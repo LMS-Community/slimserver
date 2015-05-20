@@ -102,12 +102,14 @@ sub handleFeed {
 			$currentLibrary = '';
 		}
 		
+		my $name = Slim::Music::VirtualLibraries->getNameForId($k, $client);
+
 		push @items, {
-			name => $libraryPrefix . $v->{name} . sprintf(" ($count %s)", cstring($client, 'SONGS')),
-			sortName => $v->{name},
+			name => $libraryPrefix . $name . sprintf(" ($count %s)", cstring($client, 'SONGS')),
+			sortName => $name,
 			type => 'outline',
 			items => [{
-				name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USE_X', $v->{name}),
+				name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USE_X', $name),
 				url  => \&setLibrary,
 				passthrough => [{
 					library_id => $k,
@@ -175,7 +177,7 @@ sub setLibrary {
 
 	$cb->({
 		items => [{
-			name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USING_X', (Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'))),
+			name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USING_X', (Slim::Music::VirtualLibraries->getNameForId($args->{library_id}, $client) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'))),
 			showBriefly => 1,
 		}]
 	});

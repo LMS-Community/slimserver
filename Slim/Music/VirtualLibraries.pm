@@ -21,6 +21,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	# Define some virtual libraries.
 	# - id:        the library's ID. Use something specific to your plugin to prevent dupes.
 	# - name:      the user facing name, shown in menus and settings
+	# - string:    optionally provide a string token instead of a name which would be used to 
+	#              localize the library name 
 	# - sql:       a SQL statement which creates the records in library_track
 	# - persist:   keep track of the library definition without the caller's help. This option
 	#              is invalid if you use any of the callback parameters.
@@ -35,7 +37,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	
 	Slim::Music::VirtualLibraries->registerLibrary( {
 		id => 'demoLongTracks',
-		name => 'Longish tracks only',
+		# the string token would be used to create "name => 'Longish tracks only'" in your language
+		string => 'PLUGIN_LONGISH_TRACKS_ONLY',
 		# %s is being replaced with the library's internal ID
 		sql => qq{
 			INSERT OR IGNORE INTO library_track (library, track)
@@ -161,7 +164,7 @@ sub registerLibrary {
 	}
 	
 	$libraries{$id2} = $args;
-	$libraries{$id2}->{name} ||= $args->{id};
+	$libraries{$id2}->{name} = $class->localizedLibraryName($id2) || $args->{id};
 
 	Slim::Music::Import->useImporter( $class, 1);
 	
@@ -317,12 +320,23 @@ sub getLibraryIdForClient {
 }
 
 sub getNameForId {
-	my ($class, $id) = @_;
+	my ($class, $id, $client) = @_;
 	
 	$id = $class->getRealId($id);
 	
 	return '' unless $libraries{$id};
-	return $libraries{$id}->{name} || '';
+	return $class->localizedLibraryName($id, $client) || '';
+}
+
+sub localizedLibraryName {
+	my ($class, $id, $client) = @_;
+	
+	my $string = $libraries{$id}->{string};
+	my $name   = $libraries{$id}->{name};
+	
+	return $name unless $string && Slim::Utils::Strings::stringExists($string);
+	
+	return Slim::Utils::Strings::clientString($client, $string);
 }
 
 sub getIdForName {

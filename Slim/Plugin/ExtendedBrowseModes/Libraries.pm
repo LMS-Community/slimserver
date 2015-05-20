@@ -22,9 +22,10 @@ sub initLibraries {
 	
 	if ( $prefs->get('enableLosslessPreferred') ) {
 		Slim::Music::VirtualLibraries->registerLibrary({
-			id => 'losslessPreferred',
-			name => string('PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED'),
-			sql => qq{
+			id     => 'losslessPreferred',
+			name   => string('PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED'),
+			string => 'PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED',
+			sql    => qq{
 				INSERT OR IGNORE INTO library_track (library, track)
 					SELECT '%s', tracks.id
 					FROM tracks, albums

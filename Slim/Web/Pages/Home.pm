@@ -154,7 +154,7 @@ sub home {
 	}
 
 	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-		$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id);
+		$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id, $client);
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
