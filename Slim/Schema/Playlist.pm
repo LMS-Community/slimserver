@@ -24,6 +24,7 @@ my $prefs = preferences('server');
 	$class->has_many('playlist_tracks' => 'Slim::Schema::PlaylistTrack' => 'playlist');
 }
 
+# XXX - this should be able to filter by library!
 sub tracks {
 	my $self = shift;
 	
