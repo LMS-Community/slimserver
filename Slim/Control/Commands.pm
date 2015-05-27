@@ -3408,7 +3408,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			$client->currentPlaylist($playlist) if $cmd && $cmd =~ /^(?:play|load)/;
 
-			return $playlist->tracks;
+			return $playlist->tracks($library_id);
 		}
 
 		return ();

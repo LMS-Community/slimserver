@@ -2459,6 +2459,7 @@ sub playlistsTracksQuery {
 	my $quantity   = $request->getParam('_quantity');
 	my $tagsprm    = $request->getParam('tags');
 	my $playlistID = $request->getParam('playlist_id');
+	my $libraryId  = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 
 	if (!defined $playlistID) {
 		$request->setStatusBadParams();
@@ -2474,7 +2475,7 @@ sub playlistsTracksQuery {
 	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
 
 	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
-		$iterator = $playlistObj->tracks();
+		$iterator = $playlistObj->tracks($libraryId);
 		$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
 	}
 

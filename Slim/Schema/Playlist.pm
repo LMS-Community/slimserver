@@ -24,13 +24,11 @@ my $prefs = preferences('server');
 	$class->has_many('playlist_tracks' => 'Slim::Schema::PlaylistTrack' => 'playlist');
 }
 
-# XXX - this should be able to filter by library!
 sub tracks {
 	my $self = shift;
+	my $library_id = shift;
 	
-	my %attributes = (order_by => 'me.position');
-	
-	return $self->playlist_tracks(undef, \%attributes);
+	return Slim::Schema->rs('PlaylistTrack')->getTracks($self->id, $library_id);
 }
 
 sub setTracks {
