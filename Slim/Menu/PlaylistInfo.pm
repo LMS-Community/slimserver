@@ -88,7 +88,7 @@ sub registerDefaultInfoProviders {
 }
 
 sub menu {
-	my ( $class, $client, $url, $playlist, $tags ) = @_;
+	my ( $class, $client, $url, $playlist, $tags, $filter ) = @_;
 	$tags ||= {};
 
 	# If we don't have an ordering, generate one.
@@ -119,7 +119,7 @@ sub menu {
 		
 		if ( defined $ref->{func} ) {
 			
-			my $item = eval { $ref->{func}->( $client, $url, $playlist, $remoteMeta, $tags ) };
+			my $item = eval { $ref->{func}->( $client, $url, $playlist, $remoteMeta, $tags, $filter ) };
 			if ( $@ ) {
 				$log->error( 'PlaylistInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
@@ -181,24 +181,26 @@ sub menu {
 }
 
 sub playlistItemCount {
-	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter) = @_;
 	
 	my $items = [];
 	my $jive;
 	
 	return $items if !blessed($client) || !blessed($playlist);
 	
+	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	
 	push @{$items}, {
 		type => 'text',
 		name => cstring($client, 'INFORMATION_TRACKS') . cstring('COLON') . ' ' 
-			. Slim::Utils::Misc::delimitThousands($playlist->tracks()->count),
+			. Slim::Utils::Misc::delimitThousands($playlist->tracks($library_id)->count),
 	};
 	
 	return $items;
 }
 
 sub playPlaylist {
-	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter) = @_;
 
 	my $items = [];
 	my $jive;
@@ -219,6 +221,10 @@ sub playPlaylist {
 		},
 	};
 	$actions->{play} = $actions->{go};
+	
+	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		$actions->{go}->{params}->{library_id} = $library_id;
+	}
 
 	$jive->{actions} = $actions;
 	$jive->{style} = 'itemplay';
@@ -233,23 +239,23 @@ sub playPlaylist {
 }
 
 sub addPlaylistEnd {
-	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
+	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter ) = @_;
 	my $add_string   = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
-	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd );
+	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd, $filter );
 
 }
 
 sub addPlaylistNext {
-	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
+	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
-	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd );
+	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd, $filter );
 
 }
 
 sub addPlaylist {
-	my ( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd ) = @_;
+	my ( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd, $filter ) = @_;
 
 	my $items = [];
 	my $jive;
@@ -269,6 +275,10 @@ sub addPlaylist {
 	};
 	$actions->{play} = $actions->{go};
 	$actions->{add}  = $actions->{go};
+	
+	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		$actions->{go}->{params}->{library_id} = $library_id;
+	}
 
 	$jive->{actions} = $actions;
 
@@ -354,11 +364,15 @@ sub cliQuery {
 	
 	# Default menu
 	if ( $url ) {
-		$feed = Slim::Menu::PlaylistInfo->menu( $client, $url, undef, $tags );
+		$feed = Slim::Menu::PlaylistInfo->menu( $client, $url, undef, $tags, {
+			library_id => $request->getParam('library_id')
+		} );
 	}
 	else {
 		my $playlist = Slim::Schema->find( Playlist => $playlistId );
-		$feed     = Slim::Menu::PlaylistInfo->menu( $client, $playlist->url, $playlist, $tags );
+		$feed = Slim::Menu::PlaylistInfo->menu( $client, $playlist->url, $playlist, $tags, {
+			library_id => $request->getParam('library_id')
+		}  );
 	}
 	
 	Slim::Control::XMLBrowser::cliQuery( 'playlistinfo', $feed, $request );
