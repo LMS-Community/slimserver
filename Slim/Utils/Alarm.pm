@@ -560,7 +560,10 @@ sub sound {
 		main::DEBUGLOG && $isDebug && $log->debug('Sounding alarm');
 
 		# we need to disable randomplay or we can't change shuffle mode
-		$client->execute(['randomplay', 'disable']);
+		if (defined $self->{_playlist})
+		{
+			$client->execute(['randomplay', 'disable']);
+		}
 
 		# Stop any other current alarm
 		if ($client->alarmData->{currentAlarm}) {
