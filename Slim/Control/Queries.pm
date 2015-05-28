@@ -1232,7 +1232,7 @@ sub mediafolderQuery {
 					my $itemDetails = $sth->fetchrow_hashref;
 					
 					if ($type eq 'video') {
-						foreach my $k (keys $itemDetails) {
+						foreach my $k (keys %$itemDetails) {
 							$itemDetails->{"videos.$k"} = $itemDetails->{$k} unless $k =~ /^videos\./;
 						}
 						
@@ -1243,7 +1243,7 @@ sub mediafolderQuery {
 						utf8::decode( $itemDetails->{'images.title'} ) if exists $itemDetails->{'images.title'};
 						utf8::decode( $itemDetails->{'images.album'} ) if exists $itemDetails->{'images.album'};
 
-						foreach my $k (keys $itemDetails) {
+						foreach my $k (keys %$itemDetails) {
 							$itemDetails->{"images.$k"} = $itemDetails->{$k} unless $k =~ /^images\./;
 						}
 						_imageData($request, $loopname, $chunkCount, $tags, $itemDetails);
