@@ -101,6 +101,7 @@ Settings = {
 						this.submitSettings(function() {
 							tb.activate(tab);
 						});
+
 					}
 
 					this._resetModified();
@@ -206,6 +207,10 @@ Settings = {
 							try { frames.settings.location = url; }
 							catch(e) { location = url; }
 						});
+					}
+					else if (btn == 'no') {
+						try { frames.settings.location = url; }
+						catch(e) { location = url; }
 					}
 
 					this._resetModified();
