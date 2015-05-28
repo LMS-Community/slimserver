@@ -559,6 +559,12 @@ sub sound {
 		# Sound an Alarm (HWV 63)
 		main::DEBUGLOG && $isDebug && $log->debug('Sounding alarm');
 
+		# we need to disable randomplay or we can't change shuffle mode
+		if (defined $self->{_playlist})
+		{
+			$client->execute(['randomplay', 'disable']);
+		}
+
 		# Stop any other current alarm
 		if ($client->alarmData->{currentAlarm}) {
 			main::DEBUGLOG && $log->debug('Stopping other current alarm');
