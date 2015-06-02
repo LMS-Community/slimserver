@@ -252,6 +252,10 @@ my %localTagMapping = (
 	albumartist            => 'artistname',
 	trackartist            => 'artistname',
 	album                  => 'albumname',
+	rate                   => 'samplerate',
+	age                    => 'timestamp',
+	ct                     => 'content_type',
+	fs                     => 'filesize',
 	composer               => undef,
 	conductor              => undef,
 	band                   => undef,
@@ -266,7 +270,7 @@ sub setAttributes {
 	
 	%availableTags = map { $_ => 1 } @allAttributes unless keys %availableTags;
 	
-#	main::DEBUGLOG && $log->debug("$url: $self => ", Data::Dump::dump($attributes));
+	main::DEBUGLOG && $log->debug($self->url . " => ", Data::Dump::dump($attributes));
 	
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this

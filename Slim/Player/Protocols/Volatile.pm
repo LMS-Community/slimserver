@@ -52,10 +52,12 @@ sub getMetadataFor {
 		secs      => $track->duration,
 		coverid   => $track->coverid,
 		icon      => $track->cover && '/music/' . $track->coverid . '/cover.png',
+		samplerate=> $track->samplerate,
 		bitrate   => $track->prettyBitRate,
 		genre     => $track->genre,
 		replay_gain=> $track->replay_gain,
 		type      => $track->content_type,
+		year      => $track->year,
 	};
 }
 
