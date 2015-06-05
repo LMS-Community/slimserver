@@ -236,6 +236,12 @@ sub rebuild {
 		# SQL code is supposed to re-build the full library. Delete the old values first:
 		my $delete_sth = $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
 		$delete_sth->execute($id);
+
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			my $logArgs = Storable::dclone($args);
+			$logArgs->{sql} =~ s/\s+/ /g;
+			$log->debug( Data::Dump::dump($logArgs) );
+		}
 		
 		$dbh->do( sprintf($sql, $id), undef, @{ $args->{params} || [] } );
 		
