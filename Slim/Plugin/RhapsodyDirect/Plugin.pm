@@ -34,9 +34,9 @@ sub initPlugin {
 		sub { Slim::Plugin::RhapsodyDirect::ProtocolHandler->getIcon(); }
 	);
 	
-	Slim::Networking::Slimproto::addHandler( 
-		RPDS => \&rpds_handler
-	);
+#	Slim::Networking::Slimproto::addHandler( 
+#		RPDS => \&rpds_handler
+#	);
 	
 	# Track Info item
 	Slim::Menu::TrackInfo->registerInfoProvider( rhapsody => (
