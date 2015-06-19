@@ -744,22 +744,6 @@ sub getMetadataFor {
 			};
 		}
 	}
-=pod XXX - no longer needed with RadioIO metadata handling in its own plugin
-	elsif ( $playlistURL =~ /radioio/i ) {
-		if ( Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
-			# RadioIO
-			my $icon = Slim::Plugin::InternetRadio::Plugin::RadioIO->_pluginDataFor('icon');
-				
-			return {
-				artist   => $artist,
-				title    => $title,
-				cover    => $icon,
-				icon     => $icon,
-				type     => 'MP3 (RadioIO)',
-			};
-		}
-	}
-=cut
 	else {	
 
 		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS)$/ )  {

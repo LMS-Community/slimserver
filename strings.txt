@@ -16069,21 +16069,6 @@ RADIO_TUNEIN
 	SV	Ange webbadress
 	ZH_CN	收音机网址
 
-RADIOIO
-	CS	RadioIO
-	DA	RadioIO
-	DE	RadioIO
-	EN	RadioIO
-	ES	RadioIO
-	FI	RadioIO
-	FR	RadioIO
-	IT	RadioIO
-	NL	RadioIO
-	NO	RadioIO
-	PL	RadioIO
-	RU	RadioIO
-	SV	RadioIO
-
 SHOUTCAST
 	CS	SHOUTcast
 	DA	SHOUTcast
