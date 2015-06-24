@@ -489,7 +489,7 @@ sub getMetadataFor {
 	my ($trackId) = $url =~ m{rhapd://(.+)\.m4a};
 	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
 	
-	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+	if ( $trackId && !$meta && !$client->master->pluginData('fetchingMeta') ) {
 
 		$client->master->pluginData( fetchingMeta => 1 );
 		
