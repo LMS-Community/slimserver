@@ -218,6 +218,9 @@ ELSE %]
 							WRAPPER playlink noTarget=1 -%]
 								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% playerURI %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
+							IF allLinks; WRAPPER insertlink noTarget=1 -%]
+								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=insert&amp;index=[% loop.index %]&amp;player=[% playerURI %]', true, SqueezeJS.string('connecting_for'));"
+							[%- END; END;
 							WRAPPER addlink noTarget=1 -%]
 								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% playerURI %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;

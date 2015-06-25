@@ -297,7 +297,7 @@ sub indexHandler {
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
-	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
+	if (!defined $level || $params->{'action'} =~ /^(?:play|add|insert)/) {
 
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		# also pass through play/add to reuse xmlbrowser handling of playall etc
