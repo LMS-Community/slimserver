@@ -28,7 +28,7 @@ they say and no more.
 
 use strict;
 
-#use FileHandle ();
+use FileHandle ();
 use File::Next;
 use Path::Class;
 
@@ -223,7 +223,7 @@ sub scanDirectory {
 		return $foundItems;
 	}
 
-	my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:audio', 'recursive:1' ] );
+	my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:list|audio', 'recursive:1' ] );
 	$request->execute();
 
 	if ( $request->isStatusError() ) {
@@ -233,6 +233,20 @@ sub scanDirectory {
 		foreach ( @{ $request->getResult('folder_loop') || [] } ) {
 			if ($_->{type} =~ /track|audio/) {
 				push @{$foundItems}, $_->{url};
+			}
+			elsif ($_->{type} =~ /playlist/) {
+				my $playlist = Slim::Schema->updateOrCreate({
+					'url'        => $url,
+					'readTags'   => 1,
+					'checkMTime' => 1,
+					'playlist'   => 1,
+				});
+	
+				my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($_->{url})));
+				
+				if ( scalar @tracks ) {
+					push @{$foundItems}, @tracks;
+				}
 			}
 		}
 	}
