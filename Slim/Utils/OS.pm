@@ -467,4 +467,8 @@ sub canRestartServer { 0 }
 
 sub progressJSON { }
 
+sub runningFromSource {
+	$::REVISION =~ /^\s*\d+\s*$/ ? 0 : 1;
+}
+
 1;

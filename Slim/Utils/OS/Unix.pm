@@ -69,7 +69,7 @@ sub dirsFor {
 		push @dirs, '';
 
 	# we don't want these values to return a(nother) value
-	} elsif ($dir =~ /^(?:libpath|mysql-language|updates)$/) {
+	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
 
 	} elsif ($dir eq 'prefs' && $::prefsdir) {
 		

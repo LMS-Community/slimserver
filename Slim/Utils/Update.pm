@@ -32,6 +32,12 @@ sub checkVersion {
 
 	Slim::Utils::Timers::killTimers(0, \&checkVersion);			
 
+	# don't check for updates when running from the source
+	if ($os->runningFromSource) {
+		main::INFOLOG && $log->is_info && $log->info("We're running from the source - don't check for updates");
+		return;
+	}
+	
 	return unless $prefs->get('checkVersion');
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
@@ -150,7 +156,7 @@ sub checkVersionCB {
 			getUpdate($version);
 		}
 		
-		# if we got an update mit download URL, display it in the web UI et al.
+		# if we got an update with download URL, display it in the web UI et al.
 		elsif ($version && $version =~ /a href=/i) {
 			$::newVersion = $version;
 		}
@@ -178,7 +184,7 @@ sub checkVersionError {
 sub getUpdate {
 	my $url = shift;
 	
-	my $params = $os->getUpdateParams();
+	my $params = $os->getUpdateParams($url);
 	
 	return unless $params;
 	

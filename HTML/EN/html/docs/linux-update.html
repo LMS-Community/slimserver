@@ -1,0 +1,24 @@
+[% pagetitle = 'How to update your Linux installation' %]
+[% PROCESS helpheader.html %]
+[% extension = installerFile.match('\.(rpm|deb)$');
+IF extension;
+	distro = extension.0;
+END;
+%]
+
+<p>On some Linux distributions we provide an automatic download of Logitech Media Server update installers. 
+These currently are available for .rpm and .deb based systems.<p>
+
+<p>Your Logitech Media Server has downloaded the latest installer to the following location:</p>
+
+<pre>[% installerFile %]</pre>
+
+<p>Please execute the following steps to bring your Logitech Media Server installation up to date:</p> 
+
+<ul style="direction: ltr;">
+	<li>Log in to your server machine using your username and password.</li>
+	<li>Run the following command to execute the installer</li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
+</ul>
+
+[% PROCESS helpfooter.html %]

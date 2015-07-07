@@ -95,7 +95,15 @@ sub scanner {
 	return '/usr/libexec/squeezeboxserver-scanner';
 }
 
+sub canAutoUpdate { $_[0]->SUPER::runningFromSource ? 0 : 1 }
+sub installerExtension { 'rpm' }; 
 sub installerOS { 'rpm' }
+
+sub getUpdateParams {
+	return {
+		cb => \&Slim::Utils::OS::Linux::signalUpdateReady
+	};
+}
 
 
 1;

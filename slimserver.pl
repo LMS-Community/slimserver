@@ -413,6 +413,7 @@ sub init {
 	}
 
 	Slim::Utils::OSDetect::init();
+	my $os = Slim::Utils::OSDetect->getOS();
 
 	# initialize server subsystems
 	initSettings();
@@ -466,7 +467,7 @@ sub init {
 	$failsafe ? $prefs->set('failsafe', 1) : $prefs->remove('failsafe');
 
 	# Change UID/GID after the pid & logfiles have been opened.
-	unless (Slim::Utils::OSDetect::getOS->dontSetUserAndGroup() || (defined($user) && $> != 0)) {
+	unless ($os->dontSetUserAndGroup() || (defined($user) && $> != 0)) {
 		main::INFOLOG && $log->info("Server settings effective user and group if requested...");
 		changeEffectiveUserAndGroup();		
 	}
@@ -485,7 +486,7 @@ sub init {
 	}
 
 	main::INFOLOG && $log->info("Server binary search path init...");
-	Slim::Utils::OSDetect::getOS->initSearchPath();
+	$os->initSearchPath();
 
 	# Find plugins and process any new ones now so we can load their strings
 	main::INFOLOG && $log->info("Server PluginManager init...");
@@ -623,7 +624,7 @@ sub init {
 	main::INFOLOG && $log->info("Server checkDataSource...");
 	checkDataSource();
 	
-	if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
+	if ( $os->canAutoRescan && $prefs->get('autorescan') ) {
 		require Slim::Utils::AutoRescan;
 		
 		main::INFOLOG && $log->info('Auto-rescan init...');
@@ -664,7 +665,7 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	if ( $REVISION =~ /^\s*\d+\s*$/ && $prefs->get('checkVersion') ) {
+	if ( !$os->runningFromSource && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,

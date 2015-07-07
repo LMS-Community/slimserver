@@ -106,6 +106,14 @@ sub scanner {
 	return '/usr/sbin/squeezeboxserver-scanner';
 }
 
+sub canAutoUpdate { $_[0]->runningFromSource ? 0 : 1 }
+sub installerExtension { 'deb' }; 
 sub installerOS { 'deb' }
+
+sub getUpdateParams {
+	return {
+		cb => \&Slim::Utils::OS::Linux::signalUpdateReady
+	};
+}
 
 1;
