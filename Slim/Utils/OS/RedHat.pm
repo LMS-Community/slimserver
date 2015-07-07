@@ -100,9 +100,13 @@ sub installerExtension { 'rpm' };
 sub installerOS { 'rpm' }
 
 sub getUpdateParams {
-	return {
-		cb => \&Slim::Utils::OS::Linux::signalUpdateReady
-	};
+	my ($class, $url) = @_;
+	
+	if ($url) {
+		Slim::Utils::OS::Linux::signalUpdateReady($url);
+	}
+	
+	return;
 }
 
 
