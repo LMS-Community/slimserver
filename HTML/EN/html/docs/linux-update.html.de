@@ -1,0 +1,26 @@
+[% pagetitle = 'Logitech Media Server auf einem Linux System aktualisieren' %]
+[% PROCESS helpheader.html %]
+[% extension = installerFile.match('\.(rpm|deb)$');
+IF extension;
+	distro = extension.0;
+END;
+%]
+
+<p>Auf einigen Linux Distributionen bieten wir eine vereinfachte Logitech Media Server Aktualisierung an.
+Dies ist derzeit auf RPM und Debian basierenden Systemen der Fall.<p>
+
+[% IF distro == 'deb' %]
+<p>Die aktuellste Logitech Media Server Version wurde bereits in folgenden Ordner heruntergeladen:</p>
+
+<pre>[% installerFile %]</pre>
+[% END %]
+
+<p>Bitte f&uuml;hre die foldenen Schritte aus, um die Logitech Media Server Installation zu aktualisieren:</p> 
+
+<ul style="direction: ltr;">
+	<li>Melde dich auf deinem Linux-Rechner an.</li>
+	<li>F&uuml;hre folgenden Befehl in einem Terminal aus:</li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
+</ul>
+
+[% PROCESS helpfooter.html %]

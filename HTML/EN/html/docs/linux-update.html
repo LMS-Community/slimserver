@@ -1,4 +1,4 @@
-[% pagetitle = 'How to update your Linux installation' %]
+[% pagetitle = 'How to update your Logitech Media Server on your Linux system' %]
 [% PROCESS helpheader.html %]
 [% extension = installerFile.match('\.(rpm|deb)$');
 IF extension;
@@ -9,9 +9,11 @@ END;
 <p>On some Linux distributions we provide an automatic download of Logitech Media Server update installers. 
 These currently are available for .rpm and .deb based systems.<p>
 
+[% IF distro == 'deb' %]
 <p>Your Logitech Media Server has downloaded the latest installer to the following location:</p>
 
 <pre>[% installerFile %]</pre>
+[% END %]
 
 <p>Please execute the following steps to bring your Logitech Media Server installation up to date:</p> 
 
