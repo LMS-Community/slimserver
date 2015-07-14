@@ -55,7 +55,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => $streamUrl =~ /\.mp3$/ ? 128_000 : 192_000,
+		bitrate => $streamUrl =~ /\.mp3$/ ? 128_000 : 320_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mp4';
@@ -121,7 +121,7 @@ sub parseDirectHeaders {
 	# Save length for reinit and seeking
 	$client->master->pluginData( length => $length );
 	
-	my $bitrate = $client->streamingSong()->streamUrl() =~ /\.mp3$/ ? 128_000 : 192_000;
+	my $bitrate = $client->streamingSong()->streamUrl() =~ /\.mp3$/ ? 128_000 : 320_000;
 
 	$client->streamingSong->bitrate($bitrate);
 
@@ -285,7 +285,7 @@ sub _gotNextRadioTrack {
 		title     => $track->{name},
 		cover     => $track->{cover},
 		duration  => $track->{playbackSeconds},
-		bitrate   => '192k CBR',
+		bitrate   => '320k CBR',
 		type      => 'M4A (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
@@ -431,7 +431,7 @@ sub getMetadataFor {
 		my $song = $client->currentSongForUrl($url);
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
-				bitrate   => '192k CBR',
+				bitrate   => '320k CBR',
 				type      => 'M4A (Rhapsody)',
 				icon      => $icon,
 				cover     => $icon,
@@ -491,7 +491,7 @@ sub getMetadataFor {
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
 	
 	return $meta || {
-		bitrate   => '192k CBR',
+		bitrate   => '320k CBR',
 		type      => 'M4A (Rhapsody)',
 		icon      => $icon,
 		cover     => $icon,
@@ -527,7 +527,7 @@ sub _gotBulkMetadata {
 		
 		my $meta = {
 			%{$track},
-			bitrate   => '192k CBR',
+			bitrate   => '320k CBR',
 			type      => 'M4A (Rhapsody)',
 			info_link => 'plugins/rhapsodydirect/trackinfo.html',
 			icon      => $icon,
