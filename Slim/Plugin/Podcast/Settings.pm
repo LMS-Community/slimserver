@@ -12,7 +12,6 @@ use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
-use Slim::Networking::SqueezeNetwork;
 
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
