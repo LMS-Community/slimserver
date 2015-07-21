@@ -1,4 +1,4 @@
-package Slim::Plugin::RadioTime::Metadata;
+package Slim::Plugin::InternetRadio::TuneIn::Metadata;
 
 # $Id$
 
@@ -8,7 +8,7 @@ use Slim::Formats::RemoteMetadata;
 use Slim::Formats::XML;
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Plugin::RadioTime::Plugin;
+use Slim::Plugin::InternetRadio::TuneIn;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -21,8 +21,7 @@ my $prefs = preferences('plugin.radiotime');
 use constant PARTNER_ID => 16;
 use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID;
 use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID . '&serial=';
-
-my $ICON;
+use constant ICON       => 'plugins/TuneIn/html/images/icon.png';
 
 sub init {
 	my $class = shift;
@@ -44,8 +43,6 @@ sub init {
 		match => qr/cloudfront\.net\/(?:[ps]?\d+|gn\/[A-Z0-9]+)[tqgd]?\.(?:jpe?g|png|gif)$/,
 		func  => \&artworkUrl,
 	);
-
-	$ICON = Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon');
 }
 
 sub getConfig {
@@ -68,7 +65,7 @@ sub getConfig {
 		\&getConfig,
 	);
 
-	$http->get( CONFIG_URL . Slim::Plugin::RadioTime::Plugin->getSerial($client) );
+	$http->get( CONFIG_URL . Slim::Plugin::InternetRadio::TuneIn->getSerial($client) );
 }
 
 sub _gotConfig {
@@ -95,8 +92,8 @@ sub defaultMeta {
 	
 	return {
 		title => Slim::Music::Info::getCurrentTitle($url),
-		icon  => $ICON,
-		cover => $ICON,
+		icon  => ICON,
+		cover => ICON,
 		type  => $client->string('RADIO'),
 	};
 }
@@ -111,11 +108,11 @@ sub parser {
 	}
 
 	# If a station is providing Icy metadata, disable metadata
-	# provided by RadioTime
+	# provided by TuneIn
 	if ( $metadata =~ /StreamTitle=\'([^']+)\'/ ) {
 		if ( $1 ) {
 			if ( $client->pluginData('metadata' ) ) {
-				main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
+				main::DEBUGLOG && $log->is_debug && $log->debug('Disabling TuneIn metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 				$client->pluginData( metadata => undef );
@@ -140,10 +137,10 @@ sub parser {
 	}
 	
 	# If a station is providing WMA metadata, disable metadata
-	# provided by RadioTime
+	# provided by TuneIn
 	elsif ( $metadata =~ /(?:CAPTION|artist|type=SONG)/ ) {
 		if ( $client->pluginData('metadata' ) ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
+			main::DEBUGLOG && $log->is_debug && $log->debug('Disabling TuneIn metadata, stream has WMA metadata');
 			
 			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 			$client->pluginData( metadata => undef );
@@ -212,7 +209,7 @@ sub fetchMetadata {
 	my ($stationId) = $url =~ m/(?:station)?id=([^&]+)/i; # support old-style stationId= and new id= URLs
 	return unless $stationId;
 	
-	my $username = Slim::Plugin::RadioTime::Plugin->getUsername($client);
+	my $username = Slim::Plugin::InternetRadio::TuneIn->getUsername($client);
 	
 	my $metaUrl = META_URL . '&id=' . $stationId;
 	
@@ -220,7 +217,7 @@ sub fetchMetadata {
 		$metaUrl .= '&username=' . uri_escape_utf8($username);
 	}
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Fetching RadioTime metadata from $metaUrl" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Fetching TuneIn metadata from $metaUrl" );
 	
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotMetadata,
@@ -254,7 +251,7 @@ sub _gotMetadata {
 	$client->pluginData( fetchingMeta => 0 );
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Raw RadioTime metadata: " . Data::Dump::dump($feed) );
+		$log->debug( "Raw TuneIn metadata: " . Data::Dump::dump($feed) );
 	}
 	
 	my $ttl = 300;
@@ -290,7 +287,7 @@ sub _gotMetadata {
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Saved RadioTime metadata: " . Data::Dump::dump($meta) );
+		$log->debug( "Saved TuneIn metadata: " . Data::Dump::dump($meta) );
 	}
 	
 	$client->pluginData( metadata => $meta );
@@ -313,7 +310,7 @@ sub _gotMetadataError {
 	my $url    = $http->params('url');
 	my $error  = $http->error;
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Error fetching RadioTime metadata: $error" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Error fetching TuneIn metadata: $error" );
 	
 	$client = $client->master;
 	$client->pluginData( fetchingMeta => 0 );
@@ -384,7 +381,7 @@ sub _fetchArtwork {
 			
 			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&serial=%s&artist=%s&title=%s',
 				PARTNER_ID,
-				Slim::Plugin::RadioTime::Plugin->getSerial($client),
+				Slim::Plugin::InternetRadio::TuneIn->getSerial($client),
 				$track->{artist},
 				$track->{title},
 			);

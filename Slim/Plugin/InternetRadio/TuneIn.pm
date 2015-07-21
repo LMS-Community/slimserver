@@ -1,6 +1,4 @@
-package Slim::Plugin::RadioTime::Plugin;
-
-# $Id: Plugin.pm 11021 2006-12-21 22:28:39Z dsully $
+package Slim::Plugin::InternetRadio::TuneIn;
 
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +11,6 @@ package Slim::Plugin::RadioTime::Plugin;
 # GNU General Public License for more details.
 
 use strict;
-use base qw(Slim::Plugin::OPMLBased);
 
 use Digest::MD5 ();
 use Tie::IxHash;
@@ -21,58 +18,58 @@ use URI;
 use URI::QueryParam;
 use URI::Escape qw(uri_escape_utf8);
 
-use Slim::Plugin::RadioTime::Metadata;
+use Slim::Plugin::InternetRadio::TuneIn::Metadata;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
 use constant MENUS => {
 	presets => {
-		icon   => '/plugins/RadioTime/html/images/radiopresets.png',
+		icon   => '/plugins/TuneIn/html/images/radiopresets.png',
 		weight => 5,
 	},
 	local => {
-		icon   => '/plugins/RadioTime/html/images/radiolocal.png',
+		icon   => '/plugins/TuneIn/html/images/radiolocal.png',
 		weight => 20,
 	},
 	music => {
-		icon   => '/plugins/RadioTime/html/images/radiomusic.png',
+		icon   => '/plugins/TuneIn/html/images/radiomusic.png',
 		weight => 30,
 	},
 	sports => {
-		icon   => '/plugins/RadioTime/html/images/radiosports.png',
+		icon   => '/plugins/TuneIn/html/images/radiosports.png',
 		weight => 40,
 	},
 	news => {
-		icon   => '/plugins/RadioTime/html/images/radionews.png',
+		icon   => '/plugins/TuneIn/html/images/radionews.png',
 		weight => 45,
 	},
 	talk => {
-		icon   => '/plugins/RadioTime/html/images/radiotalk.png',
+		icon   => '/plugins/TuneIn/html/images/radiotalk.png',
 		weight => 50,
 	},
 	location => {
-		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		icon   => '/plugins/TuneIn/html/images/radioworld.png',
 		weight => 55,
 	},
 	language => {
-		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		icon   => '/plugins/TuneIn/html/images/radioworld.png',
 		weight => 56,
 	},
 	world => {
-		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		icon   => '/plugins/TuneIn/html/images/radioworld.png',
 		weight => 60,
 	},
 	podcast => {
-		icon   => '/plugins/RadioTime/html/images/podcasts.png',
+		icon   => '/plugins/TuneIn/html/images/podcasts.png',
 		weight => 70,
 	},
 	search => {
-		icon   => '/plugins/RadioTime/html/images/radiosearch.png',
+		icon   => '/plugins/TuneIn/html/images/radiosearch.png',
 		weight => 110,
 	},
 	default => {
-		icon => '/plugins/RadioTime/html/images/radio.png',
+		icon => '/plugins/TuneIn/html/images/radio.png',
 	},
 };
 
@@ -85,15 +82,15 @@ use constant OPTIONS_URL => 'http://opml.radiotime.com/Options.ashx?partnerId=' 
 my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
 
-sub initPlugin {
+sub init {
 	my $class = shift;
 	
 	# Initialize metadata handler
-	Slim::Plugin::RadioTime::Metadata->init();
+	Slim::Plugin::InternetRadio::TuneIn::Metadata->init();
 
 	if ( main::WEBUI ) {
-		require Slim::Plugin::RadioTime::Settings;
-		Slim::Plugin::RadioTime::Settings->new;
+		require Slim::Plugin::InternetRadio::TuneIn::Settings;
+		Slim::Plugin::InternetRadio::TuneIn::Settings->new;
 	}
 
 	# Track Info handler
@@ -180,7 +177,7 @@ sub fixUrl {
 	if ($client) {
 		my %playerFormats = map { $_ => 1 } $client->formats;
 	
-		# RadioTime's listing defaults to giving us mp3 and wma streams only,
+		# TuneIn's listing defaults to giving us mp3 and wma streams only,
 		# but we support a few more
 		@formats = grep {
 		
@@ -237,7 +234,7 @@ sub trackInfoHandler {
 	return $item;
 }
 
-# Bug 15569, special case for RadioTime stations, use their trackinfo menu
+# Bug 15569, special case for TuneIn stations, use their trackinfo menu
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 	
@@ -278,15 +275,15 @@ sub reportError {
 			. '&id=' . uri_escape_utf8($id)
 			. '&message=' . uri_escape_utf8($error);
 	
-		main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to RadioTime: $reportUrl");
+		main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to TuneIn: $reportUrl");
 	
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
 			sub {
-				main::INFOLOG && $log->is_info && $log->info("RadioTime failure report OK");
+				main::INFOLOG && $log->is_info && $log->info("TuneIn failure report OK");
 			},
 			sub {
 				my $http = shift;
-				main::INFOLOG && $log->is_info && $log->info( "RadioTime failure report failed: " . $http->error );
+				main::INFOLOG && $log->is_info && $log->info( "TuneIn failure report failed: " . $http->error );
 			},
 			{
 				timeout => 30,

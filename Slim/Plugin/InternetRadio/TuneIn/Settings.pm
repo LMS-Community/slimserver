@@ -1,4 +1,4 @@
-package Slim::Plugin::RadioTime::Settings;
+package Slim::Plugin::InternetRadio::TuneIn::Settings;
 
 # Logitech Media Server Copyright 2001-2013 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@ sub name {
 }
 
 sub page {
-	return Slim::Web::HTTP::CSRF->protectURI('plugins/RadioTime/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/TuneIn/settings/basic.html');
 }
 
 sub prefs {

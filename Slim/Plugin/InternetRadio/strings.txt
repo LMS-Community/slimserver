@@ -13,3 +13,267 @@ PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
 	RU	Каталоги радиостанций Интернета
 	SV	Kataloger för webbradio
 
+# String file for TuneIn Radio plugin
+
+PLUGIN_RADIOTIME_MODULE_NAME
+	CS	TuneIn Radio
+	DA	TuneIn Radio
+	DE	TuneIn Radio
+	EN	TuneIn Radio
+	ES	TuneIn Radio
+	FI	TuneIn Radio
+	FR	TuneIn Radio
+	HE	TuneIn Radio
+	IT	TuneIn Radio
+	NL	TuneIn Radio
+	NO	TuneIn Radio
+	PL	TuneIn Radio
+	RU	TuneIn Radio
+	SV	TuneIn Radio
+
+PLUGIN_RADIOTIME_MODULE_NAME_DESC
+	CS	TuneIn Radio - Místní Internetové rádio
+	DA	TuneIn Radio - lokal internetradio
+	DE	TuneIn Radio - Lokale Internetradiosender
+	EN	TuneIn Radio - Local Internet Radio
+	ES	TuneIn Radio - Radio por Internet local
+	FI	TuneIn Radio - paikallinen internetradio
+	FR	TuneIn Radio - Radio Internet locale
+	IT	TuneIn Radio - Radio Internet locale
+	NL	TuneIn Radio - lokale internetradio
+	NO	TuneIn Radio: Lokal Internett-radio
+	PL	TuneIn Radio - lokalne radio internetowe
+	RU	TuneIn Radio — местная интернет-радиостанция
+	SV	TuneIn Radio – Lokal webbradio
+
+PLUGIN_RADIOTIME_MODULE_TITLE
+	CS	TuneIn Radio
+	DA	TuneIn Radio
+	DE	TuneIn Radio
+	EN	TuneIn Radio
+	ES	TuneIn Radio
+	FI	TuneIn Radio
+	FR	TuneIn Radio
+	IT	TuneIn Radio
+	NL	TuneIn Radio
+	NO	TuneIn Radio
+	PL	TuneIn Radio
+	RU	TuneIn Radio
+	SV	TuneIn Radio
+
+PLUGIN_RADIOTIME_LOADING
+	CS	Nahrávání TuneIn Radio...
+	DA	Indlæser TuneIn Radio...
+	DE	TuneIn Radio wird geladen...
+	EN	Loading TuneIn Radio...
+	ES	Cargando TuneIn Radio...
+	FI	Ladataan TuneIn Radio...
+	FR	Chargement de TuneIn Radio...
+	HE	טוען את TuneIn Radio...
+	IT	Caricamento TuneIn Radio...
+	NL	TuneIn Radio wordt geladen...
+	NO	Laster TuneIn Radio ..
+	PL	Ładowanie usługi TuneIn Radio...
+	RU	Идет загрузка TuneIn Radio...
+	SV	Läser in TuneIn Radio...
+
+PLUGIN_RADIOTIME_OPTIONS
+	CS	Možnosti TuneIn Radio
+	DA	TuneIn Radio-indstillinger
+	DE	Optionen für TuneIn Radio
+	EN	TuneIn Radio Options
+	ES	Opciones de TuneIn Radio
+	FI	TuneIn Radion asetukset
+	FR	Options de TuneIn Radio
+	IT	Opzioni TuneIn Radio
+	NL	Opties voor TuneIn Radio
+	NO	Alternativer for TuneIn Radio
+	PL	Opcje TuneIn Radio
+	RU	Параметры TuneIn Radio
+	SV	Alternativ för TuneIn Radio
+
+RADIOTIME_LANGUAGE
+	CS	Podle jazyka
+	DA	Efter Sprog
+	DE	Nach Sprache
+	EN	By Language
+	ES	Por idioma
+	FI	Kielen mukaan
+	FR	Par Langue
+	IT	Per lingua
+	NL	Op taal
+	NO	Etter språk
+	PL	Wg języka
+	RU	По языкам
+	SV	Efter språk
+
+RADIOTIME_LOCAL
+	CS	Místní rozhlas
+	DA	Lokal Radio
+	DE	Lokales Radio
+	EN	Local Radio
+	ES	Radio local
+	FI	Paikallisradio
+	FR	Radio Locale
+	IT	Radio locale
+	NL	Lokale Radio
+	NO	Lokalradio
+	PL	Lokalne radio
+	RU	Местное радио
+	SV	Lokalradio
+
+RADIOTIME_LOCATION
+	CS	Podle lokality
+	DA	Efter sted
+	DE	Nach Standort
+	EN	By Location
+	ES	Por ubicación
+	FI	Sijainnin mukaan
+	FR	Par Lieu
+	IT	Per luogo
+	NL	Op locatie
+	NO	Etter plassering
+	PL	Wg lokalizacji
+	RU	По регионам
+	SV	Efter land
+
+RADIOTIME_WORLD
+	CS	Podle lokality
+	DA	Efter sted
+	DE	Nach Standort
+	EN	By Location
+	ES	Por ubicación
+	FI	Sijainnin mukaan
+	FR	Par Lieu
+	IT	Per luogo
+	NL	Op locatie
+	NO	Etter plassering
+	PL	Wg lokalizacji
+	RU	По регионам
+	SV	Efter land
+
+RADIOTIME_MUSIC
+	CS	Hudba
+	DA	Musik
+	DE	Musik
+	EN	Music
+	ES	Música
+	FI	Musiikki
+	FR	Musique
+	IT	Musica
+	NL	Muziek
+	NO	Musikk
+	PL	Muzyka
+	RU	Музыка
+	SV	Musik
+
+RADIOTIME_NEWS
+	CS	Novinky
+	DA	Nyheder
+	DE	Nachrichten
+	EN	News
+	ES	Noticias
+	FI	Uutiset
+	FR	Actualités
+	IT	Notizie
+	NL	Nieuws
+	NO	Nyheter
+	PL	Aktualności
+	RU	Новости
+	SV	Nyheter
+
+RADIOTIME_PODCAST
+	CS	Podcasty
+	DA	Podcasts
+	DE	Podcasts
+	EN	Podcasts
+	ES	Podcasts
+	FI	Podcastit
+	FR	Podcasts
+	IT	Podcast
+	NL	Podcasts
+	NO	Podkaster
+	PL	Podcasty
+	RU	Подкасты
+	SV	Poddsändningar
+
+RADIOTIME_SEARCH
+	CS	Vyhledávání TuneIn
+	DA	Søg i TuneIn
+	DE	TuneIn durchsuchen
+	EN	Search TuneIn
+	ES	Buscar en TuneIn
+	FI	Etsi TuneIn-palvelusta
+	FR	Rechercher dans TuneIn
+	IT	Cerca in TuneIn
+	NL	TuneIn doorzoeken
+	NO	Søk TuneIn
+	PL	Szukaj w usłudze TuneIn
+	RU	Поиск на TuneIn
+	SV	Sök på TuneIn
+
+RADIOTIME_SPORTS
+	CS	Sportovní
+	DA	Sport
+	DE	Sport
+	EN	Sports
+	ES	Deportes
+	FI	Urheilu
+	FR	Sports
+	IT	Sport
+	NL	Sport
+	NO	Sport
+	PL	Sport
+	RU	Спорт
+	SV	Sport
+
+RADIOTIME_TALK
+	CS	Mluvit
+	DA	Tale
+	DE	Talksendungen
+	EN	Talk
+	ES	Conversación
+	FI	Keskustelu
+	FR	Émissions-Débats
+	IT	Talk
+	NL	Gesproken
+	NO	Prat
+	PL	Rozmowa
+	RU	Разговорное
+	SV	Pratradio
+
+RADIOTIME_MY_PRESETS
+	CS	Mé Předvolby
+	DA	Mine forvalg
+	DE	Eigene Voreinstellungen
+	EN	My Presets
+	ES	Mis Memorias
+	FI	Esiasetukset
+	FR	Mes Préréglages
+	HE	ההגדרות הקבועות מראש שלי
+	IT	Stazioni predefinite
+	NL	Mijn Voorkeuren
+	NO	Mine forhåndsinnstilte frekvenser
+	PL	Moje wstępnie zdefiniowane stacje radiowe
+	RU	Мои предустановки
+	SV	Mina förinställningar
+
+PLUGIN_RADIOTIME_USERNAME
+	CS	Uživatelské jméno
+	DA	Brugernavn
+	DE	TuneIn Benutzername
+	EN	TuneIn Username
+	ES	Nombre de usuario
+	FI	Käyttäjätunnus
+	FR	Nom d'utilisateur TuneIn
+	HE	שם משתמש
+	IT	Nome utente
+	JA	ユーザー名
+	NL	Gebruikersnaam
+	NO	Brukernavn
+	PL	Nazwa użytkownika
+	PT	Utilizador
+	RU	Имя пользователя
+	SV	Användarnamn
+	ZH_CN	用户名
+
