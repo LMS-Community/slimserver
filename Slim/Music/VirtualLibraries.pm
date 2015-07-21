@@ -20,19 +20,30 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 
 	# Define some virtual libraries.
 	# - id:        the library's ID. Use something specific to your plugin to prevent dupes.
+	#
 	# - name:      the user facing name, shown in menus and settings
+	#
 	# - string:    optionally provide a string token instead of a name which would be used to 
-	#              localize the library name 
+	#              localize the library name
+	# 
 	# - sql:       a SQL statement which creates the records in library_track
+	#
 	# - persist:   keep track of the library definition without the caller's help. This option
 	#              is invalid if you use any of the callback parameters.
+	#
 	# - scannerCB: a sub ref to some code creating the records in library_track. Use scannerCB
 	#              if your library logic is a bit more complex than a simple SQL statement.
+	#
 	# - priority:  optionally define a numerical priority if you want your library definition
 	#              to be evaluated in a given order. Lower values are built first. Defaults to 0.
+	#
 	# - unregisterCB: optionally define a callback to be executed before a library view is
 	#              being removed. Can eg. be used to clean up some plugin specific data.
-	
+	#
+	# - rebuildOnUpdate: an optional regex matching a db.table string. If an update to a
+	#              matching table happens, the library will be rebuilt. USE CAREFULLY! Excessive
+	#              rebuilding might considerably harm your performance and listening experience.
+	#
 	# sql and scannerCB are mutually exclusive. scannerCB takes precedence over sql.
 	
 	Slim::Music::VirtualLibraries->registerLibrary( {
@@ -48,7 +59,7 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 		},
 		unregisterCB => sub {
 			my $id = shift;
-			# do something useful wehn this library is being unregistered
+			# do something useful when this library is being unregistered
 			$prefs->remove('library_' . $id);
 		}
 	} );
@@ -78,6 +89,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Music::Import;
 
+# don't rebuild too soon - the server might still be busy buffering and rendering artwork
+use constant AUTO_REBUILD_BUFFER_TIME => 10;
+
 my $serverPrefs = preferences('server');
 my $prefs = preferences('virtualLibraries');
 
@@ -85,6 +99,7 @@ my $log = logger('database.virtuallibraries');
 
 my %libraries;
 my %totals;
+my $updateHook;
 
 sub init {
 	my $class = shift;
@@ -93,6 +108,24 @@ sub init {
 		type   => 'post',
 		weight => 100,
 	} );
+	
+	if (!main::SCANNER) {
+		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+
+		# SQLite only: automatically trigger library updates on table changes
+		if ($sqlHelperClass =~ /SQLite/i) {
+			$updateHook = sub {
+
+				# only add this overhead if the library definition tells us to do so
+				return unless grep { $_->{rebuildOnUpdate} } values %libraries;
+				
+				Slim::Schema->dbh->sqlite_update_hook(\&_autoRebuild);
+			};
+		}
+		else {
+			$log->error("We don't support library updates triggered by database changes on your SQL engine: " . $sqlHelperClass->sqlVersion( Slim::Schema->dbh ));
+		}
+	}
 	
 	# restore virtual libraries
 	foreach my $vlid ( grep /^vlid_[\da-f]+$/, keys %{$prefs->all} ) {
@@ -105,6 +138,7 @@ sub init {
 		# Wipe cached data after rescan or library change
 		Slim::Control::Request::subscribe( sub {
 			%totals = ();
+			$updateHook->() if $updateHook;
 		}, [['library','rescan'], ['changed','done']] );
 	}
 }
@@ -166,7 +200,24 @@ sub registerLibrary {
 	$libraries{$id2} = $args;
 	$libraries{$id2}->{name} = $class->localizedLibraryName($id2) || $args->{id};
 
-	Slim::Music::Import->useImporter( $class, 1);
+	$updateHook->() if $updateHook;
+
+	Slim::Music::Import->useImporter( $class, 1 );
+
+	if (!main::SCANNER) {
+		# check whether library has already been built	
+		my $sth = Slim::Schema->dbh->prepare_cached(
+			"SELECT COUNT(1) FROM library_track WHERE library = ? LIMIT 1"
+		);
+		$sth->execute($id2);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+	
+		if (!$count) {
+			$log->warn(sprintf('Library "%s" has not been created yet. Building it now.', $libraries{$id2}->{name}));
+			$class->rebuild($id2);
+		}
+	}
 	
 	return $id2;
 }
@@ -218,34 +269,53 @@ sub startScan {
 	Slim::Music::Import->endImporter($class);
 }
 
+my %rebuildQueue;
+
 sub rebuild {
 	my ($class, $id) = @_;
 	
-	$id = $class->getRealId($id);
+	$class ||= __PACKAGE__;
+	
+	if ( !$id && (($id) = keys %rebuildQueue) ) {
+		delete $rebuildQueue{$id};
+	}
+	
+	$id = $class->getRealId($id) if $id;
 	
 	my $args = $libraries{$id};
 
-	return unless $args && ref $args eq 'HASH';
-
-	if ( my $cb = $args->{scannerCB} ) {
-		$cb->($id);
-	}
-	elsif ( my $sql = $args->{sql} ) {
+	if ( $id && $args && ref $args eq 'HASH' ) {
+		
+		delete $totals{$id};
+	
 		my $dbh = Slim::Schema->dbh;
-
+	
+		# use SQLite's progress handler to give the streams some air to breathe
+		$dbh->sqlite_progress_handler(10_000, sub {
+			main::idleStreams();
+			return;
+		}) unless main::SCANNER; 
+	
 		# SQL code is supposed to re-build the full library. Delete the old values first:
 		my $delete_sth = $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
 		$delete_sth->execute($id);
-
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			my $logArgs = Storable::dclone($args);
-			$logArgs->{sql} =~ s/\s+/ /g;
-			$log->debug( Data::Dump::dump($logArgs) );
+	
+		if ( my $cb = $args->{scannerCB} ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Running callback to create library.");
+			$cb->($id);
 		}
-		
-		$dbh->do( sprintf($sql, $id), undef, @{ $args->{params} || [] } );
-		
-		# create helper records for contributors and albums
+		elsif ( my $sql = $args->{sql} ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				# poor man's Storable::clone: can't clone a regex
+				my $logArgs = { map { $_ => $args->{$_} } keys %$args };
+				$logArgs->{sql} =~ s/\s+/ /g;
+				$log->debug( Data::Dump::dump($logArgs) );
+			}
+			
+			$dbh->do( sprintf($sql, $id), undef, @{ $args->{params} || [] } );
+		}
+			
+		# create helper records for contributors, albums etc.
 		$delete_sth = $dbh->prepare_cached('DELETE FROM library_album WHERE library = ?');
 		$delete_sth->execute($id);
 
@@ -284,11 +354,42 @@ sub rebuild {
 				GROUP BY genre_track.genre
 		});
 		$genres_sth->execute($id, $id);
+	
+		$dbh->sqlite_progress_handler(0, undef) unless main::SCANNER;
+		
 	}
 	
-	return 1;
+	# Tell everyone who needs to know
+	Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
+	
+	return keys %rebuildQueue ? 1 : 0;
 }
 
+sub _autoRebuild {
+	my (undef, $db, $table) = @_;
+	
+	return if $table =~ /^library_/; 	# ignore updates to the library tables - it's most likely ourselves
+	
+	foreach my $id ( sort { ($libraries{$a}->{priority} || 0) <=> ($libraries{$b}->{priority} || 0) } keys %libraries ) {
+	
+		my $filter = $libraries{$id}->{rebuildOnUpdate} || next;
+
+		next if "$db.$table" !~ $filter;
+		
+		main::DEBUGLOG && $log->is_debug && $log->debug("Library view needs an update: '" . $libraries{$id}->{name} . "'");
+		
+		$rebuildQueue{$id}++;
+
+		Slim::Utils::Timers::killTimers(undef, \&_rebuild);
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + AUTO_REBUILD_BUFFER_TIME, \&_rebuild);
+	}
+}
+
+# wrapper around rebuild, to be used when called by timers
+sub _rebuild {
+	Slim::Utils::Scheduler::remove_task(\&rebuild);
+	Slim::Utils::Scheduler::add_task(\&rebuild);
+}
 
 sub getLibraries {
 	return \%libraries;

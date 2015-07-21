@@ -42,6 +42,37 @@ sub initPlugin {
 				WHERE tracks.content_type = 'flc'
 		}
 	},{
+		id => 'neverHeard',
+		name => "Tracks you've never listened to",
+		sql => qq{
+			INSERT OR IGNORE INTO library_track (library, track)
+				SELECT '%s', tracks.id 
+				FROM tracks_persistent
+				JOIN tracks ON tracks.urlmd5 = tracks_persistent.urlmd5
+				WHERE tracks_persistent.playcount IS NULL OR tracks_persistent.playcount < 1
+		},
+		rebuildOnUpdate => qr/tracks_persistent/,
+	},{
+		id => 'notHeardInALongTime',
+		name => "Tracks you haven't listened to in a while",
+		scannerCB => sub {
+			my $id = shift;
+
+			my $dbh = Slim::Schema->dbh;
+			
+			# 30 days ago
+			my $threshold = time() - 30 * 86400;
+		
+			$dbh->do( sprintf(q{
+				INSERT OR IGNORE INTO library_track (library, track)
+					SELECT '%s', tracks.id 
+					FROM tracks_persistent
+					JOIN tracks ON tracks.urlmd5 = tracks_persistent.urlmd5
+					WHERE tracks_persistent.lastPlayed IS NULL OR tracks_persistent.lastPlayed < %s
+			}, $id, $threshold) );
+		},
+		rebuildOnUpdate => qr/tracks_persistent/,
+	},{
 		id => 'loveThisDemo',
 		name => 'Love is in the air (and in album/track titles)',
 		scannerCB => sub {
