@@ -24176,8 +24176,8 @@ SERVER_UPDATE_AVAILABLE
 	SV	Det finns en ny version av Logitech Media Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
 
 SERVER_LINUX_UPDATE_AVAILABLE
-	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="/html/docs/linux-update.html?installFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
-	EN	A new version of Logitech Media Server is available (%s). <a href="/html/docs/linux-update.html?installFile=%s" target="update">Click here for further information</a>.
-	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="/html/docs/linux-update.html?installFile=%s" target="update">Cliquez ici pour plus d'info</a>.
-	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar (%s). <a href="/html/docs/linux-update.html?installFile=%s" target="update">Klik op hier</a>.
+	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
+	EN	A new version of Logitech Media Server is available (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Click here for further information</a>.
+	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
+	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Klik op hier</a>.
 	
