@@ -106,7 +106,6 @@ sub initPlugin {
 	# no need to continue in scanner mode
 	return if main::SCANNER;
 
-	# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
 	Slim::Control::Request::subscribe( sub {
 		$prefs->remove('popularTerms');
 		_initPopularTerms();
