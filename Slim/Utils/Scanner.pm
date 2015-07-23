@@ -236,7 +236,7 @@ sub scanDirectory {
 			}
 			elsif ($_->{type} =~ /playlist/) {
 				my $playlist = Slim::Schema->updateOrCreate({
-					'url'        => $url,
+					'url'        => Slim::Utils::Misc::fileURLFromPath($url),
 					'readTags'   => 1,
 					'checkMTime' => 1,
 					'playlist'   => 1,
