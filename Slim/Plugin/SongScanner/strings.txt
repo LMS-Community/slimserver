@@ -18,19 +18,19 @@ PLUGIN_SONGSCANNER
 	SV	Låtsökaren
 
 PLUGIN_SONGSCANNER_DESC
-	CS	Interface přehrávače pro skok na libovolnou pozici za současného přehrávání skladby
-	DA	Kontrolpanel til at springe til vilkårlige steder i det nummer som spilles
-	DE	Player-Schnittstelle zum Springen an zufällige Positionen im aktuellen Titel
-	EN	Player interface for jumping to arbitrary positions within the currently playing song
-	ES	Interfaz del reproductor para saltar a posiciones aleatorias dentro de la canción que se está reproduciendo en ese momento
-	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä
-	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture
-	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione
-	NL	Muzieksysteeminterface om naar willekeurige posities in het huidige nummer te springen
-	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av
-	PL	Interfejs odtwarzacza umożliwiający przejście do dowolnego miejsca w aktualnie odtwarzanym utworze
-	RU	Интерфейс плеера для перехода в произвольную позицию воспроизводимой песни
-	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp
+	CS	Interface přehrávače pro skok na libovolnou pozici za současného přehrávání skladby (Squeezebox Classic, Squeezebox Boom, Transporter)
+	DA	Kontrolpanel til at springe til vilkårlige steder i det nummer som spilles (Squeezebox Classic, Squeezebox Boom, Transporter)
+	DE	Player-Schnittstelle zum Springen an zufällige Positionen im aktuellen Titel (nur Squeezebox Classic, Squeezebox Boom, Transporter)
+	EN	Player interface for jumping to arbitrary positions within the currently playing song (Squeezebox Classic, Squeezebox Boom, Transporter only)
+	ES	Interfaz del reproductor para saltar a posiciones aleatorias dentro de la canción que se está reproduciendo en ese momento (Squeezebox Classic, Squeezebox Boom, Transporter)
+	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä (Squeezebox Classic, Squeezebox Boom, Transporter)
+	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture (Squeezebox Classic, Squeezebox Boom, Transporter)
+	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NL	Muzieksysteeminterface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
+	PL	Interfejs odtwarzacza umożliwiający przejście do dowolnego miejsca w aktualnie odtwarzanym utworze (Squeezebox Classic, Squeezebox Boom, Transporter)
+	RU	Интерфейс плеера для перехода в произвольную позицию воспроизводимой песни (Squeezebox Classic, Squeezebox Boom, Transporter)
+	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp (Squeezebox Classic, Squeezebox Boom, Transporter)
 
 PLUGIN_SONGSCANNER_SET
 	CS	Čas:

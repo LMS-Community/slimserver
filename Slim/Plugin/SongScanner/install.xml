@@ -1,7 +1,7 @@
 <?xml version='1.0' standalone='yes'?>
 <extension>
   <name>PLUGIN_SONGSCANNER</name>
-  <creator>Kevin Deane-Freeman</creator>
+  <creator>Kevin Deane-Freeman, Logitech</creator>
   <defaultState>enabled</defaultState>
   <description>PLUGIN_SONGSCANNER_DESC</description>
   <homepageURL>http://www.mysqueezebox.com/support</homepageURL>
@@ -13,6 +13,5 @@
     <minVersion>7.0a</minVersion>
   </targetApplication>
   <type>2</type>
-  <enforce>1</enforce>
   <version>2.0</version>
 </extension>
