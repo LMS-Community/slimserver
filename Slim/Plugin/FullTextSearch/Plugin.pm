@@ -153,7 +153,7 @@ sub startScan {
 sub checkSingleTrack {
 	my ( $trackObj, $url ) = @_;
 	
-	return unless $trackObj->id;
+	return if $trackObj->remote || !$trackObj->id;
 	
 	my $dbh = _dbh();
 
