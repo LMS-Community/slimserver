@@ -90,7 +90,7 @@
 		<td>[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]&nbsp;</td>
 		<td>
 			<span style="display:none">[% plugin.creator || plugin.email || plugin.homepage %]&nbsp;</span>
-			[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[% ELSIF plugin.homepage %]<a href="[% plugin.homepage %]" target="_blank">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email %]</a>[%- END -%]&nbsp;
+			[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[% ELSIF plugin.homepage %]<a href="[% plugin.homepage %]" target="_blank">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email OR plugin.homepage %]</a>[%- END -%]&nbsp;
 		</td>
 		<td>
 			[% IF type == 'update' %][% plugin.version %]
