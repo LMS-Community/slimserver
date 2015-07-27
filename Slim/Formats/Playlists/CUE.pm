@@ -354,21 +354,16 @@ sub parse {
 
 			} elsif (defined $currtrack && defined $filename) {
 
-				# Better remove this point.
-				# To me it doesn't do what its was meant to do.
-				#
-				# In any case it will not take effect due to 
-				# the patch below marked : 
-				#
 				# Bug 5735, skip cue sheets with multiple FILE entries.
-				# 
-				# Here original comments:
+				# This is not the right thing to do, but let's at least not break
+				# the existing functionality... See TODO comment below.
 				#
 				# Each track in a cue sheet can have a different
 				# filename. See Bug 2126 &
 				# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
 			
 				$tracks->{$currtrack}->{'FILENAME'} = $filename;
+				$filesSeen++;
 			} 
 			
 			# TODO: Correctly Handle Multiple file cue sheet.
@@ -384,6 +379,14 @@ sub parse {
 											 $command,
 											 _removeQuotes($value));
 		}
+		
+		last if $filesSeen && $filesSeen > 1;
+	}
+
+	# Bug 5735, skip cue sheets with multiple FILE entries
+	if ( $filesSeen > 1 ) {
+		$log->warn('Skipping cuesheet with multiple FILE entries');
+		return;
 	}
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug('After line parsing ' . Data::Dump::dump({
@@ -391,12 +394,6 @@ sub parse {
 		tracks		=> $tracks,
 		filename	=> $filename
 	}));
-
-	# Bug 5735, skip cue sheets with multiple FILE entries
-	if ( $filesSeen > 1 ) {
-		$log->warn('Skipping cuesheet with multiple FILE entries');
-		return;
-	}
 
 	# Here controls on the entire cuesheet structure, moving attributes
 	# to the correct level, preventing duplicates and renaming when needed.
