@@ -62,7 +62,7 @@ sub initPlugin {
 		'use'          => $prefs->get('itunes'),
 	});
 	
-	if ( main::ISWINDOWS ) {
+	if ( main::ISWINDOWS && $prefs->get('extract_artwork') ) {
 		require Win32;
 		require Slim::Plugin::iTunes::Importer::Artwork::Win32;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::Win32', {
@@ -70,7 +70,8 @@ sub initPlugin {
 			'use'  => $prefs->get('itunes'),
 		} );
 	}
-	elsif ( main::ISMAC ) {
+	elsif ( main::ISMAC && $prefs->get('extract_artwork') ) {
+		
 		require Slim::Plugin::iTunes::Importer::Artwork::OSX;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::OSX', {
 			'type' => 'artwork',
@@ -162,6 +163,23 @@ sub startScan {
 		return;
 	}
 
+	main::INFOLOG && $log->info("Get music folder from iTunes XML file");
+	
+	my $iTunesParser = XML::Parser->new(
+		'ErrorContext'     => 2,
+		'ProtocolEncoding' => 'UTF-8',
+		'NoExpand'         => 1,
+		'NoLWP'            => 1,
+		'Handlers'         => {
+
+			'Start' => \&handleStartElement,
+			'Char'  => \&handleCharElement,
+			'End'   => \&handleMusicFolderEndElement,
+		},
+	);
+
+	$iTunesParser->parsefile($file);
+
 	$progress = Slim::Utils::Progress->new({ 
 		'type'  => 'importer', 
 		'name'  => 'itunes', 
@@ -171,7 +189,7 @@ sub startScan {
 
 	$iTunesScanStartTime = time();
 
-	my $iTunesParser = XML::Parser->new(
+	$iTunesParser = XML::Parser->new(
 		'ErrorContext'     => 2,
 		'ProtocolEncoding' => 'UTF-8',
 		'NoExpand'         => 1,
@@ -469,6 +487,9 @@ sub handlePlaylist {
 	$progress->update($name);
 	time() > $i && ($i = time + 5) && Slim::Schema->forceCommit;
 
+	# this is the "all tracks" playlist - skip it
+	return if $name eq '####!####';
+
 	main::INFOLOG && $log->info("Got a playlist ($url) named $name");
 
 	# add this playlist to our playlist library
@@ -666,6 +687,28 @@ sub handleEndElement {
 		}
 
 		%item = ();
+	}
+}
+
+# End element handler which doesn't deal with tracks etc. Only used to find the music folder key.
+sub handleMusicFolderEndElement {
+	my ($p, $element) = @_;
+
+	# Start our state machine controller - tell the next char handler what to do next.
+	if ($element eq 'key') {
+
+		$inKey = 0;
+
+		# This is the only top level value we care about.
+		if ($currentKey eq 'Music Folder') {
+			$nextIsMusicFolder = 1;
+		}
+
+		return;
+	}
+
+	if ($element eq 'string' || $element eq 'integer' || $element eq 'date') {
+		$inValue = 0;
 	}
 }
 
