@@ -202,6 +202,11 @@ sub loadStrings {
 
 sub loadAdditional {
 	my $lang = shift;
+
+	# some devices request ZH_HANS rather than ZH_CN for Chinese
+	if ( $lang =~ /^ZH_HAN.$/i && !exists $strings->{$lang} ) {
+		$lang = 'ZH_CN';
+	}
 	
 	if ( exists $strings->{$lang} ) {
 		return $strings->{$lang};
