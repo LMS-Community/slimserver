@@ -1157,13 +1157,46 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 						isplayer: playerInfo.isplayer
 					});
 	
+					var tpl = new Ext.Template( '<div>{title}<span class="browsedbControls"><img src="' + webroot + 'html/images/{powerImg}.gif" id="{powerId}">&nbsp;<img src="' + webroot + 'html/images/{playPauseImg}.gif" id="{playPauseId}"></span></div>')
+					
 					this.menu.add(
 						new Ext.menu.CheckItem({
-							text: playerInfo.name,
+							text: tpl.apply({
+								title: playerInfo.name,
+								playPauseImg: playerInfo.isplaying ? 'b_pause' : 'b_play',
+								playPauseId: playerInfo.playerid + ' ' + (playerInfo.isplaying ? 'pause' : 'play'),
+								powerImg: playerInfo.power ? 'b_poweron' : 'b_poweroff',
+								powerId: playerInfo.playerid + ' power ' + (playerInfo.power ? '0' : '1')
+							}),
 							value: playerInfo.playerid,
 							cls: playerInfo.model,
 							group: 'playerList',
 							checked: playerInfo.playerid == playerid,
+							hideOnClick: false,
+							listeners: {
+								click: function(self, ev) {
+									var target = ev ? ev.getTarget() : null;
+									
+									// check whether user clicked one of the playlist controls
+									if ( target && Ext.id(target).match(/^([a-f0-9:]+ (?:power|play|pause)\b.*)/i) ) {
+										var cmd = RegExp.$1.split(' ');
+										
+										Ext.Ajax.request({
+											url: SqueezeJS.Controller.getBaseUrl() + '/jsonrpc.js',
+											method: 'POST',
+											params: Ext.util.JSON.encode({
+												id: 1,
+												method: "slim.request",
+												params: [cmd.shift(), cmd]
+											}),
+											callback: function() {
+												SqueezeJS.Controller.updateAll();
+											}
+										});
+										return false;
+									}
+								}
+							},
 							scope: this,
 							handler: this._selectPlayer
 						})
@@ -1303,10 +1336,20 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 			return playersByServer;
 		},
 	
-		_selectPlayer: function(ev){
-			if (ev) {
-				this.setText(ev.text || '');
-				SqueezeJS.Controller.selectPlayer(ev.value);
+		_selectPlayer: function(item, ev){
+			if (item) {
+				this.setText(item.text || '');
+				SqueezeJS.Controller.selectPlayer(item.value);
+
+				// local players have hideOnClick disabled - but we want them to hide anyway
+				if (!item.hideOnClick) {
+					var pm = item.parentMenu;
+					if (pm.floating) {
+						this.clickHideDelayTimer = pm.hide.defer(item.clickHideDelay, pm, [true]);
+					} else {
+						pm.deactivateActive();
+					}
+				}
 			}
 			else
 				this.setText('');		

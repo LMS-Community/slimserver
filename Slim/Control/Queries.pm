@@ -3238,6 +3238,8 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'power', $eachclient->power());
 				$request->addResultLoop('players_loop', $cnt, 
+					'isplaying', $eachclient->isPlaying() ? 1 : 0);
+				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
 				$request->addResultLoop('players_loop', $cnt, 
