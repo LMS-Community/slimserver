@@ -502,6 +502,9 @@ sub logFile {
 
 		my @lines;
 		while ( --$count && (my $line = $file->readline()) ) {
+			$line = "<span style=\"color:green\">$line<\/span>" if $line =~ /main::init.*Starting/;
+			$line =~ s/(error)\b/<span style="color:red">$1<\/span>/ig;
+			$line =~ s/(warn.*?)\b/<span style="color:orange">$1<\/span>/ig;
 			unshift (@lines, $line);
 		}
 		$body .= join('', @lines);
@@ -509,7 +512,7 @@ sub logFile {
 		$file->close();			
 	};		
 
-	return ("text/plain", \$body)
+	return ("text/html", \"<pre>$body</pre>");
 }
 
 sub statusTxt {
