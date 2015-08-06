@@ -1174,7 +1174,7 @@ sub generateHTTPResponse {
 			$response->content_type('text/html');
 			$response->code(RC_NOT_FOUND);
 		
-			$body = filltemplatefile('html/errors/404.html', $params);
+			$$body = "<h1>404 Not Found: $path</h1><p>Logitech Media Server web UI is not available in --noweb mode.</p>";
 		
 			return prepareResponseForSending(
 				$client,
