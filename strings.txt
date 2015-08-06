@@ -20724,6 +20724,10 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 	RU	Файл журнала мониторинга производительности Logitech Media Server хранится здесь:
 	SV	Prestandaövervakning loggas här:
 
+SETUP_LOG_ZIPPED
+	DE	ZIP Datei
+	EN	ZIP archive
+
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
 	DA	Fra

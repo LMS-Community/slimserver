@@ -8,6 +8,7 @@ package Slim::Web::Pages::Common;
 # version 2.
 
 use strict;
+use File::Basename qw(basename);
 use File::ReadBackwards;
 use Scalar::Util qw(blessed);
 
@@ -39,6 +40,8 @@ sub init(){
 	Slim::Web::Pages->addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::Pages->addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
 	
+	# cleanup potential left-overs from downloading ZIPped log files
+	Slim::Utils::Misc::deleteFiles(Slim::Utils::OSDetect::dirsFor('log'), qr/^(?:server|scanner).*zip$/i);
 }
 
 sub _lcPlural {
@@ -448,6 +451,37 @@ sub logFile {
 	$logfile .= 'LogFile';
 	
 	my $logFile = Slim::Utils::Log->$logfile;
+
+	if ( $params->{zip} && -f $logFile ) {
+		my $zip;
+
+		eval {
+			require Archive::Zip;
+
+			Archive::Zip::setErrorHandler( sub {
+				$log->error("Error compressing log file: " . shift);
+			} );
+			
+			$zip = Archive::Zip->new();
+		};
+		
+		if (defined $zip) {
+			# COMPRESSION_LEVEL_FASTEST == 1
+			my $member = $zip->addFile( $logFile, basename($logFile), 1 );
+			
+			my $zipFile = $logFile . '.zip';
+			
+			# AZ_OK == 0
+			if ( $member && $zip->writeToFileNamed( $zipFile ) == 0 ) {
+				$response->code(HTTP::Status::RC_OK);
+				Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, 'application/zip', $zipFile  );
+				return;
+			}
+		}
+
+		$log->error("Error compressing log file using Archive::Zip $@ - returning uncompressed log file instead");
+		$params->{full} = 1;
+	}
 	
 	if ( $params->{full} && -f $logFile ) {
 		$response->code(HTTP::Status::RC_OK);
