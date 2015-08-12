@@ -215,6 +215,11 @@ sub _gotArtwork {
 	if (main::DEBUGLOG && $log->is_debug) {
 		$log->debug('Received artwork of type ' . $http->headers->content_type . ' and ' . ($http->headers->content_length || length(${$http->contentRef})) . ' bytes length' );
 	}
+	
+	# shortcut if we received an error message back
+	if ($http->headers->content_type =~ /text/) {
+		return _gotArtworkError($http);
+	}
 
 	if ( Slim::Utils::ImageResizer::hasDaemon() ) {
 		# We don't use SimpleAsyncHTTP's saveAs feature, as this wouldn't keep a copy in the cache, which we might need
@@ -236,9 +241,16 @@ sub _gotArtwork {
 sub _gotArtworkError {
 	my $http = shift;
 	my $url  = $http->url;
+	
+	my $error = 404;
+	
+	if ($http->headers->content_type =~ /text/) {
+		$error = 500;
+		main::INFOLOG && $log->is_info && $log->info("Server returned error: " . $http->content);
+	}
 
-	# File does not exist, return 404
-	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $url);
+	# File does not exist, return error
+	main::INFOLOG && $log->info("Artwork not found, returning $error: " . $url);
 
 	while ( my $item = shift @{ $queue{$url} }) {
 		my $client   = $item->{client};
@@ -247,7 +259,7 @@ sub _gotArtworkError {
 		my $params   = $item->{params};
 		my $callback = $item->{callback};
 	
-		_artworkError( $client, $params, $spec, 404, $callback, @$args );
+		_artworkError( $client, $params, $spec, $error, $callback, @$args );
 	}
 	
 	delete $queue{$url};
