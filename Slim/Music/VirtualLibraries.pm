@@ -360,7 +360,9 @@ sub rebuild {
 	}
 	
 	# Tell everyone who needs to know
-	Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
+	if (!main::SCANNER) {
+		Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
+	}
 	
 	return keys %rebuildQueue ? 1 : 0;
 }

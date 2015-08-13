@@ -3,8 +3,6 @@ package Slim::Plugin::FullTextSearch::Plugin;
 use strict;
 use Tie::Cache::LRU::Expires;
 
-use Slim::Control::Queries;
-use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner::API;
