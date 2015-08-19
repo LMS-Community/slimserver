@@ -22,7 +22,9 @@
 					(<a href="/[% item.items.0 | lower %].log?lines=100" target="log">100</a>,
 					<a href="/[% item.items.0 | lower %].log?lines=500" target="log">500</a>,
 					<a href="/[% item.items.0 | lower %].log?lines=1000" target="log">1000</a>
-					[% "LINES" | string %])
+					[% "LINES" | string %],
+					<a href="/[% item.keys.0 | lower %].log?full=1">[% "EVERYTHING" | string | lower %]</a>,
+					<a href="/[% item.keys.0 | lower %].log?zip=1">[% "SETUP_LOG_ZIPPED" | string %]</a>)
 				</div>
 			[% END %]
 		[% END %]
