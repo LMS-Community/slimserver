@@ -364,7 +364,7 @@ sub parseMetadata {
 				
 				my $handled = eval { $parser->( $client, $url, $metadata ) };
 				if ( $@ ) {
-					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
+					my $name = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($parser) : 'unk';
 					$log->error( "Metadata parser $name failed: $@" );
 				}
 				return if $handled;

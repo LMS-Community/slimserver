@@ -2503,9 +2503,9 @@ sub checkAuthorization {
 sub addCloseHandler{
 	my $funcPtr = shift;
 	
-	if ( main::INFOLOG && $log->is_info ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-		$log->info("Adding Close handler: $funcName");
+		$log->debug("Adding Close handler: $funcName");
 	}
 	
 	push @closeHandlers, $funcPtr;

@@ -465,9 +465,6 @@ my $log = logger('control.command');
 # adds standard commands and queries to the dispatch DB...
 sub init {
 
-	# Allow deparsing of code ref function names.
-	Slim::bootstrap::tryModuleLoad('Slim::Utils::PerlRunTime');
-
 ######################################################################################################################################################################
 #	                                                                                                    |requires Client
 #	                                                                                                    |  |is a Query
@@ -802,8 +799,8 @@ sub subscribe {
 	# rebuild the super regexp for the current list of listeners
 	__updateListenerSuperRE();
 
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info(sprintf(
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug(sprintf(
 			"Request from: %s - (%d listeners)\n",
 			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 			scalar(keys %listeners)
@@ -826,8 +823,8 @@ sub unsubscribe {
 	# rebuild the super regexp for the current list of listeners
 	__updateListenerSuperRE();
 
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info(sprintf(
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug(sprintf(
 			"Request from: %s - (%d listeners)\n",
 			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 			scalar(keys %listeners)
@@ -1886,7 +1883,7 @@ sub execute {
 
 		if ($@) {
 			my $error = "$@";
-			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+			my $funcName = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) : 'unk';
 			logError("While trying to run function coderef [$funcName]: [$error]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
@@ -2086,7 +2083,7 @@ sub notify {
 						eval { $relevant = &{$funcPtr}($request, $self) };
 				
 						if ($@) {
-							my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+							my $funcName = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) : 'unk';
 							logError("While trying to run function coderef [$funcName]: [$@]");
 							
 							next;
@@ -2494,7 +2491,7 @@ sub __autoexecute{
 
 	# oops, failed
 	if ($@) {
-		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+		my $funcName = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) : 'unk';
 		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
 		$deleteSub = 1;
 	}

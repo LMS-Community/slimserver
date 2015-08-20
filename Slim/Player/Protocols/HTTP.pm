@@ -141,7 +141,7 @@ sub parseMetadata {
 		
 		my $handled = eval { $parser->( $client, $url, $metadata ) };
 		if ( $@ ) {
-			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
+			my $name = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($parser) : 'unk';
 			logger('formats.metadata')->error( "Metadata parser $name failed: $@" );
 		}
 		return if $handled;
@@ -659,7 +659,7 @@ sub getMetadataFor {
 	if ( $provider ) {
 		my $metadata = eval { $provider->( $client, $url ) };
 		if ( $@ ) {
-			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($provider);
+			my $name = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($provider) : 'unk';
 			$log->error( "Metadata provider $name failed: $@" );
 		}
 		elsif ( scalar keys %{$metadata} ) {

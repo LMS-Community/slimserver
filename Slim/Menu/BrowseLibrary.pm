@@ -494,7 +494,7 @@ sub _conditionWrapper {
 		};
 		
 		if ($@) {
-			$log->warn("Couldn't call menu-filter", Slim::Utils::PerlRunTime::realNameForCodeRef($filter), ": $@");
+			$log->warn("Couldn't call menu-filter", main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($filter) : 'unk', ": $@");
 			# Assume true
 			next;
 		}

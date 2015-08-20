@@ -213,7 +213,7 @@ sub handleURI {
 
 	if ($@) {
 		if ( $log->is_error ) {
-			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+			my $funcName = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) : 'unk';
 			$log->error("While trying to run function coderef [$funcName]: [$@]");
 			main::DEBUGLOG && $log->is_debug && $log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
 		}

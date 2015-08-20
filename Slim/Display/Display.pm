@@ -492,7 +492,7 @@ sub curLines {
 
 	if (main::INFOLOG && $log->is_info) {
 
-		my $source = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
+		my $source = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc) : 'unk';
 		my ($line, $sub, @subs);
 		my $frame = 1;
 

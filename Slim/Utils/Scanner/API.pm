@@ -193,16 +193,14 @@ sub _makeDispatcher {
 			
 				eval { $h->{cb}->( $arg1, $opts->{url} ) };
 				if ( $@ ) {
-					require Slim::Utils::PerlRunTime;
-					my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+					my $method = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} ) : 'unk';
 					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{url} . " ($method): $@");
 				}
 			}
 			else { # Images/Videos
 				eval { $h->{cb}->( $opts->{hashref} ) };
 				if ( $@ ) {
-					require Slim::Utils::PerlRunTime;
-					my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+					my $method = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} ) : 'unk';
 					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{hashref}->{url} . " ($method): $@");
 				}
 			}
@@ -221,8 +219,7 @@ sub _makeFinishedDispatcher {
 		for my $h ( @{$handlers} ) {
 			eval { $h->{cb}->($count) };
 			if ( $@ ) {
-				require Slim::Utils::PerlRunTime;
-				my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+				my $method = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} ) : 'unk';
 				Slim::Utils::Log::logError("Error in onFinished handler ($method): $@");
 			}
 		}

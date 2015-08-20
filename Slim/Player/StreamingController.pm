@@ -291,7 +291,7 @@ sub _eventAction {
 		$log->error(sprintf("%s:  %s with action %s resulted in invalid state %s-%s",
 			$self->{'masterId'},
 			$event,
-			Slim::Utils::PerlRunTime::realNameForCodeRef($action),
+			main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($action) : 'unk',
 			$PlayingStateName[$self->{'playingState'}], $StreamingStateName[$self->{'streamingState'}])
 		);
 	}
