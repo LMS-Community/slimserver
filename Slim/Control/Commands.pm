@@ -1829,7 +1829,6 @@ sub playlistcontrolCommand {
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
 	my $jumpIndex           = $request->getParam('play_index');
-	my $library_id          = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id')) || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
@@ -1943,6 +1942,7 @@ sub playlistcontrolCommand {
 
 			$cmd .= "tracks";
 
+			my $library_id = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id')) || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 			my $query = 'playlist.id=' . $playlist_id;
 			$query   .= '&library_id=' . $library_id if $library_id;
 			
@@ -2013,7 +2013,7 @@ sub playlistcontrolCommand {
 			$info[0] = $year;
 		}
 
-		if (defined($library_id)) {
+		if (defined(my $library_id = $request->getParam('library_id'))) {
 			$what->{'libraryTracks.library'} = $library_id;
 		}
 
