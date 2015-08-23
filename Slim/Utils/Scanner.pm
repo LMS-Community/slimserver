@@ -222,31 +222,49 @@ sub scanDirectory {
 	if (!$url) {
 		return $foundItems;
 	}
-
-	my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:list|audio', 'recursive:1' ] );
-	$request->execute();
-
-	if ( $request->isStatusError() ) {
-		$log->error($request->getStatusText());
-	}
-	elsif ($return) {
-		foreach ( @{ $request->getResult('folder_loop') || [] } ) {
-			if ($_->{type} =~ /track|audio/) {
-				push @{$foundItems}, $_->{url};
-			}
-			elsif ($_->{type} =~ /playlist/) {
-				my $playlist = Slim::Schema->updateOrCreate({
-					'url'        => Slim::Utils::Misc::fileURLFromPath($url),
-					'readTags'   => 1,
-					'checkMTime' => 1,
-					'playlist'   => 1,
-				});
 	
-				my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($_->{url})));
-				
-				if ( scalar @tracks ) {
-					push @{$foundItems}, @tracks;
-				}
+	my @items;
+	
+	if ( Slim::Music::Info::isSong($url) ) {
+		push @items, {
+			url => Slim::Utils::Misc::fileURLFromPath($url),
+			type => 'audio'
+		};
+	}
+	elsif ( Slim::Music::Info::isPlaylist($url) ) {
+		push @items, {
+			url => Slim::Utils::Misc::fileURLFromPath($url),
+			type => 'playlist'
+		};
+	}
+	else {
+		my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:list|audio', 'recursive:1' ] );
+		$request->execute();
+	
+		if ( $request->isStatusError() ) {
+			$log->error($request->getStatusText());
+		}
+		elsif ($return) {
+			@items = @{ $request->getResult('folder_loop') || [] };
+		}
+	}
+
+	foreach ( @items ) {
+		if ($_->{type} =~ /track|audio/) {
+			push @{$foundItems}, $_->{url};
+		}
+		elsif ($_->{type} =~ /playlist/) {
+			my $playlist = Slim::Schema->updateOrCreate({
+				'url'        => Slim::Utils::Misc::fileURLFromPath($url),
+				'readTags'   => 1,
+				'checkMTime' => 1,
+				'playlist'   => 1,
+			});
+
+			my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($_->{url})));
+			
+			if ( scalar @tracks ) {
+				push @{$foundItems}, @tracks;
 			}
 		}
 	}
