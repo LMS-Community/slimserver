@@ -318,8 +318,6 @@ my $prefs        = preferences('server');
 our $VERSION     = '7.9.0';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
-our $audiodir    = undef;
-our $playlistdir = undef;
 our $httpport    = undef;
 
 our (
@@ -349,15 +347,6 @@ our (
 	$nosetup,
 	$noserver,
 	$norestart,
-	$noupnp,
-	$noweb,
-	$notranscoding,
-	$nodebuglog,
-	$noinfolog,
-	$noimages,
-	$novideo,
-	$nosb1slimp3sync,
-	$nostatistics,
 	$stdio,
 	$stop,
 	$perfwarn,
@@ -870,18 +859,9 @@ sub initOptions {
 		'prefsfile=s'   => \$prefsfile,
 		# prefsdir is parsed by Slim::Utils::Prefs prior to initOptions being run
 		'quiet'	        => \$quiet,
-		'nodebuglog'    => \$nodebuglog,
-		'noinfolog'     => \$noinfolog,
-		'noimage'       => \$noimages,
-		'novideo'       => \$novideo,
 		'norestart'     => \$norestart,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
-		'nostatistics'  => \$nostatistics,
-		'noupnp'        => \$noupnp,
-		'nosb1slimp3sync'=> \$nosb1slimp3sync,
-		'notranscoding' => \$notranscoding,
-		'noweb'         => \$noweb,
 		'failsafe'      => \$failsafe,
 		'perfwarn=s'    => \$perfwarn,  # content parsed by PerfMon if set
 		'checkstrings'  => \$checkstrings,

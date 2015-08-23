@@ -63,7 +63,7 @@ use Slim::Utils::Progress;
 {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly scanningProcess doQueueScanTasks)) {
+	for my $accessor (qw(scanPlaylistsOnly scanningProcess doQueueScanTasks)) {
 
 		$class->mk_classdata($accessor);
 	}

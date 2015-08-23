@@ -106,8 +106,8 @@ die $@ if $@;
 
 sub main {
 
-	our ($rescan, $playlists, $wipe, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics, $noimages, $novideo);
+	our ($rescan, $playlists, $wipe, $force, $prefsFile, $priority);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
 
 	our $LogTimestamp = 1;
 	
@@ -119,18 +119,12 @@ sub main {
 
 	GetOptions(
 		'force'        => \$force,
-		'cleanup'      => \$cleanup,
 		'rescan'       => \$rescan,
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
 		# prefsdir parsed by Slim::Utils::Prefs
-		'noimage'      => \$noimages,
-		'novideo'      => \$novideo,
-		'nodebuglog'   => \$nodebuglog,
-		'noinfolog'    => \$noinfolog,
-		'nostatistics' => \$nostatistics,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,
@@ -297,10 +291,6 @@ sub main {
 	# Flag the database as being scanned.
 	Slim::Music::Import->setIsScanning($scanType);
 
-	if ($cleanup) {
-		Slim::Music::Import->cleanupDatabase(1);
-	}
-
 	if ($wipe) {
 
 		eval { Slim::Schema->wipeAllData; };
@@ -387,7 +377,7 @@ sub initializeFrameworks {
 
 	main::INFOLOG && $log->info("Server strings init...");
 
-	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
+	Slim::Utils::Strings::init();
 
 	main::INFOLOG && $log->info("Server Info init...");
 
@@ -411,7 +401,6 @@ Usage: $0 [debug options] [--rescan] [--wipe]
 Command line options:
 
 	--force        Force a scan, even if we think a scan is already taking place.
-	--cleanup      Run a database cleanup job at the end of the scan
 	--rescan       Look for new files since the last scan.
 	--wipe         Wipe the DB and start from scratch
 	--playlists    Only scan files in your playlistdir.
