@@ -99,14 +99,12 @@ sub initPlugin {
 		'use'          => 1,
 	});
 
-	my $dbh = _dbh();
-
 	# no need to continue in scanner mode
 	return if main::SCANNER;
 
 	Slim::Control::Request::subscribe( sub {
 		$prefs->remove('popularTerms');
-		_initPopularTerms();
+		_initPopularTerms(1);
 		%ftsCache = ();
 	}, [['rescan'], ['done']] );
 
@@ -115,16 +113,6 @@ sub initPlugin {
 
 	# don't continue if the library hasn't been initialized yet, or if a schema change is going to trigger a rescan anyway
 	return unless Slim::Schema->hasLibrary() && !Slim::Schema->schemaUpdated;
-		
-	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
-	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
-	
-	if (!$ftExists) {
-		$scanlog->error("Fulltext index missing or outdated - re-building");
-		
-		$prefs->remove('popularTerms');
-		_rebuildIndex();
-	}
 
 	_initPopularTerms();
 }
@@ -495,10 +483,23 @@ sub _rebuildIndex {
 }
 
 sub _initPopularTerms {
+	my $scanDone = shift;
 	
 	return if ($popularTerms = join('|', @{ $prefs->get('popularTerms') || [] }));
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
+		
+	my $dbh = _dbh();
+	
+	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
+	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
+	
+	if (!$ftExists) {
+		$scanlog->error("Fulltext index missing or outdated - re-building");
+		
+		$prefs->remove('popularTerms');
+		_rebuildIndex() unless $scanDone;
+	}
 
 	# get a list of terms which occur more than LARGE_RESULTSET times in our database
 	my $terms = _dbh()->selectcol_arrayref( sprintf(qq{
