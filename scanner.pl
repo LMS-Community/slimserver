@@ -122,9 +122,15 @@ sub main {
 		'rescan'       => \$rescan,
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
+		# prefsdir parsed by Slim::Utils::Prefs
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
-		# prefsdir parsed by Slim::Utils::Prefs
+		# these values are parsed separately, we don't need these values in a variable - just get them off the list
+		'noimage'      => sub {},
+		'novideo'      => sub {},
+		'nodebuglog'   => sub {},
+		'noinfolog'    => sub {},
+		'nostatistics' => sub {},
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,

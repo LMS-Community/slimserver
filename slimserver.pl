@@ -868,6 +868,16 @@ sub initOptions {
 		'charset=s'     => \$charset,
 		'dbtype=s'      => \$dbtype,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
+		# these values are parsed separately, we don't need these values in a variable - just get them off the list
+		'nodebuglog'    => sub {},
+		'noinfolog'     => sub {},
+		'noimage'       => sub {},
+		'novideo'       => sub {},
+		'nostatistics'  => sub {},
+		'noupnp'        => sub {},
+		'nosb1slimp3sync'=> sub {},
+		'notranscoding' => sub {},
+		'noweb'         => sub {},
 	);
 
 	# make --logging and --debug synonyms, but prefer --logging
