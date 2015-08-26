@@ -27,7 +27,7 @@ sub initPlugin {
 		# Setup cant_open handler for TuneIn reporting
 		Slim::Control::Request::subscribe(
 			\&cantOpen,
-			[[ 'playlist','cant_open' ]],
+			[['playlist'],['cant_open']],
 		);
 		
 		Slim::Plugin::InternetRadio::TuneIn->init();
