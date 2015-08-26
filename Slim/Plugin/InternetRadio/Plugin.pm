@@ -69,7 +69,7 @@ sub initPlugin {
 		# Setup cant_open handler for RadioTime reporting
 		Slim::Control::Request::subscribe(
 			\&cantOpen,
-			[[ 'playlist','cant_open' ]],
+			[['playlist'],['cant_open' ]],
 		);
 	}
 
