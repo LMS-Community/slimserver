@@ -2589,9 +2589,7 @@ sub rescanCommand {
 	
 	if ( $mode eq 'external' ) {
 		# The old way of rescanning using scanner.pl
-		my %args = (
-			cleanup => 1,
-		);
+		my %args = ();
 
 		if ($originalMode eq 'playlists') {
 			$args{playlists} = 1;
