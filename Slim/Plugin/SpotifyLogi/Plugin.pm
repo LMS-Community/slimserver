@@ -221,6 +221,9 @@ sub spds_handler {
 		
 		my $string = ($error_code >= 3 && $error_code <= 103) ? $client->string("SPOTIFY_ERROR_${error_code}") : $message;
 		$client->controller()->playerStreamingFailed($client, $string, ' '); # empty string to hide track URL
+
+		my $song = $client->controller->streamingSong();
+		Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'cant_open', $song ? $song->currentTrack()->url : 'unk', "$error_code: $string" ] );
 		
 		# Force stop on certain errors
 		if ( grep { $error_code == $_ } @stop_errors ) {
