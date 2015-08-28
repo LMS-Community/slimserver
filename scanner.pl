@@ -119,6 +119,7 @@ sub main {
 
 	GetOptions(
 		'force'        => \$force,
+		'cleanup'      => sub {},
 		'rescan'       => \$rescan,
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
