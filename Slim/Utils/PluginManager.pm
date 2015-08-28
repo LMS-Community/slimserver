@@ -419,14 +419,27 @@ sub dirsFor {
 	my $type  = shift;
 	
 	my @dirs = ();
+	my $disabledTokens = {};
 
 	for my $name (keys %$plugins) {
 
-		# FIXME: for the moment include strings for disabled plugins so the settings page works
-		if ($type eq 'strings' || $prefs->get($name) eq 'enabled') {
+		# include name & description strings for disabled plugins so the settings page works
+		my $enabled = $prefs->get($name) eq 'enabled';
+		if ($type eq 'strings' || $enabled) {
 			push @dirs, $plugins->{$name}->{'basedir'};
+			
+			# we don't want to read all tokens for disabled plugins - only those used in the name & description
+			if (!$enabled) {
+				my $tokens = {};
+				foreach my $item ('name', 'description') {
+					$tokens->{$plugins->{$name}->{$item}}++ if $plugins->{$name}->{$item};
+				}
+				$disabledTokens->{$dirs[-1]} = $tokens if scalar keys %$tokens;
+			}
 		}
 	}
+	
+	push @dirs, $disabledTokens if scalar keys %$disabledTokens;
 	
 	return @dirs;
 }
