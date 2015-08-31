@@ -148,7 +148,6 @@ sub getImage {
 			return;
 		}
 
-$url = 'http://userserve-ak.last.fm/serve/252/27907855/Black+Label+Society+Zakk+Wylde.jpg';
 		main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
 
 		my $pre_shrunk;
