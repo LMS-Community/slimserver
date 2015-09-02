@@ -1,4 +1,4 @@
-<title>[% IF pagetitle %][% pagetitle -%][% ELSE %][% "SQUEEZEBOX_SERVER" | string %][% END -%]</title>
+<title>[% IF pagetitle %][% pagetitle | html -%][% ELSE %][% "SQUEEZEBOX_SERVER" | string %][% END -%]</title>
 <link rel="shortcut icon" href="[% webroot %]favicon.ico" type="image/x-icon"/>
 <link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon"/>
 <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]"/>

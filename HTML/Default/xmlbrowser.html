@@ -380,11 +380,12 @@ useSpecialExt="-browse" %]
 						[% END %]	
 						[% WRAPPER weblink %]
 							[% title = (item.web.value || item.name || item.title) %]
-							[% title | html_line_break %]
+							[% title | html | html_line_break %]
 
 							[% IF item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
 								artist = item.trackartist || item.artist;
+								artist = artist | html;
 
 								IF includeArtist && ( 
 									(item.albumartist && artist != item.albumartist)
@@ -408,9 +409,9 @@ useSpecialExt="-browse" %]
 						[% END %]
 						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) || (playlist_id && item.name2 && includeArtist) %]
 							[% IF item.artist_id %]
-								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist || item.name2 %]</a>
+								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% (item.artist || item.name2) | html %]</a>
 							[% ELSE %]
-								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] [% item.artist || item.name2 %]
+								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] [% (item.artist || item.name2) | html %]
 							[% END %]
 						[% END %]
 					[% END %]

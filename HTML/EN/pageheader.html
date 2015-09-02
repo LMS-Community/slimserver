@@ -24,7 +24,7 @@
 	</head>
 	<body  [% bodyscript %]>
 	[% IF pagetitle %]
-		<div class="largeAttribute">[% pagetitle %]
+		<div class="largeAttribute">[% pagetitle | html %]
 		[% IF artwork && hasArtwork %]
 			[% "GALLERY" | string %]
 		[% END %]
