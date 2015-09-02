@@ -75,7 +75,7 @@
 	
 				[% END %]
 	
-				[% item = contributorsHTML.join(', ') %]
+				[% item = contributorsHTML.join(', ') | html %]
 	
 				[% title = role | upper; PROCESS songInfoItem %]
 			[% END %]
@@ -100,7 +100,7 @@
 				[% END %]
 				[% genresHTML.push(genreHTMLFrag) %]
 			[% END %]
-			[% item = genresHTML.join(', ') %]
+			[% item = genresHTML.join(', ') | html %]
 			[% PROCESS songInfoItem title = "GENRE" %]
 		[% END %]
 	
