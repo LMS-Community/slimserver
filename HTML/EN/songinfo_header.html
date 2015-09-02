@@ -62,12 +62,13 @@
 					[% UNLESS notarget; target = "target=\"browser\""; END %]
 	
 					[% 
+					htmlArtist = contributor.name | html;
 					IF contributor.link;
-						contributorHTMLFrag = "<a href=\"$webroot$contributor.link&amp;player=$playerURI\" $target>$contributor.name</a>";
+						contributorHTMLFrag = "<a href=\"$webroot$contributor.link&amp;player=$playerURI\" $target>$htmlArtist</a>";
 					ELSIF contributor.id;
-						contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributor.name | url %])&amp;artist_id=[% contributor.id %]&amp;player=[% playerURI %]/" [% target %]>[% contributor.name %]</a>[% END;
+						contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributor.name | url %])&amp;artist_id=[% contributor.id %]&amp;player=[% playerURI %]/" [% target %]>[% htmlArtist %]</a>[% END;
 					ELSE;
-						contributorHTMLFrag = contributor.name;
+						contributorHTMLFrag = htmlArtist;
 					END
 					%]
 	
@@ -75,7 +76,7 @@
 	
 				[% END %]
 	
-				[% item = contributorsHTML.join(', ') | html %]
+				[% item = contributorsHTML.join(', ') %]
 	
 				[% title = role | upper; PROCESS songInfoItem %]
 			[% END %]
@@ -91,16 +92,17 @@
 
 		[% IF itemobj.genres %] [% genresHTML = [] %]
 			[% FOREACH genre = itemobj.genres %][% UNLESS notarget; target = "target=\"browser\""; END %]
+				[% htmlGenre = genre.name | html %]
 				[% IF genre.id %]
-					[% genreHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=artists&amp;linktitle=[% 'GENRE' | string %]%20([% genre.name | uri %])&amp;genre_id=[% genre.id %]&amp;player=[% playerURI %]/" [% target %]>[% genre.name %]</a>[% END %]
+					[% genreHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=artists&amp;linktitle=[% 'GENRE' | string %]%20([% genre.name | uri %])&amp;genre_id=[% genre.id %]&amp;player=[% playerURI %]/" [% target %]>[% htmlGenre %]</a>[% END %]
 				[% ELSIF genre.link %]
-					[% genreHTMLFrag = "<a href=\"${webroot}$genre.link&amp;player=$playerURI\" $target>$genre.name</a>" %]
+					[% genreHTMLFrag = "<a href=\"${webroot}$genre.link&amp;player=$playerURI\" $target>$htmlGenre</a>" %]
 				[% ELSE %]
-					[% genreHTMLFrag = "$genre.name" %]
+					[% genreHTMLFrag = htmlGenre %]
 				[% END %]
 				[% genresHTML.push(genreHTMLFrag) %]
 			[% END %]
-			[% item = genresHTML.join(', ') | html %]
+			[% item = genresHTML.join(', ') %]
 			[% PROCESS songInfoItem title = "GENRE" %]
 		[% END %]
 	

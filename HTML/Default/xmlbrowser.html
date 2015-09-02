@@ -369,11 +369,12 @@ useSpecialExt="-browse" %]
 						[% END %]	
 						[% WRAPPER weblink %]
 							[% title = (item.web.value || item.name || item.title) %]
-							[% title | html_line_break %]
+							[% title | html | html_line_break %]
 
 							[% IF includeArtist && item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
 								artist = item.trackartist || item.artist;
+								artist = artist | html;
 
 								IF ( 
 									(item.albumartist && artist != item.albumartist)
@@ -400,10 +401,10 @@ useSpecialExt="-browse" %]
 								[% needBR || stringBY %]
 								[% FOREACH artist IN item.artists %]
 									[% item.artist_id = item.artist_ids.${loop.index} %] 
-									<a [% PROCESS artistItemHRef item.artist = artist %] class="browseItemLink">[% artist %]</a>[% UNLESS loop.last; ", "; END %]
+									<a [% PROCESS artistItemHRef item.artist = artist %] class="browseItemLink">[% artist | html %]</a>[% UNLESS loop.last; ", "; END %]
 								[% END %]
 							[% ELSE %]
-								[% needBR || stringBY %] [% item.artist || item.name2 %]
+								[% needBR || stringBY %] [% (item.artist || item.name2) || html %]
 							[% END %]
 						[% END %]
 					[% END %]
