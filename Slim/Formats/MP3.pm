@@ -72,10 +72,6 @@ my %tagMapping = (
 	TCMP => "COMPILATION",
 	YTCP => "COMPILATION", # non-standard v2.3 frame
 	TCON => "GENRE",
-	TYER => "YEAR",
-	TDRC => "YEAR",
-	TDOR => "YEAR",
-	XDOR => "YEAR",
 	TIT2 => "TITLE",
 	TPE1 => "ARTIST",
 	TPE2 => "BAND",
@@ -387,6 +383,16 @@ sub doTagMapping {
 		}
 	}
 	
+	# prefer release date over recording time etc.
+	if (!$tags->{YEAR}) {
+		my $year;
+		foreach ( qw(TDOR XDOR TDRC TYER TDAT) ) {
+			$year ||= $tags->{$_};
+			delete $tags->{$_};
+		}
+		$tags->{YEAR} ||= $year if $year;
+	}
+
 	# We only want a 4-digit year
 	if ( defined $tags->{YEAR} ) {
 		my $year = $tags->{YEAR};
