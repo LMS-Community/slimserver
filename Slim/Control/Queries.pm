@@ -1883,7 +1883,7 @@ sub mediafolderQuery {
 		$volatileUrl = 1;
 	}
 
-	if ($url =~ /^tmp:/) {
+	if (Slim::Music::Info::isVolatileURL($url)) {
 		# if we're dealing with temporary items, store the real URL in $volatileUrl
 		$volatileUrl = $url;
 		$volatileUrl =~ s/^tmp/file/;
@@ -2104,7 +2104,7 @@ sub mediafolderQuery {
 			
 			# volatile folder in browse root?
 			my $isDir;
-			if (!$realName || $realName =~ /^tmp/ && $id < 0) {
+			if (!$realName || Slim::Music::Info::isVolatileURL($realName) && $id < 0) {
 				my $url2 = $url;
 				$url2 =~ s/^tmp/file/;
 				$realName = '[' . Slim::Music::Info::fileName($url2) . ']';

@@ -60,7 +60,7 @@ sub scanPathOrURL {
 
 	# use the same code for volatile tracks as for regular tracks, but replace the URLs
 	# and create track objects for those temporary items
-	if ( Slim::Music::Info::isRemoteURL($pathOrUrl) && $pathOrUrl !~ /^tmp:/ ) {
+	if ( Slim::Music::Info::isRemoteURL($pathOrUrl) && !Slim::Music::Info::isVolatileURL($pathOrUrl) ) {
 
 		# Do not scan remote URLs now, they will be scanned right before playback by
 		# an onJump handler.
@@ -69,7 +69,7 @@ sub scanPathOrURL {
 
 	} else {
 		
-		if ( $pathOrUrl =~ /^tmp:/ ) {
+		if ( Slim::Music::Info::isVolatileURL($pathOrUrl) ) {
 			require Slim::Player::Protocols::Volatile;
 	
 			$args->{'volatile'} = $pathOrUrl;

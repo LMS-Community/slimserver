@@ -1129,6 +1129,26 @@ sub isRemoteURL {
 	return 0;
 }
 
+sub isVolatileURL {
+	my $url = shift || return 0;
+	
+	return 1 if $url =~ /^tmp:/;
+}
+
+sub isVolatile {
+	my $urlOrObj = shift || return 0;
+	
+	return 1 if isVolatileURL($urlOrObj);
+	
+	# $urlOrObj is a protocol handler
+	return 1 if $urlOrObj =~ /::/ && $urlOrObj->isa('Slim::Player::Protocols::Volatile');
+	
+	# $urlOrObj is a track object
+	return 1 if $urlOrObj =~ /::/ && $urlOrObj->can('url') && isVolatileURL($urlOrObj->url);
+	
+	return 0;
+}
+
 # Only valid for the current playing song
 sub canSeek {
 	my ($client, $playingSong) = @_;

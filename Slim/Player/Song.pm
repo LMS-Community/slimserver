@@ -398,7 +398,7 @@ sub open {
 		my @streamFormats;
 		push (@streamFormats, 'I') if (! $wantTranscoderSeek);
 		
-		push @streamFormats, ($handler->isRemote && $handler ne 'Slim::Player::Protocols::Volatile' ? 'R' : 'F');
+		push @streamFormats, ($handler->isRemote && !Slim::Music::Info::isVolatile($handler) ? 'R' : 'F');
 		
 		($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 			$self,
@@ -819,7 +819,7 @@ sub canDoSeek {
 
 		if ($handler->can('canSeek')) {
 			if ($handler->canSeek( $self->master(), $self )) {
-				return $self->_canSeek(1) if $handler->isRemote() && $handler ne 'Slim::Player::Protocols::Volatile';
+				return $self->_canSeek(1) if $handler->isRemote() && !Slim::Music::Info::isVolatile($handler);
 				
 				# If dealing with local file and transcoding then best let transcoder seek if it can
 				
@@ -868,7 +868,7 @@ sub canDoSeek {
 		if (Slim::Player::TranscodingHelper::getConvertCommand2(
 				$self,
 				Slim::Music::Info::contentType($self->currentTrack),
-				[($handler->isRemote && $handler ne 'Slim::Player::Protocols::Volatile') ? 'R' : 'F'], ['T'], []))
+				[($handler->isRemote && !Slim::Music::Info::isVolatile($handler)) ? 'R' : 'F'], ['T'], []))
 		{
 			return $self->_canSeek(2);
 		}
