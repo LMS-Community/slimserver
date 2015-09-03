@@ -1144,7 +1144,7 @@ sub isVolatile {
 	return 1 if $urlOrObj =~ /::/ && $urlOrObj->isa('Slim::Player::Protocols::Volatile');
 	
 	# $urlOrObj is a track object
-	return 1 if $urlOrObj =~ /::/ && $urlOrObj->can('url') && isVolatileURL($urlOrObj->url);
+	return 1 if blessed($urlOrObj) && $urlOrObj->can('url') && isVolatileURL($urlOrObj->url);
 	
 	return 0;
 }
