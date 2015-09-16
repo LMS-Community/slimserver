@@ -3653,6 +3653,12 @@ sub statusQuery {
 	}
 
 	$request->addResult("playlist_tracks", $songCount);
+
+	# send client pref for digital volume control
+	my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
+	if ( defined($digitalVolumeControl) ) {
+		$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
+	}
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
@@ -3709,12 +3715,6 @@ sub statusQuery {
 		# send client pref for alarm timeout
 		my $alarm_timeout_seconds = $prefs->client($client)->get('alarmTimeoutSeconds');
 		$request->addResult('alarm_timeout_seconds', defined $alarm_timeout_seconds ? $alarm_timeout_seconds + 0 : 300);
-
-		# send client pref for digital volume control
-		my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
-		if ( defined($digitalVolumeControl) ) {
-			$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
-		}
 
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
