@@ -173,6 +173,8 @@ useSpecialExt="-browse" %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				[% IF songinfo.favorites %]
 				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | replace("'", "%27") | uri %]', '[% crumb.values.-1 | html %]');"
+				[% ELSIF item.simpleAlbumLink && item.favorites_url %]
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | replace("'", "%27") | uri %]');"
 				[% ELSE %]
 				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
 				[% END %]
