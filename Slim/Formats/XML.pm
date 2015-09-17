@@ -657,7 +657,7 @@ sub xmlToHash {
 	my $timeout = preferences('server')->get('remotestreamtimeout') * 2;
 
 	# Bug 3510 - check for bogus content.
-	if ($$content !~ /<\??(?:xml|rss)/) {
+	if ($$content !~ /<\??(?:xml|rss|opml)/) {
 
 		# Set $@, so the block below will catch it.
 		$@ = "Invalid XML feed\n";
