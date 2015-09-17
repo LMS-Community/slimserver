@@ -195,6 +195,9 @@ sub deletePlaylist {
 			$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
 			
 		} else {
+			# don't show the playlist name field any more
+			delete $params->{'playlist_id'};
+
 			# Send the user off to the top level browse playlists
 			return browsePlaylists(@_);
 		}
