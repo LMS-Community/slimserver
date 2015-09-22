@@ -1644,6 +1644,11 @@ sub _tracks {
 		$search = $args->{'search'};
 	}
 	
+	# when searching we don't want tracks to be sorted by album first
+	if ($search && !$pt->{'sort'}) {
+		$sort = undef;
+	}
+	
 	# Sanity check
 	if ((!defined $search || !length($search)) && !scalar @searchTags) {
 		$log->error('Invalid request: no search term or album/artist/genre tags');
