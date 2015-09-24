@@ -617,6 +617,18 @@ sub makeVolatile {
 
 	require Slim::Player::Protocols::Volatile;
 	
+	$client = $client->master;
+		
+	# When shuffle is on, we'll have to deal with it separately. Track order won't be retained, 
+	# but at least the same track should play after the update:
+	#    1. set shuffle off
+	#    2. remember the position
+	#    3. add new tracks
+	#    4. restore position
+	#    5. shuffle again, preserving the currently playing track
+	my $shuffle = shuffle($client);
+	$client->execute([ 'playlist', 'shuffle', 0 ]) if $shuffle;
+	
 	my $needRestart;
 	
 	my @urls = map {
@@ -645,12 +657,21 @@ sub makeVolatile {
 		
 		if ($client->isPlaying()) {
 			$playtime = Slim::Player::Source::songTime($client);
-			$cmd = 'loadtracks';
+			$cmd = 'loadtracks' unless $shuffle;
 		}
 
 		Slim::Player::Playlist::stopAndClear($client);
 
-		$client->execute([ 'playlist', $cmd, 'listRef', \@urls, 0, $position ]);
+		$client->execute([ 'playlist', $cmd, 'listRef', \@urls, 0.2, $position ]);
+		
+		# restore shuffle state
+		if ($shuffle) {
+			# playlist addtracks wouldn't jump - need to do it here
+			$client->execute([ 'playlist', 'jump', $position ]);
+			$client->execute([ 'playlist', 'shuffle', $shuffle ]);
+			$client->execute([ 'play', 0.2 ]);
+		}
+		
 		Slim::Player::Source::gototime($client, $playtime) if $playtime;
 	}
 }
