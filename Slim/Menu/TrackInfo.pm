@@ -971,7 +971,7 @@ sub infoRating {
 }
 
 sub infoBitrate {
-	my ( $client, $url, $track ) = @_;
+	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
 	my $item;
 	
@@ -1002,6 +1002,13 @@ sub infoBitrate {
 				label => 'BITRATE',
 				name  => sprintf( "%s%s", $bitrate, $convert),
 			};
+		}
+	}
+	elsif ( $remoteMeta->{bitrate} ) {
+		$item = {
+			type  => 'text',
+			label => 'BITRATE',
+			name  => $remoteMeta->{bitrate},
 		}
 	}
 	
