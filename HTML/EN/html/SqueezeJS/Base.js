@@ -725,7 +725,7 @@ SqueezeJS.SonginfoParser = {
 	bitrate : function(result){
 		var bitrate = '';
 
-		if (result.playlist_tracks > 0 && result.playlist_loop[0].bitrate && result.remote) {
+		if (result.playlist_tracks > 0 && result.playlist_loop[0].bitrate) {
 			bitrate = result.playlist_loop[0].bitrate
 				+ (result.playlist_loop[0].type
 					? ', ' + result.playlist_loop[0].type
