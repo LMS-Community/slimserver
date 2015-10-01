@@ -25,6 +25,7 @@ sub parse {
 
 		next unless $item->{enclosure} && keys %{$item->{enclosure}};
 		
+		$item->{link} = '';
 		$item->{line1} = $item->{title} || $item->{name};
 		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
 		$item->{'xmlns:slim'} = 1;
