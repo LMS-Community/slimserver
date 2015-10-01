@@ -1,6 +1,7 @@
 package Slim::Plugin::Podcast::Parser;
 
 use Date::Parse qw(strptime str2time);
+use Scalar::Util qw(blessed);
 use URI;
 
 use Slim::Formats::XML;
@@ -14,6 +15,7 @@ sub parse {
 	my $client = $http->params->{params}->{client};
 	
 	my $cache = Slim::Utils::Cache->new;
+	my %fetching;
 
 	# don't use eval() - caller is Slim::Formats::XML is doing so already
 	my $feed = Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef, $http->headers()->content_type );
@@ -46,8 +48,12 @@ sub parse {
 		# track progress of our listening
 		my $key = 'podcast-' . $item->{enclosure}->{url};
 		my $position = $cache->get($key);
-		if ( !defined $position ) {
-			$cache->set($key, 0, '30days');
+		if ( !$position ) {
+			if ( my $redirect = $cache->get("$key-redirect") ) {
+				$position = $cache->get("podcast-$redirect");
+			}
+			
+			$cache->set($key, $position || 0, '30days');
 		}
 		
 		# do we have duration stored from previous playback?
@@ -58,6 +64,47 @@ sub parse {
 			# fall back to cached value - if available
 			$item->{duration} ||= $cache->get("$key-duration");
 		}
+
+		$cache->set("$key-duration", $item->{duration}, '30days');
+
+		# sometimes the URL would redirect - store data for the real URL, too
+		# only check when we're seeing this URL for the first time!
+		if ( !$fetching{$key} && !defined $cache->get("$key-redirect") ) {
+			$fetching{$key} = 1;
+			
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($item->{enclosure}->{url});
+		
+			if ($handler->can('scanUrl')) {
+				$handler->scanUrl($item->{enclosure}->{url}, {
+					client => $client,
+					cb     => sub {
+						my ( $newTrack, $error, $pt ) = @_;
+
+						$fetching{$key} = 0;
+						
+						return unless $pt && $pt->{url} && $newTrack && blessed($newTrack) && (my $url = $newTrack->url);
+						
+						if ($pt->{url} ne $url) {
+							my $key = 'podcast-' . $url;
+							my $position = $cache->get($key);
+							if ( !defined $position ) {
+								$cache->set($key, $pt->{position} || 0, '30days');
+							}
+							
+							$cache->set("$key-duration", $pt->{duration}, '30days') if $pt->{duration};
+						}
+
+						$cache->set($pt->{redirectKey}, $url || '', '30days');
+					},
+					pt => [{ 
+						url => $item->{enclosure}->{url}, 
+						duration => $item->{duration}, 
+						position => $position,
+						redirectKey => "$key-redirect",
+					}]
+				} );
+			}
+		}
 		
 		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0));
 		
@@ -66,9 +113,8 @@ sub parse {
 			delete $item->{description};     # remove description, or xmlbrowser would consider this to be a RSS feed
 
 			my $enclosure = delete $item->{enclosure};
-			my $url       = $enclosure->{url} . '#slimpodcast';
-			
-			$cache->set('podcast-position-' . $url, $position, '10days');
+			my $url       = $cache->get("$key-redirect") || $enclosure->{url};
+			$position     = $cache->get("podcast-$url");
 			
 			$position = Slim::Utils::DateTime::timeFormat($position);
 			$position =~ s/^0+[:\.]//;
@@ -100,7 +146,7 @@ sub parse {
 
 		$item->{title} = $progress . '  ' . $item->{title} if $progress;
 		
-		if ( $item->{duration} && !$duration ) {
+		if ( $item->{duration} && (!$duration || $duration !~ /:/) ) {
 			my $s = $item->{duration};
 			my $h = int($s / (60*60));
 			my $m = int(($s - $h * 60 * 60) / 60);

@@ -110,14 +110,12 @@ sub songChangeCallback {
 
 	my $url = Slim::Player::Playlist::url($client);
 	
-	if ( $url =~ /#slimpodcast/ && $request->isCommand([['playlist'], ['newsong']]) ) {
-		my $key = 'podcast-position-' . $url;
-		if ( my $newPos = $cache->get($key) ) {
-			$cache->remove($key);
+	if ( $request->isCommand([['playlist'], ['newsong']]) && $client->pluginData('goto') ne $url && Slim::Music::Info::isRemoteURL($url) ) {
+		$client->pluginData( goto => $url );
+
+		if ( my $newPos = $cache->get("podcast-$url") ) {
 			Slim::Player::Source::gototime($client, $newPos);
 		}
-		
-		$url =~ s/#slimpodcast.*//;
 	}
 
 	if ( defined $cache->get('podcast-' . $url) ) {
@@ -148,7 +146,11 @@ sub _trackProgress {
 		# track objects aren't persistent across server restarts - keep our own list of podcast durations in the cache
 		$cache->set("$key-duration", Slim::Player::Source::playingSongDuration($client), '30days') unless $cache->get("$key-duration");
 
-		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state for ' . $client->name . ': ' . Slim::Player::Source::songTime($client));
+		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state ' . Data::Dump::dump({
+			player => $client->name,
+			url => $url,
+			playtime => Slim::Player::Source::songTime($client),
+		}));
 	
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -170,8 +172,6 @@ sub trackInfoMenu {
 	
 	my $song = Slim::Player::Source::playingSong($client);
 	return unless $song && $song->canSeek;
-
-	$url =~ s/#slimpodcast.*//;
 
 	if ( $url && defined $cache->get('podcast-' . $url) ) {
 		my $title = $client->string('PLUGIN_PODCAST_SKIP_BACK', $prefs->get('skipSecs'));
