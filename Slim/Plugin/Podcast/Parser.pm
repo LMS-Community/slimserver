@@ -25,7 +25,10 @@ sub parse {
 
 		next unless $item->{enclosure} && keys %{$item->{enclosure}};
 		
+		# remove "link" item, as it confuses XMLBrowser 
+		# see http://forums.slimdevices.com/showthread.php?t=100446
 		$item->{link} = '';
+		
 		$item->{line1} = $item->{title} || $item->{name};
 		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
 		$item->{'xmlns:slim'} = 1;
