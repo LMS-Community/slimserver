@@ -19,7 +19,7 @@ my $log   = logger('network.squeezenetwork');
 my $prefs = preferences('server');
 
 # Regex for which URLs we want to report stats for
-my $REPORT_RE = qr{^(?:http|mms|sirius|live365|loop)://};
+my $REPORT_RE = qr{^(?:http|mms|live365|loop)://};
 
 # Report stats to SN at this interval
 my $REPORT_INTERVAL = 1200;
