@@ -134,6 +134,7 @@ strip out characters beyond U+FFFF as MySQL doesn't like them in TEXT fields.
 sub ignoreCaseArticles {
 	my $s = shift;
 	my $transliterate = shift;
+	my $ignoreArticles = (shift) ? '1' : '0';
 
 	if (!defined $s) {
 		return undef;
@@ -148,13 +149,15 @@ sub ignoreCaseArticles {
 		%caseArticlesCache = ();
 	}
 	
-	my $key = $s . ($transliterate ? '1' : '0');
+	my $key = $s . ($transliterate ? '1' : '0') . $ignoreArticles;
 
 	if (!$caseArticlesCache{$key}) {
 
 		use locale;
 		
-		my $value = ignorePunct(ignoreArticles(uc($s)));
+		my $value = uc($s); 
+		$value = ignoreArticles($value) unless $ignoreArticles;
+		$value = ignorePunct($value);
 
 		# Remove characters beyond U+FFFF as MySQL doesn't like them in TEXT fields
 		$value =~ s/[\x{10000}-\x{10ffff}]//g;
@@ -163,16 +166,21 @@ sub ignoreCaseArticles {
 		$value =~ s/^ +//o;
 		$value =~ s/ +$//o;
 
-		$caseArticlesCache{$s . '0'} = $value;
+		$caseArticlesCache{$s . '0' . $ignoreArticles} = $value;
 		
 		if ($transliterate) {
 			# Bug 16956, Transliterate Unicode characters
 			$value = Slim::Utils::Unicode::utf8toLatin1Transliterate($value);
-			$caseArticlesCache{$s . '1'} = $value;
+			$caseArticlesCache{$s . '1' . $ignoreArticles} = $value;
 		}
 	}
 
 	return $caseArticlesCache{$key};
+}
+
+# Search terms should not have the article removed
+sub ignoreCase {
+	return ignoreCaseArticles($_[0], $_[1], 1);
 }
 
 =head2 clearCaseArticleCache()

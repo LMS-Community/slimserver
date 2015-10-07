@@ -311,7 +311,7 @@ sub registerCustomString {
 	my ($class, $string) = @_;
 	
 	if ( !Slim::Utils::Strings::stringExists($string) ) {
-		my $token = Slim::Utils::Text::ignoreCaseArticles($string, 1);
+		my $token = Slim::Utils::Text::ignoreCase($string, 1);
 		
 		$token =~ s/\s/_/g;
 		$token = 'PLUGIN_EXTENDED_BROWSEMODES_' . $token;
@@ -361,7 +361,7 @@ sub valueToId {
 			s/^\s+|\s+$//g; 
 
 			$_ = Slim::Utils::Unicode::utf8decode_locale($_);
-			$_ = Slim::Utils::Text::ignoreCaseArticles($_, 1);
+			$_ = Slim::Utils::Text::ignoreCase($_, 1);
 			
 			if ( !Slim::Schema->rs($schema)->find($_) && (my $item = Slim::Schema->rs($schema)->search({ 'namesearch' => $_ })->first) ) {
 				$_ = $item->id;

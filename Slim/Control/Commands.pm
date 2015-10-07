@@ -2193,7 +2193,7 @@ sub playlistsEditCommand {
 			if ($title) {
 				$playlistTrack->title($title);
 				$playlistTrack->titlesort(Slim::Utils::Text::ignoreCaseArticles($title));
-				$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCaseArticles($title, 1));
+				$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCase($title, 1));
 			}
 
 			$playlistTrack->update;
@@ -2419,7 +2419,7 @@ sub playlistsRenameCommand {
 		$playlistObj->set_column('urlmd5', md5_hex($newUrl));
 		$playlistObj->set_column('title', $newName);
 		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
-		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCaseArticles($newName, 1));
+		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCase($newName, 1));
 		$playlistObj->update;
 
 		if (!defined Slim::Formats::Playlists::M3U->write( 
@@ -3398,7 +3398,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			} else {
 
-				$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value, 1);
+				$find{$key} = Slim::Utils::Text::ignoreCase($value, 1);
 			}
 		}
 	}

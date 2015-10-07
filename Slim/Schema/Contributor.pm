@@ -132,7 +132,7 @@ sub add {
 
 		# Bug 10324, we now match only the exact name
 		my $name   = $artistList[$i];
-		my $search = Slim::Utils::Text::ignoreCaseArticles($name, 1);
+		my $search = Slim::Utils::Text::ignoreCase($name, 1);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		my $mbid   = $brainzIDList[$i];
 		

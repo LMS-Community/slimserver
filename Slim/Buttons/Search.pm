@@ -224,7 +224,7 @@ sub searchTerm {
 	$search = $context{$client} if !defined $search;
 
 	# do the search!
-	@{$client->searchTerm} = split(//, Slim::Utils::Text::ignoreCaseArticles($search));
+	@{$client->searchTerm} = split(//, Slim::Utils::Text::ignoreCase($search));
 
 	my $term = '';
 
