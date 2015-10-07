@@ -20,7 +20,7 @@ use FindBin qw($Bin);
 use File::Spec::Functions qw(catfile catdir);
 
 our @EXPORT = qw(string getPref);
-my ($os, $language, %strings);
+my ($os, $language, %strings, $stringsLoaded);
 
 BEGIN {
 	my @SlimINC = ();
@@ -65,12 +65,13 @@ BEGIN {
 	$os = Slim::Utils::OSDetect->getOS();
 }
 
-my $serverPrefFile = catfile( scalar($os->dirsFor('prefs')), 'server.prefs' );
-my $versionFile    = catfile( scalar($os->dirsFor('updates')), 'server.version' );
+my ($serverPrefFile, $versionFile);
 
 # return localised version of string token
 sub string {
 	my $name = shift;
+	
+	loadStrings() unless $stringsLoaded;
 	
 	$language ||= getPref('language') || $os->getSystemLanguage();
 		
@@ -135,10 +136,14 @@ sub loadStrings {
 	}
 
 	close STRINGS;
+	
+	$stringsLoaded = 1;
 }
 
 sub setString {
 	my ($stringname, $string) = @_;
+	
+	loadStrings() unless $stringsLoaded;
 
 	$language ||= getPref('language') || $os->getSystemLanguage();
 
@@ -156,6 +161,7 @@ sub getPref {
 		$prefFile = catdir($os->dirsFor('prefs'), 'plugin', $prefFile);
 	}
 	else {
+		$serverPrefFile ||= catfile( scalar($os->dirsFor('prefs')), 'server.prefs' );
 		$prefFile = $serverPrefFile;
 	}
 
@@ -192,10 +198,9 @@ sub getPref {
 	return $ret;
 }
 
-loadStrings();
-
-
 sub checkForUpdate {
+	
+	$versionFile ||= catfile( scalar($os->dirsFor('updates')), 'server.version' );
 	
 	open(UPDATEFLAG, $versionFile) || return '';
 	
