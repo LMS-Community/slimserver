@@ -14,8 +14,6 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use POSIX qw(LC_CTYPE LC_TIME);
 
-use constant GROWLINTERVAL => 60*60;
-
 my $canFollowAlias;
 
 sub name {
@@ -219,6 +217,11 @@ sub dirsFor {
 		
 		push @dirs, catdir($class->dirsFor('music'), 'Playlists');
 
+	# We might get called from some helper script (update checker)
+	} elsif ($dir eq 'libpath' && $Bin =~ m|Bin/darwin|) {
+
+		push @dirs, "$Bin/../..";
+
 	# we don't want these values to return a value
 	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
 
@@ -352,54 +355,73 @@ sub pathFromMacAlias {
 	return $path;
 }
 
+my $updateCheckInitialized;
+my $plistLabel = "com.slimdevices.updatecheck";
+
 sub initUpdate {
-	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 30, \&signalUpdateReady);
+	return if $updateCheckInitialized;
+	
+	my $log = Slim::Utils::Log::logger('server.update');
+	my $err = "Failed to install LaunchAgent for the update checker";
+		
+	my $launcherPlist = catfile($ENV{HOME}, 'Library', 'LaunchAgents', $plistLabel . '.plist');
+	
+	if ( open(UPDATE_CHECKER, ">$launcherPlist") ) {
+		my $script = Slim::Utils::Misc::findbin('check-update.pl');
+		my $logDir = Slim::Utils::Log::serverLogFile();
+		my $interval = Slim::Utils::Prefs::preferences('server')->get('checkVersionInterval') || 86400;
+
+		# don't nag too often...
+		$interval = 6*3600 if $interval < 6*3600;
+
+		require File::Basename;
+		my $folder = File::Basename::dirname($script);
+
+		print UPDATE_CHECKER qq(<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>$plistLabel</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>$script</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>WorkingDirectory</key>
+	<string>$folder</string>
+	<key>StandardOutPath</key>
+	<string>$logDir</string>
+	<key>StandardErrorPath</key>
+	<string>$logDir</string>
+	<key>StartInterval</key>
+	<integer>$interval</integer>
+</dict>
+</plist>);
+
+		close UPDATE_CHECKER;
+		
+		$err = `launchctl unload $launcherPlist; launchctl load $launcherPlist`;
+	}
+	
+	if ($err) {
+		$log->error($err);
+	}
+	else {
+		$updateCheckInitialized = 1;
+	}
 }
 
 sub getUpdateParams {
 	return {
-		cb => \&signalUpdateReady
+		cb => sub {
+			# let's kick the update checker
+			if ( my $err = `launchctl start $plistLabel` ) {
+				Slim::Utils::Log::logger('server.update')->error($err);
+			}
+		}
 	};
-}
-
-sub signalUpdateReady {
-			
-	my $updater = Slim::Utils::Update::getUpdateInstaller();
-	my $log     = Slim::Utils::Log::logger('server.update');
-			
-	unless ($updater && -e $updater) {	
-		if ($updater) {
-			$log->info("Updater file '$updater' not found!");
-		}
-		else {
-			$log->info("No updater file found!");
-		}
-		return;
-	}
-
-	$log->debug("Notify '$updater' is ready to be installed");
-		
-	Slim::Utils::Timers::killTimers(undef, \&signalUpdateReady);
-	Slim::Utils::Timers::killTimers(undef, \&_signalUpdateReady);
-		
-	# don't run the signal immediately, as the prefs are written delayed
-	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 15, \&_signalUpdateReady);
-}
-
-sub _signalUpdateReady {
-	my $log = Slim::Utils::Log::logger('server.update');
-	my $osa = Slim::Utils::Misc::findbin('osascript');
-	my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
-	
-	if ($osa && $script) {
-		$script = sprintf("%s '%s' &", $osa, $script);
-		
-		$log->debug("Running notification:\n$script");
-		system($script);
-	}
-	else {
-		$log->warn("AppleScript interpreter osascript or notification script not found!");
-	}
 }
 
 sub canAutoUpdate { 1 }
