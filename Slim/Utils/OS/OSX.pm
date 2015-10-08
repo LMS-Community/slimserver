@@ -409,6 +409,13 @@ sub initUpdate {
 	else {
 		$updateCheckInitialized = 1;
 	}
+
+	# disable the update checker in case the check is disabled by the user
+	Slim::Utils::Prefs::preferences('server')->setChange( sub {
+		`launchctl unload $plistLabel`;
+		unlink($launcherPlist);
+		$updateCheckInitialized = 0;
+	}, 'checkVersion' );
 }
 
 sub getUpdateParams {
