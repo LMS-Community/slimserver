@@ -64,6 +64,11 @@ my @stop_errors = (
 	102, # Spotify play token lost, account in use elsewhere
 );
 
+# Report these errors
+my @report_errors = (
+	6, # SP_ERROR_BAD_USERNAME_OR_PASSWORD
+);
+
 sub initPlugin {
 	my $class = shift;
 	
@@ -224,6 +229,22 @@ sub spds_handler {
 
 		my $song = $client->controller->streamingSong();
 		Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'cant_open', $song ? $song->currentTrack()->url : 'unk', "$error_code: $string" ] );
+		
+		# Report some serious issues to back-end
+		if ( grep { $error_code == $_ } @report_errors ) {
+			my $auth = $client->pluginData('info') && $client->pluginData('info')->{auth};
+			$auth ||= {};
+			
+			my $http = Slim::Networking::SqueezeNetwork->new(
+				sub {},
+				sub {},
+				{ client => $client }
+			)->get(
+				Slim::Networking::SqueezeNetwork->url(
+					sprintf('/api/spotify/v1/opml/report_error?account=%s&error=%s', uri_escape_utf8($auth->{username}), $error_code),
+				)
+			);
+		}
 		
 		# Force stop on certain errors
 		if ( grep { $error_code == $_ } @stop_errors ) {
