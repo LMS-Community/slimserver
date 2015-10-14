@@ -306,8 +306,10 @@ img#background {
 	padding-bottom: 3px;
 }
 
-#current_playlist_name {
-	margin-right: 65px;
+#current_playlist_summary {
+	position: absolute;
+	bottom: 0;
+	right: 80px;
 }
 
 .pagetitle {
