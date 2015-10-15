@@ -48,7 +48,7 @@
 
 		[% WRAPPER settingGroup title="" desc=""%]
 			<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>
-			<input type=text class="stdedit" name="pref_variousArtistsString" id="variousArtistsString" value="[% prefs.pref_variousArtistsString %]" size="40">
+			<input type=text class="stdedit" name="pref_variousArtistsString" id="variousArtistsString" value="[% prefs.pref_variousArtistsString %]" size="40" placeholder="[% "VARIOUSARTISTS" | string | html %]">
 		[% END %]
 	[% END %]
 
