@@ -5,34 +5,34 @@
 <div class="helpsection">
 
 <p>
-SoftSqueeze emulates Squeezebox and Transporter on Windows, Mac OSX and Unix Computers.
+SoftSqueeze emuliert die Squeezebox und den Transporter unter Windows, Mac OSX sowie Unix Computern.
 </p>
 
 <p>
-Since Server 7.4 SoftSqueeze is replaced by <a href="https://code.google.com/p/squeezeslave/downloads/list" target="_blank">SqueezePlay</a></p>
-<p>Meanwhile SqueezePlay isn't shipped the the standard installation anymore.</p>
+Ab der Serverversion 7.4 wurde SoftSqueeze durch <a href="https://code.google.com/p/squeezeslave/downloads/list" target="_blank">SqueezePlay</a> ersetzt und ist nun kein Bestandteil der Installation mehr.
+</p>
 <hr>
-<p>There are some Squeeze Software Emulations out there eg. the ones that <a href="https://www.mediafire.com/folder/4q8dvq20iyz9e/Builds" target="_blank">Ralph Irving</a> maintains.</p>
+<p>Es gibt diverse Squeeze Software Emulationen unter anderem von <a href="https://www.mediafire.com/folder/4q8dvq20iyz9e/Builds" target="_blank">Ralph Irving</a>.</p>
 <table>
  <tbody>
   <tr>
    <th><b>Name: </b></td>
-   <th><b>Description: </b></td>
-   <th><b>Link to our Forum: </b></th>
+   <th><b>Funktion: </b></td>
+   <th><b>Thread im Forum: </b></th>
   </tr>
   <tr>
    <td><b>Jivelite</b></td>                  
-   <td>Graphical Frontend without Playerfunctionality.</td>                      
+   <td>Graphisches Frontend ohne Abspielfunktion.</td>                      
    <td><a href="http://forums.slimdevices.com/showthread.php?98156-Announce-JiveLite-cut-down-squeezebox-control-application" target="_blank">Link</a></td>
   </tr>
   <tr>
    <td><b>Squeezelite  </b></td>                  
-   <td>Commandline Player without Frontend.</td>                      
+   <td>Kommandozeilen Player ohne Frontend.</td>                      
    <td><a href="http://forums.slimdevices.com/showthread.php?97046-Announce-Squeezelite-a-small-headless-squeezeplay-emulator-for-linux-%28alsa-only%29" target="_blank">Link</a></td>
   </tr>
   <tr>
    <td><b>SqueezePlay</b></td>                  
-   <td>Graphical Frontend with Playerfunctionality.</td>                      
+   <td>Graphisches Frontend mit Abspielfunktion.</td>                      
    <td><a href="http://forums.slimdevices.com/showthread.php?96573-SqueezePlay-for-Windows-with-ASIO-DirectSound-WASAPI-and-WDMKS-device-support" target="_blank">Windows</a> </td>
   </tr>
  </tbody>

@@ -1,30 +1,46 @@
 [% pagetitle = 'REMOTE_STREAMING' | string %]
 [% PROCESS helpheader.html %]
-<p>The Logitech Media Server was designed to stream mp3 files to a Slim Devices/Logitech network music player.  However, it can also stream the same files over the Internet to an MP3 software player such as Winamp and iTunes.
 
-<p>For the sake of discussion, the computer running the server will be called the remote machine.
-
-<p>First install and start the Logitech Media Server software on this machine.
-Make sure it is reachable over the Internet.  If not, you will need to open port 9000 on your router.
-
-<p>Now, use the following instructions:
-<ol>
-<li>Open the stream called http://localhost:9000/stream.mp3 in your MP3 software player.  (Replace "localhost" with the IP address of the remote computer.) This will inform the server that the software player is ready to receive a stream.
-
-<li>Open the web interface of the server running on the remote computer by opening the web page http://localhost:9000 (Replace "localhost" with the IP address of the remote computer). You will notice a "player" corresponding to the IP address of the computer with the MP3 software player. 
-
-<li>Use the left pane of the server web interface to browse and select files and playlists.  When music is selected, it will appear in the right pane of the web interface.
-
-<li>Click on "Play" in the right pane of the server web interface to start the music. 
-
-<li>After a couple of seconds, you will hear music playing through the MP3 software player. (The delay is due to buffering in the MP3 player software.) 
-
-<li>To change the content playing, use the server on the remote machine.
-
-<li>If you are using the server's password security, you'll need to use a slightly modified URL like this: http://username:password@localhost:9000/stream.mp3
-</ol>
-<p>Your music can also be streamed to a Squeezebox or Transporter network music player for listening on a stereo.  For more information about this product and FAQs, visit <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a>.
-
-<p>If you have a question or problem, please visit www.mysqueezebox.com/support or visit our user forums at <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
-
+<h2>Remote Streaming</h2>
+<li>The Logitech Media Server was designed to stream audio files like mp3 or flac to a Slim Devices/Logitech Network Musik Player.<p> However, it can also stream the same files over the Internet to an MP3 software player such as VLC; Squeezelite and iTunes. </p></li>
+<li>For the sake of discussion, the computer running the server will be called the remote machine.
+<hr>
+<h2>Now, use the following instructions:</h2>
+ <p></p>
+ <p>Open the stream called <a href="/stream.mp3">"http://localhost:9000/stream.mp3"</a> in your MP3
+  software player. (Replace "localhost" with the IP address of the remote computer.)
+  This will inform the server that the software player is ready to receive a stream.</p>
+ <p>Open the web interface of the server running on the remote computer by opening the web page <a href="/">"http://localhost:9000"</a> (Replace "localhost" with the IP address of the remote computer). You will notice
+   a "player" corresponding to the IP address of the computer with the MP3 software player.</p>
+ <p>Use the left pane of the server web interface to browse and select files and playlists. When music is selected, it will appear in the right pane of the web interface. </p>
+ <p>Click on "Play" in the right pane of the server web interface to start the music.</p>
+ <p>After a couple of seconds, you will hear music playing through the MP3 software player. (The delay is due to buffering in the MP3 player software.) </p>
+ <p>If the MP3 Player did not start playing - please press the Play button on the MP3 Device again.</p>
+ <p>To change the content playing, use the server on the remote machine.</p>
+<hr>
+</li>
+<li><b>Password security:</b>
+ <p>If you are using the server's password security, you'll need to
+         use a slightly modified URL like this:
+         http://username:password@localhost:9000/stream.mp3 </p>
+ <p>If the password securtiy for Logitech Media Server Software is
+          enabled - Please use only your own Devices or delete the History.
+          Otherwise your Account credentials become public. </p>
+<hr>
+</li>
+<li><b>Advanced Features:</b>
+ <p>Your music can also be streamed to a Squeezebox or Transporter
+           network music player for listening on a stereo.</p>
+ <p>To use all features like Volume Control Logitech Media Server
+            you need a device that supports the squeezeboxprotokoll like
+            Squeezebox Classic, Squeezebox Boom, Squeezebox Duet,
+            Transporter, Squeezebox Radio, Squeezebox Touch,
+            squeezelite.</p>
+             
+ <p>For more information about this product and FAQs, visit  <a
+ href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a></p>
+ 
+ <p>If you have a question or problem, please visit www.mysqueezebox.com/support or visit our user forums at <a
+ href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a></p>
+              
 [% PROCESS helpfooter.html %]
