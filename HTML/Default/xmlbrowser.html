@@ -371,7 +371,7 @@ useSpecialExt="-browse" %]
 						[% END %]	
 						[% WRAPPER weblink %]
 							[% title = (item.web.value || item.name || item.title) %]
-							[% title | html | html_line_break %]
+							[% title | html_line_break %]
 
 							[% IF includeArtist && item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
