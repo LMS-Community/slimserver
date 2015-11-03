@@ -244,6 +244,17 @@ sub artworkRequest {
 			$sth->execute($id);
 			($url, $cover) = $sth->fetchrow_array;
 			$sth->finish;
+			
+			# border case: 8 characters we're assuming it's a cover ID, but it could be a track ID, too
+			if ( (!$url || !$cover) && $type eq 'music' && $id =~ /\d{8}/ ) {
+				$sth = Slim::Schema->dbh->prepare_cached( qq{
+					SELECT url, cover FROM tracks WHERE id = ?
+				} );
+				
+				$sth->execute($id);
+				($url, $cover) = $sth->fetchrow_array;
+				$sth->finish;
+			}
 		}
 		
 		if ( !$url || !$cover ) {
