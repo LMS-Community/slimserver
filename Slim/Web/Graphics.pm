@@ -373,15 +373,14 @@ sub artworkRequest {
 		main::idleStreams();
 		
 		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
-			
-		Slim::Utils::ImageResizer->resize($fullpath, $path, $spec, sub {
-			# Resized image should now be in cache
-			my $body;
 		
-			if ( my $c = _cached($path) ) {
-				$body = $c->{data_ref};
-				
-				my $ct = 'image/' . $c->{content_type};
+		my $imageCb = sub {
+			my ($body, $format) = @_;
+			
+			$format ||= Slim::Music::Artwork->_imageContentType($body);
+			
+			if ( $body && $format && ref $body eq 'SCALAR' ) {
+				my $ct = $format =~ /image/ ? $format : 'image/' . $format;
 				$ct =~ s/jpg/jpeg/;
 				$response->content_type($ct);
 				
@@ -411,6 +410,35 @@ sub artworkRequest {
 			}
 		
 			$callback->( $client, $params, $body, @args );
+		};
+		
+		# if we don't want to resize the image, just read from the tag and don't cache the full size image
+		if ( !$spec && (my $ct = Slim::Music::Info::contentType($fullpath)) ) {
+			my $formatClass = Slim::Formats->classForFormat($ct);
+			my $body;
+
+			if (Slim::Formats->loadTagFormatForType($ct) && $formatClass->can('getCoverArt')) {
+				$body = $formatClass->getCoverArt($fullpath);
+			}
+
+			if ($body && length $body) {
+				main::INFOLOG && $isInfo && $log->info("  No Resizing required - return raw image data");
+				
+				$imageCb->(\$body);
+				return;
+			}
+		}
+			
+		Slim::Utils::ImageResizer->resize($fullpath, $path, $spec, sub {
+			my ($body, $format) = @_;
+			
+			# if we didn't get a valid reference returned, try to read from cache
+			if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path)) ) {
+				$body = $c->{data_ref};
+				$format = $c->{content_type};
+			}
+		
+			$imageCb->($body, $format);
 		} );
 	
 	}

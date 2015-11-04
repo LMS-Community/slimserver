@@ -64,7 +64,7 @@ sub getMetadataFor {
 sub getArtwork {
 	my ($class, $track, $path) = @_;
 
-	return if -d $path;
+	return if $path && -d $path;
 	
 	# Try to read a cover image from the tags first.
 	my ($body, $contentType, $file);
