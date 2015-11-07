@@ -105,6 +105,6 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	EN	Now using '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
-	DE	Bibliotheksansict gelöscht
+	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
 	
