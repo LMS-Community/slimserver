@@ -38,3 +38,12 @@ CREATE TABLE library_genre (
   FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
 );
 CREATE INDEX libraryGenreIndex ON library_genre (genre);
+
+--
+-- Full text search support
+-- 
+DROP TABLE IF EXISTS fulltext;
+CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);
+
+DROP TABLE IF EXISTS fulltext_terms;
+CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);
