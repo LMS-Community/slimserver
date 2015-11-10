@@ -132,7 +132,7 @@ sub loadTypesConfig {
 					
 					foreach my $mimeType (@mimeTypes) {
 						next if ($mimeType eq '-');
-						$mimeTypes{$mimeType} = $type;
+						$mimeTypes{lc($mimeType)} = $type;
 					}
 
 					foreach my $slimType (@slimTypes) {

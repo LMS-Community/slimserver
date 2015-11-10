@@ -365,7 +365,7 @@ sub parseDirectHeaders {
 			$redir = $1;
 		}
 		
-		elsif ($header =~ /^Content-Type:\s*(.*)/i) {
+		elsif ($header =~ /^Content-Type:\s*([^;]*)/i) {
 			$contentType = $1;
 		}
 		
