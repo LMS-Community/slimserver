@@ -5642,7 +5642,7 @@ ALBUMREPLAYGAIN
 
 SETUP_MP3STREAMINGMETHOD
 	CS	Metoda datových přenosových proudů
-	DA	streamingmetode
+	DA	Streamingmetode
 	DE	Streaming-Methode
 	EN	Streaming Method
 	ES	Método de secuencias
