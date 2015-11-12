@@ -5650,7 +5650,7 @@ ALBUMREPLAYGAIN
 
 SETUP_MP3STREAMINGMETHOD
 	CS	Metoda datových přenosových proudů
-	DA	streamingmetode
+	DA	Streamingmetode
 	DE	Streaming-Methode
 	EN	Streaming Method
 	ES	Método de secuencias
@@ -16176,19 +16176,7 @@ RADIO_PROVIDERS_SOMAFM
 	SV	SomaFM
 
 RADIO_PROVIDERS_SKYFM
-	CS	SKY.fm
-	DA	SKY.fm
-	DE	SKY.fm
-	EN	SKY.fm
-	ES	SKY.fm
-	FI	SKY.fm
-	FR	SKY.fm
-	IT	SKY.fm
-	NL	SKY.fm
-	NO	SKY.fm
-	PL	SKY.fm
-	RU	SKY.fm
-	SV	SKY.fm
+	EN	RadioTunes
 
 RADIO_PROVIDERS_RADIODE
 	CS	radio.de
