@@ -2,30 +2,40 @@
 [% PROCESS helpheader.html %]
 
 <h2>Remote-Datenstrom</h2>
-<li>Der Logitech Media Server wurde f&uuml;r das streamen von Audio Dateien wie z.B mp3 flac zu einem Slim Devices/Logitech Netzwerk Musik Player gemacht.<br>Das Streamen zu einem mit dem Netzwerk verbundenen MP3 Software player wie VLC, squeezelite und iTunes wird ebenso unterst&uuml;tzt. 
-</li><li>Zur Vereinfachung wird der Rechner auf dem der Logitech Media Server l&auml;uft im folgenden als Remote System bezeichnet.
+<ul>
+<li>Der Logitech Media Server wurde f&uuml;r das Streamen von Audio Dateien wie z.B mp3 flac zu einem Slim Devices/Logitech Netzwerk Musik Player gemacht.
+<li>Das Streamen zu einem mit dem Netzwerk verbundenen MP3 Software player wie VLC, squeezelite und iTunes wird ebenso unterst&uuml;tzt. 
+<li>Zur Vereinfachung wird der Rechner auf dem der Logitech Media Server l&auml;uft im folgenden als Remote System bezeichnet.
+</ul>
 <hr>
-<h2><b>Anleitung zum streamen:</b></h2>
- <p>Installieren und starten Sie die Logitech Media Server Software auf einem Rechner. Stellen Sie sicher, das ein Zugang zu Ihrem lokalen Netzwerk besteht. </p>
- <p>&Ouml;ffnen Sie den Stream auf <a href="/stream.mp3">"http://localhost:9000/stream.mp3"</a> auf Ihrem Software MP3 Player. (Ersetzen Sie "localhost" mit der IP Addresse des Remote Systems.) Danach erkennt das Remote System einen abspielbereiten MP3 Player.</p>
- <p>&Ouml;ffnen Sie die Weboberfl&auml;che des Remote Systems durch Eingabe von <a href="/">"http://localhost:9000"</a> (Ersetzen Sie "localhost" mit der IP Addresse des Remote Systems.) Auf der rechten Seite werden Sie ein neues Abespielger&auml;t finden, der die IP Addresse Ihres MP3 Software Players hat. </p>
- <p>Auf der linken Seite der Logitech Media Server Web Oberfl&auml;che k&ouml;nnen Sie nach Dateien und Abspiellisten suchen. Die Ausgew&auml;hlten Audio Dateien werden dann auf der rechten Seite angezeigt.</p>
- <p>Durch anklicken von "Play" auf der rechten Seite starten Sie das Abspielen auf dem ausgew&auml;hlten Player.</p>
- <p>Nach ein paar Sekunden startet die Musikwiedergabe auf dem MP3 Software Player. (Die Zeitverz&ouml;gerung ist notwendig um den Puffer auf dem MP3 Player zu f&uuml;llen)</p>
- <p>Falls das abspielen nicht startet, bitte erneut Play auf dem MP3 Player dr&uuml;cken.</p>
- <p>Zum Ändern des Musikinhalts benutzen Sie die Weboberfl&auml;che auf dem Remote System.</p>
-<hr>
-</li><li><b>Passwort Sicherheit:</b>
- <p>Wenn Sie ein Passwort f&uuml;r die Logitech Media Server Software eingerichtet haben, m&uuml;ssen Sie die Web Adresse f&uuml;r den Zugang zum Logitechmedia Server anpassen: http://benutzername:passwort@localhost:9000/stream.mp3</p>
- <p>Bitte benutzen Sie nur eigene Ger&auml;te, wenn Sie die Passwort Sicherheit f&uuml;r den Logitech Media Server Software eingerichtet haben, oder l&ouml;schen nach Gebrauch die den Verlauf, da andernfalls Ihre Zugangsdaten in fremde H&auml;nde gelangen.</p>
-<hr>
-</li><li><b>Erweiterte Funktionen nutzen:</b> 
- <p>Ihre Musik kann nat&uuml;rlich auch zu einer Squeezebox oder dem Transporter gestreamt werden um Sie auf Ihrer Musik Anlage abzuh&ouml;ren.</p>
- <p>Um alle Vorz&uuml;ge von Logitech Media Server nutzen zu k&ouml;nnen wie z.B zentrale Lautst&auml;rkeregelung, ben&ouml;tigen Sie einen Player, der das Squeezeboxprotokoll beherrscht wie z.B  Squeezebox Classic, Squeezebox Boom, Squeezebox Duet, Transporter, Squeezebox Radio, Squeezebox Touch, squeezelite.</p>
+<h2>Anleitung zum Streamen:</h2>
+<ul>
+ <li>Installieren und starten Sie die Logitech Media Server Software auf einem Rechner. Stellen Sie sicher, das ein Zugang zu Ihrem lokalen Netzwerk besteht.
+ <li>&Ouml;ffnen Sie den Stream auf <a href="/stream.mp3">"http://localhost:9000/stream.mp3"</a> auf Ihrem Software MP3 Player. (Ersetzen Sie "localhost" mit der IP Addresse des Remote Systems.) Danach erkennt das Remote System einen abspielbereiten MP3 Player.
+ <li>&Ouml;ffnen Sie die Weboberfl&auml;che des Remote Systems durch Eingabe von <a href="/">"http://localhost:9000"</a> (Ersetzen Sie "localhost" mit der IP Addresse des Remote Systems.) Auf der rechten Seite werden Sie ein neues Abespielger&auml;t finden, der die IP Addresse Ihres MP3 Software Players hat.
+ <li>Auf der linken Seite der Logitech Media Server Web Oberfl&auml;che k&ouml;nnen Sie nach Dateien und Abspiellisten suchen. Die Ausgew&auml;hlten Audio Dateien werden dann auf der rechten Seite angezeigt.
+ <li>Durch anklicken von "Play" auf der rechten Seite starten Sie das Abspielen auf dem ausgew&auml;hlten Player.
+ <li>Nach ein paar Sekunden startet die Musikwiedergabe auf dem MP3 Software Player. (Die Zeitverz&ouml;gerung ist notwendig um den Puffer auf dem MP3 Player zu f&uuml;llen)
+ <li>Falls das Abspielen nicht startet, bitte erneut Play auf dem MP3 Player dr&uuml;cken.
+ <li>Zum Ändern des Musikinhalts benutzen Sie die Weboberfl&auml;che auf dem Remote System.
+</ul>
+<h2>Passwort Sicherheit:</h2>
+<ul>
+ <li>Wenn Sie ein Passwort f&uuml;r die Logitech Media Server Software eingerichtet haben, m&uuml;ssen Sie die Web Adresse f&uuml;r den Zugang zum Logitechmedia Server anpassen: http://benutzername:passwort@localhost:9000/stream.mp3
+ <li>Bitte benutzen Sie nur eigene Ger&auml;te, wenn Sie die Passwort Sicherheit f&uuml;r den Logitech Media Server Software eingerichtet haben, oder l&ouml;schen nach Gebrauch die den Verlauf, da andernfalls Ihre Zugangsdaten in fremde H&auml;nde gelangen.
+</ul>
+<h2>Erweiterte Funktionen nutzen:</h2>
+<ul> 
+ <li>Ihre Musik kann nat&uuml;rlich auch zu einer Squeezebox oder dem Transporter gestreamt werden um Sie auf Ihrer Musik Anlage abzuh&ouml;ren.
+ <li>Um alle Vorz&uuml;ge von Logitech Media Server nutzen zu k&ouml;nnen wie z.B zentrale Lautst&auml;rkeregelung, ben&ouml;tigen Sie einen Player, der das Squeezeboxprotokoll beherrscht wie z.B  Squeezebox Classic, Squeezebox Boom, Squeezebox Duet, Transporter, Squeezebox Radio, Squeezebox Touch, squeezelite.
  
- <p>Weitere Informationen finden Sie auf <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a>.</p>
+ <li>Weitere Informationen finden Sie auf <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a>.
+</ul>
 
-<b>Wenn Sie Fragen oder ein Problem mit Logitech Media Server haben, besuchen Sie www.mysqueezebox.com/support oder nutzen Sie das Forum unter </b><a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
+<div>
+<br/>
+<p>Wenn Sie Fragen oder ein Problem mit Logitech Media Server haben, besuchen Sie www.mysqueezebox.com/support oder nutzen Sie das Forum unter <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a></p>
+</div>
 
 
 [% PROCESS helpfooter.html %]
