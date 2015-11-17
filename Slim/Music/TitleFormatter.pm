@@ -245,7 +245,7 @@ sub init {
 	# duration - already formatted for local tracks, but often seconds only for remote tracks
 	$parsedFormats{'DURATION'} = sub {
 		if ( ref $_[0] eq 'HASH' ) {
-			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || '';
+			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || $_[0]->{'secs'} || '';
 			
 			# format if we got a number only
 			return sprintf('%s:%02s', int($duration / 60), $duration % 60) if $duration * 1 eq $duration;

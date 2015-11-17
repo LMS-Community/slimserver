@@ -248,6 +248,11 @@ sub playlist {
 				$form{'currentsong'} = undef;
 				$form{'title'}    = $form{text} || Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
 			}
+			
+			# Volatile tracks are not really remote streams. They're always a bit different.
+			# I don't like that, but we need to override the plugin_meta's
+			$form{'plugin_meta'}->{'title'} = $form{'title'} if $form{'plugin_meta'} && Slim::Music::Info::isVolatileURL($track->url);
+			
 			$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 	
 			push @{$params->{'playlist_items'}}, \%form;
