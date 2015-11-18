@@ -1016,6 +1016,11 @@ sub infoBitrate {
 				&& ($streambitrate = $song->streambitrate())
 				&& $sourcebitrate != $streambitrate)
 			{
+					if ( $song->streamformat() =~ /wav|aif|pcm/ 
+						 && (my $samplesize = $track->samplesize)
+						 && (my $sampleRate = $track->samplerate) ) {
+						$streambitrate = $sampleRate * $samplesize * 2;
+					}
 					$convert = sprintf( ' (%s %s%s %s)', 
 						cstring($client, 'CONVERTED_TO'), 
 						sprintf( "%d", $streambitrate / 1000 ),
