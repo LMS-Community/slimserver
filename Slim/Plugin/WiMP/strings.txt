@@ -1,17 +1,8 @@
 PLUGIN_WIMP_MODULE_NAME
-	CS	Služba WiMP
-	DA	WiMP
-	DE	WiMP
-	EN	WiMP
-	ES	WiMP
-	FI	WiMP
-	FR	WiMP
-	IT	WiMP
-	NL	WiMP
-	NO	WiMP
-	PL	WiMP
-	RU	WiMP
-	SV	WiMP
+	EN	Tidal
+	
+PLUGIN_WIMP_MODULE_DESC
+	EN	Tidal - High Fidelity Music Streaming
 
 PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	CS	Získávání informací o stopě...
@@ -29,49 +20,49 @@ PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	SV	Hämtar spårinformation...
 
 PLUGIN_WIMP_ERROR_LOGGED_OUT
-	CS	Je nám líto - ke službě WiMP se nelze připojit z jiného zařízení, pokud je používána v přehrávači Squeezebox. Zkuste službu WiMP použít z přehrávače Squeezebox.
-	DA	Vi beklager. Du kan ikke oprette forbindelse til WiMP fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge WiMP igen på din Squeezebox.
-	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu WiMP herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, WiMP auf Ihrer Squeezebox zu verwenden.
-	EN	We're sorry - you can't connect to WiMP from another device while using it on your Squeezebox. Please try again to use WiMP on your Squeezebox.
-	ES	Lamentablemente, no es posible conectarse a WiMP desde otro dispositivo mientras se usa en Squeezebox. Vuelva a intentar usar WiMP en Squeezebox.
-	FI	Valitettavasti et voi muodostaa yhteyttä WiMP:hen muulta laitteelta, kun käytät sitä Squeezeboxissa. Yritä WiMP:n käyttämistä Squeezeboxissa uudelleen.
-	FR	Vous ne pouvez pas vous connecter à WiMP à partir d'un autre dispositif lorsque vous l'utilisez sur votre Squeezebox. Veuillez réessayer d'utiliser WiMP sur votre Squeezebox.
-	IT	Impossibile eseguire la connessione a WiMP da un altro dispositivo durante l'utilizzo con Squeezebox. Riprovare a utilizzare WiMP in Squeezebox.
-	NL	Wanneer je WiMP op je Squeezebox gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met WiMP via je Squeezebox.
-	NO	Beklager, du kan ikke kople til WiMP fra en annen enhet mens du bruker tjenesten på Squeezebox. Prøv å bruke WiMP på Squeezebox igjen.
-	PL	Niestety, nie możesz połączyć się z usługą WiMP z innego urządzenia, kiedy używasz jej w urządzeniu Squeezebox. Spróbuj ponownie, aby użyć usługi WiMP w urządzeniu Squeezebox.
-	RU	С другого устройства нельзя подключаться к службе WiMP, когда она используется на плеере Squeezebox. Попробуйте снова использовать WiMP на плеере Squeezebox.
-	SV	Du kan tyvärr inte ansluta till WiMP från en annan enhet medan du använder den i din Squeezebox. Försök igen att använda WiMP i din Squeezebox.
+	CS	Je nám líto - ke službě Tidal se nelze připojit z jiného zařízení, pokud je používána v přehrávači Squeezebox. Zkuste službu Tidal použít z přehrávače Squeezebox.
+	DA	Vi beklager. Du kan ikke oprette forbindelse til Tidal fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge Tidal igen på din Squeezebox.
+	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu Tidal herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, Tidal auf Ihrer Squeezebox zu verwenden.
+	EN	We're sorry - you can't connect to Tidal from another device while using it on your Squeezebox. Please try again to use Tidal on your Squeezebox.
+	ES	Lamentablemente, no es posible conectarse a Tidal desde otro dispositivo mientras se usa en Squeezebox. Vuelva a intentar usar Tidal en Squeezebox.
+	FI	Valitettavasti et voi muodostaa yhteyttä Tidal:hen muulta laitteelta, kun käytät sitä Squeezeboxissa. Yritä Tidal:n käyttämistä Squeezeboxissa uudelleen.
+	FR	Vous ne pouvez pas vous connecter à Tidal à partir d'un autre dispositif lorsque vous l'utilisez sur votre Squeezebox. Veuillez réessayer d'utiliser Tidal sur votre Squeezebox.
+	IT	Impossibile eseguire la connessione a Tidal da un altro dispositivo durante l'utilizzo con Squeezebox. Riprovare a utilizzare Tidal in Squeezebox.
+	NL	Wanneer je Tidal op je Squeezebox gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met Tidal via je Squeezebox.
+	NO	Beklager, du kan ikke kople til Tidal fra en annen enhet mens du bruker tjenesten på Squeezebox. Prøv å bruke Tidal på Squeezebox igjen.
+	PL	Niestety, nie możesz połączyć się z usługą Tidal z innego urządzenia, kiedy używasz jej w urządzeniu Squeezebox. Spróbuj ponownie, aby użyć usługi Tidal w urządzeniu Squeezebox.
+	RU	С другого устройства нельзя подключаться к службе Tidal, когда она используется на плеере Squeezebox. Попробуйте снова использовать Tidal на плеере Squeezebox.
+	SV	Du kan tyvärr inte ansluta till Tidal från en annan enhet medan du använder den i din Squeezebox. Försök igen att använda Tidal i din Squeezebox.
 
 PLUGIN_WIMP_ERROR
-	CS	Chyba služby WiMP
-	DA	WiMP-fejl
-	DE	WiMP-Fehler
-	EN	WiMP Error
-	ES	Error de WiMP
-	FI	WiMP-virhe
-	FR	Erreur de WiMP
-	IT	Errore WiMP
-	NL	Fout bij WiMP
-	NO	WiMP-feil
-	PL	Błąd usługi WiMP
-	RU	Ошибка WiMP
-	SV	WiMP-fel
+	CS	Chyba služby Tidal
+	DA	Tidal-fejl
+	DE	Tidal-Fehler
+	EN	Tidal Error
+	ES	Error de Tidal
+	FI	Tidal-virhe
+	FR	Erreur de Tidal
+	IT	Errore Tidal
+	NL	Fout bij Tidal
+	NO	Tidal-feil
+	PL	Błąd usługi Tidal
+	RU	Ошибка Tidal
+	SV	Tidal-fel
 
 PLUGIN_WIMP_ON_WIMP
-	CS	Na službě WiMP
-	DA	På WiMP
-	DE	In WiMP
-	EN	On WiMP
-	ES	En WiMP
-	FI	WiMP:ssä
-	FR	Sur WiMP
-	IT	Su WiMP
-	NL	Over WiMP
-	NO	På WiMP
-	PL	W usłudze WiMP
-	RU	На WiMP
-	SV	Om WiMP
+	CS	Na službě Tidal
+	DA	På Tidal
+	DE	In Tidal
+	EN	On Tidal
+	ES	En Tidal
+	FI	Tidal:ssä
+	FR	Sur Tidal
+	IT	Su Tidal
+	NL	Over Tidal
+	NO	På Tidal
+	PL	W usłudze Tidal
+	RU	На Tidal
+	SV	Om Tidal
 
 PLUGIN_WIMP_STREAM_FAILED
 	DE	Fehler beim Lesen des Datenstroms
