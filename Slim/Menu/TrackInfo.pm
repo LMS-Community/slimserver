@@ -1117,7 +1117,7 @@ sub infoUrl {
 		if ($track->isRemoteURL($turl)) {
 			$item = {
 				type  => 'text',
-				name  => Slim::Utils::Misc::unescape($turl),
+				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::unescape($turl) ),
 				label => 'URL',	
 			};
 		} else {
