@@ -69,7 +69,7 @@ sub initPlugin {
 					client  => $client,
 					feed    => Slim::Plugin::WiMP::ProtocolHandler->trackInfoURL( $client, $url ),
 					path    => 'plugins/wimp/trackinfo.html',
-					title   => 'Tidal Track Info',
+					title   => 'TIDAL Track Info',
 					timeout => 35,
 					args    => \@_
 				} );
