@@ -1,8 +1,8 @@
 PLUGIN_WIMP_MODULE_NAME
-	EN	Tidal
+	EN	TIDAL
 	
 PLUGIN_WIMP_MODULE_DESC
-	EN	Tidal - High Fidelity Music Streaming
+	EN	TIDAL - High Fidelity Music Streaming
 
 PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	CS	Získávání informací o stopě...
@@ -20,49 +20,49 @@ PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	SV	Hämtar spårinformation...
 
 PLUGIN_WIMP_ERROR_LOGGED_OUT
-	CS	Je nám líto - ke službě Tidal se nelze připojit z jiného zařízení, pokud je používána v přehrávači Squeezebox. Zkuste službu Tidal použít z přehrávače Squeezebox.
-	DA	Vi beklager. Du kan ikke oprette forbindelse til Tidal fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge Tidal igen på din Squeezebox.
-	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu Tidal herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, Tidal auf Ihrer Squeezebox zu verwenden.
-	EN	We're sorry - you can't connect to Tidal from another device while using it on your Squeezebox. Please try again to use Tidal on your Squeezebox.
-	ES	Lamentablemente, no es posible conectarse a Tidal desde otro dispositivo mientras se usa en Squeezebox. Vuelva a intentar usar Tidal en Squeezebox.
-	FI	Valitettavasti et voi muodostaa yhteyttä Tidal:hen muulta laitteelta, kun käytät sitä Squeezeboxissa. Yritä Tidal:n käyttämistä Squeezeboxissa uudelleen.
-	FR	Vous ne pouvez pas vous connecter à Tidal à partir d'un autre dispositif lorsque vous l'utilisez sur votre Squeezebox. Veuillez réessayer d'utiliser Tidal sur votre Squeezebox.
-	IT	Impossibile eseguire la connessione a Tidal da un altro dispositivo durante l'utilizzo con Squeezebox. Riprovare a utilizzare Tidal in Squeezebox.
-	NL	Wanneer je Tidal op je Squeezebox gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met Tidal via je Squeezebox.
-	NO	Beklager, du kan ikke kople til Tidal fra en annen enhet mens du bruker tjenesten på Squeezebox. Prøv å bruke Tidal på Squeezebox igjen.
-	PL	Niestety, nie możesz połączyć się z usługą Tidal z innego urządzenia, kiedy używasz jej w urządzeniu Squeezebox. Spróbuj ponownie, aby użyć usługi Tidal w urządzeniu Squeezebox.
-	RU	С другого устройства нельзя подключаться к службе Tidal, когда она используется на плеере Squeezebox. Попробуйте снова использовать Tidal на плеере Squeezebox.
-	SV	Du kan tyvärr inte ansluta till Tidal från en annan enhet medan du använder den i din Squeezebox. Försök igen att använda Tidal i din Squeezebox.
+	CS	Je nám líto - ke službě TIDAL se nelze připojit z jiného zařízení, pokud je používána v přehrávači Squeezebox. Zkuste službu TIDAL použít z přehrávače Squeezebox.
+	DA	Vi beklager. Du kan ikke oprette forbindelse til TIDAL fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge TIDAL igen på din Squeezebox.
+	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu TIDAL herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, TIDAL auf Ihrer Squeezebox zu verwenden.
+	EN	We're sorry - you can't connect to TIDAL from another device while using it on your Squeezebox. Please try again to use TIDAL on your Squeezebox.
+	ES	Lamentablemente, no es posible conectarse a TIDAL desde otro dispositivo mientras se usa en Squeezebox. Vuelva a intentar usar TIDAL en Squeezebox.
+	FI	Valitettavasti et voi muodostaa yhteyttä TIDAL:hen muulta laitteelta, kun käytät sitä Squeezeboxissa. Yritä TIDAL:n käyttämistä Squeezeboxissa uudelleen.
+	FR	Vous ne pouvez pas vous connecter à TIDAL à partir d'un autre dispositif lorsque vous l'utilisez sur votre Squeezebox. Veuillez réessayer d'utiliser TIDAL sur votre Squeezebox.
+	IT	Impossibile eseguire la connessione a TIDAL da un altro dispositivo durante l'utilizzo con Squeezebox. Riprovare a utilizzare TIDAL in Squeezebox.
+	NL	Wanneer je TIDAL op je Squeezebox gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met TIDAL via je Squeezebox.
+	NO	Beklager, du kan ikke kople til TIDAL fra en annen enhet mens du bruker tjenesten på Squeezebox. Prøv å bruke TIDAL på Squeezebox igjen.
+	PL	Niestety, nie możesz połączyć się z usługą TIDAL z innego urządzenia, kiedy używasz jej w urządzeniu Squeezebox. Spróbuj ponownie, aby użyć usługi TIDAL w urządzeniu Squeezebox.
+	RU	С другого устройства нельзя подключаться к службе TIDAL, когда она используется на плеере Squeezebox. Попробуйте снова использовать TIDAL на плеере Squeezebox.
+	SV	Du kan tyvärr inte ansluta till TIDAL från en annan enhet medan du använder den i din Squeezebox. Försök igen att använda TIDAL i din Squeezebox.
 
 PLUGIN_WIMP_ERROR
-	CS	Chyba služby Tidal
-	DA	Tidal-fejl
-	DE	Tidal-Fehler
-	EN	Tidal Error
-	ES	Error de Tidal
-	FI	Tidal-virhe
-	FR	Erreur de Tidal
-	IT	Errore Tidal
-	NL	Fout bij Tidal
-	NO	Tidal-feil
-	PL	Błąd usługi Tidal
-	RU	Ошибка Tidal
-	SV	Tidal-fel
+	CS	Chyba služby TIDAL
+	DA	TIDAL-fejl
+	DE	TIDAL-Fehler
+	EN	TIDAL Error
+	ES	Error de TIDAL
+	FI	TIDAL-virhe
+	FR	Erreur de TIDAL
+	IT	Errore TIDAL
+	NL	Fout bij TIDAL
+	NO	TIDAL-feil
+	PL	Błąd usługi TIDAL
+	RU	Ошибка TIDAL
+	SV	TIDAL-fel
 
 PLUGIN_WIMP_ON_WIMP
-	CS	Na službě Tidal
-	DA	På Tidal
-	DE	In Tidal
-	EN	On Tidal
-	ES	En Tidal
-	FI	Tidal:ssä
-	FR	Sur Tidal
-	IT	Su Tidal
-	NL	Over Tidal
-	NO	På Tidal
-	PL	W usłudze Tidal
-	RU	На Tidal
-	SV	Om Tidal
+	CS	Na službě TIDAL
+	DA	På TIDAL
+	DE	In TIDAL
+	EN	On TIDAL
+	ES	En TIDAL
+	FI	TIDAL:ssä
+	FR	Sur TIDAL
+	IT	Su TIDAL
+	NL	Over TIDAL
+	NO	På TIDAL
+	PL	W usłudze TIDAL
+	RU	На TIDAL
+	SV	Om TIDAL
 
 PLUGIN_WIMP_STREAM_FAILED
 	DE	Fehler beim Lesen des Datenstroms
