@@ -804,7 +804,7 @@ sub gotOPML {
 						push @details, '{BITRATE}: ' . $item->{'bitrate'} . ' {KBPS}';
 					}
 					
-					if ( my $duration = $item->{'duration'} ) {
+					if ( my $duration = $item->{'secs'} || $item->{'duration'} ) {
 						$duration = sprintf('%s:%02s', int($duration / 60), $duration % 60);
 						push @details, '{LENGTH}: ' . $duration;
 					}
