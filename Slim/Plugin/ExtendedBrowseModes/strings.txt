@@ -96,6 +96,25 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	RU	Произвольные альбомы
 	SV	Slumpmässigt valda album
 
+PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
+	CS	Nejlepší stopy
+	DA	Mest populære numre
+	DE	Top-Titel
+	EN	Top Tracks
+	ES	Pistas principales
+	FI	Suositut kappaleet
+	FR	Pistes principales
+	IT	Brani più ascoltati
+	NL	Topnummers
+	NO	Mest populære spor
+	PL	Najpopularniejsze utwory
+	RU	Лучшие дорожки
+	SV	Toppspår
+
+PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
+	DE	Flop-Titel
+	EN	Flop Tracks
+
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	DE	'%s' verwenden
 	EN	Use '%s'

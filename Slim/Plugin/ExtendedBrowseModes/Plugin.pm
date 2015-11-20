@@ -8,6 +8,7 @@ package Slim::Plugin::ExtendedBrowseModes::Plugin;
 use strict;
 
 use base qw(Slim::Plugin::OPMLBased);
+use Digest::MD5 qw(md5_hex);
 
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::VirtualLibraries;
@@ -248,6 +249,36 @@ sub initMenus {
 		static       => 1,
 		nocache      => 1,
 	});
+	
+	if (main::STATISTICS) {
+		push @additionalStaticMenuItems, {
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS',
+			params       => {
+				mode   => 'toptracks',
+				'sort' => 'sql=tracks_persistent.playcount DESC, tracks_persistent.lastplayed DESC, tracks.album, tracks.disc, tracks.tracknum',
+				search => 'sql=tracks_persistent.playcount >= %s',
+			},
+			feed         => \&_hitlist,
+			id           => 'myMusicTopTracks',
+			icon         => 'plugins/ExtendedBrowseModes/html/icon_charts.png',
+			weight       => 68,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS',
+			params       => {
+				mode   => 'floptracks',
+				'sort' => 'sql=tracks_persistent.playcount ASC, tracks_persistent.lastplayed ASC, tracks.album, tracks.disc, tracks.tracknum',
+				search => 'sql=tracks_persistent.playcount <= %s OR tracks_persistent.playcount IS NULL',
+			},
+			feed         => \&_hitlist,
+			id           => 'myMusicFlopTracks',
+			icon         => 'plugins/ExtendedBrowseModes/html/icon_charts.png',
+			weight       => 69,
+			static       => 1,
+			nocache      => 1,
+		};
+	}
 
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
 		__PACKAGE__->registerBrowseMode($_);
@@ -423,5 +454,93 @@ sub _randomAlbums {
 		$callback->(@_);
 	}, $args, $pt );
 }
+
+# Use Slim::Menu::BrowseLibrary::_tracks to show a list of the most popular/unpopular tracks
+my $countCache;
+sub _hitlist { if (main::STATISTICS) {
+	my ($client, $callback, $args, $pt) = @_;
+	
+	if (!$countCache) {
+		require Tie::Cache::LRU::Expires;
+		tie %$countCache, 'Tie::Cache::LRU::Expires', EXPIRES => 15, ENTRIES => 5;
+	}
+
+	# Don't get all tracks if there's a large number. Get the lowest playcount of the 
+	# top $maxPlaylistLength tracks. That's the minimum playcount we want to display. 
+	# This can be more than $maxPlaylistLength when there's more than one with that number of plays.
+	my $minPlayCount = 1;
+	my $totals = Slim::Schema->totals($client);
+
+	if ( $totals->{track} > (my $maxPlaylistLength = $serverPrefs->get('maxPlaylistLength')) ) {
+		
+		my $orderBy = 'tracks_persistent.playcount DESC';
+		
+		if ($pt->{sort} =~ /sql=([^,]+)/) {
+			$orderBy = $1;
+		}
+
+		my $cacheKey = md5_hex($orderBy . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+		if ( my $playCount = $countCache->{$cacheKey} ) {
+			$minPlayCount = $playCount;
+		}
+		else {
+			my $sql = qq{
+				SELECT tracks_persistent.playcount 
+				FROM tracks_persistent 
+				JOIN tracks ON tracks.urlmd5 = tracks_persistent.urlmd5 
+			};
+			
+			my @p = ($maxPlaylistLength, $maxPlaylistLength);
+
+			if ( my $libraryId = $pt->{library_id} ) {
+				$sql .= qq{
+					JOIN library_track ON library_track.track = tracks.id
+					WHERE library_track.library = ? 
+				};
+				unshift @p, $libraryId;
+			}
+			
+			$sql .= qq{
+				ORDER BY $orderBy
+				LIMIT ?,?
+			};
+			
+			my ($playCount) = Slim::Schema->dbh->selectrow_array( $sql, undef, @p );
+			
+			if ($playCount) {
+				$minPlayCount = $playCount;
+			};
+		}
+		
+		$countCache->{$cacheKey} = $minPlayCount;
+	}
+
+	$pt->{search} = sprintf($pt->{search}, $minPlayCount) if $pt && $pt->{search};
+	$args->{params}->{search} = sprintf($args->{params}->{search}, $minPlayCount) if $args && $args->{params} && $args->{params}->{search};
+
+	Slim::Menu::BrowseLibrary::_tracks( $client, sub {
+		my ($result) = @_;
+		
+		# don't know why the web UI would report isControl here...
+		my $isWeb = $args->{isControl} && !$args->{orderBy} && $args->{params} && $args->{params}->{orderBy};
+
+		$result->{items} = [ 
+			map { 
+				my $playCount = sprintf(' (%s)', $_->{playcount} || 0);
+
+				if ($isWeb) {
+					$_->{web} ||= {};
+					$_->{web}->{value} = "$playCount " . Slim::Music::TitleFormatter::infoFormat(undef, 'TRACKNUM. TITLE - ALBUM - ARTIST', 'TITLE', $_);
+				}
+				$_->{name} .= $playCount;
+				$_->{title} .= $playCount;
+				$_;
+			} @{$result->{items}} 
+		] if $result->{items};
+		
+		$callback->(@_);
+	}, $args, $pt );
+} }
 
 1;

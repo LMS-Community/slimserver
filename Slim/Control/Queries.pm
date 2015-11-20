@@ -1,7 +1,5 @@
 package Slim::Control::Queries;
 
-# $Id:  $
-#
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -5459,25 +5457,35 @@ sub _getTagDataForTracks {
 	
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
-	my @cols = keys %{$c};
+	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 	
 	my $dbh = Slim::Schema->dbh;
 	
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
-		
-		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(1) FROM ( $sql ) AS t1
-		} );
 
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Titles totals query: SELECT COUNT(1) FROM ($sql) / " . Data::Dump::dump($p) );
+		my $cacheKey = md5_hex($sql . join( '', @{$p} ));
+		
+		# use short lived cache, as we might be dealing with changing data (eg. playcount)
+		if ( my $cached = $bmfCache{$cacheKey} ) {
+			$total = $cached;
 		}
+		else {
+			my $total_sth = $dbh->prepare_cached( qq{
+				SELECT COUNT(1) FROM ( $sql ) AS t1
+			} );
+	
+			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+				$sqllog->debug( "Titles totals query: SELECT COUNT(1) FROM ($sql) / " . Data::Dump::dump($p) );
+			}
+				
+			$total_sth->execute( @{$p} );
+			($total) = $total_sth->fetchrow_array();
+			$total_sth->finish;
 			
-		$total_sth->execute( @{$p} );
-		($total) = $total_sth->fetchrow_array();
-		$total_sth->finish;
+			$bmfCache{$cacheKey} = $total;
+		}
 		
 		my ($valid, $start, $end);
 		($valid, $start, $end) = $limit->($total) unless $count_only;
