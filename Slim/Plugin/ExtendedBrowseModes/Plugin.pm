@@ -477,6 +477,7 @@ sub _hitlist { if (main::STATISTICS) {
 		
 		if ($pt->{sort} =~ /sql=([^,]+)/) {
 			$orderBy = $1;
+			$minPlayCount = 0 if $orderBy =~ /ASC/;
 		}
 
 		my $cacheKey = md5_hex($orderBy . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
@@ -491,7 +492,7 @@ sub _hitlist { if (main::STATISTICS) {
 				JOIN tracks ON tracks.urlmd5 = tracks_persistent.urlmd5 
 			};
 			
-			my @p = ($maxPlaylistLength, $maxPlaylistLength);
+			my @p = ($maxPlaylistLength, 1);
 
 			if ( my $libraryId = $pt->{library_id} ) {
 				$sql .= qq{
@@ -522,8 +523,7 @@ sub _hitlist { if (main::STATISTICS) {
 	Slim::Menu::BrowseLibrary::_tracks( $client, sub {
 		my ($result) = @_;
 		
-		# don't know why the web UI would report isControl here...
-		my $isWeb = $args->{isControl} && !$args->{orderBy} && $args->{params} && $args->{params}->{orderBy};
+		my $isWeb = $args->{isControl} && !$client->controlledBy;
 
 		$result->{items} = [ 
 			map { 
