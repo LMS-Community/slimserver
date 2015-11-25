@@ -371,8 +371,12 @@ sub _imageContentType {
 
 	use bytes;
 
+	if ( !defined $body ) {
+		logBacktrace("Can't discover content type for undefined data.");
+	}
+
 	# iTunes sometimes puts PNG images in and says they are jpeg
-	if ($$body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+	elsif ($$body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
 
 		return 'image/png';
 
