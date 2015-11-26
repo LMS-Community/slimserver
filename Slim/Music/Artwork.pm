@@ -372,7 +372,7 @@ sub _imageContentType {
 	use bytes;
 
 	if ( !defined $body ) {
-		logBacktrace("Can't discover content type for undefined data.");
+		logBacktrace("Can't discover content type for undefined data.") if main::DEBUGLOG && $log->is_debug;
 	}
 
 	# iTunes sometimes puts PNG images in and says they are jpeg

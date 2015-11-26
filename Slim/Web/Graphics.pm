@@ -379,7 +379,7 @@ sub artworkRequest {
 			
 			$format ||= Slim::Music::Artwork->_imageContentType($body);
 			
-			if ( $body && $format && ref $body eq 'SCALAR' ) {
+			if ( $body && $format && $format !~ /application/ && ref $body eq 'SCALAR' ) {
 				my $ct = $format =~ /image/ ? $format : 'image/' . $format;
 				$ct =~ s/jpg/jpeg/;
 				$response->content_type($ct);
