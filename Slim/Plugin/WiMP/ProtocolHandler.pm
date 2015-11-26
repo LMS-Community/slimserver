@@ -106,53 +106,9 @@ sub _handleClientError {
 	
 	# Tell other clients to give up
 	$song->pluginData( abandonSong => 1 );
-
-	if ( $error =~ /UserLoggedOutException/ ) {
-	
-		_handleUserLoggedOutException($client);
-		return;
-	}
 	
 	$params->{errorCb}->($error);
 }
-
-sub _handleUserLoggedOutException {
-	my $client = shift;
-
-	main::DEBUGLOG && $log->debug("User got logged out from WiMP - probably logged in elsewhere. Stop playback on all players playing WiMP.");
-
-	my $userid;
-	if (main::SLIM_SERVICE) {
-		$userid = $client->playerData->userid;
-	}
-
-	foreach my $c ( Slim::Player::Client::clients() ) {
-
-		# On SN, only stop players on the current account
-		if (main::SLIM_SERVICE) {
-			next if $userid != $c->playerData->userid;
-		}
-
-		if ( $c->isPlaying && $c->playingSong()->track()->url =~ /^wimp/ ) {
-
-			Slim::Player::Source::playmode($c, 'stop');
-
-			my $line1 = $c->string('PLUGIN_WIMP_ERROR');
-			my $line2 = $c->string('PLUGIN_WIMP_ERROR_LOGGED_OUT');
-	
-			$c->showBriefly( {
-				line => [ $line1, $line2 ],
-				jive => { type => 'popupplay', text => [ $line2 ], duration => 5000},
-			}, {
-				scroll    => 1,
-				firstline => 1,
-				block     => 1,
-				duration  => 5,
-			} );
-		}
-	}
-}
-
 
 sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
@@ -271,14 +227,6 @@ sub _gotTrack {
 			duration => $info->{duration} / 2,
 			url      => $params->{url},
 		};
-		
-		Slim::Utils::Timers::killTimers( $client, \&_reportPlayDuration );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			time() + $params->{duration},
-			\&_reportPlayDuration,
-			$params
-		);
 	}
 }
 
@@ -290,48 +238,6 @@ sub _gotTrackError {
 	return if $params->{song}->pluginData('abandonSong');
 
 	_handleClientError( $error, $client, $params );
-}
-
-sub _reportPlayDuration {
-	my ( $client, $params ) = @_;
-	
-	my $url = $client->playingSong()->track()->url();
-	
-	# only report if we're still playing the same track
-	if ( $url && $url eq $params->{url} ) {
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug("we're halfway through the track - reporting play duration");
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			sub {
-				my $http = shift;
-
-				my $content = $http->content;
-					
-				if ( $content =~ /UserLoggedOutException/ ) {
-					_handleUserLoggedOutException($client);
-				}
-					
-				main::DEBUGLOG && $log->is_debug && $log->debug('reportPlayDuration returned: ' . $content)
-			},
-			sub {
-				if ( main::DEBUGLOG && $log->is_debug ) {
-					my $http = shift;
-					$log->debug( 'reportPlayDuration failed: ' . $http->error );
-				}
-			},
-			{
-				client => $client,
-			},
-		);
-		
-		$http->get(
-			Slim::Networking::SqueezeNetwork->url(
-				'/api/wimp/v1/playback/reportPlayDuration?duration=' . $params->{duration}
-			)
-		);
-		
-	}
 }
 
 sub canDirectStreamSong {
@@ -354,6 +260,7 @@ sub parseHeaders {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
+	# XXX - parse bitrate
 	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
 	
 	my $isFlac  = grep m{Content.*audio/(?:x-|)flac}i, @headers;
@@ -368,8 +275,6 @@ sub parseDirectHeaders {
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
-	
-	my $stationId;
 
 	my ($trackId) = _getStreamParams( $url );
 	
@@ -377,10 +282,6 @@ sub trackInfoURL {
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/wimp/v1/opml/trackinfo?trackId=' . $trackId
 	);
-	
-	if ( $stationId ) {
-		$trackInfoURL .= '&stationId=' . $stationId;
-	}
 	
 	return $trackInfoURL;
 }
