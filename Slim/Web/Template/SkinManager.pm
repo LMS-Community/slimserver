@@ -259,10 +259,11 @@ sub _resizeImage {
 
 		# use local imageproxy to resize image (if enabled)
 		$url = Slim::Web::ImageProxy::proxiedImage($url);
+		
+		my ($host) = Slim::Utils::Misc::crackURL($url);
 
 		# don't use imageproxy on local network
-		if ( $url =~ m{^http://(?:192\.168\.|172\.1[6-9]\.|172\.2\d\.|172\.3[01]\.|10\.|127\.0|localhost)}i ) {
-			# XXX - we might consider a local imageproxy handling local URLs and files
+		if ( $host && Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i ) {
 			return $url;
 		}
 		
