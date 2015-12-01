@@ -909,19 +909,7 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 		&& $song->isRemote()
 		&& $elapsed > 10)				# have we managed to play at least 10s?
 	{
-		if (0 # XXX disabled
-			&& $song->duration()			# of known duration and more that 10s left
-			&& $song->duration() > ($elapsed + $stillToPlay + 10)
-			&& $song->canSeek)
-		{
-			if (my $seekdata = $song->getSeekData($elapsed + $stillToPlay)) {
-				main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ', duration=', $song->duration(), ' at time offset ', $elapsed + $stillToPlay);
-				_Stream($self, $event, {song => $song, seekdata => $seekdata});
-				return;
-			}
-			# else fall
-			main::INFOLOG && $log->is_info && $log->info('Unable to re-stream ', $song->currentTrack()->url, ', duration=', $song->duration(), ' at time offset ', $elapsed + $stillToPlay);
-		} elsif (!$song->duration() && $song->isLive()) {	# unknown duration => assume radio
+		if (!$song->duration() && $song->isLive()) {	# unknown duration => assume radio
 			main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ' after time ', $elapsed);
 			$song->retryData({ count => 0, start => Time::HiRes::time()});
 			_Stream($self, $event, {song => $song});
