@@ -387,7 +387,8 @@ sub updateProgress {
 	
 	my $log = logger('scan.scanner');
 	
-	# Scanner does not have an event loop, so use sync HTTP here
+	# Scanner does not have an event loop, so use sync HTTP here.
+	# Don't use Slim::Utils::Network, as it comes with too much overhead.
 	my $host = ( $prefs->get('httpaddr') || '127.0.0.1' ) . ':' . $prefs->get('httpport');
 	
 	my $ua = LWP::UserAgent->new(

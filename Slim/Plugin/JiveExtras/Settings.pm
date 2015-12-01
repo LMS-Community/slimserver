@@ -108,7 +108,7 @@ sub _addSettings {
 		$params->{$optname} = [];
 		$params->{$optname.'_served'} = [];
 
-		my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $serverprefs->get('httpport') . "/jive$optname";
+		my $urlBase = Slim::Utils::Network::serverURL() . "/jive$optname";
 
 		for my $opt (@{$prefs->get($optname)}) {
 			my $url;

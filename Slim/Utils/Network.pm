@@ -154,6 +154,16 @@ sub serverAddr {
 	return $main::httpaddr || hostAddr();
 }
 
+=head2 serverURL( )
+
+Return the base URL for this server
+
+=cut
+
+sub serverURL {
+	return 'http://' . serverAddr() . ':' . preferences('server')->get('httpport');
+}
+
 =head2 hostToAddr( $host )
 
 Does a blocking DNS lookup for a host to an IP address.

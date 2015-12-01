@@ -768,12 +768,9 @@ sub makeCacheDir {
 }
 
 sub homeURL {
+	logBacktrace('Slim::Utils::Prefs::homeURL is deprecated. Please use Slim::Utils::Network::serverURL() instead.');
 	require Slim::Utils::Network;
-	
-	my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
-	my $port = $prefs->get('httpport');
-
-	return "http://$host:$port/";
+	return Slim::Utils::Network::serverURL() . '/';
 }
 
 sub maxRate {

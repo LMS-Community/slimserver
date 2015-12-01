@@ -52,7 +52,7 @@ sub handler {
 		my (undef, $ok) = $prefs->set('httpport', $paramRef->{'pref_httpport'});
 
 		if ($ok) {
-			my $homeURL = Slim::Utils::Prefs::homeURL();
+			my $homeURL = Slim::Utils::Network::serverURL();
 
 			$paramRef->{'warning'} .= join('',
 				string("SETUP_HTTPPORT_OK"),

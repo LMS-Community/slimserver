@@ -77,7 +77,7 @@ sub write {
 	my $string  = '';
 	my $output  = $class->_filehandleFromNameOrString($filename, \$string) || return;
 
-	my $homeURL = Slim::Utils::Prefs::homeURL();
+	my $homeURL = Slim::Utils::Network::serverURL();
 
 	my $xspf    = XML::XSPF->new;
 	my @tracks  = ();

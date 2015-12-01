@@ -647,7 +647,7 @@ sub processHTTP {
 					
 					# throw 404
 					$params->{'suggestion'} = qq(There is no "$desiredskin")
-						. qq( skin, try ) . Slim::Utils::Prefs::homeURL() . qq( instead.);
+						. qq( skin, try ) . Slim::Utils::Network::serverURL() . qq( instead.);
 
 					if ( $log->is_warn ) {
 						$log->warn("Invalid skin requested: [" . join(' ', ($request->method, $request->uri)) . "]");

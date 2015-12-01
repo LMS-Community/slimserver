@@ -316,10 +316,7 @@ sub url {
 
 	return unless $firmwares->{$model}->{file};
 	
-	return 'http://'
-		. Slim::Utils::Network::serverAddr() . ':'
-		. preferences('server')->get('httpport')
-		. '/firmware/' . basename($firmwares->{$model}->{file});
+	return Slim::Utils::Network::serverURL() . '/firmware/' . basename($firmwares->{$model}->{file});
 }
 
 =head2 need_upgrade( $current_version, $model )
