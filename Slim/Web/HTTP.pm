@@ -1168,7 +1168,6 @@ sub generateHTTPResponse {
 		# return quickly with a 404 if web UI is disabled
 		} elsif ( !main::WEBUI && (
 			   $path =~ /status\.m3u/
-			|| $path =~ /status\.txt/
 			|| $path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/
 		) ) {
 			$response->content_type('text/html');
@@ -1229,12 +1228,6 @@ sub generateHTTPResponse {
 				
 				# when the full file is requested, then all the streaming is handled in the logFile call. Nothing is returned.
 				return 0 unless $contentType;
-			}
-		
-		} elsif ($path =~ /status\.txt/) {
-
-			if ( main::WEBUI ) {
-				($contentType, $body) = Slim::Web::Pages::Common->statusTxt($client, $httpClient, $response, $params, $p);
 			}
 		
 		} elsif ($path =~ /status\.m3u/) {
@@ -1336,17 +1329,6 @@ sub generateHTTPResponse {
 
 		# Set the body to nothing, so the length() check won't fail.
 		$$body = "";
-	}
-
-	# Tell the browser not to reload the playlist unless it's changed.
-	# XXXX - not fully baked. Need more testing.
-	if (0 && !defined $mtime && defined $client && ref($client->currentPlaylistRender())) {
-
-		$mtime = $client->currentPlaylistRender()->[0] || undef;
-
-		if (defined $mtime) {
-			$response->expires($mtime + 60);
-		}
 	}
 
 	# Create an ETag based on the mtime, file size and inode of the
