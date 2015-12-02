@@ -17,7 +17,7 @@ use Slim::Utils::Timers;
 
 my $prefs = preferences('server');
 my $log = Slim::Utils::Log->addLogCategory( {
-	'category'     => 'plugin.wimp',
+	'category'     => 'plugin.tidal',
 	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
@@ -54,7 +54,7 @@ sub new {
 	my $streamUrl = $song->streamUrl() || return;
 	my ($trackId, $format) = _getStreamParams( $args->{url} || '' );
 	
-	main::DEBUGLOG && $log->debug( 'Remote streaming WiMP track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming TIDAL track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
