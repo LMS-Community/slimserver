@@ -1,7 +1,5 @@
 package Slim::Web::Pages::Home;
 
-# $Id$
-
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -9,14 +7,18 @@ package Slim::Web::Pages::Home;
 
 use strict;
 
+use Data::URIEncode qw(complex_to_query);
+use Digest::MD5 qw(md5_hex);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
+use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Networking::Discovery::Server;
 use Slim::Plugin::Base;
 
 my $prefs = preferences('server');
+my $cache = Slim::Utils::Cache->new;
 
 sub init {
 	Slim::Web::Pages->addPageFunction(qr/^$/, \&home);
@@ -101,11 +103,25 @@ sub home {
 	
 	my $conditions = \%Slim::Web::Pages::pageConditions;
 	
-	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
+	my $cmpStrings = {};
+	while (my ($menu, $menuItems) = each %Slim::Web::Pages::additionalLinks ) {
 		
 		next if $menu eq 'apps' && !main::NOMYSB;
 
-		my @sorted = sort {
+		$params->{additionalLinks}->{ $menu } = {
+			map {
+				$_ => $menuItems->{ $_ };
+			}
+			# Filter out items that don't match condition
+			grep {
+				!$conditions->{$_}
+				||
+				$conditions->{$_}->( $client )
+			}
+			keys %$menuItems
+		};
+
+		$params->{additionalLinkOrder}->{ $menu } = [ sort {
 			(
 				$menu !~ /(?:my_apps)/ &&
 				( $pluginWeights->{$a} || $prefs->get("rank-$a") || 0 ) <=>
@@ -121,26 +137,10 @@ sub home {
 			)
 			|| 
 			(
-				lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
-				lc( Slim::Buttons::Home::cmpString($client, $b) )
+				( $cmpStrings->{$a} ||= lc(Slim::Buttons::Home::cmpString($client, $a)) ) cmp
+				( $cmpStrings->{$b} ||= lc(Slim::Buttons::Home::cmpString($client, $b)) )
 			)
-		}
-		keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };
-
-		$params->{additionalLinkOrder}->{ $menu } = \@sorted;
-		
-		$params->{additionalLinks}->{ $menu } = {
-			map {
-				$_ => $Slim::Web::Pages::additionalLinks{ $menu }->{ $_ },
-			}
-			# Filter out items that don't match condition
-			grep {
-				!$conditions->{$_}
-				||
-				$conditions->{$_}->( $client )
-			}
-			keys %{ $Slim::Web::Pages::additionalLinks{ $menu } }
-		};
+		} keys %{ $params->{additionalLinks}->{ $menu } } ];
 	}
 
 	if (main::NOMYSB) {
@@ -154,10 +154,39 @@ sub home {
 	}
 
 	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		$params->{library_id}   = $library_id;
 		$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id, $client);
 	}
+
+	my $checksum;
+	if (!main::NOBROWSECACHE && $template eq 'home.html') {
+		$checksum = md5_hex(join(':', 
+			($client ? $client->id : ''),
+			$params->{newVersion},
+			$params->{newPlugins},
+			$params->{hasLibrary},
+			$prefs->get('langauge'),
+			$params->{library_id},
+			complex_to_query($params->{additionalLinks}),
+			complex_to_query($params->{additionalLinkOrder}),
+			complex_to_query($params->{cookies}),
+			complex_to_query($params->{favorites}),
+			$params->{'skinOverride'} || $prefs->get('skin'),
+			$template,
+			$params->{song_count},
+			$params->{album_count},
+			$params->{artist_count},
+		));
 	
-	return Slim::Web::HTTP::filltemplatefile($template, $params);
+		if (my $cached = $cache->get($checksum)) {
+			return $cached;
+		}
+	}
+
+	my $page = Slim::Web::HTTP::filltemplatefile($template, $params);
+	$cache->set($checksum, $page, 3600) if $checksum && !main::NOBROWSECACHE;
+	
+	return $page;
 }
 
 sub switchServer {

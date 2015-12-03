@@ -491,9 +491,6 @@ sub homeExitHandler {
 }
 
 sub cmpString {
-#	my $client = shift;
-#	my $string = shift;
-
 	if ( Slim::Utils::Strings::stringExists($_[1]) ) {
 		return Slim::Utils::Strings::cstring($_[0], $_[1]);
 	}
