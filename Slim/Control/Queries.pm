@@ -3346,10 +3346,18 @@ sub statusQuery {
 		my $quantity = $request->getParam('_quantity');
 		
 		my $loop = $menuMode ? 'item_loop' : 'playlist_loop';
+		my $totalOnly;
 		
 		if ( $menuMode ) {
 			# Set required tags for menuMode
 			$tags = 'aAlKNcxJ';
+		}
+		# DD - total playtime for the current playlist, nothing else returned
+		elsif ( $tags =~ /DD/ ) {
+			$totalOnly = 1;
+			$tags = 'd';
+			$index = 0;
+			$quantity = $songCount;
 		}
 		else {
 			$tags = 'gald' if !defined $tags;
@@ -3367,16 +3375,20 @@ sub statusQuery {
 		# we need to be sure we have the latest data from the DB if ratings are requested
 		my $refreshTrack = $tags =~ /R/;
 		
-		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
-
-		if ($track->remote) {
-			$tags .= "B"; # include button remapping
-			my $metadata = _songData($request, $track, $tags);
-			$request->addResult('remoteMeta', $metadata);
+		my $track;
+		
+		if (!$totalOnly) {
+			$track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
+	
+			if ($track->remote) {
+				$tags .= "B" unless $totalOnly; # include button remapping
+				my $metadata = _songData($request, $track, $tags);
+				$request->addResult('remoteMeta', $metadata);
+			}
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song
-		if ($modecurrent && ($repeat == 1) && $quantity) {
+		if ($modecurrent && ($repeat == 1) && $quantity && !$totalOnly) {
 
 			$request->addResult('offset', $playlist_cur_index) if $menuMode;
 
@@ -3416,6 +3428,8 @@ sub statusQuery {
 				} ) if scalar @trackIds;
 				
 				$idx = $start;
+				my $totalDuration = 0;
+				
 				foreach( @tracks ) {
 					# XXX - need to resolve how we get here in the first place
 					# should not need this:
@@ -3428,7 +3442,11 @@ sub statusQuery {
 					# references a track not in the db yet, we can fail
 					next if !$data;
 
-					if ($menuMode) {
+					if ($totalOnly) {
+						my $trackData = _songData($request, $data, $tags);
+						$totalDuration += $trackData->{duration};
+					}
+					elsif ($menuMode) {
 						_addJiveSong($request, $loop, $count, $idx, $data);
 						# add clear and save playlist items at the bottom
 						if ( ($idx+1)  == $songCount) {
@@ -3450,8 +3468,12 @@ sub statusQuery {
 					main::idleStreams() if ! ($count % 20);
 				}
 				
+				if ($totalOnly) {
+					$request->addResult('playlist duration', $totalDuration || 0);
+				}
+				
 				# we don't do that in menu mode!
-				if (!$menuMode) {
+				if (!$menuMode && !$totalOnly) {
 				
 					my $repShuffle = $prefs->get('reshuffleOnRepeat');
 					my $canPredictFuture = ($repeat == 2)  			# we're repeating all
