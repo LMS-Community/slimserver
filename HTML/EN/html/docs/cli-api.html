@@ -53,6 +53,7 @@
 <h4 id="7.7">Changes starting from Squeezebox Server 7.7</h4>
 <ul>
 	<li>Extended <a href="#rescan">&quot;rescan&quot;</a> with optional singledir parameter</li>
+	<li>Add DD parameter to the &quot;<a href="#status">status</a>&quot; query to report total playtime of the current queue.</li>
 </ul>
 
 
@@ -7367,7 +7368,10 @@ in the saved playlists folder.</p>
 			by a letter (see command 
 			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
 			fields and their identifying letter). The default tags value for 
-			this query is &quot;gald&quot;.
+			this query is &quot;gald&quot;. In addition to the tags supported by 
+			&quot;<a href="#songinfo">songinfo</a>&quot; there's the special "DD"
+			tag, which would return no track information, but the total duration
+			of the current playlist only. 
 		</td>
 	</tr>
 	<tr>
@@ -7609,6 +7613,15 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			Only for Squeezebox1 players.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;playlist duration
+		</td>
+		<td>
+			Duration of the full playlist. Decimal seconds. Only if tag:DD was requested
+			and for the duration of tracks where it is known (it is not for eg. radio streams).
 		</td>
 	</tr>
 	<tr>
