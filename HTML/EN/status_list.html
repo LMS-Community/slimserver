@@ -6,27 +6,27 @@
 		[% ELSE %]
 		<span class="exlisting">
 		[% END %]
-		<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
-		[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
+		<a href="[% webroot %]songinfo.html?item=[% item.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
+		[% IF item.includeAlbum && item.album && item.album != noAlbum %]
 			[% stringFROM %]
-			[% IF item.itemobj.album %]
-				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.itemobj.album.title | html %]</a>
-			[% ELSE; item.plugin_meta.album; END %]
+			[% IF item.album_id %]
+				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.album | html %]</a>
+			[% ELSE; item.album; END %]
 		[% END %]
 		[% IF item.includeArtist;
-			IF item.artist && item.artist != item.noArtist; 
-				PROCESS artistsAsHTML.html itemobj = item.itemobj;
-			ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
+			IF item.artistsWithAttributes && item.artistsWithAttributes.0.name != noArtist; 
+				PROCESS artistsAsHTML.html;
+			ELSIF item.artist && item.artist != noArtist;
 				stringBY;
 				" ";
-				item.plugin_meta.artist;
+				item.artist;
 			END;
 		END %]
 		</span>
-		[%# current_title is for radio streams %]
-		[% IF item.current_title %]
+		[%# remote_title is for radio streams %]
+		[% IF item.remote_title %]
 			<br />
-			[% item.current_title | html %]
+			[% item.remote_title | html %]
 		[% END %]
 		<div class="playlistControls">
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% stringPLAY %]</a>
