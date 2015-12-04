@@ -1,7 +1,5 @@
 package Slim::Web::Pages::Playlist;
 
-# $Id$
-
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -9,11 +7,7 @@ package Slim::Web::Pages::Playlist;
 
 use strict;
 
-use File::Spec::Functions qw(:ALL);
-use POSIX ();
-use Scalar::Util qw(blessed);
-use Tie::Cache::LRU::Expires;
-
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -21,24 +15,22 @@ use Slim::Web::Pages;
 use Slim::Utils::Prefs;
 
 my $log = logger('player.playlist');
-
 my $prefs = preferences('server');
+my $cache = Slim::Utils::Cache->new;
 
 use constant CACHE_TIME => 300;
 
-tie my %albumCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 5;
-
 sub init {
-	
 	Slim::Web::Pages->addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist );
 }
 
 sub playlist {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start Playlist build');
+	
 	if (!defined($client)) {
 
-		# fixed faster rate for noclients
 		$params->{'playercount'} = 0;
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	
@@ -55,14 +47,53 @@ sub playlist {
 	
 	my $songcount = Slim::Player::Playlist::count($client);
 	my $currentItem = Slim::Player::Source::playingSongIndex($client);
+	my $titleFormat = Slim::Music::Info::standardTitleFormat();
 
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
 	
 	my $itemsPerPage = $prefs->get('itemsPerPage');
 
-	if ( !$params->{'start'} ) {
+	if ( !defined $params->{'start'} ) {
 		$params->{'start'} = int($currentItem/$itemsPerPage) * $itemsPerPage;
+	}
+
+	if (!$songcount) {
+		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+	}
+	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	my $cacheKey;
+	if (!main::NOBROWSECACHE) {
+		$cacheKey = join(':', 
+			$client->id,
+			$client->currentPlaylistChangeTime(),
+			$prefs->get('langauge'),
+			$params->{'skinOverride'} || $prefs->get('skin') || '',
+			$params->{'start'},
+			$songcount,
+			$currentItem,
+			$stillScanning ? 1 : 0,
+			$titleFormat,
+			$itemsPerPage,
+		);
+	
+		my $cached = $client->currentPlaylistRender();
+		if ( $cached && !($cached = $cached->{$cacheKey}) ) {
+			$cached = undef;
+		}
+		
+		if ( !$cached && ($cached = $cache->get($cacheKey)) ) {
+			$client->currentPlaylistRender({
+				$cacheKey => $cached
+			});
+		}
+		
+		if ( $cached ) {
+			main::INFOLOG && $log->info("Returning cached playlist html - not modified.");
+			return $cached;
+		}
 	}
 
 	if ($client->currentPlaylist() && !Slim::Music::Info::isRemoteURL($client->currentPlaylist())) {
@@ -71,62 +102,7 @@ sub playlist {
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 	}
 
-#	if (main::DEBUGLOG && $log->is_debug && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
-#
-#		$log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
-#		$log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
-#		$log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
-#		$log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
-#
-#		$log->debug("skinOverride: $params->{'skinOverride'}");
-#		$log->debug("start: $params->{'start'}");
-#	}
-#
-#	# Only build if we need to - try to return cached html or build page from cached info
-#	my $cachedRender = $client->currentPlaylistRender();
-#
-#	if ($songcount > 0 && 
-#		defined $params->{'skinOverride'} &&
-#		defined $params->{'start'} &&
-#		$cachedRender && ref($cachedRender) eq 'ARRAY' &&
-#		$client->currentPlaylistChangeTime() &&
-#		$client->currentPlaylistChangeTime() < $cachedRender->[0] &&
-#		$cachedRender->[1] eq $params->{'skinOverride'} &&
-#		$cachedRender->[2] eq $params->{'start'} ) {
-#
-#		if ($cachedRender->[5]) {
-#
-#			main::INFOLOG && $log->info("Returning cached playlist html - not modified.");
-#
-#			# reset cache timer to forget cached html
-#			Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
-#			Slim::Utils::Timers::setTimer($client, time() + CACHE_TIME, \&flushCachedHTML);
-#
-#			return $cachedRender->[5];
-#
-#		} else {
-#
-#			main::INFOLOG && $log->info("Rebuilding playlist from cached params.");
-#
-#			if (Slim::Utils::Misc::getPlaylistDir() && !Slim::Music::Import->stillScanning()) {
-#				$params->{'cansave'} = 1;
-#			}
-#
-#			$params->{'playlist_items'}   = $cachedRender->[3];
-#			$params->{'pageinfo'}         = $cachedRender->[4];
-#
-#			return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
-#		}
-#	}
-
-	if (!$songcount) {
-		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
-	}
-
-	my $item;
-	my %form;
-
-	if (Slim::Utils::Misc::getPlaylistDir() && !Slim::Music::Import->stillScanning()) {
+	if (Slim::Utils::Misc::getPlaylistDir() && !$stillScanning) {
 		$params->{'cansave'} = 1;
 	}
 	
@@ -139,39 +115,37 @@ sub playlist {
 				'perPage'      => $params->{'itemsPerPage'} || $itemsPerPage,
 	});
 	
-	my ($start,$end);
-	$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
-	$end = $params->{'pageinfo'}{'enditem'};
+	my $start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+	my $end   = $params->{'pageinfo'}{'enditem'};
 	
 	my $offset = $start % 2 ? 0 : 1; 
 
-	my $composerIn   = $prefs->get('composerInArtists');
-
-	my $titleFormat  = Slim::Music::Info::standardTitleFormat();
-
 	$params->{'playlist_items'} = [];
-	$params->{'myClientState'}  = $client;
 
 	# This is a hot loop.
-	# But it's better done all at once than through the scheduler.
 	my $itemnum = 0;
 	
-	my $t = Time::HiRes::time;
-
-	# get the playlist duration
-	my $request = Slim::Control::Request->new( $client->id, [ 'status', 0, $songcount-1, 'tags:DD' ] );
-	$request->source('internal');
-	$request->execute();
-	if ( $request->isStatusError() ) {
-		$log->error($request->getStatusText());
+	# get the playlist duration - use cached value if playlist has not changed
+	my $durationCacheKey = 'playlist_duration_' . $client->currentPlaylistUpdateTime();
+	if ( my $cached = $cache->get($durationCacheKey) ) {
+		$params->{'pageinfo'}->{'totalDuration'} = Slim::Utils::DateTime::timeFormat($cached);
 	}
-	elsif ( my $totalDuration = $request->getResult('playlist duration') ) {
-		$params->{'pageinfo'}->{'totalDuration'} = Slim::Utils::DateTime::timeFormat($totalDuration);
+	else {
+		my $request = Slim::Control::Request->new( $client->id, [ 'status', 0, 1, 'tags:DD' ] );
+		$request->source('internal');
+		$request->execute();
+		if ( $request->isStatusError() ) {
+			$log->error($request->getStatusText());
+		}
+		elsif ( my $totalDuration = $request->getResult('playlist duration') ) {
+			$params->{'pageinfo'}->{'totalDuration'} = Slim::Utils::DateTime::timeFormat($totalDuration);
+			$cache->set($durationCacheKey, $totalDuration);
+		}
+	
+		$params->{'pageinfo'}->{'totalDuration'} ||= 0;
+	
+		main::idleStreams();
 	}
-	
-	main::idleStreams();
-	
-	$params->{'pageinfo'}->{'totalDuration'} ||= 0;
 
 	# from BrwoseLibrary->_tracks: dtuxgaAsSliqyorf, k, cJK
 	my $tags = 'tags:xaAsSlLeN' . 'cJK';
@@ -189,20 +163,32 @@ sub playlist {
 	my $includeAlbum  = $titleFormat !~ /\bALBUM\b/;
 	my $includeArtist = $titleFormat !~ /\bARTIST\b/;
 	
-	$request = Slim::Control::Request->new( $client->id, [ 'status', $start, $itemsPerPage, $tags ] );
-	$request->source('internal');
-	$request->execute();
-	if ( $request->isStatusError() ) {
-		$log->error($request->getStatusText());
+	# try to use cached data if we've been showing the same set of tracks before
+	my $tracksCacheKey = join('_', 'playlist_tracks_', $client->currentPlaylistUpdateTime(), $start, $itemsPerPage, $tags);
+	my $tracks;
+	if ( my $cached = $cache->get($tracksCacheKey) ) {
+		$tracks = $cached;
 	}
-	
-	main::idleStreams();
+	else {
+		my $request = Slim::Control::Request->new( $client->id, [ 'status', $start, $itemsPerPage, $tags ] );
+		$request->source('internal');
+		$request->execute();
+		if ( $request->isStatusError() ) {
+			$log->error($request->getStatusText());
+		}
+		else {
+			$tracks = $request->getResult('playlist_loop');
+			$cache->set($tracksCacheKey, $tracks) if $tracks;
+		}
+		
+		main::idleStreams();
+	}
 	
 	my $titleFormatter = $titleFormat eq 'TITLE' 
 		? sub { $_[0]->{title} }
 		: sub { Slim::Music::TitleFormatter::infoFormat(undef, $titleFormat, 'TITLE', $_[0]) };
 	
-	foreach ( @{ $request->getResult('playlist_loop') } ) {
+	foreach ( @{ $tracks || [] } ) {
 		$_->{'ct'}            = $_->{'type'} if $_->{'type'};
 		if (my $secs = $_->{'duration'}) {
 			$_->{'secs'}      = $secs;
@@ -222,7 +208,7 @@ sub playlist {
 		$_->{'cover'} ||= $_->{'artwork_url'};
 		$_->{'cover'} ||= '/music/' . ($_->{'coverid'} || $_->{'artwork_track_id'} || 0) . '/cover';
 		
-		$_->{'num'}           = $itemnum;
+		$_->{'num'}           = $start + $itemnum;
 		$_->{'currentsong'}   = 'current' if ($start + $itemnum) == $currentItem;
 		$_->{'odd'}           = ($itemnum + $offset) % 2;
 		
@@ -249,8 +235,7 @@ sub playlist {
 			}];
 		}
 
-		# TODO - current_title for remote streams?
-		$_->{'title'}         = $titleFormatter->($_);
+		$_->{'title'} = $titleFormatter->($_);
 
 		push @{$params->{'playlist_items'}}, $_;
 		
@@ -260,52 +245,25 @@ sub playlist {
 		main::idleStreams() if !($itemnum % 10);
 	}
 
-	$params->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
-	$params->{'noAlbum'}  = Slim::Utils::Strings::string('NO_ALBUM');
+	$params->{'noArtist'} = string('NO_ARTIST');
+	$params->{'noAlbum'}  = string('NO_ALBUM');
 
 	main::INFOLOG && $log->info("End playlist build.");
 
 	my $page = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
-#	if ($client) {
-#
-#		# Cache to reduce cpu spike seen when playlist refreshes
-#		# For the moment cache html for Classic, other skins only cache params
-#		# Later consider caching as html unless an ajaxRequest
-#		# my $cacheHtml = !$params->{'ajaxRequest'};
-#		my $cacheHtml = (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Classic');
-#
-#		my $time = time();
-#
-#		$client->currentPlaylistRender([
-#			$time,
-#			($params->{'skinOverride'} || ''),
-#			($params->{'start'}),
-#			$params->{'playlist_items'},
-#			$params->{'pageinfo'},
-#			$cacheHtml ? $page : undef,
-#		]);
-#
-#		if ( main::INFOLOG && $log->is_info ) {
-#			$log->info( sprintf("Caching playlist as %s.", $cacheHtml ? 'html' : 'params') );
-#		}
-#
-#		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
-#
-#		if ($cacheHtml) {
-#			Slim::Utils::Timers::setTimer($client, $time + CACHE_TIME, \&flushCachedHTML);
-#		}
-#	}
+	if ($cacheKey) {
+		# keep one copy in memory for the old skins, polling frequently
+		$client->currentPlaylistRender({
+			$cacheKey => $page
+		});
+		
+		# longer living copy in the disk cache
+		$cache->set($cacheKey, $page);
+	}
 
 	return $page;
 }
-
-#sub flushCachedHTML {
-#	my $client = shift;
-#
-#	main::INFOLOG && $log->info("Flushing playlist html cache for client.");
-#	$client->currentPlaylistRender(undef);
-#}
 
 1;
 
