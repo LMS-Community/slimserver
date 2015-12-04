@@ -3869,8 +3869,8 @@ sub statusQuery {
 				} ) if scalar @trackIds;
 				
 				# no need to use Tie::IxHash to preserve order when we return JSON Data
-				my $fast = ($request->source && $request->source =~ m{/slim/request\b|JSONRPC}) ? 1 : 0;
-				
+				my $fast = ($totalOnly || ($request->source && $request->source =~ m{/slim/request\b|JSONRPC})) ? 1 : 0;
+
 				# Slice and map playlist to get only the requested IDs
 				$idx = $start;
 				my $totalDuration = 0;
@@ -3884,7 +3884,7 @@ sub statusQuery {
 					next if !$data;
 
 					if ($totalOnly) {
-						my $trackData = _songData($request, $data, $tags);
+						my $trackData = _songData($request, $data, $tags, $fast);
 						$totalDuration += $trackData->{duration};
 					}
 					elsif ($menuMode) {
