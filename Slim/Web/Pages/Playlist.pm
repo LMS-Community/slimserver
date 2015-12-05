@@ -227,12 +227,25 @@ sub playlist {
 			}
 		}
 		
-		# TODO - contributors on multi-contributor track?
+		# We might have multiple contributors for a track
 		if (!$_->{'remote'}) {
-			$_->{'artistsWithAttributes'} = [{
-				name => $_->{'artist'},
-				artistId => $_->{'artist_id'},
-			}];
+			my @contributors = split /, /, join(', ', $_->{'artist'}, $_->{'trackartist'});
+			my @ids = join(',', $_->{'artist_ids'}, $_->{'trackartist_ids'}) =~ /(\b\d+\b)/g;
+			
+			my %seen;
+			my @tupels;
+			
+			for (my $x = 0; $x < scalar @ids; $x++) {
+				next if $seen{$ids[$x]}++;
+				
+				push @tupels, {
+					name => $contributors[$x],
+					artistId => $ids[$x],
+				};
+			}
+			
+			$_->{'artistsWithAttributes'} ||= [];
+			push @{$_->{'artistsWithAttributes'}}, @tupels;
 		}
 
 		$_->{'title'} = $titleFormatter->($_);
