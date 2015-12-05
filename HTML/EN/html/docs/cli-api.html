@@ -44,8 +44,9 @@
 <hr>
 <h4 id="7.7">Changes starting from Squeezebox Server 7.7</h4>
 <ul>
-	<li>Extended <a href="#rescan">&quot;rescan&quot;</a> with optional singledir parameter</li>
-	<li>Add DD parameter to the &quot;<a href="#status">status</a>&quot; query to report total playtime of the current queue.</li>
+	<li>Extended <a href="#rescan">&quot;rescan&quot;</a> with optional singledir parameter.</li>
+	<li>Added <a href="#info total duration ?">"info total duration ?"</a> query to return the total number of seconds for the library.</li>
+	<li>Added DD parameter to the &quot;<a href="#status">status</a>&quot; query to report total playtime of the current queue.</li>
 </ul>
 
 
@@ -2592,6 +2593,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#info total songs ?">info total songs ?</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#info total duration ?">info total duration ?</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#genres">genres</a></code></strong>
 	</li>
 	<li>
@@ -2947,6 +2951,32 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;info total songs ?&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;info total songs 18&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="info total duration ?">
+	<strong>
+		<code>
+			info 
+			total 
+			duration 
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;info total duration ?&quot; query returns the number of seconds playtime
+	in the server music database.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;info total duration ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;info total duration 66109&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
