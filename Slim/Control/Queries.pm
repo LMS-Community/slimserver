@@ -1711,7 +1711,7 @@ sub infoTotalQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
+	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs', 'duration']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1721,10 +1721,10 @@ sub infoTotalQuery {
 		return;
 	}
 	
-	my $totals = Slim::Schema->totals($request->client);
-	
 	# get our parameters
 	my $entity = $request->getRequest(2);
+	
+	my $totals = Slim::Schema->totals($request->client) if $entity ne 'duration';
 
 	if ($entity eq 'albums') {
 		$request->addResult("_$entity", $totals->{album});
@@ -1737,6 +1737,9 @@ sub infoTotalQuery {
 	}
 	elsif ($entity eq 'songs') {
 		$request->addResult("_$entity", $totals->{track});
+	}
+	elsif ($entity eq 'duration') {
+		$request->addResult("_$entity", Slim::Schema->totalTime($request->client));
 	}
 	
 	$request->setStatusDone();
