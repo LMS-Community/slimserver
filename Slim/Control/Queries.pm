@@ -3179,6 +3179,7 @@ sub serverstatusQuery {
 		$request->addResult("info total artists", $totals->{contributor});
 		$request->addResult("info total genres", $totals->{genre});
 		$request->addResult("info total songs", $totals->{track});
+		$request->addResult("info total duration", Slim::Schema->totalTime());
 	}
 
 	my %savePrefs;
