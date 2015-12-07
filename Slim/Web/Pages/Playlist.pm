@@ -77,6 +77,7 @@ sub playlist {
 			$stillScanning ? 1 : 0,
 			$titleFormat,
 			$itemsPerPage,
+			$params->{'cookies'}->{'Squeezebox-noPlaylistCover'}->value ? 1 : 0
 		);
 	
 		my $cached = $client->currentPlaylistRender();
