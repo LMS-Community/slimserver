@@ -1,0 +1,7 @@
+PLUGIN_REMOTE_LIBRARY_MODULE_NAME
+	DE	Entfernte Musiksammlung
+	EN	Remote Music Library
+
+PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
+	DE	Wiedergabe von Musik aus der Sammlung eines andere Logitech Music Servers, ohne den Player umschalten zu müssen.
+	EN	Music playback from another Logitech Music Server's Music Library without switching the player to that server.
