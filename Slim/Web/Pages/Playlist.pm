@@ -52,7 +52,9 @@ sub playlist {
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
 	
-	my $itemsPerPage = $prefs->get('itemsPerPage');
+	my $itemsPerPage  = $prefs->get('itemsPerPage');
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	my $currentSkin   = $params->{'skinOverride'} || $prefs->get('skin') || '';
 
 	if ( !defined $params->{'start'} ) {
 		$params->{'start'} = int($currentItem/$itemsPerPage) * $itemsPerPage;
@@ -62,15 +64,14 @@ sub playlist {
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	}
 	
-	my $stillScanning = Slim::Music::Import->stillScanning();
-	
 	my $cacheKey;
-	if (!main::NOBROWSECACHE) {
+	# only cache rendered page for skins known to be compatible
+	if ( !main::NOBROWSECACHE && $currentSkin =~ /(?:EN|Classic|Default)/ ) {
 		$cacheKey = join(':', 
 			$client->id,
 			$client->currentPlaylistChangeTime(),
 			$prefs->get('langauge'),
-			$params->{'skinOverride'} || $prefs->get('skin') || '',
+			$currentSkin,
 			$params->{'start'},
 			$songcount,
 			$currentItem,
