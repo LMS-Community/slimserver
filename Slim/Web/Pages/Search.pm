@@ -269,7 +269,7 @@ sub advancedSearch {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 	$params->{'statistics'} = 1 if main::STATISTICS;
-	$params->{'roles'}      = \%Slim::Schema::Contributor::roleToContributorMap;
+	$params->{'roles'}      = Slim::Schema::Contributor->roleToContributorMap;
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveSearch' && keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
 		# don't store operators when there's no value
@@ -460,7 +460,7 @@ sub _initActiveRoles {
 	$params->{'search'} ||= {};
 	$params->{'search'}->{'contributor_namesearch'} ||= {};
 
-	foreach (keys %Slim::Schema::Contributor::roleToContributorMap) {
+	foreach (Slim::Schema::Contributor->contributorRoleIds) {
 		$params->{'search'}->{'contributor_namesearch'}->{'active' . $_} = 1 if $params->{'search.contributor_namesearch.active' . $_};
 	}
 

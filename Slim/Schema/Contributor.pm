@@ -12,7 +12,7 @@ use Slim::Schema::ResultSet::Contributor;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
-our %contributorToRoleMap = (
+my %contributorToRoleMap = (
 	'ARTIST'      => 1,
 	'COMPOSER'    => 2,
 	'CONDUCTOR'   => 3,
@@ -21,7 +21,11 @@ our %contributorToRoleMap = (
 	'TRACKARTIST' => 6,
 );
 
-our %roleToContributorMap = reverse %contributorToRoleMap;
+my @contributorRoles = sort keys %contributorToRoleMap;
+my @contributorRoleIds = values %contributorToRoleMap;
+my $totalContributorRoles = scalar @contributorRoles; 
+
+my %roleToContributorMap = reverse %contributorToRoleMap;
 
 {
 	my $class = __PACKAGE__;
@@ -60,15 +64,19 @@ our %roleToContributorMap = reverse %contributorToRoleMap;
 }
 
 sub contributorRoles {
-	my $class = shift;
+	return @contributorRoles;
+}
 
-	return sort keys %contributorToRoleMap;
+sub contributorRoleIds {
+	return @contributorRoleIds;
 }
 
 sub totalContributorRoles {
-	my $class = shift;
+	return $totalContributorRoles;
+}
 
-	return scalar keys %contributorToRoleMap;
+sub roleToContributorMap {
+	return \%roleToContributorMap;
 }
 
 sub typeToRole {

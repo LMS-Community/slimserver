@@ -4817,13 +4817,15 @@ sub _songDataFromHash {
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
 	
+	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
+	
 	# loop so that stuff is returned in the order given...
 	for my $tag (split (//, $tags)) {
 		my $tagref = $tagMap{$tag} or next;
 		
 		# Special case for A/S which return multiple keys
 		if ( $tag eq 'A' ) {
-			for my $role ( Slim::Schema::Contributor->contributorRoles ) {
+			for my $role ( @contributorRoles ) {
 				$role = lc $role;
 				if ( defined $res->{$role} ) {
 					$returnHash{$role} = $res->{$role};
@@ -4831,7 +4833,7 @@ sub _songDataFromHash {
 			}
 		}
 		elsif ( $tag eq 'S' ) {
-			for my $role ( Slim::Schema::Contributor->contributorRoles ) {
+			for my $role ( @contributorRoles ) {
 				$role = lc $role;
 				if ( defined $res->{"${role}_ids"} ) {
 					$returnHash{"${role}_ids"} = $res->{"${role}_ids"};
