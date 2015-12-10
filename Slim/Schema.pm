@@ -2786,6 +2786,7 @@ sub _createGenre {
 		if ($newGenres ne $oldGenres) {
 			# Bug 1143: The user has updated the genre tag, and is
 			# rescanning We need to remove the previous associations.
+			my $track = Slim::Schema->rs('Track')->find($trackId);
 			$track->genreTracks->delete_all;
 	
 			Slim::Schema::Genre->add($genre, $trackId);
