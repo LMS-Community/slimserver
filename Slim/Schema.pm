@@ -2773,10 +2773,17 @@ sub _createGenre {
 		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has genre '$genre'"));
 
 	} elsif (!$create && $genre) {
-		# XXX use raw DBI
-		my $track = Slim::Schema->rs('Track')->find($trackId);
+		# get the list of genre names for this track
+		my $sth = $self->dbh->prepare_cached( qq{
+			SELECT genres.name FROM genre_track JOIN genres ON genres.id = genre_track.genre WHERE genre_track.track = ?
+		} );
+		$sth->execute($trackId);
 		
-		if ($genre ne $track->genres->single->name) {
+		# compare the list of ordered, lower case genre names, new and old
+		my $newGenres = join('::', sort map { lc($_->[0]) } @{ $sth->fetchall_arrayref() || [] });
+		my $oldGenres = join('::', sort map { lc($_) } Slim::Music::Info::splitTag($genre));
+		
+		if ($newGenres ne $oldGenres) {
 			# Bug 1143: The user has updated the genre tag, and is
 			# rescanning We need to remove the previous associations.
 			$track->genreTracks->delete_all;
