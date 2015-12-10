@@ -348,6 +348,7 @@ sub exitScan {
 Called immediately after connect.  Sets up MD5() function.
 
 =cut
+my %postConnectHandlers;
 
 sub postConnect {
 	my ( $class, $dbh ) = @_;
@@ -374,6 +375,30 @@ sub postConnect {
 				Slim::Schema->optimizeDB();
 			}
 		}
+	}
+	
+	foreach (keys %postConnectHandlers) {
+		$_->postDBConnect($dbh);
+	}
+}
+
+=head2
+
+Allow plugins and others to register handlers which should be called from postConnect
+
+=cut
+
+sub addPostConnectHandler {
+	my ( $class, $handler ) = @_;
+	
+	if ($handler && $handler->can('postDBConnect')) {
+		$postConnectHandlers{$handler}++
+	}
+	
+	# if we register for the first time, re-initialize the dbh object
+	if ( $postConnectHandlers{$handler} == 1 ) {
+		Slim::Schema->disconnect;
+		Slim::Schema->init;
 	}
 }
 

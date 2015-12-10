@@ -99,6 +99,9 @@ sub initPlugin {
 		'use'          => 1,
 	});
 
+	# register handler to register custom functions used for the FTS indexing
+	Slim::Utils::OSDetect->getOS()->sqlHelperClass()->addPostConnectHandler($class);
+
 	# no need to continue in scanner mode
 	return if main::SCANNER;
 
@@ -140,7 +143,7 @@ sub checkSingleTrack {
 	
 	return if $trackObj->remote || !$trackObj->id;
 	
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 
 	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
 	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
@@ -182,7 +185,7 @@ sub createHelperTable {
 		$tokens = $class->parseSearchTerm($args->{search}, $type);
 	}
 
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 			
 	$dbh->do('DROP TABLE IF EXISTS ' . $name);
 			
@@ -202,7 +205,7 @@ sub createHelperTable {
 
 sub dropHelperTable {
 	return if $log->debug;
-	_dbh()->do('DROP TABLE IF EXISTS ' . $_[1]);
+	Slim::Schema->dbh->do('DROP TABLE IF EXISTS ' . $_[1]);
 }
 
 sub parseSearchTerm {
@@ -280,7 +283,7 @@ sub parseSearchTerm {
 	my $isLargeResultSet;
 
 	# make sure our custom functions are registered
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 	
 	if (wantarray && $type && $tokens) {
 		my $counts = $ftsCache{ uc($type . '|' . $tokens) };
@@ -330,7 +333,7 @@ sub _getContributorRole {
 	
 	return '' unless $workId && $contributors && $type && $col;
 	
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 	my $sth = $dbh->prepare_cached("SELECT name, namesearch, role FROM contributors, $type WHERE contributors.id = ? AND $type.contributor = ? AND $type.$col = ? GROUP BY role");
 
 	my ($name, $namesearch, $role);
@@ -360,7 +363,7 @@ sub _getAlbumTracksInfo {
 	
 	return '' unless $albumId;
 	
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 	# XXX - should we include artist information?
 	my $sth = $dbh->prepare_cached(qq{
 		SELECT IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || 
@@ -392,7 +395,7 @@ sub _rebuildIndex {
 	
 	$scanlog->error("Starting fulltext index build");
 
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 
 	$scanlog->error("Initialize fulltext table");
 	
@@ -489,7 +492,7 @@ sub _initPopularTerms {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
 		
-	my $dbh = _dbh();
+	my $dbh = Slim::Schema->dbh;
 	
 	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
@@ -502,7 +505,7 @@ sub _initPopularTerms {
 	}
 
 	# get a list of terms which occur more than LARGE_RESULTSET times in our database
-	my $terms = _dbh()->selectcol_arrayref( sprintf(qq{
+	my $terms = $dbh->selectcol_arrayref( sprintf(qq{
 		SELECT term, d FROM (
 			SELECT term, SUM(documents) d 
 			FROM fulltext_terms 
@@ -519,8 +522,8 @@ sub _initPopularTerms {
 	main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$terms));
 }
 
-sub _dbh {
-	my $dbh = Slim::Schema->dbh;
+sub postDBConnect {
+	my ($class, $dbh) = @_;
 	
 	# some custom functions to get good data
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
@@ -530,8 +533,6 @@ sub _dbh {
 	
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
-	
-	return $dbh;
 }
 
 1;
