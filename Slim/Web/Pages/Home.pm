@@ -160,7 +160,7 @@ sub home {
 
 	my $checksum;
 	if (!main::NOBROWSECACHE && $template eq 'home.html') {
-		$checksum = md5_hex(join(':', 
+		$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':', 
 			($client ? $client->id : ''),
 			$params->{newVersion},
 			$params->{newPlugins},
@@ -176,7 +176,7 @@ sub home {
 			$params->{song_count},
 			$params->{album_count},
 			$params->{artist_count},
-		));
+		)));
 	
 		if (my $cached = $cache->get($checksum)) {
 			return $cached;
