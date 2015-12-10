@@ -168,6 +168,8 @@ sub fixUrl {
 		wmpro   => 'wmap',
 		wma     => 'wma',
 		wmvoice => 'wma',
+		# Apple HLS m3u8 is supported through the PlayHLS plugin and ffmpeg
+		hls     => 'hls',
 		# Real Player is supported through the AlienBBC plugin
 		real    => 'rtsp',
 	);
