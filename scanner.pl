@@ -355,9 +355,6 @@ sub main {
 			$sqlHelperClass->afterScan();
 		}
 	}
-
-	# Wipe templates if they exist.
-	rmtree( catdir($prefs->get('cachedir'), 'templates') );
 	
 	# Cleanup after we're done, we can't rely on this being called from a sig handler
 	cleanup();
