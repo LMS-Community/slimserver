@@ -19,6 +19,9 @@ sub initDetails {
 
 	$class->{osDetails}->{isReadyNAS} = 1;
 
+	# add Plugins folder to search path
+	unshift @INC, '/c/.squeezeboxserver';
+
 	return $class->{osDetails};
 }
 
