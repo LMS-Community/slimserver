@@ -8,6 +8,8 @@ we can use with locally connected players.
 
 =cut
 
+use strict;
+
 use JSON::XS::VersionOneAndTwo;
 use Storable qw(dclone);
 
@@ -73,7 +75,7 @@ sub _getRemoteMenu {
 			my $results = shift || {};
 			
 			my @items;
-			foreach ( @{ $results->{item_loop} || [] }) {
+			foreach ( @{ $results->{item_loop} || [] } ) {
 				# we only use the My Music menu at this point
 				next unless $_->{node} eq 'myMusic';
 				

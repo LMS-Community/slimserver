@@ -1,7 +1,5 @@
 package Slim::Menu::BrowseLibrary;
 
-# $Id$
-
 =head1 NAME
 
 Slim::Menu::BrowseLibrary
@@ -147,6 +145,8 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
+use JSON::XS::VersionOneAndTwo;
+
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -742,12 +742,12 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library);
 
 sub _topLevel {
-	my ($client, $callback, $args) = @_;
-	my $params = $args->{'params'};
-	
+	my ($client, $callback, $args, $pt) = @_;
+	my $params = $args->{'params'} || $pt;
+
 	if ($params) {
 		my %args;
 
@@ -769,6 +769,7 @@ sub _topLevel {
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		$args{'wantIndex'}    = $params->{'wantIndex'} if $params->{'wantIndex'};
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
+		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -810,13 +811,19 @@ sub _generic {
 		$tags,          # string:    (optional) the value of the 'tags'	parameter to use - added to queryTags
 		$getIndexList   # boolean:   (optional)
 	) = @_;
+
+	# remote_library might be part of the @searchTags. But it's to be consumed by
+	# BrowseLibrary, rather than by the CLI.
+	if (!$args->{remote_library}) {
+		($args->{remote_library}) = map { /remote_library:(.*)/ && $1 } grep /remote_library/, @$queryTags;
+	}
 	
 	# library_id:-1 is supposed to clear/override the global library_id
 	$queryTags = [ grep {
-		$_ && $_ !~ /library_id\s*:\s*-1/
+		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @$queryTags ];
-	
-	if (!Slim::Schema::hasLibrary()) {
+
+	if (!$args->{remote_library} && !Slim::Schema::hasLibrary()) {
 	
 		$log->warn('Database not fully initialized yet - return dummy placeholder');
 	
@@ -838,8 +845,99 @@ sub _generic {
 	
 	my $indexList;
 	
+	# Define a bunch of callbacks to as we might need to run this in async mode
+	
+	# callback to process the resulting data
+	my $requestDone = sub {
+		my $results = shift || {};
+			
+		my ($result, $extraItems) = $resultsFunc->($results);
+
+		$result ||= {};
+		$extraItems ||= [];
+		$quantity ||= 0;
+		
+		$result->{'indexList'} = $indexList if defined $indexList;
+		$result->{'offset'}    = $index;
+		my $total = $result->{'total'} = $results->{'count'} || 0;
+		
+		# We only add extra-items (typically all-songs) if the total is 2 or more
+		if ($extraItems && $total > 1) {
+			my $n = scalar @$extraItems;
+			$result->{'total'} += $n;
+			
+			my $nResults = scalar @{$result->{'items'}};
+			
+			# Work out whether this result block should have the extra items added
+			if ($quantity && $index && !$nResults) {
+				# Only extra items in this result
+				my $usedAlready = $index - $total;
+				push @{$result->{'items'}}, @$extraItems[$usedAlready..$#$extraItems];
+			} elsif ($quantity && $nResults < $quantity) {
+				my $spaceLeft = $quantity - $nResults;
+				$spaceLeft = scalar @$extraItems if scalar @$extraItems < $spaceLeft;
+				push @{$result->{'items'}}, @$extraItems[0..($spaceLeft-1)];
+			} else {
+				# just add them all
+				push @{$result->{'items'}}, @$extraItems;
+			}
+		}
+		
+		if ( !$args->{search} && (!$result->{items} || !scalar @{ $result->{items} }) ) {
+			$result->{items} = [ {
+				type  => 'text',
+				title => cstring($client, 'EMPTY'),
+			} ];
+			
+			$result->{total} = 1;
+		}
+			
+		#$log->error(Data::Dump::dump($result));
+	
+		logBacktrace('no callback') unless $callback;
+	
+		$callback->($result);
+	};
+	
+	# callback to run the actual request
+	my $execRequest = sub {
+		push @$queryTags, 'tags:' . $tags if defined $tags;
+		
+		main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @$queryTags));
+
+		my $requestRef = [ (ref $query ? @$query : $query), $index, $quantity, @$queryTags ];
+
+		_doRequest($client, $requestRef, $requestDone, $args);
+	};
+	
 	if ($getIndexList && $quantity && $quantity != 1) {
 		# quantity == 1 is special and only used when (re)traversing the tree before getting to the desired leaf
+
+		my $gotIndexList = sub {
+			my $results = shift || {};
+			$indexList = $results->{indexList};
+			
+			# find where our index starts and then where it needs to end
+			if ($indexList) {
+				my $total = 0;
+	
+				map { $total += $_->[1] } @$indexList;
+				
+				# don't browse beyond the end
+				$index = 0 if $total <= $index;
+				$total = 0;
+				
+				foreach (@$indexList) {
+					$total += $_->[1];
+					if ($total >= $index + $quantity) {
+						$quantity = $total - $index;
+						last;
+					}
+				}
+			}
+			
+			$execRequest->();
+		};
 		
 		# Get the page-bar and update quantity if necessary so that all of the last category is returned
 		
@@ -848,103 +946,81 @@ sub _generic {
 		
 		main::INFOLOG && $log->is_info && $log->info("$query (0, 1): tags ->", join(', ', @newTags));
 		
-		my $request = Slim::Control::Request->new( $client ? $client->id() : undef,
-			[ (ref $query ? @$query : $query), 0, 1, @newTags ] );
+		my $requestRef = [ (ref $query ? @$query : $query), 0, 1, @newTags ];
+		
+		_doRequest($client, $requestRef, $gotIndexList, $args);
+	}
+	else {
+		$execRequest->();
+	}
+}
+
+# Wrapper function to run a query either locally using Slim::Control::Request,
+# or on a remote server using JSONRPC.
+sub _doRequest {
+	my ($client, $requestRef, $callback, $args) = @_;
+	
+	my $remote_library = $args->{remote_library};
+	
+	if ( $remote_library && $remote_library =~ m|^http.*:\d+/| ) {
+		my $postdata = to_json({
+			id     => 1,
+			method => 'slim.request',
+			params => [ '', $requestRef ]
+		});
+		
+		Slim::Networking::SimpleAsyncHTTP->new(
+			sub {
+				my $http = shift;
+
+				my $res = eval { from_json( $http->content ) } || {};
+			
+				if ( $@ || ref $res ne 'HASH' ) {
+					$log->error( $@ || 'Invalid JSON response: ' . $http->content );
+				}
+				
+				$callback->($res->{result});
+			},
+			sub {
+				my $http = shift;
+				$log->error( "Failed to get data from $remote_library: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+				$callback->();
+			},
+			{
+				timeout => 15,
+			},
+		)->post( $remote_library . 'jsonrpc.js', $postdata );
+	}
+	else {
+		my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
 		$request->execute();
+		
 		if ( $request->isStatusError() ) {
 			$log->error($request->getStatusText());
 		}
-
-		# find where our index starts and then where it needs to end
-		if ($indexList = $request->getResult('indexList')) {
-			my $total = 0;
-
-			map { $total += $_->[1] } @$indexList;
 			
-			# don't browse beyond the end
-			$index = 0 if $total <= $index;
-			$total = 0;
-			
-			foreach (@$indexList) {
-				$total += $_->[1];
-				if ($total >= $index + $quantity) {
-					$quantity = $total - $index;
-					last;
-				}
-			}
-		}
+		$callback->($request->getResults());
 	}
-	
-	push @$queryTags, 'tags:' . $tags if defined $tags;
-	
-	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @$queryTags));
-	
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef,
-		[ (ref $query ? @$query : $query), $index, $quantity, @$queryTags ] );
-	$request->execute();
-	
-	$quantity ||= 0;
-	
-	if ( $request->isStatusError() ) {
-		$log->error($request->getStatusText());
-	}
-
-#	$log->error(Data::Dump::dump($request->getResults()));
-	
-	my ($result, $extraItems) = $resultsFunc->($request->getResults());
-
-	$result->{'indexList'} = $indexList if defined $indexList;
-	$result->{'offset'}    = $index;
-	my $total = $result->{'total'} = $request->getResults()->{'count'};
-	
-	# We only add extra-items (typically all-songs) if the total is 2 or more
-	if ($extraItems && $total > 1) {
-		my $n = scalar @$extraItems;
-		$result->{'total'} += $n;
-		
-		my $nResults = scalar @{$result->{'items'}};
-		
-		# Work out whether this result block should have the extra items added
-		if ($quantity && $index && !$nResults) {
-			# Only extra items in this result
-			my $usedAlready = $index - $total;
-			push @{$result->{'items'}}, @$extraItems[$usedAlready..$#$extraItems];
-		} elsif ($quantity && $nResults < $quantity) {
-			my $spaceLeft = $quantity - $nResults;
-			$spaceLeft = scalar @$extraItems if scalar @$extraItems < $spaceLeft;
-			push @{$result->{'items'}}, @$extraItems[0..($spaceLeft-1)];
-		} else {
-			# just add them all
-			push @{$result->{'items'}}, @$extraItems;
-		}
-	}
-	
-	if ( !$args->{search} && (!$result->{items} || !scalar @{ $result->{items} }) ) {
-		$result->{items} = [ {
-			type  => 'text',
-			title => cstring($client, 'EMPTY'),
-		} ];
-		
-		$result->{total} = 1;
-	}
-		
-#	$log->error(Data::Dump::dump($result));
-
-	logBacktrace('no callback') unless $callback;
-
-	$callback->($result);
 }
 
 sub _search {
 	my ($client, $callback, $args, $pt) = @_;
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	my $items = searchItems($client);
 	
-	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+	if ( !$remote_library &&  (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 		foreach (@$items) {
 			$_->{'passthrough'} = [
 				{ 'library_id' => $library_id }
 			];
+		}
+	}
+	
+	if ( $remote_library ) {
+		foreach (@$items) {
+			$_->{'passthrough'} ||= [];
+			push @{$_->{'passthrough'}}, { 'remote_library' => $remote_library };
 		}
 	}
 
@@ -1111,6 +1187,7 @@ sub _artists {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1148,12 +1225,14 @@ sub _artists {
 		sub {
 			my $results = shift;
 			my $items = $results->{'artists_loop'};
+			$remote_library ||= $args->{'remote_library'};
+
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'artist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
-				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}] } ];
+				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
 				$_->{'favorites_url'} = 'db:contributor.name=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
@@ -1241,7 +1320,9 @@ sub _artists {
 			}
 			
 			my $params = _tagsToParams(\@ptSearchTags);
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [artist_id => 'id'],
+			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [artist_id => 'id'],
 				info => {
@@ -1285,6 +1366,7 @@ sub _genres {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1297,6 +1379,8 @@ sub _genres {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
 			
+			$remote_library ||= $args->{'remote_library'};
+			
 			push @searchTags, "role_id:ALBUMARTIST" if !$prefs->get('useUnifiedArtistsList');
 			
 			foreach (@$items) {
@@ -1304,13 +1388,15 @@ sub _genres {
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_artists;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], remote_library => $remote_library } ];
 				$_->{'favorites_url'} = 'db:genre.name=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			};
 			
 			my $params = _tagsToParams(\@searchTags);
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [genre_id => 'id'],
+			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [genre_id => 'id'],
 				info => {
@@ -1346,6 +1432,7 @@ sub _years {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	if ($library_id && !grep /library_id/, @searchTags) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1355,17 +1442,20 @@ sub _years {
 		sub {
 			my $results = shift;
 			my $items = $results->{'years_loop'};
+			$remote_library ||= $args->{'remote_library'};
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'year'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "year:" . $_->{'year'}] } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "year:" . $_->{'year'}], remote_library => $remote_library } ];
 				$_->{'favorites_url'} = 'db:year.id=' . ($_->{'name'} || 0 );
 			};
 			
 			my $params = _tagsToParams(\@searchTags);
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [year => 'name'],
+			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [year => 'name'],
 				info => {
@@ -1425,6 +1515,7 @@ sub _albums {
 	# XXX - make the full list of items optional!
 	my $tags       = 'ljsaaSS';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	if (!$sort || $sort !~ /^sort:(?:random|new)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
@@ -1458,13 +1549,18 @@ sub _albums {
 		sub {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
+
+			$remote_library ||= $args->{'remote_library'};
+			my $baseImageUrl = $remote_library || '';
+			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};
-				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				$_->{'image'} = $baseImageUrl . 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				delete $_->{'artwork_track_id'} if $baseImageUrl;
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum' } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
 				# the favorites url is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
@@ -1491,12 +1587,15 @@ sub _albums {
 					delete $_->{'artist'};
 				}
 				
-				$_->{'hasMetadata'}   = 'album'
+				$_->{'hasMetadata'}   = 'album';
 			}
 			my $extra;
 			if (scalar @searchTags && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
-				my %actions = (
+				
+				my %actions = $remote_library ? (
+					commonVariables	=> [album_id => 'id'],
+				) : (
 					allAvailableActionsDefined => 1,
 					info => {
 						command     => [],
@@ -1582,7 +1681,9 @@ sub _albums {
 			}
 			
 			my $params = _tagsToParams(\@searchTags);
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [album_id => 'id'],
+			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [album_id => 'id'],
 				info => {
@@ -1638,6 +1739,7 @@ sub _tracks {
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
 	my $tags       = 'dtuxgaAsSliqyorf';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1669,6 +1771,7 @@ sub _tracks {
 		sub {
 			my $results = shift;
 			my $items   = $results->{'titles_loop'};
+			$remote_library ||= $args->{'remote_library'};
 			
 			foreach (@$items) {
 				# Map a few items that get different tags to those expected for TitleFormatter
@@ -1718,11 +1821,21 @@ sub _tracks {
 					$_->{'image'}     = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 					$_->{'image'}   ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				}
+				
+				if ($remote_library) {
+					$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
+					$_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+					delete $_->{'coverid'};
+					delete $_->{'artwork_track_id'};
+					$_->{'playall'} = 1;
+				}
 			}
 			
 			my $params = _tagsToParams(\@searchTags);
 
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [track_id => 'id'],
+			) : (
 				commonVariables	=> [track_id => 'id'],
 				allAvailableActionsDefined => 1,
 				
@@ -1801,7 +1914,7 @@ sub _tracks {
 					itemActions => \%allSongsActions,
 				} ];
 			
-			} else {
+			} elsif (!$remote_library) {
 				$actions{'playall'} = {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
@@ -1843,6 +1956,8 @@ sub _tracks {
 
 sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
+
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
 	_generic($client, $callback, $args, 'musicfolder', ['tags:cdus', @searchTags],
@@ -1850,6 +1965,7 @@ sub _bmf {
 			my $results = shift;
 			my $gotsubfolder = 0;
 			my $items = $results->{'folder_loop'};
+			$remote_library ||= $args->{'remote_library'};
 			
 			my $cover;
 			
@@ -1858,7 +1974,7 @@ sub _bmf {
 				if ($_->{'type'} eq 'folder') {
 					$_->{'type'}        = 'playlist';
 					$_->{'url'}         = \&_bmf;
-					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ] } ];
+					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ], remote_library => $remote_library } ];
 					$_->{'itemActions'} = {
 						info => {
 							command     => ['folderinfo', 'items'],
@@ -1896,6 +2012,12 @@ sub _bmf {
 						$_->{'artwork_track_id'} = $_->{'coverid'};
 						$cover ||= $_->{'image'};
 					}
+				
+					if ($remote_library) {
+						$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
+						$cover = $_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+						$_->{'playall'} = 1,
+					}
 				} 
 				elsif ($_->{'type'} eq 'playlist' && Slim::Music::Info::isCUE($_->{'url'})) {
 					$_->{'favorites_url'} =	$_->{'url'};
@@ -1905,6 +2027,11 @@ sub _bmf {
 						searchTags => [ "playlist_id:" . $_->{'id'} ],
 						noEdit     => 1, 
 					} ];					
+				
+					if ($remote_library) {
+						$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
+						$_->{'playall'} = 1,
+					}
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {
@@ -1929,6 +2056,7 @@ sub _playlists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
@@ -1940,16 +2068,19 @@ sub _playlists {
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
+			$remote_library ||= $args->{'remote_library'};
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'playlist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'favorites_url'} =	$_->{'url'};			
 				$_->{'playlist'}      = \&_playlistTracks;
 				$_->{'url'}           = \&_playlistTracks;
-				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], } ];
+				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
 			};
 			
-			my %actions = (
+			my %actions = $remote_library ? (
+				commonVariables	=> [playlist_id => 'id'],
+			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [playlist_id => 'id'],
 				info => {
@@ -1989,6 +2120,7 @@ sub _playlistTracks {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $offset     = $args->{'index'} || 0;
+	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
 	my $noEdit     = delete $pt->{noEdit} if defined $pt->{noEdit};
 	
@@ -1997,6 +2129,8 @@ sub _playlistTracks {
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlisttracks_loop'};
+			$remote_library ||= $args->{'remote_library'};
+			
 			foreach (@$items) {
 				# Map a few items that get different tags to those expected for TitleFormatter
 				# Currently missing composer, conductor, band because of additional cost of 'A' tag query
@@ -2023,9 +2157,17 @@ sub _playlistTracks {
 				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
+				
+				if ($remote_library) {
+					$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
+					$_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+					$_->{'playall'} = 1,
+				}
 			}
 
-			my %actions = (
+			my %actions = $remote_library ? (
+					commonVariables	=> [track_id => 'id', url => 'url'],
+			) : (
 					commonVariables	=> [track_id => 'id', url => 'url'],
 					info => {
 						command     => ['trackinfo', 'items'],

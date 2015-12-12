@@ -8,7 +8,8 @@ use Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use Slim::Utils::Log;
 
 # replace with whatever other implementation we're going to try
-use Slim::Plugin::RemoteLibrary::SlimBrowseProxy;
+#use Slim::Plugin::RemoteLibrary::SlimBrowseProxy;
+use Slim::Plugin::RemoteLibrary::BrowseLibrary;
 
 our $REMOTE_BROWSE_CLASS;
 
@@ -101,9 +102,10 @@ sub proxiedStreamUrl {
 	
 	my $url = $baseUrl . 'music/' . ($id || 0) . '/download';
 	$url =~ s/^http/lms/;
-	
-	if ($item->{presetParams}) {
-		my $suffix = Slim::Music::Info::typeFromSuffix($item->{presetParams}->{favorites_url} || '');
+
+	# XXX - presetParams is only being used by the SlimBrowseProxy. Can be removed in case we're going the BrowseLibrary path
+	if ($item->{url} || $item->{presetParams}) {
+		my $suffix = Slim::Music::Info::typeFromSuffix($item->{url} || $item->{presetParams}->{favorites_url} || '');
 		$url .= ".$suffix" if $suffix;
 	}
 	
@@ -113,7 +115,7 @@ sub proxiedStreamUrl {
 sub proxiedImage {
 	my ($item, $baseUrl) = @_;
 	
-	my $iconId = $item->{'icon-id'} || $item->{icon};
+	my $iconId = $item->{'icon-id'} || $item->{icon} || $item->{image};
 	my $image;
 	
 	# some menu items are known locally - use local artwork, it's faster
