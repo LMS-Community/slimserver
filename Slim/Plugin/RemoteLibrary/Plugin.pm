@@ -59,9 +59,6 @@ sub initPlugin {
 		},
 	);
 	
-	Slim::Menu::BrowseLibrary->registerStreamProxy(\&proxiedStreamUrl);
-	Slim::Menu::BrowseLibrary->registerImageProxy(\&proxiedImage);
-	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'selectRemoteLibrary',

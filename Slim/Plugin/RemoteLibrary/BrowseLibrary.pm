@@ -13,6 +13,9 @@ use strict;
 use Slim::Menu::BrowseLibrary;
 
 $Slim::Plugin::RemoteLibrary::Plugin::REMOTE_BROWSE_CLASS = __PACKAGE__;
+	
+Slim::Menu::BrowseLibrary->registerStreamProxy(\&Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl);
+Slim::Menu::BrowseLibrary->registerImageProxy(\&Slim::Plugin::RemoteLibrary::Plugin::proxiedImage);
 
 sub getServerMenuItem {
 	my ($class, $server) = @_;
