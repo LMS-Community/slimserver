@@ -150,7 +150,7 @@ sub playlist {
 	}
 
 	# from BrwoseLibrary->_tracks: dtuxgaAsSliqyorf, k, cJK
-	my $tags = 'tags:xaAsSlLeN' . 'cJK';
+	my $tags = 'tags:xaAsSlLeNcJK';
 	
 	# Some additional tags we might need to satisfy the title format
 	$titleFormat =~ /\bGENRE\b/    && ($tags .= 'g');
@@ -161,6 +161,9 @@ sub playlist {
 	$titleFormat =~ /\bCOMMENT\b/  && ($tags .= 'k');
 	$titleFormat =~ /\bYEAR\b/     && ($tags .= 'y');
 	$titleFormat =~ /\bBITRATE\b/  && ($tags .= 'r');
+	$titleFormat =~ /\bDURATION\b/ && ($tags .= 'd');
+	$titleFormat =~ /\bSAMPLERATE\b/ && ($tags .= 'T');
+	$titleFormat =~ /\bSAMPLESIZE\b/ && ($tags .= 'I');
 	
 	my $includeAlbum  = $titleFormat !~ /\bALBUM\b/;
 	my $includeArtist = $titleFormat !~ /\bARTIST\b/;
