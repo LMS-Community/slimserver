@@ -1551,12 +1551,10 @@ sub _albums {
 			my $items = $results->{'albums_loop'};
 
 			$remote_library ||= $args->{'remote_library'};
-			my $baseImageUrl = $remote_library || '';
 			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};
-				$_->{'image'} = $baseImageUrl . 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
-				delete $_->{'artwork_track_id'} if $baseImageUrl;
+				$_->{'image'} = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
@@ -1588,6 +1586,11 @@ sub _albums {
 				}
 				
 				$_->{'hasMetadata'}   = 'album';
+				
+				if ($remote_library) {
+					$_->{'image'} = _proxiedImageUrl($_, $remote_library);
+					delete $_->{'artwork_track_id'};
+				}
 			}
 			my $extra;
 			if (scalar @searchTags && $sort !~ /:(?:new|random)/) {
@@ -1823,8 +1826,8 @@ sub _tracks {
 				}
 				
 				if ($remote_library) {
-					$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
-					$_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+					$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
+					$_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
 					delete $_->{'coverid'};
 					delete $_->{'artwork_track_id'};
 					$_->{'playall'} = 1;
@@ -2014,8 +2017,8 @@ sub _bmf {
 					}
 				
 					if ($remote_library) {
-						$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
-						$cover = $_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+						$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
+						$cover = $_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
 						$_->{'playall'} = 1,
 					}
 				} 
@@ -2029,7 +2032,7 @@ sub _bmf {
 					} ];					
 				
 					if ($remote_library) {
-						$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
+						$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
 						$_->{'playall'} = 1,
 					}
 				}
@@ -2159,8 +2162,8 @@ sub _playlistTracks {
 				$_->{'play_index'}    = $offset++;
 				
 				if ($remote_library) {
-					$_->{'url'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedStreamUrl($_, $remote_library);
-					$_->{'image'} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $remote_library) if $_->{'image'};
+					$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
+					$_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
 					$_->{'playall'} = 1,
 				}
 			}
@@ -2205,5 +2208,35 @@ sub getDisplayName () {
 
 sub playerMenu {'PLUGINS'}
 
+=pod
+Provide hooks for plugins to register callbacks for some common remote streaming proxy helpers
+=cut
+
+my $streamProxy;
+my $imageProxy;
+
+sub registerStreamProxy {
+	my ($class, $proxy) = @_;
+	
+	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
+
+	$streamProxy = $proxy;
+}
+
+sub _proxiedStreamUrl {
+	return $streamProxy ? $streamProxy->(@_) : $_[0];
+}
+
+sub registerImageProxy {
+	my ($class, $proxy) = @_;
+	
+	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
+
+	$imageProxy = $proxy;
+}
+
+sub _proxiedImageUrl {
+	return $imageProxy ? $imageProxy->(@_) : $_[0];
+}
 
 1;
