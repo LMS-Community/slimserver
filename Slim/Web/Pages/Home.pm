@@ -240,7 +240,7 @@ sub switchServer {
 }
 
 # Bug 7254, don't tell Ray to reconnect to SN unless it's known to be attached to the user's account
-sub _canSwitch { if (main::NOMYSB) {
+sub _canSwitch { if (!main::NOMYSB) {
 	my $client = shift;
 	
 	return ( ($client->deviceid != 7) || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) );
