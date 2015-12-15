@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>21865f76-C204-475C-B46E-50370DAC7EDE</id>
+	<name>PLUGIN_REMOTE_LIBRARY_MODULE_NAME</name>
+	<module>Slim::Plugin::RemoteLibrary::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/</homepageURL>
+	<icon>plugins/RemoteLibrary/html/icon.png</icon>
+	<targetApplication>
+		<id>SlimService</id>
+		<minVersion>7.9</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
