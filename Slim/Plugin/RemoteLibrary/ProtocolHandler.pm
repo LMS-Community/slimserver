@@ -99,6 +99,7 @@ sub _gotMetadata {
 	my $http = shift;
 	my $url  = $http->params('url');
 	my $song = $http->params('song');
+	my $client = $http->params('client');
 
 	my $res = eval { from_json( $http->content ) };
 
@@ -129,6 +130,11 @@ sub _gotMetadata {
 	}
 
 	$cache->set('remotelibrary_' . $url, $meta);
+	
+	# Update the playlist time so the web will refresh, etc
+	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+	
+	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
 }
 
 1;
