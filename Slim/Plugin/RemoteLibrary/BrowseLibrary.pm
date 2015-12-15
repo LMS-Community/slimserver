@@ -80,7 +80,8 @@ sub _extractBrowseMenu {
 		next unless !$_->{node} || $_->{node} eq 'myMusic';
 		
 		# only allow for standard browse menus for now
-		next unless $knownBrowseMenus->{$_->{id}}; # || $_->{id} =~ /(?:myMusicArtists|myMusic.*Albums|myMusic.*Tracks)/;
+		# /(?:myMusicArtists|myMusic.*Albums|myMusic.*Tracks)/;
+		next unless $knownBrowseMenus->{$_->{id}} || $_->{id} =~ /(?:myMusicArtists)/;
 		
 		$_->{icon} = Slim::Plugin::RemoteLibrary::Plugin::proxiedImage($_, $baseUrl);
 		$_->{url}  = \&Slim::Menu::BrowseLibrary::_topLevel;
