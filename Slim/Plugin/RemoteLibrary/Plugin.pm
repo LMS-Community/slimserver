@@ -1,18 +1,26 @@
 package Slim::Plugin::RemoteLibrary::Plugin;
 
+=pod
+
+Add a wrapper around Slim::Menu::BrowseLibrary to inject the remote_library information. 
+Slim::Menu::BrowseLibrary will use this to request information from a remote server rather 
+than the local database.
+
+=cut
+
 use base qw(Slim::Plugin::OPMLBased);
 
 use strict;
 use JSON::XS::VersionOneAndTwo;
 
+use Slim::Menu::BrowseLibrary;
 use Slim::Plugin::RemoteLibrary::ProtocolHandler;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 
-# replace with whatever other implementation we're going to try
-#use Slim::Plugin::RemoteLibrary::SlimBrowseProxy;
-use Slim::Plugin::RemoteLibrary::BrowseLibrary;
-
-our $REMOTE_BROWSE_CLASS;
+Slim::Menu::BrowseLibrary->registerStreamProxy(\&_proxiedStreamUrl);
+Slim::Menu::BrowseLibrary->registerImageProxy(\&_proxiedImage);
+Slim::Menu::BrowseLibrary->registerPrefGetter(\&_getPref);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.remotelibrary',
@@ -37,6 +45,8 @@ my $knownBrowseMenus = {
 	myMusicSearchPlaylists => 'search.png',
 #	randomplay => 'plugins/RandomPlay/html/images/icon.png',
 };
+
+my $cache = Slim::Utils::Cache->new;
 
 sub initPlugin {
 	my $class = shift;
@@ -82,12 +92,18 @@ sub handleFeed {
 	foreach ( keys %$servers ) {
 		next if Slim::Networking::Discovery::Server::is_self(Slim::Networking::Discovery::Server::getServerAddress($_));
 		
-		my $server = {
-			name => $_,
-			baseUrl => Slim::Networking::Discovery::Server::getWebHostAddress($_),
-		};
+		my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($_);
+
+		_getBrowsePrefs($baseUrl);
 		
-		push @$items, $REMOTE_BROWSE_CLASS->getServerMenuItem($server);
+		# create menu item
+		push @$items, {
+			name => $_,
+			url  => \&_getRemoteMenu,
+			passthrough => [{
+				remote_library => $baseUrl,
+			}],
+		};
 	}
 	
 	$cb->({
@@ -95,7 +111,56 @@ sub handleFeed {
 	});
 }
 
-sub proxiedStreamUrl {
+sub _getRemoteMenu {
+	my ($client, $callback, $args, $pt) = @_;
+	
+	my $baseUrl = $pt->{remote_library} || $client->pluginData('baseUrl');
+	$client->pluginData( baseUrl => $baseUrl );
+	
+	$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $baseUrl) );
+}
+
+sub _extractBrowseMenu {
+	my ($menuItems, $baseUrl) = @_;
+	
+	$menuItems ||= [];
+
+	my @items;
+
+	foreach ( @$menuItems ) {
+		# we only use the My Music menu at this point
+		next unless !$_->{node} || $_->{node} eq 'myMusic';
+		
+		# only allow for standard browse menus for now
+		# /(?:myMusicArtists|myMusic.*Albums|myMusic.*Tracks)/;
+		next unless $knownBrowseMenus->{$_->{id}} || $_->{id} =~ /(?:myMusicArtists)/;
+		
+		$_->{icon} = _proxiedImage($_, $baseUrl);
+		$_->{url}  = \&Slim::Menu::BrowseLibrary::_topLevel;
+		$_->{name} = $_->{text};
+		
+		my $params = {};
+		if ($_->{actions} && $_->{actions}->{go} && $_->{actions}->{go}->{params}) {
+			$params = $_->{actions}->{go}->{params};
+		}
+		
+		# we can't handle library views on remote servers
+		next if $params->{library_id};
+
+		$_->{passthrough} = [{
+			%$params,
+			remote_library => $baseUrl
+		}];
+		
+		push @items, $_;
+	}
+	
+	return {
+		items => [ sort { $a->{weight} <=> $b->{weight} } @items ]
+	}
+}
+
+sub _proxiedStreamUrl {
 	my ($item, $baseUrl) = @_;
 	
 	my $id = $item->{id};
@@ -113,7 +178,7 @@ sub proxiedStreamUrl {
 	return $url;
 }
 
-sub proxiedImage {
+sub _proxiedImage {
 	my ($item, $baseUrl) = @_;
 	
 	my $iconId = $item->{'icon-id'} || $item->{icon} || $item->{image};
@@ -142,12 +207,49 @@ sub proxiedImage {
 	}
 }
 
-sub getKnownBrowseMenus {
-	return $knownBrowseMenus;
+# get some of the prefs we need for the browsing from the remote host
+my @prefsFetcher;
+sub _getBrowsePrefs {
+	my ($baseUrl) = @_;
+	
+	my $cacheKey = $baseUrl . '_prefs';
+	my $cached = $cache->get($cacheKey) || {};
+	
+	foreach my $pref ( 'noGenreFilter', 'noRoleFilter', 'useUnifiedArtistsList', 'composerInArtists', 'conductorInArtists', 'bandInArtists' ) {
+		if (!$cached->{$pref}) {
+			push @prefsFetcher, sub {
+				_remoteRequest($baseUrl, 
+					[ '', ['pref', $pref, '?' ] ],
+					sub {
+						my $result = shift || {};
+						
+						$cached->{$pref} = $result->{'_p2'} || 0;
+						$cache->set($cacheKey, $cached, 3600);
+
+						if (my $next = shift @prefsFetcher) {
+							$next->();
+						}	
+					},
+				);
+			}
+		}
+	}
+	
+	if (my $next = shift @prefsFetcher) {
+		$next->();
+	}	
+}
+
+sub _getPref {
+	my ($pref, $remote_library) = @_;
+	
+	if ( $remote_library && (my $cached = $cache->get($remote_library . '_prefs')) ) {
+		return $cached->{$pref};
+	}
 }
 
 # Send a CLI command to a remote server
-sub remoteRequest {
+sub _remoteRequest {
 	my ($server, $request, $cb, $ecb) = @_;
 
 	$ecb ||= $cb;
