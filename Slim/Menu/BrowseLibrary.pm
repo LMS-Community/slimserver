@@ -1357,7 +1357,7 @@ sub _artists {
 			
 			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
-		's', $pt->{'wantIndex'},
+		's', $pt->{'wantIndex'} || $args->{'wantIndex'},
 	);
 }
 
@@ -1424,7 +1424,7 @@ sub _genres {
 			
 			return {items => $items, actions => \%actions, sorted => 1}, undef;
 		},
-		's', $pt->{'wantIndex'},
+		's', $pt->{'wantIndex'} || $args->{'wantIndex'},
 	);
 }
 
@@ -1567,7 +1567,7 @@ sub _albums {
 						
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
-					$_->{'artist_ids'} = [ split /,/, $_->{'artist_ids'} ];
+					$_->{'artist_ids'} = [ split /,/, $_->{'artist_ids'} ];    # / syntax highlighters get easily confused...
 				}
 				else {
 					$_->{'artists'}    = [ $_->{'artist'} ];
@@ -1728,7 +1728,7 @@ sub _albums {
 			}, $extra;
 		},
 		# no need for an index bar in New Music mode
-		$tags, $pt->{'wantIndex'} && !($sort && $sort =~ /^sort:(random|new)$/),
+		$tags, ($pt->{'wantIndex'} || $args->{'wantIndex'}) && !($sort && $sort =~ /^sort:(random|new)$/),
 	);
 }
 
