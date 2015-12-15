@@ -29,6 +29,7 @@ my $knownBrowseMenus = {
 	myMusicNewMusic => 'newmusic.png',
 	myMusicMusicFolder => 'musicfolder.png',
 	myMusicPlaylists => 'playlists.png',
+	myMusicRandomAlbums => 'plugins/ExtendedBrowseModes/html/randomalbums.png',
 	myMusicSearch => 'search.png',
 	myMusicSearchArtists => 'search.png',
 	myMusicSearchAlbums => 'search.png',

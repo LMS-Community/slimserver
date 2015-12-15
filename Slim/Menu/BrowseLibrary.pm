@@ -148,12 +148,14 @@ use strict;
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Music::VirtualLibraries;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
+my $cache = Slim::Utils::Cache->new();
 
 #my %pluginData = (
 #	icon => 'html/images/browselibrary.png',
@@ -1544,6 +1546,20 @@ sub _albums {
 		$sort = undef unless grep {$_ eq $1} ('new', 'random', values %orderByList);
 	} 
 	
+	# Under certain circumstances (random albums in web UI or with remote streams) we are only
+	# to return one item. In this case pull a list of IDs from the cache, as requesting a bunch 
+	# of random albums would retun a different list than what we were showing the user.
+	my $cacheKey = 'randomAlbumIDs_' . ($client ? $client->id : '') if $sort && $sort =~ 'random';
+
+	# shortcut if we hit a cached list
+	if ( $cacheKey && $args->{quantity} && $args->{quantity} == 1 && (my $cached = $cache->get($cacheKey)) ) {
+		if ( ref $cached && ref $cached eq 'HASH' ) {
+			$cached->{items} = [ map { $_->{'playlist'} = $_->{'url'} = \&_tracks; $_ } @{$cached->{items}} ];
+			$callback->($cached);
+			return;
+		}
+	}
+
 	_generic($client, $callback, $args, 'albums',
 		[@searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
@@ -1719,13 +1735,28 @@ sub _albums {
 			);
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
-			
-			return {
+
+			my $result = {
 				items       => $items,
 				actions     => \%actions,
 				sorted      => (($sort && $sort =~ /^sort:(?:random|new)$/) ? 0 : 1),
 				orderByList => (defined($search) || ($sort && $sort =~ /^sort:(?:random|new)$/) ? undef : \%orderByList),
-			}, $extra;
+			};
+
+			if ( $cacheKey && $args->{quantity} && $args->{quantity} > 1 ) {
+				$cache->set($cacheKey, {
+					items => [ map { 
+						delete $_->{'url'};
+						delete $_->{'playlist'};
+						$_;
+					} @{$result->{items}} ],
+					actions => $result->{actions},
+					sorted => $result->{sorted},
+					orderByList => $result->{orderByList},
+				}, 86400);
+			}
+			
+			return $result, $extra;
 		},
 		# no need for an index bar in New Music mode
 		$tags, ($pt->{'wantIndex'} || $args->{'wantIndex'}) && !($sort && $sort =~ /^sort:(random|new)$/),
