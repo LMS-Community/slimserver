@@ -3,6 +3,7 @@ package Slim::Plugin::RemoteLibrary::Plugin;
 use base qw(Slim::Plugin::OPMLBased);
 
 use strict;
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use Slim::Utils::Log;
@@ -19,9 +20,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_REMOTE_LIBRARY_MODULE_NAME',
 } );
 
-# XXX - get this from Slim::Menu::BrowseLibrary?
 my $knownBrowseMenus = {
-	myMusic => 'mymusic.png',
+#	myMusic => 'mymusic.png',
 	myMusicArtists => 'artists.png',
 	myMusicAlbums => 'albums.png',
 	myMusicGenres => 'genres.png',
@@ -143,6 +143,52 @@ sub proxiedImage {
 
 sub getKnownBrowseMenus {
 	return $knownBrowseMenus;
+}
+
+# Send a CLI command to a remote server
+sub remoteRequest {
+	my ($server, $request, $cb, $ecb) = @_;
+
+	$ecb ||= $cb;
+	
+	if ( !($server && $request && ref $request && scalar @$request && $ecb) ) {
+		$ecb->() if $ecb;
+		return;
+	}
+
+	my $baseUrl = $server =~ /^http/ ? $server : Slim::Networking::Discovery::Server::getWebHostAddress($server);
+	
+	my $postdata = to_json({
+		id     => 1,
+		method => 'slim.request',
+		params => $request,
+	});
+	
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $http = shift;
+
+			my $res = eval { from_json( $http->content ) };
+		
+			if ( $@ || ref $res ne 'HASH' ) {
+				$log->error( $@ || 'Invalid JSON response: ' . $http->content );
+				$ecb->();
+				return;
+			}
+
+			$res ||= {};
+	
+			$cb->($res->{result});
+		},
+		sub {
+			my $http = shift;
+			$log->error( "Failed to get menu: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+			$ecb->();
+		},
+		{
+			timeout => 60,
+		},
+	)->post( $baseUrl . 'jsonrpc.js', $postdata );
 }
 
 1;

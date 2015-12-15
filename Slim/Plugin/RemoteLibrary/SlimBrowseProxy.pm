@@ -174,48 +174,7 @@ warn Data::Dump::dump($request);
 
 # Send a CLI command to a remote server
 sub _remoteRequest {
-	my ($server, $request, $cb, $ecb) = @_;
-
-	$ecb ||= $cb;
-	
-	if ( !($server && $request && ref $request && scalar @$request && $ecb) ) {
-		$ecb->() if $ecb;
-		return;
-	}
-
-	my $baseUrl = $server =~ /^http/ ? $server : Slim::Networking::Discovery::Server::getWebHostAddress($server);
-	
-	my $postdata = to_json({
-		id     => 1,
-		method => 'slim.request',
-		params => $request,
-	});
-	
-	Slim::Networking::SimpleAsyncHTTP->new(
-		sub {
-			my $http = shift;
-
-			my $res = eval { from_json( $http->content ) };
-		
-			if ( $@ || ref $res ne 'HASH' ) {
-				$log->error( $@ || 'Invalid JSON response: ' . $http->content );
-				$ecb->();
-				return;
-			}
-
-			$res ||= {};
-	
-			$cb->($res->{result});
-		},
-		sub {
-			my $http = shift;
-			$log->error( "Failed to get menu: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
-			$ecb->();
-		},
-		{
-			timeout => 15,
-		},
-	)->post( $baseUrl . 'jsonrpc.js', $postdata );
+	Slim::Plugin::RemoteLibrary::Plugin::remoteRequest(@_);
 }
 
 1;

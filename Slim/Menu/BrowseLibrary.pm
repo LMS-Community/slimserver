@@ -1195,13 +1195,13 @@ sub _artists {
 	}
 	
 	my @ptSearchTags = @searchTags;
-	@ptSearchTags = grep {$_ !~ /^genre_id:/} @ptSearchTags if $prefs->get('noGenreFilter');
+	@ptSearchTags = grep {$_ !~ /^genre_id:/} @ptSearchTags if _getPref('noGenreFilter', $remote_library);
 	
-	if ( $prefs->get('noRoleFilter') && (my (@roles) = grep /^role_id:/, @ptSearchTags) ) {
+	if ( _getPref('noRoleFilter', $remote_library) && (my (@roles) = grep /^role_id:/, @ptSearchTags) ) {
 		@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags;
 		
 		# "no role filter" means the default role list _plus_ what we specifically want
-		if ( $prefs->get('useUnifiedArtistsList') ) {
+		if ( _getPref('useUnifiedArtistsList', $remote_library) ) {
 			@roles = map {
 				/role_id:(.*)/;
 				Slim::Schema::Contributor->roleToType($1);
@@ -1211,7 +1211,7 @@ sub _artists {
 	
 			# Loop through each pref to see if the user wants to show that contributor role.
 			foreach (Slim::Schema::Contributor->contributorRoles) {
-				if ($prefs->get(lc($_) . 'InArtists')) {
+				if (_getPref(lc($_) . 'InArtists', $remote_library)) {
 					push @roles, $_;
 				}
 			}
@@ -1381,7 +1381,7 @@ sub _genres {
 			
 			$remote_library ||= $args->{'remote_library'};
 			
-			push @searchTags, "role_id:ALBUMARTIST" if !$prefs->get('useUnifiedArtistsList');
+			push @searchTags, "role_id:ALBUMARTIST" if !_getPref('useUnifiedArtistsList', $remote_library);
 			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'genre'};
@@ -1827,7 +1827,7 @@ sub _tracks {
 				
 				if ($remote_library) {
 					$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
-					$_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
+					$_->{'image'} = _proxiedImageUrl($_, $remote_library) if $_->{'image'};
 					delete $_->{'coverid'};
 					delete $_->{'artwork_track_id'};
 					$_->{'playall'} = 1;
@@ -2018,7 +2018,7 @@ sub _bmf {
 				
 					if ($remote_library) {
 						$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
-						$cover = $_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
+						$cover = $_->{'image'} = _proxiedImageUrl($_, $remote_library) if $_->{'image'};
 						$_->{'playall'} = 1,
 					}
 				} 
@@ -2163,7 +2163,7 @@ sub _playlistTracks {
 				
 				if ($remote_library) {
 					$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
-					$_->{'image'} = _proxiedImage($_, $remote_library) if $_->{'image'};
+					$_->{'image'} = _proxiedImageUrl($_, $remote_library) if $_->{'image'};
 					$_->{'playall'} = 1,
 				}
 			}
@@ -2214,6 +2214,7 @@ Provide hooks for plugins to register callbacks for some common remote streaming
 
 my $streamProxy;
 my $imageProxy;
+my $prefGetter;
 
 sub registerStreamProxy {
 	my ($class, $proxy) = @_;
@@ -2237,6 +2238,27 @@ sub registerImageProxy {
 
 sub _proxiedImageUrl {
 	return $imageProxy ? $imageProxy->(@_) : $_[0];
+}
+
+sub registerPrefGetter {
+	my ($class, $getter) = @_;
+	
+	return unless $getter && ref $getter && ref $getter eq 'CODE';
+	
+	$prefGetter = $getter;
+}
+
+sub _getPref {
+	my ($pref, $remote_library) = @_;
+	
+	my $value;
+	if ( $remote_library && $prefGetter) {
+		$value = $prefGetter->($pref, $remote_library);
+	}
+	
+	$value = $prefs->get($pref) unless defined $value;
+	
+	return $value;
 }
 
 1;
