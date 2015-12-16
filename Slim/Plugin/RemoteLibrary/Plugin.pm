@@ -18,10 +18,6 @@ use Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 
-Slim::Menu::BrowseLibrary->registerStreamProxy(\&_proxiedStreamUrl);
-Slim::Menu::BrowseLibrary->registerImageProxy(\&_proxiedImage);
-Slim::Menu::BrowseLibrary->registerPrefGetter(\&_getPref);
-
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.remotelibrary',
 	'defaultLevel' => 'ERROR',
@@ -58,17 +54,27 @@ sub initPlugin {
 	# Custom proxy to let the remote server handle the resizing.
 	# The remote server very likely already has pre-cached artwork.
 	Slim::Web::ImageProxy->registerHandler(
-		match => qr/^http:lms/,
+		match => qr/remotelibrary\/[0-9a-z\-]{36}/i,
 		func  => sub {
 			my ($url, $spec) = @_;
 			
-			$url =~ s/http:lms/http/;
-			$url =~ s/\.(gif|jpe?g|png|bmp)$//i;
-			$url .= '_' . $spec if $spec;
+			my ($remote_library, $remote_url) = $url =~ m|remotelibrary/(.*?)/(.*)|;
+
+			my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
+			
+			$remote_url = $baseUrl . $remote_url;
+			my ($ext) = $remote_url =~ s/(\.gif|jpe?g|png|bmp)$//i;
+			$remote_url .= '_' . $spec if $spec;
+			$remote_url .= $ext;
 		
-			return $url;
+			return $remote_url;
 		},
 	);
+
+	# tell Slim::Menu::BrowseLibrary where to get information for remote libraries from
+	Slim::Menu::BrowseLibrary->registerStreamProxy(\&_proxiedStreamUrl);
+	Slim::Menu::BrowseLibrary->registerImageProxy(\&_proxiedImage);
+	Slim::Menu::BrowseLibrary->registerPrefGetter(\&_getPref);
 	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -89,19 +95,18 @@ sub handleFeed {
 	my $servers = Slim::Networking::Discovery::Server::getServerList();
 	my $items = [];
 	
-	foreach ( keys %$servers ) {
-		next if Slim::Networking::Discovery::Server::is_self(Slim::Networking::Discovery::Server::getServerAddress($_));
+	foreach ( sort keys %$servers ) {
 		
-		my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($_);
-
-		_getBrowsePrefs($baseUrl);
+		next if Slim::Networking::Discovery::Server::is_self($_);
+		
+		_getBrowsePrefs($_);
 		
 		# create menu item
 		push @$items, {
 			name => $_,
 			url  => \&_getRemoteMenu,
 			passthrough => [{
-				remote_library => $baseUrl,
+				remote_library => Slim::Networking::Discovery::Server::getServerUUID($_),
 			}],
 		};
 	}
@@ -114,14 +119,14 @@ sub handleFeed {
 sub _getRemoteMenu {
 	my ($client, $callback, $args, $pt) = @_;
 	
-	my $baseUrl = $pt->{remote_library} || $client->pluginData('baseUrl');
-	$client->pluginData( baseUrl => $baseUrl );
+	my $remote_library = $pt->{remote_library} || $client->pluginData('remote_library');
+	$client->pluginData( remote_library => $remote_library );
 	
-	$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $baseUrl) );
+	$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
 }
 
 sub _extractBrowseMenu {
-	my ($menuItems, $baseUrl) = @_;
+	my ($menuItems, $remote_library) = @_;
 	
 	$menuItems ||= [];
 
@@ -135,7 +140,7 @@ sub _extractBrowseMenu {
 		# /(?:myMusicArtists|myMusic.*Albums|myMusic.*Tracks)/;
 		next unless $knownBrowseMenus->{$_->{id}} || $_->{id} =~ /(?:myMusicArtists)/;
 		
-		$_->{icon} = _proxiedImage($_, $baseUrl);
+		$_->{icon} = _proxiedImage($_, $remote_library);
 		$_->{url}  = \&Slim::Menu::BrowseLibrary::_topLevel;
 		$_->{name} = $_->{text};
 		
@@ -149,7 +154,7 @@ sub _extractBrowseMenu {
 
 		$_->{passthrough} = [{
 			%$params,
-			remote_library => $baseUrl
+			remote_library => $remote_library
 		}];
 		
 		push @items, $_;
@@ -161,13 +166,12 @@ sub _extractBrowseMenu {
 }
 
 sub _proxiedStreamUrl {
-	my ($item, $baseUrl) = @_;
+	my ($item, $remote_library) = @_;
 	
 	my $id = $item->{id};
 	$id ||= $item->{commonParams}->{track_id} if $item->{commonParams};
 	
-	my $url = $baseUrl . 'music/' . ($id || 0) . '/download';
-	$url =~ s/^http/lms/;
+	my $url = 'lms://' . $remote_library . '/music/' . ($id || 0) . '/download';
 
 	# XXX - presetParams is only being used by the SlimBrowseProxy. Can be removed in case we're going the BrowseLibrary path
 	if ($item->{url} || $item->{presetParams}) {
@@ -179,46 +183,42 @@ sub _proxiedStreamUrl {
 }
 
 sub _proxiedImage {
-	my ($item, $baseUrl) = @_;
-	
-	my $iconId = $item->{'icon-id'} || $item->{icon} || $item->{image};
-	my $image;
+	my ($item, $remote_library) = @_;
+
+	my $image = $item->{'icon-id'} || $item->{icon} || $item->{image} || $item->{coverid};
 	
 	# some menu items are known locally - use local artwork, it's faster
-	if ( !$iconId && (my $id = $item->{id}) ) {
+	if ( my $id = $item->{id} ) {
 		$id = 'myMusicAlbums' if $id =~ /^myMusicAlbums/;
 		$id = 'myMusicArtists' if $id =~ /^myMusicArtists/;
 
-		my $icon = $knownBrowseMenus->{$id};
-		
-		return 'html/images/' . $icon if $icon && $icon !~ m|/|;;
-		
-		$iconId = $icon;
+		if ( my $image = $knownBrowseMenus->{$id} ) {
+			$image = 'html/images/' . $image unless $image =~ m|/|;
+			return $image;
+		}
 	}
 
-	if ($iconId && $iconId =~ /^-?[\w\d]+$/) {
-		$iconId = "music/$iconId/cover";
+	if ($image && $image =~ /^-?[\w\d]+$/) {
+		$image = "music/$image/cover";
 	}
 	
-	if ($iconId) {
-		my $image = $baseUrl . $iconId;
-		$image =~ s/^http:/http:lms:/;
-		return $image;	
+	if ($image) {
+		return join('/', '/imageproxy', 'remotelibrary', $remote_library, $image, 'image.png');
 	}
 }
 
 # get some of the prefs we need for the browsing from the remote host
 my @prefsFetcher;
 sub _getBrowsePrefs {
-	my ($baseUrl) = @_;
+	my ($serverId) = @_;
 	
-	my $cacheKey = $baseUrl . '_prefs';
+	my $cacheKey = $serverId . '_prefs';
 	my $cached = $cache->get($cacheKey) || {};
 	
 	foreach my $pref ( 'noGenreFilter', 'noRoleFilter', 'useUnifiedArtistsList', 'composerInArtists', 'conductorInArtists', 'bandInArtists' ) {
 		if (!$cached->{$pref}) {
 			push @prefsFetcher, sub {
-				_remoteRequest($baseUrl, 
+				_remoteRequest($serverId, 
 					[ '', ['pref', $pref, '?' ] ],
 					sub {
 						my $result = shift || {};
@@ -250,16 +250,16 @@ sub _getPref {
 
 # Send a CLI command to a remote server
 sub _remoteRequest {
-	my ($server, $request, $cb, $ecb) = @_;
+	my ($remote_library, $request, $cb, $ecb) = @_;
 
 	$ecb ||= $cb;
 	
-	if ( !($server && $request && ref $request && scalar @$request && $ecb) ) {
+	if ( !($remote_library && $request && ref $request && scalar @$request && $ecb) ) {
 		$ecb->() if $ecb;
 		return;
 	}
 
-	my $baseUrl = $server =~ /^http/ ? $server : Slim::Networking::Discovery::Server::getWebHostAddress($server);
+	my $baseUrl = $remote_library =~ /^http/ ? $remote_library : Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
 	
 	my $postdata = to_json({
 		id     => 1,
@@ -285,7 +285,7 @@ sub _remoteRequest {
 		},
 		sub {
 			my $http = shift;
-			$log->error( "Failed to get menu: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+			$log->error( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
 			$ecb->();
 		},
 		{

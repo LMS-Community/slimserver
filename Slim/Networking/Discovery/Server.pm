@@ -14,12 +14,14 @@ use Slim::Networking::UDP;
 use Slim::Networking::Discovery::Players;
 use Slim::Utils::Log;
 use Slim::Utils::Network;
+use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
 my $log = logger('network.protocol');
+my $prefs = preferences('server');
 
-my $discovery_packet = pack 'a5xa4xa4x', 'eIPAD', 'NAME', 'JSON';
+my $discovery_packet = pack 'a5xa4xa4xa4x', 'eIPAD', 'NAME', 'JSON', 'UUID';
 
 # List of server we see
 my $server_list = {};
@@ -114,9 +116,9 @@ Return a server's IP address if available
 =cut
 
 sub getServerAddress {
-	my $server = shift;
-	
-	return $server_list->{$server}->{IP} || $server;
+	my $id = shift;
+	my $server = _getServerConfig($id) || {};	
+	return $server->{IP} || $id;
 }
 
 =head2 getServerPort()
@@ -126,8 +128,19 @@ Return a server's port if available
 =cut
 
 sub getServerPort {
-	my $server = shift;
-	return $server_list->{$server}->{JSON} || 9000;
+	my $server = _getServerConfig(shift) || {};
+	return $server->{JSON} || 9000;
+}
+
+=head2 getServerUUID()
+
+Return a server's UUID if available
+
+=cut
+
+sub getServerUUID {
+	my $server = _getServerConfig(shift) || {};
+	return $server->{UUID} || '';
 }
 
 =head2 getWebHostAddress()
@@ -137,8 +150,24 @@ Return a server's full address to access its web page
 =cut
 
 sub getWebHostAddress {
-	my $server = shift;
-	return 'http://' . getServerAddress($server) . ':' . getServerPort($server) . '/';
+	my $id = shift;
+	return 'http://' . getServerAddress($id) . ':' . getServerPort($id) . '/';
+}
+
+sub _getServerConfig {
+	my ($id) = @_;
+	
+	my $server = $server_list->{$id};
+	
+	# if we were not given the server's key, try to find it by UUID, Name or IP address
+	if (!$server || !ref $server) {
+		my $lcId = lc($id);
+		($server) = grep {
+			lc($_->{UUID}) eq $lcId || lc($_->{NAME}) eq $lcId || $_->{IP} eq $id
+		} values %$server_list;
+	}
+	
+	return $server || {};
 }
 
 =head2 gotTLVResponse( $udpsock, $clientpaddr, $msg )
@@ -193,7 +222,7 @@ sub gotTLVResponse {
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {	
-		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}");
+		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}, UUID $server->{UUID}");
 	}
 
 	if ($server->{NAME}) {
@@ -217,7 +246,13 @@ sub gotTLVResponse {
 }
 
 sub is_self {
-	return (shift eq Slim::Utils::Network::serverAddr())
+	my $id = shift;
+	
+	# compare IP addresses - backwards compatible
+	return 1 if $id eq Slim::Utils::Network::serverAddr();
+	
+	# check based on UUID - better
+	return 1 if lc(getServerUUID($id)) eq lc($prefs->get('server_uuid'));
 }
 
 =head1 SEE ALSO

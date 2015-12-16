@@ -963,8 +963,9 @@ sub _doRequest {
 	my ($client, $requestRef, $callback, $args) = @_;
 	
 	my $remote_library = $args->{remote_library};
+	my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($remote_library) if $remote_library;
 	
-	if ( $remote_library && $remote_library =~ m|^http.*:\d+/| ) {
+	if ( $baseUrl && $baseUrl =~ m|^http.*:\d+/| ) {
 		my $postdata = to_json({
 			id     => 1,
 			method => 'slim.request',
@@ -985,13 +986,13 @@ sub _doRequest {
 			},
 			sub {
 				my $http = shift;
-				$log->error( "Failed to get data from $remote_library: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+				$log->error( "Failed to get data from $baseUrl: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
 				$callback->();
 			},
 			{
 				timeout => 15,
 			},
-		)->post( $remote_library . 'jsonrpc.js', $postdata );
+		)->post( $baseUrl . 'jsonrpc.js', $postdata );
 	}
 	else {
 		my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );

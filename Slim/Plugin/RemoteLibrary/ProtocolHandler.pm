@@ -1,7 +1,5 @@
 package Slim::Plugin::RemoteLibrary::ProtocolHandler;
 
-# $Id$
-
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
@@ -39,7 +37,9 @@ sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
 	
 	my $url = $song->track()->url;
-	$url =~ s/^lms\b/http/;
+	my ($baseUrl, $id, $file) = _parseUrl($url);
+
+	$url = $baseUrl . join('/', 'music', $id, $file);
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Setting streaming URL: $url");
 	
@@ -53,13 +53,16 @@ sub getMetadataFor {
 	
 	my $meta = $cache->get('remotelibrary_' . $url);
 	my $song = $client->playingSong();
+
+	my ($baseUrl, $id, $file) = _parseUrl($url);
+
+	if ($song && $song->streamUrl && $song->streamUrl eq $url) {
+		$song->streamUrl($baseUrl . join('/', 'music', $id, $file));
+	}
 	
 	if ( !$meta && !$client->pluginData('fetchingMetadata') ) {
 		$song->pluginData( fetchingMetadata => 1 );
 
-		my ($baseUrl, $id) = $url =~ m|(lms:.*:\d+)/music/(\d+)/|;
-		$baseUrl =~ s/^lms/http/;
-		
 		my $postdata = to_json({
 			id     => 1,
 			method => 'slim.request',
@@ -78,7 +81,7 @@ sub getMetadataFor {
 				song    => $song,
 				url     => $url,
 			},
-		)->post( $baseUrl . '/jsonrpc.js', $postdata );
+		)->post( $baseUrl . 'jsonrpc.js', $postdata );
 	}
 	
 	if ($meta && keys $meta) {
@@ -120,9 +123,10 @@ sub _gotMetadata {
 	};
 
 	if ($meta->{coverid}) {
-		my ($baseUrl) = $url =~ m|(lms:.*:\d+/music/)|;
-		$baseUrl =~ s/^lms/http:lms/;
-		$meta->{cover} = $baseUrl . (delete $meta->{coverid}) . '/cover';
+		my ($remote_library) = $url =~ m|lms://(.*?)/music/|;
+		$meta->{cover} = Slim::Plugin::RemoteLibrary::Plugin::_proxiedImage({
+			'image' => delete $meta->{coverid}
+		}, $remote_library);
 	}
 
 	if ($song) {
@@ -135,6 +139,15 @@ sub _gotMetadata {
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 	
 	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+}
+
+sub _parseUrl {
+	my $url = shift;
+	
+	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/(\d+?)/(.*)|;
+	my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($uuid);
+	
+	return ($baseUrl || $uuid, $id, $file);
 }
 
 1;
