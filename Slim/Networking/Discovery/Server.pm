@@ -21,7 +21,7 @@ use Slim::Utils::Unicode;
 my $log = logger('network.protocol');
 my $prefs = preferences('server');
 
-my $discovery_packet = pack 'a5xa4xa4xa4x', 'eIPAD', 'NAME', 'JSON', 'UUID';
+my $discovery_packet = pack 'a5xa4xa4xa4xa4x', 'eIPAD', 'NAME', 'JSON', 'UUID', 'VERS';
 
 # List of server we see
 my $server_list = {};
@@ -143,6 +143,17 @@ sub getServerUUID {
 	return $server->{UUID} || '';
 }
 
+=head2 getServerVersion()
+
+Return a server's Version if available
+
+=cut
+
+sub getServerVersion {
+	my $server = _getServerConfig(shift) || {};
+	return $server->{VERS} || '';
+}
+
 =head2 getWebHostAddress()
 
 Return a server's full address to access its web page
@@ -222,7 +233,7 @@ sub gotTLVResponse {
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {	
-		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}, UUID $server->{UUID}");
+		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}, UUID $server->{UUID}, version $server->{VERS}");
 	}
 
 	if ($server->{NAME}) {

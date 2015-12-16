@@ -131,6 +131,7 @@ sub _extractBrowseMenu {
 	$menuItems ||= [];
 
 	my @items;
+	my $hasArtists;
 
 	foreach ( @$menuItems ) {
 		# we only use the My Music menu at this point
@@ -139,6 +140,11 @@ sub _extractBrowseMenu {
 		# only allow for standard browse menus for now
 		# /(?:myMusicArtists|myMusic.*Albums|myMusic.*Tracks)/;
 		next unless $knownBrowseMenus->{$_->{id}} || $_->{id} =~ /(?:myMusicArtists)/;
+		
+		# some items require at least LMS 7.9
+		if ( Slim::Utils::Versions->compareVersions(Slim::Networking::Discovery::Server::getServerVersion($remote_library), '7.9.0') < 0 ) {
+			next if $_->{id} eq 'myMusicRandomAlbums';
+		}
 		
 		$_->{icon} = _proxiedImage($_, $remote_library);
 		$_->{url}  = \&Slim::Menu::BrowseLibrary::_topLevel;
