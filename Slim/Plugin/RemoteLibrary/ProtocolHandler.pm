@@ -4,6 +4,7 @@ use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
 use JSON::XS::VersionOneAndTwo;
+use Scalar::Util qw(blessed);
 
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Cache;
@@ -37,7 +38,7 @@ sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
 	
 	my $url = $song->track()->url;
-	my ($baseUrl, $id, $file) = _parseUrl($url);
+	my ($baseUrl, $uuid, $id, $file) = _parseUrl($url);
 
 	$url = $baseUrl . join('/', 'music', $id, $file);
 	
@@ -54,19 +55,35 @@ sub getMetadataFor {
 	my $meta = $cache->get('remotelibrary_' . $url);
 	my $song = $client->playingSong();
 
-	my ($baseUrl, $id, $file) = _parseUrl($url);
+	my ($baseUrl, $uuid, $id, $file) = _parseUrl($url);
 
 	if ($song && $song->streamUrl && $song->streamUrl eq $url) {
 		$song->streamUrl($baseUrl . join('/', 'music', $id, $file));
 	}
 	
 	if ( !$meta && !$client->pluginData('fetchingMetadata') ) {
-		$song->pluginData( fetchingMetadata => 1 );
+		$client->pluginData( fetchingMetadata => 1 );
 
+		# Go fetch metadata for all tracks on the playlist without metadata
+		my $need = {
+			$id => $url
+		};
+		
+		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
+			my $trackURL = blessed($track) ? $track->url : $track;
+			if ( $trackURL && $trackURL =~ /$uuid/ && (my (undef, undef, $id) = _parseUrl($trackURL)) ) {
+				if ( $id && !$cache->get("remotelibrary_$trackURL") ) {
+					$need->{$id} = $trackURL;
+					# only fetch 50 tracks in one query
+					last if scalar keys %$need > 50;
+				}
+			}
+		}
+		
 		my $postdata = to_json({
 			id     => 1,
 			method => 'slim.request',
-			params => [ '', ['songinfo', 0, 999, 'track_id:' . $id, 'tags:acdgilortyY'] ]
+			params => [ '', ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY']],
 		});
 
 		Slim::Networking::SimpleAsyncHTTP->new(
@@ -78,8 +95,8 @@ sub getMetadataFor {
 			{
 				timeout => 30,
 				client  => $client,
-				song    => $song,
 				url     => $url,
+				idUrlMap => $need,
 			},
 		)->post( $baseUrl . 'jsonrpc.js', $postdata );
 	}
@@ -101,8 +118,8 @@ sub getMetadataFor {
 sub _gotMetadata {
 	my $http = shift;
 	my $url  = $http->params('url');
-	my $song = $http->params('song');
 	my $client = $http->params('client');
+	my $idUrlMap = $http->params('idUrlMap');
 
 	my $res = eval { from_json( $http->content ) };
 
@@ -111,30 +128,28 @@ sub _gotMetadata {
 		return;
 	}
 	
-	if ( !$res->{result} && $res->{result}->{songinfo_loop} ) {
+	if ( !($res->{result} && $res->{result}->{titles_loop}) ) {
 		$http->error( 'Unexpected response data: ' . Data::Dump::dump($res) );
 	}
 	
-	my $meta = {
-		map {
-			my ($k, $v) = each %$_;
-			$k => $v;
-		} @{ $res->{result}->{songinfo_loop} }
-	};
-
-	if ($meta->{coverid}) {
-		my ($remote_library) = $url =~ m|lms://(.*?)/music/|;
-		$meta->{cover} = Slim::Plugin::RemoteLibrary::Plugin::_proxiedImage({
-			'image' => delete $meta->{coverid}
-		}, $remote_library);
-	}
-
-	if ($song) {
-		$song->pluginData( fetchingMetadata => 0 );
-	}
-
-	$cache->set('remotelibrary_' . $url, $meta);
+	foreach my $meta ( @{$res->{result}->{titles_loop}} ) {
+		next unless $meta->{id} && (my $url = $idUrlMap->{$meta->{id}});
 	
+		if ($meta->{coverid}) {
+			my (undef, $remote_library) = _parseUrl($url);
+			$meta->{cover} = Slim::Plugin::RemoteLibrary::Plugin::_proxiedImage({
+				'image' => delete $meta->{coverid}
+			}, $remote_library);
+		}
+
+		$cache->set('remotelibrary_' . $url, $meta);
+	}
+	
+
+	if ($client) {
+		$client->pluginData( fetchingMetadata => 0 );
+	}
+
 	# Update the playlist time so the web will refresh, etc
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 	
@@ -147,7 +162,7 @@ sub _parseUrl {
 	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/(\d+?)/(.*)|;
 	my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($uuid);
 	
-	return ($baseUrl || $uuid, $id, $file);
+	return ($baseUrl || '', $uuid, $id, $file);
 }
 
 1;
