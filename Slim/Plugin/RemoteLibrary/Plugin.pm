@@ -17,6 +17,7 @@ use Slim::Menu::BrowseLibrary;
 use Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(cstring string);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.remotelibrary',
@@ -41,6 +42,8 @@ my $knownBrowseMenus = {
 	myMusicSearchPlaylists => 'search.png',
 #	randomplay => 'plugins/RandomPlay/html/images/icon.png',
 };
+
+my %passwordProtected;
 
 my $cache = Slim::Utils::Cache->new;
 
@@ -99,14 +102,15 @@ sub handleFeed {
 		
 		next if Slim::Networking::Discovery::Server::is_self($_);
 		
-		_getBrowsePrefs($_);
+		my $uuid = Slim::Networking::Discovery::Server::getServerUUID($_);
+		_getBrowsePrefs($uuid);
 		
 		# create menu item
 		push @$items, {
 			name => $_,
 			url  => \&_getRemoteMenu,
 			passthrough => [{
-				remote_library => Slim::Networking::Discovery::Server::getServerUUID($_),
+				remote_library => $uuid,
 			}],
 		};
 	}
@@ -121,8 +125,18 @@ sub _getRemoteMenu {
 	
 	my $remote_library = $pt->{remote_library} || $client->pluginData('remote_library');
 	$client->pluginData( remote_library => $remote_library );
-	
-	$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
+
+	if ($passwordProtected{$remote_library}) {
+		$callback->({
+			items => [{
+				name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED'),
+				type => 'textarea'
+			}]
+		});
+	}
+	else {
+		$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
+	}
 }
 
 sub _extractBrowseMenu {
@@ -222,7 +236,7 @@ sub _getBrowsePrefs {
 	my $cached = $cache->get($cacheKey) || {};
 	
 	foreach my $pref ( 'noGenreFilter', 'noRoleFilter', 'useUnifiedArtistsList', 'composerInArtists', 'conductorInArtists', 'bandInArtists' ) {
-		if (!$cached->{$pref}) {
+		if (!$cached->{$pref} && !$passwordProtected{$serverId}) {
 			push @prefsFetcher, sub {
 				_remoteRequest($serverId, 
 					[ '', ['pref', $pref, '?' ] ],
@@ -291,7 +305,14 @@ sub _remoteRequest {
 		},
 		sub {
 			my $http = shift;
-			$log->error( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+
+			if ($http->error && $http->error =~ /^401/) {
+				$log->error( "$baseUrl is password protected? " . $http->error) unless $passwordProtected{$remote_library}++;
+			}
+			else {
+				$log->error( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+			}
+
 			$ecb->();
 		},
 		{

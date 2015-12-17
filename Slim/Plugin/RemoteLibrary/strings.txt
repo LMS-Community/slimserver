@@ -5,3 +5,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
 	DE	Wiedergabe von Musik aus der Sammlung eines andere Logitech Music Servers, ohne den Player umschalten zu müssen.
 	EN	Music playback from another Logitech Music Server's Music Library without switching the player to that server.
+
+PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
+	DE	Dieser Server ist Passwort geschützt. Techniker ist informiert.
+	EN	This server is password protected. We can't handle authentication, yet. Stay tuned!
