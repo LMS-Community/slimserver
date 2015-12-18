@@ -10,11 +10,7 @@ use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 
-my $log = Slim::Utils::Log->addLogCategory( {
-	'category'     => 'plugin.remotelibrary',
-	'defaultLevel' => 'ERROR',
-	'description'  => 'PLUGIN_REMOTE_LIBRARY_MODULE_NAME',
-} );
+my $log = logger('plugin.remotelibrary');
 
 my $cache = Slim::Utils::Cache->new;
 
@@ -80,25 +76,15 @@ sub getMetadataFor {
 			}
 		}
 		
-		my $postdata = to_json({
-			id     => 1,
-			method => 'slim.request',
-			params => [ '', ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY']],
-		});
-
-		Slim::Networking::SimpleAsyncHTTP->new(
+		Slim::Plugin::RemoteLibrary::Plugin::remoteRequest($uuid, 
+			[ '', ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY']],
 			\&_gotMetadata,
-			sub {
-				my $http = shift;
-				$log->error( "Failed to get metadata from $url: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
-			},
+			sub {},
 			{
-				timeout => 30,
 				client  => $client,
-				url     => $url,
 				idUrlMap => $need,
 			},
-		)->post( $baseUrl . 'jsonrpc.js', $postdata );
+		);
 	}
 	
 	if ($meta && keys $meta) {
@@ -116,23 +102,21 @@ sub getMetadataFor {
 }
 
 sub _gotMetadata {
-	my $http = shift;
-	my $url  = $http->params('url');
-	my $client = $http->params('client');
-	my $idUrlMap = $http->params('idUrlMap');
-
-	my $res = eval { from_json( $http->content ) };
-
-	if ( $@ || ref $res ne 'HASH' ) {
-		$log->error( $@ || 'Invalid JSON response: ' . $http->content );
-		return;
-	}
+	my ($result, $args) = @_;
 	
-	if ( !($res->{result} && $res->{result}->{titles_loop}) ) {
-		$http->error( 'Unexpected response data: ' . Data::Dump::dump($res) );
-	}
+	my $client = $args->{client};
+	my $idUrlMap = $args->{idUrlMap};
 	
-	foreach my $meta ( @{$res->{result}->{titles_loop}} ) {
+	if ( !($result && $result->{titles_loop}) ) {
+		$log->error( 'Unexpected response data: ' . Data::Dump::dump($result) );
+		
+		# fill in some fake metadata to prevent looping lookups
+		$result->{titles_loop} = [ map {
+			id => $_
+		}, keys %$idUrlMap ];
+	}
+
+	foreach my $meta ( @{$result->{titles_loop}} ) {
 		next unless $meta->{id} && (my $url = $idUrlMap->{$meta->{id}});
 	
 		if ($meta->{coverid}) {
@@ -160,7 +144,7 @@ sub _parseUrl {
 	my $url = shift;
 	
 	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/(\d+?)/(.*)|;
-	my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($uuid);
+	my $baseUrl = Slim::Plugin::RemoteLibrary::Plugin->baseUrl($uuid);
 	
 	return ($baseUrl || '', $uuid, $id, $file);
 }

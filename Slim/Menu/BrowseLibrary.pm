@@ -230,6 +230,8 @@ my %nodes;
 my @addedNodes;
 my @deletedNodes;
 
+my ($requestProxy, $streamProxy, $imageProxy, $prefGetter);
+
 my %browseLibraryModeMap = (
 	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
 	playlistTracks => \&_playlistTracks,# needs to be here because no top-level menu added via registerNode()
@@ -963,36 +965,12 @@ sub _doRequest {
 	my ($client, $requestRef, $callback, $args) = @_;
 	
 	my $remote_library = $args->{remote_library};
-	my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($remote_library) if $remote_library;
 	
-	if ( $baseUrl && $baseUrl =~ m|^http.*:\d+/| ) {
-		my $postdata = to_json({
-			id     => 1,
-			method => 'slim.request',
-			params => [ '', $requestRef ]
-		});
-		
-		Slim::Networking::SimpleAsyncHTTP->new(
-			sub {
-				my $http = shift;
-
-				my $res = eval { from_json( $http->content ) } || {};
-			
-				if ( $@ || ref $res ne 'HASH' ) {
-					$log->error( $@ || 'Invalid JSON response: ' . $http->content );
-				}
-				
-				$callback->($res->{result});
-			},
-			sub {
-				my $http = shift;
-				$log->error( "Failed to get data from $baseUrl: " . ($http->error || $http->mess || Data::Dump::dump($http)) );
-				$callback->();
-			},
-			{
-				timeout => 15,
-			},
-		)->post( $baseUrl . 'jsonrpc.js', $postdata );
+	if ( $requestProxy && $remote_library ) {
+		$requestProxy->($remote_library, 
+			[ '', $requestRef ],
+			$callback
+		);
 	}
 	else {
 		my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
@@ -2241,12 +2219,18 @@ sub getDisplayName () {
 sub playerMenu {'PLUGINS'}
 
 =pod
+
 Provide hooks for plugins to register callbacks for some common remote streaming proxy helpers
+
 =cut
 
-my $streamProxy;
-my $imageProxy;
-my $prefGetter;
+sub registerRequestProxy {
+	my ($class, $proxy) = @_;
+	
+	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
+
+	$requestProxy = $proxy;
+}
 
 sub registerStreamProxy {
 	my ($class, $proxy) = @_;

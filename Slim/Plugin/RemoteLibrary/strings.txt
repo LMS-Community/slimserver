@@ -6,6 +6,89 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
 	DE	Wiedergabe von Musik aus der Sammlung eines andere Logitech Music Servers, ohne den Player umschalten zu müssen.
 	EN	Music playback from another Logitech Music Server's Music Library without switching the player to that server.
 
+PLUGIN_REMOTE_LIBRARY_USERNAME
+	CS	Uživatelské jméno
+	DA	Brugernavn
+	DE	Benutzername
+	EN	Username
+	ES	Nombre de usuario
+	FI	Käyttäjätunnus
+	FR	Nom d'utilisateur
+	HE	שם משתמש
+	IT	Nome utente
+	JA	ユーザー名
+	NL	Gebruikersnaam
+	NO	Brukernavn
+	PL	Nazwa użytkownika
+	PT	Utilizador
+	RU	Имя пользователя
+	SV	Användarnamn
+	ZH_CN	用户名
+
+PLUGIN_REMOTE_LIBRARY_PASSWORD
+	CS	Heslo
+	DA	Adgangskode
+	DE	Kennwort
+	EN	Password
+	ES	Contraseña
+	FI	Salasana
+	FR	Mot de passe
+	IT	Password
+	NL	Wachtwoord
+	NO	Passord
+	PL	Hasło
+	RU	Пароль
+	SV	Lösenord
+
 PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
-	DE	Dieser Server ist Passwort geschützt. Techniker ist informiert.
-	EN	This server is password protected. We can't handle authentication, yet. Stay tuned!
+	DE	Dieser Logitech Media Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein. 
+	EN	This Logitech Media Server is password protected. Please enter username and password for this server.
+
+PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
+	DE	Bitte geben Sie das Passwort für den anderen Logitech Media Server ein.
+	EN	Please enter the password for the other Logitech Media Server.
+
+PLUGIN_REMOTE_LIBRARY_INVALID_USERNAME_PASSWORD
+	CS	Neplatné uživatelské jméno nebo heslo.
+	DA	Ugyldigt brugernavn eller adgangskode.
+	DE	Benutzername oder Kennwort ungültig.
+	EN	Invalid username or password.
+	ES	Contraseña o nombre de usuario no válido.
+	FI	Virheellinen käyttäjätunnus tai salasana.
+	FR	Nom d'utilisateur ou mot de passe non valide.
+	IT	Nome utente o password non validi.
+	NL	Gebruikersnaam of wachtwoord ongeldig.
+	NO	Ugyldig brukernavn eller passord.
+	PL	Nieprawidłowa nazwa użytkownika lub hasło.
+	RU	Недействительные имя пользователя или пароль.
+	SV	Ogiltigt användarnamn eller lösenord.
+
+PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
+	CS	Úspěšné přihlášení
+	DA	Du er logget på
+	DE	Erfolgreiche Anmeldung
+	EN	Login Success
+	ES	Inicio de sesión realizado correctamente
+	FI	Kirjautuminen onnistui
+	FR	Connexion effectuée
+	IT	Accesso riuscito
+	NL	Aanmelding geslaagd
+	NO	Du er logget på
+	PL	Logowanie powiodło się.
+	RU	Вы вошли в систему
+	SV	Inloggningen lyckades
+
+PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
+	CS	Není možné ověřit váš účet, zkuste znovu později.
+	DA	Din konto kunne ikke verificeres. Prøv igen senere.
+	DE	Ihr Konto konnte nicht bestätigt werden, versuchen Sie es noch einmal.
+	EN	Unable to verify your account, please try again.
+	ES	Imposible verificar su cuenta, vuelva a intentarlo.
+	FI	Tiliä ei voi vahvistaa, yritä myöhemmin uudelleen.
+	FR	Vérification de votre compte impossible. Réessayez.
+	IT	Impossibile verificare l'account. Riprovare.
+	NL	Je account kan niet worden geverifieerd; probeer het opnieuw.
+	NO	Kunne ikke godkjenne kontoen din. Prøv igjen senere.
+	PL	Nie można zweryfikować konta; spróbuj ponownie później.
+	RU	Невозможно проверить вашу учетную запись. Повторите попытку позже.
+	SV	Det går inte att verifiera kontot. Försök igen senare.

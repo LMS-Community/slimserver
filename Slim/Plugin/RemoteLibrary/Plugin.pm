@@ -12,12 +12,16 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use strict;
 use JSON::XS::VersionOneAndTwo;
+use MIME::Base64 qw(encode_base64 decode_base64);
 
 use Slim::Menu::BrowseLibrary;
 use Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring string);
+
+my $prefs = preferences('plugin.remotelibrary');
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.remotelibrary',
@@ -63,7 +67,7 @@ sub initPlugin {
 			
 			my ($remote_library, $remote_url) = $url =~ m|remotelibrary/(.*?)/(.*)|;
 
-			my $baseUrl = Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
+			my $baseUrl = $class->baseUrl($remote_library);
 			
 			$remote_url = $baseUrl . $remote_url;
 			my ($ext) = $remote_url =~ s/(\.gif|jpe?g|png|bmp)$//i;
@@ -75,6 +79,7 @@ sub initPlugin {
 	);
 
 	# tell Slim::Menu::BrowseLibrary where to get information for remote libraries from
+	Slim::Menu::BrowseLibrary->registerRequestProxy(\&remoteRequest);
 	Slim::Menu::BrowseLibrary->registerStreamProxy(\&_proxiedStreamUrl);
 	Slim::Menu::BrowseLibrary->registerImageProxy(\&_proxiedImage);
 	Slim::Menu::BrowseLibrary->registerPrefGetter(\&_getPref);
@@ -121,21 +126,46 @@ sub handleFeed {
 }
 
 sub _getRemoteMenu {
-	my ($client, $callback, $args, $pt) = @_;
+	my ($client, $cb, $args, $pt) = @_;
 	
 	my $remote_library = $pt->{remote_library} || $client->pluginData('remote_library');
 	$client->pluginData( remote_library => $remote_library );
 
 	if ($passwordProtected{$remote_library}) {
-		$callback->({
+		# XXX - can we pre-populate the input field with the known password?
+		$cb->({
 			items => [{
 				name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED'),
 				type => 'textarea'
+			},{
+				name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_USERNAME'),
+				type => 'search',
+				url  => sub {
+					my ($client, $cb, $args, $pt) = @_;
+					
+					$cb->({
+						items => [{
+							name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD'),
+							type => 'textarea'
+						},{
+							name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_PASSWORD'),
+							type => 'search',
+							url => \&_checkCredentials,
+							passthrough => [{
+								user => $args->{search},
+								remote_library => $remote_library,
+							}]
+						}]
+					})
+				},
+				passthrough => [{
+					remote_library => $remote_library,
+				}]
 			}]
 		});
 	}
 	else {
-		$callback->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
+		$cb->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
 	}
 }
 
@@ -185,6 +215,45 @@ sub _extractBrowseMenu {
 	}
 }
 
+sub _checkCredentials {
+	my ($client, $cb, $args, $pt) = @_;
+
+	my $username = $pt->{user};
+	my $password = $args->{search};
+	my $remote_library = $pt->{remote_library};
+	
+	$prefs->set($remote_library, encode_base64(pack("u", "$username:$password"), ''));
+	
+	# Run a request against this server to test credentials
+	remoteRequest($remote_library, 
+		[ '', ['serverstatus', 0, 1 ] ],
+		sub {
+			my $result = shift || {};
+			
+			# we've successfully authenticated - remove this server from the blacklist
+			delete $passwordProtected{$remote_library};
+
+			$cb->({
+				items => [{
+					name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS'),
+					type => 'text'
+				},{
+					name => cstring($client, 'CONTINUE'),
+					nextWindow => 'myMusic'
+				}]
+			});
+		},
+		sub {
+			$cb->({
+				items => [{
+					name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE'),
+					type => 'textarea',
+				}]
+			});
+		}
+	);
+}
+
 sub _proxiedStreamUrl {
 	my ($item, $remote_library) = @_;
 	
@@ -223,7 +292,7 @@ sub _proxiedImage {
 	}
 	
 	if ($image) {
-		return join('/', '/imageproxy', 'remotelibrary', $remote_library, $image, 'image.png');
+		return join('/', 'imageproxy', 'remotelibrary', $remote_library, $image, 'image.png');
 	}
 }
 
@@ -236,9 +305,9 @@ sub _getBrowsePrefs {
 	my $cached = $cache->get($cacheKey) || {};
 	
 	foreach my $pref ( 'noGenreFilter', 'noRoleFilter', 'useUnifiedArtistsList', 'composerInArtists', 'conductorInArtists', 'bandInArtists' ) {
-		if (!$cached->{$pref} && !$passwordProtected{$serverId}) {
+		if (!defined $cached->{$pref} && !$passwordProtected{$serverId}) {
 			push @prefsFetcher, sub {
-				_remoteRequest($serverId, 
+				remoteRequest($serverId, 
 					[ '', ['pref', $pref, '?' ] ],
 					sub {
 						my $result = shift || {};
@@ -268,9 +337,22 @@ sub _getPref {
 	}
 }
 
+sub baseUrl {
+	my ($class, $remote_library) = @_;
+
+	my $baseUrl = $remote_library =~ /^http/ ? $remote_library : Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
+
+	if ( my $creds = $prefs->get($remote_library) ) {
+		$creds = unpack(chr(ord("a") + 19 + print ""), decode_base64($creds));
+		$baseUrl =~ s/^(http:\/\/)/$1$creds\@/;
+	}
+	
+	return $baseUrl;
+}
+
 # Send a CLI command to a remote server
-sub _remoteRequest {
-	my ($remote_library, $request, $cb, $ecb) = @_;
+sub remoteRequest {
+	my ($remote_library, $request, $cb, $ecb, $pt) = @_;
 
 	$ecb ||= $cb;
 	
@@ -279,7 +361,7 @@ sub _remoteRequest {
 		return;
 	}
 
-	my $baseUrl = $remote_library =~ /^http/ ? $remote_library : Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
+	my $baseUrl = __PACKAGE__->baseUrl($remote_library);
 	
 	my $postdata = to_json({
 		id     => 1,
@@ -301,19 +383,19 @@ sub _remoteRequest {
 
 			$res ||= {};
 	
-			$cb->($res->{result});
+			$cb->($res->{result}, $pt);
 		},
 		sub {
 			my $http = shift;
 
-			if ($http->error && $http->error =~ /^401/) {
+			if ( ($http->error || $http->mess || '') =~ /\b401\b/ ) {
 				$log->error( "$baseUrl is password protected? " . $http->error) unless $passwordProtected{$remote_library}++;
 			}
 			else {
 				$log->error( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
 			}
 
-			$ecb->();
+			$ecb->(undef, $pt);
 		},
 		{
 			timeout => 60,
