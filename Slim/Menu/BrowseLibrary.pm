@@ -1631,7 +1631,7 @@ sub _albums {
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,
-					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'menuStyle:allSongs' }],
+					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 				} ];
 			}

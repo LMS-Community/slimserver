@@ -88,13 +88,13 @@ sub getMetadataFor {
 	}
 	
 	if ($meta && keys $meta) {
-		$song->duration($meta->{duration}) if $meta->{duration};
+		$song->duration($meta->{duration}) if $song && $meta->{duration};
 
 		# bitrate is a formatted string (eg. "320kbps") - need to transform into number
 		if (my $bitrate = $meta->{bitrate}) {
 			$bitrate = $bitrate * 1.0;
 			$bitrate *= 1000 if $bitrate !~ /^\d{5,}$/;
-			$song->bitrate($bitrate) if $bitrate;
+			$song->bitrate($bitrate) if $song && $bitrate;
 		}
 	}
 	

@@ -501,7 +501,7 @@ sub handleFeed {
 
 					if ($depth == $levels) {
 						$args{'index'} = $index;
-						$args{'quantity'} = $stash->{'itemsPerPage'} || $prefs->get('itemsPerPage');
+						$args{'quantity'} = $stash->{'itemsPerPage'} || ($stash->{action} =~ /^(?:play|add)all$/i && $prefs->get('maxPlaylistLength')) || $prefs->get('itemsPerPage');
 					} elsif ($depth < $levels) {
 						$args{'index'} = $index[$depth];
 						$args{'quantity'} = 1;
