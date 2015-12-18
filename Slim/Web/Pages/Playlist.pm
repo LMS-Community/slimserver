@@ -162,6 +162,7 @@ sub playlist {
 	$titleFormat =~ /\bYEAR\b/     && ($tags .= 'y');
 	$titleFormat =~ /\bBITRATE\b/  && ($tags .= 'r');
 	$titleFormat =~ /\bDURATION\b/ && ($tags .= 'd');
+	$titleFormat =~ /\bURL\b/      && ($tags .= 'u');
 	$titleFormat =~ /\bSAMPLERATE\b/ && ($tags .= 'T');
 	$titleFormat =~ /\bSAMPLESIZE\b/ && ($tags .= 'I');
 	
