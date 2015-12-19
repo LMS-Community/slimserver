@@ -87,7 +87,7 @@ sub getMetadataFor {
 		);
 	}
 	
-	if ($meta && keys $meta) {
+	if ($meta && ref $meta && keys %$meta) {
 		$song->duration($meta->{duration}) if $song && $meta->{duration};
 
 		# bitrate is a formatted string (eg. "320kbps") - need to transform into number
