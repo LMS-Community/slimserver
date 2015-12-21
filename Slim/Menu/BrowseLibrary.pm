@@ -155,7 +155,7 @@ use Slim::Utils::Strings qw(cstring);
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
-my $cache = Slim::Utils::Cache->new();
+my $cache;
 
 #my %pluginData = (
 #	icon => 'html/images/browselibrary.png',
@@ -301,6 +301,8 @@ sub init {
 	my $class = shift;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug('init');
+	
+	$cache = Slim::Utils::Cache->new();
 	
 	{
 		no strict 'refs';
