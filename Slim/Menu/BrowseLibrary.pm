@@ -1224,8 +1224,8 @@ sub _artists {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
 					name        => cstring($client, 'ALL_ALBUMS'),
-					type        => 'playlist',
-					playlist    => \&_tracks,
+					type        => $remote_library ? 'link' : 'playlist',
+					playlist    => $remote_library ? undef : \&_tracks,
 					url         => \&_albums,
 					passthrough => [{ searchTags => \@searchTags }],
 					itemActions => {
@@ -1240,19 +1240,19 @@ sub _artists {
 								%$params,
 							},
 						},
-						play => {
+						play => $remote_library ? undef : {
 							command     => ['playlistcontrol'],
 							fixedParams => {cmd => 'load', %$params},
 						},
-						add => {
+						add => $remote_library ? undef : {
 							command     => ['playlistcontrol'],
 							fixedParams => {cmd => 'add', %$params},
 						},
-						insert => {
+						insert => $remote_library ? undef : {
 							command     => ['playlistcontrol'],
 							fixedParams => {cmd => 'insert', %$params},
 						},
-						remove => {
+						remove => $remote_library ? undef : {
 							command     => ['playlistcontrol'],
 							fixedParams => {cmd => 'delete', %$params},
 						},
