@@ -474,9 +474,10 @@ Main = {
 		SqueezeJS.setCookie('Squeezebox-expandPlayerControl', doExpand);
 
 		// resize the window if in undocked mode
-		if (!Ext.get('ctrlUndock').isVisible()) {
+		var el = Ext.get('ctrlUndock');
+		if (el && !el.isVisible()) {
 			var width = Ext.get(document.body).getWidth();
-			var height = doExpand ? 170 : 100
+			var height = doExpand ? 200 : 115
 
 			if (Ext.isOpera && doExpand) {
 				height += 15;
