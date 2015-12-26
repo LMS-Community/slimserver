@@ -7,7 +7,7 @@
 	<a href="#Supported Commands">Experts, jump directly to the command index</a>
 </p>
 
-<h2>Introduction</h2>
+<h2 id="Introduction">Introduction</h2>
 
 <p>
 	the Logitech Media Server provides a command-line interface to the
@@ -42,6 +42,9 @@
 </p>
 
 <hr>
+
+<h3 id="Changelog">Changelog</h3>
+
 <h4 id="7.9">Changes starting from Squeezebox Server 7.9</h4>
 <ul>
 	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries 
@@ -284,9 +287,9 @@
 <hr>
 
 
-<h3>
+<h2 id="Command Format">
 	Command format
-</h3>
+</h2>
 <h4>
 	General command and query format
 </h4>
@@ -493,7 +496,7 @@
 
 
 
-<h3 id="Notes">Notes</h3>
+<h2 id="Notes">Notes</h2>
 <ul>
 	<li>The Security settings of the server preferences apply to CLI
 		connections when they are established. A change in security
@@ -503,12 +506,10 @@
 		be the first command sent after the connection. Any error in the
 		user and/or password, or using any other command as the first
 		one, results in the server disconnecting.</li>
-<p></p>
 	<li>All Logitech Media Server preferences apply to the CLI data. For examples, the
 		preference about composers appearing in the artists list applies to
 		the data returned by the &quot;<a href="#artists">artists</a>&quot;
 		query.</li>
-<p></p>
 	<li>Commands that use paths to songs or playlists
 		(<code>&lt;item&gt;</code> parameters below)  can use relative paths
 		from the root of the Music Library folder to specify songs.  For
@@ -520,7 +521,6 @@
 		before the path.  For example, to refer to the saved playlist
 		&quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a
 		path of &quot;__playlists/bar.m3u&quot;.</li>
-<p></p>
 	<li>The HTTP server can return cover art for songs using the track
 		ID as returned by the CLI functions. If no cover art exists for
 		the given song, the server returns special "no artwork" image.
@@ -606,9 +606,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 
 
-<h3 id="Supported Commands">
+<h2 id="Supported Commands">
 	Supported Commands
-</h3>
+</h2>
 <p>
 	The available commands and queries are listed below, grouped by their scope:
 </p>
@@ -660,18 +660,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 
 <hr>
-<h2 id="GC">
+<h3 id="GC">
 	General commands and queries
-</h2>
+</h3>
 <ul>
 	<li>
 		<strong><code><a href="#login">login</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#can">can</a></code></strong>
+		<strong><code><a href="#can">can ?</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#version">version</a></code></strong>
+		<strong><code><a href="#version">version ?</a></code></strong>
 	</li>
 	<li>
 		<strong><code><a href="#listen">listen</a></code></strong>
@@ -771,7 +771,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="version ?">
+<p id="version">
 	<strong>
 		<code>
 			version
@@ -1189,9 +1189,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <!-- PLAYER COMMANDS                                                         -->
 <!--#########################################################################-->
 <hr>
-<h2 id="PC">
+<h3 id="PC">
 	Player commands and queries
-</h2>
+</h3>
 <ul>
 	<li>
 		<strong><code><a href="#player count ?">player count ?</a></code></strong>
@@ -1236,7 +1236,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#sync">sync</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#syncgroups">syncgroups</a></code></strong>
+		<strong><code><a href="#syncgroups">syncgroups ?</a></code></strong>
 	</li>
 	<li>
 		<strong><code><a href="#power">power</a></code></strong>
@@ -1263,7 +1263,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#display">display</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#linesperscreen">linesperscreen</a></code></strong>
+		<strong><code><a href="#linesperscreen">linesperscreen ?</a></code></strong>
 	</li>
 	<li>
 		<strong><code><a href="#display ? ?">display ? ?</a></code></strong>
@@ -2600,9 +2600,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <!-- DATABASE COMMANDS                                                       -->
 <!--#########################################################################-->
 <hr>
-<h2 id="DB">
+<h3 id="DB">
 	Database commands and queries
-</h2>
+</h3>
 <ul>
 	<li>
 		<strong><code><a href="#rescan">rescan</a></code></strong>
@@ -5828,9 +5828,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <!--#########################################################################-->
 
 <hr>
-<h2 id="PL">
+<h3 id="PL">
 	Playlist commands and queries
-</h2>
+</h3>
 <ul>
 	<li>
 		<strong><code><a href="#play">play</a></code></strong>
@@ -6871,9 +6871,9 @@ in the saved playlists folder.</p>
 <!--#########################################################################-->
 
 <hr>
-<h2 id="CQ">
+<h3 id="CQ">
 	Compound queries
-</h2>
+</h3>
 <ul>
 	<li>
 		<strong><code><a href="#serverstatus">serverstatus</a></code></strong>
@@ -7957,9 +7957,9 @@ in the saved playlists folder.</p>
 <!--#########################################################################-->
 
 <hr>
-<h2 id="NC">
+<h3 id="NC">
 	Notifications
-</h2>
+</h3>
 <p>
 	All commands listed in this document are notifications as well as being
 	commands and can be received when using &quot;listen 1&quot; (if they do not
@@ -8207,9 +8207,9 @@ in the saved playlists folder.</p>
 <!--#########################################################################-->
 
 <hr>
-<h2 id="AL">
+<h3 id="AL">
 	Alarm commands and queries
-</h2>
+</h3>
 
 <ul>
 	<li>
@@ -8519,9 +8519,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <!--#########################################################################-->
 
 <hr>
-<h2 id="PG">
+<h3 id="PG">
 	Plugins commands and queries
-</h2>
+</h3>
 <p>
 	The following command and queries are proposed by server plugins. The
 	plugin must be enabled in the server configuration for the commands
@@ -9605,6 +9605,23 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <h3 id="RandomPlay">
 	RandomPlay
 </h3>
+<ul>
+	<li>
+		<strong><code><a href="#randomplay">randomplay</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#randomplaygenrelist">randomplaygenrelist</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#randomplaychoosegenre">randomplaychoosegenre</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#randomplaygenreselectall">randomplaygenreselectall</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#randomplayisactive">randomplayisactive</a></code></strong>
+	</li>
+</ul>
 
 <p id="randomplay">
 	<strong>
@@ -9724,6 +9741,17 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <h3 id="MusicIP">
 	MusicIP
 </h3>
+<ul>
+	<li>
+		<strong><code><a href="#musicip">musicip mix</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#musicipplayadd">musicip &lt;play|add&gt;</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#musicipmoods">musicip moods</a></code></strong>
+	</li>
+</ul>
 
 <p id="musicip">
 	<strong>
@@ -9878,9 +9906,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <!--#########################################################################-->
 
 <hr>
-<h2 id="DC">
+<h3 id="DC">
 	Deprecated commands and queries
-</h2>
+</h3>
 <p>
 	The following commands are still supported but their usage is not
 	recommended:
