@@ -120,6 +120,19 @@ sub handleFeed {
 		};
 	}
 	
+	if ( !scalar @$items ) {
+		$items = [{
+			name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_NOT_FOUND'),
+			type => 'textarea'
+		}];
+	}
+	else {
+		unshift @$items, {
+			name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND'),
+			type => 'textarea'
+		};
+	}
+	
 	$cb->({
 		items => $items
 	});
