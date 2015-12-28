@@ -92,3 +92,12 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
 	PL	Nie można zweryfikować konta; spróbuj ponownie później.
 	RU	Невозможно проверить вашу учетную запись. Повторите попытку позже.
 	SV	Det går inte att verifiera kontot. Försök igen senare.
+
+PLUGIN_REMOTE_LIBRARY_NOT_FOUND
+	DE	Es wurde kein anderer Logitech Media Server im Netzwerk gefunden. Bitte stellen Sie sicher, dass eine Kopie ausgeführt wird und erreichbar ist.
+	EN	No other Logitech Media Server was found in your network. Please make sure it's up and running and reachable.
+
+PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
+	DE	Falls in der Liste der gefundenen Logitech Media Server einer fehlt, so stellen Sie sicher, dass er ausgeführt wird und im Netzwerk verfügbar ist.
+	EN	This is the list of Logitech Media Server instances found in your network. In case the desired instance was missing, make sure the software is up and running.
+	
