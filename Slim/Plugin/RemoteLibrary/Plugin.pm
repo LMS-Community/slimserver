@@ -201,6 +201,25 @@ sub _extractBrowseMenu {
 		# some items require at least LMS 7.9
 		if ( Slim::Utils::Versions->compareVersions(Slim::Networking::Discovery::Server::getServerVersion($remote_library), '7.9.0') < 0 ) {
 			next if $_->{id} eq 'myMusicRandomAlbums';
+			
+			# older servers can't filter artists by role
+			if ($_->{id} =~ /^myMusicArtists/ ) {
+				next if $hasArtists;
+				
+				$_ = {
+					actions => {
+						go => {
+								cmd => ["browselibrary", "items"],
+								params => { menu => 1, mode => "artists" },
+							},
+						},
+					homeMenuText => string('BROWSE_ARTISTS'),
+					id => "myMusicArtists",
+					text => string('BROWSE_BY_ARTIST'),
+					weight => 10,
+				};
+				$hasArtists++;
+			}
 		}
 		
 		$_->{icon} = _proxiedImage($_, $remote_library);
