@@ -1183,6 +1183,44 @@ sub generateHTTPResponse {
 				$response,
 			);
 
+		} elsif ($path =~ /music\/(-[0-9a-f]+)\/download/) {
+			my $obj = Slim::Schema->find('Track', $1);
+			
+			# our download code can't handle the volatile files directly - let's fake a local file here
+			if (blessed($obj) && Slim::Music::Info::isVolatile($obj->url)) {
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($obj->url);
+				
+				my $url = Slim::Utils::Misc::fileURLFromPath($handler->pathFromFileURL($obj->url));
+				
+				my $tmpObj = Slim::Schema::RemoteTrack->updateOrCreate($url, {
+					content_type => Slim::Music::Info::typeFromPath($url)
+				});
+
+				main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for large file download");
+				delete $keepAlives{$httpClient};
+				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+				$response->header( Connection => 'close' );
+
+				if ( blessed($tmpObj) && $tmpObj->id && downloadMusicFile($httpClient, $response, $tmpObj->id) ) {
+					return 0;
+				}
+			}
+
+			# 404 error
+			$log->is_warn && $log->warn("unable to find file for path: $path");
+
+			$response->content_type('text/html');
+			$response->code(RC_NOT_FOUND);
+
+			$body = filltemplatefile('html/errors/404.html', $params);
+
+			return prepareResponseForSending(
+				$client,
+				$params,
+				$body,
+				$httpClient,
+				$response,
+			);
 		} elsif ($path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/) {
 			# Bug 10730
 			my $id = $1;

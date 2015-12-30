@@ -42,6 +42,7 @@ my @allAttributes = (qw(
 	
 	_comment genre
 	
+	dlna_profile
 	stash
 	error
 ));

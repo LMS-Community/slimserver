@@ -73,19 +73,30 @@ sub getMetadataFor {
 			$id => $url
 		};
 		
-		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
-			my $trackURL = blessed($track) ? $track->url : $track;
-			if ( $trackURL && $trackURL =~ /$uuid/ && (my (undef, undef, $id) = _parseUrl($trackURL)) ) {
-				if ( $id && !$cache->get("remotelibrary_$trackURL") ) {
-					$need->{$id} = $trackURL;
-					# only fetch 50 tracks in one query
-					last if scalar keys %$need > 50;
+		my $request;
+			
+		# we'll have to use one songinfo query per remote track
+		if ( $id =~ /^-/ ) {
+			$request = ['songinfo', 0, 999, 'track_id:' . $id, 'tags:acdgilortyY'];
+		}
+		# local (to the remote server) tracks can be fetched using the more efficient titles query
+		else {
+			for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
+				my $trackURL = blessed($track) ? $track->url : $track;
+				if ( $trackURL && $trackURL =~ /$uuid/ && (my (undef, undef, $id) = _parseUrl($trackURL)) ) {
+					if ( $id && $id !~ /^-/ && !$cache->get("remotelibrary_$trackURL") ) {
+						$need->{$id} = $trackURL;
+						# only fetch 50 tracks in one query
+						last if scalar keys %$need > 50;
+					}
 				}
 			}
+			
+			$request = ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY'];
 		}
 		
 		Slim::Plugin::RemoteLibrary::Plugin::remoteRequest($uuid, 
-			[ '', ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY']],
+			[ '', $request ],
 			\&_gotMetadata,
 			sub {},
 			{
@@ -115,7 +126,7 @@ sub _gotMetadata {
 	my $client = $args->{client};
 	my $idUrlMap = $args->{idUrlMap};
 	
-	if ( !($result && $result->{titles_loop}) ) {
+	if ( !($result && ($result->{titles_loop} || $result->{songinfo_loop})) ) {
 		$log->error( 'Unexpected response data: ' . Data::Dump::dump($result) );
 		
 		# fill in some fake metadata to prevent looping lookups
@@ -123,8 +134,21 @@ sub _gotMetadata {
 			id => $_
 		}, keys %$idUrlMap ];
 	}
+	
+	my @trackInfo;
+	if ($result->{titles_loop}) {
+		@trackInfo = @{$result->{titles_loop}};
+	}
+	elsif ($result->{songinfo_loop}) {
+		push @trackInfo, {
+			map {
+				my ($k, $v) = each %$_;
+				$k => $v;
+			} @{ $result->{songinfo_loop} }
+		};
+	}
 
-	foreach my $meta ( @{$result->{titles_loop}} ) {
+	foreach my $meta ( @trackInfo ) {
 		next unless $meta->{id} && (my $url = $idUrlMap->{$meta->{id}});
 	
 		if ($meta->{coverid}) {
@@ -151,7 +175,7 @@ sub _gotMetadata {
 sub _parseUrl {
 	my $url = shift;
 	
-	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/(\d+?)/(.*)|;
+	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/([\-\d]+?)/(.*)|;
 	my $baseUrl = Slim::Plugin::RemoteLibrary::Plugin->baseUrl($uuid);
 	
 	return ($baseUrl || '', $uuid, $id, $file);
