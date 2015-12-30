@@ -49,6 +49,7 @@
 <ul>
 	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries 
 	now accept a library_id parameter to filter the results by virtual libraries. <a href="#libraries">libraries returns a list of libraries with their name and IDs.</a></li>
+	<li>Added support for new "random" sort order for the <a href="#albums">albums</a> query.</li>
 	<li>Added support for these queries to filter by the contributor's role (role_id).</li>
 </ul>
 
@@ -3617,9 +3618,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Sort order of the returned list of albums. One of &quot;album&quot;,
-			(the default), &quot;new&quot; which replicates the
-			&quot;New Music&quot; browse mode of the web interface, or &quot;artflow&quot; which
-			sorts by artist, year, album for use with artwork-centric interfaces.
+			(the default), &quot;new&quot; (sort by change date in descending order),
+			&quot;artflow&quot; which sorts by artist, year, album for use with 
+			artwork-centric interfaces,	&quot;artistalbum&quot;, &quot;yearalbum&quot;, 
+			&quot;yearartistalbum&quot;, &quot;random&quot;.
 		</td>
 	</tr>
 	<tr>
