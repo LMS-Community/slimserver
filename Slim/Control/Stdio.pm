@@ -86,7 +86,7 @@ sub executeCmd {
 
 	my @outputParams = Slim::Control::Request::executeLegacy($client, $arrayRef);
 
-	return array_to_string($client->id, \@outputParams);
+	return array_to_string($client ? $client->id : undef, \@outputParams);
 }
 
 # transforms an escaped string into an array (returned). If the first
