@@ -958,11 +958,11 @@ sub stream_s {
 		# songs differ. This avoids some unpleasant white
 		# noise from (at least) the Squeezebox Touch when
 		# using the analogue outputs. This might be bug#1884.
-		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)
-		    ||
-		    !Slim::Player::ReplayGain->trackSampleRateMatch($master, 1)) {
+		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
 			main::INFOLOG && $log->info('Overriding transition due to differing sample rates');
 			$transitionType = 0;
+		 } else {
+			main::INFOLOG && $log->info('Sample rates do not require a transition restriction');
 		 }
 
 	}
