@@ -287,7 +287,8 @@ sub _resizeImage {
 		$resizeParams .= "x$height" if $height;
 
 		# music artwork
-		if ( $url =~ m{^(/music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
+		my $webroot = $context->{STASH}->{webroot};
+		if ( $url =~ m{^((?:$webroot|/)music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
 			return $1 . $resizeParams . '_o';
 		}
 		
