@@ -38,7 +38,6 @@ my $_Servers = {
 	uesr    => 'www.uesmartradio.com',
 	sn      => 'www.mysqueezebox.com',
 	update  => 'update.mysqueezebox.com',
-	test    => 'www.test.mysqueezebox.com',
 };
 
 # Used only on SN
@@ -82,9 +81,8 @@ if ( main::SLIM_SERVICE ) {
 sub get_server {
 	my ($class, $stype) = @_;
 	
-	# Use SN test server if hidden test pref is set
-	if ( $stype eq 'sn' && $prefs->get('use_sn_test') ) {
-		$stype = 'test';
+	if ( $stype eq 'sn' && $ENV{MYSB_TEST} ) {
+		return $ENV{MYSB_TEST};
 	}
 	
 	return $_Servers->{$stype}

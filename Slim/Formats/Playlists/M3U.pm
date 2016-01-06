@@ -117,6 +117,10 @@ sub read {
 		next if $entry =~ /^#/;
 		next if $entry =~ /#CURTRACK/;
 		next if $entry eq "";
+		
+		# if an invalid playlist is downloaded as HTML, ignore it
+		last if $entry =~ /^<(?:!DOCTYPE\s*)?html/;
+		next if $entry =~ /^</;
 
 		$entry =~ s|$LF||g;
 

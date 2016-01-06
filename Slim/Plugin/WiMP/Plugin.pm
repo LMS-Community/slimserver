@@ -1,7 +1,5 @@
 package Slim::Plugin::WiMP::Plugin;
 
-# $Id:  $
-
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 use URI::Escape qw(uri_escape_utf8);
@@ -9,7 +7,7 @@ use URI::Escape qw(uri_escape_utf8);
 use Slim::Plugin::WiMP::ProtocolHandler;
 
 my $log = Slim::Utils::Log->addLogCategory( {
-	category     => 'plugin.wimp',
+	category     => 'plugin.tidal',
 	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
@@ -69,7 +67,7 @@ sub initPlugin {
 					client  => $client,
 					feed    => Slim::Plugin::WiMP::ProtocolHandler->trackInfoURL( $client, $url ),
 					path    => 'plugins/wimp/trackinfo.html',
-					title   => 'WiMP Track Info',
+					title   => 'TIDAL Track Info',
 					timeout => 35,
 					args    => \@_
 				} );
