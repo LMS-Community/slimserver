@@ -36,10 +36,6 @@ sub prefs {
 	if (Slim::Player::Client::clients() > 1) {
 		push @prefs, 'syncStartDelay';
 	}
-	
-	if (!main::NOUPNP) {
-		push @prefs, 'noupnp';
-	}
 
 	return ($prefs, @prefs);
 }

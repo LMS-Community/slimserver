@@ -299,7 +299,7 @@ useSpecialExt="-browse" %]
 		[% IF image %]
 		<div>
 			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
-				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
+				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt" style="max-width:150px;max-height:150px">
 			</a>
 		</div>
 		[% END %]
@@ -350,6 +350,11 @@ useSpecialExt="-browse" %]
 						</form>
 					</span>					
 				[% END %]
+			[% ELSIF item.type == 'textarea' %]
+				<div class="selectorMarker">
+					[% title = (item.web.value || item.name || item.title) %]
+					[% title | html_line_break %]
+				</div>
 			[% ELSE %]
 				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : playlist_id ? 'draggableSong' : '') _ (!(hasArtwork && !artwork) && item.icon ? ' smallIcon' : '') anchor = item.anchor %]
 					[% IF artwork == 1;

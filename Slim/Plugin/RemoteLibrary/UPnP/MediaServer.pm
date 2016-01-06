@@ -1,4 +1,4 @@
-package Slim::Utils::UPnPMediaServer;
+package Slim::Plugin::RemoteLibrary::UPnP::MediaServer;
 
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -13,23 +13,19 @@ use HTML::Entities;
 use Tie::LLHash;
 use URI::Escape qw(uri_escape);
 
-use Slim::Buttons::BrowseUPnPMediaServer;
-use Slim::Web::UPnPMediaServer;
-use Slim::Networking::Select;
-use Slim::Networking::UPnP::ControlPoint;
 use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-use constant MENU_WEIGHT => 999;
+use Slim::Plugin::RemoteLibrary::UPnP::ControlPoint;
 
-our %devices             = ();
-our $registeredCallbacks = [];
+my %devices;
+#our $registeredCallbacks = [];
 
-my $log = logger('network.upnp');
+my $log = logger('plugin.remotelibrary');
 
-my $prefs = preferences('server');
+my $prefs = preferences('plugin.remotelibrary');
 
 # Media server model names to ignore (i.e. Rhapsody)
 my $IGNORE_RE = qr{Rhapsody}i;
@@ -37,11 +33,8 @@ my $IGNORE_RE = qr{Rhapsody}i;
 sub init {
 	main::INFOLOG && $log->info('UPnP: Starting up');
 	
-	Slim::Buttons::BrowseUPnPMediaServer::init();
-	Slim::Web::UPnPMediaServer::init();
-	
 	# Look for all UPnP media servers on the network
-	Slim::Networking::UPnP::ControlPoint->search( {
+	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->search( {
 		callback   => \&foundDevice,
 		deviceType => 'urn:schemas-upnp-org:device:MediaServer:1',
 	} );
@@ -50,7 +43,7 @@ sub init {
 sub shutdown {
 	main::INFOLOG && $log->info('UPnP: Shutting down');
 	
-	Slim::Networking::UPnP::ControlPoint->shutdown();
+	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->shutdown();
 	
 	while ( my ($udn, $device) = each %devices ) {
 		if ( main::INFOLOG && $log->is_info ) {
@@ -59,24 +52,22 @@ sub shutdown {
 		
 		foundDevice( $device, 'remove' );
 	}
-	
-	$prefs->remove('upnpServers');
-}		
+}
+
+sub getDevices {
+	return \%devices;
+}
 
 sub foundDevice {
 	my ( $device, $event ) = @_;
 	
 	# We'll get a callback for all UPnP devices, but we only look for media servers
 	if ( $device->getdevicetype =~ /MediaServer/ && $device->getmodelname !~ $IGNORE_RE ) {
-		my $menuName = HTML::Entities::decode( $device->getfriendlyname );
-		
 		if ( $event eq 'add' ) {
 
-			main::INFOLOG && $log->info("Adding new media server: $menuName");
+			main::INFOLOG && $log->info("Adding new media server: " . HTML::Entities::decode( $device->getfriendlyname ));
 			
 			$devices{ $device->getudn } = $device;
-		
-			addDeviceMenus( $device, $menuName );
 			
 			# If a UPnP server crashes, it won't send out a byebye message, so we need to poll
 			# periodically to see if this server is still alive
@@ -85,42 +76,19 @@ sub foundDevice {
 		elsif ( $event eq 'remove' ) {
 			delete $devices{ $device->getudn };
 			
-			removeDeviceMenus( $device, $menuName );
-			
 			Slim::Utils::Timers::killTimers( $device, \&checkServerHealth );
-		}
-		
-		# Store all device URLs in a pref
-		$prefs->set( upnpServers => [ map { $_->getlocation } values %devices ] );
-		
-		# notify anyone who is interested in devices (i.e. Rhapsody plugin)
-		for my $callback ( @{$registeredCallbacks} ) {
-			$callback->( $device, $event );
 		}
 	}
 	else {
 
-		if ( main::INFOLOG && $log->is_info ) {
-			$log->info(sprintf("%s is a %s %s (%s), ignoring",
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug(sprintf("%s is a %s %s (%s), ignoring",
 				$device->getfriendlyname,
 				$device->getmanufacturer,
 				$device->getmodelname,
 				$device->getdevicetype,
 			));
 		}
-	}
-}
-
-sub registerCallback {
-	my $callback = shift;
-	
-	push @{$registeredCallbacks}, $callback;
-	
-	if (main::DEBUGLOG && $log->is_debug) {
-
-		my $func = Slim::Utils::PerlRunTime::realNameForCodeRef( $callback );
-
-		$log->debug("New device callback registered: [$func]");
 	}
 }
 
@@ -162,55 +130,9 @@ sub checkServerHealthError {
 	}
 	
 	# Remove the device from the control point
-	Slim::Networking::UPnP::ControlPoint::removeDevice( $device );
+	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint::removeDevice( $device );
 	
 	foundDevice( $device, 'remove' );
-}
-
-sub addDeviceMenus {
-	my $device = shift;
-	my $name   = shift;
-
-	if ( !Slim::Utils::Strings::stringExists($name) ) {
-		Slim::Utils::Strings::setString( uc $name, $name );
-	}
-	
-	my $udn = $device->getudn;
-	
-	my %params = (
-		'useMode' => 'upnpmediaserver',
-		'device'  => $udn,
-		'title'   => $device->getfriendlyname,
-	);
-	
-	# cache special id=0 item
-	my $cache = Slim::Utils::Cache->new;
-	$cache->set( "upnp_item_info_${udn}_0", {
-		title => $device->getfriendlyname,
-	} );
-
-	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, \%params);
-
-	Slim::Web::Pages->addPageLinks(
-		'browse', { 
-			$name => 'browseupnp.html?device=' . $device->getudn 
-			       . '&hierarchy=0&title=' . uri_escape( $params{title} )
-		}
-	);
-					
-	# not really a plugin, but still set the weight of the menu item
-	Slim::Plugin::Base->addWeight($name, MENU_WEIGHT);
-}
-
-sub removeDeviceMenus {
-	my $device = shift;
-	my $name   = shift;
-
-	Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC', $name);	
-	
-	Slim::Web::Pages->addPageLinks(
-		'browse', { $name => undef }
-	);
 }
 
 sub loadContainer {
@@ -233,7 +155,7 @@ sub loadContainer {
 		passthrough    => [ $args ],
 	);
 	
-	Slim::Networking::UPnP::ControlPoint->browse( \%args );
+	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->browse( \%args );
 }
 
 sub gotContainer {
@@ -249,10 +171,13 @@ sub gotContainer {
 		# We use an IO::String object and parse in chunks to reduce memory usage
 		
 		local $/ = '</container>';
+
+		my $i;
+	
 		while ( my $chunk = <$io> ) {
 			
 			# This can be slow if we have a huge file to process, so give back some time
-			main::idleStreams();
+			main::idleStreams() if !(++$i % 20);
 			
 			if ( $chunk =~ /<container(.*?)<\/container>/sg ) {
 				my $node = $1;
@@ -260,6 +185,7 @@ sub gotContainer {
 				my ($title, $id, $type, $url, $childCount);
 				if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
 					$title = HTML::Entities::decode($1);
+					utf8::decode($title);
 					# some Rhapsody titles contain '??'
 					$title =~ s/\?\?/ /g;
 				}
@@ -304,7 +230,7 @@ sub gotContainer {
 					while ( my $itemChunk = <$io> ) {
 						
 						# This can be slow if we have a huge file to process, so give back some time
-						main::idleStreams();
+						main::idleStreams() if !(++$i % 20);
 						
 						if ( $itemChunk =~ /<item(.*?)<\/item>/sg ) {
 							my $node = $1;
@@ -313,6 +239,7 @@ sub gotContainer {
 
 							if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
 								$title = HTML::Entities::decode($1);
+								utf8::decode($title);
 								# some Rhapsody titles contain '??'
 								$title =~ s/\?\?/ /g;
 							}
@@ -344,6 +271,7 @@ sub gotContainer {
 							for my $key ( keys %otherItems ) {
 								next if $key =~ /(?:title|class)/;	# we already grabbed these above
 								$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
+								utf8::decode($props->{$key});
 							}
 
 							if ($url) {
@@ -380,7 +308,7 @@ sub gotContainer {
 	else {
 		# request failed, add 1 child with the failure message
 		push @children, {
-			'title' => Slim::Utils::Strings::string('UPNP_REQUEST_FAILED'),
+			'title' => Slim::Utils::Strings::string('PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED'),
 		};
 	}
 	

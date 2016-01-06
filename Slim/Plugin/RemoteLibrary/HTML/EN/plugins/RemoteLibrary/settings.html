@@ -1,0 +1,28 @@
+[% PROCESS settings/header.html %]
+	[% WRAPPER setting title="PLUGIN_REMOTE_LIBRARY_MODULE_NAME" desc="" %]
+		[% 'PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC' | string %]
+	[% END %]
+
+	[% WRAPPER setting title="SQUEEZEBOX_SERVER" desc="PLUGIN_REMOTE_LIBRARY_LMS_DESC" %]
+		<select class="stdedit" name="pref_useLMS" id="noupnp">
+			<option [% IF prefs.pref_useLMS %]selected="selected" [% END %]value="1">
+				[% 'PLUGIN_REMOTE_LIBRARY_LMS_ENABLE' | string %]
+			</option>
+			<option [% IF !prefs.pref_useLMS %]selected="selected" [% END %]value="0">
+				[% 'PLUGIN_REMOTE_LIBRARY_LMS_DISABLE' | string %]
+			</option>
+		</select>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_REMOTE_LIBRARY_SETUP_UPNP" desc="PLUGIN_REMOTE_LIBRARY_UPNP_DESC" %]
+		<select class="stdedit" name="pref_useUPnP" id="noupnp">
+			<option [% IF prefs.pref_useUPnP %]selected="selected" [% END %]value="1">
+				[% 'PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE' | string %]
+			</option>
+			<option [% IF !prefs.pref_useUPnP %]selected="selected" [% END %]value="0">
+				[% 'PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE' | string %]
+			</option>
+		</select>
+	[% END %]
+	
+[% PROCESS settings/footer.html %]

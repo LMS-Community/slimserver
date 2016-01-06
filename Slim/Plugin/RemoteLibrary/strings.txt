@@ -3,8 +3,8 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	EN	Remote Music Library
 
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
-	DE	Wiedergabe von Musik aus der Sammlung eines andere Logitech Music Servers, ohne den Player umschalten zu müssen.
-	EN	Music playback from another Logitech Music Server's Music Library without switching the player to that server.
+	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung eines anderen Logitech Music Servers oder UPnP Servers, ohne den Player umschalten zu müssen.
+	EN	Allow music playback from another Logitech Music Server's Music Library or a UPnP server without switching the player to that server.
 
 PLUGIN_REMOTE_LIBRARY_USERNAME
 	CS	Uživatelské jméno
@@ -94,10 +94,109 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
 	SV	Det går inte att verifiera kontot. Försök igen senare.
 
 PLUGIN_REMOTE_LIBRARY_NOT_FOUND
-	DE	Es wurde kein anderer Logitech Media Server im Netzwerk gefunden. Bitte stellen Sie sicher, dass eine Kopie ausgeführt wird und erreichbar ist. Und probieren Sie es in ein, zwei Minuten noch einmal.
-	EN	No other Logitech Media Server was found in your network. Please make sure it's up and running and reachable. Then try again in a minute or two.
+	DE	Es wurde kein anderer Medienserver im Netzwerk gefunden. Bitte stellen Sie sicher, dass einer ausgeführt wird und erreichbar ist. Und probieren Sie es in ein, zwei Minuten noch einmal.
+	EN	No other media server was found in your network. Please make sure it's up and running and reachable. Then try again in a minute or two.
 
 PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	DE	Falls der gewünschte Server fehlt, überprüfen Sie, ob er ausgeführt wird. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	In case the desired instance was missing, make sure the software is up and running, and try again in a minute or two.
+	
+PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
+	CS	Selhal požadavek UPnP, zkontrolujte prosím server UPnP.
+	DA	UPnP-anmodning mislykkedes. Kontroller UPnP-serveren.
+	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
+	EN	UPnP request failed, please check the UPnP server.
+	ES	Fallo de solicitud UPnP, compruebe el servidor UPnP.
+	FI	UPnP-pyyntö epäonnistui, tarkista UPnP-palvelin.
+	FR	Echec de la requête UPnP. Veuillez vérifier le serveur UPnP.
+	HE	כשל בבקשת UPnP, בדוק את שרת ה-UPnP.
+	IT	Richiesta UPnP non riuscita. Verificare il server UPnP.
+	NL	UPnP-verzoek mislukt. Controleer de UPnP-server.
+	NO	UPnP-forespørsel mislyktes. Kontroller UPnP-serveren.
+	PL	Wykonanie żądania UPnP nie powiodło się; sprawdź serwer UPnP.
+	RU	Сбой запроса UPnP, проверьте сервер UPnP.
+	SV	UPnP-begäran misslyckades. Kontrollera UPnP-servern.
+	ZH_CN	UPnP请求失败，请检查UPnP服务器。
+
+# Settings
+PLUGIN_REMOTE_LIBRARY_LMS_DESC
+
+PLUGIN_REMOTE_LIBRARY_LMS_DESC
+	DE	Soll der Server nach weiteren Logitech Media Servern in Ihrem Netzwerk suchen?
+	EN	Should this server look for other Logitech Media Servers on your network?
+	FR	Ce serveur doit-il rechercher d'autres Logitech Media Servers sur le réseau?
+
+PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
+	DE	Ja, nach weiteren Logitech Media Servern suchen.
+	EN	Enabled, look for other Logitech Media Servers.
+	FR	Activé, rechercher d'autres Logitech Media Servers.
+
+PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
+	DE	Nein, nicht nach Logitech Media Servern suchen.
+	EN	Disabled, do not look for other Logitech Media Servers.
+	FR	Désactivé, ne pas rechercher d'autres Logitech Media Servers.
+	
+PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
+	CS	Klient UPnP
+	DA	UPnP-klient
+	DE	UPnP-Client
+	EN	UPnP Client
+	ES	Cliente UPnP
+	FI	UPnP-asiakas
+	FR	Client UPnP
+	HE	לקוח UPnP
+	IT	Client UPnP
+	NL	UPnP-client
+	NO	UPnP-klient
+	PL	Klient UPnP
+	RU	Клиент UPnP
+	SV	UPnP-klient
+
+PLUGIN_REMOTE_LIBRARY_UPNP_DESC
+	CS	Má Logitech Media Server hledat na vaší síti další servery médií UPnP?
+	DA	Skal Logitech Media Server søge efter andre UPnP-medieservere på dit netværk?
+	DE	Soll Logitech Media Server nach weiteren UPnP-Medienservern in Ihrem Netzwerk suchen?
+	EN	Should Logitech Media Server look for other UPnP media servers on your network?
+	ES	¿Debe Logitech Media Server buscar otros servidores de medios UPnP en la red?
+	FI	Haluatko, että Logitech Media Server etsii muita UPnP-mediapalvelimia verkosta?
+	FR	Le Logitech Media Server doit-il rechercher d'autres serveurs UPnP sur le réseau?
+	HE	האם ברצונך ש-Logitech Media Server יחפש אחר שרתי מדיה אחרים מסוג UPnP ברשת שלך?
+	IT	Cercare altri server multimediali UPnP nella rete?
+	NL	Moet Logitech Media Server naar andere UPnP-mediaservers op je netwerk zoeken?
+	NO	Vil du at Logitech Media Server skal se etter andre UPnP-medieservere i nettverket?
+	PL	Czy program Logitech Media Server ma wyszukać inne serwery multimediów UPnP w sieci?
+	RU	Выполнить поиск других медиа-серверов UPnP в вашей сети?
+	SV	Ska Logitech Media Server söka efter andra UPnP-medieservrar på nätverket?
+
+PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
+	CS	Aktivováno, hledat další servery médií UPnP.
+	DA	Aktiveret; søg efter andre UPnP-medieservere.
+	DE	Ja, nach weiteren UPnP-Medienservern suchen.
+	EN	Enabled, look for other UPnP media servers.
+	ES	Activado, buscar otros servidores de medios UPnP.
+	FI	Käytössä, etsi muita UPnP-mediapalvelimia.
+	FR	Activé, rechercher d'autres serveurs UPnP.
+	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP.
+	IT	Attivato. Cerca altri server multimediali UPnP.
+	NL	Ingeschakeld, naar andere UPnP-mediaservers zoeken.
+	NO	På, se etter andre UPnP-medietjenere.
+	PL	Włączone, znajdź inne serwery multimediów UPnP.
+	RU	Включено, поиск других медиа-серверов UPnP.
+	SV	Aktiverad: Sök efter andra UPnP-medieservrar.
+
+PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
+	CS	Vypnuto, nehledat další UPnP servery médií.
+	DA	Deaktiveret. Søg ikke efter andre UPnP-medieservere.
+	DE	Nein, nicht nach UPnP-Medienservern suchen.
+	EN	Disabled, do not look for other UPnP media servers.
+	ES	Desactivado, no buscar otros servidores de medios UPnP.
+	FI	Ei käytössä, älä etsi muita UPnP-mediapalvelimia.
+	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP.
+	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP.
+	IT	Disattivato. Non cercare altri server multimediali UPnP.
+	NL	Uitgeschakeld, niet naar andere UPnP-mediaservers zoeken.
+	NO	Av. Logitech Media Server vil ikke se etter andre UPnP-medieservere.
+	PL	Wyłączone, nie wyszukuj innych serwerów multimediów UPnP.
+	RU	Отключено, не выполнять поиск других медиа-серверов UPnP.
+	SV	Aktiverad. Sök inte efter andra UPnP-medieservrar.
 	

@@ -33,17 +33,6 @@
 
 	[% END %]
 
-	[% IF prefs.exists('pref_noupnp'); WRAPPER setting title="SETUP_NOUPNP" desc="SETUP_NOUPNP_DESC" %]
-		<select class="stdedit" name="pref_noupnp" id="noupnp">
-			<option [% IF prefs.pref_noupnp == 0 %]selected="selected" [% END %]value="0">
-				[% 'SETUP_UPNP_ENABLE' | string %]
-			</option>
-			<option [% IF prefs.pref_noupnp == 1 %]selected="selected" [% END %]value="1">
-				[% 'SETUP_UPNP_DISABLE' | string %]
-			</option>
-		</select>
-	[% END; END %]
-
 	[% IF prefs.exists('pref_tcpReadMaximum') || prefs.exists('pref_tcpWriteMaximum') || prefs.exists('pref_udpChunkSize') %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]	

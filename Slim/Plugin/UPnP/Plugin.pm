@@ -24,9 +24,6 @@ my $log = Slim::Utils::Log->addLogCategory( {
 sub initPlugin {
 	my $class = shift;
 	
-	# return quickly if UPnP has been disabled on the command line
-	return if main::NOUPNP;
-	
 	if ( !defined $prefs->get('maxUPnPImageSize')) {
 		$prefs->set('maxUPnPImageSize', 1920);
 	}
@@ -56,8 +53,6 @@ sub initPlugin {
 
 sub shutdownPlugin {
 	my $class = shift;
-	
-	return if main::NOUPNP;
 	
 	Slim::Plugin::UPnP::MediaServer->shutdown;
 	Slim::Plugin::UPnP::MediaRenderer->shutdown;

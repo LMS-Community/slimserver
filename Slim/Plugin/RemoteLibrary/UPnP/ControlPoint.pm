@@ -1,13 +1,11 @@
-package Slim::Networking::UPnP::ControlPoint;
+package Slim::Plugin::RemoteLibrary::UPnP::ControlPoint;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2016 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 # An asynchronous UPnP Control Point 
-
-# $Id$
 
 use strict;
 
@@ -22,24 +20,24 @@ use Slim::Networking::Select;
 use Slim::Networking::Async::Socket::UDP;
 use Slim::Utils::Log;
 
-my $log = logger('network.upnp');
+my $log = logger('plugin.remotelibrary');
 
 # A global socket that listens for UPnP events
 our $sock;
 
 # all devices we currently know about
-our $devices = {};
+my $devices = {};
 
 # devices we are currently trying to contact.  This prevents many
 # simultaneous requests when a device sends many notify packets at once
-our $deviceRequests = {};
+my $deviceRequests = {};
 
 # device locations we've retrieved description documents from
-our $deviceLocations = {};
+my $deviceLocations = {};
 
 # failed devices, we don't check these more than once every 30 minutes
-our $failedDevices = {};
-our $FAILURE_RETRY_TIME = 60 * 30;
+use constant FAILURE_RETRY_TIME => 60 * 30  / 180;
+my $failedDevices = {};
 
 # Search for all devices on the network
 sub search {
@@ -276,7 +274,7 @@ sub _gotError {
 	delete $deviceLocations->{ $args->{location} };
 	
 	# keep track of failures
-	$failedDevices->{ $args->{location} } = time + $FAILURE_RETRY_TIME;
+	$failedDevices->{ $args->{location} } = time + FAILURE_RETRY_TIME;
 	
 	$log->error("Error retrieving device description: $error");
 }

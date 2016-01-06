@@ -36,8 +36,6 @@ BEGIN {
 	}
 }
 
-# leaving this flag in for the moment - unlikely but possibly some 3rd party plugin is referring to it
-use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
 use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
@@ -47,14 +45,17 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
-use constant NOUPNP       => ( grep { /--noupnp/ } @ARGV ) ? 1 : 0;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : !NOUPNP;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !NOUPNP;
+use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
+use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
+
+# leaving some legacy flags for the moment - unlikely but possibly some 3rd party plugin is referring to it
+use constant SLIM_SERVICE => 0;
+use constant NOUPNP       => 0;
 
 use Config;
 my %check_inc;
@@ -197,7 +198,7 @@ sub MEDIASUPPORT {
 	return $MEDIASUPPORT if defined $MEDIASUPPORT;
 
 	eval {
-		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && !main::NOUPNP && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
+		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
 	};
 		
 	return $MEDIASUPPORT;
@@ -549,12 +550,6 @@ sub init {
 	Slim::Schema::RemoteTrack->init();
 	
 	Slim::Music::VirtualLibraries->init();
-
-	unless ( main::NOUPNP || $prefs->get('noupnp') ) {
-		main::INFOLOG && $log->info("UPnP init...");
-		require Slim::Utils::UPnPMediaServer;
-		Slim::Utils::UPnPMediaServer::init();
-	}
 	
 	# Register the default importers - necessary to ensure that Slim::Schema::init() is called
 	# but no need to initialize it, as it's being run in external scanner mode only
@@ -810,7 +805,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --notranscoding  => Disable transcoding support.
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
-    --noupnp         => Disable UPnP subsystem
     --nomysqueezebox => Disable mysqueezebox.com integration.
                         Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
@@ -874,7 +868,6 @@ sub initOptions {
 		'noimage'       => sub {},
 		'novideo'       => sub {},
 		'nostatistics'  => sub {},
-		'noupnp'        => sub {},
 		'nosb1slimp3sync'=> sub {},
 		'notranscoding' => sub {},
 		'noweb'         => sub {},

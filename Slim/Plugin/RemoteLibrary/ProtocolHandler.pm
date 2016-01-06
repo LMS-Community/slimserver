@@ -95,7 +95,7 @@ sub getMetadataFor {
 			$request = ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY'];
 		}
 		
-		Slim::Plugin::RemoteLibrary::Plugin::remoteRequest($uuid, 
+		Slim::Plugin::RemoteLibrary::LMS::remoteRequest($uuid, 
 			[ '', $request ],
 			\&_gotMetadata,
 			sub {},
@@ -153,7 +153,7 @@ sub _gotMetadata {
 	
 		if ($meta->{coverid}) {
 			my (undef, $remote_library) = _parseUrl($url);
-			$meta->{cover} = Slim::Plugin::RemoteLibrary::Plugin::_proxiedImage({
+			$meta->{cover} = Slim::Plugin::RemoteLibrary::LMS::_proxiedImage({
 				'image' => delete $meta->{coverid}
 			}, $remote_library);
 		}
@@ -176,7 +176,7 @@ sub _parseUrl {
 	my $url = shift;
 	
 	my ($uuid, $id, $file) = $url =~ m|lms://(.*?)/music/([\-\d]+?)/(.*)|;
-	my $baseUrl = Slim::Plugin::RemoteLibrary::Plugin->baseUrl($uuid);
+	my $baseUrl = Slim::Plugin::RemoteLibrary::LMS->baseUrl($uuid);
 	
 	return ($baseUrl || '', $uuid, $id, $file);
 }

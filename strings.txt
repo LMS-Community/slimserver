@@ -1,7 +1,5 @@
 # Main Logitech Media Server strings file
 
-# $Id$
-
 #
 # This tab-delimited file contains all the text strings used in Logitech Media Server
 # The format should be self explanatory. To submit a new language, or a better
@@ -5213,70 +5211,6 @@ SETUP_PACKETLATENCY_DESC
 	PL	Program Logitech Media Server automatycznie mierzy opóźnienie sieci między nim a odtwarzaczem. Jest to ważne w celu zachowania synchronizacji. Czasami te pomiary mogą być bardzo niespójne, a przez to nieprzydatne. W takim przypadku można określić typową wartość w tym miejscu.
 	RU	Logitech Media Server автоматически измеряет задержку в сети между ним и плеером. Это важно для сохранения синхронизации. Иногда эти измерения могут слишком отличаться друг от друга, чтобы выявить какую-то закономерность: в этом случае можно ввести типичное значение в данное поле.
 	SV	Logitech Media Server mäter automatiskt nätverksfördröjningen mellan sig själv och spelaren. Det här är viktigt när du vill upprätthålla synkronisering. Ibland ger mätningarna så spridda resultat att de inte är användbara. I så fall anger du ett typvärde här.
-
-SETUP_NOUPNP
-	CS	Klient UPnP
-	DA	UPnP-klient
-	DE	UPnP-Client
-	EN	UPnP Client
-	ES	Cliente UPnP
-	FI	UPnP-asiakas
-	FR	Client UPnP
-	HE	לקוח UPnP
-	IT	Client UPnP
-	NL	UPnP-client
-	NO	UPnP-klient
-	PL	Klient UPnP
-	RU	Клиент UPnP
-	SV	UPnP-klient
-
-SETUP_NOUPNP_DESC
-	CS	Má Logitech Media Server hledat na vaší síti další servery médií UPnP?
-	DA	Skal Logitech Media Server søge efter andre UPnP-medieservere på dit netværk?
-	DE	Soll Logitech Media Server nach weiteren UPnP-Medienservern in Ihrem Netzwerk suchen?
-	EN	Should Logitech Media Server look for other UPnP media servers on your network?
-	ES	¿Debe Logitech Media Server buscar otros servidores de medios UPnP en la red?
-	FI	Haluatko, että Logitech Media Server etsii muita UPnP-mediapalvelimia verkosta?
-	FR	Le Logitech Media Server doit-il rechercher d'autres serveurs UPnP sur le réseau?
-	HE	האם ברצונך ש-Logitech Media Server יחפש אחר שרתי מדיה אחרים מסוג UPnP ברשת שלך?
-	IT	Cercare altri server multimediali UPnP nella rete?
-	NL	Moet Logitech Media Server naar andere UPnP-mediaservers op je netwerk zoeken?
-	NO	Vil du at Logitech Media Server skal se etter andre UPnP-medieservere i nettverket?
-	PL	Czy program Logitech Media Server ma wyszukać inne serwery multimediów UPnP w sieci?
-	RU	Выполнить поиск других медиа-серверов UPnP в вашей сети?
-	SV	Ska Logitech Media Server söka efter andra UPnP-medieservrar på nätverket?
-
-SETUP_UPNP_ENABLE
-	CS	Aktivováno, hledat další servery médií UPnP.
-	DA	Aktiveret; søg efter andre UPnP-medieservere.
-	DE	Ja, nach weiteren UPnP-Medienservern suchen.
-	EN	Enabled, look for other UPnP media servers.
-	ES	Activado, buscar otros servidores de medios UPnP.
-	FI	Käytössä, etsi muita UPnP-mediapalvelimia.
-	FR	Activé, rechercher d'autres serveurs UPnP.
-	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP.
-	IT	Attivato. Cerca altri server multimediali UPnP.
-	NL	Ingeschakeld, naar andere UPnP-mediaservers zoeken.
-	NO	På, se etter andre UPnP-medietjenere.
-	PL	Włączone, znajdź inne serwery multimediów UPnP.
-	RU	Включено, поиск других медиа-серверов UPnP.
-	SV	Aktiverad: Sök efter andra UPnP-medieservrar.
-
-SETUP_UPNP_DISABLE
-	CS	Vypnuto, nehledat další UPnP servery médií.
-	DA	Deaktiveret. Søg ikke efter andre UPnP-medieservere.
-	DE	Nein, nicht nach UPnP-Medienservern suchen.
-	EN	Disabled, do not look for other UPnP media servers.
-	ES	Desactivado, no buscar otros servidores de medios UPnP.
-	FI	Ei käytössä, älä etsi muita UPnP-mediapalvelimia.
-	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP.
-	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP.
-	IT	Disattivato. Non cercare altri server multimediali UPnP.
-	NL	Uitgeschakeld, niet naar andere UPnP-mediaservers zoeken.
-	NO	Av. Logitech Media Server vil ikke se etter andre UPnP-medieservere.
-	PL	Wyłączone, nie wyszukuj innych serwerów multimediów UPnP.
-	RU	Отключено, не выполнять поиск других медиа-серверов UPnP.
-	SV	Aktiverad. Sök inte efter andra UPnP-medieservrar.
 
 SETUP_MAXBITRATE
 	CS	Omezení Bitrate (přenosové rychlosti)
@@ -17936,23 +17870,6 @@ SQUEEZEBOX_SERVER_CONNECTING
 	RU	Подключение к %s...
 	SV	Ansluts till %s...
 	ZH_CN	%s连接中...
-
-UPNP_REQUEST_FAILED
-	CS	Selhal požadavek UPnP, zkontrolujte prosím server UPnP.
-	DA	UPnP-anmodning mislykkedes. Kontroller UPnP-serveren.
-	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
-	EN	UPnP request failed, please check the UPnP server.
-	ES	Fallo de solicitud UPnP, compruebe el servidor UPnP.
-	FI	UPnP-pyyntö epäonnistui, tarkista UPnP-palvelin.
-	FR	Echec de la requête UPnP. Veuillez vérifier le serveur UPnP.
-	HE	כשל בבקשת UPnP, בדוק את שרת ה-UPnP.
-	IT	Richiesta UPnP non riuscita. Verificare il server UPnP.
-	NL	UPnP-verzoek mislukt. Controleer de UPnP-server.
-	NO	UPnP-forespørsel mislyktes. Kontroller UPnP-serveren.
-	PL	Wykonanie żądania UPnP nie powiodło się; sprawdź serwer UPnP.
-	RU	Сбой запроса UPnP, проверьте сервер UPnP.
-	SV	UPnP-begäran misslyckades. Kontrollera UPnP-servern.
-	ZH_CN	UPnP请求失败，请检查UPnP服务器。
 
 SETUP_SCROLLMODE
 	CS	Režim rolování
