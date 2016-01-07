@@ -1,7 +1,5 @@
 package Slim::Web::Pages::BrowseDB;
 
-# $Id$
-
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -19,7 +17,7 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
-# This only remains in order to support UPnPMediaServer
+# This only remains in order to support potential 3rd party plugins still calling it. It's no longer being used in LMS core.
 
 sub init {
 
