@@ -48,6 +48,9 @@ sub getLibraryList {
 			
 			if ( $iconList = $iconList->{icon} ) {
 				
+				# some servers don't return a list of icons, but only a single value
+				$iconList = [ $iconList ] unless ref $iconList eq 'ARRAY';
+				
 				# pick the largest, and PNG over JPG (if both of same size)
 				$iconList = [ sort {
 					$b->{height} <=> $a->{height} || $b->{width} <=> $a->{width} 
@@ -121,7 +124,7 @@ sub gotContainer {
 			
 		$cb->([{
 			name => $error,
-			type => 'text'
+			type => 'textarea'
 		}]);
 
 		return;
@@ -148,7 +151,7 @@ sub gotContainer {
 				}
 			}
 			else {
-				push @$items, {
+				my $item = {
 					name => $child->{title},
 					type => 'link',
 					url  => \&_browseUPnP,
@@ -159,15 +162,20 @@ sub gotContainer {
 				};
 				
 				if ($child->{url}) {
-					$items->[-1]->{play} = $child->{url};
-					$items->[-1]->{type} = 'audio';
-					$items->[-1]->{passthrough}->[0]->{metadata} = 1;
+					$item->{play} = $child->{url};
+					$item->{type} = 'audio';
+					$item->{passthrough}->[0]->{metadata} = 1;
 
 					# when we're called to Play All Tracks or similar, return the stream's URL
-					$items->[-1]->{url}  = $child->{url} if $playlist;
+					$item->{url} = $child->{url} if $playlist;
 
 					push @$tracks, $child->{url} unless $playlist;
 				}
+				elsif (!$child->{id}) {
+					$item->{type} = 'textarea';
+				}
+
+				push @$items, $item;
 			}
 		}				
 
