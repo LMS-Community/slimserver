@@ -50,6 +50,7 @@ sub resize {
 	}
 	
 	my ($offset, $length) = (0, 0); # used if an audio file is passed in
+	my $in_format;
 	
 	if ( $file && !-e $file ) {
 		die "Unable to resize from $file: File does not exist\n";
@@ -68,6 +69,12 @@ sub resize {
 				
 				$file = undef;
 			}
+			# sometimes we get an invalid offset, but Audio::Scan is able to read the image data anyway
+			# this is a workaround for this known bug: https://rt.cpan.org/Public/Bug/Display.html?id=95410
+			elsif ( !($in_format = _content_type_file($file, $offset, 'silent')) ) {
+				($offset, $length, $origref) = _read_data_from_tag($file);
+				$file = undef if $origref;
+			}
 		}
 	}
 	
@@ -75,7 +82,7 @@ sub resize {
 	my $explicit_format = $format;
 	
 	# Format of original image
-	my $in_format = $file ? _content_type_file($file, $offset) : _content_type($origref);
+	$in_format ||= $file ? _content_type_file($file, $offset) : _content_type($origref);
 	
 	# Ignore width/height of 'X'
 	$width  = undef if $width eq 'X';
@@ -346,12 +353,19 @@ sub _read_tag {
 	
 	# We get here if the embedded image is either ID3 APIC with unsync null bytes, or a Vorbis base64 tag
 	# In this case we need to re-read the full artwork using Audio::Scan
+	
+	return _read_data_from_tag($file);
+}
+
+sub _read_data_from_tag {
+	my $file = shift;
+	
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
-	$debug && warn "Offset information not found, re-reading file for direct artwork\n";
+	$debug && warn "Offset information not found or invalid, re-reading file for direct artwork\n";
 	
-	$s = Audio::Scan->scan_tags($file);
-	$tags = $s->{tags};
+	my $s = Audio::Scan->scan_tags($file);
+	my $tags = $s->{tags};
 	
 	# MP3, other files with ID3v2
 	if ( my $pic = $tags->{APIC} ) {
