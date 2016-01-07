@@ -532,7 +532,7 @@ sub init {
 	main::INFOLOG && $log->info("Server Buttons init...");
 	Slim::Buttons::Common::init();
 
-	if ($stdio) {
+	if ($stdio || ($ENV{LMS_STDIO} && $REVISION eq 'TRUNK')) {
 		main::INFOLOG && $log->info("Server Stdio init...");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
