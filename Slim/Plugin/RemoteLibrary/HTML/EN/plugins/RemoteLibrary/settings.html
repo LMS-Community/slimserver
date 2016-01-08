@@ -24,5 +24,9 @@
 			</option>
 		</select>
 	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_REMOTE_LIBRARY_IGNORE_MENU" desc="PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC" %]
+		<textarea class="stdedit" name="pref_ignoreFolders" id="ignoreFolders" cols="60" rows="4">[% prefs.pref_ignoreFolders | html %]</textarea>
+	[% END %]
 	
 [% PROCESS settings/footer.html %]

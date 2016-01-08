@@ -1,10 +1,10 @@
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME
-	DE	Entfernte Musiksammlung
-	EN	Remote Music Library
+	DE	Entfernte Musiksammlungen
+	EN	Remote Music Libraries
 
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
-	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung eines anderen Logitech Music Servers oder UPnP Servers, ohne den Player umschalten zu müssen.
-	EN	Allow music playback from another Logitech Music Server's Music Library or a UPnP server without switching the player to that server.
+	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung von anderen Logitech Music Server oder UPnP/DLNA Servern, ohne den Player umschalten zu müssen.
+	EN	Allow music playback from other Logitech Music Server or UPnP/DLNA servers without switching the player.
 
 PLUGIN_REMOTE_LIBRARY_USERNAME
 	CS	Uživatelské jméno
@@ -102,25 +102,23 @@ PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	EN	In case the desired instance was missing, make sure the software is up and running, and try again in a minute or two.
 	
 PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
-	CS	Selhal požadavek UPnP, zkontrolujte prosím server UPnP.
-	DA	UPnP-anmodning mislykkedes. Kontroller UPnP-serveren.
-	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
-	EN	UPnP request failed, please check the UPnP server.
-	ES	Fallo de solicitud UPnP, compruebe el servidor UPnP.
-	FI	UPnP-pyyntö epäonnistui, tarkista UPnP-palvelin.
-	FR	Echec de la requête UPnP. Veuillez vérifier le serveur UPnP.
-	HE	כשל בבקשת UPnP, בדוק את שרת ה-UPnP.
-	IT	Richiesta UPnP non riuscita. Verificare il server UPnP.
-	NL	UPnP-verzoek mislukt. Controleer de UPnP-server.
-	NO	UPnP-forespørsel mislyktes. Kontroller UPnP-serveren.
-	PL	Wykonanie żądania UPnP nie powiodło się; sprawdź serwer UPnP.
-	RU	Сбой запроса UPnP, проверьте сервер UPnP.
-	SV	UPnP-begäran misslyckades. Kontrollera UPnP-servern.
-	ZH_CN	UPnP请求失败，请检查UPnP服务器。
+	CS	Selhal požadavek UPnP/DLNA, zkontrolujte prosím server UPnP/DLNA.
+	DA	UPnP/DLNA-anmodning mislykkedes. Kontroller UPnP/DLNA-serveren.
+	DE	Fehler bei der UPnP/DLNA-Anforderung. Prüfen Sie den UPnP/DLNA-Server.
+	EN	UPnP/DLNA request failed, please check the UPnP/DLNA server.
+	ES	Fallo de solicitud UPnP/DLNA, compruebe el servidor UPnP/DLNA.
+	FI	UPnP/DLNA-pyyntö epäonnistui, tarkista UPnP/DLNA-palvelin.
+	FR	Echec de la requête UPnP/DLNA. Veuillez vérifier le serveur UPnP/DLNA.
+	HE	כשל בבקשת UPnP/DLNA, בדוק את שרת ה-UPnP/DLNA.
+	IT	Richiesta UPnP/DLNA non riuscita. Verificare il server UPnP/DLNA.
+	NL	UPnP/DLNA-verzoek mislukt. Controleer de UPnP/DLNA-server.
+	NO	UPnP/DLNA-forespørsel mislyktes. Kontroller UPnP/DLNA-serveren.
+	PL	Wykonanie żądania UPnP/DLNA nie powiodło się; sprawdź serwer UPnP/DLNA.
+	RU	Сбой запроса UPnP/DLNA, проверьте сервер UPnP/DLNA.
+	SV	UPnP/DLNA-begäran misslyckades. Kontrollera UPnP/DLNA-servern.
+	ZH_CN	UPnP/DLNA请求失败，请检查UPnP/DLNA服务器。
 
 # Settings
-PLUGIN_REMOTE_LIBRARY_LMS_DESC
-
 PLUGIN_REMOTE_LIBRARY_LMS_DESC
 	DE	Soll der Server nach weiteren Logitech Media Servern in Ihrem Netzwerk suchen?
 	EN	Should this server look for other Logitech Media Servers on your network?
@@ -137,66 +135,78 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 	FR	Désactivé, ne pas rechercher d'autres Logitech Media Servers.
 	
 PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
-	CS	Klient UPnP
-	DA	UPnP-klient
-	DE	UPnP-Client
-	EN	UPnP Client
-	ES	Cliente UPnP
-	FI	UPnP-asiakas
-	FR	Client UPnP
-	HE	לקוח UPnP
-	IT	Client UPnP
-	NL	UPnP-client
-	NO	UPnP-klient
-	PL	Klient UPnP
-	RU	Клиент UPnP
-	SV	UPnP-klient
+	CS	Klient UPnP/DLNA
+	DA	UPnP/DLNA-klient
+	DE	UPnP/DLNA-Client
+	EN	UPnP/DLNA Client
+	ES	Cliente UPnP/DLNA
+	FI	UPnP/DLNA-asiakas
+	FR	Client UPnP/DLNA
+	HE	לקוח UPnP/DLNA
+	IT	Client UPnP/DLNA
+	NL	UPnP/DLNA-client
+	NO	UPnP/DLNA-klient
+	PL	Klient UPnP/DLNA
+	RU	Клиент UPnP/DLNA
+	SV	UPnP/DLNA-klient
 
 PLUGIN_REMOTE_LIBRARY_UPNP_DESC
-	CS	Má Logitech Media Server hledat na vaší síti další servery médií UPnP?
-	DA	Skal Logitech Media Server søge efter andre UPnP-medieservere på dit netværk?
-	DE	Soll Logitech Media Server nach weiteren UPnP-Medienservern in Ihrem Netzwerk suchen?
-	EN	Should Logitech Media Server look for other UPnP media servers on your network?
-	ES	¿Debe Logitech Media Server buscar otros servidores de medios UPnP en la red?
-	FI	Haluatko, että Logitech Media Server etsii muita UPnP-mediapalvelimia verkosta?
-	FR	Le Logitech Media Server doit-il rechercher d'autres serveurs UPnP sur le réseau?
-	HE	האם ברצונך ש-Logitech Media Server יחפש אחר שרתי מדיה אחרים מסוג UPnP ברשת שלך?
-	IT	Cercare altri server multimediali UPnP nella rete?
-	NL	Moet Logitech Media Server naar andere UPnP-mediaservers op je netwerk zoeken?
-	NO	Vil du at Logitech Media Server skal se etter andre UPnP-medieservere i nettverket?
-	PL	Czy program Logitech Media Server ma wyszukać inne serwery multimediów UPnP w sieci?
-	RU	Выполнить поиск других медиа-серверов UPnP в вашей сети?
-	SV	Ska Logitech Media Server söka efter andra UPnP-medieservrar på nätverket?
+	CS	Má Logitech Media Server hledat na vaší síti další servery médií UPnP/DLNA?
+	DA	Skal Logitech Media Server søge efter andre UPnP/DLNA-medieservere på dit netværk?
+	DE	Soll Logitech Media Server nach weiteren UPnP/DLNA-Medienservern in Ihrem Netzwerk suchen?
+	EN	Should Logitech Media Server look for other UPnP/DLNA media servers on your network?
+	ES	¿Debe Logitech Media Server buscar otros servidores de medios UPnP/DLNA en la red?
+	FI	Haluatko, että Logitech Media Server etsii muita UPnP/DLNA-mediapalvelimia verkosta?
+	FR	Le Logitech Media Server doit-il rechercher d'autres serveurs UPnP/DLNA sur le réseau?
+	HE	האם ברצונך ש-Logitech Media Server יחפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA ברשת שלך?
+	IT	Cercare altri server multimediali UPnP/DLNA nella rete?
+	NL	Moet Logitech Media Server naar andere UPnP/DLNA-mediaservers op je netwerk zoeken?
+	NO	Vil du at Logitech Media Server skal se etter andre UPnP/DLNA-medieservere i nettverket?
+	PL	Czy program Logitech Media Server ma wyszukać inne serwery multimediów UPnP/DLNA w sieci?
+	RU	Выполнить поиск других медиа-серверов UPnP/DLNA в вашей сети?
+	SV	Ska Logitech Media Server söka efter andra UPnP/DLNA-medieservrar på nätverket?
 
 PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
-	CS	Aktivováno, hledat další servery médií UPnP.
-	DA	Aktiveret; søg efter andre UPnP-medieservere.
-	DE	Ja, nach weiteren UPnP-Medienservern suchen.
-	EN	Enabled, look for other UPnP media servers.
-	ES	Activado, buscar otros servidores de medios UPnP.
-	FI	Käytössä, etsi muita UPnP-mediapalvelimia.
-	FR	Activé, rechercher d'autres serveurs UPnP.
-	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP.
-	IT	Attivato. Cerca altri server multimediali UPnP.
-	NL	Ingeschakeld, naar andere UPnP-mediaservers zoeken.
-	NO	På, se etter andre UPnP-medietjenere.
-	PL	Włączone, znajdź inne serwery multimediów UPnP.
-	RU	Включено, поиск других медиа-серверов UPnP.
-	SV	Aktiverad: Sök efter andra UPnP-medieservrar.
+	CS	Aktivováno, hledat další servery médií UPnP/DLNA.
+	DA	Aktiveret; søg efter andre UPnP/DLNA-medieservere.
+	DE	Ja, nach weiteren UPnP/DLNA-Medienservern suchen.
+	EN	Enabled, look for other UPnP/DLNA media servers.
+	ES	Activado, buscar otros servidores de medios UPnP/DLNA.
+	FI	Käytössä, etsi muita UPnP/DLNA-mediapalvelimia.
+	FR	Activé, rechercher d'autres serveurs UPnP/DLNA.
+	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA.
+	IT	Attivato. Cerca altri server multimediali UPnP/DLNA.
+	NL	Ingeschakeld, naar andere UPnP/DLNA-mediaservers zoeken.
+	NO	På, se etter andre UPnP/DLNA-medietjenere.
+	PL	Włączone, znajdź inne serwery multimediów UPnP/DLNA.
+	RU	Включено, поиск других медиа-серверов UPnP/DLNA.
+	SV	Aktiverad: Sök efter andra UPnP/DLNA-medieservrar.
 
 PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
-	CS	Vypnuto, nehledat další UPnP servery médií.
-	DA	Deaktiveret. Søg ikke efter andre UPnP-medieservere.
-	DE	Nein, nicht nach UPnP-Medienservern suchen.
-	EN	Disabled, do not look for other UPnP media servers.
-	ES	Desactivado, no buscar otros servidores de medios UPnP.
-	FI	Ei käytössä, älä etsi muita UPnP-mediapalvelimia.
-	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP.
-	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP.
-	IT	Disattivato. Non cercare altri server multimediali UPnP.
-	NL	Uitgeschakeld, niet naar andere UPnP-mediaservers zoeken.
-	NO	Av. Logitech Media Server vil ikke se etter andre UPnP-medieservere.
-	PL	Wyłączone, nie wyszukuj innych serwerów multimediów UPnP.
-	RU	Отключено, не выполнять поиск других медиа-серверов UPnP.
-	SV	Aktiverad. Sök inte efter andra UPnP-medieservrar.
+	CS	Vypnuto, nehledat další UPnP/DLNA servery médií.
+	DA	Deaktiveret. Søg ikke efter andre UPnP/DLNA-medieservere.
+	DE	Nein, nicht nach UPnP/DLNA-Medienservern suchen.
+	EN	Disabled, do not look for other UPnP/DLNA media servers.
+	ES	Desactivado, no buscar otros servidores de medios UPnP/DLNA.
+	FI	Ei käytössä, älä etsi muita UPnP/DLNA-mediapalvelimia.
+	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP/DLNA.
+	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA.
+	IT	Disattivato. Non cercare altri server multimediali UPnP/DLNA.
+	NL	Uitgeschakeld, niet naar andere UPnP/DLNA-mediaservers zoeken.
+	NO	Av. Logitech Media Server vil ikke se etter andre UPnP/DLNA-medieservere.
+	PL	Wyłączone, nie wyszukuj innych serwerów multimediów UPnP/DLNA.
+	RU	Отключено, не выполнять поиск других медиа-серверов UPnP/DLNA.
+	SV	Aktiverad. Sök inte efter andra UPnP/DLNA-medieservrar.
+	
+PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
+	DE	UPnP/DLNA Menüs ignorieren
+	EN	UPnP/DLNA Ignore Menus
+
+PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
+	DE	Gib eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lasse das Feld leer, um keine Ordner zu überspringen.
+	EN	Define a comma separated list of menu names, which should be ignored when browsing UPnP/DLNA sources. This can include eg. menus providing pictures, videos, or other media not applicable on the Squeezebox. Leave that field empty if you don't want to skip any folder.
+
+PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
+	DE	Filme, Videos, Fotos, Bilder, Movies, Video, Pictures, Images
+	EN	Movies, Video, Pictures, Images
 	

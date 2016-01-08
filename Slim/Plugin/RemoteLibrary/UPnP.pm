@@ -141,9 +141,24 @@ sub gotContainer {
 		my $playlist  = $pt->{playlist};
 		my $tracks    = [];
 		my $hasIcons;
+		
+		my $filterRE;
+		if ( my $ignoreFolders = $prefs->get('ignoreFolders') ) {
+			$ignoreFolders = join( '|', split(/\s*,\s*/, $ignoreFolders) );
+			$filterRE = qr/^(?:$ignoreFolders)$/i;
+		}
 				
 		for my $child ( @{$children} ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($child));
+			
+			next unless $child->{title};
+
+			if ( defined $filterRE && $child->{title} =~ $filterRE ) {
+				if ( !$child->{type} || $child->{type} =~ /^object.container(?:\.storageFolder)?$/i ) {
+					main::INFOLOG && $log->is_info && $log->info("Skipping menu item, its name is on the ignore list (check settings if you don't agree): " . Data::Dump::dump($child));
+					next;
+				}
+			}
 			
 			if ( $getMetadata ) {
 				foreach ( qw(title artist album genre url) ) {

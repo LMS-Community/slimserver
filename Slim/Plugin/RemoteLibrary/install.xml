@@ -9,6 +9,7 @@
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/</homepageURL>
 	<icon>plugins/RemoteLibrary/html/icon.png</icon>
+	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>        
 	<playerMenu>BROWSE_MUSIC</playerMenu>
 	<targetApplication>
 		<id>SlimService</id>

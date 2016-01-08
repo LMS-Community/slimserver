@@ -21,7 +21,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(useLMS useUPnP));
+	return ($prefs, qw(useLMS useUPnP ignoreFolders));
 }
 
 sub handler {

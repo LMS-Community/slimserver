@@ -53,6 +53,10 @@ sub initPlugin {
 	$prefs->init({
 		useLMS => 1,
 		useUPnP => (preferences('server')->get('noupnp') ? 0 : 1),
+		ignoreFolders => sub {
+			my %ignoreItems = Slim::Utils::OSDetect::getOS->ignoredItems();
+			return join( ', ', string('PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT'), grep { $ignoreItems{$_} == 1 } keys %ignoreItems );
+		},
 	});
 	
 	if ( $prefs->get('useLMS') ) {
