@@ -96,6 +96,10 @@ sub handleFeed {
 
 	my $items = [];
 	
+	# there's a bug in SP which would block the menu when we re-enter a menu with a text area 
+	# after we had left from a menu item other than the first one...
+	my $isSqueezeplay = ($client && $client->controllerUA && $client->controllerUA =~ /^SqueezePlay/) ? 1 : 0;
+	
 	foreach my $provider (keys %remoteLibraryProviders) {
 		next unless $provider->can('getLibraryList');
 		push @$items, @{ $provider->getLibraryList() || [] };
@@ -109,16 +113,13 @@ sub handleFeed {
 	}
 	else {
 		$items = [ sort { lc($a->{name}) cmp lc($b->{name}) } @$items ];
-		
-		# Squeezeplay can't handle icons when a textarea is shown...
-		if ( $client && $client->controllerUA && $client->controllerUA =~ /^SqueezePlay/ ) {
-			$items = [ map { delete $_->{image}; $_ } @$items ];
+
+		if ( !$isSqueezeplay ) {
+			unshift @$items, {
+				name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND'),
+				type => 'textarea'
+			};
 		}
-		
-		unshift @$items, {
-			name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND'),
-			type => 'textarea'
-		};
 	}
 	
 	$cb->({
