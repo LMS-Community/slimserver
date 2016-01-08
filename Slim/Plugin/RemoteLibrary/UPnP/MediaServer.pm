@@ -24,7 +24,6 @@ my %devices;
 #our $registeredCallbacks = [];
 
 my $log = logger('plugin.remotelibrary');
-
 my $prefs = preferences('plugin.remotelibrary');
 
 # Media server model names to ignore (i.e. Rhapsody)
@@ -163,8 +162,6 @@ sub gotContainer {
 	my $args = shift;
 	my $udn  = $args->{udn};
 	
-	my $cache = Slim::Utils::Cache->new;
-
 	my @children;
 	
 	if ( $io ) {		
@@ -180,46 +177,7 @@ sub gotContainer {
 			main::idleStreams() if !(++$i % 20);
 			
 			if ( $chunk =~ /<container(.*?)<\/container>/sg ) {
-				my $node = $1;
-			
-				my ($title, $id, $type, $url, $childCount);
-				if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
-					$title = HTML::Entities::decode($1);
-					utf8::decode($title);
-					# some Rhapsody titles contain '??'
-					$title =~ s/\?\?/ /g;
-				}
-				if ( $node =~ /id="([^"]+)"/ ) {
-					$id = $1;
-				}
-				if ( $node =~ /childCount="([^"]+)"/ ) {
-					$childCount = $1;
-				}
-				if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
-					$url = $1;
-					
-					# If the UPnP server is running on the same PC as the server, URL may be localhost
-					if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
-						my $realIP = Slim::Utils::IPDetect::IP();
-						$url       =~ s/$host/$realIP/;
-					}
-				}
-
-				my $props = {
-					title      => $title,
-					id         => $id,
-					childCount => $childCount,
-					url        => $url,
-				};
-
-				if ($url) {
-					Slim::Music::Info::setTitle($url, $title);
-				}
-			
-				# item info is cached for use in building crumb trails in the web UI
-				$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
-			
-				push @children, $props;
+				push @children, _parseChunk($1);
 			}
 			else {
 				# done with containers, do we also have items?
@@ -233,74 +191,17 @@ sub gotContainer {
 						main::idleStreams() if !(++$i % 20);
 						
 						if ( $itemChunk =~ /<item(.*?)<\/item>/sg ) {
-							my $node = $1;
-							
-							my ($title, $id, $type, $url);
-
-							if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
-								$title = HTML::Entities::decode($1);
-								utf8::decode($title);
-								# some Rhapsody titles contain '??'
-								$title =~ s/\?\?/ /g;
-							}
-							if ( $node =~ m{<upnp:class[^>]*>([^<]+)</upnp:class>} ) {
-								$type = $1;
-							}
-							if ( $node =~ /id="([^"]+)"/ ) {
-								$id = $1;
-							}
-							if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
-								$url = $1;
-								
-								# If the UPnP server is running on the same PC as the server, URL may be localhost
-								if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
-									my $realIP = Slim::Utils::IPDetect::IP();
-									$url       =~ s/$host/$realIP/;
-								}
-							}
-							
-							my $props = {
-								title => $title,
-								id    => $id,
-								url   => $url,
-								type  => $type,
-							};
-							
-							# grab all other namespace items
-							my %otherItems = $node =~ m{<\w+:(\w+)>([^<]+)</\w+:}g;
-							for my $key ( keys %otherItems ) {
-								next if $key =~ /(?:title|class)/;	# we already grabbed these above
-								$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
-								utf8::decode($props->{$key});
-							}
-
-							if ($url) {
-								Slim::Music::Info::setTitle($url, $title);
-							}
+							my $props = _parseChunk($1);
 							
 							# Cache artwork if any
-							if ( $props->{albumArtURI} ) {
-								my $cache = Slim::Utils::Cache->new();
-								$cache->set( "remote_image_$url" => $props->{albumArtURI}, '1 day' );
+							if ( $props->{albumArtURI} && $props->{url} ) {
+								my $cache = Slim::Utils::Cache->new;
+								$cache->set( "remote_image_" . $props->{url}, $props->{albumArtURI}, '1 week' );
 							}
-
-							$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
 
 							push @children, $props;
 						}
-						elsif ( $chunk =~ m{<TotalMatches[^>]*>([^<]+)</TotalMatches>} ) {
-							# total browse results, used for building pagination links
-							my $matches = $1;
-							my $id      = $args->{id};
-							$cache->set( "upnp_total_matches_${udn}_${id}", $matches, '1 hour' );
-						}
 					}
-				}
-				elsif ( $chunk =~ m{<TotalMatches[^>]*>([^<]+)</TotalMatches>} ) {
-					# total browse results, used for building pagination links
-					my $matches = $1;
-					my $id      = $args->{id};
-					$cache->set( "upnp_total_matches_${udn}_${id}", $matches, '1 hour' );
 				}
 			}
 		}
@@ -337,20 +238,57 @@ sub gotContainer {
 	$callback->( $container, @{$passthrough} );
 }
 
-sub getItemInfo {
-	my $udn = shift;
-	my $id  = shift;
+sub _parseChunk {
+	my $node = shift;
+	
+	my ($title, $url);
+	my $props = {};
 
-	my $cache = Slim::Utils::Cache->new;
-	return $cache->get( "upnp_item_info_${udn}_${id}");
-}
+	if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
+		$title = HTML::Entities::decode($1);
+		utf8::decode($title);
+		# some Rhapsody titles contain '??'
+		$title =~ s/\?\?/ /g;
+		$props->{title} = $title;
+	}
 
-sub getTotalMatches {
-	my $udn = shift;
-	my $id  = shift;
+	if ( $node =~ /id="([^"]+)"/ ) {
+		$props->{id} = $1;
+	}
 
-	my $cache = Slim::Utils::Cache->new;
-	return $cache->get( "upnp_total_matches_${udn}_${id}");
+	if ( $node =~ m{<upnp:class[^>]*>([^<]+)</upnp:class>} ) {
+		$props->{type} = $1;
+	}
+
+	if ( $node =~ /childCount="([^"]+)"/ ) {
+		$props->{childCount} = $1;
+	}
+
+	if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
+		$url = $1;
+		
+		# If the UPnP server is running on the same PC as the server, URL may be localhost
+		if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
+			my $realIP = Slim::Utils::IPDetect::IP();
+			$url       =~ s/$host/$realIP/;
+		}
+		
+		$props->{url} = $url;
+	}
+				
+	# grab all other namespace items
+	my %otherItems = $node =~ m{<\w+:(\w+)>([^<]+)</\w+:}g;
+	for my $key ( keys %otherItems ) {
+		next if $key =~ /(?:title|class)/;	# we already grabbed these above
+		$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
+		utf8::decode($props->{$key});
+	}
+
+	if ( $url && $title ) {
+		Slim::Music::Info::setTitle($url, $title);
+	}
+	
+	return $props;
 }
 
 sub gotBlurb {

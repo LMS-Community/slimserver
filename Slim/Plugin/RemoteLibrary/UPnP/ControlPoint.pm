@@ -35,8 +35,8 @@ my $deviceRequests = {};
 # device locations we've retrieved description documents from
 my $deviceLocations = {};
 
-# failed devices, we don't check these more than once every 30 minutes
-use constant FAILURE_RETRY_TIME => 60 * 30  / 180;
+# failed devices, we don't check these more than once every X minutes
+use constant FAILURE_RETRY_TIME => 60 * 5;
 my $failedDevices = {};
 
 # Search for all devices on the network

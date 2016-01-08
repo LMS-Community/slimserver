@@ -111,7 +111,7 @@ sub handleFeed {
 		$items = [ sort { lc($a->{name}) cmp lc($b->{name}) } @$items ];
 		
 		# Squeezeplay can't handle icons when a textarea is shown...
-		if ( $client->controllerUA && $client->controllerUA =~ /^SqueezePlay/ ) {
+		if ( $client && $client->controllerUA && $client->controllerUA =~ /^SqueezePlay/ ) {
 			$items = [ map { delete $_->{image}; $_ } @$items ];
 		}
 		

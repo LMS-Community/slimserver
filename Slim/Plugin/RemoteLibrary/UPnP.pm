@@ -11,6 +11,8 @@ use strict;
 use URI::Escape qw(uri_escape uri_unescape);
 use XML::Simple;
 
+use Slim::Formats::RemoteMetadata;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring string);
@@ -19,6 +21,7 @@ use Slim::Plugin::RemoteLibrary::UPnP::MediaServer;
 
 my $prefs = preferences('plugin.remotelibrary');
 my $log   = logger('plugin.remotelibrary');
+my $cache = Slim::Utils::Cache->new;
 
 sub init {
 	my $class = shift;
@@ -60,10 +63,7 @@ sub getLibraryList {
 
 				if ( scalar @$iconList && (my $img = $iconList->[0]->{url}) ) {
 					if ($img !~ /^http/) {
-						my $baseUrl = $_->getlocation;
-						my ($host, $port, $path, undef, undef) = Slim::Utils::Misc::crackURL($baseUrl);
-						$baseUrl =~ s/$path//;
-						$img = $baseUrl . $img;
+						$img = _getBaseUrl($_->getlocation) . $img;
 					}
 					
 					$icon = $img;
@@ -140,8 +140,11 @@ sub gotContainer {
 		my $getMetadata = $pt->{metadata};
 		my $playlist  = $pt->{playlist};
 		my $tracks    = [];
+		my $hasIcons;
 				
 		for my $child ( @{$children} ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($child));
+			
 			if ( $getMetadata ) {
 				foreach ( qw(title artist album genre url) ) {
 					push @$items, {
@@ -166,13 +169,34 @@ sub gotContainer {
 					$item->{type} = 'audio';
 					$item->{passthrough}->[0]->{metadata} = 1;
 
-					# when we're called to Play All Tracks or similar, return the stream's URL
-					$item->{url} = $child->{url} if $playlist;
+					# save metadata for later use
+					$cache->set('upnp_meta_' . $child->{url}, $child, '1 week');
 
-					push @$tracks, $child->{url} unless $playlist;
+					# register metadata handler
+					if ( !Slim::Formats::RemoteMetadata->getProviderFor($child->{url}) ) {
+						my $baseUrl = _getBaseUrl($child->{url});
+						
+						Slim::Formats::RemoteMetadata->registerProvider(
+							match => qr/\Q$baseUrl\E/,
+							func => \&getMetadata,
+						);
+					}
+
+					# when we're called to Play All Tracks or similar, return the stream's URL
+					if ($playlist) {
+						$item->{url} = $child->{url};
+					}
+					else {
+						push @$tracks, $child->{url};
+					}
 				}
 				elsif (!$child->{id}) {
 					$item->{type} = 'textarea';
+				}
+				
+				if ($child->{albumArtURI} && !$child->{url}) {
+					$item->{image} = $child->{albumArtURI};
+					$hasIcons++;
 				}
 
 				push @$items, $item;
@@ -186,6 +210,7 @@ sub gotContainer {
 				type => 'playlist',
 				url  => \&_browseUPnP,
 				on_select => 'play',
+				image => $hasIcons ? 'html/images/playall.png' : undef,
 				passthrough => [{
 					device => $device,
 					hierarchy => $hierarchy,
@@ -194,8 +219,58 @@ sub gotContainer {
 			};
 		}
 	}
+	
+	if (!scalar @$items) {
+		push @$items, {
+			name => cstring($client, 'EMPTY'),
+			type => 'text'
+		};
+	}
 
 	$cb->($items);
+}
+
+sub getMetadata {
+	my ( $client, $url ) = @_;
+
+	my $info = $cache->get('upnp_meta_' . $url) || {};
+	
+	my $meta = {
+		title => $info->{title},
+	};
+	
+	if ( my $artist = $info->{artist} || $info->{actor} || $info->{contributor} || $info->{creator} ) {
+		$meta->{artist} = $artist;
+	}
+	
+	if ( my $date = $info->{date} ) {
+		 if ( $date =~ /\b(\d{4})\b/ ) {
+			 $meta->{year} = $1;
+		 }
+	}
+
+	my %metaMapping = (
+		title => 0,
+		album => 0,
+		genre => 0,
+		originalTrackNumber => 'tracknum',
+		albumArtURI => 'cover',
+	);
+	
+	while ( my ($k, $attribute) = each %metaMapping ) {
+		if ( defined $attribute && defined $info->{$k} ) {
+			$meta->{$attribute || $k} = $info->{$k};
+		}
+	}
+
+	return $meta;
+}
+
+sub _getBaseUrl {
+	my $baseUrl = shift;
+	my ($host, $port, $path, undef, undef) = Slim::Utils::Misc::crackURL($baseUrl);
+	$baseUrl =~ s/\Q$path\E//;
+	return $baseUrl;
 }
 
 1;
