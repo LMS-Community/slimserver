@@ -65,23 +65,21 @@ sub initPlugin {
 		Slim::Plugin::RemoteLibrary::UPnP->init()
 	}
 	
+	if ( main::WEBUI ) {
+		require Slim::Plugin::RemoteLibrary::Settings;	
+		Slim::Plugin::RemoteLibrary::Settings->new;
+	}
+	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'selectRemoteLibrary',
 		node   => 'myMusic',
 		menu   => 'browse',
-		weight => 1000,
+		weight => 110,
 	);
-	
-	if ( main::WEBUI ) {
-		require Slim::Plugin::RemoteLibrary::Settings;	
-		Slim::Plugin::RemoteLibrary::Settings->new;
-	}
 }
 
-sub getDisplayName () {
-	return 'PLUGIN_REMOTE_LIBRARY_MODULE_NAME';
-}
+sub getDisplayName { 'PLUGIN_REMOTE_LIBRARY_MODULE_NAME' }
 
 sub addRemoteLibraryProvider {
 	my ($class, $provider) = @_;
