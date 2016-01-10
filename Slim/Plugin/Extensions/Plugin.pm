@@ -178,6 +178,8 @@ sub addRepo {
 	main::INFOLOG && $log->info("adding repository $repo weight $weight");
 
 	$repos{$repo} = $weight;
+
+	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions, 'user');
 }
 
 sub removeRepo {
@@ -189,6 +191,8 @@ sub removeRepo {
 	main::INFOLOG && $log->info("removing repository $repo");
 
 	delete $repos{$repo};
+
+	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
 }
 
 sub repos {
