@@ -79,11 +79,8 @@ sub init {
 	);
 
 	# tell Slim::Menu::BrowseLibrary where to get information for remote libraries from
-	Slim::Menu::BrowseLibrary->registerRequestProxy(\&remoteRequest);
-	Slim::Menu::BrowseLibrary->registerStreamProxy(\&_proxiedStreamUrl);
-	Slim::Menu::BrowseLibrary->registerImageProxy(\&_proxiedImage);
-	Slim::Menu::BrowseLibrary->registerPrefGetter(\&_getPref);
-
+	Slim::Menu::BrowseLibrary->setRemoteLibraryHandler($class);
+	
 	Slim::Plugin::RemoteLibrary::Plugin->addRemoteLibraryProvider($class);
 }
 
@@ -98,6 +95,9 @@ sub getLibraryList {
 		next if Slim::Networking::Discovery::Server::is_self($_);
 		
 		my $uuid = Slim::Networking::Discovery::Server::getServerUUID($_);
+		
+		main::DEBUGLOG && $log->is_debug && $log->debug("Using remote Logitech Media Server: " . Data::Dump::dump($servers->{$_}));
+		
 		_getBrowsePrefs($uuid);
 		
 		# create menu item
@@ -199,7 +199,7 @@ sub _extractBrowseMenu {
 			}
 		}
 		
-		$_->{icon} = _proxiedImage($_, $remote_library);
+		$_->{icon} = __PACKAGE__->proxiedImageUrl($_, $remote_library);
 		$_->{url}  = \&Slim::Menu::BrowseLibrary::_topLevel;
 		$_->{name} = $_->{text};
 		
@@ -234,7 +234,7 @@ sub _checkCredentials {
 	$prefs->set($remote_library, encode_base64(pack("u", "$username:$password"), ''));
 	
 	# Run a request against this server to test credentials
-	remoteRequest($remote_library, 
+	__PACKAGE__->remoteRequest($remote_library, 
 		[ '', ['serverstatus', 0, 1 ] ],
 		sub {
 			my $result = shift || {};
@@ -263,8 +263,8 @@ sub _checkCredentials {
 	);
 }
 
-sub _proxiedStreamUrl {
-	my ($item, $remote_library) = @_;
+sub proxiedStreamUrl {
+	my ($class, $item, $remote_library) = @_;
 	
 	my $id = $item->{id};
 	$id ||= $item->{commonParams}->{track_id} if $item->{commonParams};
@@ -280,8 +280,8 @@ sub _proxiedStreamUrl {
 	return $url;
 }
 
-sub _proxiedImage {
-	my ($item, $remote_library) = @_;
+sub proxiedImageUrl {
+	my ($class, $item, $remote_library) = @_;
 
 	my $image = $item->{'icon-id'} || $item->{icon} || $item->{image} || $item->{coverid};
 	
@@ -316,7 +316,7 @@ sub _getBrowsePrefs {
 	foreach my $pref ( 'noGenreFilter', 'noRoleFilter', 'useUnifiedArtistsList', 'composerInArtists', 'conductorInArtists', 'bandInArtists' ) {
 		if (!defined $cached->{$pref} && !$passwordProtected{$serverId}) {
 			push @prefsFetcher, sub {
-				remoteRequest($serverId, 
+				__PACKAGE__->remoteRequest($serverId, 
 					[ '', ['pref', $pref, '?' ] ],
 					sub {
 						my $result = shift || {};
@@ -338,8 +338,8 @@ sub _getBrowsePrefs {
 	}	
 }
 
-sub _getPref {
-	my ($pref, $remote_library) = @_;
+sub getPref {
+	my ($class, $pref, $remote_library) = @_;
 	
 	if ( $remote_library && (my $cached = $cache->get($remote_library . '_prefs')) ) {
 		return $cached->{$pref};
@@ -361,7 +361,7 @@ sub baseUrl {
 
 # Send a CLI command to a remote server
 sub remoteRequest {
-	my ($remote_library, $request, $cb, $ecb, $pt) = @_;
+	my ($class, $remote_library, $request, $cb, $ecb, $pt) = @_;
 
 	$ecb ||= $cb;
 	

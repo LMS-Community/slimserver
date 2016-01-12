@@ -95,7 +95,7 @@ sub getMetadataFor {
 			$request = ['titles', 0, 999, sprintf('search:sql=tracks.id IN (%s)', join(',', keys %$need)), 'tags:acdgilortyY'];
 		}
 		
-		Slim::Plugin::RemoteLibrary::LMS::remoteRequest($uuid, 
+		Slim::Plugin::RemoteLibrary::LMS->remoteRequest($uuid, 
 			[ '', $request ],
 			\&_gotMetadata,
 			sub {},
@@ -153,7 +153,7 @@ sub _gotMetadata {
 	
 		if ($meta->{coverid}) {
 			my (undef, $remote_library) = _parseUrl($url);
-			$meta->{cover} = Slim::Plugin::RemoteLibrary::LMS::_proxiedImage({
+			$meta->{cover} = Slim::Plugin::RemoteLibrary::LMS->proxiedImageUrl({
 				'image' => delete $meta->{coverid}
 			}, $remote_library);
 		}

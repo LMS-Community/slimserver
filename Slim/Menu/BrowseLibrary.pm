@@ -230,7 +230,8 @@ my %nodes;
 my @addedNodes;
 my @deletedNodes;
 
-my ($requestProxy, $streamProxy, $imageProxy, $prefGetter);
+# this can be set to a class which would give us access to remote LMS instances
+my $remoteLibraryHandler;
 
 my %browseLibraryModeMap = (
 	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
@@ -966,10 +967,8 @@ sub _generic {
 sub _doRequest {
 	my ($client, $requestRef, $callback, $args) = @_;
 	
-	my $remote_library = $args->{remote_library};
-	
-	if ( $requestProxy && $remote_library ) {
-		$requestProxy->($remote_library, 
+	if ( $remoteLibraryHandler && (my $remote_library = $args->{remote_library}) ) {
+		$remoteLibraryHandler->remoteRequest($remote_library, 
 			[ '', $requestRef ],
 			$callback
 		);
@@ -2222,56 +2221,41 @@ sub playerMenu {'PLUGINS'}
 
 =pod
 
-Provide hooks for plugins to register callbacks for some common remote streaming proxy helpers
+Provide a hook for plugins to register a remote library helper class. This class needs to provide the following methods:
+
+- remoteRequest: proxy a LMS/CLI command to a remote host.
+- proxiedStreamUrl: return a URL LMS can deal with. This can be using a custom protocol handler.
+- proxiedImageUrl: return a valid URL to a remote LMS instance's image, including resizing parameters if needed.
+- getPref: get a preference from a remote server.
 
 =cut
 
-sub registerRequestProxy {
-	my ($class, $proxy) = @_;
+sub setRemoteLibraryHandler {
+	my ($class, $handler) = @_;
 	
-	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
-
-	$requestProxy = $proxy;
-}
-
-sub registerStreamProxy {
-	my ($class, $proxy) = @_;
+	# a class which wants to deal with remote servers must provide a number of methods
+	if ( !( $handler && $handler->can('remoteRequest') && $handler->can('proxiedStreamUrl') && $handler->can('proxiedImageUrl') && $handler->can('getPref') ) ) {
+		$class ||= 'undefined';
+		$log->error("Not registering '$class' as remote handler. It doesn't support all required methods.");
+	}
 	
-	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
-
-	$streamProxy = $proxy;
+	$remoteLibraryHandler = $handler;
 }
 
 sub _proxiedStreamUrl {
-	return $streamProxy ? $streamProxy->(@_) : $_[0];
-}
-
-sub registerImageProxy {
-	my ($class, $proxy) = @_;
-	
-	return unless $proxy && ref $proxy && ref $proxy eq 'CODE';
-
-	$imageProxy = $proxy;
+	return $remoteLibraryHandler ? $remoteLibraryHandler->proxiedStreamUrl(@_) : $_[0];
 }
 
 sub _proxiedImageUrl {
-	return $imageProxy ? $imageProxy->(@_) : $_[0];
-}
-
-sub registerPrefGetter {
-	my ($class, $getter) = @_;
-	
-	return unless $getter && ref $getter && ref $getter eq 'CODE';
-	
-	$prefGetter = $getter;
+	return $remoteLibraryHandler ? $remoteLibraryHandler->proxiedImageUrl(@_) : $_[0];
 }
 
 sub _getPref {
 	my ($pref, $remote_library) = @_;
 	
 	my $value;
-	if ( $remote_library && $prefGetter) {
-		$value = $prefGetter->($pref, $remote_library);
+	if ( $remote_library && $remoteLibraryHandler) {
+		$value = $remoteLibraryHandler->getPref($pref, $remote_library);
 	}
 	
 	$value = $prefs->get($pref) unless defined $value;
