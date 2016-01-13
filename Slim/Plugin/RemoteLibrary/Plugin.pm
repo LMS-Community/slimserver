@@ -59,6 +59,23 @@ sub initPlugin {
 		},
 	});
 	
+	# some sanity checks on remote LMS URLs
+	$prefs->setChange(sub {
+		my ($prefname, $newValue) = @_;
+		
+		$newValue = [ map {
+			$_ = 'http://' . $_ unless m|^http://|i;
+			$_ .= ':9000' unless m|:\d+$|;
+			$_;
+		} @{ $newValue || [] }];
+	}, 'remoteLMS');
+	
+	$prefs->setValidate(sub {
+		# localhost is not allowed, as players wouldn't see it
+		return 0 if grep /localhost|127\.0\.0\.1/, @{ $_[1] || [] };
+		return 1;
+	}, 'remoteLMS');
+	
 	if ( $prefs->get('useLMS') ) {
 		require Slim::Plugin::RemoteLibrary::LMS;
 		Slim::Plugin::RemoteLibrary::LMS->init();

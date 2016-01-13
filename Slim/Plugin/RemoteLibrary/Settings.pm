@@ -33,6 +33,19 @@ sub handler {
 		Slim::Plugin::RemoteLibrary::LMS->init();
 	}
 
+	if ($paramRef->{'saveSettings'}) {
+		my @array;
+
+		for (my $i = 0; defined $paramRef->{'pref_remoteLMS' . $i}; $i++) {
+			push @array, $paramRef->{'pref_remoteLMS' . $i} if $paramRef->{'pref_remoteLMS' . $i};
+		}
+
+		$prefs->set('remoteLMS', \@array);
+	}
+	
+	$paramRef->{'prefs'}->{ 'pref_remoteLMS' } = [ @{ $prefs->get('remoteLMS') || [] }, '' ];
+	$paramRef->{'remoteLMSDetails'} = $prefs->get('remoteLMSDetails');
+
 	if ( defined $paramRef->{pref_useUPnP} && $paramRef->{pref_useUPnP} ne $prefs->get('useUPnP') ) {
 		# Shut down all UPnP activity - don't load module if it wasn't loaded yet
 		eval { Slim::Plugin::RemoteLibrary::UPnP::MediaServer->shutdown() };

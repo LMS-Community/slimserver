@@ -54,6 +54,14 @@ my $cache = Slim::Utils::Cache->new;
 sub init {
 	my $class = shift;
 	
+	# get details about the manually added servers
+	$class->getServerDetails(1);
+	
+	# update server details whenever the list of manually added LMS fails
+	$prefs->setChange(sub {
+		$class->getServerDetails();
+	}, 'remoteLMS');
+	
 	Slim::Player::ProtocolHandlers->registerHandler(
 		lms => 'Slim::Plugin::RemoteLibrary::ProtocolHandler'
 	);
@@ -87,22 +95,37 @@ sub init {
 sub getLibraryList {
 	return unless $prefs->get('useLMS');
 
-	my $servers = Slim::Networking::Discovery::Server::getServerList();
-	my $items = [];
+	my %servers;
+	my $items;
 	
-	foreach ( sort keys %$servers ) {
+	# locally discovered servers
+	my $servers = Slim::Networking::Discovery::Server::getServerList();
+	foreach ( keys %$servers ) {
+		$servers{ Slim::Networking::Discovery::Server::getServerUUID($_) } = $_;
+	}
+	
+	my $otherServers = $prefs->get('remoteLMSDetails') || {};
+
+	# manually addes servers
+	foreach ( @{ $prefs->get('remoteLMS') || [] } ) {
+		my $details = $otherServers->{$_} || next;
+		$servers{$details->{uuid}} = $details->{name} || $_;
+	}
+
+	my $server_uuid = preferences('server')->get('server_uuid');
+	
+	while ( my ($uuid, $name) = each %servers ) {
 		
-		next if Slim::Networking::Discovery::Server::is_self($_);
+		# ignore servers with invalid UUID, or ourselves
+		next if !$uuid || $uuid eq $server_uuid || $uuid =~ /[^a-z\-\d]/i;
 		
-		my $uuid = Slim::Networking::Discovery::Server::getServerUUID($_);
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug("Using remote Logitech Media Server: " . Data::Dump::dump($servers->{$_}));
+		main::DEBUGLOG && $log->is_debug && $log->debug("Using remote Logitech Media Server: $name");
 		
 		_getBrowsePrefs($uuid);
 		
 		# create menu item
 		push @$items, {
-			name => $_,
+			name => $name,
 			type => 'link',
 			url  => \&_getRemoteMenu,
 			image => 'plugins/RemoteLibrary/html/lms.png',
@@ -118,8 +141,8 @@ sub getLibraryList {
 sub _getRemoteMenu {
 	my ($client, $cb, $args, $pt) = @_;
 	
-	my $remote_library = $pt->{remote_library} || $client->pluginData('remote_library');
-	$client->pluginData( remote_library => $remote_library );
+	my $remote_library = $pt->{remote_library} || ($client && $client->pluginData('remote_library'));
+	$client->pluginData( remote_library => $remote_library ) if $client;
 
 	if ($passwordProtected{$remote_library}) {
 		# XXX - can we pre-populate the input field with the known password?
@@ -349,12 +372,25 @@ sub getPref {
 sub baseUrl {
 	my ($class, $remote_library) = @_;
 
-	my $baseUrl = $remote_library =~ /^http/ ? $remote_library : Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
+	my $baseUrl;
+	
+	$baseUrl = $remote_library if $remote_library =~ /^http/;
+
+	if (!$baseUrl) {
+		my $serverDetails = $prefs->get('remoteLMSDetails');
+		($baseUrl) = grep {
+			$serverDetails->{$_} && lc($serverDetails->{$_}->{uuid}) eq lc($remote_library) 
+		} @{ $prefs->get('remoteLMS') || [] };
+	}
+
+	$baseUrl ||= Slim::Networking::Discovery::Server::getWebHostAddress($remote_library);
 
 	if ( my $creds = $prefs->get($remote_library) ) {
 		$creds = unpack(chr(ord("a") + 19 + print ""), decode_base64($creds));
 		$baseUrl =~ s/^(http:\/\/)/$1$creds\@/;
 	}
+	
+	$baseUrl .= '/' unless $baseUrl =~ m|/$|;
 	
 	return $baseUrl;
 }
@@ -410,6 +446,51 @@ sub remoteRequest {
 			timeout => 60,
 		},
 	)->post( $baseUrl . 'jsonrpc.js', $postdata );
+}
+
+sub getServerDetails {
+	my ($class, $force) = @_;
+	
+	my $servers = $prefs->get('remoteLMS') || [];
+
+	my @detailsQueries = (
+		{ name => 'version', query => ['version', '?'], key => '_version' },
+		{ name => 'name', query => ['pref', 'libraryname', '?'], key => '_p2' },
+		{ name => 'uuid', query => ['pref', 'server_uuid', '?'], key => '_p2' },
+	);
+	
+	foreach my $server ( @$servers ) {
+		if (!$force) {
+			my $details = $prefs->get('remoteLMSDetails') || {};
+			next if $details->{$server};
+		}
+		
+		foreach ( @detailsQueries ) {
+			$class->remoteRequest($server, 
+				['', $_->{query}],
+				sub {
+					my ($results, $pt) = @_;
+
+					return unless $results && $pt && $pt->{server} && $pt->{name} && $pt->{key};
+					
+					my $server = $pt->{server};
+					
+					my $details = $prefs->get('remoteLMSDetails') || {};
+
+					$details->{$server} ||= {};
+					$details->{$server}->{$pt->{name}} = $results->{$pt->{key}};
+					
+					$prefs->set('remoteLMSDetails', $details);
+				},
+				# XXX - what to do in case of failure?
+				sub {},
+				{
+					%$_,
+					server => $server,
+				}
+			);
+		}
+	}
 }
 
 1;

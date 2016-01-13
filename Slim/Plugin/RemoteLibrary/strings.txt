@@ -197,6 +197,18 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
 	PL	Wyłączone, nie wyszukuj innych serwerów multimediów UPnP/DLNA.
 	RU	Отключено, не выполнять поиск других медиа-серверов UPnP/DLNA.
 	SV	Aktiverad. Sök inte efter andra UPnP/DLNA-medieservrar.
+
+PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
+	DE	Entfernte Logitech Media Server
+	EN	Remote Logitech Media Servers
+
+PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
+	DE	Unter Umständen können entfernte Logitech Media Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies allenfalls auf dem entfernten Server.
+	EN	Under certain circumstances remote Logitech Media Servers can't be discovered automatically (eg. when using a VPN connection). You can manually enter server addresses to cover for these cases. You can use IP addresses or fully qualified domain names. The port usually is 9000, but can be different. Please check on your remote server.
+
+PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
+	DE	http://deinserver:<Port> oder http://<IP-Adresse>:9000 
+	EN	http://yourserver:<Port> or http://<IP address>:9000
 	
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	DE	UPnP/DLNA Menüs ignorieren

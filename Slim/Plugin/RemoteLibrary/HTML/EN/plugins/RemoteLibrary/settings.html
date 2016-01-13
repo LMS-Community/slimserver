@@ -14,6 +14,13 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="PLUGIN_REMOTE_LIBRARY_REMOTE_LMS" desc="PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC" %]
+		[% FOREACH server = prefs.pref_remoteLMS %]
+			<input type="text" class="stdedit" name="pref_remoteLMS[% loop.index %]" id="remoteLMS[% loop.index %]" value="[% server %]" placeholder="[% "PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT" | string | html %]" size="40">
+			[% IF remoteLMSDetails.$server %] [% remoteLMSDetails.$server.name %][% END %]<br>
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="PLUGIN_REMOTE_LIBRARY_SETUP_UPNP" desc="PLUGIN_REMOTE_LIBRARY_UPNP_DESC" %]
 		<select class="stdedit" name="pref_useUPnP" id="noupnp">
 			<option [% IF prefs.pref_useUPnP %]selected="selected" [% END %]value="1">
