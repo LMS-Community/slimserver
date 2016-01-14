@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<extension>
+	<id>9434210e-bc51-4997-ba91-fcc37b66677b</id>
+	<name>PLUGIN_DNDPLAY</name>
+	<module>Slim::Plugin::DnDPlay::Plugin</module>
+	<version>0.1</version>
+	<description>PLUGIN_DNDPLAY_DESC</description>
+	<creator>Logitech</creator>
+
+	<defaultState>enabled</defaultState>
+        
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<type>2</type>
+
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>

@@ -1,0 +1,7 @@
+PLUGIN_DNDPLAY
+	DE	Drag & Drop Musikdateien zur Wiedergabe
+	EN	Drag & drop music files to play
+
+PLUGIN_DNDPLAY_DESC
+	DE	Diese Plugin erlaubt es, Musikdateien aus dem Dateimanager des Betriebssystems (Finder, Explorer etc.) ins Logitech Media Server Web-Interface zu ziehen, um diese wiederzugeben. Dateien, die nicht im Logitech Media Server verfügbar sind, werden zur Wiedergabe temporär zum Server übertragen.
+	EN	This plugin allows you do drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the Logitech Media Server web interface to play them back. Files which are not available from the Logitech Media Server are temporarily transfered for the playback.
