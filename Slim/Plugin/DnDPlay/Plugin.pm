@@ -36,7 +36,56 @@ sub initPlugin {
 		Slim::Web::HTTP::filltemplatefile('html/js-main-dd.html', $_[1]);
 	});
 	
+	Slim::Web::Pages->addRawFunction("plugin/dndplay/checkfiles", \&handleFilesCheck);
 	Slim::Web::Pages->addRawFunction("plugin/dndplay/upload", \&handleUpload);
+}
+
+sub handleFilesCheck {
+	my ($httpClient, $response) = @_;
+	
+	my $request = $response->request;
+	my $result = {};
+	
+	my $content = eval {
+		from_json($request->content())
+	};
+	
+	if ( $@ || !$content ) {
+		$result = {
+			error => "Failed to get request body data: " . ($@ || 'no data'),
+			code  => 500,
+		};
+	}
+	elsif ( ref $content && ref $content eq 'ARRAY' ) {
+		my @actions;
+		foreach my $file ( @$content ) {
+			if ( my $url = Slim::Plugin::DnDPlay::FileManager->getCachedFileUrl($file) ) {
+				push @actions, $url;
+			}
+			else {
+				push @actions, 'upload'
+			}
+		}
+		
+		$result->{actions} = \@actions;
+	}
+	else {
+		$result = {
+			error => "Invalid data, Array of file descriptions expected " . (main::DEBUGLOG && Data::Dump::dump($content)),
+			code  => 500
+		};
+	}
+	
+		
+	$log->error($result->{error}) if $result->{error};
+
+	my $content = to_json($result);
+	$response->header( 'Content-Length' => length($content) );
+	$response->code($result->{code} || 200);
+	$response->header('Connection' => 'close');
+	$response->content_type('application/json');
+	
+	Slim::Web::HTTP::addHTTPResponse( $httpClient, $response, \$content	);
 }
 
 sub handleUpload {
@@ -70,25 +119,33 @@ sub handleUpload {
 			my ($boundary) = $ct =~ /boundary=(.*)/;
 			
 			my $content = $request->content_ref;
+			my %info;
 	
-			foreach my $param (split /--\Q$boundary\E/, $$content) {
-				if ( $param =~ s/(.+?)${CRLF}${CRLF}//s ) {
+			foreach my $data (split /--\Q$boundary\E/, $$content) {
+				if ( $data =~ s/(.+?)${CRLF}${CRLF}//s ) {
 					my $header = $1;
+					$data =~ s/$CRLF*$//s;
 
 					main::DEBUGLOG && $log->is_debug && $log->debug("New section header found: " . Data::Dump::dump($header));
 					
-					if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl($header, \$param) ) {
-						$client->execute([ 'playlist', Slim::Player::Playlist::count($client) ? 'add' : 'play', $url ]);
-						delete $result->{code};
-						
-						# we don't accept more than one file per upload
-						last;
+					# uploaded file
+					if ( $header =~ /filename=".+?"/si ) {
+						if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl($header, \$data, \%info) ) {
+							$info{url} = $url;
+							$client->execute([ 'playlist', Slim::Player::Playlist::count($client) ? 'add' : 'play', $url ]);
+							delete $result->{code};
+						}
+						else {
+							$result->{code} = 415; # unsupported media type
+						}
 					}
-					else {
-						$result->{code} = 415; # unsupported media type
+					elsif ( $header =~ /name="(.+?)"/si ) {
+						$info{$1} = $data;
 					}
 				}
 			}
+			
+			main::DEBUGLOG && $log->is_debug && $log->debug("Found additional file information: " . Data::Dump::dump(%info));
 		}
 	}
 	else {
