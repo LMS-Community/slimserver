@@ -437,7 +437,7 @@ sub remoteRequest {
 				$log->error( "$baseUrl is password protected? " . $http->error) unless $passwordProtected{$remote_library}++;
 			}
 			else {
-				$log->error( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
+				$log->warn( "Failed to get data from $baseUrl ($postdata): " . ($http->error || $http->mess || Data::Dump::dump($http)) );
 			}
 
 			$ecb->(undef, $pt);
