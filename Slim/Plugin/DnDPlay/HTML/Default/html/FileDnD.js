@@ -22,11 +22,16 @@ if (window.File && window.FileList) {
 			var added = 0;
 			var check = new Array();
 
+			// create a list of the files we want to play - we create an Array, as we can't pop items from the FileList object
 			for (var i = 0, file; file = files[i]; i++) {
+
 				// only upload audio files
 				if (file.type.match('audio')) {
 					added++;
+					
 					this.queue.push(file);
+					
+					// keep a list of tracks we want information about from LMS
 					check.push({
 						name: file.name,
 						size: file.size,
@@ -40,6 +45,7 @@ if (window.File && window.FileList) {
 				SqueezeJS.Controller.playerControl(['playlist', 'clear']);
 			}
 			
+			// lookup files on LMS - we don't want to upload unless necessary
 			Ext.Ajax.request({
 				url: SqueezeJS.Controller.getBaseUrl() + '/plugin/dndplay/checkfiles',
 				method: 'POST',
@@ -50,6 +56,7 @@ if (window.File && window.FileList) {
 						response = Ext.util.JSON.decode(response.responseText);
 
 						if (response && response.actions) {
+							// store the required action ('upload' or command to play) in the queue
 							for (var i = 0; i < response.actions.length; i++) {
 								if (this.queue[i] && !this.queue[i].action) {
 									this.queue[i].action = response.actions[i];
@@ -57,7 +64,7 @@ if (window.File && window.FileList) {
 							}
 						}
 
-						this.uploadFile();
+						this.handleFile();
 					}
 				},
 				scope: this
@@ -71,7 +78,7 @@ if (window.File && window.FileList) {
 		    evt.dataTransfer.dropEffect = 'copy';
 		},
 		
-		uploadFile: function() {
+		handleFile: function() {
 			var file = this.queue.shift();
 			
 			if (!file) {
@@ -82,8 +89,8 @@ if (window.File && window.FileList) {
 			// we've received a file URL - play it
 			if (file.action && file.action != 'upload') {
 				SqueezeJS.Controller.playerRequest({
-					params: [ "playlist", "add", file.action ],
-					callback: this.uploadFile,
+					params: Ext.decode(file.action),
+					callback: this.handleFile,
 					scope: this
 				});
 				return;
@@ -95,7 +102,11 @@ if (window.File && window.FileList) {
 			var scope = this;
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4) {
-					this.uploadFile();
+					var action = Ext.decode(xhr.responseText);
+					if (action && action.action) {
+						this.queue.unshift(action);
+					}
+					this.handleFile();
 				}
 			}.createDelegate(this);
 			
