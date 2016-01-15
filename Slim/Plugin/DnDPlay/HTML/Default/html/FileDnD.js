@@ -26,7 +26,7 @@ if (window.File && window.FileList) {
 			for (var i = 0, file; file = files[i]; i++) {
 
 				// only upload audio files
-				if (file.type.match('audio')) {
+				if (file.type.match('audio') || file.name.match('\.(mp3|mp4|flac|ogg|m4a|wma|flc|aac|aic|alc|m3u|pls|wav|wpl|xpf)$')) {
 					added++;
 					
 					this.queue.push(file);
@@ -41,34 +41,35 @@ if (window.File && window.FileList) {
 				}
 			}
 			
-			if (added > 0 && evt.shiftKey) {
-				SqueezeJS.Controller.playerControl(['playlist', 'clear']);
-			}
-			
-			// lookup files on LMS - we don't want to upload unless necessary
-			Ext.Ajax.request({
-				url: SqueezeJS.Controller.getBaseUrl() + '/plugin/dndplay/checkfiles',
-				method: 'POST',
-				params: Ext.util.JSON.encode(check),
-				timeout: 5000,
-				success: function(response) {
-					if (response && response.responseText) {
-						response = Ext.util.JSON.decode(response.responseText);
+			if (added > 0) {
+				if (evt.shiftKey)
+					SqueezeJS.Controller.playerControl(['playlist', 'clear']);
+				
+				// lookup files on LMS - we don't want to upload unless necessary
+				Ext.Ajax.request({
+					url: SqueezeJS.Controller.getBaseUrl() + '/plugin/dndplay/checkfiles',
+					method: 'POST',
+					params: Ext.util.JSON.encode(check),
+					timeout: 5000,
+					success: function(response) {
+						if (response && response.responseText) {
+							response = Ext.util.JSON.decode(response.responseText);
 
-						if (response && response.actions) {
-							// store the required action ('upload' or command to play) in the queue
-							for (var i = 0; i < response.actions.length; i++) {
-								if (this.queue[i] && !this.queue[i].action) {
-									this.queue[i].action = response.actions[i];
-								} 
+							if (response && response.actions) {
+								// store the required action ('upload' or command to play) in the queue
+								for (var i = 0; i < response.actions.length; i++) {
+									if (this.queue[i] && !this.queue[i].action) {
+										this.queue[i].action = response.actions[i];
+									} 
+								}
 							}
-						}
 
-						this.handleFile();
-					}
-				},
-				scope: this
-			});
+							this.handleFile();
+						}
+					},
+					scope: this
+				});
+			}
 		},
 		
 		handleDragOver: function(ev) {
