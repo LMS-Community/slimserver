@@ -47,6 +47,8 @@ if (window.File && window.FileList) {
 					SqueezeJS.Controller.playerStatus.playlist_tracks = 0;
 				}
 				
+				this.playNext = (SqueezeJS.Controller.playerStatus.playlist_tracks == 0);
+				
 				// lookup files on LMS - we don't want to upload unless necessary
 				Ext.Ajax.request({
 					url: SqueezeJS.Controller.getBaseUrl() + '/plugin/dndplay/checkfiles',
@@ -104,10 +106,14 @@ if (window.File && window.FileList) {
 				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
 				
 			// we've received a file URL - play it
-			if (file.url && file.url != 'upload') {
+			if (file.url && !file.url.match('^upload:')) {
 				SqueezeJS.Controller.playerRequest({
-					params: ['playlist', (SqueezeJS.Controller.playerStatus.playlist_tracks == 0 ? 'play' : 'add'), file.url],
-					callback: this.handleFile,
+					params: ['playlist', (this.playNext ? 'play' : 'add'), file.url],
+					callback: function() {
+						SqueezeJS.Controller.getStatus();
+						this.playNext = false;
+						this.handleFile();
+					}
 					scope: this
 				});
 				return;
@@ -132,6 +138,11 @@ if (window.File && window.FileList) {
 			formdata.append('size', file.size);
 			formdata.append('type', file.type);
 			formdata.append('timestamp', Math.floor(file.lastModifiedDate.getTime() / 1000))
+			
+			var cacheKey = file.url.split('upload:');
+			if (cacheKey.length > 1)
+				formdata.append('key', cacheKey[cacheKey.length - 1]);
+			
 			formdata.append('uploadfile', file);  // Anhängen der Datei an das Objekt
 			xhr.send(formdata); 
 		} 

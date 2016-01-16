@@ -30,7 +30,7 @@ sub init {
 sub getFileUrl {
 	my ($class, $header, $dataRef, $file) = @_;
 	
-	my $filename = _cachedFileName($file);
+	my $filename = $class->cachedFileName($file);
 			
 	File::Slurp::write_file($filename, {binmode => ':raw'}, $dataRef);
 
@@ -54,8 +54,18 @@ sub getFileUrl {
 	return $url;
 }
 
-sub _cachedFileName {
-	my $file = shift;
+sub cachedFileName {
+	my ($class, $file) = @_;
+
+	return unless $file && $file->{name} && $file->{size} && $file->{timestamp};
+	
+	my ($key, $ext) = $class->cacheKey($file);
+
+	return catfile($uploadFolder, "$key.$ext");
+}
+
+sub cacheKey {
+	my ($class, $file) = @_;
 
 	return unless $file && $file->{name} && $file->{size} && $file->{timestamp};
 
@@ -64,9 +74,9 @@ sub _cachedFileName {
 	my ($ext) = $file->{name} =~ /\.(\w+)$/;
 	$ext    ||= Slim::Music::Info::mimeToType($file->{type});
 	
-	my $key = md5_hex(join('::', $name, $file->{size}, $file->{timestamp}));
+	my $key = $file->{key} || md5_hex(join('::', $name, $file->{size}, $file->{timestamp}));
 	
-	return catfile($uploadFolder, "$key.$ext");
+	return wantarray ? ($key, $ext) : $key;
 }
 
 sub getCachedFileUrl {
@@ -74,7 +84,7 @@ sub getCachedFileUrl {
 	
 	return unless $file && $file->{name} && $file->{size} && $file->{timestamp};
 	
-	my $filename = _cachedFileName($file);
+	my $filename = $class->cachedFileName($file);
 
 	if ( -f $filename ) {
 		my $url = Slim::Utils::Misc::fileURLFromPath($filename);
@@ -93,7 +103,10 @@ sub getCachedFileUrl {
 
 	# build regex based on URI escaped values
 	my $filename = URI::Escape::uri_escape_utf8($file->{name});
+	$filename =~ s/[\(\)'\^\$\[\]\+\*]/.*/g;
 	$filename =~ s/(%[a-f\d]{2})+/.*/ig;
+	
+	warn $filename;
 	
 	$sth->execute( $file->{size}, $file->{timestamp}, $filename );
 	

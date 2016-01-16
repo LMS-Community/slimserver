@@ -90,7 +90,8 @@ sub handleFilesCheck { if (main::WEBUI) {
 					push @urls, $url;
 				}
 				else {
-					push @urls, 'upload'
+					my $key = Slim::Plugin::DnDPlay::FileManager->cacheKey($file);
+					push @urls, 'upload:' . $key;
 				}
 			}
 			
