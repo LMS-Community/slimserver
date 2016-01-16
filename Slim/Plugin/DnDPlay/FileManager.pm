@@ -89,7 +89,7 @@ sub getCachedFileUrl {
 	
 	# Filename encoding can be a pita - let's use a regex to work around it.
 	# Filesize and timestamp are pretty unique, indexed and will provide for fast results anyway.
-	my $sth = $dbh->prepare_cached( 'SELECT url FROM tracks WHERE filesize = ? AND timestamp = ? AND url REGEXP ? LIMIT 1' );
+	my $sth = $dbh->prepare_cached( 'SELECT id FROM tracks WHERE filesize = ? AND timestamp = ? AND url REGEXP ? LIMIT 1' );
 
 	# build regex based on URI escaped values
 	my $filename = URI::Escape::uri_escape_utf8($file->{name});
@@ -99,7 +99,8 @@ sub getCachedFileUrl {
 	
 	my $results = $sth->fetchall_arrayref({});
 
-	if ( $results && ref $results && (my $url = $results->[0]->{url}) ) {
+	if ( $results && ref $results && (my $id = $results->[0]->{id}) ) {
+		my $url = "db:track.id=$id";
 		main::DEBUGLOG && $log->is_debug && $log->debug("Found indexed file $url for " . Data::Dump::dump($file) );
 		return $url;
 	}

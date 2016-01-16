@@ -100,8 +100,8 @@ if (window.File && window.FileList) {
 				return;
 			}
 
-			if (file.url || file.name)
-				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + (file.url || file.name));
+			if (file.name)
+				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
 				
 			// we've received a file URL - play it
 			if (file.url && file.url != 'upload') {
