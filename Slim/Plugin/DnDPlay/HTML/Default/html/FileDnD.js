@@ -60,33 +60,26 @@ if (window.File && window.FileList) {
 				}
 				
 				// lookup files on LMS - we don't want to upload unless necessary
-				Ext.Ajax.request({
-					url: SqueezeJS.Controller.getBaseUrl() + '/plugin/dndplay/checkfiles',
-					method: 'POST',
-					params: Ext.util.JSON.encode(check),
-					timeout: 5000,
+				SqueezeJS.Controller.request({
+					params: [ '', [
+						'uploadcheck',
+						'files:' + Ext.util.JSON.encode(check),
+					]],
 					success: function(response) {
 						if (response && response.responseText) {
 							response = Ext.util.JSON.decode(response.responseText);
 
-							if (response && response.urls) {
+							if (response && response.result && response.result.files_loop) {
+								var files = response.result.files_loop;
 								// store the url (or 'upload') in the queue
-								for (var i = 0; i < response.urls.length; i++) {
+								for (var i = 0; i < files.length; i++) {
 									if (this.queue[i] && !this.queue[i].url) {
-										this.queue[i].url = response.urls[i];
+										this.queue[i].url = files[i].url;
 									} 
 								}
 							}
 
 							this.handleFile();
-						}
-					},
-					failure: function(response) {
-						if (response && response.responseText) {
-							response = Ext.util.JSON.decode(response.responseText);
-
-							if (response && response.error)
-								SqueezeJS.Controller.showBriefly(response.error);
 						}
 					},
 					scope: this
