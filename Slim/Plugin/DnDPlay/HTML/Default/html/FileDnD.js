@@ -40,10 +40,12 @@ if (window.File && window.FileList) {
 					});
 				}
 			}
-			
+
 			if (added > 0) {
-				if (evt.shiftKey)
+				if (evt.shiftKey && SqueezeJS.Controller.playerStatus.playlist_tracks > 0) {
 					SqueezeJS.Controller.playerControl(['playlist', 'clear']);
+					SqueezeJS.Controller.playerStatus.playlist_tracks = 0;
+				}
 				
 				// lookup files on LMS - we don't want to upload unless necessary
 				Ext.Ajax.request({
@@ -55,11 +57,11 @@ if (window.File && window.FileList) {
 						if (response && response.responseText) {
 							response = Ext.util.JSON.decode(response.responseText);
 
-							if (response && response.actions) {
-								// store the required action ('upload' or command to play) in the queue
-								for (var i = 0; i < response.actions.length; i++) {
-									if (this.queue[i] && !this.queue[i].action) {
-										this.queue[i].action = response.actions[i];
+							if (response && response.urls) {
+								// store the url (or 'upload') in the queue
+								for (var i = 0; i < response.urls.length; i++) {
+									if (this.queue[i] && !this.queue[i].url) {
+										this.queue[i].url = response.urls[i];
 									} 
 								}
 							}
@@ -67,8 +69,19 @@ if (window.File && window.FileList) {
 							this.handleFile();
 						}
 					},
+					failure: function(response) {
+						if (response && response.responseText) {
+							response = Ext.util.JSON.decode(response.responseText);
+
+							if (response && response.error)
+								SqueezeJS.Controller.showBriefly(response.error);
+						}
+					},
 					scope: this
 				});
+			}
+			else {
+				Ext.Msg.alert(SqueezeJS.string('noItemsFound'), SqueezeJS.string('plugin_dndplay_no_items'));
 			}
 		},
 		
@@ -86,11 +99,14 @@ if (window.File && window.FileList) {
 				SqueezeJS.Controller.getStatus();
 				return;
 			}
-			
+
+			if (file.url || file.name)
+				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + (file.url || file.name));
+				
 			// we've received a file URL - play it
-			if (file.action && file.action != 'upload') {
+			if (file.url && file.url != 'upload') {
 				SqueezeJS.Controller.playerRequest({
-					params: Ext.decode(file.action),
+					params: ['playlist', (SqueezeJS.Controller.playerStatus.playlist_tracks == 0 ? 'play' : 'add'), file.url],
 					callback: this.handleFile,
 					scope: this
 				});
@@ -103,9 +119,9 @@ if (window.File && window.FileList) {
 			var scope = this;
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4) {
-					var action = Ext.decode(xhr.responseText);
-					if (action && action.action) {
-						this.queue.unshift(action);
+					var response = Ext.decode(xhr.responseText);
+					if (response && response.url) {
+						this.queue.unshift(response);
 					}
 					this.handleFile();
 				}

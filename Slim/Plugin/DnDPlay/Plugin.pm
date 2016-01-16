@@ -11,6 +11,7 @@ use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string cstring);
 
 use constant MAX_UPLOAD_SIZE => 100_000_000;
 
@@ -50,7 +51,7 @@ sub _webHandler { if (main::WEBUI) {
 	}
 	else {
 		$result = {
-			error => 'No player defined',
+			error => string('PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED'),
 			code  => 500,
 		};
 	}
@@ -80,27 +81,27 @@ sub handleFilesCheck { if (main::WEBUI) {
 				error => "Failed to get request body data: " . ($@ || 'no data'),
 				code  => 500,
 			};
+			$log->error( delete $result->{error} );
 		}
 		elsif ( ref $content && ref $content eq 'ARRAY' ) {
-			my @actions;
-			my $action = Slim::Player::Playlist::count($client) ? 'add' : 'play';
+			my @urls;
 			foreach my $file ( @$content ) {
 				if ( my $url = Slim::Plugin::DnDPlay::FileManager->getCachedFileUrl($file) ) {
-					push @actions, "['playlist', '$action', '$url']";
-					$action = 'add';
+					push @urls, $url;
 				}
 				else {
-					push @actions, 'upload'
+					push @urls, 'upload'
 				}
 			}
 			
-			$result->{actions} = \@actions;
+			$result->{urls} = \@urls;
 		}
 		else {
 			$result = {
-				error => "Invalid data, Array of file descriptions expected " . (main::DEBUGLOG && Data::Dump::dump($content)),
+				error => "Invalid data, Array of file descriptions expected. " . (main::DEBUGLOG && Data::Dump::dump($content)),
 				code  => 500
 			};
+			$log->error( delete $result->{error} );
 		}
 		
 		return $result;
@@ -114,7 +115,7 @@ sub handleUpload { if (main::WEBUI) {
 
 		if ( $request->content_length > MAX_UPLOAD_SIZE ) {
 			$result = {
-				error => sprintf("File size (%s) exceeds maximum upload size (%s)", $request->content_length, MAX_UPLOAD_SIZE),
+				error => sprintf(cstring($client, 'PLUGIN_DNDPLAY_FILE_TOO_LARGE'), $request->content_length, MAX_UPLOAD_SIZE),
 				code  => 413,
 			};
 		}
@@ -135,11 +136,12 @@ sub handleUpload { if (main::WEBUI) {
 					# uploaded file
 					if ( $header =~ /filename=".+?"/si ) {
 						if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl($header, \$data, \%info) ) {
-							$result->{action} = "['playlist', '". (Slim::Player::Playlist::count($client) ? 'add' : 'play') . "', '$url']";
+							$result->{url} = $url;
 							delete $result->{code};
 						}
 						else {
-							$result->{code} = 415; # unsupported media type
+							$result->{error} = cstring($client, 'PROBLEM_UNKNOWN_TYPE') . (main::DEBUGLOG && (' ' . Data::Dump::dump(%info)) );
+							$result->{code} = 415;
 						}
 					}
 					elsif ( $header =~ /name="(.+?)"/si ) {
