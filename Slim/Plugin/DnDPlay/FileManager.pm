@@ -106,8 +106,6 @@ sub getCachedFileUrl {
 	$filename =~ s/[\(\)'\^\$\[\]\+\*]/.*/g;
 	$filename =~ s/(%[a-f\d]{2})+/.*/ig;
 	
-	warn $filename;
-	
 	$sth->execute( $file->{size}, $file->{timestamp}, $filename );
 	
 	my $results = $sth->fetchall_arrayref({});

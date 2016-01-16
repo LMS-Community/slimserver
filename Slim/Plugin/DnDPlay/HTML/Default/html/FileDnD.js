@@ -21,12 +21,21 @@ if (window.File && window.FileList) {
 			var files = evt.dataTransfer.files; // FileList object.
 			var added = 0;
 			var check = new Array();
+			
+			var error;
 
 			// create a list of the files we want to play - we create an Array, as we can't pop items from the FileList object
 			for (var i = 0, file; file = files[i]; i++) {
-
 				// only upload audio files
 				if (file.type.match('audio') || file.name.match('\.(mp3|mp4|flac|ogg|m4a|wma|flc|aac|aic|alc|m3u|pls|wav|wpl|xpf)$')) {
+					if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
+						if (!error) {
+							error = String.format(SqueezeJS.string('fileTooLarge'), file.size, file.name);
+							Ext.Msg.alert(SqueezeJS.string('noItemsFound'), error);
+						}
+						continue;
+					}
+
 					added++;
 					
 					this.queue.push(file);
@@ -44,10 +53,11 @@ if (window.File && window.FileList) {
 			if (added > 0) {
 				if (evt.shiftKey && SqueezeJS.Controller.playerStatus.playlist_tracks > 0) {
 					SqueezeJS.Controller.playerControl(['playlist', 'clear']);
-					SqueezeJS.Controller.playerStatus.playlist_tracks = 0;
+					this.playNext = true;
 				}
-				
-				this.playNext = (SqueezeJS.Controller.playerStatus.playlist_tracks == 0);
+				else if (SqueezeJS.Controller.playerStatus.playlist_tracks == 0) {
+					this.playNext = true;
+				}
 				
 				// lookup files on LMS - we don't want to upload unless necessary
 				Ext.Ajax.request({
@@ -98,6 +108,9 @@ if (window.File && window.FileList) {
 			var file = this.queue.shift();
 			
 			if (!file) {
+				// nothing left to do - stop the status update task
+				Ext.TaskMgr.stop(this.statusUpdater);
+				this.statusUpdater = null;
 				SqueezeJS.Controller.getStatus();
 				return;
 			}
@@ -110,7 +123,15 @@ if (window.File && window.FileList) {
 				SqueezeJS.Controller.playerRequest({
 					params: ['playlist', (this.playNext ? 'play' : 'add'), file.url],
 					callback: function() {
-						SqueezeJS.Controller.getStatus();
+						
+						if (!this.statusUpdater) {
+							this.statusUpdater = {
+								run: SqueezeJS.Controller.getStatus,
+								interval: 2000
+							};
+							Ext.TaskMgr.start(this.statusUpdater);
+						}
+
 						this.playNext = false;
 						this.handleFile();
 					},

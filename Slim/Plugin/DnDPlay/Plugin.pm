@@ -33,7 +33,10 @@ sub initPlugin { if (main::WEBUI) {
 
 	# this handler hijacks the default handler for js-main, to inject the D'n'd code
 	Slim::Web::Pages->addPageFunction("js-main\.html", sub {
-		Slim::Web::HTTP::filltemplatefile('html/js-main-dd.html', $_[1]);
+		my $params = $_[1];
+		$params->{maxUploadSize} = MAX_UPLOAD_SIZE;
+		$params->{fileTooLarge}  = string('PLUGIN_DNDPLAY_FILE_TOO_LARGE', '{0}', '{1}');
+		Slim::Web::HTTP::filltemplatefile('html/js-main-dd.html', $params);
 	});
 	
 	Slim::Web::Pages->addRawFunction("plugin/dndplay/checkfiles", \&handleFilesCheck);
