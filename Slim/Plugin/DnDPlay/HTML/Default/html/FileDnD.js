@@ -113,7 +113,7 @@ if (window.File && window.FileList) {
 						SqueezeJS.Controller.getStatus();
 						this.playNext = false;
 						this.handleFile();
-					}
+					},
 					scope: this
 				});
 				return;
