@@ -43,7 +43,7 @@ sub initPlugin {
 	} 
 	
 	# the file upload is handled through a custom request handler, dealing with multi-part POST requests
-	Slim::Web::Pages->addRawFunction("plugin/dndplay/upload", \&handleUpload);
+	Slim::Web::Pages->addRawFunction("plugins/dndplay/upload", \&handleUpload);
 	
     Slim::Control::Request::addDispatch(['playlist', 'playmatch'], [1, 1, 1, \&cliPlayMatch]);
     Slim::Control::Request::addDispatch(['playlist', 'addmatch'], [1, 1, 1, \&cliPlayMatch]);

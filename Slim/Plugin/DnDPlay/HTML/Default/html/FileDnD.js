@@ -84,6 +84,7 @@ if (window.File && window.FileList) {
 				params: ['playlist', (action || 'add') + 'match', 'name:' + file.name, 'size:' + file.size, 'timestamp:' + Math.floor(file.lastModifiedDate.getTime() / 1000), 'type:' + file.type],
 				success: function(response){
 					if (!this.statusUpdater) {
+						SqueezeJS.Controller.getStatus();
 						this.statusUpdater = {
 							run: SqueezeJS.Controller.getStatus,
 							interval: 2000
