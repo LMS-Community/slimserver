@@ -20,7 +20,6 @@ if (window.File && window.FileList) {
 	
 			var files = evt.dataTransfer.files; // FileList object.
 			var added = 0;
-			var check = new Array();
 			
 			var error;
 
@@ -39,51 +38,21 @@ if (window.File && window.FileList) {
 					added++;
 					
 					this.queue.push(file);
-					
-					// keep a list of tracks we want information about from LMS
-					check.push({
-						name: file.name,
-						size: file.size,
-						type: file.type,
-						timestamp: Math.floor(file.lastModifiedDate.getTime() / 1000)
-					});
 				}
 			}
 
 			if (added > 0) {
+				var action = 'add';
+				
 				if (evt.shiftKey && SqueezeJS.Controller.playerStatus.playlist_tracks > 0) {
 					SqueezeJS.Controller.playerControl(['playlist', 'clear']);
-					this.playNext = true;
+					action = 'play';
 				}
 				else if (SqueezeJS.Controller.playerStatus.playlist_tracks == 0) {
-					this.playNext = true;
+					action = 'play';
 				}
 				
-				// lookup files on LMS - we don't want to upload unless necessary
-				SqueezeJS.Controller.request({
-					params: [ '', [
-						'uploadcheck',
-						'files:' + Ext.util.JSON.encode(check),
-					]],
-					success: function(response) {
-						if (response && response.responseText) {
-							response = Ext.util.JSON.decode(response.responseText);
-
-							if (response && response.result && response.result.files_loop) {
-								var files = response.result.files_loop;
-								// store the url (or 'upload') in the queue
-								for (var i = 0; i < files.length; i++) {
-									if (this.queue[i] && !this.queue[i].url) {
-										this.queue[i].url = files[i].url;
-									} 
-								}
-							}
-
-							this.handleFile();
-						}
-					},
-					scope: this
-				});
+				this.handleFile(action);
 			}
 			else {
 				Ext.Msg.alert(SqueezeJS.string('noItemsFound'), SqueezeJS.string('plugin_dndplay_no_items'));
@@ -97,7 +66,7 @@ if (window.File && window.FileList) {
 		    evt.dataTransfer.dropEffect = 'copy';
 		},
 		
-		handleFile: function() {
+		handleFile: function(action) {
 			var file = this.queue.shift();
 			
 			if (!file) {
@@ -110,52 +79,54 @@ if (window.File && window.FileList) {
 
 			if (file.name)
 				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
-				
-			// we've received a file URL - play it
-			if (file.url && !file.url.match('^upload:')) {
-				SqueezeJS.Controller.playerRequest({
-					params: ['playlist', (this.playNext ? 'play' : 'add'), file.url],
-					callback: function() {
-						
-						if (!this.statusUpdater) {
-							this.statusUpdater = {
-								run: SqueezeJS.Controller.getStatus,
-								interval: 2000
-							};
-							Ext.TaskMgr.start(this.statusUpdater);
-						}
 
-						this.playNext = false;
-						this.handleFile();
-					},
-					scope: this
-				});
-				return;
-			}
-			
+			SqueezeJS.Controller.playerRequest({
+				params: ['playlist', (action || 'add') + 'match', 'name:' + file.name, 'size:' + file.size, 'timestamp:' + Math.floor(file.lastModifiedDate.getTime() / 1000), 'type:' + file.type],
+				success: function(response){
+					if (!this.statusUpdater) {
+						this.statusUpdater = {
+							run: SqueezeJS.Controller.getStatus,
+							interval: 2000
+						};
+						Ext.TaskMgr.start(this.statusUpdater);
+					}
+
+					if (response && response.responseText) {
+						response = Ext.util.JSON.decode(response.responseText);
+
+						if (response && response.result && response.result.upload) {
+							file.key = response.result.upload;
+							this.uploadFile(file, action);
+							return;
+						}
+					}
+
+					this.handleFile();
+				},
+				scope: this
+			});
+		},
+		
+		uploadFile: function(file, action) {
 			var xhr = new XMLHttpRequest();    // den AJAX Request anlegen
 			xhr.open('POST', '/plugin/dndplay/upload');    // Angeben der URL und des Requesttyps
 			
 			var scope = this;
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4) {
-					var response = Ext.decode(xhr.responseText);
-					if (response && response.url) {
-						this.queue.unshift(response);
-					}
 					this.handleFile();
 				}
 			}.createDelegate(this);
 			
 			var formdata = new FormData();    // Anlegen eines FormData Objekts zum Versenden unserer Datei
+			formdata.append('action', action || 'add');
 			formdata.append('name', file.name);
 			formdata.append('size', file.size);
 			formdata.append('type', file.type);
 			formdata.append('timestamp', Math.floor(file.lastModifiedDate.getTime() / 1000))
 			
-			var cacheKey = file.url.split('upload:');
-			if (cacheKey.length > 1)
-				formdata.append('key', cacheKey[cacheKey.length - 1]);
+			if (file.key)
+				formdata.append('key', file.key);
 			
 			formdata.append('uploadfile', file);  // Anhängen der Datei an das Objekt
 			xhr.send(formdata); 

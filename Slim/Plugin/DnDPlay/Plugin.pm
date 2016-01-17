@@ -45,7 +45,8 @@ sub initPlugin {
 	# the file upload is handled through a custom request handler, dealing with multi-part POST requests
 	Slim::Web::Pages->addRawFunction("plugin/dndplay/upload", \&handleUpload);
 	
-    Slim::Control::Request::addDispatch(['uploadcheck'], [0, 1, 1, \&cliFilesCheck]);
+    Slim::Control::Request::addDispatch(['playlist', 'playmatch'], [1, 1, 1, \&cliPlayMatch]);
+    Slim::Control::Request::addDispatch(['playlist', 'addmatch'], [1, 1, 1, \&cliPlayMatch]);
 }
 
 sub handleUpload {
@@ -79,6 +80,10 @@ sub handleUpload {
 					if ( $header =~ /filename=".+?"/si ) {
 						if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl($header, \$data, \%info) ) {
 							$result->{url} = $url;
+							
+							if ($info{action}) {
+								$client->execute(['playlist', $info{action}, $url]);
+							}
 							delete $result->{code};
 						}
 						else {
@@ -113,41 +118,34 @@ sub handleUpload {
 	Slim::Web::HTTP::addHTTPResponse( $httpClient, $response, \$content	);
 }
 
-sub cliFilesCheck {
+sub cliPlayMatch {
 	my $request = shift;
 	
-	my $files = $request->getParam('files');
-	utf8::encode($files);
-
-	$files = eval {
-		from_json($files)
+	my $client = $request->client;
+	
+	my $file = {
+		name => $request->getParam('name'),
+		timestamp => $request->getParam('timestamp'),
+		size => $request->getParam('size'),
+		type => $request->getParam('type'),
 	};
 
-	my $count;
-	
-	if ($@ || !$files || !ref $files) {
-		$log->error("Error decoding data: " . ($@ || 'no data'));
+	if ($request->isNotQuery([['playlist'], ['addmatch', 'playmatch']]) || !($file->{name} && $file->{timestamp} && defined $file->{size})) {
+		$log->error('Missing file information.');
+		$request->setStatusBadDispatch();
+		return;
 	}
-	elsif ( ref $files && ref $files eq 'ARRAY' ) {
-		my @urls;
-		foreach my $file ( @$files ) {
-			my $url = Slim::Plugin::DnDPlay::FileManager->getCachedFileUrl($file);
-			
-			if (!$url) {
-				my $key = Slim::Plugin::DnDPlay::FileManager->cacheKey($file);
-				$url = 'upload:' . $key;
-			}
-			
-			$request->addResultLoop('files_loop', $count, 'url', $url);				
+	
+	my $action = $request->isQuery([['playlist'], ['playmatch']]) ? 'play' : 'add';
 
-			$count++;
-		}
+	if ( my $url = Slim::Plugin::DnDPlay::FileManager->getCachedFileUrl($file) ) {
+		$client->execute(['playlist', $action, $url]);
+		$request->addResult('success', $action);
 	}
 	else {
-		$log->error( "Invalid data, Array of file descriptions expected. " . (main::DEBUGLOG && Data::Dump::dump($files)) );
+		my $key = Slim::Plugin::DnDPlay::FileManager->cacheKey($file);
+		$request->addResult('upload', $key);
 	}
-	
-	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
