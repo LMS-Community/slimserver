@@ -110,7 +110,7 @@ if (window.File && window.FileList) {
 		
 		uploadFile: function(file, action) {
 			var xhr = new XMLHttpRequest();    // den AJAX Request anlegen
-			xhr.open('POST', '/plugin/dndplay/upload');    // Angeben der URL und des Requesttyps
+			xhr.open('POST', '/plugins/dndplay/upload');    // Angeben der URL und des Requesttyps
 			
 			var scope = this;
 			xhr.onreadystatechange = function() {
