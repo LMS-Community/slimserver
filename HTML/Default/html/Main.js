@@ -150,7 +150,7 @@ Main = {
 		this._playlistInit();
 
 		// initialize message area in footer
-		new SqueezeJS.UI.ShowBriefly({
+		this.showBrieflyArea = new SqueezeJS.UI.ShowBriefly({
 			renderTo: 'footerInfoText',
 			template: '<img src="' + webroot + 'html/images/btn_info.gif"/>&nbsp;{msg}'
 		});

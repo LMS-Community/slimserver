@@ -78,7 +78,7 @@ if (window.File && window.FileList) {
 			}
 
 			if (file.name)
-				SqueezeJS.Controller.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
+				this.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
 
 			SqueezeJS.Controller.playerRequest({
 				params: ['playlist', (action || 'add') + 'match', 'name:' + file.name, 'size:' + file.size, 'timestamp:' + Math.floor(file.lastModifiedDate.getTime() / 1000), 'type:' + file.type],
@@ -119,6 +119,16 @@ if (window.File && window.FileList) {
 				}
 			}.createDelegate(this);
 			
+			var progress = -1;
+			xhr.upload.addEventListener("progress", function(e) {
+				var p = parseInt(e.loaded / e.total * 100);
+				// only update progress information when the value has changed
+				if (p > progress) {
+					this.showBriefly(String.format(SqueezeJS.string('adding_to_playlist') + ' {0} ({1}%)', file.name, p));
+					progress = p;
+				}
+			}.createDelegate(this), false);
+			
 			var formdata = new FormData();    // Anlegen eines FormData Objekts zum Versenden unserer Datei
 			formdata.append('action', action || 'add');
 			formdata.append('name', file.name);
@@ -131,7 +141,19 @@ if (window.File && window.FileList) {
 			
 			formdata.append('uploadfile', file);  // Anhängen der Datei an das Objekt
 			xhr.send(formdata); 
-		} 
+		},
+		
+		showBriefly: function(text) {
+			var statusArea = Main.showBrieflyArea.getEl();
+			if (statusArea && statusArea.hasActiveFx()) {
+				statusArea.stopFx();
+				statusArea.update(text);
+				statusArea.pause(1).fadeOut();
+			}
+			else {
+				SqueezeJS.Controller.showBriefly(text);
+			}
+		}
 	};
 
 	Ext.onReady(function() {
