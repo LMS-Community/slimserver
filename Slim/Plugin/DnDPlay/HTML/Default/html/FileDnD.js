@@ -143,12 +143,14 @@ if (window.File && window.FileList) {
 			xhr.send(formdata); 
 		},
 		
+		// use main status area, but don't use showBriefly to get more frequent updates without the flicker
 		showBriefly: function(text) {
-			var statusArea = Main.showBrieflyArea.getEl();
-			if (statusArea && statusArea.hasActiveFx()) {
-				statusArea.stopFx();
-				statusArea.update(text);
-				statusArea.pause(1).fadeOut();
+			var statusArea = Main.showBrieflyArea;
+			var statusAreaEl = statusArea ? statusArea.getEl() : null;
+			if (statusAreaEl && statusAreaEl.hasActiveFx()) {
+				statusAreaEl.stopFx();
+				statusArea.template.overwrite(statusAreaEl, { msg: text });
+				statusAreaEl.pause(1).fadeOut();
 			}
 			else {
 				SqueezeJS.Controller.showBriefly(text);
