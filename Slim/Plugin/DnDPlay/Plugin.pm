@@ -16,7 +16,7 @@ use Slim::Utils::Strings qw(string cstring);
 
 use Slim::Plugin::DnDPlay::FileManager;
 
-use constant MAX_UPLOAD_SIZE => 100_000_000;
+use constant MAX_UPLOAD_SIZE => 100 * 1024 * 1024;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.dndplay',
@@ -64,7 +64,7 @@ sub handleUpload {
 	if ( my $client = _getClient($request) ) {
 		if ( $request->content_length > MAX_UPLOAD_SIZE ) {
 			$result = {
-				error => sprintf(cstring($client, 'PLUGIN_DNDPLAY_FILE_TOO_LARGE'), $request->content_length, MAX_UPLOAD_SIZE),
+				error => sprintf(cstring($client, 'PLUGIN_DNDPLAY_FILE_TOO_LARGE'), formatMB($request->content_length), formatMB(MAX_UPLOAD_SIZE)),
 				code  => 413,
 			};
 		}
@@ -159,6 +159,10 @@ sub handleUpload {
 	$response->content_type('application/json');
 	
 	Slim::Web::HTTP::addHTTPResponse( $httpClient, $response, \$content	);
+}
+
+sub formatMB {
+	return Slim::Utils::Misc::delimitThousands(int($_[0] / 1024 / 1024)) . 'MB';
 }
 
 sub cliPlayMatch {

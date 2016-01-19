@@ -15,5 +15,5 @@ PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
 	EN	Cannot play music without a player connected.
 	
 PLUGIN_DNDPLAY_FILE_TOO_LARGE
-	DE	Die Dateigrösse (%s) überschreitet die maximal mögliche Upload-Grösse (%s).
+	DE	Die Dateigrösse (%s) überschreitet die maximal erlaubte Upload-Grösse (%s).
 	EN	File size (%s) exceeds maximum upload size (%s).

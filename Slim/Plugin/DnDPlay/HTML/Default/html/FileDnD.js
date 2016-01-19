@@ -27,16 +27,7 @@ if (window.File && window.FileList) {
 			for (var i = 0, file; file = files[i]; i++) {
 				// only upload audio files
 				if (file.type.match('audio') || file.name.match('\.(mp3|mp4|flac|ogg|m4a|wma|flc|aac|aic|alc|m3u|pls|wav|wpl|xpf)$')) {
-					if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
-						if (!error) {
-							error = String.format(SqueezeJS.string('fileTooLarge'), file.size, file.name);
-							Ext.Msg.alert(SqueezeJS.string('noItemsFound'), error);
-						}
-						continue;
-					}
-
 					added++;
-					
 					this.queue.push(file);
 				}
 			}
@@ -95,7 +86,17 @@ if (window.File && window.FileList) {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 
-						if (response && response.result && response.result.upload) {
+						if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
+							Ext.Msg.alert(
+								file.name, 
+								String.format(
+									SqueezeJS.string('fileTooLarge'), 
+									Math.floor(file.size / 1024 / 1024) + 'MB', 
+									Math.floor(SqueezeJS.DnD.maxUploadSize / 1024 / 1024) + 'MB'
+								)
+							);
+						}
+						else if (response && response.result && response.result.upload) {
 							file.key = response.result.upload;
 							this.uploadFile(file, action);
 							return;
@@ -115,6 +116,12 @@ if (window.File && window.FileList) {
 			var scope = this;
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4) {
+					if (xhr.responseText) {
+						var response = Ext.util.JSON.decode(xhr.responseText);
+						if (response && response.error) {
+							Ext.Msg.alert(SqueezeJS.string('noItemsFound'), response.error);
+						}
+					}
 					this.handleFile();
 				}
 			}.createDelegate(this);
@@ -150,7 +157,7 @@ if (window.File && window.FileList) {
 			if (statusAreaEl && statusAreaEl.hasActiveFx()) {
 				statusAreaEl.stopFx();
 				statusArea.template.overwrite(statusAreaEl, { msg: text });
-				statusAreaEl.pause(1).fadeOut();
+				statusAreaEl.pause(2).fadeOut();
 			}
 			else {
 				SqueezeJS.Controller.showBriefly(text);

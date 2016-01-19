@@ -151,8 +151,7 @@ Main = {
 
 		// initialize message area in footer
 		this.showBrieflyArea = new SqueezeJS.UI.ShowBriefly({
-			renderTo: 'footerInfoText',
-			template: '<img src="' + webroot + 'html/images/btn_info.gif"/>&nbsp;{msg}'
+			renderTo: 'footerInfoText'
 		});
 
 

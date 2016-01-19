@@ -252,7 +252,12 @@ img#background {
 }
 
 #footerInfoText div {
-	display: inline;
+    display: inline;
+	padding: 4px 0 4px 25px;
+    background-image:url(html/images/btn_info.gif);
+    background-repeat: no-repeat;
+    background-position: right middle;
+    visibility: hidden;
 }
 
 #settingsLink {
