@@ -28,11 +28,11 @@ sub init {
 }
 
 sub getFileUrl {
-	my ($class, $header, $dataRef, $file) = @_;
+	my ($class, $file) = @_;
 	
 	my $filename = $class->cachedFileName($file);
-			
-	File::Slurp::write_file($filename, {binmode => ':raw'}, $dataRef);
+	
+	rename $file->{tempfile}, $filename;
 
 	my $url = Slim::Utils::Misc::fileURLFromPath($filename);
 	
@@ -46,7 +46,7 @@ sub getFileUrl {
 		$url =~ s/^file/tmp/;
 	}
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Received audio file: $filename; stored as $url");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Received audio file: $file->{name}; stored as $url");
 
 	Slim::Utils::Timers::killTimers(0, \&_cleanup);
 	Slim::Utils::Timers::setTimer(0, time() + CLEANUP_INTERVAL, \&_cleanup);
@@ -154,5 +154,7 @@ sub _cleanup {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Upload folder cleanup done!");
 }
+
+sub uploadFolder { $uploadFolder }
 
 1;

@@ -7,6 +7,7 @@ package Slim::Plugin::DnDPlay::Plugin;
 
 use strict;
 
+use File::Temp qw(tempfile);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Log;
@@ -30,8 +31,6 @@ my $cacheFolder;
 sub initPlugin {
 	my $class = shift;
 	
-	Slim::Plugin::DnDPlay::FileManager->init();
-
 	if (main::WEBUI) {
 		# this handler hijacks the default handler for js-main, to inject the D'n'd code
 		Slim::Web::Pages->addPageFunction("js-main\.html", sub {
@@ -49,11 +48,18 @@ sub initPlugin {
     Slim::Control::Request::addDispatch(['playlist', 'addmatch'], [1, 1, 1, \&cliPlayMatch]);
 }
 
+# don't run the cleanup before all protocol handlers from plugins are initialized
+sub postinitPlugin {
+	Slim::Plugin::DnDPlay::FileManager->init();
+}
+
 sub handleUpload {
 	my ($httpClient, $response, $func) = @_;
 	
 	my $request = $response->request;
 	my $result = {};
+	
+	my $t = Time::HiRes::time();
 	
 	if ( my $client = _getClient($request) ) {
 		if ( $request->content_length > MAX_UPLOAD_SIZE ) {
@@ -66,38 +72,75 @@ sub handleUpload {
 			my $ct = $request->header('Content-Type');
 			my ($boundary) = $ct =~ /boundary=(.*)/;
 			
-			my $content = $request->content_ref;
 			my %info;
-	
-			foreach my $data (split /--\Q$boundary\E/, $$content) {
-				if ( $data =~ s/(.+?)${CRLF}${CRLF}//s ) {
-					my $header = $1;
-					$data =~ s/$CRLF*$//s;
+			my ($k, $v, $fh);
 
-					main::DEBUGLOG && $log->is_debug && $log->debug("New section header found: " . Data::Dump::dump($header));
+			# open a pseudo-filehandle to the uploaded data ref for further processing
+			open TEMP, '<', $request->content_ref;
+			
+			while (<TEMP>) {
+				if ( Time::HiRes::time - $t > 0.1 ) {
+					main::idleStreams();
+					$t = Time::HiRes::time();
+				}
+				
+				# a new part starts - reset some variables
+				if ( /--\Q$boundary\E/i ) {
+					$k = $v = '';
 					
-					# uploaded file
-					if ( $header =~ /filename=".+?"/si ) {
-						if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl($header, \$data, \%info) ) {
-							$result->{url} = $url;
-							
-							if ($info{action}) {
-								$client->execute(['playlist', $info{action}, $url]);
-							}
-							delete $result->{code};
-						}
-						else {
-							$result->{error} = cstring($client, 'PROBLEM_UNKNOWN_TYPE') . (main::DEBUGLOG && (' ' . Data::Dump::dump(%info)) );
-							$result->{code} = 415;
-						}
+					# remove potential superfluous cr/lf from the end of the file, then close it
+					if ($fh) {
+						truncate $fh, $info{size} if $info{size};
+						close $fh;
 					}
-					elsif ( $header =~ /name="(.+?)"/si ) {
-						$info{$1} = $data;
-					}
+				}
+				
+				# write data to file handle
+				elsif ( $fh ) {
+					print $fh $_;
+				}
+				
+				# we got an uploaded file
+				elsif ( !$k && /filename="(.+?)"/i ) {
+					$k = 'upload';
+				}
+				
+				# we got the separator after the upload file name: file data comes next. Open a file handle to write the data to.
+				elsif ( $k && $k eq 'upload' && /^\s*$/ ) {
+					($fh, $info{tempfile}) = tempfile('tmp-XXXX',
+						DIR => Slim::Plugin::DnDPlay::FileManager->uploadFolder(),
+						UNLINK => 0
+					);
+				}
+				
+				# we received some variable name
+				elsif ( /\bname="(.+?)"/i ) {
+					$k = $1;
+				}
+				
+				# an uploaded variable's content
+				elsif ( $k && $k ne 'upload' && $_ ) {
+					s/$CRLF*$//s;
+					$info{$k} = $_ if $_;
 				}
 			}
 			
-			main::DEBUGLOG && $log->is_debug && $log->debug("Found additional file information: " . Data::Dump::dump(%info));
+			main::DEBUGLOG && $log->is_debug && $log->debug("Uploaded file information found: " . Data::Dump::dump(%info));
+			
+			close TEMP;
+
+			if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl(\%info) ) {
+				$result->{url} = $url;
+				
+				if ($info{action}) {
+					$client->execute(['playlist', $info{action}, $url]);
+				}
+				delete $result->{code};
+			}
+			else {
+				$result->{error} = cstring($client, 'PROBLEM_UNKNOWN_TYPE');
+				$result->{code} = 415;
+			}
 		}
 	}
 	else {
