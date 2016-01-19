@@ -77,7 +77,7 @@ sub getLibraryList {
 			name => $_->getfriendlyname,
 			type => 'link',
 			url  => \&_browseUPnP,
-			image => $icon,
+			image => proxiedImage($icon),
 			passthrough => [{
 				device => $_->getudn,
 				hierarchy => 0,
@@ -210,7 +210,7 @@ sub gotContainer {
 				}
 				
 				if ($child->{albumArtURI} && !$child->{url}) {
-					$item->{image} = $child->{albumArtURI};
+					$item->{image} = proxiedImage($child->{albumArtURI});
 					$hasIcons++;
 				}
 
@@ -287,5 +287,23 @@ sub _getBaseUrl {
 	$baseUrl =~ s/\Q$path\E//;
 	return $baseUrl;
 }
+
+# we don't provide our own image proxy implementation, but force use of the local imageproxy, as we can't resize remotely
+my %registeredProxies;
+sub proxiedImage {
+	my ($url) = @_;
+
+	my ($host) = Slim::Utils::Misc::crackURL($url);
+	if (!$registeredProxies{$host}) {
+		Slim::Web::ImageProxy->registerHandler(
+			match => qr/\Q$host\E/i,
+			func  => sub { return $_[0] },
+		);
+		$registeredProxies{$host}++;
+	}
+	
+	return Slim::Web::ImageProxy::proxiedImage($url, 1);
+}
+
 
 1;

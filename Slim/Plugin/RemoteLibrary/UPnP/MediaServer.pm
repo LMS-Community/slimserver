@@ -277,7 +277,7 @@ sub _parseChunk {
 	}
 				
 	# grab all other namespace items
-	my %otherItems = $node =~ m{<\w+:(\w+)>([^<]+)</\w+:}g;
+	my %otherItems = $node =~ m{<\w+:(\w+)[^>]*?>([^<]+)</\w+:}g;
 	for my $key ( keys %otherItems ) {
 		next if $key =~ /(?:title|class)/;	# we already grabbed these above
 		$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
