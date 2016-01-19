@@ -409,6 +409,14 @@ sub init {
 			}
 		}, 'checkVersion' );
 
+		$prefs->setChange( sub {
+			if ( !$_[1] ) {
+				require Slim::Utils::Update;
+				# remove the server.version file to stop update notifications
+				Slim::Utils::Update::setUpdateInstaller('');
+			}
+		}, 'autoDownloadUpdate', 'checkVersion' );
+
 		if ( !main::SCANNER ) {
 			$prefs->setChange( sub {
 				return if Slim::Music::Import->stillScanning;

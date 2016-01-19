@@ -40,8 +40,6 @@ sub checkVersion {
 	
 	return unless $prefs->get('checkVersion');
 
-	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
-
 	my $installer = getUpdateInstaller() || '';
 	
 	# reset update download status in case our system is up to date
@@ -288,6 +286,8 @@ sub downloadAsyncDone {
 sub setUpdateInstaller {
 	my $file = shift;
 	
+	$versionFile ||= getVersionFile();
+	
 	if ($file && open(UPDATEFLAG, ">$versionFile")) {
 		
 		main::DEBUGLOG && $log->debug("Setting update version file to: $file");
@@ -307,10 +307,17 @@ sub setUpdateInstaller {
 	}
 }
 
+sub getVersionFile {
+	$versionFile ||= catdir( scalar($os->dirsFor('updates')), 'server.version' );
+	return $versionFile;
+}
+
 
 sub getUpdateInstaller {
 	
 	return unless $prefs->get('autoDownloadUpdate');
+	
+	$versionFile ||= getVersionFile();
 	
 	main::DEBUGLOG && $log->debug("Reading update installer path from $versionFile");
 	
