@@ -86,20 +86,22 @@ if (window.File && window.FileList) {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 
-						if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
-							Ext.Msg.alert(
-								file.name, 
-								String.format(
-									SqueezeJS.string('fileTooLarge'), 
-									Math.floor(file.size / 1024 / 1024) + 'MB', 
-									Math.floor(SqueezeJS.DnD.maxUploadSize / 1024 / 1024) + 'MB'
-								)
-							);
-						}
-						else if (response && response.result && response.result.upload) {
-							file.key = response.result.upload;
-							this.uploadFile(file, action);
-							return;
+						if (response && response.result && response.result.upload) {
+							if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
+								Ext.Msg.alert(
+									file.name, 
+									String.format(
+										SqueezeJS.string('fileTooLarge'), 
+										Math.floor(file.size / 1024 / 1024) + 'MB', 
+										Math.floor(SqueezeJS.DnD.maxUploadSize / 1024 / 1024) + 'MB'
+									)
+								);
+							}
+							else {
+								file.key = response.result.upload;
+								this.uploadFile(file, action);
+								return;
+							}
 						}
 					}
 
