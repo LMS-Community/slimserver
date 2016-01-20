@@ -37,6 +37,7 @@ sub initPlugin {
 			my $params = $_[1];
 			$params->{maxUploadSize} = MAX_UPLOAD_SIZE;
 			$params->{fileTooLarge}  = string('PLUGIN_DNDPLAY_FILE_TOO_LARGE', '{0}', '{1}');
+			$params->{validTypeExtensions} = '\.(' . join('|', Slim::Music::Info::validTypeExtensions()) . ')$';
 			Slim::Web::HTTP::filltemplatefile('html/js-main-dd.html', $params);
 		});
 	} 

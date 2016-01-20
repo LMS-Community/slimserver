@@ -26,7 +26,7 @@ if (window.File && window.FileList) {
 			// create a list of the files we want to play - we create an Array, as we can't pop items from the FileList object
 			for (var i = 0, file; file = files[i]; i++) {
 				// only upload audio files
-				if (file.type.match('audio') || file.name.match('\.(mp3|mp4|flac|ogg|m4a|wma|flc|aac|aic|alc|m3u|pls|wav|wpl|xpf)$')) {
+				if (file.type.match('audio') || file.name.match(SqueezeJS.DnD.validTypeExtensions)) {
 					added++;
 					this.queue.push(file);
 				}
