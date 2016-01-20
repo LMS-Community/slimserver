@@ -1910,6 +1910,7 @@ sub sync {
 		}
 	}
 	
+	$player->currentPlaylistUpdateTime(Time::HiRes::time());
 	Slim::Control::Request::notifyFromArray($self->master(), ['playlist', 'sync']);
 	
 	if (main::INFOLOG && $synclog->is_info) {
@@ -1970,6 +1971,8 @@ sub unsync {
 	Slim::Player::Playlist::copyPlaylist($player, $self->master());
 	
 	$prefs->client($player)->remove('syncgroupid') unless $keepSyncGroupId;
+
+	$player->currentPlaylistUpdateTime(Time::HiRes::time());
 
 	Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
 	Slim::Control::Request::notifyFromArray($player, ['playlist', 'sync']);
