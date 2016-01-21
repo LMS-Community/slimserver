@@ -130,7 +130,11 @@ sub handleUpload {
 			
 			close TEMP;
 
-			if ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl(\%info) ) {
+			if ( !$info{name} ) {
+				$result->{error} = string('PLUGIN_DNDPLAY_INVALID_DATA');
+				$result->{code} = 500;
+			}
+			elsif ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl(\%info) ) {
 				$result->{url} = $url;
 				
 				if ($info{action}) {
@@ -141,6 +145,10 @@ sub handleUpload {
 			else {
 				$result->{error} = cstring($client, 'PROBLEM_UNKNOWN_TYPE');
 				$result->{code} = 415;
+			}
+			
+			if ( $result->{error} && $info{tempfile} && -f $info{tempfile} ) {
+				unlink $info{tempfile};
 			}
 		}
 	}

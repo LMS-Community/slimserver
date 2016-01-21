@@ -32,6 +32,11 @@ sub getFileUrl {
 	
 	my $filename = $class->cachedFileName($file);
 	
+	if ( !$filename ) {
+		unlink $file->{tempfile};
+		return;
+	}
+	
 	rename $file->{tempfile}, $filename;
 
 	my $url = Slim::Utils::Misc::fileURLFromPath($filename);
