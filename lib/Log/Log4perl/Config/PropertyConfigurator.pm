@@ -56,7 +56,7 @@ sub parse {
             $var_subst{$key} = $val;
 
                 # Substitute any variables
-            $val =~ s/\${(.*?)}/
+            $val =~ s/\$\{(.*?)\}/
                       Log::Log4perl::Config::var_subst($1, \%var_subst)/gex;
 
             # for triggers, we want to compile them but not run them

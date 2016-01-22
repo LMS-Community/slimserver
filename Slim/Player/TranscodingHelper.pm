@@ -585,7 +585,7 @@ sub tokenizeConvertCommand2 {
 	}
 
 	# Try to read parameters from file referenced in the command's placeholder '${PREF-FILE.KEY}$' 
-	while ($command && $command =~ /\${(.*?)}\$/g) {
+	while ($command && $command =~ /\$\{(.*?)\}\$/g) {
 		my $placeholder = $1;
 		my $transcoder  = $binaries{$placeholder} || '';
 		
