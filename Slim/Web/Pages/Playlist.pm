@@ -76,7 +76,7 @@ sub playlist {
 			$songcount,
 			$currentItem,
 			$stillScanning ? 1 : 0,
-			$titleFormat,
+			Slim::Utils::Misc::escape($titleFormat),
 			$itemsPerPage,
 			($params->{'cookies'} && $params->{'cookies'}->{'Squeezebox-noPlaylistCover'} && $params->{'cookies'}->{'Squeezebox-noPlaylistCover'}->value) ? 1 : 0
 		);
