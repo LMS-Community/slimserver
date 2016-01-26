@@ -204,6 +204,9 @@ sub _get_dbfile {
 	return catfile( $self->{root}, $namespace . '.db' );
 }
 
+# only try to re-build once
+my $rebuilt;
+
 sub _init_db {
 	my $self  = shift;
 	my $retry = shift;
@@ -279,9 +282,24 @@ sub _init_db {
 	$dbh->{HandleError} = sub {
 		my ($msg, $handle, $value) = @_;
 
+		my $dbfile = $self->_get_dbfile;
+		
 		require Slim::Utils::Log;
-		Slim::Utils::Log::logError($msg);
-		Slim::Utils::Log::logError($self->_get_dbfile);
+		Slim::Utils::Log::logBacktrace($msg);
+		Slim::Utils::Log::logError($dbfile);
+		
+		if ( $msg =~ /SQLite.*(?:database disk image is malformed|is not a database)/i ) {
+			# we've already tried to recover - give up
+			if ($rebuilt++) {
+				Slim::Utils::Log::logError("Please stop the server, delete $dbfile and restart.");
+			}
+			else {
+				Slim::Utils::Log::logError("Trying to re-build $dbfile from scratch.");
+				$self->close();
+				unlink $dbfile;
+				$self->_init_db(1);
+			}
+		}
 	};
 	
 	# Prepare statements we need
