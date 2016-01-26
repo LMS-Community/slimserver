@@ -118,6 +118,9 @@ sub installerOS {
 	elsif ( $class->{osDetails}->{osArch} =~ /^x86_64/i ) {
 		return 'debamd64';
 	}
+	elsif ( $class->{osDetails}->{osArch} =~ /^i386/i ) {
+		return 'debi386';
+	}
 
 	return 'deb';
 }
