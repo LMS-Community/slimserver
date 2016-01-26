@@ -16,13 +16,17 @@ use Slim::Utils::Strings qw(string cstring);
 
 use Slim::Plugin::DnDPlay::FileManager;
 
-use constant MAX_UPLOAD_SIZE => 100 * 1024 * 1024;
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.dndplay',
 	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_DNDPLAY',
 });
+
+my $prefs = preferences('plugin.dndplay');
+
+sub MAX_UPLOAD_SIZE {
+	return $prefs->get('maxfilesize') * 1024 * 1024;
+}
 
 my $CRLF = $Socket::CRLF;
 
@@ -30,8 +34,15 @@ my $cacheFolder;
 
 sub initPlugin {
 	my $class = shift;
+
+	$prefs->init({
+		maxfilesize => 100,
+	});
 	
 	if (main::WEBUI) {
+		require Slim::Plugin::DnDPlay::Settings;
+		Slim::Plugin::DnDPlay::Settings->new();
+		
 		# this handler hijacks the default handler for js-main, to inject the D'n'd code
 		Slim::Web::Pages->addPageFunction("js-main\.html", sub {
 			my $params = $_[1];
@@ -194,9 +205,15 @@ sub cliPlayMatch {
 	
 	my $action = $request->isQuery([['playlist'], ['playmatch']]) ? 'play' : 'add';
 
-	if ( my $url = Slim::Plugin::DnDPlay::FileManager->getCachedFileUrl($file) ) {
+	# if we have a cached or local file, we can play it
+	if ( my $url = Slim::Plugin::DnDPlay::FileManager->getCachedOrLocalFileUrl($file) ) {
 		$client->execute(['playlist', $action, $url]);
 		$request->addResult('success', $action);
+	}
+	# we should upload, but file is too large
+	elsif ( $file->{size} > MAX_UPLOAD_SIZE ) {
+		$request->addResult( 'error', sprintf(cstring($client, 'PLUGIN_DNDPLAY_FILE_TOO_LARGE'), formatMB($file->{size}), formatMB(MAX_UPLOAD_SIZE)) );
+		$request->addResult( 'maxUploadSize', MAX_UPLOAD_SIZE );
 	}
 	else {
 		my $key = Slim::Plugin::DnDPlay::FileManager->cacheKey($file);

@@ -86,21 +86,33 @@ if (window.File && window.FileList) {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 
-						if (response && response.result && response.result.upload) {
-							if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
+						if (response && response.result) {
+							if ( response.result.maxUploadSize && Number.isInteger(response.result.maxUploadSize) ) {
+								SqueezeJS.DnD.maxUploadSize = response.result.maxUploadSize;
+							}
+							
+							if (response.result.upload) {
+								if (file.size && file.size > SqueezeJS.DnD.maxUploadSize) {
+									Ext.Msg.alert(
+										file.name, 
+										String.format(
+											SqueezeJS.string('fileTooLarge'), 
+											Math.floor(file.size / 1024 / 1024) + 'MB', 
+											Math.floor(SqueezeJS.DnD.maxUploadSize / 1024 / 1024) + 'MB'
+										)
+									);
+								}
+								else {
+									file.key = response.result.upload;
+									this.uploadFile(file, action);
+									return;
+								}
+							}
+							else if (response.result.error) {
 								Ext.Msg.alert(
 									file.name, 
-									String.format(
-										SqueezeJS.string('fileTooLarge'), 
-										Math.floor(file.size / 1024 / 1024) + 'MB', 
-										Math.floor(SqueezeJS.DnD.maxUploadSize / 1024 / 1024) + 'MB'
-									)
+									response.result.error
 								);
-							}
-							else {
-								file.key = response.result.upload;
-								this.uploadFile(file, action);
-								return;
 							}
 						}
 					}

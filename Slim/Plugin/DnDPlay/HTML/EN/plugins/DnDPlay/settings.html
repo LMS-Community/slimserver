@@ -1,0 +1,8 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_DNDPLAY_MAX_FILESIZE" desc="" %]
+		[% "PLUGIN_DNDPLAY_MAX_FILESIZE_DESC" | string %]<br/><br/>
+		<input type="text" class="stdedit sliderInput_10_1000" name="pref_maxfilesize" id="idletime" value="[% prefs.pref_maxfilesize %]" size="10">
+	[% END %]
+
+[% PROCESS settings/footer.html %]

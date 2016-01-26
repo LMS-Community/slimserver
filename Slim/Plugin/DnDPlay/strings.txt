@@ -21,3 +21,11 @@ PLUGIN_DNDPLAY_FILE_TOO_LARGE
 PLUGIN_DNDPLAY_INVALID_DATA
 	DE	Ingültige Anfrage.
 	EN	Invalid request.
+
+PLUGIN_DNDPLAY_MAX_FILESIZE
+	DE	Maximale Upload-Grösse (in MB)
+	EN	Maximum Upload Size (in MB)
+
+PLUGIN_DNDPLAY_MAX_FILESIZE_DESC
+	DE	Der Transfer von Dateien für die Freigabe verlangt auf dem Server viel Speicher. Daher ist die maximale Upload-Grösse standardmässig auf 100MB beschränkt. Sollten Sie grössere Dateien abspielen wollen, und verfügt ihr Server über die entsprechenden Ressourcen, dann können Sie diese Beschränkung hier erhöhen.
+	EN	Uploading files to the server will require considerable amounts of memory on the server. The maximum file size therefore is limited to 100MB by default. If you feel a need to be able to play larger files, and your server offers the additional ressources, you can adjust the maximum accepted file size here.

@@ -84,7 +84,7 @@ sub cacheKey {
 	return wantarray ? ($key, $ext) : $key;
 }
 
-sub getCachedFileUrl {
+sub getCachedOrLocalFileUrl {
 	my ($class, $file) = @_;
 	
 	return unless $file && $file->{name} && $file->{size} && $file->{timestamp};
