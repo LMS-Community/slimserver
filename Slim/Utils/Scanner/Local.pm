@@ -28,8 +28,11 @@ use constant PENDING_CHANGED => 0x04;
 # If more than this many items are changed during a scan, the database is optimized
 use constant OPTIMIZE_THRESHOLD => 100;
 
-# Number of items to process at once, this value will affect the max size of the WAL file
-use constant CHUNK_SIZE => 50;
+use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /SQLite/ ? 1 : 0);
+
+# Number of items to process at once, this value will affect the max size of the WAL file.
+# Chunking is only required with SQLite, as we don't have this kind of concurrency problem with MySQL.
+use constant CHUNK_SIZE => IS_SQLITE ? 50 : 1000;
 
 my $log   = logger('scan.scanner');
 my $prefs = preferences('server');
@@ -217,7 +220,7 @@ sub rescan {
 			AND             url LIKE '$basedir%'
 			AND             virtual IS NULL
 			AND             content_type != 'dir'
-		};
+		} . (IS_SQLITE ? '' : ' ORDER BY url');
 		
 		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
 		# 2. Files that are new and not in the database.
@@ -238,7 +241,7 @@ sub rescan {
 		my $onDiskOnlySQL = qq{
 			SELECT          url
 			FROM            diskonly
-		};
+		} . (IS_SQLITE ? '' : ' ORDER BY url');
 		
 		# 3. Files that have changed mtime or size.
 		# XXX can this query be optimized more?
@@ -255,7 +258,7 @@ sub rescan {
 				AND tracks.content_type != 'dir'
 			)
 			WHERE scanned_files.url LIKE '$basedir%'
-		};
+		} . (IS_SQLITE ? '' : ' ORDER BY scanned_files.url');
 
 		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
 		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
