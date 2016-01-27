@@ -160,7 +160,7 @@ sub read {
 					TITLE      => $title,
 					ARTISTNAME => $author,
 					SECS       => $secs,					
-				} );
+				}, $url );
 			}
 		}
 		
@@ -189,7 +189,7 @@ sub read {
 
 			if ($class->playlistEntryIsValid($entry->as_string, $url)) {
 
-				push @items, $class->_updateMetaData($entry->as_string);
+				push @items, $class->_updateMetaData($entry->as_string, undef, $url);
 			}
 		}
 	}
@@ -205,7 +205,7 @@ sub read {
 
 			if ($class->playlistEntryIsValid($entry, $url)) {
 
-				push @items, $class->_updateMetaData($entry);
+				push @items, $class->_updateMetaData($entry, undef, $url);
 			}
 		}
 	}

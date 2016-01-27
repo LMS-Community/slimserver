@@ -2047,14 +2047,18 @@ sub _bmf {
 						$_->{'playall'} = 1,
 					}
 				}
-				# Cannot do anything useful with a playlist in BMF
-#				elsif ($_->{'type'} eq 'playlist') {
-#					$_->{'type'}        = 'text';
-#					$_->{'favorites_url'} =	$_->{'url'};
-#					$_->{'playlist'}	  = \&_playlistTracks;
-#					$_->{'url'}           = \&_playlistTracks;
-#					$_->{'passthrough'}   = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
-#				}
+				# Playlists in BMF folders should be returned as volatile as they will most 
+				# likely have not been scanned and therefore not useful for browse.
+				elsif ($_->{'type'} eq 'playlist') {
+					$_->{'type'}          = 'audio';
+					$_->{'url'}           =~ s/^file/tmp/;
+					$_->{'favorites_url'} =	$_->{'url'};
+				
+					if ($remote_library) {
+						$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
+						$_->{'playall'} = 1,
+					}
+				}
 				else # if ($_->{'type'} eq 'unknown') 
 				{
 					$_->{'type'}        = 'text';

@@ -1,7 +1,5 @@
 package Slim::Utils::Scanner;
 
-# $Id$
-#
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
@@ -260,8 +258,13 @@ sub scanDirectory {
 				'checkMTime' => 1,
 				'playlist'   => 1,
 			});
+			
+			my $url = $_->{url};
+			if ($args->{volatile}) {
+				$url = Slim::Utils::Misc::fileURLFromPath($args->{url});
+			};
 
-			my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($_->{url})));
+			my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL( $url )));
 			
 			if ( scalar @tracks ) {
 				push @{$foundItems}, @tracks;

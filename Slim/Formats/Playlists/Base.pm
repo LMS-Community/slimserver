@@ -20,8 +20,13 @@ sub _updateMetaData {
 	my $class    = shift;
 	my $entry    = shift;
 	my $metadata = shift;
+	my $playlistUrl = shift;
 
 	my $attributes = {};
+	
+	if ( Slim::Music::Info::isVolatile($playlistUrl) ) {
+		$entry =~ s/^file/tmp/;
+	}
 
 	# Update title MetaData only if its not a local file with Title information already cached.
 	if ($metadata && Slim::Music::Info::isRemoteURL($entry)) {

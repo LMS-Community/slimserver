@@ -70,7 +70,7 @@ sub read {
 
 				main::DEBUGLOG && $log->debug("    entry: $entry");
 
-				push @items, $class->_updateMetaData($entry);
+				push @items, $class->_updateMetaData($entry, undef, $url);
 			}
 		}
 	}

@@ -83,7 +83,7 @@ sub read {
 
 			push @items, $class->_updateMetaData( $entry, {
 				'TITLE' => $titles[$i]
-			} );
+			}, $url );
 		}
 	}
 

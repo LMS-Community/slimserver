@@ -49,7 +49,7 @@ sub read {
 
 			push @items, $class->_updateMetaData( $location, {
 				'TITLE' => $title,
-			} );
+			}, $url );
 		}
 	}
 

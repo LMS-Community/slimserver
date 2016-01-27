@@ -1942,6 +1942,7 @@ sub mediafolderQuery {
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,
+			'playlist' => Slim::Music::Info::isPlaylist($url),
 		}) if $url;
 
 		if ( (blessed($item) && $item->can('content_type')) || ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) ) {

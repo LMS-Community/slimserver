@@ -60,7 +60,7 @@ sub read {
 
 			push @urls, $class->_updateMetaData( $enclosure->{'url'}, {
 				'TITLE' => $item->{'title'},
-			} );
+			}, $url );
 
 		} else {
 
