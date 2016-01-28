@@ -2053,6 +2053,14 @@ sub _bmf {
 					$_->{'type'}          = 'audio';
 					$_->{'url'}           =~ s/^file/tmp/;
 					$_->{'favorites_url'} =	$_->{'url'};
+					$_->{'playall'}     = 1;
+
+					$_->{'itemActions'} = {
+						info => {
+							command     => ['trackinfo', 'items'],
+							fixedParams => {track_id =>  $_->{'id'}},
+						},
+					};
 				
 					if ($remote_library) {
 						$_->{'url'} = _proxiedStreamUrl($_, $remote_library);
