@@ -45,7 +45,12 @@
 
 	[% IF useExtJS %]   
 		[% WRAPPER setting title="SETUP_ADDITIONAL_PLAYLIST_BUTTONS" desc="SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC"%]
-		<input type=checkbox [% IF prefs.pref_additionalPlaylistButtons %]checked="1" [% END %] class="stdedit" name="pref_additionalPlaylistButtons" id="additionalPlaylistButtons" value="1" />
+		<select class="stdedit" name="pref_additionalPlaylistButtons" id="additionalPlaylistButtons">
+
+			<option [% IF prefs.pref_additionalPlaylistButtons %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
+			<option [% IF NOT prefs.pref_additionalPlaylistButtons %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
+		
+		</select>
 		[% END %]
 	[% END %]
 

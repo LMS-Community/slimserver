@@ -13,7 +13,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.dndplay');
 
 sub name {
-	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_DNDPLAY');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_DNDPLAY_SHORT');
 }
 
 sub page {
