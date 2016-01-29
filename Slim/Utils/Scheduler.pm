@@ -155,10 +155,10 @@ sub run_tasks {
 
 		my $cont = eval { &$subptr(@subargs) };
 
-           if ( main::DEBUGLOG && $isDebug ) {
-		    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
-		    $log->debug("Scheduler ran task: $subname (ordered: $ordered)");
-	    }
+		if ( main::DEBUGLOG && $isDebug ) {
+			my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+			$log->debug("Scheduler ran task: $subname (ordered: $ordered)");
+		}
 
 		if ($@) {
 			logError("Scheduler task failed: $@");

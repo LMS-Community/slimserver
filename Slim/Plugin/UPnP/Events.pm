@@ -408,7 +408,7 @@ sub sendNotify {
 	
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info( "Notifying to $host:$port for " . $sub->{client} . " / " . $sub->{service} );
-		$log->debug($notify);
+		main::DEBUGLOG && $log->is_debug && $log->debug($notify);
 	}
 	
 	# XXX use AnyEvent::Socket instead?

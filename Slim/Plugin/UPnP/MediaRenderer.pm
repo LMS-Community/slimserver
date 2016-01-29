@@ -118,7 +118,7 @@ sub init {
 		upnp => 'Slim::Plugin::UPnP::MediaRenderer::ProtocolHandler'
 	);
 	
-	$log->info('UPnP MediaRenderer initialized');
+	main::INFOLOG && $log->is_info && $log->info('UPnP MediaRenderer initialized');
 }
 
 sub shutdown {
@@ -142,7 +142,7 @@ sub newClient {
 	# Ignore if we're already enabled for this client
 	return if $client->pluginData('uuid');
 	
-	$log->info( 'Setting up MediaRenderer for ' . $client->id );
+	main::INFOLOG && $log->is_info && $log->info( 'Setting up MediaRenderer for ' . $client->id );
 	
 	my $uuid = Slim::Plugin::UPnP::Discovery->uuid($client);
 	$client->pluginData( uuid => $uuid );
@@ -168,7 +168,7 @@ sub disconnectClient {
 	my $request = shift;
 	my $client  = $request->client || return;
 	
-	$log->info( 'Client ' . $client->id . ' disconnected, shutting down MediaRenderer' );
+	main::INFOLOG && $log->is_info && $log->info( 'Client ' . $client->id . ' disconnected, shutting down MediaRenderer' );
 	
 	if ( my $uuid = $client->pluginData('uuid') ) {	
 		Slim::Plugin::UPnP::Discovery->unregister( $uuid );

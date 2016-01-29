@@ -369,7 +369,7 @@ sub _cliQuery_done {
 		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid for $cachetime" );
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
-		if ( $@ && $log->is_debug ) {
+		if ( main::DEBUGLOG && $@ && $log->is_debug ) {
 			$log->debug("Session not cached: $@");
 		}
 	}

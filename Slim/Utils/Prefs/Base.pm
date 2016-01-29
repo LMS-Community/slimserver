@@ -216,7 +216,7 @@ sub init {
 				$value = $hash->{ $pref };
 			}
 
-			if ( main::DEBUGLOG && $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(
 					"init " . $class->_root->{'namespace'} . ":" 
 					. ($class->{'clientid'} || '') . ":" . $pref 

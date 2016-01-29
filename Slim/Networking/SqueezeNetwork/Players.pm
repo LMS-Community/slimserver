@@ -213,12 +213,12 @@ sub _players_done {
 				eval { $subclass->getDisplayName() };
 
 				if (!$@) {
-					$log->debug("Plugin $subclass already initialized - skipping");
+					main::DEBUGLOG && $log->is_debug && $log->debug("Plugin $subclass already initialized - skipping");
 					_updateWebLink($info->{title}, $app);
 					next; 
 				}
 
-				$log->debug("Initializing plugin for mysqueezebox.com based app '$app': $subclass");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Initializing plugin for mysqueezebox.com based app '$app': $subclass");
 				
 				my $code = qq{
 					package ${subclass};

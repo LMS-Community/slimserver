@@ -93,7 +93,7 @@ sub validateFeed {
 	
 	my $newFeedUrl = $params->{newfeed};
 	
-	$log->info("validating $newFeedUrl...");
+	main::INFOLOG && $log->is_info && $log->info("validating $newFeedUrl...");
 
 	Slim::Formats::XML->getFeedAsync(
 		sub {
@@ -101,7 +101,7 @@ sub validateFeed {
 			
 			my $title = $feed->{title} || $newFeedUrl;
 			
-			$log->info( "Verified feed $newFeedUrl, title: $title" );
+			main::INFOLOG && $log->is_info && $log->info( "Verified feed $newFeedUrl, title: $title" );
 				
 			my $feeds = $prefs->get('feeds');
 			push @$feeds, {
@@ -146,7 +146,7 @@ sub importFromMySB {
 
 
 	if ( $url ) {
-		$log->info( "Trying to get podcast list from mysqueezebox.com: $url" );
+		main::INFOLOG && $log->is_info && $log->info( "Trying to get podcast list from mysqueezebox.com: $url" );
 		
 		Slim::Formats::XML->getFeedAsync(
 			sub {

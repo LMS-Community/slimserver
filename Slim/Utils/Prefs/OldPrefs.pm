@@ -63,7 +63,7 @@ sub _oldPrefs {
 
 	if ( my $path = Slim::Utils::OSDetect::dirsFor('oldprefs') ) {
 
-		$log->info("using old preference file $oldprefs for conversion") if $oldprefs;
+		main::INFOLOG && $log->is_info && $log->info("using old preference file $oldprefs for conversion") if $oldprefs;
 
 		$oldprefs = eval { YAML::XS::LoadFile($path) };
 

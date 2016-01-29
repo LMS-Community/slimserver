@@ -219,7 +219,7 @@ sub getUpdate {
 
 		setUpdateInstaller();
 		
-		$log->debug("Downloading...\n   URL:      $url\n   Save as:  $tmpFile\n   Filename: $file");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Downloading...\n   URL:      $url\n   Save as:  $tmpFile\n   Filename: $file");
 
 		# Save to a tmp file so we can check SHA
 		my $download = Slim::Networking::SimpleAsyncHTTP->new(
@@ -262,7 +262,7 @@ sub downloadAsyncDone {
 
 	cleanup($path);
 
-	$log->info("Successfully downloaded update installer file '$tmpFile'. Saving as $file");
+	main::INFOLOG && $log->is_info && $log->info("Successfully downloaded update installer file '$tmpFile'. Saving as $file");
 	unlink $file;
 	my $success = rename $tmpFile, $file;
 	
@@ -319,10 +319,10 @@ sub getUpdateInstaller {
 	
 	$versionFile ||= getVersionFile();
 	
-	main::DEBUGLOG && $log->debug("Reading update installer path from $versionFile");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || do {
-		$log->debug("No '$versionFile' available.");
+		main::DEBUGLOG && $log->is_debug && $log->debug("No '$versionFile' available.");
 		return '';	
 	};
 	

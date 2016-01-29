@@ -98,11 +98,13 @@ sub initPlugin {
 		Slim::Plugin::PreventStandby::Settings->new;
 	}
 
-	if (my $idletime = $prefs->get('idletime')) {
-		$log->debug("System standby now allowed after $idletime minutes of player idle time.")
-	}
-	else {
-		$log->debug("System standby now prohibited.")
+	if ( main::DEBUGLOG ) {
+		if (my $idletime = $prefs->get('idletime')) {
+			$log->debug("System standby now allowed after $idletime minutes of player idle time.")
+		}
+		else {
+			$log->debug("System standby now prohibited.")
+		}
 	}
 	
 	$pollInterval = $handler->pollInterval || INTERVAL;

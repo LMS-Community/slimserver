@@ -49,11 +49,11 @@ sub init {
 		$prefChangeSet = 1;
 	}
 	
-	$log->info('UPnP MediaServer initialized');
+	main::INFOLOG && $log->is_info && $log->info('UPnP MediaServer initialized');
 }
 
 sub reinit {	
-	$log->debug("libraryname pref changed, re-initializing UPnP MediaServer");
+	main::DEBUGLOG && $log->is_debug && $log->debug("libraryname pref changed, re-initializing UPnP MediaServer");
 	
 	__PACKAGE__->shutdown;
 	__PACKAGE__->init;

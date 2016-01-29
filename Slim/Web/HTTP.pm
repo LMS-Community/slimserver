@@ -336,7 +336,7 @@ sub processHTTP {
 
 		my $reason = $httpClient->reason || 'unknown error reading request';
 		
-		if ( main::INFOLOG && $isDebug ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. ($reason)");
 		}
 
@@ -345,7 +345,7 @@ sub processHTTP {
 	}
 	
 
-	if ( main::DEBUGLOG && $isDebug ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(
 			"HTTP request: from $peeraddr{$httpClient}:" . $httpClient->peerport . " ($httpClient) for " .
 			join(' ', ($request->method(), $request->protocol(), $request->uri()))
@@ -483,7 +483,7 @@ sub processHTTP {
 				my $csrfAuth = $2;
 
 				if ( main::DEBUGLOG && $isDebug ) {
-					$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"" . $uri . "\", so resetting request URI to \"$plainURI\"");
+					$log->debug("Found CSRF auth token \"$csrfAuth\" in URI \"" . $uri . "\", so resetting request URI to \"$plainURI\"");
 				}
 
 				# change the URI so later code doesn't "see" the cauth part
@@ -705,7 +705,7 @@ sub processHTTP {
 	}
 	
 	if ( main::DEBUGLOG && $isDebug ) {
-		$log->info(
+		$log->debug(
 			"End request: keepAlive: [" .
 			($keepAlives{$httpClient} || '') .
 			"] - waiting for next request for $httpClient on connection = " . ($response->header('Connection') || '') . "\n"

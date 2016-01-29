@@ -247,7 +247,7 @@ sub addYear {
 }
 
 sub cliQuery {
-	$log->debug('cliQuery');
+	main::DEBUGLOG && $log->is_debug && $log->debug('cliQuery');
 	my $request = shift;
 	
 	# WebUI or newWindow param from SP side results in no
