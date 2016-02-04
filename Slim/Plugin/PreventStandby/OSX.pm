@@ -25,7 +25,7 @@ sub new {
 	my ($class, $i) = @_;
 
 	if ( $command = Slim::Utils::Misc::findbin('caffeinate') ) {
-		$command .= ' -s';
+		$command .= ' -i';
 	}
 	elsif ( $command = Slim::Utils::Misc::findbin('pmset') ) {
 		$command .= ' noidle';
