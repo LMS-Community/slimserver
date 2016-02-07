@@ -1019,6 +1019,8 @@ sub getGenreOverlay {
 sub toggleGenreState {
 	my ($client, $item) = @_;
 	
+	my $genres = getGenres($client);
+	
 	if ($item->{'selectAll'}) {
 
 		$item->{'enabled'} = ! $item->{'enabled'};
