@@ -65,7 +65,7 @@ sub mcast_add {
 		$self,
 		getprotobyname('ip') || 0,
 		_constant('IP_MULTICAST_TTL'),
-		pack 'I', 4,
+		pack _constant('PACK_TEMPLATE'), 4,
 	) || logError("While setting multicast TTL, UPnP may not work properly: $!");
 }
 
@@ -76,14 +76,16 @@ sub _constant {
 		'IP_MULTICAST_TTL'  => 0,
 		'IP_ADD_MEMBERSHIP' => 1,
 		'IP_MULTICAST_IF'   => 2,
+		'PACK_TEMPLATE'     => 3,
 	);
 	
 	my %constants = (
-		'MSWin32' => [10,12,9],
-		'cygwin'  => [3,5,2],
-		'darwin'  => [10,12,9],
-		'freebsd' => [10,12,9],
-		'default' => [33,35,32],
+		'MSWin32' => [10,12,9,'I'],
+		'cygwin'  => [3,5,2,'I'],
+		'darwin'  => [10,12,9,'I'],
+		'freebsd' => [10,12,9,'I'],
+		'solaris' => [17,19,16,'C'],
+		'default' => [33,35,32,'I'],
 	);
 	
 	my $index = $names{$name};
