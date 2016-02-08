@@ -48,6 +48,11 @@ sub playlist {
 	my $songcount = Slim::Player::Playlist::count($client);
 	my $currentItem = Slim::Player::Source::playingSongIndex($client);
 	my $titleFormat = Slim::Music::Info::standardTitleFormat();
+	my $externalFormats = Slim::Music::TitleFormatter->externalFormats();
+	
+	my $hasExternalFormatter = grep {
+		$titleFormat =~ /\Q$_\E/;
+	} @$externalFormats;
 
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
@@ -66,7 +71,7 @@ sub playlist {
 	
 	my $cacheKey;
 	# only cache rendered page for skins known to be compatible
-	if ( !main::NOBROWSECACHE && $currentSkin =~ /(?:EN|Classic|Default)/ ) {
+	if ( !main::NOBROWSECACHE && !$hasExternalFormatter && $currentSkin =~ /(?:EN|Classic|Default)/ ) {
 		$cacheKey = join(':', 
 			$client->id,
 			$client->currentPlaylistChangeTime(),
@@ -192,7 +197,10 @@ sub playlist {
 	
 	my $titleFormatter = $titleFormat eq 'TITLE' 
 		? sub { $_[0]->{title} }
-		: sub { Slim::Music::TitleFormatter::infoFormat(undef, $titleFormat, 'TITLE', $_[0]) };
+		: sub {
+			my $formatted = Slim::Music::TitleFormatter::infoFormat($_[1], $titleFormat) if $_[1];
+			return $formatted || Slim::Music::TitleFormatter::infoFormat(undef, $titleFormat, 'TITLE', $_[0]) 
+		};
 	
 	foreach ( @{ $tracks || [] } ) {
 		$_->{'ct'}            = $_->{'type'} if $_->{'type'};
@@ -253,8 +261,11 @@ sub playlist {
 			$_->{'artistsWithAttributes'} ||= [];
 			push @{$_->{'artistsWithAttributes'}}, @tupels;
 		}
+		
+		# external formatters might expect a full track object
+		my $track = $hasExternalFormatter ? Slim::Schema->find('Track', $_->{id}) : undef;
 
-		$_->{'title'} = $titleFormatter->($_);
+		$_->{'title'} = $titleFormatter->($_, $track);
 
 		push @{$params->{'playlist_items'}}, $_;
 		

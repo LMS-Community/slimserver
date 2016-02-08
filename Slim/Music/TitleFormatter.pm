@@ -28,7 +28,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
-our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache, %formatCache);
+our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache, %formatCache, $externalFormats);
 
 my $log = logger('database.info');
 
@@ -431,6 +431,9 @@ sub addFormat {
 	my $formatSubRef = shift;
 	my $nocache = shift;
 
+	my ($package) = caller();
+	$externalFormats->{$format}++ if $package !~ /^Slim/;
+	
 	# only add format if it is not already defined
 	if (!defined $parsedFormats{$format}) {
 
@@ -458,6 +461,12 @@ sub addFormat {
 	}
 
 	return 1;
+}
+
+# some 3rd party plugins register their own format handlers
+# this method can tell a caller whether we have such external formatters
+sub externalFormats {
+	return [ keys %$externalFormats ];
 }
 
 my %endbrackets = (
