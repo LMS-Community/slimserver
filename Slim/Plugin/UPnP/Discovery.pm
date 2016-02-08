@@ -484,7 +484,7 @@ sub _advertise {
 					last;
 				}
 			}
-			if ( !$local_addr ) {
+			if ( !$local_addr || $local_addr eq '0.0.0.0' ) {
 				$local_addr = Slim::Utils::Network::serverAddr(); # default
 			}
 			
