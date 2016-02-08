@@ -184,6 +184,7 @@ sub rescan {
 	# if we should optimize the database or not, and also so we know if
 	# we need to udpate lastRescanTime
 	my $changes = 0;
+	my $ctFilter = $args->{types} eq 'list' ? "== 'ssp'" : "!= 'dir'";
 	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
@@ -219,7 +220,7 @@ sub rescan {
 			)
 			AND             url LIKE '$basedir%'
 			AND             virtual IS NULL
-			AND             content_type != 'dir'
+			AND             content_type $ctFilter
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 		
 		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
@@ -255,7 +256,7 @@ sub rescan {
 					OR
 					scanned_files.filesize != tracks.filesize
 				)
-				AND tracks.content_type != 'dir'
+				AND tracks.content_type $ctFilter
 			)
 			WHERE scanned_files.url LIKE '$basedir%'
 		} . (IS_SQLITE ? '' : ' ORDER BY scanned_files.url');
@@ -279,7 +280,7 @@ sub rescan {
 		my $inDBOnlyCount = 0;
 		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
-		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio/;
+		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio|list/;
     	
 		$log->error("Get new tracks count") unless main::SCANNER && $main::progress;
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
@@ -609,7 +610,7 @@ sub deleted {
 	my $content_type = _content_type($url);
 	
 	if ( Slim::Music::Info::isSong($url, $content_type) ) {
-		$log->error("Handling deleted audio file $url") unless main::SCANNER && $main::progress;
+		$log->warn("Handling deleted audio file $url") unless main::SCANNER && $main::progress;
 
 		# XXX no DBIC objects
 		my $track = Slim::Schema->rs('Track')->search( url => $url )->single;
