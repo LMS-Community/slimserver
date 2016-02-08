@@ -1,7 +1,5 @@
 package Slim::Schema::RemoteTrack;
 
-# $Id$
-
 # This is an emulation of the Slim::Schema::Track API for remote tracks
 
 use strict;
@@ -16,6 +14,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $log = logger('formats.metadata');
+my $prefs = preferences('server');
 my $cache;
 
 # Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
@@ -64,11 +63,11 @@ my @allAttributes = (qw(
 
 sub init {
 	$cache = Slim::Utils::Cache->new;
-	
+
 	my $maxPlaylistLengthCB = sub {
 		my ($pref, $max) = @_;
 		
-		if (preferences('server')->get('dbhighmem')) {
+		if ($prefs->get('dbhighmem')) {
 			$max ||= 2000;
 			$max = 2000 if $max < 2000;
 		}
@@ -83,8 +82,6 @@ sub init {
 			$cacheObj->max_size($max);
 		}
 	};
-	
-	my $prefs = preferences('server');
 	
 	$maxPlaylistLengthCB->(undef, $prefs->get('maxPlaylistLength'));
 	
@@ -302,6 +299,7 @@ my %localTagMapping = (
 );
 
 my %availableTags;
+my $separator;
 
 sub setAttributes {
 	my ($self, $attributes) = @_;
@@ -316,6 +314,15 @@ sub setAttributes {
 		$key = $localTagMapping{$key} if exists $localTagMapping{$key};
 		next if !defined($key) || $key eq 'url';
 		next unless $availableTags{$key};
+		
+		# some formats can return multiple values per key - join them
+		if ( (ref $value || '') eq 'ARRAY' ) {
+			if (!$separator) {
+				my @splitList = split(/\s+/, ($prefs->get('splitList') || ''));
+				$separator = ($splitList[0] || ';') . ' ';
+			}
+			$value = join($separator, @$value);
+		}
 		
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
 			$log->debug("$key: ", $self->$key(), "=>$value");
