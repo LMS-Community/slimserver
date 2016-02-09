@@ -9,14 +9,16 @@ use Slim::Utils::Cache;
 use Slim::Utils::DateTime;
 use Slim::Utils::Strings qw(cstring);
 
+my $cache = Slim::Utils::Cache->new;
+
+my $fetching;
+my @scanQueue;
+
 sub parse {
 	my ($class, $http, $params) = @_;
 	
 	my $client = $http->params->{params}->{client};
 	
-	my $cache = Slim::Utils::Cache->new;
-	my %fetching;
-
 	# don't use eval() - caller is Slim::Formats::XML is doing so already
 	my $feed = Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef, $http->headers()->content_type );
 
@@ -69,41 +71,15 @@ sub parse {
 
 		# sometimes the URL would redirect - store data for the real URL, too
 		# only check when we're seeing this URL for the first time!
-		if ( !$fetching{$key} && !defined $cache->get("$key-redirect") ) {
-			$fetching{$key} = 1;
+		if ( !(scalar grep { $_->{key} eq $key } @scanQueue) && !defined $cache->get("$key-redirect") ) {
+			push @scanQueue, { 
+				url      => $item->{enclosure}->{url}, 
+				duration => $item->{duration}, 
+				position => $position,
+				key      => $key,
+			};
 			
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($item->{enclosure}->{url});
-		
-			if ($handler->can('scanUrl')) {
-				$handler->scanUrl($item->{enclosure}->{url}, {
-					client => $client,
-					cb     => sub {
-						my ( $newTrack, $error, $pt ) = @_;
-
-						$fetching{$key} = 0;
-						
-						return unless $pt && $pt->{url} && $newTrack && blessed($newTrack) && (my $url = $newTrack->url);
-						
-						if ($pt->{url} ne $url) {
-							my $key = 'podcast-' . $url;
-							my $position = $cache->get($key);
-							if ( !defined $position ) {
-								$cache->set($key, $pt->{position} || 0, '30days');
-							}
-							
-							$cache->set("$key-duration", $pt->{duration}, '30days') if $pt->{duration};
-						}
-
-						$cache->set($pt->{redirectKey}, $url || '', '30days');
-					},
-					pt => [{ 
-						url => $item->{enclosure}->{url}, 
-						duration => $item->{duration}, 
-						position => $position,
-						redirectKey => "$key-redirect",
-					}]
-				} );
-			}
+			_scanItem();
 		}
 		
 		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0));
@@ -173,4 +149,48 @@ sub parse {
 	return $feed;
 }
 
+sub _scanItem {
+	return if $fetching;
+
+	if ( my $item = shift @scanQueue ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($item->{url});
+	
+		if ($handler && $handler->can('scanUrl')) {
+			$fetching = 1;
+			
+			$handler->scanUrl($item->{url}, {
+				client => $client,
+				cb     => \&_gotUrl,
+				pt => [$item]
+			} );
+		}
+	}
+	else {
+		$fetching = 0;
+	}
+}
+
+sub _gotUrl {
+	my ( $newTrack, $error, $pt ) = @_;
+	
+	if ( $pt && $pt->{url} && $newTrack && blessed($newTrack) && (my $url = $newTrack->url) ) {
+		my $key = $pt->{key} || '';
+		
+		if ($pt->{url} ne $url) {
+			my $key = 'podcast-' . $url;
+			my $position = $cache->get($key);
+			if ( !defined $position ) {
+				$cache->set($key, $pt->{position} || 0, '30days');
+			}
+			
+			$cache->set("$key-duration", $pt->{duration}, '30days') if $pt->{duration};
+		}
+
+		$cache->set("$key-redirect", $url || '', '30days');
+	}
+	
+	# check next item
+	$fetching = 0;
+	_scanItem();
+}
 1;
