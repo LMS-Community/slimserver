@@ -1277,6 +1277,9 @@ sub isSong {
 	if (!$type) {
 		$type = _isContentTypeHelper($pathOrObj, $type);
 	}
+	elsif ($type eq 'application/octet-stream') {
+		$type = _isContentTypeHelper($pathOrObj);
+	}
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
