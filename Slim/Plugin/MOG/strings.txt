@@ -1,20 +1,26 @@
 PLUGIN_MOG_ADD_ALL_PLAYLIST
-	EN	Add All to MOG Playlist 
+	EN	Add All to MOG Playlist
+	NL	Voeg Alles toe aan MOG-playlist
 
 PLUGIN_ADD_TRACK_PLAYLIST
 	EN	Add track to MOG Playlist
+	NL	Voeg nummer toe aan MOG-playlist
 
 PLUGIN_MOG_PLAYLIST
 	EN	MOG Playlist Options
+	NL	Opties voor MOG-playlist
 
 PLUGIN_MOG_BOOKMARKS
 	EN	MOG Favorites Options
+	NL	Opties voor MOG-favorieten
 
 PLUGIN_MOG
 	EN	MOG
+	NL	MOG
 
 PLUGIN_MOG_MODULE_NAME
 	EN	MOG
+	NL	MOG
 
 PLUGIN_ON_MOG
 	CS	Na MOG
