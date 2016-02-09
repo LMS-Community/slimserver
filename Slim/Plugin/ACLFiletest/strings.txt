@@ -1,5 +1,7 @@
 PLUGIN_ACL_FILETEST
 	EN	Enable ACL filetests
+	NL	Schakel ACL-bestandtest in
 	
 PLUGIN_ACL_FILETEST_DESC
 	EN	This plugin allows you to check file permissions based on ACLs on some systems. Do not enable this plugin unless you know your system does support ACLs and Perl's 'use filetest'.
+	NL	Deze plug-in maakt het op sommige systemen mogelijk om bestandsrechten op basis van ACL's te controleren. Schakel deze plug-in alleen in als je zeker weet dat je systeem ACL's and Perl's 'use filetest' ondersteunt.

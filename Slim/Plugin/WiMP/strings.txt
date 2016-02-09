@@ -1,8 +1,10 @@
 PLUGIN_WIMP_MODULE_NAME
 	EN	TIDAL
+	NL	TIDAL
 	
 PLUGIN_WIMP_MODULE_DESC
 	EN	TIDAL - High Fidelity Music Streaming
+	NL	TIDAL - High Fidelity Music Streaming
 
 PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	CS	Získávání informací o stopě...
@@ -67,7 +69,9 @@ PLUGIN_WIMP_ON_WIMP
 PLUGIN_WIMP_STREAM_FAILED
 	DE	Fehler beim Lesen des Datenstroms
 	EN	Failed to play stream
+	NL	Afspelen stream mislukt
 
 PLUGIN_WIMP_INVALID_TRACK_ID
 	DE	Fehlende oder ungültige ID
 	EN	Missing or invalid track ID
+	NL	Track-ID mist of is ongeldig

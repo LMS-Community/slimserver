@@ -5460,10 +5460,12 @@ SETUP_REPLAYGAINMODE_DESC
 SETUP_REPLAYGAIN_REMOTE
 	DE	Anpassung für Internet-Streams
 	EN	Default Adjustment for Remote Streams
+	NL	Aanpassing voor internetstreams
 	
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienst haben stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
+	NL	Online streamingdiensten bieden meestal geen vorm van volumenormalisering aan. Als je deze internetstreams mixt met locale bestanden, kan dit leiden tot ongewenste veranderingen in het volume. Bepaal een standaardwaarde die bij internetstreams moet worden gebruikt.
 
 REPLAYGAIN_DISABLED
 	CS	Žádné nastavení hlasitosti
@@ -7700,18 +7702,22 @@ SETUP_NOGENREFILTER_DESC
 SETUP_NOROLEFILTER
 	DE	Interpreten-Rolle auf Album- und Titelebene filtern
 	EN	Filter Contributor Roles at the Album & Track Level
+	NL	Rollen van uitvoerenden filteren op Album- en Nummerniveau
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
 	EN	Show all albums and tracks for an artist
+	NL	Toon alle albums en nummers van een artiest
 
 SETUP_NOROLEFILTER_0
 	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected role for an artist
+	NL	Laat alleen nummers zien die overeenkomen met de geselecteerde rol van de artiest
 
 SETUP_NOROLEFILTER_DESC
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
+	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER enz.).
 
 SETUP_COMPOSERINARTISTS
 	CS	Skladatel, Skupina a Orchestr v Interpretech
@@ -8063,14 +8069,17 @@ SETUP_ARTISTS_BROWSE_MODES
 SETUP_ARTISTS_BROWSE_MODES_DESC
 	DE	Wählen Sie, ob sie eine einzelne, konfigurierbare List von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand let's you define which contributor roles should be part of the Artists menu.
+	NL	Kies of je een enkele, aan te passen lijst met artiesten wilt, of twee lijsten voor Albumartiesten en Alle Artiesten. Albumartiesten is een lijst waar de albumartiest de enige artiest op het album is, of is het de artiest die in de 'ALBUMARTIST tag' vermeld staat. Alle Artiesten is een lijst met alle artiesten die in een tag voorkomen met een uitvoerende rol (ARTIST, COMPOSER, enz.). Daarentegen kun je in de enkele, aan te passen lijst met artiesten aangeven welke uitvoerende rollen in de lijst moeten worden opgenomen.
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
+	NL	Gebruik een aan te passen lijst met artiesten
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
+	NL	Gebruik aparte lijsten voor Albumartiesten en Alle Artiesten
 
 SETUP_BROWSEAGELIMIT
 	CS	Omezení nové hudby
@@ -8108,22 +8117,27 @@ SETUP_BROWSEAGELIMIT_DESC
 SETUP_SCAN_ON_PREF_CHANGE
 	DE	Bei Einstellungesänderungen Sammlung durchsuchen
 	EN	Trigger Scan on Preference Changes
+	NL	Start scan bij voorkeurswijzigingen
 	
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
+	NL	Sommige voorkeuren vragen om het volledig wissen van je muziekcollectie en een herscan. Deze scan kan automatisch worden gestart als je dat wilt. Maar het tegelijkertijd aanpassen van verschillende voorkeuren kan leiden tot meerdere scans die in een wachtrij worden geplaatst.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
+	NL	Start scan automatisch
 
 SETUP_SCAN_ON_PREF_CHANGE_OFF
 	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
 	EN	Prompt to scan, but don't trigger it automatically
+	NL	Vraag om te scannen, maar start het niet automatisch
 
 SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	DE	Einige Einstellungsänderungern erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
+	NL	Sommige voorkeurswijzigingen vragen om een herscan van je collectie voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
 
 SETUP_DBHIGHMEM
 	CS	Konfigurovat paměť databáze
@@ -8188,6 +8202,7 @@ SETUP_DBHIGHMEM_HIGH
 SETUP_DBHIGHMEM_MAX
 	DE	Maximum (empfohlen für Sammlungen mit mehr als 50'000 Titeln und Computer mit 2 GB RAM und mehr)
 	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
+	Nl	Maximaal (aanbevolen voor collecties met meer dan 50.000 nummers en een systeem met 2+ GB RAM)
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -9819,7 +9834,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	HE	הסרת השיר מרשימת ההשמעה
 	IT	Rimuovi questo brano dalla playlist
 	JA	この曲をプレイリストから削除する
-	NL	Dit liedje uit de playlist verwijderen
+	NL	Dit nummer uit de playlist verwijderen
 	NO	Fjern denne sangen fra spillelisten
 	PL	Usuń ten utwór z listy odtwarzania
 	PT	Remover esta Música da Playlist
@@ -9838,7 +9853,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	HE	הוסף שיר זה לרשימת ההשמעה
 	IT	Aggiungi questo brano
 	JA	この曲をプレイリストに加える
-	NL	Dit liedje toevoegen
+	NL	Dit nummer toevoegen
 	NO	Legg til denne sangen
 	PL	Dodaj ten utwór
 	PT	Adicionar esta Música à Playlist
@@ -10191,7 +10206,7 @@ SHUFFLE_ON_SONGS
 	HE	סידור אקראי לפי שיר
 	IT	Riproduzione casuale per brano
 	JA	トラックをランダムにする
-	NL	Willekeurige afspelen op liedje
+	NL	Willekeurige afspelen op nummer
 	NO	Tilfeldige spor
 	PL	Losowo według utworu
 	PT	Misturar Playlist por Música
@@ -11203,7 +11218,7 @@ SONGTITLE
 	HE	שם השיר
 	IT	Titolo brano
 	JA	曲タイトル
-	NL	Titel van liedje
+	NL	Titel van nummer
 	NO	Sangtittel
 	PL	Tytuł utworu
 	PT	Música
@@ -12719,7 +12734,7 @@ SONG
 	HE	שיר
 	IT	Brano
 	JA	曲
-	NL	Liedje
+	NL	Nummer
 	NO	Sang
 	PL	Utwór
 	PT	Música
@@ -13380,6 +13395,7 @@ MOSTPLAYED
 PLAYCOUNT
 	DE	Anzahl Wiedergaben
 	EN	Play Count
+	Nl	Aantal keren afgespeeld
 
 ALBUM_INFO
 	CS	Info o Albu
@@ -13452,7 +13468,7 @@ SONG_INFO
 	HE	פרטי השיר
 	IT	Informazioni sul brano
 	JA	曲の情報
-	NL	Informatie over liedje
+	NL	Informatie over nummer
 	NO	Sanginfo
 	PL	Informacje o utworze
 	PT	Informação da Música
@@ -14061,6 +14077,7 @@ DEBUG_NETWORK_SQUEEZENETWORK
 DEBUG_NETWORK_REPOSITORIES
 	DE	Download Verzeichnisse für Erweiterungen, Aktualisierungen etc.
 	EN	Download repositories for extensions, update etc.
+	NL	Download opslag-URL's voor extensies, updates enz.
 
 DEBUG_PLAYER_JIVE
 	CS	Podpora pro zařízení založené na Squeezplay
@@ -14441,7 +14458,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	HE	הנגן יכול להציג מידע אודות התקדמות השיר במהלך ההשמעה. בחר את המידע שברצונך להציג.
 	IT	Nel lettore è possibile visualizzare informazioni relative all'avanzamento del brano in corso. Scegliere le informazioni da visualizzare.
 	JA	プレーヤーは、曲の進み具合を表示することができます。表示したい情報を選んでください。
-	NL	Het muzieksysteem kan informatie over de voortgang van een liedje weergeven, terwijl het afgespeeld wordt. Kies de informatie die weergegeven moet worden.
+	NL	Het muzieksysteem kan informatie over de voortgang van een nummer weergeven, terwijl het afgespeeld wordt. Kies de informatie die weergegeven moet worden.
 	NO	Spilleren kan vise hvor mye av sangen som er spilt av under avspillingen. Velg hvilken informasjon du vil se.
 	PL	Odtwarzacz może wyświetlić informacje o postępie odtwarzania utworu. Wybierz informacje, które chcesz wyświetlić.
 	PT	O cliente pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
@@ -15433,10 +15450,12 @@ SEARCHFOR
 TEXTSEARCH
 	DE	Textsuche
 	EN	text search
+	NL	tekst zoeken
 
 NOT_IN_TEXTSEARCH
 	DE	nicht in Textsuche
 	EN	not in text search
+	NL	niet in zoekopdracht
 
 SEARCHFOR_ARTIST
 	CS	Hledat interpreta
@@ -16111,6 +16130,7 @@ RADIO_PROVIDERS_SOMAFM
 
 RADIO_PROVIDERS_SKYFM
 	EN	RadioTunes
+	NL	RadioTunes
 
 RADIO_PROVIDERS_RADIODE
 	CS	radio.de
@@ -17000,6 +17020,7 @@ INFORMATION_PLUGINDIRS
 INFORMATION_BINDIRS
 	DE	Ordner für Hilfsprogramme
 	EN	Helper Applications Folder
+	NL	Map hulptoepassingen
 
 INFORMATION_ARCHITECTURE
 	CS	Architektura platformy
@@ -17534,10 +17555,12 @@ NOT
 RANGE
 	DE	Bereich
 	EN	range
+	NL	bereik
 
 NOT_IN_RANGE
 	DE	nicht im Bereich
 	EN	not in range
+	NL	niet binnen bereik
 
 # The space before the French : is there on purpose.
 
@@ -18281,7 +18304,7 @@ SETUP_POWERONRESUME_STOPOFF_PLAYON
 	FR	Stopper à l'arrêt / Redémarrer le morceau à l'allumage
 	HE	עצירה בעת כיבוי / הפעלה מחדש בעת הפעלה
 	IT	Interrompi allo spegnimento / Ricomincia brano all'accensione
-	NL	Stoppen bij uitzetten/liedje opnieuw starten bij aanzetten
+	NL	Stoppen bij uitzetten / Nummer opnieuw starten bij aanzetten
 	NO	Stans avspilling når av / Start sang på nytt ved oppstart
 	PL	Zatrzymaj po wyłączeniu / Ponownie odtwórz utwór po włączeniu
 	RU	Остановка при выкл. / С начала песни при вкл.
@@ -18943,22 +18966,27 @@ SETUP_PRECACHEARTWORK_DISABLED
 SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	DE	Spezifikationen für Zwischenspeicherung
 	EN	Custom pre-caching specifications
+	NL	Aangepaste specificaties pre-caching
 	
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
+	NL	Afbeeldingen schalen
 
 SETUP_IMAGEPROXY_DESC
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie zu Gunster bester Qualität und Performance in der Grösse angepasst. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
+	NL	Om de beste kwaliteit afbeeldingen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar je muzieksysteem worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
 
 SETUP_IMAGEPROXY_REMOTE
 	DE	Plattenhüllen auf mysqueezebox.com anpassen
 	EN	Use mysqueezebox.com to resize artwork
+	NL	Gebruik mysqueezebox.com om afbeeldingen te schalen
 
 SETUP_IMAGEPROXY_LOCAL
 	DE	Plattenhüllen lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
+	NL	Gebruik Logitech Media Server om afbeeldingen te schalen
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -19784,6 +19812,7 @@ DEBUG_ARTWORK
 
 DEBUG_ARTWORK_IMAGEPROXY
 	EN	Artwork Resizing Proxy
+	NL	Afbeeldingen Schalen Proxy
 
 DEBUG_FACTORYTEST
 	CS	Informace použité při výrobních zkouškách
@@ -20163,6 +20192,7 @@ DEBUG_DATABASE_INFO
 DEBUG_DATABASE_VIRTUALLIBRARIES
 	DE	Musiksammlungs-Ansichten (Virtual Libraries)
 	EN	Library Views (virtual libraries)
+	NL	Deelcollecties (virtual libraries)
 
 DEBUG_OS_FILES
 	CS	Informace o úrovni souborového systému
@@ -20632,6 +20662,7 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 SETUP_LOG_ZIPPED
 	DE	ZIP Datei
 	EN	ZIP archive
+	NL	Zipbestand
 
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
@@ -21030,6 +21061,7 @@ MERGEVA_PROGRESS
 UPDATESTANDALONEARTWORK_PROGRESS
 	DE	Nach aktualisierten Plattenhüllen suchen
 	EN	Find updated coverart files
+	NL	Vind geüpdatete hoesafbeeldingen
 
 PRECACHEARTWORK_PROGRESS
 	CS	Příprava ukládání obalu do mezipaměti
@@ -21139,22 +21171,27 @@ IMPORTER_PROGRESS_DESC
 VIRTUALLIBRARIES_PROGRESS
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create library views
+	NL	Deelcollectie maken
 
 AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
+	NL	Als Deelcollectie
 
 VIRTUALLIBRARIES
 	DE	Bibliotheksansichten
 	EN	Library Views
+	NL	Deelcollecties
 
 ALL_LIBRARY
 	DE	Ganze Musiksammlung
 	EN	All music library
+	NL	Hele muziekcollectie
 	
 SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
+	NL	Geselecteerde deelcollectie
 
 RUNNING
 	CS	Spuštěno
@@ -21602,7 +21639,7 @@ JIVE_PLAY_THIS_SONG
 	FI	Soita tämä kappale
 	FR	Lire ce morceau
 	IT	Riproduci questo brano
-	NL	Dit liedje afspelen
+	NL	Dit nummer afspelen
 	NO	Spill denne sangen
 	PL	Odtwórz ten utwór
 	RU	Воспроизвести эту песню
@@ -22166,6 +22203,7 @@ RECENT_SEARCHES
 SAVED_SEARCH
 	DE	Gespeicherte Suche
 	EN	Saved Search
+	NL	Opgeslagen zoekresultaat
 
 ALBUMS_SORT_METHOD
 	CS	Způsob řazení alb
@@ -24029,30 +24067,37 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...
 	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken 
 	EN	Defeat destructive Touch-To-Play
+	NL	Bevestigen Touch-To-Play
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
 	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
+	NL	Bij het aanraken/selecteren van een afspeelbaar item op je Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	DE	Destruktives Verhalten nicht unterdrücken
 	EN	Do not defeat
+	NL	Niet vragen
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
 	EN	Always ask before playing your selection
+	NL	Altijd vragen om je selectie af te spelen
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
 	EN	Defeat if current playlist has more than one track
+	NL	Vragen als de huidige playlist meer dan een nummer bevat
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
 	EN	Defeat only if playing and current playlist has more than one track
+	NL	Alleen vragen als de huidige playlist meer dan een nummer bevat
 	
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
+	NL	Alleen vragen als het huidige afgespeelde nummer geen radiostream is
 	
 ON_MYSB
 	CS	Na mysqueezebox.com
