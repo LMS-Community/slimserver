@@ -332,6 +332,10 @@ sub login {
 		$login_params,
 	);
 	
+	if ( Slim::Networking::Async::HTTP->hasSSL() ) {
+		$url =~ s/^http:/https:/;
+	}
+
 	$self->get( $url );
 }
 
