@@ -7,7 +7,9 @@ ELSE;
 	INCLUDE "html/ext/ext-main.js";
 END;
 
-INCLUDE "html/lightbox/lightbox.js";
+IF hasMediaSupport;
+	INCLUDE "html/lightbox/lightbox.js";
+END;
 
 INCLUDE "html/SqueezeJS/Base.js";
 INCLUDE "html/SqueezeJS/UI.js";

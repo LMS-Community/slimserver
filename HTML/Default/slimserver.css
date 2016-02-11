@@ -42,7 +42,7 @@ a:hover, .link:hover,
 .currentTrackInfo a:hover,
 .homeMenuItem a:hover,
 .browseItemLink:hover, 
-#footer_content a:hover {
+#footer a:hover {
 	text-decoration: underline;
 }
 
@@ -54,7 +54,7 @@ a:hover, .link:hover,
 #crumblist a,
 .browseItemLink,
 .browsedbListItem a, 
-#footer_content a {
+#footer a {
 	text-decoration: none;
 }
 
@@ -124,29 +124,22 @@ a:hover, .link:hover,
 	position: absolute;
 	background-color: white;
 	z-index: 20002;
-	background-image: url(html/images/background.png);
+	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
 }
 
-img#background {
+div#background {
 	position: absolute;
 	top: 5px;
 	left: 5px;
 	z-index: -1;
+	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
+	border-radius: 15px;
 }
 
-#header_content {
+#header {
 	height: 12px;
 	padding-top: 11px;
-	background: url(html/images/header_right.gif) no-repeat top right;
 	margin-right: 0;
-}
-
-#header_left {
-	background: url(html/images/header_left.gif) no-repeat top left;
-	height: 12px;
-	width: 12px;
-	left: 0px;
-	position: absolute;
 }
 
 #squeezeboxLogo {
@@ -196,29 +189,16 @@ img#background {
 #leftcontent {
 	width: 100%;
 	height: 100%;
+	background: linear-gradient(to bottom, #404040 25px,#e0e0e0 0px,#e0e0e0 100%);
 }
 
-#footer_content {
+#footer {
 	height: 16px;
 	padding-top: 24px;
 	margin-right: 0;
-	background: url(html/images/footer_right.gif) no-repeat bottom right;
 }
 
-#footer_left {
-	background: url(html/images/footer_left.gif) no-repeat;
-	height: 16px;
-	margin-top: 24px;
-	width: 16px;
-	left: 0px;
-	vertical-align: bottom;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-.singlePanel #footer_content { padding-top: 0; }
-.singlePanel #footer_left { margin-top: 0; }
+.singlePanel #footer { padding-top: 0; }
 
 .singlePanel .inner_top_left,
 .singlePanel .inner_top_right {

@@ -232,6 +232,10 @@ sub addSkinTemplate {
 
 		EVAL_PERL => 1,
 		ABSOLUTE  => 1,
+		
+		VARIABLES => {
+			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
+		},
 	});
 
 	return $class->{skinTemplates}->{$skin};
