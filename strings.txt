@@ -8118,13 +8118,13 @@ SETUP_SCAN_ON_PREF_CHANGE
 	DE	Bei Einstellungesänderungen Sammlung durchsuchen
 	EN	Trigger Scan on Preference Changes
 	NL	Start scan bij voorkeurswijzigingen
-	FR  Lancer l'analyse après modification des préférences 
+	FR	Lancer l'analyse après modification des préférences 
 	
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
 	NL	Sommige voorkeuren vragen om het volledig wissen van je muziekcollectie en een herscan. Deze scan kan automatisch worden gestart als je dat wilt. Maar het tegelijkertijd aanpassen van verschillende voorkeuren kan leiden tot meerdere scans die in een wachtrij worden geplaatst.
-	FR  Certains changements ont besoin d'effacer la bibliothèque et de tout analyser pour prendre effet. Cette opération peut être déclenchée automatiquement si vous le souhaitez. Attention, si vous modifiez plusieurs préférences à la suite, autant d'analyses vont être enchainées.
+	FR	Certains changements ont besoin d'effacer la bibliothèque et de tout analyser pour prendre effet. Cette opération peut être déclenchée automatiquement si vous le souhaitez. Attention, si vous modifiez plusieurs préférences à la suite, autant d'analyses vont être enchainées.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
 	DE	Durchsuchen automatisch starten
