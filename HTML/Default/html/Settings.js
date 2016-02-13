@@ -549,7 +549,6 @@ Settings.Page = function(){
 					),
 					buttons: Ext.Msg.OKCANCEL,
 					fn: function(btn, text) {
-						console.log(btn, text);
 						if (btn == 'ok') {
 							location = restartUrl;
 						}
