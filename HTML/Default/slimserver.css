@@ -124,7 +124,7 @@ a:hover, .link:hover,
 	position: absolute;
 	background-color: white;
 	z-index: 20002;
-	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
 }
 
 div#background {
@@ -132,7 +132,7 @@ div#background {
 	top: 5px;
 	left: 5px;
 	z-index: -1;
-	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
 	border-radius: 15px;
 }
 
