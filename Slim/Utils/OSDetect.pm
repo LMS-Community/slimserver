@@ -63,6 +63,9 @@ sub init {
 		#print STDOUT "Found custom OS support file for " . $os->name . "\n";
 	};
 
+	if ( $@ && $@ !~ m{^Can't locate Slim/Utils/OS/Custom.pm} ) {
+		warn $@;
+	}
 
 	if (!$os) {		
 
