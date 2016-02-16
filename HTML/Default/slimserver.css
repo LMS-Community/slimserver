@@ -407,8 +407,6 @@ div.pagetitleWithIcon {
 	margin-right: 10px;
 }
 
-#playlistCommands table { display: inline; }
-
 #btnPlaylistToggleArtwork {
 	position: absolute;
 	left: 12px;
