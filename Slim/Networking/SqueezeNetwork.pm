@@ -386,7 +386,8 @@ sub login {
 		$login_params,
 	);
 	
-	if ( Slim::Networking::Async::HTTP->hasSSL() ) {
+	if ( Slim::Networking::Async::HTTP->hasSSL() && !delete $params{SSLfailed} ) {
+		$params{SSL} = 1;
 		$url =~ s/^http:/https:/;
 	}
 
@@ -608,6 +609,12 @@ sub _error {
 	my ( $self, $error ) = @_;
 	my $params = $self->params('params');
 	
+	if ( delete $params->{SSL} ) {
+		$params->{SSLfailed} = 1;
+		$self->login(%$params);
+		return;
+	}
+
 	my $proxy = $prefs->get('webproxy'); 
 
 	$log->error( "Unable to login to SN: $error" 
