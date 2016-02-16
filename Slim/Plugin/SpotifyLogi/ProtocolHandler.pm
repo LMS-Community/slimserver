@@ -93,6 +93,35 @@ sub getNextTrack {
 	);
 }
 
+sub explodePlaylist {
+	my ( $class, $client, $uri, $cb ) = @_;
+	
+	my $tracks = [];
+
+	if ( $uri !~ /^spotify:track:/ ) {
+		Slim::Networking::SqueezeNetwork->new(
+			sub {
+				my $http = shift;
+				my $tracks = eval { from_json( $http->content ) };
+				$cb->($tracks || []);
+			},
+			sub {
+				$cb->([$uri])
+			},
+			{
+				client => $client
+			}
+		)->get(
+			Slim::Networking::SqueezeNetwork->url(
+				'/api/spotify/v1/playback/getTracksFromURI?uri=' . uri_escape($uri),
+			)
+		);
+	}
+	else {
+		$cb->([$uri])
+	}
+}
+
 sub canDirectStream {
 	my ( $class, $client, $url ) = @_;
 

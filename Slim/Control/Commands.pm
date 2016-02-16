@@ -1394,14 +1394,26 @@ sub playlistXitemCommand {
 	# But not for or local file:// URLs,  and this may mean 
 	# rescanning items already in the database but still allows playlist and other favorites to be played
 	
-	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
+	# hardcoding these protocols isn't the best way to do this. We should be using the protocol handler's explodePlaylist call.
 	if ($path =~ /^db:|^itunesplaylist:|^musicipplaylist:/) {
-
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
 			$request->setStatusDone();
 			return;
 		}
+	}
+
+
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($path);
+
+	if ( $handler && $handler->can('explodePlaylist') ) {
+		$handler->explodePlaylist($client, $path, sub {
+			my $tracks = shift;
+			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', $tracks, $fadeIn]);
+			$request->setStatusDone();
+		});
+
+		return;
 	}
 
 	# correct the path
