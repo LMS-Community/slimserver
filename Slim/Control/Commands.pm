@@ -1346,6 +1346,8 @@ sub playlistXitemCommand {
 		return;
 	}
 
+	$title = Slim::Utils::Unicode::utf8decode($title) if $title;
+
 	main::INFOLOG && $log->info("cmd: $cmd, item: $item, title: $title, fadeIn: ", ($fadeIn ? $fadeIn : 'undef'));
 
 	my $jumpToIndex = $request->getParam('play_index'); # This should be undef (by default) - see bug 2085
