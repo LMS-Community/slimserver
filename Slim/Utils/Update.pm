@@ -211,7 +211,7 @@ sub getUpdate {
 		if ( -e $file ) {
 			main::INFOLOG && $log->info("We already have the latest installer file: $file");
 			
-			setUpdateInstaller($file);
+			setUpdateInstaller($file, $params->{cb});
 			return;
 		}
 		
@@ -244,7 +244,7 @@ sub downloadAsyncDone {
 	
 	my $file    = $http->params('file');
 	my $tmpFile = $http->params('saveAs');
-	my $params  = $http->params('params');
+	my $params  = $http->params('params') || {};
 	
 	my $path    = $params->{'path'};
 	
@@ -267,7 +267,7 @@ sub downloadAsyncDone {
 	my $success = rename $tmpFile, $file;
 	
 	if (-e $file) {
-		setUpdateInstaller($file) ;
+		setUpdateInstaller($file, $params->{cb}) ;
 	}
 	elsif (!$success) {
 		$log->warn("Renaming '$tmpFile' to '$file' failed.");
@@ -275,16 +275,12 @@ sub downloadAsyncDone {
 	else {
 		$log->warn("There was an unknown error downloading/storing the update installer.");
 	}
-	
-	if ($params && ref($params->{cb}) eq 'CODE') {
-		$params->{cb}->($file);
-	}
 
 	cleanup($path, 'tmp');
 }
 
 sub setUpdateInstaller {
-	my $file = shift;
+	my ($file, $cb) = @_;
 	
 	$versionFile ||= getVersionFile();
 	
@@ -294,6 +290,10 @@ sub setUpdateInstaller {
 		
 		print UPDATEFLAG $file;
 		close UPDATEFLAG;
+
+		if ($cb && ref($cb) eq 'CODE') {
+			$cb->($file);
+		}
 	}
 	
 	elsif ($file) {
