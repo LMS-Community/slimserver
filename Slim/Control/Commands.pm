@@ -1403,8 +1403,8 @@ sub playlistXitemCommand {
 		}
 	}
 
-
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($path);
+	# if we have a single item, we might need to expand it to some list (eg. Spotify Album -> track list)
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($path) unless $list;
 
 	if ( $handler && $handler->can('explodePlaylist') ) {
 		$handler->explodePlaylist($client, $path, sub {
