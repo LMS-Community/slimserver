@@ -49,15 +49,30 @@
 			}
 		};
 	
-		if (Ext.isIE6)
-			return;
-			
 		var sortableTables = Ext.query('table.sortable');
 		
 		for (var i = 0; i < sortableTables.length; i++) {	
 		    // make the table sortable by header
 		    var grid = new SqueezeJS.UI.SortableTable(sortableTables[i]);
 		    grid.render();
+		    
+		    // allow the user to click anywher in the row to toggle the plugin
+		    grid.on({
+		    	cellclick: function(self, rowIndex, columnIndex, e) {
+		    		if (e && e.target) {
+		    			var el = Ext.get(e.target);
+		    			var row = el.up('tr')
+
+		    			// ...except on links
+		    			if (row && !el.dom.href) {
+		    				var cb = row.child('input');
+		    				if (cb) {
+		    					cb.dom.checked = !cb.dom.checked;
+		    				}
+		    			}
+		    		}
+		    	}
+		    });
 		}
 
 		Settings.Page.initCollapsableItems();
