@@ -185,9 +185,12 @@ sub getUpdate {
 	my $params = $os->getUpdateParams($url);
 	
 	return unless $params;
-	
-	$params->{path} ||= scalar ( $os->dirsFor('updates') );
-	
+	my @tmp = $os->dirsFor('updates');
+   
+	$params->{path} ||=  $tmp[-1] ;
+        
+	mkdir $params->{path} unless -d $params->{path};
+            	
 	cleanup($params->{path}, 'tmp');
 
 	if ( $url && Slim::Music::Info::isURL($url) ) {
@@ -308,7 +311,9 @@ sub setUpdateInstaller {
 }
 
 sub getVersionFile {
-	$versionFile ||= catdir( scalar($os->dirsFor('updates')), 'server.version' );
+	my @tmp= $os->dirsFor('updates');
+	mkdir $tmp[-1] unless -d $tmp[-1];
+	$versionFile ||= catdir( $tmp[-1], 'server.version' );
 	return $versionFile;
 }
 

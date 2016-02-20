@@ -200,7 +200,8 @@ sub getPref {
 
 sub checkForUpdate {
 	
-	$versionFile ||= catfile( scalar($os->dirsFor('updates')), 'server.version' );
+	my @tmp= $os->dirsFor('updates');
+	$versionFile ||= catfile( $tmp[-1], 'server.version' );
 	
 	open(UPDATEFLAG, $versionFile) || return '';
 	
