@@ -4,7 +4,7 @@
 	<head>
 		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
-		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all-notheme.css" />
 		<link rel="stylesheet" type="text/css" href="/Default/slimserver.css" />
 
 		<style type="text/css">
@@ -62,7 +62,7 @@
 			#loading-mask {
 				width: 120%;
 				height: 100%;
-				background-image: url(/Default/html/images/background.png);
+				background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
 				position: absolute;
 				z-index: 20000;
 				left: 0;
@@ -221,7 +221,7 @@
 	</head>
 
 	<body class="singlePanel">
-		<img id="background" src="/Default/html/images/background.png" />
+		<div id="background"></div>
 
 		<div id="loading-mask">&#160;</div>
 		<div id="loading">
@@ -274,29 +274,26 @@
 		</script>
 
 		<div id="header">
-			<div id="header_left"></div>
-			<div id="header_content">
-				<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeboxLogo"></span>
-				<span>
-					<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
-						<select name="language" id="language">
-		
-							[% FOREACH option = languageoptions.sort %]
-								[% IF !languageoptions.$option.search('\*') %]
-									<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option %]">[% languageoptions.$option %]</option>
-								[% END %]
-							[%- END -%]
-		
-							[% IF !preferredLanguage %]
-								<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+			<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeboxLogo"></span>
+			<span>
+				<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
+					<select name="language" id="language">
+	
+						[% FOREACH option = languageoptions.sort %]
+							[% IF !languageoptions.$option.search('\*') %]
+								<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option %]">[% languageoptions.$option %]</option>
 							[% END %]
-		
-						</select>
-						<input name="saveLanguage" type="hidden" value="1">
-					</form>
-					<a href="http://www.logitech.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a>
-				</span>
-			</div>
+						[%- END -%]
+	
+						[% IF !preferredLanguage %]
+							<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+						[% END %]
+	
+					</select>
+					<input name="saveLanguage" type="hidden" value="1">
+				</form>
+				<a href="http://www.logitech.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a>
+			</span>
 		</div>
 
 		<div id="inner_header">
@@ -323,9 +320,6 @@
 		</div>
 
 		<div id="footer">
-			<div id="footer_left"></div>
-			<div id="footer_content">
-			</div>
 		</div>
 
 		<!-- the wizard's tabs: make them all use the same class, which is iterated by the JS -->
