@@ -233,6 +233,9 @@ sub addSkinTemplate {
 		EVAL_PERL => 1,
 		ABSOLUTE  => 1,
 		
+		# we usually don't change templates while running
+		STAT_TTL  => main::NOBROWSECACHE ? 1 : 3600,
+		
 		VARIABLES => {
 			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
 		},

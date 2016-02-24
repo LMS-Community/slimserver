@@ -154,7 +154,7 @@ sub playlist {
 		main::idleStreams();
 	}
 
-	# from BrwoseLibrary->_tracks: dtuxgaAsSliqyorf, k, cJK
+	# from BrowseLibrary->_tracks: dtuxgaAsSliqyorf, k, cJK
 	my $tags = 'tags:xaAsSlLeNcJK';
 	
 	# Some additional tags we might need to satisfy the title format

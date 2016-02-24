@@ -1001,6 +1001,7 @@ sub generateHTTPResponse {
 		$params->{'browserType'} = $skinMgr->detectBrowser($response->request);
 	}
 
+	# XXX - this is no longer being used by any of the stock skins
 	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage|html\/js-)/) {
 
 		$params->{'params'} = {};

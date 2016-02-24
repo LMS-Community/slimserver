@@ -66,7 +66,9 @@
 		    			// ...except on links
 		    			if (row && !el.dom.href) {
 		    				var cb = row.child('input');
-		    				if (cb) {
+
+		    				// don't toggle the checkbox if we clicked it directly
+		    				if (cb && cb.id != el.id) {
 		    					cb.dom.checked = !cb.dom.checked;
 		    				}
 		    			}
