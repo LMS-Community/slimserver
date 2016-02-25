@@ -162,14 +162,15 @@ sub onStream {
 }
 
 sub getMetadataFor {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $url, undef, $song ) = @_;
 	
 	my $icon = Slim::Networking::SqueezeNetwork->url('/static/images/icons/spotify/album.png');
+	$song ||= $client->currentSongForUrl($url);
 	
 	# Rewrite URL if it came from Triode's plugin
 	$url =~ s{^spotify:track}{spotify://track};
 
-	if ( my $song = $client->currentSongForUrl($url) ) {
+	if ( $song ||= $client->currentSongForUrl($url) ) {
 		if ( my $info = $song->pluginData('info') ) {		
 			return {
 				artist    => $info->{artist},
@@ -181,7 +182,7 @@ sub getMetadataFor {
 				bitrate   => $info->{prefs}->{bitrate} . 'k VBR',
 				info_link => 'plugins/spotifylogi/trackinfo.html',
 				type      => 'Ogg Vorbis (Spotify)',
-			};
+			} if $info->{title} && $info->{duration};
 		}
 	}
 	
@@ -233,6 +234,14 @@ sub getMetadataFor {
 	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
+	
+	if ( $song ) {
+		if ( $meta->{duration} && !($song->duration && $song->duration > 0) ) {
+			$song->duration($meta->{duration});
+		}
+		
+		$song->pluginData( info => $meta );
+	}
 	
 	return $meta || {
 		bitrate   => '320k VBR',
