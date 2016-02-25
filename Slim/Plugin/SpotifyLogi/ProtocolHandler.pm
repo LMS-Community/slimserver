@@ -133,14 +133,15 @@ sub onStream {
 }
 
 sub getMetadataFor {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $url, undef, $song ) = @_;
 	
 	my $icon = __PACKAGE__->getIcon();
+	$song ||= $client->currentSongForUrl($url);
 	
 	# Rewrite URL if it came from Triode's plugin
 	$url =~ s{^spotify:track}{spotify://track};
 
-	if ( my $song = $client->currentSongForUrl($url) ) {
+	if ( $song ||= $client->currentSongForUrl($url) ) {
 		if ( my $info = $song->pluginData('info') ) {		
 			return {
 				artist    => $info->{artist},
@@ -164,7 +165,7 @@ sub getMetadataFor {
 					
 #					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
 				}
-			};
+			} if $info->{title} && $info->{duration};
 		}
 	}
 	
@@ -216,6 +217,14 @@ sub getMetadataFor {
 	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
+	
+	if ( $song ) {
+		if ( $meta->{duration} && !($song->duration && $song->duration > 0) ) {
+			$song->duration($meta->{duration});
+		}
+		
+		$song->pluginData( info => $meta );
+	}
 	
 	return $meta || {
 		bitrate   => '320k VBR',
