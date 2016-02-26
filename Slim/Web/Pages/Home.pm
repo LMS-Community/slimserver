@@ -20,6 +20,13 @@ use Slim::Plugin::Base;
 my $prefs = preferences('server');
 my $cache = Slim::Utils::Cache->new;
 
+# known skins which don't need all the overhead of DB related variables in index.html
+my %lightIndex = (
+	Default => 1,
+	EN => 1,
+	Classic => 1,
+);
+
 sub init {
 	Slim::Web::Pages->addPageFunction(qr/^$/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, \&home);
@@ -45,7 +52,8 @@ sub home {
 	my ($client, $params, undef, $httpClient, $response) = @_;
 
 	my $template = $params->{"path"} =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
-
+	my $checksum;
+	
 	# allow the setup wizard to be skipped in case the user's using an old browser (eg. Safari 1.x)
 	if ($params->{skipWizard}) {
 		$prefs->set('wizardDone', 1);
@@ -72,114 +80,116 @@ sub home {
 		$params->{'hasLibrary'} = 0;
 	}
 
-	# More leakage from the DigitalInput 'plugin'
-	#
-	# If our current player has digital inputs, show the menu.
-	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')) {
-		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
-	}
-
-	# More leakage from the LineIn/Out 'plugins'
-	#
-	# If our current player has line, show the menu.
-	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
-		Slim::Plugin::LineIn::Plugin->webPages($client);
-	}
-
-	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineOut::Plugin')) {
-		Slim::Plugin::LineOut::Plugin->webPages($client);
-	}
-
-	if (my $favs = Slim::Utils::Favorites->new($client)) {
-		$params->{'favorites'} = $favs->toplevel;
-	}
+	# we don't need all of the heavy lifting for many index.html files. They are basically framesets.
+	if ( $template ne 'index.html' || !$lightIndex{$params->{systemSkin}} ) {
+		# More leakage from the DigitalInput 'plugin'
+		#
+		# If our current player has digital inputs, show the menu.
+		if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')) {
+			Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
+		}
 	
-	# Bug 4125, sort all additionalLinks submenus properly
-	$params->{additionalLinkOrder} = {};
-	$params->{additionalLinks} = {};
+		# More leakage from the LineIn/Out 'plugins'
+		#
+		# If our current player has line, show the menu.
+		if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+			Slim::Plugin::LineIn::Plugin->webPages($client);
+		}
 	
-	# Get sort order for plugins
-	my $pluginWeights = Slim::Plugin::Base->getWeights();
+		if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineOut::Plugin')) {
+			Slim::Plugin::LineOut::Plugin->webPages($client);
+		}
 	
-	my $conditions = \%Slim::Web::Pages::pageConditions;
+		if (my $favs = Slim::Utils::Favorites->new($client)) {
+			$params->{'favorites'} = $favs->toplevel;
+		}
 	
-	my $cmpStrings = {};
-	while (my ($menu, $menuItems) = each %Slim::Web::Pages::additionalLinks ) {
+		# Bug 4125, sort all additionalLinks submenus properly
+		$params->{additionalLinkOrder} = {};
+		$params->{additionalLinks} = {};
 		
-		next if $menu eq 'apps' && !main::NOMYSB;
-
-		$params->{additionalLinks}->{ $menu } = {
-			map {
-				$_ => $menuItems->{ $_ };
-			}
-			# Filter out items that don't match condition
-			grep {
-				!$conditions->{$_}
-				||
-				$conditions->{$_}->( $client )
-			}
-			keys %$menuItems
-		};
-
-		$params->{additionalLinkOrder}->{ $menu } = [ sort {
-			(
-				$menu !~ /(?:my_apps)/ &&
-				( $pluginWeights->{$a} || $prefs->get("rank-$a") || 0 ) <=>
-				( $pluginWeights->{$b} || $prefs->get("rank-$b") || 0 )
-			)
-			|| 
-			(
-				!main::NOMYSB && $menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
-			)
-			|| 
-			(
-				!main::NOMYSB && $menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
-			)
-			|| 
-			(
-				( $cmpStrings->{$a} ||= lc(Slim::Buttons::Home::cmpString($client, $a)) ) cmp
-				( $cmpStrings->{$b} ||= lc(Slim::Buttons::Home::cmpString($client, $b)) )
-			)
-		} keys %{ $params->{additionalLinks}->{ $menu } } ];
-	}
-
-	if (main::NOMYSB) {
-		$params->{additionalLinks}->{my_apps} = delete $params->{additionalLinks}->{apps};
-		$params->{additionalLinkOrder}->{my_apps} = delete $params->{additionalLinkOrder}->{apps};
-	}
-
-	if ( !($params->{page} && $params->{page} eq 'help') ) {
-		Slim::Web::Pages::Common->addPlayerList($client, $params);
-		Slim::Web::Pages::Common->addLibraryStats($params, $client);
-	}
-
-	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-		$params->{library_id}   = $library_id;
-		$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id, $client);
-	}
-
-	my $checksum;
-	if (!main::NOBROWSECACHE && $template eq 'home.html') {
-		$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':', 
-			($client ? $client->id : ''),
-			$params->{newVersion},
-			$params->{newPlugins},
-			$params->{hasLibrary},
-			$prefs->get('langauge'),
-			$params->{library_id},
-			complex_to_query($params->{additionalLinks}),
-			complex_to_query($params->{additionalLinkOrder}),
-			complex_to_query($params->{cookies} || {}),
-			complex_to_query($params->{favorites} || {}),
-			$params->{'skinOverride'} || $prefs->get('skin'),
-			$template,
-			$params->{song_count},
-			$params->{album_count},
-			$params->{artist_count},
-		)));
+		# Get sort order for plugins
+		my $pluginWeights = Slim::Plugin::Base->getWeights();
+		
+		my $conditions = \%Slim::Web::Pages::pageConditions;
+		
+		my $cmpStrings = {};
+		while (my ($menu, $menuItems) = each %Slim::Web::Pages::additionalLinks ) {
+			
+			next if $menu eq 'apps' && !main::NOMYSB;
 	
-		if (my $cached = $cache->get($checksum)) {
-			return $cached;
+			$params->{additionalLinks}->{ $menu } = {
+				map {
+					$_ => $menuItems->{ $_ };
+				}
+				# Filter out items that don't match condition
+				grep {
+					!$conditions->{$_}
+					||
+					$conditions->{$_}->( $client )
+				}
+				keys %$menuItems
+			};
+	
+			$params->{additionalLinkOrder}->{ $menu } = [ sort {
+				(
+					$menu !~ /(?:my_apps)/ &&
+					( $pluginWeights->{$a} || $prefs->get("rank-$a") || 0 ) <=>
+					( $pluginWeights->{$b} || $prefs->get("rank-$b") || 0 )
+				)
+				|| 
+				(
+					!main::NOMYSB && $menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
+				)
+				|| 
+				(
+					!main::NOMYSB && $menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
+				)
+				|| 
+				(
+					( $cmpStrings->{$a} ||= lc(Slim::Buttons::Home::cmpString($client, $a)) ) cmp
+					( $cmpStrings->{$b} ||= lc(Slim::Buttons::Home::cmpString($client, $b)) )
+				)
+			} keys %{ $params->{additionalLinks}->{ $menu } } ];
+		}
+	
+		if (main::NOMYSB) {
+			$params->{additionalLinks}->{my_apps} = delete $params->{additionalLinks}->{apps};
+			$params->{additionalLinkOrder}->{my_apps} = delete $params->{additionalLinkOrder}->{apps};
+		}
+	
+		if ( !($params->{page} && $params->{page} eq 'help') ) {
+			Slim::Web::Pages::Common->addPlayerList($client, $params);
+			Slim::Web::Pages::Common->addLibraryStats($params, $client);
+		}
+	
+		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+			$params->{library_id}   = $library_id;
+			$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id, $client);
+		}
+	
+		if (!main::NOBROWSECACHE && $template eq 'home.html') {
+			$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':', 
+				($client ? $client->id : ''),
+				$params->{newVersion},
+				$params->{newPlugins},
+				$params->{hasLibrary},
+				$prefs->get('langauge'),
+				$params->{library_id},
+				complex_to_query($params->{additionalLinks}),
+				complex_to_query($params->{additionalLinkOrder}),
+				complex_to_query($params->{cookies} || {}),
+				complex_to_query($params->{favorites} || {}),
+				$params->{'skinOverride'} || $prefs->get('skin'),
+				$template,
+				$params->{song_count},
+				$params->{album_count},
+				$params->{artist_count},
+			)));
+		
+			if (my $cached = $cache->get($checksum)) {
+				return $cached;
+			}
 		}
 	}
 
