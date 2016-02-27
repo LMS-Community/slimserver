@@ -2,12 +2,14 @@ PLUGIN_EXTENDED_BROWSEMODES
 	DE	Erweiterte Musik Menüs
 	EN	Additional Browse Modes
 	NL	Extra Browser Modi
+	FR	Autres Modes de Navigation
 
 	
 PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	NL	Creëer extra menu's om door je muziekcollectie te browsen, via Albumartiest, Componisten, Genres te selecteren en meer.
+	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc. 
 	
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	CS	Interpret alba
