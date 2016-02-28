@@ -452,7 +452,7 @@ LIBRARY_CONTAINS
 	EN	Your media library contains
 	ES	La biblioteca multimedia contiene
 	FI	Mediakirjaston sisältö:
-	FR	Votre bibliothèque multimédia contient
+	FR	Votre bibliothèque musicale contient
 	HE	ספריית המוסיקה שלך מכילה
 	IT	La libreria multimediale contiene
 	JA	ミュージック ライブラリ
@@ -6272,7 +6272,7 @@ SETUP_LIBRARY_NAME
 	EN	Media Library Name
 	ES	Nombre de biblioteca multimedia
 	FI	Mediakirjaston nimi
-	FR	Nom de la bibliothèque multimédia
+	FR	Nom de la bibliothèque musicale
 	IT	Nome libreria multimediale
 	NL	Naam van mediacollectie
 	NO	Navn på mediebibliotek
@@ -6287,7 +6287,7 @@ SETUP_LIBRARY_NAME_DESC
 	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
 	ES	Así es como se llamará la biblioteca multimedia en el menú de \"Mi material multimedia\" de Squeezebox.
 	FI	Näin mediakirjastosi nimetään Squeezeboxisi Oma media -valikossa.
-	FR	Votre bibliothèque multimédia est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
+	FR	Votre bibliothèque musicale est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
 	IT	La libreria multimediale viene denominata in questo modo nel menu dei file multimediali di Squeezebox.
 	NL	Dit is de naam waarmee je mediacollectie in het Squeezebox-menu Mijn media verschijnt.
 	NO	Slik vises navnet på mediebiblioteket i menyen Mine mediefiler på Squeezebox.
@@ -6320,7 +6320,7 @@ SETUP_AUDIODIR_DESC
 	EN	You can specify a folder containing music files that Logitech Media Server will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MusicIP.
 	ES	Se puede especificar una carpeta que contenga archivos de música para que Logitech Media Server la examine y agregue a la biblioteca de música. Introduzca la ruta a ala carpeta a continuación. Se puede dejar este campo en blanco si va a importar la información de la biblioteca de música desde iTunes o MusicIP.
 	FI	Voit määrittää kansion, jonka Logitech Media Server tarkistaa ja josta se etsii musiikkitiedostoja musiikkikirjastoon lisättäväksi.  Kirjoita kansion polku alle.  Voit jättää kentän tyhjäksi, jos tuot musiikkikirjastotietoja iTunes- tai MusicIP-sovelluksista.
-	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le Logitech Media Server l'analyse et ajoute son contenu à votre bibliothèque multimédia. Spécifiez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous importez les informations de votre bibliothèque multimédia à partir d'iTunes ou de MusicIP.
+	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le Logitech Media Server l'analyse et ajoute son contenu à votre bibliothèque musicale. Spécifiez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous importez les informations de votre bibliothèque musicale à partir d'iTunes ou de MusicIP.
 	HE	באפשרותך לציין תיקייה שמכילה קובצי מוסיקה שעל Logitech Media Server לסרוק ולהוסיף לספריית המוסיקה שלך. הזן את הנתיב לתיקייה בשדה שלהלן. באפשרותך להשאיר שדה זה ריק אם אתה מייבא את מידע ספריית המוסיקה מ-iTunes או מ-MusicIP.
 	IT	È possibile indicare una cartella contenente file musicali che Logitech Media Server analizzerà e aggiungerà alla libreria musicale. Inserire di seguito il percorso della cartella. Si può lasciare il campo vuoto se si importa la libreria musicale da iTunes o MusicIP.
 	JA	Logitech Media Serverが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
@@ -6353,7 +6353,7 @@ SETUP_MEDIADIRS_DESC
 	EN	You can specify one or more folders containing media files that Logitech Media Server will scan and add to your media library.  Enter the paths to the folder below.
 	ES	Puede especificar una o más carpetas con archivos multimedia que Logitech Media Server examinará y agregará a la biblioteca multimedia. Introduzca la ruta a la carpeta abajo.
 	FI	Voit määrittää yhden tai useamman mediatiedostoja sisältävän kansion, jonka tiedostot Logitech Media Server tarkistaa ja lisää mediakirjastoon. Anna kansiopolut alla.
-	FR	Vous pouvez spécifier un ou plusieurs dossiers contenant des fichiers multimédias que le Logitech Media Server analysera et ajoutera à votre bibliothèque multimédia. Saisissez les chemins d'accès à ces dossiers ci-dessous.
+	FR	Vous pouvez spécifier un ou plusieurs dossiers contenant des fichiers multimédias que le Logitech Media Server analysera et ajoutera à votre bibliothèque musicale. Saisissez les chemins d'accès à ces dossiers ci-dessous.
 	IT	È possibile specificare una o più cartelle contenenti file multimediali che Logitech Media Server analizzerà e aggiungerà alla libreria multimediale. Immettere di seguito i percorsi della cartella.
 	NL	U kunt één of meer mappen met mediabestanden opgeven die Logitech Media server moet scannen en aan uw mediacollectie moet toevoegen. Voer hieronder de paden naar de map in.
 	NO	Du kan angi én eller flere mapper med mediefiler som Logitech Media Server skal søke i og legge til i mediebiblioteket. Oppgi mappebanene nedenfor.
@@ -6479,7 +6479,7 @@ SETUP_RESCAN
 	EN	Rescan Media Library
 	ES	Volver a examinar la biblioteca multimedia
 	FI	Tarkista mediakirjasto uudelleen
-	FR	Analyser la bibliothèque multimédia
+	FR	Analyser la bibliothèque musicale
 	HE	סריקה חוזרת של ספריית המוסיקה
 	IT	Ripeti analisi della libreria multimediale
 	NL	Mediacollectie opnieuw scannen
@@ -6673,7 +6673,7 @@ RESCANNING
 	EN	Logitech Media Server is now rescanning your Media Library.
 	ES	Logitech Media Server está volviendo a examinar la biblioteca multimedia.
 	FI	Logitech Media Server tarkistaa mediakirjastoasi uudelleen.
-	FR	Le Logitech Media Server analyse maintenant la bibliothèque multimédia.
+	FR	Le Logitech Media Server analyse maintenant la bibliothèque musicale.
 	HE	השרת מבצע סריקה חוזרת של ספריית המוסיקה שלך.
 	IT	Logitech Media Server sta analizzando nuovamente la libreria multimediale.
 	JA	サーバーは音楽ライブラリーを再スキャンしています。
@@ -6692,7 +6692,7 @@ RESCANNING_SHORT
 	EN	Rescanning Media Library...
 	ES	Volviendo a examinar la biblioteca multimedia...
 	FI	Mediakirjastoa tarkistetaan uudelleen...
-	FR	Nouvelle analyse de la bibliothèque multimédia en cours...
+	FR	Nouvelle analyse de la bibliothèque musicale en cours...
 	HE	סריקה חוזרת של ספריית המוסיקה...
 	IT	Nuova analisi della libreria multimediale in corso...
 	NL	Mediacollectie wordt opnieuw gescand...
@@ -6724,7 +6724,7 @@ SCAN_ABORTED
 	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your media library.
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca multimedia deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää mediakirjaston kaikkia toimintoja.
-	FR	L'analyse a été interrompue. Notez que vous devrez lancer une nouvelle analyse pour obtenir l'accès complet à votre bibliothèque multimédia.
+	FR	L'analyse a été interrompue. Notez que vous devrez lancer une nouvelle analyse pour obtenir l'accès complet à votre bibliothèque musicale.
 	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi per avere accesso completo alla libreria multimediale.
 	NL	De scan is afgebroken. Voer de scan opnieuw uit om volledige toegang tot je mediacollectie te krijgen.
 	NO	Søket ble avbrutt. Du må kjøre søket på nytt for å få full tilgang til mediebiblioteket.
@@ -7623,7 +7623,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca material multimedia, se puede hacer que el servidor encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat mediahakuja, voit määrittää palvelimen etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa. Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
-	FR	Lors d'une recherche dans la bibliothèque multimédia, les résultats peuvent correspondre à des mots contenant les termes spécifiés ou seulement commençant par les termes spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche en début de mot. Si vous sélectionnez l'option de recherche n'importe oùs, TRAIN sera également renvoyé comme résultat.
+	FR	Lors d'une recherche dans la bibliothèque musicale, les résultats peuvent correspondre à des mots contenant les termes spécifiés ou seulement commençant par les termes spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche en début de mot. Si vous sélectionnez l'option de recherche n'importe où, TRAIN sera également renvoyé comme résultat.
 	HE	בעת חיפוש פריטי מוסיקה, באפשרותך להורות ל-Squeezebox למצוא התאמות עבור פריטים שמכילים מילים שמתחילות באותן אותיות כמו מחרוזת החיפוש או מילים שכוללות את המחרוזת לחיפוש בכל מקום שהוא במילה. לדוגמה, חיפוש בתחילתן של מילים אחר "עד" יחזיר פריטים עם המילה "עדין". חיפוש בתוך מילים יחזיר גם פריטים שמכילים את המילה "רעד".
 	IT	Quando si effettuano ricerche nei file multimediali, il server può trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono. Ad esempio, cercando tra le parole che iniziano con FERRO vengono trovate voci quali FERROVIA, mentre cercando anche all'interno delle parole vengono individuate voci come AFFERRO.
 	NL	Wanneer je naar mediabestanden zoekt, kun je naar woorden zoeken die met de letters van de zoektekst beginnen, of woorden waarin de zoektekst ergens voorkomt. Zoek je bijvoorbeeld naar 'RAIN' aan het begin van woorden, dan vind je woorden zoals 'RAINBOW'. Als je binnen woorden zoekt, worden ook woorden zoals 'TRAIN' als resultaat gegeven.
@@ -7640,7 +7640,7 @@ SETUP_NOGENREFILTER
 	EN	Filter Genres at the Album & Track Level.
 	ES	Filtrar géneros por álbum y pista.
 	FI	Suodata genret levy- ja raitatasolla.
-	FR	Portée du filtre surr les genres
+	FR	Portée du filtre sur les genres
 	HE	סנן סגנונות ברמת האלבום והרצועה.
 	IT	Filtra i generi musicali a livello di album e brani.
 	NL	Genres op album- en trackniveau filteren.
@@ -8017,7 +8017,7 @@ SETUP_IGNOREDARTICLES_DESC
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.  Changing this setting will start a rescan of your music library.
 	ES	Una lista de artículos ("the", "les", "los", etc.) que se deben omitir al principio de los nombres de artista, canción o álbum al ordenar. Separe varios artículos con espacio o deje esta lista en blanco para desactivar este comportamiento. Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Luettelo artistin, kappaleen tai levyn nimen edessä olevista artikkeleista ("the", "les", "los", jne.), jotka ohitetaan lajitellessa. Erota artikkelit välilyönnillä tai tai jätä luettelo tyhjäksi, jos haluat poistaa toiminnan käytöstä.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. Si vous modifiez ce réglage, votre bibliothèque multimédia sera à nouveau analysée.
+	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	רשימת מיליות (ה היידוע, אותיות בכל"מ, "the"‏, "les"‏, "los" וכו') שיש להתעלם מהן בתחילת השמות של מבצעים, שירים או אלבומים במהלך מיון. הפרד בין מיליות באמצעות רווחים או השאר את הרשימה ריקה כדי להשבית התנהגות זו. שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Elenco di articoli ("the", "gli", "i", "le") anteposti ai nomi di artisti, brani o album, da ignorare nell'ordinamento. Inserire i diversi articoli separati da spazi o lasciare vuoto l'elenco se si desidera disattivare questa funzionalità. Se si modifica questa impostazione, viene ripetuta l'analisi della libreria musicale.
 	NL	Een lijst met lidwoorden (de, het, een, the, les, los, enz.) die voor de naam van een artiest, liedje of album staan en bij het sorteren genegeerd moeten worden. Scheid meerdere lidwoorden door spaties, of laat de lijst leeg om deze functie uit te schakelen. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
@@ -8048,7 +8048,7 @@ SETUP_SPLITLIST_DESC
 	EN	Logitech Media Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Logitech Media Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Logitech Media Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Logitech Media Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre bibliothèque multimédia sera à nouveau analysée.
+	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	Logitech Media Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Logitech Media Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
@@ -8243,7 +8243,7 @@ SETUP_DISABLESTATISTICS_DESC
 	EN	When the Logitech Media Server front page comes up, it scans your media library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large library.
 	ES	Cuando se muestra la pantalla inicial de Logitech Media Server, éste examina la biblioteca multimedia para obtener estadísticas de la biblioteca y mostrarlas en la página inicial. Se puede optar por desactivar este comportamiento, lo que acortará el tiempo necesario para abrir la interfaz Web, especialmente con una biblioteca de gran tamaño.
 	FI	Kun Logitech Media Serverin etusivu tulee näyttöön, Logitech Media Server tarkistaa mediakirjaston ja selvittää kirjaston tilastot. Nämä tilastotiedot näytetään etusivulla. Halutessasi voit poistaa toiminnon käytöstä. Tämä lyhentää internet-liittymän avaamiseen kuluvaa aikaa erityisesti jos kirjasto on suuri.
-	FR	Lorsque la page d'accueil du Logitech Media Server apparaît, celui-ci analyse votre bibliothèque multimédia afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la bibliothèque est importante.
+	FR	Lorsque la page d'accueil du Logitech Media Server apparaît, celui-ci analyse votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la bibliothèque est importante.
 	HE	עם הופעת הדף הראשי של Logitech Media Server, השרת סורק את ספריית המוסיקה שלך לחישוב הנתונים הסטטיסטיים אודות הספרייה ולהצגתם בדף הראשי. באפשרותך לבחור להשבית התנהגות זו כדי לקצר את משך הזמן הנחוץ לפתיחת ממשק האינטרנט, במיוחד אם ספריית המוסיקה גדולה.
 	IT	All'apertura della pagina iniziale di Logitech Media Server viene analizzata la libreria multimediale e ne vengono calcolate e visualizzate le statistiche. È possibile scegliere di disattivare questa funzionalità, in modo da velocizzare i tempi iniziali di apertura dell'interfaccia Web, in particolare se si dispone di una libreria multimediale estesa.
 	NL	Wanneer de webpagina van Logitech Media Server verschijnt, wordt je mediacollectie gescand om je collectiestatistieken op te halen. Deze worden vervolgens op de webpagina weergegeven. Als je dit uitschakelt, wordt de webinterface sneller geopend, vooral wanneer de mediacollectie erg groot is.
@@ -9050,7 +9050,7 @@ SETUP_GROUPDISCS_DESC
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Voit määrittää, käsitelläänkö usean levyn sarjoja yhtenä levynä (yhdellä nimellä) vai useina levyinä, joilla kullakin on oma nimensä, esimerkiksi "Levyn nimi (levy 2/3)".  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre bibliothèque multimédia sera à nouveau analysée.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
@@ -12864,7 +12864,7 @@ BROWSE_MUSIC
 	EN	Music Library
 	ES	Biblioteca de música
 	FI	Musiikkikirjasto
-	FR	Bibliothèque multimédia
+	FR	Bibliothèque musicale
 	IT	Libreria musicale
 	NL	Muziekcollectie
 	NO	Musikkbibliotek
@@ -13601,7 +13601,7 @@ SCAN_WARNING
 	EN	Logitech Media Server is still scanning your media library, so some items may not appear in this area yet.
 	ES	Logitech Media Server todavía está examinado la biblioteca multimedia, por lo que algunos elementos quizás no aparezcan aún en esta sección.
 	FI	Logitech Media Server tarkistaa yhä mediakirjastoasi. Jotkin kohteet eivät välttämättä vielä näy tässä kohdassa.
-	FR	Le Logitech Media Server n'a pas terminé d'analyser votre bibliothèque multimédia. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
+	FR	Le Logitech Media Server n'a pas terminé d'analyser votre bibliothèque musicale. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
 	HE	Logitech Media Server עדיין סורק את ספריית המוסיקה שלך, כך שייתכן שפריטים מסוימים טרם מופיעים באזור זה.
 	IT	L'analisi della libreria multimediale da parte di Logitech Media Server è ancora in corso. Alcune voci potrebbero non essere ancora visualizzate in questa area.
 	JA	Logitech Media Serverは、現在音楽ライブラリをスキャンしています。よって、いくつかのアイテムはまだ表示されていないかもしれません。
@@ -13620,7 +13620,7 @@ HOME_SCAN_WARNING
 	EN	Logitech Media Server is still scanning your media library. Please be patient as this may take a while.
 	ES	Logitech Media Server sigue examinado la biblioteca multimedia. Tenga paciencia ya que esto puede tardar.
 	FI	Logitech Media Server tarkistaa yhä mediakirjastoasi. Odota rauhassa, sillä tähän saattaa kulua hetki.
-	FR	Le Logitech Media Server analyse le contenu de votre bibliothèque multimédia. Veuillez patienter.
+	FR	Le Logitech Media Server analyse le contenu de votre bibliothèque musicale. Veuillez patienter.
 	HE	Logitech Media Server עדיין סורק את ספריית המוסיקה שלך. אנא המתן בסבלנות; הפעולה עשויה להימשך זמן מה.
 	IT	L'analisi della libreria multimediale da parte di Logitech Media Server è ancora in corso. Attendere. L'operazione potrebbe richiedere alcuni minuti.
 	NL	Logitech Media Server is je mediacollectie aan het scannen. Een ogenblik geduld. Dit kan even duren.
@@ -15005,7 +15005,7 @@ NO_PLAYER_DETAILS
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Logitech Media Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un dispositivo Squeezebox o Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un dispositivo Squeezebox o Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Logitech Media Server conectándose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Logitech Media Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre bibliothèque multimédia à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre bibliothèque multimédia avec le Logitech Media Server en vous connectant à l'URL suivante: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
+	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre bibliothèque musicale à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre bibliothèque musicale avec le Logitech Media Server en vous connectant à l'URL suivante: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Logitech Media Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Logitech Media Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
@@ -16722,7 +16722,7 @@ INFORMATION_MENU_LIBRARY
 	EN	Library Statistics
 	ES	Estadísticas de biblioteca
 	FI	Kirjaston tilastot
-	FR	Statistiques de la bibliothèque multimédia
+	FR	Statistiques de la bibliothèque
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
 	JA	ライブラリー統計
@@ -18196,7 +18196,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like Logitech Media Server to use.  Changing this setting will start a rescan of your music library.
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice Logitech Media Server. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat Logitech Media Serverin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
-	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que le Logitech Media Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre bibliothèque multimédia.
+	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que le Logitech Media Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre bibliothèque musicale.
 	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Logitech Media Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Logitech Media Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
@@ -20223,7 +20223,7 @@ DEBUG_DATABASE_VIRTUALLIBRARIES
 	DE	Musiksammlungs-Ansichten (Virtual Libraries)
 	EN	Library Views (virtual libraries)
 	NL	Deelcollecties (virtual libraries)
-	FR	Sous-bibliothèques (bibliothèques virtuelles)
+	FR	Bibliothèques thématiques (bibliothèques virtuelles)
 
 DEBUG_OS_FILES
 	CS	Informace o úrovni souborového systému
@@ -21205,19 +21205,19 @@ VIRTUALLIBRARIES_PROGRESS
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create library views
 	NL	Deelcollectie maken
-	FR	Création d'une sous-bibliothèque 
+	FR	Création d'une bibliothèque thématique 
 
 AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 	NL	Als Deelcollectie
-	FR	Comme une sous-bibliothèque
+	FR	Comme une bibliothèque thématique
 
 VIRTUALLIBRARIES
 	DE	Bibliotheksansichten
 	EN	Library Views
 	NL	Deelcollecties
-	FR	Sous-bibliothèques
+	FR	Bibliothèques thématiques
 
 ALL_LIBRARY
 	DE	Ganze Musiksammlung
@@ -21229,7 +21229,7 @@ SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
 	NL	Geselecteerde deelcollectie
-	FR	Sous-bibliothèque active
+	FR	Bibliothèque thématique active
 
 RUNNING
 	CS	Spuštěno
@@ -21268,7 +21268,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	EN	The server has finished scanning your media library.
 	ES	El servidor ha finalizado el examen de su biblioteca multimedia.
 	FI	Palvelin on nyt lopettanut mediakirjastosi tarkistuksen.
-	FR	Le serveur a terminé d'analyser la bibliothèque multimédia.
+	FR	Le serveur a terminé d'analyser la bibliothèque musicale.
 	IT	Il server ha completato l'analisi della libreria multimediale.
 	NL	De server heeft je mediacollectie gescand.
 	NO	Serveren har nå søkt gjennom mediebiblioteket.
@@ -23350,7 +23350,7 @@ CLEANUP_CACHE
 	EN	Clean cache folder, including media library database, artwork cache etc.
 	ES	Limpiar carpeta de caché, incluidas base de datos multimedia, caché de carátulas, etc.
 	FI	Tyhjennä välimuistikansio, mukaan luettuna mediatietokanta ja kansitaiteen välimuisti.
-	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque multimédia, les pochettes, etc.
+	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque musicale, les pochettes, etc.
 	IT	Pulisci cartella della cache, inclusi il database della libreria multimediale, la cache delle copertine e così via.
 	NL	Cachemap opschonen, inclusief mediadatabase, hoesafbeeldingencache, enz.
 	NO	Tøm hurtigbuffermappen, inkludert mediedatabasen, hurtigbufrede omslag osv.
@@ -23770,7 +23770,7 @@ CONTINUE_TO_SQUEEZEBOX_SERVER
 	EN	Continue to Logitech Media Server to manage settings for accessing your personal media library.
 	ES	Continuar a Logitech Media Server para administrar la configuración de reproducción de su biblioteca multimedia personal.
 	FI	Jatka Logitech Media Serveriin. Siellä voit määrittää henkilökohtaisen mediakirjastosi käyttöasetukset.
-	FR	Continuez vers le Logitech Media Server pour gérer les réglages de lecture de votre bibliothèque multimédia.
+	FR	Continuez vers le Logitech Media Server pour gérer les réglages de lecture de votre bibliothèque musicale.
 	IT	Passare a Logitech Media Server per gestire le impostazioni di accesso alla libreria multimediale personale.
 	NL	Ga door naar Logitech Media Server om instellingen te beheren voor het afspelen van je persoonlijke mediacollectie.
 	NO	Gå til Logitech Media Server for å angi tilgangsinnstillinger for mediebiblioteket.
@@ -23937,7 +23937,7 @@ NO_LIBRARY
 	EN	No media library configured
 	ES	No hay ninguna biblioteca multimedia configurada
 	FI	Mediakirjastoa ei ole määritetty
-	FR	Aucune bibliothèque multimédia n'a été configurée
+	FR	Aucune bibliothèque musicale n'a été configurée
 	IT	Nessuna libreria multimediale configurata
 	NL	Er is geen mediacollectie geconfigureerd
 	NO	Ingen mediebiblioteker er konfigurert
@@ -23952,7 +23952,7 @@ LIBRARY_NOT_READY
 	EN	No music library configured or not ready to be used
 	ES	No hay ninguna biblioteca de música configurada o no está lista para usar
 	FI	Musiikkikirjastoa ei ole määritetty tai se ei ole käyttövalmis
-	FR	Aucune bibliothèque multimédia configurée ou prête à l'utilisation
+	FR	Aucune bibliothèque musicale configurée ou prête à l'utilisation
 	IT	Nessuna libreria musicale configurata o non pronta all’uso
 	NL	Geen muziekcollectie geconfigureerd of muziekcollectie is niet klaar voor gebruik
 	NO	Ingen musikkbibliotek er konfigurert, eller så er ingen bibliotek klare til å brukes
