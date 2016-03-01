@@ -632,7 +632,7 @@ SqueezeJS.SonginfoParser = {
 				title = result.playlist_loop[0].title;
 
 			else
-				title = (result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
+				title = (result.playlist_loop[0].disc && result.playlist_loop[0].disccount > 1 ? result.playlist_loop[0].disc + '-' : '')
 						+ (result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
 						+ result.playlist_loop[0].title;
 
