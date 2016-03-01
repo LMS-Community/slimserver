@@ -102,7 +102,7 @@ useSpecialExt="-browse" %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="[% path %]?[% multiquery %][% searchquery | replace("'", "%27") | uri %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name | html %]</a>
+			<a href="[% path %]?[% multiquery %][% searchquery | uri | replace("'", "%27") %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name | html %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -117,10 +117,10 @@ useSpecialExt="-browse" %]
 [% IF streaminfo %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
 	<div id="songInfoPlayLinks">
-		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
-		[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
-		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
-		[% IF allLinks; WRAPPER removelink %]onclick="Browse.XMLBrowser.removeLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
+		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
+		[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
+		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
+		[% IF allLinks; WRAPPER removelink %]onclick="Browse.XMLBrowser.removeLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
 	</div>
 	[% END; END %]
 
@@ -172,19 +172,19 @@ useSpecialExt="-browse" %]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				[% IF songinfo.favorites %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | replace("'", "%27") | uri %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 				[% ELSIF item.simpleAlbumLink && item.favorites_url %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | replace("'", "%27") | uri %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
 				[% ELSE %]
-				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
+				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% pageinfo.startitem %]', '[% sess %]');"
 				[% END %]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
 				[% IF songinfo.favorites %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | replace("'", "%27") | uri %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 				[% ELSE %]
-				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
+				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% pageinfo.startitem %]', '[% sess %]');"
 				[% END %]
 			[% END %]
 		[% END %]
@@ -196,9 +196,9 @@ useSpecialExt="-browse" %]
 			[% IF allLinks && item.removeLink; WRAPPER removelink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.removeLink | replace("'", "%27") %]&player=[% playerURI %]', 1);"[% END; END %]
 			[% IF item.mixersLink; WRAPPER morelink %]href="[% webroot %][% item.mixersLink %]?player=[% playerURI %]"[% END; END %]
 		[% ELSIF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-			[% WRAPPER playlink %]onclick="Browse.XMLBrowser.play[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
-			[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END; END %]
-			[% WRAPPER addlink %]onclick="Browse.XMLBrowser.add[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
+			[% WRAPPER playlink %]onclick="Browse.XMLBrowser.play[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% sess %]');"[% END %]
+			[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% sess %]');"[% END; END %]
+			[% WRAPPER addlink %]onclick="Browse.XMLBrowser.add[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% sess %]');"[% END %]
 		[% ELSE %]
 			[% PROCESS dummylink %]
 			[% PROCESS dummylink %]
@@ -209,18 +209,18 @@ useSpecialExt="-browse" %]
 	[%- BLOCK allcontrol -%]
 		[% IF songinfo.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | replace("'", "%27") | uri %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 			[% END %]
 		[% ELSIF songinfo.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | replace("'", "%27") | uri %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 			[% END %]
 		[% END %]
 		
-		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
-		[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]
-		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
-		[% IF allLinks; WRAPPER removelink %]onclick="Browse.XMLBrowser.removeLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]
+		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+		[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]
+		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+		[% IF allLinks; WRAPPER removelink %]onclick="Browse.XMLBrowser.removeLink('[% multiquery %][% searchquery | uri | replace("'", "%27") %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]
 			
 		[% IF songinfo.mixersLink; WRAPPER morelink %]
 			href="[% webroot %][% songinfo.mixersLink %]?player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]
@@ -454,7 +454,7 @@ useSpecialExt="-browse" %]
 		[% ELSE; NEXT %]
 		[% END %]
 	[% ELSIF !item.type.match('^text') %]
-		<a href="[% path %]?[% multiquery %][% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
+		<a href="[% path %]?[% multiquery %][% searchquery | uri | replace("'", "%27") %]index=[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
 	[% ELSIF item.type == "text" && item.image %]
 		<a href="[% UNLESS item.image.match("^(\/|http)") %][% webroot %][% END %][% item.image %]" target="_blank" [% slideshowHelpers %]>
 	[% END %]

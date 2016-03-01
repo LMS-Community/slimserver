@@ -8,7 +8,7 @@
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name | html %]</a>
+			<a href="[% path %]?[% searchquery | uri | replace("'", "%27") %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name | html %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
