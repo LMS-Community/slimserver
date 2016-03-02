@@ -21,6 +21,7 @@ use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
 
 use constant SNTIME_POLL_INTERVAL => 3600;
@@ -70,6 +71,9 @@ if ( main::SLIM_SERVICE ) {
 		(?:/|$)		# /|$ prevents matching www.squeezenetwork.com.foo.com,
 	}x;
 }
+
+my $loginErrors = 0;
+my $nextLoginAttempt = 0;
 
 sub get_server {
 	my ($class, $stype) = @_;
@@ -139,6 +143,7 @@ sub _init_done {
 	
 	# Clear error counter
 	$prefs->remove( 'snInitErrors' );
+	$loginErrors = $nextLoginAttempt = 0;
 	
 	# Store disabled plugins, if any
 	if ( $json->{disabled_plugins} ) {
@@ -219,14 +224,16 @@ sub _init_error {
 	# back off if we keep getting errors
 	my $count = $prefs->get('snInitErrors') || 0;
 	$prefs->set( snInitErrors => $count + 1 );
+	$loginErrors = $count + 1;
 	
 	my $retry = 300 * ( $count + 1 );
+	$nextLoginAttempt = time() + $retry;
 	
 	$log->error( sprintf("mysqueezebox.com sync init failed: $error, will retry in $retry (%s)", $http->url) );
 	
 	Slim::Utils::Timers::setTimer(
 		undef,
-		time() + $retry,
+		$nextLoginAttempt + 10,
 		sub { 
 			__PACKAGE__->init();
 		}
@@ -323,6 +330,12 @@ sub login {
 	my $time = time();
 	my $login_params;
 	
+	# don't run the query if we've failed recently
+	if ( $time < $nextLoginAttempt ) {
+		$log->warn("We've failed to log in a few moments ago. Let's not try again just yet, we don't want to hammer it.");
+		return $params{ecb}->(undef, cstring($client, 'SETUP_SN_VALIDATION_FAILED'));
+	}
+	
 	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 		# login using MAC/UUID on TinySBS
 		my $osDetails = Slim::Utils::OSDetect::details();
@@ -347,9 +360,7 @@ sub login {
 	
 		# Return if we don't have any SN login information
 		if ( !$username || !$password ) {
-			my $error = $client 
-				? $client->string('SQUEEZENETWORK_NO_LOGIN')
-				: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
+			my $error = cstring($client, 'SQUEEZENETWORK_NO_LOGIN');
 			
 			main::INFOLOG && $log->info( $error );
 			return $params{ecb}->( undef, $error );
@@ -593,6 +604,8 @@ sub _login_done {
 		$prefs->set( sn_session => $sid );
 	}
 	
+	$nextLoginAttempt = $loginErrors = 0;
+	
 	main::DEBUGLOG && $log->debug("Logged into SN OK");
 	
 	$params->{cb}->( $self, $json );
@@ -607,6 +620,10 @@ sub _error {
 		$self->login(%$params);
 		return;
 	}
+
+	# tell the login method not to try again
+	$loginErrors++;
+	$nextLoginAttempt = 60 * $loginErrors;
 
 	my $proxy = $prefs->get('webproxy'); 
 
