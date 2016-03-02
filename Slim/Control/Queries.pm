@@ -1029,6 +1029,10 @@ sub artistsQuery {
 		my $total_sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(1) FROM ( $sql ) AS t1
 		} );
+				
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Artists totals query: $sql / " . Data::Dump::dump($p) );
+		}
 		
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
