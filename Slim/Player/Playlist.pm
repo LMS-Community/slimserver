@@ -654,10 +654,27 @@ sub makeVolatile {
 		my $position = Slim::Player::Source::playingSongIndex($client);
 		my $cmd      = 'addtracks';
 		my $playtime;
+		my $restoreStateWhenShuffled = ['power', 0];
 		
 		if ($client->isPlaying()) {
 			$playtime = Slim::Player::Source::songTime($client);
-			$cmd = 'loadtracks' unless $shuffle;
+			
+			if ($shuffle) {
+				$restoreStateWhenShuffled = ['play', 0.2];
+			}
+			else {
+				$cmd = 'loadtracks';
+			}
+		}
+		elsif ($shuffle && $client->power) {
+			if ($client->isPaused) {
+				# XXX - pause somehow doesn't work...
+#				$restoreStateWhenShuffled = ['pause', 1];
+				$restoreStateWhenShuffled = ['stop'];
+			}
+			elsif ($client->isStopped) {
+				$restoreStateWhenShuffled = ['stop'];
+			}
 		}
 
 		Slim::Player::Playlist::stopAndClear($client);
@@ -669,7 +686,7 @@ sub makeVolatile {
 			# playlist addtracks wouldn't jump - need to do it here
 			$client->execute([ 'playlist', 'jump', $position ]);
 			$client->execute([ 'playlist', 'shuffle', $shuffle ]);
-			$client->execute([ 'play', 0.2 ]);
+			$client->execute($restoreStateWhenShuffled);
 		}
 		
 		Slim::Player::Source::gototime($client, $playtime) if $playtime;
