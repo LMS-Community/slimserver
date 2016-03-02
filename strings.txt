@@ -452,7 +452,7 @@ LIBRARY_CONTAINS
 	EN	Your media library contains
 	ES	La biblioteca multimedia contiene
 	FI	Mediakirjaston sisältö:
-	FR	Votre bibliothèque multimédia contient
+	FR	Votre bibliothèque musicale contient
 	HE	ספריית המוסיקה שלך מכילה
 	IT	La libreria multimediale contiene
 	JA	ミュージック ライブラリ
@@ -4894,7 +4894,7 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can fix the volume control at 100% if you are using the volume control on your amplifier to control loudness or need perfect digital passthrough. This affects both digital and analog volume.
 	ES	Puede fijar el control de volumen en 100% si utiliza el control de volumen de su amplificador para controlar la sonoridad o si necesita un paso a través digital perfecto. Esto afecta tanto al volumen digital como al volumen analógico.
 	FI	Voit asettaa äänenvoimakkuuden kiinteästi 100 prosenttiin, jos hallitset äänenvoimakkuutta vahvistimen äänenvoimakkuuden säätimillä tai jos tarvitset täydellisen digitaalisen läpikulun. Tämä vaikuttaa sekä digitaaliseen että analogiseen äänenvoimakkuuteen.
-	FR	Vous pouvez choisir de fixer le réglage du volume à 100% si vous l'utilisez sur votre amplificateur pour contrôler l'intensité ou si vous voulez un relais numérique parfait. Cela affecte les volumes numérique et analogique.
+	FR	Vous pouvez choisir de fixer le réglage du volume à 100% si vous utilisez votre amplificateur pour contrôler le volume ou si vous voulez un signal numérique parfait. Cela affecte le volume tant en numérique qu'en analogique.
 	IT	Se si utilizza il controllo del volume dell'amplificatore per regolare l'audio oppure si desidera ottenere un passthrough digitale perfetto, è possibile mantenere il controllo del volume fisso su 100%. Questa impostazione ha effetto sia sul volume digitale sia su quello analogico.
 	NL	Je kunt de volumeregeling op 100% vastzetten als je de volumeregeling op je versterker gebruikt voor geluidssterkte of als perfecte digitale doorvoer is vereist. Dit is zowel op digitaal als analoog volume van invloed.
 	NO	Du kan fastsette volumet til 100% hvis du bruker volumkontrollen på forsterkeren til å styre lydnivået, eller hvis du trenger perfekt digital gjennomgang. Dette påvirker både digitalt og analogt volum.
@@ -5462,12 +5462,14 @@ SETUP_REPLAYGAIN_REMOTE
 	EN	Default Adjustment for Remote Streams
 	FR	Ajustement du volume pour le streaming Internet
 	NL	Aanpassing voor internetstreams
+	FR	Ajustement du volume pour le streaming Internet
 	
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienst haben stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
 	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
 	NL	Online streamingdiensten bieden meestal geen vorm van volumenormalisering aan. Als je deze internetstreams mixt met locale bestanden, kan dit leiden tot ongewenste veranderingen in het volume. Bepaal een standaardwaarde die bij internetstreams moet worden gebruikt.
+	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
 
 REPLAYGAIN_DISABLED
 	CS	Žádné nastavení hlasitosti
@@ -6272,7 +6274,7 @@ SETUP_LIBRARY_NAME
 	EN	Media Library Name
 	ES	Nombre de biblioteca multimedia
 	FI	Mediakirjaston nimi
-	FR	Nom de la bibliothèque multimédia
+	FR	Nom de la bibliothèque musicale
 	IT	Nome libreria multimediale
 	NL	Naam van mediacollectie
 	NO	Navn på mediebibliotek
@@ -6287,7 +6289,7 @@ SETUP_LIBRARY_NAME_DESC
 	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
 	ES	Así es como se llamará la biblioteca multimedia en el menú de \"Mi material multimedia\" de Squeezebox.
 	FI	Näin mediakirjastosi nimetään Squeezeboxisi Oma media -valikossa.
-	FR	Votre bibliothèque multimédia est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
+	FR	Votre bibliothèque musicale est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
 	IT	La libreria multimediale viene denominata in questo modo nel menu dei file multimediali di Squeezebox.
 	NL	Dit is de naam waarmee je mediacollectie in het Squeezebox-menu Mijn media verschijnt.
 	NO	Slik vises navnet på mediebiblioteket i menyen Mine mediefiler på Squeezebox.
@@ -6353,7 +6355,7 @@ SETUP_MEDIADIRS_DESC
 	EN	You can specify one or more folders containing media files that Logitech Media Server will scan and add to your media library.  Enter the paths to the folder below.
 	ES	Puede especificar una o más carpetas con archivos multimedia que Logitech Media Server examinará y agregará a la biblioteca multimedia. Introduzca la ruta a la carpeta abajo.
 	FI	Voit määrittää yhden tai useamman mediatiedostoja sisältävän kansion, jonka tiedostot Logitech Media Server tarkistaa ja lisää mediakirjastoon. Anna kansiopolut alla.
-	FR	Vous pouvez spécifier un ou plusieurs dossiers contenant des fichiers multimédias que le Logitech Media Server analysera et ajoutera à votre bibliothèque multimédia. Saisissez les chemins d'accès à ces dossiers ci-dessous.
+	FR	Vous pouvez spécifier un ou plusieurs dossiers contenant des fichiers multimédias que le Logitech Media Server analysera et ajoutera à votre bibliothèque musicale. Saisissez les chemins d'accès à ces dossiers ci-dessous.
 	IT	È possibile specificare una o più cartelle contenenti file multimediali che Logitech Media Server analizzerà e aggiungerà alla libreria multimediale. Immettere di seguito i percorsi della cartella.
 	NL	U kunt één of meer mappen met mediabestanden opgeven die Logitech Media server moet scannen en aan uw mediacollectie moet toevoegen. Voer hieronder de paden naar de map in.
 	NO	Du kan angi én eller flere mapper med mediefiler som Logitech Media Server skal søke i og legge til i mediebiblioteket. Oppgi mappebanene nedenfor.
@@ -6479,7 +6481,7 @@ SETUP_RESCAN
 	EN	Rescan Media Library
 	ES	Volver a examinar la biblioteca multimedia
 	FI	Tarkista mediakirjasto uudelleen
-	FR	Analyser la bibliothèque multimédia
+	FR	Analyser la bibliothèque musicale
 	HE	סריקה חוזרת של ספריית המוסיקה
 	IT	Ripeti analisi della libreria multimediale
 	NL	Mediacollectie opnieuw scannen
@@ -6673,7 +6675,7 @@ RESCANNING
 	EN	Logitech Media Server is now rescanning your Media Library.
 	ES	Logitech Media Server está volviendo a examinar la biblioteca multimedia.
 	FI	Logitech Media Server tarkistaa mediakirjastoasi uudelleen.
-	FR	Le Logitech Media Server analyse maintenant la bibliothèque multimédia.
+	FR	Le Logitech Media Server analyse maintenant la bibliothèque musicale.
 	HE	השרת מבצע סריקה חוזרת של ספריית המוסיקה שלך.
 	IT	Logitech Media Server sta analizzando nuovamente la libreria multimediale.
 	JA	サーバーは音楽ライブラリーを再スキャンしています。
@@ -6692,7 +6694,7 @@ RESCANNING_SHORT
 	EN	Rescanning Media Library...
 	ES	Volviendo a examinar la biblioteca multimedia...
 	FI	Mediakirjastoa tarkistetaan uudelleen...
-	FR	Nouvelle analyse de la bibliothèque multimédia en cours...
+	FR	Nouvelle analyse de la bibliothèque musicale en cours...
 	HE	סריקה חוזרת של ספריית המוסיקה...
 	IT	Nuova analisi della libreria multimediale in corso...
 	NL	Mediacollectie wordt opnieuw gescand...
@@ -6724,7 +6726,7 @@ SCAN_ABORTED
 	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your media library.
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca multimedia deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää mediakirjaston kaikkia toimintoja.
-	FR	L'analyse a été interrompue. Notez que vous devrez lancer une nouvelle analyse pour obtenir l'accès complet à votre bibliothèque multimédia.
+	FR	L'analyse a été interrompue. Notez que vous devrez lancer une nouvelle analyse pour obtenir l'accès complet à votre bibliothèque musicale.
 	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi per avere accesso completo alla libreria multimediale.
 	NL	De scan is afgebroken. Voer de scan opnieuw uit om volledige toegang tot je mediacollectie te krijgen.
 	NO	Søket ble avbrutt. Du må kjøre søket på nytt for å få full tilgang til mediebiblioteket.
@@ -7572,7 +7574,7 @@ SETUP_SEARCHSUBSTRING
 	EN	Search Within Words
 	ES	Buscar dentro de palabras
 	FI	Hae sanojen sisältä
-	FR	Rechercher dans les mots
+	FR	Recherche de termes
 	HE	חיפוש בתוך מילים
 	IT	Cerca all'interno delle parole
 	NL	Binnen woorden zoeken
@@ -7589,7 +7591,7 @@ SETUP_SEARCHSUBSTRING_0
 	EN	Search Beginning of Words
 	ES	Buscar principios de palabras
 	FI	Etsi sanojen alkuja
-	FR	Rechercher par début de mot
+	FR	Recherche en début de mot
 	HE	חיפוש בתחילת מילים
 	IT	Cerca l'inizio delle parole
 	NL	Begin van woorden zoeken
@@ -7606,7 +7608,7 @@ SETUP_SEARCHSUBSTRING_1
 	EN	Search Within Words
 	ES	Buscar dentro de palabras
 	FI	Hae sanojen sisältä
-	FR	Rechercher dans les mots
+	FR	Recherche n'importe où
 	HE	חיפוש בתוך מילים
 	IT	Cerca all'interno delle parole
 	NL	Binnen woorden zoeken
@@ -7623,7 +7625,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca material multimedia, se puede hacer que el servidor encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat mediahakuja, voit määrittää palvelimen etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa. Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
-	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, TRAIN sera également renvoyé comme résultat.
+	FR	Lors d'une recherche dans la bibliothèque musicale, les résultats peuvent correspondre à des mots contenant les termes spécifiés ou seulement commençant par les termes spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche en début de mot. Si vous sélectionnez l'option de recherche n'importe où, TRAIN sera également renvoyé comme résultat.
 	HE	בעת חיפוש פריטי מוסיקה, באפשרותך להורות ל-Squeezebox למצוא התאמות עבור פריטים שמכילים מילים שמתחילות באותן אותיות כמו מחרוזת החיפוש או מילים שכוללות את המחרוזת לחיפוש בכל מקום שהוא במילה. לדוגמה, חיפוש בתחילתן של מילים אחר "עד" יחזיר פריטים עם המילה "עדין". חיפוש בתוך מילים יחזיר גם פריטים שמכילים את המילה "רעד".
 	IT	Quando si effettuano ricerche nei file multimediali, il server può trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono. Ad esempio, cercando tra le parole che iniziano con FERRO vengono trovate voci quali FERROVIA, mentre cercando anche all'interno delle parole vengono individuate voci come AFFERRO.
 	NL	Wanneer je naar mediabestanden zoekt, kun je naar woorden zoeken die met de letters van de zoektekst beginnen, of woorden waarin de zoektekst ergens voorkomt. Zoek je bijvoorbeeld naar 'RAIN' aan het begin van woorden, dan vind je woorden zoals 'RAINBOW'. Als je binnen woorden zoekt, worden ook woorden zoals 'TRAIN' als resultaat gegeven.
@@ -7706,24 +7708,28 @@ SETUP_NOROLEFILTER
 	EN	Filter Contributor Roles at the Album & Track Level
 	FR	Portée du filtre sur le rôle de l'artiste
 	NL	Rollen van uitvoerenden filteren op Album- en Nummerniveau
+	FR	Portée du filtre sur le rôle de l'artiste
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
 	EN	Show all albums and tracks for an artist
 	FR	Afficher tous les albums et morceaux d'un artiste
 	NL	Toon alle albums en nummers van een artiest
+	FR	Afficher tous les albums et morceaux d'un artiste
 
 SETUP_NOROLEFILTER_0
 	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected role for an artist
 	FR	Afficher uniquement les albums et les morceaux correspondant au rôle de l'artiste
 	NL	Laat alleen nummers zien die overeenkomen met de geselecteerde rol van de artiest
+	FR	Afficher uniquement les albums et les morceaux correspondant au rôle de l'artiste
 
 SETUP_NOROLEFILTER_DESC
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
 	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER enz.).
+	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
 
 SETUP_COMPOSERINARTISTS
 	CS	Skladatel, Skupina a Orchestr v Interpretech
@@ -8017,7 +8023,7 @@ SETUP_IGNOREDARTICLES_DESC
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.  Changing this setting will start a rescan of your music library.
 	ES	Una lista de artículos ("the", "les", "los", etc.) que se deben omitir al principio de los nombres de artista, canción o álbum al ordenar. Separe varios artículos con espacio o deje esta lista en blanco para desactivar este comportamiento. Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Luettelo artistin, kappaleen tai levyn nimen edessä olevista artikkeleista ("the", "les", "los", jne.), jotka ohitetaan lajitellessa. Erota artikkelit välilyönnillä tai tai jätä luettelo tyhjäksi, jos haluat poistaa toiminnan käytöstä.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	רשימת מיליות (ה היידוע, אותיות בכל"מ, "the"‏, "les"‏, "los" וכו') שיש להתעלם מהן בתחילת השמות של מבצעים, שירים או אלבומים במהלך מיון. הפרד בין מיליות באמצעות רווחים או השאר את הרשימה ריקה כדי להשבית התנהגות זו. שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Elenco di articoli ("the", "gli", "i", "le") anteposti ai nomi di artisti, brani o album, da ignorare nell'ordinamento. Inserire i diversi articoli separati da spazi o lasciare vuoto l'elenco se si desidera disattivare questa funzionalità. Se si modifica questa impostazione, viene ripetuta l'analisi della libreria musicale.
 	NL	Een lijst met lidwoorden (de, het, een, the, les, los, enz.) die voor de naam van een artiest, liedje of album staan en bij het sorteren genegeerd moeten worden. Scheid meerdere lidwoorden door spaties, of laat de lijst leeg om deze functie uit te schakelen. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
@@ -8048,7 +8054,7 @@ SETUP_SPLITLIST_DESC
 	EN	Logitech Media Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Logitech Media Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Logitech Media Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Logitech Media Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	Logitech Media Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Logitech Media Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
@@ -8077,18 +8083,21 @@ SETUP_ARTISTS_BROWSE_MODES_DESC
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand let's you define which contributor roles should be part of the Artists menu.
 	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
 	NL	Kies of je een enkele, aan te passen lijst met artiesten wilt, of twee lijsten voor Albumartiesten en Alle Artiesten. Albumartiesten is een lijst waar de albumartiest de enige artiest op het album is, of is het de artiest die in de 'ALBUMARTIST tag' vermeld staat. Alle Artiesten is een lijst met alle artiesten die in een tag voorkomen met een uitvoerende rol (ARTIST, COMPOSER, enz.). Daarentegen kun je in de enkele, aan te passen lijst met artiesten aangeven welke uitvoerende rollen in de lijst moeten worden opgenomen.
+	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
 	FR	Utilisation d'une seule liste configurable d'artistes
 	NL	Gebruik een aan te passen lijst met artiesten
+	FR	Utilisation d'une seule liste configurable d'artistes
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
 	FR	Utilisation de listes distinctes Artistes des Albums et tous les Artistes
 	NL	Gebruik aparte lijsten voor Albumartiesten en Alle Artiesten
+	FR	Utilisation de listes distinctes Artistes des Albums et tous les Artistes
 
 SETUP_BROWSEAGELIMIT
 	CS	Omezení nové hudby
@@ -8128,30 +8137,35 @@ SETUP_SCAN_ON_PREF_CHANGE
 	EN	Trigger Scan on Preference Changes
 	FR	Lancer l'analyse après modification des préférences
 	NL	Start scan bij voorkeurswijzigingen
+	FR	Lancer l'analyse après modification des préférences 
 	
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
 	FR	Certains changements ont besoin d'effacer la bibliothèque et de tout analyser pour prendre effet. Cette opération peut être déclenchée automatiquement si vous le souhaitez. Attention, si vous modifiez plusieurs préférences à la suite, autant d'analyses vont être enchainées.
 	NL	Sommige voorkeuren vragen om het volledig wissen van je muziekcollectie en een herscan. Deze scan kan automatisch worden gestart als je dat wilt. Maar het tegelijkertijd aanpassen van verschillende voorkeuren kan leiden tot meerdere scans die in een wachtrij worden geplaatst.
+	FR	Certains changements ont besoin d'effacer la bibliothèque et de tout analyser pour prendre effet. Cette opération peut être déclenchée automatiquement si vous le souhaitez. Attention, si vous modifiez plusieurs préférences à la suite, autant d'analyses vont être enchainées.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
 	FR	Relancer automatiquement l'analyse
 	NL	Start scan automatisch
+	FR	Relancer automatiquement l'analyse 
 
 SETUP_SCAN_ON_PREF_CHANGE_OFF
 	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
 	EN	Prompt to scan, but don't trigger it automatically
 	FR	Demander avant de lancer l'analyse
 	NL	Vraag om te scannen, maar start het niet automatisch
+	FR	Demander avant de lancer l'analyse
 
 SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	DE	Einige Einstellungsänderungern erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
 	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
 	NL	Sommige voorkeurswijzigingen vragen om een herscan van je collectie voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
+	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
 
 SETUP_DBHIGHMEM
 	CS	Konfigurovat paměť databáze
@@ -8218,6 +8232,7 @@ SETUP_DBHIGHMEM_MAX
 	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
 	FR	Maximum (recommandé pour les bibliothèques de plus de 50 000 titres et les systèmes avec au moins 2 Go de RAM)
 	Nl	Maximaal (aanbevolen voor collecties met meer dan 50.000 nummers en een systeem met 2+ GB RAM)
+	FR	Maximum (recommandé pour les bibliothèques de plus de 50 000 titres et les systèmes avec au moins 2 Go de RAM)
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -8243,7 +8258,7 @@ SETUP_DISABLESTATISTICS_DESC
 	EN	When the Logitech Media Server front page comes up, it scans your media library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large library.
 	ES	Cuando se muestra la pantalla inicial de Logitech Media Server, éste examina la biblioteca multimedia para obtener estadísticas de la biblioteca y mostrarlas en la página inicial. Se puede optar por desactivar este comportamiento, lo que acortará el tiempo necesario para abrir la interfaz Web, especialmente con una biblioteca de gran tamaño.
 	FI	Kun Logitech Media Serverin etusivu tulee näyttöön, Logitech Media Server tarkistaa mediakirjaston ja selvittää kirjaston tilastot. Nämä tilastotiedot näytetään etusivulla. Halutessasi voit poistaa toiminnon käytöstä. Tämä lyhentää internet-liittymän avaamiseen kuluvaa aikaa erityisesti jos kirjasto on suuri.
-	FR	Lorsque la page d'accueil du Logitech Media Server apparaît, celui-ci analyse votre bibliothèque multimédia afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la bibliothèque est importante.
+	FR	Lorsque la page d'accueil du Logitech Media Server apparaît, celui-ci analyse votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la bibliothèque est importante.
 	HE	עם הופעת הדף הראשי של Logitech Media Server, השרת סורק את ספריית המוסיקה שלך לחישוב הנתונים הסטטיסטיים אודות הספרייה ולהצגתם בדף הראשי. באפשרותך לבחור להשבית התנהגות זו כדי לקצר את משך הזמן הנחוץ לפתיחת ממשק האינטרנט, במיוחד אם ספריית המוסיקה גדולה.
 	IT	All'apertura della pagina iniziale di Logitech Media Server viene analizzata la libreria multimediale e ne vengono calcolate e visualizzate le statistiche. È possibile scegliere di disattivare questa funzionalità, in modo da velocizzare i tempi iniziali di apertura dell'interfaccia Web, in particolare se si dispone di una libreria multimediale estesa.
 	NL	Wanneer de webpagina van Logitech Media Server verschijnt, wordt je mediacollectie gescand om je collectiestatistieken op te halen. Deze worden vervolgens op de webpagina weergegeven. Als je dit uitschakelt, wordt de webinterface sneller geopend, vooral wanneer de mediacollectie erg groot is.
@@ -9050,7 +9065,7 @@ SETUP_GROUPDISCS_DESC
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Voit määrittää, käsitelläänkö usean levyn sarjoja yhtenä levynä (yhdellä nimellä) vai useina levyinä, joilla kullakin on oma nimensä, esimerkiksi "Levyn nimi (levy 2/3)".  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
@@ -11872,9 +11887,11 @@ OGF
  
 DFF
 	EN	DFF
+	FR	DFF
 
 DSF
 	EN	DSF
+	FR	DSF
 
 MODIFIED
 	CS	Upraveno
@@ -13412,6 +13429,7 @@ PLAYCOUNT
 	EN	Play Count
 	FR	Nombre de fois joué
 	Nl	Aantal keren afgespeeld
+	FR	Nombre de fois joué
 
 ALBUM_INFO
 	CS	Info o Albu
@@ -13599,7 +13617,7 @@ SCAN_WARNING
 	EN	Logitech Media Server is still scanning your media library, so some items may not appear in this area yet.
 	ES	Logitech Media Server todavía está examinado la biblioteca multimedia, por lo que algunos elementos quizás no aparezcan aún en esta sección.
 	FI	Logitech Media Server tarkistaa yhä mediakirjastoasi. Jotkin kohteet eivät välttämättä vielä näy tässä kohdassa.
-	FR	Le Logitech Media Server n'a pas terminé d'analyser votre bibliothèque multimédia. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
+	FR	Le Logitech Media Server n'a pas terminé d'analyser votre bibliothèque musicale. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
 	HE	Logitech Media Server עדיין סורק את ספריית המוסיקה שלך, כך שייתכן שפריטים מסוימים טרם מופיעים באזור זה.
 	IT	L'analisi della libreria multimediale da parte di Logitech Media Server è ancora in corso. Alcune voci potrebbero non essere ancora visualizzate in questa area.
 	JA	Logitech Media Serverは、現在音楽ライブラリをスキャンしています。よって、いくつかのアイテムはまだ表示されていないかもしれません。
@@ -13618,7 +13636,7 @@ HOME_SCAN_WARNING
 	EN	Logitech Media Server is still scanning your media library. Please be patient as this may take a while.
 	ES	Logitech Media Server sigue examinado la biblioteca multimedia. Tenga paciencia ya que esto puede tardar.
 	FI	Logitech Media Server tarkistaa yhä mediakirjastoasi. Odota rauhassa, sillä tähän saattaa kulua hetki.
-	FR	Le Logitech Media Server analyse le contenu de votre bibliothèque multimédia. Veuillez patienter.
+	FR	Le Logitech Media Server analyse le contenu de votre bibliothèque musicale. Veuillez patienter.
 	HE	Logitech Media Server עדיין סורק את ספריית המוסיקה שלך. אנא המתן בסבלנות; הפעולה עשויה להימשך זמן מה.
 	IT	L'analisi della libreria multimediale da parte di Logitech Media Server è ancora in corso. Attendere. L'operazione potrebbe richiedere alcuni minuti.
 	NL	Logitech Media Server is je mediacollectie aan het scannen. Een ogenblik geduld. Dit kan even duren.
@@ -14095,6 +14113,7 @@ DEBUG_NETWORK_REPOSITORIES
 	EN	Download repositories for extensions, update etc.
 	FR	Télécharger les répertoires pour les extensions, mises à jour, etc.
 	NL	Download opslag-URL's voor extensies, updates enz.
+	FR	Télécharger les répertoires pour les extensions, mises à jour, etc.
 
 DEBUG_PLAYER_JIVE
 	CS	Podpora pro zařízení založené na Squeezplay
@@ -15469,12 +15488,14 @@ TEXTSEARCH
 	EN	text search
 	FR	Recherche de texte
 	NL	tekst zoeken
+	FR	Recherche de texte
 
 NOT_IN_TEXTSEARCH
 	DE	nicht in Textsuche
 	EN	not in text search
 	FR	pas dans la recherche de texte
 	NL	niet in zoekopdracht
+	FR	pas dans la recherche de texte
 
 SEARCHFOR_ARTIST
 	CS	Hledat interpreta
@@ -16720,7 +16741,7 @@ INFORMATION_MENU_LIBRARY
 	EN	Library Statistics
 	ES	Estadísticas de biblioteca
 	FI	Kirjaston tilastot
-	FR	Statistiques de la bibliothèque musicale
+	FR	Statistiques de la bibliothèque
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
 	JA	ライブラリー統計
@@ -17041,6 +17062,7 @@ INFORMATION_BINDIRS
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
 	NL	Map hulptoepassingen
+	FR	Dossier pour l'aide des applications
 
 INFORMATION_ARCHITECTURE
 	CS	Architektura platformy
@@ -17577,12 +17599,14 @@ RANGE
 	EN	range
 	FR	compris entre
 	NL	bereik
+	FR	compris entre
 
 NOT_IN_RANGE
 	DE	nicht im Bereich
 	EN	not in range
 	FR	non compris entre
 	NL	niet binnen bereik
+	FR	non compris entre
 
 # The space before the French : is there on purpose.
 
@@ -18990,30 +19014,35 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	EN	Custom pre-caching specifications
 	FR	paramétrage personnalisé du pré-cache
 	NL	Aangepaste specificaties pre-caching
+	FR	paramétrage personnalisé du pré-cache 
 	
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
 	FR	Redimensionner les pochettes
 	NL	Afbeeldingen schalen
+	FR	Redimensionner les pochettes
 
 SETUP_IMAGEPROXY_DESC
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie zu Gunster bester Qualität und Performance in der Grösse angepasst. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
 	NL	Om de beste kwaliteit afbeeldingen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar je muzieksysteem worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
+	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes. 
 
 SETUP_IMAGEPROXY_REMOTE
 	DE	Plattenhüllen auf mysqueezebox.com anpassen
 	EN	Use mysqueezebox.com to resize artwork
 	FR	Redimensionner les pochettes avec mysqueezebox.com
 	NL	Gebruik mysqueezebox.com om afbeeldingen te schalen
+	FR	Redimensionner les pochettes avec mysqueezebox.com 
 
 SETUP_IMAGEPROXY_LOCAL
 	DE	Plattenhüllen lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
 	FR	Redimensionner les pochettes avec Logitech Media Server
 	NL	Gebruik Logitech Media Server om afbeeldingen te schalen
+	FR	Redimensionner les pochettes avec Logitech Media Server
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -19842,6 +19871,7 @@ DEBUG_ARTWORK_IMAGEPROXY
 	EN	Artwork Resizing Proxy
 	FR	Redimensionner les pochettes en amont
 	NL	Afbeeldingen Schalen Proxy
+	FR	Redimensionner les pochettes en amont 
 
 DEBUG_FACTORYTEST
 	CS	Informace použité při výrobních zkouškách
@@ -20223,6 +20253,7 @@ DEBUG_DATABASE_VIRTUALLIBRARIES
 	EN	Library Views (virtual libraries)
 	FR	Bibliothèques thématiques (bibliothèques virtuelles)
 	NL	Deelcollecties (virtual libraries)
+	FR	Bibliothèques thématiques (bibliothèques virtuelles)
 
 DEBUG_OS_FILES
 	CS	Informace o úrovni souborového systému
@@ -20694,6 +20725,7 @@ SETUP_LOG_ZIPPED
 	EN	ZIP archive
 	FR	Fichier ZIP
 	NL	Zipbestand
+	FR	Fichier ZIP
 
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
@@ -21094,6 +21126,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	EN	Find updated coverart files
 	FR	Recherche des pochettes des albums actualisés
 	NL	Vind geüpdatete hoesafbeeldingen
+	FR	Recherche des pochettes des albums actualisés
 
 PRECACHEARTWORK_PROGRESS
 	CS	Příprava ukládání obalu do mezipaměti
@@ -21205,30 +21238,35 @@ VIRTUALLIBRARIES_PROGRESS
 	EN	Create library views
 	FR	Création d'une bibliothèque thématique
 	NL	Deelcollectie maken
+	FR	Création d'une bibliothèque thématique 
 
 AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 	FR	Comme une bibliothèque thématique
 	NL	Als Deelcollectie
+	FR	Comme une bibliothèque thématique
 
 VIRTUALLIBRARIES
 	DE	Bibliotheksansichten
 	EN	Library Views
 	FR	Bibliothèques thématiques
 	NL	Deelcollecties
+	FR	Bibliothèques thématiques
 
 ALL_LIBRARY
 	DE	Ganze Musiksammlung
 	EN	All music library
 	FR	Bibliothèque complète
 	NL	Hele muziekcollectie
+	FR	Bibliothèque complète
 	
 SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
 	FR	Bibliothèque thématique active
 	NL	Geselecteerde deelcollectie
+	FR	Bibliothèque thématique active
 
 RUNNING
 	CS	Spuštěno
@@ -21267,7 +21305,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	EN	The server has finished scanning your media library.
 	ES	El servidor ha finalizado el examen de su biblioteca multimedia.
 	FI	Palvelin on nyt lopettanut mediakirjastosi tarkistuksen.
-	FR	Le serveur a terminé d'analyser la bibliothèque multimédia.
+	FR	Le serveur a terminé d'analyser la bibliothèque musicale.
 	IT	Il server ha completato l'analisi della libreria multimediale.
 	NL	De server heeft je mediacollectie gescand.
 	NO	Serveren har nå søkt gjennom mediebiblioteket.
@@ -22242,6 +22280,7 @@ SAVED_SEARCH
 	EN	Saved Search
 	FR	Recherches enregistrées
 	NL	Opgeslagen zoekresultaat
+	FR	Recherches enregistrées
 
 ALBUMS_SORT_METHOD
 	CS	Způsob řazení alb
@@ -23349,7 +23388,7 @@ CLEANUP_CACHE
 	EN	Clean cache folder, including media library database, artwork cache etc.
 	ES	Limpiar carpeta de caché, incluidas base de datos multimedia, caché de carátulas, etc.
 	FI	Tyhjennä välimuistikansio, mukaan luettuna mediatietokanta ja kansitaiteen välimuisti.
-	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque multimédia, les pochettes, etc.
+	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque musicale, les pochettes, etc.
 	IT	Pulisci cartella della cache, inclusi il database della libreria multimediale, la cache delle copertine e così via.
 	NL	Cachemap opschonen, inclusief mediadatabase, hoesafbeeldingencache, enz.
 	NO	Tøm hurtigbuffermappen, inkludert mediedatabasen, hurtigbufrede omslag osv.
@@ -23769,7 +23808,7 @@ CONTINUE_TO_SQUEEZEBOX_SERVER
 	EN	Continue to Logitech Media Server to manage settings for accessing your personal media library.
 	ES	Continuar a Logitech Media Server para administrar la configuración de reproducción de su biblioteca multimedia personal.
 	FI	Jatka Logitech Media Serveriin. Siellä voit määrittää henkilökohtaisen mediakirjastosi käyttöasetukset.
-	FR	Continuez vers le Logitech Media Server pour gérer les réglages de lecture de votre bibliothèque multimédia.
+	FR	Continuez vers le Logitech Media Server pour gérer les réglages de lecture de votre bibliothèque musicale.
 	IT	Passare a Logitech Media Server per gestire le impostazioni di accesso alla libreria multimediale personale.
 	NL	Ga door naar Logitech Media Server om instellingen te beheren voor het afspelen van je persoonlijke mediacollectie.
 	NO	Gå til Logitech Media Server for å angi tilgangsinnstillinger for mediebiblioteket.
@@ -23936,7 +23975,7 @@ NO_LIBRARY
 	EN	No media library configured
 	ES	No hay ninguna biblioteca multimedia configurada
 	FI	Mediakirjastoa ei ole määritetty
-	FR	Aucune bibliothèque multimédia n'a été configurée
+	FR	Aucune bibliothèque musicale n'a été configurée
 	IT	Nessuna libreria multimediale configurata
 	NL	Er is geen mediacollectie geconfigureerd
 	NO	Ingen mediebiblioteker er konfigurert
@@ -24107,42 +24146,49 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
 	NL	Bevestigen Touch-To-Play
+	FR	Nouvelle sélection et liste de lecture en cours
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
 	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op je Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
+	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	DE	Destruktives Verhalten nicht unterdrücken
 	EN	Do not defeat
 	FR	Continuer la liste de lecture en cours
 	NL	Niet vragen
+	FR	Continuer la liste de lecture en cours
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
 	EN	Always ask before playing your selection
 	FR	Toujours demander une confirmation avant de lancer le titre sélectionné
 	NL	Altijd vragen om je selectie af te spelen
+	FR	Toujours demander une confirmation avant de lancer le titre sélectionné
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
 	EN	Defeat if current playlist has more than one track
 	FR	Demander une confirmation si la liste de lecture actuelle a plus d'un titre
 	NL	Vragen als de huidige playlist meer dan een nummer bevat
+	FR	Demander une confirmation si la liste de lecture actuelle a plus d'un titre 
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
 	EN	Defeat only if playing and current playlist has more than one track
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
 	NL	Alleen vragen als de huidige playlist meer dan een nummer bevat
+	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
 	
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	FR	Demander une confirmation uniquement si une radio n'est pas en cours de diffusion
 	NL	Alleen vragen als het huidige afgespeelde nummer geen radiostream is
+	FR	Demander une confirmation uniquement si une radio n'est pas en cours de diffusion
 	
 ON_MYSB
 	CS	Na mysqueezebox.com
