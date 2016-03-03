@@ -82,6 +82,8 @@ my %mediadirsCache  = ();
 my %fixPathCache    = ();
 my @findBinPaths    = ();
 
+my $MAX_CACHE_ENTRIES = $prefs->get('dbhighmem') ? 512 : 32;
+
 $prefs->setChange( sub { 
 	%mediadirsCache = ();
 }, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
@@ -275,7 +277,7 @@ sub pathFromFileURL {
 	}
 
 	if (!$noCache) {
-		%fileToPathCache = () if scalar keys %fileToPathCache > 32;
+		%fileToPathCache = () if scalar keys %fileToPathCache > $MAX_CACHE_ENTRIES;
 		$fileToPathCache{$url} = $file;
 	}
 
@@ -325,7 +327,7 @@ sub fileURLFromPath {
 	my $file = $uri->as_string;
 	$file =~ s%/$%% if $addedSlash;
 
-	if (scalar keys %pathToFileCache > 32) {
+	if (scalar keys %pathToFileCache > $MAX_CACHE_ENTRIES) {
 		%pathToFileCache = ();
 	}
 
@@ -442,7 +444,7 @@ sub fixPath {
 
 	my $base = $_[1] && ( $fixPathCache{$_[1]} || Slim::Utils::Unicode::encode_locale($_[1]) );
 	
-	if (scalar keys %fixPathCache > 32) {
+	if (scalar keys %fixPathCache > $MAX_CACHE_ENTRIES) {
 		%fixPathCache = ();
 	}
 	
