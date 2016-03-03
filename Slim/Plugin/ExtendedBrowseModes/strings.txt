@@ -81,7 +81,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	NL	Hele collectie (Standaard)
 
 PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC
-	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Eigene Musik Menü auswählen.
+	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
 	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
 	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
 

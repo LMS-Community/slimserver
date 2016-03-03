@@ -213,7 +213,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
 	NL	Externe Logitech Media Servers
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
-	DE	Unter Umständen können entfernte Logitech Media Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies allenfalls auf dem entfernten Server.
+	DE	Unter Umständen können entfernte Logitech Media Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies gegebenenfalls auf dem entfernten Server.
 	EN	Under certain circumstances remote Logitech Media Servers can't be discovered automatically (eg. when using a VPN connection). You can manually enter server addresses to cover for these cases. You can use IP addresses or fully qualified domain names. The port usually is 9000, but can be different. Please check on your remote server.
 	NL	Onder bepaalde omstandigheden kunnen Logitech Media Servers niet automatisch worden gevonden (bv. bij gebruik van een VPN-verbinding). In dit geval kun je het serveradres handmatig invoeren. Je kunt hiervoor het IP-adres of complete domeinnaam gebruiken. De standaard poort is 9000, maar kan afwijken. Kijk dit na op je externe server.
 
