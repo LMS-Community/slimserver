@@ -152,8 +152,7 @@
 [% WRAPPER field title='LENGTH' %]
 	[% logicalSelectionBlock(name='search.secs.op', withRange=1) %]
 
-	<input name="search.secs" value="[% search.secs.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
-	[% "SECONDS" | string %]
+	<input name="search.secs" value="[% search.secs.value %]" size="10" maxlength="10" style="text-align: right;" type="text" placeholder="[% "SECONDS" | string %]">
 [% END %]
 
 [% WRAPPER field title='TRACK' %]
@@ -183,8 +182,7 @@
 [% WRAPPER field title='MODTIME' %]
 	[% timeSelectionBlock(name='search.timestamp.op') %]
 
-	<input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text">
-	&nbsp; [% "EXAMPLE_SHORT" | string %] mm/dd/yyyy
+	<input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text" placeholder="mm/dd/yyyy">
 [% END %]
 
 [% WRAPPER field title='BITRATE' %]
@@ -194,10 +192,10 @@
 		<option value="">[% "ANY_VALUE" | string %]</option>
 
 		[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
-			<option value="[% bitRate %]" [% IF search.bitrate.value == bitRate %]selected[% END %]>[% bitRate %]</option>
+			<option value="[% bitRate %]" [% IF search.bitrate.value == bitRate %]selected[% END %]>[% bitRate %] [% "KBPS" | string %]</option>
 		[%- END %]
 
-	</select> [% "KBPS" | string %]
+	</select>
 [% END %]
 
 [% IF samplerates.size; WRAPPER field title='SAMPLERATE' %]
@@ -207,9 +205,21 @@
 		<option value="">[% "ANY_VALUE" | string %]</option>
 
 		[% FOREACH sampleRate = samplerates %]
-			<option value="[% sampleRate %]">[% (sampleRate / 1000) | format('%.1f') %]</option>
+			<option value="[% sampleRate %]" [% IF search.samplerate.value == sampleRate %]selected[% END %]>[% (sampleRate / 1000) | format('%.1f') %] kHz</option>
 		[% END %]
-	</select> kHz
+	</select>
+[% END; END %]
+
+[% IF samplesizes.size; WRAPPER field title='SAMPLESIZE' %]
+	[% logicalSelectionBlock(name='search.samplesize.op') %]
+
+	<select name="search.samplesize">
+		<option value="">[% "ANY_VALUE" | string %]</option>
+
+		[% FOREACH sampleSize = samplesizes %]
+			<option value="[% sampleSize %]" [% IF search.samplesize.value == sampleSize %]selected[% END %]>[% sampleSize %] [% "BITS" | string %]</option>
+		[% END %]
+	</select>
 [% END; END %]
 
 [% IF fileTypes %]
@@ -227,8 +237,7 @@
 [% WRAPPER field title='FILELENGTH' %]
 	[% logicalSelectionBlock(name='search.filesize.op', withRange=1) %]
 
-	<input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="30" style="text-align: right;" type="text">
-	[% "BYTES" | string %]
+	<input name="search.filesize" value="[% search.filesize.value %]" size="10" maxlength="30" style="text-align: right;" type="text" placeholder="[% "BYTES" | string %]">
 [% END %]
 
 [% WRAPPER field title='COMMENT' %]

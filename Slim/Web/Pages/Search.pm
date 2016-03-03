@@ -260,9 +260,13 @@ sub advancedSearch {
 	
 	# get available samplerates
 	if ( !($params->{'samplerates'} = $cache->get($prefix . 'samplerateList')) ) {
-		$params->{samplerates} = $dbh->selectcol_arrayref('SELECT DISTINCT samplerate FROM tracks WHERE samplerate > 0');
-
+		$params->{'samplerates'} = $dbh->selectcol_arrayref('SELECT DISTINCT samplerate FROM tracks WHERE samplerate > 0');
 		$cache->set($prefix . 'samplerateList', $params->{'samplerates'}, 86400 * 7) if scalar @{$params->{'samplerates'}};
+	}
+	
+	if ( !($params->{'samplesizes'} = $cache->get($prefix . 'samplesizeList')) ) {
+		$params->{'samplesizes'} = $dbh->selectcol_arrayref('SELECT DISTINCT samplesize FROM tracks WHERE samplesize > 0');
+		$cache->set($prefix . 'samplesizeList', $params->{'samplesizes'}, 86400 * 7) if scalar @{$params->{'samplesizes'}};
 	}
 	
 	# load up the genres we know about.
