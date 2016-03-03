@@ -30,7 +30,7 @@ PLUGIN_DNDPLAY_FILE_TOO_LARGE
 	NL	Bestandsgrootte (%s) is groter dan de maximale uploadgrootte (%s).
 	
 PLUGIN_DNDPLAY_INVALID_DATA
-	DE	Ingültige Anfrage.
+	DE	Ungültige Anfrage.
 	EN	Invalid request.
 	NL	Ongeldig verzoek.
 

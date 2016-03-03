@@ -228,7 +228,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	NL	UPnP/DLNA Menu's negeren
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
-	DE	Gib eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lasse das Feld leer, um keine Ordner zu überspringen.
+	DE	Geben Sie eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lassen Sie das Feld leer, um keine Ordner zu überspringen.
 	EN	Define a comma separated list of menu names, which should be ignored when browsing UPnP/DLNA sources. This can include eg. menus providing pictures, videos, or other media not applicable on the Squeezebox. Leave that field empty if you don't want to skip any folder.
 	NL	Maak een met komma's gescheiden lijst van menu-items, die tijdens het browsen van UPnP/DLNA moeten worden genegeerd. Dit kunnen menu's zijn die verwijzen naar foto's, video's, of andere media die niet van toepassing zijn op de Squeezebox. Laat het veld leeg als je geen enkele map wilt overslaan.
 
