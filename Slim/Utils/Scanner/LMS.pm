@@ -289,6 +289,7 @@ sub rescan {
 			if ($changes) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 				Slim::Music::Import->setLastScanTime();
+				Slim::Music::Import->setLastScanTimeIsDST();
 				Slim::Schema->wipeCaches();
 			}
 			

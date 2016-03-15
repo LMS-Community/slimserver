@@ -253,6 +253,32 @@ sub setLastScanTime {
 	$last->update;
 }
 
+=head2 setLastScanTimeIsDST()
+
+Set flag whether a scan happened in DST or not.
+We'll need this on Windows, which has a bug handling file's mtime and DST.
+
+=cut
+
+sub setLastScanTimeIsDST {
+	my $class = shift;
+
+	# May not have a DB to store this in
+	return if !Slim::Schema::hasLibrary();
+	
+	my $last = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => 'lastRescanTimeIsDST'
+	} );
+
+	$last->value( (localtime(time()))[8] ? 1 : 0 );
+	$last->update;
+}
+
+sub getLastScanTimeIsDST {
+	my $class = shift;
+	return $class->lastScanTime('lastRescanTimeIsDST');
+}
+
 =head2 setIsScanning( )
 
 Set a flag in the DB to true or false if the scanner is running.
