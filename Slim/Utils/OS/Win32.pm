@@ -670,7 +670,6 @@ sub getShortcut {
 	return ( $name, $class->fileURLFromShortcut($path) );
 }
 
-
 =head2 setPriority( $priority )
 
 Set the priority for the server. $priority should be -20 to 20
