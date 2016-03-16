@@ -7282,6 +7282,10 @@ SETUP_AUTO_DOWNLOAD_1
 	RU	Автоматически загружать доступные обновления.
 	SV	Ladda ner uppdateringar automatiskt när de är tillgängliga.
 
+SETUP_CHECK_NOW
+	DE	Jetzt nach Update suchen
+	EN	Check for updates now
+	
 SETUP_SCREENSAVER
 	CS	Spořič obrazovky při přehrávání
 	DA	Pauseskærm når der spilles
@@ -24173,6 +24177,11 @@ SERVER_UPDATE_AVAILABLE
 	PL	Dostępna jest nowa wersja oprogramowania Logitech Media Server (%s). <a href="%s" target="update">Kliknij tutaj, aby pobrać</a>.
 	RU	Доступна новая версия Logitech Media Server (%s). <a href="%s" target="update">Для загрузки щелкните здесь</a>.
 	SV	Det finns en ny version av Logitech Media Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
+
+SERVER_UPDATE_NOT_AVAILABLE
+	DE	Es steht keine neue Version von Logitech Media Server zur Verfügung.
+	EN	There's no new version of Logitech Media Server available.
+	FR	Votre version de Logitech Media Server est à jour.
 
 SERVER_LINUX_UPDATE_AVAILABLE
 	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.

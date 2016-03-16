@@ -27,6 +27,8 @@ my $os = Slim::Utils::OSDetect->getOS();
 my $versionFile;
 
 sub checkVersion {
+	my $cb = shift;
+	
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
 
@@ -38,7 +40,7 @@ sub checkVersion {
 		return;
 	}
 	
-	return unless $prefs->get('checkVersion');
+	return unless $prefs->get('checkVersion') || $cb;
 
 	my $installer = getUpdateInstaller() || '';
 	
@@ -55,7 +57,7 @@ sub checkVersion {
 
 	my $lastTime = $prefs->get('checkVersionLastTime');
 
-	if ($lastTime) {
+	if ($lastTime && !$cb) {
 
 		my $delta = Time::HiRes::time() - $lastTime;
 
@@ -90,9 +92,13 @@ sub checkVersion {
 	
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
+	my $params = {
+		cb => $cb
+	};
+	
 	my $http = main::NOMYSB 
-		? Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError)
-		: Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
+		? Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError, $params)
+		: Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError, $params);
 		
 	$http->get($url);
 
@@ -103,12 +109,14 @@ sub checkVersion {
 # called when check version request is complete
 sub checkVersionCB {
 	my $http = shift;
+	my $cb = $http->params('cb');
+
+	my $version;
 
 	# store result in global variable, to be displayed by browser
 	if ($http->code =~ /^2\d\d/) {
 
 		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
-		my $version;
 		
 		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
 		if (main::NOMYSB) {
@@ -163,6 +171,8 @@ sub checkVersionCB {
 		$::newVersion = 0;
 		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->code));
 	}
+	
+	$cb->($version) if $cb && ref $cb;
 }
 
 # called only if check version request fails

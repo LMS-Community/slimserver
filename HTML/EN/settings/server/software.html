@@ -20,6 +20,12 @@
 		</select>
 	[% END %]
 	[% END %]
+	
+	[% IF !runningFromSource %]
+	[% WRAPPER setting title="" desc="" %]
+		<input type="submit" name="checkForUpdateNow" class="stdclick" value="[% "SETUP_CHECK_NOW" | string %]"/>
+	[% END %]
+	[% END %]
 
 [% PROCESS settings/footer.html %]
 

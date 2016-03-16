@@ -32,9 +32,33 @@ sub prefs {
 }
 
 sub handler {
-	my ($class, $client, $paramRef) = @_;
+	my ($class, $client, $paramRef, $callback, @args) = @_;
 	
-	$paramRef->{canAutoUpdate} = Slim::Utils::OSDetect->getOS()->canAutoUpdate();
+	my $os = Slim::Utils::OSDetect->getOS();
+	$paramRef->{canAutoUpdate} = $os->canAutoUpdate();
+	$paramRef->{runningFromSource} = $os->runningFromSource();
+
+	if ($::newVersion) {
+		$paramRef->{'warning'} ||= $::newVersion;
+	}
+	
+	if (delete $paramRef->{checkForUpdateNow}) {
+		require Slim::Utils::Update;
+		Slim::Utils::Update::checkVersion(sub {
+			my $info = shift;
+
+			if ($info =~ /^http.*(\d+\.\d+\.\d+)/) {
+				$info = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $1, $info)
+			}
+			elsif (!$info) {
+				$info = Slim::Utils::Strings::clientString($client, 'SERVER_UPDATE_NOT_AVAILABLE')
+			}
+			
+			$paramRef->{'warning'} = $info;
+			$callback->( $client, $paramRef, $class->SUPER::handler($client, $paramRef), @args );
+		});
+		return;
+	}
 
 	return $class->SUPER::handler($client, $paramRef);
 }
