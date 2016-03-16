@@ -22,7 +22,7 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = qw(checkVersion);
+	my @prefs = qw(checkVersion checkVersionInterval);
 	
 	if (Slim::Utils::OSDetect->getOS()->canAutoUpdate()) {
 		push @prefs, 'autoDownloadUpdate';

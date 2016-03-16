@@ -7222,6 +7222,24 @@ SETUP_CHECKVERSION_0
 	SV	Sök inte automatiskt efter programuppdateringar
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
+SETUP_CHECKVERSION_DAILY
+	DE	Täglich
+	EN	Daily
+	FR	Tous les jours
+	NL	Dagelijks
+
+SETUP_CHECKVERSION_WEEKLY
+	DE	Wöchentlich
+	EN	Weekly
+	FR	Hebdomadaire
+	NL	Wekelijks
+
+SETUP_CHECKVERSION_MONTHLY
+	DE	Monatlich
+	EN	Monthly
+	FR	Mensuel
+	NL	Maandelijks
+	
 SETUP_AUTO_DOWNLOAD
 	CS	Automatické stahování
 	DA	Hent automatisk
