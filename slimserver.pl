@@ -596,9 +596,6 @@ sub init {
 	main::INFOLOG && $log->info("Server Jive init...");
 	Slim::Control::Jive->init();
 	
-	main::INFOLOG && $log->info("Remote Metadata init...");
-	Slim::Formats::RemoteMetadata->init();
-	
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
 

@@ -1,7 +1,5 @@
-package Slim::Formats::RemoteMetadata::YALP;
+package Slim::Plugin::YALP::Plugin;
 
-# $Id$
-#
 # WMA metadata parser for YALP radio
 # /tilive1.alice.cdn.interbusiness.it/
 
@@ -14,7 +12,7 @@ my $log = logger('formats.metadata');
 
 use constant IMAGE_PREFIX => 'http://images.rossoalice.alice.it/musicbox/';
 
-sub init {
+sub initPlugin {
 	Slim::Formats::RemoteMetadata->registerParser(
 		match => qr/tilive1.alice.cdn.interbusiness.it/,
 		func  => \&parser,

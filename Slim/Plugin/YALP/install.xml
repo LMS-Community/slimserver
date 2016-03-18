@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>b29433d0-e9bc-4e3d-8907-89aa77bab5b8</id>
+	<name>PLUGIN_YALP</name>
+	<module>Slim::Plugin::YALP::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_YALP</description>
+	<creator>Logitech</creator>
+
+	<defaultState>disabled</defaultState>
+
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<type>2</type><!-- type=extension -->
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

@@ -26,9 +26,6 @@ use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 
-# Built-in parsers
-use Slim::Formats::RemoteMetadata::YALP;
-
 use Tie::RegexpHash;
 
 my $log = logger('formats.metadata');
@@ -36,12 +33,8 @@ my $log = logger('formats.metadata');
 tie my %providers, 'Tie::RegexpHash';
 tie my %parsers,   'Tie::RegexpHash';
 
-sub init {
-	my $class = shift;
-	
-	# Setup our built-in metadata parsers
-	Slim::Formats::RemoteMetadata::YALP->init();
-}
+# This doesn't do anything any more. But I'll leave it in, just in case something was calling us
+sub init {}
 
 =head2 registerProvider( PARAMS )
 

@@ -1,0 +1,2 @@
+PLUGIN_YALP
+	EN	WMA metadata parser for YALP radio
