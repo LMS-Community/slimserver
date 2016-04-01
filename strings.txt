@@ -24255,14 +24255,28 @@ SERVER_UPDATE_AVAILABLE
 	RU	Доступна новая версия Logitech Media Server (%s). <a href="%s" target="update">Для загрузки щелкните здесь</a>.
 	SV	Det finns en ny version av Logitech Media Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
 
-SERVER_UPDATE_NOT_AVAILABLE
-	DE	Es steht keine neue Version von Logitech Media Server zur Verfügung.
-	EN	There's no new version of Logitech Media Server available.
-	FR	Votre version de Logitech Media Server est à jour.
+SERVER_UPDATE_AVAILABLE_SHORT
+	CS	K dispozici je nová verze Logitech Media Server.
+	DA	Der findes en ny version af Logitech Media Server.
+	DE	Eine neue Version von Logitech Media Server ist verfügbar.
+	EN	A new version of Logitech Media Server is available.
+	ES	Hay disponible una nueva versión de Logitech Media Server.
+	FI	Logitech Media Serveristä on tarjolla uusi versio.
+	FR	Une nouvelle version de Logitech Media Server est disponible.
+	IT	È disponibile una nuova versione di Logitech Media Server.
+	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar.
+	NO	En ny versjon av Logitech Media Server er tilgjengelig.
+	PL	Dostępna jest nowa wersja oprogramowania Logitech Media Server.
+	RU	Доступна новая версия Logitech Media Server.
+	SV	Det finns en ny version av Logitech Media Server.
 
 SERVER_LINUX_UPDATE_AVAILABLE
-	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
-	EN	A new version of Logitech Media Server is available (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Click here for further information</a>.
-	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
-	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Klik op hier</a>.
-	PL	Nowa wersja Logitech Media Server jest dostępna (%s). <a href="/html/docs/linux-update.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
+	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
+	EN	A new version of Logitech Media Server is available (%s). <a href="updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
+	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
+	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
+	PL	Nowa wersja Logitech Media Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
+
+UPDATES_LATEST_CHANGES
+	DE	Letzte Änderungen (<a href="%s" target="_blank">alle Änderungen</a>)
+	EN	Latest Changes (<a href="%s" target="_blank">all changes</a>)

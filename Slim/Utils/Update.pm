@@ -304,6 +304,8 @@ sub setUpdateInstaller {
 		if ($cb && ref($cb) eq 'CODE') {
 			$cb->($file);
 		}
+		
+		$::newVersion ||= string('SERVER_UPDATE_AVAILABLE_SHORT');
 	}
 	
 	elsif ($file) {

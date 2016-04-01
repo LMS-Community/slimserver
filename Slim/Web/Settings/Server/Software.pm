@@ -51,7 +51,7 @@ sub handler {
 				$info = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $1, $info)
 			}
 			elsif (!$info) {
-				$info = Slim::Utils::Strings::clientString($client, 'SERVER_UPDATE_NOT_AVAILABLE')
+				$info = Slim::Utils::Strings::clientString($client, 'CONTROLPANEL_NO_UPDATE_AVAILABLE')
 			}
 			
 			$paramRef->{'warning'} = $info;

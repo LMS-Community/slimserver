@@ -220,9 +220,10 @@ sub appsQuery {
 		getExtensions({
 			'name'   => $repo, 
 			'type'   => $args->{'type'}, 
-			'target' => $args->{'targetPlat'},
-			'version'=> $args->{'targetVers'},, 
-			'lang'   => $args->{'lang'},
+			'target' => $args->{'targetPlat'} || Slim::Utils::OSDetect::OS(),
+			'version'=> $args->{'targetVers'} || $::VERSION,
+			'lang'   => $args->{'lang'} || $Slim::Utils::Strings::currentLang,
+			'details'=> $args->{'details'},
 			'cb'     => \&_appsQueryCB,
 			'pt'     => [ $request, $data ],
 		});
@@ -250,11 +251,15 @@ sub _appsQueryCB {
 
 	my $args = $request->getParam('args');
 
-	my $actions = findUpdates($data->{'results'}, $args->{'current'}, $prefs->get($args->{'type'}) || {});
+	my $actions = findUpdates($data->{'results'}, $args->{'current'}, $prefs->get($args->{'type'}) || {}, $args->{'details'});
 
 	if ($prefs->get('auto')) {
 
 		$request->addResult('actions', $actions);
+
+	} elsif ($args->{'details'}) {
+
+		$request->addResult('updates', $actions);
 
 	} else {
 

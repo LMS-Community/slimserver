@@ -244,10 +244,7 @@ sub checkForUpdates {
 
 	$request->addParam(args => {
 		type => 'plugin',
-		targetPlat => Slim::Utils::OSDetect::OS(),
-		targetVers => $::VERSION,
-		current    => $current,
-		lang       => $Slim::Utils::Strings::currentLang,
+		current => $current,
 	});
 
 	for my $plugin (keys %$plugins) {

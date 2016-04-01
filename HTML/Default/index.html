@@ -188,11 +188,9 @@
 
 					[% IF newVersion %]
 						<span id="newVersion">
-							<img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/> [% newVersion %]
+							<img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/> <a href="[% webroot %]updateinfo.html" target="browser">[% "SERVER_UPDATE_AVAILABLE_SHORT" | string | html %]</a>
 						</span>
-					[% END %]
-
-					[% IF newPlugins %]
+					[% ELSIF newPlugins %]
 						<span id="newPlugins">
 							<img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/> <a href="[% webroot %]settings/index.html?activePage=SETUP_PLUGINS" target="sc_settings">[% newPlugins %]</a>
 						</span>

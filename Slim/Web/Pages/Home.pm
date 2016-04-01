@@ -32,6 +32,7 @@ sub init {
 	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, \&switchServer);
+	Slim::Web::Pages->addPageFunction(qr/^updateinfo\.htm/, \&updateInfo);
 	
 	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') }) if !main::NOMYSB;
 
@@ -197,6 +198,44 @@ sub home {
 	$cache->set($checksum, $page, 3600) if $checksum && !main::NOBROWSECACHE;
 	
 	return $page;
+}
+
+sub updateInfo {
+	my ($client, $params, $callback) = @_;
+
+	my $current = {};
+
+	my $request = Slim::Control::Request->new(undef, ['appsquery']);
+
+	$request->addParam(args => {
+		type    => 'plugin',
+		details => 1,
+		current => $current,
+	});
+	
+	$params->{pt} = {
+		request => $request,
+	};
+
+	$request->callbackParameters(\&_updateInfoCB, [ @_ ]);
+	$request->execute();
+
+	return;
+}
+
+sub _updateInfoCB {
+	my ($client, $params, $callback, $httpClient, $response) = @_;
+	
+	my $request = $params->{pt}->{request};
+	
+	$params->{'newVersion'} = $::newVersion;
+	$params->{'newPlugins'} = $request && [ map { $_->{info} } values %{$request->getResult('updates')} ];
+	
+	if ($params->{installerFile}) {
+		$params->{'newVersion'} = ${Slim::Web::HTTP::filltemplatefile('html/docs/linux-update.html', $params)};
+	}
+	
+	$callback->($client, $params, Slim::Web::HTTP::filltemplatefile('update_software.html', $params), $httpClient, $response);
 }
 
 sub switchServer {

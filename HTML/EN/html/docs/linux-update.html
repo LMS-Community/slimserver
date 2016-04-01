@@ -1,5 +1,3 @@
-[% pagetitle = 'How to update your Logitech Media Server on your Linux system' %]
-[% PROCESS helpheader.html %]
 [% extension = installerFile.match('\.(rpm|deb)$');
 IF extension;
 	distro = extension.0;
@@ -22,5 +20,3 @@ These currently are available for .rpm and .deb based systems.<p>
 	<li>Run the following command to execute the installer</li>
 	<li><code>sudo [% distro == 'rpm' ? 'rpm -uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
 </ul>
-
-[% PROCESS helpfooter.html %]

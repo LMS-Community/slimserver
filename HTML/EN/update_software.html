@@ -1,0 +1,151 @@
+[% pagetitle = 'SETUP_CHECKVERSION' FILTER string %]
+[% pwd_list = BLOCK %]
+	<a href="updateinfo.html?player=[% playerURI %]">[% pagetitle %]</a>
+[% END %]
+[% extJsScripts = BLOCK %]
+	<script type="text/javascript">
+		Ext.onReady(function(){
+			Ext.ns('Ext.ux');
+
+			Ext.ux.JSONP = (function(){
+				var _queue = [],
+					_current = null,
+					_nextRequest = function() {
+						_current = null;
+						if(_queue.length) {
+							_current = _queue.shift();
+							_current.script.src = _current.url + '?' + _current.params;
+							document.getElementsByTagName('head')[0].appendChild(_current.script);
+						}
+					};
+
+				return {
+					request: function(url, o) {
+						if(!url) {
+							return;
+						}
+						var me = this;
+
+						o.params = o.params || {};
+						if(o.callbackKey) {
+							o.params[o.callbackKey] = 'Ext.ux.JSONP.callback';
+						}
+						var params = Ext.urlEncode(o.params);
+
+						var script = document.createElement('script');
+						script.type = 'text/javascript';
+
+						if(o.isRawJSON) {
+							if(Ext.isIE) {
+								Ext.fly(script).on('readystatechange', function() {
+									if(script.readyState == 'complete') {
+										var data = script.innerHTML;
+										if(data.length) {
+											me.callback(Ext.decode(data));
+										}
+									}
+								});
+							}
+							else {
+								Ext.fly(script).on('load', function() {
+									var data = script.innerHTML;
+									if(data.length) {
+										me.callback(Ext.decode(data));
+									}
+								});
+							}
+						}
+
+						_queue.push({
+							url: url,
+							script: script,
+							callback: o.callback || function(){},
+							scope: o.scope || window,
+							params: params || null
+						});
+
+						if(!_current) {
+							_nextRequest();
+						}
+					},
+
+					callback: function(json) {
+						_current.callback.apply(_current.scope, [json]);
+						Ext.fly(_current.script).removeAllListeners();
+						document.getElementsByTagName('head')[0].removeChild(_current.script);
+						_nextRequest();
+					}
+				}
+			})();
+
+			Ext.ux.JSONP.request("https://api.github.com/repos/Logitech/slimserver/commits", {
+				params: {
+					per_page: 5,
+					// TODO: make this dynamic
+					sha: 'public/7.9'
+				},
+				callbackKey: "callback",
+				callback: function(c) {
+					var el = Ext.get('changelogWrapper');
+					
+					if (!el)
+						return;
+					
+					var xt = new Ext.XTemplate(
+							'<tpl if="this.previousDate != date">',
+								'<dt>{[this.previousDate = values.date]}</dt>',
+							'</tpl>',
+							'<dd>&bull; <a href="{url}" target="_blank">{msg}</a></dd>',
+							{
+								previousDate: ''
+							}
+					);
+					xt.compile();
+
+					Ext.each(c.data, function(item, index, all){
+						var dt = Date.parseDate(item.commit.committer.date, "c");
+						xt.append('changelog', {
+							msg: item.commit.message,
+							author: item.committer.login,
+							date: dt.format("Y-m-d"),
+							url: item.html_url
+						});
+					});
+					
+					el.setDisplayed('block');
+				}
+			});
+	});
+	</script>
+[% END %]
+[% PROCESS pageheader.html %]
+	<div class="helpsection"> 
+	
+	[% IF newVersion %]
+		<h4>[% "CONTROLPANEL_UPDATE_AVAILABLE" | string %]</h4>
+	
+		<dt>[% newVersion %]</dt>
+	
+		<div id="changelogWrapper" style="display:none; margin-top: 15px;" class="helpsection">
+			<!-- TODO: make this URL dynamic -->
+			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/Logitech/slimserver/commits/public/7.9") %]</h4>
+			<dl id="changelog"></dl>
+		</div>
+	[% ELSE %]
+		<h4>[% "CONTROLPANEL_NO_UPDATE_AVAILABLE" | string | html %]</h4>
+	[% END %]
+	
+	<div>&nbsp;</div>
+	
+	[% IF newPlugins && newPlugins.keys.count %]
+		<h4>[% "PLUGINS_UPDATES_AVAILABLE" | string %]</h4>
+		<dl>
+			[% FOREACH plugin = newPlugins %]
+			<dt>[% plugin.title _ " (" _ plugin.version _ ")" -%]</dt>
+			[%- IF plugin.changes %]<dd>[% plugin.changes %]</dd>[% END %]
+			[% END %]
+		</dl>
+	[% END %]
+	
+	</div>
+[% PROCESS pagefooter.html %]
