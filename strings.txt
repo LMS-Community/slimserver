@@ -201,7 +201,7 @@ DEFAULT_SKIN
 	JA	スタンダード
 	NL	Standaard
 	NO	Standard
-	PL	Domyślne
+	PL	Domyślny
 	RU	По умолчанию
 	SV	Standard
 	ZH_CN	缺省
@@ -986,7 +986,7 @@ ABOUT
 	JA	Logitech Media Server V.%s, 製作:
 	NL	Logitech Media Server V.%s, geschreven door:
 	NO	Logitech Media Server V.%s, skrevet av:
-	PL	Logitech Media Server V.%s, oprogramowanie przez: 
+	PL	Logitech Media Server V.%s, stworzony przez:
 	PT	Logitech Media Server v.%s, escrito por
 	SV	Logitech Media Server v.%s, skriven av:
 	ZH_CN	Logitech Media Server V.%s, 制作:
@@ -1023,7 +1023,7 @@ ZAPPING_FROM_PLAYLIST
 	JA	プレイ リストから消去:
 	NL	Verplaatsen naar gezapte liedjes playlist:
 	NO	Flytter til spillelisten «Zappede sanger»:
-	PL	Przenoszenie do listy odtwarzania Utwory połączone:
+	PL	Przenoszenie do schowka:
 	PT	Mover para a playlist rápida de músicas
 	RU	В плей-лист "Стертые песни":
 	SV	Flyttar till spellistan med ignorerade låtar.
@@ -1042,7 +1042,7 @@ ZAPPED_SONGS
 	JA	消去された曲
 	NL	Gezapte liedjes
 	NO	Zappede sanger
-	PL	Utwory połączone
+	PL	Schowek
 	PT	Playlist Rápida de Músicas
 	RU	Стертые песни
 	SV	Ignorerade låtar
@@ -1447,7 +1447,7 @@ SLEEPING_IN
 	JA	スリープ
 	NL	Sluimermodus in
 	NO	Hvilemodus om
-	PL	Usypianie
+	PL	Uśpienie za
 	PT	Inactivo dentro de
 	RU	Спящий режим после
 	SV	Viloläge aktiveras om
@@ -1645,7 +1645,7 @@ ALARM_ALARM
 	IT	Sveglia
 	NL	Wekker
 	NO	Alarm
-	PL	Alarm
+	PL	Budzik
 	RU	Будильник
 	SV	Alarm
 
@@ -1969,7 +1969,7 @@ ALARM_FADE
 	IT	Sveglia graduale
 	NL	Weksignaal infaden
 	NO	Skru vekkerklokken på gradvis
-	PL	Stopniowo zwiększaj głośność alarmów
+	PL	Stopniowo zwiększaj głośność
 	RU	Усиление сигналов будильников
 	SV	Tona in alarm
 	ZH_CN	闹钟缓慢切入
@@ -2064,7 +2064,7 @@ ALARM_SNOOZE
 	IT	Snooze sveglia in corso...
 	NL	Weksignaal wordt gesnoozed...
 	NO	Slumrer vekkerklokken ...
-	PL	Odkładanie alarmu...
+	PL	Drzemka...
 	RU	В режим повтора сигнала...
 	SV	Aktiverar snoozefunktion...
 
@@ -2443,7 +2443,7 @@ SQUEEZEBOX2
 	IT	Squeezebox2/v3
 	NL	Squeezebox2/v3
 	NO	Squeezebox2/v3
-	PL	Squeezebox2/wer. 3
+	PL	Squeezebox2/v3
 	RU	Squeezebox2/v3
 	SV	Squeezebox 2/v3
 
@@ -3126,7 +3126,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
 	NO	Feil: Kan ikke koble til for å hente spilleliste
-	PL	Błąd: nie można połączyć się aby odzyskać listę odtwarzania
+	PL	Błąd: nie można połączyć się, aby odzyskać listę odtwarzania
 	SV	Fel: Kan inte ansluta för att hämta spellista
 	ZH_CN	失误：无法取得播放表
 
@@ -3268,7 +3268,7 @@ XML_GET_FAILED
 	IT	Analisi non riuscita
 	NL	Kan niet parseren
 	NO	Tolking mislyktes
-	PL	Analiza nie powiodła się
+	PL	Błąd przetwarzania
 	RU	Сбой анализа
 	SV	Det gick inte att tolka
 	ZH_CN	解析失误
@@ -3353,7 +3353,7 @@ XML_ENCLOSURE
 	IT	Allegato
 	NL	Bijlage
 	NO	Vedlegg
-	PL	Obudowa
+	PL	Załącznik
 	RU	Вложение
 	SV	Kabinett
 	ZH_CN	框架
@@ -3370,7 +3370,7 @@ XML_AUDIO_ENCLOSURES
 	IT	Allegati audio
 	NL	Audiobijlagen
 	NO	Lydvedlegg
-	PL	Obudowy audio
+	PL	Załączniki audio
 	RU	Аудиовложения
 	SV	Högtalarkabinett
 	ZH_CN	音频框架
@@ -3438,7 +3438,7 @@ XML_EXPLICIT
 	IT	Esplicito
 	NL	Expliciet
 	NO	Støtende
-	PL	Jawne
+	PL	Bez cenzury
 	RU	Непристойный
 	SV	Explicit
 	ZH_CN	说明
@@ -3605,7 +3605,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、BITRATE（ビットレート)、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
 	NL	Dit zijn de indelingen die geselecteerd kunnen worden, zowel in de webinterface als in de instellingen van je muzieksysteem. Als je een indeling wilt verwijderen, maak je het tekstvakje leeg. Wil je een indeling toevoegen, dan zet je het in een leeg vakje. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als int), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br> De huidige selectie is de indeling die op de webpagina's gebruikt zal worden.
 	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og på spillerne. Tøm boksen for å fjerne et format. Du legger til et nytt format ved å oppgi det i en tom boks. Tilgjengelige dataelementer er CT (innholdstype), TITLE (tittel), GENRE (sjanger), TRACKNUM (spornummer), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totalt antall sekunder, oppgitt som et heltall), DURATION (minutter og sekunder), BITRATE, LONGDATE (dagens dato i langt format), SHORTDATE (dagens dato i kort format) og CURRTIME (klokkeslett nå). Elementer kan separeres med ethvert tegn, eller ingen. Skilletegnet vises bare om dataelementet finnes.<br>Det valgte formatet er det som blir brukt på nettsidene.
-	PL	Są to formaty dostępne do wyboru w odtwarzaczu. Aby wprowadzić nowy format dla selekcji na odtwarzaczu, wybierz jeden z listy rozwijanej i zapisz ustawienie.<br>Aktualny wybór to format, który będzie używany na odtwarzaczu.<br>Jeżeli chcesz dodać nowy format niedostępny w liscie rozwijanej, idź do Ustalenie Serwera > Interfejs > Format Tytułu  
+	PL	Są to formaty dostępne do wyboru w odtwarzaczu. Aby wprowadzić nowy format do wyboru na odtwarzaczu, wybierz jeden z listy rozwijanej i zapisz ustawienia.<br>Aktualny wybór to format, który będzie używany na odtwarzaczu.<br>Jeżeli chcesz dodać nowy format, niedostępny w liscie rozwijanej, przejdź do: Ustawienia serwera > Interfejs > Format tytułu
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
 	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
@@ -3624,7 +3624,7 @@ SETUP_GROUP_MENUITEMS
 	JA	ホーム メニュー カスタマイズ
 	NL	Hoofdmenu
 	NO	Tilpass hovedmenyen
-	PL	Dostosowywanie Strony Głównej
+	PL	Dostosowanie głównego menu
 	PT	Personalização do Menu Inicial
 	SV	Konfigurering av huvudmenyn
 	ZH_CN	主页菜单
@@ -5466,14 +5466,14 @@ SETUP_REPLAYGAIN_REMOTE
 	EN	Default Adjustment for Remote Streams
 	FR	Ajustement du volume pour le streaming Internet
 	NL	Aanpassing voor internetstreams
-	PL	Domyślne regulowanie strumienia zdalnego
+	PL	Domyślna wartość dla zdalnych strumieni
 	 	
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
 	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
 	NL	Online streamingdiensten bieden meestal geen vorm van volumenormalisering aan. Als je deze internetstreams mixt met locale bestanden, kan dit leiden tot ongewenste veranderingen in het volume. Bepaal een standaardwaarde die bij internetstreams moet worden gebruikt.
-	PL	Zdalne strumienie z serwisów często nie pozwalają na regulację. Jeżeli odtwarzasz utwór ze zdalnego strumienia zmieszany z lokalnymi utworami, to może to doprowadzić do nie korzystnych zmian głośności. Zapisz domyślną wartość która będzie użyta dla każdego zdalnego strumienia który nie ma własnej wartości głośności.
+	PL	Zdalne strumienie często nie przesyłają żadnych danych, które pozwalałyby na automatyczne dopasowanie głośności. Odtwarzanie utworów ze zdalnych strumieni wymieszanych z lokalnymi utworami może doprowadzić do niepożądanych zmian głośności. Ustal domyślną wartość, która będzie użyta dla każdego zdalnego strumienia, który nie określa własnego poziomu głośności.
 
 REPLAYGAIN_DISABLED
 	CS	Žádné nastavení hlasitosti
@@ -7734,7 +7734,7 @@ SETUP_NOROLEFILTER
 	EN	Filter Contributor Roles at the Album & Track Level
 	FR	Portée du filtre sur le rôle de l'artiste
 	NL	Rollen van uitvoerenden filteren op Album- en Nummerniveau
-	PL	Filtrowanie ról współpracowniczych na poziome albumu & utworu
+	PL	Filtrowanie albumów i utworów według ról kontrybutorów
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
@@ -7748,14 +7748,14 @@ SETUP_NOROLEFILTER_0
 	EN	Only show tracks or albums matching the selected role for an artist
 	FR	Afficher uniquement les albums et les morceaux correspondant au rôle de l'artiste
 	NL	Laat alleen nummers zien die overeenkomen met de geselecteerde rol van de artiest
-	PL	Pokaż albumy i utwory tylko zgodne z wybraną rolą wykonawcy
+	PL	Pokaż wyłącznie te albumy i utwory, które są zgodne z wybraną rolą
 
 SETUP_NOROLEFILTER_DESC
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
 	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER enz.).
-	PL	Filtrowanie może być wykonane podczas przeglądania wykonawców dla pokazania albumów & utworów które zgadzają się z wybranymi rolami (np. ALBUMARTIST, COMPOSER,itp).
+	PL	Filtrowanie może zostać włączone podczas przeglądania listy wykonawców, aby wyświetlić tylko te albumy i utwory, które są zgodne z wybraną rolą kontrybutora (np. ALBUMARTIST, COMPOSER itp.).
 
 SETUP_COMPOSERINARTISTS
 	CS	Skladatel, Skupina a Orchestr v Interpretech
@@ -7770,7 +7770,7 @@ SETUP_COMPOSERINARTISTS
 	JA	「アーチスト」に、作曲家、バンド、オーケストラ
 	NL	Componist, groep en orkest in artiesten
 	NO	Komponist, band og orkester i Artister
-	PL	Kompozytor, zespół i orkiestra z wykonawcami
+	PL	Kompozytor, zespół i orkiestra jako wykonawcy
 	PT	Compositor, Banda e Orquestra em Artistas
 	RU	Поле "Исполнители": композитор, группа и оркестр
 	SV	Kompositör, band och orkester i Artister
@@ -7789,7 +7789,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	JA	作曲家、バンド、オーケストラの情報は、ブラウズ・検索の時にアーチスト情報として認識させることができます。
 	NL	Je kunt informatie over componisten, groepen en orkesten in de lijst van artiesten opnemen, zodat je erin kunt bladeren en zoeken.
 	NO	Sanginformasjon om komponist, gruppe og orkester kan inkluderes i artistlisten når du blar og søker.
-	PL	W celu przeglądania i wyszukiwania do listy wykonawców można dodać informacje o kompozytorze, zespołach i orkiestrach związane z utworem.
+	PL	Wyświetlaj kompozytorów oraz nazwy zespołów i orkiestr na liście wykonawców.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
 	RU	Информацию о композиторах, группах и оркестрах для данной песни можно включить в список исполнителей для просмотра и поиска.
 	SV	Låtinformation om kompositörer, band och orkestrar kan inkluderas i artistlistan för bläddring eller sökning.
@@ -7827,7 +7827,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 	JA	サーバーソフトウェアは、最後に再生していたプレイリストを記憶しておくことができます。
 	NL	Logitech Media Server kan de laatste playlist voor 'Speelt nu' onthouden en deze laden wanneer de server start.
 	NO	Logitech Media Server kan huske siste spilleliste som var i Spilles nå når programmet starter.
-	PL	Program Logitech Media Server może wyświetlić ostanie listy odtwarzania utworów w kategorii Teraz odtwarzane po uruchomieniu aplikacji.
+	PL	Program Logitech Media Server może przywrócić poprzednią listę odtwarzania "Teraz odtwarzane" podczas uruchomienia aplikacji.
 	PT	O servidor pode manter a playlist de músicas actual quando é re-iniciado.
 	RU	Logitech Media Server может запоминать последний плей-лист песен, воспроизводившихся при запуске приложения.
 	SV	Logitech Media Server kan komma ihåg den senast spelade aktuella spellistan tills nästa gång programmet körs.
@@ -7903,7 +7903,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	JA	サーバーソフトウェアは、リピート時に、再度ランダムをかけるよう選択することができます。
 	NL	Logitech Media Server kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
 	NO	Logitech Media Server kan omrokkere spillelister på nytt etter hver gjennomspilling av en liste.
-	PL	Program Logitech Media Server może w razie potrzeby po każdym pełnym przejściu ponownie sortować listy posortowane losowo.
+	PL	Program Logitech Media Server może, w razie potrzeby, zmienić kolejność utworów w liście odtwarzanej losowo, każdorazowo po odtworzeniu wszystkich utworów z listy.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
 	RU	Logitech Media Server может повторно перемешивать плей-листы после воспроизведения всех песен списка.
 	SV	Logitech Media Server kan blanda om blandade spellistor varje gång hela listan gåtts igenom.
@@ -7979,7 +7979,7 @@ SETUP_PLAYTRACKALBUM_1
 	JA	同じアルバム、またはフォルダーのその他の曲を再生する
 	NL	Andere liedjes van album/uit map afspelen
 	NO	Spill andre sanger i albumet eller katalogen
-	PL	Odtwórz inne utwory w albumie lub katalogu
+	PL	Odtwórz inne utwory z albumu lub katalogu
 	PT	Tocar outras músicas do álbum ou da mesma directoria
 	RU	Воспроизвести другие песни в альбоме или каталоге
 	SV	Spela andra låtar från albumet eller mappen
@@ -8054,7 +8054,7 @@ SETUP_IGNOREDARTICLES_DESC
 	IT	Elenco di articoli ("the", "gli", "i", "le") anteposti ai nomi di artisti, brani o album, da ignorare nell'ordinamento. Inserire i diversi articoli separati da spazi o lasciare vuoto l'elenco se si desidera disattivare questa funzionalità. Se si modifica questa impostazione, viene ripetuta l'analisi della libreria musicale.
 	NL	Een lijst met lidwoorden (de, het, een, the, les, los, enz.) die voor de naam van een artiest, liedje of album staan en bij het sorteren genegeerd moeten worden. Scheid meerdere lidwoorden door spaties, of laat de lijst leeg om deze functie uit te schakelen. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Artikler («the», «les», «los» osv.) som skal overses på begynnelsen av navnet til en artist, et album eller en sang ved sortering. Skill flere artikler med mellomrom eller la feltet stå tomt for å deaktivere funksjonen. Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
-	PL	Lista przedimków („the”, „les”, „los” itp.) ignorowanych na początku nazwy wykonawcy, utworu lub albumu podczas sortowania. Oddziel przedimki spacjami lub pozostaw pole puste, aby wyłączyć tę funkcję. Zmiana tego ustawienia spowoduje ponowne przeszukiwanie biblioteki muzyki.
+	PL	Lista przedimków („the”, „les”, „los” itp.) ignorowanych na początku nazwy wykonawcy, utworu lub albumu podczas sortowania. Oddziel przedimki spacjami lub pozostaw pole puste, aby wyłączyć tę funkcję. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Список артиклей (the, les, los и др.), игнорируемых в начале имени исполнителя, названия песни или альбома при их сортировке. Введите артикли через пробел или не заполняйте этот список, чтобы отключить данное поведение. При изменении этой настройки медиатека будет пересканирована.
 	SV	En lista med artiklar (the, les, los, o.s.v.) som ska ignoreras när de kommer först i namn på artister, låtar och album. Avgränsa artiklarna med mellanslag eller lämna fältet tomt om du vill avaktivera funktionen. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
@@ -8085,7 +8085,7 @@ SETUP_SPLITLIST_DESC
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Logitech Media Server kan hente flere artister, albumtitler og sjangere fra etikettene i musikkfilene dine. Hvis den finner noen av ordene eller tegnene nedenfor i etikettene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artistetiketten «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
-	PL	Program Logitech Media Server może wyodrębnić wykonawców, tytuły albumów i gatunki ze znaczników plików muzycznych. Jeżeli program Logitech Media Server znajdzie poniższe słowa lub znaki w znacznikach, utworzy listy dla każdego elementu. Na przykład umieszczenie średnika na liście poniżej, spowoduje, że utwór ze znacznikiem wykonawcy „J. S. Bach;Michael Tilson Thomas” pojawi się w obszarze wykonawców dla „J. S. Bach” i „Michael Tilson Thomas”. Zmiana tego ustawienia spowoduje ponowne przeszukiwanie biblioteki muzyki.
+	PL	Program Logitech Media Server może wyodrębnić wykonawców, tytuły albumów i gatunki ze znaczników plików muzycznych. Jeżeli program Logitech Media Server znajdzie poniższe słowa lub znaki w znacznikach, utworzy listy dla każdego elementu. Na przykład umieszczenie średnika na liście poniżej, spowoduje, że utwór ze znacznikiem wykonawcy „J. S. Bach;Michael Tilson Thomas” pojawi się w obszarze wykonawców dla „J. S. Bach” i „Michael Tilson Thomas”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Logitech Media Server может извлекать из тегов музыкальных файлов имена исполнителей, названия альбомов и жанры, даже если их несколько. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей и под именем "И. С. Бах", и под именем "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
 	SV	Logitech Media Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
@@ -8100,7 +8100,7 @@ SETUP_ARTISTS_BROWSE_MODES
 	IT	Sfoglia artisti
 	NL	Artiesten bekijken
 	NO	Bla i artister
-	PL	Przeglądaj wykonawców
+	PL	Przeglądanie wykonawców
 	RU	Просмотр исполнителей
 	SV	Bläddra efter artister
 
@@ -8109,22 +8109,21 @@ SETUP_ARTISTS_BROWSE_MODES_DESC
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand let's you define which contributor roles should be part of the Artists menu.
 	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
 	NL	Kies of je een enkele, aan te passen lijst met artiesten wilt, of twee lijsten voor Albumartiesten en Alle Artiesten. Albumartiesten is een lijst waar de albumartiest de enige artiest op het album is, of is het de artiest die in de 'ALBUMARTIST tag' vermeld staat. Alle Artiesten is een lijst met alle artiesten die in een tag voorkomen met een uitvoerende rol (ARTIST, COMPOSER, enz.). Daarentegen kun je in de enkele, aan te passen lijst met artiesten aangeven welke uitvoerende rollen in de lijst moeten worden opgenomen.
-	PL	Wybierz, czy chcesz korzystać z jednej, konfiguralnej listy wykonawców, czy z dwóch list dla Wykonawcy Albumu i Wszystkich Wykonawców. Wykonawcy Albumu, jest listą gdzie Wykonawca Albumu jest jedynym wykonawcą na albumie albo jest wykonawcą okreslonym w znaczniku ALBUMARTIST. Wszyscy Wykonawcy, jest listą każdego wykonawcy który pojawia się w znaczeniu roli współpracownika (wykonawca, kompozytor itp. ). Z kolei pojedyńcza, konfiguralna lista wykonawców, pozwala okreslić jakie role powinne być częścią menu wykonawców.
-	
+	PL	Wybierz, czy chcesz korzystać z jednej, konfigurowalnej listy wykonawców, czy z dwóch list: "Wykonawcy albumów" oraz "Wszyscy wykonawcy". Na liście "Wykonawcy albumów" pojawią się wyłącznie solowi wykonawcy albumów, bądź wykonawcy podani w znaczniku ALBUMARTIST. Na liście "Wszyscy wykonawcy" pojawią się wszyscy artyści podani w znacznikach określających role kontrybutorów (ARTIST, COMPOSER itp.). Z kolei pojedyncza, konfigurowalna lista wykonawców pozwala na określenie, które role kontrybutorów powinny być w niej zawarte.
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
 	FR	Utilisation d'une seule liste configurable d'artistes
 	NL	Gebruik een aan te passen lijst met artiesten
-	PL	Wybierz jedną, konfiguralną listę wykonawców 
+	PL	Jedna, konfigurowalna lista wykonawców
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
 	FR	Utilisation de listes distinctes Artistes des Albums et tous les Artistes
 	NL	Gebruik aparte lijsten voor Albumartiesten en Alle Artiesten
-	PL	Wybierz dwie osobne listy dla Wykonawcy Albumu i Wszystkich Wykonawców
+	PL	Dwie osobne listy: "Wykonawcy albumów" oraz "Wszyscy wykonawcy"
 
 SETUP_BROWSEAGELIMIT
 	CS	Omezení nové hudby
@@ -8164,35 +8163,35 @@ SETUP_SCAN_ON_PREF_CHANGE
 	EN	Trigger Scan on Preference Changes
 	FR	Lancer l'analyse après modification des préférences
 	NL	Start scan bij voorkeurswijzigingen
-	PL	Wystartuj przeszukiwanie na zmianie opcji
+	PL	Uruchom przeszukiwanie biblioteki po zmianie ustawień
 	
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
 	FR	Certains changements ont besoin d'effacer la bibliothèque et de tout analyser pour prendre effet. Cette opération peut être déclenchée automatiquement si vous le souhaitez. Attention, si vous modifiez plusieurs préférences à la suite, autant d'analyses vont être enchainées.
 	NL	Sommige voorkeuren vragen om het volledig wissen van je muziekcollectie en een herscan. Deze scan kan automatisch worden gestart als je dat wilt. Maar het tegelijkertijd aanpassen van verschillende voorkeuren kan leiden tot meerdere scans die in een wachtrij worden geplaatst.
-	PL	Żeby zaczęły zobowiązywać, niektóre opcje wymagają pełnego oczyszczenia i ponownego przeszukania twojej medialnej biblioteki. Jeżeli chcesz, to przeszukiwanie może wystartowac automatycznie. Jednak,  jeżeli zmienisz wiele opcji na raz, to może spowodować ułożenie w kolejce wielokrotnych przeszukiwań.
+	PL	Niektóre ustawienia wymagają ponownego przeszukania całej Twojej biblioteki multimedialnej do poprawnego działania. Ten proces może być uruchamiany automatycznie, lecz może spowodować zakolejkowanie wielokrotnego przeszukiwania biblioteki w przypadku zmiany kilku ustawień naraz.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
 	FR	Relancer automatiquement l'analyse
 	NL	Start scan automatisch
-	PL	Wystartuj przeszukiwanie automatycznie
+	PL	Automatycznie uruchom przeszukiwanie
 
 SETUP_SCAN_ON_PREF_CHANGE_OFF
 	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
 	EN	Prompt to scan, but don't trigger it automatically
 	FR	Demander avant de lancer l'analyse
 	NL	Vraag om te scannen, maar start het niet automatisch
-	PL	Spytaj się o przeszukiwanie, ale nie wystartuj automatycznie
+	PL	Spytaj się, czy uruchomić przeszukiwanie
 
 SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	DE	Einige Einstellungsänderungen erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
 	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
 	NL	Sommige voorkeurswijzigingen vragen om een herscan van je collectie voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
-	PL	Żeby zobowiązywać, niektóre opcje wymagają przeszukiwanie twojej biblioteki medialnej. <a href="%s">Przyciśnij tutaj do wystartowania przeszukania.</a>
+	PL	Niektóre ustawienia wymagają ponownego przeszukania biblioteki multimedialnej. <a href="%s">Kliknij tutaj, aby uruchomić przeszukiwanie.</a>
 
 SETUP_DBHIGHMEM
 	CS	Konfigurovat paměť databáze
@@ -8235,7 +8234,7 @@ SETUP_DBHIGHMEM_NORMAL
 	IT	Normale
 	NL	Normaal
 	NO	Normal
-	PL	Zwykły
+	PL	Normalna
 	RU	Обычный
 	SV	Normal
 
@@ -8250,7 +8249,7 @@ SETUP_DBHIGHMEM_HIGH
 	IT	Alta (opzione consigliata per computer con almeno 1 GB di RAM)
 	NL	Hoog (aanbevolen voor computers met 1+ GB RAM)
 	NO	Høy (anbefales for maskiner med 1 GB RAM eller mer)
-	PL	Wysoka (zalecana do komputerów mających ponad 1 GB pamięci RAM)
+	PL	Wysoka (zalecana dla komputerów wyposażonych w co najmniej 1 GB RAM)
 	RU	Высокое (рекомендовано для компьютеров с объемом ОЗУ не менее 1 Гб)
 	SV	Hög (rekommenderas för datorer med mer än 1 GB RAM)
 
@@ -8259,7 +8258,7 @@ SETUP_DBHIGHMEM_MAX
 	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
 	FR	Maximum (recommandé pour les bibliothèques de plus de 50 000 titres et les systèmes avec au moins 2 Go de RAM)
 	NL	Maximaal (aanbevolen voor collecties met meer dan 50.000 nummers en een systeem met 2+ GB RAM)
-	PL	Maksymalne (zalecane dla bibliotek z ponad 50,000 utworów i komputerów z ponad 2GB RAM)
+	PL	Maksymalna (zalecana dla bibliotek zawierających ponad 50.000 utworów i komputerów wyposażonych w co najmniej 2 GB RAM)
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -9098,7 +9097,7 @@ SETUP_GROUPDISCS_DESC
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
 	NL	Je kunt opgeven of sets met meerdere schijven als één album (met één naam) behandeld moeten worden, of als meerdere albums, elk met een unieke naam per cd, zoals 'Albumtitel (Schijf 2 van 3)'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Du kan angi om flere plater skal behandles som ett album (med ett navn), eller som flere separate album der hver plate har et eget navn, for eksempel «Albumtittel (plate 2 av 3)». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
-	PL	Możliwe jest określenie, czy zestawy kilku dysków są traktowane jako pojedynczy album (z jedną nazwą) czy jako kilka albumów, gdzie każdy dysk ma unikatową nazwę, na przykład „Tytuł albumu (dysk 2 z 3)”. Zmiana tego ustawienia spowoduje ponowne przeszukiwanie biblioteki muzyki.
+	PL	Możliwe jest określenie, czy zestawy kilku dysków są traktowane jako pojedynczy album (z jedną nazwą) czy jako kilka albumów, gdzie każdy dysk ma unikatową nazwę, na przykład „Tytuł albumu (dysk 2 z 3)”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Можно указать, рассматривать ли набор из нескольких дисков как единый альбом (с единым именем) или как несколько альбомов, у каждого из которых свое уникальное имя для каждого из дисков, например "Название альбома (диск 2 из 3)". При изменении этой настройки будет запущено повторное сканирование медиатеки.
 	SV	Du kan ange om de ingående skivorna i en box ska behandlas som ett album eller flera separata album. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 	ZH_CN	您可以指定由多个光碟组成的合集是否视为一个单一的乐谱帖（以一个名字）或保持为个别单独的专辑。例如“专辑标题（光碟1）”。更动此设置Logitech Media Server将开始重新扫描您的音乐库。
@@ -9270,7 +9269,7 @@ SETUP_SN_NEED_ACCOUNT
 	IT	Crea un nuovo account mysqueezebox.com
 	NL	Ik moet een mysqueezebox.com-account maken
 	NO	Jeg må opprette en mysqueezebox.com-konto
-	PL	Musze utworzyć konto usługi mysqueezebox.com
+	PL	Muszę utworzyć konto usługi mysqueezebox.com
 	RU	Мне нужно создать учетную запись mysqueezebox.com
 	SV	Jag behöver ett mysqueezebox.com-konto
 
@@ -9615,7 +9614,7 @@ SETUP_WIZARD_PREVIOUS
 	IT	Indietro
 	NL	Vorige
 	NO	Forrige
-	PL	Poprzedni
+	PL	Wróć
 	RU	Предыдущий
 	SV	Föregående
 
@@ -10102,7 +10101,7 @@ ON
 	JA	オン
 	NL	aan
 	NO	på
-	PL	na
+	PL	wł.
 	PT	sim
 	RU	Вкл.
 	SV	på
@@ -10495,7 +10494,7 @@ VOLUME_SOFTER
 	JA	ソフト
 	NL	Zachter
 	NO	Lavere
-	PL	Słabiej
+	PL	Ciszej
 	PT	Reduzir
 	RU	Тише
 	SV	Lägre
@@ -10672,7 +10671,7 @@ LARGE
 	JA	大
 	NL	Groot
 	NO	Stor
-	PL	Duże
+	PL	Duży
 	PT	Grande
 	RU	Крупный
 	SV	Stor
@@ -10691,7 +10690,7 @@ SMALL
 	JA	小
 	NL	Klein
 	NO	Liten
-	PL	Małe
+	PL	Mały
 	PT	Pequeno
 	RU	Маленький
 	SV	Liten
@@ -10710,7 +10709,7 @@ MEDIUM
 	JA	中
 	NL	Gemiddeld
 	NO	Middels
-	PL	Średnie
+	PL	Średni
 	RU	Средний
 	SV	Medel
 	ZH_CN	中
@@ -10728,7 +10727,7 @@ HUGE
 	JA	特大
 	NL	Enorm
 	NO	Enorm
-	PL	Duże
+	PL	Bardzo duży
 	RU	Очень большой
 	SV	Enorm
 	ZH_CN	特大
@@ -10809,7 +10808,7 @@ FULL
 	IT	Spesso
 	NL	Vol
 	NO	Fullt
-	PL	Pełne
+	PL	Pełny
 	RU	Полный
 	SV	Full
 
@@ -10858,7 +10857,7 @@ STANDARD
 	IT	Standard
 	NL	Standaard
 	NO	Standard
-	PL	Domyślne
+	PL	Domyślny
 	RU	Стандартный
 	SV	Standard
 
@@ -10962,7 +10961,7 @@ SAVE_AS
 	JA	保存
 	NL	Opslaan
 	NO	Lagre
-	PL	Zapisz
+	PL	Zapisz jako
 	PT	Gravar
 	RU	Сохранить
 	SV	Spara
@@ -11102,7 +11101,7 @@ SAVED_THIS_PLAYLIST_AS
 	IT	Playlist salvata come:\n\n%s
 	NL	Deze playlist opslaan als:\n\n%s
 	NO	Lagret denne spillelisten som:\n\n%s
-	PL	Zapisz tę listę odtwarzania jako:\n\n%s
+	PL	Zapisano tę listę odtwarzania jako:\n\n%s
 	RU	Сохранить этот плей-лист как:\n\n%s
 	SV	Spellistan sparad som: \n\n%s
 
@@ -11811,7 +11810,7 @@ UNK
 	JA	不明
 	NL	Onbekend
 	NO	Ukjent
-	PL	Nieznane
+	PL	Nieznany
 	PT	Desconhecido
 	RU	Неизвестный
 	SV	Okänt
@@ -11933,7 +11932,7 @@ MODIFIED
 	JA	変更された
 	NL	Gewijzigd
 	NO	Endret
-	PL	Zmodyfikowane
+	PL	Zmodyfikowany
 	RU	Изменено
 	SV	Ändrat
 	ZH_CN	已更改
@@ -12006,7 +12005,7 @@ FILELENGTH
 	JA	ファイルの長さ
 	NL	Bestandslengte
 	NO	Fillengde
-	PL	Długość pliku
+	PL	Rozmiar pliku
 	PT	Tamanho Ficheiro
 	RU	Длина файла
 	SV	Fillängd
@@ -12243,7 +12242,7 @@ DRM
 	JA	このファイルはDigital Rights Managementによりロックされています
 	NL	Dit bestand is geblokkeerd door Digital Rights Management
 	NO	Denne filen er stengt med digital rettighetsadministrasjon
-	PL	Plik jest zablokowany przez mechanizm Zarządzanie prawami cyfrowymi
+	PL	Plik jest zablokowany przez mechanizm zarządzania prawami cyfrowymi (DRM)
 	RU	Этот файл заблокирован управлением цифровыми правами
 	SV	Den här filen är DRM-spärrad (Digital Rights Management).
 	ZH_CN	此文件经由数码版权管理锁定
@@ -13002,7 +13001,7 @@ BROWSE_BY_ALBUMARTIST
 	IT	Artistas album
 	NL	Albumartiesten
 	NO	Albumartister
-	PL	Wykonawca albumu
+	PL	Wykonawcy albumów
 	RU	Исполнитель альбома
 	SV	Albumartister
 
@@ -13017,7 +13016,7 @@ BROWSE_ALBUMARTISTS
 	IT	Sfoglia artistas album
 	NL	Albumartiesten bekijken
 	NO	Bla i albumartister
-	PL	Przeglądaj wykonawcę albumu
+	PL	Przeglądaj wykonawców albumów
 	RU	Просмотр Исполнитель альбома
 	SV	Bläddra efter albumartister
 
@@ -13110,7 +13109,7 @@ BROWSE_BY_ARTWORK
 	JA	アートワークをブラウズする
 	NL	Hoesafbeeldingen
 	NO	Albumomslag
-	PL	Okładka
+	PL	Okładki
 	RU	Обложка
 	SV	Albumomslag
 	ZH_CN	浏览图象
@@ -13253,7 +13252,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	IT	La cartella Musica non è disponibile durante l’analisi.
 	NL	Muziekmap is niet beschikbaar tijdens het scannen.
 	NO	Musikkmappen er ikke tilgjengelig når søk pågår.
-	PL	Folder muzyczny nie jest dostępny gdy trwa przeszukiwanie.
+	PL	Folder muzyczny nie jest dostępny, gdy trwa przeszukiwanie.
 	RU	Во время сканирования папка "Музыка" недоступна.
 	SV	Musikmappen är inte tillgänglig under sökning.
 
@@ -13355,7 +13354,7 @@ NEXT
 	JA	次
 	NL	Volgende
 	NO	Neste
-	PL	Dalej
+	PL	Następny
 	PT	Seguinte
 	RU	Следующий
 	SV	Nästa
@@ -13431,7 +13430,7 @@ LAST
 	JA	最後
 	NL	Laatste
 	NO	Siste
-	PL	Ostanie
+	PL	Ostatni
 	PT	Última
 	RU	Последний
 	SV	Sist
@@ -13461,7 +13460,7 @@ PLAYCOUNT
 	EN	Play Count
 	FR	Nombre de fois joué
 	NL	Aantal keren afgespeeld
-	PL	Ilość odtwarzania
+	PL	Ilość odtworzeń
 
 ALBUM_INFO
 	CS	Info o Albu
@@ -14158,7 +14157,7 @@ DEBUG_PLAYER_JIVE
 	IT	Supporto per i dispositivi basati su Squeezeplay
 	NL	Ondersteuning voor Squeezplay-apparaten
 	NO	Støtte for Squeezplay-komponenter
-	PL	Obsługa urządzeń opartych na oprogramowaniu Squeezplay
+	PL	Obsługa urządzeń opartych na oprogramowaniu Squeezeplay
 	RU	Поддержка устройств на основе Squeezplay
 	SV	Stöd för Squeezeplay-baserade enheter
 
@@ -15330,7 +15329,7 @@ MUTED
 	JA	ミュート
 	NL	Gedempt
 	NO	Stille
-	PL	Bez dźwięku
+	PL	Wyciszony
 	PT	Silencioso
 	RU	Без звука
 	SV	Inget ljud
@@ -15367,7 +15366,7 @@ LCMUTED
 	JA	ミュート
 	NL	gedempt
 	NO	stille
-	PL	Bez dźwięku
+	PL	wyciszony
 	PT	silencioso
 	RU	Без звука
 	SV	ljud av
@@ -15404,7 +15403,7 @@ EXAMPLE_SHORT
 	IT	es:
 	NL	bijv.
 	NO	eksempel:
-	PL	np.:
+	PL	np.
 	RU	пр:
 	SV	ex:
 
@@ -15520,14 +15519,14 @@ TEXTSEARCH
 	EN	text search
 	FR	Recherche de texte
 	NL	tekst zoeken
-	PL	Wyszukanie tekstu
+	PL	zawiera
 
 NOT_IN_TEXTSEARCH
 	DE	nicht in Textsuche
 	EN	not in text search
 	FR	pas dans la recherche de texte
 	NL	niet in zoekopdracht
-	PL	Nie jest w wyszukaniu tekstu
+	PL	nie zawiera
 
 SEARCHFOR_ARTIST
 	CS	Hledat interpreta
@@ -17098,7 +17097,7 @@ INFORMATION_BINDIRS
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
 	NL	Map hulptoepassingen
-	PL	Pomoc dla foldera aplikacji
+	PL	Folder aplikacji pomocniczych
 
 INFORMATION_ARCHITECTURE
 	CS	Architektura platformy
@@ -17411,7 +17410,7 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	IT	Sistema operativo
 	NL	Besturingssysteem
 	NO	OS
-	PL	System operacyjny
+	PL	System
 	RU	ОС
 	SV	Operativsystem
 
@@ -17635,14 +17634,14 @@ RANGE
 	EN	range
 	FR	compris entre
 	NL	bereik
-	PL	Zasięg
+	PL	zakres
 
 NOT_IN_RANGE
 	DE	nicht im Bereich
 	EN	not in range
 	FR	non compris entre
 	NL	niet binnen bereik
-	PL	poza zasięgiem
+	PL	poza zakresem
 
 # The space before the French : is there on purpose.
 
@@ -18258,7 +18257,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Logitech Media Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Logitech Media Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
-	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program Logitech Media Server. Zmiana tego ustawienia powoduje ponowne przeszukiwanie biblioteki muzyki.
+	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program Logitech Media Server. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Формат тега MP3 не предоставляет единого стандарта для задания исполнителя альбома. В некоторых средствах для редактирования тегов MP3 поле TPE2 используется для обозначения исполнителя альбома (например, в iTunes, Winamp, проигрывателе Windows Media), тогда как в других оно может иметь подразумеваемое значение "Группа/Оркестр". Выберите необходимое значение для использования в Logitech Media Server. При изменении этой настройки начнется повторное сканирование медиатеки.
 	SV	Det finns inget standardsätt att ange albumartister med mp3-taggar. I vissa mp3-taggningsverktyg används TPE2-fältet för att ange albumartist (exempelvis i iTunes, Winamp och Windows Media Player), medan det i andra verktyg används för att ange band/orkester. Välj vilket alternativ Logitech Media Server använder. Om du ändrar den här inställningen påbörjas en ny sökning av musikbiblioteket.
 
@@ -18540,7 +18539,7 @@ SETUP_LARGETEXTFONT_0
 	IT	Classico
 	NL	Klassiek
 	NO	Klassisk
-	PL	Klasyczne
+	PL	Klasyczna
 	RU	Classic
 	SV	Klassisk
 	ZH_CN	典型
@@ -18557,7 +18556,7 @@ SETUP_LARGETEXTFONT_1
 	IT	Moderno
 	NL	Modern
 	NO	Moderne
-	PL	Nowoczesne
+	PL	Nowoczesna
 	RU	Современный
 	SV	Modern
 	ZH_CN	现代
@@ -19011,7 +19010,7 @@ SETUP_PRECACHEARTWORK_ALL
 	IT	Inserire le copertine di album, foto e video nella pre-cache
 	NL	Afbeeldingen van albums, foto's en video's vooraf in cache opslaan
 	NO	Forhåndsbufre album, fotografier og videoer
-	PL	Buforuj wstępnie materiały graficzne do płyt, zdjęć i filmów wideo
+	PL	Buforuj wstępnie materiały graficzne do albumów, zdjęć i filmów wideo
 	RU	Pre-cache album, photo and video artwork
 	SV	Cachelagra omslag för album, foton och videor
 
@@ -19026,7 +19025,7 @@ SETUP_PRECACHEARTWORK_ENABLED
 	IT	Copertina album in pre-cache
 	NL	Afbeeldingen van albums vooraf in cache opslaan
 	NO	Forhåndsbufre albumomslag
-	PL	Buforuj wstępnie okładkę płyty
+	PL	Buforuj wstępnie okładkę albumu
 	RU	Предварительно кэшировать обложку альбома
 	SV	Cachelagra albumomslag
 
@@ -19050,21 +19049,21 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	EN	Custom pre-caching specifications
 	FR	paramétrage personnalisé du pré-cache
 	NL	Aangepaste specificaties pre-caching
-	PL	Dostosowywanie opcji bufora
+	PL	Dostosowanie ustawień bufora
 	
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
 	FR	Redimensionner les pochettes
 	NL	Afbeeldingen schalen
-	PL	Dopasowywanie okładek
+	PL	Dopasowywanie rozmiarów okładek
 
 SETUP_IMAGEPROXY_DESC
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
 	NL	Om de beste kwaliteit afbeeldingen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar je muzieksysteem worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
-	PL	W celu uzyskania najlepszej jakości okładki i wydajnośći na odtwarzaczach, pliki z okładkami są dopasowywane pod względem rozmiaru przed przesyłką to odtwarzacza. Domyślnie to jest zrobione przez mysqueezebox.com. Jeżli chcesz być niezależny od mysqueezebox.com lub uzyskujesz wewnętrzne źródło strumieniowe, możesz używać wewnętrzne dopasowywanie przez Logitech Media Serwer.
+	PL	W celu uzyskania najlepszej jakości okładki i wydajności na odtwarzaczach, okładki są dopasowywane względem rozmiaru przed przesłaniem do odtwarzacza. Domyślnie jest to obsłużone przez mysqueezebox.com. Jeśli chcesz być niezależny od mysqueezebox.com, lub używasz lokalnego źródła, możesz pozwolić, aby to Logitech Media Server zajął się dopasowywaniem okładek.
 
 SETUP_IMAGEPROXY_REMOTE
 	DE	Plattenhüllen auf mysqueezebox.com anpassen
@@ -19211,7 +19210,7 @@ SETUP_PRIORITY_NORMAL
 	IT	Normale
 	NL	Normaal
 	NO	Normal
-	PL	Zwykły
+	PL	Normalny
 	RU	Обычный
 	SV	Normal
 	ZH_CN	中
@@ -19245,7 +19244,7 @@ SETUP_PRIORITY_LOW
 	IT	Bassa
 	NL	Laag
 	NO	Lav
-	PL	Niskie
+	PL	Niski
 	RU	Низкий
 	SV	Låg
 	ZH_CN	低
@@ -19907,7 +19906,7 @@ DEBUG_ARTWORK_IMAGEPROXY
 	EN	Artwork Resizing Proxy
 	FR	Redimensionner les pochettes en amont
 	NL	Afbeeldingen Schalen Proxy
-	PL	Proxy dla dopasowywania okładek
+	PL	Proxy dla dopasowywania rozmiarów okładek
 
 DEBUG_FACTORYTEST
 	CS	Informace použité při výrobních zkouškách
@@ -20289,7 +20288,7 @@ DEBUG_DATABASE_VIRTUALLIBRARIES
 	EN	Library Views (virtual libraries)
 	FR	Bibliothèques thématiques (bibliothèques virtuelles)
 	NL	Deelcollecties (virtual libraries)
-	PL	Widoki Biblioteki (wirtualne biblioteki)
+	PL	Biblioteki tematyczne
 
 DEBUG_OS_FILES
 	CS	Informace o úrovni souborového systému
@@ -21162,7 +21161,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	EN	Find updated coverart files
 	FR	Recherche des pochettes des albums actualisés
 	NL	Vind geüpdatete hoesafbeeldingen
-	PL	Wyszukaj aktualizowane pliki okładek
+	PL	Wyszukaj zaktualizowane pliki okładek
 
 PRECACHEARTWORK_PROGRESS
 	CS	Příprava ukládání obalu do mezipaměti
@@ -21274,21 +21273,21 @@ VIRTUALLIBRARIES_PROGRESS
 	EN	Create library views
 	FR	Création d'une bibliothèque thématique
 	NL	Deelcollectie maken
-	PL	Stwórz widoki biblioteki
+	PL	Utwórz biblioteki tematyczne
 
 AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 	FR	Comme une bibliothèque thématique
 	NL	Als Deelcollectie
-	PL	Jako widok biblioteki
+	PL	Jako biblioteka tematyczna
 
 VIRTUALLIBRARIES
 	DE	Bibliotheksansichten
 	EN	Library Views
 	FR	Bibliothèques thématiques
 	NL	Deelcollecties
-	PL	Widoki Biblioteki
+	PL	Biblioteki tematyczne
 
 ALL_LIBRARY
 	DE	Ganze Musiksammlung
@@ -21302,7 +21301,7 @@ SUB_LIBRARY
 	EN	Selected library view
 	FR	Bibliothèque thématique active
 	NL	Geselecteerde deelcollectie
-	PL	Wybrany widok biblioteki
+	PL	Wybrana biblioteka tematyczna
 
 RUNNING
 	CS	Spuštěno
@@ -24181,50 +24180,50 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
 	NL	Bevestigen Touch-To-Play
-	PL	Wyłącz destrukcyjny Touch-To-Play	
+	PL	Zachowanie Touch-To-Play
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
 	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op je Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
-	PL	Po dotknięciu/wyborze utworu to odtwarzania na Squeezebox, można przypadkowo zastąpić to co jest aktualnie odtwarzane. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
+	PL	Przy wyborze/zaznaczeniu utworu można przypadkowo zastąpić aktualną listę odtwarzania. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	DE	Destruktives Verhalten nicht unterdrücken
 	EN	Do not defeat
 	FR	Continuer la liste de lecture en cours
 	NL	Niet vragen
-	PL	Nie wyłączaj
+	PL	Zawsze zezwalaj na odtwarzanie wybranych utworów
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
 	EN	Always ask before playing your selection
 	FR	Toujours demander une confirmation avant de lancer le titre sélectionné
 	NL	Altijd vragen om je selectie af te spelen
-	PL	Zawsze zapytaj przed odtwarzaniem twojego wyboru
+	PL	Pytaj przed rozpoczęciem odtwarzania wybranych utworów
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
 	EN	Defeat if current playlist has more than one track
 	FR	Demander une confirmation si la liste de lecture actuelle a plus d'un titre
 	NL	Vragen als de huidige playlist meer dan een nummer bevat
-	PL	Wyłącz jeżeli aktualna lista odtwarzania ma więcej niż jeden utwór
+	PL	Nie pozwól, gdy aktualna lista odtwarzania zawiera więcej niż jeden utwór
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
 	EN	Defeat only if playing and current playlist has more than one track
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
 	NL	Alleen vragen als de huidige playlist meer dan een nummer bevat
-	PL	Wyłącz tylko wtedy jeżeli odtwarzana i aktualna lista ma więcej niż jeden utwór
+	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie oraz aktualna lista odtwarzania zawiera więcej niż jeden utwór
 	
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	FR	Demander une confirmation uniquement si une radio n'est pas en cours de diffusion
 	NL	Alleen vragen als het huidige afgespeelde nummer geen radiostream is
-	PL	Wyłącz tylko wtedy jeżeli odtwarzany i aktualny utwór nie jest strumieniem radia
-	
+	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie i aktualny utwór nie jest strumieniem radiowym
+
 ON_MYSB
 	CS	Na mysqueezebox.com
 	DA	På mysqueezebox.com

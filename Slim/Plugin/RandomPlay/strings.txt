@@ -38,6 +38,7 @@ PLUGIN_RANDOM_DISABLE
 	EN	Stop Random Mix
 	FR	Arrête mix aléatoire
 	NL	Stop Willekeurige mix
+	PL	Zatrzymaj składankę losową
 
 PLUGIN_RANDOM_DISABLED
 	CS	Náhodně zvolený mix zastaven

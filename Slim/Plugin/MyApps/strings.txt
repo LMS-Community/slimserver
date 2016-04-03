@@ -18,3 +18,4 @@ PLUGIN_MY_APPS_NO_APPS
 	EN	No App installed
 	FR	Aucune application n'est installée
 	NL	Geen toepassing geïnstalleerd
+	PL	Brak zainstalowanych aplikacji

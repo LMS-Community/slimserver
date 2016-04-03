@@ -70,8 +70,10 @@ PLUGIN_WIMP_STREAM_FAILED
 	DE	Fehler beim Lesen des Datenstroms
 	EN	Failed to play stream
 	NL	Afspelen stream mislukt
+	PL	Błąd odtwarzania strumienia
 
 PLUGIN_WIMP_INVALID_TRACK_ID
 	DE	Fehlende oder ungültige ID
 	EN	Missing or invalid track ID
 	NL	Track-ID mist of is ongeldig
+	PL	Błędny identyfikator utworu
