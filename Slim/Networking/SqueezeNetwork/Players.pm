@@ -31,9 +31,7 @@ my $POLL_INTERVAL = MIN_POLL_INTERVAL;
 
 sub init {
 	my $class = shift;
-	
-	fetch_players();
-	
+		
 	# CLI command for telling a player on SN to connect to us
 	Slim::Control::Request::addDispatch(
 		['squeezenetwork', 'disconnect', '_id'],
@@ -47,11 +45,6 @@ sub init {
 	);
 
 	# Subscribe to player connect/disconnect messages
-	Slim::Control::Request::subscribe(
-		\&fetch_players,
-		[['client'],['new','reconnect']]
-	);
-
 	# wait a few seconds before updating to give the player time to connect to SQN
 	Slim::Control::Request::subscribe(
 		sub {
@@ -61,8 +54,14 @@ sub init {
 				\&fetch_players,
 			);			
 		},
-		[['client'],['disconnect','forget']]
+		[['client'],['new','reconnect','disconnect','forget']]
 	);
+
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 3,
+		\&fetch_players,
+	);			
 }
 
 sub shutdown {
@@ -138,9 +137,38 @@ sub _players_done {
 	}
 	
 	# Update enabled apps for each player
+	my $appHandler = sub {
+		my ($player, $cprefs, $client) = @_;
+		
+		# Compare existing apps to new list
+		my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
+		my $newApps     = complex_to_query( $player->{apps} );
+		
+		# Only refresh menus if the list has changed
+		if ( $currentApps ne $newApps ) {
+			$cprefs->set( apps => $player->{apps} );
+			
+			$client ||= Slim::Player::Client::getClient( $player->{mac} );
+		
+			# Refresh ip3k and Jive menu
+			if ( $client ) {
+				if ( !$client->isa('Slim::Player::SqueezePlay') ) {
+					Slim::Buttons::Home::updateMenu($client);
+				}
+				
+				# Clear Jive menu and refresh with new main menu
+				Slim::Control::Jive::deleteAllMenuItems($client);
+				Slim::Control::Jive::mainMenu($client);
+			}
+		}
+	};
+	
 	# This will create new pref entries for players this server has never seen
+	my %playersSeen;
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
+			$playersSeen{$player->{mac}}++;
+			
 			# Keep a list of all available apps for the web UI
 			for my $app ( keys %{ $player->{apps} } ) {
 				$allApps->{$app} = $player->{apps}->{$app};
@@ -148,26 +176,18 @@ sub _players_done {
 			
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
 			
-			# Compare existing apps to new list
-			my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
-			my $newApps     = complex_to_query( $player->{apps} );
-			
-			# Only refresh menus if the list has changed
-			if ( $currentApps ne $newApps ) {
-				$cprefs->set( apps => $player->{apps} );
-			
-				# Refresh ip3k and Jive menu
-				if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
-					if ( !$client->isa('Slim::Player::SqueezePlay') ) {
-						Slim::Buttons::Home::updateMenu($client);
-					}
-					
-					# Clear Jive menu and refresh with new main menu
-					Slim::Control::Jive::deleteAllMenuItems($client);
-					Slim::Control::Jive::mainMenu($client);
-				}
-			}
+			$appHandler->($player, $cprefs);
 		}
+	}
+
+	# now do the same for all locally connected players which are not known by mysb.com (eg. software players)
+	for my $client ( Slim::Player::Client::clients() ) {
+		next if !$client->macaddress || $playersSeen{$client->macaddress};
+		
+		$appHandler->( {
+			mac => $client->macaddress,
+			apps => $allApps,
+		}, $prefs->client($client), $client );
 	}
 	
 	# Setup apps for the web and classic player UI.
