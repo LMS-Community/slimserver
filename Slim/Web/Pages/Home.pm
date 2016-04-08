@@ -229,7 +229,9 @@ sub _updateInfoCB {
 	my $request = $params->{pt}->{request};
 	
 	$params->{'newVersion'} = $::newVersion;
-	$params->{'newPlugins'} = $request && [ map { $_->{info} } values %{$request->getResult('updates')} ];
+	
+	my $newPlugins = $request->getResult('updates') || {};
+	$params->{'newPlugins'} = $request && [ map { $_->{info} } grep { $_ } values %$newPlugins ];
 	
 	if ($params->{installerFile}) {
 		$params->{'newVersion'} = ${Slim::Web::HTTP::filltemplatefile('html/docs/linux-update.html', $params)};
