@@ -241,6 +241,17 @@ sub advancedSearch {
 			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
 
+		if ($newKey =~ /url/) {
+			my $uri = URI::Escape::uri_escape_utf8($params->{$key});
+			
+			# don't escape backslashes
+			$uri =~ s$%(?:2F|5C)$/$ig;
+			# replace the % in the URI escaped string with a single character placeholder
+			$uri =~ s/%/_/g;
+
+			$params->{$key} = { 'like' => "%$uri%" };
+		}
+
 		$query{$newKey} = $params->{$key};
 	}
 	

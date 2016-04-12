@@ -16274,12 +16274,19 @@ URL
 	ES	URL
 	FI	URL
 	FR	URL
+	HE	כתובת URL
 	IT	URL
 	NL	URL
 	NO	URL
 	PL	URL
 	RU	URL
 	SV	URL
+	ZH_CN	网址
+
+PATH
+	DE	Pfad
+	EN	Path
+	FR	Chemin
 
 RADIO_TUNEIN_NOW
 	CS	Naladit nyní
@@ -16659,18 +16666,6 @@ EDIT
 	RU	Изменить
 	SV	Redigera
 	ZH_CN	编辑
-
-URL
-	DA	URL
-	DE	URL
-	EN	URL
-	ES	URL
-	FR	URL
-	HE	כתובת URL
-	IT	URL
-	NL	URL
-	PL	URL
-	ZH_CN	网址
 
 INFORMATION
 	CS	Informace

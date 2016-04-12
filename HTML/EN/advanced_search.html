@@ -234,6 +234,10 @@
 	[% END %]
 [% END %]
 
+[% WRAPPER field title='PATH' %]
+	<input name="search.url" value="[% search.url.value %]" size="[% size %]" maxlength="1000" type="text">
+[% END %]
+
 [% WRAPPER field title='FILELENGTH' %]
 	[% logicalSelectionBlock(name='search.filesize.op', withRange=1) %]
 
