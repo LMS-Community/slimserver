@@ -225,7 +225,7 @@ sub _syncDown_done {
 	if ( $client ) {
 		my $cprefs = $prefs->client($client);
 		
-		if ( ($content->{next_sync} || 0) < 60) ) {
+		if ( ($content->{next_sync} || 0) < 60 ) {
 			$content->{next_sync} = 300;
 		}
 	
