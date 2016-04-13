@@ -224,6 +224,10 @@ sub _syncDown_done {
 	# Client prefs
 	if ( $client ) {
 		my $cprefs = $prefs->client($client);
+		
+		if ( ($content->{next_sync} || 0) < 60 ) {
+			$content->{next_sync} = 300;
+		}
 	
 		$cprefs->set( snLastSyncDown => $content->{timestamp} );
 		$cprefs->set( snSyncInterval => $content->{next_sync} );
@@ -369,7 +373,7 @@ sub prefEvent {
 	my $request = shift;
 	my $client  = $request->client;
 	
-	if ( $client && !$client->isa('Slim::Player::Squeezebox2') ) {
+	if ( !defined $client || !$client->isa('Slim::Player::Squeezebox2') || $client->deviceid =~ /^(?:3|6|8|11|12)/ ) {
 		return;
 	}
 	
