@@ -1,8 +1,6 @@
 package Slim::Web::Settings::Server::Software;
 
-# $Id: Software.pm 15258 2007-12-13 15:29:14Z mherger $
-
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2016 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -48,10 +46,10 @@ sub handler {
 			my $info = shift;
 
 			if ($info =~ /^http.*(\d+\.\d+\.\d+)/) {
-				$info = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $1, $info)
+				$info = sprintf('<a href="%supdateinfo.html" target="browser">%s</a>', $paramRef->{webroot}, Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE_SHORT'));
 			}
 			elsif (!$info) {
-				$info = Slim::Utils::Strings::clientString($client, 'CONTROLPANEL_NO_UPDATE_AVAILABLE')
+				$info = Slim::Utils::Strings::string('CONTROLPANEL_NO_UPDATE_AVAILABLE')
 			}
 			
 			$paramRef->{'warning'} = $info;
