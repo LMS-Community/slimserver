@@ -39,7 +39,7 @@ sub new {
 		url     => $track->{URL},
 		song    => $args->{'song'},
 		client  => $client,
-		bitrate => 128_000,
+		bitrate => $class->getBitrateFromTrackInfo($track) * 1000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
@@ -51,6 +51,16 @@ sub new {
 }
 
 sub getFormatForURL () { 'mp3' }
+
+sub getBitrateFromTrackInfo {
+	my ($class, $track) = @_;
+
+	if ( $track && ref $track && $track->{format} && $track->{format} =~ /_(\d{2,3})$/ ) {
+		return $1;
+	}	
+
+	return 128;
+}
 
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
@@ -695,7 +705,7 @@ sub getMetadataFor {
 			# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
 			cover       => $track->{cover} || 'http://images.slacker.com/covers/1400/' . $track->{albumid},
 			icon        => $icon,
-			bitrate     => '128k CBR',
+			bitrate     => $class->getBitrateFromTrackInfo($track) . 'k CBR',
 			type        => 'MP3 (Slacker)',
 			info_link   => 'plugins/slacker/trackinfo.html',
 			buttons     => {
