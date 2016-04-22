@@ -237,10 +237,7 @@ sub main {
 	
 	# pull in the memory usage module if requested.
 	if (main::INFOLOG && logger('server.memory')->is_info) {
-		
-		Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage');
-
-		if ($@) {
+		if ( Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage') ) {
 
 			logError("Couldn't load Slim::Utils::MemoryUsage: [$@]");
 
