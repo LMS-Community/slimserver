@@ -108,6 +108,37 @@ sub isRepeatingStream {
 	return $song->track()->url =~ /\.dzr$/;
 }
 
+sub explodePlaylist {
+	my ( $class, $client, $url, $cb ) = @_;
+	
+	my $tracks = [];
+
+	if ( $url =~ m{^deezer://((?:playlist|album):[0-9a-z]+)}i ) {
+		my $id = $1;
+		
+		Slim::Networking::SqueezeNetwork->new(
+			sub {
+				my $http = shift;
+				my $tracks = eval { from_json( $http->content ) };
+				$cb->($tracks || []);
+			},
+			sub {
+				$cb->([])
+			},
+			{
+				client => $client
+			}
+		)->get(
+			Slim::Networking::SqueezeNetwork->url(
+				'/api/deezer/v1/playback/getTracksForID?id=' . uri_escape_utf8($id),
+			)
+		);
+	}
+	else {
+		$cb->([$url])
+	}
+}
+
 # Check if player is allowed to skip, using canSkip value from SN
 sub canSkip {
 	my $client = shift;
