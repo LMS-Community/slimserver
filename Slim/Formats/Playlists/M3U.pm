@@ -263,8 +263,14 @@ sub write {
 		my $track = Slim::Schema->objectForUrl($item);
 	
 		if (!blessed($track) || !$track->can('title')) {
+			
+			if ( Slim::Music::Info::isURL($item) && $item !~ /^file:/ ) {
+				print $output $item, "\n";
+			}
+			else {
+				logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
+			}
 	
-			logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			next;
 		};
 		
