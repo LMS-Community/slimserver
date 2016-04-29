@@ -1114,7 +1114,8 @@ sub parseRevision {
 	my ($revision, $builddate) = split (/\n/, $tempBuildInfo);
 	
 	# if we're running from a git clone, report the last commit ID and timestamp
-	if ( $revision eq 'TRUNK' && `git show -s --format=%h\\|%ci 2> /dev/null` =~ /^([0-9a-f]+)\|(\d{4}-\d\d-\d\d.*)/i ) {
+	# "git -C ..." is only available in recent git version, more recent than what CentOS provides...
+	if ( $revision eq 'TRUNK' && `cd $Bin && git show -s --format=%h\\|%ci 2> /dev/null` =~ /^([0-9a-f]+)\|(\d{4}-\d\d-\d\d.*)/i ) {
 		$revision = 'git-' . $1;
 		$builddate = $2;
 	}
