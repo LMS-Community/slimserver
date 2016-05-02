@@ -25,6 +25,8 @@ use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use JSON::XS::VersionOneAndTwo;
 use Time::HiRes qw(sleep);
+use Sort::Naturally;
+use Encode;
 
 use Slim::Utils::ArtworkCache;
 use Slim::Utils::Log;
@@ -41,6 +43,13 @@ my $log = logger('database.info');
 my $prefs = preferences('server');
 
 $prefs->setChange( \&setCacheSize, 'dbhighmem' ) unless main::SCANNER;
+
+$DBD::SQLite::COLLATION{naturally} = sub {
+        use locale;
+        my $a = decode_utf8($_[0]);
+        my $b = decode_utf8($_[1]);
+        return ncmp($a, $b);
+};
 
 sub storageClass { 'DBIx::Class::Storage::DBI::SQLite' };
 
@@ -158,61 +167,8 @@ sub _migrateDBFile {
 	}
 }
 
-my $hasICU;
-my $currentICU = '';
-my $loadedICU = {};
 sub collate { 
-	# Use ICU if built into DBD::SQLite
-	if ( !defined $hasICU ) {
-		$hasICU = (DBD::SQLite->can('compile_options') && grep /ENABLE_ICU/, DBD::SQLite::compile_options());
-	}
-	
-	if ($hasICU) {
-		my $lang = $prefs->get('language');
-
-		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
-		
-		if ( $collation && $currentICU ne $collation ) {	
-			if ( !$loadedICU->{$collation} ) {
-				if ( !Slim::Schema->hasLibrary() ) {
-					# XXX for i.e. ContributorTracks many_to_many
-					return "COLLATE $collation ";
-				}
-				
-				# Point to our custom small ICU collation data file
-				$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
-
-				my $dbh = Slim::Schema->dbh;
-                
-				my $qcoll = $dbh->quote($collation);
-				my $qpath = $dbh->quote($ENV{ICU_DATA});
-
-				# Win32 doesn't always like to read the ICU_DATA env var, so pass it here too
-				my $sql = main::ISWINDOWS
-					? "SELECT icu_load_collation($qcoll, $qcoll, $qpath)"
-					: "SELECT icu_load_collation($qcoll, $qcoll)";
-
-				eval { $dbh->do($sql) };
-				if ( $@ ) {
-					$log->error("SQLite ICU collation $collation failed: $@");
-					$hasICU = 0;
-					return 'COLLATE perllocale ';
-				}
-				
-				main::DEBUGLOG && $log->is_debug && $log->debug("Loaded ICU collation for $collation");
-				
-				$loadedICU->{$collation} = 1;
-			}
-			
-			$currentICU = $collation;
-		}
-		
-		return "COLLATE $currentICU " if $currentICU;
-	}
-	
-	# Fallback to built-in perllocale collation to sort using Unicode Collation Algorithm
-	# on systems with a properly installed locale.
-	return 'COLLATE perllocale ';
+	return 'COLLATE naturally ';
 }
 
 =head2 randomFunction()
@@ -357,10 +313,6 @@ sub postConnect {
 	
 	# http://search.cpan.org/~adamk/DBD-SQLite-1.33/lib/DBD/SQLite.pm#Transaction_and_Database_Locking
 	$dbh->{sqlite_use_immediate_transaction} = 1;
-	
-	# Reset collation load state
-	$currentICU = '';
-	$loadedICU = {};
 	
 	# Check if the DB has been optimized (stats analysis)
 	if ( !main::SCANNER ) {
