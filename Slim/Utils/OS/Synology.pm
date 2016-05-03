@@ -61,6 +61,13 @@ sub initDetails
 	return $class->{osDetails};
 }
 
+sub localeDetails {
+	my $lc_ctype = 'utf8';
+	my $lc_time = 'C';
+
+	return ($lc_ctype, $lc_time);
+}
+
 
 sub logRotate
 {
