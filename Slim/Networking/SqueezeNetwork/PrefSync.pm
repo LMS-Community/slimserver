@@ -373,7 +373,7 @@ sub prefEvent {
 	my $request = shift;
 	my $client  = $request->client;
 	
-	if ( !defined $client || !$client->isa('Slim::Player::Squeezebox2') || $client->deviceid =~ /^(?:3|6|8|11|12)/ ) {
+	if ( $client && !$client->isa('Slim::Player::Squeezebox2') ) {
 		return;
 	}
 	
