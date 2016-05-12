@@ -2,145 +2,172 @@
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
-<p>
-The Logitech Media Server can display artwork associated with each album.
-This "cover art" is typically a copy of the CD/album's cover.
-</p>
-<p>
-Artwork is displayed in several places within the Squeezebox software.
-The details of the display vary depending on the skin currently being used.
-The "Default" skin has browse by cover art functions, clicking on a picture of the CD/album will select the album for
-playing or processing. The "Default" skin also display the cover art in the status display as the songs are played.
-</P>
+<h4>What is Artwork?</h4>
+ <p>Artwork is cover art from CD albums and typically a copy of the CD/album's cover.
+ The Logitech Media Server can display artwork associated with each album.
+ </p>
 
-<h4>What is Artwork, how does the Squeezebox software use it?</h4>
-<p>
-Artwork is cover art from CD albums. It is displayed both to beautify 
-the Squeezebox interface, and in the "Browse by album" section to
-specify which albums are selected for playing or processing.
-</p>
-
+<h4>How does the Squeezebox software use it?</h4> 
+ <p>Artwork is displayed in several places within the Squeezebox software.
+  When you import (scan) your library - the scanner uses the first picture for all other media files found in that Folder.
+  So you should use one Folder for each Album.
+ </p>
+<h4>Where should i store the cover art?</h4>
+ <ul>
+  <ol>
+   <li>You can embed the cover art into your media files by using your favourite mp3/flac tagging tool.
+   <p>If embedded artwork is used - these pictures will always be the first used by the Software.     
+   <li>You can store the artwork into the Folderstructure of your Library.
+    <p>Logitech Media Server looks in the same path as the song, thus you would be looking for the same artfile in this case.</p>
+   <li>You can store them into a separte Folder for your cover art.
+    <p>There is an option in Server Settings, Advanced, Formatting for setting filenames for Artwork, Artwork
+    Thumbnail, and for setting a central location for artwork files. You can enter a specific filename if you use something not found in the list (eg, artwork.jpg).
+    You may also create filenames based on song variables.  For furter
+    information scroll down to <b>Filenames based on song variables</b>
+   </p> 
+  </ol>
+ </ul>
+  
 <h4>How do I get cover art?</h4>
-<p>
-Many site that sell CDs include
-cover art in their catalog. With most browsers, you can right click
-on the image and select "Save image as..."
-</P>
-<p>
-Several third party developers have written utilities
-to automatically retreive cover art based on the internal tags 
-of your MP3, Ogg, Flac, or other files. See 
-<a href="">http://forums.slimdevices.com/forumdisplay.php?4-3rd-Party-Software</a> http://forums.slimdevices.com/forumdisplay.php?4-3rd-Party-Software
-for more information.
-</p>
+<p>Many site that sell CDs include cover art in their catalog. With most browsers, you can right click on the image and select "Save image as..."</p>
+<h4>Useful plugins</h4>
+<p>Several third party developers have written utilities to automatically retreive cover art based on the internal tags of your MP3, Ogg, Flac, or other files. See 
+<a href="http://forums.slimdevices.com/forumdisplay.php?4-3rd-Party-Software" target="_new" class="browseItemLink"
+>3rd-Party-Software</a> for more information.</p>
+
+<h4>Find albums with small /missing artwork used in your library:</h4>
+ <p>The Music Artist Info Plugin can support you to find albums with no or small artwork.
+    If you enabled this plugin before a scan/rescan - it supports you with some additional Information under the extras in the main menue.
+ </p>
+ 
 <h4>Graphic file requirements</h4>
 <p>The Squeezebox will display any graphic file that your browser can support. 
-Nearly all browsers support .GIF and .JPG files, so most SlimDevices
-customers use one of these file formats.</p>
+Nearly all browsers support .GIF .PNG and .JPG files, so most customers use one of these file formats.</p>
+
 <h4>Image sizes</h4>
-<p>
-The image files should be modest in size, as they are sized to fit
-on the HTML browser window. There is no reason to have images
-larger than 300x300 pixels, they won't be displayed with that size,
-and it simply takes up space and bandwidth.
-</P>
+ <p>The image files should be modest in size, as they are sized to fit on the HTML browser window. 
+ There is no reason to have images with a larger Resolution than 72 or 96 dpi,
+ as these High-Res images are made for printing and it simply takes up space and bandwidth
+ and slows down the usability of the server.</p>
 
 <h4>Technical details</h4>
-<p>For each place in the skin that references a large cover art image,
-the Squeezebox software performs the following search:</p>
+ <p>For each place in the skin that references a large cover art image, the Squeezebox software performs the following search:</p>
 <ul>
-<li>Search in the current music directory for (in order): <br>
-<ol><li>cover.jpg, cover.gif, <li>folder.jpg, folder.gif, <li>album.jpg, album.gif, <li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif</ul>
-</ol>
-<p>
-The Logitech Media Server will use the first image file located in this search.</p>
-
-<p>
-Logitech Media Server looks in the same path as the song, thus you would be looking for the
-same artfile in this case.  However there is an option in Server Settings,
-Advanced, Formatting for setting filenames for Artwork, Artwork Thumbnail, and
-for setting a central location for artwork files. You can enter a specific filename 
-if you use something not found in the list (eg, artwork.jpg).  You may also create 
-filenames based on song variables.  If your first character is %, the server then parses
- the rest of the string as an InfoFormat, the same as title format is created.
-</p>
-
-<p>
-As an example, you could create a single directory of songs and name all your
-artwork as artist-album.jpg.  For this, enter a setting of</p> 
+ <li>Search in the current music directory for (in order): <br>
+  <ol>
+   <li>cover.jpg, cover.gif,
+   <li>folder.jpg, folder.gif,
+   <li>album.jpg, album.gif,
+   <li>thumb.jpg, thumb.gif, 
+   <li>albumartsmall.jpg, albumartsmall.gif
+  </ol>
+</ul>
+ <p>The Logitech Media Server will use the first image file located in this search.</p>
+<h4>Filenames based on song variables</h4>
+ <p>If your first character is %, the server then parses the rest of the string as an InfoFormat, the same as title format is created. As an example, you could create a single directory of songs and name all your artwork as artist-album.jpg.  For this, enter a setting of</p> 
 <pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> 
-<p>for Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any Logitech Media Server supported format, .jpg is
-assumed if no extension is given.
-</P>
+ <p>for Artwork or Artwork Thumbnail in the server settings section.</p>
+ <p> The extension can be specified for any Logitech Media Server supported format, .jpg is assumed if no extension is given.</p>
+ <p>Available data elements are:</p> 
+  <table>
+   <tbody>
+    <tr>
+     <td><b>Setting </td>
+     <td>Description </b></td>
+    </tr>                 
+    <tr>
+     <td>CT</td>
+     <td>content type</td>
+    </tr>
+    <tr>
+     <td>TITLE</td>
+     <td>Song title</td>
+    </tr>
+     <td>GENRE</td>
+     <td>Song genre</td>
+    </tr>
+    <tr>
+     <td>TRACKNUM</td>
+     <td>tracknumber as an integer</td>
+    </tr>
+    <tr>
+     <td>FS</td>
+     <td>file size as reported by the underlying Operating System.</td>
+    </tr>
+    <tr>
+     <td>ARTIST</td>
+     <td>Artist for pop music, sometimes conductor for classical works.</td>
+    </tr>
+    <tr>
+     <td>ALBUM</td>
+     <td>Album name</td>
+    </tr>
+    <tr>
+     <td>COMMENT</td>
+     <td>Often the encoder used to create the MP3/FLAC/AAC/... file.</td>
+    </tr>
+    <tr>
+     <td>YEAR</td>
+     <td>Year published or released.</td>
+    </tr> 
+    <tr>
+     <td>SECS</td>
+     <td>total song length in seconds</td>
+    </tr>
+    <tr>
+     <td>DURATION</td>
+     <td>(minutes and seconds)</td>
+    </tr>
+    <tr>
+     <td>VBR_SCALE</td>
+     <td>vbr/cbr</td>
+    </tr>  
+    <tr>
+     <td>BITRATE</td>
+     <td>encoded bit rate</td>
+    </tr>
+    <tr>
+     <td>VOLUME</td>
+     <td>volume name</td>
+    </tr>
+    <tr>   
+     <td>PATH</td>
+     <td>Path to the song</td>
+    </tr>
+    <tr> 
+     <td>FILE</td>
+     <td>main file name of song</td>
+    </tr>
+    <tr>
+     <td>EXT</td>
+     <td>file extension of song (Type in Microsoft systems)</td>
+    </tr>
+    <tr>  
+     <td>LONGDATE</td>
+     <td>current date, long</td> 
+    </tr>
+    <tr> 
+     <td>SHORTDATE</td>
+     <td>current date, short</td>
+    </tr>
+    <tr>   
+     <td>CURRTIME</td>
+     <td>current time.</td>
+    </tr>
+   </tbody> 
+  </table>
+<p>Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.</p>
 
-
-<p>
-Available data elements are:</p> 
-<table>
-<tr><td>&nbsp;&nbsp;</td><td>
-<dl>
-<dt>CT 
-<dd>content type
-<dt>TITLE
-<dd>Song title
-<dt>GENRE
-<dd>Song genre
-<dt>TRACKNUM
-<dd>tracknumber as an integer
-<dt>FS
-<dd>file size as reported by the underlying Operating System.
-<dt>ARTIST
-<dd>Artist for pop music, sometimes conductor for classical works.
-<dt>ALBUM
-<dd>Album name.
-<dt> COMMENT
-<dd>Often the encoder used to create the   MP3/FLAC/AAC/... file.
-<dt> YEAR 
-<dd>Year published or released.
-<dt>SECS
-<dd>total song length in seconds 
-<dt>DURATION 
-<dd>(minutes and seconds), 
-<dt>VBR_SCALE 
-<dd>vbr/cbr 
-<dt>BITRATE
-<dd>encoded bit rate
-<dt>VOLUME
-<dd>volume name 
-<dt>PATH 
-<dd>Path to the song
-<dt>FILE 
-<dd>main file name of song
-<dt>EXT
-<dd>file extension of song (Type in Microsoft systems) 
-<dt>LONGDATE
-<dd>current date, long 
-<dt>SHORTDATEi
-<dd>current date, short 
-<dt>
-CURRTIME
-<dd>current time.
-</dl>
-</td></tr></table>
-<p>Elements can be separated by anything (or nothing). The separators are only used
-if the data elements are present.
-</p>
-
-<p>
-The above list is included for completeness, it is unlikely that anyone would actually
-want to have differing artwork files for songs of different bitrates, but the
+<p>The above list is included for completeness, it is unlikely that anyone would actually want to have differing artwork files for songs of different bitrates, but the
 ability is in the Logitech Media Server.
 </P>
 
-<p>
-Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server
+<p>Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server
 settings.  If an Artwork Folder setting is used (in Server Settings, Additional, Interface) then that folder is searched first
 for any file matching those given for Artwork.
 </p>
 
-<p>
-Browse by artwork and status BOTH scale the same image
-file found for Thumb.  By default, the browse by artwork contrains to 100x100,
+<p>Browse by artwork and status BOTH scale the same image file found for Thumb.  By default, the browse by artwork contrains to 100x100,
 while the status constrains to 100 leaving aspect ratio intact. 
 </p>
 
