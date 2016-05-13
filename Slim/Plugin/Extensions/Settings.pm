@@ -45,7 +45,7 @@ sub handler {
 
 		# handle changes to repos
 
-		my @new = grep { $_ =~ /^http:\/\/.*\.xml/ } (ref $params->{'repos'} eq 'ARRAY' ? @{$params->{'repos'}} : $params->{'repos'});
+		my @new = grep { $_ =~ /^https?:\/\/.*\.xml/ } (ref $params->{'repos'} eq 'ARRAY' ? @{$params->{'repos'}} : $params->{'repos'});
 
 		my %current = map { $_ => 1 } @{ $prefs->get('repos') || [] };
 		my %new     = map { $_ => 1 } @new;
