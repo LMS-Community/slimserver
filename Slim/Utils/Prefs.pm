@@ -255,7 +255,7 @@ sub init {
 		'jivealbumsort'		=> 'album',
 		# Server Settings - mysqueezebox.com
 		'sn_sync'               => 1,
-		'sn_disable_stats'		=> 0,
+		'sn_disable_stats'		=> 1,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
