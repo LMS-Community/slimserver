@@ -1,8 +1,6 @@
 package Slim::Networking::SimpleAsyncHTTP;
 
-# $Id$
-
-# Logitech Media Server Copyright 2003-2011 Logitech.
+# Logitech Media Server Copyright 2003-2016 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -143,10 +141,19 @@ sub _createHTTPRequest {
 	}
 	
 	# If cached, add If-None-Match and If-Modified-Since headers
-	if ( my $data = $self->cachedResponse ) {			
+	if ( my $data = $self->cachedResponse ) {
+
+		# gzip encoded results come with a -gzip postfix which needs to be removed, or the etag would not match
+		my $etag = $data->{headers}->header('ETag') || undef;
+		$etag =~ s/-gzip// if $etag;
+
+		# if the last_modified value is a UNIX timestamp, convert it
+		my $lastModified = $data->{headers}->last_modified || undef;
+		$lastModified = HTTP::Date::time2str($lastModified) if $lastModified && $lastModified !~ /\D/;
+
 		unshift @_, (
-			'If-None-Match'     => $data->{headers}->header('ETag') || undef,
-			'If-Modified-Since' => $data->{headers}->last_modified || undef,
+			'If-None-Match'     => $etag,
+			'If-Modified-Since' => $lastModified
 		);
 	}
 
