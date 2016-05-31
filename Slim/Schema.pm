@@ -160,7 +160,7 @@ sub init {
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
 	if ( $@ ) {
-		logWarning("Creating new database - empty, outdated or invalid database found");
+		main::INFOLOG && $log->is_info && $log->info("Creating new database - empty, outdated or invalid database found");
 
 		eval {
 			$dbh->do('DROP TABLE IF EXISTS metainformation');
