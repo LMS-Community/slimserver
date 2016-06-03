@@ -11,7 +11,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
-use constant CLEANUP_INTERVAL => 3600;
+use constant CLEANUP_INTERVAL => 24 * 3600;
 
 my $log = logger('plugin.dndplay');
 my $serverprefs = preferences('server');
@@ -132,7 +132,10 @@ sub _cleanup {
 	my %inUse;
 	
 	while ( defined ( my $file = $files->() ) ) {
-		if ( $file =~ /clientplaylist_.*?.m3u$/i ) {
+
+		# only check player playlists of players which have been connected within the past few days
+		if ( $file =~ /clientplaylist_.*?.m3u$/i && -M $file < 7 ) {
+
 			foreach ( Slim::Formats::Playlists::M3U->read($file, undef, Slim::Utils::Misc::fileURLFromPath($file)) ) {
 				my $url = $_->url;
 				next unless $url && $url =~ s/^tmp:/file:/;
