@@ -248,7 +248,7 @@ sub parseSearchTerm {
 				$token = "w10:$_*";
 				
 				# log warning about search for popular term (set flag in cache to only warn once)
-				$ftsCache{uc($token)}++ || $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
+				$ftsCache{uc($token)}++ || (main::DEBUGLOG && $log->is_debug && $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'"));
 			}
 		}
 		# don't search substrings for single digit numbers or single characters
@@ -268,7 +268,7 @@ sub parseSearchTerm {
 				$token = "w10:$raw";
 				
 				# log warning about search for popular term (set flag in cache to only warn once)
-				$ftsCache{uc($token)}++ || $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
+				$ftsCache{uc($token)}++ || (main::DEBUGLOG && $log->is_debug && $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'"));
 			}
 		}
 		
