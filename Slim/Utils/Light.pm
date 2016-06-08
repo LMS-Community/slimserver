@@ -31,6 +31,25 @@ BEGIN {
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
+	
+	# Check for use64bitint Perls
+	my $is64bitint = $arch =~ /64int/;
+
+	# Some ARM platforms use different arch strings, just assume any arm*linux system
+	# can run our binaries, this will fail for some people running invalid versions of Perl
+	# but that's OK, they'd be broken anyway.
+	if ( $arch =~ /^arm.*linux/ ) {
+		$arch = $arch =~ /gnueabihf/ 
+			? 'arm-linux-gnueabihf-thread-multi' 
+			: 'arm-linux-gnueabi-thread-multi';
+		$arch .= '-64int' if $is64bitint;
+	}
+	
+	# Same thing with PPC
+	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
+		$arch = 'powerpc-linux-thread-multi';
+		$arch .= '-64int' if $is64bitint;
+	}
 
 	my $perlmajorversion = $Config{'version'};
 	   $perlmajorversion =~ s/\.\d+$//;
@@ -53,6 +72,7 @@ BEGIN {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion),
 		catdir($libPath,'lib'), 
 		catdir($libPath,'CPAN'), 
 		$libPath,

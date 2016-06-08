@@ -238,10 +238,18 @@ sub _init_db {
 		# scanner is heavy on writes, server on reads - tweak accordingly
 		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
 
-		require Slim::Utils::Prefs;
+		my $dbhighmem;
+		if (main::RESIZER) {
+			require Slim::Utils::Light;
+			$dbhighmem = Slim::Utils::Light::getPref('dbhighmem');
+		}
+		else {
+			require Slim::Utils::Prefs;
+			$dbhighmem = Slim::Utils::Prefs::preferences('server')->get('dbhighmem');
+		}
 	
 		# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
-		if ( Slim::Utils::Prefs::preferences('server')->get('dbhighmem') ) {
+		if ( $dbhighmem ) {
 			$dbh->do('PRAGMA cache_size = 20000');
 			$dbh->do('PRAGMA temp_store = MEMORY');
 		}
@@ -270,7 +278,7 @@ sub _init_db {
 		warn "$@Delete the file $dbfile and start from scratch.\n";
 		
 		# Make sure cachedir exists
-		Slim::Utils::Prefs::makeCacheDir();
+		Slim::Utils::Prefs::makeCacheDir() unless main::RESIZER;
 		
 		# Something was wrong with the database, delete it and try again
 		unlink $dbfile;
