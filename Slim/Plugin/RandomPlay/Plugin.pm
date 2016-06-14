@@ -346,10 +346,13 @@ sub postinitPlugin {
 		
 			my %genres;
 			foreach my $track (@{ Slim::Player::Playlist::playList($client) }) {
-				next if $track->remote;
-		
-				foreach ( $track->genres ) {
-					$genres{$_->name}++
+				if ( $track->remote ) {
+					$genres{$track->genre}++ if $track->genre;
+				}
+				else {
+					foreach ( $track->genres ) {
+						$genres{$_->name}++
+					}
 				}
 			}
 			
@@ -364,6 +367,30 @@ sub postinitPlugin {
 			}
 		
 			$cb->($client, ['randomplay://track']);
+		});
+
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TRACK', sub {
+			my ($client, $cb) = @_;
+			$client->execute(['randomplaygenreselectall', 0]);
+			$cb->($client, ['randomplay://track']);
+		});
+
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_ITEM', sub {
+			my ($client, $cb) = @_;
+			$client->execute(['randomplaygenreselectall', 0]);
+			$cb->($client, ['randomplay://album']);
+		});
+
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_CONTRIBUTOR_ITEM', sub {
+			my ($client, $cb) = @_;
+			$client->execute(['randomplaygenreselectall', 0]);
+			$cb->($client, ['randomplay://contributor']);
+		});
+
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_YEAR_ITEM', sub {
+			my ($client, $cb) = @_;
+			$client->execute(['randomplaygenreselectall', 0]);
+			$cb->($client, ['randomplay://year']);
 		});
 	}
 }

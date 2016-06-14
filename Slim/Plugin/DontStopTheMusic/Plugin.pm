@@ -199,7 +199,7 @@ sub dontStopTheMusic {
 			elsif (main::INFOLOG && $log->is_info) {
 				$log->info("No matching tracks found for current playlist!");
 			}
-		} );
+		} ) if $handler;
 
 	}
 }
