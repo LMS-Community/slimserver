@@ -29,6 +29,12 @@ my $log = Slim::Utils::Log->addLogCategory({
 my %handlers;
 
 sub initPlugin {
+
+	if ( main::WEBUI ) {
+		require Slim::Plugin::DontStopTheMusic::Settings;
+		Slim::Plugin::DontStopTheMusic::Settings->new;
+	}
+
 	# register a settings item. I don't like that, but we can't hook in to the mysb.com delivered menu.
 	Slim::Control::Request::addDispatch(['dontstopthemusicsetting'],[1, 0, 1, \&dontStopTheMusicSetting]);
 	
@@ -61,6 +67,10 @@ sub getHandler {
 	my ($class, $client) = @_;
 	return unless $client;
 	return $handlers{$prefs->client($client)->get('provider')};
+}
+
+sub getHandlers {
+	return \%handlers;
 }
 
 sub dontStopTheMusicSetting {
@@ -169,9 +179,17 @@ sub dontStopTheMusic {
 	
 	if ($songsRemaining < $numTracks) {
 
-		# don't continue if the last item in the queue is a radio station
+		# don't continue if the last item in the queue is a radio station or similar
+		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $client->playingSong()->track->url ) ) {
+			if ($handler->can('isRepeatingStream')) {
+				return if $handler->isRepeatingStream($client->playingSong());
+			}
+		}
+		
 		my $playlist = Slim::Player::Playlist::playList($client);
-		my (undef, undef, $duration) = $class->getMixablePropertiesFromTrack($client, $playlist->[-1]);
+		my $lastTrack = $playlist->[-1];
+
+		my (undef, undef, $duration) = $class->getMixablePropertiesFromTrack($client, $lastTrack);
 		
 		if (!$duration) {
 			main::INFOLOG && $log->is_info && $log->info("Found radio station last in the queue - don't start a mix.");

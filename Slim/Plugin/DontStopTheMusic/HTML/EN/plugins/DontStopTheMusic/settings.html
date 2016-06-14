@@ -1,0 +1,16 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_DSTM" desc="PLUGIN_DSTM_HELP" %]
+		<p>
+			<input type=radio [% IF !prefs.pref_provider %]checked[% END %] class="stdedit" name="pref_provider" id="providerOff" value="0" />
+			<label for="providerOff" class="stdlabel">[% "DISABLED" | string | html %]</label>
+		</p>
+		[% FOREACH handler = handlers  %]
+			<p>
+				<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit" name="pref_provider" id="provider[% loop.index %]" value="[% handler %]" />
+				<label for="provider[% loop.index %]" class="stdlabel">[% handler | string | html %]</label>
+			</p>
+		[% END %]
+	[% END %]
+
+[% PROCESS settings/footer.html %]

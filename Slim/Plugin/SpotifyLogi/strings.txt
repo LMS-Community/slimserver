@@ -59,8 +59,8 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	SV	På Spotify
 	
 PLUGIN_SPOTIFYLOGI_RECOMMENDATIONS
-	DE	Spotify Empfehlungen
-	EN	Spotify Recommendations
+	DE	Spotify Empfehlungen (basierend auf aktueller Wiedergabeliste)
+	EN	Spotify Recommendations (based on the current playlist)
 
 SPOTIFY_ERROR_3
 	CS	Tuto stopu nelze přehrát.
