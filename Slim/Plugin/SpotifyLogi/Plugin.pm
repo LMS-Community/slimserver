@@ -1,6 +1,14 @@
 package Slim::Plugin::SpotifyLogi::Plugin;
 
-# $Id$
+# Logitech Media Server Copyright 2001-2016 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
 use strict;
 use base 'Slim::Plugin::OPMLBased';
@@ -138,6 +146,74 @@ sub initPlugin {
 				} );
 			},
 		);
+	}
+}
+
+sub postinitPlugin {
+	my $class = shift;
+	
+	# if user has the Don't Stop The Music plugin enabled, register ourselves
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
+		require Slim::Plugin::DontStopTheMusic::Plugin;
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_SPOTIFYLOGI_RECOMMENDATIONS', \&dontStopTheMusic);
+	}
+}
+
+sub dontStopTheMusic {
+	my ($client, $cb) = @_;
+
+	my $seedTracks = Slim::Plugin::DontStopTheMusic::Plugin->getMixableProperties($client, 5);
+
+	# don't seed from radio stations - only do if we're playing from some track based source
+	if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
+		main::INFOLOG && $log->info("Auto-mixing Spotify tracks from random items in current playlist");
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			sub {
+				my $http = shift;
+				my $client = $http->params->{client};
+				
+				my $content = eval { from_json( $http->content ) };
+				my @tracks;
+				
+				if ( $@ || ($content && $content->{error}) ) {
+					$http->error( $@ || $content->{error} );
+				}
+				elsif ( $content && ref $content && $content->{body} && (my $items = $content->{body}->{outline}) ) {
+					@tracks = grep { $_ } map { $_->{play} } @$items;
+				}
+				
+				$cb->($client, \@tracks);
+			},
+			sub {
+				my $http = shift;
+				my $client = $http->params->{client};
+
+				if ( main::DEBUGLOG && $log->is_debug ) {
+					$log->debug( 'getMix failed: ' . $http->error );
+				}
+				
+				$cb->($client);
+			},
+			{
+				client => $client,
+				timeout => 15,
+			},
+		);
+
+		my $json = eval { to_json({
+			seed => $seedTracks
+		}) };
+		
+		if ( $@ ) {
+			$log->error("JSON encoding failes: $@");
+			$json = '';
+		}
+
+		$http->post( $http->url( '/api/spotify/v1/opml/autoDJ' ), $json );
+	}
+	else {
+		$cb->($client);
 	}
 }
 

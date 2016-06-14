@@ -6,7 +6,7 @@ package Slim::Plugin::RandomPlay::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2005-2011 Logitech.
+# Logitech Media Server Copyright 2005-2016 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -331,6 +331,41 @@ sub initPlugin {
 	);
 	
 	$cache = Slim::Utils::Cache->new();
+}
+
+sub postinitPlugin {
+	my $class = shift;
+	
+	# if user has the Don't Stop The Music plugin enabled, register ourselves
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
+		require Slim::Plugin::DontStopTheMusic::Plugin;
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TITLEMIX_WITH_GENRES', sub {
+			my ($client, $cb) = @_;
+		
+			return unless $client;
+		
+			my %genres;
+			foreach my $track (@{ Slim::Player::Playlist::playList($client) }) {
+				next if $track->remote;
+		
+				foreach ( $track->genres ) {
+					$genres{$_->name}++
+				}
+			}
+			
+			# don't seed from radio stations - only do if we're playing from some track based source
+			if (keys %genres) {
+				# reset all genres to only use those present in our queue
+				$client->execute(['randomplaygenreselectall', 0]);
+				
+				foreach (keys %genres) {
+					$client->execute(['randomplaychoosegenre', $_, 1]);
+				}
+			}
+		
+			$cb->($client, ['randomplay://track']);
+		});
+	}
 }
 
 sub _shutdown {

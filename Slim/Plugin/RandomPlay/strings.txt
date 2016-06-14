@@ -551,3 +551,6 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	RU	Нажмите RIGHT, чтобы
 	SV	Tryck på RIGHT om du vill
 
+PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
+	DE	Titelmix (auf aktuelle Genres beschränkt)
+	EN	Song Mix (limited to current genres)

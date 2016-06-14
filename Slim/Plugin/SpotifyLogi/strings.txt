@@ -57,6 +57,10 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	PL	W Spotify
 	RU	На Spotify
 	SV	På Spotify
+	
+PLUGIN_SPOTIFYLOGI_RECOMMENDATIONS
+	DE	Spotify Empfehlungen
+	EN	Spotify Recommendations
 
 SPOTIFY_ERROR_3
 	CS	Tuto stopu nelze přehrát.

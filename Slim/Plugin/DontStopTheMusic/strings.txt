@@ -1,0 +1,6 @@
+PLUGIN_DSTM
+	EN	Don't Stop The Music
+	
+PLUGIN_DSTM_DESC
+	DE	Don't Stop The Musik bewahrt Sie davor, von der Stille überrascht zu werden. Wenn die Wiedergabeliste sich dem Ende neigt, wird automatisch passende Musik angehängt.
+	EN	Don't Stop The Music will make sure you don't let the silence kill your flow. Once you reach the end of your playlist it will automatically add music similar to what you've been listening to.
