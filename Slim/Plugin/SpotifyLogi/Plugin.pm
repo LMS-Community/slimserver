@@ -16,6 +16,7 @@ use base 'Slim::Plugin::OPMLBased';
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::SpotifyLogi::ProtocolHandler;
 
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
 
 my $log = Slim::Utils::Log->addLogCategory( {

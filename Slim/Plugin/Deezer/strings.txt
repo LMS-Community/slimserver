@@ -104,3 +104,5 @@ PLUGIN_DEEZER_SKIPS_EXCEEDED
 	RU	Лимит пропускания превышен. Вы снова сможете пропускать позже.
 	SV	Gränsen för att hoppa till nästa ljudspår har överstigits. Försök igen senare.
 
+PLUGIN_DEEZER_SMART_RADIO
+	EN	Deezer Smart Radio

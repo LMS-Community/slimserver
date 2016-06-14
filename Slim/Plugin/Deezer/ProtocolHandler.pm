@@ -1,6 +1,14 @@
 package Slim::Plugin::Deezer::ProtocolHandler;
 
-# $Id$
+# Logitech Media Server Copyright 2001-2016 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
@@ -568,6 +576,7 @@ sub getMetadataFor {
 		my $song = $client->currentSongForUrl($url);
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
+				title     => $client->string('PLUGIN_DEEZER_SMART_RADIO'),
 				bitrate   => '320k CBR',
 				type      => 'MP3 (Deezer)',
 				icon      => $icon,
