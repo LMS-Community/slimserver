@@ -142,7 +142,7 @@ sub dontStopTheMusic {
 					dontStopTheMusic($client, $http->params->{cb}, @{$http->params->{artists}});
 				}
 				elsif ( $content && ref $content && $content->{body} && (my $items = $content->{body}->{outline}) ) {
-					push @tracks, $items->[0]->{URL};
+					push @tracks, $items->[0]->{URL} if scalar @$items;
 				}
 				
 				if (scalar @tracks) {
