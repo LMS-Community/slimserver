@@ -214,7 +214,13 @@ sub dontStopTheMusic {
 				my $request = $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
 				$request->source($class);
 			}
-			elsif (main::INFOLOG && $log->is_info) {
+			elsif ( $prefs->client($client)->get('provider') !~ /^PLUGIN_RANDOM/ && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
+				$log->warn("I'm sorry, we couldn't create any reasonable result with your current playlist. We'll just play something instead.");
+				
+				my $request = $client->execute(['playlist', 'addtracks', 'listRef', ['randomplay://track'] ]);
+				$request->source($class);
+			}
+			elsif ( main::INFOLOG && $log->is_info ) {
 				$log->info("No matching tracks found for current playlist!");
 			}
 		} ) if $handler;
