@@ -206,17 +206,22 @@ sub registerLibrary {
 	Slim::Music::Import->useImporter( $class, 1 );
 
 	if (!main::SCANNER) {
-		# check whether library has already been built	
-		my $sth = Slim::Schema->dbh->prepare_cached(
-			"SELECT COUNT(1) FROM library_track WHERE library = ? LIMIT 1"
-		);
-		$sth->execute($id2);
-		my ($count) = $sth->fetchrow_array;
-		$sth->finish;
-	
-		if (!$count) {
-			$log->warn(sprintf('Library "%s" has not been created yet. Building it now.', $libraries{$id2}->{name}));
-			$class->rebuild($id2);
+		if ( Slim::Music::Import->stillScanning ) {
+			$log->error("Can't create the library view at this point, as the scanner is running: " . $args->{name});
+		}
+		else {
+			# check whether library has already been built	
+			my $sth = Slim::Schema->dbh->prepare_cached(
+				"SELECT COUNT(1) FROM library_track WHERE library = ? LIMIT 1"
+			);
+			$sth->execute($id2);
+			my ($count) = $sth->fetchrow_array;
+			$sth->finish;
+		
+			if (!$count) {
+				$log->warn(sprintf('Library "%s" has not been created yet. Building it now.', $libraries{$id2}->{name}));
+				$class->rebuild($id2);
+			}
 		}
 	}
 	
