@@ -554,3 +554,8 @@ PLUGIN_RANDOM_PRESS_RIGHT
 PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	DE	Titelmix (auf aktuelle Genres beschränkt)
 	EN	Song Mix (limited to current genres)
+
+PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
+	DE	Zufälliges Album (auf aktuelle Genres beschränkt)
+	EN	Random Album (limited to current genres)
+	

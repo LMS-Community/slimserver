@@ -1,4 +1,5 @@
 PLUGIN_DSTM
+	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
 	
 PLUGIN_DSTM_DESC

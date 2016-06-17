@@ -339,8 +339,9 @@ sub postinitPlugin {
 	# if user has the Don't Stop The Music plugin enabled, register ourselves
 	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
 		require Slim::Plugin::DontStopTheMusic::Plugin;
-		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TITLEMIX_WITH_GENRES', sub {
-			my ($client, $cb) = @_;
+		
+		my $mixWithGenres = sub {
+			my ($type, $client, $cb) = @_;
 		
 			return unless $client;
 		
@@ -366,13 +367,21 @@ sub postinitPlugin {
 				}
 			}
 		
-			$cb->($client, ['randomplay://track']);
+			$cb->($client, ['randomplay://' . $type]);
+		};
+		
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TITLEMIX_WITH_GENRES', sub {
+			$mixWithGenres->('track', @_);
 		});
 
 		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TRACK', sub {
 			my ($client, $cb) = @_;
 			$client->execute(['randomplaygenreselectall', 0]);
 			$cb->($client, ['randomplay://track']);
+		});
+		
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES', sub {
+			$mixWithGenres->('album', @_);
 		});
 
 		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_ITEM', sub {
