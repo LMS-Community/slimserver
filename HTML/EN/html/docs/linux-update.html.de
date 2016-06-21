@@ -13,7 +13,7 @@ Dies ist derzeit auf RPM und Debian basierenden Systemen der Fall.<p>
 <pre>[% installerFile %]</pre>
 [% END %]
 
-<p>Bitte f&uuml;hre die folgenen Schritte aus, um die Logitech Media Server Installation zu aktualisieren:</p> 
+<p>Bitte f&uuml;hre die folgenden Schritte aus, um die Logitech Media Server Installation zu aktualisieren:</p> 
 
 <ul style="direction: ltr;">
 	<li>Melde dich auf deinem Linux-Rechner an.</li>
