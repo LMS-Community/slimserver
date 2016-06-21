@@ -1002,7 +1002,7 @@ sub generateHTTPResponse {
 	}
 
 	# XXX - this is no longer being used by any of the stock skins
-	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage|html\/js-)/) {
+	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage)/) {
 
 		$params->{'params'} = {};
 
