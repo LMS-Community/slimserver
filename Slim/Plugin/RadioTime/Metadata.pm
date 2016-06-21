@@ -12,6 +12,7 @@ use Slim::Plugin::RadioTime::Plugin;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string cstring);
 
 use URI::Escape qw(uri_escape_utf8);
 
@@ -90,7 +91,7 @@ sub defaultMeta {
 		title => Slim::Music::Info::getCurrentTitle($url),
 		icon  => $ICON,
 		cover => $ICON,
-		type  => $client->string('RADIO'),
+		type  => cstring($client, 'RADIO'),
 	};
 }
 
@@ -156,6 +157,8 @@ sub parser {
 
 sub provider {
 	my ( $client, $url ) = @_;
+	
+	return defaultMeta(undef, $url) unless $client;
 	
 	my $hasIcy = $client->master->pluginData('hasIcy');
 	
