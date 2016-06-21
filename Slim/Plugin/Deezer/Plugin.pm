@@ -114,6 +114,10 @@ sub postinitPlugin {
 				$cb->($client);
 			}
 		});
+
+		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_DEEZER_FLOW', sub {
+			$_[1]->($_[0], ['deezer://flow.dzr']);
+		});
 	}
 }
 
