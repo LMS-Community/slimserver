@@ -58,6 +58,16 @@ sub initPlugin {
 	Slim::Control::Request::subscribe(\&onPlaylistChange, [['playlist'], ['cant_open', 'newsong', 'delete', 'resume']]);
 }
 
+sub postinitPlugin {
+	if (my $favsObject = Slim::Utils::Favorites->new()) {
+		foreach my $fav (@{$favsObject->all}) {
+			Slim::Plugin::DontStopTheMusic::Plugin->registerHandler($fav->{title}, sub {
+				$_[1]->($_[0], [$fav->{url}]);
+			});
+		}
+	}
+}
+
 sub registerHandler {
 	my ($class, $id, $handler) = @_;
 	$handlers{$id} = $handler;
@@ -96,7 +106,7 @@ sub dontStopTheMusicSetting {
 
 	foreach (sort keys %handlers) {
 		$request->setResultLoopHash('item_loop', $i, {
-			text => $client->string($_),
+			text => $_ =~ /(?:[a-z]|\s)/ ? $_ : $client->string($_),
 			radio => ($_ eq $provider) ? 1 : 0,
 			actions => {
 				do => {
@@ -211,7 +221,10 @@ sub dontStopTheMusic {
 					}
 				}
 				
-				my $request = $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
+				# single db: items (database query) need to be added, or they wouldn't be expanded
+				my $request = (scalar @$tracks == 1 && $tracks->[0] =~ /^db:/) 
+					? $client->execute(['playlist', 'add', $tracks->[0] ]) 
+					: $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
 				$request->source($class);
 			}
 			elsif ( $prefs->client($client)->get('provider') !~ /^PLUGIN_RANDOM/ && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
