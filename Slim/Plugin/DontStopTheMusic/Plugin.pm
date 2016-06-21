@@ -106,7 +106,7 @@ sub dontStopTheMusicSetting {
 
 	foreach (sort keys %handlers) {
 		$request->setResultLoopHash('item_loop', $i, {
-			text => $_ =~ /(?:[a-z]|\s)/ ? $_ : $client->string($_),
+			text => Slim::Utils::Strings::stringExists($_) ? $client->string($_) : $_,
 			radio => ($_ eq $provider) ? 1 : 0,
 			actions => {
 				do => {
