@@ -8,7 +8,7 @@
 		[% FOREACH handler = handlers  %]
 			<p>
 				<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit" name="pref_provider" id="provider[% loop.index %]" value="[% handler %]" />
-				<label for="provider[% loop.index %]" class="stdlabel">[% handler | string | html %]</label>
+				<label for="provider[% loop.index %]" class="stdlabel">[% handler | getstring | html %]</label>
 			</p>
 		[% END %]
 	[% END %]
