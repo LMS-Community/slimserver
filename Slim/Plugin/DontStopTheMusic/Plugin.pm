@@ -26,6 +26,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_DSTM',
 });
 
+my $MENU_URL = 'plugins/DontStopTheMusic/menu.html';
+use constant ICON => 'html/images/playlists.png';
+
 my %handlers;
 
 sub initPlugin {
@@ -33,6 +36,15 @@ sub initPlugin {
 	if ( main::WEBUI ) {
 		require Slim::Plugin::DontStopTheMusic::Settings;
 		Slim::Plugin::DontStopTheMusic::Settings->new;
+
+		# add settings page to main menu, but set flag to use different layout
+		Slim::Web::Pages->addPageFunction(qr/^\Q$MENU_URL\E/, sub {
+			$_[1]->{mainMenuItem} = 1;
+			Slim::Plugin::DontStopTheMusic::Settings->handler(@_);
+		});
+		
+		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DSTM' => $MENU_URL });
+		Slim::Web::Pages->addPageLinks('icons', { 'PLUGIN_DSTM' => ICON });
 	}
 
 	# register a settings item. I don't like that, but we can't hook in to the mysb.com delivered menu.
@@ -43,7 +55,7 @@ sub initPlugin {
 		id      => 'settingsDontStopTheMusic',
 		node    => 'settings',
 		window  => { 
-			'icon-id' => '/html/images/playlists.png',
+			'icon-id' => ICON,
 		},
 		weight  => 1,
 		actions => {
