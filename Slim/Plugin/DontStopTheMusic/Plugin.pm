@@ -26,8 +26,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_DSTM',
 });
 
-my $MENU_URL = 'plugins/DontStopTheMusic/menu.html';
-use constant ICON => 'html/images/playlists.png';
+use constant MENU => 'plugins/DontStopTheMusic/menu.html';
+use constant ICON => 'plugins/DontStopTheMusic/html/images/icon.png';
 
 my %handlers;
 
@@ -38,13 +38,16 @@ sub initPlugin {
 		Slim::Plugin::DontStopTheMusic::Settings->new;
 
 		# add settings page to main menu, but set flag to use different layout
-		Slim::Web::Pages->addPageFunction(qr/^\Q$MENU_URL\E/, sub {
-			$_[1]->{mainMenuItem} = 1;
+		Slim::Web::Pages->addPageFunction(qr/^\Q@{[MENU]}\E/, sub {
+			my $params = $_[1];
+			$params->{mainMenuItem} = 1;
+			$params->{pageicon} = ICON;
+			$params->{pageURL} = MENU;
 			Slim::Plugin::DontStopTheMusic::Settings->handler(@_);
 		});
 		
-		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DSTM' => $MENU_URL });
-		Slim::Web::Pages->addPageLinks('icons', { 'PLUGIN_DSTM' => ICON });
+		Slim::Web::Pages->addPageLinks('plugins', { 'PLUGIN_DSTM' => MENU });
+		Slim::Web::Pages->addPageLinks('icons',   { 'PLUGIN_DSTM' => ICON });
 	}
 
 	# register a settings item. I don't like that, but we can't hook in to the mysb.com delivered menu.

@@ -1,20 +1,36 @@
 [% BLOCK dstmOptions %]
 	<p>
-		<input type=radio [% IF !prefs.pref_provider %]checked[% END %] class="stdedit" name="pref_provider" id="providerOff" value="0" />
+		<input type=radio [% IF !prefs.pref_provider %]checked[% END %] class="stdedit dstm_provider" name="pref_provider" id="providerOff" value="0" />
 		<label for="providerOff" class="stdlabel">[% "DISABLED" | string | html %]</label>
 	</p>
 	[% FOREACH handler = handlers  %]
 		<p>
-			<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit" name="pref_provider" id="provider[% loop.index %]" value="[% handler %]" />
+			<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit dstm_provider" name="pref_provider" id="provider[% loop.index %]" value="[% handler %]" />
 			<label for="provider[% loop.index %]" class="stdlabel">[% handler | getstring | html %]</label>
 		</p>
 	[% END %]
 [% END %]
 
+[% IF useExtJS; extJsScripts = BLOCK %]
+<script TYPE="text/javascript">
+	Ext.onReady(function() {
+		Ext.select('input.dstm_provider').on({
+			change: function() {
+				Ext.Ajax.request({
+					form: 'settingsForm'
+				});
+			}
+		});
+	});
+</script>
+[% END; END %]
+	
 [% IF mainMenuItem %]
 	[% pagetitle = 'PLUGIN_DSTM' | string %]
 	[% pwd_list = BLOCK %]
-		[% "PLUGIN_DSTM" | string %]
+		<a href="[% webroot _ pageURL %]?player=[% player | uri %]">
+			[% "PLUGIN_DSTM" | string %]
+		</a>
 	[% END %]
 	
 	[% PROCESS pageheader.html %]
@@ -35,7 +51,12 @@
 [% END %]
 
 [% IF mainMenuItem %]
-				<p><br><input type=submit value="[% "SAVE" | string %]" name="saveSettings"></p>
+				<p>
+					<input type=hidden value=1 name="saveSettings"><br>
+					[% UNLESS useExtJS %]
+					<input type=submit value="[% "SAVE" | string %]">
+					[% END %]
+				</p>
 
 			</div>
 		</form>
