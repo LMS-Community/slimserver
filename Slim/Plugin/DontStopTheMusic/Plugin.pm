@@ -241,8 +241,8 @@ sub dontStopTheMusic {
 					}
 				}
 				
-				# single db: items (database query) need to be added, or they wouldn't be expanded
-				my $request = (scalar @$tracks == 1 && $tracks->[0] =~ /^db:/) 
+				# "playlist addtracks" can only handle single tracks, but not eg. playlists or db://... urls
+				my $request = (scalar @$tracks == 1) 
 					? $client->execute(['playlist', 'add', $tracks->[0] ]) 
 					: $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
 				$request->source($class);
