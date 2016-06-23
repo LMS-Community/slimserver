@@ -14,6 +14,7 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(cstring);
 
 use constant MIN_TRACKS_LEFT => 2;		# minimum number of tracks left before we add our own
 
@@ -114,15 +115,11 @@ sub dontStopTheMusicSetting {
 	
 	my $i = 1;
 	
-	my $string = sub {
-		Slim::Utils::Strings::stringExists($_[0]) ? $client->string($_[0]) : $_[0];
-	};
-
 	foreach (sort {
-		lc($string->($a)) cmp lc($string->($b));
+		lc(getString($a, $client)) cmp lc(getString($b, $client));
 	} keys %handlers) {
 		$request->setResultLoopHash('item_loop', $i, {
-			text => $string->($_),
+			text => getString($_),
 			radio => ($_ eq $provider) ? 1 : 0,
 			actions => {
 				do => {
@@ -138,6 +135,13 @@ sub dontStopTheMusicSetting {
 	$request->addResult('count', $i);
 	$request->setStatusDone()
 }
+
+sub getString {
+	my ($token, $client) = @_;
+	return Slim::Utils::Strings::stringExists($token) 
+			? cstring($client, $token) 
+			: $token;
+};
 
 sub onPlaylistChange {
 	my $request = shift;

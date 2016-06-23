@@ -38,7 +38,9 @@ sub prefs {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	$paramRef->{handlers} = [ sort keys %{Slim::Plugin::DontStopTheMusic::Plugin->getHandlers()} ];
+	$paramRef->{handlers} = [ sort {
+		lc(Slim::Plugin::DontStopTheMusic::Plugin::getString($a, $client)) cmp lc(Slim::Plugin::DontStopTheMusic::Plugin::getString($b, $client));
+	} keys %{Slim::Plugin::DontStopTheMusic::Plugin->getHandlers()} ];
 	
 	return $class->SUPER::handler($client, $paramRef);
 }
