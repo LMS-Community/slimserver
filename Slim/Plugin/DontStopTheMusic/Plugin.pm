@@ -71,16 +71,11 @@ sub initPlugin {
 
 	# listen to playlist change events so we know when our own playlist ends
 	Slim::Control::Request::subscribe(\&onPlaylistChange, [['playlist'], ['cant_open', 'newsong', 'delete', 'resume']]);
+	Slim::Control::Request::subscribe(\&registerFavorites, [['favorites'], ['changed']]);
 }
 
 sub postinitPlugin {
-	if (my $favsObject = Slim::Utils::Favorites->new()) {
-		foreach my $fav (@{$favsObject->all}) {
-			Slim::Plugin::DontStopTheMusic::Plugin->registerHandler($fav->{title}, sub {
-				$_[1]->($_[0], [$fav->{url}]);
-			});
-		}
-	}
+	registerFavorites();
 }
 
 sub registerHandler {
@@ -188,6 +183,16 @@ sub onPlaylistChange {
 			
 		}
 	} 
+}
+
+sub registerFavorites {
+	if (my $favsObject = Slim::Utils::Favorites->new()) {
+		foreach my $fav (@{$favsObject->all}) {
+			__PACKAGE__->registerHandler($fav->{title}, sub {
+				$_[1]->($_[0], [$fav->{url}]);
+			});
+		}
+	}
 }
 
 sub dontStopTheMusic {
