@@ -113,10 +113,16 @@ sub dontStopTheMusicSetting {
 	});
 	
 	my $i = 1;
+	
+	my $string = sub {
+		Slim::Utils::Strings::stringExists($_[0]) ? $client->string($_[0]) : $_[0];
+	};
 
-	foreach (sort keys %handlers) {
+	foreach (sort {
+		lc($string->($a)) cmp lc($string->($b));
+	} keys %handlers) {
 		$request->setResultLoopHash('item_loop', $i, {
-			text => Slim::Utils::Strings::stringExists($_) ? $client->string($_) : $_,
+			text => $string->($_),
 			radio => ($_ eq $provider) ? 1 : 0,
 			actions => {
 				do => {
