@@ -683,9 +683,13 @@ SqueezeJS.SonginfoParser = {
 		if (result.playlist_tracks > 0) {
 			for (var x = 0; x < contributorRoles.length; x++) {
 				if (result.playlist_loop[0][contributorRoles[x]]) {
-					var contributors = result.playlist_loop[0][contributorRoles[x]].split(', ');
 					var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(', ') : new Array();
-	
+
+					// Don't split the artist name if we only have a single id. Or Earth would no longer play with Wind & Fire.
+					var contributors = ids.length != 1
+						? result.playlist_loop[0][contributorRoles[x]].split(', ')
+						: new Array(result.playlist_loop[0][contributorRoles[x]]);
+
 					for (var i = 0; i < contributors.length; i++) {
 						// only add to the list if it's not already in there
 						if (!currentContributors[contributors[i]]) {

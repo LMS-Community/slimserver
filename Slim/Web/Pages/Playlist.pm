@@ -18,6 +18,9 @@ my $log = logger('player.playlist');
 my $prefs = preferences('server');
 my $cache = Slim::Utils::Cache->new;
 
+# keep a small cache of artist_id -> artistname mappings
+my %artistIdMap;
+
 use constant CACHE_TIME => 300;
 
 sub init {
@@ -228,7 +231,8 @@ sub playlist {
 		
 		# bug 17340 - in track lists we give the trackartist precedence over the artist
 		if ( $_->{'trackartist'} ) {
-			$_->{'artist'} = $_->{'trackartist'};
+			$_->{'artist'} = delete $_->{'trackartist'};
+			$_->{'artist_ids'} = delete $_->{'trackartist_ids'};
 		}
 		# if the track doesn't have an ARTIST or TRACKARTIST tag, use all contributors of whatever other role is defined
 		elsif ( !$_->{'artist_ids'} ) {
@@ -243,8 +247,28 @@ sub playlist {
 		
 		# We might have multiple contributors for a track
 		if (!$_->{'remote'}) {
-			my @contributors = split /, /, join(', ', $_->{'artist'}, $_->{'trackartist'});
-			my @ids = join(',', $_->{'artist_ids'}, $_->{'trackartist_ids'}) =~ /(\b\d+\b)/g;
+			my @contributors = split /, /, join(', ', $_->{'albumartist'}, $_->{'artist'}, $_->{'trackartist'});
+			my @ids = join(',', $_->{'albumartist_ids'}, $_->{'artist_ids'}, $_->{'trackartist_ids'}) =~ /(\b\d+\b)/g;
+			
+			# splitting comma separated artists sucks, as we could end up splitting Earth from Wind & Fire
+			# Do potentially slow look up of artists one by one to get the right id -> name mapping
+			if ( scalar @ids != scalar @contributors ) {
+				@contributors = ();
+
+				foreach my $id (@ids) {
+					my $artistName = $artistIdMap{$id};
+					
+					if (!$artistName) {
+						if ( my $request = Slim::Control::Request::executeRequest($client, [ 'artists', 0, 1, 'artist_id:' . $id ]) ) {
+							($artistName) = map { $_->{artist} } grep { $_->{id} == $id } @{ $request->getResult('artists_loop') || [] };
+							%artistIdMap = () if scalar keys %artistIdMap > 16;
+							$artistIdMap{$id} = $artistName if $artistName;
+						}
+					}
+
+					push @contributors, ($artistName || '');
+				}
+			}
 			
 			my %seen;
 			my @tupels;
