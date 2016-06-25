@@ -122,6 +122,19 @@
 				
 				</select>
 			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_TRANSITIONSAMPLERESTRICTION" desc="SETUP_TRANSITIONSAMPLERESTRICTION_DESC" %]
+				<select class="stdedit" name="pref_transitionSampleRestriction" id="pref_transitionSampleRestriction">
+
+				[% FOREACH option = {
+					'0' => 'SETUP_TRANSITIONSAMPLERESTRICTION_OFF',
+					'1' => 'SETUP_TRANSITIONSAMPLERESTRICTION_ON',
+				} %]
+					<option [% IF prefs.pref_transitionSampleRestriction == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+
+				</select>
+			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
 				<input type="text" class="stdedit sliderInput_0_10" name="pref_transitionDuration" id="pref_transitionDuration" value="[% prefs.pref_transitionDuration %]" size="5">

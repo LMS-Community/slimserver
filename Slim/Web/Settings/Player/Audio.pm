@@ -42,7 +42,7 @@ sub prefs {
 	}
 
 	if ($client->maxTransitionDuration()) {
-		push @prefs,qw(transitionType transitionDuration transitionSmart);
+		push @prefs,qw(transitionType transitionDuration transitionSmart transitionSampleRestriction);
 	}
 	
 	if ($client->hasDigitalOut()) {

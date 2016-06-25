@@ -5942,6 +5942,18 @@ SETUP_TRANSITIONSMART_OFF
 	RU	Откл. интеллект. перекрестное затухание
 	SV	Avaktivera smart korstoning
 
+SETUP_TRANSITIONSAMPLERESTRICTION
+	EN	Crossfade Across Different Sample Rates
+
+SETUP_TRANSITIONSAMPLERESTRICTION_DESC
+	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
+
+SETUP_TRANSITIONSAMPLERESTRICTION_OFF
+	EN	Yes
+
+SETUP_TRANSITIONSAMPLERESTRICTION_ON
+	EN	No
+
 SETUP_TITLEFORMAT
 	CS	Formát názvu
 	DA	Titelformat
