@@ -1,47 +1,35 @@
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
-	CS	Rhapsody
-	DA	Rhapsody
-	DE	Rhapsody
-	EN	Rhapsody
-	ES	Rhapsody
-	FI	Rhapsody
-	FR	Rhapsody
-	IT	Rhapsody
-	NL	Rhapsody
-	NO	Rhapsody
-	PL	Rhapsody
-	RU	Rhapsody
-	SV	Rhapsody
+	EN	Napster
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
-	CS	Chyba Rhapsody
-	DA	Rhapsody-fejl
-	DE	Rhapsody-Fehler
-	EN	Rhapsody Error
-	ES	Error de Rhapsody
-	FI	Rhapsodyn virhe
-	FR	Erreur Rhapsody
-	IT	Errore di Rhapsody
-	NL	Rhapsody-foutmelding
-	NO	Rhapsody-feil
-	PL	Błąd usługi Rhapsody
-	RU	Ошибка Rhapsody
-	SV	Rhapsody-fel
+	CS	Chyba Napster
+	DA	Napster-fejl
+	DE	Napster-Fehler
+	EN	Napster Error
+	ES	Error de Napster
+	FI	Napster virhe
+	FR	Erreur Napster
+	IT	Errore di Napster
+	NL	Napster-foutmelding
+	NO	Napster-feil
+	PL	Błąd usługi Napster
+	RU	Ошибка Napster
+	SV	Napster-fel
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
-	CS	Tento přehrávač nepodporuje Rhapsody/Napster. Je vyžadován Squeezebox2 nebo vyšší.
-	DA	Denne afspiller understøtter ikke Rhapsody/Napster. Der kræves en Squeezebox2 eller senere.
-	DE	Rhapsody/Napster wird auf diesem Player nicht unterstützt. Sie benötigen eine Squeezebox2 oder höher.
-	EN	This player does not support Rhapsody/Napster.  A Squeezebox2 or higher is required.
-	ES	Este reproductor es incompatible con Rhapsody/Napster. Se necesita Squeezebox2 o posterior.
-	FI	Tämä soitin ei tue Rhapsodya/Napsteria. Vaaditaan Squeezebox2 tai uudempi.
-	FR	Ce lecteur ne prend pas en charge Rhapsody/Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
-	IT	Questo lettore non supporta Rhapsody/Napster. È necessario utilizzare Squeezebox2 o versione successiva.
-	NL	Dit muzieksysteem biedt geen ondersteuning voor Rhapsody/Napster. Een Squeezebox2 of hoger is vereist.
-	NO	Denne spilleren støtter ikke Rhapsody/Napster. En Squeezebox2 eller høyere er påkrevd.
-	PL	Ten odtwarzacz nie obsługuje usługi Rhapsody/Napster. Wymagane jest urządzenie Squeezebox2 lub nowsze.
-	RU	Этот плеер не поддерживает Rhapsody/Napster. Требуется Squeezebox2 или более высокой версии.
-	SV	Spelaren har inte stöd för Rhapsody/Napster. Squeezebox 2 eller senare krävs.
+	CS	Tento přehrávač nepodporuje Napster. Je vyžadován Squeezebox2 nebo vyšší.
+	DA	Denne afspiller understøtter ikke Napster. Der kræves en Squeezebox2 eller senere.
+	DE	Napster wird auf diesem Player nicht unterstützt. Sie benötigen eine Squeezebox2 oder höher.
+	EN	This player does not support Napster.  A Squeezebox2 or higher is required.
+	ES	Este reproductor es incompatible con Napster. Se necesita Squeezebox2 o posterior.
+	FI	Tämä soitin ei tue Napsteria. Vaaditaan Squeezebox2 tai uudempi.
+	FR	Ce lecteur ne prend pas en charge Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
+	IT	Questo lettore non supporta Napster. È necessario utilizzare Squeezebox2 o versione successiva.
+	NL	Dit muzieksysteem biedt geen ondersteuning voor Napster. Een Squeezebox2 of hoger is vereist.
+	NO	Denne spilleren støtter ikke Napster. En Squeezebox2 eller høyere er påkrevd.
+	PL	Ten odtwarzacz nie obsługuje usługi Napster. Wymagane jest urządzenie Squeezebox2 lub nowsze.
+	RU	Этот плеер не поддерживает Napster. Требуется Squeezebox2 или более высокой версии.
+	SV	Spelaren har inte stöd för Napster. Squeezebox 2 eller senare krävs.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	CS	Selhání zvukového proudu, přechod na další stopu.
@@ -104,19 +92,19 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	SV	Felaktig uppspelningssession. Endast tre strömmar kan spelas upp samtidigt.
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
-	CS	Na Rhapsody
-	DA	På Rhapsody
-	DE	Auf Rhapsody
-	EN	On Rhapsody
-	ES	En Rhapsody
-	FI	Rhapsodyssa
-	FR	Sur Rhapsody
-	IT	Su Rhapsody
-	NL	Op Rhapsody
-	NO	På Rhapsody
-	PL	W usłudze Rhapsody
-	RU	На Rhapsody
-	SV	På Rhapsody
+	CS	Na Napster
+	DA	På Napster
+	DE	Auf Napster
+	EN	On Napster
+	ES	En Napster
+	FI	Napster
+	FR	Sur Napster
+	IT	Su Napster
+	NL	Op Napster
+	NO	På Napster
+	PL	W usłudze Napster
+	RU	На Napster
+	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	CS	Na Napster
@@ -134,17 +122,16 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
-	CS	K použití Rhapsody stiskněte a podržte JAS k aktualizaci vašeho firmware.
-	DA	Hvis du vil bruge Rhapsody, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
-	DE	Wenn Sie Rhapsody nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
-	EN	To use Rhapsody, press and hold BRIGHTNESS to update your firmware.
-	ES	Para usar Rhapsody, mantenga pulsado BRIGHTNESS para actualizar el firmware.
-	FI	Jos haluat käyttää Rhapsodya, päivitä laiteohjelmisto pitämällä Kirkkaus-painike pohjassa.
-	FR	Pour utiliser Rhapsody, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
-	IT	Per usare Rhapsody, tenere premuto BRIGHTNESS per aggiornare il firmware.
-	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
-	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
-	PL	Aby użyć usługi Rhapsody, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
-	RU	Чтобы использовать Rhapsody, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
-	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
-
+	CS	K použití Napster stiskněte a podržte JAS k aktualizaci vašeho firmware.
+	DA	Hvis du vil bruge Napster, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
+	DE	Wenn Sie Napster nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
+	EN	To use Napster, press and hold BRIGHTNESS to update your firmware.
+	ES	Para usar Napster, mantenga pulsado BRIGHTNESS para actualizar el firmware.
+	FI	Jos haluat käyttää Napstera, päivitä laiteohjelmisto pitämällä Kirkkaus-painike pohjassa.
+	FR	Pour utiliser Napster, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
+	IT	Per usare Napster, tenere premuto BRIGHTNESS per aggiornare il firmware.
+	NL	Als je Napster wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
+	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Napster.
+	PL	Aby użyć usługi Napster, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
+	RU	Чтобы использовать Napster, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
+	SV	Om du vill använda Napster uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
