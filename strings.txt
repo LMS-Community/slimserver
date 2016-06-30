@@ -20144,19 +20144,19 @@ DEBUG_NETWORK_PROTOCOL_SLIMP3
 	SV	SliMP3-protokoll
 
 DEBUG_NETWORK_UPNP
-	CS	Informace o serveru a zařízení UPnP (Rhapsody)
-	DA	Oplysninger om UPnP-server og enhed (Rhapsody)
-	DE	UPnP Server & Geräte Information (Rhapsody)
-	EN	UPnP Server & Device Information (Rhapsody)
-	ES	Información de dispositivo y servidor UPnP (Rhapsody)
-	FI	UPnP-palvelin ja laitetiedot (Rhapsody)
-	FR	Informations serveur et dispositif UPnP (Rhapsody)
-	IT	Informazioni su dispositivi e server UPnP (Rhapsody)
-	NL	Informatie over UPnP-server en -apparaat (Rhapsody)
-	NO	UPnP server- og enhetsinformasjon (Rhapsody)
-	PL	Informacje o serwerze UPnP i urządzeniu (Rhapsody)
-	RU	Информация о сервере и устройстве UPnP (Rhapsody)
-	SV	UPnP-server och enhetsinformation (Rhapsody)
+	CS	Informace o serveru a zařízení UPnP
+	DA	Oplysninger om UPnP-server og enhed
+	DE	UPnP Server & Geräte Information
+	EN	UPnP Server & Device Information
+	ES	Información de dispositivo y servidor UPnP
+	FI	UPnP-palvelin ja laitetiedot
+	FR	Informations serveur et dispositif UPnP
+	IT	Informazioni su dispositivi e server UPnP
+	NL	Informatie over UPnP-server en -apparaat
+	NO	UPnP server- og enhetsinformasjon
+	PL	Informacje o serwerze UPnP i urządzeniu
+	RU	Информация о сервере и устройстве UPnP
+	SV	UPnP-server och enhetsinformation
 
 DEBUG_NETWORK_JSONRPC
 	CS	Protokolování JSON-RPC API

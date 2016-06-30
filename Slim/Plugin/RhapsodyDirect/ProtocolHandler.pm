@@ -1,8 +1,6 @@
 package Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 
-# $Id: ProtocolHandler.pm 11678 2007-03-27 14:39:22Z andy $
-
-# Rhapsody Direct handler for rhapd:// URLs.
+# Rhapsody Direct / Napster handler for rhapd:// URLs.
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
@@ -37,7 +35,7 @@ sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
 
 sub canSeek {}
 
-sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Rhapsody Radio' ); }
+sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Napster Radio' ); }
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
@@ -49,7 +47,7 @@ sub new {
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
 	
-	main::DEBUGLOG && $log->debug( 'Remote streaming Rhapsody track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Napster track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -104,7 +102,7 @@ sub parseDirectHeaders {
 
 	foreach my $header (@headers) {
 
-		main::DEBUGLOG && $log->debug("RhapsodyDirect header: $header");
+		main::DEBUGLOG && $log->debug("Napster header: $header");
 
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
@@ -286,7 +284,7 @@ sub _gotNextRadioTrack {
 		cover     => $track->{cover},
 		duration  => $track->{playbackSeconds},
 		bitrate   => '320k CBR',
-		type      => 'M4A (Rhapsody)',
+		type      => 'M4A (Napster)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 		buttons   => {
@@ -432,7 +430,7 @@ sub getMetadataFor {
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
 				bitrate   => '320k CBR',
-				type      => 'M4A (Rhapsody)',
+				type      => 'M4A (Napster)',
 				icon      => $icon,
 				cover     => $icon,
 			};
@@ -492,7 +490,7 @@ sub getMetadataFor {
 	
 	return $meta || {
 		bitrate   => '320k CBR',
-		type      => 'M4A (Rhapsody)',
+		type      => 'M4A (Napster)',
 		icon      => $icon,
 		cover     => $icon,
 	};
@@ -528,7 +526,7 @@ sub _gotBulkMetadata {
 		my $meta = {
 			%{$track},
 			bitrate   => '320k CBR',
-			type      => 'M4A (Rhapsody)',
+			type      => 'M4A (Napster)',
 			info_link => 'plugins/rhapsodydirect/trackinfo.html',
 			icon      => $icon,
 		};
@@ -565,7 +563,7 @@ sub _playlistCallback {
 	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
 		# User stopped playing Rhapsody, 
 
-		main::DEBUGLOG && $log->debug( "Stopped Rhapsody, unsubscribing from playlistCallback" );
+		main::DEBUGLOG && $log->debug( "Stopped Napster, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
 		
 		return;

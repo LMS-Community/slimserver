@@ -925,20 +925,20 @@ PLUGIN_PANDORA_RATING_NEGATIVE_LINE2
 	SV	Låten kommer inte att spelas igen.
 
 PLUGIN_PANDORA_SEARCH_RHAPSODY
-	CS	Hledat %s na Rhapsody
-	DA	Søg efter %s på Rhapsody
-	DE	Auf Rhapsody nach %s suchen
-	EN	Search for %s on Rhapsody
-	ES	Buscar %s en Rhapsody
-	FI	Hae kohdetta %s Rhapsodyssä
-	FR	Recherche de %s sur Rhapsody
-	HE	חפש %s ב-Rhapsody
-	IT	Cerca %s in Rhapsody.
-	NL	Naar %s zoeken op Rhapsody
-	NO	Søk etter %s på Rhapsody
-	PL	Wyszukaj %s w usłudze Rhapsody
-	RU	Поиск %s на Rhapsody
-	SV	Sök efter %s på Rhapsody.
+	CS	Hledat %s na Napster
+	DA	Søg efter %s på Napster
+	DE	Auf Napster nach %s suchen
+	EN	Search for %s on Napster
+	ES	Buscar %s en Napster
+	FI	Hae kohdetta %s Napster
+	FR	Recherche de %s sur Napster
+	HE	חפש %s ב-Napster
+	IT	Cerca %s in Napster.
+	NL	Naar %s zoeken op Napster
+	NO	Søk etter %s på Napster
+	PL	Wyszukaj %s w usłudze Napster
+	RU	Поиск %s на Napster
+	SV	Sök efter %s på Napster.
 
 PLUGIN_PANDORA_SKIPS_EXCEEDED
 	CS	Překročen hodinový limit přeskočení, znovu přeskakovat můžete později.
