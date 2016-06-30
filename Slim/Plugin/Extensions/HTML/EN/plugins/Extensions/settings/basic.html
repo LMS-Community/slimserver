@@ -84,8 +84,9 @@
 	<tr>
 		<td><input name="[% type == 'update' ? "update:" _ plugin.name : plugin.name %]" [% plugin.enforce ? "disabled" : "" %] [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 		[% IF type != 'update' %]
-			<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />&nbsp;</td>
+			<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />&nbsp;
 		[% END %]
+		</td>
 		<td>[% plugin.title %][% IF type == 'enabled' %] (v[% plugin.version %])[%- END -%]&nbsp;</td>
 		<td>[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]&nbsp;</td>
 		<td>
