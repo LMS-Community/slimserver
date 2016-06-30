@@ -318,16 +318,17 @@ sub getMixablePropertiesFromTrack {
 	
 	return unless blessed $track;
 
-	my $id     = $track->url;
+	my $url    = $track->url;
+	my $id     = $track->id;
 	my $artist = $track->artistName;
 	my $title  = $track->title;
 	my $duration = $track->duration;
 				
 	# we might have to look up titles for remote sources
-	if ( !($artist && $title && $duration) && $track && $track->remote && $id ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($id);
+	if ( !($artist && $title && $duration) && $track && $track->remote && $url ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler->can('getMetadataFor') ) {
-			my $remoteMeta = $handler->getMetadataFor( $client, $id );
+			my $remoteMeta = $handler->getMetadataFor( $client, $url );
 			$artist   ||= $remoteMeta->{artist};
 			$title    ||= $remoteMeta->{title};
 			$duration ||= $remoteMeta->{duration};
