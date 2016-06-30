@@ -1,47 +1,23 @@
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
-	CS	Rhapsody
-	DA	Rhapsody
-	DE	Rhapsody
-	EN	Rhapsody
-	ES	Rhapsody
-	FI	Rhapsody
-	FR	Rhapsody
-	IT	Rhapsody
-	NL	Rhapsody
-	NO	Rhapsody
-	PL	Rhapsody
-	RU	Rhapsody
-	SV	Rhapsody
+	EN	Napster
 
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
-	CS	Rhapsody
-	DA	Rhapsody
-	DE	Rhapsody
-	EN	Rhapsody
-	ES	Rhapsody
-	FI	Rhapsody
-	FR	Rhapsody
-	IT	Rhapsody
-	NL	Rhapsody
-	NO	Rhapsody
-	PL	Rhapsody
-	RU	Rhapsody
-	SV	Rhapsody
+	EN	Napster
 
 PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
-	CS	Knihovna Rhapsody
-	DA	Rhapsody-bibliotek
-	DE	Rhapsody Library
-	EN	Rhapsody Library
-	ES	Biblioteca Rhapsody
-	FI	Rhapsody-kirjasto
-	FR	Bibliothèque Rhapsody
-	IT	Libreria Rhapsody
-	NL	Rhapsody-collectie
-	NO	Rhapsody-bibliotek
-	PL	Biblioteka usługi Rhapsody
-	RU	Медиатека Rhapsody
-	SV	Rhapsody-bibliotek
+	CS	Knihovna Napster
+	DA	Napster-bibliotek
+	DE	Napster Library
+	EN	Napster Library
+	ES	Biblioteca Napster
+	FI	Napster-kirjasto
+	FR	Bibliothèque Napster
+	IT	Libreria Napster
+	NL	Napster-collectie
+	NO	Napster-bibliotek
+	PL	Biblioteka usługi Napster
+	RU	Медиатека Napster
+	SV	Napster-bibliotek
 
 PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY
 	CS	Knihovna Napster
@@ -59,109 +35,109 @@ PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY
 	SV	Napster-bibliotek
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
-	CS	Chyba Rhapsody
-	DA	Rhapsody-fejl
-	DE	Rhapsody-Fehler
-	EN	Rhapsody Error
-	ES	Error de Rhapsody
-	FI	Rhapsodyn virhe
-	FR	Erreur Rhapsody
-	IT	Errore di Rhapsody
-	NL	Rhapsody-foutmelding
-	NO	Rhapsody-feil
-	PL	Błąd usługi Rhapsody
-	RU	Ошибка Rhapsody
-	SV	Rhapsody-fel
+	CS	Chyba Napster
+	DA	Napster-fejl
+	DE	Napster-Fehler
+	EN	Napster Error
+	ES	Error de Napster
+	FI	Napster virhe
+	FR	Erreur Napster
+	IT	Errore di Napster
+	NL	Napster-foutmelding
+	NO	Napster-feil
+	PL	Błąd usługi Napster
+	RU	Ошибка Napster
+	SV	Napster-fel
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
-	CS	Interní chyba Rhapsody: %s
-	DA	Intern Rhapsody-fejl: %s
-	DE	Interner Rhapsody-Fehler: %s
-	EN	Internal Rhapsody Error: %s
-	ES	Error interno de Rhapsody: %s
-	FI	Sisäinen Rhapsodyn virhe: %s
-	FR	Erreur interne Rhapsody: %s
-	IT	Errore interno di Rhapsody: %s
-	NL	Interne Rhapsody-foutmelding: %s
-	NO	Intern Rhapsody-feil: %s
-	PL	Błąd wewnętrzny usługi Rhapsody: %s
-	RU	Внутренняя ошибка Rhapsody: %s
-	SV	Internt Rhapsody-fel: %s
+	CS	Interní chyba Napster: %s
+	DA	Intern Napster-fejl: %s
+	DE	Interner Napster-Fehler: %s
+	EN	Internal Napster Error: %s
+	ES	Error interno de Napster: %s
+	FI	Sisäinen Napster virhe: %s
+	FR	Erreur interne Napster: %s
+	IT	Errore interno di Napster: %s
+	NL	Interne Napster-foutmelding: %s
+	NO	Intern Napster-feil: %s
+	PL	Błąd wewnętrzny usługi Napster: %s
+	RU	Внутренняя ошибка Napster: %s
+	SV	Internt Napster-fel: %s
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
-	CS	Neplatná odezva přehrávače na Rhapsody.
-	DA	Ugyldigt Rhapsody-svar fra afspilleren.
-	DE	Ungültige Rhapsody-Reaktion vom Player.
-	EN	Invalid Rhapsody response from player.
-	ES	Respuesta no válida de Rhapsody desde reproductor.
-	FI	Virheellinen Rhapsodyn vastaus soittimelta.
-	FR	Réponse Rhapsody non valide de la part de la platine.
-	IT	Risposta Rhapsody non valida dal lettore.
-	NL	Ongeldige Rhapsody-respons van muzieksysteem.
-	NO	Ugyldig Rhapsody-respons fra spilleren.
-	PL	Nieprawidłowa odpowiedź dla usługi Rhapsody z odtwarzacza.
-	RU	Недействительный ответ Rhapsody от плеера.
-	SV	Ogiltigt Rhapsody-svar från spelaren.
+	CS	Neplatná odezva přehrávače na Napster.
+	DA	Ugyldigt Napster-svar fra afspilleren.
+	DE	Ungültige Napster-Reaktion vom Player.
+	EN	Invalid Napster response from player.
+	ES	Respuesta no válida de Napster desde reproductor.
+	FI	Virheellinen Napster vastaus soittimelta.
+	FR	Réponse Napster non valide de la part de la platine.
+	IT	Risposta Napster non valida dal lettore.
+	NL	Ongeldige Napster-respons van muzieksysteem.
+	NO	Ugyldig Napster-respons fra spilleren.
+	PL	Nieprawidłowa odpowiedź dla usługi Napster z odtwarzacza.
+	RU	Недействительный ответ Napster от плеера.
+	SV	Ogiltigt Napster-svar från spelaren.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
-	CS	Není možná komunikace s Rhapsody.
-	DA	Det var ikke muligt at kommunikere med Rhapsody.
-	DE	Verbindung mit Rhapsody nicht möglich.
-	EN	Unable to communicate with Rhapsody.
-	ES	Imposible comunicarse con Rhapsody.
-	FI	Tietoliikenne Rhapsodyn kanssa ei onnistu.
-	FR	Communication avec Rhapsody impossible.
-	IT	Impossibile comunicare con Rhapsody.
-	NL	Geen communicatie mogelijk met Rhapsody.
-	NO	Kan ikke kommunisere med Rhapsody.
-	PL	Nie można połączyć się z usługą Rhapsody.
-	RU	Взаимодействие с Rhapsody невозможно.
-	SV	Det går inte att kommunicera med Rhapsody.
+	CS	Není možná komunikace s Napster.
+	DA	Det var ikke muligt at kommunikere med Napster.
+	DE	Verbindung mit Napster nicht möglich.
+	EN	Unable to communicate with Napster.
+	ES	Imposible comunicarse con Napster.
+	FI	Tietoliikenne Napster kanssa ei onnistu.
+	FR	Communication avec Napster impossible.
+	IT	Impossibile comunicare con Napster.
+	NL	Geen communicatie mogelijk met Napster.
+	NO	Kan ikke kommunisere med Napster.
+	PL	Nie można połączyć się z usługą Napster.
+	RU	Взаимодействие с Napster невозможно.
+	SV	Det går inte att kommunicera med Napster.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
-	CS	Přehrávač nebyl schopen komunikace s Rhapsody.
-	DA	Afspilleren kunne ikke kommunikere med Rhapsody.
-	DE	Player konnte keine Verbindung mit Rhapsody herstellen.
-	EN	Player was unable to communicate with Rhapsody.
-	ES	El reproductor no se pudo comunicar con Rhapsody.
-	FI	Soitin ei voinut kommunikoida Rhapsodyn kanssa.
-	FR	La platine n'a pas pu communiquer avec Rhapsody.
-	IT	Il lettore non è stato in grado di comunicare con Rhapsody.
-	NL	Muzieksysteem kan niet met Rhapsody communiceren.
-	NO	Spilleren kunne ikke kommunisere med Rhapsody.
-	PL	Odtwarzacz nie mógł połączyć się z usługą Rhapsody.
-	RU	Плееру не удалось обменяться данными с Rhapsody.
-	SV	Det gick inte att upprätta någon kommunikation mellan spelaren och Rhapsody.
+	CS	Přehrávač nebyl schopen komunikace s Napster.
+	DA	Afspilleren kunne ikke kommunikere med Napster.
+	DE	Player konnte keine Verbindung mit Napster herstellen.
+	EN	Player was unable to communicate with Napster.
+	ES	El reproductor no se pudo comunicar con Napster.
+	FI	Soitin ei voinut kommunikoida Napster kanssa.
+	FR	La platine n'a pas pu communiquer avec Napster.
+	IT	Il lettore non è stato in grado di comunicare con Napster.
+	NL	Muzieksysteem kan niet met Napster communiceren.
+	NO	Spilleren kunne ikke kommunisere med Napster.
+	PL	Odtwarzacz nie mógł połączyć się z usługą Napster.
+	RU	Плееру не удалось обменяться данными с Napster.
+	SV	Det gick inte att upprätta någon kommunikation mellan spelaren och Napster.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
-	CS	Tento přehrávač nepodporuje Rhapsody/Napster. Je vyžadován Squeezebox2 nebo vyšší.
-	DA	Denne afspiller understøtter ikke Rhapsody/Napster. Der kræves en Squeezebox2 eller senere.
-	DE	Rhapsody/Napster wird auf diesem Player nicht unterstützt. Sie benötigen eine Squeezebox2 oder höher.
-	EN	This player does not support Rhapsody/Napster.  A Squeezebox2 or higher is required.
-	ES	Este reproductor es incompatible con Rhapsody/Napster. Se necesita Squeezebox2 o posterior.
-	FI	Tämä soitin ei tue Rhapsodya/Napsteria. Vaaditaan Squeezebox2 tai uudempi.
-	FR	Cette platine ne prend pas en charge Rhapsody/Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
-	IT	Questo lettore non supporta Rhapsody/Napster. È necessario utilizzare Squeezebox2 o versione successiva.
-	NL	Dit muzieksysteem biedt geen ondersteuning voor Rhapsody/Napster. Een Squeezebox2 of hoger is vereist.
-	NO	Denne spilleren støtter ikke Rhapsody/Napster. En Squeezebox2 eller høyere er påkrevd.
-	PL	Ten odtwarzacz nie obsługuje usługi Rhapsody/Napster. Wymagane jest urządzenie Squeezebox2 lub nowsze.
-	RU	Этот плеер не поддерживает Rhapsody/Napster. Требуется Squeezebox2 или более высокой версии.
-	SV	Spelaren har inte stöd för Rhapsody/Napster. Squeezebox 2 eller senare krävs.
+	CS	Tento přehrávač nepodporuje Napster. Je vyžadován Squeezebox2 nebo vyšší.
+	DA	Denne afspiller understøtter ikke Napster. Der kræves en Squeezebox2 eller senere.
+	DE	Napster wird auf diesem Player nicht unterstützt. Sie benötigen eine Squeezebox2 oder höher.
+	EN	This player does not support Napster.  A Squeezebox2 or higher is required.
+	ES	Este reproductor es incompatible con Napster. Se necesita Squeezebox2 o posterior.
+	FI	Tämä soitin ei tue Napsteria. Vaaditaan Squeezebox2 tai uudempi.
+	FR	Cette platine ne prend pas en charge Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
+	IT	Questo lettore non supporta Napster. È necessario utilizzare Squeezebox2 o versione successiva.
+	NL	Dit muzieksysteem biedt geen ondersteuning voor Napster. Een Squeezebox2 of hoger is vereist.
+	NO	Denne spilleren støtter ikke Napster. En Squeezebox2 eller høyere er påkrevd.
+	PL	Ten odtwarzacz nie obsługuje usługi Napster. Wymagane jest urządzenie Squeezebox2 lub nowsze.
+	RU	Этот плеер не поддерживает Napster. Требуется Squeezebox2 или более высокой версии.
+	SV	Spelaren har inte stöd för Napster. Squeezebox 2 eller senare krävs.
 
 PLUGIN_RHAPSODY_DIRECT_US_ONLY
-	CS	Omlouváme se, Rhapsody je nyní dostupná pouze v USA.
-	DA	Beklager, men Rhapsody kan foreløbig kun benyttes i USA.
-	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
-	EN	Sorry, Rhapsody is currently available in the U.S. only.
-	ES	Rhapsody sólo está disponible en EE UU.
-	FI	Rhapsody on tällä hetkellä tarjolla vain Yhdysvalloissa.
-	FR	Rhapsody est uniquement disponible aux Etats-Unis actuellement.
-	IT	Spiacenti, al momento Rhapsody è disponibile solo negli USA.
-	NL	Sorry, Rhapsody is momenteel alleen beschikbaar in de VS.
-	NO	Beklager, Rhapsody er for øyeblikket bare tilgjengelig i USA.
-	PL	Niestety usługa Rhapsody jest aktualnie dostępna tylko w USA.
-	RU	Извините, сейчас служба Rhapsody доступна только в США.
-	SV	Rhapsody är för närvarande endast tillgängligt i USA.
+	CS	Omlouváme se, Napster je nyní dostupná pouze v USA.
+	DA	Beklager, men Napster kan foreløbig kun benyttes i USA.
+	DE	Napster ist leider derzeit nur in den USA verfügbar.
+	EN	Sorry, Napster is currently available in the U.S. only.
+	ES	Napster sólo está disponible en EE UU.
+	FI	Napster on tällä hetkellä tarjolla vain Yhdysvalloissa.
+	FR	Napster est uniquement disponible aux Etats-Unis actuellement.
+	IT	Spiacenti, al momento Napster è disponibile solo negli USA.
+	NL	Sorry, Napster is momenteel alleen beschikbaar in de VS.
+	NO	Beklager, Napster er for øyeblikket bare tilgjengelig i USA.
+	PL	Niestety usługa Napster jest aktualnie dostępna tylko w USA.
+	RU	Извините, сейчас служба Napster доступна только в США.
+	SV	Napster är för närvarande endast tillgängligt i USA.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	CS	Selhání zvukového proudu, přechod na další stopu.
@@ -179,19 +155,19 @@ PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
 PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
-	CS	Přihlašování do Rhapsody...
-	DA	Logger på Rhapsody...
-	DE	Anmelden bei Rhapsody läuft ...
-	EN	Logging in to Rhapsody...
-	ES	Iniciando sesión en Rhapsody...
-	FI	Kirjaudutaan Rhapsodyyn...
-	FR	Connexion à Rhapsody...
-	IT	Accesso a Rhapsody...
-	NL	Bezig met aanmelden bij Rhapsody...
-	NO	Logger på Rhapsody...
-	PL	Logowanie w usłudze Rhapsody...
-	RU	Вход в систему Rhapsody...
-	SV	Loggar in på Rhapsody...
+	CS	Přihlašování do Napster...
+	DA	Logger på Napster...
+	DE	Anmelden bei Napster läuft ...
+	EN	Logging in to Napster...
+	ES	Iniciando sesión en Napster...
+	FI	Kirjaudutaan Napster...
+	FR	Connexion à Napster...
+	IT	Accesso a Napster...
+	NL	Bezig met aanmelden bij Napster...
+	NO	Logger på Napster...
+	PL	Logowanie w usłudze Napster...
+	RU	Вход в систему Napster...
+	SV	Loggar in på Napster...
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
 	CS	Získávání informací o stopě...
@@ -269,34 +245,34 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	SV	Felaktig uppspelningssession. Endast tre strömmar kan spelas upp samtidigt.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
-	CS	Rhapsody nemůže přehrávat s tolika synchronizovanými přehrávači. Odsynchronizujte laskavě jeden nebo více přehrávačů.
-	DA	Rhapsody kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
-	DE	Rhapsody funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
-	EN	Rhapsody cannot play with this many players synced.  Please unsync one or more players.
-	ES	Rhapsody no puede reproducir con tantos reproductores sincronizados. Debe desincronizar al menos uno de ellos.
-	FI	Rhapsody ei toimi, jos näin monta soitinta on synkronoitu.  Poista yhden tai useamman soittimen synkronointi.
-	FR	Rhapsody ne peut fonctionner avec autant de platines synchronisées. Veuillez désynchroniser au moins une platine.
-	IT	Impossibile utilizzare Rhapsody con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
-	NL	Rhapsody kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
-	NO	Rhapsody kan ikke brukes med så mange synkroniserte spillere. Du må fjerne én eller flere spillere fra synkroniseringen.
-	PL	Odtwarzanie przez usługę Rhapsody przy takiej liczbie zsynchronizowanych odtwarzaczy jest niemożliwe. Wyłącz synchronizację co najmniej jednego odtwarzacza.
-	RU	Rhapsody не может воспроизводить, когда синхронизируется так много плееров. Отмените синхронизацию для одного или нескольких плееров.
-	SV	Det går inte att spela upp från Rhapsody när så många spelare har synkroniserats. Ta bort en eller flera spelare ur synkroniseringsgruppen.
+	CS	Napster nemůže přehrávat s tolika synchronizovanými přehrávači. Odsynchronizujte laskavě jeden nebo více přehrávačů.
+	DA	Napster kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
+	DE	Napster funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
+	EN	Napster cannot play with this many players synced.  Please unsync one or more players.
+	ES	Napster no puede reproducir con tantos reproductores sincronizados. Debe desincronizar al menos uno de ellos.
+	FI	Napster ei toimi, jos näin monta soitinta on synkronoitu.  Poista yhden tai useamman soittimen synkronointi.
+	FR	Napster ne peut fonctionner avec autant de platines synchronisées. Veuillez désynchroniser au moins une platine.
+	IT	Impossibile utilizzare Napster con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
+	NL	Napster kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
+	NO	Napster kan ikke brukes med så mange synkroniserte spillere. Du må fjerne én eller flere spillere fra synkroniseringen.
+	PL	Odtwarzanie przez usługę Napster przy takiej liczbie zsynchronizowanych odtwarzaczy jest niemożliwe. Wyłącz synchronizację co najmniej jednego odtwarzacza.
+	RU	Napster не может воспроизводить, когда синхронизируется так много плееров. Отмените синхронизацию для одного или нескольких плееров.
+	SV	Det går inte att spela upp från Napster när så många spelare har synkroniserats. Ta bort en eller flera spelare ur synkroniseringsgruppen.
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
-	CS	Na Rhapsody
-	DA	På Rhapsody
-	DE	Auf Rhapsody
-	EN	On Rhapsody
-	ES	En Rhapsody
-	FI	Rhapsodyssa
-	FR	Sur Rhapsody
-	IT	Su Rhapsody
-	NL	Op Rhapsody
-	NO	På Rhapsody
-	PL	W usłudze Rhapsody
-	RU	На Rhapsody
-	SV	På Rhapsody
+	CS	Na Napster
+	DA	På Napster
+	DE	Auf Napster
+	EN	On Napster
+	ES	En Napster
+	FI	Napster
+	FR	Sur Napster
+	IT	Su Napster
+	NL	Op Napster
+	NO	På Napster
+	PL	W usłudze Napster
+	RU	На Napster
+	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	CS	Na Napster
@@ -314,32 +290,32 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
-	CS	Není možné najít adresu pro Rhapsody.
-	DA	Adressen til Rhapsody blev ikke fundet.
-	DE	Adresse für Rhapsody nicht gefunden.
-	EN	Unable to find address for Rhapsody.
-	ES	No se puede encontrar la dirección de Rhapsody.
-	FI	Rhapsodyn osoitetta ei löydy.
-	FR	Adresse de Rhapsody introuvable.
-	IT	Impossibile trovare l'indirizzo di Rhapsody.
-	NL	Kan adres voor Rhapsody niet vinden.
-	NO	Fant ikke adresse til Rhapsody.
-	PL	Nie można znaleźć adresu dla usługi Rhapsody.
-	RU	Невозможно найти адрес для Rhapsody.
-	SV	Det gick inte att hitta någon Rhapsody-adress.
+	CS	Není možné najít adresu pro Napster.
+	DA	Adressen til Napster blev ikke fundet.
+	DE	Adresse für Napster nicht gefunden.
+	EN	Unable to find address for Napster.
+	ES	No se puede encontrar la dirección de Napster.
+	FI	Napster osoitetta ei löydy.
+	FR	Adresse de Napster introuvable.
+	IT	Impossibile trovare l'indirizzo di Napster.
+	NL	Kan adres voor Napster niet vinden.
+	NO	Fant ikke adresse til Napster.
+	PL	Nie można znaleźć adresu dla usługi Napster.
+	RU	Невозможно найти адрес для Napster.
+	SV	Det gick inte att hitta någon Napster-adress.
 
 PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
-	CS	K použití Rhapsody stiskněte a podržte JAS k aktualizaci vašeho firmware.
-	DA	Hvis du vil bruge Rhapsody, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
-	DE	Wenn Sie Rhapsody nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
-	EN	To use Rhapsody, press and hold BRIGHTNESS to update your firmware.
-	ES	Para usar Rhapsody, mantenga pulsado BRIGHTNESS para actualizar el firmware.
-	FI	Jos haluat käyttää Rhapsodyä, päivitä laitteisto-ohjelmisto pitämällä Kirkkaus-painike pohjassa.
-	FR	Pour utiliser Rhapsody, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
-	IT	Per usare Rhapsody, tenere premuto BRIGHTNESS per aggiornare il firmware.
-	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
-	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
-	PL	Aby użyć usługi Rhapsody, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
-	RU	Чтобы использовать Rhapsody, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
-	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
+	CS	K použití Napster stiskněte a podržte JAS k aktualizaci vašeho firmware.
+	DA	Hvis du vil bruge Napster, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
+	DE	Wenn Sie Napster nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
+	EN	To use Napster, press and hold BRIGHTNESS to update your firmware.
+	ES	Para usar Napster, mantenga pulsado BRIGHTNESS para actualizar el firmware.
+	FI	Jos haluat käyttää Napster, päivitä laitteisto-ohjelmisto pitämällä Kirkkaus-painike pohjassa.
+	FR	Pour utiliser Napster, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
+	IT	Per usare Napster, tenere premuto BRIGHTNESS per aggiornare il firmware.
+	NL	Als je Napster wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
+	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Napster.
+	PL	Aby użyć usługi Napster, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
+	RU	Чтобы использовать Napster, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
+	SV	Om du vill använda Napster uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
 
