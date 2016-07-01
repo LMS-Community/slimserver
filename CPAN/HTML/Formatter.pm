@@ -1,105 +1,13 @@
-
-require 5;
 package HTML::Formatter;
+BEGIN {
+  $HTML::Formatter::VERSION = '2.05';
+}
+BEGIN {
+  $HTML::Formatter::AUTHORITY = 'cpan:NIGELM';
+}
 
-=head1 NAME
+# ABSTRACT: Base class for HTML formatters
 
-HTML::Formatter - Base class for HTML formatters
-
-=head1 SYNOPSIS
-
-  use HTML::FormatSomething;
-  my $infile  = "whatever.html";
-  my $outfile = "whatever.file";
-  open OUT, ">$outfile"
-   or die "Can't write-open $outfile: $!\nAborting";
-  binmode(OUT);
-  print OUT HTML::FormatSomething->format_file(
-    $infile,
-      'option1' => 'value1',
-      'option2' => 'value2',
-      ...
-  );
-  close(OUT);
-
-=head1 DESCRIPTION
-
-HTML::Formatter is a base class for classes that take HTML
-and format it to some output format.  When you take an object
-of such a base class and call C<< $formatter->format( $tree ) >>
-with an HTML::TreeBuilder (or HTML::Element) object, they return
-the 
-
-HTML formatters are able to format a HTML syntax tree into various
-printable formats.  Different formatters produce output for different
-output media.  Common for all formatters are that they will return the
-formatted output when the format() method is called.  The format()
-method takes a HTML::Element object (usually the HTML::TreeBuilder
-root object) as parameter.
-
-Here are the four main methods that this class provides:
-
-=over
-
-=item SomeClass->format_file( $filename, I<< option1 => value1, option2 => value2, ... >> )
-
-This returns a string consisting of the result of using the given class
-to format the given HTML file according to the given (optional) options.
-Internally it calls C<< SomeClass->new( ... )->format( ... ) >> on a new
-HTML::TreeBuilder object based on the given HTML file.
-
-=item SomeClass->format_string( $html_source, I<< option1 => value1, option2 => value2, ... >> )
-
-This returns a string consisting of the result of using the given class
-to format the given HTML source according to the given (optional)
-options. Internally it calls C<< SomeClass->new( ... )->format( ... ) >>
-on a new HTML::TreeBuilder object based on the given source.
-
-=item $formatter = SomeClass->new( I<< option1 => value1, option2 => value2, ... >> )
-
-This creates a new formatter object with the given options.
-
-=item $render_string = $formatter->format( $html_tree_object )
-
-This renders the given HTML object accerting to the options set for
-$formatter.
-
-=back
-
-
-After you've used a particular formatter object to format a particular
-HTML tree object, you probably should not use either again.
-
-
-=head1 SEE ALSO
-
-L<HTML::FormatText>, L<HTML::FormatPS>,
-L<HTML::FormatRTF>
-
-L<HTML::TreeBuilder>, L<HTML::Element>, L<HTML::Tree>
-
-
-
-=head1 COPYRIGHT
-
-Copyright (c) 1995-2002 Gisle Aas, and 2002- Sean M. Burke. All rights
-reserved.
-
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
-This program is distributed in the hope that it will be useful, but
-without any warranty; without even the implied warranty of
-merchantability or fitness for a particular purpose.
-
-
-=head1 AUTHOR
-
-Current maintainer: Sean M. Burke <sburke@cpan.org>
-
-Original author: Gisle Aas <gisle@aas.no>
-
-=cut
 
 BEGIN { *DEBUG = sub(){0} unless defined &DEBUG }
 
@@ -107,16 +15,15 @@ use HTML::Element 3.15 ();
 
 use strict;
 use Carp;
-use UNIVERSAL qw(can);
 
 use vars qw($VERSION @Size_magic_numbers);
-$VERSION = sprintf("%d.%02d", q$Revision: 2.04 $ =~ /(\d+)\.(\d+)/);
 
 #
 # A typical formatter will not use all of the features of this
 # class.  But it will use some, as best fits the mapping
 # of HTML to the particular output format.
 #
+
 
 sub new
 {
@@ -135,7 +42,7 @@ sub configure
 {
     my($self, $arg) = @_;
     for (keys %$arg) {
-	warn "Unknown configure argument '$_'" if $^W;
+    warn "Unknown configure argument '$_'" if $^W;
     }
     $self;
 }
@@ -147,7 +54,7 @@ sub massage_tree {
   DEBUG > 4 and print("Before massaging:\n"), $html->dump();
 
   $html->simplify_pres();
-  
+
   # Does anything else need doing?
 
   DEBUG > 4 and print("After massaging:\n"), $html->dump();
@@ -155,10 +62,9 @@ sub massage_tree {
   return;
 }
 
-# forgiving aliases
-sub format_from_file   { shift->format_file(@_) }
-sub format_from_string { shift->format_string(@_) }
 
+
+sub format_from_file   { shift->format_file(@_) }
 sub format_file {
   my($self, $filename, @params) = @_;
   $self = $self->new(@params) unless ref $self;
@@ -168,12 +74,14 @@ sub format_file {
 
   my $tree = $self->_default_tree();
   $tree->parse_file($filename);
-  
+
   my $out = $self->format($tree);
   $tree->delete;
   return $out;
 }
 
+
+sub format_from_string { shift->format_string(@_) }
 sub format_string {
   my($self, $content, @params) = @_;
   $self = $self->new(@params) unless ref $self;
@@ -193,13 +101,14 @@ sub format_string {
 sub _default_tree {
   require HTML::TreeBuilder;
   my $t = HTML::TreeBuilder->new;
-  
+
   # If nothing else works, try using these parser options:s
   #$t->implicit_body_p_tag(1);
   #$t->p_strict(1);
-  
+
   return $t;
 }
+
 
 
 sub format
@@ -207,7 +116,7 @@ sub format
     my($self, $html) = @_;
 
     croak "Usage: \$formatter->format(\$tree)"
-     unless defined $html and ref $html and can($html, 'tag');
+     unless defined $html and ref $html and $html->can('tag');
 
     if( $self->DEBUG() > 4 ) {
       print "Tree to format:\n";
@@ -218,31 +127,31 @@ sub format
     $self->massage_tree($html);
     $self->begin($html);
     $html->number_lists();
-    
+
 
     # Per-iteration scratch:
     my($node, $start, $depth, $tag, $func);
     $html->traverse(
-	sub {
-	    ($node, $start, $depth) = @_;
-	    if (ref $node) {
-		$tag = $node->tag;
-		$func = $tag . '_' . ($start ? "start" : "end");
-		# Use UNIVERSAL::can so that we can recover if
-		# a handler is not defined for the tag.
-		if (can($self, $func)) {
-		    DEBUG > 3 and print '  ' x $depth, "Calling $func\n";
-		    return $self->$func($node);
-		} else {
-		    DEBUG > 3 and print '  ' x $depth,
-		      "Skipping $func: no handler for it.\n";
-		    return 1;
-		}
-	    } else {
-		$self->textflow($node);
-	    }
-	    1;
-	}
+    sub {
+        ($node, $start, $depth) = @_;
+        if (ref $node) {
+        $tag = $node->tag;
+        $func = $tag . '_' . ($start ? "start" : "end");
+        # Use ->can so that we can recover if
+        # a handler is not defined for the tag.
+        if ($self->can($func)) {
+            DEBUG > 3 and print '  ' x $depth, "Calling $func\n";
+            return $self->$func($node);
+        } else {
+            DEBUG > 3 and print '  ' x $depth,
+              "Skipping $func: no handler for it.\n";
+            return 1;
+        }
+        } else {
+        $self->textflow($node);
+        }
+        1;
+    }
     );
     $self->end($html);
     join('', @{$self->{output}});
@@ -281,7 +190,7 @@ sub end
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 sub set_version_tag {
   my($self, $html) = @_;
-  
+
   if($html) {
     $self->{'version_tag'} = sprintf(
       "%s (v%s, using %s v%s%s)",
@@ -323,20 +232,20 @@ sub frameset_start { 0; }
 
 sub header_start
 {
-    my($self, $level, $node) = @_;
+    my($self, undef, $node) = @_;
     my $align = $node->attr('align');
     if (defined($align) && lc($align) eq 'center') {
-	$self->{center}++;
+    $self->{center}++;
     }
     1;
 }
 
 sub header_end
 {
-    my($self, $level, $node) = @_;
+    my($self, undef, $node) = @_;
     my $align = $node->attr('align');
     if (defined($align) && lc($align) eq 'center') {
-	$self->{center}--;
+    $self->{center}--;
     }
 }
 
@@ -449,7 +358,7 @@ sub div_start   # interesting only for its 'align' attribute
     my($self, $node) = @_;
     my $align = $node->attr('align');
     if (defined($align) && lc($align) eq 'center') {
-	return $self->center_start;
+    return $self->center_start;
     }
     1;
 }
@@ -459,7 +368,7 @@ sub div_end
     my($self, $node) = @_;
     my $align = $node->attr('align');
     if (defined($align) && lc($align) eq 'center') {
-	return $self->center_end;
+    return $self->center_end;
     }
 }
 
@@ -488,9 +397,9 @@ sub font_start
     my $size = $elem->attr('size');
     return 1 unless defined $size;
     if ($size =~ /^\s*[+\-]/) {
-	my $base = $self->{basefont_size}[-1];
-	  # yes, base it on the most recent one
-	$size = $base + $size;
+    my $base = $self->{basefont_size}[-1];
+      # yes, base it on the most recent one
+    $size = $base + $size;
     }
     push @{$self->{'font_size'}}, $size;
     $self->new_font_size( $size );
@@ -527,7 +436,7 @@ sub small_start
     1;
 }
 
-sub big_end 
+sub big_end
 {
     my $self = $_[0];
     pop @{ $self->{'font_size'} };
@@ -535,7 +444,7 @@ sub big_end
     1;
 }
 
-sub small_end 
+sub small_end
 {
     my $self = $_[0];
     pop @{ $self->{'font_size'} };
@@ -620,7 +529,7 @@ sub del_end   { 0; }
 
 sub scale_font_for {
   my($self, $reference_size) = @_;
-  
+
   # Mozilla's source, at
   # http://lxr.mozilla.org/seamonkey/source/content/html/style/src/nsStyleUtil.cpp#299
   # says:
@@ -639,7 +548,7 @@ sub scale_font_for {
     : ( $size_number > $#Size_magic_numbers ) ?  $#Size_magic_numbers
     : int( $size_number )
   ;
-  
+
   my $result = int( .5 + $reference_size * $Size_magic_numbers[ $size_number ] );
 
   $self->DEBUG() > 1
@@ -863,10 +772,10 @@ sub option_start   { 0; }
 
 sub td_start {
   my $self = shift;
-  
+
   push @{$self->{'center_stack'}}, $self->{'center'};
   $self->{center} = 0;
-  
+
   $self->p_start(@_);
 }
 sub td_end {
@@ -901,17 +810,17 @@ sub textflow
 {
     my $self = shift;
     if ($self->{pre}) {
-	# Strip one leading and one trailing newline so that a <pre>
-	#  tag can be placed on a line of its own without causing extra
-	#  vertical space as part of the preformatted text.
-	$_[0] =~ s/\n$//;
-	$_[0] =~ s/^\n//;
-	$self->pre_out( $_[0] );
+    # Strip one leading and one trailing newline so that a <pre>
+    #  tag can be placed on a line of its own without causing extra
+    #  vertical space as part of the preformatted text.
+    $_[0] =~ s/\n$//;
+    $_[0] =~ s/^\n//;
+    $self->pre_out( $_[0] );
     } else {
-	for (split(/(\s+)/, $_[0])) {
-	    next unless length $_;
-	    $self->out($_);
-	}
+    for (split(/(\s+)/, $_[0])) {
+        next unless length $_;
+        $self->out($_);
+    }
     }
 }
 
@@ -928,20 +837,20 @@ sub vspace
     # You may think it odd to conflate the two concepts of
     # ending this paragraph, and asserting how much space should
     # follow; but it happens to work out pretty well.
-    
+
     my($self, $min, $add) = @_;
     my $old = $self->{vspace};
     if (defined $old) {
-	my $new = $old;
-	$new += $add || 0;
-	$new = $min if $new < $min;
-	$self->{vspace} = $new;
+    my $new = $old;
+    $new += $add || 0;
+    $new = $min if $new < $min;
+    $self->{vspace} = $new;
     } else {
-	$self->{vspace} = $min;
+    $self->{vspace} = $min;
         DEBUG > 1 and print " vspace not set, so setting to $min\n";
-	#my $new = $add || 0;
-	#$new = $min if $new < $min;
-	#$self->{vspace} = $new;
+    #my $new = $add || 0;
+    #$new = $min if $new < $min;
+    #$self->{vspace} = $new;
     }
     DEBUG > 1 and print " vspace now set to $min\n";
     $old;
@@ -982,5 +891,176 @@ sub adjust_rm
 
 
 #``````````````````````````````````````````````````````````````````````````
+
+
 1;
+
+__END__
+=pod
+
+=for test_synopsis 1;
+__END__
+
+=for stopwords formatters
+
+=head1 NAME
+
+HTML::Formatter - Base class for HTML formatters
+
+=head1 VERSION
+
+version 2.05
+
+=head1 SYNOPSIS
+
+  use HTML::FormatSomething;
+  my $infile  = "whatever.html";
+  my $outfile = "whatever.file";
+  open OUT, ">$outfile"
+   or die "Can't write-open $outfile: $!\n";
+
+  print OUT HTML::FormatSomething->format_file(
+    $infile,
+      'option1' => 'value1',
+      'option2' => 'value2',
+      ...
+  );
+  close(OUT);
+
+=head1 DESCRIPTION
+
+HTML::Formatter is a base class for classes that take HTML
+and format it to some output format.  When you take an object
+of such a base class and call C<< $formatter->format( $tree ) >>
+with an HTML::TreeBuilder (or HTML::Element) object, they return
+the
+
+HTML formatters are able to format a HTML syntax tree into various
+printable formats.  Different formatters produce output for different
+output media.  Common for all formatters are that they will return the
+formatted output when the format() method is called.  The format()
+method takes a HTML::Element object (usually the HTML::TreeBuilder
+root object) as parameter.
+
+=head1 METHODS
+
+=head2 new
+
+    my $formatter = FormatterClass->new(
+        option1 => value1, option2 => value2, ...
+    );
+
+This creates a new formatter object with the given options.
+
+=head2 format_file
+
+=head2 format_from_file
+
+    $string = FormatterClass->format_file(
+        $html_source,
+        option1 => value1, option2 => value2, ...
+        );
+
+Return a string consisting of the result of using the given class
+to format the given HTML file according to the given (optional) options.
+Internally it calls C<< SomeClass->new( ... )->format( ... ) >> on a new
+HTML::TreeBuilder object based on the given HTML file.
+
+=head2 format_string
+
+=head2 format_from_string
+
+    $string = FormatterClass->format_string(
+        $html_source,
+        option1 => value1, option2 => value2, ...
+        );
+
+Return a string consisting of the result of using the given class
+to format the given HTML source according to the given (optional)
+options. Internally it calls C<< SomeClass->new( ... )->format( ... ) >>
+on a new HTML::TreeBuilder object based on the given source.
+
+=head2 format
+
+    my $render_string = $formatter->format( $html_tree_object );
+
+This renders the given HTML object according to the options set for
+$formatter.
+
+After you've used a particular formatter object to format a particular
+HTML tree object, you probably should not use either again.
+
+=head1 SEE ALSO
+
+The three specific formatters:-
+
+=over
+
+=item L<HTML::FormatText>
+
+Format HTML into plain text
+
+=item L<HTML::FormatPS>
+
+Format HTML into postscript
+
+=item L<HTML::FormatRTF>
+
+Format HTML into Rich Text Format
+
+=back
+
+Also the HTML manipulation libraries used - L<HTML::TreeBuilder>,
+L<HTML::Element> and L<HTML::Tree>
+
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests through the web interface at
+L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Format>.
+
+=head1 AVAILABILITY
+
+The project homepage is L<http://search.cpan.org/dist/HTML-Format>.
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
+site near you, or see L<http://search.cpan.org/dist/HTML-Format/>.
+
+The development version lives at L<http://github.com/nigelm/html-format>
+and may be cloned from L<git://github.com/nigelm/html-format.git>.
+Instead of sending patches, please fork this project using the standard
+git and github infrastructure.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Nigel Metheringham <nigelm@cpan.org>
+
+=item *
+
+Sean M Burke <sburke@cpan.org>
+
+=item *
+
+Gisle Aas <gisle@ActiveState.com>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Nigel Metheringham, 2002-2005 Sean M Burke, 1999-2002 Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 
