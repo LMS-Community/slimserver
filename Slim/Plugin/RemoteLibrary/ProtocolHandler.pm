@@ -14,6 +14,25 @@ my $log = logger('plugin.remotelibrary');
 
 my $cache = Slim::Utils::Cache->new;
 
+# To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
+sub new {
+	my $class  = shift;
+	my $args   = shift;
+
+	my $client = $args->{client};
+	
+	my $song      = $args->{'song'};
+	my $streamUrl = $song->streamUrl() || return;
+
+	my $sock = $class->SUPER::new( {
+		url     => $streamUrl,
+		song    => $song,
+		client  => $client,
+	} ) || return;
+
+	return $sock;
+}
+
 sub canSeek { 1 }
 
 sub isRemote { 1 }
