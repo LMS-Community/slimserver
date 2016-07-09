@@ -10,7 +10,7 @@
 # Also, when submitting changes, please use the latest version in CVS
 #
 # NOTE: Please keep the languages in alphabetical order by two-letter identifier.
-# 
+#
 # The two letter codes are defined by ISO 639-1
 # http://en.wikipedia.org/wiki/List_of_ISO_639_codes
 
@@ -2850,7 +2850,7 @@ GETTING_STREAM_INFO
 	FR	Obtention des informations sur le flux...
 	HE	מקבל פרטי זרימה...
 	IT	Recupero informazioni sullo stream in corso...
-	NL	Stroominfo wordt opgehaald...
+	NL	steaminformatie wordt opgehaald...
 	NO	Henter informasjon om strøm ...
 	PL	Pobieranie informacji o strumieniu...
 	RU	Получение информации о потоке...
@@ -5467,7 +5467,7 @@ SETUP_REPLAYGAIN_REMOTE
 	FR	Ajustement du volume pour le streaming Internet
 	NL	Aanpassing voor internetstreams
 	PL	Domyślna wartość dla zdalnych strumieni
-	 	
+
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
@@ -7245,7 +7245,7 @@ SETUP_CHECKVERSION_MONTHLY
 	EN	Monthly
 	FR	Mensuel
 	NL	Maandelijks
-	
+
 SETUP_AUTO_DOWNLOAD
 	CS	Automatické stahování
 	DA	Hent automatisk
@@ -7309,7 +7309,7 @@ SETUP_AUTO_DOWNLOAD_1
 SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
-	
+
 SETUP_SCREENSAVER
 	CS	Spořič obrazovky při přehrávání
 	DA	Pauseskærm når der spilles
@@ -8164,7 +8164,7 @@ SETUP_SCAN_ON_PREF_CHANGE
 	FR	Lancer l'analyse après modification des préférences
 	NL	Start scan bij voorkeurswijzigingen
 	PL	Uruchom przeszukiwanie biblioteki po zmianie ustawień
-	
+
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
@@ -11912,7 +11912,7 @@ OGF
 	PL	Ogg FLAC
 	RU	Ogg FLAC
 	SV	Ogg FLAC
- 
+
 DFF
 	EN	DFF
 
@@ -12094,17 +12094,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
@@ -14372,7 +14372,7 @@ PLAYER_IP_ADDRESS
 	FR	L'adresse IP de cette platine est
 	HE	כתובת ה-IP של הנגן היא
 	IT	L'indirizzo IP del lettore è
-	JA	このプレーヤーのIPアドレスは 
+	JA	このプレーヤーのIPアドレスは
 	NL	Het IP-adres van dit muzieksysteem is
 	NO	Spillerens IP-adresse er
 	PL	Adres IP tego odtwarzacza to
@@ -14391,7 +14391,7 @@ PLAYER_MAC_ADDRESS
 	FR	L'adresse MAC de cette platine est
 	HE	כתובת ה-MAC של האתרנט של הנגן היא
 	IT	L'indirizzo MAC Ethernet di questo lettore è
-	JA	このプレーヤーのMACアドレスは 
+	JA	このプレーヤーのMACアドレスは
 	NL	Het ethernet-MAC-adres van dit muzieksysteem is
 	NO	Spillerens MAC-adresse er
 	PL	Adres MAC w sieci Ethernet tego odtwarzacza to
@@ -16313,7 +16313,7 @@ RADIO_TUNEIN_DESC
 	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala aquí y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
 	FI	Jos tiedät jo sen radiokanavan URL-osoitteen, jota haluat kuunnella, kirjoita se tähän ja valitse Virittäydy kanavalle. Voit kirjoittaa joko radiovirran itsensä (esim. http://62.49.59.50:8000) tai virtaa osoittavan soittoluettelotiedoston (esim. http://www.hitzradio.com/hitzradio.pls) URL:n.
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ici et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
-	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
+	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls).
 	IT	Se si conosce già l'URL della stazione che si vuole ascoltare, inserirlo qui e fare clic sul pulsante Sintonizza. È possibile inserire l'URL dello stream della radio (esempio http://62.49.59.50:8000) o del file della playlist che punta allo stream (esempio http://www.hitzradio.com/hitzradio.pls).
 	NL	Als je de URL al weet van de zender die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio-stream zelf invoeren (bijv. http://62.49.59.50:8000), of van het playlistbestand dat naar de stream wijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 	NO	Hvis du allerede vet url-en til stasjonen du vil høre på, kan du angi den her og klikke på «Finn». Du kan enten angi url-en til selve radiostrømmen (for eksempel http://62.49.59.50:8000), eller til spillelistefilen som peker til strømmen (for eksempel http://www.hitzradio.com/hitzradio.pls).
@@ -18097,7 +18097,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación.
 	FI	Voit valita, että kaikki kokoelmalevyt näkyvät Eri artistit -kohdan alla, tai voit valita, että ne näkyvät kokoelman eri artistien nimen alla.
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
-	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף. 
+	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
 	NL	Je kunt verzamelalbums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamelalbum laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
@@ -18148,7 +18148,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación.
 	FI	Kun kokoelmalevyjä laitetaan samaan ryhmään, ne näkyvät oletuksena kohdassa Eri artistit.  Voit vaihtaa nimen alla.
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
-	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן. 
+	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
 	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder veranderen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
@@ -19045,7 +19045,7 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	FR	paramétrage personnalisé du pré-cache
 	NL	Aangepaste specificaties pre-caching
 	PL	Dostosowanie ustawień bufora
-	
+
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
@@ -19065,14 +19065,14 @@ SETUP_IMAGEPROXY_REMOTE
 	EN	Use mysqueezebox.com to resize artwork
 	FR	Redimensionner les pochettes avec mysqueezebox.com
 	NL	Gebruik mysqueezebox.com om afbeeldingen te schalen
-	PL	Użyj mysqueezebox.com do dopasowywania okładek   
+	PL	Użyj mysqueezebox.com do dopasowywania okładek
 
 SETUP_IMAGEPROXY_LOCAL
 	DE	Plattenhüllen lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
 	FR	Redimensionner les pochettes avec Logitech Media Server
 	NL	Gebruik Logitech Media Server om afbeeldingen te schalen
-	PL	Użyj Logitech Media Server do dopasowywania okładek   
+	PL	Użyj Logitech Media Server do dopasowywania okładek
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -21290,7 +21290,7 @@ ALL_LIBRARY
 	FR	Bibliothèque complète
 	NL	Hele muziekcollectie
 	PL	Cała biblioteka muzyczna
-	
+
 SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
@@ -24171,7 +24171,7 @@ SYNC_ABOUT
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...
-	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken 
+	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
 	NL	Bevestigen Touch-To-Play
@@ -24179,7 +24179,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
-	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
+	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op je Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 	PL	Przy wyborze/zaznaczeniu utworu można przypadkowo zastąpić aktualną listę odtwarzania. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
@@ -24211,7 +24211,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
 	NL	Alleen vragen als de huidige playlist meer dan een nummer bevat
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie oraz aktualna lista odtwarzania zawiera więcej niż jeden utwór
-	
+
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
