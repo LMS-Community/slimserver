@@ -10,7 +10,7 @@
 # Also, when submitting changes, please use the latest version in CVS
 #
 # NOTE: Please keep the languages in alphabetical order by two-letter identifier.
-# 
+#
 # The two letter codes are defined by ISO 639-1
 # http://en.wikipedia.org/wiki/List_of_ISO_639_codes
 
@@ -1021,7 +1021,7 @@ ZAPPING_FROM_PLAYLIST
 	HE	העברה לרשימת ההשמעה 'דילוג':
 	IT	Passaggio alla playlist dei brani scelti con zapping:
 	JA	プレイ リストから消去:
-	NL	Verplaatsen naar gezapte liedjes playlist:
+	NL	Verplaatsen naar gezapte nummers playlist:
 	NO	Flytter til spillelisten «Zappede sanger»:
 	PL	Przenoszenie do schowka:
 	PT	Mover para a playlist rápida de músicas
@@ -1040,7 +1040,7 @@ ZAPPED_SONGS
 	HE	דילוג
 	IT	Brani scelti con zapping
 	JA	消去された曲
-	NL	Gezapte liedjes
+	NL	Gezapte nummers
 	NO	Zappede sanger
 	PL	Schowek
 	PT	Playlist Rápida de Músicas
@@ -1328,7 +1328,7 @@ REPEAT_ONE
 	HE	השמעה חוזרת של השיר הנוכחי
 	IT	Ripeti il brano corrente
 	JA	1曲リピート
-	NL	Huidig liedje herhalen
+	NL	Huidig nummer herhalen
 	NO	Gjenta sang
 	PL	Powtórz bieżący utwór
 	PT	A repetir a música actual
@@ -2850,7 +2850,7 @@ GETTING_STREAM_INFO
 	FR	Obtention des informations sur le flux...
 	HE	מקבל פרטי זרימה...
 	IT	Recupero informazioni sullo stream in corso...
-	NL	Stroominfo wordt opgehaald...
+	NL	steaminformatie wordt opgehaald...
 	NO	Henter informasjon om strøm ...
 	PL	Pobieranie informacji o strumieniu...
 	RU	Получение информации о потоке...
@@ -3528,7 +3528,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	HE	ניתן להגדיר את הבהירות של תצוגת הנגן כאשר הנגן מופעל, כבוי או במצב מוכן (שומר מסך). באפשרותך גם לכוונן את הבהירות באופן אוטומטי כאשר אתה לוחץ על אחד הלחצנים, כאשר מתחיל להשמיע שיר, או כאשר לא מתבצעת כל פעולה שהיא בנגן. באפשרותך לבחור להשבית התנהגות אוטומטית זו.
 	IT	È possibile impostare una diversa luminosità del display del lettore a seconda che sia acceso, spento o inattivo (screen saver). La luminosità può essere inoltre regolata automaticamente quando si preme un pulsante, si avvia la riproduzione di un brano o se il lettore è inattivo. Questa funzione automatica può essere disattivata.
 	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
-	NL	De helderheid van het muzieksysteemdisplay kan afgestemd worden op de status van het systeem: aan, uit, of in ruststand (schermbeveiliger). De helderheid kan ook automatisch aangepast worden wanneer je op een knop drukt, het afspelen van een liedje start of een tijdje niets doet. Je kunt dit automatische gedrag desgewenst uitschakelen.
+	NL	De helderheid van het muzieksysteemdisplay kan afgestemd worden op de status van het systeem: aan, uit, of in ruststand (schermbeveiliger). De helderheid kan ook automatisch aangepast worden wanneer je op een knop drukt, het afspelen van een nummer start of een tijdje niets doet. Je kunt dit automatische gedrag desgewenst uitschakelen.
 	NO	Du kan angi ulike innstillinger for lysstyrke avhengig av om spilleren er av, på eller inaktiv (skjermsparer). Dette kan justeres automatisk når du trykker på en knapp, starter avspilling eller lar spilleren stå i fred en stund. Du kan velge å deaktivere disse automatiske justeringene.
 	PL	Jasność wyświetlacza odtwarzacza można ustawić dla trybu włączenia, wyłączenia lub bezczynności (wygaszacz ekranu). Można także ustawić ją automatycznie dla naciśnięcia przycisku, rozpoczęcia odtwarzania lub nieużywania przez pewien czas. To automatyczne działanie można wyłączyć.
 	RU	Можно настроить яркость экрана плеера во включенном, выключенном или неактивном состоянии (экранная заставка). Она также может настраиваться автоматически, когда пользователь нажимает кнопку, начинает воспроизведение песни или на какое-то время перестает пользоваться устройством. Это автоматическое поведение можно отключить.
@@ -4633,7 +4633,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	HE	הנגן יכול להציג מידע אודות התקדמות השיר במהלך ההשמעה. בחר את המידע שברצונך להציג.
 	IT	È possibile visualizzare nel lettore informazioni sulla riproduzione in corso. Scegliere le informazioni che si desidera visualizzare.
 	JA	プレーヤーは演奏中の曲の進行具合を表示することができます。表示したい情報を選んでください。
-	NL	Het muzieksysteem kan informatie over de voortgang van een liedje weergeven, terwijl het afgespeeld wordt. Kies de informatie die weergegeven moet worden.
+	NL	Het muzieksysteem kan informatie over de voortgang van een nummer weergeven, terwijl het afgespeeld wordt. Kies de informatie die weergegeven moet worden.
 	NO	Spilleren kan vise hvor mye av sangen som er spilt av under avspillingen. Du kan selv velge hvilken informasjon du vil se som standard, og aktivere og deaktivere moduser. Du kan bla gjennom disse modusene ved å trykke på NOW PLAYING på fjernkontrollen flere ganger.
 	PL	Odtwarzacz umożliwia wyświetlanie informacji o postępie odtwarzania utworu. Możliwe jest wybranie informacji wyświetlanych domyślnie oraz włączenie lub wyłączenie trybów, które mają być dostępne. Aby przełączać się między tymi trybami, należy naciskać przycisk Now Playing na pilocie.
 	PT	O cliente pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
@@ -5245,7 +5245,7 @@ SETUP_MAXBITRATE_DESC
 	HE	Logitech Media Server יכול להמיר קובצי מוסיקה לתבנית WAV/AIFF או MP3 באופן אוטומטי במהלך השמעת שירים כדי להוריד את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-Logitech Media Server דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו Logitech Media Server יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו. אם תבחר את האפשרות 'ללא הגבלה', Logitech Media Server יפעיל זרימות של קובצי MP3 מבלי להמירם ויפעיל את יתר סוגי הקבצים כשמע PCM לא דחוס.
 	IT	In Logitech Media Server è possibile eseguire rapidamente la conversione automatica dei file musicali WAV/AIFF o MP3 in modo da ridurre il bitrate dei dati inviati al lettore. Questa operazione può essere utile se si collega il lettore a un server tramite Internet o se si verificano interruzioni saltuarie con una rete senza fili. È possibile impostare il bitrate massimo con cui inviare lo stream audio al lettore. I brani MP3 codificati a un bitrate inferiore a quello massimo non vengono convertiti. Se si sceglie Nessun limite, il server trasferisce i file MP3 senza convertirli e gli altri tipi di file come audio PCM non compresso.
 	JA	Logitech Media Serverは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
-	NL	Logitech Media Server kan je muziekbestanden direct automatisch naar WAV/AIFF of MP3 converteren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als je systeem via het internet met Logitech Media Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Logitech Media Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd. Als je 'Geen limiet' kiest, streamt Logitech Media Server MP3-bestanden zonder conversie en andere bestandstypen als niet-gecomprimeerde PCM-audio.
+	NL	Logitech Media Server kan je muziekbestanden direct automatisch naar WAV/AIFF of MP3 converteren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als je systeem via het internet met Logitech Media Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Logitech Media Server maximaal naar je systeem zal streamen. MP3-nummers die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd. Als je 'Geen limiet' kiest, streamt Logitech Media Server MP3-bestanden zonder conversie en andere bestandstypen als niet-gecomprimeerde PCM-audio.
 	NO	Logitech Media Server kan automatisk konvertere musikkfilene til wav/aiff eller mp3 under avspilling, for å begrense bithastigheten på datastrømmen til spilleren. Dette kan være nyttig hvis du kopler spilleren til serveren over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for strømmingen til spilleren fra Logitech Media Server. Mp3-filer som er kodet med en lavere bithastighet enn maksimumhastigheten, blir ikke konvertert. Hvis du velger Ubegrenset, strømmer serveren mp3-filer uten konvertering, og andre filtyper som ukomprimert pcm-lyd.
 	PL	Program Logitech Media Server może automatycznie przekonwertować w locie pliki WAV/AIFF lub MP3 na niższą szybkość transmisji bitów danych przesyłanych strumieniowo do odtwarzacza. Jest to przydatne w przypadku łączenia odtwarzacza z programem Logitech Media Server przez Internet lub tymczasowych problemów z siecią bezprzewodową. Możliwe jest także wybranie maksymalnej szybkości transmisji bitów danych przesyłanych strumieniowo przez program Logitech Media Server do odtwarzacza. Utwory w formacie MP3 zakodowane z szybkością transmisji bitów niższą niż podana poniżej nie zostaną przekonwertowane. Wybranie opcji Bez ograniczeń spowoduje, że program Logitech Media Server będzie strumieniowo przesyłał pliki MP3 bez konwersji, a pliki innych typów jako nieskompresowany dźwięk PCM.
 	RU	Logitech Media Server может автоматически преобразовывать музыкальные файлы в формат WAV/AIFF или MP3 в режиме реального времени, чтобы уменьшить скорость передачи данных на плеер. Это удобно при подключении плеера к Logitech Media Server через Интернет или при неустойчивой работе беспроводной сети. Можно задать максимальную скорость передачи со Logitech Media Server на плеер. MP3-файлы со скоростью передачи ниже указанного значения преобразованы не будут. Если выбрать параметр "Без ограничений", Logitech Media Server будет передавать MP3-файлы без преобразования, а другие типы файлов — в виде PCM-аудио без сжатия.
@@ -5263,7 +5263,7 @@ SETUP_MP3BITRATE_DESC
 	HE	Logitech Media Server יכול להמיר את קובצי המוסיקה שלך באופן אוטומטי ל-MP3 במהלך השמעה של תבניות שאינן MP3. Logitech Media Server גם יכול לדחוס את קובצי ה-MP3 כדי לצמצם את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-Logitech Media Server דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו Logitech Media Server יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו.
 	IT	Logitech Media Server consente di convertire automaticamente i file musicali in MP3 in modo rapido per riprodurre formati diversi da MP3. Consente inoltre di ricomprimere i file MP3 per ridurre il bitrate dei dati inviati al lettore. Questa funzione risulta utile se si connette il lettore a un server tramite Internet o se si verificano occasionali interruzioni con una rete senza fili. È possibile scegliere il bitrate massimo con cui inviare lo stream audio al lettore tramite Logitech Media Server. I brani MP3 codificati a un bitrate inferiore a quello massimo non vengono convertiti.
 	JA	Logitech Media Serverは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
-	NL	Logitech Media Server kan je muziekbestanden direct automatisch naar MP3 converteren om andere formaten dan MP3 af te spelen. Logitech Media Server kan je MP3-bestanden ook opnieuw comprimeren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als het systeem via het internet met Logitech Media Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Logitech Media Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd.
+	NL	Logitech Media Server kan je muziekbestanden direct automatisch naar MP3 converteren om andere formaten dan MP3 af te spelen. Logitech Media Server kan je MP3-bestanden ook opnieuw comprimeren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als het systeem via het internet met Logitech Media Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Logitech Media Server maximaal naar je systeem zal streamen. MP3-nummers die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd.
 	NO	Logitech Media Server kan automatisk konvertere musikkfiler til mp3 under avspilling, slik at du kan spille av andre formater enn mp3. Logitech Media Server kan også komprimere mp3-filene dine, for å senke bithastigheten for data som strømmes til spilleren. Dette kan være nyttig hvis du kopler spilleren til serveren over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for strømmingen til spilleren fra Logitech Media Server. Mp3-filer som er kodet med en bithastighet som er lavere enn maksimumshastigheten, blir ikke konvertert.
 	PL	Program Logitech Media Server może automatycznie przekonwertować w locie pliki muzyczne na format MP3 w celu odtworzenia formatów innych niż MP3. Program Logitech Media Server może także ponownie skompresować pliki MP3 na niższą szybkość transmisji bitów danych przesyłanych strumieniowo do odtwarzacza. Jest to przydatne w przypadku łączenia odtwarzacza z programem Logitech Media Server przez Internet lub tymczasowych problemów z siecią bezprzewodową. Możliwe jest także wybranie maksymalnej szybkości transmisji bitów danych przesyłanych strumieniowo przez program Logitech Media Server do odtwarzacza. Utwory w formacie MP3 zakodowane z szybkością transmisji bitów niższą niż podana poniżej nie zostaną przekonwertowane.
 	RU	Logitech Media Server может автоматически преобразовывать в формат MP3 музыкальные файлы других форматов в режиме реального времени и воспроизводить их. Logitech Media Server может также повторно сжимать MP3-файлы, чтобы снизить скорость передачи данных на плеер. Это удобно при подключении плеера к Logitech Media Server через Интернет или при неустойчивой работе беспроводной сети. Можно задать максимальную скорость передачи со Logitech Media Server на плеер. MP3-файлы со скоростью передачи ниже указанного значения преобразованы не будут.
@@ -5455,7 +5455,7 @@ SETUP_REPLAYGAINMODE_DESC
 	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées Replay Gain, permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le gain morceau permet de normaliser le volume de chaque morceau. Avec le gain album, le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le gain intelligent permet d'utiliser le gain album si des morceaux consécutifs sont issus d'un même album. Sinon, le gain morceau est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
 	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di una playlist mista.
-	NL	Sommige muziekbestanden bevatten volumeaanpassing, of 'Replay Gain'-informatie, die gebruikt kan worden tijdens het afspelen om ervoor te zorgen dat liedjes en albums met hetzelfde volume afgespeeld worden. Het muzieksysteem kan deze informatie gebruiken, indien aanwezig. Je kunt volumeaanpassing van tracks gebruiken om tracks met een gelijk volume af te spelen. Je kunt volumeaanpassing van albums gebruiken om albums met een gelijk volume af te spelen, maar daarbij de volumeverschillen tussen de tracks van een album bewaren. 'Slimme' aanpassingsselectie gebruikt volumeaanpassing van album als opeenvolgende liedjes van hetzelfde album komen, of volumeaanpassing van tracks voor een gemengde playlist.
+	NL	Sommige muziekbestanden bevatten volumeaanpassing, of 'Replay Gain'-informatie, die gebruikt kan worden tijdens het afspelen om ervoor te zorgen dat nummers en albums met hetzelfde volume afgespeeld worden. Het muzieksysteem kan deze informatie gebruiken, indien aanwezig. Je kunt volumeaanpassing van tracks gebruiken om tracks met een gelijk volume af te spelen. Je kunt volumeaanpassing van albums gebruiken om albums met een gelijk volume af te spelen, maar daarbij de volumeverschillen tussen de tracks van een album bewaren. 'Slimme' aanpassingsselectie gebruikt volumeaanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volumeaanpassing van tracks voor een gemengde playlist.
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
@@ -5467,7 +5467,7 @@ SETUP_REPLAYGAIN_REMOTE
 	FR	Ajustement du volume pour le streaming Internet
 	NL	Aanpassing voor internetstreams
 	PL	Domyślna wartość dla zdalnych strumieni
-	 	
+
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
@@ -5756,7 +5756,7 @@ SETUP_TRANSITIONTYPE_DESC
 	FR	La Squeezebox peut joindre deux morceaux par un effet de transition (ou fondu): un fondu enchaîné ou une combinaison de fondus descendant et ascendant. Sélectionnez le type de transition souhaité.
 	HE	הנגן יכול לעבור באופן הדרגתי בין שירים, בין אם באמצעות מעבר הדרגתי או הגברה או החלשה של שירים. בחר את סוג המעבר ההדרגתי הרצוי.
 	IT	Il lettore può passare gradualmente tra i brani, sia sfumando tra il precedente ed il successivo, sia dissolvendo in entrata o in uscita. Scegliere il tipo di transizione desiderato.
-	NL	Het muzieksysteem kan naadloze overgangen tussen liedjes maken door crossfading tussen de liedjes, of door de liedjes in en uit te faden. Kies het gewenste type crossfade.
+	NL	Het muzieksysteem kan naadloze overgangen tussen nummers maken door crossfading tussen de nummers, of door de nummers in en uit te faden. Kies het gewenste type crossfade.
 	NO	Spilleren kan lage overganger mellom sanger, enten med krysstoning eller ved å tone sanger ut og så inn. Velg hva slags overgang du vil ha.
 	PL	Odtwarzacz może stopniowo przechodzić między utworami za pomocą przenikania lub stopniowego zgłaśniania i wyciszania. Wybierz odpowiedni typ przenikania.
 	RU	Плеер может плавно переходить между песнями: либо с помощью перекрестного затухания, либо с помощью усиления или затухания песен. Выберите необходимый тип перехода.
@@ -5790,7 +5790,7 @@ SETUP_TRANSITIONDURATION_DESC
 	FR	Spécifiez la durée en secondes de l'effet de transition entre les morceaux. La durée maximale est 10 secondes.
 	HE	הזן את פרק הזמן למעבר הדרגתי בין שירים, בשניות. ניתן להגדיר עד 10 שניות לכל היותר.
 	IT	Inserire la durata, in secondi, della transizione tra i brani. La durata massima è 10 secondi.
-	NL	Geef in seconden op hoe lang een crossfade tussen liedjes mag duren. Het maximum is 10 seconden.
+	NL	Geef in seconden op hoe lang een crossfade tussen nummers mag duren. Het maximum is 10 seconden.
 	NO	Angi lengden på krysstoning i sekunder. Denne verdien kan ikke være høyere enn 10 sekunder.
 	PL	Wprowadź czas przenikania między utworami w sekundach. Maksymalna wartość wynosi 10 sekund.
 	RU	Введите временной интервал для перекрестного затухания между песнями (в секундах). Максимум — 10 с.
@@ -6837,7 +6837,7 @@ SETUP_REFRESHRATE_DESC
 	HE	הגדר את פרק הזמן בין טעינות חוזרות של הדפדפן, בשניות. במהלך השמעה של שיר, השרת יגדיר את הרענון סמוך לסוף השיר, אם הוא אינו עולה על ערך זה. (ברירת המחדל היא 30, הערך המינימלי 2)
 	IT	Imposta l'intervallo di aggiornamento del browser in secondi. Se la durata del brano è inferiore al valore impostato, Logitech Media Server esegue l'aggiornamento verso la fine del brano. Il valore predefinito è 30, quello minimo 2.
 	JA	ブラウザーが更新する時間を秒数で入力してください。曲を再生中の場合には、曲の最後に更新します。（工場出荷時は30秒、最小は2秒）
-	NL	Stel de tijd in seconden in waarna de browser de pagina moet vernieuwen. Logitech Media Server zal de pagina bij het einde van een liedje vernieuwen als dit minder is dan deze waarde. (Standaardwaarde is 30, minimumwaarde is 2 seconden.)
+	NL	Stel de tijd in seconden in waarna de browser de pagina moet vernieuwen. Logitech Media Server zal de pagina bij het einde van een nummer vernieuwen als dit minder is dan deze waarde. (Standaardwaarde is 30, minimumwaarde is 2 seconden.)
 	NO	Angi tiden mellom hver oppdatering i nettleseren i sekunder. Når en sang spilles, foretar Logitech Media Server en oppdatering mot slutten av sangen, selv om gjenværende tid er mindre enn angitt. (Standardverdi er 30, minimumsverdi er 2)
 	PL	Ustaw czas w sekundach do ponownego załadowania przeglądarki. Podczas odtwarzania utworu program Logitech Media Server ustawi odświeżenie pod koniec utworu, jeżeli czas będzie krótszy od tej wartości (ustawienie domyślne to 30, minimalne to 2).
 	RU	Задайте время между перезагрузками браузера в секундах. При воспроизведении Logitech Media Server будет делать обновление в конце песни, если ее длительность меньше этого значения. (По умолчанию — 30, минимум — 2.)
@@ -6874,7 +6874,7 @@ SETUP_COVERART_DESC
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
-	NL	Als er een hoesafbeelding beschikbaar is, wordt deze getoond wanneer je informatie over een album of liedje bekijkt. Deze afbeeldingen staan in de ID3-tags voor afzonderlijke liedjes of in dezelfde map als muziekbestanden. Standaard worden afbeeldingen met de volgende namen gebruikt: folder.jpg, album.jpg of thumb.jpg. Je kunt een aanvullende bestandsnaam opgeven voor hoesafbeeldingen. Je kunt andere bestandsnamen opgeven voor miniatuurafbeeldingen of afbeeldingen op volledig formaat. Wanneer je het voorvoegsel % voor de optie zet, kun je er een willekeurige string op laten volgen die uit dezelfde elementen als titelformaten bestaat (bijv. %ARTIST - ALBUM zoekt naar 'Artist - Album.jpg' om artiest- en albuminformatie te vinden).
+	NL	Als er een hoesafbeelding beschikbaar is, wordt deze getoond wanneer je informatie over een album of nummer bekijkt. Deze afbeeldingen staan in de ID3-tags voor afzonderlijke nummers of in dezelfde map als muziekbestanden. Standaard worden afbeeldingen met de volgende namen gebruikt: folder.jpg, album.jpg of thumb.jpg. Je kunt een aanvullende bestandsnaam opgeven voor hoesafbeeldingen. Je kunt andere bestandsnamen opgeven voor miniatuurafbeeldingen of afbeeldingen op volledig formaat. Wanneer je het voorvoegsel % voor de optie zet, kun je er een willekeurige string op laten volgen die uit dezelfde elementen als titelformaten bestaat (bijv. %ARTIST - ALBUM zoekt naar 'Artist - Album.jpg' om artiest- en albuminformatie te vinden).
 	NO	Hvis albumomslag er tilgjengelig, kan dette vises når du ser informasjon om et album eller en sang. Bildefiler med albumomslag finnes i ID3-etikettene for enkeltsanger, eller de kan ligge i samme mappe som sangfilene. Bildefiler med navn som «cover.jpg», «folder.jpg», «album.jpg» eller «thumb.jpg» brukes som standard. Du kan angi et annet mulig navn på bildefilene for albumomslag, og også angi egne navn på filer med miniatyrversjoner av bildene. Hvis du skriver % før alternativet, kan du legge inn enhver streng med de samme elementene som er tilgjengelige for tittelformater etter det. (Eksempel: %ARTIST - ALBUM gjør at det søkes etter en fil som heter Artist – Album.jpg ut fra informasjon om artist og album som er å finne.
 	PL	Obrazy okładki albumu (jeżeli są dostępne) pojawiają się po wyświetleniu informacji o albumie lub utworze. Obrazy okładek znajdują się w znacznikach ID3 poszczególnych utworów lub w tym samym folderze co pliki utworów. Domyślnie używane są obrazy o nazwie „cover.jpg”, „folder.jpg”, „album.jpg” lub „thumb.jpg”. Możliwe jest określenie dodatkowej nazwy pliku używanej dla okładek albumów. Można także określić inne nazwy plików dla miniatur i obrazów pełnowymiarowych. Poprzedzenie opcji znakiem % umożliwia dodanie dowolnego ciągu złożonego z tych samych elementów, jakie są używane w formatach tytułów (np. wpisanie tekstu %ARTIST - ALBUM spowoduje wyszukiwanie pliku Artist - Album.jpg w celu dopasowania do znalezionych informacji o wykonawcy i albumie.
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
@@ -7064,7 +7064,7 @@ SETUP_SAVESHUFFLED_DESC
 	HE	כאשר אתה בוחר לשמור רשימת השמעה, לאחר שזו סודרה בסדר אקראי, באפשרותך לבחור לשמור אותה עם הסדר המקורי שבו נוספו השירים או בסדר לאחר הערבוב.
 	IT	Quando si sceglie di salvare una playlist che è stata riprodotta in modo casuale è possibile decidere se salvarla nell'ordine in cui i brani sono stati aggiunti originariamente oppure in ordine casuale.
 	JA	ランダムにされたプレイリストを保存することも、元の順序で保存することも選択できます。
-	NL	Wanneer je een playlist wilt opslaan die geshuffeld is, kun je deze opslaan in de originele volgorde waarin de liedjes toegevoegd zijn, of in de geshuffelde volgorde.
+	NL	Wanneer je een playlist wilt opslaan die geshuffeld is, kun je deze opslaan in de originele volgorde waarin de nummers toegevoegd zijn, of in de geshuffelde volgorde.
 	NO	Når du velger å lagre en spilleliste som har blitt omrokkert, kan du angi om den skal lagres i original rekkefølge eller i den omrokkerte rekkefølgen.
 	PL	Jeżeli przed zapisaniem listy odtwarzania użyto funkcji odtwarzania losowego można zapisać listę z pierwotną kolejnością dodawania utworów lub z kolejnością losową.
 	RU	Если в плей-листе песни были перемешаны в случайном порядке, то его можно сохранить в исходном порядке добавления песен или в получившемся случайном.
@@ -7100,7 +7100,7 @@ SETUP_SAVESHUFFLED_0
 	HE	שמירת רשימות השמעה בסדר ההוספה של השירים
 	IT	Salva le playlist nell'ordine in cui sono stati aggiunti i brani
 	JA	プレイリストを元の順序で保存する
-	NL	Playlists opslaan in volgorde waarin liedjes toegevoegd zijn
+	NL	Playlists opslaan in volgorde waarin nummers toegevoegd zijn
 	NO	Lagre spillelister i original rekkefølge
 	PL	Zapisz listy odtwarzania w kolejności dodania utworów
 	RU	Сохранить плей-листы в порядке добавления песен
@@ -7245,7 +7245,7 @@ SETUP_CHECKVERSION_MONTHLY
 	EN	Monthly
 	FR	Mensuel
 	NL	Maandelijks
-	
+
 SETUP_AUTO_DOWNLOAD
 	CS	Automatické stahování
 	DA	Hent automatisk
@@ -7309,7 +7309,7 @@ SETUP_AUTO_DOWNLOAD_1
 SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
-	
+
 SETUP_SCREENSAVER
 	CS	Spořič obrazovky při přehrávání
 	DA	Pauseskærm når der spilles
@@ -7901,7 +7901,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	HE	השרת יכול לסדר מחדש בסדר אקראי רשימות השמעה שכבר מסודרות בסדר אקראי לאחר כל מעבר מלא על הרשימה, אם אתה מעוניין בכך.
 	IT	Se lo si desidera, Logitech Media Server può ripetere la riproduzione casuale delle playlist dopo la riproduzione di ciascuna di esse.
 	JA	サーバーソフトウェアは、リピート時に、再度ランダムをかけるよう選択することができます。
-	NL	Logitech Media Server kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
+	NL	Logitech Media Server kan de volgorde van nummers in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
 	NO	Logitech Media Server kan omrokkere spillelister på nytt etter hver gjennomspilling av en liste.
 	PL	Program Logitech Media Server może, w razie potrzeby, zmienić kolejność utworów w liście odtwarzanej losowo, każdorazowo po odtworzeniu wszystkich utworów z listy.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
@@ -7958,7 +7958,7 @@ SETUP_PLAYTRACKALBUM
 	HE	השמעת שירים אחרים באלבום
 	IT	Riproduci gli altri brani dell'album
 	JA	同じアルバムのその他の曲を再生する
-	NL	Andere liedjes van album afspelen
+	NL	Andere nummers van album afspelen
 	NO	Spill andre låter i albumet
 	PL	Odtwórz inne utwory z albumu
 	PT	Tocar outras músicas do álbum
@@ -7977,7 +7977,7 @@ SETUP_PLAYTRACKALBUM_1
 	HE	השמעת שירים אחרים באלבום או בספרייה
 	IT	Riproduci gli altri brani dell'album o della cartella
 	JA	同じアルバム、またはフォルダーのその他の曲を再生する
-	NL	Andere liedjes van album/uit map afspelen
+	NL	Andere nummers van album/uit map afspelen
 	NO	Spill andre sanger i albumet eller katalogen
 	PL	Odtwórz inne utwory z albumu lub katalogu
 	PT	Tocar outras músicas do álbum ou da mesma directoria
@@ -7996,7 +7996,7 @@ SETUP_PLAYTRACKALBUM_0
 	HE	השמעת שירים נבחרים בלבד
 	IT	Riproduci solo il brano selezionato
 	JA	選択した曲だけを再生する
-	NL	Alleen geselecteerde liedje afspelen
+	NL	Alleen geselecteerde nummer afspelen
 	NO	Spill bare valgt sang
 	PL	Odtwórz tylko zaznaczony utwór
 	PT	Tocar apenas a música selecionada
@@ -8015,7 +8015,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	HE	כאשר אתה בוחר שיר יחיד ולוחץ על PLAY (הפעלה) במהלך עיון באלבומים או תיקיות, באפשרותך לבחור להשמיע רק את אותו שיר או את כל השירים שנמצאים באותו אלבום או אותה ספרייה, החל מהשיר הנבחר.
 	IT	Quando si seleziona un singolo brano e si preme PLAY sul telecomando, mentre si sfogliano album o cartelle è possibile scegliere se riprodurre esclusivamente quel brano o anche tutti i brani successivi di quell'album o cartella.
 	JA	1曲だけ選択して再生した場合、その曲だけを再生するのか、同じアルバムまたはフォルダーのその他の曲も再生するのか、を選択できます。
-	NL	Als je één liedje selecteert en op de PLAY-toets drukt terwijl je albums of mappen bekijkt, kun je alleen dit liedje laten afspelen, of alle liedjes van het album of uit de map te beginnen met het geselecteerde liedje.
+	NL	Als je één nummer selecteert en op de PLAY-toets drukt terwijl je albums of mappen bekijkt, kun je alleen dit nummer laten afspelen, of alle nummers van het album of uit de map te beginnen met het geselecteerde nummer.
 	NO	Når du velger et spor og trykker på PLAY, kan du velge å spille bare dette sporet eller alle spor i det albumet eller den mappen sporet ligger i, med valgt spor som det første.
 	PL	Po wybraniu pojedynczego utworu i naciśnięciu przycisku PLAY na pilocie podczas przeglądania albumów lub folderów można odtworzyć tylko ten utwór lub wszystkie utwory w tym albumie lub katalogu, począwszy od wybranego.
 	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
@@ -8052,7 +8052,7 @@ SETUP_IGNOREDARTICLES_DESC
 	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	רשימת מיליות (ה היידוע, אותיות בכל"מ, "the"‏, "les"‏, "los" וכו') שיש להתעלם מהן בתחילת השמות של מבצעים, שירים או אלבומים במהלך מיון. הפרד בין מיליות באמצעות רווחים או השאר את הרשימה ריקה כדי להשבית התנהגות זו. שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Elenco di articoli ("the", "gli", "i", "le") anteposti ai nomi di artisti, brani o album, da ignorare nell'ordinamento. Inserire i diversi articoli separati da spazi o lasciare vuoto l'elenco se si desidera disattivare questa funzionalità. Se si modifica questa impostazione, viene ripetuta l'analisi della libreria musicale.
-	NL	Een lijst met lidwoorden (de, het, een, the, les, los, enz.) die voor de naam van een artiest, liedje of album staan en bij het sorteren genegeerd moeten worden. Scheid meerdere lidwoorden door spaties, of laat de lijst leeg om deze functie uit te schakelen. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
+	NL	Een lijst met lidwoorden (de, het, een, the, les, los, enz.) die voor de naam van een artiest, nummer of album staan en bij het sorteren genegeerd moeten worden. Scheid meerdere lidwoorden door spaties, of laat de lijst leeg om deze functie uit te schakelen. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Artikler («the», «les», «los» osv.) som skal overses på begynnelsen av navnet til en artist, et album eller en sang ved sortering. Skill flere artikler med mellomrom eller la feltet stå tomt for å deaktivere funksjonen. Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	PL	Lista przedimków („the”, „les”, „los” itp.) ignorowanych na początku nazwy wykonawcy, utworu lub albumu podczas sortowania. Oddziel przedimki spacjami lub pozostaw pole puste, aby wyłączyć tę funkcję. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Список артиклей (the, les, los и др.), игнорируемых в начале имени исполнителя, названия песни или альбома при их сортировке. Введите артикли через пробел или не заполняйте этот список, чтобы отключить данное поведение. При изменении этой настройки медиатека будет пересканирована.
@@ -8083,7 +8083,7 @@ SETUP_SPLITLIST_DESC
 	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	Logitech Media Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Logitech Media Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
-	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
+	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een nummer met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Logitech Media Server kan hente flere artister, albumtitler og sjangere fra etikettene i musikkfilene dine. Hvis den finner noen av ordene eller tegnene nedenfor i etikettene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artistetiketten «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	PL	Program Logitech Media Server może wyodrębnić wykonawców, tytuły albumów i gatunki ze znaczników plików muzycznych. Jeżeli program Logitech Media Server znajdzie poniższe słowa lub znaki w znacznikach, utworzy listy dla każdego elementu. Na przykład umieszczenie średnika na liście poniżej, spowoduje, że utwór ze znacznikiem wykonawcy „J. S. Bach;Michael Tilson Thomas” pojawi się w obszarze wykonawców dla „J. S. Bach” i „Michael Tilson Thomas”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Logitech Media Server может извлекать из тегов музыкальных файлов имена исполнителей, названия альбомов и жанры, даже если их несколько. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей и под именем "И. С. Бах", и под именем "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
@@ -8164,7 +8164,7 @@ SETUP_SCAN_ON_PREF_CHANGE
 	FR	Lancer l'analyse après modification des préférences
 	NL	Start scan bij voorkeurswijzigingen
 	PL	Uruchom przeszukiwanie biblioteki po zmianie ustawień
-	
+
 SETUP_SCAN_ON_PREF_CHANGE_DESC
 	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
 	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
@@ -9871,7 +9871,7 @@ PLAY_THIS_SONG
 	HE	השמעת שיר זה
 	IT	Riproduci questo brano
 	JA	この曲を再生する
-	NL	Dit liedje afspelen
+	NL	Dit nummer afspelen
 	NO	Spill denne sangen
 	PL	Odtwórz ten utwór
 	PT	Tocar esta Música
@@ -11912,7 +11912,7 @@ OGF
 	PL	Ogg FLAC
 	RU	Ogg FLAC
 	SV	Ogg FLAC
- 
+
 DFF
 	EN	DFF
 
@@ -12094,17 +12094,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
@@ -12592,7 +12592,7 @@ ALL_SONGS
 	HE	כל השירים
 	IT	Tutti i brani
 	JA	全ての曲
-	NL	Alle liedjes
+	NL	Alle nummers
 	NO	Alle sanger
 	PL	Wszystkie utwory
 	PT	Todas as Músicas
@@ -12773,7 +12773,7 @@ SONGS
 	HE	שירים
 	IT	Brani
 	JA	曲
-	NL	Liedjes
+	NL	Nummers
 	NO	Sanger
 	PL	Utwory
 	PT	Músicas
@@ -12811,7 +12811,7 @@ LCSONGS
 	HE	שירים
 	IT	brani
 	JA	曲
-	NL	liedjes
+	NL	nummers
 	NO	sanger
 	PL	utwory
 	PT	músicas
@@ -13147,7 +13147,7 @@ BROWSE_BY_SONG
 	HE	שירים
 	IT	Brani
 	JA	曲をブラウズする
-	NL	Liedjes
+	NL	Nummers
 	NO	Sanger
 	PL	Utwory
 	PT	Escolher por Música
@@ -13447,7 +13447,7 @@ MOSTPLAYED
 	HE	השירים המושמעים ביותר
 	IT	Brani più ascoltati
 	JA	最も多く再生された曲
-	NL	Meest gespeelde liedjes
+	NL	Meest gespeelde nummers
 	NO	Mest spilte sanger
 	PL	Najczęściej odtwarzane utwory
 	PT	Músicas Mais Tocadas
@@ -14372,7 +14372,7 @@ PLAYER_IP_ADDRESS
 	FR	L'adresse IP de cette platine est
 	HE	כתובת ה-IP של הנגן היא
 	IT	L'indirizzo IP del lettore è
-	JA	このプレーヤーのIPアドレスは 
+	JA	このプレーヤーのIPアドレスは
 	NL	Het IP-adres van dit muzieksysteem is
 	NO	Spillerens IP-adresse er
 	PL	Adres IP tego odtwarzacza to
@@ -14391,7 +14391,7 @@ PLAYER_MAC_ADDRESS
 	FR	L'adresse MAC de cette platine est
 	HE	כתובת ה-MAC של האתרנט של הנגן היא
 	IT	L'indirizzo MAC Ethernet di questo lettore è
-	JA	このプレーヤーのMACアドレスは 
+	JA	このプレーヤーのMACアドレスは
 	NL	Het ethernet-MAC-adres van dit muzieksysteem is
 	NO	Spillerens MAC-adresse er
 	PL	Adres MAC w sieci Ethernet tego odtwarzacza to
@@ -15625,7 +15625,7 @@ SEARCHFOR_SONGS
 	HE	איתור שירים
 	IT	Cerca brani
 	JA	曲を検索する
-	NL	Naar liedjes zoeken
+	NL	Naar nummers zoeken
 	NO	Søk etter sanger
 	PL	Wyszukaj utwory
 	PT	Procurar por Músicas
@@ -15649,7 +15649,7 @@ SEARCHFOR_SONGTITLE
 	HE	איתור שם שיר
 	IT	Cerca titolo brano
 	JA	曲のタイトルを検索する
-	NL	Naar titels van liedjes zoeken
+	NL	Naar titels van nummers zoeken
 	NO	Søk etter sangtittel
 	PL	Wyszukaj tytuł utworu
 	PT	Procurar por Música
@@ -15706,7 +15706,7 @@ SEARCH_FOR_SONGS
 	HE	איתור שירים
 	IT	Cerca brani
 	JA	曲を検索する
-	NL	Naar liedjes zoeken
+	NL	Naar nummers zoeken
 	NO	Søk etter sanger
 	PL	Wyszukaj utwory
 	PT	Procurar por Música
@@ -16313,7 +16313,7 @@ RADIO_TUNEIN_DESC
 	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala aquí y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
 	FI	Jos tiedät jo sen radiokanavan URL-osoitteen, jota haluat kuunnella, kirjoita se tähän ja valitse Virittäydy kanavalle. Voit kirjoittaa joko radiovirran itsensä (esim. http://62.49.59.50:8000) tai virtaa osoittavan soittoluettelotiedoston (esim. http://www.hitzradio.com/hitzradio.pls) URL:n.
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ici et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
-	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
+	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls).
 	IT	Se si conosce già l'URL della stazione che si vuole ascoltare, inserirlo qui e fare clic sul pulsante Sintonizza. È possibile inserire l'URL dello stream della radio (esempio http://62.49.59.50:8000) o del file della playlist che punta allo stream (esempio http://www.hitzradio.com/hitzradio.pls).
 	NL	Als je de URL al weet van de zender die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio-stream zelf invoeren (bijv. http://62.49.59.50:8000), of van het playlistbestand dat naar de stream wijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 	NO	Hvis du allerede vet url-en til stasjonen du vil høre på, kan du angi den her og klikke på «Finn». Du kan enten angi url-en til selve radiostrømmen (for eksempel http://62.49.59.50:8000), eller til spillelistefilen som peker til strømmen (for eksempel http://www.hitzradio.com/hitzradio.pls).
@@ -18097,7 +18097,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación.
 	FI	Voit valita, että kaikki kokoelmalevyt näkyvät Eri artistit -kohdan alla, tai voit valita, että ne näkyvät kokoelman eri artistien nimen alla.
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
-	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף. 
+	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
 	NL	Je kunt verzamelalbums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamelalbum laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
@@ -18148,7 +18148,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación.
 	FI	Kun kokoelmalevyjä laitetaan samaan ryhmään, ne näkyvät oletuksena kohdassa Eri artistit.  Voit vaihtaa nimen alla.
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
-	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן. 
+	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
 	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder veranderen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
@@ -18235,7 +18235,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	FR	Les albums qui contiennent des morceaux contenant les informations d'un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Les informations sur le groupe sont appelées TPE2 ou Artiste de l'album dans certains logiciels.
 	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
 	IT	Gli album con brani che contengono il tag Gruppo possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
-	NL	Albums met liedjes die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
+	NL	Albums met nummers die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
 	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
 	PL	Albumy zawierające utwory z nazwą zespołu mogą być wymienione pod nazwą tego zespołu lub innych wykonawców tego albumu. Etykieta zespołu nosi także nazwę TPE2 i w niektórych programach może być widoczna jako „wykonawca albumu”.
 	RU	Альбомы песен с тегами группы могут быть перечислены в списке с названием этой группы или другими исполнителями данного альбома. Тег группы также называется TPE2 и в некоторых программах может отображаться как "Исполнитель альбома".
@@ -19045,7 +19045,7 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	FR	paramétrage personnalisé du pré-cache
 	NL	Aangepaste specificaties pre-caching
 	PL	Dostosowanie ustawień bufora
-	
+
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
@@ -19065,14 +19065,14 @@ SETUP_IMAGEPROXY_REMOTE
 	EN	Use mysqueezebox.com to resize artwork
 	FR	Redimensionner les pochettes avec mysqueezebox.com
 	NL	Gebruik mysqueezebox.com om afbeeldingen te schalen
-	PL	Użyj mysqueezebox.com do dopasowywania okładek   
+	PL	Użyj mysqueezebox.com do dopasowywania okładek
 
 SETUP_IMAGEPROXY_LOCAL
 	DE	Plattenhüllen lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
 	FR	Redimensionner les pochettes avec Logitech Media Server
 	NL	Gebruik Logitech Media Server om afbeeldingen te schalen
-	PL	Użyj Logitech Media Server do dopasowywania okładek   
+	PL	Użyj Logitech Media Server do dopasowywania okładek
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -21290,7 +21290,7 @@ ALL_LIBRARY
 	FR	Bibliothèque complète
 	NL	Hele muziekcollectie
 	PL	Cała biblioteka muzyczna
-	
+
 SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
@@ -21563,7 +21563,7 @@ JIVE_PLAY_ALL_SONGS
 	FI	Soita kaikki kappaleet
 	FR	Lire tous les morceaux
 	IT	Riproduci tutti i brani
-	NL	Alle liedjes afspelen
+	NL	Alle nummers afspelen
 	NO	Spill av alle sanger
 	PL	Odtwórz wszystkie utwory
 	RU	Воспроизвести все песни
@@ -21608,7 +21608,7 @@ JIVE_ADD_ALL_SONGS
 	FI	Lisää kaikki kappaleet
 	FR	Ajouter tous les morceaux
 	IT	Aggiungi tutti i brani
-	NL	Alle liedjes toevoegen
+	NL	Alle nummers toevoegen
 	NO	Legg til alle sanger
 	PL	Dodaj wszystkie utwory
 	RU	Добавить все песни
@@ -24171,7 +24171,7 @@ SYNC_ABOUT
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...
-	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken 
+	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
 	NL	Bevestigen Touch-To-Play
@@ -24179,7 +24179,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
-	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
+	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op je Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 	PL	Przy wyborze/zaznaczeniu utworu można przypadkowo zastąpić aktualną listę odtwarzania. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
@@ -24211,7 +24211,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
 	NL	Alleen vragen als de huidige playlist meer dan een nummer bevat
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie oraz aktualna lista odtwarzania zawiera więcej niż jeden utwór
-	
+
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
