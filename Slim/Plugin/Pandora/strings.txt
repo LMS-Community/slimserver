@@ -118,7 +118,7 @@ PLUGIN_PANDORA_STREAM_FAILED
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
 	IT	Stream audio disconnesso. Passaggio al brano seguente.
-	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+	NL	Verbinding met audiostream verbroken. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm frakoplet, hopper til neste spor.
 	PL	Strumień audio odłączony, przechodzenie do następnego utworu.
 	RU	Аудиопоток прерван. Переход на следующую дорожку.
@@ -470,7 +470,7 @@ PLUGIN_PANDORA_ARTIST_OR_SONG
 	FR	Artiste ou morceau?
 	HE	מבצע או שיר?
 	IT	Artista o brano?
-	NL	Artiest of liedje?
+	NL	Artiest of nummer?
 	NO	Artist eller sang?
 	PL	Wykonawca, czy utwór?
 	RU	Исполнитель или песня?
@@ -502,7 +502,7 @@ PLUGIN_PANDORA_SONG_SEARCH_RESULTS
 	FR	Résultats de la recherche par morceau
 	HE	תוצאות חיפוש של שיר
 	IT	Risultati ricerca brano
-	NL	Zoekresultaten voor liedje
+	NL	Zoekresultaten voor nummer
 	NO	Søkeresultater, sanger
 	PL	Wyniki wyszukiwania utworu
 	RU	Результаты поиска песни
@@ -646,7 +646,7 @@ PLUGIN_PANDORA_SONG
 	FR	morceau
 	HE	שיר
 	IT	brano
-	NL	liedje
+	NL	nummer
 	NO	sang
 	PL	utwór
 	RU	Песня
@@ -710,7 +710,7 @@ PLUGIN_PANDORA_I_LIKE
 	FR	J'aime ce morceau
 	HE	אוהב את השיר
 	IT	Mi piace questo brano
-	NL	Ik vind dit een leuk liedje
+	NL	Ik vind dit een leuk nummer
 	NO	Jeg liker denne sangen
 	PL	Lubię ten utwór
 	RU	Песня мне нравится
@@ -726,7 +726,7 @@ PLUGIN_PANDORA_I_DONT_LIKE
 	FR	Je n'aime pas ce morceau
 	HE	לא אוהב את השיר
 	IT	Non mi piace questo brano
-	NL	Ik vind dit geen leuk liedje
+	NL	Ik vind dit geen leuk nummer
 	NO	Jeg liker ikke denne sangen
 	PL	Nie lubię tego utworu
 	RU	Песня мне не нравится
@@ -742,7 +742,7 @@ PLUGIN_PANDORA_BOOKMARK_SONG
 	FR	Ajouter ce morceau à ma page personnelle Pandora.com
 	HE	הוסף את השיר לדף האישי שלי ב-Pandora.com
 	IT	Aggiungi questo brano alla mia pagina personale di Pandora.com
-	NL	Dit liedje aan mijn persoonlijke pagina op Pandora.com toevoegen
+	NL	Dit nummer aan mijn persoonlijke pagina op Pandora.com toevoegen
 	NO	Legg til denne sangen på den personlige siden min på Pandora.com
 	PL	Dodaj ten utwór do mojej strony osobistej w witrynie Pandora.com
 	RU	Добавить эту песню на мою персональную страницу Pandora.com
@@ -790,7 +790,7 @@ PLUGIN_PANDORA_WHY_PLAYED
 	FR	Pourquoi avez-vous diffusé ce morceau?
 	HE	מדוע השמעת את השיר?
 	IT	Perché hai scelto questo brano?
-	NL	Waarom heb je dit liedje afgespeeld?
+	NL	Waarom heb je dit nummer afgespeeld?
 	NO	Hvorfor ble denne sangen spilt?
 	PL	Dlaczego odtworzono ten utwór?
 	RU	Почему вы выбрали эту песню?
@@ -838,7 +838,7 @@ PLUGIN_PANDORA_PLAYING_BECAUSE
 	FR	Nous diffusons ce morceau car il représente
 	HE	אנו משמיעים את השיר מכיוון שהוא
 	IT	Trasmettiamo questo brano perché presenta
-	NL	We spelen dit liedje af vanwege
+	NL	We spelen dit nummer af vanwege
 	NO	Vi spiller denne sangen fordi den har
 	PL	Odtwarzamy ten utwór, ponieważ jednym z wykonawców jest
 	RU	Мы воспроизводим эту песню, поскольку она соответствует
@@ -854,7 +854,7 @@ PLUGIN_PANDORA_CREATE_FROM_SONG
 	FR	Créer une station à partir de ce morceau
 	HE	תור תחנה חדשה משיר זה
 	IT	Crea una nuova stazione da questo brano
-	NL	Een nieuw station van dit liedje maken
+	NL	Een nieuw station van dit nummer maken
 	NO	Opprett en ny stasjon med denne sangen
 	PL	Utwórz nową stację z tego utworu
 	RU	Создать новую станцию из этой песни
@@ -886,7 +886,7 @@ PLUGIN_PANDORA_RATING_POSITIVE_LINE2
 	FR	Nous allons essayer de trouver des morceaux similaires.
 	HE	סבבה, נשתדל להשמיע שירים דומים.
 	IT	Bene, cercheremo di trasmettere brani simili.
-	NL	Cool, we zullen proberen zulke liedjes te spelen.
+	NL	Cool, we zullen proberen zulke nummers te spelen.
 	NO	Ok, da skal vi prøve å spille liknende musikk.
 	PL	Świetnie, będziemy odtwarzać podobne utwory.
 	RU	Отлично, мы попробуем воспроизвести подобные песни.
@@ -918,7 +918,7 @@ PLUGIN_PANDORA_RATING_NEGATIVE_LINE2
 	FR	Nous ne rejouerons plus ce morceau à l'avenir.
 	HE	סליחה, לא נשמיע את השיר שוב.
 	IT	Ci dispiace. Non trasmetteremo più questo brano.
-	NL	Sorry, dit liedje gaan we niet meer spelen.
+	NL	Sorry, dit nummer gaan we niet meer spelen.
 	NO	Beklager, vi skal ikke spille denne sangen mer.
 	PL	Niestety nie można odtworzyć tego utworu.
 	RU	Извините, эта песня больше не будет воспроизведена.

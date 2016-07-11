@@ -260,7 +260,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	FR	Morceaux désélectionnés dans iTunes
 	HE	שירים לא מסומנים ב-iTunes
 	IT	Brani non selezionati in iTunes
-	NL	Niet-geselecteerde liedjes in iTunes
+	NL	Niet-geselecteerde nummers in iTunes
 	NO	Umarkerte sanger i iTunes
 	PL	Niezaznaczone utwory w programie iTunes
 	RU	Неотмеченные песни в iTunes
@@ -277,7 +277,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Logitech Media Server. Vous pouvez modifier ce comportement ci-dessous.
 	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות Logitech Media Server. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
 	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con Logitech Media Server. È possibile modificare questa impostazione di seguito.
-	NL	Wanneer je het vinkje weghaalt naast een liedje in iTunes, wordt dat liedje standaard niet weergegeven wanneer je met Logitech Media Server door je muziek bladert. Je kunt dit hieronder veranderen.
+	NL	Wanneer je het vinkje weghaalt naast een nummer in iTunes, wordt dat nummer standaard niet weergegeven wanneer je met Logitech Media Server door je muziek bladert. Je kunt dit hieronder veranderen.
 	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Logitech Media Server. Du kan endre dette nedenfor.
 	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie Logitech Media Server. Działanie tej funkcji można zmienić poniżej.
 	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в Logitech Media Server. Изменить эту настройку можно ниже.
@@ -294,7 +294,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	FR	Inclure tous les morceaux
 	HE	יש לכלול את כל השירים
 	IT	Includi tutti i brani
-	NL	Alle liedjes toevoegen
+	NL	Alle nummers toevoegen
 	NO	Inkluder alle sanger
 	PL	Dodaj wszystkie utwory
 	RU	Включать все песни
@@ -311,7 +311,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	FR	Ne pas inclure les morceaux désélectionnés
 	HE	אין לכלול שירים לא מסומנים
 	IT	Non includere i brani non selezionati
-	NL	Niet-geselecteerde liedjes niet toevoegen
+	NL	Niet-geselecteerde nummers niet toevoegen
 	NO	Ikke inkluder sanger som ikke er markert
 	PL	Nie dodawaj niezaznaczonych utworów
 	RU	Не включать неотмеченные песни
