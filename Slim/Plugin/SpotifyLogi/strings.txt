@@ -57,11 +57,10 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	PL	W Spotify
 	RU	На Spotify
 	SV	På Spotify
-
+	
 PLUGIN_SPOTIFYLOGI_RECOMMENDATIONS
 	DE	Spotify Empfehlungen (basierend auf aktueller Wiedergabeliste)
 	EN	Spotify Recommendations (based on the current playlist)
-	NL	Spotify aanbevelingen (gebaseerd op je huidige playlist)
 
 SPOTIFY_ERROR_3
 	CS	Tuto stopu nelze přehrát.
@@ -317,3 +316,4 @@ SPOTIFY_ERROR_103
 	PL	Ten utwór jest niedostępny w Twoim regionie.
 	RU	Эта дорожка недоступна в вашем регионе.
 	SV	Det här spåret är inte tillgängligt i din region.
+
