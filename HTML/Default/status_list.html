@@ -63,7 +63,7 @@
 		[% END %]
 		<div class="playlistControls">
 			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringPLAY %]" title="[% stringPLAY %]">
-			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringREMOVE_FROM_PLAYLIST %]" title="[% stringREMOVE_FROM_PLAYLIST %]"></a>
+			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringREMOVE_FROM_PLAYLIST %]" title="[% stringREMOVE_FROM_PLAYLIST %]">
 			<a href="[% webroot _ info_link %]?item=[% item.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">
 				<img src="[% webroot %]html/images/b_mmmix.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringMORE %]" title="[% stringMORE %]">
 			</a>
