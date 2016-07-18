@@ -958,11 +958,15 @@ sub stream_s {
 		# songs differ. This avoids some unpleasant white
 		# noise from (at least) the Squeezebox Touch when
 		# using the analogue outputs. This might be bug#1884.
-		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
-			main::INFOLOG && $log->info('Overriding transition due to differing sample rates');
+		# Whether to implement this restriction is controlled
+		# by a player preference.
+		my $transitionSampleRestriction = $prefs->client($master)->get('transitionSampleRestriction') || 0;
+
+		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1) && $transitionSampleRestriction) {
+			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates');
 			$transitionType = 0;
-		 } else {
-			main::INFOLOG && $log->info('Sample rates do not require a transition restriction');
+		 } elsif ($transitionSampleRestriction) {
+			main::INFOLOG && $log->info('Crossfade sample rate restriction enabled but not needed for this transition');
 		 }
 
 	}
