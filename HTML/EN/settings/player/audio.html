@@ -127,8 +127,8 @@
 				<select class="stdedit" name="pref_transitionSampleRestriction" id="pref_transitionSampleRestriction">
 
 				[% FOREACH option = {
-					'0' => 'SETUP_TRANSITIONSAMPLERESTRICTION_OFF',
-					'1' => 'SETUP_TRANSITIONSAMPLERESTRICTION_ON',
+					'0' => 'NO',
+					'1' => 'YES',
 				} %]
 					<option [% IF prefs.pref_transitionSampleRestriction == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
