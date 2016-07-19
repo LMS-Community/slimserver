@@ -6226,21 +6226,65 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Response: &quot;04:20:00:12:23:45 playlist play 
 			/music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
 	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist play 
+			http://someserver/02_Sledgehammer.flac
+			Peter%20Gabriel%20-%20Sledgehammer&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist play 
+			http://someserver/02_Sledgehammer.flac
+			Peter%20Gabriel%20-%20Sledgehammer&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p id="playlist add"><strong><code>&lt;playerid&gt; playlist add &lt;item&gt;</code></strong></p>
-<p>The &quot;playlist add&quot; command adds the specified song URL, playlist or directory contents to the end of the current playlist. 
-Songs currently playing or already on the playlist are not affected.</p>
-<p>Examples:</p>
+<br>
+<p id="playlist add">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			add
+			&lt;item&gt;
+			&lt;title&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist add&quot; command adds the specified song URL, playlist
+	or directory contents to the end of the current playlist. Songs currently 
+	playing or already on the playlist are not affected. An optional title
+	value may be passed to set a title.  This can be useful for remote URLs.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote>
 	<p>Request: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>
 	<p>Request: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="playlist insert"><strong><code>&lt;playerid&gt; playlist insert &lt;item&gt;</code></strong></p>
-<p>The &quot;playlist insert&quot; command inserts the specified song URL, playlist or directory contents to be played immediately after the current song in the current playlist. 
-Any songs currently playing or already on the playlist are not affected.</p>
-<p>Examples:</p>
+<br>
+<p id="playlist insert">
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			playlist 
+			insert 
+			&lt;item&gt;
+			&lt;title&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist insert&quot; command inserts the specified song URL, playlist 
+	or directory contents to be played immediately after the current song in the 
+	current playlist. Any songs currently playing or already on the playlist are 
+	not affected. An optional title	value may be passed to set a title.  This can be 
+	useful for remote URLs.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote>
 	<p>Request: &quot;04:20:00:12:23:45 playlist insert /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
 	<br>Response: &quot;04:20:00:12:23:45 playlist insert /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>

@@ -562,7 +562,7 @@ sub init {
 	addDispatch(['playlist',       'genre',          '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'index',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'index',          '_index',     '_fadein', '_noplay', '_seekdata'], [1, 0, 0, \&Slim::Control::Commands::playlistJumpCommand]);
-	addDispatch(['playlist',       'insert',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'insert',         '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertlist',     '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertalbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'inserttracks',   '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
