@@ -52,7 +52,7 @@ PLUGIN_CLASSICAL_NO_INFO
 	FI	Virran tietoja ei voi noutaa.
 	FR	Impossible de récupérer les informations sur le flux.
 	IT	Impossibile recuperare le informazioni sullo stream.
-	NL	Kan stroominfo niet ophalen.
+	NL	Kan streaminformatie niet ophalen.
 	NO	Kan ikke hente avspillingsinformasjon.
 	PL	Nie można pobrać informacji o strumieniu.
 	RU	Невозможно извлечь информацию о потоке.
@@ -67,7 +67,7 @@ PLUGIN_CLASSICAL_STREAM_FAILED
 	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan raitaan.
 	FR	Echec du flux audio, lecture du morceau suivant.
 	IT	Errore di stream audio. Passaggio al brano seguente.
-	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
+	NL	Fout in audiostream. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
 	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.
 	RU	Сбой аудиопотока. Переход на следующую дорожку.

@@ -83,7 +83,7 @@ PLUGIN_SLACKER_STREAM_FAILED
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
 	IT	Stream audio disconnesso. Passaggio al brano seguente.
-	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+	NL	Verbinding met audiostream verbroken. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm frakoplet, hopper til neste spor.
 	PL	Strumień audio odłączony, przechodzenie do następnego utworu.
 	RU	Аудиопоток прерван. Переход на следующую дорожку.
