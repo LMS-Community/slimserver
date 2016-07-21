@@ -11,6 +11,7 @@ package Slim::Plugin::DontStopTheMusic::Plugin;
 # GNU General Public License for more details.
 
 use strict;
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
