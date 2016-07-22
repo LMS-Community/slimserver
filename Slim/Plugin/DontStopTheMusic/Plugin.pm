@@ -117,7 +117,9 @@ sub dontStopTheMusicSetting {
 	my $i = 1;
 	
 	foreach (sort {
-		lc(getString($a, $client)) cmp lc(getString($b, $client));
+		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client)) 
+			cmp 
+		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($b, $client));
 	} keys %handlers) {
 		$request->setResultLoopHash('item_loop', $i, {
 			text => getString($_),
