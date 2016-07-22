@@ -243,6 +243,15 @@ sub dontStopTheMusic {
 			my ($client, $tracks) = @_;
 			
 			if ( $tracks && scalar @$tracks ) {
+				# we don't want duplicates in the playlist
+				my $playlistURLs = { map {
+					my $url = blessed($_) ? $_->url : $_;
+					$url => 1;
+				} @{Slim::Player::Playlist::playList($client)} };
+				
+				$tracks = [ grep {
+					!$playlistURLs->{$_}
+				} @$tracks ];
 				
 				if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
 					# Delete tracks before this one on the playlist
