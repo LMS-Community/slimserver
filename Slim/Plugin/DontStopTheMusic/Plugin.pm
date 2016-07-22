@@ -91,8 +91,16 @@ sub getHandler {
 	return $handlers{$prefs->client($client)->get('provider')};
 }
 
-sub getHandlers {
-	return \%handlers;
+sub getSortedHandlerTokens {
+	my $client = shift;
+	
+	my @handlerStrings = sort {
+		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client)) 
+			cmp 
+		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($b, $client));
+	} keys %handlers;
+	
+	return wantarray ? @handlerStrings : \@handlerStrings;
 }
 
 sub dontStopTheMusicSetting {
@@ -116,11 +124,7 @@ sub dontStopTheMusicSetting {
 	
 	my $i = 1;
 	
-	foreach (sort {
-		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client)) 
-			cmp 
-		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($b, $client));
-	} keys %handlers) {
+	foreach ( getSortedHandlerTokens() ) {
 		$request->setResultLoopHash('item_loop', $i, {
 			text => getString($_),
 			radio => ($_ eq $provider) ? 1 : 0,
