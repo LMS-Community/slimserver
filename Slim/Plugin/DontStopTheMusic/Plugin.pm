@@ -258,7 +258,9 @@ sub dontStopTheMusic {
 				$tracks = [ grep {
 					!$playlistURLs->{$_}
 				} @$tracks ];
+			}
 				
+			if ( $tracks && scalar @$tracks ) {
 				if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
 					# Delete tracks before this one on the playlist
 					for (my $i = 0; $i < scalar(@$tracks); $i++) {
