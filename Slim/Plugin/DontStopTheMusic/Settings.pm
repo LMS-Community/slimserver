@@ -32,11 +32,13 @@ sub prefs {
 
 	return if (!defined $client);
 
-	return ($prefs->client($client), 'provider');
+	return ($prefs->client($client->master), 'provider');
 }
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
+
+	$client = $client->master,
 
 	$paramRef->{handlers} = Slim::Plugin::DontStopTheMusic::Plugin::getSortedHandlerTokens($client);
 	
