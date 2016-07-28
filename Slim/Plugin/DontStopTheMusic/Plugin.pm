@@ -87,12 +87,19 @@ sub registerHandler {
 
 sub getHandler {
 	my ($class, $client) = @_;
+	
 	return unless $client;
+	
+	$client = $client->master;
 	return $handlers{$prefs->client($client)->get('provider')};
 }
 
 sub getSortedHandlerTokens {
 	my $client = shift;
+	
+	return unless $client,
+	
+	$client = $client->master;
 	
 	my @handlerStrings = sort {
 		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client)) 
@@ -146,7 +153,7 @@ sub dontStopTheMusicSetting {
 sub getString {
 	my ($token, $client) = @_;
 	return Slim::Utils::Strings::stringExists($token) 
-			? cstring($client, $token) 
+			? cstring($client->master, $token) 
 			: $token;
 };
 
@@ -216,6 +223,8 @@ sub dontStopTheMusic {
 	my ($client) = @_;
 	
 	my $class = __PACKAGE__;
+	
+	$client = $client->master;
 	
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
@@ -293,6 +302,8 @@ sub getMixableProperties {
 	my ($class, $client, $count) = @_;
 	
 	return unless $client;
+	
+	$client = $client->master;
 
 	my ($trackId, $artist, $title, $duration, $tracks);
 	
@@ -334,7 +345,9 @@ sub getMixableProperties {
 sub getMixablePropertiesFromTrack {
 	my ($class, $client, $track) = @_;
 	
-	return unless blessed $track;
+	return unless $client && blessed $track;
+
+	$client = $client->master;
 
 	my $url    = $track->url;
 	my $id     = $track->id;
