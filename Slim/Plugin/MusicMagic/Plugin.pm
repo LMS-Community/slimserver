@@ -325,19 +325,31 @@ sub postinitPlugin {
 		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('MUSICMAGIC_MIX', sub {
 			my ($client, $cb) = @_;
 		
-			my $seedTracks = Slim::Plugin::DontStopTheMusic::Plugin->getMixableProperties($client, 1);
+			my $seedTracks = Slim::Plugin::DontStopTheMusic::Plugin->getMixableProperties($client, 5);
 			
 			my $tracks = [];
 		
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
-				my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
-			
-				my $mix = getMix($client, $trackObj->path, 'album') if $trackObj;
+				foreach (@$seedTracks) {
+					my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
 				
-				if ($mix && scalar @$mix) {
-					$tracks = $mix;
+					my $mix = getMix($client, $trackObj->path, 'album') if $trackObj;
+					
+					main::idleStreams();
+					
+					if ($mix && scalar @$mix) {
+						push @$tracks, @$mix;
+					}
 				}
+			}
+			
+			$tracks = Slim::Plugin::DontStopTheMusic::Plugin->deDupe($tracks);
+			
+			my $maxMixSize = $prefs->client($client)->get('mix_size') || $prefs->get('mix_size') || 12;
+			if ( scalar @$tracks > $maxMixSize ) {
+				Slim::Player::Playlist::fischer_yates_shuffle($tracks);
+				$tracks = [ splice(@$tracks, 0, $maxMixSize) ];
 			}
 		
 			$cb->($client, $tracks);

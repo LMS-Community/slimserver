@@ -225,6 +225,7 @@ sub dontStopTheMusic {
 	my $class = __PACKAGE__;
 	
 	$client = $client->master;
+	$client->pluginData( playlist => 0 );
 	
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
@@ -257,17 +258,8 @@ sub dontStopTheMusic {
 		$handler->( $client, sub {
 			my ($client, $tracks) = @_;
 			
-			if ( $tracks && scalar @$tracks ) {
-				# we don't want duplicates in the playlist
-				my $playlistURLs = { map {
-					my $url = blessed($_) ? $_->url : $_;
-					$url => 1;
-				} @{Slim::Player::Playlist::playList($client)} };
-				
-				$tracks = [ grep {
-					!$playlistURLs->{$_}
-				} @$tracks ];
-			}
+			# we don't want duplicates in the playlist
+			$tracks = __PACKAGE__->deDupePlaylist($client, $tracks);
 				
 			if ( $tracks && scalar @$tracks ) {
 				if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
@@ -293,9 +285,45 @@ sub dontStopTheMusic {
 			elsif ( main::INFOLOG && $log->is_info ) {
 				$log->info("No matching tracks found for current playlist!");
 			}
+
+			$client->pluginData(playlist => 0);
 		} ) if $handler;
 
 	}
+}
+
+sub deDupePlaylist {
+	my ( $class, $client, $tracks ) = @_;
+
+	if ( $tracks && ref $tracks && scalar @$tracks ) {
+		my $playlist = $client->pluginData('playlist');
+		
+		if ( !($playlist && ref $playlist) ) {
+			$playlist = { map {
+				my $url = blessed($_) ? $_->url : $_;
+				$url => 1;
+			} @{Slim::Player::Playlist::playList($client)} };
+			
+			$client->pluginData( playlist => $playlist );
+		}
+		
+		$tracks = $class->deDupe($tracks, { map { $_ => 1 } keys %$playlist } );
+	}
+	
+	return $tracks;
+}
+
+sub deDupe {
+	my ( $class, $tracks, $seen ) = @_;
+			
+	if ( $tracks && ref $tracks && scalar @$tracks ) {
+		$seen ||= {};
+		$tracks = [ grep {
+			!$seen->{$_}++
+		} @$tracks ];
+	}
+	
+	return $tracks;
 }
 
 sub getMixableProperties {
