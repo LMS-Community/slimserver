@@ -3,7 +3,7 @@
 	<id>99b33cfe-f43c-4de0-a7cc-8c93b7dce2db</id>
 	<name>PLUGIN_DSTM</name>
 	<module>Slim::Plugin::DontStopTheMusic::Plugin</module>
-	<version>0.1</version>
+	<version>1.0.0</version>
 	<description>PLUGIN_DSTM_DESC</description>
 	<creator>Logitech</creator>
 

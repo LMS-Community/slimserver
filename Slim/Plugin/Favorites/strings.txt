@@ -1,7 +1,5 @@
 # String file for Favorites plugin
 
-# $Id$
-
 FAVORITES
 	CS	Oblíbené položky
 	DA	Favoritter
@@ -175,6 +173,14 @@ PLUGIN_FAVORITES_DESC
 	PL	Zapisz i edytuj ulubione
 	RU	Сохраните и отредактируйте выбранное
 	SV	Spara och redigera favoriter
+	
+PLUGIN_FAVORITES_USE_DSTM
+	DE	Musikwiedergabe nie anhalten
+	EN	Don't Stop The Music
+
+PLUGIN_FAVORITES_USE_DSTM_DESC
+	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
+	EN	Register favorites as options for "Don't Stop The Music".
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	CS	Prohlížeč a editor seznamu skladeb OPML

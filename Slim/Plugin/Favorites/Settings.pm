@@ -1,6 +1,6 @@
 package Slim::Plugin::Favorites::Settings;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2016 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -21,7 +21,13 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, 'opmleditor', 'dont_browsedb');
+	my @prefs = ('opmleditor', 'dont_browsedb');
+	
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
+		push @prefs, 'registerDSTM';
+	}
+	
+	return ($prefs, @prefs);
 }
 
 sub handler {

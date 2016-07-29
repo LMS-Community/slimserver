@@ -19,4 +19,11 @@
 		</div>
 	[% END %]
 
+	[% IF prefs.exists('pref_registerDSTM') %]
+		[% WRAPPER setting title="PLUGIN_FAVORITES_USE_DSTM" desc="" %]
+			<input name="pref_registerDSTM" id="pref_registerDSTM" type="checkbox" [% IF prefs.pref_registerDSTM %] checked [% END %]>
+			<label for="pref_registerDSTM">[% "PLUGIN_FAVORITES_USE_DSTM_DESC" | string %]</label>
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]
