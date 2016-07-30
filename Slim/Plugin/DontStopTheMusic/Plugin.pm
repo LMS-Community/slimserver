@@ -97,7 +97,7 @@ sub getHandler {
 sub getSortedHandlerTokens {
 	my $client = shift;
 	
-	return unless $client,
+	return unless $client;
 	
 	$client = $client->master;
 	
@@ -131,9 +131,9 @@ sub dontStopTheMusicSetting {
 	
 	my $i = 1;
 	
-	foreach ( getSortedHandlerTokens() ) {
+	foreach ( getSortedHandlerTokens($client) ) {
 		$request->setResultLoopHash('item_loop', $i, {
-			text => getString($_),
+			text => getString($_, $client),
 			radio => ($_ eq $provider) ? 1 : 0,
 			actions => {
 				do => {
@@ -153,7 +153,7 @@ sub dontStopTheMusicSetting {
 sub getString {
 	my ($token, $client) = @_;
 	return Slim::Utils::Strings::stringExists($token) 
-			? cstring($client->master, $token) 
+			? cstring($client, $token) 
 			: $token;
 };
 
