@@ -2,7 +2,6 @@
 
 ALTER TABLE metainformation collate utf8_unicode_ci;
 ALTER TABLE rescans collate utf8_unicode_ci;
-ALTER TABLE unreadable_tracks collate utf8_unicode_ci;
 ALTER TABLE tracks collate utf8_unicode_ci;
 ALTER TABLE playlist_track collate utf8_unicode_ci;
 ALTER TABLE albums collate utf8_unicode_ci;
