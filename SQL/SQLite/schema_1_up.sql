@@ -21,12 +21,7 @@ CREATE TABLE rescans (
 -- Table: unreadable_tracks
 --
 DROP TABLE IF EXISTS unreadable_tracks;
-CREATE TABLE unreadable_tracks (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  rescan int(10),
-  url text NOT NULL,
-  reason text NOT NULL
-);
+
 CREATE INDEX unreadableRescanIndex ON unreadable_tracks (rescan);
 --
 -- Table: tracks
