@@ -141,8 +141,8 @@ sub _createHTTPRequest {
 	}
 	
 	# If cached, add If-None-Match and If-Modified-Since headers
-	if ( my $data = $self->cachedResponse ) {
-
+	my $data = $self->cachedResponse;
+	if ( $data && ref $data && $data->{headers} ) {
 		# gzip encoded results come with a -gzip postfix which needs to be removed, or the etag would not match
 		my $etag = $data->{headers}->header('ETag') || undef;
 		$etag =~ s/-gzip// if $etag;
