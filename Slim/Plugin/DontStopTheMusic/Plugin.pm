@@ -323,17 +323,19 @@ sub getMixableProperties {
 	
 	$client = $client->master;
 
-	my ($trackId, $artist, $title, $duration, $tracks);
+	my ($trackId, $artist, $title, $duration, $mbid, $artist_mbid, $tracks);
 	
 	foreach (@{ Slim::Player::Playlist::playList($client) }) {
-		($artist, $title, $duration, $trackId) = $class->getMixablePropertiesFromTrack($client, $_);
+		($artist, $title, $duration, $trackId, $mbid, $artist_mbid) = $class->getMixablePropertiesFromTrack($client, $_);
 		
 		next unless defined $artist && defined $title;
 
 		push @$tracks, {
 			id => $trackId,
 			artist => $artist,
-			title => $title
+			title => $title,
+			mbid => $mbid,
+			artist_mbid => $artist_mbid,
 		};
 	}
 
@@ -372,6 +374,8 @@ sub getMixablePropertiesFromTrack {
 	my $artist = $track->artistName;
 	my $title  = $track->title;
 	my $duration = $track->duration;
+	my $mbid   = $track->musicbrainz_id;
+	my $artist_mbid = $track->artist->musicbrainz_id if $track->artist && !$track->remote;
 				
 	# we might have to look up titles for remote sources
 	if ( !($artist && $title && $duration) && $track && $track->remote && $url ) {
@@ -384,7 +388,7 @@ sub getMixablePropertiesFromTrack {
 		}
 	}
 	
-	return ($artist, $title, $duration, $id);
+	return ($artist, $title, $duration, $id, $mbid, $artist_mbid);
 }
 
 
