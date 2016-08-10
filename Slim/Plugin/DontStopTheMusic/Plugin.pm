@@ -215,6 +215,10 @@ sub dontStopTheMusic {
 	my $class = __PACKAGE__;
 	
 	$client = $client->master;
+	
+	# don't process multiple requests at the same time
+	return if $client->pluginData('active');
+	
 	$client->pluginData( playlist => 0 );
 	
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
@@ -224,7 +228,9 @@ sub dontStopTheMusic {
 
 	my $numTracks = $prefs->get('newtracks') || MIN_TRACKS_LEFT;
 	
+	# TODO - don't run twice, set a flag
 	if ($songsRemaining < $numTracks) {
+		$client->pluginData( active => 1 );
 
 		# don't continue if the last item in the queue is a radio station or similar
 		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $client->playingSong()->track->url ) ) {
@@ -276,7 +282,8 @@ sub dontStopTheMusic {
 				$log->info("No matching tracks found for current playlist!");
 			}
 
-			$client->pluginData(playlist => 0);
+			$client->pluginData( playlist => 0 );
+			$client->pluginData( active => 0 );
 		} ) if $handler;
 
 	}
