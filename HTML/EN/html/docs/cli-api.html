@@ -702,7 +702,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#exit">exit</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#shutdown">shutdown</a></code></strong>
+		<strong><code><a href="#stopserver">stopserver</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#restartserver">restartserver</a></code></strong>
 	</li>
 </ul>
 
@@ -1160,28 +1163,52 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="shutdown">
+<p id="stopserver">
 	<strong>
 		<code>
-			shutdown
+			stopserver
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;shutdown&quot; command shuts down the server. The CLI connection
-	is terminated. Note that, obviously, there is no symmetrical command to 
-	restart the server.
+	The &quot;stopserver&quot; command shuts down the server.
 </p>
 <p>
 	Example:
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;shutdown&lt;LF&gt;&quot;
+		Request: &quot;stopserver&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;shutdown&lt;LF&gt;&quot;
+		Response: &quot;stopserver&lt;LF&gt;&quot;
 		<br>
 		(Connection terminated)
+	</p>
+</blockquote>
+
+<br>
+<p id="restartserver">
+	<strong>
+		<code>
+			restartserver
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;restartserver&quot; command restarts the server.
+	Please note that restarting the server using this command
+	is not available on all platforms.
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;restartserver&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;restartserver&lt;LF&gt;&quot;
+		<br>
+		(Connection terminates and server is being restarted)
 	</p>
 </blockquote>
 
@@ -9966,6 +9993,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	<li>
 		<strong><code><a href="#playlisttracks">playlisttracks</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#shutdown">shutdown</a></code></strong>
+	</li>
 </ul>
 
 <br>
@@ -10003,5 +10033,20 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
 </p>
 
+<br>
+<p id="shutdown">
+	<strong>
+		<code>
+			shutdown
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;shutdown&quot; command shuts down the server. The CLI connection
+	is terminated. Please note that the &quot;shutdown&quot; command is only
+	available through a direct CLI socket connection, but not over JSON/RPC or 
+	cometd. It has been replaced with the &quot;<a href="#stopserver">stopserver</a>&quot;
+	command. 
+</p>
 
 [% PROCESS helpfooter.html %]
