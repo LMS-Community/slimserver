@@ -315,6 +315,9 @@ sub skipPlugins {
 			iTunes MusicMagic PreventStandby Rescan TT xPL
 			
 			UPnP ImageBrowser
+			
+			ACLFiletest 
+			DnDPlay ExtendedBrowseModes FullTextSearch LibraryDemo
 		),
 		$class->SUPER::skipPlugins(),
 	);
