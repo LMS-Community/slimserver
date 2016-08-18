@@ -25,7 +25,7 @@ sub initDetails {
 	
 	if ( !main::RESIZER ) {
 		# Once for OS Version, then again for CPU Type.
-		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
+		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType SPHardwareDataType |') or return;
 
 		while (<SYS>) {
 
@@ -33,18 +33,8 @@ sub initDetails {
 
 				$class->{osDetails}->{'osName'} = $1;
 				$class->{osDetails}->{'osName'} =~ s/ \(\w+?\)$//;
-				last;
-			}
-		}
-
-		close SYS;
-
-		# CPU Type / Processor Name
-		open(SYS, '/usr/sbin/system_profiler SPHardwareDataType 2>/dev/null |') or return;
-
-		while (<SYS>) {
-
-			if (/Intel/i) {
+				
+			} elsif (/Intel/i) {
 
 				# Determine if we are running as 32-bit or 64-bit
 				my $bits = length( pack 'L!', 1 ) == 8 ? 64 : 32;
@@ -54,13 +44,13 @@ sub initDetails {
 				if ( $bits == 64 ) {
 					$class->{osDetails}->{'osArch'} = 'x86_64';
 				}
-			
-				last;
 
 			} elsif (/PowerPC/i) {
 
 				$class->{osDetails}->{'osArch'} = 'ppc';
 			}
+			
+			last if $class->{osDetails}->{'osName'} && $class->{osDetails}->{'osArch'};
 		}
 
 		close SYS;
