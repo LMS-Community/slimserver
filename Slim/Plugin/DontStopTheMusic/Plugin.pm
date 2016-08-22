@@ -230,8 +230,6 @@ sub dontStopTheMusic {
 	
 	# TODO - don't run twice, set a flag
 	if ($songsRemaining < $numTracks) {
-		$client->pluginData( active => 1 );
-
 		# don't continue if the last item in the queue is a radio station or similar
 		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $client->playingSong()->track->url ) ) {
 			if ($handler->can('isRepeatingStream')) {
@@ -249,43 +247,46 @@ sub dontStopTheMusic {
 			return;
 		}
 		
-		my $handler = $class->getHandler($client);
+		return if $client->pluginData('active');
 		
-		$handler->( $client, sub {
-			my ($client, $tracks) = @_;
+		if ( my $handler = $class->getHandler($client) ) {
+			$client->pluginData( active => 1 );
 			
-			# we don't want duplicates in the playlist
-			$tracks = __PACKAGE__->deDupePlaylist($client, $tracks);
+			$handler->( $client, sub {
+				my ($client, $tracks) = @_;
 				
-			if ( $tracks && scalar @$tracks ) {
-				if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
-					# Delete tracks before this one on the playlist
-					for (my $i = 0; $i < scalar(@$tracks); $i++) {
-						my $request = $client->execute(['playlist', 'delete', 0]);
-						$request->source($class);
+				# we don't want duplicates in the playlist
+				$tracks = __PACKAGE__->deDupePlaylist($client, $tracks);
+					
+				if ( $tracks && scalar @$tracks ) {
+					if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
+						# Delete tracks before this one on the playlist
+						for (my $i = 0; $i < scalar(@$tracks); $i++) {
+							my $request = $client->execute(['playlist', 'delete', 0]);
+							$request->source($class);
+						}
 					}
+					
+					# "playlist addtracks" can only handle single tracks, but not eg. playlists or db://... urls
+					my $request = (scalar @$tracks == 1) 
+						? $client->execute(['playlist', 'add', $tracks->[0] ]) 
+						: $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
+					$request->source($class);
 				}
-				
-				# "playlist addtracks" can only handle single tracks, but not eg. playlists or db://... urls
-				my $request = (scalar @$tracks == 1) 
-					? $client->execute(['playlist', 'add', $tracks->[0] ]) 
-					: $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
-				$request->source($class);
-			}
-			elsif ( $prefs->client($client)->get('provider') !~ /^PLUGIN_RANDOM/ && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
-				$log->warn("I'm sorry, we couldn't create any reasonable result with your current playlist. We'll just play something instead.");
-				
-				my $request = $client->execute(['playlist', 'addtracks', 'listRef', ['randomplay://track'] ]);
-				$request->source($class);
-			}
-			elsif ( main::INFOLOG && $log->is_info ) {
-				$log->info("No matching tracks found for current playlist!");
-			}
-
-			$client->pluginData( playlist => 0 );
-			$client->pluginData( active => 0 );
-		} ) if $handler;
-
+				elsif ( $prefs->client($client)->get('provider') !~ /^PLUGIN_RANDOM/ && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
+					$log->warn("I'm sorry, we couldn't create any reasonable result with your current playlist. We'll just play something instead.");
+					
+					my $request = $client->execute(['playlist', 'addtracks', 'listRef', ['randomplay://track'] ]);
+					$request->source($class);
+				}
+				elsif ( main::INFOLOG && $log->is_info ) {
+					$log->info("No matching tracks found for current playlist!");
+				}
+	
+				$client->pluginData( playlist => 0 );
+				$client->pluginData( active => 0 );
+			} );
+		}
 	}
 }
 
