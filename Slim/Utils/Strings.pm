@@ -514,7 +514,7 @@ sub string {
 	my $token = uc(shift);
 
 	my $string = $defaultStrings->{$token};
-	logBacktrace("missing string $token") if ($token && !defined $string);
+	logBacktrace("missing string $token") if ($token && !defined $string && $log->is_info);
 
 	if ( @_ ) {
 		return sprintf( $string, @_ );
