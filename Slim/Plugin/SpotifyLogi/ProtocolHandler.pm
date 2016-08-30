@@ -19,20 +19,30 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_SPOTIFYLOGI_MODULE_NAME',
 } );
 
-sub init {
+sub init { if (!main::SLIM_SERVICE) {
 	# Make sure all player objects have authentication data stored.
 	# Whenever a player connects, do a quick lookup to get the playback
 	# authentication details.
 	Slim::Control::Request::subscribe(
 		sub {
-			my $client = $_[0]->client;
-			
-			_getTrackAndAuth('spotify:track:4uLU6hMCjMI75M1A2tKUQC', {
-				client => $client,
-			}) if !$client->pluginData('auth');
+			__PACKAGE__->initAuthorization($_[0]->client);
 		},
 		[['client'],['new','reconnect']]
 	);
+} }
+
+sub initAuthorization {
+	my ($class, $client) = @_;
+	
+	if ( $client->model =~ /(fab4|baby)/ && !$client->pluginData('auth') ) {
+		$client->pluginData( auth => {} );
+		
+		_getTrackAndAuth('spotify:track:4uLU6hMCjMI75M1A2tKUQC', {
+			client => $client,
+		});
+		
+		return 1;
+	}	
 }
 
 sub canSeek { 1 }
