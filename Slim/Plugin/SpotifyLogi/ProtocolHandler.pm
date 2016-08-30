@@ -1,7 +1,5 @@
 package Slim::Plugin::SpotifyLogi::ProtocolHandler;
 
-# $Id$
-
 use strict;
 use base qw(Slim::Player::Protocols::SqueezePlayDirect);
 
@@ -21,7 +19,21 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_SPOTIFYLOGI_MODULE_NAME',
 } );
 
-my $prefs = preferences('server');
+sub init {
+	# Make sure all player objects have authentication data stored.
+	# Whenever a player connects, do a quick lookup to get the playback
+	# authentication details.
+	Slim::Control::Request::subscribe(
+		sub {
+			my $client = $_[0]->client;
+			
+			_getTrackAndAuth('spotify:track:4uLU6hMCjMI75M1A2tKUQC', {
+				client => $client,
+			}) if !$client->pluginData('auth');
+		},
+		[['client'],['new','reconnect']]
+	);
+}
 
 sub canSeek { 1 }
 
@@ -47,9 +59,18 @@ sub getNextTrack {
 	
 	my ($trackId) = $song->track()->url =~ m{spotify:/*(.+)};
 	
-	my $client = $song->master();
+	_getTrackAndAuth($trackId, {
+		client => $song->master(),
+		song   => $song,
+		cb     => $successCb,
+		ecb    => $errorCb,
+	});
+}
+
+sub _getTrackAndAuth {
+	my ($trackId, $params) = @_;
 	
-	my $http = Slim::Networking::SqueezeNetwork->new(
+	Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
 			my $info = eval { from_json( $http->content ) };
@@ -58,16 +79,26 @@ sub getNextTrack {
 					$log->debug( 'getPlaybackInfo failed: ' . ( $@ || $info->{error} ) );
 				}
 				
-				$errorCb->( $@ || $info->{error} );
+				if ( my $errorCb = $http->params('ecb') ) {
+					$errorCb->( $@ || $info->{error} );
+				}
 			}
 			else {
 				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getPlaybackInfo ok: ' . Data::Dump::dump($info) );
 				}
+				
+				if ( $info->{auth} && (my $client = $http->params('client')) ) {
+					$client->pluginData( auth => delete $info->{auth} );
+				}
+				
+				if ( my $song = $http->params('song') ) {
+					$song->pluginData( info => $info );
+				}
 
-				$song->pluginData( info => $info );
-
-				$successCb->();
+				if ( my $successCb = $http->params('cb') ) {
+					$successCb->();
+				}
 			}
 		},
 		sub {
@@ -77,20 +108,18 @@ sub getNextTrack {
 				$log->debug( 'getPlaybackInfo failed: ' . $http->error );
 			}
 			
-			$errorCb->( $http->error );
+			if ( my $errorCb = $http->params('ecb') ) {
+				$errorCb->( $http->error );
+			}
 		},
-		{
-			client => $song->master(),
-		},
-	);
-	
-	main::DEBUGLOG && $log->is_debug && $log->debug('Getting playback info from SN');
-
-	$http->get(
+		$params
+	)->get(
 		Slim::Networking::SqueezeNetwork->url(
 			'/api/spotify/v1/playback/getPlaybackInfo?trackId=' . uri_escape($trackId),
 		)
 	);
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug('Getting playback info from SN for ' . $trackId);
 }
 
 sub canDirectStream {
@@ -111,7 +140,7 @@ sub onStream {
 	
 	# send spds packet with auth info
 	my $info  = $song->pluginData('info');
-	my $auth  = $info->{auth};
+	my $auth  = $client->pluginData('auth');
 	my $prefs = $info->{prefs};
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {

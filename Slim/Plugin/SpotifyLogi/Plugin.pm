@@ -75,6 +75,8 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		spotify => 'Slim::Plugin::SpotifyLogi::ProtocolHandler'
 	);
+	
+	Slim::Plugin::SpotifyLogi::ProtocolHandler->init();
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
 		qr|squeezenetwork\.com.*/api/spotify/|, 
