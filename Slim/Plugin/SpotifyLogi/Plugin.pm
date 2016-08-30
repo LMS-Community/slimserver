@@ -77,6 +77,11 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		spotify => 'Slim::Plugin::SpotifyLogi::ProtocolHandler'
 	);
+	
+	# in LMS we're going to authenticate every player - don't do this on mysb, it's too expensive
+	if (!main::SLIM_SERVICE) {
+		Slim::Plugin::SpotifyLogi::ProtocolHandler->init();
+	}
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
 		qr|squeezenetwork\.com.*/api/spotify/|, 
@@ -236,6 +241,11 @@ sub spds_handler {
 		
 		my $string = ($error_code >= 3 && $error_code <= 103) ? $client->string("SPOTIFY_ERROR_${error_code}") : $message;
 		$client->controller()->playerStreamingFailed($client, $string, ' '); # empty string to hide track URL
+		
+		# if we fail playback lack of authentication, check whether we can authorize at all
+		if ( $error_code == 15 ) {
+			return if Slim::Plugin::SpotifyLogi::ProtocolHandler->initAuthorization($client);
+		}
 		
 		# Report some serious issues to back-end
 		if ( grep { $error_code == $_ } @report_errors ) {
