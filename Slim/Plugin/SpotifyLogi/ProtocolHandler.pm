@@ -19,7 +19,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_SPOTIFYLOGI_MODULE_NAME',
 } );
 
-sub init {
+sub init { if (!main::SLIM_SERVICE) {
 	# Make sure all player objects have authentication data stored.
 	# Whenever a player connects, do a quick lookup to get the playback
 	# authentication details.
@@ -29,7 +29,7 @@ sub init {
 		},
 		[['client'],['new','reconnect']]
 	);
-}
+} }
 
 sub initAuthorization {
 	my ($class, $client) = @_;

@@ -86,7 +86,9 @@ sub initPlugin {
 	);
 	
 	# in LMS we're going to authenticate every player - don't do this on mysb, it's too expensive
-	Slim::Plugin::SpotifyLogi::ProtocolHandler->init();
+	if (!main::SLIM_SERVICE) {
+		Slim::Plugin::SpotifyLogi::ProtocolHandler->init();
+	}
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
 		qr|squeezenetwork\.com.*/api/spotify/|, 
