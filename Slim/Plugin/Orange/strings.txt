@@ -1,4 +1,4 @@
-﻿PLUGIN_ORANGE_LIVERADIO
+PLUGIN_ORANGE_LIVERADIO
 	EN	Orange Liveradio
 	NL	Orange Liveradio
 	NO	Orange Liveradio

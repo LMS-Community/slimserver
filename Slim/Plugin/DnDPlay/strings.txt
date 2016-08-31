@@ -1,4 +1,4 @@
-﻿PLUGIN_DNDPLAY
+PLUGIN_DNDPLAY
 	DE	Drag & Drop Musikdateien zur Wiedergabe
 	EN	Drag & drop music files to play
 	NL	'Drag & drop' muziekbestanden om af te spelen

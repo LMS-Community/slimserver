@@ -1,4 +1,4 @@
-﻿PLUGIN_DSTM
+PLUGIN_DSTM
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
 	NO	Ikke stopp musikken

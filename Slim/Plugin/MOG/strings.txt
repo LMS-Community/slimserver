@@ -1,4 +1,4 @@
-﻿PLUGIN_MOG_ADD_ALL_PLAYLIST
+PLUGIN_MOG_ADD_ALL_PLAYLIST
 	EN	Add All to MOG Playlist
 	NL	Voeg Alles toe aan MOG-playlist
 	NO	Legg til alt i MOG-spilleliste

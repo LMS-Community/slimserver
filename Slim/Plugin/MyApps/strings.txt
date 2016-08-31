@@ -1,4 +1,4 @@
-﻿PLUGIN_MY_APPS_MODULE_NAME
+PLUGIN_MY_APPS_MODULE_NAME
 	CS	Moje aplikace
 	DA	Mine programmer
 	DE	Eigene Anwendungen

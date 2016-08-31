@@ -1,4 +1,4 @@
-﻿# Main Logitech Media Server strings file
+# Main Logitech Media Server strings file
 
 #
 # This tab-delimited file contains all the text strings used in Logitech Media Server

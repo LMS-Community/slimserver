@@ -1,4 +1,4 @@
-﻿PLUGIN_EXTENDED_BROWSEMODES
+PLUGIN_EXTENDED_BROWSEMODES
 	DE	Erweiterte Musik Menüs
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation

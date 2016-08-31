@@ -1,4 +1,4 @@
-﻿PLUGIN_FULLTEXT
+PLUGIN_FULLTEXT
 	DE	Volltextsuche
 	EN	Full text search
 	NL	Tekstzoekfunctie

@@ -1,4 +1,4 @@
-﻿PLUGIN_REMOTE_LIBRARY_MODULE_NAME
+PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	DE	Entfernte Musiksammlungen
 	EN	Remote Music Libraries
 	NL	Externe muziekcollecties

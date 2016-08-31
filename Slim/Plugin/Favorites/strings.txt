@@ -1,4 +1,4 @@
-﻿# String file for Favorites plugin
+# String file for Favorites plugin
 
 FAVORITES
 	CS	Oblíbené položky
