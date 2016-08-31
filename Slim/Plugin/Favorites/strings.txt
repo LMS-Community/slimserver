@@ -177,10 +177,12 @@ PLUGIN_FAVORITES_DESC
 PLUGIN_FAVORITES_USE_DSTM
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
+	NO	Ikke stopp musikken
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
 	EN	Register favorites as options for "Don't Stop The Music".
+	NO	Legg inn favoritter som valg for "Ikke stopp musikken".
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	CS	Prohlížeč a editor seznamu skladeb OPML
@@ -591,16 +593,19 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	DE	Verhalten mit lokaler Musik
 	EN	Local music items behaviour
 	NL	Gedrag bij locale muziek
+	NO	Oppførsel med lokal musikksamling
 	PL	Sposób przeglądania ulubionych
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
 	EN	Don't browse items whene selected, just play them (old behaviour)
 	NL	Niet doorbrowsen op een geselecteerd item, maar speel af (oude gedrag)
+	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen
 	EN	When you select a favorite contributor, genre or album, drill down to its content
 	NL	Als je een favoriete uitvoerende selecteert, genre of album, browse door tot de inhoud ervan
+	NO	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.
 	PL	Gdy wybierzesz ulubionego wykonawcę, gatunek lub album, wyświetl utwory im odpowiadające

@@ -3,6 +3,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation
 	NL	Extra Browser Modi
+	NO	Ytterligere browse-modi
 	PL	Dodatkowe tryby przeglądania
 	
 PLUGIN_EXTENDED_BROWSEMODES_DESC
@@ -10,6 +11,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
 	NL	Creëer extra menu's om door je muziekcollectie te browsen, via Albumartiest, Componisten, Genres te selecteren en meer.
+	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
 	
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
@@ -33,24 +35,28 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	DE	Komponisten
 	EN	Composers
 	NL	Componisten
+	NO	Komponister
 	PL	Kompozytorzy
 	
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	DE	Rolle des Künstlers:
 	EN	Contributor Roles:
 	NL	Rol van uitvoerende:
+	NO	Utøverroller:
 	PL	Role kontrybutorów:
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	DE	Anzeigen:
 	EN	Browse by:
 	NL	Browse op:
+	NO	Bla etter:
 	PL	Przeglądaj wg:
 
 PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	DE	Anwenden auf:
 	EN	Apply to:
 	NL	Toepassen op:
+	NO	Anvendes på:
 	PL	Zastosuj do:
 
 PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
@@ -74,36 +80,42 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	DE	Dateisystem
 	EN	Disks and folders
 	NL	Schijven en mappen
+	NO	Disker og mapper
 	PL	Dyski i foldery
 
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
 	NL	Rollen van uitvoerende:
+	NO	Utøverroller:
 	PL	Role kontrybutorów:
 
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
 	NL	Hele collectie (Standaard)
+	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
 
 PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC
 	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
 	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
 	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
+	NO	Delbiblioteker gjør at du kan bruke Min musikk-menyen på et filtrert utvalg av spor. Når de er aktivert, kan du veksle mellom delbibliotekene fra en undermeny av Min musikk.
 	PL	Biblioteki tematyczne pozwalają na użycie menu "Moja muzyka" na przefiltrowanym zbiorze utworów. Do menu "Moja muzyka" zostanie dodana dodatkowa opcja, służąca do przełączania się pomiędzy bibliotekami.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
 	NL	Verberg lossy-versies als een lossless-versie beschikbaar is.
+	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
 	NL	Maak een deelcollectie die probeert om lossy-versies te verbergen als van dezelfde opname ook een lossless-versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
+	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
 	
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
@@ -141,23 +153,26 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	DE	Flop-Titel
 	EN	Flop Tracks
 	NL	Flopnummers
+	NO	Minst avspilte spor
 	PL	Najrzadziej słuchane
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	DE	'%s' verwenden
 	EN	Use '%s'
 	NL	Gebruik '%s'
+	NO	Bruk '%s'
 	PL	Przełącz na '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	DE	Verwende nun '%s'
 	EN	Now using '%s'
 	NL	Gebruikt nu '%s'
+	NO	Bruker nå '%s'
 	PL	Przełączono na '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
 	NL	Deelcollectie gedeletet
+	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
-	

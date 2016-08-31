@@ -1,6 +1,7 @@
 PLUGIN_ORANGE_LIVERADIO
 	EN	Orange Liveradio
 	NL	Orange Liveradio
+	NO	Orange Liveradio
 
 PLUGIN_ORANGE_FAVORITES
 	CS	Orange Liveradio – oblíbené

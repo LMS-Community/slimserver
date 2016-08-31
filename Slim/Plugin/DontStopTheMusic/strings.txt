@@ -1,13 +1,16 @@
 PLUGIN_DSTM
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
+	NO	Ikke stopp musikken
 	
 PLUGIN_DSTM_DESC
 	DE	Don't Stop The Music bewahrt Sie davor, von der Stille überrascht zu werden. Wenn sich die Wiedergabeliste dem Ende neigt, wird automatisch passende Musik angehängt. Über das Menü Extras auf der Hauptseite können Sie für jeden Player separat die Auswahl der hinzuzufügenden Titel bestimmen oder abschalten.
 	EN	Don't Stop The Music will make sure you don't let the silence kill your flow. Once you reach the end of your playlist it will automatically add music similar to what you've been listening to.
-	NL	Don't Stop The Music zorgt ervoor dat er geen onverwachte stilte valt. Eenmaal aan het einde van de playlist worden automatisch nummers toegevoegd op basis van de gemaakte keuze. Deze voorkeuze vind je in het hoofdmenu onder Extra en kan voor elke muziekspeler afzonderlijk worden ingesteld. 
+	NL	Don't Stop The Music zorgt ervoor dat er geen onverwachte stilte valt. Eenmaal aan het einde van de playlist worden automatisch nummers toegevoegd op basis van de gemaakte keuze. Deze voorkeuze vind je in het hoofdmenu onder Extra en kan voor elke muziekspeler afzonderlijk worden ingesteld.
+	NO	Ikke stopp musikken sørger for at stillheten ikke forstyrrer flyten din. Den vil automagisk legge til lignende musikk som du har hørt på, så snart enden på spillelista er nådd.
 
 PLUGIN_DSTM_HELP
 	DE	Wählen Sie, was abgespielt werden soll, wenn eine Wiedergabe zu Ende geht. Die Auswahl variiert in Abhängigkeit der installierten Plugins.
 	EN	Select what you'd like to play once a playlist has come to an end. The choice can vary, depending on the plugins you've installed and configured.
 	NL	Selecteer wat je afgespeeld wilt hebben zodra je playlist het einde nadert. De keuzemogelijkheid is afhankelijk van de geïnstalleerde plug-ins.
+	NO	Velg hva du vil skal spilles av når slutten på spillelista er nådd. Valget kan variere etter hvilke tilleggsmoduler du har installert og satt opp.

@@ -2,52 +2,61 @@ PLUGIN_DNDPLAY
 	DE	Drag & Drop Musikdateien zur Wiedergabe
 	EN	Drag & drop music files to play
 	NL	'Drag & drop' muziekbestanden om af te spelen
+	NO	Dra og slipp musikkfiler for å spille
 	PL	Przeciągnij i upuść pliki muzyczne do odtworzenia
 
 PLUGIN_DNDPLAY_SHORT
 	DE	Musikdatei Drag & Drop
 	EN	Drag & Drop Music Files
 	NL	'Drag & drop' muziekbestanden
+	NO	Dra og slipp musikkfiler
 	PL	Przeciągnij i upuść pliki muzyczne
 
 PLUGIN_DNDPLAY_DESC
 	DE	Dieses Plugin erlaubt es, Musikdateien aus dem Dateimanager des Betriebssystems (Finder, Explorer etc.) ins Logitech Media Server Web-Interface zu ziehen, um diese wiederzugeben. Dateien, die nicht im Logitech Media Server verfügbar sind, werden zur Wiedergabe temporär zum Server übertragen.
 	EN	This plugin allows you do drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the Logitech Media Server web interface to play them back. Files which are not available from the Logitech Media Server are temporarily transfered for the playback.
 	NL	Deze plug-in maakt 'drag & drop' mogelijk van muziekbestanden, vanuit je bestandsverkenner op je desktop naar de Logitech Media Server webinterface, om ze af te spelen. Bestanden die niet beschikbaar zijn in Logitech Media Server worden tijdelijk overgebracht om afgespeeld te worden.
+	NO	Denne plugin-modulen lar deg spille av lydfiler ved å dra og slippe dem fra filbehandleren (Finder, Explorer etc.) til Logitech Media Servers webgrensesnitt. Filer som ikke allerede ligger på serveren blir midlertidig overført for avspilling.
 	PL	Ten dodatek pozwala na otwarzanie plików muzycznych poprzez "przeciągnięcie" z twojego pulpitu i "upuszczenie" na interfejsie internetowym programu Logitech Media Server. Pliki, które nie są bezpośrednio dostępne dla Logitech Media Server zostaną przesłane i tymczasowo zapisane na serwerze, w celu odtworzenia.
 	
 PLUGIN_DNDPLAY_NO_ITEMS
 	DE	Keine der Dateien kann wiedergegeben werden. Nur Audio-Dateien werden akzeptiert.
 	EN	No playable items found. Only audio files can be played.
 	NL	Geen afspeelbare items gevonden. Alleen muziekbestanden kunnen worden afgespeeld.
+	NO	Fant ingen avspillbare filer. Kun lydfiler kan avspilles.
 	PL	Brak plików do odtworzenia. Akceptowane są wyłącznie pliki muzyczne.
 	
 PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
 	DE	Sie können ohne Player nichts wiedergeben.
 	EN	Cannot play music without a player connected.
 	NL	Kan zonder muzieksysteem niets afspelen.
+	NO	Kan ikke spille musikk uten en tilkoblet spiller.
 	PL	Nie można uruchomić odtwarzania bez podpiętego odtwarzacza.
 	
 PLUGIN_DNDPLAY_FILE_TOO_LARGE
 	DE	Die Dateigrösse (%s) überschreitet die maximal erlaubte Upload-Grösse (%s).
 	EN	File size (%s) exceeds maximum upload size (%s).
 	NL	Bestandsgrootte (%s) is groter dan de maximale uploadgrootte (%s).
+	NO	Filstørrelse (%s) overstiger maksimal opplastingsstørrelse (%s).
 	PL	Rozmiar pliku (%s) przekracza dozwolony rozmiar (%s).
-	
+
 PLUGIN_DNDPLAY_INVALID_DATA
 	DE	Ungültige Anfrage.
 	EN	Invalid request.
 	NL	Ongeldig verzoek.
+	NO	Ugyldig forespørsel.
 	PL	Nieprawidłowe żądanie.
 
 PLUGIN_DNDPLAY_MAX_FILESIZE
 	DE	Maximale Upload-Grösse (in MB)
 	EN	Maximum Upload Size (in MB)
 	NL	Maximale uploadgrootte (in MB)
+	NO	Maksimal opplastingsstørrelse (i MB)
 	PL	Maksymalny rozmiar przesyłanego pliku (MB)
 
 PLUGIN_DNDPLAY_MAX_FILESIZE_DESC
 	DE	Der Transfer von Dateien für die Freigabe verlangt auf dem Server viel Speicher. Daher ist die maximale Upload-Grösse standardmässig auf 100MB beschränkt. Sollten Sie grössere Dateien abspielen wollen, und verfügt ihr Server über die entsprechenden Ressourcen, dann können Sie diese Beschränkung hier erhöhen.
 	EN	Uploading files to the server will require considerable amounts of memory on the server. The maximum file size therefore is limited to 100MB by default. If you feel a need to be able to play larger files, and your server offers the additional ressources, you can adjust the maximum accepted file size here.
 	NL	Het uploaden van bestanden kost een aanzienlijke hoeveelheid geheugen op de server. De maximale bestandsgrootte is daarom 100MB, standaardwaarde. Als je grotere bestanden wilt afspelen, en je server beschikt over de aanvullende middelen, kun je de maximale toegestane bestandsgrootte hier aanpassen.
+	NO	Opplasting av filer til serveren krever en anselig mengde minne på serveren. Filstørrelsen er derfor begrenset til maksimalt 100MB som standard. Dersom du vil ha muligheten til å spille av større filer, og serveren din er kraftig nok, kan du endre maksimal filstørrelse her.
 	PL	Przesyłanie plików na serwer wymaga użycia znacznej ilości pamięci na serwerze. Dlatego też domyślny maksymalny rozmiar przesyłanego pliku to 100 MB. Jeśli uznasz, że twój serwer jest w stanie obsłużyć większe pliki, możesz tutaj zwiększyć dopuszczalny rozmiar przesyłanego pliku.

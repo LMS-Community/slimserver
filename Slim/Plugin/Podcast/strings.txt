@@ -193,46 +193,54 @@ PLUGIN_PODCAST_IMPORT
 	DE	Podcast Liste importieren
 	EN	Import podcasts
 	NL	Importeer podcasts
+	NO	Importer podkaster
 	PL	Importowanie podcastów
 
 PLUGIN_PODCAST_IMPORT_FROM_MYSB
 	DE	Podcasts von mysqueezebox.com importieren
 	EN	Import podcasts from mysqueezebox.com
 	NL	Importeer podcasts van mysqueezebox.com
+	NO	Importer podkaster fra mysqueezebox.com
 	PL	Importuj podcasty z mysqueezebox.com
 
 PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
 	DE	Konnte keine Podcast Liste auf mysqueezebox.com finden. Ev. ist die mysqueezebox.com Integration nicht konfiguriert.
 	EN	Didn't find a podcast list for your mysqueezebox.com account, or account credentials are not set.
 	NL	Geen lijst gevonden met podcasts voor je mysqueezebox.com account, of je account is nog niet ingesteld.
+	NO	Kunne ikke finne en podkastliste for din mysqueezebox.com-konto, eller kontodetaljer er ikke oppgitt.
 	PL	Nie znaleziono listy podcastów na twoim koncie mysqueezebox.com, lub nie podano loginu i hasła użytkownika.
 
 PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	DE	Vom Anfang an wiedergeben
 	EN	Play from the beginning
 	NL	Speel af vanaf het begin
+	NO	Spill av fra begynnelsen
 	PL	Odtwórz od początku
 
 PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	DE	Von der letzten Position wiedergeben (%s)
 	EN	Play from last position (%s)
 	NL	Speel af vanaf laatste positie (%s)
+	NO	Spill videre fra siste posisjon (%s)
 	PL	Wznów od ostatniej pozycji (%s)
 
 PLUGIN_PODCAST_SKIP_BACK_SECS
 	DE	Zurückspringen um X Sekunden
 	EN	Jump back seconds
 	NL	Spring seconden terug
+	NO	Hopp sekunder tilbake
 	PL	Przewijanie do tyłu
 
 PLUGIN_PODCAST_SKIP_BACK_DESC
 	DE	Das Kontextmenü bietet in Podcasts die Möglichkeit, schnell zurückzuspringen. Standardmässig sind dies 15 Sekunden. Geben Sie hier an, wie weit Sie zurückspringen wollen.
 	EN	The podcasts context menu offers an option to jump back quickly within the podcast. By default this option skips back by 15 seconds.
 	NL	In het contextmenu van de podcast kun je snel terugspringen in de podcast. Standaard spring je 15 seconden terug.
+	NO	Kontekstmenyen for podkaster tilbyr å kjapt hoppe tilbake i podkasten. Standardspranget er 15 sekunder. Angi hvor langt spranget skal være.
 	PL	Menu kontekstowe podcastu zawiera opcję do szybkiego przewinięcia do tyłu. Domyślnie ta opcja przewija o 15 sekund do tyłu.
 
 PLUGIN_PODCAST_SKIP_BACK
 	DE	%s Sekunden zurück springen
 	EN	Jump back %s seconds
 	NL	Spring %s seconden terug
+	NO	Hopp %s sekunder tilbake
 	PL	Przewiń do tyłu o %s sekund

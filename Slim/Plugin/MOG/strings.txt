@@ -1,26 +1,32 @@
 PLUGIN_MOG_ADD_ALL_PLAYLIST
 	EN	Add All to MOG Playlist
 	NL	Voeg Alles toe aan MOG-playlist
+	NO	Legg til alt i MOG-spilleliste
 
 PLUGIN_ADD_TRACK_PLAYLIST
 	EN	Add track to MOG Playlist
 	NL	Voeg nummer toe aan MOG-playlist
+	NO	Legg til spor i MOG-spilleliste
 
 PLUGIN_MOG_PLAYLIST
 	EN	MOG Playlist Options
 	NL	Opties voor MOG-playlist
+	NO	Alternativer for MOG-spilleliste
 
 PLUGIN_MOG_BOOKMARKS
 	EN	MOG Favorites Options
 	NL	Opties voor MOG-favorieten
+	NO	Alternativer for MOG-favoritter
 
 PLUGIN_MOG
 	EN	MOG
 	NL	MOG
+	NO	MOG
 
 PLUGIN_MOG_MODULE_NAME
 	EN	MOG
 	NL	MOG
+	NO	MOG
 
 PLUGIN_ON_MOG
 	CS	Na MOG

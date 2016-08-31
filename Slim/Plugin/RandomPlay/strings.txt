@@ -38,6 +38,7 @@ PLUGIN_RANDOM_DISABLE
 	EN	Stop Random Mix
 	FR	Arrête mix aléatoire
 	NL	Stop Willekeurige mix
+	NO	Stopp Tilfeldig miks
 	PL	Zatrzymaj składankę losową
 
 PLUGIN_RANDOM_DISABLED
@@ -343,6 +344,7 @@ PLUGIN_RANDOM_LIBRARY_FILTER
 	DE	Bibliotheksansicht verwenden
 	EN	Use library view
 	NL	Gebruik deelcollectie
+	NO	Bruk delbiblioteker
 
 PLUGIN_RANDOM_CHOOSE_BELOW
 	CS	Vybrat náhodně zvolený mix hudby z vaší knihovny:
@@ -554,8 +556,9 @@ PLUGIN_RANDOM_PRESS_RIGHT
 PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	DE	Titelmix (auf aktuelle Genres beschränkt)
 	EN	Song Mix (limited to current genres)
+	NO	Sangmiks (begrenset til nåværende sjangre)
 
 PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	DE	Zufälliges Album (auf aktuelle Genres beschränkt)
 	EN	Random Album (limited to current genres)
-	
+	NO	Tilfeldig album (begrenset til nåværende sjangre)

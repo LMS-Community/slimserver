@@ -1,15 +1,19 @@
 PLUGIN_LIBRARY_DEMO
 	EN	Sub-Library demo
 	NL	Sub-collectie demo
+	NO	Underbibliotek-demo
 
 PLUGIN_LIBRARY_DEMO_DESC
 	EN	Plugin to demonstrate support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries. It's mostly intended as an inspiration for plugin developers.
 	NL	Plug-in om de ondersteuning van meerdere (of virtuele) collecties te demonstreren. Deze plug-in maakt (deels nutteloze) virtuele collecties aan. Het is meer bedoelt als een inspiratiebron voor plug-inontwikkelaars.
+	NO	Plugin for å demonstrere støtte for multiple (eller virtuelle) samlinger. Denne modulen lager noen (delvis ubrukelige) virtuelle samlinger, og er mest tenkt som en inspirasjon for plugin-utviklere.
 
 PLUGIN_LIBRARY_DEMO_ARTISTS
 	EN	Artists loving long tracks
 	NL	Artiesten met lange nummers
+	NO	Artister som er glad i lange spor
 
 PLUGIN_LIBRARY_DEMO_ALBUMS
 	EN	Albums with outros and other longish tracks
 	NL	Albums met outro's en andere lange nummers
+	NO	Albumer med outroer og andre lange spor
