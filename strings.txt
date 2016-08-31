@@ -16472,7 +16472,7 @@ GETTING_STARTED
 	IT	Guida introduttiva
 	JA	最初に
 	NL	De beginselen
-	NO	Kog
+	NO	Komme i gang
 	PL	Wprowadzenie
 	PT	Ajuda Inicial
 	RU	Приступая к работе
