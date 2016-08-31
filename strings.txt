@@ -19039,7 +19039,6 @@ SETUP_PRECACHEARTWORK_ALL
 	FR	Mettre la pochette de l'album, les photos et les vidéos en pré-cache
 	IT	Inserire le copertine di album, foto e video nella pre-cache
 	NL	Afbeeldingen van albums, foto's en video's vooraf in cache opslaan
-# I've corrected the previous Norwegian entry because it was misleading.
 	NO	Forhåndsbufre album-, foto- og videoomslag
 	PL	Buforuj wstępnie materiały graficzne do albumów, zdjęć i filmów wideo
 	RU	Pre-cache album, photo and video artwork
