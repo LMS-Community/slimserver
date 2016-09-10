@@ -259,7 +259,9 @@ sub dontStopTheMusic {
 				$tracks = __PACKAGE__->deDupePlaylist($client, $tracks);
 					
 				if ( $tracks && scalar @$tracks ) {
-					if ( Slim::Player::Playlist::count($client) + scalar(@$tracks) > preferences('server')->get('maxPlaylistLength') ) {
+					my $maxPlaylistLength = preferences('server')->get('maxPlaylistLength');
+					
+					if ( $maxPlaylistLength && (Slim::Player::Playlist::count($client) + scalar(@$tracks) > $maxPlaylistLength) ) {
 						# Delete tracks before this one on the playlist
 						for (my $i = 0; $i < scalar(@$tracks); $i++) {
 							my $request = $client->execute(['playlist', 'delete', 0]);
