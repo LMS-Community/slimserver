@@ -214,7 +214,7 @@ sub _downloadError {
 
 	$downloading--;
 
-	$log->warn("unable to download $name from $url - $error");
+	$log->error("unable to download $name from $url - $error");
 }
 
 sub downloading {

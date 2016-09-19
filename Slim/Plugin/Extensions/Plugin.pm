@@ -162,6 +162,15 @@ sub initPlugin {
 				
 				$prefs->set('plugin', $installPlugins);
 			}
+			
+			# a plugin could have failed to download (Thanks Google for taking down googlecode.com!...) - let's not re-try to install it
+			elsif ( !$loadedPlugins->{ $plugin } ) {
+				$log->warn("$plugin failed to download or install in some other way. Please try again.");
+				
+				delete $installPlugins->{ $plugin };
+				
+				$prefs->set('plugin', $installPlugins);
+			}
 		}
 	}
 
