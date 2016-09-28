@@ -210,7 +210,7 @@ sub load {
 		# in failsafe mode skip all plugins which aren't required
 		next if ($main::failsafe && !$plugins->{$name}->{'enforce'});
 		
-		if ( main::NOMYSB && $plugins->{$name}->{needsMySB} ) {
+		if ( main::NOMYSB && ($plugins->{$name}->{needsMySB} && $plugins->{$name}->{needsMySB} !~ /false|no/i) ) {
 			main::INFOLOG && $log->info("Skipping plugin: $name - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
 			next;
 		}
