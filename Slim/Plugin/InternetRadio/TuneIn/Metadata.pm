@@ -190,7 +190,11 @@ sub provider {
 		}
 	}
 	
-	if ( !$client->pluginData('fetchingMeta') ) {
+	# Sometimes when a slimservice instances on MySB/UESR is stopped, we might end up
+	# with fetchingMeta not being reset. As pluginData is persisted in the database,
+	# this would cause a player to never display artwork again. Let's therefore add a
+	# timestamp rather than a simple flag, and ignore the timestamp, when it's old.
+	if ( !$client->pluginData('fetchingMeta') || $client->pluginData('fetchingMeta') < (time() - 3600) ) {
 		# Fetch metadata in the background
 		Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 		fetchMetadata( $client, $url );
@@ -235,7 +239,7 @@ sub fetchMetadata {
 		},
 	);
 	
-	$client->pluginData( fetchingMeta => 1 );
+	$client->pluginData( fetchingMeta => time() );
 	
 	$http->get( $metaUrl );
 }
