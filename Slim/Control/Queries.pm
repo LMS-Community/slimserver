@@ -2330,51 +2330,72 @@ sub playersQuery {
 	$request->addResult('count', $count);
 
 	if ($valid) {
-		my $idx = $start;
-		my $cnt = 0;
-		my @players = Slim::Player::Client::clients();
-
-		if (scalar(@players) > 0) {
-
-			for my $eachclient (@players[$start..$end]) {
-				$request->addResultLoop('players_loop', $cnt, 
-					'playerindex', $idx);
-				$request->addResultLoop('players_loop', $cnt, 
-					'playerid', $eachclient->id());
-                                $request->addResultLoop('players_loop', $cnt,
-                                        'uuid', $eachclient->uuid());
-				$request->addResultLoop('players_loop', $cnt, 
-					'ip', $eachclient->ipport());
-				$request->addResultLoop('players_loop', $cnt, 
-					'name', $eachclient->name());
-				$request->addResultLoop('players_loop', $cnt, 
-					'model', $eachclient->model(1));
-				$request->addResultLoop('players_loop', $cnt, 
-					'isplayer', $eachclient->isPlayer());
-				$request->addResultLoop('players_loop', $cnt, 
-					'displaytype', $eachclient->vfdmodel())
-					unless ($eachclient->model() eq 'http');
-				$request->addResultLoop('players_loop', $cnt, 
-					'canpoweroff', $eachclient->canPowerOff());
-				$request->addResultLoop('players_loop', $cnt, 
-					'connected', ($eachclient->connected() || 0));
-
-				for my $pref (@prefs) {
-					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
-						$request->addResultLoop('players_loop', $cnt, 
-							$pref, $value);
-					}
-				}
-					
-				$idx++;
-				$cnt++;
-			}	
-		}
+		_addPlayersLoop($request, $start, $end, \@prefs);
 	}
 	
 	$request->setStatusDone();
 }
 
+sub _addPlayersLoop {
+	my ($request, $start, $end, $savePrefs) = @_;
+	
+	my $idx = $start;
+	my $cnt = 0;
+	my @players = Slim::Player::Client::clients();
+
+	if (scalar(@players) > 0) {
+
+		for my $eachclient (@players[$start..$end]) {
+			$request->addResultLoop('players_loop', $cnt, 
+				'playerid', $eachclient->id());
+			$request->addResultLoop('players_loop', $cnt,
+				'uuid', $eachclient->uuid());
+			$request->addResultLoop('players_loop', $cnt, 
+				'ip', $eachclient->ipport());
+			$request->addResultLoop('players_loop', $cnt, 
+				'name', $eachclient->name());
+			if (defined $eachclient->sequenceNumber()) {
+				$request->addResultLoop('players_loop', $cnt,
+					'seq_no', $eachclient->sequenceNumber());
+			}
+			$request->addResultLoop('players_loop', $cnt, 
+				'model', $eachclient->model(1));
+			$request->addResultLoop('players_loop', $cnt, 
+				'modelname', $eachclient->modelName());
+			$request->addResultLoop('players_loop', $cnt, 
+				'power', $eachclient->power() ? 1 : 0);
+			$request->addResultLoop('players_loop', $cnt, 
+				'isplaying', $eachclient->isPlaying() ? 1 : 0);
+			$request->addResultLoop('players_loop', $cnt, 
+				'displaytype', $eachclient->vfdmodel())
+				unless ($eachclient->model() eq 'http');
+			$request->addResultLoop('players_loop', $cnt, 
+				'isplayer', $eachclient->isPlayer() || 0);
+			$request->addResultLoop('players_loop', $cnt, 
+				'canpoweroff', $eachclient->canPowerOff());
+			$request->addResultLoop('players_loop', $cnt, 
+				'connected', ($eachclient->connected() || 0));
+			$request->addResultLoop('players_loop', $cnt,
+				'firmware', $eachclient->revision());
+			$request->addResultLoop('players_loop', $cnt, 
+				'player_needs_upgrade', 1)
+				if ($eachclient->needsUpgrade());
+			$request->addResultLoop('players_loop', $cnt,
+				'player_is_upgrading', 1)
+				if ($eachclient->isUpgrading());
+
+			for my $pref (@$savePrefs) {
+				if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
+					$request->addResultLoop('players_loop', $cnt, 
+						$pref, $value);
+				}
+			}
+				
+			$idx++;
+			$cnt++;
+		}	
+	}
+}
 
 sub playlistPlaylistsinfoQuery {
 	my $request = shift;
@@ -3247,58 +3268,7 @@ sub serverstatusQuery {
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
-
-		my $cnt = 0;
-		my @players = Slim::Player::Client::clients();
-
-		if (scalar(@players) > 0) {
-
-			for my $eachclient (@players[$start..$end]) {
-				$request->addResultLoop('players_loop', $cnt, 
-					'playerid', $eachclient->id());
-				$request->addResultLoop('players_loop', $cnt,
-					'uuid', $eachclient->uuid());
-				$request->addResultLoop('players_loop', $cnt, 
-					'ip', $eachclient->ipport());
-				$request->addResultLoop('players_loop', $cnt, 
-					'name', $eachclient->name());
-				if (defined $eachclient->sequenceNumber()) {
-					$request->addResultLoop('players_loop', $cnt,
-						'seq_no', $eachclient->sequenceNumber());
-				}
-				$request->addResultLoop('players_loop', $cnt,
-					'model', $eachclient->model(1));
-				$request->addResultLoop('players_loop', $cnt, 
-					'power', $eachclient->power());
-				$request->addResultLoop('players_loop', $cnt, 
-					'isplaying', $eachclient->isPlaying() ? 1 : 0);
-				$request->addResultLoop('players_loop', $cnt, 
-					'displaytype', $eachclient->vfdmodel())
-					unless ($eachclient->model() eq 'http');
-				$request->addResultLoop('players_loop', $cnt, 
-					'canpoweroff', $eachclient->canPowerOff());
-				$request->addResultLoop('players_loop', $cnt, 
-					'connected', ($eachclient->connected() || 0));
-				$request->addResultLoop('players_loop', $cnt, 
-					'isplayer', ($eachclient->isPlayer() || 0));
-				$request->addResultLoop('players_loop', $cnt, 
-					'player_needs_upgrade', "1")
-					if ($eachclient->needsUpgrade());
-				$request->addResultLoop('players_loop', $cnt,
-					'player_is_upgrading', "1")
-					if ($eachclient->isUpgrading());
-
-				for my $pref (@{$savePrefs{'player'}}) {
-					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
-						$request->addResultLoop('players_loop', $cnt, 
-							$pref, $value);
-					}
-				}
-					
-				$cnt++;
-			}
-		}
-
+		_addPlayersLoop($request, $start, $end, $savePrefs{'player'});
 	}
 
 	if (!main::NOMYSB) {
