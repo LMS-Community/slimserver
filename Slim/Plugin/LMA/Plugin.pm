@@ -13,7 +13,7 @@ sub initPlugin {
 	my $class = shift;
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr/(?:archive\.org|squeezenetwork\.com.*\/lma\/)/, 
+		qr/(?:archive\.org|mysqueezebox\.com.*\/lma\/)/, 
 		sub { return $class->_pluginDataFor('icon'); }
 	);
 

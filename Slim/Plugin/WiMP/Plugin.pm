@@ -20,7 +20,7 @@ sub initPlugin {
 	);
 	
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr/squeezenetwork\.com.*\/wimp\//, 
+		qr/mysqueezebox\.com.*\/wimp\//, 
 		sub { return $class->_pluginDataFor('icon'); }
 	);
 

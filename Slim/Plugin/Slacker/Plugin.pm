@@ -24,7 +24,7 @@ sub initPlugin {
 	);
 	
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/slacker/|, 
+		qr|mysqueezebox\.com.*/api/slacker/|, 
 		sub { Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon'); }
 	);
 
