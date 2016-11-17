@@ -23,7 +23,7 @@ sub initPlugin {
 	Slim::Plugin::Orange::Metadata->init();
 	
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/orange/|, 
+		qr|mysqueezebox\.com.*/api/orange/|, 
 		sub { $class->_pluginDataFor('icon') }
 	);
 	

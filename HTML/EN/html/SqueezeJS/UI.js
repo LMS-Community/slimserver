@@ -1200,7 +1200,7 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 									cls: 'menu-title',
 									scope: this,
 									handler: function(ev){
-										location = 'http://www.squeezenetwork.com/';
+										location = 'http://www.mysqueezebox.com/';
 									}
 								})
 							);
@@ -1211,7 +1211,7 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 							new Ext.menu.Item({
 								text: playerInfo.name,
 								playerid: playerInfo.playerid,
-								server: 'www.squeezenetwork.com',
+								server: 'www.mysqueezebox.com',
 								cls: playerInfo.model,
 								scope: this,
 								dlgTitle: SqueezeJS.string('squeezenetwork'),

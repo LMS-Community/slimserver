@@ -16,7 +16,7 @@ sub initPlugin {
 	);
 	
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/classical/|, 
+		qr|mysqueezebox\.com.*/api/classical/|, 
 		sub { $class->_pluginDataFor('icon') }
 	);
 	
