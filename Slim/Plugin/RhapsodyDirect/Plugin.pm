@@ -24,7 +24,7 @@ sub initPlugin {
 	);
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/rhapsody/|, 
+		qr|mysqueezebox\.com.*/api/rhapsody/|, 
 		sub { Slim::Plugin::RhapsodyDirect::ProtocolHandler->getIcon(); }
 	);
 	

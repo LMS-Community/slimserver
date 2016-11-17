@@ -15,7 +15,7 @@ sub initPlugin {
 	my $class = shift;
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr/(?:squeezenetwork\.com.*\/mp3tunes|mp3tunes\.com\/)/,
+		qr/(?:mysqueezebox\.com.*\/mp3tunes|mp3tunes\.com\/)/,
 		sub { return $class->_pluginDataFor('icon'); }
 	);
 
@@ -28,7 +28,7 @@ sub initPlugin {
 	);
 	
 	Slim::Formats::RemoteMetadata->registerProvider(
-		match => qr{mp3tunes\.com|squeezenetwork\.com/mp3tunes},
+		match => qr{mp3tunes\.com|mysqueezebox\.com/mp3tunes},
 		func   => \&metaProvider,
 	);
 }

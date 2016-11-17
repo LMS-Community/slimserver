@@ -89,7 +89,7 @@ sub initPlugin {
 	Slim::Plugin::SpotifyLogi::ProtocolHandler->init();
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/spotify/|, 
+		qr|mysqueezebox\.com.*/api/spotify/|, 
 		sub { Slim::Plugin::SpotifyLogi::ProtocolHandler->getIcon(); }
 	);
 	
