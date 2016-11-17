@@ -31,7 +31,7 @@ sub initPlugin {
 	);
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr/squeezenetwork\.com.*\/live365\//, 
+		qr/mysqueezebox\.com.*\/live365\//, 
 		sub { return $class->_pluginDataFor('icon'); }
 	);
 }

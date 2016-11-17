@@ -25,7 +25,7 @@ sub initPlugin {
 	);
 
 	Slim::Player::ProtocolHandlers->registerIconHandler(
-		qr|squeezenetwork\.com.*/api/mog/|, 
+		qr|mysqueezebox\.com.*/api/mog/|, 
 		sub { $class->_pluginDataFor('icon') }
 	);
 

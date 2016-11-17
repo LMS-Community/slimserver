@@ -1137,7 +1137,7 @@ sub _playFallback {
 	my $url;
 	
 	if ( main::SLIM_SERVICE ) {
-		$url = "loop://www.squeezenetwork.com/static/sounds/alarm/slim-backup-alarm.mp3";
+		$url = "loop://www.mysqueezebox.com/static/sounds/alarm/slim-backup-alarm.mp3";
 	}
 	else {	
 		my $server = Slim::Utils::Network::serverAddr();
