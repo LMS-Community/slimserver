@@ -2347,6 +2347,8 @@ sub _addPlayersLoop {
 
 		for my $eachclient (@players[$start..$end]) {
 			$request->addResultLoop('players_loop', $cnt, 
+				'playerindex', $idx);
+ 			$request->addResultLoop('players_loop', $cnt, 
 				'playerid', $eachclient->id());
 			$request->addResultLoop('players_loop', $cnt,
 				'uuid', $eachclient->uuid());
