@@ -172,22 +172,22 @@ sub home {
 		if (!main::NOBROWSECACHE && $template eq 'home.html') {
 			$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':', 
 				($client ? $client->id : ''),
-				$params->{newVersion},
-				$params->{newPlugins},
-				$params->{hasLibrary},
-				$prefs->get('langauge'),
-				$params->{library_id},
-				complex_to_query($params->{additionalLinks}),
-				complex_to_query($params->{additionalLinkOrder}),
+				$params->{newVersion} || '',
+				$params->{newPlugins} || '',
+				$params->{hasLibrary} || '',
+				$prefs->get('language'),
+				$params->{library_id} || '',
+				complex_to_query($params->{additionalLinks} || {}),
+				complex_to_query($params->{additionalLinkOrder} || {}),
 				complex_to_query($params->{cookies} || {}),
 				complex_to_query($params->{favorites} || {}),
-				$params->{'skinOverride'} || $prefs->get('skin'),
-				$template,
-				$params->{song_count},
-				$params->{album_count},
-				$params->{artist_count},
+				$params->{'skinOverride'} || $prefs->get('skin') || '',
+				$template || '',
+				$params->{song_count} || 0,
+				$params->{album_count} || 0,
+				$params->{artist_count} || 0,
 			)));
-		
+
 			if (my $cached = $cache->get($checksum)) {
 				return $cached;
 			}

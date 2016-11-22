@@ -537,6 +537,7 @@ sub gotOPML {
 		# keep track of station icons
 		if ( 
 			( $item->{play} || $item->{playlist} || ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist')) )
+			&& $item->{url} && !ref $item->{url}
 			&& $item->{url} =~ /^http/ 
 			&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
 			&& ( my $cover = $item->{image} || $item->{cover} )

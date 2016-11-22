@@ -523,7 +523,7 @@ sub _hitlist { if (main::STATISTICS) {
 	Slim::Menu::BrowseLibrary::_tracks( $client, sub {
 		my ($result) = @_;
 		
-		my $isWeb = $args->{isControl} && !$client->controlledBy;
+		my $isWeb = $args->{isControl} && !($client && $client->controlledBy);
 
 		$result->{items} = [ 
 			map { 

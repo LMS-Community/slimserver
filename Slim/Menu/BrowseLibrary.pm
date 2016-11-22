@@ -822,7 +822,7 @@ sub _generic {
 	# remote_library might be part of the @searchTags. But it's to be consumed by
 	# BrowseLibrary, rather than by the CLI.
 	if (!$args->{remote_library}) {
-		($args->{remote_library}) = map { /remote_library:(.*)/ && $1 } grep /remote_library/, @$queryTags;
+		($args->{remote_library}) = map { /remote_library:(.*)/ && $1 } grep { $_ && /remote_library/ } @$queryTags;
 	}
 	
 	# library_id:-1 is supposed to clear/override the global library_id

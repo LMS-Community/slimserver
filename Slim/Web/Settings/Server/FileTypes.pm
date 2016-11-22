@@ -45,6 +45,7 @@ sub handler {
 
 			# If the conversion pref is enabled confirm that 
 			# it's allowed to be checked.
+			$paramRef->{$profile} ||= '';
 			if ($paramRef->{$profile} ne 'DISABLED' && $disabledformats{$profile}) {
 
 				if (!Slim::Player::TranscodingHelper::checkBin($profile,'IgnorePrefs')) {
@@ -96,10 +97,11 @@ sub handler {
 						$binstring = undef;
 					}
 				}
+				
+				$binstring ||= '';
 			}iegsx;
 
-		if (defined $binstring && $binstring ne '-') {
-
+		if ($binstring && $binstring ne '-') {
 			push @binaries, $binstring;
 
 		} elsif ($cmdline eq '-' || $binstring eq '-') {

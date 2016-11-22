@@ -78,7 +78,7 @@ sub playlist {
 		$cacheKey = join(':', 
 			$client->id,
 			$client->currentPlaylistChangeTime(),
-			$prefs->get('langauge'),
+			$prefs->get('language'),
 			$currentSkin,
 			$params->{'start'},
 			$songcount,

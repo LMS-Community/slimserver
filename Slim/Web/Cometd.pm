@@ -410,22 +410,22 @@ sub handler {
 				
 				if ( $result->{error} ) {
 					
-					my %error = {
+					my $error = {
 						channel => '/slim/subscribe', 
 						error   => $result->{error},
 						id      => $id,
 					};
 					
-					push @errors, \%error;
+					push @errors, $error;
 
 					if ($result->{'errorNeedClient'}) {
 						$log->error('errorNeedsClient: ', join(', ', $request->[0], @{$request->[1]}));
 						# Force reconnect because client not connected.
-						# We should not need to force a new handshake, just a reconect.
+						# We should not need to force a new handshake, just a reconnect.
 						# Any successful subscribes will have the acknowledgements in the $events queue
 						# and others will be retried by the client unpon reconnect.
 						# Let the client pick the interval to give SlimProto a chance to reconnect.
-						$error{'advice'} = {
+						$error->{'advice'} = {
 							reconnect => 'retry',
 						};
 						

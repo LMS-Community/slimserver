@@ -510,7 +510,7 @@ sub cliQuery {
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
-	my $connectionId   = $request->connectionID;
+	my $connectionId   = $request->connectionID || '';
 	
 	my %filter;
 	foreach (qw(artist_id genre_id year library_id)) {

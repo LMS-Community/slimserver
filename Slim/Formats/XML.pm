@@ -39,7 +39,7 @@ sub _cacheKey {
 	my $cachekey = $url;
 	
 	if ($client) {
-		$cachekey .= '-' . $client->languageOverride;
+		$cachekey .= '-' . ($client->languageOverride || '');
 	}
 	
 	return $cachekey . '_parsedXML';

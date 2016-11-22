@@ -60,7 +60,7 @@ sub processRequest {
 
 		main::INFOLOG && $log->info("Got line: $firstline");
 
-		my $message = executeCmd($firstline);
+		my $message = executeCmd($firstline) || '';
 
 		main::INFOLOG && $log->info("Response is: $message");
 

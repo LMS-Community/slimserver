@@ -1028,6 +1028,7 @@ sub _cliQuery_done {
 					# keep track of station icons
 					if ( 
 						$isPlayable 
+						&& $item->{url} && !ref $item->{url}
 						&& $item->{url} =~ /^http/ 
 						&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
 						&& (my $cover = ($item->{image} || $item->{cover})) 

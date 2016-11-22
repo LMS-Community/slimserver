@@ -68,6 +68,10 @@ sub set {
 	
 	my $ref = $data->{data_ref};
 	
+	$data->{content_type} ||= '';
+	$data->{mtime} ||= 0;
+	$data->{original_path} ||= '';
+	
 	my $packed = pack( 'A3LS', $data->{content_type}, $data->{mtime}, length( $data->{original_path} ) )
 	 	. $data->{original_path};
 	

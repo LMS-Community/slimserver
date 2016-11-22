@@ -168,7 +168,7 @@ sub cliQuery {
 	my $client    = $request->client;
 	my $folder_id = $request->getParam('folder_id');
 	my $menuMode  = $request->getParam('menu') || 0;
-	my $connectionId = $request->connectionID;
+	my $connectionId = $request->connectionID || '';
 
 	unless ( $folder_id || $cachedFeed{$connectionId} ) {
 		$request->setStatusBadParams();

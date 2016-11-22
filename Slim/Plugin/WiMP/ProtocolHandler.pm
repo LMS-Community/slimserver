@@ -38,7 +38,7 @@ sub bufferThreshold {
 	$url = $client->playingSong()->track()->url() unless $url =~ /\.(?:fla?c|mp3)$/;
 	
 	my ($trackId, $format) = _getStreamParams( $url );
-	return ($format eq 'flac' ? 96 : 32) * ($prefs->get('bufferSecs') || 3); 
+	return ($format eq 'flac' ? 80 : 32) * ($prefs->get('bufferSecs') || 3); 
 }
 
 sub canSeek { 1 }

@@ -1054,9 +1054,9 @@ sub playlistJumpCommand {
 
 	# if we're jumping +1/-1 in the index let squeezeplay know this showBriefly is to be styled accordingly
 	my $jiveIconStyle = undef;
-	if ($index eq '-1') {
+	if ($index && $index eq '-1') {
 		$jiveIconStyle = 'rew';
-	} elsif ($index eq '+1')  {
+	} elsif ($index && $index eq '+1')  {
 		$jiveIconStyle = 'fwd';
 	}
 	$showStatus->($jiveIconStyle);
