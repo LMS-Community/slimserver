@@ -270,7 +270,7 @@ sub _resizeImage {
 		my ($host) = Slim::Utils::Misc::crackURL($url);
 
 		# don't use imageproxy on local network
-		if ( $host && Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i ) {
+		if ( $host && (Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i) ) {
 			return $url;
 		}
 		
