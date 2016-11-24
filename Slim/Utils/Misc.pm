@@ -413,7 +413,7 @@ sub crackURL {
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
 	$path ||= '/';
-	$port ||= 80;
+	$port ||= ((Slim::Networking::Async::HTTP->hasSSL() && $string =~ /^https/) ? 443 : 80);
 
 	if ( main::DEBUGLOG && $ospathslog->is_debug ) {
 		$ospathslog->debug("Cracked: $string with [$host],[$port],[$path]");

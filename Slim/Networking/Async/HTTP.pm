@@ -365,8 +365,11 @@ sub _http_read {
 				return;
 			}
 			else {
-
-				my $error = $location ? 'Redirection limit exceeded' : 'Redirection without location';
+				my $error = 'Redirection without location';
+				
+				if ($location) {
+					$error = ($location =~ /^https/ && !hasSSL()) ? "Can't connect to https URL lack of IO::Socket::SSL: $location" : 'Redirection limit exceeded';
+				}
 
 				$log->warn($error);
 				
