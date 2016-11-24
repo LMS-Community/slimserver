@@ -454,7 +454,7 @@ sub readRemoteHeaders {
 			}
 			
 			# Look for bitrate information in header indicating it's an Icy stream
-			elsif ( $bitrate = ( $http->response->header('icy-br') || $http->response->header('x-audiocast-bitrate') ) * 1000 ) {
+			elsif ( $bitrate = ( $http->response->header('icy-br') || $http->response->header('x-audiocast-bitrate') || 0 ) * 1000 ) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Found bitrate in Icy header: $bitrate");
 			}
 			

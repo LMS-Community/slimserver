@@ -514,7 +514,7 @@ sub parseHeaders {
 	}
 	else {
 	
-		if ( $bitrate > 0 && defined $self->contentLength && $self->contentLength > 0 ) {
+		if ( $bitrate && $bitrate > 0 && defined $self->contentLength && $self->contentLength > 0 ) {
 			# if we know the bitrate and length of a stream, display a progress bar
 			if ( $bitrate < 1000 ) {
 				${*$self}{'bitrate'} *= 1000;
@@ -590,7 +590,7 @@ sub requestString {
 
 	# If seeking, add Range header
 	if ($client && $seekdata) {
-		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} +  $seekdata->{restartOffset}) . '-';
+		$request .= $CRLF . 'Range: bytes=' . int( ($seekdata->{sourceStreamOffset} || 0) + ($seekdata->{restartOffset} || 0) ) . '-';
 		
 		if (defined $seekdata->{timeOffset}) {
 			# Fix progress bar
@@ -752,7 +752,7 @@ sub getMetadataFor {
 			}
 		}	
 
-		my $type = uc( $track->content_type ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
+		my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
 		
 		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
 		

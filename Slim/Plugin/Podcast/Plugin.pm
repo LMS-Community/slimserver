@@ -109,8 +109,8 @@ sub songChangeCallback {
 	}
 
 	my $url = Slim::Player::Playlist::url($client);
-	
-	if ( $request->isCommand([['playlist'], ['newsong']]) && $client->pluginData('goto') ne $url && Slim::Music::Info::isRemoteURL($url) ) {
+
+	if ( $request->isCommand([['playlist'], ['newsong']]) && !($client->pluginData('goto') && $client->pluginData('goto') eq $url) && Slim::Music::Info::isRemoteURL($url) ) {
 		$client->pluginData( goto => $url );
 
 		if ( my $newPos = $cache->get("podcast-$url") ) {

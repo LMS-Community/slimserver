@@ -1011,7 +1011,7 @@ sub _objectInfoHandler {
 	};
 	
 	my $title;
-	if ($objectType eq 'artist') {
+	if ($objectType && $objectType eq 'artist') {
 		$title = $obj->name;
 	} else {
 		$title = $obj->title;

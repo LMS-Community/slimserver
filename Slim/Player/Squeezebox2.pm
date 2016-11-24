@@ -579,7 +579,7 @@ sub directHeaders {
 			
 			# Bitrate may have been set in Scanner by reading the mp3 stream
 			if ( !$bitrate ) {
-				$bitrate = Slim::Music::Info::getBitrate( $url );
+				$bitrate = Slim::Music::Info::getBitrate( $url ) || 0;
 			}
 			
 			# WMA handles duration based on metadata
