@@ -11,7 +11,7 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Strings;
+use Slim::Utils::Strings qw(string);
 
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
