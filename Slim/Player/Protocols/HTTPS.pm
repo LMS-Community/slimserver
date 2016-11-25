@@ -49,7 +49,16 @@ sub new {
 	return $sock->request($args);
 }
 
-# we can't direct stream, as players don't support SSL 
-sub canDirectStream { 0 }
+# Check whether the current player can stream HTTPS or not 
+sub canDirectStream {
+	my $self = shift;
+	my ($client) = @_;
+	
+	if ( $client->canHTTPS ) {
+		return $self->SUPER::canDirectStream(@_);
+	}
+
+	return 0;
+}
 
 1;

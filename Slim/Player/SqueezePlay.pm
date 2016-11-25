@@ -41,6 +41,7 @@ BEGIN {
 		hasPolarityInversion
 		spDirectHandlers
 		proxyAddress
+		_canHTTPS
 	));
 }
 
@@ -58,6 +59,7 @@ sub new {
 		firmware                => 0,
 		canDecodeRhapsody       => 0,
 		canDecodeRtmp           => 0,
+		_canHTTPS               => 0,
 		hasDigitalOut           => 0,
 		hasPreAmp               => 0,
 		hasDisableDac           => 0,
@@ -86,6 +88,7 @@ my %CapabilitiesMap = (
 	SyncgroupID             => undef,
 	Spdirect                => 'spDirectHandlers',
 	Proxy                   => 'proxyAddress',
+	CanHTTPS                => '_canHTTPS',
 
 	# deprecated
 	model                   => '_model',
@@ -94,6 +97,10 @@ my %CapabilitiesMap = (
 
 sub model {
 	return shift->_model;
+}
+
+sub canHTTPS {
+	return shift->_canHTTPS;
 }
 
 # This will return the full version + revision, i.e. 7.5.0 r8265
