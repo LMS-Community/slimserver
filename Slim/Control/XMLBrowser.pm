@@ -1718,7 +1718,7 @@ sub hasAudio {
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/ ) {
 		return $item->{'playlist'} || $item->{'url'} || scalar @{ $item->{outline} || [] };
 	}
-	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
+	elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'type'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};
 	}
 	else {

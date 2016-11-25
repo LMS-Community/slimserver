@@ -132,10 +132,10 @@ sub getItemValue {
 	my $item   = getItem($client, $index);
 
 	if (ref($item)) {
-		return $item->{'value'};
+		return $item->{'value'} || '';
 	}
 
-	return $item;
+	return $item || '';
 }
 
 # some values can be mode-wide, or overridden at the list item level

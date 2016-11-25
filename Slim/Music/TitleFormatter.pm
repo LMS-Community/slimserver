@@ -76,7 +76,7 @@ sub init {
 		}
 
 		my $output = '';
-		$output = $_[0]->albumname();
+		$output = $_[0]->albumname() || '';
 		$output = '' if $output eq string('NO_ALBUM');
 
 		return (defined $output ? $output : '');
