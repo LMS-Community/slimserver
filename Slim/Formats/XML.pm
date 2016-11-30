@@ -336,6 +336,8 @@ sub parseXMLIntoFeed {
 		return parseOPML($xml);
 		
 	} elsif ($xml && $xml->{'entry'}) {
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("Parsing body as Atom");
 		
 		# It's Atom
 		return parseAtom($xml);
@@ -504,6 +506,22 @@ sub parseAtom {
 			# image is included in each item due to the way XMLBrowser works
 			'image'       => $feed{'image'},
 		);
+		
+		# some Atom streams come with multiple link items, one of them pointing to the stream (enclosure)
+		# create a valid enclosure element our XMLBrowser implementations understand
+		if ( !$item{link} && $itemXML->{link} && ref $itemXML->{link} && ref $itemXML->{link} eq 'ARRAY' ) {
+			my @links = grep {
+				$_->{rel} && lc($_->{rel}) eq 'enclosure'
+			} @{$itemXML->{link}};
+
+			if (scalar @links) {
+				$item{enclosure} = {
+					url => $links[0]->{href},
+					type => $links[0]->{type},
+					duration => $itemXML->{'itunes:duration'}
+				};
+			}
+		}
 
 		# this is a convencience for using INPUT.Choice later.
 		# it expects each item in it list to have some 'value'

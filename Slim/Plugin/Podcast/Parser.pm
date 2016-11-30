@@ -38,7 +38,7 @@ sub parse {
 		$item->{'xmlns:slim'} = 1;
 		
 		# some podcasts come with formatted duration ("00:54:23") - convert into seconds
-		my $duration = $item->{duration};
+		my $duration = $item->{duration} || '';
 		$duration =~ s/00:(\d\d:\d\d)/$1/;
 		
 		my ($s, $m, $h) = strptime($item->{duration} || 0);
@@ -65,6 +65,10 @@ sub parse {
 
 			# fall back to cached value - if available
 			$item->{duration} ||= $cache->get("$key-duration");
+			
+			if ( $item->{duration} && $item->{duration} =~ /(\d+):(\d)/ ) {
+				$item->{duration} = $1*60 + $2;
+			}
 		}
 
 		$cache->set("$key-duration", $item->{duration}, '30days');
@@ -82,7 +86,7 @@ sub parse {
 			_scanItem();
 		}
 		
-		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0));
+		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0)) if $client;
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $position && $position < $item->{duration} - 15 ) {
@@ -117,7 +121,7 @@ sub parse {
 			
 			$item->{type} = 'link';
 
-			$progress = $client->symbols($client->progressBar(12, 0.5, 0));
+			$progress = $client->symbols($client->progressBar(12, 0.5, 0)) if $client;
 		}
 
 		$item->{title} = $progress . '  ' . $item->{title} if $progress;
