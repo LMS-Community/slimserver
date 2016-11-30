@@ -763,7 +763,10 @@ sub handleFeed {
 		my $itemCount = $feed->{'total'} || scalar @{ $stash->{'items'} };
 		
 		my $clientId = ( $client ) ? $client->id : '';
-		my $otherParams = '&index=' . ($crumb[-1]->{index} || 0) . '&player=' . $clientId;
+		my $crumbIndex = $crumb[-1]->{index};
+		$crumbIndex = '' if !defined $crumbIndex;
+
+		my $otherParams = '&index=' . $crumbIndex . '&player=' . $clientId;
 		if ( $stash->{'query'} ) {
 			$otherParams = '&query=' . $stash->{'query'} . $otherParams;
 		}
