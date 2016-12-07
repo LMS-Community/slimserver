@@ -293,7 +293,8 @@ sub infoServer {
 	my $items = [
 		{
 			type => 'text',
-			name => sprintf("Logitech Media Server %s%s %s - %s @ %s",
+			name => sprintf("%s %s%s %s - %s @ %s",
+						cstring($client, 'SQUEEZEBOX_SERVER'),
 						cstring($client, 'INFORMATION_VERSION'),
 						cstring($client, 'COLON'),
 						$::VERSION,
