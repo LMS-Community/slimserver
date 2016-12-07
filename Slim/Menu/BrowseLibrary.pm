@@ -633,7 +633,9 @@ sub _registerBaseNodes {
 			feed         => \&_bmf,
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
-			condition    => sub {return isEnabledNode(@_) && scalar @{ Slim::Utils::Misc::getAudioDirs() };},
+			condition    => sub {
+				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveMediaDirs() });
+			},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 			cache        => 0,		# don't cache BMF modes, as it should act on the latest disk content!
