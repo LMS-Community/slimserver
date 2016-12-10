@@ -374,6 +374,11 @@ sub getMixableProperties {
 
 sub getMixablePropertiesFromTrack {
 	my ($class, $client, $track) = @_;
+
+	# sometimes we would only get a URL - try to get the object instead
+	if (!blessed $track && Slim::Music::Info::isURL($track)) {
+		$track = Slim::Schema->objectForUrl($track);
+	}
 	
 	return unless $client && blessed $track;
 
