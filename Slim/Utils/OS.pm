@@ -31,6 +31,22 @@ sub initDetails {
 	return shift->{osDetails};
 }
 
+sub getMACAddress {
+	my $class = shift;
+	
+	if (!main::SCANNER && !defined $class->{osDetails}->{mac}) {
+		eval {
+			require Net::Address::Ethernet;
+			$class->{osDetails}->{mac} = Net::Address::Ethernet::get_address();			
+		};
+		
+		# set to empty string to prevent repeated attempts
+		$class->{osDetails}->{mac} ||= '';
+	}
+
+	return $class->{osDetails}->{mac};
+}
+
 sub details {
 	return shift->{osDetails};
 }

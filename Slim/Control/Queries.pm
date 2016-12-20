@@ -3224,6 +3224,10 @@ sub serverstatusQuery {
 
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));
+	
+	if ( my $mac = Slim::Utils::OSDetect->getOS()->getMACAddress() ) {
+		$request->addResult('mac', $mac);
+	}
 
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
