@@ -34,7 +34,7 @@ sub init {
 sub initAuthorization {
 	my ($class, $client) = @_;
 	
-	if ( $client->model =~ /(fab4|baby)/ && !$client->pluginData('auth') ) {
+	if ( $client && $client->model =~ /(fab4|baby)/ && !$client->pluginData('auth') ) {
 		$client->pluginData( auth => {} );
 		
 		_getTrackAndAuth('spotify:track:4uLU6hMCjMI75M1A2tKUQC', {
