@@ -25,6 +25,22 @@ use Scalar::Util qw(blessed);
 use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(cstring);
+
+use constant RESCAN_TYPES => [
+	{
+		name   => '{SETUP_STANDARDRESCAN}',
+		value  => '1rescan',
+	},
+	{
+		name   => '{SETUP_WIPEDB}',
+		value  => '2wipedb',
+	},
+	{
+		name   => '{SETUP_PLAYLISTRESCAN}',
+		value  => '3playlist',
+	},
+];
 
 my $prefs = preferences('plugin.rescan');
 
@@ -36,9 +52,7 @@ $prefs->migrate(1, sub {
 	1;
 });
 
-our $interval = 1; # check every x seconds
-our @browseMenuChoices;
-our %functions;
+my $interval = 1; # check every x seconds
 
 my @progress = [0];
 
@@ -48,28 +62,6 @@ sub getDisplayName {
 
 sub initPlugin {
 	my $class = shift;
-
-	%functions = (
-		'play' => sub {
-			my $client = shift;
-
-			if ($client->modeParam('listRef')->[$client->modeParam('listIndex')] eq 'PLUGIN_RESCAN_PRESS_PLAY') {
-
-				executeRescan($client);
-
-				$client->showBriefly( {
-					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-							$client->string('PLUGIN_RESCAN_RESCANNING') ]
-				});
-
-				Slim::Buttons::Common::pushMode($client, 'scanProgress');
-				
-			} else {
-
-				$client->bumpRight();
-			}
-		}
-	);
 	
 	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode);
 
@@ -79,7 +71,137 @@ sub initPlugin {
 		Slim::Plugin::Rescan::Settings->new;
 	}
 
+	
+	Slim::Control::Request::addDispatch(['rescanplugin', 'rescan'],   [0, 0, 0, \&executeRescan]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'menu'],     [0, 1, 0, \&jiveRescanMenu]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'typemenu'], [0, 1, 0, \&jiveRescanTypeMenu]);
+
+	Slim::Control::Jive::registerPluginMenu([{
+		text    => $class->getDisplayName,
+		id      => 'settingsRescan',
+		node    => 'advancedSettings',
+		actions => {
+			go => {
+				cmd => ['rescanplugin', 'menu'],
+				player => 0
+			},
+		},
+	}]);
+
 	setTimer();
+}
+
+sub jiveRescanMenu {
+	my $request = shift;
+	my $client  = $request->client();
+
+	$request->addResult('offset', 0);
+
+	$request->setResultLoopHash('item_loop', 0, {
+		text => cstring($client, 'PLUGIN_RESCAN_TIMER_SET'),
+		input => {
+			initialText  => $prefs->get('time'),
+			title => $client->string('PLUGIN_RESCAN_TIMER_SET'),
+			_inputStyle  => 'time',
+			len          => 1,
+			help         => {
+				text => $client->string('PLUGIN_RESCAN_TIMER_DESC')
+			},
+		},
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'pref', 'plugin.rescan:time' ],
+				params => {
+					value => '__TAGGEDINPUT__',	
+					enabled => 1,
+				},
+			},
+		},
+		nextWindow => 'refresh',
+	});
+
+	$request->setResultLoopHash('item_loop', 1, {
+		text    => cstring($client, 'PLUGIN_RESCAN_TIMER_NAME'),
+		checkbox=> $prefs->get('scheduled') ? 1 : 0,
+		actions => {
+			on => {
+				player => 0,
+				cmd    => [ 'pref' , 'plugin.rescan:scheduled', 1 ],
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'pref' , 'plugin.rescan:scheduled', 0 ],
+			},
+		},
+		nextWindow => 'refresh',
+	});
+
+	$request->setResultLoopHash('item_loop', 2, {
+		text    => cstring($client, 'PLUGIN_RESCAN_TIMER_TYPE'),
+		actions => {
+			go => {
+				player => 0,
+				cmd    => [ 'rescanplugin' , 'typemenu' ],
+			},
+		},
+	});
+
+	if ( Slim::Music::Import->stillScanning ) {
+		$request->setResultLoopHash('item_loop', 3, {
+			text => cstring($client, 'PLUGIN_RESCAN_RESCANNING'),
+			nextWindow => 'refresh',
+		});
+	}
+	else {
+		$request->setResultLoopHash('item_loop', 3, {
+			text    => cstring($client, 'PLUGIN_RESCAN_MUSIC_LIBRARY'),
+			actions => {
+				do => {
+					cmd => [ 'rescanplugin' , 'rescan' ],
+				},
+			},
+			nextWindow => 'refresh',
+		});
+	}
+	
+	$request->addResult('count', 4);
+	$request->setStatusDone()
+}
+
+sub jiveRescanTypeMenu {
+	my $request = shift;
+	my $client  = $request->client();
+
+	$request->addResult('offset', 0);
+
+	my $i = 0;
+	my $currentType = $prefs->get('type');
+	
+	foreach ( map {
+		$_->{name} =~ /\{(.*)\}/;
+		{
+			name => $1 || $_->{name},
+			value => $_->{value}
+		}
+	} @{RESCAN_TYPES()} ) {
+		$request->setResultLoopHash('item_loop', $i++, {
+			text    => cstring($client, $_->{name}),
+			radio   => $currentType eq $_->{value} ? 1 : 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'pref' , 'plugin.rescan:type' ],
+					params => {
+						value => $_->{value}
+					}
+				},
+			},
+		});
+	}
+
+	$request->addResult('count', $i);
+	$request->setStatusDone();
 }
 
 sub setMode {
@@ -92,12 +214,12 @@ sub setMode {
 		return;
 	}
 
-	@browseMenuChoices = (
+	my $browseMenuChoices = [
 		'PLUGIN_RESCAN_TIMER_SET',
 		'PLUGIN_RESCAN_TIMER_OFF',
 		'PLUGIN_RESCAN_TIMER_TYPE',
 		'PLUGIN_RESCAN_PRESS_PLAY',
-	);
+	];
 
 	if ( Slim::Music::Import->stillScanning ) {
 
@@ -106,11 +228,11 @@ sub setMode {
 	} else {
 
 		if (Slim::Schema::hasLibrary() && Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all) {
-			push @browseMenuChoices, 'SETUP_VIEW_NOT_SCANNING'
+			push @$browseMenuChoices, 'SETUP_VIEW_NOT_SCANNING'
 		}
 
 		my %params = (
-			'listRef'        => \@browseMenuChoices,
+			'listRef'        => $browseMenuChoices,
 			'externRefArgs'  => 'CV',
 			'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
 			'headerAddCount' => 1,
@@ -381,20 +503,7 @@ sub rescanExitHandler {
 			my $value = $prefs->get('type');
 
 			my %params = (
-				'listRef'  => [
-					{
-						name   => '{SETUP_STANDARDRESCAN}',
-						value  => '1rescan',
-					},
-					{
-						name   => '{SETUP_WIPEDB}',
-						value  => '2wipedb',
-					},
-					{
-						name   => '{SETUP_PLAYLISTRESCAN}',
-						value  => '3playlist',
-					},
-				],
+				'listRef'      => RESCAN_TYPES,
 				'onPlay'       => sub { $prefs->set('type', $_[1]->{'value'}); },
 				'onAdd'        => sub { $prefs->set('type', $_[1]->{'value'}); },
 				'onRight'      => sub { $prefs->set('type', $_[1]->{'value'}); },
@@ -433,7 +542,27 @@ sub settingsExitHandler {
 sub getFunctions {
 	my $class = shift;
 
-	\%functions;
+	return {
+		'play' => sub {
+			my $client = shift;
+
+			if ($client->modeParam('listRef')->[$client->modeParam('listIndex')] eq 'PLUGIN_RESCAN_PRESS_PLAY') {
+
+				executeRescan();
+
+				$client->showBriefly( {
+					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+							$client->string('PLUGIN_RESCAN_RESCANNING') ]
+				});
+
+				Slim::Buttons::Common::pushMode($client, 'scanProgress');
+				
+			} else {
+
+				$client->bumpRight();
+			}
+		}
+	};
 }
 
 sub setTimer {
@@ -477,8 +606,6 @@ sub checkScanTimer {
 }
 
 sub executeRescan {
-	my $client = shift;
-	
 	my $rescanType = ['rescan'];
 	my $rescanPref = $prefs->get('type') || '';
 
@@ -495,7 +622,7 @@ sub executeRescan {
 
 		main::INFOLOG && logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
 
-		Slim::Control::Request::executeRequest($client, $rescanType);
+		Slim::Control::Request::executeRequest(undef, $rescanType);
 	}
 }
 
