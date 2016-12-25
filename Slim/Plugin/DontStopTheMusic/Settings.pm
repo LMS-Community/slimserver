@@ -38,7 +38,7 @@ sub prefs {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	$client = $client->master,
+	$client = $client->master if $client;
 
 	$paramRef->{handlers} = Slim::Plugin::DontStopTheMusic::Plugin::getSortedHandlerTokens($client);
 	
