@@ -18,5 +18,5 @@ Dies ist derzeit auf RPM und Debian basierenden Systemen der Fall.<p>
 <ul style="direction: ltr;">
 	<li>Melde dich auf deinem Linux-Rechner an.</li>
 	<li>F&uuml;hre folgenden Befehl in einem Terminal aus:</li>
-	<li><code>sudo [% distro == 'rpm' ? 'rpm -uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -Uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
 </ul>

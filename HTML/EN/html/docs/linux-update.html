@@ -18,5 +18,5 @@ These currently are available for .rpm and .deb based systems.<p>
 <ul style="direction: ltr;">
 	<li>Log in to your server machine using your username and password.</li>
 	<li>Run the following command to execute the installer</li>
-	<li><code>sudo [% distro == 'rpm' ? 'rpm -uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -Uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
 </ul>
