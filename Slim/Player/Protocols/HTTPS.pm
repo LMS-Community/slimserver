@@ -30,6 +30,7 @@ sub new {
 		PeerAddr => $server,
 		PeerPort => $port,
 		SSL_startHandshake => 1,
+		SSL_verify_mode => SSL_VERIFY_NONE
 	) or do {
 
 		$log->error("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!");
