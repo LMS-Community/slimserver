@@ -51,7 +51,7 @@ sub getFlavor {
 	
 		return 'SqueezeOS';
 	
-	} elsif (-f '/etc/debian_version') {
+	} elsif (-f '/etc/debian_version' || -f '/etc/devuan_version') {
 	
 		return 'Debian';
 	
