@@ -172,7 +172,7 @@ sub collate {
 
 		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
 		
-		if ( $currentICU ne $collation ) {	
+		if ( $collation && $currentICU ne $collation ) {	
 			if ( !$loadedICU->{$collation} ) {
 				if ( !Slim::Schema->hasLibrary() ) {
 					# XXX for i.e. ContributorTracks many_to_many
@@ -207,7 +207,7 @@ sub collate {
 			$currentICU = $collation;
 		}
 		
-		return "COLLATE $currentICU ";
+		return "COLLATE $currentICU " if $currentICU;
 	}
 	
 	# Fallback to built-in perllocale collation to sort using Unicode Collation Algorithm
