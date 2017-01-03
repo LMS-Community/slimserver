@@ -86,7 +86,7 @@ sub parse {
 			_scanItem();
 		}
 		
-		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0)) if $client;
+		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0)) if $client && !$client->display->isa('Slim::Display::NoDisplay');
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $position && $position < $item->{duration} - 15 ) {
@@ -121,7 +121,7 @@ sub parse {
 			
 			$item->{type} = 'link';
 
-			$progress = $client->symbols($client->progressBar(12, 0.5, 0)) if $client;
+			$progress = $client->symbols($client->progressBar(12, 0.5, 0)) if $client && !$client->display->isa('Slim::Display::NoDisplay');
 		}
 
 		$item->{title} = $progress . '  ' . $item->{title} if $progress;
