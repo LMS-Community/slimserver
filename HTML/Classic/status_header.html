@@ -173,7 +173,7 @@
 
 			<a [% songinfoHRef %] target="browser">[% songtitle %]</a>
 
-			[% IF itemobj.album.title && itemobj.album.title != noAlbum  && includeAlbum %]
+			[% IF itemobj.album.title.defined && itemobj.album.title != noAlbum  && includeAlbum %]
 
 				<span class="exnotactivenowplaying">[% stringFROM %] </span>
 

@@ -907,7 +907,7 @@ sub _createOrUpdateAlbum {
 	}
 	
 	# If the album does not have a title, use the singleton "No Album" album
-	if ( $create && !$title ) {
+	if ( $create && (!defined $title || $title eq '') ) {
 		# let the external scanner make an attempt to find any existing "No Album" in the 
 		# database before we assume there are none from previous scans
 		if ( !defined $_unknownAlbumId ) {

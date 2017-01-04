@@ -136,8 +136,8 @@ sub ignoreCaseArticles {
 	my $transliterate = shift;
 	my $ignoreArticles = (shift) ? '1' : '0';
 
-	if (!defined $s) {
-		return undef;
+	if (!$s) {
+		return $s;
 	}
 
 	# We don't handle references of any kind.

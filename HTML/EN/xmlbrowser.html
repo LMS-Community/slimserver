@@ -253,7 +253,11 @@
 						[% ELSIF !item.type.match('^text') %]
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
-						[% item.name || item.title || item.web.value %]
+						[% title = item.web.value;
+						   IF !title.defined || title == ''; title = item.name; END;
+						   IF !title.defined || title == ''; title = item.title; END
+						%]
+						[% title | html_line_break %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]

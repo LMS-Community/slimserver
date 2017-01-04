@@ -79,7 +79,7 @@
 			    }
 			});
 
-			[% IF query %]
+			[% IF query.defined && query != '' %]
 			sinput.validator('[% query | replace("'", " ") %]', true);
 			[% END %]
 

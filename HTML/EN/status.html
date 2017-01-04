@@ -16,7 +16,7 @@
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% stringCOLON %]
    </div>
    <div class="playingSong"><a [% songinfoHRef %] target="browser">[% songtitle %]</a>
-   [% IF itemobj.album.title && itemobj.album.title != noAlbum %]
+   [% IF itemobj.album.title.defined && itemobj.album.title != noAlbum %]
     [% stringFROM %] <a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>
    [%- END %]
    [% IF itemobj.artist && itemobj.artist != noArtist %]

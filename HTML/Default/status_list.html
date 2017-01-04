@@ -5,7 +5,7 @@
 		[% item.album_id = item.album_id %]
 		[% IF noPlaylistCover %]
 			<a href="[% webroot _ info_link %]?item=[% item.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
-			[% IF item.includeAlbum && item.album && item.album != noAlbum %]
+			[% IF item.includeAlbum && item.album.defined && item.album != noAlbum %]
 				[% stringFROM %]
 				[% IF item.album_id %]
 				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink">[% item.album | html %]</a>
@@ -47,7 +47,7 @@
 					END;
 				END %]
 			</div>
-			[% IF item.includeAlbum && item.album && item.album != noAlbum %]
+			[% IF item.includeAlbum && item.album.defined && item.album != noAlbum %]
 				<div class="playlistSongDetail">
 					[% IF item.album_id %]
 					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% item.album | html %]</span></a>

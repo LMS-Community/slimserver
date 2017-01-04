@@ -286,7 +286,7 @@ sub handleFeed {
 			$superFeed->{offset} ||= 0;
 			main::DEBUGLOG && $log->is_debug && $log->debug("Considering $i=$in ($crumbText) from ", $stash->{'index'}, ' offset=', $superFeed->{'offset'});
 			
-			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
+			my $crumbName = Slim::Control::XMLBrowser::getTitle($subFeed->{name}, $subFeed);
 			
 			# Add search query to crumb list
 			my $searchQuery;
@@ -489,7 +489,7 @@ sub handleFeed {
 					my $pt = $subFeed->{'passthrough'} || [undef];
 
 					my $search;
-					if ($searchQuery && $subFeed->{type} && $subFeed->{type} eq 'search') {
+					if (defined $searchQuery && $searchQuery ne '' && $subFeed->{type} && $subFeed->{type} eq 'search') {
 						$search = $searchQuery;
 					}
 					
@@ -554,7 +554,7 @@ sub handleFeed {
 		}
 		$itemIndex .= '.';
 		
-		$stash->{'pagetitle'} = $subFeed->{'name'} || $subFeed->{'title'};
+		$stash->{'pagetitle'} = Slim::Control::XMLBrowser::getTitle($subFeed->{'name'}, $subFeed);
 		$stash->{'index'}     = $itemIndex;
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'playUrl'}   = $subFeed->{'play'} 
