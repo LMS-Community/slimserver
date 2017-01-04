@@ -35,6 +35,7 @@ sub initDetails
 	my $class = shift;
 
 	$class->{osDetails} = $class->SUPER::initDetails();
+	$class->{osDetails}->{osArch} ||= $Config{'archname'};
 
 	$class->{osDetails}->{isDiskStation} = 1;
 
