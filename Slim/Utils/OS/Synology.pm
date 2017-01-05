@@ -22,6 +22,8 @@ package Slim::Utils::OS::Synology;
 # This module is trying to provide customisations for all these options.
 
 use strict;
+
+use Config;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
