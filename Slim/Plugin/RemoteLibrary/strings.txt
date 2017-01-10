@@ -160,6 +160,14 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 	NL	Uitgeschakeld, niet naar andere Logitech Media Servers zoeken.
 	NO	Nei, ikke se etter andre Logitech Media Servere.
 	PL	Wyłączone, nie wyszukuj innych instancji Logitech Media Server.
+
+PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
+	DE	Dateikonvertierung
+	EN	File type conversion
+	
+PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
+	DE	Sie können den entfernten Logitech Media Server beauftragen, die Dateien in ein verständliches Format umzuwandeln.
+	EN	You can have the remote Logitech Media Server convert to a format which can be played without further processing.
 	
 PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
 	CS	Klient UPnP/DLNA

@@ -1976,7 +1976,7 @@ sub _bmf {
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'musicfolder', ['tags:cdus', @searchTags],
+	_generic($client, $callback, $args, 'musicfolder', ['tags:cdus' . ($remote_library ? 'o' : ''), @searchTags],
 		sub {
 			my $results = shift;
 			my $gotsubfolder = 0;

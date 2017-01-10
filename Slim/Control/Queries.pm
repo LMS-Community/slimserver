@@ -2186,6 +2186,11 @@ sub mediafolderQuery {
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
 
+			# XXX - This is not in line with other queries requesting the content type, 
+			#       where the latter would be returned as the "type" value. But I don't
+			#       want to break backwards compatibility, therefore returning 'ct' instead.
+			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'ct', $item->content_type);
+
 			$chunkCount++;
 		}
 		

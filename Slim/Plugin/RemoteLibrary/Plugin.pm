@@ -52,6 +52,7 @@ sub initPlugin {
 
 	$prefs->init({
 		useLMS => 1,
+		transcodeLMS => 'flac',
 		useUPnP => (preferences('server')->get('noupnp') ? 0 : 1),
 		ignoreFolders => sub {
 			my %ignoreItems = Slim::Utils::OSDetect::getOS->ignoredItems();

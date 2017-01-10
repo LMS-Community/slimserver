@@ -43,6 +43,23 @@ sub audioScrobblerSource {
 	return 'P';
 }
 
+# We use the content type rather than the actual file extension as
+# the stream's extension. This helps us to keep backwards compatible
+# with a slightly broken /download handler in older server versions.
+sub getFormatForURL {
+	my ($class, $url) = @_;
+	my $type = 'unk';
+
+	# test whether the extension is a valid content type
+	if (defined $url && $url =~ m%^lms:\/\/.*\.([^./]+)$%) {
+		if ( Slim::Music::Info::isSong(undef, $1) ) {
+			return lc($1);
+		}
+	}
+
+	return $class->SUPER::getFormatForURL($url);
+}
+
 # Avoid scanning
 sub scanUrl {
 	my ($class, $url, $args) = @_;

@@ -293,11 +293,28 @@ sub proxiedStreamUrl {
 	$id ||= $item->{commonParams}->{track_id} if $item->{commonParams};
 	
 	my $url = 'lms://' . $remote_library . '/music/' . ($id || 0) . '/download';
+	my $suffix;
 
-	# XXX - presetParams is only being used by the SlimBrowseProxy. Can be removed in case we're going the BrowseLibrary path
-	if ($item->{url} || $item->{presetParams}) {
-		my $suffix = Slim::Music::Info::typeFromSuffix($item->{url} || $item->{presetParams}->{favorites_url} || '');
-		$url .= ".$suffix" if $suffix;
+	# We're using the content type as suffix, though this is not always the correct 
+	# file extension. But we'll need it to be able to correctly transcode if needed.
+	my $suffix = $item->{ct} || Slim::Music::Info::typeFromSuffix($item->{url});
+
+	# transcode anything but mp3 if needed
+	if ( $suffix ne 'mp3' ) {
+		if ( $prefs->get('transcodeLMS') ) {
+			$suffix = $prefs->get('transcodeLMS');
+		}
+		elsif ( !main::TRANSCODING ) {
+			$suffix = 'flac' 
+		}
+	}
+	
+	$url .= ".$suffix";
+	
+	# m4a is difficult: it can be lossless (alac) or lossy (mp4)
+	# you'll need an up to date remote server for this to work reliably
+	if ( !$item->{ct} && $suffix eq 'mp4' ) {
+		$log->error("Streaming m4a/mp4 files from remote source can be problematic. Make sure you're running the latest software on the remote server: $item->{url}");
 	}
 	
 	return $url;
