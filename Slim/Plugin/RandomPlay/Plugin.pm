@@ -310,6 +310,7 @@ sub initPlugin {
 			id             => 'randomplay',
 			node           => 'myMusic',
 			isANode        => 1,
+			windowStyle    => 'text_list',
 			window         => { titleStyle => 'random' },
 		},
 	);
