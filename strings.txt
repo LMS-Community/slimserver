@@ -16217,6 +16217,51 @@ RADIO_PROVIDERS_DIFM
 	RU	Digitally Imported
 	SV	Digitally Imported
 
+RADIO_PROVIDERS_JAZZRADIO
+	CS	JazzRadio
+	DA	JazzRadio
+	DE	JazzRadio
+	EN	JazzRadio
+	ES	JazzRadio
+	FI	JazzRadio
+	FR	JazzRadio
+	IT	JazzRadio
+	NL	JazzRadio
+	NO	JazzRadio
+	PL	JazzRadio
+	RU	JazzRadio
+	SV	JazzRadio
+
+RADIO_PROVIDERS_CLASSICALRADIO
+	CS	ClassicalRadio
+	DA	ClassicalRadio
+	DE	ClassicalRadio
+	EN	ClassicalRadio
+	ES	ClassicalRadio
+	FI	ClassicalRadio
+	FR	ClassicalRadio
+	IT	ClassicalRadio
+	NL	ClassicalRadio
+	NO	ClassicalRadio
+	PL	ClassicalRadio
+	RU	ClassicalRadio
+	SV	ClassicalRadio
+
+RADIO_PROVIDERS_ROCKRADIO
+	CS	ROCKRADIO
+	DA	ROCKRADIO
+	DE	ROCKRADIO
+	EN	ROCKRADIO
+	ES	ROCKRADIO
+	FI	ROCKRADIO
+	FR	ROCKRADIO
+	IT	ROCKRADIO
+	NL	ROCKRADIO
+	NO	ROCKRADIO
+	PL	ROCKRADIO
+	RU	ROCKRADIO
+	SV	ROCKRADIO
+
 RADIO_PROVIDERS_SOMAFM
 	CS	SomaFM
 	DA	SomaFM
