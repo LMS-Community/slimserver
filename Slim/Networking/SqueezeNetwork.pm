@@ -10,6 +10,7 @@ use base qw(Slim::Networking::SimpleAsyncHTTP);
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64);
+use List::Util qw(max);
 use URI::Escape qw(uri_escape);
 
 if ( !main::SCANNER ) {
@@ -285,9 +286,12 @@ sub login {
 	
 	# don't run the query if we've failed recently
 	if ( $time < $nextLoginAttempt ) {
-		$log->warn("We've failed to log in a few moments ago. Let's not try again just yet, we don't want to hammer it.");
+		$log->warn("We've failed to log in a few moments ago, or are still waiting for a response. Let's not try again just yet, we don't want to hammer it.");
 		return $params{ecb}->(undef, cstring($client, 'SETUP_SN_VALIDATION_FAILED'));
 	}
+	
+	# avoid parallel login attempts
+	$nextLoginAttempt = max($time + 30, $nextLoginAttempt);
 	
 	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 		# login using MAC/UUID on TinySBS

@@ -28,6 +28,7 @@ my $INACTIVE_PLAYERS =  [];
 # Default polling time
 use constant MIN_POLL_INTERVAL => 60;
 my $POLL_INTERVAL = MIN_POLL_INTERVAL;
+my $fetching;
 
 sub init {
 	my $class = shift;
@@ -80,6 +81,12 @@ sub fetch_players { if (main::NOMYSB) {
 } else {
 	# XXX: may want to improve this for client new/disconnect/reconnect/forget to only fetch
 	# player into for that single player
+	
+	# don't run this call if we're already waiting for player information
+	if ($fetching++) {
+		$log->warn("Ignoring request to get player information from mysqueezebox.com. A request is already running ($fetching)");
+		return;
+	}
 	
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 	
@@ -305,6 +312,8 @@ sub _players_done {
 	if ( $prefs->get('snPlayersErrors') ) {
 		$prefs->remove('snPlayersErrors');
 	}
+
+	$fetching = 0;
 	
 	Slim::Utils::Timers::setTimer(
 		undef,
@@ -357,6 +366,8 @@ sub _players_error {
 	my $retry = $POLL_INTERVAL * ( $count + 1 );
 	
 	$log->error( "Unable to get players from SN: $error, retrying in $retry seconds" );
+	
+	$fetching = 0;
 	
 	Slim::Utils::Timers::setTimer(
 		undef,
