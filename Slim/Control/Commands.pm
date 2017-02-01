@@ -2769,11 +2769,13 @@ sub setSNCredentialsCommand { if (!main::NOMYSB) {
 				$request->setStatusDone();
 			},
 			ecb      => sub {
+				my (undef, $error) = @_;
 				$request->addResult('validated', 0);
-				$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN'));
+				$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN') . ($error ? " ($error)" : ''));
 	
 				$request->setStatusDone();
 			},
+			interactive => 1,	# tell login() to attempt without respecting local rate limiting
 		);
 	}
 	
