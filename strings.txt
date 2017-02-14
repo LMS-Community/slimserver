@@ -16022,7 +16022,7 @@ SYNC_X_TO
 	FI	Synkronoi %s ja
 	FR	Synchroniser %s avec:
 	IT	Sincronizza %s in:
-	NL	Synchronisatie %s naar:
+	NL	Synchronisatie %s met:
 	NO	Synkroniser %s til:
 	PL	Synchronizuj %s do:
 	RU	Синхронизовать %s с:
