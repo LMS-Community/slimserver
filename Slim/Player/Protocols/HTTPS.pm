@@ -53,4 +53,44 @@ sub new {
 # we can't direct stream, as players don't support SSL 
 sub canDirectStream { 0 }
 
+# as we are inheriting from IO::Socket::SSL first, we have to re-implement Slim::Player::Protocols::HTTP->sysread here
+sub sysread {
+	my $self = $_[0];
+	my $chunkSize = $_[2];
+
+	my $metaInterval = ${*$self}{'metaInterval'};
+	my $metaPointer  = ${*$self}{'metaPointer'};
+
+	if ($chunkSize && $metaInterval && ($metaPointer + $chunkSize) > $metaInterval && ($metaInterval - $metaPointer) > 0) {
+
+		$chunkSize = $metaInterval - $metaPointer;
+
+		# This is very verbose...
+		#$log->debug("Reduced chunksize to $chunkSize for metadata");
+	}
+
+	my $readLength = $self->SUPER::sysread($_[1], $chunkSize);
+
+	if ($metaInterval && $readLength) {
+
+		$metaPointer += $readLength;
+		${*$self}{'metaPointer'} = $metaPointer;
+
+		# handle instream metadata for shoutcast/icecast
+		if ($metaPointer == $metaInterval) {
+
+			$self->readMetaData();
+
+			${*$self}{'metaPointer'} = 0;
+
+		} elsif ($metaPointer > $metaInterval) {
+
+			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
+		}	
+	}
+
+	return $readLength;
+}
+	
+
 1;
