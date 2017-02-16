@@ -2,6 +2,7 @@ package Slim::Player::Protocols::HTTPS;
 
 use base qw(IO::Socket::SSL Slim::Player::Protocols::HTTP);
 
+use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -96,6 +97,10 @@ sub sysread {
 
 			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
 		}	
+	}
+
+	if (main::ISWINDOWS && !$readLength) {
+		$! = EWOULDBLOCK;
 	}
 
 	return $readLength;
