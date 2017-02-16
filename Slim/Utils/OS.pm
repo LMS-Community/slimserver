@@ -35,13 +35,10 @@ sub getMACAddress {
 	my $class = shift;
 	
 	if (!main::SCANNER && !defined $class->{osDetails}->{mac}) {
-		eval {
-			require Net::Address::Ethernet;
-			$class->{osDetails}->{mac} = Net::Address::Ethernet::get_address();			
-		};
+		require Slim::Utils::Network;
 		
-		# set to empty string to prevent repeated attempts
-		$class->{osDetails}->{mac} ||= '';
+		# fall back to empty string to prevent repeated attempts (if needed)
+		$class->{osDetails}->{mac} = Slim::Utils::Network::serverMACAddress() || '';
 	}
 
 	return $class->{osDetails}->{mac};

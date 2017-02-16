@@ -154,6 +154,38 @@ sub serverAddr {
 	return $main::httpaddr || hostAddr();
 }
 
+=head2 serverMACAddress
+
+Returns the MAC address the server is listening on (if possible).
+
+This isn't trying as hard as eg. Net::Address::Ethernet, as arp etc.
+often would take too much time on the many disconnected interfaces
+of nowadays computers. In particular macOS Sierra seems to cause issues. 
+
+=cut
+
+sub serverMACAddress {
+	my $addresses;
+	eval {
+		require Net::Ifconfig::Wrapper;
+		$addresses = Net::Ifconfig::Wrapper::Ifconfig('list');
+		
+		# we're only interested in interfaces which have a known MAC and IP address
+		$addresses = [ grep { $_->{inet} && $_->{ether} } values %$addresses ]; 
+	};
+	
+	if ($addresses) {
+		my $hostAddr = serverAddr();
+		my ($address) = grep { $_->{inet}->{$hostAddr} } @$addresses;
+		
+		# if we didn't find our IP address, then let's pick just one of the list
+		$address ||= $addresses->[0];
+
+		return $address->{ether}; 
+	}
+}
+
+
 =head2 serverURL( )
 
 Return the base URL for this server
