@@ -4837,6 +4837,11 @@ sub _songDataFromHash {
 		
 		# Special case for A/S which return multiple keys
 		if ( $tag eq 'A' ) {
+			# if we don't have an explicit track artist defined, we're going to assume the track's artist was the track artist
+			if ( $res->{artist} && $res->{albumartist} && $res->{artist} ne $res->{albumartist}) {
+				$res->{trackartist} ||= $res->{artist};
+			}
+
 			for my $role ( @contributorRoles ) {
 				$role = lc $role;
 				if ( defined $res->{$role} ) {
