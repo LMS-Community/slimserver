@@ -65,7 +65,7 @@ sub mcast_add {
 		$self,
 		getprotobyname('ip') || 0,
 		_constant('IP_MULTICAST_TTL'),
-		pack 'I', 4,
+		pack 'C', 4,
 	) || logError("While setting multicast TTL, UPnP may not work properly: $!");
 }
 
@@ -83,6 +83,7 @@ sub _constant {
 		'cygwin'  => [3,5,2],
 		'darwin'  => [10,12,9],
 		'freebsd' => [10,12,9],
+		'solaris' => [17,19,16],
 		'default' => [33,35,32],
 	);
 	
