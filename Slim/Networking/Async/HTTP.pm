@@ -286,6 +286,15 @@ sub _http_read {
 	my ( $self, $args ) = @_;
 	
 	my ($code, $mess, @h) = eval { $self->socket->read_response_headers };
+
+	# XXX - this is a hack to work around some mis-configured streaming services.
+	#       Net::HTTP::Methods would reject status which don't start with HTTP/.
+	#       Some streaming services return "ICY 200 OK" instead. Let's deal with
+	#       them in a more relaxed way and give them another try.
+	if ($@ && $@ =~ /ICY 200 OK/) {
+		($code, $mess, @h) = eval { $self->socket->read_response_headers( laxed => 1 ) };
+		@h = $self->socket->_read_header_lines() if !$@ && $code == 200 && $mess =~ /OK/ && !scalar @h;
+	}
 	
 	if ($@) {
 		$self->_http_error( "Error reading headers: $@", $args );
