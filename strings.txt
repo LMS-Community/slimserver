@@ -90,19 +90,19 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2011 Logitech Verze 7.9.0
-	DA	© 2001-2011 Logitech - version 7.9.0
-	DE	© 2001-2011 Logitech Version 7.9.0
-	EN	© 2001-2011 Logitech Version 7.9.0
-	ES	© 2001-2011 Logitech Versión 7.9.0
-	FI	© 2001-2011 Logitechin versio 7.9.0
-	FR	© 2001-2011 Logitech Version 7.9.0
-	IT	© 2001-2011 Logitech versione 7.9.0
-	NL	© 2001-2011 Logitech versie 7.9.0
-	NO	© 2001–2011 Logitech versjon 7.9.0
-	PL	© 2001-2011 Logitech wersja 7.9.0
-	RU	© Logitech, 2001-2011. Версия 7.9.0
-	SV	© 2001–2011 Logitech Version 7.9.0
+	CS	© 2001-2011 Logitech Verze 7.9.1
+	DA	© 2001-2011 Logitech - version 7.9.1
+	DE	© 2001-2011 Logitech Version 7.9.1
+	EN	© 2001-2011 Logitech Version 7.9.1
+	ES	© 2001-2011 Logitech Versión 7.9.1
+	FI	© 2001-2011 Logitechin versio 7.9.1
+	FR	© 2001-2011 Logitech Version 7.9.1
+	IT	© 2001-2011 Logitech versione 7.9.1
+	NL	© 2001-2011 Logitech versie 7.9.1
+	NO	© 2001–2011 Logitech versjon 7.9.1
+	PL	© 2001-2011 Logitech wersja 7.9.1
+	RU	© Logitech, 2001-2011. Версия 7.9.1
+	SV	© 2001–2011 Logitech Version 7.9.1
 
 COPYRIGHT_LOGITECH
 	CS	© 2001-2012 Logitech
@@ -120,19 +120,19 @@ COPYRIGHT_LOGITECH
 	SV	© 2001-2012 Logitech
 
 VERSION
-	CS	Verze 7.9.0 / r%s
-	DA	Version 7.9.0 / r%s
-	DE	Version 7.9.0 / r%s
-	EN	Version 7.9.0 / r%s
-	ES	Versión 7.9.0 / r%s
-	FI	Versio 7.9.0 / r%s
-	FR	Version 7.9.0 / r%s
-	IT	Versione 7.9.0/r%s
-	NL	Versie 7.9.0 / r%s
-	NO	Versjon 7.9.0 / r%s
-	PL	Wersja 7.9.0 / r%s
-	RU	Версия 7.9.0 / r%s
-	SV	Version 7.9.0 / r%s
+	CS	Verze 7.9.1 / r%s
+	DA	Version 7.9.1 / r%s
+	DE	Version 7.9.1 / r%s
+	EN	Version 7.9.1 / r%s
+	ES	Versión 7.9.1 / r%s
+	FI	Versio 7.9.1 / r%s
+	FR	Version 7.9.1 / r%s
+	IT	Versione 7.9.1/r%s
+	NL	Versie 7.9.1 / r%s
+	NO	Versjon 7.9.1 / r%s
+	PL	Wersja 7.9.1 / r%s
+	RU	Версия 7.9.1 / r%s
+	SV	Version 7.9.1 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk

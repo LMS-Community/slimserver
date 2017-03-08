@@ -320,7 +320,7 @@ our @AUTHORS = (
 
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.9.0';
+our $VERSION     = '7.9.1';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 our $httpport    = undef;
