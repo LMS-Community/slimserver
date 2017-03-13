@@ -598,7 +598,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
-	EN	Don't browse items whene selected, just play them (old behaviour)
+	EN	Don't browse items when selected, just play them (old behaviour)
 	NL	Niet doorbrowsen op een geselecteerd item, maar speel af (oude gedrag)
 	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
