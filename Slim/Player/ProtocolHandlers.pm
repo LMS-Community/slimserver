@@ -22,7 +22,7 @@ use Slim::Networking::Async::HTTP;
 my %protocolHandlers = ( 
 	file     => qw(Slim::Player::Protocols::File),
 	http     => qw(Slim::Player::Protocols::HTTP),
-	https    => Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP),
+	https    => (!main::SLIM_SERVICE && Slim::Networking::Async::HTTP->hasSSL()) ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
