@@ -72,7 +72,7 @@ if (window.File && window.FileList) {
 				this.showBriefly(SqueezeJS.string('adding_to_playlist') + ' ' + file.name);
 
 			SqueezeJS.Controller.playerRequest({
-				params: ['playlist', (action || 'add') + 'match', 'name:' + file.name, 'size:' + file.size, 'timestamp:' + Math.floor(file.lastModifiedDate.getTime() / 1000), 'type:' + file.type],
+				params: ['playlist', (action || 'add') + 'match', 'name:' + file.name, 'size:' + (file.size || 0), 'timestamp:' + Math.floor(file.lastModified / 1000), 'type:' + (file.type || 'unk')],
 				success: function(response){
 					if (!this.statusUpdater) {
 						SqueezeJS.Controller.getStatus();
@@ -155,7 +155,7 @@ if (window.File && window.FileList) {
 			formdata.append('name', file.name);
 			formdata.append('size', file.size);
 			formdata.append('type', file.type);
-			formdata.append('timestamp', Math.floor(file.lastModifiedDate.getTime() / 1000))
+			formdata.append('timestamp', Math.floor(file.lastModified / 1000))
 			
 			if (file.key)
 				formdata.append('key', file.key);
