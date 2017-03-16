@@ -75,8 +75,9 @@ sub signalUpdateReady {
 	my ($file) = @_;
 	
 	if ($file) {
-		$file =~ /(\d\.\d\.\d).*?(\d{5,})/;
-		$::newVersion = Slim::Utils::Strings::string('SERVER_LINUX_UPDATE_AVAILABLE', "$1 - $2", $file);
+		my ($version, $revision) = $file =~ /(\d+\.\d+\.\d+)(?:.*(\d{5,}))?/;
+		$revision ||= 0;
+		$::newVersion = Slim::Utils::Strings::string('SERVER_LINUX_UPDATE_AVAILABLE', "$version - $revision", $file);
 	}
 }
 
