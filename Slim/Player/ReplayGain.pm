@@ -74,10 +74,7 @@ sub fetchGainMode {
 	return preventClipping( $track->replay_gain(), $track->replay_peak() );
 }
 
-# Based on code from James Sutula's Dynamic Transition Updater plugin,
-# this method determines whether tracks at a given offset from each
-# other in the playlist are similarly adjacent within the same album.
-sub trackAlbumMatch {
+sub findTracksByIndex {
 	my $class  = shift;
 	my $client = shift;
 	my $offset = shift;
@@ -114,9 +111,23 @@ sub trackAlbumMatch {
 	# Get the track objects
 	my $current_url   = Slim::Player::Playlist::song($client, $current_index);
 	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
-	
+
 	my $compare_url   = Slim::Player::Playlist::song($client, $compare_index);
 	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
+
+	return ($current_track, $compare_track);
+}
+
+# Based on code from James Sutula's Dynamic Transition Updater plugin,
+# this method determines whether tracks at a given offset from each
+# other in the playlist are similarly adjacent within the same album.
+sub trackAlbumMatch {
+	my $class  = shift;
+	my $client = shift;
+	my $offset = shift;
+
+	my ($current_track, $compare_track) = $class->findTracksByIndex($client, $offset);
+	return if (!$current_track || !$compare_track);
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
@@ -178,18 +189,88 @@ sub trackAlbumMatch {
 	return 0;
 }
 
+# Identify whether the sample rates match between two tracks in a
+# client playlist. This is modelled after the trackAlbumMatch function
+# above.
+sub trackSampleRateMatch {
+	my $class  = shift;
+	my $client = shift;
+	my $offset = shift;
+
+	my ($current_track, $compare_track) = $class->findTracksByIndex($client, $offset);
+	return if (!$current_track || !$compare_track);
+
+	if (!blessed($current_track) || !blessed($compare_track)) {
+
+		logError("Couldn't find object for track: [$current_track] or [$compare_track] !");
+
+		return 0;
+	}
+
+	if (!$current_track->can('samplerate') || !$compare_track->can('samplerate')) {
+
+		logError("Couldn't a find valid object for track: [$current_track] or [$compare_track] !");
+
+		return 0;
+	}
+
+	# For remote tracks, get metadata from the protocol handler
+	if ( $current_track->remote ) {
+	  if ( !$compare_track->remote ) {
+			# Other track is not remote, fail
+			return;
+		}
+
+		my $current_meta = {};
+		my $compare_meta = {};
+
+		my $current_handler = Slim::Player::ProtocolHandlers->handlerForURL( $current_track->url );
+		my $compare_handler = Slim::Player::ProtocolHandlers->handlerForURL( $compare_track->url );
+
+		if ( $current_handler && $current_handler->can('getMetadataFor') ) {
+			$current_meta = $current_handler->getMetadataFor( $client, $current_track->url );
+		}
+
+		if ( $compare_handler && $compare_handler->can('getMetadataFor') ) {
+			$compare_meta = $compare_handler->getMetadataFor( $client, $compare_track->url );
+		}
+
+		if (   $current_meta->{samplerate}
+			&& $compare_meta->{samplerate}
+			&& $current_meta->{samplerate} eq $compare_meta->{samplerate}
+		) {
+			# Sample rate metadata matches
+			return 1;
+		}
+		else {
+			return;
+		}
+	}
+
+	# Check sample rates match
+	my $compare_rate = $compare_track->samplerate;
+	my $current_rate = $current_track->samplerate;
+	if ($compare_rate && $current_rate &&
+		($compare_rate == $current_rate)) {
+
+		return 1;
+	}
+
+	return 0;
+}
+
 # Bug 5119
 # Reduce the gain value if necessary to avoid clipping
 sub preventClipping {
 	my ( $gain, $peak ) = @_;
-	
+
 	if ( defined $peak && defined $gain && $peak > 0 ) {
 		my $noclip = -20 * ( log($peak) / log(10) );
 		if ( $noclip < $gain ) {
 			return $noclip;
 		}
 	}
-	
+
 	return $gain;
 }
 
