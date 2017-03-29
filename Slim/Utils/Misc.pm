@@ -408,7 +408,7 @@ sub crackURL {
 
 	my $urlstring = join('|', Slim::Player::ProtocolHandlers->registeredHandlers);
 
-	$string =~ m|(?:$urlstring)://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
+	$string =~ m|(?:$urlstring)://(?:([^\@\/:]+):?([^\@\/]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
