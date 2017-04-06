@@ -218,6 +218,13 @@ div#background {
 /*	position: relative; Bug 18093 */
 	color: white;
 }
+			
+/* this is for MS Edge only, which is not compatible with above hack required to satisfy MS IE (bug 18093) */
+@supports (-ms-ime-align:auto) {
+	#helpLink a, #footerInfo a, #settingsLink a  {
+		position: relative;
+	}
+}
 
 #helpInfoSection {
 	display: inline;
