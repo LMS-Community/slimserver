@@ -128,7 +128,6 @@ if (ISWINDOWS && $PerlSvc::VERSION) {
 	}
 	
 	sub Interactive {
-		warn 'hmm...';
 		main::main();	
 	}
 	
