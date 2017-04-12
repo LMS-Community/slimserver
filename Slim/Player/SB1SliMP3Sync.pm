@@ -143,7 +143,7 @@ sub _findTimeForOffset {
 		}
 	}
 
-	return unless ( @{$frames} && @{$frames} > 1 );
+	return unless ( $frames && @{$frames} && @{$frames} > 1 );
 
 	my ($i, $j, $k) = (0, @{$frames} - 1);
 
