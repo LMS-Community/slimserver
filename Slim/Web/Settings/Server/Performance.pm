@@ -23,16 +23,20 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = ( $prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority 
- 				precacheArtwork maxPlaylistLength useLocalImageproxy dontTriggerScanOnPrefChange) );
- 	push @prefs, qw(autorescan autorescan_stat_interval) if Slim::Utils::OSDetect::getOS->canAutoRescan;
+	my @prefs = ( $prefs, qw(serverPriority maxPlaylistLength useLocalImageproxy) );
+				
+	if (!main::NOLIBRARY) {
+	 	push @prefs, qw(autorescan autorescan_stat_interval) if Slim::Utils::OSDetect::getOS->canAutoRescan;
+ 		push @prefs, qw(dbhighmem disableStatistics scannerPriority precacheArtwork dontTriggerScanOnPrefChange);
+	}
+ 	
  	return @prefs;
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 		
-	if ( $paramRef->{'saveSettings'} ) {
+	if ( !main::NOLIBRARY && $paramRef->{'saveSettings'} ) {
 		my $curAuto = $prefs->get('autorescan');
 		if ( $curAuto != $paramRef->{pref_autorescan} ) {
 			require Slim::Utils::AutoRescan;
@@ -53,7 +57,6 @@ sub handler {
 		}
 	
 		$prefs->set( customArtSpecs => $specs );
-		
 	}
 	
 	# Restart message if dbhighmem is changed

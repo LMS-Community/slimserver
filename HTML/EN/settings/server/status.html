@@ -29,7 +29,7 @@
 [% END %]
 [% bodyscript = 'onload="ajaxProgressRefresh();"' %]
 
-[% extJsScripts = BLOCK %]
+[% IF !noLibrary; extJsScripts = BLOCK %]
 	<script TYPE="text/javascript">
 		[% PROCESS jsString id='TOTAL_TIME' %]
 		progressbarlen = '40';
@@ -37,7 +37,7 @@
 
 		Ext.onReady(SqueezeJS.UI.ScannerInfoExtended.init, SqueezeJS.UI.ScannerInfoExtended, true);
 	</script>
-[% END %]
+[% END; END %]
 
 [% PROCESS settings/header.html %]
 [% END %]

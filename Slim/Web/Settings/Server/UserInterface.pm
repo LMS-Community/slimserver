@@ -25,8 +25,14 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize additionalPlaylistButtons
-					   longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
+	my @prefs = qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize additionalPlaylistButtons
+					   longdateFormat shortdateFormat timeFormat titleFormatWeb);
+					   
+	if (!main::NOLIBRARY) {
+		push @prefs, qw(showArtist showYear)
+	}
+
+	return ($prefs, @prefs);
 }
 
 sub handler {

@@ -29,7 +29,6 @@ sub initSetup {
 		join('::', qw(Slim Web Settings Server), $_) 
 	} qw(
 		Basic 
-		Behavior 
 		Debugging 
 		FileSelector 
 		Index 
@@ -43,6 +42,14 @@ sub initSetup {
 		UserInterface 
 		Wizard
 	);
+	
+	if (!main::NOLIBRARY) {
+		push @classes, map { 
+			join('::', qw(Slim Web Settings Server), $_) 
+		} qw(
+			Behavior 
+		);
+	}
 	
 	if (!main::NOMYSB) {
 		push @classes, 'Slim::Web::Settings::Server::SqueezeNetwork';

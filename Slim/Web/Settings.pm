@@ -216,6 +216,7 @@ sub handler {
 			if (/ITUNES/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') }
 			elsif (/PLUGIN_PODCAST/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin') }
 			elsif (/SQUEEZENETWORK_SETTINGS/) { !main::NOMYSB }
+			elsif (/BEHAVIOR_SETTINGS/) { !main::NOLIBRARY }
 			else { 1 }
 		}
 		(
@@ -284,6 +285,7 @@ sub handler {
 	}
 	
 	$class->beforeRender($paramRef, $client);
+	$paramRef->{noLibrary} = main::NOLIBRARY ? 1 : 0;
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);
 }

@@ -1,4 +1,4 @@
-[% extJsScripts = BLOCK %]
+[% IF !noLibray; extJsScripts = BLOCK %]
 	<script TYPE="text/javascript">
 		Ext.onReady(function(){
 			var el = Ext.get('progressLink');
@@ -30,7 +30,7 @@
 			});
 		});
 	</script>
-[% END %]
+[% END; END %]
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_LANGUAGE" desc="SETUP_LANGUAGE_DESC" %]
@@ -49,7 +49,7 @@
 		[% END %]
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_MEDIADIRS" desc="SETUP_MEDIADIRS_DESC" %]
+	[% IF mediadirs; WRAPPER setting title="SETUP_MEDIADIRS" desc="SETUP_MEDIADIRS_DESC" %]
 		<table border="0" cellspacing="0">
 			<tr>
 				<th>[% 'FOLDER' | string %]</th>
@@ -103,6 +103,6 @@
 		</select>
 		<input name="pref_rescan" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
-	[% END %]
+	[% END; END %]
 	
 [% PROCESS settings/footer.html %]

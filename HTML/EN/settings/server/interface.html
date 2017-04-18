@@ -12,7 +12,7 @@
 		</select>
 	[% END %]
 
-	[% WRAPPER settingSection %]
+	[% IF !noLibrary; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SHOWARTIST" desc="SETUP_SHOWARTIST_DESC" %]
 			<select class="stdedit" name="pref_showArtist" id="showArtist">
 	
@@ -30,7 +30,7 @@
 			
 			</select>
 		[% END %]
-	[% END %]
+	[% END; END %]
 
 	[% WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_titleFormat %]

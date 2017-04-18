@@ -1,5 +1,6 @@
 [% PROCESS settings/header.html %]
 	
+	[% IF !noLibrary %]
 	[% WRAPPER setting title="SETUP_DBHIGHMEM" desc="SETUP_DBHIGHMEM_DESC" %]
 		<select class="stdedit" name="pref_dbhighmem" id="dbhighmem">
 
@@ -56,6 +57,7 @@
 	
 		</table>
 	[% END; END %]
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_IMAGEPROXY" desc="SETUP_IMAGEPROXY_DESC" %]
 		<select class="stdedit" name="pref_useLocalImageproxy" id="useLocalImageproxy" [% IF imageproxies.size <= 1 %]disabled[% END %]>
@@ -80,7 +82,7 @@
 			</select>
 		[% END %]
 
-		[% WRAPPER settingGroup title="SETUP_SCANNERPRIORITY" desc="SETUP_SCANNERPRIORITY_DESC" %]
+		[% IF !noLibrary; WRAPPER settingGroup title="SETUP_SCANNERPRIORITY" desc="SETUP_SCANNERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_scannerPriority" id="scannerPriority">
 	
 			[% option = "" %]
@@ -90,10 +92,10 @@
 			[%- END -%]
 	
 			</select>
-		[% END %]
+		[% END; END %]
 	[% END %]
 
-	[% IF prefs.exists('pref_autorescan') %]
+	[% IF !noLibrary && prefs.exists('pref_autorescan') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
 			<select class="stdedit" name="pref_autorescan" id="autorescan">
 				<option [% IF prefs.pref_autorescan == 1 %]selected="selected" [% END %]value="1">
@@ -106,7 +108,7 @@
 		[% END %]
 	[% END %]
 	
-	[% IF prefs.exists('pref_autorescan_stat_interval') %]
+	[% IF !noLibrary && prefs.exists('pref_autorescan_stat_interval') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
 			<input type=text class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval %]" size="15">
 		[% END %]

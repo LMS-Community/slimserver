@@ -120,13 +120,15 @@ sub handler {
 	
 	$paramRef->{'formats'} = \@formats;
 
-	$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
-	$paramRef->{'disabledextensionsvideo'}  = $prefs->get('disabledextensionsvideo');
-	$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');
-	$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
-
-	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
-	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
+	if (!main::NOLIBRARY) {
+		$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
+		$paramRef->{'disabledextensionsvideo'}  = $prefs->get('disabledextensionsvideo');
+		$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');
+		$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
+	
+		$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
+		$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
+	}
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

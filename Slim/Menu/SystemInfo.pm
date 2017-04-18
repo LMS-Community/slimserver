@@ -63,13 +63,15 @@ sub registerDefaultInfoProviders {
 		func  => \&infoServer,
 	) );
 
-	$class->registerInfoProvider( library => (
-		after => 'server',
-		func  => \&infoLibrary,
-	) );
+	if (!main::NOLIBRARY) {
+		$class->registerInfoProvider( library => (
+			after => 'server',
+			func  => \&infoLibrary,
+		) );
+	}
 	
 	$class->registerInfoProvider( currentplayer => (
-		after => 'library',
+		after => main::NOLIBRARY ? 'server' : 'library',
 		func  => \&infoCurrentPlayer,
 	) );
 	
@@ -183,7 +185,7 @@ sub _getPlayerInfo {
 	return ($info, \@details);
 }
 
-sub infoLibrary {
+sub infoLibrary { if (!main::NOLIBRARY) {
 	my $client = shift;
 	
 	if (!Slim::Schema::hasLibrary()) {
@@ -280,7 +282,7 @@ sub infoLibrary {
 	}
 	
 	return $items;
-}
+} }
 
 sub infoServer {
 	my $client = shift;

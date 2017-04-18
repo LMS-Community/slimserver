@@ -34,7 +34,7 @@ sub handler {
 	$paramRef->{info} = $paramRef->{info}->{items};
 	
 	$paramRef->{server}  = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_SERVER'));
-	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY'));
+	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY')) unless main::NOLIBRARY;
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
 
 	# we only have one player	
@@ -49,15 +49,17 @@ sub handler {
 	$paramRef->{folders} = _extractGroup($paramRef, cstring($client, 'FOLDERS'));
 	$paramRef->{logs}    = _extractGroup($paramRef, cstring($client, 'SETUP_DEBUG_SERVER_LOG'));
 
-	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
-
-	if (Slim::Schema::hasLibrary()) {
-		# skeleton for the progress update
-		$paramRef->{progress} = ${ Slim::Web::Pages::Progress::progress($client, {
-			ajaxUpdate => 1,
-			type       => 'importer',
-			webroot    => $paramRef->{webroot}
-		}) };
+	if (!main::NOLIBRARY) {
+		$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
+	
+		if (Slim::Schema::hasLibrary()) {
+			# skeleton for the progress update
+			$paramRef->{progress} = ${ Slim::Web::Pages::Progress::progress($client, {
+				ajaxUpdate => 1,
+				type       => 'importer',
+				webroot    => $paramRef->{webroot}
+			}) };
+		}
 	}
 
 	return $class->SUPER::handler($client, $paramRef);

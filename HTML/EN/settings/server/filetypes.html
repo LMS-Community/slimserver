@@ -1,6 +1,6 @@
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER settingSection %]
+	[% IF !noLibrary; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSAUDIO" desc="SETUP_DISABLEDEXTENSIONSAUDIO_DESC" %]
 			<input type=text class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio %]" size="40">
 		[% END %]
@@ -16,7 +16,7 @@
 		[% IF !noimage; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSIMAGES" desc="SETUP_DISABLEDEXTENSIONSIMAGES_DESC" %]
 			<input type=text class="stdedit" name="disabledextensionsimages" id="disabledextensionsimages" value="[% disabledextensionsimages %]" size="40">
 		[% END; END %]
-	[% END %]
+	[% END; END %]
 
 	[% WRAPPER setting title="SETUP_GROUP_FORMATS_CONVERSION" desc="SETUP_GROUP_FORMATS_CONVERSION_DESC" %]
 		<br/>
