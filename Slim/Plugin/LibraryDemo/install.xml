@@ -8,10 +8,11 @@
 	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
+	<needsLibrary>true</needsLibrary>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
 		<minVersion>7.9.0</minVersion>
-        <maxVersion>*</maxVersion>
+		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

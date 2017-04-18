@@ -9,7 +9,8 @@
 	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
-        
+	<needsLibrary>true</needsLibrary>
+
 	<playerMenu>SETTINGS</playerMenu>        
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/Rescan/settings/basic.html</optionsURL>

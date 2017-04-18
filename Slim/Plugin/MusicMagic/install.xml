@@ -14,6 +14,7 @@
 		<win>enabled</win>
 		<other>disabled</other>
 	</defaultState>
+	<needsLibrary>true</needsLibrary>
 
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/MusicMagic/html/images/icon.png</icon>

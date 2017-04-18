@@ -8,7 +8,10 @@
 	<version>1.0.0</version>
 	<description>PLUGIN_FULLTEXT_DESC</description>
 	<creator>Logitech</creator>
+
 	<defaultState>enabled</defaultState>
+	<needsLibrary>true</needsLibrary>
+
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 

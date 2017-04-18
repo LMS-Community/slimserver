@@ -141,6 +141,11 @@ sub iconForURL {
 			return $handler->getIcon($url);
 		}
 	}
+	
+	elsif (main::NOLIBRARY) {
+		# cut short, as we don't have a library
+		return;
+	}
 
 	elsif ($url =~ /^[a-z0-9\-]*playlist:/) {
 		return 'html/images/playlists.png';

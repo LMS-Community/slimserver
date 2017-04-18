@@ -175,6 +175,10 @@ sub _addInfo {
 			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
 			next;
 		}
+		elsif ( main::NOLIBRARY && ($plugins->{$plugin}->{needsLibrary} && $plugins->{$plugin}->{needsLibrary} !~ /false|no/i) ) {
+			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires local library, but support for a local library is disabled.");
+			next;
+		}
 
 		my $entry = $plugins->{$plugin};
 

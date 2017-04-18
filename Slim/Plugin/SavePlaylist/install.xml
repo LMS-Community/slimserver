@@ -2,21 +2,22 @@
 
 <extension>
 	<id>E8513A32-71B8-4447-97E0-17FA4AD80B12</id>
-        <name>SAVE_PLAYLIST</name>
-        <module>Slim::Plugin::SavePlaylist::Plugin</module>
-        <version>1.0</version>
-        <description>SAVE_PLAYLIST_DESC</description>
-        <creator>Logitech</creator>
+	<name>SAVE_PLAYLIST</name>
+	<module>Slim::Plugin::SavePlaylist::Plugin</module>
+	<version>1.0</version>
+	<description>SAVE_PLAYLIST_DESC</description>
+	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
-        
+	<needsLibrary>true</needsLibrary>
+
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 
-        <targetApplication>
-  	        <id>Logitech Media Server</id>
-                <minVersion>7.0a</minVersion>
-                <maxVersion>*</maxVersion>
-        </targetApplication>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
 
 </extension>

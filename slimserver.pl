@@ -42,16 +42,17 @@ use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
 use constant PERFMON      => ( grep { /--perfwarn/ } @ARGV ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
-use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
+use constant STATISTICS   => ( grep { /--nostatistics|--nolibrary/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
+use constant IMAGE        => ( grep { /--noimage|--nolibrary/ } @ARGV ) ? 0 : 1;
+use constant VIDEO        => ( grep { /--novideo|--nolibrary/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
-use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
+use constant NOBROWSECACHE=> ( grep { /--nobrowsecache|--nolibrary/ } @ARGV ) ? 1 : 0;
+use constant NOLIBRARY    => ( grep { /--nolibrary/ } @ARGV ) ? 1 : 0;
 
 # leaving some legacy flags for the moment - unlikely but possibly some 3rd party plugin is referring to it
 use constant SLIM_SERVICE => 0;
@@ -182,7 +183,7 @@ use AnyEvent;
 
 # Load AIO support if available
 my $HAS_AIO;
-sub HAS_AIO {
+sub HAS_AIO { if (!main::NOLIBRARY) {
 	return $HAS_AIO if defined $HAS_AIO;
 		
 	eval {
@@ -194,10 +195,10 @@ sub HAS_AIO {
 	$HAS_AIO = 0 if !$HAS_AIO;	# Make sure it is defined now.
 	
 	return $HAS_AIO;
-}
+} }
 
 my $MEDIASUPPORT;
-sub MEDIASUPPORT {
+sub MEDIASUPPORT { if (!main::NOLIBRARY) {
 	return $MEDIASUPPORT if defined $MEDIASUPPORT;
 
 	eval {
@@ -205,7 +206,7 @@ sub MEDIASUPPORT {
 	};
 		
 	return $MEDIASUPPORT;
-}
+} }
 
 
 # Force XML::Simple to use XML::Parser for speed. This is done
@@ -254,15 +255,23 @@ use Slim::Menu::FolderInfo;
 use Slim::Menu::GlobalSearch;
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
-use Slim::Music::Import;
-use Slim::Music::VirtualLibraries;
+
+if (!main::NOLIBRARY) {
+	require Slim::Music::Import;
+	require Slim::Music::VirtualLibraries;
+}
+
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
-use Slim::Utils::Scanner::Local;
+
+if (!main::NOLIBRARY) {
+	require Slim::Utils::Scanner::Local;
+}
+
 use Slim::Utils::Scheduler;
 use Slim::Networking::Async::DNS;
 use Slim::Networking::Select;
@@ -549,19 +558,21 @@ sub init {
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
 	
-	Slim::Schema->init();
+	if (!main::NOLIBRARY) {
+		Slim::Schema->init();
+		Slim::Music::VirtualLibraries->init();
+		
+		# Register the default importers - necessary to ensure that Slim::Schema::init() is called
+		# but no need to initialize it, as it's being run in external scanner mode only
+		# XXX - we should be able to handle this differently
+		Slim::Music::Import->addImporter( 'Slim::Media::MediaFolderScan', {
+			type   => 'file',
+			weight => 1,
+			use    => 1,
+		} );
+	}
+	
 	Slim::Schema::RemoteTrack->init();
-	
-	Slim::Music::VirtualLibraries->init();
-	
-	# Register the default importers - necessary to ensure that Slim::Schema::init() is called
-	# but no need to initialize it, as it's being run in external scanner mode only
-	# XXX - we should be able to handle this differently
-	Slim::Music::Import->addImporter( 'Slim::Media::MediaFolderScan', {
-		type   => 'file',
-		weight => 1,
-		use    => 1,
-	} );
 
 	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
@@ -605,14 +616,16 @@ sub init {
 		Slim::Utils::Log->reInit;
 	}
 
-	main::INFOLOG && $log->info("Server checkDataSource...");
-	checkDataSource();
-	
-	if ( $os->canAutoRescan && $prefs->get('autorescan') ) {
-		require Slim::Utils::AutoRescan;
+	if (!main::NOLIBRARY) {
+		main::INFOLOG && $log->info("Server checkDataSource...");
+		checkDataSource();
 		
-		main::INFOLOG && $log->info('Auto-rescan init...');
-		Slim::Utils::AutoRescan->init();
+		if ( $os->canAutoRescan && $prefs->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
+			
+			main::INFOLOG && $log->info('Auto-rescan init...');
+			Slim::Utils::AutoRescan->init();
+		}
 	}
 
 	main::INFOLOG && $log->info("Library Browser init...");
@@ -805,6 +818,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nomysqueezebox => Disable mysqueezebox.com integration.
                         Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
+    --nolibrary      => Disable support for local media scan. The server would only stream from remote sources.
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --failsafe       => Don't load plugins
@@ -868,6 +882,7 @@ sub initOptions {
 		'nosb1slimp3sync'=> sub {},
 		'notranscoding' => sub {},
 		'noweb'         => sub {},
+		'nolibrary'     => sub {},
 	);
 
 	# make --logging and --debug synonyms, but prefer --logging
@@ -1075,7 +1090,7 @@ sub changeEffectiveUserAndGroup {
 	logger('server')->info("Running as uid: $> / gid: $)");
 }
 
-sub checkDataSource {
+sub checkDataSource { if (!main::NOLIBRARY) {
 
 	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
 	my $modified = 0;
@@ -1111,7 +1126,7 @@ sub checkDataSource {
 
 		Slim::Control::Request::executeRequest(undef, ['wipecache']);
 	}
-}
+} }
 
 sub forceStopServer {
 	$::stop = 1;
@@ -1163,7 +1178,7 @@ sub cleanup {
 	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
-	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
+	if (!main::NOLIBRARY && $INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 
 		if (Slim::Music::Import->stillScanning()) {
 			logger('')->info("Cancel running scanner.");

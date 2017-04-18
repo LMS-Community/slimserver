@@ -13,6 +13,7 @@
 		<mac>enabled</mac>
 		<other>disabled</other>
 	</defaultState>
+	<needsLibrary>true</needsLibrary>
 	
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/iTunes/settings/itunes.html</optionsURL>

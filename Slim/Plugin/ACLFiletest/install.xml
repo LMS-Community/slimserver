@@ -10,6 +10,8 @@
 	<description>PLUGIN_ACL_FILETEST_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
+	<needsLibrary>true</needsLibrary>
+
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type>
 	<targetApplication>

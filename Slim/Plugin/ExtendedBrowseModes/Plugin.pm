@@ -11,8 +11,6 @@ use base qw(Slim::Plugin::OPMLBased);
 use Digest::MD5 qw(md5_hex);
 
 use Slim::Menu::BrowseLibrary;
-use Slim::Music::VirtualLibraries;
-use Slim::Plugin::ExtendedBrowseModes::Libraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
@@ -55,17 +53,23 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
-Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
-Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
 
-$prefs->setChange( sub {
-	__PACKAGE__->initLibraries($_[1] || 0);
-}, 'enableLosslessPreferred' );
+if (!main::NOLIBRARY) {
+	require Slim::Music::VirtualLibraries;
+	require Slim::Plugin::ExtendedBrowseModes::Libraries;
+
+	Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
+	Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
+
+	$prefs->setChange( sub {
+		__PACKAGE__->initLibraries($_[1] || 0);
+	}, 'enableLosslessPreferred' );
+}
 
 sub initPlugin {
 	my ( $class ) = @_;
 
-	if ( main::WEBUI ) {
+	if ( main::WEBUI && !main::NOLIBRARY ) {
 		require Slim::Plugin::ExtendedBrowseModes::Settings;
 		require Slim::Plugin::ExtendedBrowseModes::PlayerSettings;
 		Slim::Plugin::ExtendedBrowseModes::Settings->new;
@@ -73,18 +77,21 @@ sub initPlugin {
 	}
 
 	$class->initMenus();
-	$class->initLibraries();
 	
-	$class->SUPER::initPlugin(
-		feed   => \&handleFeed,
-		tag    => 'selectVirtualLibrary',
-		node   => 'myMusic',
-		menu   => 'browse',
-		weight => 100,
-	);
+	if (!main::NOLIBRARY) {
+		$class->initLibraries();
+		
+		$class->SUPER::initPlugin(
+			feed   => \&handleFeed,
+			tag    => 'selectVirtualLibrary',
+			node   => 'myMusic',
+			menu   => 'browse',
+			weight => 100,
+		);
+	}
 }
 
-sub handleFeed {
+sub handleFeed { if (!main::NOLIBRARY) {
 	my ($client, $cb, $args) = @_;
 
 	my @items;
@@ -142,9 +149,9 @@ sub handleFeed {
 	$cb->({
 		items => \@items,
 	});
-}
+} }
 
-sub initLibraries {
+sub initLibraries { if (!main::NOLIBRARY) {
 	my ($class, $newValue) = @_;
 	
 	if ( defined $newValue && !$newValue ) {
@@ -157,9 +164,9 @@ sub initLibraries {
 		# if we were called on a onChange event, re-build the library
 		Slim::Music::VirtualLibraries->rebuild('losslessPreferred') if $newValue;
 	}
-}
+} }
 
-sub setLibrary {
+sub setLibrary { if (!main::NOLIBRARY) {
 	my ($client, $cb, $params, $args) = @_;
 
 	if (!$client) {
@@ -187,9 +194,9 @@ sub setLibrary {
 	Slim::Utils::Timers::setTimer(__PACKAGE__, Time::HiRes::time() + 0.1, sub {
 		Slim::Schema->totals($client);
 	});
-}
+} }
 
-sub unregisterLibrary {
+sub unregisterLibrary { if (!main::NOLIBRARY) {
 	my ($client, $cb, $params, $args) = @_;
 
 	Slim::Music::VirtualLibraries->unregisterLibrary($args->{library_id});
@@ -200,15 +207,15 @@ sub unregisterLibrary {
 			showBriefly => 1,
 		}]
 	});
-}
+} }
 
-sub condition {
+sub condition { if (!main::NOLIBRARY) {
 	my ($class, $client) = @_;
 	
 	return unless Slim::Music::VirtualLibraries->hasLibraries();
 	
 	return !$client || !$serverPrefs->client($_[1])->get('disabled_selectVirtualLibrary');
-}
+} }
 
 sub getDisplayName { 'VIRTUALLIBRARIES' }
 
@@ -236,6 +243,8 @@ sub initMenus {
 		weight       => 75,
 		static       => 1,
 		nocache      => 1,
+		condition    => main::NOLIBRARY ? sub { 1 } : undef,
+		enabled      => main::NOLIBRARY ? 1 : 0,
 	},{
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS',
 		params       => {
@@ -281,6 +290,9 @@ sub initMenus {
 	}
 
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
+		# we only allow "Browse Filesystem" in --nolibrary mode
+		next if main::NOLIBRARY && $_->{name} ne 'PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS';
+	
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
@@ -438,7 +450,7 @@ sub _browseFS {
 # Small wrapper around Slim::Menu::BrowseLibrary::_albums to add the simpleAlbumLink flag.
 # We can't use the regular drill-down links in the web UI, as this would call the randomized
 # list again, resulting in the wrong album being browsed into.
-sub _randomAlbums {
+sub _randomAlbums { if (!main::NOLIBRARY) {
 	my ($client, $callback, $args, $pt) = @_;
 
 	Slim::Menu::BrowseLibrary::_albums( $client, sub {
@@ -453,11 +465,11 @@ sub _randomAlbums {
 		
 		$callback->(@_);
 	}, $args, $pt );
-}
+} }
 
 # Use Slim::Menu::BrowseLibrary::_tracks to show a list of the most popular/unpopular tracks
 my $countCache;
-sub _hitlist { if (main::STATISTICS) {
+sub _hitlist { if (main::STATISTICS && !main::NOLIBRARY) {
 	my ($client, $callback, $args, $pt) = @_;
 	
 	if (!$countCache) {

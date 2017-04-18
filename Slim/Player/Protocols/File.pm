@@ -425,7 +425,7 @@ sub canSeekError {
 sub getIcon {
 	my ( $class, $url ) = @_;
 
-	if (Slim::Music::Info::isSong($url)) {
+	if (!main::NOLIBRARY && Slim::Music::Info::isSong($url)) {
 		
 		my $track = Slim::Schema->objectForUrl({
 			'url' => $url,

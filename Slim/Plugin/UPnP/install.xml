@@ -7,7 +7,10 @@
 	<description>PLUGIN_UPNP_MODULE_NAME_DESC</description>
 	<creator>Andy Grundman</creator>
 	<email>andy@slimdevices.com</email>
+
 	<defaultState>enabled</defaultState>
+	<needsLibrary>true</needsLibrary>
+
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type>
 	<targetApplication>

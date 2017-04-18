@@ -191,7 +191,7 @@ sub artworkRequest {
 		my $sth;
 		my ($url, $cover);
 		
-		if ( $type eq 'image' ) {
+		if ( !main::NOLIBRARY && $type eq 'image' ) {
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, hash FROM images WHERE hash = ?
 			} );
@@ -200,7 +200,7 @@ sub artworkRequest {
 			# do nothing here - just don't follow the other routes
 			# XXX support resizing video on demand
 		}
-		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
+		elsif ( !main::NOLIBRARY && $id =~ /^[0-9a-f]{8}$/ ) {
 			# ID is a coverid
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, cover FROM tracks WHERE coverid = ?
@@ -232,7 +232,7 @@ sub artworkRequest {
 				return;
 			}
 		}
-		else {
+		elsif ( !main::NOLIBRARY ) {
 			# ID is the trackid, this is deprecated because
 			# the artwork can be stale after a rescan
 			$sth = Slim::Schema->dbh->prepare_cached( qq{

@@ -327,12 +327,21 @@ sub init {
 	
     $class->_initModes();
     
-    Slim::Menu::GlobalSearch->registerInfoProvider( searchMyMusic => (
-			isa  => 'top',
-			func => \&_globalSearchMenu,
-	) );
-    
-    Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+    if (main::NOLIBRARY) {
+    	$class->registerNodeFilter(sub {
+    		my ($client, $id) = @_;
+    		warn $id;
+#    		return;
+    	})
+    }
+    else {
+	    Slim::Menu::GlobalSearch->registerInfoProvider( searchMyMusic => (
+				isa  => 'top',
+				func => \&_globalSearchMenu,
+		) );
+	    
+	    Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+    }
     
     $_initialized = 1;
 }
