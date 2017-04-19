@@ -29,7 +29,7 @@
 						tab.0 = 'PLAYER';
 						tab.1 = playersetup.BASIC_PLAYER_SETTINGS || 'settings/player/basic.html?';
 					 -%]
-					[%- ELSIF tab.0 == 'ADVANCED_SETTINGS'; tab.1 = additionalLinks.setup.FORMATTING_SETTINGS -%]
+					[%- ELSIF tab.0 == 'ADVANCED_SETTINGS'; tab.1 = noLibrary ? additionalLinks.setup.DEBUGGING_SETTINGS : additionalLinks.setup.FORMATTING_SETTINGS -%]
 					[%- ELSIF tab.0 == 'BEHAVIOR_SETTINGS'; tab.0 = 'MY_MUSIC' -%]
 					[%- ELSIF tab.0 == 'SERVER_STATUS'; tab.0 = 'INFORMATION' -%]
 					[%- END -%]

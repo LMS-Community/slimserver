@@ -38,7 +38,6 @@ sub initSetup {
 		Security 
 		Software 
 		Status 
-		TextFormatting 
 		UserInterface 
 		Wizard
 	);
@@ -48,6 +47,7 @@ sub initSetup {
 			join('::', qw(Slim Web Settings Server), $_) 
 		} qw(
 			Behavior 
+			TextFormatting 
 		);
 	}
 	

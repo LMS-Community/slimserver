@@ -146,10 +146,12 @@ Settings = {
 		}
 
 		else if (page.id == 'ADVANCED_SETTINGS') {
-			page = SqueezeJS.getCookie('Squeezebox-advancedsettings');
+			var page2 = SqueezeJS.getCookie('Squeezebox-advancedsettings');
 
-			if (page == null || page == 'null' || page == '')
-				page = 'settings/server/formatting.html?';
+			if (page2 == null || page2 == 'null' || page2 == '')
+				page = page.url || 'settings/server/formatting.html?';
+			else
+				page = page2;
 		}
 
 		if (typeof page == 'object' && page.url)
