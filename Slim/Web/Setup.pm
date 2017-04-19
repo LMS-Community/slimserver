@@ -43,7 +43,7 @@ sub initSetup {
 		Wizard
 	);
 	
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		push @classes, map { 
 			join('::', qw(Slim Web Settings Server), $_) 
 		} qw(

@@ -21,7 +21,7 @@ use constant INFOLOG      => 0;
 use constant SOCKET_PATH  => '/tmp/sbs_artwork';
 use constant LOCALFILE    => 0;
 use constant NOMYSB       => 1;
-use constant NOLIBRARY    => 1;
+use constant LIBRARY      => 1;
 
 # Copied from Slim::bootstrap to reduce memory overhead of unnecessary stuff
 BEGIN {

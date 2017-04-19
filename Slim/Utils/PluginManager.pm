@@ -210,7 +210,7 @@ sub load {
 		# in failsafe mode skip all plugins which aren't required
 		next if ($main::failsafe && !$plugins->{$name}->{'enforce'});
 		
-		if ( main::NOLIBRARY && ($plugins->{$name}->{needsLibrary} && $plugins->{$name}->{needsLibrary} !~ /false|no/i) ) {
+		if ( !main::LIBRARY && ($plugins->{$name}->{needsLibrary} && $plugins->{$name}->{needsLibrary} !~ /false|no/i) ) {
 			main::INFOLOG && $log->info("Skipping plugin: $name - requires local library, but support for a local library is disabled.");
 			next;
 		}

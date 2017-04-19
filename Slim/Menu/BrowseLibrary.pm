@@ -327,7 +327,7 @@ sub init {
 	
     $class->_initModes();
     
-    if (main::NOLIBRARY) {
+    if (!main::LIBRARY) {
     	$class->registerNodeFilter(sub {
     		my ($client, $id) = @_;
     		warn $id;

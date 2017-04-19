@@ -34,7 +34,7 @@ sub handler {
 	$paramRef->{info} = $paramRef->{info}->{items};
 	
 	$paramRef->{server}  = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_SERVER'));
-	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY')) unless main::NOLIBRARY;
+	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY')) if main::LIBRARY;
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
 
 	# we only have one player	
@@ -49,7 +49,7 @@ sub handler {
 	$paramRef->{folders} = _extractGroup($paramRef, cstring($client, 'FOLDERS'));
 	$paramRef->{logs}    = _extractGroup($paramRef, cstring($client, 'SETUP_DEBUG_SERVER_LOG'));
 
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
 	
 		if (Slim::Schema::hasLibrary()) {

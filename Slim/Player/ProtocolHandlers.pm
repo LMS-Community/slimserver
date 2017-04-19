@@ -142,7 +142,7 @@ sub iconForURL {
 		}
 	}
 	
-	elsif (main::NOLIBRARY) {
+	elsif (!main::LIBRARY) {
 		# cut short, as we don't have a library
 		return;
 	}

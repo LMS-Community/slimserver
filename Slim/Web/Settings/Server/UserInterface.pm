@@ -28,7 +28,7 @@ sub prefs {
 	my @prefs = qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize additionalPlaylistButtons
 					   longdateFormat shortdateFormat timeFormat titleFormatWeb);
 					   
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		push @prefs, qw(showArtist showYear)
 	}
 

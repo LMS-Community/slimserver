@@ -52,7 +52,7 @@ use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache|--nolibrary/ } @ARGV ) ? 1 : 0;
-use constant NOLIBRARY    => ( grep { /--nolibrary/ } @ARGV ) ? 1 : 0;
+use constant LIBRARY      => ( grep { /--nolibrary/ } @ARGV ) ? 0 : 1;
 
 # leaving some legacy flags for the moment - unlikely but possibly some 3rd party plugin is referring to it
 use constant SLIM_SERVICE => 0;
@@ -183,7 +183,7 @@ use AnyEvent;
 
 # Load AIO support if available
 my $HAS_AIO;
-sub HAS_AIO { if (!main::NOLIBRARY) {
+sub HAS_AIO { if (main::LIBRARY) {
 	return $HAS_AIO if defined $HAS_AIO;
 		
 	eval {
@@ -198,7 +198,7 @@ sub HAS_AIO { if (!main::NOLIBRARY) {
 } }
 
 my $MEDIASUPPORT;
-sub MEDIASUPPORT { if (!main::NOLIBRARY) {
+sub MEDIASUPPORT { if (main::LIBRARY) {
 	return $MEDIASUPPORT if defined $MEDIASUPPORT;
 
 	eval {
@@ -256,7 +256,7 @@ use Slim::Menu::GlobalSearch;
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
 
-if (!main::NOLIBRARY) {
+if (main::LIBRARY) {
 	require Slim::Music::Import;
 	require Slim::Music::VirtualLibraries;
 }
@@ -268,7 +268,7 @@ use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
 
-if (!main::NOLIBRARY) {
+if (main::LIBRARY) {
 	require Slim::Utils::Scanner::Local;
 }
 
@@ -558,7 +558,7 @@ sub init {
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
 	
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		Slim::Schema->init();
 		Slim::Music::VirtualLibraries->init();
 		
@@ -616,7 +616,7 @@ sub init {
 		Slim::Utils::Log->reInit;
 	}
 
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		main::INFOLOG && $log->info("Server checkDataSource...");
 		checkDataSource();
 		
@@ -1090,7 +1090,7 @@ sub changeEffectiveUserAndGroup {
 	logger('server')->info("Running as uid: $> / gid: $)");
 }
 
-sub checkDataSource { if (!main::NOLIBRARY) {
+sub checkDataSource { if (main::LIBRARY) {
 
 	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
 	my $modified = 0;
@@ -1178,7 +1178,7 @@ sub cleanup {
 	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
-	if (!main::NOLIBRARY && $INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
+	if (main::LIBRARY && $INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 
 		if (Slim::Music::Import->stillScanning()) {
 			logger('')->info("Cancel running scanner.");

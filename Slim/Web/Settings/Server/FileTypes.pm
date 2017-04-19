@@ -120,7 +120,7 @@ sub handler {
 	
 	$paramRef->{'formats'} = \@formats;
 
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
 		$paramRef->{'disabledextensionsvideo'}  = $prefs->get('disabledextensionsvideo');
 		$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');

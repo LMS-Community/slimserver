@@ -25,7 +25,7 @@ sub page {
 sub prefs {
 	my @prefs = ( $prefs, qw(serverPriority maxPlaylistLength useLocalImageproxy) );
 				
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 	 	push @prefs, qw(autorescan autorescan_stat_interval) if Slim::Utils::OSDetect::getOS->canAutoRescan;
  		push @prefs, qw(dbhighmem disableStatistics scannerPriority precacheArtwork dontTriggerScanOnPrefChange);
 	}
@@ -36,7 +36,7 @@ sub prefs {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 		
-	if ( !main::NOLIBRARY && $paramRef->{'saveSettings'} ) {
+	if ( main::LIBRARY && $paramRef->{'saveSettings'} ) {
 		my $curAuto = $prefs->get('autorescan');
 		if ( $curAuto != $paramRef->{pref_autorescan} ) {
 			require Slim::Utils::AutoRescan;

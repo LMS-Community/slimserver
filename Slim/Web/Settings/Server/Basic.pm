@@ -26,7 +26,7 @@ sub page {
 sub prefs {
 	my @prefs = qw(language libraryname);
 	
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		push @prefs, qw(playlistdir)
 	}
 	
@@ -37,7 +37,7 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 	
 	my $runScan;
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		# tell the server not to trigger a rescan immediately, but let it queue up requests
 		# this is neede to prevent multiple scans to be triggered by change handlers for paths etc.
 		Slim::Music::Import->doQueueScanTasks(1);
@@ -94,7 +94,7 @@ sub handler {
 			}
 		}
 		
-		if (!main::NOLIBRARY) {
+		if (main::LIBRARY) {
 			# handle paths
 			my @paths;
 			my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
@@ -141,7 +141,7 @@ sub handler {
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 	
-	if (!main::NOLIBRARY) {
+	if (main::LIBRARY) {
 		my $ignoreFolders = {
 			audio => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInAudioScan') } },
 			video => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInVideoScan') } },
