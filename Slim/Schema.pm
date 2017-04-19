@@ -102,6 +102,7 @@ my $TOTAL_CACHE = {};
 my $_dbh;
 
 sub dbh {
+	logBacktrace('dbh');
 	return $_dbh || shift->storage->dbh;
 }
 
@@ -2277,6 +2278,7 @@ sub _retrieveTrack {
 	my $dirname = dirname($url);
 	my $source  = $playlist ? 'Playlist' : 'Track';
 
+logBacktrace($url);
 	if (!$playlist && defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
 
 		$track = $self->lastTrack->{$dirname};

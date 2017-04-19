@@ -94,78 +94,76 @@ sub handler {
 			}
 		}
 		
-		if (main::LIBRARY) {
-			# handle paths
-			my @paths;
-			my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
-	
-			my $ignoreFolders = {
-				audio => [],
-				video => [],
-				image => [],
-			};
-	
-			my $singleDirScan;
-			for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
-				if (my $path = $paramRef->{"pref_mediadirs$i"}) {
-					delete $oldPaths{$path};
-					push @paths, $path;
-	
-					if ($paramRef->{"pref_rescan_mediadir$i"}) {
-						$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
-					}
-					
-					push @{ $ignoreFolders->{audio} }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
-					push @{ $ignoreFolders->{video} }, $path if !$paramRef->{"pref_ignoreInVideoScan$i"};
-					push @{ $ignoreFolders->{image} }, $path if !$paramRef->{"pref_ignoreInImageScan$i"};
+		# handle paths
+		my @paths;
+		my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
+
+		my $ignoreFolders = {
+			audio => [],
+			video => [],
+			image => [],
+		};
+
+		my $singleDirScan;
+		for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
+			if (my $path = $paramRef->{"pref_mediadirs$i"}) {
+				delete $oldPaths{$path};
+				push @paths, $path;
+
+				if ($paramRef->{"pref_rescan_mediadir$i"}) {
+					$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
 				}
+				
+				push @{ $ignoreFolders->{audio} }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
+				push @{ $ignoreFolders->{video} }, $path if !$paramRef->{"pref_ignoreInVideoScan$i"};
+				push @{ $ignoreFolders->{image} }, $path if !$paramRef->{"pref_ignoreInImageScan$i"};
 			}
-			
-			$prefs->set('ignoreInAudioScan', $ignoreFolders->{audio});
-			$prefs->set('ignoreInVideoScan', $ignoreFolders->{video});
-			$prefs->set('ignoreInImageScan', $ignoreFolders->{image});
-	
-			my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
-			
-			if ( keys %oldPaths || !$oldCount || scalar @paths != $oldCount ) {
-				$prefs->set('mediadirs', \@paths);
-			}
-			# only run single folder scan if the paths haven't changed (which would trigger a rescan anyway)
-			elsif ( $singleDirScan ) {
-				Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', $singleDirScan ] );
-				$runScan = 1;
-			}
+		}
+		
+		$prefs->set('ignoreInAudioScan', $ignoreFolders->{audio});
+		$prefs->set('ignoreInVideoScan', $ignoreFolders->{video});
+		$prefs->set('ignoreInImageScan', $ignoreFolders->{image});
+
+		my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
+		
+		if ( keys %oldPaths || !$oldCount || scalar @paths != $oldCount ) {
+			$prefs->set('mediadirs', \@paths);
+		}
+		# only run single folder scan if the paths haven't changed (which would trigger a rescan anyway)
+		elsif ( main::LIBRARY && $singleDirScan ) {
+			Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', $singleDirScan ] );
+			$runScan = 1;
 		}
 	}
 
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 	
-	if (main::LIBRARY) {
-		my $ignoreFolders = {
-			audio => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInAudioScan') } },
-			video => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInVideoScan') } },
-			image => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInImageScan') } },
-		};
-		
-		$paramRef->{mediadirs} = [];
-		foreach ( @{ Slim::Utils::Misc::getMediaDirs() } ) {
-			push @{ $paramRef->{mediadirs} }, {
-				path  => $_,
-				audio => $ignoreFolders->{audio}->{$_},
-				video => $ignoreFolders->{video}->{$_},
-				image => $ignoreFolders->{image}->{$_},
-			}
+	my $ignoreFolders = {
+		audio => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInAudioScan') } },
+		video => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInVideoScan') } },
+		image => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInImageScan') } },
+	};
+	
+	$paramRef->{mediadirs} = [];
+	foreach ( @{ Slim::Utils::Misc::getMediaDirs() } ) {
+		push @{ $paramRef->{mediadirs} }, {
+			path  => $_,
+			audio => $ignoreFolders->{audio}->{$_},
+			video => $ignoreFolders->{video}->{$_},
+			image => $ignoreFolders->{image}->{$_},
 		}
+	}
+
+	# add an empty input field for an additional mediadir input field
+	push @{$paramRef->{mediadirs}}, {
+		path  => '',
+	};
+
+	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
+	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 	
-		# add an empty input field for an additional mediadir input field
-		push @{$paramRef->{mediadirs}}, {
-			path  => '',
-		};
-	
-		$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
-		$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
-	
+	if (main::LIBRARY) {
 		Slim::Music::Import->doQueueScanTasks(0);
 		Slim::Music::Import->nextScanTask() if $runScan || !$prefs->get('dontTriggerScanOnPrefChange');
 	}

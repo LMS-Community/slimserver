@@ -327,14 +327,7 @@ sub init {
 	
     $class->_initModes();
     
-    if (!main::LIBRARY) {
-    	$class->registerNodeFilter(sub {
-    		my ($client, $id) = @_;
-    		warn $id;
-#    		return;
-    	})
-    }
-    else {
+    if (main::LIBRARY) {
 	    Slim::Menu::GlobalSearch->registerInfoProvider( searchMyMusic => (
 				isa  => 'top',
 				func => \&_globalSearchMenu,
@@ -496,9 +489,9 @@ sub _handleMenuChanges {
 }
 
 sub _conditionWrapper {
-	my ($client, $id, $baseCondition) = @_;
+	my ($client, $id, $baseCondition, $ignoreLibrary) = @_;
 	
-	if ($baseCondition && !$baseCondition->($client, $id)) {
+	if ($baseCondition && !$baseCondition->($client, $id, $ignoreLibrary)) {
 		return 0;
 	}
 	
@@ -528,11 +521,11 @@ sub _getNodeList {
 }
 
 sub isEnabledNode {
-	my ($client, $nodeId) = @_;
+	my ($client, $nodeId, $ignoreLibrary) = @_;
 
 	return if $client && $prefs->client($client)->get('disabled_' . $nodeId);
 	
-	return Slim::Schema::hasLibrary();
+	return $ignoreLibrary ? 1 : Slim::Schema::hasLibrary();
 }
 
 sub _registerBaseNodes {
@@ -643,7 +636,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
 			condition    => sub {
-				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveMediaDirs() });
+				return isEnabledNode($_[0], $_[1], 1) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveMediaDirs() });
 			},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
@@ -660,8 +653,10 @@ sub _registerBaseNodes {
 								return unless isEnabledNode(@_);
 								return 1 if Slim::Utils::Misc::getPlaylistDir();
 								
-								my $totals = Slim::Schema->totals($_[0]);
-								return $totals->{playlist} if $totals;
+								if (main::LIBRARY) {
+									my $totals = Slim::Schema->totals($_[0]);
+									return $totals->{playlist} if $totals;
+								}
 							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
@@ -685,14 +680,26 @@ sub _registerBaseNodes {
 }
 
 sub getJiveMenu {
-	my ($client, $baseNode, $updateCallback) = @_;
+	my ($client, $args) = @_;
+	my ($baseNode, $updateCallback, $ignoreLibrary);
+	
+	if (ref $args && ref $args eq 'HASH') {
+		$baseNode = $args->{baseNode};
+		$updateCallback = $args->{updateCallback};
+		$ignoreLibrary = $args->{ignoreLibrary};
+	}
+	# legacy parameters were not passed in a hash ref
+	else {
+		$baseNode = $args;
+		$updateCallback = $_[2];
+	}
 	
 	$jiveUpdateCallback = $updateCallback if $updateCallback;
 	
 	my @myMusicMenu;
 	
 	foreach my $node (@{_getNodeList()}) {
-		if (!_conditionWrapper($client, $node->{'id'}, $node->{'condition'})) {
+		if (!_conditionWrapper($client, $node->{'id'}, $node->{'condition'}, $ignoreLibrary)) {
 			next;
 		}
 		
@@ -842,8 +849,7 @@ sub _generic {
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @$queryTags ];
 
-	if (!$args->{remote_library} && !Slim::Schema::hasLibrary()) {
-	
+	if ( !$args->{remote_library} && !Slim::Schema::hasLibrary() && !eval { $query =~ /musicfolder|readdirectory/ } ) {
 		$log->warn('Database not fully initialized yet - return dummy placeholder');
 	
 		logBacktrace('no callback') unless $callback;

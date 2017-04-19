@@ -75,7 +75,8 @@ sub home {
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 	$params->{'newPlugins'} = Slim::Utils::PluginManager->message;
 
-	if (Slim::Schema::hasLibrary()) {
+	# in --nolibrary mode we're still going to show BMF and remote libraries
+	if (!main::LIBRARY || Slim::Schema::hasLibrary()) {
 		$params->{'hasLibrary'} = 1;
 	} else {
 		$params->{'hasLibrary'} = 0;
@@ -164,7 +165,7 @@ sub home {
 			Slim::Web::Pages::Common->addLibraryStats($params, $client);
 		}
 	
-		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		if ( main::LIBRARY && (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 			$params->{library_id}   = $library_id;
 			$params->{library_name} = Slim::Music::VirtualLibraries->getNameForId($library_id, $client);
 		}

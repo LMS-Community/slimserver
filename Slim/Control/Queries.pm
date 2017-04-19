@@ -1884,7 +1884,7 @@ sub mediafolderQuery {
 	my ($sql, $volatileUrl);
 	
 	# Bug 17436, don't allow BMF if a scan is running, browse without storing tracks in database instead
-	if (Slim::Music::Import->stillScanning()) {
+	if (!main::LIBRARY || Slim::Music::Import->stillScanning()) {
 		$volatileUrl = 1;
 	}
 
@@ -2051,7 +2051,7 @@ sub mediafolderQuery {
 
 			$topPath = blessed($topLevelObj) ? $topLevelObj->path : '';
 			
-			my $sth = (!$type || $type eq 'audio') ? Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE url = ?') : undef;
+			my $sth = !$volatileUrl && (!$type || $type eq 'audio') ? Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE url = ?') : undef;
 			
 			my $chunkCount = 0;
 			$items = [ grep {

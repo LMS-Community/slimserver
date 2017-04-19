@@ -755,10 +755,6 @@ sub updateMenu {
 	}
 	
 	for my $menuItem ( @{$menuItem} ) {
-		if ($menuItem eq 'BROWSE_MUSIC' && !Slim::Schema::hasLibrary()) {
-			next;
-		}
-		
 		# more leakage of the LineIn plugin..
 		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
 			next;

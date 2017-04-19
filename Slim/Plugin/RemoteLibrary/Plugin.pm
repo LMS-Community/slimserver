@@ -97,7 +97,7 @@ sub initPlugin {
 		tag    => 'selectRemoteLibrary',
 		node   => 'myMusic',
 		menu   => 'browse',
-		weight => 110,
+		weight => main::LIBRARY ? 110 : 90,
 	);
 }
 

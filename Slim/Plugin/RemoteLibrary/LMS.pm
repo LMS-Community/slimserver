@@ -178,7 +178,9 @@ sub _getRemoteMenu {
 		});
 	}
 	else {
-		$cb->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client), $remote_library) );
+		$cb->( _extractBrowseMenu(Slim::Menu::BrowseLibrary::getJiveMenu($client, {
+			ignoreLibrary => 1
+		}), $remote_library) );
 	}
 }
 

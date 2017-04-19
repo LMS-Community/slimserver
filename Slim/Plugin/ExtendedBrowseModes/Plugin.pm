@@ -221,18 +221,6 @@ sub getDisplayName { 'VIRTUALLIBRARIES' }
 
 sub initMenus {
 	my @additionalStaticMenuItems = ({
-		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
-		params       => {
-			mode => 'vaalbums',
-			# we need to inject the latest VA ID
-			artist_id => Slim::Schema->variousArtistsObject->id,
-		},
-		feed         => 'albums',
-		id           => 'myMusicAlbumsVariousArtists',
-		weight       => 22,
-		static       => 1,		# this menu is not user-defined
-		enabled      => 1,
-	},{
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS',
 		params       => {
 			mode => 'filesystem',
@@ -241,23 +229,39 @@ sub initMenus {
 		id           => 'myMusicFileSystem',
 		icon         => 'plugins/ExtendedBrowseModes/html/icon_folder.png',
 		weight       => 75,
-		static       => 1,
+		static       => 1,		# this menu is not user-defined
 		nocache      => 1,
+		# we enable the the filesystem browsing if no library is enabled
 		condition    => main::LIBRARY ? undef : sub { 1 },
-		enabled      => main::LIBRARY ? 0 : 1,
-	},{
-		name         => 'PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS',
-		params       => {
-			mode => 'randomalbums',
-			sort => 'random',
-		},
-		feed         => \&_randomAlbums,
-		id           => 'myMusicRandomAlbums',
-		icon         => 'plugins/ExtendedBrowseModes/html/randomalbums.png',
-		weight       => 21,
-		static       => 1,
-		nocache      => 1,
 	});
+	
+	if (main::LIBRARY) {
+		push @additionalStaticMenuItems, {
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS',
+			params       => {
+				mode => 'randomalbums',
+				sort => 'random',
+			},
+			feed         => \&_randomAlbums,
+			id           => 'myMusicRandomAlbums',
+			icon         => 'plugins/ExtendedBrowseModes/html/randomalbums.png',
+			weight       => 21,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
+			params       => {
+				mode => 'vaalbums',
+				# we need to inject the latest VA ID
+				artist_id => Slim::Schema->variousArtistsObject->id,
+			},
+			feed         => 'albums',
+			id           => 'myMusicAlbumsVariousArtists',
+			weight       => 22,
+			static       => 1,
+			enabled      => 1,
+		};
+	}
 	
 	if (main::STATISTICS) {
 		push @additionalStaticMenuItems, {
@@ -290,9 +294,6 @@ sub initMenus {
 	}
 
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
-		# we only allow "Browse Filesystem" in --nolibrary mode
-		next if !main::LIBRARY && $_->{name} ne 'PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS';
-	
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
