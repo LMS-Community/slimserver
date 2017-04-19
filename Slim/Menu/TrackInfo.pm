@@ -339,7 +339,7 @@ sub infoContributors {
 			label => 'ARTIST',
 		};
 	}
-	else {
+	elsif (main::LIBRARY) {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 		
 		# Loop through each pref to see if the user wants to link to that contributor role.
@@ -405,7 +405,7 @@ sub infoContributors {
 	return $items;
 }
 
-sub showArtwork {
+sub showArtwork { if (main::LIBRARY) {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $items = [];
 	my $jive;
@@ -424,7 +424,7 @@ sub showArtwork {
 	};
 	
 	return $items;
-}
+} }
 
 sub playTrack {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
@@ -617,7 +617,7 @@ sub infoAlbum {
 			label => 'ALBUM',
 		};
 	}
-	elsif ( my $album = $track->album ) {
+	elsif ( main::LIBRARY && (my $album = $track->album) ) {
 		my $id = $album->id;
 
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
@@ -673,7 +673,7 @@ sub infoGenres {
 			label => 'GENRE',
 		};
 	}
-	else {
+	elsif (main::LIBRARY) {
 		for my $genre ( $track->genres ) {
 			my $id = $genre->id;
 	
@@ -732,7 +732,7 @@ sub infoYear {
 			label => 'YEAR',
 		};
 	}
-	elsif ( my $year = $track->year ) {
+	elsif ( main::LIBRARY && (my $year = $track->year) ) {
 
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 		

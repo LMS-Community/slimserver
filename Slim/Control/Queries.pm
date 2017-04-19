@@ -37,7 +37,6 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 use Tie::Cache::LRU::Expires;
 
-use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
@@ -2036,7 +2035,7 @@ sub mediafolderQuery {
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
-		my $cacheKey = md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+		my $cacheKey = md5_hex(($params->{url} || $params->{id} || '') . $type . (main::LIBRARY ? Slim::Music::VirtualLibraries->getLibraryIdForClient($client) : ''));
 		if (my $cachedItem = $bmfCache{$cacheKey}) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
@@ -2966,6 +2965,11 @@ sub searchQuery {
 		$request->setStatusBadDispatch();
 		return;
 	}
+	
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
 
 	my $client   = $request->client;
 	my $index    = $request->getParam('_index');
@@ -3234,7 +3238,7 @@ sub serverstatusQuery {
 		$request->addResult('mac', $mac);
 	}
 
-	if (Slim::Schema::hasLibrary()) {
+	if ( main::LIBRARY && Slim::Schema::hasLibrary() ) {
 		# add totals
 		my $totals = Slim::Schema->totals($request->client);
 		
@@ -3548,7 +3552,7 @@ sub statusQuery {
 	$request->addResult("player_connected", $connected);
 	$request->addResult("player_ip", $client->ipport()) if $connected;
 	
-	if (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) {
+	if ( main::LIBRARY && (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 		$request->addResult("library_id", $library_id);
 		$request->addResult("library_name", Slim::Music::VirtualLibraries->getNameForId($library_id, $client));
 	}

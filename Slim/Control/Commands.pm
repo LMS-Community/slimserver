@@ -1929,7 +1929,7 @@ sub playlistcontrolCommand {
 
 	$playlist_id ||= $request->getParam('playlist_id');
 
-	if ($playlist_id) {
+	if (main::LIBRARY && $playlist_id) {
 
 		# Special case...
 		my $playlist = Slim::Schema->find('Playlist', $playlist_id);
@@ -3487,7 +3487,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 		}
 
-		if ( $library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		if ( main::LIBRARY && ($library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 			if ( Slim::Music::VirtualLibraries->getRealId($library_id) ) {
 				$joinMap{'libraryTracks'} = 'libraryTracks';
 				$find{'libraryTracks.library'} = $library_id;

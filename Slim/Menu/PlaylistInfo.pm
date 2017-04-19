@@ -180,7 +180,7 @@ sub menu {
 	};
 }
 
-sub playlistItemCount {
+sub playlistItemCount { if (main::LIBRARY) {
 	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter) = @_;
 	
 	my $items = [];
@@ -197,7 +197,7 @@ sub playlistItemCount {
 	};
 	
 	return $items;
-}
+} }
 
 sub playPlaylist {
 	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter) = @_;
@@ -222,7 +222,7 @@ sub playPlaylist {
 	};
 	$actions->{play} = $actions->{go};
 	
-	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+	if ( main::LIBRARY && (my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 		$actions->{go}->{params}->{library_id} = $library_id;
 	}
 
@@ -276,7 +276,7 @@ sub addPlaylist {
 	$actions->{play} = $actions->{go};
 	$actions->{add}  = $actions->{go};
 	
-	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+	if ( main::LIBRARY && (my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 		$actions->{go}->{params}->{library_id} = $library_id;
 	}
 

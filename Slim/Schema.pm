@@ -39,7 +39,6 @@ use Tie::Cache::LRU::Expires;
 use URI;
 
 use Slim::Formats;
-use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -50,6 +49,10 @@ use Slim::Utils::Unicode;
 use Slim::Utils::Progress;
 use Slim::Utils::Prefs;
 use Slim::Schema::Debug;
+
+if (main::LIBRARY) {
+	require Slim::Music::VirtualLibraries;
+}
 
 use Slim::Schema::RemoteTrack;
 use Slim::Schema::RemotePlaylist;
@@ -102,7 +105,7 @@ my $TOTAL_CACHE = {};
 my $_dbh;
 
 sub dbh {
-	logBacktrace('dbh');
+	main::LIBRARY || logBacktrace('dbh');
 	return $_dbh || shift->storage->dbh;
 }
 
@@ -1951,7 +1954,7 @@ Returns the total (cumulative) time in seconds of all audio tracks in the databa
 
 =cut
 
-sub totalTime {
+sub totalTime { if (main::LIBRARY) {
 	my ($self, $client) = @_;
 
 	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
@@ -1977,7 +1980,7 @@ sub totalTime {
 	}
 	
 	return $totalCache->{totalTime};
-}
+} }
 
 =head2 mergeSingleVAAlbum($albumid)
 
@@ -2278,7 +2281,7 @@ sub _retrieveTrack {
 	my $dirname = dirname($url);
 	my $source  = $playlist ? 'Playlist' : 'Track';
 
-logBacktrace($url);
+main::LIBRARY || logBacktrace($url);
 	if (!$playlist && defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
 
 		$track = $self->lastTrack->{$dirname};
@@ -3054,7 +3057,7 @@ sub clearLastError {
 
 sub lastError { $LAST_ERROR }
 
-sub totals {
+sub totals { if (main::LIBRARY) {
 	my ($class, $client) = @_;
 	
 	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
@@ -3081,7 +3084,7 @@ sub totals {
 	}
 	
 	return $totalCache;
-}
+} }
 
 sub _insertHash {
 	my ( $class, $table, $hash ) = @_;

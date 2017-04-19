@@ -147,7 +147,6 @@ should be passed a reference to a real sub (not an anonymous one).
 use strict;
 use JSON::XS::VersionOneAndTwo;
 
-use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -782,7 +781,9 @@ sub _topLevel {
 		}
 		
 		# check whether we have a global or per player library ID set
-		$params->{'library_id'} ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		if (main::LIBRARY) {
+			$params->{'library_id'} ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		}
 
 		my @searchTags;
 		for (@topLevelArgs) {
@@ -1009,7 +1010,7 @@ sub _search {
 	
 	my $items = searchItems($client);
 	
-	if ( !$remote_library &&  (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
+	if ( !$remote_library && main::LIBRARY && (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) ) {
 		foreach (@$items) {
 			$_->{'passthrough'} = [
 				{ 'library_id' => $library_id }
@@ -1036,7 +1037,7 @@ sub _globalSearchMenu {
 	
 	my $items = searchItems($client);
 	
-	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $library_id = main::LIBRARY && Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
 	foreach (@$items) {
 		$_->{'type'} = 'link'; 

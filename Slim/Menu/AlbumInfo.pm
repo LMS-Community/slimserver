@@ -218,7 +218,7 @@ sub infoContributors {
 			label => 'ARTIST',
 		};
 	}
-	else {
+	elsif (main::LIBRARY) {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 		
 		# Loop through each pref to see if the user wants to link to that contributor role.
@@ -382,7 +382,7 @@ sub infoCompilation {
 }
 
 
-sub showArtwork {
+sub showArtwork { if (main::LIBRARY) {
 	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
 	my $items = [];
 	my $jive;
@@ -401,7 +401,7 @@ sub showArtwork {
 	};
 	
 	return $items;
-}
+} }
 
 sub playAlbum {
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
