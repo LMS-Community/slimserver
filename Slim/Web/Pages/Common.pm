@@ -53,7 +53,7 @@ sub _lcPlural {
 	return sprintf("%s %s", $count, $word);
 }
 
-sub addLibraryStats {
+sub addLibraryStats { if (main::LIBRARY) {
 	my ($class, $params, $client) = @_;
 	
 	if (!Slim::Schema::hasLibrary()) {
@@ -98,7 +98,7 @@ sub addLibraryStats {
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}
-}
+} }
 
 sub addSongInfo {
 	my ($class, $client, $params, $getCurrentTitle) = @_;

@@ -82,6 +82,8 @@ sub home {
 		$params->{'hasLibrary'} = 0;
 	}
 
+	$params->{noLibrary} = main::LIBRARY ? 0 : 1;
+
 	# we don't need all of the heavy lifting for many index.html files. They are basically framesets.
 	if ( $template ne 'index.html' || !$lightIndex{$params->{systemSkin}} ) {
 		# More leakage from the DigitalInput 'plugin'

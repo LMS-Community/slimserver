@@ -1169,9 +1169,13 @@ sub handleSubFeed {
 }
 
 sub processTemplate {
+	my ($template, $stash) = @_;
+	
+	$stash->{noLibrary} = main::LIBRARY ? 0 : 1;
+	
 	my $page = Slim::Web::HTTP::filltemplatefile( @_ );
 	
-	Slim::Utils::Cache->new->set($_[1]->{renderCacheKey}, $page, 86400) if $page && $_[1]->{renderCacheKey};
+	Slim::Utils::Cache->new->set($stash->{renderCacheKey}, $page, 86400) if $page && $stash->{renderCacheKey};
 
 	return $page;
 }
