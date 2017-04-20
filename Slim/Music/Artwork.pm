@@ -28,7 +28,6 @@ use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
 use Slim::Formats;
-use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Log;

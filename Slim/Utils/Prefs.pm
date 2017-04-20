@@ -417,7 +417,7 @@ sub init {
 			}
 		}, 'autoDownloadUpdate', 'checkVersion' );
 
-		if ( !main::SCANNER ) {
+		if ( main::LIBRARY && !main::SCANNER ) {
 			$prefs->setChange( sub {
 				return if Slim::Music::Import->stillScanning;
 				
@@ -447,7 +447,7 @@ sub init {
 		}
 	}
 
-	if ( !main::SCANNER ) {
+	if ( main::LIBRARY && !main::SCANNER ) {
 		$prefs->setChange( sub {
 			my $newValues = $_[1];
 			my $oldValues = $_[3];

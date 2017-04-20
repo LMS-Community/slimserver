@@ -123,7 +123,7 @@ sub checkClientActivity {
 	if ($idletime) {
 		$idletime *= 60;
 		
-		if ( Slim::Music::Import->stillScanning() || $handler->isBusy($currenttime) ) {
+		if ( (main::LIBRARY && Slim::Music::Import->stillScanning()) || $handler->isBusy($currenttime) ) {
 			
 			$hasbeenidle = 0;
 			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");

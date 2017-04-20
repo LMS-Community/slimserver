@@ -1033,7 +1033,7 @@ sub mediafolderQuery {
 
 	$request->addResult('count', $count);
 	
-	if (!$volatileUrl) {
+	if (main::LIBRARY && !$volatileUrl) {
 		# we might have changed - flush to the db to be in sync.
 		$topLevelObj->update if blessed($topLevelObj);
 
