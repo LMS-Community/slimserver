@@ -3119,12 +3119,12 @@ sub _updateHash {
 }
 
 my $canFulltextSearch;
-sub canFulltextSearch {
+sub canFulltextSearch { if (main::LIBRARY) {
 	return $canFulltextSearch if defined $canFulltextSearch;
 	
 	$canFulltextSearch = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::FullTextSearch::Plugin') && Slim::Plugin::FullTextSearch::Plugin->canFulltextSearch;
 	return $canFulltextSearch; 
-}
+} }
 
 =head1 SEE ALSO
 

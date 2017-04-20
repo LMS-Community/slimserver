@@ -35,7 +35,7 @@ use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
 use constant NOMYSB       => 1;
-use constant LIBRARY      => 0;
+use constant LIBRARY      => 1;
 
 # Tell PerlApp to bundle these modules
 if (0) {
