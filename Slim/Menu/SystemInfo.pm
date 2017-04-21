@@ -351,7 +351,7 @@ sub infoServer {
 		},
 	];
 	
-	if ( Slim::Schema::hasLibrary() ) {
+	if ( main::LIBRARY && Slim::Schema::hasLibrary() ) {
 		push @{$items},	{
 			type => 'text',
 			name => cstring($client, 'DATABASE_VERSION') . cstring($client, 'COLON') . ' '

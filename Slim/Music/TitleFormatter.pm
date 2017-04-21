@@ -123,7 +123,7 @@ sub init {
 
 		my $disc = $_[0]->disc;
 
-		if ($disc && $disc == 1) {
+		if (main::LIBRARY && $disc && $disc == 1) {
 			
 			my $albumDiscc_sth = Slim::Schema->dbh->prepare_cached("SELECT discc FROM albums WHERE id = ?");
 

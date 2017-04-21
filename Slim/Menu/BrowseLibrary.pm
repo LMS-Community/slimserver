@@ -567,7 +567,7 @@ sub _registerBaseNodes {
 			name         => 'BROWSE_BY_ALL_ARTISTS',
 			params       => {
 				mode => 'artists',
-				role_id => join ',', Slim::Schema::Contributor->contributorRoles(),
+				role_id => main::LIBRARY ? join ',', Slim::Schema::Contributor->contributorRoles() : '',
 			},
 			feed         => \&_artists,
 			jiveIcon     => 'html/images/artists.png',
@@ -1963,7 +1963,7 @@ sub _tracks {
 			my $albumMetadata;
 			my $albumInfo;
 			my $image;
-			if ($getMetadata) {
+			if ( main::LIBRARY && $getMetadata ) {
 				my ($albumId) = grep {/album_id:/} @searchTags;
 				$albumId =~ s/album_id:// if $albumId;
 				my $album = Slim::Schema->find( Album => $albumId );

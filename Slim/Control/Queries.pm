@@ -3161,7 +3161,7 @@ sub _songData {
 				next;
 			}
 			
-			if ( defined(my $submethod = $tagref->[3]) ) {
+			if ( main::LIBRARY && defined(my $submethod = $tagref->[3]) ) {
 				
 				my $postfix = ($tag eq 'S')?"_ids":"";
 			

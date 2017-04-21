@@ -245,10 +245,6 @@ use Slim::Control::Request;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
-use Slim::Menu::AlbumInfo;
-use Slim::Menu::ArtistInfo;
-use Slim::Menu::GenreInfo;
-use Slim::Menu::YearInfo;
 use Slim::Menu::SystemInfo;
 use Slim::Menu::PlaylistInfo;
 use Slim::Menu::FolderInfo;
@@ -257,6 +253,10 @@ use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
 
 if (main::LIBRARY) {
+	require Slim::Menu::AlbumInfo;
+	require Slim::Menu::ArtistInfo;
+	require Slim::Menu::GenreInfo;
+	require Slim::Menu::YearInfo;
 	require Slim::Music::Import;
 	require Slim::Music::VirtualLibraries;
 }
@@ -295,9 +295,12 @@ if ( DEBUGLOG ) {
 	require Slim::Utils::PerlRunTime;
 }
 
-my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-eval "use $sqlHelperClass";
-die $@ if $@;
+my $sqlHelperClass;
+if ( main::LIBRARY ) {
+	$sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	eval "use $sqlHelperClass";
+	die $@ if $@;
+}
 
 our @AUTHORS = (
 	'Sean Adams',
@@ -407,7 +410,7 @@ sub init {
 		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
 	}
     
-	if ( $dbtype ) {
+	if ( main::LIBRARY && $dbtype ) {
 		# For testing SQLite, can specify a different database type
 		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
 		eval "use $sqlHelperClass";
@@ -591,14 +594,17 @@ sub init {
 	
 	main::INFOLOG && $log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
-	Slim::Menu::AlbumInfo->init();
-	Slim::Menu::ArtistInfo->init();
-	Slim::Menu::GenreInfo->init();
-	Slim::Menu::YearInfo->init();
 	Slim::Menu::SystemInfo->init();
 	Slim::Menu::PlaylistInfo->init();
 	Slim::Menu::FolderInfo->init();
 	Slim::Menu::GlobalSearch->init();
+	
+	if (main::LIBRARY) {
+		Slim::Menu::AlbumInfo->init();
+		Slim::Menu::ArtistInfo->init();
+		Slim::Menu::GenreInfo->init();
+		Slim::Menu::YearInfo->init();
+	}
 
 	main::INFOLOG && $log->info('Server Alarms init...');
 	Slim::Utils::Alarm->init();
@@ -1198,7 +1204,7 @@ sub cleanup {
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 
-	$sqlHelperClass->cleanup;
+	$sqlHelperClass->cleanup if $sqlHelperClass;
 
 	remove_pid_file();
 }

@@ -1184,7 +1184,7 @@ sub generateHTTPResponse {
 				$response,
 			);
 
-		} elsif ($path =~ /music\/(-[0-9a-f]+)\/download/) {
+		} elsif ( $path =~ /music\/(-[0-9a-f]+)\/download/ ) {
 			my $obj = Slim::Schema->find('Track', $1);
 			
 			# our download code can't handle the volatile files directly - let's fake a local file here
@@ -1222,7 +1222,7 @@ sub generateHTTPResponse {
 				$httpClient,
 				$response,
 			);
-		} elsif ($path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/) {
+		} elsif ( main::LIBRARY && $path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/ ) {
 			# Bug 10730
 			my $id = $1;
 			
@@ -2849,7 +2849,7 @@ sub downloadMusicFile {
 	return;
 }
 
-sub downloadVideoFile {
+sub downloadVideoFile { if (main::LIBRARY) {
 	my ($httpClient, $response, $id) = @_;
 
 	require Slim::Schema::Video;
@@ -2880,9 +2880,9 @@ sub downloadVideoFile {
 	}
 	
 	return;
-}
+} }
 
-sub downloadImageFile {
+sub downloadImageFile { if (main::LIBRARY) {
 	my ($httpClient, $response, $hash) = @_;
 
 	require Slim::Schema::Image;
@@ -2913,7 +2913,7 @@ sub downloadImageFile {
 	}
 	
 	return;
-}
+} }
 
 1;
 

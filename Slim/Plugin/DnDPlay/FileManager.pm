@@ -98,6 +98,8 @@ sub getCachedOrLocalFileUrl {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Found cached file '$url' for " . Data::Dump::dump($file) );
 		return $url;
 	}
+	
+	return unless main::LIBRARY;
 
 	# didn't find locally cached file - let's try the database instead
 	my $dbh = Slim::Schema->dbh;

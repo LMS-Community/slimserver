@@ -91,6 +91,14 @@ sub initPlugin {
 		after => 'playitem',
 		func  => \&trackInfoHandler,
 	) );
+	# Playlist Info handler
+	Slim::Menu::PlaylistInfo->registerInfoProvider( favorites => (
+		after => 'playitem',
+		func  => \&playlistInfoHandler,
+	) );
+
+	return unless main::LIBRARY;
+
 	# Album Info handler
 	Slim::Menu::AlbumInfo->registerInfoProvider( favorites => (
 		after => 'playitem',
@@ -100,11 +108,6 @@ sub initPlugin {
 	Slim::Menu::ArtistInfo->registerInfoProvider( favorites => (
 		after => 'playitem',
 		func  => \&artistInfoHandler,
-	) );
-	# Playlist Info handler
-	Slim::Menu::PlaylistInfo->registerInfoProvider( favorites => (
-		after => 'playitem',
-		func  => \&playlistInfoHandler,
 	) );
 }
 

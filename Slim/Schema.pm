@@ -46,11 +46,10 @@ use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
-use Slim::Utils::Progress;
 use Slim::Utils::Prefs;
-use Slim::Schema::Debug;
 
 if (main::LIBRARY) {
+	require Slim::Schema::Debug;
 	require Slim::Music::VirtualLibraries;
 }
 
@@ -398,7 +397,7 @@ Calls the schema_optimize.sql script for the current database driver.
 
 =cut
 
-sub optimizeDB {
+sub optimizeDB { if (main::LIBRARY) {
 	my $class = shift;
 	
 	my $log = logger('scan.import');
@@ -406,6 +405,8 @@ sub optimizeDB {
 	main::INFOLOG && $log->is_info && $log->info("Start schema_optimize");
 
 	my ($driver) = $class->sourceInformation;
+	
+	require Slim::Utils::Progress;
 
 	my $progress = Slim::Utils::Progress->new({ 
 		'type'  => 'importer', 
@@ -452,7 +453,7 @@ sub optimizeDB {
 		$log->error( sprintf('%30s: %s', $idx, $stats) );
 	}
 =cut
-}
+} }
 
 =head2 migrateDB()
 
@@ -2112,13 +2113,13 @@ Wipe the lastAlbum cache, if it contains the album $id
 
 =cut
 
-sub wipeLastAlbumCache {
+sub wipeLastAlbumCache { if (main::LIBRARY) {
 	my ( $self, $id ) = @_;
 	
 	if ( defined $id && exists $lastAlbum->{id} && $lastAlbum->{id} == $id ) {
 		$lastAlbum = {};
 	}
-}
+} }
 
 =head2 wipeAllData()
 
@@ -2126,7 +2127,7 @@ Wipe all data in the database. Encapsulates L<wipeDB> and L<wipeCaches>
 
 =cut
 
-sub wipeAllData {
+sub wipeAllData { if (main::LIBRARY) {
 	my $self = shift;
 
 	$self->schemaUpdated(undef);
@@ -2137,7 +2138,7 @@ sub wipeAllData {
 	Slim::Utils::ArtworkCache->new()->wipe();
 
 	main::INFOLOG && logger('scan.import')->info("Wiped the database.");
-}
+} }
 
 =head2 forceCommit()
 
@@ -2145,7 +2146,7 @@ Flush any pending database transactions to disk when not in AutoCommit mode.
 
 =cut
 
-sub forceCommit {
+sub forceCommit { if (main::LIBRARY) {
 	my $self = shift;
 
 	if (!$initialized) {
@@ -2171,7 +2172,7 @@ sub forceCommit {
 	else {
 		main::DEBUGLOG && $log->is_debug && $log->debug("forceCommit ignored, database is in AutoCommit mode");
 	}
-}
+} }
 
 =head2 artistOnlyRoles( @add );
 
@@ -2185,7 +2186,7 @@ additional roles.
 
 =cut
 
-sub artistOnlyRoles {
+sub artistOnlyRoles { if (main::LIBRARY) {
 	my $self  = shift;
 	my @add   = @_;
 
@@ -2223,7 +2224,7 @@ sub artistOnlyRoles {
 	}
 
 	return undef;
-}
+} }
 
 sub registerRatingImplementation {
 	my ( $class, $source, $impl ) = @_;
@@ -2237,7 +2238,7 @@ sub ratingImplementations {
 	return [ sort keys %ratingImplementations ];
 }
 
-sub rating {
+sub rating { if (main::LIBRARY) {
 	my ( $class, $track, $rating ) = @_;
 
 	my $impl = $prefs->get('ratingImplementation');
@@ -2247,7 +2248,7 @@ sub rating {
 	}
 
 	return $ratingImplementations{$impl}->( $track, $rating );
-}
+} }
 
 #
 # Private methods:
@@ -2660,21 +2661,23 @@ sub _preCheckAttributes {
 		$attributes->{'LYRICS'} = join("\n", @{$attributes->{'LYRICS'}});
 	}
 
-	# The ARTISTSORT and ALBUMARTISTSORT tags are normalized in Contributor->add()
-	# since the tag may need to be split.  See bugs #295 and #4584.
-	#
-	# Push these back until we have a Track object.
-	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
-		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
-		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
-		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID 
-		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
-		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT
-	)) {
-
-		next unless defined $attributes->{$tag};
-
-		$deferredAttributes->{$tag} = delete $attributes->{$tag};
+	if ( main::LIBRARY ) {
+		# The ARTISTSORT and ALBUMARTISTSORT tags are normalized in Contributor->add()
+		# since the tag may need to be split.  See bugs #295 and #4584.
+		#
+		# Push these back until we have a Track object.
+		for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
+			COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
+			COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
+			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID 
+			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+			ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT
+		)) {
+	
+			next unless defined $attributes->{$tag};
+	
+			$deferredAttributes->{$tag} = delete $attributes->{$tag};
+		}
 	}
 	
 	# If embedded artwork was found, store the length of the artwork

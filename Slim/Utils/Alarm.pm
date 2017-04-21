@@ -1741,20 +1741,22 @@ sub getPlaylists {
 
 	# Add the current saved playlists
 	# XXX: This code would ideally also be elsewhere
-	my @saved = Slim::Schema->rs('Playlist')->getPlaylists;
-	my @savedArray;
-	foreach my $playlist (@saved) {
-		push @savedArray, {
-				title => $playlist->title,
-				url => $playlist->url
-			};
+	if (main::LIBRARY) {
+		my @saved = Slim::Schema->rs('Playlist')->getPlaylists;
+		my @savedArray;
+		foreach my $playlist (@saved) {
+			push @savedArray, {
+					title => $playlist->title,
+					url => $playlist->url
+				};
+		}
+	
+		@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
+		push @playlists, {
+			type => 'PLAYLISTS',
+			items => \@savedArray,
+		};
 	}
-
-	@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
-	push @playlists, {
-		type => 'PLAYLISTS',
-		items => \@savedArray,
-	};
 
 	# Add natural sounds
 	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Sounds::Plugin') ) {

@@ -44,16 +44,18 @@ our @allColumns = (qw(
 	);
 
 	$class->set_primary_key('id');
-	
-	# setup our relationships
-	$class->belongs_to('album' => 'Slim::Schema::Album');
-	$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
-	
-	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
-	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
-	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
-	$class->has_many('libraryTracks'     => 'Slim::Schema::LibraryTrack');
+	if (main::LIBRARY) {
+		# setup our relationships
+		$class->belongs_to('album' => 'Slim::Schema::Album');
+		$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
+		
+		$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
+		$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
+	
+		$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
+		$class->has_many('libraryTracks'     => 'Slim::Schema::LibraryTrack');
+	}
 
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/title titlesort lyrics/);
@@ -110,6 +112,8 @@ sub attributes {
 
 sub albumid {
 	my $self = shift;
+	
+	return unless main::LIBRARY;
 
 	return $self->get_column('album');
 }
@@ -133,6 +137,8 @@ sub artistName {
 
 sub _artistid {
 	my $self = shift;
+
+	return unless main::LIBRARY;
 	
 	my $id = undef;
 
@@ -164,6 +170,8 @@ sub artistid {
 
 sub artist {
 	my $self = shift;
+
+	return unless main::LIBRARY;
 	
 	my ($id, $artist) = $self->_artistid;
 	
@@ -172,6 +180,8 @@ sub artist {
 
 sub artists {
 	my $self = shift;
+
+	return unless main::LIBRARY;
 
 	# Bug 4024 - include both ARTIST & TRACKARTIST here.
 	return $self->contributorsOfType(qw(ARTIST TRACKARTIST))->all;
@@ -227,6 +237,8 @@ sub band {
 
 sub genre {
 	my $self = shift;
+
+	return unless main::LIBRARY;
 
 	return $self->genres->first;
 }

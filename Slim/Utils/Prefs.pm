@@ -128,7 +128,7 @@ sub namespaces {
 
 sub init {
 	my $sqlHelperClass = $os->sqlHelperClass();
-	my $default_dbsource = $sqlHelperClass->default_dbsource();
+	my $default_dbsource = main::LIBRARY ? $sqlHelperClass->default_dbsource() : undef;
 	
 	my %defaults = (
 		# Server Prefs not settable from web pages

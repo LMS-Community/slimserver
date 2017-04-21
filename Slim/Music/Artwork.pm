@@ -159,7 +159,7 @@ sub findStandaloneArtwork {
 	return $art || 0;
 }
 
-sub updateStandaloneArtwork {
+sub updateStandaloneArtwork { if (main::LIBRARY) {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
 	
@@ -322,7 +322,7 @@ sub updateStandaloneArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}	
-}
+} }
 
 sub getImageContentAndType {
 	my $class = shift;
@@ -565,7 +565,7 @@ sub _readCoverArtFiles {
 	return undef;
 }
 
-sub precacheAllArtwork {
+sub precacheAllArtwork { if (main::LIBRARY) {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
 	my $force = shift; # sometimes we want all artwork to be re-rendered
@@ -756,7 +756,7 @@ sub precacheAllArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}	
-}
+} }
 
 sub getResizeSpecs {
 	my @specs = (

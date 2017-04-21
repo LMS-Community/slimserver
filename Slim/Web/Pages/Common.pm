@@ -20,7 +20,6 @@ use Slim::Player::Client;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
-use Slim::Utils::Progress;
 use Slim::Web::HTTP;
 
 my $prefs = preferences('server');

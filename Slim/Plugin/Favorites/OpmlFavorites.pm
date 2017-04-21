@@ -185,7 +185,7 @@ sub xmlbrowser {
 	my $hash = $class->SUPER::xmlbrowser;
 
 	# optionally let the user browse into local favorite items
-	if ( !$prefs->get('dont_browsedb')) {
+	if ( main::LIBRARY && !$prefs->get('dont_browsedb')) {
 		$class->_prepareDbItems($hash->{'items'});
 	}
 	
@@ -196,7 +196,7 @@ sub xmlbrowser {
 
 my $dbBrowseModes;
 
-sub _prepareDbItems {
+sub _prepareDbItems { if (main::LIBRARY) {
 	my ( $class, $items ) = @_;
 
 	foreach my $item (@$items) {
@@ -234,9 +234,9 @@ sub _prepareDbItems {
 			$class->_prepareDbItems($item->{'items'});
 		}
 	}
-}
+} }
 
-sub _dbItem {
+sub _dbItem { if (main::LIBRARY) {
 	my ($client, $callback, $args, $pt) = @_;
 	
 	my $class  = ucfirst( delete $pt->{'class'} );
@@ -273,7 +273,7 @@ sub _dbItem {
 		} ],
 		total => 1
 	});
-}
+} }
 
 sub all {
 	my $class  = shift;
