@@ -567,7 +567,7 @@ sub _registerBaseNodes {
 			name         => 'BROWSE_BY_ALL_ARTISTS',
 			params       => {
 				mode => 'artists',
-				role_id => main::LIBRARY ? join ',', Slim::Schema::Contributor->contributorRoles() : '',
+				role_id => join ',', Slim::Schema::Contributor->contributorRoles(),
 			},
 			feed         => \&_artists,
 			jiveIcon     => 'html/images/artists.png',

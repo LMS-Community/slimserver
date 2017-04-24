@@ -52,6 +52,10 @@ if (main::LIBRARY) {
 	require Slim::Schema::Debug;
 	require Slim::Music::VirtualLibraries;
 }
+else {
+	# We don't really need the contributors handling, but some of its helper methods
+	require Slim::Schema::Contributor;
+}
 
 use Slim::Schema::RemoteTrack;
 use Slim::Schema::RemotePlaylist;

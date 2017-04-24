@@ -324,6 +324,18 @@ sub getBitrate {
 	return ( blessed $track ) ? $track->bitrate : undef;
 }
 
+sub getPrettyBitrate {
+	my ( $bitrate, $vbrScale ) = @_;
+	
+	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
+
+	if ($bitrate) {
+		return sprintf( "%d", ($bitrate / 1000) ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
+	}
+
+	return 0;
+}	
+
 sub setBitrate {
 	my $urlOrTrack = shift;
 	my $bitrate    = shift;

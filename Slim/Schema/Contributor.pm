@@ -1,13 +1,9 @@
 package Slim::Schema::Contributor;
 
-# $Id$
-
 use strict;
 use base 'Slim::Schema::DBI';
 
 use Scalar::Util qw(blessed);
-
-use Slim::Schema::ResultSet::Contributor;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -27,8 +23,10 @@ my $totalContributorRoles = scalar @contributorRoles;
 
 my %roleToContributorMap = reverse %contributorToRoleMap;
 
-{
+{ if (main::LIBRARY) {
 	my $class = __PACKAGE__;
+
+	require Slim::Schema::ResultSet::Contributor;
 
 	$class->table('contributors');
 
@@ -61,7 +59,7 @@ my %roleToContributorMap = reverse %contributorToRoleMap;
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Contributor');
-}
+} }
 
 sub contributorRoles {
 	return @contributorRoles;
@@ -87,7 +85,7 @@ sub roleToType {
 	return $roleToContributorMap{$_[1]};
 }
 
-sub displayAsHTML {
+sub displayAsHTML { if (main::LIBRARY) {
 	my ($self, $form, $descend, $sort) = @_;
 
 	my $vaString = Slim::Music::Info::variousArtistString();
@@ -97,16 +95,16 @@ sub displayAsHTML {
 	if ($self->name eq $vaString) {
 		$form->{'attributes'} .= "&album.compilation=1";
 	}
-}
+} }
 
 # For saving favorites.
-sub url {
+sub url { if (main::LIBRARY) {
 	my $self = shift;
 
 	return sprintf('db:contributor.name=%s', URI::Escape::uri_escape_utf8($self->name));
-}
+} }
 
-sub add {
+sub add { if (main::LIBRARY) {
 	my $class = shift;
 	my $args  = shift;
 
@@ -171,9 +169,9 @@ sub add {
 	}
 
 	return wantarray ? @contributors : $contributors[0];
-}
+} }
 
-sub isInLibrary {
+sub isInLibrary { if (main::LIBRARY) {
 	my ( $self, $library_id ) = @_;
 	
 	return 1 unless $library_id && $self->id;
@@ -194,11 +192,11 @@ sub isInLibrary {
 	$sth->finish;
 	
 	return $inLibrary;
-}
+} }
 
 # Rescan list of contributors, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
-sub rescan {
+sub rescan { if (main::LIBRARY) {
 	my ( $class, @ids ) = @_;
 	
 	my $log = logger('scan.scanner');
@@ -220,7 +218,7 @@ sub rescan {
 			$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
 		}
 	}
-}
+} }
 
 1;
 

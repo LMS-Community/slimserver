@@ -306,14 +306,8 @@ sub prettyBitRate {
 
 sub buildPrettyBitRate {
 	my ( $self, $bitrate, $vbrScale ) = @_;
-	
-	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 
-	if ($bitrate) {
-		return sprintf( "%d", ($bitrate / 1000) ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
-	}
-
-	return 0;
+	return Slim::Music::Info::getPrettyBitrate($bitrate, $vbrScale);
 }	
 
 # Wrappers around common functions
