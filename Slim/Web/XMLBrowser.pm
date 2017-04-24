@@ -1255,7 +1255,10 @@ sub webLink {
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
 
 	my $renderCacheKey;
-	if ( !main::NOBROWSECACHE && $cacheables{ $args->{path} } && !($args->{url_query} && $args->{url_query} =~ /\baction=/) && !($args->{url_query} && $args->{url_query} =~ /\bindex=\d+\.\d+\.\d+/) && !Slim::Music::Import->stillScanning() ) {
+	if ( !main::NOBROWSECACHE && $cacheables{ $args->{path} } 
+		&& !($args->{url_query}	&& $args->{url_query} =~ /\baction=/)
+		&& !($args->{url_query} && $args->{url_query} =~ /\bindex=\d+\.\d+\.\d+/)
+		&& !(main::LIBRARY && Slim::Music::Import->stillScanning()) ) {
 		
 		# let cache expire between server restarts
 		$cacheTimestamp ||= time();

@@ -61,7 +61,7 @@ sub playlist {
 	$params->{'skinOverride'} ||= '';
 	
 	my $itemsPerPage  = $prefs->get('itemsPerPage');
-	my $stillScanning = Slim::Music::Import->stillScanning();
+	my $stillScanning = main::LIBRARY && Slim::Music::Import->stillScanning();
 	my $currentSkin   = $params->{'skinOverride'} || $prefs->get('skin') || '';
 
 	if ( !defined $params->{'start'} ) {

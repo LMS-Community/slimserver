@@ -372,7 +372,7 @@ sub registerCustomString {
 }
 
 # transform genre_id/artist_id into real IDs if a text is used (eg. "Various Artists")
-sub valueToId {
+sub valueToId { if (main::LIBRARY) {
 	my ($class, $value, $key) = @_;
 	
 	if ($key eq 'role_id') {
@@ -416,7 +416,7 @@ sub valueToId {
 	}
 
 	return $value || -1;
-}
+} }
 
 sub _browseFS {
 	my ($client, $callback, $args, $pt) = @_;

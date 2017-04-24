@@ -171,10 +171,10 @@ sub handler {
 	return $class->SUPER::handler($client, $paramRef);
 }
 
-sub beforeRender {
+sub beforeRender { if (main::LIBRARY) {
 	my ($class, $paramRef) = @_;
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
-}
+} }
 
 1;
 

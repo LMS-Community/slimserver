@@ -89,7 +89,7 @@ sub handler {
 		if ($paramRef->{saveSettings}) {
 				
 			# if a scan is running and one of the music sources has changed, abort scan
-			if ( 
+			if ( main::LIBRARY &&
 				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
 					|| ($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
 				) && Slim::Music::Import->stillScanning ) 

@@ -136,7 +136,11 @@ sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
 	# some settings change required a rescan, and user did confirm it
-	if (Slim::Utils::Prefs::preferences('server')->get('dontTriggerScanOnPrefChange') && Slim::Music::Import->hasScanTask && $paramRef->{'doRescanNow'}) {
+	if ( main::LIBRARY
+		&& Slim::Utils::Prefs::preferences('server')->get('dontTriggerScanOnPrefChange') 
+		&& Slim::Music::Import->hasScanTask 
+		&& $paramRef->{'doRescanNow'}
+	) {
 		Slim::Music::Import->nextScanTask();
 	}
 
@@ -186,7 +190,12 @@ sub handler {
 	}
 	
 	# ask the user to run a scan
-	if (Slim::Utils::Prefs::preferences('server')->get('dontTriggerScanOnPrefChange') && Slim::Music::Import->hasScanTask && !$paramRef->{'warning'} && !Slim::Music::Import->stillScanning()) {
+	if ( main::LIBRARY
+		&& Slim::Utils::Prefs::preferences('server')->get('dontTriggerScanOnPrefChange') 
+		&& Slim::Music::Import->hasScanTask 
+		&& !$paramRef->{'warning'} 
+		&& !Slim::Music::Import->stillScanning()
+	) {
 		$paramRef->{'rescanUrl'} = $paramRef->{webroot} . $paramRef->{path} . '?doRescanNow=1';
 		$paramRef->{'rescanUrl'} .= '&rand=' . $paramRef->{'rand'} if $paramRef->{'rand'};
 

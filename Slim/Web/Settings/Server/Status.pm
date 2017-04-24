@@ -26,7 +26,7 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	if ($paramRef->{'abortScan'}) {
+	if (main::LIBRARY && $paramRef->{'abortScan'}) {
 		Slim::Music::Import->abortScan();
 	}
 	
