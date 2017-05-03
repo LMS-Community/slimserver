@@ -16891,6 +16891,36 @@ INFORMATION_PLAYER_MODEL_ABBR
 	RU	Модель
 	SV	Modell
 
+INFORMATION_PLAYER_MODEL_NAME
+	CS	Model přehrávače název
+	DA	Navn på Afspillermodel
+	DE	Player-Modell-Name
+	EN	Player Model Name
+	ES	Nombre de Modelo de reproductor
+	FI	Soittimen malliin nimi
+	FR	Nom de la Modèle platine
+	IT	Nome Modello del lettore
+	NL	Model van muzieksysteem-naam
+	NO	Navn på Spillermodell
+	PL	Nazwa usługi Model odtwarzacza
+	RU	Название Модель плеера
+	SV	Spelarmodell-namn
+		
+INFORMATION_PLAYER_MODEL_NAME_ABBR
+	CS	Model název
+	DA	Navn på Model
+	DE	Modell-Name
+	EN	Model Name
+	ES	Nombre de Modelo
+	FI	Malliin nimi
+	FR	Nom de la Modèle
+	IT	Nome Modello
+	NL	Model-naam
+	NO	Navn på Modell
+	PL	Nazwa usługi Model
+	RU	Название Модель
+	SV	Modell-namn
+
 INFORMATION_FIRMWARE
 	CS	Verze firmwaru přehrávače
 	DA	Afspillerens firmwareversion

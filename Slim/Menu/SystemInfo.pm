@@ -147,8 +147,8 @@ sub _getPlayerInfo {
 	
 	my $info = [
 #		{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
-		{ INFORMATION_PLAYER_MODEL           => $client->modelName },
-		{ PLAYER_TYPE                        => $client->model },
+		{ INFORMATION_PLAYER_MODEL_NAME      => $client->modelName },
+		{ INFORMATION_PLAYER_MODEL           => $client->model },
 		{ INFORMATION_FIRMWARE_ABBR          => $client->revision },
 		{ INFORMATION_PLAYER_IP              => $client->ip },
 #		{ INFORMATION_PLAYER_PORT            => $client->port },
