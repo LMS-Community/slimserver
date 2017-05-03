@@ -1,4 +1,34 @@
-<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD>
-<BODY>404 Not Found: [% path %]
-[% IF suggestion %]<p>[% suggestion | html %]</p>[% END %]
-</BODY></HTML>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+        <head>
+                <meta http-equiv="refresh" content="10; URL=[% webroot %]"> 
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+               
+
+                [% PROCESS standardheader.html %]
+
+        <!--[if lte IE 6]>
+        <link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
+        <![endif]-->
+        <!--[if IE 7]>
+        <link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
+        <![endif]-->
+        </head>
+        <body>
+        <div class="helpsection">
+                <img src="/html/images/countdown.gif" id="countdown">
+                <div id="helpsection">
+                        <br/><br/>
+                        <div class="selector_topLeft">
+                        <div class="selector_bottomRight">
+                        <div class="selector_bottomLeft">
+                        <div class="homeMenuItem" id=""><a href="[% webroot %]" class="browseItemLink"><b>Home</b></a>
+                </div>
+                        <div class="homeMenuItem" id=""><b>
+                        sorry can't find [% path %]</b><br>
+                        Logitechmediaserver has not found anything matching
+                        your Request-URI and gets you back to the start.
+                </div>
+        </body>
+        </head>
