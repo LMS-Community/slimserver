@@ -1447,6 +1447,7 @@ sub sendStreamingFile {
 	$response->header('Content-Disposition', 
 		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
 	) unless $showInBrowser;
+	$response->header('Accept-Ranges', 'bytes');
 	
 	my $fh = FileHandle->new($file);
 	
