@@ -111,6 +111,7 @@ sub connect {
 	
 	# Bug 5673, avoid a crash if socket is undef
 	if ( !defined $socket ) {
+		$log->error("Failed to connect to $host:$port, because\n$@");
 		_connect_error( $socket, $self, $args );
 		return;
 	}
