@@ -40,4 +40,15 @@
 		</select>
 	[% END %]
 
+        [% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY" desc="SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_DESC" %]
+                <select class="stdedit" name="pref_scrobble_first_artist_only" id="scrobble_first_artist_only">
+                        <option [% IF prefs.pref_scrobble_first_artist_only == 1 %]selected="selected" [% END %]value="1">
+                                [% 'SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_YES' | string %]
+                        </option>
+                        <option [% IF prefs.pref_scrobble_first_artist_only == 0 %]selected="selected" [% END %]value="0">
+                                [% 'SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_NO' | string %]
+                        </option>
+                </select>
+        [% END %]
+
 [% PROCESS settings/footer.html %]

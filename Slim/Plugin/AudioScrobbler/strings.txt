@@ -433,3 +433,14 @@ PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
 	RU	Эта дорожка понравилась.
 	SV	Spåret har registrerats som älskat.
 
+SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY
+	EN	Multiple artists tags
+
+SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_DESC
+	EN	How should multiple artist tags be scrobbled? E.g. the track of "Artist A feat. Artist B" might be tagged with "Artist A; Artist B". If enabled, only scrobble "Artist A". If disabled, the artist is scrobbled as "Artist A, Artist B". Last.fm sees this as one artist, not as two separate artists.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_YES
+	EN	Scrobble only the first artist
+
+SETUP_PLUGIN_AUDIOSCROBBLER_SCROBBLE_FIRST_ARTIST_ONLY_NO
+	EN	Concatenate multiple artists into one

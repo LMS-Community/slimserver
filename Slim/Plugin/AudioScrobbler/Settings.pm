@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ( $prefs, qw(accounts enable_scrobbling include_radio) );
+	return ( $prefs, qw(accounts enable_scrobbling include_radio scrobble_first_artist_only) );
 }
 
 sub handler {

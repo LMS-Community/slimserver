@@ -74,9 +74,10 @@ sub initPlugin {
 	
 	# init scrobbling prefs
 	$prefs->init({
-		enable_scrobbling => 1,
-		include_radio     => 0,
-		account           => 0,
+		enable_scrobbling 		=> 1,
+		include_radio     		=> 0,
+		scrobble_first_artist_only	=> 0,
+		account           		=> 0,
 	});
 	
 	# Subscribe to new song events
@@ -931,7 +932,12 @@ sub _getMetadata {
 				};
 			}
 			
-			$meta->{artist}   = $meta2->{artist};
+			if ($prefs->get('scrobble_first_artist_only')) {
+				$meta->{artist} = $meta2->{artistA}[0]->{name} ? $meta2->{artistA}[0]->{name} : $meta2->{artist};
+			}
+			else {
+				$meta->{artist} = $meta2->{artist};
+			}
 			$meta->{album}    = $meta2->{album} || '';
 			$meta->{title}    = $meta2->{title};
 			$meta->{tracknum} = $meta2->{tracknum} || '';
