@@ -362,6 +362,8 @@ sub _parseLanguage {
 	$language =~ s/\.UTF.*$//;
 	$language =~ s/(?:_|-|\.)\w+$//;
 	
+	return 'EN' if $language && $language eq 'C';
+	
 	return $language || 'EN';
 }
 
