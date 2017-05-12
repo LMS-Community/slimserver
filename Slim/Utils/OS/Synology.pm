@@ -93,6 +93,7 @@ sub ignoredItems
             '@database'    => 1,   # databases store
             '@optware'     => 1,   # NSLU2-Linux Optware system
             'upd@te'       => 1,   # firmware update temporary directory
+            '#recycle'     => 1,
             # system paths in the fs root which will not contain any music
             'bin'          => '/',
             'dev'          => '/',
