@@ -29,7 +29,7 @@ if ( main::SLIM_SERVICE ) {
 
 use constant SLIMPROTO_PORT   => 3483;
 
-our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
+our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay' , undef, ,undef, undef, undef, 'vzone' );
 my $log       = logger('network.protocol.slimproto');
 my $faclog    = logger('factorytest');
 my $synclog   = logger('player.sync');
@@ -1132,6 +1132,11 @@ sub _hello_handler {
 
 		$client_class  = 'Slim::Player::SqueezePlay';
 		$display_class = 'Slim::Display::NoDisplay';
+
+	} elsif ($deviceids[$deviceid] eq 'vzone') {
+
+                $client_class  = 'Slim::Player::Vzone2';
+                $display_class = 'Slim::Display::NoDisplay';
 
 	} else {
 
