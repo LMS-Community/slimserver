@@ -39,7 +39,11 @@ sub Conversions {
 	return \%commandTable;
 }
 
-my $log = logger('player.source');
+my $log = Slim::Utils::Log->addLogCategory( {
+	category     => 'player.transcoder',
+	defaultLevel => 'ERROR',
+	description  => 'DEBUG_TRANSCODING',
+} );
 
 my $prefs = preferences('server');
 
@@ -540,7 +544,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
-	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
+	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'clientname'}    ) =~ tr/\" /_/; $tmp };
 	$subs{'GROUPID'}   = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
 
 	foreach my $v (keys %vars) {
@@ -595,9 +599,13 @@ sub tokenizeConvertCommand2 {
 			if ($file && $pref) {
 				$transcoder = preferences($file)->get($pref) || '';
 				$transcoder =~ s/\s+/ /;
+				if ( main::INFOLOG && $log->is_info ) {
+					$transcoder eq '' &&  preferences($file)->set($pref,' ');
+					$log->info("Using: $placeholder \<\= $transcoder");
+				}
 			} 
 			else {
-				$log->warn("couldn't find file preferences for: $placeholder");
+				main::INFOLOG && $log->is_info && $log->info("Couldn't find preferences for: $placeholder");
 			}
 
 			$binaries{$placeholder} = $transcoder;
