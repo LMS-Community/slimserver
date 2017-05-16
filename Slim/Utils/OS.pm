@@ -192,7 +192,6 @@ sub dirsFor {
 		
 		return unless $updateDir;
 		
-		mkdir $updateDir unless -d $updateDir;
 		push @dirs, $updateDir;
 	}
 	
