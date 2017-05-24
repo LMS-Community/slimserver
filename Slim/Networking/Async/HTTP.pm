@@ -22,7 +22,6 @@ BEGIN {
 		eval { 
 			require Slim::Networking::Async::Socket::HTTPS;
 			$hasSSL = 1;
-			msg("IO::Socket::SSL version: " . $IO::Socket::SSL::VERSION . "\n");
 		};
 
 		if ($@) {
@@ -102,6 +101,7 @@ sub new_socket {
 			# Failed. Try again with an explicit SNI.
 			my %args = @_;
 			$args{SSL_hostname} = $args{Host};
+			$args{SSL_verify_mode} = 0x00;
 			return Slim::Networking::Async::Socket::HTTPS->new( %args );
 		}
 		else {
