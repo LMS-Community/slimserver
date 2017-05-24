@@ -22,6 +22,7 @@ BEGIN {
 		eval { 
 			require Slim::Networking::Async::Socket::HTTPS;
 			$hasSSL = 1;
+			msg("IO::Socket::SSL version: " . $IO::Socket::SSL::VERSION . "\n");
 		};
 
 		if ($@) {
