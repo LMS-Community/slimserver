@@ -725,8 +725,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	the server, as defined in the Security pane of the server preferences.
 	Like any other command, the user and password must be escaped. If
 	successful, the server replaces the password with 6 star characters. If
-	unsuccessful, the server disconnects. If security is off this command is
-	always successful.
+	unsuccessful, the server returns the same, then disconnects. If security 
+	is off this command is always successful.
 </p>
 <p>
 	Examples:
@@ -740,7 +740,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<p>
 		Request: &quot;login user wrongpassword&lt;LF&gt;&quot;
 		<br>
-		Response: (Connection terminated)
+		Response: &quot;login user ******&lt;LF&gt;&quot; (Connection terminated)
 	</p>
 </blockquote>
 

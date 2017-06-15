@@ -96,6 +96,7 @@ sub ignoredItems
             '#recycle'     => 1,
             # system paths in the fs root which will not contain any music
             'bin'          => '/',
+            'config'       => '/',
             'dev'          => '/',
             'etc'          => '/',
             'etc.defaults' => '/',
@@ -108,6 +109,7 @@ sub ignoredItems
             'opt'          => '/',
             'proc'         => '/',
             'root'         => '/',
+            'run'         => '/',
             'sbin'         => '/',
             'sys'          => '/',
             'tmp'          => '/',
