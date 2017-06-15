@@ -336,7 +336,10 @@ sub load {
 		my $binDir = catdir($baseDir, 'Bin');
 
 		if (-d $binDir) {
+			Slim::Utils::OSDetect::getOS()->initSearchPath($binDir);
 
+			# XXXX - this is legacy code, as some Slim::Utils::OS::Custom classes
+			#        might not be updated to pass on the $binDir to initSearchPath
 			main::DEBUGLOG && $log->debug("Adding Bin directory: [$binDir]");
 
 			my $binArch = Slim::Utils::OSDetect::details()->{'binArch'};
