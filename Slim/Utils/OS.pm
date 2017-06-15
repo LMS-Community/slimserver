@@ -116,6 +116,9 @@ sub initSearchPath {
 	elsif ( $class->{osDetails}->{'binArch'} eq 'armhf-linux' ) {
 		push @paths, catdir($baseDir, 'arm-linux');
 	}
+	elsif ( $class->{osDetails}->{'binArch'} =~ /darwin/i && $class->{osDetails}->{osArch} =~ /x86_64/ ) {
+		unshift @paths, catdir($baseDir, $class->{osDetails}->{'binArch'} . '-x86_64'), catdir($baseDir, $^O . '-x86_64');
+	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 
