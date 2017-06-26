@@ -503,15 +503,16 @@ sub newsongCallback {
 	
 	$meta ||= {};
 	
-	my $ignoreTitles  = "\Q" . join("\E|\Q", split(/\s*,\s*/, $prefs->get('ignoreTitles'))) . "\E";
-	my $ignoreArtists = "\Q" . join("\E|\Q", split(/\s*,\s*/, $prefs->get('ignoreArtists'))) . "\E";
-	my $ignoreAlbums  = "\Q" . join("\E|\Q", split(/\s*,\s*/, $prefs->get('ignoreAlbums'))) . "\E";
-	my $ignoreGenres  = "\Q" . join("\E|\Q", split(/\s*,\s*/, $prefs->get('ignoreGenres'))) . "\E";
+	my @ignoreTitles  = split(/\s*,\s*/, $prefs->get('ignoreTitles'));
+	my @ignoreAlbums  = split(/\s*,\s*/, $prefs->get('ignoreAlbums'));
+	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
+	my @ignoreGenres  = split(/\s*,\s*/, $prefs->get('ignoreGenres'));
 	
-	if ( ($ignoreGenres && $track->genre && $track->genre->name =~ /$ignoreGenres/i)
-		|| ($ignoreTitles && $title =~ /$ignoreTitles/i)
-		|| ($ignoreArtists && ($track->artistName || $meta->{artist} || '') =~ /$ignoreArtists/i)
-		|| ($ignoreAlbums && ($track->albumname || $meta->{album} || '') =~ /$ignoreAlbums/i)
+
+	if ( (scalar @ignoreGenres && $track->genre && grep { $track->genre->name =~ /\Q$_\E/i } @ignoreGenres )
+		|| (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
+		|| (scalar @ignoreArtists && grep { ($track->artistName || $meta->{artist} || '') =~ /\Q$_\E/i } @ignoreArtists)
+		|| (scalar @ignoreAlbums && grep { ($track->albumname || $meta->{album} || '') =~ /\Q$_\E/i } @ignoreAlbums)
 	) {
 		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s, %s", $title, $track->artistName, $track->albumname, $track->genre->name) );
 		return;
