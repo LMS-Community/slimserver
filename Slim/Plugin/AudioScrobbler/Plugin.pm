@@ -507,14 +507,13 @@ sub newsongCallback {
 	my @ignoreAlbums  = split(/\s*,\s*/, $prefs->get('ignoreAlbums'));
 	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
 	my @ignoreGenres  = split(/\s*,\s*/, $prefs->get('ignoreGenres'));
-	
 
 	if ( (scalar @ignoreGenres && $track->genre && grep { $track->genre->name =~ /\Q$_\E/i } @ignoreGenres )
 		|| (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
 		|| (scalar @ignoreArtists && grep { ($track->artistName || $meta->{artist} || '') =~ /\Q$_\E/i } @ignoreArtists)
 		|| (scalar @ignoreAlbums && grep { ($track->albumname || $meta->{album} || '') =~ /\Q$_\E/i } @ignoreAlbums)
 	) {
-		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s, %s", $title, $track->artistName, $track->albumname, $track->genre->name) );
+		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s, %s", $title, $track->artistName || $meta->{artist}, $track->albumname || $meta->{album}, ($track->genre ? $track->genre->name : '')) );
 		return;
 	}
 	
