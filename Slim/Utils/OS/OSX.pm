@@ -111,7 +111,7 @@ sub canFollowAlias {
 sub initSearchPath {
 	my $class = shift;
 	
-	$class->SUPER::initSearchPath();
+	$class->SUPER::initSearchPath(@_);
 
 	my @paths = ();
 

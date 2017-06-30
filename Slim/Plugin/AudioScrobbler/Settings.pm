@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ( $prefs, qw(accounts enable_scrobbling include_radio) );
+	return ( $prefs, qw(accounts enable_scrobbling include_radio ignoreTitles ignoreGenres ignoreArtists ignoreAlbums) );
 }
 
 sub handler {

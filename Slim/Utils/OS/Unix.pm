@@ -30,7 +30,7 @@ sub initDetails {
 sub initSearchPath {
 	my $class = shift;
 
-	$class->SUPER::initSearchPath();
+	$class->SUPER::initSearchPath(@_);
 
 	my @paths = (split(/:/, ($ENV{'PATH'} || '/sbin:/usr/sbin:/bin:/usr/bin')), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/bin));
 	
