@@ -32,6 +32,8 @@ sub init {
 	my $class = shift;
 	$class->SUPER::init();
 	
+	return unless main::LIBRARY;
+	
 	Slim::Control::Request::addDispatch(
 		[ 'genreinfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
@@ -78,7 +80,7 @@ sub registerDefaultInfoProviders {
 
 }
 
-sub menu {
+sub menu { if (main::LIBRARY) {
 	my ( $class, $client, $url, $genre, $tags ) = @_;
 	$tags ||= {};
 
@@ -168,7 +170,7 @@ sub menu {
 		items => $items,
 		menuComplete => 1,
 	};
-}
+} }
 
 
 sub playGenre {

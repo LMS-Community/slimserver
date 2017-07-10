@@ -245,6 +245,10 @@ use Slim::Control::Request;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
+use Slim::Menu::AlbumInfo;
+use Slim::Menu::ArtistInfo;
+use Slim::Menu::GenreInfo;
+use Slim::Menu::YearInfo;
 use Slim::Menu::SystemInfo;
 use Slim::Menu::PlaylistInfo;
 use Slim::Menu::FolderInfo;
@@ -253,10 +257,6 @@ use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
 
 if (main::LIBRARY) {
-	require Slim::Menu::AlbumInfo;
-	require Slim::Menu::ArtistInfo;
-	require Slim::Menu::GenreInfo;
-	require Slim::Menu::YearInfo;
 	require Slim::Music::Import;
 	require Slim::Music::VirtualLibraries;
 }

@@ -31,6 +31,8 @@ my $log = logger('menu.yearinfo');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
+
+	return unless main::LIBRARY;
 	
 	Slim::Control::Request::addDispatch(
 		[ 'yearinfo', 'items', '_index', '_quantity' ],
@@ -78,7 +80,7 @@ sub registerDefaultInfoProviders {
 
 }
 
-sub menu {
+sub menu { if (main::LIBRARY) {
 	my ( $class, $client, $url, $year, $tags ) = @_;
 	$tags ||= {};
 
@@ -158,7 +160,7 @@ sub menu {
 		items => $items,
 		menuComplete => 1,
 	};
-}
+} }
 
 
 sub playYear {
