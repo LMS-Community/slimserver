@@ -84,7 +84,25 @@ sub new_socket {
 	# Create SSL socket if URI is https
 	if ( $self->request->uri->scheme eq 'https' ) {
 		if ( hasSSL() ) {
-			return Slim::Networking::Async::Socket::HTTPS->new( @_ );
+			# From http://bugs.slimdevices.com/show_bug.cgi?id=18152:
+			# We increasingly find servers *requiring* use of the SNI extension to TLS.
+			# IO::Socket::SSL supports this and, in combination with the Net:HTTPS 'front-end',
+			# will default to using a server name (PeerAddr || Host || PeerHost). But this will fail
+			# if PeerAddr has been set to, say, IPv4 or IPv6 address form. And LMS does that through
+			# DNS lookup.
+			# So we will probably need to explicitly set "SSL_hostname" if we are to succeed with such
+			# a server.
+
+			# First, try without explicit SNI, so we don't inadvertently break anything. 
+			# (This is the 'old' behaviour.) (Probably overly conservative.)
+			my $sock = Slim::Networking::Async::Socket::HTTPS->new( @_ );
+			return $sock if $sock;
+
+			# Failed. Try again with an explicit SNI.
+			my %args = @_;
+			$args{SSL_hostname} = $args{Host};
+			$args{SSL_verify_mode} = 0x00;
+			return Slim::Networking::Async::Socket::HTTPS->new( %args );
 		}
 		else {
 			# change the request to port 80
@@ -177,7 +195,11 @@ sub add_headers {
 	}
 	
 	my $host = $self->request->uri->host;
-	if ( $self->request->uri->port != 80 ) {
+	# http://bugs.slimdevices.com/show_bug.cgi?id=18151
+	# Host needs port number unless we're using default (http - 80, https - 443).
+	# Note that both curl & wget suppress the default port number. Source comment in wget suggests
+	# that broken server-side software often doesn't recognize the port argument.
+	if ( $self->request->uri->port != $self->request->uri->default_port ) {
 		$host .= ':' . $self->request->uri->port;
 	}
 
@@ -367,8 +389,11 @@ sub _http_read {
 				return;
 			}
 			else {
-
-				my $error = $location ? 'Redirection limit exceeded' : 'Redirection without location';
+				my $error = 'Redirection without location';
+				
+				if ($location) {
+					$error = ($location =~ /^https/ && !hasSSL()) ? "Can't connect to https URL lack of IO::Socket::SSL: $location" : 'Redirection limit exceeded';
+				}
 
 				$log->warn($error);
 				

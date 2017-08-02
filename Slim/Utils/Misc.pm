@@ -403,12 +403,12 @@ so we cannot just use L<URI>
 sub crackURL {
 	my ($string) = @_;
 
-	$string =~ m|$URI::scheme_re://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
+	$string =~ m|$URI::scheme_re://(?:([^\@\/:]+):?([^\@\/]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
 	$path ||= '/';
-	$port ||= 80;
+	$port ||= ((!main::SLIM_SERVICE && Slim::Networking::Async::HTTP->hasSSL() && $string =~ /^https/) ? 443 : 80);
 
 	my $log = logger('os.paths');
 

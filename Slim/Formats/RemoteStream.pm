@@ -67,7 +67,7 @@ sub open {
 		main::INFOLOG && $log->info("Opening connection using proxy $proxy");
 	}
 
-	main::INFOLOG && $log->info("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]");
+	main::INFOLOG && $log->is_info && $log->info("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]");
 
 	my $sock = $class->SUPER::new(
 		LocalAddr => $main::localStreamAddr,

@@ -14,6 +14,7 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Music::Info;
+use Slim::Networking::Async::HTTP;
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
@@ -29,7 +30,7 @@ if (main::LOCAL_PLAYERS) {
 
 if (main::SERVICES) {
 	$protocolHandlers{'http'} = qw(Slim::Player::Protocols::HTTP);
-	$protocolHandlers{'https'}= qw(Slim::Player::Protocols::HTTP);
+	$protocolHandlers{'https'}= (!main::SLIM_SERVICE && Slim::Networking::Async::HTTP->hasSSL()) ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP);
 	$protocolHandlers{'icy'}  = qw(Slim::Player::Protocols::HTTP);
 	$protocolHandlers{'mms'}  = qw(Slim::Player::Protocols::MMS);
 	$protocolHandlers{'spdr'} = qw(Slim::Player::Protocols::SqueezePlayDirect);
@@ -131,6 +132,8 @@ sub iconHandlerForURL {
 
 sub iconForURL {
 	my ($class, $url, $client) = @_;
+	
+	$url ||= '';
 
 	if (my $handler = $class->handlerForURL($url)) {
 		if ($client && $handler->can('getMetadataFor')) {
