@@ -93,25 +93,25 @@ sub getFeedAsync {
 		$handler->explodePlaylist($params->{client}, $url, sub {
 			my ($tracks) = @_;
 
-			$feed = eval {
-				return {
-					'type'  => 'opml',
-					'title' => '',
-					'items' => [
-						map {
-							{
-								# compatable with INPUT.Choice, which expects 'name' and 'value'
-								'name'  => $_,
-								'value' => $_,
-								'url'   => $_,
-								'type'  => 'audio',
-								'items' => [],
-							}
-						} @$tracks
-					],
-				};
-			};
+			return $cb->({
+				'type'  => 'opml',
+				'title' => '',
+				'items' => [
+					map {
+						{
+							# compatable with INPUT.Choice, which expects 'name' and 'value'
+							'name'  => $_,
+							'value' => $_,
+							'url'   => $_,
+							'type'  => 'audio',
+							'items' => [],
+						}
+					} @{$tracks || []}
+				],
+			}, $params);
 		});
+		
+		return;
 	}
 
 	if ($feed) {
