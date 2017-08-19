@@ -391,6 +391,8 @@ sub proxiedImage {
 
 #	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
 	
+	# Unfortunately Squeezeplay can't handle images without a file extension?!? We need to return some extension, 
+	# though it might be different from the actual content type returned. But we don't know better at this point.
 	my $ext = '.png';
 	
 	if ($url =~ /(\.(?:jpg|jpeg|png|gif))/) {
