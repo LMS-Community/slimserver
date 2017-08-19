@@ -391,7 +391,7 @@ sub proxiedImage {
 
 #	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
 	
-	my $ext = '.png';
+	my $ext = '';
 	
 	if ($url =~ /(\.(?:jpg|jpeg|png|gif))/) {
 		$ext = $1;
