@@ -86,6 +86,34 @@ sub getFeedAsync {
 		}
 	}
 
+	# if we have a single item, we might need to expand it to some list (eg. Spotify Album -> track list)
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url) unless $feed;
+
+	if ( $handler && $handler->can('explodePlaylist') ) {
+		$handler->explodePlaylist($params->{client}, $url, sub {
+			my ($tracks) = @_;
+
+			return $cb->({
+				'type'  => 'opml',
+				'title' => '',
+				'items' => [
+					map {
+						{
+							# compatable with INPUT.Choice, which expects 'name' and 'value'
+							'name'  => $_,
+							'value' => $_,
+							'url'   => $_,
+							'type'  => 'audio',
+							'items' => [],
+						}
+					} @{$tracks || []}
+				],
+			}, $params);
+		});
+		
+		return;
+	}
+
 	if ($feed) {
 		return $cb->( $feed, $params );
 	}
