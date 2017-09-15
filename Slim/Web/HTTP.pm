@@ -1402,7 +1402,7 @@ sub generateHTTPResponse {
 
 	# treat js.html differently - need the html ending to have it processed by TT,
 	# but browser should consider it javascript
-	if ( $path =~ /js(?:-browse)?\.html/i) {
+	if ( $path =~ /js(?:|-\S*)\.html/i ) {
 		$contentType = 'application/x-javascript';
 	}
 
