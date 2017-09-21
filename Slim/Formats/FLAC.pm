@@ -779,6 +779,9 @@ sub _getCUEinVCs {
 			}
 		}
 
+		# only use year instead of the full date
+		$tracks->{$key}->{'YEAR'}=~ s/.*(\d\d\d\d).*/$1/;
+
 		$class->_doTagMapping($tracks->{$key});
 
 		$items++;
