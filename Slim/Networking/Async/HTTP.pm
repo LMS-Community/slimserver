@@ -430,6 +430,17 @@ sub _http_read {
 		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 		Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
+		
+		# in a *confirmed* keep-alive situation, the whole body might already be in the buffer, 
+		# so there could be no further event which would lead to an error timeout, so body reading 
+		# must be forced. But if nothing has been read yet, attempting to force body reading can lead to 
+		# a false empty body result, so let it to the event loop. 
+		# Body might also be empty but a keep-alive with no content-length in the response is an error
+		# if everything has already been read, _http_body_read will unsubscribe to event loop 
+		# we just subscrive above ... a bit unefficient 
+		_http_read_body( $self->socket, $self, $args ) if ( ($self->response->headers->header('Connection') =~ /close/i || 
+															 $headers->header('Connection') !~ /keep-alive/i ) && 
+															 $self->socket->_rbuf_length == ($headers->content_length || 0));
 	}
 }
 
@@ -497,12 +508,20 @@ sub _http_read_body {
 		}
 	}
 	
-	if ( !defined $result || $result == 0 ) {
+	if ( !defined $result || $result == 0 || length($self->response->content) == $self->response->headers->header('Content-Length') ) {
 		# if here, we've reached the end of the body
-		
-		# close and remove the socket
-		$self->fh->close if $self->fh;
-		$self->disconnect;
+
+		# close and remove the socket if not keep-alive 
+		if ( $self->response->headers->header('Connection') =~ /close/i || $self->request->headers->header('Connection') !~ /keep-alive/i ) {
+			$self->fh->close if $self->fh;
+			$self->disconnect;
+			main::DEBUGLOG && $log->debug("closing mode");
+		}	
+		else {
+			Slim::Networking::Select::removeError( $self->socket );
+			Slim::Networking::Select::removeRead( $self->socket );
+			main::DEBUGLOG && $log->debug("keep-alive mode");
+		}
 		
 		main::DEBUGLOG && $log->debug("Body read");
 		
