@@ -1,0 +1,96 @@
+=encoding utf8
+
+=head1 NAME
+
+Net::IDN::Standards -- Internationalized Domain Names for Applications (IDNA)
+
+=head1 INTRODUCTION
+
+Historically, domain names and host names were restricted to a
+limited repertoire of ASCII characters, i.e. letters, digits and
+the hyphen (i.e. C</[A-Z0-9-]/i>). Words and names from languages
+that require additional characters (such as diacritics or special
+characters) or other scripts could not be used.
+
+Internationalized Domain Names (IDNs) extend the character
+repertoire for domain names from ASCII to Unicode while
+maintaining backwards compatibility with software that only
+expects and handles ASCII characters.
+
+In order to do so, Unicode domain names are converted to ASCII
+using an ASCII-compatible encoding (ACE) called Punycode. On the
+wire, converted domain names start with C<xn-->, followed by the
+ASCII encoding of the Unicode string.  The Unicode version is
+typically only shown in applications presenting the domain to the
+user (hence Internationalized Domain Names for Applications,
+IDNA).  Internationalized Resource Identifiers (IRIs), the
+Unicode version of URLs, may also include domain names in their
+Unicode form.
+
+The IDNA specifications, however, do not only cover the actual
+Punycode conversion but also include extensive rules for
+preparation (mapping and/or validation) of input strings.  They
+typically define two functions, C<ToASCII> and C<ToUnicode>, which
+prepare and convert a domain name to the ACE version or the
+Unicode version.
+
+=head1 DIFFERENT STANDARDS
+
+  "The nice thing about standards is that you have so many to
+  choose from."
+                                       -- Andrew S. Tanenbaum
+
+While the actual Punycode conversion is stable, there are different
+specifications regarding mapping and/or validation (preparation):
+
+=head2 IDNA2003
+
+IDNA2003, which is defined in S<RFC 3490>
+(L<http://tools.ietf.org/html/rfc3490>) and related documents, was
+the original specification for the internationalization of domain
+names.
+
+However, some issues were subsequently identified with IDNA2003:
+The specification was tied to Unicode 3.2 and therefore did not
+allow characters added in newer versions of Unicode (without
+updating the specifications).
+
+Furthermore, a few characters were mapped to other characters or
+deleted although they would carry meaning in some languages (i.e.
+'ß' and 'ς' were mapped to 'ss' and 'σ'; ZWJ and ZWNJ were always
+mapped to nothing, although some scripts like Arabic require them
+for correct display).
+
+=head2 IDNA2008
+
+IDNA2008, which is defined in S<RFC 5890>
+(L<http://tools.ietf.org/html/rfc5890>) and related documents, resolves the
+issues found in IDNA2003.
+
+This was done by allowing some characters that would either be
+mapped to other characters, mapped to zero and/or cause the
+preparation to fail. The new domain names would not be accessible
+by IDNA2003 implementations, of course.
+
+However, IDNA2008 also disallowed a large number of characters
+that had been allowed in IDNA2003 (mostly symbols). An
+implementation of IDNA2008 would therefore no longer be able to
+access domain names such as C<√.com>, which had been registered
+under IDNA2003.
+
+=head2 UTS #46
+
+Unicode Technical Standard #46 (UTS #46,
+L<http://unicode.org/reports/tr46/>) solves this problem by
+allowing domain names that are valid in either IDNA2003 or
+IDNA2008.
+
+This makes UTS #46 the perfect fit for domain lookup (be liberal
+in what you accept) but unsuitable for validating domain names
+prior to registration (be conservative in what you send).
+
+=head1 AUTHOR
+
+Claus FE<auml>rber <CFAERBER@cpan.org>
+
+=cut

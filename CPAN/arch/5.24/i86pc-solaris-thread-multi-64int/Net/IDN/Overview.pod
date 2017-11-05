@@ -1,0 +1,160 @@
+=encoding utf8
+
+=head1 NAME
+
+Net::IDN::Overwiew - Internationalized Domain Names for Applications (IDNA)
+
+=head1 DESCRIPTION
+
+The C<Net::IDN::*> modules provide a framework for the handling of
+Internationalized Domain Names for Applications (IDNA) in perl programmes.
+
+This document provides an overview of the available modules in order to 
+allow you to choose the best module for the task at hand.
+
+=head2 AVAILABLE MODULES
+
+=head3 HIGH-LEVEL (USE THIS)
+
+=over
+
+=item L<Net::IDN::Encode>
+
+provides a high-level interface for converting domain names (and
+for convenience, email addresses).  
+
+Use this module if you just want to convert domain names and don't
+care about how this is done internally.
+
+Currently, this module uses L<Net::IDN::UTS46>. However, this
+might change in the future if another specification (e.g. a
+revision of IDNA2008) becomes more appropriate.
+
+The author aims for Net::IDN::Encode to always use the specification that will
+provide the "least surprising" results.
+
+=back
+
+=head3 STANDARD-SPECIFIC
+
+These modules implement different versions of the the IDNA
+specifications. Use one of these modules only if you require
+compatibility with a specific incarnation of IDNA.
+
+=over
+
+=item L<Net::IDN::IDNA2003>
+
+implements the original IDNA specification, released in 2003
+(IDNA2003), which is now obsolete.
+
+IDNA2003 is defined in RFC 3490 L<http://tools.ietf.org/rfc/3490>
+and related documents.
+
+=begin comment
+
+=item L<Net::IDN::IDNA2008>
+
+implements the current IDNA specification, released in early 2010
+(IDNA2008 or IDNAbis). 
+
+Please note that this module will not allow you to convert some
+domain names, such as C<√.com> or C<I♥NY.com>, which were allowed
+in IDNA2003 but are disallowed in IDNA2008.
+
+IDNA2008 is defined in RFC 5890 L<http://tools.ietf.org/rfc/5890>
+and related documents.
+
+=end comment
+
+=item L<Net::IDN::UTS46>
+
+implements Unicode Technical Standard #46 (UTS #46
+L<http://unicode.org/reports/tr46/>), Unicode IDNA Compatibility
+Processing.  This specification supports all domain names allowed
+under either IDNA2003 or IDNA2008. 
+
+=back
+
+=head3 ENCODING
+
+=over
+
+=item L<Net::IDN::Punycode>
+
+performs the actual conversion between the ASCII and Unicode form
+of strings.  Punycode is defined in RFC 3492
+L<http://tools.ietf.org/rfc/3492> and related documents.
+
+Usually, it is not a good idea to use this module directly. If you
+convert domain labels (or other strings) without proper
+preparation, you may end up with an ASCII encoding that is not
+interoperable or poses security issues due to spoofing.
+
+Even if you think that your domain names are valid and in
+already-mapped format, you might be fooled by different Unicode
+normalization forms (for example, some environments might
+automatically convert your data to NFD, which breaks IDNA).
+
+=back
+
+=head3 DEPRECATED/COMPATIBILITY
+
+These modules are only maintained in order to not break
+applications that might rely on them
+
+=over
+
+=item L<Encode::Punycode>
+
+provides an L<Encode> plugin for Punycode. As Punycode is not a
+general-purpose encoding, there are limited applications.
+
+=item L<IDNA::Punycode>
+
+has an API depending on global variables. Don't use this module.
+
+=back
+
+=head2 DISTRIBUTIONS
+
+=over
+
+=item Net-IDN-Encode
+
+is the main distribution covering the most common cases for
+converting domain names between ASCII and Unicode.
+
+The author tries to keep the dependency chain as small as possible; currently
+this distribution only depends on perl 5.8.5 (including the core module
+L<Unicode::Normalize> ). 
+
+=item Net-IDN-IDNA2003
+
+provides the L<Net::IDN::IDNA2003> module. This is separate
+because it has an dependency on L<Unicode::Stringprep> (through
+L<Net::IDN::Nameprep>).
+
+=begin comment
+
+=item Net-IDN-IDNA2008
+
+provides the L<Net::IDN::IDNA2008> module. This is separate because it has an
+dependency on perl 5.10 or higher (through L<Unicode::Precis>).
+
+=end comment
+
+=item Encode-Punycode
+
+=item IDNA-Punycode
+
+are separate because they are of limited use to the average
+user/perl programmer.
+
+=back
+
+=head1 AUTHOR
+
+Claus FE<auml>rber <CFAERBER@cpan.org>
+
+=cut
