@@ -101,9 +101,12 @@ sub initSearchPath {
 	elsif ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
 	}
-	
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^aarch64-linux/ ) {
+		$class->{osDetails}->{'binArch'} = 'aarch64-linux';
+	}
+
 	# Reduce PPC to powerpc-linux
-	if ( $class->{osDetails}->{'binArch'} =~ /^(?:ppc|powerpc).*linux/ ) {
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^(?:ppc|powerpc).*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'powerpc-linux';
 	}
 
