@@ -133,7 +133,7 @@ sub processControl {
 		$body = undef;
 	}
 	
-	main::INFOLOG && $log->is_info && $log->info( "Invoking ${serviceClass}->${method}( " . Data::Dump::dump($body) . ' )' );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Invoking ${serviceClass}->${method}( " . Data::Dump::dump($body) . ' )' );
 	
 	# Invoke the method
 	my @result = eval {	$serviceClass->$method( $client, $body || {}, $request->headers, $request->header('Host') || $request->uri->host ) };
