@@ -919,6 +919,7 @@ sub logLevels {
 		'player.sync'                => 'ERROR',
 		'player.text'                => 'ERROR',
 		'player.ui'                  => 'ERROR',
+		'player.ui.screensaver'      => 'ERROR',
 
 		'scan'                       => 'ERROR',
 		'scan.auto'                  => 'DEBUG', # XXX forced on because there will be problems
