@@ -157,7 +157,7 @@ ELSE %]
 					</span>
 					<div class="smallBrowseItemDetail">
 				[% END %]
-				[% IF dontGetString; link.key; ELSE; string; END %]
+				[% IF dontGetString; link.key | html; ELSE; string | html; END %]
 				[% IF link.icon && !noIcon %]
 					</div>
 				[% END %]

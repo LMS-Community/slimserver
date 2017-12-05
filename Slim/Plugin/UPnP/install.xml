@@ -8,7 +8,7 @@
 	<creator>Andy Grundman</creator>
 	<email>andy@slimdevices.com</email>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<needsLibrary>true</needsLibrary>
 
 	<homepageURL>http://www.slimdevices.com/</homepageURL>

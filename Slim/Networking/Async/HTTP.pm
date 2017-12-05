@@ -508,7 +508,7 @@ sub _http_read_body {
 		}
 	}
 	
-	if ( !defined $result || $result == 0 || length($self->response->content) == $self->response->headers->header('Content-Length') ) {
+	if ( !defined $result || $result == 0 || (defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length')) ) {
 		# if here, we've reached the end of the body
 
 		# close and remove the socket if not keep-alive 
