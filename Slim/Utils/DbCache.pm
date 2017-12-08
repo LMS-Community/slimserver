@@ -238,15 +238,20 @@ sub _init_db {
 		# scanner is heavy on writes, server on reads - tweak accordingly
 		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
 
-		my $dbhighmem;
+		my ($dbhighmem, $dbjournalsize);
 		if (main::RESIZER) {
 			require Slim::Utils::Light;
 			$dbhighmem = Slim::Utils::Light::getPref('dbhighmem');
+			$dbjournalsize = Slim::Utils::Light::getPref('dbjournalsize');
 		}
 		else {
 			require Slim::Utils::Prefs;
-			$dbhighmem = Slim::Utils::Prefs::preferences('server')->get('dbhighmem');
+			my $prefs = Slim::Utils::Prefs::preferences('server');
+			$dbhighmem = $prefs->get('dbhighmem');
+			$dbjournalsize = $prefs->get('dbjournalsize');
 		}
+
+		$dbh->do('PRAGMA journal_size_limit = ' . ($dbjournalsize * 1024 * 1024)) if defined $dbjournalsize;
 	
 		# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
 		if ( $dbhighmem ) {
