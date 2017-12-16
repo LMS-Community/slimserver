@@ -379,7 +379,7 @@ useSpecialExt="-browse" %]
 							   IF !title.defined || title == ''; title = item.name; END;
 							   IF !title.defined || title == ''; title = item.title; END
 							%]
-							[% title | html_line_break %]
+							[% title | html | html_line_break %]
 
 							[% IF includeArtist && item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
