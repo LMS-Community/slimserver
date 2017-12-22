@@ -512,10 +512,10 @@ sub getClient {
 	# Try a brute for match for the client.
 	if (!defined($ret)) {
    		 for my $value ( values %clientHash ) {
-			return $value if ($value->ipport) eq $id);
-			return $value if ($value->ip) eq $id);
-			return $value if ($value->name) eq $id);
-			return $value if ($value->id) eq $id);
+			return $value if $value->ipport eq $id;
+			return $value if $value->ip eq $id;
+			return $value if $value->name eq $id;
+			return $value if $value->id eq $id;
 		}
 		# none of these matched, so return undef
 		return undef;
