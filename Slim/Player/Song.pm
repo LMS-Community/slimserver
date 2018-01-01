@@ -693,7 +693,7 @@ sub pluginData {
 		$ret = $self->_pluginData($key);
 	}
 	else {
-		if ( defined $value ) {
+		if ( @_ > 2 ) {
 			$self->_pluginData()->{$key} = $value;
 		}
 		
