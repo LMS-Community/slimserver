@@ -394,6 +394,23 @@ sub getProxy {
 	return $proxy || $class->SUPER::getProxy();
 }
 
+my $gateway;
+sub getDefaultGateway {
+	if (!defined $gateway) {
+		$gateway = '';
+		
+		my $route = `route print -4`;
+		while ( $route =~ /^(?:0\.0\.0\.0)\s+(?:\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)/mg ) {
+			if ( Slim::Utils::Network::ip_is_private($1) ) {
+				$gateway = $1;
+				last;
+			}
+		}
+	}
+	
+	return $gateway;
+}
+
 sub ignoredItems {
 	return (
 		# Items we should ignore  on a Windows volume
