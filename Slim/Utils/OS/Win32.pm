@@ -400,7 +400,7 @@ sub getDefaultGateway {
 		$gateway = '';
 		
 		my $route = `route print -4`;
-		while ( $route =~ /^(?:0\.0\.0\.0)\s+(?:\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)/mg ) {
+		while ( $route =~ /^\s*0\.0\.0\.0\s+\d+\.\d+\.\d+\.\d+\s+(\d+\.\d+\.\d+\.\d+)/mg ) {
 			if ( Slim::Utils::Network::ip_is_private($1) ) {
 				$gateway = $1;
 				last;
