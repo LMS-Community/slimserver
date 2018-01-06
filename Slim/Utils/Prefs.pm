@@ -221,6 +221,7 @@ sub init {
 			return join(',', Slim::Utils::Network::hostAddr());
 		},
 		'csrfProtectionLevel'   => 0,
+		'protectSettings'       => 1,
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',

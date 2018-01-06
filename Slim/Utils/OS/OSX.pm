@@ -345,6 +345,20 @@ sub pathFromMacAlias {
 	return $path;
 }
 
+my $gateway;
+sub getDefaultGateway {
+	if (!defined $gateway) {
+		$gateway = '';
+		
+		my $route = `route -n get default`;
+		if ($route =~ /gateway:\s*(\d+\.\d+\.\d+\.\d+)/s ) {
+			$gateway = $1 if Slim::Utils::Network::ip_is_private($1);
+		}
+	}
+	
+	return $gateway;
+}
+
 my $updateCheckInitialized;
 my $plistLabel = "com.slimdevices.updatecheck";
 
