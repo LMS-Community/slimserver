@@ -246,8 +246,15 @@ sub cli_socket_accept {
 		my $tmpaddr = inet_ntoa($client_socket->peeraddr);
 
 		# Check allowed hosts
-		
-		if (!($prefsServer->get('filterHosts')) || (Slim::Utils::Network::isAllowedHost($tmpaddr))) {
+		if ( !main::SLIM_SERVICE 
+			&& $tmpaddr ne '127.0.0.1'
+			&& $prefsServer->get('protectSettings')
+			&& ( Slim::Utils::Network::ip_is_gateway($tmpaddr) || !Slim::Utils::Network::ip_is_private($tmpaddr) )
+		) {
+			$log->error("Access to CLI is restricted to the local network or localhost: $tmpaddr");
+			$cli_socket->close;
+		}
+		elsif (!($prefsServer->get('filterHosts')) || (Slim::Utils::Network::isAllowedHost($tmpaddr))) {
 
 			Slim::Networking::Select::addRead($client_socket, \&client_socket_read);
 			Slim::Networking::Select::addError($client_socket, \&client_socket_close);
