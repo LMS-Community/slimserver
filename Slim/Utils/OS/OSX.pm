@@ -345,18 +345,15 @@ sub pathFromMacAlias {
 	return $path;
 }
 
-my $gateway;
 sub getDefaultGateway {
-	if (!defined $gateway) {
-		$gateway = '';
-		
-		my $route = `route -n get default`;
-		if ($route =~ /gateway:\s*(\d+\.\d+\.\d+\.\d+)/s ) {
-			$gateway = $1 if Slim::Utils::Network::ip_is_private($1);
+	my $route = `route -n get default`;
+	if ($route =~ /gateway:\s*(\d+\.\d+\.\d+\.\d+)/s ) {
+		if ( Slim::Utils::Network::ip_is_private($1) ) {
+			return $1;
 		}
 	}
 	
-	return $gateway;
+	return;
 }
 
 my $updateCheckInitialized;

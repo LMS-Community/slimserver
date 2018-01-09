@@ -967,30 +967,24 @@ sub generateHTTPResponse {
 	
 	# protect access to settings pages: only allow from local network
 	if ( main::WEBUI 
-		&& $peeraddr{$httpClient} ne '127.0.0.1'
-		&& $prefs->get('protectSettings') 
+		&& !Slim::Utils::Network::ip_is_localhost($peeraddr{$httpClient})
+		&& $prefs->get('protectSettings') && !$prefs->get('authorize') 
 		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings') 
+		&& Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient})
 	) {
-		my $gateway = Slim::Utils::OSDetect->getOS()->getDefaultGateway();
+		$log->error("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient} -> $path");
 
-		if ( 
-			( $gateway && Slim::Utils::Network::intip($peeraddr{$httpClient}) == Slim::Utils::Network::intip($gateway) )
-			|| !Slim::Utils::Network::ip_is_private($peeraddr{$httpClient} )
-		) {
-			$log->warn("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient}");
+		$response->code(RC_FORBIDDEN);
 
-			$response->code(RC_FORBIDDEN);
+		$body = filltemplatefile('html/errors/403.html', $params);
 
-			$body = filltemplatefile('html/errors/403.html', $params);
-	
-			return prepareResponseForSending(
-				$client,
-				$params,
-				$body,
-				$httpClient,
-				$response,
-			);
-		}
+		return prepareResponseForSending(
+			$client,
+			$params,
+			$body,
+			$httpClient,
+			$response,
+		);
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Generating response for ($type, $contentType) $path");

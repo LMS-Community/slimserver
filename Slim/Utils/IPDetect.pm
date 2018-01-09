@@ -14,6 +14,7 @@ use Slim::Utils::Log;
 
 my $detectedIP = undef;
 my $localhost  = '127.0.0.1';
+my $gateway    = undef;
 
 =head1 NAME
 
@@ -50,6 +51,22 @@ sub IP {
 
 sub IP_port {
 	return IP() . ':' . $main::SLIMPROTO_PORT;
+}
+
+
+=head1 defaultGateway()
+
+Returns the IP address of the system's default gateway, or an empty if not found
+
+=cut
+
+sub defaultGateway {
+	if (!defined $gateway) {
+		$gateway = Slim::Utils::OSDetect->getOS()->getDefaultGateway() || '';
+		$gateway = '' if !Slim::Utils::Network::ip_is_ipv4($gateway);
+	}
+
+	return $gateway;
 }
 
 sub _init {
