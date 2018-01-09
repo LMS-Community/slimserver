@@ -176,7 +176,7 @@ sub handleURI {
 	# block access to "pref" & "serverpref" commands if request is coming from external host
 	if ( !main::SLIM_SERVICE 
 		&& $Slim::Web::HTTP::peeraddr{$httpClient} ne '127.0.0.1'
-		&& $prefs->get('protectSettings')
+		&& $prefs->get('protectSettings') && !$prefs->get('authorize')
 		&& $params->[1] && ref($params->[1]) && $params->[1]->[0] && $params->[1]->[0] =~ /^(?:pref|serverpref|stopserver|restartserver)/
 		&& ( Slim::Utils::Network::ip_is_gateway($Slim::Web::HTTP::peeraddr{$httpClient}) || !Slim::Utils::Network::ip_is_private($Slim::Web::HTTP::peeraddr{$httpClient}) )
 	) {
