@@ -404,6 +404,21 @@ sub ip_is_ipv4 {
 	return 1;
 }
 
+=head2 ip_is_localhost()
+
+Checks whether given IP address is the host's address or localhost
+
+=cut
+
+sub ip_is_localhost {
+	my $ip = shift || return;
+	
+	return 1 if $ip eq '127.0.0.1';
+	return 1 if $ip eq hostAddr();
+
+	return intip($ip) == intip(hostAddr()) ? 1 : 0;
+}
+
 =head1 ip_is_gateway($ip)
 
 Try to figure out whether an IP address is the host's gateway
