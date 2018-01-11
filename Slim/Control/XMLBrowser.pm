@@ -811,6 +811,7 @@ sub _cliQuery_done {
 						item        => $item,
 						subFeed     => $subFeed,
 						noFavorites => 1,
+						item_id		=> scalar @crumbIndex ? join('.', @crumbIndex) : undef,
 						subItemId   => $xmlbrowserPlayControl,
 						playalbum   => 1,	# Allways add play-all item
 					})
@@ -1790,7 +1791,7 @@ sub _playlistControlContextMenu {
 	
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
-		my $item_id = $request->getParam('item_id') || '';
+		my $item_id = $args->{item_id} || $request->getParam('item_id') || '';
 		my $mode    = $request->getParam('mode');
 		my $sub_id  = $args->{'subItemId'};
 		my $subFeed = $args->{'subFeed'};
