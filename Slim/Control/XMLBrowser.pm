@@ -1839,7 +1839,6 @@ sub _playlistControlContextMenu {
 			},
 		}
 		
-		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
 				style => $canIcons ? 'item_playall' : 'itemNoAction',
