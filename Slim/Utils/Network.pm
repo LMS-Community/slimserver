@@ -480,6 +480,23 @@ sub ip_is_gateway {
 	return intip($ip) == intip($gateway) ? 1 : 0;
 }
 
+=head1 ip_on_different_network($ip)
+
+Try to figure out whether an IP address is on the same network as Logitech Media Server.
+It's very simplistic in that it only checks whether we're in a private network, but the
+requested IP is not (and vice versa)
+
+=cut
+
+sub ip_on_different_network {
+	my ($ip) = @_;
+	
+	# Check for invalid chars
+	return unless ip_is_ipv4($ip);
+
+	return ip_is_private(hostAddr()) ? !ip_is_private($ip) : ip_is_private($ip);
+}
+
 =head1 SEE ALSO
 
 L<IO::Select>
