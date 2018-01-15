@@ -249,7 +249,7 @@ sub cli_socket_accept {
 		if ( !main::SLIM_SERVICE 
 			&& !Slim::Utils::Network::ip_is_localhost($tmpaddr)
 			&& $prefsServer->get('protectSettings') && !$prefsServer->get('authorize')
-			&& Slim::Utils::Network::ip_is_gateway($tmpaddr)
+			&& ( Slim::Utils::Network::ip_is_gateway($tmpaddr) || Slim::Utils::Network::ip_on_different_network($tmpaddr) )
 		) {
 			$log->error("Access to CLI is restricted to the local network or localhost: $tmpaddr");
 			$cli_socket->close;

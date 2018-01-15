@@ -1021,7 +1021,7 @@ sub generateHTTPResponse {
 		&& !Slim::Utils::Network::ip_is_localhost($peeraddr{$httpClient})
 		&& $prefs->get('protectSettings') && !$prefs->get('authorize') 
 		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings') 
-		&& Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient})
+		&& ( Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient}) || Slim::Utils::Network::ip_on_different_network($peeraddr{$httpClient}) )
 	) {
 		$log->error("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient} -> $path");
 
