@@ -1,3 +1,16 @@
+[%
+	PROCESS jsString id='PLUGIN_DNDPLAY_NO_ITEMS' jsId='';
+	PROCESS jsString id='PLAYLIST_NO_ITEMS_FOUND' jsId='noItemsFound';
+	PROCESS jsString id='ADDING_TO_PLAYLIST' jsId='';
+%]
+
+SqueezeJS.Strings['fileTooLarge'] = "[% fileTooLarge | html | replace('"', '\"') %]";
+	
+SqueezeJS.DnD = {
+	maxUploadSize: [% maxUploadSize %],
+	validTypeExtensions: '[% validTypeExtensions %]'
+};
+	
 if (window.File && window.FileList) {
 	FileDnD = {
 		queue: new Array,

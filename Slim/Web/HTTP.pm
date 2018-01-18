@@ -963,10 +963,31 @@ sub generateHTTPResponse {
 		);
 	}
 
-	main::INFOLOG && $log->is_info && $log->info("Generating response for ($type, $contentType) $path");
-
-	# some generally useful form details...
 	my $classOrCode = Slim::Web::Pages->getPageFunction($path);
+	
+	# protect access to settings pages: only allow from local network
+	if ( main::WEBUI 
+		&& !Slim::Utils::Network::ip_is_localhost($peeraddr{$httpClient})
+		&& $prefs->get('protectSettings') && !$prefs->get('authorize') 
+		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings') 
+		&& ( Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient}) || Slim::Utils::Network::ip_on_different_network($peeraddr{$httpClient}) )
+	) {
+		$log->error("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient} -> $path");
+
+		$response->code(RC_FORBIDDEN);
+
+		$body = filltemplatefile('html/errors/403.html', $params);
+
+		return prepareResponseForSending(
+			$client,
+			$params,
+			$body,
+			$httpClient,
+			$response,
+		);
+	}
+
+	main::INFOLOG && $log->is_info && $log->info("Generating response for ($type, $contentType) $path");
 	
 	if (defined($client) && $classOrCode) {
 		$params->{'player'} = $client->id();
