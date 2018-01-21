@@ -12,9 +12,14 @@ use Socket qw(inet_aton inet_ntoa sockaddr_in pack_sockaddr_in PF_INET SOCK_DGRA
 use Symbol;
 use Slim::Utils::Log;
 
-my $detectedIP = undef;
-my $localhost  = '127.0.0.1';
-my $gateway    = undef;
+use constant RETRY_AFTER  => 60;
+use constant MAX_ATTEMPTS => 5;
+use constant LOCALHOST    => '127.0.0.1';
+
+my $detectedIP;
+my $gateway;
+my $lastCheck = 0;
+my $checkCount = 0;
 
 =head1 NAME
 
@@ -41,6 +46,9 @@ L<IO::Socket>
 =cut
 
 sub IP {
+	if ($detectedIP && $detectedIP eq LOCALHOST && $checkCount <= MAX_ATTEMPTS && time() - $lastCheck > RETRY_AFTER) {
+		$detectedIP = undef;
+	}
 
 	if (!$detectedIP) { 
 		_init(); 
@@ -70,6 +78,8 @@ sub defaultGateway {
 }
 
 sub _init {
+	$lastCheck = time();
+	$checkCount++;
 
 	if ($detectedIP) {
 		return;
@@ -93,9 +103,9 @@ sub _init {
 
 	my $iaddr = inet_aton($raddr) || do {
 
-		logWarning("Couldn't call inet_aton($raddr) - falling back to $localhost");
+		logWarning("Couldn't call inet_aton($raddr) - falling back to " . LOCALHOST);
 
-		$detectedIP = $localhost;
+		$detectedIP = LOCALHOST;
 
 		return;
 	};
@@ -104,9 +114,9 @@ sub _init {
 
 	socket($sock, PF_INET, SOCK_DGRAM, $proto) || do {
 
-		logWarning("Couldn't call socket(PF_INET, SOCK_DGRAM, \$proto) - falling back to $localhost");
+		logWarning("Couldn't call socket(PF_INET, SOCK_DGRAM, \$proto) - falling back to " . LOCALHOST);
 
-		$detectedIP = $localhost;
+		$detectedIP = LOCALHOST;
 
 		return;
 	};
@@ -117,9 +127,9 @@ sub _init {
 
 		bind($sock, pack_sockaddr_in(0, $laddr)) or do {
 
-			logWarning("Couldn't call bind(pack_sockaddr_in(0, \$laddr) - falling back to $localhost");
+			logWarning("Couldn't call bind(pack_sockaddr_in(0, \$laddr) - falling back to " . LOCALHOST);
 
-			$detectedIP = $localhost;
+			$detectedIP = LOCALHOST;
 
 			return;
 		};
@@ -127,9 +137,9 @@ sub _init {
 
 	connect($sock, $paddr) || do {
 
-		logWarning("Couldn't call connect() - falling back to $localhost");
+		logWarning("Couldn't call connect() - falling back to " . LOCALHOST);
 
-		$detectedIP = $localhost;
+		$detectedIP = LOCALHOST;
 
 		return;
 	};

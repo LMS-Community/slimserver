@@ -967,12 +967,13 @@ sub generateHTTPResponse {
 	
 	# protect access to settings pages: only allow from local network
 	if ( main::WEBUI 
-		&& !Slim::Utils::Network::ip_is_localhost($peeraddr{$httpClient})
+		&& !Slim::Utils::Network::ip_is_host($peeraddr{$httpClient}) 
 		&& $prefs->get('protectSettings') && !$prefs->get('authorize') 
 		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings') 
 		&& ( Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient}) || Slim::Utils::Network::ip_on_different_network($peeraddr{$httpClient}) )
 	) {
-		$log->error("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient} -> $path");
+		my $hostIP = Slim::Utils::IPDetect::IP();
+		$log->error("Access to settings pages is restricted to the local network or localhost: $peeraddr{$httpClient} -> $hostIP ($path)");
 
 		$response->code(RC_FORBIDDEN);
 
