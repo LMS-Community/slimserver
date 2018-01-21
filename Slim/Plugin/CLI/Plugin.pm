@@ -247,7 +247,7 @@ sub cli_socket_accept {
 
 		# Check allowed hosts
 		if ( !main::SLIM_SERVICE 
-			&& !Slim::Utils::Network::ip_is_localhost($tmpaddr)
+			&& !Slim::Utils::Network::ip_is_host($tmpaddr)
 			&& $prefsServer->get('protectSettings') && !$prefsServer->get('authorize')
 			&& ( Slim::Utils::Network::ip_is_gateway($tmpaddr) || Slim::Utils::Network::ip_on_different_network($tmpaddr) )
 		) {
