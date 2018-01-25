@@ -1285,10 +1285,15 @@ sub generateHTTPResponse {
 		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
 
 			if ( main::WEBUI ) {
-				($contentType, $body) = Slim::Web::Pages::Common->logFile($httpClient, $params, $response, $1);
+				$body = Slim::Web::Pages::Common->logFile($httpClient, $params, $response, $1);
 				
-				# when the full file is requested, then all the streaming is handled in the logFile call. Nothing is returned.
-				return 0 unless $contentType;
+				if ($body) {
+					$contentType = 'text/html';
+				}
+				else {
+					# when the full file is requested, then all the streaming is handled in the logFile call. Nothing is returned.
+					return 0 unless $contentType;
+				}
 			}
 		
 		} elsif ($path =~ /status\.m3u/) {
