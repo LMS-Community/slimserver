@@ -8,7 +8,7 @@
 	<creator>Andy Grundman</creator>
 	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<email>andy@slimdevices.com</email>
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type>
 	<targetApplication>

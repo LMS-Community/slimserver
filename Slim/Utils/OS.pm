@@ -270,6 +270,11 @@ sub getProxy {
 	return $proxy;
 }
 
+=head2 getDefaultGateway()
+	Get the network's default gateway address
+=cut
+sub getDefaultGateway { '' }
+
 sub ignoredItems {
 	return (
 		# Items we should ignore on a linux volume

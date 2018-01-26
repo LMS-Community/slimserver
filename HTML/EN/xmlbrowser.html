@@ -247,7 +247,7 @@
 						[% ELSIF !item.type.match('^text') %]
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
-						[% item.name || item.title || item.web.value %]
+						[% (item.name || item.title || item.web.value) | html %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]

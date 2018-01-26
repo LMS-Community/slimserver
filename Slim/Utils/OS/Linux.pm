@@ -51,4 +51,15 @@ sub getFlavor {
 	return 'Linux';
 }
 
+sub getDefaultGateway {
+	my $route = `/sbin/route -n`;
+	while ( $route =~ /^(?:0\.0\.0\.0)\s*(\d+\.\d+\.\d+\.\d+)/mg ) {
+		if ( Slim::Utils::Network::ip_is_private($1) ) {
+			return $1;
+		}
+	}
+	
+	return;
+}
+
 1;
