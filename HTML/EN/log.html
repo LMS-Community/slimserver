@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<style type="text/css">
+			body, form {
+				margin: 0;
+			}
+			
+			pre {
+				margin-top: 0;
+				margin-left: 5px;
+			}
+
+			#header {
+				background: #666;
+				color: white;
+				font-size: 12px;
+				font-family: sans-serif;
+				padding: 10px;
+				position: -webkit-sticky;
+				position: sticky;
+				top: 0;
+			}
+			
+			#header * {
+				vertical-align: middle;
+			}
+			
+			#header a {
+				color: white;
+			}
+			
+			#header span, input {
+				margin-left: 10px;
+			}
+			
+			#search {
+				border: 1px;
+				height: 16px;
+				margin-left: 0;
+			}
+		</style>
+		
+		<script>
+			function submitForm(vars) {
+				if (vars) {
+					for (var k in vars) {
+						if (vars.hasOwnProperty(k)) {
+							document.getElementById(k).value = vars[k];
+						}
+					}
+					
+				}
+				
+				console.log(document.forms[0]);
+				document.forms[0].submit();
+			}
+			
+			[% IF refresh %]
+			setTimeout(function() { 
+				//location.reload()
+				submitForm();
+			}, [% refresh * 1000 %]);
+			[% END %]
+		</script>
+	</head>
+	<body>
+		<div id="header">
+			<form action="#bottom" method="POST">
+				<img src="[% webroot %]html/images/b_delete.gif" onclick="submitForm({lines:50,search:''})">
+				<input type="text" name="search" id="search" value="[% search %]"></input>
+				<input type="checkbox" name="refresh" id="refresh" value="[% refresh %]" [% IF refresh; "checked"; END %] onclick="submitForm({refresh:[% IF refresh; 0; ELSE; 10; END %]})"></input>
+				<label for="refresh">[% "CONTROLPANEL_REFRESH" | string %]</label>
+
+				<span>
+					(<a href="javascript:submitForm({lines:50})">50</a>,
+					<a href="javascript:submitForm({lines:100})">100</a>,
+					<a href="javascript:submitForm({lines:500})">500</a>,
+					<a href="javascript:submitForm({lines:1000})">1000</a>
+					[% "LINES" | string %])
+				</span>
+				<span><a href="/[% path %]?zip=1">[% "DOWNLOAD" | string %]</a></span>
+
+				<input type="hidden" name="lines" id="lines" value="[% lines %]"></input> 
+			</form>
+		</div>
+		<pre>[% logLines %]</pre>
+		<span id="bottom"></span>
+	</body>
+</html>

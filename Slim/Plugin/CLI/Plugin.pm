@@ -243,7 +243,7 @@ sub cli_socket_accept {
 		my $tmpaddr = inet_ntoa($client_socket->peeraddr);
 
 		# Check allowed hosts
-		if ( !Slim::Utils::Network::ip_is_localhost($tmpaddr)
+		if ( !Slim::Utils::Network::ip_is_host($tmpaddr)
 			&& $prefsServer->get('protectSettings') && !$prefsServer->get('authorize')
 			&& ( Slim::Utils::Network::ip_is_gateway($tmpaddr) || Slim::Utils::Network::ip_on_different_network($tmpaddr) )
 		) {

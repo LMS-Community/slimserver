@@ -446,13 +446,13 @@ sub ip_is_ipv4 {
 	return 1;
 }
 
-=head2 ip_is_localhost()
+=head2 ip_is_host()
 
 Checks whether given IP address is the host's address or localhost
 
 =cut
 
-sub ip_is_localhost {
+sub ip_is_host {
 	my $ip = shift || return;
 	
 	return 1 if $ip eq '127.0.0.1';
@@ -493,6 +493,9 @@ sub ip_on_different_network {
 	
 	# Check for invalid chars
 	return unless ip_is_ipv4($ip);
+	
+	# if our host IP is 127.0.0.1 (lookup failed), then all networks would be different - ignore
+	return if hostAddr() eq '127.0.0.1';
 
 	return ip_is_private(hostAddr()) ? !ip_is_private($ip) : ip_is_private($ip);
 }
