@@ -389,8 +389,9 @@ sub fetchById {
 sub get {
 	my ($self, $attribute) = @_;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug($self->_url, ', ', $attribute, '->', $self->$attribute());
-	
+	main::DEBUGLOG && $log->is_debug &&
+		$log->debug($self->_url, ', ', $attribute, '->', $self->$attribute() || "* undefined value *");
+
 	return($self->$attribute());
 }
 
