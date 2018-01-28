@@ -416,8 +416,11 @@ sub parseRSS {
 		
 		$feed{'image'} = $url;
 	}
-	elsif ( $xml->{'itunes:image'} ) {
+	elsif ( ref $xml->{'itunes:image'} eq 'HASH' ) {
 		$feed{'image'} = $xml->{'itunes:image'}->{'href'};
+	}
+	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
+		$feed{'image'} = $xml->{'channel'}->{'itunes:image'}->{'href'};
 	}
 
 	# some feeds (slashdot) have items at same level as channel
