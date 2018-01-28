@@ -397,7 +397,14 @@ sub parseRSS {
 		'xmlns:slim'     => unescapeAndTrim($xml->{'xmlsns:slim'}),
 	);
 	
-	# look for an image
+	# Look for an image
+
+	# Note: we take special care to ensure that "$feed{'image'}" is only ever
+	# populated with a *scalar* value. Anything else will break Jive browsing
+	# (SlimBrowserApplet) when it attempts to fetch artwork.
+	# E.g. If a broken podcast provides an empty 'url' tag, 'XMLin' would interpret it
+	# as an empty hash ref. So we explicitly guard against such occurrences.
+
 	if ( ref $xml->{'channel'}->{'image'} ) {
 		
 		my $image = $xml->{'channel'}->{'image'};
@@ -417,13 +424,15 @@ sub parseRSS {
 			$url = $image->{'link'};
 		}
 		
-		$feed{'image'} = $url;
+		$feed{'image'} = $url unless ref $url; # scalar value only !
 	}
 	elsif ( ref $xml->{'itunes:image'} eq 'HASH' ) {
-		$feed{'image'} = $xml->{'itunes:image'}->{'href'};
+		my $href = $xml->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
 	}
 	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
-		$feed{'image'} = $xml->{'channel'}->{'itunes:image'}->{'href'};
+		my $href = $xml->{'channel'}->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
 	}
 
 	# some feeds (slashdot) have items at same level as channel
