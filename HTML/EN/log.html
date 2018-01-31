@@ -38,6 +38,11 @@
 				height: 16px;
 				margin-left: 0;
 			}
+			
+			#header form > img, #header label {
+				text-decoration: underline;
+				cursor: pointer;
+			}
 		</style>
 		
 		<script>
@@ -67,9 +72,11 @@
 		<div id="header">
 			<form action="#bottom" method="POST">
 				<img src="[% webroot %]html/images/b_delete.gif" onclick="submitForm({lines:50,search:''})">
-				<input type="text" name="search" id="search" value="[% search %]"></input>
-				<input type="checkbox" name="refresh" id="refresh" value="[% refresh %]" [% IF refresh; "checked"; END %] onclick="submitForm({refresh:[% IF refresh; 0; ELSE; 10; END %]})"></input>
-				<label for="refresh">[% "CONTROLPANEL_REFRESH" | string %]</label>
+				<input type="text" name="search" id="search" value="[% search %]" placeholder="[% "SEARCH" | string | html %]"></input>
+				<span>
+					<input type="checkbox" name="refresh" id="refresh" value="[% refresh %]" [% IF refresh; "checked"; END %] onclick="submitForm({refresh:[% IF refresh; 0; ELSE; 10; END %]})"></input>
+					<label for="refresh">[% "CONTROLPANEL_REFRESH" | string %]</label>
+				</span>
 
 				<span>
 					(<a href="javascript:submitForm({lines:50})">50</a>,
