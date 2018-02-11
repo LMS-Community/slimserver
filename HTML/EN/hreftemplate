@@ -194,13 +194,15 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 	[% details = ( item.album _ artistlist _ year)  | html -%]
 	[% FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	<img [% style %] 
-		src=
 		[% IF item.image %]
-		"[% item.image | resizeimage(height, height, '-', webroot) %]"
+		src="[% item.image | resizeimage(height, height, '-', webroot) %]"
+		srcset="[% item.image | resizeimage(height * 2, height * 2, '-', webroot) %] 2x"
 		[% ELSIF item.coverThumb %]
-		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %]"
+		src="/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %]"
+		srcset="/music/[% item.coverThumb %]/cover_[% height * 2 %]x[% height * 2 %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %] 2x"
 		[% ELSIF item.icon %]
-		"[% item.icon | resizeimage(height, height, '-', webroot) %]"
+		src="[% item.icon | resizeimage(height, height, '-', webroot) %]"
+		srcset="[% item.icon | resizeimage(height * 2, height * 2, '-', webroot) %] 2x"
 		[% END %]
 	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 		alt   = "[% details %]"

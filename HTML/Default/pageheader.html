@@ -68,7 +68,7 @@
 
 			<div class="pagetitle [%- IF pageicon -%]pagetitleWithIcon[% END %]">
 				[%- IF pageicon -%]
-					<img src="[% pageicon | resizeimage(25, 25, 'f', webroot) %]" class="pageicon" width="25" height="25" border="0" alt="[% pagetitle | html %]">
+					<img src="[% pageicon | resizeimage(25, 25, 'f', webroot) %]" srcset=[% pageicon | resizeimage(50, 50) %] 2x" class="pageicon" width="25" height="25" border="0" alt="[% pagetitle | html %]">
 				[%- END -%]
 				<span>[% pagetitle | html %]&nbsp;</span>
 				[% UNLESS page == 'help' %]
