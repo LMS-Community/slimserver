@@ -299,7 +299,7 @@ useSpecialExt="-browse" %]
 		[% IF image %]
 		<div>
 			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
-				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt" style="max-width:150px;max-height:150px">
+				<img src="[% image | resizeimage(150, 150, '', webroot) %]" srcset="[% image | resizeimage(300, 300, '', webroot) %] 2x" alt="coverArt" style="max-width:150px;max-height:150px">
 			</a>
 		</div>
 		[% END %]
@@ -313,7 +313,7 @@ useSpecialExt="-browse" %]
 			[%- WRAPPER contentitem controls = 'allcontrol' lineclass = (useAllIcon ? 'browsedbListItem itemWithCover' : 'browsedbListItem' )%]
 				[% IF useAllIcon %]
 					<span class="browseCover">
-						<img src="[% webroot %]html/images/playall_50x50_f.png" width="50">
+						<img src="[% webroot %]html/images/playall_50x50_f.png" srcset="[% webroot %]html/images/playall_100x100_f.png 2x" width="50">
 					</span>
 					<div class="browseItemDetail">
 				[% END %]
@@ -438,7 +438,7 @@ useSpecialExt="-browse" %]
 [% BLOCK itemIcon %]
 	[% WRAPPER weblink %]
 	<span class="browseCover">
-		<img src="[% url | resizeimage(size, size, 'o', webroot) %]" onLoad="resize(this, [%- size %])">
+		<img src="[% url | resizeimage(size, size, 'o', webroot) %]" srcset="[% url | resizeimage(size * 2, size * 2, 'o', webroot) %] 2x" onLoad="resize(this, [%- size %])">
 	</span>
 	[% END %]
 	<div class="[% class %]">

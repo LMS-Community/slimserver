@@ -498,6 +498,11 @@ sub processHTTP {
 		if ($path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)} ) {
 			if ( my $cookie = $request->header('Cookie') ) {
 				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
+				
+				# define the precacheHiDPIArtwork pref if we're dealing with a high DPI monitor
+				if ( $params->{'cookies'}->{'Squeezebox-enableHiDPI'} && $params->{'cookies'}->{'Squeezebox-enableHiDPI'}->value > 1 && !defined $prefs->get('precacheHiDPIArtwork') ) {
+					$prefs->set('precacheHiDPIArtwork', 1);
+				}
 			}
 		}
 		

@@ -456,9 +456,9 @@ sub ip_is_host {
 	my $ip = shift || return;
 	
 	return 1 if $ip eq '127.0.0.1';
-	return 1 if $ip eq hostAddr();
+	return 1 if $ip eq serverAddr();
 
-	return intip($ip) == intip(hostAddr()) ? 1 : 0;
+	return intip($ip) == intip(serverAddr()) ? 1 : 0;
 }
 
 =head1 ip_is_gateway($ip)
@@ -497,7 +497,7 @@ sub ip_on_different_network {
 	# if our host IP is 127.0.0.1 (lookup failed), then all networks would be different - ignore
 	return if hostAddr() eq '127.0.0.1';
 
-	return ip_is_private(hostAddr()) ? !ip_is_private($ip) : ip_is_private($ip);
+	return ip_is_private(serverAddr()) ? !ip_is_private($ip) : ip_is_private($ip);
 }
 
 =head1 SEE ALSO

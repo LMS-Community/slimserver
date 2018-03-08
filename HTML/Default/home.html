@@ -38,7 +38,8 @@ ELSE %]
 							[% title = link.key | getstring %]
 							<a href="[% link.value %]player=[% player %]" class="browseItemLink">
 								<span class="browseCover">
-									<img src="[% additionalLinks.icons.item(link.key) | resizeimage(25, 25) %]" width="25" border="0" alt="[% title %]">
+									<img src="[% additionalLinks.icons.item(link.key) | resizeimage(25, 25) %]"
+									srcset=[% additionalLinks.icons.item(link.key) | resizeimage(50, 50) %] 2x" width="25" border="0" alt="[% title %]">
 								</span>
 							</a>
 							<div class="smallBrowseItemDetail">
@@ -153,7 +154,7 @@ ELSE %]
 					link.icon = additionalLinks.icons.item(link.key) || link.icon;
 				%]
 					<span class="browseCover">
-						<img src="[% link.icon | resizeimage(25, 25) %]" width="25" border="0" alt="[% string %]">
+						<img src="[% link.icon | resizeimage(25, 25) %]" srcset=[% link.icon | resizeimage(50, 50) %] 2x" width="25" border="0" alt="[% string %]">
 					</span>
 					<div class="smallBrowseItemDetail">
 				[% END %]

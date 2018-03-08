@@ -1513,7 +1513,7 @@ sub searchQuery {
 				type   => $type,
 				checkLargeResultset => sub {
 					my $isLarge = shift;
-					return ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
+					return ($isLarge && $isLarge > ($index + $quantity)) ? ('ORDER BY fulltextweight DESC LIMIT ' . $isLarge) : '';
 				},
 			});
 			

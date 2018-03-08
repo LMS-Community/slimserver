@@ -7,7 +7,7 @@
 				[% IF image || plugin_meta.cover %]
 				[% UNLESS image.match('^http'); image = image.replace('^/?', webroot); END %]
 				<a href="[% image || plugin_meta.cover %]" target="cover">
-					<img src="[% image || plugin_meta.cover | resizeimage(150, 150) %]" alt="coverArt">
+					<img src="[% image || plugin_meta.cover | resizeimage(150, 150) %]" srcset="[% image || plugin_meta.cover | resizeimage(300, 300) %] 2x" alt="coverArt">
 				</a>
 				[% ELSIF plugin_meta.icon %]
 				<img src="[% plugin_meta.icon %].png" alt="coverArt" onLoad="resize(this)">

@@ -144,6 +144,7 @@ sub getFeedAsync {
 	if ( $url =~ /(?:radiotime|tunein\.com)/ ) {
 		# Add the TuneIn username
 		if ( $url !~ /username/ && $url =~ /(?:presets|title)/ 
+			&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') 
 			&& ( my $username = Slim::Plugin::InternetRadio::TuneIn->getUsername($params->{client}) )
 		) {
 			$url .= '&username=' . uri_escape_utf8($username);
