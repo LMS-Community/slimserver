@@ -111,7 +111,7 @@ sub canFollowAlias {
 sub initSearchPath {
 	my $class = shift;
 	
-	$class->SUPER::initSearchPath();
+	$class->SUPER::initSearchPath(@_);
 
 	my @paths = ();
 
@@ -343,6 +343,17 @@ sub pathFromMacAlias {
 	}
 
 	return $path;
+}
+
+sub getDefaultGateway {
+	my $route = `route -n get default`;
+	if ($route =~ /gateway:\s*(\d+\.\d+\.\d+\.\d+)/s ) {
+		if ( Slim::Utils::Network::ip_is_private($1) ) {
+			return $1;
+		}
+	}
+	
+	return;
 }
 
 my $updateCheckInitialized;

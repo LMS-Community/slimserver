@@ -16,14 +16,14 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT tracks.id, 'track', 
 		-- weight 10
-		IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, ''),
+		IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, ''),
 		-- weight 5
 		IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
 		-- weight 3 - contributors create multiple hits, therefore only w3
 		CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || 
 		IGNORE_CASE(comments.value) || ' ' || IGNORE_CASE(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 		-- weight 1
-		printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '')
+		printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '') || ' ' || IFNULL(tracks.musicbrainz_id, '')
 		 
 		FROM tracks
 		LEFT JOIN contributor_track ON contributor_track.track = tracks.id
@@ -41,13 +41,13 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT albums.id, 'album', 
 		-- weight 10
-		IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' || IFNULL(albums.musicbrainz_id, ''),
+		IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, ''),
 		-- weight 5
 		IFNULL(albums.year, ''),
 		-- weight 3
 		CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
 		-- weight 1
-		CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
+		CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END || ' ' || IFNULL(albums.musicbrainz_id, '')
 		 
 		FROM albums
 		LEFT JOIN contributor_album ON contributor_album.album = albums.id
@@ -62,13 +62,13 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT contributors.id, 'contributor', 
 		-- weight 10
-		IFNULL(contributors.name, '') || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '') || ' ' || IFNULL(contributors.musicbrainz_id, ''),
+		IFNULL(contributors.name, '') || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, ''),
 		-- weight 5
 		'',
 		-- weight 3
 		'',
 		-- weight 1
-		''
+		IFNULL(contributors.musicbrainz_id, '')
 		FROM contributors
 		%s;
 };

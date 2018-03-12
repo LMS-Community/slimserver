@@ -611,14 +611,14 @@ SqueezeJS.SonginfoParser = {
 			album : new Ext.Template('{album}'),
 			contributor : new Ext.Template('{contributor}'),
 			year : new Ext.Template('{year}'),
-			coverart : new Ext.Template('<img src="{src}" {width} {height}>')
+			coverart : new Ext.Template('<img src="{src}" srcset="{srcset}" {width} {height}>')
 		},
 		linked : {
 			title : new Ext.Template('<a href="' + webroot +'{link}?player={player}&amp;item={id}" target="browser">{title}</a>'),
 			album : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;album_id={id}&amp;player={player}/index.html?index=0" target="browser">{album}</a>'),
 			contributor : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;artist_id={id}&amp;player={player}/" target="browser">{contributor}</a>'),
 			year : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;year={year}&amp;player={player}/" target="browser">{year}</a>'),
-			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" {width} {height}></a>')
+			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" srcset="{srcset}" {width} {height}></a>')
 		}
 	},
 
@@ -760,6 +760,7 @@ SqueezeJS.SonginfoParser = {
 		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,
+			srcset: coverart.replace(width + 'x' + width, width*2 +'x' + width*2) + ' 2x',
 			width: width ? 'width="' + width + '"' : '',
 			height: width ? 'height="' + width + '"' : '',
 			link: link

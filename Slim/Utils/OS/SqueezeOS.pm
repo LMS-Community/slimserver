@@ -473,4 +473,7 @@ sub settimeofday {
 
 sub canAutoRescan { 1 };
 
+# SqueezeOS doesn't have a web UI - and we don't want to shell out to get the gateway
+sub getDefaultGateway { '' }
+
 1;

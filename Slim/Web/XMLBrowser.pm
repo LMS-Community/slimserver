@@ -603,7 +603,7 @@ sub handleFeed {
 	
 	# Play of a playlist should be playall
 	if ($action
-		&& ($streamItem ? $streamItem->{'type'} eq 'playlist'
+		&& ($streamItem && $streamItem->{'type'} ? $streamItem->{'type'} eq 'playlist'
 						: $stash->{'type'} && $stash->{'type'} eq 'playlist')
 		&& $action =~ /^(?:play|add)$/
 	) {

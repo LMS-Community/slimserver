@@ -1,4 +1,46 @@
-<h2><a name="v7.9.0" id="v7.9.0"></a>Version 7.9.0</h2>
+<h2><a name="v7.9.1" id="v7.9.1"></a>Version 7.9.1</h2>
+<ul>
+	<li><a href="#v7.7.6">Upstream fixes from Logitech Media Server 7.7.6</a></li>
+	<br />
+	
+	<li>New Features:</li>
+	<ul>
+		<li>Allow plugins to add JavaScript to the main web UI.</li>
+		<li>Allow plugins to support seek within a transcoded stream.</li>
+		<li>Allow genres or artists to be excluded from last.fm scrobbling.</li>
+	</ul>
+	<br />
+	
+	<li>Bug Fixes:</li>
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9741">#9741</a> - Allow genres or artists to be excluded from last.fm scrobbling.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16319">#16319</a> - faad: some files won't play -- depends on name of file.</li>
+		<li>MS Edge 15 would not let us click links in the Default web UI.</li>
+		<li>Fix localization of strings if Controller is requesting another language than the server's.</li>
+	</ul>
+	<br />
+	
+	<li>Platform Support:</li>
+	<ul>
+		<li>Update IO::Socket::SSL on Windows to improve compatibility with newer SSL standards.</li>
+		<li>Perl 5.26 modules for Linux on x86_64 systems have been added - thanks fsbruva for the build script update!</li>
+		<li>Perl 5.24 modules for Linux on ARM and i386 systems have been added.</li>
+		<li>Support AARCH64 has been added.</li>
+		<li>Re-enable server restart on Debian based systems to allow for automated updates.</li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+		<li>Make Playlists menu available to the SB Classic/Boom/Transporter's Home menu</li>
+		<li>Updated faad2 to latest code. Includes patches to increase maximum path length and fix some transcoding issues on Windows. Thanks <a href="https://github.com/ralph-irving/faad2">ralphy</a> and utgg.</li>
+		<li>Limit growth of the write-ahead log files for caches.</li>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v7.9.0" id="v7.9.0"></a>Version 7.9.0 - 2017-03-07</h2>
 <ul>
 	<li>New Features:</li>
 	<ul>
@@ -35,7 +77,7 @@
 		<li>Scanner behaviour improvements:
 			<ul>
 				<li>Allow browsing your music folder while the scanner is running.</li> 
-				<li>Don't stop the music when running a full wipe & rescan.</li>
+				<li>Don't stop the music when running a full wipe &amp; rescan.</li>
 				<li>Add an option to disable automatic rescans on certain preference changes.</li>
 				<li>Increased scanning performance.</li>
 			</ul>
@@ -198,27 +240,34 @@
 <ul>
 	<li>Server Changes:</li>
 	<ul>
+		<li>Block access to settings pages from outside the local network.</li>
 		<li>Migrate our WiMP implementation to the TIDAL branding and service.</li>
 		<li>Change Napster implementation to use AAC instead of MP3.</li>
 		<li>Improve compatibility with latest iTunes 12 updates.</li>
 		<li>Limit the number of items to be added in RandomPlay. Large numbers would cause database errors.</li>
-		<li>Remove defunct Last.fm, SiriusXM and RadioIO plugins.</li>
+		<li>Remove defunct Spotify, Last.fm, SiriusXM and RadioIO plugins.</li>
 		<li>Rename Rhapsody to Napster.</li>
+		<li>Improve support for SSL protected communication. Use https to connect to mysqueezebox.com if possible.</li>
+		<li>Allow streaming of https sources by proxying them through LMS (if possible - requires IO::Socket::SSL to be installed on platforms other than Windows)</li>
 	</ul>
 	<br />
 	
 	<li>Platform Support:</li>
 	<ul>
-		<li>Improve support for latest Mac OSX 10.11 El Capitan and Windows 10.</li>
+		<li>Improve support for Mac OSX 10.11 and later, and Windows 10.</li>
 	</ul>
 	<br />
 	
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>Fix synced playback with Spotify (SB Radio and Touch only)</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17068">#17068</a> - Lost Artwork playing radio stations</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17727">#17727</a> - Playback stops with mp3 + cue sheets combination</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17901">#17901</a> - "Some settings were changed. Do you want to save them?" doesn't honor button clicked.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18078">#18078</a> - All files seen as changed after Daylight Saving time change (Windows only)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18151">#18151</a> - some server don't accept port definition in header when it's a default port.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18152">#18152</a>, <a href="https://github.com/Logitech/slimserver/issues/143">#143</a> - HTTPS download fails: Connect times out lack of certain headers.</li>
+		<li>Fix several XSS vulnerabilities in the web UI.</li>
 	</ul>
 	<br />
 </ul>

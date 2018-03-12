@@ -137,6 +137,8 @@ sub init {
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
 		'dbhighmem'             => sub { $os->canDBHighMem() },
+		# assuming that a system which has a lot of memory has larger storage, too
+		'dbjournalsize'         => sub { $os->canDBHighMem() ? 50 : 5 },
 		'cachedir'              => \&defaultCacheDir,
 		'librarycachedir'       => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,
@@ -219,6 +221,7 @@ sub init {
 			return join(',', Slim::Utils::Network::hostAddr());
 		},
 		'csrfProtectionLevel'   => 0,
+		'protectSettings'       => 1,
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',
@@ -287,6 +290,7 @@ sub init {
 	$os->postInitPrefs($prefs);
 
 	# set validation functions
+	$prefs->setValidate( 'int',   qw(dbhighmem dbjournalsize) );
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
 									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
 	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir artfolder) );

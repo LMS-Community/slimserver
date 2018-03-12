@@ -73,14 +73,16 @@ sub sqlHelperClass {
 # Skip obsolete plugins, they should be deleted by installers
 sub skipPlugins {return (qw(Picks ShoutcastBrowser Webcasters Health));}
 
-=head2 initSearchPath( )
+=head2 initSearchPath( [$baseDir] )
 
-Initialises the binary seach path used by Slim::Utils::Misc::findbin to OS specific locations
+Initialises the binary seach path used by Slim::Utils::Misc::findbin to OS specific locations.
+Optionally a base directory can be defined, eg. used to add plugin specific folders.
 
 =cut
 
 sub initSearchPath {
 	my $class = shift;
+	my $baseDir = shift || $class->dirsFor('Bin');
 	# Initialise search path for findbin - called later in initialisation than init above
 
 	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS. 
@@ -99,20 +101,26 @@ sub initSearchPath {
 	elsif ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
 	}
-	
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^aarch64-linux/ ) {
+		$class->{osDetails}->{'binArch'} = 'aarch64-linux';
+	}
+
 	# Reduce PPC to powerpc-linux
-	if ( $class->{osDetails}->{'binArch'} =~ /^(?:ppc|powerpc).*linux/ ) {
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^(?:ppc|powerpc).*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'powerpc-linux';
 	}
 
-	my @paths = ( catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'}), catdir($class->dirsFor('Bin'), $^O), $class->dirsFor('Bin') );
+	my @paths = ( catdir($baseDir, $class->{osDetails}->{'binArch'}), catdir($baseDir, $^O), $baseDir );
 
 	# Linux x86_64 should check its native folder first
 	if ( $binArch =~ s/^x86_64-([^-]+).*/x86_64-$1/ ) {
-		unshift @paths, catdir($class->dirsFor('Bin'), $binArch);
+		unshift @paths, catdir($baseDir, $binArch);
 	}
 	elsif ( $class->{osDetails}->{'binArch'} eq 'armhf-linux' ) {
-		push @paths, catdir($class->dirsFor('Bin'), 'arm-linux');
+		push @paths, catdir($baseDir, 'arm-linux');
+	}
+	elsif ( $class->{osDetails}->{'binArch'} =~ /darwin/i && $class->{osDetails}->{osArch} =~ /x86_64/ ) {
+		unshift @paths, catdir($baseDir, $class->{osDetails}->{'binArch'} . '-x86_64'), catdir($baseDir, $^O . '-x86_64');
 	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
@@ -287,6 +295,11 @@ sub getProxy {
 	return $proxy;
 }
 
+=head2 getDefaultGateway()
+	Get the network's default gateway address
+=cut
+sub getDefaultGateway { '' }
+
 sub ignoredItems {
 	return (
 		# Items we should ignore on a linux volume
@@ -361,6 +374,8 @@ sub _parseLanguage {
 	$language = uc($language);
 	$language =~ s/\.UTF.*$//;
 	$language =~ s/(?:_|-|\.)\w+$//;
+	
+	return 'EN' if $language && $language eq 'C';
 	
 	return $language || 'EN';
 }

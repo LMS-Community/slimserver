@@ -84,7 +84,25 @@ sub new_socket {
 	# Create SSL socket if URI is https
 	if ( $self->request->uri->scheme eq 'https' ) {
 		if ( hasSSL() ) {
-			return Slim::Networking::Async::Socket::HTTPS->new( @_ );
+			# From http://bugs.slimdevices.com/show_bug.cgi?id=18152:
+			# We increasingly find servers *requiring* use of the SNI extension to TLS.
+			# IO::Socket::SSL supports this and, in combination with the Net:HTTPS 'front-end',
+			# will default to using a server name (PeerAddr || Host || PeerHost). But this will fail
+			# if PeerAddr has been set to, say, IPv4 or IPv6 address form. And LMS does that through
+			# DNS lookup.
+			# So we will probably need to explicitly set "SSL_hostname" if we are to succeed with such
+			# a server.
+
+			# First, try without explicit SNI, so we don't inadvertently break anything. 
+			# (This is the 'old' behaviour.) (Probably overly conservative.)
+			my $sock = Slim::Networking::Async::Socket::HTTPS->new( @_ );
+			return $sock if $sock;
+
+			# Failed. Try again with an explicit SNI.
+			my %args = @_;
+			$args{SSL_hostname} = $args{Host};
+			$args{SSL_verify_mode} = 0x00;
+			return Slim::Networking::Async::Socket::HTTPS->new( %args );
 		}
 		else {
 			# change the request to port 80
@@ -177,7 +195,11 @@ sub add_headers {
 	}
 	
 	my $host = $self->request->uri->host;
-	if ( $self->request->uri->port != 80 ) {
+	# http://bugs.slimdevices.com/show_bug.cgi?id=18151
+	# Host needs port number unless we're using default (http - 80, https - 443).
+	# Note that both curl & wget suppress the default port number. Source comment in wget suggests
+	# that broken server-side software often doesn't recognize the port argument.
+	if ( $self->request->uri->port != $self->request->uri->default_port ) {
 		$host .= ':' . $self->request->uri->port;
 	}
 
@@ -286,6 +308,15 @@ sub _http_read {
 	my ( $self, $args ) = @_;
 	
 	my ($code, $mess, @h) = eval { $self->socket->read_response_headers };
+
+	# XXX - this is a hack to work around some mis-configured streaming services.
+	#       Net::HTTP::Methods would reject status which don't start with HTTP/.
+	#       Some streaming services return "ICY 200 OK" instead. Let's deal with
+	#       them in a more relaxed way and give them another try.
+	if ($@ && $@ =~ /ICY 200 OK/) {
+		($code, $mess, @h) = eval { $self->socket->read_response_headers( laxed => 1 ) };
+		@h = $self->socket->_read_header_lines() if !$@ && $code == 200 && $mess =~ /OK/ && !scalar @h;
+	}
 	
 	if ($@) {
 		$self->_http_error( "Error reading headers: $@", $args );
@@ -399,6 +430,17 @@ sub _http_read {
 		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 		Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
+		
+		# in a *confirmed* keep-alive situation, the whole body might already be in the buffer, 
+		# so there could be no further event which would lead to an error timeout, so body reading 
+		# must be forced. But if nothing has been read yet, attempting to force body reading can lead to 
+		# a false empty body result, so let it to the event loop. 
+		# Body might also be empty but a keep-alive with no content-length in the response is an error
+		# if everything has already been read, _http_body_read will unsubscribe to event loop 
+		# we just subscrive above ... a bit unefficient 
+		_http_read_body( $self->socket, $self, $args ) if ( ($self->response->headers->header('Connection') =~ /close/i || 
+															 $headers->header('Connection') !~ /keep-alive/i ) && 
+															 $self->socket->_rbuf_length == ($headers->content_length || 0));
 	}
 }
 
@@ -466,12 +508,20 @@ sub _http_read_body {
 		}
 	}
 	
-	if ( !defined $result || $result == 0 ) {
+	if ( !defined $result || $result == 0 || (defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length')) ) {
 		# if here, we've reached the end of the body
-		
-		# close and remove the socket
-		$self->fh->close if $self->fh;
-		$self->disconnect;
+
+		# close and remove the socket if not keep-alive 
+		if ( $self->response->headers->header('Connection') =~ /close/i || $self->request->headers->header('Connection') !~ /keep-alive/i ) {
+			$self->fh->close if $self->fh;
+			$self->disconnect;
+			main::DEBUGLOG && $log->debug("closing mode");
+		}	
+		else {
+			Slim::Networking::Select::removeError( $self->socket );
+			Slim::Networking::Select::removeRead( $self->socket );
+			main::DEBUGLOG && $log->debug("keep-alive mode");
+		}
 		
 		main::DEBUGLOG && $log->debug("Body read");
 		

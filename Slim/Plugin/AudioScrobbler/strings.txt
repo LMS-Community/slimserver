@@ -133,6 +133,38 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	RU	Нет, не сообщать о воспроизводимых дорожках на Last.fm.
 	SV	Nej, rapportera inte spelade spår till Last.fm.
 
+PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
+	DE	Titel ignorieren
+	EN	Ignore Titles
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
+	DE	Geben Sie eine Komma-separierte Liste von Titeln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
+	EN	Define a comma separated list of titles or names. Tracks which match one of these strings will not be scrobbled.
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
+	DE	Interpreten ignorieren
+	EN	Ignore Artists
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
+	DE	Geben Sie eine Komma-separierte Liste von Interpreten ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
+	EN	Define a comma separated list list of artist names. Tracks which match one of these strings will not be scrobbled.
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
+	DE	Albentitel ignorieren
+	EN	Ignore Album Titles
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
+	DE	Geben Sie eine Komma-separierte Liste von Albumtiteln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
+	EN	Define a comma separated list of album names. Tracks which match one of these strings will not be scrobbled.
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
+	DE	Stilrichtungen ignorieren
+	EN	Ignore Genres
+
+PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
+	DE	Geben Sie eine Komma-separierte Liste von Stilrichtungen ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
+	EN	Define a comma separated list list of genres. Tracks which match one of these strings will not be scrobbled.
+
 PLUGIN_AUDIOSCROBBLER_BANNED
 	CS	Tato verze Logitech Media Server byla zakázána prostřednictvím Last.fm, aktualizujte laskavě na novější verzi.
 	DA	Denne version af Logitech Media Server ser ud til at være udelukket af Last.fm. Du bør opgradere til en nyere version.

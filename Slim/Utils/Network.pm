@@ -446,6 +446,60 @@ sub ip_is_ipv4 {
 	return 1;
 }
 
+=head2 ip_is_host()
+
+Checks whether given IP address is the host's address or localhost
+
+=cut
+
+sub ip_is_host {
+	my $ip = shift || return;
+	
+	return 1 if $ip eq '127.0.0.1';
+	return 1 if $ip eq serverAddr();
+
+	return intip($ip) == intip(serverAddr()) ? 1 : 0;
+}
+
+=head1 ip_is_gateway($ip)
+
+Try to figure out whether an IP address is the host's gateway
+
+=cut
+
+sub ip_is_gateway {
+	my ($ip) = @_;
+	
+	# Check for invalid chars
+	return unless ip_is_ipv4($ip);
+
+	my $gateway = Slim::Utils::IPDetect::defaultGateway();
+	
+	return unless $gateway;
+
+	return intip($ip) == intip($gateway) ? 1 : 0;
+}
+
+=head1 ip_on_different_network($ip)
+
+Try to figure out whether an IP address is on the same network as Logitech Media Server.
+It's very simplistic in that it only checks whether we're in a private network, but the
+requested IP is not (and vice versa)
+
+=cut
+
+sub ip_on_different_network {
+	my ($ip) = @_;
+	
+	# Check for invalid chars
+	return unless ip_is_ipv4($ip);
+	
+	# if our host IP is 127.0.0.1 (lookup failed), then all networks would be different - ignore
+	return if hostAddr() eq '127.0.0.1';
+
+	return ip_is_private(serverAddr()) ? !ip_is_private($ip) : ip_is_private($ip);
+}
+
 =head1 SEE ALSO
 
 L<IO::Select>

@@ -774,6 +774,12 @@ sub getResizeSpecs {
 			'50x50_o',	# Web UI small thumbnails, Controller App (low-res display)
 		);
 		
+		# HiDPI versions of web UI artwork
+		if ($prefs->get('precacheHiDPIArtwork')) {
+			$thumbSize *= 2;
+			push @specs, "${thumbSize}x${thumbSize}_o";
+		}
+		
 		if ( my $customSpecs = $prefs->get('customArtSpecs') ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Adding custom artwork resizing specs:\n" . Data::Dump::dump($customSpecs));
 			push @specs, keys %$customSpecs;

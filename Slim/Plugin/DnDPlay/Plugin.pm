@@ -43,14 +43,16 @@ sub initPlugin {
 		require Slim::Plugin::DnDPlay::Settings;
 		Slim::Plugin::DnDPlay::Settings->new();
 		
-		# this handler hijacks the default handler for js-main, to inject the D'n'd code
-		Slim::Web::Pages->addPageFunction("js-main\.html", sub {
+		Slim::Web::Pages->addPageFunction("js-main-dd.js", sub {
 			my $params = $_[1];
 			$params->{maxUploadSize} = MAX_UPLOAD_SIZE;
 			$params->{fileTooLarge}  = string('PLUGIN_DNDPLAY_FILE_TOO_LARGE', '{0}', '{1}');
 			$params->{validTypeExtensions} = '\.(' . join('|', Slim::Music::Info::validTypeExtensions()) . ')$';
-			Slim::Web::HTTP::filltemplatefile('html/js-main-dd.html', $params);
+			Slim::Web::HTTP::filltemplatefile('js-main-dd.js', $params);
 		});
+
+		require Slim::Web::Pages::JS;
+		Slim::Web::Pages::JS->addJSFunction('js-main', 'js-main-dd.js');		
 	} 
 	
 	# the file upload is handled through a custom request handler, dealing with multi-part POST requests

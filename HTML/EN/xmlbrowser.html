@@ -257,7 +257,7 @@
 						   IF !title.defined || title == ''; title = item.name; END;
 						   IF !title.defined || title == ''; title = item.title; END
 						%]
-						[% title | html_line_break %]
+						[% title | html | html_line_break %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]

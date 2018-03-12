@@ -489,30 +489,43 @@ sub logFile {
 		return;
 	}
 
-	$response->header("Refresh" => "10; url=" . $params->{path} . ($params->{lines} ? '?lines=' . $params->{lines} : ''));
-	$response->header("Content-Type" => "text/plain; charset=utf-8");
-		
-	my $count = ($params->{lines} * 1) || 50;
+	my $lines = $params->{lines};
+	my $search = $params->{search};
+	my $url = $params->{path};
+	$url .= "?lines=$lines" if $lines;
+	$url .= ($lines ? '&' : '?') . "search=$search" if $search;
 
-	my $body = '';
+	# if we're called with a GET, then likely it was a link, use default refresh rate
+	$params->{refresh} = 10 if !defined $params->{refresh} && $response->request->method eq 'GET';	
 
+	my $count = ($lines * 1) || 50;
+
+	$params->{logLines} = '';
+	
 	my $file = File::ReadBackwards->new($logFile);
 		
 	if ($file){
 
 		my @lines;
-		while ( --$count && (my $line = $file->readline()) ) {
+		while ( $count && (my $line = $file->readline()) ) {
+			next if $search && $line !~ /\Q$search\E/i; 
+			
 			$line = "<span style=\"color:green\">$line<\/span>" if $line =~ /main::init.*Starting/;
-			$line =~ s/(error)\b/<span style="color:red">$1<\/span>/ig;
-			$line =~ s/(warn.*?)\b/<span style="color:orange">$1<\/span>/ig;
+			$line = qq(<span style="color:red">$line<\/span>) if $line =~ /(error)\b/i;
+			$line = qq(<span style="color:orange">$line<\/span>) if $line =~ /(warn.*?)\b/i;
 			unshift (@lines, $line);
+			
+			--$count;
 		}
-		$body .= join('', @lines);
+		$params->{logLines} .= join('', @lines);
 
 		$file->close();			
-	};		
+	};
 
-	return ("text/html", \"<pre>$body</pre>");
+	$response->expires(0);
+	$response->header('Cache-Control' => 'no-cache');
+
+	return Slim::Web::HTTP::filltemplatefile("log.html", $params);
 }
 
 sub statusM3u {

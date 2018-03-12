@@ -40,4 +40,20 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES" desc="PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC" %]
+		<textarea class="stdedit" name="pref_ignoreTitles" id="ignoreTitles" cols="45" rows="3">[% prefs.pref_ignoreTitles %]</textarea>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS" desc="PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC" %]
+		<textarea class="stdedit" name="pref_ignoreArtists" id="ignoreArtists" cols="45" rows="3">[% prefs.pref_ignoreArtists %]</textarea>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS" desc="PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC" %]
+		<textarea class="stdedit" name="pref_ignoreAlbums" id="ignoreAlbums" cols="45" rows="3">[% prefs.pref_ignoreAlbums %]</textarea>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES" desc="PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC" %]
+		<textarea class="stdedit" name="pref_ignoreGenres" id="ignoreGenres" cols="45" rows="3">[% prefs.pref_ignoreGenres %]</textarea>
+	[% END %]
+
 [% PROCESS settings/footer.html %]

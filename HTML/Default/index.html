@@ -9,7 +9,9 @@
 		[% END %]
 
 		<style>
-			[% INCLUDE "html/ext/resources/css/ext-main.css" %]
+			[% FILTER replace('url\(\.\./images/default', 'url(/html/ext/resources/images/default') %]
+				[% INCLUDE "html/ext/resources/css/ext-main.css" %]
+			[% END %]
 		</style>
 		[% IF hasMediaSupport %]<link rel="stylesheet" type="text/css" href="[% webroot %]html/lightbox/lightbox.css?r=[% revision %]" />[% END %]
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />

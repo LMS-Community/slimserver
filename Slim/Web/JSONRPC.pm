@@ -19,9 +19,10 @@ use Scalar::Util qw(blessed);
 use Slim::Web::HTTP;
 use Slim::Utils::Compress;
 use Slim::Utils::Log;
-
+use Slim::Utils::Prefs;
 
 my $log = logger('network.jsonrpc');
+my $prefs = preferences('server');
 
 # this holds a context for each connection, to enable asynchronous commands as well
 # as subscriptions.
@@ -172,7 +173,18 @@ sub handleURI {
 		return;
 	}
 	
-	
+	# block access to "pref" & "serverpref" commands if request is coming from external host
+	my $peeraddr = $Slim::Web::HTTP::peeraddr{$httpClient};
+	if ( !Slim::Utils::Network::ip_is_host($peeraddr)
+		&& $prefs->get('protectSettings') && !$prefs->get('authorize')
+		&& $params->[1] && ref($params->[1]) && $params->[1]->[0] && $params->[1]->[0] =~ /^(?:pref|serverpref|stopserver|restartserver)/
+		&& ( Slim::Utils::Network::ip_is_gateway($peeraddr) || Slim::Utils::Network::ip_on_different_network($peeraddr) )
+	) {
+		$log->error("Access to settings is restricted to the local network or localhost: $peeraddr " . $httpResponse->request()->content());
+		Slim::Web::HTTP::closeHTTPSocket($httpClient);
+		return;
+	}
+		
 	# create a hash to store our context
 	my $context = {};
 	$context->{'httpClient'} = $httpClient;

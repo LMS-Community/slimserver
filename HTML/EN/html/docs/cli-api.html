@@ -725,8 +725,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	the server, as defined in the Security pane of the server preferences.
 	Like any other command, the user and password must be escaped. If
 	successful, the server replaces the password with 6 star characters. If
-	unsuccessful, the server disconnects. If security is off this command is
-	always successful.
+	unsuccessful, the server returns the same, then disconnects. If security 
+	is off this command is always successful.
 </p>
 <p>
 	Examples:
@@ -740,7 +740,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<p>
 		Request: &quot;login user wrongpassword&lt;LF&gt;&quot;
 		<br>
-		Response: (Connection terminated)
+		Response: &quot;login user ******&lt;LF&gt;&quot; (Connection terminated)
 	</p>
 </blockquote>
 
@@ -8035,9 +8035,9 @@ in the saved playlists folder.</p>
 	Example:
 </p>
 <blockquote>
-		Request: &quot;readdirectory 0 10 root://edelzwerg/mp3&quot;
+		Request: &quot;readdirectory 0 10 folder://media/mp3&quot;
 		<br>
-		Response: &quot;readdirectory 0 10 root%3A%2F%2Fedelzwerg%2Fmp3 count%3A251 item%3A%5C%5Cedelzwerg%5Cmp3%5CAerosmith isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAir isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAlanis%20Morissette isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAli%20Farka%20Toure isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAll%20Saints isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CManu%20Katche isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CSinead%20O'Connor isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CShakira isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAnastacia isdir%3A1&quot;
+		Response: &quot;readdirectory 0 10 folder%3A%2F%2Fmedia%2Fmp3 count%3A251 item%3A%5C%5Cmedia%5Cmp3%5CAerosmith isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAir isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAlanis%20Morissette isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAli%20Farka%20Toure isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAll%20Saints isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CManu%20Katche isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CSinead%20O'Connor isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CShakira isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAnastacia isfolder%3A1&quot;
 </blockquote> 
 
 
@@ -9642,7 +9642,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;favorites&gt;
+			favorites
 			playlist
 			&lt;play|load|insert|add&gt;
 			&lt;taggedParameters&gt;

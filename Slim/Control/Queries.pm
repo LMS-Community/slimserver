@@ -3013,7 +3013,7 @@ sub searchQuery {
 				type   => $type,
 				checkLargeResultset => sub {
 					my $isLarge = shift;
-					return ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
+					return ($isLarge && $isLarge > ($index + $quantity)) ? ('ORDER BY fulltextweight DESC LIMIT ' . $isLarge) : '';
 				},
 			});
 			
@@ -4837,6 +4837,11 @@ sub _songDataFromHash {
 		
 		# Special case for A/S which return multiple keys
 		if ( $tag eq 'A' ) {
+			# if we don't have an explicit track artist defined, we're going to assume the track's artist was the track artist
+			if ( $res->{artist} && $res->{albumartist} && $res->{artist} ne $res->{albumartist}) {
+				$res->{trackartist} ||= $res->{artist};
+			}
+
 			for my $role ( @contributorRoles ) {
 				$role = lc $role;
 				if ( defined $res->{$role} ) {
@@ -5338,7 +5343,7 @@ sub _getTagDataForTracks {
 	};
 	
 	my $join_tracks_persistent = sub {
-		if ( main::STATISTICS ) {
+		if ( main::STATISTICS && $sql !~ /JOIN tracks_persistent/ ) {
 			$sql .= 'JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
 		}
 	};

@@ -819,6 +819,7 @@ sub canDoSeek {
 
 		if ($handler->can('canSeek')) {
 			if ($handler->canSeek( $self->master(), $self )) {
+				return $self->_canSeek(2) if $handler->can('canTranscodeSeek') && $handler->canTranscodeSeek();
 				return $self->_canSeek(1) if $handler->isRemote() && !Slim::Music::Info::isVolatile($handler);
 				
 				# If dealing with local file and transcoding then best let transcoder seek if it can

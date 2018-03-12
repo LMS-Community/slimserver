@@ -746,7 +746,7 @@ sub getMetadataFor {
 	}
 	else {	
 
-		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS)$/ )  {
+		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ )  {
 			if ( $handler && $handler->can('getMetadataFor') ) {
 				return $handler->getMetadataFor( $client, $url );
 			}

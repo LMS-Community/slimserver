@@ -11,7 +11,7 @@ function(){
 				<input type="hidden" name="sess" value="[% sess %]">
 				<input type="hidden" name="action" value="editset">
 				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-				<input id="edit_title_[% entry.index %]" style="width: 71%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
+				<input id="edit_title_[% entry.index %]" style="width: 71%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
 					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
 					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
@@ -29,7 +29,7 @@ function(){
 						<input type="hidden" name="sess" value="[% sess %]">
 						<input type="hidden" name="action" value="editset">
 						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input id="edit_title_[% entry.index %]" size="25" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input id="edit_title_[% entry.index %]" size="25" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td width="35%">
 						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
@@ -55,7 +55,7 @@ function(){
 	[% "TITLE" | string %]
 	<input type="hidden" name="sess" value="[% sess %]">
 	<input type="hidden" name="index" value="[% levelindex %]">
-	<input id="newtitle" type="text" class="stdedit" name="title" style="width: 70%;" value="[% title %]" [% IF newentry %] onClick="this.value=''"[% END %] >
+	<input id="newtitle" type="text" class="stdedit" name="title" style="width: 70%;" value="[% title | html %]" [% IF newentry %] onClick="this.value=''"[% END %] >
 	<input type="submit" class="stdclick" value="[% 'SAVE' | string %]">
 	[% IF useAJAX %]
 		<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="cancelTitle([% entry.index %]); return false;" />
@@ -217,7 +217,7 @@ function(){
 		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&amp;index=[% levelindex %]&amp;sess=[% sess %]'[% IF initCall; ', ' _ initCall; END %]);" class="browseItemLink"
 		   [%- ELSE %]
 		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]&amp;sess=[% sess %]"
-		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_PASTE" | string %]</b> [ [% deleted %] ]</I></a>
+		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_PASTE" | string %]</b> [ [% deleted | html %] ]</I></a>
 		
 	[% END %]
 	[% IF useAJAX %]</span>[% END %]

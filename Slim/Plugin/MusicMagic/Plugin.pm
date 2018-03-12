@@ -1259,7 +1259,7 @@ sub _prepare_mix {
 
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 				$mix = getMix($client, $obj->path, 'track');
-				warn Data::Dump::dump($mix);
+
 			}
 
 			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
