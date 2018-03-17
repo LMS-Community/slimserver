@@ -1241,7 +1241,7 @@ sub pluginData {
 		return $client->_pluginData->{$namespace};
 	}
 	
-	if ( defined $value ) {
+	if ( @_ > 2 ) {
 		if ( $namespace ) {
 			$client->_pluginData->{$namespace}->{$key} = $value;
 		}
