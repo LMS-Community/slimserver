@@ -334,7 +334,7 @@ sub postinitPlugin {
 				foreach (@$seedTracks) {
 					my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
 				
-					my $mix = getMix($client, $trackObj->path, 'album') if $trackObj;
+					my $mix = getMix($client, $trackObj->path, 'track') if $trackObj;
 					
 					main::idleStreams();
 					
