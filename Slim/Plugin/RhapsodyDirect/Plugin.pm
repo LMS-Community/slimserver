@@ -21,7 +21,7 @@ sub initPlugin {
 	my $class = shift;
 
 	if ( main::SLIM_SERVICE || !Slim::Networking::Async::HTTP->hasSSL() ) {
-		$log->error(Slim::Utils::Strings::string('SERVICE_REQUIRES_HTTPS'));
+		main::SLIM_SERVICE || $log->error(Slim::Utils::Strings::string('SERVICE_REQUIRES_HTTPS'));
 
 		return $class->SUPER::initPlugin(
 			feed   => sub {
