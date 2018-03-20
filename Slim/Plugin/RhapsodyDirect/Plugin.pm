@@ -6,7 +6,6 @@ use strict;
 use base 'Slim::Plugin::OPMLBased';
 
 use Slim::Networking::SqueezeNetwork;
-use Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 
 use URI::Escape qw(uri_escape_utf8);
 
@@ -18,7 +17,30 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 sub initPlugin {
 	my $class = shift;
-	
+
+	if ( !Slim::Networking::Async::HTTP->hasSSL() ) {
+		$log->error(Slim::Utils::Strings::string('SERVICE_REQUIRES_HTTPS'));
+
+		return $class->SUPER::initPlugin(
+			feed   => sub {
+				my ($client, $cb, $args) = @_;
+
+				$cb->({
+					items => [{
+						name => Slim::Utils::Strings::cstring($client, 'SERVICE_REQUIRES_HTTPS'),
+						type => 'textarea'
+					}],
+				});
+			},
+			tag    => 'rhapsodydirect',
+			menu   => 'music_services',
+			is_app => 1,
+			weight => 20,
+		);
+	}
+
+	require Slim::Plugin::RhapsodyDirect::ProtocolHandler;
+
 	Slim::Player::ProtocolHandlers->registerHandler(
 		rhapd => 'Slim::Plugin::RhapsodyDirect::ProtocolHandler'
 	);

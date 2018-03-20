@@ -223,6 +223,8 @@
 					<input type="hidden" value="[% sess %]" name="sess">
 					<input type="hidden" value="[% item.index || index _ (start + loop.index) %]" name="index" />
 				</form>
+			[% ELSIF item.type == 'textarea' %]
+				[% title = (item.web.value || item.name || item.title) %] [% title | html_line_break %]
 			[% ELSE %]
 				[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
 					onMouseOver="showElements(['controls[% item.index || index _ (start + loop.index) %]'], 'inline');"
