@@ -25,7 +25,7 @@ sub initDetails {
 	
 	if ( !main::RESIZER ) {
 		# Once for OS Version, then again for CPU Type.
-		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType SPHardwareDataType |') or return;
+		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType SPHardwareDataType 2>&1 |') or return;
 
 		while (<SYS>) {
 
