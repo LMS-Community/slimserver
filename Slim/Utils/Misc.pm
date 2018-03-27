@@ -662,7 +662,9 @@ sub getMediaDirs {
 		}->{$type}) } };
 		
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
-		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
+		$mediadirs = [ grep { $_ } map {
+			($filter eq $_ || $filter =~ /^\Q$_\E/) && $filter
+		} @$mediadirs] if $filter;
 	}
 	
 	$mediadirsCache{$type} = [ map { $_ } @$mediadirs ] unless $filter;

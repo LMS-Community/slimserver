@@ -2632,11 +2632,9 @@ sub rescanCommand {
 		
 			# we only want to scan folders for video/pictures
 			my %seen = (); # to avoid duplicates
-			@dirs = grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() };
-			
-			if ($singledir) {
-				@dirs = grep { /\Q$singledir\E/ } @dirs;
-			}
+			@dirs = grep { 
+				!$seen{$_}++ 
+			} @{ Slim::Utils::Misc::getVideoDirs($singledir) }, @{ Slim::Utils::Misc::getImageDirs($singledir) };
 
 			if ( main::MEDIASUPPORT && scalar @dirs && $mode ne 'playlists' ) {
 				require Slim::Utils::Scanner::LMS;
@@ -2657,28 +2655,20 @@ sub rescanCommand {
 				};
 				
 				# Audio scan is run first, when done, the LMS scanner is run
-				my $audio;
-				$audio = sub {
-					my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-					
-					if ($singledir) {
-						$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
-					}
-					elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
-						# scan playlist folder too
-						push @$audiodirs, $playlistdir;
-					}
-					
-					# XXX until libmediascan supports audio, run the audio scanner now
-					Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-						types      => 'list|audio',
-						scanName   => 'directory',
-						progress   => 1,
-						onFinished => $lms,
-					} );
-				};
-			
-				$audio->();
+				my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
+
+				if (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
+					# scan playlist folder too
+					push @$audiodirs, $playlistdir;
+				}
+
+				# XXX until libmediascan supports audio, run the audio scanner now
+				Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+					types      => 'list|audio',
+					scanName   => 'directory',
+					progress   => 1,
+					onFinished => $lms,
+				} );
 			}
 			elsif ($mode eq 'playlists') {
 				my $playlistdir = Slim::Utils::Misc::getPlaylistDir();
@@ -2691,12 +2681,9 @@ sub rescanCommand {
 				} );
 			}
 			else {
-				my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-				
-				if ($singledir) {
-					$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
-				}
-				elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
+				my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
+
+				if (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
 					# scan playlist folder too
 					push @$audiodirs, $playlistdir;
 				}
