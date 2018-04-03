@@ -3,7 +3,7 @@ package Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 # Rhapsody Direct / Napster handler for rhapd:// URLs.
 
 use strict;
-use base qw(Slim::Player::Protocols::HTTP);
+use base qw(Slim::Player::Protocols::HTTPS);
 
 use HTML::Entities qw(encode_entities);
 use JSON::XS::VersionOneAndTwo;
