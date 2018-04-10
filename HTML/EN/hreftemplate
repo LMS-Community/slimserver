@@ -192,7 +192,6 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 	[% END -%]
 	[% IF item.year; year = " (" _ item.year _ ")"; END %]
 	[% details = ( item.album _ artistlist _ year)  | html -%]
-	[% FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	<img [% style %] 
 		[% IF item.image %]
 		src="[% item.image | resizeimage(height, height, '-', webroot) %]"
@@ -204,11 +203,10 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 		src="[% item.icon | resizeimage(height, height, '-', webroot) %]"
 		srcset="[% item.icon | resizeimage(height * 2, height * 2, '-', webroot) %] 2x"
 		[% END %]
-	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
+		[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 		alt   = "[% details %]"
 		title = "[% details %]"
 		onLoad= "resize(this, [%- height %])">
-	[% END %]
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
