@@ -28,7 +28,7 @@ my $versionFile;
 
 sub checkVersion {
 	my $cb = shift;
-	
+
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
 
@@ -39,20 +39,20 @@ sub checkVersion {
 		main::INFOLOG && $log->is_info && $log->info("We're running from the source - don't check for updates");
 		return;
 	}
-	
+
 	return unless $prefs->get('checkVersion') || $cb;
 
 	my $installer = getUpdateInstaller() || '';
-	
+
 	# reset update download status in case our system is up to date
 	if ( $installer && installerIsUpToDate($installer) ) {
-		
+
 		main::INFOLOG && $log->info("We're up to date (v$::VERSION, $::REVISION). Reset update notifiers.");
-		
+
 		$::newVersion = undef;
 		setUpdateInstaller();
 	}
-	
+
 	$os->initUpdate() if $os->canAutoUpdate() && $prefs->get('autoDownloadUpdate');
 
 	my $lastTime = $prefs->get('checkVersionLastTime');
@@ -78,7 +78,7 @@ sub checkVersion {
 	main::INFOLOG && $log->info("Checking version now.");
 
 	my $url = main::NOMYSB ? (Slim::Networking::Repositories->getUrlForRepository('servers') . "$::VERSION/servers.xml") : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
-	
+
 	$url .= sprintf(
 		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
 		$::VERSION, 
@@ -89,18 +89,19 @@ sub checkVersion {
 		$prefs->get('server_uuid'),
 		Slim::Player::Client::clientCount(),
 	);
-	
+
 	main::DEBUGLOG && $log->debug("Using URL: $url");
-	
+
 	my $params = {
 		cb => $cb
 	};
-	
-	my $http = main::NOMYSB 
-		? Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError, $params)
-		: Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError, $params);
-		
-	$http->get($url);
+
+	if (main::NOMYSB) {
+		Slim::Networking::Repositories->get($url, \&checkVersionCB, \&checkVersionError, $params);
+	}
+	else {
+		Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError, $params)->get($url);
+	}
 
 	$prefs->set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
@@ -117,22 +118,22 @@ sub checkVersionCB {
 	if ($http->code =~ /^2\d\d/) {
 
 		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
-		
+
 		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
 		if (main::NOMYSB) {
 			require XML::Simple;
 			my $versions = XML::Simple::XMLin($content);
-			
+
 			my $osID = $os->installerOS() || 'default';
-			
+
 			main::DEBUGLOG && $log->is_debug && $log->debug("Got list of installers:\n" . Data::Dump::dump($versions));
-			
+
 			if ( my $update = $versions->{ $osID } ) {
 				if ( $update->{version} && $update->{revision} ) {
 					if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
 						if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
 							$version = $update->{url};
-							
+
 							# prepend URL with our download host if we didn't get an absolute URL
 							$version = Slim::Networking::Repositories->getUrlForRepository('servers') . $version unless $version =~ /^http/;
 						}
@@ -147,9 +148,9 @@ sub checkVersionCB {
 			chomp($content);
 			$version = $content;
 		}
-		
+
 		$version ||= 0;
-		
+
 		main::DEBUGLOG && $log->debug($version || 'No new Logitech Media Server version available');
 
 		# reset the update flag
@@ -157,11 +158,11 @@ sub checkVersionCB {
 
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
-			
+
 			main::INFOLOG && $log->info('Triggering automatic Logitech Media Server update download...');
 			getUpdate($version);
 		}
-		
+
 		# if we got an update with download URL, display it in the web UI et al.
 		elsif ($version && $version =~ /a href="downloads.slimdevices/i) {
 			$::newVersion = $version;
@@ -171,7 +172,7 @@ sub checkVersionCB {
 		$::newVersion = 0;
 		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->code));
 	}
-	
+
 	$cb->($version) if $cb && ref $cb;
 }
 
@@ -191,17 +192,17 @@ sub checkVersionError {
 # download the installer
 sub getUpdate {
 	my $url = shift;
-	
+
 	my $params = $os->getUpdateParams($url);
-	
+
 	return unless $params;
-	
+
 	$params->{path} ||= scalar ( $os->dirsFor('updates') );
-	
+
 	cleanup($params->{path}, 'tmp');
 
 	if ( $url && Slim::Music::Info::isURL($url) ) {
-		
+
 		main::INFOLOG && $log->info("URL to download update from: $url");
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
@@ -210,7 +211,7 @@ sub getUpdate {
 		# don't re-download if we're up to date
 		if (installerIsUpToDate($file)) {
 			main::INFOLOG && $log->info("We're up to date (v$::VERSION, $::REVISION). Reset update notifiers.");
-			
+
 			setUpdateInstaller();
 			return;
 		}
@@ -220,15 +221,15 @@ sub getUpdate {
 		# don't re-download if file exists already
 		if ( -e $file ) {
 			main::INFOLOG && $log->info("We already have the latest installer file: $file");
-			
+
 			setUpdateInstaller($file, $params->{cb});
 			return;
 		}
-		
+
 		my $tmpFile = "$file.tmp";
 
 		setUpdateInstaller();
-		
+
 		main::DEBUGLOG && $log->is_debug && $log->debug("Downloading...\n   URL:      $url\n   Save as:  $tmpFile\n   Filename: $file");
 
 		# Save to a tmp file so we can check SHA
@@ -241,7 +242,7 @@ sub getUpdate {
 				params => $params,
 			},
 		);
-		
+
 		$download->get( $url );
 	}
 	else {
@@ -251,13 +252,13 @@ sub getUpdate {
 
 sub downloadAsyncDone {
 	my $http = shift;
-	
+
 	my $file    = $http->params('file');
 	my $tmpFile = $http->params('saveAs');
 	my $params  = $http->params('params') || {};
-	
+
 	my $path    = $params->{'path'};
-	
+
 	# make sure we got the file
 	if (!-e $tmpFile) {
 		$log->warn("Logitech Media Server installer download failed: file '$tmpFile' not stored on disk?!?");
@@ -275,7 +276,7 @@ sub downloadAsyncDone {
 	main::INFOLOG && $log->is_info && $log->info("Successfully downloaded update installer file '$tmpFile'. Saving as $file");
 	unlink $file;
 	my $success = rename $tmpFile, $file;
-	
+
 	if (-e $file) {
 		setUpdateInstaller($file, $params->{cb}) ;
 	}
@@ -291,30 +292,30 @@ sub downloadAsyncDone {
 
 sub setUpdateInstaller {
 	my ($file, $cb) = @_;
-	
+
 	$versionFile ||= getVersionFile();
-	
+
 	if ($file && open(UPDATEFLAG, ">$versionFile")) {
-		
+
 		main::DEBUGLOG && $log->debug("Setting update version file to: $file");
-		
+
 		print UPDATEFLAG $file;
 		close UPDATEFLAG;
 
 		if ($cb && ref($cb) eq 'CODE') {
 			$cb->($file);
 		}
-		
+
 		$::newVersion ||= string('SERVER_UPDATE_AVAILABLE_SHORT');
 	}
-	
+
 	elsif ($file) {
-		
+
 		$log->warn("Unable to update version file: $versionFile");
 	}
-	
+
 	else {
-	
+
 		unlink $versionFile;
 	}
 }
@@ -326,40 +327,40 @@ sub getVersionFile {
 
 
 sub getUpdateInstaller {
-	
+
 	return unless $prefs->get('autoDownloadUpdate');
-	
+
 	$versionFile ||= getVersionFile();
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Reading update installer path from $versionFile");
-	
+
 	open(UPDATEFLAG, $versionFile) || do {
 		main::DEBUGLOG && $log->is_debug && $log->debug("No '$versionFile' available.");
 		return '';	
 	};
-	
+
 	my $updateInstaller = '';
-	
+
 	local $_;
 	while ( <UPDATEFLAG> ) {
 
 		chomp;
-		
+
 		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
 			$updateInstaller = $_;
 			last;
 		}
 	}
-		
+
 	close UPDATEFLAG;
-	
+
 	main::DEBUGLOG && $log->debug("Found update installer path: '$updateInstaller'");
-	
+
 	return $updateInstaller;
 }
 
 sub installerIsUpToDate {
-	
+
 	return unless $prefs->get('autoDownloadUpdate');
 
 	my $installer = shift || '';

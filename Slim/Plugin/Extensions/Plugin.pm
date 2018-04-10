@@ -30,7 +30,7 @@ package Slim::Plugin::Extensions::Plugin;
 # </extensions>
 #
 # Applet and Plugin entries are of the form:
-# 
+#
 # <applet name="AppletName" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
 #   <title lang="EN">English Title</title>
 #   <title lang="DE">Deutscher Titel</title>
@@ -65,14 +65,14 @@ package Slim::Plugin::Extensions::Plugin;
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
 # desc       - localised description of the applet or plugin (optional)
 # changes    - localised change log of the applet or plugin (optional)
-# link       - (plugin only) url for web page describing the plugin in more detail 
+# link       - (plugin only) url for web page describing the plugin in more detail
 # creator    - identify of author(s)
 # email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
 #
 # Wallpaper and sound entries can include all of the above elements, but the minimal definition is:
-# 
+#
 # <wallpaper name="WallpaperName" url="url for wallpaper file" />
 #
 # <sound     name="SoundName"     url="url for sound file"     />
@@ -127,7 +127,7 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'http://repos.squeezecommunity.org/extensions.xml' => 1,
+	'https://repos.squeezecommunity.org/extensions.xml' => 1,
 );
 
 sub initPlugin {
@@ -144,31 +144,31 @@ sub initPlugin {
 		for my $repo ( @{$prefs->get('repos')} ) {
 			$class->addRepo({ repo => $repo });
 		}
-		
+
 		Slim::Plugin::Extensions::Settings->new;
 
 		# clean out plugin entries for plugins which are manually installed
 		# this can happen if a developer moves an automatically installed plugin to a manually installed location
 		my $installPlugins = $prefs->get('plugin');
 		my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
-		
+
 		for my $plugin (keys %$installPlugins) {
-			
+
 			if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
-				
+
 				$log->warn("removing $plugin from install list as it is already manually installed");
-				
+
 				delete $installPlugins->{ $plugin };
-				
+
 				$prefs->set('plugin', $installPlugins);
 			}
-			
+
 			# a plugin could have failed to download (Thanks Google for taking down googlecode.com!...) - let's not re-try to install it
 			elsif ( !$loadedPlugins->{ $plugin } ) {
 				$log->warn("$plugin failed to download or install in some other way. Please try again.");
-				
+
 				delete $installPlugins->{ $plugin };
-				
+
 				$prefs->set('plugin', $installPlugins);
 			}
 		}
@@ -340,11 +340,11 @@ sub getExtensions {
 	if ( my $cached = $cache->get( $args->{'name'} . '_XML' ) ) {
 
 		main::DEBUGLOG && $log->debug("using cached extensions xml $args->{name}");
-	
+
 		_parseXML($args, $cached);
 
 	} else {
-	
+
 		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
 
 		Slim::Networking::Repositories->get(
@@ -389,7 +389,7 @@ sub _parseResponse {
 	} else {
 
 		my $cache = Slim::Utils::Cache->new;
-		
+
 		$cache->set( $args->{'name'} . '_XML', $xml, 300 );
 	}
 
@@ -425,7 +425,7 @@ sub _parseXML {
 	my $debug = main::DEBUGLOG && $log->is_debug;
 
 	my $repoTitle;
-	
+
 	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
 
 	my @res = ();
@@ -454,7 +454,7 @@ sub _parseXML {
 			};
 
 			$new->{'sha'} = $entry->{'sha'} if $entry->{'sha'};
-			
+
 			$debug && $log->debug("entry $new->{name} vers: $new->{version} url: $new->{url}");
 
 			if ($details) {
@@ -470,7 +470,7 @@ sub _parseXML {
 					$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
 				}
 				$new->{desc} = '' if ref $new->{desc};
-				
+
 				if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
 					$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
 				}
@@ -495,20 +495,20 @@ sub _parseXML {
 
 		if ( $xml->{details} && $xml->{details}->{title} 
 				 && ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
-			
+
 			$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
-			
+
 		} else {
-			
+
 			# fall back to repo's URL if no title is provided
 			$repoTitle = $args->{name};
 		}
-		
+
 		$info = {
 			'name'   => $args->{'name'},
 			'title'  => $repoTitle,
 		};
-		
+
 	}
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");
