@@ -5504,13 +5504,13 @@ sub _getTagDataForTracks {
 	# Bug 15997, AS mapping needed for MySQL
 	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
-	
+
 	my $dbh = Slim::Schema->dbh;
 	
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . join( '', @{$p} ));
+		my $cacheKey = md5_hex($sql . join( '', @{$p}, @$w ) . ($search || ''));
 		
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {
@@ -5812,7 +5812,7 @@ sub videoTitlesQuery { if (main::VIDEO && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ));
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . ($search || ''));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -6075,7 +6075,7 @@ sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ));
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . ($search || ''));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
