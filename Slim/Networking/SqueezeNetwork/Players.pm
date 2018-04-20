@@ -110,8 +110,8 @@ sub _players_done {
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
-		$log->debug( "Got list of active services: " . Data::Dump::dump( $res->{active_services} ));
-		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
+		$log->debug( "Got list of all apps  : " . Data::Dump::dump( $res->{all_apps} ));
+		$log->debug( "Next player check in  : " . $res->{next_poll} . " seconds" );
 	}
 		
 	# Update poll interval with advice from SN
@@ -127,7 +127,7 @@ sub _players_done {
 	$INACTIVE_PLAYERS  = $res->{inactive_players};
 	
 	# Make a list of all apps for the web UI
-	my $allApps = {};
+	my $allApps = $res->{all_apps} || {};
 	
 	# Add 3rd party plugins which have requested to be on the apps menu
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
