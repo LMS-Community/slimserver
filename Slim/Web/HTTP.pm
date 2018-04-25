@@ -4,7 +4,7 @@ package Slim::Web::HTTP;
 
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -58,7 +58,7 @@ use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 use constant METADATAINTERVAL => 32768;
 use constant MAXCHUNKSIZE     => 32768;
 
-# This used to be 0.05s but the CPU load associated with such fast retries is 
+# This used to be 0.05s but the CPU load associated with such fast retries is
 # really noticeable when playing remote streams. I guess that it is possible
 # that certain combinations of pipe buffers in a transcoding pipeline
 # might get caught by this but I have not been able to think of any - Alan.
@@ -107,13 +107,13 @@ sub init {
 		require Slim::Web::Template::NoWeb;
 		$skinMgr = Slim::Web::Template::NoWeb->new();
 	}
-	
+
 	# Initialize graphics resizing
 	Slim::Web::Graphics::init();
-	
+
 	# Initialize JSON RPC
 	Slim::Web::JSONRPC::init();
-	
+
 	# Initialize Cometd
 	Slim::Web::Cometd::init();
 }
@@ -137,12 +137,12 @@ sub openport {
 
 	my %tested;
 	my $testSocket;
-	
+
 	# start our listener
 	foreach my $port ($listenerport, 9000..9010, 9100, 8000, 10000) {
-		
+
 		next if $tested{$port};
-		
+
 		$openedport    = $port;
 		$tested{$port} = 1;
 
@@ -152,7 +152,7 @@ sub openport {
 		{
 			$testSocket->close;
 		}
-		
+
 		else {
 
 			$http_server_socket = HTTP::Daemon->new(
@@ -164,22 +164,22 @@ sub openport {
 				Timeout   => 0.001,
 			) and last;
 		}
-		
+
 		$log->error("Can't setup the listening port $port for the HTTP server: $!");
 	}
-	
+
 	# if none of our ports could be opened, we'll have to give up
 	if (!$http_server_socket) {
-		
+
 		$log->logdie("Running out of good ideas for the listening port for the HTTP server - giving up.");
 	}
-	
+
 	defined(Slim::Utils::Network::blocking($http_server_socket,0)) || $log->logdie("Cannot set port nonblocking");
 
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
 
 	main::INFOLOG && $log->info("Server $0 accepting http connections on port $openedport");
-	
+
 	if ($openedport != $listenerport) {
 
 		$log->error("Previously configured port $listenerport was busy - we're now using port $openedport instead");
@@ -191,7 +191,7 @@ sub openport {
 
 		$prefs->set('httpport', $openedport) ;
 	}
-	
+
 	if ( $listeneraddr ) {
 		$prefs->set( httpaddr => $listeneraddr );
 	}
@@ -237,9 +237,9 @@ sub acceptHTTP {
 	};
 
 	defined(Slim::Utils::Network::blocking($httpClient,0)) || $log->logdie("Cannot set port nonblocking");
-	
+
 	binmode($httpClient);
-	
+
 	my $peer = $httpClient->peeraddr();
 
 	if ($httpClient->connected() && $peer) {
@@ -249,7 +249,7 @@ sub acceptHTTP {
 		# Check if source address is valid
 		if (!($prefs->get('filterHosts')) ||
 		     (Slim::Utils::Network::isAllowedHost($peer))) {
-			
+
 			# Timeout for reads from the client.  HTTP::Daemon in get_request
 			# will call select(,,,10) but should not block long
 			# as we already know the socket is ready for reading
@@ -287,7 +287,7 @@ sub skins {
 # Handle an HTTP request
 sub processHTTP {
 	my $httpClient = shift || return;
-	
+
 	my $isDebug = ( main::DEBUGLOG && $log->is_debug ) ? 1 : 0;
 
 ### OLD ORDER ###
@@ -317,11 +317,11 @@ sub processHTTP {
 	## Icy-MetaData (write sendMetaData)
 	## Parse URI (write $params)
 	## Skins (write params & path, redirected if nok)
-	## More CSRF mgmt (looks at the modified path)	
+	## More CSRF mgmt (looks at the modified path)
 	## Log processed headers
 	# else
 	## Send bad request
-	
+
 	# Store the time we started processing this request
 	$httpClient->start_time( Time::HiRes::time() );
 
@@ -335,7 +335,7 @@ sub processHTTP {
 	if (!defined $request) {
 
 		my $reason = $httpClient->reason || 'unknown error reading request';
-		
+
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. ($reason)");
 		}
@@ -343,7 +343,7 @@ sub processHTTP {
 		closeHTTPSocket($httpClient, 0, $reason);
 		return;
 	}
-	
+
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(
@@ -404,7 +404,7 @@ sub processHTTP {
 
 		} else {
 
-			# If the client requests a close or a keep-alive, 
+			# If the client requests a close or a keep-alive,
 			# set the initial response to the same.
 			$response->header('Connection' => $request->header('Connection'));
 
@@ -431,7 +431,7 @@ sub processHTTP {
 
 				}
 			}
-			
+
 			if ( $keepAlives{$httpClient} ) {
 				# set the keep-alive timeout
 				Slim::Utils::Timers::setTimer(
@@ -448,7 +448,7 @@ sub processHTTP {
 		# the path is modified below for skins and stuff
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
-		
+
 		main::DEBUGLOG && $isDebug && $log->debug("Raw path is [$path]");
 
 		# break here for raw HTTP code
@@ -460,7 +460,7 @@ sub processHTTP {
 			main::DEBUGLOG && $isDebug && $log->info("Handling [$path] using raw function");
 
 			if (ref($rawFunc) eq 'CODE') {
-				
+
 				# XXX: should this use eval?
 				&{$rawFunc}($httpClient, $response);
 				return;
@@ -469,13 +469,13 @@ sub processHTTP {
 
 		# Set the request time - for If-Modified-Since
 		$request->client_date(time());
-		
+
 		my $csrfProtectionLevel = main::WEBUI && $prefs->get('csrfProtectionLevel');
-	
+
 		if ( main::WEBUI && $csrfProtectionLevel ) {
 			# remove our special X-Slim-CSRF header if present
 			$request->remove_header("X-Slim-CSRF");
-			
+
 			# store CSRF auth code in fake request header if present
 			if ( defined($uri) && ($uri =~ m|^(.*)\;cauth\=([0-9a-f]{32})$| ) ) {
 
@@ -493,27 +493,27 @@ sub processHTTP {
 				$request->push_header("X-Slim-CSRF",$csrfAuth);
 			}
 		}
-		
+
 		# Dont' process cookies for graphics, stylesheets etc.
 		if ($path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)} ) {
 			if ( my $cookie = $request->header('Cookie') ) {
 				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
-				
+
 				# define the precacheHiDPIArtwork pref if we're dealing with a high DPI monitor
 				if ( $params->{'cookies'}->{'Squeezebox-enableHiDPI'} && $params->{'cookies'}->{'Squeezebox-enableHiDPI'}->value > 1 && !defined $prefs->get('precacheHiDPIArtwork') ) {
 					$prefs->set('precacheHiDPIArtwork', 1);
 				}
 			}
 		}
-		
+
 		# Icy-MetaData
 		$sendMetaData{$httpClient} = 0;
-		
+
 		if ($request->header('Icy-MetaData')) {
 			$sendMetaData{$httpClient} = 1;
 		}
 
-		# parse out URI		
+		# parse out URI
 		my $query = ($request->method() eq "POST") ? $request->content() : $uri->query();
 
 		$params->{url_query} = $query;
@@ -523,7 +523,7 @@ sub processHTTP {
 		my ($queryWithArgs, $queryToTest, $providedPageAntiCSRFToken);
 		# CSRF: make list of params passed by HTTP client
 		my %csrfReqParams;
-		
+
 		# XXX - unfortunately Logitech Media Server uses a query form
 		# that can have a key without a value, yet it's
 		# differnet from a key with an empty value. So we have
@@ -590,18 +590,18 @@ sub processHTTP {
 		}
 
 		if ( main::WEBUI && $csrfProtectionLevel ) {
-			# for CSRF protection, get the query args in one neat string that 
+			# for CSRF protection, get the query args in one neat string that
 			# looks like a GET querystring value; this should handle GET and POST
 			# equally well, only looking at the data that we would act on
 			($queryWithArgs, $queryToTest) = Slim::Web::HTTP::CSRF->getQueries($request, \%csrfReqParams);
-	
+
 			# Stash CSRF token in $params for use in TT templates
 			$providedPageAntiCSRFToken = $params->{pageAntiCSRFToken};
 			# pageAntiCSRFToken is a bare token
 			$params->{pageAntiCSRFToken} = Slim::Web::HTTP::CSRF->makePageToken($request);
 		}
 
-		# Skins 
+		# Skins
 		if ($path) {
 
 			$params->{'webroot'} = '/';
@@ -632,7 +632,7 @@ sub processHTTP {
 				main::DEBUGLOG && $isDebug && $log->info("Alternate skin $desiredskin requested");
 
 				my $skinname = $skinMgr->isaSkin($desiredskin);
-				
+
 				if ($skinname) {
 
 					main::DEBUGLOG && $isDebug && $log->info("Rendering using $skinname");
@@ -646,10 +646,10 @@ sub processHTTP {
 				} else {
 
 					# we can either throw a 404 here or just ignore the requested skin
-					
+
 					# ignore: commented out
 					# $path =~ s{^/.+?/}{/};
-					
+
 					# throw 404
 					$params->{'suggestion'} = qq(There is no "$desiredskin")
 						. qq( skin, try ) . Slim::Utils::Network::serverURL() . qq( instead.);
@@ -657,12 +657,12 @@ sub processHTTP {
 					if ( $log->is_warn ) {
 						$log->warn("Invalid skin requested: [" . join(' ', ($request->method, $request->uri)) . "]");
 					}
-			
+
 					$response->code(RC_NOT_FOUND);
 					$response->content_type('text/html');
 					$response->header('Connection' => 'close');
 					$response->content_ref(filltemplatefile('html/errors/404.html', $params));
-			
+
 					$httpClient->send_response($response);
 					closeHTTPSocket($httpClient);
 					return;
@@ -679,7 +679,7 @@ sub processHTTP {
 				return;
 			}
 		}
-		
+
 		if ( main::DEBUGLOG && $isDebug ) {
 			$log->debug("Processed request headers: [\n" . $request->as_string() . "]");
 		}
@@ -708,7 +708,7 @@ sub processHTTP {
 		$response->content("");
 		$log->debug("Response Headers: [\n" . $response->as_string . "]");
 	}
-	
+
 	if ( main::DEBUGLOG && $isDebug ) {
 		$log->debug(
 			"End request: keepAlive: [" .
@@ -729,8 +729,8 @@ sub processURL {
 
 	# Command parameters are query parameters named p0 through pN
 	# 	For example:
-	#		http://host/status.m3u?p0=playlist&p1=jump&p2=2 
-	#		http://host/status.m3u?command=playlist&subcommand=jump&p2=2 
+	#		http://host/status.m3u?p0=playlist&p1=jump&p2=2
+	#		http://host/status.m3u?command=playlist&subcommand=jump&p2=2
 	# This example jumps to the second song in the playlist and sends a playlist as the response
 	#
 	# If there are multiple players, then they are specified by the player id
@@ -743,7 +743,7 @@ sub processURL {
 	}
 
 	# This is trumped by query parameters 'command' and 'subcommand'.
-	# These are passed as the first two command parameters (p0 and p1), 
+	# These are passed as the first two command parameters (p0 and p1),
 	# while the rest of the query parameters are passed as third (p3).
 	if (defined $params->{'command'} && $path !~ /^memoryusage/) {
 		$p[0] = $params->{'command'};
@@ -758,7 +758,7 @@ sub processURL {
 	# explicitly specified player (for web browsers or squeezeboxen)
 	if (defined($params->{"player"})) {
 		$client = Slim::Player::Client::getClient($params->{"player"});
-		
+
 		if ( blessed($client) ) {
 			if ( $path =~ m|plugins/UPnP/|i ) {
 				# Bug 18053 - we're ignoring upnp requests, as these aren't our clients being active but whatever else
@@ -773,14 +773,14 @@ sub processURL {
 
 	# is this an HTTP stream?
 	if (!defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
-		
+
 		# Bug 14825, allow multiple stream.mp3 clients from the same address with a player param
 		my $address = $params->{player} || $peeraddr{$httpClient};
-	
+
 		main::INFOLOG && $log->is_info && $log->info("processURL found HTTP client at address=$address");
-	
+
 		$client = Slim::Player::Client::getClient($address);
-		
+
 		if (!defined($client)) {
 
 			my $paddr = getpeername($httpClient);
@@ -790,7 +790,7 @@ sub processURL {
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
 				$client->init();
-				
+
 				# Give the streaming player a descriptive name such as "Winamp from x.x.x.x"
 				if ( $params->{userAgent} ) {
 					my ($agent) = $params->{userAgent} =~ m{([^/]+)};
@@ -800,10 +800,10 @@ sub processURL {
 					elsif ( $agent eq 'WinampMPEG' ) {
 						$agent = 'Winamp';
 					}
-					
+
 					$client->name( $agent . ' ' . string('FROM') . ' ' . $address );
 				}
-				
+
 				# Bug 4795
 				# If the player has an existing playlist, start playing it without
 				# requiring the user to press Play in the web UI
@@ -835,7 +835,7 @@ sub processURL {
 			$prefs->client($client)->set('transcodeBitrate',undef);
 		}
 	}
-	
+
 	# player specified from cookie
 	if ( !defined $client && $params->{'cookies'} ) {
 		if ( my $player = $params->{'cookies'}->{'Squeezebox-player'} ) {
@@ -940,7 +940,7 @@ sub generateHTTPResponse {
 	if ( Slim::Web::Pages->isRawDownload($path) ) {
 		$contentType = 'application/octet-stream';
 	}
-	
+
 	if ( $path =~ /(?:music|video|image)\/[0-9a-f]+\/(?:download|cover)/ || $path =~ /^imageproxy\// ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
@@ -969,7 +969,7 @@ sub generateHTTPResponse {
 	}
 
 	my $classOrCode = Slim::Web::Pages->getPageFunction($path);
-	
+
 	# protect access to settings pages: only allow from local network
 	if ( main::WEBUI 
 		&& !Slim::Utils::Network::ip_is_host($peeraddr{$httpClient}) 
@@ -994,11 +994,11 @@ sub generateHTTPResponse {
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Generating response for ($type, $contentType) $path");
-	
+
 	if (defined($client) && $classOrCode) {
 		$params->{'player'} = $client->id();
 		$params->{'myClientState'} = $client;
-		
+
 		if ( $path !~ m{(?:^progress\.|settings/)} ) {
 			# save the player id in a cookie
 			my $cookie = CGI::Cookie->new(
@@ -1012,14 +1012,14 @@ sub generateHTTPResponse {
 
 	# this might do well to break up into methods
 	if ($contentType =~ /(?:image|javascript|css)/ || $path =~ /html\//) {
- 
+
 		my $max = 60 * 60;
-		
+
 		# increase expiry to a week for static content, but not cover art
 		unless ($contentType =~ /image/ && $path !~ /html\//) {
 			$max = $max * 24 * 7;
 		}
-		
+
  		# static content should expire from cache in one hour
 		$response->expires( time() + $max );
 		$response->header('Cache-Control' => 'max-age=' . $max);
@@ -1042,7 +1042,7 @@ sub generateHTTPResponse {
 
 		delete $params->{'params'};
 	}
-	
+
 	# Static files handled here, stream them out to the browser to avoid wasting memory
 	my $isStatic = 0;
 	if ( $path =~ /favicon\.ico/ ) {
@@ -1062,7 +1062,7 @@ sub generateHTTPResponse {
 			$isStatic = 1;
 		}
 	}
-	
+
 	if ( $isStatic ) {
 		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
 
@@ -1083,7 +1083,7 @@ sub generateHTTPResponse {
 
 			# if we match one of the page functions as defined above,
 			# execute that, and hand it a callback to send the data.
-			
+
 			$params->{'imageproxy'} = Slim::Networking::SqueezeNetwork->url(
 				"/public/imageproxy"
 			) if !main::NOMYSB;
@@ -1105,7 +1105,7 @@ sub generateHTTPResponse {
 			} elsif ($classOrCode->can('handler')) {
 
 				# Pull the player ID out and create a client from it
-				# if we need to use it for player settings. 
+				# if we need to use it for player settings.
 				if (exists $params->{'playerid'} && $classOrCode->needsClient) {
 
 					$client = Slim::Player::Client::getClient($params->{'playerid'});
@@ -1119,7 +1119,7 @@ sub generateHTTPResponse {
 					$response,
 				);
 			}
-		
+
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
 
 		} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
@@ -1136,7 +1136,7 @@ sub generateHTTPResponse {
 				$response->header("icy-metaint" => METADATAINTERVAL);
 				$response->header("icy-name"    => string('WELCOME_TO_SQUEEZEBOX_SERVER'));
 			}
-			
+
 			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for stream.mp3");
 			delete $keepAlives{$httpClient};
 			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
@@ -1145,7 +1145,7 @@ sub generateHTTPResponse {
 			my $headers = _stringifyHeaders($response) . $CRLF;
 
 			$metaDataBytes{$httpClient} = - length($headers);
-		
+
 			addStreamingResponse($httpClient, $headers);
 
 			return 0;
@@ -1159,8 +1159,8 @@ sub generateHTTPResponse {
 			) {
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
-			
-			# Bug 15723, We need to track if we have an async artwork request so 
+
+			# Bug 15723, We need to track if we have an async artwork request so
 			# we don't return data out of order
 			my $async = 0;
 			my $sentResponse = 0;
@@ -1172,7 +1172,7 @@ sub generateHTTPResponse {
 				sub {
 					$sentResponse = 1;
 					prepareResponseForSending(@_);
-					
+
 					if ( $async ) {
 						main::INFOLOG && $log->is_info && $log->info('Async artwork request done, enable read');
 						Slim::Networking::Select::addRead($httpClient, \&processHTTP);
@@ -1181,16 +1181,16 @@ sub generateHTTPResponse {
 				$httpClient,
 				$response,
 			);
-			
+
 			# If artworkRequest did not directly call the callback, we are in an async request
 			if ( !$sentResponse ) {
 				main::INFOLOG && $log->is_info && $log->info('Async artwork request pending, pause read');
 				Slim::Networking::Select::removeRead($httpClient);
 				$async = 1;
 			}
-			
+
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
-			
+
 			return;
 
 		# return quickly with a 404 if web UI is disabled
@@ -1200,9 +1200,9 @@ sub generateHTTPResponse {
 		) ) {
 			$response->content_type('text/html');
 			$response->code(RC_NOT_FOUND);
-		
+
 			$$body = "<h1>404 Not Found: $path</h1><p>Logitech Media Server web UI is not available in --noweb mode.</p>";
-		
+
 			return prepareResponseForSending(
 				$client,
 				$params,
@@ -1213,13 +1213,13 @@ sub generateHTTPResponse {
 
 		} elsif ($path =~ /music\/(-[0-9a-f]+)\/download/) {
 			my $obj = Slim::Schema->find('Track', $1);
-			
+
 			# our download code can't handle the volatile files directly - let's fake a local file here
 			if (blessed($obj) && Slim::Music::Info::isVolatile($obj->url)) {
 				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($obj->url);
-				
+
 				my $url = Slim::Utils::Misc::fileURLFromPath($handler->pathFromFileURL($obj->url));
-				
+
 				my $tmpObj = Slim::Schema::RemoteTrack->updateOrCreate($url, {
 					content_type => Slim::Music::Info::typeFromPath($url)
 				});
@@ -1252,14 +1252,14 @@ sub generateHTTPResponse {
 		} elsif ($path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/) {
 			# Bug 10730
 			my $id = $1;
-			
+
 			if ( $path =~ /music|video/ ) {
 				main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for large file download");
 				delete $keepAlives{$httpClient};
 				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 				$response->header( Connection => 'close' );
 			}
-			
+
 			# Reject bad getContentFeatures requests (DLNA 7.4.26.5)
 			if ( my $gcf = $response->request->header('getContentFeatures.dlna.org') ) {
 				if ( $gcf ne '1' ) {
@@ -1291,7 +1291,7 @@ sub generateHTTPResponse {
 
 			if ( main::WEBUI ) {
 				$body = Slim::Web::Pages::Common->logFile($httpClient, $params, $response, $1);
-				
+
 				if ($body) {
 					$contentType = 'text/html';
 				}
@@ -1300,7 +1300,7 @@ sub generateHTTPResponse {
 					return 0 unless $contentType;
 				}
 			}
-		
+
 		} elsif ($path =~ /status\.m3u/) {
 
 			if ( main::WEBUI ) {
@@ -1320,7 +1320,7 @@ sub generateHTTPResponse {
 			}
 
 		} elsif ( Slim::Web::Pages->isRawDownload($path) ) {
-			
+
 			# path is for download of known file outside http directory
 			my ($file, $ct);
 
@@ -1351,7 +1351,7 @@ sub generateHTTPResponse {
 					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );					
 					$response->header( Connection => 'close' );
 				}
-				
+
 				# download the file
 				main::INFOLOG && $log->is_info && $log->info("serving file: $file for path: $path");
 				sendStreamingFile( $httpClient, $response, $ct, $file );
@@ -1374,11 +1374,11 @@ sub generateHTTPResponse {
 					$response,
 				);
 			}
-			
+
 		} elsif ( $path =~ /anyurl/ ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug('anyurl - parameters processed, redirect to status page if needed');
 			$body = filltemplatefile('xmlbrowser_redirect.html', $params);
-			
+
 		} else {
 			# who knows why we're here, we just know that something ain't right
 			$$body = undef;
@@ -1445,10 +1445,10 @@ sub generateHTTPResponse {
 	#}
 
 	return 0 unless $body;
-	
+
 	if ( ref $body eq 'FileHandle' ) {
 		$response->content_length( $size );
-		
+
 		my $headers = _stringifyHeaders($response) . $CRLF;
 
 		$streamingFiles{$httpClient} = $body;
@@ -1458,7 +1458,7 @@ sub generateHTTPResponse {
 		delete $peerclient{$httpClient};
 
 		addStreamingResponse($httpClient, $headers);
-		
+
 		return;
 	}
 
@@ -1469,31 +1469,31 @@ sub generateHTTPResponse {
 
 sub sendStreamingFile {
 	my ( $httpClient, $response, $contentType, $file, $objOrHash, $showInBrowser ) = @_;
-	
+
 	# Send the file down - and hint to the browser
 	# the correct filename to save it as.
 	my $size = -s $file;
-	
+
 	$response->content_type( $contentType );
 	$response->content_length( $size );
 	$response->header('Content-Disposition', 
 		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
 	) unless $showInBrowser;
-	
+
 	my $fh = FileHandle->new($file);
-	
+
 	# Range/TimeSeekRange
 	my $range   = $response->request->header('Range');
 	my $tsrange = $response->request->header('TimeSeekRange.dlna.org');
-	
+
 	# If a Range is already provided, ignore TimeSeekRange
 	my $isTSR;
 	if ( $tsrange && !$range ) {
 		# Translate TimeSeekRange into byte range
 		my $valid = 0;
-		
+
 		my $formatClass = blessed($objOrHash) ? Slim::Formats->classForFormat($objOrHash->content_type) : undef;
-		
+
 		# Ignore TimeSeekRange unless we have a valid format class (currently this only supports audio)
 		if ( $formatClass && Slim::Formats->loadTagFormatForType($objOrHash->content_type) && $formatClass->can('findFrameBoundaries') ) {
 			# Valid is: npt=(start time)-(end time)
@@ -1502,30 +1502,30 @@ sub sendStreamingFile {
 			if ( $tsrange =~ /^npt=([^-]+)-([^\s]*)$/ ) {
 				my $start = $1 || 0;
 				my $end   = $2;
-			
+
 				my $startbytes = 0;
 				my $endbytes = $size - 1;
-			
+
 				if ( $start =~ /:/ ) {
 					my ($h, $m, $s) = split /:/, $start;
 					$start = ($h * 3600) + ($m * 60) + $s;
 				}
-				
+
 				if ( $start > 0 ) {
 					$startbytes = $formatClass->findFrameBoundaries($fh, undef, $start);
 					main::DEBUGLOG && $log->is_debug && $log->debug("TimeSeekRange.dlna.org: Found start byte offset $startbytes for time $start");
 				}
-			
+
 				if ( $end ) {
 					if ( $end =~ /:/ ) {
 						my ($h, $m, $s) = split /:/, $end;
 						$end = ($h * 3600) + ($m * 60) + $s;
 					}
-					
+
 					$endbytes = $formatClass->findFrameBoundaries($fh, undef, $end);
 					main::DEBUGLOG && $log->is_debug && $log->debug("TimeSeekRange.dlna.org: Found end offset $endbytes for time $end");
 				}
-				
+
 				if ( $startbytes == -1 && $endbytes == -1 ) {
 					# DLNA 7.4.40.8, a valid time range syntax but out of range for the media
 					$response->code(416);
@@ -1536,17 +1536,17 @@ sub sendStreamingFile {
 						$endbytes = $size - 1;
 					}
 				}
-				
+
 				if ( $startbytes >= 0 && $endbytes >= 0 ) {
 					# Create a valid Range request, which will be handled by the below range code
 					$range = "bytes=${startbytes}-${endbytes}";
 					$isTSR = 1;
 					$valid = 1;
-					
+
 					my $duration = $objOrHash->secs;
 					$end ||= $duration;
 					$response->header( 'TimeSeekRange.dlna.org' => "npt=${start}-${end}/${duration} bytes=${startbytes}-${endbytes}/${size}" );
-					
+
 					# If npt is "0-" don't perform a range request
 					if ($start == 0 && $end == $duration) {
 						$range = undef;
@@ -1558,7 +1558,7 @@ sub sendStreamingFile {
 				$response->code(400);
 			}
 		}
-		
+
 		if ( !$valid ) {
 			$log->warn("Invalid TimeSeekRange.dlna.org request: $tsrange");
 			$response->code(406) unless $response->code >= 400;
@@ -1568,7 +1568,7 @@ sub sendStreamingFile {
 			return;
 		}
 	}
-	
+
 	# Support Range requests
 	if ( $range ) {
 		# Only support a single range request, and no support for suffix requests
@@ -1576,7 +1576,7 @@ sub sendStreamingFile {
 			my $first = $1 || 0;
 			my $last  = $2 || $size - 1;
 			my $total = $last - $first + 1;
-			
+
 			if ( $first > $size ) {
 				# invalid (past end of file)
 				$response->code(416);
@@ -1585,7 +1585,7 @@ sub sendStreamingFile {
 				closeHTTPSocket($httpClient);
 				return;
 			}
-			
+
 			if ( $total < 1 ) {
 				# invalid (first > last)
 				$response->code(400);
@@ -1594,15 +1594,15 @@ sub sendStreamingFile {
 				closeHTTPSocket($httpClient);
 				return;
 			}
-		
+
 			if ( $last >= $size ) {
 				$last = $size - 1;
 			}
-		
+
 			main::DEBUGLOG && $log->is_debug && $log->debug("Handling Range request: $first-$last");
-		
+
 			seek $fh, $first, 0;
-		
+
 			if ( $isTSR ) { # DLNA 7.4.40.7 A time seek uses 200 status and doesn't include Content-Range, ugh
 				$response->code(200);
 			}
@@ -1611,31 +1611,31 @@ sub sendStreamingFile {
 				$response->header( 'Content-Range' => "bytes $first-$last/$size" );
 			}
 			$response->content_length( $total );
-		
+
 			# Save total value for use later in sendStreamingResponse
 			${*$fh}{rangeTotal}   = $total;
 			${*$fh}{rangeCounter} = 0;
 		}
 	}
-	
+
 	# Respond to realTimeInfo.dlna.org (DLNA 7.4.72)
 	if ( $response->request->header('realTimeInfo.dlna.org') ) {
 		$response->header( 'realTimeInfo.dlna.org' => 'DLNA.ORG_TLAG=*' );
 	}
 
 	my $headers = _stringifyHeaders($response) . $CRLF;
-	
+
 	# For a range request, reduce rangeCounter to account for header size
 	if ( ${*$fh}{rangeTotal} ) {
 		${*$fh}{rangeCounter} -= length $headers;
 	}
-	
+
 	$streamingFiles{$httpClient} = $fh;
 
 	# we are not a real streaming session, so we need to avoid sendStreamingResponse using the random $client stored in
 	# $peerclient as this will cause streaming to the real client $client to stop.
 	delete $peerclient{$httpClient};
-	
+
 	# Disable metadata in case this client sent an Icy-Metadata header
 	$sendMetaData{$httpClient} = 0;
 
@@ -1759,7 +1759,7 @@ sub contentHasBeenModified {
 			}
 		}
  	}
- 
+
  	if ($response->code() eq RC_NOT_MODIFIED) {
 
  		for my $header (qw(Content-Length Content-Type Last-Modified)) {
@@ -1776,7 +1776,7 @@ sub prepareResponseForSending {
 	my ($client, $params, $body, $httpClient, $response) = @_;
 
 	use bytes;
-	
+
 	# Trap empty content
 	$body ||= \'';
 
@@ -1878,13 +1878,13 @@ sub addHTTPResponse {
 	# try to write out multibyte characters with invalid byte lengths in
 	# sendResponse() below.
 	use bytes;
-	
+
 	# Collect all our output into one chunk, to reduce TCP packets
 	my $outbuf;
 
 	# First add the headers, if requested
 	if (!defined($sendheaders) || $sendheaders == 1) {
-		
+
 		# Add a header displaying the time it took us to serve this request
 		$response->header( 'X-Time-To-Serve' => ( Time::HiRes::time() - $httpClient->start_time ) );
 
@@ -1896,16 +1896,16 @@ sub addHTTPResponse {
 	if ($response->request()->method() ne 'HEAD' && 
 		$response->code() ne RC_NOT_MODIFIED &&
 		$response->code() ne RC_PRECONDITION_FAILED) {
-		
+
 		# use chunks if we have a transfer-encoding that says so
 		if ($chunked) {
-			
+
 			# add chunk...
 			$outbuf .= sprintf("%X", length($$body)) . $CRLF . $$body . $CRLF;
-			
+
 			# add a last empty chunk if we're closing the connection or if there's nothing more
 			if ($close || !$more) {
-				
+
 				$outbuf .= '0' . $CRLF . $CRLF;
 			}
 
@@ -1914,7 +1914,7 @@ sub addHTTPResponse {
 			$outbuf .= $$body;
 		}
 	}
-	
+
 	push @{$outbuf{$httpClient}}, {
 		'data'     => \$outbuf,
 		'offset'   => 0,
@@ -1928,7 +1928,7 @@ sub addHTTPResponse {
 sub addHTTPLastChunk {
 	my $httpClient = shift;
 	my $close = shift;
-	
+
 	my $emptychunk = "0" . $CRLF . $CRLF;
 
 	push @{$outbuf{$httpClient}}, {
@@ -1937,7 +1937,7 @@ sub addHTTPLastChunk {
 		'length'   => length($emptychunk),
 		'close'    => $close,
 	};
-	
+
 	Slim::Networking::Select::addWrite($httpClient, \&sendResponse);
 }
 
@@ -2002,9 +2002,9 @@ sub sendResponse {
 		$segment->{'length'} -= $sentbytes;
 		$segment->{'offset'} += $sentbytes;
 		unshift @{$outbuf{$httpClient}}, $segment;
-		
+
 	} else {
-		
+
 		main::INFOLOG && $log->is_info && $log->info("Sent $sentbytes to $peeraddr{$httpClient}:$port");
 
 		# sent full message
@@ -2013,10 +2013,10 @@ sub sendResponse {
 			# no more messages to send
 			main::INFOLOG && $log->is_info && $log->info("No more segments to send to $peeraddr{$httpClient}:$port");
 
-			
+
 			# close the connection if requested by the higher God pushing segments
 			if ($segment->{'close'} && $segment->{'close'} == 1) {
-				
+
 				main::INFOLOG && $log->is_info && $log->info("End request, connection closing for: $peeraddr{$httpClient}:$port");
 
 				closeHTTPSocket($httpClient);
@@ -2041,7 +2041,7 @@ sub sendResponse {
 
 			main::INFOLOG && $log->is_info && $log->info("More segments to send to $peeraddr{$httpClient}:$port");
 		}
-		
+
 		# Reset keep-alive timer
 		Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 		Slim::Utils::Timers::setTimer(
@@ -2074,14 +2074,14 @@ sub addStreamingResponse {
 
 	# Set the kernel's send buffer to be higher so that there is less
 	# chance of audio skipping if/when we block elsewhere in the code.
-	# 
+	#
 	# Check to make sure that our target size isn't smaller than the
 	# kernel's default size.
 	if (unpack('I', getsockopt($httpClient, SOL_SOCKET, SO_SNDBUF)) < (MAXCHUNKSIZE * 2)) {
 
 		setsockopt($httpClient, SOL_SOCKET, SO_SNDBUF, (MAXCHUNKSIZE * 2));
 	}
-	
+
 	# we aren't going to read from this socket anymore so don't select on it...
 	Slim::Networking::Select::removeRead($httpClient);
 
@@ -2090,10 +2090,10 @@ sub addStreamingResponse {
 		$client->streamingsocket($httpClient);
 
 		my $newpeeraddr = getpeername($httpClient);
-	
+
 		$client->paddr($newpeeraddr) if $newpeeraddr;
 	}
-	
+
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
@@ -2108,31 +2108,31 @@ sub sendStreamingResponse {
 	my $sentbytes;
 
 	my $client;
-	
+
 	my $isInfo = ( main::INFOLOG && $log->is_info ) ? 1 : 0;
-	
+
 	if ( $peerclient{$httpClient} ) {
 		$client = Slim::Player::Client::getClient($peerclient{$httpClient});
 	}
-	
+
 	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
 	# assert($client);
-	
+
 	my $outbuf = $outbuf{$httpClient};
 	my $segment = shift(@$outbuf);
 	my $streamingFile = $streamingFiles{$httpClient};
 
 	my $silence = 0;
-	
+
 	main::INFOLOG && $isInfo && $log->info("sendStreaming response begun...");
-	
+
 	# Keep track of where we need to stop if this is a range request
 	my $rangeTotal;
 	my $rangeCounter;
 	if ( $streamingFile && ${*$streamingFile}{rangeTotal} ) {
 		$rangeTotal   = ${*$streamingFile}{rangeTotal};
 		$rangeCounter = ${*$streamingFile}{rangeCounter};
-		
+
 		main::DEBUGLOG && $log->is_debug && $log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
 	}
 
@@ -2157,7 +2157,7 @@ sub sendStreamingResponse {
 
 		$silence = 1;
 	}
-	
+
 	# if we don't have anything in our queue, then get something
 	if (!defined($segment)) {
 
@@ -2193,7 +2193,7 @@ sub sendStreamingResponse {
 
 				my $chunk = undef;
 				my $len   = MAXCHUNKSIZE;
-				
+
 				# Reduce len if needed for a range request
 				if ( $rangeTotal && ( $rangeCounter + $len > $rangeTotal ) ) {
 					$len = $rangeTotal - $rangeCounter;
@@ -2229,9 +2229,9 @@ sub sendStreamingResponse {
 
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef) {
-					
+
 				if (length($$chunkRef)) {
-	
+
 					if ( main::INFOLOG && $isInfo ) {
 						$log->info("(audio: " . length($$chunkRef) . " bytes)");
 					}
@@ -2241,9 +2241,9 @@ sub sendStreamingResponse {
 						'offset' => 0,
 						'length' => length($$chunkRef)
 					);
-	
+
 					unshift @$outbuf,\%segment;
-					
+
 				} else {
 					main::INFOLOG && $log->info("Found an empty chunk on the queue - dropping the streaming connection.");
 					forgetClient($client);
@@ -2256,9 +2256,9 @@ sub sendStreamingResponse {
 				my $retry = RETRY_TIME;
 
 				main::INFOLOG && $isInfo && $log->info("Nothing to stream, let's wait for $retry seconds...");
-				
+
 				Slim::Networking::Select::removeWrite($httpClient);
-				
+
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
 			}
 		}
@@ -2266,7 +2266,7 @@ sub sendStreamingResponse {
 		# try again...
 		$segment = shift(@$outbuf);
 	}
-	
+
 	# try to send metadata, if appropriate
 	if ($sendMetaData{$httpClient}) {
 
@@ -2297,7 +2297,7 @@ sub sendStreamingResponse {
 			);
 
 			$segment = \%segment;
-			
+
 			$metaDataBytes{$httpClient} = 0;
 
 			if ( main::INFOLOG && $isInfo ) {
@@ -2307,22 +2307,22 @@ sub sendStreamingResponse {
 		} elsif (defined($segment) && $metaDataBytes{$httpClient} + $segment->{'length'} > METADATAINTERVAL) {
 
 			my $splitpoint = METADATAINTERVAL - $metaDataBytes{$httpClient};
-			
+
 			# make a copy of the segment, and point to the second half, to be sent later.
 			my %splitsegment = %$segment;
 
 			$splitsegment{'offset'} += $splitpoint;
 			$splitsegment{'length'} -= $splitpoint;
-			
+
 			unshift @$outbuf, \%splitsegment;
-			
+
 			#only send the first part
 			$segment->{'length'} = $splitpoint;
-			
+
 			$metaDataBytes{$httpClient} += $splitpoint;
 
 			main::INFOLOG && $isInfo && $log->info("splitting message for metadata at $splitpoint");
-		
+
 		} elsif (defined $segment) {
 
 			# if it's time to send the metadata, just send the metadata
@@ -2382,7 +2382,7 @@ sub sendStreamingResponse {
 	if ($sentbytes) {
 
 		main::INFOLOG && $isInfo && $log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
-		
+
 		# Update sent counter if this is a range request
 		if ( $rangeTotal ) {	
 			${*$streamingFile}{rangeCounter} += $sentbytes;
@@ -2398,7 +2398,7 @@ sub tryStreamingLater {
 
 	if ( defined $client->streamingsocket() && $httpClient == $client->streamingsocket() ) {
 
-		# Bug 10085 - This might be a callback for an old connection  
+		# Bug 10085 - This might be a callback for an old connection
 		# which we decided to close after establishing the timer, so
 		# only kill the timer if we were called for the active streaming connection;
 		# otherwise we might kill the timer related to the next connection too.
@@ -2419,11 +2419,11 @@ sub forgetClient {
 
 sub closeHTTPSocket {
 	my ( $httpClient, $streaming, $reason ) = @_;
-	
+
 	$reason ||= 'closed normally';
-	
+
 	main::INFOLOG && $log->is_info && $log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . ($httpClient->peerport || 0). " ($reason)");
-	
+
 	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
 	Slim::Networking::Select::removeRead($httpClient);
@@ -2437,17 +2437,17 @@ sub closeHTTPSocket {
 	delete($peeraddr{$httpClient});
 	delete($keepAlives{$httpClient});
 	delete($peerclient{$httpClient});
-	
+
 	# heads up to handlers, if any
 	for my $func (@closeHandlers) {
 		if (ref($func) eq 'CODE') {
-		
+
 			# XXX: should this use eval?
 			&{$func}($httpClient);
 		}
 	}
-	
-	
+
+
 	# Fix for bug 1289. A close on its own wasn't always actually
 	# sending a FIN or RST packet until significantly later for
 	# streaming connections. The call to shutdown seems to be a
@@ -2465,7 +2465,7 @@ sub closeHTTPSocket {
 
 sub closeStreamingSocket {
 	my $httpClient = shift;
-	
+
 	if (defined $streamingFiles{$httpClient}) {
 
 		main::INFOLOG && $log->is_info && $log->info("Closing streaming file.");
@@ -2480,7 +2480,7 @@ sub closeStreamingSocket {
 			$client->streamingsocket(undef);
 		}
 	}
-	
+
 	# Close socket unless it's keep-alive
 	if ( $keepAlives{$httpClient} ) {
 		main::INFOLOG && $log->is_info && $log->info('Keep-alive on streaming socket');
@@ -2528,7 +2528,7 @@ sub checkAuthorization {
 				$ok = (crypt($password, $salt) eq $pwd);
 			}
 		}
-		
+
 		# Check for scanner progress request
 		if ( !$ok && $pwd eq $password ) {
 			if ( $request->header('X-Scanner') ) {
@@ -2555,15 +2555,15 @@ sub checkAuthorization {
 # prototype: func($httpClient), no return value
 sub addCloseHandler{
 	my $funcPtr = shift;
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		$log->debug("Adding Close handler: $funcName");
 	}
-	
+
 	push @closeHandlers, $funcPtr;
 }
-	
+
 
 # Fills the template file specified as $path, using either the currently
 # selected skin, or an override. Returns the filled template string
@@ -2638,7 +2638,7 @@ sub protect { if ( main::WEBUI ) {
 
 sub downloadMusicFile {
 	my ($httpClient, $response, $id) = @_;
-	
+
 	# Support transferMode.dlna.org (DLNA 7.4.49)
 	my $tm = $response->request->header('transferMode.dlna.org') || 'Streaming';
 	if ( $tm =~ /^(?:Streaming|Background)$/i ) {
@@ -2655,7 +2655,7 @@ sub downloadMusicFile {
 	my $obj = Slim::Schema->find('Track', $id);
 
 	if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
-		
+
 		# Bug 8808, support transcoding if a file extension is provided
 		my $uri    = $response->request->uri;
 		my $isHead = $response->request->method eq 'HEAD';
@@ -2665,17 +2665,17 @@ sub downloadMusicFile {
 			if ( !Slim::Music::Info::isSong(undef, $outFormat) ) {
 				$outFormat = Slim::Music::Info::typeFromSuffix($uri);
 			}
-			
+
 			if ( $obj->content_type ne $outFormat ) {
 				if ( main::TRANSCODING ) {
 					# Also support LAME bitrate/quality
 					my ($bitrate) = $uri =~ m{bitrate=(\d+)};
 					my ($quality) = $uri =~ m{quality=(\d)};
 					$quality = 9 unless $quality =~ /^[0-9]$/;
-					
+
 					# Use aif because DLNA specifies big-endian format
 					$outFormat = 'aif' if $outFormat =~ /^(?:aiff?|wav)$/;
-				
+
 					my ($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 						$obj,
 						undef, # content-type will be determined from $obj
@@ -2685,58 +2685,51 @@ sub downloadMusicFile {
 						$outFormat,
 						$bitrate || 0,
 					);
-				
+
 					if ( !$transcoder ) {
 						$log->error("Couldn't transcode " . $obj->url . " to $outFormat: $error");
-					
+
 						$response->code(400);
 						$response->headers->remove_content_headers;				
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
-		
+
 					my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
 						$transcoder, $obj->path, $obj->url, undef, $quality
 					);
-				
+
 					if ( !$command ) {
 						$log->error("Couldn't create transcoder command-line for " . $obj->url . " to $outFormat");
-					
+
 						$response->code(400);
 						$response->headers->remove_content_headers;					
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
-				
+
 					my $in;
 					my $out;
 					my $done = 0;
-					
+
 					if ( !$isHead ) {
 						main::INFOLOG && $log->is_info && $log->info("Opening transcoded download (" . $transcoder->{profile} . "), command: $command");
-						
+
 						# Bug: 4318
 						# On windows ensure a child window is not opened if $command includes transcode processes
 						if (main::ISWINDOWS) {
 							Win32::SetChildShowWindow(0);
 						 	$in = FileHandle->new;
 							my $pid = $in->open($command);
-					
-							# XXX Bug 15650, this sets the priority of the cmd.exe process but not the actual
-							# transcoder process(es).
-							my $handle;
-							if ( Win32::Process::Open( $handle, $pid, 0 ) ) {
-								$handle->SetPriorityClass( Slim::Utils::OS::Win32::getPriorityClass() || Win32::Process::NORMAL_PRIORITY_CLASS() );
-							}
-					
+
 							Win32::SetChildShowWindow();
 						} else {
 							$in = FileHandle->new($command);
 						}
-					
+
 						Slim::Utils::Network::blocking($in, 0);
 					}
-				
+
 					if ($outFormat eq 'aif') {
 						# Construct special PCM content-type
 						$response->content_type( 'audio/L16;rate=' . $obj->samplerate . ';channels=' . $obj->channels );
@@ -2744,23 +2737,23 @@ sub downloadMusicFile {
 					else {
 						$response->content_type( $Slim::Music::Info::types{$outFormat} );
 					}
-				
+
 					# Tell client range requests are not supported
 					$response->header( 'Accept-Ranges' => 'none' );
-					
+
 					my $filename = Slim::Utils::Misc::pathFromFileURL($obj->url);
 					$filename =~ s/\..+$/\.$outFormat/;
 					$response->header('Content-Disposition', 
 						sprintf('attachment; filename="%s"', basename($filename))
 					);
-				
+
 					my $is11 = $response->request->protocol eq 'HTTP/1.1';
-				
+
 					if ($is11) {
 						# Use chunked TE for HTTP/1.1 clients
 						$response->header( 'Transfer-Encoding' => 'chunked' );
 					}
-					
+
 					# Add DLNA HTTP header, with ORG_CI to indicate transcoding, and lack of ORG_OP to indicate no seeking
 					my $dlna;
 					if ( $outFormat eq 'mp3' ) {
@@ -2772,7 +2765,7 @@ sub downloadMusicFile {
 					if ($dlna) {
 						$response->header( 'contentFeatures.dlna.org' => $dlna );
 					}
-				
+
 					my $headers = _stringifyHeaders($response) . $CRLF;
 
 					# non-blocking stream $pipeline to $httpClient
@@ -2780,22 +2773,22 @@ sub downloadMusicFile {
 						if ($headers) {
 							syswrite $httpClient, $headers;
 							undef $headers;
-							
+
 							if ($isHead) {
 								$done = 1;
 							}
 						}
-						
+
 						if ($done) {
 							$out && $out->destroy;
 							$in && $in->close;
-							
+
 							if ( $httpClient->opened() ) {
 								closeHTTPSocket($httpClient);
 							}
 							return;
 						}
-					
+
 						if ($in) {
 							# Try to read some data from the pipeline
 							my $len = sysread $in, my $buf, 32 * 1024;
@@ -2807,7 +2800,7 @@ sub downloadMusicFile {
 							}
 							elsif ( $len == 0 ) {
 								$done = 1;
-						
+
 								if ($is11) {
 									# Add last empty chunk
 									$out->push_write( '0' . $CRLF . $CRLF );
@@ -2826,7 +2819,7 @@ sub downloadMusicFile {
 							}
 						}
 					};
-					
+
 					$out = AnyEvent::Handle->new(
 						fh         => $httpClient,
 						linger     => 0,
@@ -2841,13 +2834,13 @@ sub downloadMusicFile {
 							main::INFOLOG && $log->is_info && $log->info("Transcoded download error: $msg");
 							$done = 1;
 							$writer->();
-						},						    
+						},
 					);
-					
+
 					# Bug 17212, Must add callback after object creation - references to $out within the $writer callback were
 					# failing when the on_drain callback was passed as a constructor argument
 					$out->on_drain($writer);
-				
+
 					return 1;
 				}
 				else {
@@ -2861,23 +2854,23 @@ sub downloadMusicFile {
 				}
 			}
 		}
-		
+
 		main::INFOLOG && $log->is_info && $log->info("Opening $obj for download...");
-			
+
 		my $ct = $Slim::Music::Info::types{$obj->content_type()};
-		
+
 		# Add DLNA HTTP header
 		if ( my $pn = $obj->dlna_profile ) {
 			my $canseek = ($pn eq 'MP3' || $pn =~ /^WMA/);
 			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
 			$response->header( 'contentFeatures.dlna.org' => $dlna );
 		}
-		
+
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url), $obj );
-			
+
 		return 1;
 	}
-	
+
 	return;
 }
 
@@ -2893,7 +2886,7 @@ sub downloadVideoFile {
 			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 			$response->header( 'contentFeatures.dlna.org' => $dlna );
 		}
-		
+
 		# Support transferMode.dlna.org (DLNA 7.4.49)
 		my $tm = $response->request->header('transferMode.dlna.org') || 'Streaming';
 		if ( $tm =~ /^(?:Streaming|Background)$/i ) {
@@ -2906,11 +2899,11 @@ sub downloadVideoFile {
 			closeHTTPSocket($httpClient);
 			return;
 		}
-				
+
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}), $video );
 		return 1;
 	}
-	
+
 	return;
 }
 
@@ -2926,7 +2919,7 @@ sub downloadImageFile {
 			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
 			$response->header( 'contentFeatures.dlna.org' => $dlna );
 		}
-		
+
 		# Support transferMode.dlna.org (DLNA 7.4.49)
 		my $tm = $response->request->header('transferMode.dlna.org') || 'Interactive';
 		if ( $tm =~ /^(?:Interactive|Background)$/i ) {
@@ -2939,11 +2932,11 @@ sub downloadImageFile {
 			closeHTTPSocket($httpClient);
 			return;
 		}
-				
+
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}), $image );
 		return 1;
 	}
-	
+
 	return;
 }
 

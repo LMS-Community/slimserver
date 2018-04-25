@@ -1,5 +1,5 @@
 [% PROCESS settings/header.html %]
-	
+
 	[% WRAPPER setting title="SETUP_DBHIGHMEM" desc="SETUP_DBHIGHMEM_DESC" %]
 		<select class="stdedit" name="pref_dbhighmem" id="dbhighmem">
 
@@ -9,7 +9,7 @@
 
 		</select>
 	[% END %]
-	
+
 	[% WRAPPER setting title="SETUP_SCAN_ON_PREF_CHANGE" desc="SETUP_SCAN_ON_PREF_CHANGE_DESC" %]
 		<select class="stdedit" name="pref_dontTriggerScanOnPrefChange" id="dontTriggerScanOnPrefChange">
 
@@ -24,17 +24,17 @@
 
 			<option [% IF NOT prefs.pref_disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
 			<option [% IF prefs.pref_disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
-		
+
 		</select>
 	[% END %]
-	
+
 	[% WRAPPER setting title="SETUP_PRECACHEARTWORK" desc="SETUP_PRECACHEARTWORK_DESC" %]
 		<select class="stdedit" name="pref_precacheArtwork" id="precacheArtwork">
 
 			<option [% IF prefs.pref_precacheArtwork == 1 %]selected [% END %]value="1">[% 'SETUP_PRECACHEARTWORK_ENABLED' | getstring %]</option>
 			<option [% IF prefs.pref_precacheArtwork == 2 %]selected [% END %]value="2">[% 'SETUP_PRECACHEARTWORK_ALL' | getstring %]</option>
 			<option [% IF NOT prefs.pref_precacheArtwork %]selected [% END %]value="0">[% 'SETUP_PRECACHEARTWORK_DISABLED' | getstring %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -44,7 +44,7 @@
 		<style>
 			.specs td { padding: 5px 10px 0 0; }
 		</style>
-	
+
 		<table border="0" class="specs">
 			[% FOREACH pref = pref_customArtSpecs %]
 			<tr>
@@ -53,7 +53,7 @@
 				<td><div>[% pref.value %]</div></td>
 			</tr>
 			[% END %]
-	
+
 		</table>
 	[% END; END %]
 
@@ -63,35 +63,35 @@
 			[% FOREACH id = imageproxies.keys.sort %]
 			<option [% IF prefs.pref_useLocalImageproxy == id %]selected [% END %]value="[% id %]">[% imageproxies.$id %]</option>
 			[% END %]
-		
+
 		</select>
 	[% END %]
 
-	[% WRAPPER settingSection %]
+	[% IF prioritySettings; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_serverPriority" id="serverPriority">
-	
+
 			[% option = "" %]
 			<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
 				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
-	
+
 			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_SCANNERPRIORITY" desc="SETUP_SCANNERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_scannerPriority" id="scannerPriority">
-	
+
 			[% option = "" %]
 			<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
 				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
-	
+
 			</select>
 		[% END %]
-	[% END %]
+	[% END; END %]
 
 	[% IF prefs.exists('pref_autorescan') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
@@ -105,7 +105,7 @@
 			</select>
 		[% END %]
 	[% END %]
-	
+
 	[% IF prefs.exists('pref_autorescan_stat_interval') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
 			<input type=text class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval %]" size="15">

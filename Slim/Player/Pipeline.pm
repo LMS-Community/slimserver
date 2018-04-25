@@ -47,7 +47,7 @@ sub new {
 		};
 
 		my $readerPort = $listenReader->sockport;
-		
+
 		my ($listenWriter, $writerPort);
 
 		if ($source) {
@@ -69,10 +69,10 @@ sub new {
 		$command =~ s/"/\\"/g;
 
 		my $newcommand = '"' . Slim::Utils::Misc::findbin('socketwrapper') .  '" ';
-		
+
 		# Bug 15650, Run transcoders with the same priority as the server
 		# XXX this sets the priority of the socketwrapper.exe process but not the actual transcoder process(es).
-		my $priority = Slim::Utils::OS::Win32::getPriorityClass() || Win32::Process::NORMAL_PRIORITY_CLASS();
+		my $priority = Win32::Process::NORMAL_PRIORITY_CLASS();
 
 		my $createMode = $priority | Win32::Process::CREATE_NO_WINDOW();
 
@@ -146,7 +146,7 @@ sub new {
 
 			return undef;
 		}
-		
+
 		if (!defined(Slim::Utils::Network::blocking($writer, 0))) {
 
 			logError("Cannot set pipe line writer to nonblocking");
@@ -156,7 +156,7 @@ sub new {
 
 			return undef;
 		}
-		
+
 		binmode($reader);
 		binmode($writer);
 	}
@@ -322,16 +322,16 @@ sub sysread {
 
 			${*$self}{'pipeline_pending_bytes'} = $pendingBytes;
 			${*$self}{'pipeline_pending_size'}  = $pendingSize;
-			
+
 			if ($! != EWOULDBLOCK) {
 				return undef;	# reflect error to caller
 			}
-				
+
 			last STUFF_PIPE;
 		}
 
 	}
-	
+
 	return $reader->sysread($_[1], $chunksize);
 }
 
