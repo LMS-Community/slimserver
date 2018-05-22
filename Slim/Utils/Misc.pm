@@ -797,6 +797,26 @@ sub fileFilter {
 		return 0 if $item =~ /$ignore/;
 	}
 
+	#Process .slimignore files a la .cvsignore i.e. don't include files which
+	#match globs contained therein. This behaves slightly differently to cvsignore
+	#in that it doesn't recurse down directories - you need one slimignore per album
+	#I view this as a feature. :)
+	if ( -e $dirname . "/.slimignore") {
+		my $log = logger('os.files');
+		$log->debug("Found a .slimignore in $dirname");
+		my $slimignore_filename = $dirname . "/.slimignore";
+		open(my $slimignore, "<", $slimignore_filename) or
+			$log->debug("Couldn't open [$slimignore_filename]: $!");
+		my @ignore_masks = <$slimignore>; #FIXME: slurp could be a bad idea if the file's _massive_
+		close($slimignore);
+		foreach my $ignore (@ignore_masks) {
+			my $full_ignore = $dirname . "/" . $ignore;
+			chomp $full_ignore;
+			return 0 if( grep /$item$/, glob($full_ignore));
+		}
+	}
+
+
 	# BUG 7111: don't catdir if the $item is already a full path.
 	my $fullpath = $dirname ? catdir($dirname, $item) : $item;
 
