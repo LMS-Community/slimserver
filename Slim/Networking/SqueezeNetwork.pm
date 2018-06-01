@@ -257,6 +257,8 @@ sub url {
 
 	$path ||= '';
 
+	$base = '' if $path =~ /^http/;
+
 	return $base . $path;
 }
 
