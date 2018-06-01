@@ -538,7 +538,7 @@ sub vacuum {
 	}
 
 	if ( !$optional ) {
-#		$dbh->do('PRAGMA temp_store = MEMORY') if $prefs->get('dbhighmem');
+		$dbh->do('PRAGMA temp_store = MEMORY') if $prefs->get('dbhighmem');
 		$dbh->do('VACUUM');
 	}
 	$dbh->disconnect;
