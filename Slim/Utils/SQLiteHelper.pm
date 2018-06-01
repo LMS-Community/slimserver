@@ -518,6 +518,7 @@ sub vacuum {
 	my $dbFile = catfile( $prefs->get('librarycachedir'), ($db || 'library.db') );
 	
 	return unless -f $dbFile;
+	my $dbSize = -s _;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Start VACUUM $db");
 	
@@ -538,7 +539,8 @@ sub vacuum {
 	}
 
 	if ( !$optional ) {
-		$dbh->do('PRAGMA temp_store = MEMORY') if $prefs->get('dbhighmem');
+		# use memory as temporary storage for the vaccum if dbhighmem is enabled and db file is smaller than 1GB
+		$dbh->do('PRAGMA temp_store = MEMORY') if $dbSize < 1024 * 1024 * 1024 && $prefs->get('dbhighmem');
 		$dbh->do('VACUUM');
 	}
 	$dbh->disconnect;

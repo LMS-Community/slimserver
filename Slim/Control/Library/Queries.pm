@@ -1965,6 +1965,13 @@ sub _getTagDataForTracks {
 		$count_only = 1;
 		$tags = $sort = '';
 	}
+
+	# return IDs only
+	my $ids_only;
+	if ($tags eq 'II') {
+		$ids_only = 1;
+		$tags = $sort = '';
+	}
 	
 	# Normalize any search parameters
 	my $search = $args->{search};
@@ -1990,7 +1997,7 @@ sub _getTagDataForTracks {
 			unshift @{$w}, "tracks.id = tracksSearch.id";
 			
 			if (!$count_only) {
-				$sort = "tracksSearch.fulltextweight DESC, $sort";
+				$sort = "tracksSearch.fulltextweight DESC" . ($sort ? ", $sort" : '');
 			}
 		}
 		else {
@@ -2293,15 +2300,19 @@ sub _getTagDataForTracks {
 	my @resultOrder;
 	
 	while ( $sth->fetch ) {
-		utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
-		utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
-		utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
-		utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-		utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
-		utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
+		if (!$ids_only) {
+			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
+			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
+			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
+			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
+		}
+
+		my $id = $c->{'tracks.id'};
 		
-		$results{ $c->{'tracks.id'} } = { map { $_ => $c->{$_} } keys %{$c} };
-		push @resultOrder, $c->{'tracks.id'};
+		$results{ $id } = { map { $_ => $c->{$_} } keys %{$c} };
+		push @resultOrder, $id;
 	}
 	
 	# For tag A/S we have to run 1 additional query

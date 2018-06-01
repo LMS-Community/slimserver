@@ -98,18 +98,26 @@ trebleup.repeat			= treble_up
 volume					= volume
 volumemode				= volumemode
 home					= home
+preset_0.single			= playPreset_0
 preset_1.single			= playPreset_1
 preset_2.single			= playPreset_2
 preset_3.single			= playPreset_3
 preset_4.single			= playPreset_4
 preset_5.single			= playPreset_5
 preset_6.single			= playPreset_6
+preset_7.single			= playPreset_7
+preset_8.single			= playPreset_8
+preset_9.single			= playPreset_9
+preset_0.hold			= favorites_add0
 preset_1.hold			= favorites_add1
 preset_2.hold			= favorites_add2
 preset_3.hold			= favorites_add3
 preset_4.hold			= favorites_add4
 preset_5.hold			= favorites_add5
 preset_6.hold			= favorites_add6
+preset_7.hold			= favorites_add7
+preset_8.hold			= favorites_add8
+preset_9.hold			= favorites_add9
 
 # playing display modes
 now_playing				= playdisp_toggle
