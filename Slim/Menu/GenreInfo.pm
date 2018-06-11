@@ -173,7 +173,7 @@ sub menu { if (main::LIBRARY) {
 } }
 
 
-sub playGenre {
+sub playGenre { if (main::LIBRARY) {
 	my ( $client, $url, $genre, $remoteMeta, $tags) = @_;
 
 	my $items = [];
@@ -206,7 +206,7 @@ sub playGenre {
 	};
 	
 	return $items;
-}
+} }
 	
 sub addGenreEnd {
 	my ( $client, $url, $genre, $remoteMeta, $tags ) = @_;
@@ -223,7 +223,7 @@ sub addGenreNext {
 }
 
 
-sub addGenre {
+sub addGenre { if (main::LIBRARY) {
 	my ( $client, $url, $genre, $remoteMeta, $tags, $add_string, $cmd ) = @_;
 
 	my $items = [];
@@ -255,7 +255,7 @@ sub addGenre {
 	};
 	
 	return $items;
-}
+} }
 
 sub cliQuery {
 	main::DEBUGLOG && $log->is_debug && $log->debug('cliQuery');
