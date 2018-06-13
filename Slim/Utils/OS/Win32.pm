@@ -305,7 +305,7 @@ sub getFileName {
 	}
 	
 	# display full name if we got a Windows 8.3 file name
-	if ($path =~ /~/) {
+	if ($path =~ /~\d$/) {
 
 		if (my $n = Win32::GetLongPathName($path)) {
 			$n = File::Basename::basename($n);
