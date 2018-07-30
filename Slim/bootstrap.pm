@@ -198,6 +198,7 @@ sub loadModules {
 			print "http://downloads.activestate.com/ActivePerl/releases/\n\n";
 		}
 		else {
+			print `perl -v`;
 			print qq{
 *******
 
