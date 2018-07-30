@@ -3,10 +3,10 @@
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_AUTHORIZE" desc="SETUP_AUTHORIZE_DESC" %]
 			<select class="stdedit" name="pref_authorize" id="authorize">
-	
+
 				<option [% IF NOT prefs.pref_authorize %]selected [% END %]value="0">[% 'SETUP_NO_AUTHORIZE' | getstring %]</option>
 				<option [% IF prefs.pref_authorize %]selected [% END %]value="1">[% 'SETUP_AUTHORIZE' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 
@@ -26,10 +26,10 @@
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_IPFILTER_HEAD" desc="SETUP_IPFILTER_DESC" %]
 			<select class="stdedit" name="pref_filterHosts" id="filterHosts">
-	
+
 				<option [% IF NOT prefs.pref_filterHosts %]selected [% END %]value="0">[% 'SETUP_NO_IPFILTER' | getstring %]</option>
 				<option [% IF prefs.pref_filterHosts %]selected [% END %]value="1">[% 'SETUP_IPFILTER' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 
@@ -39,14 +39,17 @@
 
 		[% WRAPPER settingGroup title="SETUP_CSRFPROTECTIONLEVEL" desc="SETUP_CSRFPROTECTIONLEVEL_DESC" %]
 			<select class="stdedit" name="pref_csrfProtectionLevel" id="csrfProtectionLevel">
-	
+
 				<option [% IF prefs.pref_csrfProtectionLevel == 0 %]selected [% END %]value="0">[% 'NONE' | getstring %]</option>
 				<option [% IF prefs.pref_csrfProtectionLevel == 1 %]selected [% END %]value="1">[% 'MEDIUM' | getstring %]</option>
 				<option [% IF prefs.pref_csrfProtectionLevel == 2 %]selected [% END %]value="2">[% 'HIGH' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
-	[% END %]
 
+		[% WRAPPER settingGroup title="SETUP_CORS_ALLOWED_HOSTS" desc="SETUP_CORS_ALLOWED_HOSTS_DESC" %]
+			<input type="text" class="stdedit" name="pref_corsAllowedHosts" id="corsAllowedHosts" value="[% prefs.pref_corsAllowedHosts %]" size="40">
+		[% END %]
+	[% END %]
 [% PROCESS settings/footer.html %]
 
