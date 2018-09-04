@@ -25,14 +25,11 @@ sub initDetails {
 sub canDBHighMem {
 	my $class = shift;
 
-	require Linux::MemInfo;
+	my $meminfo = getMemInfo();
 
-	my %meminfo = Linux::MemInfo::get_mem_info();
-	my $memTotal = toBytes($meminfo{MemTotal}, $meminfo{MemTotalUnit});
-
-	if ($memTotal) {
+	if ($meminfo && $meminfo->{MemTotal}) {
 		# some 1GB systems grab RAM for the video adapter - enable dbhighmem if > 900MB installed
-		return $memTotal > 900_000_000;
+		return $meminfo->{MemTotal} > 900_000_000;
 	}
 
 	# in case we haven't been able to read /proc/meminfo, enable dbhighmem for x86 systems
@@ -44,20 +41,14 @@ sub canVacuumInMemory {
 
 	return unless Slim::Utils::Prefs::preferences('server')->get('dbhighmem');
 
-	require Linux::MemInfo;
-
-	my %meminfo = Linux::MemInfo::get_mem_info();
-	my $memAvailable = toBytes($meminfo{MemAvailable}, $meminfo{MemAvailableUnit})
-	                 + toBytes($meminfo{SwapFree}, $meminfo{SwapFreeUnit});
+	my $meminfo = getMemInfo() || return;
 
 	# we're good if we have two times the library file's size in memory available
-	return $memAvailable > (2 * $dbSize);
+	return ($meminfo->{MemAvailable} + $meminfo->{SwapFree}) > (2 * $dbSize);
 }
 
-sub toBytes {
-	my ($value, $unit) = @_;
-
-	return 0 unless $value && $unit;
+sub getMemInfo() {
+	open(INFIL,"/proc/meminfo") || return;
 
 	my %units = (
 		kb => 1024,
@@ -65,8 +56,18 @@ sub toBytes {
 		gb => 1024 * 1024 * 1024
 	);
 
-	return $value * $units{lc($unit)};
-};
+	my %mem;
+	foreach(<INFIL>) {
+		if ( m/^(\S+):\s+(\S+) (\S+)/ ) {
+			$mem{$1} = $2 * ($units{lc($3)} || 0);
+		}
+	}
+
+	$mem{MemAvailable} ||= $mem{MemFree} + $mem{Buffers};
+
+	close(INFIL);
+	return \%mem
+}
 
 sub getFlavor {
 	if (-f '/etc/raidiator_version') {
