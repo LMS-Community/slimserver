@@ -8,6 +8,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Scanner::API;
 use Slim::Utils::Strings qw(string);
 
+use constant CAN_FTS4 => Slim::Utils::Versions->compareVersions($DBD::SQLite::VERSION, 1.42) > 0;
+
 use constant BUILD_STEPS => 7;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
@@ -400,7 +402,14 @@ sub _rebuildIndex {
 	$scanlog->error("Initialize fulltext table");
 	
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $scanlog->error($dbh->errstr);
-	$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $scanlog->error($dbh->errstr);
+	if ( CAN_FTS4 ) {
+		main::DEBUGLOG && $log->debug("New SQLite - enable advanced fts4 features (notindexed)");
+		$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts4(id, type, w10, w5, w3, w1, matchinfo=fts3, notindexed=id);") or $scanlog->error($dbh->errstr);
+	}
+	else {
+		main::DEBUGLOG && $log->debug("Old SQLite - don't enable advanced fts4 features");
+		$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $scanlog->error($dbh->errstr);
+	}
 	main::idleStreams() unless main::SCANNER;
 
 	$scanlog->error("Create fulltext index for tracks");
