@@ -2,21 +2,8 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION;
-
-require XSLoader;
-
-BEGIN {
-	foreach ('0.99', '0.93', '0.95', '0.94') {
-		eval { XSLoader::load('Audio::Scan', $_); };
-		
-		if (!$@) {
-			$VERSION = $_;
-			last;
-		}
-	}
-}
-
+use XSLoader;
+XSLoader::load 'Audio::Scan';
 
 use constant FILTER_INFO_ONLY => 1;
 use constant FILTER_TAGS_ONLY => 2;

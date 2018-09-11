@@ -79,7 +79,7 @@ sub init {
 		'xpf' => 'Slim::Formats::Playlists::XSPF',
 	);
 
-	if ($Audio::Scan::VERSION =~ /^0\.9[45]$/) {
+	if ($Audio::Scan::VERSION >= 0.94) {
 		$tagClasses{'dff'} = 'Slim::Formats::DFF';
 		$tagClasses{'dsf'} = 'Slim::Formats::DSF';
 	}
