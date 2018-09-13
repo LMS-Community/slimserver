@@ -71,7 +71,7 @@ sub _gotConfig {
 	my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef ) };
 
 	if ( $@ ) {
-		main::DEBUGLOG && $log->debug( "Error fetching TuneIn artwork configuration: $@" );
+		$log->warn( "Error fetching TuneIn artwork configuration: $@" );
 	}
 	elsif ( $feed && $feed->{items} && (my $config = $feed->{items}->[0]) ) {
 		if ( (my $lookup = $config->{'albumart.lookupurl'}) && (my $url = $config->{'albumart.url'}) ) {
@@ -370,7 +370,7 @@ sub _fetchArtwork {
 		#                                                      q => sQuare
 		#                                                       g => Giant
 		#                                                        d => meDium
-		if ( $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i && (my $song = $client->playingSong()) ) {
+		if ( $track->{cover} && ($track->{cover} =~ m{/[ps]\d+[tqgd]?\.(?:jpg|jpeg|png|gif)$}i || $track->{cover} =~ /_0q\.png/) && (my $song = $client->playingSong()) ) {
 			if ( !$song->pluginData('stationLogo') ) {
 				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
 				
@@ -406,6 +406,7 @@ sub _fetchArtwork {
 		}
 		# fallback to station artwork
 		elsif ( my $artworkUrl = $client->pluginData('stationLogo') ) {
+			main::DEBUGLOG && $log->debug("Falling back to station artwork lack of metadata");
 			setArtwork($client, $url, $artworkUrl);
 		}
 	}
