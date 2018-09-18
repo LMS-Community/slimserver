@@ -260,6 +260,13 @@ sub parseSearchTerm {
 
 		$token;
 	} @tokens;
+
+	# conditionally revert single character optimization: if one of the tokens is more than one character, allow single characters with wildcard
+	if ( $noOfTokens && 1 && grep { index($_, '*') > 1 } @tokens ) {
+		@tokens = map {
+			length($_) == 1 ? "$_*" : $_;
+		} @tokens;
+	}
 	
 	@quoted = map {
 		my $token = $_;
