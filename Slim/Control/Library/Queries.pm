@@ -392,7 +392,7 @@ sub albumsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . ($search || ''));
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 	
 	if ( $sort eq 'new' && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
@@ -822,7 +822,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	$cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . ($search || ''));
+	$cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 	
 	my $count = $cache->{$cacheKey};
 	
@@ -2237,7 +2237,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . join( '', @{$p}, @$w ) . ($search || ''));
+		my $cacheKey = md5_hex($sql . join( '', @{$p}, @$w ) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 		
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $Slim::Control::Queries::bmfCache{$cacheKey} ) {
@@ -2545,7 +2545,7 @@ sub videoTitlesQuery { if (main::VIDEO && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . ($search || ''));
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -2809,7 +2809,7 @@ sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . ($search || ''));
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
