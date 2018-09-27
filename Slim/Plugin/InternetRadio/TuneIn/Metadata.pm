@@ -314,6 +314,10 @@ sub _gotMetadata {
 		$i++;
 	}
 
+	if ( (!$meta->{cover} || $meta->{cover} =~ /_0[tqgd]?\.(?:png|jp.?g)/) && (my $stationLogo = $client->pluginData('stationLogo')) ) {
+		$meta->{cover} = $stationLogo;
+	}
+
 	# Also cache the image URL in case the stream has other metadata
 	if ( $meta->{cover} ) {
 		setArtwork($client, $url, $meta->{cover});
@@ -410,7 +414,7 @@ sub _fetchArtwork {
 		#                                                      q => sQuare
 		#                                                       g => Giant
 		#                                                        d => meDium
-		if ( $track->{cover} && ($track->{cover} =~ m{/[ps]\d+[tqgd]?\.(?:jpg|jpeg|png|gif)$}i || $track->{cover} =~ /(_0.\.(?:png|jpg))/) && (my $song = $client->playingSong()) ) {
+		if ( $track->{cover} && ($track->{cover} =~ m{/[ps]\d+[tqgd]?\.(?:jpg|jpeg|png|gif)$}i || $track->{cover} =~ /(_0[tqgd]?\.(?:png|jpg))/) && (my $song = $client->playingSong()) ) {
 			if ( $1 && (my $stationLogo = $client->pluginData('stationLogo')) ) {
 				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $stationLogo );
 				$song->pluginData( stationLogo => $stationLogo );
