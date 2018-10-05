@@ -327,6 +327,13 @@ sub optimizeDB {
 	# only run VACUUM in the scanner, or if no player is active
 	return if !main::SCANNER && grep { $_->power() } Slim::Player::Client::clients();
 
+	# I don't like this to be here, but we have no way to tell a plugin to clean up when disabled
+	if ( !Slim::Schema->canFulltextSearch ) {
+		my $dbh = DBI->connect($class->source);
+		$dbh->do("DROP TABLE IF EXISTS fulltext;");
+		$dbh->do("DROP TABLE IF EXISTS fulltext_terms;");
+	}
+
 	$class->vacuum('library.db');
 	$class->vacuum('persist.db');
 }
@@ -371,7 +378,7 @@ sub postConnect {
 			my ($table) = eval { $dbh->selectrow_array('SELECT name FROM sqlite_master WHERE type="table" AND name="tracks"') };
 
 			if ($table) {
-				$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');			
+				$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');
 				Slim::Schema->optimizeDB();
 			}
 		}
@@ -447,11 +454,11 @@ sub updateProgress {
 			Slim::Utils::Progress->clear;
 
 			# let the user know we aborted the scan
-			my $progress = Slim::Utils::Progress->new( { 
+			my $progress = Slim::Utils::Progress->new( {
 				type  => 'importer',
 				name  => 'failure',
 				total => 1,
-				every => 1, 
+				every => 1,
 			} );
 			$progress->update('SCAN_ABORTED');
 
@@ -582,7 +589,7 @@ sub _notifyFromScanner {
 		$request->addResult( abort => 1 );
 		$request->setStatusDone();
 
-		Slim::Music::Import->setAborted(0);		
+		Slim::Music::Import->setAborted(0);
 		return;
 	}
 
