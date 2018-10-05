@@ -109,7 +109,8 @@
 					}
 				}
 				 
-				frames.browser.location.href = navigationUrl; 
+				if (frames.browser.location)
+					frames.browser.location.href = navigationUrl;
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';
@@ -131,7 +132,7 @@
 			</div>
 		</div>
 
-		<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
+		<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no" src="home.html"></iframe>
 
 		<div id="leftfooter">
 			<div class="inner">
