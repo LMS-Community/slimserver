@@ -327,13 +327,6 @@ sub optimizeDB {
 	# only run VACUUM in the scanner, or if no player is active
 	return if !main::SCANNER && grep { $_->power() } Slim::Player::Client::clients();
 
-	# I don't like this to be here, but we have no way to tell a plugin to clean up when disabled
-	if ( !Slim::Schema->canFulltextSearch ) {
-		my $dbh = DBI->connect($class->source);
-		$dbh->do("DROP TABLE IF EXISTS fulltext;");
-		$dbh->do("DROP TABLE IF EXISTS fulltext_terms;");
-	}
-
 	$class->vacuum('library.db');
 	$class->vacuum('persist.db');
 }
