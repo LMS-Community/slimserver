@@ -11952,6 +11952,9 @@ DSF
 	EN	DSF
 	NO	DSF
 
+OPS
+	EN	Opus
+
 MODIFIED
 	CS	Upraveno
 	DA	Ændret
