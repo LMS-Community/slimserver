@@ -32,13 +32,13 @@ my $fetching;
 
 sub init {
 	my $class = shift;
-		
+
 	# CLI command for telling a player on SN to connect to us
 	Slim::Control::Request::addDispatch(
 		['squeezenetwork', 'disconnect', '_id'],
 		[0, 1, 0, \&disconnect_player]
 	);
-	
+
 	# CLI command to trigger a player fetch
 	Slim::Control::Request::addDispatch(
 		['squeezenetwork', 'fetch_players', '_id'],
@@ -53,7 +53,7 @@ sub init {
 				undef,
 				time() + 2,
 				\&fetch_players,
-			);			
+			);
 		},
 		[['client'],['new','reconnect','disconnect','forget']]
 	);
@@ -62,17 +62,17 @@ sub init {
 		undef,
 		time() + 3,
 		\&fetch_players,
-	);			
+	);
 }
 
 sub shutdown {
 	my $class = shift;
-	
+
 	$CONNECTED_PLAYERS = [];
 	$INACTIVE_PLAYERS  = [];
-	
+
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
-	
+
 	main::INFOLOG && $log->info( "SqueezeNetwork player list shutdown" );
 }
 
@@ -81,54 +81,88 @@ sub fetch_players { if (main::NOMYSB) {
 } else {
 	# XXX: may want to improve this for client new/disconnect/reconnect/forget to only fetch
 	# player into for that single player
-	
+
 	# don't run this call if we're already waiting for player information
 	if ($fetching++) {
 		$log->warn("Ignoring request to get player information from mysqueezebox.com. A request is already running ($fetching)");
 		return;
 	}
-	
+
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
-	
+
 	# Get the list of players for our account that are on SN
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_players_done,
 		\&_players_error,
 	);
-	
+
 	$http->get( $http->url( '/api/v1/players' ) );
 } }
 
 sub _players_done {
 	my $http = shift;
-	
+
 	my $res = eval { from_json( $http->content ) };
 	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
 		$http->error( $@ || 'Invalid JSON response: ' . $http->content );
 		return _players_error( $http );
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
 		$log->debug( "Got list of all apps  : " . Data::Dump::dump( $res->{all_apps} ));
 		$log->debug( "Next player check in  : " . $res->{next_poll} . " seconds" );
 	}
-		
+
 	# Update poll interval with advice from SN
 	$POLL_INTERVAL = $res->{next_poll};
-	
+
 	# Make sure poll interval isn't too small
 	if ( $POLL_INTERVAL < MIN_POLL_INTERVAL ) {
 		$POLL_INTERVAL = MIN_POLL_INTERVAL;
 	}
-	
+
 	# Update player list
 	$CONNECTED_PLAYERS = $res->{players};
 	$INACTIVE_PLAYERS  = $res->{inactive_players};
-	
+
+	# SN can provide string translations for new menu items
+	if ( $res->{strings} ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding SN-supplied strings: ' . Data::Dump::dump( $res->{strings} ) );
+
+		Slim::Utils::Strings::storeExtraStrings( $res->{strings} );
+	}
+
+	_registerApps($res);
+
+	# SN can provide string translations for new menu items
+	if ( $res->{search_providers} ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding search providers: ' . Data::Dump::dump( $res->{search_providers} ) );
+
+		Slim::Menu::GlobalSearch->registerSearchProviders( $res->{search_providers} );		
+	}
+
+
+	# Clear error count if any
+	if ( $prefs->get('snPlayersErrors') ) {
+		$prefs->remove('snPlayersErrors');
+	}
+
+	$fetching = 0;
+
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + $POLL_INTERVAL,
+		\&fetch_players,
+	);
+}
+
+sub _registerApps {
+	my ($res) = @_;
+
 	# Make a list of all apps for the web UI
 	my $allApps = $res->{all_apps} || {};
-	
+
 	# Add 3rd party plugins which have requested to be on the apps menu
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 		for my $plugin (@$nonSNApps) {
@@ -138,79 +172,45 @@ sub _players_done {
 		}
 	}
 
-	# SN can provide string translations for new menu items
-	if ( $res->{strings} ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding SN-supplied strings: ' . Data::Dump::dump( $res->{strings} ) );
-		
-		Slim::Utils::Strings::storeExtraStrings( $res->{strings} );
-	}
-	
-	# Update enabled apps for each player
-	my $appHandler = sub {
-		my ($player, $cprefs, $client) = @_;
-		
-		# Compare existing apps to new list
-		my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
-		my $newApps     = complex_to_query( $player->{apps} );
-		
-		# Only refresh menus if the list has changed
-		if ( $currentApps ne $newApps ) {
-			$cprefs->set( apps => $player->{apps} );
-			
-			$client ||= Slim::Player::Client::getClient( $player->{mac} );
-		
-			# Refresh ip3k and Jive menu
-			if ( $client ) {
-				if ( !$client->isa('Slim::Player::SqueezePlay') ) {
-					Slim::Buttons::Home::updateMenu($client);
-				}
-				
-				# Clear Jive menu and refresh with new main menu
-				Slim::Control::Jive::deleteAllMenuItems($client);
-				Slim::Control::Jive::mainMenu($client);
-			}
-		}
-	};
-	
 	# This will create new pref entries for players this server has never seen
 	my %playersSeen;
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
 			$playersSeen{$player->{mac}}++;
-			
+
 			# Keep a list of all available apps for the web UI
 			for my $app ( keys %{ $player->{apps} } ) {
 				$allApps->{$app} = $player->{apps}->{$app};
 			}
-			
+
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
-			
-			$appHandler->($player, $cprefs);
+
+			_appHandler($player, $cprefs);
 		}
 	}
 
 	# now do the same for all locally connected players which are not known by mysb.com (eg. software players)
 	for my $client ( Slim::Player::Client::clients() ) {
 		next if !$client->macaddress || $playersSeen{$client->macaddress};
-		
-		$appHandler->( {
+
+		_appHandler( {
 			mac => $client->macaddress,
 			apps => $allApps,
 		}, $prefs->client($client), $client );
 	}
-	
+
 	# Setup apps for the web and classic player UI.
 	if ( main::WEBUI ) {
 		# Clear all existing my_apps items on the web, we'll build a new list
 		Slim::Web::Pages->delPageCategory('my_apps');
-		
+
 		for my $app ( keys %{$allApps} ) {
-			
+
 			# don't initialize if we have a local plugin overriding the mysb.com service
 			next if $allApps->{'nonsn_' . $app};
-			
+
 			my $info = $allApps->{$app};
-			
+
 			# If this app is supported by a local plugin, we'll use the webpage already setup for it
 			# and just copy it to the my_apps list
 			if ( $info->{plugin} ) {
@@ -225,12 +225,12 @@ sub _players_done {
 				if ( $icon !~ /^http/ ) {
 					$icon = Slim::Networking::SqueezeNetwork->url($icon);
 				}
-				
+
 				my $feed = $info->{url};
 				if ( $feed !~ /^http/ ) {
 					$feed = Slim::Networking::SqueezeNetwork->url($feed);
 				}
-				
+
 				my $tag = lc($app);
 
 				# dynamically create plugin code for mysb.com based apps
@@ -242,20 +242,20 @@ sub _players_done {
 				if (!$@) {
 					main::DEBUGLOG && $log->is_debug && $log->debug("Plugin $subclass already initialized - skipping");
 					_updateWebLink($info->{title}, $app);
-					next; 
+					next;
 				}
 
 				main::DEBUGLOG && $log->is_debug && $log->debug("Initializing plugin for mysqueezebox.com based app '$app': $subclass");
-				
+
 				my $code = qq{
 					package ${subclass};
-					
+
 					use strict;
 					use base qw(Slim::Plugin::OPMLBased);
-					
+
 					sub initPlugin {
 						my \$class = shift;
-						
+
 						\$class->SUPER::initPlugin(
 							tag    => '$tag',
 							menu   => 'apps',
@@ -264,24 +264,24 @@ sub _players_done {
 							is_app => 1,
 						);
 					}
-					
+
 					sub _pluginDataFor {
 						my ( \$class, \$key ) = \@_;
-						
+
 						return '$icon' if \$key eq 'icon';
-						
+
 						return \$class->SUPER::_pluginDataFor(\$key);
 					}
 
 					sub getDisplayName { '$info->{title}' }
-					
+
 					sub playerMenu { }
-					
-					1;				
+
+					1;
 				};
-				
+
 				eval $code;
-				
+
 				if ($@) {
 					$log->error( "Unable to dynamically create plugin class $subclass: $@" );
 				}
@@ -299,47 +299,53 @@ sub _players_done {
 			}
 		}
 	}
+}
 
-	# SN can provide string translations for new menu items
-	if ( $res->{search_providers} ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding search providers: ' . Data::Dump::dump( $res->{search_providers} ) );
+# Update enabled apps for each player
+sub _appHandler {
+	my ($player, $cprefs, $client) = @_;
 
-		Slim::Menu::GlobalSearch->registerSearchProviders( $res->{search_providers} );		
+	# Compare existing apps to new list
+	my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
+	my $newApps     = complex_to_query( $player->{apps} );
+
+	# Only refresh menus if the list has changed
+	if ( $currentApps ne $newApps ) {
+		$cprefs->set( apps => $player->{apps} );
+
+		$client ||= Slim::Player::Client::getClient( $player->{mac} );
+
+		# Refresh ip3k and Jive menu
+		if ( $client ) {
+			if ( !$client->isa('Slim::Player::SqueezePlay') ) {
+				Slim::Buttons::Home::updateMenu($client);
+			}
+
+			# Clear Jive menu and refresh with new main menu
+			Slim::Control::Jive::deleteAllMenuItems($client);
+			Slim::Control::Jive::mainMenu($client);
+		}
 	}
-	
-	
-	# Clear error count if any
-	if ( $prefs->get('snPlayersErrors') ) {
-		$prefs->remove('snPlayersErrors');
-	}
-
-	$fetching = 0;
-	
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time() + $POLL_INTERVAL,
-		\&fetch_players,
-	);
 }
 
 sub _updateWebLink {
 	my $name = shift;
 	my $id   = shift;
 	my $info = shift;
-	
+
 	my $disabled = $prefs->get('sn_disabled_plugins');
 	return if $disabled && grep /^$id$/i, @$disabled;
-	
+
 	if ($info && $info->{title} && $name && $info->{title} ne $name) {
 		my $url = Slim::Web::Pages->getPageLink( 'apps', $name );
 		Slim::Web::Pages->addPageLinks( 'my_apps', { $info->{title} => $url } );
-		
+
 		# use icon as defined by MySB to allow for white-label solutions
 		if ( my $icon = $info->{icon} ) {
 			my $pluginData = Slim::Utils::PluginManager->dataForPlugin($info->{plugin});
 			$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
 			$pluginData->{icon} = $icon;
-			
+
 			Slim::Web::Pages->addPageLinks("icons", { $name => $icon });
 			Slim::Web::Pages->addPageLinks("icons", { $info->{title} => $icon });
 		}
@@ -353,22 +359,25 @@ sub _updateWebLink {
 sub _players_error {
 	my $http  = shift;
 	my $error = $http->error;
-	
+
 	$prefs->remove('sn_session');
-	
+
 	# We don't want a stale list of players, so clear it out on error
 	$CONNECTED_PLAYERS = [];
 	$INACTIVE_PLAYERS  = [];
-	
+
 	# Backoff if we keep getting errors
 	my $count = $prefs->get('snPlayersErrors') || 0;
 	$prefs->set( snPlayersErrors => $count + 1 );
 	my $retry = $POLL_INTERVAL * ( $count + 1 );
-	
+
 	$log->error( "Unable to get players from SN: $error, retrying in $retry seconds" );
-	
+
+	# let's still register apps, as some are local only anyway
+	_registerApps({});
+
 	$fetching = 0;
-	
+
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + $retry,
@@ -380,7 +389,7 @@ sub get_players { if (main::NOMYSB) {
 	logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
 } else {
 	my $class = shift;
-	
+
 	return wantarray ? @{$CONNECTED_PLAYERS} : $CONNECTED_PLAYERS;
 } }
 
@@ -388,7 +397,7 @@ sub is_known_player { if (main::NOMYSB) {
 	logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
 } else {
 	my ($class, $client) = @_;
-	
+
 	my $mac = ref($client) ? $client->macaddress() : $client;
 
 	return scalar( grep { $mac eq $_->{mac} } @{$CONNECTED_PLAYERS}, @{$INACTIVE_PLAYERS} );	
@@ -397,9 +406,9 @@ sub is_known_player { if (main::NOMYSB) {
 sub disconnect_player {
 	my $request = shift;
 	my $id      = $request->getParam('_id') || return;
-	
+
 	$request->setStatusProcessing();
-	
+
 	# Tell an SN player to reconnect to our IP
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_disconnect_player_done,
@@ -408,31 +417,31 @@ sub disconnect_player {
 			request => $request,
 		}
 	);
-	
+
 	my $ip = Slim::Utils::Network::serverAddr();
-	
+
 	$http->get( $http->url( '/api/v1/players/disconnect/' . $id . '/' . $ip ) );
 }
 
 sub _disconnect_player_done {
 	my $http    = shift;
 	my $request = $http->params('request');
-	
+
 	my $res = eval { from_json( $http->content ) };
 	if ( $@ || ref $res ne 'HASH' ) {
 		$http->error( $@ || 'Invalid JSON response' );
 		return _disconnect_player_error( $http );
 	}
-	
+
 	if ( $res->{error} ) {
 		$http->error( $res->{error} );
 		return _disconnect_player_error( $http );
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Disconect SN player response: " . Data::Dump::dump( $res ) );
 	}
-	
+
 	$request->setStatusDone();
 }
 
@@ -440,12 +449,12 @@ sub _disconnect_player_error {
 	my $http    = shift;
 	my $error   = $http->error;
 	my $request = $http->params('request');
-	
+
 	$log->error( "Disconnect SN player error: $error" );
-	
+
 	$request->addResult( error => $error );
-	
+
 	$request->setStatusDone();
-}	
+}
 
 1;
