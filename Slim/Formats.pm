@@ -16,6 +16,7 @@ use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+use Slim::Utils::Versions;
 
 # Map our tag functions - so they can be dynamically loaded.
 our (%tagClasses, %loadedTagClasses);
@@ -79,9 +80,13 @@ sub init {
 		'xpf' => 'Slim::Formats::Playlists::XSPF',
 	);
 
-	if ($Audio::Scan::VERSION =~ /^0\.9[45]$/) {
+	if (Slim::Utils::Versions->compareVersions($Audio::Scan::VERSION,'0.94') >= 0) {
 		$tagClasses{'dff'} = 'Slim::Formats::DFF';
 		$tagClasses{'dsf'} = 'Slim::Formats::DSF';
+	}
+
+	if (Slim::Utils::Versions->compareVersions($Audio::Scan::VERSION, '1.02') >= 0) {
+		$tagClasses{'ops'} = 'Slim::Formats::OggOpus';
 	}
 
 	$init = 1;

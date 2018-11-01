@@ -2520,7 +2520,7 @@ sub jivePresetsMenu {
 
 	my $presets = $prefs->client($client)->get('presets');
 	my @presets_menu;
-	for my $preset (0..5) {
+	for my $preset (0..9) {
 		my $jive_preset = $preset + 1;
 		# is this preset currently set?
 		my $set = ref($presets) eq 'ARRAY' && defined $presets->[$preset] ? 1 : 0;
@@ -2613,6 +2613,9 @@ sub jiveFavoritesCommand {
 	if ( $command eq 'set_preset' ) {
 		# XXX: why do we use a favorites_ prefix here but not above?
 		my $preset = $request->getParam('key');
+		if ( $preset == 0 ) {
+			$preset = 10;
+		}
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
 		my $type   = $request->getParam('favorites_type');

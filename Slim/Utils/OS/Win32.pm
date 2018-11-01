@@ -169,8 +169,8 @@ sub dirsFor {
 		if ($::prefsfile && -r $::prefsfile) {
 
 			push @dirs, $::prefsfile;
-		} 
-		
+		}
+
 		else {
 
 			if ($class->{osDetails}->{'isWin6+'} && -r catdir($class->writablePath(), 'slimserver.pref')) {
@@ -251,10 +251,10 @@ sub dirsFor {
 		if (!$path || $path eq Win32::GetFolderPath(0)) {
 
 			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-				{ 
-					Access => Win32::TieRegistry::KEY_READ(), 
-					Delimiter =>'/' 
+				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/',
+				{
+					Access => Win32::TieRegistry::KEY_READ(),
+					Delimiter =>'/'
 				}
 			);
 
@@ -306,8 +306,8 @@ sub getFileName {
 		$fsObj = Win32::OLE->new('Scripting.FileSystemObject') or Slim::Utils::Log::logger('database.info')->error("$@ - cannot load Scripting.FileSystemObject?!?");
 	}
 
-	# display full name if we got a Windows 8.3 file name
-	if ($path =~ /~/) {
+	# display full name if we got a Windows 8.3 file path with a tilde in it
+	if ($path =~ /~\d+(\.|$)/ && $path =~ /\\|\//) {
 
 		if (my $n = Win32::GetLongPathName($path)) {
 			$n = File::Basename::basename($n);
@@ -318,13 +318,13 @@ sub getFileName {
 
 	}
 
-	elsif ( $locale ne 'cp1252' && $fsObj && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
+	elsif ( $fsObj && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert folder name: $path -> " . $folderObj->{Name});
 		$path = $folderObj->{Name};
 	}
 
-	elsif ( $locale ne 'cp1252' && $fsObj && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
+	elsif ( $fsObj && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert file name: $path -> " . $fileObj->{Name});
 		$path = $fileObj->{Name};
@@ -332,11 +332,11 @@ sub getFileName {
 
 	else {
 		# bug 16683 - experimental fix
-		# Decode pathnames that do not have '~' as they may have locale-encoded chracaters in them
+		# Decode pathnames that do not have '~' as they may have locale-encoded characters in them
 		$path = Slim::Utils::Unicode::utf8decode_locale($path);
 	}
 
-	return $path;	
+	return $path;
 }
 
 sub scanner {
@@ -371,7 +371,7 @@ sub getSystemLanguage {
 
 	require Win32::Locale;
 
-	$class->_parseLanguage(Win32::Locale::get_language()); 
+	$class->_parseLanguage(Win32::Locale::get_language());
 }
 
 sub dontSetUserAndGroup { 1 }
@@ -383,9 +383,9 @@ sub getProxy {
 	# on Windows read Internet Explorer's proxy setting
 	my $ieSettings = $Win32::TieRegistry::Registry->Open(
 		'CUser/Software/Microsoft/Windows/CurrentVersion/Internet Settings',
-		{ 
-			Access => Win32::TieRegistry::KEY_READ(), 
-			Delimiter =>'/' 
+		{
+			Access => Win32::TieRegistry::KEY_READ(),
+			Delimiter =>'/'
 		}
 	);
 
@@ -413,7 +413,7 @@ sub ignoredItems {
 		'System Volume Information' => '/',
 		'RECYCLER'     => '/',
 		'Recycled'     => '/',
-		'$Recycle.Bin' => '/',	
+		'$Recycle.Bin' => '/',
 	);
 }
 
@@ -491,10 +491,10 @@ sub installPath {
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
 	my $swKey = $Win32::TieRegistry::Registry->Open(
-		'LMachine/Software/Logitech/Squeezebox/', 
-		{ 
-			Access => Win32::TieRegistry::KEY_READ(), 
-			Delimiter =>'/' 
+		'LMachine/Software/Logitech/Squeezebox/',
+		{
+			Access => Win32::TieRegistry::KEY_READ(),
+			Delimiter =>'/'
 		}
 	);
 
@@ -536,10 +536,10 @@ sub writablePath {
 
 		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Logitech/Squeezebox/', 
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
+			'LMachine/Software/Logitech/Squeezebox/',
+			{
+				Access => Win32::TieRegistry::KEY_READ(),
+				Delimiter =>'/'
 			}
 		);
 
@@ -559,10 +559,10 @@ sub writablePath {
 				# NOTE: this key has proved to be wrong on some Vista systems
 				# only here for backwards compatibility
 				$swKey = $Win32::TieRegistry::Registry->Open(
-					'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-					{ 
-						Access => Win32::TieRegistry::KEY_READ(), 
-						Delimiter =>'/' 
+					'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/',
+					{
+						Access => Win32::TieRegistry::KEY_READ(),
+						Delimiter =>'/'
 					}
 				);
 
@@ -584,9 +584,9 @@ sub writablePath {
 
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/Software/Logitech/Squeezebox/', 
-				{ 
-					Delimiter =>'/' 
+				'LMachine/Software/Logitech/Squeezebox/',
+				{
+					Delimiter =>'/'
 				}
 			);
 
@@ -728,7 +728,7 @@ sub cleanupTempDirs {
 	require File::Path;
 	require Win32::Process::List;
 	my $p = Win32::Process::List->new();
-	my %processes = $p->GetProcesses(); 
+	my %processes = $p->GetProcesses();
 
 	foreach my $pid (keys %pdkFolders) {
 
@@ -784,8 +784,8 @@ sub getUpdateParams {
 sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
-sub installerExtension { '(?:exe|msi)' }; 
-sub installerOS { 
+sub installerExtension { '(?:exe|msi)' };
+sub installerOS {
 	my $class = shift;
 	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
 }

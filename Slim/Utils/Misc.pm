@@ -934,7 +934,7 @@ sub readDirectory {
 	
 		while (defined (my $item = readdir(DIR)) ) {
 			# call idle streams to service timers - used for blocking animation.
-			if (scalar @diritems % 3) {
+			if (!scalar @diritems % 20) {
 				main::idleStreams();
 			}
 	

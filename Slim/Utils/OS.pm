@@ -4,7 +4,7 @@ package Slim::Utils::OS;
 
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # Base class for OS specific code
@@ -23,7 +23,7 @@ sub new {
 	my $self = {
 		osDetails  => {},
 	};
-	
+
 	return bless $self, $class;
 }
 
@@ -33,10 +33,10 @@ sub initDetails {
 
 sub getMACAddress {
 	my $class = shift;
-	
+
 	if (!main::SCANNER && !defined $class->{osDetails}->{mac}) {
 		require Slim::Utils::Network;
-		
+
 		# fall back to empty string to prevent repeated attempts (if needed)
 		$class->{osDetails}->{mac} = Slim::Utils::Network::serverMACAddress() || '';
 	}
@@ -62,11 +62,11 @@ Windows & OSX handle this in the installer
 
 sub migratePrefsFolder {}
 
-sub sqlHelperClass { 
+sub sqlHelperClass {
 	if ( $main::dbtype ) {
 		return "Slim::Utils::${main::dbtype}Helper";
 	}
-	
+
 	return 'Slim::Utils::SQLiteHelper';
 }
 
@@ -85,10 +85,10 @@ sub initSearchPath {
 	my $baseDir = shift || $class->dirsFor('Bin');
 	# Initialise search path for findbin - called later in initialisation than init above
 
-	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS. 
+	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS.
 	my $binArch = $class->{osDetails}->{'binArch'} = $Config::Config{'archname'};
 	$class->{osDetails}->{'binArch'} =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
-	
+
 	# Reduce ARM to arm(hf)-linux
 	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux.*gnueabihf/ ||
 		($class->{osDetails}->{'binArch'} =~ /arm/ && (
@@ -122,7 +122,7 @@ sub initSearchPath {
 	elsif ( $class->{osDetails}->{'binArch'} =~ /darwin/i && $class->{osDetails}->{osArch} =~ /x86_64/ ) {
 		unshift @paths, catdir($baseDir, $class->{osDetails}->{'binArch'} . '-x86_64'), catdir($baseDir, $^O . '-x86_64');
 	}
-	
+
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 
 	# add path to Extension installer loaded plugins to @INC, NB this can only be done here as it requires Prefs to be loaded
@@ -141,9 +141,9 @@ MySQL server instead of the instance installed with SC
 
 sub initMySQL {
 	my ($class, $dbclass) = @_;
-	
+
 	require File::Which;
-	
+
 	# try to figure out whether we have a locally running MySQL
 	# which we can connect to using a socket file
 	my $mysql_config = File::Which::which('mysql_config');
@@ -158,7 +158,7 @@ sub initMySQL {
 		if ($socket && -S $socket) {
 			$dbclass->socketFile($socket);
 		}
-		
+
 	}
 }
 
@@ -176,7 +176,7 @@ sub dirsFor {
 	my $dir     = shift;
 
 	my @dirs    = ();
-	
+
 	if ($dir eq "Plugins") {
 
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
@@ -191,19 +191,19 @@ sub dirsFor {
 		eval {
 			$updateDir = catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir'), $dir );
 		};
-		
+
 		if ($@) {
 			eval {
 				$updateDir = catdir( Slim::Utils::Light::getPref('cachedir'), $dir );
 			};
 		}
-		
+
 		return unless $updateDir;
-		
+
 		mkdir $updateDir unless -d $updateDir;
 		push @dirs, $updateDir;
 	}
-	
+
 	return wantarray() ? @dirs : $dirs[0];
 }
 
@@ -225,20 +225,20 @@ sub logRotate {
 	while ( defined (my $file = readdir(DIR)) ) {
 
 		next if $file !~ /\.log$/i;
-		
+
 		$file = catdir($dir, $file);
 
 		# max. log size (default: 100MB)
 		if (-s $file > $maxSize) {
 
-			# keep one old copy		
+			# keep one old copy
 			my $oldfile = "$file.0";
 			unlink $oldfile if -e $oldfile;
-			
+
 			File::Copy::move($file, $oldfile);
 		}
 	}
-	
+
 	closedir(DIR);
 }
 
@@ -252,12 +252,12 @@ we might need to encode the path to correctly handle non-latin characters.
 
 sub decodeExternalHelperPath {
 	my $path = $_[1];
-	
+
 	# Bug 8118, only decode if filename can't be found
 	# No. We need to set the UFT8 flag if we have non-ASCII contents
-	
+
 	$path = Slim::Utils::Unicode::utf8decode_locale($path);
-	
+
 	return $path;
 }
 
@@ -315,7 +315,7 @@ Get details about the locale, system language etc.
 
 sub localeDetails {
 	require POSIX;
-	
+
 	my $lc_time  = POSIX::setlocale(POSIX::LC_TIME())  || 'C';
 	my $lc_ctype = POSIX::setlocale(POSIX::LC_CTYPE()) || 'C';
 
@@ -351,7 +351,7 @@ sub localeDetails {
 	$lc_ctype =~ s/euckr/euc-kr/i;
 	$lc_ctype =~ s/big5/big5-eten/i;
 	$lc_ctype =~ s/gb2312/euc-cn/i;
-	
+
 	return ($lc_ctype, $lc_time);
 }
 
@@ -370,13 +370,13 @@ sub getSystemLanguage {
 
 sub _parseLanguage {
 	my ($class, $language) = @_;
-	
+
 	$language = uc($language);
 	$language =~ s/\.UTF.*$//;
 	$language =~ s/(?:_|-|\.)\w+$//;
-	
+
 	return 'EN' if $language && $language eq 'C';
-	
+
 	return $language || 'EN';
 }
 
@@ -440,7 +440,7 @@ sub getPriority {
 
 =head2 initUpdate( )
 
-Initialize download of a potential updated Logitech Media Server version. 
+Initialize download of a potential updated Logitech Media Server version.
 Not needed on Linux distributions which do manage the update through their repositories.
 
 =cut
@@ -457,13 +457,23 @@ sub canAutoRescan { 0 }
 # can we use more memory to improve DB performance?
 sub canDBHighMem { 0 }
 
+sub canVacuumInMemory {
+	my ($class, $dbSize) = @_;
+
+	return unless Slim::Utils::Prefs::preferences('server')->get('dbhighmem');
+
+	# only vacuum in memory if the file is smaller than 512MB
+	# this should be ok for LMS on Windows/macOS, where we usually have plenty of RAM
+	return $dbSize < 512 * 1024 * 1024;
+}
+
 # some systems support checking ACLs in addition to simpler file tests
 my $filetest;
 sub aclFiletest {
 	my ($class, $cb) = @_;
-	
+
 	$filetest = $cb if $cb;
-	
+
 	return $filetest;
 }
 

@@ -262,6 +262,7 @@ sub getNextSong {
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
 							$self->_track($newTrack);
+							$self->_currentTrackHandler(Slim::Player::ProtocolHandlers->handlerForURL($newTrack->url));
 
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 

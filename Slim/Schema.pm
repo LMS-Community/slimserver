@@ -1009,6 +1009,12 @@ sub _createOrUpdateAlbum {
 			push @{$search}, 'albums.title = ?';
 			push @{$values}, $title;
 
+			if (defined $brainzId) {
+				push @{$search}, 'albums.musicbrainz_id = ?';
+				push @{$values}, $brainzId;
+				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $brainzId));
+			}
+
 			my $checkContributor;
 			
 			# Add disc to the search criteria if needed
@@ -1018,14 +1024,6 @@ sub _createOrUpdateAlbum {
 					push @{$values}, $disc;
 				}
 
-				# Bug 10583 - Also check musicbrainz_id if defined.
-				# Can't be used in groupdiscs mode since id is unique per disc, not per set.
-				if (defined $brainzId) {
-					push @{$search}, 'albums.musicbrainz_id = ?';
-					push @{$values}, $brainzId;
-					main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $brainzId));
-				}
-				
 				$checkContributor = 1;
 			}
 			elsif ($discc) {
