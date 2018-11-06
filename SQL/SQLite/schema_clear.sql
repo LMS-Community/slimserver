@@ -35,4 +35,8 @@ DELETE FROM library_album;
 DELETE FROM library_contributor;
 DELETE FROM library_genre;
 
+-- these table are created by the Fulltext Search plugin
+DROP TABLE IF EXISTS fulltext;
+DROP TABLE IF EXISTS fulltext_terms;
+
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';

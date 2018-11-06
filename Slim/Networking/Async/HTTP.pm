@@ -101,7 +101,7 @@ sub new_socket {
 			# Failed. Try again with an explicit SNI.
 			my %args = @_;
 			$args{SSL_hostname} = $args{Host};
-			$args{SSL_verify_mode} = 0x00;
+			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE();
 			return Slim::Networking::Async::Socket::HTTPS->new( %args );
 		}
 		else {
@@ -438,9 +438,7 @@ sub _http_read {
 		# Body might also be empty but a keep-alive with no content-length in the response is an error
 		# if everything has already been read, _http_body_read will unsubscribe to event loop 
 		# we just subscrive above ... a bit unefficient 
-		_http_read_body( $self->socket, $self, $args ) if ( ($self->response->headers->header('Connection') =~ /close/i || 
-															 $headers->header('Connection') !~ /keep-alive/i ) && 
-															 $self->socket->_rbuf_length == ($headers->content_length || 0));
+		_http_read_body( $self->socket, $self, $args ) if ( $self->response->headers->header('Connection') =~ /keep-alive/i && $self->socket->_rbuf_length == ($headers->content_length || 0));
 	}
 }
 

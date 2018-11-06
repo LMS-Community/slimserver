@@ -85,6 +85,10 @@ sub init {
 		$tagClasses{'dsf'} = 'Slim::Formats::DSF';
 	}
 
+	if (Slim::Utils::Versions->compareVersions($Audio::Scan::VERSION, '1.02') >= 0) {
+		$tagClasses{'ops'} = 'Slim::Formats::OggOpus';
+	}
+
 	$init = 1;
 
 	return 1;
