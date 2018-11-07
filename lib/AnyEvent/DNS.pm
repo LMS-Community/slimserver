@@ -1339,7 +1339,7 @@ sub resolve($%) {
                   if @rr;
 
                # see if there is a cname we can follow
-               my @rr = grep $name eq lc $_->[0] && $_->[1] eq "cname", @{ $res->{an} };
+               @rr = grep $name eq lc $_->[0] && $_->[1] eq "cname", @{ $res->{an} };
 
                if (@rr) {
                   $depth--
