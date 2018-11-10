@@ -575,7 +575,12 @@ sub albumsQuery {
 			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
 		}
 
-		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		$request->addResult('indexList', [ 
+			map { 
+				utf8::decode($_->[0]); 
+				$_; 
+			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
+		]);
 
 		if ($tags =~ /ZZ/) {
 			$request->setStatusDone();
@@ -1003,6 +1008,9 @@ sub artistsQuery {
 		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
 			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
 		$indexList = $dbh->selectall_arrayref($pageSql, undef, @{$p});
+		foreach (@$indexList) {
+			utf8::decode($_->[0])
+		}
 
 		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
 
@@ -1596,7 +1604,12 @@ sub genresQuery {
 	if ($tags =~ /Z/) {
 		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
 			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
-		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		$request->addResult('indexList', [ 
+			map { 
+				utf8::decode($_->[0]); 
+				$_; 
+			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
+		]);
 		if ($tags =~ /ZZ/) {
 			$request->setStatusDone();
 			return
