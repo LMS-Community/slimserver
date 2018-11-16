@@ -10,6 +10,7 @@ use strict;
 use Data::URIEncode qw(complex_to_query);
 use Digest::MD5 qw(md5_hex);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
@@ -32,7 +33,7 @@ sub init {
 	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, \&switchServer);
-	Slim::Web::Pages->addPageFunction(qr/^updateinfo\.htm/, \&updateInfo);
+	Slim::Web::Pages->addPageFunction(qr/^updateinfo\.(?:htm|json)/, \&updateInfo);
 	
 	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') }) if !main::NOMYSB;
 
@@ -237,7 +238,24 @@ sub _updateInfoCB {
 		$params->{'newVersion'} = ${Slim::Web::HTTP::filltemplatefile('html/docs/linux-update.html', $params)};
 	}
 	
-	$callback->($client, $params, Slim::Web::HTTP::filltemplatefile('update_software.html', $params), $httpClient, $response);
+	my $content;
+	if ($params->{path} =~ /\.json/) {
+		my $json = {};
+
+		if ($params->{'newVersion'}) {
+			$json->{server} = $params->{'newVersion'};
+		}
+		if ($params->{'newPlugins'}) {
+			$json->{plugins} = $params->{'newPlugins'};
+		}
+
+		$response->content_type('application/json');
+		my $content = to_json($json);
+		$callback->($client, $params, \$content, $httpClient, $response);
+	}
+	else {
+		$callback->($client, $params, Slim::Web::HTTP::filltemplatefile('update_software.html', $params), $httpClient, $response);
+	}
 }
 
 sub switchServer {
