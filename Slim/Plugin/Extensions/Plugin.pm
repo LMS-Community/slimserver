@@ -278,6 +278,64 @@ sub _appsQueryCB {
 	$request->setStatusDone();
 }
 
+sub getCurrentPlugins {
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	my $states  = preferences('plugin.state');
+
+	my $hide = {};
+	my $current = {};
+
+	# create entries for built in plugins and those already installed
+	my @active;
+	my @inactive;
+
+	for my $plugin (keys %$plugins) {
+
+		if ( main::NOMYSB && ($plugins->{$plugin}->{needsMySB} && $plugins->{$plugin}->{needsMySB} !~ /false|no/i) ) {
+			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
+			next;
+		}
+
+		my $entry = $plugins->{$plugin};
+
+		# don't show enforced plugins
+		next if $entry->{'enforce'};
+
+		my $state = $states->get($plugin);
+
+		my $entry = {
+			name    => $plugin,
+			title   => Slim::Utils::Strings::getString($entry->{'name'}),
+			desc    => Slim::Utils::Strings::getString($entry->{'description'}),
+			error   => Slim::Utils::PluginManager->getErrorString($plugin),
+			creator => $entry->{'creator'},
+			email   => $entry->{'email'},
+			homepage=> $entry->{'homepageURL'},
+			version => $entry->{'version'},
+			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
+			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
+			enforce => $entry->{'enforce'},
+		};
+
+		if ($state =~ /enabled/) {
+
+			push @active, $entry;
+
+			if (!$entry->{'manual'}) {
+				$current->{ $plugin } = $entry->{'version'};
+			}
+
+		} elsif ($state =~ /disabled/) {
+
+			push @inactive, $entry;
+		}
+
+		$hide->{$plugin} = 1;
+	}
+
+	return ($current, \@active, \@inactive, $hide);
+}
+
 sub findUpdates {
 	my $results = shift;
 	my $current = shift;
