@@ -235,6 +235,11 @@
 [% END %]
 
 [% WRAPPER field title='PATH' %]
+	<select name="search.url.op">
+		<option [% IF search.url.op == "LIKE" %]selected[% END %] value="LIKE" >[% "SEARCH_CONTAINS" | string %]</option>
+		<option [% IF search.url.op == "NOTLIKE" %]selected[% END %] value="NOTLIKE" >[% "SEARCH_DOESNT_CONTAIN" | string %]</option>
+	</select>
+
 	<input name="search.url" value="[% search.url.value %]" size="[% size %]" maxlength="1000" type="text">
 [% END %]
 

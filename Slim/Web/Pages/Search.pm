@@ -168,7 +168,10 @@ sub advancedSearch {
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
-			push @qstring, join('=', $key, $params->{$key});
+
+			if (!grep /^$key=/, @qstring) {
+				push @qstring, join('=', $key, $params->{$key});
+			}
 
 			# Bitrate needs to changed a bit
 			if ($key =~ /bitrate$/) {
@@ -184,6 +187,10 @@ sub advancedSearch {
 			if ($op =~ /BETWEEN/) {
 				$params->{$key} = [ split(/[,\-: ]/, $params->{$key}), '', '' ];
 				splice(@{$params->{$key}}, 2);
+			}
+
+			if ($op =~ /(NOT)?LIKE/) {
+				$op = $1 ? 'not like' : 'like';
 			}
 
 			# Map the type to the query
@@ -249,7 +256,7 @@ sub advancedSearch {
 			# replace the % in the URI escaped string with a single character placeholder
 			$uri =~ s/%/_/g;
 
-			$params->{$key} = { 'like' => "%$uri%" };
+			$params->{$key} = "%$uri%";
 		}
 
 		$query{$newKey} = $params->{$key};

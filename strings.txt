@@ -15791,6 +15791,14 @@ SEARCHING
 	SV	Söker...
 	ZH_CN	搜查中
 
+SEARCH_CONTAINS
+	DE	enthält
+	EN	contains
+
+SEARCH_DOESNT_CONTAIN
+	DE	enthält nicht
+	EN	doesn't contain
+
 FOUND
 	CS	nalezeno
 	DA	fundet
