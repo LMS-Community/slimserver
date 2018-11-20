@@ -129,6 +129,7 @@ sub advancedSearch {
 	
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
+	my %joins;
 
 	# Check for valid search terms
 	for my $key (sort keys %$params) {
@@ -164,7 +165,7 @@ sub advancedSearch {
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
-			$newKey =~ s/_(rating|playcount)\b/\.$1/;
+			$newKey =~ s/_(rating|playcount|value|titlesearch|namesearch|)\b/\.$1/;
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
@@ -193,9 +194,16 @@ sub advancedSearch {
 				$op = $1 ? 'not like' : 'like';
 			}
 
-			# Map the type to the query
-			# This will be handed to SQL::Abstract
-			$query{$newKey} = { $op => $params->{$key} };
+			if ($op eq 'not like' && ref $params->{$key} eq 'ARRAY' && ref $params->{$key}->[0] eq 'ARRAY') {
+				$query{-and} ||= [];
+				push @{$query{-and}}, map { $newKey => { 'not like' => $_ }} @{$params->{$key}->[0]};
+				delete $query{$newKey};
+			}
+			else {
+				# Map the type to the query
+				# This will be handed to SQL::Abstract
+				$query{$newKey} = { $op => $params->{$key} };
+			}
 
 			# don't include null/0 value years in search for earlier years
 			# http://bugs.slimdevices.com/show_bug.cgi?id=5713
@@ -235,9 +243,10 @@ sub advancedSearch {
 		# 
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/_(titlesearch|namesearch|value)$/\.$1/) {
+		if ($newKey =~ s/(.+)_(titlesearch|namesearch|value|)$/$1\.$2/) {
+			$joins{$1}++ if $1 ne 'me';
 
-			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
+			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
 		}
 
 		$newKey =~ s/_(rating|playcount)\b/\.$1/;
@@ -245,7 +254,7 @@ sub advancedSearch {
 		# Wildcard searches
 		if ($newKey =~ /lyrics/) {
 
-			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
+			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
 		}
 
 		if ($newKey =~ /url/) {
@@ -333,7 +342,7 @@ sub advancedSearch {
 	my @joins = ();
 	_initActiveRoles($params);
 
-	if ($query{'contributor.namesearch'}) {
+	if ($query{'contributor.namesearch'} || $joins{'contributor'}) {
 
 		if (keys %{$params->{'search'}->{'contributor_namesearch'}}) {
 			my @roles;
@@ -346,7 +355,7 @@ sub advancedSearch {
 			$query{"contributorTracks.role"} = \@roles if @roles;
 		}
 
-		if ($query{'contributor.namesearch'}) {
+		if ($query{'contributor.namesearch'} || $joins{'contributor'}) {
 
 			push @joins, { "contributorTracks" => 'contributor' };
 
@@ -396,12 +405,12 @@ sub advancedSearch {
 	
 	$query{'me.audio'} = 1;
 
-	if ($query{'album.titlesearch'}) {
+	if ($query{'album.titlesearch'} || $joins{'album'}) {
 
 		push @joins, 'album';
 	}
 
-	if ($query{'comments.value'}) {
+	if ($query{'comments.value'} || $joins{'comments'}) {
 
 		push @joins, 'comments';
 	}
