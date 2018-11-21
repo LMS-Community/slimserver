@@ -59,7 +59,9 @@
 [% MACRO containsBlock BLOCK %]
 	<select name="[% name %]">
 		<option [% IF $name == "LIKE" %]selected[% END %] value="LIKE" >[% "SEARCH_CONTAINS" | string %]</option>
-		<option [% IF $name == "NOTLIKE" %]selected[% END %] value="NOTLIKE" >[% "SEARCH_DOESNT_CONTAIN" | string %]</option>
+		<option [% IF $name == "NOT LIKE" %]selected[% END %] value="NOT LIKE" >[% "SEARCH_DOESNT_CONTAIN" | string %]</option>
+		<option [% IF $name == "STARTS WITH" %]selected[% END %] value="STARTS WITH" >[% "SEARCH_STARTS_WITH" | string %]</option>
+		<option [% IF $name == "STARTS NOT WITH" %]selected[% END %] value="STARTS NOT WITH" >[% "SEARCH_DOESNT_START_WITH" | string %]</option>
 	</select>
 [% END %]
 

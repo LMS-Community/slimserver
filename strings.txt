@@ -15799,6 +15799,14 @@ SEARCH_DOESNT_CONTAIN
 	DE	enthält nicht
 	EN	doesn't contain
 
+SEARCH_STARTS_WITH
+	DE	beginnt mit
+	EN	starts with
+
+SEARCH_DOESNT_START_WITH
+	DE	beginnt nicht mit
+	EN	does not start with
+
 FOUND
 	CS	nalezeno
 	DA	fundet

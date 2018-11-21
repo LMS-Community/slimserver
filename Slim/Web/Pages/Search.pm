@@ -190,10 +190,22 @@ sub advancedSearch {
 				splice(@{$params->{$key}}, 2);
 			}
 
-			if ($op =~ /(NOT)?LIKE/) {
+			if ($op =~ /(NOT )?LIKE/) {
 				$op = $1 ? 'not like' : 'like';
 			}
 
+			if ($op =~ /STARTS (NOT )?WITH/) {
+				$op = $1 ? 'not like' : 'like';
+
+				# depending search preferences we might have an array, or even nested array - but we only want the first item
+				while (ref $params->{$key} eq 'ARRAY') {
+					$params->{$key} = shift @{$params->{$key}};
+				}
+
+				$params->{$key} =~ s/^\%//;
+			}
+
+			# if we've got multiple arguments, we'll have to logically AND them in case of NOT LIKE
 			if ($op eq 'not like' && ref $params->{$key} eq 'ARRAY' && ref $params->{$key}->[0] eq 'ARRAY') {
 				$query{-and} ||= [];
 				push @{$query{-and}}, map { $newKey => { 'not like' => $_ }} @{$params->{$key}->[0]};
