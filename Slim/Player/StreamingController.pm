@@ -1240,7 +1240,13 @@ sub _Stream {				# play -> Buffering, Streaming
 	$paused ||= ($fadeIn > 0);
 	
 	my $setVolume = $self->{'playingState'} == STOPPED;
-	my $masterVol = abs($prefs->client($self->master())->get("volume") || 0);
+	# Bug 18165: master's volume might not be the right one to use
+	my $masterVol;
+	foreach my $player (@{$self->{'players'}}) {
+		next unless $prefs->client($player)->get('syncVolume');
+		$masterVol = abs($prefs->client($player)->get("volume") || 0);
+		last;
+	}	
 	
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;

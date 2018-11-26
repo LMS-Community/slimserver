@@ -87,10 +87,10 @@
 				callbackKey: "callback",
 				callback: function(c) {
 					var el = Ext.get('changelogWrapper');
-					
+
 					if (!el)
 						return;
-					
+
 					var xt = new Ext.XTemplate(
 							'<tpl if="this.previousDate != date">',
 								'<dt>{[this.previousDate = values.date]}</dt>',
@@ -111,7 +111,7 @@
 							url: item.html_url
 						});
 					});
-					
+
 					el.setDisplayed('block');
 				}
 			});
@@ -119,35 +119,34 @@
 	</script>
 [% END %]
 [% PROCESS pageheader.html %]
-	<div class="helpsection"> 
-	
+	<div class="helpsection">
+
 	[% IF newVersion %]
 		<h4>[% "CONTROLPANEL_UPDATE_AVAILABLE" | string %]</h4>
-	
+
 		<dt>[% newVersion %]</dt>
-	
+
 		<div id="changelogWrapper" style="display:none; margin-top: 15px;" class="helpsection">
 			<!-- TODO: make this URL dynamic -->
 			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/Logitech/slimserver/commits/public/7.9") %]</h4>
 			<dl id="changelog"></dl>
 		</div>
-		
+
 		<dt><a href="https://github.com/Logitech/slimserver/commits/public/7.9" target="_blank">[% "MORE" | string %]</a></dt>
 	[% ELSE %]
 		<h4>[% "CONTROLPANEL_NO_UPDATE_AVAILABLE" | string | html %]</h4>
 	[% END %]
-	
+
 	<div>&nbsp;</div>
-	
-	[% IF newPlugins && newPlugins.keys.count %]
+	[% IF newPlugins && newPlugins.size %]
 		<h4>[% "PLUGINS_UPDATES_AVAILABLE" | string %]</h4>
 		<dl>
 			[% FOREACH plugin = newPlugins %]
-			<dt>[% plugin.title _ " (" _ plugin.version _ ")" -%]</dt>
+			<dt class="updatedPlugin">[% plugin.title _ " (" _ plugin.version _ ")" -%]</dt>
 			[%- IF plugin.changes %]<dd>[% plugin.changes %]</dd>[% END %]
 			[% END %]
 		</dl>
 	[% END %]
-	
+
 	</div>
 [% PROCESS pagefooter.html %]

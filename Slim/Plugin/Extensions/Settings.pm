@@ -59,7 +59,7 @@ sub handler {
 				$changed = 1;
 			}
 		}
-		
+
 		for my $repo (keys %current) {
 			if (!$new{$repo}) {
 				Slim::Plugin::Extensions::Plugin->removeRepo({ repo => $repo });
@@ -90,7 +90,7 @@ sub handler {
 				}
 			}
 		}
-		
+
 		$prefs->set('plugin', $plugin) if $changed;
 	}
 
@@ -131,23 +131,23 @@ sub _getReposCB {
 	}
 
 	if ( --$data->{'remaining'} <= 0 ) {
-		
+
 		my $pageInfo = $class->_addInfo($client, $params, $data);
-		
+
 		my $finalize;
 		my $timeout = MAX_DOWNLOAD_WAIT;
-		
+
 		$finalize = sub {
 			Slim::Utils::Timers::killTimers(undef, $finalize);
-			
+
 			# if a plugin is still being downloaded, wait a bit longer, or the user might restart the server before we're done
 			if ( $timeout-- > 0 && Slim::Utils::PluginDownloader->downloading ) {
 				Slim::Utils::Timers::setTimer(undef, time() + 1, $finalize);
-				
+
 				main::DEBUGLOG && $log->is_debug && $log->debug("PluginDownloader is still busy - waiting a little longer...");
 				return;
 			}
-			
+
 			$callback->($client, $params, $pageInfo, @$args);
 		};
 
@@ -158,60 +158,7 @@ sub _getReposCB {
 sub _addInfo {
 	my ($class, $client, $params, $data) = @_;
 
-	my $plugins = Slim::Utils::PluginManager->allPlugins;
-	my $states  = preferences('plugin.state');
-
-	my $hide = {};
-	my $current = {};
-
-	# create entries for built in plugins and those already installed
-	my @active;
-	my @inactive;
-	my @updates;
-
-	for my $plugin (keys %$plugins) {
-
-		if ( main::NOMYSB && ($plugins->{$plugin}->{needsMySB} && $plugins->{$plugin}->{needsMySB} !~ /false|no/i) ) {
-			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
-			next;
-		}
-
-		my $entry = $plugins->{$plugin};
-
-		# don't show enforced plugins
-		next if $entry->{'enforce'};
-
-		my $state = $states->get($plugin);
-
-		my $entry = {
-			name    => $plugin,
-			title   => Slim::Utils::Strings::getString($entry->{'name'}),
-			desc    => Slim::Utils::Strings::getString($entry->{'description'}),
-			error   => Slim::Utils::PluginManager->getErrorString($plugin),
-			creator => $entry->{'creator'},
-			email   => $entry->{'email'},
-			homepage=> $entry->{'homepageURL'},
-			version => $entry->{'version'},
-			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
-			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
-			enforce => $entry->{'enforce'},
-		};
-
-		if ($state =~ /enabled/) {
-
-			push @active, $entry;
-
-			if (!$entry->{'manual'}) {
-				$current->{ $plugin } = $entry->{'version'};
-			}
-
-		} elsif ($state =~ /disabled/) {
-
-			push @inactive, $entry;
-		}
-
-		$hide->{$plugin} = 1;
-	}
+	my ($current, $active, $inactive, $hide) = Slim::Plugin::Extensions::Plugin::getCurrentPlugins();
 
 	my @results = sort { $a->{'weight'} !=  $b->{'weight'} ?
 						 $a->{'weight'} <=> $b->{'weight'} : 
@@ -226,6 +173,7 @@ sub _addInfo {
 	# find update actions and handle
 
 	my $actions = Slim::Plugin::Extensions::Plugin::findUpdates(\@res, $current, $prefs->get('plugin'), 'info');
+	my @updates;
 
 	for my $plugin (keys %$actions) {
 
@@ -248,7 +196,7 @@ sub _addInfo {
 			}
 
 			$hide->{$plugin} = 1;
-							 
+
 		} elsif ($entry->{'action'} eq 'uninstall') {
 
 			main::INFOLOG && $log->info("uninstalling $plugin");
@@ -258,7 +206,7 @@ sub _addInfo {
 	}
 
 	# prune out duplicate entries, favour favour higher version numbers
-	
+
 	# pass 1 - find the higher version numbers
 	my $max = {};
 
@@ -286,8 +234,8 @@ sub _addInfo {
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
 	$params->{'updates'}  = \@updates;
-	$params->{'active'}   = \@active;
-	$params->{'inactive'} = \@inactive;
+	$params->{'active'}   = $active;
+	$params->{'inactive'} = $inactive;
 	$params->{'avail'}    = \@results;
 	$params->{'repos'}    = \@repos;
 	$params->{'auto'}     = $prefs->get('auto');

@@ -55,6 +55,16 @@
 [% END %]
 [% IF NOT ajaxUpdate; PROCESS pageheader.html; END %]
 [% FILTER null %]
+
+[% MACRO containsBlock BLOCK %]
+	<select name="[% name %]">
+		<option [% IF $name == "LIKE" %]selected[% END %] value="LIKE" >[% "SEARCH_CONTAINS" | string %]</option>
+		<option [% IF $name == "NOT LIKE" %]selected[% END %] value="NOT LIKE" >[% "SEARCH_DOESNT_CONTAIN" | string %]</option>
+		<option [% IF $name == "STARTS WITH" %]selected[% END %] value="STARTS WITH" >[% "SEARCH_STARTS_WITH" | string %]</option>
+		<option [% IF $name == "STARTS NOT WITH" %]selected[% END %] value="STARTS NOT WITH" >[% "SEARCH_DOESNT_START_WITH" | string %]</option>
+	</select>
+[% END %]
+
 [% MACRO logicalSelectionBlock BLOCK %]
 	<select name="[% name %]">
 		<option [% IF $name == "=" %]selected[% END %] value="=" >[% "EQUALS" | string %]</option>
@@ -114,12 +124,14 @@
 [% END %]
 
 [% WRAPPER field title='TRACK' %]
+	[% containsBlock(name='search.me_titlesearch.op') %]
 	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
 <tr>
 	<td class="content" align="right" valign="top" style="vertical-align: top; padding-top: 2px" width="30%">[% "ARTIST" | string %]&nbsp;</td>
 	<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
+	[% containsBlock(name='search.contributor_namesearch.op') %]
 	<input name="search.contributor_namesearch" value="[% search.contributor_namesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
 	<table>
 		[% FOREACH role = roles.keys.sort %]
@@ -132,6 +144,7 @@
 </tr>
 
 [% WRAPPER field title='ALBUM' %]
+	[% containsBlock(name='search.album_titlesearch.op') %]
 	<input name="search.album_titlesearch" value="[% search.album_titlesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
@@ -235,20 +248,22 @@
 [% END %]
 
 [% WRAPPER field title='PATH' %]
+	[% containsBlock(name='search.url.op') %]
 	<input name="search.url" value="[% search.url.value %]" size="[% size %]" maxlength="1000" type="text">
 [% END %]
 
 [% WRAPPER field title='FILELENGTH' %]
 	[% logicalSelectionBlock(name='search.filesize.op', withRange=1) %]
-
 	<input name="search.filesize" value="[% search.filesize.value %]" size="10" maxlength="30" style="text-align: right;" type="text" placeholder="[% "BYTES" | string %]">
 [% END %]
 
 [% WRAPPER field title='COMMENT' %]
+	[% containsBlock(name='search.comments_value.op') %]
 	<input name="search.comments_value" value="[% search.comments_value.value %]" size="[% size %]" maxlength="1000" type="text">
 [% END %]
 
 [% WRAPPER field title='LYRICS' %]
+	[% containsBlock(name='search.lyrics.op') %]
 	<input name="search.lyrics" value="[% search.lyrics.value %]" size="[% size %]" maxlength="1000" type="text">
 [% END %]
 

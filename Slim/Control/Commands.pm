@@ -639,14 +639,18 @@ sub mixerCommand {
 			}
 	
 			$client->fade_volume($fade, \&_mixer_mute, [$client]);
-	
-			for my $eachclient (@buddies) {
 
-				if ($prefs->client($eachclient)->get('syncVolume')) {
+			# Bug 18165: do not sync volume if client's volume itself is not synced			
+			if ($prefs->client($client)->get('syncVolume')) {		
+			
+				for my $eachclient (@buddies) {
 
-					$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+					if ($prefs->client($eachclient)->get('syncVolume')) {
+
+						$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+					}
 				}
-			}
+			}	
 		}
 
 	} else {
@@ -675,13 +679,16 @@ sub mixerCommand {
 			$newval = $client->$entity($newval);
 		}
 
-		for my $eachclient (@buddies) {
-			if ($prefs->client($eachclient)->get('syncVolume')) {
-				$prefs->client($eachclient)->set($entity, $newval);
-				$eachclient->$entity($newval);
-				$eachclient->mixerDisplay('volume') if $entity eq 'volume';
+		# Bug 18165: do not sync volume if client's volume itself is not synced
+		if ($prefs->client($client)->get('syncVolume')) {		
+			for my $eachclient (@buddies) {
+				if ($prefs->client($eachclient)->get('syncVolume')) {
+					$prefs->client($eachclient)->set($entity, $newval);
+					$eachclient->$entity($newval);
+					$eachclient->mixerDisplay('volume') if $entity eq 'volume';
+				}
 			}
-		}
+		}	
 	}
 		
 	if (defined $controllerSequenceId) {
