@@ -305,7 +305,7 @@ sub onBody {
 				# size of the cache.  We use ETag/Last Modified to check for stale data during
 				# this time.
 				my $max = 60 * 60 * 24;
-				my $expires;
+				my $expires; # undefined until max-age or expires header is seen, or caller defines it
 				my $no_revalidate;
 				
 				if ( $params->{expires} ) {
@@ -328,6 +328,15 @@ sub onBody {
 					}
 				}
 				
+				# Don't cache if response is already stale, indicated by -ve expiry time.
+				# Remark: Caching with a negative expiry time is treated as "Never expire" by
+				# Slim::Utils::Cache/DbCache. Probably not what is wanted.
+				# Example seen: Server doesn't return Cache-Control header, but does return
+				# 'expires: Thu, 01 Jan 1970 00:00:00 GMT'.
+				if ( $expires && $expires < 0 ) {
+					$expires = 0;
+				}
+
 				# Don't cache for more than $max
 				if ( $expires && $expires > $max ) {
 					$expires = $max;
@@ -346,7 +355,12 @@ sub onBody {
 				}
 				else {
 					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
+						if (defined $expires) {
+							$log->debug(sprintf("Not caching [%s], cache headers forbid, or apparently stale", $self->url));
+						}
+						else {
+							$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
+						}
 					}
 				}
 			}
