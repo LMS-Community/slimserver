@@ -228,7 +228,6 @@ sub dontStopTheMusic {
 
 	my $numTracks = $prefs->get('newtracks') || MIN_TRACKS_LEFT;
 	
-	# TODO - don't run twice, set a flag
 	if ($songsRemaining < $numTracks) {
 		# don't continue if the last item in the queue is a radio station or similar
 		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $client->playingSong()->track->url ) ) {
@@ -251,6 +250,8 @@ sub dontStopTheMusic {
 		
 		if ( my $handler = $class->getHandler($client) ) {
 			$client->pluginData( active => 1 );
+
+			Slim::Player::Playlist::preserveShuffleOrder($client);
 			
 			$handler->( $client, sub {
 				my ($client, $tracks) = @_;
