@@ -180,6 +180,7 @@ sub onPlaylistChange {
 		( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') && Slim::Plugin::RandomPlay::Plugin::active($client) )
 		|| ( Slim::Utils::PluginManager->isEnabled('Plugins::SugarCube::Plugin') && preferences('plugin.SugarCube')->client($client)->get('sugarcube_status') )
 	) {
+		$log->error("Found RandomPlay or SugarCube active - I'm not going to interfere with them.");
 		return;
 	}
 
