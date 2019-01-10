@@ -3,7 +3,7 @@ package Slim::Plugin::Slacker::ProtocolHandler;
 # $Id$
 
 use strict;
-use base qw(Slim::Player::Protocols::HTTP);
+use base qw(Slim::Player::Protocols::HTTPS);
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
