@@ -407,7 +407,13 @@ sub parseRSS {
 	if ( ref $xml->{'channel'}->{'image'} ) {
 		
 		my $image = $xml->{'channel'}->{'image'};
-		my $url   = $image->{'url'};
+		my $url = "";
+		if (ref $image eq 'ARRAY') {
+		  $url   = $image->[0]->{'url'};
+		}
+		else {
+		  $url   = $image->{'url'};
+    }
 		
 		# some Podcasts have the image URL in the link tag
 		if ( !$url && $image->{'link'} && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
