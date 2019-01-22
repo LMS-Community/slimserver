@@ -23,13 +23,20 @@ sub overridePlayback {
 		return undef;
 	}
 
+	my ($type, $genres) = split(/\?/, $1);
+
 	if ( Slim::Player::Source::streamingSongIndex($client) ) {
 		# don't start immediately if we're part of a playlist and previous track isn't done playing
 		return if $client->controller()->playingSongDuration()
 	}
 
-	$client->execute(["randomplay", "$1"]);
-	
+	my $command = ["randomplay", $type];
+	if ($genres && $genres =~ /genres=(.*)/) {
+		push @$command, "genres:$1";
+	}
+
+	$client->execute($command);
+
 	return 1;
 }
 
@@ -43,16 +50,16 @@ sub isRemote { 0 }
 
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
-	
+
 	return unless $client && $url;
-	
+
 	my ($type) = $url =~ m{randomplay://(track|contributor|album|year)s?$};
 	my $title = 'PLUGIN_RANDOMPLAY';
 
 	if ($type) {
 		$title = 'PLUGIN_RANDOM_' . uc($type);
 	}
-	
+
 	return {
 		title => $client->string($title),
 		cover => $class->getIcon(),
