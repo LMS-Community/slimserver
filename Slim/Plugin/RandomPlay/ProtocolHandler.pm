@@ -11,6 +11,8 @@ package Slim::Plugin::RandomPlay::ProtocolHandler;
 # GNU General Public License for more details.
 
 use strict;
+use URI;
+use URI::QueryParam;
 
 use Slim::Plugin::RandomPlay::Plugin;
 
@@ -19,23 +21,29 @@ sub overridePlayback {
 
 	return unless $client;
 
-	if ($url !~ m|^randomplay://(.*)$|) {
-		return undef;
-	}
+	my $uri = URI->new($url);
 
-	my ($type, $genres) = split(/\?/, $1);
+	return unless $uri->scheme eq 'randomplay';
 
 	if ( Slim::Player::Source::streamingSongIndex($client) ) {
 		# don't start immediately if we're part of a playlist and previous track isn't done playing
 		return if $client->controller()->playingSongDuration()
 	}
 
+	my ($type) = $url =~ m|^randomplay://([a-z]*)\??|i;
+	my $params = $uri->query_form_hash;
+
 	my $command = ["randomplay", $type];
-	if ($genres && $genres =~ /genres=(.*)/) {
-		push @$command, "genres:$1";
+	if (my $genres = $params->{genres}) {
+		push @$command, "genres:$genres";
 	}
 
 	$client->execute($command);
+
+	# caller wishes the mix to be a one-off, not to be refreshed
+	if ($params->{dontContinue}) {
+		$client->execute(["randomplay", "disable"]);
+	}
 
 	return 1;
 }
