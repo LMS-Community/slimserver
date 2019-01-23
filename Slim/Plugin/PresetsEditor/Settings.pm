@@ -49,7 +49,7 @@ sub handler {
 		}
 	}
 
-	$params->{presets} = $prefs->client($client)->get('presets');
+	$params->{presets} = $client ? $prefs->client($client)->get('presets') : [];
 
 	my $playlistOptions = Slim::Utils::Alarm->getPlaylists($client);
 	my %urlToName;
