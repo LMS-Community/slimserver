@@ -1,5 +1,16 @@
 package Slim::Plugin::RandomPlay::DontStopTheMusic;
 
+# Originally written by Kevin Deane-Freeman (slim-mail (A_t) deane-freeman.com).
+# New world order by Dan Sully - <dan | at | slimdevices.com>
+# Fairly substantial rewrite by Max Spicer
+
+# This code is derived from code with the following copyright message:
+#
+# Logitech Media Server Copyright 2005-2019 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 use URI::Escape qw(uri_escape_utf8);
 
