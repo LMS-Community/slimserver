@@ -1,0 +1,11 @@
+PLUGIN_PRESETS_EDITOR
+	DE	Presets bearbeiten
+	EN	Presets Editor
+
+PLUGIN_PRESETS_EDITOR_DESC
+	DE	Dieses Plugin erlaubt es ihnen, die Preset-Tasten deiner Squeezebox zu konfigurieren.
+	EN	This plugin allows you to visually edit the configuration of your Squeezebox preset keys.
+
+PLUGIN_PRESETS_EDITOR_NEED_WEBUI
+	DE	Um den Presets Editor verwenden zu können müssen Sie das Web-Interface aktivieren.
+	EN	You need to enable the web UI in order to use the Presets Editor.
