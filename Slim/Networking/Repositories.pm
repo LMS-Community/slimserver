@@ -7,7 +7,7 @@ package Slim::Networking::Repositories;
 
 =head1 NAME
 
-Slim::Music::Repositories
+Slim::Networking::Repositories
 
 =head1 DESCRIPTION
 
