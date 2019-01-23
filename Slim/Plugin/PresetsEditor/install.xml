@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>c7171249-fcde-43bc-97e5-1be92854d137</id>
+	<name>PLUGIN_PRESETS_EDITOR</name>
+	<module>Slim::Plugin::PresetsEditor::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_PRESETS_EDITOR_DESC</description>
+	<creator>Logitech</creator>
+
+	<defaultState>enabled</defaultState>
+	<type>2</type><!-- type=extension -->
+
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.7.0</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>
