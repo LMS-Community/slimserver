@@ -465,6 +465,13 @@ sub parseRSS {
 			$item{'duration'} = unescapeAndTrim($itemXML->{'itunes:duration'});
 			$item{'explicit'} = unescapeAndTrim($itemXML->{'itunes:explicit'});
 
+			# Use episode specific image if there is one.
+			if (ref $itemXML->{'itunes:image'} eq 'HASH') {
+				my $href = $itemXML->{'itunes:image'}->{'href'};
+				# We only want a non null scalar
+				$item{'image'} = $href if $href && ! ref $href;
+			}
+
 			# don't duplicate data
 			if ( $itemXML->{'itunes:subtitle'} && $itemXML->{'title'} && 
 				$itemXML->{'itunes:subtitle'} ne $itemXML->{'title'} ) {
