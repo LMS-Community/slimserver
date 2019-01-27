@@ -37,7 +37,7 @@ sub handler {
 			my $text = $params->{'preset_text_' . $_};
 			my $url = $params->{'preset_url_' . $_};
 
-			if ($url ne $presets->[$_-1]->{URL}) {
+			if ($url ne $presets->[$_-1]->{URL} || ($text && $text ne $presets->[$_-1]->{text})) {
 				$presets->[$_-1] = {
 					URL => $url,
 					text => $text || '',
