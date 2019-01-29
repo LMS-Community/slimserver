@@ -402,12 +402,15 @@ sub parseRSS {
 		
 		my $image = $xml->{'channel'}->{'image'};
 		my $url = "";
-		if (ref $image eq 'ARRAY') {
-		  $url   = $image->[0]->{'url'};
+		if (ref $image eq 'HASH') {
+			# conventional RSS feeds simply provide one image element
+			$url = $image->{'url'};
 		}
-		else {
-		  $url   = $image->{'url'};
-    }
+		elsif (ref $image eq 'ARRAY') {
+			# some RSS feeds provide several variant image elements
+			# we pick the first one
+			$url = $image->[0]->{'url'};
+		}
 		
 		# some Podcasts have the image URL in the link tag
 		if ( !$url && $image->{'link'} && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
