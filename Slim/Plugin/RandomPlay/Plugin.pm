@@ -22,7 +22,7 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(cstring);
+use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Prefs;
 use Slim::Player::Sync;
 
