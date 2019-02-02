@@ -710,7 +710,7 @@ sub stream_s {
 	} elsif ($format eq 'dff' || $format eq 'dsf') {
 
 		$formatbyte      = 'd';
-		$pcmsamplesize   = '?';
+		$pcmsamplesize   = $format eq 'dsf' ? 0 : 1;
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
