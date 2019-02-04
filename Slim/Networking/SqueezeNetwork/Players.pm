@@ -305,6 +305,8 @@ sub _registerApps {
 sub _appHandler {
 	my ($player, $cprefs, $client) = @_;
 
+	return unless $cprefs->get('playername');
+
 	# Compare existing apps to new list
 	my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
 	my $newApps     = complex_to_query( $player->{apps} );
