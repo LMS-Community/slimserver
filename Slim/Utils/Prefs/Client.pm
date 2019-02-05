@@ -93,6 +93,13 @@ sub migrate {
 	}
 }
 
+sub hasPrefs {
+	my ($class, $parent, $client) = @_;
+
+	my $clientid = blessed($client) ? $client->id : $client;
+	return $parent->{'prefs'}->{"$clientPreferenceTag:$clientid"} ? 1 : 0;
+}
+
 sub _root { shift->{'parent'} }
 
 sub _obj { Slim::Player::Client::getClient(shift->{'clientid'}) }
