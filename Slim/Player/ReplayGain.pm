@@ -198,7 +198,7 @@ sub trackSampleRateMatch {
 	my $offset = shift;
 
 	my ($current_track, $compare_track) = $class->findTracksByIndex($client, $offset);
-	return if (!$current_track || !$compare_track);
+	return 1 if (!$current_track || !$compare_track);
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
