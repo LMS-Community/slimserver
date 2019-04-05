@@ -964,7 +964,7 @@ sub stream_s {
 		# by a player preference.
 		my $transitionSampleRestriction = $prefs->client($master)->get('transitionSampleRestriction') || 0;
 
-		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1) && $transitionSampleRestriction) {
+		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1) && $transitionSampleRestriction && ($transitionType == 1 || $transitionType == 5)) {
 			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates');
 			$transitionType = 0;
 		 } elsif ($transitionSampleRestriction) {
