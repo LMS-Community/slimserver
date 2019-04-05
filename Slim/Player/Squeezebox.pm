@@ -710,7 +710,7 @@ sub stream_s {
 	} elsif ($format eq 'dff' || $format eq 'dsf') {
 
 		$formatbyte      = 'd';
-		$pcmsamplesize   = $format eq 'dsf' ? 0 : 1;
+		$pcmsamplesize   = '?';
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
@@ -918,9 +918,7 @@ sub stream_s {
 		if (
 			$prefs->client($master)->get('transitionSmart') 
 			&&
-			( Slim::Player::Playlist::count($master) < 2
-			  ||
-			  Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
+			( Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
 			  ||
 			  Slim::Player::ReplayGain->trackAlbumMatch( $master, 1 )
 			)

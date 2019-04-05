@@ -70,20 +70,6 @@ sub getMemInfo() {
 }
 
 sub getFlavor {
-	my $osName = '';
-
-	# parse new-school operating system identification file if available
-	if (-f '/etc/os-release' && open(OS_RELEASE, '/etc/os-release')) {
-		while (<OS_RELEASE>) {
-			if (/^NAME="(.*?)"/i) {
-				$osName = lc($1);
-				last;
-			}
-		}
-
-		close OS_RELEASE;
-	}
-
 	if (-f '/etc/raidiator_version') {
 
 		return 'Netgear RAIDiator';
@@ -92,15 +78,15 @@ sub getFlavor {
 
 		return 'SqueezeOS';
 
-	} elsif ($osName =~ /debian|devuan|ubuntu/ || -f '/etc/debian_version' || -f '/etc/devuan_version') {
+	} elsif (-f '/etc/debian_version' || -f '/etc/devuan_version') {
 
 		return 'Debian';
 
-	} elsif ($osName =~ /red.?hat|fedora|centos/ || -f '/etc/redhat_release' || -f '/etc/redhat-release' || -f '/etc/fedora-release') {
+	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release' || -f '/etc/fedora-release') {
 
 		return 'Red Hat';
 
-	} elsif ($osName =~ /suse|sles/ || -f '/etc/SuSE-release') {
+	} elsif (-f '/etc/SuSE-release') {
 
 		return 'SuSE';
 
