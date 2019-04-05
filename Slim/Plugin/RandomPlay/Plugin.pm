@@ -14,6 +14,7 @@ package Slim::Plugin::RandomPlay::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 use Tie::Cache::LRU::Expires;
+use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 use Slim::Buttons::Home;
 use Slim::Music::VirtualLibraries;
@@ -155,7 +156,7 @@ sub initPlugin {
 			my $type = $mixTypeMap{$_};
 			$functions->{$_} = sub {
 				my $client = $_[0];
-				clearGenres($client);
+				clearClientGenres($client);
 				Slim::Plugin::RandomPlay::Mixer::playRandom($client, $type);
 			}
 		}
@@ -393,7 +394,7 @@ sub _genreInfoMenu {
 	my ($client, $url, $genre, $remoteMeta, $tags) = @_;
 
 	if ($genre) {
-		my $params = {'genres'=> $genre->name};
+		my $params = {'genres'=> uri_escape_utf8($genre->name)};
 		my @items;
 		my $action;
 
@@ -676,7 +677,7 @@ sub getFilteredGenres {
 	} keys %$genres ];
 }
 
-sub clearGenres {
+sub clearClientGenres {
 	my $client = $_[0] || return;
 	$client->pluginData(include_genres => []);
 	$cache->remove('rnd_idList_' . $client->id);
@@ -822,7 +823,7 @@ sub handlePlayOrAdd {
 		$client->modeParam('listRef', $listRef);
 
 		# Go go go!
-		clearGenres($client);
+		clearClientGenres($client);
 		Slim::Plugin::RandomPlay::Mixer::playRandom($client, $item, $add);
 	}
 }
@@ -1043,7 +1044,7 @@ sub cliRequest {
 	$mode      = $mixTypeMap{$mode} || $mode;
 
 	my $client = $request->client();
-	clearGenres($client);
+	clearClientGenres($client);
 
 	# return quickly if we lack some information
 	if ($mode && $mode eq 'disable' && $client) {
@@ -1063,6 +1064,7 @@ sub cliRequest {
 
 	# if we're called with a list of genres, use these to override the default list
 	if ( my $genres = $request->getParam('genres') ) {
+		$genres = uri_unescape($genres);
 		$client->pluginData(include_genres => [ split(/,/, $genres) ]);
 	}
 	elsif (my $genre = $request->getParam('genre_id')){
@@ -1094,7 +1096,7 @@ sub getFunctions {
 sub buttonStart {
 	my $client = shift;
 
-	clearGenres($client);
+	clearClientGenres($client);
 	Slim::Plugin::RandomPlay::Mixer::playRandom($client, $client->pluginData('type') || 'track');
 }
 
@@ -1155,7 +1157,7 @@ sub handleWebMix {
 	my ($client, $params) = @_;
 
 	if (defined $client && $params->{'type'}) {
-		clearGenres($client);
+		clearClientGenres($client);
 		Slim::Plugin::RandomPlay::Mixer::playRandom($client, $params->{'type'}, $params->{'addOnly'});
 	}
 

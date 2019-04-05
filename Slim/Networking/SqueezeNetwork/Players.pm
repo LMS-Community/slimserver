@@ -172,7 +172,6 @@ sub _registerApps {
 		}
 	}
 
-	# This will create new pref entries for players this server has never seen
 	my %playersSeen;
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
@@ -182,6 +181,9 @@ sub _registerApps {
 			for my $app ( keys %{ $player->{apps} } ) {
 				$allApps->{$app} = $player->{apps}->{$app};
 			}
+
+			# Don't create new pref entries for players this server has never seen
+			next unless Slim::Utils::Prefs::Client->hasPrefs($prefs, $player->{mac});
 
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
 
@@ -304,6 +306,8 @@ sub _registerApps {
 # Update enabled apps for each player
 sub _appHandler {
 	my ($player, $cprefs, $client) = @_;
+
+	return unless $cprefs->get('playername');
 
 	# Compare existing apps to new list
 	my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
