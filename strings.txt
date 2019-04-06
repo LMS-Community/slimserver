@@ -5798,6 +5798,14 @@ SETUP_TRANSITIONDURATION_DESC
 	RU	Введите временной интервал для перекрестного затухания между песнями (в секундах). Максимум — 10 с.
 	SV	Ange varaktighet för korstoningen i sekunder. Maximalt värde är 10 sekunder.
 	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
+	
+SETUP_FADEINDURATION
+	EN	Play or Resume fade-in duration
+	FR	Durée de montée en volume 
+
+SETUP_FADEINDURATION_DESC
+	EN	When a track is played or resumed, volume can be progressively increased. This is not like crossfade which only happen between tracks
+	FR	Lors du démarrage or de la reprise de la lecture, le volume peut être augmenté progressivement. Ce n'est pas la transition entre pistes
 
 TRANSITION_NONE
 	CS	Žádný

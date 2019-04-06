@@ -1561,11 +1561,26 @@ sub _JumpOrResume {			# resume -> Streaming, Playing
 	my ($self, $event, $params) = @_;
 
 	if (defined $self->{'resumeTime'}) {
+		my $fade = $prefs->client($self->master)->get('fadeInDuration');
 		$self->{'fadeIn'} = FADEVOLUME;
+		
+		# set volume to 0 for each player to ensure fade works
+		if ($fade) {
+			foreach my $player (@{$self->{'players'}})	{
+				$player->volume(0,1);
+			}
+		}	
 		_JumpToTime($self, $event, {newtime => $self->{'resumeTime'}, restartIfNoSeek => 1});
 
 		$self->{'resumeTime'} = undef;
 		$self->{'fadeIn'} = undef;
+		
+		# now set volume progressivly - not perfect with autostart = 0
+		if ($fade) {
+			foreach my $player (@{$self->{'players'}})	{
+				$player->fade_volume($fade);
+			}
+		}	
 	} else {
 		_Resume(@_);
 	}
@@ -1577,6 +1592,8 @@ sub _Resume {				# resume -> Playing
 	my $song        = playingSong($self);
 	my $pausedAt    = ($self->{'resumeTime'} || 0) - ($song ? ($song->startOffset() || 0) : 0);
 	my $startAtBase = Time::HiRes::time() + ($prefs->get('syncStartDelay') || 200) / 1000;
+	
+	$self->{fadeIn} ||= $prefs->client($self->master)->get('fadeInDuration');
 
 	_setPlayingState($self, PLAYING);
 	foreach my $player (@{$self->{'players'}})	{

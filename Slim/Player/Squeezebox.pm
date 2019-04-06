@@ -910,7 +910,10 @@ sub stream_s {
 	} elsif ($params->{'crossFade'}) {
 		$transitionType = 5;
 		$transitionDuration = $params->{'crossFade'};
-	} else {
+	} elsif ($prefs->client($master)->get('fadeInDuration')) {
+		$transitionType = 2;
+		$transitionDuration = $prefs->client($master)->get('fadeInDuration');
+	} elsif ($master->isPlaying(1)) {
 		$transitionType = $prefs->client($master)->get('transitionType') || 0;
 		$transitionDuration = $prefs->client($master)->get('transitionDuration') || 0;
 		
@@ -964,14 +967,16 @@ sub stream_s {
 		# by a player preference.
 		my $transitionSampleRestriction = $prefs->client($master)->get('transitionSampleRestriction') || 0;
 
-		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1) && $transitionSampleRestriction) {
-			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates');
+		if ($transitionSampleRestriction && ($transitionType == 1 || $transitionType == 5) && !Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
+			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates or single track');
 			$transitionType = 0;
 		 } elsif ($transitionSampleRestriction) {
 			main::INFOLOG && $log->info('Crossfade sample rate restriction enabled but not needed for this transition');
 		 }
-
-	}
+	} else {
+		$transitionDuration = 0;
+		$transitionType = 0;
+	}	
 	
 	if ($transitionDuration > $client->maxTransitionDuration()) {
 		$transitionDuration = $client->maxTransitionDuration();
