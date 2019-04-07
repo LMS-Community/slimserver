@@ -333,6 +333,14 @@ sub _Buffering {_setPlayingState($_[0], BUFFERING);}
 sub _Playing {
 	my ($self) = @_;
 	
+	# need to fade-in here and not in _Stream due to potential buffering delay
+	if ($self->{'fadeActive'}) {
+		foreach my $player (@{$self->{'players'}}) {
+			$player->fade_volume($prefs->client($self->master)->get('fadeInDuration'));
+		}
+	}	
+	$self->{'fadeActive'} = undef;
+	
 	# bug 10681 - don't actually change the state if we are rebuffering
 	# as there can be a race condition between output buffer underrun and
 	# track-start events especially, but not exclusively when synced.
@@ -1239,7 +1247,6 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $fadeIn = $self->{'fadeIn'} || 0;
 	$paused ||= ($fadeIn > 0);
 	
-	my $setVolume = $self->{'playingState'} == STOPPED;
 	# Bug 18165: master's volume might not be the right one to use
 	my $masterVol;
 	foreach my $player (@{$self->{'players'}}) {
@@ -1250,18 +1257,23 @@ sub _Stream {				# play -> Buffering, Streaming
 	
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;
-	
+		
 	# bug 10438
 	$self->resetFrameData();
 	
+	# fade-in has precedence over crossfade only player is stopped
+	$self->{'fadeActive'} = $fadeIn < 1 && $self->{'playingState'} == STOPPED && $prefs->client($self->master)->get('fadeInDuration');
+	
 	foreach my $player (@{$self->{'players'}}) {
-		if ($setVolume) {
+		if ($self->{'playingState'} == STOPPED) {
 			# Bug 10310: Make sure volume is synced if necessary
 			my $vol = ($prefs->client($player)->get('syncVolume'))
 				? $masterVol
 				: abs($prefs->client($player)->get("volume") || 0);
 			$player->volume($vol);
-		}
+			# can't fade_volume here as we might not be playing yet so ramp-up would be lost
+			$player->volume(0,1) if $self->{'fadeActive'};
+		}	
 		
 		my $myFadeIn = $fadeIn;
 		if ($fadeIn > $player->maxTransitionDuration()) {
@@ -1562,6 +1574,7 @@ sub _JumpOrResume {			# resume -> Streaming, Playing
 
 	if (defined $self->{'resumeTime'}) {
 		$self->{'fadeIn'} = FADEVOLUME;
+		
 		_JumpToTime($self, $event, {newtime => $self->{'resumeTime'}, restartIfNoSeek => 1});
 
 		$self->{'resumeTime'} = undef;
@@ -1577,7 +1590,9 @@ sub _Resume {				# resume -> Playing
 	my $song        = playingSong($self);
 	my $pausedAt    = ($self->{'resumeTime'} || 0) - ($song ? ($song->startOffset() || 0) : 0);
 	my $startAtBase = Time::HiRes::time() + ($prefs->get('syncStartDelay') || 200) / 1000;
-
+	
+	$self->{fadeIn} ||= $prefs->client($self->master)->get('fadeInDuration');
+																							
 	_setPlayingState($self, PLAYING);
 	foreach my $player (@{$self->{'players'}})	{
 		# set volume to 0 to make sure fade works properly
