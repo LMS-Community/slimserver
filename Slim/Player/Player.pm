@@ -70,7 +70,7 @@ our $defaultPrefs = {
 	'packetLatency'        => 2,	# ms
 	'startDelay'           => 0,	# ms
 	'playDelay'            => 0,	# ms
-	'fadeInDuration'	   => 0,
+	'fadeInDuration'       => 0,
 };
 
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
