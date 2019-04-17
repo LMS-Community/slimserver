@@ -561,6 +561,15 @@ sub forgetClient {
 	}
 }
 
+sub persistPlaybackStateForPowerOff {
+	my $client = shift;
+
+	if ($client->power()) {
+		my $playing = $client->controller()->isPlaying(1);
+		$prefs->client($client)->set('playingAtPowerOff', $playing);
+	}
+}
+
 sub startup {
 	my $client = shift;
 	my $syncgroupid = shift;
