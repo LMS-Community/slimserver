@@ -110,8 +110,8 @@ sub init {
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
-	$client->power($prefs->client($client)->get('power'));
 	$client->startup($syncgroupid);
+	$client->power($prefs->client($client)->get('power'));
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
 		
