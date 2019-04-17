@@ -111,7 +111,7 @@ sub init {
 
 	# fire it up!
 	$client->startup($syncgroupid);
-	$client->power($prefs->client($client)->get('power'));
+	$client->power($prefs->client($client)->get('power'), 0, 1);
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
 		
@@ -202,11 +202,12 @@ sub power {
 	my $client = shift;
 	my $on     = shift;
 	my $noplay = shift;
+	my $force  = shift;
 	
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
-	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
+	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) || $force;
 
 	my $resume = $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
