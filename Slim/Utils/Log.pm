@@ -820,6 +820,7 @@ sub logGroups {
 				'database.info'          => 'DEBUG',
 				'plugin.itunes'          => 'DEBUG',
 				'plugin.musicip'         => 'DEBUG',
+				'formats.playlists'      => 'DEBUG',
 			},
 			label => 'DEBUG_SCANNER_CHOOSE',
 		},
