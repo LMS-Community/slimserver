@@ -41,6 +41,7 @@ use strict;
 use base qw(Class::Data::Inheritable);
 
 use Config;
+use File::Basename;
 use File::Spec::Functions;
 use FindBin qw($Bin);
 use Proc::Background;
@@ -113,7 +114,23 @@ sub launchScan {
 
 	if ( my $logconfig = Slim::Utils::Log->defaultConfigFile ) {
 
-		$args->{ "logconfig=$logconfig" } = 1;
+		# Write out the running log configuration to a transient
+		# configuration file. Placed alongside the persistent
+		# log configuration file.
+		my $dir = File::Basename::dirname($logconfig);
+		my $running_logconfig = catfile($dir, 'log_transient_scan.conf');
+
+		# In eval to catch unexpected errors (e.g. permission issues)
+		if (eval{Slim::Utils::Log->writeConfig($running_logconfig)}) {
+
+			$args->{ "logconfig=$running_logconfig" } = 1;
+
+		} else {
+			# Write failed. Use the persistent config file.
+			$log->warn($@) if $@;
+			$log->warn("Couldn't generate running log configuration, using start up configuration.");
+			$args->{ "logconfig=$logconfig" } = 1;
+		}
 	}
 
 	if (defined $::logdir && -d $::logdir) {
@@ -152,6 +169,9 @@ sub launchScan {
 	
 	# Pass debug flags to scanner
 	my $debugArgs = '';
+
+	# Setting these log options on the command line is redundant if
+	# a running log configuration was created. Kept as a backstop.
 	my $scannerLogOptions = Slim::Utils::Log->getScannerLogOptions();
 	 
 	foreach (keys %$scannerLogOptions) {
