@@ -20499,6 +20499,21 @@ DEBUG_PLAYER_UI
 	RU	Информация о пользовательском интерфейсе плеера
 	SV	Information om användargränssnitt för spelaren
 
+DEBUG_PLAYER_UI_SCREENSAVER
+	CS	Protokolování spořič obrazovky
+	DA	Logføring af pauseskærm
+	DE	Bildschirmschoner-Protokollierung
+	EN	Player Screensaver Logging
+	ES	Registro de protector de pantalla
+	FI	Näytönsäästäjänä kirjaaminen
+	FR	Journalisation d'écran de veille
+	IT	Registrazione del salvaschermo del lettore
+	NL	Registratie van schermbeveiliger
+	NO	Loggføring av spiller skjermsparer
+	PL	Rejestrowanie wygaszacz ekranu
+	RU	Ведение журнала экранной заставка
+	SV	Loggning för skärmsläckare
+
 DEBUG_PLAYER_DISPLAY
 	CS	Informace na displeji přehrávače
 	DA	Oplysninger om afspillerens display
