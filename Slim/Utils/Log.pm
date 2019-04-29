@@ -4,7 +4,7 @@ package Slim::Utils::Log;
 
 # Logitech Media Server Copyright 2001-2011 Dan Sully, Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -93,7 +93,7 @@ sub init {
 
 	# call poor man's log rotation
 	if (!main::SCANNER) {
-		
+
 		Slim::Utils::OSDetect::getOS->logRotate($logDir);
 	}
 
@@ -130,7 +130,7 @@ sub init {
 
 		$config{'log4perl.rootLogger'} = join(', ', @levels);
 	}
-	
+
 	# Make sure recreate option is set if user has an existing log.conf
 	if ( !main::ISWINDOWS && !$ENV{NYTPROF} ) {
 		$config{'log4perl.appender.server.recreate'}              = 1;
@@ -140,11 +140,11 @@ sub init {
 		$config{'log4perl.appender.server.recreate'}              = 0;
 		$config{'log4perl.appender.server.recreate_check_signal'} = '';
 	}
-	
+
 	# Change to syslog if requested
 	if ( $args->{logfile} && $args->{logfile} eq 'syslog' ) {
 		delete $config{$_} for grep { /^log4perl.appender/ } keys %config;
-		
+
 		%config = (%config, $class->_syslogAppenders);
 	}
 
@@ -415,7 +415,7 @@ sub setLogLevelForCategory {
 
 =head2 isValidCategory ( category )
 
-Returns true if the passed category is valid. 
+Returns true if the passed category is valid.
 
 Returns false otherwise.
 
@@ -820,6 +820,9 @@ sub logGroups {
 				'database.info'          => 'DEBUG',
 				'plugin.itunes'          => 'DEBUG',
 				'plugin.musicip'         => 'DEBUG',
+				'database.virtuallibraries' => 'DEBUG'
+				'formats.audio'          => 'DEBUG',
+				'formats.playlists'      => 'DEBUG',
 			},
 			label => 'DEBUG_SCANNER_CHOOSE',
 		},
@@ -829,25 +832,25 @@ sub logGroups {
 # logging options we want to pass to the scanner
 sub getScannerLogOptions {
 	my $class = shift;
-	
+
 	my $options = $class->logGroups()->{SCANNER}->{categories};
 	my $defaults = $class->logLevels();
-	
+
 	foreach my $key (keys %$options) {
 
 		$options->{$key} = $runningConfig{"log4perl.logger.$key"} || $defaults->{$key};
-		
+
 	}
-	
+
 	return $options;
 }
 
 sub setLogGroup {
 	my ($class, $group, $persist) = @_;
-	
+
 	my $levels     = $class->logLevels($group);
 	my $categories = $class->allCategories();
-		
+
 	for my $category (keys %{$categories}) {
 		$class->setLogLevelForCategory(
 			$category, $levels->{$category} || 'ERROR'
@@ -860,7 +863,7 @@ sub setLogGroup {
 
 sub logLevels {
 	my $group = $_[1];
-	
+
 	my $categories = {
 		'server'                     => 'ERROR',
 		'server.memory'              => 'OFF',
@@ -901,7 +904,7 @@ sub logLevels {
 		'control.command'            => 'ERROR',
 		'control.queries'            => 'ERROR',
 		'control.stdio'              => 'ERROR',
-		
+
 		'menu.trackinfo'             => 'ERROR',
 
 		'player.alarmclock'          => 'ERROR',
@@ -930,11 +933,11 @@ sub logLevels {
 
 		'perfmon'                    => 'WARN, screen-raw, perfmon', # perfmon assumes this is set to WARN
 	};
-	
+
 	$categories->{'network.squeezenetwork'} = 'ERROR' unless main::NOMYSB;
 
 	return $categories unless $group;
-	
+
 	my $logGroups = logGroups();
 
 	foreach (keys %{ $logGroups->{$group}->{categories} }) {
@@ -1014,7 +1017,7 @@ sub _defaultAppenders {
 
 sub _syslogAppenders {
 	my $class = shift;
-	
+
 	eval { require Log::Dispatch::Syslog };
 	if ( $@ ) {
 		die "Unable to enable syslog support: $@\n";
