@@ -1,5 +1,5 @@
 package PAR::Heavy;
-$PAR::Heavy::VERSION = '0.09';
+$PAR::Heavy::VERSION = '0.12';
 
 =head1 NAME
 
@@ -18,8 +18,10 @@ No user-serviceable parts inside.
 ########################################################################
 # Dynamic inclusion of XS modules
 
+# NOTE: Don't "use" any module here, esp. one that is an XS module or 
+# whose "use" could cause the loading of an XS module thru its dependencies.
+
 my ($bootstrap, $dl_findfile);  # Caches for code references
-my ($dlext);                    # Cache for $Config{dlext}
 my ($cache_key);                # The current file to find
 my $is_insensitive_fs = (
     -s $0
@@ -67,39 +69,53 @@ sub _bootstrap {
         $modfname = substr($modfname, 0, 8);
     }
 
-    # XXX: Multi-platform .dll support in PARs needs better than $Config.
-    $dlext ||= do {
-        require Config;
-        %Config::Config ? $Config::Config{dlext} : '';
-    };
-
     my $modpname = join((($^O eq 'MacOS') ? ':' : '/'), @modparts);
-    my $file = $cache_key = "auto/$modpname/$modfname.$dlext";
+    my $file = $cache_key = "auto/$modpname/$modfname.$DynaLoader::dl_dlext";
 
     if ($FullCache{$file}) {
+        # TODO: understand
         local $DynaLoader::do_expand = 1;
         return $bootstrap->(@args);
     }
 
     my $member;
-    $member = PAR::_find_par_any(undef, $file, 1) if defined &PAR::_find_par_any;
-    return $bootstrap->(@args) unless $member;
+    # First, try to find things in the preferentially loaded PARs:
+    $member = PAR::_find_par_internals([@PAR::PAR_INC], undef, $file, 1)
+      if defined &PAR::_find_par_internals;
 
-    $FullCache{$file} = _dl_extract($member, $file);
+    # If that failed to find the dll, let DynaLoader (try or) throw an error
+    unless ($member) { 
+        my $filename = eval { $bootstrap->(@args) };
+        return $filename if not $@ and defined $filename;
+
+        # Now try the fallback pars
+        $member = PAR::_find_par_internals([@PAR::PAR_INC_LAST], undef, $file, 1)
+          if defined &PAR::_find_par_internals;
+
+        # If that fails, let dynaloader have another go JUST to throw an error
+        # While this may seem wasteful, nothing really matters once we fail to
+        # load shared libraries!
+        unless ($member) { 
+            return $bootstrap->(@args);
+        }
+    }
+
+    $FullCache{$file} = _dl_extract($member);
 
     # Now extract all associated shared objs in the same auto/ dir
+    # XXX: shouldn't this also set $FullCache{...} for those files?
     my $first = $member->fileName;
-    my $pat = $first;
-    $pat =~ s{[^/]*$}{};
+    my $path_pattern = $first;
+    $path_pattern =~ s{[^/]*$}{};
     if ($PAR::LastAccessedPAR) {
         foreach my $member ( $PAR::LastAccessedPAR->members ) {
             next if $member->isDirectory;
 
             my $name = $member->fileName;
             next if $name eq $first;
-            next unless $name =~ m{^/?\Q$pat\E\/[^/]?\.\Q$dlext\E[^/]*$};
+            next unless $name =~ m{^/?\Q$path_pattern\E\/[^/]*\.\Q$DynaLoader::dl_dlext\E[^/]*$};
             $name =~ s{.*/}{};
-            _dl_extract($member, $file, $name);
+            _dl_extract($member, $name);
         }
     }
 
@@ -108,46 +124,30 @@ sub _bootstrap {
 }
 
 sub _dl_extract {
-    my ($member, $file, $name) = @_;
+    my ($member, $name) = @_;
+    $name ||= $member->crc32String . ".$DynaLoader::dl_dlext";
 
-    require File::Spec;
-    require File::Temp;
+    my $filename = File::Spec->catfile($ENV{PAR_TEMP} || File::Spec->tmpdir, $name);
+    ($filename) = $filename =~ /^([\x20-\xff]+)$/;
 
-    my ($fh, $filename);
+    return $filename if -e $filename && -s _ == $member->uncompressedSize;
 
-    # fix borked tempdir from earlier versions
-    if ($ENV{PAR_TEMP} and -e $ENV{PAR_TEMP} and !-d $ENV{PAR_TEMP}) {
-        unlink($ENV{PAR_TEMP});
-        mkdir($ENV{PAR_TEMP}, 0755);
+    # $filename doesn't exist or hasn't been completely extracted:
+    # extract it under a temporary name that isn't likely to be used
+    # by concurrent processes doing the same
+    my $tempname = "$filename.$$";
+    $member->extractToFileNamed($tempname) == Archive::Zip::AZ_OK()
+        or die "Can't extract archive member ".$member->fileName." to $tempname: $!";
+
+    # now that we have a "good" copy in $tempname, rename it to $filename;
+    # if this fails (e.g. some OSes won't let you delete DLLs that are
+    # in use), but $filename exists, we assume that $filename is also
+    # "good": remove $tempname and return $filename
+    unless (rename($tempname, $filename))
+    {
+        -e $filename or die "can't rename $tempname to $filename: $!";
+        unlink($tempname);
     }
-
-    if ($ENV{PAR_CLEAN} and !$name) {
-        ($fh, $filename) = File::Temp::tempfile(
-            DIR         => ($ENV{PAR_TEMP} || File::Spec->tmpdir),
-            SUFFIX      => ".$dlext",
-            UNLINK      => ($^O ne 'MSWin32'),
-        );
-		($filename) = $filename =~ /^([\x20-\xff]+)$/;
-    }
-    else {
-        $filename = File::Spec->catfile(
-            ($ENV{PAR_TEMP} || File::Spec->tmpdir),
-            ($name || ($member->crc32String . ".$dlext"))
-        );
-		($filename) = $filename =~ /^([\x20-\xff]+)$/;
-
-        open $fh, '>', $filename or die $!
-            unless -r $filename and -e $filename
-                and -s $filename == $member->uncompressedSize;
-    }
-
-    if ($fh) {
-        binmode($fh);
-        $member->extractToFileHandle($fh);
-        close $fh;
-        chmod 0755, $filename;
-    }
-
     return $filename;
 }
 
@@ -161,7 +161,7 @@ L<PAR>
 
 Audrey Tang E<lt>cpan@audreyt.orgE<gt>
 
-L<http://par.perl.org/> is the official PAR website.  You can write
+You can write
 to the mailing list at E<lt>par@perl.orgE<gt>, or send an empty mail to
 E<lt>par-subscribe@perl.orgE<gt> to participate in the discussion.
 
@@ -169,12 +169,15 @@ Please submit bug reports to E<lt>bug-par@rt.cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, 2004, 2005, 2006 by Audrey Tang
+Copyright 2002-2010 by Audrey Tang
 E<lt>cpan@audreyt.orgE<gt>.
+
+Copyright 2006-2010 by Steffen Mueller
+E<lt>smueller@cpan.orgE<gt>.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-See L<http://www.perl.com/perl/misc/Artistic.html>
+See F<LICENSE>.
 
 =cut

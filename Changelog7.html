@@ -6,8 +6,11 @@
 	<li>New Features:</li>
 	<ul>
 		<li>Keep shuffled playlist order when Don't Stop The Music kicks in.</li>
+		<li>Don't overwrite RandomPlay genre selection when using RandomPlay with Don't Stop The Music</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/133">#133</a> - Add support for Opus codec (thanks andygrundmann, paul-1, ralph-irving, Roland0!)</li>
 		<li>Improved Advanced Search: you can now exclude text matches on eg. the file path.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16568">#16568</a> - Provide web UI to edit presets.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18118">#18118</a> - Start a RandomPlay mix with genres from a URL.</li>
 	</ul>
 	<br />
 
@@ -15,18 +18,22 @@
 	<ul>
 		<li>CORS support: you can now define a list of hosts which are allowed to access your LMS in a web browser.</li>
 		<li>Add support for updated DBD::SQLite module. This updated version should come with performance improvements and more options for the fulltext search.</li>
+		<li>Add a separate fade-in option when playback is started/resumed or track is repositioned. Use crossfade only when automatically advancing in playlist. - thanks philippe44!</li>
 	</ul>
 	<br />
 	
 	<li>Platform Support:</li>
 	<ul>
 		<li>New flac and sox binaries for most platforms with improved performance (lower CPU load) - thanks ralphy and paul1!</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18168">#18168</a> - SYS V start script in RPM distribution does not work for openSUSE 15.0</li>
 	</ul>
 	<br />
 	
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>Fix a scanner crash (out of memory) with large collections when high memory usage was enabled.</li>
+		<li>Search for a term including an asterisk ("*example*") could lead to all tracks/albums being returned.</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/234">Improve XML parsing for images in podcasts</a> (thanks mw9!)</li>
 	</ul>
 	<br />
 </ul>

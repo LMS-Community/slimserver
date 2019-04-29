@@ -57,6 +57,7 @@ sub search {
 	if ($params->{'ajaxSearch'}) {
 		$params->{'itemsPerPage'} = MAXRESULTS;
 		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search$library_id/";
+		$params->{'q'} =~ s/\*//g;
 		return Slim::Web::XMLBrowser::webLink(@_);		
 	}
 

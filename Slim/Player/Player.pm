@@ -70,6 +70,7 @@ our $defaultPrefs = {
 	'packetLatency'        => 2,	# ms
 	'startDelay'           => 0,	# ms
 	'playDelay'            => 0,	# ms
+	'fadeInDuration'       => 0,
 };
 
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
@@ -357,7 +358,10 @@ sub fade_volume {
 
 	my $int = 0.05; # interval between volume updates
 
-	my $vol = abs($prefs->client($client)->get("volume"));
+	# start from current position if still ramping up
+	my $vol = $fade < 0 && abs($client->volume) < abs($prefs->client($client)->get("volume")) ?
+			abs($client->volume) : abs($prefs->client($client)->get("volume"));
+				
 	my $now = Time::HiRes::time();
 	
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);

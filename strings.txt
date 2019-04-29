@@ -5798,6 +5798,16 @@ SETUP_TRANSITIONDURATION_DESC
 	RU	Введите временной интервал для перекрестного затухания между песнями (в секундах). Максимум — 10 с.
 	SV	Ange varaktighet för korstoningen i sekunder. Maximalt värde är 10 sekunder.
 	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
+	
+SETUP_FADEINDURATION
+	DE	Dauer der Einblendung
+	EN	Play or Resume fade-in duration
+	FR	Durée de montée en volume 
+
+SETUP_FADEINDURATION_DESC
+	DE	Die Lautstärke kann eingeblendet werden wenn die Titel-Wiedergabe gestartet wird. Im Gegensatz zur Überblendung gilt dies nur für den Start der Wiedergabe.
+	EN	When a track is played or resumed, volume can be progressively increased. This is not like crossfade which only happen between tracks.
+	FR	Lors du démarrage or de la reprise de la lecture, le volume peut être augmenté progressivement. Ce n'est pas la transition entre pistes.
 
 TRANSITION_NONE
 	CS	Žádný
@@ -20489,6 +20499,21 @@ DEBUG_PLAYER_UI
 	RU	Информация о пользовательском интерфейсе плеера
 	SV	Information om användargränssnitt för spelaren
 
+DEBUG_PLAYER_UI_SCREENSAVER
+	CS	Protokolování spořič obrazovky
+	DA	Logføring af pauseskærm
+	DE	Bildschirmschoner-Protokollierung
+	EN	Player Screensaver Logging
+	ES	Registro de protector de pantalla
+	FI	Näytönsäästäjänä kirjaaminen
+	FR	Journalisation d'écran de veille
+	IT	Registrazione del salvaschermo del lettore
+	NL	Registratie van schermbeveiliger
+	NO	Loggføring av spiller skjermsparer
+	PL	Rejestrowanie wygaszacz ekranu
+	RU	Ведение журнала экранной заставка
+	SV	Loggning för skärmsläckare
+
 DEBUG_PLAYER_DISPLAY
 	CS	Informace na displeji přehrávače
 	DA	Oplysninger om afspillerens display
@@ -24365,3 +24390,14 @@ SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
 
+UPDATE
+	CS	Aktualizace
+	DA	Opdatering
+	DE	Aktualisierung
+	EN	Update
+	ES	actualización
+	FI	Päivittää
+	FR	Mise à jour
+	IT	Aggiornamento
+	NO	Oppdaterer
+	PL	Aktualizacja

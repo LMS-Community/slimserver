@@ -1,10 +1,12 @@
 package PAR::Dist;
+use 5.006;
+use strict;
 require Exporter;
-use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
+use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK $DEBUG/;
 
-$VERSION    = '0.21';
-@ISA	    = 'Exporter';
-@EXPORT	    = qw/
+$VERSION    = '0.49'; # Change version in POD, too!
+@ISA        = 'Exporter';
+@EXPORT     = qw/
   blib_to_par
   install_par
   uninstall_par
@@ -18,9 +20,11 @@ $VERSION    = '0.21';
 
 @EXPORT_OK = qw/
   parse_dist_name
+  contains_binaries
 /;
 
-use strict;
+$DEBUG = 0;
+
 use Carp qw/carp croak/;
 use File::Spec;
 
@@ -30,7 +34,7 @@ PAR::Dist - Create and manipulate PAR distributions
 
 =head1 VERSION
 
-This document describes version 0.20 of PAR::Dist, released Oct 11, 2006.
+This document describes version 0.47 of PAR::Dist, released November 29, 2009.
 
 =head1 SYNOPSIS
 
@@ -42,15 +46,15 @@ In programs:
 
     use PAR::Dist;
 
-    my $dist = blib_to_par();	# make a PAR file using ./blib/
-    install_par($dist);		# install it into the system
-    uninstall_par($dist);	# uninstall it from the system
-    sign_par($dist);		# sign it using Module::Signature
-    verify_par($dist);		# verify it using Module::Signature
+    my $dist = blib_to_par(); # make a PAR file using ./blib/
+    install_par($dist);       # install it into the system
+    uninstall_par($dist);     # uninstall it from the system
+    sign_par($dist);          # sign it using Module::Signature
+    verify_par($dist);        # verify it using Module::Signature
 
     install_par("http://foo.com/DBI-1.37-MSWin32-5.8.0.par"); # works too
     install_par("http://foo.com/DBI-1.37"); # auto-appends archname + perlver
-    install_par("cpan://SMUELLER/PAR-0.91"); # uses CPAN author directory
+    install_par("cpan://SMUELLER/PAR-Packer-0.975"); # uses CPAN author directory
 
 =head1 DESCRIPTION
 
@@ -104,7 +108,7 @@ under the current directory if unspecified.  If F<blib/> does not exist,
 it automatically runs F<Build>, F<make>, F<Build.PL> or F<Makefile.PL> to
 create it.
 
-Returns the filename or the generated PAR distribution.
+Returns the filename of the generated PAR distribution.
 
 Valid parameters are:
 
@@ -128,6 +132,10 @@ perl by default.
 
 The output filename for the PAR distribution.
 
+=item quiet
+
+Set to true to suppress as much output as possible.
+
 =back
 
 =cut
@@ -138,11 +146,15 @@ sub blib_to_par {
     my %args = @_;
     require Config;
 
-    my $path	= $args{path};
-    my $dist	= File::Spec->rel2abs($args{dist}) if $args{dist};
-    my $name	= $args{name};
-    my $version	= $args{version};
-    my $suffix	= $args{suffix} || "$Config::Config{archname}-$Config::Config{version}.par";
+
+    # don't use 'my $foo ... if ...' it creates a static variable!
+    my $quiet = $args{quiet} || 0;
+    my $dist;
+    my $path    = $args{path};
+    $dist       = File::Spec->rel2abs($args{dist}) if $args{dist};
+    my $name    = $args{name};
+    my $version = $args{version};
+    my $suffix  = $args{suffix} || "$Config::Config{archname}-$Config::Config{version}.par";
     my $cwd;
 
     if (defined $path) {
@@ -164,14 +176,18 @@ sub blib_to_par {
     } , 'blib' );
 
     print MANIFEST join(
-	"\n",
-	'    <!-- accessible as jar:file:///NAME.par!/MANIFEST in compliant browsers -->',
-	(sort @files),
-	q(    # <html><body onload="var X=document.body.innerHTML.split(/\n/);var Y='<iframe src=&quot;META.yml&quot; style=&quot;float:right;height:40%;width:40%&quot;></iframe><ul>';for(var x in X){if(!X[x].match(/^\s*#/)&&X[x].length)Y+='<li><a href=&quot;'+X[x]+'&quot;>'+X[x]+'</a>'}document.body.innerHTML=Y">)
+        "\n",
+        '    <!-- accessible as jar:file:///NAME.par!/MANIFEST in compliant browsers -->',
+        (sort @files),
+        q(    # <html><body onload="var X=document.body.innerHTML.split(/\n/);var Y='<iframe src=&quot;META.yml&quot; style=&quot;float:right;height:40%;width:40%&quot;></iframe><ul>';for(var x in X){if(!X[x].match(/^\s*#/)&&X[x].length)Y+='<li><a href=&quot;'+X[x]+'&quot;>'+X[x]+'</a>'}document.body.innerHTML=Y">)
     );
     close MANIFEST;
 
-    if (open(OLD_META, "META.yml")) {
+    # if MYMETA.yml exists, that takes precedence over META.yml
+    my $meta_file_name = "META.yml";
+    my $mymeta_file_name = "MYMETA.yml";
+    $meta_file_name = -s $mymeta_file_name ? $mymeta_file_name : $meta_file_name;
+    if (open(OLD_META, $meta_file_name)) {
         while (<OLD_META>) {
             if (/^distribution_type:/) {
                 print META "distribution_type: par\n";
@@ -246,7 +262,9 @@ YAML
 
     mkdir('blib', 0777);
     chdir('blib');
-    _zip(dist => File::Spec->catfile(File::Spec->updir, $file)) or die $!;
+    require Cwd;
+    my $zipoutfile = File::Spec->catfile(File::Spec->updir, $file);
+    _zip(dist => $zipoutfile);
     chdir(File::Spec->updir);
 
     unlink File::Spec->catfile("blib", "MANIFEST");
@@ -255,7 +273,12 @@ YAML
     $dist ||= File::Spec->catfile($cwd, $file) if $cwd;
 
     if ($dist and $file ne $dist) {
-        rename( $file => $dist );
+        if ( File::Copy::copy($file, $dist) ) {
+          unlink $file;
+        } else {
+          die "Cannot copy $file: $!";
+        }
+
         $file = $dist;
     }
 
@@ -264,7 +287,7 @@ YAML
         $pathname =~ s!\\!/!g;
         $pathname =~ s!:!|!g;
     };
-    print << ".";
+    print << "." if !$quiet;
 Successfully created binary distribution '$file'.
 Its contents are accessible in compliant browsers as:
     jar:file://$pathname!/MANIFEST
@@ -276,18 +299,18 @@ Its contents are accessible in compliant browsers as:
 
 sub _build_blib {
     if (-e 'Build') {
-        system($^X, "Build");
+        _system_wrapper($^X, "Build");
     }
     elsif (-e 'Makefile') {
-        system($Config::Config{make});
+        _system_wrapper($Config::Config{make});
     }
     elsif (-e 'Build.PL') {
-        system($^X, "Build.PL");
-        system($^X, "Build");
+        _system_wrapper($^X, "Build.PL");
+        _system_wrapper($^X, "Build");
     }
     elsif (-e 'Makefile.PL') {
-        system($^X, "Makefile.PL");
-        system($Config::Config{make});
+        _system_wrapper($^X, "Makefile.PL");
+        _system_wrapper($Config::Config{make});
     }
 }
 
@@ -296,7 +319,10 @@ sub _build_blib {
 Installs a PAR distribution into the system, using
 C<ExtUtils::Install::install_default>.
 
-Valid parameters are:
+If only a single parameter is given, it is treated as the value for the
+C<dist> parameter.
+
+Valid named parameters are:
 
 =over 2
 
@@ -311,7 +337,24 @@ This string will be prepended to all installation paths.
 If it isn't specified, the environment variable
 C<PERL_INSTALL_ROOT> is used as a prefix.
 
+=item uninstall_shadows
+
+This corresponds to the C<uninstall_shadows> option of L<ExtUtils::Install>. Quoting its manual:
+If C<uninstall_shadows> is set to true, any differing versions throughout C<@INC>
+will be uninstalled. This is C<make install UNINST=1>.
+
+=item verbose
+
+This corresponds to the C<verbose> option of L<ExtUtils::Install>. According to its manual:
+If C<verbose> is true, will print out each file removed. This is C<make install VERBINST=1>.
+C<verbose> values going up to 5 show increasingly more diagnostics output.
+
+Default verbosity for PAR::Dist is 1.
+
 =back
+
+If you're just going to install into the running perl like everything else,
+you can stop reading the rest of this section now.
 
 Additionally, you can use several parameters to change the default
 installation destinations. You don't usually have to worry about this
@@ -331,7 +374,20 @@ The following section outlines the parameter names and default settings:
 The C<packlist_write> parameter is used to control where the F<.packlist>
 file is written to. (Necessary for uninstallation.)
 The C<packlist_read> parameter specifies a .packlist file to merge in if
-it exists.
+it exists. By setting any of the above installation targets to C<undef>,
+you can remove that target altogether. For example, passing
+C<< inst_man1dir => undef, inst_man3dir => undef >> means that the contained
+manual pages won't be installed. This is not available for the packlists.
+
+Again, the defaults will be the normal I<site> paths from C<%Config>.
+
+(*) If the C<.par>'s I<inst_archlib> section (normally C<blib/arch>)
+isn't empty, the code in I<inst_lib> (normally C<blib/lib>) is also installed
+into the I<inst_archlib> path. This makes sense for XS modules.
+If, however, you override C<inst_lib>, this automatic conversion is
+also overridden! You can use the named parameter
+C<auto_inst_lib_conversion =E<gt> 1> to re-enable the conversion
+for custom I<inst_lib>'s.
 
 Finally, you may specify a C<custom_targets> parameter. Its value should be
 a reference to a hash of custom installation targets such as
@@ -340,9 +396,6 @@ a reference to a hash of custom installation targets such as
 
 You can use this to install the F<.par> archives contents to arbitrary
 locations.
-
-If only a single parameter is given, it is treated as the C<dist>
-parameter.
 
 =cut
 
@@ -361,6 +414,9 @@ the installation target parameters do not apply. The only exception
 to this is the C<packlist_read> parameter which specifies the
 F<.packlist> file to read the list of installed files from.
 It defaults to C<$Config::Config{installsitearch}/auto/$name/.packlist>.
+
+Additionally, the C<uninstall_shadows> parameter of C<install_par>
+isn't available.
 
 =cut
 
@@ -405,18 +461,21 @@ sub _install_or_uninstall {
     $name =~ s{::|-}{/}g;
     require ExtUtils::Install;
 
-    my $rv;
     if ($action eq 'install') {
         my $target = _installation_target( File::Spec->curdir, $name, \%args );
         my $custom_targets = $args{custom_targets} || {};
         $target->{$_} = $custom_targets->{$_} foreach keys %{$custom_targets};
         
-        $rv = ExtUtils::Install::install($target, 1, 0, 0);
+        my $uninstall_shadows = $args{uninstall_shadows};
+        my $verbose = $args{verbose};
+        ExtUtils::Install::install($target, $verbose, 0, $uninstall_shadows);
     }
     elsif ($action eq 'uninstall') {
         require Config;
-        $rv = ExtUtils::Install::uninstall(
-            $args{packlist_read}||"$Config::Config{installsitearch}/auto/$name/.packlist"
+        my $verbose = $args{verbose};
+        ExtUtils::Install::uninstall(
+            $args{packlist_read}||"$Config::Config{installsitearch}/auto/$name/.packlist",
+            $verbose
         );
     }
 
@@ -424,7 +483,8 @@ sub _install_or_uninstall {
 
     chdir($old_dir);
     File::Path::rmtree([$tmpdir]);
-    return $rv;
+
+    return 1;
 }
 
 # Returns the default installation target as used by
@@ -453,14 +513,16 @@ sub _installation_target {
     );
 
 
+    my $par_has_archlib = _directory_not_empty( $sources{inst_archlib} );
+
     # default targets
     my $target = {
        read => $Config::Config{sitearchexp}."/auto/$name/.packlist",
        write => $Config::Config{installsitearch}."/auto/$name/.packlist",
-       $sources{inst_lib}
-            => (_directory_not_empty($sources{inst_archlib}))
-            ? $Config::Config{installsitearch}
-            : $Config::Config{installsitelib},
+       $sources{inst_lib} =>
+            ($par_has_archlib
+             ? $Config::Config{installsitearch}
+             : $Config::Config{installsitelib}),
        $sources{inst_archlib}   => $Config::Config{installsitearch},
        $sources{inst_bin}       => $Config::Config{installbin} ,
        $sources{inst_script}    => $Config::Config{installscript},
@@ -484,7 +546,21 @@ sub _installation_target {
     
     # insert user overrides
     foreach my $key (keys %$user) {
-        $target->{ $sources{$key} } = $user->{$key} if exists $sources{$key};
+        my $value = $user->{$key};
+        if (not defined $value and $key ne 'packlist_read' and $key ne 'packlist_write') {
+          # undef means "remove"
+          delete $target->{ $sources{$key} };
+        }
+        elsif (exists $sources{$key}) {
+          # overwrite stuff, don't let the user create new entries
+          $target->{ $sources{$key} } = $value;
+        }
+    }
+
+    # apply the automatic inst_lib => inst_archlib conversion again
+    # if the user asks for it and there is an archlib in the .par
+    if ($user->{auto_inst_lib_conversion} and $par_has_archlib) {
+      $target->{inst_lib} = $target->{inst_archlib};
     }
 
     return $target;
@@ -495,7 +571,7 @@ sub _directory_not_empty {
     my($dir) = @_;
     my $files = 0;
     File::Find::find(sub {
-	    return if $_ eq ".exists";
+        return if $_ eq ".exists";
         if (-f) {
             $File::Find::prune++;
             $files = 1;
@@ -534,7 +610,12 @@ sub verify_par {
 
 =head2 merge_par
 
-Merge two or more PAR distributions into one. First argument must
+I<Note:> Since version 0.32 of PAR::Dist, this function requires a YAML
+reader. The order of precedence is:
+
+  YAML:XS YAML YAML::Syck YAML::Tiny
+
+Merges two or more PAR distributions into one. First argument must
 be the name of the distribution you want to merge all others into.
 Any following arguments will be interpreted as the file names of
 further PAR distributions to merge into the first one.
@@ -543,7 +624,10 @@ further PAR distributions to merge into the first one.
 
 This will merge the distributions C<foo.par>, C<bar.par> and C<baz.par>
 into the distribution C<foo.par>. C<foo.par> will be overwritten!
-The original META.yml of C<foo.par> is retained.
+
+The original META.yml of C<foo.par> is retained, but augmented with any
+C<provides>, C<requires>, C<recommends>, C<build_requires>, and
+C<configure_requires> sections from the other C<.par> files.
 
 =cut
 
@@ -580,9 +664,10 @@ sub merge_par {
     my $blibdir = File::Spec->catdir($base_dir, 'blib');
 
     # move the META.yml to the (main) temp. dir.
+    my $main_meta_file = File::Spec->catfile($base_dir, 'META.yml');
     File::Copy::move(
         File::Spec->catfile($blibdir, 'META.yml'),
-        File::Spec->catfile($base_dir, 'META.yml')
+        $main_meta_file
     );
     # delete (incorrect) MANIFEST
     unlink File::Spec->catfile($blibdir, 'MANIFEST');
@@ -595,6 +680,13 @@ sub merge_par {
         (undef, my $add_dir) = _unzip_to_tmpdir(
             dist => $par
         );
+
+        # merge the meta (at least the provides info) into the main meta.yml
+        my $meta_file = File::Spec->catfile($add_dir, 'META.yml');
+        if (-f $meta_file) {
+          _merge_meta($main_meta_file, $meta_file);
+        }
+
         my @files;
         my @dirs;
         # I hate File::Find
@@ -603,7 +695,7 @@ sub merge_par {
             {wanted =>sub {
                 my $file = $File::Find::name;
                 push @files, $file if -f $file;
-                push @dirs, $file if -d $file;
+                push @dirs, $file if -d _;
             }},
             $add_dir
         );
@@ -641,13 +733,79 @@ sub merge_par {
     unlink File::Spec->catfile($blibdir, 'META.yml');
     
     chdir($base_dir);
-    my $resulting_par_file = Cwd::abs_path(blib_to_par());
+    my $resulting_par_file = Cwd::abs_path(blib_to_par(quiet => 1));
     chdir($old_cwd);
     File::Copy::move($resulting_par_file, $base_par);
     
     File::Path::rmtree([$base_dir]);
 }
 
+
+sub _merge_meta {
+  my $meta_orig_file = shift;
+  my $meta_extra_file = shift;
+  return() if not defined $meta_orig_file or not -f $meta_orig_file;
+  return 1 if not defined $meta_extra_file or not -f $meta_extra_file;
+
+  my $yaml_functions = _get_yaml_functions();
+
+  die "Cannot merge META.yml files without a YAML reader/writer"
+    if !exists $yaml_functions->{LoadFile}
+    or !exists $yaml_functions->{DumpFile};
+
+  my $orig_meta  = $yaml_functions->{LoadFile}->($meta_orig_file);
+  my $extra_meta = $yaml_functions->{LoadFile}->($meta_extra_file);
+
+  # I seem to remember there was this incompatibility between the different
+  # YAML implementations with regards to "document" handling:
+  my $orig_tree  = (ref($orig_meta) eq 'ARRAY' ? $orig_meta->[0] : $orig_meta);
+  my $extra_tree = (ref($extra_meta) eq 'ARRAY' ? $extra_meta->[0] : $extra_meta);
+
+  _merge_provides($orig_tree, $extra_tree);
+  _merge_requires($orig_tree, $extra_tree);
+  
+  $yaml_functions->{DumpFile}->($meta_orig_file, $orig_meta);
+
+  return 1;
+}
+
+# merge the two-level provides sections of META.yml
+sub _merge_provides {
+  my $orig_hash  = shift;
+  my $extra_hash = shift;
+
+  return() if not exists $extra_hash->{provides};
+  $orig_hash->{provides} ||= {};
+
+  my $orig_provides  = $orig_hash->{provides};
+  my $extra_provides = $extra_hash->{provides};
+
+  # two level clone is enough wrt META spec 1.4
+  # overwrite the original provides since we're also overwriting the files.
+  foreach my $module (keys %$extra_provides) {
+    my $extra_mod_hash = $extra_provides->{$module};
+    my %mod_hash;
+    $mod_hash{$_} = $extra_mod_hash->{$_} for keys %$extra_mod_hash;
+    $orig_provides->{$module} = \%mod_hash;
+  }
+}
+
+# merge the single-level requires-like sections of META.yml
+sub _merge_requires {
+  my $orig_hash  = shift;
+  my $extra_hash = shift;
+
+  foreach my $type (qw(requires build_requires configure_requires recommends)) {
+    next if not exists $extra_hash->{$type};
+    $orig_hash->{$type} ||= {};
+    
+    # one level clone is enough wrt META spec 1.4
+    foreach my $module (keys %{ $extra_hash->{$type} }) {
+      # FIXME there should be a version comparison here, BUT how are we going to do that without a guaranteed version.pm?
+      $orig_hash->{$type}{$module} = $extra_hash->{$type}{$module}; # assign version and module name
+    }
+  }
+}
 
 =head2 remove_man
 
@@ -772,6 +930,12 @@ sub _unzip {
     my $path = $args{path} || File::Spec->curdir;
     return unless -f $dist;
 
+    # Try fast unzipping first
+    if (eval { require Archive::Unzip::Burst; 1 }) {
+        my $return = !Archive::Unzip::Burst::unzip($dist, $path);
+        return if $return; # true return value == error (a la system call)
+    }
+    # Then slow unzipping
     if (eval { require Archive::Zip; 1 }) {
         my $zip = Archive::Zip->new;
         local %SIG;
@@ -779,9 +943,16 @@ sub _unzip {
         return unless $zip->read($dist) == Archive::Zip::AZ_OK()
                   and $zip->extractTree('', "$path/") == Archive::Zip::AZ_OK();
     }
+    # Then fall back to the system
     else {
-        return if system(unzip => $dist, '-d', $path);
+        undef $!;
+        if (_system_wrapper(unzip => $dist, '-d', $path)) {
+            die "Failed to unzip '$dist' to path '$path': Could neither load "
+                . "Archive::Zip nor (successfully) run the system 'unzip' (unzip said: $!)";
+        }
     }
+
+    return 1;
 }
 
 sub _zip {
@@ -794,19 +965,33 @@ sub _zip {
         $zip->writeToFileNamed( $dist ) == Archive::Zip::AZ_OK() or die $!;
     }
     else {
-        system(qw(zip -r), $dist, File::Spec->curdir) and die $!;
+        undef $!;
+        if (_system_wrapper(qw(zip -r), $dist, File::Spec->curdir)) {
+            die "Failed to zip '" .File::Spec->curdir(). "' to '$dist': Could neither load "
+                . "Archive::Zip nor (successfully) run the system 'zip' (zip said: $!)";
+        }
     }
+    return 1;
 }
 
-sub _args {
-    unshift @_, (glob('*.par'))[0] unless @_;
-    @_ = (dist => @_) if @_ == 1;
-    my %args = @_;
 
+# This sub munges the arguments to most of the PAR::Dist functions
+# into a hash. On the way, it downloads PAR archives as necessary, etc.
+sub _args {
+    # default to the first .par in the CWD
+    if (not @_) {
+        @_ = (glob('*.par'))[0];
+    }
+
+    # single argument => it's a distribution file name or URL
+    @_ = (dist => @_) if @_ == 1;
+
+    my %args = @_;
     $args{name} ||= $args{dist};
+
     # If we are installing from an URL, we want to munge the
     # distribution name so that it is in form "Module-Name"
-    if ($args{name}) {
+    if (defined $args{name}) {
         $args{name} =~ s/^\w+:\/\///;
         my @elems = parse_dist_name($args{name});
         # @elems is name, version, arch, perlversion
@@ -818,20 +1003,33 @@ sub _args {
             $args{name} =~ s/^([0-9A-Za-z_-]+)-\d+\..+$/$1/;
         }
     }
-    $args{dist} .= '-' . do {
-        require Config;
-        $args{suffix} || "$Config::Config{archname}-$Config::Config{version}.par"
-    } unless !$args{dist} or $args{dist} =~ /\.[a-zA-Z_][^.]*$/;
 
-    $args{dist} = _fetch(dist => $args{dist})
-      if ($args{dist} and $args{dist} =~ m!^\w+://!);
+    # append suffix if there is none
+    if ($args{dist} and not $args{dist} =~ /\.[a-zA-Z_][^.]*$/) {
+        require Config;
+        my $suffix = $args{suffix};
+        $suffix ||= "$Config::Config{archname}-$Config::Config{version}.par";
+        $args{dist} .= "-$suffix";
+    }
+
+    # download if it's an URL
+    if ($args{dist} and $args{dist} =~ m!^\w+://!) {
+        $args{dist} = _fetch(dist => $args{dist})
+    }
+
     return %args;
 }
 
 
+# Download PAR archive, but only if necessary (mirror!)
 my %escapes;
 sub _fetch {
     my %args = @_;
+
+    if ($args{dist} =~ s/^file:\/\///) {
+      return $args{dist} if -e $args{dist};
+      return;
+    }
     require LWP::Simple;
 
     $ENV{PAR_TEMP} ||= File::Spec->catdir(File::Spec->tmpdir, 'par');
@@ -839,14 +1037,14 @@ sub _fetch {
     %escapes = map { chr($_) => sprintf("%%%02X", $_) } 0..255 unless %escapes;
 
     $args{dist} =~ s{^cpan://((([a-zA-Z])[a-zA-Z])[-_a-zA-Z]+)/}
-		    {http://www.cpan.org/modules/by-authors/id/\U$3/$2/$1\E/};
+                    {http://www.cpan.org/modules/by-authors/id/\U$3/$2/$1\E/};
 
     my $file = $args{dist};
     $file =~ s/([^\w\.])/$escapes{$1}/g;
     $file = File::Spec->catfile( $ENV{PAR_TEMP}, $file);
     my $rc = LWP::Simple::mirror( $args{dist}, $file );
 
-    if (!LWP::Simple::is_success($rc)) {
+    if (!LWP::Simple::is_success($rc) and $rc != 304) {
         die "Error $rc: ", LWP::Simple::status_message($rc), " ($args{dist})\n";
     }
 
@@ -899,7 +1097,9 @@ sub _unzip_to_tmpdir {
     require File::Temp;
 
     my $dist   = File::Spec->rel2abs($args{dist});
-    my $tmpdir = File::Temp::mkdtemp(File::Spec->catdir(File::Spec->tmpdir, "parXXXXX")) or die $!;
+    my $tmpdirname = File::Spec->catdir(File::Spec->tmpdir, "parXXXXX");
+    my $tmpdir = File::Temp::mkdtemp($tmpdirname)        
+      or die "Could not create temporary directory from template '$tmpdirname': $!";
     my $path = $tmpdir;
     $path = File::Spec->catdir($tmpdir, $args{subdir}) if defined $args{subdir};
     _unzip(dist => $dist, path => $path);
@@ -927,51 +1127,58 @@ Math-Symbolic-0.502-x86_64-linux-gnu-thread-multi-5.8.7
 Math-Symbolic-0.502
 
 The ".tar.gz" or ".par" extensions as well as any
-preceding paths are stripped before parsing.
+preceding paths are stripped before parsing. Starting with C<PAR::Dist>
+0.22, versions containing a preceding C<v> are parsed correctly.
 
 This function is not exported by default.
 
 =cut
 
 sub parse_dist_name {
-	my $file = shift;
-	return(undef, undef, undef, undef) if not defined $file;
+    my $file = shift;
+    return(undef, undef, undef, undef) if not defined $file;
 
-	(undef, undef, $file) = File::Spec->splitpath($file);
-	
-	my $version = qr/\d+(?:_\d+)?|\d*(?:\.\d+(?:_\d+)?)+/;
-	$file =~ s/\.(?:par|tar\.gz|tar)$//i;
-	my @elem = split /-/, $file;
-	my (@dn, $dv, @arch, $pv);
-	while (@elem) {
-		my $e = shift @elem;
-		if ($e =~ /^$version$/o) {
-			$dv = $e;
-			last;
-		}
-		push @dn, $e;
-	}
-	
-	my $dn;
-	$dn = join('-', @dn) if @dn;
+    (undef, undef, $file) = File::Spec->splitpath($file);
+    
+    my $version = qr/v?(?:\d+(?:_\d+)?|\d*(?:\.\d+(?:_\d+)?)+)/;
+    $file =~ s/\.(?:par|tar\.gz|tar)$//i;
+    my @elem = split /-/, $file;
+    my (@dn, $dv, @arch, $pv);
+    while (@elem) {
+        my $e = shift @elem;
+        if (
+            $e =~ /^$version$/o
+            and not(# if not next token also a version
+                    # (assumes an arch string doesnt start with a version...)
+                @elem and $elem[0] =~ /^$version$/o
+            )
+        ) {
+            $dv = $e;
+            last;
+        }
+        push @dn, $e;
+    }
+    
+    my $dn;
+    $dn = join('-', @dn) if @dn;
 
-	if (not @elem) {
-		return( $dn, $dv, undef, undef);
-	}
+    if (not @elem) {
+        return( $dn, $dv, undef, undef);
+    }
 
-	while (@elem) {
-		my $e = shift @elem;
-		if ($e =~ /^$version|any_version$/) {
-			$pv = $e;
-			last;
-		}
-		push @arch, $e;
-	}
+    while (@elem) {
+        my $e = shift @elem;
+        if ($e =~ /^(?:$version|any_version)$/) {
+            $pv = $e;
+            last;
+        }
+        push @arch, $e;
+    }
 
-	my $arch;
-	$arch = join('-', @arch) if @arch;
+    my $arch;
+    $arch = join('-', @arch) if @arch;
 
-	return($dn, $dv, $arch, $pv);
+    return($dn, $dv, $arch, $pv);
 }
 
 =head2 generate_blib_stub
@@ -1008,9 +1215,9 @@ sub generate_blib_stub {
     my $dist = $args{dist};
     require Config;
     
-    my $name	= $args{name};
-    my $version	= $args{version};
-    my $suffix	= $args{suffix};
+    my $name    = $args{name};
+    my $version = $args{version};
+    my $suffix  = $args{suffix};
 
     my ($parse_name, $parse_version, $archname, $perlversion)
       = parse_dist_name($dist);
@@ -1053,6 +1260,144 @@ YAML
 }
 
 
+=head2 contains_binaries
+
+This function is not exported by default.
+
+Opens a PAR archive tries to determine whether that archive
+contains platform-specific binary code.
+
+Takes one named parameter: I<dist>. If only one parameter is
+passed, it is treated as the I<dist> parameter. (Have a look
+at the description in the C<FUNCTIONS> section above.)
+
+Throws a fatal error if the PAR archive could not be found.
+
+Returns one if the PAR was found to contain binary code
+and zero otherwise.
+
+=cut
+
+sub contains_binaries {
+    require File::Find;
+    my %args = &_args;
+    my $dist = $args{dist};
+    return undef if not defined $dist or not -r $dist;
+    require Cwd;
+    require File::Path;
+
+    # The unzipping will change directories. Remember old dir.
+    my $old_cwd = Cwd::cwd();
+    
+    # Unzip the base par to a temp. dir.
+    (undef, my $base_dir) = _unzip_to_tmpdir(
+        dist => $dist, subdir => 'blib'
+    );
+    my $blibdir = File::Spec->catdir($base_dir, 'blib');
+    my $archdir = File::Spec->catdir($blibdir, 'arch');
+
+    my $found = 0;
+
+    File::Find::find(
+      sub {
+        $found++ if -f $_ and not /^\.exists$/;
+      },
+      $archdir
+    );
+
+    chdir($old_cwd);
+    
+    File::Path::rmtree([$base_dir]);
+    
+    return $found ? 1 : 0;
+}
+
+sub _system_wrapper {
+  if ($DEBUG) {
+    Carp::cluck("Running system call '@_' from:");
+  }
+  return system(@_);
+}
+
+# stolen from Module::Install::Can
+# very much internal and subject to change or removal
+sub _MI_can_run {
+  require ExtUtils::MakeMaker;
+  my ($cmd) = @_;
+
+  my $_cmd = $cmd;
+  return $_cmd if (-x $_cmd or $_cmd = MM->maybe_command($_cmd));
+
+  for my $dir ((split /$Config::Config{path_sep}/, $ENV{PATH}), '.') {
+    my $abs = File::Spec->catfile($dir, $cmd);
+    return $abs if (-x $abs or $abs = MM->maybe_command($abs));
+  }
+
+  return;
+}
+
+
+# Tries to load any YAML reader writer I know of
+# returns nothing on failure or hash reference containing
+# a subset of Load, Dump, LoadFile, DumpFile
+# entries with sub references on success.
+sub _get_yaml_functions {
+  # reasoning for the ranking here:
+  # - XS is the de-facto standard nowadays.
+  # - YAML.pm is slow and aging
+  # - syck is fast and reasonably complete
+  # - Tiny is only a very small subset
+  # - Parse... is only a reader and only deals with the same subset as ::Tiny
+  my @modules = qw(YAML::XS YAML YAML::Tiny YAML::Syck Parse::CPAN::Meta);
+
+  my %yaml_functions;
+  foreach my $module (@modules) {
+    eval "require $module;";
+    if (!$@) {
+      warn "PAR::Dist testers/debug info: Using '$module' as YAML implementation" if $DEBUG;
+      foreach my $sub (qw(Load Dump LoadFile DumpFile)) {
+        no strict 'refs';
+        my $subref = *{"${module}::$sub"}{CODE};
+        if (defined $subref and ref($subref) eq 'CODE') {
+          $yaml_functions{$sub} = $subref;
+        }
+      }
+      $yaml_functions{yaml_provider} = $module;
+      last;
+    }
+  } # end foreach module candidates
+  if (not keys %yaml_functions) {
+    warn "Cannot find a working YAML reader/writer implementation. Tried to load all of '@modules'";
+  }
+  return(\%yaml_functions);
+}
+
+sub _check_tools {
+  my $tools = _get_yaml_functions();
+  if ($DEBUG) {
+    foreach (qw/Load Dump LoadFile DumpFile/) {
+      warn "No YAML support for $_ found.\n" if not defined $tools->{$_};
+    }
+  }
+
+  $tools->{zip} = undef;
+  # A::Zip 1.28 was a broken release...
+  if (eval {require Archive::Zip; 1;} and $Archive::Zip::VERSION ne '1.28') {
+    warn "Using Archive::Zip as ZIP tool.\n" if $DEBUG;
+    $tools->{zip} = 'Archive::Zip';
+  }
+  elsif (_MI_can_run("zip") and _MI_can_run("unzip")) {
+    warn "Using zip/unzip as ZIP tool.\n" if $DEBUG;
+    $tools->{zip} = 'zip';
+  }
+  else {
+    warn "Found neither Archive::Zip (version != 1.28) nor ZIP/UNZIP as valid ZIP tools.\n" if $DEBUG;
+    $tools->{zip} = undef;
+  }
+
+  return $tools;
+}
+
 1;
 
 =head1 SEE ALSO
@@ -1061,9 +1406,9 @@ L<PAR>, L<ExtUtils::Install>, L<Module::Signature>, L<LWP::Simple>
 
 =head1 AUTHORS
 
-Audrey Tang E<lt>cpan@audreyt.orgE<gt> 2003-2006
+Audrey Tang E<lt>cpan@audreyt.orgE<gt> 2003-2007
 
-Steffen Mueller E<lt>smueller@cpan.orgE<gt> 2005-2006
+Steffen Mueller E<lt>smueller@cpan.orgE<gt> 2005-2011
 
 PAR has a mailing list, E<lt>par@perl.orgE<gt>, that you can write to;
 send an empty mail to E<lt>par-subscribe@perl.orgE<gt> to join the list
@@ -1073,7 +1418,7 @@ Please send bug reports to E<lt>bug-par@rt.cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-Copyright 2003, 2004, 2006 by Audrey Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2003-2011 by Audrey Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

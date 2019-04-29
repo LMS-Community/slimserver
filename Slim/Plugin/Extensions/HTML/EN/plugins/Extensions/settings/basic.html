@@ -85,7 +85,7 @@
 	<div class="settingSection" style="margin-top:0;margin-bottom:20px" id="[% id %]">
 		<table class="sortable" width="100%">
 			<thead><tr>
-				<th width="5%"  class="sortable">[% "ENABLE" | string %]</th>
+				<th width="5%"  class="sortable">[% IF type == 'update' %][% "UPDATE" | string %][% ELSE %][% "ENABLE" | string %][% END %]</th>
 				<th width="20%" class="sortable">[% "NAME" | string %]</th>
 				<th width="50%" class="sortable">[% "DESCRIPTION" | string %]</th>
 				<th width="15%" class="sortable">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>

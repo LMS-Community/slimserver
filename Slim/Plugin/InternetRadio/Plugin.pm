@@ -10,7 +10,12 @@ use Slim::Plugin::InternetRadio::TuneIn;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-my $log   = logger('plugin.radio');
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.radio',
+	'defaultLevel' => 'ERROR',
+	'description'  => 'RADIO',
+});
+
 my $prefs = preferences('server');
 
 sub initPlugin {

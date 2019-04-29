@@ -397,21 +397,42 @@ sub parseRSS {
 		'xmlns:slim'     => unescapeAndTrim($xml->{'xmlsns:slim'}),
 	);
 	
-	# look for an image
+	# Look for an image
+
+	# Note: we take special care to ensure that "$feed{'image'}" is only ever
+	# populated with a *scalar* value. Anything else will break Jive browsing
+	# (SlimBrowserApplet) when it attempts to fetch artwork.
+	# E.g. If a broken podcast provides an empty 'url' tag, 'XMLin' would interpret it
+	# as an empty hash ref. So we explicitly guard against such occurrences.
+
 	if ( ref $xml->{'channel'}->{'image'} ) {
 		
 		my $image = $xml->{'channel'}->{'image'};
-		my $url   = $image->{'url'};
+		my $url = "";
+		if (ref $image eq 'HASH') {
+			# conventional RSS feeds simply provide one image element
+			$url = $image->{'url'};
+		}
+		elsif (ref $image eq 'ARRAY') {
+			# some RSS feeds provide several variant image elements
+			# we pick the first one
+			$url = $image->[0]->{'url'};
+		}
 		
 		# some Podcasts have the image URL in the link tag
 		if ( !$url && $image->{'link'} && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
 			$url = $image->{'link'};
 		}
 		
-		$feed{'image'} = $url;
+		$feed{'image'} = $url unless ref $url; # scalar value only !
 	}
-	elsif ( $xml->{'itunes:image'} ) {
-		$feed{'image'} = $xml->{'itunes:image'}->{'href'};
+	elsif ( ref $xml->{'itunes:image'} eq 'HASH' ) {
+		my $href = $xml->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
+	}
+	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
+		my $href = $xml->{'channel'}->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
 	}
 
 	# some feeds (slashdot) have items at same level as channel
@@ -443,6 +464,13 @@ sub parseRSS {
 
 			$item{'duration'} = unescapeAndTrim($itemXML->{'itunes:duration'});
 			$item{'explicit'} = unescapeAndTrim($itemXML->{'itunes:explicit'});
+
+			# Use episode specific image if there is one.
+			if (ref $itemXML->{'itunes:image'} eq 'HASH') {
+				my $href = $itemXML->{'itunes:image'}->{'href'};
+				# We only want a non null scalar
+				$item{'image'} = $href if $href && ! ref $href;
+			}
 
 			# don't duplicate data
 			if ( $itemXML->{'itunes:subtitle'} && $itemXML->{'title'} && 

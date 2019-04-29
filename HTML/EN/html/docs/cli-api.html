@@ -1552,7 +1552,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Returns wether a player can be powered off or not. 
+	Returns whether a player can be powered off or not. 
 	Current hardware players and SoftSqueeze would return 1, web clients 0.
 </p>
 <p>
@@ -9725,13 +9725,15 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<code>
 			&lt;playerid&gt;
 			randomplay
-			&lt;tracks|albums|contributors|year&gt;
+			&lt;tracks|albums|contributors|year|disable&gt;
 		</code>
 	</strong>
 </p>
 <p>
 	The &quot;randomplay&quot; command starts a random mix of the given 
-	type.
+	type. The &quot;disable&quot; type would disable continuation of
+	the currently playing mix. It would cause the current playlist to 
+	play to the end and no new tracks be added.
 </p>
 <p>
 	Example:
