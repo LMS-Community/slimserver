@@ -23,7 +23,6 @@ sub _updateMetaData {
 	my $playlistUrl = shift;
 
 	my $attributes = {};
-	my $playlist = 0;
 	
 	if ( Slim::Music::Info::isVolatile($playlistUrl) ) {
 		$entry =~ s/^file/tmp/;
@@ -40,13 +39,6 @@ sub _updateMetaData {
 		}
 	}
 	
-	# Treat radio stream as playlist, because that's what they are.
-	# If we don't do this, we'll end up attempting to play the served m3u.
-
-	if ($entry =~ m{^http[s]?://opml\.(?:radiotime|tunein)\.com}) {
-		$playlist = 1;
-	}
-
 	# Bug 6294, only updateOrCreate the track if the track
 	# doesn't already exist in the database.  $attributes will be
 	# set if it's a remote playlist and we want to update the metadata
@@ -63,7 +55,7 @@ sub _updateMetaData {
 			'url'        => $entry,
 			'attributes' => $attributes,
 			'readTags'   => 1,
-			'playlist'   => $playlist,
+			'playlist'   => Slim::Music::Info::isPlaylist($entry),
 		} );
 	}
 	
