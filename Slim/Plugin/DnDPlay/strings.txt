@@ -29,7 +29,7 @@ PLUGIN_DNDPLAY_NO_ITEMS
 PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
 	DE	Sie können ohne Player nichts wiedergeben.
 	EN	Cannot play music without a player connected.
-	NL	Kan zonder muzieksysteem niets afspelen.
+	NL	Kan zonder muziekspeler niets afspelen.
 	NO	Kan ikke spille musikk uten en tilkoblet spiller.
 	PL	Nie można uruchomić odtwarzania bez podpiętego odtwarzacza.
 	

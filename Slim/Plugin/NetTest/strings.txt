@@ -75,7 +75,7 @@ PLUGIN_NETTEST_NOT_SUPPORTED
 	FR	Non pris en charge par cette platine
 	HE	לא נתמך בנגן זה
 	IT	Non supportato in questo lettore
-	NL	Niet ondersteund op dit muzieksysteem
+	NL	Niet ondersteund op deze muziekspeler
 	NO	Ikke støttet på denne spilleren
 	PL	Nieobsługiwane w tym odtwarzaczu
 	RU	Не поддерживается в этом плеере

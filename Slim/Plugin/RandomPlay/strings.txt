@@ -98,7 +98,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	FR	ne plus ajouter de morceaux
 	HE	הפסק להוסיף שירים
 	IT	interrompi aggiunta brani
-	NL	toevoegen van nummers stoppen
+	NL	stop toevoegen van nummers
 	NO	slutte å legge til sanger
 	PL	zatrzymaj dodawanie utworów
 	RU	прекратить добавление песен
@@ -161,7 +161,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	FR	ne plus ajouter d'albums
 	HE	הפסק להוסיף אלבומים
 	IT	interrompi aggiunta album
-	NL	toevoegen van albums stoppen
+	NL	stop toevoegen van albums
 	NO	slutte å legge til album
 	PL	zatrzymaj dodawanie albumów
 	RU	прекратить добавление альбомов
@@ -224,7 +224,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	FR	ne plus ajouter d'artistes
 	HE	הפסק להוסיף מבצעים
 	IT	interrompi aggiunta artisti
-	NL	toevoegen van artiesten stoppen
+	NL	stop toevoegen van artiesten
 	NO	slutte å legge til artister
 	PL	zatrzymaj dodawanie wykonawców
 	RU	прекратить добавление исполнителей
@@ -287,7 +287,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	FR	ne plus ajouter d'années
 	HE	הפסק להוסיף שנים
 	IT	interrompi aggiunta anni
-	NL	toevoegen van jaren stoppen
+	NL	stop toevoegen van jaren
 	NO	slutte å legge til flere år
 	PL	zatrzymaj dodawanie lat
 	RU	прекратить добавление годов
@@ -436,7 +436,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	FR	Genres à inclure dans le mix:
 	HE	סגנונות שיש לכלול במיקס:
 	IT	Generi musicali da includere nella raccolta:
-	NL	Genres voor opname in je mix:
+	NL	Genres om toe te voegen aan je mix:
 	NO	Sjangere som skal inkluderes i miksen:
 	PL	Gatunki do dodania do składanki:
 	RU	Жанры, добавляемые в микс:
@@ -547,7 +547,7 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	FR	Appuyez sur DROITE pour
 	HE	לחץ על הלחצן ימינה כדי
 	IT	Premere il pulsante DESTRA per
-	NL	Met pijltje-RECHTS kun je
+	NL	Druk RECHTS om
 	NO	Gå til høyre for å
 	PL	Naciśnij przycisk W PRAWO, aby
 	RU	Нажмите RIGHT, чтобы
@@ -556,9 +556,11 @@ PLUGIN_RANDOM_PRESS_RIGHT
 PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	DE	Titelmix (auf aktuelle Genres beschränkt)
 	EN	Song Mix (limited to current genres)
+	NL	Nummermix (alleen binnen huidige genres)
 	NO	Sangmiks (begrenset til nåværende sjangre)
 
 PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	DE	Zufälliges Album (auf aktuelle Genres beschränkt)
 	EN	Random Album (limited to current genres)
+	NL	Willekeurig album (alleen binnen huidige genres)
 	NO	Tilfeldig album (begrenset til nåværende sjangre)

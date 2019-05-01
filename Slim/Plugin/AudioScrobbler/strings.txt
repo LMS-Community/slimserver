@@ -37,7 +37,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana.  Voit antaa useita tilejä, jos haluat lähettää tiedot kuunnelluista kappaleista eri soittimista eri tileihin.
 	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm. Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents.
 	IT	Inserire il nome utente e la password di Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account.
-	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muzieksystemen bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren.
+	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muziekspelers bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren.
 	NO	Angi brukernavn og passord for Last.fm. Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer.
 	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm. W celu przesłania informacji o utworach z różnych odtwarzaczy na różne konta można wprowadzić dane z kilku kont.
 	RU	Введите имя пользователя и пароль Last.fm. Можно указать несколько учетных записей, чтобы передавать дорожки с разных плееров в разные учетные записи.
@@ -234,7 +234,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
 	FI	Last.fm Audioscrobbler -soittimen asetukset
 	FR	Paramètres de Last.fm Audioscrobbler.
 	IT	Impostazioni del lettore Audioscrobbler Last.fm
-	NL	Muzieksysteeminstellingen voor Last.fm Audioscrobbler
+	NL	Muziekspelerinstellingen voor Last.fm Audioscrobbler
 	NO	Spillerinnstillinger for Last.fm Audioscrobbler
 	PL	Ustawienia odtwarzacza w usłudze Last.fm Audioscrobbler
 	RU	Настройки скробблера Last.fm
@@ -249,7 +249,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	FI	Jos haluat ottaa Audioscrobblerin käyttöön tässä soittimessa, valitse käytettävä tili.
 	FR	Pour activer Audioscrobbler pour cette platine, sélectionnez un compte à utiliser.
 	IT	Per abilitare Audioscrobbler per questo lettore, selezionare l'account da utilizzare.
-	NL	Selecteer een te gebruiken account om Audioscrobbler voor dit muzieksysteem in te schakelen.
+	NL	Selecteer een te gebruiken account om Audioscrobbler voor deze muziekspeler in te schakelen.
 	NO	Hvis du vil aktivere Audioscrobbler for denne spilleren, må du velge en konto.
 	PL	Aby włączyć funkcję Audioscrobbler dla tego odtwarzacza, wybierz konto do użycia.
 	RU	Чтобы активировать Audioscrobbler на этом плеере, выберите учетную запись.
@@ -264,7 +264,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	FI	Ei käytössä. Älä lähetä tietoja tällä soittimella soitetuista kappaleista.
 	FR	Désactivé, ne pas envoyer les morceaux lus sur cette platine.
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
-	NL	Uitgeschakeld; nummers gespeeld op dit muzieksysteem niet indienen.
+	NL	Uitgeschakeld; nummers gespeeld op deze muziekspeler niet indienen.
 	NO	Deaktivert, ikke send inn spor som spilles på denne spilleren.
 	PL	Wyłączone, nie wysyłaj informacji o odtwarzanych utworach.
 	RU	Отключено, не передавать дорожки, воспроизводимые на этом плеере.
@@ -279,7 +279,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	FI	Varoitus: Kaikkien kappaleiden lähettäminen on yleisesti poistettu käytöstä.  Jos haluat lähettää tiedot tällä soittimella soitetuista kappaleista, ota Lähetä kaikki kappaleet -asetus käyttöön kohdassa Lisäasetukset -> Last.fm Audioscrobbler.
 	FR	Avertissement: l'envoi de tous les morceaux est désactivé de manière globale. Pour envoyer les informations des morceaux pour cette platine, activez l'option pour envoyer tous les morceaux dans Avancé -> Last.fm Audioscrobbler.
 	IT	Avviso: l'invio di tutti i brani è stato disattivato a livello globale. Per inviare i dati relativi ai brani del lettore corrente, attivare l'impostazione Invia tutti i brani, accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
-	NL	Waarschuwing: Alle nummers indienen is globaal uitgeschakeld. Als je nummergegevens voor dit muzieksysteem wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
+	NL	Waarschuwing: Alle nummers indienen is globaal uitgeschakeld. Als je nummergegevens voor deze muziekspeler wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
 	NO	Advarsel: Innsending av spor er deaktivert i hele systemet. Hvis du vil sende informasjon om avspilte spor fra denne spilleren, må du aktivere innstillingen Send alle spor under Avansert -> Last.fm Audioscrobbler.
 	PL	Ostrzeżenie: wysyłanie informacji o wszystkich utworach jest globalnie wyłączone. Aby przesyłać informacje do tego odtwarzacza, włącz ustawienie przesyłania informacji o wszystkich utworach, wybierając opcję Zaawansowane -> Last.fm Audioscrobbler.
 	RU	Предупреждение. Параметр "Передавать все дорожки" глобально отключен. Чтобы передавать информацию о дорожках для этого плеера, перейдите на "Дополнительно" -> "Last.fm Аудиоскробблер" и включите "Передавать все дорожки".
@@ -294,7 +294,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	FI	Huomaa: Audioscrobbler täytyy myös ottaa käyttöön kussakin soittimessa.  Napsauta Soitin-välilehdellä ja valitse Last.fm Audioscrobbler jokaiselle soittimelle, josta haluat lähettää tiedot kuunnelluista kappaleista Last.fm:ään.
 	FR	Remarque: vous devez également activer Audioscrobbler pour chaque platine. Cliquez sur l'onglet Platine et sélectionner Last.fm Audioscrobbler pour chaque platine.
 	IT	Nota: è inoltre necessario attivare Audioscrobbler per ogni lettore. Fare clic sulla scheda Lettore e selezionare la voce Audioscrobbler Last.fm per ogni lettore che si desidera monitorare.
-	NL	Opmerking: Je moet ook Autoscrobbler voor elk muzieksysteem inschakelen. Klik op de tab Muzieksysteem en selecteer het item Last.fm Audioscrobbler voor elk systeem dat je wilt scrobbelen.
+	NL	Opmerking: Je moet ook Autoscrobbler voor elke muziekspeler inschakelen. Klik op de tab Muziekspeler en selecteer het item Last.fm Audioscrobbler voor elk systeem dat je wilt scrobbelen.
 	NO	Merk: Du må også aktivere Audioscrobbler for hver spiller. Klikk på kategorien Spiller, og velg Last.fm Audioscrobbler-elementet for hver spiller du vil bruke med Audioscrobbler.
 	PL	Uwaga: Funkcję Audioscrobbler należy włączyć dla każdego odtwarzacza. Kliknij kartę Odtwarzacz, a następnie wybierz pozycję Last.fm Audioscrobbler dla każdego odtwarzacza, z którego chcesz wysłać informacje.
 	RU	Примечание. Нужно также включить скробблер для каждого плеера. Щелкните вкладку "Плеер" и выберите элемент "Скробблер Last.fm" для каждого плеера, который необходимо скробблить.
