@@ -41,7 +41,7 @@ PLUGIN_LIVE365_ERROR
 	FI	Live365-virhe
 	FR	Erreur Live365
 	IT	Errore di Live365
-	NL	Live365-foutmelding
+	NL	Foutmelding Live365
 	NO	Live365-feil
 	PL	Błąd usługi Live365
 	RU	Ошибка Live365

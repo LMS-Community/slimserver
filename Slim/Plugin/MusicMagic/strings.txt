@@ -59,7 +59,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicIP.
 	HE	אפשרות זו קובעת את התבנית שזה נעשה שימוש בעת ייבוא רשימות השמעה של MusicIP.
 	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di MusicIP.
-	NL	Deze optie bepaalt welk formaat bij het importeren van MusicIP-playlists gebruikt wordt.
+	NL	Deze optie bepaalt welk formaat bij het importeren van MusicIP-playlists wordt gebruikt.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av MusicIP-spillelister.
 	PL	Ta opcja określa format używany podczas importowania list odtwarzania z usługi MusicIP.
 	RU	Этот параметр определяет формат для импорта плей-листов MusicIP.
@@ -229,7 +229,7 @@ SETUP_REJECT_SIZE_DESC
 	FR	Définissez le nombre d'éléments à ignorer avant de répéter un type. La valeur par défaut est 12.
 	HE	הגדר את מספר הפריטים שיש לדלג עליהם לפני חזרה על סוג. (ברירת המחדל: 12)
 	IT	Consente di impostare il numero di elementi da saltare prima di ripetere un tipo. Il valore predefinito è 12.
-	NL	Slet het aantal items in dat overgeslagen moet worden, voordat een type herhaald wordt (standaard: 12).
+	NL	Stel het aantal items in dat overgeslagen moet worden, voordat een type wordt herhaald (standaard: 12).
 	NO	Angi hvor mange elementer som skal hoppes over før en type gjentas. (Standard: 12)
 	PL	Ustaw liczbę elementów do pominięcia przed powtórzeniem typu (domyślnie: 12).
 	RU	Укажите количество элементов, которые следует пропустить перед повторением типа. (По умолчанию: 12)
@@ -331,7 +331,7 @@ SETUP_MMMPLAYERSETTINGS
 	FR	Réglages de la platine pour chaque mix
 	HE	הגדרות נגן  עבור כל מיקס
 	IT	Impostazioni del lettore per ogni raccolta
-	NL	Muzieksysteeminstellingen voor elke mix
+	NL	Muziekspelerinstellingen voor elke mix
 	NO	Spillerinnstillinger for hver miks
 	PL	Ustawienia odtwarzacza dla każdej składanki
 	RU	Настройки плеера для каждого микса
@@ -348,7 +348,7 @@ SETUP_MMMPLAYERSETTINGS_DESC
 	FR	Vous pouvez choisir de donner à chaque platine accès aux réglages du mix MusicIP avant de générer un mix. Tous les réglages définis à partir de la platine remplacent les réglages du serveur, jusqu'à ce qu'ils soient à nouveau modifiés à partir de la platine. Si vous souhaitez passer cette étape et créer directement un mix à l'aide des paramètres du serveur ou de la platine existants, sélectionnez non.
 	HE	באפשרותך לבחור להעניק לכל נגן גישה להגדרות המיקס של MusicIP לפני הפקת מיקס. הגדרות שנבחרו בנגן יעקפו הגדרות שנבחרו בשרת ויישארו בתוקף עד שישונו שוב בנגן. אם ברצונך לדלג ישירות לשלב של יצירת מיקס, באמצעות ההגדרות הנוכחיות של הנגן/השרת בלבד, בחר 'לא'.
 	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
-	NL	Je kunt ervoor kiezen elk muzieksysteem toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Muzieksysteeminstellingen vervangen de serverinstellingen en blijven van kracht tot ze via het systeem veranderd worden. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
+	NL	Je kunt ervoor kiezen elke muziekspeler toegang te geven tot de MusicIP-mixinstellingen voordat er een mix wordt gegenereerd. Instellingen op de muziekspeler gaan voor op de serverinstellingen en blijven van kracht tot ze via het systeem worden gewijzigd. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
 	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer serverinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og serverinnstillinger, velger du nei.
 	PL	Przed utworzeniem składanki każdemu odtwarzaczowi można umożliwić uzyskanie dostępu do ustawień składanki w usłudze MusicIP. Ustawienia wybrane w odtwarzaczu zastąpią ustawienia na serwerze i pozostaną stałe do momentu ponownej zmiany w odtwarzaczu. Jeżeli chcesz od razu przejść do tworzenia składanki z wykorzystaniem istniejących ustawień odtwarzacza/serwera, wybierz opcję Nie.
 	RU	Перед созданием микса можно предоставить каждому плееру доступ к настройкам микса MusicIP. Настройки, заданные через плеер, переопределяют настройки сервера и сохраняются, пока вы снова не измените их через плеер. Чтобы сразу перейти к созданию микса, используя настройки плеера/сервера, выберите "Нет".
@@ -535,7 +535,7 @@ SETUP_MUSICMAGICSCANINTERVAL_DESC
 	FR	Le Logitech Media Server importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le Logitech Media Server actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר מסד הנתונים של MusicIP משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica il database di MusicIP, Logitech Media Server importa automaticamente i dati della libreria. È possibile specificare per Logitech Media Server il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
-	NL	Wanneer je MusicIP-database verandert, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang Logitech Media Server minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NL	Wanneer je MusicIP-database wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang Logitech Media Server minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når databasen til MusicIP endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge Logitech Media Server skal vente med å laste inn databasen til MusicIP igjen. Hvis verdien er null, deaktiveres innlasting.
 	PL	Po zmianie informacji w bazie danych usługi MusicIP program Logitech Media Server automatycznie zaimportuje informacje o bibliotece. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bazę danych usługi MusicIP. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
 	RU	При изменении базы данных MusicIP данные медиатеки автоматически импортируются в Logitech Media Server. Для Logitech Media Server можно задать минимальный интервал времени (в секундах) перед повторной загрузкой базы данных MusicIP. Значение 0 означает отмену повторной загрузки.
@@ -569,7 +569,7 @@ SETUP_MMSPORT_DESC
 	FR	L'API du service MusicIP permet de sélectionner un port HTTP à utiliser pour les requêtes. Saisissez ici le numéro de port spécifié dans les réglages MusicIP Mixer.
 	HE	ממשק תוכנת היישום (API) של שירות MusicIP מאפשרת לבחור יציאת http לשימוש עבור שאילתות ל-API של MusicIP. הזן בשדה זה את מספר היציאה בהתאם להגדרה שבחרת בהגדרות יוצר המיקסים של MusicIP.
 	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
-	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
+	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API. Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
 	NO	I tjeneste-API-en for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-en. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
 	PL	Interfejs API usługi MusicIP umożliwia wybranie portu http używanego w celu wysyłania zapytań do tego interfejsu. Wprowadź tutaj numer portu zgodny z wybranymi miksera w usłudze MusicIP.
 	RU	Интерфейс MusicIP Service API позволяет выбрать НТТР-порт для запросов к MusicIP API. Введите здесь номер порта, соответствующий вашим настройкам MusicIP Mixer.
@@ -619,7 +619,7 @@ DEBUG_PLUGIN_MUSICIP
 	FI	MusicIP-miksin ja -viennin kirjaus
 	FR	Journalisation des mix et exportations MusicIP
 	IT	Registrazione esportazione e mix MusicIP
-	NL	Registratie van MusicIP-mix en -export
+	NL	Loggen van MusicIP-mix en -export
 	NO	Loggføring av miksing og eksportering for MusicIP
 	PL	Rejestrowane składanki w usłudze MusicIP Mix i eksportu
 	RU	Ведение журнала экспорта и микса MusicIP

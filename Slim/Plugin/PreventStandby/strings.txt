@@ -84,7 +84,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
 	FI	Ottamalla tämän asetuksen käyttöön estät järjestelmää siirtymästä valmiustilaan soitinten ollessa päällä, eli silloin, kun kelloa ei näy.
 	FR	Activez ce réglage pour interdire la mise en veille du système lorsque des platines sont allumées (l'horloge n'est pas affichée).
 	IT	Attivare questa impostazione per impedire l'attivazione della modalità standby quando i lettori sono accesi, vale a dire quando non visualizzano l'orologio.
-	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muzieksystemen actief zijn, d.w.z. niet de klok weergeven.
+	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muziekspelers actief zijn, d.w.z. niet de klok weergeven.
 	NO	Når denne innstillingen er aktivert, forhindrer den systemet fra å gå hvilemodus mens spillerne er slått på (altså når de ikke viser klokken).
 	PL	Włącz to ustawienie, aby uniemożliwić tryb wstrzymania systemu, kiedy odtwarzacze są włączone (tzn. nie wyświetlają zegara).
 	RU	Включите этот параметр, чтобы запретить переход в режим ожидания во время работы плееров (не отображать часы).
