@@ -427,7 +427,7 @@ ER_CANT_READ_DIR
 ER_CANT_SET_WD  
 	cze "Nemohu zm-Bìnit adresáø na '%-.64s' (chybovı kód: %d)"
 	dan "Kan ikke skifte folder til '%-.64s' (Fejlkode: %d)"
-	nla "Kan de directory niet wijzigen naar '%-.64s' (Errcode: %d)"
+	nla "Kan de directory niet veranderen naar '%-.64s' (Errcode: %d)"
 	eng "Can't change dir to '%-.64s' (errno: %d)"
 	jps "'%-.64s' ƒfƒBƒŒƒNƒgƒŠ‚É chdir ‚Å‚«‚Ü‚¹‚ñ.(errno: %d)",
 	est "Ei suuda siseneda kataloogi '%-.64s' (veakood: %d)"
@@ -2805,7 +2805,7 @@ ER_TOO_MANY_FIELDS
 ER_TOO_BIG_ROWSIZE 42000 
 	cze "-BØádek je pøíli¹ velkı. Maximální velikost øádku, nepoèítaje polo¾ky blob, je %d. Musíte zmìnit nìkteré polo¾ky na blob"
 	dan "For store poster. Max post størrelse, uden BLOB's, er %d. Du må lave nogle felter til BLOB's"
-	nla "Rij-grootte is groter dan toegestaan. Maximale rij grootte, blobs niet meegeteld, is %d. U dient sommige velden in blobs te wijzigen."
+	nla "Rij-grootte is groter dan toegestaan. Maximale rij grootte, blobs niet meegeteld, is %d. U dient sommige velden in blobs te veranderen."
 	eng "Row size too large. The maximum row size for the used table type, not counting BLOBs, is %ld. You have to change some columns to TEXT or BLOBs"
 	jps "row size ‚ª‘å‚«‚·‚¬‚Ü‚·. BLOB ‚ğŠÜ‚Ü‚È‚¢ê‡‚Ì row size ‚ÌÅ‘å‚Í %d ‚Å‚·. ‚¢‚­‚Â‚©‚Ì field ‚ğ BLOB ‚É•Ï‚¦‚Ä‚­‚¾‚³‚¢.",
 	est "Liiga pikk kirje. Kirje maksimumpikkus arvestamata BLOB-tüüpi välju on %d. Muuda mõned väljad BLOB-tüüpi väljadeks"
