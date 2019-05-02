@@ -201,7 +201,7 @@ sub _createHTTPRequest {
 	}
 =cut
 	
-	my $http = Slim::Networking::Async::HTTP->new;
+	my $http = Slim::Networking::Async::HTTP->new( $self->_params );
 	$http->send_request( {
 		request     => $request,
 		maxRedirect => $params->{maxRedirect},
