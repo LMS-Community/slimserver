@@ -58,11 +58,31 @@ my $cookieJar;
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_accessor( rw => qw(
-	uri request response saveAs fh timeout maxRedirect
+	uri request response saveAs fh timeout maxRedirect socks
 ) );
 
 sub init {
 	$cookieJar = HTTP::Cookies->new( file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
+}
+
+sub new {
+	my ($class, $args) = @_;
+	my $self = $class->SUPER::new;
+	
+	if ( $args->{socks} ) {
+		eval {
+			require Slim::Networking::Async::Socket::HTTPSocks;
+			require Slim::Networking::Async::Socket::HTTPSSocks if hasSSL();
+		};
+	
+		if (!$@) {			
+			# no need for a hash mk_accessor type as we don't access individual keys
+			$self->socks($args->{socks});
+			main::INFOLOG && $log->info("Using SOCKS $args->{ProxyAddr}::$args->{ProxyPort} to connect");
+		}	
+	}	
+	
+	return $self;
 }
 
 sub new_socket {
@@ -92,17 +112,31 @@ sub new_socket {
 			# DNS lookup.
 			# So we will probably need to explicitly set "SSL_hostname" if we are to succeed with such
 			# a server.
-
+			
 			# First, try without explicit SNI, so we don't inadvertently break anything. 
 			# (This is the 'old' behaviour.) (Probably overly conservative.)
-			my $sock = Slim::Networking::Async::Socket::HTTPS->new( @_ );
-			return $sock if $sock;
 
-			# Failed. Try again with an explicit SNI.
+			my $sock;
+						
+			if ($self->socks) {
+				$sock = Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, @_ );
+			}
+			else {		
+				$sock = Slim::Networking::Async::Socket::HTTPS->new( @_ );
+			}	
+			return $sock if $sock;
+			
 			my %args = @_;
+			
+			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} = $args{Host};
 			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE();
-			return Slim::Networking::Async::Socket::HTTPS->new( %args );
+			if ($self->socks) {
+				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
+			}
+			else {		
+				return Slim::Networking::Async::Socket::HTTPS->new( %args );
+			}
 		}
 		else {
 			# change the request to port 80
@@ -112,12 +146,18 @@ sub new_socket {
 			my %args = @_;
 			$args{PeerPort} = 80;
 			
-			$log->warn("Warning: trying HTTP request to HTTPS server");
-			
-			return Slim::Networking::Async::Socket::HTTP->new( %args );
+			if ($self->socks) {
+				return Slim::Networking::Async::Socket::HTTPSocks->new( %{$self->socks}, %args );
+			}
+			else {		
+				return Slim::Networking::Async::Socket::HTTP->new( %args );
+			}
 		}
 	}
-	else {
+	elsif ($self->socks) {
+		return Slim::Networking::Async::Socket::HTTPSocks->new( %{$self->socks}, @_ );
+	}
+	else { 	
 		return Slim::Networking::Async::Socket::HTTP->new( @_ );
 	}
 }

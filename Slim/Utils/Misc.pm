@@ -44,6 +44,7 @@ use URI;
 use URI::Escape;
 use URI::file;
 use Digest::SHA1 qw(sha1_hex);
+use MIME::Base64;
 
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
