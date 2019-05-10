@@ -206,8 +206,9 @@ sub send_request {
 		$self->request->protocol( 'HTTP/1.0' );
 	}
 	
+	# the used class is NET::HTTP::Method which now supports HTTP 1.1
 	# XXX until we support chunked encoding, force 1.0
-	$self->request->protocol('HTTP/1.0');
+	# $self->request->protocol('HTTP/1.0');
 	
 	$self->add_headers();
 	
