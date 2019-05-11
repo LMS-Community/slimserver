@@ -223,19 +223,7 @@ sub _gotArtwork {
 		return _gotArtworkError($http);
 	}
 
-	if ( Slim::Utils::ImageResizer::hasDaemon() ) {
-		# We don't use SimpleAsyncHTTP's saveAs feature, as this wouldn't keep a copy in the cache, which we might need
-		# if we wanted other sizes of the same url
-		my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($url) );
-
-		# Unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
-		File::Slurp::write_file($fullpath, $http->contentRef);
-	
-		_resizeFromFile($http->url, $fullpath);	
-	}
-	else {
-		_resizeFromFile($http->url, $http->contentRef, $http);
-	}
+	_resizeFromFile($http->url, $http->contentRef, $http);
 }
 
 sub _gotArtworkError {

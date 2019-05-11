@@ -133,14 +133,21 @@ while (1) {
 		
 		# get command
 		my $buf = <$client>;
-	
-		my ($file, $spec, $cacheroot, $cachekey) = unpack 'Z*Z*Z*Z*', $buf;
 		
+		my ($file, $spec, $cacheroot, $cachekey, $data) = unpack 'Z* Z* Z* Z* I/a*', $buf;
+		
+		if ($data) {
+			# trim cr/lf from the end
+			$data =~ s/\015\012$//s;
+			$data =~ s/\\0x12/\n/sg;
+			$data =~ s/\\0x15/\r/sg;
+		}
+
 		# An empty spec is allowed, this returns the original image
 		$spec ||= 'XxX';
 		
 		my $imageproxy = $cachekey =~ /^imageproxy/;
-		DEBUG && warn sprintf("file=%s, spec=%s, cacheroot=%s, cachekey=%s imageproxy=%s\n", $file, $spec, $cacheroot, $cachekey, $imageproxy || 0);
+		DEBUG && warn sprintf("file=%s, spec=%s, cacheroot=%s, cachekey=%s, imageproxy=%s, imagedata=%s bytes\n", $file, $spec, $cacheroot, $cachekey, $imageproxy || 0, length($data));
 		
 		if ( !$file || !$spec || !$cacheroot || !$cachekey ) {
 			die "Invalid parameters: $file, $spec, $cacheroot, $cachekey\n";
@@ -156,7 +163,7 @@ while (1) {
 		
 		# do resize
 		Slim::Utils::GDResizer->gdresize(
-			file     => $file,
+			file     => $data ? \$data : $file,
 			debug    => DEBUG,
 			faster   => $faster,
 			cache    => $cache,
@@ -188,7 +195,6 @@ sub new {
 	my $class = shift;
 	my $root = shift;
 
-warn 'imageproxy';
 	return $class->SUPER::new($root, 'imgproxy', 86400*30);
 }
 
