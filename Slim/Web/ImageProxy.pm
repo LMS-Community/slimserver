@@ -231,9 +231,7 @@ sub _gotArtwork {
 		# Unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
 		File::Slurp::write_file($fullpath, $http->contentRef);
 	
-		_resizeFromFile($http->url, $fullpath);
-	
-		unlink $fullpath;
+		_resizeFromFile($http->url, $fullpath);	
 	}
 	else {
 		_resizeFromFile($http->url, $http->contentRef, $http);
@@ -305,9 +303,11 @@ sub _resizeFromFile {
 		else {
 			Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
 				my ($body, $format) = @_;
-	
+
 				# Resized image should now be in cache
 				my $response = $args->[1];
+
+				unlink $fullpath if !ref $fullpath && $fullpath =~ /imgproxy_[a-f0-9]+$/i;
 				
 				if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = $cache->get($cachekey)) ) {
 					$body = $c->{data_ref};

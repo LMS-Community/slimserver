@@ -120,7 +120,8 @@ $SIG{TERM} = $SIG{INT} = $SIG{QUIT} = sub {
 	exit 0;
 };
 
-my $cache = Slim::Utils::ArtworkCache->new('.');
+my $artworkCache = Slim::Utils::ArtworkCache->new('.');
+my $imageProxyCache = Slim::Web::ImageProxy::Cache->new('.');
 
 DEBUG && warn "$0 listening on " . SOCKET_PATH . "\n";
 
@@ -138,7 +139,8 @@ while (1) {
 		# An empty spec is allowed, this returns the original image
 		$spec ||= 'XxX';
 		
-		DEBUG && warn "file=$file, spec=$spec, cacheroot=$cacheroot, cachekey=$cachekey\n";
+		my $imageproxy = $cachekey =~ /^imageproxy/;
+		DEBUG && warn sprintf("file=%s, spec=%s, cacheroot=%s, cachekey=%s imageproxy=%s\n", $file, $spec, $cacheroot, $cachekey, $imageproxy || 0);
 		
 		if ( !$file || !$spec || !$cacheroot || !$cachekey ) {
 			die "Invalid parameters: $file, $spec, $cacheroot, $cachekey\n";
@@ -146,6 +148,7 @@ while (1) {
 	
 		my @spec = split ',', $spec;
 		
+		my $cache = $imageproxy ? $imageProxyCache : $artworkCache;
 		if ( $cache->getRoot() ne $cacheroot ) {
 			$cache->setRoot($cacheroot);
 			$cache->pragma('locking_mode = NORMAL');
@@ -171,6 +174,22 @@ while (1) {
 		print $client "Error: $@\015\012";
 		warn "$@\n";
 	}
+}
+
+1;
+
+package Slim::Web::ImageProxy::Cache;
+
+use base 'Slim::Utils::DbArtworkCache';
+
+use strict;
+
+sub new {
+	my $class = shift;
+	my $root = shift;
+
+warn 'imageproxy';
+	return $class->SUPER::new($root, 'imgproxy', 86400*30);
 }
 
 __END__
