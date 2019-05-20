@@ -27,12 +27,12 @@ BEGIN {
 	use Config;
 	use File::Spec::Functions qw(catdir);
 	use Slim::Utils::OSDetect;	# XXX would be nice to do without this
-	
+
 	my $libPath = $Bin;
 	my @SlimINC = ();
-	
+
 	Slim::Utils::OSDetect::init();
-	
+
 	if (my $libs = Slim::Utils::OSDetect::dirsFor('libpath')) {
 		# On Debian, RH and SUSE, our CPAN directory is located in the same dir as strings.txt
 		$libPath = $libs;
@@ -44,7 +44,7 @@ BEGIN {
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
-	
+
 	# Check for use64bitint Perls
 	my $is64bitint = $arch =~ /64int/;
 
@@ -52,12 +52,12 @@ BEGIN {
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
-		$arch = $arch =~ /gnueabihf/ 
-			? 'arm-linux-gnueabihf-thread-multi' 
+		$arch = $arch =~ /gnueabihf/
+			? 'arm-linux-gnueabihf-thread-multi'
 			: 'arm-linux-gnueabi-thread-multi';
 		$arch .= '-64int' if $is64bitint;
 	}
-	
+
 	# Same thing with PPC
 	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 		$arch = 'powerpc-linux-thread-multi';
@@ -76,8 +76,8 @@ BEGIN {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion),
-		catdir($libPath,'lib'), 
-		catdir($libPath,'CPAN'), 
+		catdir($libPath,'lib'),
+		catdir($libPath,'CPAN'),
 		$libPath,
 	);
 
@@ -127,40 +127,38 @@ DEBUG && warn "$0 listening on " . SOCKET_PATH . "\n";
 
 while (1) {
 	my $client = $socket->accept();
-	
+
 	eval {
 		DEBUG && (my $tv = Time::HiRes::time());
-		
+
 		# get command
 		my $buf = <$client>;
-		
-		my ($file, $spec, $cacheroot, $cachekey, $data) = unpack 'Z* Z* Z* Z* I/a*', $buf;
-		
+
+		my ($file, $spec, $cacheroot, $cachekey, $data) = unpack 'Z* Z* Z* Z* Z*', $buf;
+
 		if ($data) {
-			# trim cr/lf from the end
-			$data =~ s/\015\012$//s;
-			$data =~ s/\\0x12/\n/sg;
-			$data =~ s/\\0x15/\r/sg;
+			require MIME::Base64;
+			$data = MIME::Base64::decode_base64($data);
 		}
 
 		# An empty spec is allowed, this returns the original image
 		$spec ||= 'XxX';
-		
+
 		my $imageproxy = $cachekey =~ /^imageproxy/;
 		DEBUG && warn sprintf("file=%s, spec=%s, cacheroot=%s, cachekey=%s, imageproxy=%s, imagedata=%s bytes\n", $file, $spec, $cacheroot, $cachekey, $imageproxy || 0, length($data));
-		
+
 		if ( !$file || !$spec || !$cacheroot || !$cachekey ) {
-			die "Invalid parameters: $file, $spec, $cacheroot, $cachekey\n";
+			die sprintf("Invalid parameters: file=%s, spec=%s, cacheroot=%s, cachekey=%s, imageproxy=%s, imagedata=%s bytes\n", $file, $spec, $cacheroot, $cachekey, $imageproxy || 0, length($data || ''));
 		}
-	
+
 		my @spec = split ',', $spec;
-		
+
 		my $cache = $imageproxy ? $imageProxyCache : $artworkCache;
 		if ( $cache->getRoot() ne $cacheroot ) {
 			$cache->setRoot($cacheroot);
 			$cache->pragma('locking_mode = NORMAL');
 		}
-		
+
 		# do resize
 		Slim::Utils::GDResizer->gdresize(
 			file     => $data ? \$data : $file,
@@ -170,13 +168,13 @@ while (1) {
 			cachekey => $cachekey,
 			spec     => \@spec,
 		);
-	
+
 		# send result
 		print $client "OK\015\012";
-		
+
 		DEBUG && warn "OK (" . (Time::HiRes::time() - $tv) . " seconds)\n";
 	};
-	
+
 	if ( $@ ) {
 		print $client "Error: $@\015\012";
 		warn "$@\n";
