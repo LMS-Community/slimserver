@@ -13505,6 +13505,10 @@ MOSTPLAYED
 	SV	Mest spelade låtar
 	ZH_CN	最常播的歌曲
 
+LASTPLAYED
+	DE	Zuletzt wiedergegeben
+	EN	Last Played
+
 PLAYCOUNT
 	DE	Anzahl Wiedergaben
 	EN	Play Count

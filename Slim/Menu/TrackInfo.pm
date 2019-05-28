@@ -188,9 +188,21 @@ sub registerDefaultInfoProviders {
 		func   => \&infoFileSize,
 	) );
 
-	$class->registerInfoProvider( url => (
+	$class->registerInfoProvider( playcount => (
 		parent => 'moreinfo',
 		after  => 'filesize',
+		func   => \&infoPlayCount,
+	) );
+
+	$class->registerInfoProvider( lastplayed => (
+		parent => 'moreinfo',
+		after  => 'playcount',
+		func   => \&infoLastPlayed,
+	) );
+
+	$class->registerInfoProvider( url => (
+		parent => 'moreinfo',
+		after  => 'lastplayed',
 		func   => \&infoUrl,
 	) );
 
@@ -952,19 +964,19 @@ sub infoReplayGain {
 	my $album = $track->album;
 	
 	if ( my $replaygain = $track->replay_gain ) {
-		push @{$items}, _replainGainItem($client, $replaygain, $track->replay_peak, 'REPLAYGAIN');
+		push @{$items}, _replayGainItem($client, $replaygain, $track->replay_peak, 'REPLAYGAIN');
 	}
 	
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
-			push @{$items}, _replainGainItem($client, $albumreplaygain, $album->replay_peak, 'ALBUMREPLAYGAIN');
+			push @{$items}, _replayGainItem($client, $albumreplaygain, $album->replay_peak, 'ALBUMREPLAYGAIN');
 		}
 	}
 	
 	return $items;
 }
 
-sub _replainGainItem {
+sub _replayGainItem {
 	my ($client, $replaygain, $replaygainpeak, $tag) = @_;
 	
 	my $noclip = Slim::Player::ReplayGain::preventClipping( $replaygain, $replaygainpeak );
@@ -1090,6 +1102,38 @@ sub infoFileSize {
 			type  => 'text',
 			label => 'FILELENGTH',
 			name  => Slim::Utils::Misc::delimitThousands($len),
+		};
+	}
+	
+	return $item;
+}
+
+sub infoPlayCount {
+	my ( $client, $url, $track ) = @_;
+	
+	my $item;
+	
+	if ( my $count = $track->playcount ) {
+		$item = {
+			type  => 'text',
+			label => 'PLAYCOUNT',
+			name  => Slim::Utils::Misc::delimitThousands($count),
+		};
+	}
+	
+	return $item;
+}
+
+sub infoLastPlayed {
+	my ( $client, $url, $track ) = @_;
+	
+	my $item;
+	
+	if ( my $lastplayed = $track->lastplayed ) {
+		$item = {
+			type  => 'text',
+			label => 'LASTPLAYED',
+			name  => $track->buildModificationTime($lastplayed),
 		};
 	}
 	
