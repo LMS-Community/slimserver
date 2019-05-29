@@ -86,12 +86,23 @@ sub logRotate
 sub ignoredItems
 {
 	return (
-            '@eaDir'       => 1,   # media indexer meta data
-            '@spool'       => 1,   # mail/print/.. spool
-            '@tmp'         => 1,   # system temporary files
             '@appstore'    => 1,   # Synology package manager
+            '@clamav'      => 1,
+            '@cloudsync'   => 1,
             '@database'    => 1,   # databases store
+            '@download'    => 1,
+            '@eaDir'       => 1,   # media indexer meta data
+            '@maillog'     => 1,
+            '@MailScanner' => 1,
             '@optware'     => 1,   # NSLU2-Linux Optware system
+            '@postfix'     => 1,
+            '@S2S'         => 1,
+            '@spool'       => 1,   # mail/print/.. spool
+            '@SynoFinder-log'             => 1,
+            '@SynologyApplicationService' => 1,
+            '@synologydrive'              => 1,
+            '@SynologyDriveShareSync'     => 1,
+            '@tmp'         => 1,   # system temporary files
             'upd@te'       => 1,   # firmware update temporary directory
             '#recycle'     => 1,
             # system paths in the fs root which will not contain any music
@@ -103,13 +114,15 @@ sub ignoredItems
             'home'         => '/',
             'initrd'       => '/',
             'lib'          => '/',
+            'lib32'        => '/',
+            'lib64'        => '/',
             'linuxrc'      => '/',
             'lost+found'   => 1,
             'mnt'          => '/',
             'opt'          => '/',
             'proc'         => '/',
             'root'         => '/',
-            'run'         => '/',
+            'run'          => '/',
             'sbin'         => '/',
             'sys'          => '/',
             'tmp'          => '/',
