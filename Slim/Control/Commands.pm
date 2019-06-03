@@ -2595,6 +2595,7 @@ sub rescanCommand {
 	}
 
 	# if scan is running or we're told to queue up requests, return quickly
+	# FIXME - this seems to sometimes lead to infinite loops! (see eg. Synology change)
 	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks() || Slim::Music::Import->hasScanTask() ) {
 		Slim::Music::Import->queueScanTask($request);
 		
@@ -2611,6 +2612,7 @@ sub rescanCommand {
 	while ( my ($class, $config) = each %{$importers} ) {
 		if ( $class =~ /(?:Plugin|Slim::Music::VirtualLibraries)/ && $config->{use} ) {
 			$mode = 'external';
+			last;
 		}
 	}
 	
