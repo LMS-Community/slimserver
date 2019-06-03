@@ -87,6 +87,7 @@ sub ignoredItems
 {
 	return (
             '@appstore'    => 1,   # Synology package manager
+            '@autoupdate'  => 1,
             '@clamav'      => 1,
             '@cloudsync'   => 1,
             '@database'    => 1,   # databases store
@@ -99,9 +100,12 @@ sub ignoredItems
             '@S2S'         => 1,
             '@spool'       => 1,   # mail/print/.. spool
             '@SynoFinder-log'             => 1,
+            '@synodlvolumeche.core'       => 1,
             '@SynologyApplicationService' => 1,
             '@synologydrive'              => 1,
             '@SynologyDriveShareSync'     => 1,
+            '@synopkg'     => 1,
+            '@synovideostation'           => 1,
             '@tmp'         => 1,   # system temporary files
             'upd@te'       => 1,   # firmware update temporary directory
             '#recycle'     => 1,
