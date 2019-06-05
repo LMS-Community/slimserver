@@ -93,11 +93,13 @@ sub ignoredItems
             '@database'    => 1,   # databases store
             '@download'    => 1,
             '@eaDir'       => 1,   # media indexer meta data
+            '@img_bkp_cache' => 1,
             '@maillog'     => 1,
             '@MailScanner' => 1,
             '@optware'     => 1,   # NSLU2-Linux Optware system
             '@postfix'     => 1,
             '@S2S'         => 1,
+            '@sharesnap'   => 1,
             '@spool'       => 1,   # mail/print/.. spool
             '@SynoFinder-log'             => 1,
             '@synodlvolumeche.core'       => 1,
