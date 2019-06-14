@@ -12,6 +12,7 @@ package Slim::Plugin::RandomPlay::DontStopTheMusic;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Plugin::DontStopTheMusic::Plugin;
@@ -65,6 +66,12 @@ sub mixWithGenres {
 
 	my %genres;
 	foreach my $track (@{ Slim::Player::Playlist::playList($client) }) {
+		if (!blessed $track) {
+			$track = Slim::Schema->objectForUrl($track);
+		}
+
+		next unless blessed $track;
+
 		if ( $track->remote ) {
 			$genres{$track->genre}++ if $track->genre;
 		}
