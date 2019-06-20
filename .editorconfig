@@ -1,0 +1,5 @@
+root = true
+
+[*.p[lm]]
+indent_style = tab
+indent_size = 8
