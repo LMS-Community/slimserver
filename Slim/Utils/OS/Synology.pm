@@ -5,35 +5,20 @@ package Slim::Utils::OS::Synology;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 #
-# This module written by Philippe Kehl <phkehl at gmx dot net>
-#
-# Synology DiskStation (DS) include a wide range of NAS devices based on
-# several architectures (PPC, ARM, PPCe500v2, ARMv5, and maybe others). They
-# all use a custom and minimal Linux system (Linux 2.6 based). There are (to my
-# knowledge) three options to run Logitech Media Server on these devices:
-#
-# 1) flipflip's SlimServer on DiskStation (SSODS) provides a system
-#    (libc, Perl, tools etc.) spcifically to run Logitech Media Server.
-# 2) Synology recently added Perl to its standard system and provides an
-#    add-on Logitech Media Server package (via the DSM Package Management).
-# 3) "Optware", a package for feed for numerous add-on packages from the
-#    NSLU2-Linux project, provides a Logitech Media Server package and its dependencies.
-#
-# This module is trying to provide customisations for all these options.
+# This module was initially written by Philippe Kehl <phkehl at gmx dot net>
 
 use strict;
 
 use Config;
-use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 
 use base qw(Slim::Utils::OS::Linux);
 
 use constant MAX_LOGSIZE => 1024*1024*1; # maximum log size: 1 MB
+use constant MUSIC_DIR   => '/volume1/music';
+use constant PHOTOS_DIR  => '/volume1/photo';
+use constant VIDEOS_DIR  => '/volume1/video';
 
-
-sub initDetails
-{
+sub initDetails {
 	my $class = shift;
 
 	$class->{osDetails} = $class->SUPER::initDetails();
@@ -41,24 +26,19 @@ sub initDetails
 
 	$class->{osDetails}->{isDiskStation} = 1;
 
-	# check how this Logitech Media Server is run on the DiskStation
-	if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
-		&& "@INC" =~ m{/volume1/SSODS/lib/perl})
-	{
-		$class->{osDetails}->{isSSODS} = 1;
-		$class->{osDetails}->{osName} .= ' (SSODS)';
-	}
-	elsif (-d '/opt/share/squeezecenter'
-		&& "@INC" =~ m{/opt/lib/perl})
-	{
-		$class->{osDetails}->{isOptware} = 1;
-		$class->{osDetails}->{osName} .= ' (NSLU2-Linux Optware)';
-	}
-	elsif (-d '/volume1/@appstore/SqueezeCenter'
-		&& "@INC" =~ m{/usr/lib/perl})
-	{
-		$class->{osDetails}->{isSynology} = 1;
-		$class->{osDetails}->{osName} .= ' (DSM Package Management)';
+	if ( !main::RESIZER && !main::SCANNER ) {
+		open(my $versionInfo, '<', '/etc/VERSION') or warn "Can't open /etc/VERSION: $!";
+
+		if ($versionInfo) {
+			while (<$versionInfo>) {
+				if (/productversion="(.*?)"/i) {
+					$class->{osDetails}->{osName} = "Synology DSM $1";
+					last;
+				}
+			}
+
+			close $versionInfo;
+		};
 	}
 
 	return $class->{osDetails};
@@ -72,72 +52,94 @@ sub localeDetails {
 }
 
 
-sub logRotate
-{
+sub logRotate {
 	my $class   = shift;
 	my $dir     = shift || Slim::Utils::OSDetect::dirsFor('log');
 
-    # only keep small log files (1MB) because they are displayed
-    # (if at all) in a web interface
-    Slim::Utils::OS->logRotate($dir, MAX_LOGSIZE);
+	# only keep small log files (1MB) because they are displayed
+	# (if at all) in a web interface
+	Slim::Utils::OS->logRotate($dir, MAX_LOGSIZE);
+}
+
+sub dirsFor {
+	my ($class, $dir) = @_;
+
+	my @dirs = $class->SUPER::dirsFor($dir);
+
+	if ($dir =~ /^(?:music|videos|pictures)$/) {
+		my $mediaDir;
+
+		if ($dir eq 'music' && -d MUSIC_DIR) {
+			$mediaDir = MUSIC_DIR;
+		}
+		# elsif ($dir eq 'videos' && -d VIDEOS_DIR) {
+		# 	$mediaDir = VIDEOS_DIR;
+		# }
+		# elsif ($dir eq 'pictures' && -d PHOTOS_DIR) {
+		# 	$mediaDir = PHOTOS_DIR;
+		# }
+
+		push @dirs, $mediaDir if $mediaDir;
+	}
+
+	return wantarray() ? @dirs : $dirs[0];
 }
 
 
-sub ignoredItems
-{
+sub ignoredItems {
 	return (
-            '@appstore'    => 1,   # Synology package manager
-            '@autoupdate'  => 1,
-            '@clamav'      => 1,
-            '@cloudsync'   => 1,
-            '@database'    => 1,   # databases store
-            '@download'    => 1,
-            '@eaDir'       => 1,   # media indexer meta data
-            '@img_bkp_cache' => 1,
-            '@maillog'     => 1,
-            '@MailScanner' => 1,
-            '@optware'     => 1,   # NSLU2-Linux Optware system
-            '@postfix'     => 1,
-            '@S2S'         => 1,
-            '@sharesnap'   => 1,
-            '@spool'       => 1,   # mail/print/.. spool
-            '@SynoFinder-log'             => 1,
-            '@synodlvolumeche.core'       => 1,
-            '@SynologyApplicationService' => 1,
-            '@synologydrive'              => 1,
-            '@SynologyDriveShareSync'     => 1,
-            '@synopkg'     => 1,
-            '@synovideostation'           => 1,
-            '@tmp'         => 1,   # system temporary files
-            'upd@te'       => 1,   # firmware update temporary directory
-            '#recycle'     => 1,
-            # system paths in the fs root which will not contain any music
-            'bin'          => '/',
-            'config'       => '/',
-            'dev'          => '/',
-            'etc'          => '/',
-            'etc.defaults' => '/',
-            'home'         => '/',
-            'initrd'       => '/',
-            'lib'          => '/',
-            'lib32'        => '/',
-            'lib64'        => '/',
-            'linuxrc'      => '/',
-            'lost+found'   => 1,
-            'mnt'          => '/',
-            'opt'          => '/',
-            'proc'         => '/',
-            'root'         => '/',
-            'run'          => '/',
-            'sbin'         => '/',
-            'sys'          => '/',
-            'tmp'          => '/',
-            'usr'          => '/',
-            'var'          => '/',
-            'var.defaults' => '/',
-            # now only the data partition mount points /volume(|USB)[0-9]
-            # should remain
-           );
+		'@appstore'      => 1,   # Synology package manager
+		'@autoupdate'    => 1,
+		'@clamav'        => 1,
+		'@cloudsync'     => 1,
+		'@database'      => 1,   # databases store
+		'@download'      => 1,
+		'@eaDir'         => 1,   # media indexer meta data
+		'@img_bkp_cache' => 1,
+		'@maillog'     => 1,
+		'@MailScanner' => 1,
+		'@optware'     => 1,   # NSLU2-Linux Optware system
+		'@postfix'     => 1,
+		'@S2S'         => 1,
+		'@sharesnap'   => 1,
+		'@spool'       => 1,   # mail/print/.. spool
+		'@SynoFinder-log'             => 1,
+		'@synodlvolumeche.core'       => 1,
+		'@SynologyApplicationService' => 1,
+		'@synologydrive'              => 1,
+		'@SynologyDriveShareSync'     => 1,
+		'@synopkg'     => 1,
+		'@synovideostation'           => 1,
+		'@tmp'         => 1,   # system temporary files
+		'upd@te'       => 1,   # firmware update temporary directory
+		'#recycle'     => 1,
+		# system paths in the fs root which will not contain any music
+		'bin'          => '/',
+		'config'       => '/',
+		'dev'          => '/',
+		'etc'          => '/',
+		'etc.defaults' => '/',
+		'home'         => '/',
+		'initrd'       => '/',
+		'lib'          => '/',
+		'lib32'        => '/',
+		'lib64'        => '/',
+		'linuxrc'      => '/',
+		'lost+found'   => 1,
+		'mnt'          => '/',
+		'opt'          => '/',
+		'proc'         => '/',
+		'root'         => '/',
+		'run'          => '/',
+		'sbin'         => '/',
+		'sys'          => '/',
+		'tmp'          => '/',
+		'usr'          => '/',
+		'var'          => '/',
+		'var.defaults' => '/',
+		# now only the data partition mount points /volume(|USB)[0-9]
+		# should remain
+	);
 }
 
 1;
