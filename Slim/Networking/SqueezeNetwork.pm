@@ -439,26 +439,6 @@ sub _createHTTPRequest {
 		return;
 	}
 
-=pod
-	# when dealing with an https url, wrap the error handler in some code to fall back to http on failure
-	if ($url =~ /^https:/) {
-		my $ecb = $self->ecb;
-
-		$self->ecb(sub {
-			my ($self, $error) = @_;
-
-			# XXX - fallback should probably only be used if we failed du to some https issue
-			# Connect timed out: Connection refused - https not available on server
-			$log->error("Failed to fetch $url: $error");
-			$url =~ s/^https:/http:/;
-			$log->warn("https lookup failed - trying plain text http instead: $url");
-
-			$self->ecb($ecb);
-			$self->SUPER::_createHTTPRequest( $type, $url, @args);
-		});
-	}
-=cut
-
 	$self->SUPER::_createHTTPRequest( $type, $url, @args );
 }
 

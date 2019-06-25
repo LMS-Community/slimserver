@@ -142,16 +142,9 @@ sub get {
 		my ($http, $error) = @_;
 
 		my $url = $http->url;
-
 		$log->error("Failed to fetch $url: $error");
 
-		if ($url =~ s/^(http)s:/$1:/) {
-			$log->warn("https lookup failed - trying plain text http instead: $url");
-			Slim::Networking::SimpleAsyncHTTP->new($cb, $ecb, $params)->get($url);
-		}
-		else {
-			$ecb->($http, $error)
-		}
+		$ecb->($http, $error);
 	}, $params)->get( $url );
 }
 
