@@ -116,6 +116,8 @@ sub new_socket {
 
 			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} = $args{Host};
+			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE()
+                            if $prefs->get('insecureHTTPS');
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
 			}
