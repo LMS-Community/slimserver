@@ -1,0 +1,514 @@
+=head1 NAME
+
+DBD::SQLite::Fulltext_search - Using fulltext searches with DBD::SQLite
+
+=head1 DESCRIPTION
+
+=head2 Introduction
+
+SQLite is bundled with an extension module called "FTS" for full-text
+indexing. Tables with this feature enabled can be efficiently queried
+to find rows that contain one or more instances of some specified
+words (also called "tokens"), in any column, even if the table contains many
+large documents.
+
+The first full-text search modules for SQLite were called C<FTS1> and C<FTS2>
+and are now obsolete. The latest version is C<FTS4>, but it shares many
+features with the former module C<FTS3>, which is why parts of the 
+API and parts of the documentation still refer to C<FTS3>; from a client
+point of view, both can be considered largely equivalent.
+Detailed documentation can be found
+at L<http://www.sqlite.org/fts3.html>.
+
+=head2 Short example
+
+Here is a very short example of using FTS :
+
+  $dbh->do(<<"") or die DBI::errstr;
+  CREATE VIRTUAL TABLE fts_example USING fts4(content)
+  
+  my $sth = $dbh->prepare("INSERT INTO fts_example(content) VALUES (?)");
+  $sth->execute($_) foreach @docs_to_insert;
+  
+  my $results = $dbh->selectall_arrayref(<<"");
+  SELECT docid, snippet(fts_example) FROM fts_example WHERE content MATCH 'foo'
+
+The key points in this example are :
+
+=over
+
+=item *
+
+The syntax for creating FTS tables is 
+
+  CREATE VIRTUAL TABLE <table_name> USING fts4(<columns>)
+
+where C<< <columns> >> is a list of column names. Columns may be
+typed, but the type information is ignored. If no columns
+are specified, the default is a single column named C<content>.
+In addition, FTS tables have an implicit column called C<docid>
+(or also C<rowid>) for numbering the stored documents.
+
+=item *
+
+Statements for inserting, updating or deleting records 
+use the same syntax as for regular SQLite tables.
+
+=item *
+
+Full-text searches are specified with the C<MATCH> operator, and an
+operand which may be a single word, a word prefix ending with '*', a
+list of words, a "phrase query" in double quotes, or a boolean combination
+of the above.
+
+=item *
+
+The builtin function C<snippet(...)> builds a formatted excerpt of the
+document text, where the words pertaining to the query are highlighted.
+
+=back
+
+There are many more details to building and searching
+FTS tables, so we strongly invite you to read
+the full documentation at L<http://www.sqlite.org/fts3.html>.
+
+
+=head1 QUERY SYNTAX
+
+Here are some explanation about FTS queries, borrowed from 
+the sqlite documentation.
+
+=head2 Token or token prefix queries
+
+An FTS table may be queried for all documents that contain a specified
+term, or for all documents that contain a term with a specified
+prefix. The query expression for a specific term is simply the term
+itself. The query expression used to search for a term prefix is the
+prefix itself with a '*' character appended to it. For example:
+
+  -- Virtual table declaration
+  CREATE VIRTUAL TABLE docs USING fts3(title, body);
+  
+  -- Query for all documents containing the term "linux":
+  SELECT * FROM docs WHERE docs MATCH 'linux';
+  
+  -- Query for all documents containing a term with the prefix "lin".
+  SELECT * FROM docs WHERE docs MATCH 'lin*';
+
+If a search token (on the right-hand side of the MATCH operator) 
+begins with "^" then that token must be the first in its field of
+the document : so for example C<^lin*> matches
+'linux kernel changes ...' but does not match 'new linux implementation'.
+
+
+=head2 Column specifications
+
+Normally, a token or token prefix query is matched against the FTS
+table column specified as the right-hand side of the MATCH
+operator. Or, if the special column with the same name as the FTS
+table itself is specified, against all columns. This may be overridden
+by specifying a column-name followed by a ":" character before a basic
+term query. There may be space between the ":" and the term to query
+for, but not between the column-name and the ":" character. For
+example:
+
+  -- Query the database for documents for which the term "linux" appears in
+  -- the document title, and the term "problems" appears in either the title
+  -- or body of the document.
+  SELECT * FROM docs WHERE docs MATCH 'title:linux problems';
+
+  -- Query the database for documents for which the term "linux" appears in
+  -- the document title, and the term "driver" appears in the body of the document
+  -- ("driver" may also appear in the title, but this alone will not satisfy the.
+  -- query criteria).
+  SELECT * FROM docs WHERE body MATCH 'title:linux driver';
+
+=head2 Phrase queries
+
+A phrase query is a query that retrieves all documents that contain a
+nominated set of terms or term prefixes in a specified order with no
+intervening tokens. Phrase queries are specified by enclosing a space
+separated sequence of terms or term prefixes in double quotes ("). For
+example:
+
+  -- Query for all documents that contain the phrase "linux applications".
+  SELECT * FROM docs WHERE docs MATCH '"linux applications"';
+
+  -- Query for all documents that contain a phrase that matches "lin* app*". 
+  -- As well as "linux applications", this will match common phrases such 
+  -- as "linoleum appliances" or "link apprentice".
+  SELECT * FROM docs WHERE docs MATCH '"lin* app*"';
+
+=head2 NEAR queries.
+
+A NEAR query is a query that returns documents that contain a two or
+more nominated terms or phrases within a specified proximity of each
+other (by default with 10 or less intervening terms). A NEAR query is
+specified by putting the keyword "NEAR" between two phrase, term or
+prefix queries. To specify a proximity other than the default, an
+operator of the form "NEAR/<N>" may be used, where <N> is the maximum
+number of intervening terms allowed. For example:
+
+  -- Virtual table declaration.
+  CREATE VIRTUAL TABLE docs USING fts4();
+
+  -- Virtual table data.
+  INSERT INTO docs VALUES('SQLite is an ACID compliant embedded relational database management system');
+
+  -- Search for a document that contains the terms "sqlite" and "database" with
+  -- not more than 10 intervening terms. This matches the only document in
+  -- table docs (since there are only six terms between "SQLite" and "database" 
+  -- in the document).
+  SELECT * FROM docs WHERE docs MATCH 'sqlite NEAR database';
+
+  -- Search for a document that contains the terms "sqlite" and "database" with
+  -- not more than 6 intervening terms. This also matches the only document in
+  -- table docs. Note that the order in which the terms appear in the document
+  -- does not have to be the same as the order in which they appear in the query.
+  SELECT * FROM docs WHERE docs MATCH 'database NEAR/6 sqlite';
+
+  -- Search for a document that contains the terms "sqlite" and "database" with
+  -- not more than 5 intervening terms. This query matches no documents.
+  SELECT * FROM docs WHERE docs MATCH 'database NEAR/5 sqlite';
+
+  -- Search for a document that contains the phrase "ACID compliant" and the term
+  -- "database" with not more than 2 terms separating the two. This matches the
+  -- document stored in table docs.
+  SELECT * FROM docs WHERE docs MATCH 'database NEAR/2 "ACID compliant"';
+
+  -- Search for a document that contains the phrase "ACID compliant" and the term
+  -- "sqlite" with not more than 2 terms separating the two. This also matches
+  -- the only document stored in table docs.
+  SELECT * FROM docs WHERE docs MATCH '"ACID compliant" NEAR/2 sqlite';
+
+More than one NEAR operator may appear in a single query. In this case
+each pair of terms or phrases separated by a NEAR operator must appear
+within the specified proximity of each other in the document. Using
+the same table and data as in the block of examples above:
+
+  -- The following query selects documents that contains an instance of the term 
+  -- "sqlite" separated by two or fewer terms from an instance of the term "acid",
+  -- which is in turn separated by two or fewer terms from an instance of the term
+  -- "relational".
+  SELECT * FROM docs WHERE docs MATCH 'sqlite NEAR/2 acid NEAR/2 relational';
+
+  -- This query matches no documents. There is an instance of the term "sqlite" with
+  -- sufficient proximity to an instance of "acid" but it is not sufficiently close
+  -- to an instance of the term "relational".
+  SELECT * FROM docs WHERE docs MATCH 'acid NEAR/2 sqlite NEAR/2 relational';
+
+Phrase and NEAR queries may not span multiple columns within a row.
+
+=head2 Set operations
+
+The three basic query types described above may be used to query the
+full-text index for the set of documents that match the specified
+criteria. Using the FTS query expression language it is possible to
+perform various set operations on the results of basic queries. There
+are currently three supported operations:
+
+=over
+
+=item *
+
+The AND operator determines the intersection of two sets of documents.
+
+=item * 
+
+The OR operator calculates the union of two sets of documents.
+
+=item *
+
+The NOT operator may be used to compute the relative complement of one
+set of documents with respect to another.
+
+=back
+
+
+The AND, OR and NOT binary set operators must be entered using capital
+letters; otherwise, they are interpreted as basic term queries instead
+of set operators.  Each of the two operands to an operator may be a
+basic FTS query, or the result of another AND, OR or NOT set
+operation. Parenthesis may be used to control precedence and grouping.
+
+The AND operator is implicit for adjacent basic queries without any
+explicit operator. For example, the query expression "implicit
+operator" is a more succinct version of "implicit AND operator".
+
+Boolean operations as just described correspond to the so-called
+"enhanced query syntax" of sqlite; this is the version compiled 
+with C<DBD::SQLite>, starting from version 1.31.
+A former version, called the "standard query syntax", used to
+support tokens prefixed with '+' or '-' signs (for token inclusion
+or exclusion); if your application needs to support this old
+syntax, use  L<DBD::SQLite::FTS3Transitional> (published
+in a separate distribution) for doing the conversion.
+
+=head1 TOKENIZERS
+
+=head2 Concept
+
+The behaviour of full-text indexes strongly depends on how
+documents are split into I<tokens>; therefore FTS table
+declarations can explicitly specify how to perform
+tokenization: 
+
+  CREATE ... USING fts4(<columns>, tokenize=<tokenizer>)
+
+where C<< <tokenizer> >> is a sequence of space-separated
+words that triggers a specific tokenizer. Tokenizers can
+be SQLite builtins, written in C code, or Perl tokenizers.
+Both are as explained below.
+
+=head2 SQLite builtin tokenizers
+
+SQLite comes with some builtin tokenizers (see
+L<http://www.sqlite.org/fts3.html#tokenizer>) :
+
+=over
+
+=item simple
+
+Under the I<simple> tokenizer, a term is a contiguous sequence of
+eligible characters, where eligible characters are all alphanumeric
+characters, the "_" character, and all characters with UTF codepoints
+greater than or equal to 128. All other characters are discarded when
+splitting a document into terms. They serve only to separate adjacent
+terms.
+
+All uppercase characters within the ASCII range (UTF codepoints less
+than 128), are transformed to their lowercase equivalents as part of
+the tokenization process. Thus, full-text queries are case-insensitive
+when using the simple tokenizer.
+
+=item porter
+
+The I<porter> tokenizer uses the same rules to separate the input
+document into terms, but as well as folding all terms to lower case it
+uses the Porter Stemming algorithm to reduce related English language
+words to a common root.
+
+=item icu
+
+The I<icu> tokenizer uses the ICU library to decide how to
+identify word characters in different languages; however, this
+requires SQLite to be compiled with the C<SQLITE_ENABLE_ICU>
+pre-processor symbol defined. So, to use this tokenizer, you need
+edit F<Makefile.PL> to add this flag in C<@CC_DEFINE>, and then
+recompile C<DBD::SQLite>; of course, the prerequisite is to have
+an ICU library available on your system.
+
+=item unicode61
+
+The I<unicode61> tokenizer works very much like "simple" except that it
+does full unicode case folding according to rules in Unicode Version
+6.1 and it recognizes unicode space and punctuation characters and
+uses those to separate tokens. By contrast, the simple tokenizer only
+does case folding of ASCII characters and only recognizes ASCII space
+and punctuation characters as token separators.
+
+By default, "unicode61" also removes all diacritics from Latin script
+characters. This behaviour can be overridden by adding the tokenizer
+argument C<"remove_diacritics=0">. For example:
+
+  -- Create tables that remove diacritics from Latin script characters
+  -- as part of tokenization.
+  CREATE VIRTUAL TABLE txt1 USING fts4(tokenize=unicode61);
+  CREATE VIRTUAL TABLE txt2 USING fts4(tokenize=unicode61 "remove_diacritics=1");
+
+  -- Create a table that does not remove diacritics from Latin script
+  -- characters as part of tokenization.
+  CREATE VIRTUAL TABLE txt3 USING fts4(tokenize=unicode61 "remove_diacritics=0");
+
+Additional options can customize the set of codepoints that unicode61
+treats as separator characters or as token characters -- see the
+documentation in L<http://www.sqlite.org/fts3.html#unicode61>.
+
+=back
+
+If a more complex tokenizing algorithm is required, for example to
+implement stemming, discard punctuation, or to recognize compound words,
+use the perl tokenizer to implement your own logic, as explained below.
+
+=head2 Perl tokenizers
+
+=head3 Declaring a perl tokenizer
+
+In addition to the builtin SQLite tokenizers, C<DBD::SQLite>
+implements a I<perl> tokenizer, that can hook to any tokenizing
+algorithm written in Perl. This is specified as follows :
+
+  CREATE ... USING fts4(<columns>, tokenize=perl '<perl_function>')
+
+where C<< <perl_function> >> is a fully qualified Perl function name
+(i.e. prefixed by the name of the package in which that function is
+declared). So for example if the function is C<my_func> in the main 
+program, write
+
+  CREATE ... USING fts4(<columns>, tokenize=perl 'main::my_func')
+
+=head3 Writing a perl tokenizer by hand
+
+That function should return a code reference that takes a string as
+single argument, and returns an iterator (another function), which
+returns a tuple C<< ($term, $len, $start, $end, $index) >> for each
+term. Here is a simple example that tokenizes on words according to
+the current perl locale
+
+  sub locale_tokenizer {
+    return sub {
+      my $string = shift;
+
+      use locale;
+      my $regex      = qr/\w+/;
+      my $term_index = 0;
+
+      return sub { # closure
+        $string =~ /$regex/g or return; # either match, or no more token
+        my ($start, $end) = ($-[0], $+[0]);
+        my $len           = $end-$start;
+        my $term          = substr($string, $start, $len);
+        return ($term, $len, $start, $end, $term_index++);
+      }
+    };
+  }
+
+There must be three levels of subs, in a kind of "Russian dolls" structure,
+because :
+
+=over
+
+=item *
+
+the external, named sub is called whenever accessing a FTS table
+with that tokenizer
+
+=item *
+
+the inner, anonymous sub is called whenever a new string
+needs to be tokenized (either for inserting new text into the table,
+or for analyzing a query).
+
+=item *
+
+the innermost, anonymous sub is called repeatedly for retrieving
+all terms within that string.
+
+=back
+
+
+
+
+=head3 Using Search::Tokenizer
+
+Instead of writing tokenizers by hand, you can grab one of those
+already implemented in the L<Search::Tokenizer> module. For example,
+if you want ignore differences between accented characters, you can
+write :
+
+  use Search::Tokenizer;
+  $dbh->do(<<"") or die DBI::errstr;
+  CREATE ... USING fts4(<columns>, 
+                        tokenize=perl 'Search::Tokenizer::unaccent')
+
+Alternatively, you can use L<Search::Tokenizer/new> to build
+your own tokenizer. Here is an example that treats compound
+words (words with an internal dash or dot) as single tokens :
+
+  sub my_tokenizer {
+    return Search::Tokenizer->new(
+      regex => qr{\p{Word}+(?:[-./]\p{Word}+)*},
+     );
+  }
+
+
+=head1 Fts4aux - Direct Access to the Full-Text Index
+
+The content of a full-text index can be accessed through the
+virtual table module "fts4aux". For example, assuming that
+our database contains a full-text indexed table named "ft",
+we can declare :
+
+  CREATE VIRTUAL TABLE ft_terms USING fts4aux(ft)
+
+and then query the C<ft_terms> table to access the
+list of terms, their frequency, etc.
+Examples are documented in
+L<http://www.sqlite.org/fts3.html#fts4aux>.
+
+
+=head1 How to spare database space
+
+By default, FTS stores a complete copy of the indexed documents,
+together with the fulltext index. On a large collection of documents,
+this can consume quite a lot of disk space. However, FTS has some
+options for compressing the documents, or even for not storing them at
+all -- see L<http://www.sqlite.org/fts3.html#fts4_options>. 
+
+In particular, the option for I<contentless FTS tables> only stores
+the fulltext index, without the original document content. This is
+specified as C<content="">, like in the following example :
+
+  CREATE VIRTUAL TABLE t1 USING fts4(content="", a, b)
+
+Data can be inserted into such an FTS4 table using an INSERT
+statements. However, unlike ordinary FTS4 tables, the user must supply
+an explicit integer docid value. For example:
+
+  -- This statement is Ok:
+  INSERT INTO t1(docid, a, b) VALUES(1, 'a b c', 'd e f');
+
+  -- This statement causes an error, as no docid value has been provided:
+  INSERT INTO t1(a, b) VALUES('j k l', 'm n o');
+
+Of course your application will need an algorithm for finding
+the external resource corresponding to any I<docid> stored within
+SQLite.
+
+When using placeholders, the docid must be explicitly typed to 
+INTEGER, because this is a "hidden column" for which sqlite 
+is not able to automatically infer the proper type. So the following
+doesn't work :
+
+  my $sth = $dbh->prepare("INSERT INTO t1(docid, a, b) VALUES(?, ?, ?)");
+  $sth->execute(2, 'aa', 'bb'); # constraint error
+
+but it works with an explicitly cast  :
+
+  my $sql = "INSERT INTO t1(docid, a, b) VALUES(CAST(? AS INTEGER), ?, ?)",
+  my $sth = $dbh->prepare(sql);
+  $sth->execute(2, 'aa', 'bb');
+
+or with an explicitly typed L<DBI/bind_param> :
+
+  use DBI qw/SQL_INTEGER/;
+  my $sql = "INSERT INTO t1(docid, a, b) VALUES(?, ?, ?)";
+  my $sth = $dbh->prepare(sql);
+  $sth->bind_param(1, 2, SQL_INTEGER);
+  $sth->bind_param(2, "aa");
+  $sth->bind_param(3, "bb");
+  $sth->execute();
+
+It is not possible to UPDATE or DELETE a row stored in a contentless
+FTS4 table. Attempting to do so is an error.
+
+Contentless FTS4 tables also support SELECT statements. However, it is
+an error to attempt to retrieve the value of any table column other
+than the docid column. The auxiliary function C<matchinfo()> may be
+used, but C<snippet()> and C<offsets()> may not, so if such
+functionality is needed, it has to be directly programmed within the
+Perl application.
+
+=head1 AUTHOR
+
+Laurent Dami E<lt>dami@cpan.orgE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2014 Laurent Dami.
+
+Some parts borrowed from the L<http://sqlite.org> documentation, copyright 2014.
+
+This documentation is in the public domain; you can redistribute
+it and/or modify it under the same terms as Perl itself.
+
