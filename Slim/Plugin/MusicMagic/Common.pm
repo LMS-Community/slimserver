@@ -70,13 +70,15 @@ sub checkDefaults {
 		playlist_prefix => '',
 		playlist_suffix => '',
 		scan_interval   => 3600,
+		host            => 'localhost',		
 		port            => 10002,
 	}, 'Slim::Plugin::MusicMagic::Prefs');
 }
 
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
-	
+
+	my $MMShost = $prefs->get('host');
 	my $MMSport = $prefs->get('port');
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -96,7 +98,7 @@ sub grabFilters {
 		}
 	);
 
-	$http->get( "http://localhost:$MMSport/api/filters" );
+	$http->get( "http://$MMShost:$MMSport/api/filters" );
 }
 
 sub getFilterList {

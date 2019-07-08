@@ -33,6 +33,7 @@ use Slim::Utils::Favorites;
 use constant MENU_WEIGHT => 95;
 
 my $initialized = 0;
+my $MMShost;
 my $MMSport;
 my $canPowerSearch;
 
@@ -144,7 +145,7 @@ sub initPlugin {
 
 	my $response = _syncHTTPRequest("/api/version");
 
-	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
+	main::INFOLOG && $log->info("Testing for API on $MMShost:$MMSport");
 
 	if ($response->is_error) {
 
@@ -152,7 +153,7 @@ sub initPlugin {
 		
 		$prefs->set('musicip', 0) if !defined $enabled;
 
-		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
+		$log->error("Can't connect to port $MMSport on $MMShost - MusicIP disabled.");
 
 	} else {
 
@@ -412,7 +413,7 @@ sub isMusicLibraryFileChanged {
 		},
 	);
 	
-	$http->get( "http://localhost:$MMSport/api/cacheid?contents" );
+	$http->get( "http://$MMShost:$MMSport/api/cacheid?contents" );
 }
 
 sub _statusOK {
@@ -517,7 +518,7 @@ sub _cacheidOK {
 		},
 	);
 	
-	$http->get( "http://localhost:$MMSport/api/getStatus" );
+	$http->get( "http://$MMShost:$MMSport/api/getStatus" );
 }
 
 sub _musicipError {
@@ -878,7 +879,7 @@ sub getMix {
 	# url encode the request, but not the argstring
 	my $mixArgs = $validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
 	
-	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
+	main::DEBUGLOG && $log->debug("Request http://$MMShost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
 
@@ -1417,13 +1418,14 @@ sub _objectInfoHandler {
 sub _syncHTTPRequest {
 	my $url = shift;
 	
+	$MMShost = $prefs->get('host') unless $MMShost;	
 	$MMSport = $prefs->get('port') unless $MMSport;
 	
 	my $http = LWP::UserAgent->new;
 
 	$http->timeout($prefs->get('timeout') || 5);
 
-	return $http->get("http://localhost:$MMSport$url");
+	return $http->get("http://$MMShost:$MMSport$url");
 }
 
 # This method is used for the in-process rescanner to update mixable status
@@ -1435,7 +1437,7 @@ sub checkSingleTrack {
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
 	
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
-	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	my $apiurl = "http://$MMShost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
 	
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {

@@ -542,6 +542,23 @@ SETUP_MUSICMAGICSCANINTERVAL_DESC
 	SV	När din MusicIP-databas ändras importeras biblioteksinformationen automatiskt till Logitech Media Server. Du kan ange en minimitid (i sekunder) som Logitech Media Server ska vänta mellan varje gång informationen från MusicIP-databasen uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的MusicIP数据库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
+SETUP_MMSHOST
+	CS	HTTP host MusicIP
+	DA	MusicIP HTTP-host
+	DE	MusicIP - HTTP-Host
+	EN	MusicIP HTTP Host
+	ES	Host HTTP de MusicIP
+	FI	MusicIP HTTP-isäntä
+	FR	Host HTTP MusicIP
+	HE	יציאמארמארח HTTP עבור MusicIP
+	IT	Host HTTP MusicIP
+	NL	MusicIP-HTTP-host
+	NO	Http-host for MusicIP
+	PL	Host HTTP usługi MusicIP
+	RU	HTTP-host MusicIP
+	SV	HTTP-host för MusicIP
+	ZH_CN	MusicIP HTTP主机
+
 SETUP_MMSPORT
 	CS	HTTP port MusicIP
 	DA	MusicIP HTTP-port
@@ -558,6 +575,23 @@ SETUP_MMSPORT
 	RU	HTTP-порт MusicIP
 	SV	HTTP-port för MusicIP
 	ZH_CN	MusicIP HTTP端口
+
+SETUP_MMSHOST_DESC
+	CS	Název hostitele počítače, na kterém je služba MusicIP spuštěna (výchozí nastavení pro stejný hostitel jako server Logitech Media Server, 'localhost')
+	DA	Værtsnavnet på den maskine, som MusicIP-tjenesten kører på (som standard til samme vært som Logitech Media Server, 'localhost')
+	DE	Der Hostname des Computers, auf dem der MusicIP-Dienst ausgeführt wird (standardmäßig derselbe Host wie der Logitech Media Server, 'localhost')
+	EN	The hostname of the machine that the MusicIP Service is running on (defaults to the same host as Logitech Media Server, 'localhost')
+	ES	El nombre de host de la máquina en la que se está ejecutando el servicio MusicIP (predeterminado para el mismo host que Logitech Media Server, 'localhost')
+	FI	Sen laitteen isäntänimi, johon MusicIP-palvelu on käynnissä (oletusarvo on sama isäntä kuin Logitech Media Server, 'localhost')
+	FR	Nom d'hôte de la machine sur laquelle le service MusicIP est exécuté (par défaut, le même hôte que Logitech Media Server, 'localhost')
+	HE	שם המארח של המכונה שבו שירות MusicIP פועל (ברירות מחדל לאותו מארח כמו Logitech Media Server, 'localhost')
+	IT	Il nome host della macchina su cui è in esecuzione il servizio MusicIP (predefinito sullo stesso host di Logitech Media Server, 'localhost')
+	NL	De hostnaam van de machine waarop de MusicIP-service wordt uitgevoerd (standaard ingesteld op dezelfde host als Logitech Media Server, 'localhost')
+	NO	Vertsnavnet til maskinen som MusicIP-tjenesten kjører på (standard til samme vert som Logitech Media Server, 'localhost')
+	PL	Nazwa hosta komputera, na którym uruchomiona jest usługa MusicIP (domyślnie jest to ten sam host, na którym znajduje się serwer Logitech Media Server, „localhost”)
+	RU	Имя хоста компьютера, на котором запущена служба MusicIP (по умолчанию тот же хост, что и у Logitech Media Server, «localhost»)
+	SV	Ime gostitelja računalnika, na katerem se izvaja storitev MusicIP (privzeto je isti gostitelj kot Logitech Media Server, 'localhost')
+	ZH_CN	运行MusicIP服务的计算机的主机名（默认为与Logitech Media Server相同的主机，'localhost'）
 
 SETUP_MMSPORT_DESC
 	CS	Služba API MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení Mixéru Music IP.

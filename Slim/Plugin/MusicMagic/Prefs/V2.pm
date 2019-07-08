@@ -13,6 +13,7 @@ sub migrate {
 		$prefs->set('musicip',         $oldPrefs->get('musicmagic'));
 		$prefs->set('scan_interval',   $oldPrefs->get('scan_interval') || 3600          );
 		$prefs->set('player_settings', $oldPrefs->get('player_settings') || 0           );
+		$prefs->set('host',            $oldPrefs->get('host') || 'localhost'            );		
 		$prefs->set('port',            $oldPrefs->get('port') || 10002                  );
 		$prefs->set('mix_filter',      $oldPrefs->get('mix_filter')                     );
 		$prefs->set('reject_size',     $oldPrefs->get('reject_size') || 0               );

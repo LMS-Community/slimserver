@@ -87,6 +87,12 @@
 			[% END %]
 		[% END %]
 
+		[% IF prefs.exists('pref_host') %]
+			[% WRAPPER settingGroup title="SETUP_MMSHOST" desc="SETUP_MMSHOST_DESC" %]
+				<input type="text" class="stdedit" name="pref_host" id="host" value="[% prefs.pref_host %]" size="15">
+			[% END %]
+		[% END %]
+
 		[% IF prefs.exists('pref_port') %]
 			[% WRAPPER settingGroup title="SETUP_MMSPORT" desc="SETUP_MMSPORT_DESC" %]
 				<input type="text" class="stdedit" name="pref_port" id="port" value="[% prefs.pref_port %]" size="5">
