@@ -50,7 +50,7 @@ sub getTag {
 	
 	my $info = $s->{info};
 	my $tags = $s->{tags};
-	
+
 	return unless $info->{song_length_ms};
 	
 	# skip files with video tracks
@@ -67,6 +67,7 @@ sub getTag {
 	$tags->{SECS}         = $info->{song_length_ms} / 1000;
 	$tags->{BITRATE}      = $info->{avg_bitrate};
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
+	$tags->{LEADING_MDAT} = $info->{leading_mdat} || undef;
 	
 	if ( my $track = $info->{tracks}->[0] ) {
 		# MP4 file
