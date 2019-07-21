@@ -11599,7 +11599,7 @@ ALC
 	SV	Apple Lossless
 
 ALCX
-	EN	Apple Lossless leading mdat
+	EN	Apple Lossless leading audio
 
 MOV
 	CS	Film QuickTime
@@ -11647,7 +11647,7 @@ MP4
 	SV	MPEG-4
 
 MP4X
-	EN	MPEG-4 leading mdat
+	EN	MPEG-4 leading audio
 
 SLS
 	CS	MPEG-4 SLS / HD-AAC
