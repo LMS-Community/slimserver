@@ -61,22 +61,7 @@ my $prefs = preferences('server');
 
 my $log = logger('player.ui');
 
-# TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
-our %browseCache = (); # remember where each client is browsing
-
 Slim::Buttons::Common::addMode('INPUT.Choice', getFunctions(), \&setMode);
-
-=head2 forgetClient ( $client )
-
-Clean up global hash when a client is gone
-
-=cut
-
-sub forgetClient {
-	my $client = shift;
-
-	delete $browseCache{ $client };
-}
 
 # get the value the user is currently referencing.
 # item could be hash, string or code
@@ -396,7 +381,7 @@ sub changePos {
 			$value = $value->{'value'};
 		}
 
-		$browseCache{$client}{$client->modeParam("modeName")} = $value;
+		$client->browseCache->{$client->modeParam("modeName")} = $value;
 	}
 }
 
@@ -564,7 +549,7 @@ sub init {
 		# if initialValue not provided, use the one we saved
 		if (!$initialValue && $client->modeParam("modeName")) {
 
-			$initialValue = $browseCache{$client}{$client->modeParam("modeName")};
+			$initialValue = $client->browseCache->{$client->modeParam("modeName")};
 		}
 
 		if ($initialValue) {

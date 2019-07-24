@@ -126,7 +126,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								curDepth lastLetterIndex lastLetterDigit lastLetterTime lastDigitIndex lastDigitTime searchFor
 								syncSelection _playPoint playPoints
 								jiffiesEpoch jiffiesOffsetList
-								_tempVolume musicInfoTextCache metaTitle languageOverride controlledBy controllerUA password currentSleepTime
+								_tempVolume browseCache musicInfoTextCache metaTitle languageOverride controlledBy controllerUA password currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								alarmData knobData
 								modeStack modeParameterStack playlist chunks
@@ -137,7 +137,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
 							));
-							
+
 	# modeParameterStack is called a lot, cache the index to avoid many accessor calls
 	$modeParameterStackIndex = __PACKAGE__->_slot('modeParameterStack');
 }
@@ -167,7 +167,7 @@ sub new {
 	if ( defined $uuid && $uuid =~ /0000000000/ ) {
 		$uuid = undef;
 	}
-	
+
 	$client->init_accessor(
 
 		# device identify
@@ -209,7 +209,7 @@ sub new {
 		#It is used to allow the player to act as the master for the locally maintained parameter.
 		sequenceNumber          => 0,
 
-		# The (controllerSequenceId, controllerSequenceNumber) tuple is used to enable synchronization of commands 
+		# The (controllerSequenceId, controllerSequenceNumber) tuple is used to enable synchronization of commands
 		# sent to the player via the server and via an additional, out-of-band mechanism (currently UDAP).
 		# It is used to enable the player to discard duplicate commands received via both channels.
 		controllerSequenceId    => undef,
@@ -251,7 +251,7 @@ sub new {
 		currentPlaylistRender   => undef,
 		_currentPlaylistUpdateTime => Time::HiRes::time(), # only changes to the playlist
 		_currentPlaylistChangeTime => undef,               # updated on song changes
-		
+
 		# display state
 		display                 => undef,
 		lines                   => undef,
@@ -283,15 +283,16 @@ sub new {
 		playPoints              => undef,              # set of (timeStamp, apparentStartTime) tuples to determine consistency
 		jiffiesEpoch            => undef,
 		jiffiesOffsetList       => [],                 # array tracking the relative deviations relative to our clock
-		
+
 		# alarm state
 		alarmData		=> {},			# Stored alarm data for this client.  Private.
-		
+
 		# Knob data
 		knobData		=> {},			# Stored knob data for this client
 
 		# other
 		_tempVolume             => undef,
+		browseCache             => {},
 		musicInfoTextCache      => undef,
 		metaTitle               => undef,
 		languageOverride        => undef,
@@ -304,14 +305,14 @@ sub new {
 		_pluginData             => {},
 		updatePending           => 0,
 		disconnected            => 0,
-	
+
 	);
-	
+
 	$clientHash{$id} = $client;
 
 	$client->controller(Slim::Player::StreamingController->new($client));
 
-	if (!main::SCANNER) {	
+	if (!main::SCANNER) {
 		Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
 	}
 
@@ -467,7 +468,7 @@ sub name {
 	return $name;
 }
 
-# If this player does not have a name set, then find the first 
+# If this player does not have a name set, then find the first
 # unused name from the sequence ("Name", "Name 2", "Name 3", ...),
 # where Name, is the result of the modelName() method. Consider
 # all the players ever known to this SC in finding an unused name.
@@ -482,7 +483,7 @@ sub _makeDefaultName {
 	foreach my $clientPref ( $prefs->allClients ) {
 		$existingName{ $clientPref->get('playername') || 'Squeezebox' } = 1;
 	}
-	
+
 	my $maxIndex = 0;
 
 	do {
@@ -533,29 +534,28 @@ the WebUI, nor will any it's timers be serviced anymore until it reconnects.
 
 sub forgetClient {
 	my $client = shift;
-	
+
 	if ($client) {
 		$client->controller()->unsync($client, 'keepSyncGroupId');
-		
+
 		$client->display->forgetDisplay();
-		
+
 		# Clean up global variables used in various modules
 		Slim::Buttons::Common::forgetClient($client);
 		Slim::Buttons::Home::forgetClient($client);
-		Slim::Buttons::Input::Choice::forgetClient($client);
 		Slim::Buttons::Playlist::forgetClient($client);
 		Slim::Utils::Alarm->forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
-		
+
 		if ( !main::SCANNER ) {
 			Slim::Web::HTTP::forgetClient($client);
 		}
-		
+
 		delete $clientHash{ $client->id };
-		
+
 		# stop watching this player
 		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
-		
+
 		# Bug 15860: Force the connection shut if it is not already
 		Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
 	}
@@ -575,7 +575,7 @@ sub startup {
 	my $syncgroupid = shift;
 
 	Slim::Player::Sync::restoreSync($client, $syncgroupid);
-	
+
 	# restore the old playlist
 	Slim::Player::Playlist::loadClientPlaylist($client, \&initial_add_done)
 }
@@ -604,11 +604,11 @@ sub initial_add_done {
 
 			$i++;
 		}
-		
+
 		$currsong = 0;
-		
+
 		$client->controller()->resetSongqueue($currsong);
-		
+
 	} elsif ($shuffleType eq 'album') {
 
 		# reshuffle set this properly, for album shuffle
@@ -955,27 +955,27 @@ Returns a pretty string for the current sleep time.
 
 Normally we simply return the time in minutes.
 
-For the case of stopping after the current song, 
+For the case of stopping after the current song,
 a friendly string is returned.
 
 =cut
 
 sub prettySleepTime {
 	my $client = shift;
-	
-	
+
+
 	my $sleeptime = $client->sleepTime() - Time::HiRes::time();
 	my $sleepstring = "";
-	
+
 	my $dur = $client->controller()->playingSongDuration() || 0;
 	my $remaining = 0;
-	
+
 	if ($dur) {
 		$remaining = $dur - Slim::Player::Source::songTime($client);
 	}
 
 	if ($client->sleepTime) {
-		
+
 		# check against remaining time to see if sleep time matches within a minute.
 		if (int($sleeptime/60 + 0.5) == int($remaining/60 + 0.5)) {
 			$sleepstring = $client->string('SLEEPING_AT_END_OF_SONG');
@@ -983,7 +983,7 @@ sub prettySleepTime {
 			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60 + 0.5),$client->string('MINUTES'));
 		}
 	}
-	
+
 	return $sleepstring;
 }
 
@@ -1035,7 +1035,7 @@ sub modeParam {
 
 sub modeParams {
 	my $client = shift;
-	
+
 	@_ ? $client->modeParameterStack()->[-1] = shift : $client->modeParameterStack()->[-1];
 }
 
@@ -1115,14 +1115,14 @@ sub streamingProgressBar {
 	my $log = logger('player.streaming');
 
 	my $url = $args->{'url'};
-	
+
 	# Duration specified directly (i.e. from a plugin)
 	my $duration = $args->{'duration'};
-	
+
 	# Duration can be calculated from bitrate + length
 	my $bitrate = $args->{'bitrate'};
 	my $length  = $args->{'length'};
-	
+
 	if (main::INFOLOG && $log->is_info) {
 		$log->info(sprintf("url=%s, duration=%s, bitrate=%s, contentLength=%s",
 			$url,
@@ -1131,9 +1131,9 @@ sub streamingProgressBar {
 			(defined($length) ? $length : 'undef'))
 		);
 	}
-	
+
 	my $secs;
-	
+
 	if ( $duration ) {
 		$secs = $duration;
 	}
@@ -1143,15 +1143,15 @@ sub streamingProgressBar {
 	else {
 		return;
 	}
-	
+
 	my %cacheEntry = (
 		'SECS' => $secs,
 	);
-	
+
 	Slim::Music::Info::updateCacheEntry( $url, \%cacheEntry );
-	
+
 	Slim::Music::Info::setDuration( $url, $secs );
-	
+
 	# Set the duration so the progress bar appears
 	if ( my $song = $client->streamingSong()) {
 
@@ -1184,7 +1184,7 @@ sub epochirtime {
 		$client->lastActivityTime($val);
 		$client->_epochirtime($val);
 	}
-	
+
 	return $client->_epochirtime;
 }
 
@@ -1236,20 +1236,20 @@ sub currentPlaylistChangeTime {
 
 sub pluginData {
 	my ( $client, $key, $value ) = @_;
-	
+
 	my $namespace;
-	
+
 	# if called from a plugin, we automatically use the plugin's namespace for keys
 	my $package = caller(0);
-	
+
 	if ( $package =~ /^(?:Slim::Plugin|Plugins)::(\w+)/ ) {
 		$namespace = $1;
 	}
-	
+
 	if ( $namespace && !defined $key ) {
 		return $client->_pluginData->{$namespace};
 	}
-	
+
 	if ( defined $value ) {
 		if ( $namespace ) {
 			$client->_pluginData->{$namespace}->{$key} = $value;
@@ -1258,7 +1258,7 @@ sub pluginData {
 			$client->_pluginData->{$key} = $value;
 		}
 	}
-	
+
 	if ( $namespace ) {
 		my $val = $client->_pluginData->{$namespace}->{$key};
 		return ( defined $val ) ? $val : undef;
@@ -1296,7 +1296,7 @@ Set a preset for this player.  Arguments:
 
 =over 4
 
-=item slot 
+=item slot
 
 Which preset to set.  Valid values are from 1-10.
 
@@ -1322,17 +1322,17 @@ Optional.  XMLBrowser parser.
 
 sub setPreset {
 	my ( $client, $args ) = @_;
-	
+
 	return unless $args->{slot} && $args->{URL} && $args->{text};
-	
+
 	my $preset = {
 		URL  => $args->{URL},
 		text => $args->{text},
 		type => $args->{type} || 'audio',
 	};
-	
 	$preset->{parser} = $args->{parser} if $args->{parser};		
-	
+
+
 	my $cprefs = $prefs->client($client);
 	my $presets = $cprefs->get('presets');
 	$presets->[ $args->{slot} - 1 ] = $preset;
@@ -1347,7 +1347,7 @@ sub master {return $_[0]->controller()->master();}
 
 sub streamingSong {return $_[0]->controller()->streamingSong();}
 sub playingSong {return $_[0]->controller()->playingSong();}
-	
+
 sub isPlaying {return $_[0]->controller()->isPlaying($_[1]);}
 sub isPaused {return $_[0]->controller()->isPaused();}
 sub isStopped {return $_[0]->controller()->isStopped();}
@@ -1355,7 +1355,7 @@ sub isRetrying {return $_[0]->controller()->isRetrying();}
 
 sub currentTrackForUrl {
 	my ($client, $url) = @_;
-	
+
 	my $song = $client->controller()->currentSongForUrl($url);
 	if ( $song ) {
 		return $song->currentTrack();
@@ -1364,7 +1364,7 @@ sub currentTrackForUrl {
 
 sub currentSongForUrl {
 	my ($client, $url) = @_;
-	
+
 	return $client->controller()->currentSongForUrl($url);
 }
 
@@ -1408,7 +1408,7 @@ sub syncedWithNames {
 	return join(' & ', map { $_->name || $_->id } @syncList);
 
 }
-	
+
 # return formatted date/time strings - overwritten in SN to respect timezone
 sub timeF {
 	return Slim::Utils::DateTime::timeF(
@@ -1444,7 +1444,7 @@ sub hasScrolling { 0 }
 
 sub apps {
 	my $client = shift;
-	
+
 	my %clientApps = %{$prefs->client($client)->get('apps') || {}};
 
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
@@ -1460,11 +1460,11 @@ sub apps {
 
 sub isAppEnabled {
 	my ( $client, $app ) = @_;
-	
+
 	if ( grep { $_ eq lc($app) } keys %{ $client->apps } ) {
 		return 1;
 	}
-	
+
 	return;
 }
 
