@@ -23,64 +23,6 @@ sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('settings/server/plugins.html');
 }
 
-=pod
-# XXX - don't need this any more, as the Extensions plugin is enforced?
-sub handler {
-	my ($class, $client, $paramRef) = @_;
-
-	my $plugins = Slim::Utils::PluginManager->allPlugins;
-	my $pluginState = preferences('plugin.state')->all();
-	
-	for my $plugin (keys %{$plugins}) {
-
-		my $name = $plugins->{$plugin}->{'name'};
-
-		$plugins->{$plugin}->{errorDesc} = Slim::Utils::PluginManager->getErrorString($plugin);
-
-		if ( $paramRef->{'saveSettings'} ) {
-
-			next if $plugins->{$plugin}->{'enforce'};
-
-			if (!$paramRef->{$name} && $pluginState->{$plugin} eq 'enabled') {
-				Slim::Utils::PluginManager->disablePlugin($plugin);
-			}
-	
-			if ($paramRef->{$name} && $pluginState->{$plugin} eq 'disabled') {
-				Slim::Utils::PluginManager->enablePlugin($plugin);
-			}
-		}
-
-	}
-
-	if (Slim::Utils::PluginManager->needsRestart) {
-		
-		$paramRef = $class->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
-	}
-
-	$paramRef = $class->restartServer($paramRef, Slim::Utils::PluginManager->needsRestart);
-
-	$paramRef->{plugins}     = $plugins;
-	$paramRef->{failsafe}    = $main::failsafe;
-
-	$paramRef->{pluginState} = preferences('plugin.state')->all();
-
-	# FIXME: temp remap new states to binary value:
-	for my $plugin (keys %{$paramRef->{pluginState}}) {
-		$paramRef->{pluginState}->{$plugin} = $paramRef->{pluginState}->{$plugin} =~ /enabled/;
-	}
-
-	my @sortedPlugins = 
-		map { $_->[1] }
-		sort { $a->[0] cmp $b->[0] }
-		map { [ uc( Slim::Utils::Strings::getString($plugins->{$_}->{name}) ), $_ ] } 
-		keys %$plugins;
-
-	$paramRef->{sortedPlugins} = \@sortedPlugins;
-
-	return $class->SUPER::handler($client, $paramRef);
-}
-=cut
-
 sub getRestartMessage {
 	my ($class, $paramRef, $noRestartMsg) = @_;
 	
