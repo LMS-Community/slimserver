@@ -388,7 +388,7 @@ Get a list of values from the osDetails list
 
 sub get {
 	my $class = shift;
-	
+
 	if ( wantarray ) {	
 		return map { $class->{osDetails}->{$_} } 
 		       grep { $class->{osDetails}->{$_} } @_;
@@ -451,7 +451,6 @@ sub canAutoUpdate { 0 };
 sub installerExtension { '' };
 sub installerOS { '' };
 
-# XXX - disable AutoRescan for all but SqueezeOS for now
 sub canAutoRescan { 0 }
 
 # can we use more memory to improve DB performance?

@@ -3,7 +3,7 @@ package Slim::Utils::Prefs;
 # $Id$
 
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -55,7 +55,7 @@ Preferences for plugins are expected to be stored in namespaces prefixed by 'plu
 
 =item on change callback to execute when a preference is set
 
-=back 
+=back
 
 =head2 Each namespace supports:
 
@@ -129,7 +129,7 @@ sub namespaces {
 sub init {
 	my $sqlHelperClass = $os->sqlHelperClass();
 	my $default_dbsource = $sqlHelperClass->default_dbsource();
-	
+
 	my %defaults = (
 		# Server Prefs not settable from web pages
 		'bindAddress'           => '127.0.0.1',            # Default MySQL bind address
@@ -262,16 +262,16 @@ sub init {
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
-	
+
 	if (!main::NOMYSB) {
 		# Server Settings - mysqueezebox.com
 		$defaults{'sn_sync'} = 1;
 		$defaults{'sn_disable_stats'} = 1;
 	}
 
-	# we can have different defaults depending on the OS 
+	# we can have different defaults depending on the OS
 	$os->initPrefs(\%defaults);
-	
+
 	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
 	# this is required as Slim::Control::Request::init will not have run at this point
 	if (exists &Slim::Control::Request::addDispatch) {
@@ -285,7 +285,7 @@ sub init {
 
 	# initialise any new prefs
 	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
-	
+
 	# perform OS-specific post-init steps
 	$os->postInitPrefs($prefs);
 
@@ -299,7 +299,7 @@ sub init {
 	# allow users to set a port below 1024 on windows which does not require admin for this
 	my $minP = main::ISWINDOWS ? 1 : 1024;
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=>  65535 }, 'httpport'    );
-	
+
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>  4096 }, 'udpChunkSize');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');
@@ -333,7 +333,7 @@ sub init {
 				# 192.168.0.*
 				s/\*/0/g;
 				next if Slim::Utils::Network::ip_is_ipv4($_);
-							
+
 				return 0;
 			}
 
@@ -351,19 +351,19 @@ sub init {
 
 						# try to compile the regex to validate it
 						eval { qr/$regex/ };
-						
+
 						if ($@) {
 							return;
 						} elsif ($regex =~ /.+\.([^.]+)$/) {
 							my $suffix = $1;
 							return grep(/^$suffix$/i, qw(jpg gif png jpeg));
 						}
-						
+
 						return 1;
 					}
 		}, 'coverArt',
 	);
-	
+
 	# mediadirs must be a list of unique, valid folders
 	$prefs->setValidate({
 		validator => sub {
@@ -373,7 +373,7 @@ sub init {
 			# don't accept duplicate entries
 			my %seen;
 			return 0 if scalar ( grep { !$seen{$_}++ } @{$new} ) != scalar @$new;
-			
+
 			foreach (@{ $new }) {
 				if (Slim::Utils::Misc::isWinDrive($_)) {
 					# do nothing - on Windows we're going to accept a drive letter without folder
@@ -389,7 +389,7 @@ sub init {
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
-	
+
 	# All languages are always loaded on SN
 	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 
@@ -405,64 +405,62 @@ sub init {
 		Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef])
 	}, 'ignoredarticles');
 
-	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
-		$prefs->setChange( sub {
-			if ( $_[1] ) {
-				require Slim::Utils::Update;
-				Slim::Utils::Update::checkVersion();
-			}
-		}, 'checkVersion' );
-
-		$prefs->setChange( sub {
-			if ( !$_[1] ) {
-				require Slim::Utils::Update;
-				# remove the server.version file to stop update notifications
-				Slim::Utils::Update::setUpdateInstaller('');
-			}
-		}, 'autoDownloadUpdate', 'checkVersion' );
-
-		if ( !main::SCANNER ) {
-			$prefs->setChange( sub {
-				return if Slim::Music::Import->stillScanning;
-				
-				my $newValues = $_[1];
-				my $oldValues = $_[3];
-
-				my @new = grep {
-					!defined $oldValues->{$_};
-				} keys %$newValues;
-
-				# trigger artwork scan if we've got a new specification only
-				if ( scalar @new ) {
-					require Slim::Music::Artwork;
-					
-					Slim::Music::Import->setIsScanning('PRECACHEARTWORK_PROGRESS');
-					Slim::Music::Artwork->precacheAllArtwork(sub {
-						Slim::Music::Import->setIsScanning(0);
-					}, 1);
-				}
-			}, 'customArtSpecs');
-			
-			$prefs->setChange( sub {
-				my $new = $_[1];
-				my $old = $_[3];
-				Slim::Music::Import->nextScanTask if $old && !$new;
-			}, 'dontTriggerScanOnPrefChange' );
+	$prefs->setChange( sub {
+		if ( $_[1] ) {
+			require Slim::Utils::Update;
+			Slim::Utils::Update::checkVersion();
 		}
+	}, 'checkVersion' );
+
+	$prefs->setChange( sub {
+		if ( !$_[1] ) {
+			require Slim::Utils::Update;
+			# remove the server.version file to stop update notifications
+			Slim::Utils::Update::setUpdateInstaller('');
+		}
+	}, 'autoDownloadUpdate', 'checkVersion' );
+
+	if ( !main::SCANNER ) {
+		$prefs->setChange( sub {
+			return if Slim::Music::Import->stillScanning;
+
+			my $newValues = $_[1];
+			my $oldValues = $_[3];
+
+			my @new = grep {
+				!defined $oldValues->{$_};
+			} keys %$newValues;
+
+			# trigger artwork scan if we've got a new specification only
+			if ( scalar @new ) {
+				require Slim::Music::Artwork;
+
+				Slim::Music::Import->setIsScanning('PRECACHEARTWORK_PROGRESS');
+				Slim::Music::Artwork->precacheAllArtwork(sub {
+					Slim::Music::Import->setIsScanning(0);
+				}, 1);
+			}
+		}, 'customArtSpecs');
+
+		$prefs->setChange( sub {
+			my $new = $_[1];
+			my $old = $_[3];
+			Slim::Music::Import->nextScanTask if $old && !$new;
+		}, 'dontTriggerScanOnPrefChange' );
 	}
 
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
 			my $newValues = $_[1];
 			my $oldValues = $_[3];
-			
+
 			my %new = map { $_ => 1 } @$newValues;
-	
+
 			# get old paths which no longer exist:
 			my @old = grep {
 				delete $new{$_} != 1;
 			} @$oldValues;
-			
+
 			# in order to get rid of stale entries trigger full rescan if path has been removed
 			if (scalar @old) {
 				main::INFOLOG && logger('scan.scanner')->info('removed folder from mediadirs - trigger wipecache: ' . Data::Dump::dump(@old));
@@ -481,9 +479,9 @@ sub init {
 		$prefs->setChange( sub {
 			my $newValues = $_[1];
 			my $oldValues = $_[3];
-			
+
 			my %old = map { $_ => 1 } @$oldValues;
-	
+
 			# get new exclusion paths which did not exist previously:
 			my @new = grep {
 				delete $old{$_} != 1;
@@ -516,7 +514,7 @@ sub init {
 			Slim::Music::PlaylistFolderScan->init;
 			Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
 		}, 'playlistdir');
-	
+
 		$prefs->setChange( sub {
 			if ($_[1]) {
 				Slim::Control::Request::subscribe(\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]);
@@ -554,7 +552,7 @@ sub init {
 		my $client = $_[2] || return;
 		Slim::Player::Transporter::updateEffectsLoop($client);
 	}, 'fxloopClock');
-	
+
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
 		Slim::Player::Transporter::updateRolloff($client);
@@ -571,12 +569,12 @@ sub init {
 		my $client = $_[2] || return;
 		Slim::Player::Boom::setAnalogOutMode($client);
 	}, 'analogOutMode');
-	
+
 	$prefs->setChange( sub {
 		foreach my $client ( Slim::Player::Client::clients() ) {
 			if ($client->isa("Slim::Player::Boom")) {
 				$client->setRTCTime();
-			}		
+			}
 		}
 	}, 'timeFormat');
 
@@ -592,7 +590,7 @@ sub init {
 			$cookieJar->save();
 			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
-		
+
 		$prefs->setChange( sub {
 			Slim::Utils::Timers::setTimer(
 				$_[1],
@@ -600,11 +598,11 @@ sub init {
 				sub {
 					my $isDisabled = shift;
 					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
-					
+
 					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
 				},
 			);
-			
+
 		}, 'sn_disable_stats');
 	}
 
@@ -682,35 +680,35 @@ sub defaultMediaDirs {
 	my $audiodir = $prefs->get('audiodir');
 
 	$prefs->remove('audiodir') if $audiodir;
-	
+
 	my @mediaDirs;
-	
+
 	# if an audiodir had been there before, configure LMS as we did in SBS: audio only
 	if ($audiodir) {
 		# set mediadirs to the former audiodir
 		push @mediaDirs, $audiodir;
-		
+
 		# add the audiodir to the list of sources to be ignored by the other scans
 		defaultMediaIgnoreFolders('music', $audiodir);
 	}
-	
+
 	# new LMS installation: default to all media folders
 	else {
 		# try to find the OS specific default folders for various media types
 		foreach my $medium ('music', 'videos', 'pictures') {
 			my $path = Slim::Utils::OSDetect::dirsFor($medium);
-			
+
 			main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
-			
+
 			if ($path && -d $path) {
 				push @mediaDirs, $path;
-				
+
 				# ignore media from other media's scan
 				defaultMediaIgnoreFolders($medium, $path);
 			}
 		}
 	}
-	
+
 	return \@mediaDirs;
 }
 
@@ -726,10 +724,10 @@ sub defaultMediaIgnoreFolders {
 
 	foreach ( @{ $ignoreDirs{$type} } ) {
 		my $ignoreDirs = $prefs->get($_) || [];
-		
+
 		push @$ignoreDirs, $dir;
 		$prefs->set($_, $ignoreDirs);
-	}				
+	}
 }
 
 sub defaultPlaylistDir {
@@ -762,7 +760,7 @@ sub defaultCacheDir {
 	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
 		$CacheDir = undef;
 	}
-	
+
 	return $CacheDir;
 }
 
@@ -820,14 +818,14 @@ sub maxRate {
 	if ( $rate != 0 && logger('player.source')->is_debug ) {
 		main::DEBUGLOG && logger('player.source')->debug(sprintf("Setting maxBitRate for %s to: %d", $client->name, $rate));
 	}
-	
+
 	# if we're the master, make sure we return the lowest common denominator bitrate.
 	my @playergroup = ($client->syncGroupActiveMembers());
-	
+
 	for my $everyclient (@playergroup) {
 
 		my $otherRate = maxRate($everyclient, 1);
-		
+
 		# find the lowest bitrate limit of the sync group. Zero refers to no limit.
 		$rate = ($otherRate && (($rate && $otherRate < $rate) || !$rate)) ? $otherRate : $rate;
 	}

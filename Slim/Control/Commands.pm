@@ -3080,28 +3080,11 @@ sub wipecacheCommand {
 		}
 
 		Slim::Utils::Progress->clear();
-		
-		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
-			# Wipe/rescan in-process on SqueezeOS
 
-			# XXX - for the time being we're going to assume that the embedded server will only handle one folder
-			my $dir = Slim::Utils::Misc::getAudioDirs()->[0];
-			
-			my %args = (
-				types    => 'list|audio',
-				scanName => 'directory',
-				progress => 1,
-				wipe     => 1,
-			);
-			
-			Slim::Utils::Scanner::Local->rescan( $dir, \%args );
-		}
-		else {
-			# Launch external scanner on normal systems
-			Slim::Music::Import->launchScan( {
-				wipe => 1,
-			} );
-		}
+		# Launch external scanner on normal systems
+		Slim::Music::Import->launchScan( {
+			wipe => 1,
+		} );
 	}
 
 	$request->setStatusDone();
