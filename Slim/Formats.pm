@@ -59,8 +59,10 @@ sub init {
 		'wmap' => 'Slim::Formats::WMA',
 		'wmal' => 'Slim::Formats::WMA',
 		'alc' => 'Slim::Formats::Movie',
+		'alcx' => 'Slim::Formats::Movie',
 		'aac' => 'Slim::Formats::Movie',
 		'mp4' => 'Slim::Formats::Movie',
+		'mp4x' => 'Slim::Formats::Movie',
 		'sls' => 'Slim::Formats::Movie',
 		'shn' => 'Slim::Formats::Shorten',
 		'mpc' => 'Slim::Formats::Musepack',
@@ -253,6 +255,11 @@ sub readTags {
 	if (-e $filepath) {
 		# cache the file size & date
 		($tags->{'FILESIZE'}, $tags->{'TIMESTAMP'}) = (stat(_))[7,9];
+	}
+
+	if ($tags->{'LEADING_MDAT'}) {
+		$type = 'mp4x';
+		$tags->{'CONTENT_TYPE'} = 'alcx' if ($tags->{'CONTENT_TYPE'} eq 'alc')
 	}
 
 	# Only set if we couldn't read it from the file.

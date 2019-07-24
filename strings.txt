@@ -11598,6 +11598,9 @@ ALC
 	RU	Apple Lossless
 	SV	Apple Lossless
 
+ALCX
+	EN	Apple Lossless leading audio
+
 MOV
 	CS	Film QuickTime
 	DA	QuickTime-film
@@ -11642,6 +11645,9 @@ MP4
 	PL	MP4
 	RU	MPEG-4
 	SV	MPEG-4
+
+MP4X
+	EN	MPEG-4 leading audio
 
 SLS
 	CS	MPEG-4 SLS / HD-AAC
