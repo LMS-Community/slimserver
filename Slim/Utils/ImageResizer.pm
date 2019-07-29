@@ -24,8 +24,12 @@ my $pending_requests = 0;
 my $hasDaemon; 
 
 sub hasDaemon {
-	if (!defined $hasDaemon) {
-		$hasDaemon = !main::SCANNER && !main::ISWINDOWS && -r SOCKET_PATH && -w _;
+	my ($class, $check) = @_;
+
+	if (!defined $hasDaemon || $check) {
+		$hasDaemon = (!main::SCANNER && !main::ISWINDOWS && -r SOCKET_PATH && -w _) or do {
+			unlink SOCKET_PATH;
+		};
 	}
 	
 	return $hasDaemon;
@@ -102,7 +106,14 @@ sub resize {
 				},
 			);
 			
-			$handle->push_write( pack('Z*Z*Z*Z*', $file, $specs, $cacheroot, $cachekey) . "\015\012" );
+			# need to protect \n\r in the file from ending the sending prematurely
+			# this is NOT 100% safe, as it might break 
+			if (ref $file) {
+				$$file =~ s/\n/\\0x12/sg;
+				$$file =~ s/\r/\\0x15/sg;
+			}
+
+			$handle->push_write( pack('Z* Z* Z* Z* I/a*', ref $file ? 'data' : $file, $specs, $cacheroot, $cachekey, ref $file ? $$file : '') . "\015\012" );
 		}, sub {
 			# prepare callback, used to set the timeout
 			return SOCKET_TIMEOUT;
