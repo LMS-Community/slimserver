@@ -676,6 +676,15 @@ sub stream_s {
 		$pcmchannels     = '?';
 		$outputThreshold = 20;
 		
+	} elsif ($format eq 'ops') {
+
+		$formatbyte      = 'u';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 20;
+		
 	} elsif ($format eq 'alc') {
 
 		$formatbyte      = 'l';
