@@ -535,7 +535,7 @@ sub init {
 
 		$prefs->setChange( sub {
 			Slim::Control::Queries->wipeCaches();
-		}, 'browseagelimit');
+		}, 'browseagelimit', 'ignoreDirRE');
 	}
 
 	$prefs->setChange( sub {

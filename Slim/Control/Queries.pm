@@ -5096,6 +5096,9 @@ sub showArtwork {
 
 # Wipe cached data, called after a rescan
 sub wipeCaches {
+	my $bmfCacheObject = tied %bmfCache;
+	tie %bmfCache, 'Tie::Cache::LRU::Expires', EXPIRES => $bmfCacheObject->{EXPIRES}, ENTRIES => $bmfCacheObject->{ENTRIES};
+
 	$cache = {};
 }
 
