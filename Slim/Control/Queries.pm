@@ -2802,8 +2802,9 @@ sub readDirectoryQuery {
 		my $filterRE = qr/./ unless ($filter eq 'musicfiles');
 
 		# get file system items in $folder
-		@fsitems = Slim::Utils::Misc::readDirectory(catdir($folder), $filterRE);
+		@fsitems = Slim::Utils::Misc::readDirectory($folder, $filterRE);
 		map {
+			Slim::Utils::Unicode::utf8on($_) if Slim::Utils::Unicode::looks_like_utf8($_);
 			$fsitems{$_} = {
 				d => -d catdir($folder, $_),
 				f => -f _
@@ -2855,9 +2856,12 @@ sub readDirectoryQuery {
 
 			my $path;
 			for my $item (@fsitems[$start..$end]) {
+				my $name = $item;
+
+				$item = Slim::Utils::Unicode::utf8decode_locale($item);
+
 				$path = ($folder ? catdir($folder, $item) : $item);
 
-				my $name = $item;
 				my $decodedName;
 
 				# display full name if we got a Windows 8.3 file name
