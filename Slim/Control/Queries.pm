@@ -29,6 +29,7 @@ L<Slim::Control::Queries> implements most Logitech Media Server queries and is d
 
 use strict;
 
+use File::Basename qw(basename);
 use Storable;
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
@@ -2803,10 +2804,11 @@ sub readDirectoryQuery {
 
 		# get file system items in $folder
 		@fsitems = Slim::Utils::Misc::readDirectory($folder, $filterRE);
+		my $transformFn = main::ISWINDOWS ? sub { Slim::Utils::Unicode::encode_locale($_[0]) } : sub { $_[0] };
 		map {
-			Slim::Utils::Unicode::utf8on($_) if Slim::Utils::Unicode::looks_like_utf8($_);
+			Slim::Utils::Unicode::utf8on($_) if !main::ISWINDOWS && Slim::Utils::Unicode::looks_like_utf8($_);
 			$fsitems{$_} = {
-				d => -d catdir($folder, $_),
+				d => -d $transformFn->(catdir($folder, $_)),
 				f => -f _
 			}
 		} @fsitems;
@@ -2866,7 +2868,7 @@ sub readDirectoryQuery {
 
 				# display full name if we got a Windows 8.3 file name
 				if (main::ISWINDOWS && $name =~ /~\d/) {
-					$decodedName = Slim::Music::Info::fileName($path);
+					$decodedName = basename(Slim::Music::Info::fileName($path));
 				} else {
 					$decodedName = Slim::Utils::Unicode::utf8decode_locale($name);
 				}
