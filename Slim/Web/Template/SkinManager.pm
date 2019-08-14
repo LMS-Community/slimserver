@@ -44,12 +44,6 @@ my $absolutePathRegex = main::ISWINDOWS ? qr{^(?:/|[a-z]:)}i :  qr{^/};
 sub new {
 	my $class = shift;
 
-	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));
-	if (!-f $versionFile) {
-		unlink map { catdir($class->templateCacheDir(), $_) } File::Slurp::read_dir($class->templateCacheDir());
-		write_file($versionFile, '');
-	}
-
 	Slim::bootstrap::tryModuleLoad('Template::Stash::XS');
 
 	if ($@) {
@@ -249,6 +243,13 @@ sub addSkinTemplate {
 			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
 		},
 	});
+
+	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));
+	if (!-f $versionFile) {
+	# if (-d $class->templateCacheDir() && !-f $versionFile) {
+		unlink map { catdir($class->templateCacheDir(), $_) } File::Slurp::read_dir($class->templateCacheDir());
+		write_file($versionFile, '');
+	}
 
 	return $class->{skinTemplates}->{$skin};
 }
