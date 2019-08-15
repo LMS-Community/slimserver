@@ -245,8 +245,7 @@ sub addSkinTemplate {
 	});
 
 	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));
-	if (!-f $versionFile) {
-	# if (-d $class->templateCacheDir() && !-f $versionFile) {
+	if (-d $class->templateCacheDir() && !-f $versionFile) {
 		unlink map { catdir($class->templateCacheDir(), $_) } File::Slurp::read_dir($class->templateCacheDir());
 		write_file($versionFile, '');
 	}
