@@ -914,6 +914,10 @@ sub readDirectory {
 
 			return @diritems;
 		}
+
+		# At some point Windows seems to have started returning content of the "current directory" on the drive 
+		# if the path wasn't absolute. Make sure we start with a slash if only a drive letter is given. - mh
+		$native_dirname .= '/' if $native_dirname =~ /^[a-z]:$/i;
 	}
 
 	if ($recursive) {
