@@ -125,6 +125,7 @@ sub ignoredItems {
 		'@tmp'         => 1,   # system temporary files
 		'upd@te'       => 1,   # firmware update temporary directory
 		'#recycle'     => 1,
+		'#snapshot'    => 1,
 		# system paths in the fs root which will not contain any music
 		'bin'          => '/',
 		'config'       => '/',
