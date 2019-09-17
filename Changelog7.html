@@ -41,7 +41,6 @@
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/pull/270">#270</a> - Fix playing MPEG-4 files with leading mdat.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/275">#275</a> - Fix encodingin readdirectory query.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/278">#278</a> - Correctly encode password before sending it to mysb.com for authentication. Characters like the Pound sign (&pound;) would fail.</li>
 		<li>Fix a scanner crash (out of memory) with large collections when high memory usage was enabled.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/261">#261</a> - add non-blocking https client.</li>
 		<li>Search for a term including an asterisk ("*example*") could lead to all tracks/albums being returned.</li>
@@ -73,7 +72,7 @@
 		<li>Fix localization of strings if Controller is requesting another language than the server's.</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Update IO::Socket::SSL on Windows to improve compatibility with newer SSL standards.</li>
@@ -289,6 +288,25 @@
 	<br />
 </ul>
 
+<h2><a name="v7.7.7" id="v7.7.7"></a>Version 7.7.7</h2>
+<ul>
+	<li>Server Changes:</li>
+	<ul>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/pull/278">#278</a> - Correctly encode password before sending it to mysb.com for authentication. Characters like the Pound sign (&pound;) would fail.</li>
+	</ul>
+	<br />
+</ul>
+
 <h2><a name="v7.7.6" id="v7.7.6"></a>Version 7.7.6 - 2018-04-02</h2>
 <ul>
 	<li>Server Changes:</li>
@@ -304,16 +322,16 @@
 		<li>Allow streaming of https sources by proxying them through LMS (if possible - requires IO::Socket::SSL to be installed on platforms other than Windows)</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Improve support for Mac OSX 10.11 and later, and Windows 10.</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
-		<li>Fix synced playback with Spotify (SB Radio and Touch only)</li> 
+		<li>Fix synced playback with Spotify (SB Radio and Touch only)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17068">#17068</a> - Lost Artwork playing radio stations</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17727">#17727</a> - Playback stops with mp3 + cue sheets combination</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17901">#17901</a> - "Some settings were changed. Do you want to save them?" doesn't honor button clicked.</li>
@@ -345,7 +363,7 @@
 		<li>Minor changes to the EN skin to improve usability on mobile devices.</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Add support for Mac OSX 10.10 Yosemite (Perl 5.18).</li>
@@ -386,7 +404,7 @@
 <ul>
 	<li>New Features:</li>
 	<ul>
-		<li>Replace custom OSX installer with a standard installation package (.pkg file). Please note that 
+		<li>Replace custom OSX installer with a standard installation package (.pkg file). Please note that
 		the OSX build now requires OSX 10.5 as a minimum.</li>
 		<li>Make the OSX PrefPane 64-bit compatible.</li>
 	</ul>
@@ -398,7 +416,7 @@
 		<li>Remove legacy Napster plugin. Napster now is a Rhapsody company.</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Mac OSX 10.9 Mavericks, which has Perl 5.16, is now supported.</li>
@@ -431,7 +449,7 @@
 		<li>New packages for the ReadyNAS family of storage systems to support their ARM processor based devices.</li>
 	</ul>
 	<br />
-	
+
 	<li>Scanner Changes:</li>
 	<ul>
 		<li>The command-line scanner no longer supports scanning a path passed on the command-line. All paths to be scanned must be listed in the prefs file.</li>
@@ -472,7 +490,7 @@
 		<li>Improved MOG support to allow dynamic control of artist radio stations.</li>
 	</ul>
 	<br />
-	
+
 	<li>MySQL note:</li>
 	<ul>
 		<li>DBD::mysql binaries are no longer included. If you wish to run against a MySQL server you will need to install this manually for your version of Perl.</li>
@@ -627,7 +645,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 57<br />	
+		<li>Boom - Version 57<br />
 			Squeezebox 2/3 - Version 137<br />
 			Transporter - Version 87<br />
 			Receiver - Version 77
@@ -641,18 +659,18 @@
 			<li>(Boom) Discrete IR codes for power_on, power_off and line_in</li>
 			<li>Support for output_channels flags, to output only left or right channel, useful with synced Booms.</li>
 			<li>Fixed DNS client handling when server returns multiple A records for MySB.</li>
-			<li>Fixed a bug with text scrolling in scroll-once mode.</li>		
+			<li>Fixed a bug with text scrolling in scroll-once mode.</li>
 			<li>Added support for new Rhapsody SSL certificate.</li>
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>New Services:</li>
 	<ul>
 		<li>Support for Orange Liveradio (all countries).</li>
 	</ul>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Transcoding is now supported when requesting an HTTP download (/music/[id]/download[.extension]).</li>
@@ -677,7 +695,7 @@
 		<li>Add original track filename to download url on trackinfo page (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=16424">#16424</a>)</li>
 	</ul>
 	<br />
-	
+
 	<li>Other Major Changes:</li>
 	<ul>
 		<li>Major Rewrite of Library Browser</li>
@@ -701,7 +719,7 @@
 		<li>The CLI charset tagged parameter has been removed from all commands that supported it. All input and output is now in UTF-8 (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=16834">#16834</a>).</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2735">#2735</a> - Add pagebar functionality to the CLI</li>
@@ -789,7 +807,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 54<br />	
+		<li>Boom - Version 54<br />
 			Squeezebox 2/3 - Version 134<br />
 			Transporter - Version 84<br />
 			Receiver - Version 69
@@ -799,14 +817,14 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Mac OSX 10.7 Lion, which has Perl 5.12.3, is now supported.</li>
 		<li>Perl 5.12 modules for Linux systems have been rebuilt with version 5.12.3 for improved compatibility.</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15010">#15010</a> - player menus showing entries in wrong language</li>
@@ -818,7 +836,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 53<br />	
+		<li>Boom - Version 53<br />
 			Squeezebox 2/3 - Version 133<br />
 			Transporter - Version 83<br />
 			Receiver - Version 68
@@ -828,13 +846,13 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Support for using the Comet API in long-polling mode.</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16874">#16874</a> - 100% CPU lockup could occur while streaming AAC radio streams</li>
@@ -846,7 +864,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 52<br />	
+		<li>Boom - Version 52<br />
 			Squeezebox 2/3 - Version 132<br />
 			Transporter - Version 82<br />
 			Receiver - Version 67
@@ -857,7 +875,7 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>New Services:</li>
 	<ul>
 		<li>Support for Spotify (Radio and Touch players only).</li>
@@ -886,7 +904,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 51<br />	
+		<li>Boom - Version 51<br />
 			Squeezebox 2/3 - Version 131<br />
 			Transporter - Version 81<br />
 			Receiver - Version 66
@@ -905,7 +923,7 @@
 
 <h2><a name="v7.5.1" id="v7.5.1"></a>Version 7.5.1 - 2010-06-10</h2>
 <ul>
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Seeking within MPEG-4 files (AAC/ALAC) is now supported for players with native playback (Radio, Touch).</li>
@@ -958,7 +976,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14674">#14674</a> - Make double clicking task bar icon action configurable</li>
 	</ul>
 	<br />
-	
+
 	<li>Resource Usage:</li>
 	<ul>
 		<li>Additional work on Squeezebox Server to reduce memory & other usage. The following command-line flags are available:</li>
@@ -983,7 +1001,7 @@
 		http://svn.slimdevices.com/repos/slim/7.5/trunk/vendor/faad2/seeking+alac.patch</a></br></li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>(Classic / Transporter / Boom) Fixed volume display when muting.</li>
@@ -1087,7 +1105,7 @@
 		<li>Added Queen app.</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Binaries and tarballs are now available for the following platforms:
@@ -1099,7 +1117,7 @@
 		</li>
 	</ul>
 	<br />
-	
+
 	<li>Scanner bug fixes and improvements:</li>
 	<ul>
 		<li>Improved speed of FLAC scanning.</li>
@@ -1116,7 +1134,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14788">#14788</a> - Fixed crash when reading certain WMA tags</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=10429">#10429</a> - Added pref for extracting iTunes artwork, off by default</li>
@@ -1159,7 +1177,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 50<br />	
+		<li>Boom - Version 50<br />
 			Squeezebox 2/3 - Version 130<br />
 			Transporter - Version 80<br />
 			Receiver - Version 65
@@ -1171,7 +1189,7 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>Scanner:</li>
 	<ul>
 		<li>The file format scanning modules have been completely rewritten in C as a <a href="http://search.cpan.org/dist/Audio-Scan/">standalone module</a> with comprehensive unit tests.</li>
@@ -1180,13 +1198,13 @@
 		<li>Seeking in VBR MP3 files is now more accurate.</li>
 	</ul>
 	<br />
-	
+
 	<li>System integration:</li>
 	<ul>
 		<li>New Control Panel for Windows, Console for Windows Home Server and Preference Pane for OSX as a shortcut to common activities</li>
 	</ul>
 	<br />
-	
+
 	<li>Preset Changes:</li>
 	<ul>
 		<li>Boom/IR presets are no longer associated with Favorites, and each player now has a separate preset list.</li>
@@ -1196,7 +1214,7 @@
 		<li>For more information, please see bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=13248">#13248</a>.</li>
 	</ul>
 	<br />
-	
+
 	<li>Resource Usage:</li>
 	<ul>
 		<li>Several features of Squeezebox Server can be disabled to reduce memory usage. The following command-line flags are available:</li>
@@ -1263,7 +1281,7 @@
 		<li>Support for Mac OS X Snow Leopard.  SqueezeCenter itself will run in 64-bit mode, but note that the Preference Pane only supports 32-bit mode.</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4584">#4584</a> - Support for ALBUMARTISTSORT</li>
@@ -1276,7 +1294,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 47<br />	
+		<li>Boom - Version 47<br />
 			Squeezebox 2/3 - Version 127<br />
 			Transporter - Version 77<br />
 			Receiver - Version 62
@@ -1284,7 +1302,7 @@
 		<ul>
 			<li>Ogg Vorbis streams can now be played.  Note that low-bitrate streams less than 64k are not supported due to excess memory requirements.</li>
 			<li>No longer use OpenDNS as a fallback, as it may return inconsistent SN results from other devices on the network.</li>
-			<li>Fixed DNS incompatibility with certain Netgear routers.</li> 
+			<li>Fixed DNS incompatibility with certain Netgear routers.</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4418">#4418</a> - Ogg Vorbis streams crash player</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7857">#7857</a> - Player crashes when playing an Ogg file with large headers</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=10638">#10638</a> - Boom: No sound from Line In in setup menu</li>
@@ -1355,7 +1373,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 43<br />	
+		<li>Boom - Version 43<br />
 			Squeezebox 2/3 - Version 123<br />
 			Transporter - Version 73<br />
 			Receiver - Version 58
@@ -1422,7 +1440,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 41<br />	
+		<li>Boom - Version 41<br />
 			Squeezebox 2/3 - Version 121<br />
 			Transporter - Version 71<br />
 			Receiver - Version 56
@@ -1433,9 +1451,9 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
-	<ul> 	 
+	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4578">#4578</a> - Accented characters in playlist entries don't rescan correctly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5119">#5119</a> - Replay gain with positive gain setting can cause clipping</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8654">#8654</a> - Update to WavPack 4.50</li>
@@ -1461,7 +1479,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 40<br />	
+		<li>Boom - Version 40<br />
 			Squeezebox 2/3 - Version 120<br />
 			Transporter - Version 70<br />
 			Receiver - Version 55
@@ -1494,7 +1512,7 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>Web UI:</li>
 	<ul>
 		<li>Improved, simplified first run wizard</li>
@@ -1504,7 +1522,7 @@
 		<li>"Extension Installer" for simplifying installation of SqueezeCenter Plugins and Squeezebox Controller Applets</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform support:</li>
 	<ul>
 		<li>New Slim::Utils::OS classes allow for simplified SqueezeCenter customizing and platform support. See the <a href="http://wiki.slimdevices.com/index.php/Customizing_SqueezeCenter_using_Slim::Utils::OS::Custom">wiki article about Slim::Utils::OS::Custom</a> for details.</li>
@@ -1515,7 +1533,7 @@
 		<li>SqueezeCenter log files are rotated when they grow beyond 100MB (Windows/OSX)</li>
 	</ul>
 	<br />
-	
+
 	<li>Synchronization & Streaming:</li>
 	<ul>
 		<li>Gapless synchronization (but not for SliMP3 or SB1)</li>
@@ -1529,27 +1547,27 @@
 		<li>Removed Rhapsody stream limit for synced players.  Each sync group now counts as one stream.</li>
 	</ul>
 	<br />
-	
+
 	<li>Internet Radio:</li>
 	<ul>
 		<li>Re-organized Internet Radio menu to make it easier to find radio stations.</li>
 		<li>Now-Playing metadata support for RadioTime stations.</li>
 	</ul>
-	
+
 	<li>Music Services:</li>
 	<ul>
 		<li>Deezer Radio (France, UK, Germany)</li>
 	</ul>
-	
+
 	<li>Boom</li>
 	<ul>
 		<li>Speakers can be used even if headphones are plugged in</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 
-	<ul> 	 
+	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=529">#529</a> - Add feature to disable re-buffering at the beginning of each track when syncing</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=571">#571</a>,
 			<a href="http://bugs.slimdevices.com/show_bug.cgi?id=9153">#9153</a> - Transcoded files cannot FWD / RWD</li>
@@ -1575,30 +1593,30 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8766">#8766</a> - Deleted MusicIP filters should not be used anymore by SC</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8914">#8914</a> - Moving 1 player from a sync to SN will cause all players to halt playback</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8952">#8952</a> - Update notification needs to be localized</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9002">#9002</a> - MusicIP fails to import existing playlists</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9039">#9039</a> - No track seeking when playing flac .cue files</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9154">#9154</a> - When displaying 'large' artwork, certain info tags should be cut short...</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9002">#9002</a> - MusicIP fails to import existing playlists</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9039">#9039</a> - No track seeking when playing flac .cue files</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9154">#9154</a> - When displaying 'large' artwork, certain info tags should be cut short...</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9230">#9230</a> - SBC fails firmware upgrade if SC has a bad internet connection</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9272">#9272</a> - MusicIP import doesn't remove stale playlists</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9272">#9272</a> - MusicIP import doesn't remove stale playlists</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9368">#9368</a> - Unable to enter AM in alarm when switching Time Format</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9382">#9382</a> - 'Add Next' does not work from XMLBrowser menus</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9404">#9404</a> - Boom: Added minimum and sensitivity settings (web, player ui, jive) for automatic brightness</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9405">#9405</a> - Restore original volume when alarm ends</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9429">#9429</a> - Rescan music library shows wrong type during scan</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9484">#9484</a> - Connection loss between controller and Squeezecenter while accessing large directories/albums (Music Folder Browsing)</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9501">#9501</a> - Unattended installs difficult with present windows installer</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9541">#9541</a> - DRM-ed ITunes files in playlists should not appear in Player UI</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9404">#9404</a> - Boom: Added minimum and sensitivity settings (web, player ui, jive) for automatic brightness</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9405">#9405</a> - Restore original volume when alarm ends</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9429">#9429</a> - Rescan music library shows wrong type during scan</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9484">#9484</a> - Connection loss between controller and Squeezecenter while accessing large directories/albums (Music Folder Browsing)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9501">#9501</a> - Unattended installs difficult with present windows installer</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9541">#9541</a> - DRM-ed ITunes files in playlists should not appear in Player UI</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9555">#9555</a> - Some Rhapsody items don't work when saved as favorites</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9587">#9587</a> - Standard web interface freezes when a TwonkyMedia is on network</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9598">#9598</a> - Add the ability to retrieve possible alarm playlist urls via CLI</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9601">#9601</a> - Don't fallback to OpenDNS if non-primary local NS tests fail</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9605">#9605</a> - MIP-Mixes won't contain tracks with non-ascii characters in it's file/directoryname</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9608">#9608</a> - SC max synced players (List Box) - not displaying all players with many players connected</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9666">#9666</a> - Time box missing from Alarm panel, once alarm is set</li> 
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9681">#9681</a> - Spectrum analyzer screensaver behaves differently since SC7.2/FW112</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9587">#9587</a> - Standard web interface freezes when a TwonkyMedia is on network</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9598">#9598</a> - Add the ability to retrieve possible alarm playlist urls via CLI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9601">#9601</a> - Don't fallback to OpenDNS if non-primary local NS tests fail</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9605">#9605</a> - MIP-Mixes won't contain tracks with non-ascii characters in it's file/directoryname</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9608">#9608</a> - SC max synced players (List Box) - not displaying all players with many players connected</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9666">#9666</a> - Time box missing from Alarm panel, once alarm is set</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9681">#9681</a> - Spectrum analyzer screensaver behaves differently since SC7.2/FW112</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9703">#9703</a> - Add date & time of last scan to Music Scan Details</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9709">#9709</a> - Stack Overflow podcast doesn't play (using direct streaming)</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9722">#9722</a> - Sync when already synced should show "unsyncing" show-briefly</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9722">#9722</a> - Sync when already synced should show "unsyncing" show-briefly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9801">#9801</a> - stream.mp3 times out after a minute</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9818">#9818</a> - Real Time clock not set after clock change on server</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9863">#9863</a> - Add a "favorites exists url/id" command to CLI</li>
@@ -1613,7 +1631,7 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version 33<br />	
+		<li>Boom - Version 33<br />
 			Squeezebox 2/3 - Version 113<br />
 			Transporter - Version 63<br />
 			Receiver - Version 48
@@ -1677,7 +1695,7 @@
 		<ul>
 			<li>Initial Boom firmware.</li>
 		</ul>
-				
+
 		<li>Squeezebox 2/3 - Version 112<br />
 			Transporter - Version 62<br />
 			Receiver - Version 47
@@ -1731,7 +1749,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9170">#9170</a> - xPL IR Code Broadcast Broken</li>
 	</ul>
 	<br />
-	
+
 	<li>Softsqueeze<ul>
 		<li>Bumped Version to 3.7b0 (eternal beta now).</li>
 		<li>Fixed version check to last through 7.5, followed by more appropriate warning after.</li>
@@ -1805,7 +1823,7 @@
 		</ul>
 	</ul>
 	<br />
-	
+
 	<li>Music Services:
 	<ul>
 		<li>Support for Last.fm Radio</li>
@@ -1917,26 +1935,26 @@
 		</li>
 	</ul>
 	<br />
-	
+
 	<li>Music Services:
 	<ul>
 		<li>Support for SIRIUS Internet Radio.</li>
 	</ul>
 	<br />
-	
+
 	<li>Squeezebox Controller:
 	<ul>
 		<li>Fully support per device language settings</li>
 	</ul>
 	<br />
-	
+
 	<li>Tag Reading:
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3727">#3727</a> - Unicode genres are duplicated between MP3 and FLACs</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7782">#7782</a> - Use COVERART tag in Ogg files</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4092">#4092</a> - Multiple radio stations in a playlist don't work</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4276">#4276</a> - Accented / special characters in cue file name</li>
@@ -2097,7 +2115,7 @@
 
 	<li>Internationalization:
 	<ul>
-		<li>Updated official translations (EN, DE, ES, FR, IT, NL) 
+		<li>Updated official translations (EN, DE, ES, FR, IT, NL)
 		<li>Updated Danish translations from Bjørn Haagensen
 	</ul>
 	<br />
@@ -2259,6 +2277,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5631">#5631</a> - Problem with WMA files read from a UPnP media server</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6508">#6508</a> - Occasional songs freeze with no sound</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6540">#6539</a> - Sync via player UI breaks sometimes</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6666">#6666</a> - Synchronisation offset when unpausing if player has volume set to 0</li>		
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6666">#6666</a> - Synchronisation offset when unpausing if player has volume set to 0</li>
 	</ul>
 </ul>
