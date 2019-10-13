@@ -342,7 +342,16 @@ sub load {
 
 			main::DEBUGLOG && $log->debug("Adding Bin directory: [$binDir]");
 
-			Slim::Utils::Misc::addFindBinPaths( catdir($binDir, Slim::Utils::OSDetect::details()->{'binArch'}), $binDir );
+			my $osDetails = Slim::Utils::OSDetect::details();
+			my $binArch = $osDetails->{'binArch'};
+			my @paths = ( catdir($binDir, $binArch), catdir($binDir, $^O), $binDir );
+
+			if ( $binArch =~ /darwin/i && $osDetails->{osArch} =~ /x86_64/ ) {
+				unshift @paths, catdir($binDir, $^O . '-' . $osDetails->{osArch});
+				unshift @paths, catdir($binDir, $binArch . '-' . $osDetails->{osArch});
+			}
+
+			Slim::Utils::Misc::addFindBinPaths( @paths );
 		}
 
 		# add skin folders even in noweb mode: we'll need them for the icons

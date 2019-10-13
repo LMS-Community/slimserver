@@ -85,6 +85,11 @@ sub initSearchPath {
 	}
 
 	my @paths = ( catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'}), catdir($class->dirsFor('Bin'), $^O), $class->dirsFor('Bin') );
+
+	if ( $class->{osDetails}->{'binArch'} =~ /darwin/i && $class->{osDetails}->{osArch} =~ /x86_64/ ) {
+		unshift @paths, catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'} . '-' . $class->{osDetails}->{osArch});
+		unshift @paths, catdir($class->dirsFor('Bin'), $^O . '-' . $class->{osDetails}->{osArch});
+	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 
