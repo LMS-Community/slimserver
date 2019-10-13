@@ -144,7 +144,13 @@ sub addFindBinPaths {
 
 	while (my $path = shift) {
 
-		if (-d $path) {
+		# don't register duplicate entries
+		if (grep /\Q$path\E/, @findBinPaths) {
+
+			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("not adding $path - duplicate entry");
+
+		}
+		elsif (-d $path) {
 
 			main::INFOLOG && $log->info("adding $path");
 

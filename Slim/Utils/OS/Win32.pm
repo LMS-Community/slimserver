@@ -115,8 +115,8 @@ sub initDetails {
 sub initSearchPath {
 	my $class = shift;
 
-	$class->SUPER::initSearchPath();
-
+	$class->SUPER::initSearchPath(@_);
+	
 	# TODO: we might want to make this a bit more intelligent
 	# as Perl is not always in that folder (eg. German Windows)
 
