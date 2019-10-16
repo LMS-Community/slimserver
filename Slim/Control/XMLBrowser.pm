@@ -1435,7 +1435,6 @@ sub _cliQuery_done {
 					mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
 					radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
 					slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
-					live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
 					lma		=>	'PLUGIN_LMA_MODULE_NAME',
 				};
 				
