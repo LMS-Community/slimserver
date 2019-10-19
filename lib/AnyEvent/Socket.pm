@@ -459,10 +459,11 @@ Example.
 
 sub inet_aton {
    my ($name, $cb) = @_;
+   my $ipn;
 
-   if (my $ipn = &parse_ipv4) {
+   if ($ipn = &parse_ipv4) {
       $cb->($ipn);
-   } elsif (my $ipn = &parse_ipv6) {
+   } elsif ($ipn = &parse_ipv6) {
       $cb->($ipn);
    } elsif ($name eq "localhost") { # rfc2606 et al.
       $cb->(v127.0.0.1, v0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1);
