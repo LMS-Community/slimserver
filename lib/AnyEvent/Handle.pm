@@ -1770,7 +1770,7 @@ sub _tls_error {
    return $self->_error ($!, 1)
       if $err == Net::SSLeay::ERROR_SYSCALL ();
 
-   my $err =Net::SSLeay::ERR_error_string (Net::SSLeay::ERR_get_error ());
+   $err =Net::SSLeay::ERR_error_string (Net::SSLeay::ERR_get_error ());
 
    # reduce error string to look less scary
    $err =~ s/^error:[0-9a-fA-F]{8}:[^:]+:([^:]+):/\L$1: /;
