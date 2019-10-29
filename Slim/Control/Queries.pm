@@ -3253,6 +3253,8 @@ sub serverstatusQuery {
 		$request->addResult('mac', $mac);
 	}
 
+	$request->addResult('ip', Slim::Utils::Network::serverAddr());
+
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
 		my $totals = Slim::Schema->totals($request->client);
