@@ -3254,6 +3254,7 @@ sub serverstatusQuery {
 	}
 
 	$request->addResult('ip', Slim::Utils::Network::serverAddr());
+	$request->addResult('httpport', $prefs->get('httpport'));
 
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
