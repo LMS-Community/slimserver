@@ -2050,7 +2050,7 @@ sub playlistcontrolCommand {
 			$what->{'year.id'} = $year_id;
 		}
 		
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd, $request->getParam('sort'));
 	}
 
 	# don't call Xtracks if we got no songs
@@ -3255,6 +3255,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
 	my $cmd    = shift;
+	my $sortParam = shift;
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
@@ -3271,9 +3272,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
 	my $collate = $sqlHelperClass->collate();
-	
-	my $albumSort 
-		= $sqlHelperClass->append0("album.titlesort") . " $collate"
+
+	my $sortAlbumsByYear = $sortParam eq 'artflow' || $sortParam eq 'yearalbum' || $sortParam eq 'yearartistalbum';
+	my $albumSort = $sortAlbumsByYear ? $sqlHelperClass->append0("album.year") . ", " : "";
+	$albumSort = $albumSort . $sqlHelperClass->append0("album.titlesort") . " $collate"
 		. ', me.disc, me.tracknum, '
 		. $sqlHelperClass->append0("me.titlesort") . " $collate";
 		
