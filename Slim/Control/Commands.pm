@@ -2049,8 +2049,12 @@ sub playlistcontrolCommand {
 
 			$what->{'year.id'} = $year_id;
 		}
-		
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd, $request->getParam('sort'));
+
+		if (defined(my $sort = $request->getParam('sort'))) {
+			$what->{'sort'} = $sort;
+		}
+
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
 	# don't call Xtracks if we got no songs
@@ -3273,12 +3277,9 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	
 	my $collate = $sqlHelperClass->collate();
 
-	my $sortAlbumsByYear = $sortParam eq 'artflow' || $sortParam eq 'yearalbum' || $sortParam eq 'yearartistalbum';
-	my $albumSort = $sortAlbumsByYear ? $sqlHelperClass->append0("album.year") . ", " : "";
-	$albumSort = $albumSort . $sqlHelperClass->append0("album.titlesort") . " $collate"
-		. ', me.disc, me.tracknum, '
-		. $sqlHelperClass->append0("me.titlesort") . " $collate";
-		
+	my $albumSort = $sqlHelperClass->append0("album.titlesort") . " $collate"
+		. ', me.disc, me.tracknum, ' . $sqlHelperClass->append0("me.titlesort") . " $collate";
+	my $albumYearSort = $sqlHelperClass->append0("album.year") . ", " . $albumSort;
 	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort") . " $collate";
 	
 	if ( !Slim::Schema::hasLibrary()) {
@@ -3384,11 +3385,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			$attrs{$key} = $value;
 
-		} elsif ($key eq 'sort') {
-
-			$sort = $value;
-
-		} else {
+		} elsif ($key ne 'sort') { # 'sort' handled afterwards...
 
 			if ($key =~ /\.(?:name|title)search$/) {
 				
@@ -3403,6 +3400,20 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$find{$key} = Slim::Utils::Text::ignoreCase($value, 1);
 			}
+		}
+	}
+
+	# Check for 'sort' after iterating other keys, so that it takes precedence...
+	if (defined($terms->{'sort'})) {
+		my $value = $terms->{'sort'};
+
+		if ($value eq 'artflow' || $value eq 'yearartistalbum' || $value eq 'yearalbum') {
+			# If its an album sort where year takes precendence, then sort by year first
+			$sort = $albumYearSort;
+		} elsif ($value ne 'artistalbum' && $value ne 'new' && $value ne 'random') {
+			# Only use sort value if it is **not** an album sort.
+			# TODO: Better way to check this?
+			$sort = $value;
 		}
 	}
 
@@ -3464,7 +3475,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $joinMap{'year'};
 		}
 		
-		if ($sort && $sort eq $albumSort) {
+		if ($sort && ($sort eq $albumSort || $sort eq $albumYearSort)) {
 			if ($find{'me.album'}) {
 				# Don't need album-sort if we have a specific album-id
 				$sort = undef;
