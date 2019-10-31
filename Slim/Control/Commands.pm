@@ -3259,7 +3259,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
 	my $cmd    = shift;
-	my $sortParam = shift;
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
