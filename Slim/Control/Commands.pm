@@ -3407,8 +3407,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		my $value = $terms->{'sort'};
 
 		if ($value eq 'artflow' || $value eq 'yearartistalbum' || $value eq 'yearalbum') {
-			# If its an album sort where year takes precendence, then sort by year first
-			$sort = $albumYearSort;
+			# If its an album sort where year takes precedence, then sort by year first
+			if ($sort eq $albumSort) {
+				$sort = $albumYearSort;
+			}
 		} elsif ($value ne 'artistalbum' && $value ne 'new' && $value ne 'random') {
 			# Only use sort value if it is **not** an album sort.
 			$sort = $value;
