@@ -3411,7 +3411,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			if ($sort eq $albumSort) {
 				$sort = $albumYearSort;
 			}
-		} elsif ($value ne 'artistalbum' && $value ne 'new' && $value ne 'random') {
+		} elsif ($value !~ /^(artistalbum|albumtrack|new|random)$/) {
 			# Only use sort value if it is **not** an album sort.
 			$sort = $value;
 		}
