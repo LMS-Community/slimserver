@@ -5376,7 +5376,7 @@ sub _getTagDataForTracks {
 
 	my $join_tracks_persistent = sub {
 		if ( main::STATISTICS && $sql !~ /JOIN tracks_persistent/ ) {
-			$sql .= 'JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+			$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
 		}
 	};
 
