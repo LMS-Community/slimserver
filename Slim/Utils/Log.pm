@@ -871,6 +871,7 @@ sub logLevels {
 		'server.scheduler'           => 'ERROR',
 		'server.select'              => 'ERROR',
 		'server.timers'              => 'ERROR',
+		'server.update'              => 'ERROR',
 
 		'artwork'                    => 'ERROR',
 		'artwork.imageproxy'         => 'ERROR',
