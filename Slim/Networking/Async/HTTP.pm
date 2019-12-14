@@ -293,7 +293,9 @@ sub _format_request {
 	}
 
 	# XXX until we support chunked encoding, force 1.0
-	$self->socket->http_version('1.0');
+	# $self->socket->http_version('1.0');
+	$self->socket->http_version($self->request->protocol =~ m|HTTP/(\S*)|i);
+	$self->socket->keep_alive($self->request->header('Connection') =~ /keep-alive/i);
 
 	my $request = $self->socket->format_request(
 		$self->request->method,
