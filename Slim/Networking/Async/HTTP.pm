@@ -250,7 +250,8 @@ sub add_headers {
 	$headers->init_header( 'User-Agent'    => Slim::Utils::Misc::userAgentString() );
 	$headers->init_header( Accept          => '*/*' );
 	$headers->init_header( 'Cache-Control' => 'no-cache' );
-	$headers->init_header( Connection      => 'close' );
+	# only init 'Connection' header if HTTP is 1.0, otherwise leave if to Net::HTTP::Method
+	$headers->init_header( Connection      => 'close' ) if $self->request->protocol =~ m|HTTP/1.0|i;
 
 	if ( $headers->header('User-Agent') !~ /^NSPlayer/ ) {
 		$headers->init_header( 'Icy-Metadata' => 1 );
@@ -292,11 +293,12 @@ sub _format_request {
 		push @h, $$content_ref;
 	}
 
-	# XXX until we support chunked encoding, force 1.0
-	# $self->socket->http_version('1.0');
+	# Support HTTP 1.1 and keep-alive
 	my ($version) = $self->request->protocol =~ m|HTTP/(\S*)|i;
 	$version = '1.0' if $version ne '1.1';
 	$self->socket->http_version($version);
+	$self->socket->keep_alive(1) if ($version == '1.1' && $self->request->header('Connection') !~ /close/i) || 
+									$self->request->header('Connection') =~ /keep-alive/i;
 	
 	my $request = $self->socket->format_request(
 		$self->request->method,
