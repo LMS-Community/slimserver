@@ -483,7 +483,8 @@ sub requestMethod {
 
 	} else {
 		$clientid ||= $playername;
-		$log->error(($clientid ? "$clientid: " : '') . "request not dispatchable!");
+		# Warn rather than Error because this does happen a lot - e.g. device at end of gateway via plugin is powered off
+		$log->warn(($clientid ? "$clientid: " : '') . "request not dispatchable!");
 		Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 		return;
 	}	
