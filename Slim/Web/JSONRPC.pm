@@ -483,7 +483,7 @@ sub requestMethod {
 
 	} else {
 		$clientid ||= $playername;
-		$log->error(($clientid ? "$clientid: " : '') . "request not dispatchable!");
+		$log->warn(($clientid ? "$clientid: " : '') . "request not dispatchable!");
 		Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 		return;
 	}	
