@@ -11,7 +11,7 @@ SAVE_PLAYLIST_DESC
 	FI	Tallenna soittoluettelot soittimen käyttöliittymästä
 	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
 	IT	Salva playlist dall'interfaccia del lettore
-	NL	Playlists uit de muzieksysteem-UI opslaan
+	NL	Playlists uit de muziekspeler-UI opslaan
 	NO	Lagre spillelister fra spillergrensesnittet
 	PL	Zapisz listy odtwarzania z interfejsu odtwarzacza
 	RU	Сохранить плей-листы из пользовательского интерфейса плеера
@@ -27,7 +27,7 @@ PLAYLIST_OVERWRITE
 	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante:
 	HE	עבור ימינה להחלפת רשימת ההשמעה הנוכחית:
 	IT	Premere DESTRA per sostituire la playlist corrente:
-	NL	Rechts om de bestaande playlist te vervangen:
+	NL	Druk RECHTS om de bestaande playlist te vervangen:
 	NO	Gå til høyre for å bytte ut den eksisterende spillelisten:
 	PL	Przejdź w prawo, aby zastąpić istniejącą listę odtwarzania:
 	RU	Перейдите вправо, чтобы заменить существующий плей-лист:
@@ -44,7 +44,7 @@ PLAYLIST_SAVE
 	HE	עבור ימינה פעם נוספת לשמירת רשימת ההשמעה בשם:
 	IT	Premere DESTRA nuovamente per salvare la playlist con nome:
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
-	NL	Opnieuw rechts om playlist op te slaan als:
+	NL	Druk opnieuw RECHTS om playlist op te slaan als:
 	NO	Gå til høyre igjen for å lagre spillelisten som:
 	PL	Ponownie w prawo, aby zapisać listę odtwarzania jako:
 	RU	Снова вправо, чтобы сохранить плей-лист как:

@@ -626,8 +626,7 @@ sub makeVolatile {
 	#    3. add new tracks
 	#    4. restore position
 	#    5. shuffle again, preserving the currently playing track
-	my $shuffle = shuffle($client);
-	$client->execute([ 'playlist', 'shuffle', 0 ]) if $shuffle;
+	preserveShuffleOrder($client);
 	
 	my $needRestart;
 	
@@ -659,35 +658,12 @@ sub makeVolatile {
 		if ($client->isPlaying()) {
 			$playtime = Slim::Player::Source::songTime($client);
 			
-			if ($shuffle) {
-				$restoreStateWhenShuffled = ['play', 0.2];
-			}
-			else {
-				$cmd = 'loadtracks';
-			}
+			$cmd = 'loadtracks';
 		}
-		elsif ($shuffle && $client->power) {
-			if ($client->isPaused) {
-				# XXX - pause somehow doesn't work...
-#				$restoreStateWhenShuffled = ['pause', 1];
-				$restoreStateWhenShuffled = ['stop'];
-			}
-			elsif ($client->isStopped) {
-				$restoreStateWhenShuffled = ['stop'];
-			}
-		}
-
+		
 		Slim::Player::Playlist::stopAndClear($client);
 
 		$client->execute([ 'playlist', $cmd, 'listRef', \@urls, 0.2, $position ]);
-		
-		# restore shuffle state
-		if ($shuffle) {
-			# playlist addtracks wouldn't jump - need to do it here
-			$client->execute([ 'playlist', 'jump', $position ]);
-			$client->execute([ 'playlist', 'shuffle', $shuffle ]);
-			$client->execute($restoreStateWhenShuffled);
-		}
 		
 		Slim::Player::Source::gototime($client, $playtime) if $playtime;
 	}
@@ -912,6 +888,20 @@ sub reshuffle {
 	}
 
 	refreshPlaylist($client);
+}
+
+# preserveShuffleOrder would order the actual playlist in the currently shuffled order
+# After calling this it's no longer possible to restore the original order of tracks.
+sub preserveShuffleOrder {
+	my ($client) = @_;
+
+	if (shuffle($client)) {
+		my @playlist = @{playList($client)};
+		@{$client->playlist} = map { $playlist[$_] } @{shuffleList($client)};
+		@{$client->shufflelist} = ( 0 .. $#playlist );
+
+		shuffle($client, 0);
+	}
 }
 
 sub scheduleWriteOfPlaylist {

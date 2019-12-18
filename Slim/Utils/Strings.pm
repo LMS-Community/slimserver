@@ -441,6 +441,7 @@ sub storeExtraStrings {
 		
 		$extraStringsCache = eval { from_json( read_file($extraCache) ) };
 		if ( $@ ) {
+			$log->error("Failed to read extrastrings.json file: $@");
 			$extraStringsCache = {};
 		}
 	}
@@ -467,6 +468,12 @@ sub storeExtraStrings {
 	}
 
 	if ( $extraStringsDirty ) {
+		# secondary languages need to be refreshed - remove the cached data
+		foreach (keys %{ languageOptions() }) {
+			next if $_ eq $currentLang;
+			delete $strings->{$_} if $strings->{$_};
+		}
+	
 		# Batch changes to avoid lots of writes
 		Slim::Utils::Timers::killTimers( $extraCache, \&_writeExtraStrings );
 		Slim::Utils::Timers::setTimer( $extraCache, time() + 5, \&_writeExtraStrings );
@@ -480,6 +487,8 @@ sub _writeExtraStrings {
 	
 	$extraStringsDirty = 0;
 	eval { write_file( $extraCache, to_json($extraStringsCache) ) };
+
+	$log->error("Failed to write extrastrings.json file: $@") if $@;
 };
 
 =head2 loadExtraStrings

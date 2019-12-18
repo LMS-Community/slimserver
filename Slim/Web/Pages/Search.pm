@@ -57,6 +57,7 @@ sub search {
 	if ($params->{'ajaxSearch'}) {
 		$params->{'itemsPerPage'} = MAXRESULTS;
 		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search$library_id/";
+		$params->{'q'} =~ s/\*//g;
 		return Slim::Web::XMLBrowser::webLink(@_);		
 	}
 
@@ -129,6 +130,7 @@ sub advancedSearch {
 	
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
+	my %joins;
 
 	# Check for valid search terms
 	for my $key (sort keys %$params) {
@@ -164,11 +166,14 @@ sub advancedSearch {
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
-			$newKey =~ s/_(rating|playcount)\b/\.$1/;
+			$newKey =~ s/_(rating|playcount|value|titlesearch|namesearch|)\b/\.$1/;
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
-			push @qstring, join('=', $key, $params->{$key});
+
+			if (!grep /^$key=/, @qstring) {
+				push @qstring, join('=', $key, $params->{$key});
+			}
 
 			# Bitrate needs to changed a bit
 			if ($key =~ /bitrate$/) {
@@ -186,9 +191,32 @@ sub advancedSearch {
 				splice(@{$params->{$key}}, 2);
 			}
 
-			# Map the type to the query
-			# This will be handed to SQL::Abstract
-			$query{$newKey} = { $op => $params->{$key} };
+			if ($op =~ /(NOT )?LIKE/) {
+				$op = $1 ? 'not like' : 'like';
+			}
+
+			if ($op =~ /STARTS (NOT )?WITH/) {
+				$op = $1 ? 'not like' : 'like';
+
+				# depending search preferences we might have an array, or even nested array - but we only want the first item
+				while (ref $params->{$key} eq 'ARRAY') {
+					$params->{$key} = shift @{$params->{$key}};
+				}
+
+				$params->{$key} =~ s/^\%//;
+			}
+
+			# if we've got multiple arguments, we'll have to logically AND them in case of NOT LIKE
+			if ($op eq 'not like' && ref $params->{$key} eq 'ARRAY' && ref $params->{$key}->[0] eq 'ARRAY') {
+				$query{-and} ||= [];
+				push @{$query{-and}}, map { $newKey => { 'not like' => $_ }} @{$params->{$key}->[0]};
+				delete $query{$newKey};
+			}
+			else {
+				# Map the type to the query
+				# This will be handed to SQL::Abstract
+				$query{$newKey} = { $op => $params->{$key} };
+			}
 
 			# don't include null/0 value years in search for earlier years
 			# http://bugs.slimdevices.com/show_bug.cgi?id=5713
@@ -228,9 +256,10 @@ sub advancedSearch {
 		# 
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/_(titlesearch|namesearch|value)$/\.$1/) {
+		if ($newKey =~ s/(.+)_(titlesearch|namesearch|value|)$/$1\.$2/) {
+			$joins{$1}++ if $1 ne 'me';
 
-			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
+			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
 		}
 
 		$newKey =~ s/_(rating|playcount)\b/\.$1/;
@@ -238,7 +267,7 @@ sub advancedSearch {
 		# Wildcard searches
 		if ($newKey =~ /lyrics/) {
 
-			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
+			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
 		}
 
 		if ($newKey =~ /url/) {
@@ -249,7 +278,7 @@ sub advancedSearch {
 			# replace the % in the URI escaped string with a single character placeholder
 			$uri =~ s/%/_/g;
 
-			$params->{$key} = { 'like' => "%$uri%" };
+			$params->{$key} = "%$uri%";
 		}
 
 		$query{$newKey} = $params->{$key};
@@ -326,7 +355,7 @@ sub advancedSearch {
 	my @joins = ();
 	_initActiveRoles($params);
 
-	if ($query{'contributor.namesearch'}) {
+	if ($query{'contributor.namesearch'} || $joins{'contributor'}) {
 
 		if (keys %{$params->{'search'}->{'contributor_namesearch'}}) {
 			my @roles;
@@ -339,7 +368,7 @@ sub advancedSearch {
 			$query{"contributorTracks.role"} = \@roles if @roles;
 		}
 
-		if ($query{'contributor.namesearch'}) {
+		if ($query{'contributor.namesearch'} || $joins{'contributor'}) {
 
 			push @joins, { "contributorTracks" => 'contributor' };
 
@@ -389,12 +418,12 @@ sub advancedSearch {
 	
 	$query{'me.audio'} = 1;
 
-	if ($query{'album.titlesearch'}) {
+	if ($query{'album.titlesearch'} || $joins{'album'}) {
 
 		push @joins, 'album';
 	}
 
-	if ($query{'comments.value'}) {
+	if ($query{'comments.value'} || $joins{'comments'}) {
 
 		push @joins, 'comments';
 	}

@@ -4,13 +4,15 @@ package Slim::Web::Template::SkinManager;
 
 # Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
-use base qw(Slim::Web::Template::NoWeb); 
+use base qw(Slim::Web::Template::NoWeb);
 
 use strict;
+use File::Slurp;
 use File::Spec::Functions qw(:ALL);
+use Digest::MD5 qw(md5_hex);
 use Template;
 use URI::Escape qw(uri_escape);
 use YAML::XS;
@@ -28,7 +30,8 @@ BEGIN {
 	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
 	# Use Profiler instead if you want to investigate page rendering performance
 #	$Template::Config::CONTEXT = 'Slim::Web::Template::Profiler';
-	$Template::Provider::MAX_DIRS = 128;
+	$Template::Provider::MAX_DIRS = 256;
+	$Template::Directive::WHILE_MAX = 10000;
 }
 
 use constant baseSkin => 'EN';
@@ -61,12 +64,12 @@ sub new {
 	};
 
 	bless $self, $class;
-	
+
 	push @{ $self->{templateDirs} }, Slim::Utils::OSDetect::dirsFor('HTML');
-	
+
 	my %skins = $self->skins();
 	$self->{skins} = \%skins;
-	
+
 	return $self;
 }
 
@@ -86,7 +89,7 @@ sub isaSkin {
 
 sub skins {
 	my $class = shift;
-	
+
 	# create a hash of available skins - used for skin override and by settings page
 	my $UI = shift; # return format for settings page rather than lookup cache for skins
 
@@ -104,15 +107,15 @@ sub skins {
 			main::INFOLOG && $log->is_info && $log->info("skin entry: $dir");
 
 			if ($UI) {
-				
+
 				$dir = Slim::Utils::Misc::unescape($dir);
 				my $name = Slim::Utils::Strings::getString( uc($dir) . '_SKIN' );
-				
+
 				$skinlist{ $UI ? $dir : uc $dir } = ($name eq uc($dir) . '_SKIN') ? $dir : $name;
 			}
-			
+
 			else {
-				
+
 				$skinlist{ uc $dir } = $dir;
 			}
 		}
@@ -133,7 +136,7 @@ sub addSkinTemplate {
 	my @skinParents  = ();
 	my @preprocess   = qw(hreftemplate cmdwrappers);
 	my $skinSettings = '';
-	
+
 	for my $rootDir ($class->HTMLTemplateDirs()) {
 
 		my $skinConfig = catfile($rootDir, $skin, 'skinconfig.yml');
@@ -176,7 +179,7 @@ sub addSkinTemplate {
 			}
 		}
 	}
-	
+
 	if (ref($skinSettings) eq 'HASH' && ref $skinSettings->{'preprocess'} eq "ARRAY") {
 
 		for my $checkfile (@{$skinSettings->{'preprocess'}}) {
@@ -224,7 +227,7 @@ sub addSkinTemplate {
 			'utf8encode'        => \&Slim::Utils::Unicode::utf8encode,
 			'utf8on'            => \&Slim::Utils::Unicode::utf8on,
 			'utf8off'           => \&Slim::Utils::Unicode::utf8off,
-			'resizeimage'       => [ \&_resizeImage, 1 ], 
+			'resizeimage'       => [ \&_resizeImage, 1 ],
 			'imageproxy'        => [ sub {
 				return _resizeImage($_[0], $_[1], $_[2], '-');
 			}, 1 ],
@@ -232,14 +235,20 @@ sub addSkinTemplate {
 
 		EVAL_PERL => 1,
 		ABSOLUTE  => 1,
-		
+
 		# we usually don't change templates while running
 		STAT_TTL  => main::NOBROWSECACHE ? 1 : 3600,
-		
+
 		VARIABLES => {
 			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
 		},
 	});
+
+	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));
+	if (-d $class->templateCacheDir() && !-f $versionFile) {
+		unlink map { catdir($class->templateCacheDir(), $_) } File::Slurp::read_dir($class->templateCacheDir());
+		write_file($versionFile, '');
+	}
 
 	return $class->{skinTemplates}->{$skin};
 }
@@ -256,36 +265,36 @@ sub _nonBreaking {
 
 sub _resizeImage {
 	my ( $context, $width, $height, $mode, $prefix ) = @_;
-	
+
 	$height ||= '';
 	$mode   ||= '';
 	$prefix ||= '/';
-	
+
 	return sub {
 		my $url = shift;
 
 		# use local imageproxy to resize image (if enabled)
 		$url = Slim::Web::ImageProxy::proxiedImage($url);
-		
+
 		my ($host) = Slim::Utils::Misc::crackURL($url);
 
 		# don't use imageproxy on local network
 		if ( $host && (Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i) ) {
 			return $url;
 		}
-		
+
 		# fall back to using external image proxy for external resources
 		elsif ( !main::NOMYSB && $url =~ m{^https?://} ) {
 			return Slim::Networking::SqueezeNetwork->url(
 				"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
 			);
 		}
-		
+
 		# $url comes with resizing parameters
 		if ( $url =~ /_((?:[0-9X]+x[0-9X]+)(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
 			return $url;
 		}
-		
+
 		# sometimes we'll need to prepend the webroot to our url
 		$url = $prefix . $url unless $url =~ m{^/};
 
@@ -298,7 +307,7 @@ sub _resizeImage {
 		if ( $url =~ m{^((?:$webroot|/)music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
 			return $1 . $resizeParams . '_o';
 		}
-		
+
 		# special mode "-": don't resize local urls (some already come with resize parameters)
 		if ($mode eq '-') {
 			if ($url =~ m|/[a-z]+\.png$|) {
@@ -310,11 +319,11 @@ sub _resizeImage {
 		}
 
 		$resizeParams .= "_$mode" if $mode;
-	
+
 		$url =~ s/(\.png|\.gif|\.jpe?g|)$/$resizeParams$1/i;
 		$url = '/' . $url unless $url =~ m{^(?:/|http)};
-		
-		return $url; 
+
+		return $url;
 	};
 }
 
@@ -322,7 +331,7 @@ sub _resizeImage {
 my %empty;
 sub _fillTemplate {
 	my ($class, $params, $path, $skin) = @_;
-	
+
 	# Make sure we have a skin template for fixHttpPath to use.
 	my $template = $class->{skinTemplates}->{$skin} || $class->addSkinTemplate($skin);
 
@@ -331,8 +340,8 @@ sub _fillTemplate {
 	$params->{'LOCALE'} = 'utf-8';
 
 	$path = $class->fixHttpPath($skin, $path);
-	
-	return \'' if $empty{$path}; 
+
+	return \'' if $empty{$path};
 
 	if (!$template->process($path, $params, \$output)) {
 
@@ -365,11 +374,11 @@ Attempts to figure out what the browser is by user-agent string identification
 
 sub detectBrowser {
 	my ($class, $request) = @_;
-	
+
 	my $return = 'unknown';
-	
+
 	my $ua = $request->header('user-agent') || return $return;
-	
+
 	if ($ua =~ /Firefox/) {
 		$return = 'Firefox';
 	} elsif ($ua =~ /Opera/) {
@@ -388,7 +397,7 @@ sub detectBrowser {
 	{
 		$return = 'IE';
 	}
-	
+
 	return $return;
 }
 

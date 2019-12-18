@@ -30,7 +30,7 @@
 		[% ELSE %]
 			<span class="playlistCover">
 				[% IF item.album_id %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% END %]
-				<img src="[% item.cover | resizeimage(50, 50) %]" width="50" height="50" onLoad="resize(this, 50)">
+				<img src="[% item.cover | resizeimage(50, 50) %]" srcset="[% item.cover | resizeimage(100, 100) %] 2x" width="50" height="50" onLoad="resize(this, 50)">
 				[% IF item.album_id %]</a>[% END %]
 			</span>
 			<div class="playlistSongDetail">

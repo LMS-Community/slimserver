@@ -379,7 +379,13 @@ sub clientForgetCommand {
 		main::INFOLOG && $log->info($client->id . ': not forgetting as connected again');
 		return;
 	}
-	
+
+	# Persist playback state like we would do when turning off a player, that is, treat a vanishing
+	# player that's still playing the same way as a player that's turned off while still playing, so
+	# we can make it start playing again if it reappears and the user told us to resume playing
+	# when powering on.
+	$client->persistPlaybackStateForPowerOff();
+
 	$client->controller()->playerInactive($client);
 
 	$client->forgetClient();
@@ -639,14 +645,18 @@ sub mixerCommand {
 			}
 	
 			$client->fade_volume($fade, \&_mixer_mute, [$client]);
-	
-			for my $eachclient (@buddies) {
 
-				if ($prefs->client($eachclient)->get('syncVolume')) {
+			# Bug 18165: do not sync volume if client's volume itself is not synced			
+			if ($prefs->client($client)->get('syncVolume')) {		
+			
+				for my $eachclient (@buddies) {
 
-					$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+					if ($prefs->client($eachclient)->get('syncVolume')) {
+
+						$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+					}
 				}
-			}
+			}	
 		}
 
 	} else {
@@ -675,13 +685,16 @@ sub mixerCommand {
 			$newval = $client->$entity($newval);
 		}
 
-		for my $eachclient (@buddies) {
-			if ($prefs->client($eachclient)->get('syncVolume')) {
-				$prefs->client($eachclient)->set($entity, $newval);
-				$eachclient->$entity($newval);
-				$eachclient->mixerDisplay('volume') if $entity eq 'volume';
+		# Bug 18165: do not sync volume if client's volume itself is not synced
+		if ($prefs->client($client)->get('syncVolume')) {		
+			for my $eachclient (@buddies) {
+				if ($prefs->client($eachclient)->get('syncVolume')) {
+					$prefs->client($eachclient)->set($entity, $newval);
+					$eachclient->$entity($newval);
+					$eachclient->mixerDisplay('volume') if $entity eq 'volume';
+				}
 			}
-		}
+		}	
 	}
 		
 	if (defined $controllerSequenceId) {
@@ -2036,7 +2049,11 @@ sub playlistcontrolCommand {
 
 			$what->{'year.id'} = $year_id;
 		}
-		
+
+		if (defined(my $sort = $request->getParam('sort'))) {
+			$what->{'sort'} = $sort;
+		}
+
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
@@ -2582,6 +2599,7 @@ sub rescanCommand {
 	}
 
 	# if scan is running or we're told to queue up requests, return quickly
+	# FIXME - this seems to sometimes lead to infinite loops! (see eg. Synology change)
 	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks() || Slim::Music::Import->hasScanTask() ) {
 		Slim::Music::Import->queueScanTask($request);
 		
@@ -2598,6 +2616,7 @@ sub rescanCommand {
 	while ( my ($class, $config) = each %{$importers} ) {
 		if ( $class =~ /(?:Plugin|Slim::Music::VirtualLibraries)/ && $config->{use} ) {
 			$mode = 'external';
+			last;
 		}
 	}
 	
@@ -2632,11 +2651,9 @@ sub rescanCommand {
 		
 			# we only want to scan folders for video/pictures
 			my %seen = (); # to avoid duplicates
-			@dirs = grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() };
-			
-			if ($singledir) {
-				@dirs = grep { /\Q$singledir\E/ } @dirs;
-			}
+			@dirs = grep { 
+				!$seen{$_}++ 
+			} @{ Slim::Utils::Misc::getVideoDirs($singledir) }, @{ Slim::Utils::Misc::getImageDirs($singledir) };
 
 			if ( main::MEDIASUPPORT && scalar @dirs && $mode ne 'playlists' ) {
 				require Slim::Utils::Scanner::LMS;
@@ -2657,28 +2674,20 @@ sub rescanCommand {
 				};
 				
 				# Audio scan is run first, when done, the LMS scanner is run
-				my $audio;
-				$audio = sub {
-					my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-					
-					if ($singledir) {
-						$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
-					}
-					elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
-						# scan playlist folder too
-						push @$audiodirs, $playlistdir;
-					}
-					
-					# XXX until libmediascan supports audio, run the audio scanner now
-					Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-						types      => 'list|audio',
-						scanName   => 'directory',
-						progress   => 1,
-						onFinished => $lms,
-					} );
-				};
-			
-				$audio->();
+				my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
+
+				if (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
+					# scan playlist folder too
+					push @$audiodirs, $playlistdir;
+				}
+
+				# XXX until libmediascan supports audio, run the audio scanner now
+				Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+					types      => 'list|audio',
+					scanName   => 'directory',
+					progress   => 1,
+					onFinished => $lms,
+				} );
 			}
 			elsif ($mode eq 'playlists') {
 				my $playlistdir = Slim::Utils::Misc::getPlaylistDir();
@@ -2691,12 +2700,9 @@ sub rescanCommand {
 				} );
 			}
 			else {
-				my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-				
-				if ($singledir) {
-					$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
-				}
-				elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
+				my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
+
+				if (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
 					# scan playlist folder too
 					push @$audiodirs, $playlistdir;
 				}
@@ -2769,11 +2775,13 @@ sub setSNCredentialsCommand { if (!main::NOMYSB) {
 				$request->setStatusDone();
 			},
 			ecb      => sub {
+				my (undef, $error) = @_;
 				$request->addResult('validated', 0);
-				$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN'));
+				$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN') . ($error ? " ($error)" : ''));
 	
 				$request->setStatusDone();
 			},
+			interactive => 1,	# tell login() to attempt without respecting local rate limiting
 		);
 	}
 	
@@ -3076,28 +3084,11 @@ sub wipecacheCommand {
 		}
 
 		Slim::Utils::Progress->clear();
-		
-		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
-			# Wipe/rescan in-process on SqueezeOS
 
-			# XXX - for the time being we're going to assume that the embedded server will only handle one folder
-			my $dir = Slim::Utils::Misc::getAudioDirs()->[0];
-			
-			my %args = (
-				types    => 'list|audio',
-				scanName => 'directory',
-				progress => 1,
-				wipe     => 1,
-			);
-			
-			Slim::Utils::Scanner::Local->rescan( $dir, \%args );
-		}
-		else {
-			# Launch external scanner on normal systems
-			Slim::Music::Import->launchScan( {
-				wipe => 1,
-			} );
-		}
+		# Launch external scanner on normal systems
+		Slim::Music::Import->launchScan( {
+			wipe => 1,
+		} );
 	}
 
 	$request->setStatusDone();
@@ -3284,12 +3275,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
 	my $collate = $sqlHelperClass->collate();
-	
-	my $albumSort 
-		= $sqlHelperClass->append0("album.titlesort") . " $collate"
-		. ', me.disc, me.tracknum, '
-		. $sqlHelperClass->append0("me.titlesort") . " $collate";
-		
+
+	my $albumSort = $sqlHelperClass->append0("album.titlesort") . " $collate"
+		. ', me.disc, me.tracknum, ' . $sqlHelperClass->append0("me.titlesort") . " $collate";
+	my $albumYearSort = $sqlHelperClass->append0("album.year") . ", " . $albumSort;
 	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort") . " $collate";
 	
 	if ( !Slim::Schema::hasLibrary()) {
@@ -3395,11 +3384,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			$attrs{$key} = $value;
 
-		} elsif ($key eq 'sort') {
-
-			$sort = $value;
-
-		} else {
+		} elsif ($key ne 'sort') { # 'sort' handled afterwards...
 
 			if ($key =~ /\.(?:name|title)search$/) {
 				
@@ -3414,6 +3399,21 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$find{$key} = Slim::Utils::Text::ignoreCase($value, 1);
 			}
+		}
+	}
+
+	# Check for 'sort' after iterating other keys, so that it takes precedence...
+	if (defined($terms->{'sort'})) {
+		my $value = $terms->{'sort'};
+
+		if ($value eq 'artflow' || $value eq 'yearartistalbum' || $value eq 'yearalbum') {
+			# If its an album sort where year takes precedence, then sort by year first
+			if ($sort eq $albumSort) {
+				$sort = $albumYearSort;
+			}
+		} elsif ($value !~ /^(artistalbum|albumtrack|new|random)$/) {
+			# Only use sort value if it is **not** an album sort.
+			$sort = $value;
 		}
 	}
 
@@ -3475,7 +3475,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $joinMap{'year'};
 		}
 		
-		if ($sort && $sort eq $albumSort) {
+		if ($sort && ($sort eq $albumSort || $sort eq $albumYearSort)) {
 			if ($find{'me.album'}) {
 				# Don't need album-sort if we have a specific album-id
 				$sort = undef;

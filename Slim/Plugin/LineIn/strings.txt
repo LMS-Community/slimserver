@@ -26,7 +26,7 @@ PLUGIN_LINE_IN_DESC
 	FI	Boomin linjatulo
 	FR	Entrée ligne pour Boom
 	IT	Ingresso Boom
-	NL	Lijningang voor boom
+	NL	Lijningang voor Boom
 	NO	Lydinngang for Boom
 	PL	Wejście liniowe niskich tonów
 	RU	Линейный вход для Squeezebox Boom

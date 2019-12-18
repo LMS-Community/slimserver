@@ -141,8 +141,9 @@ sub getUpdateParams {
 	my ($class, $url) = @_;
 	
 	if ($url) {
-		$url =~ /(\d\.\d\.\d).*?(\d{5,})/;
-		$::newVersion = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', "$1 - $2", $url);
+		my ($version, $revision) = $url =~ /(\d+\.\d+\.\d+)(?:.*(\d{5,}))?/;
+		$revision ||= 0;
+		$::newVersion = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', "$version - $revision", $url);
 	}
 	
 	return;

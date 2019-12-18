@@ -725,8 +725,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	the server, as defined in the Security pane of the server preferences.
 	Like any other command, the user and password must be escaped. If
 	successful, the server replaces the password with 6 star characters. If
-	unsuccessful, the server disconnects. If security is off this command is
-	always successful.
+	unsuccessful, the server returns the same, then disconnects. If security 
+	is off this command is always successful.
 </p>
 <p>
 	Examples:
@@ -740,7 +740,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<p>
 		Request: &quot;login user wrongpassword&lt;LF&gt;&quot;
 		<br>
-		Response: (Connection terminated)
+		Response: &quot;login user ******&lt;LF&gt;&quot; (Connection terminated)
 	</p>
 </blockquote>
 
@@ -1552,7 +1552,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Returns wether a player can be powered off or not. 
+	Returns whether a player can be powered off or not. 
 	Current hardware players and SoftSqueeze would return 1, web clients 0.
 </p>
 <p>
@@ -6906,6 +6906,18 @@ in the saved playlists folder.</p>
 		playback will start with the indicated track.
 		</td>
 	</tr>
+
+	<tr>
+		<td>sort</td>
+		<td>
+			Album sort order. One of &quot;album&quot;, (the default),
+			&quot;new&quot; (sort by change date in descending order),
+			&quot;artflow&quot; which sorts by artist, year, album for use with
+			artwork-centric interfaces,	&quot;artistalbum&quot;, &quot;yearalbum&quot;,
+			&quot;yearartistalbum&quot;, &quot;random&quot;. Only of relevance
+			if genre_id, artist_id or year|year_id is supplied.
+		</td>
+	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -7124,6 +7136,22 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			The MAC address of the computer on which the server software is running.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			ip
+		</td>
+		<td>
+			The IP address of the computer on which the server software is running.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			httpport
+		</td>
+		<td>
+			The port on which the server software is listening.
 		</td>
 	</tr>
 	<tr>
@@ -7613,6 +7641,14 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>
+			waitingToPlay
+		</td>
+		<td>
+			A flag telling whether the player isn't actually playing, but still waiting for data or something.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<em>If player is on:</em>
 		</td>
 		<td>
@@ -8035,9 +8071,9 @@ in the saved playlists folder.</p>
 	Example:
 </p>
 <blockquote>
-		Request: &quot;readdirectory 0 10 root://edelzwerg/mp3&quot;
+		Request: &quot;readdirectory 0 10 folder://media/mp3&quot;
 		<br>
-		Response: &quot;readdirectory 0 10 root%3A%2F%2Fedelzwerg%2Fmp3 count%3A251 item%3A%5C%5Cedelzwerg%5Cmp3%5CAerosmith isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAir isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAlanis%20Morissette isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAli%20Farka%20Toure isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAll%20Saints isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CManu%20Katche isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CSinead%20O'Connor isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CShakira isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAnastacia isdir%3A1&quot;
+		Response: &quot;readdirectory 0 10 folder%3A%2F%2Fmedia%2Fmp3 count%3A251 item%3A%5C%5Cmedia%5Cmp3%5CAerosmith isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAir isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAlanis%20Morissette isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAli%20Farka%20Toure isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAll%20Saints isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CManu%20Katche isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CSinead%20O'Connor isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CShakira isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAnastacia isfolder%3A1&quot;
 </blockquote> 
 
 
@@ -8628,7 +8664,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<strong><code><a href="#radios">apps</a></code></strong>
 	</li>
 	<li>
-		<strong><a href="#XMLBrowser">Live Music Archive, Live365, MP3tunes, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS</a></strong>
+		<strong><a href="#XMLBrowser">Live Music Archive, MP3tunes, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS</a></strong>
 	</li>
 	<li>
 		<strong><a href="#Favorites">Favorites</a></strong>
@@ -8713,7 +8749,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			&nbsp;&nbsp;<b>cmd</b>
 		</td>
 		<td>
-			Command, one of &quot;lma&quot;, &quot;live365&quot;, &quot;mp3tunes&quot;,
+			Command, one of &quot;lma&quot;, &quot;mp3tunes&quot;,
 			&quot;pandora&quot;, &quot;podcast&quot;, 
 			&quot;radiotime&quot;,  &quot;rhapsodydirect&quot;, &quot;shoutcast&quot;, &quot;
 			or &quot;picks&quot;, or any other, additionally installed radio or music service
@@ -8776,13 +8812,13 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 
 <br>
 <h3 id="XMLBrowser">
-	Live Music Archive, Live365, MP3tunes, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS
+	Live Music Archive, MP3tunes, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS
 </h3>
 <p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;lma|live365|mp3tunes|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
+			&lt;lma|mp3tunes|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
 			items
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
@@ -8975,7 +9011,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;lma|live365|mp3tunes|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
+			&lt;lma|mp3tunes|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
 			playlist
 			&lt;play|load|insert|add&gt;
 			&lt;taggedParameters&gt;
@@ -9642,7 +9678,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;favorites&gt;
+			favorites
 			playlist
 			&lt;play|load|insert|add&gt;
 			&lt;taggedParameters&gt;
@@ -9717,13 +9753,15 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<code>
 			&lt;playerid&gt;
 			randomplay
-			&lt;tracks|albums|contributors|year&gt;
+			&lt;tracks|albums|contributors|year|disable&gt;
 		</code>
 	</strong>
 </p>
 <p>
 	The &quot;randomplay&quot; command starts a random mix of the given 
-	type.
+	type. The &quot;disable&quot; type would disable continuation of
+	the currently playing mix. It would cause the current playlist to 
+	play to the end and no new tracks be added.
 </p>
 <p>
 	Example:

@@ -19,8 +19,7 @@
   to navigate around the music library and control the player. The HTTP server 
   may also be used in conjunction with another software application (<i>wget</i> 
   or <i>curl</i>, for example) as a way to access and control the player via HTTP.
-  The server can return XML instead of HTML for such "automation" uses (see 
-  <a href="xml_skin.html">The XML Skin</a> documentation.)</p>
+</p>
 <p> In the examples in this document the server is running on a computer 
   with the IP address of 10.0.1.201.</p>
 <h4>HTTP Access</h4>
@@ -446,15 +445,6 @@ AJAX/XmlHttpRequest calls safe to act on.
     <td>http://host:port/status.html</td>
     <td>Human readable HTML page indicating the status of the player</td>
     <td>text/html</td>
-  </tr>
-  <tr> 
-    <td> 
-      <p>http://host:port/xml/status.xml</p>
-      <p></p>
-    </td>
-    <td>XML data indicating the status of the player (see 
-  <a href="xml_skin.html">The XML Skin</a> documentation)</td>
-    <td>text/xml</td>
   </tr>
   <tr> 
     <td>http://host:port/status.m3u</td>

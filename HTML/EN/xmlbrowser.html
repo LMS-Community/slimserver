@@ -72,7 +72,7 @@
 		[% PROCESS pagebar %]
 	[% END %]
 	
-	[% BLOCK favoritescontrol %]<span id="controls[% item.index || index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
+	[% BLOCK favoritescontrol %]<span id="controls[% item.index || index _ ((start || 0) + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('[% path %]', 'action=favadd&index=[% item.index || index _ (start + loop.index) %]&start=[% pageinfo.startitem %]&sess=[% sess %]')"
@@ -223,10 +223,12 @@
 					<input type="hidden" value="[% sess %]" name="sess">
 					<input type="hidden" value="[% item.index || index _ (start + loop.index) %]" name="index" />
 				</form>
+			[% ELSIF item.type == 'textarea' %]
+				[% title = (item.web.value || item.name || item.title) %] [% title | html_line_break %]
 			[% ELSE %]
 				[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
-					onMouseOver="showElements(['controls[% item.index || index _ (start + loop.index) %]'], 'inline');"
-					onMouseOut="hideElements(['controls[% item.index || index _ (start + loop.index) %]'])">
+					onMouseOver="showElements(['controls[% item.index || index _ ((start || 0) + loop.index) %]'], 'inline');"
+					onMouseOut="hideElements(['controls[% item.index || index _ ((start || 0) + loop.index) %]'])">
 				[% END %]
 
 				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = (playlist_id ? 'editcontrols' : 'favoritescontrol') anchor = item.anchor %]
@@ -251,13 +253,13 @@
 						[% ELSIF item.simpleAlbumLink %]
 							<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% player | uri %]/">
 						[% ELSIF !item.type.match('^text') %]
-							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
+							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ ((start || 0) + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
 						[% title = item.web.value;
 						   IF !title.defined || title == ''; title = item.name; END;
 						   IF !title.defined || title == ''; title = item.title; END
 						%]
-						[% title | html_line_break %]
+						[% title | html | html_line_break %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]

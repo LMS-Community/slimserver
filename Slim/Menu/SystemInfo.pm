@@ -37,7 +37,7 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'systeminfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
@@ -67,27 +67,27 @@ sub registerDefaultInfoProviders {
 		after => 'server',
 		func  => \&infoLibrary,
 	) );
-	
+
 	$class->registerInfoProvider( currentplayer => (
 		after => 'library',
 		func  => \&infoCurrentPlayer,
 	) );
-	
+
 	$class->registerInfoProvider( players => (
 		after => 'currentplayer',
 		func  => \&infoPlayers,
 	) );
-	
+
 	$class->registerInfoProvider( dirs => (
 		after => 'players',
 		func  => \&infoDirs,
 	) );
-	
+
 	$class->registerInfoProvider( logs => (
 		after => 'dirs',
 		func  => \&infoLogs,
 	) );
-	
+
 	$class->registerInfoProvider( plugins => (
 		after => 'logs',
 		func  => \&infoPlugins,
@@ -97,54 +97,54 @@ sub registerDefaultInfoProviders {
 sub infoPlayers {
 	my $client = shift;
 	my $tags   = shift;
-	
+
 	my @players = Slim::Player::Client::clients();
 	return {} if ! scalar @players;
-	
+
 	my $item = {
 		name  => cstring($client, 'INFORMATION_MENU_PLAYER'),
 		items => []
 	};
-	
+
 	for my $player (sort { $a->name cmp $b->name } @players) {
-		
+
 		my ($raw, $details) = _getPlayerInfo($player, $tags);
-					
+
 		push @{ $item->{items} }, {
 			name  => $player->name,
 			items => $details,
 			web   => {
 				name  => $player->name,
 				items => $raw,
-			} 
+			}
 		}
 	}
-	
+
 	return $item;
 }
 
 sub infoCurrentPlayer {
 	my $client = shift || return;
 	my $tags   = shift;
-	
+
 	my ($raw, $details) = _getPlayerInfo($client, $tags);
-	
+
 	my $item = {
 		name  => cstring($client, 'INFORMATION_SPECIFIC_PLAYER', $client->name),
 		items => $details,
 		web   => {
 			hide => 1,
 			items => $raw,
-		} 
+		}
 	};
-	
+
 	return $item;
 }
 
 sub _getPlayerInfo {
 	my $client = shift;
 	my $tags   = shift;
-	
+
 	my $info = [
 #		{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
 		{ INFORMATION_PLAYER_MODEL           => $client->modelName },
@@ -160,13 +160,13 @@ sub _getPlayerInfo {
 	my @details;
 	foreach (@$info) {
 		my ($key, $value) = each %{$_};
-			
+
 		next unless defined $value;
-			
+
 		if (Slim::Utils::Strings::stringExists($key . '_ABBR')) {
 			$key = $key . '_ABBR'
 		}
-			
+
 		push @details, {
 			type => 'text',
 			name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
@@ -174,18 +174,18 @@ sub _getPlayerInfo {
 	}
 
 	if (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Health::Plugin')) {
-		
+
 		if (my $netinfo = Slim::Plugin::Health::NetTest::systemInfoMenu($client, $tags)) {
 			push @details, $netinfo;
 		}
 	}
-	
+
 	return ($info, \@details);
 }
 
 sub infoLibrary {
 	my $client = shift;
-	
+
 	if (!Slim::Schema::hasLibrary()) {
 		return {
 			name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
@@ -197,19 +197,19 @@ sub infoLibrary {
 			],
 		};
 	}
-	
+
 	elsif (Slim::Music::Import->stillScanning) {
 		return {
 			name => cstring($client, 'RESCANNING_SHORT'),
-	
+
 			web  => {
 				hide => 1,
 			},
-		} 
+		}
 	}
-	
+
 	my $totals = Slim::Schema->totals();
-	
+
 	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
 
@@ -254,23 +254,23 @@ sub infoLibrary {
 	# don't bother counting images/videos unless media are enabled
 	if ( main::MEDIASUPPORT ) {
 		my ($request, $results);
-		
+
 		# XXX - no simple access to result sets for images/videos yet?
 		if (main::VIDEO) {
 			$request = Slim::Control::Request::executeRequest( $client, ['video_titles', 0, 0] );
 			$results = $request->getResults();
-		
+
 			unshift @{ $items->{items} }, {
 				type => 'text',
 				name => cstring($client, 'INFORMATION_VIDEOS') . cstring($client, 'COLON') . ' '
 					. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
 			};
 		}
-	
+
 		if (main::IMAGE) {
 			$request = Slim::Control::Request::executeRequest( $client, ['image_titles', 0, 0] );
 			$results = $request->getResults();
-		
+
 			unshift @{ $items->{items} }, {
 				type => 'text',
 				name => cstring($client, 'INFORMATION_IMAGES') . cstring($client, 'COLON') . ' '
@@ -278,18 +278,18 @@ sub infoLibrary {
 			};
 		}
 	}
-	
+
 	return $items;
 }
 
 sub infoServer {
 	my $client = shift;
 	my $tags   = shift;
-	
+
 	my $menu   = $tags->{menuMode};
-		
+
 	my $osDetails = Slim::Utils::OSDetect::details();
-	
+
 	my $items = [
 		{
 			type => 'text',
@@ -301,25 +301,25 @@ sub infoServer {
 						$::REVISION,
 						$::BUILDDATE),
 		},
-		
+
 		{
 			type => 'text',
 			name => cstring($client, 'INFORMATION_HOSTNAME') . cstring($client, 'COLON') . ' '
 						. Slim::Utils::Network::hostName(),
-		}, 
-		
+		},
+
 		{
 			type => 'text',
 			name => cstring($client, 'INFORMATION_SERVER_IP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 						. Slim::Utils::Network::serverAddr(),
-		}, 
-		
+		},
+
 		{
 			type => 'text',
 			name => cstring($client, 'INFORMATION_SERVER_HTTP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 						. $prefs->get('httpport'),
-		}, 
-	
+		},
+
 		{
 			type => 'text',
 			name => sprintf("%s%s %s - %s - %s ", 
@@ -329,26 +329,30 @@ sub infoServer {
 						$prefs->get('language'),
 						Slim::Utils::Unicode::currentLocale()),
 		},
-		
+
 		{
 			type => 'text',
 			name => cstring($client, 'INFORMATION_ARCHITECTURE' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 						. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
 		},
-		
+
 		{
 			type => 'text',
 			name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
 						. $Config{'version'} . ' - ' . $Config{'archname'},
 		},
-		
-		# XXX - let's show the Audio::Scan version until we've updated them all
+
 		{
 			type => 'text',
 			name => 'Audio::Scan' . cstring($client, 'COLON') . ' ' . $Audio::Scan::VERSION,
 		},
+
+		{
+			type => 'text',
+			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'BLANK')),
+		},
 	];
-	
+
 	if ( Slim::Schema::hasLibrary() ) {
 		push @{$items},	{
 			type => 'text',
@@ -356,7 +360,7 @@ sub infoServer {
 						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->dbh ),
 		};
 	}
-	
+
 	push @{$items},	{
 		type => 'text',
 		name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
@@ -371,7 +375,7 @@ sub infoServer {
 
 sub infoDirs {
 	my $client = shift;
-	
+
 	my $folders = [
 		{ INFORMATION_CACHEDIR   => $prefs->get('cachedir') },
 		{ INFORMATION_PREFSDIR   => Slim::Utils::Prefs::dir() },
@@ -379,17 +383,17 @@ sub infoDirs {
 		{ INFORMATION_PLUGINDIRS => join(", ", grep {$_ !~ m|Slim/Plugin|} Slim::Utils::OSDetect::dirsFor('Plugins')) },
 		{ INFORMATION_BINDIRS => join(", ", Slim::Utils::Misc::getBinPaths()) },
 	];
-	
+
 	my $item = {
 		name  => cstring($client, 'FOLDERS'),
 		items => [],
-		
+
 		web   => {
 			name  => 'FOLDERS',
 			items => $folders,
 		}
 	};
-	
+
 	foreach (@$folders) {
 		my ($key, $value) = each %{$_};
 		push @{ $item->{items} }, {
@@ -397,21 +401,21 @@ sub infoDirs {
 			name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
 		}
 	}
-	
+
 	return $item;
 }
 
 sub infoPlugins {
 	my $client = shift || return;
 	my $tags   = shift;
-	
+
 	my $item = {
 		name  => cstring($client, 'INFORMATION_MENU_MODULE'),
 		items => [],
-		
+
 		web   => {
 			hide => 1,
-		} 
+		}
 	};
 
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
@@ -427,7 +431,7 @@ sub infoPlugins {
 
 			my $name   = $plugins->{$plugin}->{'name'};
 			my $version = $plugins->{$plugin}->{'version'};
-			
+
 			if ( $name eq uc($name) ) {
 				$name = cstring($client, $name);
 			}
@@ -442,43 +446,43 @@ sub infoPlugins {
 	@list = sort { $a->{'name'} cmp $b->{'name'} } @list;
 
 	$item->{'items'} = \@list;
-	
+
 	return $item;
 }
 
 
 sub infoLogs {
 	my $client = shift;
-	
+
 	my $logs = Slim::Utils::Log->getLogFiles();
-	
+
 	my $item = {
 		name  => cstring($client, 'SETUP_DEBUG_SERVER_LOG'),
 		items => [],
-		
+
 		web   => {
 			name  => 'SETUP_DEBUG_SERVER_LOG',
 			items => $logs,
 		}
 	};
-	
+
 	foreach (@$logs) {
 		my ($key, $value) = each %{$_};
-		
+
 		next unless $value;
-		
+
 		push @{ $item->{items} }, {
 			type => 'text',
 			name => cstring($client, "SETUP_DEBUG_${key}_LOG") . cstring($client, 'COLON') . ' ' . $value
 		}
 	}
-	
+
 	return $item;
 }
 
 sub cliQuery {
 	my $request = shift;
-	
+
 	my $client  = $request->client;
 	my $tags    = {
 		menuMode => $request->getParam('menu') || 0,

@@ -14,7 +14,13 @@ BEGIN {
 	use IO::Socket::SSL;
 }
 
-use base qw(Net::HTTPS Slim::Networking::Async::Socket);
+use base qw(Net::HTTPS::NB Slim::Networking::Async::Socket);
+
+sub new {
+	my ($class, %args) = @_;
+	$args{'Blocking'} = 0;
+	return $class->SUPER::new(%args);
+}
 
 sub close {
 	my $self = shift;

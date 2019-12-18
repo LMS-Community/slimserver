@@ -676,6 +676,15 @@ sub stream_s {
 		$pcmchannels     = '?';
 		$outputThreshold = 20;
 		
+	} elsif ($format eq 'ops') {
+
+		$formatbyte      = 'u';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 20;
+		
 	} elsif ($format eq 'alc') {
 
 		$formatbyte      = 'l';
@@ -710,7 +719,7 @@ sub stream_s {
 	} elsif ($format eq 'dff' || $format eq 'dsf') {
 
 		$formatbyte      = 'd';
-		$pcmsamplesize   = '?';
+		$pcmsamplesize   = $format eq 'dsf' ? 0 : 1;
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
@@ -918,7 +927,9 @@ sub stream_s {
 		if (
 			$prefs->client($master)->get('transitionSmart') 
 			&&
-			( Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
+			( Slim::Player::Playlist::count($master) < 2
+			  ||
+			  Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
 			  ||
 			  Slim::Player::ReplayGain->trackAlbumMatch( $master, 1 )
 			)
@@ -962,14 +973,22 @@ sub stream_s {
 		# by a player preference.
 		my $transitionSampleRestriction = $prefs->client($master)->get('transitionSampleRestriction') || 0;
 
-		if (!Slim::Player::ReplayGain->trackSampleRateMatch($master, -1) && $transitionSampleRestriction) {
-			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates');
+		if ($transitionSampleRestriction && ($transitionType == 1 || $transitionType == 5) && !Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
+			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates or single track');
 			$transitionType = 0;
 		 } elsif ($transitionSampleRestriction) {
 			main::INFOLOG && $log->info('Crossfade sample rate restriction enabled but not needed for this transition');
 		 }
-
-	}
+		 
+		 # this is crossfade, so only apply fade-in if we are already playing (exclude start, resume, reposition actions)
+		 if (!$master->isPlaying(1)) {
+			if ($transitionType == 2) {
+				$transitionType = 0;
+			} elsif ($transitionType == 4) {
+				$transitionType = 3;
+			}
+		 }
+	}	
 	
 	if ($transitionDuration > $client->maxTransitionDuration()) {
 		$transitionDuration = $client->maxTransitionDuration();

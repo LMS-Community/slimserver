@@ -76,14 +76,14 @@ sub init {
 	# Must initialize these here, not in declaration so that options have been parsed.
 	$dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
 	$updatesDir = Slim::Utils::OSDetect::dirsFor('updates');
-	
+
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^\w{4}_\d\.\d_.*\.bin(\.tmp)?$/i);
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^.*version$/i);
 
 	# No longer try downloading all player firmwares at startup - just allow the background
 	# download to get what is needed
-	
+
 	# Delete old ip3k firmware downloads - we should not normally need them again
 	Slim::Utils::Misc::deleteFiles($updatesDir, qr/^(squeezebox|squeezebox2|transporter|boom|receiver)_\d+\.bin$/);
 }
@@ -103,12 +103,12 @@ sub init_firmware_download {
 	my $model = shift;
 
 	return if $model eq 'squeezeplay'; # there is no firmware for the desktop version of squeezeplay!
-	
+
 	my $version_file   = catdir( $updatesDir, "$model.version" );
 
 	my $custom_version = catdir( $updatesDir, "custom.$model.version" );
 	my $custom_image   = catdir( $updatesDir, "custom.$model.bin" );
-	
+
 	if ( -r $custom_version && -r $custom_image ) {
 		main::INFOLOG && $log->info("Using custom $model firmware $custom_version $custom_image");
 
@@ -119,7 +119,7 @@ sub init_firmware_download {
 		($firmwares->{$model}->{version}, $firmwares->{$model}->{revision}) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
 		Slim::Web::Pages->addRawDownload("^firmware/custom.$model.bin", $custom_image, 'binary');
-		
+
 		return;
 	}
 
@@ -154,15 +154,15 @@ in 1 day.
 sub init_version_done {
 	my $version_file = shift;
 	my $model        = shift || 'jive';
-			
+
 	my $version = read_file($version_file);
-	
+
 	# jive.version format:
 	# 7.0 rNNNN
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
 	my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-	# on SqueezeOS we don't download firmware files
+	# on some systems we don't download firmware files
 	# we'll let the player download them from squeezenetwork directly
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
 
@@ -174,14 +174,14 @@ sub init_version_done {
 
 		Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
 	}
-	
+
 	else {
-		
+
 		my $fw_file = catdir( $updatesDir, "${model}_${ver}_r${rev}.bin" );
 
 		if ( !-e $fw_file ) {		
 			main::INFOLOG && $log->info("Downloading $model firmware to: $fw_file");
-		
+
 			downloadAsync( $fw_file, {cb => \&init_fw_done, pt => [$fw_file, $model]} );
 		}
 		else {
@@ -191,14 +191,14 @@ sub init_version_done {
 				revision => $rev,
 				file     => $fw_file,
 			};
-	
+
 			Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
-			
+
 			Slim::Web::Pages->addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 		}
 
 	}
-	
+
 	# Check again for an updated $model.version in 12 hours
 	main::DEBUGLOG && $log->debug("Scheduling next $model.version check in " . ($prefs->get('checkVersionInterval') / 3600) . " hours");
 	Slim::Utils::Timers::setTimer(
@@ -213,7 +213,7 @@ sub init_version_done {
 =head2 init_fw_done($fw_file, $model)
 
 Callback after firmware has been downloaded.  Receives the filename
-of the newly downloaded firmware and the $modelname. 
+of the newly downloaded firmware and the $modelname.
 Removes old firmware file if one exists.
 
 =cut
@@ -221,11 +221,11 @@ Removes old firmware file if one exists.
 sub init_fw_done {
 	my $fw_file = shift;
 	my $model   = shift;
-		
+
 	Slim::Utils::Misc::deleteFiles($updatesDir, qr/^$model.*\.bin(\.tmp)?$/i, $fw_file);
-	
+
 	my ($ver, $rev) = $fw_file =~ m/${model}_([^_]+)_r([^\.]+).bin/;
-	
+
 	$firmwares->{$model} = {
 		version  => $ver,
 		revision => $rev,
@@ -233,7 +233,7 @@ sub init_fw_done {
 	};
 
 	main::DEBUGLOG && $log->debug("downloaded $ver $rev for $model - $fw_file");
-	
+
 	Slim::Web::Pages->addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 
 	# send a notification that this firmware is downloaded
@@ -252,21 +252,21 @@ sub init_fw_error {
 	main::INFOLOG && $log->info("$model firmware download had an error");
 
 	get_fw_locally( $model );
-	
+
 	# Note: Server will keep trying to download a new one
 }
 
 sub get_fw_locally {
 	my $model = shift || 'jive';
-	
+
 	for my $path ($updatesDir, $dir) {
 		# Check if we have a usable Jive firmware
 		my $version_file = catdir( $path, "$model.version" );
-		
+
 		if ( -e $version_file ) {
 			my $version = read_file($version_file);
 			my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
-	
+
 			my $fw_file = catdir( $path, "${model}_${ver}_r${rev}.bin" );
 
 			if ( -e $fw_file ) {
@@ -276,12 +276,12 @@ sub get_fw_locally {
 					revision => $rev,
 					file     => $fw_file,
 				};
-				
+
 				Slim::Web::Pages->addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
-	
+
 				# send a notification that this firmware is downloaded
 				Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
-				
+
 				last;
 			}
 		}
@@ -306,7 +306,7 @@ sub url {
 		return unless ($firmwares->{$model}->{file});	# Will be available immediately if custom f/w 
 	}
 
-	# when running on SqueezeOS, return the direct link from SqueezeNetwork
+	# on some systems return the direct link from SqueezeNetwork
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
 		return BASE() . $::VERSION . '/' . $model
 			. '_' . $firmwares->{$model}->{version} 
@@ -315,7 +315,7 @@ sub url {
 	}
 
 	return unless $firmwares->{$model}->{file};
-	
+
 	return Slim::Utils::Network::serverURL() . '/firmware/' . basename($firmwares->{$model}->{file});
 }
 
@@ -328,19 +328,19 @@ if there is no firmware downloaded.
 
 sub need_upgrade {
 	my ( $class, $current, $model ) = @_;
-	
+
 	unless ($firmwares->{$model} && $firmwares->{$model}->{file} && $firmwares->{$model}->{version}) {
 		main::DEBUGLOG && $log->debug("no firmware for $model - can't upgrade");
 		return;
 	}
-	
+
 	my ($cur_version, $cur_rev) = $current =~ m/^([^ ]+)\sr(\d+)/;
-	
+
 	if ( !$cur_version || !$cur_rev ) {
 		logError("$model sent invalid current version: $current");
 		return;
 	}
-	
+
 	# Force upgrade if the version doesn't match, or if the rev is older
 	# Allows newer firmware to work without forcing a downgrade
 	if ( 
@@ -351,9 +351,9 @@ sub need_upgrade {
 		main::DEBUGLOG && $log->debug("$model needs upgrade! (has: $current, needs: $firmwares->{$model}->{version} $firmwares->{$model}->{revision})");
 		return 1;
 	}
-	
+
 	main::DEBUGLOG && $log->debug("$model doesn't need an upgrade (has: $current, server has: $firmwares->{$model}->{version} $firmwares->{$model}->{revision})");
-	
+
 	return;
 }
 
@@ -369,41 +369,41 @@ $file must be an absolute path.
 
 sub download {
 	my ( $url, $file ) = @_;
-	
+
 	require LWP::UserAgent;
 	my $ua = LWP::UserAgent->new(
 		env_proxy => 1,
 	);
-	
+
 	my $error;
-	
+
 	msg("Downloading firmware from $url, please wait...\n");
-	
+
 	my $res = $ua->mirror( $url, $file );
 	if ( $res->is_success ) {
-		
+
 		# Download the SHA1sum file to verify our download
 		my $res2 = $ua->mirror( "$url.sha", "$file.sha" );
 		if ( $res2->is_success ) {
-			
+
 			my $sumfile = read_file( "$file.sha" ) or fatal("Unable to read $file.sha to verify firmware\n");
 			my ($sum) = $sumfile =~ m/([a-f0-9]{40})/;
 			unlink "$file.sha";
-			
+
 			open my $fh, '<', $file or fatal("Unable to read $file to verify firmware\n");
 			binmode $fh;
-			
+
 			my $sha1 = Digest::SHA1->new;
 			$sha1->addfile($fh);
 			close $fh;
-			
+
 			if ( $sha1->hexdigest eq $sum ) {
 				logWarning("Successfully downloaded and verified $file.");
 				return 1;
 			}
-			
+
 			unlink $file;
-			
+
 			logError("Validation of firmware $file failed, SHA1 checksum did not match");
 		}
 		else {
@@ -414,12 +414,12 @@ sub download {
 	else {
 		$error = $res->status_line;
 	}
-	
+
 	if ( $res->code == 304 ) {
 		main::INFOLOG && $log->info("File $file not modified");
 		return 0;
 	}
-	
+
 	logError("Unable to download firmware from $url: $error");
 
 	return 0;
@@ -437,7 +437,7 @@ my %filesDownloading;
 sub downloadAsync {
 	my ($file, $args) = @_;
 	$args ||= {};
-		
+
 	# Are we already downloading?
 	my $callbacks;
 	if (!$args->{'retry'} && ($callbacks = $filesDownloading{$file})) {
@@ -448,13 +448,13 @@ sub downloadAsync {
 		}
 		return;
 	}
-	
+
 	# Use an empty array ref as the default true value
 	$filesDownloading{$file} ||= [];
-	
+
 	# URL to download
 	my $url = BASE() . $::VERSION . '/' . basename($file);
-	
+
 	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&downloadAsyncDone,
@@ -465,9 +465,9 @@ sub downloadAsync {
 			file   => $file,
 		},
 	);
-	
+
 	main::INFOLOG && $log->info("Downloading in the background: $url -> $file");
-	
+
 	$http->get( $url );
 }
 
@@ -482,12 +482,12 @@ sub downloadAsyncDone {
 	my $args = $http->params();
 	my $file = $args->{'file'};
 	my $url  = $http->url;
-	
+
 	# make sure we got the file
 	if ( !-e "$file.tmp" ) {
 		return downloadAsyncError( $http, 'File was not saved properly' );
 	}
-	
+
 	# Grab the SHA file, doesn't need to be saved to the filesystem
 	$http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&downloadAsyncSHADone,
@@ -497,7 +497,7 @@ sub downloadAsyncDone {
 			saveAs => undef,
 		}
 	);
-	
+
 	$http->get( $url . '.sha' );
 }
 
@@ -511,33 +511,33 @@ sub downloadAsyncSHADone {
 	my $http = shift;
 	my $args = $http->params();
 	my $file = $args->{'file'};
-	
+
 	# get checksum
 	my ($sum) = $http->content =~ m/([a-f0-9]{40})/;
-	
+
 	# open firmware file
 	open my $fh, '<', "$file.tmp" or return downloadAsyncError( $http, "Unable to read $file to verify firmware" );
 	binmode $fh;
-	
+
 	my $sha1 = Digest::SHA1->new;
 	$sha1->addfile($fh);
 	close $fh;
-	
+
 	if ( $sha1->hexdigest eq $sum ) {
-				
+
 		# rename the tmp file
 		rename "$file.tmp", $file or return downloadAsyncError( $http, "Unable to rename temporary $file file" );
-		
+
 		main::INFOLOG && $log->info("Successfully downloaded and verified $file.");
-	
+
 		# reset back off time
 		$CHECK_TIME = INITIAL_RETRY_TIME;
-		
+
 		my $cb = $args->{'cb'};
 		if ( $cb && ref $cb eq 'CODE' ) {
 			$cb->( @{$args->{'pt'} || []} );
 		}
-		
+
 		# Pick up extra callbacks waiting for this file
 		foreach $args (@{$filesDownloading{$file}}) {
 			my $cb = $args->{'cb'};
@@ -545,7 +545,7 @@ sub downloadAsyncSHADone {
 				$cb->( @{$args->{'pt'} || []} );
 			}
 		}
-		
+
 		delete $filesDownloading{$file};
 	}
 	else {
@@ -565,10 +565,10 @@ sub downloadAsyncError {
 	my $file = $http->params('file');
 	my $cb   = $http->params('cb');
 	my $pt   = $http->params('pt');
-	
+
 	# Clean up
 	unlink "$file.tmp" if -e "$file.tmp"; 
-	
+
 	# If error was "Unable to open $file for writing", downloading will never succeed so just give up
 	# Same for "Unable to write" if we run out of disk space, for example
 	if ( $error =~ /Unable to (?:open|write)/ ) {
@@ -586,8 +586,8 @@ sub downloadAsyncError {
 
 		if ( my $proxy = $prefs->get('webproxy') ) {
 			$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
-		} 
-	
+		}
+
 		Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
 		Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync,
 			{
@@ -597,14 +597,14 @@ sub downloadAsyncError {
 				retry=> 1,
 			},
 		 );
-	
+
 		# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
 		$CHECK_TIME *= 2;
 		if ( $CHECK_TIME > MAX_RETRY_TIME ) {
 			$CHECK_TIME = MAX_RETRY_TIME;
 		}
 	}
-	
+
 	# Bug 9230, if we failed to download a Jive firmware but have a valid one in Cache already,
 	# we should still offer it for download
 	my $model = scalar @$pt > 1 ? $pt->[1] : 'jive';
@@ -621,9 +621,9 @@ Shuts down with an error message.
 
 sub fatal {
 	my $msg = shift;
-	
+
 	logError($msg);
-	
+
 	main::stopServer();
 }
 

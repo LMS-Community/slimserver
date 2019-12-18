@@ -409,6 +409,7 @@ sub artworkRequest {
 				$body = \'';
 			}
 		
+			main::INFOLOG && $isInfo && $log->info("  Done Resizing: $fullpath using spec $spec");
 			$callback->( $client, $params, $body, @args );
 		};
 		

@@ -102,7 +102,7 @@ sub _add {
 		}
 	}
 	
-	return unless defined $fh;
+	return unless defined $fh && defined fileno($fh);
 	
 	my $w = EV::io(
 		fileno($fh),

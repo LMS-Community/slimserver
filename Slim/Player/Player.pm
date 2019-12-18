@@ -70,6 +70,7 @@ our $defaultPrefs = {
 	'packetLatency'        => 2,	# ms
 	'startDelay'           => 0,	# ms
 	'playDelay'            => 0,	# ms
+	'fadeInDuration'       => 0,
 };
 
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
@@ -109,8 +110,8 @@ sub init {
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
-	$client->power($prefs->client($client)->get('power'));
 	$client->startup($syncgroupid);
+	$client->power($prefs->client($client)->get('power'), 0, 1);
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
 		
@@ -201,11 +202,12 @@ sub power {
 	my $client = shift;
 	my $on     = shift;
 	my $noplay = shift;
+	my $force  = shift;
 	
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
-	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
+	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) || $force;
 
 	my $resume = $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
@@ -357,7 +359,10 @@ sub fade_volume {
 
 	my $int = 0.05; # interval between volume updates
 
-	my $vol = abs($prefs->client($client)->get("volume"));
+	# start from current position if still ramping up
+	my $vol = $fade < 0 && abs($client->volume) < abs($prefs->client($client)->get("volume")) ?
+			abs($client->volume) : abs($prefs->client($client)->get("volume"));
+				
 	my $now = Time::HiRes::time();
 	
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);

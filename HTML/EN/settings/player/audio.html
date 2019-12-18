@@ -127,8 +127,8 @@
 				<select class="stdedit" name="pref_transitionSampleRestriction" id="pref_transitionSampleRestriction">
 
 				[% FOREACH option = {
-					'0' => 'NO',
-					'1' => 'YES',
+					'1' => 'NO',
+					'0' => 'YES',
 				} %]
 					<option [% IF prefs.pref_transitionSampleRestriction == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
@@ -138,6 +138,10 @@
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
 				<input type="text" class="stdedit sliderInput_0_10" name="pref_transitionDuration" id="pref_transitionDuration" value="[% prefs.pref_transitionDuration %]" size="5">
+			[% END %]
+			
+			[% WRAPPER settingGroup title="SETUP_FADEINDURATION" desc="SETUP_FADEINDURATION_DESC" %]
+				<input type="text" class="stdedit sliderInput_0_10" name="pref_fadeInDuration" id="pref_fadeInDuration" value="[% prefs.pref_fadeInDuration %]" size="5">
 			[% END %]
 
 		[% END %]

@@ -8,7 +8,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
 	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung von anderen Logitech Music Server oder UPnP/DLNA Servern, ohne den Player umschalten zu müssen.
 	EN	Allow music playback from other Logitech Music Server or UPnP/DLNA servers without switching the player.
-	NL	Deze plug-in maakt het mogelijk muziek af te spelen van een andere Logitech Media Server of UPnP/DLNA-server, zonder van muzieksysteem te wisselen.
+	NL	Deze plug-in maakt het mogelijk muziek af te spelen van een andere Logitech Media Server of UPnP/DLNA-server, zonder van muziekspeler te wisselen.
 	NO	Denne modulen gjør det mulig å spille av musikk fra andre Logitech Media Servere eller UPnP/DLNA-servere, uten å måtte koble om spilleren.
 	PL	Odtwarzanie muzyki z innych instancji Logitech Media Server lub ze źródeł UPnP/DLNA, bez konieczności przełączania odtwarzacza.
 

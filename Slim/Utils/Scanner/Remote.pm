@@ -477,7 +477,7 @@ sub readRemoteHeaders {
 				# Bug 11001, if the URL uses basic authentication, it may be an Icecast
 				# server that allows only 1 connection per user.  Delay this callback for a second
 				# to avoid the chance of getting a 401 error when trying to stream.
-				if ( $track->url =~ m{http://[^:]+:[^@]+@} ) {
+				if ( $track->url =~ m{https?://[^:]+:[^@]+@} ) {
 					main::DEBUGLOG && $log->is_debug && $log->debug( 'Auth stream detected, waiting 1 second before streaming' );
 					
 					Slim::Utils::Timers::setTimer(
@@ -493,8 +493,12 @@ sub readRemoteHeaders {
 				}
 			}
 			else {
-				# We still need to read more info about this stream, but we can begin playing it now
-				$cb->( $track, undef, @{$pt} );
+				# XXX - for whatever reason we have to disconnect an https connection before we can do another connection...
+				#       we'll start playback once the scanning has finished
+				if ( $track->url !~ /^https/ ) {
+					# We still need to read more info about this stream, but we can begin playing it now - unless it's an https stream
+					$cb->( $track, undef, @{$pt} );
+				}
 				
 				# Continue scanning in the background
 				
@@ -807,7 +811,14 @@ sub streamAudioData {
 	unlink $fh->filename if -e $fh->filename;
 	delete $args->{_scanbuf};
 	delete $args->{_scanlen};
-	
+
+	# as https for whatever eason didn't allow us to start the stream while scanning
+	# we're no disconnecting to allow the stream to start
+	if ( $args->{cb} && $track->url =~ /^https/ ) {
+		$http->disconnect;
+		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
+	}
+
 	# Disconnect
 	return 0;
 }

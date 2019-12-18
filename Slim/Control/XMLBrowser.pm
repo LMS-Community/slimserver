@@ -803,6 +803,9 @@ sub _cliQuery_done {
 				$log->error("Requested item index $xmlbrowserPlayControl out of range: ",
 					$subFeed->{'offset'}, '..', $subFeed->{'offset'} + $count -1);
 			} else {
+				# this certainly does look wrong, but I've seen cases where this menu was misbehavioung if there was a code reference in one item - mh
+				unshift @crumbIndex, 'ffffffff' if $crumbIndex[0] !~ /^[a-f0-9]{8}/i;
+
 				my $item = $items->[$i];
 				for my $eachmenu (@{ 
 					_playlistControlContextMenu({
@@ -811,6 +814,7 @@ sub _cliQuery_done {
 						item        => $item,
 						subFeed     => $subFeed,
 						noFavorites => 1,
+						item_id		=> scalar @crumbIndex ? join('.', @crumbIndex) : undef,
 						subItemId   => $xmlbrowserPlayControl,
 						playalbum   => 1,	# Allways add play-all item
 					})
@@ -1431,7 +1435,6 @@ sub _cliQuery_done {
 					mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
 					radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
 					slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
-					live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
 					lma		=>	'PLUGIN_LMA_MODULE_NAME',
 				};
 				
@@ -1790,7 +1793,7 @@ sub _playlistControlContextMenu {
 	
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
-		my $item_id = $request->getParam('item_id') || '';
+		my $item_id = $args->{item_id} || $request->getParam('item_id') || '';
 		my $mode    = $request->getParam('mode');
 		my $sub_id  = $args->{'subItemId'};
 		my $subFeed = $args->{'subFeed'};
@@ -1838,7 +1841,7 @@ sub _playlistControlContextMenu {
 			},
 		}
 		
-		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $request->getParam('item_id'), $sub_id))) {
+		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $args->{item_id} || $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
 				style => $canIcons ? 'item_playall' : 'itemNoAction',

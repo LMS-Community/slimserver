@@ -23,6 +23,8 @@ Main = {
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
 			expires: new Date(new Date().getTime()+(60*60*24*365*1000))
 		}));
+		
+		SqueezeJS.setCookie('Squeezebox-enableHiDPI', window.devicePixelRatio);
 
 		var leftpanel = {
 			region: 'center',

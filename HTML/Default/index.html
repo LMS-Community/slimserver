@@ -9,7 +9,9 @@
 		[% END %]
 
 		<style>
-			[% INCLUDE "html/ext/resources/css/ext-main.css" %]
+			[% FILTER replace('url\(\.\./images/default', 'url(/html/ext/resources/images/default') %]
+				[% INCLUDE "html/ext/resources/css/ext-main.css" %]
+			[% END %]
 		</style>
 		[% IF hasMediaSupport %]<link rel="stylesheet" type="text/css" href="[% webroot %]html/lightbox/lightbox.css?r=[% revision %]" />[% END %]
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
@@ -107,7 +109,8 @@
 					}
 				}
 				 
-				frames.browser.location.href = navigationUrl; 
+				if (frames.browser.location)
+					frames.browser.location.href = navigationUrl;
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';
@@ -129,7 +132,7 @@
 			</div>
 		</div>
 
-		<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
+		<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no" src="home.html"></iframe>
 
 		<div id="leftfooter">
 			<div class="inner">

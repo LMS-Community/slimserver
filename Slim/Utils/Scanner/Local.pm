@@ -184,7 +184,7 @@ sub rescan {
 	# if we should optimize the database or not, and also so we know if
 	# we need to udpate lastRescanTime
 	my $changes = 0;
-	my $ctFilter = $args->{types} eq 'list' ? "== 'ssp'" : "!= 'dir'";
+	my $ctFilter = $args->{types} eq 'list' ? "= 'ssp'" : "!= 'dir'";
 	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {

@@ -1842,8 +1842,10 @@ if (Ext.ToolTip) {
 	
 			var el = this.body;
 			if (el) {
-				if (el = el.child('img:first', true))
+				if (el = el.child('img:first', true)) {
 					el.src = SqueezeJS.SonginfoParser.coverartUrl(result);
+					el.srcset = el.src;
+				}
 			}
 			else {
 				this.html = SqueezeJS.SonginfoParser.coverart(result, true);

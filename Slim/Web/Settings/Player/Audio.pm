@@ -31,7 +31,7 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	my @prefs = qw(powerOnResume lameQuality maxBitrate);
+	my @prefs = qw(powerOnResume lameQuality maxBitrate fadeInDuration);
 
 	if ($client->hasPowerControl()) {
 		push @prefs,'powerOffDac';

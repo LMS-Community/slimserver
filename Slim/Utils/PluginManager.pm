@@ -336,11 +336,15 @@ sub load {
 		my $binDir = catdir($baseDir, 'Bin');
 
 		if (-d $binDir) {
+			Slim::Utils::OSDetect::getOS()->initSearchPath($binDir);
 
+			# XXXX - this is legacy code, as some Slim::Utils::OS::Custom classes
+			#        might not be updated to pass on the $binDir to initSearchPath
 			main::DEBUGLOG && $log->debug("Adding Bin directory: [$binDir]");
 
-			my $binArch = Slim::Utils::OSDetect::details()->{'binArch'};
-			my @paths = ( catdir($binDir, $binArch), $binDir );
+			my $osDetails = Slim::Utils::OSDetect::details();
+			my $binArch = $osDetails->{'binArch'};
+			my @paths = ( catdir($binDir, $binArch), catdir($binDir, $^O), $binDir );
 
 			if ( $binArch =~ /i386-linux/i ) {
 	 			my $arch = $Config::Config{'archname'};
@@ -351,6 +355,10 @@ sub load {
 			}
 			elsif ( $binArch && $binArch eq 'armhf-linux' ) {
 				push @paths, catdir($binDir, 'arm-linux');
+			}
+			elsif ( $binArch =~ /darwin/i && $osDetails->{osArch} =~ /x86_64/ ) {
+				unshift @paths, catdir($binDir, $^O . '-' . $osDetails->{osArch});
+				unshift @paths, catdir($binDir, $binArch . '-' . $osDetails->{osArch});
 			}
 
 			Slim::Utils::Misc::addFindBinPaths( @paths );

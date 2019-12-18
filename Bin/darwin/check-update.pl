@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # This script checks whether we have an update ready to be installed
 
@@ -14,6 +14,7 @@ BEGIN {
 }
 
 use constant RESIZER => 0;
+use constant SCANNER => 0;
 
 use Slim::Utils::Light;
 use Slim::Utils::OSDetect;

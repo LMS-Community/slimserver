@@ -55,6 +55,7 @@ sub _updateMetaData {
 			'url'        => $entry,
 			'attributes' => $attributes,
 			'readTags'   => 1,
+			'playlist'   => Slim::Music::Info::isPlaylist($entry),
 		} );
 	}
 	

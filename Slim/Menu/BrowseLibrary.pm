@@ -646,6 +646,7 @@ sub _registerBaseNodes {
 			params       => {mode => 'playlists'},
 			feed         => \&_playlists,
 			icon         => 'html/images/playlists.png',
+			homeMenuText => 'SAVED_PLAYLISTS',
 			condition    => sub {
 								return unless isEnabledNode(@_);
 								return 1 if Slim::Utils::Misc::getPlaylistDir();

@@ -144,7 +144,13 @@ sub addFindBinPaths {
 
 	while (my $path = shift) {
 
-		if (-d $path) {
+		# don't register duplicate entries
+		if (grep { $_ eq $path } @findBinPaths) {
+
+			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("not adding $path - duplicate entry");
+
+		}
+		elsif (-d $path) {
 
 			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("adding $path");
 
@@ -408,7 +414,7 @@ sub crackURL {
 
 	my $urlstring = join('|', Slim::Player::ProtocolHandlers->registeredHandlers);
 
-	$string =~ m|(?:$urlstring)://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
+	$string =~ m|(?:$urlstring)://(?:([^\@\/:]+):?([^\@\/]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
@@ -656,7 +662,9 @@ sub getMediaDirs {
 		}->{$type}) } };
 		
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
-		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
+		$mediadirs = [ grep { $_ } map {
+			($filter eq $_ || $filter =~ /^\Q$_\E/) && $filter
+		} @$mediadirs] if $filter;
 	}
 	
 	$mediadirsCache{$type} = [ map { $_ } @$mediadirs ] unless $filter;
@@ -906,6 +914,10 @@ sub readDirectory {
 
 			return @diritems;
 		}
+
+		# At some point Windows seems to have started returning content of the "current directory" on the drive 
+		# if the path wasn't absolute. Make sure we start with a slash if only a drive letter is given. - mh
+		$native_dirname .= '/' if $native_dirname =~ /^[a-z]:$/i;
 	}
 
 	if ($recursive) {
@@ -926,7 +938,7 @@ sub readDirectory {
 	
 		while (defined (my $item = readdir(DIR)) ) {
 			# call idle streams to service timers - used for blocking animation.
-			if (scalar @diritems % 3) {
+			if (!scalar @diritems % 20) {
 				main::idleStreams();
 			}
 	

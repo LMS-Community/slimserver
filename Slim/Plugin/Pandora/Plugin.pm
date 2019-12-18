@@ -223,6 +223,7 @@ sub trackInfoMenu {
 	}
 }
 
+=pod
 sub artistInfoMenu {
 	my ( $client, $url, $artist, $remoteMeta ) = @_;
 	
@@ -246,6 +247,7 @@ sub artistInfoMenu {
 		};
 	}
 }
+=cut
 
 sub stationDeleted {
 	my $request = shift;

@@ -101,7 +101,7 @@ if you want the standard metadata functions to handle the data.
   Slim::Formats::RemoteMetadata->registerParser(
       match => qr/soma\.fm/,
       func  => \&parser,
-  ) );
+  );
 
   sub parser {
       my ( $client, $url, $metadata ) = @_;

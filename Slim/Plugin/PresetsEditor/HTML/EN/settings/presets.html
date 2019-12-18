@@ -1,0 +1,53 @@
+[% PROCESS settings/header.html %]
+	<style>
+		div.table {
+			display: table;
+		}
+		div.table-row {
+			display: table-row;
+		}
+		.table-cell {
+			display: table-cell;
+			margin-right: 5px;
+			padding-right: 5px;
+		}
+		select.preset-picker {
+			width: 40px;
+		}
+	</style>
+	[% WRAPPER setting title="PLUGIN_PRESETS_EDITOR" desc="PLUGIN_PRESETS_EDITOR_DESC" %]
+		<div class="table">
+		[% FOREACH preset = presets %]
+			<div class="table-row">
+				<span class="table-cell table-index">[% loop.count %].</span>
+				<input class="table-cell" type="text" name="preset_text_[% loop.count %]" id="preset_text_[% loop.count %]" value="[% preset.text %]" size=40></input>
+				<input class="table-cell" type="text" name="preset_url_[% loop.count %]" id="preset_url_[% loop.count %]" value="[% preset.URL %]" size=100></input>
+
+				<select class="table-cell preset-picker" id="preset_pick_[% loop.count %]" onchange="javascript:pickPreset([% loop.count %], this);">
+					<option style="text-align: center" value="">&hellip;</option>
+					[% FOREACH playlistType IN playlistOptions %]
+					<optgroup label="[% playlistType.type %]">
+						[% FOREACH playlist IN playlistType.items %]
+							[%  %]
+							<option value="[% playlist.url %]">[% playlist.title %]</option>
+						[%- END -%]
+					</optgroup>
+					[%- END -%]
+				</select>
+			</div>
+		[% END %]
+		</div>
+	[% END %]
+
+	<script>
+		var url2name = [% urlToName | utf8decode %];
+		function pickPreset(preset, picker) {
+			if (picker.value) {
+				document.getElementById("preset_text_" + preset).value = url2name[picker.value] || "";
+				document.getElementById("preset_url_" + preset).value = picker.value;
+			}
+
+			document.getElementById("preset_pick_" + preset).getElementsByTagName('option')[0].selected = 'selected'
+		}
+	</script>
+[% PROCESS settings/footer.html %]

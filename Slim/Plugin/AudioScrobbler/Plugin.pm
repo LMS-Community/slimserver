@@ -77,6 +77,10 @@ sub initPlugin {
 		enable_scrobbling => 1,
 		include_radio     => 0,
 		account           => 0,
+		ignoreTitles      => '',
+		ignoreGenres      => '',
+		ignoreArtists     => '',
+		ignoreAlbums      => '',
 	});
 	
 	# Subscribe to new song events
@@ -419,12 +423,13 @@ sub newsongCallback {
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
 	my $duration = $track->secs;
+	my $meta;
 	
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
+			$meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
 			if ( $meta && $meta->{duration} ) {
 				$duration = $meta->{duration};
 			}
@@ -478,11 +483,8 @@ sub newsongCallback {
 	my $title = $track->title;
 	
 	if ( $track->remote ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
-			$title   = $meta->{title};
+		if ( $meta ) {
+			$title = $meta->{title};
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
@@ -497,6 +499,22 @@ sub newsongCallback {
 			main::DEBUGLOG && $log->debug("Ignoring remote URL $url");
 			return;
 		}
+	}
+	
+	$meta ||= {};
+	
+	my @ignoreTitles  = split(/\s*,\s*/, $prefs->get('ignoreTitles'));
+	my @ignoreAlbums  = split(/\s*,\s*/, $prefs->get('ignoreAlbums'));
+	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
+	my @ignoreGenres  = split(/\s*,\s*/, $prefs->get('ignoreGenres'));
+
+	if ( (scalar @ignoreGenres && $track->genre && grep { $track->genre->name =~ /\Q$_\E/i } @ignoreGenres )
+		|| (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
+		|| (scalar @ignoreArtists && grep { ($track->artistName || $meta->{artist} || '') =~ /\Q$_\E/i } @ignoreArtists)
+		|| (scalar @ignoreAlbums && grep { ($track->albumname || $meta->{album} || '') =~ /\Q$_\E/i } @ignoreAlbums)
+	) {
+		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s, %s", $title, $track->artistName || $meta->{artist}, $track->albumname || $meta->{album}, ($track->genre ? $track->genre->name : '')) );
+		return;
 	}
 	
 	# We check again at half the song's length or 240 seconds, whichever comes first

@@ -507,7 +507,7 @@ sub indexHandler {
 				# cancel on a new item - remove it
 				splice @$level, $indexLevel, 1;
 
-			} elsif ($params->{'entrytitle'}) {
+			} elsif ($params->{'entrytitle'} && !$params->{'cancel'}) {
 
 				# editted item - modify including possibly changing type
 				my $entry = @$level[$indexLevel];

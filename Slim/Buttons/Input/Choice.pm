@@ -29,7 +29,7 @@ Slim::Buttons::Input::Choice
 	onAdd => sub {
 
 	},
-	
+
 	onRight => $client->modeParam('onRight'), # passthrough
  );
 
@@ -61,22 +61,7 @@ my $prefs = preferences('server');
 
 my $log = logger('player.ui');
 
-# TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
-our %browseCache = (); # remember where each client is browsing
-
 Slim::Buttons::Common::addMode('INPUT.Choice', getFunctions(), \&setMode);
-
-=head2 forgetClient ( $client )
-
-Clean up global hash when a client is gone
-
-=cut
-
-sub forgetClient {
-	my $client = shift;
-	
-	delete $browseCache{ $client };
-}
 
 # get the value the user is currently referencing.
 # item could be hash, string or code
@@ -100,7 +85,7 @@ sub getItem {
 sub getItemName {
 	my $client = shift;
 	my $index  = shift; # optional
-	
+
 	# if name has been overridden by a function, this code will get that.
 	# A 'name' function in the item is preferred over a 'name' modeParam
 
@@ -108,7 +93,7 @@ sub getItemName {
 	if ( ref($item) && $item->{'name'} && ref $item->{'name'} eq 'CODE' ) {
 		return $item->{'name'};
 	}
-	
+
 	if (my $name = $client->modeParam('name')) {
 		return $name;
 	}
@@ -121,7 +106,7 @@ sub getItemName {
 	if ( ref($item) && $item->{'name'}) {
 		return $item->{'name'};
 	}
-	
+
 	return $item;
 }
 
@@ -132,10 +117,10 @@ sub getItemValue {
 	my $item   = getItem($client, $index);
 
 	if (ref($item)) {
-		return $item->{'value'} || '';
+		return defined $item->{'value'} ? $item->{'value'} : '';
 	}
 
-	return $item || '';
+	return defined $item ? $item : '';
 }
 
 # some values can be mode-wide, or overridden at the list item level
@@ -172,7 +157,7 @@ sub getExtVal {
 		if ($@) {
 
 			logError("Couldn't run coderef. [$@]");
-			
+
 			return '';
 		}
 
@@ -205,7 +190,7 @@ my %functions = (
 		my ($client,$funct,$functarg) = @_;
 
 		my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos();
-		
+
 		changePos($client, $dir, $funct, $pushDir) if $pushDir;
 	},
 	'numberScroll' => sub {
@@ -258,7 +243,7 @@ my %functions = (
 	'play'       => sub { callCallback('onPlay', @_) },
 	'add'        => sub { callCallback('onAdd', @_)  },
 	'create_mix' => sub { callCallback('onCreateMix', @_)  },
-	
+
 	# right and left buttons is handled in exitInput
 
 	# add more explicit callbacks if necessary here.
@@ -302,9 +287,9 @@ sub callCallback {
 		if ($@) {
 
 			logError("Couldn't run callback: [$callbackName] : $@");
-		
+
 		} elsif (getParam($client,'pref')) {
-		
+
 			$client->update;
 		}
 
@@ -320,15 +305,15 @@ sub changePos {
 
 	my $listRef   = $client->modeParam('listRef');
 	my $listIndex = $client->modeParam('listIndex');
-	
+
 	if ($client->modeParam('noWrap')) {
-		
+
 		#not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
 			return;
 		}
-		
+
 		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
 			$client->bumpDown() if ($funct !~ /repeat/);
 			return;
@@ -336,13 +321,13 @@ sub changePos {
 	}
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);
 	}
-	
+
 	my $valueRef = $client->modeParam('valueRef');
 
 	$$valueRef = $listRef->[$newposition];
@@ -365,23 +350,23 @@ sub changePos {
 		}
 
 	} elsif ($newposition != $listIndex) {
-		
+
 		$pushDir ||= '';
-		
+
 		if ($pushDir eq 'up')  {
-			
+
 			$client->pushUp();
 
 		} elsif ($pushDir eq 'down') {
-			
+
 			$client->pushDown();
 
 		} elsif ($dir < 0)  {
-			
+
 			$client->pushUp();
 
 		} else {
-			
+
 			$client->pushDown();
 		}
 
@@ -396,13 +381,13 @@ sub changePos {
 			$value = $value->{'value'};
 		}
 
-		$browseCache{$client}{$client->modeParam("modeName")} = $value;
+		$client->browseCache->{$client->modeParam("modeName")} = $value;
 	}
 }
 
 # callers can specify strings (i.e. header) as a string like this...
 # text text text {STRING1} text {count} text {STRING2}
-# and the behavior will be 
+# and the behavior will be
 # 'text' will go through unchanged
 # '{STRING}' will be replaced with STRING translated
 # '{count}' is stripped out as it is now shown in the overlay (modeParam headerAddCount is preferred)
@@ -467,9 +452,9 @@ sub lines {
 	if (ref($overlayref) eq 'ARRAY') {
 
 		($overlay1, $overlay2) = @$overlayref;
-		
+
 	} elsif (my $pref = getParam($client,'pref')) {
-		
+
 		# assume a single non-descending list of items, 'pref' item must be given in the params
 		my $val = ref $pref eq 'CODE' ? $pref->($client) : preferences('server')->client($client)->get($pref);
 		if (scalar(@$listRef) == 1) {
@@ -560,11 +545,11 @@ sub init {
 	if ($setMethod eq 'push') {
 
 		my $initialValue = getExtVal($client, getParam($client, 'initialValue'));
-		
+
 		# if initialValue not provided, use the one we saved
 		if (!$initialValue && $client->modeParam("modeName")) {
 
-			$initialValue = $browseCache{$client}{$client->modeParam("modeName")};
+			$initialValue = $client->browseCache->{$client->modeParam("modeName")};
 		}
 
 		if ($initialValue) {
@@ -622,7 +607,7 @@ sub exitInput {
 					}, undef, 1);
 
 				} elsif (getParam($client,'pref')) {
-		
+
 					$client->update;
 				}
 

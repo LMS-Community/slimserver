@@ -30,7 +30,7 @@ package Slim::Plugin::Extensions::Plugin;
 # </extensions>
 #
 # Applet and Plugin entries are of the form:
-# 
+#
 # <applet name="AppletName" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
 #   <title lang="EN">English Title</title>
 #   <title lang="DE">Deutscher Titel</title>
@@ -65,14 +65,14 @@ package Slim::Plugin::Extensions::Plugin;
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
 # desc       - localised description of the applet or plugin (optional)
 # changes    - localised change log of the applet or plugin (optional)
-# link       - (plugin only) url for web page describing the plugin in more detail 
+# link       - (plugin only) url for web page describing the plugin in more detail
 # creator    - identify of author(s)
 # email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
 #
 # Wallpaper and sound entries can include all of the above elements, but the minimal definition is:
-# 
+#
 # <wallpaper name="WallpaperName" url="url for wallpaper file" />
 #
 # <sound     name="SoundName"     url="url for sound file"     />
@@ -104,7 +104,7 @@ my $prefs = preferences('plugin.extensions');
 
 $prefs->init({ repos => [], plugin => {}, auto => 0 });
 
-$prefs->migrate(2, 
+$prefs->migrate(2,
 				sub {
 					# find any plugins already installed via previous version of extension downloader and save as selected
 					# this should avoid trying to remove existing plugins when this version is first loaded
@@ -127,7 +127,7 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'http://repos.squeezecommunity.org/extensions.xml' => 1,
+	'https://repos.squeezecommunity.org/extensions.xml' => 1,
 );
 
 sub initPlugin {
@@ -144,31 +144,31 @@ sub initPlugin {
 		for my $repo ( @{$prefs->get('repos')} ) {
 			$class->addRepo({ repo => $repo });
 		}
-		
+
 		Slim::Plugin::Extensions::Settings->new;
 
 		# clean out plugin entries for plugins which are manually installed
 		# this can happen if a developer moves an automatically installed plugin to a manually installed location
 		my $installPlugins = $prefs->get('plugin');
 		my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
-		
+
 		for my $plugin (keys %$installPlugins) {
-			
+
 			if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
-				
+
 				$log->warn("removing $plugin from install list as it is already manually installed");
-				
+
 				delete $installPlugins->{ $plugin };
-				
+
 				$prefs->set('plugin', $installPlugins);
 			}
-			
+
 			# a plugin could have failed to download (Thanks Google for taking down googlecode.com!...) - let's not re-try to install it
 			elsif ( !$loadedPlugins->{ $plugin } ) {
 				$log->warn("$plugin failed to download or install in some other way. Please try again.");
-				
+
 				delete $installPlugins->{ $plugin };
-				
+
 				$prefs->set('plugin', $installPlugins);
 			}
 		}
@@ -227,8 +227,8 @@ sub appsQuery {
 	for my $repo (keys %repos) {
 
 		getExtensions({
-			'name'   => $repo, 
-			'type'   => $args->{'type'}, 
+			'name'   => $repo,
+			'type'   => $args->{'type'},
 			'target' => $args->{'targetPlat'} || Slim::Utils::OSDetect::OS(),
 			'version'=> $args->{'targetVers'} || $::VERSION,
 			'lang'   => $args->{'lang'} || $Slim::Utils::Strings::currentLang,
@@ -278,6 +278,64 @@ sub _appsQueryCB {
 	$request->setStatusDone();
 }
 
+sub getCurrentPlugins {
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	my $states  = preferences('plugin.state');
+
+	my $hide = {};
+	my $current = {};
+
+	# create entries for built in plugins and those already installed
+	my @active;
+	my @inactive;
+
+	for my $plugin (keys %$plugins) {
+
+		if ( main::NOMYSB && ($plugins->{$plugin}->{needsMySB} && $plugins->{$plugin}->{needsMySB} !~ /false|no/i) ) {
+			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
+			next;
+		}
+
+		my $entry = $plugins->{$plugin};
+
+		# don't show enforced plugins
+		next if $entry->{'enforce'};
+
+		my $state = $states->get($plugin);
+
+		my $entry = {
+			name    => $plugin,
+			title   => Slim::Utils::Strings::getString($entry->{'name'}),
+			desc    => Slim::Utils::Strings::getString($entry->{'description'}),
+			error   => Slim::Utils::PluginManager->getErrorString($plugin),
+			creator => $entry->{'creator'},
+			email   => $entry->{'email'},
+			homepage=> $entry->{'homepageURL'},
+			version => $entry->{'version'},
+			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
+			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
+			enforce => $entry->{'enforce'},
+		};
+
+		if ($state =~ /enabled/) {
+
+			push @active, $entry;
+
+			if (!$entry->{'manual'}) {
+				$current->{ $plugin } = $entry->{'version'};
+			}
+
+		} elsif ($state =~ /disabled/) {
+
+			push @inactive, $entry;
+		}
+
+		$hide->{$plugin} = 1;
+	}
+
+	return ($current, \@active, \@inactive, $hide);
+}
+
 sub findUpdates {
 	my $results = shift;
 	my $current = shift;
@@ -304,7 +362,7 @@ sub findUpdates {
 
 		if (!defined $current->{ $app } || Slim::Utils::Versions->compareVersions($apps->{ $app }->{'version'}, $current->{ $app }) > 0){
 
-			main::INFOLOG && $log->info("$app action install version " . $apps->{ $app }->{'version'} . 
+			main::INFOLOG && $log->info("$app action install version " . $apps->{ $app }->{'version'} .
 										($current->{ $app } ? (" from " . $current->{ $app }) : ''));
 
 			$actions->{ $app } = { action => 'install', url => $apps->{ $app }->{'url'}, sha => $apps->{ $app }->{'sha'} };
@@ -340,11 +398,11 @@ sub getExtensions {
 	if ( my $cached = $cache->get( $args->{'name'} . '_XML' ) ) {
 
 		main::DEBUGLOG && $log->debug("using cached extensions xml $args->{name}");
-	
+
 		_parseXML($args, $cached);
 
 	} else {
-	
+
 		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
 
 		Slim::Networking::Repositories->get(
@@ -362,19 +420,19 @@ sub _parseResponse {
 
 	my $xml  = {};
 
-	eval { 
+	eval {
 		$xml = XMLin($http->content,
 			SuppressEmpty => undef,
-			KeyAttr     => { 
-				title   => 'lang', 
-				desc    => 'lang', 
+			KeyAttr     => {
+				title   => 'lang',
+				desc    => 'lang',
 				changes => 'lang'
 			},
 			ContentKey  => '-content',
 			GroupTags   => {
-				applets => 'applet', 
-				sounds  => 'sound', 
-				wallpapers => 'wallpaper', 
+				applets => 'applet',
+				sounds  => 'sound',
+				wallpapers => 'wallpaper',
 				plugins => 'plugin',
 				patches => 'patch',
 			},
@@ -389,7 +447,7 @@ sub _parseResponse {
 	} else {
 
 		my $cache = Slim::Utils::Cache->new;
-		
+
 		$cache->set( $args->{'name'} . '_XML', $xml, 300 );
 	}
 
@@ -425,7 +483,7 @@ sub _parseXML {
 	my $debug = main::DEBUGLOG && $log->is_debug;
 
 	my $repoTitle;
-	
+
 	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
 
 	my @res = ();
@@ -454,7 +512,7 @@ sub _parseXML {
 			};
 
 			$new->{'sha'} = $entry->{'sha'} if $entry->{'sha'};
-			
+
 			$debug && $log->debug("entry $new->{name} vers: $new->{version} url: $new->{url}");
 
 			if ($details) {
@@ -470,9 +528,12 @@ sub _parseXML {
 					$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
 				}
 				$new->{desc} = '' if ref $new->{desc};
-				
+
 				if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
 					$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
+				}
+				elsif (!ref $entry->{changes}) {
+					$new->{changes} = $entry->{changes};
 				}
 				$new->{changes} = '' if ref $new->{changes};
 
@@ -493,22 +554,22 @@ sub _parseXML {
 
 	if ($details) {
 
-		if ( $xml->{details} && $xml->{details}->{title} 
+		if ( $xml->{details} && $xml->{details}->{title}
 				 && ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
-			
+
 			$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
-			
+
 		} else {
-			
+
 			# fall back to repo's URL if no title is provided
 			$repoTitle = $args->{name};
 		}
-		
+
 		$info = {
 			'name'   => $args->{'name'},
 			'title'  => $repoTitle,
 		};
-		
+
 	}
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");

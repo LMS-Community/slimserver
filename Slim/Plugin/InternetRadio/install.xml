@@ -8,7 +8,6 @@
 	<description>PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<enforce>1</enforce>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>

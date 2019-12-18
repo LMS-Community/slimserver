@@ -27,7 +27,7 @@ BEGIN {
 					Delimiter =>'/' 
 				}
 			);
-			
+
 			if ($swKey) {
 				push @ARGV, split(" ", $swKey->{ImagePath});
 				shift @ARGV;	# remove script name
@@ -65,49 +65,49 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 # as built with ActiveState's PerlSvc
 if (ISWINDOWS && $PerlSvc::VERSION) {
 	package PerlSvc;
-	
+
 	our %Config = (
 		DisplayName => 'Logitech Media Server',
 		Description => "Logitech Media Server - streaming media server",
 		ServiceName => "squeezesvc",
 		StartNow    => 0,
 	);
-	
+
 	sub Startup {
 		# Tell PerlSvc to bundle these modules
 		if (0) {
 			require 'auto/Compress/Raw/Zlib/autosplit.ix';
 			require Cache::FileCache;
 		}
-		
+
 		# added to workaround a problem with 5.8 and perlsvc.
 		# $SIG{BREAK} = sub {} if RunningAsService();
 		main::initOptions();
 		main::init();
-		
+
 		# here's where your startup code will go
 		while (ContinueRun() && !main::idle()) { }
-	
+
 		main::stopServer();
 	}
-	
+
 	sub Install {
-	
+
 		my($Username,$Password);
-	
+
 		use Getopt::Long;
-	
+
 		Getopt::Long::GetOptions(
 			'username=s' => \$Username,
 			'password=s' => \$Password,
 		);
-	
+
 		main::initLogging();
-	
+
 		if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
 			my @infos;
 			my ($host, $user);
-	
+
 			# use the localhost '.' by default, unless user has defined "domain\username"
 			if ($Username =~ /(.+)\\(.+)/) {
 				$host = $1;
@@ -117,7 +117,7 @@ if (ISWINDOWS && $PerlSvc::VERSION) {
 				$host = '.';
 				$user = $Username;
 			}
-	
+
 			# configure user to be used to run the server
 			my $grant = PerlSvc::extract_bound_file('grant.exe');
 			if ($host && $user && $grant && !`$grant add SeServiceLogonRight $user`) {
@@ -126,17 +126,16 @@ if (ISWINDOWS && $PerlSvc::VERSION) {
 			}
 		}
 	}
-	
+
 	sub Interactive {
-		warn 'hmm...';
 		main::main();	
 	}
-	
+
 	sub Remove {
 		# add your additional remove messages or functions here
 		main::initLogging();
 	}
-	
+
 	sub Help {	
 		main::showUsage();
 		main::initLogging();
@@ -159,14 +158,14 @@ BEGIN {
 	# set the AnyEvent model to our subclassed version when PERFMON is enabled
 	$ENV{PERL_ANYEVENT_MODEL} = 'PerfMonEV' if main::PERFMON;
 	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
-	
+
 	# By default, tell Audio::Scan not to get artwork to save memory
 	# Where needed, this is locally changed to 0.
 	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
 
 	# save argv
 	@argv = @ARGV;
-        
+
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
@@ -185,15 +184,15 @@ use AnyEvent;
 my $HAS_AIO;
 sub HAS_AIO {
 	return $HAS_AIO if defined $HAS_AIO;
-		
+
 	eval {
 		require AnyEvent::AIO;
 		IO::AIO::max_poll_time( 0.01 ); # Make AIO play nice if there are a lot of requests (10ms per poll)
 		$HAS_AIO = 1;
 	};
-	
+
 	$HAS_AIO = 0 if !$HAS_AIO;	# Make sure it is defined now.
-	
+
 	return $HAS_AIO;
 }
 
@@ -204,7 +203,7 @@ sub MEDIASUPPORT {
 	eval {
 		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
 	};
-		
+
 	return $MEDIASUPPORT;
 }
 
@@ -212,7 +211,7 @@ sub MEDIASUPPORT {
 # Force XML::Simple to use XML::Parser for speed. This is done
 # here so other packages don't have to worry about it. If we
 # don't have XML::Parser installed, we fall back to PurePerl.
-# 
+#
 # Only use XML::Simple 2.15 an above, which has support for pass-by-ref
 use XML::Simple qw(2.15);
 
@@ -320,7 +319,7 @@ our @AUTHORS = (
 
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.9.0';
+our $VERSION     = '7.9.2';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 our $httpport    = undef;
@@ -364,10 +363,10 @@ our (
 
 sub init {
 	$inInit = 1;
-	
+
 	# May get overridden by object-leak or nytprof usage below
 	$SIG{USR2} = \&Slim::Utils::Log::logBacktrace;
-	
+
 	# Can only have one of NYTPROF and Object-Leak at a time
 	if ( $ENV{OBJECT_LEAK} ) {
 		require Devel::Leak::Object;
@@ -377,7 +376,7 @@ sub init {
 			warn "Dumping objects...\n";
 		};
 	}
-	
+
 	# initialize the process and daemonize, etc...
 	srand();
 
@@ -393,12 +392,12 @@ sub init {
 
 	# force a charset from the command line
 	$Slim::Utils::Unicode::lc_ctype = $charset if $charset;
-	
+
 	# If dbsource has been changed via settings, it overrides the default
 	if ( $prefs->get('dbtype') ) {
 		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
 	}
-    
+
 	if ( $dbtype ) {
 		# For testing SQLite, can specify a different database type
 		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
@@ -428,10 +427,10 @@ sub init {
 	}
 
 	$SIG{__WARN__} = sub { msg($_[0]) };
-	
+
 	# Uncomment to enable crash debugging.
 	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
-	
+
 	# Start/stop profiler during runtime (requires Devel::NYTProf)
 	# and NYTPROF env var set to 'start=no'
 	if ( $ENV{NYTPROF} && $INC{'Devel/NYTProf.pm'} && $ENV{NYTPROF} =~ /start=no/ ) {
@@ -439,7 +438,7 @@ sub init {
 			DB::enable_profile();
 			warn "Profiling enabled...\n";
 		};
-	
+
 		$SIG{USR2} = sub {
 			DB::finish_profile();
 			warn "Profiling disabled...\n";
@@ -456,7 +455,7 @@ sub init {
 
 		save_pid_file();
 	}
-	
+
 	# leave a mark for external tools
 	$failsafe ? $prefs->set('failsafe', 1) : $prefs->remove('failsafe');
 
@@ -472,7 +471,7 @@ sub init {
 	} else {
 		Slim::Utils::Misc::setPriority( $prefs->get('serverPriority') );
 	}
-	
+
 	# Generate a UUID for this SC instance on first-run
 	if ( !$prefs->get('server_uuid') ) {
 		require UUID::Tiny;
@@ -488,7 +487,7 @@ sub init {
 
 	main::INFOLOG && $log->info("Server strings init...");
 	Slim::Utils::Strings::init();
-	
+
 	# Load appropriate DB module
 	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
 	Slim::bootstrap::tryModuleLoad($dbModule);
@@ -501,23 +500,23 @@ sub init {
 		main::INFOLOG && $log->info("Server SQL init ($sqlHelperClass)...");
 		$sqlHelperClass->init();
 	}
-	
+
 	main::INFOLOG && $log->info("Async DNS init...");
 	Slim::Networking::Async::DNS->init;
-	
+
 	main::INFOLOG && $log->info("Async HTTP init...");
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
-	
+
 	if (!main::NOMYSB) {
 		main::INFOLOG && $log->info("SqueezeNetwork Init...");
 		require Slim::Networking::SqueezeNetwork;
 		Slim::Networking::SqueezeNetwork->init();
 	}
-	
+
 	main::INFOLOG && $log->info("Download repositories init...");
 	Slim::Networking::Repositories->init();
-	
+
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
@@ -529,10 +528,10 @@ sub init {
 
 	main::INFOLOG && $log->info("Server Request init...");
 	Slim::Control::Request::init();
-	
+
 	main::INFOLOG && $log->info("Server Queries init...");
 	Slim::Control::Queries->init();
-	
+
 	main::INFOLOG && $log->info("Server Buttons init...");
 	Slim::Buttons::Common::init();
 
@@ -549,12 +548,12 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
-	
+
 	Slim::Schema->init();
 	Slim::Schema::RemoteTrack->init();
-	
+
 	Slim::Music::VirtualLibraries->init();
-	
+
 	# Register the default importers - necessary to ensure that Slim::Schema::init() is called
 	# but no need to initialize it, as it's being run in external scanner mode only
 	# XXX - we should be able to handle this differently
@@ -578,7 +577,7 @@ sub init {
 		require Slim::Web::Setup;
 		Slim::Web::Setup::initSetup();
 	}
-	
+
 	main::INFOLOG && $log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
 	Slim::Menu::AlbumInfo->init();
@@ -599,7 +598,7 @@ sub init {
 
 	main::INFOLOG && $log->info("Server Jive init...");
 	Slim::Control::Jive->init();
-	
+
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
 
@@ -608,17 +607,17 @@ sub init {
 
 	main::INFOLOG && $log->info("Server checkDataSource...");
 	checkDataSource();
-	
+
 	if ( $os->canAutoRescan && $prefs->get('autorescan') ) {
 		require Slim::Utils::AutoRescan;
-		
+
 		main::INFOLOG && $log->info('Auto-rescan init...');
 		Slim::Utils::AutoRescan->init();
 	}
 
 	main::INFOLOG && $log->info("Library Browser init...");
 	Slim::Menu::BrowseLibrary->init();
-	
+
 	# regular server has a couple more initial operations.
 	main::INFOLOG && $log->info("Server persist playlists...");
 
@@ -661,14 +660,14 @@ sub init {
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
-	
+
 	$inInit = 0;
 
 	main::INFOLOG && $log->info("Server done init...");
 }
 
 sub main {
-	
+
 	# command line options
 	initOptions();
 
@@ -697,28 +696,28 @@ sub idle {
 	}
 
 	$lastlooptime = $now;
-	
+
 	# This flag indicates we have pending IR or request events to handle
 	my $pendingEvents = 0;
-	
+
 	# process IR queue
 	$pendingEvents = Slim::Hardware::IR::idle();
-	
+
 	if ( !$pendingEvents ) {
 		# empty notifcation queue, only if no IR events are pending
 		$pendingEvents = Slim::Control::Request::checkNotifications();
-		
+
 		if ( !$pendingEvents ) {
 			# run scheduled tasks, only if no other events are pending
 			$pendingEvents = Slim::Utils::Scheduler::run_tasks();
 		}
 	}
-	
+
 	# Include pending AIO events or we will end up stalling AIO processing
 	if ( $HAS_AIO && !$pendingEvents ) {
 		$pendingEvents += IO::AIO::nreqs();
 	}
-	
+
 	if ( $pendingEvents ) {
 		# Some notifications are still pending, run the loop in non-blocking mode
 		Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
@@ -733,10 +732,10 @@ sub idle {
 
 sub idleStreams {
 	my $timeout = shift || 0;
-	
+
 	# No idle processing during startup
 	return if $inInit;
-	
+
 	# Loop once without blocking
 	Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
 }
@@ -914,7 +913,7 @@ sub initSettings {
 		$prefs->set('cachedir', $cachedir);
 		$prefs->set('librarycachedir', $cachedir);
 	}
-	
+
 	if (defined($httpport)) {
 		$prefs->set('httpport', $httpport);
 	}
@@ -922,17 +921,17 @@ sub initSettings {
 	if (defined($cliport)) {
 		preferences('plugin.cli')->set('cliport', $cliport);
 	}
-	
+
 	if (defined($prefs->get('cachedir')) && $prefs->get('cachedir') ne '') {
 
 		$cachedir = $prefs->get('cachedir');
 		$cachedir = Slim::Utils::Misc::fixPath($cachedir);
 		$cachedir = Slim::Utils::Misc::pathFromFileURL($cachedir);
 		$cachedir =~ s|[/\\]$||;
-		
+
 		# Make sure cachedir exists
 		Slim::Utils::Prefs::makeCacheDir($cachedir);
-		
+
 		$prefs->set('cachedir',$cachedir);
 		$prefs->set('librarycachedir',$cachedir) unless $prefs->get('librarycachedir');
 	}
@@ -1024,7 +1023,7 @@ sub changeEffectiveUserAndGroup {
 
 	endgrent();
 
-	# If a group was specified, get the gid of it and add it to the 
+	# If a group was specified, get the gid of it and add it to the
 	# list of supplementary groups.
 	if (defined($group)) {
 		$gid = getgrnam($group);
@@ -1049,11 +1048,11 @@ sub changeEffectiveUserAndGroup {
 	# any supplementary group IDs, so compare against that.  On some systems
 	# no supplementary group IDs are present at system startup or at all.
 
-	# We need to pass $pgid twice because setgroups only gets called if there's 
+	# We need to pass $pgid twice because setgroups only gets called if there's
 	# more than one value.  For example, if we did:
 	# $) = "1234"
-	# then the effective primary group would become 1234, but we'd retain any 
-	# previously set supplementary groups.  To become a member of just 1234, the 
+	# then the effective primary group would become 1234, but we'd retain any
+	# previously set supplementary groups.  To become a member of just 1234, the
 	# correct way is to do:
 	# $) = "1234 1234"
 
@@ -1091,12 +1090,9 @@ sub checkDataSource {
 	$prefs->set('mediadirs', $mediadirs) if $modified;
 
 	return if !Slim::Schema::hasLibrary();
-	
+
 	$sqlHelperClass->checkDataSource();
-	
-	# Don't launch an initial scan on SqueezeOS, it will be handled by AutoRescan
-	return if Slim::Utils::OSDetect::isSqueezeOS();
-	
+
 	# Count entries for all media types, run scan if all are empty
 	my $dbh = Slim::Schema->dbh;
 	my ($gc, $vc, $ic) = $dbh->selectrow_array( qq{
@@ -1134,7 +1130,7 @@ sub restartServer {
 	if ( canRestartServer() ) {
 		cleanup();
 		logger('')->info( 'Logitech Media Server restarting...' );
-		
+
 		if ( !Slim::Utils::OSDetect->getOS()->restartServer($0, \@argv) ) {
 			logger('')->error("Unable to restart Logitech Media Server");
 		}
@@ -1154,13 +1150,13 @@ sub stopServer {
 	cleanup();
 
 	logger('')->info( 'Logitech Media Server shutting down.' );
-	
+
 	exit();
 }
 
 sub cleanup {
 	logger('')->info("Logitech Media Server cleaning up.");
-	
+
 	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
@@ -1198,7 +1194,7 @@ sub save_pid_file {
 		File::Slurp::write_file($pidfile, $process_id);
 	}
 }
- 
+
 sub remove_pid_file {
 	 if (defined $pidfile) {
 	 	unlink $pidfile;
@@ -1209,8 +1205,8 @@ sub END {
 
 	Slim::bootstrap::theEND();
 }
- 
-# start up the server if we're not running as a service.	
+
+# start up the server if we're not running as a service.
 if (!defined($PerlSvc::VERSION)) { 
 	main()
 }

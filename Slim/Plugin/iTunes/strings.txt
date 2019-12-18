@@ -62,7 +62,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש בעת ייבוא רשימות השמעה של iTunes.
 	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
-	NL	Deze optie bepaalt welk formaat bij het importeren van iTunes-playlists gebruikt wordt.
+	NL	Bepaal hier welk formaat gebruikt moet worden bij het importeren van iTunes-playlists.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av iTunes-spillelister.
 	PL	Ta opcja określa format używany podczas importowania list odtwarzania programu iTunes.
 	RU	Этот параметр определяет формат для импорта плей-листов iTunes.
@@ -135,7 +135,7 @@ SETUP_ITUNES_DESC
 	HE	Logitech Media Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
 	IT	In Logitech Media Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	Logitech Media ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	Logitech Media Server kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je muzieksysteem  doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
+	NL	Logitech Media Server kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle wijzigingen in iTunes worden ook op je muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
 	NO	Logitech Media Server kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
 	PL	Program Logitech Media Server może korzystać z biblioteki muzyki i list odtwarzania programu iTunes. Wszelki zmiany wprowadzone w programie iTunes zostaną uwzględnione w odtwarzaczu. Aby zaimportować informacje z biblioteki muzyki programu iTunes, zaznacz pole wyboru poniżej.
 	RU	Logitech Media Server может использовать медиатеку и плей-листы iTunes. Все изменения, вносимые в iTunes, отражаются в плеере. Установите флажок (ниже), чтобы импортировать данные медиатеки iTunes.
@@ -170,7 +170,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	FR	Le Logitech Media Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר ספריית המוסיקה של iTunes משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica la libreria musicale di iTunes, Logitech Media Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
-	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NL	Wanneer je iTunes-muziekcollectie wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når musikkbiblioteket til iTunes endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
 	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Logitech Media Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
 	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Logitech Media Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
@@ -277,7 +277,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Logitech Media Server. Vous pouvez modifier ce comportement ci-dessous.
 	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות Logitech Media Server. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
 	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con Logitech Media Server. È possibile modificare questa impostazione di seguito.
-	NL	Wanneer je het vinkje weghaalt naast een nummer in iTunes, wordt dat nummer standaard niet weergegeven wanneer je met Logitech Media Server door je muziek bladert. Je kunt dit hieronder veranderen.
+	NL	Standaard worden nummers die in iTunes niet aangevinkt zijn, niet in Logitech Media Server weergegeven. Je kunt dit hieronder wijzigen.
 	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Logitech Media Server. Du kan endre dette nedenfor.
 	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie Logitech Media Server. Działanie tej funkcji można zmienić poniżej.
 	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в Logitech Media Server. Изменить эту настройку можно ниже.
@@ -372,7 +372,7 @@ ITUNES_ARTWORK_PHASE_1_PROGRESS
 	FI	iTunesin lataaman kansitaiteen tuominen
 	FR	Importations de pochettes iTunes téléchargées
 	IT	Importazione copertine di iTunes scaricate
-	NL	Import van door iTunes gedownloade hoesafbeeldingen
+	NL	Import van door iTunes gedownloade albumcovers
 	NO	Importering av omslag lastet ned fra iTunes
 	PL	Importowanie okładek pobranych do programu iTunes
 	RU	Импорт обложек, загруженных в iTunes
@@ -387,7 +387,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	FI	iTunesin käyttäjän lisäämän kansitaiteen tuominen
 	FR	Importations de pochettes iTunes ajoutées par l'utilisateur
 	IT	Importazione copertine di iTunes aggiunte dall'utente
-	NL	Import van door iTunes-gebruiker toegevoegde hoesafbeeldingen
+	NL	Import van door iTunes-gebruiker toegevoegde albumcovers
 	NO	Importering av omslag lagt til av bruker fra iTunes
 	PL	Użytkownik programu iTunes - importowanie dodanych okładek
 	RU	Импорт обложек, добавленных пользователем iTunes
@@ -488,7 +488,7 @@ SETUP_ITUNES_EXTRACT_ARTWORK
 	FI	Pura iTunesin kansikuvat (kokeellinen)
 	FR	Extraire les pochettes iTunes (expérimental)
 	IT	Estrai illustrazioni di iTunes (sperimentale)
-	NL	iTunes-artwork extraheren (experiment)
+	NL	iTunes-artwork extraheren (experimenteel)
 	NO	Hent albumomslag fra iTunes (eksperimentell)
 	PL	Wyodrębnij okładki programu iTunes (eksperymentalne)
 	RU	Извлечь обложку iTunes (экспериментально)
