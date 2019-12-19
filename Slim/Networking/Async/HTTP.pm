@@ -321,6 +321,22 @@ sub read_body {
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
 
+sub suspendStream {
+	my $self = shift;
+
+	Slim::Utils::Timers::killTimers( $self->socket, \&_http_read_timeout );
+	Slim::Networking::Select::removeRead( $self->socket );
+}
+
+sub resumeStream {
+	my $self = shift;
+
+	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
+	
+	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self->socket->get('passthrough') );
+	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
+}
+
 sub _http_socket_error {
 	my ( $socket, $self, $args ) = @_;
 
