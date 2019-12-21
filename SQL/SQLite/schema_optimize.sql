@@ -10,8 +10,6 @@
 
 --INSERT INTO contributor_album (role,contributor,album) SELECT DISTINCT role,contributor,album FROM contributor_track,tracks where tracks.id=contributor_track.track;
 
-DELETE FROM scanned_files;
-
 -- Analyze is slow but very necessary for SQLite to choose correct indices for queries, especially
 -- on the tracks table which has a ton of them.
 ANALYZE;
