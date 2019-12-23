@@ -659,6 +659,13 @@ sub coverid {
 	return $val;
 }
 
+sub coverurl {
+	my $self = shift;
+
+	my $cover = $self->cover;
+	return $cover if $cover && $cover =~ /^https?:/;
+}
+
 # Cover ID can be generated without a Track object, so this is a class method
 sub generateCoverId {
 	my ( $classOrSelf, $args ) = @_;

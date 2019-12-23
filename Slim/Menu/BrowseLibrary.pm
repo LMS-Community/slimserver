@@ -147,6 +147,7 @@ should be passed a reference to a real sub (not an anonymous one).
 use strict;
 use JSON::XS::VersionOneAndTwo;
 
+use Slim::Menu::OnlineLibraries;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -758,6 +759,11 @@ sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
 	my $params = $args->{'params'} || $pt;
 
+	if ($params->{'extid'} && (my $menuHandler = Slim::Menu::OnlineLibraries->itemHandlerForId($params->{'extid'}))) {
+		$menuHandler->($client, $callback, $args, $pt || $args->{params});
+		return;
+	}
+
 	if ($params) {
 		my %args;
 
@@ -1083,7 +1089,7 @@ sub _tagsToParams {
 	return \%p;
 }
 
-=cut
+=pod
 # Untested
 sub _combinedSearch {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1498,7 +1504,7 @@ sub _albums {
 	my $wantMeta   = $pt->{'wantMetadata'};
 	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
 	# XXX - make the full list of items optional!
-	my $tags       = 'ljsaaSS';
+	my $tags       = 'ljsaaSSKx';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
@@ -1553,7 +1559,8 @@ sub _albums {
 			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};
-				$_->{'image'} = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
@@ -1687,7 +1694,7 @@ sub _albums {
 				commonVariables	=> [album_id => 'id'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [album_id => 'id'],
+				commonVariables	=> [album_id => 'id', extid => 'extid'],
 				info => {
 					command     => ['albuminfo', 'items'],
 					fixedParams => $params,

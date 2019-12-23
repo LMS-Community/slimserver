@@ -255,7 +255,7 @@ sub updateStandaloneArtwork {
 			}
 
 			# check for updated artwork
-			if ( $cover ) {
+			if ( $cover && $cover !~ /^https?:/ ) {
 				$newCoverId = Slim::Schema::Track->generateCoverId({
 					cover => $cover,
 					url   => $url,
@@ -303,6 +303,16 @@ sub updateStandaloneArtwork {
 				# Update the rest of the tracks on this album
 				# to use the same coverid and cover_cached status
 				$sth_update_tracks->execute( $cover, $newCoverId, $albumid );
+
+				if ( ++$i % 50 == 0 ) {
+					Slim::Schema->forceCommit;
+					$t = time + 5;
+				}
+
+				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
+			}
+			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
+				$sth_update_albums->execute( $cover, $albumid );
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
