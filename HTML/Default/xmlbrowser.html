@@ -384,14 +384,14 @@ useSpecialExt="-browse" %]
 							[% IF includeArtist && item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
 								artist = item.trackartist || item.artist;
-								artist = artist | html;
+								htmlartist = artist | html;
 
 								IF ( 
 									(item.albumartist && artist != item.albumartist)
 									|| artist != item.artist
 									|| itemobj.compilation
 								);
-									"$stringBY $artist";
+									"$stringBY $htmlartist";
 								END; 
 							%]
 							[% END %]
