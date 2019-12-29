@@ -1262,8 +1262,8 @@ sub _createOrUpdateAlbum {
 	# Future TODO: if an album has multiple images i.e. Ghosts,
 	# prefer cover.jpg instead of embedded artwork for album?
 	# Would require an additional cover column in the albums table
-	if ( $trackColumns->{coverid} ) {
-		$albumHash->{artwork} = $trackColumns->{coverid};
+	if ( $trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) {
+		$albumHash->{artwork} = $trackColumns->{coverid} || $trackColumns->{cover};
 	}
 
 	if ( main::DEBUGLOG && $isDebug ) {
@@ -1872,7 +1872,7 @@ Creates or updates a virtual album which is pointing to an album on a music serv
 
 =cut
 
-sub updateOrCreateExternalAlbum {
+sub updateOrCreateOnlineAlbum {
 	my $self = shift;
 	my $args = shift;
 

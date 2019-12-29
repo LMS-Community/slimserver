@@ -673,8 +673,11 @@ sub generateCoverId {
 	my $coverid;
  	my $mtime;
 	my $size;
-		
-	if ( $args->{cover} =~ /^\d+$/ ) {
+
+	if ( $args->{cover} =~ /^https?/ ) {
+		$mtime = $size = 1;
+	}
+	elsif ( $args->{cover} =~ /^\d+$/ ) {
 		# Cache is based on mtime/size of the file containing embedded art
 		$mtime = $args->{mtime};
 		$size  = $args->{size};

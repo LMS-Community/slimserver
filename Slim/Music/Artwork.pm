@@ -57,6 +57,8 @@ my %findArtCache;
 sub findStandaloneArtwork {
 	my ( $class, $trackAttributes, $deferredAttributes, $dirurl ) = @_;
 
+	return 0 if !Slim::Music::Info::isFileURL($dirurl);
+
 	my $isInfo = main::INFOLOG && $log->is_info;
 
 	my $art = $findArtCache{$dirurl};
@@ -171,6 +173,7 @@ sub updateStandaloneArtwork {
 		OR tracks.cover LIKE '%jpeg'
 		OR tracks.cover LIKE '%png'
 		OR tracks.cover LIKE '%gif'
+		OR tracks.cover LIKE 'http%'
 		OR tracks.coverid IS NULL
 	};
 
@@ -265,7 +268,7 @@ sub updateStandaloneArtwork {
 			# check for new artwork to unchanged file
 			# - !$cover: there wasn't any previously
 			# - !$newCoverId: existing file has disappeared
-			if ( !$cover || !$newCoverId ) {
+			if ( (!$cover || !$newCoverId) && Slim::Music::Info::isFileURL($url) ) {
 				# store properties in a hash
 				my $track = Slim::Schema->find('Track', $trackid);
 
@@ -619,8 +622,8 @@ sub precacheAllArtwork {
 			albums.artwork AS album_artwork
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
-		WHERE  tracks.cover != '0'
-		AND    tracks.coverid IS NOT NULL
+		WHERE  (tracks.cover != '0' AND tracks.coverid IS NOT NULL)
+		       OR tracks.cover LIKE 'http%'
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
 	. qq{
@@ -717,6 +720,18 @@ sub precacheAllArtwork {
 
 			# Do the actual pre-caching only if the pref for it is enabled
 			if ( $isEnabled ) {
+				# let's grab external images when run in the scanner
+				if (main::SCANNER && $cover =~ /^https?:/) {
+					require Slim::Networking::SimpleSyncHTTP;
+					my $result = Slim::Networking::SimpleSyncHTTP->new({
+						cache => 1
+					})->get($cover);
+
+					if ($result->is_success) {
+						$cover = $result->contentRef;
+					}
+				}
+
 				# Image to resize is either a cover path or the audio file
 				my $path = $cover =~ /^\d+$/
 					? Slim::Utils::Misc::pathFromFileURL($url)

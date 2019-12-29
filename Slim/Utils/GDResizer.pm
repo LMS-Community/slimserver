@@ -558,7 +558,7 @@ sub _cache {
 
 	my $cached = {
 		content_type  => $ct,
-		mtime         => $file ? (stat($file))[9] : 0,
+		mtime         => ($file && !ref $file) ? (stat($file))[9] : 0,
 		original_path => $file,
 		data_ref      => $imgref,
 	};
