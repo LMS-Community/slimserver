@@ -1028,7 +1028,7 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort')
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /x/ ? ', contributors.extid' : ''))
 			. 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
@@ -1106,8 +1106,10 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($id, $name, $namesort);
-		$sth->bind_columns( \$id, \$name, \$namesort );
+		my ($id, $name, $namesort, $extid);
+		my @bind = (\$id, \$name, \$namesort);
+		push @bind, \$extid if $tags =~ /x/;
+		$sth->bind_columns(@bind);
 
 		my $process = sub {
 			$id += 0;
@@ -1121,6 +1123,10 @@ sub artistsQuery {
 				# Bug 11070: Don't display large V at beginning of browse Artists
 				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			}
+
+			if ($tags =~ /x/ && $extid) {
+				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
 			}
 
 			$chunkCount++;

@@ -13312,6 +13312,10 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	RU	Во время сканирования папка "Музыка" недоступна.
 	SV	Musikmappen är inte tillgänglig under sökning.
 
+BROWSE_ON_SERVICE
+	DE	Auf %s durchsuchen
+	EN	Browse on %s
+
 SYNCHRONIZE
 	CS	Synchronizovat
 	DA	Synkroniser

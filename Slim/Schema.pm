@@ -2721,7 +2721,7 @@ sub _preCheckAttributes {
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID 
 		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
-		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID
+		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
 	)) {
 
 		next unless defined $attributes->{$tag};
@@ -2969,6 +2969,8 @@ sub _mergeAndCreateContributors {
 			'artist'   => $contributor, 
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'sortBy'   => $attributes->{$tag.'SORT'},
+			# only store EXTID for track artist, as we don't have it for other roles
+			'extid'    => $tag eq 'TRACKARTIST' && $attributes->{'ARTIST_EXTID'},
 		});
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
