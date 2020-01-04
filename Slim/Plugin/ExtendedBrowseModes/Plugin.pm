@@ -59,8 +59,8 @@ Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
 Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
 
 $prefs->setChange( sub {
-	__PACKAGE__->initLibraries($_[1] || 0);
-}, 'enableLosslessPreferred' );
+	__PACKAGE__->initLibraries($_[0], $_[1] || 0);
+}, 'enableLosslessPreferred', 'enableLocalTracksOnly' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -145,17 +145,20 @@ sub handleFeed {
 }
 
 sub initLibraries {
-	my ($class, $newValue) = @_;
-	
+	my ($class, $pref, $newValue) = @_;
+
+	my $library = $pref;
+	$library =~ s/^enable//;
+
 	if ( defined $newValue && !$newValue ) {
-		Slim::Music::VirtualLibraries->unregisterLibrary('losslessPreferred');
+		Slim::Music::VirtualLibraries->unregisterLibrary(lcfirst($library));
 	}
 	
-	if ( $prefs->get('enableLosslessPreferred') ) {
+	if ( $prefs->get($pref) ) {
 		Slim::Plugin::ExtendedBrowseModes::Libraries->initLibraries();
 		
 		# if we were called on a onChange event, re-build the library
-		Slim::Music::VirtualLibraries->rebuild('losslessPreferred') if $newValue;
+		Slim::Music::VirtualLibraries->rebuild($library) if $newValue;
 	}
 }
 

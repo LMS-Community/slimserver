@@ -67,7 +67,13 @@
 		<input type="hidden" name="pref_enableLosslessPreferred" value="[% prefs.pref_enableLosslessPreferred || 0 %]" />
 	[% ELSE; WRAPPER setting title="VIRTUALLIBRARIES" desc="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC" %]
 		<p>
-			<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF prefs.pref_enableLosslessPreferred %]checked="checked"[% END %] value="1" class="stdedit" />
+			<input type="checkbox" name="pref_enableLocalTracksOnly" id="enableLocalTracksOnly" [% IF
+				prefs.pref_enableLocalTracksOnly %]checked="checked" [% END %] value="1" class="stdedit" />
+			<label for="enableLocalTracksOnly">[% "PLUGIN_EXTENDED_BROWSEMODES_LOCAL_MUSIC_ONLY" | string %]</label>
+		</p>
+		<p>
+			<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF
+				prefs.pref_enableLosslessPreferred %]checked="checked" [% END %] value="1" class="stdedit" />
 			<label for="enableLosslessPreferred">[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED" | string %]</label>
 		</p>
 		<p>[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC" | string %]</p>

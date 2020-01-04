@@ -23,7 +23,7 @@ sub name {
 }
 
 sub prefs {
-	return ( $prefs, qw(enableLosslessPreferred) );
+	return ( $prefs, qw(enableLosslessPreferred enableLocalTracksOnly) );
 }
 
 sub page {

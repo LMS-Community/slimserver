@@ -309,7 +309,7 @@ sub rebuild {
 		$delete_sth->execute($id);
 	
 		if ( my $cb = $args->{scannerCB} ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug("Running callback to create library.");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Running callback to create library: " . Data::Dump::dump($args));
 			$cb->($id);
 		}
 		elsif ( my $sql = $args->{sql} ) {
