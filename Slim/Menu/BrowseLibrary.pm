@@ -1481,7 +1481,7 @@ sub _albums {
 	my $wantMeta   = $pt->{'wantMetadata'};
 	my $extid      = $pt->{'extid'};
 	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
-	my $tags       = 'ljsaaSSK';
+	my $tags       = 'ljsaaSSKx';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
@@ -1556,7 +1556,7 @@ sub _albums {
 					$_->{'artists'}    = [ $_->{'artist'} ];
 					$_->{'artist_ids'} = [ $_->{'id'} ];
 				}
-				
+
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
@@ -1675,7 +1675,7 @@ sub _albums {
 							allAvailableActionsDefined => 1,
 							items => {
 								command => [BROWSELIBRARY, 'items'],
-								fixedParams => {extid => $id}
+								fixedParams => { extid => $id }
 							}
 						};
 

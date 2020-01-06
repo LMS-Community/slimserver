@@ -3494,6 +3494,10 @@ SOURCE
 	SV	Källa
 	ZH_CN	源头
 
+EXTERNAL_ID
+	DE	Externe ID
+	EN	External ID
+
 #
 # Setup page strings
 # General strings for the setup pages
