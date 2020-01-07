@@ -267,6 +267,10 @@ sub main {
 	# useCache is 0 so scanner does not modify the plugin cache file
 	Slim::Utils::PluginManager->init( 'import', 0 );
 
+	main::INFOLOG && $log->info("Server Info init...");
+
+	Slim::Music::Info::init();
+
 	# need to re-init the strings, as plugins might have added new tokens
 	Slim::Utils::Strings::init();
 
@@ -379,10 +383,6 @@ sub initializeFrameworks {
 	main::INFOLOG && $log->info("Server strings init...");
 
 	Slim::Utils::Strings::init();
-
-	main::INFOLOG && $log->info("Server Info init...");
-
-	Slim::Music::Info::init();
 
 	# Bug 16188 - create dummy protocol entries for all protocol handlers known to the main server
 	# this ensures that when we scan a url for one of these protocols we treat it as a valid remote entry

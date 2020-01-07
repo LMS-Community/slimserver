@@ -222,7 +222,7 @@ sub pathFromFileURL {
 
 	if ($url !~ /^file:\/\//i) {
 
-		logWarning("Path isn't a file URL: $url");
+		logBacktrace("Path isn't a file URL: $url");
 
 		return $url;
 	}

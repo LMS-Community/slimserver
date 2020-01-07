@@ -218,9 +218,10 @@ sub rescan {
 				SELECT url FROM scanned_files
 				WHERE filesize != 0
 			)
-			AND             url LIKE '$basedir%'
-			AND             virtual IS NULL
-			AND             content_type $ctFilter
+			AND             ((url LIKE '$basedir%'
+			                  AND             virtual IS NULL
+			                  AND             content_type $ctFilter)
+			                OR extid IS NOT NULL)
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 		
 		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
@@ -330,7 +331,7 @@ sub rescan {
 				}
 				
 				if ( $inDBOnlySth->fetch ) {
-					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($deleted) );
+					$progress && $progress->update( Slim::Music::Info::isFileURL($deleted) ? Slim::Utils::Misc::pathFromFileURL($deleted) : $deleted );
 					$changes++;
 					
 					deleted($deleted);
@@ -700,7 +701,7 @@ sub deleted {
 		}
 	}
 	elsif ( Slim::Music::Info::isCUE($url, $content_type) ) {
-		$log->error("Handling deleted cue sheet $url") unless main::SCANNER && $main::progress;
+		$log->warn("Handling deleted cue sheet $url") unless main::SCANNER && $main::progress;
 		
 		$work = sub {
 			my $sth = $dbh->prepare_cached( qq{
@@ -799,7 +800,7 @@ sub deleted {
 		};
 	}
 	elsif ( Slim::Music::Info::isList($url, $content_type) ) {
-		$log->error("Handling deleted playlist $url") unless main::SCANNER && $main::progress;
+		$log->warn("Handling deleted playlist $url") unless main::SCANNER && $main::progress;
 
 		$work = sub {
 			# Get the playlist details
@@ -825,7 +826,7 @@ sub deleted {
 	}
 	else {
 		# Bug 17452, handle everything else by just deleting the record. This will be used for 'fec' and 'cur' types
-		$log->error("Handling deleted file $url") unless main::SCANNER && $main::progress;
+		$log->warn("Handling deleted file $url") unless main::SCANNER && $main::progress;
 		
 		$dbh->do( qq{
 			DELETE FROM tracks WHERE url = ?
