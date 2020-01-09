@@ -69,14 +69,14 @@ sub _createHTTPRequest {
 
 	my $params = $self->_params;
 
-	my $request = $self->SUPER::_createHTTPRequest(@_);
+	my ($request, $timeout) = $self->SUPER::_createHTTPRequest(@_);
 
-	# in case of a cached response we wouldn't get a request object back
-	return $self unless $request;
+	# in case of a cached response we'd return without any response data
+	return $self unless $request && $timeout;
 
 	my $ua = LWP::UserAgent->new(
 		agent   => Slim::Utils::Misc::userAgentString(),
-		timeout => $params->{timeout} || $params->{Timeout} || 15,
+		timeout => $timeout || 10,
 	);
 
 	my $res = $ua->request($request);
