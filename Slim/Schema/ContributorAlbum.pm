@@ -1,6 +1,5 @@
 package Slim::Schema::ContributorAlbum;
 
-# $Id$
 #
 # Contributor to album mapping class
 

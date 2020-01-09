@@ -1,6 +1,5 @@
 package Slim::Utils::MySQLHelper;
 
-# $Id$
 
 =head1 NAME
 

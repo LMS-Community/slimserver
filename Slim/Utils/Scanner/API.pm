@@ -1,6 +1,5 @@
 package Slim::Utils::Scanner::API;
 
-# $Id$
 
 use strict;
 

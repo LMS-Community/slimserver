@@ -1,6 +1,5 @@
 package Slim::Plugin::Slacker::ProtocolHandler;
 
-# $Id$
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);

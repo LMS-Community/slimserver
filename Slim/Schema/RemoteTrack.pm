@@ -1,5 +1,10 @@
 package Slim::Schema::RemoteTrack;
 
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
+
 # This is an emulation of the Slim::Schema::Track API for remote tracks
 
 use strict;

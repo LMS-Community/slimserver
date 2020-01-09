@@ -1,6 +1,5 @@
 package Slim::Plugin::Base;
 
-# $Id$
 
 # Base class for plugins. Implement some basics.
 

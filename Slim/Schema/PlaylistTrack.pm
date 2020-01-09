@@ -1,6 +1,5 @@
 package Slim::Schema::PlaylistTrack;
 
-# $Id$
 #
 # Playlist to track mapping class
 

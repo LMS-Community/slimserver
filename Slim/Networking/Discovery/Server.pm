@@ -1,8 +1,6 @@
 package Slim::Networking::Discovery::Server;
 
-# $Id: Server.pm 15258 2007-12-13 15:29:14Z mherger $
-
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

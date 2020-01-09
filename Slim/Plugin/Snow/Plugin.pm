@@ -1,13 +1,12 @@
 package Slim::Plugin::Snow::Plugin;
 
-# $Id: Plugin.pm 11021 2006-12-21 22:28:39Z dsully $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 # graphic SB code added by James Craig September 2005
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

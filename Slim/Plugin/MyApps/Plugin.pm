@@ -1,6 +1,5 @@
 package Slim::Plugin::MyApps::Plugin;
 
-# $Id$
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);

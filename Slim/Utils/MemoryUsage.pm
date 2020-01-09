@@ -1,6 +1,5 @@
 package Slim::Utils::MemoryUsage;
 
-# $Id$ 
 #
 # This module is a merging of B::TerseSize and Apache::Status 
 # put together to work with Logitech Media Server by Dan Sully

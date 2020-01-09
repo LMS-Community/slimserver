@@ -2,7 +2,6 @@ package Slim::Plugin::Favorites::Opml;
 
 # Base class for editing opml files - front end to XMLin and XMLout
 
-# $Id$
 
 use strict;
 

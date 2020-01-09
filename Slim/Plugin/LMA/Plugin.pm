@@ -1,6 +1,5 @@
 package Slim::Plugin::LMA::Plugin;
 
-# $Id$
 
 # Load Live Music Archive data via an OPML file - so we can ride on top of the Podcast Browser
 

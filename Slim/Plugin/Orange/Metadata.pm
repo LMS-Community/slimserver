@@ -1,6 +1,9 @@
 package Slim::Plugin::Orange::Metadata;
 
-# $Id: Metadata.pm 10553 2011-05-06 15:29:58Z mherger $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 

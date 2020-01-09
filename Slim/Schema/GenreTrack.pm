@@ -1,6 +1,5 @@
 package Slim::Schema::GenreTrack;
 
-# $Id$
 #
 # Genre to track mapping class
 

@@ -1,6 +1,5 @@
 package Slim::Web::HTTP::ClientConn;
 
-# $Id$
 
 # Subclass of HTTP::Daemon::ClientConn that represents a web client
 

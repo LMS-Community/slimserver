@@ -1,6 +1,5 @@
 package Slim::Plugin::Slacker::Plugin;
 
-# $Id$
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);

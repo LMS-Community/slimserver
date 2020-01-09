@@ -1,6 +1,5 @@
 package Slim::Networking::SqueezeNetwork::Stats;
 
-# $Id$
 
 # Report radio stats to SN if enabled.
 

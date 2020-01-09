@@ -1,6 +1,5 @@
 package Slim::Schema::ResultSet::Track;
 
-# $Id$
 
 use strict;
 use base qw(Slim::Schema::ResultSet::Base);

@@ -1,6 +1,9 @@
 package Slim::Plugin::UPnP::MediaServer::ContentDirectory;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Plugin/UPnP/MediaServer/ContentDirectory.pm 78831 2011-07-25T16:48:09.710754Z andy  $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 

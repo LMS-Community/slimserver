@@ -2,7 +2,6 @@ package Slim::Plugin::Favorites::OpmlFavorites;
 
 # An opml based favorites handler
 
-# $Id$
 
 use strict;
 

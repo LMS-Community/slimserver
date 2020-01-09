@@ -1,6 +1,6 @@
 package Slim::Formats::XML;
 
-# Copyright 2006-2019 Logitech
+# Logitech Media Server Copyright 2006-2020 Logitech.
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,

@@ -1,6 +1,5 @@
 package Slim::Plugin::MP3tunes::Plugin;
 
-# $Id$
 
 # Browse MP3tunes via SqueezeNetwork
 

@@ -1,7 +1,5 @@
 # String file for xPL plugin
 
-# $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
-
 PLUGIN_XPL
 	CS	Interface xPL
 	DA	xPL-grænseflade

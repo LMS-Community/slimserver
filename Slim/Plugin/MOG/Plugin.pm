@@ -1,6 +1,9 @@
 package Slim::Plugin::MOG::Plugin;
 
-# $Id: Plugin.pm 10553 2011-08-03 15:29:58Z Shaahul $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);

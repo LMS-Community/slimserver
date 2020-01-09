@@ -1,6 +1,9 @@
 package Slim::Plugin::MOG::ProtocolHandler;
 
-# $Id: ProtocolHandler.pm 31715 2011-08-16 13:14:29Z shameed $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);

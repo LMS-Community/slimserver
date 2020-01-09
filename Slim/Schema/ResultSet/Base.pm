@@ -1,6 +1,5 @@
 package Slim::Schema::ResultSet::Base;
 
-# $Id$
 
 # Base class for ResultSets - override what you need.
 

@@ -2,7 +2,7 @@ package Slim::Buttons::GlobalSearch;
 
 #	$Id: Information.pm 26931 2009-06-07 03:53:36Z michael $
 #
-#	Copyright (c) 2003-2009 Logitech, Cursor Software Limited.
+#	Copyright (c) 2003-2020 Logitech, Cursor Software Limited.
 #	All rights reserved.
 #
 #	This program is free software; you can redistribute it and/or modify

@@ -1,7 +1,10 @@
 package Slim::Plugin::UPnP::Plugin;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Plugin/UPnP/Plugin.pm 78831 2011-07-25T16:48:09.710754Z andy  $
-#
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
+
 # UPnP/DLNA Media Interface
 # Andy Grundman
 # andy@slimdevices.com

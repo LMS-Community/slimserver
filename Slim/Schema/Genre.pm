@@ -1,6 +1,5 @@
 package Slim::Schema::Genre;
 
-# $Id$
 
 use strict;
 use base 'Slim::Schema::DBI';

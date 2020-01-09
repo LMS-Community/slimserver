@@ -1,6 +1,5 @@
 package Slim::Plugin::OPMLBased;
 
-# $Id$
 
 # Base class for all plugins that use OPML feeds
 

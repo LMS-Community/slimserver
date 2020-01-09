@@ -1,6 +1,5 @@
 package Slim::Networking::SqueezeNetwork::Players;
 
-# $Id$
 
 # Keep track of players that are connected to SN
 
