@@ -1,6 +1,9 @@
 package Slim::Plugin::UPnP::Discovery;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Plugin/UPnP/Discovery.pm 78831 2011-07-25T16:48:09.710754Z andy  $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 # This module handles UPnP 1.0 discovery advertisements and responses to search requests
 # Reference: http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf

@@ -1,7 +1,5 @@
 # String file for MusicIP plugin
 
-# $Id: strings.txt 11145 2007-01-07 00:19:08Z kdf $
-
 MUSICMAGIC
 	CS	MusicIP
 	DA	MusicIP

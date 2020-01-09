@@ -1,6 +1,5 @@
 package Slim::Plugin::Sounds::Plugin;
 
-# $Id$
 
 # Browse Sounds & Effects
 

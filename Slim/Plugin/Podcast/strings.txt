@@ -1,7 +1,5 @@
 # String file for Podcast plugin
 
-# $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
-
 PLUGIN_PODCAST
 	CS	Podcasty
 	DA	Podcasts

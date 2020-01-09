@@ -1,7 +1,10 @@
 package Slim::Plugin::UPnP::SOAPServer;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Plugin/UPnP/SOAPServer.pm 76276 2011-02-01T19:44:19.488696Z andy  $
-#
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
+
 # SOAP handling functions.
 # Note that SOAP::Lite is only used for parsing requests and generating responses,
 # it does not send or receive directly from the network.

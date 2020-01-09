@@ -1,11 +1,9 @@
 package Slim::Display::EmulatedSqueezebox2;
 
-# Logitech Media Server Copyright (c) 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
-
-# $Id: EmulatedSqueezebox2.pm 13042 2007-09-17 22:44:40Z adrian $
 
 =head1 NAME
 

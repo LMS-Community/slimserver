@@ -1,6 +1,5 @@
 package Slim::Plugin::Pandora::Plugin;
 
-# $Id$
 
 # Play Pandora via mysqueezebox.com
 

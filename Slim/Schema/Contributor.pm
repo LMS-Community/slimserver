@@ -1,6 +1,5 @@
 package Slim::Schema::Contributor;
 
-# $Id$
 
 use strict;
 use base 'Slim::Schema::DBI';

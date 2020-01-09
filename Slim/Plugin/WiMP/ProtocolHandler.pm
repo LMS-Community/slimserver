@@ -1,6 +1,9 @@
 package Slim::Plugin::WiMP::ProtocolHandler;
 
-# $Id: ProtocolHandler.pm 30836 2010-05-28 20:13:33Z agrundman $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);

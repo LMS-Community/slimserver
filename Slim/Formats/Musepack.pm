@@ -1,8 +1,6 @@
 package Slim::Formats::Musepack;
 
-# $tagsd: Musepack.pm,v 1.0 2004/01/27 00:00:00 daniel Exp $
-
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

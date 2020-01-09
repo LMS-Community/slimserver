@@ -1,7 +1,5 @@
 # String file for CLI plugin
 
-# $Id: strings.txt 10924 2006-12-10 10:07:21Z mherger $
-
 PLUGIN_CLI
 	CS	Command Line Interface (Povelové rozhraní) (CLI)
 	DA	Kommandolinjegrænseflade

@@ -5,7 +5,6 @@ package Slim::Utils::PluginDownloader;
 # Plugins zip files should not include any additional path information - i.e. they include the install.xml file at the top level
 # The plugin 'name' must match the package naming of the plugin, i.e. name 'MyPlugin' equates to package 'Plugins::MyPlugin::Plugin'
 
-# $Id$
 
 use strict;
 

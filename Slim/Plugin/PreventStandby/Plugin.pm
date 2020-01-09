@@ -1,34 +1,14 @@
 package Slim::Plugin::PreventStandby::Plugin;
 
-# $Id: Plugin.pm 11021 2006-12-21 22:28:39Z dsully $
+# Logitech Media Server Copyright 2006-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 # PreventStandby.pm by Julian Neil (julian.neil@internode.on.net)
-#
+
 # Prevent the server machine from going into standby when it is streaming
 # music to any clients.
-#
-# Excuse my perl.. first time I've ever used it.
-#
-# Thanks to the PowerSave plugin by Jason Holtzapplefor some basics,
-# to various ppl on the slim forums and to CPAN and the Win32::API module.
-#
-#-> Changelog
-#
-# 1.0 - 2006-04-05 - Initial Release
-#
-# 2.0 - 2009-01-03 - Proposed changes by Gordon Harris to address bug 8520:
-#
-#                    http://bugs.slimdevices.com/show_bug.cgi?id=8520
-#
-#                    Added "idletime" feature -- waits at least $idletime number
-#                    of idle player intervals before allowing standby.  Also, is
-#                    "resume aware" -- resets the idle counter on system resume
-#                    from standby or hibernation.
-#
-#       2009-01-12 - Cleaned up some content in strings.txt, added optional check
-#                    power feature to mimic Nigel Burch's proposed patch behavior.
-#
-# 3.0 - 2012-08-26 - add support for OSX, plus infrastructure to add more
 
 use strict;
 use Time::HiRes;

@@ -1,6 +1,5 @@
 package Slim::Utils::SQLHelper;
 
-# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,5 @@
 # String file for NetTest plugin
 
-# $Id$
 
 PLUGIN_NETTEST
 	CS	Test sítě

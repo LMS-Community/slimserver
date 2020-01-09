@@ -1,8 +1,6 @@
 package Slim::Formats::APE;
 
-# $Id: APE.pm 5405 2005-12-14 22:02:37Z dean $
-
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -1,7 +1,5 @@
 # String file for Snow plugin
 
-# $Id: strings.txt 11049 2006-12-28 09:47:38Z mherger $
-
 PLUGIN_SCREENSAVER_SNOW
 	CS	Spořič obrazovky s motivem sněhu
 	DA	Pauseskærm:

@@ -1,6 +1,9 @@
 package Slim::Plugin::UPnP::MediaServer::MediaReceiverRegistrar;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Plugin/UPnP/MediaServer/MediaReceiverRegistrar.pm 75368 2010-12-16T04:09:11.731914Z andy  $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use strict;
 

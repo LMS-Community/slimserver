@@ -1,7 +1,5 @@
 # String file for SongScanner plugin
 
-# $Id: strings.txt,v 1.1 2007-11-07 07:38:15 fishbone Exp $
-
 PLUGIN_SONGSCANNER
 	CS	Prohlížeč skladby
 	DA	Analyse af nummer

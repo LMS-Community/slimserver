@@ -1,6 +1,5 @@
 package Slim::Plugin::Classical::ProtocolHandler;
 
-# $Id$
 
 # Handler for classical:// URLs
 

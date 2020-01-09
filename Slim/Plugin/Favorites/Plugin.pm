@@ -7,7 +7,7 @@ package Slim::Plugin::Favorites::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2005-2016 Logitech.
+# Logitech Media Server Copyright 2005-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

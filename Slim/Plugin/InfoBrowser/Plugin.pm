@@ -2,7 +2,6 @@ package Slim::Plugin::InfoBrowser::Plugin;
 
 # InfoBrowser - an extensible information parser for Logitech Media Server 7.0
 #
-# $Id$
 #
 # InfoBrowser provides a framework to use Squeezebox Server's xmlbrowser to fetch remote content and convert it into a format
 # which can be displayed via the server web interface, cli for jive or another cli client or via the player display.

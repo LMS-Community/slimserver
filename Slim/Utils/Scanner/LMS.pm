@@ -1,8 +1,6 @@
 package Slim::Utils::Scanner::LMS;
 
-# $Id: /sd/slim/7.6/branches/lms/server/Slim/Utils/Scanner/LMS.pm 78886 2011-07-26T15:15:45.375510Z andy  $
-#
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 #

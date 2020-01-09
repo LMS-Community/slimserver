@@ -1,6 +1,5 @@
 package Slim::Schema::Playlist;
 
-# $Id$
 
 use strict;
 use base 'Slim::Schema::Track';

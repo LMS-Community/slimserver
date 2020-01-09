@@ -1,6 +1,5 @@
 package Slim::Schema::ContributorTrack;
 
-# $Id$
 #
 # Contributor to track mapping class
 

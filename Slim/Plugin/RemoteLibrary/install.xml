@@ -12,7 +12,7 @@
 	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>        
 	<playerMenu>BROWSE_MUSIC</playerMenu>
 	<targetApplication>
-		<id>SlimService</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.9</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

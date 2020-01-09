@@ -1,6 +1,9 @@
 package Slim::Networking::SqueezeNetwork::PrefSync;
 
-# $Id: SqueezeNetwork.pm 11768 2007-04-16 18:14:55Z andy $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 # Sync prefs from SS <-> SN
 

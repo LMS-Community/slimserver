@@ -1,7 +1,7 @@
 package Slim::Plugin::RSSNews::Plugin;
 
 # RSS News Browser
-# Copyright 2006-2009 Logitech
+# Logitech Media Server Copyright 2006-2020 Logitech.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -9,8 +9,6 @@ package Slim::Plugin::RSSNews::Plugin;
 #
 # This is a reimplementation of the old RssNews plugin based on
 # the Podcast Browser plugin.
-#
-# $Id: Plugin.pm 11071 2007-01-01 15:47:59Z adrian $
 
 use strict;
 use base qw(Slim::Plugin::Base);

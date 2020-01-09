@@ -1,6 +1,6 @@
 package Slim::Player::SB1SliMP3Sync;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -10,7 +10,6 @@ package Slim::Player::SB1SliMP3Sync;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id$
 #
 
 use strict;

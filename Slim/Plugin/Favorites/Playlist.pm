@@ -1,6 +1,5 @@
 package Slim::Plugin::Favorites::Playlist;
 
-# $Id$
 
 # Class to allow importing of playlist formats understood by Logitech Media Server into opml files
 
