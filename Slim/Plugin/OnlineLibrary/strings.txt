@@ -1,0 +1,7 @@
+PLUGIN_ONLINE_LIBRARY_MODULE_NAME
+	DE	Online Musiksammlungsintegration
+	EN	Online Music Library Integration
+
+PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
+	DE	Erweiterte Kontrolle über die Integration ihrer Online-Musiksammlungen.
+	EN	Get more control over how your online music libraries are integrated with your local music.
