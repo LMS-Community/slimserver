@@ -45,6 +45,10 @@ sub handler {
 		} elsif ($paramRef->{'pref_rescantype'} eq '3playlist') {
 
 			$rescanType = [qw(rescan playlists)];
+
+		} elsif ($paramRef->{'pref_rescantype'} eq '4onlinelibrary') {
+
+			$rescanType = [qw(rescan onlinelibrary)];
 		}
 
 		for my $pref (qw(playlistdir)) {

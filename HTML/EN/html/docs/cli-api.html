@@ -2718,7 +2718,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			rescan 
-			&lt;|playlists|external|full singlefolder|?&gt;
+			&lt;|playlists|onlinelibrary|external|full singlefolder|?&gt;
 		</code>
 	</strong>
 </p>
@@ -2726,7 +2726,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	The &quot;rescan&quot; command causes the server to rescan the entire music 
 	library, reloading the music file information. If &quot;playlists&quot; is 
 	indicated (&quot;rescan playlists&quot;), only the playlist directory is
-	rescanned. If &quot;external&quot; is requested, the rescan will be performed
+	rescanned. If &quot;onlinelibrary&quot; is indicated (&quot;rescan onlinelibrary&quot),
+	only the import from online music services is run If &quot;external&quot; is 
+	requested, the rescan will be performed
 	using the external scanner process instead of the in-process scanner.
 	If &quot;full file://some/path&quot; is defined, then only this path will be scanned.
 	Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 

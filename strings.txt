@@ -6608,6 +6608,10 @@ SETUP_PLAYLISTRESCAN
 	SV	Sök bara igenom spellistorna på nytt
 	ZH_CN	重新扫描播放表而已。
 
+SETUP_ONLINE_LIBRARY_RESCAN
+	DE	Nur Online Musiksammlung neu einlesen
+	EN	Only rescan online music library
+
 SETUP_AUTO_RESCAN
 	CS	Automaticky detekovat změny
 	DA	Registrer automatisk ændringer
@@ -21256,6 +21260,10 @@ PLAYLIST_PROGRESS
 	PL	Przeszukiwanie listy odtwarzania
 	RU	Сканирование плей-листа
 	SV	Sökning i spellista
+
+ONLINE_LIBRARY_DELETED_PROGRESS
+	DE	Titel aus Online Musiksammlung werden gelöscht
+	EN	Removing online library tracks
 
 MERGEVA_PROGRESS
 	CS	Sloučit více interpretů

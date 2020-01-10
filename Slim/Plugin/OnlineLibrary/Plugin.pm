@@ -97,7 +97,7 @@ sub _pollOnlineLibraries {
 			main::INFOLOG && $log->is_info && $log->info("Online library " . ($needsUpdate ? 'needs update' : 'is up to date'));
 
 			if ($needsUpdate) {
-				Slim::Control::Request::executeRequest(undef, ['rescan']);
+				Slim::Control::Request::executeRequest(undef, ['rescan', 'onlinelibrary']);
 			}
 
 			Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);

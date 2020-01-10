@@ -47,7 +47,7 @@ BEGIN {
 	use Slim::Utils::OSDetect;
 
 	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI HTML::Parser XML::Parser::Expat YAML::XS)], []);
-	
+
 	# By default, tell Audio::Scan not to get artwork to save memory
 	# Where needed, this is locally changed to 0.
 	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
@@ -56,13 +56,13 @@ BEGIN {
 # Force XML::Simple to use XML::Parser for speed. This is done
 # here so other packages don't have to worry about it. If we
 # don't have XML::Parser installed, we fall back to PurePerl.
-# 
+#
 # Only use XML::Simple 2.15 an above, which has support for pass-by-ref
 use XML::Simple qw(2.15);
 
 eval {
 	local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
-	require XML::Parser; 
+	require XML::Parser;
 };
 
 if (!$@) {
@@ -78,6 +78,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Music::OnlineLibraryScan;
 use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -88,7 +89,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Media::MediaFolderScan;
 
 if ( INFOLOG || DEBUGLOG ) {
-    require Data::Dump;
+	require Data::Dump;
 	require Slim::Utils::PerlRunTime;
 }
 
@@ -106,11 +107,11 @@ die $@ if $@;
 
 sub main {
 
-	our ($rescan, $playlists, $wipe, $force, $prefsFile, $priority);
+	our ($rescan, $playlists, $onlineLibrary, $wipe, $force, $prefsFile, $priority);
 	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
 
 	our $LogTimestamp = 1;
-	
+
 	my $changes = 0;
 
 	$prefs = preferences('server');
@@ -119,10 +120,11 @@ sub main {
 
 	GetOptions(
 		'force'        => \$force,
-		'cleanup'      => sub {},
+		# 'cleanup'      => sub {},
 		'rescan'       => \$rescan,
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
+		'onlinelibrary'=> \$onlineLibrary,
 		# prefsdir parsed by Slim::Utils::Prefs
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
@@ -145,19 +147,19 @@ sub main {
 	);
 
 	save_pid_file();
-	
+
 	# If dbsource has been changed via settings, it overrides the default
 	if ( $prefs->get('dbtype') ) {
 		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
 	}
-	
+
 	if ( $dbtype ) {
 		# For testing SQLite, can specify a different database type
 		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
 		eval "use $sqlHelperClass";
 		die $@ if $@;
 	}
-	
+
 	# Start a fresh scanner.log on every scan
 	if ( my $file = Slim::Utils::Log->scannerLogFile() ) {
 		unlink $file if -e $file;
@@ -171,11 +173,11 @@ sub main {
 		'debug'   => $debug,
 	});
 
-	if ($help || (!$rescan && !$wipe && !$playlists)) {
+	if ($help || (!$rescan && !$wipe && !$playlists && !$onlineLibrary)) {
 		usage();
 		exit;
 	}
-	
+
 	# Start/stop profiler during runtime (requires Devel::NYTProf)
 	# and NYTPROF env var set to 'start=no'
 	if ( $ENV{NYTPROF} && $INC{'Devel/NYTProf.pm'} && $ENV{NYTPROF} =~ /start=no/ ) {
@@ -183,13 +185,13 @@ sub main {
 			DB::enable_profile();
 			warn "Profiling enabled...\n";
 		};
-	
+
 		$SIG{USR2} = sub {
 			DB::disable_profile();
 			warn "Profiling disabled...\n";
 		};
 	}
-	
+
 
 	# Redirect STDERR to the log file.
 	if (!$progress) {
@@ -199,7 +201,7 @@ sub main {
 	STDOUT->autoflush(1);
 
 	my $log = logger('server');
-	
+
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
 	$log->error("Starting Logitech Media Server scanner (v$VERSION, $REVISION, $BUILDDATE) perl $]");
@@ -213,7 +215,7 @@ sub main {
 	} else {
 		Slim::Utils::Misc::setPriority( $prefs->get('scannerPriority') );
 	}
-	
+
 	# Load appropriate DB module
 	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
 	Slim::bootstrap::tryModuleLoad($dbModule);
@@ -221,7 +223,7 @@ sub main {
 		logError("Couldn't load $dbModule [$@]");
 		exit;
 	}
-	
+
 	if ( $sqlHelperClass ) {
 		main::INFOLOG && $log->info("Server SQL init...");
 		$sqlHelperClass->init();
@@ -234,7 +236,7 @@ sub main {
 		msg("Exiting!\n");
 		exit;
 	}
-	
+
 	# pull in the memory usage module if requested.
 	if (main::INFOLOG && logger('server.memory')->is_info) {
 		if ( Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage') ) {
@@ -246,10 +248,10 @@ sub main {
 			Slim::Utils::MemoryUsage->init();
 		}
 	}
-	
+
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
-	
+
 	Slim::Music::VirtualLibraries->init();
 
 	if ($playlists) {
@@ -259,10 +261,13 @@ sub main {
 
 	} else {
 
+		Slim::Music::Import->scanOnlineLibraryOnly($onlineLibrary);
 		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
+		Slim::Music::OnlineLibraryScan->init;
+
 	}
-	
+
 	# Load any plugins that define import modules
 	# useCache is 0 so scanner does not modify the plugin cache file
 	Slim::Utils::PluginManager->init( 'import', 0 );
@@ -279,7 +284,7 @@ sub main {
 	checkDataSource();
 
 	main::INFOLOG && $log->info("Scanner done init...\n");
-	
+
 	# Perform pre-scan steps specific to the database type, i.e. SQLite needs to copy to a new file
 	$sqlHelperClass->beforeScan();
 
@@ -313,7 +318,7 @@ sub main {
 	# Don't wrap the below in a transaction - we want to have the server
 	# periodically update the db. This is probably better than a giant
 	# commit at the end, but is debatable.
-	# 
+	#
 	# NB: Slim::Schema::throw_exception really isn't right now - it's just
 	# printing an error and bt(). Once the server can handle & log
 	# exceptions properly, it should croak(), so the exception is
@@ -338,7 +343,7 @@ sub main {
 	} else {
 
 		# Run mergeVariousArtists, artwork scan, etc.
-		eval { Slim::Music::Import->runScanPostProcessing; }; 
+		eval { Slim::Music::Import->runScanPostProcessing; };
 
 		if ($@) {
 
@@ -356,10 +361,10 @@ sub main {
 			$sqlHelperClass->afterScan();
 		}
 	}
-	
+
 	# Cleanup after we're done, we can't rely on this being called from a sig handler
 	cleanup();
-	
+
 	# To debug scanner memory usage, uncomment this line and kill -USR2 the scanner process
 	# after it's finished scanning.
 	# while (1) { sleep 1 }
@@ -378,7 +383,7 @@ sub initializeFrameworks {
 
 	Slim::Utils::Prefs::init();
 
-	Slim::Utils::Prefs::makeCacheDir();	
+	Slim::Utils::Prefs::makeCacheDir();
 
 	main::INFOLOG && $log->info("Server strings init...");
 
@@ -401,25 +406,26 @@ Usage: $0 [debug options] [--rescan] [--wipe]
 
 Command line options:
 
-	--force        Force a scan, even if we think a scan is already taking place.
-	--rescan       Look for new files since the last scan.
-	--wipe         Wipe the DB and start from scratch
-	--playlists    Only scan files in your playlistdir.
-	--progress     Show a progress bar of the scan.
-	--dbtype TYPE  Force database type (valid values are MySQL or SQLite)
-	--prefsdir     Specify alternative preferences directory.
-	--priority     set process priority from -20 (high) to 20 (low)
-	--logfile      Send all debugging messages to the specified logfile.
-	--logdir       Specify folder location for log file
-	--logconfig    Specify pre-defined logging configuration file
-	--noimage      Disable scanning for images.
-	--novideo      Disable scanning for videos.
-	--nodebuglog   Disable all debug-level logging (compiled out).
-	--noinfolog    Disable all debug-level & info-level logging (compiled out).
-	--nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
-	--debug        various debug options
-	--quiet        keep silent
-	
+	--force         Force a scan, even if we think a scan is already taking place.
+	--rescan        Look for new files since the last scan.
+	--wipe          Wipe the DB and start from scratch
+	--playlists     Only scan files in your playlistdir.
+	--onlinelibrary Only update online library content
+	--progress      Show a progress bar of the scan.
+	--dbtype TYPE   Force database type (valid values are MySQL or SQLite)
+	--prefsdir      Specify alternative preferences directory.
+	--priority      set process priority from -20 (high) to 20 (low)
+	--logfile       Send all debugging messages to the specified logfile.
+	--logdir        Specify folder location for log file
+	--logconfig     Specify pre-defined logging configuration file
+	--noimage       Disable scanning for images.
+	--novideo       Disable scanning for videos.
+	--nodebuglog    Disable all debug-level logging (compiled out).
+	--noinfolog     Disable all debug-level & info-level logging (compiled out).
+	--nostatistics  Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
+	--debug         various debug options
+	--quiet         keep silent
+
 Examples:
 
 	$0 --rescan
@@ -430,12 +436,12 @@ EOF
 
 my $cleanupDone;
 sub cleanup {
-	
+
 	# cleanup() is called at the end of main() and possibly again from a sig handler
 	# We only want it to run once.
-	return if $cleanupDone;	
+	return if $cleanupDone;
 	$cleanupDone = 1;
-	
+
 	Slim::Utils::PluginManager->shutdownPlugins();
 
 	# Make sure to flush anything in the database to disk.
@@ -443,13 +449,13 @@ sub cleanup {
 		Slim::Music::Import->setIsScanning(0);
 
 		Slim::Schema->forceCommit;
-		
+
 		Slim::Schema->disconnect;
 	}
-	
+
 	# Notify server we are exiting
 	$sqlHelperClass->exitScan();
-	
+
 	$sqlHelperClass->cleanup;
 
 	remove_pid_file();
@@ -469,7 +475,7 @@ sub checkDataSource {
 	$prefs->set('mediadirs', $mediadirs) if $modified;
 
 	return if !Slim::Schema::hasLibrary();
-	
+
 	$sqlHelperClass->checkDataSource();
 }
 
