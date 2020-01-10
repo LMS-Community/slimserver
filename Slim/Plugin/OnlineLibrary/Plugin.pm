@@ -16,8 +16,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring string);
 use Slim::Utils::Timers;
 
-use constant DELAY_FIRST_POLL => 4;
-use constant POLLING_INTERVAL => 1 * 60;
+use constant DELAY_FIRST_POLL => 24;
+use constant POLLING_INTERVAL => 5 * 60;
 
 my $prefs = preferences('plugin.onlinelibrary');
 
@@ -25,15 +25,16 @@ my @onlineLibraryProviders;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.onlinelibrary',
-	'defaultLevel' => 'ERROR',
+	'defaultLevel' => 'INFO',
 	'description'  => 'PLUGIN_ONLINE_LIBRARY_MODULE_NAME',
 } );
 
 sub initPlugin {
 	my $class = shift;
 
-	# $prefs->init({
-	# });
+	$prefs->init({
+		pollForUpdates => 1
+	});
 	
 	if ( main::WEBUI ) {
 		require Slim::Plugin::OnlineLibrary::Settings;
@@ -48,14 +49,29 @@ sub postinitPlugin {
 
 	@onlineLibraryProviders = grep { $_->can('onlineLibraryNeedsUpdate') } Slim::Utils::PluginManager->enabledPlugins();
 	if (scalar @onlineLibraryProviders) {
+		$prefs->setChange(sub {
+			Slim::Utils::Timers::killTimers(undef, \&_pollOnlineLibraries);
+			Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
+		}, 'pollForUpdates');
+
 		Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
 	}
 }
 
+my $isPolling;
 sub _pollOnlineLibraries {
+	# no need for polling when there's no provider
+	return unless scalar @onlineLibraryProviders && $prefs->get('pollForUpdates');
+
 	Slim::Utils::Timers::killTimers(undef, \&_pollOnlineLibraries);
 
-	return unless scalar @onlineLibraryProviders;
+	if ($isPolling || Slim::Music::Import->stillScanning()) {
+		main::INFOLOG && $log->is_info && $log->info("Online library poll or scan is active - try again later");
+		Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
+		return;
+	}
+
+	main::INFOLOG && $log->is_info && $log->info("Starting poll for updated online library...");
 
 	my @workers = map {
 		my $poller = $_;
@@ -78,9 +94,15 @@ sub _pollOnlineLibraries {
 		cb    => sub {
 			my $needsUpdate = shift;
 
-			main::INFOLOG && $log->is_info && $log->info($needsUpdate ? 'needs update' : 'all up to date');
+			main::INFOLOG && $log->is_info && $log->info("Online library " . ($needsUpdate ? 'needs update' : 'is up to date'));
+
+			if ($needsUpdate) {
+				Slim::Control::Request::executeRequest(undef, ['rescan']);
+			}
 
 			Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
 		}
 	);
 }
+
+1;

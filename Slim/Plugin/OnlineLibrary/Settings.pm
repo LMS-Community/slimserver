@@ -21,14 +21,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(yo));
-}
-
-sub handler {
-	my ($class, $client, $paramRef, $pageSetup) = @_;
-
-
-	return $class->SUPER::handler($client, $paramRef, $pageSetup);
+	return ($prefs, qw(pollForUpdates));
 }
 
 1;
