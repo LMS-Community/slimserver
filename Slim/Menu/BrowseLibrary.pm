@@ -739,6 +739,7 @@ sub _topLevel {
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
 		$args{'extid'}        = $params->{'extid'} if $params->{'extid'};
+		$args{'noEdit'}       = $params->{'noEdit'} if $params->{'noEdit'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -1481,7 +1482,7 @@ sub _albums {
 	my $wantMeta   = $pt->{'wantMetadata'};
 	my $extid      = $pt->{'extid'};
 	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
-	my $tags       = 'ljsaaSSKx';
+	my $tags       = 'ljsaaSSKE';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
@@ -2096,7 +2097,7 @@ sub _playlists {
 	}
 
 	_generic($client, $callback, $args, 'playlists',
-		['tags:su', @searchTags, ($search ? 'search:' . $search : undef)],
+		['tags:sux', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
@@ -2111,10 +2112,10 @@ sub _playlists {
 			};
 			
 			my %actions = $remote_library ? (
-				commonVariables	=> [playlist_id => 'id'],
+				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [playlist_id => 'id'],
+				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
 				info => {
 					command     => ['playlistinfo', 'items'],
 				},

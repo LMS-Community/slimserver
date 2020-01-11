@@ -526,7 +526,7 @@ sub albumsQuery {
 		$c->{'albums.compilation'} = 1;
 	}
 
-	if ( $tags =~ /x/ ) {
+	if ( $tags =~ /E/ ) {
 		$c->{'albums.extid'} = 1;
 	}
 
@@ -2660,6 +2660,8 @@ sub playlistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
 				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
 				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+				$tags =~ /E/ && $request->addResultLoop($loopname, $chunkCount, 'extid', $eachitem->extid);
+				$tags =~ /x/ && $request->addResultLoop($loopname, $chunkCount, 'remote', $eachitem->remote ? 1 : 0);
 
 				$chunkCount++;
 
@@ -4788,6 +4790,7 @@ my %tagMap = (
 	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
 	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
 	  'N' => ['remote_title'],                                          # remote stream title
+	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
 
 
 	# Tag    Tag name              Token              Relationship     Method          Track relationship
@@ -4850,6 +4853,7 @@ my %colMap = (
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
+	E => 'tracks.extid',
 );
 
 sub _songDataFromHash {
