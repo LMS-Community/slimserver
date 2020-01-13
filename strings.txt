@@ -21417,6 +21417,13 @@ VIRTUALLIBRARIES
 	NO	Delbiblioteker
 	PL	Biblioteki tematyczne
 
+SETUP_LIBRARY_VIEWS_DESC
+	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
+	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
+	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
+	NO	Delbiblioteker gjør at du kan bruke Min musikk-menyen på et filtrert utvalg av spor. Når de er aktivert, kan du veksle mellom delbibliotekene fra en undermeny av Min musikk.
+	PL	Biblioteki tematyczne pozwalają na użycie menu "Moja muzyka" na przefiltrowanym zbiorze utworów. Do menu "Moja muzyka" zostanie dodana dodatkowa opcja, służąca do przełączania się pomiędzy bibliotekami.
+
 ALL_LIBRARY
 	DE	Ganze Musiksammlung
 	EN	All music library

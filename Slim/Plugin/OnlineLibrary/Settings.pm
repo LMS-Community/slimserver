@@ -21,7 +21,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(pollForUpdates));
+	return ($prefs, qw(pollForUpdates enableLocalTracksOnly enablePreferLocalLibraryOnly));
 }
 
 1;

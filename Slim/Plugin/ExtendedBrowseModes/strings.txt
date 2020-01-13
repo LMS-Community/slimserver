@@ -97,23 +97,12 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
 
-PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC
-	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
-	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
-	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
-	NO	Delbiblioteker gjør at du kan bruke Min musikk-menyen på et filtrert utvalg av spor. Når de er aktivert, kan du veksle mellom delbibliotekene fra en undermeny av Min musikk.
-	PL	Biblioteki tematyczne pozwalają na użycie menu "Moja muzyka" na przefiltrowanym zbiorze utworów. Do menu "Moja muzyka" zostanie dodana dodatkowa opcja, służąca do przełączania się pomiędzy bibliotekami.
-
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
 	NL	Verberg lossy-versies als een lossless-versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
-
-PLUGIN_EXTENDED_BROWSEMODES_LOCAL_MUSIC_ONLY
-	DE	Nur lokale Titel (keine Streaming Dienste)
-	EN	Local tracks only (no music service)
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.

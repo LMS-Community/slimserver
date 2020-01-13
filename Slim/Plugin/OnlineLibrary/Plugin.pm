@@ -16,6 +16,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring string);
 use Slim::Utils::Timers;
 
+use Slim::Plugin::OnlineLibrary::Libraries;
+
 use constant DELAY_FIRST_POLL => 24;
 use constant POLLING_INTERVAL => 5 * 60;
 
@@ -33,13 +35,22 @@ sub initPlugin {
 	my $class = shift;
 
 	$prefs->init({
-		pollForUpdates => 1
+		pollForUpdates => 1,
+		enablePreferLocalLibraryOnly => 0,
+		enableLocalTracksOnly => 0,
 	});
-	
+
+	$prefs->setChange( sub {
+		$class->initLibraries($_[0], $_[1] || 0);
+	}, 'enablePreferLocalLibraryOnly', 'enableLocalTracksOnly' );
+
+
 	if ( main::WEBUI ) {
 		require Slim::Plugin::OnlineLibrary::Settings;
 		Slim::Plugin::OnlineLibrary::Settings->new;
 	}
+
+	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
 
 	# $class->SUPER::initPlugin(@_);
 }
@@ -103,6 +114,24 @@ sub _pollOnlineLibraries {
 			Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
 		}
 	);
+}
+
+sub initLibraries {
+	my ($class, $pref, $newValue) = @_;
+
+	my $library = $pref;
+	$library =~ s/^enable//;
+
+	if ( defined $newValue && !$newValue ) {
+		Slim::Music::VirtualLibraries->unregisterLibrary(lcfirst($library));
+	}
+
+	if ( $prefs->get($pref) ) {
+		Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
+
+		# if we were called on a onChange event, re-build the library
+		Slim::Music::VirtualLibraries->rebuild($library) if $newValue;
+	}
 }
 
 1;

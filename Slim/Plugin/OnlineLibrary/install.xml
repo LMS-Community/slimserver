@@ -3,6 +3,7 @@
 	<id>1b8f1315-d9ae-4ad1-8edf-de0eddbdcd15</id>
 	<name>PLUGIN_ONLINE_LIBRARY_MODULE_NAME</name>
 	<module>Slim::Plugin::OnlineLibrary::Plugin</module>
+	<importmodule>Slim::Plugin::OnlineLibrary::Libraries</importmodule>
 	<version>1.0</version>
 	<description>PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>

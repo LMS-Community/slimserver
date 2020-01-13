@@ -60,7 +60,7 @@ Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
 
 $prefs->setChange( sub {
 	__PACKAGE__->initLibraries($_[0], $_[1] || 0);
-}, 'enableLosslessPreferred', 'enableLocalTracksOnly' );
+}, 'enableLosslessPreferred' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -73,7 +73,7 @@ sub initPlugin {
 	}
 
 	$class->initMenus();
-	$class->initLibraries();
+	Slim::Plugin::ExtendedBrowseModes::Libraries->initLibraries();
 	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,

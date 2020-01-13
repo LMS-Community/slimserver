@@ -47,20 +47,6 @@ sub initLibraries {
 			}
 		});
 	}
-	
-	if ( $prefs->get('enableLocalTracksOnly') ) {
-		Slim::Music::VirtualLibraries->registerLibrary({
-			id     => 'localTracksOnly',
-			name   => string('PLUGIN_EXTENDED_BROWSEMODES_LOCAL_MUSIC_ONLY'),
-			string => 'PLUGIN_EXTENDED_BROWSEMODES_LOCAL_MUSIC_ONLY',
-			sql    => qq{
-				INSERT OR IGNORE INTO library_track (library, track)
-					SELECT '%s', tracks.id
-					FROM tracks
-					WHERE tracks.remote != 1
-			}
-		});
-	}
 }
 
 
