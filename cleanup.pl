@@ -58,7 +58,7 @@ require Getopt::Long;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Light;
 
-our $VERSION = '7.9.3';
+our $VERSION = '8.0.0';
 
 BEGIN {
 	if (ISWINDOWS) {
