@@ -4941,7 +4941,7 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote && !$track->extid;
+	my $isRemote = $track->remote;
 	my $url = $track->url;
 
 	if ( $isRemote ) {
@@ -4975,7 +4975,7 @@ sub _songData {
 			if ($t->url ne $url) {
 				$parentTrack = $track;
 				$track = $t;
-				$isRemote = $track->remote && !$track->extid;
+				$isRemote = $track->remote;
 			}
 		}
 	}
@@ -5061,7 +5061,7 @@ sub _songData {
 					# array returned/genre
 					if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
 						$value = join(', ', map { $_ = $_->$submethod() } $related->all);
-					} elsif ( $isRemote ) {
+					} elsif ( $isRemote && !$related->can($submethod) ) {
 						$value = $related;
 					} else {
 						$value = $related->$submethod();
