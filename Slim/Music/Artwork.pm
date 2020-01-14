@@ -178,10 +178,17 @@ sub updateStandaloneArtwork {
 
 	# get singledir parameter from the scanner if available
 	my $singledir = main::SCANNER ? $ARGV[-1] : undef;
-	if ($singledir) {
+	if ($singledir && $singledir eq 'onlinelibrary') {
+		# shortcut for online library scan only - ignore local files
+		$where = qq{
+			tracks.url NOT LIKE 'file://%'
+			AND tracks.cover LIKE 'http%'
+		};
+	}
+	elsif ($singledir) {
 		$singledir = Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Unicode::encode_locale($singledir));
 		$where = qq{
-			url LIKE '$singledir%'
+			tracks.url LIKE '$singledir%'
 			AND ($where)
 		};
 	}
@@ -203,7 +210,7 @@ sub updateStandaloneArtwork {
 		JOIN  albums ON (tracks.album = albums.id)
 		WHERE $where
 		GROUP BY tracks.cover, tracks.album
- 	};
+	};
 
 	my $sth_update_tracks = $dbh->prepare( qq{
 	    UPDATE tracks

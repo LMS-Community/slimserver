@@ -170,6 +170,9 @@ sub launchScan {
 	if ( $singledir ) {
 		push @scanArgs, $singledir;
 	}
+	elsif ( $args->{onlinelibrary} ) {
+		push @scanArgs, 'onlinelibrary';
+	}
 
 	$class->setIsScanning($args->{wipe} ? 'SETUP_WIPEDB' : 'SETUP_STANDARDRESCAN');
 
