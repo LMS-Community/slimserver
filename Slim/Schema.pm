@@ -861,6 +861,7 @@ sub _createOrUpdateAlbum {
 	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
 	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID};
+	my $extId     = $attributes->{EXTID} || $attributes->{ALBUM_EXTID};
 
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
@@ -1011,10 +1012,16 @@ sub _createOrUpdateAlbum {
 				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $brainzId));
 			}
 
+			if (defined $extId) {
+				push @{$search}, 'albums.extid = ?';
+				push @{$values}, $extId;
+				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for External Album Id: %s", $extId));
+			}
+
 			my $checkContributor;
 
 			# Add disc to the search criteria if needed
-			if ($checkDisc) {
+			if ($checkDisc && !$extId) {
 				if ($disc) {
 					push @{$search}, 'albums.disc = ?';
 					push @{$values}, $disc;
@@ -1022,7 +1029,7 @@ sub _createOrUpdateAlbum {
 
 				$checkContributor = 1;
 			}
-			elsif ($discc) {
+			elsif ($discc && !$extId) {
 				# If we're not checking discs - ie: we're in
 				# groupdiscs mode, check discc if it exists,
 				# in the case where there are multiple albums
@@ -1033,7 +1040,7 @@ sub _createOrUpdateAlbum {
 
 				$checkContributor = 1;
 			}
-			elsif ( defined $disc && !defined $discc ) {
+			elsif ( defined $disc && !defined $discc && !$extId ) {
 
 				# Bug 3920 - In the case where there's two
 				# albums of the same name, but one is
@@ -1058,7 +1065,7 @@ sub _createOrUpdateAlbum {
 
 			# Bug 3662 - Only check for undefined/null values if the
 			# values are undefined.
-			if ( !defined $disc ) {
+			if ( !defined $disc && !$extId ) {
 				push @{$search}, 'albums.disc IS NULL';
 
 				if ( !defined $discc ) {
@@ -1070,7 +1077,7 @@ sub _createOrUpdateAlbum {
 			# of trying to match on the artist. Having the
 			# compilation bit means that this is 99% of the time a
 			# Various Artist album, so a contributor match would fail.
-			if ( defined $isCompilation ) {
+			if ( defined $isCompilation && !$extId ) {
 				# in the database this is 0 or 1
 				push @{$search}, 'albums.compilation = ?';
 				push @{$values}, $isCompilation;
@@ -1089,10 +1096,10 @@ sub _createOrUpdateAlbum {
 			if (
 				# In checkDisc mode, try "same folder" only if none of MUSICBRAINZ_ALBUM_ID,
 				# DISC and DISCC are known.
-				($checkDisc && !defined $brainzId && !defined $disc && !defined $discc) ||
+				($checkDisc && !defined $brainzId && !defined $disc && !defined $discc && !$extId) ||
 				# When not checking discs (i.e., "Group Discs" mode), try "same folder"
 				# as a last resort if both DISC and DISCC are unknown.
-				(!$checkDisc && !defined $disc && !defined $discc)
+				(!$checkDisc && !defined $disc && !defined $discc && !$extId)
 			) {
 				push @{$search}, 'tracks.url LIKE ?';
 				push @{$values}, "$basename%";
@@ -1234,6 +1241,10 @@ sub _createOrUpdateAlbum {
 		$albumHash->{year} = undef;
 	}
 
+	if ( $extId ) {
+		$albumHash->{extid} = $extId;
+	}
+
 	# Bug 7731, filter out duplicate keys that end up as array refs
 	while ( my ($tag, $value) = each %{$albumHash} ) {
 		if ( ref $value eq 'ARRAY' ) {
@@ -1250,8 +1261,8 @@ sub _createOrUpdateAlbum {
 	# Future TODO: if an album has multiple images i.e. Ghosts,
 	# prefer cover.jpg instead of embedded artwork for album?
 	# Would require an additional cover column in the albums table
-	if ( $trackColumns->{coverid} ) {
-		$albumHash->{artwork} = $trackColumns->{coverid};
+	if ( $trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) {
+		$albumHash->{artwork} = $trackColumns->{coverid} || $trackColumns->{cover};
 	}
 
 	if ( main::DEBUGLOG && $isDebug ) {
@@ -1723,6 +1734,7 @@ sub updateOrCreateBase {
 	my $readTags      = $args->{'readTags'} || 0;
 	my $checkMTime    = $args->{'checkMTime'};
 	my $playlist      = $args->{'playlist'};
+	my $integrateRemote = $args->{'integrateRemote'};
 	my $isNew         = $args->{'new'} || 0; # save a query if caller knows the track is new
 
 	my $trackId;
@@ -1742,7 +1754,7 @@ sub updateOrCreateBase {
 	$attributeHash->{urlmd5} = md5_hex($url);
 
 	# Short-circuit for remote tracks
-	if (Slim::Music::Info::isRemoteURL($url)) {
+	if (!$integrateRemote && Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
 
 		($attributeHash, undef) = $self->_preCheckAttributes({
@@ -1755,7 +1767,7 @@ sub updateOrCreateBase {
 
 	# Track will be defined or not based on the assignment above.
 	if ( !defined $track && !$isNew ) {
-		$track = $self->_retrieveTrack($url, $playlist);
+		$track = $self->_retrieveTrack($url, $playlist, $integrateRemote);
 	}
 
 	# XXX - exception should go here. Coming soon.
@@ -1827,6 +1839,7 @@ sub updateOrCreateBase {
 			$self->_postCheckAttributes({
 				'track'      => $track,
 				'attributes' => $deferredAttributes,
+				'integrateRemote' => $integrateRemote
 			});
 		}
 
@@ -1844,11 +1857,60 @@ sub updateOrCreateBase {
 			'readTags'   => $readTags,
 			'commit'     => $commit,
 			'playlist'   => $playlist,
+			'integrateRemote' => $integrateRemote
 		});
 
 	}
 
 	return $track || $trackId;
+}
+
+=head2 updateOrCreateOnlineAlbum()
+
+Creates or updates a virtual album which is pointing to an album on a music service
+
+=cut
+
+sub updateOrCreateOnlineAlbum {
+	my $self = shift;
+	my $args = shift;
+
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+
+	my $attributes = $args->{'attributes'};
+	my $create     = $args->{'create'} || 0;
+
+	# Make a local variable for COMPILATION, that is easier to handle
+	my $isCompilation = undef;
+
+	if (defined $attributes->{'COMPILATION'}) {
+		# Use eq instead of == here, otherwise perl will warn.
+		if ($attributes->{'COMPILATION'} =~ /^(?:yes|true)$/i || $attributes->{'COMPILATION'} eq 1) {
+			$isCompilation = 1;
+			main::DEBUGLOG && $isDebug && $log->debug("-- Album is a compilation");
+		} elsif ($attributes->{'COMPILATION'} =~ /^(?:no|false)$/i || $attributes->{'COMPILATION'} eq 0) {
+			$isCompilation = 0;
+			main::DEBUGLOG && $isDebug && $log->debug("-- Album is NOT a compilation");
+		}
+	}
+
+	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
+
+	my $trackColumns = {
+		year    => $attributes->{YEAR},
+		coverid => $attributes->{COVER},
+	};
+
+	### Update Album row
+	my $albumId = $self->_createOrUpdateAlbum($attributes, 
+		$trackColumns,
+		$isCompilation,
+		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],  # primary contributor-id
+		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,                    # hasAlbumArtist
+		$create,                                                                # create
+		undef,                                                                  # Track
+		$attributes->{EXTID}                                                    # basename
+	);
 }
 
 =head2 variousArtistsObject()
@@ -2256,14 +2318,14 @@ sub _defaultRatingImplementation {
 }
 
 sub _retrieveTrack {
-	my ($self, $url, $playlist) = @_;
+	my ($self, $url, $playlist, $integrateRemote) = @_;
 
 	return undef if !$url;
 	return undef if ref($url);
 
 	my $track;
 
-	if (Slim::Music::Info::isRemoteURL($url)) {
+	if (!$integrateRemote && Slim::Music::Info::isRemoteURL($url)) {
 		return Slim::Schema::RemoteTrack->fetch($url, $playlist);
 	}
 
@@ -2271,7 +2333,7 @@ sub _retrieveTrack {
 	my $dirname = dirname($url);
 	my $source  = $playlist ? 'Playlist' : 'Track';
 
-	if (!$playlist && defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
+	if (!$playlist && $dirname ne '.' && defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
 
 		$track = $self->lastTrack->{$dirname};
 
@@ -2658,7 +2720,7 @@ sub _preCheckAttributes {
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID 
 		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
-		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT
+		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
 	)) {
 
 		next unless defined $attributes->{$tag};
@@ -2813,7 +2875,7 @@ sub _postCheckAttributes {
 		return undef;
 	}
 
-	if ($trackRemote || !$trackAudio) {
+	if (!$args->{integrateRemote} && ($trackRemote || !$trackAudio)) {
 		$track->update;
 		return;
 	}
@@ -2906,6 +2968,8 @@ sub _mergeAndCreateContributors {
 			'artist'   => $contributor, 
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'sortBy'   => $attributes->{$tag.'SORT'},
+			# only store EXTID for track artist, as we don't have it for other roles
+			'extid'    => $tag eq 'TRACKARTIST' && $attributes->{'ARTIST_EXTID'},
 		});
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));

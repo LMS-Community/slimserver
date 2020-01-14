@@ -38,6 +38,7 @@ my %roleToContributorMap = reverse %contributorToRoleMap;
 		musicmagic_mixable
 		namesearch
 		musicbrainz_id
+		extid
 	));
 
 	$class->set_primary_key('id');
@@ -112,6 +113,7 @@ sub add {
 	# Pass args by name
 	my $artist     = $args->{'artist'} || return;
 	my $brainzID   = $args->{'brainzID'};
+	my $extid      = $args->{'extid'};
 
 	my @contributors = ();
 
@@ -143,19 +145,19 @@ sub add {
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		my $mbid   = $brainzIDList[$i];
 		
-		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE name = ?' );
+		my $sth = $dbh->prepare_cached( 'SELECT id, extid FROM contributors WHERE name = ?' );
 		$sth->execute($name);
-		my ($id) = $sth->fetchrow_array;
+		my ($id, $mergedExtid) = $sth->fetchrow_array;
 		$sth->finish;
 		
 		if ( !$id ) {
 			$sth = $dbh->prepare_cached( qq{
 				INSERT INTO contributors
-				(name, namesort, namesearch, musicbrainz_id)
+				(name, namesort, namesearch, musicbrainz_id, extid)
 				VALUES
-				(?, ?, ?, ?)
+				(?, ?, ?, ?, ?)
 			} );
-			$sth->execute( $name, $sort, $search, $mbid );
+			$sth->execute( $name, $sort, $search, $mbid, $extid );
 			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
 		else {
@@ -163,6 +165,17 @@ sub add {
 			if ( $search ne Slim::Utils::Unicode::utf8toLatin1Transliterate($sort) ) {
 				$sth = $dbh->prepare_cached('UPDATE contributors SET namesort = ? WHERE id = ?');
 				$sth->execute( $sort, $id );
+			}
+
+			# allow adding external IDs from multiple services
+			if ( ($extid && !$mergedExtid) || ($mergedExtid && $extid && $mergedExtid ne $extid) ) {
+				my %extIds = map { $_ => 1 } split(',', $mergedExtid);
+
+				if (!$extIds{$extid}) {
+					$sth = $dbh->prepare_cached('UPDATE contributors SET extid = ? WHERE id = ?');
+					$mergedExtid = $mergedExtid ? join(',', $mergedExtid, $extid) : $extid;
+					$sth->execute( $mergedExtid, $id );
+				}
 			}
 		}
 		

@@ -32,6 +32,7 @@ my $log = logger('database.info');
 		replay_gain
 		replay_peak
 		musicbrainz_id
+		extid
 	), title => { accessor => undef() });
 
 	$class->set_primary_key('id');

@@ -526,6 +526,10 @@ sub albumsQuery {
 		$c->{'albums.compilation'} = 1;
 	}
 
+	if ( $tags =~ /E/ ) {
+		$c->{'albums.extid'} = 1;
+	}
+
 	if ( $tags =~ /X/ ) {
 		$c->{'albums.replay_gain'} = 1;
 	}
@@ -717,11 +721,13 @@ sub albumsQuery {
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'});
+			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
+			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
+			$tags =~ /x/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
 
@@ -1022,7 +1028,7 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort')
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /x/ ? ', contributors.extid' : ''))
 			. 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
@@ -1100,8 +1106,10 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($id, $name, $namesort);
-		$sth->bind_columns( \$id, \$name, \$namesort );
+		my ($id, $name, $namesort, $extid);
+		my @bind = (\$id, \$name, \$namesort);
+		push @bind, \$extid if $tags =~ /x/;
+		$sth->bind_columns(@bind);
 
 		my $process = sub {
 			$id += 0;
@@ -1115,6 +1123,10 @@ sub artistsQuery {
 				# Bug 11070: Don't display large V at beginning of browse Artists
 				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			}
+
+			if ($tags =~ /x/ && $extid) {
+				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
 			}
 
 			$chunkCount++;
@@ -2648,6 +2660,8 @@ sub playlistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
 				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
 				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+				$tags =~ /E/ && $request->addResultLoop($loopname, $chunkCount, 'extid', $eachitem->extid);
+				$tags =~ /x/ && $request->addResultLoop($loopname, $chunkCount, 'remote', $eachitem->remote ? 1 : 0);
 
 				$chunkCount++;
 
@@ -4772,10 +4786,11 @@ my %tagMap = (
 	                                                                    #replay_peak
 
 	  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
-	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
+	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL
 	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
 	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
 	  'N' => ['remote_title'],                                          # remote stream title
+	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
 
 
 	# Tag    Tag name              Token              Relationship     Method          Track relationship
@@ -4838,6 +4853,7 @@ my %colMap = (
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
+	E => 'tracks.extid',
 );
 
 sub _songDataFromHash {
@@ -4925,7 +4941,7 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote;
+	my $isRemote = $track->remote && !$track->extid;
 	my $url = $track->url;
 
 	if ( $isRemote ) {
@@ -4959,7 +4975,7 @@ sub _songData {
 			if ($t->url ne $url) {
 				$parentTrack = $track;
 				$track = $t;
-				$isRemote = $track->remote;
+				$isRemote = $track->remote && !$track->extid;
 			}
 		}
 	}

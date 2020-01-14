@@ -33,12 +33,12 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'albuminfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
 	);
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'albuminfo', 'playlist', '_method' ],
 		[ 1, 1, 1, \&cliQuery ]
@@ -55,7 +55,7 @@ sub name {
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addalbum => (
@@ -108,6 +108,11 @@ sub registerDefaultInfoProviders {
 		after => 'year',
 		func  => \&infoCompilation,
 	) );
+
+	$class->registerInfoProvider( extid => (
+		after => 'compilation',
+		func  => \&infoExternalId,
+	) );
 }
 
 sub menu {
@@ -120,7 +125,7 @@ sub menu {
 	# that, we will have our ordering and only need to step
 	# through it.
 	my $infoOrdering = $class->getInfoOrdering;
-	
+
 	# $remoteMeta is an empty set right now. adding to allow for parallel construction with trackinfo
 	my $remoteMeta = {};
 
@@ -134,27 +139,27 @@ sub menu {
 			return;
 		}
 	}
-	
+
 	# Function to add menu items
 	my $addItem = sub {
 		my ( $ref, $items ) = @_;
-		
+
 		if ( defined $ref->{func} ) {
-			
+
 			my $item = eval { $ref->{func}->( $client, $url, $album, $remoteMeta, $tags, $filter ) };
 			if ( $@ ) {
 				$log->error( 'Album menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
 			}
-			
+
 			return unless defined $item;
-			
+
 			# skip jive-only items for non-jive UIs
 			return if $ref->{menuMode} && !$tags->{menuMode};
-			
+
 			# show artwork item to jive only if artwork exists
 			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$album->coverArtExists;
-			
+
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
 					push @{$items}, @{$item};
@@ -168,35 +173,35 @@ sub menu {
 			}
 			else {
 				$log->error( 'AlbumInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
-			}				
+			}
 		}
 	};
-	
+
 	# Now run the order, which generates all the items we need
 	my $items = [];
-	
+
 	for my $ref ( @{ $infoOrdering } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
-		
+
 		# Add the item
 		$addItem->( $ref, $items );
-		
+
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
 		} @{ $infoOrdering };
-		
+
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
-			
+
 			for my $child ( @children ) {
 				$addItem->( $child, $subitems );
 			}
 		}
 	}
-	
+
 	return {
 		name  => $album->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
@@ -207,10 +212,10 @@ sub menu {
 
 sub infoContributors {
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
-	
+
 	my $items = [];
 	$filter ||= {};
-	
+
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
 			type =>  'text',
@@ -220,24 +225,24 @@ sub infoContributors {
 	}
 	else {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
-		
+
 		# Loop through each pref to see if the user wants to link to that contributor role.
 		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
 		$linkRoles{'ARTIST'} = 1;
 		$linkRoles{'TRACKARTIST'} = 1;
 		$linkRoles{'ALBUMARTIST'} = 1;
-		
+
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-		
+
 		# Loop through the contributor types and append
 		for my $role (@roles) {
 			for my $contributor ( $album->artistsForRoles($role) ) {
-				
+
 				next unless $contributor->isInLibrary($library_id);
-				
+
 				if ($linkRoles{$role}) {
 					my $id = $contributor->id;
-					
+
 					my %actions = (
 						allAvailableActionsDefined => 1,
 						items => {
@@ -255,15 +260,15 @@ sub infoContributors {
 						insert => {
 							command     => ['playlistcontrol'],
 							fixedParams => { cmd => 'insert', artist_id => $id, library_id => $library_id },
-						},								
+						},
 						info => {
 							command     => ['artistinfo', 'items'],
 							fixedParams => { artist_id => $id, library_id => $library_id },
-						},								
+						},
 					);
 					$actions{'playall'} = $actions{'play'};
 					$actions{'addall'} = $actions{'add'};
-					
+
 					my $item = {
 						type    => 'playlist',
 						url     => 'blabla',
@@ -283,17 +288,17 @@ sub infoContributors {
 			}
 		}
 	}
-	
+
 	return $items;
 }
 
 sub infoYear {
 	my ( $client, $url, $album ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $year = $album->year ) {
-		
+
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
@@ -311,11 +316,11 @@ sub infoYear {
 			insert => {
 				command     => ['playlistcontrol'],
 				fixedParams => {cmd => 'insert', year => $year},
-			},								
+			},
 			info => {
 				command     => ['yearinfo', 'items'],
 				fixedParams => {year => $year},
-			},								
+			},
 		);
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
@@ -328,16 +333,16 @@ sub infoYear {
 			itemActions => \%actions,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoDisc {
 	my ( $client, $url, $album ) = @_;
-	
+
 	my $item;
 	my ($disc, $discc);
-	
+
 	if ( blessed($album) && ($disc = $album->disc) && ($discc = $album->discc) ) {
 		$item = {
 			type  => 'text',
@@ -345,15 +350,15 @@ sub infoDisc {
 			name  => "$disc/$discc",
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoDuration {
 	my ( $client, $url, $album ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $duration = $album->duration ) {
 		$item = {
 			type  => 'text',
@@ -361,15 +366,15 @@ sub infoDuration {
 			name  => $duration,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoCompilation {
 	my ( $client, $url, $album ) = @_;
-	
+
 	my $item;
-	
+
 	if ( $album->compilation ) {
 		$item = {
 			type  => 'text',
@@ -377,10 +382,25 @@ sub infoCompilation {
 			name  => cstring($client,'YES'),
 		};
 	}
-	
+
 	return $item;
 }
 
+sub infoExternalId {
+	my ( $client, $url, $album ) = @_;
+
+	my $item;
+
+	if ( $album->extid ) {
+		$item = {
+			type  => 'text',
+			label => 'EXTERNAL_ID',
+			name  => $album->extid,
+		};
+	}
+
+	return $item;
+}
 
 sub showArtwork {
 	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
@@ -397,9 +417,9 @@ sub showArtwork {
 	push @{$items}, {
 		type => 'text',
 		name => cstring($client, 'SHOW_ARTWORK_SINGLE'),
-		jive => $jive, 
+		jive => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -407,7 +427,7 @@ sub playAlbum {
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
 
 	return undef if !blessed($client);
-	
+
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],
@@ -415,7 +435,7 @@ sub playAlbum {
 		},
 	};
 	$actions->{'play'} = $actions->{'items'};
-	
+
 	return {
 		itemActions => $actions,
 		nextWindow  => 'nowPlaying',
@@ -424,7 +444,7 @@ sub playAlbum {
 		name        => cstring($client, 'PLAY'),
 	};
 }
-	
+
 sub addAlbumEnd {
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
 	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'ADD_TO_END', 'add', $filter );
@@ -448,7 +468,7 @@ sub addAlbum {
 	};
 	$actions->{'play'} = $actions->{'items'};
 	$actions->{'add'}  = $actions->{'items'};
-	
+
 	return {
 		itemActions => $actions,
 		nextWindow  => 'parent',
@@ -460,7 +480,7 @@ sub addAlbum {
 
 sub infoReplayGain {
 	my ( $client, $url, $album ) = @_;
-	
+
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
 			my $noclip = Slim::Player::ReplayGain::preventClipping( $albumreplaygain, $album->replay_peak );
@@ -472,7 +492,7 @@ sub infoReplayGain {
 			if ( $noclip < $albumreplaygain ) {
 				# Gain was reduced to avoid clipping
 				$item{'name'} .= sprintf( " (%s)",
-						cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) ); 
+						cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) );
 			}
 			return \%item;
 		}
@@ -486,7 +506,7 @@ tie my %cachedFeed, 'Tie::Cache::LRU', 2;
 sub cliQuery {
 	main::DEBUGLOG && $log->is_debug && $log->debug('cliQuery');
 	my $request = shift;
-	
+
 	# WebUI or newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
@@ -503,7 +523,7 @@ sub cliQuery {
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
 	}
-	
+
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
 	my $albumId        = $request->getParam('album_id');
@@ -511,22 +531,22 @@ sub cliQuery {
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
 	my $connectionId   = $request->connectionID || '';
-	
+
 	my %filter;
 	foreach (qw(artist_id genre_id year library_id)) {
 		if (my $arg = $request->getParam($_)) {
 			$filter{$_} = $arg;
 		}
-	}	
+	}
 
 	my $tags = {
 		menuMode      => $menuMode,
 		menuContext   => $menuContext,
 		playlistIndex => $playlist_index,
 	};
-	
+
 	my $feed;
-	
+
 	# Default menu
 	if ( $url ) {
 		$feed = Slim::Menu::AlbumInfo->menu( $client, $url, undef, $tags, \%filter );
@@ -542,9 +562,9 @@ sub cliQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 	$cachedFeed{ $connectionId } = $feed if $feed;
-	
+
 	Slim::Control::XMLBrowser::cliQuery( 'albuminfo', $feed, $request );
 }
 

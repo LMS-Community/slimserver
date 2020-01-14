@@ -47,7 +47,10 @@ sub _cached {
 	my $isInfo = main::INFOLOG && $log->is_info;
 	
 	if ( my $cached = $cache->get($path) ) {
-		if ( my $orig = $cached->{original_path} ) {
+		if ( $path =~ m|^music/[a-f0-9]{8}/cover| && $cached->{mtime} == 0 ) {
+			return $cached;
+		}
+		elsif ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,
 			# unless it's a /music|/video|/image path, where we don't care if
 			# it has changed.  The scanner should deal with changes there.
@@ -331,7 +334,7 @@ sub artworkRequest {
 	
 	# Resolve full path if it's not already a full path (checks Unix and Windows path prefixes)
 	# Bug 16814: We also need to check for UNC prefix
-	if ( $fullpath !~ m{^/} && $fullpath !~ /^[a-z]:[\\\/]/i && $fullpath !~ /^\\\\/i ) {
+	if ( $fullpath !~ m{^/|^https?} && $fullpath !~ /^[a-z]:[\\\/]/i && $fullpath !~ /^\\\\/i ) {
 		my $skin = $params->{skinOverride} || $prefs->get('skin');
 		main::INFOLOG && $isInfo && $log->info("  Looking for: $fullpath in skin $skin");	
 		$fullpath = $skinMgr->fixHttpPath($skin, $fullpath);
@@ -369,7 +372,7 @@ sub artworkRequest {
 		}
 	}
 	
-	if ( $fullpath && -e $fullpath ) {
+	if ( $fullpath && ($fullpath =~ /^https?:/ || -e $fullpath) ) {
 		main::idleStreams();
 		
 		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
@@ -430,34 +433,62 @@ sub artworkRequest {
 			}
 		}
 			
-		Slim::Utils::ImageResizer->resize($fullpath, $path, $spec, sub {
-			my ($body, $format) = @_;
+		my $doResize = sub {
+			my $cover = $_[0];
+			Slim::Utils::ImageResizer->resize($cover, $path, $spec, sub {
+				my ($body, $format) = @_;
+				
+				# if we didn't get a valid reference returned, try to read from cache
+				if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path)) ) {
+					$body = $c->{data_ref};
+					$format = $c->{content_type};
+				}
 			
-			# if we didn't get a valid reference returned, try to read from cache
-			if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path)) ) {
-				$body = $c->{data_ref};
-				$format = $c->{content_type};
-			}
-		
-			$imageCb->($body, $format);
-		} );
+				$imageCb->($body, $format);
+			} );
+		};
 	
+		if ($fullpath =~ /^https?:/) {
+			Slim::Networking::SimpleAsyncHTTP->new(
+				sub {
+					my $http = shift;
+					$doResize->($http->contentRef);
+				},
+				sub {
+					send404($client, $params, $callback, @args);
+				},
+				{
+					timeout => 15
+				}
+			)->get($fullpath);
+		}
+		else {
+			$doResize->($fullpath);
+		}
 	}
 	else {
 		# File does not exist, return 404
-		main::INFOLOG && $isInfo && $log->info("  File not found, returning 404");
-		
-		$response->code(404);
-		$response->content_type('text/html');
-		$response->expires( time() - 1 );
-		$response->header( 'Cache-Control' => 'no-cache' );
-		
-		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-		
-		$callback->( $client, $params, $body, @args );
+		send404($client, $params, $callback, @args);
 	}
 	
 	return;
+}
+
+sub send404 {
+	my ( $client, $params, $callback, @args ) = @_;
+
+	my $response = $args[1];
+
+	main::INFOLOG && $log->is_info && $log->info("  File not found, returning 404");
+	
+	$response->code(404);
+	$response->content_type('text/html');
+	$response->expires( time() - 1 );
+	$response->header( 'Cache-Control' => 'no-cache' );
+	
+	my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
+	
+	$callback->( $client, $params, $body, @args );
 }
 
 sub parseSpec {

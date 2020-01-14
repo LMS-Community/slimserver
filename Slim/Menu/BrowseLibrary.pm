@@ -157,71 +157,6 @@ my $prefs = preferences('server');
 my $log = logger('database.info');
 my $cache;
 
-#my %pluginData = (
-#	icon => 'html/images/browselibrary.png',
-#);
-#
-#sub _pluginDataFor {
-#	my $class = shift;
-#	my $key   = shift;
-#
-#	my $pluginData = $class->pluginData() if $class->can('pluginData');
-#
-#	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
-#		return $pluginData->{$key};
-#	}
-#	
-#	if ($pluginData{$key}) {
-#		return $pluginData{$key};
-#	}
-#
-#	return __PACKAGE__->SUPER::_pluginDataFor($key);
-#}
-#
-#my @submenus = (
-#	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
-#		icon => 'html/images/albums.png',
-#	}],
-#	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
-#		icon => 'html/images/artists.png',
-#	}],
-#);
-#
-#sub _initSubmenu {
-#	my ($class, %args) = @_;
-#	$args{'weight'} ||= $class->weight() + 1;
-#	$args{'is_app'} ||= 0;
-#	$class->SUPER::initPlugin(%args);
-#}
-#
-#sub _initSubmenus {
-#	my $class = shift;
-#	my $base  = __PACKAGE__;
-#	
-#	foreach my $menu (@submenus) {
-#
-#		my $packageName = $base . '::' . $menu->[0];
-#		my $pkg = "{
-#			package $packageName;
-#			use base '$base';
-#			my \$pluginData;
-#			
-#			sub init {
-#				my (\$class, \$feed, \$data) = \@_;
-#				\$pluginData = \$data;
-#				\$class->SUPER::_initSubmenu(feed => \$feed, tag => '$menu->[1]');
-#			}
-#		
-#			sub getDisplayName {'$menu->[2]'}	
-#			sub pluginData {\$pluginData}	
-#		}";
-#		
-#		eval $pkg;
-#		
-#		$packageName->init($menu->[3], $menu->[4]);
-#	}
-#}
-
 use constant BROWSELIBRARY => 'browselibrary';
 
 my $_initialized = 0;
@@ -232,6 +167,7 @@ my @deletedNodes;
 
 # this can be set to a class which would give us access to remote LMS instances
 my $remoteLibraryHandler;
+my %onlineLibraryHandlers;
 
 my %browseLibraryModeMap = (
 	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
@@ -296,6 +232,25 @@ sub deregisterNode {
 		$class->_scheduleMenuChanges(undef, $node);
 	}
 }
+
+sub registerOnlineService {
+	my ($class, $name, $handler) = @_;
+
+	if ($name && $handler && ref $handler) {
+		$onlineLibraryHandlers{$name} = $handler;
+	}
+}
+
+sub getOnlineServicesForID {
+	my ($client, $id) = @_;
+
+	return [ grep { $_ } map { 
+		$onlineLibraryHandlers{$_}->($client, $id);
+	} sort { 
+		lc($a->{name}) cmp lc($b->{name})
+	} keys %onlineLibraryHandlers ];
+}
+
 
 
 sub init {
@@ -754,6 +709,9 @@ sub setMode {
 
 our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library);
 
+# keep a very small cache of feeds to allow browsing into a music service feed
+tie my %cachedFeed, 'Tie::Cache::LRU', 5;
+
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
 	my $params = $args->{'params'} || $pt;
@@ -780,6 +738,8 @@ sub _topLevel {
 		$args{'wantIndex'}    = $params->{'wantIndex'} if $params->{'wantIndex'};
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
+		$args{'extid'}        = $params->{'extid'} if $params->{'extid'};
+		$args{'noEdit'}       = $params->{'noEdit'} if $params->{'noEdit'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -799,9 +759,27 @@ sub _topLevel {
 				sub {
 					my $opml = shift;
 					$opml->{'query'} = \%entryParams;
+					$cachedFeed{$client} = $opml;
 					$callback->($opml, @_);
 				},
 				$args, \%args);
+			return;
+		}
+		elsif (my $extid = $args{'extid'}) {
+			if (my ($feed) = @{ getOnlineServicesForID($client, $extid) }) {
+				my $pt = $feed->{passthrough}->[0];
+				
+				$cachedFeed{$client} = {
+					func => $feed->{url},
+					pt => $pt
+				};
+				$feed->{url}->($client, $callback, $args, $pt);
+				
+				return;
+			}
+		}
+		elsif (my $cached = $cachedFeed{$client}) {
+			$cached->{func}->($client, $callback, $args, $cached->{pt});
 			return;
 		}
 	}
@@ -871,8 +849,12 @@ sub _generic {
 		$result->{'offset'}    = $index;
 		my $total = $result->{'total'} = $results->{'count'} || 0;
 		
-		# We only add extra-items (typically all-songs) if the total is 2 or more
-		if ($extraItems && $total > 1) {
+		# We only add the "play all" etc. extra-items if the total is 2 or more
+		if ($total < 2) {
+			$extraItems = [ grep { !$_->{'skipIfSingleton'} } @$extraItems ];
+		}
+
+		if ($extraItems) {
 			my $n = scalar @$extraItems;
 			$result->{'total'} += $n;
 			
@@ -885,7 +867,7 @@ sub _generic {
 				push @{$result->{'items'}}, @$extraItems[$usedAlready..$#$extraItems];
 			} elsif ($quantity && $nResults < $quantity) {
 				my $spaceLeft = $quantity - $nResults;
-				$spaceLeft = scalar @$extraItems if scalar @$extraItems < $spaceLeft;
+				$spaceLeft = $n if $n < $spaceLeft;
 				push @{$result->{'items'}}, @$extraItems[0..($spaceLeft-1)];
 			} else {
 				# just add them all
@@ -1083,7 +1065,7 @@ sub _tagsToParams {
 	return \%p;
 }
 
-=cut
+=pod
 # Untested
 sub _combinedSearch {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1230,6 +1212,7 @@ sub _artists {
 					playlist    => $remote_library ? undef : \&_tracks,
 					url         => \&_albums,
 					passthrough => [{ searchTags => \@searchTags }],
+					skipIfSingleton => 1,
 					itemActions => {
 						allAvailableActionsDefined => 1,
 						info => {
@@ -1301,15 +1284,16 @@ sub _artists {
 					url         => \&_tracks,
 					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
+					skipIfSingleton => 1,
 				} ];
 			}
 			
 			my $params = _tagsToParams(\@ptSearchTags);
 			my %actions = $remote_library ? (
-				commonVariables	=> [artist_id => 'id'],
+				commonVariables	=> [artist_id => 'id', extid => 'extid'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [artist_id => 'id'],
+				commonVariables	=> [artist_id => 'id', extid => 'extid'],
 				info => {
 					command     => ['artistinfo', 'items'],
 				},
@@ -1342,7 +1326,7 @@ sub _artists {
 			
 			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
-		's', $pt->{'wantIndex'} || $args->{'wantIndex'},
+		'sx', $pt->{'wantIndex'} || $args->{'wantIndex'},
 	);
 }
 
@@ -1496,9 +1480,9 @@ sub _albums {
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $wantMeta   = $pt->{'wantMetadata'};
+	my $extid      = $pt->{'extid'};
 	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
-	# XXX - make the full list of items optional!
-	my $tags       = 'ljsaaSS';
+	my $tags       = 'ljsaaSSKE';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	
@@ -1553,7 +1537,8 @@ sub _albums {
 			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};
-				$_->{'image'} = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
@@ -1572,7 +1557,7 @@ sub _albums {
 					$_->{'artists'}    = [ $_->{'artist'} ];
 					$_->{'artist_ids'} = [ $_->{'id'} ];
 				}
-				
+
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
@@ -1637,6 +1622,7 @@ sub _albums {
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
+					skipIfSingleton => 1,
 				} ];
 			}
 			elsif ($search) {
@@ -1679,7 +1665,24 @@ sub _albums {
 					url         => \&_tracks,
 					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
+					skipIfSingleton => 1
 				} ];
+			}
+
+			if ($extid) {
+				foreach my $id (split /,/, $extid) {
+					foreach my $menu ( @{ getOnlineServicesForID($client, $id) }) {
+						$menu->{itemActions} = {
+							allAvailableActionsDefined => 1,
+							items => {
+								command => [BROWSELIBRARY, 'items'],
+								fixedParams => { extid => $id }
+							}
+						};
+
+						push @$extra, $menu;
+					}
+				}
 			}
 			
 			my $params = _tagsToParams(\@searchTags);
@@ -1929,6 +1932,7 @@ sub _tracks {
 					playlist    => \&_tracks,
 					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%allSongsActions,
+					skipIfSingleton => 1,
 				} ];
 			
 			} elsif (!$remote_library) {
@@ -2093,7 +2097,7 @@ sub _playlists {
 	}
 
 	_generic($client, $callback, $args, 'playlists',
-		['tags:su', @searchTags, ($search ? 'search:' . $search : undef)],
+		['tags:sux', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
@@ -2108,10 +2112,10 @@ sub _playlists {
 			};
 			
 			my %actions = $remote_library ? (
-				commonVariables	=> [playlist_id => 'id'],
+				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [playlist_id => 'id'],
+				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
 				info => {
 					command     => ['playlistinfo', 'items'],
 				},

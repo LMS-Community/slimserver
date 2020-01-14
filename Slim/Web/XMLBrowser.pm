@@ -1320,7 +1320,8 @@ sub _makeWebLink {
 		for (my $i = 0; $i < scalar @vars; $i += 2) {
 			if (defined $item->{$vars[$i+1]}) {
 				$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]};
-			} else {
+			} elsif ($vars[$i+1] ne 'extid') {
+				# XXX - why would we return here?
 				return undef;
 			}
 		}

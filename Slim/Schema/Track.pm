@@ -658,6 +658,13 @@ sub coverid {
 	return $val;
 }
 
+sub coverurl {
+	my $self = shift;
+
+	my $cover = $self->cover;
+	return $cover if $cover && $cover =~ /^https?:/;
+}
+
 # Cover ID can be generated without a Track object, so this is a class method
 sub generateCoverId {
 	my ( $classOrSelf, $args ) = @_;
@@ -665,8 +672,11 @@ sub generateCoverId {
 	my $coverid;
  	my $mtime;
 	my $size;
-		
-	if ( $args->{cover} =~ /^\d+$/ ) {
+
+	if ( $args->{cover} =~ /^https?/ ) {
+		$mtime = $size = 1;
+	}
+	elsif ( $args->{cover} =~ /^\d+$/ ) {
 		# Cache is based on mtime/size of the file containing embedded art
 		$mtime = $args->{mtime};
 		$size  = $args->{size};

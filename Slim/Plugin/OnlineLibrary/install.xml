@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>1b8f1315-d9ae-4ad1-8edf-de0eddbdcd15</id>
+	<name>PLUGIN_ONLINE_LIBRARY_MODULE_NAME</name>
+	<module>Slim::Plugin::OnlineLibrary::Plugin</module>
+	<importmodule>Slim::Plugin::OnlineLibrary::Libraries</importmodule>
+	<version>1.0</version>
+	<description>PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/</homepageURL>
+	<optionsURL>plugins/OnlineLibrary/settings.html</optionsURL>        
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9.2</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

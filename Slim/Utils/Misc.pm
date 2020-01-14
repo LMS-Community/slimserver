@@ -66,6 +66,7 @@ my $canFollowAlias = 0;
 if (main::ISWINDOWS) {
 	require Win32::File;
 	require Slim::Utils::OS::Win32;
+	require File::Which;
 }
 elsif ($^O =~/darwin/i) {
 	# OSX 10.3 doesn't have the modules needed to follow aliases
@@ -221,7 +222,7 @@ sub pathFromFileURL {
 
 	if ($url !~ /^file:\/\//i) {
 
-		logWarning("Path isn't a file URL: $url");
+		logBacktrace("Path isn't a file URL: $url");
 
 		return $url;
 	}
