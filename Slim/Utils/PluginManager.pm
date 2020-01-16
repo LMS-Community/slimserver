@@ -355,7 +355,7 @@ sub load {
 			elsif ( $binArch && $binArch eq 'armhf-linux' ) {
 				push @paths, catdir($binDir, 'arm-linux');
 			}
-			elsif ( $binArch =~ /darwin/i && $osDetails->{osArch} =~ /x86_64/ ) {
+			elsif ( $binArch =~ /darwin/i && ($osDetails->{osArch} =~ /x86_64/ || $osDetails->{osName} =~ /\b10\.[1-9][4-9]\./) ) {
 				unshift @paths, catdir($binDir, $^O . '-' . $osDetails->{osArch});
 				unshift @paths, catdir($binDir, $binArch . '-' . $osDetails->{osArch});
 			}
