@@ -23,7 +23,7 @@ use constant POLLING_INTERVAL => 5 * 60;
 
 my $prefs = preferences('plugin.onlinelibrary');
 
-my @onlineLibraryProviders;
+my %onlineLibraryProviders;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.onlinelibrary',
@@ -35,7 +35,6 @@ sub initPlugin {
 	my $class = shift;
 
 	$prefs->init({
-		pollForUpdates => 1,
 		enablePreferLocalLibraryOnly => 0,
 		enableLocalTracksOnly => 0,
 	});
@@ -51,19 +50,29 @@ sub initPlugin {
 	}
 
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
-
-	# $class->SUPER::initPlugin(@_);
 }
 
 sub postinitPlugin {
 	my ($class) = @_;
 
-	@onlineLibraryProviders = grep { $_->can('onlineLibraryNeedsUpdate') } Slim::Utils::PluginManager->enabledPlugins();
-	if (scalar @onlineLibraryProviders) {
+	# create (module => enable flag) tupels
+	%onlineLibraryProviders = map {
+		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($_);
+		$_ => ($pluginData && $pluginData->{onlineLibrary}) ? 'enable_' . $pluginData->{name} : '';
+	} grep { $_->can('onlineLibraryNeedsUpdate') } Slim::Utils::PluginManager->enabledPlugins();
+
+	if (scalar keys %onlineLibraryProviders) {
+		# initialize prefs to enable importers by default
+		$prefs->init({
+			map {
+				$_ => 1;
+			} values %onlineLibraryProviders
+		});
+
 		$prefs->setChange(sub {
 			Slim::Utils::Timers::killTimers(undef, \&_pollOnlineLibraries);
 			Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
-		}, 'pollForUpdates');
+		}, values %onlineLibraryProviders);
 
 		Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
 	}
@@ -71,10 +80,17 @@ sub postinitPlugin {
 
 my $isPolling;
 sub _pollOnlineLibraries {
-	# no need for polling when there's no provider
-	return unless scalar @onlineLibraryProviders && $prefs->get('pollForUpdates');
-
 	Slim::Utils::Timers::killTimers(undef, \&_pollOnlineLibraries);
+
+	# no need for polling when there's no provider
+	return unless scalar values %onlineLibraryProviders;
+
+	my @enabledImporters = grep {
+		$prefs->get($onlineLibraryProviders{$_})
+	} keys %onlineLibraryProviders;
+
+	# no need for polling if all importers are disabled
+	return unless scalar @enabledImporters;
 
 	if ($isPolling || Slim::Music::Import->stillScanning()) {
 		main::INFOLOG && $log->is_info && $log->info("Online library poll or scan is active - try again later");
@@ -91,13 +107,15 @@ sub _pollOnlineLibraries {
 
 			return $acb->($result) if $result;
 
+			main::INFOLOG && $log->is_info && $log->info("Going to check $poller");
+
 			eval {
 				$poller->onlineLibraryNeedsUpdate($acb);
 			};
 
 			$log->error($@) if $@;
 		}
-	} @onlineLibraryProviders;
+	} @enabledImporters;
 
 	Async::Util::achain(
 		input => undef,
@@ -114,6 +132,11 @@ sub _pollOnlineLibraries {
 			Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
 		}
 	);
+}
+
+sub getLibraryProviders {
+	my ($class) = @_;
+	return \%onlineLibraryProviders;
 }
 
 sub initLibraries {

@@ -1,10 +1,15 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_POLL_UPDATES" desc="PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_DESC" %]
-	<select class="stdedit" name="pref_pollForUpdates" id="pollForUpdates">
-		<option [% IF prefs.pref_pollForUpdates %]selected [% END %]value="1">[% 'YES' | string %]</option>
-		<option [% IF NOT prefs.pref_pollForUpdates %]selected [% END %]value="0">[% 'NO' | string %]</option>
-	</select>
+		[% IF libraryProviders.size; FOREACH libraryProvider = libraryProviders %]
+			<p>
+				<input type="checkbox" name="pref_[% libraryProvider.0 %]" id="[% libraryProvider.0 %]" 
+					[% IF	libraryProvider.2 %] checked="checked" [% END %] value="1" class="stdedit" />
+				<label for="[% libraryProvider.0 %]">[% libraryProvider.1 %]</label>
+			</p>
+		[% END; ELSE %]
+			<p>[% "PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE" | string %]</p>
+		[% END %]
 	[% END %]
 	
 	[% WRAPPER setting title="VIRTUALLIBRARIES" desc="SETUP_LIBRARY_VIEWS_DESC" %]
