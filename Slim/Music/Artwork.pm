@@ -45,6 +45,8 @@ my $importlog  = logger('scan.import');
 
 my $prefs = preferences('server');
 
+my $cache;
+
 tie my %lastFile, 'Tie::Cache::LRU', 128;
 
 # Small cache of path -> cover.jpg mapping to speed up
@@ -728,13 +730,22 @@ sub precacheAllArtwork {
 			if ( $isEnabled ) {
 				# let's grab external images when run in the scanner
 				if (main::SCANNER && $cover =~ /^https?:/) {
-					require Slim::Networking::SimpleSyncHTTP;
-					my $result = Slim::Networking::SimpleSyncHTTP->new({
-						cache => 1
-					})->get($cover);
+					$cache ||= Slim::Utils::Cache->new();
 
-					if ($result->is_success) {
-						$cover = $result->contentRef;
+					if (my $cached = $cache->get($cover)) {
+						$cover = \$cached;
+					}
+					else {
+						require Slim::Networking::SimpleSyncHTTP;
+						my $result = Slim::Networking::SimpleSyncHTTP->new({
+							cache => 1
+						})->get($cover);
+
+						if ($result->is_success) {
+							my $fetched = $result->contentRef;
+							$cache->set($cover, $$fetched, 86400 * 30);
+							$cover = $fetched;
+						}
 					}
 				}
 
