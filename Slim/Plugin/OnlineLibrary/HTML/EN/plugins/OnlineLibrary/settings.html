@@ -1,13 +1,22 @@
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_POLL_UPDATES" desc="PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_DESC" %]
-		[% IF libraryProviders.size; FOREACH libraryProvider = libraryProviders %]
-			<p>
-				<input type="checkbox" name="pref_[% libraryProvider.0 %]" id="[% libraryProvider.0 %]" 
-					[% IF	libraryProvider.2 %] checked="checked" [% END %] value="1" class="stdedit" />
-				<label for="[% libraryProvider.0 %]">[% libraryProvider.1 %]</label>
-			</p>
-		[% END; ELSE %]
+	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_MODULE_NAME" desc="" %]
+		[% IF libraryProviders.size %]
+			<table>
+				[% FOREACH libraryProvider = libraryProviders %]
+				<tr>
+					<td style="vertical-align: middle;">[% libraryProvider.1 %]</td>
+					<td>
+						<select name="pref_[% libraryProvider.0 %]">
+							<option [% IF libraryProvider.2 == 1 %]selected[% END %] value=1>[% "PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION" | string %]</option>
+							<option [% IF libraryProvider.2 == -1 %]selected[% END %] value=-1>[% "PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL" | string %]</option>
+							<option [% IF libraryProvider.2 == 0 %]selected[% END %] value=0>[% "PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION" | string %]</option>
+						</select>
+					</td>
+				</tr>
+				[% END %]
+			</table>
+		[% ELSE %]
 			<p>[% "PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE" | string %]</p>
 		[% END %]
 	[% END %]

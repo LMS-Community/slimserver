@@ -86,7 +86,7 @@ sub _pollOnlineLibraries {
 	return unless scalar values %onlineLibraryProviders;
 
 	my @enabledImporters = grep {
-		$prefs->get($onlineLibraryProviders{$_})
+		$prefs->get($onlineLibraryProviders{$_}) == 1;
 	} keys %onlineLibraryProviders;
 
 	# no need for polling if all importers are disabled

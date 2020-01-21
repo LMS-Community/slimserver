@@ -8,6 +8,7 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
 use Slim::Utils::Scanner::Local;
 
 use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /SQLite/ ? 1 : 0);
@@ -60,6 +61,25 @@ sub startScan {
 	});
 
 	return $changes;
+}
+
+# Helper method for importer plugins to see whether they are enabled or not
+sub isImportEnabled {
+	my ($class, $importer) = @_;
+
+	if ( main::SCANNER 
+		? (preferences('plugin.state')->get('OnlineLibrary') || '') eq 'enabled' 
+		: Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin') 
+	) {
+		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($importer);
+
+		if ($pluginData && ref $pluginData && $pluginData->{name} && ($pluginData->{onlineLibrary} || '') eq 'true') {
+			my $enabled = preferences('plugin.onlinelibrary')->get('enable_' . $pluginData->{name});
+			return $enabled ? 1 : 0;
+		}
+	}
+
+	return 1;
 }
 
 1;

@@ -6,13 +6,17 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 	DE	Erweiterte Kontrolle über die Integration ihrer Online-Musiksammlungen.
 	EN	Get more control over how your online music libraries are integrated with your local music.
 
-PLUGIN_ONLINE_LIBRARY_POLL_UPDATES
-	DE	Automatisch auf Sammlungs-Änderungen überprüfen
-	EN	Automatically poll for library changes
+PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
+	DE	Online Sammlung integrieren aber nicht auf Änderungen überprüfen
+	EN	Integrate online library but do not automatically check for changes
 
-PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_DESC
-	DE	Logitech Media Server kann automatisch überprüfen, ob ihre Musiksammlung im Online Dienst verändert wurde (falls dies vom Dienst unterstützt wird). In diesem Fall werden Veränderungen automatich in ihre Musiksammlung übernommen.
-	EN	Logitech Media Server can poll your music service for changes in your library (if supported by the service). In case of a change, your library is automatically updated.
+PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
+	DE	Online Sammlung integrieren und automatisch auf Änderungen überprüfen
+	EN	Integrate online library and automatically check for changes
+
+PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
+	DE	Online Sammlung nicht integrieren
+	EN	Do not integrate online music collection
 
 PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
 	DE	Es wurde kein unterstützter Streaming-Dienst gefunden.

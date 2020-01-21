@@ -27,19 +27,6 @@ sub prefs {
 	return ($prefs, qw(enableLocalTracksOnly enablePreferLocalLibraryOnly), @onlineLibraries);
 }
 
-sub handler {
-	my ($class, $client, $params) = @_;
-
-	if ($params->{'saveSettings'}) {
-		# we have to make sure the pref is defined, or we'll keep enabling it
-		foreach (values %{ Slim::Plugin::OnlineLibrary::Plugin->getLibraryProviders() }) {
-			$params->{"pref_$_"} = $params->{"pref_$_"} || 0;
-		}
-	}
-
-	return $class->SUPER::handler($client, $params);
-}
-
 sub beforeRender {
 	my ($class, $params, $client) = @_;
 
