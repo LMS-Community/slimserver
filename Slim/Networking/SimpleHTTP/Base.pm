@@ -79,14 +79,17 @@ sub _createHTTPRequest {
 		my $cache = Slim::Utils::Cache->new();
 
 		if ( my $data = $cache->get( _cacheKey($self->url, $client) ) ) {
-			$self->cachedResponse( $data );
+			# make sure this is a cached response, and not some random other cached value using the same key
+			if (ref $data && $data->{_time}) {
+				$self->cachedResponse( $data );
 
-			# If the data was cached within the past 5 minutes,
-			# return it immediately without revalidation, to improve
-			# UI experience
-			if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
-				main::DEBUGLOG && $log->is_debug && $log->debug("Using cached response [$url]");
-				return $self->sendCachedResponse();
+				# If the data was cached within the past 5 minutes,
+				# return it immediately without revalidation, to improve
+				# UI experience
+				if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
+					main::DEBUGLOG && $log->is_debug && $log->debug("Using cached response [$url]");
+					return $self->sendCachedResponse();
+				}
 			}
 		}
 	}

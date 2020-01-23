@@ -732,7 +732,7 @@ sub precacheAllArtwork {
 				if (main::SCANNER && $cover =~ /^https?:/) {
 					$cache ||= Slim::Utils::Cache->new();
 
-					if (my $cached = $cache->get($cover)) {
+					if (my $cached = $cache->get("artwork_$cover")) {
 						$cover = \$cached;
 					}
 					else {
@@ -743,7 +743,7 @@ sub precacheAllArtwork {
 
 						if ($result->is_success) {
 							my $fetched = $result->contentRef;
-							$cache->set($cover, $$fetched, 86400 * 30);
+							$cache->set("artwork_$cover", $$fetched, 86400 * 30);
 							$cover = $fetched;
 						}
 					}
