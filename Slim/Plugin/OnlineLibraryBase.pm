@@ -1,4 +1,4 @@
-package Slim::Music::OnlineLibraryScan;
+package Slim::Plugin::OnlineLibraryBase;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -6,6 +6,7 @@ package Slim::Music::OnlineLibraryScan;
 
 use strict;
 
+use Slim::Schema;
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -15,63 +16,85 @@ use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /
 
 my $log = logger('scan.scanner');
 
-sub init {
-	my $class = shift;
+sub initPlugin {
+	my ($class, $args) = @_;
 
-	Slim::Music::Import->addImporter( $class, {
-		type         => 'file',
-		weight       => 10,
-		use          => 1,
-		onlineLibraryOnly => 1,
-	} );
+	return if !$class->isImportEnabled();
+
+	$args ||= {};
+
+	Slim::Music::Import->addImporter($class, {
+		'type'         => 'file',
+		'weight'       => 200,
+		'use'          => 1,
+		'playlistOnly' => 1,
+		'onlineLibraryOnly' => 1,
+		%$args,
+	});
+
+	return 1;
 }
 
-sub startScan {
-	my $class = shift;
+sub initOnlineTracksTable { if (main::SCANNER && !$main::wipe) {
+	my $dbh = Slim::Schema->dbh();
+
+	main::INFOLOG && $log->is_info && $log->info("Re-build temporary table for Spotify tracks");
+	$dbh->do('DROP TABLE IF EXISTS online_tracks');
+	$dbh->do(qq{
+		CREATE TEMPORARY TABLE online_tracks (url TEXT PRIMARY KEY);
+	});
+} }
+
+sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
+	my ($class) = @_;
 
 	my $dbh = Slim::Schema->dbh;
+	my $trackUriPrefix = $class->trackUriPrefix;
 
 	my $inOnlineLibrarySQL = qq{
 		SELECT DISTINCT(url)
 		FROM            tracks
-		WHERE           url NOT LIKE 'file://%'
-		AND             extid IS NOT NULL
+		WHERE           url LIKE '$trackUriPrefix%'
+			AND url NOT IN (
+				SELECT url FROM online_tracks
+			)
 	} . (IS_SQLITE ? '' : ' ORDER BY url');
 
-	$log->error("Get online tracks count") unless main::SCANNER && $main::progress;
+	$log->error("Get removed online tracks count") unless main::SCANNER && $main::progress;
 	# only remove missing tracks when looking for audio tracks
-	my $inOnlineLibraryCount = 0;
-	($inOnlineLibraryCount) = $dbh->selectrow_array( qq{
+	my $notInOnlineLibraryCount = 0;
+	($notInOnlineLibraryCount) = $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $inOnlineLibrarySQL ) AS t1
-	} ) if !(main::SCANNER && $main::wipe);
+	} );
 
 	my $changes = 0;
 	my $paths;
 
 	Slim::Utils::Scanner::Local->deleteTracks($dbh, \$changes, \$paths, '', {
 		name  => 'online music library tracks',
-		count => $inOnlineLibraryCount,
+		count => $notInOnlineLibraryCount,
 		progressName => 'online_library_deleted',
 		sql   => $inOnlineLibrarySQL,
 	}, {
 		types    => 'audio',
-		# scanName => 'directory',
 		no_async => 1,
 		progress => 1,
 	});
 
 	return $changes;
-}
+} }
+
+sub trackUriPrefix { 'unknown://' }
 
 # Helper method for importer plugins to see whether they are enabled or not
 sub isImportEnabled {
-	my ($class, $importer) = @_;
+	my ($class) = @_;
 
 	if ( main::SCANNER 
 		? (preferences('plugin.state')->get('OnlineLibrary') || '') eq 'enabled' 
 		: Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin') 
 	) {
-		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($importer);
+		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($class);
 
 		if ($pluginData && ref $pluginData && $pluginData->{name} && ($pluginData->{onlineLibrary} || '') eq 'true') {
 			my $enabled = preferences('plugin.onlinelibrary')->get('enable_' . $pluginData->{name});
