@@ -16,7 +16,7 @@ use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /
 
 my $log = logger('scan.scanner');
 
-sub initPlugin {
+sub initPlugin { if (main::SCANNER) {
 	my ($class, $args) = @_;
 
 	return if !$class->isImportEnabled();
@@ -33,7 +33,7 @@ sub initPlugin {
 	});
 
 	return 1;
-}
+} }
 
 sub initOnlineTracksTable { if (main::SCANNER && !$main::wipe) {
 	my $dbh = Slim::Schema->dbh();
@@ -103,6 +103,48 @@ sub isImportEnabled {
 	}
 
 	return 1;
+}
+
+sub storeTracks {
+	my ($class, $tracks, $libraryId) = @_;
+
+	return unless $tracks && ref $tracks;
+
+	my $dbh = Slim::Schema->dbh();
+	my $insertTrackInLibrary_sth   = $dbh->prepare_cached("INSERT OR IGNORE INTO library_track (library, track) VALUES (?, ?)") if $libraryId;
+	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
+
+	my $c = 0;
+
+	foreach my $track (@$tracks) {
+		my $url = delete $track->{url} || next;
+
+		my $trackObj = Slim::Schema->updateOrCreate({
+			url             => $url,
+			attributes      => $track,
+			integrateRemote => 1,
+		});
+
+		if ($insertTrackInLibrary_sth) {
+			$insertTrackInLibrary_sth->execute($libraryId, $trackObj->id);
+		}
+
+		if ($insertTrackInTempTable_sth) {
+			$insertTrackInTempTable_sth->execute($url);
+		}
+
+		if (!main::SCANNER && ++$c % 20 == 0) {
+			main::idle();
+		}
+	}
+
+	main::idle() if !main::SCANNER;
+}
+
+sub libraryMetaId {
+	my ($class, $libraryMeta) = @_;
+	$libraryMeta ||= {};
+	return ($libraryMeta->{total} || '') . '|' . ($libraryMeta->{lastAdded} || '');
 }
 
 1;
