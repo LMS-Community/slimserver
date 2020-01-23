@@ -2969,7 +2969,7 @@ sub _mergeAndCreateContributors {
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'sortBy'   => $attributes->{$tag.'SORT'},
 			# only store EXTID for track artist, as we don't have it for other roles
-			'extid'    => $tag eq 'TRACKARTIST' && $attributes->{'ARTIST_EXTID'},
+			'extid'    => $tag eq 'ARTIST' && $attributes->{'ARTIST_EXTID'},
 		});
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));

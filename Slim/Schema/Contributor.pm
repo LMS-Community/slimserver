@@ -113,7 +113,6 @@ sub add {
 	# Pass args by name
 	my $artist     = $args->{'artist'} || return;
 	my $brainzID   = $args->{'brainzID'};
-	my $extid      = $args->{'extid'};
 
 	my @contributors = ();
 
@@ -127,6 +126,9 @@ sub add {
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = $args->{'sortBy'} ? Slim::Music::Info::splitTag($args->{'sortBy'}) : @artistList;
+
+	my %artistToExtIdMap;
+	@artistToExtIdMap{@artistList} = Slim::Music::Info::splitTag($args->{'extid'} || '');
 	
 	# Bug 9725, split MusicBrainz tag to support multiple artists
 	my @brainzIDList;
@@ -141,13 +143,14 @@ sub add {
 
 		# Bug 10324, we now match only the exact name
 		my $name   = $artistList[$i];
+		my $extid  = $artistToExtIdMap{$name};
 		my $search = Slim::Utils::Text::ignoreCase($name, 1);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		my $mbid   = $brainzIDList[$i];
 		
 		my $sth = $dbh->prepare_cached( 'SELECT id, extid FROM contributors WHERE name = ?' );
 		$sth->execute($name);
-		my ($id, $mergedExtid) = $sth->fetchrow_array;
+		my ($id, $oldExtId) = $sth->fetchrow_array;
 		$sth->finish;
 		
 		if ( !$id ) {
@@ -168,13 +171,14 @@ sub add {
 			}
 
 			# allow adding external IDs from multiple services
-			if ( ($extid && !$mergedExtid) || ($mergedExtid && $extid && $mergedExtid ne $extid) ) {
-				my %extIds = map { $_ => 1 } split(',', $mergedExtid);
+			if ($extid) {
+				my $newExtId = join(',', sort keys { map { 
+					$_ => 1 
+				} split(',', $oldExtId || ''), $extid });
 
-				if (!$extIds{$extid}) {
+				if ($newExtId ne $oldExtId) {
 					$sth = $dbh->prepare_cached('UPDATE contributors SET extid = ? WHERE id = ?');
-					$mergedExtid = $mergedExtid ? join(',', $mergedExtid, $extid) : $extid;
-					$sth->execute( $mergedExtid, $id );
+					$sth->execute( $newExtId, $id );
 				}
 			}
 		}
