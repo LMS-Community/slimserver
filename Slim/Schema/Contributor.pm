@@ -172,9 +172,10 @@ sub add {
 
 			# allow adding external IDs from multiple services
 			if ($extid) {
-				my $newExtId = join(',', sort keys { map { 
+				my %uniqueIds = map { 
 					$_ => 1 
-				} split(',', $oldExtId || ''), $extid });
+				} split(',', $oldExtId || ''), $extid;
+				my $newExtId = join(',', sort keys %uniqueIds);
 
 				if ($newExtId ne $oldExtId) {
 					$sth = $dbh->prepare_cached('UPDATE contributors SET extid = ? WHERE id = ?');
