@@ -51,10 +51,12 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 	my $dbh = Slim::Schema->dbh;
 	my $trackUriPrefix = $class->trackUriPrefix;
 
+	my $playlistOnly = Slim::Music::Import->scanPlaylistsOnly() ? ' AND content_type = "ssp"' : '';
+
 	my $inOnlineLibrarySQL = qq{
 		SELECT DISTINCT(url)
 		FROM            tracks
-		WHERE           url LIKE '$trackUriPrefix%'
+		WHERE           url LIKE '$trackUriPrefix%' $playlistOnly
 			AND url NOT IN (
 				SELECT url FROM online_tracks
 			)
