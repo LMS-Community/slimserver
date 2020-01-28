@@ -642,7 +642,7 @@ sub precacheAllArtwork {
 	    UPDATE tracks
 	    SET    coverid = ?, cover_cached = 1
 	    WHERE  album = ?
-	    AND    cover = ? OR cover LIKE 'http%'
+	    AND    (cover = ? OR cover LIKE 'http%')
 	} );
 
 	my $sth_update_albums = $dbh->prepare( qq{
