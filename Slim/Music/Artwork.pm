@@ -185,6 +185,7 @@ sub updateStandaloneArtwork {
 		$where = qq{
 			tracks.url NOT LIKE 'file://%'
 			AND tracks.cover LIKE 'http%'
+			AND tracks.coverid IS NULL
 		};
 	}
 	elsif ($singledir) {
@@ -266,7 +267,7 @@ sub updateStandaloneArtwork {
 			}
 
 			# check for updated artwork
-			if ( $cover && $cover !~ /^https?:/ ) {
+			if ( $cover ) {
 				$newCoverId = Slim::Schema::Track->generateCoverId({
 					cover => $cover,
 					url   => $url,
@@ -631,7 +632,6 @@ sub precacheAllArtwork {
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
 		WHERE  (tracks.cover != '0' AND tracks.coverid IS NOT NULL)
-		       OR tracks.cover LIKE 'http%'
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
 	. qq{
@@ -642,7 +642,7 @@ sub precacheAllArtwork {
 	    UPDATE tracks
 	    SET    coverid = ?, cover_cached = 1
 	    WHERE  album = ?
-	    AND    cover = ?
+	    AND    cover = ? OR cover LIKE 'http%'
 	} );
 
 	my $sth_update_albums = $dbh->prepare( qq{
