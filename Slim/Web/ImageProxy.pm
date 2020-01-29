@@ -249,6 +249,9 @@ sub _gotArtworkError {
 		$error = $1;
 		main::INFOLOG && $log->is_info && $log->info("Server returned error: " . $http->error);
 	}
+	elsif (main::INFOLOG && $log->is_info) {
+		$log->info("Unexpected failure fetching $url: " . $http->error);
+	}
 
 	# File does not exist, return error
 	main::INFOLOG && $log->info("Artwork not found, returning $error: " . $url);
