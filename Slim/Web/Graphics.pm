@@ -22,7 +22,7 @@ my $log   = logger('artwork');
 
 my $skinMgr;
 
-my $cache;
+my ($cache, $imgProxyCache);
 
 sub init {
 	# Get cache for artwork
@@ -449,18 +449,26 @@ sub artworkRequest {
 		};
 	
 		if ($fullpath =~ /^https?:/) {
-			Slim::Networking::SimpleAsyncHTTP->new(
-				sub {
-					my $http = shift;
-					$doResize->($http->contentRef);
-				},
-				sub {
-					send404($client, $params, $callback, @args);
-				},
-				{
-					timeout => 15
-				}
-			)->get($fullpath);
+			require Slim::Web::ImageProxy;
+			$imgProxyCache ||= Slim::Web::ImageProxy::Cache->new();
+
+			if (my $cached = $imgProxyCache->get($fullpath)) {
+				$doResize->($cached->{data_ref});
+			}
+			else {
+				Slim::Networking::SimpleAsyncHTTP->new(
+					sub {
+						my $http = shift;
+						$doResize->($http->contentRef);
+					},
+					sub {
+						send404($client, $params, $callback, @args);
+					},
+					{
+						timeout => 15
+					}
+				)->get($fullpath);
+			}
 		}
 		else {
 			$doResize->($fullpath);

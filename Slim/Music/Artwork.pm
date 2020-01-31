@@ -45,7 +45,7 @@ my $importlog  = logger('scan.import');
 
 my $prefs = preferences('server');
 
-my $cache;
+my $imgProxyCache;
 
 tie my %lastFile, 'Tie::Cache::LRU', 128;
 
@@ -631,7 +631,8 @@ sub precacheAllArtwork {
 			albums.artwork AS album_artwork
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
-		WHERE  (tracks.cover != '0' AND tracks.coverid IS NOT NULL)
+		WHERE  tracks.cover != '0' 
+		AND    tracks.coverid IS NOT NULL
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
 	. qq{
@@ -730,10 +731,11 @@ sub precacheAllArtwork {
 			if ( $isEnabled ) {
 				# let's grab external images when run in the scanner
 				if (main::SCANNER && $cover =~ /^https?:/) {
-					$cache ||= Slim::Utils::Cache->new();
+					require Slim::Web::ImageProxy;
+					$imgProxyCache ||= Slim::Web::ImageProxy::Cache->new();
 
-					if (my $cached = $cache->get("artwork_$cover")) {
-						$cover = \$cached;
+					if (my $cached = $imgProxyCache->get($cover)) {
+						$cover = $cached->{data_ref};
 					}
 					else {
 						require Slim::Networking::SimpleSyncHTTP;
@@ -742,8 +744,18 @@ sub precacheAllArtwork {
 						})->get($cover);
 
 						if ($result->is_success) {
+							my ($ct) = $result->headers->content_type =~ /image\/(png|jpe?g)/;
+							$ct =~ s/jpeg/jpg/;
+
 							my $fetched = $result->contentRef;
-							$cache->set("artwork_$cover", $$fetched, 86400 * 30);
+
+							$imgProxyCache->set($cover, {
+								content_type  => $ct,
+								mtime         => 0,
+								original_path => undef,
+								data_ref      => $fetched,
+							});
+
 							$cover = $fetched;
 						}
 					}
