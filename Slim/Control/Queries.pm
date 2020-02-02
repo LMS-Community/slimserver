@@ -727,7 +727,7 @@ sub albumsQuery {
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
-			$tags =~ /x/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
+			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
 
@@ -1028,7 +1028,7 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /x/ ? ', contributors.extid' : ''))
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /E/ ? ', contributors.extid' : ''))
 			. 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
@@ -1108,7 +1108,7 @@ sub artistsQuery {
 
 		my ($id, $name, $namesort, $extid);
 		my @bind = (\$id, \$name, \$namesort);
-		push @bind, \$extid if $tags =~ /x/;
+		push @bind, \$extid if $tags =~ /E/;
 		$sth->bind_columns(@bind);
 
 		my $process = sub {
@@ -1125,7 +1125,7 @@ sub artistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
-			if ($tags =~ /x/ && $extid) {
+			if ($tags =~ /E/ && $extid) {
 				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
 			}
 
