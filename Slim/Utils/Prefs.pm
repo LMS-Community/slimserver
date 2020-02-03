@@ -224,6 +224,7 @@ sub init {
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',
+		'insecureHTTPS'         => 0,
 		# Server Settings - TextFormatting
 		'longdateFormat'        => q(%A, %B |%d, %Y),
 		'shortdateFormat'       => q(%m/%d/%Y),
