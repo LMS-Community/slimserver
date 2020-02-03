@@ -50,6 +50,10 @@
 		[% WRAPPER settingGroup title="SETUP_CORS_ALLOWED_HOSTS" desc="SETUP_CORS_ALLOWED_HOSTS_DESC" %]
 			<input type="text" class="stdedit" name="pref_corsAllowedHosts" id="corsAllowedHosts" value="[% prefs.pref_corsAllowedHosts %]" size="40">
 		[% END %]
+
+		[% WRAPPER settingGroup title="SETUP_INSECURE_HTTPS" desc="SETUP_INSECURE_HTTPS_DESC" %]
+			<input type="checkbox" name="pref_insecureHTTPS" id="insecureHTTPS" [% IF prefs.pref_insecureHTTPS %] checked="checked" [% END %] />
+		[% END %]
 	[% END %]
 [% PROCESS settings/footer.html %]
 

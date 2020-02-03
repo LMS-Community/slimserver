@@ -8740,6 +8740,12 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	SV	För att skydda dig mot så kallade CSRF-säkerhetshot (Cross Site Request Forgery) granskas varje HTTP-begäran extra noggrant om den gäller funktioner där datorn, spelarna eller spellistorna kan manipuleras. Du kan själv välja hur noggrant granskningen ska utföras. Standardnivån är Ingen. Mer information <a href="/html/docs/http.html#csrf">finns i hjälpavsnittet</a>.
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，Logitech Media Server会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="/html/docs/http.html#csrf">帮助部分</a>。
 
+SETUP_INSECURE_HTTPS
+	EN	Insecure HTTPS
+
+SETUP_INSECURE_HTTPS_DESC
+	EN	Turning on this option switches off TLS certificate verification when Logitech Media Server acts as an HTTPS client. It also causes HTTPS requests to plugin repositories which fail for any reason to be retried over HTTP. <b>Enabling this option is discouraged!</b>
+
 SETUP_IPFILTER_HEAD
 	CS	Blokovat příchozí spojení
 	DA	Blokér indgående forbindelser
