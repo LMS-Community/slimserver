@@ -5,11 +5,11 @@ package Slim::Plugin::OnlineLibrary::Plugin;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+use strict;
 use base qw(Slim::Plugin::Base);
 
 use Async::Util;
-
-use strict;
+use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -25,6 +25,9 @@ my $prefs = preferences('plugin.onlinelibrary');
 
 my %onlineLibraryProviders;
 
+my %onlineLibraryIconProvider = ();
+tie %onlineLibraryIconProvider, 'Tie::RegexpHash';
+
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.onlinelibrary',
 	'defaultLevel' => 'INFO',
@@ -37,12 +40,14 @@ sub initPlugin {
 	$prefs->init({
 		enablePreferLocalLibraryOnly => 0,
 		enableLocalTracksOnly => 0,
+		enableServiceEmblem => 1,
 	});
 
 	$prefs->setChange( sub {
 		$class->initLibraries($_[0], $_[1] || 0);
 	}, 'enablePreferLocalLibraryOnly', 'enableLocalTracksOnly' );
 
+	$prefs->setChange( \&Slim::Web::XMLBrowser::wipeCaches, 'enableServiceEmblem' );
 
 	if ( main::WEBUI ) {
 		require Slim::Plugin::OnlineLibrary::Settings;
@@ -155,6 +160,23 @@ sub initLibraries {
 		# if we were called on a onChange event, re-build the library
 		Slim::Music::VirtualLibraries->rebuild($library) if $newValue;
 	}
+}
+
+sub addLibraryIconProvider {
+	my ($class, $serviceTag, $iconUrl) = @_;
+
+	return unless $serviceTag && $iconUrl;
+
+	$onlineLibraryIconProvider{qr/^$serviceTag:/} = $iconUrl;
+}
+
+sub getServiceIcon {
+	my ($class, $id) = @_;
+
+	return unless $id;
+	return unless $prefs->get('enableServiceEmblem');
+
+	return $onlineLibraryIconProvider{$id};
 }
 
 1;

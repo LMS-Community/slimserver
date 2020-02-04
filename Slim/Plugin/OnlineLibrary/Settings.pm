@@ -24,7 +24,7 @@ sub page {
 
 sub prefs {
 	my @onlineLibraries = values %{ Slim::Plugin::OnlineLibrary::Plugin->getLibraryProviders() };
-	return ($prefs, qw(enableLocalTracksOnly enablePreferLocalLibraryOnly), @onlineLibraries);
+	return ($prefs, qw(enableLocalTracksOnly enablePreferLocalLibraryOnly enableServiceEmblem), @onlineLibraries);
 }
 
 sub beforeRender {

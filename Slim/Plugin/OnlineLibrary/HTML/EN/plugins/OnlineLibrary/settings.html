@@ -21,6 +21,14 @@
 		[% END %]
 	[% END %]
 	
+	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO" desc="" %]
+		<p>
+			<input type="checkbox" name="pref_enableServiceEmblem" id="enableServiceEmblem" [% IF
+				prefs.pref_enableServiceEmblem %]checked="checked" [% END %] value="1" class="stdedit" />
+			<label for="enableServiceEmblem">[% "PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC" | string %]</label>
+		</p>
+	[% END %]
+	
 	[% WRAPPER setting title="VIRTUALLIBRARIES" desc="SETUP_LIBRARY_VIEWS_DESC" %]
 		<p>
 			<input type="checkbox" name="pref_enableLocalTracksOnly" id="enableLocalTracksOnly" [% IF

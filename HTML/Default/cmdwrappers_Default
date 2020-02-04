@@ -1,6 +1,7 @@
 [%- FILTER null %]
 	[% debug = 0 %]
 	[% USE Math %]
+	[% USE OnlineServices %]
 
 	[% controlGraphics = 1 %]
 	[% browserTarget = "browser" %]
@@ -91,6 +92,7 @@
 		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% Math.rand(1) %]_selector"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% itemSize %]px;height:[% itemSize %]px;">
+				[% IF item.extid; serviceIcon = OnlineServices.getIconForId(item.extid); IF serviceIcon %]<img src="[% serviceIcon %]" class="extIdImg">[% END; END %]
 				[% IF item.weblink %]
 					<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %]>
 				[% ELSIF item.simpleAlbumLink %]

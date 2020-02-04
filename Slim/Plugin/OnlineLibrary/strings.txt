@@ -33,3 +33,11 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
 	EN	Local tracks only (no music service)
+
+PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
+	DE	Musikdienst-Logo
+	EN	Music Service Logo
+
+PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
+	DE	Markiere Online-Alben mit Musikdienst-Logo (falls verfügbar).
+	EN	Put streaming service logo on top of album artwork (if available).
