@@ -28,7 +28,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
-	EN	Only show local album if you got another copy in your online music collection.
+	EN	Show only local album if you got another copy in your online music collection.
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
