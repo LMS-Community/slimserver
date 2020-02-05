@@ -53,6 +53,7 @@
 
 		[% WRAPPER settingGroup title="SETUP_INSECURE_HTTPS" desc="SETUP_INSECURE_HTTPS_DESC" %]
 			<input type="checkbox" name="pref_insecureHTTPS" id="insecureHTTPS" [% IF prefs.pref_insecureHTTPS %] checked="checked" [% END %] />
+			<label for="insecureHTTPS">[% "SETUP_INSECURE_HTTPS2" | string %]</label>
 		[% END %]
 	[% END %]
 [% PROCESS settings/footer.html %]

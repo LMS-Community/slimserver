@@ -8741,10 +8741,16 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，Logitech Media Server会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="/html/docs/http.html#csrf">帮助部分</a>。
 
 SETUP_INSECURE_HTTPS
+	DE	Unsicheres HTTPS
 	EN	Insecure HTTPS
 
+SETUP_INSECURE_HTTPS2
+	DE	Server Zertifikate bei HTTPS Verbindungen nicht überprüfen.
+	EN	Switch off certificate verification on HTTPS connections.
+
 SETUP_INSECURE_HTTPS_DESC
-	EN	Turning on this option switches off TLS certificate verification when Logitech Media Server acts as an HTTPS client. It also causes HTTPS requests to plugin repositories which fail for any reason to be retried over HTTP. <b>Enabling this option is discouraged!</b>
+	DE	"Unsicheres HTTPS" bedeutet, dass Logitech Media Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
+	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 
 SETUP_IPFILTER_HEAD
 	CS	Blokovat příchozí spojení

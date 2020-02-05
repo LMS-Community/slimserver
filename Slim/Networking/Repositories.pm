@@ -144,7 +144,7 @@ sub get {
 		my $url = $http->url;
 		$log->error("Failed to fetch $url: $error");
 
-		if ($prefs->get('insecureHTTPS') and $url =~ s/^(http)s:/$1:/) {
+		if ($prefs->get('insecureHTTPS') && $url =~ s/^(http)s:/$1:/) {
 			$log->warn("https lookup failed - trying plain text http instead: $url");
 			Slim::Networking::SimpleAsyncHTTP->new($cb, $ecb, $params)->get($url);
 		}
