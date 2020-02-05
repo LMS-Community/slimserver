@@ -1583,8 +1583,8 @@ sub _newTrack {
 
 	my $ct = $columnValueHash{'content_type'};
 
-	# For simple (odd) cases, just create the Track row and return
-	if (!defined $ct || $ct eq 'dir' || $ct eq 'lnk' || !$columnValueHash{'audio'}) {
+	# For simple cases, just create the Track row and return
+	if (($playlist && $columnValueHash{extid}) || !defined $ct || $ct eq 'dir' || $ct eq 'lnk' || !$columnValueHash{'audio'}) {
 		return $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 	}
 
@@ -1648,7 +1648,7 @@ sub _newTrack {
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
 	### Create ContributorTrack & ContributorAlbum rows
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);	
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
 
 	### Create Genre rows
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
