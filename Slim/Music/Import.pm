@@ -176,6 +176,8 @@ sub launchScan {
 
 	$class->setIsScanning($args->{wipe} ? 'SETUP_WIPEDB' : 'SETUP_STANDARDRESCAN');
 
+	main::INFOLOG && $log->is_info && $log->info("Running scanner using arguments: $command " . Data::Dump::dump(@scanArgs));
+
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
