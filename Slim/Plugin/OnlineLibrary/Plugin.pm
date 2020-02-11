@@ -30,7 +30,7 @@ tie %onlineLibraryIconProvider, 'Tie::RegexpHash';
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.onlinelibrary',
-	'defaultLevel' => 'INFO',
+	'defaultLevel' => 'WARN',
 	'description'  => 'PLUGIN_ONLINE_LIBRARY_MODULE_NAME',
 } );
 

@@ -34,7 +34,7 @@ use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
-use constant NOMYSB       => 1;
+use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
 
 # Tell PerlApp to bundle these modules
 if (0) {

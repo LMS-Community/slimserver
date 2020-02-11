@@ -38,7 +38,7 @@ sub initPlugin { if (main::SCANNER) {
 sub initOnlineTracksTable { if (main::SCANNER && !$main::wipe) {
 	my $dbh = Slim::Schema->dbh();
 
-	main::INFOLOG && $log->is_info && $log->info("Re-build temporary table for Spotify tracks");
+	main::INFOLOG && $log->is_info && $log->info("Re-build temporary table for online tracks");
 	$dbh->do('DROP TABLE IF EXISTS online_tracks');
 	$dbh->do(qq{
 		CREATE TEMPORARY TABLE online_tracks (url TEXT PRIMARY KEY);

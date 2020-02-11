@@ -61,6 +61,9 @@ sub put { shift->_createHTTPRequest( PUT => @_ ) }
 
 sub head { shift->_createHTTPRequest( HEAD => @_ ) }
 
+sub hasSSL { if (!main::SCANNER) {
+	Slim::Networking::Async::HTTP->hasSSL() 
+} }
 
 sub _createHTTPRequest {
 	my $self = shift;
