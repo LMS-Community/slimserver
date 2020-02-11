@@ -37,6 +37,10 @@ sub initPlugin {
 		after => 'middle',
 		func  => \&trackInfoMenu,
 	) );
+
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin') ) {
+		Slim::Plugin::OnlineLibrary::Plugin->addLibraryIconProvider('wimp', '/plugins/WiMP/html/images/tidal.png');
+	}
 	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
@@ -74,6 +78,12 @@ sub initPlugin {
 			},
 		);
 	}
+}
+
+sub onlineLibraryNeedsUpdate {
+	my $class = shift;
+	require Slim::Plugin::WiMP::Importer;
+	return Slim::Plugin::WiMP::Importer->needsUpdate(@_);
 }
 
 sub trackInfoMenu {
