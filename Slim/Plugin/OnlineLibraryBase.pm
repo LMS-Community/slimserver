@@ -92,10 +92,7 @@ sub trackUriPrefix { 'unknown://' }
 sub isImportEnabled {
 	my ($class) = @_;
 
-	if ( main::SCANNER 
-		? (preferences('plugin.state')->get('OnlineLibrary') || '') eq 'enabled' 
-		: Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin') 
-	) {
+	if ( Slim::Music::Import->isOnlineLibrarySupportEnabled() ) {
 		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($class);
 
 		if ($pluginData && ref $pluginData && $pluginData->{name} && ($pluginData->{onlineLibrary} || '') eq 'true') {
@@ -104,7 +101,7 @@ sub isImportEnabled {
 		}
 	}
 
-	return 1;
+	return 0;
 }
 
 sub storeTracks {

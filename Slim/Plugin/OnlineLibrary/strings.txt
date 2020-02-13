@@ -41,3 +41,7 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 	DE	Markiere Online-Alben mit Musikdienst-Logo (falls verfügbar).
 	EN	Put streaming service logo on top of album artwork (if available).
+
+PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
+	DE	Nur Online Musiksammlung neu einlesen
+	EN	Only rescan online music library

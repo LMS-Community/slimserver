@@ -54,6 +54,11 @@ sub initPlugin {
 		Slim::Plugin::OnlineLibrary::Settings->new;
 	}
 
+	Slim::Music::Import->addScanType('onlinelibrary', {
+		cmd  => ['rescan', 'onlinelibrary'],
+		name => 'PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN',
+	});
+
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
 }
 
