@@ -61,12 +61,17 @@ sub scanAlbums { if (main::SCANNER) {
 	my $progress;
 
 	foreach my $account (@$accounts) {
-		$progress ||= Slim::Utils::Progress->new({
-			'type'  => 'importer',
-			'name'  => 'plugin_tidal_albums',
-			'total' => 1,
-			'every' => 1,
-		});
+		if ($progress) {
+			$progress->total($progress->total + 1);
+		}
+		else {
+			$progress = Slim::Utils::Progress->new({
+				'type'  => 'importer',
+				'name'  => 'plugin_tidal_albums',
+				'total' => 1,
+				'every' => 1,
+			});
+		}
 
 		main::INFOLOG && $log->is_info && $log->info("Reading albums...");
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
@@ -82,7 +87,7 @@ sub scanAlbums { if (main::SCANNER) {
 		main::INFOLOG && $log->is_info && $log->info(sprintf("Importing album tracks for %s albums...", scalar @$albums));
 		foreach my $album (@$albums) {
 			$progress->update($account . string('COLON') . ' ' . $album->{title});
-			main::SCANNER && Slim::Schema->forceCommit;
+			Slim::Schema->forceCommit;
 
 			$lastAdded = max($lastAdded, $album->{added});
 			my $tracks = delete $album->{tracks};
@@ -95,7 +100,7 @@ sub scanAlbums { if (main::SCANNER) {
 		$newMetadata->{$account} ||= [];
 		push @{$newMetadata->{$account}}, $lastAdded;
 
-		main::SCANNER && Slim::Schema->forceCommit;
+		Slim::Schema->forceCommit;
 	}
 
 	$progress->final() if $progress;
@@ -141,7 +146,7 @@ sub scanPlaylists { if (main::SCANNER) {
 			next unless $playlist->{uuid} && $playlist->{tracks} && ref $playlist->{tracks} && ref $playlist->{tracks} eq 'ARRAY';
 
 			$progress->update($account . string('COLON') . ' ' . $playlist->{title});
-			main::SCANNER && Slim::Schema->forceCommit;
+			Slim::Schema->forceCommit;
 
 			my $url = 'wimp://' . $playlist->{uuid} . '.tdl';
 			$lastAdded = max($lastAdded, str2time($playlist->{created}), str2time($playlist->{lastUpdated}));
@@ -181,11 +186,11 @@ sub scanPlaylists { if (main::SCANNER) {
 		push @{$newMetadata->{$account}}, $lastAdded;
 		$newMetadata->{$account}->[1] = $lastAdded;
 
-		main::SCANNER && Slim::Schema->forceCommit;
+		Slim::Schema->forceCommit;
 	}
 
 	$progress->final();
-	main::SCANNER && Slim::Schema->forceCommit;
+	Slim::Schema->forceCommit;
 
 	return $newMetadata;
 } }
