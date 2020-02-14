@@ -23,16 +23,13 @@ use constant NEEDS_UPDATE_URL => '/api/wimp/v1/opml/library/needsUpdate';
 my $cache = Slim::Utils::Cache->new();
 my $log = logger('plugin.tidal');
 
+my $http;
+
 sub startScan { if (main::SCANNER) {
 	my ($class) = @_;
 	require Slim::Networking::SqueezeNetwork::Sync;
 
-	my $playlistsOnly = Slim::Music::Import->scanPlaylistsOnly();
-	my $accounts = Plugins::Spotty::AccountHelper->getAllCredentials();
-
-	my $newMetadata = {};
-
-	my $http = Slim::Networking::SqueezeNetwork::Sync->new({ timeout => 120 });
+	$http ||= Slim::Networking::SqueezeNetwork::Sync->new({ timeout => 120 });
 
 	my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(ACCOUNTS_URL));
 
@@ -43,67 +40,90 @@ sub startScan { if (main::SCANNER) {
 
 	my $accounts = eval { from_json($response->content) } || [];
 
-	my $dbh = Slim::Schema->dbh();
-	$class->initOnlineTracksTable();
+	if (ref $accounts && scalar @$accounts) {
+		$class->initOnlineTracksTable();
 
-	my $deletePlaylists_sth = $dbh->prepare_cached("DELETE FROM tracks WHERE url LIKE 'spotify:playlist:%'");
-	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
+		my $newMetadata = {};
+		$newMetadata = $class->scanAlbums($accounts, $newMetadata);
+		$newMetadata = $class->scanPlaylists($accounts, $newMetadata);
+
+		$cache->set('tidal_library_metadata', $newMetadata, 30 * 86400);
+
+		$class->deleteRemovedTracks();
+	}
+
+	Slim::Music::Import->endImporter($class);
+} }
+
+sub scanAlbums { if (main::SCANNER) {
+	my ($class, $accounts, $newMetadata) = @_;
+
+	my $progress;
 
 	foreach my $account (@$accounts) {
-		main::INFOLOG && $log->is_info && $log->info("Starting import for user $account");
-
-		$newMetadata->{$account} ||= [0, 0];
-
-		if (!$playlistsOnly) {
-			my $progress = Slim::Utils::Progress->new({
-				'type'  => 'importer',
-				'name'  => 'plugin_tidal_albums',
-				'total' => 1,
-				'every' => 1,
-			});
-
-			main::INFOLOG && $log->is_info && $log->info("Reading albums...");
-			$progress->update(string('PLUGIN_SPOTTY_PROGRESS_READ_ALBUMS'));
-
-			my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
-			my $albums = eval { from_json($albumsResponse->content) } || [];
-
-			$@ && $log->error($@);
-
-			$progress->total(scalar @$albums + 1);
-			my $lastAdded = 0;
-
-			main::INFOLOG && $log->is_info && $log->info(sprintf("Importing album tracks for %s albums...", scalar @$albums));
-			foreach my $album (@$albums) {
-				$progress->update($album->{title});
-				main::SCANNER && Slim::Schema->forceCommit;
-
-				$lastAdded = max($lastAdded, $album->{added});
-				my $tracks = delete $album->{tracks};
-
-				$class->storeTracks([
-					map { _prepareTrack($_, $album) } @$tracks
-				]);
-			}
-
-			$progress->final();
-			main::SCANNER && Slim::Schema->forceCommit;
-
-			$newMetadata->{$account}->[0] = $lastAdded;
-		}
-
-		my $progress = Slim::Utils::Progress->new({
+		$progress ||= Slim::Utils::Progress->new({
 			'type'  => 'importer',
-			'name'  => 'plugin_tidal_playlists',
-			'total' => 2,
+			'name'  => 'plugin_tidal_albums',
+			'total' => 1,
 			'every' => 1,
 		});
 
-		main::INFOLOG && $log->is_info && $log->info("Removing playlists...");
-		$progress->update(string('PLAYLIST_DELETED_PROGRESS'));
-		$deletePlaylists_sth->execute();
+		main::INFOLOG && $log->is_info && $log->info("Reading albums...");
+		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
 
-		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS'));
+		my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
+		my $albums = eval { from_json($albumsResponse->content) } || [];
+
+		$@ && $log->error($@);
+
+		$progress->total($progress->total + scalar @$albums);
+		my $lastAdded = 0;
+
+		main::INFOLOG && $log->is_info && $log->info(sprintf("Importing album tracks for %s albums...", scalar @$albums));
+		foreach my $album (@$albums) {
+			$progress->update($account . string('COLON') . ' ' . $album->{title});
+			main::SCANNER && Slim::Schema->forceCommit;
+
+			$lastAdded = max($lastAdded, $album->{added});
+			my $tracks = delete $album->{tracks};
+
+			$class->storeTracks([
+				map { _prepareTrack($_, $album) } @$tracks
+			]);
+		}
+
+		$newMetadata->{$account} ||= [];
+		push @{$newMetadata->{$account}}, $lastAdded;
+
+		main::SCANNER && Slim::Schema->forceCommit;
+	}
+
+	$progress->final() if $progress;
+
+	return $newMetadata;
+} }
+
+sub scanPlaylists { if (main::SCANNER) {
+	my ($class, $accounts, $newMetadata) = @_;
+
+	my $dbh = Slim::Schema->dbh();
+	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
+
+	my $progress = Slim::Utils::Progress->new({
+		'type'  => 'importer',
+		'name'  => 'plugin_tidal_playlists',
+		'total' => 1,
+		'every' => 1,
+	});
+
+	main::INFOLOG && $log->is_info && $log->info("Removing playlists...");
+	$progress->update(string('PLAYLIST_DELETED_PROGRESS'));
+	my $deletePlaylists_sth = $dbh->prepare_cached("DELETE FROM tracks WHERE url LIKE 'wimp://%.tdl'");
+	$deletePlaylists_sth->execute();
+
+	foreach my $account (@$accounts) {
+		$progress->total($progress->total + 1);
+		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account));
 		my $lastAdded = 0;
 
 		main::INFOLOG && $log->is_info && $log->info("Reading playlists...");
@@ -112,7 +132,7 @@ sub startScan { if (main::SCANNER) {
 
 		$@ && $log->error($@);
 
-		$progress->total(@$playlists + 2);
+		$progress->total($progress->total + @$playlists);
 
 		my $prefix = 'TIDAL' . string('COLON') . ' ';
 
@@ -120,7 +140,7 @@ sub startScan { if (main::SCANNER) {
 		foreach my $playlist (@{$playlists || []}) {
 			next unless $playlist->{uuid} && $playlist->{tracks} && ref $playlist->{tracks} && ref $playlist->{tracks} eq 'ARRAY';
 
-			$progress->update($playlist->{title});
+			$progress->update($account . string('COLON') . ' ' . $playlist->{title});
 			main::SCANNER && Slim::Schema->forceCommit;
 
 			my $url = 'wimp://' . $playlist->{uuid} . '.tdl';
@@ -157,17 +177,17 @@ sub startScan { if (main::SCANNER) {
 			$insertTrackInTempTable_sth && $insertTrackInTempTable_sth->execute($url);
 		}
 
+		$newMetadata->{$account} ||= [];
+		push @{$newMetadata->{$account}}, $lastAdded;
 		$newMetadata->{$account}->[1] = $lastAdded;
 
-		$progress->final();
 		main::SCANNER && Slim::Schema->forceCommit;
 	}
 
-	$cache->set('tidal_library_metadata', $newMetadata, 30 * 86400);
+	$progress->final();
+	main::SCANNER && Slim::Schema->forceCommit;
 
-	$class->deleteRemovedTracks();
-
-	Slim::Music::Import->endImporter($class);
+	return $newMetadata;
 } }
 
 sub trackUriPrefix { 'wimp://' }

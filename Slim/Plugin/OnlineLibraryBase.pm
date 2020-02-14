@@ -53,7 +53,7 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 
 	my $playlistOnly = Slim::Music::Import->scanPlaylistsOnly() ? ' AND content_type = "ssp"' : '';
 
-	my $inOnlineLibrarySQL = qq{
+	my $notInOnlineLibrarySQL = qq{
 		SELECT DISTINCT(url)
 		FROM            tracks
 		WHERE           url LIKE '$trackUriPrefix%' $playlistOnly
@@ -66,7 +66,7 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 	# only remove missing tracks when looking for audio tracks
 	my $notInOnlineLibraryCount = 0;
 	($notInOnlineLibraryCount) = $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $inOnlineLibrarySQL ) AS t1
+		SELECT COUNT(*) FROM ( $notInOnlineLibrarySQL ) AS t1
 	} );
 
 	my $changes = 0;
@@ -76,7 +76,7 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 		name  => 'online music library tracks',
 		count => $notInOnlineLibraryCount,
 		progressName => 'online_library_deleted',
-		sql   => $inOnlineLibrarySQL,
+		sql   => $notInOnlineLibrarySQL,
 	}, {
 		types    => 'audio',
 		no_async => 1,
