@@ -31,7 +31,7 @@ sub startScan { if (main::SCANNER) {
 	my $accounts = Plugins::Spotty::AccountHelper->getAllCredentials();
 
 	my $newMetadata = {};
-	
+
 	my $http = Slim::Networking::SqueezeNetwork::Sync->new({ timeout => 120 });
 
 	my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(ACCOUNTS_URL));
@@ -51,7 +51,7 @@ sub startScan { if (main::SCANNER) {
 
 	foreach my $account (@$accounts) {
 		main::INFOLOG && $log->is_info && $log->info("Starting import for user $account");
-		
+
 		$newMetadata->{$account} ||= [0, 0];
 
 		if (!$playlistsOnly) {
@@ -111,7 +111,7 @@ sub startScan { if (main::SCANNER) {
 		my $playlists = eval { from_json($playlistsResponse->content) } || [];
 
 		$@ && $log->error($@);
-		
+
 		$progress->total(@$playlists + 2);
 
 		my $prefix = 'TIDAL' . string('COLON') . ' ';
@@ -158,6 +158,9 @@ sub startScan { if (main::SCANNER) {
 		}
 
 		$newMetadata->{$account}->[1] = $lastAdded;
+
+		$progress->final();
+		main::SCANNER && Slim::Schema->forceCommit;
 	}
 
 	$cache->set('tidal_library_metadata', $newMetadata, 30 * 86400);
@@ -174,10 +177,10 @@ sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
 
 	require Async::Util;
-	
+
 	# we send mysb the metadata of the latest scan and let it do the heavy lifting
 	my $metadata = $cache->get('tidal_library_metadata') || {};
-	
+
 	Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
