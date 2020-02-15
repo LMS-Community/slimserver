@@ -18,7 +18,7 @@ use Slim::Utils::Strings qw(string);
 use constant ACCOUNTS_URL  => '/api/wimp/v1/opml/library/getAccounts';
 use constant ALBUMS_URL    => '/api/wimp/v1/opml/library/myAlbums?account=%s';
 use constant PLAYLISTS_URL => '/api/wimp/v1/opml/library/myPlaylists?account=%s';
-use constant NEEDS_UPDATE_URL => '/api/wimp/v1/opml/library/needsUpdate';
+use constant FINGERPRINT_URL => '/api/wimp/v1/opml/library/fingerprint';
 
 my $cache = Slim::Utils::Cache->new();
 my $log = logger('plugin.tidal');
@@ -47,7 +47,8 @@ sub startScan { if (main::SCANNER) {
 		$newMetadata = $class->scanAlbums($accounts, $newMetadata);
 		$newMetadata = $class->scanPlaylists($accounts, $newMetadata);
 
-		$cache->set('tidal_library_metadata', $newMetadata, 30 * 86400);
+		$response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
+		$cache->set('tidal_library_fingerprint', ($http->content || ''), 30 * 86400);
 
 		$class->deleteRemovedTracks();
 	}
@@ -73,7 +74,7 @@ sub scanAlbums { if (main::SCANNER) {
 			});
 		}
 
-		main::INFOLOG && $log->is_info && $log->info("Reading albums...");
+		main::INFOLOG && $log->is_info && $log->info("Reading albums for $account...");
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
 
 		my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
@@ -131,7 +132,7 @@ sub scanPlaylists { if (main::SCANNER) {
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account));
 		my $lastAdded = 0;
 
-		main::INFOLOG && $log->is_info && $log->info("Reading playlists...");
+		main::INFOLOG && $log->is_info && $log->info("Reading playlists for $account...");
 		my $playlistsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(PLAYLISTS_URL, $account)));
 		my $playlists = eval { from_json($playlistsResponse->content) } || [];
 
@@ -200,26 +201,22 @@ sub trackUriPrefix { 'wimp://' }
 # This code is not run in the scanner, but in LMS
 sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
-
-	require Async::Util;
-
-	# we send mysb the metadata of the latest scan and let it do the heavy lifting
-	my $metadata = $cache->get('tidal_library_metadata') || {};
+	
+	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
 
 	Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
+			my $newFingerPrint = $http->content || '';
 
-			my $response = eval { from_json($http->content) } || {};
-			$@ && $log->error('Failed to get TIDAL metadata: ' . $@);
-			$cb->($response->{needsUpdate});
+			$cb->($newFingerPrint ne $oldFingerprint);
 		},
 		sub {
 			my $http = shift;
 			$log->error('Failed to get TIDAL metadata: ' . $http->error);
 			$cb->();
 		}
-	)->post(Slim::Networking::SqueezeNetwork->url(NEEDS_UPDATE_URL), to_json($metadata));
+	)->get(Slim::Networking::SqueezeNetwork->url(FINGERPRINT_URL));
 } }
 
 sub _prepareTrack {
