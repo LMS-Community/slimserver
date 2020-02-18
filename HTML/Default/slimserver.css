@@ -41,7 +41,7 @@ a:hover, .link:hover,
 #crumblist a:hover,
 .currentTrackInfo a:hover,
 .homeMenuItem a:hover,
-.browseItemLink:hover, 
+.browseItemLink:hover,
 #footer a:hover {
 	text-decoration: underline;
 }
@@ -53,7 +53,7 @@ a:hover, .link:hover,
 .currentTrackInfo a,
 #crumblist a,
 .browseItemLink,
-.browsedbListItem a, 
+.browsedbListItem a,
 #footer a {
 	text-decoration: none;
 }
@@ -171,7 +171,7 @@ div#background {
 
 .inner p {
 	margin: 5px 5px 3px;
-} 
+}
 
 .inner_top, .inner_bottom {
 	border-radius: 12px 12px 0 0;
@@ -218,7 +218,7 @@ div#background {
 /*	position: relative; Bug 18093 */
 	color: white;
 }
-			
+
 /* this is for MS Edge only, which is not compatible with above hack required to satisfy MS IE (bug 18093) */
 @supports (-ms-ime-align:auto) {
 	#helpLink a, #footerInfo a, #settingsLink a  {
@@ -364,7 +364,7 @@ div.pagetitleWithIcon {
 	color: #343434;
 }
 
-.scrollingPanel, #browsedbHeader, 
+.scrollingPanel, #browsedbHeader,
 .pageHeaderInfo, #pageFooterInfo {
 	padding: 2px 5px 0 5px;
 }
@@ -383,7 +383,7 @@ div.pagetitleWithIcon {
 .homeMenuItem {
 	margin-left: 6px;
 	position: relative;
-} 
+}
 
 .homeMenuItem input,
 .homeMenuItem img.cmdLinkIcon {
@@ -448,7 +448,7 @@ div.pagetitleWithIcon {
 }
 
 #btnPlaylistSave .x-btn-click button,
-#btnPlaylistClear .x-btn-click button { 
+#btnPlaylistClear .x-btn-click button {
 	background-position: 0 -38px;
 }
 
@@ -550,12 +550,23 @@ div.pagetitleWithIcon {
 	padding: 2px;
 }
 
-.thumbArtwork img.extIdImg {
+.thumbArtwork img.extIdImg, #ctrlCurrentArt img.extIdImg, .browseCover img.extIdImg, .playlistCover img.extIdImg {
 	position: absolute;
 	right: 2px;
 	top: 2px;
 	width: 20px;
 	height: 20px;
+}
+
+#ctrlCurrentArt img.extIdImg {
+	position: relative;
+	top: -94px;
+	left: 75px;
+}
+
+.browseCover img.extIdImg, .playlistCover img.extIdImg {
+	width: 12px;
+	height: 12px;
 }
 
 #playerControlPanel {
@@ -664,16 +675,16 @@ div.thumbwrap {
 	font-color: white;
 }
 
-#crumblist a.dragOver, 
-#crumblist a.dragUp, 
+#crumblist a.dragOver,
+#crumblist a.dragUp,
 #crumblist a.dragDown {
 	background-color: #dddddd;
 	color: #404040;
-} 
+}
 
 
 #headerSearch .searchInput,
-.browsedbControls #tuneinurl, 
+.browsedbControls #tuneinurl,
 .browsedbControls .searchInput {
 	height: 15px;
 	width: 185px;
@@ -1419,7 +1430,7 @@ ul.x-tab-strip-top {
 
 .x-btn-menu-arrow-wrap .x-btn-center button,
 .x-btn-mc em.x-btn-split,
-.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, 
+.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split,
 .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
 	height: 19px;
 	background-image: url(html/images/slim-ext/btn-arrow.gif);
@@ -1471,7 +1482,7 @@ ul.x-tab-strip-top {
 }
 
 .x-window .x-btn-over .x-btn-mr,
-.x-btn-over .x-btn-mr, 
+.x-btn-over .x-btn-mr,
 .x-btn-menu-active .x-btn-mr {
 	background-position: 0 -76px;
 }

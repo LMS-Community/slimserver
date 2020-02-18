@@ -23,7 +23,7 @@ Main = {
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
 			expires: new Date(new Date().getTime()+(60*60*24*365*1000))
 		}));
-		
+
 		SqueezeJS.setCookie('Squeezebox-enableHiDPI', window.devicePixelRatio);
 
 		var leftpanel = {
@@ -107,7 +107,7 @@ Main = {
 					margins: '5 5 0 5',
 					height: 40
 				},
-				
+
 				{
 					region: 'center',
 					layout: 'border',
@@ -184,7 +184,7 @@ Main = {
 
 		Ext.EventManager.onWindowResize(this.onResize, this);
 		this.onResize(this.body.getWidth(), this.body.getHeight());
-		
+
 		if (!SqueezeJS.cookiesEnabled())
 			Ext.MessageBox.alert(SqueezeJS.string('squeezebox_server'), SqueezeJS.string('web_no_cookies_warning'));
 	},
@@ -213,7 +213,7 @@ Main = {
 		}
 		if (el = Ext.get('settingsBtn')) {
 			el.dom.href = SqueezeJS.Utils.replacePlayerIDinUrl(el.dom.href, playerobj);
-		}		
+		}
 	},
 
 	initPlayerControl : function(){
@@ -278,7 +278,7 @@ Main = {
 		new SqueezeJS.UI.Bitrate('ctrlBitrate');
 		new SqueezeJS.UI.CurrentIndex('ctrlPlayNum');
 		new SqueezeJS.UI.SongCount('ctrlSongCount');
-		
+
 		new SqueezeJS.UI.Playtime('ctrlPlaytime');
 		new SqueezeJS.UI.CompoundPlaytime('ctrlPlaytimeCollapsed');
 		new SqueezeJS.UI.PlaytimeRemaining('ctrlRemainingTime');
@@ -286,7 +286,20 @@ Main = {
 
 		new SqueezeJS.UI.Coverart({
 			el: 'ctrlCurrentArt',
-			size: 96
+			size: 96,
+			onPlayerStateChange: function(result) {
+				var self = this;
+				this.el.update(SqueezeJS.SonginfoParser.coverart(result, this.noLink, this.size), null, function () {
+					// if we have music service icons, and the current artwork is some online item (http), try to overly the service's logo
+					if (SqueezeJS.UI.serviceIconProviders && result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].url
+						&& result.playlist_loop[0].artwork_url && result.playlist_loop[0].artwork_url.match(/http/))
+					{
+						var url = SqueezeJS.UI.serviceIconProviders[result.playlist_loop[0].url.replace(/:.*/, '')];
+						if (url)
+							self.el.createChild('<img src="' + url + '" class="extIdImg"></img>');
+					}
+				});
+			}
 		});
 
 		new SqueezeJS.UI.CoverartPopup({
@@ -396,7 +409,7 @@ Main = {
 							})
 						]
 					});
-	
+
 					new SqueezeJS.UI.SplitButton({
 						renderTo: 'btnPlaylistToggleArtwork',
 						icon: webroot + 'html/images/albumlist' + (noCover ? '2' : '0')  + '.gif',
@@ -405,7 +418,7 @@ Main = {
 						arrowTooltip: SqueezeJS.string('coverart')
 					});
 				}
-	
+
 				new SqueezeJS.UI.Button({
 					renderTo: 'btnPlaylistClear',
 					cls:      'btn-playlist-clear',
@@ -443,7 +456,7 @@ Main = {
 	collapseExpand : function(ev){
 		var expandCookie = SqueezeJS.getCookie('Squeezebox-expandPlayerControl');
 		expandCookie = expandCookie == 'false' ? false : true;
-		
+
 		var doExpand = ev.doExpand == null ? !expandCookie : ev.doExpand;
 
 		var art = Ext.get('ctrlCurrentArt');

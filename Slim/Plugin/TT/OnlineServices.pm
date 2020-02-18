@@ -2,11 +2,13 @@ package Slim::Plugin::TT::OnlineServices;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
 use base qw(Template::Plugin);
+
+use JSON::XS::VersionOneAndTwo;
 
 my $services;
 
@@ -21,12 +23,12 @@ sub load {
 	return $class;
 }
 
-sub getIconForId {
-	my ($class, $id) = @_;
+sub getIconForId { if ($services) {
+	return Slim::Plugin::OnlineLibrary::Plugin->getServiceIcon($_[1]);
+} }
 
-	return unless $services;
-
-	return Slim::Plugin::OnlineLibrary::Plugin->getServiceIcon($id);
-};
+sub getServiceIconProviders {
+	return $services ? to_json(Slim::Plugin::OnlineLibrary::Plugin->getServiceIconProviders()) : '""';
+}
 
 1;

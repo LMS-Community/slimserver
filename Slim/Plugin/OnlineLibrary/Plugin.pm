@@ -24,9 +24,7 @@ use constant POLLING_INTERVAL => 5 * 60;
 my $prefs = preferences('plugin.onlinelibrary');
 
 my %onlineLibraryProviders;
-
-my %onlineLibraryIconProvider = ();
-tie %onlineLibraryIconProvider, 'Tie::RegexpHash';
+my %onlineLibraryIconProvider;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.onlinelibrary',
@@ -172,7 +170,11 @@ sub addLibraryIconProvider {
 
 	return unless $serviceTag && $iconUrl;
 
-	$onlineLibraryIconProvider{qr/^$serviceTag:/} = $iconUrl;
+	$onlineLibraryIconProvider{$serviceTag} = $iconUrl;
+}
+
+sub getServiceIconProviders {
+	return \%onlineLibraryIconProvider;
 }
 
 sub getServiceIcon {
@@ -181,7 +183,9 @@ sub getServiceIcon {
 	return unless $id;
 	return unless $prefs->get('enableServiceEmblem');
 
-	return $onlineLibraryIconProvider{$id};
+	$id =~ s/^(\w+?):.*/$1/;
+
+	return $onlineLibraryIconProvider{$id} || '';
 }
 
 1;
