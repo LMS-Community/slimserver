@@ -36,12 +36,12 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'trackinfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
 	);
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'trackinfo', 'playlist', '_method' ],
 		[ 1, 1, 1, \&cliPlaylistCmd ]
@@ -60,7 +60,7 @@ my $emptyItemList = [{ignore => 1}];
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addtrack => (
@@ -106,7 +106,7 @@ sub registerDefaultInfoProviders {
 		after => 'album',
 		func  => \&infoRemoteTitle,
 	) );
-	
+
 	$class->registerInfoProvider( year => (
 		after => 'genres',
 		func  => \&infoYear,
@@ -121,18 +121,18 @@ sub registerDefaultInfoProviders {
 		after => 'comment',
 		func  => \&infoLyrics,
 	) );
-	
+
 	$class->registerInfoProvider( moreinfo => (
 		after => 'comment',
 		func  => \&infoMoreInfo,
 	) );
-	
+
 	$class->registerInfoProvider( tracknum => (
 		parent => 'moreinfo',
 		after  => 'moreinfo',
 		func   => \&infoTrackNum,
 	) );
-	
+
 	$class->registerInfoProvider( disc => (
 		parent => 'moreinfo',
 		after  => 'moreinfo',
@@ -168,13 +168,13 @@ sub registerDefaultInfoProviders {
 		after  => 'rating',
 		func   => \&infoBitrate,
 	) );
-	
+
 	$class->registerInfoProvider( samplerate => (
 		parent => 'moreinfo',
 		after  => 'bitrate',
 		func   => \&infoSampleRate,
 	) );
-	
+
 	$class->registerInfoProvider( samplesize => (
 		parent => 'moreinfo',
 		after  => 'samplerate',
@@ -210,24 +210,24 @@ sub registerDefaultInfoProviders {
 		after  => 'url',
 		func   => \&infoFileModTime,
 	) );
-	
+
 	$class->registerInfoProvider( tagversion => (
 		parent => 'moreinfo',
 		after  => 'modtime',
 		func   => \&infoTagVersion,
 	) );
-	
+
 	$class->registerInfoProvider( tagdump => (
 		parent => 'moreinfo',
 		after  => 'tagversion',
 		func   => \&infoTagDump,
-	) );	
+	) );
 }
 
 sub menu {
 	my ( $class, $client, $url, $track, $tags, $filter ) = @_;
 	$tags ||= {};
-	
+
 	# Protocol Handlers can define their own track info OPML menus
 	if ( $url ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
@@ -236,14 +236,14 @@ sub menu {
 			return $feed if $feed;
 		}
 	}
-	
+
 	# If we don't have an ordering, generate one.
 	# This will be triggered every time a change is made to the
 	# registered information providers, but only then. After
 	# that, we will have our ordering and only need to step
 	# through it.
 	my $infoOrdering = $class->getInfoOrdering;
-	
+
 	# Get track object if necessary
 	if ( !blessed($track) ) {
 		$track = Slim::Schema->objectForUrl( {
@@ -254,7 +254,7 @@ sub menu {
 			return;
 		}
 	}
-	
+
 	# Get plugin metadata for remote tracks
 	my $remoteMeta = {};
 	if ( $track->remote && blessed($client) ) {
@@ -263,27 +263,27 @@ sub menu {
 			$remoteMeta = $handler->getMetadataFor( $client, $url );
 		}
 	}
-	
+
 	# Function to add menu items
 	my $addItem = sub {
 		my ( $ref, $items ) = @_;
-		
+
 		if ( defined $ref->{func} ) {
-			
+
 			# skip jive-only items for non-jive UIs
 			return if $ref->{menuMode} && !$tags->{menuMode};
-			
+
 			# show artwork item to jive only if artwork exists
 			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
-			
+
 			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta, $tags, $filter ) };
 			if ( $@ ) {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
 			}
-			
+
 			return unless defined $item;
-			
+
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
 					push @{$items}, @{$item};
@@ -297,35 +297,35 @@ sub menu {
 			}
 			else {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
-			}				
+			}
 		}
 	};
-	
+
 	# Now run the order, which generates all the items we need
 	my $items = [];
-	
+
 	for my $ref ( @{ $infoOrdering } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
-		
+
 		# Add the item
 		$addItem->( $ref, $items );
-		
+
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
 		} @{ $infoOrdering };
-		
+
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
-			
+
 			for my $child ( @children ) {
 				$addItem->( $child, $subitems );
 			}
 		}
 	}
-	
+
 	return {
 		name  => $track->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
@@ -339,10 +339,10 @@ sub menu {
 
 sub infoContributors {
 	my ( $client, $url, $track, $remoteMeta, $tags, $filter ) = @_;
-	
+
 	my $items = [];
 	$filter ||= {};
-	
+
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
 			type =>  'text',
@@ -352,7 +352,7 @@ sub infoContributors {
 	}
 	else {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
-		
+
 		# Loop through each pref to see if the user wants to link to that contributor role.
 		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
 		$linkRoles{'ARTIST'} = 1;
@@ -360,13 +360,13 @@ sub infoContributors {
 		$linkRoles{'ALBUMARTIST'} = 1;
 
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-		
+
 		# Loop through the contributor types and append
 		for my $role ( @roles ) {
 			for my $contributor ( $track->contributorsOfType($role) ) {
 				if ($linkRoles{$role}) {
 					my $id = $contributor->id;
-					
+
 					my %actions = (
 						allAvailableActionsDefined => 1,
 						items => {
@@ -384,15 +384,15 @@ sub infoContributors {
 						insert => {
 							command     => ['playlistcontrol'],
 							fixedParams => { cmd => 'insert', artist_id => $id, library_id => $library_id },
-						},								
+						},
 						info => {
 							command     => ['artistinfo', 'items'],
 							fixedParams => { artist_id => $id, library_id => $library_id },
-						},								
+						},
 					);
 					$actions{'playall'} = $actions{'play'};
 					$actions{'addall'} = $actions{'add'};
-					
+
 					my $item = {
 						type    => 'playlist',
 						url     => 'blabla',
@@ -412,7 +412,7 @@ sub infoContributors {
 			}
 		}
 	}
-	
+
 	return $items;
 }
 
@@ -431,9 +431,9 @@ sub showArtwork {
 	push @{$items}, {
 		type => 'text',
 		name => cstring($client, 'SHOW_ARTWORK_SINGLE'),
-		jive => $jive, 
+		jive => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -441,20 +441,20 @@ sub playTrack {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $items = [];
 	my $jive;
-	
+
 	return $items if !blessed($client);
-	
+
 	my $play_string = cstring($client, 'PLAY');
 
 	my $actions;
 
 	# "Play Song" in current playlist context is 'jump'
 	if ( $tags->{menuContext} eq 'playlist' ) {
-		
+
 		# do not add item if this is current track and already playing
 		return $emptyItemList if $tags->{playlistIndex} == Slim::Player::Source::playingSongIndex($client)
 					&& $client->isPlaying();
-		
+
 		$actions = {
 			go => {
 				player => 0,
@@ -492,9 +492,9 @@ sub playTrack {
 		type        => 'text',
 		playcontrol => 'play',
 		name        => $play_string,
-		jive        => $jive, 
+		jive        => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -508,7 +508,7 @@ sub addTrackNext {
 		$cmd         = 'insert';
 		$playcontrol = 'insert'
 	}
-	
+
 	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd, $playcontrol );
 }
 
@@ -526,7 +526,7 @@ sub addTrackEnd {
 		$cmd         = 'add';
 		$playcontrol = 'add'
 	}
-	
+
 	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd, $playcontrol );
 }
 
@@ -537,11 +537,11 @@ sub addTrack {
 	my $jive;
 
 	return $items if !blessed($client);
-	
+
 	my $actions;
 	# remove from playlist
 	if ( $cmd eq 'delete' ) {
-		
+
 		# Do not add this item if only one item in playlist
 		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
@@ -559,15 +559,15 @@ sub addTrack {
 
 	# play next in the playlist context
 	} elsif ( $cmd eq 'playlistnext' ) {
-		
+
 		# Do not add this item if only one item in playlist
 		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
 		my $moveTo = Slim::Player::Source::playingSongIndex($client) || 0;
-		
+
 		# do not add item if this is current track or already the next track
 		return $emptyItemList if $tags->{playlistIndex} == $moveTo || $tags->{playlistIndex} == $moveTo+1;
-		
+
 		if ( $tags->{playlistIndex} > $moveTo ) {
 			$moveTo = $moveTo + 1;
 		}
@@ -611,16 +611,16 @@ sub addTrack {
 		name        => $string,
 		jive        => $jive,
 	};
-	
+
 	return $items;
 }
 
 sub infoAlbum {
 	my ( $client, $url, $track, $remoteMeta, $tags, $filter ) = @_;
-	
+
 	my $item;
 	$filter ||= {};
-	
+
 	if ( $remoteMeta->{album} ) {
 		$item = {
 			type =>  'text',
@@ -650,11 +650,11 @@ sub infoAlbum {
 			insert => {
 				command     => ['playlistcontrol'],
 				fixedParams => { cmd => 'insert', album_id => $id, library_id => $library_id},
-			},								
+			},
 			info => {
 				command     => ['albuminfo', 'items'],
 				fixedParams => { album_id => $id, library_id => $library_id},
-			},								
+			},
 		);
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
@@ -667,16 +667,16 @@ sub infoAlbum {
 			itemActions => \%actions,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoGenres {
 	my ( $client, $url, $track, $remoteMeta, undef, $filter ) = @_;
-	
+
 	my $items = [];
 	$filter ||= {};
-	
+
 	if ( $remoteMeta->{genre} ) {
 		push @$items, {
 			type =>  'text',
@@ -687,9 +687,9 @@ sub infoGenres {
 	else {
 		for my $genre ( $track->genres ) {
 			my $id = $genre->id;
-	
+
 			my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-			
+
 			my %actions = (
 				allAvailableActionsDefined => 1,
 				items => {
@@ -707,15 +707,15 @@ sub infoGenres {
 				insert => {
 					command     => ['playlistcontrol'],
 					fixedParams => { cmd => 'insert', genre_id => $id, library_id => $library_id },
-				},								
+				},
 				info => {
 					command     => ['genreinfo', 'items'],
 					fixedParams => { genre_id => $id, library_id => $library_id },
-				},								
+				},
 			);
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
-	
+
 			my $item = {
 				type    => 'playlist',
 				url     => 'blabla',
@@ -726,13 +726,13 @@ sub infoGenres {
 			push @{$items}, $item;
 		}
 	}
-	
+
 	return $items;
 }
 
 sub infoYear {
 	my ( $client, $url, $track, $remoteMeta, undef, $filter ) = @_;
-	
+
 	my $item;
 	$filter ||= {};
 
@@ -746,7 +746,7 @@ sub infoYear {
 	elsif ( my $year = $track->year ) {
 
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-		
+
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
@@ -764,11 +764,11 @@ sub infoYear {
 			insert => {
 				command     => ['playlistcontrol'],
 				fixedParams => { cmd => 'insert', year => $year, library_id => $library_id },
-			},								
+			},
 			info => {
 				command     => ['yearinfo', 'items'],
 				fixedParams => { year => $year, library_id => $library_id },
-			},								
+			},
 		);
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
@@ -781,13 +781,13 @@ sub infoYear {
 			itemActions => \%actions,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoComment {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
 	my $comment;
 
@@ -804,7 +804,7 @@ sub infoComment {
 
 		$comment .= $c;
 	}
-	
+
 	if ( $comment ) {
 
 		$comment =~ s/\r\n/\n/g;
@@ -819,22 +819,22 @@ sub infoComment {
 					wrap => 1,
 					name => $comment,
 					label => 'COMMENT',
-					
+
 				},
 			],
-			
+
 			unfold => 1,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoLyrics {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $lyrics = $track->lyrics ) {
 
 		$lyrics =~ s/\r\n/\n/g;
@@ -851,17 +851,17 @@ sub infoLyrics {
 					label => 'LYRICS',
 				},
 			],
-			
+
 			unfold => 1,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoMoreInfo {
 	my ( $client, $url, $track ) = @_;
-	
+
 	return {
 		name => cstring($client, 'MOREINFO'),
 		isContextMenu => 1,
@@ -872,9 +872,9 @@ sub infoMoreInfo {
 
 sub infoTrackNum {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $tracknum = $track->tracknum ) {
 		$item = {
 			type  => 'text',
@@ -882,17 +882,17 @@ sub infoTrackNum {
 			name  => $tracknum,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoDisc {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
 	my ($disc, $discc);
 	my $album = $track->album;
-	
+
 	if ( blessed($album) && ($disc = ($track->disc || $album->disc)) && ($discc = $album->discc) ) {
 		$item = {
 			type  => 'text',
@@ -900,22 +900,22 @@ sub infoDisc {
 			name  => "$disc/$discc",
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoContentType {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $ct = Slim::Schema->contentType($track) ) {
 		if ( blessed($client) && $track->remote && Slim::Music::Info::isPlaylist( $track, $ct ) )  {
 			if ( my $url = $client->master()->currentTrackForUrl( $track->url ) ) {
 				$ct = Slim::Schema->contentType($url);
 			}
 		}
-		
+
 		if ($ct eq 'unk' && $track->remote) {
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 			if ( $handler && $handler->can('getMetadataFor') ) {
@@ -935,15 +935,15 @@ sub infoContentType {
 			name  => $ctString,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoDuration {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $duration = $track->duration ) {
 		$item = {
 			type  => 'text',
@@ -951,33 +951,33 @@ sub infoDuration {
 			name  => $duration,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoReplayGain {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $items = [];
-	
+
 	my $album = $track->album;
-	
+
 	if ( my $replaygain = $track->replay_gain ) {
 		push @{$items}, _replayGainItem($client, $replaygain, $track->replay_peak, 'REPLAYGAIN');
 	}
-	
+
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
 			push @{$items}, _replayGainItem($client, $albumreplaygain, $album->replay_peak, 'ALBUMREPLAYGAIN');
 		}
 	}
-	
+
 	return $items;
 }
 
 sub _replayGainItem {
 	my ($client, $replaygain, $replaygainpeak, $tag) = @_;
-	
+
 	my $noclip = Slim::Player::ReplayGain::preventClipping( $replaygain, $replaygainpeak );
 	my %item = (
 		type  => 'text',
@@ -987,16 +987,16 @@ sub _replayGainItem {
 	if ( $noclip < $replaygain ) {
 		# Gain was reduced to avoid clipping
 		$item{'name'} .= sprintf( " (%s)",
-				cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) ); 
+				cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) );
 	}
 	return \%item;
 }
 
 sub infoRating {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $rating = Slim::Schema->rating($track) ) {
 		$item = {
 			type  => 'text',
@@ -1004,42 +1004,42 @@ sub infoRating {
 			name  => $rating,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoBitrate {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $bitrate = ( Slim::Music::Info::getCurrentBitrate($track->url) || $track->prettyBitRate ) ) {
-		
+
 		# A bitrate of -1 is set by Scanner::scanBitrate or Formats::*::scanBitrate when the
 		# bitrate of a remote stream can't be determined
 		if ( $bitrate && $bitrate ne '-1' ) {
-			
+
 			my ($song, $sourcebitrate, $streambitrate);
 			my $convert = '';
-			
+
 			if (blessed($client) && ($song = $client->currentSongForUrl($track->url))
 				&& ($sourcebitrate = $song->bitrate())
 				&& ($streambitrate = $song->streambitrate())
 				&& $sourcebitrate != $streambitrate)
 			{
-					if ( $song->streamformat() =~ /wav|aif|pcm/ 
+					if ( $song->streamformat() =~ /wav|aif|pcm/
 						 && (my $samplesize = $track->samplesize)
 						 && (my $sampleRate = $track->samplerate) ) {
 						$streambitrate = $sampleRate * $samplesize * 2;
 					}
-					$convert = sprintf( ' (%s %s%s %s)', 
-						cstring($client, 'CONVERTED_TO'), 
+					$convert = sprintf( ' (%s %s%s %s)',
+						cstring($client, 'CONVERTED_TO'),
 						sprintf( "%d", $streambitrate / 1000 ),
 						cstring($client, 'KBPS'),
 						cstring($client, $song->streamformat())
-					); 
+					);
 			}
-			
+
 			$item = {
 				type  => 'text',
 				label => 'BITRATE',
@@ -1054,15 +1054,15 @@ sub infoBitrate {
 			name  => $remoteMeta->{bitrate},
 		}
 	}
-	
+
 	return $item;
 }
 
 sub infoSampleRate {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $sampleRate = $track->samplerate ) {
 		$item = {
 			type  => 'text',
@@ -1070,16 +1070,16 @@ sub infoSampleRate {
 			name  => sprintf('%.1f kHz', $sampleRate / 1000),
 		};
 	}
-	
+
 	return $item;
 }
 
 # XXX: never stored??
 sub infoSampleSize {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $samplesize = $track->samplesize ) {
 		$item = {
 			type  => 'text',
@@ -1087,15 +1087,15 @@ sub infoSampleSize {
 			name  => $samplesize . cstring($client, 'BITS'),
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoFileSize {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $len = $track->filesize ) {
 		$item = {
 			type  => 'text',
@@ -1103,15 +1103,15 @@ sub infoFileSize {
 			name  => Slim::Utils::Misc::delimitThousands($len),
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoPlayCount {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $count = $track->playcount ) {
 		$item = {
 			type  => 'text',
@@ -1119,15 +1119,15 @@ sub infoPlayCount {
 			name  => Slim::Utils::Misc::delimitThousands($count),
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoLastPlayed {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $lastplayed = $track->lastplayed ) {
 		$item = {
 			type  => 'text',
@@ -1135,15 +1135,15 @@ sub infoLastPlayed {
 			name  => $track->buildModificationTime($lastplayed),
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoRemoteTitle {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
-	
+
 	my $item;
-	
+
 	if ( $track->remote && $remoteMeta->{title} ) {
 		$item = {
 			type  => 'text',
@@ -1151,22 +1151,22 @@ sub infoRemoteTitle {
 			name  => $remoteMeta->{title},
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoUrl {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $turl = $track->url ) {
 		my ($tag, $name);
 		if ($track->isRemoteURL($turl)) {
 			$item = {
 				type  => 'text',
 				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::unescape($turl) ),
-				label => 'URL',	
+				label => 'URL',
 			};
 		} else {
 			my $weblink = '/music/' . $track->id . '/download';
@@ -1178,55 +1178,55 @@ sub infoUrl {
 			$item = {
 				type  => 'text',
 				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
-				label => 'LOCATION',	
+				label => 'LOCATION',
 				weblink => $weblink,
 			};
 		}
 	}
-	
+
 	return $item;
 }
 
 sub infoFileModTime {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( !$track->remote ) {
 		if ( my $age = $track->modificationTime ) {
 			$item = {
 				type => 'text',
-				label => 'MODTIME',	
+				label => 'MODTIME',
 				name => $age,
 			};
 		}
 	}
-	
+
 	return $item;
 }
 
 sub infoTagVersion {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( my $ver = $track->tagversion ) {
 		$item = {
 			type => 'text',
-			label => 'TAGVERSION',	
+			label => 'TAGVERSION',
 			name => $ver,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub infoTagDump {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
-	if ( $track->audio ) {
+
+	if ( $track->audio && Slim::Music::Info::isFileURL($track->url) ) {
 		$item = {
 			name        => cstring($client, 'VIEW_TAGS'),
 			url         => \&tagDump,
@@ -1234,58 +1234,58 @@ sub infoTagDump {
 			isContextMenu => 1,
 		};
 	}
-	
+
 	return $item;
 }
 
 sub tagDump {
 	my ( $client, $callback, undef, $path ) = @_;
-	
+
 	return unless $callback && $path;
-	
+
 	my $menu = [];
-	
+
 	require Audio::Scan;
 	my $s = eval { Audio::Scan->scan_tags($path) };
-	
+
 	if ( $@ ) {
 		$menu = {
 			type => 'text',
 			name => $@,
 		};
 	}
-	else {	
+	else {
 		my $tags = $s->{tags};
-		
+
 		# Recursive handler for array-based tags
 		my $array_tag;
 		$array_tag = sub {
 			my $tag = shift;
-			
+
 			my @array;
-			
+
 			for my $x ( @{$tag} ) {
 				if ( ref $x eq 'ARRAY' ) {
 					my $a = $array_tag->($x);
 					$x = '[ ' . join( ', ', @{$a} ) . ' ]';
 				}
-				
+
 				if ( length($x) > 256 ) {
 					$x = '(' . length($x) . ' ' . cstring($client, 'BYTES') . ')';
 				}
-				
+
 				push @array, $x;
 			}
-			
+
 			return \@array;
 		};
-	
+
 		for my $k ( sort keys %{$tags} ) {
 			my $v = $tags->{$k};
-		
+
 			if ( ref $v eq 'ARRAY' ) {
 				my $a = $array_tag->($v);
-							
+
 				push @{$menu}, {
 					type => 'text',
 					name => $k . ': [ ' . join( ', ', @{$a} ) . ' ]',
@@ -1295,14 +1295,14 @@ sub tagDump {
 				if ( length($v) > 256 ) {
 					$v = '(' . length($v) . ' ' . cstring($client, 'BYTES') . ')';
 				}
-			
+
 				push @{$menu}, {
 					type => 'text',
 					name => $k . ': ' . $v,
 				};
 			}
 		}
-	
+
 		if ( !scalar @{$menu} ) {
 			$menu = {
 				type => 'text',
@@ -1310,7 +1310,7 @@ sub tagDump {
 			};
 		}
 	}
-	
+
 	$callback->( $menu );
 }
 
@@ -1318,7 +1318,7 @@ my $cachedFeed;
 
 sub cliQuery {
 	my $request = shift;
-	
+
 	# WebUI or newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
@@ -1335,14 +1335,14 @@ sub cliQuery {
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
 	}
-	
+
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
 	my $trackId        = $request->getParam('track_id');
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = $request->getParam('playlist_index');
-	
+
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
 		if (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) {
@@ -1352,13 +1352,13 @@ sub cliQuery {
 			$request->addParam('url', $url);
 		}
 	}
-	
+
 	my %filter;
 	foreach (qw(artist_id genre_id year library_id)) {
 		if (my $arg = $request->getParam($_)) {
 			$filter{$_} = $arg;
 		}
-	}	
+	}
 
 	my $tags = {
 		menuMode      => $menuMode,
@@ -1367,7 +1367,7 @@ sub cliQuery {
 	};
 
 	my $feed;
-	
+
 	if ( $trackId && (my $track = Slim::Schema->find( Track => $trackId )) ) {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags, \%filter );
 	} elsif ( $url ) {
@@ -1378,22 +1378,22 @@ sub cliQuery {
 	# try the song based on the playlist_index instead
 	if ( !$feed && $playlist_index && (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) ) {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $song->url, $song, $tags, \%filter );
-	} 
-	
+	}
+
 	if ( !$feed ) {
 		$log->error("Didn't get either valid trackId or url.");
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 	$cachedFeed = $feed if $feed;
-	
+
 	Slim::Control::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
 }
 
 sub cliPlaylistCmd {
 	my $request = shift;
-	
+
 	my $client  = $request->client;
 	my $method  = $request->getParam('_method');
 
@@ -1401,7 +1401,7 @@ sub cliPlaylistCmd {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 	return 	Slim::Control::XMLBrowser::cliQuery( 'trackinfo', $cachedFeed, $request );
 }
 
