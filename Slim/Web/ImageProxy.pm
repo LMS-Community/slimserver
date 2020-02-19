@@ -514,14 +514,11 @@ sub cleanup {
 		}
 	}
 
-	my $now = time();
+	my $now = Time::HiRes::time();
 
 	if (!$interval) {
-		my $start = $now;
-
 		$cache->purge;
-
-		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %f sec", $now - $start));
+		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %f sec", Time::HiRes::time() - $now));
 	}
 
 	Slim::Utils::Timers::setTimer( undef, $now + ($interval || 86400), \&cleanup );
