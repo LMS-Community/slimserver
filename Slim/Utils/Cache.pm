@@ -71,10 +71,10 @@ my $log = logger('server');
 {
 	my @methods = qw(
 		get set
-		clear purge remove 
+		clear purge remove
 	);
 	#	get_object set_object size
-		
+
 	no strict 'refs';
 	for my $method (@methods) {
 		*{ __PACKAGE__ . "::$method" } = sub {
@@ -119,11 +119,11 @@ sub new {
 	my $cache = Slim::Utils::DbCache->new( {
 		namespace => $namespace,
 	} );
-	
+
 	my $self = bless {
 		_cache => $cache,
 	}, $class;
-	
+
 	# empty existing cache if version number is different
 	my $cacheVersion = $self->get('Slim::Utils::Cache-version');
 
@@ -137,7 +137,7 @@ sub new {
 
 	# store cache object and add namespace to purge lists
 	$caches{$namespace} = $self;
-	
+
 	push @eachCycle, $namespace unless $noPeriodicPurge;
 
 	return $self;
@@ -150,7 +150,7 @@ sub cleanup {
 	# namespaces with $noPeriodicPurge set are only purged at server startup
 	# others are purged at max once per PURGE_INTERVAL.
 	#
-	# To allow disks to spin down, each namespace is purged within a short period 
+	# To allow disks to spin down, each namespace is purged within a short period
 	# and then no purging is done for PURGE_INTERVAL
 	#
 	# After the startup purge, if any players are on it reschedules in PURGE_RETRY
@@ -179,15 +179,15 @@ sub cleanup {
 		} else {
 			$interval = PURGE_INTERVAL;
 			push @thisCycle, @eachCycle;
-			
+
 			# always run one purging task at startup
 			$namespace ||= shift @thisCycle if $startUpPurge;
 			$startUpPurge = 0;
 		}
 	}
-	
-	my $now = time();
-	
+
+	my $now = Time::HiRes::time();
+
 	if ($namespace && $caches{$namespace}) {
 
 		my $cache = $caches{$namespace};
@@ -195,11 +195,11 @@ sub cleanup {
 
 		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
 			my $start = $now;
-			
+
 			$cache->purge;
-			
+
 			$cache->set('Slim::Utils::Cache-purgetime', $start, '-1');
-			$now = time();
+			$now = Time::HiRes::time();
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
 			}
