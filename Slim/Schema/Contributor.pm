@@ -22,7 +22,7 @@ my %contributorToRoleMap = (
 
 my @contributorRoles = sort keys %contributorToRoleMap;
 my @contributorRoleIds = values %contributorToRoleMap;
-my $totalContributorRoles = scalar @contributorRoles; 
+my $totalContributorRoles = scalar @contributorRoles;
 
 my %roleToContributorMap = reverse %contributorToRoleMap;
 
@@ -46,7 +46,7 @@ my %roleToContributorMap = reverse %contributorToRoleMap;
 
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
-	
+
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	$class->many_to_many('tracks', 'contributorTracks' => 'contributor', undef, {
@@ -87,13 +87,18 @@ sub roleToType {
 	return $roleToContributorMap{$_[1]};
 }
 
+sub extIds {
+	my ($self) = @_;
+	return [ split(',', $self->extid || '') ];
+}
+
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
 	my $vaString = Slim::Music::Info::variousArtistString();
 
 	$form->{'text'} = $self->name;
-	
+
 	if ($self->name eq $vaString) {
 		$form->{'attributes'} .= "&album.compilation=1";
 	}
@@ -129,13 +134,13 @@ sub add {
 
 	my %artistToExtIdMap;
 	@artistToExtIdMap{@artistList} = Slim::Music::Info::splitTag($args->{'extid'} || '');
-	
+
 	# Bug 9725, split MusicBrainz tag to support multiple artists
 	my @brainzIDList;
 	if ($brainzID) {
 		@brainzIDList = Slim::Music::Info::splitTag($brainzID);
 	}
-	
+
 	# Using native DBI here to improve performance during scanning
 	my $dbh = Slim::Schema->dbh;
 
@@ -147,12 +152,12 @@ sub add {
 		my $search = Slim::Utils::Text::ignoreCase($name, 1);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		my $mbid   = $brainzIDList[$i];
-		
+
 		my $sth = $dbh->prepare_cached( 'SELECT id, extid FROM contributors WHERE name = ?' );
 		$sth->execute($name);
 		my ($id, $oldExtId) = $sth->fetchrow_array;
 		$sth->finish;
-		
+
 		if ( !$id ) {
 			$sth = $dbh->prepare_cached( qq{
 				INSERT INTO contributors
@@ -172,8 +177,8 @@ sub add {
 
 			# allow adding external IDs from multiple services
 			if ($extid) {
-				my %uniqueIds = map { 
-					$_ => 1 
+				my %uniqueIds = map {
+					$_ => 1
 				} split(',', $oldExtId || ''), $extid;
 				my $newExtId = join(',', sort keys %uniqueIds);
 
@@ -183,7 +188,7 @@ sub add {
 				}
 			}
 		}
-		
+
 		push @contributors, $id;
 	}
 
@@ -192,24 +197,24 @@ sub add {
 
 sub isInLibrary {
 	my ( $self, $library_id ) = @_;
-	
+
 	return 1 unless $library_id && $self->id;
 	return 1 if $library_id == -1;
 
 	my $dbh = Slim::Schema->dbh;
-	
+
 	my $sth = $dbh->prepare_cached( qq{
-		SELECT 1 
+		SELECT 1
 		FROM library_contributor
 		WHERE contributor = ?
 		AND library = ?
 		LIMIT 1
 	} );
-	
+
 	$sth->execute($self->id, $library_id);
 	my ($inLibrary) = $sth->fetchrow_array;
 	$sth->finish;
-	
+
 	return $inLibrary;
 }
 
@@ -217,11 +222,11 @@ sub isInLibrary {
 # from this contributor still exists in the database.  If not, delete the contributor.
 sub rescan {
 	my ( $class, @ids ) = @_;
-	
+
 	my $log = logger('scan.scanner');
-	
+
 	my $dbh = Slim::Schema->dbh;
-	
+
 	for my $id ( @ids ) {
 		my $sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
@@ -229,7 +234,7 @@ sub rescan {
 		$sth->execute($id);
 		my ($count) = $sth->fetchrow_array;
 		$sth->finish;
-	
+
 		if ( !$count ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
 

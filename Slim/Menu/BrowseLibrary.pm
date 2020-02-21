@@ -164,10 +164,10 @@ my $_pendingChanges = 0;
 my %nodes;
 my @addedNodes;
 my @deletedNodes;
+my %extraItems;
 
 # this can be set to a class which would give us access to remote LMS instances
 my $remoteLibraryHandler;
-my %onlineLibraryHandlers;
 
 my %browseLibraryModeMap = (
 	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
@@ -233,25 +233,29 @@ sub deregisterNode {
 	}
 }
 
-sub registerOnlineService {
-	my ($class, $name, $handler) = @_;
+sub registerExtraItem {
+	my ($class, $category, $name, $handler) = @_;
+
+	if (!$category || $category !~ /^(artist|album|track)$/) {
+		$category ||= '';
+		$log->error("Extra Item Registration failed: Invalid or missing category: '$category'");
+	}
 
 	if ($name && $handler && ref $handler) {
-		$onlineLibraryHandlers{$name} = $handler;
+		$extraItems{$category}->{$name} = $handler;
+	}
+	else {
+		$log->error('Extra Item Registration failed: Missing name or handler reference');
 	}
 }
 
-sub getOnlineServicesForID {
-	my ($client, $id) = @_;
+sub getExtraItems {
+	my $category = shift;
 
-	return [ grep { $_ } map {
-		$onlineLibraryHandlers{$_}->($client, $id);
-	} sort {
-		lc($a->{name}) cmp lc($b->{name})
-	} keys %onlineLibraryHandlers ];
+	return [ map {
+		$extraItems{$category}->{$_}
+	} sort keys %{$extraItems{$category}} ];
 }
-
-
 
 sub init {
 	my $class = shift;
@@ -1469,9 +1473,14 @@ sub _albums {
 					delete $_->{'artwork_track_id'};
 				}
 			}
+
 			my $extra;
 			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
+
+				$extra = [ grep { $_ } map {
+					$_->($params->{artist_id});
+				} @{getExtraItems('artist')} ];
 
 				my %actions = $remote_library ? (
 					commonVariables	=> [album_id => 'id'],
@@ -1507,7 +1516,7 @@ sub _albums {
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'add'};
 
-				$extra = [ {
+				push @$extra, {
 					name        => cstring($client, 'ALL_SONGS'),
 					icon        => 'html/images/albums.png',
 					type        => 'playlist',
@@ -1516,7 +1525,7 @@ sub _albums {
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1,
-				} ];
+				};
 			}
 			elsif ($search) {
 				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];

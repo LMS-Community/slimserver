@@ -16,6 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring string);
 use Slim::Utils::Timers;
 
+use Slim::Plugin::OnlineLibrary::BrowseArtist;
 use Slim::Plugin::OnlineLibrary::Libraries;
 
 use constant DELAY_FIRST_POLL => 24;
@@ -57,6 +58,7 @@ sub initPlugin {
 		name => 'PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN',
 	});
 
+	Slim::Plugin::OnlineLibrary::BrowseArtist->init();
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
 }
 
