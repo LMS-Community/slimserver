@@ -1478,9 +1478,11 @@ sub _albums {
 			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
 
-				$extra = [ grep { $_ } map {
-					$_->($params->{artist_id});
-				} @{getExtraItems('artist')} ];
+				if ($params->{artist_id}) {
+					$extra = [ grep { $_ } map {
+						$_->($params->{artist_id});
+					} @{getExtraItems('artist')} ];
+				}
 
 				my %actions = $remote_library ? (
 					commonVariables	=> [album_id => 'id'],
