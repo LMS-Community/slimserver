@@ -19,7 +19,7 @@ sub initPlugin {
 
 sub initLibraries {
 	my ($class) = @_;
-	
+
 	if ( $prefs->get('enableLosslessPreferred') ) {
 		Slim::Music::VirtualLibraries->registerLibrary({
 			id     => 'losslessPreferred',
@@ -29,9 +29,9 @@ sub initLibraries {
 				INSERT OR IGNORE INTO library_track (library, track)
 					SELECT '%s', tracks.id
 					FROM tracks, albums
-					WHERE albums.id = tracks.album 
+					WHERE albums.id = tracks.album
 					AND (
-						tracks.lossless 
+						tracks.lossless
 						OR 1 NOT IN (
 							SELECT 1
 							FROM tracks other
@@ -44,6 +44,36 @@ sub initLibraries {
 							AND otheralbums.title = albums.title
 						)
 					)
+			}
+		});
+	}
+
+	if ( $prefs->get('enableAudioBooks') ) {
+		my $ids = Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($prefs->get('audioBooksGenres'), 'genre_id');
+
+		Slim::Music::VirtualLibraries->registerLibrary({
+			id     => 'audioBooks',
+			name   => string('PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS'),
+			string => 'PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS',
+			sql    => qq{
+				INSERT OR IGNORE INTO library_track (library, track)
+					SELECT '%s', tracks.id
+					FROM tracks, genre_track
+					WHERE genre_track.track = tracks.id
+					AND genre_track.genre IN ($ids)
+			}
+		});
+
+		Slim::Music::VirtualLibraries->registerLibrary({
+			id     => 'noAudioBooks',
+			name   => string('PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS'),
+			string => 'PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS',
+			sql    => qq{
+				INSERT OR IGNORE INTO library_track (library, track)
+					SELECT '%s', tracks.id
+					FROM tracks, genre_track
+					WHERE genre_track.track = tracks.id
+					AND genre_track.genre NOT IN ($ids)
 			}
 		});
 	}
