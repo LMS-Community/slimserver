@@ -11,6 +11,8 @@ use Slim::Music::VirtualLibraries;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use constant AUDIOBOOK_LIBRARY_ID => 'audioBooks';
+
 my $prefs = preferences('plugin.extendedbrowsemodes');
 
 sub initPlugin {
@@ -52,7 +54,7 @@ sub initLibraries {
 		my $ids = Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($prefs->get('audioBooksGenres'), 'genre_id');
 
 		Slim::Music::VirtualLibraries->registerLibrary({
-			id     => 'audioBooks',
+			id     => AUDIOBOOK_LIBRARY_ID,
 			name   => string('PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS'),
 			string => 'PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS',
 			sql    => qq{

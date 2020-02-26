@@ -150,13 +150,15 @@ sub handler {
 		}
 
 		if ($params->{pref_enableAudioBooks} && !$prefs->get('enableAudioBooks') && $params->{pref_audioBooksGenres}) {
-			foreach my $audioBookMenu (@{AUDIOBOOKS_MENUS()}) {
-				if (!grep { $_->{id} eq $audioBookMenu->{id} } @$menus) {
-					$audioBookMenu->{params}->{genre_id} = $params->{pref_audioBooksGenres};
-					$audioBookMenu->{name} = string($audioBookMenu->{name});
-					push @$menus, $audioBookMenu;
-				}
-			}
+			$params->{'needsAudioBookUpdate'} = 1;
+		}
+		elsif (!$params->{pref_enableAudioBooks} && $prefs->get('enableAudioBooks')) {
+			my $libraryId = Slim::Music::VirtualLibraries->getRealId(Slim::Plugin::ExtendedBrowseModes::Libraries::AUDIOBOOK_LIBRARY_ID);
+			my %ids = map { $_->{id} => 1 } @{AUDIOBOOKS_MENUS()};
+
+			$menus = [ grep {
+				!($ids{$_->{id}} && $_->{params}->{library_id} && $_->{params}->{library_id} eq $libraryId)
+			} @$menus ];
 		}
 
 		$prefs->set('additionalMenuItems', $menus);
@@ -165,12 +167,33 @@ sub handler {
 	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
 	$params->{roles} = [ Slim::Schema::Contributor->contributorRoles ];
 
+	$class->SUPER::handler($client, $params);
+}
+
+sub getServerPrefs {}
+
+
+sub beforeRender {
+	my ($class, $params, $client) = @_;
+
 	$params->{libraries} = {};
 
-	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
-	while (my ($k, $v) = each %$libraries) {
-		$params->{libraries}->{$k} = $v->{name};
+	if ($params->{'needsAudioBookUpdate'}) {
+		my $menus = $prefs->get('additionalMenuItems');
+		my $libraryId = Slim::Music::VirtualLibraries->getRealId(Slim::Plugin::ExtendedBrowseModes::Libraries::AUDIOBOOK_LIBRARY_ID);
+
+		foreach my $audioBookMenu (@{Storable::dclone(AUDIOBOOKS_MENUS)}) {
+			if (!grep { $_->{id} eq $audioBookMenu->{id} } @$menus) {
+				$audioBookMenu->{params}->{library_id} = $libraryId;
+				$audioBookMenu->{name} = string($audioBookMenu->{name});
+				push @$menus, $audioBookMenu;
+			}
+		}
+
+		$prefs->set('additionalMenuItems', $menus);
 	}
+
+	my $serverPrefs = $class->getServerPrefs($client);
 
 	my %ids;
 	$params->{menu_items} = [ map {
@@ -194,14 +217,10 @@ sub handler {
 		weight => Slim::Plugin::ExtendedBrowseModes::Plugin->weight,
 	} if $class->needsClient;
 
-	$class->SUPER::handler($client, $params);
-}
-
-sub getServerPrefs {}
-
-
-sub beforeRender {
-	my ($class, $params, $client) = @_;
+	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
+	while (my ($k, $v) = each %$libraries) {
+		$params->{libraries}->{$k} = $v->{name};
+	}
 
 	# we always set the genres to the localized default if empty
 	$params->{prefs}->{audioBooksGenres} ||= $params->{prefs}->{pref_audioBooksGenres} ||= string('PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES');
