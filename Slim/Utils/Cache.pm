@@ -53,6 +53,7 @@ use Slim::Utils::Prefs;
 use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
 use constant PURGE_RETRY       => 3600;      # retry time if players are on
 use constant PURGE_NEXT        => 30;        # purge next namespace
+use constant IDLE_THRESHOLD    => 600;       # player inactivity before we consider it unused
 
 use constant DEFAULT_NAMESPACE => 'cache';
 use constant DEFAULT_VERSION   => 1;
@@ -164,7 +165,8 @@ sub cleanup {
 	# after startup don't purge if a player is on - retry later
 	unless ($startUpPurge) {
 		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->power()) {
+			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
+				main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
 				unshift @thisCycle, $namespace;
 				$namespace = undef;
 				$interval = PURGE_RETRY;
@@ -196,12 +198,12 @@ sub cleanup {
 		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
 			my $start = $now;
 
-			$cache->purge;
+			my $deleted = $cache->purge();
 
 			$cache->set('Slim::Utils::Cache-purgetime', $start, '-1');
 			$now = Time::HiRes::time();
 			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
+				$log->info(sprintf("Cache purge: $namespace - %i records - %f sec", $deleted, $now - $start));
 			}
 		} else {
 			main::INFOLOG && $log->info("Cache purge: $namespace - skipping, purged recently");
