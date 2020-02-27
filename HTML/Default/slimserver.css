@@ -927,6 +927,10 @@ form#advSearchForm.resultsPage {
 	height: 30px;
 }
 
+#ctrlCurrentArtist, #ctrlCurrentAlbum, #ctrlBitrate {
+	white-space: nowrap;
+}
+
 #ctrlTrackInfo { height: 45px; }
 #ctrlPlaytimePanel { height: 20px; }
 
