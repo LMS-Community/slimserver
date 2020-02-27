@@ -314,7 +314,7 @@ sub registerBrowseMode {
 	}
 
 	my %params = map {
-		my $v = $class->valueToId($item->{params}->{$_}, $_);
+		my $v = Slim::Plugin::ExtendedBrowseModes::Libraries->valueToId($item->{params}->{$_}, $_);
 		{ $_ => $v };
 	} keys %{ $item->{params} || {} };
 
@@ -351,53 +351,6 @@ sub registerCustomString {
 	}
 
 	return $string;
-}
-
-# transform genre_id/artist_id into real IDs if a text is used (eg. "Various Artists")
-sub valueToId {
-	my ($class, $value, $key) = @_;
-
-	if ($key eq 'role_id') {
-		return join(',', grep {
-			$_ !~ /\D/
-		} map {
-			s/^\s+|\s+$//g;
-			uc($_);
-			Slim::Schema::Contributor->typeToRole($_);
-		} split(/,/, $value) );
-	}
-
-	return (defined $value ? $value : 0) unless $value && $key =~ /^(genre|artist)_id/;
-
-	my $category = $1;
-
-	my $schema;
-	if ($category eq 'genre') {
-		$schema = 'Genre';
-	}
-	elsif ($category eq 'artist') {
-		$schema = 'Contributor';
-	}
-
-	# replace names with IDs
-	if ( $schema && Slim::Schema::hasLibrary() ) {
-		$value = join(',', grep {
-			$_ !~ /\D/
-		} map {
-			s/^\s+|\s+$//g;
-
-			$_ = Slim::Utils::Unicode::utf8decode_locale($_);
-			$_ = Slim::Utils::Text::ignoreCase($_, 1);
-
-			if ( !Slim::Schema->rs($schema)->find($_) && (my $item = Slim::Schema->rs($schema)->search({ 'namesearch' => $_ })->first) ) {
-				$_ = $item->id;
-			}
-
-			$_;
-		} split(/,/, $value) );
-	}
-
-	return $value || -1;
 }
 
 sub _browseFS {
