@@ -929,6 +929,8 @@ form#advSearchForm.resultsPage {
 
 #ctrlCurrentArtist, #ctrlCurrentAlbum, #ctrlBitrate {
 	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #ctrlTrackInfo { height: 45px; }
