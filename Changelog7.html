@@ -2,7 +2,7 @@
 <ul>
 	<li><a href="#v7.7.7">Upstream fixes from Logitech Media Server 7.7.7</a></li>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li></li>
@@ -14,10 +14,11 @@
 		<li></li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>Async TLS handshake would crash on Windows under certain circumstances.</li>
+		<li>Fix parsing of M3U files with a BOM at the beginning of the file.</li>
 	</ul>
 	<br />
 </ul>
@@ -26,7 +27,7 @@
 <ul>
 	<li><a href="#v7.7.7">Upstream fixes from Logitech Media Server 7.7.7</a></li>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Keep shuffled playlist order when Don't Stop The Music kicks in.</li>
@@ -51,7 +52,7 @@
 		<li>Improved HTTP 1.1 support - thanks philippe44!</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>New flac and sox binaries for most platforms with improved performance (lower CPU load) - thanks ralphy and paul1!</li>
@@ -62,7 +63,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18168">#18168</a> - SYS V start script in RPM distribution does not work for openSUSE 15.0</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/pull/270">#270</a> - Fix playing MPEG-4 files with leading mdat.</li>
@@ -79,7 +80,7 @@
 <ul>
 	<li><a href="#v7.7.6">Upstream fixes from Logitech Media Server 7.7.6</a></li>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Allow plugins to add JavaScript to the main web UI.</li>
@@ -89,7 +90,7 @@
 		<li>Allow scanning of sub-trees of the stored media folder</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9741">#9741</a> - Allow genres or artists to be excluded from last.fm scrobbling.</li>
@@ -136,32 +137,32 @@
 				<li>Improved Browse Music Folder performance.</li>
 			</ul>
 		</li>
-		
+
 		<li>UI improvements:
 			<ul>
 				<li>Add new, fast live search to the web UI.</li>
 				<li>Add Fulltext Search: when searching music the results are no longer limited to a simple title or name search. Fulltext search
 				    includes a lot more data like artist names, lyrics (if available), file type etc. in the evaluation of the search term.</li>
 				<li>Improve "Advanced Search": allow searching for ratings, ranges of years, save results, use results as virtual library etc.</li>
-				<li>Give (limited) control over other players connected to your server from the web UI: power them on/off or start/pause 
-				    playback without the need to switch the currently controlled player</li> 
-				<li>Add Drag'n'Drop support to the web UI: drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the 
+				<li>Give (limited) control over other players connected to your server from the web UI: power them on/off or start/pause
+				    playback without the need to switch the currently controlled player</li>
+				<li>Add Drag'n'Drop support to the web UI: drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the
 				    Logitech Media Server web interface to play them back.</li>
 				<li>Allow the web UI's right hand side panel with player control and current playlist to be hidden.</li>
 				<li>Allow the web UI to be opened with a given navigation for the left hand navigation panel (eg. start with Album Artists).</li>
 				<li>Speed up library browsing in the web UI by caching rendered pages</li>
 			</ul>
 		</li>
-		
+
 		<li>Scanner behaviour improvements:
 			<ul>
-				<li>Allow browsing your music folder while the scanner is running.</li> 
+				<li>Allow browsing your music folder while the scanner is running.</li>
 				<li>Don't stop the music when running a full wipe &amp; rescan.</li>
 				<li>Add an option to disable automatic rescans on certain preference changes.</li>
 				<li>Increased scanning performance.</li>
 			</ul>
 		</li>
-			
+
 		<li>Add "Don't Stop The Music" plugin, allowing you to automatically continue the music listening when your playlist comes to an end.</li>
 		<li>Add support for DSD/DSF files on some platforms.</li>
 		<li>Add new way to read player specific transcoding settings from helper files (eg. for room correction). Thanks LMS0815!</li>
@@ -207,7 +208,7 @@
 	<li>Other:</li>
 	<ul>
 		<li>Restore the ability to run a single folder scan even if the external scanner needs to run</li>
-		<li>Use VACUUM to reorganize library files when appropriate. This should help performance with larger collections and 
+		<li>Use VACUUM to reorganize library files when appropriate. This should help performance with larger collections and
 		    libraries which have been updated a lot. Cache files use auto_vacuum, as they change a lot more often.</li>
 		<li>On Windows and x86 CPU based systems we're going to use more memory for buffers etc. to improve performance.</li>
 		<li>Tweak the web UI to use less graphics and simpler HTML structure. Please note that MSIE users will require version 9
@@ -265,9 +266,9 @@
 		listened to before.</li>
 		<li>Modify Internet Radio integration to work independently from mysb.com if needed.</li>
 		<li>Add new scanner step to discover new/changed/removed standalone artwork for album covers.</li>
-		<li>A new generic image resizing proxy is now built in to LMS. It can be used instead of the 
-		image proxy hosted on mysqueezebox.com, or independently by plugins to eg. resize artwork 
-		local to your network (and therefore not reachable by the remote proxy).</li> 
+		<li>A new generic image resizing proxy is now built in to LMS. It can be used instead of the
+		image proxy hosted on mysqueezebox.com, or independently by plugins to eg. resize artwork
+		local to your network (and therefore not reachable by the remote proxy).</li>
 		<li>The default behaviour on power-on is changed to resume what was playing before power-off.
 		This change will only apply to new players attached to the server;
 		the behaviour for existing players can be changed with Settings / Player / Audio.</li>
@@ -278,7 +279,7 @@
 		<li>Add Triode LocalFile 'loc' ProtocolHandler support for squeezelite.</li>
 	</ul>
 	<br />
-	
+
 	<li>Platform Support:</li>
 	<ul>
 		<li>Perl 5.18 modules for Linux x86_64 systems have been added.</li>
