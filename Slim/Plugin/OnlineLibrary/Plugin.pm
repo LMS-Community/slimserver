@@ -40,11 +40,34 @@ sub initPlugin {
 		enablePreferLocalLibraryOnly => 0,
 		enableLocalTracksOnly => 0,
 		enableServiceEmblem => 1,
+		genreMappings => [],
 	});
 
 	$prefs->setChange( sub {
 		$class->initLibraries($_[0], $_[1] || 0);
 	}, 'enablePreferLocalLibraryOnly', 'enableLocalTracksOnly' );
+
+	# only save genre mapping if it is changed
+	$prefs->setValidate({
+		validator => sub {
+			my ($pref, $new, $params, $old, $client) = @_;
+
+			return unless $new && ref $new;
+
+			$old ||= [];
+			return 1 if scalar @$new != scalar @$old;
+
+			my $i = 0;
+			return grep {
+				my $oldItem = $old->[$i++];
+				$_->{field} ne $oldItem->{field} || $_->{text} ne $oldItem->{text} || $_->{genre} ne $oldItem->{genre};
+			} @$new;
+		}
+	}, 'genreMappings');
+
+	$prefs->setChange( sub {
+		Slim::Control::Request::executeRequest(undef, ['rescan', 'onlinelibrary']);
+	}, 'genreMappings');
 
 	$prefs->setChange( \&Slim::Web::XMLBrowser::wipeCaches, 'enableServiceEmblem' );
 
@@ -57,6 +80,9 @@ sub initPlugin {
 		cmd  => ['rescan', 'onlinelibrary'],
 		name => 'PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN',
 	});
+
+	# tell LMS that we need to run the external scanner
+	Slim::Music::Import->addImporter('Plugins::OnlineLibrary::Importer', { use => 1 });
 
 	Slim::Plugin::OnlineLibrary::BrowseArtist->init();
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();

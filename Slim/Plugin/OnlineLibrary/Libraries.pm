@@ -13,13 +13,9 @@ use Slim::Utils::Strings qw(string);
 
 my $prefs = preferences('plugin.onlinelibrary');
 
-sub initPlugin {
-	shift->initLibraries();
-}
-
 sub initLibraries {
 	my ($class) = @_;
-	
+
 	if ( $prefs->get('enablePreferLocalLibraryOnly') ) {
 		Slim::Music::VirtualLibraries->registerLibrary({
 			id     => 'preferLocalLibraryOnly',
@@ -32,7 +28,7 @@ sub initLibraries {
 					WHERE tracks.album IN (
 						SELECT albums.id
 						FROM albums
-						WHERE albums.extid IS NULL 
+						WHERE albums.extid IS NULL
 							OR	1 NOT IN (
 								SELECT 1
 								FROM albums otheralbums
@@ -44,7 +40,7 @@ sub initLibraries {
 			}
 		});
 	}
-	
+
 	if ( $prefs->get('enableLocalTracksOnly') ) {
 		Slim::Music::VirtualLibraries->registerLibrary({
 			id     => 'localTracksOnly',

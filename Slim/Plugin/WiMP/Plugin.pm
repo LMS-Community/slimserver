@@ -45,6 +45,8 @@ sub initPlugin {
 		func  => \&trackInfoMenu,
 	) );
 
+	Slim::Music::Import->addImporter('Plugins::WiMP::Importer', { use => 1 });
+
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction(
@@ -121,14 +123,14 @@ sub browseArtistMenu {
 
 		Slim::Plugin::WiMP::API->getArtistMenu($client, $searchParams, sub {
 			my $result = shift || [];
-			
+
 			my $transform = sub {
 				return [ map { {
 					name => $_->{text},
 					url  => $_->{URL}
 				} } @{$_[0] || []} ]
 			};
-			
+
 			my $items = [];
 			if (scalar @$result == 1) {
 				$items = $transform->($result->[0]->{outline});

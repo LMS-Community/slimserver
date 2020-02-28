@@ -20,7 +20,7 @@
 			<p>[% "PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE" | string %]</p>
 		[% END %]
 	[% END %]
-	
+
 	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO" desc="" %]
 		<p>
 			<input type="checkbox" name="pref_enableServiceEmblem" id="enableServiceEmblem" [% IF
@@ -28,7 +28,7 @@
 			<label for="enableServiceEmblem">[% "PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC" | string %]</label>
 		</p>
 	[% END %]
-	
+
 	[% WRAPPER setting title="VIRTUALLIBRARIES" desc="SETUP_LIBRARY_VIEWS_DESC" %]
 		<p>
 			<input type="checkbox" name="pref_enableLocalTracksOnly" id="enableLocalTracksOnly" [% IF
@@ -40,6 +40,34 @@
 				prefs.pref_enablePreferLocalLibraryOnly %]checked="checked" [% END %] value="1" class="stdedit" />
 			<label for="enablePreferLocalLibraryOnly">[% "PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC" | string %]</label>
 		</p>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT" desc="PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC" %]
+		<table>
+			[% FOREACH matcher = matcher_items; matcher_no = loop.count %]
+				[% IF !headerRendered %]
+				<tr>
+					<th>[% "PLUGIN_ONLINE_LIBRARY_TAG" | string %]</th>
+					<th>[% "PLUGIN_ONLINE_LIBRARY_MATCHING" | string %]</th>
+					<th>[% "GENRE" | string %][% "COLON" | string %]</th>
+					<th style="text-align: center;">[% IF matcher.id != '_new_' %][% "DELETE" | string %][% "COLON" | string %][% END %]</th>
+				</tr>
+				[% headerRendered = 1; END %]
+				<tr>
+					<td>
+						<select class="stdedit" name="field[% matcher_no %]" style="margin-top:0">
+							<option [% IF matcher.field == "title"; "selected"; END %] value="title">[% "TITLE" | string %]</option>
+							<option [% IF matcher.field == "album"; "selected"; END %] value="album">[% "ALBUM" | string %]</option>
+							<option [% IF matcher.field == "contributor"; "selected"; END %] value="contributor">[% "ARTIST" | string %]</option>
+						</select>
+					</td>
+					<td><input type="text" name="text[% matcher_no %]" value="[% matcher.text %]" class="stdedit" /></td>
+					<td><input type="text" name="genre[% matcher_no %]" value="[% matcher.genre %]" class="stdedit" /></td>
+					<td style="text-align:center;">[% IF matcher.text && matcher.field %]<input type="checkbox" name="delete[% matcher_no %]" class="stdedit" />[% END %]</td>
+				</tr>
+			[% END %]
+		</table>
+		<p>[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</p>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

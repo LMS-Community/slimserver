@@ -27,6 +27,35 @@ sub prefs {
 	return ($prefs, qw(enableLocalTracksOnly enablePreferLocalLibraryOnly enableServiceEmblem), @onlineLibraries);
 }
 
+sub handler {
+	my ($class, $client, $params) = @_;
+
+	if ($params->{saveSettings}) {
+		my $mappings = Storable::dclone($prefs->get('genreMappings'));
+
+		for (my $i = 1; defined $params->{"field$i"}; $i++) {
+			$mappings->[$i-1] = $params->{"delete$i"} ? {} : {
+				field => $params->{"field$i"},
+				text  => $params->{"text$i"},
+				genre => $params->{"genre$i"},
+			};
+		}
+
+		# get rid of deleted items
+		$mappings = [ grep {
+			$_->{field} && $_->{text} && $_->{genre};
+		} @$mappings ];
+
+		$prefs->set('genreMappings', $mappings);
+	}
+
+	$params->{matcher_items} = [ @{$prefs->get('genreMappings')}, { field => '_new_' } ];
+
+	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
+
+	$class->SUPER::handler($client, $params);
+}
+
 sub beforeRender {
 	my ($class, $params, $client) = @_;
 

@@ -45,3 +45,24 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
 	DE	Nur Online Musiksammlung neu einlesen
 	EN	Only rescan online music library
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
+	DE	Stilrichtungen ersetzen
+	EN	Genre Replacement
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
+	DE	Nicht alle Musikdienste unterstützen Stilrichtungen. Diese Einstellung erlaubt es ihnen, Titel auf Grund ihres Namens oder des Interpreten einer Stilrichtung zuzuordnen. Das funktioniert offensichtlich nicht gut mit grossen Sammlungen. Aber die Funktion erlaubt es, gewisse Titel einer Stilrichtung zuzuordnen, um diese dann z.B. in einer Sammlungs-Ansicht zu berücksichtigen.
+	EN	Unfortunatelly not all streaming services support genres. This setting allows you to map tracks to genres based on their title or artist name. This obviuosly doesn't scale for real collections. But it eg. allows you to tag certain tracks with a specific genre to be applied in a library view.
+
+PLUGIN_ONLINE_LIBRARY_TAG
+	DE	Feld:
+	EN	Tag:
+
+PLUGIN_ONLINE_LIBRARY_MATCHING
+	DE	Zutreffender Text:
+	EN	Matching Text:
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
+	DE	Online Stilrichtungen ersetzen
+	EN	Online Genre Replacement
+
