@@ -511,7 +511,7 @@ sub cleanup {
 		for my $client ( Slim::Player::Client::clients() ) {
 			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
 				main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
-				$interval = 300 * int(rand(5));
+				$interval = 300 + 60 * rand(5);
 				last;
 			}
 		}
