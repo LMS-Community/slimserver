@@ -2,7 +2,7 @@ package Slim::Plugin::WiMP::Importer;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -123,18 +123,17 @@ sub scanPlaylists { if (main::SCANNER) {
 	my $progress = Slim::Utils::Progress->new({
 		'type'  => 'importer',
 		'name'  => 'plugin_tidal_playlists',
-		'total' => 1,
+		'total' => 0,
 		'every' => 1,
 	});
 
 	main::INFOLOG && $log->is_info && $log->info("Removing playlists...");
-	$progress->update(string('PLAYLIST_DELETED_PROGRESS'));
+	$progress->update(string('PLAYLIST_DELETED_PROGRESS'), $progress->done);
 	my $deletePlaylists_sth = $dbh->prepare_cached("DELETE FROM tracks WHERE url LIKE 'wimp://%.tdl'");
 	$deletePlaylists_sth->execute();
 
 	foreach my $account (@$accounts) {
-		$progress->total($progress->total + 1);
-		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account));
+		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account), $progress->done);
 		my $lastAdded = 0;
 
 		main::INFOLOG && $log->is_info && $log->info("Reading playlists for $account...");
@@ -206,7 +205,7 @@ sub trackUriPrefix { 'wimp://' }
 # This code is not run in the scanner, but in LMS
 sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
-	
+
 	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
 
 	Slim::Networking::SqueezeNetwork->new(
