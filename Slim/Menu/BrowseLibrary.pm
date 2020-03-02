@@ -1224,7 +1224,7 @@ sub _artists {
 
 			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
-		's', $pt->{'wantIndex'} || $args->{'wantIndex'},
+		'EQs', $pt->{'wantIndex'} || $args->{'wantIndex'},
 	);
 }
 
