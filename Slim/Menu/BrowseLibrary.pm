@@ -1085,6 +1085,9 @@ sub _artists {
 		}
 	}
 
+	# only get external artists without album if no filter is set
+	my $queryTags = (!scalar @searchTags || (scalar @searchTags == 1 && $searchTags[0] =~ /role_id:.*ALBUMARTIST/)) ? 'EQs' : 's';
+
 	_generic($client, $callback, $args, 'artists',
 		[@searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
@@ -1224,7 +1227,7 @@ sub _artists {
 
 			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
-		'EQs', $pt->{'wantIndex'} || $args->{'wantIndex'},
+		$queryTags, $pt->{'wantIndex'} || $args->{'wantIndex'},
 	);
 }
 
