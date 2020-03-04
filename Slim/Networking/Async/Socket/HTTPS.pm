@@ -17,7 +17,9 @@ use base qw(Net::HTTPS::NB Slim::Networking::Async::Socket);
 
 sub new {
 	my ($class, %args) = @_;
-	$args{'Blocking'} = 0;
+	# unfortunately Windows crashes when using non-blocking handshaking, but a timeout occurs
+	# let's disable this until somebody has figured out what's wrong with it on Windows - mh
+	$args{'Blocking'} = main::ISWINDOWS || 0;
 	return $class->SUPER::new(%args);
 }
 
