@@ -49,8 +49,11 @@ sub startScan { if (main::SCANNER) {
 	if (ref $accounts && scalar @$accounts) {
 		$class->initOnlineTracksTable();
 
-		$class->scanAlbums($accounts);
-		$class->scanArtists($accounts);
+		if (!Slim::Music::Import->scanPlaylistsOnly()) {
+			$class->scanAlbums($accounts);
+			$class->scanArtists($accounts);
+		}
+
 		$class->scanPlaylists($accounts);
 
 		$response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
@@ -97,7 +100,7 @@ sub scanAlbums { if (main::SCANNER) {
 				$log->error("Invalid data: $album");
 				next;
 			}
-			
+
 			$progress->update($account . string('COLON') . ' ' . $album->{title});
 			Slim::Schema->forceCommit;
 
