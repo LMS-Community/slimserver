@@ -175,7 +175,7 @@ sub getPlayingDisplayModes {
 	my $modes  = $client->display->modes;
 	my $nmodes = $client->display->nmodes;
 
-	for (my $i = 0; $i <= $nmodes; $i++) {
+	for (my $i = 0; $i < $nmodes; $i++) {
 
 		my $desc = $modes->[$i]{'desc'};
 
