@@ -92,7 +92,7 @@ sub cliQuery {
 	my $connectionId = $request->connectionID || '';
 
 	my $feed;
-	if ($service_id) {
+	if ($service_id && $artist_id) {
 		my $handler = $infoProvider{$service_id};
 		$feed = $handler->() if $handler;
 		if ($feed) {
@@ -100,7 +100,15 @@ sub cliQuery {
 			$cachedFeed{ $connectionId } = $feed;
 		}
 	}
-	elsif ($cachedFeed{$connectionId}) {
+	elsif ($artist_id) {
+		return Slim::Control::XMLBrowser::cliQuery(BROWSE_CMD, {
+			name  => 'browser artist online',
+			type  => 'opml',
+			items => [ getBrowseArtistItems($artist_id) ],
+		}, $request );
+	}
+
+	if (!$feed && $cachedFeed{$connectionId}) {
 		$feed = $cachedFeed{$connectionId};
 		if ($feed && (my $pt = $feed->{passthrough})) {
 			$request->addParam('artist_id', $pt->[0]->{artist_id});

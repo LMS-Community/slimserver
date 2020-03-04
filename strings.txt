@@ -13329,7 +13329,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	SV	Musikmappen är inte tillgänglig under sökning.
 
 BROWSE_ON_SERVICE
-	DE	Auf %s durchsuchen
+	DE	Auf %s
 	EN	Browse on %s
 
 SYNCHRONIZE
