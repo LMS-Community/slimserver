@@ -25,6 +25,11 @@ sub init {
 		[ BROWSE_CMD, 'playlist', '_method' ],
 		[ 1, 1, 1, \&cliQuery ]
 	);
+
+	Slim::Control::Request::addDispatch(
+		[ BROWSE_CMD, 'services' ],
+		[ 0, 1, 0, sub { $_[0]->addResult('services', [keys %infoProvider]) } ]
+	);
 }
 
 sub registerBrowseArtistItem {

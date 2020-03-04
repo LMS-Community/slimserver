@@ -92,7 +92,7 @@ sub postinitPlugin {
 		require Slim::Plugin::WiMP::API;
 		Slim::Plugin::OnlineLibrary::Plugin->addLibraryIconProvider('wimp', '/plugins/WiMP/html/images/tidal.png');
 
-		Slim::Plugin::OnlineLibrary::BrowseArtist->registerBrowseArtistItem( tidal => sub {
+		Slim::Plugin::OnlineLibrary::BrowseArtist->registerBrowseArtistItem( wimp => sub {
 			my ( $client ) = @_;
 
 			return {
