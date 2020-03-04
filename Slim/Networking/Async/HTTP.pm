@@ -112,24 +112,12 @@ sub new_socket {
 			# So we will probably need to explicitly set "SSL_hostname" if we are to succeed with such
 			# a server.
 
-			# First, try without explicit SNI, so we don't inadvertently break anything.
-			# (This is the 'old' behaviour.) (Probably overly conservative.)
-
-			my $sock;
-
-			if ($self->socks) {
-				$sock = Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, @_ );
-			}
-			else {
-				$sock = Slim::Networking::Async::Socket::HTTPS->new( @_ );
-			}
-			return $sock if $sock;
-
 			my %args = @_;
 
 			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} = $args{Host};
-			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE();
+			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
+			
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
 			}

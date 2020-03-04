@@ -36,20 +36,7 @@ sub handler {
 
 	if ($paramRef->{'pref_rescan'}) {
 
-		my $rescanType = ['rescan'];
-
-		if ($paramRef->{'pref_rescantype'} eq '2wipedb') {
-
-			$rescanType = ['wipecache'];
-
-		} elsif ($paramRef->{'pref_rescantype'} eq '3playlist') {
-
-			$rescanType = [qw(rescan playlists)];
-
-		} elsif ($paramRef->{'pref_rescantype'} eq '4onlinelibrary') {
-
-			$rescanType = [qw(rescan onlinelibrary)];
-		}
+		my $rescanType = Slim::Music::Import->getScanCommand($paramRef->{'pref_rescantype'});
 
 		for my $pref (qw(playlistdir)) {
 
@@ -65,7 +52,7 @@ sub handler {
 		}
 
 		if ( main::INFOLOG && logger('scan.scanner')->is_info ) {
-			logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
+			logger('scan.scanner')->info(sprintf("Initiating scan of type: %s", join(' ', @$rescanType)));
 		}
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
@@ -154,6 +141,9 @@ sub handler {
 	push @{$paramRef->{mediadirs}}, {
 		path  => '',
 	};
+
+	my $scanTypes = Slim::Music::Import->getScanTypes();
+	$paramRef->{'scanTypes'} = { map { $_ => $scanTypes->{$_}->{name} } grep /\d.+/, keys %$scanTypes };
 
 	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
 	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);

@@ -8,7 +8,7 @@ package Slim::Networking::SqueezeNetwork;
 # Async interface to mysqueezebox.com API
 
 use strict;
-use base qw(Slim::Networking::SimpleAsyncHTTP);
+use base qw(Slim::Networking::SimpleAsyncHTTP Slim::Networking::SqueezeNetwork::Base);
 
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
@@ -21,40 +21,16 @@ if ( !main::SCANNER ) {
 }
 
 use Slim::Utils::Log;
-use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
-
-if ( main::NOMYSB ) {
-	logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
-}
 
 my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
 
-# This is a hashref of mysqueezebox.com server types
-#   and names.
-
-my $_Servers = {
-	sn      => 'www.mysqueezebox.com',
-	update  => 'update.mysqueezebox.com',
-};
-
 my $loginErrors = 0;
 my $nextLoginAttempt = 0;
-
-sub get_server {
-	my ($class, $stype) = @_;
-
-	if ( $stype eq 'sn' && $ENV{MYSB_TEST} ) {
-		return $ENV{MYSB_TEST};
-	}
-
-	return $_Servers->{$stype}
-		|| die "No hostname known for server type '$stype'";
-}
 
 # Initialize by logging into SN server time and storing our time difference
 sub init {
@@ -240,22 +216,8 @@ sub shutdown {
 #	}
 }
 
-# Return a correct URL for mysqueezebox.com
-sub url {
-	my ( $class, $path, $external ) = @_;
-
-	if (main::NOMYSB) {
-		logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
-	}
-
-	my $base = (Slim::Networking::Async::HTTP->hasSSL() ? 'https://' : 'http://') . $class->get_server('sn');
-
-	$path ||= '';
-
-	$base = '' if $path =~ /^http/;
-
-	return $base . $path;
-}
+# both classes from which we inherit implement a sub url() - therefore we have to implement this little wrapper here
+sub url { shift->_url(@_); }
 
 # Is a URL on SN?
 sub isSNURL {
@@ -391,17 +353,6 @@ sub getAuthHeaders {
 	];
 }
 
-sub getCookie {
-	my ( $self, $client ) = @_;
-
-	# Add session cookie if we have it
-	if ( my $sid = $prefs->get('sn_session') ) {
-		return 'sdi_squeezenetwork_session=' . uri_escape($sid);
-	}
-
-	return;
-}
-
 # Override to add session cookie header
 sub _createHTTPRequest {
 	my ( $self, $type, $url, @args ) = @_;
@@ -438,26 +389,6 @@ sub _createHTTPRequest {
 
 		return;
 	}
-
-=pod
-	# when dealing with an https url, wrap the error handler in some code to fall back to http on failure
-	if ($url =~ /^https:/) {
-		my $ecb = $self->ecb;
-
-		$self->ecb(sub {
-			my ($self, $error) = @_;
-
-			# XXX - fallback should probably only be used if we failed du to some https issue
-			# Connect timed out: Connection refused - https not available on server
-			$log->error("Failed to fetch $url: $error");
-			$url =~ s/^https:/http:/;
-			$log->warn("https lookup failed - trying plain text http instead: $url");
-
-			$self->ecb($ecb);
-			$self->SUPER::_createHTTPRequest( $type, $url, @args);
-		});
-	}
-=cut
 
 	$self->SUPER::_createHTTPRequest( $type, $url, @args );
 }

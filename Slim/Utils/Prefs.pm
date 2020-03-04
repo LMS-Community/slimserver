@@ -204,7 +204,7 @@ sub init {
 		'bufferSecs'            => 3,
 		'remotestreamtimeout'   => 15,
 		'maxWMArate'            => 9999,
-		'tcpConnectMaximum'	    => 30,             # not on web page
+		'tcpConnectMaximum'     => 30,             # not on web page
 		'udpChunkSize'          => 1400,           # only used for Slimp3
 		# Server Settings - Performance
 		'disableStatistics'     => 0,
@@ -224,6 +224,7 @@ sub init {
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',
+		'insecureHTTPS'         => main::ISWINDOWS ? 1 : 0,
 		# Server Settings - TextFormatting
 		'longdateFormat'        => q(%A, %B |%d, %Y),
 		'shortdateFormat'       => q(%m/%d/%Y),

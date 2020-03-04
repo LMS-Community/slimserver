@@ -11,7 +11,7 @@
 			[% END %]
 		[% FOREACH menu = menu_items; menu_no = loop.count %]
 			[% IF !needsClient && !menu.feed && menu.id != '_new_'; NEXT; END %]
-			
+
 			[% IF (menu.feed || menu.id == '_new_') && !seen %]
 			<tr>
 				[% IF needsClient %]
@@ -65,13 +65,25 @@
 
 	[% IF needsClient %]
 		<input type="hidden" name="pref_enableLosslessPreferred" value="[% prefs.pref_enableLosslessPreferred || 0 %]" />
-	[% ELSE; WRAPPER setting title="VIRTUALLIBRARIES" desc="SETUP_LIBRARY_VIEWS_DESC" %]
-		<p>
-			<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF
-				prefs.pref_enableLosslessPreferred %]checked="checked" [% END %] value="1" class="stdedit" />
-			<label for="enableLosslessPreferred">[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED" | string %]</label>
-		</p>
-		<p>[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC" | string %]</p>
-	[% END; END %]
+		<input type="hidden" name="pref_enableAudioBooks" value="[% prefs.pref_enableAudioBooks || 0 %]" />
+		<input type="hidden" name="pref_audioBooksGenres" value="[% prefs.pref_audioBooksGenres || '' %]" />
+	[% ELSE %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="VIRTUALLIBRARIES" desc="SETUP_LIBRARY_VIEWS_DESC" %]
+				<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF
+					prefs.pref_enableLosslessPreferred %]checked="checked" [% END %] value="1" class="stdedit" />
+				<label for="enableLosslessPreferred">[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED" | string %]</label>
+				<br/>
+				[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC" | string %]
+			[% END %]
+			[% WRAPPER settingGroup title="" desc="" %]
+				<input type="checkbox" name="pref_enableAudioBooks" id="enableAudioBooks" [% IF
+					prefs.pref_enableAudioBooks %]checked="checked" [% END %] value="1" class="stdedit" />
+				<label for="enableAudioBooks">[% "PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC" | string %]</label>
+				<br/>
+				<input type="text" name="pref_audioBooksGenres" id="audioBooksGenres" value="[% prefs.pref_audioBooksGenres %]" style="width: 99%"></input>
+			[% END %]
+		[% END %]
+	[% END %]
 
 [% PROCESS settings/footer.html %]

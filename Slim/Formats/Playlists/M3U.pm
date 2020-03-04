@@ -4,7 +4,7 @@ package Slim::Formats::Playlists::M3U;
 # Logitech Media Server Copyright 2001-2020 Logitech.
 #
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -28,7 +28,7 @@ sub read {
 
 	my @items  = ();
 	my ($secs, $artist, $album, $title, $trackurl);
-	my $foundBOM = 0;
+	my $checkedBOM = 0;
 	my $fh;
 	my $mediadirs;
 
@@ -47,7 +47,7 @@ sub read {
 			return @items;
 		};
 	}
-	
+
 	main::INFOLOG && $log->info("Parsing M3U: $url");
 
 	while (my $entry = <$fh>) {
@@ -55,12 +55,20 @@ sub read {
 		chomp($entry);
 
 		# strip carriage return from dos playlists
-		$entry =~ s/\cM//g;  
+		$entry =~ s/\cM//g;
 
 		# strip whitespace from beginning and end
-		$entry =~ s/^\s*//; 
-		$entry =~ s/\s*$//; 
-		
+		$entry =~ s/^\s*//;
+		$entry =~ s/\s*$//;
+
+		# Only strip the BOM off of UTF-8 encoded bytes. Encode will
+		# handle UTF-16. Only check on first line.
+		if (!$checkedBOM && Slim::Utils::Unicode::encodingFromString($entry) eq 'utf8') {
+			$entry = Slim::Utils::Unicode::stripBOM($entry);
+		}
+
+		$checkedBOM = 1;
+
 		# If the line is not a filename (starts with #), handle encoding
 		# If it's a filename, accept it as raw bytes
 		if ( $entry =~ /^#/ ) {
@@ -70,14 +78,6 @@ sub read {
 			# Guess the encoding of each line in the file. Bug 1876
 			# includes a playlist that has latin1 titles, and utf8 paths.
 			my $enc = Slim::Utils::Unicode::encodingFromString($entry);
-
-			# Only strip the BOM off of UTF-8 encoded bytes. Encode will
-			# handle UTF-16
-			if (!$foundBOM && $enc eq 'utf8') {
-
-				$entry = Slim::Utils::Unicode::stripBOM($entry);
-				$foundBOM = 1;
-			}
 
 			$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 		}
@@ -97,26 +97,26 @@ sub read {
 		elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
 
 			$secs  = $1;
-			$title = $2;	
+			$title = $2;
 
 			main::DEBUGLOG && $log->debug("  found secs: $secs, title: $title");
 		}
 		elsif ( $entry =~ /^#EXTINF:(.*?)$/ ) {
 			$title = $1;
-			
+
 			main::DEBUGLOG && $log->debug("  found title: $title");
 		}
 
 		elsif ( $entry =~ /^#EXTURL:(.*?)$/ ) {
 			$trackurl = $1;
-			
+
 			main::DEBUGLOG && $log->debug("  found trackurl: $trackurl");
 		}
 
 		next if $entry =~ /^#/;
 		next if $entry =~ /#CURTRACK/;
 		next if $entry eq "";
-		
+
 		# if an invalid playlist is downloaded as HTML, ignore it
 		last if $entry =~ /^<(?:!DOCTYPE\s*)?html/;
 		next if $entry =~ /^</;
@@ -126,19 +126,19 @@ sub read {
 		if (!$trackurl) {
 
 			if (Slim::Music::Info::isRemoteURL($entry)) {
-	
+
 				$trackurl = $entry;
-	
+
 			} else {
-	
+
 				if (main::ISWINDOWS && !Slim::Music::Info::isFileURL($entry)) {
-					$entry = Win32::GetANSIPathName($entry);	
+					$entry = Win32::GetANSIPathName($entry);
 				}
-				
+
 				$trackurl = Slim::Utils::Misc::fixPath($entry, $baseDir);
 			}
 		}
-		
+
 		if ($class->playlistEntryIsValid($trackurl, $url)) {
 
 			push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url);
@@ -147,14 +147,14 @@ sub read {
 		else {
 			# Check if the playlist entry is relative to audiodir
 			$mediadirs ||= Slim::Utils::Misc::getAudioDirs();
-			
+
 			foreach my $audiodir (@$mediadirs) {
 				$trackurl = Slim::Utils::Misc::fixPath($entry, $audiodir);
-				
+
 				if ($class->playlistEntryIsValid($trackurl, $url)) {
 
 					push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url);
-					
+
 					last;
 				}
 			}
@@ -177,7 +177,7 @@ sub _item {
 	my ($class, $trackurl, $artist, $album, $title, $secs, $playlistUrl) = @_;
 
 	main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
-	
+
 	return $class->_updateMetaData( $trackurl, {
 		'TITLE'  => $title,
 		'ALBUM'  => $album,
@@ -192,12 +192,12 @@ sub readCurTrackForM3U {
 
 	# do nothing to the index if we can't open the list
 	open(FH, $path) || return 0;
-		
+
 	# retrieve comment with track number in it
 	my $line = <FH>;
 
 	close(FH);
- 
+
 	if ($line =~ /#CURTRACK (\d+)$/) {
 
 		main::INFOLOG && $log->info("Found track: $1");
@@ -218,7 +218,7 @@ sub writeCurTrackForM3U {
 	# do nothing to the index if we can't open the list
 	open(IN, $path) || return 0;
 	open(OUT, ">$path.tmp") || return 0;
-		
+
 	while (my $line = <IN>) {
 
 		if ($line =~ /#CURTRACK (\d+)$/) {
@@ -260,24 +260,24 @@ sub write {
 	for my $item (@{$listref}) {
 
 		my $track = Slim::Schema->objectForUrl($item);
-	
+
 		if (!blessed($track) || !$track->can('title')) {
-			
+
 			if ( Slim::Music::Info::isURL($item) && $item !~ /^file:/ ) {
 				print $output $item, "\n";
 			}
 			else {
 				logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			}
-	
+
 			next;
 		};
-		
+
 		# Bug 16683: put the 'file:///' URL in an extra extension
 		print $output "#EXTURL:", $track->url, "\n";
 
 		if ($addTitles) {
-			
+
 			my $title = $track->title;
 			my $secs = int($track->secs || -1);
 
@@ -285,10 +285,10 @@ sub write {
 				print $output "#EXTINF:$secs,$title\n";
 			}
 		}
-		
+
 		my $path = Slim::Utils::Unicode::utf8decode_locale( $class->_pathForItem($track->url) );
 		print $output $path, "\n";
-		
+
 		main::idleStreams() if ! (++$i % 20);
 	}
 

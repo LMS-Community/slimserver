@@ -5,7 +5,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	NL	Extra Browser Modi
 	NO	Ytterligere browse-modi
 	PL	Dodatkowe tryby przeglądania
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
@@ -13,7 +13,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	NL	Creëer extra menu's om door je muziekcollectie te browsen, via Albumartiest, Componisten, Genres te selecteren en meer.
 	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	CS	Interpret alba
 	DA	Albumkunstner
@@ -37,7 +37,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	NL	Componisten
 	NO	Komponister
 	PL	Kompozytorzy
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	DE	Rolle des Künstlers:
 	EN	Contributor Roles:
@@ -110,7 +110,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	NL	Maak een deelcollectie die probeert om lossy-versies te verbergen als van dezelfde opname ook een lossless-versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
 	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	CS	Náhodně zvolená alba
 	DA	Miks baseret på tilfældige album
@@ -169,3 +169,23 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	NL	Deelcollectie gedeletet
 	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
+
+PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
+	DE	Hörbücher
+	EN	Audiobooks
+
+PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
+	DE	Alles ohne Hörbücher
+	EN	All Music without Audiobooks
+
+PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
+	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
+	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
+
+PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
+	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
+	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
+
+PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
+	DE	Hörbuch-Autoren
+	EN	Authors

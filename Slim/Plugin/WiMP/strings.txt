@@ -2,7 +2,7 @@ PLUGIN_WIMP_MODULE_NAME
 	EN	TIDAL
 	NL	TIDAL
 	NO	TIDAL
-	
+
 PLUGIN_WIMP_MODULE_DESC
 	EN	TIDAL - High Fidelity Music Streaming
 	NL	TIDAL - High Fidelity Music Streaming
@@ -81,3 +81,27 @@ PLUGIN_WIMP_INVALID_TRACK_ID
 	NL	Track-ID mist of is ongeldig
 	NO	Manglende eller ugyldig spor-ID
 	PL	Błędny identyfikator utworu
+
+PLUGIN_TIDAL_ALBUMS_PROGRESS
+	DE	TIDAL Alben
+	EN	TIDAL Albums
+
+PLUGIN_TIDAL_PROGRESS_READ_ALBUMS
+	DE	Lese Alben (%s)...
+	EN	Fetching Albums (%s)...
+
+PLUGIN_TIDAL_ARTISTS_PROGRESS
+	DE	TIDAL Interpreten
+	EN	TIDAL Artists
+
+PLUGIN_TIDAL_PROGRESS_READ_ARTISTS
+	DE	Lese Interpreten (%s)...
+	EN	Fetching Artists (%s)...
+
+PLUGIN_TIDAL_PLAYLISTS_PROGRESS
+	DE	TIDAL Wiedergabelisten
+	EN	TIDAL Playlists
+
+PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS
+	DE	Lese Wiedergabelisten (%s)...
+	EN	Fetching Playlists (%s)...

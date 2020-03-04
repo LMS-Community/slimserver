@@ -53,6 +53,7 @@ use Slim::Utils::Prefs;
 use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
 use constant PURGE_RETRY       => 3600;      # retry time if players are on
 use constant PURGE_NEXT        => 30;        # purge next namespace
+use constant IDLE_THRESHOLD    => 600;       # player inactivity before we consider it unused
 
 use constant DEFAULT_NAMESPACE => 'cache';
 use constant DEFAULT_VERSION   => 1;
@@ -71,10 +72,10 @@ my $log = logger('server');
 {
 	my @methods = qw(
 		get set
-		clear purge remove 
+		clear purge remove
 	);
 	#	get_object set_object size
-		
+
 	no strict 'refs';
 	for my $method (@methods) {
 		*{ __PACKAGE__ . "::$method" } = sub {
@@ -119,11 +120,11 @@ sub new {
 	my $cache = Slim::Utils::DbCache->new( {
 		namespace => $namespace,
 	} );
-	
+
 	my $self = bless {
 		_cache => $cache,
 	}, $class;
-	
+
 	# empty existing cache if version number is different
 	my $cacheVersion = $self->get('Slim::Utils::Cache-version');
 
@@ -137,7 +138,7 @@ sub new {
 
 	# store cache object and add namespace to purge lists
 	$caches{$namespace} = $self;
-	
+
 	push @eachCycle, $namespace unless $noPeriodicPurge;
 
 	return $self;
@@ -150,7 +151,7 @@ sub cleanup {
 	# namespaces with $noPeriodicPurge set are only purged at server startup
 	# others are purged at max once per PURGE_INTERVAL.
 	#
-	# To allow disks to spin down, each namespace is purged within a short period 
+	# To allow disks to spin down, each namespace is purged within a short period
 	# and then no purging is done for PURGE_INTERVAL
 	#
 	# After the startup purge, if any players are on it reschedules in PURGE_RETRY
@@ -164,7 +165,8 @@ sub cleanup {
 	# after startup don't purge if a player is on - retry later
 	unless ($startUpPurge) {
 		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->power()) {
+			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
+				main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
 				unshift @thisCycle, $namespace;
 				$namespace = undef;
 				$interval = PURGE_RETRY;
@@ -179,15 +181,15 @@ sub cleanup {
 		} else {
 			$interval = PURGE_INTERVAL;
 			push @thisCycle, @eachCycle;
-			
+
 			# always run one purging task at startup
 			$namespace ||= shift @thisCycle if $startUpPurge;
 			$startUpPurge = 0;
 		}
 	}
-	
-	my $now = time();
-	
+
+	my $now = Time::HiRes::time();
+
 	if ($namespace && $caches{$namespace}) {
 
 		my $cache = $caches{$namespace};
@@ -195,13 +197,13 @@ sub cleanup {
 
 		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
 			my $start = $now;
-			
-			$cache->purge;
-			
+
+			my $deleted = $cache->purge();
+
 			$cache->set('Slim::Utils::Cache-purgetime', $start, '-1');
-			$now = time();
+			$now = Time::HiRes::time();
 			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
+				$log->info(sprintf("Cache purge: $namespace - %i records - %f sec", $deleted, $now - $start));
 			}
 		} else {
 			main::INFOLOG && $log->info("Cache purge: $namespace - skipping, purged recently");

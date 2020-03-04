@@ -6608,10 +6608,6 @@ SETUP_PLAYLISTRESCAN
 	SV	Sök bara igenom spellistorna på nytt
 	ZH_CN	重新扫描播放表而已。
 
-SETUP_ONLINE_LIBRARY_RESCAN
-	DE	Nur Online Musiksammlung neu einlesen
-	EN	Only rescan online music library
-
 SETUP_AUTO_RESCAN
 	CS	Automaticky detekovat změny
 	DA	Registrer automatisk ændringer
@@ -8739,6 +8735,18 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	RU	Для защиты от угроз безопасности CSRF (подделки межсайтовых запросов) HTTP-запросы в Logitech Media Server проходят специальную проверку на наличие функций, способных повлиять на работу системы, а также на плей-листы или плееры. В Logitech Media Server можно выбрать уровень проверки. По умолчанию проверка не выполняется. Дополнительные сведения <a href="/html/docs/http.html#csrf">см. в разделе справки</a>.
 	SV	För att skydda dig mot så kallade CSRF-säkerhetshot (Cross Site Request Forgery) granskas varje HTTP-begäran extra noggrant om den gäller funktioner där datorn, spelarna eller spellistorna kan manipuleras. Du kan själv välja hur noggrant granskningen ska utföras. Standardnivån är Ingen. Mer information <a href="/html/docs/http.html#csrf">finns i hjälpavsnittet</a>.
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，Logitech Media Server会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="/html/docs/http.html#csrf">帮助部分</a>。
+
+SETUP_INSECURE_HTTPS
+	DE	Unsicheres HTTPS
+	EN	Insecure HTTPS
+
+SETUP_INSECURE_HTTPS2
+	DE	Server Zertifikate bei HTTPS Verbindungen nicht überprüfen.
+	EN	Switch off certificate verification on HTTPS connections.
+
+SETUP_INSECURE_HTTPS_DESC
+	DE	"Unsicheres HTTPS" bedeutet, dass Logitech Media Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
+	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 
 SETUP_IPFILTER_HEAD
 	CS	Blokovat příchozí spojení
@@ -13321,7 +13329,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	SV	Musikmappen är inte tillgänglig under sökning.
 
 BROWSE_ON_SERVICE
-	DE	Auf %s durchsuchen
+	DE	Auf %s
 	EN	Browse on %s
 
 SYNCHRONIZE

@@ -2,22 +2,27 @@
 <ul>
 	<li><a href="Changelog7.html#v7.9.3">Upstream fixes from Logitech Media Server 7.9.3</a></li>
 	<br />
-	
+
 	<li>New Features:</li>
 	<ul>
 		<li>Online music library integration: list your collection of albums vetted in your favorite streaming service as part of your "My Music" collection.</li>
+		<li>Improved support for Audio Books: automatically create library views and browse modes dealing with Audio Books and Authors.</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
-		<li></li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/305">PR #305</a> - use ORIGINALYEAR in FLAC files to override YEAR (thanks jcbodnar!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/267">PR #267</a> - HTTPS certificates are now validated when LMS acts as a client.  HTTPS connections to plugin repositories are no-longer retried over HTTP when they fail.  The old insecure behaviour can optionally be re-enabled, although, instead, we recommend working out why HTTPS is broken in your environment and fixing that if possible.</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/308">PR #308</a> - Update faad binaries to fix several CVE-2017 security issues (thanks ralphy!)</li>
+		<li>Read Conductor tag from m4a etc. files.</li>
+		<li>Improve cache purging to reduce startup time.</li>
 	</ul>
 	<br />
-	
+
 	<li>Bug Fixes:</li>
 	<ul>
-		<li></li>
+		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
 	</ul>
 	<br />
 </ul>

@@ -28,8 +28,8 @@ BEGIN {
 
 			# our old LWP::UserAgent doesn't support ssl_opts yet
 			IO::Socket::SSL::set_defaults(
-				SSL_verify_mode => 0
-			);
+				SSL_verify_mode => Net::SSLeay::VERIFY_NONE()
+			) if preferences('server')->get('insecureHTTPS');
 
 			$hasSSL = 1;
 		};
@@ -39,6 +39,7 @@ BEGIN {
 }
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 my $log = logger('network.http');
 

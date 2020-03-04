@@ -326,7 +326,7 @@ sub getMetadataFor {
 	my ($trackId, $format) = _getStreamParams( $url );
 	my $meta = $cache->get( 'wimp_meta_' . ($trackId || '') );
 	
-	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+	if ( !($meta && $meta->{duration}) && !$client->master->pluginData('fetchingMeta') ) {
 
 		$client->master->pluginData( fetchingMeta => 1 );
 
@@ -338,7 +338,8 @@ sub getMetadataFor {
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 			if ( my ($id) = _getStreamParams( $trackURL ) ) {
-				if ( $id && !$cache->get("wimp_meta_$id") ) {
+				my $cached = $id && $cache->get("wimp_meta_$id");
+				if ( $id && !($cached && $cached->{duration}) ) {
 					$need{$id}++;
 				}
 			}
@@ -374,6 +375,7 @@ sub getMetadataFor {
 	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
+	$meta->{cover} ||= $meta->{icon} ||= $icon;
 	
 	return $meta || {
 		bitrate   => '256k CBR',

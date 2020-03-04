@@ -45,6 +45,8 @@ my $importlog  = logger('scan.import');
 
 my $prefs = preferences('server');
 
+my $imgProxyCache;
+
 tie my %lastFile, 'Tie::Cache::LRU', 128;
 
 # Small cache of path -> cover.jpg mapping to speed up
@@ -183,6 +185,7 @@ sub updateStandaloneArtwork {
 		$where = qq{
 			tracks.url NOT LIKE 'file://%'
 			AND tracks.cover LIKE 'http%'
+			AND tracks.coverid IS NULL
 		};
 	}
 	elsif ($singledir) {
@@ -264,7 +267,7 @@ sub updateStandaloneArtwork {
 			}
 
 			# check for updated artwork
-			if ( $cover && $cover !~ /^https?:/ ) {
+			if ( $cover ) {
 				$newCoverId = Slim::Schema::Track->generateCoverId({
 					cover => $cover,
 					url   => $url,
@@ -321,7 +324,7 @@ sub updateStandaloneArtwork {
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 			}
 			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
-				$sth_update_albums->execute( $cover, $albumid );
+				$sth_update_albums->execute( $newCoverId, $albumid );
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
@@ -628,8 +631,8 @@ sub precacheAllArtwork {
 			albums.artwork AS album_artwork
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
-		WHERE  (tracks.cover != '0' AND tracks.coverid IS NOT NULL)
-		       OR tracks.cover LIKE 'http%'
+		WHERE  tracks.cover != '0' 
+		AND    tracks.coverid IS NOT NULL
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
 	. qq{
@@ -640,7 +643,7 @@ sub precacheAllArtwork {
 	    UPDATE tracks
 	    SET    coverid = ?, cover_cached = 1
 	    WHERE  album = ?
-	    AND    cover = ?
+	    AND    (cover = ? OR cover LIKE 'http%')
 	} );
 
 	my $sth_update_albums = $dbh->prepare( qq{
@@ -728,13 +731,33 @@ sub precacheAllArtwork {
 			if ( $isEnabled ) {
 				# let's grab external images when run in the scanner
 				if (main::SCANNER && $cover =~ /^https?:/) {
-					require Slim::Networking::SimpleSyncHTTP;
-					my $result = Slim::Networking::SimpleSyncHTTP->new({
-						cache => 1
-					})->get($cover);
+					require Slim::Web::ImageProxy;
+					$imgProxyCache ||= Slim::Web::ImageProxy::Cache->new();
 
-					if ($result->is_success) {
-						$cover = $result->contentRef;
+					if (my $cached = $imgProxyCache->get($cover)) {
+						$cover = $cached->{data_ref};
+					}
+					else {
+						require Slim::Networking::SimpleSyncHTTP;
+						my $result = Slim::Networking::SimpleSyncHTTP->new({
+							cache => 1
+						})->get($cover);
+
+						if ($result->is_success) {
+							my ($ct) = $result->headers->content_type =~ /image\/(png|jpe?g)/;
+							$ct =~ s/jpeg/jpg/;
+
+							my $fetched = $result->contentRef;
+
+							$imgProxyCache->set($cover, {
+								content_type  => $ct,
+								mtime         => 0,
+								original_path => undef,
+								data_ref      => $fetched,
+							});
+
+							$cover = $fetched;
+						}
 					}
 				}
 

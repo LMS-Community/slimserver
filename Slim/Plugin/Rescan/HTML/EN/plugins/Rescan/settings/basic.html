@@ -18,9 +18,9 @@
 
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_TYPE" desc="" %]
 			<select name="pref_type">
-				<option value="1rescan" [% IF prefs.pref_type == "1rescan" %]selected[% END %]>[% "SETUP_STANDARDRESCAN" | string %]</option>
-				<option value="2wipedb" [% IF prefs.pref_type == "2wipedb" %]selected[% END %]>[% "SETUP_WIPEDB" | string %]</option>
-				<option value="3playlist" [% IF prefs.pref_type == "3playlist" %]selected[% END %]>[% "SETUP_PLAYLISTRESCAN" | string %]</option>
+				[% FOREACH option = scanTypes %]
+				<option [% IF prefs.pref_type == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
 			</select>
 		[% END %]
 	[% END %]

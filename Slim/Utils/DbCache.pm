@@ -115,14 +115,16 @@ sub purge {
 
 	my $dbh = $self->_init_db;
 
-	$dbh->sqlite_progress_handler(1000, sub {
+	$dbh->sqlite_progress_handler(200, sub {
 		main::idle();
 		return;
 	}) if !main::SCANNER;
 
-	$dbh->do('DELETE FROM cache WHERE t >= 0 AND t < ' . time());
+	my $deleted = $dbh->do('DELETE FROM cache WHERE t >= 0 AND t < ' . time());
 
 	$dbh->sqlite_progress_handler(0, undef) if !main::SCANNER;
+
+	return int($deleted) if $deleted;
 }
 
 sub _key {

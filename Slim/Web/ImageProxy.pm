@@ -249,6 +249,9 @@ sub _gotArtworkError {
 		$error = $1;
 		main::INFOLOG && $log->is_info && $log->info("Server returned error: " . $http->error);
 	}
+	elsif (main::INFOLOG && $log->is_info) {
+		$log->info("Unexpected failure fetching $url: " . $http->error);
+	}
 
 	# File does not exist, return error
 	main::INFOLOG && $log->info("Artwork not found, returning $error: " . $url);
@@ -478,6 +481,9 @@ use base 'Slim::Utils::DbArtworkCache';
 
 use strict;
 
+use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
+use constant IDLE_THRESHOLD    => 600;
+
 sub new {
 	my $class = shift;
 	my $root = shift;
@@ -503,25 +509,22 @@ sub cleanup {
 
 	unless ($force) {
 		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->power()) {
+			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
 				main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
-				$interval = 600;
+				$interval = 300 + 60 * rand(5);
 				last;
 			}
 		}
 	}
 
-	my $now = time();
+	my $now = Time::HiRes::time();
 
 	if (!$interval) {
-		my $start = $now;
-
-		$cache->purge;
-
-		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %f sec", $now - $start));
+		my $deleted = $cache->purge();
+		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %i records - %f sec", $deleted, Time::HiRes::time() - $now));
 	}
 
-	Slim::Utils::Timers::setTimer( undef, $now + ($interval || 86400), \&cleanup );
+	Slim::Utils::Timers::setTimer( undef, $now + ($interval || PURGE_INTERVAL), \&cleanup );
 }
 
 1;

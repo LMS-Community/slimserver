@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'), qw(filterHosts allowedHosts corsAllowedHosts csrfProtectionLevel authorize username) );
+	return (preferences('server'), qw(filterHosts allowedHosts corsAllowedHosts csrfProtectionLevel authorize username insecureHTTPS) );
 }
 
 sub handler {

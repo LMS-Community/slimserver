@@ -6,13 +6,21 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 	DE	Erweiterte Kontrolle über die Integration ihrer Online-Musiksammlungen.
 	EN	Get more control over how your online music libraries are integrated with your local music.
 
-PLUGIN_ONLINE_LIBRARY_POLL_UPDATES
-	DE	Automatisch auf Sammlungs-Änderungen überprüfen
-	EN	Automatically poll for library changes
+PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
+	DE	Online Sammlung integrieren aber nicht auf Änderungen überprüfen
+	EN	Integrate online library but do not automatically check for changes
 
-PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_DESC
-	DE	Logitech Media Server kann automatisch überprüfen, ob ihre Musiksammlung im Online Dienst verändert wurde (falls dies vom Dienst unterstützt wird). In diesem Fall werden Veränderungen automatich in ihre Musiksammlung übernommen.
-	EN	Logitech Media Server can poll your music service for changes in your library (if supported by the service). In case of a change, your library is automatically updated.
+PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
+	DE	Online Sammlung integrieren und automatisch auf Änderungen überprüfen
+	EN	Integrate online library and automatically check for changes
+
+PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
+	DE	Online Sammlung nicht integrieren
+	EN	Do not integrate online music collection
+
+PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
+	DE	Es wurde kein unterstützter Streaming-Dienst gefunden.
+	EN	There's no supported streaming service implementation available.
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 	DE	Musiksammlung ohne Online-Dubletten
@@ -20,8 +28,41 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
-	EN	Only show local album if you got another copy in your online music collection.
+	EN	Show only local album if you got another copy in your online music collection.
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
 	EN	Local tracks only (no music service)
+
+PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
+	DE	Musikdienst-Logo
+	EN	Music Service Logo
+
+PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
+	DE	Markiere Online-Alben mit Musikdienst-Logo (falls verfügbar).
+	EN	Put streaming service logo on top of album artwork (if available).
+
+PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
+	DE	Nur Online Musiksammlung neu einlesen
+	EN	Only rescan online music library
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
+	DE	Stilrichtungen ersetzen
+	EN	Genre Replacement
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
+	DE	Nicht alle Musikdienste unterstützen Stilrichtungen. Diese Einstellung erlaubt es ihnen, Titel auf Grund ihres Namens oder des Interpreten einer Stilrichtung zuzuordnen. Das funktioniert offensichtlich nicht gut mit grossen Sammlungen. Aber die Funktion erlaubt es, gewisse Titel einer Stilrichtung zuzuordnen, um diese dann z.B. in einer Sammlungs-Ansicht zu berücksichtigen.
+	EN	Unfortunatelly not all streaming services support genres. This setting allows you to map tracks to genres based on their title or artist name. This obviuosly doesn't scale for real collections. But it eg. allows you to tag certain tracks with a specific genre to be applied in a library view.
+
+PLUGIN_ONLINE_LIBRARY_TAG
+	DE	Feld:
+	EN	Tag:
+
+PLUGIN_ONLINE_LIBRARY_MATCHING
+	DE	Zutreffender Text:
+	EN	Matching Text:
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
+	DE	Online Stilrichtungen ersetzen
+	EN	Online Genre Replacement
+

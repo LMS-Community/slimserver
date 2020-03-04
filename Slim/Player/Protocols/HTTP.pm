@@ -696,7 +696,7 @@ sub getMetadataFor {
 	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
 		my @dashes = $currentTitle =~ /( - )/g;
 		if ( scalar @dashes == 1 ) {
-			($artist, $title) = split / - /, $currentTitle;
+			($artist, $title) = split /\s+-\s+/, $currentTitle;
 		}
 
 		else {

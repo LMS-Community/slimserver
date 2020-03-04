@@ -37,7 +37,7 @@
 <p>
 	For debugging purposes, CLI formatted commands can be sent using
 	standard in and out. This support is only available on Unix platforms (MacOS
-	X included), and must be enabled by launching the server with the 
+	X included), and must be enabled by launching the server with the
 	&quot;--stdio&quot; command line option.
 </p>
 
@@ -45,10 +45,18 @@
 
 <h3 id="Changelog">Changelog</h3>
 
+<h4 id="8.0">Changes starting from Squeezebox Server 8.0</h4>
+<ul>
+	<li>Added support for external IDs: when libraries from online music services are imported, <a href="#artists">artists</a>, <a href="#albums">albums</a>, and <a href="#titles">titles</a>
+	store the external, service specific ID in the 'extid' field. Artists can have multiple, comma separated values, as one artist can be found on multiple services.</li>
+</ul>
+
 <h4 id="7.9">Changes starting from Squeezebox Server 7.9</h4>
 <ul>
-	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries 
-	now accept a library_id parameter to filter the results by virtual libraries. <a href="#libraries">libraries returns a list of libraries with their name and IDs.</a></li>
+	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a
+			href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries
+		now accept a library_id parameter to filter the results by virtual libraries. <a href="#libraries">libraries
+			returns a list of libraries with their name and IDs.</a></li>
 	<li>Added support for new "random" sort order for the <a href="#albums">albums</a> query.</li>
 	<li>Added support for these queries to filter by the contributor's role (role_id).</li>
 </ul>
@@ -114,12 +122,12 @@
 <hr>
 <h4 id="7.2">Changes starting from Squeezebox Server 7.2</h4>
 <p>
-	The following syntax changes apply to the CLI in Squeezebox Server 7.2. <strong>These 
+	The following syntax changes apply to the CLI in Squeezebox Server 7.2. <strong>These
 	changes may impact CLI clients.</strong>
 </p>
 <ul>
 	<li>
-		The <a href="#alarm">&quot;alarm&quot;</a> and <a href="#alarms">&quot;alarms&quot;</a> 
+		The <a href="#alarm">&quot;alarm&quot;</a> and <a href="#alarms">&quot;alarms&quot;</a>
 		command and query have been modified to match the improved alarm functionality. Most
 		important change is the switch back to Sun=0 to Sat=6 days, instead of 0-7, where 0 meant
 		"everyday" and Sun=7.
@@ -128,7 +136,7 @@
 
 <p>
 	The following changes or new commands &amp; queries are available starting with
-	Squeezebox Server 7.2. These changes should not have any impact on existing 
+	Squeezebox Server 7.2. These changes should not have any impact on existing
 	clients:
 </p>
 <ul>
@@ -139,25 +147,25 @@
 		New query to get localized strings: "<a href="#getstring">getstring &lt;STRINGTOKEN1[,STRINGTOKEN2...]&gt;</a>".
 	</li>
 </ul>
- 
+
 <hr>
 <h4 id="7">Changes starting from Squeezebox Server 7.0</h4>
 <p>
-	The following syntax changes apply to the CLI in Squeezebox Server 7.0. <strong>These 
+	The following syntax changes apply to the CLI in Squeezebox Server 7.0. <strong>These
 	changes may impact CLI clients.</strong>
 </p>
 <ul>
 	<li>
-		Completely modified the <a href="#Favorites">Favorites plugin</a> support. 
+		Completely modified the <a href="#Favorites">Favorites plugin</a> support.
 		It is now based on XMLBrowser, like most of the internet radios, and documented
 		in the <a href="#PG">Plugins</a> section of this document.
 	</li>
 	<li>
-		Completely modified live365 support. It is now based on XMLBrowser, 
+		Completely modified live365 support. It is now based on XMLBrowser,
 		like <a href="#XMLBrowser">all internet radios</a>.
 	</li>
 	<li>
-		Deprecated the tag &quot;year_id&quot; in favour of &quot;year&quot; in the 
+		Deprecated the tag &quot;year_id&quot; in favour of &quot;year&quot; in the
 		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; command.
 	</li>
 	<li>
@@ -169,19 +177,19 @@
 		the time stamp of the last change to the current player playlist.
 	</li>
 	<li>
-		Updated the &quot;<a href="#playlist newsong">playlist newsong</a>&quot; 
+		Updated the &quot;<a href="#playlist newsong">playlist newsong</a>&quot;
 		notification to return the song title and playlist index.
 	</li>
 	<li>
-		Updated the &quot;<a href="#pref">pref</a>&quot; and &quot;<a href="#playerpref">playerpref</a>&quot; 
+		Updated the &quot;<a href="#pref">pref</a>&quot; and &quot;<a href="#playerpref">playerpref</a>&quot;
 		commands to support the namespaces for preferences.
 	</li>
 	<li>
-		Changed tags in queries &quot;<a href="#status">status</a>&quot;, 
+		Changed tags in queries &quot;<a href="#status">status</a>&quot;,
 		&quot;<a href="#titles">titles</a>&quot;,
 		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
 		&quot;<a href="#songinfo">songinfo</a>&quot;
-		for artist(s)/contributor(s) (band, composer, conductor, trackartist, etc) and genre(s). 
+		for artist(s)/contributor(s) (band, composer, conductor, trackartist, etc) and genre(s).
 		Multiple items may now be returned.
 	</li>
 	<li>
@@ -190,7 +198,7 @@
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
-	Squeezebox Server 7.0. These changes should not have any impact on existing 
+	Squeezebox Server 7.0. These changes should not have any impact on existing
 	clients:
 </p>
 <ul>
@@ -222,18 +230,18 @@
 		command to create a stored playlist.
 	</li>
 	<li>
-		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query, 
+		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query,
 		to enable returning the given preference values along with each player.
 	</li>
 	<li>
 		Added the &quot;canpoweroff&quot;, &quot;isplayer&quot; and &quot;uuid&quot; tags to the &quot;<a href="#players">players</a>&quot;,
-		&quot;<a href="#players">player</a>&quot; and &quot;<a href="#serverstatus">serverstatus</a>&quot; queries. 
+		&quot;<a href="#players">player</a>&quot; and &quot;<a href="#serverstatus">serverstatus</a>&quot; queries.
 		to enable returning the given preference values along with each player.
 	</li>
 	<li>
 		Added the &quot;<a href="#pref validate">pref validate</a>&quot; and
 		&quot;<a href="#playerpref validate">playerpref validate</a>&quot; queries to validate
-		preferences without setting them. 
+		preferences without setting them.
 	</li>
 	<li>
 		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
@@ -255,7 +263,7 @@
 		to display update messages.
 	</li>
 	<li>
-		Updated queries &quot;<a href="#status">status</a>&quot;, 
+		Updated queries &quot;<a href="#status">status</a>&quot;,
 		&quot;<a href="#titles">titles</a>&quot;,
 		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
 		&quot;<a href="#songinfo">songinfo</a>&quot;
@@ -264,7 +272,7 @@
 		image for all songs of the same album.
 	</li>
 	<li>
-		Updated queries &quot;<a href="#status">status</a>&quot;, 
+		Updated queries &quot;<a href="#status">status</a>&quot;,
 		&quot;<a href="#titles">titles</a>&quot;,
 		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
 		&quot;<a href="#songinfo">songinfo</a>&quot;
@@ -280,7 +288,7 @@
 	</li>
 	<li>
 		Slightly reorganised this document to introduce a &quot;Compound queries&quot; section to
-		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
+		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and
 		&quot;<a href="#status">status</a>&quot;.
 	</li>
 </ul>
@@ -302,11 +310,11 @@
 	<p>
 		<strong>
 			<code>
-				[&lt;playerid&gt;] 
-				&lt;p0&gt; 
+				[&lt;playerid&gt;]
+				&lt;p0&gt;
 				&lt;p1&gt;
 				...
-				&lt;pN&gt; 
+				&lt;pN&gt;
 				&lt;LF&gt;
 			</code>
 		</strong>
@@ -314,8 +322,8 @@
 </blockquote>
 <p>
 	where:
-</p> 
-<blockquote> 
+</p>
+<blockquote>
 	<p>
 		<code>&lt;playerid&gt;</code> is the unique identifier for the
 		player, usually (but not guaranteed to be) the MAC address of the
@@ -346,9 +354,9 @@
 <h4>Extended query format</h4>
 
 <p>
-	A few extended queries are defined, to regroup multiple queries and allow 
-	browsing the server database. These queries return <em>multiple</em> 
-	items. Overall however, their format is compliant with the general command 
+	A few extended queries are defined, to regroup multiple queries and allow
+	browsing the server database. These queries return <em>multiple</em>
+	items. Overall however, their format is compliant with the general command
 	format above:
 </p>
 <blockquote>
@@ -367,7 +375,7 @@
 </blockquote>
 <p>
 	where:
-</p> 
+</p>
 <blockquote>
 	<p>
 		<code>
@@ -389,7 +397,7 @@
 	</p>
 	<p>
 		<code>&lt;p3&gt;</code> through <code>&lt;pN&gt;</code> are
-		<em>tagged</em> parameters. Tags consist of a name followed by 
+		<em>tagged</em> parameters. Tags consist of a name followed by
 		&quot;:&quot;. For example, &quot;artist:Abba&quot;. The tag and
 		the &quot;:&quot; are URL escaped with the field value. Tag
 		names cannot contain &quot;:&quot; but the data can.
@@ -415,7 +423,7 @@
 </blockquote>
 <p>
 	where:
-</p> 
+</p>
 <blockquote>
 	<p>
 		The entire query is repeated.
@@ -444,7 +452,7 @@
 	information on the first 10 players known by the server (if so many
 	exist), starting from the first one:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;players 0 2&lt;LF&gt;&quot;
 		<br>
@@ -470,7 +478,7 @@
 	&lt;p1&gt; ... &lt;pN&gt; &lt;LF&gt;</code></strong></p>
 	</blockquote>
 
-<p>where: </p> 
+<p>where: </p>
 
 <blockquote>
 	<p><code>&lt;playerid&gt;</code> is the unique identifier for the
@@ -486,7 +494,7 @@
 	&lt;p1&gt; ... &lt;pN&gt; &lt;pN+1&gt; ... &lt;pM&gt;
 	&lt;LF&gt;</code></strong></p> </blockquote>
 
-<p>where: </p> 
+<p>where: </p>
 <blockquote>
 	<p>The entire query is repeated.</p>
 	<p><code>&lt;pN+1&gt;</code> through <code>&lt;pM&gt;</code> is the
@@ -528,12 +536,12 @@
 		Please refer to the <a href="artwork.html">Artwork Setup</a>
 		documentation for more details on artwork management in
 		Logitech Media Server. Use the following URL:
-		<blockquote> 
+		<blockquote>
 		  	<strong><code>
 		  	http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/cover.jpg
-		  	</code></strong><br> 
+		  	</code></strong><br>
 		</blockquote>
-		where: <br> 
+		where: <br>
 		<blockquote>
 			<code>&lt;server&gt;</code> is the ip address or name of the
 				server.<br>
@@ -544,12 +552,12 @@
 		</blockquote>
 		<p>In addition, there is a shortcut URL to return the artwork of
 			the currently playing song for a player:
-		<blockquote> 
+		<blockquote>
 			<strong><code>
 http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&gt;
 			</code></strong></p>
 		</blockquote>
-		where: <br> 
+		where: <br>
 		<blockquote>
 			<code>&lt;server&gt;</code> is the ip address or name of the
 				server.<br>
@@ -567,9 +575,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		tagged parameters, parameters using unknown tags will be
 		returned as well. This allows the client to add to commands and
 		queries some context information. For example:
-		<blockquote> 
+		<blockquote>
 			<p>
-				Request: &quot;04:20:00:12:23:45 mixer bass ? 
+				Request: &quot;04:20:00:12:23:45 mixer bass ?
 		  					context&lt;LF&gt;&quot;
 		  		<br>
 		  		Response: &quot;04:20:00:12:23:45 mixer bass 98
@@ -583,7 +591,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			</p>
 		</blockquote>
 	</li>
-	
+
 	<li>
 		All paths returned as URLs, for example the ones returned by the query
 		&quot;<a href="#songinfo">songinfo</a>&quot; are double URL escaped.
@@ -595,7 +603,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 	<li>
 		<b>Transporter Digital Inputs</b><br>
-		Transporter Digital Inputs are handled as remote streams, with a 
+		Transporter Digital Inputs are handled as remote streams, with a
 		URL starting with <code>source:</code> followed by &quot;aes-ebu&quot;,
 		&quot;bnc-spdif&quot;, &quot;toslink&quot; or &quot;rca-spdif&quot;.<br>
 		To set Transporter to the TOSLINK input, use &quot;&lt;playerid&gt;
@@ -634,8 +642,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</li>
 	<li>
 		<strong><a href="#NC">Notifications</a></strong>: internal server
-		commands echoed to the CLI by using the 
-		&quot;<a href="#listen">listen</a>&quot; or 
+		commands echoed to the CLI by using the
+		&quot;<a href="#listen">listen</a>&quot; or
 		&quot;<a href="#subscribe">subscribe</a>&quot; commands.
 	</li>
 	<li>
@@ -714,7 +722,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="login">
 	<strong>
 		<code>
-			login 
+			login
 			&lt;user&gt;
 			&lt;password&gt;
 		</code>
@@ -725,13 +733,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	the server, as defined in the Security pane of the server preferences.
 	Like any other command, the user and password must be escaped. If
 	successful, the server replaces the password with 6 star characters. If
-	unsuccessful, the server returns the same, then disconnects. If security 
+	unsuccessful, the server returns the same, then disconnects. If security
 	is off this command is always successful.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;login user correctpassword&lt;LF&gt;&quot;
 		<br>
@@ -748,7 +756,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="can">
 	<strong>
 		<code>
-			can 
+			can
 			&lt;request terms&gt;
 			?
 		</code>
@@ -761,7 +769,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;can info total genres ?&lt;LF&gt;&quot;
 		<br>
@@ -811,22 +819,22 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	server commands (notifications) on the CLI connection. Notifications concern
 	all activity in the server, not just the activity triggered by the
 	command-line.  Use 0 to clear, 1 to set, ? to query, and no parameter to
-	toggle the listen state of the command-line connection. 
+	toggle the listen state of the command-line connection.
 	<br>
-	If only certain notifications are of interrest, consider using the 
+	If only certain notifications are of interrest, consider using the
 	&quot;<a href="#subscribe">subscribe</a>&quot; command
 	below. The &quot;listen&quot; command shares some of its internal
-	plumbing with &quot;subscribe&quot; so using &quot;subscribe xxx&quot; 
-	changes the list of echoed notifications from nothing or everything to only 
+	plumbing with &quot;subscribe&quot; so using &quot;subscribe xxx&quot;
+	changes the list of echoed notifications from nothing or everything to only
 	xxx.
 	<br>
-	Please consult section <a href="#NC">Notifications</a> for a list of 
+	Please consult section <a href="#NC">Notifications</a> for a list of
 	possible notifications.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;listen 1&lt;LF&gt;&quot;
 		<br>
@@ -858,13 +866,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	&quot;listen 1&quot; changes the list of echoed notifications (to nothing
 	and everything, respectively).
 	<br>
-	Please consult section <a href="#NC">Notifications</a> for a list of 
+	Please consult section <a href="#NC">Notifications</a> for a list of
 	possible notifications.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;subscribe mixer,pause&lt;LF&gt;&quot;
 		<br>
@@ -882,15 +890,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="pref">
 	<strong>
 		<code>
-			pref 
-			&lt;prefname|namespace:prefname&gt; 
+			pref
+			&lt;prefname|namespace:prefname&gt;
 			&lt;prefvalue|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;pref&quot; command allows the caller to set and query the 
-	server's internal preference values. The following affect the 
+	The &quot;pref&quot; command allows the caller to set and query the
+	server's internal preference values. The following affect the
 	behaviour of CLI queries and commands:
 	<ul>
 		<li>
@@ -898,12 +906,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			the &quot;<a href="#login">login</a>&quot; command is required.
 		</li>
 		<li>
-			<b>groupdiscs</b>: handling of multiple disc sets. Affects the 
+			<b>groupdiscs</b>: handling of multiple disc sets. Affects the
 			&quot;<a href="#albums">albums</a>&quot; query.
 		</li>
 		<li>
 			<b>variousArtistAutoIdentification</b>: compilation artists are
-			listed as &quot;Various Artists&quot;. Affects the 
+			listed as &quot;Various Artists&quot;. Affects the
 			&quot;<a href="#artists">artists</a>&quot; query.
 		</li>
 		<li>
@@ -911,7 +919,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			queries returning genres, mainly &quot;<a href="#genres">genres</a>&quot;.
 		</li>
 		<li>
-			<b>composerInArtists</b>, <b>conductorInArtists</b>, 
+			<b>composerInArtists</b>, <b>conductorInArtists</b>,
 			<b>bandInArtists</b>: contributors considered artists. Affects the
 			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
 			query.
@@ -929,7 +937,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<p>
 		Request: &quot;pref audiodir ?&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;pref audiodir 
+		Response: &quot;pref audiodir
 			%2fUsers%2fdean%2fDesktop%2ftest%20music&lt;LF&gt;&quot;
 	</p>
 	<p>
@@ -938,10 +946,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Response: &quot;pref plugin.rescan:time 32400&lt;LF&gt;&quot;
 	</p>
 	<p>
-		Request: &quot;pref playlistdir 
+		Request: &quot;pref playlistdir
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;pref playlistdir 
+		Response: &quot;pref playlistdir
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -960,7 +968,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	The &quot;artworkspec&quot; command allows the caller to set custom artwor resizing
 	specifications. These are being used during a media scan to pre-cache artwork in the
 	given size and format. The name is optional, but allows to recognize, which client
-	would have registered a specification.	
+	would have registered a specification.
 </p>
 <p>
 	Example:
@@ -982,14 +990,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;logging&quot; command allows setting some logging levels. Today you can 
+	The &quot;logging&quot; command allows setting some logging levels. Today you can
 	only set one of the following logging groups: server, radio, transcoding, scanner.
 	The optional persist parameter defines whether the change should be persistent or not.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;logging group:scanner&lt;LF&gt;&quot;
 		<br>
@@ -1001,15 +1009,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="pref validate">
 	<strong>
 		<code>
-			pref 
+			pref
 			validate
-			&lt;prefname|namespace:prefname&gt; 
+			&lt;prefname|namespace:prefname&gt;
 			&lt;prefvalue&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;pref validate&quot; command allows the caller to validate a 
+	The &quot;pref validate&quot; command allows the caller to validate a
 	server's internal preference value without setting it.
 </p>
 <p>
@@ -1019,7 +1027,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;pref validate bufferSecs 10&quot;
 		<br>
@@ -1036,7 +1044,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="getstring">
 	<strong>
 		<code>
-			getstring 
+			getstring
 			&lt;STRINGTOKEN1[,STRINGTOKEN2...]&gt;
 		</code>
 	</strong>
@@ -1049,7 +1057,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;getstring HOME &lt;LF&gt;&quot;
 		<br>
@@ -1066,7 +1074,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="setsncredentials">
 	<strong>
 		<code>
-			setsncredentials 
+			setsncredentials
 			&lt;username&gt;
 			&lt;password&gt;
 			[&lt;sync:0|1&gt;]
@@ -1080,7 +1088,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;setsncredentials me@mysqueezebox.com p@s5w0rd &lt;LF&gt;&quot;
 		<br>
@@ -1097,7 +1105,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="debug">
 	<strong>
 		<code>
-			debug 
+			debug
 			&lt;debug category&gt;
 			&lt;OFF|FATAL|ERROR|WARN|INFO|DEBUG|?|&gt;
 		</code>
@@ -1114,7 +1122,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;debug d_files ?&lt;LF&gt;&quot;
 		<br>
@@ -1152,7 +1160,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;exit&lt;LF&gt;&quot;
 		<br>
@@ -1176,7 +1184,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;stopserver&lt;LF&gt;&quot;
 		<br>
@@ -1202,7 +1210,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;restartserver&lt;LF&gt;&quot;
 		<br>
@@ -1335,13 +1343,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;player count ?&quot; query returns the number of players 
+	The &quot;player count ?&quot; query returns the number of players
 	connected to the server.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;player count ?&lt;LF&gt;&quot;
 		<br>
@@ -1354,7 +1362,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			player
-			id 
+			id
 			&lt;playerindex&gt;
 			?
 		</code>
@@ -1369,14 +1377,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;player id 0 ?&lt;LF&gt;&quot; (or)  "0 player id ?"
 		<br>
 		Response: &quot;player id 0 04:20:00:12:23:45&lt;LF&gt;&quot;
 	</p>
 </blockquote>
-  
+
 <br>
 <p id="player uuid ?">
         <strong>
@@ -1408,7 +1416,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			player
-			name 
+			name
 			&lt;playerindex|playerid&gt;
 			?
 		</code>
@@ -1416,39 +1424,39 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;player name ?&quot; query returns the human-readable name for the
-	specified player. If the name has not been specified by the user in the 
+	specified player. If the name has not been specified by the user in the
 	Player Settings, then a default name will be used, usually the IP address.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;player name 0 ?&lt;LF&gt;&quot; or "0 player name ?"
 		<br>
 		Response: &quot;player name 0 Living Room&lt;LF&gt;&quot;
 	</p>
 </blockquote>
-  
+
 <br>
 <p id="player ip ?">
 	<strong>
 		<code>
 			player
-			ip 
+			ip
 			&lt;playerindex|playerid&gt;
 			?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;player ip ?&quot; query returns the IP address (along with port 
+	The &quot;player ip ?&quot; query returns the IP address (along with port
 	number) of the specified player.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;player ip 0 ?&lt;LF&gt;&quot; or "0 player ip ?"
 		<br>
@@ -1468,9 +1476,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;player model ?&quot; query returns the model of the player, 
-	currently one of &quot;transporter&quot;, &quot;squeezebox2&quot;, 
-	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;, 
+	The &quot;player model ?&quot; query returns the model of the player,
+	currently one of &quot;transporter&quot;, &quot;squeezebox2&quot;,
+	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;,
 	or &quot;http&quot; (for remote streaming connections).
 </p>
 <p>
@@ -1496,11 +1504,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Whether a player is a known player model. Currently know models are 
-	&quot;transporter&quot;, &quot;squeezebox2&quot;, 
-	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;, 
+	Whether a player is a known player model. Currently know models are
+	&quot;transporter&quot;, &quot;squeezebox2&quot;,
+	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;,
 	or &quot;http&quot; (for remote streaming connections).
-	Will return 0 for streaming connections. 
+	Will return 0 for streaming connections.
 </p>
 <p>
 	Example:
@@ -1526,7 +1534,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;player displaytype ?&quot; query returns the display model of the
-	player. Graphical display types start with &quot;graphic-&quot;, 
+	player. Graphical display types start with &quot;graphic-&quot;,
 	non-graphical display type with &quot;noritake-&quot;.
 </p>
 <p>
@@ -1552,13 +1560,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Returns whether a player can be powered off or not. 
+	Returns whether a player can be powered off or not.
 	Current hardware players and SoftSqueeze would return 1, web clients 0.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;player canpoweroff 04:20:00:12:23:45 ?&lt;LF&gt;&quot;
 		<br>
@@ -1582,13 +1590,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Returns the wireless signal strength for the player, range is 1 to 100.  
+	Returns the wireless signal strength for the player, range is 1 to 100.
 	Returns 0 if not connected wirelessly.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 signalstrength ?&lt;LF&gt;&quot;
 		<br>
@@ -1607,14 +1615,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	Sets the name of the player. You may query the player name 
-	by passing in &quot;?&quot; (equivalent to 
+	Sets the name of the player. You may query the player name
+	by passing in &quot;?&quot; (equivalent to
 	&quot;<a href="#player name ?">player name ?</a>&quot;.)
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 name ?&lt;LF&gt;&quot;
 		<br>
@@ -1639,13 +1647,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	Returns the connected state of the player, 1 or 0 depending on the state of
-	the TCP connection to the player. SLIMP3 players, since they use UDP, 
+	the TCP connection to the player. SLIMP3 players, since they use UDP,
 	always return 1.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 connected ?&lt;LF&gt;&quot;
 		<br>
@@ -1664,13 +1672,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;sleep&quot; command specifies a number of seconds to continue 
-	playing before powering off the player. You may query the amount of time 
+	The &quot;sleep&quot; command specifies a number of seconds to continue
+	playing before powering off the player. You may query the amount of time
 	until the player sleeps by passing in &quot;?&quot;.</p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 sleep ?&lt;LF&gt;&quot;
 		<br>
@@ -1688,14 +1696,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			sync 
+			sync
 			&lt;playerindex|playerid|-|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;sync&quot; command specifies the player to synchronise with the 
-	given playerid. The command accepts only one playerindex or playerid. 
+	The &quot;sync&quot; command specifies the player to synchronise with the
+	given playerid. The command accepts only one playerindex or playerid.
 	To unsync the player, use the &quot;-&quot; parameter.
 	<br>
 	Note that in both cases the first <code>&lt;playerid&gt</code> is the player which
@@ -1703,8 +1711,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	the second specified player will be added to the group which includes the first player,
 	if necessary first removing the second player from its existing sync-group.
 	<br>
-	You may query which players are already synced with this player by passing 
-	in a &quot;?&quot; parameter.  Multiple playerids are separated by a comma. 
+	You may query which players are already synced with this player by passing
+	in a &quot;?&quot; parameter.  Multiple playerids are separated by a comma.
 	If the player is not synced, &quot;-&quot; is returned.
 </p>
 <p>
@@ -1732,12 +1740,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="syncgroups">
 	<strong>
 		<code>
-			syncgroups ? 
+			syncgroups ?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;syncgroups&quot; query returns a comma separated list of sync 
+	The &quot;syncgroups&quot; query returns a comma separated list of sync
 	groups members (IDs and names).
 </p>
 <p>
@@ -1762,17 +1770,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;power&quot; command turns the player on or off. Use 0 to turn off, 
-	1 to turn on, ? to query and no parameter to toggle the power state of the 
+	The &quot;power&quot; command turns the player on or off. Use 0 to turn off,
+	1 to turn on, ? to query and no parameter to toggle the power state of the
 	player.
 	<br>
-	For remote streaming connections, the command does nothing and the query 
+	For remote streaming connections, the command does nothing and the query
 	always returns 1.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
 		<br>
@@ -1797,11 +1805,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;mixer volume&quot; command returns or sets the current volume 
-	setting for the player. The scale is 0 to 100, in real numbers (i.e. 34.5 
+	The &quot;mixer volume&quot; command returns or sets the current volume
+	setting for the player. The scale is 0 to 100, in real numbers (i.e. 34.5
 	is valid). If the player is muted, the volume is returned as a negative
-	value. Note that players display a 0 to 40 scale, that is, the 0..100 
-	volume divided by 2,5. Likewise, using the 
+	value. Note that players display a 0 to 40 scale, that is, the 0..100
+	volume divided by 2,5. Likewise, using the
 	&quot;<a href="#button">button</a>&quot; command with &quot;volume_up&quot;
 	or &quot;volume_down&quot; parameters increases or decreases the volume by
 	2,5.
@@ -1809,7 +1817,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;
 		<br>
@@ -1832,23 +1840,23 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			mixer 
-			muting 
+			mixer
+			muting
 			&lt;0|1|toggle|?|&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to 
-	unmute, 1 to mute, ? to query and no parameter (or 'toggle') to toggle the muting state 
-	of the player. Note also the 
-	&quot;<a href="#mixer volume">mixer volume</a>&quot; command returns a 
+	The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to
+	unmute, 1 to mute, ? to query and no parameter (or 'toggle') to toggle the muting state
+	of the player. Note also the
+	&quot;<a href="#mixer volume">mixer volume</a>&quot; command returns a
 	negative value if the player is muted.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;
 		<br>
@@ -1862,15 +1870,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			mixer
-			bass 
+			bass
 			&lt;0 .. 100|-100 .. +100|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;mixer bass&quot; command returns or sets the current bass setting 
-	for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
-	players. For more information on the 0 to 100 scale, please refer to 
+	The &quot;mixer bass&quot; command returns or sets the current bass setting
+	for the player. This is only supported by SliMP3 and SqueezeBox (SB1)
+	players. For more information on the 0 to 100 scale, please refer to
 	the &quot;<a href="#mixer volume">mixer volume</a>&quot; command.
 </p>
 <p>
@@ -1898,23 +1906,23 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="mixer treble">
 	<strong>
 		<code>
-			&lt;playerid&gt; 
-			mixer 
-			treble 
+			&lt;playerid&gt;
+			mixer
+			treble
 			&lt;0 .. 100|-100 .. +100|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;mixer treble&quot; command returns or sets the current treble 
-	setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
-	players. For more information on the 0 to 100 scale, please refer to 
+	The &quot;mixer treble&quot; command returns or sets the current treble
+	setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1)
+	players. For more information on the 0 to 100 scale, please refer to
 	the &quot;<a href="#mixer volume">mixer volume</a>&quot; command.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;
 		<br>
@@ -1936,21 +1944,21 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="mixer pitch">
 	<strong>
 		<code>
-			&lt;playerid&gt; 
-			mixer 
-			pitch 
+			&lt;playerid&gt;
+			mixer
+			pitch
 			&lt;80 .. 120|-40 .. +40|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;mixer pitch&quot; command returns or sets the current pitch 
+	The &quot;mixer pitch&quot; command returns or sets the current pitch
 	setting for the player (only supported by SqueezeBox (SB1) players).
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;
 		<br>
@@ -1973,8 +1981,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			show 
-			&lt;taggedParameters&gt; 
+			show
+			&lt;taggedParameters&gt;
 		</code>
 	</strong>
 </p>
@@ -1989,8 +1997,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<br>
 	This command is only echoed once the message display is done.
 	<br>
-	Please note the CLI expects parameters to be encoded using percent-style 
-	escaping (see above): space is represented by &quot;%20&quot;. 
+	Please note the CLI expects parameters to be encoded using percent-style
+	escaping (see above): space is represented by &quot;%20&quot;.
 	See the examples.
 </p>
 <p>
@@ -2038,7 +2046,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Brightness to use to display the message, either 'powerOn', 'powerOff',
-			'idle' or a value from 0 to 4. The default value is 4. The display 
+			'idle' or a value from 0 to 4. The default value is 4. The display
 			brightness is reset to its configured value after the message.
 		</td>
 	</tr>
@@ -2047,7 +2055,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			font
 		</td>
 		<td>
-			Use value &quot;huge&quot; to have line2 displayed on a large font 
+			Use value &quot;huge&quot; to have line2 displayed on a large font
 			using the entire display. The actual font used depends on the player
 			model. Otherwise the command uses the standard, 2 lines display font.
 		</td>
@@ -2073,12 +2081,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
-		Request: &quot;04:20:00:12:23:45 show line1:Hello%20World 
+		Request: &quot;04:20:00:12:23:45 show line1:Hello%20World
 			line2:Second%20line duration:1 centered:1&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 show line1:Hello%20World 
+		Response: &quot;04:20:00:12:23:45 show line1:Hello%20World
 			line2:Second%20line duration:1 centered:1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -2088,33 +2096,33 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			display 
-			&lt;line1&gt; 
-			&lt;line2&gt; 
+			display
+			&lt;line1&gt;
+			&lt;line2&gt;
 			&lt;duration&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;display&quot; command specifies some text to be displayed on the 
-	player screen for a specified amount of time (in seconds). Please note the 
-	CLI expects parameters to be encoded using percent-style escaping (see 
+	The &quot;display&quot; command specifies some text to be displayed on the
+	player screen for a specified amount of time (in seconds). Please note the
+	CLI expects parameters to be encoded using percent-style escaping (see
 	above): space is represented by &quot;%20&quot;. See the examples.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;
 	</p>
 	<p>
-		Request: &quot;04:20:00:12:23:45 display 
+		Request: &quot;04:20:00:12:23:45 display
 			Hello%20World Second%20Line 5&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 display 
+		Response: &quot;04:20:00:12:23:45 display
 			Hello%20World Second%20Line 5&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -2130,13 +2138,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;linesperscreen&quot; command returns how many lines of text can 
+	The &quot;linesperscreen&quot; command returns how many lines of text can
 	fit in the display, depending on its current setting or font.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 linesperscreen ?&lt;LF&gt;&quot;
 		<br>
@@ -2156,13 +2164,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;display ? ?&quot; command may be used to obtain the text that is 
+	The &quot;display ? ?&quot; command may be used to obtain the text that is
 	currently displayed on the screen.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 display ? ?&lt;LF&gt;&quot;
 		<br>
@@ -2184,13 +2192,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;displaynow&quot; command provides access to the data currently on
 	the display.  This differs from the &quot;display ? ?&quot; command in that
-	it returns the latest data sent to the display, including any animation, 
+	it returns the latest data sent to the display, including any animation,
 	double-size fonts, etc...
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 displaynow ? ?&lt;LF&gt;&quot;
 		<br>
@@ -2203,14 +2211,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			playerpref 
-			&lt;prefname|namespace:prefname&gt; 
+			playerpref
+			&lt;prefname|namespace:prefname&gt;
 			&lt;prefvalue|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playerpref&quot; command allows the caller to set and query the 
+	The &quot;playerpref&quot; command allows the caller to set and query the
 	server's internal player-specific preferences values.
 </p>
 <p>
@@ -2220,7 +2228,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;
 		<br>
@@ -2238,15 +2246,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			playerpref 
+			playerpref
 			validate
-			&lt;prefname|namespace:prefname&gt; 
+			&lt;prefname|namespace:prefname&gt;
 			&lt;prefvalue&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playerpref validate&quot; command allows the caller to validate a 
+	The &quot;playerpref validate&quot; command allows the caller to validate a
 	server's internal player-specific preference value without setting it.
 </p>
 <p>
@@ -2256,7 +2264,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playerpref validate scrollPause 3&quot;
 		<br>
@@ -2281,7 +2289,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>The &quot;button&quot; command simulates a button press. Valid button codes correspond to the functions defined in the Default.map file.
 <p>Example:</p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -2303,7 +2311,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;
 		<br>
@@ -2322,17 +2330,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;irenable&quot; command enables or disables IR processing for the 
-	player on or off. Use 0 to disable, 1 to enable, ? to query and no parameter 
+	The &quot;irenable&quot; command enables or disables IR processing for the
+	player on or off. Use 0 to disable, 1 to enable, ? to query and no parameter
 	to toggle IR processing of the player.
 	<br>
-	For remote streaming connections, the command does nothing and the query 
+	For remote streaming connections, the command does nothing and the query
 	always returns 1.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 irenable 1&lt;LF&gt;&quot;
 		<br>
@@ -2371,7 +2379,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
 		<br>
@@ -2395,7 +2403,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
 		<br>
@@ -2415,7 +2423,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;disconnect&quot; command tells a Squeezebox 2 or newer player
-	on another server instance to disconnect from its server and 
+	on another server instance to disconnect from its server and
 	connect to us. This is the opposite of &quot;<a href="#connect">connect</a>&quot;, where we
 	tell a player connected to us to connect to a different server.
 	<br>
@@ -2428,7 +2436,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
 		<br>
@@ -2447,7 +2455,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;players&quot; query returns information about all 
+	The &quot;players&quot; query returns information about all
 	&quot;players&quot; (physical players as well as streaming clients)
 	known by the server.
 </p>
@@ -2497,7 +2505,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			count
 		</td>
 		<td>
-			Number of players known by the server. Equivalent to 
+			Number of players known by the server. Equivalent to
 			&quot;<a href="#player count ?">player count ?</a>&quot;.
 		</td>
 	</tr>
@@ -2523,7 +2531,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;playerid
 		</td>
 		<td>
-			Player unique identifier. Equivalent to 
+			Player unique identifier. Equivalent to
 			&quot;<a href="#player id ?">player id ?</a>&quot;.
 		</td>
 	</tr>
@@ -2532,7 +2540,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;ip
 		</td>
 		<td>
-			Player IP and port. Equivalent to 
+			Player IP and port. Equivalent to
 			&quot;<a href="#player ip ?">player ip ?</a>&quot;.
 		</td>
 	</tr>
@@ -2541,7 +2549,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;name
 		</td>
 		<td>
-			Player name. Equivalent to 
+			Player name. Equivalent to
 			&quot;<a href="#player name ?">player name ?</a>&quot;.
 		</td>
 	</tr>
@@ -2550,7 +2558,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;model
 		</td>
 		<td>
-			Player model. Equivalent to 
+			Player model. Equivalent to
 			&quot;<a href="#player model ?">player model ?</a>&quot;.
 		</td>
 	</tr>
@@ -2559,7 +2567,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;isplayer
 		</td>
 		<td>
-			Whether a player is a known player model. Will return 0 for streaming connections. 
+			Whether a player is a known player model. Will return 0 for streaming connections.
 			&quot;<a href="#player isplayer ?">player isplayer ?</a>&quot;.
 		</td>
 	</tr>
@@ -2568,8 +2576,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;displaytype
 		</td>
 		<td>
-			Player display type. Not returned for streaming connections. 
-			Equivalent to 
+			Player display type. Not returned for streaming connections.
+			Equivalent to
 			&quot;<a href="#player displaytype ?">player displaytype &lt;playerindex&gt; ?</a>&quot;.
 		</td>
 	</tr>
@@ -2578,7 +2586,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;canpoweroff
 		</td>
 		<td>
-			Whether the player can be powered off. This value is false for streaming connections. 
+			Whether the player can be powered off. This value is false for streaming connections.
 		</td>
 	</tr>
 	<tr>
@@ -2586,7 +2594,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;connected
 		</td>
 		<td>
-			Connected state. Equivalent to 
+			Connected state. Equivalent to
 			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
 		</td>
 	</tr>
@@ -2604,7 +2612,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;<em>prefName<em>
 		</td>
 		<td>
-			Preference value. Only if the value is defined. Equivalent to 
+			Preference value. Only if the value is defined. Equivalent to
 			&quot;<a href="#playerpref">playerpref prefName ?</a>&quot;.
 		</td>
 	</tr>
@@ -2612,14 +2620,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;players 0 2 prefs:doublesize,idleBrightness&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;players 0 2 count:2 
-		playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488 
+		Response: &quot;players 0 2 count:2
+		playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488
 		name:127.0.0.1 model:softsqueeze displaytype:graphic-280x16 connected:1 doublesize:0 idleBrightness:2
-		playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
+		playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483
 		name:Movy model:slimp3 displaytype:noritake-katakana connected:1 doublesize:1 idleBrightness:1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -2717,36 +2725,36 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="rescan">
 	<strong>
 		<code>
-			rescan 
+			rescan
 			&lt;|playlists|onlinelibrary|external|full singlefolder|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;rescan&quot; command causes the server to rescan the entire music 
-	library, reloading the music file information. If &quot;playlists&quot; is 
+	The &quot;rescan&quot; command causes the server to rescan the entire music
+	library, reloading the music file information. If &quot;playlists&quot; is
 	indicated (&quot;rescan playlists&quot;), only the playlist directory is
 	rescanned. If &quot;onlinelibrary&quot; is indicated (&quot;rescan onlinelibrary&quot),
-	only the import from online music services is run If &quot;external&quot; is 
+	only the import from online music services is run If &quot;external&quot; is
 	requested, the rescan will be performed
 	using the external scanner process instead of the in-process scanner.
 	If &quot;full file://some/path&quot; is defined, then only this path will be scanned.
-	Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
+	Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the
 	server is currently scanning.
 </p>
 <p>
-	Scanning occurs when the server starts and 
+	Scanning occurs when the server starts and
 	following &quot;rescan&quot; and &quot;<a href="#wipecache">wipecache</a>&quot; commands.
 </p>
 <p>
 	Examples:
-</p> 
-<blockquote> 
+</p>
+<blockquote>
 	<p>
 		Request:  &quot;rescan&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;rescan&lt;LF&gt;&quot;
-	</p> 
+	</p>
 	<p>
 		Request:  &quot;rescan ?&lt;LF&gt;&quot;
 		<br>
@@ -2796,9 +2804,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning 
+			Returned with value 1 if the server is still scanning
 			the database, otherwise returned with value 0 and the fields below
-			are not returned. 
+			are not returned.
 		</td>
 	</tr>
 	<tr>
@@ -2850,7 +2858,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;rescanprogress&lt;LF&gt;&quot;
 		<br>
@@ -2882,8 +2890,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	Examples:
-</p> 
-<blockquote> 
+</p>
+<blockquote>
 	<p>
 		Request:  &quot;abortscan&lt;LF&gt;&quot;
 		<br>
@@ -2909,7 +2917,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;wipecache&lt;LF&gt;&quot;
 		<br>
@@ -2932,7 +2940,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;libraries&lt;LF&gt;&quot;
 		<br>
@@ -2949,13 +2957,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;libraries getid&quot; query returns the ID and the name of library set to 
+	The &quot;libraries getid&quot; query returns the ID and the name of library set to
 	be used by the given player. Returns id:0 and no name if no library is active.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 libraries getid&lt;LF&gt;&quot;
 		<br>
@@ -2975,13 +2983,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;info total genres ?&quot; query returns the number of unique 
+	The &quot;info total genres ?&quot; query returns the number of unique
 	genres in the server music database.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;info total genres ?&lt;LF&gt;&quot;
 		<br>
@@ -3009,7 +3017,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;info total artists ?&lt;LF&gt;&quot;
 		<br>
@@ -3035,7 +3043,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;info total albums ?&lt;LF&gt;&quot;
 		<br>
@@ -3047,9 +3055,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="info total songs ?">
 	<strong>
 		<code>
-			info 
-			total 
-			songs 
+			info
+			total
+			songs
 			?
 		</code>
 	</strong>
@@ -3073,9 +3081,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="info total duration ?">
 	<strong>
 		<code>
-			info 
-			total 
-			duration 
+			info
+			total
+			duration
 			?
 		</code>
 	</strong>
@@ -3110,7 +3118,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	The &quot;genres&quot; query returns all genres known by the server.
 	<br>
 	Note that the server supports multiple genres per track, depending
-	on the &quot;Multiple items in tags&quot; preference (Server Settings, 
+	on the &quot;Multiple items in tags&quot; preference (Server Settings,
 	Behavior).
 </p>
 <p>
@@ -3157,7 +3165,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			track_id
 		</td>
 		<td>
-			Limit results to the genres of the track identified by 
+			Limit results to the genres of the track identified by
 			&quot;track_id&quot;. If present, other filters are ignored.
 		</td>
 	</tr>
@@ -3166,7 +3174,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			genre_id
 		</td>
 		<td>
-			Limit results to the genre identified by 
+			Limit results to the genre identified by
 			&quot;genre_id&quot;. The genre_id may be a list of comma separated IDs.
 			If present, other filters are ignored.
 		</td>
@@ -3193,7 +3201,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			tags
 		</td>
 		<td>
-			Determines which tags are returned. Each returned tag is identified 
+			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is empty.
 		</td>
 	</tr>
@@ -3215,7 +3223,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning 
+			Returned with value 1 if the server is still scanning
 			the database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -3226,7 +3234,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Number of results returned by the query. If no filter parameter is
-			present, this is the same value as returned by 
+			present, this is the same value as returned by
 			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;.
 		</td>
 	</tr>
@@ -3291,22 +3299,22 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
   		Request: &quot;genres 0 5&lt;LF&gt;&quot;
   		<br>
-		Response: &quot;genres 0 5 rescan:1 count:6 
-		id:3 genre:Acid%20Jazz 
-		id:4 genre:Alternative%20&%20Punk 
-		id:5 genre:French 
-		id:6 genre:No%20Genre 
+		Response: &quot;genres 0 5 rescan:1 count:6
+		id:3 genre:Acid%20Jazz
+		id:4 genre:Alternative%20&%20Punk
+		id:5 genre:French
+		id:6 genre:No%20Genre
 		id:7 genre:Pop
 		&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;genres 0 5 search:unk count:1 
+		Response: &quot;genres 0 5 search:unk count:1
 		id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -3326,7 +3334,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;artists&quot; query returns all artists known by the server.
 	The results of this query depend in part on the &quot;Compilations&quot;
-	preference (Server Settings, Behavior). The &quot;Various Artists&quot; 
+	preference (Server Settings, Behavior). The &quot;Various Artists&quot;
 	pseudo-artist appears if the server groups compilations.
 </p>
 <p>
@@ -3346,7 +3354,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			search
 		</td>
 		<td>
-			Search substring. The search is case insensitive and obeys the 
+			Search substring. The search is case insensitive and obeys the
 			&quot;Search Within Words&quot; server parameter.
 		</td>
 	</tr>
@@ -3355,7 +3363,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			genre_id
 		</td>
 		<td>
-			Genre ID, to restrict the results to those artists with songs of 
+			Genre ID, to restrict the results to those artists with songs of
 			that genre. The genre_id may be a list of comma separated IDs.
 		</td>
 	</tr>
@@ -3364,7 +3372,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			album_id
 		</td>
 		<td>
-			Album ID, to restrict the results to those artists with songs of 
+			Album ID, to restrict the results to those artists with songs of
 			that album.
 		</td>
 	</tr>
@@ -3373,7 +3381,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			track_id
 		</td>
 		<td>
-			Track ID, to restrict the results to the artist of 
+			Track ID, to restrict the results to the artist of
 			&quot;track_id&quot;. If specified, all other filters are
 			ignored.
 		</td>
@@ -3392,7 +3400,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			role_id
 		</td>
 		<td>
-			Contributor role ID, to restrict the results to the artist of 
+			Contributor role ID, to restrict the results to the artist of
 			&quot;role_id&quot;. This parameter must be a comma separated list
 			of role IDs, or a comma separated list of role tokens (eg. ALBUMARTIST, ARTIST)
 		</td>
@@ -3410,7 +3418,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			tags
 		</td>
 		<td>
-			Determines which tags are returned. Each returned tag is identified 
+			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is empty.
 		</td>
 	</tr>
@@ -3432,8 +3440,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning the 
-			database. The results may therefore be incomplete. Not returned if 
+			Returned with value 1 if the server is still scanning the
+			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
 	</tr>
@@ -3442,8 +3450,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			count
 		</td>
 		<td>
-			Number of results returned by the query. If no search string is 
-			present, this is the same value as returned by 
+			Number of results returned by the query. If no search string is
+			present, this is the same value as returned by
 			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
 		</td>
 	</tr>
@@ -3456,6 +3464,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Only return the number of results, but not the results themselves.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Q
+		</td>
+		<td>
+			&nbsp;&nbsp;
+		</td>
+		<td>
+			Include external artists from music services, even if they don't have any track  or album in the current collection. This allows callers to browse those artists on the external service.
 		</td>
 	</tr>
 	<tr>
@@ -3505,27 +3524,38 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			The artist's "textkey" is the first letter of the sorting key.
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<b>E</b>
+		</td>
+		<td>
+			&nbsp;&nbsp;extid
+		</td>
+		<td>
+			The contributor's external ID, if it is eg. from an online music service.
+		</td>
+	</tr>
 </table>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;artists 0 5&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;artists 0 5 count:7 
-		id:2 artist:Anastacia 
-		id:3 artist:Calogero 
-		id:4 artist:Evanescence 
-		id:5 artist:Leftfield%20%26%20Lydon 
+		Response: &quot;artists 0 5 count:7
+		id:2 artist:Anastacia
+		id:3 artist:Calogero
+		id:4 artist:Evanescence
+		id:5 artist:Leftfield%20%26%20Lydon
 		id:18 artist:Llorca
 		&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;artists 0 5 genre_id:7&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;artists 0 5 genre_id:7 count:2 
-		id:2 artist:Anastacia 
+		Response: &quot;artists 0 5 genre_id:7 count:2
+		id:2 artist:Anastacia
 		id:19 artist:Sarah%20Connor
 		&lt;LF&gt;&quot;
 	</p>
@@ -3565,7 +3595,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			search
 		</td>
 		<td>
-			Search substring. The search is case insensitive and obeys 
+			Search substring. The search is case insensitive and obeys
 			the &quot;Search Within Words&quot; server parameter.
 		</td>
 	</tr>
@@ -3574,7 +3604,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			genre_id
 		</td>
 		<td>
-			Genre ID, to restrict the results to those albums with 
+			Genre ID, to restrict the results to those albums with
 			songs of that genre. The genre_id may be a list of comma separated IDs.
 		</td>
 	</tr>
@@ -3592,7 +3622,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			track_id
 		</td>
 		<td>
-			Track ID, to restrict the results to the album of 
+			Track ID, to restrict the results to the album of
 			&quot;track_id&quot;. If specified, all other filters are
 			ignored.
 		</td>
@@ -3648,8 +3678,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Sort order of the returned list of albums. One of &quot;album&quot;,
 			(the default), &quot;new&quot; (sort by change date in descending order),
-			&quot;artflow&quot; which sorts by artist, year, album for use with 
-			artwork-centric interfaces,	&quot;artistalbum&quot;, &quot;yearalbum&quot;, 
+			&quot;artflow&quot; which sorts by artist, year, album for use with
+			artwork-centric interfaces,	&quot;artistalbum&quot;, &quot;yearalbum&quot;,
 			&quot;yearartistalbum&quot;, &quot;random&quot;.
 		</td>
 	</tr>
@@ -3658,7 +3688,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			tags
 		</td>
 		<td>
-			Determines which tags are returned. Each returned tag is identified 
+			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is &quot;l&quot;.
 		</td>
 	</tr>
@@ -3682,7 +3712,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning the 
+			Returned with value 1 if the server is still scanning the
 			database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -3694,7 +3724,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Number of results returned by the query. If no filter
-			is present, this is the same value as returned by 
+			is present, this is the same value as returned by
 			&quot;<a href="#info total albums ?">info total albums ?</a>&quot;
 		</td>
 	</tr>
@@ -3744,7 +3774,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Album name, including the server's added &quot;(N of M)&quot; if
-			the server is set to group multi disc albums together. 
+			the server is set to group multi disc albums together.
 			See tag &quot;title&quot; for the unmodified value.
 		</td>
 	</tr>
@@ -3768,7 +3798,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;artwork_track_id
 		</td>
 		<td>
-			Identifier of one of the album tracks, used by the server to 
+			Identifier of one of the album tracks, used by the server to
 			display the album's artwork.
 		</td>
 	</tr>
@@ -3877,6 +3907,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>E</b>
+		</td>
+		<td>
+			&nbsp;&nbsp;extid
+		</td>
+		<td>
+			The album's external ID, if it is eg. from an online music service.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			X
 		</td>
 		<td>
@@ -3894,23 +3935,23 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<p>
 		Request: &quot;albums 0 4&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;albums 0 4 count:14 
-		id:1 album:Amadeus%20(Disc%201%20of%202) 
-		id:4 album:Anastacia 
-		id:5 album:Bounce%20[Single] 
+		Response: &quot;albums 0 4 count:14
+		id:1 album:Amadeus%20(Disc%201%20of%202)
+		id:4 album:Anastacia
+		id:5 album:Bounce%20[Single]
 		id:6 album:Fallen&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;albums 0 5 genre_id:7&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;albums 0 5 genre_id:7 count:2
-		id:4 album:Anastacia 
+		id:4 album:Anastacia
 		id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;albums 0 5 artist_id:19 count:1 
+		Response: &quot;albums 0 5 artist_id:19 count:1
 		id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -3976,7 +4017,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning 
+			Returned with value 1 if the server is still scanning
 			the database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -3987,7 +4028,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Number of results returned by the query. If no filter parameter is
-			present, this is the same value as returned by 
+			present, this is the same value as returned by
 			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;.
 		</td>
 	</tr>
@@ -4010,12 +4051,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
   		Request: &quot;years 0 5&lt;LF&gt;&quot;
   		<br>
-		Response: &quot;years 0 5 rescan:1 count:6 
-		year:1985 year:1987 year:1988 
+		Response: &quot;years 0 5 rescan:1 count:6
+		year:1985 year:1987 year:1988
 		year:2002 year:2003 year:2004
 		&lt;LF&gt;&quot;
 	</p>
@@ -4045,7 +4086,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	folder, starting from the top level directory configured in the server.
 </p>
 <p>
-	&quot;mediafolder&quot; is an alias to &quot;musicfolder&quot;. 
+	&quot;mediafolder&quot; is an alias to &quot;musicfolder&quot;.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -4072,7 +4113,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			return_top
 		</td>
 		<td>
-			If set to 1, and &quot;folder_id&quot; is provided, will return the data about 
+			If set to 1, and &quot;folder_id&quot; is provided, will return the data about
 			the listed folder instead of the child folders.
 		</td>
 	</tr>
@@ -4094,7 +4135,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			type
 		</td>
 		<td>
-			One of "audio", "list", "video", or "image". Select the media type you 
+			One of "audio", "list", "video", or "image". Select the media type you
 			want to browse in the given folder.
 		</td>
 	</tr>
@@ -4103,7 +4144,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			tags
 		</td>
 		<td>
-			Determines which tags are returned. Each returned tag is identified 
+			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is empty.
 		</td>
 	</tr>
@@ -4134,7 +4175,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning 
+			Returned with value 1 if the server is still scanning
 			the database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -4228,21 +4269,21 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;musicfolder 0 10&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;musicfolder 0 10 count:26 
-		id:1 title:03%20Barbie%20Girl.mp3 type:audio 
-		id:2 title:12%20-%20If%20I%20Had%20You.mp3 type:audio 
-		id:313 title:A-Ha type:dir 
+		Response: &quot;musicfolder 0 10 count:26
+		id:1 title:03%20Barbie%20Girl.mp3 type:audio
+		id:2 title:12%20-%20If%20I%20Had%20You.mp3 type:audio
+		id:313 title:A-Ha type:dir
 		id:50 title:Test.m3u type:playlist&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;musicfolder 0 10 folder_id:313&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;musicfolder 0 10 folder_id:313 count:2 
-		id:335 title:Lifelines type:dir 
+		Response: &quot;musicfolder 0 10 folder_id:313 count:2
+		id:335 title:Lifelines type:dir
 		id:336 title:Minor%20Earth%20Major%20Sky type:dir&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -4279,7 +4320,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			search
 		</td>
 		<td>
-			Search substring. The search is case insensitive and obeys the 
+			Search substring. The search is case insensitive and obeys the
 			&quot;Search Within Words&quot; server parameter.
 		</td>
 	</tr>
@@ -4312,7 +4353,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning the 
+			Returned with value 1 if the server is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -4388,7 +4429,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			<b>E</b>
 		</td>
 		<td>
-			ExtId
+			extid
 		</td>
 		<td>
 			The playlist's external ID, if it is eg. from an online music service.
@@ -4409,19 +4450,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;playlists 0 2&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;playlists 0 2 count:5 
+		Response: &quot;playlists 0 2 count:5
 			id:37 name:Funky%20Beats
 			id:57 name:SUPER&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;playlists 0 2 search:SUPER tags:u&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;playlists 0 2 search:SUPER tags:u count:1 
-			id:57 name:SUPER 
+		Response: &quot;playlists 0 2 search:SUPER tags:u count:1
+			id:57 name:SUPER
 			url:playlist:///Volume/path/file.m3u&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -4439,7 +4480,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;playlists tracks&quot; query returns the tracks of a given 
+	The &quot;playlists tracks&quot; query returns the tracks of a given
 	playlist.
 </p>
 <p>
@@ -4452,14 +4493,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>playlist_id</td>
-		<td>Playlist ID as returned by the &quot;playlists&quot; query. This is 
+		<td>Playlist ID as returned by the &quot;playlists&quot; query. This is
 		    a mandatory parameter.</td>
 	</tr>
 	<tr>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified
 		    by a letter (see command &quot;<a href="#songinfo">songinfo</a>&quot;
-		    for a list of possible fields and their identifying letter). The 
+		    for a list of possible fields and their identifying letter). The
 		    default tags value for this command is &quot;gald&quot;.</td>
 	</tr>
 </table>
@@ -4484,7 +4525,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;<b>playlist index</b></td>
-		<td>Index (first item is 0) of the track in the playlist. The first 
+		<td>Index (first item is 0) of the track in the playlist. The first
 		returned instance of this field is equal to start.  Item seperator.</td>
 	</tr>
 	<tr>
@@ -4737,7 +4778,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			cmd
 		</td>
 		<td>
-			One of &quot;up&quot;, &quot;down&quot;, &quot;move&quot;, &quot;delete&quot; or 
+			One of &quot;up&quot;, &quot;down&quot;, &quot;move&quot;, &quot;delete&quot; or
 			&quot;add&quot, in order to move up, down, delete or add a track.
 		</td>
 	</tr>
@@ -4746,7 +4787,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			index
 		</td>
 		<td>
-			For &quot;cmd:up&quot;, &quot;cmd:down&quot;, &quot;cmd:move&quot; and 
+			For &quot;cmd:up&quot;, &quot;cmd:down&quot;, &quot;cmd:move&quot; and
 			&quot;cmd:delete&quot; the index of the track to edit.
 		</td>
 	</tr>
@@ -4780,17 +4821,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote>
 	<p>
-		Request: &quot;playlists edit cmd:up 
+		Request: &quot;playlists edit cmd:up
 			playlist_id:22 index:3&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;playlists edit cmd:up 
+		Response: &quot;playlists edit cmd:up
 			playlist_id:22 index:3&lt;LF&gt;&quot;
 	</p>
 	<p>
-		Request: &quot;playlists edit cmd:add 
+		Request: &quot;playlists edit cmd:add
 			playlist_id:22 title:Song url:file://...&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;playlists edit cmd:add 
+		Response: &quot;playlists edit cmd:add
 			playlist_id:22 title:Song url:file://...&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -4800,7 +4841,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="songinfo">
 	<strong>
 		<code>
-			songinfo 
+			songinfo
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -4808,11 +4849,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;songinfo&quot; command returns all the information on a song 
-	known by the server. Please note that the &lt;start&gt; and 
+	The &quot;songinfo&quot; command returns all the information on a song
+	known by the server. Please note that the &lt;start&gt; and
 	&lt;itemsPerResponse&gt; parameters apply to the individual data fields
 	below and not, as they do in other extended CLI queries, to the number
-	or songs (or artists, genres, etc.) returned; the 
+	or songs (or artists, genres, etc.) returned; the
 	&quot;songinfo&quot; only ever returns information about a single song.
 </p>
 <p>
@@ -4832,7 +4873,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			url
 		</td>
 		<td>
-			Song path as returned by other CLI commands. This is a mandatory 
+			Song path as returned by other CLI commands. This is a mandatory
 			parameter, except if &quot;track_id&quot; is provided.
 		</td>
 	</tr>
@@ -4841,7 +4882,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			track_id
 		</td>
 		<td>
-			Track ID as returned by other CLI commands. This is a mandatory 
+			Track ID as returned by other CLI commands. This is a mandatory
 			parameter, except if &quot;url&quot; is provided.
 		</td>
 	</tr>
@@ -4877,7 +4918,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the server is still scanning the 
+			Returned with value 1 if the server is still scanning the
 			database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -4889,7 +4930,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			count
 		</td>
 		<td>
-			Number of results returned by the query, that is, total number of 
+			Number of results returned by the query, that is, total number of
 			elements to return for this song.
 		</td>
 	</tr>
@@ -5065,7 +5106,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			artwork_track_id
 		</td>
 		<td>
-			Identifier of the album track used by the server to 
+			Identifier of the album track used by the server to
 			display the album's artwork. Not listed if artwork is not
 			available for this album.
 		</td>
@@ -5350,7 +5391,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			<b>E</b>
 		</td>
 		<td>
-			ExtId
+			extid
 		</td>
 		<td>
 			Some tracks have an external identifier (eg. from an online music service).
@@ -5393,14 +5434,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;songinfo 0 100 track_id:2&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;songinfo 0 100 track_id:2 count:26 
-		id:2 title:If%20I%20Had%20You artist:Diana%20Krall duration:297.117 album_id:2 filesize:5952369 genre:Vocal 
-		comment:Pianist%2Fvocalist%20Diana%20Krall%20pays%20tribute%20to%20the%20Nat%20King%20Cole%20Trio.... 
-		album:All%20for%20You modificationTime:Thursday%2C%20March%201%2C%202007%2C%209:21:58%20PM 
+		Response: &quot;songinfo 0 100 track_id:2 count:26
+		id:2 title:If%20I%20Had%20You artist:Diana%20Krall duration:297.117 album_id:2 filesize:5952369 genre:Vocal
+		comment:Pianist%2Fvocalist%20Diana%20Krall%20pays%20tribute%20to%20the%20Nat%20King%20Cole%20Trio....
+		album:All%20for%20You modificationTime:Thursday%2C%20March%201%2C%202007%2C%209:21:58%20PM
 		type:mp3 genre_id:2 bitrate:160kbps%20VBR artist_id:3 tracknum:12 tagversion:ID3v2.3.0
 		year:1995 samplerate:44100
 		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FLogitech Media Server%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
@@ -5413,7 +5454,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="titles">
 	<strong>
 		<code>
-			titles|songs|tracks 
+			titles|songs|tracks
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -5498,7 +5539,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			search
 		</td>
 		<td>
-			Search substring. The search is case insensitive and obeys the 
+			Search substring. The search is case insensitive and obeys the
 			&quot;Search Within Words&quot; server parameter.
 		</td>
 	</tr>
@@ -5508,9 +5549,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Determines which tags are returned. Each returned tag is identified
-			by a letter (see command 
+			by a letter (see command
 			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
-			fields and their identifying letter). The default tags value for 
+			fields and their identifying letter). The default tags value for
 			this command is &quot;gald&quot;.
 		</td>
 	</tr>
@@ -5527,11 +5568,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			sort
 		</td>
 		<td>
-			Sorting, one of &quot;title&quot; (the default), 
+			Sorting, one of &quot;title&quot; (the default),
 			&quot;tracknum&quot; (in which case the track field (&quot;t&quot;)
 			is added automatically to the response) or &quot;albumtrack&quot;
 			(in which case the track and album-title fields (&quot;lt&quot;)
-			are added automatically to the response). Sorting by tracks is 
+			are added automatically to the response). Sorting by tracks is
 			possible only if tracks are defined and for a single album.
 		</td>
 	</tr>
@@ -5564,8 +5605,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Number of results returned by the query. If no search string or
-			album/artist/genre filter is present, this is the same value as 
-			returned by 
+			album/artist/genre filter is present, this is the same value as
+			returned by
 			&quot;<a href="#info total songs ?">info total songs ?</a>&quot;.
 		</td>
 	</tr>
@@ -5584,7 +5625,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			</em>
 		</td>
 		<td>
-			Same tags as defined in command 
+			Same tags as defined in command
 			&quot;<a href="#songinfo">songinfo</a>&quot;.
 		</td>
 	</tr>
@@ -5592,24 +5633,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;titles 0 2&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;titles 0 2 count:100 
-		id:55 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists 
-		album:The%20Hunt%20For%20Red%20October duration:136.93387755102 disc:1 
-		track:5 year:1990 
+		Response: &quot;titles 0 2 count:100
+		id:55 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists
+		album:The%20Hunt%20For%20Red%20October duration:136.93387755102 disc:1
+		track:5 year:1990
 		url:file://Disk/The%20Hunt%20For%20Red%20October/Ancestral%20Aid.mp3
-		id:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer 
+		id:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer
 		duration:340.297142857143 track:5 year:2001 url:...&lt;LF&gt;&quot;
 	</p>
 	<p>
 		Request: &quot;titles 0 12 album:Anastacia tags:p&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;titles 0 12 album:Anastacia tags:p count:12 id:4 
+		Response: &quot;titles 0 12 album:Anastacia tags:p count:12 id:4
 		title:Heavy%20On%20My%20Heart url:...
-		id:1 title:I%20Do url:... id:2 title:Left%20Outside%20Alone 
+		id:1 title:I%20Do url:... id:2 title:Left%20Outside%20Alone
 		url:...&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -5619,7 +5660,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="search">
 	<strong>
 		<code>
-			search 
+			search
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -5634,7 +5675,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	Please note that &quot;start&quot; and &quot;itemsPerResponse&quot; are calculated per category.
 	If you eg. have genres and tracks with the search term in them, you'll get &quot;itemsPerResponse&quot;
 	number of each of them.
-	The total number of items returned therefore can be a multiple of &quot;itemsPerResponse&quot;. 
+	The total number of items returned therefore can be a multiple of &quot;itemsPerResponse&quot;.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -5693,7 +5734,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Total number of results returned by the query. This is the sum
-			of &quot;artists_count&quot;, &quot;albums_count&quot; and 
+			of &quot;artists_count&quot;, &quot;albums_count&quot; and
 			&quot;tracks_count&quot;.
 		</td>
 	</tr>
@@ -5857,20 +5898,20 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;search 0 20 term:al&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;search 0 20 term:al count:9 
-			artists_count:2 albums_count:1 tracks_count:6 
-			artist_id:2 artist:Alanis%20Morissette 
-			artist_id:37 artist:Alphaville 
-			album_id:10 album:All%20Time%20Greatest%20Hits%20%5BBarry%20White%5D%20MMM 
-			track_id:11 track:All%20I%20Really%20Want 
-			track_id:68 track:The%20Sun%20Always%20Shines%20On%20TV 
-			track_id:185 track:All%20Around%20The%20World 
-			track_id:189 track:Give%20Me%20All%20Your%20Love%20%5BSingle%20Cut%5D 
-			track_id:245 track:Better%20All%20The%20Time 
+		Response: &quot;search 0 20 term:al count:9
+			artists_count:2 albums_count:1 tracks_count:6
+			artist_id:2 artist:Alanis%20Morissette
+			artist_id:37 artist:Alphaville
+			album_id:10 album:All%20Time%20Greatest%20Hits%20%5BBarry%20White%5D%20MMM
+			track_id:11 track:All%20I%20Really%20Want
+			track_id:68 track:The%20Sun%20Always%20Shines%20On%20TV
+			track_id:185 track:All%20Around%20The%20World
+			track_id:189 track:Give%20Me%20All%20Your%20Love%20%5BSingle%20Cut%5D
+			track_id:245 track:Better%20All%20The%20Time
 	</p>
 </blockquote>
 
@@ -5878,7 +5919,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="pragma">
 	<strong>
 		<code>
-			pragma 
+			pragma
 			&lt;pragma string&gt;
 		</code>
 	</strong>
@@ -6060,12 +6101,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;play&quot; command allows to start playing the current playlist.
 	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
-	
+
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;
 		<br>
@@ -6088,7 +6129,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;
 		<br>
@@ -6112,13 +6153,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	Example:
 </p>
 <p>
-	You may use &quot;pause 1&quot; to force the player to pause, 
+	You may use &quot;pause 1&quot; to force the player to pause,
 	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
 	toggle the pause state.
 	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period when unpausing.
 	The &quot;showBriefly&quot; parameter may be passed to specify not to show a pause icon on squeezeplay-based devices (as is the case with hitting 'power off' on the SBController, which pauses play but should not display an icon, see bug 13521)
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;
 		<br>
@@ -6144,7 +6185,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
  	<p>
  		Request:  &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;
  		<br>
@@ -6156,24 +6197,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="time">
 	<strong>
 		<code>
-			&lt;playerid&gt; 
-			time 
+			&lt;playerid&gt;
+			time
 			&lt;number|-number|+number|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;time&quot; command allows you to query the current number of 
-	seconds that the current song has been playing by passing in a 
-	&quot;?&quot;. You may jump to a particular position in a song by 
-	specifying a number of seconds to seek to. You may also jump to a relative 
-	position within a song by putting an explicit &quot;-&quot; or 
+	The &quot;time&quot; command allows you to query the current number of
+	seconds that the current song has been playing by passing in a
+	&quot;?&quot;. You may jump to a particular position in a song by
+	specifying a number of seconds to seek to. You may also jump to a relative
+	position within a song by putting an explicit &quot;-&quot; or
 	&quot;+&quot; character before a number of second you would like to seek.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 time ?&lt;LF&gt;&quot;
 		<br>
@@ -6214,10 +6255,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, 
-	&quot;title&quot; &quot;duration&quot;, &quot;remote&quot;, 
-	&quot;current_title&quot; and &quot;path&quot; commands allow for querying 
-	information about the song currently playing. &quot;remote&quot; returns 1 
+	The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;,
+	&quot;title&quot; &quot;duration&quot;, &quot;remote&quot;,
+	&quot;current_title&quot; and &quot;path&quot; commands allow for querying
+	information about the song currently playing. &quot;remote&quot; returns 1
 	if the current song is a remote stream. &quot;current_title&quot; returns
 	the current title for remote streams or the song title as formatted for
 	the player.
@@ -6225,7 +6266,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 genre ?&lt;LF&gt;&quot;
 		<br>
@@ -6240,7 +6281,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 album ?&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 album Greatest%20Hits&lt;LF&gt;&quot;
-	</p>	
+	</p>
 	<p>
 		Request: &quot;04:20:00:12:23:45 title ?&lt;LF&gt;&quot;
 		<br>
@@ -6274,7 +6315,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			playlist
-			play 
+			play
 			&lt;item&gt;
 			&lt;title&gt;
 			&lt;fadeInSecs&gt;
@@ -6283,7 +6324,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;playlist play&quot; command puts the specified song URL, playlist
-	or directory contents into the current playlist and plays starting at the 
+	or directory contents into the current playlist and plays starting at the
 	first item. Any songs previously in the playlist are discarded.  An optional title
 	value may be passed to set a title.  This can be useful for remote URLs.
 	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
@@ -6291,20 +6332,20 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
-		Request: &quot;04:20:00:12:23:45 playlist play 
+		Request: &quot;04:20:00:12:23:45 playlist play
 			/music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 playlist play 
+		Response: &quot;04:20:00:12:23:45 playlist play
 			/music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
 	</p>
 	<p>
-		Request: &quot;04:20:00:12:23:45 playlist play 
+		Request: &quot;04:20:00:12:23:45 playlist play
 			http://someserver/02_Sledgehammer.flac
 			Peter%20Gabriel%20-%20Sledgehammer&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 playlist play 
+		Response: &quot;04:20:00:12:23:45 playlist play
 			http://someserver/02_Sledgehammer.flac
 			Peter%20Gabriel%20-%20Sledgehammer&lt;LF&gt;&quot;
 	</p>
@@ -6324,7 +6365,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;playlist add&quot; command adds the specified song URL, playlist
-	or directory contents to the end of the current playlist. Songs currently 
+	or directory contents to the end of the current playlist. Songs currently
 	playing or already on the playlist are not affected. An optional title
 	value may be passed to set a title.  This can be useful for remote URLs.
 </p>
@@ -6340,19 +6381,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p id="playlist insert">
 	<strong>
 		<code>
-			&lt;playerid&gt; 
-			playlist 
-			insert 
+			&lt;playerid&gt;
+			playlist
+			insert
 			&lt;item&gt;
 			&lt;title&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playlist insert&quot; command inserts the specified song URL, playlist 
-	or directory contents to be played immediately after the current song in the 
-	current playlist. Any songs currently playing or already on the playlist are 
-	not affected. An optional title	value may be passed to set a title.  This can be 
+	The &quot;playlist insert&quot; command inserts the specified song URL, playlist
+	or directory contents to be played immediately after the current song in the
+	current playlist. Any songs currently playing or already on the playlist are
+	not affected. An optional title	value may be passed to set a title.  This can be
 	useful for remote URLs.
 </p>
 <p>
@@ -6387,13 +6428,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;playlist move&quot; command moves the song at the specified index
-	to a new index in the playlist. An offset of zero is the first song in the 
+	to a new index in the playlist. An offset of zero is the first song in the
 	playlist.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 playlist move 0 5&lt;LF&gt;&quot;
 		<br>
@@ -6407,19 +6448,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			playlist
-			delete 
+			delete
 			&lt;songindex&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playlist delete&quot; command deletes the song at the specified 
+	The &quot;playlist delete&quot; command deletes the song at the specified
 	index from the current playlist.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 playlist delete 5&lt;LF&gt;&quot;
 		<br>
@@ -6459,7 +6500,7 @@ Response: &quot;04:20:00:12:23:45 playlist preview url:db:album.titlesearch=A%20
 		<code>
 			&lt;playerid&gt;
 			playlist
-			resume 
+			resume
 			&lt;playlist&gt;
 			&lt;taggedParameters&gt;
 		</code>
@@ -6467,8 +6508,8 @@ Response: &quot;04:20:00:12:23:45 playlist preview url:db:album.titlesearch=A%20
 </p>
 
 <p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when
-the file was saved. (Resuming works only with M3U files saved with the &quot;playlist save&quot; command below.) 
-Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist 
+the file was saved. (Resuming works only with M3U files saved with the &quot;playlist save&quot; command below.)
+Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist
 in the saved playlists folder.</p>
 <p>Optional tagged parameters are noplay, which when non-zero will not auto-start the track, and wipePlaylist, which will destroy the saved playlist from both the filesystem and from the DB (these tagged params are typically used for resuming a temporarily cached playlist, e.g. after exiting alarm sound preview on squeezeplay devices).</p>
 <p>Examples:</p>
@@ -6489,8 +6530,8 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	Saves a playlist file in the saved playlists directory. Accepts a playlist 
-	filename (without .m3u suffix) and saves in the top level of the playlists 
+	Saves a playlist file in the saved playlists directory. Accepts a playlist
+	filename (without .m3u suffix) and saves in the top level of the playlists
 	directory.
 </p>
 <p>
@@ -6508,83 +6549,83 @@ in the saved playlists folder.</p>
 </blockquote>
 
 <br><p id="playlist loadalbum"><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
-<p>The &quot;playlist loadalbum&quot; command puts songs matching the specified 
-  genre artist and album criteria on the playlist. Songs previously in the 
+<p>The &quot;playlist loadalbum&quot; command puts songs matching the specified
+  genre artist and album criteria on the playlist. Songs previously in the
   playlist are discarded.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist addalbum"><strong><code>&lt;playerid&gt; playlist addalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
-<p> The &quot;playlist addalbum&quot; command appends all songs matching the 
-  specified criteria onto the end of the playlist. Songs currently playing 
+<p> The &quot;playlist addalbum&quot; command appends all songs matching the
+  specified criteria onto the end of the playlist. Songs currently playing
   or already on the playlist are not affected.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist loadtracks"><strong><code>&lt;playerid&gt; playlist loadtracks &lt;searchparam&gt;</code></strong></p>
-<p>The &quot;playlist loadtracks&quot; command puts tracks matching the specified 
-  query on the playlist. Songs previously in the 
+<p>The &quot;playlist loadtracks&quot; command puts tracks matching the specified
+  query on the playlist. Songs previously in the
   playlist are discarded. Note: you must provide a particular form to the searchparam (see examples)</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks track.titlesearch=purple &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks track.titleseach=purple &lt;LF&gt;&quot;</p>
 </blockquote>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks album.titlesearch=3121 &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks album.titlesearch=3121 &lt;LF&gt;&quot;</p>
 </blockquote>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks contributor.namesearch=prince &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks contributor.namesearch=prince &lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist addtracks"><strong><code>&lt;playerid&gt; playlist addtracks &lt;searchparam&gt;</code></strong></p>
-<p> The &quot;playlist addtracks&quot; command appends all songs matching the 
-  specified criteria onto the end of the playlist. Songs currently playing 
+<p> The &quot;playlist addtracks&quot; command appends all songs matching the
+  specified criteria onto the end of the playlist. Songs currently playing
   or already on the playlist are not affected.  Note: you must provide a particular form to the searchparam (see examples)
 </p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist addtracks track.titlesearch=purple &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks track.titleseach=purple &lt;LF&gt;&quot;</p>
 </blockquote>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist addtracks album.titlesearch=3121 &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks album.titlesearch=3121 &lt;LF&gt;&quot;</p>
 </blockquote>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist addtracks contributor.namesearch=prince &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks contributor.namesearch=prince &lt;LF&gt;&quot;</p>
 </blockquote>
 
 
 <br><p id="playlist insertalbum"><strong><code>&lt;playerid&gt; playlist insertalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
-<p> The &quot;playlist insertalbum&quot; command inserts all songs matching the 
+<p> The &quot;playlist insertalbum&quot; command inserts all songs matching the
   specified criteria at the top of the playlist. Songs already on the playlist are not affected.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist deletealbum"><strong><code>&lt;playerid&gt; playlist deletealbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
-<p>The &quot;playlist deletealbum&quot; command removes songs matching the specified 
+<p>The &quot;playlist deletealbum&quot; command removes songs matching the specified
   genre artist and album criteria from the playlist.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist clear"><strong><code>&lt;playerid&gt; playlist clear</code></strong></p>
-<p>The &quot;playlist clear&quot; command removes any song that is on the playlist. 
+<p>The &quot;playlist clear&quot; command removes any song that is on the playlist.
   The player is stopped.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlist zap"><strong><code>&lt;playerid&gt; playlist zap &lt;songindex&gt;</code></strong></p>
 <p>The &quot;playlist zap&quot; command adds the song at index songindex into the zapped song playlist.</p>
 <p>Examples: </p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -6592,20 +6633,20 @@ in the saved playlists folder.</p>
 <p id="playlist name ?">
 	<strong>
 		<code>
-			&lt;playerid&gt; 
-			playlist 
-			name 
+			&lt;playerid&gt;
+			playlist
+			name
 			?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playlist name&quot; command returns the name of the saved 
+	The &quot;playlist name&quot; command returns the name of the saved
 	playlist last loaded into the Now Playing playlist, if any.
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playlist name ?&lt;LF&gt;&quot;
 		<br>
@@ -6626,16 +6667,16 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlist url&quot; command returns the URL of the saved playlist 
-	last loaded into the Now Playing playlist, if any. 
+	The &quot;playlist url&quot; command returns the URL of the saved playlist
+	last loaded into the Now Playing playlist, if any.
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playlist url ?&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 playlist url 
+		Response: &quot;04:20:00:12:23:45 playlist url
 			file:///Users/dean/Music/testmusic/Zapped%20Songs.m3u&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -6652,13 +6693,13 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlist modified&quot; returns the modification state of the 
+	The &quot;playlist modified&quot; returns the modification state of the
 	saved playlist last loaded into the Now Playing playlist, if any.
 	If &quot;1&quot;, the playlist has been modified since it was loaded.
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playlist modified ?&lt;LF&gt;&quot;
 		<br>
@@ -6678,8 +6719,8 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlist playlistsinfo&quot; query returns information on the 
-	saved playlist last loaded into the Now Playing playlist, if any. 
+	The &quot;playlist playlistsinfo&quot; query returns information on the
+	saved playlist last loaded into the Now Playing playlist, if any.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -6704,18 +6745,18 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>name</td>
-		<td>Playlist name. Equivalent to 
+		<td>Playlist name. Equivalent to
 			&quot;<a href="#playlist name">playlist name ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
 		<td>modified</td>
-		<td>Modification state of the saved playlist. Equivalent to 
+		<td>Modification state of the saved playlist. Equivalent to
 			&quot;<a href="#playlist modified">playlist modified ?</a>&quot;.
 	</td>
 	<tr>
 		<td>url</td>
-		<td>Playlist url. Equivalent to 
+		<td>Playlist url. Equivalent to
 			&quot;<a href="#playlist url">playlist url ?</a>&quot;.
 		</td>
 	</tr>
@@ -6723,7 +6764,7 @@ in the saved playlists folder.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;a5:41:d2:cd:cd:05 playlist playlistsinfo &lt;LF&gt;&quot;
 		<br>
@@ -6734,16 +6775,16 @@ in the saved playlists folder.</p>
 
 
 <br><p id="playlist index"><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt; &lt;fadeInSecs&gt;</code></strong></p>
-<p>The &quot;playlist index&quot; command sets or queries the song that is currently 
-  playing by index. When setting, a zero-based value may be used to indicate which 
-  song to play. An explicitly positive or negative number may be used to jump 
+<p>The &quot;playlist index&quot; command sets or queries the song that is currently
+  playing by index. When setting, a zero-based value may be used to indicate which
+  song to play. An explicitly positive or negative number may be used to jump
   to a song relative to the currently playing song.
   The index can only be set if the playlist is not empty.
   If an index parameter is set then &quot;fadeInSecs&quot; may be passed to specify fade-in period.
-  The value of the current song 
+  The value of the current song
   index may be obtained by passing in &quot;?&quot; as a parameter.</p>
 <p>Examples:</p>
-<blockquote> 
+<blockquote>
   <p>Request: &quot;04:20:00:12:23:45 playlist index +1&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index +1&lt;LF&gt;&quot;</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist index ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;</p>
@@ -6770,17 +6811,17 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
-	album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot;,  
-	&quot;playlist remote&quot; and &quot;playlist duration&quot; queries 
-	return the requested information for a given song at an index position in 
-	the current playlist. &quot;playlist remote&quot; returns 1 if the 
+	The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist
+	album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot;,
+	&quot;playlist remote&quot; and &quot;playlist duration&quot; queries
+	return the requested information for a given song at an index position in
+	the current playlist. &quot;playlist remote&quot; returns 1 if the
 	&quot;song&quot; is a remote stream.
 </p>
 <p>
 	Examples:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;04:20:00:12:23:45 playlist genre 3 ?&lt;LF&gt;&quot;
 		<br>
@@ -6880,7 +6921,7 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlistcontrol&quot; command enables playlist operations using IDs as returned by 
+	The &quot;playlistcontrol&quot; command enables playlist operations using IDs as returned by
 	extended CLI queries (titles, artists, playlists, etc).
 </p>
 <p>
@@ -6894,7 +6935,7 @@ in the saved playlists folder.</p>
 	<tr>
 		<td>cmd</td>
 		<td>
-			Command to perform on the playlist, one of &quot;load&quot;, 
+			Command to perform on the playlist, one of &quot;load&quot;,
 			&quot;add&quot;, &quot;insert&quot; or &quot;delete&quot;.
 		 	This parameter is mandatory. If no additional parameter is provided,
 		 	the entire DB is loaded/added/inserted/deleted.
@@ -6915,7 +6956,7 @@ in the saved playlists folder.</p>
 	<tr>
 		<td>track_id</td>
 		<td>Comma-separated list of track IDs, to restrict the results to these
-			track_ids. If this parameter is provided, then any genre_id, 
+			track_ids. If this parameter is provided, then any genre_id,
 			artist_id and/or album_id parameter is ignored. The tracks are added to the playlist
 			in the given order.</td>
 	</tr>
@@ -6973,26 +7014,26 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>rescan</td>
-		<td>Returned with value 1 if the server is still scanning the 
+		<td>Returned with value 1 if the server is still scanning the
 			database. The command may therefore have missed items.
 			Not returned if no scan is in progress.</td>
 	</tr>
 	<tr>
 		<td>count</td>
-		<td>Number of elements loaded/added/inserted or max number of elements 
+		<td>Number of elements loaded/added/inserted or max number of elements
 			deleted. For folders, only 1 is returned.</td>
 	</tr>
 </table>
 <p>Example:</p>
-<blockquote> 
-  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol 
+<blockquote>
+  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol
   		cmd:add genre_id:9&lt;LF&gt;&quot;<br>
-  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol 
+  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol
   	 	cmd:add genre_id:9 count:33&lt;LF&gt;&quot;</p>
 
-  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol 
+  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol
   		cmd:load album_id:22&lt;LF&gt;&quot;<br>
-  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol 
+  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol
   	 	cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -7025,20 +7066,20 @@ in the saved playlists folder.</p>
 <p id="serverstatus">
 	<strong>
 		<code>
-			serverstatus 
-			&lt;start&gt; 
-			&lt;itemsPerResponse&gt; 
+			serverstatus
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;serverstatus&quot; query returns a complete status about the server, including its 
-	players. 
+	The &quot;serverstatus&quot; query returns a complete status about the server, including its
+	players.
 	<br>
 	Clients can subscribe to &quot;serverstatus&quot; queries, so that the query
 	results are automatically returned asynchronously whenever a change occurs
-	to the server. Please note this mechanism is completely distinct from the 
+	to the server. Please note this mechanism is completely distinct from the
 	&quot;listen&quot; and &quot;subscribe&quot; commands described elsewhere in this
 	document.
 </p>
@@ -7075,7 +7116,7 @@ in the saved playlists folder.</p>
 			subscribe
 		</td>
 		<td>
-			This optional parameter controls the subscription to the server 
+			This optional parameter controls the subscription to the server
 			status. Only one status subscription is possible per connection.
 			<br>
 			Subscription is enabled by using this parameter with a positive
@@ -7086,17 +7127,17 @@ in the saved playlists folder.</p>
 			<br>
 			When enabled, the &quot;serverstatus&quot; query is automatically
 			re-generated on server change (and sent asynchronously to the CLI
-			client). The number indicates the time interval in seconds between 
+			client). The number indicates the time interval in seconds between
 			automatic generations in case nothing happened to the server info in the
 			interval. Use &quot;0&quot; to disable this last feature and only be
 			notified on changes. Please see the example.
 			<br>
 			Some situations will lead to multiple status queries
-			generated very close to another. This is a limitation of the 
+			generated very close to another. This is a limitation of the
 			change detection &quot;algorithm&quot;.
 			<br>
-			Please note this mechanism is completely distinct from the 
-			&quot;listen&quot; and &quot;subscribe&quot; commands described 
+			Please note this mechanism is completely distinct from the
+			&quot;listen&quot; and &quot;subscribe&quot; commands described
 			above.
 		</td>
 	</tr>
@@ -7146,7 +7187,7 @@ in the saved playlists folder.</p>
 			progressdone
 		</td>
 		<td>
-			Returned with the current value of items completed for current scan phase. Not returned if 
+			Returned with the current value of items completed for current scan phase. Not returned if
 			no scan is in progress.
 		</td>
 	</tr>
@@ -7258,7 +7299,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;<em>prefName<em>
 		</td>
 		<td>
-			Preference value. Only if the value is defined. Equivalent to 
+			Preference value. Only if the value is defined. Equivalent to
 			&quot;<a href="#pref">pref prefName ?</a>&quot;.
 		</td>
 	</tr>
@@ -7268,7 +7309,7 @@ in the saved playlists folder.</p>
 			player count
 		</td>
 		<td>
-			Number of players known by the server. Equivalent to 
+			Number of players known by the server. Equivalent to
 			&quot;<a href="#player count ?">player count ?</a>&quot;.
 		</td>
 	</tr>
@@ -7290,7 +7331,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;<b>playerid</b>
 		</td>
 		<td>
-			Player unique identifier. Item delimiter. Equivalent to 
+			Player unique identifier. Item delimiter. Equivalent to
 			&quot;<a href="#player id ?">player id ?</a>&quot;.
 		</td>
 	</tr>
@@ -7304,11 +7345,11 @@ in the saved playlists folder.</p>
 		</td>
 	</tr>
 	<tr>
-		<td>	
+		<td>
 			&nbsp;&nbsp;ip
 		</td>
 		<td>
-			Player IP and port. Equivalent to 
+			Player IP and port. Equivalent to
 			&quot;<a href="#player ip ?">player ip ?</a>&quot;.
 		</td>
 	</tr>
@@ -7317,7 +7358,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;name
 		</td>
 		<td>
-			Player name. Equivalent to 
+			Player name. Equivalent to
 			&quot;<a href="#player name ?">player name ?</a>&quot;.
 		</td>
 	</tr>
@@ -7334,7 +7375,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;power
 		</td>
 		<td>
-			Player model. Equivalent to 
+			Player model. Equivalent to
 			&quot;<a href="#player model ?">player model ?</a>&quot;.
 		</td>
 	</tr>
@@ -7343,8 +7384,8 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;isplayer
 		</td>
 		<td>
-			Whether a player is a known player model. Will return 0 for streaming connections. 
-			Equivalent to 
+			Whether a player is a known player model. Will return 0 for streaming connections.
+			Equivalent to
 			&quot;<a href="#player isplayer ?">player isplayer ?</a>&quot;.
 		</td>
 	</tr>
@@ -7353,8 +7394,8 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;displaytype
 		</td>
 		<td>
-			Player display type. Not returned for streaming connections. 
-			Equivalent to 
+			Player display type. Not returned for streaming connections.
+			Equivalent to
 			&quot;<a href="#player displaytype ?">player displaytype &lt;playerindex&gt; ?</a>&quot;.
 		</td>
 	</tr>
@@ -7363,7 +7404,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;canpoweroff
 		</td>
 		<td>
-			Whether the player can be powered off. This value is false for streaming connections. 
+			Whether the player can be powered off. This value is false for streaming connections.
 		</td>
 	</tr>
 	<tr>
@@ -7371,7 +7412,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;connected
 		</td>
 		<td>
-			Connected state. Equivalent to 
+			Connected state. Equivalent to
 			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
 		</td>
 	</tr>
@@ -7495,7 +7536,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;<em>prefName<em>
 		</td>
 		<td>
-			Preference value. Only if the value is defined. Equivalent to 
+			Preference value. Only if the value is defined. Equivalent to
 			&quot;<a href="#playerpref">playerpref prefName ?</a>&quot;.
 		</td>
 	</tr>
@@ -7503,7 +7544,7 @@ in the saved playlists folder.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 </blockquote>
 
 
@@ -7512,9 +7553,9 @@ in the saved playlists folder.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			status 
-			&lt;start&gt; 
-			&lt;itemsPerResponse&gt; 
+			status
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
 		</code>
 	</strong>
@@ -7537,7 +7578,7 @@ in the saved playlists folder.</p>
 	<br>
 	Clients can subscribe to &quot;status&quot; queries, so that the query
 	results are automatically returned asynchronously whenever a change occurs
-	to a player. Please note this mechanism is completely distinct from the 
+	to a player. Please note this mechanism is completely distinct from the
 	&quot;listen&quot; and &quot;subscribe&quot; commands described elsewhere in this document.
 </p>
 <p>
@@ -7558,13 +7599,13 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			Determines which tags are returned. Each returned tag is identified
-			by a letter (see command 
+			by a letter (see command
 			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
-			fields and their identifying letter). The default tags value for 
-			this query is &quot;gald&quot;. In addition to the tags supported by 
+			fields and their identifying letter). The default tags value for
+			this query is &quot;gald&quot;. In addition to the tags supported by
 			&quot;<a href="#songinfo">songinfo</a>&quot; there's the special "DD"
 			tag, which would return no track information, but the total duration
-			of the current playlist only. 
+			of the current playlist only.
 		</td>
 	</tr>
 	<tr>
@@ -7572,8 +7613,8 @@ in the saved playlists folder.</p>
 			subscribe
 		</td>
 		<td>
-			This optional parameter controls the subscription to the player 
-			status. Only one status subscription is possible per player and 
+			This optional parameter controls the subscription to the player
+			status. Only one status subscription is possible per player and
 			connection.
 			<br>
 			Subscription is enabled by using this parameter with a positive
@@ -7584,21 +7625,21 @@ in the saved playlists folder.</p>
 			<br>
 			When enabled, the &quot;status&quot; request is automatically
 			re-generated on player change (and sent asynchronously to the CLI
-			client). The number indicates the time interval in seconds between 
+			client). The number indicates the time interval in seconds between
 			automatic generations in case nothing happened to the player in the
 			interval. Use &quot;0&quot; to disable this last feature and only be
 			notified on player or playlist changes. Please see the example.
 			<br>
 			Some situations will lead to multiple status queries
-			generated very close to another. This is a limitation of the 
+			generated very close to another. This is a limitation of the
 			change detection &quot;algorithm&quot;.
 			<br>
 			If the player is manually (through the web page) or automatically
 			deleted from the server, the status query returns the &quot;error&quot;
 			tag with value &quot;invalid player&quot; and the subscription is terminated.
 			<br>
-			Please note this mechanism is completely distinct from the 
-			&quot;listen&quot; and &quot;subscribe&quot; commands described 
+			Please note this mechanism is completely distinct from the
+			&quot;listen&quot; and &quot;subscribe&quot; commands described
 			above.
 		</td>
 	</tr>
@@ -7780,7 +7821,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;sync_slaves
 		</td>
 		<td>
-			Comma-separated list of player IDs, slaves to sync_master in the 
+			Comma-separated list of player IDs, slaves to sync_master in the
 			sync group this player belongs to. Only if synced.
 		</td>
 	</tr>
@@ -7854,8 +7895,8 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;playlist_name
 		</td>
 		<td>
-			Playlist name, if the current playlist is a stored playlist. 
-			Equivalent to 
+			Playlist name, if the current playlist is a stored playlist.
+			Equivalent to
 			&quot;<a href="#playlist name">playlist name ?</a>&quot;.
 		</td>
 	</tr>
@@ -7865,7 +7906,7 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			Modification state of the saved playlist (if the current playlist is
-			one). Equivalent to 
+			one). Equivalent to
 			&quot;<a href="#playlist modified">playlist modified ?</a>&quot;.
 		</td>
 	</tr>
@@ -7874,7 +7915,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;playlist_timestamp
 		</td>
 		<td>
-			Timestamp of the current playlist, in seconds. Changes to the playlist 
+			Timestamp of the current playlist, in seconds. Changes to the playlist
 			(insertion/removal/shuffling) result in an increase of this value. This can be
 			used to detect the entire playlist has to be reacquired.
 		</td>
@@ -7884,7 +7925,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;playlist_tracks
 		</td>
 		<td>
-			Number of tracks in the current playlist. Only if there is a 
+			Number of tracks in the current playlist. Only if there is a
 			playlist.
 		</td>
 	</tr>
@@ -7914,7 +7955,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;<em>Tags</em>
 		</td>
 		<td>
-			Same tags as defined in command 
+			Same tags as defined in command
 			&quot;<a href="#songinfo">songinfo</a>&quot;.
 		</td>
 	</tr>
@@ -7922,18 +7963,18 @@ in the saved playlists folder.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		<em>Simple example</em>
 		<br>
 		Request: &quot;a5:41:d2:cd:cd:05 status 0 2 tags:&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;a5:41:d2:cd:cd:05 status 0 2 tags: player_name:127.0.0.1 
-		player_connected:1 power:1 mode:play rate:1 time:13.7129358076728 
-		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50 
-		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+		Response: &quot;a5:41:d2:cd:cd:05 status 0 2 tags: player_name:127.0.0.1
+		player_connected:1 power:1 mode:play rate:1 time:13.7129358076728
+		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50
+		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2
 		playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3
-		playlist%20index:0 title:Left%20Outside%20Alone playlist%20index:1 
+		playlist%20index:0 title:Left%20Outside%20Alone playlist%20index:1
 		title:Bounce%20[Original%20Version]&lt;LF&gt;&quot;
 	</p>
 	<p>
@@ -7941,12 +7982,12 @@ in the saved playlists folder.</p>
 		<br>
 		Request: &quot;a5:41:d2:cd:cd:05 status - 2 tags:&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;a5:41:d2:cd:cd:05 status - 2 tags: player_name:127.0.0.1 
-		player_connected:1 power:1 mode:play rate:1 time:18.721127818274 
-		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50 
-		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+		Response: &quot;a5:41:d2:cd:cd:05 status - 2 tags: player_name:127.0.0.1
+		player_connected:1 power:1 mode:play rate:1 time:18.721127818274
+		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50
+		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2
 		playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3
-		playlist%20index:1 title:Bounce%20[Original%20Version] 
+		playlist%20index:1 title:Bounce%20[Original%20Version]
 		playlist%20index:2 title:Open%20Up%20[Radio%20Edit]&lt;LF&gt;&quot;
 	</p>
 	<p>
@@ -7954,20 +7995,20 @@ in the saved playlists folder.</p>
 		<br>
 		Request: &quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		Response: &quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30
 		player_name:127.0.0.1 ... <em>(same as above)</em>
 		<br>
 		<br>
 		<em>10 seconds later, player is turned off, CLI generates and sends:</em>
 		<br>
-		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30
 		player_name:127.0.0.1 player_connected:1 power:0&lt;LF&gt;&quot;
 		<br>
 		<br>
 		<em>30 seconds (the subscribe value) elapse, no changes to the player, the
 		CLI generates and sends:</em>
 		<br>
-		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30
 		player_name:127.0.0.1 player_connected:1 power:0&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -7976,7 +8017,7 @@ in the saved playlists folder.</p>
 <p id="displaystatus">
 	<strong>
 		<code>
-			displaystatus 
+			displaystatus
 			&lt;taggedParameters&gt;
 		</code>
 	</strong>
@@ -8042,11 +8083,11 @@ in the saved playlists folder.</p>
 </p>
 <p>
 	The &quot;readdirectory&quot; query allows to browse filesystems from the server's point of view.
-	This can be used to eg. select music folders. Local filesystems are supported, as are UNC paths 
+	This can be used to eg. select music folders. Local filesystems are supported, as are UNC paths
 	on Windows systems (eg. \\server\musicshare).
 	<br>
 	Please note that on Windows systems the back slashes must either be escaped or replaced by
-	normal slashes. The above path would better be written //server/musicshare. 
+	normal slashes. The above path would better be written //server/musicshare.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -8065,7 +8106,7 @@ in the saved playlists folder.</p>
 			folder
 		</td>
 		<td>
-			the path to the folder to be displayed, eg. c:/music, /Users/mh/Music, 
+			the path to the folder to be displayed, eg. c:/music, /Users/mh/Music,
 			//server/share etc.
 		</td>
 	</tr>
@@ -8077,7 +8118,7 @@ in the saved playlists folder.</p>
 			<ul>
 				<li>filter:foldersonly - list folders only
 				<li>filter:filesonly - list files only
-				<li>filter:musicfiles - list all files considered music files by the server; 
+				<li>filter:musicfiles - list all files considered music files by the server;
 				this is the same filter as is used when scanning the disk for music
 				<li>filter:filetype:xyz - list file type .xyz only
 				<li>filter:xyz - any expression filter path/filenames
@@ -8120,7 +8161,7 @@ in the saved playlists folder.</p>
 		Request: &quot;readdirectory 0 10 folder://media/mp3&quot;
 		<br>
 		Response: &quot;readdirectory 0 10 folder%3A%2F%2Fmedia%2Fmp3 count%3A251 item%3A%5C%5Cmedia%5Cmp3%5CAerosmith isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAir isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAlanis%20Morissette isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAli%20Farka%20Toure isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAll%20Saints isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CManu%20Katche isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CSinead%20O'Connor isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CShakira isfolder%3A1 item%3A%5C%5Cmedia%5Cmp3%5CAnastacia isfolder%3A1&quot;
-</blockquote> 
+</blockquote>
 
 
 <!--#########################################################################-->
@@ -8155,11 +8196,11 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	A new client is notified using &quot;client new&quot;. 
-	&quot;client disconnect&quot; is sent when a client disconnects. Unless it 
+	A new client is notified using &quot;client new&quot;.
+	&quot;client disconnect&quot; is sent when a client disconnects. Unless it
 	reconnects (as signaled by &quot;client reconnect&quot;) before a number of
-	minutes, the client will be automatically forgotten by the server (as 
-	indicated by command/notification 
+	minutes, the client will be automatically forgotten by the server (as
+	indicated by command/notification
 	&quot;<a href="#client forget">client forget</a>&quot;.)
 </p>
 
@@ -8312,8 +8353,8 @@ in the saved playlists folder.</p>
 
 <p>
 	This notification notifies a client that a plugin supports volume change capability for a player.
-	This capability will override (from a user point of view) the "digitalVolumeControl" flag that indicates whether a player's output is fixed to a certain volume (typically 100%).
-	This will be used by pluginjs providing external volume control, e.g. for an amplifier (IRBlaster being an example). In this scenario, the volume output of the player is typically fixed but there is still a volume control capability and the plugin control the amp's volume instead.
+	This capability will override (from a user's point of view) the "digitalVolumeControl" flag that indicates whether a player's output is fixed to a certain volume (typically 100%).
+	This will be used by plugins providing external volume control, e.g. for an amplifier (IRBlaster being an example). In this scenario, the volume output of the player is typically fixed but there is still a volume control capability and the plugin controls the amp's volume instead.
 	The purpose of this notification is to let a client know that there is a volume control capability associated to a player.
 </p>
 <p>
@@ -8371,7 +8412,7 @@ in the saved playlists folder.</p>
 		<br>
 		Response 2: &quot;a5:41:d2:cd:cd:05 getexternalvolumeinfo precise:1 plugin:DenonSerial&quot;
 	</p>
-</blockquote> 
+</blockquote>
 
 <!--#########################################################################-->
 <!-- ALARM COMMANDS                                                          -->
@@ -8490,11 +8531,11 @@ in the saved playlists folder.</p>
 	</tr>
 </table>
 <p>Examples:</p>
-<blockquote> 
+<blockquote>
   <p><b>Defining a new alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1
 	playlist:file://some/playlist.m3u time:9000&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1
 	playlist:file://some/playlist.m3u time:9000 id:eaf39&lt;LF&gt;&quot;</p>
   <p><b>Deleting an alarm</b>
 <br>Request: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;
@@ -8546,26 +8587,26 @@ in the saved playlists folder.</p>
 		<td>&nbsp;&nbsp;<b>singleton</b></td>
 		<td>1 if the item is the only one in it's category, or 0 if there's more than one item.</td>
 	</tr>
-	
+
 </table>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
   		Request: &quot;alarm playlists 0 3&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;alarm playlists 0 100 category:The current playlist 
-		                                      title:Use Current Playlist 
+		Response: &quot;alarm playlists 0 100 category:The current playlist
+		                                      title:Use Current Playlist
 		                                      url:
-		                                      singleton:1 
-		                                      category:Favorites 
-		                                      title:Random%20Artists 
-		                                      url:randomplay://contributor 
-		                                      singleton:0 
-		                                      category:Favorites 
-		                                      title:Random%20Tracks 
-		                                      url:randomplay://track 
+		                                      singleton:1
+		                                      category:Favorites
+		                                      title:Random%20Artists
+		                                      url:randomplay://contributor
+		                                      singleton:0
+		                                      category:Favorites
+		                                      title:Random%20Tracks
+		                                      url:randomplay://track
 		                                      singleton:0
 		                                      count:29
 		&lt;LF&gt;&quot;
@@ -8586,7 +8627,7 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>dow</td>
-		<td>If present, the query returns information about this Day Of Week 
+		<td>If present, the query returns information about this Day Of Week
 		only. Note this takes precedence over any &quot;filter&quot; parameter.
 		0 is Sunday, 1 is Monday, etc. up to 6 being Saturday.
 		</td>
@@ -8594,7 +8635,7 @@ in the saved playlists folder.</p>
 	<tr>
 		<td>filter</td>
 		<td>One of &quot;all&quot; or &quot;enabled&quot; (the default).
-		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use 
+		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use
 		&quot;enabled&quot;</td>
 	</tr>
 </table>
@@ -8644,12 +8685,12 @@ in the saved playlists folder.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
   		Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
-		time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
+		Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1
+		time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000
 		volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
 		&lt;LF&gt;&quot;
 	</p>
@@ -8696,10 +8737,10 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	The following command and queries are proposed by server plugins. The
 	plugin must be enabled in the server configuration for the commands
-	and queries to be available to the CLI client. Please use query 
+	and queries to be available to the CLI client. Please use query
 	&quot;<a href="#can">can</a>&quot; to determine if the given command or
 	query is available. Query &quot;<a href="#radios">radios</a>&quot; can
-	alternatively be used to get a list of available radio station plugin CLI 
+	alternatively be used to get a list of available radio station plugin CLI
 	queries.
 <p>
 <ul>
@@ -8739,7 +8780,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	all radio type plugins enabled in
 	the server. These commands enable the client to present a top level
 	&quot;Radio&quot; or &quot;My Apps&quot; respectively
-	menu easily, without hardcoding the plugins nor 
+	menu easily, without hardcoding the plugins nor
 	worrying about them being enabled.
 </p>
 <p>
@@ -8796,7 +8837,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			Command, one of &quot;lma&quot;, &quot;mp3tunes&quot;,
-			&quot;pandora&quot;, &quot;podcast&quot;, 
+			&quot;pandora&quot;, &quot;podcast&quot;,
 			&quot;radiotime&quot;,  &quot;rhapsodydirect&quot;, &quot;shoutcast&quot;, &quot;
 			or &quot;picks&quot;, or any other, additionally installed radio or music service
 			type plugin. Item delimiter. <br>
@@ -8808,7 +8849,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			&nbsp;&nbsp;name
 		</td>
 		<td>
-			Radio plugin full display name, for example 
+			Radio plugin full display name, for example
 			&quot;Live Music Archive&quot;.
 		</td>
 	</tr>
@@ -8844,12 +8885,12 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
   		Request: &quot;radios 0 2&lt;LF&gt;&quot;
   		<br>
-		Response: &quot;radios 0 2 count:2 
-		cmd:radiotime name:RadioGuide type:xmlbrowser 
+		Response: &quot;radios 0 2 count:2
+		cmd:radiotime name:RadioGuide type:xmlbrowser
 		cmd:shoutcast name:SHOUTcast%20Internet%20Radio type:xmlbrowser
 		&lt;LF&gt;&quot;
 	</p>
@@ -8876,7 +8917,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	These instructions are valid for all XMLBrowser based plugins.
 	While the CLI queries are identical, returned values may vary between
 	plugins. All queries to fetch data from the Internet, and consequently,
-	as experienced in the web interface, there may be a significant delay 
+	as experienced in the web interface, there may be a significant delay
 	before these queries return data. Data is cached however so subsequent
 	queries performed immediately return much faster.
 	<br>
@@ -8899,7 +8940,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of an item to be returned. The id represents the hierarchical 
+			The id of an item to be returned. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
 			in SNMP, like eg. 2.0.9.3
 		</td>
@@ -8943,7 +8984,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			networkerror
 		</td>
 		<td>
-			Returned with value 1 if there was a network error accessing 
+			Returned with value 1 if there was a network error accessing
 			the content source.
 		</td>
 	</tr>
@@ -9009,10 +9050,10 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			&nbsp;&nbsp;url
 		</td>
 		<td>
-			URL of the station or track (only returned if parameter 
-			&quot;want_url&quot; is set to 1). Although, the station can be 
-			played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command, an 
+			URL of the station or track (only returned if parameter
+			&quot;want_url&quot; is set to 1). Although, the station can be
+			played using the
+			&quot;<a href="#playlist play">playlist play</a>&quot; command, an
 			equivalent command that operates on the id is provided below.
 		</td>
 	</tr>
@@ -9036,19 +9077,19 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;picks items 0 2 item_id:0&lt;LF&gt;&quot;
 		<br>
-		Response: "picks items 0 2 
-		item_id:0 
-		count:19 
+		Response: "picks items 0 2
+		item_id:0
+		count:19
 		id:0.0
-		name:Alternative | RADIO%20DAVIDBYRNE.COM 
+		name:Alternative | RADIO%20DAVIDBYRNE.COM
 		hasitems:0
 		id:0.1
 		name:Alternative | KCRW Music
-		hasitems:0 
+		hasitems:0
 		&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -9065,13 +9106,13 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	This command adds or plays an item. Though playback of these stations could 
-	be achieved by the standard playlist methods, calling this command will 
-	ensure that the station's name is displayed, not only it's url (if 
-	possible). 
+	This command adds or plays an item. Though playback of these stations could
+	be achieved by the standard playlist methods, calling this command will
+	ensure that the station's name is displayed, not only it's url (if
+	possible).
 	<br>
-	If item_id defines an item that can't be played, but contains playable 
-	subitems, then these will be played instead. This allows to eg. play all 
+	If item_id defines an item that can't be played, but contains playable
+	subitems, then these will be played instead. This allows to eg. play all
 	tracks of a genre.
 </p>
 <p>
@@ -9091,7 +9132,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of an item to be played. The id represents the hierarchical 
+			The id of an item to be played. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
 			in SNMP, like eg. 2.0.9.3
 		</td>
@@ -9100,7 +9141,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;6e:ef:54:e9:02:b0 shoutcast playlist play item_id:1.1&lt;LF&gt;&quot;
 		<br>
@@ -9119,12 +9160,12 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	Enables rating the Pandora current song. If rated 0, the song is skipped if possible. 
+	Enables rating the Pandora current song. If rated 0, the song is skipped if possible.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;6e:ef:54:e9:02:b0 pandora rate 0&lt;LF&gt;&quot;
 		<br>
@@ -9142,12 +9183,12 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	Skips the currently playing Pandora song. 
+	Skips the currently playing Pandora song.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;6e:ef:54:e9:02:b0 pandora skipTrack&lt;LF&gt;&quot;
 		<br>
@@ -9217,7 +9258,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of a favorite to be returned. The id represents the hierarchical 
+			The id of a favorite to be returned. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
 			in SNMP, like eg. 2.0.9.3
 		</td>
@@ -9301,10 +9342,10 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			&nbsp;&nbsp;url
 		</td>
 		<td>
-			URL of the station or track (only returned if parameter 
-			&quot;want_url&quot; is set to 1). Although, the station can be 
-			played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command, an 
+			URL of the station or track (only returned if parameter
+			&quot;want_url&quot; is set to 1). Although, the station can be
+			played using the
+			&quot;<a href="#playlist play">playlist play</a>&quot; command, an
 			equivalent command that operates on the id is provided below.
 		</td>
 	</tr>
@@ -9362,7 +9403,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites exists file:///... &lt;LF&gt;&quot;
 		<br>
@@ -9400,9 +9441,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of a favorite to be inserted. The id represents the hierarchical 
+			The id of a favorite to be inserted. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			Room is made to accommodate the new favorite. If no item_id is provided,
 			the favorite is added at position 0.
@@ -9461,7 +9502,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites add url:file:///... title:BestSong&lt;LF&gt;&quot;
 		<br>
@@ -9499,9 +9540,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of a level to be inserted. The id represents the hierarchical 
+			The id of a level to be inserted. The id represents the hierarchical
 			structure of the level using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			Room is made to accommodate the new level. If no item_id is provided,
 			the level is added at position 0.
@@ -9544,7 +9585,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites addlevel title:Favourites&lt;LF&gt;&quot;
 		<br>
@@ -9583,9 +9624,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of a favorite or level to be deleted. The id represents the hierarchical 
+			The id of a favorite or level to be deleted. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			This parameter is mandatory.
 		</td>
@@ -9594,7 +9635,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites delete item_id:1.2.3.4.5&lt;LF&gt;&quot;
 		<br>
@@ -9631,9 +9672,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of a favorite or level to be renamed. The id represents the hierarchical 
+			The id of a favorite or level to be renamed. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			This parameter is mandatory.
 		</td>
@@ -9651,7 +9692,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites rename item_id:1.2.3.4.5 title:NewTitle&lt;LF&gt;&quot;
 		<br>
@@ -9688,9 +9729,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			from_id
 		</td>
 		<td>
-			The id of a favorite or level to be moved. The id represents the hierarchical 
+			The id of a favorite or level to be moved. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			This parameter is mandatory.
 		</td>
@@ -9700,9 +9741,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			to_id
 		</td>
 		<td>
-			The id to move the favorite or level to. The id represents the hierarchical 
+			The id to move the favorite or level to. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			This parameter is mandatory.
 		</td>
@@ -9712,7 +9753,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;favorites move from_id:1.2.3.4.5 to_id:5.4.3.2.1&lt;LF&gt;&quot;
 		<br>
@@ -9734,8 +9775,8 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	This command adds or plays a favorite.
 	<br>
-	If item_id defines an item that can't be played, but contains playable 
-	subitems, then these will be played instead. This allows to eg. play all 
+	If item_id defines an item that can't be played, but contains playable
+	subitems, then these will be played instead. This allows to eg. play all
 	tracks of a genre.
 </p>
 <p>
@@ -9755,7 +9796,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			item_id
 		</td>
 		<td>
-			The id of an item to be played. The id represents the hierarchical 
+			The id of an item to be played. The id represents the hierarchical
 			structure of the file using a dotted syntax similar to the one used
 			in SNMP, like eg. 2.0.9.3
 		</td>
@@ -9764,7 +9805,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request: &quot;6e:ef:54:e9:02:b0 favorites playlist play item_id:1.1&lt;LF&gt;&quot;
 		<br>
@@ -9804,15 +9845,15 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	The &quot;randomplay&quot; command starts a random mix of the given 
+	The &quot;randomplay&quot; command starts a random mix of the given
 	type. The &quot;disable&quot; type would disable continuation of
-	the currently playing mix. It would cause the current playlist to 
+	the currently playing mix. It would cause the current playlist to
 	play to the end and no new tracks be added.
 </p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 randomplay albums&lt;LF&gt;&quot;
 		<br>
@@ -9834,7 +9875,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 randomplaygenrelist&lt;LF&gt;&quot;
 		<br>
@@ -9857,7 +9898,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 randomplaychoosegenre Afropop 1&lt;LF&gt;&quot;
 		<br>
@@ -9880,7 +9921,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 randomplaygenreselectall 1&lt;LF&gt;&quot;
 		<br>
@@ -9902,7 +9943,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 randomplaygisactive&quot;
 		<br>
@@ -10005,9 +10046,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			Determines which tags are returned. Each returned tag is identified
-			by a letter (see command 
+			by a letter (see command
 			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
-			fields and their identifying letter). The default tags value for 
+			fields and their identifying letter). The default tags value for
 			this command is &quot;gald&quot;.
 		</td>
 	</tr>
@@ -10015,7 +10056,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 musicip album_id:23&lt;LF&gt;&quot;
 		<br>
@@ -10042,7 +10083,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 musicip play&lt;LF&gt;&quot;
 		<br>
@@ -10064,7 +10105,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
 		Request:  &quot;04:20:00:12:23:45 musicip moods&lt;LF&gt;&quot;
 		<br>
@@ -10110,8 +10151,8 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 </p>
 <p>
 	The &quot;mode&quot; command allows to set the player playlist
-	mode directly. <b>It is deprecated</b>. &quot;mode play&quot; has been 
-	replaced by &quot;<a href="#play">play</a>&quot; &quot;mode stop&quot; 
+	mode directly. <b>It is deprecated</b>. &quot;mode play&quot; has been
+	replaced by &quot;<a href="#play">play</a>&quot; &quot;mode stop&quot;
 	by &quot;<a href="#stop">stop</a>&quot; and &quot;mode pause&quot;
 	by &quot;<a href="#pause">pause 1</a>&quot;.
 </p>
@@ -10128,8 +10169,8 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	The &quot;playlisttracks&quot; command returns the tracks of a given 
-	playlist, <b>is deprecated</b>, and has been replaced by the 
+	The &quot;playlisttracks&quot; command returns the tracks of a given
+	playlist, <b>is deprecated</b>, and has been replaced by the
 	&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
 </p>
 
@@ -10144,9 +10185,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p>
 	The &quot;shutdown&quot; command shuts down the server. The CLI connection
 	is terminated. Please note that the &quot;shutdown&quot; command is only
-	available through a direct CLI socket connection, but not over JSON/RPC or 
+	available through a direct CLI socket connection, but not over JSON/RPC or
 	cometd. It has been replaced with the &quot;<a href="#stopserver">stopserver</a>&quot;
-	command. 
+	command.
 </p>
 
 [% PROCESS helpfooter.html %]

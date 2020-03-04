@@ -42,7 +42,7 @@
 				SqueezeJS.Controller.init({
 					player: playerid
 				});
-		
+
 				// initialize player control panel
 				Main.initPlayerControl();
 			});
@@ -76,6 +76,8 @@
 	[% PROCESS jsString id='COLLAPSE' jsId='collapse' %]
 	[% PROCESS jsString id='EXPAND' jsId='expand' %]
 	[% PROCESS jsString id='UNDOCK_PLAYER_PANEL' jsId='undock' %]
+
+	SqueezeJS.UI.serviceIconProviders = [% USE OnlineServices; OnlineServices.getServiceIconProviders() %];
 
 	Ext.onReady(function(){
 		SqueezeJS.externalImageProxy = new Ext.Template('[% imageproxy %]?u={url}&h={size}&w={size}');
@@ -120,7 +122,7 @@
 						<tr><td>
 							<div id="ctrlUndock" [% IF !embedded %]style="visibility:hidden"[% END %]></div>
 						</td></tr>
-						
+
 						<tr><td>
 							<div id="ctrlCollapse"></div>
 							<div id="ctrlExpand"></div>

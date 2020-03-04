@@ -3,7 +3,7 @@ package Slim::Formats::Movie;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -21,6 +21,7 @@ my %tagMapping = (
 	ART  => 'ARTIST',
 	CMT  => 'COMMENT',
 	COVR => 'ARTWORK',
+	CON  => 'CONDUCTOR',
 	CPIL => 'COMPILATION',
 	DAY  => 'YEAR',
 	GNRE => 'GENRE',
@@ -35,7 +36,7 @@ my %tagMapping = (
 	TMPO => 'BPM',
 	TRKN => 'TRACKNUM',
 	WRT  => 'COMPOSER',
-	
+
 	'MusicBrainz Album Artist' => 'ALBUMARTIST',
 	'MusicBrainz Track Id'     => 'MUSICBRAINZ_ID',
 	'MusicBrainz Sortname'     => 'ARTISTSORT',
@@ -44,19 +45,19 @@ my %tagMapping = (
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
-	
+
 	my $s = Audio::Scan->scan( $file );
-	
+
 	my $info = $s->{info};
 	my $tags = $s->{tags};
 
 	return unless $info->{song_length_ms};
-	
+
 	# skip files with video tracks
 	for my $track ( @{ $info->{tracks} } ) {
 		return if exists $track->{width};
 	}
-	
+
 	# map the existing tag names to the expected tag names
 	$class->_doTagMapping($tags);
 
@@ -67,7 +68,7 @@ sub getTag {
 	$tags->{BITRATE}      = $info->{avg_bitrate};
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	$tags->{LEADING_MDAT} = $info->{leading_mdat} || undef;
-	
+
 	if ( my $track = $info->{tracks}->[0] ) {
 		# MP4 file
 		$tags->{SAMPLESIZE} = $track->{bits_per_sample};
@@ -82,7 +83,7 @@ sub getTag {
 		elsif ( $track->{encoding} && $track->{encoding} eq 'drms' ) {
 			$tags->{DRM} = 1;
 		}
-		
+
 		# Check for HD-AAC file, if the file has 2 tracks and AOTs of 2/37
 		if ( defined $track->{audio_object_type} && (my $track2 = $info->{tracks}->[1]) ) {
 			if ( $track->{audio_object_type} == 2 && $track2->{audio_object_type} == 37 ) {
@@ -98,10 +99,10 @@ sub getTag {
 		$tags->{OFFSET}   = $info->{audio_offset}; # ID3v2 tags may be present
 		$tags->{BITRATE}  = $info->{bitrate};
 		$tags->{CHANNELS} = $info->{channels};
-		
+
 		if ( $info->{id3_version} ) {
 			$tags->{TAGVERSION} = $info->{id3_version};
-		    
+
 			Slim::Formats::MP3->doTagMapping($tags);
 		}
 	}
@@ -112,12 +113,12 @@ sub getTag {
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
-	
+
 	# Enable artwork in Audio::Scan
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
-	
+
 	my $s = Audio::Scan->scan_tags($file);
-	
+
 	return $s->{tags}->{COVR};
 }
 
@@ -139,19 +140,19 @@ sub _doTagMapping {
 	if ( defined $tags->{YEAR} ) {
 		$tags->{YEAR} =~ s/.*(\d\d\d\d).*/$1/;
 	}
-	
+
 	# Unroll the disc info.
 	if ( $tags->{DISK} ) {
 		($tags->{DISC}, $tags->{DISCC}) = split /\//, delete $tags->{DISK};
 	}
-	
+
 	# Look for iTunes SoundCheck data, unless we have a TXXX track gain tag
 	if ( !$tags->{REPLAYGAIN_TRACK_GAIN} ) {
 		if ( $tags->{ITUNNORM} ) {
 			$tags->{REPLAYGAIN_TRACK_GAIN} = Slim::Utils::SoundCheck::normStringTodB( delete $tags->{ITUNNORM} );
 		}
 	}
-	
+
 	# Flag if we have embedded cover art
 	if ( $tags->{ARTWORK} ) {
 		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
@@ -166,18 +167,18 @@ sub _doTagMapping {
 
 sub getInitialAudioBlock {
 	my ($class, $fh, $track, $time) = @_;
-	
+
 	my $sourcelog = logger('player.source');
-	
+
 	# When playing the start of a virtual cue sheet track, findFrameBoundaries will not have been called
 	if ( !exists ${*$fh}{_mp4_seek_header} && $track->url =~ /#([^-]+)-([^-]+)$/ ) {
 		$class->findFrameBoundaries( $fh, undef, $1 );
 	}
-	
+
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
 	);
-	
+
 	return ${ delete ${*$fh}{_mp4_seek_header} };
 }
 
@@ -187,13 +188,13 @@ sub findFrameBoundaries {
 	if (!defined $fh || !defined $time) {
 		return 0;
 	}
-	
+
 	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $fh, int($time * 1000) );
-	
+
 	# Since getInitialAudioBlock will be called right away, stash the new seek header so
 	# we don't have to scan again
 	${*$fh}{_mp4_seek_header} = \($info->{seek_header});
-	
+
 	return $info->{seek_offset};
 }
 

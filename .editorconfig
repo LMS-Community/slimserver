@@ -1,5 +1,5 @@
 root = true
 
-[*.p[lm]]
+[*.{html,p[lm]}]
 indent_style = tab
 indent_size = 8

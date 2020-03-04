@@ -43,6 +43,7 @@ use base qw(Class::Data::Inheritable);
 use Config;
 use File::Spec::Functions;
 use FindBin qw($Bin);
+use List::Util qw(max);
 use Proc::Background;
 use Scalar::Util qw(blessed);
 
@@ -78,6 +79,21 @@ my $prefs           = preferences('server');
 
 my %scanQueue;
 my $ABORT = 0;
+
+my %scanTypes = (
+	'1rescan' => {
+		cmd   => ['rescan'],
+		name => 'SETUP_STANDARDRESCAN'
+	},
+	'2wipedb' => {
+		cmd   => ['wipecache'],
+		name => 'SETUP_WIPEDB'
+	},
+	'3playlist' => {
+		cmd   => ['rescan', 'playlists'],
+		name => 'SETUP_PLAYLISTRESCAN'
+	}
+);
 
 =head2 launchScan( \%args )
 
@@ -170,17 +186,33 @@ sub launchScan {
 	if ( $singledir ) {
 		push @scanArgs, $singledir;
 	}
-	elsif ( $args->{onlinelibrary} ) {
+	elsif ( isOnlineLibrarySupportEnabled() && $args->{onlinelibrary} ) {
 		push @scanArgs, 'onlinelibrary';
 	}
 
-	$class->setIsScanning($args->{wipe} ? 'SETUP_WIPEDB' : 'SETUP_STANDARDRESCAN');
+	my ($scanType) = map {
+		$scanTypes{$_}->{name}
+	} grep {
+		($args->{wipe} && /^\dwipe/)
+		|| ($args->{playlists} && /^\dplaylist/)
+		|| (isOnlineLibrarySupportEnabled() && $args->{onlinelibrary} && /^\donlinelibrary/)
+	} keys %scanTypes;
+
+	$class->setIsScanning($scanType || 'SETUP_STANDARDRESCAN');
+
+	main::INFOLOG && $log->is_info && $log->info("Running scanner using arguments: $command " . Data::Dump::dump(@scanArgs));
 
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
 
 	return 1;
+}
+
+sub isOnlineLibrarySupportEnabled {
+	return main::SCANNER
+		? (preferences('plugin.state')->get('OnlineLibrary') || '') eq 'enabled'
+		: Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin');
 }
 
 =head2 abortScan()
@@ -456,6 +488,24 @@ sub runScanPostProcessing {
 
 	return 1;
 }
+
+
+sub addScanType {
+	my ($class, $key, $config) = @_;
+	my $max = max(map { /^(\d+)/; $1; } keys %scanTypes) + 1;
+	$scanTypes{$max . $key} = $config;
+}
+
+sub getScanTypes {
+	return \%scanTypes;
+}
+
+sub getScanCommand {
+	my ($class, $type) = @_;
+	my $scanType = $scanTypes{$type} || $scanTypes{'1rescan'};
+	return $scanType->{cmd};
+}
+
 
 =head2 deleteImporter( $importer )
 
