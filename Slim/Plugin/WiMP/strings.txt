@@ -90,6 +90,14 @@ PLUGIN_TIDAL_PROGRESS_READ_ALBUMS
 	DE	Lese Alben (%s)...
 	EN	Fetching Albums (%s)...
 
+PLUGIN_TIDAL_ARTISTS_PROGRESS
+	DE	TIDAL Interpreten
+	EN	TIDAL Artists
+
+PLUGIN_TIDAL_PROGRESS_READ_ARTISTS
+	DE	Lese Interpreten (%s)...
+	EN	Fetching Artists (%s)...
+
 PLUGIN_TIDAL_PLAYLISTS_PROGRESS
 	DE	TIDAL Wiedergabelisten
 	EN	TIDAL Playlists

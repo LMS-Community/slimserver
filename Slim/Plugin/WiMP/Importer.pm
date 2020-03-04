@@ -22,6 +22,7 @@ use Slim::Utils::Strings qw(string);
 
 use constant ACCOUNTS_URL  => '/api/wimp/v1/opml/library/getAccounts';
 use constant ALBUMS_URL    => '/api/wimp/v1/opml/library/myAlbums?account=%s';
+use constant ARTISTS_URL   => '/api/wimp/v1/opml/library/myArtists?account=%s';
 use constant PLAYLISTS_URL => '/api/wimp/v1/opml/library/myPlaylists?account=%s';
 use constant FINGERPRINT_URL => '/api/wimp/v1/opml/library/fingerprint';
 
@@ -48,9 +49,9 @@ sub startScan { if (main::SCANNER) {
 	if (ref $accounts && scalar @$accounts) {
 		$class->initOnlineTracksTable();
 
-		my $newMetadata = {};
-		$newMetadata = $class->scanAlbums($accounts, $newMetadata);
-		$newMetadata = $class->scanPlaylists($accounts, $newMetadata);
+		$class->scanAlbums($accounts);
+		$class->scanArtists($accounts);
+		$class->scanPlaylists($accounts);
 
 		$response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
 		$cache->set('tidal_library_fingerprint', ($http->content || ''), 30 * 86400);
@@ -62,7 +63,7 @@ sub startScan { if (main::SCANNER) {
 } }
 
 sub scanAlbums { if (main::SCANNER) {
-	my ($class, $accounts, $newMetadata) = @_;
+	my ($class, $accounts) = @_;
 
 	my $progress;
 
@@ -88,14 +89,18 @@ sub scanAlbums { if (main::SCANNER) {
 		$@ && $log->error($@);
 
 		$progress->total($progress->total + scalar @$albums);
-		my $lastAdded = 0;
 
 		main::INFOLOG && $log->is_info && $log->info(sprintf("Importing album tracks for %s albums...", scalar @$albums));
+		main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($albums));
 		foreach my $album (@$albums) {
+			if (!ref $album) {
+				$log->error("Invalid data: $album");
+				next;
+			}
+			
 			$progress->update($account . string('COLON') . ' ' . $album->{title});
 			Slim::Schema->forceCommit;
 
-			$lastAdded = max($lastAdded, $album->{added});
 			my $tracks = delete $album->{tracks};
 
 			$class->storeTracks([
@@ -103,19 +108,69 @@ sub scanAlbums { if (main::SCANNER) {
 			]);
 		}
 
-		$newMetadata->{$account} ||= [];
-		push @{$newMetadata->{$account}}, $lastAdded;
+		Slim::Schema->forceCommit;
+	}
+
+	$progress->final() if $progress;
+} }
+
+sub scanArtists { if (main::SCANNER) {
+	my ($class, $accounts) = @_;
+
+	my $progress;
+
+	foreach my $account (@$accounts) {
+		if ($progress) {
+			$progress->total($progress->total + 1);
+		}
+		else {
+			$progress = Slim::Utils::Progress->new({
+				'type'  => 'importer',
+				'name'  => 'plugin_tidal_artists',
+				'total' => 1,
+				'every' => 1,
+			});
+		}
+
+		main::INFOLOG && $log->is_info && $log->info("Reading albums for $account...");
+		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ARTISTS', $account));
+
+		my $artistsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ARTISTS_URL, $account)));
+		my $artists = eval { from_json($artistsResponse->content) } || [];
+
+		$@ && $log->error($@);
+
+		$progress->total($progress->total + scalar @$artists);
+
+		main::INFOLOG && $log->is_info && $log->info(sprintf("Importing artist tracks for %s artists...", scalar @$artists));
+		main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($artists));
+		foreach my $artist (@$artists) {
+			if (!ref $artist) {
+				$log->error("Invalid artist data: $artist");
+				next;
+			}
+
+			my $name = $artist->{name};
+
+			$progress->update($account . string('COLON') . ' ' . $name);
+			Slim::Schema->forceCommit;
+
+			Slim::Schema->rs('Contributor')->update_or_create({
+				'name'       => $name,
+				'namesort'   => Slim::Utils::Text::ignoreCaseArticles($name),
+				'namesearch' => Slim::Utils::Text::ignoreCase($name, 1),
+				'extid'      => 'wimp:artist:' . $artist->{id},
+			}, { 'key' => 'namesearch' });
+		}
 
 		Slim::Schema->forceCommit;
 	}
 
 	$progress->final() if $progress;
-
-	return $newMetadata;
 } }
 
 sub scanPlaylists { if (main::SCANNER) {
-	my ($class, $accounts, $newMetadata) = @_;
+	my ($class, $accounts) = @_;
 
 	my $dbh = Slim::Schema->dbh();
 	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
@@ -134,7 +189,6 @@ sub scanPlaylists { if (main::SCANNER) {
 
 	foreach my $account (@$accounts) {
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account), $progress->done);
-		my $lastAdded = 0;
 
 		main::INFOLOG && $log->is_info && $log->info("Reading playlists for $account...");
 		my $playlistsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(PLAYLISTS_URL, $account)));
@@ -154,7 +208,6 @@ sub scanPlaylists { if (main::SCANNER) {
 			Slim::Schema->forceCommit;
 
 			my $url = 'wimp://' . $playlist->{uuid} . '.tdl';
-			$lastAdded = max($lastAdded, str2time($playlist->{created}), str2time($playlist->{lastUpdated}));
 
 			my $playlistObj = Slim::Schema->updateOrCreate({
 				url        => $url,
@@ -187,17 +240,11 @@ sub scanPlaylists { if (main::SCANNER) {
 			$insertTrackInTempTable_sth && $insertTrackInTempTable_sth->execute($url);
 		}
 
-		$newMetadata->{$account} ||= [];
-		push @{$newMetadata->{$account}}, $lastAdded;
-		$newMetadata->{$account}->[1] = $lastAdded;
-
 		Slim::Schema->forceCommit;
 	}
 
 	$progress->final();
 	Slim::Schema->forceCommit;
-
-	return $newMetadata;
 } }
 
 sub trackUriPrefix { 'wimp://' }

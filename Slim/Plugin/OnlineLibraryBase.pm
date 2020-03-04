@@ -143,7 +143,7 @@ sub storeTracks {
 sub libraryMetaId {
 	my ($class, $libraryMeta) = @_;
 	$libraryMeta ||= {};
-	return ($libraryMeta->{total} || '') . '|' . ($libraryMeta->{lastAdded} || '');
+	return ($libraryMeta->{total} || '') . '|' . ($libraryMeta->{lastAdded} || '') . '|' . ($libraryMeta->{hash} || '');
 }
 
 1;
