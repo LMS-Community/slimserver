@@ -54,6 +54,7 @@ use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
 use constant PURGE_RETRY       => 3600;      # retry time if players are on
 use constant PURGE_NEXT        => 30;        # purge next namespace
 use constant IDLE_THRESHOLD    => 600;       # player inactivity before we consider it unused
+use constant FIRST_PURGE_DELAY => 30;
 
 use constant DEFAULT_NAMESPACE => 'cache';
 use constant DEFAULT_VERSION   => 1;
@@ -63,8 +64,6 @@ my %caches = ();
 
 my @thisCycle = (); # namespaces to be purged this purge cycle
 my @eachCycle = (); # namespaces to be purged every PURGE_INTERVAL
-
-my $startUpPurge = 1; # Flag for purging at startup
 
 my $log = logger('server');
 
@@ -91,9 +90,11 @@ sub init {
 	__PACKAGE__->new();
 
 	if ( !main::SCANNER ) {
-		# start purge routine in 10 seconds to purge all caches created during server and plugin startup
 		require Slim::Utils::Timers;
-		Slim::Utils::Timers::setTimer( undef, time() + 10, \&cleanup );
+		Slim::Utils::Timers::setTimer( undef, time() + FIRST_PURGE_DELAY + rand(FIRST_PURGE_DELAY), sub {
+			push @thisCycle, @eachCycle;
+			cleanup();
+		} );
 	}
 }
 
@@ -162,29 +163,23 @@ sub cleanup {
 	# take one namespace from list to purge this cycle
 	$namespace = shift @thisCycle;
 
-	# after startup don't purge if a player is on - retry later
-	unless ($startUpPurge) {
-		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
-				main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
-				unshift @thisCycle, $namespace;
-				$namespace = undef;
-				$interval = PURGE_RETRY;
-				last;
-			}
+	# don't purge if a player is active - retry later
+	for my $client ( Slim::Player::Client::clients() ) {
+		if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
+			main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
+			unshift @thisCycle, $namespace;
+			$namespace = undef;
+			$interval = PURGE_RETRY;
+			last;
 		}
 	}
 
 	unless ($interval) {
 		if (@thisCycle) {
-			$interval = $startUpPurge ? 0.1 : PURGE_NEXT;
+			$interval = PURGE_NEXT;
 		} else {
 			$interval = PURGE_INTERVAL;
 			push @thisCycle, @eachCycle;
-
-			# always run one purging task at startup
-			$namespace ||= shift @thisCycle if $startUpPurge;
-			$startUpPurge = 0;
 		}
 	}
 

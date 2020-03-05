@@ -494,7 +494,7 @@ sub new {
 		if ( !main::SCANNER ) {
 			# start purge routine in a few seconds
 			require Slim::Utils::Timers;
-			Slim::Utils::Timers::setTimer( undef, time() + 10 + int(rand(5)), \&cleanup, 1 );
+			Slim::Utils::Timers::setTimer( undef, time() + 60 + rand(30), \&cleanup );
 		}
 	}
 
