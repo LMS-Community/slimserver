@@ -171,7 +171,7 @@ sub home {
 		}
 
 		if (!main::NOBROWSECACHE && $template eq 'home.html') {
-			$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':', 
+			$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':',
 				($client ? $client->id : ''),
 				$params->{newVersion} || '',
 				$params->{newPlugins} || '',
@@ -238,6 +238,8 @@ sub _updateInfoCB {
 		$params->{'newVersion'} = ${Slim::Web::HTTP::filltemplatefile('html/docs/linux-update.html', $params)};
 	}
 
+	($params->{'serverVersion'}) = $main::VERSION =~ /^(\d+\.\d+)/;
+
 	my $content;
 	if ($params->{path} =~ /\.json/) {
 		my $json = {};
@@ -261,7 +263,7 @@ sub _updateInfoCB {
 sub switchServer {
 	my ($client, $params) = @_;
 
-	if ( !main::NOMYSB && ( lc($params->{'switchto'}) eq 'squeezenetwork' 
+	if ( !main::NOMYSB && ( lc($params->{'switchto'}) eq 'squeezenetwork'
 		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK') ) ) {
 
 		if ( _canSwitch($client) ) {
@@ -297,8 +299,8 @@ sub switchServer {
 
 		if ( !main::NOMYSB && _canSwitch($client) ) {
 			$params->{servers}->{'SQUEEZENETWORK'} = {
-				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
-			}; 
+				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')
+			};
 		}
 
 		my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};

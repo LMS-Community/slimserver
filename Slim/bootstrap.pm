@@ -91,9 +91,9 @@ sub loadModules {
 	}
 
 	my @SlimINC = ();
-	
+
 	Slim::Utils::OSDetect::init();
-	
+
 	if (my $libs = Slim::Utils::OSDetect::dirsFor('libpath')) {
 		# On Debian, RH and SUSE, our CPAN directory is located in the same dir as strings.txt
 		$libPath = $libs;
@@ -105,20 +105,20 @@ sub loadModules {
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
-	
+
 	# Check for use64bitint Perls
 	my $is64bitint = $arch =~ /64int/;
-	
+
 	# Some ARM platforms use different arch strings, just assume any arm*linux system
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
-		$arch = $arch =~ /gnueabihf/ 
-			? 'arm-linux-gnueabihf-thread-multi' 
+		$arch = $arch =~ /gnueabihf/
+			? 'arm-linux-gnueabihf-thread-multi'
 			: 'arm-linux-gnueabi-thread-multi';
 		$arch .= '-64int' if $is64bitint;
 	}
-	
+
 	# Same thing with PPC
 	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 		$arch = 'powerpc-linux-thread-multi';
@@ -137,8 +137,8 @@ sub loadModules {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion),
-		catdir($libPath,'lib'), 
-		catdir($libPath,'CPAN'), 
+		catdir($libPath,'lib'),
+		catdir($libPath,'CPAN'),
 		$libPath,
 	);
 
@@ -186,11 +186,12 @@ sub loadModules {
 	}
 
 	if (scalar @required_really_failed) {
+		my ($serverVersion) = $main::VERSION =~ /^(\d+\.\d+)/;
 
 		my $failed = join(' ', @required_really_failed);
 
 		print "The following modules failed to load: $failed\n\n";
-		
+
 		if ( main::ISWINDOWS ) {
 			print "To run from source on Windows, please install ActivePerl 5.14.  ActivePerl 5.10.0 is no longer supported.\n";
 			print "http://downloads.activestate.com/ActivePerl/releases/\n\n";
@@ -202,12 +203,12 @@ sub loadModules {
 
 NOTE:
 
-If you're running some unsupported Linux/Unix platform, please use the buildme.sh 
+If you're running some unsupported Linux/Unix platform, please use the buildme.sh
 script located here:
 
-https://github.com/Logitech/slimserver-vendor/tree/public/7.9/CPAN
+https://github.com/Logitech/slimserver-vendor/tree/public/$serverVersion/CPAN
 
-If 7.9 is outdated by the time you read this, Replace "7.9" with the major version
+If $serverVersion is outdated by the time you read this, Replace "$serverVersion" with the major version
 You should never need to do this if you're on Windows or Mac OSX. If the installers
 don't work for you, ask for help and/or report a bug.
 
@@ -215,7 +216,7 @@ don't work for you, ask for help and/or report a bug.
 
 			\n};
 		}
-		
+
 		print "Exiting..\n";
 
 		exit;
@@ -223,13 +224,13 @@ don't work for you, ask for help and/or report a bug.
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
-	
+
 	# Check that all of our CPAN modules are the correct minimum version
 	my $failed = check_valid_versions();
 	if ( scalar keys %{$failed} ) {
-	
+
 		print "The following CPAN modules were found but cannot work with Logitech Media Server:\n";
-		
+
 		for my $module ( sort keys %{$failed} ) {
 			if ( $failed->{$module}->{loaded} eq $failed->{$module}->{need} && $failed->{$module}->{msg} ) {
 				print "  $module:\n" . $failed->{$module}->{msg} . "\n";
@@ -238,22 +239,22 @@ don't work for you, ask for help and/or report a bug.
 				print "  $module (loaded " . $failed->{$module}->{loaded} . ", need " . $failed->{$module}->{need} . ")\n";
 			}
 		}
-		
-		print "\n";		
+
+		print "\n";
 		print "To fix this problem you have several options:\n";
 		print "1. Install the latest version of the module(s) using CPAN: sudo cpan Some::Module\n";
 		print "2. Update the module's package using apt-get, yum, etc.\n";
 		print "3. Run the .tar.gz version of Logitech Media Server which includes all required CPAN modules.\n";
 		print "\n";
-		
+
 		exit;
 	}
-	
+
 	# Load PerfMon if enabled
 	if ( main::PERFMON ) {
 		require Slim::Utils::PerfMon;
 	}
-	
+
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'TERM'} = \&sigterm;
 	$SIG{'INT'}  = \&sigint;
@@ -343,32 +344,32 @@ sub check_valid_versions {
 
 	# Don't load all these modules in the scanner
 	return $failed if main::SCANNER || main::RESIZER;
-	
+
 	# don't check validity on Windows binary - it's all built in
 	return $failed if $0 =~ /scanner\.exe/i;
-	
+
 	my ($dir) = Slim::Utils::OSDetect::dirsFor('types');
-	
+
 	open my $fh, '<', catfile( $dir, 'modules.conf' ) or die 'modules.conf not found';
 	do { local $/ = undef; $modules = <$fh> };
 	close $fh;
 
 	for my $line ( split /\n/, $modules ) {
-		
+
 		next if !main::WEBUI && $line =~ /Template/;
-		
+
 		next unless $line =~ /^\w+/;
 		chomp $line;
-		
+
 		my ($mod, $ver, $max_ver) = split /\s+/, $line;
-		
+
 		# Could parse the module file here using code from Module::Build,
 		# but we will be loading these later anyway, so this is easier.
 		eval "use $mod ()";
 		if ( !$@ ) {
 			eval {
 				$mod->VERSION( $ver || 0 );
-			
+
 				# Check if version is too high
 				if ( $max_ver && $mod->VERSION gt $max_ver ) {
 					die "$mod version " . $mod->VERSION . " is too new, please use version $max_ver\n";
@@ -394,7 +395,7 @@ sub check_valid_versions {
 			}
 		}
 	}
-	
+
 	return $failed;
 }
 

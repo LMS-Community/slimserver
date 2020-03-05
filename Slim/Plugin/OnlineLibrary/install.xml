@@ -12,7 +12,7 @@
 	<optionsURL>plugins/OnlineLibrary/settings.html</optionsURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
-		<minVersion>7.9.2</minVersion>
+		<minVersion>8.0.0</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

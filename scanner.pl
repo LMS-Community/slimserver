@@ -42,7 +42,11 @@ if (0) {
 	require Cache::FileCache;
 }
 
+our $REVISION    = undef;
+our $BUILDDATE   = undef;
+
 BEGIN {
+	our $VERSION = '8.0.0';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
@@ -91,10 +95,6 @@ if ( INFOLOG || DEBUGLOG ) {
 	require Data::Dump;
 	require Slim::Utils::PerlRunTime;
 }
-
-our $VERSION     = '8.0.0';
-our $REVISION    = undef;
-our $BUILDDATE   = undef;
 
 our $prefs;
 our $progress;
@@ -203,7 +203,7 @@ sub main {
 
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	$log->error("Starting Logitech Media Server scanner (v$VERSION, $REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server scanner (v$main::VERSION, $REVISION, $BUILDDATE) perl $]");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);

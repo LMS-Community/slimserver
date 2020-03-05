@@ -81,8 +81,7 @@
 			Ext.ux.JSONP.request("https://api.github.com/repos/Logitech/slimserver/commits", {
 				params: {
 					per_page: 5,
-					// TODO: make this dynamic
-					sha: 'public/7.9'
+					sha: 'public/[% serverVersion %]'
 				},
 				callbackKey: "callback",
 				callback: function(c) {
@@ -128,11 +127,11 @@
 
 		<div id="changelogWrapper" style="display:none; margin-top: 15px;" class="helpsection">
 			<!-- TODO: make this URL dynamic -->
-			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/Logitech/slimserver/commits/public/7.9") %]</h4>
+			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/Logitech/slimserver/commits/public/" _ serverVersion) %]</h4>
 			<dl id="changelog"></dl>
 		</div>
 
-		<dt><a href="https://github.com/Logitech/slimserver/commits/public/7.9" target="_blank">[% "MORE" | string %]</a></dt>
+		<dt><a href="https://github.com/Logitech/slimserver/commits/public/[% serverVersion %]" target="_blank">[% "MORE" | string %]</a></dt>
 	[% ELSE %]
 		<h4>[% "CONTROLPANEL_NO_UPDATE_AVAILABLE" | string | html %]</h4>
 	[% END %]

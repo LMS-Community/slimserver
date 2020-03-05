@@ -21,10 +21,10 @@ BEGIN {
 		eval {
 			require Win32::TieRegistry;
 			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/System/ControlSet001/services/squeezesvc', 
-				{ 
-					Access => Win32::TieRegistry::KEY_READ(), 
-					Delimiter =>'/' 
+				'LMachine/System/ControlSet001/services/squeezesvc',
+				{
+					Access => Win32::TieRegistry::KEY_READ(),
+					Delimiter =>'/'
 				}
 			);
 
@@ -61,7 +61,7 @@ use Config;
 my %check_inc;
 $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 
-# This package section is used for the windows service version of the application, 
+# This package section is used for the windows service version of the application,
 # as built with ActiveState's PerlSvc
 if (ISWINDOWS && $PerlSvc::VERSION) {
 	package PerlSvc;
@@ -128,7 +128,7 @@ if (ISWINDOWS && $PerlSvc::VERSION) {
 	}
 
 	sub Interactive {
-		main::main();	
+		main::main();
 	}
 
 	sub Remove {
@@ -136,7 +136,7 @@ if (ISWINDOWS && $PerlSvc::VERSION) {
 		main::initLogging();
 	}
 
-	sub Help {	
+	sub Help {
 		main::showUsage();
 		main::initLogging();
 	}
@@ -150,7 +150,12 @@ use lib $Bin;
 
 our @argv;
 
+our $REVISION    = undef;
+our $BUILDDATE   = undef;
+
 BEGIN {
+	our $VERSION = '8.0.0';
+
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable
 	$ENV{LIBEV_FLAGS} = 1;
@@ -217,7 +222,7 @@ use XML::Simple qw(2.15);
 
 eval {
 	local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
-	require XML::Parser; 
+	require XML::Parser;
 };
 
 if (!$@) {
@@ -318,10 +323,6 @@ our @AUTHORS = (
 );
 
 my $prefs        = preferences('server');
-
-our $VERSION     = '8.0.0';
-our $REVISION    = undef;
-our $BUILDDATE   = undef;
 our $httpport    = undef;
 
 our (
@@ -384,9 +385,9 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->error("Starting Logitech Media Server (v$VERSION, $REVISION, $BUILDDATE) perl $] - " . $main::Config{archname});
+	$log->error("Starting Logitech Media Server (v$main::VERSION, $REVISION, $BUILDDATE) perl $] - " . $main::Config{archname});
 
-	if ($diag) { 
+	if ($diag) {
 		eval "use diagnostics";
 	}
 
@@ -418,10 +419,10 @@ sub init {
 
 	unless (main::ISWINDOWS) {
 		$SIG{'HUP'} = \&initSettings;
-	}		
+	}
 
 	if (Slim::Utils::Misc::runningAsService()) {
-		$SIG{'QUIT'} = \&Slim::bootstrap::ignoresigquit; 
+		$SIG{'QUIT'} = \&Slim::bootstrap::ignoresigquit;
 	} else {
 		$SIG{'QUIT'} = \&Slim::bootstrap::sigquit;
 	}
@@ -462,7 +463,7 @@ sub init {
 	# Change UID/GID after the pid & logfiles have been opened.
 	unless ($os->dontSetUserAndGroup() || (defined($user) && $> != 0)) {
 		main::INFOLOG && $log->info("Server settings effective user and group if requested...");
-		changeEffectiveUserAndGroup();		
+		changeEffectiveUserAndGroup();
 	}
 
 	# Set priority, command line overrides pref
@@ -686,7 +687,7 @@ sub idle {
 	my $now = EV::now;
 
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
-	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {		
+	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {
 		# For all clients that support RTC, we need to adjust their clocks
 		for my $client ( Slim::Player::Client::clients() ) {
 			if ( $client->hasRTCAlarm ) {
@@ -766,7 +767,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --logfile        => Specify a file for error logging.  Specify 'syslog' to log to syslog.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
-    --stdio          => Use standard in and out as a command line interface 
+    --stdio          => Use standard in and out as a command line interface
                         to the server
     --user           => Specify the user that server should run as.
                         Only usable if server is started as root.
@@ -778,21 +779,21 @@ Usage: $0 [--diag] [--daemon] [--stdio]
                         Set to 0 in order disable the web server.
     --httpaddr       => Activate the web interface on the specified IP address.
     --cliport        => Activate the command line interface TCP/IP interface
-                        on the specified port. Set to 0 in order disable the 
+                        on the specified port. Set to 0 in order disable the
                         command line interface server.
-    --cliaddr        => Activate the command line interface TCP/IP 
+    --cliaddr        => Activate the command line interface TCP/IP
                         interface on the specified IP address.
     --prefsdir       => Specify the location of the preferences directory
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
-    --playeraddr     => Specify the _server's_ IP address to use to connect 
+    --playeraddr     => Specify the _server's_ IP address to use to connect
                         to Slim players
     --priority       => set process priority from -20 (high) to 20 (low)
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nodebuglog     => Disable all debug-level logging (compiled out).
     --noinfolog      => Disable all debug-level & info-level logging (compiled out).
-    --norestart      => Disable automatic restarts of server (if performed by external script) 
+    --norestart      => Disable automatic restarts of server (if performed by external script)
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible.
                         Settings changes are not preserved.
@@ -936,7 +937,7 @@ sub initSettings {
 		$prefs->set('librarycachedir',$cachedir) unless $prefs->get('librarycachedir');
 	}
 
-	Slim::Utils::Prefs::makeCacheDir();	
+	Slim::Utils::Prefs::makeCacheDir();
 }
 
 sub daemonize {
@@ -1207,7 +1208,7 @@ sub END {
 }
 
 # start up the server if we're not running as a service.
-if (!defined($PerlSvc::VERSION)) { 
+if (!defined($PerlSvc::VERSION)) {
 	main()
 }
 
