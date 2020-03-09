@@ -673,7 +673,7 @@ sub processHTTP {
 
 			$params->{"path"} = Slim::Utils::Misc::unescape($path);
 			$params->{"host"} = $request->header('Host');
-		} 
+		}
 
 		if ( main::WEBUI && $csrfProtectionLevel ) {
 			# apply CSRF protection logic to "dangerous" commands
@@ -706,7 +706,7 @@ sub processHTTP {
 			$response->content_type('text/html');
 			$response->content_ref(filltemplatefile('html/errors/405.html', $params));
 		}
-	
+
 		$httpClient->send_response($response);
 		closeHTTPSocket($httpClient);
 	}
@@ -748,7 +748,9 @@ sub processURL {
 
 	for (my $i = 0; $i <= scalar keys %{$params}; $i++) {
 		last unless defined $params->{"p$i"};
-		$p[$i] = Slim::Utils::Unicode::utf8encode_locale($params->{"p$i"});
+		$p[$i] = (!main::ISWINDOWS && Slim::Utils::Unicode::looks_like_utf8($_))
+			? Slim::Utils::Unicode::utf8on($params->{"p$i"})
+			: Slim::Utils::Unicode::utf8encode_locale($params->{"p$i"});
 	}
 
 	# This is trumped by query parameters 'command' and 'subcommand'.
@@ -831,11 +833,11 @@ sub processURL {
 			my $temprate = $params->{'bitrate'};
 
 			foreach my $i (qw(320 256 224 192 160 128 112 96 80 64 56 48 40 32)) {
-				$temprate = $i; 	 
-				last if ($i <= $params->{'bitrate'}); 	 
+				$temprate = $i;
+				last if ($i <= $params->{'bitrate'});
 			}
 
-			$prefs->client($client)->set('transcodeBitrate',$temprate); 	 
+			$prefs->client($client)->set('transcodeBitrate',$temprate);
 
 			main::INFOLOG && $log->is_info && $log->info("Setting transcode bitrate to $temprate");
 
@@ -905,7 +907,7 @@ sub generateHTTPResponse {
 
 	# this is a scalar ref because of the potential size of the body.
 	# not sure if it actually speeds things up considerably.
-	my ($body, $mtime, $inode, $size); 
+	my ($body, $mtime, $inode, $size);
 
 	# default to 200
 	$response->code(RC_OK);
@@ -916,14 +918,14 @@ sub generateHTTPResponse {
 	$params->{'noserver'} = 1   if $::noserver;
 
 	# Check for the gallery view cookie.
-	if ($params->{'cookies'}->{'Squeezebox-albumView'} && 
+	if ($params->{'cookies'}->{'Squeezebox-albumView'} &&
 		$params->{'cookies'}->{'Squeezebox-albumView'}->value) {
 
 		$params->{'artwork'} = $params->{'cookies'}->{'Squeezebox-albumView'}->value unless defined $params->{'artwork'};
 	}
 
 	# Check for the album order cookie.
-	if ($params->{'cookies'}->{'Squeezebox-orderBy'} && 
+	if ($params->{'cookies'}->{'Squeezebox-orderBy'} &&
 		$params->{'cookies'}->{'Squeezebox-orderBy'}->value) {
 
 		$params->{'orderBy'} = $params->{'cookies'}->{'Squeezebox-orderBy'}->value unless defined $params->{'orderBy'};
@@ -980,10 +982,10 @@ sub generateHTTPResponse {
 	my $classOrCode = Slim::Web::Pages->getPageFunction($path);
 
 	# protect access to settings pages: only allow from local network
-	if ( main::WEBUI 
-		&& !Slim::Utils::Network::ip_is_host($peeraddr{$httpClient}) 
-		&& $prefs->get('protectSettings') && !$prefs->get('authorize') 
-		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings') 
+	if ( main::WEBUI
+		&& !Slim::Utils::Network::ip_is_host($peeraddr{$httpClient})
+		&& $prefs->get('protectSettings') && !$prefs->get('authorize')
+		&& $classOrCode && !ref $classOrCode && $classOrCode->isa('Slim::Web::Settings')
 		&& ( Slim::Utils::Network::ip_is_gateway($peeraddr{$httpClient}) || Slim::Utils::Network::ip_on_different_network($peeraddr{$httpClient}) )
 	) {
 		my $hostIP = Slim::Utils::IPDetect::IP();
@@ -1061,7 +1063,7 @@ sub generateHTTPResponse {
 	elsif ( $path =~ /\.css|\.js(?!on)|robots\.txt/ ) {
 		$isStatic = 1;
 	}
-	elsif (    $path =~ m{html/} 
+	elsif (    $path =~ m{html/}
 			&& $path !~ /\/\w+_(X|\d+)x(X|\d+)
                     (?:_([sSfFpc]))?        # resizeMode, given by a single character
                     (?:_[\da-fA-F]+)? 		# background color, optional
@@ -1159,8 +1161,8 @@ sub generateHTTPResponse {
 
 			return 0;
 
-		} elsif ($path =~ m{(?:image|music|video)/([^/]+)/(cover|thumb)} || 
-			$path =~ m{^(?:plugins/cache/icons|imageproxy)} || 
+		} elsif ($path =~ m{(?:image|music|video)/([^/]+)/(cover|thumb)} ||
+			$path =~ m{^(?:plugins/cache/icons|imageproxy)} ||
 			$path =~ /\/\w+_(X|\d+)x(X|\d+)
 	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character
 	                        (?:_[\da-fA-F]+)? 		# background color, optional
@@ -1175,8 +1177,8 @@ sub generateHTTPResponse {
 			my $sentResponse = 0;
 
 			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::artworkRequest(
-				$client, 
-				$path, 
+				$client,
+				$path,
 				$params,
 				sub {
 					$sentResponse = 1;
@@ -1343,7 +1345,7 @@ sub generateHTTPResponse {
 					$file = ref $fileinfo->{file} eq 'CODE' ? $fileinfo->{file}->($path) : $fileinfo->{file};
 					$ct   = ref $fileinfo->{ct}   eq 'CODE' ? $fileinfo->{ct}->($path)   : $fileinfo->{ct};
 
-					if (!-e $file) { 
+					if (!-e $file) {
 						$file = undef;
 					}
 
@@ -1357,7 +1359,7 @@ sub generateHTTPResponse {
 				if ( $keepAlives{$httpClient} ) {
 					main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for raw file $file");
 					delete $keepAlives{$httpClient};
-					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );					
+					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 					$response->header( Connection => 'close' );
 				}
 
@@ -1485,7 +1487,7 @@ sub sendStreamingFile {
 
 	$response->content_type( $contentType );
 	$response->content_length( $size );
-	$response->header('Content-Disposition', 
+	$response->header('Content-Disposition',
 		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
 	) unless $showInBrowser;
 
@@ -1795,7 +1797,7 @@ sub prepareResponseForSending {
 	# bug 7498: add charset to content type if needed
 	# If we're perl 5.8 or above, always send back utf-8
 	# Otherwise, send back the charset from the current locale
-	my $contentType = $response->content_type; 
+	my $contentType = $response->content_type;
 
 	if ($contentType =~ m!^text/(?:html|xml)!) {
 
@@ -1832,8 +1834,8 @@ sub _stringifyHeaders {
 	$data .= $response->headers_as_string($CRLF);
 
 	# hack to make xmms like the audio better, since it appears to be case sensitive on for headers.
-	$data =~ s/^(Icy-.+\:)/\L$1/mg; 
-	
+	$data =~ s/^(Icy-.+\:)/\L$1/mg;
+
 	# hack for Reciva Internet Radios which glitch on metadata unless the
 	# icy-name header comes before icy-metaint, so make sure icy-metaint
 	# is the last of the headers.
@@ -1902,7 +1904,7 @@ sub addHTTPResponse {
 
 	# And now the body.
 	# Don't send back any content on a HEAD or 304 response.
-	if ($response->request()->method() ne 'HEAD' && 
+	if ($response->request()->method() ne 'HEAD' &&
 		$response->code() ne RC_NOT_MODIFIED &&
 		$response->code() ne RC_PRECONDITION_FAILED) {
 
@@ -1980,7 +1982,7 @@ sub sendResponse {
 
 		# Nothing to send, so we take the socket out of the write list.
 		# When we process the next request, it will get put back on.
-		Slim::Networking::Select::removeWrite($httpClient); 
+		Slim::Networking::Select::removeWrite($httpClient);
 
 		return;
 	}
@@ -2072,8 +2074,8 @@ sub sendResponse {
 sub addStreamingResponse {
 	my $httpClient = shift;
 	my $message    = shift;
-	
-	my %segment = ( 
+
+	my %segment = (
 		'data'   => \$message,
 		'offset' => 0,
 		'length' => length($message)
@@ -2160,8 +2162,8 @@ sub sendStreamingResponse {
 		closeStreamingSocket($httpClient);
 		return undef;
 	}
-	
-	if (!defined($streamingFile) && $client && $client->isa("Slim::Player::HTTP") && 
+
+	if (!defined($streamingFile) && $client && $client->isa("Slim::Player::HTTP") &&
 		((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 
 		$silence = 1;
@@ -2178,7 +2180,7 @@ sub sendStreamingResponse {
 			my $bitrate = Slim::Utils::Prefs::maxRate($client);
 			my $silence = undef;
 
-			if ($bitrate == 320 || $bitrate == 0) { 
+			if ($bitrate == 320 || $bitrate == 0) {
 
 				$silence = getStaticContent("html/silence.mp3");
 
@@ -2187,7 +2189,7 @@ sub sendStreamingResponse {
 				$silence = getStaticContent("html/lbrsilence.mp3");
 			}
 
-			my %segment = ( 
+			my %segment = (
 				'data'   => $silence,
 				'offset' => 0,
 				'length' => length($$silence)
@@ -2231,7 +2233,7 @@ sub sendStreamingResponse {
 					closeStreamingSocket($httpClient);
 					main::INFOLOG && $log->info("Abandoning orphened streaming connection");
 					return 0;
-				} 
+				}
 
 				$chunkRef = $client->nextChunk(MAXCHUNKSIZE, sub {tryStreamingLater(shift, $httpClient);});
 			}
@@ -2244,8 +2246,8 @@ sub sendStreamingResponse {
 					if ( main::INFOLOG && $isInfo ) {
 						$log->info("(audio: " . length($$chunkRef) . " bytes)");
 					}
-	
-					my %segment = ( 
+
+					my %segment = (
 						'data'   => $chunkRef,
 						'offset' => 0,
 						'length' => length($$chunkRef)
@@ -2299,7 +2301,7 @@ sub sendStreamingResponse {
 
 			my $message = chr($length) . $metastring;
 
-			my %segment = ( 
+			my %segment = (
 				'data'   => \$message,
 				'offset' => 0,
 				'length' => length($message)
@@ -2393,7 +2395,7 @@ sub sendStreamingResponse {
 		main::INFOLOG && $isInfo && $log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
 
 		# Update sent counter if this is a range request
-		if ( $rangeTotal ) {	
+		if ( $rangeTotal ) {
 			${*$streamingFile}{rangeCounter} += $sentbytes;
 		}
 	}
@@ -2709,8 +2711,8 @@ sub downloadMusicFile {
 		# Bug 8808, support transcoding if a file extension is provided
 		my $uri    = $response->request->uri;
 		my $isHead = $response->request->method eq 'HEAD';
-		
-		if ( my ($outFormat) = $uri =~ m{download\.([^\?]+)} ) {				
+
+		if ( my ($outFormat) = $uri =~ m{download\.([^\?]+)} ) {
 			# if the file extension itself is no valid content type, try to figure it out
 			if ( !Slim::Music::Info::isSong(undef, $outFormat) ) {
 				$outFormat = Slim::Music::Info::typeFromSuffix($uri);
@@ -2740,7 +2742,7 @@ sub downloadMusicFile {
 						$log->error("Couldn't transcode " . $obj->url . " to $outFormat: $error");
 
 						$response->code(400);
-						$response->headers->remove_content_headers;				
+						$response->headers->remove_content_headers;
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
@@ -2753,7 +2755,7 @@ sub downloadMusicFile {
 						$log->error("Couldn't create transcoder command-line for " . $obj->url . " to $outFormat");
 
 						$response->code(400);
-						$response->headers->remove_content_headers;					
+						$response->headers->remove_content_headers;
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
@@ -2793,7 +2795,7 @@ sub downloadMusicFile {
 
 					my $filename = Slim::Utils::Misc::pathFromFileURL($obj->url);
 					$filename =~ s/\..+$/\.$outFormat/;
-					$response->header('Content-Disposition', 
+					$response->header('Content-Disposition',
 						sprintf('attachment; filename="%s"', basename($filename))
 					);
 
@@ -2896,9 +2898,9 @@ sub downloadMusicFile {
 				else {
 					# Transcoding is not enabled, return 400
 					$log->error("Transcoding is not enabled for " . $obj->url . " to $outFormat");
-				
-					$response->code(400);	
-					$response->headers->remove_content_headers;				
+
+					$response->code(400);
+					$response->headers->remove_content_headers;
 					addHTTPResponse($httpClient, $response, \'', 1, 0);
 					return 1;
 				}
