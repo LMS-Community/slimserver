@@ -828,7 +828,8 @@ sub artistsQuery {
 
 	my $va_pref  = $prefs->get('variousArtistAutoIdentification') && $prefs->get('useUnifiedArtistsList');
 
-	my $wantExternal = $tags =~ /Q/ && $tags =~ /E/;
+	# we only want external artists without tracks if there's no filtering argument given
+	my $wantExternal = $tags =~ /Q/ && !$year && !$genreID && !$genreString && !$trackID && !$albumID && !$artistID;
 
 	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';
