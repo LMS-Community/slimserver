@@ -154,7 +154,10 @@ sub handler {
 		}
 		elsif (!$params->{pref_enableAudioBooks} && $prefs->get('enableAudioBooks')) {
 			my $libraryId = Slim::Music::VirtualLibraries->getRealId(Slim::Plugin::ExtendedBrowseModes::Libraries::AUDIOBOOK_LIBRARY_ID);
-			my %ids = map { $_->{id} => 1 } @{AUDIOBOOKS_MENUS()};
+			my %ids = map {
+				Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
+				$_->{id} => 1;
+			} @{AUDIOBOOKS_MENUS()};
 
 			$menus = [ grep {
 				!($ids{$_->{id}} && $_->{params}->{library_id} && $_->{params}->{library_id} eq $libraryId)
