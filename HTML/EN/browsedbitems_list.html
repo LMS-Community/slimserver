@@ -1,9 +1,10 @@
+	[% UNLESS leftControls; leftControls = 'browsecontrols'; END %]
 	[% WRAPPER contentitem
-			leftcontrols= 'browsecontrols'
+			leftcontrols= leftControls
 			itemobj     = item.itemobj
 			attributes  = item.attributes
 			odd         = item.odd
-			anchor      = item.anchor 
+			anchor      = item.anchor
 			showdescend = item.showdescend
 			showplay    = item.showplay
 			showplayall = item.showplayall

@@ -1,5 +1,5 @@
 [%- FILTER null %]
-[% 
+[%
 stringBY    = "BY" | string;
 stringFROM  = "FROM" | string;
 stringHOME  = "HOME" | string;
@@ -19,6 +19,7 @@ stringDELETE= "DELETE" | string;
 stringALBUM = "ALBUM" | string;
 stringARTIST= "ARTIST" | string;
 stringYEAR  = "YEAR" | string;
+stringINFO  = "INFORMATION" | string;
 
 playerURI = player | uri;
 albumHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% itemobj.album.title | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/"[% END;
@@ -40,7 +41,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [%- END %]
 
 [%# href for save playlist command %]
-[% BLOCK savePlaylistLink -%] 
+[% BLOCK savePlaylistLink -%]
 	[% "<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >" %]
 	[% IF img; "<img alt=\"";stringSAVE;"\" src=\"html/images/";img;"\" >";ELSE; stringSAVE; END;"</a>" -%]
 [%- END %]
@@ -61,7 +62,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [% BLOCK statusImg -%][% IF NOT height; height = thumbSize || 100; END %][% IF NOT width; width = height; END %]
 	[% "<span style=\"width:";height;"px; height:";height;"px;\"><img src=\"/music/$coverThumb/cover_";width;"x"; height;"_f_000000.jpg\""; IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END;
 		"id=\"coverartpath\"
-		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; stringFROM; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
+		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; stringFROM; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\"
 		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\"></span>" -%]
 [%- END %]
 
@@ -71,21 +72,21 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [%- END %]
 
 
-[%  
+[%
 	'urlcmdFor' => {
 				'play'   => 'play',
 				'add'    => 'add',
 				'insert' => 'insert',
 				'remove' => 'deleteitem',
 			}
-			
+
 	'cmdFor'    => {
 				'play'   => 'loadtracks',
 				'add'    => 'addtracks',
 				'insert' => 'inserttracks',
 				'remove' => 'deletetracks',
-			} 
-			
+			}
+
 	'numcmdFor' => {
 				'delete' => 'delete',
 				'move'   => 'move',
@@ -117,7 +118,7 @@ p0=playlist&amp;p1=[% numcmdFor.$cmdType %]&amp;p2=[% num %]
 
 [%# use this to add/play/insert/remove tracks and remote URLs %]
 [% BLOCK cmdHRef -%]
-href="[% webroot %][% statusroot %]?[% 
+href="[% webroot %][% statusroot %]?[%
 	IF numcmdFor.$cmdType; # better way to determine this?
 		PROCESS cmdNumericQuery;
 	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
@@ -127,7 +128,7 @@ href="[% webroot %][% statusroot %]?[%
 	END; %]&amp;player=[% playerURI %]"
 [%- END %]
 
-[%# ajaxCmdHRef supplies only the URL args necessary for an add/play/insert/remove 
+[%# ajaxCmdHRef supplies only the URL args necessary for an add/play/insert/remove
 this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 %]
 [% BLOCK ajaxCmdHRef -%]
 [%- IF numcmdFor.$cmdType; # better way to determine this?
@@ -192,7 +193,7 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 	[% END -%]
 	[% IF item.year; year = " (" _ item.year _ ")"; END %]
 	[% details = ( item.album _ artistlist _ year)  | html -%]
-	<img [% style %] 
+	<img [% style %]
 		[% IF item.image %]
 		src="[% item.image | resizeimage(height, height, '-', webroot) %]"
 		srcset="[% item.image | resizeimage(height * 2, height * 2, '-', webroot) %] 2x"
@@ -221,12 +222,12 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 	lastpage = pageinfo.totalpages - 1;
 	pagebarend = pagebarstart + pagesperbar - 1;
 	IF pagebarend > lastpage; pagebarend = lastpage; END;
-	IF pagebarstart > 0; 
+	IF pagebarstart > 0;
 	  pagesstart = 1;
 	  pagesprev = pageinfo.currentpage - pagesperbar;
 	  IF pagesprev < 0; pagesprev = 0; END;
 	  pagesprev = pagesprev * pageinfo.itemsperpage;
-	ELSE; 
+	ELSE;
 	  pagesstart = 0;
 	  pagesprev = '';
 	END;

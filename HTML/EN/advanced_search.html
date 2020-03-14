@@ -6,32 +6,32 @@
 		if (el) {
 			var link = el.dom.href;
 			el.dom.href='javascript:void(0);';
-			el.on('click', function(){ 
+			el.on('click', function(){
 				var f = Ext.get('advSearchForm');
-				
+
 				if (f.isVisible())
 					location = link;
 				else {
 					f.show();
-					
+
 					SqueezeJS.UI.ScrollPanel.offset2 += f.getHeight();
 					SqueezeJS.UI.ScrollPanel.init();
-				} 
+				}
 			});
 		}
-		
+
 		// advanced search somehow ends up with two scrolling panels - override default ScrollPanel
 		if ( ((el = Ext.get('content')) && el.hasClass('scrollingPanel')) ) {
 			var sp = SqueezeJS.UI.ScrollPanel;
-			
+
 			sp.el2 = el;
-			
+
 			// where is this value coming from? We shouldn't need to hard-code it
 			sp.offset2 = -18;
-			
+
 			if (el = Ext.get('infoTab'))
 				sp.offset2 += el.getHeight();
-			
+
 			if (el = Ext.get('pagebar'))
 				sp.offset2 += el.getHeight();
 
@@ -43,7 +43,7 @@
 			sp.onResize();
 		}
 		[% END %]
-		
+
 		LiveSearch.init();
 	});
 </script>
@@ -239,7 +239,7 @@
 	[% WRAPPER field title='TYPE' %]
 		<select name="search.content_type">
 			<option value="">[% "ANY_TYPE" | string %]</option>
-	
+
 			[% FOREACH type = fileTypes.keys %]
 				<option value="[% type %]" [% IF search.content_type.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
 			[%- END %]
@@ -291,25 +291,37 @@
 			<input value="[% "CLEAR"  | string %]" name="resetAdvSearch" type="submit">
 		</td>
 	</tr>
-	
+
 	</tbody></table><br></form>
 
 	<div id="browsedbHeader">
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
-		
-		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
+
+		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 	</div>
 
-		
+
+	[% BLOCK albumBrowsecontrols %]
+		[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
+		[% PROCESS favoritescontrol %]
+		[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+		[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
+		[% WRAPPER addlink %][% PROCESS cmdHRef cmdType='add' %][% END %]
+		[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
+		[% WRAPPER morelink %]href="[% webroot %]clixmlbrowser/clicmd=albuminfo+items&album_id=[% item.itemobj.id %]&amp;linktitle=[% stringINFO %]%20([% item.albumTitle %])/?player=[% playerURI %]" target="browser"[% END %]
+	[%- END %]
+
 	[% IF browse_items.size %]
 		<div id="browsedbList">
 
 			[% IF searchType == 'Album';
 				itemInfoTemplate = 'albuminfo';
+				leftControls = 'albumBrowsecontrols';
 			ELSE;
 				itemInfoTemplate = 'trackinfo';
+				leftControls = 'browsecontrols';
 			END %]
 
 			[% FOREACH item = browse_items %]
