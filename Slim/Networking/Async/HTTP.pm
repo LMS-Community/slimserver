@@ -485,9 +485,12 @@ sub _http_read {
 		# must be forced. But if nothing has been read yet, attempting to force body reading can lead to
 		# a false empty body result, so let it to the event loop.
 		# Body might also be empty but a keep-alive with no content-length in the response is an error
-		# if everything has already been read, _http_body_read will unsubscribe to event loop
-		# we just subscrive above ... a bit unefficient
-		_http_read_body( $self->socket, $self, $args ) if ( $self->response->headers->header('Connection') =~ /keep-alive/i && $self->socket->_rbuf_length == ($headers->content_length || 0));
+		# if everything has already been read, _http_body_read will unsubscribe to event loop 
+		# we just subscrive above ... a bit unefficient 
+		if ( (!defined $self->response->headers->header('Connection') ||  $self->response->headers->header('Connection') =~ /keep-alive/i) && 
+			$self->socket->_rbuf_length == ($headers->content_length || 0) ) {
+			_http_read_body( $self->socket, $self, $args ) 
+		}
 	}
 }
 
