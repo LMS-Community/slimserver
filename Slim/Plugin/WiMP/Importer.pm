@@ -61,6 +61,9 @@ sub startScan { if (main::SCANNER) {
 
 		$class->deleteRemovedTracks();
 	}
+	elsif (ref $accounts) {
+		$cache->set('tidal_library_fingerprint', -1, 30 * 86400);
+	}
 
 	Slim::Music::Import->endImporter($class);
 } }
@@ -257,6 +260,10 @@ sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
 
 	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
+	
+	if ($oldFingerprint == -1) {
+		return $cb->($oldFingerprint);
+	}
 
 	Slim::Networking::SqueezeNetwork->new(
 		sub {

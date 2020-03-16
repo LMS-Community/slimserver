@@ -138,6 +138,8 @@ sub _pollOnlineLibraries {
 
 	my @workers = map {
 		my $poller = $_;
+		my $pref   = $onlineLibraryProviders{$_};
+		
 		sub {
 			my ($result, $acb) = @_;
 
@@ -146,7 +148,16 @@ sub _pollOnlineLibraries {
 			main::INFOLOG && $log->is_info && $log->info("Going to check $poller");
 
 			eval {
-				$poller->onlineLibraryNeedsUpdate($acb);
+				$poller->onlineLibraryNeedsUpdate(sub {
+					my $pollerResult = shift;
+					
+					if ($pollerResult && $pollerResult == -1) {
+						$log->warn("Disabling polling for $poller lack of account information");
+						$prefs->set($pref, 0);
+						$pollerResult = 0;
+					}
+					$acb->($pollerResult);
+				});
 			};
 
 			$log->error($@) if $@;
