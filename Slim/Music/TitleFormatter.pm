@@ -37,7 +37,7 @@ sub init {
 
 	# for relating track attributes to album/artist attributes
 	my @trackAttrs = ();
-	
+
 	require Slim::Schema::Track;
 
 	# Subs for all regular track attributes
@@ -48,28 +48,32 @@ sub init {
 			if ( ref $_[0] eq 'HASH' ) {
 				return $_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '';
 			}
-			
+
 			my $output = $_[0]->get_column($attr);
 			return (defined $output ? $output : '');
 		};
 	}
-	
+
 	# localize content type where possible
 	$parsedFormats{'CT'} = sub {
 		my $output = $parsedFormats{'CONTENT_TYPE'}->(@_);
-		
+
 		if (!$output && ref $_[0] eq 'HASH' ) {
 			$output = $_[0]->{ct} || $_[0]->{ 'tracks.ct' } || '';
 		}
-		
+
 		$output = Slim::Utils::Strings::getString( uc($output) ) if $output;
-		
+
+		if (!$output && ref $_[0] eq 'HASH' ) {
+			$output = $_[0]->{type} || '';
+		}
+
 		return $output;
 	};
 
 	# Override album
 	$parsedFormats{'ALBUM'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{album} || $_[0]->{'albums.title'} || '';
 		}
@@ -83,7 +87,7 @@ sub init {
 
 	# add album related
 	$parsedFormats{'ALBUMSORT'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '';
 		}
@@ -99,7 +103,7 @@ sub init {
 	};
 
 	$parsedFormats{'DISCC'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{discc} || $_[0]->{'albums.discc'} || '';
 		}
@@ -115,7 +119,7 @@ sub init {
 	};
 
 	$parsedFormats{'DISC'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{disc} || $_[0]->{'tracks.disc'} || '';
 		}
@@ -123,7 +127,7 @@ sub init {
 		my $disc = $_[0]->disc;
 
 		if ($disc && $disc == 1) {
-			
+
 			my $albumDiscc_sth = Slim::Schema->dbh->prepare_cached("SELECT discc FROM albums WHERE id = ?");
 
 			$albumDiscc_sth->execute($_[0]->albumid);
@@ -142,7 +146,7 @@ sub init {
 
 	# add artist related
 	$parsedFormats{'ARTIST'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '';
 		}
@@ -157,7 +161,7 @@ sub init {
 
 			push @output, $name;
 		}
-		
+
 		# Bug 12162: cope with objects that only have artistName and no artists
 		if (!(scalar @output) && $_[0]->can('artistName')) {
 			my $name = $_[0]->artistName();
@@ -170,7 +174,7 @@ sub init {
 	};
 
 	$parsedFormats{'ARTISTSORT'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{artistsort} || $_[0]->{'contributors.titlesort'} || '';
 		}
@@ -194,16 +198,16 @@ sub init {
 	for my $attr (qw(composer conductor band)) {
 
 		$parsedFormats{uc($attr)} = sub {
-			
+
 			if ( ref $_[0] eq 'HASH' ) {
 				return $_[0]->{$attr} || '';
 			}
 
 			my $output = '';
-			
+
 			eval {
 				my ($item) = $_[0]->$attr();
-	
+
 				if ($item) {
 					$output = $item->name();
 				}
@@ -215,7 +219,7 @@ sub init {
 
 	# add genre
 	$parsedFormats{'GENRE'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{genre} || $_[0]->{'genres.name'} || '';
 		}
@@ -245,7 +249,7 @@ sub init {
 	$parsedFormats{'DURATION'} = sub {
 		if ( ref $_[0] eq 'HASH' ) {
 			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || $_[0]->{'secs'} || '';
-			
+
 			# format if we got a number only
 			return sprintf('%s:%02s', int($duration / 60), $duration % 60) if $duration * 1 eq $duration;
 			return $duration;
@@ -271,10 +275,10 @@ sub init {
 
 		return Slim::Music::Info::getCurrentBitrate($_[0]->url) || $_[0]->prettyBitRate;
 	};
-	
+
 	# add file info
 	$parsedFormats{'VOLUME'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{volume} || '';
 		}
@@ -295,7 +299,7 @@ sub init {
 	};
 
 	$parsedFormats{'PATH'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{path} || '';
 		}
@@ -316,7 +320,7 @@ sub init {
 	};
 
 	$parsedFormats{'FILE'} = sub {
-		
+
 		my $url;
 		if ( ref $_[0] eq 'HASH' ) {
 			if ( $_[0]->{url} ) {
@@ -346,11 +350,11 @@ sub init {
 	};
 
 	$parsedFormats{'EXT'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{ext} || '';
 		}
-		
+
 		my $output = '';
 		my $url = $_[0]->get('url');
 
@@ -369,17 +373,17 @@ sub init {
 
 	# Add date/time elements
 	$parsedFormats{'LONGDATE'}  = sub {
-		return Slim::Utils::DateTime::longDateF(); 
+		return Slim::Utils::DateTime::longDateF();
 	};
-	
+
 	$parsedFormats{'SHORTDATE'} = sub {
 		return Slim::Utils::DateTime::shortDateF();
 	};
-	
+
 	$parsedFormats{'CURRTIME'}  = sub {
 		return Slim::Utils::DateTime::timeF();
 	};
-	
+
 	# Add localized from/by
 	$parsedFormats{'FROM'} = sub { return string('FROM'); };
 	$parsedFormats{'BY'}   = sub { return string('BY'); };
@@ -395,7 +399,7 @@ sub init {
 
 	# Add lightweight FILE.EXT format
 	$parsedFormats{'FILE.EXT'} = sub {
-		
+
 		if ( ref $_[0] eq 'HASH' ) {
 			return $_[0]->{'file.ext'} || '';
 		}
@@ -432,7 +436,7 @@ sub addFormat {
 
 	my ($package) = caller();
 	$externalFormats->{$format}++ if $package !~ /^Slim/;
-	
+
 	# only add format if it is not already defined
 	if (!defined $parsedFormats{$format}) {
 
@@ -551,9 +555,9 @@ sub _parseFormat {
 	# break up format string into separators and elements
 	# elements must be separated by non-word characters
 	@parsed = ($format =~ m/(.*?)\b($elemRegex)\b/gc);
-	
+
 	# add anything remaining at the end
-	# perl 5.6 doesn't like retaining the pos() on m//gc in list context, 
+	# perl 5.6 doesn't like retaining the pos() on m//gc in list context,
 	# so use the length of the joined matches to determine where we left off
 	push @parsed, substr($format,length(join '', @parsed));
 
@@ -637,12 +641,12 @@ sub infoFormat {
 	my $meta      = shift; # optional metadata hash to use instead of object data
 	my $output    = '';
 	my $format;
-	
+
 	# use a safe format string if none specified
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
 	if ($str && $] > 5.007) {
-		
+
 		my $old = $str;
 		if ( !($str = $formatCache{$old}) ) {
 			$str = $old;
@@ -661,7 +665,7 @@ sub infoFormat {
 
 	# Get the formatting function from the hash, or parse it
 	$format = $parsedFormats{$str} || _parseFormat($str);
-	
+
 	# Short-circuit if we have metadata
 	if ( $meta ) {
 		# Make sure all keys in meta are lowercase for format lookups
@@ -669,7 +673,7 @@ sub infoFormat {
 		for my $key ( @uckeys ) {
 			$meta->{lc($key)} = $meta->{$key};
 		}
-		
+
 		$output = $format->($meta) if ref($format) eq 'CODE';
 	}
 	else {
@@ -691,7 +695,7 @@ sub infoFormat {
 
 		$output = $format->($track) if ref($format) eq 'CODE';
 	}
-	
+
 	$output = '' if !defined $output;
 
 	if ($output eq "" && defined($safestr)) {
