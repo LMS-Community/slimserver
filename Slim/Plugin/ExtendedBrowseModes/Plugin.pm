@@ -48,8 +48,8 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
-Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
-Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
+Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['library'], ['changed']] );
+Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['rescan'], ['done']] );
 
 $prefs->setChange( sub {
 	__PACKAGE__->initLibraries($_[0], $_[1] || 0);
