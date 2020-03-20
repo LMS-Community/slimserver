@@ -1086,7 +1086,7 @@ sub _artists {
 	}
 
 	# only get external artists without album if no filter is set
-	my $queryTags = (!scalar @searchTags || (scalar @searchTags == 1 && $searchTags[0] =~ /role_id:.*ALBUMARTIST/)) ? 'EQs' : 's';
+	my $queryTags = (!scalar grep { $_ !~ /^role_id:.*ALBUMARTIST|^library_id:/} @searchTags) ? 'EQs' : 's';
 
 	_generic($client, $callback, $args, 'artists',
 		[@searchTags, ($search ? 'search:' . $search : undef)],

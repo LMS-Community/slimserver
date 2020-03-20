@@ -352,13 +352,14 @@ sub rebuild {
 
 		my $contributors_sth = $dbh->prepare_cached(qq{
 			INSERT OR IGNORE INTO library_contributor (library, contributor)
-				SELECT DISTINCT ?, contributor_track.contributor
-				FROM contributor_track
+				SELECT DISTINCT ?, contributors.id
+				FROM contributors
+					LEFT JOIN contributor_track ON contributor_track.contributor = contributors.id
 				WHERE contributor_track.track IN (
 					SELECT library_track.track
 					FROM library_track
 					WHERE library_track.library = ?
-				)
+				) OR (contributors.extid IS NOT NULL AND contributors.extid != '')
 		});
 		$contributors_sth->execute($id, $id);
 
