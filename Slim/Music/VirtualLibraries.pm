@@ -359,7 +359,11 @@ sub rebuild {
 					SELECT library_track.track
 					FROM library_track
 					WHERE library_track.library = ?
-				) OR (contributors.extid IS NOT NULL AND contributors.extid != '')
+				) OR (
+					contributors.extid IS NOT NULL
+					AND contributors.extid != ''
+					AND contributors.id NOT IN (SELECT DISTINCT contributor FROM contributor_track)
+				)
 		});
 		$contributors_sth->execute($id, $id);
 
