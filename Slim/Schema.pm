@@ -269,7 +269,7 @@ sub _connect {
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	my $on_connect_do = $sqlHelperClass->on_connect_do();
 
-	$class->connection( $dsn || $source, $username, $password, { 
+	$class->connection( $dsn || $source, $username, $password, {
 		RaiseError    => 1,
 		AutoCommit    => 1,
 		PrintError    => 0,
@@ -369,7 +369,7 @@ sub wipeDB {
 
 	my ($driver) = $class->sourceInformation;
 
-	eval { 
+	eval {
 		Slim::Utils::SQLHelper->executeSQLFile(
 			$driver, $class->storage->dbh, "schema_clear.sql"
 		);
@@ -399,10 +399,10 @@ sub optimizeDB {
 
 	my ($driver) = $class->sourceInformation;
 
-	my $progress = Slim::Utils::Progress->new({ 
-		'type'  => 'importer', 
-		'name'  => 'dboptimize', 
-		'total' => 2, 
+	my $progress = Slim::Utils::Progress->new({
+		'type'  => 'importer',
+		'name'  => 'dboptimize',
+		'total' => 2,
 		'bar'   => 1
 	});
 
@@ -461,7 +461,7 @@ sub migrateDB {
 
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
-		dbh   => $dbh,  
+		dbh   => $dbh,
 		dir   => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
 		debug => $log->is_debug,
 	});
@@ -705,7 +705,7 @@ sub contentType {
 	if ((!defined $contentType || $contentType eq $defaultType) && $blessed) {
 
 		$contentType = Slim::Music::Info::typeFromPath($url);
-	} 
+	}
 
 	# Only set the cache if we have a valid contentType
 	if (defined $contentType && $contentType ne $defaultType) {
@@ -807,7 +807,7 @@ sub objectForUrl {
 
 	if (!$url) {
 
-		logBacktrace("Null track request! Returning undef."); 
+		logBacktrace("Null track request! Returning undef.");
 		return undef;
 	}
 
@@ -959,7 +959,7 @@ sub _createOrUpdateAlbum {
 		my $checkDisc = 0;
 
 		# Bug 10583 - Revert disc 1/1 change. Use MB Album Id in addition (unique id per disc, not per set!)
-		if (!$prefs->get('groupdiscs') && 
+		if (!$prefs->get('groupdiscs') &&
 			(($disc && $discc) || ($disc && !$discc) || $brainzId)) {
 
 			$checkDisc = 1;
@@ -979,7 +979,7 @@ sub _createOrUpdateAlbum {
 		# get() doesn't run the UTF-8 trigger, and ->title() calls
 		# Slim::Schema::Album->title() which has different behavior.
 
-		if ( 
+		if (
 			   $lastAlbum->{_dirname}
 			&& $lastAlbum->{_dirname} eq $basename
 			&& $lastAlbum->{title} eq $title
@@ -1366,7 +1366,7 @@ sub _createComments {
 			(?, ?)
 		} );
 
-		for my $comment (@{$comments}) {	
+		for my $comment (@{$comments}) {
 			$sth->execute( $trackId, $comment );
 
 			main::DEBUGLOG && $log->is_debug && $log->debug("-- Track has comment '$comment'");
@@ -1633,7 +1633,7 @@ sub _newTrack {
 	}
 
 	### Create Album row
-	my $albumId = $self->_createOrUpdateAlbum($deferredAttributes, 
+	my $albumId = $self->_createOrUpdateAlbum($deferredAttributes,
 		\%columnValueHash,														# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
@@ -2073,7 +2073,7 @@ sub mergeSingleVAAlbum {
 			SELECT id
 			FROM tracks
 			WHERE album = ?
-		) 
+		)
 		AND	  role = ?
 		ORDER BY contributor, track
 	} );
@@ -2594,7 +2594,7 @@ sub _preCheckAttributes {
 	}
 
 	# Some tag formats - APE? store the type of channels instead of the number of channels.
-	if (defined $attributes->{'CHANNELS'}) { 
+	if (defined $attributes->{'CHANNELS'}) {
 		if ($attributes->{'CHANNELS'} =~ /stereo/i) {
 			$attributes->{'CHANNELS'} = 2;
 		} elsif ($attributes->{'CHANNELS'} =~ /mono/i) {
@@ -2606,10 +2606,10 @@ sub _preCheckAttributes {
 	# Same for DISC - Bug 2821
 	for my $tag (qw(YEAR DISC DISCC BPM CHANNELS)) {
 
-		if ( 
-		    defined $attributes->{$tag} 
+		if (
+		    defined $attributes->{$tag}
 		    &&
-		    ( $attributes->{$tag} !~ /^\d+$/ || $attributes->{$tag} == 0 ) 
+		    ( $attributes->{$tag} !~ /^\d+$/ || $attributes->{$tag} == 0 )
 		) {
 			delete $attributes->{$tag};
 		}
@@ -2717,8 +2717,8 @@ sub _preCheckAttributes {
 	# Push these back until we have a Track object.
 	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
 		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
-		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
-		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID 
+		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
+		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
 		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
 	)) {
@@ -2867,7 +2867,7 @@ sub _postCheckAttributes {
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
 
-	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = 
+	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) =
 		(@cols{qw/id url content_type audio remote/});
 
 	if (!defined $trackType || $trackType eq 'dir' || $trackType eq 'lnk') {
@@ -2900,7 +2900,7 @@ sub _postCheckAttributes {
 	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
 
 	### Update Album row
-	my $albumId = $self->_createOrUpdateAlbum($attributes, 
+	my $albumId = $self->_createOrUpdateAlbum($attributes,
 		\%cols,																	# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
@@ -2914,7 +2914,7 @@ sub _postCheckAttributes {
 		$track->album($albumId);
 	}
 
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);	
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
 
 	# Save any changes - such as album.
 	$track->update;
@@ -2965,7 +2965,7 @@ sub _mergeAndCreateContributors {
 		# contributors? I think so. ID3 doesn't have
 		# "BANDSORT" or similar at any rate.
 		push @{ $contributors{$tag} }, Slim::Schema::Contributor->add({
-			'artist'   => $contributor, 
+			'artist'   => $contributor,
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'sortBy'   => $attributes->{$tag.'SORT'},
 			# only store EXTID for track artist, as we don't have it for other roles
@@ -3021,8 +3021,8 @@ sub _createContributorRoleRelationships {
 	# a changed track where contributors have been removed.  Current contributors
 	# will be re-added by below
 	my $sth_delete_tracks = $self->dbh->prepare_cached( qq{
-		DELETE 
-		FROM contributor_track 
+		DELETE
+		FROM contributor_track
 		WHERE track = ?
 	} );
 	$sth_delete_tracks->execute($trackId);
@@ -3176,7 +3176,7 @@ sub canFulltextSearch {
 	return $canFulltextSearch if defined $canFulltextSearch;
 
 	$canFulltextSearch = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::FullTextSearch::Plugin') && Slim::Plugin::FullTextSearch::Plugin->canFulltextSearch;
-	return $canFulltextSearch; 
+	return $canFulltextSearch;
 }
 
 =head1 SEE ALSO
