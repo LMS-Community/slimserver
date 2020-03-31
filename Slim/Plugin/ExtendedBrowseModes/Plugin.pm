@@ -337,7 +337,7 @@ sub registerCustomString {
 	my ($class, $string) = @_;
 
 	if ( !Slim::Utils::Strings::stringExists($string) ) {
-		my $token = Slim::Utils::Text::ignoreCase($string, 1);
+		my $token = uc(Slim::Utils::Text::ignoreCase($string, 1));
 
 		$token =~ s/\s/_/g;
 		$token = 'PLUGIN_EXTENDED_BROWSEMODES_' . $token;
