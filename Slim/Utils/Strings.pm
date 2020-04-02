@@ -505,7 +505,7 @@ sub loadExtraStrings {
 	}
 
 	for my $string ( keys %{ $cache || {} } ) {
-		storeString( $string, $cache->{$string} ) if !stringExists($string);
+		storeString( $string, $cache->{$string} );
 	}
 }
 
