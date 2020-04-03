@@ -7,7 +7,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
-	<defaultState>disabled</defaultState>
+	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/</homepageURL>
 	<optionsURL>plugins/OnlineLibrary/settings.html</optionsURL>
 	<targetApplication>
