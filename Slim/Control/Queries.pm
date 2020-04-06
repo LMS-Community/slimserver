@@ -5424,6 +5424,7 @@ sub _getTagDataForTracks {
 
 	# Process tags and add columns/joins as needed
 	$tags =~ /e/ && do { $c->{'tracks.album'} = 1 };
+	$tags =~ /E/ && do { $c->{'tracks.extid'} = 1 };
 	$tags =~ /d/ && do { $c->{'tracks.secs'} = 1 };
 	$tags =~ /t/ && do { $c->{'tracks.tracknum'} = 1 };
 	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
