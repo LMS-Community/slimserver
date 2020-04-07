@@ -1,49 +1,50 @@
-[% IF useExtJS && !macaddress; extJsScripts = BLOCK %]   
-	<script TYPE="text/javascript">   
+[% IF useExtJS && !macaddress; extJsScripts = BLOCK %]
+	<script TYPE="text/javascript">
 		function forgetPlayer(playerid) {
-			SqueezeJS.Controller.request({   
-				params: [ playerid, [ 'client', 'forget' ]]   
-			});   
+			SqueezeJS.Controller.request({
+				params: [ playerid, [ 'client', 'forget' ]]
+			});
 		}
-	</script>   
+	</script>
 [% END;
-ELSIF !macaddress; pageHeaderScripts = BLOCK %]   
-	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>   
-	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>   
-	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>   
-	<script TYPE="text/javascript" language="JavaScript">   
-		function forgetPlayer(playerid) {   
-			// add a random number to the params as IE loves to cache the heck out of   
-			var args   = 'command=client&subcommand=forget&player='+ playerid +'&d=' + Math.random();   
-			var url    = 'index.html';   
-			var action = 'dummyCallback';   
-			ajaxRequest(url, args, action);   
-		}   
-		
-		function dummyCallback() {}   
-
-
-		function resetPlayer(url) {
-			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
-				location = url;
+ELSIF !macaddress; pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" language="JavaScript">
+		function forgetPlayer(playerid) {
+			// add a random number to the params as IE loves to cache the heck out of
+			var args   = 'command=client&subcommand=forget&player='+ playerid +'&d=' + Math.random();
+			var url    = 'index.html';
+			var action = 'dummyCallback';
+			ajaxRequest(url, args, action);
 		}
-	</script>   
-[% END; 
-ELSIF !useExtJS; pageHeaderScripts = BLOCK %]   
-	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>   
-	<script TYPE="text/javascript" language="JavaScript">   
+
+		function dummyCallback() {}
+
+
 		function resetPlayer(url) {
 			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
 				location = url;
 		}
 	</script>
-[% END; END %] 
+[% END;
+ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script TYPE="text/javascript" language="JavaScript">
+		function resetPlayer(url) {
+			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
+				location = url;
+		}
+	</script>
+[% END; END %]
 [% PROCESS settings/header.html %]
 
 [% IF prefs %]
 	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]
 		[%- IF playericon %]<img src="/html/images/Players/[% playericon %]_250x250_ffffff.png" class="playericon">[% END %]
 		<input type="text" class="stdedit" name="pref_playername" id="playername" value="[% prefs.pref_playername | html %]" size="20" maxlength="32">
+		[% IF radioNeedsFakeVersion %]<div class="prefDesc" style="color:red">[% "RADIO_NEEDS_PATCH" | string %]</div>[% END %]
 	[% END %]
 
 
@@ -60,7 +61,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 			</div>
 		[% END %]
 	[% END; END %]
-	
+
 	[% IF prefs.exists('pref_playingDisplayModes') %]
 		[% WRAPPER setting title="SETUP_PLAYINGDISPLAYMODE" desc="SETUP_PLAYINGDISPLAYMODE_DESC" %]
 			[% FOREACH format = prefs.pref_playingDisplayModes %]
@@ -105,7 +106,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 						[% FOREACH option = saveropts.$saver %]
 							<option [% IF prefs.${"pref_$saver"} == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 						[%- END -%]
-					</select>		
+					</select>
 				[% END %]
 				[% desc = '' %]
 			[% END %]
@@ -139,17 +140,17 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 		<input type="button" onclick="[% useExtJS ? "Settings." : '' %]resetPlayer('[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1')" value="[% "SETUP_RESET_PLAYER" | string %]">
 	[% END %]
 
-	[% IF !macaddress; WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]   
-		<p>   
-		[% IF useAJAX %]   
-			<a href="[% webroot %]" onClick="forgetPlayer('[% playerid %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>   
-		[% ELSIF useExtJS %]   
-			<a href="[% webroot %]settings/player/basic.html" onClick="forgetPlayer('[% playerid %]');" target="settings">[% "FORGET_PLAYER_LINK" | string %]</a>   
-		[% ELSE %]   
-			<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>   
-		[% END %]   
-		</p>   
-	[% END; END %] 
+	[% IF !macaddress; WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]
+		<p>
+		[% IF useAJAX %]
+			<a href="[% webroot %]" onClick="forgetPlayer('[% playerid %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+		[% ELSIF useExtJS %]
+			<a href="[% webroot %]settings/player/basic.html" onClick="forgetPlayer('[% playerid %]');" target="settings">[% "FORGET_PLAYER_LINK" | string %]</a>
+		[% ELSE %]
+			<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+		[% END %]
+		</p>
+	[% END; END %]
 
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" desc="" %]
 		[% FOREACH item IN playerinfo; item.key %]

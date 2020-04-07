@@ -13987,6 +13987,10 @@ SERVER_STATUS_DESC
 	RU	Информация обо всех найденных устройствах, подключенных к Logitech Media Server
 	SV	Information om alla identifierade enheter som anslutits till Logitech Media Server
 
+RADIO_NEEDS_PATCH
+	DE	Sie scheinen ein Squeezebox Radio mit veralteter Firmware zu verwenden, welche diese Logitech Media Server Version nicht als kompatibel akzeptiert. Bitte patchen Sie das Gerät. <a href="/html/docs/radio-compatibility.html" target="_blank">Weitere Informationen.</a>
+	EN	You seem to be using a Radio with an outdated firmware, not recognizing this version of Logitech Media Server. Please consider patching it. <a href="/html/docs/radio-compatibility.html" target="_blank">Get more information.</a>
+
 BASIC_SERVER_SETTINGS
 	CS	Základní nastavení
 	DA	Grundindstillinger

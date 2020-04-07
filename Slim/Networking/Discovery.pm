@@ -139,6 +139,8 @@ See https://github.com/Logitech/slimserver/blob/public/8.0/README.md#sb-radio-an
 	return RADIO_COMPATIBLE_VERSION;
 }
 
+sub needsFakeVersion { $needsFakeVersion ? 1 : 0 }
+
 =head2 addTLVHandler( $hash )
 
 Add entries to tlv handler in format { $key => $handler }

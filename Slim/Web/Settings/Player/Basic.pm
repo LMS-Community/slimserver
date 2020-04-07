@@ -44,7 +44,7 @@ sub prefs {
 			push @prefs, qw(visualMode);
 		}
 	}
-	
+
 	# Bug 8069, show title format pref for HTTP clients
 	if ( $client->isa('Slim::Player::HTTP') ) {
 		push @prefs, 'titleFormatCurr';
@@ -77,7 +77,7 @@ sub handler {
 			push @prefs, qw(visualModes);
 		}
 	}
-	
+
 	# Bug 8069, show title format pref for HTTP clients
 	if ( $client->isa('Slim::Player::HTTP') ) {
 		push @prefs, 'titleFormat';
@@ -111,7 +111,7 @@ sub handler {
 	}
 
 	$paramRef->{'titleFormatOptions'}  = hashOfPrefs('titleFormat');
-	
+
 	if ($client && !$client->display->isa('Slim::Display::NoDisplay')) {
 		$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
 		$paramRef->{'visualModeOptions'}     = getVisualModes($client);
@@ -121,20 +121,22 @@ sub handler {
 	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
 	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};
 	$paramRef->{'macaddress'} = $client->macaddress;
-		
+
 	$paramRef->{'playericon'} = $class->getPlayerIcon($client,$paramRef);
 
 	if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay')) {
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->client($client)->get('defeatDestructiveTouchToPlay');
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->get('defeatDestructiveTouchToPlay') unless defined $paramRef->{'defeatDestructiveTouchToPlay'};
 	}
-	
+
+	$paramRef->{'radioNeedsFakeVersion'} = $client->model(1) eq 'baby' && Slim::Networking::Discovery->needsFakeVersion;
+
 	my $page = $class->SUPER::handler($client, $paramRef);
 
 	if ($client && $client->display->isa('Slim::Display::Transporter')) {
 		Slim::Buttons::Common::updateScreen2Mode($client);
 	}
-	
+
 	return $page;
 }
 
@@ -226,10 +228,10 @@ sub getPlayerIcon {
 
 	# default icon for software emulators and media players
 	$model = 'squeezebox' if $model eq 'squeezebox2';
-	
+
 	# Check if $model image exists else use 'default'
 	$model = Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png")
-		? $model 
+		? $model
 		: 'softsqueeze';
 
 	return $model;

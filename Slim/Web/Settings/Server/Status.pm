@@ -27,19 +27,19 @@ sub handler {
 	if ($paramRef->{'abortScan'}) {
 		Slim::Music::Import->abortScan();
 	}
-	
+
 	$paramRef->{info} = Slim::Menu::SystemInfo->menu( $client );
 	$paramRef->{info} = $paramRef->{info}->{items};
-	
+
 	$paramRef->{server}  = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_SERVER'));
 	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY'));
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
 
-	# we only have one player	
+	# we only have one player
 	if ($client && !$paramRef->{players}) {
 		$paramRef->{players} = {
 			items => [
-				 _extractGroup($paramRef, $client->name) 
+				 _extractGroup($paramRef, $client->name)
 			]
 		};
 	}
@@ -48,6 +48,7 @@ sub handler {
 	$paramRef->{logs}    = _extractGroup($paramRef, cstring($client, 'SETUP_DEBUG_SERVER_LOG'));
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
+	$paramRef->{'radioNeedsFakeVersion'} = Slim::Networking::Discovery->needsFakeVersion;
 
 	if (Slim::Schema::hasLibrary()) {
 		# skeleton for the progress update
@@ -63,11 +64,11 @@ sub handler {
 
 sub _extractGroup {
 	my ($paramRef, $token) = @_;
-	
+
 	my @items = grep { $_->{name} eq $token } @{$paramRef->{info}};
-	
+
 	@{$paramRef->{info}} = grep { $_->{name} ne $token } @{$paramRef->{info}};
-	
+
 	return shift @items;
 }
 
