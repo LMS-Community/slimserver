@@ -3,7 +3,7 @@ package Slim::Web::Cometd;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This class provides an implementation of the Cometd Bayeux protocol
@@ -59,28 +59,28 @@ sub init {
 # Handler for CLI requests
 sub cliHandler {
 	my ( $socket, $message ) = @_;
-	
+
 	# Tell the CLI plugin to notify us on disconnect for this socket
 	Slim::Plugin::CLI::Plugin::addDisconnectHandler( $socket, \&cliCloseHandler );
-	
+
 	handler( [ $socket, undef ], $message );
 }
 
 # Handler for web requests
 sub webHandler {
 	my ( $httpClient, $httpResponse ) = @_;
-	
+
 	# make sure we're connected
 	if ( !$httpClient->connected ) {
 		$log->warn("Aborting, client not connected: $httpClient");
 		return;
 	}
-	
+
 	my $req = $httpResponse->request;
 	my $ct	= $req->content_type;
-	
+
 	my ( $params, %ops );
-	
+
 	if ( $ct && $ct =~ m{^(?:text|application)/json} ) {
 		# POST as plain JSON
 		if ( my $content = $req->content ) {
@@ -96,7 +96,7 @@ sub webHandler {
 			$params = ( $req->uri =~ m{\?(.*)} )[ 0 ];
 		}
 	}
-	
+
 	if ( $params && $params =~ m{=} ) {
 		# uri param ?message=[json]
 		%ops = map {
@@ -108,15 +108,15 @@ sub webHandler {
 		# uri param ?[json]
 		$ops{message} = $params;
 	}
-	
+
 	handler( [ $httpClient, $httpResponse ], $ops{message} );
 }
 
 sub handler {
 	my ( $conn, $message ) = @_;
-	
+
 	if ( !$message ) {
-		sendResponse( 
+		sendResponse(
 			@{$conn},
 			[ { successful => JSON::XS::false, error => 'no bayeux message found' } ]
 		);
@@ -125,51 +125,51 @@ sub handler {
 
 	my $objs = eval { from_json( $message ) };
 	if ( $@ ) {
-		sendResponse( 
+		sendResponse(
 			@{$conn},
 			[ { successful => JSON::XS::false, error => "$@" } ]
 		);
 		return;
 	}
-	
+
 	if ( ref $objs ne 'ARRAY' ) {
 		if ( $log->is_warn ) {
 			$log->warn( 'Got Cometd request that is not an array: ', (main::DEBUGLOG && $log->is_debug) ? Data::Dump::dump($objs) : '' );
 		}
-		
-		sendResponse( 
+
+		sendResponse(
 			@{$conn},
 			[ { successful => JSON::XS::false, error => 'bayeux message not an array' } ]
 		);
 		return;
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $peer = $conn->[HTTP_CLIENT]->peerhost . ':' . $conn->[HTTP_CLIENT]->peerport;
 		$log->debug( "Cometd request ($peer): " . Data::Dump::dump( $objs ) );
 	}
-	
+
 	my $clid;
 	my $events = [];
 	my @errors;
 	my $delayedResponse; # false if we want to call sendResponse at the end of this method
-	
-	for my $obj ( @{$objs} ) {		
+
+	for my $obj ( @{$objs} ) {
 		if ( ref $obj ne 'HASH' ) {
-			sendResponse( 
+			sendResponse(
 				@{$conn},
 				[ { successful => JSON::XS::false, error => 'bayeux event not a hash' } ]
 			);
 			return;
 		}
-		
+
 		if ( !$clid ) {
 			# specified clientId
 			if ( $obj->{clientId} ) {
 				$clid = $obj->{clientId};
 			}
 			elsif ( $obj->{channel} eq '/meta/handshake' ) {
-				$clid = Slim::Utils::Misc::createUUID(); 
+				$clid = Slim::Utils::Misc::createUUID();
 				$manager->add_client( $clid );
 			}
 			elsif ( $obj->{channel} =~ m{^/slim/(?:subscribe|request)} && $obj->{data} ) {
@@ -180,7 +180,7 @@ sub handler {
 				# Pull clientId out of unsubscribe
 				($clid) = $obj->{data}->{unsubscribe} =~ m{/([0-9a-f]{8})/};
 			}
-			
+
 			# Register client with HTTP connection
 			if ( $clid ) {
 				if ( ref $conn eq 'ARRAY' ) {
@@ -193,7 +193,7 @@ sub handler {
 					error   => 'No clientId found',
 					id      => $obj->{id},
 				};
-				
+
 				# No point in trying to process requests without a clientId
 				# Given that we are not sending advice to the client, the pending
 				# requests may just get dropped but what can we do?
@@ -201,7 +201,7 @@ sub handler {
 				last;
 			}
 		}
-		
+
 		# Detect the language Jive wants content returned in
 		my ($lang, $ua);
 		if ( ref $conn ) {
@@ -212,7 +212,7 @@ sub handler {
 			# Detect the user agent
 			$ua = $conn->[HTTP_RESPONSE]->request->header('X-User-Agent') || $conn->[HTTP_RESPONSE]->request->header('User-Agent');
 		}
-		
+
 		# If a client sends any request and we do not have a valid clid record
 		# because the streaming connection has been lost for example, re-handshake them
 		if ( !$manager->is_valid_clid( $clid ) ) {
@@ -228,18 +228,18 @@ sub handler {
 					interval  => 0,
 				}
 			};
-			
+
 			last;
 		}
-		
+
 		if ( $obj->{channel} eq '/meta/handshake' ) {
-			
+
 			my $advice = {
 				reconnect => 'retry',               # one of "none", "retry", "handshake"
 				interval  => LONG_POLLING_INTERVAL, # initial interval is 0 to support long-polling's connect request
 				timeout   => LONG_POLLING_TIMEOUT,
 			};
-				
+
 			push @{$events}, {
 				channel					 => '/meta/handshake',
 				version					 => PROTOCOL_VERSION,
@@ -247,11 +247,11 @@ sub handler {
 				clientId				 => $clid,
 				successful				 => JSON::XS::true,
 				advice					 => $advice,
-			};			
+			};
 		}
 		elsif ( $obj->{channel} =~ qr{^/meta/(?:re)?connect$} ) {
 			main::DEBUGLOG && $log->debug( "Client (re-)connected: $clid" );
-			
+
 			my $streaming = $obj->{connectionType} eq 'streaming' ? 1 : 0;
 
 			# We want the /meta/(re)connect response to always be the first event
@@ -265,19 +265,19 @@ sub handler {
 					interval => $streaming ? RETRY_DELAY : 0, # update interval for streaming mode
 				},
 			} );
-			
+
 			# Remove disconnect timer, as a connect is basically the same as a reconnect
 			Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
-			
+
 			# register this connection with the manager
 			$manager->register_connection( $clid, $conn );
-			
-			if ( $streaming ) {					
+
+			if ( $streaming ) {
 				if ( ref $conn eq 'ARRAY' ) {
 					# HTTP-specific connection stuff
 					# Streaming connections use chunked transfer encoding
 					$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
-		
+
 					# Tell HTTP client our transport
 					$conn->[HTTP_CLIENT]->transport( 'streaming' );
 				}
@@ -285,63 +285,63 @@ sub handler {
 			else {
 				# Long-polling
 				$conn->[HTTP_CLIENT]->transport( 'long-polling' );
-				
+
 				my $timeout = LONG_POLLING_TIMEOUT;
-				
+
 				# Client can override timeout
 				if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
 					$timeout = $obj->{advice}->{timeout};
 				}
-				
+
 				# If we have pending messages for this client, send immediately
 				if ( $manager->has_pending_events($clid) ) {
-					main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');				
+					main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');
 					$timeout = 0;
 				}
-				
+
 				# Hold the connection open while we wait for events
 				# If timeout is 0, sendResponse will be called as soon as all
 				# events in the request have been processed
 				main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
-					
+
 				Slim::Utils::Timers::setTimer(
 					$conn->[HTTP_CLIENT],
 					Time::HiRes::time() + ($timeout / 1000),
 					\&sendResponse,
 					$conn->[HTTP_RESPONSE],
 				);
-				
+
 				$delayedResponse = 1;
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/disconnect' ) {
-			
-			# disconnect them				
+
+			# disconnect them
 			push @{$events}, {
 				channel    => '/meta/disconnect',
 				clientId   => $clid,
 				successful => JSON::XS::true,
 				timestamp  => time2str( time() ),
 			};
-			
+
 			if ( ref $conn eq 'ARRAY' ) {
 				# Close the connection after this response
 				$conn->[HTTP_RESPONSE]->header( Connection => 'close' );
 			}
-		
+
 			disconnectClient( $clid );
 		}
 		elsif ( $obj->{channel} eq '/meta/subscribe' ) {
-			
+
 			my $subscriptions = $obj->{subscription};
-		
+
 			# a channel name or a channel pattern or an array of channel names and channel patterns.
 			if ( !ref $subscriptions ) {
 				$subscriptions = [ $subscriptions ];
 			}
-		
+
 			$manager->add_channels( $clid, $subscriptions );
-		
+
 			for my $sub ( @{$subscriptions} ) {
 				push @{$events}, {
 					channel      => '/meta/subscribe',
@@ -352,16 +352,16 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/unsubscribe' ) {
-			
+
 			my $subscriptions = $obj->{subscription};
-		
+
 			# a channel name or a channel pattern or an array of channel names and channel patterns.
 			if ( !ref $subscriptions ) {
 				$subscriptions = [ $subscriptions ];
 			}
-		
+
 			$manager->remove_channels( $clid, $subscriptions );
-		
+
 			for my $sub ( @{$subscriptions} ) {
 				push @{$events}, {
 					channel      => '/meta/unsubscribe',
@@ -373,7 +373,7 @@ sub handler {
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
 			# A request to execute & subscribe to some Logitech Media Server event
-			
+
 			# A valid /slim/subscribe message looks like this:
 			# {
 			#   channel  => '/slim/subscribe',
@@ -383,19 +383,19 @@ sub handler {
 			#     request  => [ '', [ 'serverstatus', 0, 50, 'subscribe:60' ],
 			#     priority => <value>, # optional priority value, is passed-through with the response
 			#   }
-			
+
 			# If the request array doesn't contain 'subscribe:foo' the request will be treated
 			# as a normal subscription using Request::subscribe()
-			
+
 			my $id       = $obj->{id};
 			my $request  = $obj->{data}->{request};
 			my $response = $obj->{data}->{response};
 			my $priority = $obj->{data}->{priority};
-			
+
 			if ( $request && $response ) {
 				# We expect the clientId to be part of the response channel
 				my ($responseClid) = $response =~ m{/([0-9a-f]{8})/};
-				
+
 				my $result = handleRequest( {
 					id       => $id,
 					request  => $request,
@@ -405,16 +405,16 @@ sub handler {
 					type     => 'subscribe',
 					lang     => $lang,
 					ua       => $ua,
-				} ); 
-				
+				} );
+
 				if ( $result->{error} ) {
-					
+
 					my $error = {
-						channel => '/slim/subscribe', 
+						channel => '/slim/subscribe',
 						error   => $result->{error},
 						id      => $id,
 					};
-					
+
 					push @errors, $error;
 
 					if ($result->{'errorNeedClient'}) {
@@ -427,12 +427,12 @@ sub handler {
 						$error->{'advice'} = {
 							reconnect => 'retry',
 						};
-						
+
 						# The client will stop processing responses after this error with reconnect advice
 						# so stop processing further requests.
 						last;
 					}
-						
+
 				}
 				else {
 					push @{$events}, {
@@ -441,15 +441,15 @@ sub handler {
 						successful   => JSON::XS::true,
 						id           => $id,
 					};
-					
+
 					# Remove this subscription from pending unsubscribes, if any
 					delete $toUnsubscribe{$response};
-					
+
 					# If the request was not async, tell the manager to deliver the results to all subscribers
 					if ( exists $result->{data} ) {
 						if ( $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
 							push @{$events}, $result;
-							
+
 							# We might be in delayed response mode, but we don't want to delay
 							# this non-async data
 							$delayedResponse = 0;
@@ -477,16 +477,16 @@ sub handler {
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
 			# A request to unsubscribe from a Logitech Media Server event, this is not the same as /meta/unsubscribe
-			
+
 			# A valid /slim/unsubscribe message looks like this:
 			# {
 			#   channel  => '/slim/unsubscribe',
 			#   data     => {
 			#     unsubscribe => '/slim/serverstatus',
 			#   }
-			
+
 			my $unsub = $obj->{data}->{unsubscribe};
-			
+
 			# If this subscription was a normal subscribe, we can unsubscribe now
 			if ( my $callback = delete $subCallbacks{$unsub} ) {
 				# this was a normal subscribe, so we have to call unsubscribe()
@@ -499,7 +499,7 @@ sub handler {
 				# It will be removed the next time we get a requestCallback for it
 				$toUnsubscribe{$unsub} = 1;
 			}
-			
+
 			push @{$events}, {
 				channel      => '/slim/unsubscribe',
 				clientId     => $clid,
@@ -510,7 +510,7 @@ sub handler {
 		}
 		elsif ( $obj->{channel} eq '/slim/request' ) {
 			# A request to execute a one-time Logitech Media Server event
-			
+
 			# A valid /slim/request message looks like this:
 			# {
 			#   channel  => '/slim/request',
@@ -520,16 +520,16 @@ sub handler {
 			#     request  => [ '', [ 'menu', 0, 100, ],
 			#     priority => <value>, # optional priority value, is passed-through with the response
 			#   }
-			
+
 			my $id       = $obj->{id};
 			my $request  = $obj->{data}->{request};
 			my $response = $obj->{data}->{response};
 			my $priority = $obj->{data}->{priority};
-			
+
 			if ( $request && $response ) {
 				# We expect the clientId to be part of the response channel
 				my ($responseClid) = $response =~ m{/([0-9a-f]{8})/};
-				
+
 				my $result = handleRequest( {
 					id       => $id,
 					request  => $request,
@@ -540,7 +540,7 @@ sub handler {
 					lang     => $lang,
 					ua       => $ua,
 				} );
-				
+
 				if ( $result->{error} ) {
 					push @errors, {
 						channel => '/slim/request',
@@ -562,7 +562,7 @@ sub handler {
 							successful => JSON::XS::true,
 							id         => $id,
 						};
-					
+
 						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
 							if ( $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
@@ -591,11 +591,11 @@ sub handler {
 			}
 		}
 		else {
-			# Any other channel, except special /service/* channel 
+			# Any other channel, except special /service/* channel
 			if ( $obj->{channel} !~ q{^/service/} ) {
 				$manager->deliver_events( [ $obj ] );
 			}
-			
+
 			push @{$events}, {
 				channel      => $obj->{channel},
 				id           => $obj->{id},
@@ -603,15 +603,15 @@ sub handler {
 			};
 		}
 	}
-	
-	if ( @errors ) {		
+
+	if ( @errors ) {
 		for my $error ( @errors ) {
 			$error->{successful} = JSON::XS::false;
-						
+
 			push @{$events}, $error;
 		}
 	}
-	
+
 	if ( $delayedResponse ) {
 		# Used for long-polling, sendResponse will be called by a timer.
 		# We need to queue the events it will send
@@ -624,24 +624,24 @@ sub handler {
 
 sub sendResponse {
 	my ( $httpClient, $httpResponse, $out ) = @_;
-	
+
 	$out ||= [];
-	
+
 	# Add any additional pending events
 	push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
-	
+
 	# Add special first event for /meta/(re)connect if set
 	# Note: calling first_event will remove the event from httpClient
 	if ( my $first = $httpClient->first_event ) {
 		unshift @{$out}, $first;
 	}
-	
+
 	if ($httpResponse) {
 		if ( $httpClient->transport && $httpClient->transport eq 'long-polling' ) {
-			# Finish a long-poll cycle by sending all pending events and removing the timer			
+			# Finish a long-poll cycle by sending all pending events and removing the timer
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
-		
+
 		sendHTTPResponse( $httpClient, $httpResponse, $out );
 	}
 	else {
@@ -654,15 +654,15 @@ sub sendResponse {
 
 sub sendHTTPResponse {
 	my ( $httpClient, $httpResponse, $out ) = @_;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
+
 	$httpResponse->code( 200 );
 	$httpResponse->header( Expires => '-1' );
 	$httpResponse->header( Pragma => 'no-cache' );
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
-	
+
 	if ( $httpClient->transport && $httpClient->transport eq 'long-polling' ) {
 		# Remove the active connection info from manager until
 		# the client makes a new /meta/(re)?connect request
@@ -678,18 +678,18 @@ sub sendHTTPResponse {
 			\&disconnectClient,
 		);
 	}
-	
+
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
-	
+
 	my $sendheaders = 1; # should we send headers?
 	my $chunked     = 0; # is this a chunked connection?
-	
+
 	if ( $httpResponse->header('Transfer-Encoding') ) {
 		$chunked = 1;
-		
+
 		# Have we already sent headers on this connection?
 		if ( $httpClient->sent_headers ) {
 			$sendheaders = 0;
@@ -711,18 +711,18 @@ sub sendHTTPResponse {
 				}
 			}
 		}
-		
+
 		$httpResponse->header( 'Content-Length', length $out );
 	}
-	
+
 	Slim::Web::HTTP::addHTTPResponse(
 		$httpClient, $httpResponse, \$out, $sendheaders, $chunked,
 	);
-	
+
 	if ( main::DEBUGLOG && $isDebug ) {
 		my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 		if ( $sendheaders ) {
-			$log->debug( "Sending Cometd response ($peer):\n" 
+			$log->debug( "Sending Cometd response ($peer):\n"
 				. $httpResponse->as_string . $out
 			);
 		}
@@ -734,32 +734,32 @@ sub sendHTTPResponse {
 
 sub sendCLIResponse {
 	my ( $socket, $out ) = @_;
-	
+
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Sending Cometd CLI chunk:\n" . $out );
 	}
-	
+
 	Slim::Plugin::CLI::Plugin::cli_request_write( $out, $socket );
 }
 
 sub handleRequest {
 	my $params = shift;
-	
+
 	my $id       = $params->{id} || 0;
 	my $cmd      = $params->{request};
 	my $response = $params->{response};
 	my $priority = $params->{priority} || '';
 	my $clid     = $params->{clid};
-	
+
 	my $type     = $params->{type};
 	my $lang     = $params->{lang};
 	my $ua       = $params->{ua};
-	
+
 	my $mac  = $cmd->[0];
 	my $args = $cmd->[1];
 
@@ -767,97 +767,97 @@ sub handleRequest {
 		# If args doesn't contain a 'subscribe' key, treat it as a normal subscribe
 		# call and not a request + subscribe
 		my $isRequest = grep { /^subscribe:/ } @{$args};
-		
+
 		if ( !$isRequest ) {
 			if ( defined $cmd->[1] ) {
 				$cmd = [ $cmd->[1] ];
 			}
-			
+
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
 			}
-		
+
 			my $callback = sub {
 				my $request = shift;
-				
+
 				if ( $mac && $request->client ) {
 					# Make sure this notification is for the right client
-					
+
 					return unless $mac eq $request->client->id;
 				}
-				
-				$request->source( "$response|$id|$priority|$clid" );
-			
+
+				$request->source( "$response|$id|$priority|$clid|$ua" );
+
 				requestCallback( $request );
 			};
-		
+
 			# Need to store this callback for use later in unsubscribe
 			$subCallbacks{ $response } = $callback;
-			
+
 			Slim::Control::Request::subscribe( $callback, $cmd );
-		
+
 			main::DEBUGLOG && $log->debug( "Subscribed for $response, callback $callback" );
-		
+
 			return { ok => 1 };
 		}
 	}
-	
+
 	if ( !$args || ref $args ne 'ARRAY' ) {
 		return { error => 'invalid request arguments, array expected' };
 	}
-	
+
 	my $client;
 	my $clientid;
-	
+
 	if ( my $mac = $cmd->[0] ) {
 		$client   = Slim::Player::Client::getClient($mac);
 		$clientid = blessed($client) ? $client->id : undef;
-		
+
 		# Special case, allow menu requests with a disconnected client
 		if ( !$clientid && $args->[0] eq 'menu' ) {
 			# set the clientid anyway, will trigger special handling in S::C::Request to store as diconnected clientid
 			$clientid = $mac;
 		}
-		
+
 		if ( $client ) {
 			# Update the client's last activity time, since they did something through Comet
 			$client->lastActivityTime( Time::HiRes::time() );
 		}
 	}
-	
+
 	# create a request
 	my $request = Slim::Control::Request->new( $clientid, $args );
-	
+
 	if ( $request->isStatusDispatchable ) {
 		# fix the encoding and/or manage charset param
 		$request->fixEncoding;
-		
+
 		# remember the response channel, request id, and priority
-		$request->source( "$response|$id|$priority|$clid" );
-		
+		$request->source( "$response|$id|$priority|$clid|$ua" );
+
 		# Only set a callback if the caller wants a response
 		if ( $id ) {
 			$request->connectionID($clid);
 			$request->autoExecuteCallback( \&requestCallback );
 		}
-		
+
 		# Set language override for this request
 		if ( $client ) {
 			if ( $lang ) {
 				$client->languageOverride( $lang );
 			}
-			
+
 			# XXX: this could be more specific, i.e. iPeng
 			$client->controlledBy('squeezeplay');
 		}
 		elsif ( $lang ) {
 			$request->setLanguageOverride($lang);
 		}
-		
+
 		if ( $ua && $client ) {
 			$client->controllerUA($ua);
 		}
-		
+
 		# Finish is called when request is done to reset language and controlledBy
 		my $finish = sub {
 			if ( $client ) {
@@ -866,22 +866,22 @@ sub handleRequest {
 				$client->controllerUA(undef);
 			}
 		};
-		
+
 		$request->execute();
-		
+
 		if ( $request->isStatusError ) {
 			$finish->();
 			return { error => 'request failed with error: ' . $request->getStatusText };
 		}
-		
+
 		# If user doesn't care about the response, return nothing
 		if ( !$id ) {
 			main::DEBUGLOG && $log->debug( "Request for $response, but caller does not care about the response" );
-			
+
 			$finish->();
 			return { ok => 1 };
 		}
-		
+
 		# handle async commands
 		if ( $request->isStatusProcessing ) {
 			# Only set a callback if the caller wants a response
@@ -889,17 +889,17 @@ sub handleRequest {
 				requestCallback(@_);
 				$finish->();
 			} );
-			
+
 			main::DEBUGLOG && $log->debug( "Request for $response / $id is async, will callback" );
-			
+
 			return { ok => 1 };
 		}
-		
+
 		# the request was successful and is not async
 		main::DEBUGLOG && $log->debug( "Request for $response / $id is not async" );
-		
+
 		$finish->();
-		
+
 		return {
 			channel => $response,
 			id      => $id,
@@ -919,27 +919,27 @@ sub handleRequest {
 
 sub requestCallback {
 	my $request = shift;
-	
-	my ($channel, $id, $priority, $clid) = split (/\|/, $request->source, 4);
-	
+
+	my ($channel, $id, $priority, $clid) = split (/\|/, $request->source, 5);
+
 	main::DEBUGLOG && $log->debug( "requestCallback got results for $channel / $id" );
-	
+
 	# Do we need to unsubscribe from this request?
 	if ( delete $toUnsubscribe{ $channel } ) {
 		main::DEBUGLOG && $log->debug( "requestCallback: unsubscribing from $channel" );
-		
+
 		$request->removeAutoExecuteCallback();
-		
+
 		return;
 	}
-	
+
 	my $data = $request->getResults;
-	
+
 	if ( exists $subCallbacks{ $channel } ) {
 		# If the request was a normal subscribe, we need to use renderAsArray
 		$data = [ $request->renderAsArray ];
 	}
-	
+
 	# Construct event response
 	my $events = [ {
 		channel   => $channel,
@@ -949,10 +949,10 @@ sub requestCallback {
 			priority => $priority,
 		},
 	} ];
-	
+
 	# Queue request results via Manager
 	$manager->queue_events( $clid, $events );
-	
+
 	# It's possible for multiple callbacks to be triggered, for example
 	# a 'power' event will send both serverstatus and playerstatus data.
 	# To allow these to batch together, we need to use a timer to call
@@ -964,11 +964,11 @@ sub requestCallback {
 
 sub webCloseHandler {
 	my $httpClient = shift;
-	
+
 	# unregister connection from manager
 	if ( my $clid = $httpClient->clid ) {
 		my $transport = $httpClient->transport || 'none';
-			
+
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: $transport" );
@@ -983,11 +983,11 @@ sub webCloseHandler {
 		my $conn = $manager->get_connection($clid);
 		if ( $conn && $conn->[HTTP_CLIENT] == $httpClient ) {
 			$manager->remove_connection( $clid );
-			
+
 			if ( $transport eq 'long-polling' ) {
 				Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 			}
-			
+
 			Slim::Utils::Timers::setTimer(
 				$clid,
 				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
@@ -1002,17 +1002,17 @@ sub webCloseHandler {
 
 sub cliCloseHandler {
 	my $socket = shift;
-	
+
 	my $clid = $manager->clid_for_connection( $socket );
-	
+
 	if ( $clid ) {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $socket->peerhost . ':' . $socket->peerport;
 			$log->debug( "Lost CLI connection from $peer, clid: $clid" );
 		}
-	
+
 		$manager->remove_connection( $clid );
-	
+
 		Slim::Utils::Timers::setTimer(
 			$clid,
 			Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
@@ -1029,26 +1029,26 @@ sub cliCloseHandler {
 
 sub disconnectClient {
 	my $clid = shift;
-	
+
 	# Clean up this client's data
 	if ( $manager->is_valid_clid( $clid) ) {
 		main::DEBUGLOG && $log->debug( "Disconnect for $clid, removing subscriptions" );
-	
-		# Remove any subscriptions for this client, 
+
+		# Remove any subscriptions for this client,
 		Slim::Control::Request::unregisterAutoExecute( $clid );
-			
+
 		main::DEBUGLOG && $log->debug("Unregistered all auto-execute requests for client $clid");
-		
+
 		# Remove any normal subscriptions for this client
 		for my $channel ( keys %subCallbacks ) {
 			if ( $channel =~ m{/$clid/} ) {
 				my $callback = delete $subCallbacks{ $channel };
 				Slim::Control::Request::unsubscribe( $callback );
-				
+
 				main::DEBUGLOG && $log->debug( "Unsubscribed from callback $callback for $channel" );
 			}
 		}
-	
+
 		# Remove client from manager
 		$manager->remove_client( $clid );
 	}

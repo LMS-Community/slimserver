@@ -3257,7 +3257,13 @@ sub serverstatusQuery {
 	}
 
 	# add version
-	$request->addResult('version', $::VERSION);
+	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-baby.+)$/) {
+		main::INFOLOG && logger('network.protocol')->info("Found outdated SB Radio, need to return compatible version string: $1");
+		$request->addResult('version', Slim::Networking::Discovery::getFakeVersion());
+	}
+	else {
+		$request->addResult('version', $::VERSION);
+	}
 
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));

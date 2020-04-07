@@ -3,7 +3,7 @@ package Slim::Networking::Discovery;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -12,6 +12,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+
+# the fake version number we're going to give non-patched Radios to make them believe we're compatible
+use constant RADIO_COMPATIBLE_VERSION => '7.999.999';
 
 my $log = logger('network.protocol');
 
@@ -35,11 +38,11 @@ Return a 17 character hostname, suitable for display on a client device.
 
 sub serverHostname {
 	my $hostname = Slim::Utils::Misc::getLibraryName();
-	
+
 	# Hostname needs to be in ISO-8859-1 encoding to support the ip3k firmware font
 	$hostname = Slim::Utils::Unicode::encode('iso-8859-1', $hostname);
 
-	# just take the first 16 characters, since that's all the space we have 
+	# just take the first 16 characters, since that's all the space we have
 	$hostname = substr $hostname, 0, 16;
 
 	# pad it out to 17 characters total
@@ -63,7 +66,7 @@ Send the client on the other end of the $udpsock a hello packet.
 sub sayHello {
 	my ($udpsock, $paddr) = @_;
 
-	main::INFOLOG && $log->info(" Saying hello!");	
+	main::INFOLOG && $log->info(" Saying hello!");
 
 	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
@@ -87,13 +90,13 @@ sub gotDiscoveryRequest {
 
 		main::INFOLOG && $log->info("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).");
 
-		$response = 'D'. pack('C', 0) x 17; 
+		$response = 'D'. pack('C', 0) x 17;
 
 	} elsif ($deviceid >= 2 || $deviceid <= 4) {  ## FIXME always true
 
 		main::INFOLOG && $log->info("It's a Squeezebox");
 
-		$response = 'D'. serverHostname(); 
+		$response = 'D'. serverHostname();
 
 	} else {
 
@@ -105,18 +108,36 @@ sub gotDiscoveryRequest {
 	main::INFOLOG && $log->info("gotDiscoveryRequest: Sent discovery response.");
 }
 
+my $needsFakeVersion;
 my %TLVhandlers = (
 	# Requests
-	'NAME' => sub { 
+	'NAME' => sub {
 		return Slim::Utils::Misc::getLibraryName()
-	},											       # send full host name - no truncation
+	},                                                 # send full host name - no truncation
 	'IPAD' => sub { $::httpaddr },                     # send ipaddress as a string only if it is set
 	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
-	'VERS' => sub { $::VERSION },			   # send server version
+	'VERS' => sub { $needsFakeVersion
+		? RADIO_COMPATIBLE_VERSION
+		: $::VERSION
+	},                                                 # send server version
 	'UUID' => sub { $prefs->get('server_uuid') },	   # send server uuid
 	# Info only
 	'JVID' => sub { main::INFOLOG && $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
 );
+
+sub getFakeVersion {
+	if (!$needsFakeVersion) {
+		$log->error(qq(
+You're using a Radio with a buggy firmware not recognizing this version of Logitech Media Server.
+Please consider patching it. Until then we'll try to play nice and return a fake version number...
+
+See https://github.com/Logitech/slimserver/blob/public/8.0/README.md#sb-radio-and-logitech-media-server-8.
+));
+	}
+
+	$needsFakeVersion = 1;
+	return RADIO_COMPATIBLE_VERSION;
+}
 
 =head2 addTLVHandler( $hash )
 
@@ -158,7 +179,7 @@ sub gotTLVRequest {
 
 	# chop of leading character
 	$msg = substr($msg, 1);
-	
+
 	my $len = length($msg);
 	my ($t, $l, $v);
 	my $response = 'E';
