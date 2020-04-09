@@ -16,6 +16,7 @@
 	<li>Navigieren Sie auf dem Radio zu Einstellungen/Erweitert/<i>Applet Installer</i>. Dort installiere den "Patch Installer".
 		Darauf startet das Ger&auml;t neu.</li>
 	<li>Nach dem Neustart gehen Sie zu Einstellungen/Erweitert/<i>Patch Installer</i> und installieren den "Version Comparison Fix".</li>
+	<li>Nachdem alle Geräte gepatcht sind, ist es allenfalls erforderlich, Logitech Media Server neu zu starten, um die Warnung los zu werden.</li>
 </ul>
 
 <p>Viel Spass weiterhin mit ihrer Squeezebox Radio!</p>
