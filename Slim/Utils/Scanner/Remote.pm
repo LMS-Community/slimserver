@@ -710,6 +710,21 @@ sub parseOggHeader {
 			$log->debug( sprintf( "OggFlac: %dHz, %dBits, %dch => estimated bitrate: %dkbps",
 					      $samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
 		}
+	# search for Ogg Opus header within the data - if so change the content type to opus for OggOpus
+	# OggOpus header defined: https://people.xiph.org/~giles/2013/draft-ietf-codec-oggopus.html#rfc.section.5.1
+	} elsif (substr($data, 0, 8) eq 'OpusHead') {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Ogg stream is OggOpus - setting content type [ops]");
+		Slim::Schema->clearContentTypeCache( $track->url );
+		Slim::Music::Info::setContentType( $track->url, 'ops' );
+		$track->content_type('ops');
+		
+		my $samplerate = unpack('V', substr($data, 12, 4));
+		my $channels = unpack('C', substr($data, 9, 1));
+		$track->samplerate($samplerate);
+		$track->samplesize(16);
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug( sprintf( "OggOpus: input %dHz, %dch", $samplerate, $channels ) );
+		}
 	}
 
 	# All done
