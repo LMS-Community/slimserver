@@ -3258,8 +3258,12 @@ sub serverstatusQuery {
 
 	# add version
 	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-baby.+)$/) {
-		main::INFOLOG && logger('network.protocol')->info("Found outdated SB Radio, need to return compatible version string: $1");
-		$request->addResult('version', Slim::Networking::Discovery::getFakeVersion());
+		my $ua = $1;
+		my ($version) = $ua =~ m|SqueezePlay-baby/(\d+\.\d+\.\d+)|;
+		if (Slim::Utils::Versions->compareVersions($version, '7.8.0') < 0) {
+			main::INFOLOG && logger('network.protocol')->info("Found outdated SB Radio, need to return compatible version string: $ua");
+			$request->addResult('version', Slim::Networking::Discovery::getFakeVersion());
+		}
 	}
 	else {
 		$request->addResult('version', $::VERSION);
