@@ -161,12 +161,10 @@ sub scanArtists { if (main::SCANNER) {
 			$progress->update($account . string('COLON') . ' ' . $name);
 			Slim::Schema->forceCommit;
 
-			Slim::Schema->rs('Contributor')->update_or_create({
-				'name'       => $name,
-				'namesort'   => Slim::Utils::Text::ignoreCaseArticles($name),
-				'namesearch' => Slim::Utils::Text::ignoreCase($name, 1),
-				'extid'      => 'wimp:artist:' . $artist->{id},
-			}, { 'key' => 'namesearch' });
+			Slim::Schema::Contributor->add({
+				'artist' => $name,
+				'extid'  => 'wimp:artist:' . $artist->{id},
+			});
 		}
 
 		Slim::Schema->forceCommit;
@@ -260,7 +258,7 @@ sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
 
 	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
-	
+
 	if ($oldFingerprint == -1) {
 		return $cb->($oldFingerprint);
 	}
