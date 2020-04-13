@@ -239,7 +239,7 @@ sub pcm_sample_rates {
 sub fade_volume {
 	my ($client, $fade, $callback, $callbackargs) = @_;
 
-	if (abs($fade) > 1 ) {
+	if (abs($fade) > 1 || $client->model !~ /baby|fab4/) {
 		# for long fades do standard behavior so that sleep/alarm work
 		$client->SUPER::fade_volume($fade, $callback, $callbackargs);
 	} else {
