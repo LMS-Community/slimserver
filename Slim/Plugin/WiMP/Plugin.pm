@@ -17,6 +17,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.tidal',
 	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_WIMP_MODULE_NAME',
+	logGroups    => 'SCANNER',
 } );
 
 sub initPlugin {

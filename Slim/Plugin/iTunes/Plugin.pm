@@ -21,6 +21,7 @@ use Slim::Utils::Prefs;
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
 	'defaultLevel' => 'ERROR',
+	'logGroups'    => 'SCANNER',
 });
 
 my $prefs = preferences('plugin.itunes');
@@ -44,7 +45,7 @@ $prefs->setValidate('dir', 'music_path');
 $prefs->setChange(
 	sub {
 		my $value = $_[1];
-		
+
 		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer', $value);
 		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer::Artwork::OSX', $value) if main::ISMAC;
 		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer::Artwork::Win32', $value) if main::ISWINDOWS;
@@ -52,7 +53,7 @@ $prefs->setChange(
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
 		}
-		
+
 		# Default TPE2 as Album Artist pref if using iTunes
 		if ( $value ) {
 			preferences('server')->set( useTPE2AsAlbumArtist => 1 );
@@ -67,14 +68,14 @@ $prefs->setChange(
 		my $interval = int( $prefs->get('scan_interval') );
 
 		if ($interval) {
-			
+
 			main::INFOLOG && $log->info("re-setting checker for $interval seconds from now.");
-	
+
 			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::iTunes::Plugin::checker);
 		}
-		
+
 		else {
-			
+
 			main::INFOLOG && $log->info("disabling checker - interval set to '$interval'");
 		}
 	},
@@ -159,9 +160,9 @@ sub checker {
 	}
 
 	if ($interval) {
-		
+
 		main::INFOLOG && $log->info("setting checker for $interval seconds from now.");
-	
+
 		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&checker);
 	}
 }

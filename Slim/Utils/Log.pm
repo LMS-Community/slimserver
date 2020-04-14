@@ -61,6 +61,45 @@ my $persist       = 0;
 
 my @validLevels   = qw(OFF FATAL ERROR WARN INFO DEBUG);
 
+my $logGroups = {
+	SERVER => {
+		categories => {
+			'server'                 => 'DEBUG',
+			'server.plugins'         => 'DEBUG',
+		},
+		label => 'DEBUG_SERVER_CHOOSE',
+	},
+	RADIO => {
+		categories => {
+			'formats.audio'          => 'DEBUG',
+			'network.asyncdns'       => 'DEBUG',
+			'network.squeezenetwork' => 'DEBUG',
+		},
+		label => 'DEBUG_RADIO',
+	},
+	TRANSCODING => {
+		categories => {
+			'player.source'          => 'DEBUG',
+			'player.streaming'       => 'DEBUG',
+		},
+		label => 'DEBUG_TRANSCODING',
+	},
+	SCANNER => {
+		categories => {
+			'scan'                   => 'DEBUG',
+			'scan.auto'              => 'DEBUG',
+			'scan.scanner'           => 'DEBUG',
+			'scan.import'            => 'DEBUG',
+			'artwork'                => 'DEBUG',
+			'database.info'          => 'DEBUG',
+			'database.virtuallibraries' => 'DEBUG',
+			'formats.audio'          => 'DEBUG',
+			'formats.playlists'      => 'DEBUG',
+		},
+		label => 'DEBUG_SCANNER_CHOOSE',
+	},
+};
+
 =head2 isInitialized( )
 
 Returns true if the logging system is initialized. False otherwise.
@@ -354,6 +393,18 @@ sub addLogCategory {
 		if (my $desc = $args->{'description'}) {
 
 			$descriptions{$category} = $desc;
+		}
+
+		if (my $addToLogGroups = $args->{'logGroups'}) {
+			if (!ref $addToLogGroups) {
+				$addToLogGroups = [$addToLogGroups];
+			}
+
+			foreach (@$addToLogGroups) {
+				if ($logGroups->{$_}) {
+					$logGroups->{$_}->{'categories'}->{$args->{category}} = 'DEBUG';
+				}
+			}
 		}
 
 		return logger($args->{'category'});
@@ -786,46 +837,7 @@ sub _readConfig {
 }
 
 sub logGroups {
-	return {
-		SERVER => {
-			categories => {
-				'server'                 => 'DEBUG',
-				'server.plugins'         => 'DEBUG',
-			},
-			label => 'DEBUG_SERVER_CHOOSE',
-		},
-		RADIO => {
-			categories => {
-				'formats.audio'          => 'DEBUG',
-				'network.asyncdns'       => 'DEBUG',
-				'network.squeezenetwork' => 'DEBUG',
-			},
-			label => 'DEBUG_RADIO',
-		},
-		TRANSCODING => {
-			categories => {
-				'player.source'          => 'DEBUG',
-				'player.streaming'       => 'DEBUG',
-			},
-			label => 'DEBUG_TRANSCODING',
-		},
-		SCANNER => {
-			categories => {
-				'scan'                   => 'DEBUG',
-				'scan.auto'              => 'DEBUG',
-				'scan.scanner'           => 'DEBUG',
-				'scan.import'            => 'DEBUG',
-				'artwork'                => 'DEBUG',
-				'database.info'          => 'DEBUG',
-				'plugin.itunes'          => 'DEBUG',
-				'plugin.musicip'         => 'DEBUG',
-				'database.virtuallibraries' => 'DEBUG',
-				'formats.audio'          => 'DEBUG',
-				'formats.playlists'      => 'DEBUG',
-			},
-			label => 'DEBUG_SCANNER_CHOOSE',
-		},
-	};
+	return Storable::dclone($logGroups);
 }
 
 # logging options we want to pass to the scanner
@@ -937,8 +949,6 @@ sub logLevels {
 	$categories->{'network.squeezenetwork'} = 'ERROR' unless main::NOMYSB;
 
 	return $categories unless $group;
-
-	my $logGroups = logGroups();
 
 	foreach (keys %{ $logGroups->{$group}->{categories} }) {
 		$categories->{$_} = $logGroups->{$group}->{categories}->{$_};

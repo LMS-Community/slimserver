@@ -38,6 +38,7 @@ my $canPowerSearch;
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
+	'logGroups'    => 'SCANNER',
 });
 
 my $prefs = preferences('plugin.musicip');
@@ -67,7 +68,7 @@ sub getFunctions {
 sub useMusicMagic {
 	my $newValue = shift;
 	my $can = canUseMusicMagic();
-	
+
 	if (defined($newValue)) {
 		if (!$can) {
 			$prefs->set('musicip', 0);
@@ -75,15 +76,15 @@ sub useMusicMagic {
 			$prefs->set('musicip', $newValue);
 		}
 	}
-	
+
 	my $use = $prefs->get('musicip');
-	
-	if (!defined($use) && $can) { 
+
+	if (!defined($use) && $can) {
 		$prefs->set('musicip', 1);
 	} elsif (!defined($use) && !$can) {
 		$prefs->set('musicip', 0);
 	}
-	
+
 	$use = $prefs->get('musicip') && $can;
 
 	main::INFOLOG && $log->info("Using musicip: $use");
@@ -130,10 +131,10 @@ sub initPlugin {
 
 	# read enabled status before checkDefaults to ensure a first time initialization
 	my $enabled = $prefs->get('musicip');
-	
+
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
 
-	if ( main::WEBUI ) {	
+	if ( main::WEBUI ) {
 		Slim::Plugin::MusicMagic::Settings->new;
 	}
 
@@ -148,7 +149,7 @@ sub initPlugin {
 	if ($response->is_error) {
 
 		$initialized = 0;
-		
+
 		$prefs->set('musicip', 0) if !defined $enabled;
 
 		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
@@ -196,7 +197,7 @@ sub initPlugin {
 			},
 			'contextToken' => 'MUSICMAGIC_MIX',
 		});
-		
+
 		# Add plugin hooks
 		require Slim::Utils::Scanner::API;
 		Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack } );
@@ -206,8 +207,8 @@ sub initPlugin {
 
 		# initialize the filter list
 		Slim::Plugin::MusicMagic::Common->grabFilters();
-		
-		if ( main::WEBUI ) {	
+
+		if ( main::WEBUI ) {
 			Slim::Plugin::MusicMagic::ClientSettings->new;
 		}
 
@@ -263,7 +264,7 @@ sub initPlugin {
 			my $params = {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
-			}; 
+			};
 			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
 			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
 
@@ -272,14 +273,14 @@ sub initPlugin {
 					'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 				});
 			}
-			
+
 			# set the weight of the moods menu
 			Slim::Plugin::Base->addWeight('MUSICMAGIC_MOODS', MENU_WEIGHT);
-	
+
 			Slim::Web::Pages->addPageLinks("icons", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
 			});
-			
+
 			Slim::Control::Jive::registerPluginMenu([{
 				stringToken    => 'MUSICMAGIC_MOODS',
 				weight         => MENU_WEIGHT,
@@ -317,40 +318,40 @@ sub initPlugin {
 
 sub postinitPlugin {
 	my $class = shift;
-	
+
 	# if user has the Don't Stop The Music plugin enabled, register ourselves
 	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
 		require Slim::Plugin::DontStopTheMusic::Plugin;
 		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('MUSICMAGIC_MIX', sub {
 			my ($client, $cb) = @_;
-		
+
 			my $seedTracks = Slim::Plugin::DontStopTheMusic::Plugin->getMixableProperties($client, 5);
-			
+
 			my $tracks = [];
-		
+
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
 				foreach (@$seedTracks) {
 					my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
-				
+
 					my $mix = getMix($client, $trackObj->path, 'track') if $trackObj;
-					
+
 					main::idleStreams();
-					
+
 					if ($mix && scalar @$mix) {
 						push @$tracks, @$mix;
 					}
 				}
 			}
-			
+
 			$tracks = Slim::Plugin::DontStopTheMusic::Plugin->deDupe($tracks);
-			
+
 			my $maxMixSize = $prefs->client($client)->get('mix_size') || $prefs->get('mix_size') || 12;
 			if ( scalar @$tracks > $maxMixSize ) {
 				Slim::Player::Playlist::fischer_yates_shuffle($tracks);
 				$tracks = [ splice(@$tracks, 0, $maxMixSize) ];
 			}
-		
+
 			$cb->($client, $tracks);
 		});
 	}
@@ -369,7 +370,7 @@ sub playMix {
 
 	my $line1;
 	my $playAddInsert;
-	
+
 	if ($append == 1) {
 
 		$line1 = $client->string('ADDING_TO_PLAYLIST');
@@ -392,7 +393,7 @@ sub playMix {
 	}
 
 	my $line2 = $client->modeParam('stringHeader') ? $client->string($client->modeParam('header')) : $client->modeParam('header');
-	
+
 	$client->showBriefly({
 		'line'    => [ $line1, $line2] ,
 		'overlay' => [ $client->symbols('notesymbol'),],
@@ -410,19 +411,19 @@ sub isMusicLibraryFileChanged {
 			timeout => 30,
 		},
 	);
-	
+
 	$http->get( "http://localhost:$MMSport/api/cacheid?contents" );
 }
 
 sub _statusOK {
 	my $http   = shift;
 	my $params = $http->params('params');
-	
+
 	my $content = $http->content;
 	chomp($content);
-	
+
 	main::DEBUGLOG && $log->debug( "Read status $content" );
-		
+
 	my $fileMTime = $params->{fileMTime};
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
@@ -477,13 +478,13 @@ sub _statusOK {
 
 sub checker {
 	my $firstTime = shift || 0;
-	
+
 	if (!$prefs->get('musicip')) {
 		return;
 	}
 
 	if (!$firstTime && !Slim::Music::Import->stillScanning) {
-	
+
 		isMusicLibraryFileChanged();
 	}
 
@@ -497,14 +498,14 @@ sub checker {
 sub _cacheidOK {
 	my $http   = shift;
 	my $params = $http->params('params');
-	
+
 	my $content = $http->content;
 	chomp($content);
-	
+
 	main::DEBUGLOG && $log->debug( "Read cacheid of $content" );
-		
+
 	$params->{fileMTime} = $content;
-	
+
 	#do status check
 	$http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_statusOK,
@@ -515,7 +516,7 @@ sub _cacheidOK {
 			error   => "Can't read status",
 		},
 	);
-	
+
 	$http->get( "http://localhost:$MMSport/api/getStatus" );
 }
 
@@ -542,7 +543,7 @@ sub title {
 sub mixable {
 	my $class = shift;
 	my $item  = shift;
-	
+
 	if ($prefs->get('musicip') && blessed($item) && $item->can('musicmagic_mixable')) {
 
 		return $item->musicmagic_mixable;
@@ -597,7 +598,7 @@ sub setMoodMode {
 			my $method = shift;
 
 			if ($method eq 'right') {
-				
+
 				mixerFunction($client);
 			}
 			elsif ($method eq 'left') {
@@ -627,7 +628,7 @@ sub specialPushLeft {
 
 	my $now  = Time::HiRes::time();
 	my $when = $now + 0.5;
-	
+
 	my $mixer  = Slim::Utils::Strings::string('MUSICMAGIC_MIXING');
 
 	if ($step == 0) {
@@ -680,12 +681,12 @@ sub mixerFunction {
 	if ( $trackinfo ) {
 		$currentItem = $track;
 		$levels[$level] = 'track';
-		
+
 	# use _prepare_mix for artist/album/genre
 	# XXX - consolidate all mixes to using this method!
 	} elsif ($paramref->{track_id} || $paramref->{artist_id} || $paramref->{album_id} || $paramref->{genre_id}) {
 		my $params = {
-#			song        => $paramref->{'song_id'}, 
+#			song        => $paramref->{'song_id'},
 			track       => $paramref->{'track_id'},
 			artist      => $paramref->{'artist_id'},
 #			contributor => $paramref->{'contributor_id'},
@@ -695,14 +696,14 @@ sub mixerFunction {
 #			mood        => $paramref->{'mood'},
 #			playlist    => $paramref->{'playlist'},
 		};
-	
+
 		$mix = _prepare_mix($client, $params);
-		
+
 	# then moods
 	} elsif ($paramref->{'mood'}) {
 		$mixSeed = $currentItem;
 		$levels[$level] = 'mood';
-	
+
 	# if we've chosen a particular song
 	} elsif (!$descend || $levels[$level] eq 'track') {
 
@@ -713,13 +714,13 @@ sub mixerFunction {
 		$mixSeed = $currentItem->tracks->next->path;
 
 	} elsif ($levels[$level] eq 'contributor') {
-		
+
 		# MusicIP uses artist instead of contributor.
 		$levels[$level] = 'artist';
 		$mixSeed = $currentItem->name;
-	
+
 	} elsif ($levels[$level] eq 'genre') {
-		
+
 		$mixSeed = $currentItem->name;
 	}
 
@@ -750,7 +751,7 @@ sub mixerFunction {
 			'overlayRefArgs' => 'C',
 			'parentMode'     => 'musicmagic_mix',
 		);
-		
+
 		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 
 		specialPushLeft($client, 0);
@@ -764,7 +765,7 @@ sub mixerFunction {
 
 sub mixExitHandler {
 	my ($client,$exittype) = @_;
-	
+
 	$exittype = uc($exittype);
 
 	if ($exittype eq 'LEFT') {
@@ -790,27 +791,27 @@ sub getMix {
 	my $req;
 	my $res;
 	my @type = qw(tracks min mbytes);
-	
+
 	my %args;
-	 
+
 	if (defined $client) {
 		my $cprefs = $prefs->client($client);
 		%args = (
 			# Set the size of the list (default 12)
 			'size'       => $cprefs->get('mix_size') || $prefs->get('mix_size'),
-	
+
 			# (tracks|min|mb) Set the units for size (default tracks)
 			'sizetype'   => $type[$cprefs->get('mix_type') || $prefs->get('mix_type')],
-	
+
 			# Set the style slider (default 20)
 			'style'      => $cprefs->get('mix_style') || $prefs->get('mix_style'),
-	
+
 			# Set the variety slider (default 0)
 			'variety'    => $cprefs->get('mix_variety') || $prefs->get('mix_variety'),
 
 			# mix genres or stick with that of the seed. (Default: match seed)
 			'mixgenre'   => $cprefs->get('mix_genre') || $prefs->get('mix_genre'),
-	
+
 			# Set the number of songs before allowing dupes (default 12)
 			'rejectsize' => $cprefs->get('reject_size') || $prefs->get('reject_size'),
 		);
@@ -818,19 +819,19 @@ sub getMix {
 		%args = (
 			# Set the size of the list (default 12)
 			'size'       => $prefs->get('mix_size'),
-	
+
 			# (tracks|min|mb) Set the units for size (default tracks)
 			'sizetype'   => $type[$prefs->get('mix_type')],
-	
+
 			# Set the style slider (default 20)
 			'style'      => $prefs->get('mix_style'),
-	
+
 			# Set the variety slider (default 0)
 			'variety'    => $prefs->get('mix_variety'),
 
 			# mix genres or stick with that of the seed. (Default: match seed)
 			'mixgenre'   => $prefs->get('mix_genre'),
-	
+
 			# Set the number of songs before allowing dupes (default 12)
 			'rejectsize' => $prefs->get('reject_size'),
 		);
@@ -838,9 +839,9 @@ sub getMix {
 
 	# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
 	my $rejectType = defined $client ?
-		($prefs->client($client)->get('reject_type') || $prefs->get('reject_type')) : 
+		($prefs->client($client)->get('reject_type') || $prefs->get('reject_type')) :
 		($prefs->get('reject_type') || 0);
-	
+
 	# assign only if a rejectType found.  suppresses a warning when trying to access the array with no value.
 	if ($rejectType) {
 		$args{'rejecttype'} = $type[$rejectType];
@@ -876,7 +877,7 @@ sub getMix {
 
 	# url encode the request, but not the argstring
 	my $mixArgs = $validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
-	
+
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
@@ -884,7 +885,7 @@ sub getMix {
 	if ($response->is_error) {
 
 		if ($response->code == 500 && $filter) {
-			
+
 			::idleStreams();
 
 			# try again without the filter
@@ -897,10 +898,10 @@ sub getMix {
 		}
 
 		if ($response->is_error) {
-			
+
 			$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
 			main::DEBUGLOG && $log->debug($response->as_string);
-	
+
 			return \@mix;
 		}
 	}
@@ -912,9 +913,9 @@ sub getMix {
 
 		# Bug 4281 - need to convert from UTF-8 on Windows.
 		if (main::ISWINDOWS && !-e $songs[$j] && -e Win32::GetANSIPathName($songs[$j])) {
-			
+
 			$songs[$j] = Win32::GetANSIPathName($songs[$j]);
-			
+
 		}
 
 		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
@@ -967,7 +968,7 @@ sub musicmagic_mix {
 		$itemnumber++;
 
 	} else {
-		
+
 		# no mixed items, report empty.
 		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
 	}
@@ -984,7 +985,7 @@ sub musicmagic_mix {
 
 			next;
 		}
-		
+
 		$trackObj->displayAsHTML(\%form, 0);
 
 		$form{'attributes'} = join('=', '&track.id', $trackObj->id);
@@ -1012,7 +1013,7 @@ sub cliMoods {
 	}
 
 	# get our parameters
-	my $client = $request->client();	
+	my $client = $request->client();
 
 	my $moods = grabMoods();
 
@@ -1070,7 +1071,7 @@ sub cliMix {
 	my $tags   = $request->getParam('tags') || 'al';
 
 	my $params = {
-		song        => $request->getParam('song_id'), 
+		song        => $request->getParam('song_id'),
 		track       => $request->getParam('track_id'),
 		artist      => $request->getParam('artist_id'),
 		contributor => $request->getParam('contributor_id'),
@@ -1137,7 +1138,7 @@ sub cliMix {
 			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
 		}
 		$request->addResult('base', $base);
-		
+
 		$request->addResult('offset', 0);
 		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
 		my $thisWindow = {
@@ -1166,10 +1167,10 @@ sub cliMix {
 		};
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$chunkCount++;
-		
+
 	}
-	
-	
+
+
 	for my $item (@$mix) {
 
 		# If we can't get an object for this url, skip it, as the
@@ -1207,9 +1208,9 @@ sub cliPlayMix {
 	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
 	my $insert = !$request->isNotCommand([['musicip'], ['insert']]);
 
-	$client->execute(["playlist",	$add ? "addtracks" 
+	$client->execute(["playlist",	$add ? "addtracks"
 					: $insert ? "inserttracks"
-					: "playtracks", 
+					: "playtracks",
 			"listref=musicmagic_mix"]);
 }
 
@@ -1272,14 +1273,14 @@ sub _prepare_mix {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'artist');
-			
+
 			$params->{'src_mix'} = $obj->name;
 		}
 
 	} elsif ($album) {
 
 		my ($obj) = Slim::Schema->find('Album', $album);
-		
+
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			my $trackObj = $obj->tracks->next;
@@ -1287,11 +1288,11 @@ sub _prepare_mix {
 			if ($trackObj) {
 
 				$mix = getMix($client, $trackObj->path, 'album');
-				
+
 				$params->{'src_mix'} = $obj->title;
 			}
 		}
-		
+
 	} elsif ($genre && $genre ne "*") {
 
 		my ($obj) = Slim::Schema->find('Genre', $genre);
@@ -1300,15 +1301,15 @@ sub _prepare_mix {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'genre');
-			
+
 			$params->{'src_mix'} = $obj->name;
 		}
-	
+
 	} elsif (defined $year) {
-		
+
 		$mix = getMix($client, $year, 'year');
 		$params->{'src_mix'} = $year;
-		
+
 	} else {
 
 		main::DEBUGLOG && $log->debug("No/unknown type specified for mix");
@@ -1318,13 +1319,13 @@ sub _prepare_mix {
 	}
 
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
-		# We'll be using this to play the entire mix using 
+		# We'll be using this to play the entire mix using
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
 		$client->modeParam('musicmagic_mix', $mix);
 	} elsif (!defined $mix || ref $mix ne "ARRAY") {
 		$mix = [];
 	}
-	
+
 	return $mix;
 }
 
@@ -1349,7 +1350,7 @@ sub genreInfoHandler {
 }
 
 sub _objectInfoHandler {
-	
+
 	my ( $objectType, $client, $url, $obj, $remoteMeta, $tags ) = @_;
 	$tags ||= {};
 
@@ -1415,9 +1416,9 @@ sub _objectInfoHandler {
 
 sub _syncHTTPRequest {
 	my $url = shift;
-	
+
 	$MMSport = $prefs->get('port') unless $MMSport;
-	
+
 	my $http = LWP::UserAgent->new;
 
 	$http->timeout($prefs->get('timeout') || 5);
@@ -1429,22 +1430,22 @@ sub _syncHTTPRequest {
 # for new/changed tracks
 sub checkSingleTrack {
 	my ( $trackid, $url ) = @_;
-	
+
 	require Slim::Plugin::MusicMagic::Importer;
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
-	
+
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
 	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
-	
+
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $http = shift;
-			
+
 			if ( $http->content =~ /active\s+yes/ ) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Setting MusicIP mixable status for $path");
-				
+
 				my $track = Slim::Schema->rs('Track')->find($trackid);
-				
+
 				Slim::Plugin::MusicMagic::Importer->setSongMixable($track);
 			}
 			else {
@@ -1455,7 +1456,7 @@ sub checkSingleTrack {
 			main::DEBUGLOG && $log->is_debug && $log->debug("MusicIP mixable status not found for $path");
 		},
 	);
-	
+
 	$http->get($apiurl);
 }
 
