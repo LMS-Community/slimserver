@@ -44,6 +44,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	#              matching table happens, the library will be rebuilt. USE CAREFULLY! Excessive
 	#              rebuilding might considerably harm your performance and listening experience.
 	#
+	# - ignoreOnlineArtists: do not include online artists which don't have any track or album
+	#
 	# sql and scannerCB are mutually exclusive. scannerCB takes precedence over sql.
 
 	Slim::Music::VirtualLibraries->registerLibrary( {
@@ -350,7 +352,7 @@ sub rebuild {
 		$delete_sth = $dbh->prepare_cached('DELETE FROM library_contributor WHERE library = ?');
 		$delete_sth->execute($id);
 
-		my $contributors_sth = $dbh->prepare_cached(qq{
+		my $contributorsSQL = qq{
 			INSERT OR IGNORE INTO library_contributor (library, contributor)
 				SELECT DISTINCT ?, contributors.id
 				FROM contributors
@@ -359,12 +361,19 @@ sub rebuild {
 					SELECT library_track.track
 					FROM library_track
 					WHERE library_track.library = ?
-				) OR (
+				)
+		};
+
+		if (!$args->{ignoreOnlineArtists}) {
+			$contributorsSQL .= qq {
+ 				OR (
 					contributors.extid IS NOT NULL
 					AND contributors.extid != ''
 					AND contributors.id NOT IN (SELECT DISTINCT contributor FROM contributor_track)
 				)
-		});
+			};
+		}
+		my $contributors_sth = $dbh->prepare_cached($contributorsSQL);
 		$contributors_sth->execute($id, $id);
 
 		$delete_sth = $dbh->prepare_cached('DELETE FROM library_genre WHERE library = ?');
