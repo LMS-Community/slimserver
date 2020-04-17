@@ -43,6 +43,7 @@ use Log::Log4perl::Appender::Screen;
 use Log::Log4perl::Appender::File;
 use Path::Class;
 use Scalar::Util qw(blessed);
+use Storable;
 
 use Slim::Utils::OSDetect;
 
