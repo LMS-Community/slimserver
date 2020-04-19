@@ -820,6 +820,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
+	my $includeOnlineOnlyArtists = $request->getParam('include_online_only_artists');
 	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags     = $request->getParam('tags') || '';
 
@@ -829,7 +830,7 @@ sub artistsQuery {
 	my $va_pref  = $prefs->get('variousArtistAutoIdentification') && $prefs->get('useUnifiedArtistsList');
 
 	# we only want external artists without tracks if there's no filtering argument given
-	my $wantExternal = $tags =~ /Q/ && !$year && !$genreID && !$genreString && !$trackID && !$albumID && !$artistID;
+	my $wantExternal = $includeOnlineOnlyArtists && !$year && !$genreID && !$genreString && !$trackID && !$albumID && !$artistID;
 
 	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';

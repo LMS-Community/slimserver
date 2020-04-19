@@ -1086,11 +1086,14 @@ sub _artists {
 	}
 
 	# only get external artists without album if no filter is set
-	my $queryTags = 'EQs';
+	my $queryTags = 'Es';
 	if ( ($library_id && $library_id ne (Slim::Music::VirtualLibraries->getLibraryIdForClient($client) || ''))
 		|| (scalar grep { $_ !~ /^role_id:.*ALBUMARTIST|^library_id:/} @searchTags)
 	) {
 		$queryTags = 's';
+	}
+	else {
+		push @searchTags, 'include_online_only_artists:1'
 	}
 
 	_generic($client, $callback, $args, 'artists',

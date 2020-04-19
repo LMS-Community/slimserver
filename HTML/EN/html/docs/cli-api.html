@@ -3415,17 +3415,23 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			include_online_only_artists
+		</td>
+		<td>
+			Include external artists from music services, even if they don't have any track or album in the
+			current collection. This allows callers to browse those artists on the external service.
+			<br>
+			Please note that this parmeter would be ignored if some kind of filtering argument was given which
+			didn't apply to artists without related tracks (eg. genre_id, album_id etc.).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			tags
 		</td>
 		<td>
 			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is empty.
-			<br>
-			The "Q" tag would include external artists from music services, even if they don't have any track or album in the current collection.
-			This allows callers to browse those artists on the external service.
-			<br>
-			Please note that the "Q" tag would be ignored if some kind of filtering argument was given which doesn't apply to artists
-			without related tracks (eg. genre_id, album_id etc.).
 		</td>
 	</tr>
 </table>
