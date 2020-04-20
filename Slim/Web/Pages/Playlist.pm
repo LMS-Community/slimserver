@@ -158,7 +158,7 @@ sub playlist {
 	}
 
 	# from BrowseLibrary->_tracks: dtuxgaAsSliqyorf, k, cJK
-	my $tags = 'tags:xaAsSlLeNcJKu';
+	my $tags = 'tags:xaAsSlLeNcJK';
 
 	# Some additional tags we might need to satisfy the title format
 	$titleFormat =~ /\bGENRE\b/    && ($tags .= 'g');
