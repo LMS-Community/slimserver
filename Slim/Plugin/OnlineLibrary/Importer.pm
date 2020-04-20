@@ -71,31 +71,20 @@ sub startScan {
 		Slim::Schema->forceCommit;
 
 		if (my $selectSQL = $SQL{$mapping->{field}}) {
+			next unless $mapping->{text} && $mapping->{genre};
+
 			my $condition = sprintf('%%%s%%', $mapping->{text});
-
-			# check whether we have any matching items
-			my $count = $dbh->selectall_arrayref(qq(
-				SELECT 1
-				FROM ($selectSQL)
-				LIMIT 1
-			), undef, $condition);
-
-			next unless $count && $count->[0] && $count->[0]->[0];
-
 			my $genreName = $mapping->{genre};
-			my $genre = Slim::Schema->rs('Genre')->update_or_create({
-				name       => $genreName,
-				namesort   => Slim::Utils::Text::ignoreCaseArticles($genreName),
-				namesearch => Slim::Utils::Text::ignoreCase($genreName, 1),
-			}, { key => 'namesearch' });
 
-			my $sth = $dbh->prepare_cached(qq(
-				UPDATE genre_track
-				SET genre = ?
-				WHERE track IN ($selectSQL)
-			));
+			my $sth = $dbh->prepare_cached($selectSQL);
+			$sth->execute($condition);
 
-			$sth->execute($genre->id, $condition);
+			my $trackId;
+			$sth->bind_columns(\$trackId);
+
+			while ($sth->fetch) {
+				Slim::Schema::Genre->add($genreName, $trackId + 0);
+			}
 		}
 	}
 
