@@ -1258,24 +1258,24 @@ sub playlistXalbumCommand {
 	# Pass to parseSearchTerms
 	my $find     = {};
 
-	if (specified($genre)) {
+	if (specified($genre) && $genre ne '') {
 
-		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
+		$find->{'genre.name'} = { like => _playlistXalbum_singletonRef($genre) };
 	}
 
-	if (specified($artist)) {
+	if (specified($artist) && $artist ne '') {
 
-		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
+		$find->{'contributor.name'} = { like => _playlistXalbum_singletonRef($artist) };
 	}
 
-	if (specified($album)) {
+	if (specified($album) && $album ne '') {
 
-		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
+		$find->{'album.title'} = { like => _playlistXalbum_singletonRef($album) };
 	}
 
-	if (specified($title)) {
+	if (specified($title) && $title ne '') {
 
-		$find->{'me.title'} = _playlistXalbum_singletonRef($title);
+		$find->{'me.title'} = { like => _playlistXalbum_singletonRef($title) };
 	}
 
 	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find, $cmd);
