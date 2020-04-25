@@ -46,7 +46,9 @@ sub handler {
 			$_->{field} && $_->{text} && $_->{genre};
 		} @$mappings ];
 
+		Slim::Music::Import->doQueueScanTasks(1);
 		$prefs->set('genreMappings', $mappings);
+		Slim::Music::Import->doQueueScanTasks(0);
 	}
 
 	$params->{matcher_items} = [ @{$prefs->get('genreMappings')}, { field => '_new_' } ];
