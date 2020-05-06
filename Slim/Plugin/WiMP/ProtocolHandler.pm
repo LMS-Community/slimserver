@@ -1,6 +1,9 @@
 package Slim::Plugin::WiMP::ProtocolHandler;
 
-# $Id: ProtocolHandler.pm 30836 2010-05-28 20:13:33Z agrundman $
+# Logitech Media Server Copyright 2003-2020 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
 
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
@@ -26,19 +29,27 @@ sub isRemote { 1 }
 
 sub getFormatForURL {
 	my ($class, $url) = @_;
-	
+
 	my ($trackId, $format) = _getStreamParams( $url );
 	return $format;
 }
 
 # default buffer 3 seconds of 256kbps MP3/768kbps FLAC audio
+my %bufferSecs = (
+	flac => 80,
+	flc => 80,
+	mp3 => 32,
+	mp4 => 40
+);
+
 sub bufferThreshold {
 	my ($class, $client, $url) = @_;
 
-	$url = $client->playingSong()->track()->url() unless $url =~ /\.(?:fla?c|mp3)$/;
-	
-	my ($trackId, $format) = _getStreamParams( $url );
-	return ($format eq 'flac' ? 96 : 32) * ($prefs->get('bufferSecs') || 3); 
+	$url = $client->playingSong()->track()->url() unless $url =~ /\.(fla?c|mp[34])/;
+	my $ext = $1;
+
+	my ($trackId, $format) = _getStreamParams($url);
+	return ($bufferSecs{$format} || $bufferSecs{$ext} || 40) * ($prefs->get('bufferSecs') || 3);
 }
 
 sub canSeek { 1 }
@@ -49,21 +60,29 @@ sub new {
 	my $args   = shift;
 
 	my $client = $args->{client};
-	
+
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
 	my ($trackId, $format) = _getStreamParams( $args->{url} || '' );
-	
+
 	main::DEBUGLOG && $log->debug( 'Remote streaming TIDAL track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => $format eq 'flac' ? 800_000 : 256_000,
+		bitrate => _getBitrate($format),
 	} ) || return;
-	
-	${*$sock}{contentType} = $format eq 'flac' ? 'audio/flac' : 'audio/mpeg';
+
+	if ($format eq 'flac') {
+		${*$sock}{contentType} = 'audio/flac';
+	}
+	elsif ($format =~ /mp4|aac/) {
+		${*$sock}{contentType} = 'audio/aac';
+	}
+	else {
+		${*$sock}{contentType} = 'audio/mpeg';
+	}
 
 	return $sock;
 }
@@ -71,7 +90,7 @@ sub new {
 # Avoid scanning
 sub scanUrl {
 	my ( $class, $url, $args ) = @_;
-	
+
 	$args->{cb}->( $args->{song}->currentTrack() );
 }
 
@@ -91,58 +110,58 @@ sub canSkip { 1 }
 
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
-	
+
 	main::DEBUGLOG && $log->debug("Direct stream failed: [$response] $status_line\n");
-	
+
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_WIMP_STREAM_FAILED');
 }
 
 sub _handleClientError {
 	my ( $error, $client, $params ) = @_;
-	
+
 	my $song = $params->{song};
-	
+
 	return if $song->pluginData('abandonSong');
-	
+
 	# Tell other clients to give up
 	$song->pluginData( abandonSong => 1 );
-	
+
 	$params->{errorCb}->($error);
 }
 
 sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
-	
+
 	my $url = $song->track()->url;
-	
+
 	$song->pluginData( abandonSong   => 0 );
-	
+
 	my $params = {
 		song      => $song,
 		url       => $url,
 		successCb => $successCb,
 		errorCb   => $errorCb,
 	};
-	
+
 	_getTrack($params);
 }
 
 sub _getTrack {
 	my $params = shift;
-	
+
 	my $song   = $params->{song};
 	my $client = $song->master();
-	
+
 	return if $song->pluginData('abandonSong');
-	
+
 	# Get track URL for the next track
 	my ($trackId, $format) = _getStreamParams( $params->{url} );
-	
+
 	if (!$trackId) {
 		_gotTrackError( $client->string('PLUGIN_WIMP_INVALID_TRACK_ID'), $client, $params );
 		return;
 	}
-	
+
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
@@ -151,53 +170,55 @@ sub _getTrack {
 				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrack failed: ' . ( $@ || $info->{error} ) );
 				}
-				
+
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
 				#if ( main::DEBUGLOG && $log->is_debug ) {
 				#	$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
 				#}
-				
+
 				_gotTrack( $client, $info, $params );
 			}
 		},
 		sub {
 			my $http  = shift;
-			
+
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'getTrack failed: ' . $http->error );
 			}
-			
+
 			_gotTrackError( $http->error, $client, $params );
 		},
 		{
 			client => $client,
 		},
 	);
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN for ' . $params->{url});
-	
+
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
-			'/api/wimp/v1/playback/getMediaURL?trackId=' . $trackId
+			sprintf('/api/wimp/v1/playback/getMediaURL?trackId=%s&format=%s', $trackId, $format)
 		)
 	);
 }
 
 sub _gotTrack {
 	my ( $client, $info, $params ) = @_;
-	
-    my $song = $params->{song};
-    
-    return if $song->pluginData('abandonSong');
-	
+
+	my $song = $params->{song};
+
+	return if $song->pluginData('abandonSong');
+
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
 
+	my ($trackId, $format) = _getStreamParams( $params->{url} );
+
 	# Save all the info
 	$song->pluginData( info => $info );
-	
+
 	# Cache the rest of the track's metadata
 	my $icon = Slim::Plugin::WiMP::Plugin->_pluginDataFor('icon');
 	my $meta = {
@@ -206,19 +227,19 @@ sub _gotTrack {
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
-		bitrate   => $params->{url} =~ /\.flac/ ? 'PCM VBR' : ($info->{bitrate} . 'k CBR'),
-		type      => $params->{url} =~ /\.flac/ ? 'FLAC' : 'MP3',
+		bitrate   => $format eq 'flac' ? 'PCM VBR' : ($info->{bitrate} . 'k CBR'),
+		type      => lc($format) eq 'mp4' ? 'AAC' : uc($format),
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
-	
+
 	$song->duration( $info->{duration} );
-	
+
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 
 	$params->{successCb}->();
-	
+
 	# trigger playback statistics update
 	if ( $info->{duration} > 2) {
 		# we're asked to report back if a track has been played halfway through
@@ -231,7 +252,7 @@ sub _gotTrack {
 
 sub _gotTrackError {
 	my ( $error, $client, $params ) = @_;
-	
+
 	main::DEBUGLOG && $log->debug("Error during getTrackInfo: $error");
 
 	return if $params->{song}->pluginData('abandonSong');
@@ -241,7 +262,7 @@ sub _gotTrackError {
 
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
-	
+
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
 	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL($song->track->url()) );
@@ -250,9 +271,9 @@ sub canDirectStreamSong {
 # parseHeaders is used for proxied streaming
 sub parseHeaders {
 	my ( $self, @headers ) = @_;
-	
+
 	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @headers );
-	
+
 	return $self->SUPER::parseHeaders( @headers );
 }
 
@@ -260,22 +281,24 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
 	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
-	my ($length, $isFlac, $bitrate);
+	my ($length, $bitrate, $ct);
 	foreach my $header (@headers) {
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
 		}
-		elsif ( $header =~ /^Content-Type:\s*audio\/(?:x-|)flac/i ) {
-			$isFlac = 1;
+		elsif ( $header =~ /^Content-Type:\s*(\S*)/) {
+			$ct = Slim::Music::Info::mimeToType($1);
 		}
 	}
-	
-	if ( $isFlac && $length && (my $song = $client->streamingSong()) ) {
+
+	$ct = 'aac' if !$ct || $ct eq 'mp4';
+
+	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
 		$bitrate = int($length/$song->duration*8);
 
 		$url = $url->url if blessed $url;
 		my ($trackId) = _getStreamParams( $url );
-		
+
 		if ($trackId) {
 			my $cache = Slim::Utils::Cache->new;
 			my $meta = $cache->get('wimp_meta_' . $trackId);
@@ -285,13 +308,22 @@ sub parseDirectHeaders {
 			}
 		}
 	}
-	
-	$bitrate ||= $isFlac ? 800_000 : 256_000;
+
+	$bitrate ||= _getBitrate($ct);
 
 	$client->streamingSong->bitrate($bitrate);
-	
+
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', $isFlac ? 'flc' : 'mp3', $length);
+	return (undef, $bitrate, 0, '', $ct, $length);
+}
+
+sub _getBitrate {
+	my $ct = shift || '';
+
+	return 800_000 if $ct =~ /fla?c/;
+	return 320_000 if $ct =~ /aac|mp4/;
+
+	return 256_00;
 }
 
 # URL used for CLI trackinfo queries
@@ -299,22 +331,22 @@ sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 
 	my ($trackId) = _getStreamParams( $url );
-	
+
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/wimp/v1/opml/trackinfo?trackId=' . $trackId
 	);
-	
+
 	return $trackInfoURL;
 }
 
 # Track Info menu
 sub trackInfo {
 	my ( $class, $client, $track ) = @_;
-	
+
 	my $url          = $track->url;
 	my $trackInfoURL = $class->trackInfoURL( $client, $url );
-	
+
 	# let XMLBrowser handle all our display
 	my %params = (
 		header   => 'PLUGIN_WIMP_GETTING_TRACK_DETAILS',
@@ -322,29 +354,29 @@ sub trackInfo {
 		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
 		url      => $trackInfoURL,
 	);
-	
+
 	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-	
+
 	$client->modeParam( 'handledTransition', 1 );
 }
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
-	
+
 	my $icon = $class->getIcon();
-	
+
 	return {} unless $url;
-	
+
 	my $cache = Slim::Utils::Cache->new;
-	
+
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId, $format) = _getStreamParams( $url );
 	my $meta = $cache->get( 'wimp_meta_' . ($trackId || '') );
-	
-	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+
+	if ( !($meta && $meta->{duration}) && !$client->master->pluginData('fetchingMeta') ) {
 
 		$client->master->pluginData( fetchingMeta => 1 );
 
@@ -352,25 +384,26 @@ sub getMetadataFor {
 		my %need = (
 			$trackId => 1
 		);
-		
+
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 			if ( my ($id) = _getStreamParams( $trackURL ) ) {
-				if ( $id && !$cache->get("wimp_meta_$id") ) {
+				my $cached = $id && $cache->get("wimp_meta_$id");
+				if ( $id && !($cached && $cached->{duration}) ) {
 					$need{$id}++;
 				}
 			}
 		}
-		
+
 		if (keys %need) {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( "Need to fetch metadata for: " . join( ', ', keys %need ) );
 			}
-			
+
 			my $metaUrl = Slim::Networking::SqueezeNetwork->url(
 				"/api/wimp/v1/playback/getBulkMetadata"
 			);
-			
+
 			my $http = Slim::Networking::SqueezeNetwork->new(
 				\&_gotBulkMetadata,
 				\&_gotBulkMetadataError,
@@ -379,7 +412,7 @@ sub getMetadataFor {
 					timeout => 60,
 				},
 			);
-	
+
 			$http->post(
 				$metaUrl,
 				'Content-Type' => 'application/x-www-form-urlencoded',
@@ -390,12 +423,13 @@ sub getMetadataFor {
 			$client->master->pluginData( fetchingMeta => 0 );
 		}
 	}
-	
+
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
-	
+	$meta->{cover} ||= $meta->{icon} ||= $icon;
+
 	return $meta || {
-		bitrate   => '256k CBR',
-		type      => 'MP3',
+		bitrate   => '320k CBR',
+		type      => 'AAC',
 		icon      => $icon,
 		cover     => $icon,
 	};
@@ -404,40 +438,41 @@ sub getMetadataFor {
 sub _gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
-	
+
 	$client->master->pluginData( fetchingMeta => 0 );
-	
+
 	my $info = eval { from_json( $http->content ) };
-	
+
 	if ( $@ || ref $info ne 'ARRAY' ) {
 		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
 		return;
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
-	
+
 	# Cache metadata
 	my $cache = Slim::Utils::Cache->new;
 	my $icon  = Slim::Plugin::WiMP::Plugin->_pluginDataFor('icon');
 
 	for my $track ( @{$info} ) {
 		next unless ref $track eq 'HASH';
-		
+
 		# cache the metadata we need for display
 		my $trackId = delete $track->{id};
-		
+
 		if ( !$track->{cover} ) {
 			$track->{cover} = $icon;
 		}
 
 		my $bitrate = delete($track->{bitrate});
-		
+		warn $bitrate;
+
 		my $meta = {
 			%{$track},
 			bitrate   => $bitrate*1 > 320 ? 'PCM VBR ' : ($bitrate . 'k CBR'),
-			type      => $bitrate*1 > 320 ? 'FLAC' : 'MP3',
+			type      => $bitrate*1 > 320 ? 'FLAC' : ($bitrate*1 > 256 ? 'AAC' : 'MP3'),
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
 		};
@@ -446,10 +481,10 @@ sub _gotBulkMetadata {
 		# if we didn't cache at all, we'd keep on hammering our servers
 		$cache->set( 'wimp_meta_' . $trackId, $meta, $bitrate ? 86400 : 500 );
 	}
-	
+
 	# Update the playlist time so the web will refresh, etc
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
-	
+
 	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
 }
 
@@ -457,9 +492,9 @@ sub _gotBulkMetadataError {
 	my $http   = shift;
 	my $client = $http->params('client');
 	my $error  = $http->error;
-	
+
 	$client->master->pluginData( fetchingMeta => 0 );
-	
+
 	$log->warn("Error getting track metadata from SN: $error");
 }
 
@@ -472,31 +507,31 @@ sub getIcon {
 # SN only, re-init upon reconnection
 sub reinit {
 	my ( $class, $client, $song ) = @_;
-	
+
 	# Reset song duration/progress bar
 	my $url = $song->track->url();
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Re-init TIDAL - $url");
-	
+
 	my $cache     = Slim::Utils::Cache->new;
 	my ($trackId) = _getStreamParams( $url );
 	my $meta      = $cache->get( 'wimp_meta_' . ($trackId || '') );
-	
-	if ( $meta ) {			
+
+	if ( $meta ) {
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-	
+
 		# Reset song duration/progress bar
 		if ( $meta->{duration} ) {
 			$song->duration( $meta->{duration} );
-			
+
 			# On a timer because $client->currentsongqueue does not exist yet
 			Slim::Utils::Timers::setTimer(
 				$client,
 				Time::HiRes::time(),
 				sub {
 					my $client = shift;
-				
+
 					$client->streamingProgressBar( {
 						url      => $url,
 						duration => $meta->{duration},
@@ -505,12 +540,12 @@ sub reinit {
 			);
 		}
 	}
-	
+
 	return 1;
 }
 
 sub _getStreamParams {
-	if ( $_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3|flac)}i ) {
+	if ( $_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3|mp4|flac)}i ) {
 		return ($1, lc($2) );
 	}
 }
