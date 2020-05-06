@@ -262,16 +262,39 @@ sub parseHeaders {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
-	# XXX - parse bitrate
 	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
+	my ($length, $isFlac, $bitrate);
+	foreach my $header (@headers) {
+		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
+			$length = $1;
+		}
+		elsif ( $header =~ /^Content-Type:\s*audio\/(?:x-|)flac/i ) {
+			$isFlac = 1;
+		}
+	}
 	
-	my $isFlac  = grep m{Content.*audio/(?:x-|)flac}i, @headers;
-	my $bitrate = $isFlac ? 800_000 : 256_000;
+	if ( $isFlac && $length && (my $song = $client->streamingSong()) ) {
+		$bitrate = int($length/$song->duration*8);
+
+		$url = $url->url if blessed $url;
+		my ($trackId) = _getStreamParams( $url );
+		
+		if ($trackId) {
+			my $cache = Slim::Utils::Cache->new;
+			my $meta = $cache->get('wimp_meta_' . $trackId);
+			if ($meta && ref $meta) {
+				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
+				$cache->set( 'wimp_meta_' . $trackId, $meta, 86400 );
+			}
+		}
+	}
+	
+	$bitrate ||= $isFlac ? 800_000 : 256_000;
 
 	$client->streamingSong->bitrate($bitrate);
-
+	
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', $isFlac ? 'flc' : 'mp3');
+	return (undef, $bitrate, 0, '', $isFlac ? 'flc' : 'mp3', $length);
 }
 
 # URL used for CLI trackinfo queries
