@@ -81,7 +81,7 @@ Tarball Notes:
 	Logitech Media Server and see the complete documentation.
 
 	As part of the debugging support, if there is no /etc/slimserver.conf file, or
-	if it is not readable when the Logitech Media Server starts, it will look for ~.slimserver.conf
+	if it is not readable when the Logitech Media Server starts, it will look for ~/.slimserver.conf
 	that is, the normally hidden file .slimserver.conf in the home directory of 
 	the current user.
 
@@ -90,4 +90,4 @@ Tarball Notes:
 
 	To refresh the configuration parameters, you can simply delete the /etc/slimserver.conf
 	file (or rename it to something else). This will cause the Logitech Media Server to
-	search for the ~.slimserver.conf, and failing that, to recreate it with default values.
+	search for the ~/.slimserver.conf, and failing that, to recreate it with default values.
