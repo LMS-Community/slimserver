@@ -1088,7 +1088,7 @@ sub _artists {
 	# only get external artists without album if no filter is set
 	my $queryTags = 'Es';
 	if ( ($library_id && $library_id ne (Slim::Music::VirtualLibraries->getLibraryIdForClient($client) || ''))
-		|| ($search && !scalar @searchTags)
+		|| ($search && !scalar grep { $_ !~ /^library_id:/} @searchTags)
 		|| (scalar grep { $_ !~ /^role_id:.*ALBUMARTIST|^library_id:/} @searchTags)
 	) {
 		$queryTags = 's';
