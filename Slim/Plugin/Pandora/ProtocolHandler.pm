@@ -393,32 +393,6 @@ sub trackGain {
 	return $gain;
 }
 
-# Track Info menu
-=pod XXX - legacy track info menu from before Slim::Menu::TrackInfo times?
-sub trackInfo {
-	my ( $class, $client, $track ) = @_;
-	
-	my $url = $track->url;
-
-	# SN URL to fetch track info menu
-	my $trackInfoURL = $class->trackInfoURL( $client, $url );
-	
-	# let XMLBrowser handle all our display
-	my %params = (
-		header   => 'PLUGIN_PANDORA_GETTING_TRACK_DETAILS',
-		modeName => 'Pandora Now Playing',
-		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
-		url      => $trackInfoURL,
-		remember => 0,
-		timeout  => 35,
-	);
-
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-	
-	$client->modeParam( 'handledTransition', 1 );
-}
-=cut
-
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
