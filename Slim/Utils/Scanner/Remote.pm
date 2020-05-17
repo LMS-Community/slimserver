@@ -718,7 +718,11 @@ sub parseOggHeader {
 
 sub streamAudioData {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
-
+	
+	# we might be called with nothing, even the first time  
+	my $len = length($$dataref);
+	return 1 unless $len;
+	
 	my $first;
 
 	# Buffer data to a temp file, 128K of data by default
@@ -731,7 +735,6 @@ sub streamAudioData {
 		main::DEBUGLOG && $log->is_debug && $log->debug( $track->url . ' Buffering audio stream data to temp file ' . $fh->filename );
 	}
 
-	my $len = length($$dataref);
 	$fh->write( $$dataref, $len );
 
 	if ( $first ) {
@@ -823,8 +826,8 @@ sub streamAudioData {
 	delete $args->{_scanbuf};
 	delete $args->{_scanlen};
 
-	# as https for whatever eason didn't allow us to start the stream while scanning
-	# we're no disconnecting to allow the stream to start
+	# as https for whatever reason didn't allow us to start the stream while scanning
+	# we're now disconnecting to allow the stream to start
 	if ( $args->{cb} && $track->url =~ /^https/ ) {
 		$http->disconnect;
 		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
