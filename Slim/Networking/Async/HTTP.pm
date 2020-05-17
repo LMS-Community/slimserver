@@ -505,11 +505,12 @@ sub _http_read {
 
 sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
+	
+	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
+	return if $result < 0;
 
 	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
 	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
-
-	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
 
 	if ( $result ) {
 		main::DEBUGLOG && $log->debug("Read body: [$result] bytes");
