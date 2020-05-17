@@ -721,7 +721,7 @@ sub streamAudioData {
 	
 	# we might be called with nothing, even the first time  
 	my $len = length($$dataref);
-	return unless $len;
+	return 1 unless $len;
 	
 	my $first;
 
