@@ -140,6 +140,38 @@ sub storeTracks {
 	main::idle() if !main::SCANNER;
 }
 
+sub getLibraryStats {
+	my ($class) = @_;
+	my $prefix = $class->trackUriPrefix();
+	$prefix =~ s/:.*/:/g;
+
+	my $totals;
+
+	my $dbh = Slim::Schema->dbh();
+	my $trackCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type != 'ssp'");
+	$trackCount_sth->execute("$prefix%");
+	my ($count) = $trackCount_sth->fetchrow_array();
+	$trackCount_sth->finish;
+
+	$totals->{tracks} = $count || 0;
+
+	my $albumCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM albums WHERE extid LIKE ?");
+	$albumCount_sth->execute("$prefix%");
+	($count) = $albumCount_sth->fetchrow_array();
+	$albumCount_sth->finish;
+
+	$totals->{albums} = $count || 0;
+
+	my $artistCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM contributors WHERE extid LIKE ?");
+	$artistCount_sth->execute("%$prefix%");
+	($count) = $artistCount_sth->fetchrow_array();
+	$artistCount_sth->finish;
+
+	$totals->{artists} = $count || 0;
+
+	return $totals;
+}
+
 sub libraryMetaId {
 	my ($class, $libraryMeta) = @_;
 	$libraryMeta ||= {};

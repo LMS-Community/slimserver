@@ -35,6 +35,14 @@ sub handler {
 	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY'));
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
 
+	foreach (@{$paramRef->{info}}) {
+		if ($_->{web} && ($_->{web}->{group} || '') eq 'onlinelibrary') {
+			$paramRef->{onlinelibrary} ||= [];
+			push @{$paramRef->{onlinelibrary}}, $_;
+		}
+	}
+	@{$paramRef->{info}} = grep { !$_->{web} || ($_->{web}->{group} || '') ne 'onlinelibrary' } @{$paramRef->{info}};
+
 	# we only have one player
 	if ($client && !$paramRef->{players}) {
 		$paramRef->{players} = {

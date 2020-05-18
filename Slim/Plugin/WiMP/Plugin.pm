@@ -178,6 +178,12 @@ sub onlineLibraryNeedsUpdate {
 	return Slim::Plugin::WiMP::Importer->needsUpdate(@_);
 }
 
+sub getLibraryStats {
+	require Slim::Plugin::WiMP::Importer;
+	my $totals = Slim::Plugin::WiMP::Importer->getLibraryStats();
+	return wantarray ? ('PLUGIN_WIMP_MODULE_NAME', $totals) : $totals;
+}
+
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 
