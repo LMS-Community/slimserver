@@ -1,32 +1,35 @@
-# $Id: Common.pm 8931 2006-08-11 16:44:43Z dsully $
-#
 package HTTP::Request::Common;
 
 use strict;
-use vars qw(@EXPORT @EXPORT_OK $VERSION $DYNAMIC_FILE_UPLOAD);
+use warnings;
 
-$DYNAMIC_FILE_UPLOAD ||= 0;  # make it defined (don't know why)
+our $VERSION = '6.24';
 
-require Exporter;
-*import = \&Exporter::import;
-@EXPORT =qw(GET HEAD PUT POST);
-@EXPORT_OK = qw($DYNAMIC_FILE_UPLOAD);
+our $DYNAMIC_FILE_UPLOAD ||= 0;  # make it defined (don't know why)
+
+use Exporter 5.57 'import';
+
+our @EXPORT =qw(GET HEAD PUT PATCH POST OPTIONS);
+our @EXPORT_OK = qw($DYNAMIC_FILE_UPLOAD DELETE);
 
 require HTTP::Request;
 use Carp();
-
-$VERSION = sprintf("%d.%02d", q$Revision: 1.26 $ =~ /(\d+)\.(\d+)/);
 
 my $CRLF = "\015\012";   # "\r\n" is not portable
 
 sub GET  { _simple_req('GET',  @_); }
 sub HEAD { _simple_req('HEAD', @_); }
-sub PUT  { _simple_req('PUT' , @_); }
+sub DELETE { _simple_req('DELETE', @_); }
+sub PATCH { request_type_with_data('PATCH', @_); }
+sub POST { request_type_with_data('POST', @_); }
+sub PUT { request_type_with_data('PUT', @_); }
+sub OPTIONS { request_type_with_data('OPTIONS', @_); }
 
-sub POST
+sub request_type_with_data
 {
-    my $url = shift;
-    my $req = HTTP::Request->new(POST => $url);
+    my $type = shift;
+    my $url  = shift;
+    my $req = HTTP::Request->new($type => $url);
     my $content;
     $content = shift if @_ and ref $_[0];
     my($k, $v);
@@ -57,7 +60,7 @@ sub POST
 	    my $boundary_index;
 	    for (my @tmp = @v; @tmp;) {
 		my($k, $v) = splice(@tmp, 0, 2);
-		if (lc($k) eq "boundary") {
+		if ($k eq "boundary") {
 		    $boundary = $v;
 		    $boundary_index = @v - @tmp - 1;
 		    last;
@@ -82,6 +85,9 @@ sub POST
 	    my $url = URI->new('http:');
 	    $url->query_form(ref($content) eq "HASH" ? %$content : @$content);
 	    $content = $url->query;
+
+	    # HTML/4.01 says that line breaks are represented as "CR LF" pairs (i.e., `%0D%0A')
+	    $content =~ s/(?<!%0D)%0A/%0D%0A/g if defined($content);
 	}
     }
 
@@ -103,13 +109,18 @@ sub _simple_req
     my($method, $url) = splice(@_, 0, 2);
     my $req = HTTP::Request->new($method => $url);
     my($k, $v);
+    my $content;
     while (($k,$v) = splice(@_, 0, 2)) {
 	if (lc($k) eq 'content') {
 	    $req->add_content($v);
+            $content++;
 	}
 	else {
 	    $req->push_header($k, $v);
 	}
+    }
+    if ($content && !defined($req->header("Content-Length"))) {
+        $req->header("Content-Length", length(${$req->content_ref}));
     }
     $req;
 }
@@ -121,10 +132,10 @@ sub form_data   # RFC1867
     my @data = ref($data) eq "HASH" ? %$data : @$data;  # copy
     my $fhparts;
     my @parts;
-    my($k,$v);
-    while (($k,$v) = splice(@data, 0, 2)) {
+    while (my ($k,$v) = splice(@data, 0, 2)) {
 	if (!ref($v)) {
 	    $k =~ s/([\\\"])/\\$1/g;  # escape quotes and backslashes
+            no warnings 'uninitialized';
 	    push(@parts,
 		 qq(Content-Disposition: form-data; name="$k"$CRLF$CRLF$v));
 	}
@@ -134,18 +145,22 @@ sub form_data   # RFC1867
 		$usename = $file;
 		$usename =~ s,.*/,, if defined($usename);
 	    }
+            $k =~ s/([\\\"])/\\$1/g;
 	    my $disp = qq(form-data; name="$k");
-	    $disp .= qq(; filename="$usename") if $usename;
+            if (defined($usename) and length($usename)) {
+                $usename =~ s/([\\\"])/\\$1/g;
+                $disp .= qq(; filename="$usename");
+            }
 	    my $content = "";
 	    my $h = HTTP::Headers->new(@headers);
 	    if ($file) {
-		require Symbol;
-		my $fh = Symbol::gensym();
-		open($fh, $file) or Carp::croak("Can't open file $file: $!");
+		open(my $fh, "<", $file) or Carp::croak("Can't open file $file: $!");
 		binmode($fh);
 		if ($DYNAMIC_FILE_UPLOAD) {
-		    # will read file later
-		    $content = $fh;
+		    # will read file later, close it now in order to
+                    # not accumulate to many open file handles
+                    close($fh);
+		    $content = \$file;
 		}
 		else {
 		    local($/) = undef; # slurp files
@@ -170,7 +185,7 @@ sub form_data   # RFC1867
 			           $h->as_string($CRLF),
 			           "");
 	    if (ref $content) {
-		push(@parts, [$head, $content]);
+		push(@parts, [$head, $$content]);
 		$fhparts++;
 	    }
 	    else {
@@ -203,7 +218,7 @@ sub form_data   # RFC1867
 		    # or perhaps a file in the /proc file system where
 		    # stat may return a 0 size even though reading it
 		    # will produce data.  So we cannot make
-		    # a Content-Length header.  
+		    # a Content-Length header.
 		    undef $length;
 		    last;
 		}
@@ -230,6 +245,12 @@ sub form_data   # RFC1867
 		    return $p;
 		}
 		my($buf, $fh) = @$p;
+                unless (ref($fh)) {
+                    my $file = $fh;
+                    undef($fh);
+                    open($fh, "<", $file) || Carp::croak("Can't open file $file: $!");
+                    binmode($fh);
+                }
 		my $buflength = length $buf;
 		my $n = read($fh, $buf, 2048, $buflength);
 		if ($n) {
@@ -241,7 +262,7 @@ sub form_data   # RFC1867
 		}
 		if ($buflength) {
 		    defined $length && ($length -= $buflength);
-		    return $buf 
+		    return $buf
 	    	}
 	    }
 	};
@@ -282,11 +303,17 @@ sub boundary
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Request::Common - Construct common HTTP::Request objects
+
+=head1 VERSION
+
+version 6.24
 
 =head1 SYNOPSIS
 
@@ -294,13 +321,20 @@ HTTP::Request::Common - Construct common HTTP::Request objects
   $ua = LWP::UserAgent->new;
   $ua->request(GET 'http://www.sn.no/');
   $ua->request(POST 'http://somewhere/foo', [foo => bar, bar => foo]);
+  $ua->request(PATCH 'http://somewhere/foo', [foo => bar, bar => foo]);
+  $ua->request(PUT 'http://somewhere/foo', [foo => bar, bar => foo]);
+  $ua->request(OPTIONS 'http://somewhere/foo', [foo => bar, bar => foo]);
 
 =head1 DESCRIPTION
 
-This module provide functions that return newly created C<HTTP::Request>
+This module provides functions that return newly created C<HTTP::Request>
 objects.  These functions are usually more convenient to use than the
-standard C<HTTP::Request> constructor for the most common requests.  The
-following functions are provided:
+standard C<HTTP::Request> constructor for the most common requests.
+
+Note that L<LWP::UserAgent> has several convenience methods, including
+C<get>, C<head>, C<delete>, C<post> and C<put>.
+
+The following functions are provided:
 
 =over 4
 
@@ -308,7 +342,7 @@ following functions are provided:
 
 =item GET $url, Header => Value,...
 
-The GET() function returns an C<HTTP::Request> object initialized with
+The C<GET> function returns an L<HTTP::Request> object initialized with
 the "GET" method and the specified URL.  It is roughly equivalent to the
 following call
 
@@ -320,11 +354,11 @@ following call
 but is less cluttered.  What is different is that a header named
 C<Content> will initialize the content part of the request instead of
 setting a header field.  Note that GET requests should normally not
-have a content, so this hack makes more sense for the PUT() and POST()
-functions described below.
+have a content, so this hack makes more sense for the C<PUT>, C<PATCH>
+ and C<POST> functions described below.
 
-The get(...) method of C<LWP::UserAgent> exists as a shortcut for
-$ua->request(GET ...).
+The C<get(...)> method of L<LWP::UserAgent> exists as a shortcut for
+C<< $ua->request(GET ...) >>.
 
 =item HEAD $url
 
@@ -332,16 +366,51 @@ $ua->request(GET ...).
 
 Like GET() but the method in the request is "HEAD".
 
-The head(...)  method of "LWP::UserAgent" exists as a shortcut for
-$ua->request(HEAD ...).
+The C<head(...)>  method of L<LWP::UserAgent> exists as a shortcut for
+C<< $ua->request(HEAD ...) >>.
+
+=item DELETE $url
+
+=item DELETE $url, Header => Value,...
+
+Like C<GET> but the method in the request is C<DELETE>.  This function
+is not exported by default.
+
+=item PATCH $url
+
+=item PATCH $url, Header => Value,...
+
+=item PATCH $url, $form_ref, Header => Value,...
+
+=item PATCH $url, Header => Value,..., Content => $form_ref
+
+=item PATCH $url, Header => Value,..., Content => $content
+
+The same as C<POST> below, but the method in the request is C<PATCH>.
 
 =item PUT $url
 
 =item PUT $url, Header => Value,...
 
+=item PUT $url, $form_ref, Header => Value,...
+
+=item PUT $url, Header => Value,..., Content => $form_ref
+
 =item PUT $url, Header => Value,..., Content => $content
 
-Like GET() but the method in the request is "PUT".
+The same as C<POST> below, but the method in the request is C<PUT>
+
+=item OPTIONS $url
+
+=item OPTIONS $url, Header => Value,...
+
+=item OPTIONS $url, $form_ref, Header => Value,...
+
+=item OPTIONS $url, Header => Value,..., Content => $form_ref
+
+=item OPTIONS $url, Header => Value,..., Content => $content
+
+The same as C<POST> below, but the method in the request is C<OPTIONS>
 
 =item POST $url
 
@@ -351,12 +420,29 @@ Like GET() but the method in the request is "PUT".
 
 =item POST $url, Header => Value,..., Content => $form_ref
 
-This works mostly like GET() with "POST" as the method, but this function
-also takes a second optional array or hash reference parameter
-($form_ref).  This argument can be used to pass key/value pairs for
-the form content.  By default we will initialize a request using the
+=item POST $url, Header => Value,..., Content => $content
+
+C<POST>, C<PATCH> and C<PUT> all work with the same parameters.
+
+  %data = ( title => 'something', body => something else' );
+  $ua = LWP::UserAgent->new();
+  $request = HTTP::Request::Common::POST( $url, [ %data ] );
+  $response = $ua->request($request);
+
+They take a second optional array or hash reference
+parameter C<$form_ref>.  The content can also be specified
+directly using the C<Content> pseudo-header, and you may also provide
+the C<$form_ref> this way.
+
+The C<Content> pseudo-header steals a bit of the header field namespace as
+there is no way to directly specify a header that is actually called
+"Content".  If you really need this you must update the request
+returned in a separate statement.
+
+The C<$form_ref> argument can be used to pass key/value pairs for the
+form content.  By default we will initialize a request using the
 C<application/x-www-form-urlencoded> content type.  This means that
-you can emulate a HTML E<lt>form> POSTing like this:
+you can emulate an HTML E<lt>form> POSTing like this:
 
   POST 'http://www.perl.org/survey.cgi',
        [ name   => 'Gisle Aas',
@@ -366,7 +452,7 @@ you can emulate a HTML E<lt>form> POSTing like this:
          perc   => '3%',
        ];
 
-This will create a HTTP::Request object that looks like this:
+This will create an L<HTTP::Request> object that looks like this:
 
   POST http://www.perl.org/survey.cgi
   Content-Length: 66
@@ -380,7 +466,7 @@ name or by passing the value as an array reference.
 The POST method also supports the C<multipart/form-data> content used
 for I<Form-based File Upload> as specified in RFC 1867.  You trigger
 this content format by specifying a content type of C<'form-data'> as
-one of the request headers.  If one of the values in the $form_ref is
+one of the request headers.  If one of the values in the C<$form_ref> is
 an array reference, then it is treated as a file part specification
 with the following interpretation:
 
@@ -398,7 +484,7 @@ want to suppress sending the filename when you provide a $file value.
 
 If a $file is provided by no C<Content-Type> header, then C<Content-Type>
 and C<Content-Encoding> will be filled in automatically with the values
-returned by LWP::MediaTypes::guess_media_type()
+returned by C<LWP::MediaTypes::guess_media_type()>
 
 Sending my F<~/.profile> to the survey used as example above can be
 achieved by this:
@@ -412,7 +498,7 @@ achieved by this:
                          init   => ["$ENV{HOME}/.profile"],
                        ]
 
-This will create a HTTP::Request object that almost looks this (the
+This will create an L<HTTP::Request> object that almost looks this (the
 boundary and the content of your F<~/.profile> is likely to be
 different):
 
@@ -422,43 +508,43 @@ different):
 
   --6G+f
   Content-Disposition: form-data; name="name"
-  
+
   Gisle Aas
   --6G+f
   Content-Disposition: form-data; name="email"
-  
+
   gisle@aas.no
   --6G+f
   Content-Disposition: form-data; name="gender"
-  
+
   M
   --6G+f
   Content-Disposition: form-data; name="born"
-  
+
   1964
   --6G+f
   Content-Disposition: form-data; name="init"; filename=".profile"
   Content-Type: text/plain
-  
+
   PATH=/local/perl/bin:$PATH
   export PATH
 
   --6G+f--
 
-If you set the $DYNAMIC_FILE_UPLOAD variable (exportable) to some TRUE
+If you set the C<$DYNAMIC_FILE_UPLOAD> variable (exportable) to some TRUE
 value, then you get back a request object with a subroutine closure as
 the content attribute.  This subroutine will read the content of any
 files on demand and return it in suitable chunks.  This allow you to
 upload arbitrary big files without using lots of memory.  You can even
 upload infinite files like F</dev/audio> if you wish; however, if
-the file is not a plain file, there will be no Content-Length header
+the file is not a plain file, there will be no C<Content-Length> header
 defined for the request.  Not all servers (or server
 applications) like this.  Also, if the file(s) change in size between
-the time the Content-Length is calculated and the time that the last
+the time the C<Content-Length> is calculated and the time that the last
 chunk is delivered, the subroutine will C<Croak>.
 
-The post(...)  method of "LWP::UserAgent" exists as a shortcut for
-$ua->request(POST ...).
+The C<post(...)>  method of L<LWP::UserAgent> exists as a shortcut for
+C<< $ua->request(POST ...) >>.
 
 =back
 
@@ -466,13 +552,23 @@ $ua->request(POST ...).
 
 L<HTTP::Request>, L<LWP::UserAgent>
 
+Also, there are some examples in L<HTTP::Request/"EXAMPLES"> that you might
+find useful. For example, batch requests are explained there.
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1997-2004, Gisle Aas
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
+__END__
+
+
+#ABSTRACT: Construct common HTTP::Request objects

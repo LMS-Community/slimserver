@@ -1,18 +1,26 @@
 package HTTP::Headers::Util;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK);
+use warnings;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.13 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = '6.24';
 
-require Exporter;
-@ISA=qw(Exporter);
+use base 'Exporter';
 
-@EXPORT_OK=qw(split_header_words join_header_words);
-
+our @EXPORT_OK=qw(split_header_words _split_header_words join_header_words);
 
 
-sub split_header_words
+sub split_header_words {
+    my @res = &_split_header_words;
+    for my $arr (@res) {
+	for (my $i = @$arr - 2; $i >= 0; $i -= 2) {
+	    $arr->[$i] = lc($arr->[$i]);
+	}
+    }
+    return @res;
+}
+
+sub _split_header_words
 {
     my(@val) = @_;
     my @res;
@@ -85,11 +93,17 @@ sub join_header_words
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Headers::Util - Header value parsing utility functions
+
+=head1 VERSION
+
+version 6.24
 
 =head1 SYNOPSIS
 
@@ -105,7 +119,6 @@ exported by default.
 The following functions are available:
 
 =over 4
-
 
 =item split_header_words( @header_values )
 
@@ -141,13 +154,14 @@ the requirement for tokens).
   value             = token | quoted-string
 
 Each I<header> is represented by an anonymous array of key/value
-pairs.  The value for a simple token (not part of a parameter) is C<undef>.
-Syntactically incorrect headers will not necessary be parsed as you
+pairs.  The keys will be all be forced to lower case.
+The value for a simple token (not part of a parameter) is C<undef>.
+Syntactically incorrect headers will not necessarily be parsed as you
 would want.
 
 This is easier to describe with some examples:
 
-   split_header_words('foo="bar"; port="80,81"; discard, bar=baz');
+   split_header_words('foo="bar"; port="80,81"; DISCARD, BAR=baz');
    split_header_words('text/html; charset="iso-8859-1"');
    split_header_words('Basic realm="\\"foo\\\\bar\\""');
 
@@ -155,7 +169,11 @@ will return
 
    [foo=>'bar', port=>'80,81', discard=> undef], [bar=>'baz' ]
    ['text/html' => undef, charset => 'iso-8859-1']
-   [Basic => undef, realm => "\"foo\\bar\""]
+   [basic => undef, realm => "\"foo\\bar\""]
+
+If you don't want the function to convert tokens and attribute keys to
+lower case you can call it as C<_split_header_words> instead (with a
+leading underscore).
 
 =item join_header_words( @arrays )
 
@@ -175,10 +193,21 @@ will both return the string:
 
 =back
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1997-1998, Gisle Aas
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: Header value parsing utility functions
 

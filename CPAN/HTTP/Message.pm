@@ -1,19 +1,32 @@
 package HTTP::Message;
 
-# $Id: Message.pm 8931 2006-08-11 16:44:43Z dsully $
-
 use strict;
-use vars qw($VERSION $AUTOLOAD);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.57 $ =~ /(\d+)\.(\d+)/);
+use warnings;
+
+our $VERSION = '6.24';
 
 require HTTP::Headers;
 require Carp;
 
 my $CRLF = "\015\012";   # "\r\n" is not portable
-$HTTP::URI_CLASS ||= $ENV{PERL_HTTP_URI_CLASS} || "URI";
+unless ($HTTP::URI_CLASS) {
+    if ($ENV{PERL_HTTP_URI_CLASS}
+    &&  $ENV{PERL_HTTP_URI_CLASS} =~ /^([\w:]+)$/) {
+        $HTTP::URI_CLASS = $1;
+    } else {
+        $HTTP::URI_CLASS = "URI";
+    }
+}
 eval "require $HTTP::URI_CLASS"; die $@ if $@;
 
-
+*_utf8_downgrade = defined(&utf8::downgrade) ?
+    sub {
+        utf8::downgrade($_[0], 1) or
+            Carp::croak("HTTP::Message content must be bytes")
+    }
+    :
+    sub {
+    };
 
 sub new
 {
@@ -30,7 +43,12 @@ sub new
     else {
 	$header = HTTP::Headers->new;
     }
-    $content = '' unless defined $content;
+    if (defined $content) {
+        _utf8_downgrade($content);
+    }
+    else {
+        $content = '';
+    }
 
     bless {
 	'_headers' => $header,
@@ -58,7 +76,7 @@ sub parse
 	    last;
 	}
     }
-
+    local $HTTP::Headers::TRANSLATE_UNDERSCORE;
     new($class, \@hdr, $str);
 }
 
@@ -82,7 +100,24 @@ sub clear {
 }
 
 
-sub protocol { shift->_elem('_protocol',  @_); }
+sub protocol {
+    shift->_elem('_protocol',  @_);
+}
+
+sub headers {
+    my $self = shift;
+
+    # recalculation of _content might change headers, so we
+    # need to force it now
+    $self->_content unless exists $self->{_content};
+
+    $self->{_headers};
+}
+
+sub headers_as_string {
+    shift->headers->as_string(@_);
+}
+
 
 sub content  {
 
@@ -103,14 +138,16 @@ sub content  {
     }
 }
 
+
 sub _set_content {
     my $self = $_[0];
+    _utf8_downgrade($_[1]);
     if (!ref($_[1]) && ref($self->{_content}) eq "SCALAR") {
-	${$self->{_content}} = $_[1];
+	${$self->{_content}} = defined( $_[1] ) ? $_[1] : '';
     }
     else {
 	die "Can't set content to be a scalar reference" if ref($_[1]) eq "SCALAR";
-	$self->{_content} = $_[1];
+	$self->{_content} = defined( $_[1] ) ? $_[1] : '';
 	delete $self->{_content_ref};
     }
     delete $self->{_parts} unless $_[2];
@@ -123,6 +160,8 @@ sub add_content
     $self->_content unless exists $self->{_content};
     my $chunkref = \$_[0];
     $chunkref = $$chunkref if ref($$chunkref);  # legacy
+
+    _utf8_downgrade($$chunkref);
 
     my $ref = ref($self->{_content});
     if (!$ref) {
@@ -137,6 +176,12 @@ sub add_content
     delete $self->{_parts};
 }
 
+sub add_content_utf8 {
+    my($self, $buf)  = @_;
+    utf8::upgrade($buf);
+    utf8::encode($buf);
+    $self->add_content($buf);
+}
 
 sub content_ref
 {
@@ -157,6 +202,82 @@ sub content_ref
 }
 
 
+sub content_charset
+{
+    my $self = shift;
+    if (my $charset = $self->content_type_charset) {
+	return $charset;
+    }
+
+    # time to start guessing
+    my $cref = $self->decoded_content(ref => 1, charset => "none");
+
+    # Unicode BOM
+    for ($$cref) {
+	return "UTF-8"     if /^\xEF\xBB\xBF/;
+	return "UTF-32LE" if /^\xFF\xFE\x00\x00/;
+	return "UTF-32BE" if /^\x00\x00\xFE\xFF/;
+	return "UTF-16LE" if /^\xFF\xFE/;
+	return "UTF-16BE" if /^\xFE\xFF/;
+    }
+
+    if ($self->content_is_xml) {
+	# http://www.w3.org/TR/2006/REC-xml-20060816/#sec-guessing
+	# XML entity not accompanied by external encoding information and not
+	# in UTF-8 or UTF-16 encoding must begin with an XML encoding declaration,
+	# in which the first characters must be '<?xml'
+	for ($$cref) {
+	    return "UTF-32BE" if /^\x00\x00\x00</;
+	    return "UTF-32LE" if /^<\x00\x00\x00/;
+	    return "UTF-16BE" if /^(?:\x00\s)*\x00</;
+	    return "UTF-16LE" if /^(?:\s\x00)*<\x00/;
+	    if (/^\s*(<\?xml[^\x00]*?\?>)/) {
+		if ($1 =~ /\sencoding\s*=\s*(["'])(.*?)\1/) {
+		    my $enc = $2;
+		    $enc =~ s/^\s+//; $enc =~ s/\s+\z//;
+		    return $enc if $enc;
+		}
+	    }
+	}
+	return "UTF-8";
+    }
+    elsif ($self->content_is_html) {
+	# look for <META charset="..."> or <META content="...">
+	# http://dev.w3.org/html5/spec/Overview.html#determining-the-character-encoding
+	require IO::HTML;
+	# Use relaxed search to match previous versions of HTTP::Message:
+	my $encoding = IO::HTML::find_charset_in($$cref, { encoding    => 1,
+	                                                   need_pragma => 0 });
+	return $encoding->mime_name if $encoding;
+    }
+    elsif ($self->content_type eq "application/json") {
+	for ($$cref) {
+	    # RFC 4627, ch 3
+	    return "UTF-32BE" if /^\x00\x00\x00./s;
+	    return "UTF-32LE" if /^.\x00\x00\x00/s;
+	    return "UTF-16BE" if /^\x00.\x00./s;
+	    return "UTF-16LE" if /^.\x00.\x00/s;
+	    return "UTF-8";
+	}
+    }
+    if ($self->content_type =~ /^text\//) {
+	for ($$cref) {
+	    if (length) {
+		return "US-ASCII" unless /[\x80-\xFF]/;
+		require Encode;
+		eval {
+		    Encode::decode_utf8($_, Encode::FB_CROAK() | Encode::LEAVE_SRC());
+		};
+		return "UTF-8" unless $@;
+		return "ISO-8859-1";
+	    }
+	}
+    }
+
+    return undef;
+}
+
+
 sub decoded_content
 {
     my($self, %opt) = @_;
@@ -164,16 +285,6 @@ sub decoded_content
     my $content_ref_iscopy;
 
     eval {
-
-	require HTTP::Headers::Util;
-	my($ct, %ct_param);
-	if (my @ct = HTTP::Headers::Util::split_header_words($self->header("Content-Type"))) {
-	    ($ct, undef, %ct_param) = @{$ct[-1]};
-	    $ct = lc($ct);
-
-	    die "Can't decode multipart content" if $ct =~ m,^multipart/,;
-	}
-
 	$content_ref = $self->content_ref;
 	die "Can't decode ref content" if ref($content_ref) ne "SCALAR";
 
@@ -181,59 +292,44 @@ sub decoded_content
 	    $h =~ s/^\s+//;
 	    $h =~ s/\s+$//;
 	    for my $ce (reverse split(/\s*,\s*/, lc($h))) {
-		next unless $ce || $ce eq "identity";
+		next unless $ce;
+		next if $ce eq "identity" || $ce eq "none";
 		if ($ce eq "gzip" || $ce eq "x-gzip") {
-		    require Compress::Zlib;
-		    unless ($content_ref_iscopy) {
-			# memGunzip is documented to destroy its buffer argument
-			my $copy = $$content_ref;
-			$content_ref = \$copy;
-			$content_ref_iscopy++;
-		    }
-		    $content_ref = \Compress::Zlib::memGunzip($$content_ref);
-		    die "Can't gunzip content" unless defined $$content_ref;
+		    require IO::Uncompress::Gunzip;
+		    my $output;
+		    IO::Uncompress::Gunzip::gunzip($content_ref, \$output, Transparent => 0)
+			or die "Can't gunzip content: $IO::Uncompress::Gunzip::GunzipError";
+		    $content_ref = \$output;
+		    $content_ref_iscopy++;
 		}
-		elsif ($ce eq "x-bzip2") {
-		    require Compress::Bzip2;
-		    $content_ref = Compress::Bzip2::decompress($$content_ref);
-		    die "Can't bunzip content" unless defined $$content_ref;
+		elsif ($ce eq "x-bzip2" or $ce eq "bzip2") {
+		    require IO::Uncompress::Bunzip2;
+		    my $output;
+		    IO::Uncompress::Bunzip2::bunzip2($content_ref, \$output, Transparent => 0)
+			or die "Can't bunzip content: $IO::Uncompress::Bunzip2::Bunzip2Error";
+		    $content_ref = \$output;
 		    $content_ref_iscopy++;
 		}
 		elsif ($ce eq "deflate") {
-		    require Compress::Zlib;
-		    my $out = Compress::Zlib::uncompress($$content_ref);
-		    unless (defined $out) {
-			# "Content-Encoding: deflate" is supposed to mean the "zlib"
-                        # format of RFC 1950, but Microsoft got that wrong, so some
-                        # servers sends the raw compressed "deflate" data.  This
-                        # tries to inflate this format.
-			unless ($content_ref_iscopy) {
-			    # the $i->inflate method is documented to destroy its
-			    # buffer argument
-			    my $copy = $$content_ref;
-			    $content_ref = \$copy;
-			    $content_ref_iscopy++;
-			}
-
-			my($i, $status) = Compress::Zlib::inflateInit(
-			    WindowBits => -Compress::Zlib::MAX_WBITS(),
-                        );
-			my $OK = Compress::Zlib::Z_OK();
-			die "Can't init inflate object" unless $i && $status == $OK;
-			($out, $status) = $i->inflate($content_ref);
-			if ($status != Compress::Zlib::Z_STREAM_END()) {
-			    if ($status == $OK) {
-				$self->push_header("Client-Warning" =>
-				    "Content might be truncated; incomplete deflate stream");
-			    }
-			    else {
-				# something went bad, can't trust $out any more
-				$out = undef;
-			    }
+		    require IO::Uncompress::Inflate;
+		    my $output;
+		    my $status = IO::Uncompress::Inflate::inflate($content_ref, \$output, Transparent => 0);
+		    my $error = $IO::Uncompress::Inflate::InflateError;
+		    unless ($status) {
+			# "Content-Encoding: deflate" is supposed to mean the
+			# "zlib" format of RFC 1950, but Microsoft got that
+			# wrong, so some servers sends the raw compressed
+			# "deflate" data.  This tries to inflate this format.
+			$output = undef;
+			require IO::Uncompress::RawInflate;
+			unless (IO::Uncompress::RawInflate::rawinflate($content_ref, \$output)) {
+			    $self->push_header("Client-Warning" =>
+				"Could not raw inflate content: $IO::Uncompress::RawInflate::RawInflateError");
+			    $output = undef;
 			}
 		    }
-		    die "Can't inflate content" unless defined $out;
-		    $content_ref = \$out;
+		    die "Can't inflate content: $error" unless defined $output;
+		    $content_ref = \$output;
 		    $content_ref_iscopy++;
 		}
 		elsif ($ce eq "compress" || $ce eq "x-compress") {
@@ -255,21 +351,55 @@ sub decoded_content
 	    }
 	}
 
-	if ($ct && $ct =~ m,^text/,,) {
-	    my $charset = $opt{charset} || $ct_param{charset} || $opt{default_charset} || "ISO-8859-1";
-	    $charset = lc($charset);
-	    if ($charset ne "none") {
-		require Encode;
-		if (do{my $v = $Encode::VERSION; $v =~ s/_//g; $v} < 2.0901 &&
-		    !$content_ref_iscopy)
-		{
-		    # LEAVE_SRC did not work before Encode-2.0901
-		    my $copy = $$content_ref;
-		    $content_ref = \$copy;
-		    $content_ref_iscopy++;
+	if ($self->content_is_text || (my $is_xml = $self->content_is_xml)) {
+	    my $charset = lc(
+	        $opt{charset} ||
+		$self->content_type_charset ||
+		$opt{default_charset} ||
+		$self->content_charset ||
+		"ISO-8859-1"
+	    );
+	    if ($charset eq "none") {
+		# leave it as is
+	    }
+	    elsif ($charset eq "us-ascii" || $charset eq "iso-8859-1") {
+		if ($$content_ref =~ /[^\x00-\x7F]/ && defined &utf8::upgrade) {
+		    unless ($content_ref_iscopy) {
+			my $copy = $$content_ref;
+			$content_ref = \$copy;
+			$content_ref_iscopy++;
+		    }
+		    utf8::upgrade($$content_ref);
 		}
-		$content_ref = \Encode::decode($charset, $$content_ref,
-					       Encode::FB_CROAK() | Encode::LEAVE_SRC());
+	    }
+	    else {
+		require Encode;
+		eval {
+		    $content_ref = \Encode::decode($charset, $$content_ref,
+			 ($opt{charset_strict} ? Encode::FB_CROAK() : 0) | Encode::LEAVE_SRC());
+		};
+		if ($@) {
+		    my $retried;
+		    if ($@ =~ /^Unknown encoding/) {
+			my $alt_charset = lc($opt{alt_charset} || "");
+			if ($alt_charset && $charset ne $alt_charset) {
+			    # Retry decoding with the alternative charset
+			    $content_ref = \Encode::decode($alt_charset, $$content_ref,
+				 ($opt{charset_strict} ? Encode::FB_CROAK() : 0) | Encode::LEAVE_SRC())
+			        unless $alt_charset eq "none";
+			    $retried++;
+			}
+		    }
+		    die unless $retried;
+		}
+		die "Encode::decode() returned undef improperly" unless defined $$content_ref;
+		if ($is_xml) {
+		    # Get rid of the XML encoding declaration if present
+		    $$content_ref =~ s/^\x{FEFF}//;
+		    if ($$content_ref =~ /^(\s*<\?xml[^\x00]*?\?>)/) {
+			substr($$content_ref, 0, length($1)) =~ s/\sencoding\s*=\s*(["']).*?\1//;
+		    }
+		}
 	    }
 	}
     };
@@ -279,6 +409,101 @@ sub decoded_content
     }
 
     return $opt{ref} ? $content_ref : $$content_ref;
+}
+
+
+sub decodable
+{
+    # should match the Content-Encoding values that decoded_content can deal with
+    my $self = shift;
+    my @enc;
+    local $@;
+    # XXX preferably we should determine if the modules are available without loading
+    # them here
+    eval {
+        require IO::Uncompress::Gunzip;
+        push(@enc, "gzip", "x-gzip");
+    };
+    eval {
+        require IO::Uncompress::Inflate;
+        require IO::Uncompress::RawInflate;
+        push(@enc, "deflate");
+    };
+    eval {
+        require IO::Uncompress::Bunzip2;
+        push(@enc, "x-bzip2", "bzip2");
+    };
+    # we don't care about announcing the 'identity', 'base64' and
+    # 'quoted-printable' stuff
+    return wantarray ? @enc : join(", ", @enc);
+}
+
+
+sub decode
+{
+    my $self = shift;
+    return 1 unless $self->header("Content-Encoding");
+    if (defined(my $content = $self->decoded_content(charset => "none"))) {
+	$self->remove_header("Content-Encoding", "Content-Length", "Content-MD5");
+	$self->content($content);
+	return 1;
+    }
+    return 0;
+}
+
+
+sub encode
+{
+    my($self, @enc) = @_;
+
+    Carp::croak("Can't encode multipart/* messages") if $self->content_type =~ m,^multipart/,;
+    Carp::croak("Can't encode message/* messages") if $self->content_type =~ m,^message/,;
+
+    return 1 unless @enc;  # nothing to do
+
+    my $content = $self->content;
+    for my $encoding (@enc) {
+	if ($encoding eq "identity" || $encoding eq "none") {
+	    # nothing to do
+	}
+	elsif ($encoding eq "base64") {
+	    require MIME::Base64;
+	    $content = MIME::Base64::encode($content);
+	}
+	elsif ($encoding eq "gzip" || $encoding eq "x-gzip") {
+	    require IO::Compress::Gzip;
+	    my $output;
+	    IO::Compress::Gzip::gzip(\$content, \$output, Minimal => 1)
+		or die "Can't gzip content: $IO::Compress::Gzip::GzipError";
+	    $content = $output;
+	}
+	elsif ($encoding eq "deflate") {
+	    require IO::Compress::Deflate;
+	    my $output;
+	    IO::Compress::Deflate::deflate(\$content, \$output)
+		or die "Can't deflate content: $IO::Compress::Deflate::DeflateError";
+	    $content = $output;
+	}
+	elsif ($encoding eq "x-bzip2" || $encoding eq "bzip2") {
+	    require IO::Compress::Bzip2;
+	    my $output;
+	    IO::Compress::Bzip2::bzip2(\$content, \$output)
+		or die "Can't bzip2 content: $IO::Compress::Bzip2::Bzip2Error";
+	    $content = $output;
+	}
+	elsif ($encoding eq "rot13") {  # for the fun of it
+	    $content =~ tr/A-Za-z/N-ZA-Mn-za-m/;
+	}
+	else {
+	    return 0;
+	}
+    }
+    my $h = $self->header("Content-Encoding");
+    unshift(@enc, $h) if $h;
+    $self->header("Content-Encoding", join(", ", @enc));
+    $self->remove_header("Content-Length", "Content-MD5");
+    $self->content($content);
+    return 1;
 }
 
 
@@ -300,9 +525,61 @@ sub as_string
 }
 
 
-sub headers            { shift->{'_headers'};                }
-sub headers_as_string  { shift->{'_headers'}->as_string(@_); }
+sub dump
+{
+    my($self, %opt) = @_;
+    my $content = $self->content;
+    my $chopped = 0;
+    if (!ref($content)) {
+	my $maxlen = $opt{maxlength};
+	$maxlen = 512 unless defined($maxlen);
+	if ($maxlen && length($content) > $maxlen * 1.1 + 3) {
+	    $chopped = length($content) - $maxlen;
+	    $content = substr($content, 0, $maxlen) . "...";
+	}
 
+	$content =~ s/\\/\\\\/g;
+	$content =~ s/\t/\\t/g;
+	$content =~ s/\r/\\r/g;
+
+	# no need for 3 digits in escape for these
+	$content =~ s/([\0-\11\13-\037])(?!\d)/sprintf('\\%o',ord($1))/eg;
+
+	$content =~ s/([\0-\11\13-\037\177-\377])/sprintf('\\x%02X',ord($1))/eg;
+	$content =~ s/([^\12\040-\176])/sprintf('\\x{%X}',ord($1))/eg;
+
+	# remaining whitespace
+	$content =~ s/( +)\n/("\\40" x length($1)) . "\n"/eg;
+	$content =~ s/(\n+)\n/("\\n" x length($1)) . "\n"/eg;
+	$content =~ s/\n\z/\\n/;
+
+	my $no_content = $opt{no_content};
+	$no_content = "(no content)" unless defined $no_content;
+	if ($content eq $no_content) {
+	    # escape our $no_content marker
+	    $content =~ s/^(.)/sprintf('\\x%02X',ord($1))/eg;
+	}
+	elsif ($content eq "") {
+	    $content = $no_content;
+	}
+    }
+
+    my @dump;
+    push(@dump, $opt{preheader}) if $opt{preheader};
+    push(@dump, $self->{_headers}->as_string, $content);
+    push(@dump, "(+ $chopped more bytes not shown)") if $chopped;
+
+    my $dump = join("\n", @dump, "");
+    $dump =~ s/^/$opt{prefix}/gm if $opt{prefix};
+
+    print $dump unless defined wantarray;
+    return $dump;
+}
+
+# allow subclasses to override what will handle individual parts
+sub _part_class {
+    return __PACKAGE__;
+}
 
 sub parts {
     my $self = shift;
@@ -331,10 +608,15 @@ sub parts {
 sub add_part {
     my $self = shift;
     if (($self->content_type || "") !~ m,^multipart/,) {
-	my $p = HTTP::Message->new($self->remove_content_headers,
-				   $self->content(""));
+	my $p = $self->_part_class->new(
+	    $self->remove_content_headers,
+	    $self->content(""),
+	);
 	$self->content_type("multipart/mixed");
-	$self->{_parts} = [$p];
+	$self->{_parts} = [];
+        if ($p->headers->header_field_names || $p->content ne "") {
+            push(@{$self->{_parts}}, $p);
+        }
     }
     elsif (!exists $self->{_parts} || ref($self->{_content}) eq "SCALAR") {
 	$self->_parts;
@@ -359,18 +641,21 @@ sub _stale_content {
 }
 
 
-# delegate all other method calls the the _headers object.
+# delegate all other method calls to the headers object.
+our $AUTOLOAD;
 sub AUTOLOAD
 {
     my $method = substr($AUTOLOAD, rindex($AUTOLOAD, '::')+2);
-    return if $method eq "DESTROY";
 
     # We create the function here so that it will not need to be
     # autoloaded the next time.
     no strict 'refs';
-    *$method = eval "sub { shift->{'_headers'}->$method(\@_) }";
+    *$method = sub { local $Carp::Internal{+__PACKAGE__} = 1; shift->headers->$method(@_) };
     goto &$method;
 }
+
+
+sub DESTROY {}  # avoid AUTOLOADing it
 
 
 # Private method to access members in %$self
@@ -395,9 +680,9 @@ sub _parts {
 	my %h = @{$h[0]};
 	if (defined(my $b = $h{boundary})) {
 	    my $str = $self->content;
-	    $str =~ s/\r?\n--\Q$b\E--\r?\n.*//s;
+	    $str =~ s/\r?\n--\Q$b\E--.*//s;
 	    if ($str =~ s/(^|.*?\r?\n)--\Q$b\E\r?\n//s) {
-		$self->{_parts} = [map HTTP::Message->parse($_),
+		$self->{_parts} = [map $self->_part_class->parse($_),
 				   split(/\r?\n--\Q$b\E\r?\n/, $str)]
 	    }
 	}
@@ -411,7 +696,7 @@ sub _parts {
 	$self->{_parts} = [$class->parse($content)];
     }
     elsif ($ct =~ m,^message/,) {
-	$self->{_parts} = [ HTTP::Message->parse($self->content) ];
+	$self->{_parts} = [ $self->_part_class->parse($self->content) ];
     }
 
     $self->{_parts} ||= [];
@@ -421,7 +706,7 @@ sub _parts {
 # Create private _content attribute from current _parts
 sub _content {
     my $self = shift;
-    my $ct = $self->header("Content-Type") || "multipart/mixed";
+    my $ct = $self->{_headers}->header("Content-Type") || "multipart/mixed";
     if ($ct =~ m,^\s*message/,i) {
 	_set_content($self, $self->{_parts}[0]->as_string($CRLF), 1);
 	return;
@@ -436,7 +721,7 @@ sub _content {
     my $boundary_index;
     for (my @tmp = @v; @tmp;) {
 	my($k, $v) = splice(@tmp, 0, 2);
-	if (lc($k) eq "boundary") {
+	if ($k eq "boundary") {
 	    $boundary = $v;
 	    $boundary_index = @v - @tmp - 1;
 	    last;
@@ -466,7 +751,7 @@ sub _content {
     }
 
     $ct = HTTP::Headers::Util::join_header_words(@v);
-    $self->header("Content-Type", $ct);
+    $self->{_headers}->header("Content-Type", $ct);
 
     _set_content($self, "--$boundary$CRLF" .
 	                join("$CRLF--$boundary$CRLF", @parts) .
@@ -487,12 +772,17 @@ sub _boundary
 
 1;
 
+=pod
 
-__END__
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Message - HTTP style message (base class)
+
+=head1 VERSION
+
+version 6.24
 
 =head1 SYNOPSIS
 
@@ -543,24 +833,32 @@ but it will make your program a whole character shorter :-)
 
 =item $mess->content
 
-=item $mess->content( $content )
+=item $mess->content( $bytes )
 
 The content() method sets the raw content if an argument is given.  If no
 argument is given the content is not touched.  In either case the
 original raw content is returned.
 
+If the C<undef> argument is given, the content is reset to its default value,
+which is an empty string.
+
 Note that the content should be a string of bytes.  Strings in perl
 can contain characters outside the range of a byte.  The C<Encode>
 module can be used to turn such strings into a string of bytes.
 
-=item $mess->add_content( $data )
+=item $mess->add_content( $bytes )
 
-The add_content() methods appends more data to the end of the current
-content buffer.
+The add_content() methods appends more data bytes to the end of the
+current content buffer.
+
+=item $mess->add_content_utf8( $string )
+
+The add_content_utf8() method appends the UTF-8 bytes representing the
+string to the end of the current content buffer.
 
 =item $mess->content_ref
 
-=item $mess->content_ref( \$content )
+=item $mess->content_ref( \$bytes )
 
 The content_ref() method will return a reference to content buffer string.
 It can be more efficient to access the content this way if the content
@@ -577,12 +875,21 @@ will automatically dereference scalar references passed this way.  For
 other references content() will return the reference itself and
 add_content() will refuse to do anything.
 
+=item $mess->content_charset
+
+This returns the charset used by the content in the message.  The
+charset is either found as the charset attribute of the
+C<Content-Type> header or by guessing.
+
+See L<http://www.w3.org/TR/REC-html40/charset.html#spec-char-encoding>
+for details about how charset is determined.
+
 =item $mess->decoded_content( %options )
 
-Returns the content with any C<Content-Encoding> undone and strings
-mapped to perl's Unicode strings.  If the C<Content-Encoding> or
-C<charset> of the message is unknown this method will fail by
-returning C<undef>.
+Returns the content with any C<Content-Encoding> undone and for textual content
+the raw content encoded to Perl's Unicode strings.  If the C<Content-Encoding>
+or C<charset> of the message is unknown this method will fail by returning
+C<undef>.
 
 The following options can be specified.
 
@@ -595,13 +902,27 @@ C<none> can used to suppress decoding of the charset.
 
 =item C<default_charset>
 
-This override the default charset of "ISO-8859-1".
+This override the default charset guessed by content_charset() or
+if that fails "ISO-8859-1".
+
+=item C<alt_charset>
+
+If decoding fails because the charset specified in the Content-Type header
+isn't recognized by Perl's Encode module, then try decoding using this charset
+instead of failing.  The C<alt_charset> might be specified as C<none> to simply
+return the string without any decoding of charset as alternative.
+
+=item C<charset_strict>
+
+Abort decoding if malformed characters is found in the content.  By
+default you get the substitution character ("\x{FFFD}") in place of
+malformed characters.
 
 =item C<raise_error>
 
 If TRUE then raise an exception if not able to decode content.  Reason
 might be that the specified C<Content-Encoding> or C<charset> is not
-supported.  If this option is FALSE, then decode_content() will return
+supported.  If this option is FALSE, then decoded_content() will return
 C<undef> on errors, but will still set $@.
 
 =item C<ref>
@@ -611,6 +932,43 @@ be more efficient in cases where the decoded content is identical to
 the raw content as no data copying is required in this case.
 
 =back
+
+=item $mess->decodable
+
+=item HTTP::Message::decodable()
+
+This returns the encoding identifiers that decoded_content() can
+process.  In scalar context returns a comma separated string of
+identifiers.
+
+This value is suitable for initializing the C<Accept-Encoding> request
+header field.
+
+=item $mess->decode
+
+This method tries to replace the content of the message with the
+decoded version and removes the C<Content-Encoding> header.  Returns
+TRUE if successful and FALSE if not.
+
+If the message does not have a C<Content-Encoding> header this method
+does nothing and returns TRUE.
+
+Note that the content of the message is still bytes after this method
+has been called and you still need to call decoded_content() if you
+want to process its content as a string.
+
+=item $mess->encode( $encoding, ... )
+
+Apply the given encodings to the content of the message.  Returns TRUE
+if successful. The "identity" (non-)encoding is always supported; other
+currently supported encodings, subject to availability of required
+additional modules, are "gzip", "deflate", "x-bzip2" and "base64".
+
+A successful call to this function will set the C<Content-Encoding>
+header.
+
+Note that C<multipart/*> or C<message/*> messages can't be encoded and
+this method will croak if you try.
 
 =item $mess->parts
 
@@ -626,7 +984,7 @@ The argumentless form will return a list of C<HTTP::Message> objects.
 If the content type of $msg is not C<multipart/*> or C<message/*> then
 this will return the empty list.  In scalar context only the first
 object is returned.  The returned message parts should be regarded as
-are read only (future versions of this library might make it possible
+read-only (future versions of this library might make it possible
 to modify the parent by modifying the parts).
 
 If the content type of $msg is C<message/*> then there will only be
@@ -635,7 +993,7 @@ one part returned.
 If the content type is C<message/http>, then the return value will be
 either an C<HTTP::Request> or an C<HTTP::Response> object.
 
-If an @parts argument is given, then the content of the message will
+If a @parts argument is given, then the content of the message will be
 modified. The array reference form is provided so that an empty list
 can be provided.  The @parts array should contain C<HTTP::Message>
 objects.  The @parts objects are owned by $mess after this call and
@@ -688,6 +1046,39 @@ that the returned string is newline terminated (even when the message
 content is not).  No extra newline is appended if an explicit $eol is
 passed.
 
+=item $mess->dump( %opt )
+
+Returns the message formatted as a string.  In void context print the string.
+
+This differs from C<< $mess->as_string >> in that it escapes the bytes
+of the content so that it's safe to print them and it limits how much
+content to print.  The escapes syntax used is the same as for Perl's
+double quoted strings.  If there is no content the string "(no
+content)" is shown in its place.
+
+Options to influence the output can be passed as key/value pairs. The
+following options are recognized:
+
+=over
+
+=item maxlength => $num
+
+How much of the content to show.  The default is 512.  Set this to 0
+for unlimited.
+
+If the content is longer then the string is chopped at the limit and
+the string "...\n(### more bytes not shown)" appended.
+
+=item no_content => $str
+
+Replaces the "(no content)" marker.
+
+=item prefix => $str
+
+A string that will be prefixed to each line of the dump.
+
+=back
+
 =back
 
 All methods unknown to C<HTTP::Message> itself are delegated to the
@@ -723,10 +1114,21 @@ details of these methods:
     $mess->authorization_basic
     $mess->proxy_authorization_basic
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1995-2004 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: HTTP style message (base class)
 

@@ -1,136 +1,112 @@
-package LWP::Debug;
+package LWP::Debug;    # legacy
 
-# $Id: Debug.pm 8931 2006-08-11 16:44:43Z dsully $
+our $VERSION = '6.44';
 
 require Exporter;
-@ISA = qw(Exporter);
-@EXPORT_OK = qw(level trace debug conns);
+our @ISA       = qw(Exporter);
+our @EXPORT_OK = qw(level trace debug conns);
 
 use Carp ();
 
 my @levels = qw(trace debug conns);
-%current_level = ();
+our %current_level = ();
 
-
-sub import
-{
-    my $pack = shift;
+sub import {
+    my $pack    = shift;
     my $callpkg = caller(0);
     my @symbols = ();
-    my @levels = ();
+    my @levels  = ();
     for (@_) {
-	if (/^[-+]/) {
-	    push(@levels, $_);
-	}
-	else {
-	    push(@symbols, $_);
-	}
+        if (/^[-+]/) {
+            push(@levels, $_);
+        }
+        else {
+            push(@symbols, $_);
+        }
     }
     Exporter::export($pack, $callpkg, @symbols);
     level(@levels);
 }
 
-
-sub level
-{
+sub level {
     for (@_) {
-	if ($_ eq '+') {              # all on
-	    # switch on all levels
-	    %current_level = map { $_ => 1 } @levels;
-	}
-	elsif ($_ eq '-') {           # all off
-	    %current_level = ();
-	}
-	elsif (/^([-+])(\w+)$/) {
-	    $current_level{$2} = $1 eq '+';
-	}
-	else {
-	    Carp::croak("Illegal level format $_");
-	}
+        if ($_ eq '+') {    # all on
+                            # switch on all levels
+            %current_level = map { $_ => 1 } @levels;
+        }
+        elsif ($_ eq '-') {    # all off
+            %current_level = ();
+        }
+        elsif (/^([-+])(\w+)$/) {
+            $current_level{$2} = $1 eq '+';
+        }
+        else {
+            Carp::croak("Illegal level format $_");
+        }
     }
 }
 
+sub trace { _log(@_) if $current_level{'trace'}; }
+sub debug { _log(@_) if $current_level{'debug'}; }
+sub conns { _log(@_) if $current_level{'conns'}; }
 
-sub trace  { _log(@_) if $current_level{'trace'}; }
-sub debug  { _log(@_) if $current_level{'debug'}; }
-sub conns  { _log(@_) if $current_level{'conns'}; }
-
-
-sub _log
-{
+sub _log {
     my $msg = shift;
-    $msg .= "\n" unless $msg =~ /\n$/;  # ensure trailing "\n"
+    $msg .= "\n" unless $msg =~ /\n$/;    # ensure trailing "\n"
 
-    my($package,$filename,$line,$sub) = caller(2);
+    my ($package, $filename, $line, $sub) = caller(2);
     print STDERR "$sub: $msg";
 }
 
 1;
 
-
 __END__
+
+=pod
 
 =head1 NAME
 
-LWP::Debug - debug routines for the libwww-perl library
-
-=head1 SYNOPSIS
-
- use LWP::Debug qw(+ -conns);
-
- # Used internally in the library
- LWP::Debug::trace('send()');
- LWP::Debug::debug('url ok');
- LWP::Debug::conns("read $n bytes: $data");
+LWP::Debug - deprecated
 
 =head1 DESCRIPTION
 
-LWP::Debug provides tracing facilities. The trace(), debug() and
-conns() function are called within the library and they log
-information at increasing levels of detail. Which level of detail is
-actually printed is controlled with the C<level()> function.
+This module has been deprecated.  Please see L<LWP::ConsoleLogger> for your
+debugging needs.
 
-The following functions are available:
+LWP::Debug is used to provide tracing facilities, but these are not used
+by LWP any more.  The code in this module is kept around
+(undocumented) so that 3rd party code that happens to use the old
+interfaces continue to run.
 
-=over 4
+One useful feature that LWP::Debug provided (in an imprecise and
+troublesome way) was network traffic monitoring.  The following
+section provides some hints about recommended replacements.
 
-=item level(...)
+=head2 Network traffic monitoring
 
-The C<level()> function controls the level of detail being
-logged. Passing '+' or '-' indicates full and no logging
-respectively. Individual levels can switched on and of by passing the
-name of the level with a '+' or '-' prepended.  The levels are:
+The best way to monitor the network traffic that LWP generates is to
+use an external TCP monitoring program.  The
+L<WireShark|http://www.wireshark.org/> program is highly recommended for this.
 
-  trace   : trace function calls
-  debug   : print debug messages
-  conns   : show all data transfered over the connections
+Another approach it to use a debugging HTTP proxy server and make
+LWP direct all its traffic via this one.  Call C<< $ua->proxy >> to
+set it up and then just use LWP as before.
 
-The LWP::Debug module provide a special import() method that allows
-you to pass the level() arguments with initial use statement.  If a
-use argument start with '+' or '-' then it is passed to the level
-function, else the name is exported as usual.  The following two
-statements are thus equivalent (if you ignore that the second pollutes
-your namespace):
+For less precise monitoring needs just setting up a few simple
+handlers might do.  The following example sets up handlers to dump the
+request and response objects that pass through LWP:
 
-  use LWP::Debug qw(+);
-  use LWP::Debug qw(level); level('+');
+  use LWP::UserAgent;
+  $ua = LWP::UserAgent->new;
+  $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
 
-=item trace($msg)
+  $ua->add_handler("request_send",  sub { shift->dump; return });
+  $ua->add_handler("response_done", sub { shift->dump; return });
 
-The C<trace()> function is used for tracing function
-calls. The package and calling subroutine name is
-printed along with the passed argument. This should
-be called at the start of every major function.
+  $ua->get("http://www.example.com");
 
-=item debug($msg)
+=head1 SEE ALSO
 
-The C<debug()> function is used for high-granularity
-reporting of state in functions.
+L<LWP::ConsoleLogger>, L<LWP::ConsoleLogger::Everywhere>, L<LWP::UserAgent>
 
-=item conns($msg)
-
-The C<conns()> function is used to show data being
-transferred over the connections. This may generate
-considerable output.
-
-=back
+=cut

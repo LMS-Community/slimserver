@@ -1,9 +1,7 @@
 package File::Listing;
 
-# $Id: Listing.pm 1152 2004-08-10 23:08:33Z dean $
-
 sub Version { $VERSION; }
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = "6.04";
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -37,30 +35,47 @@ sub init { } # Dummy sub
 
 sub file_mode ($)
 {
+    Carp::croak("Input to file_mode() must be a 10 character string.")
+        unless length($_[0]) == 10;
+
     # This routine was originally borrowed from Graham Barr's
     # Net::FTP package.
 
     local $_ = shift;
     my $mode = 0;
-    my($type,$ch);
+    my($type);
 
     s/^(.)// and $type = $1;
+
+    # When the set-group-ID bit (file mode bit 02000) is set, and the group
+    # execution bit (file mode bit 00020) is unset, and it is a regular file,
+    # some implementations of `ls' use the letter `S', others use `l' or `L'.
+    # Convert this `S'.
+
+    s/[Ll](...)$/S$1/;
 
     while (/(.)/g) {
 	$mode <<= 1;
 	$mode |= 1 if $1 ne "-" &&
 		      $1 ne 'S' &&
-		      $1 ne 't' &&
 		      $1 ne 'T';
     }
 
-    $type eq "d" and $mode |= 0040000 or	# Directory
-      $type eq "l" and $mode |= 0120000 or	# Symbolic Link
-	$mode |= 0100000;			# Regular File
+    $mode |= 0004000 if /^..s....../i;
+    $mode |= 0002000 if /^.....s.../i;
+    $mode |= 0001000 if /^........t/i;
 
-    $mode |= 0004000 if /^...s....../i;
-    $mode |= 0002000 if /^......s.../i;
-    $mode |= 0001000 if /^.........t/i;
+    # De facto standard definitions. From 'stat.h' on Solaris 9.
+
+    $type eq "p" and $mode |= 0010000 or        # fifo
+    $type eq "c" and $mode |= 0020000 or        # character special
+    $type eq "d" and $mode |= 0040000 or        # directory
+    $type eq "b" and $mode |= 0060000 or        # block special
+    $type eq "-" and $mode |= 0100000 or        # regular
+    $type eq "l" and $mode |= 0120000 or        # symbolic link
+    $type eq "s" and $mode |= 0140000 or        # socket
+    $type eq "D" and $mode |= 0150000 or        # door
+      Carp::croak("Unknown file type: $type");
 
     $mode;
 }
@@ -116,8 +131,7 @@ package File::Listing::unix;
 use HTTP::Date qw(str2time);
 
 # A place to remember current directory from last line parsed.
-use vars qw($curdir);
-no strict qw(vars);
+use vars qw($curdir @ISA);
 
 @ISA = qw(File::Listing);
 
@@ -144,7 +158,7 @@ sub line
 	 .*                                       # Graps
 	 \D(\d+)                                  # File size
 	 \s+                                      # Some space
-	 (\w{3}\s+\d+\s+(?:\d{1,2}:\d{2}|\d{4}))  # Date
+	 (\w{3}\s+\d+\s+(?:\d{1,2}:\d{2}|\d{4})|\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})  # Date
 	 \s+                                      # Some more space
 	 (.*)$                                    # File name
 	/x )
@@ -199,6 +213,7 @@ sub line
     }
     else {
         # parse failed, check if the dosftp parse understands it
+        File::Listing::dosftp->init();
         return(File::Listing::dosftp->line($_,$tz,$error));
     }
 
@@ -211,8 +226,7 @@ package File::Listing::dosftp;
 use HTTP::Date qw(str2time);
 
 # A place to remember current directory from last line parsed.
-use vars qw($curdir);
-no strict qw(vars);
+use vars qw($curdir @ISA);
 
 @ISA = qw(File::Listing);
 
@@ -232,11 +246,11 @@ sub line
 
     s/\015//g;
 
-    my ($kind, $size, $date, $name);
+    my ($date, $size_or_dir, $name, $size);
 
     # 02-05-96  10:48AM                 1415 src.slf
     # 09-10-96  09:18AM       <DIR>          sl_util
-    if (($date,$size_or_dir,$name) =
+    if (($date, $size_or_dir, $name) =
         /^(\d\d-\d\d-\d\d\s+\d\d:\d\d\wM)         # Date and time info
          \s+                                      # Some space
          (<\w{3}>|\d+)                            # Dir or Size
@@ -255,9 +269,7 @@ sub line
 	    $type = 'f';
             $size = $size_or_dir;
 	}
-	return [$name, $type, $size, str2time($date, $tz),
-              File::Listing::file_mode($kind)];
-
+	return [$name, $type, $size, str2time($date, $tz), undef];
     }
     else {
 	return () unless defined $error;
@@ -280,6 +292,8 @@ package File::Listing::netware;
 
 package File::Listing::apache;
 
+use vars qw(@ISA);
+
 @ISA = qw(File::Listing);
 
 
@@ -291,9 +305,16 @@ sub line {
     local($_) = shift;
     my($tz, $error) = @_; # ignored for now...
 
-    if (m!<A\s+HREF=\"([^\"]+)\">.*</A>.*?(\d+)-([a-zA-Z]+)-(\d+)\s+(\d+):(\d+)\s+(?:([\d\.]+[kM]?|-))!i) {
+    s!</?t[rd][^>]*>! !g;  # clean away various table stuff
+    if (m!<A\s+HREF=\"([^\"]+)\">.*</A>.*?(\d+)-([a-zA-Z]+|\d+)-(\d+)\s+(\d+):(\d+)\s+(?:([\d\.]+[kMG]?|-))!i) {
 	my($filename, $filesize) = ($1, $7);
 	my($d,$m,$y, $H,$M) = ($2,$3,$4,$5,$6);
+	if ($m =~ /^\d+$/) {
+	    ($d,$y) = ($y,$d) # iso date
+	}
+	else {
+	    $m = _monthabbrev_number($m);
+	}
 
 	$filesize = 0 if $filesize eq '-';
 	if ($filesize =~ s/k$//i) {
@@ -308,7 +329,7 @@ sub line {
 	$filesize = int $filesize;
 
 	require Time::Local;
-	my $filetime = Time::Local::timelocal(0,$M,$H,$d,_monthabbrev_number($m)-1,_guess_year($y)-1900);
+	my $filetime = Time::Local::timelocal(0,$M,$H,$d,$m-1,_guess_year($y)-1900);
 	my $filetype = ($filename =~ s|/$|| ? "d" : "f");
 	return [$filename, $filetype, $filesize, $filetime, undef];
     }
@@ -358,6 +379,7 @@ File::Listing - parse directory listing
 =head1 SYNOPSIS
 
  use File::Listing qw(parse_dir);
+ $ENV{LANG} = "C";  # dates in non-English locales not supported
  for (parse_dir(`ls -l`)) {
      ($name, $type, $size, $mtime, $mode) = @$_;
      next if $type ne 'f'; # plain file
@@ -371,10 +393,7 @@ File::Listing - parse directory listing
 =head1 DESCRIPTION
 
 This module exports a single function called parse_dir(), which can be
-used to parse directory listings. Currently it only understand Unix
-C<'ls -l'> and C<'ls -lR'> format.  It should eventually be able to
-most things you might get back from a ftp server file listing (LIST
-command), i.e. VMS listings, NT listings, DOS listings,...
+used to parse directory listings.
 
 The first parameter to parse_dir() is the directory listing to parse.
 It can be a scalar, a reference to an array of directory lines or a
@@ -384,10 +403,10 @@ The second parameter is the time zone to use when parsing time stamps
 in the listing. If this value is undefined, then the local time zone is
 assumed.
 
-The third parameter is the type of listing to assume.  The values will
-be strings like 'unix', 'vms', 'dos'.  Currently only 'unix' is
-implemented and this is also the default value.  Ideally, the listing
-type should be determined automatically.
+The third parameter is the type of listing to assume.  Currently
+supported formats are 'unix', 'apache' and 'dosftp'.  The default
+value is 'unix'.  Ideally, the listing type should be determined
+automatically.
 
 The fourth parameter specifies how unparseable lines should be treated.
 Values can be 'ignore', 'warn' or a code reference.  Warn means that
@@ -405,7 +424,12 @@ $filetype value is one of the letters 'f', 'd', 'l' or '?'.  The
 $filetime value is the seconds since Jan 1, 1970.  The
 $filemode is a bitmask like the mode returned by stat().
 
-=head1 CREDITS
+=head1 COPYRIGHT
+
+Copyright 1996-2010, Gisle Aas
 
 Based on lsparse.pl (from Lee McLoughlin's ftp mirror package) and
 Net::FTP's parse_dir (Graham Barr).
+
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.

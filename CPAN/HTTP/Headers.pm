@@ -1,16 +1,15 @@
 package HTTP::Headers;
 
-# $Id: Headers.pm 8931 2006-08-11 16:44:43Z dsully $
-
 use strict;
-use Carp ();
+use warnings;
 
-use vars qw($VERSION $TRANSLATE_UNDERSCORE);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.64 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = '6.24';
+
+use Carp ();
 
 # The $TRANSLATE_UNDERSCORE variable controls whether '_' can be used
 # as a replacement for '-' in header field names.
-$TRANSLATE_UNDERSCORE = 1 unless defined $TRANSLATE_UNDERSCORE;
+our $TRANSLATE_UNDERSCORE = 1 unless defined $TRANSLATE_UNDERSCORE;
 
 # "Good Practice" order of HTTP message headers:
 #    - General-Headers
@@ -19,34 +18,34 @@ $TRANSLATE_UNDERSCORE = 1 unless defined $TRANSLATE_UNDERSCORE;
 #    - Entity-Headers
 
 my @general_headers = qw(
-   Cache-Control Connection Date Pragma Trailer Transfer-Encoding Upgrade
-   Via Warning
+    Cache-Control Connection Date Pragma Trailer Transfer-Encoding Upgrade
+    Via Warning
 );
 
 my @request_headers = qw(
-   Accept Accept-Charset Accept-Encoding Accept-Language
-   Authorization Expect From Host
-   If-Match If-Modified-Since If-None-Match If-Range If-Unmodified-Since
-   Max-Forwards Proxy-Authorization Range Referer TE User-Agent
+    Accept Accept-Charset Accept-Encoding Accept-Language
+    Authorization Expect From Host
+    If-Match If-Modified-Since If-None-Match If-Range If-Unmodified-Since
+    Max-Forwards Proxy-Authorization Range Referer TE User-Agent
 );
 
 my @response_headers = qw(
-   Accept-Ranges Age ETag Location Proxy-Authenticate Retry-After Server
-   Vary WWW-Authenticate
+    Accept-Ranges Age ETag Location Proxy-Authenticate Retry-After Server
+    Vary WWW-Authenticate
 );
 
 my @entity_headers = qw(
-   Allow Content-Encoding Content-Language Content-Length Content-Location
-   Content-MD5 Content-Range Content-Type Expires Last-Modified
+    Allow Content-Encoding Content-Language Content-Length Content-Location
+    Content-MD5 Content-Range Content-Type Expires Last-Modified
 );
 
 my %entity_header = map { lc($_) => 1 } @entity_headers;
 
 my @header_order = (
-   @general_headers,
-   @request_headers,
-   @response_headers,
-   @entity_headers,
+    @general_headers,
+    @request_headers,
+    @response_headers,
+    @entity_headers,
 );
 
 # Make alternative representations of @header_order.  This is used
@@ -99,8 +98,11 @@ sub clear
 
 sub push_header
 {
-    Carp::croak('Usage: $h->push_header($field, $val)') if @_ != 3;
-    shift->_header(@_, 'PUSH');
+    my $self = shift;
+    return $self->_header(@_, 'PUSH_H') if @_ == 2;
+    while (@_) {
+	$self->_header(splice(@_, 0, 2), 'PUSH_H');
+    }
 }
 
 
@@ -137,6 +139,9 @@ sub remove_content_headers
     for my $f (grep $entity_header{$_} || /^content-/, keys %$self) {
 	$c->{$f} = delete $self->{$f};
     }
+    if (exists $self->{'::std_case'}) {
+	$c->{'::std_case'} = $self->{'::std_case'};
+    }
     $c;
 }
 
@@ -145,24 +150,40 @@ sub _header
 {
     my($self, $field, $val, $op) = @_;
 
-    # $push is only used interally sub push_header
-    Carp::croak('Need a field name') unless length($field);
+    Carp::croak("Illegal field name '$field'")
+        if rindex($field, ':') > 1 || !length($field);
 
     unless ($field =~ /^:/) {
 	$field =~ tr/_/-/ if $TRANSLATE_UNDERSCORE;
 	my $old = $field;
 	$field = lc $field;
-	unless(defined $standard_case{$field}) {
-	    # generate a %standard_case entry for this field
+	unless($standard_case{$field} || $self->{'::std_case'}{$field}) {
+	    # generate a %std_case entry for this field
 	    $old =~ s/\b(\w)/\u$1/g;
-	    $standard_case{$field} = $old;
+	    $self->{'::std_case'}{$field} = $old;
 	}
+    }
+
+    $op ||= defined($val) ? 'SET' : 'GET';
+    if ($op eq 'PUSH_H') {
+	# Like PUSH but where we don't care about the return value
+	if (exists $self->{$field}) {
+	    my $h = $self->{$field};
+	    if (ref($h) eq 'ARRAY') {
+		push(@$h, ref($val) eq "ARRAY" ? @$val : $val);
+	    }
+	    else {
+		$self->{$field} = [$h, ref($val) eq "ARRAY" ? @$val : $val]
+	    }
+	    return;
+	}
+	$self->{$field} = $val;
+	return;
     }
 
     my $h = $self->{$field};
     my @old = ref($h) eq 'ARRAY' ? @$h : (defined($h) ? ($h) : ());
 
-    $op ||= defined($val) ? 'SET' : 'GET';
     unless ($op eq 'GET' || ($op eq 'INIT' && @old)) {
 	if (defined($val)) {
 	    my @new = ($op eq 'PUSH') ? @old : ();
@@ -185,18 +206,18 @@ sub _header
 sub _sorted_field_names
 {
     my $self = shift;
-    return sort {
+    return [ sort {
         ($header_order{$a} || 999) <=> ($header_order{$b} || 999) ||
          $a cmp $b
-    } keys %$self
+    } grep !/^::/, keys %$self ];
 }
 
 
 sub header_field_names {
     my $self = shift;
-    return map $standard_case{$_} || $_, $self->_sorted_field_names
+    return map $standard_case{$_} || $self->{'::std_case'}{$_} || $_, @{ $self->_sorted_field_names },
 	if wantarray;
-    return keys %$self;
+    return grep !/^::/, keys %$self;
 }
 
 
@@ -204,21 +225,32 @@ sub scan
 {
     my($self, $sub) = @_;
     my $key;
-    foreach $key ($self->_sorted_field_names) {
-        next if $key =~ /^_/;
+    for $key (@{ $self->_sorted_field_names }) {
 	my $vals = $self->{$key};
 	if (ref($vals) eq 'ARRAY') {
 	    my $val;
 	    for $val (@$vals) {
-		&$sub($standard_case{$key} || $key, $val);
+		$sub->($standard_case{$key} || $self->{'::std_case'}{$key} || $key, $val);
 	    }
 	}
 	else {
-	    &$sub($standard_case{$key} || $key, $vals);
+	    $sub->($standard_case{$key} || $self->{'::std_case'}{$key} || $key, $vals);
 	}
     }
 }
 
+sub flatten {
+	my($self)=@_;
+
+	(
+		map {
+			my $k = $_;
+			map {
+				( $k => $_ )
+			} $self->header($_);
+		} $self->header_field_names
+	);
+}
 
 sub as_string
 {
@@ -226,29 +258,56 @@ sub as_string
     $endl = "\n" unless defined $endl;
 
     my @result = ();
-    $self->scan(sub {
-	my($field, $val) = @_;
-	$field =~ s/^://;
-	if ($val =~ /\n/) {
-	    # must handle header values with embedded newlines with care
-	    $val =~ s/\s+$//;          # trailing newlines and space must go
-	    $val =~ s/\n\n+/\n/g;      # no empty lines
-	    $val =~ s/\n([^\040\t])/\n $1/g;  # intial space for continuation
-	    $val =~ s/\n/$endl/g;      # substitute with requested line ending
+    for my $key (@{ $self->_sorted_field_names }) {
+	next if index($key, '_') == 0;
+	my $vals = $self->{$key};
+	if ( ref($vals) eq 'ARRAY' ) {
+	    for my $val (@$vals) {
+		$val = '' if not defined $val;
+		my $field = $standard_case{$key} || $self->{'::std_case'}{$key} || $key;
+		$field =~ s/^://;
+		if ( index($val, "\n") >= 0 ) {
+		    $val = _process_newline($val, $endl);
+		}
+		push @result, $field . ': ' . $val;
+	    }
 	}
-	push(@result, "$field: $val");
-    });
+	else {
+	    $vals = '' if not defined $vals;
+	    my $field = $standard_case{$key} || $self->{'::std_case'}{$key} || $key;
+	    $field =~ s/^://;
+	    if ( index($vals, "\n") >= 0 ) {
+		$vals = _process_newline($vals, $endl);
+	    }
+	    push @result, $field . ': ' . $vals;
+	}
+    }
 
     join($endl, @result, '');
 }
 
+sub _process_newline {
+    local $_ = shift;
+    my $endl = shift;
+    # must handle header values with embedded newlines with care
+    s/\s+$//;        # trailing newlines and space must go
+    s/\n(\x0d?\n)+/\n/g;     # no empty lines
+    s/\n([^\040\t])/\n $1/g; # initial space for continuation
+    s/\n/$endl/g;    # substitute with requested line ending
+    $_;
+}
 
-sub clone
-{
-    my $self = shift;
-    my $clone = new HTTP::Headers;
-    $self->scan(sub { $clone->push_header(@_);} );
-    $clone;
+
+
+if (eval { require Clone; 1 }) {
+    *clone = \&Clone::clone;
+} else {
+    *clone = sub {
+	my $self = shift;
+	my $clone = HTTP::Headers->new;
+	$self->scan(sub { $clone->push_header(@_);} );
+	$clone;
+    };
 }
 
 
@@ -260,6 +319,7 @@ sub _date_header
     if (defined $time) {
 	$self->_header($header, HTTP::Date::time2str($time));
     }
+    $old =~ s/;.*// if defined($old);
     HTTP::Date::str2time($old);
 }
 
@@ -282,14 +342,67 @@ sub client_date         { shift->_date_header('Client-Date',         @_); }
 #sub retry_after       { shift->_date_header('Retry-After',       @_); }
 
 sub content_type      {
-  my $ct = (shift->_header('Content-Type', @_))[0];
-  return '' unless defined($ct) && length($ct);
-  my @ct = split(/;\s*/, $ct, 2);
-  for ($ct[0]) {
-      s/\s+//g;
-      $_ = lc($_);
-  }
-  wantarray ? @ct : $ct[0];
+    my $self = shift;
+    my $ct = $self->{'content-type'};
+    $self->{'content-type'} = shift if @_;
+    $ct = $ct->[0] if ref($ct) eq 'ARRAY';
+    return '' unless defined($ct) && length($ct);
+    my @ct = split(/;\s*/, $ct, 2);
+    for ($ct[0]) {
+	s/\s+//g;
+	$_ = lc($_);
+    }
+    wantarray ? @ct : $ct[0];
+}
+
+sub content_type_charset {
+    my $self = shift;
+    require HTTP::Headers::Util;
+    my $h = $self->{'content-type'};
+    $h = $h->[0] if ref($h);
+    $h = "" unless defined $h;
+    my @v = HTTP::Headers::Util::split_header_words($h);
+    if (@v) {
+	my($ct, undef, %ct_param) = @{$v[0]};
+	my $charset = $ct_param{charset};
+	if ($ct) {
+	    $ct = lc($ct);
+	    $ct =~ s/\s+//;
+	}
+	if ($charset) {
+	    $charset = uc($charset);
+	    $charset =~ s/^\s+//;  $charset =~ s/\s+\z//;
+	    undef($charset) if $charset eq "";
+	}
+	return $ct, $charset if wantarray;
+	return $charset;
+    }
+    return undef, undef if wantarray;
+    return undef;
+}
+
+sub content_is_text {
+    my $self = shift;
+    return $self->content_type =~ m,^text/,;
+}
+
+sub content_is_html {
+    my $self = shift;
+    return $self->content_type eq 'text/html' || $self->content_is_xhtml;
+}
+
+sub content_is_xhtml {
+    my $ct = shift->content_type;
+    return $ct eq "application/xhtml+xml" ||
+           $ct eq "application/vnd.wap.xhtml+xml";
+}
+
+sub content_is_xml {
+    my $ct = shift->content_type;
+    return 1 if $ct eq "text/xml";
+    return 1 if $ct eq "application/xml";
+    return 1 if $ct =~ /\+xml$/;
+    return 0;
 }
 
 sub referer           {
@@ -352,11 +465,17 @@ sub _basic_auth {
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Headers - Class encapsulating HTTP Message headers
+
+=head1 VERSION
+
+version 6.24
 
 =head1 SYNOPSIS
 
@@ -401,7 +520,9 @@ Returns a copy of this C<HTTP::Headers> object.
 
 =item $h->header( $field )
 
-=item $h->header( $field => $value, ... )
+=item $h->header( $field => $value )
+
+=item $h->header( $f1 => $v1, $f2 => $v2, ... )
 
 Get or set the value of one or more header fields.  The header field
 name ($field) is not case sensitive.  To make the life easier for perl
@@ -414,14 +535,15 @@ means that you can update several fields with a single invocation.
 The $value argument may be a plain string or a reference to an array
 of strings for a multi-valued field. If the $value is provided as
 C<undef> then the field is removed.  If the $value is not given, then
-that header field will remain unchanged.
+that header field will remain unchanged. In addition to being a string,
+$value may be something that stringifies.
 
 The old value (or values) of the last of the header fields is returned.
 If no such field exists C<undef> will be returned.
 
 A multi-valued field will be returned as separate values in list
 context and will be concatenated with ", " as separator in scalar
-context.  The HTTP spec (RFC 2616) promise that joining multiple
+context.  The HTTP spec (RFC 2616) promises that joining multiple
 values in this way will not change the semantic of a header field, but
 in practice there are cases like old-style Netscape cookies (see
 L<HTTP::Cookies>) where "," is used as part of the syntax of a single
@@ -437,6 +559,8 @@ Examples:
  $accepts = $header->header('Accept');  # get values as a single string
 
 =item $h->push_header( $field => $value )
+
+=item $h->push_header( $f1 => $v1, $f2 => $v2, ... )
 
 Add a new field value for the specified header field.  Previous values
 for the same field are retained.
@@ -477,9 +601,9 @@ possible to tell which of the returned values belonged to which field.
 =item $h->remove_content_headers
 
 This will remove all the header fields used to describe the content of
-a message.  All header field names prefixed with C<Content-> falls
+a message.  All header field names prefixed with C<Content-> fall
 into this category, as well as C<Allow>, C<Expires> and
-C<Last-Modified>.  RFC 2616 denote these fields as I<Entity Header
+C<Last-Modified>.  RFC 2616 denotes these fields as I<Entity Header
 Fields>.
 
 The return value is a new C<HTTP::Headers> object that contains the
@@ -510,6 +634,10 @@ Any return values of the callback routine are ignored.  The loop can
 be broken by raising an exception (C<die>), but the caller of scan()
 would have to trap the exception itself.
 
+=item $h->flatten()
+
+Returns the list of pairs of keys and values.
+
 =item $h->as_string
 
 =item $h->as_string( $eol )
@@ -529,7 +657,7 @@ values will be substituted with this line ending sequence.
 =head1 CONVENIENCE METHODS
 
 The most frequently used headers can also be accessed through the
-following convenience methods.  These methods can both be used to read
+following convenience methods.  Most of these methods can both be used to read
 and to set the value of a header.  The header value is set if you pass
 an argument to the method.  The old header value is always returned.
 If the given header did not exist then C<undef> is returned.
@@ -591,6 +719,33 @@ string is returned.  This makes it safe to do the following:
      ...
   }
 
+=item $h->content_type_charset
+
+Returns the upper-cased charset specified in the Content-Type header.  In list
+context return the lower-cased bare content type followed by the upper-cased
+charset.  Both values will be C<undef> if not specified in the header.
+
+=item $h->content_is_text
+
+Returns TRUE if the Content-Type header field indicate that the
+content is textual.
+
+=item $h->content_is_html
+
+Returns TRUE if the Content-Type header field indicate that the
+content is some kind of HTML (including XHTML).  This method can't be
+used to set Content-Type.
+
+=item $h->content_is_xhtml
+
+Returns TRUE if the Content-Type header field indicate that the
+content is XHTML.  This method can't be used to set Content-Type.
+
+=item $h->content_is_xml
+
+Returns TRUE if the Content-Type header field indicate that the
+content is XML.  This method can't be used to set Content-Type.
+
 =item $h->content_encoding
 
 The Content-Encoding header field is used as a modifier to the
@@ -620,7 +775,7 @@ standard.>
 This header field is used in request messages and contains information
 about the user agent originating the request.  I<E.g.>:
 
-  $h->user_agent('Mozilla/1.2');
+  $h->user_agent('Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 6.0)');
 
 =item $h->server
 
@@ -716,10 +871,21 @@ These field names are returned with the ':' intact for
 $h->header_field_names and the $h->scan callback, but the colons do
 not show in $h->as_string.
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1995-2005 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: Class encapsulating HTTP Message headers
 

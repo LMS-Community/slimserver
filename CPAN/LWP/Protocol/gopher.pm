@@ -1,5 +1,4 @@
-#
-# $Id: gopher.pm 8931 2006-08-11 16:44:43Z dsully $
+package LWP::Protocol::gopher;
 
 # Implementation of the gopher protocol (RFC 1436)
 #
@@ -7,20 +6,17 @@
 # which in turn is a vastly modified version of Oscar's http'get()
 # dated 28/3/94 in <ftp://cui.unige.ch/PUBLIC/oscar/scripts/http.pl>
 # including contributions from Marc van Heyningen and Martijn Koster.
-#
-
-package LWP::Protocol::gopher;
 
 use strict;
-use vars qw(@ISA);
+
+our $VERSION = '6.44';
 
 require HTTP::Response;
 require HTTP::Status;
 require IO::Socket;
 require IO::Select;
 
-require LWP::Protocol;
-@ISA = qw(LWP::Protocol);
+use base qw(LWP::Protocol);
 
 
 my %gopher2mimetype = (
@@ -47,35 +43,33 @@ sub request
 {
     my($self, $request, $proxy, $arg, $size, $timeout) = @_;
 
-    LWP::Debug::trace('()');
-
     $size = 4096 unless $size;
 
     # check proxy
     if (defined $proxy) {
-	return HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
+	return HTTP::Response->new(HTTP::Status::RC_BAD_REQUEST,
 				   'You can not proxy through the gopher');
     }
 
-    my $url = $request->url;
+    my $url = $request->uri;
     die "bad scheme" if $url->scheme ne 'gopher';
 
 
     my $method = $request->method;
     unless ($method eq 'GET' || $method eq 'HEAD') {
-	return HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
+	return HTTP::Response->new(HTTP::Status::RC_BAD_REQUEST,
 				   'Library does not allow method ' .
 				   "$method for 'gopher:' URLs");
     }
 
     my $gophertype = $url->gopher_type;
     unless (exists $gopher2mimetype{$gophertype}) {
-	return HTTP::Response->new(&HTTP::Status::RC_NOT_IMPLEMENTED,
+	return HTTP::Response->new(HTTP::Status::RC_NOT_IMPLEMENTED,
 				   'Library does not support gophertype ' .
 				   $gophertype);
     }
 
-    my $response = HTTP::Response->new(&HTTP::Status::RC_OK, "OK");
+    my $response = HTTP::Response->new(HTTP::Status::RC_OK, "OK");
     $response->header('Content-type' => $gopher2mimetype{$gophertype}
 					|| 'text/plain');
     $response->header('Content-Encoding' => $gopher2encoding{$gophertype})
@@ -86,7 +80,7 @@ sub request
 	$response->header('Client-Warning' => 'Client answer only');
 	return $response;
     }
-    
+
     if ($gophertype eq '7' && ! $url->search) {
       # the url is the prompt for a gopher search; supply boiler-plate
       return $self->collect_once($arg, $response, <<"EOT");
@@ -126,6 +120,7 @@ EOT
     # Ok, lets make the request
     my $socket = IO::Socket::INET->new(PeerAddr => $host,
 				       PeerPort => $port,
+				       LocalAddr => $self->{ua}{local_address},
 				       Proto    => 'tcp',
 				       Timeout  => $timeout);
     die "Can't connect to $host:$port" unless $socket;
@@ -192,7 +187,7 @@ sub gopher2url
 sub menu2html {
     my($menu) = @_;
 
-    $menu =~ s/\015//g;  # remove carriage return
+    $menu =~ tr/\015//d;  # remove carriage return
     my $tmp = <<"EOT";
 <HTML>
 <HEAD>
