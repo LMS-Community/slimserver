@@ -145,7 +145,7 @@ sub _connect_error {
 	
 	# Kill the timeout timer
 	Slim::Utils::Timers::killTimers( $socket, \&_connect_error );
-
+	
 	# close the socket
 	if ( defined $socket ) {
 		$socket->close;
@@ -177,6 +177,9 @@ sub _async_connect {
 			return;
 		}
 		else {
+			# remove our initial selects
+			Slim::Networking::Select::removeError($socket);
+			Slim::Networking::Select::removeWrite($socket);
 			return _connect_error( $socket, $self, $args );
 		}
 	}
