@@ -15,7 +15,7 @@ use base qw(Slim::Utils::Accessor);
 
 use Scalar::Util qw(blessed weaken);
 use Socket qw(inet_ntoa);
-use Errno qw(EWOULDBLOCK);
+use Errno qw(EWOULDBLOCK EAGAIN);
 
 use Slim::Networking::Async::DNS;
 use Slim::Networking::Async::Socket::HTTP;
@@ -165,9 +165,14 @@ sub _connect_error {
 sub _async_connect {
 	my ( $socket, $self, $args ) = @_;
 
+	# on Windows $! might not be cleared when socket is not yet connected
+	# and whatever was previous value is kept, making the test below fail
+	# by clearing it, we force underlying to redefine it.
+	$! = undef;
+	
 	# check that we are actually connected
 	if ( !$socket->connected ) {
-		if ( ref $socket eq 'Slim::Networking::Async::Socket::HTTPS' and $! == EWOULDBLOCK ) {
+		if ($socket->isa('Slim::Networking::Async::Socket::HTTPS') && ($! == EWOULDBLOCK || $! == EAGAIN)) {
 			# The TLS handshake is not yet complete.  Retry later.
 			return;
 		}
