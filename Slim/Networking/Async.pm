@@ -165,6 +165,11 @@ sub _connect_error {
 sub _async_connect {
 	my ( $socket, $self, $args ) = @_;
 
+	# on Windows $! might not be cleared when socket is not yet connected
+	# and whatever was previous value is kept, making the test below fail
+	# by clearing it, we force underlying to redefine it.
+	$! = undef;
+	
 	# check that we are actually connected
 	if ( !$socket->connected ) {
 		if ($socket->isa('Slim::Networking::Async::Socket::HTTPS') && ($! == EWOULDBLOCK || $! == EAGAIN)) {
