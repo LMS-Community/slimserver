@@ -9,7 +9,7 @@ use Slim::Utils::OSDetect;
 
 use Digest::MD5;
 
-use constant MAX_DOWNLOAD_WAIT => 20;
+use constant MAX_DOWNLOAD_WAIT => 120;
 
 my $prefs = preferences('plugin.extensions');
 my $log   = logger('plugin.extensions');
@@ -101,10 +101,10 @@ sub handler {
 
 	for my $repo (keys %$repos) {
 		Slim::Plugin::Extensions::Plugin::getExtensions({
-			'name'   => $repo, 
-			'type'   => 'plugin', 
+			'name'   => $repo,
+			'type'   => 'plugin',
 			'target' => Slim::Utils::OSDetect::OS(),
-			'version'=> $::VERSION, 
+			'version'=> $::VERSION,
 			'lang'   => $Slim::Utils::Strings::currentLang,
 			'details'=> 1,
 			'cb'     => \&_getReposCB,
@@ -135,17 +135,20 @@ sub _getReposCB {
 		my $pageInfo = $class->_addInfo($client, $params, $data);
 
 		my $finalize;
-		my $timeout = MAX_DOWNLOAD_WAIT;
+		my $timeout = Time::HiRes::time() + MAX_DOWNLOAD_WAIT;
 
 		$finalize = sub {
 			Slim::Utils::Timers::killTimers(undef, $finalize);
 
 			# if a plugin is still being downloaded, wait a bit longer, or the user might restart the server before we're done
-			if ( $timeout-- > 0 && Slim::Utils::PluginDownloader->downloading ) {
+			if ( Time::HiRes::time() <= $timeout && Slim::Utils::PluginDownloader->downloading ) {
 				Slim::Utils::Timers::setTimer(undef, time() + 1, $finalize);
 
 				main::DEBUGLOG && $log->is_debug && $log->debug("PluginDownloader is still busy - waiting a little longer...");
 				return;
+			}
+			elsif ( Time::HiRes::time() > $timeout ) {
+				$log->warn("Plugin download timed out");
 			}
 
 			$callback->($client, $params, $pageInfo, @$args);
@@ -161,7 +164,7 @@ sub _addInfo {
 	my ($current, $active, $inactive, $hide) = Slim::Plugin::Extensions::Plugin::getCurrentPlugins();
 
 	my @results = sort { $a->{'weight'} !=  $b->{'weight'} ?
-						 $a->{'weight'} <=> $b->{'weight'} : 
+						 $a->{'weight'} <=> $b->{'weight'} :
 						 $a->{'title'} cmp $b->{'title'} } values %{$data->{'results'}};
 
 	my @res;
