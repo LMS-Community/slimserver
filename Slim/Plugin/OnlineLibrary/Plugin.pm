@@ -65,6 +65,11 @@ sub initPlugin {
 		}
 	}, 'genreMappings');
 
+	# make sure the value is defined, otherwise it would be enabled again
+	$prefs->setChange( sub {
+		$prefs->set($_[0], 0) unless defined $_[1];
+	}, 'enableServiceEmblem' );
+
 	$prefs->setChange( sub {
 		Slim::Control::Request::executeRequest(undef, ['rescan', 'onlinelibrary']);
 	}, 'genreMappings');
