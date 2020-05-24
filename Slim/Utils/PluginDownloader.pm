@@ -156,15 +156,28 @@ sub install {
 
 	my $file = catdir($downloadTo, "$name.zip");
 
-	unlink $file;
+	if (-r $file) {
+		my $digest = _getDigest($file);
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new( \&_downloadDone, \&_downloadError, { saveAs => $file, args => $args } );
+		if ($args->{sha} ne $digest) {
+			main::INFOLOG && $log->is_info && $log->info(sprintf("found existing download, but digest does not match %s - %s will be re-downloaded: expected %s, got %s", $file, $name, $args->{sha}, $digest));
+			unlink $file;
+		}
+	}
 
-	main::INFOLOG && $log->info("install - downloading $name from $url");
+	if (-r $file) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("found existing download, digest matches - don't re-download: $name");
+		_installDownload($file, $args);
+	}
+	else {
+		my $http = Slim::Networking::SimpleAsyncHTTP->new( \&_downloadDone, \&_downloadError, { saveAs => $file, args => $args } );
 
-	$downloading++;
+		main::INFOLOG && $log->info("install - downloading $name from $url");
 
-	$http->get($url);
+		$downloading++;
+
+		$http->get($url);
+	}
 }
 
 sub _downloadDone {
@@ -174,26 +187,23 @@ sub _downloadDone {
 	my $args  = $http->params('args');
 
 	my $name  = $args->{'name'};
-	my $digest= $args->{'sha'};
-	my $url   = $http->url;
 
 	main::INFOLOG && $log->info("downloaded $name to $file");
 
 	$downloading--;
 
+	_installDownload($file, $args);
+}
+
+sub _installDownload {
+	my ($file, $args) = @_;
+
+	my $name  = $args->{'name'};
+	my $digest= $args->{'sha'};
+
 	if (-r $file) {
 
-		my $sha1 = Digest::SHA1->new;
-
-		open my $fh, '<', $file or $log->error("Failed to open $file");
-
-		binmode $fh;
-
-		$sha1->addfile($fh);
-
-		close $fh;
-
-		my $gotDigest = $sha1->hexdigest;
+		my $gotDigest = _getDigest($file);
 
 		if ($digest ne $gotDigest) {
 
@@ -219,6 +229,22 @@ sub _downloadDone {
 			$prefs->set($name, 'needs-install');
 		}
 	}
+}
+
+sub _getDigest {
+	my ($file) = @_;
+
+	my $sha1 = Digest::SHA1->new;
+
+	open my $fh, '<', $file or $log->error("Failed to open $file");
+
+	binmode $fh;
+
+	$sha1->addfile($fh);
+
+	close $fh;
+
+	return $sha1->hexdigest;
 }
 
 sub _downloadError {
