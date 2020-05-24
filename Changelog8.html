@@ -15,6 +15,7 @@
 		<li><a href="https://github.com/Logitech/slimserver/pull/305">PR #305</a> - use ORIGINALYEAR in FLAC files to override YEAR (thanks jcbodnar!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/267">PR #267</a> - HTTPS certificates are now validated when LMS acts as a client.  HTTPS connections to plugin repositories are no-longer retried over HTTP when they fail.  The old insecure behaviour can optionally be re-enabled, although, instead, we recommend working out why HTTPS is broken in your environment and fixing that if possible.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/308">PR #308</a> - Update faad binaries to fix several CVE-2017 security issues (thanks ralphy!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/346">PR #346</a> - Update Audio::Scan on Windows to 1.02 (thanks ralphy!)</li>
 		<li>Read Conductor tag from m4a etc. files.</li>
 		<li>Persist some web browser side preferences like artwork mode, expanded menus etc. on the server. Safari would regularly "forget" them.</li>
 		<li>Improve cache purging to reduce startup time and the risk of locking up other initialization tasks.</li>
@@ -25,6 +26,7 @@
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
+		<li>Avoid re-downloading of plugin files if they've already successfully beeen downloaded.</li>
 		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
 	</ul>
 	<br />
