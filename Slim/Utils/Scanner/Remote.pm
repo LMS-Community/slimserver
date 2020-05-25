@@ -372,7 +372,7 @@ sub readRemoteHeaders {
 	}
 
 	# Is this an audio stream or a playlist?
-	if ( Slim::Music::Info::isSong( $track, $type ) ) {
+	if ( $type = Slim::Music::Info::isSong( $track, $type ) ) {
 		main::INFOLOG && $log->is_info && $log->info("This URL is an audio stream [$type]: " . $track->url);
 
 		$track->content_type($type);
