@@ -20,7 +20,7 @@ use Slim::Plugin::OnlineLibrary::BrowseArtist;
 use Slim::Plugin::OnlineLibrary::Libraries;
 
 use constant DELAY_FIRST_POLL => 24;
-use constant POLLING_INTERVAL => 5 * 60;
+use constant POLLING_INTERVAL => 60 * 60;
 
 my $prefs = preferences('plugin.onlinelibrary');
 
