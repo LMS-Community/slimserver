@@ -17390,6 +17390,11 @@ INFORMATION_TRACKS
 	SV	Totalt antal spår
 	ZH_CN	音轨总数
 
+INFORMATION_PLAYLISTS
+	DE	Anzahl Wiedergabelisten
+	EN	Total Playlists
+	FR	Listes de lecture
+
 INFORMATION_VIDEOS
 	CS	Videí celkem
 	DA	Videoer i alt

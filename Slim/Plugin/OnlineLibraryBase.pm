@@ -146,28 +146,22 @@ sub getLibraryStats {
 	$prefix =~ s/:.*/:/g;
 
 	my $totals;
-
 	my $dbh = Slim::Schema->dbh();
-	my $trackCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type != 'ssp'");
-	$trackCount_sth->execute("$prefix%");
-	my ($count) = $trackCount_sth->fetchrow_array();
-	$trackCount_sth->finish;
 
-	$totals->{tracks} = $count || 0;
+	foreach (
+		['tracks', "SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type != 'ssp'"],
+		['albums', "SELECT COUNT(1) FROM albums WHERE extid LIKE ?"],
+		['artists', "SELECT COUNT(1) FROM contributors WHERE extid LIKE ?"],
+		['playlists', "SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type = 'ssp'"],
+		['playlistTracks', "SELECT COUNT(1) FROM playlist_track WHERE track LIKE ?"]
+	) {
+		my $count_sth = $dbh->prepare_cached($_->[1]);
+		$count_sth->execute("$prefix%");
+		my ($count) = $count_sth->fetchrow_array();
+		$count_sth->finish;
 
-	my $albumCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM albums WHERE extid LIKE ?");
-	$albumCount_sth->execute("$prefix%");
-	($count) = $albumCount_sth->fetchrow_array();
-	$albumCount_sth->finish;
-
-	$totals->{albums} = $count || 0;
-
-	my $artistCount_sth = $dbh->prepare_cached("SELECT COUNT(1) FROM contributors WHERE extid LIKE ?");
-	$artistCount_sth->execute("%$prefix%");
-	($count) = $artistCount_sth->fetchrow_array();
-	$artistCount_sth->finish;
-
-	$totals->{artists} = $count || 0;
+		$totals->{$_->[0]} = $count || 0;
+	}
 
 	return $totals;
 }

@@ -66,3 +66,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	DE	Online Stilrichtungen ersetzen
 	EN	Online Genre Replacement
 
+PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
+	DE	Anzahl Titel in Wiedergabelisten
+	EN	Total Tracks in Playlists
+	FR	Morceaux dans des listes de lecture
