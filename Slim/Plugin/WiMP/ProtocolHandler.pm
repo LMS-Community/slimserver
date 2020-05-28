@@ -467,7 +467,6 @@ sub _gotBulkMetadata {
 		}
 
 		my $bitrate = delete($track->{bitrate});
-		warn $bitrate;
 
 		my $meta = {
 			%{$track},
