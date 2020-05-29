@@ -718,7 +718,7 @@ sub parseOggHeader {
 		Slim::Schema->clearContentTypeCache( $track->url );
 		Slim::Music::Info::setContentType( $track->url, 'ops' );
 		$track->content_type('ops');
-		
+
 		my $samplerate = unpack('V', substr($data, 12, 4));
 		my $channels = unpack('C', substr($data, 9, 1));
 		$track->samplerate($samplerate);
@@ -734,10 +734,10 @@ sub parseOggHeader {
 
 sub streamAudioData {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
-	
+
+	return 1 unless defined $$dataref;
+
 	my $len = length($$dataref);
-	return 1 unless $len;
-	
 	my $first;
 
 	# Buffer data to a temp file, 128K of data by default
@@ -778,10 +778,8 @@ sub streamAudioData {
 
 	$args->{_scanlen} -= $len;
 
-	if ( $args->{_scanlen} > 0 ) {
+	if ( $args->{_scanlen} > 0 && $len) {
 		# Read more data
-		#$log->is_debug && $log->debug( $track->url . ' Bytes left: ' . $args->{_scanlen} );
-
 		return 1;
 	}
 

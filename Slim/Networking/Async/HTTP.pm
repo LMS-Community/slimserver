@@ -540,6 +540,9 @@ sub _http_read_body {
 	elsif ( $args->{onStream} ) {
 		# The caller wants a callback on every chunk of data streamed
 		my $pt   = $args->{passthrough} || [];
+		if ( !$result ) {
+			$buf = defined $result ? "" : undef;
+		}
 		my $more = $args->{onStream}->( $self, \$buf, @{$pt} );
 
 		# onStream callback can signal to stop the stream by returning false
