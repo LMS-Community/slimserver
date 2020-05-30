@@ -377,7 +377,7 @@ sub sendXplHBeatMsg {
 		# if the song name has the track number at the beginning, remove it
 		$trackname =~ s/^[0-9]*\.//g;
 		$trackname =~ s/^ //g;
-		
+
 	} elsif ($client->isStopped()) {
 		$playmode = "stopped";
 	} elsif ($client->isPaused()) {
@@ -394,7 +394,7 @@ sub sendXplHBeatMsg {
 	} else {
 		$msg = "interval=$xpl_interval\nport=$xpl_port\nremote-ip=$localip\nschema=audio.slimserv\nstatus=$playmode";
 		$msg = "$msg"; #\nsong=$song\nline1=$prevline1\nline2=$prevline2";
-		
+
 		sendxplmsg("xpl-stat", "*","hbeat.app", $msg, $clientName);
 	}
 }
@@ -634,7 +634,7 @@ sub xplExecuteCallback {
 		
 		sendXplHBeatMsg($client);
 	}
-
+	
 	elsif ($request->isCommand([['power']])) {
 
 		main::DEBUGLOG && $log->debug("Callback for power.");
