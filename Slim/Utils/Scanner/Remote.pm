@@ -420,6 +420,16 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
+		elsif ( $type eq 'wav' ) {
+
+			# Read the header to allow support for oggflac as it requires different decode path
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading WAV header');
+			$http->read_body( {
+				readLimit   => 36,
+				onBody      => \&parseWavHeader,
+				passthrough => [ $track, $args ],
+			} );
+		}
 		else {
 			# If URL was mms but content-type is not wma, change URL
 			if ( $track->url =~ /^mms/i ) {
@@ -727,6 +737,32 @@ sub parseOggHeader {
 			$log->debug( sprintf( "OggOpus: input %dHz, %dch", $samplerate, $channels ) );
 		}
 	}
+
+	# All done
+	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseWavHeader {
+	my ( $http, $track, $args ) = @_;
+
+	my $client = $args->{client};
+	my $cb	   = $args->{cb} || sub {};
+	my $pt	   = $args->{pt} || [];
+
+	my $data = $http->response->content;
+
+	# search for Wav headers within the data
+	my $samplerate = unpack('V', substr($data, 24, 4));
+	my $samplesize = unpack('v', substr($data, 34, 2));
+	my $channels = unpack('v', substr($data, 22, 2));
+	my $bitrate = $samplerate * $samplesize * $channels;
+	$track->samplerate($samplerate);
+	$track->samplesize($samplesize);
+	Slim::Music::Info::setBitrate( $track->url, $bitrate );
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug( sprintf( "Wav: %dHz, %dBits, %dch => bitrate: %dkbps",
+					      $samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
+	} 
 
 	# All done
 	$cb->( $track, undef, @{$pt} );

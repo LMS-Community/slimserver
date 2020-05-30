@@ -447,7 +447,8 @@ sub open {
 
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
-	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {
+	# Make sure for direct mode that if transcode rule is identity, codec is _really_ supported (e.g. wav vs pcm)
+	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self)) && grep {$_ eq $format} Slim::Player::CapabilitiesHelper::supportedFormats($client)) {
 		main::INFOLOG && $log->info( "URL supports direct streaming [$url->$directUrl]" );
 		$self->directstream(1);
 		$self->streamUrl($directUrl);
