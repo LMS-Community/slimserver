@@ -793,7 +793,7 @@ sub canSeek {
 	my $bitrate = $song->bitrate();
 	my $seconds = $song->duration();
 
-	if ( !$bitrate || !$seconds ) {
+	if ( !$bitrate || !$seconds || $song->streamformat =~ /(pcm|wav)/ ) {
 		#$log->debug( "bitrate: $bitrate, duration: $seconds" );
 		#$log->debug( "Unknown bitrate or duration, seek disabled" );
 		return 0;
