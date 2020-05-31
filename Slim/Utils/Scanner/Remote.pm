@@ -716,6 +716,7 @@ sub parseOggHeader {
 		my $bitrate = 0.6 * $samplerate * $samplesize * $channels;
 		$track->samplerate($samplerate);
 		$track->samplesize($samplesize);
+		$track->channels($channels);	
 		Slim::Music::Info::setBitrate( $track->url, $bitrate );
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( sprintf( "OggFlac: %dHz, %dBits, %dch => estimated bitrate: %dkbps",
@@ -758,6 +759,7 @@ sub parseWavHeader {
 	my $bitrate = $samplerate * $samplesize * $channels;
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
+	$track->channels($channels);	
 	Slim::Music::Info::setBitrate( $track->url, $bitrate );
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "Wav: %dHz, %dBits, %dch => bitrate: %dkbps",
