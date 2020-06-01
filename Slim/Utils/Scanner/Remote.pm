@@ -422,11 +422,22 @@ sub readRemoteHeaders {
 		}
 		elsif ( $type eq 'wav' ) {
 
-			# Read the header to allow support for oggflac as it requires different decode path
+			# Read the header to allow support for wav as it requires different decode path
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading WAV header');
 			$http->read_body( {
 				readLimit   => 36,
 				onBody      => \&parseWavHeader,
+				passthrough => [ $track, $args ],
+			} );
+		}
+		elsif ( $type eq 'aif' ) {
+
+			# Read the header to allow support for aif as it requires different decode path
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AIF header');
+
+			$http->read_body( {
+				readLimit   => 4*1024,
+				onBody      => \&parseAifHeader,
 				passthrough => [ $track, $args ],
 			} );
 		}
@@ -751,6 +762,12 @@ sub parseWavHeader {
 	my $pt	   = $args->{pt} || [];
 
 	my $data = $http->response->content;
+	
+	# do minimum check
+	if (substr($data, 0, 4) ne 'RIFF') {
+		$cb->( $track, undef, @{$pt} );
+		return;
+	}	
 
 	# search for Wav headers within the data
 	my $samplerate = unpack('V', substr($data, 24, 4));
@@ -767,6 +784,52 @@ sub parseWavHeader {
 	} 
 
 	# All done
+	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseAifHeader {
+	my ( $http, $track, $args ) = @_;
+
+	my $client = $args->{client};
+	my $cb	   = $args->{cb} || sub {};
+	my $pt	   = $args->{pt} || [];
+
+	my $data = $http->response->content;
+		
+	# do minimum check
+	if (substr($data, 0, 4) ne 'FORM') {
+		$cb->( $track, undef, @{$pt} );
+		return;
+	}	
+		
+	my $offset = 12;
+	
+	while ($offset < length($data) - 22) {
+
+		if (substr($data, $offset, 4) eq 'COMM') {
+			my $samplesize = unpack('n', substr($data, $offset+14, 2));
+			my $channels = unpack('n', substr($data, $offset+8, 2));
+			# sample rate is encoded as IEEE 80 bit extended format
+			my $samplerate = unpack('N', substr($data, $offset+18, 4));
+			my $exponent = (unpack('s>', substr($data, $offset+16, 2)) & 0x7fff) - 16383 - 31;
+			while ($exponent < 0) { $samplerate >>= 1; $exponent++; }
+			while ($exponent > 0) { $samplerate <<= 1; $exponent--; }
+			my $bitrate = $samplerate * $samplesize * $channels;			
+			$track->samplerate($samplerate);
+			$track->samplesize($samplesize);
+			$track->channels($channels);	
+			$track->endian(1);	
+			Slim::Music::Info::setBitrate( $track->url, $bitrate );
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug( sprintf( "Aif: %dHz, %dBits, %dch => bitrate: %dkbps",
+						$samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
+			}	
+			last;
+		} 
+		
+		$offset += unpack('N', substr($data, $offset+4, 4)) + 8;
+	}
+
 	$cb->( $track, undef, @{$pt} );
 }
 
