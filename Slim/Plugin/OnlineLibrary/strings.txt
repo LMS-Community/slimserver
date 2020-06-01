@@ -1,72 +1,91 @@
 PLUGIN_ONLINE_LIBRARY_MODULE_NAME
 	DE	Online Musiksammlungsintegration
 	EN	Online Music Library Integration
+	NL	Online Muziekcollectie Integratie
 
 PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 	DE	Erweiterte Kontrolle über die Integration ihrer Online-Musiksammlungen.
 	EN	Get more control over how your online music libraries are integrated with your local music.
+	NL	Krijg meer controle over hoe jouw online muziekcollectie wordt geïntegreerd met jouw lokale muziek.
 
 PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
 	DE	Online Sammlung integrieren aber nicht auf Änderungen überprüfen
 	EN	Integrate online library but do not automatically check for changes
+	NL	Integreer online collectie, maar controleer niet automatisch op wijzigingen 
 
 PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
 	DE	Online Sammlung integrieren und automatisch auf Änderungen überprüfen
 	EN	Integrate online library and automatically check for changes
+	NL	Integreer online collectie en controleer automatisch op wijzigingen
 
 PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
 	DE	Online Sammlung nicht integrieren
 	EN	Do not integrate online music collection
+	NL	Geen integratie van online muziekcollectie
 
 PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
 	DE	Es wurde kein unterstützter Streaming-Dienst gefunden.
 	EN	There's no supported streaming service implementation available.
+	NL	Er is geen ondersteunde muziek streaming dienst gevonden.
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 	DE	Musiksammlung ohne Online-Dubletten
 	EN	Music without online duplicates
+	NL	Muziekcollectie zonder online duplicaten
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
 	EN	Show only local album if you got another copy in your online music collection.
+	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is.
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
 	EN	Local tracks only (no music service)
+	NL	Alleen lokale nummers (geen muziek streaming diensten)  
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 	DE	Musikdienst-Logo
 	EN	Music Service Logo
+	NL	Muziek streaming dienst logo
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 	DE	Markiere Online-Alben mit Musikdienst-Logo (falls verfügbar).
 	EN	Put streaming service logo on top of album artwork (if available).
+	NL	Markeer online albums met een streaming dienst logo op de albumhoes (indien beschikbaar).
 
 PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
 	DE	Nur Online Musiksammlung neu einlesen
 	EN	Only rescan online music library
+	NL	Alleen online muziek collectie opnieuw scannen
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
 	DE	Stilrichtungen ersetzen
 	EN	Genre Replacement
+	NL	Genres vervangen
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 	DE	Nicht alle Musikdienste unterstützen Stilrichtungen. Diese Einstellung erlaubt es ihnen, Titel auf Grund ihres Namens oder des Interpreten einer Stilrichtung zuzuordnen. Das funktioniert offensichtlich nicht gut mit grossen Sammlungen. Aber die Funktion erlaubt es, gewisse Titel einer Stilrichtung zuzuordnen, um diese dann z.B. in einer Sammlungs-Ansicht zu berücksichtigen.
-	EN	Unfortunatelly not all streaming services support genres. This setting allows you to map tracks to genres based on their title or artist name. This obviuosly doesn't scale for real collections. But it eg. allows you to tag certain tracks with a specific genre to be applied in a library view.
-
+	EN	Unfortunatelly not all streaming services support genres. This setting allows you to map tracks to genres based on their title or artist name. This obviously doesn't scale for real collections. But it eg. allows you to tag certain tracks with a specific genre to be applied in a library view.
+	NL	Niet alle online muziek streaming diensten ondersteunen genres. Met deze instelling kan je nummers toewijzen aan genres op basis van hun titel of artiesten. Dit werkt uiteraard niet voor erg grote collecties. Maar het stelt je in staat bepaalde nummers te taggen met een specifiek genre om toe te passen in een bibliotheekweergave.	
+	
+	
 PLUGIN_ONLINE_LIBRARY_TAG
 	DE	Feld:
 	EN	Tag:
+	NL	Tag:
 
 PLUGIN_ONLINE_LIBRARY_MATCHING
 	DE	Zutreffender Text:
 	EN	Matching Text:
+	NL	Toepasselijke Tekst:
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	DE	Online Stilrichtungen ersetzen
 	EN	Online Genre Replacement
+	NL	Online Genres Vervangen
 
 PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
 	DE	Anzahl Titel in Wiedergabelisten
 	EN	Total Tracks in Playlists
 	FR	Morceaux dans des listes de lecture
+	NL	Totaal aantal nummers in afspeellijsten
