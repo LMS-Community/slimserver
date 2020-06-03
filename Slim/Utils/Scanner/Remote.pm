@@ -727,7 +727,7 @@ sub parseOggHeader {
 		my $bitrate = 0.6 * $samplerate * $samplesize * $channels;
 		$track->samplerate($samplerate);
 		$track->samplesize($samplesize);
-		$track->channels($channels);	
+		$track->channels($channels);
 		Slim::Music::Info::setBitrate( $track->url, $bitrate );
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( sprintf( "OggFlac: %dHz, %dBits, %dch => estimated bitrate: %dkbps",
@@ -740,7 +740,7 @@ sub parseOggHeader {
 		Slim::Schema->clearContentTypeCache( $track->url );
 		Slim::Music::Info::setContentType( $track->url, 'ops' );
 		$track->content_type('ops');
-		
+
 		my $samplerate = unpack('V', substr($data, 12, 4));
 		my $channels = unpack('C', substr($data, 9, 1));
 		$track->samplerate($samplerate);
@@ -762,12 +762,12 @@ sub parseWavHeader {
 	my $pt	   = $args->{pt} || [];
 
 	my $data = $http->response->content;
-	
+
 	# do minimum check
 	if (substr($data, 0, 4) ne 'RIFF') {
 		$cb->( $track, undef, @{$pt} );
 		return;
-	}	
+	}
 
 	# search for Wav headers within the data
 	my $samplerate = unpack('V', substr($data, 24, 4));
@@ -776,12 +776,12 @@ sub parseWavHeader {
 	my $bitrate = $samplerate * $samplesize * $channels;
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
-	$track->channels($channels);	
+	$track->channels($channels);
 	Slim::Music::Info::setBitrate( $track->url, $bitrate );
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "Wav: %dHz, %dBits, %dch => bitrate: %dkbps",
 					      $samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
-	} 
+	}
 
 	# All done
 	$cb->( $track, undef, @{$pt} );
@@ -795,15 +795,15 @@ sub parseAifHeader {
 	my $pt	   = $args->{pt} || [];
 
 	my $data = $http->response->content;
-		
+
 	# do minimum check
 	if (substr($data, 0, 4) ne 'FORM') {
 		$cb->( $track, undef, @{$pt} );
 		return;
-	}	
-		
+	}
+
 	my $offset = 12;
-	
+
 	while ($offset < length($data) - 22) {
 
 		if (substr($data, $offset, 4) eq 'COMM') {
@@ -814,19 +814,19 @@ sub parseAifHeader {
 			my $exponent = (unpack('s>', substr($data, $offset+16, 2)) & 0x7fff) - 16383 - 31;
 			while ($exponent < 0) { $samplerate >>= 1; $exponent++; }
 			while ($exponent > 0) { $samplerate <<= 1; $exponent--; }
-			my $bitrate = $samplerate * $samplesize * $channels;			
+			my $bitrate = $samplerate * $samplesize * $channels;
 			$track->samplerate($samplerate);
 			$track->samplesize($samplesize);
-			$track->channels($channels);	
-			$track->endian(1);	
+			$track->channels($channels);
+			$track->endian(1);
 			Slim::Music::Info::setBitrate( $track->url, $bitrate );
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( sprintf( "Aif: %dHz, %dBits, %dch => bitrate: %dkbps",
 						$samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
-			}	
+			}
 			last;
-		} 
-		
+		}
+
 		$offset += unpack('N', substr($data, $offset+4, 4)) + 8;
 	}
 
@@ -837,7 +837,7 @@ sub streamAudioData {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
 
 	return 1 unless defined $$dataref;
-	
+
 	my $len = length($$dataref);
 	my $first;
 
