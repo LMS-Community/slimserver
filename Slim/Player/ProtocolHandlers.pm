@@ -101,8 +101,17 @@ sub handlerForURL {
 	}
 
 	# Load the handler when requested..
-	my $handler = $class->loadHandler($protocol);
-	
+	my $handler;
+	foreach my $key ( keys %protocolHandlers ) {
+		next unless $key =~ m/^\(/;
+		if ( $url =~ $key ) {
+			$handler = $class->loadHandler($key);
+			last;
+		}
+	}
+	$handler = $class->loadHandler($protocol)
+	    unless defined($handler);
+
 	# Handler should be a class, not '1' for rtsp
 	return $handler && $handler =~ /::/ ? $handler : undef;
 }
