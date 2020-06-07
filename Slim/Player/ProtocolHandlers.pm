@@ -9,6 +9,7 @@ package Slim::Player::ProtocolHandlers;
 use strict;
 
 use Scalar::Util qw(blessed);
+use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -30,6 +31,8 @@ my %protocolHandlers = (
 	db       => 1,
 );
 
+tie my %URLHandlers, 'Tie::RegexpHash';
+
 my %localHandlers = (
 	file     => 1,
 	db       => 1,
@@ -46,9 +49,11 @@ sub isValidHandler {
 		if ($protocolHandlers{$protocol}) {
 			return 1;
 		}
-	
-		if (exists $protocolHandlers{$protocol}) {
+		elsif (exists $protocolHandlers{$protocol}) {
 			return 0;
+		}
+		elsif ($URLHandlers{$protocol}) {
+			return 1;
 		}
 	}
 
@@ -65,13 +70,18 @@ sub isValidRemoteHandler {
 sub registeredHandlers {
 	my $class = shift;
 
-	return keys %protocolHandlers;
+	return keys %protocolHandlers, keys %URLHandlers;
 }
 
 sub registerHandler {
 	my ($class, $protocol, $classToRegister) = @_;
-	
-	$protocolHandlers{$protocol} = $classToRegister;
+
+	if (ref($protocol) eq 'Regexp') {
+		$URLHandlers{$protocol} = $classToRegister;
+	}
+	else {
+		$protocolHandlers{$protocol} = $classToRegister;
+	}
 }
 
 sub registerIconHandler {
@@ -101,16 +111,8 @@ sub handlerForURL {
 	}
 
 	# Load the handler when requested..
-	my $handler;
-	foreach my $key ( keys %protocolHandlers ) {
-		next unless $key =~ m/^\(/;
-		if ( $url =~ $key ) {
-			$handler = $class->loadHandler($key);
-			last;
-		}
-	}
-	$handler = $class->loadHandler($protocol)
-	    unless defined($handler);
+	my $handler = $class->loadURLHandler($url)
+	    // $class->loadHandler($protocol);
 
 	# Handler should be a class, not '1' for rtsp
 	return $handler && $handler =~ /::/ ? $handler : undef;
@@ -186,11 +188,21 @@ sub iconForURL {
 	return;
 }
 
-# Dynamically load in the protocol handler classes to save memory.
 sub loadHandler {
 	my ($class, $protocol) = @_;
 
-	my $handlerClass = $protocolHandlers{lc $protocol};
+	return $class->loadHandlerClass($protocolHandlers{lc $protocol});
+}
+
+sub loadURLHandler {
+	my ($class, $url) = @_;
+
+	return $class->loadHandlerClass($URLHandlers{$url});
+}
+
+# Dynamically load in the protocol handler classes to save memory.
+sub loadHandlerClass {
+	my ($class, $handlerClass) = @_;
 
 	if ($handlerClass && $handlerClass ne '1' && !$loadedHandlers{$handlerClass}) {
 
