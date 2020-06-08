@@ -49,11 +49,9 @@ sub isValidHandler {
 		if ($protocolHandlers{$protocol}) {
 			return 1;
 		}
-		elsif (exists $protocolHandlers{$protocol}) {
+	
+		if (exists $protocolHandlers{$protocol}) {
 			return 0;
-		}
-		elsif ($URLHandlers{$protocol}) {
-			return 1;
 		}
 	}
 
@@ -70,18 +68,19 @@ sub isValidRemoteHandler {
 sub registeredHandlers {
 	my $class = shift;
 
-	return keys %protocolHandlers, keys %URLHandlers;
+	return keys %protocolHandlers;
 }
 
 sub registerHandler {
 	my ($class, $protocol, $classToRegister) = @_;
+	
+	$protocolHandlers{$protocol} = $classToRegister;
+}
 
-	if (ref($protocol) eq 'Regexp') {
-		$URLHandlers{$protocol} = $classToRegister;
-	}
-	else {
-		$protocolHandlers{$protocol} = $classToRegister;
-	}
+sub registerURLHandler {
+	my ($class, $regexp, $classToRegister) = @_;
+
+	$URLHandlers{$regexp} = $classToRegister;
 }
 
 sub registerIconHandler {
