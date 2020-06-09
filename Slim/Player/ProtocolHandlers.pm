@@ -9,6 +9,7 @@ package Slim::Player::ProtocolHandlers;
 use strict;
 
 use Scalar::Util qw(blessed);
+use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -29,6 +30,8 @@ my %protocolHandlers = (
 	playlist => 0,
 	db       => 1,
 );
+
+tie my %URLHandlers, 'Tie::RegexpHash';
 
 my %localHandlers = (
 	file     => 1,
@@ -74,6 +77,12 @@ sub registerHandler {
 	$protocolHandlers{$protocol} = $classToRegister;
 }
 
+sub registerURLHandler {
+	my ($class, $regexp, $classToRegister) = @_;
+
+	$URLHandlers{$regexp} = $classToRegister;
+}
+
 sub registerIconHandler {
 	my ($class, $regex, $ref) = @_;
 
@@ -101,8 +110,9 @@ sub handlerForURL {
 	}
 
 	# Load the handler when requested..
-	my $handler = $class->loadHandler($protocol);
-	
+	my $handler = $class->loadURLHandler($url)
+	    // $class->loadHandler($protocol);
+
 	# Handler should be a class, not '1' for rtsp
 	return $handler && $handler =~ /::/ ? $handler : undef;
 }
@@ -177,11 +187,21 @@ sub iconForURL {
 	return;
 }
 
-# Dynamically load in the protocol handler classes to save memory.
 sub loadHandler {
 	my ($class, $protocol) = @_;
 
-	my $handlerClass = $protocolHandlers{lc $protocol};
+	return $class->loadHandlerClass($protocolHandlers{lc $protocol});
+}
+
+sub loadURLHandler {
+	my ($class, $url) = @_;
+
+	return $class->loadHandlerClass($URLHandlers{$url});
+}
+
+# Dynamically load in the protocol handler classes to save memory.
+sub loadHandlerClass {
+	my ($class, $handlerClass) = @_;
 
 	if ($handlerClass && $handlerClass ne '1' && !$loadedHandlers{$handlerClass}) {
 
