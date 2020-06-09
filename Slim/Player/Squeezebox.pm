@@ -574,7 +574,7 @@ sub stream_s {
 
 	$format ||= 'mp3';
 
-	if ($format eq 'pcm') {
+	if ($format eq 'pcm' || $format eq 'wav') {
 
 		$formatbyte      = 'p';
 		$pcmsamplesize   = 1;
@@ -587,6 +587,7 @@ sub stream_s {
 			$pcmsamplesize = $client->pcm_sample_sizes($track);
 			$pcmsamplerate = $client->pcm_sample_rates($track);
 			$pcmchannels   = $track->channels() || '2';
+			$pcmendian = 0 if $track->endian == 1;
 		}
 
 	} elsif ($format eq 'aif') {

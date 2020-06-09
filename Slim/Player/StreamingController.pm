@@ -1225,7 +1225,9 @@ sub _Stream {				# play -> Buffering, Streaming
 		$self->{'songStreamController'} = undef;
 	}
 	
+	# create song and re-acquire seekdata as open() can modify/created it 	
 	my ($songStreamController, @error) = $song->open($seekdata);
+	$seekdata = $song->seekdata;
 		
 	if (!$songStreamController) {
 		_errorOpening($self, $song->currentTrack()->url, @error);

@@ -645,8 +645,8 @@ sub directHeaders {
 				# we've got a playlist in all likelyhood, have the player send it to us
 				$client->sendFrame('body', \(pack('N', $length)));
 
-			} elsif ($client->contentTypeSupported($contentType)) {
-				
+			} elsif ($client->contentTypeSupported($controller->song->streamformat)) {
+
 				# If we redirected (Live365), update the original URL with the metadata from the real URL
 				if ( my $oldURL = delete $redirects->{ $url } ) {
 

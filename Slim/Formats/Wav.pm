@@ -60,12 +60,6 @@ sub getTag {
 
 sub getInitialAudioBlock {
 	my ($class, $fh, $track) = @_;
-	
-	# bug 10026: do not provide header when streaming as PCM
-	if (${*$fh}{'streamFormat'} eq 'pcm') {
-		return '';
-	}
-	
 	my $length = $track->audio_offset() || return undef;
 	
 	open(my $localFh, '<&=', $fh);
