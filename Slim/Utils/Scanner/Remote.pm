@@ -436,7 +436,7 @@ sub readRemoteHeaders {
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AIF header');
 
 			$http->read_body( {
-				readLimit   => 4*1024,
+				readLimit   => 16*1024,
 				onBody      => \&parseAifHeader,
 				passthrough => [ $track, $args ],
 			} );
@@ -776,12 +776,17 @@ sub parseWavHeader {
 	my $bitrate = $samplerate * $samplesize * $channels;
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
-	$track->channels($channels);
+	$track->channels($channels);	
+	$track->block_alignment($channels * $samplesize / 8);
+	my $fmtsize = unpack('V', substr($data, 16, 4));
+	$track->audio_offset(3*4 + $fmtsize + 2*4 + 2*4);
+	$track->audio_size(unpack('V', substr($data, 3*4 + $fmtsize + 2*4 + 1*4, 4)));
 	Slim::Music::Info::setBitrate( $track->url, $bitrate );
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( sprintf( "Wav: %dHz, %dBits, %dch => bitrate: %dkbps",
-					      $samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
-	}
+		$log->debug( sprintf( "wav: %dHz, %dBits, %dch => bitrate: %dkbps (ofs: %d, len: %d)",
+					$samplerate, $samplesize, $channels, int( $bitrate / 1000 ), 
+					$track->audio_offset, $track->audio_size ) );
+	}	
 
 	# All done
 	$cb->( $track, undef, @{$pt} );
@@ -819,11 +824,19 @@ sub parseAifHeader {
 			$track->samplesize($samplesize);
 			$track->channels($channels);
 			$track->endian(1);
+			$track->block_alignment($channels * $samplesize / 8);
 			Slim::Music::Info::setBitrate( $track->url, $bitrate );
+		} 
+		
+		if (substr($data, $offset, 4) eq 'SSND') {
+			my $chunk_offset = unpack('N', substr($data, $offset+8, 4));
+			$track->audio_offset(4*4 + $chunk_offset + $offset);
+			$track->audio_size(unpack('N', substr($data, $offset+4, 4)));
 			if ( main::DEBUGLOG && $log->is_debug ) {
-				$log->debug( sprintf( "Aif: %dHz, %dBits, %dch => bitrate: %dkbps",
-						$samplerate, $samplesize, $channels, int( $bitrate / 1000 ) ) );
-			}
+				$log->debug( sprintf( "aif: %dHz, %dBits, %dch => bitrate: %dkbps (ofs: %d, len: %d)",
+						$track->samplerate, $track->samplesize, $track->channels, int( $track->bitrate / 1000 ), 
+						$track->audio_offset, $track->audio_size ) );
+			}	
 			last;
 		}
 

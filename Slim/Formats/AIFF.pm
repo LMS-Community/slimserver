@@ -80,6 +80,21 @@ sub getTag {
 	return $tags;
 }
 
+sub getInitialAudioBlock {
+	my ($class, $fh, $track) = @_;
+	my $length = $track->audio_offset() || return undef;
+	
+	open(my $localFh, '<&=', $fh);
+	
+	seek($localFh, 0, 0);
+	main::DEBUGLOG && logger('player.source')->debug("Reading initial audio block: length $length");
+	read ($localFh, my $buffer, $length);
+	seek($localFh, 0, 0);
+	close($localFh);
+	
+	return $buffer;
+}
+
 *getCoverArt = \&Slim::Formats::MP3::getCoverArt;
 
 sub canSeek { 1 }

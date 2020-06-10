@@ -123,6 +123,7 @@ sub loadConversionTables {
 # I - can transcode from stdin
 # F - can transcode from a named file
 # R - can transcode from a remote URL (URL types unspecified)
+# H - request to strip out header (wav/aif only)
 #
 # O - can seek to a byte offset in the source stream (not yet implemented)
 # T - can seek to a start time offset
@@ -392,13 +393,24 @@ sub getConvertCommand2 {
 			&& $type eq 'wma' && blessed($track) && $track->lossless) {
 				next PROFILE;
 		}
+		
+		my $streamformat = (split (/-/, $profile))[1];
+		
+		# aif/wav oddity #1 (for remote seek)
+		# when seeking a remote track, can't re-send the header, it's lost 
+		if ($type =~ /(wav|aif)/ && !($streamformat eq 'pcm' && $command eq '-' )
+			&& $track->remote && $song->seekdata) {
+			main::DEBUGLOG && $log->is_debug
+				&& $log->debug("Rejecting $command because header is unavailable when seeking");
+			next PROFILE;
+		}							 
 
 		$transcoder = {
 			command          => $command,
 			profile          => $profile,
 			usedCapabilities => [@$need, @$want],
 			streamMode       => $streamMode,
-			streamformat     => (split (/-/, $profile))[1],
+			streamformat     => $streamformat,
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || 44100,
 			clientid         => $clientid || 'undefined',
@@ -407,6 +419,12 @@ sub getConvertCommand2 {
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
 			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
+			# aif/wav oddity #2 (for '-' rule)
+			# aif - aif: any SB that does not support wav requires aif header stripping
+			# wav/aif - pcm: force header stripping
+			stripHeader      => $caps->{'H'} || ($command eq "-" &&
+                                (($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
+                                 ($type eq 'aif' && $streamformat eq 'aif' && !grep {$_ eq 'wav'} @supportedformats))),
 		};
 		
 		# Check for optional profiles

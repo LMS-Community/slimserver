@@ -136,7 +136,7 @@ sub open {
 			$streamLength = $song->streamLength();
 			$seekoffset = $seekdata->{restartOffset};
 		} elsif ($seekdata->{sourceStreamOffset}) {						# used for seeking
-			$seekoffset = $seekdata->{sourceStreamOffset};
+			$seekoffset = $seekdata->{sourceStreamOffset} + $seekdata->{sourceHeaderOffset};
 			$streamLength -= $seekdata->{sourceStreamOffset} - $offset;
 		} else {
 			$seekoffset = $offset;										# normal case

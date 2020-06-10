@@ -444,11 +444,24 @@ sub open {
 			rateLimit => 0,
 		};
 	}
-
+	
+	# now can set seekdata support information
+	$seekdata->{'sourceStreamLength'} = $track->audio_size;
+	
+	if ($transcoder->{'stripHeader'}) {
+		# Set initialAudioBlock to 0 (not undef) so that File does not re-send it
+		$self->initialAudioBlock(0);
+		# Tell File and HTTP to strip header from source
+		$seekdata->{'sourceHeaderOffset'} = $track->audio_offset || 0,
+		main::INFOLOG && $log->info( "stripping header of ", $seekdata->{'sourceStreamOffset'}, " / ", $seekdata->{'sourceStreamLength'});
+	}
+	
+	# update seekdata (might be only support information)
+	$self->seekdata($seekdata);
+	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
-	# Make sure for direct mode that if transcode rule is identity, codec is _really_ supported (e.g. wav vs pcm)
-	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self)) && grep {$_ eq $format} Slim::Player::CapabilitiesHelper::supportedFormats($client)) {
+	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {
 		main::INFOLOG && $log->info( "URL supports direct streaming [$url->$directUrl]" );
 		$self->directstream(1);
 		$self->streamUrl($directUrl);
