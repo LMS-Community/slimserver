@@ -22,6 +22,9 @@
 		<li>Persist some web browser side preferences like artwork mode, expanded menus etc. on the server. Safari would regularly "forget" them.</li>
 		<li>Improve cache purging to reduce startup time and the risk of locking up other initialization tasks.</li>
 		<li>Updated LWP module and dependencies to improve compatibility with newer Perl versions.</li>
+		<li>Add 'wav wav' rule which keeps headers.</li>
+		<li>Add 'aif pcm' rule and change 'aif aif' rule to keep header except for "legacy" SB.</li>
+		<li>Add 'H' tag in convert.conf to strip wav/aiff headers.</li>
 	</ul>
 	<br />
 
@@ -30,6 +33,8 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
 		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
+		<li>Support wav/aif remote streams (direct and proxied).</li>
+		<li>Check that destination (not source) codec is supported in direct streaming.</li>
 	</ul>
 	<br />
 </ul>
