@@ -2102,8 +2102,26 @@ sub _playlistTracks {
 					commonVariables	=> [track_id => 'id', url => 'url'],
 			) : (
 					commonVariables	=> [track_id => 'id', url => 'url'],
+					allAvailableActionsDefined => 1,
+
 					info => {
 						command     => ['trackinfo', 'items'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
+					},
+					remove => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'delete'},
 					},
 					playall => {
 						command     => ['playlistcontrol'],
