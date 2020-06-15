@@ -142,17 +142,17 @@ sub isReadyToStream {
 		# Bug 15490, work out whether or not we can gaplessly stream PCM/AIFF. Assume that if
 		# channels, samplesize and samplerate all match, we'll be fine.
 		if ( $CSF eq 'pcm' || $CSF eq 'aif' ) {
-			if ( $playingSong ) {
-				if (   $playingSong->channels   == $song->channels
-					&& $playingSong->samplesize == $song->samplesize
-					&& $playingSong->samplerate == $song->samplerate
-				) {
-					return 1;
-				}
-			}
-		}
-	}
-	
+                        if ( $playingSong ) {
+                                if (   $playingSong->currentTrack->channels   == $song->currentTrack->channels
+                                        && $playingSong->currentTrack->samplesize == $song->currentTrack->samplesize
+                                        && $playingSong->currentTrack->samplerate == $song->currentTrack->samplerate
+                                ) {
+                                        return 1;
+                                }
+                        }
+                }
+        }
+        main::DEBUGLOG && logger('player.playlist')->debug("Restart decoder required");
 	return 0;
 }
 
