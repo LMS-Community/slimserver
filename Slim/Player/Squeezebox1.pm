@@ -130,29 +130,28 @@ sub isReadyToStream {
 	
 	# Determine if we can gaplessly stream the next track (return 1) or have to restart the decoder (return 0)
 	my $CSF = $client->streamformat();
-	
-	my $nextCT = $song->currentTrack->content_type;
-	my $prevCT = $playingSong && $playingSong->currentTrack->content_type;
+	my $songTrack = $song->currentTrack;
+	my $playingTrack = $playingSong && $playingSong->currentTrack;
 	
 	# Only allow gapless streaming if previous track's content-type matches the next track's content-type
-	if ( $prevCT && $prevCT eq $nextCT ) {
+	if ( $playingTrack->content_type && $playingTrack->content_type eq $songTrack->content_type ) {
 		# MP3 is OK even if at a different sample rate, etc
 		return 1 if $CSF eq 'mp3';
 	
 		# Bug 15490, work out whether or not we can gaplessly stream PCM/AIFF. Assume that if
 		# channels, samplesize and samplerate all match, we'll be fine.
 		if ( $CSF eq 'pcm' || $CSF eq 'aif' ) {
-                        if ( $playingSong ) {
-                                if (   $playingSong->currentTrack->channels   == $song->currentTrack->channels
-                                        && $playingSong->currentTrack->samplesize == $song->currentTrack->samplesize
-                                        && $playingSong->currentTrack->samplerate == $song->currentTrack->samplerate
-                                ) {
-                                        return 1;
-                                }
-                        }
-                }
-        }
-        main::DEBUGLOG && logger('player.playlist')->debug("Restart decoder required");
+			if ( $playingSong ) {
+				if (   $playingTrack->channels && $playingTrack->channels == $songTrack->channels
+					&& $playingTrack->samplesize && $playingTrack->samplesize == $songTrack->samplesize
+					&& $playingTrack->samplerate && $playingTrack->samplerate == $songTrack->samplerate
+				) {
+					return 1;
+				}
+			}
+		}
+	}
+	main::DEBUGLOG && logger('player')->debug("Restart decoder required");
 	return 0;
 }
 
