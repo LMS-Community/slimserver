@@ -130,12 +130,11 @@ sub isReadyToStream {
 	
 	# Determine if we can gaplessly stream the next track (return 1) or have to restart the decoder (return 0)
 	my $CSF = $client->streamformat();
-	
-	my $nextCT = $song->currentTrack->content_type;
-	my $prevCT = $playingSong && $playingSong->currentTrack->content_type;
+	my $songTrack = $song->currentTrack;
+	my $playingTrack = $playingSong && $playingSong->currentTrack;
 	
 	# Only allow gapless streaming if previous track's content-type matches the next track's content-type
-	if ( $prevCT && $prevCT eq $nextCT ) {
+	if ( $playingTrack->content_type && $playingTrack->content_type eq $songTrack->content_type ) {
 		# MP3 is OK even if at a different sample rate, etc
 		return 1 if $CSF eq 'mp3';
 	
@@ -143,16 +142,16 @@ sub isReadyToStream {
 		# channels, samplesize and samplerate all match, we'll be fine.
 		if ( $CSF eq 'pcm' || $CSF eq 'aif' ) {
 			if ( $playingSong ) {
-				if (   $playingSong->channels   == $song->channels
-					&& $playingSong->samplesize == $song->samplesize
-					&& $playingSong->samplerate == $song->samplerate
+				if (   $playingTrack->channels && $playingTrack->channels == $songTrack->channels
+					&& $playingTrack->samplesize && $playingTrack->samplesize == $songTrack->samplesize
+					&& $playingTrack->samplerate && $playingTrack->samplerate == $songTrack->samplerate
 				) {
 					return 1;
 				}
 			}
 		}
 	}
-	
+	main::DEBUGLOG && logger('player')->debug("Restart decoder required");
 	return 0;
 }
 
