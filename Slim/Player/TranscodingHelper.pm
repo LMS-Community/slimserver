@@ -89,6 +89,11 @@ sub loadConversionTables {
 				my $clientid   = lc($4);
 				my $profile = "$inputtype-$outputtype-$clienttype-$clientid";
 
+				if ($commandTable{$profile}) {
+					my @index = sort grep { $_ =~ /\Q$profile\E/ } keys %commandTable;
+					$profile .= '-' . (($index[-1] =~ /-(\d+$)/)[0] + 1);
+				}
+				
 				$line = <CONVERT>;
 				if ($line =~ /^\s+#\s+(\S.*)/) {
 					_getCapabilities($profile, $1);
@@ -355,7 +360,12 @@ sub getConvertCommand2 {
 	}
 	
 	# Test each profile in turn
-	PROFILE: foreach my $profile (@profiles) {
+	PROFILE: foreach (@profiles) {
+		my $instance = 0;
+	INSTANCE:
+		my $profile = $_ . ($instance++ ? '-' . ($instance-1) : '');
+		next PROFILE unless exists $commandTable{$profile}; 
+		
 		my $command = checkBin($profile);
 		next PROFILE if !$command;
 
@@ -373,7 +383,7 @@ sub getConvertCommand2 {
 			main::DEBUGLOG && $log->is_debug
 				&& $log->debug("Rejecting $command because no available stream mode supported: ",
 							(join(',', @$streamModes)));
-			next PROFILE;
+			goto INSTANCE;
 		}
 		
 		# Check for mandatory capabilities
@@ -384,14 +394,14 @@ sub getConvertCommand2 {
 				if ($_ eq 'D') {
 					$error ||= 'UNSUPPORTED_SAMPLE_RATE';
 				}
-				next PROFILE;
+				goto INSTANCE;
 			}
 		}
 
 		# We can't handle WMA Lossless in firmware.
 		if ($command eq "-"
 			&& $type eq 'wma' && blessed($track) && $track->lossless) {
-				next PROFILE;
+				goto INSTANCE
 		}
 		
 		my $streamformat = (split (/-/, $profile))[1];
@@ -446,7 +456,7 @@ sub getConvertCommand2 {
 				$backupTranscoder->{'wanted'} = $wanted;
 				$backupTranscoder->{'usedCapabilities'} = [@$need, @got];
 			}
-			next PROFILE;
+			goto INSTANCE;
 		}
 		
 		last;
