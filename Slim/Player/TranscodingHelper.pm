@@ -89,6 +89,7 @@ sub loadConversionTables {
 				my $clientid   = lc($4);
 				my $profile = "$inputtype-$outputtype-$clienttype-$clientid";
 
+				# if profile is duplicated, find the highest index to create a unique instance
 				if ($commandTable{$profile}) {
 					my @index = sort grep { $_ =~ /\Q$profile\E/ } keys %commandTable;
 					$profile .= '-' . (($index[-1] =~ /-(\d+$)/)[0] + 1);
@@ -363,7 +364,8 @@ sub getConvertCommand2 {
 	PROFILE: foreach (@profiles) {
 		my $instance = 0;
 	INSTANCE:
-		my $profile = $_ . ($instance++ ? '-' . ($instance-1) : '');
+		my $profile = $instance ? "$_-$instance" : $_;
+		$instance++;
 		next PROFILE unless exists $commandTable{$profile}; 
 		
 		my $command = checkBin($profile);
