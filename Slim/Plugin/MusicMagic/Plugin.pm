@@ -331,10 +331,16 @@ sub postinitPlugin {
 
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
+				my @seedsToUse = ();
 				foreach my $seedTrack (@$seedTracks) {
 					my ($trackObj) = Slim::Schema->find('Track', $seedTrack->{id});
+					if ($trackObj) {
+						push @seedsToUse, $trackObj->path;
+					}
+				}
 
-					my $mix = getMix($client, $trackObj->path, 'track') if $trackObj;
+				if (scalar @seedsToUse > 0) {
+					my $mix = getMix($client, 'track', @seedsToUse);
 
 					main::idleStreams();
 
@@ -731,12 +737,12 @@ sub mixerFunction {
 	elsif ($levels[$level] eq 'playlistTrack' || $trackinfo ) {
 
 		$mixSeed = $currentItem->path;
-		$mix = getMix($client, $mixSeed, 'track');
+		$mix = getMix($client, 'track', $mixSeed);
 
 	} elsif ($currentItem && ($paramref->{'mood'} || $currentItem->musicmagic_mixable)) {
 
 		# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-		$mix = getMix($client, $mixSeed, $levels[$level]);
+		$mix = getMix($client, $levels[$level], $mixSeed);
 	}
 
 	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
@@ -784,8 +790,8 @@ sub mixExitHandler {
 
 sub getMix {
 	my $client = shift;
-	my $id = shift;
 	my $for = shift;
+	my @ids = splice(@_);
 
 	my @mix = ();
 	my $req;
@@ -867,16 +873,21 @@ sub getMix {
 		return undef;
 	}
 
-	main::DEBUGLOG && $log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
-
-	if (!main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ) {
-
-		# need to decode the file path when a file is used as seed
-		$id = Slim::Utils::Unicode::utf8decode_locale($id);
+	my $mixArgs = '';
+	my $count = scalar(@ids);
+	for (my $j = 0; $j < $count; $j++) {
+		my $id = $ids[$j];
+		if (!main::ISWINDOWS) {
+			# need to decode the file path when a file is used as seed
+			$id = Slim::Utils::Unicode::utf8decode_locale($id);
+		}
+		main::DEBUGLOG && $log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
+		if ($j > 0) {
+			$mixArgs = $mixArgs . '&' . $validMixTypes{$for} . '=' . Plugins::MIPMixer::Common::escape($id);
+		} else {
+			$mixArgs = $validMixTypes{$for} . '=' . Plugins::MIPMixer::Common::escape($id);
+		}
 	}
-
-	# url encode the request, but not the argstring
-	my $mixArgs = $validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
 
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 
@@ -1227,7 +1238,7 @@ sub _prepare_mix {
 	my $playlist = $params->{'playlist'};
 
 	if ($mood) {
-		$mix = getMix($client, $mood, 'mood');
+		$mix = getMix($client, 'mood', $mood);
 		$params->{'src_mix'} = $mood;
 
 	} elsif ($playlist) {
@@ -1243,7 +1254,7 @@ sub _prepare_mix {
 					$playlist = Slim::Utils::Misc::unescape($1);
 				}
 
-				$mix = getMix($client, $playlist, 'playlist');
+				$mix = getMix($client, 'playlist', $playlist);
 			}
 
 			$params->{'src_mix'} = $obj->title;
@@ -1258,7 +1269,7 @@ sub _prepare_mix {
 			if ($obj->musicmagic_mixable) {
 
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix($client, $obj->path, 'track');
+				$mix = getMix($client, 'track', $obj->path);
 
 			}
 
@@ -1272,7 +1283,7 @@ sub _prepare_mix {
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client, $obj->name, 'artist');
+			$mix = getMix($client, 'artist', $obj->name);
 
 			$params->{'src_mix'} = $obj->name;
 		}
@@ -1287,7 +1298,7 @@ sub _prepare_mix {
 
 			if ($trackObj) {
 
-				$mix = getMix($client, $trackObj->path, 'album');
+				$mix = getMix($client, 'album', $trackObj->path);
 
 				$params->{'src_mix'} = $obj->title;
 			}
@@ -1300,14 +1311,14 @@ sub _prepare_mix {
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client, $obj->name, 'genre');
+			$mix = getMix($client, 'genre', $obj->name);
 
 			$params->{'src_mix'} = $obj->name;
 		}
 
 	} elsif (defined $year) {
 
-		$mix = getMix($client, $year, 'year');
+		$mix = getMix($client, 'year', $year);
 		$params->{'src_mix'} = $year;
 
 	} else {
