@@ -331,8 +331,8 @@ sub postinitPlugin {
 
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
-				foreach (@$seedTracks) {
-					my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
+				foreach my $seedTrack (@$seedTracks) {
+					my ($trackObj) = Slim::Schema->find('Track', $seedTrack->{id});
 
 					my $mix = getMix($client, $trackObj->path, 'track') if $trackObj;
 
