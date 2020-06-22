@@ -875,7 +875,7 @@ sub getMix {
 	}
 
 	my $mixArgs = join('&', map {
-		my $id = main::ISWINDOWS ? $_ : Slim::Utils::Unicode::utf8decode_locale($_);
+		my $id = !main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ? Slim::Utils::Unicode::utf8decode_locale($_) : $_;
 		$validMixTypes{$for} . '=' . Plugins::MIPMixer::Common::escape($id);
 	} @ids);
 
