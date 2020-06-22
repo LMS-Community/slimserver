@@ -58,8 +58,10 @@ sub getTag {
 	return $tags;
 }
 
+sub volatileInitialAudioBlock { 1 }
+
 sub getInitialAudioBlock {
-	my ($class, $fh, $track) = @_;
+	my ($class, $fh, $track, $time) = @_;
 	my $length = $track->audio_offset() || return undef;
 	
 	open(my $localFh, '<&=', $fh);
@@ -69,8 +71,26 @@ sub getInitialAudioBlock {
 	read ($localFh, my $buffer, $length);
 	seek($localFh, 0, 0);
 	close($localFh);
+
+	# adjust header size according to seek position
+	my $trim = int($time * $track->bitrate / 8);
+	$trim -= $trim % ($track->block_alignment || 1);
+	substr($buffer, $length - 4, 4, pack('V', $track->audio_size - $trim));
 	
 	return $buffer;
+}
+
+sub getRemoteInitialBlock {
+	my ($track, $time) = @_;
+	my $trim = int ($track->bitrate / 8 * $time);
+
+	$trim -= $trim % ($track->block_alignment || 1);
+	substr($track->initial_block, -4, 4, pack('V', $track->audio_size - $trim));
+	
+	return { 
+		seek_header => $track->initial_block,
+		seek_offset => $trim ? $track->audio_offset + $trim : undef, 
+	};
 }
 
 sub doTagMapping {

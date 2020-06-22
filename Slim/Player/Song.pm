@@ -63,6 +63,7 @@ my @_playlistCloneAttributes = qw(
 			startOffset streamLength
 			seekdata initialAudioBlock
 			_canSeek _canSeekError
+			stripHeader
 
 			_duration _bitrate _streambitrate _streamFormat
 			_transcoded directstream
@@ -445,19 +446,9 @@ sub open {
 		};
 	}
 	
-	# now can set seekdata support information
-	$seekdata->{'sourceStreamLength'} = $track->audio_size;
-	
-	if ($transcoder->{'stripHeader'}) {
-		# Set initialAudioBlock to 0 (not undef) so that File does not re-send it
-		$self->initialAudioBlock(0);
-		# Tell File and HTTP to strip header from source
-		$seekdata->{'sourceHeaderOffset'} = $track->audio_offset || 0,
-		main::INFOLOG && $log->info( "stripping header of ", $seekdata->{'sourceStreamOffset'}, " / ", $seekdata->{'sourceStreamLength'});
-	}
-	
-	# update seekdata (might be only support information)
-	$self->seekdata($seekdata);
+	# don't modify $song in getConverterCommand2 
+	$self->stripHeader($transcoder->{'stripHeader'});
+print("TRANSCODING using $transcoder->{'command'} FROM $format to $transcoder->{'streamformat'} strip:", $self->stripHeader, " ofs:", $track->audio_offset, "\n");		
 	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;

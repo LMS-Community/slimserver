@@ -69,6 +69,28 @@ sub canDirectStream {
 sub sysread {
 	my $self = $_[0];
 	my $chunkSize = $_[2];
+	
+	# stitch header if any
+	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
+		
+		my $chunkLength = $length;
+		my $chunkref;
+		
+		main::DEBUGLOG && $log->debug("getting initial audio block of size $length");
+		
+		if ($length > $chunkSize || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
+			$chunkLength = $length > $chunkSize ? $chunkSize : $length;
+			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
+			$chunkref = \$chunk;
+			${*$self}{'initialAudioBlockRemaining'} = ($length - $chunkLength);
+		} else {
+			${*$self}{'initialAudioBlockRemaining'} = 0;
+			$chunkref = ${*$self}{'initialAudioBlockRef'};
+		}
+	
+		$_[1] = $$chunkref;
+		return $chunkLength;
+	}
 
 	my $metaInterval = ${*$self}{'metaInterval'};
 	my $metaPointer  = ${*$self}{'metaPointer'};
@@ -80,9 +102,18 @@ sub sysread {
 		# This is very verbose...
 		#$log->debug("Reduced chunksize to $chunkSize for metadata");
 	}
-
-	my $readLength = $self->SUPER::sysread($_[1], $chunkSize);
-
+	
+	my $readLength;
+	
+	# do not sysread if we are building-up too much processed audio
+	if (${*$self}{'audio_buildup'} > $chunkSize) {
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize); 
+	} else {	
+		$readLength = $self->SUPER::sysread($_[1], $chunkSize);
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize) if ${*$self}{'audio_process'}; 
+	}	
+	
+	# use $readLength from socket for meta interval adjustement
 	if ($metaInterval && $readLength) {
 
 		$metaPointer += $readLength;
@@ -100,6 +131,9 @@ sub sysread {
 			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
 		}	
 	}
+	
+	# when not-empty, chose return buffer length over sysread() 
+	$readLength = length $_[1] if length $_[1];
 
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EWOULDBLOCK;

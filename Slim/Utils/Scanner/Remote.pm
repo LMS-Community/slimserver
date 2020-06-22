@@ -436,9 +436,19 @@ sub readRemoteHeaders {
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AIF header');
 
 			$http->read_body( {
-				readLimit   => 16*1024,
+				readLimit   => 32*1024,
 				onBody      => \&parseAifHeader,
 				passthrough => [ $track, $args ],
+			} );
+		}
+		elsif ( $type eq 'mp4' ) {
+
+			# Read the header and optionally seek across file
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading MP4 header');
+
+			$http->read_body( {
+				onStream      => \&parseMp4Header,
+				passthrough => [ $track, $args, $url ],
 			} );
 		}
 		else {
@@ -692,6 +702,7 @@ sub parseAACHeader {
 	my $aac = Audio::Scan->scan_fh( aac => $fh );
 
 	if ( my $samplerate = $aac->{info}->{samplerate} ) {
+		# TODO: should this be removed?
 		if ( $samplerate <= 24000 ) { # XXX remove when Audio::Scan is updated to 0.84
 			$samplerate *= 2;
 		}
@@ -701,6 +712,170 @@ sub parseAACHeader {
 
 	# All done
 	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseMp4Header {
+	my ( $http, $dataref, $track, $args, $url ) = @_;
+	return -1 unless defined $$dataref;
+	
+	# stitch new data to existing buf and init parser if needed
+	$args->{_scanbuf} .= $$dataref;
+	$args->{_need} ||= 8;
+	$args->{_offset} ||= 0;
+	
+	my $len = length($$dataref);
+	my $offset = $args->{_offset};
+	my $cb	   = $args->{cb} || sub {};	
+	
+	while (length($args->{_scanbuf}) > $args->{_offset} + $args->{_need} + 8) {
+		$args->{_atom} = substr($args->{_scanbuf}, $offset+4, 4);
+		$args->{_need} = unpack('N', substr($args->{_scanbuf}, $offset, 4));
+		$args->{_offset} = $args->{"_$args->{_atom}_"} = $offset;
+		
+		# a bit of sanity check
+		if ($offset == 0 && $args->{_atom} ne 'ftyp') {
+			$log->warn("no header! this is supposed to be a mp4 track");
+			$cb->( $track, undef, @{$args->{pt} || []} );
+			return 0;
+		}
+		
+		$offset += $args->{_need};
+		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
+		
+		# mdat reached = audio offset & size acquired
+		if ($args->{_atom} eq 'mdat') {
+			$track->audio_offset($args->{_mdat_} + 8);
+			$track->audio_size($args->{_need});
+			last;
+		}	
+	}
+	
+	return -1 unless $args->{_mdat_};
+
+	# now make sure we have acquired a full moov atom
+	if (!$args->{_moov_}) {
+		# no 'moov' found but EoF
+		if (!$len) {
+			$log->warn("no 'moov' found before EOF => track probably not playable");
+			$cb->( $track, undef, @{$args->{pt} || []} );
+			return 0;
+		}
+		
+		# already waiting for bottom 'moov', we need more
+		return -1 if $args->{_range};
+		
+		# top 'moov' not found, need to seek beyond 'mdat'
+		my $query = Slim::Networking::Async::HTTP->new;
+		$args->{_range} = "bytes=$offset-";
+		$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset});
+		delete $args->{_need};
+		
+		# re-calculate header all the time (i.e. can't go direct at all)
+		$track->initial_block_type(2);
+		
+		# can't re-issue an HTTP request, ask caller to continue at $offset then
+		return $offset unless $http;
+		$http->disconnect;
+		
+		main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
+	
+		$query->send_request( {
+			request     => HTTP::Request->new( GET => $url,  [ 'Range' => $args->{_range} ] ),
+			onStream  	=> \&parseMp4Header,
+			onError     => sub {
+			my ($self, $error) = @_;
+				$log->warn( "could not find MP4 header $error" );
+				$cb->( $track, undef, @{$args->{pt} || []} );
+			},
+			passthrough => [ $track, $args, $url ],			
+		} );
+	
+		return 0;
+	} elsif ($args->{_atom} eq 'moov' && $len) {
+		return -1;
+	}	
+	
+	# finally got it, add 'moov' size it if was last atom
+	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0));
+	
+	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
+	my $fh = File::Temp->new();
+	$fh->write($args->{_scanbuf} . pack('N', $track->audio_size) . 'mdat' . ' ' x 16);
+	$fh->seek(0, 0);
+	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
+
+	my ($samplesize, $channels);
+	my $samplerate = $info->{samplerate};
+	my $duration = $info->{song_length_ms} / 1000;
+	my $bitrate = $info->{avg_bitrate};
+	
+	if ( my $item = $info->{tracks}->[0] ) {
+		my $format;
+		
+		$samplesize = $item->{bits_per_sample};
+		$channels = $item->{channels};
+
+		# If encoding is alac, the file is lossless
+		if ( $item->{encoding} && $item->{encoding} eq 'alac' ) {
+			$format = 'alc';	
+			# bitrate will be wrong b/c we only gave a header, not a real file
+			$bitrate = $duration ? $track->audio_size * 8 / $duration : 850_000;
+		} elsif ( $item->{encoding} && $item->{encoding} eq 'drms' ) {
+			$track->drm(1);
+		} 
+		
+		# Check for HD-AAC file, if the file has 2 tracks and AOTs of 2/37
+		if ( defined $item->{audio_object_type} && (my $item2 = $info->{tracks}->[1]) ) {
+			if ( $item->{audio_object_type} == 2 && $item2->{audio_object_type} == 37 ) {
+				$samplesize   = $item2->{bits_per_sample};
+				$format = 'sls';
+			}
+		}
+		
+#=comment out these lines if you don't want ADTS frame extraction in Perl
+		# set mp4 to adts processor unless we are doing alac/sls
+		# can't do direct there as we need to process audio all the time
+		if (!$format) {
+			require Slim::Formats::Movie;
+			$track->audio_process(\&Slim::Formats::Movie::extractADTS);
+			$track->initial_block_type(2);
+			$format = 'aac';
+		} 
+#=cut		
+		
+		# change track attributes if format has been altered
+		if ($format) {
+			Slim::Schema->clearContentTypeCache( $track->url );
+			Slim::Music::Info::setContentType( $track->url, $format );
+			$track->content_type($format);
+		}	
+	} else	{
+		$log->warn("no playable track found");
+		$cb->( $track, undef, @{$args->{pt} || []} );
+		return 0;
+	}
+
+	$track->samplerate($samplerate);
+	$track->samplesize($samplesize);
+	$track->channels($channels);	
+	Slim::Music::Info::setBitrate( $track, $bitrate );
+	Slim::Music::Info::setDuration( $track, $duration );
+	
+	# use the audio block to stash the temp file handler
+	$track->initial_block($fh);
+	$track->initial_block_type(1) unless $track->initial_block_type;
+	require Slim::Formats::Movie;
+	$track->get_initial_block(\&Slim::Formats::Movie::getRemoteInitialBlock); 
+	
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug( sprintf( "mp4: %dHz, %dBits, %dch => bitrate: %dkbps (ofs:%d, len:%d, hdr:%d)",
+					$samplerate, $samplesize, $channels, int( $bitrate / 1000 ), 
+					$track->audio_offset, $track->audio_size, length $args->{_scanbuf}) );
+	}	
+	
+	# All done
+	$cb->( $track, undef, @{$args->{pt} || []} );
+	return 0;
 }
 
 sub parseOggHeader {
@@ -782,13 +957,20 @@ sub parseWavHeader {
 	$track->audio_offset(3*4 + $fmtsize + 2*4 + 2*4);
 	$track->audio_size(unpack('V', substr($data, 3*4 + $fmtsize + 2*4 + 1*4, 4)));
 	Slim::Music::Info::setBitrate( $track->url, $bitrate );
+	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "wav: %dHz, %dBits, %dch => bitrate: %dkbps (ofs: %d, len: %d)",
 					$samplerate, $samplesize, $channels, int( $bitrate / 1000 ), 
 					$track->audio_offset, $track->audio_size ) );
 	}	
+	
+	# we have a dynamic header but can go direct when not seeking
+	$track->initial_block(substr($data, 0, $track->audio_offset));
+	$track->initial_block_type(1);
+	require Slim::Formats::Wav;
+	$track->get_initial_block(\&Slim::Formats::Wav::getRemoteInitialBlock);
 
-	# All done
+	# all done
 	$cb->( $track, undef, @{$pt} );
 }
 
@@ -840,9 +1022,16 @@ sub parseAifHeader {
 			last;
 		}
 
-		$offset += unpack('N', substr($data, $offset+4, 4)) + 8;
+		$offset += unpack('N', substr($data, $offset+4, 4)) + 2*4;
 	}
-
+	
+	# we have a dynamic header but can go direct when not seeking
+	$track->initial_block(substr($data, 0, $track->audio_offset));
+	$track->initial_block_type(1);
+	require Slim::Formats::AIFF;
+	$track->get_initial_block(\&Slim::Formats::AIFF::getRemoteInitialBlock);
+		
+	# all done
 	$cb->( $track, undef, @{$pt} );
 }
 

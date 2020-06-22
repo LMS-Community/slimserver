@@ -408,15 +408,6 @@ sub getConvertCommand2 {
 		
 		my $streamformat = (split (/-/, $profile))[1];
 		
-		# aif/wav oddity #1 (for remote seek)
-		# when seeking a remote track, can't re-send the header, it's lost 
-		if ($type =~ /(wav|aif)/ && !($streamformat eq 'pcm' && $command eq '-' )
-			&& $track->remote && $song->seekdata) {
-			main::DEBUGLOG && $log->is_debug
-				&& $log->debug("Rejecting $command because header is unavailable when seeking");
-			next PROFILE;
-		}							 
-
 		$transcoder = {
 			command          => $command,
 			profile          => $profile,
@@ -431,14 +422,14 @@ sub getConvertCommand2 {
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
 			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
-			# aif/wav oddity #2 (for '-' rule)
+			# aif/wav oddity (for '-' rule)
 			# aif - aif: any SB that does not support wav requires aif header stripping
 			# wav/aif - pcm: force header stripping
 			stripHeader      => $caps->{'H'} || ($command eq "-" &&
-                                (($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
-                                 ($type eq 'aif' && $streamformat eq 'aif' && !grep {$_ eq 'wav'} @supportedformats))),
-		};
-		
+		                        (($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
+		                         ($type eq 'aif' && $streamformat eq 'aif' && !grep {$_ eq 'wav'} @supportedformats))),
+		};					
+						 
 		# Check for optional profiles
 		my $wanted = 0;
 		my @got = ();
