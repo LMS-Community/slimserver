@@ -79,7 +79,7 @@ sub new {
 
 			$newcommand .= $log->is_debug ? ' -D ' : ' -d ';       # socketwrapper debugging (-D = verbose)
 
-			$createMode = $priority; # create window so it is seen
+			$createMode = $priority | Win32::Process::CREATE_NEW_CONSOLE(); # create window so it is seen
 		}
 
 		if ($listenWriter) {
