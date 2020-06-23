@@ -329,7 +329,7 @@ sub canDirectStream {
 	return $url;
 }
 
-# TODO: what happens is this method is overloaded in a sub-class that does not call its parents method
+# TODO: what happens if this method is overloaded in a sub-class that does not call its parents method
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 	

@@ -304,7 +304,7 @@ sub extractADTS {
 	$codec->{inbuf} .= substr($$dataref, $offset);
 	$$dataref = substr($$dataref, 0, $offset);
 		
-	while (1) {
+	while ($codec->{frame_size} || $codec->{frame_index} < $codec->{entries}) {
 		my $frame_size = $codec->{frame_size} || $codec->{frames}->[$codec->{frame_index}];
 		last if $frame_size + $consumed > length($codec->{inbuf}) || length($$dataref) + $frame_size + 7 > $chunk_size;
 	
