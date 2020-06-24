@@ -702,10 +702,6 @@ sub parseAACHeader {
 	my $aac = Audio::Scan->scan_fh( aac => $fh );
 
 	if ( my $samplerate = $aac->{info}->{samplerate} ) {
-		# TODO: should this be removed?
-		if ( $samplerate <= 24000 ) { # XXX remove when Audio::Scan is updated to 0.84
-			$samplerate *= 2;
-		}
 		$track->samplerate($samplerate);
 		main::DEBUGLOG && $log->is_debug && $log->debug("AAC samplerate: $samplerate");
 	}
@@ -771,10 +767,10 @@ sub parseMp4Header {
 		delete $args->{_need};
 		
 		# re-calculate header all the time (i.e. can't go direct at all)
-		$track->initial_block_type(2);
+		$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
 		
 		# can't re-issue an HTTP request, ask caller to continue at $offset then
-		return $offset unless $http;
+		return $offset unless $url;
 		$http->disconnect;
 		
 		main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
@@ -832,16 +828,18 @@ sub parseMp4Header {
 			}
 		}
 		
-#=comment out these lines if you don't want ADTS frame extraction in Perl
-		# set mp4 to adts processor unless we are doing alac/sls
-		# can't do direct there as we need to process audio all the time
-		if (!$format) {
+		# process to get AAC output if possible 
+	    # MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
+		# MPEG-4 ADTS Scalable Sampling Rate = 104
+		if (!$format && $item->{audio_type} == 64) {
 			require Slim::Formats::Movie;
 			$track->audio_process(\&Slim::Formats::Movie::extractADTS);
-			$track->initial_block_type(2);
+			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
 			$format = 'aac';
-		} 
-#=cut		
+		} elsif (!$format && $item->{audio_type} ~~ 102..104) {
+			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+			$format = 'aac';
+		}
 		
 		# change track attributes if format has been altered
 		if ($format) {
@@ -863,7 +861,7 @@ sub parseMp4Header {
 	
 	# use the audio block to stash the temp file handler
 	$track->initial_block($fh);
-	$track->initial_block_type(1) unless $track->initial_block_type;
+	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK) unless $track->initial_block_type;
 	require Slim::Formats::Movie;
 	$track->get_initial_block(\&Slim::Formats::Movie::getRemoteInitialBlock); 
 	
@@ -966,7 +964,7 @@ sub parseWavHeader {
 	
 	# we have a dynamic header but can go direct when not seeking
 	$track->initial_block(substr($data, 0, $track->audio_offset));
-	$track->initial_block_type(1);
+	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	require Slim::Formats::Wav;
 	$track->get_initial_block(\&Slim::Formats::Wav::getRemoteInitialBlock);
 
@@ -1027,7 +1025,7 @@ sub parseAifHeader {
 	
 	# we have a dynamic header but can go direct when not seeking
 	$track->initial_block(substr($data, 0, $track->audio_offset));
-	$track->initial_block_type(1);
+	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	require Slim::Formats::AIFF;
 	$track->get_initial_block(\&Slim::Formats::AIFF::getRemoteInitialBlock);
 		

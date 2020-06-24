@@ -58,7 +58,7 @@ sub request {
 	my $song = $args->{'song'};
 	my $stash;
 
-	# header is optional even when proxied, but define it empty for requestString
+	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
 	if (!defined $song->track->initial_block_type || $song->stripHeader) {
 		$song->initialAudioBlock('');
 		return $self->SUPER::request($args);
@@ -341,7 +341,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !defined $song->track->initial_block_type;
 	
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($song->track->initial_block_type == 2 || $song->seekdata || $song->track->audio_process) {
+	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata || $song->track->audio_process) {
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}	

@@ -25,6 +25,10 @@ my $cache;
 # Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
 use constant CACHE_SIZE => 500;
 
+use constant INITIAL_BLOCK_ONCE 	=> 0;
+use constant INITIAL_BLOCK_ONSEEK 	=> 1;
+use constant INITIAL_BLOCK_ALWAYS	=> 2;
+
 tie our %Cache, 'Tie::Cache::LRU', CACHE_SIZE;
 tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 

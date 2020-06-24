@@ -448,7 +448,6 @@ sub open {
 	
 	# don't modify $song in getConverterCommand2 
 	$self->stripHeader($transcoder->{'stripHeader'});
-print("TRANSCODING using $transcoder->{'command'} FROM $format to $transcoder->{'streamformat'} strip:", $self->stripHeader, " ofs:", $track->audio_offset, "\n");		
 	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;

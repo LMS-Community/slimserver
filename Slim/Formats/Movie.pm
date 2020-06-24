@@ -190,7 +190,7 @@ sub getRemoteInitialBlock {
 	my $fh = $track->initial_block;
 	$fh->seek(0, 0);
 
-	if ($time || $track->initial_block_type == 2) {			
+	if ($time || $track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS) {			
 		# Audio::Scan seekoffset is first audio frame after seek but from the *original* header (not stitched)
 		$info = Audio::Scan->find_frame_fh_return_info(mp4 => $fh, ($time * 1000) || 0);
 		delete $info->{seek_offset} unless $time;
