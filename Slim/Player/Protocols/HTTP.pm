@@ -65,17 +65,24 @@ sub request {
 	}
 
 	# obtain initial audio block if missing and adjust seekdata then
-	if (!defined $song->initialAudioBlock) {
-		if ($song->track->get_initial_block) {
-			my $info = $song->track->get_initial_block->($song->track, $song->seekdata ? $song->seekdata->{'timeOffset'} : 0);
-			$song->initialAudioBlock($info->{'seek_header'});
-			$song->seekdata->{sourceStreamOffset} = $info->{seek_offset} if $info->{'seek_offset'};
-			$stash = $info->{'stash'};
-		} else {
-			# no callback to define initial block, means it's empty BUT defined
-			$song->initialAudioBlock('');
+	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($song->track->original_content_type)) {
+		my $formatClass = Slim::Formats->classForFormat($song->track->original_content_type);
+		my $seekdata = $song->seekdata || {};
+		
+		if ($formatClass->can('findFrameBoundaries')) {
+			my $offset = $formatClass->findFrameBoundaries($song->track->initial_block_fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
+			$seekdata->{sourceStreamOffset} = $offset if $offset;
+		}
+		
+		if ($formatClass->can('getInitialAudioBlock')) {
+			my $initialBlock = \$formatClass->getInitialAudioBlock($song->track->initial_block_fh, $song->track, $seekdata->{timeOffset} || 0, $stash);
+			$song->initialAudioBlock($$initialBlock);
 		}	
-	}
+		
+		main::DEBUGLOG && $log->debug("building new header");	
+	} else {
+		$song->initialAudioBlock('');
+	}	
 
 	# all set for opening the HTTP object
 	$self = $self->SUPER::request($args);
@@ -84,13 +91,14 @@ sub request {
 	my $length = length($song->initialAudioBlock);
 	${*$self}{'initialAudioBlockRemaining'} = $length;
 	${*$self}{'initialAudioBlockRef'} = \($song->initialAudioBlock);
-	main::DEBUGLOG && $log->debug("Got initial audio block of size $length");	
 	
 	# dynamic headers need to be re-calculated every time 
 	$song->initialAudioBlock(undef) if $song->track->initial_block_type;
 	
 	${*$self}{'audio_process'} = $song->track->audio_process;
 	${*$self}{'audio_stash'} = $stash;
+	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of $length from ", $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : 0,
+								  " and processing with ", $song->track->audio_process || 'none'); 
 
 	return $self;
 }

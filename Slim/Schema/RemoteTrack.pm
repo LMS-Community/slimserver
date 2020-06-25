@@ -34,7 +34,7 @@ tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 
 my @allAttributes = (qw(
 	_url
-	content_type
+	_content_type original_content_type
 	bitrate
 	secs
 	
@@ -42,7 +42,7 @@ my @allAttributes = (qw(
 	
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
-	initial_block initial_block_type get_initial_block audio_process
+	initial_block_fh initial_block_type audio_process 
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
@@ -128,6 +128,15 @@ sub comment {
 	}
 	
 	return $self->_comment;
+}
+
+sub content_type {
+	my ($self, $ct) = @_;
+	
+	$self->original_content_type($self->_content_type || $ct) if !$self->original_content_type || $self->original_content_type eq $self->_content_type;
+	$self->_content_type($ct) if $ct;
+
+	return $self->_content_type;
 }
 
 sub _mergeComments {

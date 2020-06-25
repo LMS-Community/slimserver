@@ -180,33 +180,16 @@ sub getInitialAudioBlock {
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
 	);
-
-	return ${ delete ${*$fh}{_mp4_seek_header} };
-}
-
-sub getRemoteInitialBlock { 
-	my ($track, $time) = @_;
-	my $info;		
-	my $fh = $track->initial_block;
-	$fh->seek(0, 0);
-
-	if ($time || $track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS) {			
-		# Audio::Scan seekoffset is first audio frame after seek but from the *original* header (not stitched)
-		$info = Audio::Scan->find_frame_fh_return_info(mp4 => $fh, ($time * 1000) || 0);
-		delete $info->{seek_offset} unless $time;
+	
+	# if we are de-muxing mp4 to ADTS frames, no header is required
+	if ($track->audio_process == \&extractADTS) {
+		$_[4] = setADTSContext(${*$fh}{_mp4_seek_header});
+		delete ${*$fh}{_mp4_seek_header};
+		return '';
 	} else {	
-		read $fh, my $block, -s $fh;
-		$info->{seek_header} = substr($block, 0, -16);
-	}		
-				
-	# need to set codec info for mp4 ==> adts 
-	if ($track->audio_process) {
-		$info->{stash} = setCodec(\$info->{seek_header});
-		$info->{seek_header} = '';
+		return ${ delete ${*$fh}{_mp4_seek_header} };
 	}	
-				
-	return $info;
-} 
+}
 
 sub findFrameBoundaries {
 	my ($class, $fh, $offset, $time) = @_;
@@ -226,7 +209,7 @@ sub findFrameBoundaries {
 
 sub canSeek { 1 }
 
-sub setCodec {
+sub setADTSContext {
 	my ($bufref) = @_;
 	my $pos;
 	my $codec;

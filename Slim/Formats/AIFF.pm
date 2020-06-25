@@ -103,21 +103,6 @@ sub getInitialAudioBlock {
 	return $buffer;
 }
 
-sub getRemoteInitialBlock {
-	my ($track, $time) = @_;
-	my $trim = int ($track->bitrate / 8 * $time);
-
-	# trim 'FORM' and 'SSND' chunk sizes 	
-	$trim -= $trim % ($track->block_alignment || 1);
-	substr($track->initial_block, 4, 4, pack('N', $track->audio_size + $track->audio_offset - 2*4 - $trim));
-	substr($track->initial_block, -3*4, 4, pack('N', $track->audio_size + 2*4 - $trim));
-	
-	return { 
-		seek_header => $track->initial_block,
-		seek_offset => $trim ? $track->audio_offset + $trim : undef, 
-	};
-}
-
 *getCoverArt = \&Slim::Formats::MP3::getCoverArt;
 
 sub canSeek { 1 }

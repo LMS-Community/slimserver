@@ -80,19 +80,6 @@ sub getInitialAudioBlock {
 	return $buffer;
 }
 
-sub getRemoteInitialBlock {
-	my ($track, $time) = @_;
-	my $trim = int ($track->bitrate / 8 * $time);
-
-	$trim -= $trim % ($track->block_alignment || 1);
-	substr($track->initial_block, -4, 4, pack('V', $track->audio_size - $trim));
-	
-	return { 
-		seek_header => $track->initial_block,
-		seek_offset => $trim ? $track->audio_offset + $trim : undef, 
-	};
-}
-
 sub doTagMapping {
 	my ( $class, $tags ) = @_;
 	
