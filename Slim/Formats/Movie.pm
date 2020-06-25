@@ -197,8 +197,12 @@ sub findFrameBoundaries {
 	if (!defined $fh || !defined $time) {
 		return 0;
 	}
-
-	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $fh, int($time * 1000) );
+	
+	# I'm not sure why we need a localFh here ...
+	open(my $localFh, '<&=', $fh);
+	$localFh->seek(0, 0);
+	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $localFh, int($time * 1000) );
+	$localFh->close;
 
 	# Since getInitialAudioBlock will be called right away, stash the new seek header so
 	# we don't have to scan again
