@@ -56,7 +56,6 @@ sub request {
 	my $self = shift;
 	my $args  = shift;
 	my $song = $args->{'song'};
-	my $stash;
 
 	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
 	if (!defined $song->track->initial_block_type || $song->stripHeader) {
@@ -75,7 +74,7 @@ sub request {
 		}
 		
 		if ($formatClass->can('getInitialAudioBlock')) {
-			my $initialBlock = \$formatClass->getInitialAudioBlock($song->track->initial_block_fh, $song->track, $seekdata->{timeOffset} || 0, $stash);
+			my $initialBlock = \$formatClass->getInitialAudioBlock($song->track->initial_block_fh, $song->track, $seekdata->{timeOffset} || 0);
 			$song->initialAudioBlock($$initialBlock);
 		}	
 		
@@ -95,8 +94,10 @@ sub request {
 	# dynamic headers need to be re-calculated every time 
 	$song->initialAudioBlock(undef) if $song->track->initial_block_type;
 	
+	# initialize audio process if any
 	${*$self}{'audio_process'} = $song->track->audio_process;
-	${*$self}{'audio_stash'} = $stash;
+	${*$self}{'audio_stash'} = ${*$self}{'audio_process'}->(${*$self}{'initialAudioBlockRef'}) if ${*$self}{'audio_process'};
+	
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of $length from ", $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : 0,
 								  " and processing with ", $song->track->audio_process || 'none'); 
 
@@ -401,6 +402,7 @@ sub sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize); 
 	} else {	
 		$readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
+		# may process audio before returning it
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
 	

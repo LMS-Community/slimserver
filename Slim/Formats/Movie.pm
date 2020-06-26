@@ -180,15 +180,8 @@ sub getInitialAudioBlock {
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
 	);
-	
-	# if we are de-muxing mp4 to ADTS frames, no header is required
-	if ($track->audio_process == \&extractADTS) {
-		$_[4] = setADTSContext(${*$fh}{_mp4_seek_header});
-		delete ${*$fh}{_mp4_seek_header};
-		return '';
-	} else {	
-		return ${ delete ${*$fh}{_mp4_seek_header} };
-	}	
+
+	return ${ delete ${*$fh}{_mp4_seek_header} };
 }
 
 sub findFrameBoundaries {
@@ -359,6 +352,9 @@ sub setADTSContext {
 }	
 
 sub extractADTS {
+	# create context when called for init
+	return setADTSContext($_[0]) if @_ == 1;
+	
 	my ($codec, $dataref, $chunk_size, $offset) = @_;
 	my $consumed = 0;
 	my @ADTSHeader = (0xFF,0xF1,0,0,0,0,0xFC);
