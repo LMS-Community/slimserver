@@ -56,25 +56,26 @@ sub request {
 	my $self = shift;
 	my $args  = shift;
 	my $song = $args->{'song'};
+	my $track = $song->track;
 
 	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
-	if (!defined $song->track->initial_block_type || $song->stripHeader) {
+	if (!defined $track->initial_block_type || $song->stripHeader) {
 		$song->initialAudioBlock('');
 		return $self->SUPER::request($args);
 	}
 
 	# obtain initial audio block if missing and adjust seekdata then
-	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($song->track->original_content_type)) {
-		my $formatClass = Slim::Formats->classForFormat($song->track->original_content_type);
+	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($track->original_content_type)) {
+		my $formatClass = Slim::Formats->classForFormat($track->original_content_type);
 		my $seekdata = $song->seekdata || {};
 		
 		if ($formatClass->can('findFrameBoundaries')) {
-			my $offset = $formatClass->findFrameBoundaries($song->track->initial_block_fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
+			my $offset = $formatClass->findFrameBoundaries($track->initial_block_fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
 			$seekdata->{sourceStreamOffset} = $offset if $offset;
 		}
 		
 		if ($formatClass->can('getInitialAudioBlock')) {
-			my $initialBlock = \$formatClass->getInitialAudioBlock($song->track->initial_block_fh, $song->track, $seekdata->{timeOffset} || 0);
+			my $initialBlock = \$formatClass->getInitialAudioBlock($track->initial_block_fh, $track, $seekdata->{timeOffset} || 0);
 			$song->initialAudioBlock($$initialBlock);
 		}	
 		
@@ -86,20 +87,21 @@ sub request {
 	# all set for opening the HTTP object
 	$self = $self->SUPER::request($args);
 	return unless $self;
+
+	# setup audio pre-process if required
+	my $blockRef = \($song->initialAudioBlock);
+	(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $track->audio_initiate->($blockRef) if $track->audio_initiate;
 	
-	my $length = length($song->initialAudioBlock);
-	${*$self}{'initialAudioBlockRemaining'} = $length;
-	${*$self}{'initialAudioBlockRef'} = \($song->initialAudioBlock);
+	# set initial block to be sent 
+	${*$self}{'initialAudioBlockRef'} = $blockRef;
+	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 	
 	# dynamic headers need to be re-calculated every time 
-	$song->initialAudioBlock(undef) if $song->track->initial_block_type;
-	
-	# initialize audio process if any
-	${*$self}{'audio_process'} = $song->track->audio_process;
-	${*$self}{'audio_stash'} = ${*$self}{'audio_process'}->(${*$self}{'initialAudioBlockRef'}) if ${*$self}{'audio_process'};
-	
-	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of $length from ", $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : 0,
-								  " and processing with ", $song->track->audio_process || 'none'); 
+	$song->initialAudioBlock(undef) if $track->initial_block_type;
+		
+	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
+								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
+								  " and processing with ", $track->audio_initiate || 'none'); 
 
 	return $self;
 }
@@ -350,7 +352,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !defined $song->track->initial_block_type;
 	
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata || $song->track->audio_process) {
+	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata || $song->track->audio_initiate) {
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}	

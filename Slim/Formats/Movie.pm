@@ -269,19 +269,21 @@ sub parseStream {
 	my $fh = File::Temp->new();
 	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
 	$fh->seek(0, 0);
-	
+
+	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
+	# MPEG-4 ADTS Scalable Sampling Rate = 104	
 	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
 	$info->{fh} = $fh;
 	$info->{audio_offset} = $args->{_mdat_} + 8;
 	if ($info->{tracks}->[0] && $info->{tracks}->[0]->{audio_type} == 64) {
-		$info->{audio_process} = \&extractADTS;
+		$info->{audio_initiate} = \&setADTSProcess;
 		$info->{audio_format} = 'aac';
 	}	
 
 	return $info;
 }
 
-sub setADTSContext {
+sub setADTSProcess {
 	my ($bufref) = @_;
 	my $pos;
 	my $codec;
@@ -347,14 +349,13 @@ sub setADTSContext {
 	
 		last if $codec->{frame_size} || $codec->{entries} && $codec->{channel_config};
 	}	
-
-	return $codec;
+	
+	# don't want to send a header when doing AAC demuxs
+	$$bufref = '';
+	return (\&extractADTS, $codec);
 }	
 
 sub extractADTS {
-	# create context when called for init
-	return setADTSContext($_[0]) if @_ == 1;
-	
 	my ($codec, $dataref, $chunk_size, $offset) = @_;
 	my $consumed = 0;
 	my @ADTSHeader = (0xFF,0xF1,0,0,0,0,0xFC);

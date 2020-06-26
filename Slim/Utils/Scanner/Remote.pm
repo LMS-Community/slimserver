@@ -769,9 +769,9 @@ sub parseMp4Header {
 		# use process_audio hook & format is set by parser
 	    # MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 		# MPEG-4 ADTS Scalable Sampling Rate = 104
-		if ( $info->{audio_process} ) {
+		if ( $info->{audio_initiate} ) {
 			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
-			$track->audio_process($info->{audio_process});
+			$track->audio_initiate($info->{audio_initiate});
 			$format = $info->{audio_format};
 		} elsif ( !$format && $item->{audio_type} ~~ 102..104 ) {
 			$format = 'aac';
