@@ -423,16 +423,19 @@ sub readRemoteHeaders {
 		elsif ( $type eq 'wav' || $type eq 'aif') {
 
 			# Read the header to allow support for wav/aif as it requires different decode path
+			$cb->( $track, undef, @{$pt} ) unless Slim::Formats->loadTagFormatForType($type);
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading $type header');
+
 			$http->read_body( {
 				onStream     => \&parseWavAifHeader,
-				passthrough => [ $track, $args, $type, $type eq 'wav' ? 128 : 32*1024],
+				passthrough => [ $track, $args, $type ],
 			} );
 		}
 		elsif ( $type eq 'mp4' ) {
 
 			# Read the header and optionally seek across file
-			main::DEBUGLOG && $log->is_debug && $log->debug('Reading MP4 header');
+			$cb->( $track, undef, @{$pt} ) unless Slim::Formats->loadTagFormatForType('mp4');
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading mp4 header');
 
 			$http->read_body( {
 				onStream      => \&parseMp4Header,
@@ -700,93 +703,40 @@ sub parseAACHeader {
 
 sub parseMp4Header {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
-	return -1 unless defined $$dataref;
-	
-	# stitch new data to existing buf and init parser if needed
-	$args->{_scanbuf} .= $$dataref;
-	$args->{_need} ||= 8;
-	$args->{_offset} ||= 0;
-	
-	my $len = length($$dataref);
-	my $offset = $args->{_offset};
-	my $cb	   = $args->{cb} || sub {};	
-	
-	while (length($args->{_scanbuf}) > $args->{_offset} + $args->{_need} + 8) {
-		$args->{_atom} = substr($args->{_scanbuf}, $offset+4, 4);
-		$args->{_need} = unpack('N', substr($args->{_scanbuf}, $offset, 4));
-		$args->{_offset} = $args->{"_$args->{_atom}_"} = $offset;
-		
-		# a bit of sanity check
-		if ($offset == 0 && $args->{_atom} ne 'ftyp') {
-			$log->warn("no header! this is supposed to be a mp4 track");
-			$cb->( $track, undef, @{$args->{pt} || []} );
-			return 0;
-		}
-		
-		$offset += $args->{_need};
-		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
-		
-		# mdat reached = audio offset & size acquired
-		if ($args->{_atom} eq 'mdat') {
-			$track->audio_offset($args->{_mdat_} + 8);
-			$track->audio_size($args->{_need});
-			last;
-		}	
-	}
-	
-	return -1 unless $args->{_mdat_};
 
-	# now make sure we have acquired a full moov atom
-	if (!$args->{_moov_}) {
-		# no 'moov' found but EoF
-		if (!$len) {
-			$log->warn("no 'moov' found before EOF => track probably not playable");
-			$cb->( $track, undef, @{$args->{pt} || []} );
+	my $formatClass = Slim::Formats->classForFormat('mp4');
+	my $info = $formatClass->parseStream($dataref, $args);
+	
+	if ( ref $info ne 'HASH' ) {
+		if ( !$info ) {
+			$log->error("unable to parse mp4 header");
+			$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 			return 0;
-		}
-		
-		# already waiting for bottom 'moov', we need more
-		return -1 if $args->{_range};
-		
-		# top 'moov' not found, need to seek beyond 'mdat'
-		my $query = Slim::Networking::Async::HTTP->new;
-		$args->{_range} = "bytes=$offset-";
-		$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset});
-		delete $args->{_need};
-		
-		# re-calculate header all the time (i.e. can't go direct at all)
-		$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
-		
-		# can't re-issue an HTTP request, ask caller to continue at $offset then
-		return $offset unless $url;
-		$http->disconnect;
-		
-		main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
+		} elsif ( $info < 0 ) {
+			return 1;
+		} else {
+			my $query = Slim::Networking::Async::HTTP->new;
+			$http->disconnect;
 	
-		$query->send_request( {
-			request     => HTTP::Request->new( GET => $url,  [ 'Range' => $args->{_range} ] ),
-			onStream  	=> \&parseMp4Header,
-			onError     => sub {
-			my ($self, $error) = @_;
-				$log->warn( "could not find MP4 header $error" );
-				$cb->( $track, undef, @{$args->{pt} || []} );
-			},
-			passthrough => [ $track, $args, $url ],			
-		} );
+			# re-calculate header all the time (i.e. can't go direct at all)
+			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
+		
+			main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
 	
-		return 0;
-	} elsif ($args->{_atom} eq 'moov' && $len) {
-		return -1;
-	}	
+			$query->send_request( {
+				request     => HTTP::Request->new( GET => $url,  [ 'Range' => "bytes=$info-" ] ),
+				onStream  	=> \&parseMp4Header,
+				onError     => sub {
+				my ($self, $error) = @_;
+					$log->warn( "could not find MP4 header $error" );
+					$args->{cb}->( $track, undef, @{$args->{pt} || []} );
+				},
+				passthrough => [ $track, $args, $url ],			
+			} );
 	
-	# finally got it, add 'moov' size it if was last atom
-	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0));
-	
-	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
-	my $fh = File::Temp->new();
-	$fh->write($args->{_scanbuf} . pack('N', $track->audio_size) . 'mdat' . ' ' x 16);
-	$fh->seek(0, 0);
-	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
+			return 0;
+		}	
+	} 
 
 	my ($samplesize, $channels);
 	my $samplerate = $info->{samplerate};
@@ -816,31 +766,31 @@ sub parseMp4Header {
 			}
 		}
 		
-		# process to get AAC output if possible 
+		# use process_audio hook & format is set by parser
 	    # MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 		# MPEG-4 ADTS Scalable Sampling Rate = 104
-		if (!$format && $item->{audio_type} == 64) {
-			require Slim::Formats::Movie;
-			$track->audio_process(\&Slim::Formats::Movie::extractADTS);
+		if ( $info->{audio_process} ) {
 			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
-			$format = 'aac';
-		} elsif (!$format && $item->{audio_type} ~~ 102..104) {
-			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+			$track->audio_process($info->{audio_process});
+			$format = $info->{audio_format};
+		} elsif ( !$format && $item->{audio_type} ~~ 102..104 ) {
 			$format = 'aac';
 		}
 		
 		# change track attributes if format has been altered
-		if ($format) {
+		if ( $format ) {
 			Slim::Schema->clearContentTypeCache( $track->url );
 			Slim::Music::Info::setContentType( $track->url, $format );
 			$track->content_type($format);
 		}	
 	} else	{
 		$log->warn("no playable track found");
-		$cb->( $track, undef, @{$args->{pt} || []} );
+		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 		return 0;
 	}
-
+	
+	$track->audio_offset($info->{audio_offset});
+	$track->audio_size($info->{audio_size});
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
 	$track->channels($channels);	
@@ -848,7 +798,7 @@ sub parseMp4Header {
 	Slim::Music::Info::setDuration( $track, $duration );
 	
 	# use the audio block to stash the temp file handler
-	$track->initial_block_fh($fh);
+	$track->initial_block_fh($info->{fh});
 	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK) unless $track->initial_block_type;
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
@@ -858,7 +808,7 @@ sub parseMp4Header {
 	}	
 	
 	# All done
-	$cb->( $track, undef, @{$args->{pt} || []} );
+	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 	return 0;
 }
 
@@ -914,27 +864,19 @@ sub parseOggHeader {
 }
 
 sub parseWavAifHeader {
-	my ( $http, $dataref, $track, $args, $type, $need ) = @_;
+	my ( $http, $dataref, $track, $args, $type ) = @_;
 
-	$args->{_scanbuf} .= $$dataref;
-	return -1 if length $args->{_scanbuf} < $need;
+	my $formatClass = Slim::Formats->classForFormat($type);
+	my $info = $formatClass->parseStream($dataref, $args);
 	
-	my $cb	 = $args->{cb} || sub {};
-	my $data = $args->{_scanbuf};
-
-	my $fh = File::Temp->new();
-	$fh->write($args->{_scanbuf});
-	$fh->seek(0, 0);
-	my $info = Audio::Scan->scan_fh( $type => $fh )->{info};
-
+	return 1 if ref $info ne 'HASH' && $info;
+	
 	if (!$info) {
 		$log->error("unable to parse $type header");
-		$cb->( $track, undef, @{$args->{pt} || []} );
+		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 		return 0;
 	}
 	
-	$fh->truncate($info->{audio_offset});
-
 	$track->samplerate($info->{samplerate});
 	$track->samplesize($info->{samplesize});
 	$track->channels($info->{channels});	
@@ -952,11 +894,11 @@ sub parseWavAifHeader {
 	}	
 	
 	# we have a dynamic header but can go direct when not seeking
-	$track->initial_block_fh($fh);
+	$track->initial_block_fh($info->{fh});
 	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 
 	# all done
-	$cb->( $track, undef, @{$args->{pt} || []} );
+	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 	return 0;
 }
 

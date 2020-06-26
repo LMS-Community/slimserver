@@ -95,6 +95,24 @@ sub doTagMapping {
 	}
 }
 
+sub parseStream {
+	my ( $class, $dataref, $args ) = @_;
+
+	$args->{_scanbuf} .= $$dataref;
+	return -1 if length $args->{_scanbuf} < 128;
+	
+	my $data = $args->{_scanbuf};
+	my $fh = File::Temp->new();
+	$fh->write($args->{_scanbuf});
+	$fh->seek(0, 0);
+	
+	my $info = Audio::Scan->scan_fh( wav => $fh )->{info};
+	$fh->truncate($info->{audio_offset});
+	$info->{fh} = $fh;
+	
+	return $info;
+}	
+
 *getCoverArt = \&Slim::Formats::MP3::getCoverArt;
 
 sub canSeek { 1 }
