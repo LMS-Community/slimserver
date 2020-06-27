@@ -423,7 +423,6 @@ sub readRemoteHeaders {
 		elsif ( $type eq 'wav' || $type eq 'aif') {
 
 			# Read the header to allow support for wav/aif as it requires different decode path
-			$cb->( $track, undef, @{$pt} ) unless Slim::Formats->loadTagFormatForType($type);
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading $type header');
 
 			$http->read_body( {
@@ -434,7 +433,6 @@ sub readRemoteHeaders {
 		elsif ( $type eq 'mp4' ) {
 
 			# Read the header and optionally seek across file
-			$cb->( $track, undef, @{$pt} ) unless Slim::Formats->loadTagFormatForType('mp4');
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading mp4 header');
 
 			$http->read_body( {
@@ -866,6 +864,7 @@ sub parseOggHeader {
 sub parseWavAifHeader {
 	my ( $http, $dataref, $track, $args, $type ) = @_;
 
+	Slim::Formats->loadTagFormatForType($type);
 	my $formatClass = Slim::Formats->classForFormat($type);
 	my $info = $formatClass->parseStream($dataref, $args);
 	
