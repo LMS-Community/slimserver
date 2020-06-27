@@ -28,7 +28,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 # https://tidal.com/browse/track/95570766
 # https://tidal.com/browse/album/95570764
 # https://tidal.com/browse/playlist/5a36919b-251c-4fa7-802c-b659aef04216
-my $URL_REGEX = qr{^https://(?:\w+\.)?tidal.com/browse/(track|playlist|album)/([a-z\d-]+)}i;
+my $URL_REGEX = qr{^https://(?:\w+\.)?tidal.com/browse/(track|playlist|album|artist)/([a-z\d-]+)}i;
 Slim::Player::ProtocolHandlers->registerURLHandler($URL_REGEX, __PACKAGE__);
 
 sub isRemote { 1 }

@@ -28,7 +28,7 @@ my $log   = logger('plugin.deezer');
 # https://www.deezer.com/album/68905661?...
 # https://www.deezer.com/track/531514321?...
 # https://www.deezer.com/playlist/1012112431?...
-my $URL_REGEX = qr/^https:\/\/(?:\w+\.)?deezer.com\/(track|playlist|album)\/(\d+)/i;
+my $URL_REGEX = qr/^https:\/\/(?:\w+\.)?deezer.com\/(track|playlist|album|artist)\/(\d+)/i;
 Slim::Player::ProtocolHandlers->registerURLHandler($URL_REGEX, __PACKAGE__);
 
 sub isRemote { 1 }
@@ -136,7 +136,7 @@ sub explodePlaylist {
 
 	my $tracks = [];
 
-	if ( $url =~ m{^deezer://((?:playlist|album):[0-9a-z]+)}i ) {
+	if ( $url =~ m{^deezer://((?:playlist|album|artist):[0-9a-z]+)}i ) {
 		my $id = $1;
 
 		Slim::Networking::SqueezeNetwork->new(
