@@ -109,7 +109,6 @@ sub parseStream {
 	$args->{_scanbuf} .= $$dataref;
 	return -1 if length $args->{_scanbuf} < 32*1024;
 	
-	my $data = $args->{_scanbuf};
 	my $fh = File::Temp->new();
 	$fh->write($args->{_scanbuf});
 	$fh->seek(0, 0);

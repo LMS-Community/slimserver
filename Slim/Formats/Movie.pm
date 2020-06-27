@@ -270,11 +270,12 @@ sub parseStream {
 	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
 	$fh->seek(0, 0);
 
-	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
-	# MPEG-4 ADTS Scalable Sampling Rate = 104	
 	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
 	$info->{fh} = $fh;
 	$info->{audio_offset} = $args->{_mdat_} + 8;
+	
+	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
+	# MPEG-4 ADTS Scalable Sampling Rate = 104	
 	if ($info->{tracks}->[0] && $info->{tracks}->[0]->{audio_type} == 64) {
 		$info->{audio_initiate} = \&setADTSProcess;
 		$info->{audio_format} = 'aac';
