@@ -401,11 +401,11 @@ sub sysread {
 	
 	# do not read if we are building-up too much processed audio
 	if (${*$self}{'audio_buildup'} > $chunkSize) {
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize); 
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} else {	
 		$readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
 		# may process audio before returning it
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize) if ${*$self}{'audio_process'}; 
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
 	
 	# use $readLength from socket for meta interval adjustement

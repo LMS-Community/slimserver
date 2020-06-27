@@ -357,23 +357,23 @@ sub setADTSProcess {
 }	
 
 sub extractADTS {
-	my ($codec, $dataref, $chunk_size, $offset) = @_;
+	my ($codec, undef, $chunk_size, $offset) = @_;
 	my $consumed = 0;
 	my @ADTSHeader = (0xFF,0xF1,0,0,0,0,0xFC);
 
-	$codec->{inbuf} .= substr($$dataref, $offset);
-	$$dataref = substr($$dataref, 0, $offset);
+	$codec->{inbuf} .= substr($_[1], $offset);
+	$_[1] = substr($_[1], 0, $offset);
 		
 	while ($codec->{frame_size} || $codec->{frame_index} < $codec->{entries}) {
 		my $frame_size = $codec->{frame_size} || $codec->{frames}->[$codec->{frame_index}];
-		last if $frame_size + $consumed > length($codec->{inbuf}) || length($$dataref) + $frame_size + 7 > $chunk_size;
+		last if $frame_size + $consumed > length($codec->{inbuf}) || length($_[1]) + $frame_size + 7 > $chunk_size;
 	
 		$ADTSHeader[2] = (((($codec->{object_type} & 0x3) - 1)  << 6)   + ($codec->{freq_index} << 2) + ($codec->{channel_config} >> 2));
 		$ADTSHeader[3] = ((($codec->{channel_config} & 0x3) << 6) + (($frame_size + 7) >> 11));
 		$ADTSHeader[4] = ( (($frame_size + 7) & 0x7ff) >> 3);
 		$ADTSHeader[5] = (((($frame_size + 7) & 7) << 5) + 0x1f) ;
 
-		$$dataref .= pack("CCCCCCC", @ADTSHeader) . substr($codec->{inbuf}, $consumed, $frame_size);
+		$_[1] .= pack("CCCCCCC", @ADTSHeader) . substr($codec->{inbuf}, $consumed, $frame_size);
 		
 		$codec->{frame_index}++;		
 		$consumed += $frame_size;
