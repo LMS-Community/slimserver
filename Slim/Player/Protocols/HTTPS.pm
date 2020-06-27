@@ -107,10 +107,11 @@ sub sysread {
 	
 	# do not sysread if we are building-up too much processed audio
 	if (${*$self}{'audio_buildup'} > $chunkSize) {
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize); 
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} else {	
 		$readLength = $self->SUPER::sysread($_[1], $chunkSize);
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, \$_[1], $chunkSize) if ${*$self}{'audio_process'}; 
+		$readLength = $self->_parseStreamHeader($_[1], $readLength);
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
 	
 	# use $readLength from socket for meta interval adjustement

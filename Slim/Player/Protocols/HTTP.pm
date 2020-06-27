@@ -404,7 +404,7 @@ sub sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} else {	
 		$readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
-		# may process audio before returning it
+		$readLength = $self->_parseStreamHeader($_[1], $readLength);
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
 	
@@ -431,6 +431,66 @@ sub sysread {
 	$readLength = length $_[1] if length $_[1];
 
 	return $readLength;
+}
+
+sub _parseStreamHeader {
+	my ($self, undef, $readLength) = @_;
+	my $args = ${*$self}{'parser_args'};	
+	
+print(Dumper($args));		
+	return $readLength unless $args && $readLength;
+
+	if ($args->{'bytes'} < 0) {
+		$args->{'bytes'} += $readLength;
+		$_[1] = substr($_[1], -$args->{'pos'});
+		
+		# remove ourselves when we have reached end of header
+		delete ${*$self}{'parser_args'} if length $_[1];
+		return undef;
+	}
+	
+	$args->{'bytes'} += $readLength;
+	my $info = ${*$self}{'parser'}->(__PACKAGE__, \$_[1], $args);
+					
+	if (ref $info eq 'HASH') {
+		# read header in memory from file handle
+		$info->{'fh'}->seek(0, 0);
+		$info->{'fh'}->read(my $buffer, -s $info->{'fh'});
+						
+		# set processing output exist and is expected format			
+		if ( $info->{'audio_initiate'} && $info->{'audio_format'} eq $args->{'format'} ) {
+			(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $info->{'audio_initiate'}->(\$buffer); 
+			
+			$args->{'pos'} -= $info->{'audio_offset'};
+			$_[1] = substr($_[1], -$args->{'pos'});	
+			
+			main::DEBUGLOG && $log->debug("found header and a processor ${*$self}{'audio_initiate'} at $info->{'audio_offset'} for $args->{'format'}");			
+		}  
+		
+		delete ${*$self}{'parser_args'} if length $_[1];
+	} elsif ($info >= 0) {
+		$log->error("failed to get a header $info for $args->{'format'}");
+		delete ${*$self}{'parser_args'};
+	} else {
+		main::DEBUGLOG && $log->debug("need to parse more than $args->{'bytes'} for $args->{'format'}");			
+		#$! = EWOULDBLOCK;
+		$_[1] = undef;
+		$readLength = undef;				
+	}
+
+	return $readLength;
+}
+
+sub setLiveHeader {
+	my ($self, $type) = @_;
+	my $formatClass;
+
+	return 0 unless Slim::Formats->loadTagFormatForType($type) && 
+                    ($formatClass = Slim::Formats->classForFormat($type)) &&
+                    $formatClass->can('parseStream');
+					
+	${*$self}{'parser'} = $formatClass->can('parseStream');
+	${*$self}{'parser_args'} = { format => $type };
 }
 
 sub parseDirectHeaders {

@@ -702,6 +702,7 @@ sub parseAACHeader {
 sub parseMp4Header {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
 
+	Slim::Formats->loadTagFormatForType('mp4');
 	my $formatClass = Slim::Formats->classForFormat('mp4');
 	my $info = $formatClass->parseStream($dataref, $args);
 	

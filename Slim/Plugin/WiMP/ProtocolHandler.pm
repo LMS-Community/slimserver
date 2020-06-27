@@ -238,18 +238,21 @@ sub _gotTrack {
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 	
-	my $http = Slim::Networking::Async::HTTP->new;
-	$http->send_request( {
-		request     => HTTP::Request->new( GET => $info->{url} ),
-		onStream  	=> \&Slim::Utils::Scanner::Remote::parseMp4Header,
-		onError     => sub {
-				my ($self, $error) = @_;
-					$log->warn( "could not find MP4 header $error" );
-					$params->{successCb}->();
-				},
-		passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],			
-	} );
-
+	if ($format eq 'mp4' || $format eq 'aac') {
+		my $http = Slim::Networking::Async::HTTP->new;
+		$http->send_request( {
+			request     => HTTP::Request->new( GET => $info->{url} ),
+			onStream  	=> \&Slim::Utils::Scanner::Remote::parseMp4Header,
+			onError     => sub {
+					my ($self, $error) = @_;
+						$log->warn( "could not find MP4 header $error" );
+						$params->{successCb}->();
+					},
+			passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],			
+		} );
+	} else {
+		$params->{successCb}->();
+	}	
 
 	# trigger playback statistics update
 	if ( $info->{duration} > 2) {
