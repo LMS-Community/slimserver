@@ -110,7 +110,7 @@ sub sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} else {	
 		$readLength = $self->SUPER::sysread($_[1], $chunkSize);
-		$readLength = $self->_parseStreamHeader($_[1], $readLength);
+		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
 	

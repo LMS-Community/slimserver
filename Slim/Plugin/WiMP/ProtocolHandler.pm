@@ -279,7 +279,7 @@ sub canDirectStreamSong {
 
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL($song->track->url()) );
+	return $class->SUPER::canDirectStreamSong( $client, $song );
 }
 
 # parseHeaders is used for proxied streaming
