@@ -133,7 +133,10 @@ sub comment {
 sub content_type {
 	my ($self, $ct) = @_;
 	
-	$self->original_content_type($self->_content_type || $ct) if !$self->original_content_type || $self->original_content_type eq $self->_content_type;
+	if (!$self->original_content_type || $self->original_content_type eq $self->_content_type) {
+		$self->original_content_type($self->_content_type || $ct);
+	}	
+	
 	$self->_content_type($ct) if $ct;
 
 	return $self->_content_type;

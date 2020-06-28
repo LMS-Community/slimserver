@@ -80,7 +80,8 @@ sub request {
 		}	
 		
 		main::DEBUGLOG && $log->debug("building new header");	
-	} else {
+	} 
+	else {
 		$song->initialAudioBlock('');
 	}	
 
@@ -126,7 +127,8 @@ sub readMetaData {
 			 	#$log->warn("Warning: Metadata byte not read! $!");
 			 	return;
 
-			 } else {
+			 } 
+			 else {
 
 				#$log->debug("Metadata byte not read, trying again: $!");
 			 }
@@ -153,7 +155,8 @@ sub readMetaData {
 					#$log->info("Metadata bytes not read! $!");
 					return;
 
-				} else {
+				} 
+				else {
 
 					#$log->info("Metadata bytes not read, trying again: $!");
 				}
@@ -377,7 +380,8 @@ sub sysread {
 			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
 			$chunkref = \$chunk;
 			${*$self}{'initialAudioBlockRemaining'} = ($length - $chunkLength);
-		} else {
+		} 
+		else {
 			${*$self}{'initialAudioBlockRemaining'} = 0;
 			$chunkref = ${*$self}{'initialAudioBlockRef'};
 		}
@@ -402,7 +406,8 @@ sub sysread {
 	# do not read if we are building-up too much processed audio
 	if (${*$self}{'audio_buildup'} > $chunkSize) {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
-	} else {	
+	} 
+	else {	
 		$readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
 		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
@@ -421,7 +426,8 @@ sub sysread {
 
 			${*$self}{'metaPointer'} = 0;
 
-		} elsif ($metaPointer > $metaInterval) {
+		} 
+		elsif ($metaPointer > $metaInterval) {
 
 			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
 		}
@@ -499,11 +505,13 @@ sub _parseStreamHeader {
                                       "at $info->{'audio_offset'} for $args->{'formats'} and header ${*$self}{'initialAudioBlockRemaining'}");			
 		
 		delete ${*$self}{'parser_args'} if length $_[1];
-	} elsif ($info >= 0) {
+	} 
+	elsif ($info >= 0) {
 		# a jump is requested, this cannot be parsed on-the-fly
 		$log->error("failed to get a header $info for $args->{'format'}");
 		delete ${*$self}{'parser_args'};
-	} else {
+	} 
+	else {
 		main::DEBUGLOG && $log->debug("need to parse more than $args->{'bytes'} for $args->{'format'}");			
 		$_[1] = undef;
 		$readLength = undef;				
@@ -693,7 +701,8 @@ sub parseHeaders {
 
 		${*$self}{'bitrate'} = $bitrate;
 		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate );
-	} elsif ( !$self->bitrate ) {
+	} 
+	elsif ( !$self->bitrate ) {
 		# Bitrate may have been set in Scanner by reading the mp3 stream
 		$bitrate = ${*$self}{'bitrate'} = Slim::Music::Info::getBitrate( $url );
 	}
@@ -815,7 +824,8 @@ sub requestString {
 		$request .= $CRLF . sprintf("Content-Length: %d", length($post));
 		$request .= $CRLF . $CRLF . $post . $CRLF;
 
-	} else {
+	} 
+	else {
 		$request .= $CRLF . $CRLF;
 	}
 

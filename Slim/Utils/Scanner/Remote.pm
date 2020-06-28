@@ -711,9 +711,11 @@ sub parseMp4Header {
 			$log->error("unable to parse mp4 header");
 			$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 			return 0;
-		} elsif ( $info < 0 ) {
+		} 
+		elsif ( $info < 0 ) {
 			return 1;
-		} else {
+		} 
+		else {
 			my $query = Slim::Networking::Async::HTTP->new;
 			$http->disconnect;
 	
@@ -723,12 +725,12 @@ sub parseMp4Header {
 			main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
 	
 			$query->send_request( {
-				request     => HTTP::Request->new( GET => $url,  [ 'Range' => "bytes=$info-" ] ),
-				onStream  	=> \&parseMp4Header,
-				onError     => sub {
-				my ($self, $error) = @_;
-					$log->warn( "could not find MP4 header $error" );
-					$args->{cb}->( $track, undef, @{$args->{pt} || []} );
+				request    => HTTP::Request->new( GET => $url,  [ 'Range' => "bytes=$info-" ] ),
+				onStream   => \&parseMp4Header,
+				onError    => sub {
+						my ($self, $error) = @_;
+						$log->warn( "could not find MP4 header $error" );
+						$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 				},
 				passthrough => [ $track, $args, $url ],			
 			} );
@@ -753,7 +755,8 @@ sub parseMp4Header {
 			$format = 'alc';	
 			# bitrate will be wrong b/c we only gave a header, not a real file
 			$bitrate = $duration ? $track->audio_size * 8 / $duration : 850_000;
-		} elsif ( $item->{encoding} && $item->{encoding} eq 'drms' ) {
+		} 
+		elsif ( $item->{encoding} && $item->{encoding} eq 'drms' ) {
 			$track->drm(1);
 		} 
 		
@@ -766,13 +769,14 @@ sub parseMp4Header {
 		}
 		
 		# use process_audio hook & format is set by parser
-	    # MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
+		# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 		# MPEG-4 ADTS Scalable Sampling Rate = 104
 		if ( $info->{audio_initiate} ) {
 			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
 			$track->audio_initiate($info->{audio_initiate});
 			$format = $info->{audio_format};
-		} elsif ( !$format && $item->{audio_type} ~~ 102..104 ) {
+		} 
+		elsif ( !$format && $item->{audio_type} ~~ 102..104 ) {
 			$format = 'aac';
 		}
 		
@@ -843,7 +847,8 @@ sub parseOggHeader {
 		}
 	# search for Ogg Opus header within the data - if so change the content type to opus for OggOpus
 	# OggOpus header defined: https://people.xiph.org/~giles/2013/draft-ietf-codec-oggopus.html#rfc.section.5.1
-	} elsif (substr($data, 0, 8) eq 'OpusHead') {
+	} 
+	elsif (substr($data, 0, 8) eq 'OpusHead') {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Ogg stream is OggOpus - setting content type [ops]");
 		Slim::Schema->clearContentTypeCache( $track->url );
 		Slim::Music::Info::setContentType( $track->url, 'ops' );
