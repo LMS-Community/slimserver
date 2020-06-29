@@ -65,79 +65,22 @@ sub canDirectStream {
 	return 0;
 }
 
-# as we are inheriting from IO::Socket::SSL first, we have to re-implement Slim::Player::Protocols::HTTP->sysread here
+# Check whether the current player can stream HTTPS or not 
+sub canDirectStreamSong {
+	my $self = shift;
+	my ($client) = @_;
+	
+	if ( $client->canHTTPS ) {
+		return $self->SUPER::canDirectStreamSong(@_);
+	}
+
+	return 0;
+}
+
 sub sysread {
-	my $self = $_[0];
-	my $chunkSize = $_[2];
-	
-	# stitch header if any
-	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
-		
-		my $chunkLength = $length;
-		my $chunkref;
-		
-		main::DEBUGLOG && $log->debug("getting initial audio block of size $length");
-		
-		if ($length > $chunkSize || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
-			$chunkLength = $length > $chunkSize ? $chunkSize : $length;
-			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
-			$chunkref = \$chunk;
-			${*$self}{'initialAudioBlockRemaining'} = ($length - $chunkLength);
-		} 
-		else {
-			${*$self}{'initialAudioBlockRemaining'} = 0;
-			$chunkref = ${*$self}{'initialAudioBlockRef'};
-		}
-	
-		$_[1] = $$chunkref;
-		return $chunkLength;
-	}
-
-	my $metaInterval = ${*$self}{'metaInterval'};
-	my $metaPointer  = ${*$self}{'metaPointer'};
-
-	if ($chunkSize && $metaInterval && ($metaPointer + $chunkSize) > $metaInterval && ($metaInterval - $metaPointer) > 0) {
-
-		$chunkSize = $metaInterval - $metaPointer;
-
-		# This is very verbose...
-		#$log->debug("Reduced chunksize to $chunkSize for metadata");
-	}
-	
-	my $readLength;
-	
-	# do not sysread if we are building-up too much processed audio
-	if (${*$self}{'audio_buildup'} > $chunkSize) {
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
-	} 
-	else {	
-		$readLength = $self->SUPER::sysread($_[1], $chunkSize);
-		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
-	}	
-	
-	# use $readLength from socket for meta interval adjustement
-	if ($metaInterval && $readLength) {
-
-		$metaPointer += $readLength;
-		${*$self}{'metaPointer'} = $metaPointer;
-
-		# handle instream metadata for shoutcast/icecast
-		if ($metaPointer == $metaInterval) {
-
-			$self->readMetaData();
-
-			${*$self}{'metaPointer'} = 0;
-
-		} 
-		elsif ($metaPointer > $metaInterval) {
-
-			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
-		}	
-	}
-	
-	# when not-empty, chose return buffer length over sysread() 
-	$readLength = length $_[1] if length $_[1];
+	my $readLength = Slim::Player::Protocols::HTTP::_sysread( sub { 
+	                            return $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
+	                        }, @_);
 
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EWOULDBLOCK;

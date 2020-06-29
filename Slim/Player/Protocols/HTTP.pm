@@ -364,6 +364,14 @@ sub canDirectStreamSong {
 }
 
 sub sysread {
+	my $readLength = _sysread( sub { 
+	                   return CORE::sysread($_[0], $_[1], $_[2], $_[3]); 
+                }, @_) ;
+	return $readLength;
+}
+
+sub _sysread {
+	my $sysread = shift;
 	my $self = $_[0];
 	my $chunkSize = $_[2];
 	
@@ -393,7 +401,7 @@ sub sysread {
 	my $metaInterval = ${*$self}{'metaInterval'};
 	my $metaPointer  = ${*$self}{'metaPointer'};
 
-	if ($metaInterval && ($metaPointer + $chunkSize) > $metaInterval) {
+	if ($chunkSize && $metaInterval && ($metaPointer + $chunkSize) > $metaInterval && ($metaInterval - $metaPointer) > 0) {
 
 		$chunkSize = $metaInterval - $metaPointer;
 
@@ -408,7 +416,7 @@ sub sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} 
 	else {	
-		$readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
+		$readLength = $sysread->(@_);
 		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
