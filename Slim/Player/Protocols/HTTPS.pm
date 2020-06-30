@@ -77,10 +77,12 @@ sub canDirectStreamSong {
 	return 0;
 }
 
+sub _sysread {
+	return $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
+}
+
 sub sysread {
-	my $readLength = Slim::Player::Protocols::HTTP::_sysread( sub { 
-	                            return $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
-	                        }, @_);
+	my $readLength = Slim::Player::Protocols::HTTP::sysread(@_);
 
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EWOULDBLOCK;

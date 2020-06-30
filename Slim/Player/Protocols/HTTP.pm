@@ -117,7 +117,7 @@ sub readMetaData {
 
 	while ($byteRead == 0) {
 
-		$byteRead = $self->SUPER::sysread($metadataSize, 1);
+		$byteRead = $self->_sysread($metadataSize, 1);
 
 		if ($!) {
 
@@ -146,7 +146,7 @@ sub readMetaData {
 
 		do {
 			$metadatapart = '';
-			$byteRead = $self->SUPER::sysread($metadatapart, $metadataSize);
+			$byteRead = $self->_sysread($metadatapart, $metadataSize);
 
 			if ($!) {
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
@@ -362,19 +362,13 @@ sub canDirectStreamSong {
 	return $direct;
 }
 
-sub sysread {
-	my $readLength = _sysread( sub { 
-	                   return CORE::sysread($_[0], $_[1], $_[2], $_[3]); 
-                }, @_) ;
-	return $readLength;
+sub _sysread {
+	return CORE::sysread($_[0], $_[1], $_[2], $_[3]); 
 }
 
-sub _sysread {
-	my $sysread = shift;
+sub sysread {
 	my $self = $_[0];
 	my $chunkSize = $_[2];
-	
-	return $sysread->($self, $_[1], $chunkSize, length($_[1] || '')) if ${*$self}{'recurse'};
 	
 	# stitch header if any
 	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
@@ -417,7 +411,7 @@ sub _sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} 
 	else {	
-		$readLength = $sysread->($self, $_[1], $chunkSize, length($_[1] || ''));
+		$readLength = $self->_sysread($_[1], $chunkSize, length($_[1] || ''));
 		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
 	}	
@@ -431,9 +425,7 @@ sub _sysread {
 		# handle instream metadata for shoutcast/icecast
 		if ($metaPointer == $metaInterval) {
 
-			${*$self}{'recurse'} = 1;
 			$self->readMetaData();
-			${*$self}{'recurse'} = 0;
 
 			${*$self}{'metaPointer'} = 0;
 

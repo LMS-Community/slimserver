@@ -166,6 +166,17 @@ sub contributorsOfType {}
 sub update {}
 sub delete {}
 
+sub DESTROY {
+	my $self = shift;
+
+	if (my $fh = $self->initial_block_fh) {
+		$fh->close;
+		unlink $fh;
+	}
+	
+	$self->SUPER::DESTROY();
+}
+
 sub retrievePersistent {}
 
 sub displayAsHTML {
