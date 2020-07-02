@@ -776,7 +776,7 @@ sub parseMp4Header {
 			$track->audio_initiate($info->{audio_initiate});
 			$format = $info->{audio_format};
 		} 
-		elsif ( !$format && $item->{audio_type} ~~ 102..104 ) {
+		elsif ( !$format && $item->{audio_type} >= 102 && $item->{audio_type} <= 104 ) {
 			$format = 'aac';
 		}
 		

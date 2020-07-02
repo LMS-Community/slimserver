@@ -362,6 +362,9 @@ sub canDirectStreamSong {
 	return $direct;
 }
 
+# we need that call structure to make sure that SUPER calls the 
+# object parent, not the class parent
+# see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
 	return CORE::sysread($_[0], $_[1], $_[2], $_[3]); 
 }
