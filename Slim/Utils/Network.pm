@@ -322,7 +322,7 @@ sub sysreadline(*;$) {
 
 			my $err = $!;
 
-			next CHAR if (!defined($result) and $err == EINTR);
+			goto CHAR if (!defined($result) and $err == EINTR);
 
 			blocking($handle, $was_blocking);
 
