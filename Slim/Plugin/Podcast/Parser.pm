@@ -106,6 +106,12 @@ sub parse {
 					url    => $url,
 				},
 				duration => $item->{duration},
+				play => sub {
+						my ($client, $cb) = @_;
+						$client->pluginData(goto => 1);
+						delete $item->{items}->[0]->{play};
+						$cb->( $item->{items}->[0] );
+					},
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
