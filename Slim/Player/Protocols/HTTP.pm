@@ -101,7 +101,7 @@ sub request {
 		
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
-								  " and processing with ", $track->audio_initiate || 'none'); 
+								  " and processing with ", ${*$self}{'audio_process'} || 'none'); 
 
 	return $self;
 }
@@ -121,7 +121,7 @@ sub readMetaData {
 
 		if ($!) {
 
-			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+			if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
 
 			 	#$log->warn("Warning: Metadata byte not read! $!");
 			 	return;
@@ -149,7 +149,7 @@ sub readMetaData {
 			$byteRead = $self->_sysread($metadatapart, $metadataSize);
 
 			if ($!) {
-				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+				if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
 
 					#$log->info("Metadata bytes not read! $!");
 					return;
@@ -591,6 +591,7 @@ sub parseDirectHeaders {
 		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
 			$rangeLength = $3;
 			$startOffset = $1;
+			${*$self}{'range'} = $1 . '-' . $2;
 		}
 
 		# mp3tunes metadata, this is a bit of hack but creating
