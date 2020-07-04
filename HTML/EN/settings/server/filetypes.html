@@ -24,7 +24,7 @@
 
 	<div class="settingSection">
 	<table border="0" cellspacing="0">
-		<tr><th>[% 'FILE_FORMAT' | string %]</th><th>[% 'STREAM_FORMAT' | string %]&nbsp;&nbsp;</th><th>[% 'DECODER' | string %]</th></tr>
+		<tr><th>[% 'FILE_FORMAT' | string %]</th><th>[% 'STREAM_FORMAT' | string %]&nbsp;&nbsp;</th><th>[% 'SETUP_INPUTTYPE' | string %]</th><th>[% 'DECODER' | string %]</th></tr>
 
 		[% FOREACH format = formats %]
 			[% frame = format.input != loop.prev.input %]
@@ -37,6 +37,8 @@
 			
 			<td class="[% odd ? "odd" : "even" %]"><label for="[% format.profile %]" class="stdlabel">[% format.output | string %]</label></td>
 			
+			<td class="[% odd ? "odd" : "even" %]">([% format.capabilities %])</td>
+	
 			<td class="[% odd ? "odd" : "even" %]">
 				<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]" [% format.binaries.size() <= 1 && "disabled" %]>
 	

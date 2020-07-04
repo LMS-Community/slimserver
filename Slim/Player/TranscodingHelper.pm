@@ -38,6 +38,10 @@ sub Conversions {
 	return \%commandTable;
 }
 
+sub Capabilities {
+	return $capabilities{$_[0]};
+}
+
 my $log = logger('player.source');
 
 my $prefs = preferences('server');
@@ -63,7 +67,7 @@ sub loadConversionTables {
 		push @convertFiles, catdir($baseDir, 'custom-convert.conf');
 	}
 	
-	foreach my $convertFileName (@convertFiles) {
+	foreach my $convertFileName (reverse @convertFiles) {
 
 		# can't read? next.
 		next unless -r $convertFileName;
