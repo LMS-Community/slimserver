@@ -78,7 +78,7 @@ sub canDirectStreamSong {
 }
 
 # we need that call structure to make sure that SUPER calls the 
-# object parent, not the class parent
+# object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
 	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
