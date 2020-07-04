@@ -4099,6 +4099,11 @@ FILE_FORMAT
 	RU	Формат файла
 	SV	Filformat
 	ZH_CN	文件格式
+	
+SETUP_INPUTTYPE
+	DE	Von
+	EN	From
+	FR	De
 
 STREAM_FORMAT
 	CS	Formát proudu
