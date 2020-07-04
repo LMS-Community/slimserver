@@ -95,13 +95,13 @@ sub request {
 	# set initial block to be sent 
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
-	
+
 	# dynamic headers need to be re-calculated every time 
 	$song->initialAudioBlock(undef) if $track->initial_block_type;
 		
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
-								  " and processing with ", ${*$self}{'audio_process'} || 'none'); 
+								  " and processing with ", sprintf("%s", $track->audio_initiate) || 'none'); 
 
 	return $self;
 }

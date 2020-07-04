@@ -300,7 +300,7 @@ sub setADTSProcess {
 		utda => 8,
 		ilst => 8,
 	);
-	
+
 	while ($pos < length $$bufref) {
 		my $len = unpack("N", substr($$bufref, $pos, 4));
 		my $type = substr($$bufref, $pos + 4, 4);
