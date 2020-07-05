@@ -4104,6 +4104,7 @@ SETUP_INPUTTYPE
 	DE	Von
 	EN	From
 	FR	De
+	ZH_CN	自
 
 STREAM_FORMAT
 	CS	Formát proudu
