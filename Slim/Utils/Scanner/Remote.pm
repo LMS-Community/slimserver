@@ -704,18 +704,23 @@ sub parseMp4Header {
 
 	Slim::Formats->loadTagFormatForType('mp4');
 	my $formatClass = Slim::Formats->classForFormat('mp4');
+	
+	# parse chunk
 	my $info = $formatClass->parseStream($dataref, $args);
 	
 	if ( ref $info ne 'HASH' ) {
 		if ( !$info ) {
+			# error, can't continue
 			$log->error("unable to parse mp4 header");
 			$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 			return 0;
 		} 
 		elsif ( $info < 0 ) {
+			# need more data
 			return 1;
 		} 
 		else {
+			# please restart from offset set by $info
 			my $query = Slim::Networking::Async::HTTP->new;
 			$http->disconnect;
 	
@@ -739,6 +744,7 @@ sub parseMp4Header {
 		}	
 	} 
 
+	# got everything we need, set the $track context
 	my ($samplesize, $channels);
 	my $samplerate = $info->{samplerate};
 	my $duration = $info->{song_length_ms} / 1000;
@@ -768,10 +774,11 @@ sub parseMp4Header {
 			}
 		}
 		
-		# use process_audio hook & format is set by parser
+		# use process_audio hook & format if set by parser
 		# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 		# MPEG-4 ADTS Scalable Sampling Rate = 104
 		if ( $info->{audio_initiate} ) {
+			# we are going to pre-process audio, can't go direct
 			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
 			$track->audio_initiate($info->{audio_initiate});
 			$format = $info->{audio_format};
