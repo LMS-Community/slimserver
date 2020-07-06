@@ -90,6 +90,7 @@ sub request {
 
 	# setup audio pre-process if required
 	my $blockRef = \($song->initialAudioBlock);
+	(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $track->audio_initiate->($blockRef) if $track->audio_initiate;
 	
 	# set initial block to be sent 
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
@@ -99,7 +100,9 @@ sub request {
 	$song->initialAudioBlock(undef) if $track->initial_block_type;
 		
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
-								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset);
+								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
+								  " and processing with ", sprintf("%s", $track->audio_initiate) || 'none'); 
+
 	return $self;
 }
 
@@ -406,7 +409,14 @@ sub sysread {
 
 	my $readLength;
 	
-	$readLength = $self->_sysread($_[1], $chunkSize, length($_[1] || ''));
+	# do not read if we are building-up too much processed audio
+	if (${*$self}{'audio_buildup'} > $chunkSize) {
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
+	} 
+	else {	
+		$readLength = $self->_sysread($_[1], $chunkSize, length($_[1] || ''));
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
+	}	
 	
 	# use $readLength from socket for meta interval adjustement
 	if ($metaInterval && $readLength) {
