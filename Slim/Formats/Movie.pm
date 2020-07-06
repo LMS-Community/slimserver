@@ -165,6 +165,8 @@ sub _doTagMapping {
 	}
 }
 
+sub volatileInitialAudioBlock { 1 }
+
 sub getInitialAudioBlock {
 	my ($class, $fh, $track, $time) = @_;
 
@@ -188,8 +190,12 @@ sub findFrameBoundaries {
 	if (!defined $fh || !defined $time) {
 		return 0;
 	}
-
-	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $fh, int($time * 1000) );
+	
+	# I'm not sure why we need a localFh here ...
+	open(my $localFh, '<&=', $fh);
+	$localFh->seek(0, 0);
+	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $localFh, int($time * 1000) );
+	$localFh->close;
 
 	# Since getInitialAudioBlock will be called right away, stash the new seek header so
 	# we don't have to scan again
@@ -199,5 +205,83 @@ sub findFrameBoundaries {
 }
 
 sub canSeek { 1 }
+
+sub parseStream {
+	my ( $class, $dataref, $args, $formats ) = @_;
+	return -1 unless defined $$dataref;
+	
+	# stitch new data to existing buf and init parser if needed
+	$args->{_scanbuf} .= $$dataref;
+	$args->{_need} ||= 8;
+	$args->{_offset} ||= 0;
+	
+	my $len = length($$dataref);
+	my $offset = $args->{_offset};
+	my $log = logger('player.streaming');
+	
+	while (length($args->{_scanbuf}) > $args->{_offset} + $args->{_need} + 8) {
+		$args->{_atom} = substr($args->{_scanbuf}, $offset+4, 4);
+		$args->{_need} = unpack('N', substr($args->{_scanbuf}, $offset, 4));
+		$args->{_offset} = $args->{"_$args->{_atom}_"} = $offset;
+		
+		# a bit of sanity check
+		if ($offset == 0 && $args->{_atom} ne 'ftyp') {
+			$log->warn("no header! this is supposed to be a mp4 track");
+			return 0;
+		}
+		
+		$offset += $args->{_need};
+		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
+		
+		# mdat reached = audio offset & size acquired
+		if ($args->{_atom} eq 'mdat') {
+			$args->{_audio_size} = $args->{_need};
+			last;
+		}
+	}
+	
+	return -1 unless $args->{_mdat_};
+
+	# now make sure we have acquired a full moov atom
+	if (!$args->{_moov_}) {
+		# no 'moov' found but EoF
+		if (!$len) {
+			$log->warn("no 'moov' found before EOF => track probably not playable");
+			return 0;
+		}
+		
+		# already waiting for bottom 'moov', we need more
+		return -1 if $args->{_range};
+		
+		# top 'moov' not found, need to seek beyond 'mdat'
+		$args->{_range} = $offset;
+		$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset});
+		delete $args->{_need};
+		return $offset;
+	} elsif ($args->{_atom} eq 'moov' && $len) {
+		return -1;
+	}	
+	
+	# finally got it, add 'moov' size it if was last atom
+	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0));
+	
+	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
+	my $fh = File::Temp->new();
+	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
+	$fh->seek(0, 0);
+
+	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
+	$info->{fh} = $fh;
+	$info->{audio_offset} = $args->{_mdat_} + 8;
+	
+	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
+	# MPEG-4 ADTS Scalable Sampling Rate = 104	
+	if ($info->{tracks}->[0] && $info->{tracks}->[0]->{audio_type} == 64 && (!$formats || grep(/aac/i, @{$formats}))) {
+		$info->{audio_initiate} = \&setADTSProcess;
+		$info->{audio_format} = 'aac';
+	}	
+
+	return $info;
+}
 
 1;

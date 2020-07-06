@@ -25,12 +25,16 @@ my $cache;
 # Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
 use constant CACHE_SIZE => 500;
 
+use constant INITIAL_BLOCK_ONCE 	=> 0;
+use constant INITIAL_BLOCK_ONSEEK 	=> 1;
+use constant INITIAL_BLOCK_ALWAYS	=> 2;
+
 tie our %Cache, 'Tie::Cache::LRU', CACHE_SIZE;
 tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 
 my @allAttributes = (qw(
 	_url
-	content_type
+	_content_type original_content_type
 	bitrate
 	secs
 	
@@ -38,6 +42,7 @@ my @allAttributes = (qw(
 	
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
+	initial_block_fh initial_block_type
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
@@ -125,6 +130,18 @@ sub comment {
 	return $self->_comment;
 }
 
+sub content_type {
+	my ($self, $ct) = @_;
+	
+	if (!$self->original_content_type || $self->original_content_type eq $self->_content_type) {
+		$self->original_content_type($self->_content_type || $ct);
+	}	
+	
+	$self->_content_type($ct) if $ct;
+
+	return $self->_content_type;
+}
+
 sub _mergeComments {
 	my $new = shift;
 	
@@ -148,6 +165,17 @@ sub contributorsOfType {}
 
 sub update {}
 sub delete {}
+
+sub DESTROY {
+	my $self = shift;
+
+	if (my $fh = $self->initial_block_fh) {
+		$fh->close;
+		unlink $fh;
+	}
+	
+	$self->SUPER::DESTROY();
+}
 
 sub retrievePersistent {}
 
@@ -291,7 +319,8 @@ my %localTagMapping = (
 	album                  => 'albumname',
 	rate                   => 'samplerate',
 	age                    => 'timestamp',
-	ct                     => 'content_type',
+	ct                     => '_content_type',
+	content_type           => '_content_type',
 	fs                     => 'filesize',
 	comment                => '_comment',
 	offset                 => 'audio_offset',

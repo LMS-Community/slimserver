@@ -58,8 +58,10 @@ sub getTag {
 	return $tags;
 }
 
+sub volatileInitialAudioBlock { 1 }
+
 sub getInitialAudioBlock {
-	my ($class, $fh, $track) = @_;
+	my ($class, $fh, $track, $time) = @_;
 	my $length = $track->audio_offset() || return undef;
 	
 	open(my $localFh, '<&=', $fh);
@@ -69,6 +71,11 @@ sub getInitialAudioBlock {
 	read ($localFh, my $buffer, $length);
 	seek($localFh, 0, 0);
 	close($localFh);
+
+	# adjust header size according to seek position
+	my $trim = int($time * $track->bitrate / 8);
+	$trim -= $trim % ($track->block_alignment || 1);
+	substr($buffer, $length - 4, 4, pack('V', $track->audio_size - $trim));
 	
 	return $buffer;
 }
@@ -87,6 +94,23 @@ sub doTagMapping {
 		Slim::Formats::MP3->doTagMapping($tags);
 	}
 }
+
+sub parseStream {
+	my ( $class, $dataref, $args ) = @_;
+
+	$args->{_scanbuf} .= $$dataref;
+	return -1 if length $args->{_scanbuf} < 128;
+	
+	my $fh = File::Temp->new();
+	$fh->write($args->{_scanbuf});
+	$fh->seek(0, 0);
+	
+	my $info = Audio::Scan->scan_fh( wav => $fh )->{info};
+	$fh->truncate($info->{audio_offset});
+	$info->{fh} = $fh;
+	
+	return $info;
+}	
 
 *getCoverArt = \&Slim::Formats::MP3::getCoverArt;
 
