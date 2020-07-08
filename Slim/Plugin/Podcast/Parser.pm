@@ -9,8 +9,6 @@ use Slim::Utils::Cache;
 use Slim::Utils::DateTime;
 use Slim::Utils::Strings qw(cstring);
 
-tie our %recentlyPlayed, 'Tie::Cache::LRU', 50;
-
 my $cache = Slim::Utils::Cache->new;
 
 my $fetching;
@@ -52,7 +50,7 @@ sub parse {
 		# track progress of our listening
 		my $key = 'podcast-' . $item->{enclosure}->{url};
 		my $position = $cache->get($key);
-		$cache->set($key, $position || 0, '30days') unless $position;
+		$cache->set($key, 0, '30days') unless $position;
 		
 		# do we have duration stored from previous playback?
 		if ( !$item->{duration} ) {
@@ -69,14 +67,6 @@ sub parse {
 
 		$cache->set("$key-duration", $item->{duration}, '30days');
 		
-		my $recent = { 
-				url      => $item->{enclosure}->{url},
-				type     => $item->{enclosure}->{type},
-				title    => $item->{line1},
-				cover    => $item->{image},
-				duration => $item->{duration},
-		};		
-
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $position && $position < $item->{duration} - 15 ) {
 			delete $item->{description};     # remove description, or xmlbrowser would consider this to be a RSS feed
@@ -95,7 +85,12 @@ sub parse {
 					length => $enclosure->{length},
 					url    => $enclosure->{url},
 				},
-				play => sub { playItem($item->{items}->[0], $recent, 1, @_) },
+				play => sub { 
+					my ($client, $cb) = @_;
+					$client->pluginData(goto => 1);
+					delete $item->{items}->[0]->{play};
+					$cb->( $item->{items}->[0] );
+				},	
 				#duration => $item->{duration},				
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
@@ -105,14 +100,11 @@ sub parse {
 					length => $enclosure->{length},
 					url    => $enclosure->{url},
 				},
-				play => sub { playItem($item->{items}->[1], $recent, 0, @_) },
 				#duration => $item->{duration},				
 			}];
 
 			$item->{type} = 'link';
-		} else {
-			$item->{play} = sub { playItem($item, $recent, 0, @_) };
-		}
+		} 
 
 		if ( $item->{duration} && (!$duration || $duration !~ /:/) ) {
 			my $s = $item->{duration};
@@ -140,62 +132,5 @@ sub parse {
 
 	return $feed;
 }
-
-sub playItem {
-	my ($item, $recent, $goto, $client, $cb) = @_;
-	$client->pluginData(goto => $goto);
-	delete $item->{play};
-	$recentlyPlayed{$recent->{url}} = $recent if $recent;
-	$cb->( $item );
-}	
-
-sub recentHandler {
-	my ($client, $cb) = @_;
-	my @menu;
-
-	foreach my $item(reverse values %recentlyPlayed) {
-		my $entry;
-		my $position = $cache->get("podcast-$item->{url}");
-		
-		if ( $position && $position < $item->{duration} - 15 ) {
-
-			$position = Slim::Utils::DateTime::timeFormat($position);
-			$position =~ s/^0+[:\.]//;		
-
-			$entry = {
-				title => $item->{title},
-				image => $item->{cover},
-				type => 'link',
-				items => [ {
-					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
-					enclosure => {
-						type   => 'audio',
-						url   => $item->{url},
-					},	
-					play => sub { playItem($entry->{items}->[0], undef, 1, @_) },
-					#duration => $item->{duration},					
-				},{
-					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
-					url   => $item->{url},
-					type  => 'audio',
-					#duration => $item->{duration},
-				}],
-			};		
-		}	
-		else {
-			$entry = {
-				title => $item->{title},
-				image => $item->{cover},
-				url   => $item->{url},				
-				type  => 'audio',
-			};
-		}	
-		
-		unshift @menu, $entry;
-	}
-
-	$cb->({ items => \@menu });
-}
-
 
 1;

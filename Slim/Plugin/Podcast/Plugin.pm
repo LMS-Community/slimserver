@@ -24,6 +24,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
+tie my %recentlyPlayed, 'Tie::Cache::LRU', 50;
+
 my $prefs = preferences('plugin.podcast');
 my $cache;
 
@@ -67,7 +69,7 @@ sub initPlugin {
 		func   => \&trackInfoMenu,
 	) );
 	
-	%Slim::Plugin::Podcast::Parser::recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
+	%recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
 
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -79,7 +81,7 @@ sub initPlugin {
 }
 
 sub shutdownPlugin {
-	my @played = values %Slim::Plugin::Podcast::Parser::recentlyPlayed;
+	my @played = values %recentlyPlayed;
 	$prefs->set('recent', \@played);
 }
 
@@ -103,7 +105,7 @@ sub handleFeed {
 	
 	push @$items, {
 		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
-		url   => \&Slim::Plugin::Podcast::Parser::recentHandler,
+		url   => \&recentHandler,
 		type  => 'link',
 	};
 	
@@ -111,6 +113,60 @@ sub handleFeed {
 		items => $items,
 	});
 }
+
+sub recentHandler {
+	my ($client, $cb) = @_;
+	my @menu;
+
+	foreach my $item(reverse values %recentlyPlayed) {
+		my $entry;
+		my $position = $cache->get("podcast-$item->{url}");
+
+		if ( $position && $position < $item->{duration} - 15 ) {
+
+			$position = Slim::Utils::DateTime::timeFormat($position);
+			$position =~ s/^0+[:\.]//;		
+
+			$entry = {
+				title => $item->{title},
+				image => $item->{cover},
+				type => 'link',
+				items => [ {
+					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
+					enclosure => {
+						type   => 'audio',
+						url   => $item->{url},
+					},	
+					play => sub { 
+							my ($client, $cb) = @_;
+							$client->pluginData(goto => 1);
+							delete $entry->{items}->[0]->{play};
+							$cb->( $entry->{items}->[0] );
+					},
+					#duration => $item->{duration},					
+				},{
+					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
+					url   => $item->{url},
+					type  => 'audio',
+					#duration => $item->{duration},
+				}],
+			};		
+		}	
+		else {
+			$entry = {
+				title => $item->{title},
+				image => $item->{cover},
+				url   => $item->{url},				
+				type  => 'audio',
+			};
+		}	
+		
+		unshift @menu, $entry;
+	}
+
+	$cb->({ items => \@menu });
+}
+
 
 sub songChangeCallback {
 	my $request = shift;
@@ -131,10 +187,15 @@ sub songChangeCallback {
 			Slim::Player::Source::gototime($client, $cache->get("podcast-$url") || 0);
 		}
 		
-		# just make it top of LRU cache
-		my $refresh = $Slim::Plugin::Podcast::Parser::recentlyPlayed{$url};
-
-		main::DEBUGLOG && $log->debug('Setting up timer to track podcast progress...');	
+		my $song = $client->streamingSong;
+		$recentlyPlayed{$url} ||=  { 
+					url      => $url,
+					title    => $song->track->title,
+					cover    => $song->icon,
+					duration => $song->duration,
+				};		
+		
+		main::DEBUGLOG && $log->debug('Setting up timer to track podcast progress...' . Data::Dump::dump($recentlyPlayed{$url}));	
 		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -152,7 +213,9 @@ sub _trackProgress {
 	my $key = 'podcast-' . $url;
 
 	Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
-	return unless $client->streamingSong && $client->streamingSong->streamUrl eq $url && defined $cache->get($key);
+	return unless (($client->streamingSong && $client->streamingSong->streamUrl eq $url) || 
+				   ($client->playingSong && $client->playingSong->streamUrl eq $url)) && 
+				    defined $cache->get($key);
 
 	# start recording position once we are actually playing
 	if ($client->isPlaying && $client->playingSong && $client->playingSong->streamUrl eq $url) {	
