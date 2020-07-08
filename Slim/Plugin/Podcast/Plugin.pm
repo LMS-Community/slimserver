@@ -140,7 +140,6 @@ sub recentHandler {
 					url => sub { 
 							my ($client, $cb) = @_;
 							$client->pluginData(goto => 1);
-							delete $entry->{items}->[0]->{play};
 							$cb->( $entry->{items}->[0] );
 					},
 					#duration => $item->{duration},					

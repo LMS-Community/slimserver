@@ -88,7 +88,6 @@ sub parse {
 				url => sub { 
 					my ($client, $cb) = @_;
 					$client->pluginData(goto => 1);
-					delete $item->{items}->[0]->{play};
 					$cb->( $item->{items}->[0] );
 				},	
 				#duration => $item->{duration},				
