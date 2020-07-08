@@ -90,7 +90,6 @@ sub parse {
 					$client->pluginData(goto => 1);
 					$cb->( $item->{items}->[0] );
 				},	
-				#duration => $item->{duration},				
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
@@ -99,7 +98,6 @@ sub parse {
 					length => $enclosure->{length},
 					url    => $enclosure->{url},
 				},
-				#duration => $item->{duration},				
 			}];
 
 			$item->{type} = 'link';

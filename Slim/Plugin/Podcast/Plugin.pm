@@ -142,12 +142,10 @@ sub recentHandler {
 							$client->pluginData(goto => 1);
 							$cb->( $entry->{items}->[0] );
 					},
-					#duration => $item->{duration},					
 				},{
 					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 					url   => $item->{url},
 					type  => 'audio',
-					#duration => $item->{duration},
 				}],
 			};		
 		}	
@@ -194,7 +192,7 @@ sub songChangeCallback {
 					duration => $song->duration,
 				};		
 		
-		main::DEBUGLOG && $log->debug('Setting up timer to track podcast progress...' . Data::Dump::dump($recentlyPlayed{$url}));	
+		main::DEBUGLOG && $log->is_debug && $log->debug('Setting up timer to track podcast progress...' . Data::Dump::dump($recentlyPlayed{$url}));	
 		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
 		Slim::Utils::Timers::setTimer(
 			$client,
