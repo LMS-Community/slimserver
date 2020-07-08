@@ -85,7 +85,7 @@ sub parse {
 					length => $enclosure->{length},
 					url    => $enclosure->{url},
 				},
-				play => sub { 
+				url => sub { 
 					my ($client, $cb) = @_;
 					$client->pluginData(goto => 1);
 					delete $item->{items}->[0]->{play};

@@ -137,7 +137,7 @@ sub recentHandler {
 						type   => 'audio',
 						url   => $item->{url},
 					},	
-					play => sub { 
+					url => sub { 
 							my ($client, $cb) = @_;
 							$client->pluginData(goto => 1);
 							delete $entry->{items}->[0]->{play};
