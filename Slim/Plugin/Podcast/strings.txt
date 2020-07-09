@@ -242,3 +242,8 @@ PLUGIN_PODCAST_SKIP_BACK
 	NL	Spring %s seconden terug
 	NO	Hopp %s sekunder tilbake
 	PL	Przewiń do tyłu o %s sekund
+	
+PLUGIN_PODCAST_RECENTLY_PLAYED
+	EN	Recently played
+	FR	Piste récentes
+	
