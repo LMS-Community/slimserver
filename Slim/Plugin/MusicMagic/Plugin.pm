@@ -876,7 +876,7 @@ sub getMix {
 
 	my $mixArgs = join('&', map {
 		my $id = !main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ? Slim::Utils::Unicode::utf8decode_locale($_) : $_;
-		$validMixTypes{$for} . '=' . Plugins::MIPMixer::Common::escape($id);
+		$validMixTypes{$for} . '=' . Plugins::MusicMagic::Common::escape($id);
 	} @ids);
 
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
