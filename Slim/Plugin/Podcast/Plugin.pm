@@ -185,10 +185,11 @@ sub songChangeCallback {
 		}
 		
 		my $song = $client->streamingSong;
-		$recentlyPlayed{$url} ||=  { 
-					url      => $url,
-					title    => $song->track->title,
-					cover    => $song->icon,
+		
+		$recentlyPlayed{$url} = { 
+					url      => $recentlyPlayed{$url}->{url} || $url,
+					title    => $recentlyPlayed{$url}->{title} || $song->track->title,
+					cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
 					duration => $song->duration,
 				};		
 		
