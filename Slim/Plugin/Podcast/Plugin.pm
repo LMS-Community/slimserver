@@ -176,7 +176,7 @@ sub songChangeCallback {
 	}
 
 	return unless $client->streamingSong;
-	my $url = $client->streamingSong->streamUrl;
+	my $url = $client->streamingSong->originUrl;
 
 	if ( defined $cache->get("podcast-$url") && $request->isCommand([['playlist'], ['newsong']]) ) {
 		if ( $client->pluginData('goto') ) {
@@ -186,9 +186,9 @@ sub songChangeCallback {
 		
 		my $song = $client->streamingSong;
 		
-		$recentlyPlayed{$url} = { 
-					url      => $recentlyPlayed{$url}->{url} || $url,
-					title    => $recentlyPlayed{$url}->{title} || $song->track->title,
+		$recentlyPlayed{$url} ||= { 
+					url      => $url,
+					title    => $song->track->title,
 					cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
 					duration => $song->duration,
 				};		
@@ -211,12 +211,12 @@ sub _trackProgress {
 	my $key = 'podcast-' . $url;
 
 	Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
-	return unless (($client->streamingSong && $client->streamingSong->streamUrl eq $url) || 
-				   ($client->playingSong && $client->playingSong->streamUrl eq $url)) && 
+	return unless (($client->streamingSong && $client->streamingSong->originUrl eq $url) || 
+				   ($client->playingSong && $client->playingSong->originUrl eq $url)) && 
 				    defined $cache->get($key);
 
 	# start recording position once we are actually playing
-	if ($client->isPlaying && $client->playingSong && $client->playingSong->streamUrl eq $url) {	
+	if ($client->isPlaying && $client->playingSong && $client->playingSong->originUrl eq $url) {	
 		$cache->set($key, Slim::Player::Source::songTime($client), '30days');
 		
 		# track objects aren't persistent across server restarts - keep our own list of podcast durations in the cache
