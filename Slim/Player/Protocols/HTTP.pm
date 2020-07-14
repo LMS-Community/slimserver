@@ -591,7 +591,7 @@ sub parseDirectHeaders {
 		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
 			$rangeLength = $3;
 			$startOffset = $1;
-			${*$self}{'range'} = $1 . '-' . $2;
+			${*$self}{'range'} = $1 . '-' . $2 if blessed $self;
 		}
 
 		# mp3tunes metadata, this is a bit of hack but creating
