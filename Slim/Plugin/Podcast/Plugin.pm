@@ -185,13 +185,13 @@ sub songChangeCallback {
 		}
 		
 		my $song = $client->streamingSong;
-		
 		$recentlyPlayed{$url} ||= { 
-					url      => $url,
-					title    => $song->track->title,
-					cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
-					duration => $song->duration,
-				};		
+				url      => $url,
+				title    => $song->track->title,
+				cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
+				duration => $song->duration,
+		};		
+		Slim::Music::Info::setCurrentTitle($song->track->url, $recentlyPlayed{$url}->{title});				
 		
 		main::DEBUGLOG && $log->is_debug && $log->debug('Setting up timer to track podcast progress...' . Data::Dump::dump($recentlyPlayed{$url}));	
 		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
