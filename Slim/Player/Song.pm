@@ -132,7 +132,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl       => $url,	# Keep track of the non-redirected urm
+		originUrl       => $url,	# Keep track of the non-redirected url
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
