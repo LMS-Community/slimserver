@@ -5472,9 +5472,9 @@ sub _getTagDataForTracks {
 		$c->{'genres.id'} = 1;
 	};
 
-	$tags =~ /a/ && do {
+	$tags =~ /[as]/ && do {
 		$join_contributors->();
-		$c->{'contributors.name'} = 1;
+		$c->{'contributors.name'} = 1 if $tags =~ /a/;
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
