@@ -130,7 +130,7 @@ sub alarmPlaylistsQuery {
 							title   => $choice->{title},
 							cmd	=> [ 'playlist', 'preview' ],
 							params  => {
-								url	=>	$choice->{url}, 
+								url	=>	$choice->{url},
 								title	=>	$choice->{title},
 							},
 						},
@@ -576,10 +576,10 @@ sub albumsQuery {
 			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
 		}
 
-		$request->addResult('indexList', [ 
-			map { 
-				utf8::decode($_->[0]); 
-				$_; 
+		$request->addResult('indexList', [
+			map {
+				utf8::decode($_->[0]);
+				$_;
 			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
 		]);
 
@@ -702,7 +702,7 @@ sub albumsQuery {
 				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
 				FROM contributor_album
 				JOIN contributors ON contributors.id = contributor_album.contributor
-				WHERE contributor_album.album = ? AND contributor_album.role IN (%s) 
+				WHERE contributor_album.album = ? AND contributor_album.role IN (%s)
 				GROUP BY contributor_album.role
 				ORDER BY contributor_album.role DESC
 			}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
@@ -713,7 +713,7 @@ sub albumsQuery {
 		while ( $sth->fetch ) {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
-			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -1086,7 +1086,7 @@ sub artistsQuery {
 	my $loopname = 'artists_loop';
 	my $chunkCount = 0;
 
-	if ($valid && $tags ne 'CC') {			
+	if ($valid && $tags ne 'CC') {
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT ?,? ";
@@ -1412,7 +1412,7 @@ sub displaystatusQuery {
 
 	} elsif ($subs =~ /showbriefly|update|bits|all/) {
 		# new subscription request - add subscription, assume cli or jive format for the moment
-		$request->privateData({ 'format' => $request->source eq 'CLI' ? 'cli' : 'jive' }); 
+		$request->privateData({ 'format' => $request->source eq 'CLI' ? 'cli' : 'jive' });
 
 		my $client = $request->client;
 
@@ -1605,10 +1605,10 @@ sub genresQuery {
 	if ($tags =~ /Z/) {
 		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
 			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
-		$request->addResult('indexList', [ 
-			map { 
-				utf8::decode($_->[0]); 
-				$_; 
+		$request->addResult('indexList', [
+			map {
+				utf8::decode($_->[0]);
+				$_;
 			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
 		]);
 		if ($tags =~ /ZZ/) {
@@ -5445,9 +5445,9 @@ sub _getTagDataForTracks {
 		$c->{'genres.id'} = 1;
 	};
 
-	$tags =~ /a/ && do {
+	$tags =~ /[as]/ && do {
 		$join_contributors->();
-		$c->{'contributors.name'} = 1;
+		$c->{'contributors.name'} = 1 if $tags =~ /a/;
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
