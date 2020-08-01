@@ -2449,7 +2449,16 @@ sub playlistsRenameCommand {
 		$playlistObj->set_column('title', $newName);
 		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCase($newName, 1));
+		$playlistObj->set_column('updated_time', time());
 		$playlistObj->update;
+
+		# tell clients to pick up the new name
+		foreach my $client ( Slim::Player::Client::clients() ) {
+			if ($client->currentPlaylist && $client->currentPlaylist->id == $playlistObj->id) {
+				$client->currentPlaylist($playlistObj);
+				$client->currentPlaylistUpdateTime(Time::HiRes::time());
+			}
+		}
 
 		if (!defined Slim::Formats::Playlists::M3U->write(
 			[ $playlistObj->tracks ],
