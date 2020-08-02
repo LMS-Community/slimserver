@@ -1196,9 +1196,7 @@ sub playlistSaveCommand {
 
 	$request->addResult('__playlist_id', $playlistObj->id);
 
-	if ($client && $playlistObj->title ne Slim::Utils::Strings::string('UNTITLED')
-		&& (!$client->currentPlaylist || $playlistObj->id == $client->currentPlaylist->id)
-	) {
+	if ($client && $playlistObj->title ne Slim::Utils::Strings::string('UNTITLED')) {
 		$client->currentPlaylist($playlistObj);
 		$client->currentPlaylistUpdateTime(Time::HiRes::time());
 		$client->currentPlaylistModified(0);
@@ -2298,6 +2296,14 @@ sub playlistsDeleteCommand {
 				],
 			},
 		});
+	}
+
+	foreach my $client ( Slim::Player::Client::clients() ) {
+		if ($client->currentPlaylist && $client->currentPlaylist->id == $playlistObj->id) {
+			# must send defined, but falsy value
+			$client->currentPlaylist(0);
+			$client->currentPlaylistUpdateTime(Time::HiRes::time());
+		}
 	}
 
 	_wipePlaylist($playlistObj);
