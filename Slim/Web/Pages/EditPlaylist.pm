@@ -2,7 +2,7 @@ package Slim::Web::Pages::EditPlaylist;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -96,30 +96,30 @@ sub saveCurrentPlaylist {
 			$params->{'warning'} = 'FILENAME_WARNING';
 
 		} else {
-			
+
 			# Changed by Fred to fix the issue of getting the playlist object
 			# by setting $p1 to it, which was messing up callback and the CLI.
-	
+
 			my $request = Slim::Control::Request::executeRequest($client, ['playlist', 'save', $title]);
-	
+
 			if (defined $request) {
-			
+
 				$params->{'playlist.id'} = $request->getResult('__playlist_id');
-				
+
 				if ($request->getResult('writeError')) {
-					
+
 					$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
-				
+
 				}
 			}
-	
+
 		}
 
 		# Don't add this back to the breadcrumbs
 		delete $params->{'saveCurrentPlaylist'};
-	
+
 		return browsePlaylist(@_);
-		
+
 	} else {
 
 		return browsePlaylists(@_);
@@ -132,39 +132,39 @@ sub renamePlaylist {
 
 	my $newName = $params->{'newname'};
 	if ($newName ne Slim::Utils::Misc::cleanupFilename($newName)) {
-			
+
 		$params->{'warning'} = 'FILENAME_WARNING';
 
 	} else {
-			
+
 		my $playlist_id = $params->{'playlist_id'};
 		my $dry_run     = !$params->{'overwrite'};
-	
-		my $request = Slim::Control::Request::executeRequest(undef, [
-						'playlists', 
-						'rename', 
+
+		my $request = Slim::Control::Request::executeRequest($client, [
+						'playlists',
+						'rename',
 						'playlist_id:' . $playlist_id,
 						'newname:' . $newName,
 						'dry_run:' . $dry_run]);
-	
+
 		if (blessed($request) && $request->getResult('overwritten_playlist_id') && !$params->{'overwrite'}) {
-	
+
 			$params->{'warning'} = 'RENAME_WARNING';
-	
+
 		}
-		
+
 		else {
-	
-			my $request = Slim::Control::Request::executeRequest(undef, [
-							'playlists', 
-							'rename', 
+
+			my $request = Slim::Control::Request::executeRequest($client, [
+							'playlists',
+							'rename',
 							'playlist_id:' . $playlist_id,
 							'newname:' . $newName]);
-							
+
 			if ($request && $request->getResult('writeError')) {
-				
+
 				$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
-			
+
 			}
 
 		}
@@ -175,7 +175,7 @@ sub renamePlaylist {
 
 sub deletePlaylist {
 	my ($client, $params) = @_;
-	
+
 	my $playlist_id = $params->{'playlist_id'};
 	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
 
@@ -191,9 +191,9 @@ sub deletePlaylist {
 			['playlists', 'delete', 'playlist_id:' . $playlist_id]);
 
 		if ($request && $request->getResult('writeError')) {
-			
+
 			$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
-			
+
 		} else {
 			# don't show the playlist name field any more
 			delete $params->{'playlist_id'};
@@ -213,7 +213,7 @@ sub browsePlaylists {
 	my $allArgs = \@_;
 
 	my @verbs = ('browselibrary', 'items', 'feedMode:1', 'mode:playlists');
-	
+
 	my $callback = sub {
 		my ($client, $feed) = @_;
 		Slim::Web::XMLBrowser->handleWebIndex( {
@@ -228,7 +228,7 @@ sub browsePlaylists {
 
 	# execute CLI command
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, ['browselibrary', 'items', 'feedMode:1', 'mode:playlists'] );
-		
+
 	# wrap async requests
 	if ( $proxiedRequest->isStatusProcessing ) {			
 		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
@@ -242,13 +242,13 @@ sub browsePlaylist {
 	my $allArgs = \@_;
 
 	my $playlist_id = $params->{'playlist.id'};
-	
+
 	my $title;
 	my $obj = Slim::Schema->find('Playlist', $playlist_id);
 	$title = string('PLAYLIST') . ' (' . $obj->name . ')' if $obj;
-	
+
 	my @verbs = ('browselibrary', 'items', 'feedMode:1', 'mode:playlistTracks', 'playlist_id:' . $playlist_id);
-	
+
 	my $callback = sub {
 		my ($client, $feed) = @_;
 		Slim::Web::XMLBrowser->handleWebIndex( {
@@ -265,7 +265,7 @@ sub browsePlaylist {
 
 	# execute CLI command
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
-		
+
 	# wrap async requests
 	if ( $proxiedRequest->isStatusProcessing ) {			
 		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );

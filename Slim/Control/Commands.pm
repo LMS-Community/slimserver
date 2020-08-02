@@ -1158,7 +1158,6 @@ sub playlistSaveCommand {
 
 	$title = Slim::Utils::Misc::cleanupFilename($title);
 
-
 	my $playlistObj = Slim::Schema->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
@@ -1196,6 +1195,14 @@ sub playlistSaveCommand {
 	}
 
 	$request->addResult('__playlist_id', $playlistObj->id);
+
+	if ($client && $playlistObj->title ne Slim::Utils::Strings::string('UNTITLED')
+		&& (!$client->currentPlaylist || $playlistObj->id == $client->currentPlaylist->id)
+	) {
+		$client->currentPlaylist($playlistObj);
+		$client->currentPlaylistUpdateTime(Time::HiRes::time());
+		$client->currentPlaylistModified(0);
+	}
 
 	if ( ! $silent ) {
 		$client->showBriefly({
@@ -2457,6 +2464,19 @@ sub playlistsRenameCommand {
 			if ($client->currentPlaylist && $client->currentPlaylist->id == $playlistObj->id) {
 				$client->currentPlaylist($playlistObj);
 				$client->currentPlaylistUpdateTime(Time::HiRes::time());
+			}
+		}
+
+		# check whether we're saving the current player's track queue as a playlist
+		my $client = $request->client;
+		if ($client && !$client->currentPlaylist) {
+			my $playlistTrackIds = join(':', map { $_->id } $playlistObj->tracks);
+			my $playerTrackIds = join(':', map { $_->id} @{$client->playlist});
+
+			if ($playlistTrackIds eq $playerTrackIds) {
+				$client->currentPlaylist($playlistObj);
+				$client->currentPlaylistUpdateTime(Time::HiRes::time());
+				$client->currentPlaylistModified(0);
 			}
 		}
 
