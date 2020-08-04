@@ -11,7 +11,7 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
 	DE	Online Sammlung integrieren aber nicht auf Änderungen überprüfen
 	EN	Integrate online library but do not automatically check for changes
-	NL	Integreer online collectie, maar controleer niet automatisch op wijzigingen 
+	NL	Integreer online collectie, maar controleer niet automatisch op wijzigingen
 
 PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
 	DE	Online Sammlung integrieren und automatisch auf Änderungen überprüfen
@@ -41,7 +41,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
 	EN	Local tracks only (no music service)
-	NL	Alleen lokale nummers (geen muziek streaming diensten)  
+	NL	Alleen lokale nummers (geen muziek streaming diensten)
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 	DE	Musikdienst-Logo
@@ -66,9 +66,16 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 	DE	Nicht alle Musikdienste unterstützen Stilrichtungen. Diese Einstellung erlaubt es ihnen, Titel auf Grund ihres Namens oder des Interpreten einer Stilrichtung zuzuordnen. Das funktioniert offensichtlich nicht gut mit grossen Sammlungen. Aber die Funktion erlaubt es, gewisse Titel einer Stilrichtung zuzuordnen, um diese dann z.B. in einer Sammlungs-Ansicht zu berücksichtigen.
 	EN	Unfortunatelly not all streaming services support genres. This setting allows you to map tracks to genres based on their title or artist name. This obviously doesn't scale for real collections. But it eg. allows you to tag certain tracks with a specific genre to be applied in a library view.
-	NL	Niet alle online muziek streaming diensten ondersteunen genres. Met deze instelling kan je nummers toewijzen aan genres op basis van hun titel of artiesten. Dit werkt uiteraard niet voor erg grote collecties. Maar het stelt je in staat bepaalde nummers te taggen met een specifiek genre om toe te passen in een bibliotheekweergave.	
-	
-	
+	NL	Niet alle online muziek streaming diensten ondersteunen genres. Met deze instelling kan je nummers toewijzen aan genres op basis van hun titel of artiesten. Dit werkt uiteraard niet voor erg grote collecties. Maar het stelt je in staat bepaalde nummers te taggen met een specifiek genre om toe te passen in een bibliotheekweergave.
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
+	DE	Erweiterte Ersetzung
+	EN	Advanced genre replacement
+
+PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
+	DE	Zurück zu den Grundeinstellungen
+	EN	Back to the basic settings
+
 PLUGIN_ONLINE_LIBRARY_TAG
 	DE	Feld:
 	EN	Tag:
