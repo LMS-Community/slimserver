@@ -296,6 +296,7 @@ my %localTagMapping = (
 	comment                => '_comment',
 	offset                 => 'audio_offset',
 	size                   => 'audio_size',
+	blockalign             => 'block_alignment',
 	composer               => undef,
 	conductor              => undef,
 	band                   => undef,
