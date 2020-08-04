@@ -415,7 +415,7 @@ sub getConvertCommand2 {
 		# aif/wav oddity #1 (for remote seek)
 		# when seeking a remote track, can't re-send the header, it's lost
 		if ($type =~ /(wav|aif)/ && !($streamformat eq 'pcm' && $command eq '-' )
-			&& $track->remote && !Slim::Music::Info::isVolatileURL($url) && $song->seekdata)
+			&& $track->remote && $song->seekdata)
 		{
 			main::DEBUGLOG && $log->is_debug
 				&& $log->debug("Rejecting $command because header is unavailable when seeking");
