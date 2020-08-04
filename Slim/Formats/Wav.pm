@@ -90,6 +90,9 @@ sub doTagMapping {
 
 *getCoverArt = \&Slim::Formats::MP3::getCoverArt;
 
-sub canSeek { 1 }
+sub canSeek { 
+	my ($class, $url) = @_;
+	return !Slim::Music::Info::isVolatileURL($url);
+ }
 
 1;
