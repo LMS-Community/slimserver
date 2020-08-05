@@ -52,6 +52,60 @@ sub new {
 	return $self;
 }
 
+sub request {
+	my $self = shift;
+	my $args  = shift;
+	my $song = $args->{'song'};
+	my $track = $song->track;
+
+	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
+	if (!defined $track->initial_block_type || $song->stripHeader) {
+		$song->initialAudioBlock('');
+		return $self->SUPER::request($args);
+	}
+
+	# obtain initial audio block if missing and adjust seekdata then
+	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($track->original_content_type)) {
+		my $formatClass = Slim::Formats->classForFormat($track->original_content_type);
+		my $seekdata = $song->seekdata || {};
+		
+		if ($formatClass->can('findFrameBoundaries')) {
+			my $offset = $formatClass->findFrameBoundaries($track->initial_block_fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
+			$seekdata->{sourceStreamOffset} = $offset if $offset;
+		}
+		
+		if ($formatClass->can('getInitialAudioBlock')) {
+			$song->initialAudioBlock($formatClass->getInitialAudioBlock($track->initial_block_fh, $track, $seekdata->{timeOffset} || 0));
+		}	
+		
+		main::DEBUGLOG && $log->debug("building new header");	
+	} 
+	else {
+		$song->initialAudioBlock('');
+	}	
+
+	# all set for opening the HTTP object
+	$self = $self->SUPER::request($args);
+	return unless $self;
+
+	# setup audio pre-process if required
+	my $blockRef = \($song->initialAudioBlock);
+	(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $track->audio_initiate->($blockRef) if $track->audio_initiate;
+	
+	# set initial block to be sent 
+	${*$self}{'initialAudioBlockRef'} = $blockRef;
+	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
+
+	# dynamic headers need to be re-calculated every time 
+	$song->initialAudioBlock(undef) if $track->initial_block_type;
+		
+	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
+								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
+								  " and processing with ", sprintf("%s", $track->audio_initiate) || 'none'); 
+
+	return $self;
+}
+
 sub isRemote { 1 }
 
 sub readMetaData {
@@ -63,16 +117,17 @@ sub readMetaData {
 
 	while ($byteRead == 0) {
 
-		$byteRead = $self->SUPER::sysread($metadataSize, 1);
+		$byteRead = $self->_sysread($metadataSize, 1);
 
 		if ($!) {
 
-			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+			if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
 
 			 	#$log->warn("Warning: Metadata byte not read! $!");
 			 	return;
 
-			 } else {
+			 } 
+			 else {
 
 				#$log->debug("Metadata byte not read, trying again: $!");
 			 }
@@ -91,15 +146,16 @@ sub readMetaData {
 
 		do {
 			$metadatapart = '';
-			$byteRead = $self->SUPER::sysread($metadatapart, $metadataSize);
+			$byteRead = $self->_sysread($metadatapart, $metadataSize);
 
 			if ($!) {
-				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+				if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
 
 					#$log->info("Metadata bytes not read! $!");
 					return;
 
-				} else {
+				} 
+				else {
 
 					#$log->info("Metadata bytes not read, trying again: $!");
 				}
@@ -286,9 +342,59 @@ sub canDirectStream {
 	return $url;
 }
 
+# TODO: what happens if this method is overloaded in a sub-class that does not call its parents method
+sub canDirectStreamSong {
+	my ( $class, $client, $song ) = @_;
+	
+	# can't go direct if we are synced or proxy is set by user
+	my $direct = $class->canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
+	return 0 unless $direct;
+	
+	# no header or stripHeader flag has precedence
+	return $direct if $song->stripHeader || !defined $song->track->initial_block_type;
+	
+	# with dynamic header 2, always go direct otherwise only when not seeking
+	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata || $song->track->audio_initiate) {
+		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
+		return 0;
+	}	
+			
+	return $direct;
+}
+
+# we need that call structure to make sure that SUPER calls the 
+# object's parent, not the package's parent
+# see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
+sub _sysread {
+	return CORE::sysread($_[0], $_[1], $_[2], $_[3]); 
+}
+
 sub sysread {
 	my $self = $_[0];
 	my $chunkSize = $_[2];
+	
+	# stitch header if any
+	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
+		
+		my $chunkLength = $length;
+		my $chunkref;
+		
+		main::DEBUGLOG && $log->debug("getting initial audio block of size $length");
+		
+		if ($length > $chunkSize || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
+			$chunkLength = $length > $chunkSize ? $chunkSize : $length;
+			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
+			$chunkref = \$chunk;
+			${*$self}{'initialAudioBlockRemaining'} = ($length - $chunkLength);
+		} 
+		else {
+			${*$self}{'initialAudioBlockRemaining'} = 0;
+			$chunkref = ${*$self}{'initialAudioBlockRef'};
+		}
+	
+		$_[1] = $$chunkref;
+		return $chunkLength;
+	}
 
 	my $metaInterval = ${*$self}{'metaInterval'};
 	my $metaPointer  = ${*$self}{'metaPointer'};
@@ -301,8 +407,19 @@ sub sysread {
 		#$log->debug("Reduced chunksize to $chunkSize for metadata");
 	}
 
-	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
-
+	my $readLength;
+	
+	# do not read if we are building-up too much processed audio
+	if (${*$self}{'audio_buildup'} > $chunkSize) {
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
+	} 
+	else {	
+		$readLength = $self->_sysread($_[1], $chunkSize, length($_[1] || ''));
+		$readLength = $self->_parseStreamHeader($_[1], $readLength, $chunkSize);
+		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'}; 
+	}	
+	
+	# use $readLength from socket for meta interval adjustement
 	if ($metaInterval && $readLength) {
 
 		$metaPointer += $readLength;
@@ -315,13 +432,110 @@ sub sysread {
 
 			${*$self}{'metaPointer'} = 0;
 
-		} elsif ($metaPointer > $metaInterval) {
+		} 
+		elsif ($metaPointer > $metaInterval) {
 
 			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
 		}
 	}
+	
+	# when not-empty, chose return buffer length over sysread() 
+	$readLength = length $_[1] if length $_[1];
 
 	return $readLength;
+}
+
+sub _parseStreamHeader {
+	my ($self, undef, $readLength, $chunkSize) = @_;
+	my $args = ${*$self}{'parser_args'};	
+
+	return $readLength unless $args && $readLength;
+	
+	# stitch with trailing bytes
+	$_[1] .= $args->{'pending'};
+	my $pending = length $args->{'pending'};
+	$args->{'pending'} = '';
+	
+	# skip header bytes if any remaining (might come from pending bytes)
+	if ($args->{'bytes'} < 0) {
+		$args->{'bytes'} += length $_[1];
+		$_[1] = substr($_[1], -$args->{'bytes'});
+
+		# we have consumed all bytes in skipping	
+		return undef unless $_[1];
+		
+		# remove ourselves when header has been consumed
+		if ($_[1] <= $chunkSize) {
+			delete ${*$self}{'parser_args'};
+			return undef;
+		}	
+	}
+	
+	# due to trailing bytes, we might be over chunksize
+	if ($pending) {
+		$args->{'pending'} = substr($_[1], $chunkSize);
+		$_[1] = substr($args->{'pending'}, 0, $chunkSize);
+		
+		# remove ourselves when we have reached end of header
+		delete ${*$self}{'parser_args'} unless $args->{'pending'};
+		return undef;
+	}
+		
+	$args->{'bytes'} += $readLength;
+	my $info = ${*$self}{'parser'}->(__PACKAGE__, \$_[1], $args, $args->{'formats'});
+					
+	if (ref $info eq 'HASH') {
+		# read header in memory from file handle
+		$info->{'fh'}->seek(0, 0);
+		$info->{'fh'}->read(my $block, -s $info->{'fh'});
+						
+		# set processing optional hook
+		if ( $info->{'audio_initiate'} ) {
+			(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $info->{'audio_initiate'}->(\$block); 
+		}	
+		
+		# send the header, modified or not by 'initiate'
+		${*$self}{'initialAudioBlockRef'} = \$block;
+		${*$self}{'initialAudioBlockRemaining'} = length $block;
+			
+		$args->{'bytes'} -= $info->{'audio_offset'};
+		$_[1] = $args->{'bytes'} ? substr($_[1], -$args->{'bytes'}) : '';	
+
+		# see you next time if we have a header to send
+		if ($block) {
+			$args->{'pending'} = $_[1];
+			$_[1] = undef;
+		}
+
+		main::DEBUGLOG && $log->debug("found header and a processor $info->{'audio_initiate'}\@${*$self}{'audio_process'} ", 
+                                      "at $info->{'audio_offset'} for $args->{'formats'} and header ${*$self}{'initialAudioBlockRemaining'}");			
+		
+		delete ${*$self}{'parser_args'} if length $_[1];
+	} 
+	elsif ($info >= 0) {
+		# a jump is requested, this cannot be parsed on-the-fly
+		$log->error("failed to get a header $info for $args->{'format'}");
+		delete ${*$self}{'parser_args'};
+	} 
+	else {
+		main::DEBUGLOG && $log->debug("need to parse more than $args->{'bytes'} for $args->{'format'}");			
+		$_[1] = undef;
+		$readLength = undef;				
+	}
+
+	return $readLength;
+}
+
+sub setLiveHeader {
+	my ($self, $type, $formats) = @_;
+	my $formatClass;
+
+	return 0 unless Slim::Formats->loadTagFormatForType($type) && 
+                    ($formatClass = Slim::Formats->classForFormat($type)) &&
+                    $formatClass->can('parseStream');
+					
+	${*$self}{'parser'} = $formatClass->can('parseStream');
+	${*$self}{'parser_args'} = { formats => $formats };
 }
 
 sub parseDirectHeaders {
@@ -333,7 +547,6 @@ sub parseDirectHeaders {
 	# May get a track object
 	if ( blessed($url) ) {
 		($oggType) = $url->content_type =~ /(ogf|ogg|ops)/;
-
 		$url = $url->url;
 	}
 
@@ -378,6 +591,7 @@ sub parseDirectHeaders {
 		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
 			$rangeLength = $3;
 			$startOffset = $1;
+			${*$self}{'range'} = $1 . '-' . $2 if blessed $self;
 		}
 
 		# mp3tunes metadata, this is a bit of hack but creating
@@ -494,7 +708,8 @@ sub parseHeaders {
 
 		${*$self}{'bitrate'} = $bitrate;
 		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate );
-	} elsif ( !$self->bitrate ) {
+	} 
+	elsif ( !$self->bitrate ) {
 		# Bitrate may have been set in Scanner by reading the mp3 stream
 		$bitrate = ${*$self}{'bitrate'} = Slim::Music::Info::getBitrate( $url );
 	}
@@ -588,20 +803,25 @@ sub requestString {
 		$request .= $CRLF . "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'');
 	}
 
-	$client->songBytes(0) if $client;
-
 	# If seeking, add Range header
-	if ($client && $seekdata) {
-		$request .= $CRLF . 'Range: bytes=' . int( ($seekdata->{sourceStreamOffset} || 0) + ($seekdata->{restartOffset} || 0) + ($seekdata->{sourceHeaderOffset} || 0)) . '-';
-		$request .= $seekdata->{sourceStreamLength} + $seekdata->{sourceHeaderOffset} - 1 if $seekdata->{sourceStreamLength};
+	if ($client) {
+		my $song = $client->streamingSong;
+		$client->songBytes(0);
+		
+		my $first = $seekdata->{restartOffset} || int( $seekdata->{sourceStreamOffset} );
+		$first ||= $song->track->audio_offset if $song->stripHeader || defined $song->initialAudioBlock;
+		
+		if ($first) {
+			$request .= $CRLF . 'Range: bytes=' . ($first || 0) . '-' . ($song->track->audio_size || '');
 
-		if (defined $seekdata->{timeOffset}) {
-			# Fix progress bar
-			$client->playingSong()->startOffset($seekdata->{timeOffset});
-			$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
+			if (defined $seekdata->{timeOffset}) {
+				# Fix progress bar
+				$client->playingSong()->startOffset($seekdata->{timeOffset});
+				$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
+			}
+
+			$client->songBytes( $first - ($song->stripHeader ? $song->track->audio_offset : 0) );
 		}
-
-		$client->songBytes(int( $seekdata->{sourceStreamOffset} ));
 	}
 
 	# Send additional information if we're POSTing
@@ -611,7 +831,8 @@ sub requestString {
 		$request .= $CRLF . sprintf("Content-Length: %d", length($post));
 		$request .= $CRLF . $CRLF . $post . $CRLF;
 
-	} else {
+	} 
+	else {
 		$request .= $CRLF . $CRLF;
 	}
 
@@ -837,10 +1058,10 @@ sub getSeekData {
 	
 	my $offset = int (( ( $bitrate * 1000 ) / 8 ) * $newtime);
 	$offset -= $offset % ($song->track->block_alignment || 1);
-	$offset += $song->seekdata->{'streamHeaderOffset'} || 0;
-
+	
+	# this might be re-calculated by request() if direct streaming is disabled
 	return {
-		sourceStreamOffset   => $offset,
+		sourceStreamOffset   => $offset + $song->track->audio_offset,
 		timeOffset           => $newtime,
 	};
 }
@@ -849,8 +1070,11 @@ sub getSeekDataByPosition {
 	my ($class, $client, $song, $bytesReceived) = @_;
 
 	my $seekdata = $song->seekdata() || {};
-
-	return {%$seekdata, restartOffset => $bytesReceived};
+		
+	my $position = int($seekdata->{'sourceStreamOffset'}) || 0;
+	$position ||= $song->track->audio_offset if defined $song->initialAudioBlock;
+		
+	return {%$seekdata, restartOffset => $position + $bytesReceived - $song->initialAudioBlock};
 }
 
 1;

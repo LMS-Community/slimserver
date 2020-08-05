@@ -711,7 +711,6 @@ sub stream_s {
 		# (2) All other AAC streams will be adts.
 		
 		$pcmsamplesize   = Slim::Music::Info::contentType($track) =~ /^(?:mp4|sls)$/ ? '5' : '2';
-		
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';

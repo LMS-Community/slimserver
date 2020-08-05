@@ -273,17 +273,21 @@ sub _gotTrack {
 
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
-
-	$params->{successCb}->();
-
-	# trigger playback statistics update
-	if ( $info->{duration} > 2) {
-		# we're asked to report back if a track has been played halfway through
-		my $params = {
-			duration => $info->{duration} / 2,
-			url      => $params->{url},
-		};
-	}
+	if ($format eq 'mp4' || $format eq 'aac') {
+		my $http = Slim::Networking::Async::HTTP->new;
+		$http->send_request( {
+			request     => HTTP::Request->new( GET => $info->{url} ),
+			onStream  	=> \&Slim::Utils::Scanner::Remote::parseMp4Header,
+			onError     => sub {
+					my ($self, $error) = @_;
+						$log->warn( "could not find MP4 header $error" );
+						$params->{successCb}->();
+					},
+			passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],			
+		} );
+	} else {
+		$params->{successCb}->();
+	}	
 }
 
 sub _gotTrackError {
@@ -294,14 +298,6 @@ sub _gotTrackError {
 	return if $params->{song}->pluginData('abandonSong');
 
 	_handleClientError( $error, $client, $params );
-}
-
-sub canDirectStreamSong {
-	my ( $class, $client, $song ) = @_;
-
-	# We need to check with the base class (HTTP) to see if we
-	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL($song->track->url()) );
 }
 
 # parseHeaders is used for proxied streaming

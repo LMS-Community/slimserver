@@ -65,44 +65,37 @@ sub canDirectStream {
 	return 0;
 }
 
-# as we are inheriting from IO::Socket::SSL first, we have to re-implement Slim::Player::Protocols::HTTP->sysread here
+# Check whether the current player can stream HTTPS or not 
+sub canDirectStreamSong {
+	my $self = shift;
+	my ($client) = @_;
+	
+	if ( $client->canHTTPS ) {
+		return $self->SUPER::canDirectStreamSong(@_);
+	}
+
+	return 0;
+}
+
+# we need that call structure to make sure that SUPER calls the 
+# object's parent, not the package's parent
+# see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
+sub _sysread {
+	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
+	
+	if (main::ISWINDOWS && !$readLength) {
+		$! = EINTR;
+	}
+
+	return $readLength;
+}
+
+# we need to subclass sysread as HTTPS first inherits from IO::Socket::SSL  
 sub sysread {
-	my $self = $_[0];
-	my $chunkSize = $_[2];
-
-	my $metaInterval = ${*$self}{'metaInterval'};
-	my $metaPointer  = ${*$self}{'metaPointer'};
-
-	if ($chunkSize && $metaInterval && ($metaPointer + $chunkSize) > $metaInterval && ($metaInterval - $metaPointer) > 0) {
-
-		$chunkSize = $metaInterval - $metaPointer;
-
-		# This is very verbose...
-		#$log->debug("Reduced chunksize to $chunkSize for metadata");
-	}
-
-	my $readLength = $self->SUPER::sysread($_[1], $chunkSize);
-
-	if ($metaInterval && $readLength) {
-
-		$metaPointer += $readLength;
-		${*$self}{'metaPointer'} = $metaPointer;
-
-		# handle instream metadata for shoutcast/icecast
-		if ($metaPointer == $metaInterval) {
-
-			$self->readMetaData();
-
-			${*$self}{'metaPointer'} = 0;
-
-		} elsif ($metaPointer > $metaInterval) {
-
-			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
-		}	
-	}
+	my $readLength = Slim::Player::Protocols::HTTP::sysread(@_);
 
 	if (main::ISWINDOWS && !$readLength) {
-		$! = EWOULDBLOCK;
+		$! = EINTR;
 	}
 
 	return $readLength;
