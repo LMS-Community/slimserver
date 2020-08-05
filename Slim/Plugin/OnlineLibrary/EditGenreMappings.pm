@@ -31,16 +31,17 @@ sub handler {
 	my ($class, $client, $params) = @_;
 
 	if ($params->{saveSettings}) {
-		# Slim::Music::Import->doQueueScanTasks(1);
-
 		# mapping based on album/artist names
 		while (my ($prefName, $prefData) = each %{$params}) {
 			if ($prefName =~ /mapping_([a-f0-9]+)/) {
-				$genreMappings->set($1, $prefData);
+				if ($prefData) {
+					$genreMappings->set($1, $prefData);
+				}
+				else {
+					$genreMappings->remove($1);
+				}
 			}
 		}
-
-		# Slim::Music::Import->doQueueScanTasks(0);
 	}
 
 	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
