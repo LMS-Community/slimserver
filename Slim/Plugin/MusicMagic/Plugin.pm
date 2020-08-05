@@ -331,10 +331,16 @@ sub postinitPlugin {
 
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
-				foreach (@$seedTracks) {
-					my ($trackObj) = Slim::Schema->find('Track', $seedTracks->[0]->{id});
+				my @seedsToUse = ();
+				foreach my $seedTrack (@$seedTracks) {
+					my ($trackObj) = Slim::Schema->find('Track', $seedTrack->{id});
+					if ($trackObj) {
+						push @seedsToUse, $trackObj->path;
+					}
+				}
 
-					my $mix = getMix($client, $trackObj->path, 'track') if $trackObj;
+				if (scalar @seedsToUse > 0) {
+					my $mix = getMix($client, \@seedsToUse, 'track');
 
 					main::idleStreams();
 
@@ -786,6 +792,7 @@ sub getMix {
 	my $client = shift;
 	my $id = shift;
 	my $for = shift;
+	my @ids = ref $id ? @$id : ($id);
 
 	my @mix = ();
 	my $req;
@@ -867,16 +874,10 @@ sub getMix {
 		return undef;
 	}
 
-	main::DEBUGLOG && $log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
-
-	if (!main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ) {
-
-		# need to decode the file path when a file is used as seed
-		$id = Slim::Utils::Unicode::utf8decode_locale($id);
-	}
-
-	# url encode the request, but not the argstring
-	my $mixArgs = $validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
+	my $mixArgs = join('&', map {
+		my $id = !main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ? Slim::Utils::Unicode::utf8decode_locale($_) : $_;
+		$validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
+	} @ids);
 
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 

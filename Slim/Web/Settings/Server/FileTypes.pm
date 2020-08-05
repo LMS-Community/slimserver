@@ -107,13 +107,17 @@ sub handler {
 
 			push @binaries, 'NATIVE';
 		}
+		
+		# build capabilities
+		my $capabilities = join(', ', grep(/I|F|R/, keys %{Slim::Player::TranscodingHelper::Capabilities($profile)}));
 
 		push @formats, {
-			'profile'  => $profile,
-			'input'    => $profileitems[0],
-			'output'   => $profileitems[1],
-			'binaries' => \@binaries,
-			'enabled'  => $enabled,
+			'profile'      => $profile,
+			'input'        => $profileitems[0],
+			'output'       => $profileitems[1],
+			'binaries'     => \@binaries,
+			'enabled'      => $enabled,
+			'capabilities' => $capabilities,
 		};
 	}
 	

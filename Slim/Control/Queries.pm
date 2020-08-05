@@ -33,6 +33,7 @@ use File::Basename qw(basename);
 use Storable;
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
+use List::Util qw(first);
 use MIME::Base64 qw(encode_base64 decode_base64);
 use Scalar::Util qw(blessed);
 use URI::Escape;
@@ -572,20 +573,7 @@ sub albumsQuery {
 	$sql .= "GROUP BY albums.id ";
 
 	if ($page_key && $tags =~ /Z/) {
-		my $pageSql = "SELECT n, count(1) FROM ("
-			. sprintf($sql, "$page_key AS n")
-			. ") AS pk GROUP BY n ORDER BY n " . ($sort !~ /year/ ? "$collate " : '');
-
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
-		}
-
-		$request->addResult('indexList', [
-			map {
-				utf8::decode($_->[0]);
-				$_;
-			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
-		]);
+		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " ORDER BY $order_by", $p));
 
 		if ($tags =~ /ZZ/) {
 			$request->setStatusDone();
@@ -1012,12 +1000,7 @@ sub artistsQuery {
 
 	my $indexList;
 	if ($tags =~ /Z/) {
-		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
-			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
-		$indexList = $dbh->selectall_arrayref($pageSql, undef, @{$p});
-		foreach (@$indexList) {
-			utf8::decode($_->[0])
-		}
+		$indexList = _createIndexList(sprintf($sql, "SUBSTR(contributors.namesort,1,1)") . " GROUP BY contributors.id ORDER BY contributors.namesort $collate", $p);
 
 		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
 
@@ -1615,14 +1598,8 @@ sub genresQuery {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	if ($tags =~ /Z/) {
-		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
-			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
-		$request->addResult('indexList', [
-			map {
-				utf8::decode($_->[0]);
-				$_;
-			} @{ $dbh->selectall_arrayref($pageSql, undef, @{$p}) }
-		]);
+		$request->addResult('indexList', _createIndexList(sprintf($sql, "SUBSTR(genres.namesort,1,1)") . " ORDER BY genres.namesort $collate", $p));
+
 		if ($tags =~ /ZZ/) {
 			$request->setStatusDone();
 			return
@@ -5472,9 +5449,9 @@ sub _getTagDataForTracks {
 		$c->{'genres.id'} = 1;
 	};
 
-	$tags =~ /a/ && do {
+	$tags =~ /[as]/ && do {
 		$join_contributors->();
-		$c->{'contributors.name'} = 1;
+		$c->{'contributors.name'} = 1 if $tags =~ /a/;
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
@@ -6213,6 +6190,47 @@ sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 
 	$request->setStatusDone();
 } }
+
+# SQLite would not sort single characters the same way as the same characters at
+# the beginning of the word. Thus sorting the list of initial characters fails:
+# https://www.mail-archive.com/sqlite-users@mailinglists.sqlite.org/msg113837.html
+# Therefore we can't use SQLite's GROUP statement, but must group items ourselves.
+# If we have an index item which we already had in the list, merge all items after
+# the previous index and the current item into one. Eg. "U Ü U" -> "U" only.
+# https://github.com/Logitech/slimserver/issues/388
+sub _createIndexList {
+	my ($pageSql, $p) = @_;
+
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	if ( $sqllog && $sqllog->is_debug ) {
+		$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
+	}
+
+	my $indexData = Slim::Schema->dbh->selectall_arrayref($pageSql, undef, @{$p});
+
+	my @indexList;
+
+	foreach (@$indexData) {
+		my $char = $_->[0];
+		utf8::decode($char);
+
+		my $i = first { @indexList[$_]->[0] eq $char } 0..$#indexList;
+
+		if (defined($i)) {
+			while ($i < $#indexList) {
+				my $toMerge = pop @indexList;
+				$indexList[$i]->[1] += $toMerge->[1];
+			}
+
+			$indexList[$i]->[1]++;
+		}
+		else {
+			push @indexList, [$char, 1];
+		}
+	}
+
+	return \@indexList;
+}
 
 
 sub _imageData { if (main::IMAGE && main::MEDIASUPPORT) {

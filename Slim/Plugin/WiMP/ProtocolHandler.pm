@@ -25,6 +25,12 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
 
+# https://tidal.com/browse/track/95570766
+# https://tidal.com/browse/album/95570764
+# https://tidal.com/browse/playlist/5a36919b-251c-4fa7-802c-b659aef04216
+my $URL_REGEX = qr{^https://(?:\w+\.)?tidal.com/browse/(track|playlist|album|artist)/([a-z\d-]+)}i;
+Slim::Player::ProtocolHandlers->registerURLHandler($URL_REGEX, __PACKAGE__);
+
 sub isRemote { 1 }
 
 sub getFormatForURL {
@@ -107,6 +113,36 @@ sub shouldLoop { 0 }
 
 # Check if player is allowed to skip, using canSkip value from SN
 sub canSkip { 1 }
+
+sub explodePlaylist {
+	my ( $class, $client, $url, $cb ) = @_;
+
+	if ( $url =~ $URL_REGEX || $url =~ m{^wimp://(playlist|album|):?([0-9a-z-]+)}i ) {
+		Slim::Networking::SqueezeNetwork->new(
+			sub {
+				my $http = shift;
+				my $opml = eval { from_json( $http->content ) };
+
+				return $cb->($opml) if $opml && ref $opml && ref $opml eq 'ARRAY';
+
+				$cb->([]);
+			},
+			sub {
+				$cb->([])
+			},
+			{
+				client => $client
+			}
+		)->get(
+			Slim::Networking::SqueezeNetwork->url(
+				"/api/wimp/v1/playback/getIdsForURL?url=" . uri_escape_utf8($url),
+			)
+		);
+	}
+	else {
+		$cb->([]);
+	}
+}
 
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
@@ -335,30 +371,6 @@ sub trackInfoURL {
 
 	return $trackInfoURL;
 }
-
-# Track Info menu
-=pod XXX - legacy track info menu from before Slim::Menu::TrackInfo times?
-sub trackInfo {
-	my ( $class, $client, $track ) = @_;
-
-	my $url          = $track->url;
-	my $trackInfoURL = $class->trackInfoURL( $client, $url );
-
-	# let XMLBrowser handle all our display
-	my %params = (
-		header   => 'PLUGIN_WIMP_GETTING_TRACK_DETAILS',
-		modeName => 'WiMP Now Playing',
-		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
-		url      => $trackInfoURL,
-	);
-
-	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
-
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-
-	$client->modeParam( 'handledTransition', 1 );
-}
-=cut
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {

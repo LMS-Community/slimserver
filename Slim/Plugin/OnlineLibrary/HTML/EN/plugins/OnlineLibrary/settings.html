@@ -67,7 +67,9 @@
 				</tr>
 			[% END %]
 		</table>
-		<p>[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</p>
+
+		<div>[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</div>
+		<div><br/><a href="editMappings.html">[% "PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED" | string %]</a></div>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

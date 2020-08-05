@@ -7,6 +7,8 @@ package Slim::Plugin::OnlineLibrary::Importer;
 
 use strict;
 
+use Digest::MD5 qw(md5_hex);
+
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
 
@@ -35,16 +37,19 @@ sub startScan {
 	my ($class) = @_;
 	my $mappings = $prefs->get('genreMappings') || [];
 
-	return unless scalar @$mappings;
+	my $dbh = Slim::Schema->dbh or return;
+	my $sth = $dbh->prepare_cached("SELECT COUNT(1) FROM albums WHERE albums.extid IS NOT NULL;");
+	$sth->execute();
+	my ($count) = $sth->fetchrow_array;
+	$sth->finish;
 
 	my $progress = Slim::Utils::Progress->new({
 		'type'  => 'importer',
 		'name'  => 'plugin_online_library_genre_replacement',
-		'total' => scalar @$mappings,
+		'total' => $count + scalar @$mappings,
 		'every' => 1,
 	});
 
-	my $dbh = Slim::Schema->dbh;
 	my %SQL = (
 		title => q(
 			SELECT DISTINCT tracks.id
@@ -83,6 +88,42 @@ sub startScan {
 			$sth->bind_columns(\$trackId);
 
 			while ($sth->fetch) {
+				Slim::Schema::Genre->add($genreName, $trackId + 0);
+			}
+		}
+	}
+
+	Slim::Schema->forceCommit;
+
+	my $genreMappings = preferences('plugin.onlinelibrary-genres');
+	my $sql = q(SELECT albums.id, albums.title, albums.titlesearch, contributors.name, contributors.namesearch
+					FROM albums JOIN contributors ON contributors.id = albums.contributor
+					WHERE albums.extid IS NOT NULL;);
+
+	my ($albumId, $title, $titlesearch, $name, $namesearch);
+
+	$sth = $dbh->prepare_cached($sql);
+	$sth->execute();
+	$sth->bind_columns(\$albumId, \$title, \$titlesearch, \$name, \$namesearch);
+
+	my $mappings = {};
+	my $selectSQL = q(SELECT tracks.id
+							FROM tracks
+							WHERE tracks.album = ? AND tracks.extid IS NOT NULL;);
+
+	my $trackId;
+	my $tracks_sth = $dbh->prepare_cached($selectSQL);
+	$tracks_sth->bind_columns(\$trackId);
+
+	while ( $sth->fetch ) {
+		$progress->update(sprintf('%s - %s', $title, $name));
+		Slim::Schema->forceCommit;
+
+		my $key = md5_hex("$titlesearch||$namesearch");
+		if (my $genreName = $genreMappings->get($key)) {
+			$tracks_sth->execute($albumId);
+
+			while ($tracks_sth->fetch) {
 				Slim::Schema::Genre->add($genreName, $trackId + 0);
 			}
 		}

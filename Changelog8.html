@@ -7,7 +7,8 @@
 	<ul>
 		<li>Online music library integration: list your collection of albums vetted in your favorite streaming service as part of your "My Music" collection.</li>
 		<li>Improved support for Audio Books: automatically create library views and browse modes dealing with Audio Books and Authors.</li>
-		<li>Where plugins provide support, you can now use “Tune In URL” to play audio associated with a webpage.  For example, tune in to <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">https://www.youtube.com/watch?v=dQw4w9WgXcQ</a> to listen to the music for that video.</li>
+		<li>Paste TIDAL or Deezer weblinks in to the Tune In field to play albums/playlists/tracks (thanks <a href="https://github.com/Logitech/slimserver/pull/360">mavit</a>!)</li>
+		<li>Keep track of recently played podcasts (thanks <a href="https://github.com/Logitech/slimserver/pull/384">philippe44</a>!)</li>
 	</ul>
 	<br />
 
@@ -31,12 +32,15 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/issues/277">#277</a> - add new flac binaries to fix seeking within remote flac streams in some locales (thanks ralphy!).</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/366">#366</a> - Fix gapless PCM Playback on Squeezebox1 (thanks michaldie!).</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/388">#388</a> - Fix sorting of index bar in the web UI.</li>
 		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
 		<li>Support wav/aif remote streams (direct and proxied).</li>
 		<li>Check that destination (not source) codec is supported in direct streaming.</li>
+		<li>Pass all seed tracks, using one API call, to MusicIP mix when used for "Dont Stop The Music".</li>
 	</ul>
 	<br />
 </ul>

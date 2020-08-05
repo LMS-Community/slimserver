@@ -33,7 +33,9 @@ sub init {
 	$udpsock = IO::Socket::INET->new(
 		Proto     => 'udp',
 		LocalPort => SERVERPORT,
-		LocalAddr => $main::localClientNetAddr
+		LocalAddr => $main::localClientNetAddr,
+		Broadcast => 1,
+		ReuseAddr => 1
 
 	) or do {
 

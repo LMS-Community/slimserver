@@ -9,10 +9,19 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Plugin::OnlineLibrary::Plugin;
+use Slim::Plugin::OnlineLibrary::EditGenreMappings;
+
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
 my $prefs = preferences('plugin.onlinelibrary');
+
+sub new {
+	my $class = shift;
+
+	Slim::Plugin::OnlineLibrary::EditGenreMappings->new();
+	$class->SUPER::new(@_);
+}
 
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_ONLINE_LIBRARY_MODULE_NAME');
