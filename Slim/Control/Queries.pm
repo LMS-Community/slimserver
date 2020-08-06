@@ -6203,7 +6203,7 @@ sub _createIndexList {
 
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	if ( $sqllog && $sqllog->is_debug ) {
-		$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
+		$sqllog->debug( "indexList query: $pageSql / " . Data::Dump::dump($p) );
 	}
 
 	my $indexData = Slim::Schema->dbh->selectall_arrayref($pageSql, undef, @{$p});
@@ -6217,12 +6217,21 @@ sub _createIndexList {
 		my $i = first { @indexList[$_]->[0] eq $char } 0..$#indexList;
 
 		if (defined($i)) {
+			# Some sort orders are tricking us: eg. in Danish Å would be considered the same as AA,
+			# but still sorted to the end. Thus Aaron would end up in the end, too. Therefore hide
+			# A at the end, by not grouping it if there's been an ASCII character larger than A already.
+			if ($char =~ /[A-Z]/ && grep {
+				$_->[0] =~ /[A-Z]/ && $char lt $_->[0];
+			} @indexList) {
+				$i = $#indexList;
+			}
+
 			while ($i < $#indexList) {
 				my $toMerge = pop @indexList;
 				$indexList[$i]->[1] += $toMerge->[1];
 			}
 
-			$indexList[$i]->[1]++;
+			$indexList[-1]->[1]++;
 		}
 		else {
 			push @indexList, [$char, 1];
