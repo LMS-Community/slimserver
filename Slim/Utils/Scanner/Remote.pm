@@ -718,7 +718,9 @@ sub parseFlacHeader {
 	$fh->seek(0, 0);
 
 	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
-	
+
+	Slim::Formats->loadTagFormatForType('flc');
+
 	$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
 	$track->audio_initiate( \&Slim::Formats::FLAC::initiateFrameAlign );
 	

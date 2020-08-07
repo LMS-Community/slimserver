@@ -1053,7 +1053,7 @@ my @CRC_TABLE = (
     0xE6, 0xE1, 0xE8, 0xEF, 0xFA, 0xFD, 0xF4, 0xF3
 );
 
-sub crc8(const void * data, size_t size) {
+sub crc8 {
 	my $data = shift;
 	my $val = 0;
 

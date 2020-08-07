@@ -65,7 +65,7 @@ sub request {
 	}
 
 	# obtain initial audio block if missing and adjust seekdata then
-	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($track->original_content_type)) {
+	if (!defined $song->initialAudioBlock && $track->original_content_type && Slim::Formats->loadTagFormatForType($track->original_content_type)) {
 		my $formatClass = Slim::Formats->classForFormat($track->original_content_type);
 		my $seekdata = $song->seekdata || {};
 		
