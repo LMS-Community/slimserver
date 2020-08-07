@@ -409,6 +409,16 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
+		elsif ( $type eq 'flc' ) {
+
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading FLAC header');
+
+			$http->read_body( {
+				readLimit   => 32 * 1024,
+				onBody      => \&parseFlacHeader,
+				passthrough => [ $track, $args ],
+			} );
+		}
 		elsif ( $type eq 'ogg' ) {
 
 			# Read the header to allow support for oggflac as it requires different decode path
@@ -697,6 +707,37 @@ sub parseAACHeader {
 
 	# All done
 	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseFlacHeader {
+	my ( $http, $track, $args ) = @_;
+	my $header = $http->response->content;
+
+	my $fh = File::Temp->new();
+	$fh->write( $header, length($header) );
+	$fh->seek(0, 0);
+
+	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
+	
+	$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
+	$track->audio_initiate( \&Slim::Formats::FLAC::initiateFrameAlign );
+	
+	# $track->audio_offset($info->{audio_offset});
+	# $track->audio_size($info->{audio_size});
+	# audiosize is not reliable
+
+	if ($info) {
+		$track->samplerate( $info->{samplerate} );
+		$track->samplesize( $info->{bits_per_sample} );
+		$track->channels( $info->{channels} );	
+		# swag bitrate to allow seek
+		my $bitrate = int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);	
+		Slim::Music::Info::setBitrate( $track, $bitrate );
+		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
+	}	
+
+	# All done
+	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 }
 
 sub parseMp4Header {
