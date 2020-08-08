@@ -939,6 +939,22 @@ sub scanBitrate {
 	return (-1, undef);
 }
 
+sub parseStream {
+	my ( $class, $dataref, $args ) = @_;
+
+	$args->{_scanbuf} .= $$dataref;
+	return -1 if length $args->{_scanbuf} < 32*1024;
+	
+	my $fh = File::Temp->new();
+	$fh->write($args->{_scanbuf});
+	$fh->seek(0, 0);
+	
+	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
+	$info->{fh} = $fh;
+		
+	return $info;
+}
+
 sub initiateFrameAlign {
 	my $context = { aligned => 0 };
 	return (\&frameAlign, $context);
@@ -978,14 +994,16 @@ sub frameAlign {
 		my $blockSize = ($tag >> 12) & 0x0f;		
 		if ($blockSize == 6) {
 			$offset += 2;
-		} elsif ($blockSize == 7) {
+		} 
+		elsif ($blockSize == 7) {
 			$offset += 1;
 		}
 		
 		my $samplerate = ($tag >> 8) & 0x0f;
 		if ($samplerate == 12) {
 			$offset += 1;
-		} elsif ($samplerate > 12 && $samplerate < 15) {
+		} 
+		elsif ($samplerate > 12 && $samplerate < 15) {
 			$offset += 2;
 		}
 		
@@ -1007,7 +1025,8 @@ sub frameAlign {
 			$_[1] = substr($context->{inbuf}, 0, $length - $chunkSize - 1);
 			$context->{inbuf} = substr($context->{inbuf}, $length - $chunkSize - 1);
 			return $chunkSize + 1;
-		} else {
+		} 
+		else {
 			$_[1] = $context->{inbuf};
 			$context->{inbuf} = '';
 			return 0;

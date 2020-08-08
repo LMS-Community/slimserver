@@ -414,8 +414,7 @@ sub readRemoteHeaders {
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading FLAC header');
 
 			$http->read_body( {
-				readLimit   => 32 * 1024,
-				onBody      => \&parseFlacHeader,
+				onStream    => \&parseFlacHeader,
 				passthrough => [ $track, $args ],
 			} );
 		}
@@ -710,25 +709,20 @@ sub parseAACHeader {
 }
 
 sub parseFlacHeader {
-	my ( $http, $track, $args ) = @_;
-	my $header = $http->response->content;
-
-	my $fh = File::Temp->new();
-	$fh->write( $header, length($header) );
-	$fh->seek(0, 0);
-
-	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
+	my ( $http, $dataref, $track, $args ) = @_;
 
 	Slim::Formats->loadTagFormatForType('flc');
-
+	my $formatClass = Slim::Formats->classForFormat('flc');
+	my $info = $formatClass->parseStream($dataref, $args);
+	
+	return 1 if ref $info ne 'HASH' && $info;
+	
 	$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
 	$track->audio_initiate( \&Slim::Formats::FLAC::initiateFrameAlign );
+	$track->content_type('flc');
 	
-	# $track->audio_offset($info->{audio_offset});
-	# $track->audio_size($info->{audio_size});
-	# audiosize is not reliable
-
 	if ($info) {
+		# don't set audio_offset & audio_size as these are not reliable here
 		$track->samplerate( $info->{samplerate} );
 		$track->samplesize( $info->{bits_per_sample} );
 		$track->channels( $info->{channels} );	

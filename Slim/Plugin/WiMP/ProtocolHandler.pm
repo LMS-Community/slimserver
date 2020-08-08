@@ -277,12 +277,9 @@ sub _gotTrack {
 		my $http = Slim::Networking::Async::HTTP->new;
 		$http->send_request( {
 			request     => HTTP::Request->new( GET => $info->{url} ),
-			onStream    => $format =~ /fla?c/i
-				? sub {
-					my ($http, $dataref, $track, $args) = @_;
-					Slim::Utils::Scanner::Remote::parseFlacHeader($http, $track, $args);
-				}
-				: \&Slim::Utils::Scanner::Remote::parseMp4Header,
+			onStream    => $format =~ /fla?c/i ? 
+						   \&Slim::Utils::Scanner::Remote::parseFlacHeader :
+						   \&Slim::Utils::Scanner::Remote::parseMp4Header,
 			onError     => sub {
 				my ($self, $error) = @_;
 				$log->warn( "could not find $format header $error" );
