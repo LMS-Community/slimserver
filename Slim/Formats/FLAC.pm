@@ -940,7 +940,7 @@ sub scanBitrate {
 }
 
 sub parseStream {
-	my ( $class, $dataref, $args ) = @_;
+	my ( $class, $dataref, $args, $length ) = @_;
 
 	$args->{_scanbuf} .= $$dataref;
 	return -1 if length $args->{_scanbuf} < 32*1024;
@@ -951,6 +951,7 @@ sub parseStream {
 	
 	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
 	$info->{fh} = $fh;
+	$info->{avg_bitrate} = int(8*1000 * ($length - $info->{audio_offset}) / $info->{song_length_ms}) if $info->{song_length_ms} && $length;
 		
 	return $info;
 }

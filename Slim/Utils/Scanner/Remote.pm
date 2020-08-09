@@ -713,7 +713,7 @@ sub parseFlacHeader {
 
 	Slim::Formats->loadTagFormatForType('flc');
 	my $formatClass = Slim::Formats->classForFormat('flc');
-	my $info = $formatClass->parseStream($dataref, $args);
+	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
 	
 	return 1 if ref $info ne 'HASH' && $info;
 	
@@ -726,8 +726,8 @@ sub parseFlacHeader {
 		$track->samplerate( $info->{samplerate} );
 		$track->samplesize( $info->{bits_per_sample} );
 		$track->channels( $info->{channels} );	
-		# swag bitrate to allow seek
-		my $bitrate = int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);	
+		# if no bitrate, swag it to allow seek
+		my $bitrate = $info->{avg_bitrate} || int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);	
 		Slim::Music::Info::setBitrate( $track, $bitrate );
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
 	}	
@@ -743,7 +743,7 @@ sub parseMp4Header {
 	my $formatClass = Slim::Formats->classForFormat('mp4');
 	
 	# parse chunk
-	my $info = $formatClass->parseStream($dataref, $args);
+	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
 	
 	if ( ref $info ne 'HASH' ) {
 		if ( !$info ) {
@@ -916,7 +916,7 @@ sub parseWavAifHeader {
 
 	Slim::Formats->loadTagFormatForType($type);
 	my $formatClass = Slim::Formats->classForFormat($type);
-	my $info = $formatClass->parseStream($dataref, $args);
+	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
 	
 	return 1 if ref $info ne 'HASH' && $info;
 	
