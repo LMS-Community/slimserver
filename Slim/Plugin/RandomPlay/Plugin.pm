@@ -936,6 +936,10 @@ sub commandCallback {
 		return;
 	}
 
+	if ($request->getParam('_item') =~ /^randomplay:/) {
+		return;
+	}
+
 	if (!defined $client || !$client->master->pluginData('type') || !$prefs->get('continuous')) {
 		return;
 	}
