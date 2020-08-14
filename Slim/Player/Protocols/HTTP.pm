@@ -482,7 +482,7 @@ sub _parseStreamHeader {
 	}
 		
 	$args->{'bytes'} += $readLength;
-	my $info = ${*$self}{'parser'}->(__PACKAGE__, \$_[1], $args, $args->{'formats'});
+	my $info = ${*$self}{'parser'}->(__PACKAGE__, \$_[1], $args);
 					
 	if (ref $info eq 'HASH') {
 		# read header in memory from file handle
