@@ -567,7 +567,7 @@ sub init {
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
-		Slim::Player::Boom::setAnalogOutMode($client);
+		$client->setAnalogOutMode if $client->can('setAnalogOutMode');
 	}, 'analogOutMode');
 
 	$prefs->setChange( sub {
