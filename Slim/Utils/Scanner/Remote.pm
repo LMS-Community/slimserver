@@ -734,6 +734,7 @@ sub parseFlacHeader {
 
 	# All done
 	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
+	return 0;
 }
 
 sub parseMp4Header {
