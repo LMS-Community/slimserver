@@ -290,7 +290,7 @@ sub sysread {
 					delete ${*$self}{'pipeline_source'};
 					$writer->close();
 					last STUFF_PIPE;
-				} elsif ($! == EWOULDBLOCK) {
+				} elsif ($! == EWOULDBLOCK || $! == EINTR) {
 					last STUFF_PIPE;		
 				} else {
 					return undef; # reflect error to caller
