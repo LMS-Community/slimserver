@@ -10,6 +10,8 @@ package Slim::Networking::Async::HTTP;
 
 use strict;
 
+use constant MIN_IO_SOCKET_SSL => '2.020';
+
 BEGIN {
 	my $hasSSL;
 
@@ -25,6 +27,10 @@ BEGIN {
 
 		if ($@) {
 			msg("Async::HTTP: Unable to load IO::Socket::SSL, will try connecting to SSL servers in non-SSL mode\n$@\n");
+		}
+		# if we're using an outdated version of IO::Socket::SSL, log a warning
+		elsif (Slim::Utils::Versions->compareVersions(MIN_IO_SOCKET_SSL, $IO::Socket::SSL::VERSION) > 0) {
+			msg("You're using a rather old version of IO::Socket::SSL (v$IO::Socket::SSL::VERSION) - please try to update to at least " . MIN_IO_SOCKET_SSL . " for improved compatibility.\n");
 		}
 
 		return $hasSSL;
@@ -46,6 +52,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
+use Slim::Utils::Versions;
 
 use constant BUFSIZE   => 16 * 1024;
 use constant MAX_REDIR => 7;
