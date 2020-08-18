@@ -950,6 +950,8 @@ sub parseStream {
 	$fh->seek(0, 0);
 	
 	my $info = Audio::Scan->scan_fh( flac => $fh )->{info};
+	return undef unless $info->{samplerate};
+
 	$info->{fh} = $fh;
 	$info->{avg_bitrate} = int(8*1000 * ($length - $info->{audio_offset}) / $info->{song_length_ms}) if $info->{song_length_ms} && $length;
 		
