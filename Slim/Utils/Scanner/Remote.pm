@@ -716,12 +716,14 @@ sub parseFlacHeader {
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
 	
 	return 1 if ref $info ne 'HASH' && $info;
-	
-	$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
+
 	$track->audio_initiate( \&Slim::Formats::FLAC::initiateFrameAlign );
 	$track->content_type('flc');
 	
 	if ($info) {
+		# we have valid header, means there will be no alignment unless we seek
+		$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+		
 		# don't set audio_offset & audio_size as these are not reliable here
 		$track->samplerate( $info->{samplerate} );
 		$track->samplesize( $info->{bits_per_sample} );
@@ -730,6 +732,9 @@ sub parseFlacHeader {
 		my $bitrate = $info->{avg_bitrate} || int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);	
 		Slim::Music::Info::setBitrate( $track, $bitrate );
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
+	} else {
+		# if we don't have an header, need to always process
+		$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
 	}	
 
 	# All done
