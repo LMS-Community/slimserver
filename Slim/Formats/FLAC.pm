@@ -987,7 +987,7 @@ sub frameAlign {
 		next unless ($tag & 0xfff80000) == 0xfff80000;
 		
 		# try to identify non-valid frame combination (see flac specifications)
-		return unless (($tag >> 12) & 0x0f) && ((($tag >> 8) & 0x0f) != 0x0f) && ((($tag >> 4) & 0x0f) < 11) &&
+		next unless (($tag >> 12) & 0x0f) && ((($tag >> 8) & 0x0f) != 0x0f) && ((($tag >> 4) & 0x0f) < 11) &&
 					  ((($tag >> 1) & 0x07) != 0x03) && ((($tag >> 1) & 0x07) != 0x07);
 		
 		my $offset = 4;
