@@ -354,7 +354,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !defined $song->track->initial_block_type;
 	
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata || $song->track->audio_initiate) {
+	if ($song->track->initial_block_type == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata) {
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}	
