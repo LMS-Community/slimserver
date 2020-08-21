@@ -124,7 +124,7 @@ sub new_socket {
 			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} = $args{Host};
 			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
-			
+
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
 			}
@@ -293,7 +293,7 @@ sub _format_request {
 	$self->socket->http_version($version);
 	$self->socket->keep_alive(1) if ($version == '1.1' && $self->request->header('Connection') !~ /close/i) || 
 									$self->request->header('Connection') =~ /keep-alive/i;
-	
+
 	my $request = $self->socket->format_request(
 		$self->request->method,
 		$fullpath,
@@ -311,6 +311,12 @@ sub read_body {
 
 	$self->socket->set( passthrough => [ $self, $args ] );
 
+	# Timer in case the server never sends any body data
+	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
+	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
+
+	$log->debug("Set read body timeout to " . $timeout);
+
 	Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
@@ -326,7 +332,7 @@ sub resume_stream {
 	my $self = shift;
 
 	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
-	
+
 	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self->socket->get('passthrough') );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
@@ -503,7 +509,7 @@ sub _http_read {
 
 sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
-	
+
 	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
 	return if $result < 0;
 
