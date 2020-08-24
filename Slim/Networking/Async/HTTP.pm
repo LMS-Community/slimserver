@@ -315,8 +315,6 @@ sub read_body {
 	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
 	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
 
-	$log->debug("Set read body timeout to " . $timeout);
-
 	Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
