@@ -319,7 +319,7 @@ our @AUTHORS = (
 
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.9.3';
+our $VERSION     = '7.9.4';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 our $httpport    = undef;
