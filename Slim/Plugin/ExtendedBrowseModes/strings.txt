@@ -5,6 +5,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	NL	Extra Browser Modi
 	NO	Ytterligere browse-modi
 	PL	Dodatkowe tryby przeglądania
+	SV	Ytterligare blädder-menyer
 
 PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
@@ -13,6 +14,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	NL	Creëer extra menu's om door je muziekcollectie te browsen, via Albumartiest, Componisten, Genres te selecteren en meer.
 	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
+	SV	Skapa ytterligare menyer för att bläddra is musiksamlingen via albumartister, kompositörer, valda genrer osv.
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	CS	Interpret alba
@@ -37,6 +39,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	NL	Componisten
 	NO	Komponister
 	PL	Kompozytorzy
+	SV	Kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	DE	Rolle des Künstlers:
@@ -44,6 +47,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	NL	Rol van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
+	SV	Artistroll
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	DE	Anzeigen:
@@ -51,6 +55,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	NL	Browse op:
 	NO	Bla etter:
 	PL	Przeglądaj wg:
+	SV	Bläddra efter:
 
 PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	DE	Anwenden auf:
@@ -58,6 +63,7 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	NL	Toepassen op:
 	NO	Anvendes på:
 	PL	Zastosuj do:
+	SV	Använd på:
 
 PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	CS	Sbírka
@@ -82,6 +88,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	NL	Schijven en mappen
 	NO	Disker og mapper
 	PL	Dyski i foldery
+	SV	Filer och mappar
 
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
@@ -89,6 +96,7 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	NL	Rollen van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
+	SV	Artistroll:
 
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
@@ -96,6 +104,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	NL	Hele collectie (Standaard)
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
+	SV	Hela musiksamlingen (standard)
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
@@ -103,6 +112,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	NL	Verberg lossy-versies als een lossless-versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
+	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
@@ -110,6 +120,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	NL	Maak een deelcollectie die probeert om lossy-versies te verbergen als van dezelfde opname ook een lossless-versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
 	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
+	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
 
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	CS	Náhodně zvolená alba
@@ -148,6 +159,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	NL	Flopnummers
 	NO	Minst avspilte spor
 	PL	Najrzadziej słuchane
+	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	DE	'%s' verwenden
@@ -155,6 +167,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	NL	Gebruik '%s'
 	NO	Bruk '%s'
 	PL	Przełącz na '%s'
+	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	DE	Verwende nun '%s'
@@ -162,6 +175,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	NL	Gebruikt nu '%s'
 	NO	Bruker nå '%s'
 	PL	Przełączono na '%s'
+	SV	Används nu '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	DE	Bibliotheksansicht gelöscht
@@ -169,23 +183,30 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	NL	Deelcollectie gedeletet
 	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
+	SV	Delbibliotek suddat
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	DE	Hörbücher
 	EN	Audiobooks
+	SV	Ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
+	SV	All musik förutom ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
+	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
+	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	DE	Hörbuch-Autoren
 	EN	Authors
+	SV	Författare
+
