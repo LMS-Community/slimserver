@@ -549,12 +549,6 @@ sub parseDirectHeaders {
 		($oggType) = $url->content_type =~ /(ogf|ogg|ops)/;
 		$url = $url->url;
 	}
-	
-	my $song = ${*$self}{'song'} if blessed $self;
-
-	if (!$song && $client->controller()->songStreamController()) {
-		$song = $client->controller()->songStreamController()->song();
-	}
 
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	my ($rangeLength, $startOffset);
@@ -573,11 +567,9 @@ sub parseDirectHeaders {
 			$title = Slim::Utils::Unicode::utf8decode_guess($1);
 		}
 
-		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) 
-			if ($song && !$song->bitrate) {
-				$bitrate = $1;
-				$bitrate *= 1000 if $bitrate < 8000;
-			}	
+		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
+			$bitrate = $1;
+			$bitrate *= 1000 if $bitrate < 1000;
 		}
 
 		elsif ($header =~ /^icy-metaint:\s*(.+)/i) {
@@ -612,6 +604,12 @@ sub parseDirectHeaders {
 	# Content-Range: has predecence over Content-Length:
 	if ($rangeLength) {
 		$length = $rangeLength;
+	}
+
+	my $song = ${*self}{'song'} if blessed $self;
+
+	if (!$song && $client->controller()->songStreamController()) {
+		$song = $client->controller()->songStreamController()->song();
 	}
 
 	if ($song && $length) {
