@@ -234,7 +234,7 @@ sub scanPlaylists { if (main::SCANNER) {
 					title     => $_->{title},
 					cover     => $_->{cover},
 					duration  => $_->{duration},
-					type      => $_->{flac} ? 'FLAC' : 'MP3',
+					type      => $_->{flac} ? 'FLAC' : 'AAC',
 				}, time + 360 * 86400);
 
 				push @trackIds, $_->{url};
