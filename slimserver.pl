@@ -826,7 +826,7 @@ sub initOptions {
 
 	$LogTimestamp = 1;
 
-	my $gotOptions = GetOptions(
+	my $gotOptions = GetOptions
 		'user=s'        => \$user,
 		'group=s'       => \$group,
 		'cliaddr=s'     => \$cliaddr,
