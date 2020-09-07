@@ -18,7 +18,8 @@ function wait_port() {
 }
 
 function finish {
-	kill -9 $NODE_PID
+	kill -9 $NODE_PID 2> /dev/null
+	cat $SERVER_LOG
 	rm $SERVER_LOG
 }
 trap finish EXIT
@@ -28,12 +29,13 @@ NODE_PID=$!
 
 wait_port $TIMEOUT || {
 	echo "Timing out trying to connect to LMS"
-	cat $SERVER_LOG
 	exit 1;
 }
 
-RESULT=$(curl -m1 -sX POST -d '{"id":0,"params":["",["serverstatus"]],"method":"slim.request"}' http://localhost:9000/jsonrpc.js | fgrep -q version)
+STATUS=$(curl -m1 -sX POST -d '{"id":0,"params":["",["serverstatus"]],"method":"slim.request"}' http://localhost:9000/jsonrpc.js)
 
-cat $SERVER_LOG
+echo $STATUS | jq .
+
+RESULT=$(echo $STATUS | fgrep -q version)
 
 exit $RESULT
