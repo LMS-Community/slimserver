@@ -573,7 +573,7 @@ sub parseDirectHeaders {
 			$title = Slim::Utils::Unicode::utf8decode_guess($1);
 		}
 
-		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
+		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i)
 			if ($song && !$song->bitrate) {
 				$bitrate = $1;
 				$bitrate *= 1000 if $bitrate < 8000;
