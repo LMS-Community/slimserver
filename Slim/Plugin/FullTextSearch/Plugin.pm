@@ -461,8 +461,8 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
-	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
-	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
+	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ? AND track LIKE 'file:%'";
+	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext.id = tracks.id AND fulltext.type = 'track'";
 	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
 
 	# use fulltext information for tracks to populate a playlist's record with track information
@@ -474,8 +474,6 @@ sub _rebuildIndex {
 		my $w1 = '';
 
 		foreach my $track ( @{ $dbh->selectcol_arrayref($plSql, undef, $playlist->id) } ) {
-			next unless $track =~ /^file:/;
-
 			main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($trSql . ' - ' . $track);
 
 			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSql, undef, $track) });
