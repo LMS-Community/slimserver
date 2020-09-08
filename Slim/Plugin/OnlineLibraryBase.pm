@@ -19,6 +19,9 @@ my $log = logger('scan.scanner');
 sub initPlugin { if (main::SCANNER) {
 	my ($class, $args) = @_;
 
+	# don't run importer if we're doing a singledir scan
+	return if main::SCANNER && $ARGV[-1] && 'onlinelibrary' ne $ARGV[-1];
+
 	return if !$class->isImportEnabled();
 
 	$args ||= {};

@@ -19,6 +19,9 @@ my $prefs = preferences('plugin.onlinelibrary');
 sub initPlugin {
 	my $class = shift;
 
+	# don't run importer if we're doing a singledir scan
+	return if main::SCANNER && $ARGV[-1] && 'onlinelibrary' ne $ARGV[-1];
+
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries() || [];
 
 	my $mappings = $prefs->get('genreMappings');
