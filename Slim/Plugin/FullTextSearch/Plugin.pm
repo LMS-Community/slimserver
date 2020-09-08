@@ -26,10 +26,11 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		-- weight 3 - contributors create multiple hits, therefore only w3
 		CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' '
 			|| IGNORE_CASE(comments.value) || ' ' || IGNORE_CASE(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' '
-			|| CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+			|| CASE WHEN tracks.channels = 1 THEN 'mono' ELSE 'stereo' END,
 		-- weight 1
-		printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' '
-			|| (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '') || ' '
+		CASE WHEN tracks.bitrate IS NULL THEN '' ELSE printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' END || IFNULL(tracks.samplerate, '') || ' '
+			|| CASE WHEN tracks.samplerate > 0 THEN (round(tracks.samplerate, 0) / 1000) ELSE '' END || ' '
+			|| IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '') || ' '
 			|| LOWER(IFNULL(tracks.musicbrainz_id, ''))
 
 		FROM tracks
@@ -461,7 +462,7 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
-	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ? AND track LIKE 'file:%'";
+	my $plSql = "SELECT track FROM playlist_track JOIN tracks ON tracks.url = playlist_track.track WHERE playlist = ? AND (track LIKE 'file:%' OR tracks.extid IS NOT NULL)";
 	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext.id = tracks.id AND fulltext.type = 'track'";
 	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
 
