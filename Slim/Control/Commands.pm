@@ -2495,6 +2495,14 @@ sub playlistsRenameCommand {
 		)) {
 			$request->addResult('writeError', 1);
 		}
+
+		# plugin hook
+		if ( Slim::Utils::Scanner::API->can('getHandlers') ) {
+			my $pluginHandlers = Slim::Utils::Scanner::API->getHandlers();
+			if ( my $handler = $pluginHandlers->{onNewPlaylistHandler} ) {
+				$handler->( { id => $playlistObj->id, obj => $playlistObj, url => $playlistObj->url } );
+			}
+		}
 	}
 
 	$request->setStatusDone();

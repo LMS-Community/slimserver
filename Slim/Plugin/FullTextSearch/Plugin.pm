@@ -82,6 +82,24 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 		%s;
 };
 
+use constant SQL_GET_PLAYLIST_TRACKS => q{
+	SELECT track
+	FROM playlist_track
+		JOIN tracks ON tracks.url = playlist_track.track
+	WHERE playlist = ? AND (track LIKE 'file:%' OR tracks.extid IS NOT NULL)
+};
+
+use constant SQL_GET_PLAYLIST_TRACK_DETAILS => q{
+	SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1
+	FROM tracks,fulltext
+	WHERE tracks.url = ? AND fulltext.id = tracks.id AND fulltext.type = 'track'
+};
+
+use constant SQL_CREATE_PLAYLIST_ITEM => q{
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
+	VALUES (?, 'playlist', ?, '', '', ?)
+};
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.fulltext',
 	'defaultLevel' => 'WARN',
@@ -122,6 +140,11 @@ sub initPlugin {
 
 	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack, want_object => 1 } );
 	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack, want_object => 1 } );
+	Slim::Utils::Scanner::API->onNewPlaylist( { cb => sub {
+		# delay execution, as we're called twice...
+		Slim::Utils::Timers::killTimers( $_[1], \&checkPlaylist );
+		Slim::Utils::Timers::setTimer( $_[1], time() + 1, \&checkPlaylist, $_[0] );
+	}, want_object => 1 } );
 
 	# don't continue if the library hasn't been initialized yet, or if a schema change is going to trigger a rescan anyway
 	return unless Slim::Schema->hasLibrary() && !Slim::Schema->schemaUpdated;
@@ -157,6 +180,11 @@ sub checkSingleTrack {
 	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
 	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
 	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'OR REPLACE', 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+}
+
+sub checkPlaylist {
+	my ($url, $trackObj) = @_;
+	_createPlaylistItem($trackObj);
 }
 
 sub canFulltextSearch {
@@ -462,32 +490,14 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
-	my $plSql = "SELECT track FROM playlist_track JOIN tracks ON tracks.url = playlist_track.track WHERE playlist = ? AND (track LIKE 'file:%' OR tracks.extid IS NOT NULL)";
-	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext.id = tracks.id AND fulltext.type = 'track'";
-	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
 
 	# use fulltext information for tracks to populate a playlist's record with track information
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
-
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( $plSql . ' [' . Data::Dump::dump($playlist->id) .']' );
-
-		my $w1 = '';
-
-		foreach my $track ( @{ $dbh->selectcol_arrayref($plSql, undef, $playlist->id) } ) {
-			main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($trSql . ' - ' . $track);
-
-			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSql, undef, $track) });
-		}
-
-		$w1 =~ s/^ +//;
-		$w1 =~ s/ +/ /;
-
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
-		$dbh->do($inSql, undef, $playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $scanlog->error($dbh->errstr);
-
+		_createPlaylistItem($playlist);
 		Slim::Schema->forceCommit if main::SCANNER;
 	}
+
 	main::idleStreams() unless main::SCANNER;
 
 	$scanlog->error("Optimize fulltext index");
@@ -506,6 +516,32 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	$scanlog->error("Fulltext index build done!");
+}
+
+sub _createPlaylistItem {
+	my ($playlist) = @_;
+
+	return unless $playlist && ref $playlist;
+
+	my $dbh = Slim::Schema->dbh;
+
+	main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( SQL_GET_PLAYLIST_TRACKS . ' [' . Data::Dump::dump($playlist->id) .']' );
+
+	my $w1 = '';
+
+	foreach my $track ( @{ $dbh->selectcol_arrayref(SQL_GET_PLAYLIST_TRACKS, undef, $playlist->id) } ) {
+		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug(SQL_GET_PLAYLIST_TRACK_DETAILS . ' - ' . $track);
+
+		$w1 .= join(' ', @{ $dbh->selectcol_arrayref(SQL_GET_PLAYLIST_TRACK_DETAILS, undef, $track) });
+	}
+
+	$w1 =~ s/^ +//;
+	$w1 =~ s/ +/ /;
+
+	if ($w1 =~ /\S/) {
+		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( SQL_CREATE_PLAYLIST_ITEM . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,  $w1) );
+		$dbh->do(SQL_CREATE_PLAYLIST_ITEM, undef, $playlist->id, $playlist->title . ' ' . $playlist->titlesearch, $w1) or $scanlog->error($dbh->errstr);
+	}
 }
 
 sub _initPopularTerms {
