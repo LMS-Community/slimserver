@@ -400,22 +400,23 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 # "9000.038" = "Audiobooks";
 # "9000.039" = "Purchased";
 # "9000.043" = "Rented Movies";
+# "4zg6f8rszh" = "Downloaded";
 
 ITUNES_IGNORED_PLAYLISTS_DEFAULTS
 # SLT: These terms MUST correspond to the translation used in iTunes, or the filter will fail
-	CS	Knihovna, videa, filmy, televizní show, hudba, koupené, půjčené filmy
-	DA	Bibliotek, Videoer, Film, Tv-udsendelser, Musik, Indkøb, Lejede film
-	DE	Mediathek, Videos, Filme, Fernsehsendungen, Musik, Einkäufe, Ausgeliehene Filme
-	EN	Library, Videos, Movies, TV Shows, Music, Purchased, Rented Movies
-	ES	Biblioteca, Vídeos, Películas, Programas de televisión, Música, Comprado, Películas alquiladas
-	FI	Kirjasto, videot, elokuvat, tv-ohjelmat, musiikki, ostetut, vuokraelokuvat
-	FR	Bibliothèque, Vidéos, Films, Séries TV, Musique, Achats, Films en location
-	IT	Libreria, Video, Filmati, Spettacoli TV, Musica, Acquisti, Filmati noleggiati
-	NL	Bibliotheek, Video's, Films, Tv-programma's, Muziek, Aangeschaft, Gehuurde films
-	NO	Bibliotek, Videoer, Filmer, TV-programmer, Musikk, Kjøpt, Leide filmer
-	PL	Biblioteka, Pliki wideo, Filmy, Programy telewizyjne, Muzyka, Zakupione, Wypożyczone filmy
-	RU	Медиатека, Видео, Фильмы, Телешоу, Музыка, Приобретено, Взятые напрокат фильмы
-	SV	Bibliotek, Videor, Filmer, TV-program, Musik, Köpt, Hyrfilmer
+	CS	Knihovna, videa, filmy, televizní show, hudba, koupené, půjčené filmy, Staženo
+	DA	Bibliotek, Videoer, Film, Tv-udsendelser, Musik, Indkøb, Lejede film, Hentet
+	DE	Mediathek, Videos, Filme, Fernsehsendungen, Musik, Einkäufe, Ausgeliehene Filme, Geladen
+	EN	Library, Videos, Movies, TV Shows, Music, Purchased, Rented Movies, Downloaded
+	ES	Biblioteca, Vídeos, Películas, Programas de televisión, Música, Comprado, Películas alquiladas, Descargado
+	FI	Kirjasto, videot, elokuvat, tv-ohjelmat, musiikki, ostetut, vuokraelokuvat, Ladattu
+	FR	Bibliothèque, Vidéos, Films, Séries TV, Musique, Achats, Films en location, Téléchargé
+	IT	Libreria, Video, Filmati, Spettacoli TV, Musica, Acquisti, Filmati noleggiati, Scaricati
+	NL	Bibliotheek, Video's, Films, Tv-programma's, Muziek, Aangeschaft, Gehuurde films, Gedownload
+	NO	Bibliotek, Videoer, Filmer, TV-programmer, Musikk, Kjøpt, Leide filmer, Lastet ned
+	PL	Biblioteka, Pliki wideo, Filmy, Programy telewizyjne, Muzyka, Zakupione, Wypożyczone filmy, Pobrane
+	RU	Медиатека, Видео, Фильмы, Телешоу, Музыка, Приобретено, Взятые напрокат фильмы, Загружено
+	SV	Bibliotek, Videor, Filmer, TV-program, Musik, Köpt, Hyrfilmer, Hämtat
 
 SETUP_ITUNES_IGNORED_PLAYLISTS
 	CS	Ignorované seznamy skladeb
