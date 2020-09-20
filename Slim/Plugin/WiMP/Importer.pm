@@ -89,6 +89,8 @@ sub scanAlbums { if (main::SCANNER) {
 		main::INFOLOG && $log->is_info && $log->info("Reading albums for $account...");
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
 
+		my $accountName = "tidal:$account" if scalar @$accounts > 1;
+
 		my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
 		my $albums = eval { from_json($albumsResponse->content) } || [];
 
@@ -111,7 +113,7 @@ sub scanAlbums { if (main::SCANNER) {
 
 			$class->storeTracks([
 				map { _prepareTrack($_, $album) } @$tracks
-			]);
+			], undef, $accountName);
 		}
 
 		Slim::Schema->forceCommit;

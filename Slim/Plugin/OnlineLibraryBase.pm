@@ -46,6 +46,11 @@ sub initOnlineTracksTable { if (main::SCANNER && !$main::wipe) {
 	$dbh->do(qq{
 		CREATE TEMPORARY TABLE online_tracks (url TEXT PRIMARY KEY);
 	});
+
+	$dbh->do('DROP TABLE IF EXISTS online_mapping');
+	$dbh->do(qq{
+		CREATE TABLE online_mapping (id INTEGER PRIMARY KEY, account char(128));
+	});
 } }
 
 sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
@@ -108,11 +113,13 @@ sub isImportEnabled {
 }
 
 sub storeTracks {
-	my ($class, $tracks, $libraryId) = @_;
+	my ($class, $tracks, $libraryId, $accountId) = @_;
 
 	return unless $tracks && ref $tracks;
 
 	my $dbh = Slim::Schema->dbh();
+	my $checkComment_sth           = $dbh->prepare_cached("SELECT id FROM comments WHERE track = ? AND value = ?") if $accountId;
+	my $insertAccountInComment_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO comments (track, value) VALUES (?, ?)") if $accountId;
 	my $insertTrackInLibrary_sth   = $dbh->prepare_cached("INSERT OR IGNORE INTO library_track (library, track) VALUES (?, ?)") if $libraryId;
 	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
 
@@ -126,6 +133,15 @@ sub storeTracks {
 			attributes      => $track,
 			integrateRemote => 1,
 		});
+
+		if ($checkComment_sth) {
+			$checkComment_sth->execute($trackObj->id, $accountId);
+			my $data = $checkComment_sth->fetchall_arrayref([0]);
+
+			if (!$data || !ref $data || !scalar @$data) {
+				$insertAccountInComment_sth->execute($trackObj->id, $accountId);
+			}
+		}
 
 		if ($insertTrackInLibrary_sth) {
 			$insertTrackInLibrary_sth->execute($libraryId, $trackObj->id);
