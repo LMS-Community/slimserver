@@ -30,7 +30,7 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		-- weight 1
 		CASE WHEN tracks.bitrate IS NULL THEN '' ELSE printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' END || IFNULL(tracks.samplerate, '') || ' '
 			|| CASE WHEN tracks.samplerate > 0 THEN (round(tracks.samplerate, 0) / 1000) ELSE '' END || ' '
-			|| IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '') || ' '
+			|| IFNULL(tracks.samplesize, '') || ' ' || REPLACE(REPLACE(tracks.url, '%%20', ' '), 'file://', '') || ' '
 			|| LOWER(IFNULL(tracks.musicbrainz_id, ''))
 
 		FROM tracks
@@ -82,22 +82,13 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 		%s;
 };
 
-use constant SQL_GET_PLAYLIST_TRACKS => q{
-	SELECT track
-	FROM playlist_track
-		JOIN tracks ON tracks.url = playlist_track.track
-	WHERE playlist = ? AND (track LIKE 'file:%' OR tracks.extid IS NOT NULL)
-};
-
-use constant SQL_GET_PLAYLIST_TRACK_DETAILS => q{
-	SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1
-	FROM tracks,fulltext
-	WHERE tracks.url = ? AND fulltext.id = tracks.id AND fulltext.type = 'track'
-};
-
 use constant SQL_CREATE_PLAYLIST_ITEM => q{
-	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-	VALUES (?, 'playlist', ?, '', '', ?)
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT playlist_track.playlist, 'playlist', ?, '', ?, GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1)
+		FROM playlist_track
+			LEFT JOIN tracks ON tracks.url = playlist_track.track
+			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', '')
+		WHERE playlist_track.playlist = ?
 };
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -184,7 +175,7 @@ sub checkSingleTrack {
 
 sub checkPlaylist {
 	my ($url, $trackObj) = @_;
-	_createPlaylistItem($trackObj);
+	_createPlaylistItem($trackObj, 'update');
 }
 
 sub canFulltextSearch {
@@ -519,29 +510,14 @@ sub _rebuildIndex {
 }
 
 sub _createPlaylistItem {
-	my ($playlist) = @_;
+	my ($playlist, $update) = @_;
 
 	return unless $playlist && ref $playlist;
 
-	my $dbh = Slim::Schema->dbh;
+	my $sql = $update ? sprintf(SQL_CREATE_PLAYLIST_ITEM, 'OR REPLACE') : sprintf(SQL_CREATE_PLAYLIST_ITEM, '');
+	main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( $sql . ' [' . Data::Dump::dump($playlist->id) .']' );
 
-	main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( SQL_GET_PLAYLIST_TRACKS . ' [' . Data::Dump::dump($playlist->id) .']' );
-
-	my $w1 = '';
-
-	foreach my $track ( @{ $dbh->selectcol_arrayref(SQL_GET_PLAYLIST_TRACKS, undef, $playlist->id) } ) {
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug(SQL_GET_PLAYLIST_TRACK_DETAILS . ' - ' . $track);
-
-		$w1 .= join(' ', @{ $dbh->selectcol_arrayref(SQL_GET_PLAYLIST_TRACK_DETAILS, undef, $track) });
-	}
-
-	$w1 =~ s/^ +//;
-	$w1 =~ s/ +/ /;
-
-	if ($w1 =~ /\S/) {
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( SQL_CREATE_PLAYLIST_ITEM . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,  $w1) );
-		$dbh->do(SQL_CREATE_PLAYLIST_ITEM, undef, $playlist->id, $playlist->title . ' ' . $playlist->titlesearch, $w1) or $scanlog->error($dbh->errstr);
-	}
+	Slim::Schema->dbh->do($sql, undef, $playlist->title . ' ' . $playlist->titlesearch, $playlist->url, $playlist->id);
 }
 
 sub _initPopularTerms {
