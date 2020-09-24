@@ -84,7 +84,7 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 
 use constant SQL_CREATE_PLAYLIST_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT playlist_track.playlist, 'playlist', ?, '', ?, GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1)
+		SELECT playlist_track.playlist, 'playlist', ?, '', ?, REPLACE(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1), "'", ' ')
 		FROM playlist_track
 			LEFT JOIN tracks ON tracks.url = playlist_track.track
 			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', '')
