@@ -52,7 +52,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	DE	Anzeigen:
 	EN	Browse by:
-	NL	Browse op:
+	NL	Blader op:
 	NO	Bla etter:
 	PL	Przeglądaj wg:
 	SV	Bläddra efter:
@@ -109,7 +109,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
-	NL	Verberg lossy-versies als een lossless-versie beschikbaar is.
+	NL	Verberg lossy versies als een lossless versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
 	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
@@ -117,7 +117,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
-	NL	Maak een deelcollectie die probeert om lossy-versies te verbergen als van dezelfde opname ook een lossless-versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
+	NL	Maak een deelcollectie die probeert om lossy versies te verbergen als van dezelfde opname ook een lossless versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
 	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
 	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
@@ -180,7 +180,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
-	NL	Deelcollectie gedeletet
+	NL	Deelcollectie verwijderd
 	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
 	SV	Delbibliotek suddat
@@ -189,24 +189,28 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	DE	Hörbücher
 	EN	Audiobooks
 	SV	Ljudböcker
+	NL	Luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
 	SV	All musik förutom ljudböcker
+	NL	Alle muziek zonder luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
+	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
-
+	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
+	
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	DE	Hörbuch-Autoren
 	EN	Authors
 	SV	Författare
-
+	NL	Schrijvers
