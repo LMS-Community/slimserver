@@ -84,7 +84,8 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 
 use constant SQL_CREATE_PLAYLIST_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT playlist_track.playlist, 'playlist', ?, '', ?, GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1)
+		-- w10: title, w3: url, w1: track metadata
+		SELECT playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
 			LEFT JOIN tracks ON tracks.url = playlist_track.track
 			LEFT JOIN fulltext ON fulltext MATCH IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', '')) AND type = 'track'
@@ -427,6 +428,17 @@ sub _ignoreCase {
 	return $text . ' ' . Slim::Utils::Text::ignoreCase($text, 1);
 }
 
+sub _uniqueTokens {
+	my ($text) = @_;
+
+	return '' unless $text;
+
+	my %seen;
+	return join(' ', grep {
+		!$seen{$_}++
+	} split(/\s/, Slim::Utils::Text::ignorePunct($text)));
+}
+
 sub _rebuildIndex {
 	my $progress = shift;
 
@@ -566,6 +578,7 @@ sub postDBConnect {
 	$dbh->sqlite_create_function( 'CONCAT_ALBUM_TRACKS_INFO', 1, \&_getAlbumTracksInfo );
 	$dbh->sqlite_create_function( 'IGNORE_CASE', 1, \&_ignoreCase);
 	$dbh->sqlite_create_function( 'IGNORE_PUNCTUATION', 1, \&Slim::Utils::Text::ignorePunct);
+	$dbh->sqlite_create_function( 'UNIQUE_TOKENS', 1, \&_uniqueTokens);
 
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
