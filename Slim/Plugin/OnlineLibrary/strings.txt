@@ -85,10 +85,12 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	DE	Erweiterte Ersetzung
 	EN	Advanced genre replacement
+	NL	Geavanceerde instellingen voor genre vervanging
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	DE	Zurück zu den Grundeinstellungen
 	EN	Back to the basic settings
+	NL	Terug naar standaard instellingen
 
 PLUGIN_ONLINE_LIBRARY_TAG
 	DE	Feld:
