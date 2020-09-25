@@ -87,7 +87,7 @@ use constant SQL_CREATE_PLAYLIST_ITEM => q{
 		SELECT playlist_track.playlist, 'playlist', ?, '', ?, GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1)
 		FROM playlist_track
 			LEFT JOIN tracks ON tracks.url = playlist_track.track
-			LEFT JOIN fulltext ON fulltext MATCH REPLACE(playlist_track.track, '%20', ' ') AND type = 'track'
+			LEFT JOIN fulltext ON fulltext MATCH IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', '')) AND type = 'track'
 		WHERE playlist_track.playlist = ?
 };
 
@@ -565,6 +565,7 @@ sub postDBConnect {
 	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
 	$dbh->sqlite_create_function( 'CONCAT_ALBUM_TRACKS_INFO', 1, \&_getAlbumTracksInfo );
 	$dbh->sqlite_create_function( 'IGNORE_CASE', 1, \&_ignoreCase);
+	$dbh->sqlite_create_function( 'IGNORE_PUNCTUATION', 1, \&Slim::Utils::Text::ignorePunct);
 
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
