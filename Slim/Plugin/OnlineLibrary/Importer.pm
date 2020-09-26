@@ -24,6 +24,13 @@ sub initPlugin {
 
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries() || [];
 
+	Slim::Music::Import->addImporter( 'Slim::Plugin::OnlineLibrary::Importer::VirtualLibrariesCleanup', {
+		type   => 'post',
+		weight => 110,       # this importer needs to be run after the VirtualLibraries (weight: 100)
+		onlineLibraryOnly => 1,
+		'use'  => 1,
+	} );
+
 	my $mappings = $prefs->get('genreMappings');
 
 	return unless scalar @$mappings;
@@ -134,6 +141,41 @@ sub startScan {
 
 	$progress->final();
 	Slim::Schema->forceCommit;
+
+	Slim::Music::Import->endImporter($class);
+}
+
+1;
+
+
+package Slim::Plugin::OnlineLibrary::Importer::VirtualLibrariesCleanup;
+
+sub startScan {
+	my ($class) = @_;
+
+	my $dbh = Slim::Schema->dbh or return;
+
+	$dbh->do('DROP TABLE IF EXISTS duplicate_albums');
+	$dbh->do(q(
+		CREATE TEMPORARY TABLE duplicate_albums AS
+			SELECT albums.id
+			FROM albums
+			WHERE albums.extid IS NOT NULL
+				AND 1 IN (
+					SELECT 1
+					FROM albums otheralbums
+					WHERE otheralbums.extid IS NULL
+						AND LOWER(otheralbums.title) = LOWER(albums.title)
+						AND otheralbums.contributor = albums.contributor
+				)
+	));
+
+	$dbh->do(q(DELETE FROM library_album WHERE library_album.album IN (SELECT id FROM duplicate_albums)));
+	$dbh->do(q(DELETE FROM library_track WHERE library_track.track in (
+		SELECT id FROM tracks WHERE tracks.album IN (SELECT id FROM duplicate_albums)
+	)));
+
+	$dbh->do('DROP TABLE IF EXISTS duplicate_albums');
 
 	Slim::Music::Import->endImporter($class);
 }
