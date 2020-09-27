@@ -86,6 +86,10 @@ sub init {
 		$tagClasses{'dsf'} = 'Slim::Formats::DSF';
 	}
 
+	if (Slim::Utils::Versions->compareVersions($Audio::Scan::VERSION,'0.99') >= 0) {
+		$tagClasses{'wvpx'} = 'Slim::Formats::WavPack';
+	}
+
 	if (Slim::Utils::Versions->compareVersions($Audio::Scan::VERSION, '1.02') >= 0) {
 		$tagClasses{'ops'} = 'Slim::Formats::OggOpus';
 	}
@@ -259,6 +263,10 @@ sub readTags {
 	if ($tags->{'LEADING_MDAT'}) {
 		$type = 'mp4x';
 		$tags->{'CONTENT_TYPE'} = 'alcx' if ($tags->{'CONTENT_TYPE'} eq 'alc')
+	}
+
+	if ($tags->{'WAVPACKDSD'}) {
+		$type = 'wvpx';
 	}
 
 	# Only set if we couldn't read it from the file.

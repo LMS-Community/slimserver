@@ -11766,19 +11766,34 @@ MPC
 	SV	Musepack
 
 WVP
-	CS	Wavpack
-	DA	Wavpack
-	DE	Wavpack
-	EN	Wavpack
-	ES	Wavpack
+	CS	WavPack
+	DA	WavPack
+	DE	WavPack
+	EN	WavPack
+	ES	WavPack
 	FI	WavPack
-	FR	Wavpack
-	IT	Wavpack
-	NL	Wavpack
-	NO	Wavpack
-	PL	Wavpack
-	RU	Wavpack
+	FR	WavPack
+	IT	WavPack
+	NL	WavPack
+	NO	WavPack
+	PL	WavPack
+	RU	WavPack
 	SV	WavPack
+
+WVPX
+	CS	WavPack DSD
+	DA	WavPack DSD
+	DE	WavPack DSD
+	EN	WavPack DSD
+	ES	WavPack DSD
+	FI	WavPack DSD
+	FR	WavPack DSD
+	IT	WavPack DSD
+	NL	WavPack DSD
+	NO	WavPack DSD
+	PL	WavPack DSD
+	RU	WavPack DSD
+	SV	WavPack DSD
 
 SHN
 # SLT: Please note that "Shorten" is a file format name, thus doesn't need to be translated
