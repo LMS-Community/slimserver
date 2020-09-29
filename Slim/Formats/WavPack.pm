@@ -29,6 +29,10 @@ sub getTag {
 	$tags->{CHANNELS}   = $info->{channels};
 	$tags->{VBR_SCALE}  = 1;
 	
+	if ( $info->{bits_per_sample} == 1 ) {
+	    $tags->{WAVPACKDSD} = 1;
+	}
+
 	Slim::Formats::APE->doTagMapping($tags);
 
 	return $tags;
