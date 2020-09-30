@@ -860,6 +860,12 @@ sub folderFilter {
 	my @path = splitdir(shift);
 	my $folder = pop @path;
 
+	# Skip this folder (and subfolders) if there is a file .slimskip.
+	if ( -f catdir(@path, $folder, ".slimskip") ) {
+		$scannerlog->error("Skipping: " . catdir(@path, $folder));
+		return 0;
+	}
+
 	my $hasStat = shift || 0;
 	my $validRE = shift;
 	my $file = catdir(@path);
