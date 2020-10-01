@@ -84,6 +84,9 @@ my @findBinPaths    = ();
 
 my $MAX_CACHE_ENTRIES = $prefs->get('dbhighmem') ? 512 : 32;
 
+# Sentinel file to skip media folders.
+my $skipsentinel = $prefs->get('skipsentinel');
+
 $prefs->setChange( sub {
 	%mediadirsCache = ();
 }, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
@@ -860,9 +863,10 @@ sub folderFilter {
 	my @path = splitdir(shift);
 	my $folder = pop @path;
 
-	# Skip this folder (and subfolders) if there is a file .slimskip.
-	if ( -f catdir(@path, $folder, ".slimskip") ) {
-		$scannerlog->error("Skipping: " . catdir(@path, $folder));
+	# Skip this folder (and subfolders) if there is a sentinel file.
+	if ( $skipsentinel && -f catdir(@path, $folder, $skipsentinel) ) {
+		main::INFOLOG && $scannerlog->is_info &&
+			$scannerlog->info("Skipping: " . catdir(@path, $folder));
 		return 0;
 	}
 

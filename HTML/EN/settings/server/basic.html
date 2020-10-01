@@ -89,6 +89,12 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_SKIPSENTINEL" desc="SETUP_SKIPSENTINEL_DESC" %]
+			<input type="text" class="stdedit" name="pref_skipsentinel" id="skipsentinel" value="[% prefs.pref_skipsentinel %]" size="40">
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
 		<select class="stdedit disableOnScan" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
 

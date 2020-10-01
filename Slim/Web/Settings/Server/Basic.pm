@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language playlistdir libraryname) );
+	return ($prefs, qw(language playlistdir libraryname skipsentinel) );
 }
 
 sub handler {
