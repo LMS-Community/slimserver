@@ -140,5 +140,9 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_SKIPSENTINEL" desc="SETUP_SKIPSENTINEL_DESC" %]
+		<input type="text" class="stdedit" name="pref_skipsentinel" id="skipsentinel" value="[% prefs.pref_skipsentinel %]" size="40">
+	[% END %]
+
 [% PROCESS settings/footer.html %]
 
