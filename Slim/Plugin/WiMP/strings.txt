@@ -2,7 +2,7 @@ PLUGIN_WIMP_MODULE_NAME
 	EN	TIDAL
 	NL	TIDAL
 	NO	TIDAL
-	
+
 PLUGIN_WIMP_MODULE_DESC
 	EN	TIDAL - High Fidelity Music Streaming
 	NL	TIDAL - High Fidelity Music Streaming
@@ -62,7 +62,7 @@ PLUGIN_WIMP_ON_WIMP
 	FI	TIDAL:ssä
 	FR	Sur TIDAL
 	IT	Su TIDAL
-	NL	Over TIDAL
+	NL	Op TIDAL
 	NO	På TIDAL
 	PL	W usłudze TIDAL
 	RU	На TIDAL
