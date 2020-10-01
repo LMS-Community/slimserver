@@ -4100,7 +4100,7 @@ FILE_FORMAT
 	RU	Формат файла
 	SV	Filformat
 	ZH_CN	文件格式
-	
+
 SETUP_INPUTTYPE
 	DE	Von
 	EN	From
@@ -6407,10 +6407,12 @@ SETUP_MEDIADIRS_DESC
 	SV	Du kan ange en eller flera mappar som innehåller mediefiler som Logitech Media Server ska söka igenom och lägga till i ditt mediebibliotek. Ange sökvägarna till mappen nedan.
 
 SETUP_SKIPSENTINEL
-	EN	Skip sentinel filename
+	DE	Markierte Ordner überspringen
+	EN	Skip Sentinel Filename
 	NL	Skip sentinel bestandsnaam
 
 SETUP_SKIPSENTINEL_DESC
+	DE	Medienordner oder -unterordner, welche eine Datei dieses Namens enthalten, werden übersprungen.
 	EN	Media (sub)folders that contain a file with this name are skipped.
 	NL	Media (sub)folders waarin een bestand met deze naam voorkomt worden overgeslagen.
 
@@ -7787,7 +7789,7 @@ SETUP_NOROLEFILTER
 	NL	Rollen van uitvoerenden filteren op Album- en Nummerniveau
 	NO	Filtrer utøverroller på album- og spornivå
 	PL	Filtrowanie albumów i utworów według ról kontrybutorów
-	SV	Filtrera artistroller på album- och låtnivå 
+	SV	Filtrera artistroller på album- och låtnivå
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
@@ -12224,17 +12226,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
