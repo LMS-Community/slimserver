@@ -6406,6 +6406,14 @@ SETUP_MEDIADIRS_DESC
 	RU	Можно указать одну или несколько папок, содержащую файлы мультимедиа, которые Logitech Media Server будет сканировать и добавлять в библиотеку мультимедиа.  Введите пути к папкам ниже.
 	SV	Du kan ange en eller flera mappar som innehåller mediefiler som Logitech Media Server ska söka igenom och lägga till i ditt mediebibliotek. Ange sökvägarna till mappen nedan.
 
+SETUP_SKIPSENTINEL
+	EN	Skip sentinel filename
+	NL	Skip sentinel bestandsnaam
+
+SETUP_SKIPSENTINEL_DESC
+	EN	Media (sub)folders that contain a file with this name are skipped.
+	NL	Media (sub)folders waarin een bestand met deze naam voorkomt worden overgeslagen.
+
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
 	DA	Mappe med afspilningslister

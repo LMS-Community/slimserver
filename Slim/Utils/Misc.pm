@@ -860,6 +860,14 @@ sub folderFilter {
 	my @path = splitdir(shift);
 	my $folder = pop @path;
 
+	# Skip this folder (and subfolders) if there is a sentinel file.
+	my $skipsentinel = $prefs->get('skipsentinel');
+	if ( $skipsentinel && -f catdir(@path, $folder, $skipsentinel) ) {
+		main::INFOLOG && $scannerlog->is_info &&
+			$scannerlog->info("Skipping: " . catdir(@path, $folder));
+		return 0;
+	}
+
 	my $hasStat = shift || 0;
 	my $validRE = shift;
 	my $file = catdir(@path);
