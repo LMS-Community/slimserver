@@ -2,9 +2,7 @@ package Slim::Networking::Async::Socket::HTTPSocks;
 
 use strict;
 
-use base qw(IO::Socket::Socks Net::HTTP::Methods Slim::Networking::Async::Socket);
-
-use Slim::Networking::Async::Socket::HTTP;
+use base qw(Slim::Networking::Async::Socket::HTTP IO::Socket::Socks);
 
 sub new {
 	my ($class, %args) = @_;
@@ -12,20 +10,29 @@ sub new {
 	# gracefully downgrade to equivalent class w/o socks
 	return Slim::Networking::Async::Socket::HTTP->new( %args ) unless $args{ProxyAddr};
 
-	my %params = (
-		%args,
-		SocksVersion => $args{Username} ? 5 : 4,
-		AuthType => $args{Username} ? 'userpass' : 'none',
-		ConnectAddr	=> $args{PeerAddr} || $args{Host},
-		ConnectPort => $args{PeerPort},		
-		Blocking => 1,
-	);	
+	# change PeerAddr to proxy (no deepcopy needed)
+	my %params = %args;
+	$params{PeerAddr} = $args{ProxyAddr};
+	$params{PeerPort} = $args{ProxyPort};
+	$params{Blocking} => 1;
 	
-	$params{ProxyPort} ||= 1080;
+	# and connect parent's class to it (better block)
+	my $sock = $class->SUPER::new( %params ) || return;
 	
-	my $sock = $class->SUPER::new(%params) || return;
-	$sock->blocking(0);
+	# now add SOCKS needed parameters
+	$params{SocksVersion} = $args{Username} ? 5 : 4;
+	$params{AuthType} = $args{Username} ? 'userpass' : 'none';
+	$params{ConnectAddr} = $args{PeerAddr} || $args{Host};
+	$params{ConnectPort} = $args{PeerPort};
+	$params{ProxyPort} = $args{ProxyPort} || 1080;
+	
+	# and initiate negotiation (we'll become IO::Socket::Socks)	
+	$sock = IO::Socket::Socks->start_SOCKS($sock, %params) || return;
 
+	# move to non-blocking
+	$sock->blocking(0);
+	
+	# we can bless back to parent's as we are IO::Socket::Socks as well
 	bless $sock;
 }
 
