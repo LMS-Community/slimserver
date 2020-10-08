@@ -140,6 +140,9 @@ sub parse {
 		# $currentTrack is setted when a TRACK command with AUDIO is encountered.
 		# if the TRACK command is not related to AUDIO, then $currentTrack is cleared.
 		#
+		# $filename is set when a FILE command encountered. Last seen $filename used to 
+		# set filename for all the following TRACKs, so multiple FILE commands supported.
+		#
 		# This way, any command issued after a NON AUDIO TRACK and before a valid
 		# AUDIO TRACK is skipped, also if the NON AUDIO track is the first one,
 		# instead of storing them as album / previous Track related as before.
