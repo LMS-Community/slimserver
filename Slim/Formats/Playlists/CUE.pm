@@ -97,7 +97,6 @@ sub parse {
 	my $embedded = shift || 0;
 
 	my ($filename, $currtrack);
-	my $filesSeen = 0;
 	my $cuesheet  = {};
 	my $tracks    = {};
 
@@ -185,9 +184,10 @@ sub parse {
 			$inAlbum = 0;
 
 			#Skipping non audio tracks.
-			if ($value =~ /^(\d+)\s+AUDIO/i) {
+			if ($value =~ /^(\d+)\s+AUDIO/i && $filename) {
 
 				$currtrack = int($1);
+			        $tracks->{$currtrack}->{'FILENAME'} = $filename;
 
 			} elsif ($value =~ /^(\d+)\s+.*/i) {
 
@@ -310,13 +310,10 @@ sub parse {
 
 		} elsif ($command eq 'FILE') {
 
-			if ($inAlbum && $value =~ /^\"(.*)\"/i) {
+			if ($value =~ /^\"(.*)\"/i) {
 				$filename = $embedded || $1;
 				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 
-				# Watch out for cue sheets with multiple FILE entries
-				$filesSeen++;
-				
 				main::DEBUGLOG && $log->is_debug && $log->debug('Filename with quotes ' . Data::Dump::dump({
 					line		=> $line,
 					command		=> $command,
@@ -325,15 +322,13 @@ sub parse {
 					returned	=> $1
 				}));
 
-			} elsif ($inAlbum && $value =~ /^\"?(\S+)\"?/i) {
+			} elsif ($value =~ /^\"?(\S+)\"?/i) {
 
 				# Some cue sheets may not have quotes. Allow that, but
 				# the filenames can't have any spaces in them."
 				$filename = $embedded || $1;
 				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 
-				$filesSeen++;
-				
 				main::DEBUGLOG && $log->is_debug && $log->debug('Filename with no quotes ' . Data::Dump::dump({
 					line		=> $line,
 					command		=> $command,
@@ -342,7 +337,7 @@ sub parse {
 					returned	=> $1
 				}));
 
-			} elsif ($inAlbum) {
+			} else {
 
 				# Invalid filename, skipped.
 				main::DEBUGLOG && $log->is_debug && $log->debug('Invalid filename ' . Data::Dump::dump({
@@ -351,23 +346,7 @@ sub parse {
 					value		=> $value
 				}));
 
-			} elsif (defined $currtrack && defined $filename) {
-
-				# Bug 5735, skip cue sheets with multiple FILE entries.
-				# This is not the right thing to do, but let's at least not break
-				# the existing functionality... See TODO comment below.
-				#
-				# Each track in a cue sheet can have a different
-				# filename. See Bug 2126 &
-				# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
-			
-				$tracks->{$currtrack}->{'FILENAME'} = $filename;
-				$filesSeen++;
-			} 
-			
-			# TODO: Correctly Handle Multiple file cue sheet.
-			# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
-
+			}
 		} else {
 
 			# handle remaning Commands as a list of keys and values.
@@ -378,20 +357,11 @@ sub parse {
 											 $command,
 											 _removeQuotes($value));
 		}
-		
-		last if $filesSeen && $filesSeen > 1;
 	}
 
-	# Bug 5735, skip cue sheets with multiple FILE entries
-	if ( $filesSeen > 1 ) {
-		$log->warn('Skipping cuesheet with multiple FILE entries');
-		return;
-	}
-	
 	main::DEBUGLOG && $log->is_debug && $log->debug('After line parsing ' . Data::Dump::dump({
 		cuesheet	=> $cuesheet,
 		tracks		=> $tracks,
-		filename	=> $filename
 	}));
 
 	# Here controls on the entire cuesheet structure, moving attributes
@@ -465,7 +435,7 @@ sub parse {
 	# create bogus database entries.
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
-		my $filepath = Slim::Utils::Misc::pathFromFileURL(($tracks->{$key}->{'FILENAME'} || $filename));
+		my $filepath = Slim::Utils::Misc::pathFromFileURL($tracks->{$key}->{'FILENAME'});
 
 		if (!$embedded && defined $filepath && !-r $filepath) {
 
@@ -482,20 +452,12 @@ sub parse {
 		return {};
 	}
 
-	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = $tracks->{$currtrack}->{'END'};
-
-	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
-	if (!$lastpos && $filename) {
-
-		main::INFOLOG && $log->info("Reading tags to get ending time of $filename");
+	# Check the original file for any information that may
+	# not be in the cue sheet. Bug 2668
+	if ($filename) {
 
 		my $tags = Slim::Formats->readTags($filename);
 
-		$lastpos = $tags->{SECS};
-
-		# Also - check the original file for any information that may
-		# not be in the cue sheet. Bug 2668
 		for my $file_attribute ( qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR  
 							GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS 
 							REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK 
@@ -526,16 +488,26 @@ sub parse {
 	# Lived untouched, sounds like an error to me, but different people 
 	# use compilation with different meaning, so better stay as it was before.
 	#
-	if (!$lastpos) {
-
-		logError("Couldn't get duration of $filename");
-	}
-
+	my $lastpos = 0;
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
 		my $track = $tracks->{$key};
+		my $file = $track->{'FILENAME'};
 
 		if (!defined $track->{'END'}) {
+			if (!$lastpos && $file) {
+
+				main::INFOLOG && $log->info("Reading tags to get ending time of $file");
+
+				my $tags = Slim::Formats->readTags($file);
+
+				$lastpos = $tags->{SECS};
+
+				if (!$lastpos) {
+					logError("Couldn't get duration of filename here $file");
+				}
+			}
+
 			$track->{'END'} = $lastpos;
 		}
 
@@ -547,17 +519,11 @@ sub parse {
 	for my $key (sort {$a <=> $b} keys %$tracks) {
 
 		my $track = $tracks->{$key};
-
-		# Each track can have it's own FILE
-		if (!defined $track->{'FILENAME'}) {
-
-			$track->{'FILENAME'} = $filename;
-		}
-
 		my $file = $track->{'FILENAME'};
 	
 		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $file ) {
 
+			logError("Missing file or start/end points for track $track.");
 			next;
 		}
 
