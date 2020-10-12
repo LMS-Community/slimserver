@@ -1,37 +1,39 @@
 package Slim::Networking::Async::Socket::HTTPSSocks;
 
 use strict;
-use IO::Socket::Socks;
 
-use base qw(IO::Socket::SSL IO::Socket::Socks Net::HTTP::Methods Slim::Networking::Async::Socket);
-
-use Slim::Networking::Async::Socket::HTTPS;
+use base qw(Slim::Networking::Async::Socket::HTTPS IO::Socket::Socks);
 
 sub new {
 	my ($class, %args) = @_;
-	
+
 	# gracefully downgrade to equivalent class w/o socks
 	return Slim::Networking::Async::Socket::HTTPS->new( %args ) unless $args{ProxyAddr};
+
+	# change PeerAddr to proxy with no handshake (no deepcopy needed)
+	my %params = %args;
+	$params{PeerAddr} = $args{ProxyAddr};
+	$params{PeerPort} = $args{ProxyPort};
+	$params{SSL_StartHandshake} => 0;
+
+	# and connect parent's class to it
+	my $sock = $class->SUPER::new( %params );
 	
-	my %params = (
-		%args,
-		SocksVersion => $args{Username} ? 5 : 4,
-		AuthType => $args{Username} ? 'userpass' : 'none',
-		ConnectAddr => $args{PeerAddr} || $args{Host},
-		ConnectPort => $args{PeerPort},		
-		Blocking => 1,
-	);	
+	# now add SOCKS needed parameters (better block)
+	$params{SocksVersion} = $args{Username} ? 5 : 4;
+	$params{AuthType} = $args{Username} ? 'userpass' : 'none';
+	$params{ConnectAddr} = $args{PeerAddr} || $args{Host};
+	$params{ConnectPort} = $args{PeerPort};
+	$params{ProxyPort} = $args{ProxyPort} || 1080;
+	$params{Blocking} => 1;
 	
-	$params{ProxyPort} ||= 1080;	
-	
-	# create the SOCKS object and connect
-	my $sock = IO::Socket::Socks->new(%params) || return;
+	# and initiate negotiation (we'll become IO::Socket::Socks)	
+	$sock = IO::Socket::Socks->start_SOCKS($sock, %params);
+
+	# move to non-blocking
 	$sock->blocking(0);
-		
-	# once connected SOCKS is a normal socket, so we can use start_SSL
-	IO::Socket::SSL->start_SSL($sock, @_);
-		
-	# as we inherit from IO::Socket::SSL, we can bless to our base class
+
+	# we can bless back to parent's as we are IO::Socket::Socks as well
 	bless $sock;
 }
 
