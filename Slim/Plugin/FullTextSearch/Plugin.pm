@@ -88,7 +88,7 @@ use constant SQL_CREATE_PLAYLIST_ITEM => q{
 		SELECT playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
 			LEFT JOIN tracks ON tracks.url = playlist_track.track
-			LEFT JOIN fulltext ON fulltext MATCH IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', '')) AND type = 'track'
+			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', ''))
 		WHERE playlist_track.playlist = ?
 };
 
