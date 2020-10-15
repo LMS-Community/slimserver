@@ -82,7 +82,8 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 		%s;
 };
 
-use constant SQL_CREATE_PLAYLIST_ITEM => q{
+use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
+? q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
 		SELECT playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
@@ -90,6 +91,13 @@ use constant SQL_CREATE_PLAYLIST_ITEM => q{
 			LEFT JOIN tracks ON tracks.url = playlist_track.track
 			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', ''))
 		WHERE playlist_track.playlist = ?
+}
+: q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		-- w10: title, w3: url, w1: track metadata
+		SELECT tracks.id, 'playlist', ?, '', ?, ''
+		FROM tracks
+		WHERE tracks.id = ?
 };
 
 my $log = Slim::Utils::Log->addLogCategory({
