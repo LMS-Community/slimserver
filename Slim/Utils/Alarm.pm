@@ -65,15 +65,15 @@ use constant DEF_ALARM_SCREENSAVER => 'SCREENSAVER.datetime';
 
 # Hash storing the playlists that alarms can use.  Keys are playlist URLs.  Values are the string descriptions for each URL.
 # Values that should be passed through client->string are surrounded with curly braces.
-# e.g. 
+# e.g.
 # {
 #	'randomplay://albums' => '{PLUGIN_RANDOM_ALBUMS}',
 # }
-my %alarmPlaylists = (); 
+my %alarmPlaylists = ();
 
 # Playlist types that have been registered using addPlaylist.  Keys are the playlist type, values
 # are the playlists datastructure.  See docs for addPlaylist.
-my %extraPlaylistTypes; 
+my %extraPlaylistTypes;
 
 # Last time seen by this class - used to spot changes to the system's time, e.g. for DST or
 # a clock adjustment
@@ -111,7 +111,7 @@ sub new {
 	# External users: use the accessors!
 	my $self = {
 		_clientId => $client->id,
-		_time => $time, 	
+		_time => $time,
 		# For daily alarms, _days is an array of booleans indicating days for which alarm should sound.
 		# 0=Sun 6=Sat. undef indicates a calendar alarm
 		_days => (! defined $time || $time < 86400) ? [(1) x 7] : undef,
@@ -129,7 +129,7 @@ sub new {
 	};
 
 	bless $self, $class;
-	
+
 	return $self;
 }
 
@@ -157,9 +157,9 @@ Sets/returns the client to which this alarm applies.
 sub client {
 	my $self = shift;
 	my $newValue = shift;
-	
+
 	$self->{_clientId} = $newValue->id if defined $newValue;
-	
+
 	return Slim::Player::Client::getClient($self->{_clientId});
 }
 
@@ -179,7 +179,7 @@ sub comment {
 	return $self->{_comment};
 }
 
-=head3 day( $dayNum , [ 0/1 ] ) 
+=head3 day( $dayNum , [ 0/1 ] )
 
 Sets/returns whether the alarm is active on a particular day (0=Sun .. 6=Sat).
 
@@ -189,9 +189,9 @@ sub day {
 	my $self = shift;
 	my $day = shift;
 	my $newValue = shift;
-	
+
 	$self->{_days}->[$day] = $newValue if defined $newValue;
-	
+
 	return $self->{_days}->[$day];
 }
 
@@ -231,9 +231,9 @@ Sets/returns whether this alarm is enabled.  Disabled alarms will never sound.
 sub enabled {
 	my $self = shift;
 	my $newValue = shift;
-	
+
 	$self->{_enabled} = $newValue if defined $newValue;
-	
+
 	return $self->{_enabled};
 }
 
@@ -251,7 +251,7 @@ sub repeat {
 	my $newValue = shift;
 
 	$self->{_repeat} = $newValue if defined $newValue;
-	
+
 	return $self->{_repeat};
 }
 =head3 shufflemode ( [0/1/2] )
@@ -284,14 +284,14 @@ Warning: for calendar alarms, this time will also include a date component.  Edi
 sub time {
 	my $self = shift;
 	my $time = shift;
-	
+
 	if (defined $time) {
 		$self->{_time} = $time;
 		if ($time >= 86400) {
 			$self->{_days} = undef;
 		}
 	}
-	
+
 	return $self->{_time};
 }
 
@@ -305,7 +305,7 @@ Alarms that have not have been saved will not have an id defined - this method w
 
 sub id {
 	my $self = shift;
-	
+
 	return $self->{_id};
 }
 
@@ -325,7 +325,7 @@ sub volume {
 
 	if (@_) {
 		my $newValue = shift;
-	
+
 		$self->{_volume} = $newValue;
 
 		# Update the RTC volume if needed
@@ -375,10 +375,10 @@ sub playlist {
 
 	if (@_) {
 		my $newValue = shift;
-		
+
 		$self->{_playlist} = $newValue;
 	}
-	
+
 	return $self->{_playlist};
 }
 
@@ -393,10 +393,10 @@ sub title {
 
 	if (@_) {
 		my $newValue = shift;
-		
+
 		$self->{_title} = $newValue;
 	}
-	
+
 	# bug 13622 - don't fall back to the url, as playlist titles aren't stored with the alarm
 	return $self->{_title} || '';
 }
@@ -431,20 +431,20 @@ next.  This allows multiple alarms to be considered against a common, non-increa
 sub findNextTime {
 	my $self = shift;
 	my $baseTime = shift;
-	
+
 	if (! $self->{_enabled}) {
 		return undef;
 	}
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
+
 	my $client = $self->client;
 
 	if (defined $self->{_days}) {
 		# Convert base time into a weekday number and time
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($baseTime);
 
-		# Find the first enabled alarm starting at baseTime's day num 
+		# Find the first enabled alarm starting at baseTime's day num
 		my $day = $wday;
 		for (my $i = 0; $i < 7; $i++) {
 			if ($self->{_days}[$day]) {
@@ -496,7 +496,7 @@ This method is generally called by a Timer callback that has been set using sche
 
 sub sound {
 	my $self = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my $class = ref $self;
@@ -506,7 +506,7 @@ sub sound {
 	my $alarmTime = shift;
 
 	my $client = $self->client;
-	
+
 	if (! defined $client) {
 		# This can happen if a client is forgotten after an alarm was scheduled for it
 		main::DEBUGLOG && $isDebug && $log->debug('Alarm triggered for unknown client: ' . $self->{_clientId});
@@ -522,7 +522,7 @@ sub sound {
 		# changes, causing timers to be fired as soon as the time change is noticed by S::U::Timers.
 		# Early alarms will be rescheduled at the end of this sub.
 		my $delta = CORE::time - $alarmTime;
-	
+
 		if ($delta < -10 || $delta > 60) {
 			main::DEBUGLOG && $isDebug && $log->debug("Alarm is $delta seconds early/late - ignoring");
 			$soundAlarm = 0;
@@ -535,22 +535,22 @@ sub sound {
 		$self->{_enabled} = 0;
 		$self->save(0);
 	}
-	
+
 	# Support special URLs for executing CLI commands, i.e.
 	# cli://power__0 (turn off)
 	# 2 underscores are used to separate commands, to allow for commands including 1 underscore
 	# Must be URI-escaped, and clientid is implied at the start of the command
-	
+
 	if ( $soundAlarm && $self->playlist =~ m{^cli://(.+)} ) {
 		my @cmd = map { uri_unescape($_) } split /__/, $1;
-		
+
 		main::DEBUGLOG && $isDebug && $log->debug( 'Executing Alarm CLI: ' . Data::Dump::dump(\@cmd) );
-		
+
 		$client->execute( \@cmd );
-		
+
 		# Make sure this alarm is not scheduled again right away
 		$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
-		
+
 		# don't sound the alarm via the code below
 		$soundAlarm = 0;
 	}
@@ -575,7 +575,7 @@ sub sound {
 		$self->{_active} = 1;
 		$client->alarmData->{currentAlarm} = $self;
 
-		my $now = Time::HiRes::time(); 
+		my $now = Time::HiRes::time();
 		# Bug 7818, count this as user interaction, even though it isn't really
 		$client->lastActivityTime($now);
 
@@ -584,7 +584,7 @@ sub sound {
 
 		my $request = $client->execute(['stop']);
 		$request->source('ALARM');
-		
+
 		# Bug 12760, 9569 - Grab power condition before alarm so we can return later on a timeout.
 		main::DEBUGLOG && $isDebug && $log->debug("Current Power State: " . ($client->power ? 'On' : 'Off'));
 		$self->{_originalPower} = $client->power;
@@ -661,13 +661,13 @@ sub sound {
 
 			my $line1 = $client->string('ALARM_NOW_PLAYING');
 
-			my $line2; 
+			my $line2;
 			if (defined $self->playlist) {
 				# Get the string that was given when the current playlist url was registered and stringify
 				# if necessary
 				my $playlistString = $alarmPlaylists{$self->playlist};
 				if (defined $playlistString) {
-					my ($stringKey) = $playlistString =~ /^{(.*)}$/; 
+					my ($stringKey) = $playlistString =~ /^{(.*)}$/;
 
 					if (defined $stringKey) {
 						$line2 = $client->string($stringKey);
@@ -725,11 +725,11 @@ Does nothing unless this alarm is already active.
 
 sub snooze {
 	my $self = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug('Snooze called for alarm id ' . $self->{_id});
-	
+
 	return unless $self->{_active};
 
 	my $client = $self->client;
@@ -772,7 +772,7 @@ sub snooze {
 
 		$self->{_snoozeActive} = 1;
 
-		# Set timer for snooze expiry 
+		# Set timer for snooze expiry
 		Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $snoozeSeconds, \&stopSnooze);
 
 		# Set up snooze subscription to end snooze on user activity
@@ -802,7 +802,7 @@ is being called at the end of a snooze timer.
 sub stopSnooze {
 	my $self = shift;
 	my $unPause = @_ ? shift : 1;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug('Snooze expired');
@@ -813,7 +813,7 @@ sub stopSnooze {
 	my $client = $self->client;
 
 	$self->{_snoozeActive} = 0;
-	
+
 	if ($unPause) {
 		main::DEBUGLOG && $isDebug && $log->debug('unpausing music');
 		my $request = $client->execute(['pause', 0, _fadeInSeconds($client)]);
@@ -830,7 +830,7 @@ sub stopSnooze {
 		duration => $SHOW_BRIEFLY_DUR,
 		jive     => undef,
 	});
-	
+
 	# Reset the subscription to end the alarm on user activity
 	$class->_setAlarmSubscription($client);
 
@@ -853,7 +853,7 @@ sub stop {
 	my $client = $self->client;
 
 	return unless $self->{_active};
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	if (defined $client->alarmData->{currentAlarm} && $client->alarmData->{currentAlarm} == $self) {
@@ -905,7 +905,7 @@ sub stop {
 		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
 		$client->power($self->{_originalPower});
 	});
-	
+
 
 	my $class = ref $self;
 	$class->popAlarmScreensaver($client);
@@ -931,26 +931,18 @@ Returns a short, single-line string describing this alarm.  e.g. 09:00 Mo Sa Sj
 sub displayStr {
 	my $self = shift;
 
-	my $displayStr;
-	
-	if ($self->{_enabled}) {
-		
-		$displayStr = $self->timeStr();
+	my $displayStr = $self->timeStr();
 
-		if (! $self->everyDay) {
-			
-			foreach my $day (1 .. 6, 0) { 
-				if ($self->day($day)) {
-					$displayStr .= ' ' . $self->client->string('ALARM_SHORT_DAY_' . $day);
-				}
+	if (! $self->everyDay) {
+		foreach my $day (1 .. 6, 0) {
+			if ($self->day($day)) {
+				$displayStr .= ' ' . $self->client->string('ALARM_SHORT_DAY_' . $day);
 			}
 		}
-
 	}
-	
-	else {
-		
-		$displayStr = $self->client->string('ALARM_OFF');
+
+	if (!$self->{_enabled}) {
+		$displayStr = $self->client->string('ALARM_OFF') . " ($displayStr)";
 	}
 
 	return $displayStr;
@@ -965,10 +957,10 @@ Returns the formatted time string for this alarm.
 sub timeStr {
 	my $self = shift;
 
-	my $time = Slim::Utils::DateTime::secsToPrettyTime($self->{_time}, $self->client);		
-	
+	my $time = Slim::Utils::DateTime::secsToPrettyTime($self->{_time}, $self->client);
+
 	$time =~ s/^\s//g;
-	
+
 	return $time;
 }
 
@@ -1004,7 +996,7 @@ sub snoozeActive {
 
 =head3 save( [ $reschedule = 1 ] )
 
-Save/update alarm.  This must be called on an alarm once changes have finished being made to it. 
+Save/update alarm.  This must be called on an alarm once changes have finished being made to it.
 Changes to existing alarms will not be persisted unless this method is called.  New alarms will
 not be scheduled unless they have first been saved.
 
@@ -1019,7 +1011,7 @@ sub save {
 
 	my $class = ref $self;
 	my $client = $self->client;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug('Saving alarm.');
@@ -1060,7 +1052,7 @@ sub _createSaveable {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Alarm hasn\'t had a time set.  Not saving.');
 		return;
 	}
-	
+
 	# Add alarm to client object if it hasn't been saved before
 	if (! defined $self->{_id}) {
 		# Create unique id for alarm
@@ -1117,7 +1109,7 @@ sub delete {
 # Check whether the alarm's client is playing something and trigger a fallback if not
 sub _checkPlaying {
 	my $self = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug('Checking whether client is playing for alarm ' . $self->id);
@@ -1126,7 +1118,7 @@ sub _checkPlaying {
 	return if ! $self->active || $self->snoozeActive;
 
 	my $client = $self->client;
-	
+
 	main::DEBUGLOG && $isDebug && $log->debug( 'Current playmode: ' . Slim::Player::Source::playmode($client) );
 
 	if (!$client->isPlaying('really')) {
@@ -1135,17 +1127,17 @@ sub _checkPlaying {
 	}
 }
 
-# Play something as a fallback for when the alarm playlist has failed for some reason 
+# Play something as a fallback for when the alarm playlist has failed for some reason
 sub _playFallback {
 	my $self = shift;
 
 	my $client = $self->client;
-	
+
 	my $url;
 
 	my $server = Slim::Utils::Network::serverAddr();
 	my $port   = $prefs->get('httpport');
-	
+
 	my $auth = '';
 	if ( $prefs->get('authorize') ) {
 		my $password = Slim::Player::Squeezebox::generate_random_string(10);
@@ -1259,7 +1251,7 @@ sub getNextAlarm {
 
 Return a sorted list of the alarms for a client.
 
-Unless $excludeCalAlarms is explicitly set to false, only daily alarms will be returned. 
+Unless $excludeCalAlarms is explicitly set to false, only daily alarms will be returned.
 
 =cut
 
@@ -1272,15 +1264,15 @@ sub getAlarms {
 
 	my @alarms;
 	foreach my $alarm (sort { $alarmHash->{$a}->{_createTime} <=> $alarmHash->{$b}->{_createTime} } keys %{$alarmHash}) {
-				
+
 		$alarm = $alarmHash->{$alarm};
-		
+
 		next unless $alarm && $alarm->id;
 
 		if ($excludeCalAlarms && $alarm->calendarAlarm) {
 			next;
 		}
-		
+
 		push @alarms, $alarm;
 	}
 	return @alarms;
@@ -1337,10 +1329,10 @@ whenever a new client is detected.
 
 sub loadAlarms {
 	my $class = shift;
-	my $client = shift;	
-	
+	my $client = shift;
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
+
 	main::DEBUGLOG && $isDebug && $log->debug('Loading saved alarms from prefs for ' . $client->name);
 	my $prefAlarms = $prefs->client($client)->alarms || {};
 
@@ -1349,7 +1341,7 @@ sub loadAlarms {
 	foreach my $prefAlarm (keys %$prefAlarms) {
 		$prefAlarm = $prefAlarms->{$prefAlarm};
 		next unless ref $prefAlarm eq 'HASH';
-		
+
 		my $alarm = $class->new($client, $prefAlarm->{_time});
 		$alarm->{_days} = $prefAlarm->{_days};
 		$alarm->{_enabled} = $prefAlarm->{_enabled};
@@ -1370,7 +1362,7 @@ sub loadAlarms {
 			$alarm->{_createTime} = $prefAlarm->{_createTime};
 		}
 
-		$client->alarmData->{alarms}->{$alarm->{_id}} = $alarm; 
+		$client->alarmData->{alarms}->{$alarm->{_id}} = $alarm;
 
 		if ($needsSaving) {
 			# Disable rescheduling after save as we'll do it soon anyway
@@ -1393,7 +1385,7 @@ This method is called automatically when new alarms are added or re-scheduling i
 sub scheduleNext {
 	my $class = shift;
 	my $client = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug('Asked to schedule next alarm for ' . $client->name);
@@ -1457,14 +1449,14 @@ sub scheduleNext {
 
 	# Set/clear the client's RTC alarm if supported
 	$class->setRTCAlarm($client);
-			
+
 	# Bug 15755: make sure CLI-based notifications get triggered
 	Slim::Control::Request::notifyFromArray($client, ['alarm', '_cmd']);
 }
 
 =head2 setRTCAlarm( $client )
 
-Sets a given client's RTC alarm clock if the client has an alarm within the next 24 hours, otherwise clears it.  Does nothing 
+Sets a given client's RTC alarm clock if the client has an alarm within the next 24 hours, otherwise clears it.  Does nothing
 if the client does not have an RTC alarm clock.  The next alarm for the client should already have been scheduled before this is called.
 
 Once called, this sub will schedule itself to be called again in 24 hours.
@@ -1476,7 +1468,7 @@ sub setRTCAlarm {
 	my $client = shift;
 
 	return if !$client->hasRTCAlarm;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug( 'Asked to set rtc alarm for ' . $client->name );
@@ -1509,7 +1501,7 @@ sub setRTCAlarm {
 
 			# Alarm times are "floating" so no need to adjust for local time
 			main::DEBUGLOG && $isDebug && $log->debug( "Setting RTC alarm to $alarmTime, volume " . $nextAlarm->volume );
-			
+
 			$client->setRTCAlarm($alarmTime, $nextAlarm->volume);
 
 			$clearRTCAlarm = 0;
@@ -1672,7 +1664,7 @@ sub addPlaylists {
 
 	foreach my $playlist (@$playlists) {
 		# Create a mapping from the url to its display name
-		$alarmPlaylists{$playlist->{url}} = $playlist->{title}; 		
+		$alarmPlaylists{$playlist->{url}} = $playlist->{title};
 	}
 
 	# Create a mapping from the playlist type to its associated playlists
@@ -1702,7 +1694,7 @@ The returned datastructure is somewhat complex and is best explained by example:
 		{
 			type => 'Use Current Playlist',
 			items => [
-				{ title => 'The Current Playlist', url => ... }, 
+				{ title => 'The Current Playlist', url => ... },
 			],
 			# This playlist type will only ever contain one item
 			singleItem => 1,
@@ -1723,7 +1715,7 @@ sub getPlaylists {
 	my $client = shift;
 
 	my @playlists;
-	
+
 	# Add the current playlist option
 	push @playlists, {
 			type => 'CURRENT_PLAYLIST',
@@ -1750,7 +1742,7 @@ sub getPlaylists {
 			};
 	}
 
-	@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
+	@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray;
 	push @playlists, {
 		type => 'PLAYLISTS',
 		items => \@savedArray,
@@ -1776,12 +1768,12 @@ sub getPlaylists {
 			};
 	}
 
-	# Stringify keys for given client if they have been enclosed in curly braces 
+	# Stringify keys for given client if they have been enclosed in curly braces
 	foreach my $type (@playlists) {
 		if ( $type->{type} eq uc( $type->{type} ) ) {
 			$type->{type} = Slim::Utils::Strings::cstring($client, $type->{type} );
 		}
-		
+
 		foreach my $playlist (@{$type->{items}}) {
 			# Stringify keys that are enclosed in curly braces
 			if ($playlist->{title} =~ /^{(.*)}$/) {
@@ -1804,9 +1796,9 @@ Setting $modeName to undef will disable the alarm screensaver.
 
 sub alarmScreensaver {
 	my ($class, $client, $value) = @_;
-	
+
 	return $class->getDefaultAlarmScreensaver unless $client;
-	
+
 	if (defined $value) {
 		$prefs->client($client)->set('alarmsaver', $value);
 	}
@@ -1856,7 +1848,7 @@ sub pushAlarmScreensaver {
 	}
 }
 
-=head2 
+=head2
 
 popAlarmScreensaver( $client )
 
@@ -1867,7 +1859,7 @@ Pop out of the alarm screensaver if it's being displayed on the given client.
 sub popAlarmScreensaver {
 	my $class = shift;
 	my $client = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my $currentMode = Slim::Buttons::Common::mode($client);
@@ -1882,7 +1874,7 @@ sub popAlarmScreensaver {
 # to $alarmsScheduled.
 sub _startStopTimeCheck {
 	my $class = shift;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	main::DEBUGLOG && $isDebug && $log->debug("$alarmsScheduled scheduled alarm(s)");
@@ -1950,7 +1942,7 @@ sub _timeStr {
 # or undef if client doesn't want a fade
 sub _fadeInSeconds {
 	my $client = shift;
-	
+
 	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
 		return $FADE_SECONDS;
 	}
@@ -1964,9 +1956,9 @@ sub _alarmEnd {
 	my $request = shift;
 
 	my $client = $request->client || return;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
+
 	# Ignore unexpected notifications
 	if ($request->isNotCommand([['pause', 'stop', 'power']])
 		&& $request->isNotCommand([['playlist'], ['jump']]))

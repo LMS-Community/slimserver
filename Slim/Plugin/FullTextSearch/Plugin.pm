@@ -26,10 +26,11 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		-- weight 3 - contributors create multiple hits, therefore only w3
 		CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' '
 			|| IGNORE_CASE(comments.value) || ' ' || IGNORE_CASE(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' '
-			|| CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+			|| CASE WHEN tracks.channels = 1 THEN 'mono' ELSE 'stereo' END,
 		-- weight 1
-		printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' '
-			|| (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '') || ' '
+		CASE WHEN tracks.bitrate IS NULL THEN '' ELSE printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' END || IFNULL(tracks.samplerate, '') || ' '
+			|| CASE WHEN tracks.samplerate > 0 THEN (round(tracks.samplerate, 0) / 1000) ELSE '' END || ' '
+			|| IFNULL(tracks.samplesize, '') || ' ' || REPLACE(REPLACE(tracks.url, '%%20', ' '), 'file://', '') || ' '
 			|| LOWER(IFNULL(tracks.musicbrainz_id, ''))
 
 		FROM tracks
@@ -81,6 +82,24 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 		%s;
 };
 
+use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
+? q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		-- w10: title, w3: url, w1: track metadata
+		SELECT playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
+		FROM playlist_track
+			LEFT JOIN tracks ON tracks.url = playlist_track.track
+			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', ''))
+		WHERE playlist_track.playlist = ?
+}
+: q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		-- w10: title, w3: url, w1: track metadata
+		SELECT tracks.id, 'playlist', ?, '', ?, ''
+		FROM tracks
+		WHERE tracks.id = ?
+};
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.fulltext',
 	'defaultLevel' => 'WARN',
@@ -121,6 +140,11 @@ sub initPlugin {
 
 	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack, want_object => 1 } );
 	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack, want_object => 1 } );
+	Slim::Utils::Scanner::API->onNewPlaylist( { cb => sub {
+		# delay execution, as we're called twice...
+		Slim::Utils::Timers::killTimers( $_[1], \&checkPlaylist );
+		Slim::Utils::Timers::setTimer( $_[1], time() + 1, \&checkPlaylist, $_[0] );
+	}, want_object => 1 } );
 
 	# don't continue if the library hasn't been initialized yet, or if a schema change is going to trigger a rescan anyway
 	return unless Slim::Schema->hasLibrary() && !Slim::Schema->schemaUpdated;
@@ -156,6 +180,11 @@ sub checkSingleTrack {
 	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
 	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
 	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'OR REPLACE', 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+}
+
+sub checkPlaylist {
+	my ($url, $trackObj) = @_;
+	_createPlaylistItem($trackObj, 'update');
 }
 
 sub canFulltextSearch {
@@ -407,6 +436,17 @@ sub _ignoreCase {
 	return $text . ' ' . Slim::Utils::Text::ignoreCase($text, 1);
 }
 
+sub _uniqueTokens {
+	my ($text) = @_;
+
+	return '' unless $text;
+
+	my %seen;
+	return join(' ', grep {
+		!$seen{$_}++
+	} split(/\s/, Slim::Utils::Text::ignorePunct($text)));
+}
+
 sub _rebuildIndex {
 	my $progress = shift;
 
@@ -461,34 +501,14 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
-	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
-	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
-	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
 
 	# use fulltext information for tracks to populate a playlist's record with track information
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
-
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( $plSql . ' [' . Data::Dump::dump($playlist->id) .']' );
-
-		my $w1 = '';
-
-		foreach my $track ( @{ $dbh->selectcol_arrayref($plSql, undef, $playlist->id) } ) {
-			next unless $track =~ /^file:/;
-
-			main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($trSql . ' - ' . $track);
-
-			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSql, undef, $track) });
-		}
-
-		$w1 =~ s/^ +//;
-		$w1 =~ s/ +/ /;
-
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
-		$dbh->do($inSql, undef, $playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $scanlog->error($dbh->errstr);
-
+		_createPlaylistItem($playlist);
 		Slim::Schema->forceCommit if main::SCANNER;
 	}
+
 	main::idleStreams() unless main::SCANNER;
 
 	$scanlog->error("Optimize fulltext index");
@@ -507,6 +527,17 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	$scanlog->error("Fulltext index build done!");
+}
+
+sub _createPlaylistItem {
+	my ($playlist, $update) = @_;
+
+	return unless $playlist && ref $playlist;
+
+	my $sql = $update ? sprintf(SQL_CREATE_PLAYLIST_ITEM, 'OR REPLACE') : sprintf(SQL_CREATE_PLAYLIST_ITEM, '');
+	main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( $sql . ' [' . Data::Dump::dump($playlist->id) .']' );
+
+	Slim::Schema->dbh->do($sql, undef, $playlist->title . ' ' . $playlist->titlesearch, $playlist->url, $playlist->id);
 }
 
 sub _initPopularTerms {
@@ -554,6 +585,8 @@ sub postDBConnect {
 	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
 	$dbh->sqlite_create_function( 'CONCAT_ALBUM_TRACKS_INFO', 1, \&_getAlbumTracksInfo );
 	$dbh->sqlite_create_function( 'IGNORE_CASE', 1, \&_ignoreCase);
+	$dbh->sqlite_create_function( 'IGNORE_PUNCTUATION', 1, \&Slim::Utils::Text::ignorePunct);
+	$dbh->sqlite_create_function( 'UNIQUE_TOKENS', 1, \&_uniqueTokens);
 
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );

@@ -1,17 +1,17 @@
-package HTTP::Daemon;
-
-# $Id: Daemon.pm 8931 2006-08-11 16:44:43Z dsully $
+package HTTP::Daemon; # git description: v6.03-2-gb274cc6
+# ABSTRACT: A simple http server class
 
 use strict;
-use vars qw($VERSION @ISA $PROTO $DEBUG);
+use warnings;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.36 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = '6.04';
 
-use IO::Socket qw(AF_INET INADDR_ANY inet_ntoa);
-@ISA=qw(IO::Socket::INET);
+use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
+our @ISA = qw(IO::Socket::INET);
 
-$PROTO = "HTTP/1.1";
+our $PROTO = "HTTP/1.1";
 
+our $DEBUG;
 
 sub new
 {
@@ -46,6 +46,9 @@ sub url
  	require Sys::Hostname;
  	$url .= lc Sys::Hostname::hostname();
     }
+    elsif ($addr eq INADDR_LOOPBACK) {
+	$url .= inet_ntoa($addr);
+    }
     else {
 	$url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
     }
@@ -73,11 +76,14 @@ sub product_tokens
 
 
 
-package HTTP::Daemon::ClientConn;
+package  # hide from PAUSE
+    HTTP::Daemon::ClientConn;
+use strict;
+use warnings;
 
-use vars qw(@ISA $DEBUG);
 use IO::Socket ();
-@ISA=qw(IO::Socket::INET);
+our @ISA = qw(IO::Socket::INET);
+our $DEBUG;
 *DEBUG = \$HTTP::Daemon::DEBUG;
 
 use HTTP::Request  ();
@@ -150,6 +156,7 @@ sub get_request
     my $r = HTTP::Request->new($method, $uri);
     $r->protocol($proto);
     ${*$self}{'httpd_client_proto'} = $proto = _http_version($proto);
+    ${*$self}{'httpd_head'} = ($method eq "HEAD");
 
     if ($proto >= $HTTP_1_0) {
 	# we expect to find some headers
@@ -190,6 +197,19 @@ sub get_request
     my $te  = $r->header('Transfer-Encoding');
     my $ct  = $r->header('Content-Type');
     my $len = $r->header('Content-Length');
+
+    # Act on the Expect header, if it's there
+    for my $e ( $r->header('Expect') ) {
+        if( lc($e) eq '100-continue' ) {
+            $self->send_status_line(100);
+            $self->send_crlf;
+        }
+        else {
+            $self->send_error(417);
+            $self->reason("Unsupported Expect header value");
+            return;
+        }
+    }
 
     if ($te && lc($te) eq 'chunked') {
 	# Handle chunked transfer encoding
@@ -266,21 +286,6 @@ sub get_request
 	return;
 
     }
-    elsif ($ct && lc($ct) =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*(\w+)/) {
-	# Handle multipart content type
-	my $boundary = "$CRLF--$1--$CRLF";
-	my $index;
-	while (1) {
-	    $index = index($buf, $boundary);
-	    last if $index >= 0;
-	    # end marker not yet found
-	    return unless $self->_need_more($buf, $timeout, $fdset);
-	}
-	$index += length($boundary);
-	$r->content(substr($buf, 0, $index));
-	substr($buf, 0, $index) = '';
-
-    }
     elsif ($len) {
 	# Plain body specified by "Content-Length"
 	my $missing = $len - length($buf);
@@ -298,6 +303,21 @@ sub get_request
 	    $r->content($buf);
 	    $buf='';
 	}
+    }
+    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i) {
+	# Handle multipart content type
+	my $boundary = "$CRLF--$2--";
+	my $index;
+	while (1) {
+	    $index = index($buf, $boundary);
+	    last if $index >= 0;
+	    # end marker not yet found
+	    return unless $self->_need_more($buf, $timeout, $fdset);
+	}
+	$index += length($boundary);
+	$r->content(substr($buf, 0, $index));
+	substr($buf, 0, $index) = '';
+
     }
     ${*$self}{'httpd_rbuf'} = $buf;
 
@@ -375,6 +395,12 @@ sub force_last_request
     ${*$self}{'httpd_nomore'}++;
 }
 
+sub head_request
+{
+    my $self = shift;
+    ${*$self}{'httpd_head'};
+}
+
 
 sub send_status_line
 {
@@ -402,6 +428,17 @@ sub send_basic_header
     print $self "Date: ", time2str(time), $CRLF;
     my $product = $self->daemon->product_tokens;
     print $self "Server: $product$CRLF" if $product;
+}
+
+
+sub send_header
+{
+    my $self = shift;
+    while (@_) {
+	my($k, $v) = splice(@_, 0, 2);
+	$v = "" unless defined($v);
+	print $self "$k: $v$CRLF";
+    }
 }
 
 
@@ -440,11 +477,15 @@ sub send_response
 	}
 	else {
 	    $self->force_last_request;
+            $res->header('connection','close'); 
 	}
 	print $self $res->headers_as_string($CRLF);
 	print $self $CRLF;  # separates headers and content
     }
-    if (ref($content) eq "CODE") {
+    if ($self->head_request) {
+	# no content
+    }
+    elsif (ref($content) eq "CODE") {
 	while (1) {
 	    my $chunk = &$content();
 	    last unless defined($chunk) && length($chunk);
@@ -478,7 +519,7 @@ sub send_redirect
 	print $self "Content-Type: $ct$CRLF";
     }
     print $self $CRLF;
-    print $self $content if $content;
+    print $self $content if $content && !$self->head_request;
     $self->force_last_request;  # no use keeping the connection open
 }
 
@@ -501,7 +542,7 @@ EOT
 	print $self "Content-Length: " . length($mess) . $CRLF;
         print $self $CRLF;
     }
-    print $self $mess;
+    print $self $mess unless $self->head_request;
     $status;
 }
 
@@ -528,7 +569,7 @@ sub send_file_response
 	    print $self "Last-Modified: ", time2str($mtime), "$CRLF" if $mtime;
 	    print $self $CRLF;
 	}
-	$self->send_file(\*F);
+	$self->send_file(\*F) unless $self->head_request;
 	return RC_OK;
     }
     else {
@@ -580,9 +621,17 @@ sub daemon
 
 __END__
 
+=pod
+
+=encoding UTF-8
+
 =head1 NAME
 
-HTTP::Daemon - a simple http server class
+HTTP::Daemon - A simple http server class
+
+=head1 VERSION
+
+version 6.04
 
 =head1 SYNOPSIS
 
@@ -593,7 +642,7 @@ HTTP::Daemon - a simple http server class
   print "Please contact me at: <URL:", $d->url, ">\n";
   while (my $c = $d->accept) {
       while (my $r = $c->get_request) {
-	  if ($r->method eq 'GET' and $r->url->path eq "/xyzzy") {
+	  if ($r->method eq 'GET' and $r->uri->path eq "/xyzzy") {
               # remember, this is *not* recommended practice :-)
 	      $c->send_file_response("/etc/passwd");
 	  }
@@ -695,7 +744,7 @@ of C<HTTP::Daemon>.  The following methods are provided:
 
 =item $c->get_request( $headers_only )
 
-This method read data from the client and turns it into an
+This method reads data from the client and turns it into an
 C<HTTP::Request> object which is returned.  It returns C<undef>
 if reading fails.  If it fails, then the C<HTTP::Daemon::ClientConn>
 object ($c) should be discarded, and you should not try call this
@@ -728,7 +777,7 @@ empty this buffer before you read more and you need to place
 unconsumed bytes here.  You also need this buffer if you implement
 services like I<101 Switching Protocols>.
 
-This method always return the old buffer content and can optionally
+This method always returns the old buffer content and can optionally
 replace the buffer content if you pass it an argument.
 
 =item $c->reason
@@ -747,6 +796,11 @@ string like "HTTP/1.1" or just "1.1".
 Return TRUE if the client speaks the HTTP/0.9 protocol.  No status
 code and no headers should be returned to such a client.  This should
 be the same as !$c->proto_ge("HTTP/1.0").
+
+=item $c->head_request
+
+Return TRUE if the last request was a C<HEAD> request.  No content
+body must be generated for these requests.
 
 =item $c->force_last_request
 
@@ -790,6 +844,12 @@ with an empty CRLF line.
 
 See the description of send_status_line() for the description of the
 accepted arguments.
+
+=item $c->send_header( $field, $value )
+
+=item $c->send_header( $field1, $value1, $field2, $value2, ... )
+
+Send one or more header lines.
 
 =item $c->send_response( $res )
 
@@ -850,10 +910,213 @@ RFC 2616
 
 L<IO::Socket::INET>, L<IO::Socket>
 
-=head1 COPYRIGHT
+=head1 SUPPORT
 
-Copyright 1996-2003, Gisle Aas
+bugs may be submitted through L<https://github.com/libwww-perl/HTTP-Daemon/issues>.
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+There is also a mailing list available for users of this distribution, at
+L<mailto:libwww@perl.org>.
 
+There is also an irc channel available for users of this distribution, at
+L<C<#lwp> on C<irc.perl.org>|irc://irc.perl.org/#lwp>.
+
+=head1 AUTHOR
+
+Gisle Aas <gisle@activestate.com>
+
+=head1 CONTRIBUTORS
+
+=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Slaven Rezic Karen Etheridge Zefram Tom Hukins Chase Whitener Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
+
+=over 4
+
+=item *
+
+Ville Skyttä <ville.skytta@iki.fi>
+
+=item *
+
+Olaf Alders <olaf@wundersolutions.com>
+
+=item *
+
+Mark Stosberg <MARKSTOS@cpan.org>
+
+=item *
+
+Slaven Rezic <slaven@rezic.de>
+
+=item *
+
+Karen Etheridge <ether@cpan.org>
+
+=item *
+
+Zefram <zefram@fysh.org>
+
+=item *
+
+Tom Hukins <tom@eborcom.com>
+
+=item *
+
+Chase Whitener <capoeirab@cpan.org>
+
+=item *
+
+Mike Schilli <mschilli@yahoo-inc.com>
+
+=item *
+
+Alexey Tourbin <at@altlinux.ru>
+
+=item *
+
+Bron Gondwana <brong@fastmail.fm>
+
+=item *
+
+Hans-H. Froehlich <hfroehlich@co-de-co.de>
+
+=item *
+
+Ian Kilgore <iank@cpan.org>
+
+=item *
+
+Jacob J <waif@chaos2.org>
+
+=item *
+
+Ondrej Hanak <ondrej.hanak@ubs.com>
+
+=item *
+
+Perlover <perlover@perlover.com>
+
+=item *
+
+Peter Rabbitson <ribasushi@cpan.org>
+
+=item *
+
+Robert Stone <talby@trap.mtview.ca.us>
+
+=item *
+
+Rolf Grossmann <rg@progtech.net>
+
+=item *
+
+Sean M. Burke <sburke@cpan.org>
+
+=item *
+
+Spiros Denaxas <s.denaxas@gmail.com>
+
+=item *
+
+Steve Hay <SteveHay@planit.com>
+
+=item *
+
+Todd Lipcon <todd@amiestreet.com>
+
+=item *
+
+Tony Finch <dot@dotat.at>
+
+=item *
+
+Toru Yamaguchi <zigorou@cpan.org>
+
+=item *
+
+Yuri Karaban <tech@askold.net>
+
+=item *
+
+amire80 <amir.aharoni@gmail.com>
+
+=item *
+
+jefflee <shaohua@gmail.com>
+
+=item *
+
+john9art <john9art@yahoo.com>
+
+=item *
+
+murphy <murphy@genome.chop.edu>
+
+=item *
+
+phrstbrn <phrstbrn@gmail.com>
+
+=item *
+
+ruff <ruff@ukrpost.net>
+
+=item *
+
+Adam Kennedy <adamk@cpan.org>
+
+=item *
+
+sasao <sasao@yugen.org>
+
+=item *
+
+Adam Sjogren <asjo@koldfront.dk>
+
+=item *
+
+Alex Kapranoff <ka@nadoby.ru>
+
+=item *
+
+Andreas J. Koenig <andreas.koenig@anima.de>
+
+=item *
+
+Bill Mann <wfmann@alum.mit.edu>
+
+=item *
+
+DAVIDRW <davidrw@cpan.org>
+
+=item *
+
+Daniel Hedlund <Daniel.Hedlund@eprize.com>
+
+=item *
+
+David E. Wheeler <david@justatheory.com>
+
+=item *
+
+FWILES <FWILES@cpan.org>
+
+=item *
+
+Father Chrysostomos <sprout@cpan.org>
+
+=item *
+
+Gavin Peters <gpeters@deepsky.com>
+
+=item *
+
+Graeme Thompson <Graeme.Thompson@mobilecohesion.com>
+
+=back
+
+=head1 COPYRIGHT AND LICENCE
+
+This software is copyright (c) 1995 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

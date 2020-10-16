@@ -1,0 +1,52 @@
+[% IF useExtJS; extJsScripts = BLOCK %]
+	<style type="text/css">
+		.x-grid3-cell {
+			vertical-align: middle !important;
+		}
+	</style>
+
+	<script TYPE="text/javascript">
+		Ext.onReady(function () {
+			var sortableTable = Ext.get('albumGenreMappingsTable');
+
+			if (sortableTable) {
+				// make the table sortable by header
+				var grid = new SqueezeJS.UI.SortableTable(sortableTable, {
+					disableSelection: false,
+					stateId: 'albumGenreMappingsTable',
+					stateful: true
+				});
+				grid.render();
+				grid.store.sort(1);
+			}
+		});
+	</script>
+[% END; END %]
+[% PROCESS settings/header.html %]
+	[% WRAPPER setting title="PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT" desc="PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC" %]
+		<p>[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</p>
+
+		<div style="padding:10px 0"><a href="settings.html">[% "PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC" | string %]</a></div>
+
+		<div class="settingSection" style="margin-top:0;margin-bottom:20px;" id="albumGenreMappings">
+			<table id="albumGenreMappingsTable">
+				<thead>
+					<tr>
+						<th width="35%" class="sortable">[% "ALBUM" | string %]</th>
+						<th width="35%" class="sortable">[% "ARTIST" | string %]</th>
+						<th width="30%">[% "GENRE" | string %]</th>
+					</tr>
+				</thead>
+				<tbody>
+					[% FOREACH mappingKey = genreMappings.keys.sort %]
+					<tr>
+						<td>[% genreMappings.$mappingKey.0 %]</td>
+						<td>[% genreMappings.$mappingKey.1 %]</td>
+						<td><input type="text" name="mapping_[% mappingKey %]" value="[% genreMappings.$mappingKey.2 %]" style="width:90%"></td>
+					</tr>
+					[% END %]
+				</tbody>
+			</table>
+		</div>
+	[% END %]
+[% PROCESS settings/footer.html %]

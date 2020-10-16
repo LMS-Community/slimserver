@@ -217,7 +217,7 @@ sub rescan {
 				WHERE filesize != 0
 			)
 			AND             url LIKE '$basedir%'
-			AND             virtual IS NULL
+			AND             `virtual` IS NULL
 			AND             content_type $ctFilter
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
@@ -746,7 +746,7 @@ sub deleted {
 					SELECT id, album, year
 					FROM   tracks
 					WHERE  url LIKE '$url#%'
-					AND    virtual = 1
+					AND    `virtual` = 1
 				} );
 				$sth->execute;
 				$ptracks = $sth->fetchall_arrayref( {} );

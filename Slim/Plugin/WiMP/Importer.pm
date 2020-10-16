@@ -89,6 +89,8 @@ sub scanAlbums { if (main::SCANNER) {
 		main::INFOLOG && $log->is_info && $log->info("Reading albums for $account...");
 		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
 
+		my $accountName = "tidal:$account" if scalar @$accounts > 1;
+
 		my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
 		my $albums = eval { from_json($albumsResponse->content) } || [];
 
@@ -111,7 +113,7 @@ sub scanAlbums { if (main::SCANNER) {
 
 			$class->storeTracks([
 				map { _prepareTrack($_, $album) } @$tracks
-			]);
+			], undef, $accountName);
 		}
 
 		Slim::Schema->forceCommit;
@@ -161,12 +163,10 @@ sub scanArtists { if (main::SCANNER) {
 			$progress->update($account . string('COLON') . ' ' . $name);
 			Slim::Schema->forceCommit;
 
-			Slim::Schema->rs('Contributor')->update_or_create({
-				'name'       => $name,
-				'namesort'   => Slim::Utils::Text::ignoreCaseArticles($name),
-				'namesearch' => Slim::Utils::Text::ignoreCase($name, 1),
-				'extid'      => 'wimp:artist:' . $artist->{id},
-			}, { 'key' => 'namesearch' });
+			Slim::Schema::Contributor->add({
+				'artist' => $name,
+				'extid'  => 'wimp:artist:' . $artist->{id},
+			});
 		}
 
 		Slim::Schema->forceCommit;
@@ -236,7 +236,7 @@ sub scanPlaylists { if (main::SCANNER) {
 					title     => $_->{title},
 					cover     => $_->{cover},
 					duration  => $_->{duration},
-					type      => $_->{flac} ? 'FLAC' : 'MP3',
+					type      => $_->{flac} ? 'FLAC' : 'AAC',
 				}, time + 360 * 86400);
 
 				push @trackIds, $_->{url};
@@ -260,7 +260,7 @@ sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
 
 	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
-	
+
 	if ($oldFingerprint == -1) {
 		return $cb->($oldFingerprint);
 	}

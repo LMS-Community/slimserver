@@ -1,17 +1,18 @@
-#
-# $Id: LWP.pm 8931 2006-08-11 16:44:43Z dsully $
-
 package LWP;
 
-$VERSION = "5.805";
-sub Version { $VERSION; }
+our $VERSION = '6.44';
 
-require 5.005;
 require LWP::UserAgent;  # this should load everything you need
+
+sub Version { $VERSION; }
 
 1;
 
 __END__
+
+=pod
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -50,8 +51,8 @@ used separately or together.
 =item *
 
 Provides an object oriented model of HTTP-style communication.  Within
-this framework we currently support access to http, https, gopher, ftp, news,
-file, and mailto resources.
+this framework we currently support access to C<http>, C<https>, C<gopher>,
+C<ftp>, C<news>, C<file>, and C<mailto> resources.
 
 =item *
 
@@ -102,11 +103,11 @@ The libwww-perl library is based on HTTP style communication. This
 section tries to describe what that means.
 
 Let us start with this quote from the HTTP specification document
-<URL:http://www.w3.org/pub/WWW/Protocols/>:
+<URL:http://www.w3.org/Protocols/>:
 
 =over 3
 
-=item
+=item *
 
 The HTTP protocol is based on a request/response paradigm. A client
 establishes a connection with a server and sends a request to the
@@ -142,11 +143,11 @@ It is as simple as that!
 
 =head2 The Request Object
 
-The libwww-perl request object has the class name C<HTTP::Request>.
+The libwww-perl request object has the class name L<HTTP::Request>.
 The fact that the class name uses C<HTTP::> as a
 prefix only implies that we use the HTTP model of communication.  It
 does not limit the kind of services we can try to pass this I<request>
-to.  For instance, we will send C<HTTP::Request>s both to ftp and
+to.  For instance, we will send L<HTTP::Request>s both to ftp and
 gopher servers, as well as to the local file system.
 
 The main attributes of the request objects are:
@@ -155,53 +156,53 @@ The main attributes of the request objects are:
 
 =item *
 
-The B<method> is a short string that tells what kind of
+B<method> is a short string that tells what kind of
 request this is.  The most common methods are B<GET>, B<PUT>,
 B<POST> and B<HEAD>.
 
 =item *
 
-The B<uri> is a string denoting the protocol, server and
+B<uri> is a string denoting the protocol, server and
 the name of the "document" we want to access.  The B<uri> might
 also encode various other parameters.
 
 =item *
 
-The B<headers> contain additional information about the
+B<headers> contains additional information about the
 request and can also used to describe the content.  The headers
 are a set of keyword/value pairs.
 
 =item *
 
-The B<content> is an arbitrary amount of data.
+B<content> is an arbitrary amount of data.
 
 =back
 
 =head2 The Response Object
 
-The libwww-perl response object has the class name C<HTTP::Response>.
+The libwww-perl response object has the class name L<HTTP::Response>.
 The main attributes of objects of this class are:
 
 =over 3
 
 =item *
 
-The B<code> is a numerical value that indicates the overall
+B<code> is a numerical value that indicates the overall
 outcome of the request.
 
 =item *
 
-The B<message> is a short, human readable string that
+B<message> is a short, human readable string that
 corresponds to the I<code>.
 
 =item *
 
-The B<headers> contain additional information about the
+B<headers> contains additional information about the
 response and describe the content.
 
 =item *
 
-The B<content> is an arbitrary amount of data.
+B<content> is an arbitrary amount of data.
 
 =back
 
@@ -214,7 +215,7 @@ response classification methods are:
 
 =item is_success()
 
-The request was was successfully received, understood or accepted.
+The request was successfully received, understood or accepted.
 
 =item is_error()
 
@@ -240,11 +241,11 @@ The user agent is an interface layer between
 your application code and the network.  Through this interface you are
 able to access the various servers on the network.
 
-The class name for the user agent is C<LWP::UserAgent>.  Every
+The class name for the user agent is L<LWP::UserAgent>.  Every
 libwww-perl application that wants to communicate should create at
 least one object of this class. The main method provided by this
-object is request(). This method takes an C<HTTP::Request> object as
-argument and (eventually) returns a C<HTTP::Response> object.
+object is request(). This method takes an L<HTTP::Request> object as
+argument and (eventually) returns a L<HTTP::Response> object.
 
 The user agent has many other attributes that let you
 configure how it will interact with the network and with your
@@ -254,42 +255,42 @@ application.
 
 =item *
 
-The B<timeout> specifies how much time we give remote servers to
+B<timeout> specifies how much time we give remote servers to
 respond before the library disconnects and creates an
 internal I<timeout> response.
 
 =item *
 
-The B<agent> specifies the name that your application should use when it
+B<agent> specifies the name that your application uses when it
 presents itself on the network.
 
 =item *
 
-The B<from> attribute can be set to the e-mail address of the person
+B<from> can be set to the e-mail address of the person
 responsible for running the application.  If this is set, then the
 address will be sent to the servers with every request.
 
 =item *
 
-The B<parse_head> specifies whether we should initialize response
+B<parse_head> specifies whether we should initialize response
 headers from the E<lt>head> section of HTML documents.
 
 =item *
 
-The B<proxy> and B<no_proxy> attributes specify if and when to go through
-a proxy server. <URL:http://www.w3.org/pub/WWW/Proxies/>
+B<proxy> and B<no_proxy> specify if and when to go through
+a proxy server. <URL:http://www.w3.org/History/1994/WWW/Proxies/>
 
 =item *
 
-The B<credentials> provide a way to set up user names and
+B<credentials> provides a way to set up user names and
 passwords needed to access certain services.
 
 =back
 
 Many applications want even more control over how they interact
 with the network and they get this by sub-classing
-C<LWP::UserAgent>.  The library includes a
-sub-class, C<LWP::RobotUA>, for robot applications.
+L<LWP::UserAgent>.  The library includes a
+sub-class, L<LWP::RobotUA>, for robot applications.
 
 =head2 An Example
 
@@ -298,7 +299,7 @@ represented in actual perl code:
 
   # Create a user agent object
   use LWP::UserAgent;
-  $ua = LWP::UserAgent->new;
+  my $ua = LWP::UserAgent->new;
   $ua->agent("MyApp/0.1 ");
 
   # Create a request
@@ -406,7 +407,7 @@ using the "Range" header.
 
 Directory listings are by default returned unprocessed (as returned
 from the ftp server) with the content media type reported to be
-"text/ftp-dir-listing". The C<File::Listing> module provides methods
+"text/ftp-dir-listing". The L<File::Listing> module provides methods
 for parsing of these directory listing.
 
 The ftp module is also able to convert directory listings to HTML and
@@ -418,7 +419,7 @@ For normal file retrievals, the "Content-Type" is guessed based on the
 file name suffix. See L<LWP::MediaTypes>.
 
 The "If-Modified-Since" request header works for servers that implement
-the MDTM command.  It will probably not work for directory listings though.
+the C<MDTM> command.  It will probably not work for directory listings though.
 
 Example:
 
@@ -498,7 +499,7 @@ Example:
 
 =head2 CPAN Requests
 
-URLs with scheme C<cpan:> are redirected to the a suitable CPAN
+URLs with scheme C<cpan:> are redirected to a suitable CPAN
 mirror.  If you have your own local mirror of CPAN you might tell LWP
 to use it for C<cpan:> URLs by an assignment like this:
 
@@ -546,7 +547,6 @@ The following modules provide various functions and definitions.
 
  LWP                -- This file.  Library version number and documentation.
  LWP::MediaTypes    -- MIME types configuration (text/html etc.)
- LWP::Debug         -- Debug logging module
  LWP::Simple        -- Simplified procedural interface for common functions
  HTTP::Status       -- HTTP status code (200 OK etc)
  HTTP::Date         -- Date parsing module for HTTP date formats
@@ -558,10 +558,10 @@ The following modules provide various functions and definitions.
 =head1 MORE DOCUMENTATION
 
 All modules contain detailed information on the interfaces they
-provide.  The I<lwpcook> manpage is the libwww-perl cookbook that contain
+provide.  The L<lwpcook> manpage is the libwww-perl cookbook that contain
 examples of typical usage of the library.  You might want to take a
-look at how the scripts C<lwp-request>, C<lwp-rget> and C<lwp-mirror>
-are implemented.
+look at how the scripts L<lwp-request>, L<lwp-download>, L<lwp-dump>
+and L<lwp-mirror> are implemented.
 
 =head1 ENVIRONMENT
 
@@ -571,7 +571,7 @@ The following environment variables are used by LWP:
 
 =item HOME
 
-The C<LWP::MediaTypes> functions will look for the F<.media.types> and
+The L<LWP::MediaTypes> functions will look for the F<.media.types> and
 F<.mime.types> files relative to you home directory.
 
 =item http_proxy
@@ -586,24 +586,37 @@ These environment variables can be set to enable communication through
 a proxy server.  See the description of the C<env_proxy> method in
 L<LWP::UserAgent>.
 
-=item PERL_LWP_USE_HTTP_10
+=item PERL_LWP_ENV_PROXY
 
-Enable the old HTTP/1.0 protocol driver instead of the new HTTP/1.1
-driver.  You might want to set this to a TRUE value if you discover
-that your old LWP applications fails after you installed LWP-5.60 or
-better.
+If set to a TRUE value, then the L<LWP::UserAgent> will by default call
+C<env_proxy> during initialization.  This makes LWP honor the proxy variables
+described above.
+
+=item PERL_LWP_SSL_VERIFY_HOSTNAME
+
+The default C<verify_hostname> setting for L<LWP::UserAgent>.  If
+not set the default will be 1.  Set it as 0 to disable hostname
+verification (the default prior to libwww-perl 5.840.
+
+=item PERL_LWP_SSL_CA_FILE
+
+=item PERL_LWP_SSL_CA_PATH
+
+The file and/or directory
+where the trusted Certificate Authority certificates
+is located.  See L<LWP::UserAgent> for details.
 
 =item PERL_HTTP_URI_CLASS
 
-Used to decide what URI objects to instantiate.  The default is C<URI>.
-You might want to set it to C<URI::URL> for compatibility with old times.
+Used to decide what URI objects to instantiate.  The default is L<URI>.
+You might want to set it to L<URI::URL> for compatibility with old times.
 
 =back
 
 =head1 AUTHORS
 
 LWP was made possible by contributions from Adam Newby, Albert
-Dvornik, Alexandre Duret-Lutz, Andreas Gustafsson, Andreas König,
+Dvornik, Alexandre Duret-Lutz, Andreas Gustafsson, Andreas KÃ¶nig,
 Andrew Pimlott, Andy Lester, Ben Coleman, Benjamin Low, Ben Low, Ben
 Tilly, Blair Zajac, Bob Dalgleish, BooK, Brad Hughes, Brian
 J. Murrell, Brian McCauley, Charles C. Fu, Charles Lane, Chris Nandor,
@@ -617,16 +630,16 @@ Lopes, John Klar, Johnny Lee, Josh Kronengold, Josh Rai, Joshua
 Chamas, Joshua Hoblitt, Kartik Subbarao, Keiichiro Nagano, Ken
 Williams, KONISHI Katsuhiro, Lee T Lindley, Liam Quinn, Marc Hedlund,
 Marc Langheinrich, Mark D. Anderson, Marko Asplund, Mark Stosberg,
-Markus B Krüger, Markus Laker, Martijn Koster, Martin Thurn, Matthew
+Markus B KrÃ¼ger, Markus Laker, Martijn Koster, Martin Thurn, Matthew
 Eldridge, Matthew.van.Eerde, Matt Sergeant, Michael A. Chase, Michael
 Quaranta, Michael Thompson, Mike Schilli, Moshe Kaminsky, Nathan
 Torkington, Nicolai Langfeldt, Norton Allen, Olly Betts, Paul
-J. Schinder, peterm, Philip GuentherDaniel Buenzli, Pon Hwa Lin,
+J. Schinder, peterm, Philip Guenther, Daniel Buenzli, Pon Hwa Lin,
 Radoslaw Zielinski, Radu Greab, Randal L. Schwartz, Richard Chen,
 Robin Barker, Roy Fielding, Sander van Zoest, Sean M. Burke,
 shildreth, Slaven Rezic, Steve A Fink, Steve Hay, Steven Butler,
 Steve_Kilbane, Takanori Ugai, Thomas Lotterer, Tim Bunce, Tom Hughes,
-Tony Finch, Ville Skyttä, Ward Vandewege, William York, Yale Huang,
+Tony Finch, Ville SkyttÃ¤, Ward Vandewege, William York, Yale Huang,
 and Yitzchak Scott-Thoennes.
 
 LWP owes a lot in motivation, design, and code, to the libwww-perl
@@ -639,7 +652,7 @@ libwww-perl-0.40 library for details.
 
 =head1 COPYRIGHT
 
-  Copyright 1995-2005, Gisle Aas
+  Copyright 1995-2009, Gisle Aas
   Copyright 1995, Martijn Koster
 
 This library is free software; you can redistribute it and/or
@@ -650,7 +663,7 @@ modify it under the same terms as Perl itself.
 The latest version of this library is likely to be available from CPAN
 as well as:
 
- http://www.linpro.no/lwp/
+  http://github.com/libwww-perl/libwww-perl
 
 The best place to discuss this code is on the <libwww@perl.org>
 mailing list.

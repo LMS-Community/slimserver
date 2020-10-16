@@ -60,13 +60,13 @@ sub initPlugin {
 	});
 
 	$class->SUPER::initPlugin(@_);
-	
+
 	Slim::Plugin::Favorites::OpmlFavorites->migrate();
-	
+
 	if ( main::WEBUI ) {
 		Slim::Plugin::Favorites::Settings->new;
 	}
-	
+
 	# register opml based favorites handler
 	Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::OpmlFavorites');
 
@@ -79,13 +79,13 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'move'], [0, 0, 1, \&cliMove]);
 	Slim::Control::Request::addDispatch(['favorites', 'playlist', '_method' ],[1, 1, 1, \&cliBrowse]);
 	Slim::Control::Request::addDispatch(['favorites', 'exists', '_id'], [0, 1, 1, \&cliExists]);
-	
+
 	# register notifications
 	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
 
-	# register new mode for deletion of favorites	
+	# register new mode for deletion of favorites
 	Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
-	
+
 	# Track Info handler
 	Slim::Menu::TrackInfo->registerInfoProvider( favorites => (
 		after => 'playitem',
@@ -112,14 +112,14 @@ sub postinitPlugin {
 	# if user has the Don't Stop The Music plugin enabled, register ourselves
 	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
 		require Slim::Plugin::DontStopTheMusic::Plugin;
-		
+
 		registerFavoritesAsDSTMProvider();
-		
+
 		$prefs->setChange(sub {
 			unregisterFavoritesAsDSTMProvider();
 			registerFavoritesAsDSTMProvider();
 		}, 'registerDSTM');
-		
+
 		Slim::Control::Request::subscribe(\&registerFavoritesAsDSTMProvider, [['favorites'], ['changed']]);
 	}
 }
@@ -156,7 +156,7 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my $opml = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
 
 	# use INPUT.Choice to display the list of feeds
@@ -175,16 +175,16 @@ sub setMode {
 
 sub deleteMode {
 	my ( $client, $method ) = @_;
-	
+
 	if ( $method eq 'pop' ) {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my $title = $client->modeParam('title'); # title to display
 	my $index = $client->modeParam('index'); # favorite index to delete
 	my $depth = $client->modeParam('depth'); # number of levels to pop out of when done
-	
+
 	# Bug 6177, Menu to confirm favorite removal
 	Slim::Buttons::Common::pushMode( $client, 'INPUT.Choice', {
 		header   => '{PLUGIN_FAVORITES_REMOVE}',
@@ -202,24 +202,24 @@ sub deleteMode {
 				onRight => sub {
 					my $client = shift;
 					my $index  = $client->modeParam('favorite');
-					
-					my $favorites = Slim::Utils::Favorites->new($client);					
+
+					my $favorites = Slim::Utils::Favorites->new($client);
 					$favorites->deleteIndex($index);
-					
+
 					$client->modeParam( 'favorite', undef );
-					
+
 					$client->showBriefly( {
 						line => [ $client->string('FAVORITES_DELETING'), $title ],
 					},
 					{
 						callback     => sub {
 							my $client = shift || return;
-							
+
 							# Pop back until we're out of Favorites
 							for ( 1 .. $depth ) {
 								Slim::Buttons::Common::popModeRight($client);
 							}
-							
+
 							$client->update;
 						},
 						callbackargs => $client,
@@ -256,7 +256,7 @@ sub toggleButtonHandler {
 
 	$params->{favoritesEnabled} = 1;
 	$params->{itemobj} = {
-		url => $params->{url}, 
+		url => $params->{url},
 		title => $params->{title},
 	};
 
@@ -344,7 +344,7 @@ sub indexHandler {
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		# also pass through play/add to reuse xmlbrowser handling of playall etc
 		main::INFOLOG && $log->info("passing through to xmlbrowser");
-			
+
 		return Slim::Web::XMLBrowser->handleWebIndex( {
 			client => $client,
 			feed   => $opml->xmlbrowser,
@@ -478,7 +478,7 @@ sub indexHandler {
 
 				push @$dest, splice @$level, $indexLevel, 1;
 			}
-				
+
 			$changed = 1;
 		}
 
@@ -521,27 +521,27 @@ sub indexHandler {
 					if ($url !~ /^http:/) {
 
 						if ($url !~ /\.(xml|opml|rss)$/) {
-							
+
 							$entry->{'type'} = 'audio';
-							
+
 						} else {
-							
+
 							delete $entry->{'type'};
 						}
-						
+
 					} elsif (!$params->{'fetched'}) {
-						
+
 						main::INFOLOG && $log->info("checking content type for $url");
-						
+
 						Slim::Networking::Async::HTTP->new()->send_request( {
 							'request'     => HTTP::Request->new( GET => $url ),
 							'onHeaders'   => \&asyncCBContentType,
 							'onError'     => \&asyncCBContentTypeError,
 							'passthrough' => [ $client, $params, @_ ],
 						} );
-						
+
 						return;
-						
+
 					} else {
 
 						my $mime = $params->{'fetchedtype'} || 'error';
@@ -559,13 +559,13 @@ sub indexHandler {
 						}
 
 						if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
-							
+
 							main::INFOLOG && $log->info("content type $type - treating as audio");
-							
+
 							$entry->{'type'} = 'audio';
-							
+
 						} else {
-							
+
 							main::INFOLOG && $log->info("content type $type - treating as non audio");
 
 							delete $entry->{'type'};
@@ -748,10 +748,36 @@ sub cliBrowse {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	my $feed = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
 
+	if (my $search = $request->getParam('search')) {
+		my $filteredItems = _search($feed->{items}, $search);
+		$feed->{items} = $filteredItems;
+		$feed->{title} .= sprintf(' ("%s")', $search);
+	}
+
 	Slim::Control::XMLBrowser::cliQuery('favorites', $feed, $request);
+}
+
+sub _search {
+	my ($feed, $search) = @_;
+
+	return [] unless $search && $feed && ref $feed && ref $feed eq 'ARRAY';
+
+	my $items = [];
+
+	foreach my $item (@$feed) {
+		if ($item->{items} && ref $item->{items} && ref $item->{items} eq 'ARRAY' && scalar @{$item->{items}}) {
+			my $innerItems = _search($item->{items}, $search);
+			push @$items, @$innerItems if scalar @$innerItems;
+		}
+		elsif ($item->{name} && $item->{url} && $item->{name} =~ /\Q$search\E/i) {
+			push @$items, $item;
+		}
+	}
+
+	return $items;
 }
 
 sub cliExists {
@@ -760,24 +786,24 @@ sub cliExists {
 	my $client = $request->client();
 	my $id     = $request->getParam('_id');
 	my $url;
-	
+
 	my $favs = Slim::Utils::Favorites->new($client);
-	
+
 	if ( $id =~ /^\d+$/ ) {
 		my $obj = Slim::Schema->rs('Track')->find($id);
 		if ( !$obj ) {
 			$request->setStatusBadParams();
 			return;
 		}
-		
+
 		$url = $obj->url;
 	}
 	else {
 		$url = $id;
 	}
-	
+
 	my $index = $favs->findUrl($url);
-	
+
 	if ( defined $index ) {
 		$request->addResult( exists => 1 );
 		$request->addResult( index  => $index );
@@ -785,7 +811,7 @@ sub cliExists {
 	else {
 		$request->addResult( exists => 0 );
 	}
-	
+
 	$request->setStatusDone();
 }
 
@@ -826,7 +852,7 @@ sub cliAdd {
 				'icon' => $icon || $favs->icon($url),
 			};
 			$entry->{'parser'} = $parser if $parser;
-			
+
 			$request->addResult('count', 1);
 
 		} elsif ($command eq 'addlevel' && defined $title) {
@@ -866,7 +892,7 @@ sub cliAdd {
 
 		# show feedback to jive
 		$client->showBriefly({
-			jive => { 
+			jive => {
 			type => 'mixed',
 			style => 'favorite',
 			#'icon-id' => $icon ? $icon : '/html/images/cover.png',
@@ -918,7 +944,7 @@ sub cliDelete {
 	if ($request->source && $request->source =~ /\/slim\/request/) {
 		my $deleteMsg = $title?$title:$url;
 		$client->showBriefly({
-			'jive' => { 
+			'jive' => {
 			'text' => [ $client->string('FAVORITES_DELETING'),
 						$deleteMsg ],
 			}
@@ -980,9 +1006,9 @@ sub cliMove {
 	main::INFOLOG && $log->info("moving item from index $from to index $to");
 
 	splice @$toLevel, $toIndex, 0, (splice @$fromLevel, $fromIndex, 1);
-	
+
 	$favs->save;
-	
+
 	$request->setStatusDone();
 }
 
@@ -1009,13 +1035,13 @@ sub playlistInfoHandler {
 sub _objectInfoHandler {
 	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
 	$tags ||= {};
-	
+
 	my $index = Slim::Utils::Favorites->new($client)->findUrl($url);
-	
+
 	my $jive = {
 		style => ($client && $client->revision !~ /^7\.[0-7]/) ? 'item_fav' : 'itemNoAction'
 	};
-	
+
 	my $title;
 	if ($objectType && $objectType eq 'artist') {
 		$title = $obj->name;
@@ -1077,7 +1103,7 @@ sub _objectInfoHandler {
 				name        => cstring($client, 'JIVE_DELETE_FROM_FAVORITES'),
 				jive        => $jive,
 			};
-	
+
 		} else {
 			return {
 				type        => 'link',
@@ -1088,15 +1114,15 @@ sub _objectInfoHandler {
 			};
 		}
 	}
-	
+
 	return;
 }
 
 sub objectInfoAddFavorite {
 	my ( $client, $callback, undef, $obj ) = @_;
-	
+
 	my $favorites = Slim::Utils::Favorites->new($client);
-	
+
 	my $favIndex = $favorites->add(
 		$obj,
 		$obj->name || $obj->url,
@@ -1104,7 +1130,7 @@ sub objectInfoAddFavorite {
 		undef,
 		undef,
 	);
-	
+
 	my $menu = {
 		type        => 'text',
 		name        => cstring($client, 'FAVORITES_ADDING'),
@@ -1112,20 +1138,20 @@ sub objectInfoAddFavorite {
 		refresh     => 1,
 		favorites   => 0,
 	};
-	
+
 	$callback->( [$menu] );
 }
 
 sub objectInfoRemoveFavorite {
 	my ( $client, $callback, $params, $obj ) = @_;
-	
+
 	my $menu = [
 		{
 			type => 'link',
 			name => cstring($client, 'PLUGIN_FAVORITES_CANCEL'),
 			url  => sub {
 				my $callback = $_[1];
-				
+
 				$callback->( [{
 					type        => 'text',
 					name        => cstring($client, 'PLUGIN_FAVORITES_CANCELLING'),
@@ -1140,12 +1166,12 @@ sub objectInfoRemoveFavorite {
 			name => cstring($client, 'FAVORITES_RIGHT_TO_DELETE'),
 			url  => sub {
 				my $callback = $_[1];
-				
+
 				my $favorites = Slim::Utils::Favorites->new($client);
 				my $index = Slim::Utils::Favorites->new($client)->findUrl( $obj->url );
-				
+
 				$favorites->deleteIndex($index);
-				
+
 				my $menu2 = {
 					type        => 'text',
 					name        => cstring($client, 'FAVORITES_DELETING'),
@@ -1154,12 +1180,12 @@ sub objectInfoRemoveFavorite {
 					refresh     => 1,
 					favorites   => 0,
 				};
-				
+
 				$callback->( [$menu2] );
 			},
 		},
 	];
-	
+
 	$callback->( $menu );
 }
 

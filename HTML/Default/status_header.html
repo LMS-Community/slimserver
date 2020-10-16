@@ -77,8 +77,6 @@
 	[% PROCESS jsString id='EXPAND' jsId='expand' %]
 	[% PROCESS jsString id='UNDOCK_PLAYER_PANEL' jsId='undock' %]
 
-	SqueezeJS.UI.serviceIconProviders = [% USE OnlineServices; OnlineServices.getServiceIconProviders() %];
-
 	Ext.onReady(function(){
 		SqueezeJS.externalImageProxy = new Ext.Template('[% imageproxy %]?u={url}&h={size}&w={size}');
 		SqueezeJS.externalImageProxy.compile();

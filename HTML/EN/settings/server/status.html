@@ -59,6 +59,16 @@
 	[% END %]
 [% END %]
 
+[% IF onlinelibrary %]
+	[% FOREACH service IN onlinelibrary %]
+		[% WRAPPER setting title=service.name %]
+			[% FOREACH item IN service.items %]
+				<div>[% item.name %]</div>
+			[% END %]
+		[% END %]
+	[% END %]
+[% END %]
+
 [% IF progress AND NOT simple %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]

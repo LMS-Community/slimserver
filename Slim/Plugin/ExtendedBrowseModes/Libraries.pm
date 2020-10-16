@@ -16,6 +16,14 @@ use constant AUDIOBOOK_LIBRARY_ID => 'audioBooks';
 my $prefs = preferences('plugin.extendedbrowsemodes');
 
 sub initPlugin {
+	Slim::Music::Import->addImporter( shift, {
+		type   => 'post',
+		use    => 1,
+		weight => 90,		# must be smaller than VirtualLibrary!
+	} );
+}
+
+sub startScan {
 	shift->initLibraries();
 }
 
@@ -57,6 +65,7 @@ sub initLibraries {
 			id     => AUDIOBOOK_LIBRARY_ID,
 			name   => string('PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS'),
 			string => 'PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS',
+			ignoreOnlineArtists => 1,
 			sql    => qq{
 				INSERT OR IGNORE INTO library_track (library, track)
 					SELECT '%s', tracks.id

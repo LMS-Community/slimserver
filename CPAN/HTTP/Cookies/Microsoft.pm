@@ -2,55 +2,53 @@ package HTTP::Cookies::Microsoft;
 
 use strict;
 
-use vars qw(@ISA $VERSION);
-
-$VERSION = sprintf("%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = '6.08';
 
 require HTTP::Cookies;
-@ISA=qw(HTTP::Cookies);
+our @ISA=qw(HTTP::Cookies);
 
 sub load_cookies_from_file
 {
-	my ($file) = @_;
-	my @cookies;
-	my ($key, $value, $domain_path, $flags, $lo_expire, $hi_expire);
-	my ($lo_create, $hi_create, $sep);
+    my ($file) = @_;
+    my @cookies;
 
-	open(COOKIES, $file) || return;
+    open (my $fh, '<', $file) || return;
 
-	while ($key = <COOKIES>)
-	{
-		chomp($key);
-		chomp($value     = <COOKIES>);
-		chomp($domain_path= <COOKIES>);
-		chomp($flags     = <COOKIES>);		# 0x0001 bit is for secure
-		chomp($lo_expire = <COOKIES>);
-		chomp($hi_expire = <COOKIES>);
-		chomp($lo_create = <COOKIES>);
-		chomp($hi_create = <COOKIES>);
-		chomp($sep       = <COOKIES>);
+    while (my $key = <$fh>) {
+        chomp $key;
+        my ($value, $domain_path, $flags, $lo_expire, $hi_expire);
+        my ($lo_create, $hi_create, $sep);
+        chomp($value     = <$fh>);
+        chomp($domain_path= <$fh>);
+        chomp($flags     = <$fh>); # 0x0001 bit is for secure
+        chomp($lo_expire = <$fh>);
+        chomp($hi_expire = <$fh>);
+        chomp($lo_create = <$fh>);
+        chomp($hi_create = <$fh>);
+        chomp($sep       = <$fh>);
 
-		if (!defined($key) || !defined($value) || !defined($domain_path) ||
-			!defined($flags) || !defined($hi_expire) || !defined($lo_expire) ||
-			!defined($hi_create) || !defined($lo_create) || !defined($sep) ||
-			($sep ne '*'))
-		{
-			last;
-		}
+        if (!defined($key) || !defined($value) || !defined($domain_path) ||
+            !defined($flags) || !defined($hi_expire) || !defined($lo_expire) ||
+            !defined($hi_create) || !defined($lo_create) || !defined($sep) ||
+            ($sep ne '*'))
+        {
+            last;
+        }
 
-		if ($domain_path =~ /^([^\/]+)(\/.*)$/)
-		{
-			my $domain = $1;
-			my $path = $2;
+        if ($domain_path =~ /^([^\/]+)(\/.*)$/) {
+            my $domain = $1;
+            my $path = $2;
 
-			push(@cookies, {KEY => $key, VALUE => $value, DOMAIN => $domain,
-					PATH => $path, FLAGS =>$flags, HIXP =>$hi_expire,
-					LOXP => $lo_expire, HICREATE => $hi_create,
-					LOCREATE => $lo_create});
-		}
-	}
+            push @cookies, {
+                KEY => $key, VALUE => $value, DOMAIN => $domain,
+                PATH => $path, FLAGS =>$flags, HIXP =>$hi_expire,
+                LOXP => $lo_expire, HICREATE => $hi_create,
+                LOCREATE => $lo_create
+            };
+        }
+    }
 
-	return \@cookies;
+    return \@cookies;
 }
 
 sub get_user_name
@@ -78,7 +76,7 @@ sub epoch_time_offset_from_win32_filetime
 	# 0x019db1de 0xd53e8000 is 1970 Jan 01 00:00:00 in Win32 FILETIME
 	#
 	# 100 nanosecond intervals == 0.1 microsecond intervals
-	
+
 	my $filetime_low32_1970 = 0xd53e8000;
 	my $filetime_high32_1970 = 0x019db1de;
 
@@ -135,7 +133,7 @@ sub load_cookie
 			my $secure = ($cookie->{FLAGS} & 1) != 0;
 			my $expires = epoch_time_offset_from_win32_filetime($cookie->{HIXP}, $cookie->{LOXP});
 
-			$self->set_cookie(undef, $cookie->{KEY}, $cookie->{VALUE}, 
+			$self->set_cookie(undef, $cookie->{KEY}, $cookie->{VALUE},
 					  $cookie->{PATH}, $cookie->{DOMAIN}, undef,
 					  0, $secure, $expires-$now, 0);
 		}
@@ -144,126 +142,109 @@ sub load_cookie
 
 sub load
 {
-	my($self, $cookie_index) = @_;
-	my $now = time() - $HTTP::Cookies::EPOCH_OFFSET;
-	my $cookie_dir = '';
-	my $delay_load = (defined($self->{'delayload'}) && $self->{'delayload'});
-	my $user_name = get_user_name();
-	my $data;
+    my($self, $cookie_index) = @_;
+    my $now = time() - $HTTP::Cookies::EPOCH_OFFSET;
+    my $cookie_dir = '';
+    my $delay_load = (defined($self->{'delayload'}) && $self->{'delayload'});
+    my $user_name = get_user_name();
+    my $data;
 
-	$cookie_index ||= $self->{'file'} || return;
-	if ($cookie_index =~ /[\\\/][^\\\/]+$/)
-	{
-		$cookie_dir = $` . "\\";
-	}
+    $cookie_index ||= $self->{'file'} || return;
+    if ($cookie_index =~ /[\\\/][^\\\/]+$/) {
+        $cookie_dir = $` . "\\";
+    }
 
-	local(*INDEX, $_);
+    open (my $fh, '<:raw', $cookie_index) || return;
+    if (256 != read($fh, $data, 256)) {
+        warn "$cookie_index file is not large enough";
+        return;
+    }
 
-	open(INDEX, $cookie_index) || return;
-	binmode(INDEX);
-	if (256 != read(INDEX, $data, 256))
-	{
-		warn "$cookie_index file is not large enough";
-		close(INDEX);
-		return;
-	}
+    # Cookies' index.dat file starts with 32 bytes of signature
+    # followed by an offset to the first record, stored as a little-endian DWORD
+    my ($sig, $size) = unpack('a32 V', $data);
 
-	# Cookies' index.dat file starts with 32 bytes of signature
-	# followed by an offset to the first record, stored as a little-endian DWORD
-	my ($sig, $size) = unpack('a32 V', $data);
-	
-	if (($sig !~ /^Client UrlCache MMF Ver 5\.2/) || # check that sig is valid (only tested in IE6.0)
-		(0x4000 != $size))
-	{
-		warn "$cookie_index ['$sig' $size] does not seem to contain cookies";
-		close(INDEX);
-		return;
-	}
+    # check that sig is valid (only tested in IE6.0)
+    if (($sig !~ /^Client UrlCache MMF Ver 5\.2/) || (0x4000 != $size)) {
+        warn "$cookie_index ['$sig' $size] does not seem to contain cookies";
+        return;
+    }
 
-	if (0 == seek(INDEX, $size, 0)) # move the file ptr to start of the first record
-	{
-		close(INDEX);
-		return;
-	}
+    # move the file ptr to start of the first record
+    if (0 == seek($fh, $size, 0)) {
+        return;
+    }
 
-	# Cookies are usually stored in 'URL ' records in two contiguous 0x80 byte sectors (256 bytes)
-	# so read in two 0x80 byte sectors and adjust if not a Cookie.
-	while (256 == read(INDEX, $data, 256))
-	{
-		# each record starts with a 4-byte signature
-		# and a count (little-endian DWORD) of 0x80 byte sectors for the record
-		($sig, $size) = unpack('a4 V', $data);
+    # Cookies are usually stored in 'URL ' records in two contiguous 0x80 byte sectors (256 bytes)
+    # so read in two 0x80 byte sectors and adjust if not a Cookie.
+    while (256 == read($fh, $data, 256)) {
+        # each record starts with a 4-byte signature
+        # and a count (little-endian DWORD) of 0x80 byte sectors for the record
+        ($sig, $size) = unpack('a4 V', $data);
 
-		# Cookies are found in 'URL ' records
-		if ('URL ' ne $sig)
-		{
-			# skip over uninteresting record: I've seen 'HASH' and 'LEAK' records
-			if (($sig eq 'HASH') || ($sig eq 'LEAK'))
-			{
-				# '-2' takes into account the two 0x80 byte sectors we've just read in
-				if (($size > 0) && ($size != 2))
-				{
-				    if (0 == seek(INDEX, ($size-2)*0x80, 1))
-				    {
-					    # Seek failed. Something's wrong. Gonna stop.
-					    last;
-				    }
-				}
-			}
-			next;
-		}
+        # Cookies are found in 'URL ' records
+        if ('URL ' ne $sig) {
+            # skip over uninteresting record: I've seen 'HASH' and 'LEAK' records
+            if (($sig eq 'HASH') || ($sig eq 'LEAK')) {
+                # '-2' takes into account the two 0x80 byte sectors we've just read in
+                if (($size > 0) && ($size != 2)) {
+                    if (0 == seek($fh, ($size-2)*0x80, 1)) {
+                        # Seek failed. Something's wrong. Gonna stop.
+                        last;
+                    }
+                }
+            }
+            next;
+        }
 
-		#$REMOVE Need to check if URL records in Cookies' index.dat will
-		#        ever use more than two 0x80 byte sectors
-		if ($size > 2)
-		{
-			my $more_data = ($size-2)*0x80;
+        #$REMOVE Need to check if URL records in Cookies' index.dat will
+        #        ever use more than two 0x80 byte sectors
+        if ($size > 2) {
+            my $more_data = ($size-2)*0x80;
 
-			if ($more_data != read(INDEX, $data, $more_data, 256))
-			{
-				last;
-			}
-		}
+            if ($more_data != read($fh, $data, $more_data, 256)) {
+                last;
+            }
+        }
 
-		if ($data =~ /Cookie\:$user_name\@([\x21-\xFF]+).*?($user_name\@[\x21-\xFF]+\.txt)/)
-		{
-			my $cookie_file = $cookie_dir . $2; # form full pathname
+        (my $user_name2 = $user_name) =~ s/ /_/g;
+        if ($data =~ /Cookie:\Q$user_name\E@([\x21-\xFF]+).*?((?:\Q$user_name\E|\Q$user_name2\E)@[\x21-\xFF]+\.txt)/) {
+            my $cookie_file = $cookie_dir . $2; # form full pathname
 
-			if (!$delay_load)
-			{
-				$self->load_cookie($cookie_file);
-			}
-			else
-			{
-				my $domain = $1;
+            if (!$delay_load) {
+                $self->load_cookie($cookie_file);
+            }
+            else {
+                my $domain = $1;
 
-				# grab only the domain name, drop everything from the first dir sep on
-				if ($domain =~ m{[\\/]})
-				{
-					$domain = $`;
-				}
+                # grab only the domain name, drop everything from the first dir sep on
+                if ($domain =~ m{[\\/]}) {
+                    $domain = $`;
+                }
 
-				# set the delayload cookie for this domain with 
-				# the cookie_file as cookie for later-loading info
-				$self->set_cookie(undef, 'cookie', $cookie_file,
-						      '//+delayload', $domain, undef,
-						      0, 0, $now+86400, 0);
-			}
-		}
-	}
+                # set the delayload cookie for this domain with
+                # the cookie_file as cookie for later-loading info
+                $self->set_cookie(undef, 'cookie', $cookie_file, '//+delayload', $domain, undef, 0, 0, $now+86_400, 0);
+            }
+        }
+    }
 
-	close(INDEX);
-
-	1;
+    1;
 }
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
-HTTP::Cookies::Microsoft - access to Microsoft cookies files
+HTTP::Cookies::Microsoft - Access to Microsoft cookies files
+
+=head1 VERSION
+
+version 6.08
 
 =head1 SYNOPSIS
 
@@ -324,5 +305,20 @@ Copyright 2002 Johnny Lee
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
+=head1 AUTHOR
+
+Gisle Aas <gisle@activestate.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2002-2019 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+__END__
+
+#ABSTRACT: Access to Microsoft cookies files
 

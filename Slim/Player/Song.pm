@@ -42,7 +42,7 @@ my $_liveCount = 0;
 my @_playlistCloneAttributes = qw(
 	index
 	_track _currentTrack _currentTrackHandler
-	streamUrl
+	streamUrl originUrl
 	owner
 	_playlist _scanDone
 
@@ -63,6 +63,7 @@ my @_playlistCloneAttributes = qw(
 			startOffset streamLength
 			seekdata initialAudioBlock
 			_canSeek _canSeekError
+			stripHeader
 
 			_duration _bitrate _streambitrate _streamFormat
 			_transcoded directstream
@@ -132,6 +133,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
+		originUrl       => $url,	# Keep track of the non-redirected url
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -285,6 +287,8 @@ sub getNextSong {
 						}
 
 						$track = $newTrack;
+						# need to replace streamUrl if we have been redirected/updated
+						$self->streamUrl($track->url);
 					}
 
 					# maybe we just found or scanned a playlist
@@ -444,7 +448,10 @@ sub open {
 			rateLimit => 0,
 		};
 	}
-
+	
+	# don't modify $song in getConverterCommand2 
+	$self->stripHeader($transcoder->{'stripHeader'});
+	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
 	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {

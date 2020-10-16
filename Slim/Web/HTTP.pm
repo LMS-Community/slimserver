@@ -85,6 +85,17 @@ our %keepAlives     = ();
 
 my  $skinMgr;
 
+# Cookies to be persisted on the server side prefs: some browsers are resetting cookies regularly
+use constant PERSIST_COOKIES => [
+	'Squeezebox-albumView',
+	'Squeezebox-expandPlayerControl',
+	'Squeezebox-expanded-MY_MUSIC',
+	'Squeezebox-expanded-FAVORITES',
+	'Squeezebox-expanded-PLUGINS',
+	'Squeezebox-expanded-PLUGIN_MY_APPS_MODULE_NAME',
+	'Squeezebox-expanded-RADIO',
+];
+
 # we call these whenever we close a connection
 our @closeHandlers = ();
 
@@ -497,13 +508,19 @@ sub processHTTP {
 		}
 
 		# Dont' process cookies for graphics, stylesheets etc.
-		if ($path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)} ) {
+		if (shouldHandleCookies($path)) {
 			if ( my $cookie = $request->header('Cookie') ) {
 				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
 
 				# define the precacheHiDPIArtwork pref if we're dealing with a high DPI monitor
 				if ( $params->{'cookies'}->{'Squeezebox-enableHiDPI'} && $params->{'cookies'}->{'Squeezebox-enableHiDPI'}->value > 1 && !defined $prefs->get('precacheHiDPIArtwork') ) {
 					$prefs->set('precacheHiDPIArtwork', 1);
+				}
+
+				foreach (@{PERSIST_COOKIES()}) {
+					if ( $params->{'cookies'}->{$_} && ($params->{'cookies'}->{$_}->value . '') ne ($prefs->get($_) . '') ) {
+						$prefs->set($_, $params->{'cookies'}->{$_}->value);
+					}
 				}
 			}
 		}
@@ -944,6 +961,19 @@ sub generateHTTPResponse {
 
 	my $path = $params->{"path"};
 	my $type = Slim::Music::Info::typeFromSuffix($path, 'htm');
+
+	# some browsers delete cookies aggressively - restore them from prefs
+	if (shouldHandleCookies($response->request->uri->path)) {
+		foreach (@{PERSIST_COOKIES()}) {
+			if (!$params->{'cookies'}->{$_}) {
+				my $cookie = CGI::Cookie->new(
+					-name    => $_,
+					-value   => $prefs->get($_),
+				);
+				$response->headers->push_header( 'Set-Cookie' => $cookie );
+			}
+		}
+	}
 
 	# lots of people need this
 	my $contentType = $params->{'Content-Type'} = $Slim::Music::Info::types{$type};
@@ -2504,6 +2534,12 @@ sub closeStreamingSocket {
 	}
 
 	return;
+}
+
+sub shouldHandleCookies {
+	my ($path) = @_;
+	return unless $path;
+	return $path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)};
 }
 
 sub checkAuthorization {

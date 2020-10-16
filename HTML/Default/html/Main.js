@@ -286,20 +286,7 @@ Main = {
 
 		new SqueezeJS.UI.Coverart({
 			el: 'ctrlCurrentArt',
-			size: 96,
-			onPlayerStateChange: function(result) {
-				var self = this;
-				this.el.update(SqueezeJS.SonginfoParser.coverart(result, this.noLink, this.size), null, function () {
-					// if we have music service icons, and the current artwork is some online item (http), try to overly the service's logo
-					if (SqueezeJS.UI.serviceIconProviders && result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].url
-						&& result.playlist_loop[0].artwork_url && result.playlist_loop[0].artwork_url.match(/http/))
-					{
-						var url = SqueezeJS.UI.serviceIconProviders[result.playlist_loop[0].url.replace(/:.*/, '')];
-						if (url)
-							self.el.createChild('<img src="' + url + '" class="extIdImg"></img>');
-					}
-				});
-			}
+			size: 96
 		});
 
 		new SqueezeJS.UI.CoverartPopup({

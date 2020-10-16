@@ -1,4 +1,4 @@
-<h2><a name="v7.9.3" id="v7.9.3"></a>Version 7.9.3</h2>
+<h2><a name="v7.9.4" id="v7.9.4"></a>Version 7.9.4</h2>
 <ul>
 	<li><a href="#v7.7.7">Upstream fixes from Logitech Media Server 7.7.7</a></li>
 	<br />
@@ -11,7 +11,31 @@
 
 	<li>Server Changes:</li>
 	<ul>
+		<li>Do not import iTunes/Apple Music's "Downloaded" playlist - it can be huge.</li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
 		<li></li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li>Fulltext search wouldn't find playlists based on track titles.</li>
+	</ul>
+	<br />
+</ul>
+
+<h2><a name="v7.9.3" id="v7.9.3"></a>Version 7.9.3 - 2020-08-18 (532d062a1)</h2>
+<ul>
+	<li><a href="#v7.7.7">Upstream fixes from Logitech Media Server 7.7.7</a></li>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li>Add support for macOS 11.0 (Big Sur - Intel only)</li>
 	</ul>
 	<br />
 
@@ -19,6 +43,13 @@
 	<ul>
 		<li>Async TLS handshake would crash on Windows under certain circumstances.</li>
 		<li>Fix parsing of M3U files with a BOM at the beginning of the file.</li>
+		<li>Fix Opus detection by parsing actual data (thanks philippe44!)</li>
+		<li>Allow fade-in for squeezeplay client that don't handle it locally when &lt; 1s (thanks philippe44!)</li>
+		<li><a href="https://github.com/ralph-irving/squeezelite/issues/94">#94</a> - Fix playback of small streams when using HTTPS (thanks philippe44!)</li>
+		<li>Avoid re-downloading of plugin files if they've already successfully beeen downloaded.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/227">#227</a> - Update player's playlist name when the currently playing playlist is renamed.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/350">#350</a> - Several improvements playing very short and WAV files over https (thanks phlippe_44!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/400">#400</a> - Don't hard-code treble/bass settings to Boom's values, but read from client model.</li>
 	</ul>
 	<br />
 </ul>
@@ -319,6 +350,7 @@
 <ul>
 	<li>Server Changes:</li>
 	<ul>
+		<li>Don't hard-code the Pandora bitrate.</li>
 		<li>Remove defunct Live365 and Flickr plugins.</li>
 	</ul>
 	<br />

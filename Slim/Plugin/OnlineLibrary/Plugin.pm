@@ -20,7 +20,7 @@ use Slim::Plugin::OnlineLibrary::BrowseArtist;
 use Slim::Plugin::OnlineLibrary::Libraries;
 
 use constant DELAY_FIRST_POLL => 24;
-use constant POLLING_INTERVAL => 5 * 60;
+use constant POLLING_INTERVAL => 60 * 60;
 
 my $prefs = preferences('plugin.onlinelibrary');
 
@@ -65,6 +65,11 @@ sub initPlugin {
 		}
 	}, 'genreMappings');
 
+	# make sure the value is defined, otherwise it would be enabled again
+	$prefs->setChange( sub {
+		$prefs->set($_[0], 0) unless defined $_[1];
+	}, 'enableServiceEmblem' );
+
 	$prefs->setChange( sub {
 		Slim::Control::Request::executeRequest(undef, ['rescan', 'onlinelibrary']);
 	}, 'genreMappings');
@@ -83,6 +88,12 @@ sub initPlugin {
 
 	# tell LMS that we need to run the external scanner
 	Slim::Music::Import->addImporter('Plugins::OnlineLibrary::Importer', { use => 1 });
+
+	Slim::Menu::SystemInfo->registerInfoProvider( onlinelibrary => (
+		after => 'library',
+		before => 'currentplayer',
+		func  => \&systemInfoMenu,
+	) );
 
 	Slim::Plugin::OnlineLibrary::BrowseArtist->init();
 	Slim::Plugin::OnlineLibrary::Libraries->initLibraries();
@@ -139,7 +150,7 @@ sub _pollOnlineLibraries {
 	my @workers = map {
 		my $poller = $_;
 		my $pref   = $onlineLibraryProviders{$_};
-		
+
 		sub {
 			my ($result, $acb) = @_;
 
@@ -150,7 +161,7 @@ sub _pollOnlineLibraries {
 			eval {
 				$poller->onlineLibraryNeedsUpdate(sub {
 					my $pollerResult = shift;
-					
+
 					if ($pollerResult && $pollerResult == -1) {
 						$log->warn("Disabling polling for $poller lack of account information");
 						$prefs->set($pref, 0);
@@ -179,6 +190,76 @@ sub _pollOnlineLibraries {
 			Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
 		}
 	);
+}
+
+sub systemInfoMenu {
+	my $client = shift;
+
+	return if Slim::Music::Import->stillScanning;
+
+	my $items = [];
+
+	my @enabledImporters = grep {
+		$prefs->get($onlineLibraryProviders{$_});
+	} keys %onlineLibraryProviders;
+
+	foreach my $serviceClass (@enabledImporters) {
+		if ($serviceClass->can('getLibraryStats')) {
+			my ($title, $totals) = $serviceClass->getLibraryStats();
+
+			next unless ($title && $totals && ($totals->{tracks} || $totals->{albums} || $totals->{artists}));
+
+			my $item = {
+				name => cstring($client, $title),
+				items => [],
+				web  => {
+					group  => 'onlinelibrary',
+					unfold => 1,
+				},
+			};
+
+			if ($totals->{tracks}) {
+				push @{$item->{items}}, {
+					type => 'text',
+					name => cstring($client, 'INFORMATION_TRACKS') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($totals->{tracks}),
+				};
+			}
+
+			if ($totals->{albums}) {
+				push @{$item->{items}}, {
+					type => 'text',
+					name => cstring($client, 'INFORMATION_ALBUMS') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($totals->{albums}),
+				};
+			}
+
+			if ($totals->{artists}) {
+				push @{$item->{items}}, {
+					type => 'text',
+					name => cstring($client, 'INFORMATION_ARTISTS') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($totals->{artists}),
+				};
+			}
+
+			if ($totals->{playlists}) {
+				push @{$item->{items}}, {
+					type => 'text',
+					name => cstring($client, 'INFORMATION_PLAYLISTS') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($totals->{playlists}),
+				};
+			}
+
+			if ($totals->{playlistTracks}) {
+				push @{$item->{items}}, {
+					type => 'text',
+					name => cstring($client, 'PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($totals->{playlistTracks}),
+				};
+			}
+
+			push @$items, $item;
+
+			main::idleStreams();
+		}
+	}
+
+	return [ sort { $a->{name} cmp $b->{name}} @$items ];
 }
 
 sub getLibraryProviders {

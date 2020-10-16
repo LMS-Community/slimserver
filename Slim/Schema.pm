@@ -1865,54 +1865,6 @@ sub updateOrCreateBase {
 	return $track || $trackId;
 }
 
-=head2 updateOrCreateOnlineAlbum()
-
-Creates or updates a virtual album which is pointing to an album on a music service
-
-=cut
-
-sub updateOrCreateOnlineAlbum {
-	my $self = shift;
-	my $args = shift;
-
-	my $isDebug = main::DEBUGLOG && $log->is_debug;
-
-	my $attributes = $args->{'attributes'};
-	my $create     = $args->{'create'} || 0;
-
-	# Make a local variable for COMPILATION, that is easier to handle
-	my $isCompilation = undef;
-
-	if (defined $attributes->{'COMPILATION'}) {
-		# Use eq instead of == here, otherwise perl will warn.
-		if ($attributes->{'COMPILATION'} =~ /^(?:yes|true)$/i || $attributes->{'COMPILATION'} eq 1) {
-			$isCompilation = 1;
-			main::DEBUGLOG && $isDebug && $log->debug("-- Album is a compilation");
-		} elsif ($attributes->{'COMPILATION'} =~ /^(?:no|false)$/i || $attributes->{'COMPILATION'} eq 0) {
-			$isCompilation = 0;
-			main::DEBUGLOG && $isDebug && $log->debug("-- Album is NOT a compilation");
-		}
-	}
-
-	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
-
-	my $trackColumns = {
-		year    => $attributes->{YEAR},
-		coverid => $attributes->{COVER},
-	};
-
-	### Update Album row
-	my $albumId = $self->_createOrUpdateAlbum($attributes, 
-		$trackColumns,
-		$isCompilation,
-		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],  # primary contributor-id
-		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,                    # hasAlbumArtist
-		$create,                                                                # create
-		undef,                                                                  # Track
-		$attributes->{EXTID}                                                    # basename
-	);
-}
-
 =head2 variousArtistsObject()
 
 Returns a singleton object representing the artist 'Various Artists'

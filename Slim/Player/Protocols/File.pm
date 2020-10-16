@@ -151,7 +151,7 @@ sub open {
 	${*$sock}{'streamFormat'} = $args->{'transcoder'}->{'streamformat'};
 
 	if ( $seekoffset
-	
+		&& !$song->stripHeader
 		# We do not need to worry about an initialAudioBlock when we are restarting
 		# as getSeekDataByPosition() will not have allowed a restart within the
 		# initialAudioBlock.
@@ -172,18 +172,16 @@ sub open {
 			main::DEBUGLOG && $log->debug("Got initial audio block of size $length");
 			if ($seekoffset <= $length) {
 				# Might as well just play from the start normally
-				$offset = $seekoffset = 0;
 				$streamLength = $size + $offset;
+				$offset = $seekoffset = 0;
 			} else {
 				${*$sock}{'initialAudioBlockRemaining'} = $length;
 				${*$sock}{'initialAudioBlockRef'} = \($song->initialAudioBlock());
 				$streamLength += $length;
 			}
 			
-			# For MP4 files, we can't cache the audio block because it's different each time
-			if ($streamClass eq 'Slim::Formats::Movie') {
-				$song->initialAudioBlock(undef);
-			}
+			# For some files, we can't cache the audio block because it's different each time
+			$song->initialAudioBlock(undef) if $streamClass->can('volatileInitialAudioBlock') && $streamClass->volatileInitialAudioBlock($track);
 		}
 	}
 	
@@ -192,7 +190,7 @@ sub open {
 		if (!defined(sysseek($sock, $seekoffset, 0))) {
 			logError("could not seek to $seekoffset for $filepath: $!");
 		} else {
-			$client->songBytes($seekoffset - ${*$sock}{'initialAudioBlockRemaining'});
+			$client->songBytes($seekoffset - ($song->stripHeader ? $song->offset : ${*$sock}{'initialAudioBlockRemaining'}));
 			${*$sock}{'position'} = $seekoffset;
 			if ($seekoffset > $offset && $seekdata && $seekdata->{'timeOffset'}) {
 				$song->startOffset($seekdata->{'timeOffset'});

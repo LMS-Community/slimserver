@@ -1,21 +1,34 @@
 package LWP::Authen::Digest;
+
 use strict;
+use base 'LWP::Authen::Basic';
+
+our $VERSION = '6.44';
 
 require Digest::MD5;
 
-sub authenticate
-{
-    my($class, $ua, $proxy, $auth_param, $response,
-       $request, $arg, $size) = @_;
+sub _reauth_requested {
+    my ($class, $auth_param, $ua, $request, $auth_header) = @_;
+    my $ret = defined($$auth_param{stale}) && lc($$auth_param{stale}) eq 'true';
+    if ($ret) {
+        my $hdr = $request->header($auth_header);
+        $hdr =~ tr/,/;/;    # "," is used to separate auth-params!!
+        ($hdr) = HTTP::Headers::Util::split_header_words($hdr);
+        my $nonce = {@$hdr}->{nonce};
+        delete $$ua{authen_md5_nonce_count}{$nonce};
+    }
+    return $ret;
+}
 
-    my($user, $pass) = $ua->get_basic_credentials($auth_param->{realm},
-                                                  $request->url, $proxy);
-    return $response unless defined $user and defined $pass;
+sub auth_header {
+    my($class, $user, $pass, $request, $ua, $h) = @_;
+
+    my $auth_param = $h->{auth_param};
 
     my $nc = sprintf "%08X", ++$ua->{authen_md5_nonce_count}{$auth_param->{nonce}};
     my $cnonce = sprintf "%8x", time;
 
-    my $uri = $request->url->path_query;
+    my $uri = $request->uri->path_query;
     $uri = "/" unless length $uri;
 
     my $md5 = Digest::MD5->new;
@@ -28,7 +41,7 @@ sub authenticate
     push(@digest, $auth_param->{nonce});
 
     if ($auth_param->{qop}) {
-	push(@digest, $nc, $cnonce, $auth_param->{qop});
+	push(@digest, $nc, $cnonce, ($auth_param->{qop} =~ m|^auth[,;]auth-int$|) ? 'auth' : $auth_param->{qop});
     }
 
     $md5->add(join(":", $request->method, $uri));
@@ -42,7 +55,7 @@ sub authenticate
     my %resp = map { $_ => $auth_param->{$_} } qw(realm nonce opaque);
     @resp{qw(username uri response algorithm)} = ($user, $uri, $digest, "MD5");
 
-    if (($auth_param->{qop} || "") eq "auth") {
+    if (($auth_param->{qop} || "") =~ m|^auth([,;]auth-int)?$|) {
 	@resp{qw(qop cnonce nc)} = ("auth", $cnonce, $nc);
     }
 
@@ -60,31 +73,18 @@ sub authenticate
     my @pairs;
     for (@order) {
 	next unless defined $resp{$_};
-	push(@pairs, "$_=" . qq("$resp{$_}"));
-    }
 
-    my $auth_header = $proxy ? "Proxy-Authorization" : "Authorization";
-    my $auth_value  = "Digest " . join(", ", @pairs);
-
-    # Need to check this isn't a repeated fail!
-    my $r = $response;
-    while ($r) {
-	my $u = $r->request->{digest_user_pass};
-	if ($u && $u->[0] eq $user && $u->[1] eq $pass) {
-	    # here we know this failed before
-	    $response->header("Client-Warning" =>
-			      "Credentials for '$user' failed before");
-	    return $response;
+	# RFC2617 says that qop-value and nc-value should be unquoted.
+	if ( $_ eq 'qop' || $_ eq 'nc' ) {
+		push(@pairs, "$_=" . $resp{$_});
 	}
-	$r = $r->previous;
+	else {
+		push(@pairs, "$_=" . qq("$resp{$_}"));
+	}
     }
 
-    my $referral = $request->clone;
-    $referral->header($auth_header => $auth_value);
-    # we shouldn't really do this, but...
-    $referral->{digest_user_pass} = [$user, $pass];
-
-    return $ua->request($referral, $arg, $size, $response);
+    my $auth_value  = "Digest " . join(", ", @pairs);
+    return $auth_value;
 }
 
 1;

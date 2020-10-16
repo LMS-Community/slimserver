@@ -15,7 +15,7 @@ CREATE INDEX coveridIndex ON tracks (coverid);
 
 ALTER TABLE tracks ADD cover_cached tinyint(1) default NULL;
 
-ALTER TABLE tracks ADD virtual tinyint(1) default NULL;
+ALTER TABLE tracks ADD `virtual` tinyint(1) default NULL;
 
 ALTER TABLE albums CHANGE artwork artwork char(8) default NULL;
 

@@ -298,19 +298,17 @@ sub registerBrowseMode {
 	my $icon = $item->{icon};
 
 	# replace feed placeholders
-	my ($feed, $mode);
+	my $feed;
 	if ( ref $item->{feed} eq 'CODE' ) {
 		$feed = $item->{feed};
 	}
 	elsif ( $item->{feed} =~ /\balbums$/ ) {
 		$feed = \&Slim::Menu::BrowseLibrary::_albums;
 		$icon = 'html/images/albums.png';
-		$mode = $item->{params}->{mode} || $item->{id};
 	}
 	else {
 		$feed = \&Slim::Menu::BrowseLibrary::_artists;
 		$icon = 'html/images/artists.png';
-		$mode = $item->{params}->{mode} || $item->{id};
 	}
 
 	my %params = map {

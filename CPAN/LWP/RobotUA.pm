@@ -1,17 +1,14 @@
 package LWP::RobotUA;
 
-# $Id: RobotUA.pm 8931 2006-08-11 16:44:43Z dsully $
+use base qw(LWP::UserAgent);
 
-require LWP::UserAgent;
-@ISA = qw(LWP::UserAgent);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.27 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = '6.44';
 
 require WWW::RobotRules;
 require HTTP::Request;
 require HTTP::Response;
 
 use Carp ();
-use LWP::Debug ();
 use HTTP::Status ();
 use HTTP::Date qw(time2str);
 use strict;
@@ -50,8 +47,8 @@ sub new
     my $self = LWP::UserAgent->new(%cnf);
     $self = bless $self, $class;
 
-    $self->{'delay'} = 1;   # minutes
-    $self->{'use_sleep'} = 1;
+    $self->{'delay'} = $delay;   # minutes
+    $self->{'use_sleep'} = $use_sleep;
 
     if ($rules) {
 	$rules->agent($cnf{agent});
@@ -75,7 +72,7 @@ sub agent
     my $old = $self->SUPER::agent(@_);
     if (@_) {
 	# Changing our name means to start fresh
-	$self->{'rules'}->agent($self->{'agent'}); 
+	$self->{'rules'}->agent($self->{'agent'});
     }
     $old;
 }
@@ -116,65 +113,52 @@ sub simple_request
 {
     my($self, $request, $arg, $size) = @_;
 
-    LWP::Debug::trace('()');
-
     # Do we try to access a new server?
-    my $allowed = $self->{'rules'}->allowed($request->url);
+    my $allowed = $self->{'rules'}->allowed($request->uri);
 
     if ($allowed < 0) {
-	LWP::Debug::debug("Host is not visited before, or robots.txt expired.");
-	# fetch "robots.txt"
-	my $robot_url = $request->url->clone;
+	# Host is not visited before, or robots.txt expired; fetch "robots.txt"
+	my $robot_url = $request->uri->clone;
 	$robot_url->path("robots.txt");
 	$robot_url->query(undef);
-	LWP::Debug::debug("Requesting $robot_url");
 
 	# make access to robot.txt legal since this will be a recursive call
-	$self->{'rules'}->parse($robot_url, ""); 
+	$self->{'rules'}->parse($robot_url, "");
 
-	my $robot_req = new HTTP::Request 'GET', $robot_url;
+	my $robot_req = HTTP::Request->new('GET', $robot_url);
+	my $parse_head = $self->parse_head(0);
 	my $robot_res = $self->request($robot_req);
+	$self->parse_head($parse_head);
 	my $fresh_until = $robot_res->fresh_until;
-	if ($robot_res->is_success) {
-	    my $c = $robot_res->content;
-	    if ($robot_res->content_type =~ m,^text/, && $c =~ /^\s*Disallow\s*:/mi) {
-		LWP::Debug::debug("Parsing robot rules");
-		$self->{'rules'}->parse($robot_url, $c, $fresh_until);
-	    }
-	    else {
-		LWP::Debug::debug("Ignoring robots.txt");
-		$self->{'rules'}->parse($robot_url, "", $fresh_until);
-	    }
-
+	my $content = "";
+	if ($robot_res->is_success && $robot_res->content_is_text) {
+	    $content = $robot_res->decoded_content;
+	    $content = "" unless $content && $content =~ /^\s*Disallow\s*:/mi;
 	}
-	else {
-	    LWP::Debug::debug("No robots.txt file found");
-	    $self->{'rules'}->parse($robot_url, "", $fresh_until);
-	}
+	$self->{'rules'}->parse($robot_url, $content, $fresh_until);
 
 	# recalculate allowed...
-	$allowed = $self->{'rules'}->allowed($request->url);
+	$allowed = $self->{'rules'}->allowed($request->uri);
     }
 
     # Check rules
     unless ($allowed) {
-	my $res = new HTTP::Response
-	  &HTTP::Status::RC_FORBIDDEN, 'Forbidden by robots.txt';
+	my $res = HTTP::Response->new(
+	  HTTP::Status::RC_FORBIDDEN, 'Forbidden by robots.txt');
 	$res->request( $request ); # bind it to that request
 	return $res;
     }
 
-    my $netloc = eval { local $SIG{__DIE__}; $request->url->host_port; };
+    my $netloc = eval { local $SIG{__DIE__}; $request->uri->host_port; };
     my $wait = $self->host_wait($netloc);
 
     if ($wait) {
-	LWP::Debug::debug("Must wait $wait seconds");
 	if ($self->{'use_sleep'}) {
 	    sleep($wait)
 	}
 	else {
-	    my $res = new HTTP::Response
-	      &HTTP::Status::RC_SERVICE_UNAVAILABLE, 'Please, slow down';
+	    my $res = HTTP::Response->new(
+	      HTTP::Status::RC_SERVICE_UNAVAILABLE, 'Please, slow down');
 	    $res->header('Retry-After', time2str(time + $wait));
 	    $res->request( $request ); # bind it to that request
 	    return $res;
@@ -206,6 +190,8 @@ sub as_string
 
 __END__
 
+=pod
+
 =head1 NAME
 
 LWP::RobotUA - a class for well-behaved Web robots
@@ -229,9 +215,9 @@ should consult the F</robots.txt> file to ensure that they are welcomed
 and they should not make requests too frequently.
 
 But before you consider writing a robot, take a look at
-<URL:http://www.robotstxt.org/>.
+L<URL:http://www.robotstxt.org/>.
 
-When you use a I<LWP::RobotUA> object as your user agent, then you do not
+When you use an I<LWP::RobotUA> object as your user agent, then you do not
 really have to think about these things yourself; C<robots.txt> files
 are automatically consulted and obeyed, the server isn't queried
 too rapidly, and so on.  Just send requests
@@ -242,16 +228,14 @@ special agent will make sure you are nice.
 
 =head1 METHODS
 
-The LWP::RobotUA is a sub-class of LWP::UserAgent and implements the
+The LWP::RobotUA is a sub-class of L<LWP::UserAgent> and implements the
 same methods. In addition the following methods are provided:
 
-=over 4
+=head2 new
 
-=item $ua = LWP::RobotUA->new( %options )
-
-=item $ua = LWP::RobotUA->new( $agent, $from )
-
-=item $ua = LWP::RobotUA->new( $agent, $from, $rules )
+    my $ua = LWP::RobotUA->new( %options )
+    my $ua = LWP::RobotUA->new( $agent, $from )
+    my $ua = LWP::RobotUA->new( $agent, $from, $rules )
 
 The LWP::UserAgent options C<agent> and C<from> are mandatory.  The
 options C<delay>, C<use_sleep> and C<rules> initialize attributes
@@ -262,50 +246,57 @@ F<robots.txt>.
 It is also possible to just pass the value of C<agent>, C<from> and
 optionally C<rules> as plain positional arguments.
 
-=item $ua->delay
+=head2 delay
 
-=item $ua->delay( $minutes )
+    my $delay = $ua->delay;
+    $ua->delay( $minutes );
 
 Get/set the minimum delay between requests to the same server, in
-I<minutes>.  The default is 1 minute.  Note that this number doesn't
-have to be an integer; for example, this sets the delay to 10 seconds:
+I<minutes>.  The default is C<1> minute.  Note that this number doesn't
+have to be an integer; for example, this sets the delay to C<10> seconds:
 
     $ua->delay(10/60);
 
-=item $ua->use_sleep
+=head2 use_sleep
 
-=item $ua->use_sleep( $boolean )
+    my $bool = $ua->use_sleep;
+    $ua->use_sleep( $boolean );
 
-Get/set a value indicating whether the UA should sleep() if requests
-arrive too fast, defined as $ua->delay minutes not passed since
-last request to the given server.  The default is TRUE.  If this value is
-FALSE then an internal SERVICE_UNAVAILABLE response will be generated.
-It will have an Retry-After header that indicates when it is OK to
+Get/set a value indicating whether the UA should L<LWP::RobotUA/sleep> if
+requests arrive too fast, defined as C<< $ua->delay >> minutes not passed since
+last request to the given server.  The default is true.  If this value is
+false then an internal C<SERVICE_UNAVAILABLE> response will be generated.
+It will have a C<Retry-After> header that indicates when it is OK to
 send another request to this server.
 
-=item $ua->rules
+=head2 rules
 
-=item $ua->rules( $rules )
+    my $rules = $ua->rules;
+    $ua->rules( $rules );
 
 Set/get which I<WWW::RobotRules> object to use.
 
-=item $ua->no_visits( $netloc )
+=head2 no_visits
+
+    my $num = $ua->no_visits( $netloc )
 
 Returns the number of documents fetched from this server host. Yeah I
-know, this method should probably have been named num_visits() or
+know, this method should probably have been named C<num_visits> or
 something like that. :-(
 
-=item $ua->host_wait( $netloc )
+=head2 host_wait
+
+    my $num = $ua->host_wait( $netloc )
 
 Returns the number of I<seconds> (from now) you must wait before you can
 make a new request to this host.
 
-=item $ua->as_string
+=head2 as_string
+
+    my $string = $ua->as_string;
 
 Returns a string that describes the state of the UA.
 Mainly useful for debugging.
-
-=back
 
 =head1 SEE ALSO
 
@@ -317,3 +308,5 @@ Copyright 1996-2004 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
+
+=cut

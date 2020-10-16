@@ -19,6 +19,9 @@ my $log = logger('scan.scanner');
 sub initPlugin { if (main::SCANNER) {
 	my ($class, $args) = @_;
 
+	# don't run importer if we're doing a singledir scan
+	return if main::SCANNER && $ARGV[-1] && 'onlinelibrary' ne $ARGV[-1];
+
 	return if !$class->isImportEnabled();
 
 	$args ||= {};
@@ -42,6 +45,11 @@ sub initOnlineTracksTable { if (main::SCANNER && !$main::wipe) {
 	$dbh->do('DROP TABLE IF EXISTS online_tracks');
 	$dbh->do(qq{
 		CREATE TEMPORARY TABLE online_tracks (url TEXT PRIMARY KEY);
+	});
+
+	$dbh->do('DROP TABLE IF EXISTS online_mapping');
+	$dbh->do(qq{
+		CREATE TABLE online_mapping (id INTEGER PRIMARY KEY, account char(128));
 	});
 } }
 
@@ -105,11 +113,13 @@ sub isImportEnabled {
 }
 
 sub storeTracks {
-	my ($class, $tracks, $libraryId) = @_;
+	my ($class, $tracks, $libraryId, $accountId) = @_;
 
 	return unless $tracks && ref $tracks;
 
 	my $dbh = Slim::Schema->dbh();
+	my $checkComment_sth           = $dbh->prepare_cached("SELECT id FROM comments WHERE track = ? AND value = ?") if $accountId;
+	my $insertAccountInComment_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO comments (track, value) VALUES (?, ?)") if $accountId;
 	my $insertTrackInLibrary_sth   = $dbh->prepare_cached("INSERT OR IGNORE INTO library_track (library, track) VALUES (?, ?)") if $libraryId;
 	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
 
@@ -123,6 +133,15 @@ sub storeTracks {
 			attributes      => $track,
 			integrateRemote => 1,
 		});
+
+		if ($checkComment_sth) {
+			$checkComment_sth->execute($trackObj->id, $accountId);
+			my $data = $checkComment_sth->fetchall_arrayref([0]);
+
+			if (!$data || !ref $data || !scalar @$data) {
+				$insertAccountInComment_sth->execute($trackObj->id, $accountId);
+			}
+		}
 
 		if ($insertTrackInLibrary_sth) {
 			$insertTrackInLibrary_sth->execute($libraryId, $trackObj->id);
@@ -138,6 +157,32 @@ sub storeTracks {
 	}
 
 	main::idle() if !main::SCANNER;
+}
+
+sub getLibraryStats {
+	my ($class) = @_;
+	my $prefix = $class->trackUriPrefix();
+	$prefix =~ s/:.*/:/g;
+
+	my $totals;
+	my $dbh = Slim::Schema->dbh();
+
+	foreach (
+		['tracks', "SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type != 'ssp'"],
+		['albums', "SELECT COUNT(1) FROM albums WHERE extid LIKE ?"],
+		['artists', "SELECT COUNT(1) FROM contributors WHERE extid LIKE ?"],
+		['playlists', "SELECT COUNT(1) FROM tracks WHERE extid LIKE ? AND content_type = 'ssp'"],
+		['playlistTracks', "SELECT COUNT(1) FROM playlist_track WHERE track LIKE ?"]
+	) {
+		my $count_sth = $dbh->prepare_cached($_->[1]);
+		$count_sth->execute("$prefix%");
+		my ($count) = $count_sth->fetchrow_array();
+		$count_sth->finish;
+
+		$totals->{$_->[0]} = $count || 0;
+	}
+
+	return $totals;
 }
 
 sub libraryMetaId {

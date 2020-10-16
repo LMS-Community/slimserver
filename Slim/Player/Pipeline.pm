@@ -79,7 +79,7 @@ sub new {
 
 			$newcommand .= $log->is_debug ? ' -D ' : ' -d ';       # socketwrapper debugging (-D = verbose)
 
-			$createMode = $priority; # create window so it is seen
+			$createMode = $priority | Win32::Process::CREATE_NEW_CONSOLE(); # create window so it is seen
 		}
 
 		if ($listenWriter) {
@@ -290,7 +290,7 @@ sub sysread {
 					delete ${*$self}{'pipeline_source'};
 					$writer->close();
 					last STUFF_PIPE;
-				} elsif ($! == EWOULDBLOCK) {
+				} elsif ($! == EWOULDBLOCK || $! == EINTR) {
 					last STUFF_PIPE;		
 				} else {
 					return undef; # reflect error to caller

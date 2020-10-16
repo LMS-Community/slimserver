@@ -550,7 +550,7 @@ div.pagetitleWithIcon {
 	padding: 2px;
 }
 
-.thumbArtwork img.extIdImg, #ctrlCurrentArt img.extIdImg, .browseCover img.extIdImg, .playlistCover img.extIdImg {
+.thumbArtwork img.extIdImg, #ctrlCurrentArt img.extIdImg, .browseCover img.extIdImg {
 	position: absolute;
 	right: 2px;
 	top: 2px;

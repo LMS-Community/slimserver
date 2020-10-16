@@ -17,6 +17,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.tidal',
 	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_WIMP_MODULE_NAME',
+	logGroups    => 'SCANNER',
 } );
 
 sub initPlugin {
@@ -175,6 +176,12 @@ sub onlineLibraryNeedsUpdate {
 	my $class = shift;
 	require Slim::Plugin::WiMP::Importer;
 	return Slim::Plugin::WiMP::Importer->needsUpdate(@_);
+}
+
+sub getLibraryStats {
+	require Slim::Plugin::WiMP::Importer;
+	my $totals = Slim::Plugin::WiMP::Importer->getLibraryStats();
+	return wantarray ? ('PLUGIN_WIMP_MODULE_NAME', $totals) : $totals;
 }
 
 sub trackInfoMenu {

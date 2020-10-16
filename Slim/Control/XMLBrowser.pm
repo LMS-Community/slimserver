@@ -1923,7 +1923,7 @@ sub _defeatDestructiveTouchToPlay {
 	my $pref;
 	
 	if ($client && (my $agent = $client->controllerUA)) {
-		if ($agent =~ /squeezeplay/i) {
+		if ($agent =~ /squeezeplay/i && $agent !~ /jivelite/i) {
 			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
 			
 			return 0 if $version < 7.6;

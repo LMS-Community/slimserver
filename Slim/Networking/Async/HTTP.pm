@@ -10,6 +10,8 @@ package Slim::Networking::Async::HTTP;
 
 use strict;
 
+use constant MIN_IO_SOCKET_SSL => '2.020';
+
 BEGIN {
 	my $hasSSL;
 
@@ -25,6 +27,10 @@ BEGIN {
 
 		if ($@) {
 			msg("Async::HTTP: Unable to load IO::Socket::SSL, will try connecting to SSL servers in non-SSL mode\n$@\n");
+		}
+		# if we're using an outdated version of IO::Socket::SSL, log a warning
+		elsif (Slim::Utils::Versions->compareVersions(MIN_IO_SOCKET_SSL, $IO::Socket::SSL::VERSION) > 0) {
+			msg("You're using a rather old version of IO::Socket::SSL (v$IO::Socket::SSL::VERSION) - please try to update to at least " . MIN_IO_SOCKET_SSL . " for improved compatibility.\n");
 		}
 
 		return $hasSSL;
@@ -46,6 +52,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
+use Slim::Utils::Versions;
 
 use constant BUFSIZE   => 16 * 1024;
 use constant MAX_REDIR => 7;
@@ -117,7 +124,7 @@ sub new_socket {
 			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} = $args{Host};
 			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
-			
+
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
 			}
@@ -286,7 +293,7 @@ sub _format_request {
 	$self->socket->http_version($version);
 	$self->socket->keep_alive(1) if ($version == '1.1' && $self->request->header('Connection') !~ /close/i) || 
 									$self->request->header('Connection') =~ /keep-alive/i;
-	
+
 	my $request = $self->socket->format_request(
 		$self->request->method,
 		$fullpath,
@@ -304,6 +311,10 @@ sub read_body {
 
 	$self->socket->set( passthrough => [ $self, $args ] );
 
+	# Timer in case the server never sends any body data
+	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
+	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
+
 	Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
@@ -319,7 +330,7 @@ sub resume_stream {
 	my $self = shift;
 
 	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
-	
+
 	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self->socket->get('passthrough') );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 }
@@ -497,10 +508,11 @@ sub _http_read {
 sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
 
+	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
+	return if $result < 0;
+
 	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
 	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
-
-	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
 
 	if ( $result ) {
 		main::DEBUGLOG && $log->debug("Read body: [$result] bytes");
@@ -530,6 +542,9 @@ sub _http_read_body {
 	elsif ( $args->{onStream} ) {
 		# The caller wants a callback on every chunk of data streamed
 		my $pt   = $args->{passthrough} || [];
+		if ( !$result ) {
+			$buf = defined $result ? "" : undef;
+		}
 		my $more = $args->{onStream}->( $self, \$buf, @{$pt} );
 
 		# onStream callback can signal to stop the stream by returning false

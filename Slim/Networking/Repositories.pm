@@ -68,7 +68,7 @@ use Slim::Utils::Timers;
 use constant POLL_INTERVAL => 3600 * 6;
 
 # mirrors whose latency is within this range (in seconds) will be picked randomly
-use constant OK_THRESHOLD => 0.5;	
+use constant OK_THRESHOLD => 0.5;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'network.repositories',
@@ -134,9 +134,11 @@ sub get {
 
 	my $url = $item =~ /^https?:/ ? $class->getMirrorForUrl($item) : $class->getUrlForRepository($item);
 
-	if (!Slim::Networking::Async::HTTP->hasSSL() && $url =~ s/^https:/http:/) {
-		$log->warn("Falling back to plain text http lack of IO::Socket::SSL: " . $url) unless $missingSSLWarned{$url}++;
+	if (!Slim::Networking::Async::HTTP->hasSSL() && $url =~ /^https:(.*)/ && !$missingSSLWarned{$url}++) {
+		$log->warn("Falling back to plain text http lack of IO::Socket::SSL: " . $url);
 	}
+
+	$url =~ s/^https:/http:/ if $missingSSLWarned{$url};
 
 	Slim::Networking::SimpleAsyncHTTP->new($cb, sub {
 		my ($http, $error) = @_;
@@ -144,8 +146,9 @@ sub get {
 		my $url = $http->url;
 		$log->error("Failed to fetch $url: $error");
 
-		if ($prefs->get('insecureHTTPS') && $url =~ s/^(http)s:/$1:/) {
-			$log->warn("https lookup failed - trying plain text http instead: $url");
+		if ($prefs->get('insecureHTTPS') && $url =~ /^https:/) {
+			$log->warn("https lookup failed - trying plain text http instead: $url") unless $missingSSLWarned{$url}++;
+			$url =~ s/^(http)s:/$1:/;
 			Slim::Networking::SimpleAsyncHTTP->new($cb, $ecb, $params)->get($url);
 		}
 		else {
@@ -172,7 +175,7 @@ sub getUrlForRepository {
 	@urls = grep {
 		$latency ||= $repositories->{$_};
 		$repositories->{$_} - $latency < OK_THRESHOLD ? 1 : 0;
-	} sort { 
+	} sort {
 		$repositories->{$a} <=> $repositories->{$b}
 	} @urls;
 
@@ -188,9 +191,9 @@ sub getMirrorForUrl {
 	my ($class, $url) = @_;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Trying to find a mirror for URL: " . $url);
-	
-	my ($repository) = grep { 
-		$repositories{$_}->{$url} ? $_ : undef 
+
+	my ($repository) = grep {
+		$repositories{$_}->{$url} ? $_ : undef
 	} keys %repositories;
 
 	if ($repository) {
@@ -209,11 +212,11 @@ sub measureLatency {
 
 	for my $repo ( keys %{$repositories{$repository}} ) {
 		Slim::Networking::SimpleAsyncHTTP->new(
-			\&_measureLatencyDone, 
-			\&_measureLatencyDone, 
-			{ 
-				repository => $repository, 
-				sent       => Time::HiRes::time(), 
+			\&_measureLatencyDone,
+			\&_measureLatencyDone,
+			{
+				repository => $repository,
+				sent       => Time::HiRes::time(),
 				cache      => 0,
 				timeout    => 5,
 			}

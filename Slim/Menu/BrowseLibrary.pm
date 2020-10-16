@@ -1086,7 +1086,16 @@ sub _artists {
 	}
 
 	# only get external artists without album if no filter is set
-	my $queryTags = (!scalar grep { $_ !~ /^role_id:.*ALBUMARTIST|^library_id:/} @searchTags) ? 'EQs' : 's';
+	my $queryTags = 'Es';
+	if ( ($library_id && $library_id ne (Slim::Music::VirtualLibraries->getLibraryIdForClient($client) || ''))
+		|| ($search && !scalar grep { $_ !~ /^library_id:/} @searchTags)
+		|| (scalar grep { $_ !~ /^role_id:.*ALBUMARTIST|^library_id:/} @searchTags)
+	) {
+		$queryTags = 's';
+	}
+	else {
+		push @searchTags, 'include_online_only_artists:1'
+	}
 
 	_generic($client, $callback, $args, 'artists',
 		[@searchTags, ($search ? 'search:' . $search : undef)],
@@ -2093,8 +2102,26 @@ sub _playlistTracks {
 					commonVariables	=> [track_id => 'id', url => 'url'],
 			) : (
 					commonVariables	=> [track_id => 'id', url => 'url'],
+					allAvailableActionsDefined => 1,
+
 					info => {
 						command     => ['trackinfo', 'items'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
+					},
+					remove => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'delete'},
 					},
 					playall => {
 						command     => ['playlistcontrol'],

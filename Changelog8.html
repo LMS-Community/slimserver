@@ -7,23 +7,52 @@
 	<ul>
 		<li>Online music library integration: list your collection of albums vetted in your favorite streaming service as part of your "My Music" collection.</li>
 		<li>Improved support for Audio Books: automatically create library views and browse modes dealing with Audio Books and Authors.</li>
+		<li>Paste TIDAL or Deezer weblinks in to the Tune In field to play albums/playlists/tracks (thanks <a href="https://github.com/Logitech/slimserver/pull/360">mavit</a>!)</li>
+		<li>Keep track of recently played podcasts (thanks <a href="https://github.com/Logitech/slimserver/pull/384">philippe44</a>!)</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/pull/367">PR #367</a> - Improved parsing of HTTP header allows for new features (eg. AAC transcoding) and fixes some issues with streaming remote files. Thanks a lot philippe_44!</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/305">PR #305</a> - use ORIGINALYEAR in FLAC files to override YEAR (thanks jcbodnar!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/267">PR #267</a> - HTTPS certificates are now validated when LMS acts as a client.  HTTPS connections to plugin repositories are no-longer retried over HTTP when they fail.  The old insecure behaviour can optionally be re-enabled, although, instead, we recommend working out why HTTPS is broken in your environment and fixing that if possible.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/308">PR #308</a> - Update faad binaries to fix several CVE-2017 security issues (thanks ralphy!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/324">PR #324</a> - Implement documented, but non-functional search in "favorites" query.</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/346">PR #346</a> - Update Audio::Scan on Windows to 1.02 (thanks ralphy!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/355">PR #355</a> - Improved metadata handling in the xPL plugin (thanks keynet!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/429">PR #429</a> - Hide library folders from scanning with a sentinel file (thanks sciurius!)</li>
+		<li>Improved Dutch translation (thanks blackfiction!)</li>
 		<li>Read Conductor tag from m4a etc. files.</li>
+		<li>Persist some web browser side preferences like artwork mode, expanded menus etc. on the server. Safari would regularly "forget" them.</li>
 		<li>Improve cache purging to reduce startup time and the risk of locking up other initialization tasks.</li>
+		<li>Updated LWP module and dependencies to improve compatibility with newer Perl versions.</li>
+		<li>Support import of DSD in WavPack files (requires additional DSDPlay 3rd party plugin).</li>
+		<li>Add 'wav wav' rule which keeps headers.</li>
+		<li>Add 'aif pcm' rule and change 'aif aif' rule to keep header except for "legacy" SB.</li>
+		<li>Add 'H' tag in convert.conf to strip wav/aiff headers.</li>
+		<li>Update SSL support on Windows (thanks ralphy!)</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/277">#277</a> - add new flac binaries to fix seeking within remote flac streams in some locales (thanks ralphy!).</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/366">#366</a> - Fix gapless PCM Playback on Squeezebox1 (thanks michaldie!).</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/388">#388</a> - Fix sorting of index bar in the web UI.</li>
 		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
+		<li>Support wav/aif remote streams (direct and proxied).</li>
+		<li>Check that destination (not source) codec is supported in direct streaming.</li>
+		<li>Pass all seed tracks, using one API call, to MusicIP mix when used for "Dont Stop The Music".</li>
+		<li>Re-build Fulltext Search Index for modified playlists after they've been saved.</li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+		<li>Updated translations: Swedish (thanks Johan!)</li>
 	</ul>
 	<br />
 </ul>
