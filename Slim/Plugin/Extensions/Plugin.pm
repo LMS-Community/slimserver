@@ -127,7 +127,7 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'https://repos.squeezecommunity.org/extensions.xml' => 1,
+	'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1,
 );
 
 sub initPlugin {

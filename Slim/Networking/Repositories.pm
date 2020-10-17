@@ -81,9 +81,9 @@ my $prefs = preferences('server');
 # weighting. The default of 1 would be replaced with the latency in order to
 # allow latency based load balancing.
 my %repositories = (
-	servers    => { 'https://repos.squeezecommunity.org/' => 1 },
+	servers    => { 'https://downloads.slimdevices.com/releases/' => 1 },
 	firmware   => { 'http://update.slimdevices.com/update/firmware/' => 1 },
-	extensions => { 'https://repos.squeezecommunity.org/extensions.xml' => 1 },
+	extensions => { 'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1 },
 );
 
 my %missingSSLWarned;
