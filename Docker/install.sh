@@ -36,13 +36,39 @@ usermod -a -G audio nobody
 
 # Install LMS
 OUT=$(curl -skL "http://downloads.slimdevices.com/nightly/index.php?ver=8.0")
-# Try to catch the link or die
-REGEX=".*href=\".(.*)amd64.deb\""
-if [[ ${OUT} =~ ${REGEX} ]]; then
-  URL="http://downloads.slimdevices.com/nightly${BASH_REMATCH[1]}amd64.deb"
+
+# Check architecture
+MACHINE_TYPE=`uname -m`
+#X64
+if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+  # Try to catch the link or die
+  REGEX=".*href=\".(.*)amd64.deb\""
+  if [[ ${OUT} =~ ${REGEX} ]]; then
+    URL="http://downloads.slimdevices.com/nightly${BASH_REMATCH[1]}amd64.deb"
+  else
+    exit 1
+  fi
+#X86
+elif [ ${MACHINE_TYPE} == 'i386' -o ${MACHINE_TYPE} == 'i686']; then
+  # Try to catch the link or die
+  REGEX=".*href=\".(.*)i386.deb\""
+  if [[ ${OUT} =~ ${REGEX} ]]; then
+    URL="http://downloads.slimdevices.com/nightly${BASH_REMATCH[1]}i386.deb"
+  else
+    exit 1
+  fi
+#ARM
 else
-  exit 1
+  # Try to catch the link or die
+  REGEX=".*href=\".(.*)arm.deb\""
+  if [[ ${OUT} =~ ${REGEX} ]]; then
+    URL="http://downloads.slimdevices.com/nightly${BASH_REMATCH[1]}arm.deb"
+  else
+    exit 1
+  fi
 fi
+
+
 
 curl -skL -o /tmp/lms.deb $URL
 dpkg -i /tmp/lms.deb
