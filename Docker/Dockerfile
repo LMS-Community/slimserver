@@ -4,7 +4,7 @@ FROM phusion/baseimage:0.11
 #########################################
 
 # Set correct environment variables
-ENV HOME="/root" LC_ALL="C.UTF-8" LANG="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
+ENV HOME="/root"
 
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
@@ -12,7 +12,7 @@ CMD ["/sbin/my_init"]
 # Install airplay
 RUN mkdir /var/run/dbus
 RUN apt-get update
-RUN apt-get install -y wget lame faad flac sox perl tzdata pv libcrypt-openssl-rsa-perl libio-socket-inet6-perl libwww-perl avahi-utils libio-socket-ssl-perl dbus avahi-daemon mpg123
+RUN apt-get install -y wget perl tzdata pv libcrypt-openssl-rsa-perl libio-socket-inet6-perl libwww-perl avahi-utils libio-socket-ssl-perl dbus avahi-daemon
 ADD libnet-sdp-perl_0.07-1_all.deb /tmp
 RUN dpkg -i /tmp/libnet-sdp-perl_0.07-1_all.deb
 

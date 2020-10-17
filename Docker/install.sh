@@ -15,20 +15,6 @@ chown -R nobody:users /home
 rm -rf /etc/service/sshd /etc/service/cron /etc/service/syslog-ng /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 #########################################
-##    REPOSITORIES AND DEPENDENCIES    ##
-#########################################
-
-# Repositories
-add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe multiverse"
-add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe multiverse"
-#curl -skL -o /etc/apt/sources.list http://tinyurl.com/lm2vf9a
-
-# Install Dependencies
-apt-get update -qq
-apt-get install -qy lame faad flac sox
-
-
-#########################################
 ##  FILES, SERVICES AND CONFIGURATION  ##
 #########################################
 # LMS
