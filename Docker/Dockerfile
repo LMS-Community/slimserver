@@ -31,12 +31,12 @@ RUN /tmp/install.sh
 RUN mkdir -p /config /var/log/supervisor
 
 RUN mkdir /music && \
-  chown -R squeezeboxserver:users /config /music
+  chown -R squeezeboxserver:users /config /music /playlist
  
 #########################################
 ##         EXPORTS AND VOLUMES         ##
 #########################################
-VOLUME /config /music
+VOLUME /config /music /playlist
 WORKDIR /config
 
 USER squeezeboxserver

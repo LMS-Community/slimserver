@@ -8,6 +8,7 @@ Run with:
 docker run -t -i --rm=true --net="bridge" \
       -v "<somewhere>":"/config":rw \
       -v "<somewhere>":"/music":ro \
+      -v "<somewhere>":"/playlist":ro \
       -v "/var/run/dbus":"/var/run/dbus":rw \
       -v "/etc/localtime":"/etc/localtime":ro \
       -p 9000:9000/tcp \
@@ -26,6 +27,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /<somewhere>:/config:rw
       - /<somewhere>:/music:ro
+      - /<somewhere>:/playlist:ro
       - /var/run/dbus:/var/run/dbus:rw
     ports:
       - 9000:9000/tcp
