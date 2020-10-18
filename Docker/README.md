@@ -2,21 +2,19 @@
 
 Docker image for Logitech Media Server
 
-Run with:
+Run:
 
 ```
-docker run -t -i --rm=true --net="bridge" \
+docker run -it \
       -v "<somewhere>":"/config":rw \
       -v "<somewhere>":"/music":ro \
       -v "<somewhere>":"/playlist":ro \
-      -v "/var/run/dbus":"/var/run/dbus":rw \
-      -v "/etc/localtime":"/etc/localtime":ro \
       -p 9000:9000/tcp \
       -p 9090:9090/tcp \
       Logitech/slimserver
 ```
 
-or compose
+Docker compose:
 ```
 version: '3'
 services:
@@ -24,13 +22,24 @@ services:
     container_name: lms
     image: Logitech/slimserver
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - /<somewhere>:/config:rw
       - /<somewhere>:/music:ro
       - /<somewhere>:/playlist:ro
-      - /var/run/dbus:/var/run/dbus:rw
     ports:
       - 9000:9000/tcp
       - 9090:9090/tcp
     restart: always
 ```
+
+Alternatively you can specify the user and group id to use:
+For run add:
+```
+  -e PUID=1000 \
+  -e PGID=1000
+ ```
+For compose add:
+```
+environment:
+  - PUID=1000
+  - PGID=1000
+ ```

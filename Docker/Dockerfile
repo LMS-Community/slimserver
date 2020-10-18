@@ -1,49 +1,36 @@
+#Base image
 FROM debian:stable-slim
 
-#########################################
-##        ENVIRONMENTAL CONFIG         ##
-#########################################
-
-# Set correct environment variables
+# Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME="/root"
 
-#########################################
-##         INSTALL PACKAGES            ##
-#########################################
-
-RUN apt-get update  && \
-apt-get install -y wget perl tzdata pv libwww-perl avahi-utils libio-socket-ssl-perl libnet-ssleay-perl curl supervisor && \
+# Install packages
+RUN apt-get update -qq  && \
+apt-get install -qy wget curl perl tzdata libwww-perl libio-socket-ssl-perl libnet-ssleay-perl supervisor && \
 apt-get clean -qy && \
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Add start script
+# Add supervisor script
 COPY supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
-#########################################
-##         RUN INSTALL SCRIPT          ##
-#########################################
+# Add startup script
+COPY start-container.sh /usr/bin/start-container
+RUN chmod +x /usr/bin/start-container
 
+# Add & install LMS sript
 COPY install.sh /tmp/
 RUN chmod +x /tmp/install.sh
 RUN /tmp/install.sh
 
-RUN mkdir -p /config /var/log/supervisor
+# Volume and port setup
+RUN mkdir -p /config /music /playlist /var/log/supervisor
 
-RUN mkdir /music && \
-  chown -R squeezeboxserver:users /config /music /playlist
- 
-#########################################
-##         EXPORTS AND VOLUMES         ##
-#########################################
 VOLUME /config /music /playlist
-WORKDIR /config
-
-USER squeezeboxserver
 
 EXPOSE 3483 3483/udp 9000 9090 5353/udp 9005 38863 46960
 
-#########################################
-##       	    SUPERVISOR 	           ##
-#########################################
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+#Startup setup
+WORKDIR /config
+
+ENTRYPOINT ["start-container"]

@@ -1,27 +1,17 @@
 #!/bin/bash
 
-#########################################
-##        ENVIRONMENTAL CONFIG         ##
-#########################################
+# Configure environment
+export DEBIAN_FRONTEND="noninteractive"
 
 # Configure user squeezeboxserver
-export DEBIAN_FRONTEND="noninteractive"
 useradd squeezeboxserver
 usermod -u 99 squeezeboxserver
 usermod -g 100 squeezeboxserver
 usermod -d /home squeezeboxserver
 chown -R squeezeboxserver:users /home
 
-#########################################
-##  FILES, SERVICES AND CONFIGURATION  ##
-#########################################
-
 # Allow acces to /dev/snd
 usermod -a -G audio squeezeboxserver
-
-#########################################
-##             INSTALLATION            ##
-#########################################
 
 # Install LMS
 OUT=$(curl -skL "http://downloads.slimdevices.com/nightly/index.php?ver=8.0")
