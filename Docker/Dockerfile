@@ -1,5 +1,5 @@
 #Base image
-FROM debian:stable-slim
+FROM debian:9-slim
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
