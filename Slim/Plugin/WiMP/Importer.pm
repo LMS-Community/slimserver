@@ -289,8 +289,8 @@ sub _prepareTrack {
 	return {
 		url          => $track->{url},
 		TITLE        => $track->{title},
-		ARTIST       => $track->{artist}->{name},
-		ARTIST_EXTID => 'wimp:artist:' . $track->{artist}->{id},
+		ARTIST       => $album->{artist}->{name},
+		ARTIST_EXTID => 'wimp:artist:' . $album->{artist}->{id},
 		TRACKARTIST  => join($splitChar, map { $_->{name} } @{ $track->{artists} }),
 		ALBUM        => $album->{title},
 		ALBUM_EXTID  => 'wimp:album:' . $album->{id},
