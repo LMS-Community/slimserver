@@ -6,7 +6,7 @@ package Slim::Plugin::WiMP::ProtocolHandler;
 # version 2.
 
 use strict;
-use base qw(Slim::Player::Protocols::HTTP);
+use base qw(Slim::Player::Protocols::HTTPS);
 
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);

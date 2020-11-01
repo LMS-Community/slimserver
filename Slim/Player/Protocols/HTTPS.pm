@@ -14,6 +14,11 @@ sub new {
 	my $args  = shift;
 	my $url   = $args->{'url'} || '';
 
+	# we're actually dealing with unencrypted http
+	if ($url =~ /^http:/) {
+		return Slim::Player::Protocols::HTTP->new($args);
+	}
+
 	my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
 
 	if (!$server || !$port) {
