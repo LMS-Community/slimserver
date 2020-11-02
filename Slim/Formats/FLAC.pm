@@ -1036,7 +1036,7 @@ sub frameAlign {
 		}
 	} 
 	
-	$_[1] = '';
+	$_[1] = undef;
 	return 0;
 }
 

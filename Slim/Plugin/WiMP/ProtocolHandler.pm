@@ -213,7 +213,7 @@ sub _getTrack {
 				#if ( main::DEBUGLOG && $log->is_debug ) {
 				#	$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
 				#}
-
+				$info->{url} =~ s/^http:/https:/;
 				_gotTrack( $client, $info, $params );
 			}
 		},

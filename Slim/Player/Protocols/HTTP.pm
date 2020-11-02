@@ -411,6 +411,7 @@ sub sysread {
 	
 	# do not read if we are building-up too much processed audio
 	if (${*$self}{'audio_buildup'} > $chunkSize) {
+		$! = undef;
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} 
 	else {	
@@ -439,8 +440,16 @@ sub sysread {
 		}
 	}
 	
-	# when not-empty, chose return buffer length over sysread() 
-	$readLength = length $_[1] if length $_[1];
+	# when not-empty, choose return buffer length over sysread() otherwise
+	# readLength must be 'undef' unless we are at eof
+	if (defined $_[1]) {
+		$readLength = length $_[1];
+	} 
+	elsif ($readLength) {
+		$readLength = undef;
+	}
+
+	$! ||= EINTR unless defined $readLength;
 
 	return $readLength;
 }

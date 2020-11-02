@@ -97,13 +97,7 @@ sub _sysread {
 
 # we need to subclass sysread as HTTPS first inherits from IO::Socket::SSL  
 sub sysread {
-	my $readLength = Slim::Player::Protocols::HTTP::sysread(@_);
-
-	if (main::ISWINDOWS && !$readLength) {
-		$! = EINTR;
-	}
-
-	return $readLength;
+	return Slim::Player::Protocols::HTTP::sysread(@_);
 }
 	
 
