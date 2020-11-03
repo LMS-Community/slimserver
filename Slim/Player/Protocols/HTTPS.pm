@@ -13,10 +13,13 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 	my $url   = $args->{'url'} || '';
-
-	# we're actually dealing with unencrypted http
+	
 	if ($url =~ /^http:/) {
-		return Slim::Player::Protocols::HTTP->new($args);
+		# only use Slim::Player::Protocols::HTTP methods and we can't just use
+		# directly Slim::Player::Protocols::HTTP::new or method resolution will
+		# ignore *real* base class and any overloaded one will be missed
+		local @ISA = reverse @ISA;
+		return $class->SUPER::new($args);
 	}
 
 	my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
@@ -58,24 +61,24 @@ sub new {
 	return $sock->request($args);
 }
 
-# Check whether the current player can stream HTTPS or not 
+# Check whether the current player can stream HTTPS or Url is HTTP
 sub canDirectStream {
 	my $self = shift;
-	my ($client) = @_;
-	
-	if ( $client->canHTTPS ) {
+	my ($client, $url) = @_;
+
+	if ( $client->canHTTPS || $url =~ /^http:/) {
 		return $self->SUPER::canDirectStream(@_);
 	}
 
 	return 0;
 }
 
-# Check whether the current player can stream HTTPS or not 
+# Check whether the current player can stream HTTPS or Url is HTTP
 sub canDirectStreamSong {
 	my $self = shift;
-	my ($client) = @_;
-	
-	if ( $client->canHTTPS ) {
+	my ($client, $song) = @_;
+
+	if ( $client->canHTTPS || $song->streamUrl =~ /^http:/) {
 		return $self->SUPER::canDirectStreamSong(@_);
 	}
 
@@ -87,7 +90,7 @@ sub canDirectStreamSong {
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
 	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
-	
+
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EINTR;
 	}
