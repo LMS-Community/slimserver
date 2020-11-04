@@ -106,8 +106,32 @@ PLUGIN_DEEZER_SKIPS_EXCEEDED
 
 PLUGIN_DEEZER_SMART_RADIO
 	EN	Deezer Smart Radio
-	
+
 PLUGIN_DEEZER_FLOW
 	DE	Deezer Flow (nur Premium+ Nutzer)
 	EN	Deezer Flow (Premium+ users only)
 	FR	Deezer Flow (Premium+ uniquement)
+
+PLUGIN_DEEZER_ALBUMS_PROGRESS
+	DE	Deezer Alben
+	EN	Deezer Albums
+
+PLUGIN_DEEZER_PROGRESS_READ_ALBUMS
+	DE	Lese Alben (%s)...
+	EN	Fetching Albums (%s)...
+
+PLUGIN_DEEZER_ARTISTS_PROGRESS
+	DE	Deezer Interpreten
+	EN	Deezer Artists
+
+PLUGIN_DEEZER_PROGRESS_READ_ARTISTS
+	DE	Lese Interpreten (%s)...
+	EN	Fetching Artists (%s)...
+
+PLUGIN_DEEZER_PLAYLISTS_PROGRESS
+	DE	Deezer Wiedergabelisten
+	EN	Deezer Playlists
+
+PLUGIN_DEEZER_PROGRESS_READ_PLAYLISTS
+	DE	Lese Wiedergabelisten (%s)...
+	EN	Fetching Playlists (%s)...

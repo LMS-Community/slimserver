@@ -1,4 +1,4 @@
-package Slim::Plugin::WiMP::Importer;
+package Slim::Plugin::Deezer::Importer;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -9,10 +9,7 @@ use strict;
 
 use base qw(Slim::Plugin::OnlineLibraryBase);
 
-use Date::Parse qw(str2time);
-use Digest::MD5 qw(md5_hex);
 use JSON::XS::VersionOneAndTwo;
-use List::Util qw(max);
 
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -20,31 +17,47 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
 use Slim::Utils::Strings qw(string);
 
-use constant ACCOUNTS_URL  => '/api/wimp/v1/opml/library/getAccounts';
-use constant ALBUMS_URL    => '/api/wimp/v1/opml/library/myAlbums?account=%s';
-use constant ARTISTS_URL   => '/api/wimp/v1/opml/library/myArtists?account=%s';
-use constant PLAYLISTS_URL => '/api/wimp/v1/opml/library/myPlaylists?account=%s';
-use constant FINGERPRINT_URL => '/api/wimp/v1/opml/library/fingerprint';
+use constant ACCOUNTS_URL  => '/api/deezer/v1/opml/library/getAccounts';
+use constant ALBUMS_URL    => '/api/deezer/v1/opml/library/myAlbums';
+use constant ARTISTS_URL   => '/api/deezer/v1/opml/library/myArtists';
+use constant PLAYLISTS_URL => '/api/deezer/v1/opml/library/myPlaylists';
+use constant FINGERPRINT_URL => '/api/deezer/v1/opml/library/fingerprint';
 
 my $cache = Slim::Utils::Cache->new();
-my $log = logger('plugin.tidal');
+my $log = logger('plugin.deezer');
 
-my $http;
+my ($http, $accounts);
+
+sub isImportEnabled {
+	my ($class) = @_;
+
+	if ($class->SUPER::isImportEnabled) {
+		require Slim::Networking::SqueezeNetwork::Sync;
+
+		$http ||= Slim::Networking::SqueezeNetwork::Sync->new({ timeout => 120 });
+
+		my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(ACCOUNTS_URL));
+
+		if ($response->code != 200) {
+			$log->error('Failed to get Deezer accounts: ' . $response->error);
+			return;
+		}
+
+		$accounts = eval { from_json($response->content) } || [];
+
+		return 1 if scalar @$accounts;
+
+		main::INFOLOG && $log->is_info && $log->info("No Premium Deezer account found - skipping import");
+	}
+
+	return 0;
+}
 
 sub startScan { if (main::SCANNER) {
 	my ($class) = @_;
 	require Slim::Networking::SqueezeNetwork::Sync;
 
 	$http ||= Slim::Networking::SqueezeNetwork::Sync->new({ timeout => 120 });
-
-	my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(ACCOUNTS_URL));
-
-	if ($response->code != 200) {
-		$log->error('Failed to get TIDAL accounts: ' . $response->error);
-		return;
-	}
-
-	my $accounts = eval { from_json($response->content) } || [];
 
 	if (ref $accounts && scalar @$accounts) {
 		$class->initOnlineTracksTable();
@@ -56,13 +69,13 @@ sub startScan { if (main::SCANNER) {
 
 		$class->scanPlaylists($accounts);
 
-		$response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
-		$cache->set('tidal_library_fingerprint', ($http->content || ''), 30 * 86400);
+		my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
+		$cache->set('deezer_library_fingerprint', ($response->content || ''), 30 * 86400);
 
 		$class->deleteRemovedTracks();
 	}
 	elsif (ref $accounts) {
-		$cache->set('tidal_library_fingerprint', -1, 30 * 86400);
+		$cache->set('deezer_library_fingerprint', -1, 30 * 86400);
 	}
 
 	Slim::Music::Import->endImporter($class);
@@ -80,16 +93,16 @@ sub scanAlbums { if (main::SCANNER) {
 		else {
 			$progress = Slim::Utils::Progress->new({
 				'type'  => 'importer',
-				'name'  => 'plugin_tidal_albums',
+				'name'  => 'plugin_deezer_albums',
 				'total' => 1,
 				'every' => 1,
 			});
 		}
 
 		main::INFOLOG && $log->is_info && $log->info("Reading albums for $account...");
-		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ALBUMS', $account));
+		$progress->update(string('PLUGIN_DEEZER_PROGRESS_READ_ALBUMS', $account));
 
-		my $accountName = "tidal:$account" if scalar @$accounts > 1;
+		my $accountName = "deezer:$account" if scalar @$accounts > 1;
 
 		my $albumsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ALBUMS_URL, $account)));
 		my $albums = eval { from_json($albumsResponse->content) } || [];
@@ -134,14 +147,14 @@ sub scanArtists { if (main::SCANNER) {
 		else {
 			$progress = Slim::Utils::Progress->new({
 				'type'  => 'importer',
-				'name'  => 'plugin_tidal_artists',
+				'name'  => 'plugin_deezer_artists',
 				'total' => 1,
 				'every' => 1,
 			});
 		}
 
 		main::INFOLOG && $log->is_info && $log->info("Reading artists for $account...");
-		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_ARTISTS', $account));
+		$progress->update(string('PLUGIN_DEEZER_PROGRESS_READ_ARTISTS', $account));
 
 		my $artistsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ARTISTS_URL, $account)));
 		my $artists = eval { from_json($artistsResponse->content) } || [];
@@ -165,7 +178,7 @@ sub scanArtists { if (main::SCANNER) {
 
 			Slim::Schema::Contributor->add({
 				'artist' => $name,
-				'extid'  => 'wimp:artist:' . $artist->{id},
+				'extid'  => 'deezer:artist:' . $artist->{id},
 			});
 		}
 
@@ -183,18 +196,18 @@ sub scanPlaylists { if (main::SCANNER) {
 
 	my $progress = Slim::Utils::Progress->new({
 		'type'  => 'importer',
-		'name'  => 'plugin_tidal_playlists',
+		'name'  => 'plugin_deezer_playlists',
 		'total' => 0,
 		'every' => 1,
 	});
 
 	main::INFOLOG && $log->is_info && $log->info("Removing playlists...");
 	$progress->update(string('PLAYLIST_DELETED_PROGRESS'), $progress->done);
-	my $deletePlaylists_sth = $dbh->prepare_cached("DELETE FROM tracks WHERE url LIKE 'wimp://%.tdl'");
+	my $deletePlaylists_sth = $dbh->prepare_cached("DELETE FROM tracks WHERE url LIKE 'deezer://%.dzl'");
 	$deletePlaylists_sth->execute();
 
 	foreach my $account (@$accounts) {
-		$progress->update(string('PLUGIN_TIDAL_PROGRESS_READ_PLAYLISTS', $account), $progress->done);
+		$progress->update(string('PLUGIN_DEEZER_PROGRESS_READ_PLAYLISTS', $account), $progress->done);
 
 		main::INFOLOG && $log->is_info && $log->info("Reading playlists for $account...");
 		my $playlistsResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(PLAYLISTS_URL, $account)));
@@ -204,16 +217,16 @@ sub scanPlaylists { if (main::SCANNER) {
 
 		$progress->total($progress->total + @$playlists);
 
-		my $prefix = 'TIDAL' . string('COLON') . ' ';
+		my $prefix = 'Deezer' . string('COLON') . ' ';
 
 		main::INFOLOG && $log->is_info && $log->info(sprintf("Importing tracks for %s playlists...", scalar @$playlists));
 		foreach my $playlist (@{$playlists || []}) {
-			next unless $playlist->{uuid} && $playlist->{tracks} && ref $playlist->{tracks} && ref $playlist->{tracks} eq 'ARRAY';
+			next unless $playlist->{id} && $playlist->{tracks} && ref $playlist->{tracks} && ref $playlist->{tracks} eq 'ARRAY';
 
 			$progress->update($account . string('COLON') . ' ' . $playlist->{title});
 			Slim::Schema->forceCommit;
 
-			my $url = 'wimp://' . $playlist->{uuid} . '.tdl';
+			my $url = 'deezer://' . $playlist->{id} . '.dzl';
 
 			my $playlistObj = Slim::Schema->updateOrCreate({
 				url        => $url,
@@ -230,16 +243,16 @@ sub scanPlaylists { if (main::SCANNER) {
 
 			my @trackIds;
 			foreach (@{$playlist->{tracks}}) {
-				$cache->set('wimp_meta_' . $_->{id}, {
-					artist    => $_->{artist}->{name},
+				$cache->set('deezer_meta_' . $_->{id}, {
+					artist    => $_->{artist},
 					album     => $_->{album},
 					title     => $_->{title},
 					cover     => $_->{cover},
 					duration  => $_->{duration},
-					type      => $_->{flac} ? 'FLAC' : 'AAC',
+					type      => 'mp3',
 				}, time + 360 * 86400);
 
-				push @trackIds, $_->{url};
+				push @trackIds, sprintf("deezer://%s.mp3", $_->{id});
 			}
 
 			$playlistObj->setTracks(\@trackIds) if $playlistObj && scalar @trackIds;
@@ -253,13 +266,13 @@ sub scanPlaylists { if (main::SCANNER) {
 	Slim::Schema->forceCommit;
 } }
 
-sub trackUriPrefix { 'wimp://' }
+sub trackUriPrefix { 'deezer://' }
 
 # This code is not run in the scanner, but in LMS
 sub needsUpdate { if (!main::SCANNER) {
 	my ($class, $cb) = @_;
 
-	my $oldFingerprint = $cache->get('tidal_library_fingerprint') || return $cb->(1);
+	my $oldFingerprint = $cache->get('deezer_library_fingerprint') || return $cb->(1);
 
 	if ($oldFingerprint == -1) {
 		return $cb->($oldFingerprint);
@@ -274,7 +287,7 @@ sub needsUpdate { if (!main::SCANNER) {
 		},
 		sub {
 			my $http = shift;
-			$log->error('Failed to get TIDAL metadata: ' . $http->error);
+			$log->error('Failed to get Deezer metadata: ' . $http->error);
 			$cb->();
 		}
 	)->get(Slim::Networking::SqueezeNetwork->url(FINGERPRINT_URL));
@@ -283,29 +296,25 @@ sub needsUpdate { if (!main::SCANNER) {
 sub _prepareTrack {
 	my ($track, $album) = @_;
 
+	my $url = sprintf("deezer://%s.mp3", $track->{id});
 	my $splitChar = substr(preferences('server')->get('splitList'), 0, 1);
-	my $ct = Slim::Music::Info::typeFromPath($track->{url});
 
 	return {
-		url          => $track->{url},
+		url          => $url,
 		TITLE        => $track->{title},
-		ARTIST       => $album->{artist}->{name},
-		ARTIST_EXTID => 'wimp:artist:' . $album->{artist}->{id},
-		TRACKARTIST  => join($splitChar, map { $_->{name} } @{ $track->{artists} }),
+		ARTIST       => $album->{artist},
+		ARTIST_EXTID => 'deezer:artist:' . $album->{artist_id},
 		ALBUM        => $album->{title},
-		ALBUM_EXTID  => 'wimp:album:' . $album->{id},
+		ALBUM_EXTID  => 'deezer:album:' . $album->{id},
 		TRACKNUM     => $track->{trackNumber},
-		GENRE        => 'TIDAL',
-		DISC         => $track->{volumeNumber},
-		DISCC        => $track->{numberOfVolumes} || 1,
+		GENRE        => join($splitChar, @{$album->{genres} || []}),
 		SECS         => $track->{duration},
 		YEAR         => substr($album->{releaseDate} || '', 0, 4),
 		COVER        => $album->{cover},
 		AUDIO        => 1,
-		EXTID        => $track->{url},
+		EXTID        => $url,
 		TIMESTAMP    => $album->{added},
-		CONTENT_TYPE => $ct,
-		LOSSLESS     => $ct eq 'flc' ? 1 : 0,
+		CONTENT_TYPE => 'mp3',
 	};
 }
 

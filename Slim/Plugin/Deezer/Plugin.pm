@@ -17,6 +17,7 @@ use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Plugin::Deezer::ProtocolHandler;
+use Slim::Utils::Strings qw(cstring);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.deezer',
@@ -26,7 +27,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub initPlugin {
 	my $class = shift;
-	
+
 	Slim::Player::ProtocolHandlers->registerHandler(
 		deezer => 'Slim::Plugin::Deezer::ProtocolHandler'
 	);
@@ -38,32 +39,34 @@ sub initPlugin {
 		weight => 35,
 		is_app => 1,
 	);
-	
+
+	Slim::Music::Import->addImporter('Plugins::Deezer::Importer', { use => 1 });
+
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::Pages->addPageFunction( 
+		Slim::Web::Pages->addPageFunction(
 			'plugins/deezer/trackinfo.html',
 			sub {
 				my $client = $_[0];
 				my $params = $_[1];
-				
+
 				my $url;
-				
+
 				my $id = $params->{sess} || $params->{item};
-				
+
 				if ( $id ) {
 					# The user clicked on a different URL than is currently playing
 					if ( my $track = Slim::Schema->find( Track => $id ) ) {
 						$url = $track->url;
 					}
-					
+
 					# Pass-through track ID as sess param
 					$params->{sess} = $id;
 				}
 				else {
 					$url = Slim::Player::Playlist::url($client);
 				}
-				
+
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					client  => $client,
 					feed    => Slim::Plugin::Deezer::ProtocolHandler->trackInfoURL( $client, $url ),
@@ -79,35 +82,35 @@ sub initPlugin {
 
 sub postinitPlugin {
 	my $class = shift;
-	
+
 	# if user has the Don't Stop The Music plugin enabled, register ourselves
 	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ) {
 		Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_DEEZER_SMART_RADIO', sub {
 			my ($client, $cb) = @_;
-		
+
 			my $seedTracks = Slim::Plugin::DontStopTheMusic::Plugin->getMixableProperties($client, 50);
-		
+
 			# don't seed from radio stations - only do if we're playing from some track based source
 			if ($seedTracks && ref $seedTracks && scalar @$seedTracks) {
 				main::INFOLOG && $log->info("Creating Deezer Smart Radio from random items in current playlist");
-				
+
 				# get the most frequent artist in our list
 				my %artists;
-				
+
 				foreach (@$seedTracks) {
 					$artists{$_->{artist}}++;
 				}
-				
+
 				# split "feat." etc. artists
 				my @artists;
 				foreach (keys %artists) {
 					if ( my ($a1, $a2) = split(/\s*(?:\&|and|feat\S*)\s*/i, $_) ) {
 						push @artists, $a1, $a2;
 					}
-				} 
-				
+				}
+
 				unshift @artists, sort { $artists{$b} <=> $artists{$a} } keys %artists;
-				
+
 				dontStopTheMusic($client, $cb, @artists);
 			}
 			else {
@@ -119,6 +122,69 @@ sub postinitPlugin {
 			$_[1]->($_[0], ['deezer://flow.dzr']);
 		});
 	}
+
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::OnlineLibrary::Plugin') ) {
+		Slim::Plugin::OnlineLibrary::Plugin->addLibraryIconProvider('deezer', '/plugins/Deezer/html/images/logo.png');
+
+		require Slim::Plugin::Deezer::API;
+		Slim::Plugin::OnlineLibrary::BrowseArtist->registerBrowseArtistItem( deezer => sub {
+			my ( $client ) = @_;
+
+			return {
+				name => cstring($client, 'BROWSE_ON_SERVICE', 'Deezer'),
+				type => 'link',
+				icon => $class->_pluginDataFor('icon'),
+				url  => \&browseArtistMenu,
+			};
+		} );
+	}
+}
+
+sub browseArtistMenu {
+	my ($client, $cb, $params, $args) = @_;
+
+	my $items = [];
+
+	my $artistId = $params->{artist_id} || $args->{artist_id};
+	if ( defined($artistId) && $artistId =~ /^\d+$/ && (my $artistObj = Slim::Schema->resultset("Contributor")->find($artistId))) {
+		my $searchParams = {
+			name => $artistObj->name
+		};
+
+		if (my ($extId) = grep /deezer:artist:(\d+)/, @{$artistObj->extIds}) {
+			my ($id) = $extId =~ /deezer:artist:(\d+)/;
+			$searchParams->{id} = $id;
+		}
+
+		Slim::Plugin::Deezer::API->getArtistMenu($client, $searchParams, sub {
+			my $result = shift || [];
+
+			$cb->([ map {
+				$_->{name} = delete $_->{text};
+				$_->{url}  = delete $_->{URL};
+				$_;
+			} @$result ]);
+		});
+
+		return;
+	}
+
+	$cb->([{
+		type  => 'text',
+		title => cstring($client, 'EMPTY'),
+	}]);
+}
+
+sub onlineLibraryNeedsUpdate {
+	my $class = shift;
+	require Slim::Plugin::Deezer::Importer;
+	return Slim::Plugin::Deezer::Importer->needsUpdate(@_);
+}
+
+sub getLibraryStats {
+	require Slim::Plugin::Deezer::Importer;
+	my $totals = Slim::Plugin::Deezer::Importer->getLibraryStats();
+	return wantarray ? ('PLUGIN_DEEZER_MODULE_NAME', $totals) : $totals;
 }
 
 sub dontStopTheMusic {
@@ -126,7 +192,7 @@ sub dontStopTheMusic {
 	my $cb      = shift;
 	my $nextArtist = shift;
 	my @artists = @_;
-	
+
 	if ($nextArtist) {
 		Slim::Networking::SqueezeNetwork->new(
 			sub {
@@ -148,7 +214,7 @@ sub dontStopTheMusic {
 				elsif ( $content && ref $content && $content->{body} && (my $items = $content->{body}->{outline}) ) {
 					push @tracks, $items->[0]->{URL} if scalar @$items;
 				}
-				
+
 				if (scalar @tracks) {
 					$cb->($client, \@tracks);
 				}
@@ -163,7 +229,7 @@ sub dontStopTheMusic {
 				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'Smart Mix failed: ' . $http->error );
 				}
-				
+
 				if (scalar @{$http->params->{artists}}) {
 					dontStopTheMusic($client, $http->params->{cb}, @{$http->params->{artists}});
 				}
