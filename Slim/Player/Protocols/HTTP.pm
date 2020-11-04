@@ -373,6 +373,9 @@ sub sysread {
 	my $self = $_[0];
 	my $chunkSize = $_[2];
 	
+	# make sure we start with an empty return buffer ...
+	$_[1] = '';
+	
 	# stitch header if any
 	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
 		
@@ -411,7 +414,6 @@ sub sysread {
 	
 	# do not read if we are building-up too much processed audio
 	if (${*$self}{'audio_buildup'} > $chunkSize) {
-		$! = undef;
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize); 
 	} 
 	else {	
@@ -440,17 +442,15 @@ sub sysread {
 		}
 	}
 	
-	# when not-empty, choose return buffer length over sysread() otherwise
-	# readLength must be 'undef' unless we are at eof
-	if (defined $_[1]) {
-		$readLength = length $_[1];
-	} 
-	elsif ($readLength) {
+	# when not-empty, choose return buffer length over sysread()
+	return length $_[1] if length $_[1];
+	
+	# we are still processing but have nothing yet to return
+	if ($readLength) {
 		$readLength = undef;
+		$! = EINTR;
 	}
-
-	$! ||= EINTR unless defined $readLength;
-
+	
 	return $readLength;
 }
 

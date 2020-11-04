@@ -102,6 +102,6 @@ sub _sysread {
 sub sysread {
 	return Slim::Player::Protocols::HTTP::sysread(@_);
 }
-	
+
 
 1;
