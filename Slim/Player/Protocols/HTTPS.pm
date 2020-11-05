@@ -13,12 +13,12 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 	my $url   = $args->{'url'} || '';
-	
+
 	if ($url =~ /^http:/) {
 		# only use Slim::Player::Protocols::HTTP methods and we can't just use
 		# directly Slim::Player::Protocols::HTTP::new or method resolution will
 		# ignore *real* base class and any overloaded one will be missed
-		local @ISA = reverse @ISA;
+		local @ISA = grep { $_ ne 'IO::Socket::SSL' } @ISA;
 		return $class->SUPER::new($args);
 	}
 
@@ -57,7 +57,7 @@ sub new {
 		# used for non blocking I/O
 		${*$sock}{'_sel'}    = IO::Select->new($sock);
 	}
-				
+
 	return $sock->request($args);
 }
 
@@ -85,11 +85,11 @@ sub canDirectStreamSong {
 	return 0;
 }
 
-# we need that call structure to make sure that SUPER calls the 
+# we need that call structure to make sure that SUPER calls the
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
-	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]); 
+	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]);
 
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EINTR;
@@ -98,7 +98,7 @@ sub _sysread {
 	return $readLength;
 }
 
-# we need to subclass sysread as HTTPS first inherits from IO::Socket::SSL  
+# we need to subclass sysread as HTTPS first inherits from IO::Socket::SSL
 sub sysread {
 	return Slim::Player::Protocols::HTTP::sysread(@_);
 }
