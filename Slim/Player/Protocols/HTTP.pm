@@ -373,6 +373,9 @@ sub sysread {
 	my $self = $_[0];
 	my $chunkSize = $_[2];
 	
+	# make sure we start with an empty return buffer ...
+	$_[1] = '';
+	
 	# stitch header if any
 	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
 		
@@ -439,9 +442,15 @@ sub sysread {
 		}
 	}
 	
-	# when not-empty, chose return buffer length over sysread() 
-	$readLength = length $_[1] if length $_[1];
-
+	# when not-empty, choose return buffer length over sysread()
+	return length $_[1] if length $_[1];
+	
+	# we are still processing but have nothing yet to return
+	if ($readLength) {
+		$readLength = undef;
+		$! = EINTR;
+	}
+	
 	return $readLength;
 }
 

@@ -213,7 +213,6 @@ sub _getTrack {
 				#if ( main::DEBUGLOG && $log->is_debug ) {
 				#	$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
 				#}
-
 				_gotTrack( $client, $info, $params );
 			}
 		},
@@ -315,7 +314,7 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
 	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
-	my ($length, $bitrate, $ct);
+	my ($length, $rangeLength, $bitrate, $ct);
 	foreach my $header (@headers) {
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
@@ -323,6 +322,14 @@ sub parseDirectHeaders {
 		elsif ( $header =~ /^Content-Type:\s*(\S*)/) {
 			$ct = Slim::Music::Info::mimeToType($1);
 		}
+		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
+			$rangeLength = $3;
+		}
+	}
+	
+	# Content-Range: has predecence over Content-Length:
+	if ($rangeLength) {
+		$length = $rangeLength;
 	}
 
 	$ct = 'aac' if !$ct || $ct eq 'mp4';
