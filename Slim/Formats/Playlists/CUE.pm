@@ -457,7 +457,7 @@ sub parse {
 
 	# Check the original file for any information that may
 	# not be in the cue sheet. Bug 2668
-	if ($filename) {
+	if (!$embedded && $filename) {
 
 		my $tags = Slim::Formats->readTags($filename);
 
