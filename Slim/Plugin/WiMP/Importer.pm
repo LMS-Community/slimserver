@@ -23,6 +23,7 @@ use Slim::Utils::Strings qw(string);
 use constant ACCOUNTS_URL  => '/api/wimp/v1/opml/library/getAccounts';
 use constant ALBUMS_URL    => '/api/wimp/v1/opml/library/myAlbums?account=%s';
 use constant ARTISTS_URL   => '/api/wimp/v1/opml/library/myArtists?account=%s';
+use constant ARTIST_URL    => '/api/wimp/v1/opml/library/getArtist?id=%s';
 use constant PLAYLISTS_URL => '/api/wimp/v1/opml/library/myPlaylists?account=%s';
 use constant FINGERPRINT_URL => '/api/wimp/v1/opml/library/fingerprint';
 
@@ -167,6 +168,8 @@ sub scanArtists { if (main::SCANNER) {
 				'artist' => $name,
 				'extid'  => 'wimp:artist:' . $artist->{id},
 			});
+
+			_cacheArtistPictureUrl($artist)
 		}
 
 		Slim::Schema->forceCommit;
@@ -252,6 +255,40 @@ sub scanPlaylists { if (main::SCANNER) {
 	$progress->final();
 	Slim::Schema->forceCommit;
 } }
+
+sub getArtistPicture { if (main::SCANNER) {
+	my ($class, $id) = @_;
+
+	my $url = $cache->get('tidal_artist_image' . $id);
+
+	# return $url if $url;
+
+	$id =~ s/wimp:artist://;
+
+	my $artistResponse = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(sprintf(ARTIST_URL, $id)));
+
+	my $artist = eval { from_json($artistResponse->content) } || [];
+
+	if (scalar @$artist) {
+		$artist = $artist->[0];
+		if ($artist && ref $artist) {
+			_cacheArtistPictureUrl($artist, 30*86400);
+			return $artist->{cover};
+		}
+	}
+
+	return;
+} }
+
+my $previousArtistId = '';
+sub _cacheArtistPictureUrl {
+	my ($artist, $ttl) = @_;
+
+	if ($artist->{cover} && $artist->{id} ne $previousArtistId) {
+		$cache->set('tidal_artist_image' . 'wimp:artist:' . $artist->{id}, $artist->{cover}, $ttl || 86400);
+		$previousArtistId = $artist->{id};
+	}
+}
 
 sub trackUriPrefix { 'wimp://' }
 

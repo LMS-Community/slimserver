@@ -127,6 +127,11 @@ sub scanAlbums { if (main::SCANNER) {
 			$class->storeTracks([
 				map { _prepareTrack($_, $album) } @$tracks
 			], undef, $accountName);
+
+			_cacheArtistPictureUrl({
+				id => $album->{artist_id},
+				image => $album->{artistImage}
+			});
 		}
 
 		Slim::Schema->forceCommit;
@@ -180,6 +185,8 @@ sub scanArtists { if (main::SCANNER) {
 				'artist' => $name,
 				'extid'  => 'deezer:artist:' . $artist->{id},
 			});
+
+			_cacheArtistPictureUrl($artist);
 		}
 
 		Slim::Schema->forceCommit;
@@ -265,6 +272,21 @@ sub scanPlaylists { if (main::SCANNER) {
 	$progress->final();
 	Slim::Schema->forceCommit;
 } }
+
+sub getArtistPicture { if (main::SCANNER) {
+	my ($class, $id) = @_;
+	return $cache->get('deezer_artist_image' . $id);
+} }
+
+my $previousArtistId = '';
+sub _cacheArtistPictureUrl {
+	my ($artist) = @_;
+
+	if ($artist->{image} && $artist->{id} ne $previousArtistId) {
+		$cache->set('deezer_artist_image' . 'deezer:artist:' . $artist->{id}, $artist->{image}, 86400);
+		$previousArtistId = $artist->{id};
+	}
+}
 
 sub trackUriPrefix { 'deezer://' }
 
