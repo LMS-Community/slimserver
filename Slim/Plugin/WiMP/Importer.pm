@@ -261,7 +261,7 @@ sub getArtistPicture { if (main::SCANNER) {
 
 	my $url = $cache->get('tidal_artist_image' . $id);
 
-	# return $url if $url;
+	return $url if $url;
 
 	$id =~ s/wimp:artist://;
 
