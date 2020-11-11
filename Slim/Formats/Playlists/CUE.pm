@@ -498,17 +498,17 @@ sub parse {
 		my $file = $track->{'FILENAME'};
 
 		if (!defined $track->{'END'}) {
-			if (!$lastpos && $file) {
+			if (!$embedded && !$lastpos && $file) {
 
 				main::INFOLOG && $log->info("Reading tags to get ending time of $file");
 
 				my $tags = Slim::Formats->readTags($file);
 
 				$lastpos = $tags->{SECS};
+			}
 
-				if (!$lastpos) {
-					logError("Couldn't get duration of filename here $file");
-				}
+			if (!$lastpos) {
+				logError("Couldn't get duration of filename here $file");
 			}
 
 			$track->{'END'} = $lastpos;
@@ -526,7 +526,8 @@ sub parse {
 
 		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $file ) {
 
-			logError("Missing file or start/end points for track $track.");
+			logError("Missing file or start/end points for track $file.");
+			main::INFOLOG && $log->is_info && $log->info(Data::Dump::dump($track));
 			next;
 		}
 
