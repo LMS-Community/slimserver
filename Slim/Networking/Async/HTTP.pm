@@ -84,7 +84,7 @@ sub new {
 		if (!$@) {
 			# no need for a hash mk_accessor type as we don't access individual keys
 			$self->socks($args->{socks});
-			main::INFOLOG && $log->info("Using SOCKS $args->{ProxyAddr}::$args->{ProxyPort} to connect");
+			main::INFOLOG && $log->info("Using SOCKS $args->{socks}->{ProxyAddr}::$args->{socks}->{ProxyPort} to connect");
 		}
 	}
 
@@ -172,9 +172,10 @@ sub use_proxy {
 }
 
 sub send_request {
-	my ( $self, $args ) = @_;
+	my ( $self, $args, $redirect ) = @_;
 
 	$self->maxRedirect( $args->{maxRedirect} || MAX_REDIR );
+	$self->response( undef ) unless $redirect;
 
 	if ( $args->{Timeout} ) {
 		$self->timeout( $args->{Timeout} );
@@ -451,7 +452,7 @@ sub _http_read {
 				$self->send_request( {
 					request => $self->request,
 					%{$args},
-				} );
+				}, 1 );
 
 				return;
 			}
