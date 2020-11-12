@@ -980,10 +980,13 @@ sub _createOrUpdateAlbum {
 		# Slim::Schema::Album->title() which has different behavior.
 
 		if (
-			   $lastAlbum->{_dirname}
-			&& $lastAlbum->{_dirname} eq $basename
-			&& $lastAlbum->{title} eq $title
-			&& (!$checkDisc || (($disc || '') eq ($lastAlbum->{disc} || 0)))
+			($extId && $lastAlbum->{extid} && $extId eq $lastAlbum->{extid})
+			||
+			(  $lastAlbum->{_dirname}
+				&& $lastAlbum->{_dirname} eq $basename
+				&& $lastAlbum->{title} eq $title
+				&& (!$checkDisc || (($disc || '') eq ($lastAlbum->{disc} || 0)))
+			)
 		) {
 			delete $lastAlbum->{_dirname};
 			$albumHash = $lastAlbum;
@@ -1321,7 +1324,7 @@ sub _createOrUpdateAlbum {
 	# This depends on whether we need to cope with out-of-order scans
 	# and I don't really know.
 	$lastAlbum = $albumHash;
-	$lastAlbum->{_dirname} = $basename;
+	$lastAlbum->{_dirname} = $basename unless $albumHash->{extid};
 
 	return $albumHash->{id};
 }
