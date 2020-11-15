@@ -85,6 +85,12 @@ sub canDirectStreamSong {
 	return 0;
 }
 
+sub slimprotoFlags {
+	my ($client, $url, $isDirect) = @_;
+	# $url is HTTPS for sure, just need to test that direct is enabled
+	return $isDirect ? 0x20 : 0x00;
+}
+
 # we need that call structure to make sure that SUPER calls the
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
