@@ -509,7 +509,7 @@ sub opened {
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out, '5' = crossfade-immediate
 #	u8_t flags;	// [1]	0x80 - loop infinitely
 #               //      0x40 - stream without restarting decoder
-#               //      0x20 - Rtmp (SqueezePlay only)
+#               //      0x20 - SSL socket required (when canHTTPS is set in HELO) or Rtmp (other SqueezePlay)
 #               //      0x10 - SqueezePlay direct protocol handler - pass direct to SqueezePlay
 #               //      0x08 - output only right channel as mono
 #               //      0x04 - output only left channel as mono
