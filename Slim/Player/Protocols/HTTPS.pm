@@ -86,7 +86,7 @@ sub canDirectStreamSong {
 }
 
 sub slimprotoFlags {
-	my ($client, $url, $isDirect) = @_;
+	my ($self, $client, $url, $isDirect) = @_;
 	# $url might still be HTTP (see new), so need to check that and direct
 	return ($isDirect && $url =~ /^https:/) ? 0x20 : 0x00;
 }
