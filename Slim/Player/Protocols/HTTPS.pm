@@ -87,8 +87,8 @@ sub canDirectStreamSong {
 
 sub slimprotoFlags {
 	my ($client, $url, $isDirect) = @_;
-	# $url is HTTPS for sure, just need to test that direct is enabled
-	return $isDirect ? 0x20 : 0x00;
+	# $url might still be HTTP (see new), so need to check that and direct
+	return ($isDirect && $url =~ /^https:/) ? 0x20 : 0x00;
 }
 
 # we need that call structure to make sure that SUPER calls the
