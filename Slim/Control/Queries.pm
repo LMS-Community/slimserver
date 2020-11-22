@@ -1538,7 +1538,7 @@ sub genresQuery {
 	}
 	elsif (defined $genreID) {
 		my @genreIDs = split(/,/, $genreID);
-		push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+		push @{$w}, 'genres.id IN (' . join(', ', map {'?'} @genreIDs) . ')';
 		push @{$p}, @genreIDs;
 	}
 	else {
