@@ -46,7 +46,7 @@ sub new {
 		if ($request->getRequestString() eq 'rescan done'){
 			$favs->_urlindex;
 		}
-		
+
 	}, [['rescan'], ['done']]);
 
 	return $favs;
@@ -71,12 +71,12 @@ sub migrate {
 sub filename {
 	my $class = shift;
 	my $dir = shift;
-	
+
 	# Shortcut if filename supplied
 	return $dir if ($dir && -f $dir);
 
 	$dir ||= Slim::Utils::OSDetect::dirsFor('prefs');
-	
+
 	return catdir($dir, "favorites.opml");
 }
 
@@ -180,14 +180,15 @@ sub _loadOldFavorites {
 
 sub xmlbrowser {
 	my $class = shift;
+	my $dontBrowseDb = shift;
 
 	my $hash = $class->SUPER::xmlbrowser;
 
 	# optionally let the user browse into local favorite items
-	if ( !$prefs->get('dont_browsedb')) {
+	if ( !$prefs->get('dont_browsedb') && !$dontBrowseDb ) {
 		$class->_prepareDbItems($hash->{'items'});
 	}
-	
+
 	$hash->{'favorites'} = 1;
 
 	return $hash;
@@ -201,7 +202,7 @@ sub _prepareDbItems {
 	foreach my $item (@$items) {
 		if ( $item->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
 			my ($class, $key, $value) = ($1, $2, $3);
-			
+
 			$class = ucfirst($class);
 
 			$dbBrowseModes ||= {
@@ -217,7 +218,7 @@ sub _prepareDbItems {
 					$artistHandler->{feed}->(@_) if $artistHandler;
 				} ],
 			};
-			
+
 			if ( $dbBrowseModes->{$class} ) {
 				$item->{'type'} = 'playlist';
 				$item->{'play'} = $item->{'url'} . '&libraryTracks.library=-1';
@@ -237,7 +238,7 @@ sub _prepareDbItems {
 
 sub _dbItem {
 	my ($client, $callback, $args, $pt) = @_;
-	
+
 	my $class  = ucfirst( delete $pt->{'class'} );
 	my $key   = URI::Escape::uri_unescape(delete $pt->{'key'});
 	my $value = URI::Escape::uri_unescape(delete $pt->{'value'});
@@ -248,21 +249,21 @@ sub _dbItem {
 		utf8::decode($value);
 		utf8::encode($value);
 	}
-	
+
 	if ( my $dbBrowseMode = $dbBrowseModes->{$class} ) {
 		my $obj = Slim::Schema->single( ucfirst($class), { $key => $value } );
-	
+
 		if ($obj && $obj->id) {
 			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id, 'library_id:-1' ];
-			
+
 			while ( my ($k, $v) = each %{ $dbBrowseMode->[2] || {} } ) {
 				$pt->{$k} = $v
 			}
-			
+
 			return $dbBrowseMode->[1]->($client, $callback, $args, $pt);
 		}
 	}
-	
+
 	# something went wrong
 	# XXX - better error handling
 	$callback->({
@@ -341,7 +342,7 @@ sub add {
 	if ($parser) {
 		$entry->{'parser'} = $parser;
 	}
-	
+
 	if ( $url =~ /\.opml$/ ) {
 		delete $entry->{'type'};
 	}

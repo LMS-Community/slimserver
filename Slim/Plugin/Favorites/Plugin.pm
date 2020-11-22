@@ -749,7 +749,7 @@ sub cliBrowse {
 		return;
 	}
 
-	my $feed = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
+	my $feed = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser($request->getParam('menu') ? undef : 1);
 
 	if (my $search = $request->getParam('search')) {
 		my $filteredItems = _search($feed->{items}, $search);
