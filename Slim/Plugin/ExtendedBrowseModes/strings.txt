@@ -36,6 +36,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	DE	Komponisten
 	EN	Composers
+	IT	Compositori
 	NL	Componisten
 	NO	Komponister
 	PL	Kompozytorzy
@@ -208,7 +209,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	DE	Hörbuch-Autoren
 	EN	Authors

@@ -1,6 +1,7 @@
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	DE	Entfernte Musiksammlungen
 	EN	Remote Music Libraries
+	IT	Libreria Musicale Remota
 	NL	Externe muziekcollecties
 	NO	Eksterne musikksamlinger
 	PL	Zdalne biblioteki muzyczne
@@ -47,7 +48,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD
 	SV	Lösenord
 
 PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
-	DE	Dieser Logitech Media Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein. 
+	DE	Dieser Logitech Media Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein.
 	EN	This Logitech Media Server is password protected. Please enter username and password for this server.
 	NL	Deze Logitech Media Server is beveiligd met een wachtwoord. Voer je gebruikersnaam en wachtwoord voor deze server in.
 	NO	Denne Logitech Media Serveren er passordbeskyttet. Oppgi brukernavn og passord for serveren.
@@ -111,14 +112,14 @@ PLUGIN_REMOTE_LIBRARY_NOT_FOUND
 	NL	Er is geen andere mediaserver op je netwerk gevonden. Zorg ervoor dat deze beschikbaar en bereikbaar is. Probeer na een paar minuten weer.
 	NO	Fant ingen annen mediaserver i nettverket ditt. Vær så snill å sørge for at serveren er oppe og tilgjengelig, og prøv igjen om et minutt eller to.
 	PL	Nie znaleziono innego serwera mediów w twojej sieci. Upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
-	
+
 PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	DE	Falls der gewünschte Server fehlt, überprüfen Sie, ob er ausgeführt wird. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	In case the desired instance was missing, make sure the software is up and running, and try again in a minute or two.
 	NL	Als de gewenste locatie niet wordt gevonden, zorg ervoor dat de software beschikbaar en bereikbaar is, en probeer na een paar minuten weer.
 	NO	Dersom den ønskede serveren manglet, vær så snill å sørge for at serverprogrammet er oppe og går, og forsøk igjen om et par minutter.
 	PL	Jeśli pożądany serwer nie został znaleziony, upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
-	
+
 PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
 	CS	Selhal požadavek UPnP/DLNA, zkontrolujte prosím server UPnP/DLNA.
 	DA	UPnP/DLNA-anmodning mislykkedes. Kontroller UPnP/DLNA-serveren.
@@ -164,11 +165,11 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
 	DE	Dateikonvertierung
 	EN	File type conversion
-	
+
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
 	DE	Sie können den entfernten Logitech Media Server beauftragen, die Dateien in ein verständliches Format umzuwandeln.
 	EN	You can have the remote Logitech Media Server convert to a format which can be played without further processing.
-	
+
 PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
 	CS	Klient UPnP/DLNA
 	DA	UPnP/DLNA-klient
@@ -253,7 +254,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
 	NL	http://jouwserver:<Poort> of http://<IP-adres>:9000
 	NO	http://dinserver:<Port> eller http://<IP-adresse>:9000
 	PL	http://twojserwer:<Port> lub http://<adres IP>:9000
-	
+
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	DE	UPnP/DLNA Menüs ignorieren
 	EN	UPnP/DLNA Ignore Menus
@@ -274,4 +275,4 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
 	NL	Films, Video's, Foto's, Afbeeldingen
 	NO	Filmer, videoklipp, bilder, image-filer
 	PL	Movies, Video, Pictures, Images, Filmy, Obrazy, Zdjęcia, Wideo
-	
+
