@@ -23,6 +23,7 @@ use constant DELAY_FIRST_POLL => 240;
 use constant POLLING_INTERVAL => 60 * 60;
 
 my $prefs = preferences('plugin.onlinelibrary');
+my $serverPrefs = preferences('server');
 
 my %onlineLibraryProviders;
 my %onlineLibraryIconProvider;
@@ -129,21 +130,30 @@ my $isPolling;
 sub _pollOnlineLibraries {
 	Slim::Utils::Timers::killTimers(undef, \&_pollOnlineLibraries);
 
-	# no need for polling when there's no provider
-	return unless scalar values %onlineLibraryProviders;
-
-	my @enabledImporters = grep {
-		$prefs->get($onlineLibraryProviders{$_}) == 1;
-	} keys %onlineLibraryProviders;
-
-	# no need for polling if all importers are disabled
-	return unless scalar @enabledImporters;
-
 	if ($isPolling || Slim::Music::Import->stillScanning()) {
 		main::INFOLOG && $log->is_info && $log->info("Online library poll or scan is active - try again later");
 		Slim::Utils::Timers::setTimer(undef, time() + POLLING_INTERVAL, \&_pollOnlineLibraries);
 		return;
 	}
+
+	# no need for polling when there's no provider
+	return unless scalar values %onlineLibraryProviders;
+
+	# create list of apps configured on mysb.com or locally
+	my %configuredApps;
+	foreach my $clientPref ( $serverPrefs->allClients ) {
+		my $apps = $clientPref->get('apps');
+		foreach my $app (values %$apps) {
+			$configuredApps{$app->{plugin}} = 1 if $app->{plugin};
+		}
+	}
+
+	my @enabledImporters = grep {
+		$configuredApps{$_} && $prefs->get($onlineLibraryProviders{$_}) == 1;
+	} keys %onlineLibraryProviders;
+
+	# no need for polling if all importers are disabled
+	return unless scalar @enabledImporters;
 
 	main::INFOLOG && $log->is_info && $log->info("Starting poll for updated online library...");
 
