@@ -4100,7 +4100,7 @@ FILE_FORMAT
 	RU	Формат файла
 	SV	Filformat
 	ZH_CN	文件格式
-	
+
 SETUP_INPUTTYPE
 	DE	Von
 	EN	From
@@ -7789,7 +7789,7 @@ SETUP_NOROLEFILTER
 	NL	Rollen van uitvoerenden filteren op Album- en Nummerniveau
 	NO	Filtrer utøverroller på album- og spornivå
 	PL	Filtrowanie albumów i utworów według ról kontrybutorów
-	SV	Filtrera artistroller på album- och låtnivå 
+	SV	Filtrera artistroller på album- och låtnivå
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
@@ -12226,17 +12226,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
@@ -13131,7 +13131,7 @@ BROWSE_BY_ALBUMARTIST
 	FI	Levyartisti
 	FR	Artistes des Albums
 	HE	מבצע האלבום
-	IT	Artistas album
+	IT	Artista dell'album
 	NL	Albumartiesten
 	NO	Albumartister
 	PL	Wykonawcy albumów
@@ -13146,7 +13146,7 @@ BROWSE_ALBUMARTISTS
 	ES	Examinar artistas de álbum
 	FI	Hae levyartisti
 	FR	Parcourir les Artistes des Albums
-	IT	Sfoglia artistas album
+	IT	Sfoglia artista dell'album
 	NL	Albumartiesten bekijken
 	NO	Bla i albumartister
 	PL	Przeglądaj wykonawców albumów
