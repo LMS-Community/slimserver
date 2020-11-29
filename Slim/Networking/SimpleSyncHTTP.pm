@@ -13,6 +13,8 @@ use strict;
 
 use base qw(Slim::Networking::SimpleHTTP::Base);
 
+use File::Spec::Functions qw(catdir);
+use HTTP::Cookies;
 use LWP::UserAgent;
 
 BEGIN {
@@ -47,6 +49,8 @@ __PACKAGE__->mk_accessor( rw => qw(
 	_params _log type url error code mess headers contentRef cacheTime cachedResponse
 ) );
 
+my $cookieJar;
+
 sub new {
 	my ($class, $params) = @_;
 
@@ -57,6 +61,8 @@ sub new {
 
 	$self->_params($params);
 	$self->_log($log);
+
+	# $cookieJar = HTTP::Cookies->new( file => catdir(preferences('server')->get('cachedir'), 'cookies.dat'), autosave => 1 );
 
 	return $self;
 }
@@ -78,6 +84,7 @@ sub _createHTTPRequest {
 	my $ua = LWP::UserAgent->new(
 		agent   => Slim::Utils::Misc::userAgentString(),
 		timeout => $timeout || 10,
+		cookie_jar => $cookieJar,
 	);
 
 	my $res = $ua->request($request);
