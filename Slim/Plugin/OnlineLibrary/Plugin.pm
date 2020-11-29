@@ -149,7 +149,7 @@ sub _pollOnlineLibraries {
 	}
 
 	my @enabledImporters = grep {
-		$configuredApps{$_} && $prefs->get($onlineLibraryProviders{$_}) == 1;
+		(/^Plugins::/ || $configuredApps{$_}) && $prefs->get($onlineLibraryProviders{$_}) == 1;
 	} keys %onlineLibraryProviders;
 
 	# no need for polling if all importers are disabled
