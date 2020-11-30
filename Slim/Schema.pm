@@ -863,6 +863,9 @@ sub _createOrUpdateAlbum {
 	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID};
 	my $extId     = $attributes->{EXTID} || $attributes->{ALBUM_EXTID};
 
+	# if we have a disc number from an online service, default disc count to 1
+	$discc ||= 1 if $extId && $disc;
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	# Bug 17322, strip leading/trailing spaces from name
@@ -980,7 +983,7 @@ sub _createOrUpdateAlbum {
 		# Slim::Schema::Album->title() which has different behavior.
 
 		if (
-			($extId && $lastAlbum->{extid} && $extId eq $lastAlbum->{extid})
+			($extId && $lastAlbum->{extid} && $extId eq $lastAlbum->{extid} && $disc && $disc == $lastAlbum->{disc})
 			||
 			(  $lastAlbum->{_dirname}
 				&& $lastAlbum->{_dirname} eq $basename
@@ -1106,6 +1109,14 @@ sub _createOrUpdateAlbum {
 			) {
 				push @{$search}, 'tracks.url LIKE ?';
 				push @{$values}, "$basename%";
+				$join = 1;
+			}
+
+			# with an online library item we don't have a path to check, but we hopefully have
+			# consistent disc information (complete or none at all)
+			if ($extId && $disc && !$prefs->get('groupdiscs')) {
+				push @{$search}, 'tracks.disc = ?';
+				push @{$values}, $disc;
 				$join = 1;
 			}
 
