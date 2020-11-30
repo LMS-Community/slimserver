@@ -167,6 +167,7 @@ sub loadConversionTables {
 # %C, $CHANNELS$   - channel count
 # %c, $OCHANNELS$  - output channel count
 #   , $SAMPLESIZE$ - sample size (in bits)
+#   , $SAMPLERATE$ - sample rate (in Hz)
 # %i               - clientid
 # %I, $CLIENTID$   - clientid     ( : or . replaced by - )
 # %p               - player model
@@ -427,6 +428,7 @@ sub getConvertCommand2 {
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
 			sampleSize       => $track->samplesize || 16,
+			sampleRate       => $track->samplerate || 44100,
 			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
 			# aif/wav oddity (for '-' rule)
 			# aif - aif: any SB that does not support wav requires aif header stripping
@@ -564,6 +566,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'QUALITY'}    = $quality;
 	$subs{'CHANNELS'}   = $transcoder->{'channels'};
 	$subs{'SAMPLESIZE'} = $transcoder->{'sampleSize'};
+	$subs{'SAMPLERATE'} = $transcoder->{'sampleRate'};	
 	$subs{'OCHANNELS'}  = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}   = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}     = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
