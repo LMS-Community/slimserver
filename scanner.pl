@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 
-require 5.008_001;
+require 5.010;
 use strict;
 
 use FindBin qw($Bin);
