@@ -166,6 +166,8 @@ sub loadConversionTables {
 
 # %C, $CHANNELS$   - channel count
 # %c, $OCHANNELS$  - output channel count
+#   , $SAMPLESIZE$ - sample size (in bits)
+#   , $SAMPLERATE$ - sample rate (in Hz)
 # %i               - clientid
 # %I, $CLIENTID$   - clientid     ( : or . replaced by - )
 # %p               - player model
@@ -425,6 +427,8 @@ sub getConvertCommand2 {
 			name             => $client ? $client->name : 'undefined',
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
+			sampleSize       => $track->samplesize || 16,
+			sampleRate       => $track->samplerate || 44100,
 			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
 			# aif/wav oddity (for '-' rule)
 			# aif - aif: any SB that does not support wav requires aif header stripping
@@ -521,7 +525,8 @@ sub tokenizeConvertCommand2 {
 		$start += $transcoder->{'start'};
 	}
 
-	if ($start) {
+	# there should be no start when using stdin (cue or not)
+	if ($start && $transcoder->{'streamMode'} ne 'I') {
 		push @{$transcoder->{'usedCapabilities'}}, 'T';
 	}
 
@@ -557,15 +562,17 @@ sub tokenizeConvertCommand2 {
 	# Check to see if we need to flip the endianess on output
 	$subs{'-x'}        = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 
-	$subs{'FILE'}      = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');
-	$subs{'URL'}       = '"' . $fullpath . '"';
-	$subs{'QUALITY'}   = $quality;
-	$subs{'CHANNELS'}  = $transcoder->{'channels'};
-	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
-	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
-	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
-	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
-	$subs{'GROUPID'}   = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
+	$subs{'FILE'}       = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');
+	$subs{'URL'}        = '"' . $fullpath . '"';
+	$subs{'QUALITY'}    = $quality;
+	$subs{'CHANNELS'}   = $transcoder->{'channels'};
+	$subs{'SAMPLESIZE'} = $transcoder->{'sampleSize'};
+	$subs{'SAMPLERATE'} = $transcoder->{'sampleRate'};	
+	$subs{'OCHANNELS'}  = $transcoder->{'outputChannels'};
+	$subs{'CLIENTID'}   = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
+	$subs{'PLAYER'}     = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
+	$subs{'NAME'}       = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
+	$subs{'GROUPID'}    = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
 
 	foreach my $v (keys %vars) {
 		my $value;
