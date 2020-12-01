@@ -42,7 +42,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
-	EN	Show only local album if you got another copy in your online music collection.
+	EN	Show only local album if you have another copy in your online music collection.
 	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is.
 	SV	Visa bara det lokala albumet när en kopia finns i ditt online-bibliotek
 
@@ -108,7 +108,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	DE	Online Stilrichtungen ersetzen
 	EN	Online Genre Replacement
 	NL	Online Genres Vervangen
-	SV	Ersätta Online genre 
+	SV	Ersätta Online genre
 
 PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
 	DE	Anzahl Titel in Wiedergabelisten
