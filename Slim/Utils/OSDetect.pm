@@ -66,7 +66,7 @@ sub init {
 		warn $@;
 	}
 
-	if (!$os) {		
+	if (!$os) {
 
 		if ($^O =~/darwin/i) {
 
@@ -83,13 +83,8 @@ sub init {
 			require Slim::Utils::OS::Linux;
 			$os = Slim::Utils::OS::Linux->getFlavor();
 
-			if ($os =~ /RAIDiator/i) {
-
-				require Slim::Utils::OS::ReadyNAS;
-				$os = Slim::Utils::OS::ReadyNAS->new();
-
 			# we only differentiate Debian/Suse/Red Hat if they've been installed from a package
-			} elsif ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezeboxserver}) {
+			if ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezeboxserver}) {
 
 				require Slim::Utils::OS::Debian;
 				$os = Slim::Utils::OS::Debian->new();
