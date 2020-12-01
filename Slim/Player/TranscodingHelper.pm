@@ -525,7 +525,8 @@ sub tokenizeConvertCommand2 {
 		$start += $transcoder->{'start'};
 	}
 
-	if ($start) {
+	# there should be no start when using stdin (cue or not)
+	if ($start && $transcoder->{'streamMode'} ne 'I') {
 		push @{$transcoder->{'usedCapabilities'}}, 'T';
 	}
 
