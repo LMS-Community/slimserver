@@ -334,7 +334,7 @@ sub _prepareTrack {
 		TRACKNUM     => $track->{trackNumber},
 		GENRE        => 'TIDAL',
 		DISC         => $track->{volumeNumber},
-		DISCC        => $track->{numberOfVolumes} || 1,
+		DISCC        => $album->{numberOfVolumes} || 1,
 		SECS         => $track->{duration},
 		YEAR         => substr($album->{releaseDate} || '', 0, 4),
 		COVER        => $album->{cover},
