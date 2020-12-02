@@ -318,7 +318,7 @@ sub needsUpdate { if (!main::SCANNER) {
 sub _prepareTrack {
 	my ($track, $album) = @_;
 
-	my $url = sprintf("deezer://%s.mp3", $track->{id});
+	my $url = sprintf("deezer://%s.%s", $track->{id}, $track->{lossless} ? 'flac' : 'mp3');
 	my $splitChar = substr(preferences('server')->get('splitList'), 0, 1);
 
 	return {
@@ -336,7 +336,7 @@ sub _prepareTrack {
 		AUDIO        => 1,
 		EXTID        => $url,
 		TIMESTAMP    => $album->{added},
-		CONTENT_TYPE => 'mp3',
+		CONTENT_TYPE => $track->{lossless} ? 'flc' : 'mp3',
 	};
 }
 

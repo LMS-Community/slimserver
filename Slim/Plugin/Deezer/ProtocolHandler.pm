@@ -33,12 +33,33 @@ Slim::Player::ProtocolHandlers->registerURLHandler($URL_REGEX, __PACKAGE__);
 
 sub isRemote { 1 }
 
-sub getFormatForURL { 'mp3' }
+sub getFormatForURL {
+	my ($class, $url) = @_;
+
+	my ($trackId, $format) = _getStreamParams( $url );
+	return $format || 'mp3';
+}
 
 # default buffer 3 seconds of 320k audio
-sub bufferThreshold { 40 * ( $prefs->get('bufferSecs') || 3 ) }
+sub bufferThreshold {
+	my ($class, $client, $url) = @_;
 
-sub canSeek { 0 }
+	$url = $client->playingSong()->track()->url() unless $url =~ /\.(flac|mp3)/;
+	my $ext = $1;
+
+	my ($trackId, $format) = _getStreamParams($url);
+
+	$format ||= $ext;
+	($format eq 'flac' ? 80 : 40) * ( $prefs->get('bufferSecs') || 3 )
+}
+
+sub canSeek {
+	my ( $class, $client, $song ) = @_;
+
+	return 0 if $song->track->url =~ /\.dzr/;
+
+	1;
+}
 
 sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Deezer' ); }
 
@@ -51,6 +72,7 @@ sub new {
 
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
+	my ($trackId, $format) = _getStreamParams( $args->{url} || '' );
 
 	main::DEBUGLOG && $log->debug( 'Remote streaming Deezer track: ' . $streamUrl );
 
@@ -58,10 +80,10 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 320_000,
+		bitrate => _getBitrate($format),
 	} ) || return;
 
-	${*$sock}{contentType} = 'audio/mpeg';
+	${*$sock}{contentType} = $format eq 'flac' ? 'audio/flac' : 'audio/mpeg';
 
 	return $sock;
 }
@@ -105,12 +127,46 @@ sub parseDirectHeaders {
 		Slim::Music::Info::setDuration( $url, 0 );
 	}
 
-	my $bitrate = 320_000;
+	my ($length, $rangeLength, $bitrate, $ct);
+	foreach my $header (@headers) {
+		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
+			$length = $1;
+		}
+		elsif ( $header =~ /^Content-Type:\s*(\S*)/) {
+			$ct = Slim::Music::Info::mimeToType($1);
+		}
+		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
+			$rangeLength = $3;
+		}
+	}
+
+	# Content-Range: has predecence over Content-Length:
+	if ($rangeLength) {
+		$length = $rangeLength;
+	}
+
+	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
+		$bitrate = int($length/$song->duration*8);
+
+		$url = $url->url if blessed $url;
+		my ($trackId) = _getStreamParams( $url );
+
+		if ($trackId) {
+			my $cache = Slim::Utils::Cache->new;
+			my $meta = $cache->get('wimp_meta_' . $trackId);
+			if ($meta && ref $meta) {
+				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
+				$cache->set( 'wimp_meta_' . $trackId, $meta, 86400 );
+			}
+		}
+	}
+
+	$bitrate ||= _getBitrate($ct);
 
 	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
+	return (undef, $bitrate, 0, '', $ct, $length, undef);
 }
 
 # Don't allow looping
@@ -371,7 +427,7 @@ sub _getTrack {
 	my $client = $song->master();
 
 	# Get track URL for the next track
-	my ($trackId) = $params->{url} =~ m{deezer://(.+)\.mp3};
+	my ($trackId, $format) = _getStreamParams($params->{url});
 
 	my $error;
 	if ( $song->pluginData('abandonSong') || ($error = Slim::Utils::Cache->new->get('deezer_ignore_' . $trackId)) ) {
@@ -410,6 +466,7 @@ sub _getTrack {
 		},
 		{
 			client => $client,
+			format => $format
 		},
 	);
 
@@ -417,7 +474,7 @@ sub _getTrack {
 
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
-			'/api/deezer/v1/playback/getMediaURL?trackId=' . uri_escape_utf8($trackId)
+			sprintf('/api/deezer/v1/playback/getMediaURL?trackId=%s&format=%s', uri_escape_utf8($trackId), $format)
 		)
 	);
 }
@@ -425,14 +482,19 @@ sub _getTrack {
 sub _gotTrack {
 	my ( $client, $info, $params ) = @_;
 
-    my $song = $params->{song};
+	my $song = $params->{song};
 
-    return if $song->pluginData('abandonSong');
+	return if $song->pluginData('abandonSong');
 
 	if (!$info->{url}) {
 		_gotTrackError('No stream URL found', $client, $params);
 		return;
 	}
+
+	my ($isFLAC) = $info->{url} =~ /\.\bflac\b/;
+
+	$info->{bitrate} = ($isFLAC ? 'PCM VBR' : '320k CBR');
+	$info->{type}    = ($isFLAC ? 'FLAC' : 'MP3') . ' (Deezer)';
 
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
@@ -448,8 +510,8 @@ sub _gotTrack {
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration} || 200,
-		bitrate   => '320k CBR',
-		type      => 'MP3 (Deezer)',
+		bitrate   => $info->{bitrate},
+		type      => $info->{type},
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
 	};
@@ -543,11 +605,11 @@ sub trackInfoURL {
 		}
 	}
 
-	my ($trackId) = $url =~ m{deezer://(.+)\.mp3};
+	my ($trackId, $format) = _getStreamParams($url);
 
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/deezer/v1/opml/trackinfo?trackId=' . $trackId
+		sprintf('/api/deezer/v1/opml/trackinfo?trackId=%s&format=%s', $trackId, $format)
 	);
 
 	if ( $stationId ) {
@@ -556,30 +618,6 @@ sub trackInfoURL {
 
 	return $trackInfoURL;
 }
-
-# Track Info menu
-=pod XXX - legacy track info menu from before Slim::Menu::TrackInfo times?
-sub trackInfo {
-	my ( $class, $client, $track ) = @_;
-
-	my $url          = $track->url;
-	my $trackInfoURL = $class->trackInfoURL( $client, $url );
-
-	# let XMLBrowser handle all our display
-	my %params = (
-		header   => 'PLUGIN_DEEZER_GETTING_TRACK_DETAILS',
-		modeName => 'Deezer Now Playing',
-		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
-		url      => $trackInfoURL,
-	);
-
-	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
-
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-
-	$client->modeParam( 'handledTransition', 1 );
-}
-=cut
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
@@ -605,8 +643,8 @@ sub getMetadataFor {
 	my $cache = Slim::Utils::Cache->new;
 
 	# If metadata is not here, fetch it so the next poll will include the data
-	my ($trackId) = $url =~ m{deezer://(.+)\.mp3};
-	my $meta      = $cache->get( 'deezer_meta_' . $trackId );
+	my ($trackId, $format) = _getStreamParams($url);
+	my $meta = $cache->get( 'deezer_meta_' . $trackId );
 
 	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
 
@@ -617,11 +655,9 @@ sub getMetadataFor {
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
-			if ( $trackURL =~ m{deezer://(.+)\.mp3} ) {
-				my $id = $1;
-				if ( !$cache->get("deezer_meta_$id") ) {
-					push @need, $id;
-				}
+			my ($id) = _getStreamParams($trackURL);
+			if ( $id && !$cache->get("deezer_meta_$id") ) {
+				push @need, $id;
 			}
 		}
 
@@ -761,6 +797,19 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	return Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+}
+
+sub _getStreamParams {
+	if ( $_[0] =~ m{deezer://(.+)\.(mp3|flac)}i ) {
+		return ($1, lc($2) );
+	}
+}
+
+sub _getBitrate {
+	my $ct = shift || '';
+
+	return 800_000 if $ct =~ /fla?c/;
+	return 320_000;
 }
 
 1;
