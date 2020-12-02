@@ -133,7 +133,10 @@ sub loadConversionTables {
 # I - can transcode from stdin
 # F - can transcode from a named file
 # R - can transcode from a remote URL (URL types unspecified)
-# H - request to strip out header (wav/aif only)
+#
+# E - extensions syntax E:{<key>=<value>,<key>=<value>}
+#		NOSTART=I/F/R : no $START$ field when transcoding from I/F/R
+#		NOHEADER=I/F/R : strip out header when transcoding from I/F/R (waf/aif only)
 #
 # O - can seek to a byte offset in the source stream (not yet implemented)
 # T - can seek to a start time offset
@@ -197,7 +200,11 @@ sub _getCapabilities {
 
 		if ($capabilities =~ /^:\{(\w+=[^}]+)\}/) {
 			$capabilities = $';
-			$args = $1;
+			if ($can eq 'E') {
+				$args = { split (/\s*[=,]\s*/, $1) };
+			} else {
+				$args = $1;
+			}
 		} else {
 			if ($can =~ /OTUDB/) {
 				$log->error("Capabilities for $profile: missing arguments for '$can'");
@@ -207,6 +214,9 @@ sub _getCapabilities {
 
 		$capabilities{$profile}->{$can} = $args;
 	}
+	
+	# for convenience, always define an extension field
+	$capabilities{$profile}->{'E'} ||= {};
 }
 
 sub isEnabled {
@@ -414,7 +424,7 @@ sub getConvertCommand2 {
 
 		my $streamformat = (split (/-/, $profile))[1];
 
-    $transcoder = {
+		$transcoder = {
 			command          => $command,
 			profile          => $profile,
 			usedCapabilities => [@$need, @$want],
@@ -430,11 +440,12 @@ sub getConvertCommand2 {
 			sampleSize       => $track->samplesize || 16,
 			sampleRate       => $track->samplerate || 44100,
 			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
+			extensions       => $caps->{'E'},
 			# aif/wav oddity (for '-' rule)
 			# aif - aif: any SB that does not support wav requires aif header stripping
 			# wav/aif - pcm: force header stripping
-			stripHeader      => $caps->{'H'} || ($command eq "-" &&
-                                (($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
+			stripHeader      => ($caps->{'E'}->{'NOHEADER'} =~ /$streamMode/) || ($command eq "-" && 
+								(($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
                                  ($type eq 'aif' && $streamformat eq 'aif' && !grep {$_ eq 'wav'} @supportedformats))),
 		};
 
@@ -526,7 +537,7 @@ sub tokenizeConvertCommand2 {
 	}
 
 	# there should be no start when using stdin (cue or not)
-	if ($start && $transcoder->{'streamMode'} ne 'I') {
+	if ($start && $transcoder->{'extensions'}->{'NOSTART'} !~ /$transcoder->{'streamMode'}/) {
 		push @{$transcoder->{'usedCapabilities'}}, 'T';
 	}
 
