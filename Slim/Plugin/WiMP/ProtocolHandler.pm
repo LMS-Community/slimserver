@@ -284,7 +284,7 @@ sub _gotTrack {
 		my $http = Slim::Networking::Async::HTTP->new;
 		$http->send_request( {
 			request     => HTTP::Request->new( GET => $info->{url} ),
-			onStream    => $format =~ /fla?c/i ? 
+			onStream    => $format =~ /fla?c/i ?
 						   \&Slim::Utils::Scanner::Remote::parseFlacHeader :
 						   \&Slim::Utils::Scanner::Remote::parseMp4Header,
 			onError     => sub {
@@ -334,7 +334,7 @@ sub parseDirectHeaders {
 			$rangeLength = $3;
 		}
 	}
-	
+
 	# Content-Range: has predecence over Content-Length:
 	if ($rangeLength) {
 		$length = $rangeLength;
@@ -372,7 +372,7 @@ sub _getBitrate {
 	return 800_000 if $ct =~ /fla?c/;
 	return 320_000 if $ct =~ /aac|mp4/;
 
-	return 256_00;
+	return 256_000;
 }
 
 # URL used for CLI trackinfo queries
