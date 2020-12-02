@@ -127,8 +127,9 @@ my %TLVhandlers = (
 
 sub getFakeVersion {
 	if (!$needsFakeVersion) {
+		my $model = shift;
 		$log->error(qq(
-You're using a Radio with a buggy firmware not recognizing this version of Logitech Media Server.
+You're using a SB $model with a buggy firmware not recognizing this version of Logitech Media Server.
 Please consider patching it. Until then we'll try to play nice and return a fake version number...
 
 See https://github.com/Logitech/slimserver/blob/public/8.0/README.md#sb-radio-and-logitech-media-server-8.
