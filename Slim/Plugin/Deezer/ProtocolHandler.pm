@@ -393,8 +393,8 @@ sub _gotNextRadioTrack {
 		title     => $track->{title},
 		duration  => $track->{duration} || 200,
 		cover     => $track->{cover} || $icon,
-		bitrate   => '320k CBR',
-		type      => 'MP3 (Deezer)',
+		bitrate   => _getBitratePlaceholder($url),
+		type      => _getFormatPlaceholder($url),
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
 		buttons   => {
@@ -491,10 +491,8 @@ sub _gotTrack {
 		return;
 	}
 
-	my ($isFLAC) = $info->{url} =~ /\.\bflac\b/;
-
-	$info->{bitrate} = ($isFLAC ? 'PCM VBR' : '320k CBR');
-	$info->{type}    = ($isFLAC ? 'FLAC' : 'MP3') . ' (Deezer)';
+	$info->{bitrate} = _getBitratePlaceholder($info->{url});
+	$info->{type}    = _getFormatPlaceholder($info->{url});
 
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
@@ -630,8 +628,8 @@ sub getMetadataFor {
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
 				title     => ($url && $url =~ /flow\.dzr/) ? $client->string('PLUGIN_DEEZER_FLOW') : $client->string('PLUGIN_DEEZER_SMART_RADIO'),
-				bitrate   => '320k CBR',
-				type      => 'MP3 (Deezer)',
+				bitrate   => _getBitratePlaceholder($url),
+				type      => _getFormatPlaceholder($url),
 				icon      => $icon,
 				cover     => $icon,
 			};
@@ -676,6 +674,7 @@ sub getMetadataFor {
 				client  => $client,
 				timeout => 60,
 				trackIds=> \@need,
+				format  => $format,
 			},
 		);
 
@@ -689,8 +688,8 @@ sub getMetadataFor {
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
 
 	return $meta || {
-		bitrate   => '320k CBR',
-		type      => 'MP3 (Deezer)',
+		bitrate   => _getBitratePlaceholder($url),
+		type      => _getFormatPlaceholder($url),
 		icon      => $icon,
 		cover     => $icon,
 	};
@@ -700,6 +699,7 @@ sub _gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	my $trackIds = $http->params->{trackIds};
+	my $format = $http->params->{format};
 
 	$client->master->pluginData( fetchingMeta => 0 );
 
@@ -733,8 +733,8 @@ sub _gotBulkMetadata {
 
 		my $meta = {
 			%{$track},
-			bitrate   => '320k CBR',
-			type      => 'MP3 (Deezer)',
+			bitrate   => _getBitratePlaceholder($format),
+			type      => _getFormatPlaceholder($format),
 			info_link => 'plugins/deezer/trackinfo.html',
 			icon      => $icon,
 		};
@@ -781,8 +781,8 @@ sub _invalidateTracks {
 	# set default meta data for tracks without meta data
 	foreach ( @$trackIds ) {
 		$cache->set('deezer_meta_' . $_, {
-			bitrate   => '320k CBR',
-			type      => 'MP3 (Deezer)',
+			bitrate   => _getBitratePlaceholder(),
+			type      => _getFormatPlaceholder(),
 			icon      => $icon,
 			cover     => $icon,
 		},
@@ -810,6 +810,16 @@ sub _getBitrate {
 
 	return 800_000 if $ct =~ /fla?c/;
 	return 320_000;
+}
+
+sub _getBitratePlaceholder {
+	my $url = shift || 'mp3';
+	return $url =~ /\.?\bflac\b/ ? 'PCM VBR' : '320k CBR';
+}
+
+sub _getFormatPlaceholder {
+	my $url = shift || 'mp3';
+	return ($url =~ /\.?\bflac\b/ ? 'FLAC' : 'MP3') . ' (Deezer)';
 }
 
 1;
