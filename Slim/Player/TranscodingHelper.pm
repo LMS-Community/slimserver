@@ -361,8 +361,10 @@ sub getConvertCommand2 {
 	}
 
 	if ($prefs->get('prioritizeNative')) {
-		my ($format) = grep /$type/, @supportedformats;
-		@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
+		my @types = $type eq 'wav' ? ('pcm', $type) : ($type);
+			my ($format) = grep /$type/, @supportedformats;
+			@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
+		}	
 	}
 
 	# Build the full list of possible profiles
