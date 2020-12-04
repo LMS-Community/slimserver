@@ -349,7 +349,7 @@ sub canDirectStreamSong {
 	# can't go direct if we are synced or proxy is set by user
 	my $direct = $class->canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 	return 0 unless $direct;
-	
+
 	# no header or stripHeader flag has precedence
 	return $direct if $song->stripHeader || !defined $song->track->initial_block_type;
 	

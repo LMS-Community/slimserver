@@ -163,7 +163,7 @@ sub play {
 	}
 
 	$client->bufferReady(0);
-	
+
 	my $ret = $client->stream_s($params);
 
 	# make sure volume is set, without changing temp setting

@@ -931,10 +931,11 @@ sub parseWavAifHeader {
 		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 		return 0;
 	}
-	
+
 	$track->samplerate($info->{samplerate});
 	$track->samplesize($info->{samplesize});
 	$track->channels($info->{channels});	
+	$track->endian($type eq 'wav' || $info->{compression_type} eq 'swot' ? 0 : 1);
 	
 	$track->block_alignment($info->{channels} * $info->{bits_per_sample} / 8);
 	$track->audio_offset($info->{audio_offset});
