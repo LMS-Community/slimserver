@@ -360,6 +360,10 @@ sub getConvertCommand2 {
 		@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
 	}
 
+	# put native format on top is required
+	my ($index) = grep { @supportedformats[$_] eq $type } (0 .. @supportedformats-1);
+	@supportedformats[$index, 0] = @supportedformats[0, $index] if $index && $prefs->get('prioritizeNative');
+
 	# Build the full list of possible profiles
 	my @profiles = $forceTranscode ? ("$type-$type-transcode-*") : ();
 
