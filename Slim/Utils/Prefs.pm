@@ -194,6 +194,7 @@ sub init {
 		'disabledextensionsvideo'    => '',
 		'disabledextensionsimages'   => '',
 		'disabledextensionsplaylist' => '',
+		'prioritizeNative'      => 1,
 		'disabledformats'       => [],
 		'ignoreInAudioScan'     => [],
 		'ignoreInVideoScan'     => [],
@@ -291,7 +292,7 @@ sub init {
 
 	# set validation functions
 	$prefs->setValidate( 'int',   qw(dbhighmem dbjournalsize) );
-	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
+	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout
 									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
 	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
@@ -321,7 +322,7 @@ sub init {
 	$prefs->setValidate({
 		validator => sub {
 			foreach (split (/,/, $_[1])) {
-				s/\s*//g; 
+				s/\s*//g;
 
 				next if Slim::Utils::Network::ip_is_ipv4($_);
 
@@ -393,7 +394,7 @@ sub init {
 	# All languages are always loaded on SN
 	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 
-	$prefs->setChange( 
+	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
 		qw(splitList groupdiscs useTPE2AsAlbumArtist)
 	);
@@ -599,7 +600,7 @@ sub init {
 					my $isDisabled = shift;
 					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
 
-					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
+					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );
 				},
 			);
 

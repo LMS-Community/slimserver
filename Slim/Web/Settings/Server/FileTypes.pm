@@ -23,6 +23,10 @@ sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('settings/server/filetypes.html');
 }
 
+sub prefs {
+	return ($prefs, qw(prioritizeNative));
+}
+
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
@@ -33,7 +37,7 @@ sub handler {
 		$prefs->set('disabledextensionsvideo',    $paramRef->{'disabledextensionsvideo'});
 		$prefs->set('disabledextensionsimages',   $paramRef->{'disabledextensionsimages'});
 		$prefs->set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
-		
+
 		my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
 
 		my @disabled = ();
@@ -42,14 +46,14 @@ sub handler {
 
 		foreach my $profile (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref}))) {
 
-			# If the conversion pref is enabled confirm that 
+			# If the conversion pref is enabled confirm that
 			# it's allowed to be checked.
 			$paramRef->{$profile} ||= '';
 			if ($paramRef->{$profile} ne 'DISABLED' && $disabledformats{$profile}) {
 
 				if (!Slim::Player::TranscodingHelper::checkBin($profile,'IgnorePrefs')) {
 
-					$paramRef->{'warning'} .= 
+					$paramRef->{'warning'} .=
 						string('SETUP_FORMATSLIST_MISSING_BINARY') . " $@ " . string('FOR') ." $profile<br>";
 
 					push @disabled, $profile;
@@ -66,24 +70,24 @@ sub handler {
 
 	my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
 	my $formatslistref  = Slim::Player::TranscodingHelper::Conversions();
-	my @formats         = (); 
+	my @formats         = ();
 
 	for my $profile (sort { $a cmp $b } (grep { $_ !~ /transcode/ } (keys %{$formatslistref}))) {
 
-		# skip internal formats which should not be shown or disabled 
+		# skip internal formats which should not be shown or disabled
 		next if $profile =~ /^spdr|^test/;
 
 		my @profileitems = split('-', $profile);
 		my @binaries     = ('DISABLED');
-		
+
 		# TODO: expand this to handle multiple command lines, but use binary case for now
 		my $enabled = Slim::Player::TranscodingHelper::checkBin($profile) ? 1 : 0;
-		
+
 		# build setup string from commandTable
 		my $cmdline = $formatslistref->{$profile};
 		my $binstring;
 
-		$cmdline =~ 
+		$cmdline =~
 			s{^\[(.*?)\](.*?\|?\[(.*?)\].*?)?}
 			{
 				$binstring = $1 if $1 eq '-' || Slim::Utils::Misc::findbin($1);
@@ -96,7 +100,7 @@ sub handler {
 						$binstring = undef;
 					}
 				}
-				
+
 				$binstring ||= '';
 			}iegsx;
 
@@ -107,7 +111,7 @@ sub handler {
 
 			push @binaries, 'NATIVE';
 		}
-		
+
 		# build capabilities
 		my $capabilities = join(', ', grep(/I|F|R/, keys %{Slim::Player::TranscodingHelper::Capabilities($profile)}));
 
@@ -120,7 +124,7 @@ sub handler {
 			'capabilities' => $capabilities,
 		};
 	}
-	
+
 	$paramRef->{'formats'} = \@formats;
 
 	$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');

@@ -4065,6 +4065,10 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 	SV	Logitech Media Server kan konvertera ljudfiler under uppspelning. Du kan avaktivera specifika format nedan genom att avmarkera dem. Här visas endast namnet på den binära filen. Om du vill se eller redigera hela kommandoraden måste du öppna convert.conf. Spara ändringarna genom att klicka på Ändra.
 	ZH_CN	Logitech Media Server能对音像文件进行即时的格式转换以便在播放机上播放。如要撤销某些格式，请清除其复选框中的标记。此处只显示有关的可执行文件。如要查看或编辑完整的命令行，请查看convert.conf。请点击《更动》以保存您所作的设定。
 
+SETUP_FORMATS_PREFER_NATIVE
+	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
+	EN	Prefer native format (decoding on the player) whenever possible
+
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
 	DA	Det krævede program blev ikke fundet:

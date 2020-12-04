@@ -19,6 +19,8 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_GROUP_FORMATS_CONVERSION" desc="SETUP_GROUP_FORMATS_CONVERSION_DESC" %]
+		<input type="checkbox" name="pref_prioritizeNative" id="prioritizeNative" [% IF prefs.pref_prioritizeNative %] checked="checked" [% END %] />
+		<label for="prioritizeNative">[% "SETUP_FORMATS_PREFER_NATIVE" | string %]</label>
 		<br/>
 	[% END %]
 
@@ -34,18 +36,18 @@
 			[% END %]
 			<tr>
 			<td class="[% odd ? "odd" : "even" %] firstColumn">[% IF frame %][% format.input | string %][% END %]</td>
-			
+
 			<td class="[% odd ? "odd" : "even" %]"><label for="[% format.profile %]" class="stdlabel">[% format.output | string %]</label></td>
-			
+
 			<td class="[% odd ? "odd" : "even" %]">([% format.capabilities %])</td>
-	
+
 			<td class="[% odd ? "odd" : "even" %]">
 				<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]" [% format.binaries.size() <= 1 && "disabled" %]>
-	
+
 				[%- FOREACH value = format.binaries -%]
 					<option [% IF loop.index == format.enabled %]selected [% END %]value="[% value %]">[% value | getstring %]</option>
 				[%- END -%]
-				
+
 				</select>
 			</td>
 			</tr>

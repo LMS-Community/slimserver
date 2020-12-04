@@ -214,7 +214,7 @@ sub _getCapabilities {
 
 		$capabilities{$profile}->{$can} = $args;
 	}
-	
+
 	# for convenience, always define an extension field
 	$capabilities{$profile}->{'E'} ||= {};
 }
@@ -360,6 +360,11 @@ sub getConvertCommand2 {
 		@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
 	}
 
+	if ($prefs->get('prioritizeNative')) {
+		my ($format) = grep /$type/, @supportedformats;
+		@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
+	}
+
 	# Build the full list of possible profiles
 	my @profiles = $forceTranscode ? ("$type-$type-transcode-*") : ();
 
@@ -448,7 +453,7 @@ sub getConvertCommand2 {
 			# aif/wav oddity (for '-' rule)
 			# aif - aif: any SB that does not support wav requires aif header stripping
 			# wav/aif - pcm: force header stripping
-			stripHeader      => ($caps->{'E'}->{'NOHEADER'} =~ /$streamMode/) || ($command eq "-" && 
+			stripHeader      => ($caps->{'E'}->{'NOHEADER'} =~ /$streamMode/) || ($command eq "-" &&
 								(($type =~ /(wav|aif)/ && $streamformat eq 'pcm') ||
                                  ($type eq 'aif' && $streamformat eq 'aif' && !grep {$_ eq 'wav'} @supportedformats))),
 		};
@@ -582,7 +587,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'QUALITY'}    = $quality;
 	$subs{'CHANNELS'}   = $transcoder->{'channels'};
 	$subs{'SAMPLESIZE'} = $transcoder->{'sampleSize'};
-	$subs{'SAMPLERATE'} = $transcoder->{'sampleRate'};	
+	$subs{'SAMPLERATE'} = $transcoder->{'sampleRate'};
 	$subs{'OCHANNELS'}  = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}   = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}     = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
