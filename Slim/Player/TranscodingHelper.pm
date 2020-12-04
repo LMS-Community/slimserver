@@ -362,6 +362,7 @@ sub getConvertCommand2 {
 
 	if ($prefs->get('prioritizeNative')) {
 		my @types = $type eq 'wav' ? ('pcm', $type) : ($type);
+		foreach my $type (@types) {
 			my ($format) = grep /$type/, @supportedformats;
 			@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
 		}	
