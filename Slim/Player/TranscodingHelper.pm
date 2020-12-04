@@ -307,11 +307,14 @@ sub getConvertCommand2 {
 	my $track;
 	my $song;
 	my $client;
+	my $forceTranscode;
 
 	if ( ref $songOrTrack eq 'Slim::Player::Song' ) {
 		$song   = $songOrTrack;
 		$track  = $song->currentTrack();
 		$client = $song->master();
+		my $handler = $song->currentTrackHandler();
+		$forceTranscode = $handler->forceTranscode($client, $type) if $handler && $handler->can('forceTranscode');
 	}
 	else {
 		$track = $songOrTrack;
@@ -358,7 +361,8 @@ sub getConvertCommand2 {
 	}
 
 	# Build the full list of possible profiles
-	my @profiles = ();
+	my @profiles = $forceTranscode ? ("$type-$type-transcode-*") : ();
+
 	foreach my $checkFormat (@supportedformats) {
 
 		if ( $clientid && $player ) {
@@ -371,7 +375,7 @@ sub getConvertCommand2 {
 
 		push @profiles, "$type-$checkFormat-*-*";
 
-		if ($type eq $checkFormat && enabledFormat("$type-$checkFormat-*-*")) {
+		if ($type eq $checkFormat && enabledFormat("$type-$checkFormat-*-*") && !$forceTranscode) {
 			push @profiles, "$type-$checkFormat-transcode-*";
 		}
 	}

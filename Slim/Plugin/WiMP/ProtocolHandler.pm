@@ -40,14 +40,6 @@ sub getFormatForURL {
 	return $format;
 }
 
-sub formatOverride {
-	my ($class, $song) = @_;
-	my $format = Slim::Music::Info::contentType($song->currentTrack);
-
-	return 'tdlflc' if $format eq 'flc';
-	return $format;
-}
-
 # default buffer 3 seconds of 256kbps MP3/768kbps FLAC audio
 my %bufferSecs = (
 	flac => 80,
@@ -67,6 +59,11 @@ sub bufferThreshold {
 }
 
 sub canSeek { 1 }
+
+sub forceTranscode { 
+	my ($self, $client, $format) = @_;
+	return $format eq 'flc' && $client->model =~ /squeezebox|boom|transporter/;
+}
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
