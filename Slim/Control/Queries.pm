@@ -3235,7 +3235,7 @@ sub serverstatusQuery {
 	}
 
 	# add version
-	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-(?:baby|fab4|jive).+|)$/) {
+	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-(?:baby|fab4|jive)\b.+)$/) {
 		my $ua = $1;
 		my ($model, $version) = $ua =~ m{SqueezePlay-(baby|fab4|jive)/(\d+\.\d+\.\d+)};
 		if (Slim::Utils::Versions->compareVersions($version, '7.8.0') < 0) {
@@ -3247,6 +3247,9 @@ sub serverstatusQuery {
 
 			main::INFOLOG && logger('network.protocol')->info("Found outdated SB $model, need to return compatible version string: $ua");
 			$request->addResult('version', Slim::Networking::Discovery::getFakeVersion($model));
+		}
+		else {
+			$request->addResult('version', $::VERSION);
 		}
 	}
 	else {
