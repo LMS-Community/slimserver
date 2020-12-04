@@ -60,9 +60,10 @@ sub bufferThreshold {
 
 sub canSeek { 1 }
 
-sub forceTranscode { 
+# some online streams are compressed in a way which causes stutter on ip3k based players
+sub forceTranscode {
 	my ($self, $client, $format) = @_;
-	return $format eq 'flc' && $client->model =~ /squeezebox|boom|transporter/;
+	return $format eq 'flc' && $client->model =~ /squeezebox|boom|transporter|receiver/;
 }
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
