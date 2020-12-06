@@ -37,7 +37,17 @@ sub getFormatForURL {
 	my ($class, $url) = @_;
 
 	my ($trackId, $format) = _getStreamParams( $url );
-	return $format || 'mp3';
+
+	# This is hacky: for radio/flow we don't know the format type. Let's assume what we got last...
+	return $format || $prefs->get('latestFormat') || 'mp3';
+}
+
+sub formatOverride {
+	my ($class, $song) = @_;
+
+	my $format = $class->getFormatForURL($song->track->url);
+	$format =~ s/flac/flc/;
+	return $format;
 }
 
 # default buffer 3 seconds of 320k audio
@@ -376,7 +386,7 @@ sub _gotNextRadioTrack {
 	}
 
 	# set metadata for track, will be set on playlist newsong callback
-	$url      = 'deezer://' . $track->{id} . '.mp3';
+	$url      = 'deezer://' . $track->{id} . '.' . __PACKAGE__->getFormatForURL($track->{url});
 	my $title = $track->{title} . ' ' .
 		$client->string('BY') . ' ' . $track->{artist_name} . ' ' .
 		$client->string('FROM') . ' ' . $track->{album_name};
@@ -494,6 +504,9 @@ sub _gotTrack {
 	$info->{bitrate} = _getBitratePlaceholder($info->{url});
 	$info->{type}    = _getFormatPlaceholder($info->{url});
 
+	# as we don't know the format for a flow/radio station, let's keep the format of the last played track to make assumptions later on...
+	$prefs->set('latestFormat', __PACKAGE__->getFormatForURL($info->{url}));
+
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
 
@@ -584,7 +597,7 @@ sub canDirectStreamSong {
 
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL($song->streamUrl()) );
 }
 
 # URL used for CLI trackinfo queries
@@ -800,8 +813,12 @@ sub getIcon {
 }
 
 sub _getStreamParams {
-	if ( $_[0] =~ m{deezer://(.+)\.(mp3|flac)}i ) {
+	my $url = shift;
+	if ( $url =~ m{deezer://(.+)\.(mp3|flac)}i ) {
 		return ($1, lc($2) );
+	}
+	elsif ( $url =~ /deezer\.com.*\.(mp3|flac)/) {
+		return (undef, lc($1));
 	}
 }
 
