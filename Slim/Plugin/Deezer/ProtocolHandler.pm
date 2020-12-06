@@ -339,7 +339,7 @@ sub _getNextRadioTrack {
 
 	# Talk to SN and get the next track to play
 	my $radioURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/deezer/v1/radio/getNextTrack?stationId=$stationId"
+		sprintf("/api/deezer/v1/radio/getNextTrack?stationId=%s&format=%s", $stationId, $prefs->get('latestFormat'));
 	);
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
