@@ -117,7 +117,13 @@ sub initSearchPath {
 	elsif ( $class->{osDetails}->{'binArch'} eq 'armhf-linux' ) {
 		push @paths, catdir($baseDir, 'arm-linux');
 	}
-	elsif ( $class->{osDetails}->{'binArch'} =~ /darwin/i && ($class->{'osDetails'}->{'osArch'} =~ /x86_64/ || $class->{'osDetails'}->{'osName'} =~ /\b10\.[1-9][4-9]\./) ) {
+	elsif ( $class->{osDetails}->{'binArch'} =~ /darwin/i
+		&& (
+			$class->{'osDetails'}->{'osArch'} =~ /x86_64/
+			|| $class->{'osDetails'}->{'osName'} =~ /\b10\.[1-9][4-9]\./
+			|| $class->{'osDetails'}->{'osName'} =~ /\b11\.\d+/
+		)
+	) {
 		unshift @paths, catdir($baseDir, $class->{osDetails}->{'binArch'} . '-x86_64'), catdir($baseDir, $^O . '-x86_64');
 	}
 
@@ -363,7 +369,7 @@ sub getSystemLanguage {
 	require POSIX;
 
 	my $class = shift;
-	$class->_parseLanguage(POSIX::setlocale(POSIX::LC_CTYPE())); 
+	$class->_parseLanguage(POSIX::setlocale(POSIX::LC_CTYPE()));
 }
 
 sub _parseLanguage {
@@ -387,8 +393,8 @@ Get a list of values from the osDetails list
 sub get {
 	my $class = shift;
 
-	if ( wantarray ) {	
-		return map { $class->{osDetails}->{$_} } 
+	if ( wantarray ) {
+		return map { $class->{osDetails}->{$_} }
 		       grep { $class->{osDetails}->{$_} } @_;
 	}
 	else {

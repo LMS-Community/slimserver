@@ -45,6 +45,10 @@ sub initDetails {
 					$class->{osDetails}->{'osArch'} = 'x86_64';
 				}
 
+			} elsif (/Chip.*(Apple .*)/) {
+
+				$class->{osDetails}->{'osArch'} = $1;
+
 			} elsif (/PowerPC/i) {
 
 				$class->{osDetails}->{'osArch'} = 'ppc';
