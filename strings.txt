@@ -4068,6 +4068,7 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 SETUP_FORMATS_PREFER_NATIVE
 	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
 	EN	Prefer native format (decoding on the player) whenever possible
+	FR	Utiliser le format natif si possible (éviter le transcodage)
 
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
