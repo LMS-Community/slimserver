@@ -99,6 +99,7 @@ sub parse {
 	my ($filename, $currtrack);
 	my $cuesheet  = {};
 	my $tracks    = {};
+	my $fileHasChanged = 0;
 
 	main::INFOLOG && $log->info("baseDir: [$baseDir]");
 
@@ -185,6 +186,7 @@ sub parse {
 		} elsif ($command eq 'TRACK') {
 
 			$inAlbum = 0;
+			$fileHasChanged = 0;
 
 			#Skipping non audio tracks.
 			if ($value =~ /^(\d+)\s+AUDIO/i && $filename) {
@@ -209,6 +211,10 @@ sub parse {
 
 			} elsif ($value =~ /^01\s+(\d+):(\d+):(\d+)/i) {
 
+				if ($fileHasChanged) {
+					$log->warn("Found INDEX 01 after FILE but before TRACK. Looks like non-comlaint CUE. Skipping.");
+					return;
+				}
 				$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
 			}
 
@@ -316,6 +322,7 @@ sub parse {
 			if ($value =~ /^\"(.*)\"/i) {
 				$filename = $embedded || $1;
 				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+				$fileHasChanged = 1;
 
 				main::DEBUGLOG && $log->is_debug && $log->debug('Filename with quotes ' . Data::Dump::dump({
 					line		=> $line,
