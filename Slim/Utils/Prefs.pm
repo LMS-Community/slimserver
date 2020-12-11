@@ -213,7 +213,7 @@ sub init {
 		'scannerPriority'       => 0,
 		'precacheArtwork'       => 1,
 		'customArtSpecs'        => {},
-		'maxPlaylistLength'     => 500,
+		'maxPlaylistLength'     => sub { $os->canDBHighMem() ? 2500 : 500 },
 		# Server Settings - Security
 		'filterHosts'           => 0,
 		'allowedHosts'          => sub {
