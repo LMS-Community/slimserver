@@ -130,7 +130,7 @@ my %repos = (
 	'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1,
 );
 
-my $UNSUPPORTED_REPO = 'https://github.com/LMS-Community/lms-plugin-repository/raw/enableUnsupported/unsupported.xml';
+my $UNSUPPORTED_REPO = 'https://github.com/LMS-Community/lms-plugin-repository/raw/master/unsupported.xml';
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
