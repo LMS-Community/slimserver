@@ -376,3 +376,9 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	RU	Расширения Logitech
 	SV	Logitech-tillägg
 
+PLUGIN_EXTENSIONS_USE_UNSUPPORTED
+	DE	Nicht unterstützte Ereweiterungen
+	EN	Use unsupported extensions
+
+PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
+	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.

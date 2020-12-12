@@ -188,6 +188,11 @@
 		</div>
 	[% END %]
 
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS_USE_UNSUPPORTED" desc="" %]
+		<input type="checkbox" name="useUnsupported" id="useUnsupported" [% IF useUnsupported %] checked="1" [% END %] />
+		<label for="useUnsupported">[% "PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC" | string %]</label>
+	[% END %]
+
 	<input name="rand" type="hidden" value="[% rand %]" />
 
 [% PROCESS settings/footer.html %]

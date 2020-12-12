@@ -102,7 +102,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.extensions');
 
-$prefs->init({ repos => [], plugin => {}, auto => 0 });
+$prefs->init({ repos => [], plugin => {}, auto => 0, useUnsupported => 0 });
 
 $prefs->migrate(2,
 				sub {
@@ -130,10 +130,16 @@ my %repos = (
 	'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1,
 );
 
+my $UNSUPPORTED_REPO = 'https://github.com/LMS-Community/lms-plugin-repository/raw/enableUnsupported/unsupported.xml';
+
+$prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
+
 sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin;
+
+	initUnsupportedRepo();
 
 	for my $repo (keys %repos) {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
@@ -208,6 +214,14 @@ sub repos {
 	return \%repos;
 }
 
+sub initUnsupportedRepo {
+	if ($prefs->get('useUnsupported')) {
+		$repos{$UNSUPPORTED_REPO} = 1;
+	}
+	else {
+		delete $repos{$UNSUPPORTED_REPO};
+	}
+}
 
 # This query compares the list of provided apps to the policy setting for apps which should be installed
 # If an app is in the wrong state it sends back an action with details of what to change

@@ -45,6 +45,9 @@ sub handler {
 		my $auto = $params->{'auto'} ? 1 : 0;
 		$prefs->set('auto', $auto) if $auto != $prefs->get('auto');
 
+		my $useUnsupported = $params->{'useUnsupported'} ? 1 : 0;
+		$prefs->set('useUnsupported', $useUnsupported) if $useUnsupported != $prefs->get('useUnsupported');
+
 		# handle changes to repos
 
 		my @new = grep { $_ =~ /^https?:\/\/.*\.xml/ } (ref $params->{'repos'} eq 'ARRAY' ? @{$params->{'repos'}} : $params->{'repos'});
@@ -243,6 +246,7 @@ sub _addInfo {
 	$params->{'repos'}    = \@repos;
 	$params->{'auto'}     = $prefs->get('auto');
 	$params->{'rand'}     = $rand;
+	$params->{'useUnsupported'} = $prefs->get('useUnsupported');
 
 	# don't offer the restart before the plugin download has succeeded.
 	my $needsRestart = Slim::Utils::PluginManager->needsRestart || Slim::Utils::PluginDownloader->downloading;

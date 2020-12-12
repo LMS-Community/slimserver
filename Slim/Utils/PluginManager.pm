@@ -29,6 +29,7 @@ my $log   = logger('server.plugins');
 
 my $prefs = preferences('plugin.state'); # per plugin state or pending state
 # valid states: disabled, enabled, needs-enable, needs-disable, needs-install, needs-uninstall
+my $extensionMgrPrefs = preferences('plugin.extensions');
 
 my $plugins   = {};
 my $loaded    = {};
@@ -69,14 +70,14 @@ sub init {
 			$downloader = 'Slim::Utils::PluginDownloader';
 			$downloader->init;
 		};
-		
+
 		$@ && $log->error("Failed to load plugin downloader: $@");
 	}
 
 	my $pendingOps;
 	my $cacheInvalid;
 	my $osDetails = Slim::Utils::OSDetect::details();
-	
+
 	%SKIP = map {$_ => 1} Slim::Utils::OSDetect::skipPlugins();
 
 	# load the manifest cache
@@ -100,9 +101,9 @@ sub init {
 
 					$class->_needsDisable($plugin);
 
-				} elsif ($val eq 'needs-uninstall') { 
+				} elsif ($val eq 'needs-uninstall') {
 
-					$class->_needsUninstall($plugin); 
+					$class->_needsUninstall($plugin);
 
 				} elsif ($val eq 'needs-install') {
 
@@ -128,7 +129,7 @@ sub init {
 		$cacheInvalid = 'processed pending operations';
 
 	} elsif ($cacheInfo && $cacheInfo->{'version'}) {
-	
+
 		if ($cacheInfo->{'version'} != CACHE_VERSION) {
 
 			$cacheInvalid = 'cache version does not match';
@@ -162,7 +163,7 @@ sub init {
 
 		$cacheInvalid = 'no plugin cache or cache disabled by caller';
 	}
-	
+
 	if ($cacheInvalid) {
 
 		$log->warn("Reparsing plugin manifests - $cacheInvalid");
@@ -180,35 +181,35 @@ sub init {
 				'osType'  => $osDetails->{'os'},
 				'osArch'  => $osDetails->{'osArch'},
 			};
-		
+
 			$class->_writePluginCache unless $main::failsafe;
 		}
 	}
-} 
+}
 
 sub load {
 	my $class = shift;
 	my $moduleType = shift || '';
 
 	for my $name (sort keys %$plugins) {
-		
+
 		my $state = $prefs->get($name);
-		
+
 		my $manifest = $plugins->{$name};
 
 		# Skip plugins with no perl module.
 		next unless $manifest->{ $moduleType . 'module' };
-		
+
 		my $baseDir    = $manifest->{'basedir'};
 		my $module     = $manifest->{ $moduleType . 'module' };
-		
+
 		# Initialize all plugins into the disabled list, they are removed below
 		# if they are loaded
 		$disabled->{$module} = $plugins->{$name};
 
 		# in failsafe mode skip all plugins which aren't required
 		next if ($main::failsafe && !$plugins->{$name}->{'enforce'});
-		
+
 		if ( main::NOMYSB && ($plugins->{$name}->{needsMySB} && $plugins->{$name}->{needsMySB} !~ /false|no/i) ) {
 			main::INFOLOG && $log->info("Skipping plugin: $name - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
 			next;
@@ -275,20 +276,20 @@ sub load {
  			my $arch = $Config::Config{'archname'};
 			$arch =~ s/^i[3456]86-/i386-/;
 			$arch =~ s/gnu-//;
-	
+
 			# Check for use64bitint Perls
 			my $is64bitint = $arch =~ /64int/;
-			
+
 			# Some ARM platforms use different arch strings, just assume any arm*linux system
 			# can run our binaries, this will fail for some people running invalid versions of Perl
 			# but that's OK, they'd be broken anyway.
 			if ( $arch =~ /^arm.*linux/ ) {
-				$arch = $arch =~ /gnueabihf/ 
-					? 'arm-linux-gnueabihf-thread-multi' 
+				$arch = $arch =~ /gnueabihf/
+					? 'arm-linux-gnueabihf-thread-multi'
 					: 'arm-linux-gnueabi-thread-multi';
 				$arch .= '-64int' if $is64bitint;
 			}
-			
+
 			# Same thing with PPC
 			if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 				$arch = 'powerpc-linux-thread-multi';
@@ -304,7 +305,7 @@ sub load {
 					unshift @INC, catdir($lib, $v, $a)         if -d catdir($lib, $v, $a);
 				}
 			}
-			
+
 			my %seen;
 			@INC = grep { ! $seen{$_} ++ } @INC;
 		}
@@ -326,7 +327,7 @@ sub load {
 			} else {
 
 				$loaded->{$module} = $plugins->{$name};
-				
+
 				delete $disabled->{$module};
 			}
 		}
@@ -347,7 +348,7 @@ sub load {
 
 			if ( $binArch =~ /i386-linux/i ) {
 	 			my $arch = $Config::Config{'archname'};
-	 			
+
 				if ( $arch && $arch =~ s/^x86_64-([^-]+).*/x86_64-$1/ ) {
 					unshift @paths, catdir($binDir, $arch);
 				}
@@ -386,9 +387,9 @@ sub load {
 		for my $module (sort keys %$loaded) {
 
 			if ($module->can($initFunction)) {
-				
+
 				eval { $module->$initFunction };
-				
+
 				if ($@) {
 
 					logWarning("Couldn't call $module->$initFunction: $@");
@@ -424,7 +425,7 @@ sub shutdownPlugins {
 sub dirsFor {
 	my $class = shift;
 	my $type  = shift;
-	
+
 	my @dirs = ();
 	my $disabledTokens = {};
 
@@ -434,7 +435,7 @@ sub dirsFor {
 		my $enabled = $prefs->get($name) eq 'enabled';
 		if ($type eq 'strings' || $enabled) {
 			push @dirs, $plugins->{$name}->{'basedir'};
-			
+
 			# we don't want to read all tokens for disabled plugins - only those used in the name & description
 			if (!$enabled) {
 				my $tokens = {};
@@ -445,9 +446,9 @@ sub dirsFor {
 			}
 		}
 	}
-	
+
 	push @dirs, $disabledTokens if scalar keys %$disabledTokens;
-	
+
 	return @dirs;
 }
 
@@ -507,7 +508,7 @@ sub enabledPlugins {
 # this returns all plugins which are disabled
 sub disabledPlugins {
 	my $class = shift;
-	
+
 	return $disabled;
 }
 
@@ -515,7 +516,7 @@ sub disabledPlugins {
 sub isEnabled {
 	my $class  = shift;
 	my $module = shift || return;
-	
+
 	return $loaded->{$module};
 }
 
@@ -565,7 +566,7 @@ sub message {
 
 	$message = shift if @_;
 
-	return $class->needsRestart 
+	return $class->needsRestart
 		? Slim::Utils::Strings::string('PLUGINS_RESTART_MSG') . ' (' .
 			join(', ',
 				map {
@@ -610,7 +611,7 @@ sub _loadPluginCache {
 
 	$plugins = YAML::XS::LoadFile($file);
 
-	$cacheInfo = delete $plugins->{'__cacheinfo'} || { 
+	$cacheInfo = delete $plugins->{'__cacheinfo'} || {
 		'version' => -1,
 	};
 
@@ -724,7 +725,7 @@ sub _parseInstallManifest {
 	$installManifest->{'basedir'} = dirname($file);
 
 	if (!defined $module) {
-		
+
 		$installManifest->{'error'} = 'INSTALLERROR_NO_MODULE';
 
 	} elsif (!$class->_checkPluginVersion($installManifest)) {
@@ -737,43 +738,43 @@ sub _parseInstallManifest {
 		my $osDetails    = Slim::Utils::OSDetect::details();
 		my $osType       = $osDetails->{'os'};
 		my $osArch       = $osDetails->{'osArch'};
-		
+
 		my $requireOS    = 0;
 		my $matchingOS   = 0;
 		my $requireArch  = 0;
 		my $matchingArch = 0;
 		my @platforms    = $installManifest->{'targetPlatform'} || ();
-		
+
 		if (ref($installManifest->{'targetPlatform'}) eq 'ARRAY') {
-			
+
 			@platforms = @{ $installManifest->{'targetPlatform'} };
 		}
-		
+
 		for my $platform (@platforms) {
-			
+
 			$requireOS = 1;
-			
+
 			my ($targetOS, $targetArch) = split /-/, $platform;
-			
+
 			if ($osType =~ /$targetOS/i) {
-				
+
 				$matchingOS = 1;
-				
+
 				if ($targetArch) {
-					
+
 					$requireArch = 1;
-					
+
 					if ($osArch =~ /$targetArch/i) {
-						
+
 						$matchingArch = 1;
 						last;
 					}
 				}
 			}
 		}
-		
+
 		if ($requireOS && (!$matchingOS || ($requireArch && !$matchingArch))) {
-			
+
 			$installManifest->{'error'} = 'INSTALLERROR_INCOMPATIBLE_PLATFORM';
 
 			$log->warn("plugin $pluginName incompatible with system - disabling");
@@ -799,6 +800,9 @@ sub _checkPluginVersion {
 
 	my $min = $manifest->{'targetApplication'}->{'minVersion'};
 	my $max = $manifest->{'targetApplication'}->{'maxVersion'};
+
+	# user can decide to go crazy and ignore the maxVersion
+	$max = '*' if $extensionMgrPrefs->get('useUnsupported');
 
 	# Didn't match the version? Next..
 	if (!Slim::Utils::Versions->checkVersion($::VERSION, $min, $max)) {
