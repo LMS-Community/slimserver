@@ -271,7 +271,7 @@ sub sysread {
 	}
 
 	# First try to stuff the pipe
-	STUFF_PIPE:	while (defined($source)) {
+	while (defined($source)) {
 
 		my $pendingBytes = ${*$self}{'pipeline_pending_bytes'};
 		my $pendingSize  = ${*$self}{'pipeline_pending_size'};
@@ -286,12 +286,13 @@ sub sysread {
 				if (defined $socketReadlen) {
 					# EOF
 					main::INFOLOG && $log->info("EOF on source stream");
-					undef $source;
-					delete ${*$self}{'pipeline_source'};
+					$source->close();
 					$writer->close();
-					last STUFF_PIPE;
+					delete ${*$self}{'pipeline_source'};
+					delete ${*$self}{'pipeline_writer'};
+					last;
 				} elsif ($! == EWOULDBLOCK || $! == EINTR) {
-					last STUFF_PIPE;		
+					last;		
 				} else {
 					return undef; # reflect error to caller
 				}
@@ -326,7 +327,7 @@ sub sysread {
 				return undef;	# reflect error to caller
 			}
 
-			last STUFF_PIPE;
+			last;
 		}
 
 	}

@@ -212,7 +212,7 @@ sub parse {
 			} elsif ($value =~ /^01\s+(\d+):(\d+):(\d+)/i) {
 
 				if ($fileHasChanged) {
-					$log->warn("Found INDEX 01 after FILE but before TRACK. Looks like non-comlaint CUE. Skipping.");
+					$log->warn("Found INDEX 01 after FILE but before TRACK. Looks like non-compliant CUE. Skipping.");
 					return;
 				}
 				$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
