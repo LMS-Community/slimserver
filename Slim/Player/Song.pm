@@ -64,6 +64,7 @@ my @_playlistCloneAttributes = qw(
 			seekdata initialAudioBlock
 			_canSeek _canSeekError
 			stripHeader
+			wantFormat
 
 			_duration _bitrate _streambitrate _streamFormat
 			_transcoded directstream
@@ -107,7 +108,7 @@ sub new {
 
 	main::INFOLOG && $log->info("index $index -> $url");
 
-# XXX - thsi test does not work with last.fm - not sure why it was here in the first place
+# XXX - this test does not work with last.fm - not sure why it was here in the first place
 #	if (!Slim::Music::Info::isURL($url)) {
 #		logError("[$url] Unrecognized type " . Slim::Music::Info::contentType($url));
 #
@@ -403,10 +404,13 @@ sub open {
 		push (@streamFormats, 'I') if (! $wantTranscoderSeek);
 
 		push @streamFormats, ($handler->isRemote && !Slim::Music::Info::isVolatile($handler) ? 'R' : 'F');
+		
+		my $formats = [ $format ];
+		push ($formats, grep { $_ ne $format} keys %{$track->processor}) if $track->can('processor');
 
 		($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 			$self,
-			$format,
+			$formats,
 			\@streamFormats, [], \@wantOptions);
 
 		if (! $transcoder) {
@@ -416,6 +420,8 @@ sub open {
 			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
 		}
 
+		$self->wantFormat($transcoder->{'wantFormat'});
+		
 		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
 			$transcoder->{'start'} = $self->startOffset($self->seekdata()->{'timeOffset'});
 		}
@@ -816,6 +822,8 @@ sub canDoSeek {
 	} 
 	
 	else {
+		my $formats = [ Slim::Music::Info::contentType($self->currentTrack) ]; 
+		push (@$formats, grep { $_ ne $formats->[0] } keys %{$self->currentTrack->processor}) if $self->currentTrack->can('prcoessor');
 
 		if ($handler->can('canSeek')) {
 			if ($handler->canSeek( $self->master(), $self )) {
@@ -827,7 +835,7 @@ sub canDoSeek {
 				# First see how we would stream without seeking question
 				my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
 					$self,
-					Slim::Music::Info::contentType($self->currentTrack),
+					$formats,
 					['I', 'F'], [], []);
 
 				if (! $transcoder) {
@@ -843,7 +851,7 @@ sub canDoSeek {
 				# no, then could we get a seeking transcoder?
 				if (Slim::Player::TranscodingHelper::getConvertCommand2(
 					$self,
-					Slim::Music::Info::contentType($self->currentTrack),
+					$formats,
 					['I', 'F'], ['T'], []))
 				{
 					return $self->_canSeek(2);
@@ -868,7 +876,7 @@ sub canDoSeek {
 		
 		if (Slim::Player::TranscodingHelper::getConvertCommand2(
 				$self,
-				Slim::Music::Info::contentType($self->currentTrack),
+				$formats,
 				[($handler->isRemote && !Slim::Music::Info::isVolatile($handler)) ? 'R' : 'F'], ['T'], []))
 		{
 			return $self->_canSeek(2);

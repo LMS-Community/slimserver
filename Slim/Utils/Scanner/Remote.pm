@@ -731,10 +731,10 @@ sub parseFlacHeader {
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
 
 		# we have valid header, means there will be no alignment unless we seek
-		$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	} else {
 		# if we don't have an header, need to always process
-		$track->initial_block_type( Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
+		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
 	}	
 
 	# All done
@@ -768,7 +768,7 @@ sub parseMp4Header {
 			$http->disconnect;
 	
 			# re-calculate header all the time (i.e. can't go direct at all)
-			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
+			$args->{initial_block_type} = Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS;
 		
 			main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
 	
@@ -818,17 +818,9 @@ sub parseMp4Header {
 		}
 		
 		# use process_audio hook & format if set by parser
-		# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
-		# MPEG-4 ADTS Scalable Sampling Rate = 104
-		if ( $info->{audio_initiate} ) {
-			# we are going to pre-process audio, can't go direct
-			$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS);
-			$track->audio_initiate($info->{audio_initiate});
-			$format = $info->{audio_format};
+		foreach ( keys %{$info->{processor}} ) {
+			$track->processor($_, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, $info->{processor}->{$_});
 		} 
-		elsif ( !$format && $item->{audio_type} >= 102 && $item->{audio_type} <= 104 ) {
-			$format = 'aac';
-		}
 		
 		# change track attributes if format has been altered
 		if ( $format ) {
@@ -852,7 +844,7 @@ sub parseMp4Header {
 	
 	# use the audio block to stash the temp file handler
 	$track->initial_block_fh($info->{fh});
-	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK) unless $track->initial_block_type;
+	$track->processor($track->content_type, $args->{initial_block_type} // Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "mp4: %dHz, %dBits, %dch => bitrate: %dkbps (ofs:%d, len:%d, hdr:%d)",
@@ -951,7 +943,7 @@ sub parseWavAifHeader {
 	
 	# we have a dynamic header but can go direct when not seeking
 	$track->initial_block_fh($info->{fh});
-	$track->initial_block_type(Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+	$track->processor($type, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 
 	# all done
 	$args->{cb}->( $track, undef, @{$args->{pt} || []} );

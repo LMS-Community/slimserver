@@ -302,6 +302,19 @@ sub checkBin {
 }
 
 sub getConvertCommand2 {
+	my $songOrTrack = shift;
+	my $type = shift || [undef];
+	my $transcoder;
+
+	foreach (@$type) {
+		$transcoder = _getConvertCommand2($songOrTrack, $_, @_);
+		last if $transcoder;
+	} 
+
+	return $transcoder;
+}	
+
+sub _getConvertCommand2 {
 	my ($songOrTrack, $type, $streamModes, $need, $want, $formatOverride, $rateOverride) = @_;
 
 	my $track;
@@ -441,6 +454,7 @@ sub getConvertCommand2 {
 			profile          => $profile,
 			usedCapabilities => [@$need, @$want],
 			streamMode       => $streamMode,
+			wantFormat       => $type,
 			streamformat     => $streamformat,
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || 44100,
