@@ -406,7 +406,7 @@ sub open {
 		push @streamFormats, ($handler->isRemote && !Slim::Music::Info::isVolatile($handler) ? 'R' : 'F');
 		
 		my $formats = [ $format ];
-		push ($formats, grep { $_ ne $format} keys %{$track->processor}) if $track->can('processor');
+		push (@$formats, grep { $_ ne $format} keys %{$track->processor}) if $track->can('processor');
 
 		($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 			$self,
