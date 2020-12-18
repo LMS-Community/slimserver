@@ -717,7 +717,6 @@ sub parseFlacHeader {
 	
 	return 1 if ref $info ne 'HASH' && $info;
 
-	$track->audio_initiate( \&Slim::Formats::FLAC::initiateFrameAlign );
 	$track->content_type('flc');
 	
 	if ($info) {
@@ -731,10 +730,10 @@ sub parseFlacHeader {
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
 
 		# we have valid header, means there will be no alignment unless we seek
-		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK, \&Slim::Formats::FLAC::initiateFrameAlign);
 	} else {
 		# if we don't have an header, need to always process
-		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS );
+		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, \&Slim::Formats::FLAC::initiateFrameAlign );
 	}	
 
 	# All done
@@ -794,7 +793,7 @@ sub parseMp4Header {
 	my $bitrate = $info->{avg_bitrate};
 	
 	if ( my $item = $info->{tracks}->[0] ) {
-		my $format;
+		my $format = 'mp4';
 		
 		$samplesize = $item->{bits_per_sample};
 		$channels = $item->{channels};
@@ -823,7 +822,7 @@ sub parseMp4Header {
 		} 
 		
 		# change track attributes if format has been altered
-		if ( $format ) {
+		if ( $format ne $track->content_type ) {
 			Slim::Schema->clearContentTypeCache( $track->url );
 			Slim::Music::Info::setContentType( $track->url, $format );
 			$track->content_type($format);
