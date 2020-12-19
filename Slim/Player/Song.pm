@@ -400,7 +400,7 @@ sub open {
 		my @formats = ( $format );
 		push (@formats, grep { $_ ne $format} keys %{$track->processors}) if $track->can('processors');
 
-		# we include processed formats just here because it only applies to remote + 'I' and other
+		# we include processed formats just here because they only applies to remote + 'I' and other
 		# calls to getConvertCommand2 (seek evaluation & Volatile) rule out this case before
 		foreach (@formats) {
 			$self->wantFormat($_);
@@ -417,7 +417,7 @@ sub open {
 		} elsif (main::INFOLOG && $log->is_info) {
 			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
 		}
-		
+
 		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
 			$transcoder->{'start'} = $self->startOffset($self->seekdata()->{'timeOffset'});
 		}
