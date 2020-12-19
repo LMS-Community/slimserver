@@ -769,7 +769,7 @@ sub parseMp4Header {
 			# re-calculate header all the time (i.e. can't go direct at all)
 			$args->{initial_block_type} = Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS;
 		
-			main::INFOLOG && $log->is_info && $log->debug("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
+			main::INFOLOG && $log->is_info && $log->info("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
 	
 			$query->send_request( {
 				request    => HTTP::Request->new( GET => $url,  [ 'Range' => "bytes=$info-" ] ),
