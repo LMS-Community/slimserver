@@ -730,10 +730,10 @@ sub parseFlacHeader {
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
 
 		# we have valid header, means there will be no alignment unless we seek
-		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK, \&Slim::Formats::FLAC::initiateFrameAlign);
+		$track->processors('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK, \&Slim::Formats::FLAC::initiateFrameAlign);
 	} else {
 		# if we don't have an header, need to always process
-		$track->processor('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, \&Slim::Formats::FLAC::initiateFrameAlign );
+		$track->processors('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, \&Slim::Formats::FLAC::initiateFrameAlign );
 	}	
 
 	# All done
@@ -817,8 +817,8 @@ sub parseMp4Header {
 		}
 		
 		# use process_audio hook & format if set by parser
-		foreach ( keys %{$info->{processor}} ) {
-			$track->processor($_, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, $info->{processor}->{$_});
+		foreach ( keys %{$info->{processors}} ) {
+			$track->processors($_, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, $info->{processors}->{$_});
 		} 
 		
 		# change track attributes if format has been altered
@@ -843,7 +843,7 @@ sub parseMp4Header {
 	
 	# use the audio block to stash the temp file handler
 	$track->initial_block_fh($info->{fh});
-	$track->processor($track->content_type, $args->{initial_block_type} // Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+	$track->processors($track->content_type, $args->{initial_block_type} // Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "mp4: %dHz, %dBits, %dch => bitrate: %dkbps (ofs:%d, len:%d, hdr:%d)",
@@ -942,7 +942,7 @@ sub parseWavAifHeader {
 	
 	# we have a dynamic header but can go direct when not seeking
 	$track->initial_block_fh($info->{fh});
-	$track->processor($type, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
+	$track->processors($type, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 
 	# all done
 	$args->{cb}->( $track, undef, @{$args->{pt} || []} );

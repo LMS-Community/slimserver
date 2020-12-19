@@ -57,7 +57,7 @@ sub request {
 	my $args  = shift;
 	my $song = $args->{'song'};
 	my $track = $song->track;
-	my $processor = $track->processor($song->wantFormat);
+	my $processor = $track->processors($song->wantFormat);
 
 	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
 	if (!$processor || $song->stripHeader) {
@@ -102,7 +102,7 @@ sub request {
 		
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ", 
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
-								  " and processing with ", sprintf("%s", $processor->{'init'} || 'none')); 
+								  $processor->{'init'} ? 'with a processor' : ''); 
 
 	return $self;
 }
@@ -351,7 +351,7 @@ sub canDirectStreamSong {
 	my $direct = $class->canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 	return 0 unless $direct;
 	
-	my $processor = $song->track->processor($song->wantFormat);
+	my $processor = $song->track->processors($song->wantFormat);
 
 	# no header or stripHeader flag has precedence
 	return $direct if $song->stripHeader || !$processor;

@@ -277,7 +277,7 @@ sub parseStream {
 	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 	# MPEG-4 ADTS Scalable Sampling Rate = 104	
 	if ($info->{tracks}->[0] && $info->{tracks}->[0]->{audio_type} == 64) {
-		$info->{processor} = { 'aac' => \&setADTSProcess };
+		$info->{processors} = { 'aac' => \&setADTSProcess };
 	}	
 
 	return $info;

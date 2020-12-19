@@ -69,7 +69,7 @@ my @allAttributes = (qw(
 	);
 	
 	__PACKAGE__->mk_accessor('rw', @allAttributes);
-	__PACKAGE__->mk_accessor('hash', '_processor');
+	__PACKAGE__->mk_accessor('hash', '_processors');
 }
 
 sub init {
@@ -131,19 +131,19 @@ sub comment {
 	return $self->_comment;
 }
 
-sub processor {
+sub processors {
 	my ($self, $type, $initial_block_type, $init) = @_;
 	
-	return $self->_processor unless $type;
+	return $self->_processors unless $type;
 	
 	if (defined $initial_block_type || defined $init) {
-		$self->_processor($type, {
+		$self->_processors($type, {
 					initial_block_type => $initial_block_type,
 					init => $init,
 				} );
 	}
 
-	return $self->_processor($type);
+	return $self->_processors($type);
 }
 
 sub _mergeComments {
@@ -303,7 +303,7 @@ sub new {
 	main::DEBUGLOG && $log->is_debug && $log->debug("$class, $url");
 #	main::DEBUGLOG && $log->logBacktrace();
 	
-	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {}, _processor => {});
+	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {}, _processors => {});
 	$self->init_accessor(remote => Slim::Music::Info::isRemoteURL($url));
 	$self->setAttributes($attributes);
 	
