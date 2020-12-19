@@ -400,6 +400,8 @@ sub open {
 		my @formats = ( $format );
 		push (@formats, grep { $_ ne $format} keys %{$track->processors}) if $track->can('processors');
 
+		# we include processed formats just here because it only applies to remote + 'I' and other
+		# calls to getConvertCommand2 (seek evaluation & Volatile) rule out this case before
 		foreach (@formats) {
 			$self->wantFormat($_);
 			($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
