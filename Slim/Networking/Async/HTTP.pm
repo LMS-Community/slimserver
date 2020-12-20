@@ -64,7 +64,7 @@ my $cookieJar;
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_accessor( rw => qw(
-	uri request response saveAs fh timeout maxRedirect socks
+	uri request response saveAs fh timeout maxRedirect socks options
 ) );
 
 sub init {
@@ -88,6 +88,9 @@ sub new {
 		}
 	}
 
+	$self->options($args->{options});
+	print Dumper("additional socket", $self->options);
+
 	return $self;
 }
 
@@ -107,6 +110,9 @@ sub new_socket {
 		);
 	}
 
+	# merge with user-defined socket parameters
+	push @_, %{$self->options} if $self->options;
+
 	# Create SSL socket if URI is https
 	if ( $self->request->uri->scheme eq 'https' ) {
 		if ( hasSSL() ) {
@@ -122,8 +128,8 @@ sub new_socket {
 			my %args = @_;
 
 			# Failed. Try again with an explicit SNI.
-			$args{SSL_hostname} = $args{Host};
-			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
+			$args{SSL_hostname} = $args{Host} unless defined $args{SSL_hostname};
+			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS') && !defined $args{SSL_verify_mode};
 
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
