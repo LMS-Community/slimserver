@@ -95,6 +95,9 @@ sub new {
 
 sub new_socket {
 	my $self = shift;
+	
+	# merge with user-defined socket parameters
+	push @_, %{$self->options} if $self->options;
 
 	if ( my $proxy = $self->use_proxy ) {
 
@@ -108,9 +111,6 @@ sub new_socket {
 			PeerPort => $pport || 80,
 		);
 	}
-
-	# merge with user-defined socket parameters
-	push @_, %{$self->options} if $self->options;
 
 	# Create SSL socket if URI is https
 	if ( $self->request->uri->scheme eq 'https' ) {
@@ -127,8 +127,8 @@ sub new_socket {
 			my %args = @_;
 
 			# Failed. Try again with an explicit SNI.
-			$args{SSL_hostname} = $args{Host} unless defined $args{SSL_hostname};
-			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS') && !defined $args{SSL_verify_mode};
+			$args{SSL_hostname} //= $args{Host};
+			$args{SSL_verify_mode} //= Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
 
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
