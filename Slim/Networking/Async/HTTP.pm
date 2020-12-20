@@ -89,7 +89,6 @@ sub new {
 	}
 
 	$self->options($args->{options});
-	print Dumper("additional socket", $self->options);
 
 	return $self;
 }
