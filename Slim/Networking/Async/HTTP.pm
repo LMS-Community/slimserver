@@ -7,6 +7,13 @@ package Slim::Networking::Async::HTTP;
 # version 2.
 
 # This class provides an async HTTP implementation.
+# The constructor takes an optional hash with two keys to hash
+# - 'options': set parameters for underlying socket object
+#   Slim::Networking::Async::HTTP->new( { options => {
+#               SSL_cipher_list => 'DEFAULT:!DH',
+#               SSL_verify_mode => Net::SSLeay::VERIFY_NONE } })
+# - 'socks': use a socks proxy to tunnel the request 
+# See code below for better explanation
 
 use strict;
 
@@ -64,7 +71,7 @@ my $cookieJar;
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_accessor( rw => qw(
-	uri request response saveAs fh timeout maxRedirect socks
+	uri request response saveAs fh timeout maxRedirect socks options
 ) );
 
 sub init {
@@ -88,11 +95,16 @@ sub new {
 		}
 	}
 
+	$self->options($args->{options});
+
 	return $self;
 }
 
 sub new_socket {
 	my $self = shift;
+	
+	# merge with user-defined socket parameters
+	push @_, %{$self->options} if $self->options;
 
 	if ( my $proxy = $self->use_proxy ) {
 
@@ -122,8 +134,8 @@ sub new_socket {
 			my %args = @_;
 
 			# Failed. Try again with an explicit SNI.
-			$args{SSL_hostname} = $args{Host};
-			$args{SSL_verify_mode} = Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
+			$args{SSL_hostname} //= $args{Host};
+			$args{SSL_verify_mode} //= Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
 
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
