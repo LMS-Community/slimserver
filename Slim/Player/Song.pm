@@ -64,6 +64,7 @@ my @_playlistCloneAttributes = qw(
 			seekdata initialAudioBlock
 			_canSeek _canSeekError
 			stripHeader
+			wantFormat
 
 			_duration _bitrate _streambitrate _streamFormat
 			_transcoded directstream
@@ -106,14 +107,6 @@ sub new {
 	$url = $track->url;
 
 	main::INFOLOG && $log->info("index $index -> $url");
-
-# XXX - thsi test does not work with last.fm - not sure why it was here in the first place
-#	if (!Slim::Music::Info::isURL($url)) {
-#		logError("[$url] Unrecognized type " . Slim::Music::Info::contentType($url));
-#
-#		logError($client->string('PROBLEM_CONVERT_FILE'));
-#		return undef;
-#	}
 
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 	if (!$handler) {
@@ -403,11 +396,20 @@ sub open {
 		push (@streamFormats, 'I') if (! $wantTranscoderSeek);
 
 		push @streamFormats, ($handler->isRemote && !Slim::Music::Info::isVolatile($handler) ? 'R' : 'F');
+		
+		my @formats = ( $format );
+		push (@formats, grep { $_ ne $format} keys %{$track->processors}) if $track->can('processors');
 
-		($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
+		# we include processed formats just here because they only applies to remote + 'I' and other
+		# calls to getConvertCommand2 (seek evaluation & Volatile) rule out this case before
+		foreach (@formats) {
+			$self->wantFormat($_);
+			($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 			$self,
-			$format,
+			$_,
 			\@streamFormats, [], \@wantOptions);
+			last if $transcoder;
+		}	
 
 		if (! $transcoder) {
 			logError("Couldn't create command line for $format playback for [$url]");

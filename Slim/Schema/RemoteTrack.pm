@@ -34,7 +34,7 @@ tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 
 my @allAttributes = (qw(
 	_url
-	_content_type original_content_type
+	content_type
 	bitrate
 	secs
 	
@@ -42,7 +42,7 @@ my @allAttributes = (qw(
 	
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
-	initial_block_fh initial_block_type audio_initiate
+	initial_block_fh 
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
@@ -69,6 +69,7 @@ my @allAttributes = (qw(
 	);
 	
 	__PACKAGE__->mk_accessor('rw', @allAttributes);
+	__PACKAGE__->mk_accessor('hash', '_processors');
 }
 
 sub init {
@@ -130,16 +131,19 @@ sub comment {
 	return $self->_comment;
 }
 
-sub content_type {
-	my ($self, $ct) = @_;
+sub processors {
+	my ($self, $type, $initial_block_type, $init) = @_;
 	
-	if (!$self->original_content_type || $self->original_content_type eq $self->_content_type) {
-		$self->original_content_type($self->_content_type || $ct);
-	}	
+	return $self->_processors unless $type;
 	
-	$self->_content_type($ct) if $ct;
+	if (defined $initial_block_type || defined $init) {
+		$self->_processors($type, {
+					initial_block_type => $initial_block_type,
+					init => $init,
+				} );
+	}
 
-	return $self->_content_type;
+	return $self->_processors($type);
 }
 
 sub _mergeComments {
@@ -299,7 +303,7 @@ sub new {
 	main::DEBUGLOG && $log->is_debug && $log->debug("$class, $url");
 #	main::DEBUGLOG && $log->logBacktrace();
 	
-	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {});
+	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {}, _processors => {});
 	$self->init_accessor(remote => Slim::Music::Info::isRemoteURL($url));
 	$self->setAttributes($attributes);
 	
@@ -319,8 +323,7 @@ my %localTagMapping = (
 	album                  => 'albumname',
 	rate                   => 'samplerate',
 	age                    => 'timestamp',
-	ct                     => '_content_type',
-	content_type           => '_content_type',
+	ct                     => 'content_type',
 	fs                     => 'filesize',
 	comment                => '_comment',
 	offset                 => 'audio_offset',
