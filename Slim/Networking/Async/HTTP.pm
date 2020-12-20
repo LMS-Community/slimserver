@@ -7,6 +7,13 @@ package Slim::Networking::Async::HTTP;
 # version 2.
 
 # This class provides an async HTTP implementation.
+# The constructor takes an optional hash with two keys to hash
+# - 'options': set parameters for underlying socket object
+#   Slim::Networking::Async::HTTP->new( { options => {
+#               SSL_cipher_list => 'DEFAULT:!DH',
+#               SSL_verify_mode => Net::SSLeay::VERIFY_NONE } })
+# - 'socks': use a socks proxy to tunnel the request 
+# See code below for better explanation
 
 use strict;
 

@@ -356,7 +356,9 @@ my $http = Slim::Networking::SimpleAsyncHTTP->new(
 	{
 		mydata'  => 'foo',
 		cache    => 1,		# optional, cache result of HTTP request
-		expires => '1h',	# optional, specify the length of time to cache
+		expires  => '1h',	# optional, specify the length of time to cache
+		options  => { key/value },  # optional set of key/value pairs for the underlying socket
+		socks    => { key/value },  # optional use of socks tunnel
 	}
 );
 
