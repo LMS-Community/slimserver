@@ -618,7 +618,7 @@ sub alarmSettingsQuery {
 						player => 0,
 						cmd    => [ 'alarm', 'enableall' ],
 					},
-				], 
+				],
 			},
 		},
 	};
@@ -688,7 +688,7 @@ sub alarmSettingsQuery {
 					fadein => 0,
 				},
 			},
-		},		
+		},
 	};
 	push @menu, $fadeInAlarm;
 
@@ -732,7 +732,7 @@ sub alarmUpdateMenu {
 					enabled => 0,
 				},
 			},
-		},		
+		},
 	};
 	push @menu, $onOff;
 
@@ -864,7 +864,7 @@ sub alarmUpdateMenu {
 					repeat => 1,
 				},
 			},
-		},		
+		},
 	};
 	push @menu, $repeatOn;
 
@@ -1013,7 +1013,7 @@ sub alarmVolumeSettings {
 	my $id              = shift || 0;
 	my $string          = shift;
 
-	my $return = { 
+	my $return = {
 		text      => $string,
 		actions   => {
 			go => {
@@ -1094,13 +1094,13 @@ sub endOfTrackSleepCommand {
 
 	if ($client->isPlaying()) {
 
-		# calculate the time remaining in seconds 
+		# calculate the time remaining in seconds
 		my $dur = $client->controller()->playingSongDuration();
 		my $remaining = $dur - Slim::Player::Source::songTime($client);
 		$client->execute( ['sleep', $remaining ] );
 	} else {
 		$request->client->showBriefly(
-			{ 
+			{
 			'jive' =>
 				{
 					'type'    => 'popupplay',
@@ -1297,8 +1297,8 @@ sub crossfadeSettingsQuery {
 	my $client  = $request->client();
 	my $val     = $prefs->client($client)->get('transitionType');
 	my @strings = (
-		'TRANSITION_NONE', 'TRANSITION_CROSSFADE', 
-		'TRANSITION_FADE_IN', 'TRANSITION_FADE_OUT', 
+		'TRANSITION_NONE', 'TRANSITION_CROSSFADE',
+		'TRANSITION_FADE_IN', 'TRANSITION_FADE_OUT',
 		'TRANSITION_FADE_IN_OUT'
 	);
 	my @menu;
@@ -1320,7 +1320,7 @@ sub replaygainSettingsQuery {
 	my $client  = $request->client();
 	my $val     = $prefs->client($client)->get('replayGainMode');
 	my @strings = (
-		'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
+		'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN',
 		'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN'
 	);
 	my @menu;
@@ -1534,7 +1534,7 @@ sub playerSettingsMenu {
 				player => 0,
 			},
 		},
-	};	
+	};
 
 	# sync menu
 	push @menu, syncMenuItem($client, 1);
@@ -1597,7 +1597,7 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-		};	
+		};
 	}
 
 	# replay gain (aka volume adjustment)
@@ -1614,12 +1614,12 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
-		};	
+		};
 	}
 
-	# brightness settings for players with displays 
+	# brightness settings for players with displays
 	if ( $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay') ) {
-		push @menu, 
+		push @menu,
 		{
 			stringToken    => 'JIVE_PLAYER_DISPLAY_SETTINGS',
 			id             => 'squeezeboxDisplaySettings',
@@ -1641,9 +1641,9 @@ sub playerSettingsMenu {
 		},
 	}
 
-	# text size settings for players with graphical displays 
+	# text size settings for players with graphical displays
 	if ( $client->isPlayer() && $client->display->isa('Slim::Display::Graphics') ) {
-		push @menu, 
+		push @menu,
 		{
 			text           => $client->string("TEXTSIZE"),
 			id             => 'settingsPlayerTextsize',
@@ -1727,7 +1727,7 @@ sub minAutoBrightness {
 
 	push @brightness_settings, $slider;
 
-	my $return = { 
+	my $return = {
 		text      => $string,
 		count     => scalar(@brightness_settings),
 		offset    => 0,
@@ -1761,7 +1761,7 @@ sub sensAutoBrightness {
 
 	push @brightness_settings, $slider;
 
-	my $return = { 
+	my $return = {
 		text      => $string,
 		count     => scalar(@brightness_settings),
 		offset    => 0,
@@ -1884,7 +1884,7 @@ sub repeatSettings {
 	my @translated_repeat_strings = map { ucfirst($client->string($_)) } @repeat_strings;
 	my @repeatChoiceActions;
 	for my $i (0..$#repeat_strings) {
-		push @repeatChoiceActions, 
+		push @repeatChoiceActions,
 		{
 			player => 0,
 			cmd    => ['playlist', 'repeat', "$i"],
@@ -1921,7 +1921,7 @@ sub shuffleSettings {
 	my @translated_shuffle_strings = map { ucfirst($client->string($_)) } @shuffle_strings;
 	my @shuffleChoiceActions;
 	for my $i (0..$#shuffle_strings) {
-		push @shuffleChoiceActions, 
+		push @shuffleChoiceActions,
 		{
 			player => 0,
 			cmd => ['playlist', 'shuffle', "$i"],
@@ -2044,7 +2044,7 @@ sub getPlayersToSyncWith() {
 	}
 
 	for my $syncOption (sort { $a->{name} cmp $b->{name} } @syncList) {
-		push @return, { 
+		push @return, {
 			text  => $syncOption->{name},
 			radio => ($syncOption->{isSyncedWith} == 1) + 0,
 			actions  => {
@@ -2057,13 +2057,13 @@ sub getPlayersToSyncWith() {
 						unsyncWith            => $currentlySyncedWith,
 					},
 				},
-			},		
+			},
 			nextWindow => 'refresh',
-		};	
+		};
 	}
-	
+
 	if ( $client->isSynced() ) {
-		push @return, { 
+		push @return, {
 			text  => $client->string('DO_NOT_SYNC'),
 			radio => 0,
 			actions  => {
@@ -2076,14 +2076,14 @@ sub getPlayersToSyncWith() {
 						unsyncWith            => $currentlySyncedWith,
 					},
 				},
-			},		
+			},
 			nextWindow => 'refresh',
-		};	
+		};
 	}
 
 	return \@return;
 }
-	
+
 sub jiveSyncCommand {
 	my $request = shift;
 	my $client  = $request->client();
@@ -2208,10 +2208,11 @@ sub firmwareUpgradeQuery {
 		# Bug 6828, Send relative firmware URLs for Jive versions which support it
 		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
 
-		# return full url when running some systems - we'll serve the direct download link from squeezenetwork
-		if ( $cur_rev >= 1659 && !Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
+		# do not return full url unless requested, and url isn't https, which players can't handle
+		if ( $cur_rev >= 1659 && (!Slim::Utils::OSDetect->getOS()->directFirmwareDownload() || $url =~ /^https:/) ) {
 			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
 		}
+		# return full url when running some systems - we'll serve the direct download link from squeezenetwork
 		else {
 			$request->addResult( firmwareUrl => $url );
 		}
@@ -2244,7 +2245,7 @@ sub playerPower {
 
 	my $name  = $client->name();
 	my $power = $client->power();
-	my @return; 
+	my @return;
 	my ($text, $action);
 
 	if ($power == 1) {
@@ -2391,7 +2392,7 @@ sub globalSearchMenu {
 		},
 	});
 
-	return \@searchMenu;	
+	return \@searchMenu;
 }
 
 # send a notification for menustatus
@@ -2416,7 +2417,7 @@ sub jivePlaylistsCommand {
 	my $url        = $request->getParam('url');
 	my $command    = $request->getParam('_cmd');
 	my $playlistID = $request->getParam('playlist_id');
-	my $token      = uc($command); 
+	my $token      = uc($command);
 	my @delete_menu= (
 		{
 			text    => $client->string('CANCEL'),
@@ -2592,7 +2593,7 @@ sub jivePresetsMenu {
 	$request->addResult('item_loop', \@presets_menu);
 	$request->setStatusDone();
 
-} 
+}
 
 
 sub jiveFavoritesCommand {
@@ -2694,7 +2695,7 @@ sub jiveFavoritesCommand {
 
 	$request->setStatusDone();
 
-} 
+}
 
 sub _jiveNoResults {
 	my $request = shift;
@@ -2753,7 +2754,7 @@ sub recentSearchMenu {
 			window => {
 				text => $client->string('RECENT_SEARCHES'),
 			},
-		};	
+		};
 		if (!$batch) {
 			_notifyJive(\@recentSearchMenu, $client);
 		}
@@ -2959,7 +2960,7 @@ sub appMenus {
 				if ( my ($globalMenu) = grep {
 					( $_->{uuid} && lc($_->{uuid}) eq lc($pluginInfo->{id}) )
 					|| ( $_->{text} && $_->{text} eq $pluginInfo->{name} )
-				} @appMenus ) {				
+				} @appMenus ) {
 					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
 
 					# Clone the existing menu and set the node
