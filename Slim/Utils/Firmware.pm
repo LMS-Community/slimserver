@@ -163,7 +163,7 @@ sub init_version_done {
 
 	# on some systems we don't download firmware files
 	# we'll let the player download them from squeezenetwork directly
-	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
+	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() && BASE() !~ /^https:/ ) {
 
 		$firmwares->{$model} = {
 			version  => $ver,
@@ -178,7 +178,7 @@ sub init_version_done {
 
 		my $fw_file = catdir( $updatesDir, "${model}_${ver}_r${rev}.bin" );
 
-		if ( !-e $fw_file ) {		
+		if ( !-e $fw_file ) {
 			main::INFOLOG && $log->info("Downloading $model firmware to: $fw_file");
 
 			downloadAsync( $fw_file, {cb => \&init_fw_done, pt => [$fw_file, $model]} );
@@ -245,7 +245,7 @@ Called if firmware download failed.  Checks if another firmware exists in cache.
 
 =cut
 
-sub init_fw_error {	
+sub init_fw_error {
 	my $model = shift || 'jive';
 
 	main::INFOLOG && $log->info("$model firmware download had an error");
@@ -302,14 +302,14 @@ sub url {
 		# don't trigger download more than once
 		$firmwares->{$model} = {};
 		init_firmware_download($model);
-		return unless ($firmwares->{$model}->{file});	# Will be available immediately if custom f/w 
+		return unless ($firmwares->{$model}->{file});	# Will be available immediately if custom f/w
 	}
 
 	# on some systems return the direct link from SqueezeNetwork
-	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
+	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() && BASE() !~ /^https:/ ) {
 		return BASE() . $::VERSION . '/' . $model
-			. '_' . $firmwares->{$model}->{version} 
-			. '_r' . $firmwares->{$model}->{revision} 
+			. '_' . $firmwares->{$model}->{version}
+			. '_r' . $firmwares->{$model}->{revision}
 			. '.bin';
 	}
 
@@ -342,7 +342,7 @@ sub need_upgrade {
 
 	# Force upgrade if the version doesn't match, or if the rev is older
 	# Allows newer firmware to work without forcing a downgrade
-	if ( 
+	if (
 		( $firmwares->{$model}->{version} ne $cur_version )
 		||
 		( $firmwares->{$model}->{revision} > $cur_rev )
@@ -566,7 +566,7 @@ sub downloadAsyncError {
 	my $pt   = $http->params('pt');
 
 	# Clean up
-	unlink "$file.tmp" if -e "$file.tmp"; 
+	unlink "$file.tmp" if -e "$file.tmp";
 
 	# If error was "Unable to open $file for writing", downloading will never succeed so just give up
 	# Same for "Unable to write" if we run out of disk space, for example
