@@ -347,7 +347,7 @@ sub setADTSProcess {
 			$pos += ($atoms{$type} || $len) - 8;
 		}	
 	
-		last if $codec->{frame_size} || $codec->{entries} && $codec->{channel_config};
+		last if ($codec->{frame_size} || $codec->{entries}) && $codec->{channel_config};
 	}	
 	
 	# don't want to send a header when doing AAC demuxs
