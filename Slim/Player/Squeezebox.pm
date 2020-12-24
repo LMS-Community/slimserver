@@ -705,12 +705,8 @@ sub stream_s {
 		
 		# container type and bitstream format: '1' (adif), '2' (adts), '3' (latm within loas), 
 		# '4' (rawpkts), '5' (mp4ff), '6' (latm within rawpkts)
-		#
-		# This is a hack that assumes:
-		# (1) If the original content-type of the track is MP4 or SLS then we are streaming an MP4 file (without any transcoding);
-		# (2) All other AAC streams will be adts.
-		
-		$pcmsamplesize   = Slim::Music::Info::contentType($track) =~ /^(?:mp4|sls)$/ ? '5' : '2';
+
+		$pcmsamplesize   =  $controller->song->wantFormat ne 'aac' ? '5' : '2';
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
