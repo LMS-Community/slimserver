@@ -733,6 +733,7 @@ sub requestString {
 		
 		if ($first) {
 			$request .= $CRLF . "Range: bytes=$first-";
+			$request .= $song->track->audio_offset + $song->track->audio_size - 1 if $song->track->audio_size;
 
 			if (defined $seekdata->{timeOffset}) {
 				# Fix progress bar
