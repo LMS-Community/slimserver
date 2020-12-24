@@ -723,17 +723,17 @@ sub requestString {
 		$request .= $CRLF . "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'');
 	}
 
-	# If seeking, add Range header
+	# Always add Range to exclude trailing metadata or garbage (aif/mp4...)
 	if ($client) {
 		my $song = $client->streamingSong;
 		$client->songBytes(0);
 		
 		my $first = $seekdata->{restartOffset} || int( $seekdata->{sourceStreamOffset} );
 		$first ||= $song->track->audio_offset if $song->stripHeader || defined $song->initialAudioBlock;
+		$request .= $CRLF . 'Range: bytes=' . ($first || 0) . '-';
+		$request .= $song->track->audio_offset + $song->track->audio_size - 1 if $song->track->audio_size;
 		
 		if ($first) {
-			$request .= $CRLF . "Range: bytes=$first-";
-			$request .= $song->track->audio_offset + $song->track->audio_size - 1 if $song->track->audio_size;
 
 			if (defined $seekdata->{timeOffset}) {
 				# Fix progress bar
