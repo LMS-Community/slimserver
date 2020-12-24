@@ -732,7 +732,7 @@ sub requestString {
 		$first ||= $song->track->audio_offset if $song->stripHeader || defined $song->initialAudioBlock;
 		
 		if ($first) {
-			$request .= $CRLF . 'Range: bytes=' . ($first || 0) . '-' . ($song->track->audio_size || '');
+			$request .= $CRLF . 'Range: bytes=' . ($first || 0) . '-';
 
 			if (defined $seekdata->{timeOffset}) {
 				# Fix progress bar
