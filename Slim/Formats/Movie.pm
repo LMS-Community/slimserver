@@ -272,7 +272,10 @@ sub parseStream {
 
 	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
 	$info->{fh} = $fh;
+	
+	# the offset is *after* the mdat atom, make size consistent
 	$info->{audio_offset} = $args->{_mdat_} + 8;
+	$info->{audio_size} -= 8;
 	
 	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 	# MPEG-4 ADTS Scalable Sampling Rate = 104	
