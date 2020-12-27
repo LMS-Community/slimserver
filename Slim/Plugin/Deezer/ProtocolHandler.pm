@@ -503,6 +503,7 @@ sub _gotTrack {
 
 	$info->{bitrate} = _getBitratePlaceholder($info->{url});
 	$info->{type}    = _getFormatPlaceholder($info->{url});
+	my ($trackId, $format) = _getStreamParams( $info->{url} );
 
 	# as we don't know the format for a flow/radio station, let's keep the format of the last played track to make assumptions later on...
 	$prefs->set('latestFormat', __PACKAGE__->getFormatForURL($info->{url}));
@@ -532,12 +533,27 @@ sub _gotTrack {
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
 
-	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
-	# When done, callback will continue on to playback
-	my $dns = Slim::Networking::Async->new;
-	$dns->open( {
-		Host        => URI->new( $info->{url} )->host,
-		Timeout     => 3, # Default timeout of 10 is too long,
+	# When doing flac, parse the header to be able to seek (IP3K)
+	if ($format =~ /fla?c/i) {
+		my $http = Slim::Networking::Async::HTTP->new;
+		$http->send_request( {
+			request     => HTTP::Request->new( GET => $info->{url} ),
+			onStream    => \&Slim::Utils::Scanner::Remote::parseFlacHeader,
+			onError     => sub {
+				my ($self, $error) = @_;
+				$log->warn( "could not find $format header $error" );
+				$params->{successCb}->();
+			},
+			passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],
+		} );
+	} 
+	else {
+		# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
+		# When done, callback will continue on to playback
+		my $dns = Slim::Networking::Async->new;
+		$dns->open( {
+			Host        => URI->new( $info->{url} )->host,
+			Timeout     => 3, # Default timeout of 10 is too long,
 		                  # by the time it fails player will underrun and stop
 		onDNS       => $params->{successCb},
 		onError     => $params->{successCb}, # even if it errors, keep going
