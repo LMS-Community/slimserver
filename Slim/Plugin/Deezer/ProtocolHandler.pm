@@ -555,10 +555,11 @@ sub _gotTrack {
 			Host        => URI->new( $info->{url} )->host,
 			Timeout     => 3, # Default timeout of 10 is too long,
 		                  # by the time it fails player will underrun and stop
-		onDNS       => $params->{successCb},
-		onError     => $params->{successCb}, # even if it errors, keep going
-		passthrough => [],
-	} );
+			onDNS       => $params->{successCb},
+			onError     => $params->{successCb}, # even if it errors, keep going
+			passthrough => [],
+		} );
+	}	
 
 	# Watch for playlist commands
 	Slim::Control::Request::subscribe(
@@ -606,14 +607,6 @@ sub _playlistCallback {
 
 		Slim::Music::Info::setCurrentTitle( $song->track()->url, $title );
 	}
-}
-
-sub canDirectStreamSong {
-	my ( $class, $client, $song ) = @_;
-
-	# We need to check with the base class (HTTP) to see if we
-	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL($song->streamUrl()) );
 }
 
 # URL used for CLI trackinfo queries
