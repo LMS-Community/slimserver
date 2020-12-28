@@ -87,7 +87,7 @@ sub loadConversionTables {
 			$line =~ s/\s*$//o;
 
 			if ($line =~ /^proxy\s+(\S+)\s+(\S+)/i) {
-				$proxies{$1} = $2;
+				push @{$proxies{$1}}, $2;
 			}
 			elsif ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/) {
 
@@ -365,11 +365,11 @@ sub getConvertCommand2 {
 	}
 
 	if ($prefs->get('prioritizeNative')) {
-		my $proxy = $proxies{$type} || $type;
-		my @types = $proxy eq 'wav' ? ('pcm', $proxy) : ($proxy);
+		my @types = $proxies{$type} ? @{$proxies{$type}} : ($type);
+		unshift @types, 'pcm' if grep /wav/, @types;	
 		foreach my $type (@types) {
 			my ($format) = grep /$type/, @supportedformats;
-			@supportedformats = ($format, grep { $_ !~ $proxy } @supportedformats) if $format;
+			@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
 		}	
 	}
 
