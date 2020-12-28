@@ -167,10 +167,10 @@ sub loadConversionTables {
 # %d - samplerate: samples/s
 # %D - samplerate: ksamples/s
 
-# %C, $CHANNELS$   - channel count
+# %C, $CHANNELS$   - source channel count
 # %c, $OCHANNELS$  - output channel count
-#   , $SAMPLESIZE$ - sample size (in bits)
-#   , $SAMPLERATE$ - sample rate (in Hz)
+#     $SAMPLESIZE$ - source sample size (in bits)
+#     $SAMPLERATE$ - source sample rate (in Hz)
 # %i               - clientid
 # %I, $CLIENTID$   - clientid     ( : or . replaced by - )
 # %p               - player model
