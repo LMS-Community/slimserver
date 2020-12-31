@@ -14,7 +14,7 @@ use Slim::Utils::Log;
 
 use constant GET_ARTIST_URL => '/api/wimp/v1/opml/getArtist?id=%s&name=%s';
 
-my $log = logger('plugin.wimp');
+my $log = logger('plugin.tidal');
 
 
 sub getArtistMenu {
