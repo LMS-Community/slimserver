@@ -14,7 +14,7 @@ use Slim::Utils::Log;
 
 use constant GET_ARTIST_URL => '/api/deezer/v1/opml/artist_by_name_or_id?id=%s&name=%s';
 
-my $log = logger('plugin.wimp');
+my $log = logger('plugin.deezer');
 
 
 sub getArtistMenu {
