@@ -818,9 +818,15 @@ sub objectForUrl {
 
 	# Pull the track object for the DB
 	my $track = $self->_retrieveTrack($url, $playlist);
+	my $isRemote = Slim::Music::Info::isRemoteURL($url);
+
+	# Check to see if we have a remote track stored in our database
+	if (!$track && $isRemote && !$create && !$readTag) {
+		$track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+	}
 
 	# Bug 14648: Check to see if we have a playlist with remote tracks
-	if (!$track && defined $playlistId && Slim::Music::Info::isRemoteURL($url)) {
+	if (!$track && defined $playlistId && $isRemote) {
 
 		if (my $playlistObj = $self->find('Playlist', $playlistId)) {
 			# Parse the playlist file to cause the RemoteTrack objects to be created
