@@ -28,8 +28,6 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp4' }
 
-sub formatOverride { 'aac' }
-
 # default buffer 3 seconds of 192k audio
 sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
 
