@@ -15,6 +15,7 @@ use Slim::Utils::Progress;
 use Slim::Plugin::OnlineLibrary::Libraries;
 
 my $prefs = preferences('plugin.onlinelibrary');
+my $genreMappings = preferences('plugin.onlinelibrary-genres')->all() || {};
 
 sub initPlugin {
 	my $class = shift;
@@ -33,7 +34,7 @@ sub initPlugin {
 
 	my $mappings = $prefs->get('genreMappings');
 
-	return unless scalar @$mappings;
+	return unless scalar @$mappings || keys %$genreMappings;
 
 	Slim::Music::Import->addImporter( $class, {
 		type   => 'post',
@@ -105,7 +106,6 @@ sub startScan {
 
 	Slim::Schema->forceCommit;
 
-	my $genreMappings = preferences('plugin.onlinelibrary-genres');
 	my $sql = q(SELECT albums.id, albums.title, albums.titlesearch, contributors.name, contributors.namesearch
 					FROM albums JOIN contributors ON contributors.id = albums.contributor
 					WHERE albums.extid IS NOT NULL;);
@@ -130,7 +130,7 @@ sub startScan {
 		Slim::Schema->forceCommit;
 
 		my $key = md5_hex("$titlesearch||$namesearch");
-		if (my $genreName = $genreMappings->get($key)) {
+		if (my $genreName = $genreMappings->{$key}) {
 			$tracks_sth->execute($albumId);
 
 			while ($tracks_sth->fetch) {
