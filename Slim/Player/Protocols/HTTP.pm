@@ -698,8 +698,11 @@ sub requestString {
 	# Although the port can be part of the Host: header, some hosts (such
 	# as online.wsj.com don't like it, and will infinitely redirect.
 	# According to the spec, http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-	# The port is optional if it's 80, so follow that rule.
-	my $host = $port == 80 ? $server : "$server:$port";
+	# The port is optional if it's default to the service requested, so follow that rule.
+	my $host = $server;
+	if ( $port != ( 80 || 443 ) ) {
+		$host .= ":" . $port;
+	}
 
 	# Special case, for the fallback-alarm, disable Icy Metadata, or our own
 	# server will try and send it
