@@ -5652,6 +5652,7 @@ sub _getTagDataForTracks {
 		$contrib_sth->execute;
 
 		my %values;
+		my $separator = $tags =~ /AA/ ? ',' : ', ';
 		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
 			$values{$track} ||= {};
 			my $role_info = $values{$track}->{$role} ||= {};
@@ -5659,7 +5660,7 @@ sub _getTagDataForTracks {
 			# XXX: what if name has ", " in it?
 			utf8::decode($name);
 			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
-			$role_info->{names} .= $role_info->{names} ? ', ' . $name : $name;
+			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
 		}
 
 		my $want_names = $tags =~ /A/;

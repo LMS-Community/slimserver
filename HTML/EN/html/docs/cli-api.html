@@ -4975,7 +4975,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
-			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
+			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma and space (', ') separated list of names.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>AA</b>
+		</td>
+		<td>
+			&lt;role&gt;
+		</td>
+		<td>
+			This is like "A", but without the space after the comma. This should simplify parsing/splitting when required.
 		</td>
 	</tr>
 	<tr>
@@ -5318,7 +5329,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&lt;role&gt;_ids
 		</td>
 		<td>
-			For each role as defined above, the list of ids.
+			For each role as defined above, the list of ids (comma separated).
 		</td>
 	</tr>
 	<tr>

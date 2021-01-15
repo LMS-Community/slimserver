@@ -6,7 +6,7 @@ Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
 var SqueezeJS = {
 	Strings : new Array(),
 	string : function(s){ return this.Strings[s]; },
-	
+
 	contributorRoles : new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist'),
 
 	Controller : null
@@ -32,7 +32,7 @@ function _init() {
 		catch(e) {
 			break;
 		}
-	
+
 		if (p == p.parent)
 			break;
 
@@ -44,14 +44,14 @@ function _init() {
 	Ext.apply(SqueezeJS.Controller, {
 		observers : null,
 		showBrieflyCache : '',
-	
+
 		init : function(o){
 			Ext.apply(this, o);
 
 			Ext.applyIf(this, {
 				'_server': ''
 			})
-			
+
 			this._initPlayerStatus();
 
 			this.player = -1;
@@ -75,31 +75,31 @@ function _init() {
 				name : 'playerstatus',
 				timeout : 5000,
 				fn : function(self){
-	
+
 					if (this.player && this.player != -1) {
-	
+
 						this.playerRequest({
 							params: [ "status", "-", 1, "tags:uB" ],
-				
+
 							// set timer
 							callback: function(){
 								self.timer.delay(self.timeout);
 							},
-				
+
 							success: function(response){
 								if (response && response.responseText) {
 									response = Ext.util.JSON.decode(response.responseText);
-		
+
 									// only continue if we got a result and player
 									if (response.result && response.result.player_connected) {
 										this.fireEvent('buttonupdate', response.result);
 
 										if (response.result.time)
 											this.playerStatus.playtime = parseInt(response.result.time);
-		
+
 										if (response.result.duration)
 											this.playerStatus.duration = parseInt(response.result.duration);
-		
+
 										// check whether we need to update our song info & playlist
 										if (this._needUpdate(response.result)){
 											this.getStatus();
@@ -117,41 +117,41 @@ function _init() {
 									if ( response.result && (this.playerStatus.rescan != response.result.rescan) ) {
 										this.playerStatus.rescan = response.result.rescan;
 										this.fireEvent('scannerupdate', response.result);
-										
+
 										var updater = this.observers.get('serverstatus');
 										if (updater)
 											updater.timer.delay(750);
 									}
 								}
 							},
-				
+
 							scope: this
 						})
 					}
-	
+
 					else {
 						self.timer.delay(self.timeout);
 					}
-			
+
 				}
 			});
-	
+
 			this.addObserver({
 				name : 'serverstatus',
 				timeout : 10000,
 				fn : function(self){
-	
+
 					this.request({
 						params: [ '', [ "serverstatus", 0, 999 ] ],
-			
+
 						// set timer
 						callback: function(){
 							self.timer.delay(this.player && !this.playerStatus.rescan ? 30000 : self.timeout);
 						},
-			
+
 						success: function(response){
 							this.selectPlayer(this._parseCurrentPlayerInfo(response));
-							
+
 							response = Ext.util.JSON.decode(response.responseText);
 							if (response && response.result) {
 								this.fireEvent('serverstatus', response.result);
@@ -160,42 +160,42 @@ function _init() {
 									this.playerStatus.rescan = response.result.rescan;
 									this.fireEvent('scannerupdate', response.result);
 								}
-								
+
 								if (response.result.lastscanfailed) {
 									this.showBriefly(response.result.lastscanfailed);
 								}
 							}
 						},
-			
+
 						scope: this
 					})
-			
+
 				}
 			});
-	
+
 			this.addObserver({
 				name : 'playtimeticker',
 				timeout : 950,
 				fn : function(self){
-					if (this.playerStatus.mode == 'play' && this.playerStatus.duration > 0 
+					if (this.playerStatus.mode == 'play' && this.playerStatus.duration > 0
 						&& this.playerStatus.playtime >= this.playerStatus.duration-1
 						&& this.playerStatus.playtime <= this.playerStatus.duration + 2)
 						this.getStatus();
-	
+
 					// force 0 for current time when stopped
 					if (this.playerStatus.mode == 'stop')
 						this.playerStatus.playtime = 0;
-						
+
 					this.fireEvent('playtimeupdate', {
 						current: this.playerStatus.playtime,
 						duration: this.playerStatus.duration,
 						remaining: this.playerStatus.duration ? parseInt(this.playerStatus.playtime) - this.playerStatus.duration : 0
 					})
-	
+
 					// only increment interim value if playing and not scanning (FWD/RWD)
 					if (this.playerStatus.mode == 'play' && this.playerStatus.rate == 1)
 						this.playerStatus.playtime++;
-	
+
 					self.timer.delay(self.timeout);
 				}
 			});
@@ -248,20 +248,20 @@ function _init() {
 		addObserver : function(config){
 			if (!this.observers)
 				this.observers = new Ext.util.MixedCollection();
-	
+
 			config.timer = new Ext.util.DelayedTask(config.fn, this, [ config ]);
 			config.timer.delay(0);
 			this.observers.add(config.name, config);
 		},
-		
+
 		updateObserver : function(name, config) {
 			var o = this.observers.get(name);
-			
+
 			if (o) {
 				Ext.apply(o, config);
 			}
 		},
-	
+
 		updateAll : function(){
 			if (this.observers){
 				this.playerStatus.power = null;
@@ -270,7 +270,7 @@ function _init() {
 				});
 			}
 		},
-	
+
 		// different kind of requests to the server
 		request : function(config){
 			// shortcut for .request('http://...') calls
@@ -282,7 +282,7 @@ function _init() {
 
 			if (config.showBriefly)
 				this.showBriefly(config.showBriefly);
-	
+
 			Ext.Ajax.request({
 				url: this.getBaseUrl() + (config.url || '/jsonrpc.js'),
 				method: config.method ? config.method : 'POST',
@@ -298,9 +298,9 @@ function _init() {
 				scope: config.scope || this
 			});
 		},
-	
+
 		playerRequest : function(config){
-			if (this.getPlayer()) {			
+			if (this.getPlayer()) {
 				config.params = [
 					this.player,
 					config.params
@@ -308,7 +308,7 @@ function _init() {
 				this.request(config);
 			}
 		},
-	
+
 		togglePause : function(dontUpdate) {
 			if (this.isPaused()) {
 				this.playerControl(['play'], dontUpdate);
@@ -324,7 +324,7 @@ function _init() {
 				success: function(response){
 					this.playerStatus.dontUpdate = dontUpdate;
 					this.getStatus();
-		
+
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 						if (response && response.result && response.result.text) {
@@ -335,7 +335,7 @@ function _init() {
 				params: action
 			});
 		},
-	
+
 		urlRequest : function(myUrl, updateStatus, showBriefly) {
 			this.request({
 				url: myUrl,
@@ -348,17 +348,17 @@ function _init() {
 				showBriefly: showBriefly
 			});
 		},
-		
+
 		playlistRequest : function(param, reload) {
 			this.urlRequest('/status_header.html?' + param + 'ajaxRequest=1&force=1', true);
 			if (reload)
 				this.getStatus();
 		},
-	
+
 		getStatus : function(){
 			if (this.player) {
 				this.playerRequest({
-					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLNJ" ],
+					params: [ "status", "-", 1, "tags:cgAABbehldiqtyrSSuoKLNJ" ],
 					failure: this._updateStatus,
 					success: this._updateStatus,
 					scope: this
@@ -377,7 +377,7 @@ function _init() {
 				return;
 
 			response = response.result;
-			
+
 			var playlistchange = this._needUpdate(response) && Ext.get('playList');
 
 			this.playerStatus = {
@@ -404,21 +404,21 @@ function _init() {
 			this.fireEvent('playerstatechange', response);
 			if (playlistchange)
 				this.fireEvent('playlistchange', response);
-	
+
 		},
-	
+
 		_needUpdate : function(result) {
-			// the dontUpdate flag allows us to have the timestamp check ignored for one action 
+			// the dontUpdate flag allows us to have the timestamp check ignored for one action
 			// used to prevent updates during d'n'd
 			if (this.playerStatus.dontUpdate) {
 				this.playerStatus.timestamp = result.playlist_timestamp;
 				this.playerStatus.dontUpdate = false;
 			}
-	
+
 			var needUpdate = (result.power != null && (result.power != this.playerStatus.power));
 			needUpdate |= (result.mode != null && result.mode != this.playerStatus.mode);                                   // play/paus mode
 			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > this.playerStatus.timestamp);   // playlist: time of last change
-			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != this.playerStatus.index);      // the currently playing song's position in the playlist 
+			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != this.playerStatus.index);      // the currently playing song's position in the playlist
 			needUpdate |= (result.current_title != null && result.current_title != this.playerStatus.current_title);        // title (eg. radio stream)
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != this.playerStatus.title);         // songtitle?
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != this.playerStatus.track);           // track url
@@ -427,7 +427,7 @@ function _init() {
 			needUpdate |= (result.rate != null && result.rate != this.playerStatus.rate);                                   // song is scanning (ffwd/frwd)
 			needUpdate |= (result['playlist repeat'] != null && result['playlist repeat'] != this.playerStatus.repeat);
 			needUpdate |= (result.playlist_tracks != this.playerStatus.playlist_tracks);
-	
+
 			return needUpdate;
 		},
 
@@ -459,34 +459,34 @@ function _init() {
 
 			this.playerControl(['mixer', 'volume', amount]);
 		},
-	
+
 		selectPlayer : function(playerobj){
 			if (typeof playerobj == 'object') {
-				this._firePlayerSelected(playerobj);				
+				this._firePlayerSelected(playerobj);
 			}
 			else {
 				this._initPlayerStatus();
 				this.request({
 					params: [ '', [ "serverstatus", 0, 999 ] ],
-	
+
 					success: function(response){
 						this._firePlayerSelected(this._parseCurrentPlayerInfo(response, playerobj));
 					},
-		
+
 					scope: this
-				});				
+				});
 			}
 		},
 
 		_firePlayerSelected : function(playerobj){
 			if (playerobj && playerobj.playerid) {
-				if ((playerobj.playerid != this.player && encodeURIComponent(playerobj.playerid) != this.player) 
+				if ((playerobj.playerid != this.player && encodeURIComponent(playerobj.playerid) != this.player)
 					|| this.player == -1) {
-					
+
 					var oldPlayer = this.player != -1 ? {
 						playerid: this.player
 					} : null;
-					
+
 					this._initPlayerStatus();
 					this.fireEvent('playerselected', playerobj, oldPlayer);
 				}
@@ -505,7 +505,7 @@ function _init() {
 			activeplayer = activeplayer || SqueezeJS.getCookie('Squeezebox-player');
 			return this.parseCurrentPlayerInfo(response, activeplayer);
 		},
-		
+
 		parseCurrentPlayerInfo: function(result, activeplayer) {
 			if (result && result.players_loop) {
 				var players_loop = result.players_loop;
@@ -513,13 +513,13 @@ function _init() {
 					if (players_loop[x].playerid == activeplayer || encodeURIComponent(players_loop[x].playerid) == activeplayer)
 						return players_loop[x];
 				}
-			}		
+			}
 		},
 
 		getPlayer : function() {
 			if (SqueezeJS.Controller.player == null || SqueezeJS.Controller.player == -1)
 				return;
-			
+
 			SqueezeJS.Controller.player = String(SqueezeJS.Controller.player).replace(/%3A/gi, ':');
 			return SqueezeJS.Controller.player;
 		},
@@ -527,35 +527,35 @@ function _init() {
 		isPaused : function() {
 			if (this.player && this.playerStatus.mode == 'pause') {
 				return true;
-			} 
+			}
 			return false;
 		},
 
 		isPlaying : function() {
 			if (this.player && this.playerStatus.mode == 'play') {
 				return true;
-			} 
+			}
 			return false;
 		},
 
 		isStopped : function() {
 			if (this.player && this.playerStatus.mode == 'stop') {
 				return true;
-			} 
+			}
 			return false;
 		},
 
 		hasPlaylistTracks: function() {
 			if (!this.player || !this.playerStatus)
 				return;
-				
+
 			return parseInt(this.playerStatus.playlist_tracks) > 0 ? true : false;
 		},
 
 		getBaseUrl: function() {
 			return this._server || '';
 		},
-		
+
 		setBaseUrl: function(server) {
 			if (typeof server == 'object' && server.ip && server.port) {
 				this._server = 'http://' + server.ip + ':' + server.port;
@@ -580,18 +580,18 @@ Ext.apply(SqueezeJS, {
 				newStrings += strings[x] + ',';
 			}
 		}
-		
+
 		if (newStrings > '') {
 			newStrings = newStrings.replace(/,$/, '');
 			this.Controller.request({
 				params: [ '', [ 'getstring', newStrings ] ],
 				scope: this,
-				
+
 				success: function(response) {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 						for (x in response.result) {
-							this.Strings[x.toLowerCase()] = response.result[x]; 
+							this.Strings[x.toLowerCase()] = response.result[x];
 						}
 					}
 				}
@@ -656,14 +656,14 @@ SqueezeJS.SonginfoParser = {
 			if (result.playlist_loop[0].album) {
 				if (result.playlist_loop[0].album_id)
 					id = result.playlist_loop[0].album_id;
-	
+
 				album = result.playlist_loop[0].album;
 			}
-	
+
 			else if (result.playlist_loop[0].remote_title && !noRemoteTitle)
 				album = result.playlist_loop[0].remote_title;
-	
-			else if (result.current_title) 
+
+			else if (result.current_title)
 				album = result.current_title;
 		}
 
@@ -683,22 +683,22 @@ SqueezeJS.SonginfoParser = {
 		if (result.playlist_tracks > 0) {
 			for (var x = 0; x < contributorRoles.length; x++) {
 				if (result.playlist_loop[0][contributorRoles[x]]) {
-					var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(', ') : new Array();
+					var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(',') : new Array();
 
 					// Don't split the artist name if we only have a single id. Or Earth would no longer play with Wind & Fire.
 					var contributors = ids.length != 1
-						? result.playlist_loop[0][contributorRoles[x]].split(', ')
+						? result.playlist_loop[0][contributorRoles[x]].split(/,(?!\s)/)
 						: new Array(result.playlist_loop[0][contributorRoles[x]]);
 
 					for (var i = 0; i < contributors.length; i++) {
 						// only add to the list if it's not already in there
 						if (!currentContributors[contributors[i]]) {
 							currentContributors[contributors[i]] = 1;
-	
+
 							if (contributorList)
 								contributorList += ', ';
 
-							contributorList += this.tpl[((ids[i] && !noLink) ? 'linked' : 'raw')].contributor.apply({ 
+							contributorList += this.tpl[((ids[i] && !noLink) ? 'linked' : 'raw')].contributor.apply({
 								id: (ids[i] || null),
 								contributor: contributors[i],
 								title: encodeURIComponent(SqueezeJS.string("artist") + ' (' + contributors[i] + ')'),
@@ -753,10 +753,10 @@ SqueezeJS.SonginfoParser = {
 				link = result.playlist_loop[0].info_link || 'songinfo.html';
 			}
 		}
-		
+
 		if (coverart.search(/^http/) == -1 && coverart.search(/^\//) == -1)
 			coverart = webroot + coverart;
-		
+
 		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,
@@ -775,10 +775,10 @@ SqueezeJS.SonginfoParser = {
 				coverart = result.playlist_loop[0].artwork_url;
 
 				var publicURL = (coverart.search(/^http:/) != -1);
-				
+
 				if (publicURL) {
 					var parts = coverart.match(/^http:\/\/(.+)/);
-					
+
 					// don't use image proxy when dealing with private IP addresses
 					if (parts && parts[1].match(/^\d+/) && (
 						parts[1].match(/^192\.168\./) || parts[1].match(/^172\.(?:1[6-9]|2\d|3[01])\./) || parts[1].match(/^10\./)
@@ -786,7 +786,7 @@ SqueezeJS.SonginfoParser = {
 						publicURL = false;
 					}
 				}
-				
+
 				// SqueezeJS.externalImageProxy must be a template accepting url and size values
 				if (coverart && width && SqueezeJS.externalImageProxy && publicURL) {
 					coverart = SqueezeJS.externalImageProxy.apply({
@@ -804,13 +804,13 @@ SqueezeJS.SonginfoParser = {
 				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].artwork_track_id || result.playlist_loop[0].id, width);
 			}
 		}
-		
+
 		if (coverart.match(/^imageproxy/))
 			coverart = '/' + coverart;
 
 		return coverart;
 	},
-	
+
 	defaultCoverart : function(coverid, width) {
 		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.png' : '');
 	}
@@ -847,7 +847,7 @@ SqueezeJS.Utils = {
 			remaining = true;
 			seconds = Math.abs(seconds);
 		}
-		
+
 		var hours = Math.floor(seconds / 3600);
 		var minutes = Math.floor((seconds - hours*3600) / 60);
 		seconds = Math.floor(seconds % 60);
@@ -863,7 +863,7 @@ SqueezeJS.Utils = {
 		if (el) {
 			if (SqueezeJS.UI)
 				SqueezeJS.UI.setProgressCursor(250);
-				
+
 			el.getUpdateManager().showLoadIndicator = false;
 			el.load({
 				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
@@ -871,27 +871,27 @@ SqueezeJS.Utils = {
 			});
 		}
 	},
-	
+
 	parseURI: function(uri) {
 		var	parsed = uri.match(/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/);
 		var keys   = [
 			"source",
-			"protocol", 
-			"authority", 
-			"userInfo", 
-			"user", 
-			"password", 
-			"host", 
-			"port", 
-			"relative", 
-			"path", 
-			"directory", 
-			"file", 
-			"query", 
+			"protocol",
+			"authority",
+			"userInfo",
+			"user",
+			"password",
+			"host",
+			"port",
+			"relative",
+			"path",
+			"directory",
+			"file",
+			"query",
 			"anchor"
 		];
 		var parts = {};
-		
+
 		for (var i = keys.length; i--;) {
 			parts[keys[i]] = parsed[i] || '';
 		}
@@ -910,7 +910,7 @@ SqueezeJS.Utils = {
 if (Ext.state.CookieProvider) {
 	SqueezeJS.CookieManager = new Ext.state.CookieProvider({
 		expires : new Date(new Date().getTime() + 1000*60*60*24*365),
-	
+
 		readCookies : function(){
 			var cookies = {};
 			var c = document.cookie + ";";
@@ -925,7 +925,7 @@ if (Ext.state.CookieProvider) {
 			}
 			return cookies;
 		},
-	
+
 		setCookie : function(name, value){
 			document.cookie = name + "=" + value +
 			((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
@@ -933,7 +933,7 @@ if (Ext.state.CookieProvider) {
 			((this.domain == null) ? "" : ("; domain=" + this.domain)) +
 			((this.secure == true) ? "; secure" : "");
 		},
-	
+
 		clearCookie : function(name){
 			document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
 				((this.path == null) ? "" : ("; path=" + this.path)) +
@@ -960,12 +960,12 @@ SqueezeJS.clearCookie = function(name) {
 
 SqueezeJS.cookiesEnabled = function(){
 	Ext.util.Cookies.set('_SqueezeJS-cookietest', true);
-	
+
 	if (Ext.util.Cookies.get('_SqueezeJS-cookietest')) {
 		Ext.util.Cookies.clear('_SqueezeJS-cookietest');
 		return true;
 	}
-	
+
 	return false;
 };
 
@@ -984,7 +984,7 @@ function ajaxUpdate(url, params, callback) {
 
 		if (!callback && SqueezeJS.UI)
 			callback = SqueezeJS.UI.ScrollPanel.init;
-			
+
 		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback);
 	}
 }
