@@ -165,7 +165,7 @@ sub scanArtists { if (main::SCANNER) {
 			Slim::Schema->forceCommit;
 
 			Slim::Schema::Contributor->add({
-				'artist' => $name,
+				'artist' => $class->normalizeContributorName($name),
 				'extid'  => 'wimp:artist:' . $artist->{id},
 			});
 

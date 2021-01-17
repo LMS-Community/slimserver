@@ -5,12 +5,15 @@ package Slim::Plugin::OnlineLibraryBase;
 # modify it under the terms of the GNU General Public License, version 2.
 
 use strict;
+use Tie::Cache::LRU;
 
 use Slim::Schema;
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner::Local;
+
+tie my %artistsMap, 'Tie::Cache::LRU', 128;
 
 use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /SQLite/ ? 1 : 0);
 
@@ -123,10 +126,16 @@ sub storeTracks {
 	my $insertTrackInLibrary_sth   = $dbh->prepare_cached("INSERT OR IGNORE INTO library_track (library, track) VALUES (?, ?)") if $libraryId;
 	my $insertTrackInTempTable_sth = $dbh->prepare_cached("INSERT OR IGNORE INTO online_tracks (url) VALUES (?)") if main::SCANNER && !$main::wipe;
 
+	my @roles = Slim::Schema::Contributor->contributorRoles;
 	my $c = 0;
 
 	foreach my $track (@$tracks) {
 		my $url = delete $track->{url} || next;
+
+		# try to map artists to the identical, but potentially slightly differently spelled local version (eg. Beatles vs. The Beatles)
+		foreach my $role (@roles) {
+			$track->{$role} = $class->normalizeContributorName($track->{$role}) if $track->{$role};
+		}
 
 		my $trackObj = Slim::Schema->updateOrCreate({
 			url             => $url,
@@ -157,6 +166,34 @@ sub storeTracks {
 	}
 
 	main::idle() if !main::SCANNER;
+}
+
+sub normalizeContributorName {
+	my ($class, $artist) = @_;
+
+	return $artist unless $artist;
+
+	if (my $artist2 = Slim::Utils::Text::ignoreCase($artist, 1)) {
+		if (my $normalized = $artistsMap{$artist2}) {
+			$artist = $normalized;
+		}
+		else {
+			my $dbh = Slim::Schema->dbh();
+			my $checkContributor_sth = $dbh->prepare_cached("SELECT name FROM contributors WHERE namesearch = ?");
+
+			$checkContributor_sth->execute($artist2);
+			my $contributor = $checkContributor_sth->fetchall_arrayref([0]);
+
+			if ($contributor && ref $contributor && scalar @$contributor) {
+				$artistsMap{$artist2} = $artist = $contributor->[0]->[0];
+			}
+			else {
+				$artistsMap{$artist2} = $artist;
+			}
+		}
+	}
+
+	return $artist;
 }
 
 sub getLibraryStats {
