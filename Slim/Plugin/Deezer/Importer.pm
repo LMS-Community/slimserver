@@ -47,6 +47,8 @@ sub isImportEnabled {
 
 		return 1 if scalar @$accounts;
 
+		$cache->set('deezer_library_fingerprint', -1, 30 * 86400);
+
 		main::INFOLOG && $log->is_info && $log->info("No Premium Deezer account found - skipping import");
 	}
 
