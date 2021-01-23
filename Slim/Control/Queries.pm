@@ -3237,12 +3237,13 @@ sub serverstatusQuery {
 	# add version
 	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-(?:baby|fab4|jive)\b.+)$/) {
 		my $ua = $1;
-		my ($model, $version) = $ua =~ m{SqueezePlay-(baby|fab4|jive)/(\d+\.\d+\.\d+)};
+		my ($model, $version) = $ua =~ m{SqueezePlay-(baby|fab4|jive|squeezeplay|)/(\d+\.\d+\.\d+)};
 		if (Slim::Utils::Versions->compareVersions($version, '7.8.0') < 0) {
 			$model = {
 				baby => 'Radio',
 				fab4 => 'Touch',
-				jive => 'Controller'
+				jive => 'Controller',
+				squeezeplay => 'SqueezePlay'
 			}->{$model} || $model;
 
 			main::INFOLOG && logger('network.protocol')->info("Found outdated SB $model, need to return compatible version string: $ua");
