@@ -3235,9 +3235,9 @@ sub serverstatusQuery {
 	}
 
 	# add version
-	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-(?:baby|fab4|jive)\b.+)$/) {
+	if ($request->source && $request->source !~ /-lms8/ && $request->source =~ /serverstatus\|.*?\|.*?\|.*?\|(SqueezePlay-(?:baby|fab4|jive|squeezeplay)\b.+)$/) {
 		my $ua = $1;
-		my ($model, $version) = $ua =~ m{SqueezePlay-(baby|fab4|jive|squeezeplay|)/(\d+\.\d+\.\d+)};
+		my ($model, $version) = $ua =~ m{SqueezePlay-(baby|fab4|jive|squeezeplay)/(\d+\.\d+\.\d+)};
 		if (Slim::Utils::Versions->compareVersions($version, '7.8.0') < 0) {
 			$model = {
 				baby => 'Radio',
