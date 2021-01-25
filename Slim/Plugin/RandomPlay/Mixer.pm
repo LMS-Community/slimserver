@@ -170,6 +170,8 @@ sub getRandomYear {
 		$years = [ Slim::Schema->rs('Track')->search(\%cond, \%attr)->get_column('me.year')->all ];
 	}
 
+	Slim::Player::Playlist::fischer_yates_shuffle($years); # SQLite's RAND function is not very random. This does a better job.
+
 	my $year = shift @$years;
 
 	$cache->set('rnd_years_' . $client->id, $years, 'never');
