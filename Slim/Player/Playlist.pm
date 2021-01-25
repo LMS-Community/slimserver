@@ -687,6 +687,9 @@ sub stopAndClear {
 }
 
 sub fischer_yates_shuffle {
+
+	srand(time()); # make it really random
+
 	my ($listRef) = @_;
 
 	if ($#$listRef == -1 || $#$listRef == 0) {
