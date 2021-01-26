@@ -47,7 +47,7 @@ sub _url {
 		logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
 	}
 
-	my $base = ($class->hasSSL() ? 'https://' : 'http://') . $class->get_server('sn');
+	my $base = ($class->hasSSL() && !$ENV{MYSB_TEST} ? 'https://' : 'http://') . $class->get_server('sn');
 
 	$path ||= '';
 
