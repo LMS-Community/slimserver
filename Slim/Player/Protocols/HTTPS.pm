@@ -10,6 +10,11 @@ my $log = logger('player.streaming.remote');
 my $prefs = preferences('server');
 
 sub new {
+	# make sure it's our open called, not system's one
+	return Slim::Player::Protocols::HTTPS::open(@_);
+}
+
+sub open {
 	my $class = shift;
 	my $args  = shift;
 	my $url   = $args->{'url'} || '';
