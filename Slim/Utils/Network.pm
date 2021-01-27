@@ -150,7 +150,7 @@ Returns the IP that the server is bound to.
 =cut
 
 sub serverAddr {
-	return $main::httpaddr || hostAddr();
+	return $main::advertiseaddr || $main::httpaddr || hostAddr();
 }
 
 =head2 serverMACAddress

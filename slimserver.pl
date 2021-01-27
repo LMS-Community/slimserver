@@ -336,6 +336,7 @@ our (
 	$diag,
 	$help,
 	$httpaddr,
+	$advertiseaddr,
 	$lastlooptime,
 	$logfile,
 	$logdir,
@@ -749,6 +750,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
+          [--advertiseaddr <ipaddress>]
           [--cliport <portnumber> [--cliaddr <listenip>]]
           [--priority <priority>]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
@@ -778,6 +780,8 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --httpport       => Activate the web interface on the specified port.
                         Set to 0 in order disable the web server.
     --httpaddr       => Activate the web interface on the specified IP address.
+    --advertiseaddr  => IP address to report as its exposed address (UI and to mysqueezebox.com).
+                        Basically the user facing IP address.
     --cliport        => Activate the command line interface TCP/IP interface
                         on the specified port. Set to 0 in order disable the
                         command line interface server.
@@ -836,6 +840,7 @@ sub initOptions {
 		'help'          => \$help,
 		'httpaddr=s'    => \$httpaddr,
 		'httpport=s'    => \$httpport,
+		'advertiseaddr=s' => \$advertiseaddr,
 		'logfile=s'     => \$logfile,
 		'logdir=s'      => \$logdir,
 		'logconfig=s'   => \$logconf,
