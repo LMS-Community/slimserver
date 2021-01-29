@@ -62,6 +62,11 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 	my $dbh = Slim::Schema->dbh;
 	my $trackUriPrefix = $class->trackUriPrefix;
 
+	my $inOnlineLibraryCount = 0;
+	($inOnlineLibraryCount) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM online_tracks AS t1
+	} );
+
 	my $playlistOnly = Slim::Music::Import->scanPlaylistsOnly() ? ' AND content_type = "ssp"' : '';
 
 	my $notInOnlineLibrarySQL = qq{
@@ -80,6 +85,12 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 		SELECT COUNT(*) FROM ( $notInOnlineLibrarySQL ) AS t1
 	} );
 
+	# let's not continue if we don't have any tracks any more, but had before - this most likely is due to some failure
+	if (!$inOnlineLibraryCount && $notInOnlineLibraryCount) {
+		main::INFOLOG && $log->is_info && $log->info("We don't have any online tracks in the library any more, but had $notInOnlineLibraryCount before - let's skip the deletion. It's likely due to some failure.");
+		return;
+	}
+
 	my $changes = 0;
 	my $paths;
 
@@ -92,7 +103,7 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 		types    => 'audio',
 		no_async => 1,
 		progress => 1,
-	});
+	}) if $notInOnlineLibraryCount;
 
 	return $changes;
 } }
