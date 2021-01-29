@@ -193,6 +193,8 @@ sub request {
 		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
 
+		# some 302 services omit the protocol
+		$redir = ($url =~ /^(https?:)/)[0] . $redir if $redir !~ /^https?:/;
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
 		return $class->open({
