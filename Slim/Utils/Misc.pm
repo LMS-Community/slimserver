@@ -430,6 +430,23 @@ sub crackURL {
 	return ($host, $port, $path, $user, $pass);
 }
 
+=head2 cloneProtocol( $url, $model )
+
+borrow the protocol from $model if missing in $url
+
+=cut
+
+sub cloneProtocol {
+	my ($url, $model) = @_;
+
+	return $url if $url =~ m|^\w+://|;
+
+	$url =~ s|^//||;
+	$model =~ m|^(\w+://)|;
+
+	return $1 . $url;
+}
+
 =head2 fixPath( $file, $base)
 
 	fixPath takes relative file paths and puts the base path in the beginning

@@ -193,8 +193,8 @@ sub request {
 		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
 
-		# some 302 Location: omit the protocol
-		$redir = ($url =~ m|^(\w+://)|)[0] . $redir if $redir !~ m|^\w+://|;
+		# some 302 location omit the protocol, take it from original url
+		$redir = Slim::Utils::Misc::cloneProtocol($redir, $url);
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
 		return $class->open({
