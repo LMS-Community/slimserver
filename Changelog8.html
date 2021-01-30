@@ -5,17 +5,20 @@
 
 	<li>New Features:</li>
 	<ul>
-		<li>Try to group online artists with local artists by ignoring slightly different spelling (eg. "The Beatles" vs. "Beatles", "Amy Macdonald" vs. "Amy MacDonal").</li>
+		<li>Try to group online artists with local artists by ignoring slightly different spelling (eg. "The Beatles" vs. "Beatles", "Amy Macdonald" vs. "Amy MacDonald").</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
+		<li>When an online scan doesn't return any track, but previously had some, do not remove tracks from library. The empty new list is likely due to a scan failure.</li>
+		<li>Try to improve backwards compatibility with eg. Erland's plugins, which sometimes struggle with the remote tracks.</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
+		<li>Add Perl 5.32 support for Linux aarch64 platform.</li>
 	</ul>
 	<br />
 
