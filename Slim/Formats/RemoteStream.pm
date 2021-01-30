@@ -194,7 +194,7 @@ sub request {
 		$self->close();
 
 		# some 302 location omit the protocol, take it from original url
-		$redir = ($url =~ m|^(\w+://)|)[0] . ($redir =~ s|^//||r) if $redir !~ m|^\w+://|;
+		$redir = Slim::Utils::Misc::cloneProtocol($redir, $url);
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
 		return $class->open({
