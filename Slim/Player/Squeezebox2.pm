@@ -616,6 +616,9 @@ sub directHeaders {
 			}
 
 			if ($redir) {
+				
+				# some 302 location omit the protocol, take it from original url
+				$redir = ($url =~ m|^(\w+://)|)[0] . ($redir =~ s|^//||r) if $redir !~ m|^\w+://|;
 
 				main::INFOLOG && $directlog->info("Redirecting to: $redir" . (defined($controller->song->seekdata()) ? ' with seekdata' : ''));
 				
