@@ -619,7 +619,6 @@ sub directHeaders {
 				
 				# some 302 location omit the protocol, take it from original url
 				$redir = ($url =~ m|^(\w+://)|)[0] . ($redir =~ s|^//||r) if $redir !~ m|^\w+://|;
-
 				main::INFOLOG && $directlog->info("Redirecting to: $redir" . (defined($controller->song->seekdata()) ? ' with seekdata' : ''));
 
 				# Store the old URL so we can update its bitrate/content-type/etc
