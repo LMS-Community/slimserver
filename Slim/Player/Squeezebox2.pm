@@ -116,7 +116,7 @@ sub model {
 
 sub modelName {
 	my $client = shift;
-	
+
 	if ($client->model(1) eq 'squeezebox3') {
 		return 'Squeezebox Classic';
 	}
@@ -127,20 +127,20 @@ sub modelName {
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
 	my $client = shift;
-	
+
 	return qw(wma ogg flc aif pcm mp3);
 }
 
 sub statHandler {
 	my ($client, $code, $jiffies, $error_code) = @_;
-	
+
 	if ($code eq 'STMc') {
 		$client->streamStartTimestamp($jiffies);
 	} else {
 		return if ! defined($client->streamStartTimestamp());
 	}
-	
-	
+
+
 	if ($code eq 'STMd') {
 		$client->readyToStream(1);
 		$client->controller()->playerReadyToStream($client);
@@ -169,20 +169,20 @@ sub statHandler {
 		$client->controller()->playerEndOfStream($client);
 	} else {
 		$client->controller->playerStatusHeartbeat($client);
-	}	
-	
+	}
+
 }
-	
+
 # The original Squeezebox2 firmware supported a fairly narrow volume range
 # below unity gain - 129 levels on a linear scale represented by a 1.7
 # fixed point number (no sign, 1 integer, 7 fractional bits).
 # From FW 22 onwards, volume is sent as a 16.16 value (no sign, 16 integer,
 # 16 fractional bits), significantly increasing our fractional range.
-# Rather than test for the firmware level, we send both values in the 
+# Rather than test for the firmware level, we send both values in the
 # volume message.
 
-# We thought about sending a dB scale volume to the client, but decided 
-# against it. Sending a fixed point multiplier allows us to change 
+# We thought about sending a dB scale volume to the client, but decided
+# against it. Sending a fixed point multiplier allows us to change
 # the mapping of UI volume settings to gain as we want, without being
 # constrained by any scale other than that of the fixed point range allowed
 # by the client.
@@ -191,16 +191,16 @@ sub statHandler {
 # we only have 129 levels to work with now, and within 100 range,
 # that's pretty tight.
 # this table is optimized for 40 steps (like we have in the current player UI.
-my @volume_map = ( 
-0, 1, 1, 1, 2, 2, 2, 3,  3,  4, 
-5, 5, 6, 6, 7, 8, 9, 9, 10, 11, 
-12, 13, 14, 15, 16, 16, 17, 18, 19, 20, 
-22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 
-33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 
-46, 47, 48, 50, 51, 53, 54, 56, 57, 59, 
-60, 61, 63, 65, 66, 68, 69, 71, 72, 74, 
-75, 77, 79, 80, 82, 84, 85, 87, 89, 90, 
-92, 94, 96, 97, 99, 101, 103, 104, 106, 108, 110, 
+my @volume_map = (
+0, 1, 1, 1, 2, 2, 2, 3,  3,  4,
+5, 5, 6, 6, 7, 8, 9, 9, 10, 11,
+12, 13, 14, 15, 16, 16, 17, 18, 19, 20,
+22, 23, 24, 25, 26, 27, 28, 29, 30, 32,
+33, 34, 35, 37, 38, 39, 40, 42, 43, 44,
+46, 47, 48, 50, 51, 53, 54, 56, 57, 59,
+60, 61, 63, 65, 66, 68, 69, 71, 72, 74,
+75, 77, 79, 80, 82, 84, 85, 87, 89, 90,
+92, 94, 96, 97, 99, 101, 103, 104, 106, 108, 110,
 112, 113, 115, 117, 119, 121, 123, 125, 127, 128
  );
 
@@ -211,7 +211,7 @@ sub dBToFixed {
 	# Map a floating point dB value to a 16.16 fixed point value to
 	# send as a new style volume to SB2 (FW 22+).
 	my $floatmult = 10 ** ($db/20);
-	
+
 	# use 8 bits of accuracy for dB values greater than -30dB to avoid rounding errors
 	if ($db >= -30 && $db <= 0) {
 		return int($floatmult * (1 << 8) + 0.5) * (1 << 8);
@@ -223,7 +223,7 @@ sub dBToFixed {
 sub getVolumeParameters
 {
 	# A negative stepPoint ensures that the alternate (low level) ramp never kicks in.
-	my $params = 
+	my $params =
 	{
 		totalVolumeRange => -50,    # dB
 		stepPoint        => -1,    # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
@@ -240,15 +240,15 @@ sub getVolume
 	my $stepdB            = $volume_parameters->{totalVolumeRange} * $volume_parameters->{stepFraction};
 
 	my $maxVolumedB = (defined $volume_parameters->{maximumVolume}) ? $volume_parameters->{maximumVolume} : 0;
-	
-	# Equation for a line:  
+
+	# Equation for a line:
 	# y = mx+b
-	# y1 = mx1+b, y2 = mx2+b.  
+	# y1 = mx1+b, y2 = mx2+b.
 	# y2-y1 = m(x2 - x1)
 	# y2 = m(x2 - x1) + y1
 	my $slope_high = ($maxVolumedB-$stepdB)/(100-$stepPoint) ;
 	my $slope_low  = ($stepdB-$totalVolumeRange)/($stepPoint-0);
-	
+
 	my $x2 = $volume;
 	my $m  = undef;
 	my $x1 = undef;
@@ -265,7 +265,7 @@ sub getVolume
 	my $y2 = $m * ($x2 - $x1) + $y1;
 	# print "$m, ($x1, $y1), ($x2, $y2)\n";
 	return $y2;
-	
+
 }
 
 sub volume {
@@ -277,7 +277,7 @@ sub volume {
 	if (defined($newvolume)) {
 		# Old style volume:
 		my $oldGain = $volume_map[int($volume)];
-		
+
 		my $newGain;
 		# Negative volume = muting
 		if ($volume <= 0) {
@@ -287,12 +287,12 @@ sub volume {
 			my $db = $client->getVolume($volume, $client->getVolumeParameters());
 			$newGain = $client->dBToFixed($db);
 		}
-		
+
 		my $dvc = $prefs->client($client)->get('digitalVolumeControl');
 		if ( !defined $dvc ) {
 			$dvc = $Slim::Player::Player::defaultPrefs->{digitalVolumeControl};
 		}
-		
+
 		my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
 		my $data;
@@ -335,7 +335,7 @@ sub upgradeFirmware {
 		$client->showBriefly( {
 			'line' => [ $client->string( 'FIRMWARE_MISSING' ), $client->string( 'FIRMWARE_MISSING_DESC' ) ]
 		},
-		{ 
+		{
 			'block'     => 1,
 			'scroll'    => 1,
 			'firstline' => 1,
@@ -348,17 +348,17 @@ sub upgradeFirmware {
 
 		return(0);
 	}
-	
+
 	if (-f $file2 && !-f $file) {
 		$file = $file2;
 	}
-	
+
 	$client->stop();
 
 	main::INFOLOG && $log->info("Using new update mechanism: $file");
-	
+
 	$client->isUpgrading(1);
-	
+
 	# Notify about firmware upgrade starting
 	Slim::Control::Request::notifyFromArray( $client, [ 'firmware_upgrade' ] );
 
@@ -421,13 +421,13 @@ sub stop {
 
 sub songElapsedSeconds {
 	my $client = shift;
-	
+
 	return 0 if $client->isStopped() || defined $_[0];
 
 	my ($jiffies, $elapsedMilliseconds, $elapsedSeconds) = Slim::Networking::Slimproto::getPlayPointData($client);
 
 	return 0 unless $elapsedMilliseconds || $elapsedSeconds;
-	
+
 	# Use milliseconds for the song-elapsed-time if has not suffered truncation
 	my $songElapsed;
 	if (defined $elapsedMilliseconds) {
@@ -438,12 +438,12 @@ sub songElapsedSeconds {
 	} else {
 		$songElapsed = $elapsedSeconds;
 	}
-	
+
 	if ($client->isPlaying(1)) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
 		$songElapsed += $timeDiff if ($timeDiff > 0);
 	}
-	
+
 	return $songElapsed;
 }
 
@@ -471,7 +471,7 @@ sub directHeaders {
 
 	my $controller = $client->controller()->songStreamController();
 	my $handler    = $controller ? $controller->protocolHandler() : undef;
-	
+
 	if ($handler && $handler->can('handlesStreamHeaders')) {
 
 		if ($handler->handlesStreamHeaders($client, $headers)) {
@@ -484,16 +484,16 @@ sub directHeaders {
 
 	my $url = $controller->streamUrl();
 	my $songHandler = $controller->songProtocolHandler();
-	
+
 	# We involve the protocol handler in the header parsing process.
-	# The current iteration of the firmware only knows about HTTP 
-	# headers. Specifically, it returns headers after finding a 
+	# The current iteration of the firmware only knows about HTTP
+	# headers. Specifically, it returns headers after finding a
 	# CRLF pair in the stream. In the future, we could tell the firmware
-	# to return a specific number of bytes or look for a specific 
+	# to return a specific number of bytes or look for a specific
 	# byte sequence and make this less HTTP specific. For now, we only
 	# support this type of direct streaming for HTTP-esque protocols.
 
-	# Trim embedded nulls 
+	# Trim embedded nulls
 	$headers =~ s/[\0]*$//;
 
 	$headers =~ s/\r/\n/g;
@@ -502,9 +502,9 @@ sub directHeaders {
 	my @headers = split "\n", $headers;
 
 	chomp(@headers);
-	
+
 	my $response = shift @headers;
-	
+
 	if (!$response || $response !~ m/ (\d\d\d)/) {
 
 		$directlog->warn("Invalid response code ($response) from remote stream $url");
@@ -512,19 +512,19 @@ sub directHeaders {
 		$client->failedDirectStream($response);
 
 	} else {
-	
+
 		my $status_line = $response;
 		$response = $1;
-		
+
 		if (($response < 200) || $response > 399) {
 
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
 			if ($songHandler && $songHandler->can("handleDirectError")) {
-				
+
 				# bug 10407 - make sure ready to stream again
 				$client->readyToStream(1);
-				
+
 				$songHandler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
@@ -548,7 +548,7 @@ sub directHeaders {
 			if ($songHandler && $songHandler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
 				main::INFOLOG && $directlog->info("Calling $songHandler ::parseDirectHeaders");
-				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) 
+				($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 					= $songHandler->parseDirectHeaders($client, $controller->song()->currentTrack(), @headers);
 			} elsif ($handler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
@@ -559,34 +559,34 @@ sub directHeaders {
 			$controller->song()->isLive($length ? 0 : 1) if !$redir;
 			# XXX maybe should (also) check $song->scanData()->{$url}->{metadata}->{info}->{broadcast}
 			# for WMA streams here.
-			
+
 			# update bitrate, content-type title for this URL...
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
-			
+
 			# Always prefer the title returned in the headers of a radio station
 			if ( $title ) {
 				main::INFOLOG && $directlog->is_info && $directlog->info( "Setting new title for $url, $title" );
 				Slim::Music::Info::setCurrentTitle( $url, $title );
-				
+
 				# Bug 7979, Only update the database title if this item doesn't already have a title
 				my $curTitle = Slim::Music::Info::title($url);
 				if ( !$curTitle || $curTitle =~ /^(?:http|mms)/ ) {
 					Slim::Music::Info::setTitle( $url, $title );
 				}
 			}
-			
+
 			# Bitrate may have been set in Scanner by reading the mp3 stream
 			if ( !$bitrate ) {
 				$bitrate = Slim::Music::Info::getBitrate( $url ) || 0;
 			}
-			
+
 			# WMA handles duration based on metadata
 			if ( $contentType ne 'wma' ) {
-				
+
 				# See if we have an existing track object with duration info for this stream.
 				if ( my $secs = Slim::Music::Info::getDuration($url) ) {
-				
+
 					# Display progress bar
 					$client->streamingProgressBar( {
 						'url'      => $redirects->{ $url } || $url,
@@ -594,7 +594,7 @@ sub directHeaders {
 					} );
 				}
 				else {
-			
+
 					if ( $bitrate && $length && $bitrate > 0 && $length > 0 && !$client->shouldLoop($length) ) {
 						# if we know the bitrate and length of a stream, display a progress bar
 						if ( $bitrate < 1000 ) {
@@ -618,19 +618,14 @@ sub directHeaders {
 			if ($redir) {
 
 				main::INFOLOG && $directlog->info("Redirecting to: $redir" . (defined($controller->song->seekdata()) ? ' with seekdata' : ''));
-				
+
 				# Store the old URL so we can update its bitrate/content-type/etc
-				$redirects->{ $redir } = $url;			
-				
-				# For any track-based services that use redirects (e.g. MOG Australia) this stop will
-				# cause each track to get cut off at the end. It doesn't appear to be necessary but
-				# just in case I'll leave it here commented out. -Andy
-				# $client->stop();
+				$redirects->{ $redir } = $url;
 
 				$controller->song->streamUrl($redir);
 				$client->play({
-					'paused'     => ($client->isSynced(1)), 
-					'format'     => ($client->master())->streamformat(), 
+					'paused'     => ($client->isSynced(1)),
+					'format'     => ($client->master())->streamformat(),
 					'url'        => $redir,
 					'controller' => $controller,
 					'seekdata'   => $controller->song->seekdata(),
@@ -654,7 +649,7 @@ sub directHeaders {
 
 					Slim::Music::Info::setContentType( $oldURL, $contentType ) if $contentType;
 					Slim::Music::Info::setBitrate( $oldURL, $bitrate ) if $bitrate;
-					
+
 					# carry the original title forward to the new URL
 					my $title = Slim::Music::Info::title( $oldURL );
 					Slim::Music::Info::setTitle( $url, $title ) if $title;
@@ -663,12 +658,12 @@ sub directHeaders {
 				main::INFOLOG && $directlog->is_info && $directlog->info("Beginning direct stream!");
 
 				my $loop = $client->shouldLoop($length);
-				
+
 				# Some looping sounds are too short and mess up the buffer secs
 				# This will let quickstart avoid buffering these tracks too long
 				if ( $loop ) {
 					Slim::Music::Info::setDuration( $url, 0 );
-					
+
 					main::INFOLOG && $directlog->info('Using infinite loop mode');
 				}
 
@@ -681,7 +676,7 @@ sub directHeaders {
 
 				$client->failedDirectStream();
 			}
-			
+
 			# Bug 6482, refresh the cached Track object in the client playlist from the database
 			# so it picks up any changed data such as title, bitrate, etc
 			Slim::Player::Playlist::refreshTrack( $client, $url );
@@ -691,21 +686,21 @@ sub directHeaders {
 
 sub sendContCommand {
 	my ($client, $metaint, $loop, @guids) = @_;
-	
+
 	$metaint ||= 0;
-	
+
 	if ( main::DEBUGLOG ) {
 		my $log = logger('player.streaming.direct');
 		$log->is_debug && $log->debug("Sending cont frame: metaint $metaint, loop $loop");
 	}
-	
+
 	$client->sendFrame('cont', \(pack('NCnC*', $metaint, $loop, scalar @guids, @guids)));
 }
 
 sub directBodyFrame {
 	my $client  = shift;
 	my $body    = shift;
-	
+
 	my $isInfo = $directlog->is_info;
 
 	my $controller = $client->controller()->songStreamController();
@@ -717,7 +712,7 @@ sub directBodyFrame {
 	my $done    = 0;
 
 	$isInfo && $directlog->info("Got some body from the player, length " . length($body));
-	
+
 	if (length($body)) {
 
 		$isInfo && $directlog->info("Saving away that body message until we get an empty body");
@@ -739,7 +734,7 @@ sub directBodyFrame {
 
 				$isInfo && $directlog->info("directBodyFrame: Saving to temp file: " . $fh->filename);
 			}
-			
+
 			$client->directBody->write( $body, length($body) );
 		}
 
@@ -755,7 +750,7 @@ sub directBodyFrame {
 	if ($done) {
 
 		if ( defined $client->directBody ) {
-			
+
 			# seek back to the front of the file
 			seek $client->directBody, 0, 0;
 
@@ -771,8 +766,8 @@ sub directBodyFrame {
 			else {
 				@items = Slim::Formats::Playlists->parseList( $url, $client->directBody );
 			}
-	
-			if ( scalar @items ) { 
+
+			if ( scalar @items ) {
 
 				Slim::Player::Source::explodeSong($client, \@items);
 				Slim::Player::Source::playmode($client, 'play');
@@ -807,7 +802,7 @@ sub directMetadata {
 	if ( $handler->can('parseMetadata') ) {
 		$handler->parseMetadata( $client, $controller->song(), $metadata );
 	}
-	
+
 	# new song, so reset counters
 	$client->songBytes(0);
 }
@@ -815,7 +810,7 @@ sub directMetadata {
 sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
-	
+
 	# bug 10407 - make sure ready to stream again
 	$client->readyToStream(1);
 
@@ -827,7 +822,7 @@ sub failedDirectStream {
 	$directlog->warn("Oh, well failed to do a direct stream for: $url: ", ($error || ''));
 
 	$client->directBody(undef);
-	
+
 	$client->controller()->playerStreamingFailed($client, $error || 'PROBLEM_CONNECTING');
 }
 
@@ -836,13 +831,13 @@ sub failedDirectStream {
 sub shouldLoop {
 	my $client     = shift;
 	my $audio_size = shift;
-	
+
 	# Ask the client if the track is small enough for this
 	return 0 unless ( $audio_size && $client->canLoop($audio_size) );
-	
+
 	# Check with the protocol handler
 	my $url = Slim::Player::Playlist::url($client);
-	
+
 	if ( Slim::Music::Info::isRemoteURL($url) ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler->can('shouldLoop') ) {
@@ -876,7 +871,7 @@ sub canDoReplayGain {
 }
 
 
-sub audio_outputs_enable { 
+sub audio_outputs_enable {
 	my $client = shift;
 	my $enabled = shift;
 
@@ -944,13 +939,13 @@ sub setPlayerSetting {
 	my $value  = shift;
 
 	return unless defined $value;
-	
+
 	my $isInfo = $prefslog->is_info;
 
 	$isInfo && $prefslog->info("Setting pref: [$pref] to [$value]");
 
 	my $currpref = $pref_settings->{$pref};
-	
+
 	my $status = $client->pendingPrefChanges()->{$pref} || 0;
 
 	# Only send a setd packet to the player if it is stopped and we are not
@@ -959,7 +954,7 @@ sub setPlayerSetting {
 
 		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
 		$client->sendFrame('setd', \$data);
-	
+
 		# We are now waiting for a response to this setd call
 		$client->pendingPrefChanges()->{$pref} = SETD_WAITING;
 	}
@@ -977,7 +972,7 @@ sub setPlayerSetting {
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;
-	
+
 	my $isInfo = main::INFOLOG && $prefslog->is_info;
 
 	my $id = unpack('C', $$data_ref);
@@ -987,7 +982,7 @@ sub playerSettingsFrame {
 		if ($currpref->{'firmwareid'} != $id) {
 			next;
 		}
-		
+
 		# We've received a response, so remove waiting status from this pref
 		$client->pendingPrefChanges()->{$pref} ||= 0;
 		$client->pendingPrefChanges()->{$pref} &= ~SETD_WAITING;
@@ -1009,7 +1004,7 @@ sub playerSettingsFrame {
 			}
 		}
 		else {
-			utf8::decode($value) if $pref eq 'playername'; 
+			utf8::decode($value) if $pref eq 'playername';
 			$prefs->client($client)->set( $pref, $value );
 		}
 	}
@@ -1073,7 +1068,7 @@ sub playPoint {
 
 sub startAt {
 	my ($client, $at) = @_;
-	
+
 	main::DEBUGLOG && $synclog->is_debug && $synclog->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
 
 	$client->stream( 'u', { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } );
@@ -1082,7 +1077,7 @@ sub startAt {
 
 sub resume {
 	my ($client, $at) = @_;
-	
+
 	$client->stream('u', ($at ? { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } : undef));
 	$client->SUPER::resume();
 	return 1;
