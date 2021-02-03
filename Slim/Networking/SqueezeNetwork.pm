@@ -2,7 +2,7 @@ package Slim::Networking::SqueezeNetwork;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # Async interface to mysqueezebox.com API
@@ -137,7 +137,7 @@ sub _init_done {
 #	}
 
 	# add link to mysb.com favorites to our local favorites list
-	if ( $json->{favorites_url} ) {
+	if ( $json->{favorites_url} && $prefs->get('sn_sync') ) {
 
 		my $favs = Slim::Utils::Favorites->new();
 
@@ -157,7 +157,7 @@ sub _init_error {
 
 	if ( my $proxy = $prefs->get('webproxy') ) {
 		$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
-	} 
+	}
 
 	$prefs->remove('sn_timediff');
 
@@ -174,7 +174,7 @@ sub _init_error {
 	Slim::Utils::Timers::setTimer(
 		undef,
 		$nextLoginAttempt + 10,
-		sub { 
+		sub {
 			__PACKAGE__->init();
 		}
 	);
@@ -382,7 +382,7 @@ sub _createHTTPRequest {
 			},
 			ecb    => sub {
 				my ( $http, $error ) = @_;
-				$self->error( $error ); 
+				$self->error( $error );
 				$self->ecb->( $self, $error );
 			},
 		);
@@ -426,11 +426,11 @@ sub _error {
 	$loginErrors++;
 	$nextLoginAttempt = 60 * $loginErrors;
 
-	my $proxy = $prefs->get('webproxy'); 
+	my $proxy = $prefs->get('webproxy');
 
-	$log->error( "Unable to login to SN: $error" 
+	$log->error( "Unable to login to SN: $error"
 		. ($proxy ? sprintf(" - please check your proxy configuration (%s)", $proxy) : '')
-	); 
+	);
 
 	$prefs->remove('sn_session');
 
