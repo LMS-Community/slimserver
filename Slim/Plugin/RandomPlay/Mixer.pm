@@ -52,6 +52,9 @@ sub findAndAdd {
 		return undef;
 	}
 
+	my $queryLibrary = $prefs->get('library') || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $libraryParam = '&library_id=' . $queryLibrary if $queryLibrary;
+
 	# Add the items to the end
 	foreach my $id (@randomIds) {
 
@@ -63,7 +66,7 @@ sub findAndAdd {
 
 		# Replace the current playlist with the first item / track or add it to end
 		my $request = $client->execute([
-			'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $id)
+			'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d%s', $type, $id, $libraryParam)
 		]);
 
 		# indicate request source
