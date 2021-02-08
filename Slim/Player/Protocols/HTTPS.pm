@@ -31,7 +31,7 @@ sub new {
 		PeerAddr => $server,
 		PeerPort => $port,
 		SSL_startHandshake => 1,
-		SSL_verify_mode => 0x00		# SSL_VERIFY_NONE isn't recognized on some platforms?!?
+		SSL_verify_mode => Net::SSLeay::VERIFY_NONE()		# SSL_VERIFY_NONE isn't recognized on some platforms?!?, and 0x00 isn't always "right"
 	) or do {
 
 		$log->error("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!");

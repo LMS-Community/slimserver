@@ -40,7 +40,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{'song'},
 		client  => $client,
-		bitrate => 128_000,
+		bitrate => $song->bitrate() || 128_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
@@ -202,6 +202,7 @@ sub gotNextTrack {
 	}
 	
 	# Save metadata for this track
+	$song->bitrate( $track->{bitrate} );
 	$song->duration( $track->{secs} );
 	$song->pluginData( $track );
 	$song->streamUrl($track->{'audioUrl'});
@@ -239,7 +240,7 @@ sub getSeekData {
 	my ( $class, $client, $song, $newtime ) = @_;
 	
 	return {
-		sourceStreamOffset => ( 128_000 / 8 ) * $newtime,
+		sourceStreamOffset => ( ($song->bitrate || 128_000) / 8 ) * $newtime,
 		timeOffset         => $newtime,
 	};
 }
@@ -250,7 +251,7 @@ sub parseDirectHeaders {
 	my $url     = shift;
 	my @headers = @_;
 	
-	my $bitrate     = 128_000;
+	my $bitrate     = $client->streamingSong->bitrate || 128_000;
 	my $contentType = 'mp3';
 	
 	# Clear previous duration, since we're using the same URL for all tracks
@@ -451,13 +452,15 @@ sub getMetadataFor {
 	
 	my $icon = $class->getIcon();
 	
+	my $bitrate = $song->bitrate ? ($song->bitrate/1000) . 'k CBR' : '128k CBR';
+	
 	# Could be somewhere else in the playlist
 	if ($song->track->url ne $url) {
 		main::DEBUGLOG && $log->debug($url);
 		return {
 			icon    => $icon,
 			cover   => $icon,
-			bitrate => '128k CBR',
+			bitrate => $bitrate,
 			type    => 'MP3 (Pandora)',
 			title   => 'Pandora',
 			album   => Slim::Music::Info::standardTitle( $client, $url, undef ),
@@ -474,7 +477,7 @@ sub getMetadataFor {
 			icon        => $icon,
 			replay_gain => $track->{trackGain},
 			duration    => $track->{secs},
-			bitrate     => '128k CBR',
+			bitrate     => $bitrate,
 			type        => 'MP3 (Pandora)',
 			info_link   => 'plugins/pandora/trackinfo.html',
 			buttons     => {
@@ -518,7 +521,7 @@ sub getMetadataFor {
 		return {
 			icon    => $icon,
 			cover   => $icon,
-			bitrate => '128k CBR',
+			bitrate => $bitrate,
 			type    => 'MP3 (Pandora)',
 			title   => $song->track()->title(),
 		};

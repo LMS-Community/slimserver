@@ -2,7 +2,7 @@ package Slim::Utils::OS::OSX;
 
 # Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -22,10 +22,10 @@ sub name {
 
 sub initDetails {
 	my $class = shift;
-	
+
 	if ( !main::RESIZER ) {
 		# Once for OS Version, then again for CPU Type.
-		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
+		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType SPHardwareDataType |') or return;
 
 		while (<SYS>) {
 
@@ -33,37 +33,39 @@ sub initDetails {
 
 				$class->{osDetails}->{'osName'} = $1;
 				$class->{osDetails}->{'osName'} =~ s/ \(\w+?\)$//;
-				last;
-			}
-		}
 
-		close SYS;
-
-		# CPU Type / Processor Name
-		open(SYS, '/usr/sbin/system_profiler SPHardwareDataType 2>/dev/null |') or return;
-
-		while (<SYS>) {
-
-			if (/Intel/i) {
+			} elsif (/Intel/i) {
 
 				# Determine if we are running as 32-bit or 64-bit
 				my $bits = length( pack 'L!', 1 ) == 8 ? 64 : 32;
-			
+
 				$class->{osDetails}->{'osArch'} = 'x86';
-			
+
 				if ( $bits == 64 ) {
 					$class->{osDetails}->{'osArch'} = 'x86_64';
 				}
-			
-				last;
 
 			} elsif (/PowerPC/i) {
 
 				$class->{osDetails}->{'osArch'} = 'ppc';
 			}
+
+			last if $class->{osDetails}->{'osName'} && $class->{osDetails}->{'osArch'};
 		}
 
 		close SYS;
+	}
+
+	if ( !$class->{osDetails}->{osArch} ) {
+		if ($Config{ccflags} =~ /-arch x86_64/) {
+			$class->{osDetails}->{osArch} = 'x86_64';
+		}
+		elsif ($Config{ccflags} =~ /-arch i386/) {
+			$class->{osDetails}->{osArch} = 'x86';
+		}
+		elsif ($Config{ccflags} =~ /-arch ppc/) {
+			$class->{osDetails}->{osArch} = 'ppc';
+		}
 	}
 
 	$class->{osDetails}->{'os'}  = 'Darwin';
@@ -72,7 +74,7 @@ sub initDetails {
 	# XXX - do we still need this? They're empty on my system, and created if needed in some other place anyway
 	for my $dir (
 		'Library/Application Support/UEMusicLibrary',
-		'Library/Application Support/UEMusicLibrary/Plugins', 
+		'Library/Application Support/UEMusicLibrary/Plugins',
 		'Library/Application Support/UEMusicLibrary/Graphics',
 		'Library/Application Support/UEMusicLibrary/html',
 		'Library/Application Support/UEMusicLibrary/IR',
@@ -84,33 +86,35 @@ sub initDetails {
 
 	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/UEMusicLibrary";
 	unshift @INC, "/Library/Application Support/UEMusicLibrary";
-	
+
 	return $class->{osDetails};
 }
 
 sub initPrefs {
 	my ($class, $prefs) = @_;
-	
+
 	$prefs->{libraryname} = `scutil --get ComputerName` || '';
 	chomp($prefs->{libraryname});
 
 	# Replace fancy apostraphe (’) with ASCII
 	utf8::decode( $prefs->{libraryname} ) unless utf8::is_utf8($prefs->{libraryname});
 	$prefs->{libraryname} =~ s/\x{2019}/'/;
-		
+
 	# we now have a binary preference pane - don't show the wizard
 	$prefs->{wizardDone} = 1;
 }
 
-sub canFollowAlias { 
+sub canDBHighMem { 1 }
+
+sub canFollowAlias {
 	return $canFollowAlias if defined $canFollowAlias;
-	
+
 	eval {
 		require Mac::Files;
 		require Mac::Resources;
 		$canFollowAlias = 1;
 	};
-	
+
 	if ( $@ ) {
 		$canFollowAlias = 0;
 	}
@@ -118,14 +122,14 @@ sub canFollowAlias {
 
 sub initSearchPath {
 	my $class = shift;
-	
-	$class->SUPER::initSearchPath();
+
+	$class->SUPER::initSearchPath(@_);
 
 	my @paths = ();
 
 	push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/local/bin));
-	
+
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 }
 
@@ -142,7 +146,7 @@ sub dirsFor {
 	my ($class, $dir) = @_;
 
 	my @dirs = $class->SUPER::dirsFor($dir);
-	
+
 	# These are all at the top level.
 	if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
@@ -169,8 +173,8 @@ sub dirsFor {
 		if ($::prefsfile && -r $::prefsfile) {
 
 			push @dirs, $::prefsfile;
-		} 
-		
+		}
+
 		elsif (-r catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref')) {
 
 			push @dirs, catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
@@ -179,11 +183,11 @@ sub dirsFor {
 	} elsif ($dir eq 'prefs') {
 
 		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/UEMusicLibrary');
-			
+
 	} elsif ($dir =~ /^(?:music|videos|pictures)$/) {
 
 		my $mediaDir;
-		
+
 		if ($dir eq 'music') {
 			# DHG wants LMS to default to the full Music folder, not only iTunes
 #			$mediaDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
@@ -206,7 +210,7 @@ sub dirsFor {
 		push @dirs, $mediaDir;
 
 	} elsif ($dir eq 'playlists') {
-		
+
 		push @dirs, catdir($class->dirsFor('music'), 'Playlists');
 
 	# We might get called from some helper script (update checker)
@@ -247,7 +251,7 @@ sub localeDetails {
 	# language / formatting. Set it here, so we don't need to do a
 	# system call for every clock second update.
 	my $lc_time = POSIX::setlocale(LC_TIME, $locale);
-	
+
 	return ($lc_ctype, $lc_time);
 }
 
@@ -270,7 +274,7 @@ sub getSystemLanguage {
 
 		close(LANG);
 	}
-	
+
 	return $class->_parseLanguage($language);
 }
 
@@ -301,7 +305,7 @@ sub ignoredItems {
 		'tmp'       => 1,
 		'usr'       => 1,
 		'var'       => '/',
-		'opt'       => '/',	
+		'opt'       => '/',
 	);
 }
 
@@ -321,26 +325,26 @@ INIT {
 
 sub pathFromMacAlias {
 	my ($class, $fullpath) = @_;
-	
+
 	return unless $fullpath && canFollowAlias();
-	
+
 	my $path;
-	
+
 	$fullpath = Slim::Utils::Misc::pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-	
+
 	if ( exists $aliases{$fullpath} ) {
 		return $aliases{$fullpath};
 	}
 
 	if (-f $fullpath && -r _ && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
-		
+
 		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
-			
+
 			$path = $aliases{$fullpath} = Mac::Files::ResolveAlias($alis);
-			
+
 			Mac::Resources::ReleaseResource($alis);
 		}
-		
+
 		Mac::Resources::CloseResFile($rsc);
 	}
 
@@ -354,7 +358,7 @@ sub getDefaultGateway {
 			return $1;
 		}
 	}
-	
+
 	return;
 }
 
@@ -363,12 +367,12 @@ my $plistLabel = "com.slimdevices.updatecheck";
 
 sub initUpdate {
 	return if $updateCheckInitialized;
-	
+
 	my $log = Slim::Utils::Log::logger('server.update');
 	my $err = "Failed to install LaunchAgent for the update checker";
-		
+
 	my $launcherPlist = catfile($ENV{HOME}, 'Library', 'LaunchAgents', $plistLabel . '.plist');
-	
+
 	if ( open(UPDATE_CHECKER, ">$launcherPlist") ) {
 		my $script = Slim::Utils::Misc::findbin('check-update.pl');
 		my $logDir = Slim::Utils::Log::serverLogFile();
@@ -404,10 +408,10 @@ sub initUpdate {
 </plist>);
 
 		close UPDATE_CHECKER;
-		
+
 		$err = `launchctl unload $launcherPlist; launchctl load $launcherPlist`;
 	}
-	
+
 	if ($err) {
 		$log->error($err);
 	}
@@ -436,7 +440,7 @@ sub getUpdateParams {
 
 sub canAutoUpdate { 1 }
 
-sub installerExtension { 'pkg' }; 
+sub installerExtension { 'pkg' };
 sub installerOS { 'osx' }
 
 sub canRestartServer {

@@ -385,6 +385,7 @@ sub readRemoteHeaders {
 	
 	# Set content-type for original URL and redirected URL
 	main::DEBUGLOG && $log->is_debug && $log->debug( 'Updating content-type for ' . $track->url . " to $type" );
+	Slim::Schema->clearContentTypeCache( $track->url );
 	$track = Slim::Music::Info::setContentType( $track->url, $type );
 	
 	if ( $track->url ne $url ) {

@@ -2,7 +2,7 @@ package Slim::Utils::OS::Win32;
 
 # Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -35,7 +35,7 @@ sub initDetails {
 	# better version detection than relying on Win32::GetOSName()
 	# http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx
 	my ($string, $major, $minor, $build, $id, $spmajor, $spminor, $suitemask, $producttype) = Win32::GetOSVersion();
-	
+
 	$class->{osDetails} = {
 		'os'     => 'Windows',
 		'osName' => (Win32::GetOSName())[0],
@@ -48,7 +48,7 @@ sub initDetails {
 	$class->{osDetails}->{'osName'} =~ s/Win/Windows /;
 	$class->{osDetails}->{'osName'} =~ s/\/.Net//;
 	$class->{osDetails}->{'osName'} =~ s/2003/Server 2003/;
-	
+
 	# TODO: remove this code as soon as Win32::GetOSName supports latest Windows versions
 
 	# The version numbers for Windows 7 and Windows Server 2008 R2 are identical; the PRODUCTTYPE field must be used to differentiate between them.
@@ -59,7 +59,7 @@ sub initDetails {
 	# The version numbers for Windows 8 onwards are identical, Win32.pm has not been updated to cover these
 	# https://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
 	elsif ($major == 6 && $minor == 2) {
-		
+
 		if ( my $wmi = Win32::OLE->GetObject( "WinMgmts://./root/cimv2" ) ) {
 			if ( my $list = $wmi->InstancesOf( "Win32_OperatingSystem" ) ) {
 
@@ -95,13 +95,13 @@ sub initDetails {
 		$class->{osDetails}->{'osName'} = 'Windows Home Server';
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
-	
+
 	# give some fallback value
 	$class->{osDetails}->{osName} ||= sprintf('Windows (%s, %s, %s)', $major, $minor, $producttype);
-	
+
 	# This covers Vista or later
 	$class->{osDetails}->{'isWin6+'} = ($major >= 6);
-	
+
 	# some features are Vista only, no longer supported in Windows 7
 	$class->{osDetails}->{isVista}   = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
 
@@ -117,11 +117,11 @@ sub initDetails {
 sub initSearchPath {
 	my $class = shift;
 
-	$class->SUPER::initSearchPath();
-	
+	$class->SUPER::initSearchPath(@_);
+
 	# TODO: we might want to make this a bit more intelligent
 	# as Perl is not always in that folder (eg. German Windows)
-	
+
 	Slim::Utils::Misc::addFindBinPaths('C:\Perl\bin');
 }
 
@@ -129,7 +129,7 @@ sub initMySQL {}
 
 sub initPrefs {
 	my ($class, $prefs) = @_;
-	
+
 	# we now have a binary control panel - don't show the wizard
 	$prefs->{wizardDone} = 1;
 }
@@ -149,9 +149,9 @@ sub postInitPrefs {
 
 sub dirsFor {
 	my ($class, $dir) = @_;
-	
+
 	my @dirs = $class->SUPER::dirsFor($dir);
-	
+
 	if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 		push @dirs, $Bin;
@@ -169,15 +169,15 @@ sub dirsFor {
 		if ($::prefsfile && -r $::prefsfile) {
 
 			push @dirs, $::prefsfile;
-		} 
-		
+		}
+
 		else {
 
 			if ($class->{osDetails}->{'isWin6+'} && -r catdir($class->writablePath(), 'slimserver.pref')) {
 
 				push @dirs, catdir($class->writablePath(''), 'slimserver.pref');
 			}
-			
+
 			elsif (-r catdir($Bin, 'slimserver.pref'))  {
 
 				push @dirs, catdir($Bin, 'slimserver.pref');
@@ -196,13 +196,13 @@ sub dirsFor {
 
 		my $path;
 
-		# Windows Home Server offers a Music share which is more likely to be used 
+		# Windows Home Server offers a Music share which is more likely to be used
 		# than the administrator's My Music folder
 		if ($class->{osDetails}->{isWHS} && $dir =~ /^(?:music|playlists)$/) {
 			my $objWMI = Win32::OLE->GetObject('winmgmts://./root/cimv2');
-			
+
 			if ( $objWMI && (my $shares = $objWMI->InstancesOf('Win32_Share')) ) {
-				
+
 				my $path2;
 				foreach my $objShare (in $shares) {
 
@@ -219,20 +219,20 @@ sub dirsFor {
 						$path2 = $objShare->Path;
 					}
 				}
-				
+
 				undef $shares;
-				
+
 				# we didn't find x:\shares\music, but some other share with music in the path
 				if ($path2 && !$path) {
 					$path = $path2;
 				}
 			}
-			
+
 			undef $objWMI;
 		}
 
 		my $fallback;
-		
+
 		if ($dir =~ /^(?:music|playlists)$/) {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
 			$fallback = 'My Music';
@@ -245,18 +245,18 @@ sub dirsFor {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYPICTURES) unless $path;
 			$fallback = 'My Pictures';
 		}
-		
+
 		# fall back if no path or invalid path is returned
 		if (!$path || $path eq Win32::GetFolderPath(0)) {
-	
+
 			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-				{ 
-					Access => Win32::TieRegistry::KEY_READ(), 
-					Delimiter =>'/' 
+				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/',
+				{
+					Access => Win32::TieRegistry::KEY_READ(),
+					Delimiter =>'/'
 				}
 			);
-	
+
 			if (defined $swKey) {
 				if (!($path = $swKey->{$fallback})) {
 					if ($path = $swKey->{'Personal'}) {
@@ -300,30 +300,30 @@ sub getFileName {
 
 	my $locale = Slim::Utils::Unicode->currentLocale();
 	my $fsObj;
-	
+
 	if ($locale ne 'cp1252') {
 		$fsObj = Win32::OLE->new('Scripting.FileSystemObject') or Slim::Utils::Log::logger('database.info')->error("$@ - cannot load Scripting.FileSystemObject?!?");
 	}
-	
-	# display full name if we got a Windows 8.3 file name
-	if ($path =~ /~/) {
+
+	# display full name if we got a Windows 8.3 file path with a tilde in it
+	if ($path =~ /~\d+(\.|$)/ && $path =~ /\\|\//) {
 
 		if (my $n = Win32::GetLongPathName($path)) {
 			$n = File::Basename::basename($n);
 			main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Expand short name returned by readdir() to full name: $path -> $n");
-			
+
 			$path = $n;
 		}
 
 	}
 
-	elsif ( $locale ne 'cp1252' && $fsObj && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
+	elsif ( $fsObj && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert folder name: $path -> " . $folderObj->{Name});
 		$path = $folderObj->{Name};
 	}
 
-	elsif ( $locale ne 'cp1252' && $fsObj && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
+	elsif ( $fsObj && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert file name: $path -> " . $fileObj->{Name});
 		$path = $fileObj->{Name};
@@ -331,11 +331,11 @@ sub getFileName {
 
 	else {
 		# bug 16683 - experimental fix
-		# Decode pathnames that do not have '~' as they may have locale-encoded chracaters in them
+		# Decode pathnames that do not have '~' as they may have locale-encoded characters in them
 		$path = Slim::Utils::Unicode::utf8decode_locale($path);
 	}
 
-	return $path;	
+	return $path;
 }
 
 sub scanner {
@@ -361,7 +361,7 @@ sub localeDetails {
 	my $lc_ctype = "cp$linfo";
 	my $locale   = Win32::Locale::get_locale($langid);
 	my $lc_time  = POSIX::setlocale(LC_TIME, $locale);
-	
+
 	return ($lc_ctype, $lc_time);
 }
 
@@ -370,7 +370,7 @@ sub getSystemLanguage {
 
 	require Win32::Locale;
 
-	$class->_parseLanguage(Win32::Locale::get_language()); 
+	$class->_parseLanguage(Win32::Locale::get_language());
 }
 
 sub dontSetUserAndGroup { 1 }
@@ -382,9 +382,9 @@ sub getProxy {
 	# on Windows read Internet Explorer's proxy setting
 	my $ieSettings = $Win32::TieRegistry::Registry->Open(
 		'CUser/Software/Microsoft/Windows/CurrentVersion/Internet Settings',
-		{ 
-			Access => Win32::TieRegistry::KEY_READ(), 
-			Delimiter =>'/' 
+		{
+			Access => Win32::TieRegistry::KEY_READ(),
+			Delimiter =>'/'
 		}
 	);
 
@@ -402,7 +402,7 @@ sub getDefaultGateway {
 			return $1;
 		}
 	}
-	
+
 	return;
 }
 
@@ -412,7 +412,7 @@ sub ignoredItems {
 		'System Volume Information' => '/',
 		'RECYCLER'     => '/',
 		'Recycled'     => '/',
-		'$Recycle.Bin' => '/',	
+		'$Recycle.Bin' => '/',
 	);
 }
 
@@ -427,20 +427,20 @@ sub getDrives {
 
 	if (!defined $driveList->{ttl} || !$driveList->{drives} || $driveList->{ttl} < time) {
 		require Win32API::File;;
-	
+
 		my @drives = grep {
 			s/\\//;
-	
+
 			my $driveType = Win32API::File::GetDriveType($_);
 			Slim::Utils::Log::logger('os.paths')->debug("Drive of type '$driveType' found: $_");
-	
+
 			# what USB drive is considered REMOVABLE, what's FIXED?
 			# have an external HDD -> FIXED, USB stick -> REMOVABLE
 			# would love to filter out REMOVABLEs, but I'm not sure it's save
 			#($driveType != DRIVE_UNKNOWN && $driveType != DRIVE_REMOVABLE);
 			($driveType != Win32API::File->DRIVE_UNKNOWN && /[^AB]:/i);
 		} Win32API::File::getLogicalDrives();
-		
+
 		$driveList = {
 			ttl    => time() + 60,
 			drives => \@drives
@@ -459,7 +459,7 @@ Verifies whether a drive can be accessed or not
 sub isDriveReady {
 	my ($class, $drive) = @_;
 
-	# shortcut - we've already tested this drive	
+	# shortcut - we've already tested this drive
 	if (!defined $driveState->{$drive} || $driveState->{$drive}->{ttl} < time) {
 
 		$driveState->{$drive} = {
@@ -475,7 +475,7 @@ sub isDriveReady {
 		Slim::Utils::Log::logger('os.paths')->debug("Checking drive state for $drive");
 		Slim::Utils::Log::logger('os.paths')->debug('      --> ' . ($driveState->{$drive}->{state} ? 'ok' : 'nok'));
 	}
-	
+
 	return $driveState->{$drive}->{state};
 }
 
@@ -491,9 +491,9 @@ sub installPath {
 	# This is a system-wide registry key.
 	my $swKey = $Win32::TieRegistry::Registry->Open(
 		REG_KEY,
-		{ 
-			Access => Win32::TieRegistry::KEY_READ(), 
-			Delimiter =>'/' 
+		{
+			Access => Win32::TieRegistry::KEY_READ(),
+			Delimiter =>'/'
 		}
 	);
 
@@ -515,7 +515,7 @@ sub installPath {
 	}
 
 	return $installDir || getcwd();
-	
+
 	return '';
 }
 
@@ -535,13 +535,13 @@ sub writablePath {
 
 		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			REG_KEY, 
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
+			REG_KEY,
+			{
+				Access => Win32::TieRegistry::KEY_READ(),
+				Delimiter =>'/'
 			}
 		);
-	
+
 		if (defined $swKey && $swKey->{'DataPath'}) {
 			$writablePath = $swKey->{'DataPath'};
 		}
@@ -550,7 +550,7 @@ sub writablePath {
 			# second attempt: use the Windows API (recommended by MS)
 			# use the "Common Application Data" folder to store the server configuration etc.
 			$writablePath = Win32::GetFolderPath(Win32::CSIDL_COMMON_APPDATA);
-			
+
 			# fall back if no path or invalid path is returned
 			if (!$writablePath || $writablePath eq Win32::GetFolderPath(0)) {
 
@@ -558,17 +558,17 @@ sub writablePath {
 				# NOTE: this key has proved to be wrong on some Vista systems
 				# only here for backwards compatibility
 				$swKey = $Win32::TieRegistry::Registry->Open(
-					'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-					{ 
-						Access => Win32::TieRegistry::KEY_READ(), 
-						Delimiter =>'/' 
+					'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/',
+					{
+						Access => Win32::TieRegistry::KEY_READ(),
+						Delimiter =>'/'
 					}
 				);
-			
+
 				if (defined $swKey && $swKey->{'Common AppData'}) {
 					$writablePath = $swKey->{'Common AppData'};
 				}
-				
+
 				elsif ($ENV{'ProgramData'}) {
 					$writablePath = $ENV{'ProgramData'};
 				}
@@ -578,17 +578,17 @@ sub writablePath {
 					$writablePath = $Bin;
 				}
 			}
-			
+
 			$writablePath = catdir($writablePath, 'Logitech/UE Music Library') unless $writablePath eq $Bin;
-			
+
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
-				REG_KEY, 
-				{ 
-					Delimiter =>'/' 
+				REG_KEY,
+				{
+					Delimiter =>'/'
 				}
 			);
-			
+
 			if (defined $swKey && !$swKey->{'DataPath'}) {
 				$swKey->{'DataPath'} = $writablePath;
 			}
@@ -641,14 +641,14 @@ sub pathFromShortcut {
 		} else {
 
 			Slim::Utils::Log::logger('os.files')->error("Bad path in $fullpath - path was: [$path]");
-			
+
 			return;
 		}
 
 	} else {
 
 		Slim::Utils::Log::logger('os.files')->error("Shortcut $fullpath is invalid");
-		
+
 		return;
 	}
 
@@ -674,10 +674,10 @@ sub fileURLFromShortcut {
 
 sub getShortcut {
 	my ($class, $path) = @_;
-	
+
 	my $name = Slim::Music::Info::fileName($path);
 	$name =~ s/\.lnk$//i;
-	
+
 	return ( $name, $class->fileURLFromShortcut($path) );
 }
 
@@ -760,7 +760,7 @@ sub getPriorityClass {
 
 		return $priorityClass;
 	}
-	
+
 	return;
 }
 
@@ -820,9 +820,9 @@ if process is crashing. Use this method to clean them up.
 sub cleanupTempDirs {
 
 	my $dir = $ENV{TEMP};
-	
+
 	return unless $dir && -d $dir;
-	
+
 	opendir(DIR, $dir) || return;
 
 	my @folders = readdir(DIR);
@@ -834,16 +834,16 @@ sub cleanupTempDirs {
 			$pdkFolders{$1} = $entry
 		}
 	}
-	
+
 	return unless scalar(keys %pdkFolders);
 
 	require File::Path;
 	require Win32::Process::List;
 	my $p = Win32::Process::List->new();
-	my %processes = $p->GetProcesses(); 
+	my %processes = $p->GetProcesses();
 
 	foreach my $pid (keys %pdkFolders) {
-		
+
 		# don't remove files if process is still running...
 		next if $processes{$pid};
 
@@ -859,12 +859,11 @@ sub getUpdateParams {
 	my ($class, $url) = @_;
 
 	return if main::SLIM_SERVICE || main::SCANNER;
-	
+
 	if (!$PerlSvc::VERSION) {
 		Slim::Utils::Log::logger('server.update')->info("Running server from the source - don't download the update.");
 		return;
 	}
-
 	return {
 		path => $class->dirsFor('updates'),
 	};
@@ -873,20 +872,20 @@ sub getUpdateParams {
 sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
-sub installerExtension { 'exe' }; 
+sub installerExtension { 'exe' };
 sub installerOS { 'win' }
 
 sub restartServer {
 	my $class = shift;
 
 	my $log = Slim::Utils::Log::logger('server.update');
-	
+
 
 	if (!$class->canRestartServer()) {
 		$log->warn("The server can't be restarted automatically on Windows if run from the perl source.");
 		return;
 	}
-	
+
 	if ($PerlSvc::VERSION && PerlSvc::RunningAsService()) {
 
 		my $svcHelper = Win32::GetShortPathName( catdir( $class->installPath, 'server', 'uemlsvc.exe' ) );
@@ -908,16 +907,16 @@ sub restartServer {
 			return 1;
 		}
 	}
-	
+
 	elsif ($PerlSvc::VERSION) {
-	
+
 		my $restartFlag = catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir') || $class->dirsFor('cache'), 'restart.txt' );
 		if (open(RESTART, ">$restartFlag")) {
 			close RESTART;
 			main::stopServer();
 			return 1;
 		}
-		
+
 		else {
 			$log->error("Can't write restart flag ($restartFlag) - don't shut down");
 		}

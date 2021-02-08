@@ -1,7 +1,5 @@
 package Slim::Plugin::InternetRadio::Plugin;
 
-# $Id$
-
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
@@ -26,7 +24,7 @@ my $ICONS = {};
 
 sub initPlugin {
 	my $class = shift;
-	
+
 	if ( $class eq __PACKAGE__ ) {
 		# When called initially, fetch the list of radio plugins
 		Slim::Utils::Timers::setTimer(
@@ -41,7 +39,7 @@ sub initPlugin {
 				}
 			},
 		);
-		
+
 		# Setup cant_open handler for RadioTime reporting
 		Slim::Control::Request::subscribe(
 			\&cantOpen,
@@ -53,7 +51,7 @@ sub initPlugin {
 		# Create a real plugin only for our sub-classes
 		return $class->SUPER::initPlugin(@_);
 	}
-	
+
 	return;
 }
 
@@ -65,26 +63,26 @@ sub _initRadio {
 			Timeout => 30,
 		},
 	);
-	
+
 	my $url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio');
-	
+
 	$http->get($url);
 }
 
 sub _gotRadio {
 	my $http = shift;
-	
+
 	my $json = eval { from_json( $http->content ) };
-	
+
 	if ( $log->is_debug ) {
 		$log->debug( 'Got radio menu from SN: ' . Data::Dump::dump($json) );
 	}
-	
+
 	if ( $@ ) {
 		$http->error( $@ );
 		return _gotRadioError($http);
 	}
-	
+
 	__PACKAGE__->buildMenus( $json->{radio_menu} );
 }
 
@@ -92,37 +90,37 @@ my $retry = 5;
 sub _gotRadioError {
 	my $http  = shift;
 	my $error = $http->error;
-	
+
 	$log->error( "Unable to retrieve radio directory from SN: $error" );
-	
-	# retry in a bit, but don't wait any longer than 5 minutes 
+
+	# retry in a bit, but don't wait any longer than 5 minutes
 	$retry ||= 5;
 	$retry = $retry > 300 ? $retry : ($retry * 2);
-	
+
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + $retry,
 		\&_initRadio
 	);
-	
+
 }
 
 sub buildMenus {
 	my ( $class, $items ) = @_;
-	
+
 	$MENU = $items;
-	
+
 	# Initialize icon directory
 	my $cachedir = $prefs->get('cachedir');
 	my $icondir  = catdir( $cachedir, 'icons' );
-	
+
 	if ( !-d $icondir ) {
 		mkpath($icondir) or do {
 			logError("Unable to create plugin icon cache dir $icondir");
 			$icondir = undef;
 		};
 	}
-	
+
 	for my $item ( @{$items} ) {
 		if ( !main::SLIM_SERVICE && !Slim::Utils::OSDetect::isSqueezeOS() ) {
 			if ( $item->{icon} && $icondir ) {
@@ -130,10 +128,10 @@ sub buildMenus {
 				$class->cacheIcon( $icondir, $item->{icon} );
 			}
 		}
-		
+
 		$class->generate( $item );
 	}
-	
+
 	if (main::IP3K) {
 		# Update main menu in case players were connected before the menus were created
 		for my $client ( Slim::Player::Client::clients() ) {
@@ -145,10 +143,10 @@ sub buildMenus {
 
 sub generate {
 	my ( $class, $item ) = @_;
-	
+
 	my $package  = __PACKAGE__;
 	my $subclass = $item->{class} || return;
-	
+
 	my $tag     = lc $subclass;
 	my $name    = $item->{name};    # a string token
 	my $strings = $item->{strings}; # all strings for this item
@@ -157,19 +155,18 @@ sub generate {
 	my $type    = $item->{type};
 	my $icon    = $ICONS->{ $item->{icon} } || $item->{icon};
 	my $iconRE  = $item->{iconre} || 0;
-	
 	# Bug 14245, this class may already exist if it was created on startup with no SN account,
 	# and then we tried to re-create it after an SN account has been entered
 	my $pclass = "${package}::${subclass}";
 	if ( $pclass->can('initPlugin') ) {
 		# The plugin may have a new URL, we can change the URL in the existing plugin
 		$pclass->setFeed($feed);
-		
+
 		main::DEBUGLOG && $log->is_debug && $log->debug("$pclass already exists, changing URL to $feed");
-		
+
 		return;
 	}
-	
+
 	if ( $strings && uc($name) eq $name ) {
 		# Use SN-supplied translations
 		Slim::Utils::Strings::storeExtraStrings([{
@@ -177,7 +174,7 @@ sub generate {
 			token   => $name,
 		}]);
 	}
-	
+
 	my $code = qq{
 package ${package}::${subclass};
 
@@ -193,20 +190,20 @@ use Slim::Utils::Prefs;
 my \$prefs = preferences('server');
 };
 	}
-	
+
 	$code .= qq{
 sub initPlugin {
 	my \$class = shift;
-	
+
 	my \$iconre = '$iconRE';
-	
+
 	if ( \$iconre && \$iconre ne 'radiotime' ) {
 		Slim::Player::ProtocolHandlers->registerIconHandler(
 	        qr/\$iconre/,
 	        sub { return \$class->_pluginDataFor('icon'); }
 	    );
 	}
-	
+
 	\$class->setFeed('$feed');
 
 	\$class->SUPER::initPlugin(
@@ -228,9 +225,9 @@ sub playerMenu { 'RADIO' }
 		$code .= qq{
 sub feed {
 	my \$class = shift;
-	
+
 	my \$feed = getFeed();
-	
+
 	return \$class->radiotimeFeed( \$feed, \@_ );
 }
 };
@@ -260,30 +257,30 @@ sub setFeed { \$localFeed = \$_[1] }
 		$log->error( "Unable to dynamically create radio class $subclass: $@" );
 		return;
 	}
-	
+
 	$subclass = "${package}::${subclass}";
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Creating radio plugin: $subclass");
-	
+
 	$subclass->initPlugin();
 }
 
 sub cacheIcon {
 	my ( $class, $icondir, $icon ) = @_;
-	
+
 	if ( $ICONS->{$icon} ) {
 		# already cached
 		return;
 	}
-	
+
 	my $iconpath = catfile( $icondir, basename($icon) );
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching remote icon $icon as $iconpath" );
 	}
-	
+
 	$ICONS->{$icon} = $iconpath;
-	
+
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {},
 		\&cacheIconError,
@@ -292,13 +289,13 @@ sub cacheIcon {
 			icon   => $icon,
 		},
 	);
-	
+
 	my %headers;
-	
+
 	if ( -e $iconpath ) {
 		$headers{'If-Modified-Since'} = time2str( (stat $iconpath)[9] );
 	}
-	
+
 	$http->get( $icon, %headers );
 }
 
@@ -306,9 +303,9 @@ sub cacheIconError {
 	my $http  = shift;
 	my $error = $http->error;
 	my $icon  = $http->params('icon');
-	
+
 	$log->error( "Error caching remote icon $icon: $error" );
-	
+
 	delete $ICONS->{$icon};
 }
 
@@ -330,53 +327,53 @@ sub radiotimeFeed {
 
 	my @formats = keys %rtFormats;
 	my $id = '';
-	
+
 	if ($client) {
 		my %playerFormats = map { $_ => 1 } $client->formats;
-	
+
 		# RadioTime's listing defaults to giving us mp3 and wma streams only,
 		# but we support a few more
 		@formats = grep {
-		
+
 			# format played natively on player?
 			my $canPlay = $playerFormats{$rtFormats{$_}};
-				
+
 			if ( !$canPlay && main::TRANSCODING ) {
-	
+
 				foreach my $supported (keys %playerFormats) {
-					
+
 					if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
 						$canPlay = 1;
 						last;
 					}
-	
+
 				}
 			}
-	
+
 			$canPlay;
-	
+
 		} keys %rtFormats;
-		
+
 		$id = $client->uuid || $client->id;
 	}
 
 	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
 	$feed .= 'formats=' . join(',', @formats);
-	
+
 	# Bug 15568, pass obfuscated serial to RadioTime
 	$feed .= '&serial=' . Digest::MD5::md5_hex($id);
-	
+
 	# Add the RadioTime username
 	if ( my $username = $class->radiotimeUsername($client) ) {
 		$feed .= '&username=' . uri_escape_utf8($username);
 	}
-	
+
 	return $feed;
 }
 
 sub radiotimeUsername {
 	my ( $class, $client ) = @_;
-	
+
 	# XXX LMS support
 	if ( main::SLIM_SERVICE && $client ) {
 		if ( my $json = $prefs->client($client)->get( 'plugin_radiotime_accounts', 'force', 'UserPref' ) ) {
@@ -387,21 +384,21 @@ sub radiotimeUsername {
 			}
 		}
 	}
-	
+
 	return;
 }
 
 sub _pluginDataFor {
 	my ( $class, $key ) = @_;
-	
+
 	if ( $key ne 'icon' ) {
 		return $class->SUPER::_pluginDataFor($key);
 	}
-	
+
 	if ( main::SLIM_SERVICE || Slim::Utils::OSDetect::isSqueezeOS() ) {
 		return $class->icon;
 	}
-	
+
 	# Special handling for cached remote icons from SN
 	# The Web::Graphics code will use this special URL to find the
 	# cached icon path.
@@ -410,25 +407,25 @@ sub _pluginDataFor {
 
 sub cantOpen {
 	my $request = shift;
-	
+
 	my $url   = $request->getParam('_url');
 	my $error = $request->getParam('_error');
-	
+
 	if ( !main::SLIM_SERVICE ) {
 		# Do not report if the user has turned off stats reporting
 		# Reporting is always enabled on SN
 		return if $prefs->get('sn_disable_stats');
 	}
-	
-	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
-		my ($id) = $url =~ /id=([^&]+)/;
+
+	if ( $error && $url =~ m{^https?://[^/](?:radiotime|tunein)\.com} ) {
+		my ($id) = $url =~ /\bid\b=([a-z0-9]+)/;
 		if ( $id ) {
 			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=16&mode=smartradio'
 				. '&id=' . uri_escape_utf8($id)
 				. '&message=' . uri_escape_utf8($error);
-		
+
 			main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to RadioTime: $reportUrl");
-		
+
 			my $http = Slim::Networking::SimpleAsyncHTTP->new(
 				sub {
 					main::INFOLOG && $log->is_info && $log->info("RadioTime failure report OK");
@@ -441,9 +438,9 @@ sub cantOpen {
 					timeout => 30,
 				},
 			);
-		
+
 			$http->get($reportUrl);
-			
+
 			if ( main::SLIM_SERVICE ) {
 				# Let's log these on SN too
 				$error =~ s/"/'/g;
