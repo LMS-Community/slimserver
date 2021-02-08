@@ -84,7 +84,7 @@ my $prefs = preferences('plugin.radiotime');
 
 sub init {
 	my $class = shift;
-	
+
 	# Initialize metadata handler
 	Slim::Plugin::InternetRadio::TuneIn::Metadata->init();
 
@@ -111,7 +111,7 @@ sub playerMenu { }
 
 sub parseMenu {
 	my ($class, $opml) = @_;
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got radio menu from TuneIn: ' . Data::Dump::dump($opml) );
 	}
@@ -124,24 +124,24 @@ sub parseMenu {
 		# customize TuneIn's main opml stream to get artwork etc.
 		for my $item ( @{ $opml->{items} } ) {
 			$item->{key} = 'search' if !$item->{key} && $item->{type} eq 'search';
-			
+
 			# remap 'location' to 'world' so it gets merged with mysb's menu if needed
 			my $key = delete $item->{key};
 			my $class = $key eq 'location' ? 'world' : $key;
 			$item->{class} = ucfirst($class);
-			
+
 			$weight = MENUS->{$class}->{weight} || ++$weight;
-			
+
 			$item->{URL}   = delete $item->{url};
 			$item->{icon}  = MENUS->{$class}->{icon} || MENUS->{'default'}->{icon};
 			$item->{iconre} = 'radiotime';
 			$item->{weight} = $weight;
 			push @$menu, $item;
-			
+
 			# TTP 864, Use the string token for name instead of whatever translated name we get
 			$item->{name} = 'RADIOTIME_' . uc($class);
 		}
-		
+
 		# Add special My Presets item that shows up for users with an account
 		unshift @{$menu}, {
 			URL    => PRESETS_URL,
@@ -153,13 +153,13 @@ sub parseMenu {
 			weight => MENUS->{presets}->{weight},
 		};
 	}
-	
+
 	return $menu;
 }
 
 sub fixUrl {
 	my ($class, $feed, $client) = @_;
-	
+
 	# In order of preference
 	tie my %rtFormats, 'Tie::IxHash', (
 		aac     => 'aac',
@@ -175,47 +175,47 @@ sub fixUrl {
 	);
 
 	my @formats = keys %rtFormats;
-	
+
 	if ($client) {
 		my %playerFormats = map { $_ => 1 } $client->formats;
-	
+
 		# TuneIn's listing defaults to giving us mp3 and wma streams only,
 		# but we support a few more
 		@formats = grep {
-		
+
 			# format played natively on player?
 			my $canPlay = $playerFormats{$rtFormats{$_}};
-				
+
 			if ( !$canPlay && main::TRANSCODING ) {
 				require Slim::Player::TranscodingHelper;
-	
+
 				foreach my $supported (keys %playerFormats) {
-					
+
 					if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
 						$canPlay = 1;
 						last;
 					}
-	
+
 				}
 			}
-	
+
 			$canPlay;
-	
+
 		} keys %rtFormats;
 	}
 
 	my $uri    = URI->new($feed);
 	my $rtinfo = $uri->query_form_hash;
-	
+
 	$rtinfo->{serial}    ||= $class->getSerial($client);
 	$rtinfo->{partnerId} ||= PARTNER_ID;
 	$rtinfo->{username}  ||= $class->getUsername if $feed =~ /presets/;
 	$rtinfo->{formats}     = join(',', @formats);
 	$rtinfo->{id}          = $rtinfo->{sid} || $rtinfo->{id};
-	
+
 	# don't pass the query, as our {QUERY} placeholder would become URI encoded, which is confusing xmlbrowser
 	my $query = delete $rtinfo->{query};
-	
+
 	$uri->query_form( %$rtinfo );
 
 	return $uri->as_string . ($query ? "&query=$query" : '');
@@ -223,25 +223,25 @@ sub fixUrl {
 
 sub trackInfoHandler {
 	my ( $client, $url, $track ) = @_;
-	
+
 	my $item;
-	
+
 	if ( $url =~ m{^http://opml\.(?:radiotime|tunein)\.com} ) {
 		$item = {
 			name => cstring($client, 'PLUGIN_RADIOTIME_OPTIONS'),
 			url  => __PACKAGE__->trackInfoURL( $client, $url ),
 		};
 	}
-	
+
 	return $item;
 }
 
 # Bug 15569, special case for TuneIn stations, use their trackinfo menu
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
-	
+
 	my $rtinfo = URI->new($url)->query_form_hash;
-	
+
 	return $class->fixUrl(OPTIONS_URL . ($rtinfo->{sid} || $rtinfo->{id}), $client);
 }
 
@@ -260,25 +260,25 @@ sub getUsername {
 # set username as parsed form mysb.com url (unless it's already defined)
 sub setUsername {
 	my ( $class, $username ) = @_;
-	
+
 	return if !$username || $prefs->get('username');
-	
+
 	$prefs->set('username', $username);
 }
 
 sub reportError {
 	my ($class, $url, $error) = @_;
-	
-	return unless $error && $url =~ /(?:radiotime|tunein)\.com/;
-		
-	my ($id) = $url =~ /id=([^&]+)/;
+
+	return unless $error && $url =~ m{^https?://[^/](?:radiotime|tunein)\.com};
+
+	my ($id) = $url =~ /\bid\b=([a-z0-9]+)/;
 	if ( $id ) {
 		my $reportUrl = ERROR_URL
 			. '&id=' . uri_escape_utf8($id)
 			. '&message=' . uri_escape_utf8($error);
-	
+
 		main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to TuneIn: $reportUrl");
-	
+
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
 			sub {
 				main::INFOLOG && $log->is_info && $log->info("TuneIn failure report OK");
@@ -291,7 +291,7 @@ sub reportError {
 				timeout => 30,
 			},
 		);
-	
+
 		$http->get($reportUrl);
 	}
 }
