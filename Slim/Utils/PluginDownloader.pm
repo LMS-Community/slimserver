@@ -113,6 +113,12 @@ sub extract {
 
 		} else {
 
+			# Strip world-writable file permissions:
+			foreach my $member ( $zip->members() ) {
+				my $attrs = $member->unixFileAttributes() & 0777;
+				$member->unixFileAttributes($attrs & ~0022) if $attrs & 0022
+			}
+
 			my $source;
 
 			# ignore additional directory information in zip
