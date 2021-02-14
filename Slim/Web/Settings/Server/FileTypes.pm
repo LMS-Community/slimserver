@@ -66,6 +66,7 @@ sub handler {
 		}
 
 		$prefs->set('disabledformats', \@disabled);
+		$paramRef->{'pref_prioritizeNative'} ||= 0;
 	}
 
 	my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
