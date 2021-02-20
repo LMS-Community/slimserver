@@ -690,13 +690,24 @@ sub albumsQuery {
 				}
 			}
 
+			# when filtering by role, but that role at the head of the list
+			if ($roleID) {
+				unshift @roles, map { Slim::Schema::Contributor->roleToType($_) } split(/,/, $roleID);
+				my %seen;
+				@roles = grep !($seen{$_}++), @roles;
+			}
+
 			$contributorSql = sprintf( qq{
-				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
-				FROM contributor_album
-				JOIN contributors ON contributors.id = contributor_album.contributor
-				WHERE contributor_album.album = ? AND contributor_album.role IN (%s)
-				GROUP BY contributor_album.role
-				ORDER BY contributor_album.role DESC
+				SELECT GROUP_CONCAT(c.name, ',') AS name, GROUP_CONCAT(c.id, ',') AS id
+				FROM (
+					SELECT contributors.name AS name, contributors.id AS id
+					FROM contributor_album
+						JOIN	contributors ON contributors.id = contributor_album.contributor
+					WHERE contributor_album.album = ? AND contributor_album.role IN (%s)
+					GROUP BY contributors.id
+					ORDER BY contributor_album.role DESC
+				)
+				AS c;
 			}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
 		}
 
