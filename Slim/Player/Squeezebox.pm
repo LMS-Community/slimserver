@@ -879,9 +879,9 @@ sub stream_s {
 	
 	# If the output channels pref is set, and the player is synced to at least 1 other active player
 	# we tell the player to only play the desired channel. If not actively synced, the player will play
-	# in stereo.
+	# in stereo, unless channels are combined
 	if ( my $outputChannels = $prefs->client($client)->get('outputChannels') ) {
-		if ( $client->isSynced(1) ) { # use active player count
+		if ( $outputChannels == 0x03 || $client->isSynced(1) ) { # use active player count or this is L+R
 			$flags |= ($outputChannels & 0x03) << 2;
 		}
 	}
