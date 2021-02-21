@@ -5693,10 +5693,10 @@ SETUP_OUTPUT_CHANNELS_DESC
 	CS	Tento přehrávač můžete nakonfigurovat, aby přehrával buď levý nebo pravý kanál. Tuto funkci můžete například využít k vytvoření stereo efektu ze 2 synchronizovaných rádií Squeezebox.
 	DA	Du kan konfigurere afspilleren til kun at spille i den venstre eller højre kanal. Dette kan bruges til at oprette et stereobillede fra to synkroniserede Squeezebox-radioer, f.eks.
 	DE	Sie können diesen Player so konfigurieren, dass er nur den linken oder rechten Kanal wiedergibt. Diese Option kann zum Beispiel verwendet werden, um ein Stereobild über zwei synchronisierte Squeezebox Radios zu erstellen.
-	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
+	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example. Both channels can also be combined to mono
 	ES	Puede configurar este reproductor para que sólo reproduzca el canal izquierdo o el derecho. Se puede usar, por ejemplo, para crear una imagen estéreo a partir de dos dispositivos Squeezebox Radio sincronizados.
 	FI	Voit määrittää soittimen toistamaan vain vasemmalla tai oikealla kanavalla. Näin voidaan luoda stereovaikutelma esimerkiksi kahdella synkronoidulla Squeezebox-radiolla.
-	FR	Vous pouvez configurer cette platine pour lire uniquement le canal droit ou gauche. Cette configuration vous permet par exemple de créer une image stéréo à partir de deux radios Squeezebox synchronisées.
+	FR	Vous pouvez configurer cette platine pour lire uniquement le canal droit ou gauche. Cette configuration vous permet par exemple de créer une image stéréo à partir de deux radios Squeezebox synchronisées. Les deux canaux peuvent aussi être combinés en mono
 	IT	È possibile configurare il lettore affinché riproduca solo il canale destro o sinistro. Ciò risulta utile ad esempio per creare un'immagine stereo da due Squeezebox Radio sincronizzate.
 	NL	Je kunt deze muziekspeler configureren zodat alleen via het linker- of rechterkanaal wordt afgespeeld. Zo kun je bijvoorbeeld 2 gesynchroniseerde Squeezebox Radio's in stereo-opstelling plaatsen.
 	NO	Du kan konfigurere spilleren slik at den kun spiller fra venstre eller høyre kanal. Slik kan du blant annet skape et stereobilde fra to synkroniserte Squeezebox Radio-spillere.
@@ -5748,6 +5748,10 @@ OUTPUT_CHANNELS_RIGHT
 	PL	Kanał prawy
 	RU	Правый канал
 	SV	Höger kanal
+	
+OUTPUT_CHANNELS_COMBINED
+	EN	Both Channels (Mono)
+	FR	Deux Canaux (Mono)
 
 SETUP_TRANSITIONTYPE
 	CS	Prolínání
