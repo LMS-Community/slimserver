@@ -57,7 +57,7 @@ sub search {
 		$params->{'itemsPerPage'} = MAXRESULTS;
 		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search$library_id/";
 		$params->{'q'} =~ s/\*//g;
-		return Slim::Web::XMLBrowser::webLink(@_);		
+		return Slim::Web::XMLBrowser::webLink(@_);
 	}
 
 	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
@@ -70,7 +70,14 @@ sub search {
 		};
 	}
 
-	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	
+	return Slim::Web::HTTP::filltemplatefile('search.html', $params);
+}
+
+sub parseAdvancedSearchParams {
+	my ($client, $params) = @_;
+
+	$params->{_dontRenderPage} = 1;
+	return advancedSearch($client, $params);
 }
 
 sub advancedSearch {
@@ -79,6 +86,8 @@ sub advancedSearch {
 	my $player  = $params->{'player'};
 	my %query   = ();
 	my @qstring = ();
+
+	my $dontRenderPage = delete $params->{_dontRenderPage};
 
 	# template defaults
 	$params->{'browse_list'}  = " ";
@@ -158,7 +167,7 @@ sub advancedSearch {
 			$newKey =~ s/\.op$//;
 
 			$searchParams{$newKey} ||= {};
-			$searchParams{$newKey}->{op} = $op; 
+			$searchParams{$newKey}->{op} = $op;
 
 			next unless $params->{$key} || ($newKey eq 'year' && $params->{$key} eq '0');
 
@@ -240,13 +249,13 @@ sub advancedSearch {
 		}
 		elsif ($key =~ /search\.(.*)\.(active\d+)$/) {
 			$searchParams{$1} ||= {};
-			$searchParams{$1}->{$2} = $params->{$key}; 
+			$searchParams{$1}->{$2} = $params->{$key};
 
 			next;
 		}
 
 		$searchParams{$newKey} ||= {};
-		$searchParams{$newKey}->{value} = $params->{$key}; 
+		$searchParams{$newKey}->{value} = $params->{$key};
 
 		# Append to the query string
 		push @qstring, join('=', $key, Slim::Utils::Misc::escape($params->{$key}));
@@ -348,7 +357,7 @@ sub advancedSearch {
 
 		_initActiveRoles($params);
 
-		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
+		return $dontRenderPage ? $params : Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
 	my @joins = ();
@@ -386,7 +395,7 @@ sub advancedSearch {
 		# IDs can change. When we want to save a library definition we better use the genre name.
 		if ( $query{'genre'} >= 0 && $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 			$namesearch = Slim::Schema->search('Genre', { id => $query{'genre'} })->get_column('name')->first;
-			$query{'genre'} = { 
+			$query{'genre'} = {
 				'in' => Slim::Schema->search('Genre', {
 					'me.namesearch' => { 'like' => Slim::Utils::Text::searchStringSplit($namesearch) }
 				})->get_column('id')->as_query
@@ -400,8 +409,8 @@ sub advancedSearch {
 					s/\s+$//;
 					@{Slim::Utils::Text::searchStringSplit($_)};
 				} split /,/, $namesearch;
-				
-				$query{'genre'} = { 
+
+				$query{'genre'} = {
 					($query{'genre'} == -2 ? 'not_in' : 'in') => Slim::Schema->search('Genre', {
 						'me.namesearch' => { 'like' => \@tokens }
 					})->get_column('id')->as_query
@@ -484,6 +493,8 @@ sub advancedSearch {
 		Slim::Music::VirtualLibraries->rebuild($vlid);
 	}
 
+	return ($tracksRs, $rs) if $dontRenderPage;
+
 	if (defined $client && !$params->{'start'}) {
 
 		# stash parameters used to generate this query, so if the user
@@ -527,9 +538,9 @@ sub fillInSearchResults {
 	$params->{'itemsPerPage'} ||= preferences('server')->get('itemsPerPage');
 
 	# This is handed to pageInfo to generate the pagebar 1 2 3 >> links.
-	my $otherParams = '&player=' . Slim::Utils::Misc::escape($player) . 
-			  ($type ?'&searchType='. ucfirst($type) : '') . 
-			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
+	my $otherParams = '&player=' . Slim::Utils::Misc::escape($player) .
+			  ($type ?'&searchType='. ucfirst($type) : '') .
+			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) .
 			  '&' .
 			  join('&', @$qstring);
 
