@@ -690,11 +690,11 @@ sub albumsQuery {
 				}
 			}
 
-			# when filtering by role, but that role at the head of the list
+			# when filtering by role, put that role at the head of the list if it wasn't in there yet
 			if ($roleID) {
-				unshift @roles, map { Slim::Schema::Contributor->roleToType($_) } split(/,/, $roleID);
+				unshift @roles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
 				my %seen;
-				@roles = grep !($seen{$_}++), @roles;
+				@roles = reverse grep !($seen{$_}++), reverse @roles;
 			}
 
 			$contributorSql = sprintf( qq{
