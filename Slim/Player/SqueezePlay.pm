@@ -91,7 +91,7 @@ my %CapabilitiesMap = (
 	Spdirect                => 'spDirectHandlers',
 	Proxy                   => 'proxyAddress',
 	CanHTTPS                => '_canHTTPS',
-	Balance					=> 'balance',
+	Balance                 => 'balance',
 
 	# deprecated
 	model                   => '_model',

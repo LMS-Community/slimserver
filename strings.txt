@@ -5754,14 +5754,6 @@ OUTPUT_CHANNELS_COMBINED
 	EN	Both Channels (Mono)
 	FR	Deux Canaux (Mono)
 
-SETUP_BALANCE
-	EN	Balance
-	FR	Balance	
-	
-SETUP_BALANCE_DESC
-	EN	Adjust speakers balance
-	FR	Règle la balance des haut-parleurs	
-
 SETUP_TRANSITIONTYPE
 	CS	Prolínání
 	DA	Blød overgang
@@ -10722,6 +10714,10 @@ STEREOXL
 	PL	StereoXL
 	RU	Режим StereoXL
 	SV	StereoXL
+	
+BALANCE
+	EN	Balance
+	FR	Balance		
 
 PITCH
 	CS	Tón
