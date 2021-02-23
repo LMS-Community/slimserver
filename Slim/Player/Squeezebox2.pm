@@ -51,6 +51,7 @@ our $defaultPrefs = {
 	'snLastSyncDown'     => -1,
 	'snSyncInterval'     => 30,
 	'outputChannels'     => 0,
+	'balance'            => 0,
 };
 
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
@@ -296,15 +297,18 @@ sub volume {
 		my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
 		my $data;
+		my $balance = $prefs->client($client)->get('balance') || 0;
+		my $left = $balance > 0 ? (25 - $balance) / $balance : 1;
+		my $right = $balance < 0 ? (25 + $balance) / -$balance : 1;
 		if (defined($client->controllerSequenceId())) {
-			$data = pack('NNCCNNNa6', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain,
+			$data = pack('NNCCNNNa6', $oldGain*$left, $oldGain*$right, $dvc, $preamp, $newGain*$left, $newGain*$right,
 				($client->controllerSequenceNumber() || 0), $client->controllerSequenceId());
 		}
 		elsif (defined($client->sequenceNumber())) {
-			$data = pack('NNCCNNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain, $client->sequenceNumber());
+			$data = pack('NNCCNNN', $oldGain*$left, $oldGain*$right, $dvc, $preamp, $newGain*$left, $newGain*$right, $client->sequenceNumber());
 		}
 		else {
-			$data = pack('NNCCNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain);
+			$data = pack('NNCCNN', $oldGain*$left, $oldGain*$right, $dvc, $preamp, $newGain*$left, $newGain*$right);
 		}
 		$client->sendFrame('audg', \$data);
 	}

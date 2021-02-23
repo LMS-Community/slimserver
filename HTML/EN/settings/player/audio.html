@@ -427,4 +427,10 @@
 		[% END %]
 	[% END %]
 
+	[% IF prefs.exists('pref_balance') %]
+		[% WRAPPER setting title="SETUP_BALANCE" desc="SETUP_BALANCE_DESC" %]
+			<input type="text" class="stdedit sliderInput_-25_25" name="pref_balance" id="pref_balance" value="[% prefs.pref_balance %]" size="5">
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]
