@@ -56,6 +56,7 @@ our $defaultPrefs = {
 
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -25, 'high' => 25 }, 'balance');
+$prefs->setChange( sub { $_[2]->volume($_[2]->volume); }, 'balance');
 
 # Keep track of direct stream redirects
 our $redirects = {};
