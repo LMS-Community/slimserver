@@ -111,6 +111,10 @@ sub prefs {
 		push @prefs, 'outputChannels';
 	}
 
+	if ($client->hasBalance()) {
+		push @prefs, 'balance';
+	}
+
 	return ($prefs->client($client), @prefs);
 }
 

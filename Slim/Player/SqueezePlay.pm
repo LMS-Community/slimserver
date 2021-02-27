@@ -42,6 +42,7 @@ BEGIN {
 		spDirectHandlers
 		proxyAddress
 		_canHTTPS
+		balance
 	));
 }
 
@@ -66,6 +67,7 @@ sub new {
 		hasPolarityInversion    => 0,
 		spDirectHandlers        => undef,
 		proxyAddress            => undef,
+		balance                 => 0,
 	);
 
 	return $client;
@@ -89,6 +91,7 @@ my %CapabilitiesMap = (
 	Spdirect                => 'spDirectHandlers',
 	Proxy                   => 'proxyAddress',
 	CanHTTPS                => '_canHTTPS',
+	Balance                 => 'balance',
 
 	# deprecated
 	model                   => '_model',
@@ -114,6 +117,10 @@ sub revisionNumber {
 	return $num;
 }
 
+sub hasBalance { 
+	return shift->balance;
+}
+
 sub needsUpgrade {}
 
 sub init {
@@ -127,7 +134,6 @@ sub init {
 	# Do this at end so that any resync that happens has the capabilities already set
 	$client->SUPER::init(@_);
 }
-
 
 sub reconnect {
 	my ($client, $paddr, $revision, $tcpsock, $reconnect, $bytes_received, $syncgroupid, $capabilities) = @_;

@@ -10714,6 +10714,10 @@ STEREOXL
 	PL	StereoXL
 	RU	Режим StereoXL
 	SV	StereoXL
+	
+BALANCE
+	EN	Balance
+	FR	Balance		
 
 PITCH
 	CS	Tón
