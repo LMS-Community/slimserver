@@ -101,6 +101,10 @@ sub hasScrolling {
 	return shift->revision >= 135;
 }
 
+sub hasBalance {
+	return shift->model(1) =~ /receiver|squeezebox3|transporter/;
+}
+
 sub model {
 	my $client       = shift;
 	my $wantRealName = shift;
@@ -300,8 +304,8 @@ sub volume {
 
 		my $data;
 		my $balance = $prefs->client($client)->get('balance') || 0;
-		my $left = $balance > 0 ? (25 - $balance) / $balance : 1;
-		my $right = $balance < 0 ? (25 + $balance) / -$balance : 1;
+		my $left = $balance > 0 ? (25 - $balance) / 25 : 1;
+		my $right = $balance < 0 ? (25 + $balance) / 25 : 1;
 		if (defined($client->controllerSequenceId())) {
 			$data = pack('NNCCNNNa6', $oldGain*$left, $oldGain*$right, $dvc, $preamp, $newGain*$left, $newGain*$right,
 				($client->controllerSequenceNumber() || 0), $client->controllerSequenceId());
