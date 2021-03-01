@@ -118,7 +118,8 @@ sub revisionNumber {
 }
 
 sub hasBalance { 
-	return shift->balance;
+	my $client = shift;
+	return $client->balance || $client->model =~ /controller|fab4|baby/;
 }
 
 sub needsUpgrade {}
