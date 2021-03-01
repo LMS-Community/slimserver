@@ -15,9 +15,9 @@ Slim::Buttons::Home
 		'useMode'   => 'alarm',
 		'condition' => sub { 1 },
 	});
-	
+
 	Slim::Buttons::Home::getHomeChoices($client);
-	
+
 	Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
 
 =head1 DESCRIPTION
@@ -106,7 +106,7 @@ sub init {
 	%functions = (
 		'add' => sub  {
 			my $client = shift;
-		
+
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 
 				$client->showBriefly( {
@@ -122,7 +122,7 @@ sub init {
 
 		'play' => sub  {
 			my $client = shift;
-			Slim::Buttons::Input::List::exitInput($client, 'right');		
+			Slim::Buttons::Input::List::exitInput($client, 'right');
 		},
 	);
 
@@ -137,7 +137,7 @@ Clean up global hash when a client is gone
 
 sub forgetClient {
 	my $client = shift;
-	
+
 	delete $homeChoices{ $client };
 }
 
@@ -150,8 +150,8 @@ sub forgetClient {
 =head2 addSubMenu( $menu,$submenuname,$submenuref)
 
 Adds a submenu item to the supplied menuOption.  A reference to a hash containing the
-submenu data must be supplied.  If the supplied menuOption does not exist, a new menuOption 
-will be created 
+submenu data must be supplied.  If the supplied menuOption does not exist, a new menuOption
+will be created
 
 =cut
 
@@ -177,7 +177,7 @@ sub addSubMenu {
 
 		return;
 	}
-	
+
 	$home{$menu}{'submenus'}{$submenuname} = $submenuref;
 }
 
@@ -189,9 +189,9 @@ Takes two strings, deleting the menu indicated by $submenuname from the menu nam
 
 sub delSubMenu {
 	my ($menu, $name) = @_;
-	
+
 	main::INFOLOG && $log->info("Deleting $name from $menu");
-	
+
 	if (!exists $home{$menu}{'submenus'}) {
 
 		return;
@@ -221,21 +221,21 @@ sub delSubMenu {
 =head2 addMenuOption( $menu,$menuref)
 
 Create a new menuOption for the top level.  This creates a new menu option at the top level,
-which can be enabled or disabled per player. Takes $menu as a string identifying the menu name, and $menuref, 
+which can be enabled or disabled per player. Takes $menu as a string identifying the menu name, and $menuref,
 which is a reference to the hash of menu parameters.
 
 =cut
 
 sub addMenuOption {
 	my ($menu, $menuref) = @_;
-	
+
 	if (!defined $menu) {
 
 		$log->logBacktrace("No menu information supplied!");
 
 		return;
 	}
-	
+
 	$home{$menu} = $menuref;
 }
 
@@ -265,7 +265,7 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
-	
+
 	if ($method eq 'pop') {
 
 		Slim::Buttons::Common::popMode($client);
@@ -279,7 +279,7 @@ sub setMode {
 
 		return;
 	}
-	
+
 	updateMenu($client);
 
 	$client->curDepth('');
@@ -287,7 +287,7 @@ sub setMode {
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 	}
-	
+
 	my %params          = %defaultParams;
 
 	$params{'header'}   = \&homeheader;
@@ -318,7 +318,7 @@ sub getLastDepth {
 # grab the portion of the hash for the next menu down
 sub getNextList {
 	my $client = shift;
-	
+
 	my $next = getCurrentList($client);
 
 	# return chosen Top Level item
@@ -341,7 +341,7 @@ sub getCurrentList {
 # get a generic menu reference
 sub getMenu {
 	my $depth = shift;
-	
+
 	my $current = \%home;
 
 	if ($depth eq "") {
@@ -350,13 +350,13 @@ sub getMenu {
 	}
 
 	my @depth = split(/-/, $depth);
-	
+
 	# home reference is "" so drop first item
 	shift @depth;
-	
+
 	# top level reference
 	$current = $current->{shift @depth};
-	
+
 	# recursive submenus
 	for my $level (@depth) {
 		$current = $current->{'submenus'}->{$level};
@@ -374,7 +374,7 @@ sub homeExitHandler {
 		if ($client->curDepth() ne "") {
 
 			$client->curDepth(getLastDepth($client));
-			
+
 			# call jump in case top level has changed.
 			#jump($client,$client->curSelection($client->curDepth()));
 			Slim::Buttons::Common::popModeRight($client);
@@ -386,33 +386,33 @@ sub homeExitHandler {
 			updateMenu($client);
 			$client->bumpLeft();
 		}
-	
+
 	} elsif ($exittype eq 'RIGHT') {
 
 		my $nextmenu = $client->curSelection($client->curDepth());
-		
+
 		# map default selection in case no onChange was done in INPUT.List
-		if (!defined($nextmenu)) { 
+		if (!defined($nextmenu)) {
 
 			$nextmenu = ${$client->modeParam('valueRef')};
 
 			$client->curSelection($client->curDepth(),$nextmenu);
 		}
-		
+
 		if (!defined $nextmenu) {
 
 			$client->bumpRight();
 			return;
 		}
-		
+
 		my $nextParams;
 		# some menus might need function return values for params, so test here and grab
-		
+
 		if (ref(getNextList($client)) eq 'CODE') {
 
 			$nextParams = {&getNextList($client)->($client)};
 
-		} elsif (getNextList($client)) { 
+		} elsif (getNextList($client)) {
 
 			$nextParams = &getNextList($client);
 		}
@@ -420,30 +420,30 @@ sub homeExitHandler {
 		if (exists ($nextParams->{'submenus'})) {
 
 			my %params = %defaultParams;
-			
+
 			my $containerLevel = $client->curSelection($client->curDepth());
 			$params{'header'}  = $client->string($containerLevel);
 
 			# move reference to new depth
 			my $curDepth = $client->curDepth();
 			$client->curDepth( $curDepth . "-" . $client->curSelection($curDepth) );
-			
+
 			# check for disalbed plugins in item list.
 			# Bug: 7089 - sort by ranking unless it's the plugins menu
 			$params{'listRef'} = createList($client, $nextParams, $containerLevel ne 'PLUGINS' ? 1 : 0);
 			$params{'overlayRef'} = undef if scalar @{$params{'listRef'}} == 0;
 			$params{'curMenu'} = $client->curDepth();
-			
+
 			$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
-			
+
 			# If the ExitHandler is changing, backtrack the pointer for when we return home.
 			if (exists $nextParams->{'callback'}) {$client->curDepth(getLastDepth($client));}
-			
+
 			# merge next list params over the default params where they exist.
 			@params{keys %{$nextParams}} = values %{$nextParams};
-			
+
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
-		
+
 		# if here are no submenus, check for the way out.
 		} elsif (exists($nextParams->{'useMode'})) {
 
@@ -454,7 +454,7 @@ sub homeExitHandler {
 			} else {
 				my %params = %$nextParams;
 
-				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar') && 
+				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar') &&
 					exists($nextParams->{'initialValue'})) {
 
 					# set up valueRef for current pref
@@ -505,7 +505,7 @@ sub createList {
 	my $weighted = shift;
 
 	my @list = ();
-	
+
 	# Get sort order for plugins
 	my $pluginWeights = Slim::Plugin::Base->getWeights();
 
@@ -515,7 +515,7 @@ sub createList {
 			($weighted && ($pluginWeights->{$a} || 0) <=> ($pluginWeights->{$b} || 0))
 			||
 			($weighted && ($prefs->get("rank-$b") || 0) <=> ($prefs->get("rank-$a") || 0))
-			|| 
+			||
 			(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))
 		} keys %{$params->{'submenus'}}) {
 
@@ -523,17 +523,17 @@ sub createList {
 		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {
 			next;
 		}
-		
+
 		# Leakage of the LineIn plugin..
 		if ($sub eq 'PLUGIN_LINE_IN' && !$client->hasLineIn) {
 			next;
 		}
-		
+
 		# Leakage of the LineOut plugin..
 		if ($sub eq 'PLUGIN_LINE_OUT' && !$client->hasHeadSubOut) {
 			next;
 		}
-		
+
 		if ( my $condition = $params->{submenus}->{$sub}->{condition} ) {
 			next unless $condition->( $client );
 		}
@@ -556,17 +556,17 @@ defaults to the first item from the home menu pref for the current player.
 sub jump {
 	my $client = shift;
 	my $item = shift;
-	
+
 	# force top level
 	$client->curDepth("");
 	$client->curSelection($client->curDepth(),undef);
-	
+
 	for my $menuitem (@{$homeChoices{$client}}) {
 		next unless $menuitem eq $item;
-		
+
 		$client->curSelection($client->curDepth(),$item);
 	}
-	
+
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 	}
@@ -574,8 +574,8 @@ sub jump {
 
 =head2 jumpToMenu( $client, $menu, $depth)
 
-Forces a pushMode to a  specific target menu item within the home menu tree 
-disregarding home menu settings.  $menu is a string identifying the unique menu 
+Forces a pushMode to a  specific target menu item within the home menu tree
+disregarding home menu settings.  $menu is a string identifying the unique menu
 node, while $depth is a string made up of the path of menu items taken, joined by "-".
 
 This operates on the player given by the $client structure provided.
@@ -593,7 +593,7 @@ sub jumpToMenu {
 
 	$client->curDepth($depth);
 	$client->curSelection($client->curDepth, $menu);
-	
+
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
 
 	if (exists $nextParams->{'listRef'}) {
@@ -655,10 +655,10 @@ sub menuOptions {
 	my %menuChoices = ();
 
 	$menuChoices{""} = "";
-	
+
 	# Exclude SN-disabled plugins
 	my $sn_disabled = $prefs->get('sn_disabled_plugins');
-	
+
 	MENU:
 	for my $menuOption (sort keys %home) {
 
@@ -669,10 +669,10 @@ sub menuOptions {
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Misc::getPlaylistDir()) {
 			next;
 		}
-		
+
 		if ( $sn_disabled ) {
 			for my $plugin ( @{$sn_disabled} ) {
-				next MENU if $menuOption =~ /$plugin/i;
+				next MENU if ($home{$menuOption}->{useMode} || '') =~ /^Slim::Plugin/ && $menuOption =~ /$plugin/i;
 			}
 		}
 
@@ -699,7 +699,7 @@ sub unusedMenuOptions {
 	my %plugins = map { $_ => 1 } Slim::Utils::PluginManager->installedPlugins();
 
 	for my $plugin (keys %plugins ) {
-		
+
 		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
 	}
 
@@ -717,7 +717,7 @@ sub unusedMenuOptions {
 	if (defined $menuChoices{'PLUGIN_LINE_OUT'} && !$client->hasHeadSubOut) {
 		delete $menuChoices{'PLUGIN_LINE_OUT'};
 	}
-	
+
 	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
@@ -728,7 +728,7 @@ sub unusedMenuOptions {
 
 =head2 getHomeChoices( $client )
 
-Takes a $client object as an argument and returns a array reference to the currently selected 
+Takes a $client object as an argument and returns a array reference to the currently selected
 menu items for the home menu of the supplied client.
 
 =cut
@@ -748,17 +748,17 @@ from setup when menu options are changed, or when some prefs may affect availabl
 sub updateMenu {
 	my $client = shift;
 	my @home = ();
-	
+
 	my $menuItem = $prefs->client($client)->get('menuItem');
 	if ( !ref $menuItem ) {
 		$menuItem = [ $menuItem ];
 	}
-	
+
 	for my $menuItem ( @{$menuItem} ) {
 		if ($menuItem eq 'BROWSE_MUSIC' && !Slim::Schema::hasLibrary()) {
 			next;
 		}
-		
+
 		# more leakage of the LineIn plugin..
 		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
 			next;
@@ -768,14 +768,14 @@ sub updateMenu {
 		if ($menuItem eq 'PLUGIN_LINE_OUT' && !($client->hasHeadSubOut && $client->lineOutConnected)) {
 			next;
 		}
-		
+
 		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
 
 		if (!exists $home{$menuItem} && !defined $plugin) {
 
 			next;
 		}
-		
+
 		# Skip home menu items that contain no submenus
 		if ( ref $home{$menuItem} eq 'HASH' && !scalar keys %{ $home{$menuItem} } ) {
 			next;
@@ -785,7 +785,7 @@ sub updateMenu {
 
 			$menuItem = $plugin->{'name'};
 		}
-		
+
 		push @home, $menuItem;
 	}
 
@@ -793,22 +793,22 @@ sub updateMenu {
 
 		push @home, 'NOW_PLAYING';
 	}
-	
+
 	# Add home menu apps between Internet Radio and My Apps
 	my $apps    = $client->apps;
 	my $appMenu = [];
-	
+
 	for my $app ( keys %{$apps} ) {
 		# Skip non home-menu apps
 		next unless $apps->{$app}->{home_menu} && $apps->{$app}->{home_menu} == 1;
-		
+
 		my $title = $apps->{$app}->{title};
 		next unless $title;
-		
+
 		if ( $title eq uc($title) ) {
 			$title = $client->string($title);
 		}
-		
+
 		# Is this app supported by a built-in plugin?
 		if ( my $plugin = $apps->{$app}->{plugin} ) {
 			# Make sure it's enabled
@@ -825,17 +825,17 @@ sub updateMenu {
 				mode => $title,
 				text => $title,
 			};
-			
+
 			my $url = ( main::NOMYSB || $apps->{$app}->{url} =~ /^http/ )
-				? $apps->{$app}->{url} 
+				? $apps->{$app}->{url}
 				: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
-			
+
 			# Create new XMLBrowser mode for this item
 			if ( !exists $home{$title} ) {
 				addMenuOption( $title => {
 					useMode => sub {
 						my $client = shift;
-					
+
 						my %params = (
 							header   => $title,
 							modeName => $title,
@@ -843,22 +843,22 @@ sub updateMenu {
 							title    => $title,
 							timeout  => 35,
 						);
-					
+
 						Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-					
+
 						$client->modeParam( handledTransition => 1 );
 					},
 				} );
 			}
 		}
 	}
-	
+
 	# Sort app menu after localization
 	my @sorted =
-	 	map { $_->{mode} } 
+	 	map { $_->{mode} }
 		sort { $a->{text} cmp $b->{text} }
 		@{$appMenu};
-	
+
 	# Insert app menu after radio
 	splice @home, 3, 0, @sorted;
 
@@ -872,10 +872,10 @@ sub updateMenu {
 		$client->update();
 		return;
 	}
-	
+
 	$client->modeParam('listRef', \@home);
 }
- 
+
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
