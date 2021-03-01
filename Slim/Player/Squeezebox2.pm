@@ -102,7 +102,7 @@ sub hasScrolling {
 }
 
 sub hasBalance {
-	return shift->model(1) =~ /receiver|squeezebox3|transporter/;
+	return shift->model !~ /boom/;
 }
 
 sub model {
