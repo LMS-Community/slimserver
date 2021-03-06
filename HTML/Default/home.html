@@ -1,9 +1,9 @@
 [% IF page == 'help';
-	
+
 	pagetitle = "HELP" | string;
-	
+
 	PROCESS helpheader.html noCrumbList=1;
-	
+
 	WRAPPER helpTopicList;
 		"<br/><br/>";
 		FOREACH link = additionalLinks.help;
@@ -12,7 +12,7 @@
 			PROCESS helpTopic;
 		END;
 	END;
-	
+
 	PROCESS helpfooter.html;
 
 ELSE %]
@@ -27,7 +27,7 @@ ELSE %]
 	[%
 	my_musicItems = BLOCK;
 		FOREACH item = additionalLinkOrder.browse;
-			IF additionalLinks.browse.exists(item);	
+			IF additionalLinks.browse.exists(item);
 				link = { key=item, value=additionalLinks.browse.$item };
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				IF link.key == 'FAVORITES';
@@ -46,14 +46,14 @@ ELSE %]
 								<a href="[% link.value %]player=[% player %]" class="browseItemLink">[% title %]</a>
 								<span id="advSearchMenuItem">(<a href="[% additionalLinks.search.ADVANCEDSEARCH | html %]player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>)</span>
 							</div>
-			
+
 							<span class="browsedbControls">
 		 						<form method="GET" action="[% webroot %]search.html">
 									<input type="hidden" name="player" value="[% playerid %]">
 									<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
 									<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
 								</form>
-							</span>					
+							</span>
 						</div>
 					</div>
 				[% ELSE;
@@ -62,7 +62,7 @@ ELSE %]
 			END;
 		END;
 	END;
-	
+
 	radioItems = BLOCK;
 		FOREACH item = additionalLinkOrder.radios;
 			IF additionalLinks.radios.exists(item);
@@ -101,7 +101,7 @@ ELSE %]
 		FOREACH item = additionalLinkOrder.my_apps;
 			IF additionalLinks.my_apps.exists(item);
 				link.value = additionalLinks.my_apps.$item;
-				link.target = additionalLinks.my_apps.$item.match('^http:') ? "mysb" : "";
+				link.target = additionalLinks.my_apps.$item.match('^https?:') ? "mysb" : "";
 				link.key = item;
 				PROCESS menuItem;
 			END;
@@ -170,7 +170,7 @@ ELSE %]
 				[% IF control %]
 					<span class="browsedbControls">
 						[% control %]
-					</span>					
+					</span>
 				[% END %]
 			</div>
 		</div>
@@ -184,11 +184,11 @@ ELSE %]
 			[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" noIcon=1 %]
 			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- my_musicItems -%]</div>
 		[% END %]
-		
+
 		[% expanded = cookies.${"Squeezebox-expanded-RADIO"}.value %]
 		[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
 		<div id="RADIO_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- radioItems -%]</div>
-	
+
 		[% IF additionalLinks.my_apps %]
 			[% expanded = cookies.${"Squeezebox-expanded-PLUGIN_MY_APPS_MODULE_NAME"}.value %]
 			[% PROCESS menuItem link.key="PLUGIN_MY_APPS_MODULE_NAME" link.value="home.html?" expandable="my_apps" noIcon=1 %]
@@ -197,20 +197,20 @@ ELSE %]
 
 		[% IF favorites;
 			expanded = cookies.${"Squeezebox-expanded-FAVORITES"}.value;
-			control = BLOCK; 
+			control = BLOCK;
 				WRAPPER editlink noTarget=1;
 					'href="' _ webroot _ 'plugins/Favorites/index.html?fav"';
 				END;
 			END;
 
 			PROCESS menuItem expandable=1 noIcon=1
-				link = { 
+				link = {
 					key = 'FAVORITES',
 					value = additionalLinks.browse.FAVORITES
-				} 
+				}
 			%]
 			<div id="FAVORITES_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>
-			[% 
+			[%
 				expandable = 0;
 				dontGetString = 1;
 				FOREACH entry = favorites;
@@ -260,8 +260,8 @@ ELSE %]
 		[% infoTab = BLOCK %]
 			<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
 			<span id="songcount">[%- song_count %]</span> [% stringBY -%]
-			<span id="artistcount">[% artist_count %]</span>[% IF library_name; 
-				' (' _ library_name _ ')'; 
+			<span id="artistcount">[% artist_count %]</span>[% IF library_name;
+				' (' _ library_name _ ')';
 			END %].
 		[% END %]
 	[% END %]

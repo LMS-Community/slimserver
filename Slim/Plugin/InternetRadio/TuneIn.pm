@@ -226,7 +226,7 @@ sub trackInfoHandler {
 
 	my $item;
 
-	if ( $url =~ m{^http://opml\.(?:radiotime|tunein)\.com} ) {
+	if ( $url =~ m{^https?://opml\.(?:radiotime|tunein)\.com} ) {
 		$item = {
 			name => cstring($client, 'PLUGIN_RADIOTIME_OPTIONS'),
 			url  => __PACKAGE__->trackInfoURL( $client, $url ),
