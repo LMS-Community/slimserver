@@ -1144,7 +1144,7 @@ sub _cliQuery_done {
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
-							$hash{'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id')} = proxiedImage($item->{icon});
+							$hash{'icon' . ($item->{icon} =~ /^https?:/ ? '' : '-id')} = proxiedImage($item->{icon});
 							$hasImage = 1;
 						} elsif ( $item->{image} ) {
 							$hash{'icon'} = proxiedImage($item->{image});

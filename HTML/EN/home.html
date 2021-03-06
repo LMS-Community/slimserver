@@ -45,7 +45,7 @@
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH item = additionalLinkOrder.browse %]
-		[%- IF additionalLinks.browse.exists(item) %]	
+		[%- IF additionalLinks.browse.exists(item) %]
 		<li><a href="[% additionalLinks.browse.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 		[% IF item == 'SEARCH' && additionalLinks.search.ADVANCEDSEARCH %]
 		<li><a href="[% additionalLinks.search.ADVANCEDSEARCH | html %]player=[% playerURI %]">[% "ADVANCEDSEARCH" | getstring | html %]</a></li>
@@ -68,7 +68,7 @@
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END; END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string | html %]</a></li>
-	</ul>	
+	</ul>
 </div>
 
 [% IF additionalLinks.my_apps %]
@@ -76,7 +76,7 @@
 	<div>[% "PLUGIN_MY_APPS_MODULE_NAME" | string | upper %]</div>
 	<ul>
 	[%- FOREACH item = additionalLinkOrder.my_apps %]
-		<li><a href="[% additionalLinks.my_apps.$item | html %]player=[% playerURI %]" [% IF additionalLinks.my_apps.$item.match('^http:') %]target="mysb"[% END %]>[% item | getstring | html %]</a></li>
+		<li><a href="[% additionalLinks.my_apps.$item | html %]player=[% playerURI %]" [% IF additionalLinks.my_apps.$item.match('^https?:') %]target="mysb"[% END %]>[% item | getstring | html %]</a></li>
 	[%- END %]
 	[%- FOREACH link = additionalLinks.apps; IF !additionalLinkOrder.my_apps.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>

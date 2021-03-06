@@ -518,7 +518,7 @@ sub indexHandler {
 
 					my $url = $params->{'entryurl'};
 
-					if ($url !~ /^http:/) {
+					if ($url !~ /^https?:/) {
 
 						if ($url !~ /\.(xml|opml|rss)$/) {
 
