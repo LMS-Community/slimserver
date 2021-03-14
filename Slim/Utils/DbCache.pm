@@ -181,7 +181,7 @@ sub _canonicalize_expiration_time {
 		$expiry = $1;
 	}
 	elsif ( $expiry =~ /^\s*([+-]?(?:\d+|\d*\.\d*))\s*(\w*)\s*$/ && $_Expiration_Units{ $2 } ) {
-		$expiry = ( $_Expiration_Units{ $2 } ) * $1;
+		$expiry = time() + ( $_Expiration_Units{ $2 } ) * $1;
 	}
 	else {
 		$expiry = DEFAULT_EXPIRES_TIME;
