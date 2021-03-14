@@ -1009,7 +1009,7 @@ sub generateHTTPResponse {
 		);
 	}
 
-	my $classOrCode = Slim::Web::Pages->getPageFunction($path);
+	my $classOrCode = Slim::Web::Pages->getPageFunction($path) if $path !~ m{^imageproxy/};
 
 	# protect access to settings pages: only allow from local network
 	if ( main::WEBUI
