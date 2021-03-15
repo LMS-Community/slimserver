@@ -10714,10 +10714,10 @@ STEREOXL
 	PL	StereoXL
 	RU	Режим StereoXL
 	SV	StereoXL
-	
+
 BALANCE
 	EN	Balance
-	FR	Balance		
+	FR	Balance
 
 PITCH
 	CS	Tón
@@ -21400,7 +21400,7 @@ MERGEVA_PROGRESS
 
 UPDATESTANDALONEARTWORK_PROGRESS
 	DE	Nach aktualisierten Plattenhüllen suchen
-	EN	Find updated coverart files
+	EN	Find Updated Coverart Files
 	FR	Recherche des pochettes des albums actualisés
 	NL	Vind geüpdatete albumcovers
 	NO	Finn oppdaterte plateomslagsfiler
@@ -21514,7 +21514,7 @@ IMPORTER_PROGRESS_DESC
 
 VIRTUALLIBRARIES_PROGRESS
 	DE	Musiksammlungs-Ansichten erstellen
-	EN	Create library views
+	EN	Create Library Views
 	FR	Création d'une bibliothèque thématique
 	NL	Deelcollectie maken
 	NO	Lag delbibliotek

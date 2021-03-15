@@ -58,6 +58,7 @@ sub startScan {
 		'type'  => 'importer',
 		'name'  => 'plugin_online_library_genre_replacement',
 		'total' => $count + scalar @$mappings,
+		'bar'   => 1,
 		'every' => 1,
 	});
 

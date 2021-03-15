@@ -24,7 +24,9 @@ sub initPlugin {
 }
 
 sub startScan {
-	shift->initLibraries();
+	my ($class) = @_;
+	$class->initLibraries();
+	Slim::Music::Import->endImporter($class);
 }
 
 sub initLibraries {

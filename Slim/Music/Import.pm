@@ -469,6 +469,7 @@ sub runScanPostProcessing {
 	#Slim::Music::Artwork->downloadArtwork();
 
 	# update standalone artwork if it's been changed without the music file being changed (don't run on a wipe & rescan)
+	$importsRunning{'updateStandaloneArtwork'} = Time::HiRes::time();
 	Slim::Music::Artwork->updateStandaloneArtwork() unless $class->stillScanning =~ /wipe/i;
 
 	# Pre-cache resized artwork
@@ -707,7 +708,7 @@ sub endImporter {
 	if (exists $importsRunning{$importer}) {
 
 		$log->error(sprintf("Completed %s Scan in %s seconds.",
-			$importer, int(Time::HiRes::time() - $importsRunning{$importer})
+			$importer, sprintf('%.3f', Time::HiRes::time() - $importsRunning{$importer})
 		));
 
 		delete $importsRunning{$importer};

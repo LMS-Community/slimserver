@@ -346,8 +346,6 @@ sub updateStandaloneArtwork {
 
 		$progress->final;
 
-		$log->error( "updateStandaloneArtwork finished in " . $progress->duration );
-
 		$cb && $cb->();
 
 		return 0;
@@ -631,7 +629,7 @@ sub precacheAllArtwork {
 			albums.artwork AS album_artwork
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
-		WHERE  tracks.cover != '0' 
+		WHERE  tracks.cover != '0'
 		AND    tracks.coverid IS NOT NULL
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
