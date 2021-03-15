@@ -3478,6 +3478,9 @@ sub statusQuery_filter {
 	# Bug 10064: playlist notifications get sent to everyone in the sync-group
 	if ($request->isCommand([['playlist', 'newmetadata']]) && (my $client = $request->client)) {
 		return 0 if !grep($_->id eq $myclientid, $client->syncGroupActiveMembers());
+	} elsif ($request->isCommand([['sync']])) {
+		# Don't filter out notifications for sync commands. All players are notified
+		# of the change in sync state regardless of whether they are "on" or "off".
 	} else {
 		return 0 if $clientid ne $myclientid;
 	}
