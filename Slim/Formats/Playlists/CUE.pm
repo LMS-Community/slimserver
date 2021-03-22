@@ -407,15 +407,6 @@ sub parse {
 			$track->{'ARTIST'}      = $performer;
 			$track->{'TRACKARTIST'} = $performer;
 
-			# Automatically flag a compilation album
-			# since we are setting the artist.
-
-			if (defined($cuesheet->{'ALBUMARTIST'}) && $cuesheet->{'ALBUMARTIST'} ne $performer) {
-				$cuesheet->{'COMPILATION'} = '1';
-				# Deleted the condition on 'defined', it could be defined
-				# but equal NO, N, 0,... or what else.
-				# we want it to be = 1 in this case.
-			}
 		}
 
 		# Songwriter is the standard command for composer
