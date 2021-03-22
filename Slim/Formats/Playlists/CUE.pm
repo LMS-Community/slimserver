@@ -421,11 +421,6 @@ sub parse {
 		_mergeCommand('DISCNUMBER', 'DISC', $track, $track);
 	}
 
-	#
-	# WARNING: Compilation could be false if Album Artist is not defined,
-	# even if artist is not the same in all the tracks. See my note below.
-	#
-
 	main::DEBUGLOG && $log->is_debug && $log->debug('Before merging ' . Data::Dump::dump({
 		cuesheet	=> $cuesheet,
 		tracks		=> $tracks,
@@ -481,14 +476,7 @@ sub parse {
 			}
 		}
 	}
-	# WARNING:
-	# if the Album artist was not defined in cue sheet, Compilation could be
-	# false, even if all the tracks are from different artists and Abum artist
-	# was defined in Audio file.
-	#
-	# Lived untouched, sounds like an error to me, but different people
-	# use compilation with different meaning, so better stay as it was before.
-	#
+
 	my $lastpos = 0;
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
