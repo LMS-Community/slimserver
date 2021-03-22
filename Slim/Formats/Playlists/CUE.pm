@@ -285,14 +285,21 @@ sub parse {
 
 			} elsif ($remCommand eq 'COMPILATION') {
 
-				if ($remValue && $remValue =~ /1|YES|Y/i) {
+				my $compilation = undef;
 
+				if ($remValue =~ /^(?:1|yes|y|true)$/i) {
+					$compilation = '1'
+				} elsif ($remValue =~ /^(?:0|no|n|false)$/i) {
+					$compilation = '0';
+				}
+
+				if (defined $compilation) {
 					($cuesheet, $tracks) = _addCommand($cuesheet,
 													 $tracks,
 													 $inAlbum,
 													 $currtrack,
 													 $remCommand,
-													 '1');
+													 $compilation);
 				}
 
 			} else {
