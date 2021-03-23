@@ -285,14 +285,21 @@ sub parse {
 
 			} elsif ($remCommand eq 'COMPILATION') {
 
-				if ($remValue && $remValue =~ /1|YES|Y/i) {
+				my $compilation = undef;
 
+				if ($remValue =~ /^(?:1|yes|y|true)$/i) {
+					$compilation = '1'
+				} elsif ($remValue =~ /^(?:0|no|n|false)$/i) {
+					$compilation = '0';
+				}
+
+				if (defined $compilation) {
 					($cuesheet, $tracks) = _addCommand($cuesheet,
 													 $tracks,
 													 $inAlbum,
 													 $currtrack,
 													 $remCommand,
-													 '1');
+													 $compilation);
 				}
 
 			} else {
@@ -407,15 +414,6 @@ sub parse {
 			$track->{'ARTIST'}      = $performer;
 			$track->{'TRACKARTIST'} = $performer;
 
-			# Automatically flag a compilation album
-			# since we are setting the artist.
-
-			if (defined($cuesheet->{'ALBUMARTIST'}) && $cuesheet->{'ALBUMARTIST'} ne $performer) {
-				$cuesheet->{'COMPILATION'} = '1';
-				# Deleted the condition on 'defined', it could be defined
-				# but equal NO, N, 0,... or what else.
-				# we want it to be = 1 in this case.
-			}
 		}
 
 		# Songwriter is the standard command for composer
@@ -429,11 +427,6 @@ sub parse {
 
 		_mergeCommand('DISCNUMBER', 'DISC', $track, $track);
 	}
-
-	#
-	# WARNING: Compilation could be false if Album Artist is not defined,
-	# even if artist is not the same in all the tracks. See my note below.
-	#
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Before merging ' . Data::Dump::dump({
 		cuesheet	=> $cuesheet,
@@ -490,14 +483,7 @@ sub parse {
 			}
 		}
 	}
-	# WARNING:
-	# if the Album artist was not defined in cue sheet, Compilation could be
-	# false, even if all the tracks are from different artists and Abum artist
-	# was defined in Audio file.
-	#
-	# Lived untouched, sounds like an error to me, but different people
-	# use compilation with different meaning, so better stay as it was before.
-	#
+
 	my $lastpos = 0;
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
