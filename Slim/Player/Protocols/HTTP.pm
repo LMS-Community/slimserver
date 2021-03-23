@@ -70,7 +70,7 @@ sub request {
 		my $formatClass = Slim::Formats->classForFormat($track->content_type);
 		my $seekdata = $song->seekdata || {};
 		open (my $fh, '<', $track->initial_block_fn) if $track->initial_block_fn;
-		binmode $fh;
+		binmode $fh if $fh;
 
 		if ($formatClass->can('findFrameBoundaries')) {
 			my $offset = $formatClass->findFrameBoundaries($fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
