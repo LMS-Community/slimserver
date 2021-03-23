@@ -69,16 +69,19 @@ sub request {
 	if (!defined $song->initialAudioBlock && Slim::Formats->loadTagFormatForType($track->content_type)) {
 		my $formatClass = Slim::Formats->classForFormat($track->content_type);
 		my $seekdata = $song->seekdata || {};
+		open (my $fh, '<', $track->initial_block_fn) if $track->initial_block_fn;
+		binmode $fh if $fh;
 
 		if ($formatClass->can('findFrameBoundaries')) {
-			my $offset = $formatClass->findFrameBoundaries($track->initial_block_fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
+			my $offset = $formatClass->findFrameBoundaries($fh, $seekdata->{sourceStreamOffset} || 0, $seekdata->{timeOffset} || 0);
 			$seekdata->{sourceStreamOffset} = $offset if $offset;
 		}
 
 		if ($formatClass->can('getInitialAudioBlock')) {
-			$song->initialAudioBlock($formatClass->getInitialAudioBlock($track->initial_block_fh, $track, $seekdata->{timeOffset} || 0));
+			$song->initialAudioBlock($formatClass->getInitialAudioBlock($fh, $track, $seekdata->{timeOffset} || 0));
 		}
 
+		$fh->close if $fh;
 		main::DEBUGLOG && $log->debug("building new header");
 	}
 	else {
