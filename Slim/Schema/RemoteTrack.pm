@@ -42,7 +42,7 @@ my @allAttributes = (qw(
 	
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
-	initial_block_fh 
+	initial_block_fn 
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
@@ -173,10 +173,7 @@ sub delete {}
 sub DESTROY {
 	my $self = shift;
 
-	if (my $fh = $self->initial_block_fh) {
-		$fh->close;
-		unlink $fh;
-	}
+	unlink $self->initial_block_fn if $self->initial_block_fn;
 	
 	$self->SUPER::DESTROY();
 }

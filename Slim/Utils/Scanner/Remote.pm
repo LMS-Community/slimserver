@@ -842,7 +842,9 @@ sub parseMp4Header {
 	Slim::Music::Info::setDuration( $track, $duration );
 	
 	# use the audio block to stash the temp file handler
-	$track->initial_block_fh($info->{fh});
+	$track->initial_block_fn($info->{fh}->filename);
+	$info->{fh}->unlink_on_destroy(0);
+	$info->{fh}->close;	
 	$track->processors($track->content_type, $args->{initial_block_type} // Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
@@ -941,7 +943,10 @@ sub parseWavAifHeader {
 	}	
 	
 	# we have a dynamic header but can go direct when not seeking
-	$track->initial_block_fh($info->{fh});
+	$track->initial_block_fn($info->{fh}->filename);
+	$info->{fh}->unlink_on_destroy(0);
+	$info->{fh}->close;	
+	
 	$track->processors($type, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 
 	# all done
