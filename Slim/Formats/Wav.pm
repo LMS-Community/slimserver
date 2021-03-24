@@ -101,7 +101,7 @@ sub parseStream {
 	$args->{_scanbuf} .= $$dataref;
 	return -1 if length $args->{_scanbuf} < 128;
 	
-	my $fh = File::Temp->new();
+	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
 	$fh->write($args->{_scanbuf});
 	$fh->seek(0, 0);
 	
