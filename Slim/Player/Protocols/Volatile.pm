@@ -3,7 +3,7 @@ package Slim::Player::Protocols::Volatile;
 # Logitech Media Server Copyright 2001-2020 Logitech, Vidur Apparao.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
-# version 2.  
+# version 2.
 
 # Subclass of file:// protocol handler to allow files to be played without being stored in the database.
 # This can be used to eg. browse music folder while a scan is running, or play files from removable media.
@@ -19,7 +19,7 @@ sub isRemote { 1 }
 
 sub pathFromFileURL {
 	my ($class, $url) = @_;
-	
+
 	$url =~ s/^tmp\b/file/;
 	return Slim::Utils::Misc::pathFromFileURL($url);
 }
@@ -27,27 +27,29 @@ sub pathFromFileURL {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
-	my $track = Slim::Schema::RemoteTrack->fetch($url);
-	
+	my $track = Slim::Schema::RemoteTrack->fetch($url) || Slim::Schema::RemoteTrack->updateOrCreate($url, {
+		content_type => Slim::Music::Info::typeFromPath($url)
+	});
+
 	$url =~ s/^tmp/file/;
 	my $path = $class->pathFromFileURL($url);
-	
+
 	if ( ! ($track->title && $track->artistName && $track->duration) ) {
 		my $attributes = Slim::Formats->readTags( $path );
-		
+
 		# make sure we have a value for artist, or we'll end up scanning the file over and over again
 		$attributes->{ARTIST} = cstring($client, 'NO_ARTIST') unless defined $attributes->{ARTIST};
-		
+
 		$track->setAttributes($attributes) if $attributes && keys %$attributes;
-		
+
 		$class->getArtwork($track, $path)
 	}
-	
+
 	# artwork might have been purged from cache - re-read it
 	if ( $track->cover && !$track->coverArt ) {
 		$class->getArtwork($track, $path);
 	}
-	
+
 	return {
 		title     => $track->title,
 		artist    => $track->artistName,
@@ -70,25 +72,25 @@ sub getArtwork {
 	my ($class, $track, $path) = @_;
 
 	return if $path && -d $path;
-	
+
 	# Try to read a cover image from the tags first.
 	my ($body, $contentType, $file);
-	
+
 	eval {
 		($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtTags($track, $path);
-	
+
 		# Nothing there? Look on the file system.
 		if (!defined $body) {
 			($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtFiles($track, $path);
 		}
 	};
-	
+
 	if ($body && defined $file) {
 		Slim::Utils::Cache->new->set( 'cover_' . $track->url, {
 			image => $body,
 			type  => $contentType || 'image/jpeg',
 		}, 86400 * 7 );
-		
+
 		$track->cover($file);
 	}
 	elsif ($track->cover) {
