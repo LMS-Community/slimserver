@@ -943,6 +943,7 @@ sub initSettings {
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();
+	Slim::Utils::Misc::makeTempDir();
 }
 
 sub daemonize {
