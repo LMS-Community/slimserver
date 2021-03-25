@@ -654,6 +654,7 @@ sub getTempDir {
 =cut
 
 sub makeTempDir {
+	return if $tempdir;
 	$tempdir = catdir($prefs->get('cachedir'), 'tmp');
 	
 	if (-d $tempdir) {
@@ -664,12 +665,12 @@ sub makeTempDir {
 	mkpath($tempdir);
 		
 	if (!-d $tempdir) {
-		$tempdir =  tempdir( DIR => $prefs->get('cachedir'), CLEANUP => 1 );
+		$tempdir = tempdir( DIR => $prefs->get('cachedir'), CLEANUP => 1 );
 		$ospathslog->warn("can't make private temp dir, trying $tempdir");
 	}	
 	
 	if (!-d $tempdir) {
-		$tempdir =  tempdir( CLEANUP => 1 );
+		$tempdir = tempdir( CLEANUP => 1 );
 		$ospathslog->warn("still can't make private temp dir, using $tempdir");
 	}	
 }
