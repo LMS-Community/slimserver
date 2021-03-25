@@ -34,6 +34,8 @@ our @EXPORT = qw(assert msg msgf errorMsg specified);
 
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
+use File::Path qw(mkpath rmtree);
+use File::Temp qw(tempdir);
 use File::Slurp;
 use FindBin qw($Bin);
 use POSIX qw(strftime);
@@ -75,6 +77,7 @@ elsif ($^O =~/darwin/i) {
 
 # Cache our user agent string.
 my $userAgentString;
+my $tempdir;
 
 my %pathToFileCache = ();
 my %fileToPathCache = ();
@@ -632,6 +635,44 @@ sub getLibraryName {
 	$hostname =~ s/\x{2019}/'/g;
 
 	return $hostname;
+}
+
+=head2 getTempDir()
+
+	Get LMS-private temp dir 
+
+=cut
+
+sub getTempDir {
+	return $tempdir;	
+}
+
+=head2 makeTempDir()
+
+	make and clean LMS-private temp dir 
+
+=cut
+
+sub makeTempDir {
+	return if $tempdir;
+	$tempdir = catdir($prefs->get('cachedir'), 'tmp');
+	
+	if (-d $tempdir) {
+		rmtree($tempdir, { keep_root => 1 });
+		return;
+	}	
+	
+	mkpath($tempdir);
+		
+	if (!-d $tempdir) {
+		$tempdir = tempdir( DIR => $prefs->get('cachedir'), CLEANUP => 1 );
+		$ospathslog->warn("can't make private temp dir, trying $tempdir");
+	}	
+	
+	if (!-d $tempdir) {
+		$tempdir = tempdir( CLEANUP => 1 );
+		$ospathslog->warn("still can't make private temp dir, using $tempdir");
+	}	
 }
 
 =head2 getAudioDir()

@@ -266,7 +266,7 @@ sub parseStream {
 	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0));
 	
 	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
-	my $fh = File::Temp->new();
+	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
 	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
 	$fh->seek(0, 0);
 
