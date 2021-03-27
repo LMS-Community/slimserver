@@ -44,7 +44,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]
 		[%- IF playericon %]<img src="/html/images/Players/[% playericon %]_250x250_ffffff.png" class="playericon">[% END %]
 		<input type="text" class="stdedit" name="pref_playername" id="playername" value="[% prefs.pref_playername | html %]" size="20" maxlength="32">
-		[% IF radioNeedsFakeVersion %]<div class="prefDesc" style="color:red">[% "RADIO_NEEDS_PATCH" | string %]</div>[% END %]
+		[% IF radioNeedsFakeVersion %]<div class="prefDesc">[% "RADIO_NEEDS_PATCH" | string %]</div>[% END %]
 	[% END %]
 
 
