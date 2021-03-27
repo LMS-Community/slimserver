@@ -14057,8 +14057,8 @@ SERVER_STATUS_DESC
 	SV	Information om alla identifierade enheter som anslutits till Logitech Media Server
 
 RADIO_NEEDS_PATCH
-	DE	Sie scheinen ein Squeezebox Radio mit veralteter Firmware zu verwenden, welche diese Logitech Media Server Version nicht als kompatibel akzeptiert. Bitte patchen Sie das Gerät. <a href="/html/docs/radio-compatibility.html" target="_blank">Weitere Informationen.</a>
-	EN	You seem to be using a Radio with an outdated firmware, not recognizing this version of Logitech Media Server. Please consider patching it. <a href="/html/docs/radio-compatibility.html" target="_blank">Get more information.</a>
+	DE	Sie scheinen eine Squeezebox mit veralteter Firmware zu verwenden, welche diese Logitech Media Server Version nicht als kompatibel akzeptiert. Es wird empfohlen, entweder das Community Firmware Plugin zu verwenden, oder die Firmware zu patchen (<a href="/html/docs/radio-compatibility.html" target="_blank">weitere Informationen</a>).
+	EN	You seem to be using a Squeezebox with an outdated firmware, not recognizing this version of Logitech Media Server. Please consider using the Community Firmware plugin, or patching the device's firmware (<a href="/html/docs/radio-compatibility.html" target="_blank">get more information</a>).
 	SV	Du verkar använda en Squeezebox Radio med ett gammalt hårdvaruprogram som inte är kompatibelt med den här Logitech Media Server-versionen. Apparaten behöver uppdateras. <a href="/html/docs/radio-compatibility.html" target="_blank">Mer information.</a>
 
 BASIC_SERVER_SETTINGS

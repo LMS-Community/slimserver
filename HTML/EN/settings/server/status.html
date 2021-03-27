@@ -84,7 +84,7 @@
 [% IF players %]
 	[% WRAPPER setting title = "INFORMATION_MENU_PLAYER" %]
 		<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
-		[% IF radioNeedsFakeVersion %]<div class="prefDesc" style="color:red">[% "RADIO_NEEDS_PATCH" | string %]</div>[% END %]
+		[% IF radioNeedsFakeVersion %]<div class="prefDesc">[% "RADIO_NEEDS_PATCH" | string %]</div>[% END %]
 	[% END %]
 	[% FOREACH client = players.items %]
 		[% WRAPPER setting title = client.name %]
