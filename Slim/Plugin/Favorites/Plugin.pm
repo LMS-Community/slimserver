@@ -937,8 +937,9 @@ sub cliDelete {
 			return;
 		}
 	}
-
-	$favs->deleteIndex($index);
+	else {
+		$favs->deleteIndex($index);
+	}
 
 	# show feedback if this action came from jive cometd session
 	if ($request->source && $request->source =~ /\/slim\/request/) {
