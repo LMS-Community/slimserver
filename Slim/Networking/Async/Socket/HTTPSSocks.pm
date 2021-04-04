@@ -13,7 +13,7 @@ sub new {
 	# change PeerAddr to proxy with no handshake (no deepcopy needed)
 	my %params = %args;
 	$params{PeerAddr} = $args{ProxyAddr};
-	$params{PeerPort} = $args{ProxyPort};
+	$params{PeerPort} = $args{ProxyPort} || 1080;
 	$params{SSL_StartHandshake} => 0;
 
 	# and connect parent's class to it
@@ -24,7 +24,6 @@ sub new {
 	$params{AuthType} = $args{Username} ? 'userpass' : 'none';
 	$params{ConnectAddr} = $args{PeerAddr} || $args{Host};
 	$params{ConnectPort} = $args{PeerPort};
-	$params{ProxyPort} = $args{ProxyPort} || 1080;
 	$params{Blocking} => 1;
 	
 	# and initiate negotiation (we'll become IO::Socket::Socks)	

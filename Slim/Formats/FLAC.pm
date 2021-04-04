@@ -944,7 +944,8 @@ sub parseStream {
 	my ( $class, $dataref, $args, $length ) = @_;
 
 	$args->{_scanbuf} .= $$dataref;
-	return -1 if length $args->{_scanbuf} < 32*1024;
+	my $buflen = length $args->{_scanbuf};
+	return -1 if $buflen < 32*1024;
 
 	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
 	$fh->write($args->{_scanbuf});
@@ -954,7 +955,19 @@ sub parseStream {
 	return undef unless $info->{samplerate};
 
 	$info->{fh} = $fh;
-	$info->{avg_bitrate} = int(8*1000 * ($length - $info->{audio_offset}) / $info->{song_length_ms}) if $info->{song_length_ms} && $length;
+
+	# Audio::Scan tries to guess total_sample which is in FLAC header. When codec does not know, it sets it 
+	# to 0 and then Audio::Scan seeks to eof and read sample numbers from there which is incorrect here. So we
+	# assume that in best cases, FLAC has a compression ratio of 8 and use that as a limit.
+	my $maxSamples = ($buflen - $info->{audio_offset}) / ($info->{channels} * $info->{bits_per_sample} / 8) * 8;
+	
+	if ($maxSamples < 0 || $info->{total_samples} < $maxSamples) {
+		$log->warn("Can't estimate track duration (got $info->{song_length_ms} ms)");
+		$info->{song_length_ms} = 0;
+		$info->{total_samples} = 0;
+	} elsif ($length) {	
+		$info->{avg_bitrate} = int(8*1000 * ($length - $info->{audio_offset}) / $info->{song_length_ms});
+	}	
 
 	return $info;
 }
