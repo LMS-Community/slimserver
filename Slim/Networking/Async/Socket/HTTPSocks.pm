@@ -13,7 +13,7 @@ sub new {
 	# change PeerAddr to proxy (no deepcopy needed)
 	my %params = %args;
 	$params{PeerAddr} = $args{ProxyAddr};
-	$params{PeerPort} = $args{ProxyPort};
+	$params{PeerPort} = $args{ProxyPort} | 1080;
 	$params{Blocking} => 1;
 	
 	# and connect parent's class to it (better block)
@@ -24,7 +24,6 @@ sub new {
 	$params{AuthType} = $args{Username} ? 'userpass' : 'none';
 	$params{ConnectAddr} = $args{PeerAddr} || $args{Host};
 	$params{ConnectPort} = $args{PeerPort};
-	$params{ProxyPort} = $args{ProxyPort} || 1080;
 	
 	# and initiate negotiation (we'll become IO::Socket::Socks)	
 	$sock = IO::Socket::Socks->start_SOCKS($sock, %params) || return;
