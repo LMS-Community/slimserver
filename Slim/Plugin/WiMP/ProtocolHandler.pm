@@ -280,11 +280,11 @@ sub _gotTrack {
 				$params->{successCb}->();
 			},
 			passthrough => [ $song->track, { cb => sub {
-												my $meta = $cache->get('wimp_meta_' . $info->{id});
-												$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
-												$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
-												$params->{successCb}->(); 
-												} },						  
+			                                    my $meta = $cache->get('wimp_meta_' . $info->{id});
+			                                    $meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
+			                                    $cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
+			                                    $params->{successCb}->(); 
+			                               } },						  
 			                 $info->{url} ],
 		} );
 	} else {
