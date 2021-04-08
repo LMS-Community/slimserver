@@ -2,7 +2,7 @@ package Slim::Schema::RemoteTrack;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This is an emulation of the Slim::Schema::Track API for remote tracks
@@ -37,20 +37,20 @@ my @allAttributes = (qw(
 	content_type
 	bitrate
 	secs
-	
+
 	artistname albumname coverurl type info_link
-	
+
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
-	initial_block_fn 
+	initial_block_fn
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
-	
-	rating lastplayed playcount virtual
-	
+
+	urlmd5 virtual
+
 	_comment genre
-	
+
 	dlna_profile
 	stash
 	error
@@ -67,7 +67,7 @@ my @allAttributes = (qw(
 			albumid
 		),
 	);
-	
+
 	__PACKAGE__->mk_accessor('rw', @allAttributes);
 	__PACKAGE__->mk_accessor('hash', '_processors');
 }
@@ -77,7 +77,7 @@ sub init {
 
 	my $maxPlaylistLengthCB = sub {
 		my ($pref, $max) = @_;
-		
+
 		if ($prefs->get('dbhighmem')) {
 			$max ||= 2000;
 			$max = 2000 if $max < 2000;
@@ -93,9 +93,9 @@ sub init {
 			$cacheObj->max_size($max);
 		}
 	};
-	
+
 	$maxPlaylistLengthCB->(undef, $prefs->get('maxPlaylistLength'));
-	
+
 	$prefs->setChange($maxPlaylistLengthCB, 'maxPlaylistLength');
 }
 
@@ -106,20 +106,20 @@ sub coverArtExists {0}
 
 sub isRemoteURL {shift->remote();}
 
-sub path { 
+sub path {
 	my $url = shift->_url();
-	
+
 	if ( $url =~ s/^tmp/file/ ) {
 		return Slim::Utils::Misc::pathFromFileURL($url);
 	}
-	
+
 	return $url;
 }
 
 sub comment {
 	my ($self, $new) = @_;
-	
-	if (defined $new) {	
+
+	if (defined $new) {
 		$self->_comment(_mergeComments($new));
 	}
 
@@ -127,15 +127,15 @@ sub comment {
 	if (ref $self->_comment && ref $self->_comment eq 'ARRAY') {
 		$self->_comment(_mergeComments($self->_comment));
 	}
-	
+
 	return $self->_comment;
 }
 
 sub processors {
 	my ($self, $type, $initial_block_type, $init) = @_;
-	
+
 	return $self->_processors unless $type;
-	
+
 	if (defined $initial_block_type || defined $init) {
 		$self->_processors($type, {
 					initial_block_type => $initial_block_type,
@@ -148,17 +148,17 @@ sub processors {
 
 sub _mergeComments {
 	my $new = shift;
-	
+
 	if (ref $new && ref $new eq 'ARRAY') {
 		my $comment;
-		
+
 		foreach my $c (@$new) {
 			# put a slash between multiple comments.
 			$comment .= ' / ' if $comment;
 			$c =~ s/^eng(.*)/$1/;
 			$comment .= $c;
 		}
-		
+
 		$new = $comment if $comment;
 	}
 
@@ -174,11 +174,14 @@ sub DESTROY {
 	my $self = shift;
 
 	unlink $self->initial_block_fn if $self->initial_block_fn;
-	
+
 	$self->SUPER::DESTROY();
 }
 
-sub retrievePersistent {}
+*retrievePersistent = \&Slim::Schema::Track::retrievePersistent;
+*playcount = \&Slim::Schema::Track::playcount;
+*rating = \&Slim::Schema::Track::rating;
+*lastplayed = \&Slim::Schema::Track::lastplayed;
 
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
@@ -227,22 +230,22 @@ sub artistName {
 sub coverArt {
 	my $self    = shift;
 	my $list    = shift || 0;
-	
+
 	my ($body, $contentType, $mtime, $path);
 
 #	my $cover = $self->cover;
-#	
+#
 #	return undef if defined $cover && !$cover;
-	
+
 	# Remote files may have embedded cover art
 	my $image = $cache->get( 'cover_' . $self->_url );
-	
+
 	return undef if !$image;
-	
+
 	$body        = $image->{image};
 	$contentType = $image->{type};
 	$mtime       = time();
-	
+
 	if ( !$list && wantarray ) {
 		return ( $body, $contentType, time() );
 	} else {
@@ -251,22 +254,22 @@ sub coverArt {
 }
 
 # Although the URL is the primary key into the cache,
-# we allow it to be updated 
+# we allow it to be updated
 sub url {
-	my ($self, $new) = @_; 
-	
+	my ($self, $new) = @_;
+
 	if ($new) {
-		
+
 		# We could leave the old reference in the cache but
 		# I am not sure that it is safe.
 		delete $Cache{$self->_url};
-		
+
 		$self->_url($new);
 		$Cache{$new} = $self;
-	
+
 		$cache->set('rt_' . $self->id, $new) unless main::SCANNER;
 	}
-	
+
 	return $self->_url;
 }
 
@@ -279,9 +282,9 @@ sub url {
 sub new {
 	my $class  = shift;
 	my $attributes = shift;
-	
+
 	my $url;
-	
+
 	if (ref $attributes ne 'HASH') {
 		$url = $attributes;
 		$attributes = shift || {};
@@ -289,26 +292,26 @@ sub new {
 	} else {
 		$url = $attributes->{'url'};
 	}
-	
+
 	if (!defined $url) {
 		$log->error('No url!');
 		return undef;
 	}
-	
+
 	my $self = $class->SUPER::new;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("$class, $url");
 #	main::DEBUGLOG && $log->logBacktrace();
-	
+
 	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {}, _processors => {});
 	$self->init_accessor(remote => Slim::Music::Info::isRemoteURL($url));
 	$self->setAttributes($attributes);
-	
+
 	$Cache{$url} = $self;
 	$idIndex{$self->id} = $self;
-	
+
 	$cache->set('rt_' . $self->id, $url) unless main::SCANNER;
-	
+
 	return $self;
 }
 
@@ -330,7 +333,6 @@ my %localTagMapping = (
 	conductor              => undef,
 	band                   => undef,
 	remote                 => undef,
-	urlmd5                 => undef,
 );
 
 my %availableTags;
@@ -338,18 +340,18 @@ my $separator;
 
 sub setAttributes {
 	my ($self, $attributes) = @_;
-	
+
 	%availableTags = map { $_ => 1 } @allAttributes unless keys %availableTags;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug($self->url . " => ", Data::Dump::dump($attributes));
-	
+
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this
 		$key = lc($key);
 		$key = $localTagMapping{$key} if exists $localTagMapping{$key};
 		next if !defined($key) || $key eq 'url';
 		next unless $availableTags{$key};
-		
+
 		# some formats can return multiple values per key - join them
 		if ( (ref $value || '') eq 'ARRAY' ) {
 			if (!$separator) {
@@ -358,10 +360,10 @@ sub setAttributes {
 			}
 			$value = join($separator, @$value);
 		}
-		
+
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
 			$log->debug("$key: ", $self->$key(), "=>$value");
-		
+
 		$self->$key($value);
 	}
 }
@@ -380,44 +382,44 @@ sub updateOrCreate {
 		$self = $Cache{$url};
 		my $id = $idIndex{$self->id} if $self; # refresh ID index cache
 	}
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug($url);
-	
+
 	if ($self) {
 		$self->setAttributes($attributes);
 	} else {
 		$self = $class->new($url, $attributes);
 	}
-	
+
 	return $self;
 }
 
 sub fetch {
 	my ($class, $url, $playlist) = @_;
-	
-	
+
+
 	my $self = $Cache{$url};
 	my $id = $idIndex{$self->id} if $self; # refresh ID index cache
-	
+
 	if ($self && $playlist && !$self->isa('Slim::Schema::RemotePlaylist')) {
 		main::DEBUGLOG && $log->is_debug && $log->debug("$url upcast to RemotePlaylist");
 		bless $self, 'Slim::Schema::RemotePlaylist';
 	}
-	
+
 	return $self;
 }
 
 sub fetchById {
 	my ($class, $id) = @_;
-	
+
 	my $self = $idIndex{$id};
-	
+
 	# try to get the URL from the disk cache - might be needed for BMF of volatile tracks
 	if (!main::SCANNER && !$self) {
 		my $url = $cache->get('rt_' . $id);
 		$self = $class->new($url) if $url;
 	}
-	
+
 	return $self;
 }
 

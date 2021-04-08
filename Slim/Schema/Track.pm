@@ -43,11 +43,11 @@ our @allColumns = (qw(
 	);
 
 	$class->set_primary_key('id');
-	
+
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::Schema::Album');
 	$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
-	
+
 	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
 	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
@@ -59,7 +59,7 @@ our @allColumns = (qw(
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
-	
+
 	if (main::STATISTICS) {
 		$class->might_have(
 			persistent => 'Slim::Schema::TrackPersistent',
@@ -122,24 +122,24 @@ sub albumname {
 # Partly, this is a placehold for a later, more-efficient caching implementation
 sub artistName {
 	my $self = shift;
-	
+
 	if (my $artist = $self->artist) {
 		return $artist->name;
 	}
-	
+
 	return undef;
 }
 
 sub _artistid {
 	my $self = shift;
-	
+
 	my $id = undef;
 
 	if (defined ($id = $self->get_column('primary_artist'))) {
 		main::DEBUGLOG && $log->debug("Using cached primary artist");
 		return wantarray ? ($id, $self->primary_artist) : $id;
 	}
-	
+
 	# XXX primary_artist is now set during scan, the below code should be removed
 
 	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
@@ -151,21 +151,21 @@ sub _artistid {
 		$self->update;
 		main::DEBUGLOG && $log->debug("Track ", $self->id, " caching primary artist $id -> ", $artist->name);
 	}
-	
+
 	return wantarray ? ($id, $artist) : $id;
 }
 
 sub artistid {
 	my $artistid = shift->_artistid();
-	
+
 	return $artistid;
 }
 
 sub artist {
 	my $self = shift;
-	
+
 	my ($id, $artist) = $self->_artistid;
-	
+
 	return $artist;
 }
 
@@ -193,7 +193,7 @@ sub artistsWithAttributes {
 #				'artist'     => $contributor,
 				'artistId'   => $contributor->id,
 				'name'       => $contributor->name,
-				'attributes' => join('&', 
+				'attributes' => join('&',
 					join('=', 'contributor.id', $contributor->id),
 					join('=', 'contributor.role', $type),
 				),
@@ -277,7 +277,7 @@ sub lastUpdated {
 
 sub buildModificationTime {
 	my ( $self, $time ) = @_;
-	
+
 	return join(', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time));
 }
 
@@ -287,13 +287,13 @@ sub prettyBitRate {
 
 	my $bitrate  = $self->bitrate;
 	my $vbrScale = $self->vbr_scale;
-	
+
 	return $self->buildPrettyBitRate($bitrate, $vbrScale);
 }
 
 sub buildPrettyBitRate {
 	my ( $self, $bitrate, $vbrScale ) = @_;
-	
+
 	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 
 	if ($bitrate) {
@@ -301,7 +301,7 @@ sub buildPrettyBitRate {
 	}
 
 	return 0;
-}	
+}
 
 # Wrappers around common functions
 sub isRemoteURL {
@@ -332,13 +332,13 @@ sub isContainer {
 sub coverArt {
 	my $self    = shift;
 	my $list    = shift || 0;
-	
+
 	my ($body, $contentType, $mtime, $path);
 
 	my $cover = $self->cover;
-	
+
 	return undef if defined $cover && !$cover;
-	
+
 	# Remote files may have embedded cover art
 	if ( $cover && $self->remote ) {
 		my $cache = Slim::Utils::Cache->new();
@@ -348,7 +348,7 @@ sub coverArt {
 			$contentType = $image->{type};
 			$mtime       = time();
 		}
-		
+
 		if ( !$list && wantarray ) {
 			return ( $body, $contentType, time() );
 		}
@@ -357,7 +357,7 @@ sub coverArt {
 		}
 	}
 
-	# return with nothing if this isn't a file. 
+	# return with nothing if this isn't a file.
 	# We don't need to search on streams, for example.
 	if (!$self->audio) {
 		return undef;
@@ -372,7 +372,7 @@ sub coverArt {
 
 	# A numeric cover value indicates the cover art is embedded in the file's
 	# metdata tags.
-	# 
+	#
 	# Otherwise we'll have a path to a file on disk.
 
 	if ($cover && $cover !~ /^\d+$/) {
@@ -390,14 +390,14 @@ sub coverArt {
 	# If we didn't already store an artwork value - look harder.
 	if (!$cover || $cover =~ /^\d+$/ || !$body) {
 
-		# readCoverArt calls into the Format classes, which can throw an error. 
+		# readCoverArt calls into the Format classes, which can throw an error.
 		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self) };
 
 		if ($@) {
 			$log->error("Error: Exception when trying to call readCoverArt() for [$url] : [$@]");
 		}
 	}
-	
+
 	if (defined $path) {
 		if ( $self->cover ne $path ) {
 			$self->cover($path);
@@ -407,7 +407,7 @@ sub coverArt {
 		# kick this back up to the webserver so we can set last-modified
 		$mtime = $path !~ /^\d+$/ ? (stat($path))[9] : (stat($self->path))[9];
 	}
-	
+
 	else {
 		$self->cover(0);	# means known not to have artwork, don't ask again
 		$self->update;
@@ -491,7 +491,7 @@ sub displayAsHTML {
 			FROM contributor_track, contributors
 			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s) AND contributors.id = contributor_track.contributor
 		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
-		
+
 		my ($contributorId, $contributorName);
 		$contributor_sth->execute($form->{'item'});
 		$contributor_sth->bind_col( 1, \$contributorId );
@@ -514,7 +514,7 @@ sub displayAsHTML {
 			$form->{'includeArtist'} = 1;
 			$form->{'artistsWithAttributes'} = \@info;
 		}
-		
+
 		if (!$form->{'includeArtist'} && $form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'}) {
 			$form->{'includeArtist'} = 1;
 		}
@@ -522,19 +522,19 @@ sub displayAsHTML {
 
 	if ($format !~ /ALBUM/) {
 		$form->{'includeAlbum'}  = 1;
-		
+
 		my $albumId = $self->albumid;
 		my $albumDetails = $albumCache{$albumId};
-		
+
 		if ( !$albumDetails ) {
 			my $sth = Slim::Schema->dbh->prepare_cached("SELECT title, artwork FROM albums WHERE id = ?");
-			
+
 			$sth->execute($albumId);
 			$albumDetails = $sth->fetchrow_hashref || {};
 			$sth->finish;
 
 			utf8::decode($albumDetails->{title});
-	
+
 			$albumCache{$albumId} = $albumDetails;
 		}
 
@@ -552,15 +552,15 @@ sub retrievePersistent {
 
 	if (main::STATISTICS) {
 		my $trackPersistent;
-		
+
 		# Match on musicbrainz_id first
 		if ( $self->musicbrainz_id ) {
 			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
 		}
-		else {
+		elsif ($self->urlmd5) {
 			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
 		}
-	
+
 		if ( blessed($trackPersistent) ) {
 			return $trackPersistent;
 		}
@@ -571,54 +571,54 @@ sub retrievePersistent {
 
 # The methods below are stored in the persistent table
 
-sub playcount { 
+sub playcount {
 	my ( $self, $val ) = @_;
-	
+
 	if (main::STATISTICS) {
 		if ( my $persistent = $self->retrievePersistent ) {
 			if ( defined $val ) {
 				$persistent->set( playcount => $val );
 				$persistent->update;
 			}
-			
+
 			return $persistent->playcount;
 		}
 	}
-	
+
 	return;
 }
 
-sub rating { 
+sub rating {
 	my ( $self, $val ) = @_;
-	
+
 	if (main::STATISTICS) {
 		if ( my $persistent = $self->retrievePersistent ) {
 			if ( defined $val ) {
 				$persistent->set( rating => $val );
 				$persistent->update;
 			}
-			
+
 			return $persistent->rating;
 		}
 	}
-	
+
 	return;
 }
 
-sub lastplayed { 
+sub lastplayed {
 	my ( $self, $val ) = @_;
-	
+
 	if (main::STATISTICS) {
 		if ( my $persistent = $self->retrievePersistent ) {
 			if ( defined $val ) {
 				$persistent->set( lastplayed => $val );
 				$persistent->update;
 			}
-			
+
 			return $persistent->lastplayed;
 		}
 	}
-	
+
 	return;
 }
 
@@ -634,12 +634,12 @@ sub lastplayed {
 #
 sub coverid {
 	my $self = shift;
-	
+
 	my $val = $self->_coverid(@_);
-	
+
 	# Don't initialize on any update, even $track->coverid(undef)
 	return $val if @_;
-	
+
 	if ( !defined $val ) {
 		# Initialize coverid value
 		if ( $self->cover ) {
@@ -649,12 +649,12 @@ sub coverid {
 				mtime => $self->timestamp,
 				size  => $self->filesize,
 			} );
-			
+
 			$self->_coverid($val);
 			$self->update;
 		}
 	}
-	
+
 	return $val;
 }
 
@@ -668,7 +668,7 @@ sub coverurl {
 # Cover ID can be generated without a Track object, so this is a class method
 sub generateCoverId {
 	my ( $classOrSelf, $args ) = @_;
-	
+
 	my $coverid;
  	my $mtime;
 	my $size;
@@ -689,7 +689,7 @@ sub generateCoverId {
 	if ( $mtime && $size ) {
 		$coverid = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
 	}
-	
+
 	return $coverid;
 }
 
