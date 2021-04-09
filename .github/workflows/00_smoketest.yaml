@@ -2,7 +2,7 @@ name: 'Smoketest for Logitech Media Server'
 on:
   push:
   pull_request_target:
-    types: assigned
+    types: [assigned, labeled]
 jobs:
   linux:
     name: Run LMS to see whether it crashes immediately...
