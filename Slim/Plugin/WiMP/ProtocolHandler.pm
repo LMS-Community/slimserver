@@ -75,7 +75,6 @@ sub new {
 
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
-	my ($trackId, $format) = _getStreamParams( $args->{url} || '' );
 
 	main::DEBUGLOG && $log->debug( 'Remote streaming TIDAL track: ' . $streamUrl );
 
@@ -83,18 +82,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => _getBitrate($format),
 	} ) || return;
-
-	if ($format eq 'flac') {
-		${*$sock}{contentType} = 'audio/flac';
-	}
-	elsif ($format =~ /mp4|aac/) {
-		${*$sock}{contentType} = 'audio/aac';
-	}
-	else {
-		${*$sock}{contentType} = 'audio/mpeg';
-	}
 
 	return $sock;
 }
@@ -278,6 +266,7 @@ sub _gotTrack {
 
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
+
 	if ($format =~ /mp4|aac|fla?c/i) {
 		my $http = Slim::Networking::Async::HTTP->new;
 		$http->send_request( {
@@ -290,7 +279,13 @@ sub _gotTrack {
 				$log->warn( "could not find $format header $error" );
 				$params->{successCb}->();
 			},
-			passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],
+			passthrough => [ $song->track, { cb => sub {
+			                                    my $meta = $cache->get('wimp_meta_' . $info->{id});
+			                                    $meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
+			                                    $cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
+			                                    $params->{successCb}->(); 
+			                               } },						  
+			                 $info->{url} ],
 		} );
 	} else {
 		$params->{successCb}->();
@@ -305,72 +300,6 @@ sub _gotTrackError {
 	return if $params->{song}->pluginData('abandonSong');
 
 	_handleClientError( $error, $client, $params );
-}
-
-# parseHeaders is used for proxied streaming
-sub parseHeaders {
-	my ( $self, @headers ) = @_;
-
-	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @headers );
-
-	return $self->SUPER::parseHeaders( @headers );
-}
-
-sub parseDirectHeaders {
-	my ( $class, $client, $url, @headers ) = @_;
-
-	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
-	my ($length, $rangeLength, $bitrate, $ct);
-	foreach my $header (@headers) {
-		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
-			$length = $1;
-		}
-		elsif ( $header =~ /^Content-Type:\s*(\S*)/) {
-			$ct = Slim::Music::Info::mimeToType($1);
-		}
-		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
-			$rangeLength = $3;
-		}
-	}
-
-	# Content-Range: has predecence over Content-Length:
-	if ($rangeLength) {
-		$length = $rangeLength;
-	}
-
-	$ct = 'aac' if !$ct || $ct eq 'mp4';
-
-	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
-		$bitrate = int($length/$song->duration*8);
-
-		$url = $url->url if blessed $url;
-		my ($trackId) = _getStreamParams( $url );
-
-		if ($trackId) {
-			my $cache = Slim::Utils::Cache->new;
-			my $meta = $cache->get('wimp_meta_' . $trackId);
-			if ($meta && ref $meta) {
-				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
-				$cache->set( 'wimp_meta_' . $trackId, $meta, 86400 );
-			}
-		}
-	}
-
-	$bitrate ||= _getBitrate($ct);
-
-	$client->streamingSong->bitrate($bitrate);
-
-	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', $ct, $length);
-}
-
-sub _getBitrate {
-	my $ct = shift || '';
-
-	return 800_000 if $ct =~ /fla?c/;
-	return 320_000 if $ct =~ /aac|mp4/;
-
-	return 256_000;
 }
 
 # URL used for CLI trackinfo queries
@@ -495,7 +424,7 @@ sub _gotBulkMetadata {
 
 		my $meta = {
 			%{$track},
-			bitrate   => $bitrate*1 > 320 ? 'PCM VBR ' : ($bitrate . 'k CBR'),
+			bitrate   => $bitrate*1 > 320 ? 'PCM VBR' : ($bitrate . 'k CBR'),
 			type      => $bitrate*1 > 320 ? 'FLAC' : ($bitrate*1 > 256 ? 'AAC' : 'MP3'),
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
