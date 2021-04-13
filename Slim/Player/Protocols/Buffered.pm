@@ -40,7 +40,7 @@ sub close {
 
 	# clean buffer file and all handlers
 	Slim::Networking::Select::removeRead($self);	
-	${*$self}{'_rfh'}->close;
+	${*$self}{'_rfh'}->close if ${*$self}{'_rfh'};
 	delete ${*$self}{'_fh'};
 	
 	$self->SUPER::close(@_);
