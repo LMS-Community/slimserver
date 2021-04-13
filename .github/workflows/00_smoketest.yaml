@@ -1,6 +1,7 @@
 name: 'Smoketest for Logitech Media Server'
 on:
   push:
+  workflow_dispatch:
   pull_request_target:
     types: [assigned, labeled]
 jobs:
