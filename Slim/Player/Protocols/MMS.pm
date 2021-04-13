@@ -47,7 +47,7 @@ sub new {
 	my $url        = $args->{'url'};
 	my $client     = $args->{'client'};
 	
-	my $self = $class->open($args);
+	my $self = $class->SUPER::new($args);
 
 	if (defined($self)) {
 		${*$self}{'client'}  = $args->{'client'};

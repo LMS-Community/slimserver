@@ -38,7 +38,7 @@ sub isRemote {
 	return 1;
 }
 
-sub open {
+sub new {
 	my $class = shift;
 	my $args  = shift;
 
@@ -119,8 +119,12 @@ sub open {
 	
 	${*$sock}{'song'} = $args->{'song'};
 
-	return $sock->request($args);
+	return $sock->open($args);
 
+}
+
+sub open {
+	shift->request(@_);
 }
 
 sub request {
@@ -197,7 +201,7 @@ sub request {
 		$redir = Slim::Utils::Misc::cloneProtocol($redir, $url);
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
-		return $class->open({
+		return $class->new({
 			'url'     => $redir,
 			'song'    => $args->{'song'},
 			'infoUrl' => $self->infoUrl,

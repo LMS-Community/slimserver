@@ -42,7 +42,7 @@ sub new {
 		# return undef;
 	}
 
-	my $self = $class->open($args);
+	my $self = $class->SUPER::new($args);
 
 	if (defined($self)) {
 		${*$self}{'client'}  = $args->{'client'};
