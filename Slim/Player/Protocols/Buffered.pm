@@ -56,9 +56,8 @@ sub _sysread {
 	# we are not ready to read body yet, read socket directly
 	return $self->SUPER::_sysread($_[1], $_[2], $_[3]) unless $rfh;
 
-	# try to read from buffer file, first *always* reset read pointer
-	$rfh->seek(0, 1);						
-	my $readLength = read($rfh, $_[1], $_[2], $_[3]);
+	# first, try to read from buffer file
+	my $readLength = $rfh->read($_[1], $_[2], $_[3]);
 	return $readLength if $readLength;
 	
 	# assume that close() will be called for cleanup
@@ -86,7 +85,9 @@ sub saveStream {
 	return unless defined $bytes;
 	
 	if ($bytes) {
-		${*$self}{'_fh'}->write($data);
+		# need to bypass Perl's buffered IO and maje sure read eof is reset
+		syswrite(${*$self}{'_fh'}, $data);
+		${*$self}{'_rfh'}->seek(0, 1);								
 	} else {
 		Slim::Networking::Select::removeRead($self);	
 		${*$self}{_done} = 1;		
