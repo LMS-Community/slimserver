@@ -19,7 +19,10 @@ sub new {
 	my ($args) = @_;
 
 	main::INFOLOG && $log->info("Using Buffered HTTP(S) service for $args->{url}");
-	my $self = $class->SUPER::new(@_);
+	my $self = $class->SUPER::new(@_) or do {
+		$log->error("Couldn't create socket for Buffered - $!");
+		return undef;
+	};
 	
 	# don't buffer if we don't have content-length
 	return $self unless ${*$self}{'contentLength'};
