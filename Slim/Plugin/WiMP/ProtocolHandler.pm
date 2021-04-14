@@ -6,7 +6,7 @@ package Slim::Plugin::WiMP::ProtocolHandler;
 # version 2.
 
 use strict;
-use base qw(Slim::Player::Protocols::HTTPS);
+use vars qw(@ISA);
 
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
@@ -24,6 +24,15 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
+
+if ($prefs->get('useBufferedHTTP')) {
+	require Slim::Player::Protocols::Buffered;
+	push @ISA, qw(Slim::Player::Protocols::Buffered);
+}
+else {
+	require Slim::Player::Protocols::HTTPS;
+	push @ISA, qw(Slim::Player::Protocols::HTTPS);
+}
 
 # https://tidal.com/browse/track/95570766
 # https://tidal.com/browse/album/95570764
@@ -283,8 +292,8 @@ sub _gotTrack {
 			                                    my $meta = $cache->get('wimp_meta_' . $info->{id});
 			                                    $meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
 			                                    $cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
-			                                    $params->{successCb}->(); 
-			                               } },						  
+			                                    $params->{successCb}->();
+			                               } },
 			                 $info->{url} ],
 		} );
 	} else {
