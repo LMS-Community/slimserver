@@ -762,9 +762,10 @@ sub parseMp4Header {
 			return 1;
 		} 
 		else {
-			# please restart from offset set by $info
+			# please restart from offset set by $info, keep current request's custom fields...
 			my $query = Slim::Networking::Async::HTTP->new;
 			$http->disconnect;
+			$http->request->header('Range' => "bytes=$info-");
 	
 			# re-calculate header all the time (i.e. can't go direct at all)
 			$args->{initial_block_type} = Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS;
@@ -772,11 +773,11 @@ sub parseMp4Header {
 			main::INFOLOG && $log->is_info && $log->info("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
 	
 			$query->send_request( {
-				request    => HTTP::Request->new( GET => $url,  [ 'Range' => "bytes=$info-" ] ),
+				request    => $http->request,
 				onStream   => \&parseMp4Header,
 				onError    => sub {
 						my ($self, $error) = @_;
-						$log->warn( "could not find MP4 header $error" );
+						$log->error( "could not find MP4 header $error" );
 						$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 				},
 				passthrough => [ $track, $args, $url ],			
