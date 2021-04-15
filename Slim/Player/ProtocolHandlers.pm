@@ -13,23 +13,27 @@ use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Music::Info;
 use Slim::Networking::Async::HTTP;
+
+my $prefs = preferences('server');
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
 # have a zero value
-my %protocolHandlers = ( 
+my %protocolHandlers = (
 	file     => main::LOCALFILE ? qw(Slim::Player::Protocols::LocalFile) : qw(Slim::Player::Protocols::File),
 	tmp      => qw(Slim::Player::Protocols::Volatile),
-	http     => qw(Slim::Player::Protocols::HTTP),
-	https    => Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP),
-	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
 	playlist => 0,
 	db       => 1,
 );
+
+setHTTPHandler($prefs->get('useBufferedHTTP'));
+
+$prefs->setChange(sub { setHTTPHandler($_[1]) }, 'useBufferedHTTP');
 
 tie my %URLHandlers, 'Tie::RegexpHash';
 
@@ -42,6 +46,14 @@ my %loadedHandlers = ();
 
 my %iconHandlers = ();
 
+sub setHTTPHandler {
+	my ($useBufferedHTTP) = @_;
+
+	$protocolHandlers{http}  = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
+	$protocolHandlers{https} = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : (Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP)),
+	$protocolHandlers{icy}   = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
+}
+
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
@@ -49,7 +61,7 @@ sub isValidHandler {
 		if ($protocolHandlers{$protocol}) {
 			return 1;
 		}
-	
+
 		if (exists $protocolHandlers{$protocol}) {
 			return 0;
 		}
@@ -60,9 +72,9 @@ sub isValidHandler {
 
 sub isValidRemoteHandler {
 	my ($class, $protocol) = @_;
-	
+
 	return isValidHandler(@_) && !$localHandlers{$protocol};
-	
+
 }
 
 sub registeredHandlers {
@@ -73,7 +85,7 @@ sub registeredHandlers {
 
 sub registerHandler {
 	my ($class, $protocol, $classToRegister) = @_;
-	
+
 	$protocolHandlers{$protocol} = $classToRegister;
 }
 
@@ -92,7 +104,7 @@ sub registerIconHandler {
 
 sub handlerForProtocol {
 	my ($class, $protocol) = @_;
-	
+
 	return $protocolHandlers{$protocol};
 }
 
@@ -121,7 +133,7 @@ sub iconHandlerForURL {
 	my ($class, $url) = @_;
 
 	return undef unless $url;
-	
+
 	my $handler;
 	foreach (keys %iconHandlers) {
 		if ($url =~ /$_/i) {
@@ -136,7 +148,7 @@ sub iconHandlerForURL {
 
 sub iconForURL {
 	my ($class, $url, $client) = @_;
-	
+
 	$url ||= '';
 
 	if (my $handler = $class->handlerForURL($url)) {
@@ -145,7 +157,7 @@ sub iconForURL {
 				return $meta->{cover} if $meta->{cover};
 			}
 		}
-		
+
 		if ($handler->can('getIcon')) {
 			return $handler->getIcon($url);
 		}
@@ -157,12 +169,12 @@ sub iconForURL {
 
 	elsif ($url =~ /^db:album\.(\w+)=(.+)/) {
 		my $value = Slim::Utils::Misc::unescape($2);
-		
+
 		if (utf8::is_utf8($value)) {
 			utf8::decode($value);
 			utf8::encode($value);
 		}
-		
+
 		my $album = Slim::Schema->search('Album', { $1 => $value })->first;
 
 		if ($album && $album->artwork) {
