@@ -8414,6 +8414,22 @@ SETUP_ENABLE_STATISTICS
 	SV	Aktivera biblioteksstatistik
 	ZH_CN	启用库存统计
 
+SETUP_BUFFEREDHTTP
+	DE	Online Datenströme zwischenspeichern
+	EN	Cache online streams to disk
+
+SETUP_BUFFEREDHTTP_DESC
+	DE	Logitech Media Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
+	EN	Logitech Media Server can cache HTTP(S) streams of defined length (podcasts, single tracks) on disk. The buffer files will be removed again once the stream has been played. This can improve the reliability with some servers. But it also does cause more writing to the file system, which could potentially wear out eg. SD cards.
+
+SETUP_ENABLE_BUFFEREDHTTP
+	DE	HTTP(S) Datenströme zwischenspeichern
+	EN	Cache HTTP(S) streams on disk
+
+SETUP_DISABLE_BUFFEREDHTTP
+	DE	HTTP(S) Datenströme nicht zwischenspeichern
+	EN	Do not cache HTTP(S) streams on disk
+
 SETUP_LONGDATEFORMAT
 	CS	Formát dlouhého data
 	DA	Langt datoformat
