@@ -530,14 +530,24 @@ sub readRemoteHeaders {
 				}
 
 				# Continue scanning in the background
+				delete $args->{cb};	
 
 				# We may be able to determine the bitrate or other tag information
 				# about this remote stream/file by reading a bit of audio data
 				main::DEBUGLOG && $log->is_debug && $log->debug('Reading audio data in the background to detect bitrate and/or tags');
+					
+				# as https for whatever reason didn't allow us to start the stream while scanning
+				# we're now disconnecting to allow the stream to start
+				$args->{cb} = sub {
+					my $track = shift;
+					my $param = shift;
+					$http->disconnect;
+					$cb->( $track, $param, @_ );
+				} if $cb && $track->url =~ /^https/;
 
 				# read as much as is necessary to read all ID3v2 tags and determine bitrate
 				$http->read_body( {
-					onStream    => \&streamAudioData,
+					onStream    => \&parseAudioStream,
 					passthrough => [ $track, $args, $url ],
 				} );
 			}
@@ -955,7 +965,7 @@ sub parseWavAifHeader {
 	return 0;
 }
 
-sub streamAudioData {
+sub parseAudioStream {
 	my ( $http, $dataref, $track, $args, $url ) = @_;
 
 	return 1 unless defined $$dataref;
@@ -989,6 +999,9 @@ sub streamAudioData {
 
 			# Read the full ID3v2 tag + some audio frames for bitrate
 			$args->{_scanlen} = $id3size + (16 * 1024);
+			
+			# last chance to set content_type if missing
+			Slim::Music::Info::setContentType( $track->url, 'mp3' ) unless $track->content_type;
 
 			main::DEBUGLOG && $log->is_debug && $log->debug( 'ID3v2 tag detected, will read ' . $args->{_scanlen} . ' bytes' );
 		}
@@ -1062,12 +1075,8 @@ sub streamAudioData {
 	delete $args->{_scanbuf};
 	delete $args->{_scanlen};
 
-	# as https for whatever reason didn't allow us to start the stream while scanning
-	# we're now disconnecting to allow the stream to start
-	if ( $args->{cb} && $track->url =~ /^https/ ) {
-		$http->disconnect;
-		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
-	}
+	# callback if needed
+	$args->{cb}->( $track, undef, @{$args->{pt} || []} ) if $args->{cb};
 
 	# Disconnect
 	return 0;
