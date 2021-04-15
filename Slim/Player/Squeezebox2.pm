@@ -276,7 +276,7 @@ sub volume {
 
 	if (defined($newvolume)) {
 		# Old style volume:
-		my $oldGain = $volume_map[int($volume)];
+		my $oldGain = $volume > 0 ? $volume_map[int($volume)] : 0;
 
 		my $newGain;
 		# Negative volume = muting
