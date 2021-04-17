@@ -327,11 +327,13 @@ provider may also return more than one menu item by returning an arrayref.
   sub myAction {
       my ( $client, $callback, $params, $foo, $bar ) = @_;
 
-      my $menu = {
-          type => 'text',
-          name => 'Results: ...',
-      };
-	
+      my $menu = [
+          {
+              type => 'text',
+              name => 'Results: ...',
+          }
+      ];
+
       return $callback->( $menu );
   }
 
