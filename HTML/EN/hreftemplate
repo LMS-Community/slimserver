@@ -15,6 +15,7 @@ stringPLAY  = "PLAY" | string;
 stringREMOVE_FROM_PLAYLIST = "REMOVE_FROM_PLAYLIST" | string;
 stringADD   = "ADD" | string;
 stringDELETE= "DELETE" | string;
+stringMORE  = "MORE" | string;
 
 stringALBUM = "ALBUM" | string;
 stringARTIST= "ARTIST" | string;
