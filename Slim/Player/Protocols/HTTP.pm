@@ -58,22 +58,6 @@ sub new {
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'url'}     = $args->{'url'};
 
-	# set persistence parameters if  enabled, 
-	if ( ${*$self}{'_request'} ) {
-		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
-		my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
-		
-		${*$self}{'_persistent'} = {
-			'session' => Slim::Networking::Async::HTTP->new,
-			'request' => delete ${*$self}{'_request'},
-			'errors'  => 0,
-			'status'  => IDLE,
-			'first'   => $first || 0,
-			'length'  => $length,
-		};
-		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $args->{url}");
-	}	
-
 	return $self;
 }
 
@@ -83,6 +67,36 @@ sub close {
 
 	$v->{'session'}->disconnect if $v && $v->{'status'} > IDLE;
 	$self->SUPER::close(@_);
+print "CLOSE ----------------------------------------\n";						
+}
+
+sub parsed {
+	my $self = shift;
+	my ($url, $request, @headers) = @_;
+	
+	return unless $prefs->get('useEnhancedHTTP') == 1 && !$self->isa("Slim::Player::Protocols::Buffered");
+	
+	# re-parse the request string as it might have been overloaded by subclasses
+	my $request_object = HTTP::Request->parse($request);
+	my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
+	
+	# need to change URI if proxy is used as request does not include it
+	my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
+	$request_object->uri($uri);
+
+	my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
+	my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
+		
+	${*$self}{'_persistent'} = {
+		'session' => Slim::Networking::Async::HTTP->new,
+		'request' => $request_object,
+		'errors'  => 0,
+		'status'  => IDLE,
+		'first'   => $first || 0,
+		'length'  => $length,
+	};
+
+	main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $url");
 }
 
 sub request {

@@ -127,6 +127,8 @@ sub open {
 	shift->request(@_);
 }
 
+sub parsed { }
+
 sub request {
 	my $self = shift;
 	my $args = shift;
@@ -210,20 +212,10 @@ sub request {
 			'client'  => $args->{'client'},
 		});
 	}
-
-	main::INFOLOG && $log->info("Opened stream!");
-
-	if ($prefs->get('useEnhancedHTTP') == 1 && !$self->isa("Slim::Player::Protocols::Buffered")) {
-		# re-parse the request string as it might have been overloaded by subclasses
-		my $request_object = HTTP::Request->parse($request);
-		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
 	
-		# need to change URI if proxy is used as request does not include it
-		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
-		$request_object->uri($uri);
-
-		${*$self}{'_request'} = $request_object,
-	}
+	$self->parsed($url, $request, @headers);
+	
+	main::INFOLOG && $log->info("Opened stream!");
 
 	return $self;
 }
