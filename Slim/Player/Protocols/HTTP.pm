@@ -67,7 +67,6 @@ sub close {
 
 	$v->{'session'}->disconnect if $v && $v->{'status'} > IDLE;
 	$self->SUPER::close(@_);
-print "CLOSE ----------------------------------------\n";						
 }
 
 sub parsed {
