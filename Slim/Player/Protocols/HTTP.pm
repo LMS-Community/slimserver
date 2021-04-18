@@ -351,7 +351,7 @@ sub canDirectStream {
 	my ($classOrSelf, $client, $url, $inType) = @_;
 	
 	# when persistent is used, we won't direct stream to enable retries
-	return 0 if ${*$classOrSelf} && ${*$classOrSelf}{'_persistent'};
+	return 0 if $prefs->get('useEnhancedHTTP');
 
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players
@@ -405,19 +405,20 @@ sub canDirectStreamSong {
 sub readChunk {
 	my $self  = $_[0];
 	my $v = ${*$self}{'_persistent'};
-	
+
 	# when there is no persistence, just call regular _sysread method
 	# the _persistent hash is set *only* after the body has been read
 	return $self->_sysread($_[1], $_[2], $_[3]) unless $v;
 	
 	# read directly from socket if primary connection is still active
-	my $readLength = $self->_sysread($_[1], $_[2], $_[3]) unless $v->{'status'} != IDLE;
-	$v->{'first'} += $readLength if $v->{status} == IDLE && ${*$self}{'contentLength'};
+	if ($v->{'status'} == IDLE) {
+		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
+		$v->{'first'} += $readLength if ${*$self}{'contentLength'};
 	
-	# when persistent connection is not active, return sysread's result UNLESS eof before expected length
-	return $readLength if $readLength ||
-	                     ( defined($readLength) && $v->{'first'} == ${*$self}{'contentLength'} ) || 
-	                     ( !defined($readLength) && $v->{'status'} == IDLE && $v->{'first'} < ${*$self}{'contentLength'} );
+		# return sysread's result UNLESS we reach eof before expected length
+		# this means we have no persistence when content-length is missing (webradio)
+		return $readLength unless defined($readLength) && !$readLength && $v->{'first'} != ${*$self}{'contentLength'};
+	}					 
 
 	# all received using persistent connection
 	return 0 if $v->{'status'} == DISCONNECTED;

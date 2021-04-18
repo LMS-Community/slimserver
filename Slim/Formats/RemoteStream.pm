@@ -212,8 +212,8 @@ sub request {
 	}
 
 	main::INFOLOG && $log->info("Opened stream!");
-	
-	if ($prefs->get('useEnhancedHTTP') == 1) {
+
+	if ($prefs->get('useEnhancedHTTP') == 1 && !$self->isa("Slim::Player::Protocols::Buffered")) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
 		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
@@ -221,7 +221,7 @@ sub request {
 		# need to change URI if proxy is used as request does not include it
 		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
 		$request_object->uri($uri);
-	
+
 		${*$self}{'_request'} = $request_object,
 	}
 
