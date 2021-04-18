@@ -468,9 +468,8 @@ sub readChunk {
 		} );
 	}
 
-	# the child socket should be non-blocking so here we can safely call
-	# read_entity_body which calls sysread if buffer is empty. This is normally
-	# a callback invoked when select() has something to read on that socket.
+	# the child socket is non-blocking so we can safely call read_entity_body which calls sysread
+	# if buffer is empty. This is normally a callback used when select() indicates pending bytes
 	my $bytes = $v->{'session'}->socket->read_entity_body($_[1], $_[2]) if $v->{'status'} == CONNECTED;
 	
 	# note that we use EINTR with empty buffer because EWOULDBLOCK allows Source::_readNextChunk
@@ -600,6 +599,7 @@ sub parseDirectHeaders {
 
 	# May get a track object
 	if ( blessed($url) ) {
+		# FIXME: this does not belong here, we'd better fix the mimetotype below
 		($oggType) = $url->content_type =~ /(ogf|ogg|ops)/;
 		$url = $url->url;
 	}
