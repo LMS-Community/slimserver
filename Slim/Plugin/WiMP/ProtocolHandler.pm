@@ -25,7 +25,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	'description'  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
 
-if ($prefs->get('useBufferedHTTP')) {
+if ($prefs->get('useEnhancedHTTP') == 2) {
 	require Slim::Player::Protocols::Buffered;
 	push @ISA, qw(Slim::Player::Protocols::Buffered);
 }

@@ -31,9 +31,9 @@ my %protocolHandlers = (
 	db       => 1,
 );
 
-setHTTPHandler($prefs->get('useBufferedHTTP'));
+setHTTPHandler($prefs->get('useEnhancedHTTP'));
 
-$prefs->setChange(sub { setHTTPHandler($_[1]) }, 'useBufferedHTTP');
+$prefs->setChange(sub { setHTTPHandler($_[1]) }, 'useEnhancedHTTP');
 
 tie my %URLHandlers, 'Tie::RegexpHash';
 
@@ -47,11 +47,10 @@ my %loadedHandlers = ();
 my %iconHandlers = ();
 
 sub setHTTPHandler {
-	my ($useBufferedHTTP) = @_;
-
-	$protocolHandlers{http}  = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
-	$protocolHandlers{https} = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : (Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP)),
-	$protocolHandlers{icy}   = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
+	my ($useEnhancedHTTP) = @_;
+	$protocolHandlers{http}  = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
+	$protocolHandlers{https} = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : (Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP)),
+	$protocolHandlers{icy}   = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
 }
 
 sub isValidHandler {

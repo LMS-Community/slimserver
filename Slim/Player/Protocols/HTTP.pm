@@ -23,6 +23,14 @@ use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
 
+use constant MAX_ERRORS	=> 5;
+
+use constant DISCONNECTED => 0;
+use constant IDLE         => 1;
+use constant READY        => 2;
+use constant CONNECTING   => 3;
+use constant CONNECTED    => 4;
+
 my $log       = logger('player.streaming.remote');
 my $directlog = logger('player.streaming.direct');
 my $sourcelog = logger('player.source');
@@ -43,13 +51,36 @@ sub new {
 	}
 
 	my $self = $class->SUPER::new($args);
+	return unless defined $self;
 
-	if (defined($self)) {
-		${*$self}{'client'}  = $args->{'client'};
-		${*$self}{'url'}     = $args->{'url'};
-	}
+	${*$self}{'client'}  = $args->{'client'};
+	${*$self}{'url'}     = $args->{'url'};
+
+	# set persistence parameters if  enabled, 
+	if ( ${*$self}{'_request'} ) {
+		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
+		my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
+		
+		${*$self}{'_persistent'} = {
+			'session' => Slim::Networking::Async::HTTP->new,
+			'request' => delete ${*$self}{'_request'},
+			'errors'  => 0,
+			'status'  => IDLE,
+			'first'   => $first || 0,
+			'length'  => $length,
+		};
+		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $args->{url}");
+	}	
 
 	return $self;
+}
+
+sub close {
+	my $self = shift;
+	my $v = delete ${*$self}{'_persistent'};
+
+	$v->{'session'}->disconnect if $v && $v->{'status'} > IDLE;
+	$self->SUPER::close(@_);
 }
 
 sub request {
@@ -121,7 +152,7 @@ sub readMetaData {
 
 	while ($byteRead == 0) {
 
-		$byteRead = $self->_sysread($metadataSize, 1);
+		$byteRead = readChunk($self, $metadataSize, 1);
 
 		if ($!) {
 
@@ -150,7 +181,7 @@ sub readMetaData {
 
 		do {
 			$metadatapart = '';
-			$byteRead = $self->_sysread($metadatapart, $metadataSize);
+			$byteRead = readChunk($self, $metadatapart, $metadataSize);
 
 			if ($!) {
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
@@ -318,6 +349,9 @@ sub parseMetadata {
 
 sub canDirectStream {
 	my ($classOrSelf, $client, $url, $inType) = @_;
+	
+	# when persistent is used, we won't direct stream to enable retries
+	return 0 if ${*$classOrSelf} && ${*$classOrSelf}{'_persistent'};
 
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players
@@ -366,6 +400,88 @@ sub canDirectStreamSong {
 	}
 
 	return $direct;
+}
+
+sub readChunk {
+	my $self  = $_[0];
+	my $v = ${*$self}{'_persistent'};
+	
+	# when there is no persistence, just call regular _sysread method
+	# the _persistent hash is set *only* after the body has been read
+	return $self->_sysread($_[1], $_[2], $_[3]) unless $v;
+	
+	# read directly from socket if primary connection is still active
+	my $readLength = $self->_sysread($_[1], $_[2], $_[3]) unless $v->{'status'} != IDLE;
+	$v->{'first'} += $readLength if $v->{status} == IDLE && ${*$self}{'contentLength'};
+	
+	# when persistent connection is not active, return sysread's result UNLESS eof before expected length
+	return $readLength if $readLength ||
+	                     ( defined($readLength) && $v->{'first'} == ${*$self}{'contentLength'} ) || 
+	                     ( !defined($readLength) && $v->{'status'} == IDLE && $v->{'first'} < ${*$self}{'contentLength'} );
+
+	# all received using persistent connection
+	return 0 if $v->{'status'} == DISCONNECTED;
+
+	# if we are not streaming, need to (re)start a session
+	if ( $v->{'status'} <= READY ) {
+		my $request = $v->{'request'}; 
+		my $last = $v->{'length'} - 1 if $v->{'length'};
+		
+		$request->header( 'Range', "bytes=$v->{'first'}-$last");
+		$v->{'status'} = CONNECTING;		
+		$v->{'lastSeen'} = undef;
+
+		$log->warn("Persistent streaming from $v->{'first'} for ${*$self}{'url'}");
+
+		$v->{'session'}->send_request( {
+			request   => $request,
+			onHeaders => sub {
+				my $headers = shift->response->headers;
+				$v->{'length'} = $1 if $headers->header('Content-Range') =~ /^bytes\s+\d+-\d+\/(\d+)/i;
+				$v->{'length'} ||= $headers->header('Content-Length') if $headers->header('Content-Length');
+				$v->{'status'} = CONNECTED;
+				$v->{'errors'} = 0;
+			},
+			onError  => sub {
+				$v->{'session'}->disconnect;
+				$v->{'status'} = READY;
+				$v->{'errors'}++;
+				$log->error("cannot open session for ${*$self}{'url'} $_[1] ");
+			},
+		} );
+	}
+
+	# the child socket should be non-blocking so here we can safely call
+	# read_entity_body which calls sysread if buffer is empty. This is normally
+	# a callback invoked when select() has something to read on that socket.
+	my $bytes = $v->{'session'}->socket->read_entity_body($_[1], $_[2]) if $v->{'status'} == CONNECTED;
+	
+	# note that we use EINTR with empty buffer because EWOULDBLOCK allows Source::_readNextChunk
+	# to do an addRead on $self and would not work as primary socket is closed
+	if ( $bytes && $bytes != -1 ) {
+		$v->{'first'} += $bytes if ${*$self}{'contentLength'};
+		$v->{'lastSeen'} = time();
+		return $bytes;
+	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < MAX_ERRORS && 
+							  ($v->{'status'} != CONNECTED || $! == EINTR || $! == EWOULDBLOCK) && 
+							  (!defined $v->{'lastSeen'} || time() - $v->{'lastSeen'} < 5)) ) {
+		$! = EINTR;
+		main::DEBUGLOG && $log->is_debug && $log->debug("need to wait for ${*$self}{'url'}");
+		return undef;
+	} elsif ( !$v->{'length'} || $v->{'first'} == $v->{'length'} || $v->{'errors'} >= MAX_ERRORS ) {
+		$v->{'session'}->disconnect;
+		$v->{'status'} = DISCONNECTED;
+		main::INFOLOG && $log->is_info && $log->info("end of ${*$self}{'url'} s:", time() - $v->{'lastSeen'}, " e:$v->{'errors'}");
+		return 0;
+	} else {
+		$log->warn("unexpected connection close at $v->{'first'}/$v->{'length'} for ${*$self}{'url'}\n\tsince:", 
+		           time() - $v->{'lastSeen'}, "\n\terror:", ($! != EINTR && $! != EWOULDBLOCK) ? $! : "N/A");
+		$v->{'session'}->disconnect;
+		$v->{'status'} = READY;
+		$v->{'errors'}++;
+		$! = EINTR;
+		return undef;
+	}
 }
 
 # we need that call structure to make sure that SUPER calls the
@@ -423,7 +539,7 @@ sub sysread {
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize);
 	}
 	else {
-		$readLength = $self->_sysread($_[1], $chunkSize, length($_[1] || ''));
+		$readLength = readChunk($self, $_[1], $chunkSize, length($_[1] || ''));
 		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'};
 	}
 

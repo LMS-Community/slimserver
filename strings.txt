@@ -8414,21 +8414,27 @@ SETUP_ENABLE_STATISTICS
 	SV	Aktivera biblioteksstatistik
 	ZH_CN	启用库存统计
 
-SETUP_BUFFEREDHTTP
-	DE	Online Datenströme zwischenspeichern
-	EN	Cache online streams to disk
+SETUP_ENHANCEDHTTP
+	EN	Streaming mode for HTTP(S)
+	FR	Mode de streaming HTTP(S)
 
-SETUP_BUFFEREDHTTP_DESC
+SETUP_ENHANCEDHTTP_DESC
 	DE	Logitech Media Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
-	EN	Logitech Media Server can cache HTTP(S) streams of defined length (podcasts, single tracks) on disk. The buffer files will be removed again once the stream has been played. This can improve the reliability with some servers. But it also does cause more writing to the file system, which could potentially wear out eg. SD cards.
+	EN	When a HTTP(S) connection to a server fails, Logitech Media Server terminates playback. It can also try to re-open it (Persistent mode) or it can cache streams of defined length (podcasts, single tracks) on disk. The buffer files will be removed again once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out eg. SD cards. 
+	FR	Lorsqu'une connexion HTTP(S) échoue, Logitech Media Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou cacher sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD)
 
+SETUP_ENABLE_PERSISTENTHTTP
+	EN	Persistent mode
+	FR	Mode persistent
+	
 SETUP_ENABLE_BUFFEREDHTTP
 	DE	HTTP(S) Datenströme zwischenspeichern
 	EN	Cache HTTP(S) streams on disk
+	FR	Cacher les flux HTTP(S) sur disque
 
-SETUP_DISABLE_BUFFEREDHTTP
-	DE	HTTP(S) Datenströme nicht zwischenspeichern
-	EN	Do not cache HTTP(S) streams on disk
+SETUP_DISABLE_ENHANCEDHTTP
+	EN	Normal streaming
+	FR	Streaming normal
 
 SETUP_LONGDATEFORMAT
 	CS	Formát dlouhého data
