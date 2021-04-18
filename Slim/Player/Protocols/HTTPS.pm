@@ -43,20 +43,17 @@ sub new {
 		  ? (SSL_verify_mode => Net::SSLeay::VERIFY_NONE())           # SSL_VERIFY_NONE isn't recognized on some platforms?!?, and 0x00 isn't always "right"
 		  : () ),
 	) or do {
-
 		$log->error("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!");
 		return undef;
 	};
 
-	if (defined($sock)) {
-		${*$sock}{'client'}  = $args->{'client'};
-		${*$sock}{'url'}     = $args->{'url'};
-		${*$sock}{'song'}    = $args->{'song'};
+	${*$sock}{'client'}  = $args->{'client'};
+	${*$sock}{'url'}     = $args->{'url'};
+	${*$sock}{'song'}    = $args->{'song'};
 
-		# store a IO::Select object in ourself.
-		# used for non blocking I/O
-		${*$sock}{'_sel'}    = IO::Select->new($sock);
-	}
+	# store a IO::Select object in ourself.
+	# used for non blocking I/O
+	${*$sock}{'_sel'}    = IO::Select->new($sock);
 
 	return $sock->request($args);
 }

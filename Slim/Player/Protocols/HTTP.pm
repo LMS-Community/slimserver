@@ -50,8 +50,10 @@ sub new {
 		# return undef;
 	}
 
-	my $self = $class->SUPER::new($args);
-	return unless defined $self;
+	my $self = $class->SUPER::new($args) or do {
+		$log->error("Couldn't create socket binding to $main::localStreamAddr - $!");
+		return undef;
+	};
 
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'url'}     = $args->{'url'};
