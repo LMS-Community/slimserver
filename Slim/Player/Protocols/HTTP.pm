@@ -63,9 +63,21 @@ sub new {
 
 sub close {
 	my $self = shift;
-	my $v = delete ${*$self}{'_persistent'};
+	my $v = delete ${*$self}{'_enhanced'};
 
-	$v->{'session'}->disconnect if $v && $v->{'status'} > IDLE;
+	# FIXME: can be optimized
+	if ($v) {
+		if ($v->{'fh'}) {
+			# clean buffer file and all handlers
+			Slim::Networking::Select::removeRead($self);
+			$v->{'rfh'}->close;
+			delete $v->{'fh'};			
+		} elsif ($v->{'status'} && $v->{'status'} > IDLE) {
+			# disconnect persistent session (if any)
+			$v->{'session'}->disconnect;
+		}		
+	}	
+	
 	$self->SUPER::close(@_);
 }
 
@@ -73,29 +85,45 @@ sub response {
 	my $self = shift;
 	my ($url, $request, @headers) = @_;
 	
-	return unless $prefs->get('useEnhancedHTTP') == 1 && !$self->isa("Slim::Player::Protocols::Buffered");
+	return unless my $enhanced = $prefs->get('useEnhancedHTTP');
 	
-	# re-parse the request string as it might have been overloaded by subclasses
-	my $request_object = HTTP::Request->parse($request);
-	my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
+	if ($enhanced == 1 || !${*$self}{'contentLength'}) {
+		# re-parse the request string as it might have been overloaded by subclasses
+		my $request_object = HTTP::Request->parse($request);
+		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
 	
-	# need to change URI if proxy is used as request does not include it
-	my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
-	$request_object->uri($uri);
+		# need to change URI if proxy is used as request does not include it
+		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
+		$request_object->uri($uri);
 
-	my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
-	my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
+		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
+		my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
 		
-	${*$self}{'_persistent'} = {
-		'session' => Slim::Networking::Async::HTTP->new,
-		'request' => $request_object,
-		'errors'  => 0,
-		'status'  => IDLE,
-		'first'   => $first || 0,
-		'length'  => $length,
-	};
+		${*$self}{'_enhanced'} = {
+			'session' => Slim::Networking::Async::HTTP->new,
+			'request' => $request_object,
+			'errors'  => 0,
+			'status'  => IDLE,
+			'first'   => $first || 0,
+			'length'  => $length,
+			'reader'  => \&readPersistentChunk,
+		};
 
-	main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $url");
+		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $url");
+	} else {	
+		# HTTP headers have now been acquired in a blocking way by the above, we can
+		# now enable fast download of body to a file from which we'll read further data
+		# but the switch of socket handler can only be done within _sysread otherwise
+		# we will timeout when there is a pipeline with a callback
+		${*$self}{'_enhanced'} = {
+			'fh'      => File::Temp->new( DIR => Slim::Utils::Misc::getTempDir, SUFFIX => '.buf' ),
+			'reader'  => \&readBufferedChunk,
+		};
+		open ${*$self}{'_enhanced'}->{'rfh'}, '<', ${*$self}{'_enhanced'}->{'fh'}->filename;
+		binmode(${*$self}{'_enhanced'}->{'rfh'});
+
+		main::INFOLOG && $log->info("Using Buffered service for url");
+	}
 }
 
 sub request {
@@ -419,12 +447,14 @@ sub canDirectStreamSong {
 
 sub readChunk {
 	my $self  = $_[0];
-	my $v = ${*$self}{'_persistent'};
+	my $v = ${*$self}{'_enhanced'} || return $self->_sysread($_[1], $_[2], $_[3]);
+	return $v->{'reader'}->($v, $self, $_[1], $_[2], $_[3]);
+}
 
-	# when there is no persistence, just call regular _sysread method
-	# the _persistent hash is set *only* after the body has been read
-	return $self->_sysread($_[1], $_[2], $_[3]) unless $v;
-	
+sub readPersistentChunk {
+	my $v = shift;	
+	my $self  = $_[0];
+
 	# read directly from socket if primary connection is still active
 	if ($v->{'status'} == IDLE) {
 		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
@@ -496,6 +526,50 @@ sub readChunk {
 		$v->{'errors'}++;
 		$! = EINTR;
 		return undef;
+	}
+}
+
+sub readBufferedChunk {
+	my $v = shift;	
+	my $self  = $_[0];
+
+	# first, try to read from buffer file
+	my $readLength = $v->{'rfh'}->read($_[1], $_[2], $_[3]);
+	return $readLength if $readLength;
+
+	# assume that close() will be called for cleanup
+	return 0 if $v->{'done'};
+
+	# empty file but not done yet, try to read directly
+	$readLength = $self->_sysread($_[1], $_[2], $_[3]);
+
+	# if we now have data pending, likely we have been removed from the reading loop
+	# so we have to re-insert ourselves (no need to store fresh data in buffer)
+	if ($readLength) {
+		Slim::Networking::Select::addRead($self, \&saveStream);
+		return $readLength;
+	}
+
+	# use EINTR because EWOULDBLOCK (although faster) may overwrite our addRead()
+	$! = EINTR;
+	return undef;
+}
+
+# handler for pending data in Buffered mode
+sub saveStream {
+	my $self = shift;
+	my $v = ${*$self}{'_enhanced'};
+
+	my $bytes = $self->_sysread(my $data, 32768);
+	return unless defined $bytes;
+
+	if ($bytes) {
+		# need to bypass Perl's buffered IO and make sure read eof is reset
+		syswrite($v->{'fh'}, $data);
+		$v->{'rfh'}->seek(0, 1);
+	} else {
+		Slim::Networking::Select::removeRead($self);
+		$v->{'done'} = 1;
 	}
 }
 

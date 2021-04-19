@@ -18,21 +18,14 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use base qw(Slim::Player::Protocols::HTTPS);
+
 my $prefs = preferences('server');
 my $log = Slim::Utils::Log->addLogCategory( {
 	'category'     => 'plugin.tidal',
 	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
-
-if ($prefs->get('useEnhancedHTTP') == 2) {
-	require Slim::Player::Protocols::Buffered;
-	push @ISA, qw(Slim::Player::Protocols::Buffered);
-}
-else {
-	require Slim::Player::Protocols::HTTPS;
-	push @ISA, qw(Slim::Player::Protocols::HTTPS);
-}
 
 # https://tidal.com/browse/track/95570766
 # https://tidal.com/browse/album/95570764

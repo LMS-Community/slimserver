@@ -27,13 +27,12 @@ my %protocolHandlers = (
 	tmp      => qw(Slim::Player::Protocols::Volatile),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
+	http     => qw(Slim::Player::Protocols::HTTP),
+	https    => qw(Slim::Player::Protocols::HTTPS),
+	icy      => qw(Slim::Player::Protocols::HTTP),	
 	playlist => 0,
 	db       => 1,
 );
-
-setHTTPHandler($prefs->get('useEnhancedHTTP'));
-
-$prefs->setChange(sub { setHTTPHandler($_[1]) }, 'useEnhancedHTTP');
 
 tie my %URLHandlers, 'Tie::RegexpHash';
 
@@ -45,13 +44,6 @@ my %localHandlers = (
 my %loadedHandlers = ();
 
 my %iconHandlers = ();
-
-sub setHTTPHandler {
-	my ($useEnhancedHTTP) = @_;
-	$protocolHandlers{http}  = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
-	$protocolHandlers{https} = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : (Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP)),
-	$protocolHandlers{icy}   = $useEnhancedHTTP == 2 ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
-}
 
 sub isValidHandler {
 	my ($class, $protocol) = @_;
