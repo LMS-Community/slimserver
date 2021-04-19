@@ -127,8 +127,6 @@ sub open {
 	shift->request(@_);
 }
 
-sub parsed { }
-
 sub request {
 	my $self = shift;
 	my $args = shift;
@@ -213,7 +211,7 @@ sub request {
 		});
 	}
 	
-	$self->parsed($url, $request, @headers);
+	$self->response($url, $request, @headers) if $self->can('response');
 	
 	main::INFOLOG && $log->info("Opened stream!");
 

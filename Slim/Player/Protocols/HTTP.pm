@@ -69,7 +69,7 @@ sub close {
 	$self->SUPER::close(@_);
 }
 
-sub parsed {
+sub response {
 	my $self = shift;
 	my ($url, $request, @headers) = @_;
 	
