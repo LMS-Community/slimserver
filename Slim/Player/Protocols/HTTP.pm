@@ -57,28 +57,27 @@ sub new {
 
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'url'}     = $args->{'url'};
+	${*$self}{'_class'}  = $class;	
 
 	return $self;
 }
 
 sub close {
 	my $self = shift;
-	my $v = delete ${*$self}{'_enhanced'};
 
-	# FIXME: can be optimized
-	if ($v) {
-		if ($v->{'fh'}) {
-			# clean buffer file and all handlers
-			Slim::Networking::Select::removeRead($self);
-			$v->{'rfh'}->close;
-			delete $v->{'fh'};			
-		} elsif ($v->{'status'} && $v->{'status'} > IDLE) {
-			# disconnect persistent session (if any)
-			$v->{'session'}->disconnect;
-		}		
-	}	
-	
-	$self->SUPER::close(@_);
+	# call parent's ONLY when new() was made in this class, otherwise creating
+	# subclass has multi-inheritance of else and takes care of close()
+	$self->SUPER::close(@_) if ${*$self}{_class};
+	return unless my $v = delete ${*$self}{'_enhanced'};
+
+	if ($v->{'fh'}) {
+		# close read buffer file and remove handler
+		Slim::Networking::Select::removeRead($self);
+		$v->{'rfh'}->close;
+	} elsif ($v->{'status'} && $v->{'status'} > IDLE) {
+		# disconnect persistent session (if any)
+		$v->{'session'}->disconnect;
+	}		
 }
 
 sub response {

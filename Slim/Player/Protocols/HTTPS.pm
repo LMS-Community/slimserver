@@ -58,6 +58,14 @@ sub new {
 	return $sock->request($args);
 }
 
+sub close {
+	my $self = shift;
+	$self->SUPER::close;
+	# if we are really HTTPS, we also need to call HTTP's close() to let it do cleanup
+	# and it will know that it should not call own parent's close()
+	$self->Slim::Player::Protocols::HTTP::close if $self->isa('IO::Socket::SSL');
+}
+
 # Check whether the current player can stream HTTPS or Url is HTTP
 sub canDirectStream {
 	my $self = shift;
