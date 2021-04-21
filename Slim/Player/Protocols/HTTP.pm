@@ -86,8 +86,8 @@ sub response {
 
 	# HTTP headers have now been acquired in a blocking way		
 	return unless my $enhanced = $prefs->get('useEnhancedHTTP');
-	
-	if ($enhanced == 1 || $self->contentLength) {
+
+	if ($enhanced == 1 || !$self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
 		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
