@@ -83,10 +83,11 @@ sub close {
 sub response {
 	my $self = shift;
 	my ($url, $request, @headers) = @_;
-	
+
+	# HTTP headers have now been acquired in a blocking way		
 	return unless my $enhanced = $prefs->get('useEnhancedHTTP');
 	
-	if ($enhanced == 1 || !${*$self}{'contentLength'}) {
+	if ($enhanced == 1 || $self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
 		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
@@ -96,7 +97,7 @@ sub response {
 		$request_object->uri($uri);
 
 		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
-		my $length = ${*$self}{'contentLength'} if ${*$self}{'contentLength'};
+		my $length = $self->contentLength if $self->contentLength;
 		
 		${*$self}{'_enhanced'} = {
 			'session' => Slim::Networking::Async::HTTP->new,
@@ -110,8 +111,7 @@ sub response {
 
 		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $url");
 	} else {	
-		# HTTP headers have now been acquired in a blocking way by the above, we can
-		# now enable fast download of body to a file from which we'll read further data
+		# enable fast download of body to a file from which we'll read further data
 		# but the switch of socket handler can only be done within _sysread otherwise
 		# we will timeout when there is a pipeline with a callback
 		${*$self}{'_enhanced'} = {
@@ -153,17 +153,16 @@ sub request {
 		if ($formatClass->can('getInitialAudioBlock')) {
 			$song->initialAudioBlock($formatClass->getInitialAudioBlock($fh, $track, $seekdata->{timeOffset} || 0));
 		}
+		
+		$song->initialAudioBlock('') unless defined $song->initialAudioBlock;
 
 		$fh->close if $fh;
 		main::DEBUGLOG && $log->debug("building new header");
 	}
-	else {
-		$song->initialAudioBlock('');
-	}
 
-	# all set for opening the HTTP object
+	# all set for opening the HTTP object, but only handle the one non-redirected call
 	$self = $self->SUPER::request($args);
-	return unless $self;
+	return $self if !$self || exists ${*$self}{'initialAudioBlockRef'};
 
 	# setup audio pre-process if required
 	my $blockRef = \($song->initialAudioBlock);
@@ -173,8 +172,8 @@ sub request {
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
-	# dynamic headers need to be re-calculated every time
-	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
+	# dynamic headers need to be re-calculated every time 
+	$song->initialAudioBlock($processor->{'initial_block_type'} ? undef : '');
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
@@ -457,11 +456,11 @@ sub readPersistentChunk {
 	# read directly from socket if primary connection is still active
 	if ($v->{'status'} == IDLE) {
 		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
-		$v->{'first'} += $readLength if ${*$self}{'contentLength'};
+		$v->{'first'} += $readLength if $self->contentLength;
 	
 		# return sysread's result UNLESS we reach eof before expected length
 		# this means we have no persistence when content-length is missing (webradio)
-		return $readLength unless defined($readLength) && !$readLength && $v->{'first'} != ${*$self}{'contentLength'};
+		return $readLength unless defined($readLength) && !$readLength && $v->{'first'} != $self->contentLength;
 	}					 
 
 	# all received using persistent connection
@@ -503,7 +502,7 @@ sub readPersistentChunk {
 	# note that we use EINTR with empty buffer because EWOULDBLOCK allows Source::_readNextChunk
 	# to do an addRead on $self and would not work as primary socket is closed
 	if ( $bytes && $bytes != -1 ) {
-		$v->{'first'} += $bytes if ${*$self}{'contentLength'};
+		$v->{'first'} += $bytes if $self->contentLength;
 		$v->{'lastSeen'} = time();
 		return $bytes;
 	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < MAX_ERRORS && 
@@ -811,7 +810,6 @@ sub parseHeaders {
 	}
 
 	${*$self}{'redirect'} = $redir;
-
 	${*$self}{'contentLength'} = $length if $length;
 	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
 

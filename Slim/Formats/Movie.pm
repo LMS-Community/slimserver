@@ -325,11 +325,10 @@ sub setADTSProcess {
 			$offset += 3 if $data == 0x80 || $data == 0x81 || $data == 0xfe;
 			$offset++;
 			$data = unpack("N", substr($$bufref, $pos + $offset, 4));
-			$codec->{freq_index} = ($data >> 23) & 0x0f;
+			$codec->{freq_index} = ($data >> 23) & 0x0f;						
+			$codec->{channel_config} = ($data >> 19) & 0x0f;						
 			$codec->{object_type} = $data >> 27;
-			# Fix because Touch and Radio cannot handle ADTS header of AAC Main.
-			$codec->{object_type} = 2 if $codec->{object_type} == 5; 
-			$codec->{channel_config} = ($data >> 19) & 0x0f;
+			$codec->{object_type} = ($data >> 10) & 0x1f if $codec->{object_type} == 5 || $codec->{object_type} == 29;
 			$pos += $len - 8;
 	} elsif ($type eq 'stsz') {
 			my $offset = 4;
@@ -405,6 +404,18 @@ sub extractADTS {
 # M	13	frame length, this value must include 7 bytes of header 
 # O	11	Buffer fullness
 # P	2	Number of AAC frames (RDBs) in ADTS frame minus 1, for maximum compatibility always use 1 AAC frame per ADTS frame
+#
+# ISO 14496 Part 3 Table 1.13
+# 
+# A: Profile (2=LC, 5=SBR, 29=PS), R: Core SampleRate, M: Main SampleRate, 
+# C: Channels, X: Extensions, S=???, T=???, E=extension bit
+# 
+# AOT=2		AOT=5|29	AOT=2 (extended)
+# AAAA ARRR	AAAA ARRR	AAAA ARRR	
+# RCCC CXXX	RCCC CMMM	RCCC CXXX
+#			MPPP PP	    SSSS SSSS
+#						SSST TTTT
+#						ERRR R
 
 
 1;

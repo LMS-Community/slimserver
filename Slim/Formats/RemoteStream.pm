@@ -210,7 +210,7 @@ sub request {
 			'client'  => $args->{'client'},
 		});
 	}
-	
+
 	$self->response($url, $request, @headers) if $self->can('response');
 	
 	main::INFOLOG && $log->info("Opened stream!");
