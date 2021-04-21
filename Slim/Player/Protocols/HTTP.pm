@@ -67,7 +67,7 @@ sub close {
 
 	# call parent's ONLY when new() was made in this class, otherwise creating
 	# subclass has multi-inheritance of else and takes care of close()
-	$self->SUPER::close(@_) if ${*$self}{_class};
+	$self->SUPER::close(@_) if ${*$self}{'_class'};
 	return unless my $v = delete ${*$self}{'_enhanced'};
 
 	if ($v->{'fh'}) {
@@ -82,18 +82,18 @@ sub close {
 
 sub response {
 	my $self = shift;
-	my ($url, $request, @headers) = @_;
+	my ($args, $request, @headers) = @_;
 
 	# HTTP headers have now been acquired in a blocking way		
-	return unless my $enhanced = $prefs->get('useEnhancedHTTP');
+	return unless my $enhanced = $args->{'useEnhancedHTTP'} // $prefs->get('useEnhancedHTTP');
 
 	if ($enhanced == 1 || !$self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
-		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($url);
+		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($args->{'url'});
 	
 		# need to change URI if proxy is used as request does not include it
-		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $url;
+		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $args->{'url'};
 		$request_object->uri($uri);
 
 		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
@@ -109,7 +109,7 @@ sub response {
 			'reader'  => \&readPersistentChunk,
 		};
 
-		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $url");
+		main::INFOLOG && $log->is_info && $log->info("Using Persistent service for $args->{'url'}");
 	} else {	
 		# enable fast download of body to a file from which we'll read further data
 		# but the switch of socket handler can only be done within _sysread otherwise
@@ -121,7 +121,7 @@ sub response {
 		open ${*$self}{'_enhanced'}->{'rfh'}, '<', ${*$self}{'_enhanced'}->{'fh'}->filename;
 		binmode(${*$self}{'_enhanced'}->{'rfh'});
 
-		main::INFOLOG && $log->info("Using Buffered service for url");
+		main::INFOLOG && $log->info("Using Buffered service for $args->{'url'}");
 	}
 }
 

@@ -201,17 +201,14 @@ sub request {
 		$redir = Slim::Utils::Misc::cloneProtocol($redir, $url);
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
-		return $class->new({
+		return $class->new({%$args,
 			'url'     => $redir,
-			'song'    => $args->{'song'},
-			'infoUrl' => $self->infoUrl,
 			'post'    => $post,
-			'create'  => $args->{'create'},
-			'client'  => $args->{'client'},
+			'infoUrl' => $self->infoUrl,
 		});
 	}
 
-	$self->response($url, $request, @headers) if $self->can('response');
+	$self->response($args, $request, @headers) if $self->can('response');
 	
 	main::INFOLOG && $log->info("Opened stream!");
 
