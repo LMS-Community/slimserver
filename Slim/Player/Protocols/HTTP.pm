@@ -81,13 +81,10 @@ sub request {
 
 		main::DEBUGLOG && $log->debug("building new header");
 	}
-	else {
-		$song->initialAudioBlock('');
-	}
 
-	# all set for opening the HTTP object
+	# all set for opening the HTTP object, but only handle the one non-redirected call
 	$self = $self->SUPER::request($args);
-	return unless $self;
+	return $self if !$self || exists ${*$self}{'initialAudioBlockRef'};
 
 	# setup audio pre-process if required
 	my $blockRef = \($song->initialAudioBlock);
@@ -97,8 +94,8 @@ sub request {
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
-	# dynamic headers need to be re-calculated every time
-	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
+	# dynamic headers need to be re-calculated every time 
+	$song->initialAudioBlock($processor->{'initial_block_type'} ? undef : '');
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
