@@ -173,7 +173,7 @@ sub request {
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
 	# dynamic headers need to be re-calculated every time 
-	$song->initialAudioBlock($processor->{'initial_block_type'} ? undef : '');
+	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
