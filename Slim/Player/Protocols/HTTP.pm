@@ -64,8 +64,8 @@ sub new {
 sub close {
 	my $self = shift;
 
-	# call parent's ONLY when new() was made in this class, otherwise creating
-	# subclass has multi-inheritance of else and takes care of close()
+	# call parent's ONLY when new() was made by this class, otherwise
+	# let subclass take care of socket's close (multiple inheritance)
 	$self->SUPER::close(@_) if ${*$self}{'_class'};
 	return unless my $v = delete ${*$self}{'_enhanced'};
 
@@ -724,10 +724,9 @@ sub parseDirectHeaders {
 			$length = $1;
 		}
 
-		elsif ($header =~ /^Content-Range:\s*bytes\s*(.*)/i) {
-			my $range = $1;
-			($startOffset, undef, $rangeLength) =~ /(\d+)-(\d+)\/(\*|\d+)/;
-			${*$self}{'contentRange'} = $range if blessed $self;
+		elsif ($header =~ /^Content-Range:\s+bytes\s+(\d+)-\d+\/(\d+)/i) {
+			$startOffset = $1;
+			$rangeLength = $2;
 		}
 
 		# mp3tunes metadata, this is a bit of hack but creating
@@ -815,6 +814,10 @@ sub parseHeaders {
 	${*$self}{'redirect'} = $redir;
 	${*$self}{'contentLength'} = $length if $length;
 	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
+
+	# capture this here as our parseDirectHeader might be overloaded
+	my ($range) = grep /^Content-Range:/i, @_;
+	(${*$self}{'contentRange'}) = $range =~ /^Content-Range:\s*bytes\s*(.*)/i;
 
 	# Always prefer the title returned in the headers of a radio station
 	if ( $title ) {
