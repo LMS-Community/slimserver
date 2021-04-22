@@ -412,8 +412,8 @@ sub extractADTS {
 # 
 # AOT=2      AOT=5|29   AOT=2 (extended)
 # AAAA ARRR  AAAA ARRR  AAAA ARRR	
-# RCCC CXXX	 RCCC CMMM  RCCC CXXX
-#            MPPP PP	SSSS SSSS
+# RCCC CXXX  RCCC CMMM  RCCC CXXX
+#            MPPP PP    SSSS SSSS
 #                       SSST TTTT
 #                       ERRR R
 
