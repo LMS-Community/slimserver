@@ -37,7 +37,6 @@ my $sourcelog = logger('player.source');
 
 my $prefs = preferences('server');
 
-
 sub new {
 	my $class = shift;
 	my $args  = shift;
@@ -85,9 +84,10 @@ sub response {
 	my ($args, $request, @headers) = @_;
 
 	# HTTP headers have now been acquired in a blocking way		
-	return unless my $enhanced = $args->{'useEnhancedHTTP'} // $prefs->get('useEnhancedHTTP');
+	my $enhanced = $self->canEnhanceHTTP($args->{'client'}, $args->{'url'});
+	return unless $enhanced && $self->contentLength;
 
-	if ($enhanced == 1 || !$self->contentLength) {
+	if ($enhanced == 1) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
 		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($args->{'url'});
@@ -96,8 +96,8 @@ sub response {
 		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $args->{'url'};
 		$request_object->uri($uri);
 
-		my $first = $1 if ${*$self}{'range'} =~ /(\d+)/;
-		my $length = $self->contentLength if $self->contentLength;
+		my $first = $1 if $self->contentRange =~ /(\d+)-/;
+		my $length = $self->contentLength;
 		
 		${*$self}{'_enhanced'} = {
 			'session' => Slim::Networking::Async::HTTP->new,
@@ -388,11 +388,15 @@ sub parseMetadata {
 	return undef;
 }
 
+sub canEnhanceHTTP {
+	return $prefs->get('useEnhancedHTTP');
+}	
+
 sub canDirectStream {
 	my ($classOrSelf, $client, $url, $inType) = @_;
 	
 	# when persistent is used, we won't direct stream to enable retries
-	return 0 if $prefs->get('useEnhancedHTTP');
+	return 0 if $classOrSelf->canEnhanceHTTP($client, $url);
 
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players
@@ -456,10 +460,9 @@ sub readPersistentChunk {
 	# read directly from socket if primary connection is still active
 	if ($v->{'status'} == IDLE) {
 		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
-		$v->{'first'} += $readLength if $self->contentLength;
+		$v->{'first'} += $readLength;
 	
 		# return sysread's result UNLESS we reach eof before expected length
-		# this means we have no persistence when content-length is missing (webradio)
 		return $readLength unless defined($readLength) && !$readLength && $v->{'first'} != $self->contentLength;
 	}					 
 
@@ -502,7 +505,7 @@ sub readPersistentChunk {
 	# note that we use EINTR with empty buffer because EWOULDBLOCK allows Source::_readNextChunk
 	# to do an addRead on $self and would not work as primary socket is closed
 	if ( $bytes && $bytes != -1 ) {
-		$v->{'first'} += $bytes if $self->contentLength;
+		$v->{'first'} += $bytes;
 		$v->{'lastSeen'} = time();
 		return $bytes;
 	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < MAX_ERRORS && 
@@ -721,10 +724,10 @@ sub parseDirectHeaders {
 			$length = $1;
 		}
 
-		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
-			$rangeLength = $3;
-			$startOffset = $1;
-			${*$self}{'range'} = $1 . '-' . $2 if blessed $self;
+		elsif ($header =~ /^Content-Range:\s*bytes\s*(.*)/i) {
+			my $range = $1;
+			($startOffset, undef, $rangeLength) =~ /(\d+)-(\d+)\/(\*|\d+)/;
+			${*$self}{'contentRange'} = $range if blessed $self;
 		}
 
 		# mp3tunes metadata, this is a bit of hack but creating

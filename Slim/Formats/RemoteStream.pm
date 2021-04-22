@@ -201,10 +201,13 @@ sub request {
 		$redir = Slim::Utils::Misc::cloneProtocol($redir, $url);
 		main::INFOLOG && $log->info("Redirect to: $redir");
 
-		return $class->new({%$args,
+		return $class->new({
 			'url'     => $redir,
-			'post'    => $post,
+			'song'    => $args->{'song'},
 			'infoUrl' => $self->infoUrl,
+			'post'    => $post,
+			'create'  => $args->{'create'},
+			'client'  => $args->{'client'},
 		});
 	}
 
@@ -299,6 +302,12 @@ sub contentLength {
 	my $self = shift;
 
 	return ${*$self}{'contentLength'};
+}
+
+sub contentRange {
+	my $self = shift;
+
+	return ${*$self}{'contentRange'};
 }
 
 sub contentType {
