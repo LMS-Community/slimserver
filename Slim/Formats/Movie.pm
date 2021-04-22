@@ -410,12 +410,12 @@ sub extractADTS {
 # A: Profile (2=LC, 5=SBR, 29=PS), R: Core SampleRate, M: Main SampleRate, 
 # C: Channels, X: Extensions, S=???, T=???, E=extension bit
 # 
-# AOT=2		AOT=5|29	AOT=2 (extended)
-# AAAA ARRR	AAAA ARRR	AAAA ARRR	
-# RCCC CXXX	RCCC CMMM	RCCC CXXX
-#			MPPP PP	    SSSS SSSS
-#						SSST TTTT
-#						ERRR R
+# AOT=2      AOT=5|29   AOT=2 (extended)
+# AAAA ARRR  AAAA ARRR  AAAA ARRR	
+# RCCC CXXX	 RCCC CMMM  RCCC CXXX
+#            MPPP PP	SSSS SSSS
+#                       SSST TTTT
+#                       ERRR R
 
 
 1;
