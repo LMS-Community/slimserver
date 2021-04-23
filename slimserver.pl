@@ -924,10 +924,6 @@ sub initSettings {
 		$prefs->set('librarycachedir', $cachedir);
 	}
 	
-	if (defined($tmpdir)) {
-		$prefs->set('tmpdir', $tmpdir);
-	}
-
 	if (defined($httpport)) {
 		$prefs->set('httpport', $httpport);
 	}
@@ -951,6 +947,9 @@ sub initSettings {
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();
+	
+	# tmpdir is set only through command line
+	$tmpdir = Win32::GetANSIPathName($tmpdir) if main::ISWINDOWS;
 	Slim::Utils::Misc::makeTempDir();
 }
 

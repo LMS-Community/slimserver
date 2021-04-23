@@ -656,13 +656,14 @@ sub getTempDir {
 sub makeTempDir {
 	return if $tempdir;
 
-	if ($prefs->get('tmpdir')) {
-		$tempdir = catdir($prefs->get('tmpdir'), 'squeezeboxserver');
+	if ($::tmpdir) {
+		$tempdir = catdir($::tmpdir, 'squeezeboxserver');
+
 		if (-d $tempdir) {
 			rmtree($tempdir, { keep_root => 1 });
 			return;
 		}	
-	
+
 		mkpath($tempdir);
 		return if -d $tempdir;
 		
