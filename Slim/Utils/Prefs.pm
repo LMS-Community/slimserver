@@ -98,7 +98,7 @@ $os->migratePrefsFolder($path);
 my $prefs = preferences('server');
 
 # File paths need to be prepared in order to correctly read the file system
-$prefs->setFilepaths(qw(mediadirs ignoreInAudioScan ignoreInVideoScan ignoreInImageScan playlistdir cachedir librarycachedir coverArt));
+$prefs->setFilepaths(qw(mediadirs ignoreInAudioScan ignoreInVideoScan ignoreInImageScan playlistdir cachedir tmpdir librarycachedir coverArt));
 
 
 =head2 preferences( $namespace )

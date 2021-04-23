@@ -655,6 +655,19 @@ sub getTempDir {
 
 sub makeTempDir {
 	return if $tempdir;
+
+	if ($tempdir = $prefs->get('tmpdir')) {
+		if (-d $tempdir) {
+			rmtree($tempdir, { keep_root => 1 });
+			return;
+		}	
+	
+		mkpath($tempdir);
+		return if -d $tempdir;
+		
+		$ospathslog->warn("can't make custom temp dir $tempdir");	
+	}	
+	
 	$tempdir = catdir($prefs->get('cachedir'), 'tmp');
 	
 	if (-d $tempdir) {
