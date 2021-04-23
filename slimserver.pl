@@ -851,7 +851,7 @@ sub initOptions {
 		'logging=s'     => \$logging,
 		'LogTimestamp!' => \$LogTimestamp,
 		'cachedir=s'    => \$cachedir,
-		'tmpdir=s'      => \$tmpdir,
+		'tmpdir:s'      => \$tmpdir,
 		'pidfile=s'     => \$pidfile,
 		'playeraddr=s'  => \$localClientNetAddr,
 		'priority=i'    => \$priority,
