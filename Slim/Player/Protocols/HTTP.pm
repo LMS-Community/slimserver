@@ -96,7 +96,7 @@ sub response {
 		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $args->{'url'};
 		$request_object->uri($uri);
 
-		my $first = $1 if $self->contentRange =~ /(\d+)-/;
+		my ($first) = $self->contentRange =~ /(\d+)-/;
 		my $length = $self->contentLength;
 		
 		${*$self}{'_enhanced'} = {
@@ -104,7 +104,7 @@ sub response {
 			'request' => $request_object,
 			'errors'  => 0,
 			'status'  => IDLE,
-			'first'   => $first || 0,
+			'first'   => $first // 0,
 			'length'  => $length,
 			'reader'  => \&readPersistentChunk,
 		};
