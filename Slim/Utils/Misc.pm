@@ -424,13 +424,15 @@ sub crackURL {
 	$path ||= '/';
 	$port ||= ((Slim::Networking::Async::HTTP->hasSSL() && $string =~ /^https/) ? 443 : 80);
 
+	my $proxied = "http://$host:$port$path" if $prefs->get('webproxy') && $host !~ /(?:localhost|127.0.0.1)/;
+
 	if ( main::DEBUGLOG && $ospathslog->is_debug ) {
 		$ospathslog->debug("Cracked: $string with [$host],[$port],[$path]");
 		$ospathslog->debug("   user: [$user]") if $user;
 		$ospathslog->debug("   pass: [$pass]") if $pass;
 	}
 
-	return ($host, $port, $path, $user, $pass);
+	return ($host, $port, $path, $user, $pass, $proxied);
 }
 
 =head2 cloneProtocol( $url, $model )

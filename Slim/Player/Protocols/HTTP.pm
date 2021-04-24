@@ -31,6 +31,9 @@ use constant READY        => 2;
 use constant CONNECTING   => 3;
 use constant CONNECTED    => 4;
 
+use constant PERSISTENT   => 1;
+use constant BUFFERED     => 2;
+
 my $log       = logger('player.streaming.remote');
 my $directlog = logger('player.streaming.direct');
 my $sourcelog = logger('player.source');
@@ -85,16 +88,15 @@ sub response {
 
 	# HTTP headers have now been acquired in a blocking way		
 	my $enhanced = $self->canEnhanceHTTP($args->{'client'}, $args->{'url'});
-	return unless $enhanced && $self->contentLength;
+	return unless $enhanced;
 
-	if ($enhanced == 1) {
+	if ($enhanced == PERSISTENT || !$self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
-		my ($server, $port, $path) = Slim::Utils::Misc::crackURL($args->{'url'});
+		my ($server, $port, $path, undef, undef, $proxied) = Slim::Utils::Misc::crackURL($args->{'url'});
 	
 		# need to change URI if proxy is used as request does not include it
-		my $uri = $prefs->get('webproxy') && $server !~ /(?:localhost|127.0.0.1)/ ? "http://$server:$port$path" : $args->{'url'};
-		$request_object->uri($uri);
+		$request_object->uri($proxied) if $proxied;
 
 		my ($first) = $self->contentRange =~ /(\d+)-/;
 		my $length = $self->contentLength;
@@ -103,6 +105,7 @@ sub response {
 			'session' => Slim::Networking::Async::HTTP->new,
 			'request' => $request_object,
 			'errors'  => 0,
+			'max'     => $self->contentLength ? MAX_ERRORS : 1,
 			'status'  => IDLE,
 			'first'   => $first // 0,
 			'length'  => $length,
@@ -508,13 +511,13 @@ sub readPersistentChunk {
 		$v->{'first'} += $bytes;
 		$v->{'lastSeen'} = time();
 		return $bytes;
-	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < MAX_ERRORS && 
+	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < $v->{'max'} && 
 							  ($v->{'status'} != CONNECTED || $! == EINTR || $! == EWOULDBLOCK) && 
 							  (!defined $v->{'lastSeen'} || time() - $v->{'lastSeen'} < 5)) ) {
 		$! = EINTR;
 		main::DEBUGLOG && $log->is_debug && $log->debug("need to wait for ${*$self}{'url'}");
 		return undef;
-	} elsif ( !$v->{'length'} || $v->{'first'} == $v->{'length'} || $v->{'errors'} >= MAX_ERRORS ) {
+	} elsif ( $v->{'first'} == $v->{'length'} || $v->{'errors'} >= $v->{'max'} ) {
 		$v->{'session'}->disconnect;
 		$v->{'status'} = DISCONNECTED;
 		main::INFOLOG && $log->is_info && $log->info("end of ${*$self}{'url'} s:", time() - $v->{'lastSeen'}, " e:$v->{'errors'}");
@@ -896,14 +899,10 @@ sub requestString {
 	my $post   = shift;
 	my $seekdata = shift;
 
-	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+	my ($server, $port, $path, $user, $password, $proxied) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy = $prefs->get('webproxy');
-
-	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
-		$path = "http://$server:$port$path";
-	}
+	$path = $proxied if $proxied;
 
 	my $type = $post ? 'POST' : 'GET';
 

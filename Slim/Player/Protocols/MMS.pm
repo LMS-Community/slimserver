@@ -123,14 +123,10 @@ sub requestString {
 	
 	main::DEBUGLOG && $log->debug($url);
 
-	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+	my ($server, $port, $path, $user, $password, $proxied) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy = $prefs->get('webproxy');
-	
-	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
-		$path = "http://$server:$port$path";
-	}
+	$path = $proxied if $proxied;
 
 	my $host = $port == 80 ? $server : "$server:$port";
 
