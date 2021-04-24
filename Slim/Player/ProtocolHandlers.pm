@@ -13,11 +13,8 @@ use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
 use Slim::Music::Info;
 use Slim::Networking::Async::HTTP;
-
-my $prefs = preferences('server');
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but

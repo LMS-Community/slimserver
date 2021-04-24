@@ -67,16 +67,6 @@
 		</select>
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_ENHANCEDHTTP" desc="SETUP_ENHANCEDHTTP_DESC" %]
-		<select class="stdedit" name="pref_useEnhancedHTTP" id="useEnhancedHTTP">
-
-			<option [% IF NOT prefs.pref_useEnhancedHTTP %]selected [% END %]value="0">[% 'SETUP_DISABLE_ENHANCEDHTTP' | getstring %]</option>
-			<option [% IF prefs.pref_useEnhancedHTTP == 1 %]selected [% END %]value="1">[% 'SETUP_ENABLE_PERSISTENTHTTP' | getstring %]</option>
-			<option [% IF prefs.pref_useEnhancedHTTP == 2 %]selected [% END %]value="2">[% 'SETUP_ENABLE_BUFFEREDHTTP' | getstring %]</option>
-
-		</select>
-	[% END %]
-
 	[% IF prioritySettings; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_serverPriority" id="serverPriority">

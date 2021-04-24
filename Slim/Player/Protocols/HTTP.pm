@@ -70,15 +70,15 @@ sub close {
 	# call parent's ONLY when new() was made by this class, otherwise
 	# let subclass take care of socket's close (multiple inheritance)
 	$self->SUPER::close(@_) if ${*$self}{'_class'};
-	return unless my $v = delete ${*$self}{'_enhanced'};
+	return unless my $enhanced = delete ${*$self}{'_enhanced'};
 
-	if ($v->{'fh'}) {
+	if ($enhanced->{'fh'}) {
 		# close read buffer file and remove handler
 		Slim::Networking::Select::removeRead($self);
-		$v->{'rfh'}->close;
-	} elsif ($v->{'status'} && $v->{'status'} > IDLE) {
+		$enhanced->{'rfh'}->close;
+	} elsif ($enhanced->{'status'} && $enhanced->{'status'} > IDLE) {
 		# disconnect persistent session (if any)
-		$v->{'session'}->disconnect;
+		$enhanced->{'session'}->disconnect;
 	}		
 }
 
@@ -87,10 +87,10 @@ sub response {
 	my ($args, $request, @headers) = @_;
 
 	# HTTP headers have now been acquired in a blocking way		
-	my $enhanced = $self->canEnhanceHTTP($args->{'client'}, $args->{'url'});
-	return unless $enhanced;
+	my $enhance = $self->canEnhanceHTTP($args->{'client'}, $args->{'url'});
+	return unless $enhance;
 
-	if ($enhanced == PERSISTENT || !$self->contentLength) {
+	if ($enhance == PERSISTENT || !$self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
 		my ($server, $port, $path, undef, undef, $proxied) = Slim::Utils::Misc::crackURL($args->{'url'});
@@ -452,50 +452,50 @@ sub canDirectStreamSong {
 
 sub readChunk {
 	my $self  = $_[0];
-	my $v = ${*$self}{'_enhanced'} || return $self->_sysread($_[1], $_[2], $_[3]);
-	return $v->{'reader'}->($v, $self, $_[1], $_[2], $_[3]);
+	my $enhanced = ${*$self}{'_enhanced'} || return $self->_sysread($_[1], $_[2], $_[3]);
+	return $enhanced->{'reader'}->($enhanced, $self, $_[1], $_[2], $_[3]);
 }
 
 sub readPersistentChunk {
-	my $v = shift;	
+	my $enhanced = shift;	
 	my $self  = $_[0];
 
 	# read directly from socket if primary connection is still active
-	if ($v->{'status'} == IDLE) {
+	if ($enhanced->{'status'} == IDLE) {
 		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
-		$v->{'first'} += $readLength;
+		$enhanced->{'first'} += $readLength;
 	
 		# return sysread's result UNLESS we reach eof before expected length
-		return $readLength unless defined($readLength) && !$readLength && $v->{'first'} != $self->contentLength;
+		return $readLength unless defined($readLength) && !$readLength && $enhanced->{'first'} != $self->contentLength;
 	}					 
 
 	# all received using persistent connection
-	return 0 if $v->{'status'} == DISCONNECTED;
+	return 0 if $enhanced->{'status'} == DISCONNECTED;
 
 	# if we are not streaming, need to (re)start a session
-	if ( $v->{'status'} <= READY ) {
-		my $request = $v->{'request'}; 
-		my $last = $v->{'length'} - 1 if $v->{'length'};
+	if ( $enhanced->{'status'} <= READY ) {
+		my $request = $enhanced->{'request'}; 
+		my $last = $enhanced->{'length'} - 1 if $enhanced->{'length'};
 		
-		$request->header( 'Range', "bytes=$v->{'first'}-$last");
-		$v->{'status'} = CONNECTING;		
-		$v->{'lastSeen'} = undef;
+		$request->header( 'Range', "bytes=$enhanced->{'first'}-$last");
+		$enhanced->{'status'} = CONNECTING;		
+		$enhanced->{'lastSeen'} = undef;
 
-		$log->warn("Persistent streaming from $v->{'first'} for ${*$self}{'url'}");
+		$log->warn("Persistent streaming from $enhanced->{'first'} for ${*$self}{'url'}");
 
-		$v->{'session'}->send_request( {
+		$enhanced->{'session'}->send_request( {
 			request   => $request,
 			onHeaders => sub {
 				my $headers = shift->response->headers;
-				$v->{'length'} = $1 if $headers->header('Content-Range') =~ /^bytes\s+\d+-\d+\/(\d+)/i;
-				$v->{'length'} ||= $headers->header('Content-Length') if $headers->header('Content-Length');
-				$v->{'status'} = CONNECTED;
-				$v->{'errors'} = 0;
+				$enhanced->{'length'} = $1 if $headers->header('Content-Range') =~ /^bytes\s+\d+-\d+\/(\d+)/i;
+				$enhanced->{'length'} ||= $headers->header('Content-Length') if $headers->header('Content-Length');
+				$enhanced->{'status'} = CONNECTED;
+				$enhanced->{'errors'} = 0;
 			},
 			onError  => sub {
-				$v->{'session'}->disconnect;
-				$v->{'status'} = READY;
-				$v->{'errors'}++;
+				$enhanced->{'session'}->disconnect;
+				$enhanced->{'status'} = READY;
+				$enhanced->{'errors'}++;
 				$log->error("cannot open session for ${*$self}{'url'} $_[1] ");
 			},
 		} );
@@ -503,46 +503,46 @@ sub readPersistentChunk {
 
 	# the child socket is non-blocking so we can safely call read_entity_body which calls sysread
 	# if buffer is empty. This is normally a callback used when select() indicates pending bytes
-	my $bytes = $v->{'session'}->socket->read_entity_body($_[1], $_[2]) if $v->{'status'} == CONNECTED;
+	my $bytes = $enhanced->{'session'}->socket->read_entity_body($_[1], $_[2]) if $enhanced->{'status'} == CONNECTED;
 	
 	# note that we use EINTR with empty buffer because EWOULDBLOCK allows Source::_readNextChunk
 	# to do an addRead on $self and would not work as primary socket is closed
 	if ( $bytes && $bytes != -1 ) {
-		$v->{'first'} += $bytes;
-		$v->{'lastSeen'} = time();
+		$enhanced->{'first'} += $bytes;
+		$enhanced->{'lastSeen'} = time();
 		return $bytes;
-	} elsif ( $bytes == -1 || (!defined $bytes && $v->{'errors'} < $v->{'max'} && 
-							  ($v->{'status'} != CONNECTED || $! == EINTR || $! == EWOULDBLOCK) && 
-							  (!defined $v->{'lastSeen'} || time() - $v->{'lastSeen'} < 5)) ) {
+	} elsif ( $bytes == -1 || (!defined $bytes && $enhanced->{'errors'} < $enhanced->{'max'} && 
+							  ($enhanced->{'status'} != CONNECTED || $! == EINTR || $! == EWOULDBLOCK) && 
+							  (!defined $enhanced->{'lastSeen'} || time() - $enhanced->{'lastSeen'} < 5)) ) {
 		$! = EINTR;
 		main::DEBUGLOG && $log->is_debug && $log->debug("need to wait for ${*$self}{'url'}");
 		return undef;
-	} elsif ( $v->{'first'} == $v->{'length'} || $v->{'errors'} >= $v->{'max'} ) {
-		$v->{'session'}->disconnect;
-		$v->{'status'} = DISCONNECTED;
-		main::INFOLOG && $log->is_info && $log->info("end of ${*$self}{'url'} s:", time() - $v->{'lastSeen'}, " e:$v->{'errors'}");
+	} elsif ( $enhanced->{'first'} == $enhanced->{'length'} || $enhanced->{'errors'} >= $enhanced->{'max'} ) {
+		$enhanced->{'session'}->disconnect;
+		$enhanced->{'status'} = DISCONNECTED;
+		main::INFOLOG && $log->is_info && $log->info("end of ${*$self}{'url'} s:", time() - $enhanced->{'lastSeen'}, " e:$enhanced->{'errors'}");
 		return 0;
 	} else {
-		$log->warn("unexpected connection close at $v->{'first'}/$v->{'length'} for ${*$self}{'url'}\n\tsince:", 
-		           time() - $v->{'lastSeen'}, "\n\terror:", ($! != EINTR && $! != EWOULDBLOCK) ? $! : "N/A");
-		$v->{'session'}->disconnect;
-		$v->{'status'} = READY;
-		$v->{'errors'}++;
+		$log->warn("unexpected connection close at $enhanced->{'first'}/$enhanced->{'length'} for ${*$self}{'url'}\n\tsince:", 
+		           time() - $enhanced->{'lastSeen'}, "\n\terror:", ($! != EINTR && $! != EWOULDBLOCK) ? $! : "N/A");
+		$enhanced->{'session'}->disconnect;
+		$enhanced->{'status'} = READY;
+		$enhanced->{'errors'}++;
 		$! = EINTR;
 		return undef;
 	}
 }
 
 sub readBufferedChunk {
-	my $v = shift;	
+	my $enhanced = shift;	
 	my $self  = $_[0];
 
 	# first, try to read from buffer file
-	my $readLength = $v->{'rfh'}->read($_[1], $_[2], $_[3]);
+	my $readLength = $enhanced->{'rfh'}->read($_[1], $_[2], $_[3]);
 	return $readLength if $readLength;
 
 	# assume that close() will be called for cleanup
-	return 0 if $v->{'done'};
+	return 0 if $enhanced->{'done'};
 
 	# empty file but not done yet, try to read directly
 	$readLength = $self->_sysread($_[1], $_[2], $_[3]);
@@ -562,18 +562,18 @@ sub readBufferedChunk {
 # handler for pending data in Buffered mode
 sub saveStream {
 	my $self = shift;
-	my $v = ${*$self}{'_enhanced'};
+	my $enhanced = ${*$self}{'_enhanced'};
 
 	my $bytes = $self->_sysread(my $data, 32768);
 	return unless defined $bytes;
 
 	if ($bytes) {
 		# need to bypass Perl's buffered IO and make sure read eof is reset
-		syswrite($v->{'fh'}, $data);
-		$v->{'rfh'}->seek(0, 1);
+		syswrite($enhanced->{'fh'}, $data);
+		$enhanced->{'rfh'}->seek(0, 1);
 	} else {
 		Slim::Networking::Select::removeRead($self);
-		$v->{'done'} = 1;
+		$enhanced->{'done'} = 1;
 	}
 }
 

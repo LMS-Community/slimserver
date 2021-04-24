@@ -22,7 +22,7 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = ( $prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority useEnhancedHTTP
+	my @prefs = ( $prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority
  				precacheArtwork maxPlaylistLength useLocalImageproxy dontTriggerScanOnPrefChange) );
  	push @prefs, qw(autorescan autorescan_stat_interval) if Slim::Utils::OSDetect::getOS->canAutoRescan;
  	return @prefs;
