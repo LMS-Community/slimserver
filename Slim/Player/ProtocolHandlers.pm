@@ -13,11 +13,8 @@ use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
 use Slim::Music::Info;
 use Slim::Networking::Async::HTTP;
-
-my $prefs = preferences('server');
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
@@ -27,13 +24,12 @@ my %protocolHandlers = (
 	tmp      => qw(Slim::Player::Protocols::Volatile),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
+	http     => qw(Slim::Player::Protocols::HTTP),
+	https    => qw(Slim::Player::Protocols::HTTPS),
+	icy      => qw(Slim::Player::Protocols::HTTP),	
 	playlist => 0,
 	db       => 1,
 );
-
-setHTTPHandler($prefs->get('useBufferedHTTP'));
-
-$prefs->setChange(sub { setHTTPHandler($_[1]) }, 'useBufferedHTTP');
 
 tie my %URLHandlers, 'Tie::RegexpHash';
 
@@ -45,14 +41,6 @@ my %localHandlers = (
 my %loadedHandlers = ();
 
 my %iconHandlers = ();
-
-sub setHTTPHandler {
-	my ($useBufferedHTTP) = @_;
-
-	$protocolHandlers{http}  = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
-	$protocolHandlers{https} = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : (Slim::Networking::Async::HTTP->hasSSL() ? qw(Slim::Player::Protocols::HTTPS) : qw(Slim::Player::Protocols::HTTP)),
-	$protocolHandlers{icy}   = $useBufferedHTTP ? qw(Slim::Player::Protocols::Buffered) : qw(Slim::Player::Protocols::HTTP),
-}
 
 sub isValidHandler {
 	my ($class, $protocol) = @_;

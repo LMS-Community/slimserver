@@ -67,15 +67,6 @@
 		</select>
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_BUFFEREDHTTP" desc="SETUP_BUFFEREDHTTP_DESC" %]
-		<select class="stdedit" name="pref_useBufferedHTTP" id="useBufferedHTTP">
-
-			<option [% IF NOT prefs.pref_useBufferedHTTP %]selected [% END %]value="0">[% 'SETUP_DISABLE_BUFFEREDHTTP' | getstring %]</option>
-			<option [% IF prefs.pref_useBufferedHTTP %]selected [% END %]value="1">[% 'SETUP_ENABLE_BUFFEREDHTTP' | getstring %]</option>
-
-		</select>
-	[% END %]
-
 	[% IF prioritySettings; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_serverPriority" id="serverPriority">

@@ -211,6 +211,8 @@ sub request {
 		});
 	}
 
+	$self->response($args, $request, @headers) if $self->can('response');
+	
 	main::INFOLOG && $log->info("Opened stream!");
 
 	return $self;
@@ -300,6 +302,12 @@ sub contentLength {
 	my $self = shift;
 
 	return ${*$self}{'contentLength'};
+}
+
+sub contentRange {
+	my $self = shift;
+
+	return ${*$self}{'contentRange'};
 }
 
 sub contentType {

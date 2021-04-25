@@ -328,6 +328,7 @@ our $httpport    = undef;
 our (
 	$inInit,
 	$cachedir,
+	$tmpdir,
 	$user,
 	$group,
 	$cliaddr,
@@ -745,6 +746,7 @@ sub idleStreams {
 sub showUsage {
 	print <<EOF;
 Usage: $0 [--diag] [--daemon] [--stdio]
+          [--cachedir <dirpath>] [--tmpdir <dirpath>]
           [--logdir <logpath>]
           [--logfile <logfilepath|syslog>]
           [--user <username>]
@@ -763,6 +765,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
 
     --help           => Show this usage information.
     --cachedir       => Directory for Logitech Media Server to save cached music and web data
+    --tmpdir         => Directory for Logitech Media Server's temporary files (cleaned on start and stop)
     --diag           => Use diagnostics, shows more verbose errors.
                         Also slows down library processing considerably
     --logdir         => Specify folder location for log file
@@ -848,6 +851,7 @@ sub initOptions {
 		'logging=s'     => \$logging,
 		'LogTimestamp!' => \$LogTimestamp,
 		'cachedir=s'    => \$cachedir,
+		'tmpdir=s'      => \$tmpdir,
 		'pidfile=s'     => \$pidfile,
 		'playeraddr=s'  => \$localClientNetAddr,
 		'priority=i'    => \$priority,
@@ -919,7 +923,7 @@ sub initSettings {
 		$prefs->set('cachedir', $cachedir);
 		$prefs->set('librarycachedir', $cachedir);
 	}
-
+	
 	if (defined($httpport)) {
 		$prefs->set('httpport', $httpport);
 	}
@@ -943,6 +947,9 @@ sub initSettings {
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();
+	
+	# tmpdir is set only through command line
+	$tmpdir = Win32::GetANSIPathName($tmpdir) if main::ISWINDOWS;
 	Slim::Utils::Misc::makeTempDir();
 }
 
