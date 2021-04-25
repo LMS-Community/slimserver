@@ -332,6 +332,12 @@ sub _readNextChunk {
 					if ($callback) {
 						# This is a hack but I hesitate to use isa(Pileline) or similar.
 						# Suggestions for better, efficient implementation welcome
+						# Be careful that if the socket is not active anymore, using EWOULDBLOCK is a bad idea. The 
+						# ProtcolHandler's $self might be simply a proxy for what is being really done (e.g. when using
+						# Persistent HTTP and the connection has failed at least once). The Buffered HTTP can handle this
+						# addRead because it will re-place itself in the select() loop, but it's not very elegant.
+						# The advice for future readers is to NOT use EWOULDBLOCK in your ProtocolHandler's sysread() 
+						# use EINTR instead which is a bit slower but totally safe.
 						Slim::Networking::Select::addRead(${*$fd}{'pipeline_reader'} || $fd, sub {_wakeupOnReadable(shift, $client);}, 1);
 					}
 					return undef;	
