@@ -78,16 +78,15 @@ sub request {
 		if ($formatClass->can('getInitialAudioBlock')) {
 			$song->initialAudioBlock($formatClass->getInitialAudioBlock($track->initial_block_fh, $track, $seekdata->{timeOffset} || 0));
 		}
+		
+		$song->initialAudioBlock('') unless defined $song->initialAudioBlock;
 
 		main::DEBUGLOG && $log->debug("building new header");
 	}
-	else {
-		$song->initialAudioBlock('');
-	}
 
-	# all set for opening the HTTP object
+	# all set for opening the HTTP object, but only handle the one non-redirected call
 	$self = $self->SUPER::request($args);
-	return unless $self;
+	return $self if !$self || exists ${*$self}{'initialAudioBlockRef'};
 
 	# setup audio pre-process if required
 	my $blockRef = \($song->initialAudioBlock);
@@ -97,7 +96,7 @@ sub request {
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
-	# dynamic headers need to be re-calculated every time
+	# dynamic headers need to be re-calculated every time 
 	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
