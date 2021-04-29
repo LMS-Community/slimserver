@@ -377,7 +377,7 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	SV	Logitech-tillägg
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
-	DE	Nicht unterstützte Ereweiterungen
+	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
