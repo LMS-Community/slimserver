@@ -97,7 +97,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 			[% BLOCK controls %]
 				[%
 					itemobj = {
-						url   = "randomplay://${type}" 
+						url   = "randomplay://${type}"
 						title = title
 					};
 					PROCESS favoritescontrol isFavorite = favorites.${type}
@@ -127,7 +127,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 
 
 		<p>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</p>
-	
+
 		[% odd = 1 %]
 		<table border="0" width="100%">[% USE table pluginRandomGenreListSort, cols=2, pad=0 %]
 			[%- FOREACH genrerow = table.rows %]
@@ -210,6 +210,14 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 				</select>
 			</p>
 		[% END %]
+
+		<p>
+			[% "PLUGIN_RANDOM_SHUFFLE_METHOD" | string %][% "COLON" | string %]
+			<select class="stdedit" name="useBalancedShuffle" id="useBalancedShuffle">
+				<option [% IF !useBalancedShuffle %]selected[% END %] value="0">[% "PLUGIN_RANDOM_USE_FASTER_SHUFFLE" | string %]</option>
+				<option [% IF useBalancedShuffle %]selected[% END %] value="1">[% "PLUGIN_RANDOM_USE_BALANCED_SHUFFLE" | string %]</option>
+			</select>
+		</p>
 
 		<p>
 			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]

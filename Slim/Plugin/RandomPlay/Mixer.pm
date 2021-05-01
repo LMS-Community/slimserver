@@ -104,12 +104,22 @@ sub getIdList {
 
 	if ($type =~ /track|year/) {
 		# it's messy reaching that far in to Slim::Control::Queries, but it's >5x faster on a Raspberry Pi2 with 100k tracks than running the full "titles" query
-		(undef, $idList) = Slim::Control::Queries::_getTagDataForTracks( 'II', {
+		my $results;
+		($results, $idList) = Slim::Control::Queries::_getTagDataForTracks( 'II', {
 			where     => '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")',
 			year      => $type eq 'year' && getRandomYear($client, $filteredGenres),
 			genreId   => $queryGenres,
 			libraryId => $queryLibrary,
 		} );
+
+		if ($prefs->get('useBalancedShuffle')) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Using balanced shuffle");
+			$idList = balancedShuffle([ map { [$_, $results->{$_}->{'tracks.primary_artist'}] } keys %$results ]);
+		}
+		else {
+			# shuffle ID list
+			Slim::Player::Playlist::fischer_yates_shuffle($idList);
+		}
 
 		$type = 'track';
 	}
@@ -133,12 +143,53 @@ sub getIdList {
 		$loop = 'artists_loop' if $type eq 'contributor';
 
 		$idList = [ map { $_->{id} } @{ $request->getResult($loop) || [] } ];
+
+		# shuffle ID list
+		Slim::Player::Playlist::fischer_yates_shuffle($idList);
 	}
 
-	# shuffle ID list
-	Slim::Player::Playlist::fischer_yates_shuffle($idList);
-
 	return $idList;
+}
+
+# balancedShuffle is inspired by https://engineering.atspotify.com/2014/02/28/how-to-shuffle-songs/
+# It tries to not shuffle really randomly, which often is considered "unnatural". But it distributes
+# a group's items (eg. an artist's tracks) evenly along the full list.
+# $list must be a listref of tupels, where the first element of the tuple would be the item's key
+# (eg. track ID) and the second value would be the ID of the group (eg. the artist ID)
+# see also https://codegolf.stackexchange.com/questions/198094/spotify-shuffle-music-playlist-shuffle-algorithm
+sub balancedShuffle {
+	my ($list) = @_;
+
+	my %grouped;
+	foreach my $item (@$list) {
+		my $group = $grouped{$item->[1]} ||= [];
+		push @$group, $item->[0];
+	}
+
+	my $count = scalar @$list;
+	my %weighed;
+
+	while (my ($group, $items) = each %grouped) {
+		my $itemsCount = scalar @$items;
+
+		# shuffle items within the group
+		Slim::Player::Playlist::fischer_yates_shuffle($items);
+
+		# define initial offset - randomize to spread across range so not all start at 0
+		my $offset = rand(1/$itemsCount)*$count;
+		my $spacer = $count / $itemsCount;
+
+		my $i = 0;
+		foreach (@$items) {
+			my $jitter = -($itemsCount/10) + rand($itemsCount/10*2);
+			$weighed{$_} = $offset + $i * $spacer + $jitter;
+			$i++;
+		}
+	}
+
+	return [ sort {
+		$weighed{$a} <=> $weighed{$b}
+	} keys %weighed ];
 }
 
 sub getRandomYear {

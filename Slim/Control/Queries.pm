@@ -5569,6 +5569,8 @@ sub _getTagDataForTracks {
 		$sql .= "ORDER BY $sort ";
 	}
 
+	$ids_only && do { $c->{'tracks.primary_artist'} = 1 };
+
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
 	my @cols = sort keys %{$c};

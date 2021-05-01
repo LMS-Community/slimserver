@@ -344,6 +344,18 @@ PLUGIN_RANDOM_LIBRARY_FILTER
 	NL	Gebruik deelcollectie
 	NO	Bruk delbiblioteker
 
+PLUGIN_RANDOM_SHUFFLE_METHOD
+	DE	Mischmethode
+	EN	Shuffle method
+
+PLUGIN_RANDOM_USE_BALANCED_SHUFFLE
+	DE	Ausbalancierter, aber langsamer mischen
+	EN	Use more balanced, but slower shuffle
+
+PLUGIN_RANDOM_USE_FASTER_SHUFFLE
+	DE	Schneller, aber weniger ausbalanciert mischen
+	EN	Use faster, but less balanced shuffle
+
 PLUGIN_RANDOM_CHOOSE_BELOW
 	CS	Vybrat náhodně zvolený mix hudby z vaší knihovny:
 	DA	Vælg en tilfældig blanding af musik fra dit bibliotek:

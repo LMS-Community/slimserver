@@ -183,6 +183,10 @@ sub initPlugin {
         [1, 1, 0, \&chooseLibrariesMenu]);
 	Slim::Control::Request::addDispatch(['randomplaychooselibrary', '_library'],
         [1, 0, 0, \&chooseLibrary]);
+	Slim::Control::Request::addDispatch(['randomplayshufflemethodlist', '_index', '_quantity'],
+        [1, 0, 0, \&chooseShuffleMethod]);
+	Slim::Control::Request::addDispatch(['randomplayshufflemethod', '_value'],
+        [1, 0, 0, \&shuffleMethod]);
 	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
         [1, 0, 0, \&genreSelectAllOrNone]);
 	Slim::Control::Request::addDispatch(['randomplayisactive'],
@@ -295,6 +299,19 @@ sub initPlugin {
 			},
 		},
 		{
+			stringToken    => 'PLUGIN_RANDOM_SHUFFLE_METHOD',
+			id      => 'randomshufflemethod',
+			weight  => 65,
+			window  => { titleStyle => 'random' },
+			node    => 'randomplay',
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'randomplayshufflemethodlist' ],
+				},
+			},
+		},
+		{
 			stringToken    => 'PLUGIN_RANDOM_DISABLE',
 			id      => 'randomdisable',
 			weight  => 100,
@@ -338,6 +355,10 @@ sub initPlugin {
 			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
 		]
 	);
+
+	$prefs->init({
+		useBalancedShuffle => sub { Slim::Utils::OSDetect->getOS()->canDBHighMem() ? 1 : 0 },
+	});
 }
 
 sub postinitPlugin {
@@ -609,6 +630,55 @@ sub chooseLibrariesMenu {
 
 	Slim::Control::Jive::sliceAndShip($request, $client, \@menu);
 }
+
+sub shuffleMethod {
+	my $request = shift;
+
+	if (!$initialized) {
+		$request->setStatusBadConfig();
+		return;
+	}
+
+	$prefs->set('useBalancedShuffle', $request->getParam('_value') ? 1 : 0);
+
+	$request->setStatusDone();
+}
+
+sub chooseShuffleMethod {
+	my $request = shift;
+
+	if (!$initialized) {
+		$request->setStatusBadConfig();
+		return;
+	}
+
+	my $client = $request->client();
+
+	my $useBalancedShuffle = $prefs->get('useBalancedShuffle');
+
+	my @menu = ({
+		text     => cstring($client, 'PLUGIN_RANDOM_USE_FASTER_SHUFFLE'),
+		radio    => ($useBalancedShuffle ? 0 : 1),
+		actions  => {
+			'do' => {
+				player => 0,
+				cmd	=> ['randomplayshufflemethod', 0],
+			},
+		},
+	},{
+		text     => cstring($client, 'PLUGIN_RANDOM_USE_BALANCED_SHUFFLE'),
+		radio    => ($useBalancedShuffle ? 1 : 0),
+		actions  => {
+			'do' => {
+				player => 0,
+				cmd	=> ['randomplayshufflemethod', 1],
+			},
+		},
+	});
+
+	Slim::Control::Jive::sliceAndShip($request, $client, \@menu);
+}
+
 
 # Returns a hash whose keys are the genres in the db
 sub getGenres {
@@ -1139,6 +1209,7 @@ sub handleWebList {
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
 		$params->{'pluginRandomNowPlaying'}    = $client->master->pluginData('type');
 		$params->{'pluginRandomUseLibrary'}    = $prefs->get('library');
+		$params->{'useBalancedShuffle'}        = $prefs->get('useBalancedShuffle');
 
 		$params->{'mixTypes'}                  = \@mixTypes;
 		$params->{'favorites'}                 = {};
@@ -1187,6 +1258,7 @@ sub handleWebSettings {
 	$prefs->set('oldtracks', $params->{'numOldTracks'});
 	$prefs->set('continuous', $params->{'continuousMode'} ? 1 : 0);
 	$prefs->set('library', $params->{'useLibrary'});
+	$prefs->set('useBalancedShuffle', $params->{'useBalancedShuffle'} ? 1 : 0);
 
 	# Pass on to check if the user requested a new mix as well
 	handleWebMix($client, $params);
