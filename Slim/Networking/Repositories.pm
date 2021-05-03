@@ -90,7 +90,7 @@ my %missingSSLWarned;
 
 sub init {
 	# read optional file with additinal repositories
-	my $reposfile = catfile(Slim::Utils::OSDetect::dirsFor('repositories'), 'repositories.conf');
+	my $reposfile = catfile(scalar Slim::Utils::OSDetect::dirsFor('repositories'), 'repositories.conf');
 
 	if ( -f $reposfile && open(CONVERT, $reposfile) ) {
 		while (my $line = <CONVERT>) {

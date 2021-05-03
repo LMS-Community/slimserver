@@ -2,7 +2,7 @@ package Slim::GUI::ControlPanel::MainFrame;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -58,9 +58,9 @@ sub new {
 
 	my $panel     = Wx::Panel->new($self);
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
-	
+
 	$pollTimer = Slim::GUI::ControlPanel::Timer->new();
-	
+
 	$btnOk = Slim::GUI::ControlPanel::OkButton->new( $panel, wxID_OK, string('OK') );
 	EVT_BUTTON( $self, $btnOk, sub {
 		$btnOk->do($svcMgr->checkServiceState());
@@ -69,20 +69,20 @@ sub new {
 	} );
 
 	if ($initialSetup) {
-		
+
 		require Slim::GUI::ControlPanel::InitialSettings;
-		
+
 		$mainSizer->Add(Slim::GUI::ControlPanel::InitialSettings->new($panel, $self), 1, wxALL | wxGROW, 10);
-		
+
 	}
-	
+
 	else {
 
 		my $notebook = Wx::Notebook->new($panel);
-	
+
 		EVT_NOTEBOOK_PAGE_CHANGED($self, $notebook, sub {
 			my ($self, $event) = @_;
-	
+
 			eval {
 				my $child = $notebook->GetPage($notebook->GetSelection());
 				if ($child && $child->can('_update')) {
@@ -90,25 +90,25 @@ sub new {
 				};
 			}
 		});
-	
+
 		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('CONTROLPANEL_SERVERSTATUS'), 1);
 		$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook, $self), string('INFORMATION'));
-	
+
 		$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	}
-	
+
 	my $footerSizer = Wx::BoxSizer->new(wxHORIZONTAL);
-	
+
 	if ($file = $self->_fixIcon('logitech-logo.png')) {
 		Wx::Image::AddHandler(Wx::PNGHandler->new());
 		my $icon = Wx::StaticBitmap->new( $panel, -1, Wx::Bitmap->new($file, wxBITMAP_TYPE_PNG) );
 		$footerSizer->Add($icon, 0, wxLEFT | wxBOTTOM, 5);
 	}
-	
+
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
 
@@ -117,10 +117,10 @@ sub new {
 		EVT_BUTTON( $self, $btnApply, sub {
 			$btnOk->do($svcMgr->checkServiceState());
 		} );
-	
+
 		$btnsizer->AddButton($btnApply);
 	}
-	
+
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 
 	EVT_BUTTON( $self, $btnCancel, sub {
@@ -132,11 +132,11 @@ sub new {
 
 	$btnsizer->Realize();
 
-	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL); 
+	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL);
 	$footerSizer2->Add($btnsizer, 0, wxEXPAND);
 	$footerSizer2->AddSpacer(7);
 	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT_LOGITECH')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
-	
+
 	my ($version) = parseRevision();
 	$version = sprintf(string('VERSION'), $version);
 	$footerSizer2->Add(Wx::StaticText->new($panel, -1, $version), 0, wxALIGN_RIGHT | wxRIGHT, 3);
@@ -144,8 +144,8 @@ sub new {
 	$footerSizer->Add($footerSizer2, wxEXPAND);
 	$mainSizer->Add($footerSizer, 0, wxLEFT | wxRIGHT | wxGROW, 8);
 
-	$panel->SetSizer($mainSizer);	
-	
+	$panel->SetSizer($mainSizer);
+
 	$pollTimer->Start(5000, wxTIMER_CONTINUOUS);
 	$pollTimer->Notify();
 
@@ -189,7 +189,7 @@ sub _fixIcon {
 sub parseRevision {
 	# The revision file may not exist for svn copies.
 	my $tempBuildInfo = eval { File::Slurp::read_file(
-		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
+		catdir(scalar Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
 	) } || "TRUNK\nUNKNOWN";
 
 	# Once we've read the file, split it up so we have the Revision and Build Date
@@ -235,11 +235,11 @@ use base 'Wx::Button';
 
 sub new {
 	my $self = shift;
-		
+
 	$self = $self->SUPER::new(@_);
 	$self->{actionHandlers} = {};
 	$self->SetDefault();
-	
+
 	return $self;
 }
 
@@ -250,11 +250,11 @@ sub addActionHandler {
 
 sub do {
 	my ($self, $status) = @_;
-	
+
 	Slim::GUI::ControlPanel->setPref('wizardDone', 1);
-	
+
 	foreach my $actionHandler (keys %{ $self->{actionHandlers} }) {
-		
+
 		if (my $action = $self->{actionHandlers}->{$actionHandler}) {
 			&$action($status);
 		}
@@ -291,9 +291,9 @@ sub new {
 sub OnInit {
 	my $self = shift;
 	my $frame;
-	
-	$frame = Slim::GUI::ControlPanel::MainFrame->new($args); 
-	
+
+	$frame = Slim::GUI::ControlPanel::MainFrame->new($args);
+
 	$frame->Show( 1 );
 }
 
@@ -319,7 +319,7 @@ sub getBaseUrl {
 
 sub setPref {
 	my ($self, $pref, $value) = @_;
-	
+
 	$self->serverRequest('pref', $pref, $value);
 }
 
@@ -328,15 +328,15 @@ sub getPref {
 	$file ||= '';
 
 	my $value;
-	
+
 	# if SC is running, use the CLI, otherwise read the prefs file from disk
 	if ($svcMgr->isRunning()) {
 
 		if ($file) {
-			$file =~ s/\.prefs$//; 
+			$file =~ s/\.prefs$//;
 			$file = "plugin.$file:";
 		}
-	
+
 		$value = $self->serverRequest('pref', $file . $pref, '?');
 
 		if (ref $value eq 'HASH' && $value->{msg} && $value->{msg} =~ /^500/i) {
@@ -346,11 +346,11 @@ sub getPref {
 			$value = $value->{'_p2'};
 		}
 	}
-	
+
 	else {
 		$value = Slim::Utils::Light::getPref($pref, $file);
 	}
-	
+
 	return $value;
 }
 
@@ -358,10 +358,10 @@ sub string {
 	my ($self, $stringToken) = @_;
 
 	my $string = Slim::Utils::Light::string($stringToken);
-	
+
 	# if SC is running, use the CLI, otherwise read the prefs file from disk
 	if ($string eq $stringToken && $svcMgr->isRunning()) {
-	
+
 		my $response = $self->serverRequest('getstring', $stringToken);
 
 		if (ref $response eq 'HASH' && $response->{$stringToken} && $response->{$stringToken} ne $stringToken) {
@@ -369,7 +369,7 @@ sub string {
 			Slim::Utils::Light::setString($stringToken, $string);
 		}
 	}
-	
+
 	return $string;
 }
 
@@ -386,16 +386,16 @@ sub serverRequest {
 	my $baseUrl = $self->getBaseUrl();
 	$baseUrl =~ s|^http://||;
 
-	my $req = HTTP::Request->new( 
+	my $req = HTTP::Request->new(
 		'POST' => "http://$baseUrl/jsonrpc.js",
 	);
 	$req->header('Content-Type' => 'text/plain');
 
 	$req->content($postdata);
-	
+
 	my $ua = LWP::UserAgent->new();
 	$ua->timeout(2);
-	
+
 	if ($credentials && $credentials->{username} && $credentials->{password}) {
 		$ua->credentials($baseUrl, Slim::Utils::Light::string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
 	}
@@ -406,32 +406,32 @@ sub serverRequest {
 
 	# check whether authentication is needed
 	while ($response->code == 401) {
-		
+
 		$needAuthentication = 1;
-		
+
 		my $loginDialog = Slim::GUI::ControlPanel::LoginDialog->new();
-		
+
 		if ($loginDialog->ShowModal() == wxID_OK) {
-		
+
 			$credentials = {
 				username => $loginDialog->username,
 				password => $loginDialog->password,
 			};
-		
+
 			$ua->credentials($baseUrl, Slim::Utils::Light::string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
-		
+
 			$response = $ua->request($req);
 		}
-		
+
 		else {
 			exit;
 		}
-		
+
 		$loginDialog->Destroy();
 	}
 
 	$needAuthentication = 0;
-	
+
 	my $content;
 	$content = $response->decoded_content if ($response);
 
@@ -459,21 +459,21 @@ my ($username, $password);
 
 sub new {
 	my $self = shift;
-		
+
 	$self = $self->SUPER::new(undef, -1, string('LOGIN'), [-1, -1], [350, 220], wxDEFAULT_DIALOG_STYLE);
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
-	
+
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('CONTROLPANEL_AUTHENTICATION_REQUIRED')), 0, wxALL, 10);
 
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
 	$username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [320, -1]);
 	$mainSizer->Add($username, 0, wxALL, 10);
-	
+
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
 	$password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [320, -1], wxTE_PASSWORD);
 	$mainSizer->Add($password, 0, wxALL, 10);
-	
+
 	$mainSizer->AddStretchSpacer();
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
@@ -485,7 +485,7 @@ sub new {
 	$self->SetSizer($mainSizer);
 
 	$self->Centre();
-		
+
 	return $self;
 }
 
@@ -513,11 +513,11 @@ use Slim::Utils::Light;
 
 sub new {
 	my ($self, $page, $parent, $url, $label, $width) = @_;
-	
+
 	$self = $self->SUPER::new($page, -1, string($label), [-1, -1], [$width || -1, -1]);
-	
+
 	$parent->addStatusListener($self);
-	
+
 	$url = Slim::GUI::ControlPanel->getBaseUrl() . $url;
 
 	EVT_BUTTON( $page, $self, sub {

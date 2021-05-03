@@ -84,7 +84,7 @@ sub song {
 			'create'   => 1,
 			'readTags' => 1,
 		});
-		
+
 		if ($refresh) {
 			$objOrUrl = refreshTrack($client, $objOrUrl->url);
 		}
@@ -108,10 +108,10 @@ sub songs {
 				: @{playList($client)}[$start .. $end])
 	{
 		# Use $_ here to use perl's inline replace semantics
-		
+
 		if ( $_ && !blessed($_) ) {
-						
-			# If we instantiate a Track from a URL then 
+
+			# If we instantiate a Track from a URL then
 			# back-patch the playlist item with the Track. This could be common
 			# for remote tracks.
 
@@ -127,7 +127,7 @@ sub songs {
 				$log->warn('Cannot get Track object for: ', $_);
 			}
 		}
-		
+
 		push @tracks, $_ if $_ && blessed($_);
 	}
 
@@ -137,13 +137,13 @@ sub songs {
 # Refresh track(s) in a client playlist from the database
 sub refreshTrack {
 	my ( $client, $url ) = @_;
-	
+
 	my $track = Slim::Schema->objectForUrl( {
 		url      => $url,
 		create   => 1,
 		readTags => 1,
 	} );
-	
+
 	my $i = 0;
 	for my $item ( @{ playList($client) } ) {
 		my $itemUrl = blessed($item) ? $item->url : $item;
@@ -152,7 +152,7 @@ sub refreshTrack {
 		}
 		$i++;
 	}
-	
+
 	return $track;
 }
 
@@ -164,9 +164,9 @@ sub url {
 
 sub shuffleList {
 	my ($client) = shift;
-	
+
 	$client = $client->master();
-	
+
 	return $client->shufflelist;
 }
 
@@ -174,20 +174,20 @@ sub playList {
 	my ($client) = shift;
 
 	$client = $client->master();
-	
+
 	return $client->playlist;
 }
 
 sub addTracks {
 	my ($client, $tracksRef, $insert) = @_;
-	
+
 	my $playlist = playList($client);
-	
+
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
-	
+
 	# How many tracks might we need to remove to make space?
 	my $need = $maxPlaylistLength ? (scalar @{$playlist} + scalar @{$tracksRef}) - $maxPlaylistLength : 0;
-	
+
 	if ($need > 0) {
 		# 1. If we have already-played stuff at the start of the playlist that we can remove, then remove that first
 		my $canRemove = Slim::Player::Source::playingSongIndex($client) || 0;
@@ -198,7 +198,7 @@ sub addTracks {
 			$need -= removeTrack($client, 0, $canRemove);
 		}
 	}
-		
+
 	if ($need > 0 && $insert) {
 		# 2. If inserting, then try to remove stuff from the end of the playlist
 		my $streamingSongIndex =Slim::Player::Source::streamingSongIndex($client) || 0;
@@ -210,7 +210,7 @@ sub addTracks {
 			$need -= removeTrack($client, scalar @{$playlist} - $canRemove, $canRemove);
 		}
 	}
-	
+
 	my $canAdd;
 	my $errorMsg;
 	if ($need >= scalar @{$tracksRef}) {
@@ -227,7 +227,7 @@ sub addTracks {
 		$canAdd = scalar @{$tracksRef};
 		push (@{$playlist}, @{$tracksRef});
 	}
-	
+
 	if ($errorMsg) {
 		$client->showBriefly({
 			line => [ undef, $errorMsg ],
@@ -238,11 +238,11 @@ sub addTracks {
 			duration  => 5,
 		});
 	}
-	
+
 	if ($insert) {
 		_insert_done($client, $canAdd);
 	}
-	
+
 	return $canAdd;
 }
 
@@ -255,7 +255,7 @@ sub _insert_done {
 	if (shuffle($client)) {
 		my @reshuffled = ($moveFrom .. ($moveFrom + $size - 1));
 		$client = $client->master();
-		if (count($client) != $size) {	
+		if (count($client) != $size) {
 			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
 		} else {
 			push @{$client->shufflelist}, @reshuffled;
@@ -273,15 +273,15 @@ sub _insert_done {
 sub shuffle {
 	my $client = shift;
 	my $shuffle = shift;
-	
+
 	$client = $client->master();
 
 	if (defined($shuffle)) {
 		$prefs->client($client)->set('shuffle', $shuffle);
 	}
-	
+
 	# If Random Play mode is active, return 0
-	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'} 
+	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'}
 		&& Slim::Plugin::RandomPlay::Plugin::active($client)
 	) {
 		return 0;
@@ -291,20 +291,20 @@ sub shuffle {
 	if ($client->shuffleInhibit) {
 		return 0;
 	}
-	
+
 	return $prefs->client($client)->get('shuffle');
 }
 
 sub repeat {
 	my $client = shift;
 	my $repeat = shift;
-	
+
 	$client = $client->master();
 
 	if (defined($repeat)) {
 		$prefs->client($client)->set('repeat', $repeat);
 	}
-	
+
 	return $prefs->client($client)->get('repeat');
 }
 
@@ -326,21 +326,21 @@ sub removeTrack {
 	my $client = shift->master();
 	my $tracknum = shift;
 	my $nTracks = shift || 1;
-	
+
 	my $log     = logger('player.source');
 
 	if ($tracknum > count($client) - 1) {
 		$log->warn("Attempting to remove track(s) $tracknum beyond end of playlist");
 		return 0;
-	}	
+	}
 	if ($tracknum + $nTracks > count($client)) {
 		$log->warn("Arrempting to remove too many tracks ($nTracks)");
 		$nTracks = count($client) - $tracknum;
 	}
-	
+
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
-	
+
 	# Stop playing track, if necessary, before cuting old track(s) out of playlist
 	# in case Playlist::song() is called while stopping
 	my $playingSongIndex = Slim::Player::Source::playingSongIndex($client);
@@ -350,17 +350,17 @@ sub removeTrack {
 
 		Slim::Player::Source::playmode($client, "stop");
 		$stopped = 1;
-	} 
+	}
 
 	# Remove old tracks from playlist
 	my $playlist = playList($client);
 	my $shufflelist = shuffleList($client);
 	if (shuffle($client)) {
-		
+
 		# We make a copy of the set of playlist-index values to remove here,
 		# so that they are stable while the inner loop may change the values in place.
 		my @playlistIndexes = @{$shufflelist}[$tracknum .. ($tracknum + $nTracks - 1)];
-		
+
 		foreach my $playlistindex (@playlistIndexes) {
 			splice(@$playlist, $playlistindex, 1);
 			foreach (@$shufflelist) {
@@ -374,29 +374,29 @@ sub removeTrack {
 		splice(@$playlist, $tracknum, $nTracks);
 		@$shufflelist = ( 0 .. $#{$playlist} );
 	}
-	
+
 	if (!$stopped) {
 		if (Slim::Player::Source::streamingSongIndex($client) >= $tracknum  && Slim::Player::Source::streamingSongIndex($client) < $tracknum + $nTracks) {
 			# If we're removing the streaming song (which is different from
 			# the playing song), get the client to flush out the current song
 			# from its audio pipeline.
 			main::INFOLOG && $log->info("Removing currently streaming track.");
-	
+
 			Slim::Player::Source::flushStreamingSong($client);
-	
+
 		} else {
-	
+
 			my $queue = $client->currentsongqueue();
-	
+
 			for my $song (@$queue) {
-	
+
 				if ($tracknum < $song->index()) {
 					$song->index($song->index() - $nTracks);
 				}
 			}
 		}
 	}
-	
+
 	if ($stopped) {
 
 		my $songcount = scalar(@$playlist);
@@ -404,7 +404,7 @@ sub removeTrack {
 		if ($playingSongIndex >= $songcount) {
 			$playingSongIndex = $songcount - 1;
 		}
-		
+
 		$client->execute([ 'playlist', 'jump', $playingSongIndex, undef, $oldMode ne "play" ]);
 	}
 
@@ -412,10 +412,10 @@ sub removeTrack {
 	# this is due to it being a wrapper around $client->modeParam('listIndex')
 	refreshPlaylist($client,
 		Slim::Buttons::Playlist::showingNowPlaying($client) ?
-			undef : 
+			undef :
 			Slim::Buttons::Playlist::browseplaylistindex($client)
 	);
-	
+
 	return $nTracks;
 }
 
@@ -428,12 +428,12 @@ sub removeMultipleTracks {
 	if (defined($tracks) && ref($tracks) eq 'ARRAY') {
 
 		for my $track (@$tracks) {
-	
+
 			# Handle raw file urls (from BMF, of course)
 			if (ref $track) {
 				$track = $track->url;
 			};
-			
+
 			$trackEntries{$track} = 1;
 		}
 	}
@@ -450,7 +450,7 @@ sub removeMultipleTracks {
 	my %oldToNew = ();
 	my $i        = 0;
 	my $oldCount = 0;
- 
+
 	while ($i <= $#{playList($client)}) {
 
 		#check if this file meets all criteria specified
@@ -478,7 +478,7 @@ sub removeMultipleTracks {
 
 		$oldCount++;
 	}
-	
+
 	my @reshuffled = ();
 	my $newTrack;
 	my $getNext = 0;
@@ -497,7 +497,7 @@ sub removeMultipleTracks {
 			$getNext = 1;
 		}
 
-		if (exists($oldToNew{$oldNum})) { 
+		if (exists($oldToNew{$oldNum})) {
 
 			push(@reshuffled,$oldToNew{$oldNum});
 
@@ -519,7 +519,7 @@ sub removeMultipleTracks {
 	}
 
 	$client = $client->master();
-	
+
 	@{$client->shufflelist} = @reshuffled;
 
 	if ($stopped && ($oldMode eq "play")) {
@@ -556,9 +556,9 @@ sub moveSong {
 	my $dest = shift;
 	my $size = shift;
 	my $listref;
-	
+
 	$client = $client->master();
-	
+
 	if (!defined($size)) {
 		$size = 1;
 	}
@@ -567,8 +567,8 @@ sub moveSong {
 		$dest = $src + $dest;
 	}
 
-	if (defined $src && defined $dest && 
-		$src < count($client) && 
+	if (defined $src && defined $dest &&
+		$src < count($client) &&
 		$dest < count($client) && $src >= 0 && $dest >= 0) {
 
 		if (shuffle($client)) {
@@ -577,11 +577,11 @@ sub moveSong {
 			$listref = playList($client);
 		}
 
-		if (defined $listref) {		
+		if (defined $listref) {
 
 			my @item = splice @{$listref},$src, $size;
 
-			splice @{$listref},$dest, 0, @item;	
+			splice @{$listref},$dest, 0, @item;
 
 			my $playingIndex = Slim::Player::Source::playingSongIndex($client);
 			my $streamingIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -616,10 +616,10 @@ sub makeVolatile {
 	my $client = shift;
 
 	require Slim::Player::Protocols::Volatile;
-	
+
 	$client = $client->master;
-		
-	# When shuffle is on, we'll have to deal with it separately. Track order won't be retained, 
+
+	# When shuffle is on, we'll have to deal with it separately. Track order won't be retained,
 	# but at least the same track should play after the update:
 	#    1. set shuffle off
 	#    2. remember the position
@@ -627,58 +627,58 @@ sub makeVolatile {
 	#    4. restore position
 	#    5. shuffle again, preserving the currently playing track
 	preserveShuffleOrder($client);
-	
+
 	my $needRestart;
-	
+
 	my @urls = map {
 		my $url = blessed($_) ? $_->url : $_;
-		
+
 		if ( $url =~ s/^file/tmp/ ) {
 			Slim::Schema->objectForUrl({
 				'url'      => $url,
 				'create'   => 1,
 				'readTags' => 1,
 			});
-			
+
 			Slim::Player::Protocols::Volatile->getMetadataFor($client, $url);
-			
+
 			$needRestart++;
 		}
-		
+
 		$url;
 	} @{playList($client)};
-	
+
 	# don't restart playback unless we've been playing local tracks
 	if ($needRestart) {
 		my $position = Slim::Player::Source::playingSongIndex($client);
 		my $cmd      = 'addtracks';
 		my $playtime;
 		my $restoreStateWhenShuffled = ['power', 0];
-		
+
 		if ($client->isPlaying()) {
 			$playtime = Slim::Player::Source::songTime($client);
-			
+
 			$cmd = 'loadtracks';
 		}
-		
+
 		Slim::Player::Playlist::stopAndClear($client);
 
 		$client->execute([ 'playlist', $cmd, 'listRef', \@urls, 0.2, $position ]);
-		
+
 		Slim::Player::Source::gototime($client, $playtime) if $playtime;
 	}
 }
 
 sub stopAndClear {
 	my $client = shift;
-	
+
 	# Bug 11447 - Have to stop player and clear song queue
 	$client->controller->stop();
 	$client->controller()->resetSongqueue();
 
 	@{playList($client)} = ();
 	$client->currentPlaylist(undef);
-	
+
 	# Remove saved playlist if available
 	my $playlistUrl = _playlistUrlForClient($client);
 	unlink(Slim::Utils::Misc::pathFromFileURL($playlistUrl)) if $playlistUrl;
@@ -706,7 +706,7 @@ sub reshuffle {
 	my $client = shift->master();
 
 	my $dontpreservecurrsong = shift;
-  
+
 	my $songcount = count($client);
 	my $listRef   = shuffleList($client);
 
@@ -726,7 +726,7 @@ sub reshuffle {
 	} elsif ($realsong > $songcount) {
 		$realsong = $songcount;
 	}
-	
+
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Reshuffling, current song index: %d, preserve song? %s",
 			$realsong,
@@ -758,7 +758,7 @@ sub reshuffle {
 				if ($listRef->[$i] == $realsong) {
 
 					if (shuffle($client)) {
-					
+
 						my $temp = $listRef->[$i];
 						$listRef->[$i] = $listRef->[0];
 						$listRef->[0] = $temp;
@@ -881,7 +881,7 @@ sub reshuffle {
 
 	# If we just changed order in the reshuffle and we're already streaming
 	# the next song, flush the streaming song since it's probably not next.
-	if (shuffle($client) && 
+	if (shuffle($client) &&
 		Slim::Player::Source::playingSongIndex($client) != Slim::Player::Source::streamingSongIndex($client)) {
 
 		Slim::Player::Source::flushStreamingSong($client);
@@ -927,7 +927,7 @@ sub scheduleWriteOfPlaylist {
 		return 0;
 	}
 
-	Slim::Formats::Playlists::M3U->write( 
+	Slim::Formats::Playlists::M3U->write(
 		[ $playlistObj->tracks ],
 		undef,
 		$playlistObj->path,
@@ -959,12 +959,12 @@ sub removePlaylistFromDisk {
 sub newSongPlaylist {
 	my $client = shift || return;
 	my $reset = shift;
-	
+
 	main::DEBUGLOG && logger('player.playlist')->debug("Begin function - reset: " . ($reset || 'false'));
 
 	return if Slim::Player::Playlist::shuffle($client);
 	return if !Slim::Utils::Misc::getPlaylistDir();
-	
+
 	my $playlist = '';
 
 	if ($client->currentPlaylist && blessed($client->currentPlaylist)) {
@@ -993,14 +993,14 @@ sub newSongPlaylistCallback {
 	main::DEBUGLOG && logger('player.playlist')->debug("Begin function");
 
 	my $client = $request->client() || return;
-	
+
 	newSongPlaylist($client)
 }
 
 
 sub modifyPlaylistCallback {
 	my $request = shift;
-	
+
 	my $client  = $request->client();
 
 	main::INFOLOG && $log->info("Checking if persistPlaylists is set..");
@@ -1009,9 +1009,9 @@ sub modifyPlaylistCallback {
 		main::DEBUGLOG && $log->debug("no client or persistPlaylists not set, not saving playlist");
 		return;
 	}
-	
+
 	# If Random Play mode is active, we don't save the playlist
-	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'} 
+	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'}
 		&& Slim::Plugin::RandomPlay::Plugin::active($client)
 	) {
 		main::DEBUGLOG && $log->debug("Random play mode active, not saving playlist");
@@ -1021,9 +1021,9 @@ sub modifyPlaylistCallback {
 	my $savePlaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
 
 	# Did the playlist or the current song change?
-	my $saveCurrentSong = 
-		$savePlaylist || 
-		$request->isCommand([['playlist'], ['open']]) || 
+	my $saveCurrentSong =
+		$savePlaylist ||
+		$request->isCommand([['playlist'], ['open']]) ||
 		($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
 
 	if (!$saveCurrentSong) {
@@ -1051,14 +1051,14 @@ sub modifyPlaylistCallback {
 
 			# Create a virtual track that is our pointer
 			# to the list of tracks that make up this playlist.
-			my $playlistTitle = sprintf('%s - %s', 
+			my $playlistTitle = sprintf('%s - %s',
 						Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),
 						Slim::Utils::Unicode::utf8encode($eachclient->name ||  $eachclient->ip),
 					);
 
 			my $playlistUrl = _playlistUrlForClient($client) or next;
-			
-			Slim::Formats::Playlists::M3U->write( 
+
+			Slim::Formats::Playlists::M3U->write(
 				$playlist,
 				$playlistTitle,
 				Slim::Utils::Misc::pathFromFileURL($playlistUrl),
@@ -1085,7 +1085,7 @@ sub modifyPlaylistCallback {
 # restore the old playlist if we aren't already synced with somebody (that has a playlist)
 sub loadClientPlaylist {
 	my ($client, $callback) = @_;
-	
+
 	return if ($client->isSynced() || !$prefs->get('persistPlaylists'));
 
 	my $url = _playlistUrlForClient($client) or return;
@@ -1109,12 +1109,12 @@ sub loadClientPlaylist {
 
 sub _playlistUrlForClient {
 	my $client = shift;
-	
+
 	my $id = $client->id();
 	$id =~ s/://g;
 
 	return Slim::Utils::Misc::fileURLFromPath(
-		catfile(Slim::Utils::OSDetect::dirsFor('prefs'), "clientplaylist_$id.m3u")
+		catfile(scalar Slim::Utils::OSDetect::dirsFor('prefs'), "clientplaylist_$id.m3u")
 	);
 }
 

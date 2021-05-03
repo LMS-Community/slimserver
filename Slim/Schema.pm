@@ -462,7 +462,7 @@ sub migrateDB {
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
 		dbh   => $dbh,
-		dir   => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
+		dir   => catdir(scalar Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
 		debug => $log->is_debug,
 	});
 

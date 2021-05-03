@@ -70,7 +70,7 @@ sub statHandler {
 		if ( !$client->bufferReady() && $client->bytesReceivedOffset() 		# may need to signal track-start
 			&& ($client->bytesReceived() - $client->bytesReceivedOffset() - $client->bufferFullness() > 0) )
 		{
-			$client->bufferReady(1);	# to stop multiple starts 
+			$client->bufferReady(1);	# to stop multiple starts
 			$client->controller()->playerTrackStarted($client);
 		} else {
 			$client->controller->playerStatusHeartbeat($client);
@@ -213,7 +213,7 @@ sub bass {
 	my $newbass = shift;
 
 	my $bass = $client->SUPER::bass($newbass);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));	
+	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));
 
 	return $bass;
 }
@@ -223,7 +223,7 @@ sub treble {
 	my $newtreble = shift;
 
 	my $treble = $client->SUPER::treble($newtreble);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));	
+	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));
 
 	return $treble;
 }
@@ -295,8 +295,8 @@ sub pcm_sample_rates {
 	my $client = shift;
 	my $track = shift;
 
-    	my %pcm_sample_rates = ( 11025 => '0',				 
-				 22050 => '1',				 
+    	my %pcm_sample_rates = ( 11025 => '0',
+				 22050 => '1',
 				 32000 => '2',
 				 44100 => '3',
 				 48000 => '4',
@@ -366,8 +366,8 @@ sub upgradeFirmware {
 	# if no upgrade path is given, then "upgrade" the client to itself.
 	$to_version = $client->revision unless $to_version;
 
-	my $file  = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
-	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('updates'), "squeezebox_$to_version.bin" );
+	my $file  = catdir( scalar Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
+	my $file2 = catdir( scalar Slim::Utils::OSDetect::dirsFor('updates'), "squeezebox_$to_version.bin" );
 	my $log   = logger('player.firmware');
 
 	if (!-f $file && !-f $file2) {

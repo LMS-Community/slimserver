@@ -2,13 +2,13 @@ package Slim::Utils::Light;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This module provides some functions compatible with functions
 # from the core Logitech Media Server code, without their overhead.
 # These functions are called by helper applications like SqueezeTray
-# or the control panel. 
+# or the control panel.
 
 use Exporter::Lite;
 @ISA = qw(Exporter);
@@ -29,7 +29,7 @@ BEGIN {
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
-	
+
 	# Check for use64bitint Perls
 	my $is64bitint = $arch =~ /64int/;
 
@@ -37,12 +37,12 @@ BEGIN {
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
-		$arch = $arch =~ /gnueabihf/ 
-			? 'arm-linux-gnueabihf-thread-multi' 
+		$arch = $arch =~ /gnueabihf/
+			? 'arm-linux-gnueabihf-thread-multi'
 			: 'arm-linux-gnueabi-thread-multi';
 		$arch .= '-64int' if $is64bitint;
 	}
-	
+
 	# Same thing with PPC
 	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 		$arch = 'powerpc-linux-thread-multi';
@@ -71,8 +71,8 @@ BEGIN {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion),
-		catdir($libPath,'lib'), 
-		catdir($libPath,'CPAN'), 
+		catdir($libPath,'lib'),
+		catdir($libPath,'CPAN'),
 		$libPath,
 	);
 
@@ -88,19 +88,19 @@ my ($serverPrefFile, $versionFile);
 # return localised version of string token
 sub string {
 	my $name = shift;
-	
+
 	loadStrings() unless $stringsLoaded;
-	
+
 	$language ||= getPref('language') || $os->getSystemLanguage();
-		
+
 	my $lang = shift || $language;
-	
+
 	my $string = $strings{ $name }->{ $lang } || $strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
-	
+
 	if ( @_ ) {
 		$string = sprintf( $string, @_ );
-	}	
-	
+	}
+
 	return $string;
 }
 
@@ -119,13 +119,13 @@ sub loadStrings {
 	elsif (defined $PerlTray::VERSION) {
 		$file = PerlTray::extract_bound_file('strings.txt');
 	}
-	
+
 	# try to find the strings.txt file from our installation
 	unless ($file && -f $file) {
 		my $path = $os->dirsFor('strings');
 		$file = catdir($path, 'strings.txt');
 	}
-	
+
 	open(STRINGS, "<:utf8", $file) || do {
 		warn "Couldn't open file [$file]!";
 		return;
@@ -134,7 +134,7 @@ sub loadStrings {
 	foreach my $line (<STRINGS>) {
 
 		chomp($line);
-		
+
 		next if $line =~ /^#/;
 		next if $line !~ /\S/;
 
@@ -154,18 +154,18 @@ sub loadStrings {
 	}
 
 	close STRINGS;
-	
+
 	$stringsLoaded = 1;
 }
 
 sub setString {
 	my ($stringname, $string) = @_;
-	
+
 	loadStrings() unless $stringsLoaded;
 
 	$language ||= getPref('language') || $os->getSystemLanguage();
 
-	$strings{$stringname}->{$language} = $string;	
+	$strings{$stringname}->{$language} = $string;
 }
 
 
@@ -176,7 +176,7 @@ sub getPref {
 	my $prefFile = shift;
 
 	if ($prefFile) {
-		$prefFile = catdir($os->dirsFor('prefs'), 'plugin', $prefFile);
+		$prefFile = catdir(scalar $os->dirsFor('prefs'), 'plugin', $prefFile);
 	}
 	else {
 		$serverPrefFile ||= catfile( scalar($os->dirsFor('prefs')), 'server.prefs' );
@@ -184,7 +184,7 @@ sub getPref {
 	}
 
 	require YAML::XS;
-	
+
 	my $prefs = eval { YAML::XS::LoadFile($prefFile) };
 
 	my $ret;
@@ -199,7 +199,7 @@ sub getPref {
 #
 #			local $_;
 #			while (<PREF>) {
-#			
+#
 #				# read YAML (server) and old style prefs (installer)
 #				if (/^$pref(:| \=)? (.+)$/) {
 #					$ret = $2;
@@ -217,27 +217,27 @@ sub getPref {
 }
 
 sub checkForUpdate {
-	
+
 	$versionFile ||= catfile( scalar($os->dirsFor('updates')), 'server.version' );
-	
+
 	open(UPDATEFLAG, $versionFile) || return '';
-	
+
 	my $installer = '';
-	
+
 	local $_;
 	while ( <UPDATEFLAG> ) {
 
 		chomp;
-		
+
 		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
 			$installer = $_;
 			last;
 		}
 	}
-		
+
 	close UPDATEFLAG;
-	
-	return $installer if ($installer && -r $installer);	
+
+	return $installer if ($installer && -r $installer);
 }
 
 sub resetUpdateCheck {
