@@ -2,7 +2,7 @@ package Slim::Utils::ServiceManager::Win32;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use base qw(Slim::Utils::ServiceManager);
@@ -27,8 +27,8 @@ my $svcHelper;
 sub init {
 	my $class = shift;
 	$class = $class->SUPER::init();
-	$svcHelper = catdir( Win32::GetShortPathName( $os->dirsFor('base') ), 'server', 'squeezesvc.exe' );
-	
+	$svcHelper = catdir( Win32::GetShortPathName( scalar $os->dirsFor('base') ), 'server', 'squeezesvc.exe' );
+
 	return $class;
 }
 
@@ -51,13 +51,13 @@ sub getStartupType {
 
 sub canSetStartupType {
 
-	# on Vista+ we can elevate privileges	
+	# on Vista+ we can elevate privileges
 	if ($os->get('isVista')) {
 		return 1;
 	}
-	
+
 	# on other Windows versions we have to be member of the administrators group to be able to manage the service
-	# only return true if SC isn't configured to be run as a background service, OR if the user is an admin 
+	# only return true if SC isn't configured to be run as a background service, OR if the user is an admin
 	else {
 
 		my $isService = (getStartupType() == SC_STARTUP_TYPE_SERVICE);
@@ -67,10 +67,10 @@ sub canSetStartupType {
 
 sub getStartupOptions {
 	my $class = shift;
-	
+
 	if (!$os->get('isVista') && !Win32::IsAdminUser()) {
 		return ('CONTROLPANEL_NEED_ADMINISTRATOR', 'RUN_NEVER', 'RUN_AT_LOGIN');
-	}	
+	}
 
 	return $class->SUPER::getStartupOptions();
 }
@@ -78,23 +78,23 @@ sub getStartupOptions {
 sub setStartupType {
 	my ($class, $type, $username, $password) = @_;
 	$username = '' unless defined $username;
-	
+
 	$Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
 	# enable service mode
 	if ($type == SC_STARTUP_TYPE_SERVICE) {
 		my @args;
-		
+
 		push @args, "--username=$username" if $username;
 		push @args, "--password=$password" if $password;
 		push @args, '--install';
-		
+
 		system($svcHelper, @args);
 	}
 	else {
 		system($svcHelper, "--remove");
 	}
-	
+
 	return 1;
 }
 
@@ -103,16 +103,16 @@ sub initStartupType {
 
 	# preset atLogin if it isn't defined yet
 	my $atLogin = $Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'};
-	
+
 	if ($atLogin !~ /[01]/) {
-		
+
 		# make sure our Key does exist before we can write to it
 		if (! (my $regKey = $Registry->{SB_USER_REGISTRY_KEY . ''})) {
 			$Registry->{'CUser/Software/Logitech/'} = {
 				'Squeezebox/' => {}
 			};
 		}
-	
+
 		# migrate startup setting
 		if (defined $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'}) {
 			$Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'} = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
@@ -129,7 +129,7 @@ sub canStart {
 
 sub start {
 	my ($class, $params) = @_;
-	
+
 	if (!$params && $class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
 		`$svcHelper --start`;
@@ -137,15 +137,15 @@ sub start {
 
 	else {
 
-		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'SqueezeSvr.exe' ) );
-		
+		my $appExe = Win32::GetShortPathName( catdir( scalar $os->dirsFor('base'), 'server', 'SqueezeSvr.exe' ) );
+
 		if ($params) {
 			$params = "$appExe $params";
 		}
 		else {
 			$params = '';
 		}
-		
+
 		# start as background job
 		my $processObj;
 		Win32::Process::Create(
@@ -165,7 +165,7 @@ sub start {
 
 sub checkServiceState {
 	my $class = shift;
-	
+
 	if ($class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
 		my %status = ();
@@ -189,7 +189,7 @@ sub checkServiceState {
 			# it could happen SC has been started as an app, even though
 			# it's configured to be running as a service
 			if (getProcessID() != -1) {
-	
+
 				$class->{status} = SC_STATE_RUNNING;
 			}
 		}
@@ -205,12 +205,12 @@ sub checkServiceState {
 
 			$class->{status} = SC_STATE_RUNNING;
 		}
-		
+
 		else {
-			
+
 			$class->{status} = SC_STATE_STOPPED;
 		}
-		
+
 	}
 
 	if ($class->{status} == SC_STATE_RUNNING) {
@@ -225,7 +225,7 @@ sub checkServiceState {
 			$class->{checkHTTP} = 0;
 		}
 	}
-	
+
 	return $class->{status};
 }
 

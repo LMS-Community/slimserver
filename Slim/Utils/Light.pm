@@ -179,7 +179,7 @@ sub getPref {
 		$prefFile = catdir(scalar $os->dirsFor('prefs'), 'plugin', $prefFile);
 	}
 	else {
-		$serverPrefFile ||= catfile( scalar($os->dirsFor('prefs')), 'server.prefs' );
+		$serverPrefFile ||= catfile(scalar $os->dirsFor('prefs'), 'server.prefs');
 		$prefFile = $serverPrefFile;
 	}
 

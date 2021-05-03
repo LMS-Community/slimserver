@@ -32,7 +32,7 @@ sub checkVersion {
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
 
-	Slim::Utils::Timers::killTimers(0, \&checkVersion);			
+	Slim::Utils::Timers::killTimers(0, \&checkVersion);
 
 	# don't check for updates when running from the source
 	if ($os->runningFromSource) {
@@ -80,9 +80,9 @@ sub checkVersion {
 	my $url = main::NOMYSB ? (Slim::Networking::Repositories->getUrlForRepository('servers') . "$::VERSION/servers.xml") : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
 
 	$url .= sprintf(
-		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
-		$::VERSION, 
-		$::REVISION, 
+		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d",
+		$::VERSION,
+		$::REVISION,
 		Slim::Utils::Strings::getLanguage(),
 		$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
 		$os->canAutoUpdate() ? $os->installerOS() : '',
@@ -321,7 +321,7 @@ sub setUpdateInstaller {
 }
 
 sub getVersionFile {
-	$versionFile ||= catdir( scalar($os->dirsFor('updates')), 'server.version' );
+	$versionFile ||= catdir( scalar $os->dirsFor('updates'), 'server.version' );
 	return $versionFile;
 }
 
@@ -336,7 +336,7 @@ sub getUpdateInstaller {
 
 	open(UPDATEFLAG, $versionFile) || do {
 		main::DEBUGLOG && $log->is_debug && $log->debug("No '$versionFile' available.");
-		return '';	
+		return '';
 	};
 
 	my $updateInstaller = '';

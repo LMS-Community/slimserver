@@ -641,17 +641,17 @@ sub getLibraryName {
 
 =head2 getTempDir()
 
-	Get LMS-private temp dir 
+	Get LMS-private temp dir
 
 =cut
 
 sub getTempDir {
-	return $tempdir;	
+	return $tempdir;
 }
 
 =head2 makeTempDir()
 
-	make and clean LMS-private temp dir 
+	make and clean LMS-private temp dir
 
 =cut
 
@@ -664,32 +664,32 @@ sub makeTempDir {
 		if (-d $tempdir) {
 			rmtree($tempdir, { keep_root => 1 });
 			return;
-		}	
+		}
 
 		mkpath($tempdir);
 		return if -d $tempdir;
-		
-		$ospathslog->warn("can't make custom temp dir $tempdir");	
-	}	
-	
+
+		$ospathslog->warn("can't make custom temp dir $tempdir");
+	}
+
 	$tempdir = catdir($prefs->get('cachedir'), 'tmp');
-	
+
 	if (-d $tempdir) {
 		rmtree($tempdir, { keep_root => 1 });
 		return;
-	}	
-	
+	}
+
 	mkpath($tempdir);
-		
+
 	if (!-d $tempdir) {
 		$tempdir = tempdir( DIR => $prefs->get('cachedir'), CLEANUP => 1 );
 		$ospathslog->warn("can't make private temp dir, trying $tempdir");
-	}	
-	
+	}
+
 	if (!-d $tempdir) {
 		$tempdir = tempdir( CLEANUP => 1 );
 		$ospathslog->warn("still can't make private temp dir, using $tempdir");
-	}	
+	}
 }
 
 =head2 getAudioDir()
@@ -1205,7 +1205,7 @@ sub parseRevision {
 
 	# The revision file may not exist for svn copies.
 	my $tempBuildInfo = eval { File::Slurp::read_file(
-		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
+		catdir(scalar Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
 	) } || "TRUNK\nUNKNOWN";
 
 	my ($revision, $builddate) = split (/\n/, $tempBuildInfo);

@@ -2,7 +2,7 @@ package Slim::Utils::OS::Unix;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -33,7 +33,7 @@ sub initSearchPath {
 	$class->SUPER::initSearchPath(@_);
 
 	my @paths = (split(/:/, ($ENV{'PATH'} || '/sbin:/usr/sbin:/bin:/usr/bin')), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/bin));
-	
+
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 }
 
@@ -50,7 +50,7 @@ sub dirsFor {
 	my ($class, $dir) = @_;
 
 	my @dirs = $class->SUPER::dirsFor($dir);
-	
+
 	# some defaults
 	if ($dir =~ /^(?:strings|revision|convert|types|repositories)$/) {
 
@@ -72,9 +72,9 @@ sub dirsFor {
 	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
 
 	} elsif ($dir eq 'prefs' && $::prefsdir) {
-		
+
 		push @dirs, $::prefsdir;
-		
+
 	# SqueezeCenter <= 7.3 prefs
 	} elsif ($dir eq 'scprefs') {
 
@@ -84,23 +84,23 @@ sub dirsFor {
 		@dirs = ( $oldpath );
 
 	} elsif ($dir eq 'oldprefs') {
-	
+
 		if ($::prefsfile && -r $::prefsfile) {
-	
+
 			push @dirs, $::prefsfile;
-		
+
 		} elsif (-r '/etc/slimserver.conf') {
-	
+
 			push @dirs, '/etc/slimserver.conf';
-	
-		} elsif (-r catdir($class->dirsFor('prefs'), 'slimserver.pref')) {
-	
-			push @dirs, catdir($class->dirsFor('prefs'), 'slimserver.pref');
-	
+
+		} elsif (-r catdir(scalar $class->dirsFor('prefs'), 'slimserver.pref')) {
+
+			push @dirs, catdir(scalar $class->dirsFor('prefs'), 'slimserver.pref');
+
 		} elsif (-r catdir($ENV{'HOME'}, 'slimserver.pref')) {
-	
+
 			push @dirs, catdir($ENV{'HOME'}, 'slimserver.pref');
-	
+
 		}
 
 	} else {
@@ -115,9 +115,9 @@ sub migratePrefsFolder {
 	my ($class, $newdir) = @_;
 
 	return if -d $newdir && -f catdir($newdir, 'server.prefs');
-	
+
 	# we only care about SqueezeCenter -> Squeezebox Server for now
-	my $olddir = $class->dirsFor('scprefs');	
+	my $olddir = $class->dirsFor('scprefs');
 
 	return unless -d $olddir && -r _;
 

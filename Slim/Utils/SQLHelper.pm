@@ -45,7 +45,7 @@ sub executeSQLFile {
 	my $sqlFile = $file;
 
 	if (!file_name_is_absolute($file)) {
-		$sqlFile = catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver, $file);
+		$sqlFile = catdir(scalar Slim::Utils::OSDetect::dirsFor('SQL'), $driver, $file);
 	}
 
 	main::INFOLOG && logger('database.sql')->info("Executing SQL file $sqlFile");
