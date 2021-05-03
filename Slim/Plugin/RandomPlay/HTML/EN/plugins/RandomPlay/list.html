@@ -212,14 +212,6 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 		[% END %]
 
 		<p>
-			[% "PLUGIN_RANDOM_SHUFFLE_METHOD" | string %][% "COLON" | string %]
-			<select class="stdedit" name="useBalancedShuffle" id="useBalancedShuffle">
-				<option [% IF !useBalancedShuffle %]selected[% END %] value="0">[% "PLUGIN_RANDOM_USE_FASTER_SHUFFLE" | string %]</option>
-				<option [% IF useBalancedShuffle %]selected[% END %] value="1">[% "PLUGIN_RANDOM_USE_BALANCED_SHUFFLE" | string %]</option>
-			</select>
-		</p>
-
-		<p>
 			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
 			<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
 			[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]

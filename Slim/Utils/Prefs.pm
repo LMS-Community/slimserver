@@ -214,6 +214,7 @@ sub init {
 		'precacheArtwork'       => 1,
 		'customArtSpecs'        => {},
 		'maxPlaylistLength'     => sub { $os->canDBHighMem() ? 2500 : 500 },
+		'useBalancedShuffle'    => sub { $os->canDBHighMem() ? 1 : 0 },
 		# Server Settings - Security
 		'filterHosts'           => 0,
 		'allowedHosts'          => sub {

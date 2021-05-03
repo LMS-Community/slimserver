@@ -19,6 +19,13 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_SHUFFLE_METHOD" desc="" %]
+		<select class="stdedit" name="pref_useBalancedShuffle" id="useBalancedShuffle">
+			<option [% IF !prefs.pref_useBalancedShuffle %]selected[% END %] value="0">[% "SETUP_USE_FASTER_SHUFFLE" | string %]</option>
+			<option [% IF prefs.pref_useBalancedShuffle %]selected[% END %] value="1">[% "SETUP_USE_BALANCED_SHUFFLE" | string %]</option>
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_DISABLESTATISTICS" desc="SETUP_DISABLESTATISTICS_DESC" %]
 		<select class="stdedit" name="pref_disableStatistics" id="disableStatistics">
 
