@@ -793,7 +793,7 @@ sub reshuffle {
 	if (shuffle($client) == 1) {
 		if ($prefs->get('useBalancedShuffle')) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Using balanced shuffle");
-			$listRef = balancedShuffle([ map {
+			my $newListRef = balancedShuffle([ map {
 				my $track = playList($client)->[$_];
 				my $artist = $track->artistName;
 
@@ -806,7 +806,9 @@ sub reshuffle {
 				[$_, $artist || ''];
 			} @$listRef ], 'alpha');
 
-			@{$client->shufflelist} = @$listRef;
+			for (my $i = 0; $i < $songcount; $i++) {
+				$listRef->[$i] = $newListRef->[$i];
+			}
 		}
 		else {
 			fischer_yates_shuffle($listRef);
