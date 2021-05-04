@@ -33,6 +33,7 @@ sub init {
 our %commandTable = ();
 our %capabilities = ();
 our %binaries = ();
+my %proxies = ();
 
 sub Conversions {
 	return \%commandTable;
@@ -85,7 +86,10 @@ sub loadConversionTables {
 			$line =~ s/^\s*//o;
 			$line =~ s/\s*$//o;
 
-			if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/) {
+			if ($line =~ /^proxy\s+(\S+)\s+(\S+)/i) {	
+				$proxies{$1} = $2;
+			}
+			elsif ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/) {
 
 				my $inputtype  = $1;
 				my $outputtype = $2;
@@ -352,7 +356,8 @@ sub getConvertCommand2 {
 	}
 
 	if ($prefs->get('prioritizeNative')) {
-		my @types = $type eq 'wav' ? ('pcm', $type) : ($type);
+		my @types = split /,/, ($proxies{$type} || $type);			
+		unshift @types, 'pcm' if grep /wav/, @types;	
 		foreach my $type (@types) {
 			my ($format) = grep /$type/, @supportedformats;
 			@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;
