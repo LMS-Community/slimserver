@@ -829,8 +829,8 @@ sub processURL {
 						$agent = 'Winamp';
 					}
 
-					if ($address =~ m/alexa/i) {
-						$client->name( "Amazon Echo" );
+					if ( $address =~ m/^alexa|^amazon|^echo/i ) {
+						$client->name( 'AlexaPlayer' );
 					} else {
 						$client->name( $agent . ' ' . string('FROM') . ' ' . $address );
 					}
