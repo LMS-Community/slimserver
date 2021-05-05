@@ -829,7 +829,11 @@ sub processURL {
 						$agent = 'Winamp';
 					}
 
-					$client->name( $agent . ' ' . string('FROM') . ' ' . $address );
+					if ($address =~ m/alexa/i) {
+						$client->name( "Amazon Echo" );
+					} else {
+						$client->name( $agent . ' ' . string('FROM') . ' ' . $address );
+					}
 				}
 
 				# Bug 4795
