@@ -25,6 +25,7 @@ through Request.pm and the mechanisms it defines.
 
 use strict;
 
+use List::Util qw(shuffle);
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
@@ -1729,6 +1730,8 @@ sub playlistXtracksCommand {
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
+	if ( $what =~ /track\.titlesearch|contributor\.namesearch|genre\.id/i ) { @tracks = shuffle ( @tracks ) };
+	
 	my $size;
 
 	# add or remove the found songs
