@@ -93,10 +93,13 @@ sub response {
 	if ($enhance == PERSISTENT || !$self->contentLength) {
 		# re-parse the request string as it might have been overloaded by subclasses
 		my $request_object = HTTP::Request->parse($request);
-		my ($server, $port, $path, undef, undef, $proxied) = Slim::Utils::Misc::crackURL($args->{'url'});
-	
-		# need to change URI if proxy is used as request does not include it
-		$request_object->uri($proxied) if $proxied;
+		my $uri = $request_object->uri;
+
+		# re-set full uri if it is not absolute (e.g. not proxied)
+		if ($uri !~ /^https?/) {
+			my ($proto, $host, $port) = $args->{'url'} =~ m|(.+)://(?:[^\@]*\@)?([^:/]+):*(\d*)|;
+			$request_object->uri("$proto://$host:$port$uri");
+		}	
 
 		my ($first) = $self->contentRange =~ /(\d+)-/;
 		my $length = $self->contentLength;
