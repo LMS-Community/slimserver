@@ -763,6 +763,8 @@ sub reshuffle {
 		return;
 	}
 
+	return if $songcount <= 1;
+
 	my $realsong = ${$listRef}[Slim::Player::Source::playingSongIndex($client)];
 
 	if (!defined($realsong) || $dontpreservecurrsong) {
@@ -795,12 +797,15 @@ sub reshuffle {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Using balanced shuffle");
 			my $newListRef = balancedShuffle([ map {
 				my $track = playList($client)->[$_];
-				my $artist = $track->artistName;
+				my $artist = $track->artistName if ref $track && $track->can('artistName');
 
-				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($track->url) if !$artist;
+				if (!$artist) {
+					my $url = ref $track ? $track->url : $track;
+					my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-				if ( $handler && $handler->can('getMetadataFor') && (my $meta = $handler->getMetadataFor($client, $track->url)) ) {
-					$artist = $meta->{artist};
+					if ( $handler && $handler->can('getMetadataFor') && (my $meta = $handler->getMetadataFor($client, $url)) ) {
+						$artist = $meta->{artist};
+					}
 				}
 
 				[$_, $artist || ''];

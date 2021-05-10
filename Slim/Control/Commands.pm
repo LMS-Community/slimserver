@@ -1741,12 +1741,15 @@ sub playlistXtracksCommand {
 
 			my $sortList = Slim::Player::Playlist::balancedShuffle([ map {
 				my $track = $tracks[$_];
-				my $category = $track->$categoryMethod;
+				my $category = $track->$categoryMethod if ref $track && $track->can($categoryMethod);
 
-				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($track->url) if !$category;
+				if (!$categoryMethod) {
+					my $url = ref $track ? $track->url : $track;
+					my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-				if ( $handler && $handler->can('getMetadataFor') && (my $meta = $handler->getMetadataFor($client, $track->url)) ) {
-					$category = $meta->{$categoryRemoteItem};
+					if ( $handler && $handler->can('getMetadataFor') && (my $meta = $handler->getMetadataFor($client, $url)) ) {
+						$category = $meta->{$categoryRemoteItem};
+					}
 				}
 
 				[$_, $category || ''];
