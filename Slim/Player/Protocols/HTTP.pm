@@ -98,7 +98,7 @@ sub response {
 		# re-set full uri if it is not absolute (e.g. not proxied)
 		if ($uri !~ /^https?/) {
 			my ($proto, $host, $port) = $args->{'url'} =~ m|(.+)://(?:[^\@]*\@)?([^:/]+):*(\d*)|;
-			$request_object->uri("$proto://$host:$port$uri");
+			$request_object->uri("$proto://$host" . ($port ? ":$port" : '') . $uri);
 		}	
 
 		my ($first) = $self->contentRange =~ /(\d+)-/;
