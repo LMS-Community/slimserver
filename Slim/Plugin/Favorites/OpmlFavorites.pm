@@ -131,7 +131,7 @@ sub _urlindex {
 		}
 
 		# look up icon if not defined or an album or track (can change during rescan)
-		if ( !$entry->{'icon'} || ($entry->{'URL'} && $entry->{'URL'} =~ /^(?:db:album|file:)/) ) {
+		if ( !$entry->{'icon'} || ($entry->{'URL'} && $entry->{'URL'} =~ /^(?:db:album|file:)/ && $entry->{'icon'} !~ /^http/) ) {
 			$entry->{'icon'} = $class->icon($entry->{'URL'});
 		}
 
