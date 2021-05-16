@@ -800,7 +800,7 @@ sub processURL {
 	}
 
 	# is this an HTTP stream?
-	if (!defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
+	if (!defined($client) && ($path =~ /(?:stream\.(?:mp3|flac)|stream)$/)) {
 
 		# Bug 14825, allow multiple stream.mp3 clients from the same address with a player param
 		my $address = $params->{player} || $peeraddr{$httpClient};
@@ -808,6 +808,9 @@ sub processURL {
 		main::INFOLOG && $log->is_info && $log->info("processURL found HTTP client at address=$address");
 
 		$client = Slim::Player::Client::getClient($address);
+
+		my ($format) = $path =~ /[^\.]+\.(mp3|flac)/;
+		$format = ($format =~ s/flac/flc/r) || 'mp3';
 
 		if (!defined($client)) {
 
@@ -817,6 +820,7 @@ sub processURL {
 
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
+				$client->formats($format);
 				$client->init();
 
 				# Give the streaming player a descriptive name such as "Winamp from x.x.x.x"
@@ -842,6 +846,17 @@ sub processURL {
 					$client->execute( [ 'play' ] );
 				}
 			}
+		} else {
+			$client->started(0);
+			
+			# might have to change required codec (stop & start are queued)
+			if ($client->isPlaying && $client->formats !~ /$format/) {
+				$client->execute( [ 'stop' ] );
+				$client->execute( [ 'play' ] );
+			}	
+			
+			# optional play will use new format (if any)
+			$client->formats($format);				
 		}
 
 		if (defined($params->{'bitrate'})) {
@@ -1163,7 +1178,7 @@ sub generateHTTPResponse {
 
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
 
-		} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
+		} elsif ($path =~ /^(?:stream\.(?:mp3|flac)|stream)$/o) {
 			# Bug 15380, return correct content-type depending on what we're streaming
 			if ( my $sc = $client->controller()->songStreamController() ) {
 				if ( my $song = $sc->song() ) {
@@ -2193,7 +2208,20 @@ sub sendStreamingResponse {
 		return undef;
 	}
 
-	if (!defined($streamingFile) && $client && $client->isa("Slim::Player::HTTP") &&
+	if ($client && $client->isa("Slim::Player::HTTP") && $client->formats =~/flc/ && !$client->started) {
+		
+		$client->started(1);
+		my $silence = getStaticContent("html/silence-header.flac");
+				
+		my %segment = (
+				'data'   => $silence,
+				'offset' => 0,
+				'length' => length($$silence)
+			);
+			
+		unshift @$outbuf,\%segment;			
+		
+	} elsif (!defined($streamingFile) && $client && $client->isa("Slim::Player::HTTP") &&
 		((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 
 		$silence = 1;
@@ -2210,7 +2238,11 @@ sub sendStreamingResponse {
 			my $bitrate = Slim::Utils::Prefs::maxRate($client);
 			my $silence = undef;
 
-			if ($bitrate == 320 || $bitrate == 0) {
+			if ($client->formats =~ /flc/) {
+
+				$silence = getStaticContent("html/silence.flac");
+
+			} elsif ($bitrate == 320 || $bitrate == 0) {
 
 				$silence = getStaticContent("html/silence.mp3");
 

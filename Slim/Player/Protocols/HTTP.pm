@@ -467,7 +467,7 @@ sub readPersistentChunk {
 	if ($enhanced->{'status'} == IDLE) {
 		my $readLength = $self->_sysread($_[1], $_[2], $_[3]);
 		$enhanced->{'first'} += $readLength;
-	
+
 		# return sysread's result UNLESS we reach eof before expected length
 		return $readLength unless defined($readLength) && !$readLength && $enhanced->{'first'} != $self->contentLength;
 	}					 

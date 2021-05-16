@@ -18,6 +18,10 @@ use Slim::Display::NoDisplay;
 
 @ISA = qw(Slim::Player::Client);
 
+{
+	__PACKAGE__->mk_accessor('rw', qw( formats started ));
+}
+
 sub new {
 	my ($class, $id, $paddr, $tcpsock) = @_;
 	
@@ -64,7 +68,6 @@ sub resume      { 1 }
 sub volume      { 1 }
 sub fade_volume { 1 }
 sub bufferFullness { 0 }
-sub formats     { 'mp3' }
 sub model       { 'http' }
 sub modelName   { 'Web Client' }
 sub decoder     { 'http' }
@@ -86,7 +89,7 @@ sub nextChunk {
 	my $client = $_[0];
 	
 	my $chunk = Slim::Player::Source::nextChunk(@_);
-	
+
 	if (defined($chunk) && length($$chunk) == 0) {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
