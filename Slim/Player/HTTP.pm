@@ -27,6 +27,10 @@ sub new {
 	
 	my $client = $class->SUPER::new($id, $paddr);
 
+	$client->init_accessor(
+		formats => 'mp3',
+	);	
+
 	$client->streamingsocket($tcpsock);
 
 	$client->display( Slim::Display::NoDisplay->new($client) );

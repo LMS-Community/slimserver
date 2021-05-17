@@ -810,7 +810,7 @@ sub processURL {
 		$client = Slim::Player::Client::getClient($address);
 
 		my ($format) = $path =~ /[^\.]+\.(mp3|flac)/;
-		$format = ($format =~ s/flac/flc/r) || 'mp3';
+		$format =~ s/flac/flc/;
 
 		if (!defined($client)) {
 
@@ -820,7 +820,7 @@ sub processURL {
 
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
-				$client->formats($format);
+				$client->formats($format) if $format;
 				$client->init();
 
 				# Give the streaming player a descriptive name such as "Winamp from x.x.x.x"
@@ -856,7 +856,7 @@ sub processURL {
 			}	
 			
 			# optional play will use new format (if any)
-			$client->formats($format);				
+			$client->formats($format) if $format;				
 		}
 
 		if (defined($params->{'bitrate'})) {
