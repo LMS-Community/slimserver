@@ -799,8 +799,12 @@ sub processURL {
 		}
 	}
 
+	# get the HTTP stream format (if any)
+	my $format = $1 || 'mp3' if $path =~ /(?:stream\.(mp3|flac)|stream)$/;
+	$format =~ s/flac/flc/;
+
 	# is this an HTTP stream?
-	if (!defined($client) && ($path =~ /(?:stream\.(?:mp3|flac)|stream)$/)) {
+	if (!defined($client) && $format) {
 
 		# Bug 14825, allow multiple stream.mp3 clients from the same address with a player param
 		my $address = $params->{player} || $peeraddr{$httpClient};
@@ -808,9 +812,6 @@ sub processURL {
 		main::INFOLOG && $log->is_info && $log->info("processURL found HTTP client at address=$address");
 
 		$client = Slim::Player::Client::getClient($address);
-
-		my ($format) = $path =~ /[^\.]+\.(mp3|flac)/;
-		$format =~ s/flac/flc/;
 
 		if (!defined($client)) {
 
@@ -820,7 +821,6 @@ sub processURL {
 
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
-				$client->formats($format) if $format;
 				$client->init();
 
 				# Give the streaming player a descriptive name such as "Winamp from x.x.x.x"
@@ -846,19 +846,8 @@ sub processURL {
 					$client->execute( [ 'play' ] );
 				}
 			}
-		} else {
-			$client->started(0);
-			
-			# might have to change required codec (stop & start are queued)
-			if ($client->isPlaying && $client->formats !~ /$format/) {
-				$client->execute( [ 'stop' ] );
-				$client->execute( [ 'play' ] );
-			}	
-			
-			# optional play will use new format (if any)
-			$client->formats($format) if $format;				
-		}
-
+		} 
+		
 		if (defined($params->{'bitrate'})) {
 			# must validate 32 40 48 56 64 80 96 112 128 160 192 224 256 320 CBR
 			# set to the closest lower value of its not a match
@@ -877,6 +866,19 @@ sub processURL {
 
 			$prefs->client($client)->set('transcodeBitrate',undef);
 		}
+	}
+	
+	if ($client && $client->isa("Slim::Player::HTTP") && $format) {
+		$client->started(0);
+			
+		# might have to change required codec (stop & start are queued)
+		if ($client->isPlaying && $client->formats !~ /$format/) {
+			$client->execute( [ 'stop' ] );
+			$client->execute( [ 'play' ] );
+		}	
+
+		# optional play will use new format (if any)
+		$client->formats($format);				
 	}
 
 	# player specified from cookie
