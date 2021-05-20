@@ -270,7 +270,7 @@ sub _gotTrack {
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 
 	Slim::Utils::Scanner::Remote::parseRemoteHeader( 
-		$song->track, $info->{url}, $format =~ s/flac/flc/r, 
+		$song->track, $info->{url}, $format, 
 		sub {
 			my $meta = $cache->get('wimp_meta_' . $info->{id});
 			$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);

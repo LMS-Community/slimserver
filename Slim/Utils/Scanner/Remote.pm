@@ -90,7 +90,10 @@ sub parseRemoteHeader {
 
 	return $successCb->() unless $parser;
 
+	# first, tidy up things a bit
 	$url ||= $track->url;
+	$format =~ s/flac/flc/;
+
 	my $http = Slim::Networking::Async::HTTP->new;
 	my $method = $parser->{'readLimit'} ? 'onBody' : 'onStream';
 	push my @extra, $url if $parser->{'extra'} =~ /url/;
