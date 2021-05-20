@@ -66,6 +66,45 @@ my %ogg_quality = (
 	10 => 500000,
 );
 
+
+=head2 parseRemoteHeader( $track, $url, $format, $successCb, $errorCb );
+
+parse a remote URL to acquire header and populate $track object. When 
+finished, calls back success or error callback
+
+=cut
+
+my %parsers = (
+	'wma' => { parser => \&parseWMAHeader, readLimit => 128 * 1024 }, 
+	'aac' => { parser => \&parseAACHeader, readLimit => 4 * 1024 },	  	
+	'ogg' => { parser => \&parseOggHeader, readLimit => 64 },         
+	'flc' => { parser => \&parseFlacHeader },						  
+	'wav' => { parser => \&parseWavAifHeader, extra => 'format' },    
+	'aif' => { parser => \&parseWavAifHeader, extra => 'format' },    
+	'mp4' => { parser => \&parseMp4Header, extra => 'url' },			
+);
+
+sub parseRemoteHeader {
+	my ($track, $url, $format, $successCb, $errorCb) = @_;
+	my $parser = $parsers{$format};
+
+	return $successCb->() unless $parser;
+
+	$url ||= $track->url;
+	my $http = Slim::Networking::Async::HTTP->new;
+	my $method = $parser->{'readLimit'} ? 'onBody' : 'onStream';
+	push my @extra, $url if $parser->{'extra'} =~ /url/;
+	push @extra, $format if $parser->{'extra'} =~ /format/;
+
+	$http->send_request( {
+		request     => HTTP::Request->new( GET => $url ),
+		$method     => $parser->{'parser'},
+		readLimit   => $parser->{'readLimit'},
+		onError     => $errorCb,
+		passthrough => [ $track, { cb => $successCb }, @extra ],
+	} );
+}
+
 =head2 scanURL( $url, $args );
 
 Scan a remote URL.  When finished, calls back to $args->{cb} with a success flag
