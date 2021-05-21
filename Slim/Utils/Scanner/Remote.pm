@@ -86,13 +86,13 @@ my %parsers = (
 
 sub parseRemoteHeader {
 	my ($track, $url, $format, $successCb, $errorCb) = @_;
-	my $parser = $parsers{$format};
-
-	return $successCb->() unless $parser;
-
+	
 	# first, tidy up things a bit
 	$url ||= $track->url;
 	$format =~ s/flac/flc/;
+	
+	my $parser = $parsers{$format};
+	return $successCb->() unless $parser;
 
 	my $http = Slim::Networking::Async::HTTP->new;
 	my $method = $parser->{'readLimit'} ? 'onBody' : 'onStream';
@@ -766,7 +766,7 @@ sub parseFlacHeader {
 	Slim::Formats->loadTagFormatForType('flc');
 	my $formatClass = Slim::Formats->classForFormat('flc');
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
-	
+
 	return 1 if ref $info ne 'HASH' && $info;
 
 	$track->content_type('flc');
