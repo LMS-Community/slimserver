@@ -86,13 +86,13 @@ my %parsers = (
 
 sub parseRemoteHeader {
 	my ($track, $url, $format, $successCb, $errorCb) = @_;
-	my $parser = $parsers{$format};
-
-	return $successCb->() unless $parser;
-
+	
 	# first, tidy up things a bit
 	$url ||= $track->url;
 	$format =~ s/flac/flc/;
+
+	my $parser = $parsers{$format};
+	return $successCb->() unless $parser;
 
 	my $http = Slim::Networking::Async::HTTP->new;
 	my $method = $parser->{'readLimit'} ? 'onBody' : 'onStream';
