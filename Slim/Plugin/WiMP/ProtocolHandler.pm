@@ -269,29 +269,19 @@ sub _gotTrack {
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 
-	if ($format =~ /mp4|aac|fla?c/i) {
-		my $http = Slim::Networking::Async::HTTP->new;
-		$http->send_request( {
-			request     => HTTP::Request->new( GET => $info->{url} ),
-			onStream    => $format =~ /fla?c/i ?
-						   \&Slim::Utils::Scanner::Remote::parseFlacHeader :
-						   \&Slim::Utils::Scanner::Remote::parseMp4Header,
-			onError     => sub {
-				my ($self, $error) = @_;
-				$log->warn( "could not find $format header $error" );
-				$params->{successCb}->();
-			},
-			passthrough => [ $song->track, { cb => sub {
-			                                    my $meta = $cache->get('wimp_meta_' . $info->{id});
-			                                    $meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
-			                                    $cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
-			                                    $params->{successCb}->();
-			                               } },
-			                 $info->{url} ],
+	Slim::Utils::Scanner::Remote::parseRemoteHeader(
+		$song->track, $info->{url}, $format,
+		sub {
+			my $meta = $cache->get('wimp_meta_' . $info->{id});
+			$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
+			$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
+			$params->{successCb}->();
+		},
+		sub {
+			my ($self, $error) = @_;
+			$log->warn( "could not find $format header $error" );
+			$params->{successCb}->();
 		} );
-	} else {
-		$params->{successCb}->();
-	}
 }
 
 sub _gotTrackError {

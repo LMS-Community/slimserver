@@ -535,17 +535,13 @@ sub _gotTrack {
 
 	# When doing flac, parse the header to be able to seek (IP3K)
 	if ($format =~ /fla?c/i) {
-		my $http = Slim::Networking::Async::HTTP->new;
-		$http->send_request( {
-			request     => HTTP::Request->new( GET => $info->{url} ),
-			onStream    => \&Slim::Utils::Scanner::Remote::parseFlacHeader,
-			onError     => sub {
+		Slim::Utils::Scanner::Remote::parseRemoteHeader( 
+			$song->track, $info->{url}, $format, $params->{successCb}, 
+			sub {
 				my ($self, $error) = @_;
 				$log->warn( "could not find $format header $error" );
 				$params->{successCb}->();
-			},
-			passthrough => [ $song->track, { cb => $params->{successCb} }, $info->{url} ],
-		} );
+			} );
 	} 
 	else {
 		# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
