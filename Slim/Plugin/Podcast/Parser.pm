@@ -100,7 +100,10 @@ sub parse {
 				},
 			}];
 
-			$item->{type} = 'link';
+			$item->{type}       = 'link';
+			$item->{on_select} 	= 'play';
+			$item->{play}      	= $enclosure->{url};
+			$item->{playall}    = 1;
 		} 
 
 		if ( $item->{duration} && (!$duration || $duration !~ /:/) ) {

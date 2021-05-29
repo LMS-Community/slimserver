@@ -70,6 +70,7 @@ my @allAttributes = (qw(
 
 	__PACKAGE__->mk_accessor('rw', @allAttributes);
 	__PACKAGE__->mk_accessor('hash', '_processors');
+	__PACKAGE__->mk_accessor('array', '_redirs');
 }
 
 sub init {
@@ -251,6 +252,15 @@ sub coverArt {
 	} else {
 		return $body;
 	}
+}
+
+sub redirs {
+	my ($self, $arg) = @_;
+	my $redirs = $self->_redirs || [];
+	
+	return wantarray ? $redirs : @{$redirs} unless defined $arg;
+	return $self->_redirs($arg) if $arg =~ /^\d+$/; 
+	return $self->_redirs(scalar @{$redirs}, $arg);
 }
 
 # Although the URL is the primary key into the cache,

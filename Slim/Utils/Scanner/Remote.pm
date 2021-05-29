@@ -378,40 +378,8 @@ sub readRemoteHeaders {
 	Slim::Schema->clearContentTypeCache( $track->url );
 	$track = Slim::Music::Info::setContentType( $track->url, $type );
 
-	if ( $track->url ne $url ) {
-		my $update;
-
-		# Don't create a duplicate object if the only difference is http:// instead of mms://
-		if ( $track->url =~ m{^mms://(.+)} ) {
-			if ( $url ne "http://$1" ) {
-				$update = 1;
-			}
-		}
-		else {
-			$update = 1;
-		}
-
-		if ( $update ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug( "Updating redirected URL $url" );
-
-			# Get/create a new entry for the redirected track
-			my $redirTrack = Slim::Schema->updateOrCreate( {
-				url => $url,
-			} );
-
-			# Copy values from original track
-			$redirTrack->title( $track->title );
-			$redirTrack->content_type( $track->content_type );
-			$redirTrack->bitrate( $track->bitrate );
-
-			$redirTrack->update;
-
-			# Delete original track
-			$track->delete;
-
-			$track = $redirTrack;
-		}
-	}
+	# to handle volatile, keep the original url in $track object
+	$track->redirs($url) if $track->url ne $url;
 
 	# Is this an audio stream or a playlist?
 	if ( $type = Slim::Music::Info::isSong( $track, $type ) ) {
@@ -766,7 +734,7 @@ sub parseFlacHeader {
 	Slim::Formats->loadTagFormatForType('flc');
 	my $formatClass = Slim::Formats->classForFormat('flc');
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
-	
+
 	return 1 if ref $info ne 'HASH' && $info;
 
 	$track->content_type('flc');
@@ -1185,29 +1153,6 @@ sub parsePlaylist {
 			title  => (($playlist->title && $playlist->title =~ /^(?:http|mms)/i) ? undef : $playlist->title),
 			cb     => sub {
 				my ( $result, $error ) = @_;
-
-				# Bug 10208: If resulting track is not the same as entry (due to redirect),
-				# we need to adjust the playlist
-				if ( blessed($result) && $result->id != $entry->id ) {
-					main::DEBUGLOG && $log->is_debug && $log->debug('Scanned track changed, updating playlist');
-
-					my $i = 0;
-					for my $e ( @results ) {
-						if ( $e->id == $entry->id ) {
-							splice @results, $i, 1, $result;
-							last;
-						}
-						$i++;
-					}
-
-					# Get the $playlist object again, as it may have changed
-					$playlist = Slim::Schema->objectForUrl( {
-						url      => $playlist->url,
-						playlist => 1,
-					} );
-
-					$playlist->setTracks( \@results );
-				}
 
 				$scanned++;
 

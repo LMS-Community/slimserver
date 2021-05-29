@@ -435,9 +435,9 @@ sub canDirectStream {
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 
-	# can't go direct if we are synced or proxy is set by user
+	# can't go direct if we are synced or proxy is set by user or if we have more than one redirection
 	my $direct = $class->canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
-	return 0 unless $direct;
+	return 0 unless $direct && $song->track->redirs < 2;
 
 	my $processor = $song->track->processors($song->wantFormat);
 
@@ -805,6 +805,9 @@ sub parseHeaders {
 
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $self->parseDirectHeaders($client, $url, @_);
 
+	# we should not parse anything before we have reached target
+	return if ${*$self}{'redirect'} = $redir;
+
 	if ($contentType) {
 		if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
 			# webservers often lie about playlists.  This will
@@ -817,7 +820,6 @@ sub parseHeaders {
 		Slim::Music::Info::setContentType( $url, $contentType );
 	}
 
-	${*$self}{'redirect'} = $redir;
 	${*$self}{'contentLength'} = $length if $length;
 	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
 

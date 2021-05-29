@@ -42,7 +42,7 @@ my $_liveCount = 0;
 my @_playlistCloneAttributes = qw(
 	index
 	_track _currentTrack _currentTrackHandler
-	streamUrl originUrl
+	streamUrl
 	owner
 	_playlist _scanDone
 
@@ -126,7 +126,6 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl       => $url,	# Keep track of the non-redirected url
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -281,7 +280,6 @@ sub getNextSong {
 
 						$track = $newTrack;
 						# need to replace streamUrl if we have been redirected/updated
-						$self->streamUrl($track->url);
 					}
 
 					# maybe we just found or scanned a playlist
