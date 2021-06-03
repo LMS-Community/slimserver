@@ -256,8 +256,8 @@ sub getNextSong {
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
 							$self->_track($newTrack);				
-							$self->_currentTrackHandler($self->can('getSongHandler') 
-							                            ? $self->getSongHandler($newTrack)
+							$self->_currentTrackHandler($handler->can('getSongHandler') 
+							                            ? $handler->getSongHandler($self, $newTrack)
 							                            : Slim::Player::ProtocolHandlers->handlerForURL($newTrack->url));
 														
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);

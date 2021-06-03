@@ -103,7 +103,7 @@ sub updateRecentlyPlayed {
 }
 
 sub unwrapUrl {
-	return shift =~ m|^podcast://([^&]+)(?:&from=(\d+)$)?|;	
+	return shift =~ m|^podcast://([^{]+)(?:{from=(\d+)}$)?|;	
 }
 
 sub wrapUrl {
@@ -120,7 +120,7 @@ sub handleFeed {
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};
-		my $image = $cache->get('podcast-' . $url);
+		my $image = $cache->get('podcast-rss-' . $url);
 
 		push @$items, {
 			name => $_->{name},
@@ -134,7 +134,7 @@ sub handleFeed {
 				eval {
 					my $xml = XMLin(shift->content);
 					my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
-					$cache->set('podcast-' . $url, $image, '90days') if $image;
+					$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
 				};
 			},
 			sub {

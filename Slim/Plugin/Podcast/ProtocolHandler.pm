@@ -52,7 +52,8 @@ sub new {
 	main::INFOLOG && $log->info( "Streaming podcast $args->{url} from $startTime" );
 	
 	# erase last position from cache
-	$cache->remove('podcast-' . $1) if Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
+	my ($url) = Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
+	$cache->remove('podcast-' . $url) if $url;
 	
 	if ($startTime) {
 		my $seekdata = $song->getSeekData($startTime);
