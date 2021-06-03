@@ -24,7 +24,7 @@ Slim::Player::ProtocolHandlers->registerHandler('podcast', __PACKAGE__);
 sub scanUrl {
 	my ( $class, $url, $args ) = @_;
 	my $track = $args->{song}->track;
-	my ($scanUrl, $from) = Slim::Plugin::Podcast::Plugin::unwrap($url);	
+	my ($scanUrl, $from) = Slim::Plugin::Podcast::Plugin::unwrapUrl($url);	
 	
 	main::INFOLOG && $log->info("Scanning podcast $url for title ", $track->title);
 
@@ -52,7 +52,7 @@ sub new {
 	main::INFOLOG && $log->info( "Streaming podcast $args->{url} from $startTime" );
 	
 	# erase last position from cache
-	$cache->remove('podcast-' . $1) if Slim::Plugin::Podcast::Plugin::unwrap($song->originUrl);
+	$cache->remove('podcast-' . $1) if Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
 	
 	if ($startTime) {
 		my $seekdata = $song->getSeekData($startTime);
@@ -65,7 +65,7 @@ sub new {
 sub onStop {
     my ($self, $song) = @_;
 	my $elapsed = $song->master->controller->playingSongElapsed;
-	my ($url) = Slim::Plugin::Podcast::Plugin::unwrap($song->originUrl);
+	my ($url) = Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
 
 	if ($elapsed > 15 && (!$song->duration || $elapsed < $song->duration - 15)) {
 		$cache->set("podcast-$url", int ($elapsed), '30days');

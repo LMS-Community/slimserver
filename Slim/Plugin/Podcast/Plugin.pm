@@ -73,23 +73,6 @@ sub initPlugin {
 		func   => \&trackInfoMenu,
 	) );
 	
-	foreach ( @{$prefs->get('feeds')} ) {
-		my $url = $_->{value};
-
-		Slim::Networking::SimpleAsyncHTTP->new(
-			sub { 
-				eval {
-					my $xml = XMLin(shift->content);
-					my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
-					$cache->set("podcast-$url", $image, '30days') if $image;
-				};
-			},
-			sub {
-				$log->warn("can't get RSS feed icon ", shift->error);
-			},
-		)->get($_->{value}) unless $cache->get("podcast-$url");
-	}
-	
 	%recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
 
 	$class->SUPER::initPlugin(
@@ -109,7 +92,7 @@ sub shutdownPlugin {
 
 sub updateRecentlyPlayed {
 	my ($class, $client, $song) = @_;
-	my ($url) = unwrap($song->originUrl);
+	my ($url) = unwrapUrl($song->originUrl);
 
 	$recentlyPlayed{$url} ||= { 
 			url      => $url,
@@ -119,11 +102,11 @@ sub updateRecentlyPlayed {
 	};	
 }
 
-sub unwrap {
+sub unwrapUrl {
 	return shift =~ m|^podcast://([^&]+)(?:&from=(\d+)$)?|;	
 }
 
-sub wrap {
+sub wrapUrl {
 	my ($url, $from) = @_;
 	
 	return 'podcast://' . $url . ($from ? "&from=$from" : '');
@@ -137,13 +120,27 @@ sub handleFeed {
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};
+		my $image = $cache->get('podcast-' . $url);
 
 		push @$items, {
-			name   => $_->{name},
-			url    => $url,
+			name => $_->{name},
+			url  => $url,
 			parser => 'Slim::Plugin::Podcast::Parser',
-			image  => $cache->get("podcast-$url") || __PACKAGE__->_pluginDataFor('icon'),
+			image => $image || __PACKAGE__->_pluginDataFor('icon'),
 		};
+
+		Slim::Networking::SimpleAsyncHTTP->new(
+			sub { 
+				eval {
+					my $xml = XMLin(shift->content);
+					my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
+					$cache->set('podcast-' . $url, $image, '90days') if $image;
+				};
+			},
+			sub {
+				$log->warn("can't get RSS feed icon ", shift->error);
+			},
+		)->get($_->{value}) unless $image;
 	}
 	
 	push @$items, {
@@ -163,15 +160,15 @@ sub recentHandler {
 	my @menu;
 
 	foreach my $item(reverse values %recentlyPlayed) {
-		my $from = $cache->get("podcast-$item->{url}");
+		my $from = $cache->get('podcast-' . $item->{url});
 		
-		# every entry here as a remote_image_ cached item so we can have
+		# every entry here has a remote_image_ cached item so we can have
 		# a direct play entry all the time, even if it has played fully
 		my $entry = {
 			title => $item->{title},
 			image => $item->{cover},
 			type  => 'audio',			
-			play  => wrap($item->{url}),			
+			play  => wrapUrl($item->{url}),			
 			on_select => 'play',
 		};
 
@@ -186,14 +183,14 @@ sub recentHandler {
 				cover => $item->{cover},									
 				enclosure => {
 					type  => 'audio',
-					url   => wrap($item->{url}, $from),
+					url   => wrapUrl($item->{url}, $from),
 				},	
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				cover => $item->{cover},				
 				enclosure => {
 					type  => 'audio',
-					url   => wrap($item->{url}),
+					url   => wrapUrl($item->{url}),
 				},	
 			}],
 		}	

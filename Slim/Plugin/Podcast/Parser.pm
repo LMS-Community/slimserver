@@ -71,7 +71,7 @@ sub parse {
 		$cache->set("$key-duration", $item->{duration}, '30days');
 
 		my $url = $item->{enclosure}->{url};
-		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrap($url);
+		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $from && $from < $item->{duration} - 15 ) {
@@ -82,7 +82,7 @@ sub parse {
 			# so that XMLBrowser to show sub-menu *and* we can play from top
 			my $enclosure = delete $item->{enclosure};
 			$item->{on_select} = 'play';
-			$item->{play} = Slim::Plugin::Podcast::Plugin::wrap($url);
+			$item->{play} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 			$item->{type}  = 'link';
 			
 			$item->{items} = [{
@@ -93,7 +93,7 @@ sub parse {
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
-					url    => Slim::Plugin::Podcast::Plugin::wrap($url, $from),
+					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url, $from),
 				},
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
@@ -103,7 +103,7 @@ sub parse {
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
-					url    => Slim::Plugin::Podcast::Plugin::wrap($url),
+					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url),
 				},
 			}];
 

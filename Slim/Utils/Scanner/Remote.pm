@@ -538,6 +538,7 @@ sub readRemoteHeaders {
 				Slim::Music::Info::setBitrate( $track, $bitrate, $vbr );
 
 				if ( $track->url ne $url ) {
+					$log->warn("don't know what we are doing here $url ", $track->url);
 					Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 				}
 
@@ -1086,6 +1087,7 @@ sub parseAudioStream {
 
 			# Copy bitrate to redirected URL
 			if ( $track->url ne $url ) {
+				$log->warn("don't know what we are doing here $url ", $track->url);
 				Slim::Music::Info::setBitrate( $url, $bitrate );
 				if ($cl) {
 					Slim::Music::Info::setDuration( $url, ( $cl * 8 ) / $bitrate );

@@ -126,7 +126,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl		=> $url,	# keep trace of the url the song was created with
+		originUrl       => $url,	# keep trace of the url the song was created with
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -257,8 +257,8 @@ sub getNextSong {
 							# Update of original track, by playlist or redirection
 							$self->_track($newTrack);				
 							$self->_currentTrackHandler($self->can('getSongHandler') 
-														? $self->getSongHandler($newTrack)
-														: Slim::Player::ProtocolHandlers->handlerForURL($newTrack));
+							                            ? $self->getSongHandler($newTrack)
+							                            : Slim::Player::ProtocolHandlers->handlerForURL($newTrack->url));
 														
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 
