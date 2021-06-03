@@ -118,6 +118,13 @@ sub handleFeed {
 	my $items = [];
 	my @feeds = @{$prefs->get('feeds')}; 
 
+	push @$items, {
+		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
+		url   => \&recentHandler,
+		type  => 'link',
+		image => __PACKAGE__->_pluginDataFor('icon'),
+	};
+
 	foreach ( @feeds ) {
 		my $url = $_->{value};
 		my $image = $cache->get('podcast-rss-' . $url);
@@ -142,13 +149,6 @@ sub handleFeed {
 			},
 		)->get($_->{value}) unless $image;
 	}
-	
-	push @$items, {
-		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
-		url   => \&recentHandler,
-		type  => 'link',
-		image => __PACKAGE__->_pluginDataFor('icon'),
-	};
 	
 	$cb->({
 		items => $items,
