@@ -33,7 +33,7 @@ tie our %Cache, 'Tie::Cache::LRU', CACHE_SIZE;
 tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 
 my @allAttributes = (qw(
-	_url
+	_url redir
 	content_type
 	bitrate
 	secs

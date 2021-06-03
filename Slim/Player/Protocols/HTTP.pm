@@ -805,6 +805,9 @@ sub parseHeaders {
 
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $self->parseDirectHeaders($client, $url, @_);
 
+	# we should not parse anything before we have reached target
+	return if ${*$self}{'redirect'} = $redir;
+	
 	if ($contentType) {
 		if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
 			# webservers often lie about playlists.  This will
@@ -817,7 +820,6 @@ sub parseHeaders {
 		Slim::Music::Info::setContentType( $url, $contentType );
 	}
 
-	${*$self}{'redirect'} = $redir;
 	${*$self}{'contentLength'} = $length if $length;
 	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
 

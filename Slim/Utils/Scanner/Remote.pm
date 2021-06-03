@@ -403,6 +403,7 @@ sub readRemoteHeaders {
 			$redirTrack->title( $track->title );
 			$redirTrack->content_type( $track->content_type );
 			$redirTrack->bitrate( $track->bitrate );
+			$redirTrack->redir( $track->redir || $track->url );
 
 			$redirTrack->update;
 

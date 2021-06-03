@@ -476,7 +476,8 @@ sub setRemoteMetadata {
 		$currentBitrates{$url} = $track->prettyBitRate;
 	}
 	
-	if ( $meta->{cover} && $url =~ m|^http| ) {
+	if ( $meta->{cover} && $url =~ m|https?://| ) {
+		# cache only if it's HTTP(s) - direct or hidden
 		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, '30 days');
 	}
 	

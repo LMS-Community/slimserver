@@ -1231,6 +1231,7 @@ sub _Stream {				# play -> Buffering, Streaming
 		_errorOpening($self, $song->currentTrack()->url, @error);
 
 		# Bug 3161: more-agressive retries
+		$song->retryData({ count => 0, redir => $song->track->redir }) if $song->track->redir;
 		return if _willRetry($self, $song);
 		
 		_NextIfMore($self, $event, {errorSong => $song});
@@ -1420,7 +1421,7 @@ sub _willRetry {
 	my $interval = $retryIntervals[$retry->{'count'} > $#retryIntervals ? -1 : $retry->{'count'}];
 	my $retryTime = time() + $interval;
 
-	if ($retry->{'start'} + $limit < $retryTime) {
+	if (($retry->{'redir'} && $retry->{'count'}) || (!$retry->{'redir'} && $retry->{'start'} + $limit < $retryTime)) {
 		# too late, give up
 		$song->retryData(undef);
 		_errorOpening($self, $song->currentTrack()->url, 'RETRY_LIMIT_EXCEEDED');

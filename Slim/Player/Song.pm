@@ -126,7 +126,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl       => $url,	# Keep track of the non-redirected url
+		originUrl		=> $url,	# keep trace of the url the song was created with
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -255,9 +255,11 @@ sub getNextSong {
 
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
-							$self->_track($newTrack);
-							$self->_currentTrackHandler(Slim::Player::ProtocolHandlers->handlerForURL($newTrack->url));
-
+							$self->_track($newTrack);				
+							$self->_currentTrackHandler($self->can('getSongHandler') 
+														? $self->getSongHandler($newTrack)
+														: Slim::Player::ProtocolHandlers->handlerForURL($newTrack));
+														
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 
 							# Replace the item on the playlist so it has the new track/URL
@@ -292,11 +294,10 @@ sub getNextSong {
 					# if we just found a playlist					
 					if (!$self->_currentTrack() && $self->isPlaylist()) {
 						main::INFOLOG && $log->info("Found a playlist");
-						$self->getNextSong($successCb, $failCb);	# recurse
-					} else {
-						$self->getNextSong($successCb, $failCb);	# recurse
-						# $successCb->();
 					}
+					
+					# always recurse either for playlist or to continue and do getNextTrack
+					$self->getNextSong($successCb, $failCb);
 				}
 				else {
 					# Notify of failure via cant_open, this is used to pick
@@ -349,8 +350,9 @@ sub open {
 	my $client  = $self->master();
 	my $track   = $self->currentTrack();
 	assert($track);
-	my $url     = $track->url;
-
+	# try to open initial url if we have failed after being redirected
+	my $url = $track->url;
+	$url = $self->retryData->{'redir'} if $self->retryData;
 	# Reset seekOffset - handlers will set this if necessary
 	$self->startOffset(0);
 
