@@ -146,6 +146,7 @@ sub scanURL {
 
 	# Make sure it has a title
 	if ( !$track->title ) {
+		$args->{'title'} ||= $args->{'song'}->track->title if $args->{'song'}; 		
 		$track = Slim::Music::Info::setTitle( $url, $args->{'title'} ? $args->{'title'} : $url );
 	}
 
@@ -299,7 +300,7 @@ sub handleRedirect {
 	# Keep track of artwork or station icon across redirects
 	my $cache = Slim::Utils::Cache->new();
 	if ( my $icon = $cache->get("remote_image_" . $track->url) ) {
-		$cache->set("remote_image_" . $request->uri, $icon, '30 days');
+		$cache->set("remote_image_" . $request->uri->canonical->as_string, $icon, '30 days');
 	}
 
 	return $request;
@@ -321,7 +322,7 @@ sub readRemoteHeaders {
 	# $track is the track object for the original URL we scanned
 	# $url is the final URL, may be different due to a redirect
 
-	my $url = $http->request->uri->as_string;
+	my $url = $http->request->uri->canonical->as_string;
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Headers for $url are " . Data::Dump::dump( $http->response->headers ) );

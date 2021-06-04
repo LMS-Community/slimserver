@@ -1069,7 +1069,7 @@ sub getMetadataFor {
 	# Remember playlist URL
 	my $playlistURL = $url;
 
-	# Check for radio URLs with cached covers
+	# Check for radio or OPML feeds URLs with cached covers
 	my $cache = Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
