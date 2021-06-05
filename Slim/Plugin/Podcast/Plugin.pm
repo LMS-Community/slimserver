@@ -109,7 +109,7 @@ sub unwrapUrl {
 sub wrapUrl {
 	my ($url, $from) = @_;
 	
-	return 'podcast://' . $url . ($from ? "&from=$from" : '');
+	return 'podcast://' . $url . ($from ? "{from=$from}" : '');
 }
 
 sub handleFeed {

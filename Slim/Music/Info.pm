@@ -394,7 +394,7 @@ my %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 sub setRemoteMetadata {
 	my ( $url, $meta ) = @_;
-	
+
 	# Bug 15833: only update metadata for remote tracks.
 	# Local tracks should have everything correct from the scan.
 	return if !isRemoteURL($url);
