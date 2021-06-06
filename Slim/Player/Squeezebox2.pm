@@ -458,19 +458,16 @@ sub songElapsedSeconds {
 }
 
 sub canDirectStream {
-	my $client = shift;
-	my $url = shift;
-	my $song = shift;
+	my ($client, $url, $song) = @_;
+	
+	my $handler = $song ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+	return unless $handler;
 
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-
-	if ($song && $handler && $handler->can("canDirectStreamSong")) {
+	if ($handler->can("canDirectStreamSong")) {
 		return $handler->canDirectStreamSong($client, $song);
-	} elsif ($handler && $handler->can("canDirectStream")) {
+	} elsif ($handler->can("canDirectStream")) {
 		return $handler->canDirectStream($client, $url);
 	}
-
-	return undef;
 }
 
 sub directHeaders {

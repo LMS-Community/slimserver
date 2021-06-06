@@ -102,6 +102,7 @@ sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
 
+	# $TODO$ this is the global canDirectStream question
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
 	if ($handler && $handler->can("canDirectStream") && !$handler->isa("Slim::Player::Protocols::MMS")) {

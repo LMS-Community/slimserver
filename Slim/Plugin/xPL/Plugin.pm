@@ -348,6 +348,7 @@ sub sendXplHBeatMsg {
 				$title = $track->title if $track->can('title');
 				my $remoteMeta = {};
 				my $url = $track->url;
+				# $TODO$ seems questionable what to use as I think we are looking at the playingsong
 				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 				if ( $handler && $handler->can('getMetadataFor') ) {
 					$remoteMeta = $handler->getMetadataFor($client, $url);

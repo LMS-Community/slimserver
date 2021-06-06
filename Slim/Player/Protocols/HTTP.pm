@@ -1105,11 +1105,9 @@ sub getMetadataFor {
 		}
 	}
 	else {
-
-		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ )  {
-			if ( $handler && $handler->can('getMetadataFor') ) {
-				return $handler->getMetadataFor( $client, $url );
-			}
+		my $handler = $song ? $song->currentHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
+			return $handler->getMetadataFor( $client, $url );
 		}
 
 		my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
