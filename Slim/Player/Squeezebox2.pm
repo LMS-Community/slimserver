@@ -460,7 +460,8 @@ sub songElapsedSeconds {
 sub canDirectStream {
 	my ($client, $url, $song) = @_;
 	
-	my $handler = $song ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+	# this is client's canDirectStream, not protocol handler's 
+	my $handler = $song->currentTrackHandler;
 	return unless $handler;
 
 	if ($handler->can("canDirectStreamSong")) {
@@ -477,7 +478,7 @@ sub directHeaders {
 	main::INFOLOG && $directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
 	my $controller = $client->controller()->songStreamController();
-	my $handler    = $controller ? $controller->protocolHandler() : undef;
+	my $handler    = $controller->protocolHandler() if $controller;
 
 	if ($handler && $handler->can('handlesStreamHeaders')) {
 
@@ -487,10 +488,9 @@ sub directHeaders {
 
 	}
 
-	unless ($controller && $controller->isDirect()) {return;}
+	return unless $controller && $controller->isDirect();
 
 	my $url = $controller->streamUrl();
-	my $songHandler = $controller->songProtocolHandler();
 
 	# We involve the protocol handler in the header parsing process.
 	# The current iteration of the firmware only knows about HTTP
@@ -527,12 +527,12 @@ sub directHeaders {
 
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
-			if ($songHandler && $songHandler->can("handleDirectError")) {
+			if ($handler && $handler->can("handleDirectError")) {
 
 				# bug 10407 - make sure ready to stream again
 				$client->readyToStream(1);
 
-				$songHandler->handleDirectError($client, $url, $response, $status_line);
+				$handler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
 				$client->failedDirectStream($status_line);
@@ -552,12 +552,7 @@ sub directHeaders {
 				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
-			if ($songHandler && $songHandler->can("parseDirectHeaders")) {
-				# Could use a hash ref for header parameters
-				main::INFOLOG && $directlog->info("Calling $songHandler ::parseDirectHeaders");
-				($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-					= $songHandler->parseDirectHeaders($client, $controller->song()->currentTrack(), @headers);
-			} elsif ($handler->can("parseDirectHeaders")) {
+			if ($handler && $handler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
 				main::INFOLOG && $directlog->info("Calling $handler ::parseDirectHeaders");
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);

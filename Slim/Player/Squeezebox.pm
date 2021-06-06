@@ -136,7 +136,7 @@ sub play {
 	my $params = shift;
 
 	my $controller = $params->{'controller'};
-	my $handler = $controller->songProtocolHandler();
+	my $handler = $controller->protocolHandler();
 
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
@@ -535,7 +535,6 @@ sub stream_s {
 	my $url         = $controller->streamUrl();
 	my $track       = $controller->track();
 	my $handler     = $controller->protocolHandler();
-	my $songHandler = $controller->songProtocolHandler();
 	my $isDirect    = $controller->isDirect();
 	my $master      = $client->master();
 
@@ -751,8 +750,8 @@ sub stream_s {
 		$outputThreshold = 1;
 
 		# Handler may override pcmsamplesize (Rhapsody)
-		if ( $songHandler && $songHandler->can('pcmsamplesize') ) {
-			$pcmsamplesize = $songHandler->pcmsamplesize( $client, $params );
+		if ( $handler && $handler->can('pcmsamplesize') ) {
+			$pcmsamplesize = $handler->pcmsamplesize( $client, $params );
 		}
 
 		# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
@@ -773,7 +772,7 @@ sub stream_s {
 
 		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
-		$request_string = $songHandler->requestString($client, $url, undef, $params->{'seekdata'});
+		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 	} elsif (my $proxy = $params->{'proxyStream'}) {
@@ -816,7 +815,7 @@ sub stream_s {
 		}
 		$server_port = $port;
 
-		$request_string = $songHandler->requestString($client, $url, undef, $params->{'seekdata'});
+		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 		if (!$server_port || !$server_ip) {
@@ -935,10 +934,10 @@ sub stream_s {
 		}
 
 		# Bug 10567, allow plugins to override transition setting
-		if ( $songHandler && $songHandler->can('transitionType') ) {
-			my $override = $songHandler->transitionType( $master, $controller->song(), $transitionType );
+		if ( $handler && $handler->can('transitionType') ) {
+			my $override = $handler->transitionType( $master, $controller->song(), $transitionType );
 			if ( defined $override ) {
-				main::INFOLOG && $log->is_info && $log->info("$songHandler changed transition type to $override");
+				main::INFOLOG && $log->is_info && $log->info("$handler changed transition type to $override");
 				$transitionType = $override;
 			}
 		}

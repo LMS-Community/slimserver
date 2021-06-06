@@ -21,10 +21,6 @@ sub new {
 	my $self = {
 		song => $song,
 		streamHandler => $streamHandler,
-		# $TODO$ here, I really don't know if the handler should be from streamUrl or from the song's handler
-		# I would say from streamUrl b/c this is what we use to actually stream so a PH that has not subclassed
-		# HTTP but sets a streamUrl probably wants the PH of the streamUrl to be used and not itself.
-		protocolHandler => my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->streamUrl()),
 	};
 
 	bless $self, $class;
@@ -50,9 +46,7 @@ sub DESTROY {
 
 sub song {return shift->{'song'};}
 sub streamHandler {return shift->{'streamHandler'};}
-sub protocolHandler {return shift->{'protocolHandler'};}
-
-sub songProtocolHandler {return shift->song()->handler();}
+sub protocolHandler {return shift->song()->currentTrackHandler();}
 
 sub close {
 	my $self = shift;
