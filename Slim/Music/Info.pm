@@ -478,7 +478,7 @@ sub setRemoteMetadata {
 	
 	if ( $meta->{cover} ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-		if ( $handler && $handler->isRemote ) {
+		if ( $url =~ m|^http| || ($handler && $handler->can('cacheImage') && $handler->cacheImage('remote_image_')) ) {
 			Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, '30 days');
 		}	
 	}

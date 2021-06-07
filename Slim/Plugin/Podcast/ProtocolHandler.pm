@@ -68,6 +68,7 @@ use Slim::Utils::Cache;
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 my $cache = Slim::Utils::Cache->new;
+my $cachePrefix;
 
 Slim::Player::ProtocolHandlers->registerHandler('podcast', __PACKAGE__);
 
@@ -80,8 +81,8 @@ sub scanUrl {
 	main::INFOLOG && $log->info("Scanning podcast $url for title ", $track->title);
 
 	# as for redirect, need to port to new url the cover/icon set in XMLBrowser
-	if ( my $icon = $cache->get("remote_image_" . $url) ) {
-		$cache->set("remote_image_" . $scanUrl, $icon, '30 days');
+	if ( my $icon = $cache->get($cachePrefix . $url) ) {
+		$cache->set($cachePrefix . $scanUrl, $icon, '30 days');
 	}
 	
 	$args->{song}->seekdata( { timeOffset => $from } ) if $from;
@@ -91,6 +92,12 @@ sub scanUrl {
 # we want to always be the protocol handler for the $song (not track)
 sub getSongHandler {
 	return __PACKAGE__;
+}
+
+# we want the image to be cached for us
+sub cacheImage {
+	$cachePrefix = $_1;
+	return $cachePrefix;
 }
 
 sub new {
