@@ -136,7 +136,7 @@ sub play {
 	my $params = shift;
 
 	my $controller = $params->{'controller'};
-	my $handler = $controller->protocolHandler();
+	my $handler = $controller->songHandler();
 
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
@@ -534,7 +534,8 @@ sub stream_s {
 	my $controller  = $params->{'controller'};
 	my $url         = $controller->streamUrl();
 	my $track       = $controller->track();
-	my $handler     = $controller->protocolHandler();
+	my $handler     = $controller->urlHandler();
+	my $songHandler = $controller->songHandler();
 	my $isDirect    = $controller->isDirect();
 	my $master      = $client->master();
 
@@ -562,9 +563,8 @@ sub stream_s {
 		# use getFormatForURL only if the format is not already given
 		# This method is bad because it only looks at the URL suffix and can cause
 		# (for example) Ogg HTTP streams to be played using the mp3 decoder!
-		if ( !$format && $handler->can("getFormatForURL") ) {
-			$format = $handler->getFormatForURL($url);
-		}
+		my $methodHandler = $songHandler->can('getFormatForURL') ? $songHandler : $handler;
+		$format = $methodHandler->getFormatForURL($url) if !$format && $methodHandler;
 	}
 
 	if ( !$format ) {
@@ -750,8 +750,8 @@ sub stream_s {
 		$outputThreshold = 1;
 
 		# Handler may override pcmsamplesize (Rhapsody)
-		if ( $handler && $handler->can('pcmsamplesize') ) {
-			$pcmsamplesize = $handler->pcmsamplesize( $client, $params );
+		if ( $songHandler && $songHandler->can('pcmsamplesize') ) {
+			$pcmsamplesize = $songHandler->pcmsamplesize( $client, $params );
 		}
 
 		# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
@@ -772,7 +772,8 @@ sub stream_s {
 
 		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
-		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});
+		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
+		$request_string = $methodHandler->getRequestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 	} elsif (my $proxy = $params->{'proxyStream'}) {
@@ -815,7 +816,9 @@ sub stream_s {
 		}
 		$server_port = $port;
 
-		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});
+		# prioritize song's protocol handler at even in direct mode it might change requestString
+		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
+		$request_string = $methodHandler->requestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 		if (!$server_port || !$server_ip) {
@@ -934,10 +937,10 @@ sub stream_s {
 		}
 
 		# Bug 10567, allow plugins to override transition setting
-		if ( $handler && $handler->can('transitionType') ) {
-			my $override = $handler->transitionType( $master, $controller->song(), $transitionType );
+		if ( $songHandler && $songHandler->can('transitionType') ) {
+			my $override = $songHandler->transitionType( $master, $controller->song(), $transitionType );
 			if ( defined $override ) {
-				main::INFOLOG && $log->is_info && $log->info("$handler changed transition type to $override");
+				main::INFOLOG && $log->is_info && $log->info("$songHandler changed transition type to $override");
 				$transitionType = $override;
 			}
 		}

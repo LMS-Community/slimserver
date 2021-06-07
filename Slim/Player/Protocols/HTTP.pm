@@ -1105,7 +1105,8 @@ sub getMetadataFor {
 		}
 	}
 	else {
-		my $handler = $song ? $song->currentHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+		# make sure that protocol handler is what the $song wanted, not just the $url-based one
+		my $handler = $song ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
 			return $handler->getMetadataFor( $client, $url );
 		}
