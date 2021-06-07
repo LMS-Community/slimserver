@@ -96,7 +96,7 @@ sub getSongHandler {
 
 # we want the image to be cached for us (we will port it only when needed)
 sub cacheImage {
-	my ($class, $url, $prefix) = @_;
+	my ($class, $url, $image, $prefix) = @_;
 	return $cachePrefix = $prefix;
 }
 
