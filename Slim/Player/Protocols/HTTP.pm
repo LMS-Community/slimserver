@@ -266,7 +266,7 @@ sub getSongHandler {
 	my ($class, $self, $track) = @_;
 	
 	# re-evaluate as we might have been upgraded to HTTPS
-	return Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+	return $class ne __PACKAGE__ ? $class : Slim::Player::ProtocolHandlers->handlerForURL($track->url);
 }
 
 sub parseMetadata {
