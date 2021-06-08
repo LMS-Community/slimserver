@@ -64,7 +64,7 @@ sub close {
 }
 
 sub songHandler {
-	return shift->song->currentTrackHandler();
+	return shift->song->handler();
 }
 
 sub isDirect {
