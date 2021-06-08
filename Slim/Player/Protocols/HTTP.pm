@@ -1029,7 +1029,9 @@ sub getMetadataFor {
 	# Check for parsed WMA metadata, this is here because WMA may
 	# use HTTP protocol handler
 	my $song = $client->playingSong();
-	if ( $song && $song->track->url eq $url ) {
+	my $forPlaying = $song->track->url eq $url if $song;
+
+	if ( $forPlaying ) {
 		if ( my $meta = $song->pluginData('wmaMeta') ) {
 			my $data = {};
 			if ( $meta->{artist} ) {
@@ -1067,7 +1069,7 @@ sub getMetadataFor {
 	# Remember playlist URL
 	my $playlistURL = $url;
 
-	# Check for radio URLs with cached covers
+	# Check for radio or OPML feeds URLs with cached covers
 	my $cache = Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
@@ -1106,7 +1108,8 @@ sub getMetadataFor {
 	}
 	else {
 		# make sure that protocol handler is what the $song wanted, not just the $url-based one
-		my $handler = $song ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+		my $handler = $forPlaying ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+
 		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
 			return $handler->getMetadataFor( $client, $url );
 		}

@@ -554,7 +554,7 @@ sub directHeaders {
 			}
 
 			# prioritize song's protocol handler over url handler
-			my $methodHandler = $songHandler && $songHandler->can('parseDirectHeaders') ? $songHandler : $handler;
+			my $methodHandler = $songHandler->can('parseDirectHeaders') ? $songHandler : $handler;
 			
 			main::INFOLOG && $directlog->info("Calling $methodHandler :: parseDirectHeader");
 			$directlog->error("Calling $methodHandler::parseDirectHeader");
