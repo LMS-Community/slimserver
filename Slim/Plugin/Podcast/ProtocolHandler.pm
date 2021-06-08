@@ -38,11 +38,6 @@ sub scanUrl {
 	$class->SUPER::scanUrl($scanUrl, $args);
 }
 
-# we want to always be the protocol handler for the $song (not track)
-sub getSongHandler {
-	return __PACKAGE__;
-}
-
 # we want the image to be cached for us (we will port it only when needed)
 sub cacheImage {
 	my ($class, $url, $image, $prefix) = @_;

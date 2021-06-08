@@ -262,6 +262,13 @@ sub getFormatForURL {
 	return Slim::Music::Info::typeFromSuffix($url);
 }
 
+sub getSongHandler {
+	my ($class, $self, $track) = @_;
+	
+	# re-evaluate as we might have been upgraded to HTTPS
+	return Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+}
+
 sub parseMetadata {
 	my ( $class, $client, undef, $metadata ) = @_;
 
