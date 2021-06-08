@@ -78,8 +78,13 @@ sub onStop {
 
 sub onStream {
 	my ($self, $client, $song) = @_;
+
+	# ignore updated title that comes from parsing stream	
+	my $title = Slim::Music::Info::getCurrentTitle($client, $song->track->redir);	
+	Slim::Music::Info::setCurrentTitle($song->track->url, $title, $client);
+	$song->track->title($title);	
 	
-	Slim::Plugin::Podcast::Plugin->updateRecentlyPlayed( $client, $song );
+	Slim::Plugin::Podcast::Plugin->updateRecentlyPlayed($client, $song);
 }
 
 

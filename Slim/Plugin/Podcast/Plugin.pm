@@ -94,7 +94,7 @@ sub updateRecentlyPlayed {
 	my ($class, $client, $song) = @_;
 	my ($url) = unwrapUrl($song->originUrl);
 
-	$recentlyPlayed{$url} ||= { 
+	$recentlyPlayed{$url} = { 
 			url      => $url,
 			title    => $song->track->title,
 			cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
