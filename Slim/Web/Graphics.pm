@@ -150,7 +150,7 @@ sub artworkRequest {
 		# Special case:
 		# /music/current/cover.jpg (mentioned in CLI docs)
 		if ( $id eq 'current' && $client ) {
-			my $trackObj = Slim::Player::Playlist::track($client);
+			my $trackObj = Slim::Player::Playlist::song($client);
 			
 			if ( $trackObj && blessed $trackObj ) {
 				$id = $trackObj->coverid;

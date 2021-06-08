@@ -717,7 +717,7 @@ our %functions = (
 			# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
 			} elsif (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
-				$obj = Slim::Player::Playlist::track($client, Slim::Buttons::Playlist::browseplaylistindex($client));
+				$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
 			}
 
 			# xmlbrowser mode - save type and parser params to favorites too
@@ -1331,7 +1331,7 @@ our %functions = (
 			
 			$client->showBriefly( {
 				'line' => [ $client->string('ZAPPING_FROM_PLAYLIST'), 
-							Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::track($client, $index)) ]
+							Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, $index)) ]
 			   }, {'firstline' => 1, block => 1 }
 			); 
 			

@@ -108,10 +108,10 @@ sub findTracksByIndex {
 	}
 
 	# Get the track objects
-	my $current_url   = Slim::Player::Playlist::track($client, $current_index);
+	my $current_url   = Slim::Player::Playlist::song($client, $current_index);
 	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
 	
-	my $compare_url   = Slim::Player::Playlist::track($client, $compare_index);
+	my $compare_url   = Slim::Player::Playlist::song($client, $compare_index);
 	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
 
 	return ($current_track, $compare_track);

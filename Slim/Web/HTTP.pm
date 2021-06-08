@@ -835,7 +835,7 @@ sub processURL {
 				# Bug 4795
 				# If the player has an existing playlist, start playing it without
 				# requiring the user to press Play in the web UI
-				if ( Slim::Player::Playlist::track($client) &&
+				if ( Slim::Player::Playlist::song($client) &&
 					!Slim::Music::Info::isRemoteURL( Slim::Player::Playlist::url($client) )
 				) {
 					# play if current playlist item is not a remote url

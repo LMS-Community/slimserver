@@ -321,7 +321,7 @@ sub sendXplHBeatMsg {
 		$playmode = "playing";
 
 		my $track = Slim::Schema->objectForUrl({
-			'url'      => Slim::Player::Playlist::track($client),
+			'url'      => Slim::Player::Playlist::song($client),
 			'create'   => 1,
 			'readTags' => 1,
 		});

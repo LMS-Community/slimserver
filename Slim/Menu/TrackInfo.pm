@@ -1345,9 +1345,9 @@ sub cliQuery {
 
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
-		if (my $track = Slim::Player::Playlist::track( $client, $playlist_index )) {
-			$trackId = $track->id;
-			$url     = $track->url;
+		if (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) {
+			$trackId = $song->id;
+			$url     = $song->url;
 			$request->addParam('track_id', $trackId);
 			$request->addParam('url', $url);
 		}
@@ -1376,7 +1376,7 @@ sub cliQuery {
 
 	# sometimes we get a $trackId which wouldn't return a valid track object
 	# try the song based on the playlist_index instead
-	if ( !$feed && $playlist_index && (my $song = Slim::Player::Playlist::track( $client, $playlist_index )) ) {
+	if ( !$feed && $playlist_index && (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) ) {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $song->url, $song, $tags, \%filter );
 	}
 

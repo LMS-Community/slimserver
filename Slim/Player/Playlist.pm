@@ -59,7 +59,6 @@ sub song {
 }
 
 sub track {
-
 	my ($client, $index, $refresh, $useShuffled) = @_;
 	$refresh ||= 0;
 	$useShuffled = 1 unless defined $useShuffled;

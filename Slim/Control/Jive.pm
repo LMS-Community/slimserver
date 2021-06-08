@@ -2504,10 +2504,10 @@ sub jivePresetsMenu {
 	# if playlist_index is sent, that's for the current NP track, derive everything you need from it
 	my $playlist_index = $request->getParam('playlist_index');
 	if ( defined($playlist_index) ) {
-		my $track = Slim::Player::Playlist::track( $client, $playlist_index );
-		$url     = $track->url;
+		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
+		$url     = $song->url;
 		$type    = 'audio';
-		$title   = $track->title;
+		$title   = $song->title;
 	}
 
 	# preset needs to be saved as either a playlist or default to audio
@@ -2624,10 +2624,10 @@ sub jiveFavoritesCommand {
 		# if playlist_index is sent, that's for the current NP track, derive everything you need from it
 		my $playlist_index = $request->getParam('playlist_index');
 		if ( defined($playlist_index) ) {
-			my $track = Slim::Player::Playlist::track( $client, $playlist_index );
-			$url     = $track->url;
+			my $song = Slim::Player::Playlist::song( $client, $playlist_index );
+			$url     = $song->url;
 			$type    = 'audio';
-			$title   = $track->title;
+			$title   = $song->title;
 		}
 
 		# favorite needs to be saved as either a playlist or default to audio

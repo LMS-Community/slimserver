@@ -81,7 +81,7 @@ sub new {
 
 	my $client = $owner->master();
 
-	my $objOrUrl = Slim::Player::Playlist::track($client, $index) || return undef;
+	my $objOrUrl = Slim::Player::Playlist::song($client, $index) || return undef;
 
 	# Bug: 3390 - reload the track if it's changed.
 	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;

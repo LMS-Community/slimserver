@@ -169,7 +169,7 @@ sub init {
 			} else {
 
 				Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', {
-					'track' => Slim::Player::Playlist::track($client, browseplaylistindex($client)),
+					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),
 					'current' => browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client)
 				});
 			}
@@ -200,7 +200,7 @@ sub init {
 
 				# rec button deletes an entry if you are browsing the playlist...
 				my $songtitle = Slim::Music::Info::standardTitle($client, 
-					Slim::Player::Playlist::track($client, browseplaylistindex($client))
+					Slim::Player::Playlist::song($client, browseplaylistindex($client))
 				);
 
 				$client->execute(["playlist", "delete", browseplaylistindex($client)]);	
@@ -424,26 +424,26 @@ sub lines {
 				Slim::Player::Playlist::count($client);
 		}
 
-		my $track = Slim::Player::Playlist::track($client, browseplaylistindex($client) );
+		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client) );
 		
 		my $title;
 		my $meta;
 		
 		# Get remote metadata for other tracks in the playlist if available
-		if ( $track->isRemoteURL ) {
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+		if ( $song->isRemoteURL ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
 			if ( $handler && $handler->can('getMetadataFor') ) {
-				$meta = $handler->getMetadataFor( $client, $track->url );
+				$meta = $handler->getMetadataFor( $client, $song->url );
 				
 				if ( $meta->{title} ) {
-					$title = Slim::Music::Info::getCurrentTitle( $client, $track->url, 0, $meta );
+					$title = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $meta );
 				}
 			}
 		}
 		
 		if ( !$title ) {
-			$title = Slim::Music::Info::standardTitle($client, $track);
+			$title = Slim::Music::Info::standardTitle($client, $song);
 		}
 		
 		$parts = {
@@ -453,21 +453,21 @@ sub lines {
 
 		if ($client->display->showExtendedText()) {
 			
-			if ($track && !($track->isRemoteURL)) {
+			if ($song && !($song->isRemoteURL)) {
 
 				$parts->{'screen2'} = {
 					'line' => [ 
-					   Slim::Music::Info::displayText($client, $track, 'ALBUM'),
-					   Slim::Music::Info::displayText($client, $track, 'ARTIST'),
+					   Slim::Music::Info::displayText($client, $song, 'ALBUM'),
+					   Slim::Music::Info::displayText($client, $song, 'ARTIST'),
 					]
 				};
 
-			} elsif ($track && $meta) {
+			} elsif ($song && $meta) {
 
 				$parts->{'screen2'} = {
 					'line' => [ 
-					   Slim::Music::Info::displayText($client, $track, 'ALBUM', $meta),
-					   Slim::Music::Info::displayText($client, $track, 'ARTIST', $meta),
+					   Slim::Music::Info::displayText($client, $song, 'ALBUM', $meta),
+					   Slim::Music::Info::displayText($client, $song, 'ARTIST', $meta),
 					]
 				};
 

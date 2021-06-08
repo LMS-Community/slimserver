@@ -304,7 +304,7 @@ sub power {
 				$client->execute(["playlist","jump", 0, 1, 1]);
 			}
 			
-			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client)
+			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client)
 				&& $prefs->client($client)->get('playingAtPowerOff')) {
 				# play even if current playlist item is a remote url (bug 7426)
 				# but only if we were playing at power-off (bug 7061)
@@ -567,19 +567,19 @@ sub currentSongLines {
 			}
 		}
 		
-		my $track = Slim::Player::Playlist::track($client);
+		my $song = Slim::Player::Playlist::song($client);
 		
 		my $currentTitle;
 		my $imgKey;
 		my $artwork;
 		my $remoteMeta;
 
-		if ( $track->isRemoteURL ) {
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+		if ( $song->isRemoteURL ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
 			if ( $handler && $handler->can('getMetadataFor') ) {
 
-				$remoteMeta = $handler->getMetadataFor( $client, $track->url );
+				$remoteMeta = $handler->getMetadataFor( $client, $song->url );
 
 				if ( $remoteMeta->{cover} ) {
 					$imgKey = 'icon';
@@ -591,12 +591,12 @@ sub currentSongLines {
 				}
 				
 				# Format remote metadata according to title format
-				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url, 0, $remoteMeta );
+				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $remoteMeta );
 			}
 			
 			# If that didn't return anything, use default title
 			if ( !$currentTitle ) {
-				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url );
+				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url );
 			}
 
 			if ( !$artwork ) {
@@ -605,9 +605,9 @@ sub currentSongLines {
 			}
 		}
 		else {
-			$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url );
+			$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url );
 			
-			if ( my $album = $track->album ) {
+			if ( my $album = $song->album ) {
 				$imgKey = 'icon-id';
 				$artwork = $album->artwork || 0;
 			}
@@ -622,9 +622,9 @@ sub currentSongLines {
 			
 			my ($s2line1, $s2line2);
 
-			if ($track && $track->isRemoteURL) {
+			if ($song && $song->isRemoteURL) {
 
-				my $title = Slim::Music::Info::displayText($client, $track, 'TITLE');
+				my $title = Slim::Music::Info::displayText($client, $song, 'TITLE');
 
 				if ( ($currentTitle || '') ne ($title || '') && !Slim::Music::Info::isURL($title) ) {
 
@@ -632,14 +632,14 @@ sub currentSongLines {
 
 				} elsif ($remoteMeta) {
 
-					$s2line1 = Slim::Music::Info::displayText($client, $track, 'ALBUM', $remoteMeta);
-					$s2line2 = Slim::Music::Info::displayText($client, $track, 'ARTIST', $remoteMeta);
+					$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM', $remoteMeta);
+					$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST', $remoteMeta);
 				}
 
 			} else {
 
-				$s2line1 = Slim::Music::Info::displayText($client, $track, 'ALBUM');
-				$s2line2 = Slim::Music::Info::displayText($client, $track, 'ARTIST');
+				$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM');
+				$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST');
 			}
 
 			$screen2 = {
@@ -649,10 +649,10 @@ sub currentSongLines {
 		
 		$jive = {
 			'type' => 'icon',
-			'text' => [ $status, $track ? $track->title : undef ],
+			'text' => [ $status, $song ? $song->title : undef ],
 			'style' => $jiveIconStyle,
 			'play-mode' => $playmode,
-			'is-remote' => $track->isRemoteURL,
+			'is-remote' => $song->isRemoteURL,
 		};
 		
 		if ( $imgKey ) {
