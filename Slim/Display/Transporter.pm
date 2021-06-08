@@ -308,7 +308,7 @@ sub showVisualizer {
 	my $display = shift;
 
 	# turn off visualizer if we're playing a digital input
-	if ( Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($display->client)) ) {
+	if ( Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::track($display->client)) ) {
 		return 0;
 	}
 	

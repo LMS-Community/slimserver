@@ -52,7 +52,12 @@ sub shuffleType {
 	return 'none';
 }
 
-sub song {
+sub song { 
+	$log->is_warn && logBacktrace('deprecated!') ;
+	return track(@_);
+}
+
+sub track {
 
 	my ($client, $index, $refresh, $useShuffled) = @_;
 	$refresh ||= 0;
