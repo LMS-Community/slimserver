@@ -39,7 +39,7 @@ sub scanUrl {
 }
 
 # we want the image to be cached for us (we will port it only when needed)
-sub cacheImage {
+sub shouldCacheImage {
 	my ($class, $url, $image, $prefix) = @_;
 	return $cachePrefix = $prefix;
 }

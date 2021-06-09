@@ -143,9 +143,16 @@ sub handleFeed {
 					my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
 					$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
 				};
+				
+				# when we fail, cache the default icon for a day
+				if ($@) {
+					$log->warn("can't parse $url RSS for feed icon: ", $@);
+					$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
+				}
 			},
 			sub {
-				$log->warn("can't get RSS feed icon ", shift->error);
+				$log->warn("can't get $url RSS feed icon: ", shift->error);
+				$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
 			},
 		)->get($_->{value}) unless $image;
 	}
