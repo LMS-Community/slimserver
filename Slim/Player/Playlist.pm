@@ -52,8 +52,9 @@ sub shuffleType {
 	return 'none';
 }
 
-sub song { 
-	$log->is_warn && logBacktrace('deprecated!') ;
+sub song {
+	$log->warn("The use of Slim::Player::Playlist::song() is deprecated, use Slim::Player::Playlist::track() instead");
+	main::INFOLOG && $log->is_info && logBacktrace('deprecated!') ;
 	return track(@_);
 }
 
