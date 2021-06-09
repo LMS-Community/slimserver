@@ -339,10 +339,10 @@ sub handleWebList {
 
 	if ($client) {
 
-		my $song = Slim::Player::Playlist::song($client);
+		my $track = Slim::Player::Playlist::track($client);
 		
-		if ($song) {
-			$url = $song->url;
+		if ($track) {
+			$url = $track->url;
 
 		
 			my $name;

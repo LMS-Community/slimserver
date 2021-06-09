@@ -2508,7 +2508,7 @@ sub playlistXQuery {
 
 		my $songData = _songData(
 			$request,
-			Slim::Player::Playlist::song($client, $index),
+			Slim::Player::Playlist::track($client, $index),
 			'dalgN',			# tags needed for our entities
 		);
 
@@ -3883,7 +3883,7 @@ sub statusQuery {
 		my $track;
 
 		if (!$totalOnly) {
-			$track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
+			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
 			if ($track->remote) {
 				$tags .= "B" unless $totalOnly; # include button remapping
@@ -4007,7 +4007,7 @@ sub statusQuery {
 							for ($idx = $start; $idx <= $end; $idx++){
 
 								_addSong($request, $loop, $count,
-									Slim::Player::Playlist::song($client, $idx, $refreshTrack), $tags,
+									Slim::Player::Playlist::track($client, $idx, $refreshTrack), $tags,
 									'playlist index', $idx
 								);
 

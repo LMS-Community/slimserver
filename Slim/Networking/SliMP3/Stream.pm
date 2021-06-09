@@ -522,7 +522,7 @@ sub gotAck {
 	
 			main::INFOLOG && $log->info($client->id, " Buffer full, starting playback");
 	
-			$client->currentplayingsong(Slim::Player::Playlist::song($client));
+			$client->currentplayingsong(Slim::Player::Playlist::track($client));
 			$client->remoteStreamStartTime(time());
 			
 			$client->bufferReady(1);

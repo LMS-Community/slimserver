@@ -1174,7 +1174,7 @@ sub playlistSaveCommand {
 	if ($prefs->get('saveShuffled')) {
 
 		for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
-			push @$annotatedList, Slim::Player::Playlist::song($client, $shuffleitem, 0, 0);
+			push @$annotatedList, Slim::Player::Playlist::track($client, $shuffleitem, 0, 0);
 		}
 
 	} else {
@@ -1842,7 +1842,7 @@ sub playlistZapCommand {
 
 	my $zapped   = $client->string('ZAPPED_SONGS');
 	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
-	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
+	my $zaptrack  = Slim::Player::Playlist::track($client, $zapindex);
 
 	#  Remove from current playlist
 	if (Slim::Player::Playlist::count($client) > 0) {
@@ -1863,7 +1863,7 @@ sub playlistZapCommand {
 		},
 	});
 
-	$playlistObj->appendTracks([ $zapsong ]);
+	$playlistObj->appendTracks([ $zaptrack ]);
 	$playlistObj->update;
 
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
