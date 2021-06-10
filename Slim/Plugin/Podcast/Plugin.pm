@@ -96,7 +96,7 @@ sub updateRecentlyPlayed {
 
 	$recentlyPlayed{$url} = { 
 			url      => $url,
-			title    => $song->track->title,
+			title    => $song->currentTrack->title,
 			cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
 			duration => $song->duration,
 	};	

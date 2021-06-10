@@ -1038,7 +1038,7 @@ sub getMetadataFor {
 	# Check for parsed WMA metadata, this is here because WMA may
 	# use HTTP protocol handler
 	my $song = $client->playingSong();
-	if ( $song && $song->track->url eq $url ) {
+	if ( $song && $song->currentTrack->url eq $url ) {
 		if ( my $meta = $song->pluginData('wmaMeta') ) {
 			my $data = {};
 			if ( $meta->{artist} ) {
