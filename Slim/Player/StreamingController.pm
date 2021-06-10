@@ -1231,7 +1231,7 @@ sub _Stream {				# play -> Buffering, Streaming
 		_errorOpening($self, $song->currentTrack()->url, @error);
 
 		# Bug 3161: more-agressive retries
-		$song->retryData({ count => 0, redir => $song->track->redir }) if $song->track->redir;
+		$song->retryData({ count => 0, redir => $song->currentTrack->redir }) if $song->track->redir;
 		return if _willRetry($self, $song);
 		
 		_NextIfMore($self, $event, {errorSong => $song});
