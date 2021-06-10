@@ -79,12 +79,6 @@ sub init {
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^\w{4}_\d\.\d_.*\.bin(\.tmp)?$/i);
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^.*version$/i);
-
-	# No longer try downloading all player firmwares at startup - just allow the background
-	# download to get what is needed
-
-	# Delete old ip3k firmware downloads - we should not normally need them again
-	Slim::Utils::Misc::deleteFiles($updatesDir, qr/^(squeezebox|squeezebox2|transporter|boom|receiver)_\d+\.bin$/);
 }
 
 =head2 init_firmware_download()

@@ -290,11 +290,11 @@ sub needsUpgrade {
 		}
 	}
 
+	my $okButCheckFirmware;
 	if ($to == $from) {
-
 		main::INFOLOG && $log->info("$model firmware is up-to-date, v. $from");
 		$client->_needsUpgrade(0);
-		return 0;
+		$okButCheckFirmware = 1;
 	}
 
 	# skip upgrade if file doesn't exist
@@ -313,10 +313,12 @@ sub needsUpgrade {
 			'line' => [ $client->string( 'FIRMWARE_MISSING' ), $client->string( 'FIRMWARE_MISSING_DESC' ) ]
 		}, {
 			'block' => 1, 'scroll' => 1, 'firstline' => 1,
-		} );
+		} ) unless $okButCheckFirmware;
 
 		return 0;
 	}
+
+	return 0 if $okButCheckFirmware;
 
 	main::INFOLOG && $log->info("$model v. $from requires upgrade to $to");
 
