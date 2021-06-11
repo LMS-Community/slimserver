@@ -436,7 +436,7 @@ sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 
 	# can't go direct if we are synced or proxy is set by user
-	my $direct = $class->canDirectStream( $client, $song->currentTrack->url, $class->getFormatForURL );
+	my $direct = $class->canDirectStream( $client, $song->streamUrl, $class->getFormatForURL );
 	return 0 unless $direct;
 
 	my $processor = $song->currentTrack->processors($song->wantFormat);

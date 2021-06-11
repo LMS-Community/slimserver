@@ -578,14 +578,6 @@ sub _playlistCallback {
 	}
 }
 
-sub canDirectStreamSong {
-	my ( $class, $client, $song ) = @_;
-	
-	# We need to check with the base class (HTTP) to see if we
-	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream($client, $song->streamUrl(), $class->getFormatForURL());
-}
-
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
