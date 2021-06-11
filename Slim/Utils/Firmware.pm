@@ -446,7 +446,7 @@ sub downloadAsync {
 	$filesDownloading{$file} ||= [];
 
 	# URL to download
-	my $url = BASE() . $::VERSION . '/' . basename($file);
+	my $url = BASE(basename($file)) . $::VERSION . '/' . basename($file);
 
 	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
