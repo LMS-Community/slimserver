@@ -103,9 +103,11 @@ sub canDirectStream {
 
 	# this is client's canDirectStream, not protocol handler's 
 	my $handler = $song->currentTrackHandler;
-	return unless $handler;
+	return unless $handler && !$handler->isa("Slim::Player::Protocols::MMS");
 
-	if ($handler->can("canDirectStream") && !$handler->isa("Slim::Player::Protocols::MMS")) {
+	if ($handler->can("canDirectStreamSong")) {
+		return $handler->canDirectStreamSong($client, $song);
+	} elsif ($handler->can("canDirectStream")) {
 		return $handler->canDirectStream($client, $url);
 	}
 }

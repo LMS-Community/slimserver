@@ -17,7 +17,7 @@ my $log = logger('player.source');
 my $_liveCount = 0;
 
 {
-	__PACKAGE__->mk_accessor('ro', qw(song streamHandler urlHandler));
+	__PACKAGE__->mk_accessor('ro', qw(song streamHandler streamUrlHandler));
 	__PACKAGE__->mk_accessor('rw', qw(playerProxyStreaming));
 }	
 
@@ -29,7 +29,7 @@ sub new {
 	$self->init_accessor(
 		song => $song,
 		streamHandler => $streamHandler,
-		urlHandler => Slim::Player::ProtocolHandlers->handlerForURL($song->streamUrl()),
+		streamUrlHandler => Slim::Player::ProtocolHandlers->handlerForURL($song->streamUrl()),
 	);	
 
 	$_liveCount++;

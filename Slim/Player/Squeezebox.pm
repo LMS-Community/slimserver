@@ -534,7 +534,7 @@ sub stream_s {
 	my $controller  = $params->{'controller'};
 	my $url         = $controller->streamUrl();
 	my $track       = $controller->track();
-	my $handler     = $controller->urlHandler();
+	my $handler     = $controller->streamUrlHandler();
 	my $songHandler = $controller->songHandler();
 	my $isDirect    = $controller->isDirect();
 	my $master      = $client->master();

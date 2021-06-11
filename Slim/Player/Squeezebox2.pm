@@ -478,7 +478,7 @@ sub directHeaders {
 	main::INFOLOG && $directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
 	my $controller = $client->controller()->songStreamController();
-	my $handler    = $controller->urlHandler() if $controller;
+	my $handler    = $controller->streamUrlHandler() if $controller;
 
 	if ($handler && $handler->can('handlesStreamHeaders')) {
 
@@ -553,12 +553,12 @@ sub directHeaders {
 				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
-			# prioritize song's protocol handler over url handler
+			# prioritize song's protocol handler over streamUrl handler
 			my $methodHandler = $songHandler->can('parseDirectHeaders') ? $songHandler : $handler;
 			
 			main::INFOLOG && $directlog->info("Calling $methodHandler :: parseDirectHeader");
 			$directlog->error("Calling $methodHandler::parseDirectHeader");
-			# Could use a hash ref for header parameters			
+			# songHandler relates to the current (sub)track while streamUrl handler just use streamUrl
 			($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = 
 				$methodHandler->parseDirectHeaders($client, $methodHandler == $songHandler ? $controller->song()->currentTrack() : $url, @headers);
 			
@@ -804,8 +804,7 @@ sub directMetadata {
 	my $controller = $client->controller()->songStreamController() || return;
 
 	# Will also get called for proxy streaming
-	# unless ($controller && $controller->isDirect()) {return;}
-
+	
 	my $handler = $controller->song()->currentTrackHandler();
 	if ( $handler->can('parseMetadata') ) {
 		$handler->parseMetadata( $client, $controller->song(), $metadata );
