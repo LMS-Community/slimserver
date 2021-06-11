@@ -891,17 +891,16 @@ sub cliAdd {
 		}
 
 		# show feedback to jive
-		$client->showBriefly({
-			jive => {
-			type => 'mixed',
-			style => 'favorite',
-			#'icon-id' => $icon ? $icon : '/html/images/cover.png',
-			'icon' => $icon || $favs->icon($url),
-			text => [ $client->string('FAVORITES_ADDING'),
-					$title,
-				   ],
-			},
-		});
+		if ($request->source && $request->source =~ /\/slim\/request/) {
+			$client->showBriefly({
+				jive => {
+					type => 'mixed',
+					style => 'favorite',
+					'icon' => $icon || $favs->icon($url),
+					text => [ $client->string('FAVORITES_ADDING'), $title ],
+				},
+			});
+		}
 
 		$request->setStatusDone();
 
