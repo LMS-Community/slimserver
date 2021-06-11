@@ -194,7 +194,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->currentTrack()->url(), $class->getFormatForURL() );
 }
 
 # Track Info menu

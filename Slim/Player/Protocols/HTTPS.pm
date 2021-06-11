@@ -83,7 +83,7 @@ sub canDirectStreamSong {
 	my $class = shift;
 	my ($client, $song) = @_;
 
-	if ( $client->canHTTPS || $song->currentTrack->url =~ /^http:/) {
+	if ( $client->canHTTPS || $song->streamUrl =~ /^http:/) {
 		return $class->SUPER::canDirectStreamSong(@_);
 	}
 
