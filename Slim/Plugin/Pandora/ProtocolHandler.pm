@@ -379,7 +379,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream($client, $song->currentTrack()->url(), $class->getFormatForURL());
+	return $class->SUPER::canDirectStream($client, $song->streamUrl(), $class->getFormatForURL());
 }
 
 # Override replaygain to always use the supplied gain value
