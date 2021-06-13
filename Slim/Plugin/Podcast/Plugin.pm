@@ -135,26 +135,26 @@ sub handleFeed {
 			parser => 'Slim::Plugin::Podcast::Parser',
 			image => $image || __PACKAGE__->_pluginDataFor('icon'),
 		};
+		
+		unless ($image) {
+			# always cache image avoid sending a flood of requests
+			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
 
-		Slim::Networking::SimpleAsyncHTTP->new(
-			sub { 
-				eval {
-					my $xml = XMLin(shift->content);
-					my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
-					$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
-				};
+			Slim::Networking::SimpleAsyncHTTP->new(
+				sub { 
+					eval {
+						my $xml = XMLin(shift->content);
+						my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
+						$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
+					};
 				
-				# when we fail, cache the default icon for a day
-				if ($@) {
-					$log->warn("can't parse $url RSS for feed icon: ", $@);
-					$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
-				}
-			},
-			sub {
-				$log->warn("can't get $url RSS feed icon: ", shift->error);
-				$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
-			},
-		)->get($_->{value}) unless $image;
+					$log->warn("can't parse $url RSS for feed icon: ", $@) if $@;
+				},
+				sub {
+					$log->warn("can't get $url RSS feed icon: ", shift->error);
+				},
+			)->get($_->{value});
+		}	
 	}
 	
 	$cb->({
