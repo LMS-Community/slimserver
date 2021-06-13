@@ -1420,7 +1420,7 @@ sub _willRetry {
 	my $interval = $retryIntervals[$retry->{'count'} > $#retryIntervals ? -1 : $retry->{'count'}];
 	my $retryTime = time() + $interval;
 
-	if (($retry->{'redir'} && $retry->{'count'}) || (!$retry->{'redir'} && $retry->{'start'} + $limit < $retryTime)) {
+	if ($retry->{'start'} + $limit < $retryTime) {
 		# too late, give up
 		$song->retryData(undef);
 		_errorOpening($self, $song->currentTrack()->url, 'RETRY_LIMIT_EXCEEDED');
