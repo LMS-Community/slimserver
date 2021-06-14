@@ -146,6 +146,7 @@ sub scanURL {
 
 	# Make sure it has a title
 	if ( !$track->title ) {
+		$args->{'title'} ||= $args->{'song'}->track->title if $args->{'song'}; 		
 		$track = Slim::Music::Info::setTitle( $url, $args->{'title'} ? $args->{'title'} : $url );
 	}
 
@@ -299,7 +300,7 @@ sub handleRedirect {
 	# Keep track of artwork or station icon across redirects
 	my $cache = Slim::Utils::Cache->new();
 	if ( my $icon = $cache->get("remote_image_" . $track->url) ) {
-		$cache->set("remote_image_" . $request->uri, $icon, '30 days');
+		$cache->set("remote_image_" . $request->uri->canonical->as_string, $icon, '30 days');
 	}
 
 	return $request;
@@ -321,7 +322,7 @@ sub readRemoteHeaders {
 	# $track is the track object for the original URL we scanned
 	# $url is the final URL, may be different due to a redirect
 
-	my $url = $http->request->uri->as_string;
+	my $url = $http->request->uri->canonical->as_string;
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Headers for $url are " . Data::Dump::dump( $http->response->headers ) );
@@ -403,6 +404,7 @@ sub readRemoteHeaders {
 			$redirTrack->title( $track->title );
 			$redirTrack->content_type( $track->content_type );
 			$redirTrack->bitrate( $track->bitrate );
+			$redirTrack->redir( $track->redir || $track->url );
 
 			$redirTrack->update;
 
@@ -537,6 +539,7 @@ sub readRemoteHeaders {
 				Slim::Music::Info::setBitrate( $track, $bitrate, $vbr );
 
 				if ( $track->url ne $url ) {
+					$log->warn("don't know what we are doing here $url ", $track->url);
 					Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 				}
 
@@ -1085,6 +1088,7 @@ sub parseAudioStream {
 
 			# Copy bitrate to redirected URL
 			if ( $track->url ne $url ) {
+				$log->warn("don't know what we are doing here $url ", $track->url);
 				Slim::Music::Info::setBitrate( $url, $bitrate );
 				if ($cl) {
 					Slim::Music::Info::setDuration( $url, ( $cl * 8 ) / $bitrate );

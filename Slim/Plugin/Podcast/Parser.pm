@@ -1,8 +1,11 @@
 package Slim::Plugin::Podcast::Parser;
 
+use strict;
+
 use Date::Parse qw(strptime str2time);
 use Scalar::Util qw(blessed);
 use URI;
+use XML::Simple;
 
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
@@ -49,9 +52,9 @@ sub parse {
 
 		# track progress of our listening
 		my $key = 'podcast-' . $item->{enclosure}->{url};
-		my $position = $cache->get($key);
-		$cache->set($key, 0, '30days') unless $position;
-		
+		my $from = $cache->get($key);
+		my $position;
+
 		# do we have duration stored from previous playback?
 		if ( !$item->{duration} ) {
 			my $trackObj = Slim::Schema->objectForUrl( { url => $item->{enclosure}->{url} } );
@@ -66,42 +69,47 @@ sub parse {
 		}
 
 		$cache->set("$key-duration", $item->{duration}, '30days');
+
+		my $url = $item->{enclosure}->{url};
+		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
-		if ( $position && $position < $item->{duration} - 15 ) {
-			delete $item->{description};     # remove description, or xmlbrowser would consider this to be a RSS feed
-
-			my $enclosure = delete $item->{enclosure};
-			$position     = $cache->get('podcast-' . $enclosure->{url});
-
-			$position = Slim::Utils::DateTime::timeFormat($position);
+		if ( $from && $from < $item->{duration} - 15 ) {
+			$position = Slim::Utils::DateTime::timeFormat($from);
 			$position =~ s/^0+[:\.]//;
-
+			
+			# remote_image is now cached, so replace enclosure with a play attribute 
+			# so that XMLBrowser to show sub-menu *and* we can play from top
+			my $enclosure = delete $item->{enclosure};
+			$item->{on_select} = 'play';
+			$item->{play} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
+			$item->{type}  = 'link';
+			
 			$item->{items} = [{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
 				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
+				description => $item->{description},
+				cover => $item->{image},
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
-					url    => $enclosure->{url},
+					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url, $from),
 				},
-				url => sub { 
-					my ($client, $cb) = @_;
-					$client->pluginData(goto => 1);
-					$cb->( $item->{items}->[0] );
-				},	
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
+				description => $item->{description},
+				cover => $item->{image},
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
-					url    => $enclosure->{url},
+					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url),
 				},
 			}];
 
-			$item->{type} = 'link';
-		} 
+			# delete description or XML browser treats is as RSS
+			delete $item->{description};
+		}
 
 		if ( $item->{duration} && (!$duration || $duration !~ /:/) ) {
 			my $s = $item->{duration};

@@ -241,6 +241,8 @@ sub getNextSong {
 	# If we have (a) a scannable playlist track,
 	# or (b) a scannable track that is not yet scanned and could be a playlist ...
 	if ($handler->can('scanUrl') && !$self->_scanDone()) {
+		# always start new scanning from original url as redirected one might be gone
+		$url = $track->redir if $track->can('redir') && $track->redir;
 		$self->_scanDone(1);
 		main::INFOLOG && $log->info("scanning URL $url");
 		$handler->scanUrl($url, {
@@ -255,9 +257,9 @@ sub getNextSong {
 
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
-							$self->_track($newTrack);
-							$self->_currentTrackHandler(Slim::Player::ProtocolHandlers->handlerForURL($newTrack->url));
-
+							$self->_track($newTrack);	
+							$self->init_accessor(handler => $handler->getSongHandler($self, $newTrack)) if $handler->can('getSongHandler');
+														
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 
 							# Replace the item on the playlist so it has the new track/URL
@@ -292,11 +294,10 @@ sub getNextSong {
 					# if we just found a playlist					
 					if (!$self->_currentTrack() && $self->isPlaylist()) {
 						main::INFOLOG && $log->info("Found a playlist");
-						$self->getNextSong($successCb, $failCb);	# recurse
-					} else {
-						$self->getNextSong($successCb, $failCb);	# recurse
-						# $successCb->();
 					}
+					
+					# always recurse either for playlist or to continue and do getNextTrack
+					$self->getNextSong($successCb, $failCb);
 				}
 				else {
 					# Notify of failure via cant_open, this is used to pick
@@ -343,13 +344,13 @@ my %streamFormatMap = (
 );
 
 sub open {
-	my ($self, $seekdata) = @_;
+	my ($self, $seekdata, $redir) = @_;
 
 	my $handler = $self->currentTrackHandler();
 	my $client  = $self->master();
 	my $track   = $self->currentTrack();
 	assert($track);
-	my $url     = $track->url;
+	my $url = $redir || $track->url;
 
 	# Reset seekOffset - handlers will set this if necessary
 	$self->startOffset(0);
@@ -477,6 +478,13 @@ sub open {
 			});
 
 			if (!$sock) {
+				
+				# if we failed on a redirected track, retry once
+				if ($track->can('redir') && $track->redir && !$redir) {
+					main::INFOLOG && $log->info("failed opening, retrying non-redirect url ", $track->redir);
+					return $self->open($seekdata, $track->redir);
+				}
+				
 				logWarning("stream failed to open [$url].");
 				$self->setStatus(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
@@ -646,7 +654,7 @@ sub open {
 		$streamController = Slim::Player::SongStreamController->new($self, $sock);
 
 	} else {
-
+		# file or remote 'R' mode failed => no point retrying
 		logError("Can't open [$url] : $!");
 		return (undef, 'PROBLEM_OPENING', $url);
 	}

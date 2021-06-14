@@ -9,12 +9,16 @@ package Slim::Plugin::Podcast::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use XML::Simple;
+
 use Slim::Plugin::Podcast::Parser;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
+
+use Slim::Plugin::Podcast::ProtocolHandler;
 
 use constant PROGRESS_INTERVAL => 5;     # update progress tracker every x seconds
 
@@ -82,32 +86,76 @@ sub initPlugin {
 
 sub shutdownPlugin {
 	my @played = values %recentlyPlayed;
+
 	$prefs->set('recent', \@played);
+}
+
+sub updateRecentlyPlayed {
+	my ($class, $client, $song) = @_;
+	my ($url) = unwrapUrl($song->originUrl);
+
+	$recentlyPlayed{$url} = { 
+			url      => $url,
+			title    => $song->currentTrack->title,
+			cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
+			duration => $song->duration,
+	};	
+}
+
+sub unwrapUrl {
+	return shift =~ m|^podcast://([^{]+)(?:{from=(\d+)}$)?|;	
+}
+
+sub wrapUrl {
+	my ($url, $from) = @_;
+	
+	return 'podcast://' . $url . ($from ? "{from=$from}" : '');
 }
 
 sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
 
-	# hook in to new song event - show "jump to last position" menu if matching a podcast
-	Slim::Control::Request::subscribe(\&songChangeCallback, [['playlist'], ['newsong', 'pause', 'stop']]);
-
 	my $items = [];
-	
 	my @feeds = @{$prefs->get('feeds')}; 
-	
-	foreach ( @feeds ) {
-		push @$items, {
-			name => $_->{name},
-			url  => $_->{value},
-			parser => 'Slim::Plugin::Podcast::Parser',
-		}
-	}
-	
+
 	push @$items, {
 		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
 		url   => \&recentHandler,
 		type  => 'link',
+		image => __PACKAGE__->_pluginDataFor('icon'),
 	};
+
+	foreach ( @feeds ) {
+		my $url = $_->{value};
+		my $image = $cache->get('podcast-rss-' . $url);
+
+		push @$items, {
+			name => $_->{name},
+			url  => $url,
+			parser => 'Slim::Plugin::Podcast::Parser',
+			image => $image || __PACKAGE__->_pluginDataFor('icon'),
+		};
+		
+		unless ($image) {
+			# always cache image avoid sending a flood of requests
+			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
+
+			Slim::Networking::SimpleAsyncHTTP->new(
+				sub { 
+					eval {
+						my $xml = XMLin(shift->content);
+						my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
+						$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
+					};
+				
+					$log->warn("can't parse $url RSS for feed icon: ", $@) if $@;
+				},
+				sub {
+					$log->warn("can't get $url RSS feed icon: ", shift->error);
+				},
+			)->get($_->{value});
+		}	
+	}
 	
 	$cb->({
 		items => $items,
@@ -119,122 +167,45 @@ sub recentHandler {
 	my @menu;
 
 	foreach my $item(reverse values %recentlyPlayed) {
-		my $entry;
-		my $position = $cache->get("podcast-$item->{url}");
+		my $from = $cache->get('podcast-' . $item->{url});
+		
+		# every entry here has a remote_image_ cached item so we can have
+		# a direct play entry all the time, even if it has played fully
+		my $entry = {
+			title => $item->{title},
+			image => $item->{cover},
+			type  => 'audio',			
+			play  => wrapUrl($item->{url}),			
+			on_select => 'play',
+		};
 
-		if ( $position && $position < $item->{duration} - 15 ) {
-
-			$position = Slim::Utils::DateTime::timeFormat($position);
+		if ( $from && $from < $item->{duration} - 15 ) {
+			my $position = Slim::Utils::DateTime::timeFormat($from);
 			$position =~ s/^0+[:\.]//;		
 
-			$entry = {
-				title => $item->{title},
-				image => $item->{cover},
-				type => 'link',
-				items => [ {
-					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
-					enclosure => {
-						type   => 'audio',
-						url   => $item->{url},
-					},	
-					url => sub { 
-							my ($client, $cb) = @_;
-							$client->pluginData(goto => 1);
-							$cb->( $entry->{items}->[0] );
-					},
-				},{
-					title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
-					url   => $item->{url},
+			$entry->{type} = 'link',
+			
+			$entry->{items} = [ {
+				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
+				cover => $item->{cover},									
+				enclosure => {
 					type  => 'audio',
-				}],
-			};		
-		}	
-		else {
-			$entry = {
-				title => $item->{title},
-				image => $item->{cover},
-				url   => $item->{url},				
-				type  => 'audio',
-			};
+					url   => wrapUrl($item->{url}, $from),
+				},	
+			},{
+				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
+				cover => $item->{cover},				
+				enclosure => {
+					type  => 'audio',
+					url   => wrapUrl($item->{url}),
+				},	
+			}],
 		}	
 		
 		unshift @menu, $entry;
 	}
 
 	$cb->({ items => \@menu });
-}
-
-
-sub songChangeCallback {
-	my $request = shift;
-
-	my $client = $request->client() || return;
-	
-	# If synced, only listen to the master
-	if ( $client->isSynced() ) {
-		return unless Slim::Player::Sync::isMaster($client);
-	}
-
-	return unless $client->streamingSong;
-	my $url = $client->streamingSong->originUrl;
-
-	if ( defined $cache->get("podcast-$url") && $request->isCommand([['playlist'], ['newsong']]) ) {
-		if ( $client->pluginData('goto') ) {
-			$client->pluginData( goto => 0 );
-			Slim::Player::Source::gototime($client, $cache->get("podcast-$url") || 0);
-		}
-		
-		my $song = $client->streamingSong;
-		$recentlyPlayed{$url} ||= { 
-				url      => $url,
-				title    => $song->track->title,
-				cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
-				duration => $song->duration,
-		};		
-		Slim::Music::Info::setCurrentTitle($song->track->url, $recentlyPlayed{$url}->{title});				
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug('Setting up timer to track podcast progress...' . Data::Dump::dump($recentlyPlayed{$url}));	
-		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			time() + PROGRESS_INTERVAL,
-			\&_trackProgress,
-			$url,
-		);
-	}	
-}
-
-# if this is a podcast, set up a timer to track progress
-sub _trackProgress {
-	my $client = shift || return;
-	my $url    = shift || return;
-	my $key = 'podcast-' . $url;
-
-	Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
-	return unless (($client->streamingSong && $client->streamingSong->originUrl eq $url) || 
-				   ($client->playingSong && $client->playingSong->originUrl eq $url)) && 
-				    defined $cache->get($key);
-
-	# start recording position once we are actually playing
-	if ($client->isPlaying && $client->playingSong && $client->playingSong->originUrl eq $url) {	
-		$cache->set($key, Slim::Player::Source::songTime($client), '30days');
-		
-		# track objects aren't persistent across server restarts - keep our own list of podcast durations in the cache
-		$cache->set("$key-duration", Slim::Player::Source::playingSongDuration($client), '30days') unless $cache->get("$key-duration");
-
-		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state ' . Data::Dump::dump({
-			player => $client->name,
-			url => $url,
-			playtime => Slim::Player::Source::songTime($client),
-		}));
-	}	
-
-	Slim::Utils::Timers::setTimer(
-		$client,
-		time() + PROGRESS_INTERVAL,
-		\&_trackProgress,
-		$url,
-	) if $client->isPlaying;
 }
 
 sub getDisplayName {

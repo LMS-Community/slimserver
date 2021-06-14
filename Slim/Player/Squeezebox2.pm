@@ -525,6 +525,7 @@ sub directHeaders {
 		$response = $1;
 
 		if (($response < 200) || $response > 399) {
+			my $track = $controller->song->currentTrack;
 
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
@@ -534,6 +535,21 @@ sub directHeaders {
 				$client->readyToStream(1);
 
 				$songHandler->handleDirectError($client, $url, $response, $status_line);
+			}
+			elsif ($track->can('redir') && $track->redir && $track->redir ne $url) {
+				
+				# if we have been redirected and we fail on directstream, give it a shot with
+				# the initial utl. This is not a ideal solution, but we have no other option
+				main::INFOLOG && $directlog->is_info && $directlog->info("retrying with non-redirected url ", $track->redir);
+				
+				$controller->song->streamUrl($track->redir);
+				$client->play({
+					'paused'     => ($client->isSynced(1)),
+					'format'     => ($client->master())->streamformat(),
+					'url'        => $track->redir,
+					'controller' => $controller,
+					'seekdata'   => $controller->song->seekdata(),
+				});
 			}
 			else {
 				$client->failedDirectStream($status_line);

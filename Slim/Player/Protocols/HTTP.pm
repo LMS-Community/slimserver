@@ -262,6 +262,13 @@ sub getFormatForURL {
 	return Slim::Music::Info::typeFromSuffix($url);
 }
 
+sub getSongHandler {
+	my ($class, $self, $track) = @_;
+	
+	# re-evaluate as we might have been upgraded to HTTPS
+	return $class ne __PACKAGE__ ? $class : Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+}
+
 sub parseMetadata {
 	my ( $class, $client, undef, $metadata ) = @_;
 
@@ -805,6 +812,9 @@ sub parseHeaders {
 
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $self->parseDirectHeaders($client, $url, @_);
 
+	# we should not parse anything before we have reached target
+	return if ${*$self}{'redirect'} = $redir;
+	
 	if ($contentType) {
 		if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
 			# webservers often lie about playlists.  This will
@@ -817,7 +827,6 @@ sub parseHeaders {
 		Slim::Music::Info::setContentType( $url, $contentType );
 	}
 
-	${*$self}{'redirect'} = $redir;
 	${*$self}{'contentLength'} = $length if $length;
 	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
 
