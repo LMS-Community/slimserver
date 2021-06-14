@@ -231,10 +231,10 @@ sub dontStopTheMusic {
 	
 	if ($songsRemaining < $numTracks) {
 		# don't continue if the last item in the queue is a radio station or similar
-		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $client->playingSong()->track->url ) ) {
-			if ($handler->can('isRepeatingStream')) {
+		if ( my $handler = $client->playingSong->currentTrackHandler ) {
+			if ( $handler->can('isRepeatingStream') ) {
 				return if $handler->isRepeatingStream($client->playingSong());
-			}
+			}	
 		}
 		
 		my $playlist = Slim::Player::Playlist::playList($client);

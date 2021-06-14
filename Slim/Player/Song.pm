@@ -892,29 +892,6 @@ sub canDoSeek {
 	}
 }
 
-# This is a prototype, that just falls back to protocol-handler providers (pull) for now.
-# It is planned to move the actual metadata maintenance into this module where the
-# protocol-handlers will push the data.
-
-sub metadata {
-	my ($self) = @_;
-
-	my $handler;
-
-	if (($handler = $self->_currentTrackHandler()) && $handler->can('songMetadata')
-		|| ($handler = $self->handler()) && $handler->can('songMetadata') )
-	{
-		return $handler->songMetadata($self);
-	} 
-	elsif (($handler = $self->_currentTrackHandler()) && $handler->can('getMetadataFor')
-		|| ($handler = $self->handler()) && $handler->can('getMetadataFor') )
-	{
-		return $handler->songMetadata($self->master, $self->currentTrackHandler()->url, 0);
-	}
-
-	return undef;
-}
-
 sub icon {
 	my $self = shift;
 	my $client = $self->master();
