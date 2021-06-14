@@ -135,7 +135,7 @@ sub request {
 	my $self = shift;
 	my $args  = shift;
 	my $song = $args->{'song'};
-	my $track = $song->track;
+	my $track = $song->currentTrack;
 	my $processor = $track->processors($song->wantFormat);
 
 	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
@@ -399,10 +399,10 @@ sub canEnhanceHTTP {
 }	
 
 sub canDirectStream {
-	my ($classOrSelf, $client, $url, $inType) = @_;
+	my ($class, $client, $url, $inType) = @_;
 	
 	# when persistent is used, we won't direct stream to enable retries
-	return 0 if $classOrSelf->canEnhanceHTTP($client, $url);
+	return 0 if $class->canEnhanceHTTP($client, $url);
 
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players
@@ -436,10 +436,10 @@ sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 
 	# can't go direct if we are synced or proxy is set by user
-	my $direct = $class->canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
+	my $direct = $class->canDirectStream( $client, $song->streamUrl, $class->getFormatForURL );
 	return 0 unless $direct;
 
-	my $processor = $song->track->processors($song->wantFormat);
+	my $processor = $song->currentTrack->processors($song->wantFormat);
 
 	# no header or stripHeader flag has precedence
 	return $direct if $song->stripHeader || !$processor;
@@ -940,12 +940,13 @@ sub requestString {
 	# Always add Range to exclude trailing metadata or garbage (aif/mp4...)
 	if ($client) {
 		my $song = $client->streamingSong;
+		my $track = $song->currentTrack;
 		$client->songBytes(0);
 
 		my $first = $seekdata->{restartOffset} || int( $seekdata->{sourceStreamOffset} );
-		$first ||= $song->track->audio_offset if $song->stripHeader || defined $song->initialAudioBlock;
+		$first ||= $track->audio_offset if $song->stripHeader || defined $song->initialAudioBlock;
 		$request .= $CRLF . 'Range: bytes=' . ($first || 0) . '-';
-		$request .= $song->track->audio_offset + $song->track->audio_size - 1 if $song->track->audio_size;
+		$request .= $track->audio_offset + $track->audio_size - 1 if $track->audio_size;
 
 		if ($first) {
 
@@ -955,7 +956,7 @@ sub requestString {
 				$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
 			}
 
-			$client->songBytes( $first - ($song->stripHeader ? $song->track->audio_offset : 0) );
+			$client->songBytes( $first - ($song->stripHeader ? $track->audio_offset : 0) );
 		}
 	}
 
@@ -1029,7 +1030,9 @@ sub getMetadataFor {
 	# Check for parsed WMA metadata, this is here because WMA may
 	# use HTTP protocol handler
 	my $song = $client->playingSong();
-	if ( $song && $song->track->url eq $url ) {
+	my $current = $song->currentTrack->url eq $url if $song;
+
+	if ( $current ) {
 		if ( my $meta = $song->pluginData('wmaMeta') ) {
 			my $data = {};
 			if ( $meta->{artist} ) {
@@ -1067,7 +1070,7 @@ sub getMetadataFor {
 	# Remember playlist URL
 	my $playlistURL = $url;
 
-	# Check for radio URLs with cached covers
+	# Check for radio or OPML feeds URLs with cached covers
 	my $cache = Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
@@ -1105,11 +1108,11 @@ sub getMetadataFor {
 		}
 	}
 	else {
+		# make sure that protocol handler is what the $song wanted, not just the $url-based one
+		my $handler = $current ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ )  {
-			if ( $handler && $handler->can('getMetadataFor') ) {
-				return $handler->getMetadataFor( $client, $url );
-			}
+		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
+			return $handler->getMetadataFor( $client, $url );
 		}
 
 		my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
@@ -1193,11 +1196,11 @@ sub getSeekData {
 	main::INFOLOG && $log->info( "Trying to seek $newtime seconds into $bitrate kbps" );
 
 	my $offset = int (( ( $bitrate * 1000 ) / 8 ) * $newtime);
-	$offset -= $offset % ($song->track->block_alignment || 1);
+	$offset -= $offset % ($song->currentTrack->block_alignment || 1);
 
 	# this might be re-calculated by request() if direct streaming is disabled
 	return {
-		sourceStreamOffset   => $offset + $song->track->audio_offset,
+		sourceStreamOffset   => $offset + $song->currentTrack->audio_offset,
 		timeOffset           => $newtime,
 	};
 }
@@ -1208,7 +1211,7 @@ sub getSeekDataByPosition {
 	my $seekdata = $song->seekdata() || {};
 
 	my $position = int($seekdata->{'sourceStreamOffset'}) || 0;
-	$position ||= $song->track->audio_offset if defined $song->initialAudioBlock;
+	$position ||= $song->currentTrack->audio_offset if defined $song->initialAudioBlock;
 
 	return {%$seekdata, restartOffset => $position + $bytesReceived - $song->initialAudioBlock};
 }

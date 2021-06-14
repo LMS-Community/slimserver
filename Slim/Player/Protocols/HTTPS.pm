@@ -68,11 +68,11 @@ sub close {
 
 # Check whether the current player can stream HTTPS or Url is HTTP
 sub canDirectStream {
-	my $self = shift;
+	my $class = shift;
 	my ($client, $url) = @_;
 
 	if ( $client->canHTTPS || $url =~ /^http:/) {
-		return $self->SUPER::canDirectStream(@_);
+		return $class->SUPER::canDirectStream(@_);
 	}
 
 	return 0;
@@ -80,11 +80,11 @@ sub canDirectStream {
 
 # Check whether the current player can stream HTTPS or Url is HTTP
 sub canDirectStreamSong {
-	my $self = shift;
+	my $class = shift;
 	my ($client, $song) = @_;
 
 	if ( $client->canHTTPS || $song->streamUrl =~ /^http:/) {
-		return $self->SUPER::canDirectStreamSong(@_);
+		return $class->SUPER::canDirectStreamSong(@_);
 	}
 
 	return 0;

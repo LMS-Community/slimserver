@@ -99,16 +99,17 @@ sub canDecodeRhapsody { 0 };
 sub hasScrolling { 0 }
 
 sub canDirectStream {
-	my $client = shift;
-	my $url = shift;
+	my ($client, $url, $song) = @_;
 
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	# this is client's canDirectStream, not protocol handler's 
+	my $handler = $song->currentTrackHandler;
+	return unless $handler && !$handler->isa("Slim::Player::Protocols::MMS");
 
-	if ($handler && $handler->can("canDirectStream") && !$handler->isa("Slim::Player::Protocols::MMS")) {
+	if ($handler->can("canDirectStreamSong")) {
+		return $handler->canDirectStreamSong($client, $song);
+	} elsif ($handler->can("canDirectStream")) {
 		return $handler->canDirectStream($client, $url);
 	}
-	
-	return undef;
 }
 
 

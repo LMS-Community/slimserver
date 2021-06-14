@@ -136,7 +136,7 @@ sub play {
 	my $params = shift;
 
 	my $controller = $params->{'controller'};
-	my $handler = $controller->songProtocolHandler();
+	my $handler = $controller->songHandler();
 
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
@@ -536,8 +536,8 @@ sub stream_s {
 	my $controller  = $params->{'controller'};
 	my $url         = $controller->streamUrl();
 	my $track       = $controller->track();
-	my $handler     = $controller->protocolHandler();
-	my $songHandler = $controller->songProtocolHandler();
+	my $handler     = $controller->streamUrlHandler();
+	my $songHandler = $controller->songHandler();
 	my $isDirect    = $controller->isDirect();
 	my $master      = $client->master();
 
@@ -565,9 +565,8 @@ sub stream_s {
 		# use getFormatForURL only if the format is not already given
 		# This method is bad because it only looks at the URL suffix and can cause
 		# (for example) Ogg HTTP streams to be played using the mp3 decoder!
-		if ( !$format && $handler->can("getFormatForURL") ) {
-			$format = $handler->getFormatForURL($url);
-		}
+		my $methodHandler = $songHandler->can('getFormatForURL') ? $songHandler : $handler;
+		$format = $methodHandler->getFormatForURL($url) if !$format && $methodHandler;
 	}
 
 	if ( !$format ) {
@@ -775,7 +774,8 @@ sub stream_s {
 
 		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
-		$request_string = $songHandler->requestString($client, $url, undef, $params->{'seekdata'});
+		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
+		$request_string = $methodHandler->getRequestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 	} elsif (my $proxy = $params->{'proxyStream'}) {
@@ -818,7 +818,9 @@ sub stream_s {
 		}
 		$server_port = $port;
 
-		$request_string = $songHandler->requestString($client, $url, undef, $params->{'seekdata'});
+		# prioritize song's protocol handler at even in direct mode it might change requestString
+		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
+		$request_string = $methodHandler->requestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 		if (!$server_port || !$server_ip) {

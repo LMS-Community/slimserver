@@ -126,7 +126,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl       => $url,	# Keep track of the non-redirected url
+		originUrl       => $url,	# keep trace of the url the song was created with
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -882,29 +882,6 @@ sub canDoSeek {
 
 		return $self->_canSeek(0);
 	}
-}
-
-# This is a prototype, that just falls back to protocol-handler providers (pull) for now.
-# It is planned to move the actual metadata maintenance into this module where the
-# protocol-handlers will push the data.
-
-sub metadata {
-	my ($self) = @_;
-
-	my $handler;
-
-	if (($handler = $self->_currentTrackHandler()) && $handler->can('songMetadata')
-		|| ($handler = $self->handler()) && $handler->can('songMetadata') )
-	{
-		return $handler->songMetadata($self);
-	} 
-	elsif (($handler = $self->_currentTrackHandler()) && $handler->can('getMetadataFor')
-		|| ($handler = $self->handler()) && $handler->can('getMetadataFor') )
-	{
-		return $handler->songMetadata($self->master, $self->currentTrackHandler()->url, 0);
-	}
-
-	return undef;
 }
 
 sub icon {

@@ -89,7 +89,7 @@ sub randomGUID {
 }
 
 sub canDirectStream {
-	my ($classOrSelf, $client, $url, $inType) = @_;
+	my ($class, $client, $url, $inType) = @_;
 	
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players

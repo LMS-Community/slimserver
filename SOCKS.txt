@@ -1,7 +1,7 @@
 SSH tunnel with port forwarding allows per port TCP/UDP traffic to be 
 "forwarded" from one end to the tunnel to the other and appear like it was 
 initiated from the remote end of tunnel. For example all traffic send to 
-port 5000 on the local machine can be forwared to a remote machine, on port
+port 5000 on the local machine can be forwarded to a remote machine, on port
 25000 and will appear to any client on the remote side as if it was locally 
 coming from port 25000
 
@@ -13,12 +13,21 @@ This tunneling is not a all-or-nothing tunnel an allow each TCP request to be
 selectively forwarding or not
 
 You must first either use a public SOCKS server or create your own SOCKS/SSH
-pair in which ase you must have a local SOCKS server, a local SSH client and 
-a remote SSH server. On Linux openssh does everything, one local instance with 
+pair in which case you must have a local SOCKS server, a local SSH client and 
+a remote SSH server. On Linux, openssh does everything, one local instance with 
 dynamic port forwarding (-D) and a remote instance to a friend's network does 
 the job. On Windows, you can use Bitvise Client & Server. There is plenty of 
 internet litterature on SOCKS/SSH that explain the concept much better than 
 anything I could write :-)
+
+    HTTP request ------> SOCKS client ------||-----> SOCKS server ------> www.google.com
+    >www.google.com	     >some.socks.com    ||       >www.google.com      >5000
+    >5000                >1080              ||       >5000                (from some.socks.com)
+	
+	HTTP request ------> SOCKS client ----> SOCKS relay  (encrypted)   SOCKS server -----> www.google.com
+    >www.google.com	     >192.168.0.1       >SSH client  -----||----> >SSH server          5000
+    >5000                >1080              >some.ssh.com     ||      >www.google.com
+	                                        >23               ||      >5000 (from some.ssh.com)
 
 One thing to notice with SOCKS5 is the lack of proper authentication mechanism
 which means that if you have a username/password, they will be sent in clear
@@ -26,9 +35,9 @@ to the server. SOCKS4 does not require authentication. That's why I prefer
 to have a local SOCKS server that creates a SSH tunnel to a remote end but this 
 means you must have a SSH remote end.
 
-To use socks proxy to your HTTP requests, set the SOCKS parameter in LMS and
-simply passed a hash named "socks" to SimpleAsyncHTTP::new or Async::HTP::new
-with the following content (see IO::Socket::Socks)
+To use socks proxy to your HTTP requests, simply passed a hash named "socks" 
+to SimpleAsyncHTTP::new or Async::HTTP::new with the following content. See 
+also IO::Socket::Socks)
 	
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub { # succes CB },
@@ -69,7 +78,4 @@ are set and to 4 otherwise. ProxyPort can be omitted and will be set to 1080.
 
 If 'socks' hash is set but ProxyAddr is missing, a regular SimpleAsync or Async 
 call will be made
-			
-
-
-						
+					

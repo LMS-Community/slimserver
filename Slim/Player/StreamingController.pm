@@ -2138,7 +2138,7 @@ sub pause      {
 	# Some protocol handlers don't allow pausing of active streams.
 	# We check if that's the case before continuing.
 	my $song = playingSong($self) || {};
-	my $handler = $song->handler();
+	my $handler = $song->currentTrackHandler();
 
 	if ($handler && $handler->can("canDoAction") &&
 		!$handler->canDoAction(master($self), $song->currentTrack()->url, 'pause'))
