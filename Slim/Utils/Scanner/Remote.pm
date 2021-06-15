@@ -143,7 +143,7 @@ sub scanURL {
 	my $track = Slim::Schema->updateOrCreate( {
 		url => $url,
 	} );
-
+	
 	# Make sure it has a title
 	if ( !$track->title ) {
 		$args->{'title'} ||= $args->{'song'}->track->title if $args->{'song'}; 		
@@ -405,6 +405,7 @@ sub readRemoteHeaders {
 			$redirTrack->content_type( $track->content_type );
 			$redirTrack->bitrate( $track->bitrate );
 			$redirTrack->redir( $track->redir || $track->url );
+			$redirTrack->origin( $track->origin );
 
 			$redirTrack->update;
 

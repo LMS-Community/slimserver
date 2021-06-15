@@ -775,7 +775,7 @@ sub stream_s {
 		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
 		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
-		$request_string = $methodHandler->getRequestString($client, $url, undef, $params->{'seekdata'});
+		$request_string = $methodHandler->getRequestString($client, $url, undef, $params->{'seekdata'} || $controller->song->seekdata);
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 	} elsif (my $proxy = $params->{'proxyStream'}) {
@@ -820,7 +820,7 @@ sub stream_s {
 
 		# prioritize song's protocol handler at even in direct mode it might change requestString
 		my $methodHandler = $songHandler->can('requestString') ? $songHandler : $handler;
-		$request_string = $methodHandler->requestString($client, $url, undef, $params->{'seekdata'});
+		$request_string = $methodHandler->requestString($client, $url, undef, $params->{'seekdata'} || $controller->song->seekdata);
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 		if (!$server_port || !$server_ip) {

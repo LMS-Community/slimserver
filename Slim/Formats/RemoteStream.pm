@@ -203,6 +203,7 @@ sub request {
 
 		return $class->new({
 			'url'     => $redir,
+			'redir'   => $args->{'redir'} || $url,
 			'song'    => $args->{'song'},
 			'infoUrl' => $self->infoUrl,
 			'post'    => $post,

@@ -42,7 +42,7 @@ my $_liveCount = 0;
 my @_playlistCloneAttributes = qw(
 	index
 	_track _currentTrack _currentTrackHandler
-	streamUrl originUrl
+	streamUrl
 	owner
 	_playlist _scanDone
 
@@ -126,7 +126,6 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-		originUrl       => $url,	# keep trace of the url the song was created with
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
@@ -216,7 +215,7 @@ sub _getNextPlaylistTrack {
 }
 
 sub getNextSong {
-	my ($self, $successCb, $failCb) = @_;
+	my ($self, $successCb, $failCb, $redir) = @_;
 
 	my $handler = $self->currentTrackHandler();
 
@@ -235,14 +234,12 @@ sub getNextSong {
 	}
 
 	my $track   = $self->currentTrack();
-	my $url     = $track->url;
+	my $url     = $redir || $track->url;
 	my $client  = $self->master();
 
 	# If we have (a) a scannable playlist track,
 	# or (b) a scannable track that is not yet scanned and could be a playlist ...
 	if ($handler->can('scanUrl') && !$self->_scanDone()) {
-		# always start new scanning from original url as redirected one might be gone
-		$url = $track->redir if $track->can('redir') && $track->redir;
 		$self->_scanDone(1);
 		main::INFOLOG && $log->info("scanning URL $url");
 		$handler->scanUrl($url, {
@@ -283,7 +280,7 @@ sub getNextSong {
 
 						$track = $newTrack;
 						# need to replace streamUrl if we have been redirected/updated
-						$self->streamUrl($track->url);
+						$self->streamUrl($track->url) if $track->url ne $url;
 					}
 
 					# maybe we just found or scanned a playlist
@@ -298,6 +295,10 @@ sub getNextSong {
 					
 					# always recurse either for playlist or to continue and do getNextTrack
 					$self->getNextSong($successCb, $failCb);
+				}
+				elsif ($track->can('redir') && $track->redir && !$redir) {
+					# recurse once if we failed and have been redirected
+					$self->getNextSong($successCb, $failCb, $track->redir);
 				}
 				else {
 					# Notify of failure via cant_open, this is used to pick
@@ -481,10 +482,11 @@ sub open {
 				
 				# if we failed on a redirected track, retry once
 				if ($track->can('redir') && $track->redir && !$redir) {
-					main::INFOLOG && $log->info("failed opening, retrying non-redirect url ", $track->redir);
+					main::INFOLOG && $log->info("failed opening, retrying non-redirected url ", $track->redir);
+					$self->streamUrl($track->redir);
 					return $self->open($seekdata, $track->redir);
 				}
-				
+
 				logWarning("stream failed to open [$url].");
 				$self->setStatus(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);

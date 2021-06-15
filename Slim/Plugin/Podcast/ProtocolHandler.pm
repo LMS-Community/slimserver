@@ -17,56 +17,55 @@ use Slim::Utils::Cache;
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 my $cache = Slim::Utils::Cache->new;
-my $cachePrefix;
 
 Slim::Player::ProtocolHandlers->registerHandler('podcast', __PACKAGE__);
 
 # remove podcast:// protocol to scan real url
 sub scanUrl {
 	my ( $class, $url, $args ) = @_;
-	my $track = $args->{song}->track;
-	my ($scanUrl, $from) = Slim::Plugin::Podcast::Plugin::unwrapUrl($url);	
+	my $song = $args->{song};
+	my ($scanUrl, $startTime) = Slim::Plugin::Podcast::Plugin::unwrapUrl($url);	
 	
-	main::INFOLOG && $log->info("Scanning podcast $url for title ", $track->title);
+	my $cb = $args->{cb};
+	
+	$args->{cb} = sub {
+		my $track = shift;
 
-	# as for redirect, need to port to new url the cover/icon set in XMLBrowser
-	if ( my $icon = $cache->get($cachePrefix . $url) ) {
-		$cache->set($cachePrefix . $scanUrl, $icon, '30 days');
-	}
+		main::INFOLOG && $log->info("Scanned podcast $url from ($startTime) for title: ", $song->track->title);
+		$song->streamUrl($track->url);		
+
+		# reset track's url first otherwise url-based methods will fail
+		$track->url($url);
+
+		# set seekdata so they can be used in proxied and direct
+		if ($startTime) {
+			my $seekdata = $song->getSeekData($startTime);
+			$song->seekdata($seekdata);
+		}
+
+		# must update playlist time for webUI to refresh - not sure why
+		$song->master->currentPlaylistUpdateTime( Time::HiRes::time() );	
+		$cb->($track, @_);
+	};
 	
-	$args->{song}->seekdata( { timeOffset => $from } ) if $from;
 	$class->SUPER::scanUrl($scanUrl, $args);
 }
 
-# we want the image to be cached for us (we will port it only when needed)
-sub shouldCacheImage {
-	my ($class, $url, $image, $prefix) = @_;
-	return $cachePrefix = $prefix;
-}
+sub shouldCacheImage { 1 }
 
 sub new {
 	my ($class, $args) = @_;
-	my $song = $args->{song};	
-	my $startTime = $song->seekdata->{timeOffset} if $song->seekdata;
 	
-	main::INFOLOG && $log->info( "Streaming podcast $args->{url} from $startTime" );
-	
-	# erase last position from cache
-	my ($url) = Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
-	$cache->remove('podcast-' . $url) if $url;
-	
-	if ($startTime) {
-		my $seekdata = $song->getSeekData($startTime);
-		$song->seekdata($seekdata);
-	}
-	
+	# use streaming url but avoid redirection loop
+	$args->{url} = $args->{song}->streamUrl unless $args->{redir};
 	return $class->SUPER::new( $args );
 }
 
 sub onStop {
     my ($self, $song) = @_;
 	my $elapsed = $song->master->controller->playingSongElapsed;
-	my ($url) = Slim::Plugin::Podcast::Plugin::unwrapUrl($song->originUrl);
+	my ($url) = Slim::Plugin::Podcast::Plugin::unwrapUrl($song->currentTrack->url);
+
 
 	if ($elapsed > 15 && (!$song->duration || $elapsed < $song->duration - 15)) {
 		$cache->set("podcast-$url", int ($elapsed), '30days');

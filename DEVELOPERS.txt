@@ -1,123 +1,132 @@
 ------------- How is image/icon/cover passed from the OPML item to a track -------------
 
-When a $url from an OPML item is added to current playlist, a $track object is created 
-and its image is obtained by calling handlerForUrl($url)->getMetadataFor($url). 
-If this protocol handler is HTTP, it needs to find the image just by using this $url, 
-there is no other information. 
+When a $url from an OPML item is added to current playlist, a $track object is created and its 
+image is obtained by calling handlerForUrl($url)->getMetadataFor($url). If this protocol handler
+is HTTP, it needs to find the image just by using this $url, there is no other information. 
 
-XMLBrowser(s), when adding the url to the playlist, call setRemoteMetadata which caches
-the OPML items's image link as "remote_image_$url". Inside setRemoteMetadata, the $url's
-protocol handler will be called with a method shouldCacheImage(class, url, image, prefix). 
-That method can either return true and then the "remote_image_$url" will be cached or it 
-can also do its own caching and return false. When "remote_image_$url" is cached, it is 
-used getMetadataFor() as one of the image sources. 
+XMLBrowser(s), when adding the url to the playlist, call setRemoteMetadata which caches the OPML 
+items's image link as "remote_image_$url". It does that automatically for HTTP(S) and otherwise 
+calls the $url's protocol handler method shouldCacheImage. This method can either return true and 
+then the "remote_image_$url" will be cached or it can also do its own caching (or not) and return 
+false. When "remote_image_$url" is cached, it is used getMetadataFor() as one of the image sources. 
 
-Now, when playing the $track, if scanUrl() points to Slim::Utils::Scanner::Remote::ScanURL() 
-and if there are redirections, the $track->url is modified to $newurl which will then be 
-used in further getMetadataFor calls. As this $newurl has no image's link entry in the 
-cache, the "remote_entry_$url" is copied upon each redirection to "remote_image_$newurl" 
-during the scan. Ultimately, when the actual image is cached (not the link), there will be
-an artwork cache entry that getMetadataFor() will use. 
+Now, when playing the $track, if scanUrl() points to Slim::Utils::Scanner::Remote::ScanURL() and if
+there are redirections, a $newtrack is created whose $newurl is the redirected one which will then 
+be used in further getMetadataFor calls. As this $newurl has no image's link entry in the cache, 
+the "remote_entry_$url" is copied upon each redirection to "remote_image_$newurl" during the scan. 
+Ultimately, when the actual image is cached (not the link), there will be an artwork cache entry 
+that getMetadataFor() will use. 
 
-Note than some format may have other cover art inside streamed with the track and, for 
-example, mp3 does grab that image and cache it using "cover_$url". It is the *actual*
-image there, not a link to it. Looke at Slim::Format:: for further details
+Note that some format may have other cover art inside streamed with the track and, for example,
+mp3 does grab that image and cache it using "cover_$url". It is the *actual* image there, not a
+link to it. Look at Slim::Format::XXX for further details.
 
 --------------------------------- How scanUrl works ------------------------------------
 
-For HTTP(S) protocol handler, the scanUrl calls Slim::Utils::Scanner::Remote::scanURL when
-a track starts to play to acquire all necessary informations. The scanUrl is called with 
-the $url to scan and a $song object in the $args. 
+For HTTP(S) protocol handler, the scanUrl calls Slim::Utils::Scanner::Remote::scanURL when a track
+starts to play to acquire all necessary informations. The scanUrl is called with the $url to scan 
+and an $args containing the $song object and a $callback.
 
-That $song has a $track object that is created from the original $url set when OPML item 
-is added in the playlist. When scanning $url, the Slim::Utils::Scanner::Remote::scanURL
-creates a new $track object everytime the final URI returned by the GET is different from 
-the $url argument. This happens on HTTP redirection and/or if the $url argument differs 
-from $args->{'song'}->track->url. When it finally returns, scanUrl provides a new $track
-that replaces the current one in the $song object and in the playlist.
+That $song contains a $track object that is created from the original $url set when OPML item is 
+added in the playlist. When scanning $url, the Slim::Utils::Scanner::Remote::scanURL creates a new 
+$track object everytime the uri returned by the GET is different from the $url argument. This 
+happens on HTTP redirection and if the $url argument differs from $args->{'song'}->track->url. The
+original url is stored as $track->redir (note that it might be empty).
 
------------------------- Thin Protocol Hander (e.g. podcast) -----------------------------
+When it returns, scanUrl provides a new $track that replaces the current one in the $song object 
+*and* in the playlist. This means that the playlist may have new $track->url for same item index.
+When playing again that track from the playlist, LMS would normally scan again that redirected
+$track->url which might be gone (see below). 
 
-A thin protocol handler simply (and mostly) encapsulate HTTPS(s) urls into a small wrapper 
-like "<myph>://http://<$url>". Typically, the scanUrl unwraps the $url to the HTTP(S) one
-and then relies on normal HTTP(S) handling, but there are a few catches as we want to benefit
-from all HTTP(S) methods but still overload some, making sure our protocol handler is still
-called after we have de-encapsulated urls.
-
-1- When a $track object has changed after scanUrl, the required protocol handler might need to 
-be re-evaluated and replaced by what matches the actual $track->url (there are many protocol 
-handlers but that's too difficult to describe here). It should not be re-evaluated all the time 
-otehrwise the thin protocol handler would loose control if the $track->url has been reset to 
-HTTP(S). To avoid that, an optional <myph>::songHandler() method is called to see if the thin 
-protocol handler still wants control. It should return the $class of the handler. By default, 
-Slim::Player::Protocol::HTTP uses that to replace itself by its HTTPS version when there is a
-HTTP->HTTPS upgrade. So the default behaviour is to *keep* the existing protocol handler.
-
-3- Now, not every thin protocol handler's methods will be called after this scan because some
-portion of LMS might still call handlerForUrl($track->url) and not use the protocol handler
-that is stored inside the $song object. As of 8.2, we are trying to limit these but there is
-still work to do.
-	
-NB: Before calling scanUrl, do not try to replace manually the $args->{'song'}->{'track'}->url 
-with the de-encapsulated $url that is passed an argument, that will mess the whole scanning 
-process
+Not that scanURL also replaces the $song->streamUrl by the $newTrack->url if this url is different
+from the $url passed as an argument. See "thin protocol handler" for more explanations.
 
 -------------------------- Issue of "volatile" redirection -------------------------------
 
 Some url are being redirected to temporary location, which means that the final location is only
 valid for as low as a few minutes. This causes a problem when user pauses such a track. 
 
-When pauses happens, LMS quite often memorized the current position and closes the connection 
-(it's not always the case, depending of course is track is seekable, on the fullness of player's
-buffer and a few other parameters). The issue is that upon resume, the redirected location might
-be gone and a 403 will happen. 
+When pauses happens, LMS quite often memorizes the current position and closes the connection (it's
+not always the case, depending of course is track is seekable, on the fullness of player's buffer 
+and a few other parameters). The issue is that upon resume, the redirected location might be gone 
+and a 403 will happen. 
 
-When resuming, LMS sometimes crates a new() song, sometimes it just re-opens it with open(). In
-both cases, the $url inside the track is the one that scanUrl has put after redirection. To solve 
-that, if Slim::Player::Song::open() fails and there track has been redirected, open() will recurse
-with the non-redirected url. To prevent the issue when LMS uses new(), the Slim::Player::Song::new()
-always use the original url if any. There seem to be no reason/arm in new() to try with the 
-redirected url as it will do a scanUrl anyway. 
+When resuming, LMS sometimes creates a new() song, sometimes it just re-opens it with a song open(). 
+In both cases, the $url inside the track is the one that scanUrl has put after redirection. To 
+solve that, if Slim::Player::Song::open() fails and the track has been redirected, open() will 
+set streamUrl to $track->redir (the original url) and then will recuse. When using new() on resume,
+LMS does a getNextSong which is the method calling scanUrl. If it fails, getNextSong will recurse 
+with $track->redir. 
 
-Note that the original url is only set when Slim::Utils::Misc::Scanner!!Remote::scanURL if called, 
+This is more tricky when direct stream is used because the error happens much later, when the 
+player returns the result of the HTTP request and it is thus not possible to recurse in open(). In 
+this case, as when redirection happens in direct streaming, we'll set the streamUrl to original url
+and give it another try. It's not foolproof, but it solves most cases.
+
+Note that the original url is only set when Slim::Utils::Misc::Scanner::Remote::scanURL is called, 
 so this behavior does  not impact plugins that do not call their Slim::Player::HTTP::scanUrl 
-ancestor
+ancestor.
 
-This is more tricky when direct stream is used as if LMS uses Slim::Player::Song::open(), then the 
-error happens much later, when the player returns the result of the HTTP request. it is not possible
-to recurse in open() so in this case, as when redirection happens, we'll set the streamUrl with the 
-original url and give it another try. It's not foolproof, but it solves most cases.
+------------------------ Thin Protocol Handler (e.g. podcast) -----------------------------
+
+A thin protocol handler simply (and mostly) encapsulate HTTPS(s) urls into a small wrapper like 
+"<myph>://http://<$url>". Typically, the scanUrl unwraps the $url to the HTTP(S) one and then 
+relies on normal HTTP(S) handling, but there are a few catches as we want to benefit from all 
+HTTP(S) methods but still overload some, making sure our protocol handler is still called after 
+we have de-encapsulated urls.
+
+When a $track object has changed after scanUrl (due to a redirection), LMS offers to re-evaluate
+the song->handler and replace it by what the $handler->songHandler() returns. This is useful when
+an HTTP has been upgraded to HTTPS during redirection because you know want HTTPS handle to take 
+care of this url but in many case it's dangerous. For example, for thin Protocol Handler, you don't
+want to loose the control on that song which would happend if the handler is reset to HTTP.
+
+So, when calling the scanUrl ancestor, you should unwrap your $url paramater and then let
+Slim::Utils::Scanner::Remote::ScanURL do it's HTTP job. But the callback, which returns the 
+parsed track, shall be interecepted to recover the redirected url and replace it by your original
+url (at least add-again your <myph:://> to was is returned) to make sure that the track, once 
+replaced in the playlist, will still use your protocol handler. This is also where it's recommended
+to set $song->streamUrl to the streamable url, often simply the $newtrack->url. Note that because 
+$track->url is reset to the original value, the $song->streamUrl will not be overwritten by scanURL
+
+Best is to look at Slim::Plugin::Podcast as an example of such thin protocol handler
+
+IMPORTANT NOTE: When doing proxy streaming, LMS calls the protocol handler's new() at each 
+redirection. This can be problematic for HTTP(S) subclasses if the new() if calling the ancestor's
+new() *but* uses it's $song->streamUrl. It will create an infinite loop as the url is constantly
+reset to one that will be redirected. To avoid that, use the $args->{redir} in the new arguments to
+determine if this new is after a redirection. 
 
 ------------------------------ Scanning of remote tracks ----------------------------------
 
-One issue with remote tracks is that their headers might be needed for LMS to process properly
-their sample rate, size and a few critical parameters that are required for seeking accross. 
-Without acquiring the header, it can be impossible to seek into various formats like mp4. 
-Sometimes, the header is at the bottom of the file, requiring to do an offset HTTP request.
+One issue with remote tracks is that their headers might be needed for LMS to properly process their
+sample rate, size and a few critical parameters that are required for seeking accross. Without 
+acquiring the header, it can be impossible to seek into various formats like mp4. Sometimes, the 
+header is at the bottom of the file, requiring to do an offset HTTP request.
 
-The solution was to provide a small framework to allow LMS to acquire the header, get it 
-stored and analysed and then re-used every time streaming audio starts to be sent to players.
+The solution was to provide a small framework to allow LMS to acquire the header, get it stored and 
+analysed, then re-used every time streaming bytes starts to be sent to players.
 
-The core happens in Slim::Utils::Scanner::Remote where the method parseRemoteHeader() can be 
-called by protocol handlers which want to acquire headers for their remote stream. It is used
-by default by Slim::Player::Protocol::HTTP::scanUrl.
+The core happens in Slim::Utils::Scanner::Remote where the method parseRemoteHeader() can be called 
+by protocol handlers which want to acquire headers for their remote stream. It is the default for 
+Slim::Player::Protocol::HTTP::scanUrl.
 
 It relies on helpers for each XXX format from Slim::Format::XXX
 
-- getInitialAudioBlock() that is used to get the header to be send to the player at the beginning
-  of playback. In most of cases, it's simple and the default function will work.
+- parseStream() is used to parse the stream on-the-fly, acquire track information and store them in 
+track header so that it maybe be adjusted later when seeking. This method is aimed to be called
+everytime a new scanning chunk is received, until a header is successfully parsed. It returns 0 upon
+failure, -1 if it needs more bytes, a value > 0 to jump to that offset in the stream and a hash 
+containing parsed information when done. See Slim::Format::Movie.pm for a most complete example.
   
-- parseStream() is used to parse the stream on-the-fly, acquire track information but also to store
-  the track header so that it maybe be adjusted later when seeking. This method is aimed to be called
-  everytime a new scanning chunks is received, until a header is successfully parsed. It returns 0 
-  upon failure, -1 if it needs more bytes, a value > 0 to jump to that offset in the stream and a hash 
-  containing parsed information when done. See Slim::Format::Movie.pm for a most complete example.
-  
+- getInitialAudioBlock() is used to get such acquired header to send it to the player at the 
+beginning of playback. In most of cases, it's simple and the default function will work.
+    
 The handling for every format is spread between Slim::Formats::XXX and Slim::Utils::Scanner::Remote 
 and this could be refactored a bit. In a nutshell, after parsing stream's header, it is decided if 
-the actual stream header should be skipped and replaced by a tweaked one when starting to send audio
-to the player. Such tweaked header can be added never, once, every time or only when seeking (this 
-also influences the possibility for a track to be directly played or proxied)
+the remote stream header should be discarded and replaced by a tweaked one when starting to send 
+audio bytes to the player. Such tweaked headers can be added never, once, every time or only when 
+seeking (this also influences the possibility for a track to be directly played or proxied)
 
 Upon actual streaming of audio and when header needs to be tweaked, the Slim::Player::HTTP::request 
 will look for "processors" in the track. Such processors are set upon initial scanning. A track can
@@ -127,7 +136,7 @@ depending on what the scan offered and what the player can accept.
 The relevant processor is then called in Slim::Player::HTTP and can simply create a tweaked header 
 that will then be passed to the player but it can also return a structure with a method to be called 
 for every chunk of audio data received. This is used for adts frames extraction from mp4 file, when 
-player wants 'aac' and not 'mp4'. This is also used for flac syncrhonization where some IP3K players
+player wants 'aac' and not 'mp4'. This is also used for flac synchronization where some IP3K players
 can't resynchronize when seeking in a middle of a flac stream. The more simple case is wav file that
 just need a header tweak but then don't need further handling of audio chunks. 
 
@@ -138,21 +147,18 @@ framework to have its tracks scanned.
 --------------------------- Some comments on tracks/song data structure ---------------------------	
 
 >>> URL's in $song
-- originUrl is the $track->url that is set when the $song is created. Because the $track object of a
-  $song can be replaced many times, it is the onl trace of what was there at the beginning
 - streamUrl is the url that will actually be GET, optionally using direct mode. It is set to 
-  $track->url at creation of $song, reset when track is being changed after a scan and also set by 
-  $player->canDirectStream if direct is possible. Quite often, PH use it to store the url they really
-  want to stream. By default, HTTP uses it in canDirectStreamSong to pass the argument to canDirectStream
+  $track->url at creation of $song, updated when track is being changed after a scanURL (if the 
+  updated url differs from the original one) and also set by $player->canDirectStream if direct is
+  possible. Quite often, PH use it to store the url they really want to stream. By default, HTTP 
+  uses it in canDirectStreamSong to pass the argument to canDirectStream
 
 >>> URL's in Slim::Utils::Schema::(Remote)Track
 - _url is the url used at the track's creation
 - url is a method to get/set it. When set, it changes the cache
-- redir is the url that was set when the track was created. Because the a new $track can be created upon
-  redirections (only one, at the final redirection) than the redir is copied from the mother url. it might
-  be empty in which case the track has never been redirected. Only Slim::Utils::Scanner::Remote::parseAudioStream
- (called by scanURL) set this as of 8.2
-
+- redir is the $url argument of Slim::Utils::Scanner::Remote::scanURL. It is set *only* upon redirection
+  so it might be empty which is useful to know that redirection happened.
+  
 >>> Tracks in Slim::Player::Song
 When a track contains a playlist, there is only one $song created (new) but then that same song is opened 
 multiple times. The first time the playlist is scanned and then all sub-tracks are scanned (note that 
@@ -254,7 +260,3 @@ two new keys in their hash argument
 			ProxyPort => 1080, 			
 		}
 	} );
-
-
-
-

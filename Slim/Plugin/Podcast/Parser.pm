@@ -5,7 +5,6 @@ use strict;
 use Date::Parse qw(strptime str2time);
 use Scalar::Util qw(blessed);
 use URI;
-use XML::Simple;
 
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
@@ -49,9 +48,12 @@ sub parse {
 		if ($s || $m || $h) {
 			$item->{duration} = $h*3600 + $m*60 + $s;
 		}
+		
+		my $url = $item->{enclosure}->{url};
+		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 
 		# track progress of our listening
-		my $key = 'podcast-' . $item->{enclosure}->{url};
+		my $key = 'podcast-' . $url;
 		my $from = $cache->get($key);
 		my $position;
 
@@ -68,10 +70,8 @@ sub parse {
 			}
 		}
 
+		# cache what we have anyway
 		$cache->set("$key-duration", $item->{duration}, '30days');
-
-		my $url = $item->{enclosure}->{url};
-		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $from && $from < $item->{duration} - 15 ) {
