@@ -92,12 +92,12 @@ sub shutdownPlugin {
 
 sub updateRecentlyPlayed {
 	my ($class, $client, $song) = @_;
-	my ($url) = unwrapUrl($song->originUrl);
+	my ($url) = unwrapUrl($song->currentTrack->url);
 
 	$recentlyPlayed{$url} = { 
 			url      => $url,
 			title    => $song->currentTrack->title,
-			cover    => Slim::Player::ProtocolHandlers->iconForURL($url, $client),
+			cover    => Slim::Player::ProtocolHandlers->iconForURL($song->currentTrack->url, $client),
 			duration => $song->duration,
 	};	
 }

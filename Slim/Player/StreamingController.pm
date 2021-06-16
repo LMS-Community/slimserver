@@ -435,7 +435,7 @@ sub _CheckPaused {	# only called when PAUSED
 		if ($song->canSeek() && defined $self->{'resumeTime'}) {
 
 			# Bug 10645: stop only the streaming if there is a chance to restart
-			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused");
+			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused (resume time: $self->{'resumeTime'})");
 				
 			_pauseStreaming($self, $song);
 			
@@ -443,7 +443,7 @@ sub _CheckPaused {	# only called when PAUSED
 			
 			# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
 			# Assume unknown duration means radio and so we shuould stop now
-			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused");
+			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused (no resume)");
 			
 			_Stop(@_);
 		}
