@@ -459,7 +459,7 @@ sub songElapsedSeconds {
 
 sub canDirectStream {
 	my ($client, $url, $song) = @_;
-	
+
 	# this is client's canDirectStream, not protocol handler's so there is a $song
 	my $handler = $song->currentTrackHandler;
 	return unless $handler;
@@ -537,11 +537,11 @@ sub directHeaders {
 				$songHandler->handleDirectError($client, $url, $response, $status_line);
 			}
 			elsif ($track->can('redir') && $track->redir && $track->redir ne $url) {
-				
+
 				# if we have been redirected and we fail on directstream, give it a shot with
 				# the initial utl. This is not a ideal solution, but we have no other option
 				main::INFOLOG && $directlog->is_info && $directlog->info("retrying with non-redirected url ", $track->redir);
-				
+
 				$controller->song->streamUrl($track->redir);
 				$client->play({
 					'paused'     => ($client->isSynced(1)),
@@ -571,13 +571,12 @@ sub directHeaders {
 
 			# prioritize song's protocol handler over streamUrl handler
 			my $methodHandler = $songHandler->can('parseDirectHeaders') ? $songHandler : $handler;
-			
+
 			main::INFOLOG && $directlog->info("Calling $methodHandler :: parseDirectHeader");
-			$directlog->error("Calling $methodHandler::parseDirectHeader");
 			# songHandler relates to the current (sub)track while streamUrl handler just use streamUrl
-			($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = 
+			($title, $bitrate, $metaint, $redir, $contentType, $length, $body) =
 				$methodHandler->parseDirectHeaders($client, $methodHandler == $songHandler ? $controller->song()->currentTrack() : $url, @headers);
-			
+
 			$controller->song()->isLive($length ? 0 : 1) if !$redir;
 			# XXX maybe should (also) check $song->scanData()->{$url}->{metadata}->{info}->{broadcast}
 			# for WMA streams here.
@@ -820,7 +819,7 @@ sub directMetadata {
 	my $controller = $client->controller()->songStreamController() || return;
 
 	# Will also get called for proxy streaming
-	
+
 	my $handler = $controller->song()->currentTrackHandler();
 	if ( $handler->can('parseMetadata') ) {
 		$handler->parseMetadata( $client, $controller->song(), $metadata );
