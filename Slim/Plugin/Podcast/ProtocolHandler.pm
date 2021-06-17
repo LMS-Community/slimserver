@@ -28,14 +28,12 @@ sub scanUrl {
 	my ($httpUrl, $startTime) = Slim::Plugin::Podcast::Plugin::unwrapUrl($url);	
 	my $cb = $args->{cb};
 
-	if ($startTime) {
-		# make a unique & clean url with no trailing start time
-		$url = Slim::Plugin::Podcast::Plugin::wrapUrl($httpUrl);
+	# make a unique & clean url with no trailing start time
+	$url = Slim::Plugin::Podcast::Plugin::wrapUrl($httpUrl);
+
+	# set seekdata for getNextTrack (once $song->track is updated)
+	$song->seekdata({ startTime => $startTime}) if $startTime;
 		
-		# set seekdata for getNextTrack (once $song->track is updated)
-		$song->seekdata({ startTime => $startTime});	
-	}
-	
 	$args->{cb} = sub {
 		my $track = shift;
 

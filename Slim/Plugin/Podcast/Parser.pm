@@ -103,7 +103,8 @@ sub parse {
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
-					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url),
+					# little trick to make sure "play from" url is not the main url
+					url    => Slim::Plugin::Podcast::Plugin::wrapUrl($url, 0),
 				},
 			}];
 
