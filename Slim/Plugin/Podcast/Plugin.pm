@@ -73,6 +73,17 @@ sub initPlugin {
 		func   => \&trackInfoMenu,
 	) );
 	
+	# create wrapped pseudo-tracks for recently played to have title during scanUrl
+	foreach my $item (@{$prefs->get('recent')}) {
+		my $track = Slim::Schema->updateOrCreate( {
+			url        => wrapUrl($item->{url}),
+			attributes => {
+				TITLE => $item->{title},
+				ARTWORK => $item->{cover},
+			},
+		} );
+	}	
+	
 	%recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
 
 	$class->SUPER::initPlugin(
@@ -92,12 +103,14 @@ sub shutdownPlugin {
 
 sub updateRecentlyPlayed {
 	my ($class, $client, $song) = @_;
-	my ($url) = unwrapUrl($song->currentTrack->url);
+	my $track = $song->currentTrack;
+	my ($url) = unwrapUrl($track->url);
 
 	$recentlyPlayed{$url} = { 
 			url      => $url,
-			title    => $song->currentTrack->title,
-			cover    => Slim::Player::ProtocolHandlers->iconForURL($song->currentTrack->url, $client),
+			title    => Slim::Music::Info::getCurrentTitle($client, $track->url),
+			# this is not great as we should not know that...
+			cover    => $cache->get('remote_image_' . $track->url) || Slim::Player::ProtocolHandlers->iconForURL($track->url, $client),
 			duration => $song->duration,
 	};	
 }

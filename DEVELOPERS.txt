@@ -38,8 +38,10 @@ When it returns, scanUrl provides a new $track that replaces the current one in 
 When playing again that track from the playlist, LMS would normally scan again that redirected
 $track->url which might be gone (see below). 
 
-Not that scanURL also replaces the $song->streamUrl by the $newTrack->url if this url is different
-from the $url passed as an argument. See "thin protocol handler" for more explanations.
+Not that scanURL also replaces the $song->streamUrl by the $newTrack->url if streamUrl still equals
+to the $url parameter when song is being opened/created. This allows protocol handler to change it
+as they want, but still update it when built-in scan has control.See "thin protocol handler" for 
+more explanations.
 
 -------------------------- Issue of "volatile" redirection -------------------------------
 
@@ -87,7 +89,7 @@ parsed track, shall be interecepted to recover the redirected url and replace it
 url (at least add-again your <myph:://> to was is returned) to make sure that the track, once 
 replaced in the playlist, will still use your protocol handler. This is also where it's recommended
 to set $song->streamUrl to the streamable url, often simply the $newtrack->url. Note that because 
-$track->url is reset to the original value, the $song->streamUrl will not be overwritten by scanURL
+$song->streamUrl is updated by the protocol handler, it will not be overwritten by scanURL
 
 Best is to look at Slim::Plugin::Podcast as an example of such thin protocol handler
 

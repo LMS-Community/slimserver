@@ -279,8 +279,8 @@ sub getNextSong {
 						}
 
 						$track = $newTrack;
-						# need to replace streamUrl if we have been redirected/updated
-						$self->streamUrl($track->url) if $track->url ne $url;
+						# need to replace streamUrl unless scanner has changed it
+						$self->streamUrl($track->url) if $self->streamUrl eq $url;
 					}
 
 					# maybe we just found or scanned a playlist
