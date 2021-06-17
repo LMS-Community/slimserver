@@ -54,16 +54,19 @@ and a few other parameters). The issue is that upon resume, the redirected locat
 and a 403 will happen. 
 
 When resuming, LMS sometimes creates a new() song, sometimes it just re-opens it with a song open(). 
-In both cases, the $url inside the track is the one that scanUrl has put after redirection. To 
-solve that, if Slim::Player::Song::open() fails and the track has been redirected, open() will 
-set streamUrl to $track->redir (the original url) and then will recuse. When using new() on resume,
-LMS does a getNextSong which is the method calling scanUrl. If it fails, getNextSong will recurse 
-with $track->redir. 
+In both cases, the $url inside the track is the one that scanUrl has put after redirection. 
+To solve that, if Slim::Player::Song::open() fails and the track has been redirected, open() will 
+set streamUrl to $track->redir (the original url) and then will recurse with direct streaming 
+disabled. It's not possible to allow direct streaming as if an HTTP -> HTTPS upgrade is requested
+during direct streaming redirection, playback will fall.
+When using new() on resume, LMS does a getNextSong which is the method calling scanUrl. If it fails, 
+getNextSong will recurse with $track->redir. 
 
 This is more tricky when direct stream is used because the error happens much later, when the 
 player returns the result of the HTTP request and it is thus not possible to recurse in open(). In 
 this case, as when redirection happens in direct streaming, we'll set the streamUrl to original url
-and give it another try. It's not foolproof, but it solves most cases.
+and give it another try. It's not foolproof, but it solves most cases. Typically, as said above, the
+upgraded HTTP -> HTTPS redirection cannot be handled
 
 Note that the original url is only set when Slim::Utils::Misc::Scanner::Remote::scanURL is called, 
 so this behavior does  not impact plugins that do not call their Slim::Player::HTTP::scanUrl 
