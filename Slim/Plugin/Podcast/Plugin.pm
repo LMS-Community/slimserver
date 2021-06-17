@@ -122,7 +122,7 @@ sub unwrapUrl {
 sub wrapUrl {
 	my ($url, $from) = @_;
 	
-	return 'podcast://' . $url . ($from ? "{from=$from}" : '');
+	return 'podcast://' . $url . (defined $from ? "{from=$from}" : '');
 }
 
 sub handleFeed {
@@ -210,7 +210,8 @@ sub recentHandler {
 				cover => $item->{cover},				
 				enclosure => {
 					type  => 'audio',
-					url   => wrapUrl($item->{url}),
+					# little trick to make sure "play from" url is not the main url
+					url   => wrapUrl($item->{url}, 0),
 				},	
 			}],
 		}	
