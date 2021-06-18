@@ -458,7 +458,7 @@ sub open {
 	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
-	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {
+	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self)) && (!$redir || $client->canHTTPS)) {
 		main::INFOLOG && $log->info( "URL supports direct streaming [$url->$directUrl]" );
 		$self->directstream(1);
 		$self->streamUrl($directUrl);
@@ -480,7 +480,8 @@ sub open {
 
 			if (!$sock) {
 				
-				# if we failed on a redirected track, retry once
+				# if we failed on a redirected track, retry once. Direct streaming will be disabled
+				# as redirection from HTTP to HTTPS does not work in direct mode
 				if ($track->can('redir') && $track->redir && !$redir) {
 					main::INFOLOG && $log->info("failed opening, retrying non-redirected url ", $track->redir);
 					$self->streamUrl($track->redir);
