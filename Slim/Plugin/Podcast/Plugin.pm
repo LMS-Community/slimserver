@@ -9,6 +9,7 @@ package Slim::Plugin::Podcast::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use JSON::XS::VersionOneAndTwo;
 use XML::Simple;
 
 use Slim::Plugin::Podcast::Parser;
@@ -19,6 +20,7 @@ use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
 
 use Slim::Plugin::Podcast::ProtocolHandler;
+use Slim::Plugin::Podcast::Settings;
 
 use constant PROGRESS_INTERVAL => 5;     # update progress tracker every x seconds
 
@@ -128,15 +130,18 @@ sub wrapUrl {
 sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
 
-	my $items = [];
 	my @feeds = @{$prefs->get('feeds')}; 
-
-	push @$items, {
-		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
-		url   => \&recentHandler,
-		type  => 'link',
-		image => __PACKAGE__->_pluginDataFor('icon'),
-	};
+	my $items = [ {
+			name   => cstring($client, 'PLUGIN_PODCAST_SEARCH'), 
+			type   => 'search', 
+			url    => \&searchHandler, 
+		}, {
+			name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
+			url   => \&recentHandler,
+			type  => 'link',
+			image => __PACKAGE__->_pluginDataFor('icon'),
+		}
+	];
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};
@@ -173,6 +178,62 @@ sub handleFeed {
 	$cb->({
 		items => $items,
 	});
+}
+
+sub searchHandler {
+	my ($client, $cb, $args) = @_;
+
+	my $tags = Slim::Plugin::Podcast::Settings::getProvider;	
+	my $url = $tags->{url};
+	my $country = $prefs->get('country');
+	
+	$url =~ s/%TERM%/$args->{search}/;
+	$url =~ s/%COUNTRY%/$country/;
+	
+	# try to get these from cache
+	if (my $items = $cache->get('podcast-search-' . $url)) {
+		$cb->( { items => $items } );
+		return;
+	}
+	
+	# if not found in cache then re-acquire
+	my $http = Slim::Networking::Async::HTTP->new;
+	$http->send_request( {
+		# itunes kindly sends us in a redirection loop when we use default LMS uaer-agent
+		request => HTTP::Request->new( GET => $url, [ 'User-Agent' => 'Mozilla/5.0' ] ),
+		onBody  => sub {
+			my $result = eval { from_json( shift->response->content ) };
+			$result = $result->{$tags->{result}} if $tags->{result};
+
+			$log->error($@) if $@;
+			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
+			
+			my $items = [];			
+			foreach my $feed (@$result) {
+				# find the image by order of preference
+				my ($image) = grep { $feed->{$_} } @{$tags->{image}};
+				
+				push @$items, {
+					name => $feed->{$tags->{title}},
+					url  => $feed->{$tags->{feed}},
+					image => $feed->{$image},					
+					parser => 'Slim::Plugin::Podcast::Parser',
+				}				
+			}
+				
+			# assume that new podcast *feeds* do not change too often
+			$cache->set('podcast-search-' . $url, $items, '1day') if $items;
+
+			$cb->( { items => $items } );
+		},
+		onError => sub {
+			$log->error("Search failed $_[1]");
+			$cb->({ items => [{ 
+					type => 'text',
+					name => cstring($client, 'PLUGIN_PODCAST_SEARCH_FAILED'), 
+			}] });
+		}
+	} );
 }
 
 sub recentHandler {
