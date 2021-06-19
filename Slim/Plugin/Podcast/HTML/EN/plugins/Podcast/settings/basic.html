@@ -1,6 +1,6 @@
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
-		Ext.onReady(function(){ 
+		Ext.onReady(function(){
 			new SqueezeJS.UI.Sortable({
 				el: 'podcasts_draggable',
 				selector: 'table#podcasts_draggable tr.podcast_draggable'
@@ -54,7 +54,7 @@
 	</table>
 
 	</div>
-	
+
 	[% WRAPPER setting title="PLUGIN_PODCAST_IMPORT" desc="" %]
 		<input type="submit" name="importFromMySB" value="[% "PLUGIN_PODCAST_IMPORT_FROM_MYSB" | string %]" />
 	[% END %]
@@ -66,9 +66,9 @@
 			[% END %]
 		</select>
 	[% END %]
-	
+
 	[% WRAPPER setting title="PLUGIN_PODCAST_COUNTRY" desc="PLUGIN_PODCAST_COUNTRY_DESC" %]
 		<input type="text" class="stdedit" name="pref_country" id="country" value="[% prefs.pref_country %]" size="2">
 	[% END %]
-	
+
 [% PROCESS settings/footer.html %]
