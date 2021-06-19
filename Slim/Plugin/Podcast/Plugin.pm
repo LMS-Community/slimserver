@@ -210,6 +210,8 @@ sub searchHandler {
 			
 			my $items = [];			
 			foreach my $feed (@$result) {
+				next unless $feed->{$tags->{feed}};
+
 				# find the image by order of preference
 				my ($image) = grep { $feed->{$_} } @{$tags->{image}};
 				
