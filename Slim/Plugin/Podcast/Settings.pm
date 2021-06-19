@@ -16,22 +16,6 @@ use Slim::Utils::Strings qw(string);
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 
-my @providers = ( {
-		name   => 'Apple/iTunes',
-		url    => 'https://itunes.apple.com/search?country=%COUNTRY%&media=podcast&term=%TERM%',
-		result => 'results',
-		feed   => 'feedUrl',
-		title  => 'collectionName',
-		image  => ['artworkUrl600', 'artworkUrl100'],
-	}, {
-		name  => 'GPodder', 
-		url   => 'https://gpodder.net/search.json?q=%TERM%',
-		title => 'title',
-		feed  => 'url',
-		image =>  ['scaled_logo_url', 'logo_url'],
-	}
-);
-
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_PODCAST');
 }
@@ -41,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skipSecs country));
+	return ($prefs, qw(skipSecs country provider));
 }
 
 sub handler {
@@ -94,15 +78,10 @@ sub saveSettings {
 		}
 
 		$prefs->set( feeds => $feeds );
-
-		my ($provider) = grep { $_->{name} eq $params->{provider} } @providers;
-		$prefs->set('provider', $provider);
 	}
 
-	$params->{providers} = \@providers;
-	$params->{provider} = $providers[0]->{name};
-	# just to be cautious if prefs has been mangled 
-	eval { $params->{provider} = $prefs->get('provider')->{name} };
+	# set the list of providers
+	$params->{providers} = Slim::Plugin::Podcast::Search::getProviders;
 
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
@@ -226,10 +205,6 @@ sub getMySBPodcastsUrl {
 	}
 
 	return $url;
-}
-
-sub getProvider {
-	return $prefs->get('provider') || $providers[0];
 }
 
 

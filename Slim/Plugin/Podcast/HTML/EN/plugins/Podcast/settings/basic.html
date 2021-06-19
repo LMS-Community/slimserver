@@ -60,9 +60,9 @@
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_PODCAST_PROVIDER" desc="PLUGIN_PODCAST_PROVIDER_DESC" %]
-		<select class="stdedit" name="provider">
+		<select class="stdedit" name="pref_provider" id="provider">
 			[% FOREACH item IN providers %]
-				<option value="[% item.name %]" [% IF item.name == provider %]selected [% END %]>[% item.name %]</option>
+				<option value="[% item %]" [% IF item == pref_provider %]selected [% END %]>[% item %]</option>
 			[% END %]
 		</select>
 	[% END %]
