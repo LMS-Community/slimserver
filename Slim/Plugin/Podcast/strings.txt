@@ -265,8 +265,11 @@ PLUGIN_PODCAST_PROVIDER
 	FR	Fournisseur de Podcast
 	
 PLUGIN_PODCAST_PROVIDER_DESC
-	EN	Set the Podcast feeds provider (aggregator)
+	EN	Set the Podcast feeds provider (aggregator). 
+	EN	<br>- PodcastIndex lists the most feeds and also offers an extra option to search amongst trending feeds. Search parameters are then "[lang=&ltlang1&gt[,&ltlang2&gt]] [cat=&ltcat1&gt[,&ltcat2&gt]]". See https://podcastindex.org/
+	EN	<br>- GPodder has a smaller list of referenced feeds and less frequenty updated
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
+	FR	<br>- PodcastIndex reference le plus grand nombre de flux et offre un option de recherce parmi les flux populaires. Les options supplémentaire sont alors "[lang=&ltlang1&gt[,&ltlang2&gt]] [cat=&ltcat1&gt[,&ltcat2&gt]]". Voir (https://podcastindex.org/) 
 	
 PLUGIN_PODCAST_SEARCH_FAILED
 	EN	Search failed
