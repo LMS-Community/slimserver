@@ -144,7 +144,7 @@ sub getProviders {
 
 sub getCurrent {
 	my ($provider) = grep { $_->{name} eq $prefs->get('provider') } @providers;
-	return $provider;
+	return $provider || $providers[0];
 }
 
 
