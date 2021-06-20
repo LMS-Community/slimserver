@@ -35,31 +35,18 @@ my @providers = ( {
 		menu => [ {
 			query => sub {
 				my ($self, $search) = @_;
-				my $headers = $self->{_buildHeaders}->($self);
+				my $config = $prefs->get('podcastindex');
+				my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
+				my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
+				my $time = time;
+				my $headers = [
+					'X-Auth-Key', $k,
+					'X-Auth-Date', $time,
+					'Authorization', sha1_hex($k . $s . $time),
+				];
 				return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, $headers);
 			},
-		}, {
-			title => cstring(undef, 'PLUGIN_PODCAST_TRENDING'),
-			image => 'plugins/Podcast/html/images/podcastindex.png',
-			query => sub {
-				my ($self, $search) = @_;
-				my $headers = $self->{_buildHeaders}->($self);
-				my @tags = split / /, $search;
-				$search = join '&', @tags;
-				return ('https://api.podcastindex.org/api/1.0/podcasts/trending?' . $search, $headers);
-			},
 		} ],
-		_buildHeaders => sub {
-			my $config = $prefs->get('podcastindex');
-			my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
-			my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
-			my $time = time;
-			return [
-				'X-Auth-Key', $k,
-				'X-Auth-Date', $time,
-				'Authorization', sha1_hex($k . $s . $time),
-			];
-		}
 	}, {
 		name  => 'GPodder',
 		title => 'title',
@@ -67,7 +54,7 @@ my @providers = ( {
 		image =>  ['scaled_logo_url', 'logo_url'],
 		menu => [ {
 			query => sub {
-				return ('https://gpodder.net/search.json?q=' . $_[1]);my ($self, $search) = @_;
+				return ('https://gpodder.net/search.json?q=' . $_[1]);
 			},
 		} ],
 	},
@@ -80,7 +67,10 @@ sub init {
 }
 
 sub registerProvider {
-	my ($class, $provider) = @_;
+	my ($class, $provider, $force) = @_;
+
+	# remove existing provider if forced
+	@providers = grep { $provider->{name} ne $_->{name} } @providers if $force;
 
 	if (!grep { $provider->{name} eq $_->{name} } @providers) {
 		push @providers, $provider;
