@@ -19,7 +19,7 @@ use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
 
 use Slim::Plugin::Podcast::ProtocolHandler;
-use Slim::Plugin::Podcast::Search;
+use Slim::Plugin::Podcast::Provider;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.podcast',
@@ -85,6 +85,9 @@ sub initPlugin {
 
 	%recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
 
+	# initialize all feed providers
+	Slim::Plugin::Podcast::Provider::init;
+
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'podcasts',
@@ -127,18 +130,30 @@ sub wrapUrl {
 sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
 
+	my $items = [];
+	my $provider = Slim::Plugin::Podcast::Provider::getCurrent;
+
+	# populate provider's custom menu
+	foreach my $item (@{$provider->{menu}}) {
+		push @$items, {
+			name   => $item->{title} || cstring($client, 'PLUGIN_PODCAST_SEARCH'),
+			type   => $item->{type} || 'search',
+			image  => $item->{image},
+			url    => $item->{handler} || \&Slim::Plugin::Podcast::Provider::defaultHandler,
+			passthrough => [ { provider => $provider, query => $item->{query} } ],
+		};
+	}
+
+	# then add recently played
+	push @$items, {
+		name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
+		url   => \&recentHandler,
+		type  => 'link',
+		image => __PACKAGE__->_pluginDataFor('icon'),
+	};
+
+	# then existing feeds
 	my @feeds = @{$prefs->get('feeds')};
-	my $items = [ {
-			name   => cstring($client, 'PLUGIN_PODCAST_SEARCH'),
-			type   => 'search',
-			url    => \&Slim::Plugin::Podcast::Search::searchHandler,
-		}, {
-			name  => cstring($client, 'PLUGIN_PODCAST_RECENTLY_PLAYED'),
-			url   => \&recentHandler,
-			type  => 'link',
-			image => __PACKAGE__->_pluginDataFor('icon'),
-		}
-	];
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};

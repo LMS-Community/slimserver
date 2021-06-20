@@ -13,6 +13,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use Slim::Plugin::Podcast::Provider;
+
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 
@@ -81,7 +83,7 @@ sub saveSettings {
 	}
 
 	# set the list of providers
-	$params->{providers} = Slim::Plugin::Podcast::Search::getProviders;
+	$params->{providers} = Slim::Plugin::Podcast::Provider::getProviders;
 
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];

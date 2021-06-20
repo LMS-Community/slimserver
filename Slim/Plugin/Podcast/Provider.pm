@@ -1,6 +1,6 @@
-package Slim::Plugin::Podcast::Search;
+package Slim::Plugin::Podcast::Provider;
 
-# Logitech Media Server Copyright 2005-2020 Logitech.
+# Logitech Media Server Copyright 2005-2021 Logitech.
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -26,44 +26,58 @@ my @providers = ( {
 		feed   => 'url',
 		title  => 'title',
 		image  => ['artwork', 'image'],
-		setup => sub {
-			my ($search, $request) = @_;
-			my $key = 'GJMAQPVCCGAGCQ8RRGZY';
-			my $time = time;
-			my $headers = [
-				'X-Auth-Key', $key,
-				'X-Auth-Date', $time,
-				# is there a secure storage?
-				'Authorization', sha1_hex($key . 'Yg$hwNRPHuKhkzEzujjgmwWrAryprFjrrZg^QnTm' . $time),
-			];
-			return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, $headers);
+		init => sub {
+			$prefs->init( { podcastindex => {
+				k => 'NTVhNTMzODM0MzU1NDM0NTQ1NTRlNDI1MTU5NTk1MzRhNDYzNzRkNA==',
+				s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
+			}});
 		},
+		menu => [ {
+			query => sub {
+				my ($self, $search) = @_;
+				my $headers = $self->{_buildHeaders}->($self);
+				return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, $headers);
+			},
+		}, {
+			title => cstring(undef, 'PLUGIN_PODCAST_TRENDING'),
+			image => 'plugins/Podcast/html/images/podcastindex.png',
+			query => sub {
+				my ($self, $search) = @_;
+				my $headers = $self->{_buildHeaders}->($self);
+				my @tags = split / /, $search;
+				$search = join '&', @tags;
+				return ('https://api.podcastindex.org/api/1.0/podcasts/trending?' . $search, $headers);
+			},
+		} ],
+		_buildHeaders => sub {
+			my $config = $prefs->get('podcastindex');
+			my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
+			my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
+			my $time = time;
+			return [
+				'X-Auth-Key', $k,
+				'X-Auth-Date', $time,
+				'Authorization', sha1_hex($k . $s . $time),
+			];
+		}
 	}, {
 		name  => 'GPodder',
 		title => 'title',
 		feed  => 'url',
 		image =>  ['scaled_logo_url', 'logo_url'],
-		setup => sub {
-			return ('https://gpodder.net/search.json?q=' . shift);
-		},
+		menu => [ {
+			query => sub {
+				return ('https://gpodder.net/search.json?q=' . $_[1]);my ($self, $search) = @_;
+			},
+		} ],
 	},
 );
 
-# this would be moved to a 3rd party plugin:
-__PACKAGE__->registerProvider({
- 	name   => 'Apple/iTunes',
-	result => 'results',
-	feed   => 'feedUrl',
-	title  => 'collectionName',
-	image  => ['artworkUrl600', 'artworkUrl100'],
-	setup => sub {
-		my $url = 'https://itunes.apple.com/search?media=podcast&term=' . shift;
-		my $country = $prefs->get('country');
-		$url .= "&country=$country" if $country;
-		# iTunes kindly sends us in a redirection loop when we use default LMS user-agent
-		return ($url, [ 'User-Agent', 'Mozilla/5.0' ]);
-	},
-});
+sub init {
+	foreach my $provider (@providers) {
+		$provider->{init}->() if $provider->{init};
+	}
+}
 
 sub registerProvider {
 	my ($class, $provider) = @_;
@@ -76,14 +90,12 @@ sub registerProvider {
 	}
 }
 
-sub searchHandler {
-	my ($client, $cb, $args) = @_;
+sub defaultHandler {
+	my ($client, $cb, $args, $passthrough) = @_;
 
-	my ($provider) = grep { $_->{name} eq $prefs->get('provider') } @providers;
-	$provider ||= $providers[0];
-
+	my $provider = $passthrough->{provider};
 	my $search = encode('utf-8', $args->{search});
-	my ($url, $headers) = $provider->{setup}->($search);
+	my ($url, $headers) = $passthrough->{query}->($provider, $search);
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
@@ -128,6 +140,11 @@ sub searchHandler {
 sub getProviders {
 	my @list = map { $_->{name} } @providers;
 	return \@list;
+}
+
+sub getCurrent {
+	my ($provider) = grep { $_->{name} eq $prefs->get('provider') } @providers;
+	return $provider;
 }
 
 

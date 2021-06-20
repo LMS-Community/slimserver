@@ -246,7 +246,7 @@ PLUGIN_PODCAST_SKIP_BACK
 PLUGIN_PODCAST_RECENTLY_PLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Recently played
-	FR	Piste récentes
+	FR	Pistes récentes
 
 PLUGIN_PODCAST_SEARCH
 	EN	Search feeds
@@ -272,3 +272,11 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	EN	Search failed
 	FR	Echec de recherche
 
+PLUGIN_PODCAST_TRENDING
+	EN	Trending feeds (see provider for options)
+	FR	Flux Populaires (voir le fournisseur pour les options)
+	
+PLUGIN_PODCAST_MORE_SEARCH
+	EN	More search options
+	FR	Plus d'options de recherche
+	
