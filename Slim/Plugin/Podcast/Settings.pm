@@ -27,7 +27,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skipSecs country provider));
+	return ($prefs, qw(skipSecs provider));
 }
 
 sub handler {

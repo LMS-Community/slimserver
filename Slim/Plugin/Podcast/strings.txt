@@ -252,14 +252,6 @@ PLUGIN_PODCAST_SEARCH
 	EN	Search feeds
 	FR	Rechercher des flux
 	
-PLUGIN_PODCAST_COUNTRY
-	EN	Country for feed search
-	FR	Pays pour la recherche des flux
-	
-PLUGIN_PODCAST_COUNTRY_DESC
-	EN	Some Podcast aggregators can return feeds tailored to country. Set your 2-letters country code
-	FR	Certains concentrateurs de Podcast filtrent la recherche par pays. Indiquez ici les 2 lettres de votre code pays
-	
 PLUGIN_PODCAST_PROVIDER
 	EN	Podcast provider
 	FR	Fournisseur de Podcast
