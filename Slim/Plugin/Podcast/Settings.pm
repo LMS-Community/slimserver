@@ -108,13 +108,7 @@ sub validateFeed {
 
 			main::INFOLOG && $log->is_info && $log->info( "Verified feed $newFeedUrl, title: $title" );
 
-			my $feeds = $prefs->get('feeds');
-			push @$feeds, {
-				name  => $title,
-				value => $newFeedUrl,
-			};
-
-			$prefs->set( feeds => $feeds );
+			Slim::Control::Request::executeRequest(undef, ["podcasts", "addshow", $newFeedUrl, $title]);
 
 			$class->saveSettings( $client, $params, $callback, $args );
 		},

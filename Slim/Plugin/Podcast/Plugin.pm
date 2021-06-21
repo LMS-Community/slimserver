@@ -93,6 +93,16 @@ sub initPlugin {
 		[ 0, 1, 1, \&showInfo ]
 	);
 
+	Slim::Control::Request::addDispatch(
+		[ 'podcasts', 'addshow', '_url', '_name' ],
+		[ 0, 0, 0, \&addShow ]
+	);
+
+	Slim::Control::Request::addDispatch(
+		[ 'podcasts', 'delshow', '_url' ],
+		[ 0, 0, 0, \&delShow ]
+	);
+
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'podcasts',
@@ -299,34 +309,97 @@ sub showInfo {
 	my $client = $request->client;
 	my $url    = $request->getParam('url');
 	my $name   = $request->getParam('name');
+	my $image  = $request->getParam('image');
+
+	$cache->set('podcast-rss-' . $url, $image, '90days') if $image && $url;
+
+	if ($name) {
+		$client->pluginData(showName => $name);
+	}
+	else {
+		$name = $client->pluginData('showName');
+	}
+
+	my $menuTitle = cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', $name);
+	my $menuAction = 'addshow';
+	if (grep { $_->{value} eq $url } @{$prefs->get('feeds') || []}) {
+		$menuTitle = cstring($client, 'PLUGIN_PODCAST_UNSUBSCRIBE', $name);
+		$menuAction = 'delshow';
+	}
+
+	my $item;
+	if ($request->getParam('menu')) {
+		$item = {
+			type => 'link',
+			name => $menuTitle,
+			isContextMenu => 1,
+			refresh => 1,
+			jive => {
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ 'podcasts', $menuAction, $url, $name ],
+					}
+				},
+				nextWindow => 'parent'
+			},
+		};
+	}
+	else {
+		$item = {
+			type => 'link',
+			name => $menuTitle,
+			url => sub {
+				my ($client, $cb, $params, $args) = @_;
+
+				Slim::Control::Request::executeRequest(undef, ['podcasts', $menuAction, $url, $name]);
+
+				$cb->({
+					items => [{
+						type => 'text',
+						name => cstring($client, 'PLUGIN_PODCAST_DONE'),
+					}],
+				});
+			},
+		};
+	}
 
 	Slim::Control::XMLBrowser::cliQuery('podcastinfo', {
 		name => $name,
-		items => [{
-			type => 'link',
-			name => cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', $name),
-			passthrough => [{
-				url => $url
-			}],
-			url => sub {
-				my $cb = $_[1];
-
-				my $feeds = $prefs->get('feeds');
-
-				push @$feeds, {
-					name  => $name,
-					value => $url,
-				} unless grep { $_->{value} eq $url } @$feeds;
-
-				$prefs->set( feeds => $feeds );
-
-				$cb->({ items => [{
-					type => 'text',
-					name => cstring($client, 'DONE')
-				}] });
-			}
-		}]
+		items => [$item]
 	}, $request);
+}
+
+sub addShow {
+	my $request = shift;
+
+	my $url = $request->getParam('_url');
+	my $name = $request->getParam('_name');
+
+	my $feeds = $prefs->get('feeds');
+
+	push @$feeds, {
+		name  => $name,
+		value => $url,
+	} unless grep { $_->{value} eq $url } @$feeds;
+
+	$prefs->set( feeds => $feeds );
+
+	$request->setStatusDone();
+}
+
+sub delShow {
+	my $request = shift;
+
+	my $url = $request->getParam('_url');
+
+	my $feeds = $prefs->get('feeds');
+
+	@$feeds = grep { $_->{value} ne $url } @$feeds;
+
+	$prefs->set( feeds => $feeds );
+
+	$request->setStatusDone();
 }
 
 1;

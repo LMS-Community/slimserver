@@ -116,7 +116,7 @@ sub defaultHandler {
 				actions => {
 					info => {
 						command =>   ['podcastinfo', 'items'],
-						variables => [ 'url', 'url', 'name', 'name' ],
+						variables => [ 'url', 'url', 'name', 'name', 'image', 'image' ],
 					},
 				}
 			});

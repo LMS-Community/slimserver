@@ -272,3 +272,12 @@ PLUGIN_PODCAST_SUBSCRIBE
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
+
+PLUGIN_PODCAST_UNSUBSCRIBE
+	DE	Von Podcast '%s' abmelden
+	EN	Unubscribe from '%s'
+	FR	Se désabonner de '%s'
+
+PLUGIN_PODCAST_DONE
+	DE	Abonnement angepasst...
+	EN	Subscribed/Unsubscried from show...
