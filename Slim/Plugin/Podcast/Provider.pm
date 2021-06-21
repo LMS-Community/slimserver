@@ -111,6 +111,12 @@ sub defaultHandler {
 				}
 			}
 
+			if (!scalar @$items) {
+				return $cb->({ items => [{
+					name => cstring($client, 'EMPTY')
+				}] });
+			}
+
 			$cb->({
 				items => $items,
 				actions => {
