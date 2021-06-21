@@ -111,7 +111,15 @@ sub defaultHandler {
 				}
 			}
 
-			$cb->( { items => $items } );
+			$cb->({
+				items => $items,
+				actions => {
+					info => {
+						command =>   ['podcastinfo', 'items'],
+						variables => [ 'url', 'url', 'name', 'name' ],
+					},
+				}
+			});
 		},
 		sub {
 			$log->error("Search failed $_[1]");

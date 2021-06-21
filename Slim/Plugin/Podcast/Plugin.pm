@@ -88,6 +88,11 @@ sub initPlugin {
 	# initialize all feed providers
 	Slim::Plugin::Podcast::Provider::init;
 
+	Slim::Control::Request::addDispatch(
+		[ 'podcastinfo', 'items', '_index', '_quantity' ],
+		[ 0, 1, 1, \&showInfo ]
+	);
+
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'podcasts',
@@ -182,6 +187,10 @@ sub handleFeed {
 				},
 				sub {
 					$log->warn("can't get $url RSS feed icon: ", shift->error);
+				},
+				{
+					cache => 1,
+					expires => 86400,
 				},
 			)->get($_->{value});
 		}
@@ -279,6 +288,45 @@ sub trackInfoMenu {
 	}
 
 	return;
+}
+
+sub showInfo {
+	my $request = shift;
+
+	$request->addParam('_index', 0);
+	$request->addParam('_quantity', 10);
+
+	my $client = $request->client;
+	my $url    = $request->getParam('url');
+	my $name   = $request->getParam('name');
+
+	Slim::Control::XMLBrowser::cliQuery('podcastinfo', {
+		name => $name,
+		items => [{
+			type => 'link',
+			name => cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', $name),
+			passthrough => [{
+				url => $url
+			}],
+			url => sub {
+				my $cb = $_[1];
+
+				my $feeds = $prefs->get('feeds');
+
+				push @$feeds, {
+					name  => $name,
+					value => $url,
+				} unless grep { $_->{value} eq $url } @$feeds;
+
+				$prefs->set( feeds => $feeds );
+
+				$cb->({ items => [{
+					type => 'text',
+					name => cstring($client, 'DONE')
+				}] });
+			}
+		}]
+	}, $request);
 }
 
 1;
