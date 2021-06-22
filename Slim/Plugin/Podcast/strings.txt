@@ -268,6 +268,22 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	EN	Search failed
 	FR	Echec de recherche
 
+PLUGIN_PODCAST_WHATSNEW
+	EN	New episodes of the last %s days
+	FR	Nouveaux épisodes des %s derniers jours
+
+PLUGIN_PODCAST_WHATSNEW_DESC
+	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
+	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
+
+PLUGIN_PODCAST_NEWSINCE
+	EN	Number of history days 
+	FR	Nombre de jours d'historique
+
+PLUGIN_PODCAST_MAXNEW
+	EN	Number of new episodes per feed
+	FR	Nombre de nouveaux épisodes par flux
+
 PLUGIN_PODCAST_SUBSCRIBE
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
@@ -281,3 +297,4 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 PLUGIN_PODCAST_DONE
 	DE	Abonnement angepasst...
 	EN	Subscribed/Unsubscried from show...
+	FR	Désabonné ...

@@ -13,10 +13,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
-use Slim::Plugin::Podcast::Provider;
-
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
+my @hidden = qw(maxNew newSince );
 
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_PODCAST');
@@ -27,7 +26,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skipSecs provider));
+	return ($prefs, qw(skipSecs provider), @hidden);
 }
 
 sub handler {
@@ -44,6 +43,11 @@ sub handler {
 	}
 
 	return $class->saveSettings( $client, $params, $callback, \@args );
+}
+
+sub beforeRender {
+	my ($class, $params, $client) = @_;
+	$params->{newsHandler} = defined Slim::Plugin::Podcast::Plugin::getProviderByName->can('newsHandler');
 }
 
 sub saveSettings {
@@ -78,18 +82,24 @@ sub saveSettings {
 				$i++;
 			}
 		}
-
+		
+		# don't erase hidden parameters if they are not set
+		foreach (@hidden) {
+			$params->{"pref_$_"} ||= $prefs->get($_);
+		}	
+		
 		$prefs->set( feeds => $feeds );
 	}
-
+	
 	# set the list of providers
-	$params->{providers} = Slim::Plugin::Podcast::Provider::getProviders;
+	$params->{providers} = Slim::Plugin::Podcast::Plugin::getProviders;
 
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
 	}
 
 	my $body = $class->SUPER::handler($client, $params);
+	
 	return $callback->( $client, $params, $body, @$args );
 }
 
@@ -108,7 +118,13 @@ sub validateFeed {
 
 			main::INFOLOG && $log->is_info && $log->info( "Verified feed $newFeedUrl, title: $title" );
 
-			Slim::Control::Request::executeRequest(undef, ["podcasts", "addshow", $newFeedUrl, $title]);
+			my $feeds = $prefs->get('feeds');
+			push @$feeds, {
+				name  => $title,
+				value => $newFeedUrl,
+			};
+
+			$prefs->set( feeds => $feeds );
 
 			$class->saveSettings( $client, $params, $callback, $args );
 		},
