@@ -246,5 +246,38 @@ PLUGIN_PODCAST_SKIP_BACK
 PLUGIN_PODCAST_RECENTLY_PLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Recently played
-	FR	Piste récentes
+	FR	Pistes récentes
 
+PLUGIN_PODCAST_SEARCH
+	DE	Shows suchen
+	EN	Search feeds
+	FR	Rechercher des flux
+
+PLUGIN_PODCAST_PROVIDER
+	DE	Podcastverzeichnis
+	EN	Podcast provider
+	FR	Fournisseur de Podcast
+
+PLUGIN_PODCAST_PROVIDER_DESC
+	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
+	EN	Set the Podcast feeds provider (aggregator).
+	FR	Configurez le fournisseur (concentrateur) de Podcasts
+
+PLUGIN_PODCAST_SEARCH_FAILED
+	DE	Suche fehlgeschlagen
+	EN	Search failed
+	FR	Echec de recherche
+
+PLUGIN_PODCAST_SUBSCRIBE
+	DE	Podcast '%s' abonnieren
+	EN	Subscribe to '%s'
+	FR	S'abonner à '%s'
+
+PLUGIN_PODCAST_UNSUBSCRIBE
+	DE	Von Podcast '%s' abmelden
+	EN	Unubscribe from '%s'
+	FR	Se désabonner de '%s'
+
+PLUGIN_PODCAST_DONE
+	DE	Abonnement angepasst...
+	EN	Subscribed/Unsubscried from show...

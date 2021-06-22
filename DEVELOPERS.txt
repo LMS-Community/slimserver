@@ -148,6 +148,43 @@ just need a header tweak but then don't need further handling of audio chunks.
 Look at Slim::Misc::Utils::Scanner::Remote and Slim::Formats::Movie or Slim::Formats::FLAC for 
 general understanding and at Slim::Plugin::WiMP::ProtocolHandler to see how a plugin can use this
 framework to have its tracks scanned.
+
+----------------------------------- Podcast plugin extension --------------------------------------
+
+Since LMS 8.2, the Podcast plugin has the possibility to search for feeds with a choice of search 
+engines. As it is not possible to add too many engines directly in LMS, a small extension framework
+has been built and allow custom plugins to add their own provider and a few simple set of sub-menus. 
+
+A default search handler Slim::Plugin::Podcast::defaultHandler is doing an HTTP query using a 
+customizable url and expects a JSON payload in return that it automatically maps to OPML feeds. 
+
+The Slim::Plugin::Podcats::registerProvider($provider) is used to add providers that comply with the 
+following structure.
+
+my $provider = {
+	name   => <name of provider>
+	# following are used by default handler (not needed with custom handler)
+	result => <JSON sub-entry where results are found - can be empty>
+	feed   => <feed's name in JSON payload>
+	title  => <feed's title in JSON payload>
+	image  => <array ref of possible feed's image in JSON payload>
+	# array ref of additional menu entries to podcast menu
+	menu => [ {
+		title   => <title of menu item> (default = 'Search feeds')
+		image   => <image of menu item> 
+		type    => <type of menu entry> (default = 'search')
+		handler => <handler for menu item> (default = Slim::Plugin::Provider::defaultHandler)
+		query   => <method used by defaultHandler to obtain the query url>
+	} ],
+};
+
+The 'query' entry is mandatory when no handler is provided. Its arguments are $provider and $search
+if menu entry is a 'search'. It returns an array ref with the url to query and an optional array ref
+of additional HTTP headers for that query.
+
+A customized handler, is a classical OPML handler with ($client, $cb, $args, $passthrough) and 
+expects in return to have $cb called with a hash containing another OPML set. See all other plugins
+that subclasses OPML for more details.
 	
 --------------------------- Some comments on tracks/song data structure ---------------------------	
 

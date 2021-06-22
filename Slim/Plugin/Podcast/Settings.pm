@@ -13,6 +13,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use Slim::Plugin::Podcast::Provider;
+
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 
@@ -25,7 +27,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skipSecs));
+	return ($prefs, qw(skipSecs provider));
 }
 
 sub handler {
@@ -80,6 +82,9 @@ sub saveSettings {
 		$prefs->set( feeds => $feeds );
 	}
 
+	# set the list of providers
+	$params->{providers} = Slim::Plugin::Podcast::Provider::getProviders;
+
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
 	}
@@ -103,13 +108,7 @@ sub validateFeed {
 
 			main::INFOLOG && $log->is_info && $log->info( "Verified feed $newFeedUrl, title: $title" );
 
-			my $feeds = $prefs->get('feeds');
-			push @$feeds, {
-				name  => $title,
-				value => $newFeedUrl,
-			};
-
-			$prefs->set( feeds => $feeds );
+			Slim::Control::Request::executeRequest(undef, ["podcasts", "addshow", $newFeedUrl, $title]);
 
 			$class->saveSettings( $client, $params, $callback, $args );
 		},
@@ -203,6 +202,7 @@ sub getMySBPodcastsUrl {
 
 	return $url;
 }
+
 
 1;
 
