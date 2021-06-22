@@ -39,6 +39,7 @@ $prefs->init({
 	feeds => [],
 	skipSecs => 15,
 	recent => [],
+	provider => 'PodcastIndex',
 	newSince => 7,
 	maxNew => 7,
 });
