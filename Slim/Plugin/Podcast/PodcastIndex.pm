@@ -30,6 +30,9 @@ Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'PodcastIndex', {
 	feed   => 'url',
 	title  => 'title',
 	image  => ['artwork', 'image'],
+	description => 'description',
+	author => 'author',
+	language => 'language',
 });
 
 # add a new episode menu to defaults

@@ -286,7 +286,18 @@ sub searchHandler {
 					url  => $feed->{$provider->{feed}},
 					image => $feed->{$image},
 					parser => 'Slim::Plugin::Podcast::Parser',
+				};
+
+				# pre-cache some additional information to be shown in feed info menu
+				my %moreInfo;
+
+				foreach (qw(language author description)) {
+					if (my $value = $feed->{$provider->{$_}}) {
+						$moreInfo{$_} = $value;
+					}
 				}
+
+				$cache->set('podcast_moreInfo_' . $feed->{$provider->{feed}}, \%moreInfo);
 			}
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
@@ -295,8 +306,8 @@ sub searchHandler {
 				items => $items,
 				actions => {
 					info => {
-						command =>   ['podcastinfo', 'items'],
-						variables => [ 'url', 'url', 'name', 'name' ],
+						command   => ['podcastinfo', 'items'],
+						variables => [ 'url', 'url', 'name', 'name', 'image', 'image' ],
 					},
 				}
 			});
@@ -398,10 +409,11 @@ sub showInfo {
 		$name = $client->pluginData('showName');
 	}
 
-	my $menuTitle = cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', $name);
+	my $menuTitle = cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', Slim::Utils::Unicode::utf8decode($name));
 	my $menuAction = 'addshow';
+
 	if (grep { $_->{value} eq $url } @{$prefs->get('feeds') || []}) {
-		$menuTitle = cstring($client, 'PLUGIN_PODCAST_UNSUBSCRIBE', $name);
+		$menuTitle = cstring($client, 'PLUGIN_PODCAST_UNSUBSCRIBE', Slim::Utils::Unicode::utf8decode($name));
 		$menuAction = 'delshow';
 	}
 
@@ -442,9 +454,38 @@ sub showInfo {
 		};
 	}
 
+	my $items = [ $item ];
+
+	my $moreInfo = $cache->get('podcast_moreInfo_' . $url);
+	if (keys %$moreInfo) {
+		if (my $desc = $moreInfo->{'description'}) {
+			$desc = Slim::Formats::XML::unescapeAndTrim($desc);
+			$desc =~ s/\s+/ /sg;
+
+			push @$items, {
+				type => 'text',
+				name => Slim::Utils::Unicode::utf8decode($desc)
+			};
+		}
+
+		if (my $author = $moreInfo->{'author'}) {
+			push @$items, {
+				type => 'text',
+				name => cstring($client, 'PLUGIN_PODCAST_AUTHOR') . ' ' . Slim::Utils::Unicode::utf8decode($author)
+			};
+		}
+
+		if (my $lang = $moreInfo->{'language'}) {
+			push @$items, {
+				type => 'text',
+				name => cstring($client, 'LANGUAGE') . cstring($client, 'COLON') . ' ' . $lang
+			};
+		}
+	}
+
 	Slim::Control::XMLBrowser::cliQuery('podcastinfo', {
 		name => $name,
-		items => [$item]
+		items => $items
 	}, $request);
 }
 

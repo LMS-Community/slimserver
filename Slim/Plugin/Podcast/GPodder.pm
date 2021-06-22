@@ -10,6 +10,8 @@ Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'GPodder', {
 	title => 'title',
 	feed  => 'url',
 	image =>  ['scaled_logo_url', 'logo_url'],
+	description => 'description',
+	author => 'author',
 });
 
 # just use defaults

@@ -273,6 +273,11 @@ PLUGIN_PODCAST_WHATSNEW
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
 
+PLUGIN_PODCAST_AUTHOR
+	DE	Herausgeber:
+	EN	Author:
+	FR	Auteur :
+
 PLUGIN_PODCAST_WHATSNEW_DESC
 	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
 	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
