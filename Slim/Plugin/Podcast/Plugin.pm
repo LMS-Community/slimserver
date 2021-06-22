@@ -10,6 +10,8 @@ use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
 use XML::Simple;
+use JSON::XS::VersionOneAndTwo;
+use Encode qw(encode);
 
 use Slim::Plugin::Podcast::Parser;
 use Slim::Utils::Cache;
@@ -19,7 +21,6 @@ use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
 
 use Slim::Plugin::Podcast::ProtocolHandler;
-use Slim::Plugin::Podcast::Provider;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.podcast',
@@ -32,10 +33,14 @@ tie my %recentlyPlayed, 'Tie::Cache::LRU', 50;
 my $prefs = preferences('plugin.podcast');
 my $cache;
 
+my %providers = ();
+
 $prefs->init({
 	feeds => [],
 	skipSecs => 15,
 	recent => [],
+	newSince => 7,
+	maxNew => 7,
 });
 
 # migrate old prefs across
@@ -72,6 +77,9 @@ sub initPlugin {
 		func   => \&trackInfoMenu,
 	) );
 
+	require Slim::Plugin::Podcast::PodcastIndex;
+	require Slim::Plugin::Podcast::GPodder;
+
 	# create wrapped pseudo-tracks for recently played to have title during scanUrl
 	foreach my $item (@{$prefs->get('recent')}) {
 		my $track = Slim::Schema->updateOrCreate( {
@@ -84,9 +92,6 @@ sub initPlugin {
 	}
 
 	%recentlyPlayed = map { $_->{url} => $_ } reverse @{$prefs->get('recent')};
-
-	# initialize all feed providers
-	Slim::Plugin::Podcast::Provider::init;
 
 	Slim::Control::Request::addDispatch(
 		[ 'podcastinfo', 'items', '_index', '_quantity' ],
@@ -132,31 +137,19 @@ sub updateRecentlyPlayed {
 	};
 }
 
-sub unwrapUrl {
-	return shift =~ m|^podcast://([^{]+)(?:{from=(\d+)}$)?|;
-}
-
-sub wrapUrl {
-	my ($url, $from) = @_;
-
-	return 'podcast://' . $url . (defined $from ? "{from=$from}" : '');
-}
-
 sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
 
 	my $items = [];
-	my $provider = Slim::Plugin::Podcast::Provider::getCurrent;
+	my $provider = getProviderByName();
 
 	# populate provider's custom menu
-	foreach my $item (@{$provider->{menu}}) {
-		push @$items, {
-			name   => $item->{title} || cstring($client, 'PLUGIN_PODCAST_SEARCH'),
-			type   => $item->{type} || 'search',
-			image  => 'html/images/search.png',
-			url    => $item->{handler} || \&Slim::Plugin::Podcast::Provider::defaultHandler,
-			passthrough => [ { provider => $provider, query => $item->{query} } ],
-		};
+	foreach my $item (@{$provider->getItems($client)}) {
+		$item->{title} ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
+		$item->{type}  ||= 'search',
+		$item->{url}   ||= \&searchHandler unless $item->{enclosure};
+		$item->{passthrough} ||= [ { provider => $provider, item => $item } ],
+		push @$items, $item;
 	}
 
 	# then add recently played
@@ -256,6 +249,82 @@ sub recentHandler {
 	}
 
 	$cb->({ items => \@menu });
+}
+
+sub searchHandler {
+	my ($client, $cb, $args, $passthrough) = @_;
+
+	my $provider = $passthrough->{provider};
+	my $search = encode('utf-8', $args->{search});
+	my ($url, $headers) = $provider->getSearchParams($client, $passthrough->{item}, $search);
+
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $response = shift;
+			my $result = eval { from_json( $response->content ) };
+			$result = $result->{$provider->{result}} if $provider->{result};
+
+			$log->error($@) if $@;
+			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
+
+			my $items = [];
+			foreach my $feed (@$result) {
+				next unless $feed->{$provider->{feed}};
+
+				# find the image by order of preference
+				my ($image) = grep { $feed->{$_} } @{$provider->{image}};
+
+				push @$items, {
+					name => $feed->{$provider->{title}},
+					url  => $feed->{$provider->{feed}},
+					image => $feed->{$image},
+					parser => 'Slim::Plugin::Podcast::Parser',
+				}
+			}
+
+			$cb->({
+				items => $items,
+				actions => {
+					info => {
+						command =>   ['podcastinfo', 'items'],
+						variables => [ 'url', 'url', 'name', 'name' ],
+					},
+				}
+			});
+		},
+		sub {
+			$log->error("Search failed $_[1]");
+			$cb->({ items => [{
+					type => 'text',
+					name => cstring($client, 'PLUGIN_PODCAST_SEARCH_FAILED'),
+			}] });
+		},
+		{
+			cache => 1,
+			expires => 86400,
+		}
+	)->get($url, @$headers);
+}
+
+sub registerProvider {
+	my ($class, $name, $provider, $force) = @_;
+
+	if (!$providers{$name} || $force) {
+		$providers{$name} = bless $provider, $class;
+	}
+	else {
+		$log->warn(sprintf('Podcast aggregator %s is already registered!', $name));
+	}
+}
+
+sub getProviders {
+	my @list = keys %providers;
+	return \@list;
+}
+
+sub getProviderByName {
+	my $provider = shift || $providers{$prefs->get('provider')};
+	return $provider || $providers{(keys %providers)[0]};
 }
 
 sub getDisplayName {
@@ -401,5 +470,16 @@ sub delShow {
 
 	$request->setStatusDone();
 }
+
+sub unwrapUrl {
+	return shift =~ m|^podcast://([^{]+)(?:{from=(\d+)}$)?|;
+}
+
+sub wrapUrl {
+	my ($url, $from) = @_;
+
+	return 'podcast://' . $url . (defined $from ? "{from=$from}" : '');
+}
+
 
 1;

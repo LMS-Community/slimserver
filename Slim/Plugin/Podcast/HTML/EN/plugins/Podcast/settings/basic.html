@@ -67,4 +67,15 @@
 		</select>
 	[% END %]
 
+	[% IF newsHandler %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="PLUGIN_PODCAST_NEWSINCE" desc="PLUGIN_PODCAST_WHATSNEW_DESC" %]
+				<input type="text" class="stdedit" name="pref_newSince" id="newSince" value="[% prefs.pref_newSince %]" size="2">
+			[% END %]
+			[% WRAPPER settingGroup title="PLUGIN_PODCAST_MAXNEW" %]
+				<input type="text" class="stdedit" name="pref_maxNew" id="maxNew" value="[% prefs.pref_maxNew %]" size="2">
+			[% END %]
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]
