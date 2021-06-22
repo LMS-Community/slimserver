@@ -269,18 +269,22 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	FR	Echec de recherche
 
 PLUGIN_PODCAST_WHATSNEW
+	DE	Neue Episoden der letzten %s tage
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
 
 PLUGIN_PODCAST_WHATSNEW_DESC
+	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
 	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
 
 PLUGIN_PODCAST_NEWSINCE
-	EN	Number of history days 
+	DE	Anzahl Einträge im Verlauf
+	EN	Number of history days
 	FR	Nombre de jours d'historique
 
 PLUGIN_PODCAST_MAXNEW
+	DE	Anzahl neuer Episoden pro Show
 	EN	Number of new episodes per feed
 	FR	Nombre de nouveaux épisodes par flux
 
@@ -297,4 +301,4 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 PLUGIN_PODCAST_DONE
 	DE	Abonnement angepasst...
 	EN	Subscribed/Unsubscried from show...
-	FR	Désabonné ...
+	FR	Abonné/Désabonné ...

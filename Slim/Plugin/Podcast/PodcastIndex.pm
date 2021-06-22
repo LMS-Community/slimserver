@@ -25,11 +25,11 @@ $prefs->init( { podcastindex => {
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
 } } );
 
-__PACKAGE__->Slim::Plugin::Podcast::Plugin::registerProvider('PodcastIndex', {
-		result => 'feeds',
-		feed   => 'url',
-		title  => 'title',
-		image  => ['artwork', 'image'],
+Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'PodcastIndex', {
+	result => 'feeds',
+	feed   => 'url',
+	title  => 'title',
+	image  => ['artwork', 'image'],
 });
 
 # add a new episode menu to defaults
@@ -68,9 +68,9 @@ sub newsHandler {
 		Slim::Networking::SimpleAsyncHTTP->new(
 			sub {
 				my $response = shift;
-				my $result = eval { from_json( $response->content )	};
+				my $result = eval { from_json( $response->content ) };
 
-				$log->warn("error parsing new episodes for $url", $@);
+				$log->warn("error parsing new episodes for $url", $@) if $@;
 				main::INFOLOG && $log->is_info && $log->info("found $result->{count} for $url");
 
 				foreach my $item (@{$result->{items}}) {

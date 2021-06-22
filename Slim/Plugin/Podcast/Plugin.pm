@@ -129,11 +129,11 @@ sub updateRecentlyPlayed {
 	my ($url) = unwrapUrl($track->url);
 
 	$recentlyPlayed{$url} = {
-			url      => $url,
-			title    => Slim::Music::Info::getCurrentTitle($client, $track->url),
-			# this is not great as we should not know that...
-			cover    => $cache->get('remote_image_' . $track->url) || Slim::Player::ProtocolHandlers->iconForURL($track->url, $client),
-			duration => $song->duration,
+		url      => $url,
+		title    => Slim::Music::Info::getCurrentTitle($client, $track->url),
+		# this is not great as we should not know that...
+		cover    => $cache->get('remote_image_' . $track->url) || Slim::Player::ProtocolHandlers->iconForURL($track->url, $client),
+		duration => $song->duration,
 	};
 }
 
@@ -146,9 +146,14 @@ sub handleFeed {
 	# populate provider's custom menu
 	foreach my $item (@{$provider->getItems($client)}) {
 		$item->{title} ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
-		$item->{type}  ||= 'search',
+		$item->{type}  ||= 'search';
 		$item->{url}   ||= \&searchHandler unless $item->{enclosure};
-		$item->{passthrough} ||= [ { provider => $provider, item => $item } ],
+		$item->{passthrough} ||= [ { provider => $provider, item => $item } ];
+
+		if (!$item->{image} || ref $item->{image}) {
+			$item->{image} = 'html/images/search.png';
+		}
+
 		push @$items, $item;
 	}
 
@@ -248,6 +253,8 @@ sub recentHandler {
 		unshift @menu, $entry;
 	}
 
+	push @menu, { name => cstring($client, 'EMPTY') } if !scalar @menu;
+
 	$cb->({ items => \@menu });
 }
 
@@ -281,6 +288,8 @@ sub searchHandler {
 					parser => 'Slim::Plugin::Podcast::Parser',
 				}
 			}
+
+			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
 
 			$cb->({
 				items => $items,
@@ -323,8 +332,8 @@ sub getProviders {
 }
 
 sub getProviderByName {
-	my $provider = shift || $providers{$prefs->get('provider')};
-	return $provider || $providers{(keys %providers)[0]};
+	my $name = shift || $prefs->get('provider');
+	return $providers{$name} || $providers{(keys %providers)[0]};
 }
 
 sub getDisplayName {
@@ -382,10 +391,10 @@ sub showInfo {
 
 	$cache->set('podcast-rss-' . $url, $image, '90days') if $image && $url;
 
-	if ($name) {
+	if ($name && $client) {
 		$client->pluginData(showName => $name);
 	}
-	else {
+	elsif ($client) {
 		$name = $client->pluginData('showName');
 	}
 
