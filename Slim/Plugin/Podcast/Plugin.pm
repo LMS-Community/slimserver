@@ -153,7 +153,7 @@ sub handleFeed {
 		push @$items, {
 			name   => $item->{title} || cstring($client, 'PLUGIN_PODCAST_SEARCH'),
 			type   => $item->{type} || 'search',
-			image  => $item->{image},
+			image  => 'html/images/search.png',
 			url    => $item->{handler} || \&Slim::Plugin::Podcast::Provider::defaultHandler,
 			passthrough => [ { provider => $provider, query => $item->{query} } ],
 		};
