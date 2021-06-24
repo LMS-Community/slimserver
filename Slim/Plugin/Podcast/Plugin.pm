@@ -324,8 +324,16 @@ sub registerProvider {
 	my ($class, $force) = @_;
 
 	eval "require $class";
+
+	# in case somebody provides a faulty plugin
+	if ($@) {
+		$log->warn("cannot load $class");
+		return;
+	}
+
 	my $name = $class->getName;
 
+	# load if not already there or forced
 	if (!$providers{$name} || $force) {
 		$providers{$name} = $class->new;
 		return $providers{$name};
