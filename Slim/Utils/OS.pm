@@ -121,7 +121,7 @@ sub initSearchPath {
 		&& (
 			$class->{'osDetails'}->{'osArch'} =~ /x86_64/
 			|| $class->{'osDetails'}->{'osName'} =~ /\b10\.[1-9][4-9]\./
-			|| $class->{'osDetails'}->{'osName'} =~ /\b11\.\d+/
+			|| $class->{'osDetails'}->{'osName'} =~ / 1[1-9]\.\d+/
 		)
 	) {
 		unshift @paths, catdir($baseDir, $class->{osDetails}->{'binArch'} . '-x86_64'), catdir($baseDir, $^O . '-x86_64');
