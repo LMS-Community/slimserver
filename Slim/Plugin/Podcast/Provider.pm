@@ -15,14 +15,11 @@ sub new {
 sub getMenuItems { [ { } ] }
 
 sub parseStart {
-	my ($self, $content) = @_;
 	return {
 		index => 0,
-		feeds => $content,
+		feeds => $_[1],
 	};
 }
-
-sub parseStop { }
 
 
 1;

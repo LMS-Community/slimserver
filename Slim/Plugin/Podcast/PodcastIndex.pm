@@ -44,21 +44,20 @@ sub getSearchParams {
 }
 
 sub parseStart {
-	my ($self, $content) = @_;
 	return {
 		index => 0,
-		feeds => $content->{feeds},
+		feeds => $_[1]->{feeds},
 	};
 }
 
 sub parseNext {
 	my ($self, $iterator) = @_;
-	
+
 	my $feed = $iterator->{feeds}->[$iterator->{index}++];
 	return unless $feed;
-	
+
 	my ($image) = grep { $feed->{$_} } qw(artwork image);
-	
+
 	return {
 		name         => $feed->{title},
 		url          => $feed->{url},

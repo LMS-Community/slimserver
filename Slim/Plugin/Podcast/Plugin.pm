@@ -21,8 +21,6 @@ use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
 
 use Slim::Plugin::Podcast::ProtocolHandler;
-use Slim::Plugin::Podcast::PodcastIndex;
-use Slim::Plugin::Podcast::GPodder;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.podcast',
@@ -36,15 +34,6 @@ my $prefs = preferences('plugin.podcast');
 my $cache;
 
 my %providers = ();
-
-$prefs->init({
-	feeds => [],
-	skipSecs => 15,
-	recent => [],
-	provider => Slim::Plugin::Podcast::PodcastIndex::getName(),
-	newSince => 7,
-	maxNew => 7,
-});
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
@@ -68,6 +57,18 @@ sub initPlugin {
 	my $class = shift;
 
 	$cache = Slim::Utils::Cache->new();
+	
+	registerProvider('Slim::Plugin::Podcast::PodcastIndex');
+	registerProvider('Slim::Plugin::Podcast::GPodder');
+
+	$prefs->init({
+		feeds => [],
+		skipSecs => 15,
+		recent => [],
+		provider => Slim::Plugin::Podcast::PodcastIndex->getName(),
+		newSince => 7,
+		maxNew => 7,
+	});
 
 	if (main::WEBUI) {
 		require Slim::Plugin::Podcast::Settings;
@@ -79,9 +80,6 @@ sub initPlugin {
 		before => 'top',
 		func   => \&trackInfoMenu,
 	) );
-
-	registerProvider(Slim::Plugin::Podcast::PodcastIndex->new);
-	registerProvider(Slim::Plugin::Podcast::GPodder->new);
 
 	# create wrapped pseudo-tracks for recently played to have title during scanUrl
 	foreach my $item (@{$prefs->get('recent')}) {
@@ -272,34 +270,29 @@ sub searchHandler {
 		sub {
 			my $response = shift;
 			my $result = eval { from_json( $response->content ) };
-			#$result = $result->{$provider->result} if $provider->result;
 
 			$log->error($@) if $@;
 			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
 
 			my $items = [];
 			my $iterator = $provider->parseStart($result);
-			
+
 			while (my $feed = $provider->parseNext($iterator)) {
+				# add parser is missing then add the feed to the list
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
 				push $items, $feed;
-			}
-			
-			$provider->parseStop($iterator);
-=comment			
-TODO: not sure about how to handle this part
+
 				# pre-cache some additional information to be shown in feed info menu
 				my %moreInfo;
 
 				foreach (qw(language author description)) {
-					if (my $value = $feed->{$provider->$_}) {
+					if (my $value = $feed->{$_}) {
 						$moreInfo{$_} = $value;
 					}
 				}
 
-				$cache->set('podcast_moreInfo_' . $feed->{$provider->feed}, \%moreInfo);
+				$cache->set('podcast_moreInfo_' . $feed->{url}, \%moreInfo);
 			}
-=cut			
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
 
@@ -328,12 +321,14 @@ TODO: not sure about how to handle this part
 }
 
 sub registerProvider {
-	my ($provider, $force) = @_;
+	my ($class, $force) = @_;
 
-	my $name = $provider->getName;
+	eval "require $class";
+	my $name = $class->getName;
+
 	if (!$providers{$name} || $force) {
-		$providers{$name} = $provider;
-		return $provider;
+		$providers{$name} = $class->new;
+		return $providers{$name};
 	}
 
 	$log->warn(sprintf('Podcast aggregator %s is already registered!', $name));
