@@ -27,26 +27,11 @@ $prefs->init( { podcastindex => {
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
 } } );
 
-sub new {
-	my $self = shift->SUPER::new;
-
-	$self->init_accessor(
-		result => 'feeds',
-		feed   => 'url',
-		title  => 'title',
-		image  => ['artwork', 'image'],
-		description => 'description',
-		author => 'author',
-		language => 'language',
-	);
-
-	return $self;
-}
-
 # add a new episode menu to defaults
-sub getItems {
+sub getMenuItems {
 	my ($self, $client) = @_;
-	return [ @{$self->SUPER::getItems}, {
+
+	return [ @{$self->SUPER::getMenuItems}, {
 		title => cstring($client, 'PLUGIN_PODCAST_WHATSNEW', $prefs->get('newSince')),
 		image => 'plugins/Podcast/html/images/podcastindex.png',
 		type => 'link',
@@ -55,8 +40,33 @@ sub getItems {
 }
 
 sub getSearchParams {
-	my ($self, $client, $item, $search) = @_;
-	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, getHeaders());
+	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $_[3] , getHeaders());
+}
+
+sub parseStart {
+	my ($self, $content) = @_;
+	return {
+		index => 0,
+		feeds => $content->{feeds},
+	};
+}
+
+sub parseNext {
+	my ($self, $iterator) = @_;
+	
+	my $feed = $iterator->{feeds}->[$iterator->{index}++];
+	return unless $feed;
+	
+	my ($image) = grep { $feed->{$_} } qw(artwork image);
+	
+	return {
+		name         => $feed->{title},
+		url          => $feed->{url},
+		image        => $feed->{$image},
+		description  => $feed->{description},
+		author       => $feed->{author},
+		language     => $feed->{language},
+	};
 }
 
 sub newsHandler {

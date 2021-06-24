@@ -147,7 +147,7 @@ sub handleFeed {
 	my $provider = getProviderByName();
 
 	# populate provider's custom menu
-	foreach my $item (@{$provider->getItems($client)}) {
+	foreach my $item (@{$provider->getMenuItems($client)}) {
 		$item->{title} ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
 		$item->{type}  ||= 'search';
 		$item->{url}   ||= \&searchHandler unless $item->{enclosure};
@@ -272,25 +272,22 @@ sub searchHandler {
 		sub {
 			my $response = shift;
 			my $result = eval { from_json( $response->content ) };
-			$result = $result->{$provider->result} if $provider->result;
+			#$result = $result->{$provider->result} if $provider->result;
 
 			$log->error($@) if $@;
 			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
 
 			my $items = [];
-			foreach my $feed (@$result) {
-				next unless $feed->{$provider->feed};
-
-				# find the image by order of preference
-				my ($image) = grep { $feed->{$_} } @{$provider->image};
-
-				push @$items, {
-					name => $feed->{$provider->title},
-					url  => $feed->{$provider->feed},
-					image => $feed->{$image},
-					parser => 'Slim::Plugin::Podcast::Parser',
-				};
-
+			my $iterator = $provider->parseStart($result);
+			
+			while (my $feed = $provider->parseNext($iterator)) {
+				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
+				push $items, $feed;
+			}
+			
+			$provider->parseStop($iterator);
+=comment			
+TODO: not sure about how to handle this part
 				# pre-cache some additional information to be shown in feed info menu
 				my %moreInfo;
 
@@ -302,6 +299,7 @@ sub searchHandler {
 
 				$cache->set('podcast_moreInfo_' . $feed->{$provider->feed}, \%moreInfo);
 			}
+=cut			
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
 

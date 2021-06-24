@@ -8,15 +8,21 @@ package Slim::Plugin::Podcast::Provider;
 
 use strict;
 
-use base qw(Slim::Utils::Accessor);
-
-__PACKAGE__->mk_accessor('rw', qw(result title feed image description author language));
-
 sub new {
-	return shift->SUPER::new;
+	return bless { }, shift;
 }
 
-sub getItems { [ { } ] }
+sub getMenuItems { [ { } ] }
+
+sub parseStart {
+	my ($self, $content) = @_;
+	return {
+		index => 0,
+		feeds => $content,
+	};
+}
+
+sub parseStop { }
 
 
 1;
