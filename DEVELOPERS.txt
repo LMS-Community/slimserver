@@ -155,36 +155,29 @@ Since LMS 8.2, the Podcast plugin has the possibility to search for feeds with a
 engines. As it is not possible to add too many engines directly in LMS, a small extension framework
 has been built and allow custom plugins to add their own provider and a few simple set of sub-menus. 
 
-A default search handler Slim::Plugin::Podcast::defaultHandler is doing an HTTP query using a 
-customizable url and expects a JSON payload in return that it automatically maps to OPML feeds. 
+The "Provider" class is used as the base for any podcast provider and has is expecting to haave the 
+following methods:
 
-The Slim::Plugin::Podcats::registerProvider($provider) is used to add providers that comply with the 
-following structure.
+ - new (O) => a class/object reference to the newly created provider
+ - getName => name of the provider
+ - getMenuItems (O) => array reference of OPML items to add to main menu
+ - parseStart (O) => hash to an iterator to build items from a search result
+ - parseNext => returns the next OPML item using the iterator created above
+ - getSearchParams => array reference to: [ $url for search and array reference to extra headers]
+ - newsHandler (O) => a classical OPML list builder if the provider supports "what's new"
 
-my $provider = {
-	name   => <name of provider>
-	# following are used by default handler (not needed with custom handler)
-	result => <JSON sub-entry where results are found - can be empty>
-	feed   => <feed's name in JSON payload>
-	title  => <feed's title in JSON payload>
-	image  => <array ref of possible feed's image in JSON payload>
-	# array ref of additional menu entries to podcast menu
-	menu => [ {
-		title   => <title of menu item> (default = 'Search feeds')
-		image   => <image of menu item> 
-		type    => <type of menu entry> (default = 'search')
-		handler => <handler for menu item> (default = Slim::Plugin::Provider::defaultHandler)
-		query   => <method used by defaultHandler to obtain the query url>
-	} ],
-};
+The default search handler Slim::Plugin::Podcast::searchHandler is doing an HTTP query using a 
+customizable url and expects a JSON payload in return that it maps to OPML feeds by using parseXXX
+methods. 
 
-The 'query' entry is mandatory when no handler is provided. Its arguments are $provider and $search
-if menu entry is a 'search'. It returns an array ref with the url to query and an optional array ref
-of additional HTTP headers for that query.
+The "newsHandler" method, when present, signals to the plugin that the provider is capable of 
+listing new episodes of subscribed feeds. Now, there is no boilerplate code for how to handle the 
+search for news and it is left to the provider itself (it can be too much different between 
+providers). The presence of "newsHandler" methods only guarantees that podcast settings shows a 
+"since" and "max" options.
 
-A customized handler, is a classical OPML handler with ($client, $cb, $args, $passthrough) and 
-expects in return to have $cb called with a hash containing another OPML set. See all other plugins
-that subclasses OPML for more details.
+The Slim::Plugin::Podcats::registerProvider($classname) is used to add providers. See example here
+https://github.com/philippe44/LMS-PodcastExt for adding a new provider or extending an existing one
 	
 --------------------------- Some comments on tracks/song data structure ---------------------------	
 
