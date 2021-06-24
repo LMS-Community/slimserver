@@ -8,6 +8,8 @@ package Slim::Plugin::Podcast::PodcastIndex;
 
 use strict;
 
+use base qw(Slim::Plugin::Podcast::Provider);
+
 use JSON::XS::VersionOneAndTwo;
 use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
@@ -25,20 +27,26 @@ $prefs->init( { podcastindex => {
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
 } } );
 
-Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'PodcastIndex', {
-	result => 'feeds',
-	feed   => 'url',
-	title  => 'title',
-	image  => ['artwork', 'image'],
-	description => 'description',
-	author => 'author',
-	language => 'language',
-});
+sub new {
+	my $self = shift->SUPER::new;
+
+	$self->init_accessor(
+		result => 'feeds',
+		feed   => 'url',
+		title  => 'title',
+		image  => ['artwork', 'image'],
+		description => 'description',
+		author => 'author',
+		language => 'language',
+	);
+
+	return $self;
+}
 
 # add a new episode menu to defaults
 sub getItems {
-	my ($class, $client);
-	return [ { }, {
+	my ($self, $client) = @_;
+	return [ @{$self->SUPER::getItems}, {
 		title => cstring($client, 'PLUGIN_PODCAST_WHATSNEW', $prefs->get('newSince')),
 		image => 'plugins/Podcast/html/images/podcastindex.png',
 		type => 'link',
@@ -47,14 +55,13 @@ sub getItems {
 }
 
 sub getSearchParams {
-	my ($class, $client, $item, $search) = @_;
+	my ($self, $client, $item, $search) = @_;
 	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, getHeaders());
 }
 
 sub newsHandler {
 	my ($client, $cb, $args, $passthrough) = @_;
 
-	my $provider = $passthrough->{provider};
 	my $headers = getHeaders();
 	my @feeds = @{$prefs->get('feeds')};
 	my $count = scalar @feeds;
@@ -119,6 +126,8 @@ sub getHeaders {
 		'Authorization', sha1_hex($k . $s . $time),
 	];
 }
+
+sub getName { 'PodcastIndex'}
 
 
 1;

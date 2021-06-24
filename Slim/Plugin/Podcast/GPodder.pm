@@ -6,19 +6,27 @@ package Slim::Plugin::Podcast::GPodder;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'GPodder', {
-	title => 'title',
-	feed  => 'url',
-	image =>  ['scaled_logo_url', 'logo_url'],
-	description => 'description',
-	author => 'author',
-});
+use base qw(Slim::Plugin::Podcast::Provider);
 
-# just use defaults
-sub getItems { [ { } ] }
+sub new {
+	my $self = shift->SUPER::new;
+
+	$self->init_accessor(
+		title => 'title',
+		feed  => 'url',
+		image =>  ['scaled_logo_url', 'logo_url'],
+		description => 'description',
+		author => 'author',
+	);
+
+	return $self;
+}
 
 sub getSearchParams {
 	return ('https://gpodder.net/search.json?scale_logo=256&q=' . $_[3]);
 }
+
+sub getName { 'GPodder' }
+
 
 1;
