@@ -280,7 +280,7 @@ sub searchHandler {
 			while (my $feed = $provider->parseNext($iterator)) {
 				# add parser is missing then add the feed to the list
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
-				push $items, $feed;
+				push @$items, $feed;
 
 				# pre-cache some additional information to be shown in feed info menu
 				my %moreInfo;
