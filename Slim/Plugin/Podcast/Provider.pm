@@ -8,9 +8,7 @@ package Slim::Plugin::Podcast::Provider;
 
 use strict;
 
-sub new {
-	return bless { }, shift;
-}
+sub new { shift };
 
 sub getMenuItems { [ { } ] }
 
