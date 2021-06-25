@@ -35,15 +35,6 @@ my $cache;
 
 my %providers = ();
 
-$prefs->init({
-	feeds => [],
-	skipSecs => 15,
-	recent => [],
-	provider => 'PodcastIndex',
-	newSince => 7,
-	maxNew => 7,
-});
-
 # migrate old prefs across
 $prefs->migrate(1, sub {
 	require Slim::Utils::Prefs::OldPrefs;
@@ -66,6 +57,18 @@ sub initPlugin {
 	my $class = shift;
 
 	$cache = Slim::Utils::Cache->new();
+	
+	registerProvider('Slim::Plugin::Podcast::PodcastIndex');
+	registerProvider('Slim::Plugin::Podcast::GPodder');
+
+	$prefs->init({
+		feeds => [],
+		skipSecs => 15,
+		recent => [],
+		provider => Slim::Plugin::Podcast::PodcastIndex->getName(),
+		newSince => 7,
+		maxNew => 7,
+	});
 
 	if (main::WEBUI) {
 		require Slim::Plugin::Podcast::Settings;
@@ -77,9 +80,6 @@ sub initPlugin {
 		before => 'top',
 		func   => \&trackInfoMenu,
 	) );
-
-	require Slim::Plugin::Podcast::PodcastIndex;
-	require Slim::Plugin::Podcast::GPodder;
 
 	# create wrapped pseudo-tracks for recently played to have title during scanUrl
 	foreach my $item (@{$prefs->get('recent')}) {
@@ -145,7 +145,7 @@ sub handleFeed {
 	my $provider = getProviderByName();
 
 	# populate provider's custom menu
-	foreach my $item (@{$provider->getItems($client)}) {
+	foreach my $item (@{$provider->getMenuItems($client)}) {
 		$item->{title} ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
 		$item->{type}  ||= 'search';
 		$item->{url}   ||= \&searchHandler unless $item->{enclosure};
@@ -270,35 +270,28 @@ sub searchHandler {
 		sub {
 			my $response = shift;
 			my $result = eval { from_json( $response->content ) };
-			$result = $result->{$provider->{result}} if $provider->{result};
 
 			$log->error($@) if $@;
 			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
 
 			my $items = [];
-			foreach my $feed (@$result) {
-				next unless $feed->{$provider->{feed}};
+			my $next = $provider->getFeedsIterator($result);
 
-				# find the image by order of preference
-				my ($image) = grep { $feed->{$_} } @{$provider->{image}};
-
-				push @$items, {
-					name => $feed->{$provider->{title}},
-					url  => $feed->{$provider->{feed}},
-					image => $feed->{$image},
-					parser => 'Slim::Plugin::Podcast::Parser',
-				};
+			while ( my $feed = $next->() ) {
+				# add parser if missing then add the feed to the list
+				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
+				push @$items, $feed;
 
 				# pre-cache some additional information to be shown in feed info menu
 				my %moreInfo;
 
 				foreach (qw(language author description)) {
-					if (my $value = $feed->{$provider->{$_}}) {
+					if (my $value = $feed->{$_}) {
 						$moreInfo{$_} = $value;
 					}
 				}
 
-				$cache->set('podcast_moreInfo_' . $feed->{$provider->{feed}}, \%moreInfo);
+				$cache->set('podcast_moreInfo_' . $feed->{url}, \%moreInfo);
 			}
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
@@ -328,14 +321,26 @@ sub searchHandler {
 }
 
 sub registerProvider {
-	my ($class, $name, $provider, $force) = @_;
+	my ($class, $force) = @_;
 
+	eval "require $class";
+
+	# in case somebody provides a faulty plugin
+	if ($@) {
+		$log->warn("cannot load $class");
+		return;
+	}
+
+	my $name = $class->getName;
+
+	# load if not already there or forced
 	if (!$providers{$name} || $force) {
-		$providers{$name} = bless $provider, $class;
+		$providers{$name} = $class->new;
+		return $providers{$name};
 	}
-	else {
-		$log->warn(sprintf('Podcast aggregator %s is already registered!', $name));
-	}
+
+	$log->warn(sprintf('Podcast aggregator %s is already registered!', $name));
+	return;
 }
 
 sub getProviders {

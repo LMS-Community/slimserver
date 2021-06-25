@@ -8,6 +8,8 @@ package Slim::Plugin::Podcast::PodcastIndex;
 
 use strict;
 
+use base qw(Slim::Plugin::Podcast::Provider);
+
 use JSON::XS::VersionOneAndTwo;
 use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
@@ -25,20 +27,11 @@ $prefs->init( { podcastindex => {
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
 } } );
 
-Slim::Plugin::Podcast::Plugin::registerProvider(__PACKAGE__, 'PodcastIndex', {
-	result => 'feeds',
-	feed   => 'url',
-	title  => 'title',
-	image  => ['artwork', 'image'],
-	description => 'description',
-	author => 'author',
-	language => 'language',
-});
-
 # add a new episode menu to defaults
-sub getItems {
-	my ($class, $client);
-	return [ { }, {
+sub getMenuItems {
+	my ($self, $client) = @_;
+
+	return [ @{$self->SUPER::getMenuItems}, {
 		title => cstring($client, 'PLUGIN_PODCAST_WHATSNEW', $prefs->get('newSince')),
 		image => 'plugins/Podcast/html/images/podcastindex.png',
 		type => 'link',
@@ -47,14 +40,36 @@ sub getItems {
 }
 
 sub getSearchParams {
-	my ($class, $client, $item, $search) = @_;
-	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $search, getHeaders());
+	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $_[3] , getHeaders());
+}
+
+sub getFeedsIterator {
+	my ($self, $feeds) = @_;
+	
+	my $index;
+	$feeds = $feeds->{feeds};
+	
+	# iterator on feeds
+	return sub {
+		my $feed = $feeds->[$index++];
+		return unless $feed;
+
+		my ($image) = grep { $feed->{$_} } qw(artwork image);
+
+		return {
+			name         => $feed->{title},
+			url          => $feed->{url},
+			image        => $feed->{$image},
+			description  => $feed->{description},
+			author       => $feed->{author},
+			language     => $feed->{language},
+		};
+	};
 }
 
 sub newsHandler {
 	my ($client, $cb, $args, $passthrough) = @_;
 
-	my $provider = $passthrough->{provider};
 	my $headers = getHeaders();
 	my @feeds = @{$prefs->get('feeds')};
 	my $count = scalar @feeds;
@@ -119,6 +134,8 @@ sub getHeaders {
 		'Authorization', sha1_hex($k . $s . $time),
 	];
 }
+
+sub getName { 'PodcastIndex'}
 
 
 1;
