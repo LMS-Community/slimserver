@@ -12,12 +12,5 @@ sub new { shift };
 
 sub getMenuItems { [ { } ] }
 
-sub parseStart {
-	return {
-		index => 0,
-		feeds => $_[1],
-	};
-}
-
 
 1;

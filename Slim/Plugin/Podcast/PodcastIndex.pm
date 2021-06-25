@@ -49,6 +49,7 @@ sub getFeedsIterator {
 	my $index;
 	$feeds = $feeds->{feeds};
 	
+	# iterator on feeds
 	return sub {
 		my $feed = $feeds->[$index++];
 		return unless $feed;

@@ -12,6 +12,7 @@ sub getFeedsIterator {
 	my ($self, $feeds) = @_;
 	my $index;
 	
+	# iterator on feeds
 	return sub {
 		my $feed = $feeds->[$index++];
 		return unless $feed;

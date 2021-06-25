@@ -161,14 +161,13 @@ following methods:
  - new (O) => a class/object reference to the newly created provider
  - getName => name of the provider
  - getMenuItems (O) => array reference of OPML items to add to main menu
- - parseStart (O) => hash to an iterator to build items from a search result
- - parseNext => returns the next OPML item using the iterator created above
+ - getFeedsIterator  => closure to be called to iterate through results
  - getSearchParams => array reference to: [ $url for search and array reference to extra headers]
  - newsHandler (O) => a classical OPML list builder if the provider supports "what's new"
 
 The default search handler Slim::Plugin::Podcast::searchHandler is doing an HTTP query using a 
-customizable url and expects a JSON payload in return that it maps to OPML feeds by using parseXXX
-methods. 
+customizable url and expects a JSON payload in return that it maps to OPML feeds by repeateadtly 
+calling the iterator gotten from getFeedsIterator (See PodcastIndex example).
 
 The "newsHandler" method, when present, signals to the plugin that the provider is capable of 
 listing new episodes of subscribed feeds. Now, there is no boilerplate code for how to handle the 
