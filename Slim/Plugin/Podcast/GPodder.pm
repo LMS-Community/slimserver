@@ -8,21 +8,24 @@ package Slim::Plugin::Podcast::GPodder;
 
 use base qw(Slim::Plugin::Podcast::Provider);
 
-sub parseNext {
-	my ($self, $iterator) = @_;
+sub getFeedsIterator {
+	my ($self, $feeds) = @_;
+	my $index;
 	
-	my $feed = $iterator->{feeds}->[$iterator->{index}++];
-	return unless $feed;
+	return sub {
+		my $feed = $feeds->[$index++];
+		return unless $feed;
 	
-	my ($image) = grep { $feed->{$_} } qw(scaled_logo_url logo_url);
+		my ($image) = grep { $feed->{$_} } qw(scaled_logo_url logo_url);
 	
-	return {
-		name         => $feed->{title},
-		url          => $feed->{url},
-		image        => $feed->{$image},
-		description  => $feed->{description},
-		author       => $feed->{author},
-	};
+		return {
+			name         => $feed->{title},
+			url          => $feed->{url},
+			image        => $feed->{$image},
+			description  => $feed->{description},
+			author       => $feed->{author},
+		};
+	};	
 }
 
 sub getSearchParams {

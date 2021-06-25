@@ -43,28 +43,26 @@ sub getSearchParams {
 	return ('https://api.podcastindex.org/api/1.0/search/byterm?q=' . $_[3] , getHeaders());
 }
 
-sub parseStart {
-	return {
-		index => 0,
-		feeds => $_[1]->{feeds},
-	};
-}
+sub getFeedsIterator {
+	my ($self, $feeds) = @_;
+	
+	my $index;
+	$feeds = $feeds->{feeds};
+	
+	return sub {
+		my $feed = $feeds->[$index++];
+		return unless $feed;
 
-sub parseNext {
-	my ($self, $iterator) = @_;
+		my ($image) = grep { $feed->{$_} } qw(artwork image);
 
-	my $feed = $iterator->{feeds}->[$iterator->{index}++];
-	return unless $feed;
-
-	my ($image) = grep { $feed->{$_} } qw(artwork image);
-
-	return {
-		name         => $feed->{title},
-		url          => $feed->{url},
-		image        => $feed->{$image},
-		description  => $feed->{description},
-		author       => $feed->{author},
-		language     => $feed->{language},
+		return {
+			name         => $feed->{title},
+			url          => $feed->{url},
+			image        => $feed->{$image},
+			description  => $feed->{description},
+			author       => $feed->{author},
+			language     => $feed->{language},
+		};
 	};
 }
 

@@ -275,9 +275,9 @@ sub searchHandler {
 			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);
 
 			my $items = [];
-			my $iterator = $provider->parseStart($result);
+			my $next = $provider->getFeedsIterator($result);
 
-			while (my $feed = $provider->parseNext($iterator)) {
+			while ( my $feed = $next->() ) {
 				# add parser is missing then add the feed to the list
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
 				push @$items, $feed;
