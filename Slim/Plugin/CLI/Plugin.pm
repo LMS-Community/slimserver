@@ -306,6 +306,21 @@ sub client_socket_close {
 	}
 }
 
+sub client_socket_cleanup {
+	my $client_ip = shift;
+
+	# close all connections
+	foreach my $client_socket (keys %connections) {
+
+		# retrieve the socket object
+		$client_socket = $connections{$client_socket}{'socket'};
+		next unless $client_socket->peerhost() eq $client_ip;
+
+		# close the connection
+		client_socket_close($client_socket);
+	}
+}
+
 
 # data from connection
 sub client_socket_read {
