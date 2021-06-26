@@ -82,6 +82,7 @@ my %parsers = (
 	'wav' => { parser => \&parseWavAifHeader, extra => 'format' },    
 	'aif' => { parser => \&parseWavAifHeader, extra => 'format' },    
 	'mp4' => { parser => \&parseMp4Header, extra => 'url' },			
+	'mp3' => { parser => \&parseAudioStream, extra => 'url' },			
 );
 
 sub parseRemoteHeader {
