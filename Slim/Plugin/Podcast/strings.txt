@@ -269,7 +269,7 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	FR	Echec de recherche
 
 PLUGIN_PODCAST_WHATSNEW
-	DE	Neue Episoden der letzten %s tage
+	DE	Neue Episoden der letzten %s Tage
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
 

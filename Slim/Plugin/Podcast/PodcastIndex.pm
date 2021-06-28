@@ -32,7 +32,7 @@ sub getMenuItems {
 	my ($self, $client) = @_;
 
 	return [ @{$self->SUPER::getMenuItems}, {
-		title => cstring($client, 'PLUGIN_PODCAST_WHATSNEW', $prefs->get('newSince')),
+		name => cstring($client, 'PLUGIN_PODCAST_WHATSNEW', $prefs->get('newSince')),
 		image => 'plugins/Podcast/html/images/podcastindex.png',
 		type => 'link',
 		url => \&newsHandler,
@@ -45,10 +45,10 @@ sub getSearchParams {
 
 sub getFeedsIterator {
 	my ($self, $feeds) = @_;
-	
+
 	my $index;
 	$feeds = $feeds->{feeds};
-	
+
 	# iterator on feeds
 	return sub {
 		my $feed = $feeds->[$index++];

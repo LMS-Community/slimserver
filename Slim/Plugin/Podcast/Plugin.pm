@@ -57,7 +57,7 @@ sub initPlugin {
 	my $class = shift;
 
 	$cache = Slim::Utils::Cache->new();
-	
+
 	registerProvider('Slim::Plugin::Podcast::PodcastIndex');
 	registerProvider('Slim::Plugin::Podcast::GPodder');
 
@@ -146,7 +146,7 @@ sub handleFeed {
 
 	# populate provider's custom menu
 	foreach my $item (@{$provider->getMenuItems($client)}) {
-		$item->{title} ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
+		$item->{name}  ||= cstring($client, 'PLUGIN_PODCAST_SEARCH');
 		$item->{type}  ||= 'search';
 		$item->{url}   ||= \&searchHandler unless $item->{enclosure};
 		$item->{passthrough} ||= [ { provider => $provider, item => $item } ];
