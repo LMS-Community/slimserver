@@ -251,6 +251,9 @@ sub slimproto_close {
 	Slim::Networking::Select::removeWrite($clientsock);
 	Slim::Networking::Select::removeWriteNoBlockQ($clientsock);
 
+	# close any associated cli_socket
+	Slim::Plugin::CLI::Plugin::client_socket_cleanup($clientsock->peerhost);
+
 	# close socket
 	$clientsock->close();
 
