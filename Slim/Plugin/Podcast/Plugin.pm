@@ -176,8 +176,10 @@ sub handleFeed {
 		push @$items, {
 			name => $_->{name},
 			url  => $url,
+			favorites_url => $url,
 			parser => 'Slim::Plugin::Podcast::Parser',
 			image => $image || __PACKAGE__->_pluginDataFor('icon'),
+			playlist => $url,
 		};
 
 		unless ($image) {
