@@ -93,6 +93,10 @@ sub getFeedAsync {
 		$handler->explodePlaylist($params->{client}, $url, sub {
 			my ($tracks) = @_;
 
+			# explode playlist might return a full opml list	
+			return $cb->($tracks, $params) if ref $tracks eq 'HASH';
+
+			# if not, this is just an array of url
 			return $cb->({
 				'type'  => 'opml',
 				'title' => '',
