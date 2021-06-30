@@ -119,6 +119,8 @@ sub _mysbFeed {
 			my $savedApps = $prefs->client($client)->get('apps');
 
 			foreach my $app (values %$savedApps) {
+				next if !$app->{title};
+
 				push @{$feed->{'items'}}, {
 					image => Slim::Networking::SqueezeNetwork->url($app->{'icon'}),
 					items => [1],
