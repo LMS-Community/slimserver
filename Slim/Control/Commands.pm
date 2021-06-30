@@ -1424,12 +1424,6 @@ sub playlistXitemCommand {
 	if ( $handler && $handler->can('explodePlaylist') ) {
 		$handler->explodePlaylist($client, $path, sub {
 			my $tracks = shift;
-			# transform opml list into url array if needed
-			if (ref $tracks eq 'HASH') {
-				$tracks = [ map { 
-					$_->{play} || $_->{url} 
-				} @{$tracks->{items}} ];
-			}	
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', $tracks, $fadeIn]);
 			$request->setStatusDone();
 		});
