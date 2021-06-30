@@ -263,7 +263,6 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'terminator'} = $LF;
 
 			$client_socket->setsockopt(SOL_SOCKET, SO_KEEPALIVE, 1);
-			Slim::Utils::Timers::setTimer($client_socket, time() + 3600, \&client_socket_keepalive);
 
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info("Accepted connection from $connections{$client_socket}{'id'} (" . (keys %connections) . " active connections)");
@@ -281,20 +280,6 @@ sub cli_socket_accept {
 	}
 }
 
-sub client_socket_keepalive {
-	my $client_socket = shift;
-
-	if ($client_socket->connected) {
-		$log->info("cli socket keepalive for ", $client_socket->peerhost);
-		Slim::Utils::Timers::setTimer($client_socket, time() + 3600, \&client_socket_keepalive);
-	}
-	else {
-		$log->warn("cli socket non-responsive for ", $client_socket->peerhost);
-		client_socket_close($client_socket);
-	}
-}
-
-
 # close connection
 sub client_socket_close {
 	my $client_socket = shift;
@@ -306,8 +291,6 @@ sub client_socket_close {
 	Slim::Networking::Select::removeWrite($client_socket);
 	Slim::Networking::Select::removeRead($client_socket);
 	Slim::Networking::Select::removeError($client_socket);
-
-	Slim::Utils::Timers::killTimers($client_socket, \&client_socket_keepalive);
 
 	close $client_socket;
 	delete($connections{$client_socket});
