@@ -1309,9 +1309,15 @@ sub _cliQuery_done {
 								my %params;
 								my @vars = @{$actionParamsNeeded{$key}};
 								for (my $i = 0; $i < scalar @vars; $i += 2) {
+									# ignore items whose URL points to a code ref - Squeezeplay can't handle them
+									if (ref $item->{$vars[$i+1]}) {
+										%params = ();
+										last;
+									}
+
 									$params{$vars[$i]} = $item->{$vars[$i+1]};
 								}
-								$hash{$key} = \%params;
+								$hash{$key} = \%params if keys %params;
 							}
 						}
 

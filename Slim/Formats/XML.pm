@@ -93,7 +93,7 @@ sub getFeedAsync {
 		$handler->explodePlaylist($params->{client}, $url, sub {
 			my ($tracks) = @_;
 
-			# explode playlist might return a full opml list	
+			# explode playlist might return a full opml list
 			return $cb->($tracks, $params) if ref $tracks eq 'HASH';
 
 			# if not, this is just an array of url
@@ -147,8 +147,8 @@ sub getFeedAsync {
 
 	if ( $url =~ IS_TUNEIN_RE ) {
 		# Add the TuneIn username
-		if ( $url !~ /username/ && $url =~ /(?:presets|title)/ 
-			&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') 
+		if ( $url !~ /username/ && $url =~ /(?:presets|title)/
+			&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin')
 			&& ( my $username = Slim::Plugin::InternetRadio::TuneIn->getUsername($params->{client}) )
 		) {
 			$url .= '&username=' . uri_escape_utf8($username);
@@ -437,6 +437,14 @@ sub parseRSS {
 	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
 		my $href = $xml->{'channel'}->{'itunes:image'}->{'href'};
 		$feed{'image'} = $href unless ref $href;
+	}
+
+	if (my $language = $xml->{'channel'}->{'language'}) {
+		$feed{language} = unescapeAndTrim($language);
+	}
+
+	if (my $author = $xml->{'channel'}->{'author'} || $xml->{'channel'}->{'itunes:author'}) {
+		$feed{author} = unescapeAndTrim($author);
 	}
 
 	# some feeds (slashdot) have items at same level as channel

@@ -177,38 +177,37 @@ sub handleFeed {
 			name => $_->{name},
 			url  => $url,
 			favorites_url => $url,
+			favorites_type => 'link',
 			parser => 'Slim::Plugin::Podcast::Parser',
 			image => $image || __PACKAGE__->_pluginDataFor('icon'),
 			playlist => $url,
 		};
 
-		unless ($image) {
-			# always cache image avoid sending a flood of requests
-			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
-
-			Slim::Networking::SimpleAsyncHTTP->new(
+		unless ($image && $cache->get('podcast_moreInfo_' . $url)) {
+			Slim::Formats::XML->getFeedAsync(
 				sub {
-					eval {
-						my $xml = XMLin(shift->content);
-						my $image = $xml->{channel}->{image}->{url} || $xml->{channel}->{'itunes:image'}->{href};
-						$cache->set('podcast-rss-' . $url, $image, '90days') if $image;
-					};
-
-					$log->warn("can't parse $url RSS for feed icon: ", $@) if $@;
+					_precacheShowDetails($url, $_[0]);
 				},
 				sub {
-					$log->warn("can't get $url RSS feed icon: ", shift->error);
+					$log->warn("can't get $url RSS feed information: ", $_[0]);
 				},
 				{
-					cache => 1,
-					expires => 86400,
-				},
-			)->get($_->{value});
+					parser => 'Slim::Plugin::Podcast::Parser',
+					url => $_->{value},
+					expires => 86400
+				}
+			);
 		}
 	}
 
 	$cb->({
 		items => $items,
+		actions => {
+			info => {
+				command   => ['podcastinfo', 'items'],
+				variables => [ 'url', 'url', 'name', 'name', 'image', 'image' ],
+			},
+		}
 	});
 }
 
@@ -284,16 +283,7 @@ sub searchHandler {
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
 				push @$items, $feed;
 
-				# pre-cache some additional information to be shown in feed info menu
-				my %moreInfo;
-
-				foreach (qw(language author description)) {
-					if (my $value = $feed->{$_}) {
-						$moreInfo{$_} = $value;
-					}
-				}
-
-				$cache->set('podcast_moreInfo_' . $feed->{url}, \%moreInfo);
+				_precacheShowDetails($feed->{url}, $feed);
 			}
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
@@ -320,6 +310,29 @@ sub searchHandler {
 			expires => 86400,
 		}
 	)->get($url, @$headers);
+}
+
+sub _precacheShowDetails {
+	my ($url, $feed) = @_;
+
+	if (my $image = $feed->{image}) {
+		$cache->set('podcast-rss-' . $url, $image, '90days');
+	}
+	else {
+		# always cache image to avoid sending a flood of requests
+		$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
+	}
+
+	# pre-cache some additional information to be shown in feed info menu
+	my %moreInfo;
+
+	foreach (qw(language author description)) {
+		if (my $value = $feed->{$_}) {
+			$moreInfo{$_} = $value;
+		}
+	}
+
+	$cache->set('podcast_moreInfo_' . $url, \%moreInfo);
 }
 
 sub registerProvider {
@@ -415,6 +428,15 @@ sub showInfo {
 	}
 	elsif ($client) {
 		$name = $client->pluginData('showName');
+	}
+
+	if (ref $url || $url !~ /^http/) {
+		return Slim::Control::XMLBrowser::cliQuery('podcastinfo', {
+			name => $name,
+			items => [{
+				name => $name
+			}]
+		}, $request);
 	}
 
 	my $menuTitle = cstring($client, 'PLUGIN_PODCAST_SUBSCRIBE', Slim::Utils::Unicode::utf8decode($name));
