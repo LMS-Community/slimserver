@@ -200,6 +200,10 @@ sub explodePlaylist {
 		}
 	}
 
+	if ($url =~ m{^deezer:\/\/([0-9a-z]+)\.dzl}) {
+		$url = 'deezer://playlist:' . $1;
+	}
+
 	my $tracks = [];
 
 	if ( $url =~ m{^deezer://((?:playlist|album|artist):[0-9a-z]+)}i ) {
@@ -535,14 +539,14 @@ sub _gotTrack {
 
 	# When doing flac, parse the header to be able to seek (IP3K)
 	if ($format =~ /fla?c/i) {
-		Slim::Utils::Scanner::Remote::parseRemoteHeader( 
-			$song->track, $info->{url}, $format, $params->{successCb}, 
+		Slim::Utils::Scanner::Remote::parseRemoteHeader(
+			$song->track, $info->{url}, $format, $params->{successCb},
 			sub {
 				my ($self, $error) = @_;
 				$log->warn( "could not find $format header $error" );
 				$params->{successCb}->();
 			} );
-	} 
+	}
 	else {
 		# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 		# When done, callback will continue on to playback
@@ -555,7 +559,7 @@ sub _gotTrack {
 			onError     => $params->{successCb}, # even if it errors, keep going
 			passthrough => [],
 		} );
-	}	
+	}
 
 	# Watch for playlist commands
 	Slim::Control::Request::subscribe(
@@ -639,6 +643,8 @@ sub trackInfoURL {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
+	return {} unless $url;
+
 	my $icon = $class->getIcon();
 
 	if ( $url =~ /\.dzr$/ ) {
@@ -654,28 +660,32 @@ sub getMetadataFor {
 		}
 	}
 
-	return {} unless $url;
-
 	my $cache = Slim::Utils::Cache->new;
 
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId, $format) = _getStreamParams($url);
 	my $meta = $cache->get( 'deezer_meta_' . $trackId );
 
-	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+	if ( !$client->master->pluginData('fetchingMeta') ) {
 
 		$client->master->pluginData( fetchingMeta => 1 );
 
 		# Go fetch metadata for all tracks on the playlist without metadata
-		my @need = ($trackId);
+		my @need;
+		push @need, $trackId if !$meta || !$meta->{title};
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
+
 			my ($id) = _getStreamParams($trackURL);
-			if ( $id && !$cache->get("deezer_meta_$id") ) {
-				push @need, $id;
+
+			if ($id) {
+				$meta = $cache->get("deezer_meta_$id");
+				push @need, $id if !$meta || !$meta->{title};
 			}
 		}
+
+		return $meta unless scalar @need;
 
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
