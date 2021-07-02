@@ -45,6 +45,11 @@
 
 <h3 id="Changelog">Changelog</h3>
 
+<h4 id="8.2">Changes starting from Squeezebox Server 8.2</h4>
+<ul>
+	<li>Added query to figure out whether fulltext search is enabled or not (<a href="#fulltextsearch">fulltextsearch</a>).</li>
+</ul>
+
 <h4 id="8.0">Changes starting from Squeezebox Server 8.0</h4>
 <ul>
 	<li>Added support for external IDs: when libraries from online music services are imported, <a href="#artists">artists</a>, <a href="#albums">albums</a>, and <a href="#titles">titles</a>
@@ -8763,6 +8768,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<strong><code><a href="#radios">apps</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#fulltextsearch">fulltextsearch</a></code></strong>
+	</li>
+	<li>
 		<strong><a href="#XMLBrowser">Live Music Archive, MP3tunes, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS</a></strong>
 	</li>
 	<li>
@@ -8908,6 +8916,28 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</p>
 </blockquote>
 
+
+<br>
+<p id="fulltextsearch">
+	<strong>
+		<code>
+			fulltextsearch ?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;fulltextsearch&quot; query returns a flag to tell whether the fulltext search is available.
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+  		Request: &quot;fulltextsearch ?&lt;LF&gt;&quot;
+  		<br>
+		Response: &quot;fulltextsearch 1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
 
 <br>
 <h3 id="XMLBrowser">

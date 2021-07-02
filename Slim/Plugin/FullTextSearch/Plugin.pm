@@ -146,6 +146,11 @@ sub initPlugin {
 		Slim::Utils::Timers::setTimer( $_[1], time() + 1, \&checkPlaylist, $_[0] );
 	}, want_object => 1 } );
 
+	# allow external callers to figure out whether FTS is enabled or not
+	Slim::Control::Request::addDispatch(['fulltextsearch', '?'], [0, 1, 0, sub {
+		$_[0]->addResult('_can', Slim::Schema->canFulltextSearch ? 1 : 0);
+	}]);
+
 	# don't continue if the library hasn't been initialized yet, or if a schema change is going to trigger a rescan anyway
 	return unless Slim::Schema->hasLibrary() && !Slim::Schema->schemaUpdated;
 
