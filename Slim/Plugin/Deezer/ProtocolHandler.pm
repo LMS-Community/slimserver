@@ -102,7 +102,10 @@ sub new {
 sub scanUrl {
 	my ( $class, $url, $args ) = @_;
 
-	$args->{cb}->( $args->{song}->currentTrack() );
+	# can't just take $args->{song}->currentTrack as it might be a playlist
+	$args->{cb}->( Slim::Schema->updateOrCreate( {
+		url => $url,
+	} ) );
 }
 
 # Source for AudioScrobbler
@@ -313,7 +316,8 @@ sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
 
 	my $client = $song->master();
-	my $url    = $song->track()->url;
+	# must use currentTrack and not track to get the playlist item (if any)
+	my $url    = $song->currentTrack()->url;
 
 	$song->pluginData( radioTrackURL => undef );
 	$song->pluginData( radioTitle    => undef );
