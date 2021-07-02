@@ -103,7 +103,7 @@ sub scanUrl {
 	my ( $class, $url, $args ) = @_;
 
 	# can't just take $args->{song}->currentTrack as it might be a playlist
-	$args->{cb}->( Slim::Schema->updateOrCreate( {
+	$args->{cb}->( Slim::Schema->objectForUrl( {
 		url => $url,
 	} ) );
 }
@@ -650,9 +650,9 @@ sub getMetadataFor {
 	return {} unless $url;
 
 	my $icon = $class->getIcon();
+	my $song = $client->currentSongForUrl($url);
 
 	if ( $url =~ /\.dzr$/ ) {
-		my $song = $client->currentSongForUrl($url);
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
 				title     => ($url && $url =~ /flow\.dzr/) ? $client->string('PLUGIN_DEEZER_FLOW') : $client->string('PLUGIN_DEEZER_SMART_RADIO'),
@@ -665,6 +665,9 @@ sub getMetadataFor {
 	}
 
 	my $cache = Slim::Utils::Cache->new;
+
+	# need to take the real current track url for playlists	
+	$url = $song->currentTrack->url if $song->isPlaylist;
 
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId, $format) = _getStreamParams($url);
