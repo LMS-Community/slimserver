@@ -1147,18 +1147,19 @@ sub parsePlaylist {
 		@results = eval { $formatClass->read( $fh, '', $playlist->url ) };
 	}
 	 elsif ( $type =~ /json/ ) {
-        warn 'json!';
         my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->response->content_ref, $type ) };
         $@ && $log->error("Failed to parse playlist from OPML: $@");
 
         if ($feed && $feed->{items}) {
 			$args->{song}->_playlist(1);
 			@results = map {
-				# $_->{play} || $_->{url};
 				Slim::Schema->updateOrCreate( {
-					# title => $_->{name},
 					url => $_->{play} || $_->{url},
-					} );
+					attributes => {
+						TITLE => $_->{name},
+						COVER => $_->{image},
+					},
+				} );
 			} grep {
 				$_ ->{play} || $_->{url}
 			} @{$feed->{items}};
