@@ -570,12 +570,7 @@ sub readRemoteHeaders {
 			else {
 				# XXX - for whatever reason we have to disconnect an https connection before we can do another connection...
 				# or bitrate is mandatory, so we'll start playback once the scanning has finished
-				if ( !($args->{song}->seekdata && $args->{song}->seekdata->{startTime}) && $track->url !~ /^https/ ) {
-					# We still need to read more info about this stream, but we can begin playing it now - unless it's an https stream
-					$cb->( $track, undef, @{$pt} );
-					delete $args->{cb};
-				}
-				elsif ( $track->url =~ /^https/ ) {
+				if ( $track->url =~ /^https/ ) {
 					# as https for whatever reason didn't allow us to start the stream while scanning
 					# we're now disconnecting to allow the stream to start
 					$args->{cb} = sub {
@@ -584,6 +579,10 @@ sub readRemoteHeaders {
 						$http->disconnect;
 						$cb->( $track, $param, @_ );
 					};
+				} elsif ( !$args->{song}->seekdata || !$args->{song}->seekdata->{startTime} ) {
+					# We still need to read more info about this stream, but we can begin playing it now - unless it's an https stream
+					$cb->( $track, undef, @{$pt} );
+					delete $args->{cb};
 				}
 
 				# We may be able to determine the bitrate or other tag information
