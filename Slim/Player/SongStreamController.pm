@@ -63,7 +63,12 @@ sub close {
 	}
 }
 
+sub currentTrackHandler {
+	return shift->song->currentTrackHandler();
+}
+
 sub songHandler {
+	$log->warn('this method is deprecated, please use currentTrackHandler');
 	return shift->song->handler();
 }
 

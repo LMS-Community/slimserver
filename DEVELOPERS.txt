@@ -205,25 +205,27 @@ have been skipped). On further open(), the next sub-track is set in _currentTrac
 - currentTrack() is a method that returns the actual current track, i.e. _currentTrack || _track
 
 >>> Handlers in Slim::Player::Song and Slim::Player::SongStreamingController
-- $song->handler (RO) is set at the creation of the song. it depends on track->url at creation but can
-  be if the PH wants to pass-on to another PH (like thin PH do)
+- $song->handler (RO) is set at the creation of the song. it is based on track->url at creation and is 
+  immutable. 
 - $song->_currentTrackHandler (RW) is set when a single track happens to be a playlist, for each item.
-  It allows each individual sub-tracks to have their own PR when it relates to some of their management.
-  It means that it is empty most of the time.
+  It allows each individual sub-tracks to have their own PH when it relates to some of their management.
+  It means that it is empty most of the time but PH can update it when $track is changed after scanning
+  (for example when upgrding from HTTP to HTTPS)
 - $song->currentTrackHandler() is a method that returns (_currentTrackHandler || handler) so it tells 
   what shall be used for all url related to the current (sub) track
 - $songStreamingController->urlHandler is RO and set at the creation of the song streaming controller, 
   based on the streamUrl (in S::P::Song::open)
 - $songStreamingController->streamHandler is RO and set at creation of the song streaming controller. 
   It is the class of the *socket* object created by $song->handler->new.
-- $songStreamingController->songHandler is a method that returns the $song->handler, so the song main 
-  handler, not the sub-track
+- $songStreamingController->currentTrackHandler is a shortcut to $song->currentTrackhandler
 
 >>> Protocol Handlers
 These files contains a base class but whose methods are called in different contexts (the $self)
-1- a $song context means they are called with a $song->currentHandler or $song->handler
-2- a $sock context means they are called with a $socket (or the object) that was created by $song->handler->new
-3- a simple $url context means they are called by $song->currentHandler, $song->Handler or a $songStreamingController->streamHandler
+1- a $song context means they are called with a $song->currentTrackHandler or $song->handler
+2- a $sock context means they are called with a $socket (or the object) that was created by 
+   $song->handler->new
+3- a simple $url context means they are called by $song->currentTrackHandler, $song->Handler or a 
+   $songStreamingController->streamHandler
 
 So it's a bit confusing that methods from the same package can be object-oriented called with totally
 different type of ancestors/context. In fact, some methods can be called in both context is the 
@@ -231,7 +233,7 @@ ancestor of the PH is capable of (e.g. HTTP).
 
 - functions like sysread are only called with a $sock context
 - functions like getMetadataFor can be called with a $song or an $url context
-- functions like requestString cal be called in a $song or $sock context
+- functions like requestString can be called in a $song or $sock context
 
 >>> Example of requestString
 That function is to create the HTTP headers to be sent with the GET to grab the actual audio. It 

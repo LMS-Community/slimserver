@@ -255,7 +255,7 @@ sub getNextSong {
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
 							$self->_track($newTrack);	
-							$self->init_accessor(handler => $handler->getSongHandler($self, $newTrack)) if $handler->can('getSongHandler');
+							$self->_currentTrackHandler($handler->currentTrackHandler($self, $newTrack)) if $handler->can('currentTrackHandler');
 														
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 

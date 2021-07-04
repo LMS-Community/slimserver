@@ -491,7 +491,7 @@ sub directHeaders {
 	return unless $controller && $controller->isDirect();
 
 	my $url = $controller->streamUrl();
-	my $songHandler = $controller->songHandler();
+	my $currentTrackHandler = $controller->currentTrackHandler();
 
 	# We involve the protocol handler in the header parsing process.
 	# The current iteration of the firmware only knows about HTTP
@@ -529,12 +529,12 @@ sub directHeaders {
 
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
-			if ($songHandler && $songHandler->can("handleDirectError")) {
+			if ($currentTrackHandler && $currentTrackHandler->can("handleDirectError")) {
 
 				# bug 10407 - make sure ready to stream again
 				$client->readyToStream(1);
 
-				$songHandler->handleDirectError($client, $url, $response, $status_line);
+				$currentTrackHandler->handleDirectError($client, $url, $response, $status_line);
 			}
 			elsif ($track->can('redir') && $track->redir && $track->redir ne $url) {
 
@@ -569,13 +569,13 @@ sub directHeaders {
 				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
-			# prioritize song's protocol handler over streamUrl handler
-			my $methodHandler = $songHandler->can('parseDirectHeaders') ? $songHandler : $handler;
+			# prioritize current track's protocol handler over streamUrl handler
+			my $methodHandler = $currentTrackHandler->can('parseDirectHeaders') ? $currentTrackHandler : $handler;
 
 			main::INFOLOG && $directlog->info("Calling $methodHandler :: parseDirectHeader");
-			# songHandler relates to the current (sub)track while streamUrl handler just use streamUrl
+			# currentTrackHandler relates to the current (sub)track while streamUrl handler just use streamUrl
 			($title, $bitrate, $metaint, $redir, $contentType, $length, $body) =
-				$methodHandler->parseDirectHeaders($client, $methodHandler == $songHandler ? $controller->song()->currentTrack() : $url, @headers);
+				$methodHandler->parseDirectHeaders($client, $methodHandler == $currentTrackHandler ? $controller->song()->currentTrack() : $url, @headers);
 
 			$controller->song()->isLive($length ? 0 : 1) if !$redir;
 			# XXX maybe should (also) check $song->scanData()->{$url}->{metadata}->{info}->{broadcast}
