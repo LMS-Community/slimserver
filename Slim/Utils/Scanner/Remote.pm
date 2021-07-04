@@ -1144,6 +1144,25 @@ sub parsePlaylist {
 		my $fh = IO::String->new( $http->response->content_ref );
 		@results = eval { $formatClass->read( $fh, '', $playlist->url ) };
 	}
+	 elsif ( $type =~ /json/ ) {
+        my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->response->content_ref, $type ) };
+        $@ && $log->error("Failed to parse playlist from OPML: $@");
+
+        if ($feed && $feed->{items}) {
+			$args->{song}->_playlist(1);
+			@results = map {
+				Slim::Schema->updateOrCreate( {
+					url => $_->{play} || $_->{url},
+					attributes => {
+						TITLE => $_->{name},
+						COVER => $_->{image},
+					},
+				} );
+			} grep {
+				$_ ->{play} || $_->{url}
+			} @{$feed->{items}};
+		}
+	}
 
 	if ( !scalar @results || !defined $results[0]) {
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Unable to parse playlist for content-type $type $@" );
@@ -1180,7 +1199,9 @@ sub parsePlaylist {
 			next;
 		}
 
-		__PACKAGE__->scanURL( $entry->url, {
+		# playlist might contain tracks with a different handler
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($entry->url);
+		$handler->scanUrl( $entry->url, {
 			client => $client,
 			song   => $args->{song},
 			depth  => $args->{depth} + 1,
