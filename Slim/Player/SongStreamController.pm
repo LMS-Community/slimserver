@@ -19,32 +19,32 @@ my $_liveCount = 0;
 {
 	__PACKAGE__->mk_accessor('ro', qw(song streamHandler streamUrlHandler));
 	__PACKAGE__->mk_accessor('rw', qw(playerProxyStreaming));
-}	
+}
 
 sub new {
 	my ($class, $song, $streamHandler) = @_;
-	
+
 	my $self = $class->SUPER::new;
 
 	$self->init_accessor(
 		song => $song,
 		streamHandler => $streamHandler,
 		streamUrlHandler => Slim::Player::ProtocolHandlers->handlerForURL($song->streamUrl()),
-	);	
+	);
 
 	$_liveCount++;
 	if (main::DEBUGLOG && $log->is_debug) {
-		$log->debug("live=$_liveCount");	
+		$log->debug("live=$_liveCount");
 	}
-	
+
 	return $self;
 }
 
 sub DESTROY {
 	my $self = shift;
-	
+
 	$self->close();
-	
+
 	$_liveCount--;
 	if (main::DEBUGLOG && $log->is_debug)	{
 		$log->debug("DESTROY($self) live=$_liveCount");
@@ -53,9 +53,9 @@ sub DESTROY {
 
 sub close {
 	my $self = shift;
-	
+
 	my $fd = $self->streamHandler;
-	
+
 	if (defined $fd) {
 		Slim::Networking::Select::removeError($fd);
 		Slim::Networking::Select::removeRead($fd);
@@ -68,7 +68,7 @@ sub currentTrackHandler {
 }
 
 sub songHandler {
-	$log->warn('this method is deprecated, please use currentTrackHandler');
+	Slim::Utils::Log::logBacktrace('this method is deprecated, please use currentTrackHandler');
 	return shift->song->handler();
 }
 
