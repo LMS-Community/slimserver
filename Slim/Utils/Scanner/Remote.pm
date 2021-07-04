@@ -569,27 +569,26 @@ sub readRemoteHeaders {
 			}
 			else {
 				# XXX - for whatever reason we have to disconnect an https connection before we can do another connection...
-				#       we'll start playback once the scanning has finished
-				if ( $track->url !~ /^https/ ) {
+				# or bitrate is mandatory, so we'll start playback once the scanning has finished
+				if ( !($args->{song}->seekdata && $args->{song}->seekdata->{startTime}) && $track->url !~ /^https/ ) {
 					# We still need to read more info about this stream, but we can begin playing it now - unless it's an https stream
 					$cb->( $track, undef, @{$pt} );
+					delete $args->{cb};
 				}
-
-				# Continue scanning in the background
-				delete $args->{cb};	
+				elsif ( $track->url =~ /^https/ ) {
+					# as https for whatever reason didn't allow us to start the stream while scanning
+					# we're now disconnecting to allow the stream to start
+					$args->{cb} = sub {
+						my $track = shift;
+						my $param = shift;
+						$http->disconnect;
+						$cb->( $track, $param, @_ );
+					};
+				}
 
 				# We may be able to determine the bitrate or other tag information
 				# about this remote stream/file by reading a bit of audio data
-				main::DEBUGLOG && $log->is_debug && $log->debug('Reading audio data in the background to detect bitrate and/or tags');
-					
-				# as https for whatever reason didn't allow us to start the stream while scanning
-				# we're now disconnecting to allow the stream to start
-				$args->{cb} = sub {
-					my $track = shift;
-					my $param = shift;
-					$http->disconnect;
-					$cb->( $track, $param, @_ );
-				} if $cb && $track->url =~ /^https/;
+				main::DEBUGLOG && $log->is_debug && $log->debug('Reading audio data to detect bitrate and/or tags');
 
 				# read as much as is necessary to read all ID3v2 tags and determine bitrate
 				$http->read_body( {
