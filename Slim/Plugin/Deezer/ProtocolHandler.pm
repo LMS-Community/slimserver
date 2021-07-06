@@ -666,7 +666,7 @@ sub getMetadataFor {
 
 	my $cache = Slim::Utils::Cache->new;
 
-	# need to take the real current track url for playlists	
+	# need to take the real current track url for playlists
 	$url = $song->currentTrack->url if $song && $song->isPlaylist && $song->currentTrack->url !~ /\.dzr$/;
 
 	# If metadata is not here, fetch it so the next poll will include the data
@@ -679,7 +679,7 @@ sub getMetadataFor {
 
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
-		push @need, $trackId if !$meta || !$meta->{title};
+		push @need, $trackId if !$meta || !$meta->{cover};
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
@@ -688,7 +688,7 @@ sub getMetadataFor {
 
 			if ($id) {
 				$meta = $cache->get("deezer_meta_$id");
-				push @need, $id if !$meta || !$meta->{title};
+				push @need, $id if !$meta || !$meta->{cover};
 			}
 		}
 
