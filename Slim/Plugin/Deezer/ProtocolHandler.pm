@@ -667,7 +667,7 @@ sub getMetadataFor {
 	my $cache = Slim::Utils::Cache->new;
 
 	# need to take the real current track url for playlists	
-	$url = $song->currentTrack->url if $song && $song->isPlaylist;
+	$url = $song->currentTrack->url if $song && $song->isPlaylist && $song->currentTrack->url !~ /\.dzr$/;
 
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId, $format) = _getStreamParams($url);
