@@ -679,7 +679,7 @@ sub stopAndClear {
 	my $client = shift;
 
 	# Bug 11447 - Have to stop player and clear song queue
-	$client->controller->stop();
+	$client->controller->stop($client);
 	$client->controller()->resetSongqueue();
 
 	@{playList($client)} = ();
