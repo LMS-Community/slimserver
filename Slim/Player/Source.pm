@@ -73,15 +73,15 @@ sub playmode {
 	return _returnPlayMode($controller, $client) unless defined $newmode;
 	
 	if ($newmode eq 'stop') {
-		$controller->stop();
+		$controller->stop($client);
 	} elsif ($newmode eq 'play') {
 		if (!$client->power()) {$client->power(1);}
-		$controller->play(undef, $seekdata, $reconnect, $fadeIn);
+		$controller->play(undef, $seekdata, $reconnect, $fadeIn, $client);
 	} elsif ($newmode eq 'pause') {
-		$controller->pause();
+		$controller->pause($client);
 	} elsif ($newmode eq 'resume') {
 		if (!$client->power()) {$client->power(1);}
-		$controller->resume($fadeIn);
+		$controller->resume($fadeIn, $client);
 	} else {
 		logBacktrace($client->id . " unknown playmode: $newmode");
 	}
