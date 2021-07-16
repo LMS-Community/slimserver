@@ -179,8 +179,11 @@ sub onPlaylistChange {
 	if (
 		( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') && Slim::Plugin::RandomPlay::Plugin::active($client) )
 		|| ( Slim::Utils::PluginManager->isEnabled('Plugins::SugarCube::Plugin') && preferences('plugin.SugarCube')->client($client)->get('sugarcube_status') )
+		|| ( Slim::Utils::PluginManager->isEnabled('Plugins::DynamicPlayList::Plugin')
+			&& (((Slim::Utils::PluginManager->dataForPlugin('Plugins::DynamicPlayList::Plugin'))->{'version'}) ge '3.0.0')
+			&& Plugins::DynamicPlayList::Plugin::active($client) )
 	) {
-		$log->warn("Found RandomPlay or SugarCube active - I'm not going to interfere with them.");
+		$log->warn("Found RandomPlay,SugarCube or DynamicPlayList active - I'm not going to interfere with them.");
 		return;
 	}
 
