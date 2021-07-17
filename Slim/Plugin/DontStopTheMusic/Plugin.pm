@@ -47,19 +47,19 @@ sub initPlugin {
 			$params->{pageURL} = MENU;
 			Slim::Plugin::DontStopTheMusic::Settings->handler(@_);
 		});
-		
+
 		Slim::Web::Pages->addPageLinks('plugins', { 'PLUGIN_DSTM' => MENU });
 		Slim::Web::Pages->addPageLinks('icons',   { 'PLUGIN_DSTM' => ICON });
 	}
 
 	# register a settings item. I don't like that, but we can't hook in to the mysb.com delivered menu.
 	Slim::Control::Request::addDispatch(['dontstopthemusicsetting'],[1, 0, 1, \&dontStopTheMusicSetting]);
-	
+
 	Slim::Control::Jive::registerPluginMenu([{
 		text    => 'PLUGIN_DSTM',
 		id      => 'settingsDontStopTheMusic',
 		node    => 'settings',
-		window  => { 
+		window  => {
 			'icon-id' => ICON,
 		},
 		weight  => 1,
@@ -87,26 +87,26 @@ sub unregisterHandler {
 
 sub getHandler {
 	my ($class, $client) = @_;
-	
+
 	return unless $client;
-	
+
 	$client = $client->master;
 	return $handlers{$prefs->client($client)->get('provider')};
 }
 
 sub getSortedHandlerTokens {
 	my $client = shift;
-	
+
 	return unless $client;
-	
+
 	$client = $client->master;
-	
+
 	my @handlerStrings = sort {
-		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client)) 
-			cmp 
+		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($a, $client))
+			cmp
 		Slim::Utils::Unicode::utf8toLatin1Transliterate(getString($b, $client));
 	} keys %handlers;
-	
+
 	return wantarray ? @handlerStrings : \@handlerStrings;
 }
 
@@ -128,9 +128,9 @@ sub dontStopTheMusicSetting {
 			},
 		},
 	});
-	
+
 	my $i = 1;
-	
+
 	foreach ( getSortedHandlerTokens($client) ) {
 		$request->setResultLoopHash('item_loop', $i, {
 			text => getString($_, $client),
@@ -142,18 +142,18 @@ sub dontStopTheMusicSetting {
 				},
 			},
 		});
-		
+
 		$i++;
 	}
-	
+
 	$request->addResult('count', $i);
 	$request->setStatusDone()
 }
 
 sub getString {
 	my ($token, $client) = @_;
-	return Slim::Utils::Strings::stringExists($token) 
-			? cstring($client, $token) 
+	return Slim::Utils::Strings::stringExists($token)
+			? cstring($client, $token)
 			: $token;
 };
 
@@ -177,24 +177,24 @@ sub onPlaylistChange {
 	# don't interfere with the automatically adding RandomPlay and SugarCube plugins
 	# stop smart mixing when a new RandomPlay mode is started or SugarCube is at work
 	if (
-		( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') && Slim::Plugin::RandomPlay::Plugin::active($client) )
+		( my $plugin = isConflictingPluginActive($client) )
 		|| ( Slim::Utils::PluginManager->isEnabled('Plugins::SugarCube::Plugin') && preferences('plugin.SugarCube')->client($client)->get('sugarcube_status') )
 	) {
-		$log->warn("Found RandomPlay or SugarCube active - I'm not going to interfere with them.");
+		$log->warn(sprintf("Found %s active - I'm not going to interfere with it.", $plugin || 'Sugarcube'));
 		return;
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
-	
+
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Received command %s", $request->getRequestString));
 	}
 
 	if ( $request->isCommand( [['playlist'], ['newsong', 'delete', 'cant_open']] ) ) {
-		
+
 		# create mix based on last few tracks if we near the end, repeat is off and neverStopTheMusic is set
 		if ( !Slim::Player::Playlist::repeat($client) ) {
-			
+
 			# Delay start of the mix if we're called while we're playing one single track only.
 			# We might be in the middle of adding new tracks.
 			if ($songIndex == 0) {
@@ -205,64 +205,81 @@ sub onPlaylistChange {
 			else {
 				dontStopTheMusic($client);
 			}
-			
+
 		}
-	} 
+	}
+}
+
+my $conflictingPlugins;
+sub isConflictingPluginActive {
+	my ($client) = @_;
+
+	if (!$conflictingPlugins) {
+		$conflictingPlugins = [ grep $_, map {
+			Slim::Utils::PluginManager->dataForPlugin($_)->{'canConflictWithDSTM'} ? $_ : undef;
+		} Slim::Utils::PluginManager->enabledPlugins ];
+	}
+
+	my ($isActive) = grep {
+		eval { $_->disableDSTM($client) };
+	} @$conflictingPlugins;
+
+	return $isActive;
 }
 
 sub dontStopTheMusic {
 	my ($client) = @_;
-	
+
 	my $class = __PACKAGE__;
-	
+
 	$client = $client->master;
-	
+
 	# don't process multiple requests at the same time
 	return if $client->pluginData('active');
-	
+
 	$client->pluginData( playlist => 0 );
-	
+
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
 
 	main::INFOLOG && $log->info("$songsRemaining songs remaining, songIndex = $songIndex");
 
 	my $numTracks = $prefs->get('newtracks') || MIN_TRACKS_LEFT;
-	
+
 	if ($songsRemaining < $numTracks) {
 		# don't continue if the last item in the queue is a radio station or similar
 		if ( my $handler = $client->playingSong->currentTrackHandler ) {
 			if ( $handler->can('isRepeatingStream') ) {
 				return if $handler->isRepeatingStream($client->playingSong());
-			}	
+			}
 		}
-		
+
 		my $playlist = Slim::Player::Playlist::playList($client);
 		my $lastTrack = $playlist->[-1];
 
 		my (undef, undef, $duration) = $class->getMixablePropertiesFromTrack($client, $lastTrack);
-		
+
 		if (!$duration) {
 			main::INFOLOG && $log->is_info && $log->info("Found radio station last in the queue - don't start a mix.");
 			return;
 		}
-		
+
 		return if $client->pluginData('active');
-		
+
 		if ( my $handler = $class->getHandler($client) ) {
 			$client->pluginData( active => 1 );
 
 			Slim::Player::Playlist::preserveShuffleOrder($client);
-			
+
 			$handler->( $client, sub {
 				my ($client, $tracks) = @_;
-				
+
 				# we don't want duplicates in the playlist
 				$tracks = __PACKAGE__->deDupePlaylist($client, $tracks);
-					
+
 				if ( $tracks && scalar @$tracks ) {
 					my $maxPlaylistLength = preferences('server')->get('maxPlaylistLength');
-					
+
 					if ( $maxPlaylistLength && (Slim::Player::Playlist::count($client) + scalar(@$tracks) > $maxPlaylistLength) ) {
 						# Delete tracks before this one on the playlist
 						for (my $i = 0; $i < scalar(@$tracks); $i++) {
@@ -270,23 +287,23 @@ sub dontStopTheMusic {
 							$request->source($class);
 						}
 					}
-					
+
 					# "playlist addtracks" can only handle single tracks, but not eg. playlists or db://... urls
-					my $request = (scalar @$tracks == 1) 
-						? $client->execute(['playlist', 'add', $tracks->[0] ]) 
+					my $request = (scalar @$tracks == 1)
+						? $client->execute(['playlist', 'add', $tracks->[0] ])
 						: $client->execute(['playlist', 'addtracks', 'listRef', $tracks ]);
 					$request->source($class);
 				}
 				elsif ( $prefs->client($client)->get('provider') !~ /^PLUGIN_RANDOM/ && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
 					$log->warn("I'm sorry, we couldn't create any reasonable result with your current playlist. We'll just play something instead.");
-					
+
 					my $request = $client->execute(['playlist', 'addtracks', 'listRef', ['randomplay://track'] ]);
 					$request->source($class);
 				}
 				elsif ( main::INFOLOG && $log->is_info ) {
 					$log->info("No matching tracks found for current playlist!");
 				}
-	
+
 				$client->pluginData( playlist => 0 );
 				$client->pluginData( active => 0 );
 			} );
@@ -299,47 +316,47 @@ sub deDupePlaylist {
 
 	if ( $tracks && ref $tracks && scalar @$tracks ) {
 		my $playlist = $client->pluginData('playlist');
-		
+
 		if ( !($playlist && ref $playlist) ) {
 			$playlist = { map {
 				my $url = blessed($_) ? $_->url : $_;
 				$url => 1;
 			} @{Slim::Player::Playlist::playList($client)} };
-			
+
 			$client->pluginData( playlist => $playlist );
 		}
-		
+
 		$tracks = $class->deDupe($tracks, { map { $_ => 1 } keys %$playlist } );
 	}
-	
+
 	return $tracks;
 }
 
 sub deDupe {
 	my ( $class, $tracks, $seen ) = @_;
-			
+
 	if ( $tracks && ref $tracks && scalar @$tracks ) {
 		$seen ||= {};
 		$tracks = [ grep {
 			!$seen->{$_}++
 		} @$tracks ];
 	}
-	
+
 	return $tracks;
 }
 
 sub getMixableProperties {
 	my ($class, $client, $count) = @_;
-	
+
 	return unless $client;
-	
+
 	$client = $client->master;
 
 	my ($trackId, $artist, $title, $duration, $mbid, $artist_mbid, $tracks);
-	
+
 	foreach (@{ Slim::Player::Playlist::playList($client) }) {
 		($artist, $title, $duration, $trackId, $mbid, $artist_mbid) = $class->getMixablePropertiesFromTrack($client, $_);
-		
+
 		next unless defined $artist && defined $title;
 
 		push @$tracks, {
@@ -359,7 +376,7 @@ sub getMixableProperties {
 			Slim::Player::Playlist::fischer_yates_shuffle($tracks);
 			splice(@$tracks, $count);
 		}
-		
+
 		return $tracks;
 	}
 	elsif (main::INFOLOG && $log->is_info) {
@@ -370,7 +387,7 @@ sub getMixableProperties {
 			$log->info("No mixable items found in current playlist!");
 		}
 	}
-	
+
 	return;
 }
 
@@ -381,7 +398,7 @@ sub getMixablePropertiesFromTrack {
 	if (!blessed $track && Slim::Music::Info::isURL($track)) {
 		$track = Slim::Schema->objectForUrl($track);
 	}
-	
+
 	return unless $client && blessed $track;
 
 	$client = $client->master;
@@ -393,7 +410,7 @@ sub getMixablePropertiesFromTrack {
 	my $duration = $track->duration;
 	my $mbid   = $track->musicbrainz_id;
 	my $artist_mbid = $track->artist->musicbrainz_id if $track->artist && !$track->remote;
-				
+
 	# we might have to look up titles for remote sources
 	if ( !($artist && $title && $duration) && $track && $track->remote && $url ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
@@ -404,7 +421,7 @@ sub getMixablePropertiesFromTrack {
 			$duration ||= $remoteMeta->{duration};
 		}
 	}
-	
+
 	return ($artist, $title, $duration, $id, $mbid, $artist_mbid);
 }
 

@@ -1203,6 +1203,8 @@ sub _getLibraries {
 	return \%libraries;
 }
 
+sub disableDSTM { active($_[1]) }
+
 sub active {
 	my $client = shift;
 

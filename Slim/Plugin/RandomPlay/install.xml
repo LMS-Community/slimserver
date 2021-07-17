@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <extension>
-	<id>8946D8D2-4C44-470C-ACF9-74E91E8F29AE</id>
+        <id>8946D8D2-4C44-470C-ACF9-74E91E8F29AE</id>
         <name>PLUGIN_RANDOMPLAY</name>
         <module>Slim::Plugin::RandomPlay::Plugin</module>
         <version>1.0</version>
@@ -9,14 +9,15 @@
         <playerMenu>BROWSE_MUSIC</playerMenu>
         <creator>Logitech</creator>
 
-	<defaultState>enabled</defaultState>
-        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
-	<icon>plugins/RandomPlay/html/images/icon.png</icon>
-	<type>2</type><!-- type=extension -->
+        <defaultState>enabled</defaultState>
+        <canConflictWithDSTM>1</canConflictWithDSTM>
+
+        <homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+        <icon>plugins/RandomPlay/html/images/icon.png</icon>
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
-  	        <id>Logitech Media Server</id>
+                <id>Logitech Media Server</id>
                 <minVersion>7.0a</minVersion>
                 <maxVersion>*</maxVersion>
         </targetApplication>
