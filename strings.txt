@@ -8177,7 +8177,7 @@ SETUP_ARTISTS_BROWSE_MODES
 
 SETUP_ARTISTS_BROWSE_MODES_DESC
 	DE	Wählen Sie, ob Sie eine einzelne, konfigurierbare Liste von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
-	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand let's you define which contributor roles should be part of the Artists menu.
+	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand lets you define which contributor roles should be part of the Artists menu.
 	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
 	NL	Kies of je een enkele, aan te passen lijst met artiesten wilt, of twee lijsten voor Albumartiesten en Alle Artiesten. Albumartiesten is een lijst waar de albumartiest de enige artiest op het album is, of is het de artiest die in de 'ALBUMARTIST tag' vermeld staat. Alle Artiesten is een lijst met alle artiesten die in een tag voorkomen met een uitvoerende rol (ARTIST, COMPOSER, enz.). Daarentegen kun je in de enkele, aan te passen lijst met artiesten aangeven welke uitvoerende rollen in de lijst moeten worden opgenomen.
 	NO	Velg om du vil ha én konfigurerbar Artister-liste, eller to lister for Albumartister og Alle artister. Albumartister er en liste hvor albumartisten enten er den eneste artisten på et album, eller artisten som er angitt av ALBUMARTIST-taggen. Alle artister er en liste over samtlige artister som er tagget som medvirkende (ARTIST, COMPOSER osv.). Velger du den enkeltstående, konfigurerbare artistlista, derimot, kan du velge hvilke medvirkende roller som skal føres opp i lista.
@@ -12262,17 +12262,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
