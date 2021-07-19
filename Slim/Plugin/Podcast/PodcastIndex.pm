@@ -116,7 +116,7 @@ sub newsHandler {
 			},
 			{
 				cache => 1,
-				expires => 600,
+				expires => 300,
 				timeout => 15,
 			},
 		)->get($url, @$headers);
@@ -127,7 +127,8 @@ sub getHeaders {
 	my $config = $prefs->get('podcastindex');
 	my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
 	my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
-	my $time = time;
+	# try to fit in a 5 minutes window for cache
+	my $time = int(time / 300) * 300;
 	my $headers = [
 		'X-Auth-Key', $k,
 		'X-Auth-Date', $time,
