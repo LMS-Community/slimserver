@@ -22,6 +22,8 @@ use Slim::Utils::Strings qw(string cstring);
 my $prefs = preferences('plugin.podcast');
 my $log = logger('plugin.podcast');
 
+my $authtime = time;
+
 $prefs->init( { podcastindex => {
 	k => 'NTVhNTMzODM0MzU1NDM0NTQ1NTRlNDI1MTU5NTk1MzRhNDYzNzRkNA==',
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
@@ -128,11 +130,13 @@ sub getHeaders {
 	my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
 	my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
 	# try to fit in a 5 minutes window for cache
-	my $time = int(time / 300) * 300;
+	my $now = time;	
+	$authtime = $now if $now - $authtime >= 300;
+
 	my $headers = [
 		'X-Auth-Key', $k,
-		'X-Auth-Date', $time,
-		'Authorization', sha1_hex($k . $s . $time),
+		'X-Auth-Date', $authtime,
+		'Authorization', sha1_hex($k . $s . $authtime),
 	];
 }
 
