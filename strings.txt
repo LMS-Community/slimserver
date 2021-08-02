@@ -12262,17 +12262,17 @@ THOUSANDS_SEP
 	DE	.
 	EN	,
 	ES	.
-	FI
+	FI	 
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL
+	PL	 
 	PT	.
 	RU	,
-	SV
+	SV	 
 	ZH_CN	,
 
 BYTES
