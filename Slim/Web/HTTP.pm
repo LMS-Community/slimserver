@@ -2216,7 +2216,7 @@ sub sendStreamingResponse {
 
 			} else {
 
-				$silence = getStaticContent("html/lbrsilence.mp3");
+				$silence = getStaticContent("html/lbrsilence-44.mp3");
 			}
 
 			my %segment = (
