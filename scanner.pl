@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2021 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -46,7 +46,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.2.0';
+	our $VERSION = '8.3.0';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
