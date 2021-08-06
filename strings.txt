@@ -9288,6 +9288,10 @@ SETUP_SN_EMAIL
 	RU	Адрес электронной почты
 	SV	E-postadress
 
+SETUP_SN_SIGNOUT
+	DE	Von mysqueezebox.com abmelden
+	EN	Sign out of mysqueezebox.com
+
 SETUP_SN_EMAIL_DESC
 	CS	Zadejte emailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
 	DA	Angiv e-mail-adressen som skal bruges til at logge på din konto til mysqueezebox.com.

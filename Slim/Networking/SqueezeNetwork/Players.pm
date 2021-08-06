@@ -93,6 +93,9 @@ sub fetch_players { if (main::NOMYSB) {
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_players_done,
 		\&_players_error,
+		{
+			Timeout => 60,
+		},
 	);
 
 	$http->get( $http->url( '/api/v1/players' ) );
@@ -138,7 +141,7 @@ sub _players_done {
 	if ( $res->{search_providers} ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding search providers: ' . Data::Dump::dump( $res->{search_providers} ) );
 
-		Slim::Menu::GlobalSearch->registerSearchProviders( $res->{search_providers} );		
+		Slim::Menu::GlobalSearch->registerSearchProviders( $res->{search_providers} );
 	}
 
 
@@ -363,8 +366,6 @@ sub _players_error {
 	my $http  = shift;
 	my $error = $http->error;
 
-	$prefs->remove('sn_session');
-
 	# We don't want a stale list of players, so clear it out on error
 	$CONNECTED_PLAYERS = [];
 	$INACTIVE_PLAYERS  = [];
@@ -403,7 +404,7 @@ sub is_known_player { if (main::NOMYSB) {
 
 	my $mac = ref($client) ? $client->macaddress() : $client;
 
-	return scalar( grep { $mac eq $_->{mac} } @{$CONNECTED_PLAYERS}, @{$INACTIVE_PLAYERS} );	
+	return scalar( grep { $mac eq $_->{mac} } @{$CONNECTED_PLAYERS}, @{$INACTIVE_PLAYERS} );
 } }
 
 sub disconnect_player {

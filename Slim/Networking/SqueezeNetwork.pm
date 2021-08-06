@@ -10,7 +10,6 @@ package Slim::Networking::SqueezeNetwork;
 use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP Slim::Networking::SqueezeNetwork::Base);
 
-use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64);
 use List::Util qw(max);
@@ -38,28 +37,25 @@ sub init {
 
 	main::INFOLOG && $log->info('SqueezeNetwork Init');
 
-	# Convert old non-hashed password
-	if ( my $password = $prefs->get('sn_password') ) {
-		$password = sha1_base64( $password );
-		$prefs->set( sn_password_sha => $password );
-		$prefs->remove('sn_password');
-
-		main::DEBUGLOG && $log->debug('Converted SN password to hashed version');
-	}
+	# remove legacy settings
+	$prefs->remove('sn_password_sha');
+	$prefs->remove('sn_password');
 
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time(),
 		sub {
-			if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
-				# Login to SN
+			if ( my $sid = $prefs->get('sn_session') ) {
+				# Login to SN using session token
 				$class->login(
+					sid => $sid,
 					cb  => \&_init_done,
 					ecb => \&_init_error,
 				);
 			} else {
-				# Not logging in to SN, add local apps to web interface
-				_init_add_non_sn_apps(),
+				main::INFOLOG && $log->is_info && $log->info("No SqueezeNetwork session token available - not logging in.");
+				# add local apps to web interface
+				_init_add_non_sn_apps();
 			}
 		},
 	);
@@ -129,13 +125,6 @@ sub _init_done {
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
 
-	# Init stats - don't even load the module unless stats are enabled
-	# let's not bother about re-initialising if pref is changed - there's no user-noticeable effect anyway
-#	if (!$prefs->get('sn_disable_stats')) {
-#		require Slim::Networking::SqueezeNetwork::Stats;
-#		Slim::Networking::SqueezeNetwork::Stats->init( $json );
-#	}
-
 	# add link to mysb.com favorites to our local favorites list
 	if ( $json->{favorites_url} && $prefs->get('sn_sync') ) {
 
@@ -153,7 +142,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 
-	$log->error( sprintf("Unable to login to mysqueezebox.com, sync is disabled: $error (%s)", $http->url) );
+	$log->error( "Unable to login to mysqueezebox.com, sync is disabled: $error" );
 
 	if ( my $proxy = $prefs->get('webproxy') ) {
 		$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
@@ -169,7 +158,7 @@ sub _init_error {
 	my $retry = 300 * ( $count + 1 );
 	$nextLoginAttempt = time() + $retry;
 
-	$log->error( sprintf("mysqueezebox.com sync init failed: $error, will retry in $retry (%s)", $http->url) );
+	$log->error( sprintf("will retry in $retry (%s)", $http->url) );
 
 	Slim::Utils::Timers::setTimer(
 		undef,
@@ -199,9 +188,6 @@ sub shutdown {
 
 	$prefs->remove('sn_timediff');
 
-	# Remove SN session
-	$prefs->remove('sn_session');
-
 	# Shutdown pref syncing
 	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
 		Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
@@ -209,11 +195,6 @@ sub shutdown {
 
 	# Shutdown player list fetch
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
-
-	# Shutdown stats
-#	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::Stats', 'shutdown') ) {
-#		Slim::Networking::SqueezeNetwork::Stats->shutdown();
-#	}
 }
 
 # both classes from which we inherit implement a sub url() - therefore we have to implement this little wrapper here
@@ -252,48 +233,64 @@ sub login {
 	# avoid parallel login attempts
 	$nextLoginAttempt = max($time + 30, $nextLoginAttempt);
 
-	my $username = $params{username};
+	my $username = $params{username} || $prefs->get('sn_email');
 	my $password = $params{password};
-
-	if ( !$username || !$password ) {
-		$username = $prefs->get('sn_email');
-		$password = $prefs->get('sn_password_sha');
-	}
+	my $sid      = $params{sid} || $prefs->get('sn_session');
 
 	# Return if we don't have any SN login information
-	if ( !$username || !$password ) {
+	if ( !$sid && !($username && $password) ) {
 		my $error = cstring($client, 'SQUEEZENETWORK_NO_LOGIN');
 
 		main::INFOLOG && $log->info( $error );
 		return $params{ecb}->( undef, $error );
 	}
 
-	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
+	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . ($sid ? ' using existing session' : " as $username"));
 
-	$login_params = {
-		v => 'sc' . $::VERSION,
-		u => $username,
-		t => $time,
-		a => sha1_base64( $password . $time ),
-	};
+	if ($sid) {
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			u => $username,
+			s => $sid,
+		};
+	}
+	# "interactive" mode is password validation - don't hash the password
+	elsif ($params{interactive}) {
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			u => $username,
+			p => $password,
+		};
+	}
 
 	my $self = $class->new(
 		\&_login_done,
 		\&_error,
 		{
 			params  => \%params,
-			Timeout => 30,
+			Timeout => 60,
 		},
 	);
 
 	my $url = $self->_construct_url(
 		'login',
-		$login_params,
+		{
+			u => $username,
+			# flag indicating whether we're using a session or a password
+			t => $sid ? 's' : 'p',
+		},
 	);
 
-	$self->get( $url );
+	$self->post( $url, to_json($login_params) );
 }
 
+sub logout {
+	$prefs->remove('sn_email');
+
+	# change before deleting to trigger change handler
+	$prefs->set('sn_session', '');
+	$prefs->remove('sn_session');
+}
 
 sub getHeaders {
 	my ( $self, $client ) = @_;
@@ -340,17 +337,6 @@ sub getHeaders {
 	}
 
 	return @headers;
-}
-
-sub getAuthHeaders {
-	my ( $self ) = @_;
-
-	my $email = $prefs->get('sn_email') || '';
-	my $pass  = $prefs->get('sn_password_sha') || '';
-
-	return [
-		sn_auth => $email . ':' . sha1_base64( $email . $pass )
-	];
 }
 
 # Override to add session cookie header
@@ -404,10 +390,14 @@ sub _login_done {
 	}
 
 	if ( $json->{error} ) {
+		if ($params->{sid}) {
+			$prefs->remove('sn_session');
+		}
+
 		return $self->_error( $json->{error} );
 	}
 
-	if ( my $sid = $json->{sid}	) {
+	if ( my $sid = $json->{jwt} || $json->{sid} ) {
 		$prefs->set( sn_session => $sid );
 	}
 
@@ -432,8 +422,6 @@ sub _error {
 		. ($proxy ? sprintf(" - please check your proxy configuration (%s)", $proxy) : '')
 	);
 
-	$prefs->remove('sn_session');
-
 	$self->error( $error );
 
 	$params->{ecb}->( $self, $error );
@@ -444,7 +432,7 @@ sub _construct_url {
 
 	my $url = $self->url( '/api/v1/' . $method );
 
-	if ( my @keys = keys %{$params} ) {
+	if ( my @keys = sort keys %{$params} ) {
 		my @params;
 		foreach my $key ( @keys ) {
 			push @params, uri_escape($key) . '=' . uri_escape( $params->{$key} );
