@@ -375,39 +375,35 @@ sub getDisplayName {
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 
-	return unless $url && $client && $client->isPlaying;
+	return unless unwrapUrl($url) && $client && $client->isPlaying;
 
 	my $song = Slim::Player::Source::playingSong($client);
 	return unless $song && $song->canSeek;
 
-	if ( $url && defined $cache->get('podcast-' . $url) ) {
-		my $title = $client->string('PLUGIN_PODCAST_SKIP_BACK', $prefs->get('skipSecs'));
+	my $title = $client->string('PLUGIN_PODCAST_SKIP_BACK', $prefs->get('skipSecs'));
 
-		return [{
-			name => $title,
-			url  => sub {
-				my ($client, $cb, $params) = @_;
+	return [{
+		name => $title,
+		url  => sub {
+			my ($client, $cb, $params) = @_;
 
-				my $position = Slim::Player::Source::songTime($client);
-				my $newPos   = $position > $prefs->get('skipSecs') ? $position - $prefs->get('skipSecs') : 0;
+			my $position = Slim::Player::Source::songTime($client);
+			my $newPos   = $position > $prefs->get('skipSecs') ? $position - $prefs->get('skipSecs') : 0;
 
-				main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Skipping from position %s back to %s", $position, $newPos));
+			main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Skipping from position %s back to %s", $position, $newPos));
 
-				Slim::Player::Source::gototime($client, $newPos);
+			Slim::Player::Source::gototime($client, $newPos);
 
-				$cb->({
-					items => [{
-						name        => $title,
-						showBriefly => 1,
-						nowPlaying  => 1, # then return to Now Playing
-					}]
-				});
-			},
-			nextWindow => 'parent',
-		}];
-	}
-
-	return;
+			$cb->({
+				items => [{
+					name        => $title,
+					showBriefly => 1,
+					nowPlaying  => 1, # then return to Now Playing
+				}]
+			});
+		},
+		nextWindow => 'parent',
+	}];
 }
 
 sub showInfo {
