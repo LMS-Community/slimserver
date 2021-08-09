@@ -79,7 +79,7 @@ sub parse {
 			$position =~ s/^0+[:\.]//;
 			
 			# remote_image is now cached, so replace enclosure with a play attribute 
-			# so that XMLBrowser to show sub-menu *and* we can play from top
+			# so that XMLBrowser shows a sub-menu *and* we can play from top
 			my $enclosure = delete $item->{enclosure};
 			$item->{on_select} = 'play';
 			$item->{play} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
