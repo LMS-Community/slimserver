@@ -29,7 +29,6 @@ use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 use Digest::MD5 qw(md5_hex);
-use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Alarm;
@@ -1426,10 +1425,10 @@ sub playlistXitemCommand {
 			my $tracks = shift;
 			# transform opml list into url array if needed
 			if (ref $tracks eq 'HASH') {
-				$tracks = [ map { 
-					$_->{play} || $_->{url} 
+				$tracks = [ map {
+					$_->{play} || $_->{url}
 				} @{$tracks->{items}} ];
-			}	
+			}
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', $tracks, $fadeIn]);
 			$request->setStatusDone();
 		});
@@ -2816,18 +2815,7 @@ sub setSNCredentialsCommand { if (!main::NOMYSB) {
 	# Sync can be toggled without username/password
 	if ( defined $sync ) {
 		$prefs->set('sn_sync', $sync);
-
-		if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
-			Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
-		}
-
-		if ( $sync ) {
-			require Slim::Networking::SqueezeNetwork::PrefSync;
-			Slim::Networking::SqueezeNetwork::PrefSync->init();
-		}
 	}
-
-	$password = sha1_base64($password);
 
 	# Verify username/password
 	if ($username) {
@@ -2846,7 +2834,6 @@ sub setSNCredentialsCommand { if (!main::NOMYSB) {
 				Slim::Networking::SqueezeNetwork->shutdown();
 
 				$prefs->set('sn_email', $username);
-				$prefs->set('sn_password_sha', $password);
 
 				# Start it up again if the user enabled it
 				Slim::Networking::SqueezeNetwork->init();
@@ -2867,9 +2854,7 @@ sub setSNCredentialsCommand { if (!main::NOMYSB) {
 	# stop SN integration if either mail or password is undefined
 	else {
 		$request->addResult('validated', 1);
-		$prefs->set('sn_email', '');
-		$prefs->set('sn_password_sha', '');
-		Slim::Networking::SqueezeNetwork->shutdown();
+		Slim::Networking::SqueezeNetwork->logout();
 	}
 } }
 

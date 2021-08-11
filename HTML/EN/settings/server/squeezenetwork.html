@@ -2,42 +2,35 @@
 
 [% PROCESS settings/header.html %]
 
-	<!-- XXX: This will eventually have more stuff like a way to register for a new account, etc. -->
+	[% IF has_session %]
+		[% WRAPPER setting title="SETUP_SN_EMAIL" desc="" %]
+			<div>[% prefs.pref_sn_email %]</div>
+			<br/>
+			<input type="hidden" name="pref_sn_email" value="[% prefs.pref_sn_email %]">
+			<input name="pref_logout" type="submit" class="stdclick" value="[% "SETUP_SN_SIGNOUT" | string %]"><br/><br/>
+		[% END %]
 
-	[% WRAPPER setting title="SETUP_SN_EMAIL" desc="SETUP_SN_EMAIL_DESC" %]
-		<input type="text" class="stdedit" name="pref_sn_email" id="sn_email" value="[% prefs.pref_sn_email %]" size="40">
-	[% END %]
+		[% WRAPPER setting title="SETUP_SN_SYNC" desc="SETUP_SN_SYNC_DESC" %]
+			<select class="stdedit" name="pref_sn_sync" id="sn_sync">
+				<option [% IF prefs.pref_sn_sync == 1 %]selected="selected" [% END %]value="1">
+					[% 'SETUP_SN_SYNC_ENABLE' | string %]
+				</option>
+				<option [% IF !prefs.pref_sn_sync %]selected="selected" [% END %]value="0">
+					[% 'SETUP_SN_SYNC_DISABLE' | string %]
+				</option>
+			</select>
+		[% END %]
+	[% ELSE %]
+		[% WRAPPER setting title="SETUP_SN_EMAIL" desc="SETUP_SN_EMAIL_DESC" %]
+			<input type="text" class="stdedit" name="pref_sn_email" id="sn_email" value="[% prefs.pref_sn_email %]" size="40">
+		[% END %]
 
-	[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
-		<input type="password" class="stdedit" name="pref_sn_password_sha" id="sn_password_sha" value="[% prefs.pref_sn_password_sha %]" size="40">
-		<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
-		<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
+		[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
+			<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% sn_password %]" size="40">
+			<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
+			<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
+		[% END %]
 	[% END %]
-	
-	[% WRAPPER setting title="SETUP_SN_SYNC" desc="SETUP_SN_SYNC_DESC" %]
-		<select class="stdedit" name="pref_sn_sync" id="sn_sync">
-			<option [% IF prefs.pref_sn_sync == 1 %]selected="selected" [% END %]value="1">
-				[% 'SETUP_SN_SYNC_ENABLE' | string %]
-			</option>
-			<option [% IF !prefs.pref_sn_sync %]selected="selected" [% END %]value="0">
-				[% 'SETUP_SN_SYNC_DISABLE' | string %]
-			</option>
-		</select>
-	[% END %]
-	
-<!-- 	
-	[% WRAPPER setting title="SETUP_SN_REPORT_STATS" %]
-		<div>[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br /><br /></div>
-		<select class="stdedit" name="pref_sn_disable_stats" id="sn_disable_stats">
-			<option [% IF !prefs.pref_sn_disable_stats %]selected="selected" [% END %]value="0">
-				[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
-			</option>
-			<option [% IF prefs.pref_sn_disable_stats == 1 %]selected="selected" [% END %]value="1">
-				[% 'SETUP_SN_REPORT_STATS_DISABLE' | string %]
-			</option>
-		</select>
-	[% END %]
--->
 
 [% PROCESS settings/footer.html %]
 

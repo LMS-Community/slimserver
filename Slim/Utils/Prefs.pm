@@ -583,6 +583,10 @@ sub init {
 	if (!main::NOMYSB) {
 		# Clear SN cookies from the cookie jar if the session changes
 		$prefs->setChange( sub {
+			if (!$_[1]) {
+				Slim::Networking::SqueezeNetwork->shutdown();
+			}
+
 			# XXX the sn.com hostnames can be removed later
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
 			$cookieJar->clear( 'www.squeezenetwork.com' );
@@ -593,11 +597,26 @@ sub init {
 			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
 
+		$prefs->setChange(sub {
+			my $newValue = $_[1];
+
+			if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+				Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			}
+
+			if ( $newValue && $prefs->get('sn_session') ) {
+				require Slim::Networking::SqueezeNetwork::PrefSync;
+				Slim::Networking::SqueezeNetwork::PrefSync->init();
+			}
+		}, 'sn_sync');
+
 		$prefs->setChange( sub {
 			Slim::Utils::Timers::setTimer(
 				$_[1],
 				time() + 30,
 				sub {
+					return unless $prefs->get('sn_session');
+
 					my $isDisabled = shift;
 					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
 

@@ -2,7 +2,7 @@ Wizard = {
 	fileselectors : new Array(),
 
 	init : function(args) {
-		
+
 		var mainpanel = new Array();
 		var panels = Ext.DomQuery.select('.wz_page');
 
@@ -55,7 +55,7 @@ Wizard = {
 							})
 						}
 					}
-					
+
 					document.forms.wizardForm.submit();
 				}
 
@@ -69,7 +69,7 @@ Wizard = {
 				else
 					this.jump(1)
 			},
-			
+
 			previous: function(){ this.jump(-1) },
 
 			jump: function(offset) {
@@ -91,7 +91,7 @@ Wizard = {
 				current = Math.min(current, this.items.length - 1);
 
 				this.activeItemPos = current;
-				this.getLayout().setActiveItem(current);		
+				this.getLayout().setActiveItem(current);
 
 				this._setButtons();
 			},
@@ -113,48 +113,48 @@ Wizard = {
 				sqn_p: {
 					validator: function(){
 						var email = Ext.get('sn_email').getValue();
-						var pw = Ext.get('sn_password_sha').getValue();
+						var pw = Ext.get('sn_password').getValue();
 						var disable_stats = Ext.get('sn_disable_stats').getValue();
-	
+
 						var email_summary = Ext.get('sn_email_summary');
 						var result_summary = Ext.get('sn_result_summary');
 						var resultEl = Ext.get('sn_result');
-						
+
 						resultEl.update('');
 						result_summary.update('');
-			
+
 						if (email || pw) {
 							email_summary.update(email);
-			
+
 							Ext.Ajax.request({
 								url: '/settings/server/squeezenetwork.html',
 								params: {
 									pref_sn_email: email,
-									pref_sn_password_sha: pw,
+									sn_password: pw,
 									pref_sn_disable_stats: disable_stats,
 									pref_sn_sync: 1,
 									saveSettings: 1,
 									AJAX: 1
 								},
 								scope: this,
-			
+
 								success: function(response, options){
 									var result = response.responseText.split('|');
-			
+
 									if (result[0] == '0') {
 										resultEl.update(result[1]);
 										result_summary.update('(' + result[1] + ')');
 										Ext.get('sn_email').highlight('ffcccc');
-										Ext.get('sn_password_sha').highlight('ffcccc');
+										Ext.get('sn_password').highlight('ffcccc');
 									}
-			
+
 									else {
 										this.jump(1)
 									}
 								}
 							});
 						}
-			
+
 						else {
 							email_summary.update(SqueezeJS.string('summary_none'));
 							this.jump(1)
@@ -170,7 +170,7 @@ Wizard = {
 					skip: function(){
 						return !this.useAudioDir;
 					},
-					
+
 					useAudioDir: args.useAudioDir
 				},
 
@@ -182,7 +182,7 @@ Wizard = {
 					skip: function(){
 						return !this.useAudioDir;
 					},
-					
+
 					useAudioDir: args.useAudioDir
 				},
 
@@ -190,18 +190,18 @@ Wizard = {
 					skip: function(){
 						// just update the summary, ...
 						Ext.get('summary').update(
-							(!(Ext.get('audiodir').dom.value || this.useiTunes || this.useMusicIP) 
-								? '<li>' + SqueezeJS.string('summary_none') + '</li>' 
+							(!(Ext.get('audiodir').dom.value || this.useiTunes || this.useMusicIP)
+								? '<li>' + SqueezeJS.string('summary_none') + '</li>'
 								: '') +
-							(Ext.get('audiodir').dom.value 
+							(Ext.get('audiodir').dom.value
 								? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>'
 								         + ('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>')
 								: '')  +
-							(this.useiTunes 
-								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>' 
+							(this.useiTunes
+								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>'
 								: '') +
-							(this.useMusicIP 
-								? '<li>' + SqueezeJS.string('summary_musicip') + '</li>' 
+							(this.useMusicIP
+								? '<li>' + SqueezeJS.string('summary_musicip') + '</li>'
 								: '')
 						);
 						// ...but never skip
@@ -215,18 +215,18 @@ Wizard = {
 
 			_validatePref : function(namespace, myPref) {
 				SqueezeJS.Controller.request({
-					params: ['', 
+					params: ['',
 						[
-							'pref', 
-							'validate', 
-							namespace + ':' + myPref, 
+							'pref',
+							'validate',
+							namespace + ':' + myPref,
 							Ext.get(myPref).dom.value
 						]
 					],
 					success: function(response) {
 						if (response && response.responseText) {
 							response = Ext.util.JSON.decode(response.responseText);
-				
+
 							// if preference did not validate - highlight the field
 							if (response.result && response.result.valid)
 								this.jump(1);
@@ -252,7 +252,7 @@ Wizard = {
 					margins: '5 5 0 5',
 					height: 40
 				},
-				
+
 				{
 					region: 'center',
 					layout: 'border',

@@ -8,7 +8,6 @@ package Slim::Web::Settings::Server::SqueezeNetwork;
 
 use strict;
 use base qw(Slim::Web::Settings);
-use Digest::SHA1 qw(sha1_base64);
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw(string);
@@ -36,43 +35,29 @@ sub prefs {
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
-	# The hostname for mysqueezebox.com
-	my $sn_server = Slim::Networking::SqueezeNetwork->get_server("sn");
-	$params->{sn_server} = $sn_server;
-
-	$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
-	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
-
-	if ( $params->{saveSettings} ) {
+	if ( $params->{pref_logout} ) {
+		Slim::Control::Request::executeRequest(
+			$client,
+			[
+				'setsncredentials',
+			],
+		);
+	}
+	elsif ( $params->{saveSettings} ) {
 
 		if ( defined $params->{pref_sn_sync} ) {
 			$prefs->set( 'sn_sync', $params->{pref_sn_sync} );
-
-			if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
-				Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
-			}
-
-			if ( $params->{pref_sn_sync} ) {
-				require Slim::Networking::SqueezeNetwork::PrefSync;
-				Slim::Networking::SqueezeNetwork::PrefSync->init();
-			}
-
-			$params->{prefs}->{pref_sn_sync} = $params->{pref_sn_sync};
 		}
 
 		# set credentials if mail changed or a password is defined and it has changed
-		$params->{pref_sn_password_sha} = Slim::Utils::Unicode::utf8encode($params->{pref_sn_password_sha}) if $params->{pref_sn_password_sha};
-
-		if ( $params->{pref_sn_email} ne $params->{prefs}->{pref_sn_email}
-			|| ( $params->{pref_sn_password_sha} && sha1_base64($params->{pref_sn_password_sha}) ne $prefs->get('sn_password_sha') ) ) {
-
+		if ( $params->{pref_sn_email} && $params->{sn_password} ) {
 			# Verify username/password
 			Slim::Control::Request::executeRequest(
 				$client,
 				[
 					'setsncredentials',
 					$params->{pref_sn_email},
-					$params->{pref_sn_password_sha},
+					Slim::Utils::Unicode::utf8encode($params->{sn_password}),
 				],
 				sub {
 					my $request = shift;
@@ -88,15 +73,11 @@ sub handler {
 					}
 
 					if (!$validated) {
-
 						$params->{'warning'} .= $warning . '<br/>' unless $params->{'AJAX'};
 
-						$params->{prefs}->{pref_sn_email} = $params->{pref_sn_email};
-
 						delete $params->{pref_sn_email};
-						delete $params->{pref_sn_password_sha};
+						delete $params->{sn_password};
 					}
-
 
 					my $body = $class->SUPER::handler($client, $params);
 					$callback->( $client, $params, $body, @args );
@@ -108,6 +89,18 @@ sub handler {
 	}
 
 	return $class->SUPER::handler($client, $params);
+}
+
+sub beforeRender {
+	my ($class, $params, $client) = @_;
+
+	# The hostname for mysqueezebox.com
+	my $sn_server = Slim::Networking::SqueezeNetwork->get_server("sn");
+	$params->{sn_server} = $sn_server;
+
+	$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
+	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
+	$params->{has_session}            = $prefs->get('sn_session');
 }
 
 1;

@@ -7,7 +7,6 @@ package Slim::Web::Settings::Server::Wizard;
 
 use strict;
 use base qw(Slim::Web::Settings);
-use Digest::SHA1 qw(sha1_base64);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Utils::Log;
@@ -39,7 +38,7 @@ sub handler {
 
 		$serverPrefs->set('wizardDone', 1);
 		$paramRef->{wizardDone} = 1;
-		delete $paramRef->{firstTimeRun};		
+		delete $paramRef->{firstTimeRun};
 
 	}
 
@@ -58,7 +57,7 @@ sub handler {
 			foreach my $language (I18N::LangTags::extract_language_tags($response->{_request}->{_headers}->{'accept-language'})) {
 				$language = uc($language);
 				$language =~ s/-/_/;  # we're using zh_cn, the header says zh-cn
-	
+
 				main::DEBUGLOG && $log->debug("trying language: " . $language);
 				if (defined $paramRef->{languageoptions}->{$language}) {
 					$serverPrefs->set('language', $language);
@@ -71,7 +70,7 @@ sub handler {
 
 		Slim::Utils::DateTime::setDefaultFormats();
 	}
-	
+
 	# handle language separately, as it is in its own form
 	if ($paramRef->{saveLanguage}) {
 		main::DEBUGLOG && $log->debug( 'setting language to ' . $paramRef->{language} );
@@ -80,24 +79,24 @@ sub handler {
 	}
 
 	$paramRef->{prefs}->{language} = Slim::Utils::Strings::getLanguage();
-	
+
 	# set right-to-left orientation for Hebrew users
 	$paramRef->{rtl} = 1 if ($paramRef->{prefs}->{language} eq 'HE');
 
 	foreach my $pref (@prefs) {
 
 		if ($paramRef->{saveSettings}) {
-				
+
 			# if a scan is running and one of the music sources has changed, abort scan
-			if ( 
+			if (
 				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
 					|| ($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
-				) && Slim::Music::Import->stillScanning ) 
+				) && Slim::Music::Import->stillScanning )
 			{
 				main::DEBUGLOG && $log->debug('Aborting running scan, as user re-configured music source in the wizard');
 				Slim::Music::Import->abortScan();
 			}
-			
+
 			# revert logic: while the pref is "disable", the UI is opt-in
 			# if this value is set we actually want to not disable it...
 			elsif ($pref eq 'sn_disable_stats') {
@@ -115,7 +114,7 @@ sub handler {
 		if (main::DEBUGLOG && $log->is_debug) {
  			$log->debug("$pref: " . $serverPrefs->get($pref));
 		}
-		
+
 		if ($pref eq 'mediadirs') {
 			my $mediadirs = $serverPrefs->get($pref);
 			$paramRef->{prefs}->{$pref} = scalar @$mediadirs ? $mediadirs->[0] : '';
@@ -137,32 +136,22 @@ sub handler {
 	}
 
 	else {
-		
 		# use local path if neither iTunes nor MusicIP is available, or on anything but Windows/OSX
 		$paramRef->{useAudiodir} = Slim::Utils::OSDetect::OS() !~ /^(?:mac|win)$/ || !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
 	}
-	
+
 	if ( $paramRef->{saveSettings} ) {
-
-		if (   !main::NOMYSB 
-			&& $paramRef->{sn_email}
-			&& $paramRef->{sn_password_sha}
-			&& $serverPrefs->get('sn_sync')
-		) {			
-			Slim::Networking::SqueezeNetwork->init();
-		}
-
 		# Disable iTunes and MusicIP plugins if they aren't being used
 		if ( !$paramRef->{useiTunes} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') ) {
 			Slim::Utils::PluginManager->disablePlugin('iTunes');
 		}
-		
+
 		if ( !$paramRef->{useMusicIP} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
 			Slim::Utils::PluginManager->disablePlugin('MusicMagic');
 		}
 	}
-	
-	
+
+
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
 		$paramRef->{playertype} = $client->model();
