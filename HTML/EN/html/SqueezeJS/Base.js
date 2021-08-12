@@ -837,6 +837,9 @@ SqueezeJS.Utils = {
 		if (url.search(/player=/) && ! rExp.exec(url))
 			url = url.replace(/player=/ig, '');
 
+		// reset the regex so it starts matching at the beginning of the url
+		rExp.lastIndex = 0;
+
 		return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
 	},
 
