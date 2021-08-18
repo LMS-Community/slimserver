@@ -50,7 +50,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
 	EN	Show only local album if you have another copy in your online music collection.
-	FR	Afficher uniquement l'album local lorqu'une copie existe dans la bibliothèque en ligne.
+	FR	Afficher uniquement l'album local lorsqu'une copie existe dans la bibliothèque en ligne.
 	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is.
 	SV	Visa bara det lokala albumet när en kopia finns i ditt online-bibliotek
 
