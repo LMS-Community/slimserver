@@ -17,7 +17,7 @@ use constant LARGE_RESULTSET => 500;
 
 use constant SQL_CREATE_TRACK_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT tracks.id, 'track',
+		SELECT tracks.urlmd5 || ':' || tracks.id, 'track',
 		-- weight 10
 		LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, ''),
 		-- weight 5
@@ -47,7 +47,7 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 
 use constant SQL_CREATE_ALBUM_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT albums.id, 'album',
+		SELECT MD5(albums.id) || ':' || albums.id, 'album',
 		-- weight 10
 		LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, ''),
 		-- weight 5
@@ -69,7 +69,7 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 
 use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT contributors.id, 'contributor',
+		SELECT MD5(contributors.id) || ':' || contributors.id, 'contributor',
 		-- weight 10
 		LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, ''),
 		-- weight 5
@@ -86,16 +86,15 @@ use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
 ? q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
+		SELECT MD5(playlist_track.playlist) || ':' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
-			LEFT JOIN tracks ON tracks.url = playlist_track.track
-			LEFT JOIN fulltext ON fulltext MATCH 'type:track ' || IGNORE_PUNCTUATION(REPLACE(REPLACE(playlist_track.track, '%20', ' '), 'file://', ''))
+			LEFT JOIN fulltext ON fulltext.id MATCH MD5(playlist_track.track)
 		WHERE playlist_track.playlist = ?
 }
 : q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT tracks.id, 'playlist', ?, '', ?, ''
+		SELECT MD5(tracks.id) || ':' || tracks.id, 'playlist', ?, '', ?, ''
 		FROM tracks
 		WHERE tracks.id = ?
 };
@@ -235,7 +234,7 @@ sub createHelperTable {
 
 	$orderOrLimit = 'LIMIT 0' if !$tokens;
 
-	my $searchSQL = "CREATE $temp TABLE $name AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
+	my $searchSQL = "CREATE $temp TABLE $name AS SELECT SPLIT_ID(fulltext.id) AS id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
 
 	if ( main::DEBUGLOG ) {
 		my $log2 = $sqllog->is_debug ? $sqllog : $log;
@@ -464,7 +463,7 @@ sub _rebuildIndex {
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $scanlog->error($dbh->errstr);
 	if ( CAN_FTS4 ) {
 		main::DEBUGLOG && $log->debug("New SQLite - enable advanced fts4 features (notindexed)");
-		$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts4(id, type, w10, w5, w3, w1, matchinfo=fts3, notindexed=id);") or $scanlog->error($dbh->errstr);
+		$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts4(id, type, w10, w5, w3, w1, matchinfo=fts3);") or $scanlog->error($dbh->errstr);
 	}
 	else {
 		main::DEBUGLOG && $log->debug("Old SQLite - don't enable advanced fts4 features");
@@ -584,6 +583,9 @@ sub _initPopularTerms {
 
 sub postDBConnect {
 	my ($class, $dbh) = @_;
+
+	# we're using urlhash:id as the track IDs in the fulltext table
+	$dbh->sqlite_create_function( 'SPLIT_ID', 1, sub { substr($_[0], 33) } );
 
 	# some custom functions to get good data
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
