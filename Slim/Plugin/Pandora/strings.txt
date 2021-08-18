@@ -467,7 +467,7 @@ PLUGIN_PANDORA_ARTIST_OR_SONG
 	EN	Artist or song?
 	ES	¿Artista o canción?
 	FI	Artisti vai kappale?
-	FR	Artiste ou morceau?
+	FR	Artiste ou morceau ?
 	HE	מבצע או שיר?
 	IT	Artista o brano?
 	NL	Artiest of nummer?
@@ -787,7 +787,7 @@ PLUGIN_PANDORA_WHY_PLAYED
 	EN	Why did you play this song?
 	ES	¿Por qué reprodujo esta canción?
 	FI	Miksi tämä kappale soitettiin?
-	FR	Pourquoi avez-vous diffusé ce morceau?
+	FR	Pourquoi avez-vous diffusé ce morceau ?
 	HE	מדוע השמעת את השיר?
 	IT	Perché hai scelto questo brano?
 	NL	Waarom heb je dit nummer afgespeeld?

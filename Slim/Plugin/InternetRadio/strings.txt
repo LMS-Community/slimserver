@@ -38,7 +38,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	EN	TuneIn Radio - Local Internet Radio
 	ES	TuneIn Radio - Radio por Internet local
 	FI	TuneIn Radio - paikallinen internetradio
-	FR	TuneIn Radio - Radio Internet locale
+	FR	TuneIn Radio - Radios Internet
 	IT	TuneIn Radio - Radio Internet locale
 	NL	TuneIn Radio - lokale internetradio
 	NO	TuneIn Radio: Lokal Internett-radio
@@ -114,7 +114,7 @@ RADIOTIME_LOCAL
 	EN	Local Radio
 	ES	Radio local
 	FI	Paikallisradio
-	FR	Radio Locale
+	FR	Radios Locales
 	IT	Radio locale
 	NL	Lokale Radio
 	NO	Lokalradio
@@ -234,7 +234,7 @@ RADIOTIME_TALK
 	EN	Talk
 	ES	Conversación
 	FI	Keskustelu
-	FR	Émissions-Débats
+	FR	Émissions / Débats
 	IT	Talk
 	NL	Gesproken
 	NO	Prat
@@ -249,7 +249,7 @@ RADIOTIME_MY_PRESETS
 	EN	My Presets
 	ES	Mis Memorias
 	FI	Esiasetukset
-	FR	Mes Préréglages
+	FR	Mes favoris TuneIn
 	HE	ההגדרות הקבועות מראש שלי
 	IT	Stazioni predefinite
 	NL	Mijn Voorkeuren

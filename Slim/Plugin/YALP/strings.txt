@@ -1,2 +1,3 @@
 PLUGIN_YALP
 	EN	WMA metadata parser for YALP radio
+	FR	Analyseur de métadonnées WMA pour la radio YALP

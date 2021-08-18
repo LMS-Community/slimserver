@@ -65,7 +65,7 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	EN	<b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
 	ES	<b>Advertencia</b> Dado que el servidor descargará automáticamente software de los repositorios que defina, verifique que confía en el propietario del repositorio.
 	FI	<b>Varoitus:</b> Koska palvelin lataa automaattisesti ohjelmistot määrittämistäsi tietosäilöistä, vahvista, että luotat tietosäilön omistajaan.
-	FR	<b>Attention:</b> le serveur télécharge automatiquement du contenu des répertoires que vous définissez. Assurez-vous par conséquent de leur fiabilité.
+	FR	<b>Attention :</b> le serveur télécharge automatiquement du contenu des répertoires que vous définissez. Assurez-vous par conséquent de leur fiabilité.
 	IT	<b>Attenzione:</b> verranno scaricati automaticamente prodotti software dagli archivi definiti, pertanto è consigliabile specificare archivi attendibili.
 	NL	<b>Waarschuwing:</b> Aangezien de server automatisch software downloadt van de opslagruimten die je opgeeft, moet je verifiëren dat je de eigenaar van die opslagruimte vertrouwt.
 	NO	<b>Advarsel: </b>Siden serveren automatisk laster ned programvare fra lagrene du angir, må du være sikker på at du stoler på eieren av lageret.
@@ -155,7 +155,7 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	EN	already installed manually (%s) - please remove first
 	ES	ya se instaló manualmente (%s) - quítelo primero
 	FI	on jo asennettu manuaalisesti (%s) - poista ensin
-	FR	déjà installé manuellement (%s). Veuillez d'abord le supprimer.
+	FR	Déjà installé manuellement (%s). Veuillez d'abord le supprimer.
 	IT	già installato manualmente (%s). Rimuoverlo
 	NL	al handmatig geïnstalleerd (%s) - eerst verwijderen
 	NO	allerede installert manuelt (%s) ‒ fjern først
@@ -215,7 +215,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 	EN	You are about to install:
 	ES	Está a punto de instalar:
 	FI	Aiot asentaa tämän:
-	FR	Vous êtes en train d'installer:
+	FR	Vous êtes en train d'installer :
 	IT	Sta per essere installato:
 	NL	Je wilt het volgende installeren:
 	NO	Du er i ferd med å installere
@@ -305,7 +305,7 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	EN	Allow the Logitech Media Server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
 	ES	Permite a Logitech Media Server buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
 	FI	Salli Logitech Media Serverin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
-	FR	Autoriser le Logitech Media Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger de manière à être appliqués au redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
+	FR	Autoriser le Logitech Media Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger pour les appliquer au prochain redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
 	IT	Consente a Logitech Media Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
 	NL	Logitech Media Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je plug-ins handmatig bijwerken via deze instellingenpagina.
 	NO	La Logitech Media Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
@@ -379,7 +379,9 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
 	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
+	FR	Utiliser des extensions non prises en charge
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
 	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Logitech Media Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Logitech Media Server lahm legen. Verwendung auf eigenes Risiko.
 	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.
+	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Logitech Media Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Logitech Media Server de fonctionner. À utiliser à vos risques et périls.

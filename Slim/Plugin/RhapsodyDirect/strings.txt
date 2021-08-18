@@ -56,7 +56,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
 	EN	Internal Napster Error: %s
 	ES	Error interno de Napster: %s
 	FI	Sisäinen Napster virhe: %s
-	FR	Erreur interne Napster: %s
+	FR	Erreur interne Napster : %s
 	IT	Errore interno di Napster: %s
 	NL	Interne Napster-foutmelding: %s
 	NO	Intern Napster-feil: %s

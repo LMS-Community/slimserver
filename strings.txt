@@ -980,7 +980,7 @@ ABOUT
 	EN	Logitech Media Server V.%s, written by:
 	ES	Logitech Media Server v. %s, escrito por:
 	FI	Logitech Media Server V.%s, tekijä:
-	FR	Logitech Media Server V.%s, écrit par :
+	FR	Logitech Media Server V.%s, écrit par :
 	HE	Logitech Media Server V.%s, נוצר על-ידי:
 	IT	Logitech Media Server V.%s, scritto da:
 	JA	Logitech Media Server V.%s, 製作:
@@ -998,7 +998,7 @@ REMOVING_FROM_PLAYLIST
 	EN	Removing from playlist:
 	ES	Quitando de la lista de reproducción:
 	FI	Poistetaan soittoluettelosta:
-	FR	Supprime de la liste de lecture:
+	FR	Supprime de la liste de lecture :
 	HE	הסרה מרשימת ההשמעה:
 	IT	Rimozione dalla playlist:
 	JA	プレイ リストから削除する:
@@ -1017,7 +1017,7 @@ ZAPPING_FROM_PLAYLIST
 	EN	Moving to Zapped Songs playlist:
 	ES	Moviendo a la lista de reproducción de canciones descartadas:
 	FI	Siirretään Zapped Songs -soittoluetteloon:
-	FR	Déplace dans la liste de lecture des morceaux ignorés:
+	FR	Déplace dans la liste de lecture des morceaux ignorés :
 	HE	העברה לרשימת ההשמעה 'דילוג':
 	IT	Passaggio alla playlist dei brani scelti con zapping:
 	JA	プレイ リストから消去:
@@ -1055,7 +1055,7 @@ ADDING_TO_PLAYLIST
 	EN	Adding to end of playlist:
 	ES	Agregando al final de la lista de reproducción:
 	FI	Lisätään soittoluettelon loppuun:
-	FR	Ajout à la fin de la liste de lecture:
+	FR	Ajout à la fin de la liste de lecture :
 	HE	הוספה לסוף רשימת ההשמעה:
 	IT	Aggiunta a playlist:
 	JA	プレイ リストに追加:
@@ -1091,7 +1091,7 @@ INSERT_TO_PLAYLIST
 	EN	Adding to play next:
 	ES	Agregando para reproducir a continuación:
 	FI	Lisätään seuraavaksi soitettavaksi:
-	FR	Ajoute après le morceau en cours:
+	FR	Ajoute après le morceau en cours :
 	HE	הוספה להשמעה לאחר פריט זה:
 	IT	Aggiunta brano successivo:
 	JA	プレイ リストの次の曲に追加:
@@ -1146,7 +1146,7 @@ PLAYING_RANDOMLY_FROM
 	EN	Playing shuffled from:
 	ES	Reproducción aleatoria de:
 	FI	Soitetaan sekoitettuna kohteesta:
-	FR	Lecture aléatoire à partir de:
+	FR	Lecture aléatoire à partir de :
 	HE	השמעה בסדר אקראי מתוך:
 	IT	Riproduzione in ordine casuale da:
 	JA	シャッフル:
@@ -1254,7 +1254,7 @@ NOW_PLAYING_FROM
 	EN	Now playing from:
 	ES	Reproduciendo de:
 	FI	Soitetaan kohteesta:
-	FR	Lecture de:
+	FR	Lecture de :
 	HE	מושמע כעת מתוך:
 	IT	Riproduzione da:
 	JA	現在再生中:
@@ -1769,7 +1769,7 @@ ALARM_NEXT_ALARM
 	EN	Next Alarm:
 	ES	Alarma siguiente:
 	FI	Seuraava herätys:
-	FR	Prochain réveil:
+	FR	Prochain réveil :
 	IT	Sveglia successiva:
 	NL	Volgend weksignaal:
 	NO	Neste vekking:
@@ -1799,7 +1799,7 @@ ALARM_ADD_DESC
 	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
 	ES	Puede agregar todas las alarmas que desee. Cada alarma puede programarse para que se active todos los días, sólo en días determinados, o una vez. Seleccione "Agregar alarma" para agregar una alarma nueva.
 	FI	Voit lisätä niin monta herätystä kuin haluat.  Jokainen herätys voidaan asettaa käynnistymään joka päivä, vain tiettyinä päivinä, tai vain kerran.  Aloita uuden herätyksen lisääminen valitsemalla Lisää herätys.
-	FR	Vous pouvez ajouter autant de réveils que vous le désirez. Chaque réveil peut être défini pour se déclencher tous les jours, uniquement certains jours ou une seule fois. Sélectionnez Ajouter un réveil pour débuter l'ajout d'un nouveau réveil.
+	FR	Vous pouvez ajouter autant de réveils que vous le désirez. Chaque réveil peut être défini pour se déclencher tous les jours, uniquement certains jours ou une seule fois. Sélectionnez "Ajouter un réveil" pour débuter l'ajout d'un nouveau réveil.
 	IT	È possibile aggiungere il numero di sveglie desiderato. Ciascuna sveglia può essere impostata in modo da suonare tutti i giorni, in giorni specifici oppure solo una volta. Selezionare Aggiungi sveglia per aggiungere una nuova sveglia.
 	NL	Je kunt zoveel weksignalen toevoegen als je wilt. Elk weksignaal kan ingesteld worden om elke dag af te gaan, alleen op specifieke dagen of slechts eenmaal. Selecteer 'Weksignaal toevoegen' om een nieuw signaal toe te voegen.
 	NO	Du kan legge inn så mange vekkinger du ønsker. Hver vekking kan stilles inn til å gå hver dag, på visse dager eller bare én gang. Velg Legg til vekking for å legge til en ny vekking.
@@ -2796,7 +2796,7 @@ FIRMWARE_MISSING
 	EN	Error: Missing Firmware
 	ES	Error: Falta firmware
 	FI	Virhe: Laitteisto-ohjelmisto puuttuu
-	FR	Erreur: micrologiciel manquant
+	FR	Erreur : micrologiciel manquant
 	HE	שגיאה: קושחה חסרה
 	IT	Errore: firmware mancante
 	NL	Fout: Ontbrekende firmware
@@ -2962,7 +2962,7 @@ PROBLEM_CONNECTING
 	EN	Problem: Can't connect to server for:
 	ES	Problema: No se puede conectar al servidor:
 	FI	Ongelma: ei voi muodostaa yhteyttä palvelimeen:
-	FR	Problème: impossible de joindre le serveur:
+	FR	Problème : impossible de joindre le serveur :
 	HE	בעיה: אין אפשרות להתחבר לשרת עבור:
 	IT	Problema: impossibile connettersi al server per:
 	JA	エラー: 接続できません:
@@ -2981,7 +2981,7 @@ PROBLEM_OPENING
 	EN	Problem: Can't open file for:
 	ES	Problema: No se puede abrir el archivo:
 	FI	Ongelma: Ei voi avata tiedostoa:
-	FR	Problème: impossible d'ouvrir le fichier:
+	FR	Problème : impossible d'ouvrir le fichier :
 	HE	בעיה: אין אפשרות לפתוח את הקובץ עבור:
 	IT	Problema: impossibile aprire il file per:
 	JA	エラー: ファイルを開けません:
@@ -3000,7 +3000,7 @@ PROBLEM_OPENING_REMOTE_URL
 	EN	Error: Can't open remote URL
 	ES	Error: No se puede abrir la ULR remota
 	FI	Virhe: Etä-URL:ää ei voi avata
-	FR	Erreur: impossible d'ouvrir l'URL distante
+	FR	Erreur : impossible d'ouvrir l'URL distante
 	HE	שגיאה: אין אפשרות לפתוח כתובת URL מרוחקת
 	IT	Errore: impossibile aprire l'URL remoto
 	NL	Fout: Kan externe URL niet openen voor:
@@ -3017,7 +3017,7 @@ PROBLEM_CONVERT_FILE
 	EN	Problem: Unable to play file type for:
 	ES	Problema: Imposible reproducir tipo de archivo para:
 	FI	Ongelma: Tiedostotyyppiä ei voi soittaa kohteelle:
-	FR	Problème: impossible de lire le type de fichier pour:
+	FR	Problème : impossible de lire le type de fichier pour :
 	IT	Problema. Impossibile riprodurre tipo di file per:
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 	NO	Problem: Kan ikke spille av filtype for:
@@ -3032,7 +3032,7 @@ PROBLEM_CONVERT_FILE_WMA_LOSSLESS
 	EN	Problem: WMA Lossless requires Windows
 	ES	Problema: WMA Lossless requiere Windows
 	FI	Ongelma: Häviötön WMA vaatii Windowsin
-	FR	Problème: le format WMA Lossless nécessite Windows
+	FR	Problème : le format WMA Lossless nécessite Windows
 	IT	Problema: WMA Lossless richiede Windows
 	NL	Probleem: WMA Lossless vereist Windows
 	NO	Problem: WMA Lossless krever Windows
@@ -3047,7 +3047,7 @@ PROBLEM_CONVERT_STREAM
 	EN	Problem: Unable to convert stream:
 	ES	Problema: Imposible convertir secuencia:
 	FI	Ongelma: virran muuntaminen ei onnistu:
-	FR	Probème: impossible de convertir le flux:
+	FR	Problème : impossible de convertir le flux :
 	IT	Problema. Impossibile convertire stream:
 	NL	Probleem: Kan stream niet converteren:
 	NO	Problem: Kan ikke konvertere strøm:
@@ -3062,7 +3062,7 @@ PROBLEM_CONVERTING_STREAM
 	EN	Error: DRM in file:
 	ES	Error: DRM en archivo:
 	FI	Virhe: DRM tiedostossa:
-	FR	Erreur: le fichier contient des DRM
+	FR	Erreur : le fichier contient des DRM
 	IT	Errore. DRM in file:
 	NL	Fout: DRM in bestand:
 	NO	Feil: DRM i fil:
@@ -3077,7 +3077,7 @@ PROBLEM_UNKNOWN_TYPE
 	EN	Error: Unrecognized file type for:
 	ES	Error: Tipo de archivo desconocido para:
 	FI	Virhe: Tunnistamaton tiedostotyyppi:
-	FR	Erreur: type de fichier non reconnu pour:
+	FR	Erreur : type de fichier non reconnu pour :
 	IT	Errore. Tipo di file non riconosciuto per:
 	NL	Fout: Onbekend bestandstype voor:
 	NO	Feil: Ikke gjenkjent filtype for:
@@ -3107,7 +3107,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron elementos en la lista de reproducción
 	FI	Virhe: soittoluettelosta ei löytynyt kohteita
-	FR	Erreur: rien dans la liste de lecture
+	FR	Erreur : rien dans la liste de lecture
 	HE	שגיאה: לא נמצאו פריטים ברשימת ההשמעה
 	IT	Errore: nessun elemento trovato nella playlist
 	NL	Fout: Geen items in playlist gevonden
@@ -3121,7 +3121,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener lista de reproducción
-	FR	Erreur: connexion impossible pour récupérer la liste de lecture
+	FR	Erreur : connexion impossible pour récupérer la liste de lecture
 	HE	שגיאה: אין אפשרות להתחבר ולאחזר רשימת השמעה
 	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
@@ -3137,7 +3137,7 @@ ASF_UNABLE_TO_PARSE
 	EN	Error: Unable to parse ASF audio stream
 	ES	Error: Imposible analizar secuencia de audio ASF
 	FI	Virhe: ASF-äänivirtaa ei voi jäsentää
-	FR	Erreur: impossible d'analyser le flux audio ASF
+	FR	Erreur : impossible d'analyser le flux audio ASF
 	HE	שגיאה: אין אפשרות לפצל זרימת שמע מסוג ASF
 	IT	Errore: impossibile analizzare lo stream audio ASF
 	NL	Fout: Kan ASF-audiostream niet parseren
@@ -3229,7 +3229,7 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	ES	Error al cargar la secuencia remota de %s: (%s)
 	FI	Virhe ladattaessa etäsyötettä kohteelle %s: (%s)
-	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s: (%s)
+	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s : (%s)
 	HE	אירעה שגיאה במהלך טעינת ההזנה מרחוק עבור %s: ‏(%s)
 	IT	Errore durante il tentativo di caricamento del feed remoto per %s: (%s)
 	NL	Fout tijdens laden van externe feed voor %s: (%s)
@@ -3497,6 +3497,7 @@ SOURCE
 EXTERNAL_ID
 	DE	Externe ID
 	EN	External ID
+	FR	ID externe
 	SV	Extern ID
 
 #
@@ -3585,7 +3586,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), BITRATE, LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Éstos son los formatos disponibles para seleccionar, tanto en la interfaz Web como en los reproductores. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista), COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en las páginas Web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
+	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
 	IT	Questi formati sono selezionabili sia per l'interfaccia Web, sia per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, immettere il testo appropriato nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano sotto forma di numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE, LONGDATE (data corrente in formato esteso), SHORTDATE (data corrente in formato abbreviato), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzare separatori. I separatori vengono utilizzati solo in presenza di dati.<br>Nelle pagine Web verrà utilizzato il formato correntemente selezionato.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、BITRATE（ビットレート)、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
@@ -3604,7 +3605,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	EN	These are the formats available for selection on this player. To add an additional format for selection at the player, select one from the drop-down and save the settings.<br>The Current selection is the format that will be used on the player.<br>If you want to add new formats not available in the drop-down, go to Server Settings > Interface > Title Format.
 	ES	Éstos son los formatos disponibles para seleccionar, tanto en la interfaz Web como en los reproductores. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista), COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en las páginas Web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
+	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
 	IT	Questi formati sono selezionabili sia per l'interfaccia Web, sia per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, immettere il testo appropriato nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano sotto forma di numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE, LONGDATE (data corrente in formato esteso), SHORTDATE (data corrente in formato abbreviato), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzare separatori. I separatori vengono utilizzati solo in presenza di dati.<br>Nelle pagine Web verrà utilizzato il formato correntemente selezionato.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、BITRATE（ビットレート)、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
@@ -3641,7 +3642,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	ES	Se pueden personalizar las opciones que están disponibles en el nivel superior del menú Inicio en la pantalla del reproductor. Haga clic para subir o bajar elementos o para quitar elementos de menú. Haga clic en "Agregar" para añadir de nuevo un elemento que se había quitado de un menú.
 	FI	Voit mukauttaa vaihtoehtoja, jotka ovat valittavissa ylätason Koti-valikosta soittimen näytössä. Siirrä valikkokohteita ylös- tai alaspäin napsauttamalla tai poista niitä. Voit lisätä poistamasi kohdan takaisin valikkoon valitsemalla Lisää.
-	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez sur un élément pour le déplacer verticalement ou pour le supprimer. Cliquez sur Ajouter pour ajouter un élément qui a été supprimé.
+	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez sur un élément pour le déplacer verticalement ou pour le supprimer. Cliquez sur "Ajouter" pour ajouter un élément qui a été supprimé.
 	HE	באפשרותך להתאים אישית את האפשרויות הזמינות בתפריט הראשי ברמה העליונה בתצוגת הנגן. לחץ להעברת פריטים במעלה או במורד הרשימה או להסרת פריטי תפריט. לחץ על "הוספה" להוספת פריט שהוסר בחזרה לתפריט.
 	IT	È possibile personalizzare le opzioni disponibili nel menu di primo livello della pagina iniziale visualizzato nel display del lettore. Fare clic per spostare le voci del menu verso l'alto e verso il basso o per rimuoverle. Fare clic su Aggiungi per reinserire nel menu una voce precedentemente rimossa.
 	JA	プレーヤー ディスプレイのホームメニューにて使用可能な選択肢をカスタマイズできます。アイテムをクリックして上下に動かすか削除してください。削除したアイテムを戻す為には"Add"をクリックして下さい。
@@ -3660,7 +3661,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	EN	Inactive Menu Items:
 	ES	Elementos de menú inactivos:
 	FI	Passiiviset valikkokohdat:
-	FR	Eléments de menu inactifs:
+	FR	Eléments de menu inactifs :
 	HE	פריטי תפריט לא פעילים:
 	IT	Voci inattive del menu:
 	NL	Inactieve menuopties:
@@ -3946,7 +3947,7 @@ SETUP_GROUP_PLUGINS_DESC
 	EN	Logitech Media Server includes some plugins that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins below.<br/><br/>Note: You will need to restart the application to see the effect of these changes.
 	ES	Logitech Media Server incluye algunos complementos que se pueden usar con el mando a distancia o en la interfaz Web. Puede activar o desactivar complementos individuales a continuación.<br/><br/>Nota: deberá reiniciar el servidor para que estos cambios entren en vigor.
 	FI	Logitech Media Server sisältää laajennuksia, joita voi käyttää kaukosäätimellä tai internet-liittymän välityksellä. Yksittäiset laajennukset voidaan ottaa käyttöön tai poistaa käytöstä alla.<br/><br/>Huomaa: Sovellus täytyy käynnistää uudelleen, jotta muutosten vaikutukset näkyvät.
-	FR	Le Logitech Media Server inclut certains plugins à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des plugins ci-dessous.<br/><br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
+	FR	Le Logitech Media Server inclut certains plugins à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des plugins ci-dessous.<br/><br/>Remarque : Vous devez redémarrer le serveur pour que les modifications prennent effet.
 	IT	In Logitech Media Server sono disponibili alcuni plugin utilizzabili con il telecomando o nell'interfaccia Web. È possibile attivare o disattivare i singoli plugin sottostanti.<br/><br/>Nota: per rendere effettive le modifiche, è necessario riavviare l'applicazione.
 	NL	Logitech Media Server bevat een aantal plug-ins die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke plug-ins in- of uitschakelen.<br/><br/>N.B. Je moet Logitech Media Server herstarten om de wijzigingen door te voeren.
 	NO	Logitech Media Server har plugin-moduler som du kan bruke med fjernkontrollen, eller i nettgrensesnittet. Du kan velge å aktivere eller deaktivere plugin-moduler enkeltvis nedenfor.<br/><br/>Merk: Du må starte programmet på nytt før disse endringene trer i kraft.
@@ -3976,7 +3977,7 @@ SETUP_PLUGINS_SAFEMODE
 	EN	Please note: as you're running Logitech Media Server in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
 	ES	Tenga en cuenta que: está ejecutando Logitech Media Server en modo seguro, los complementos no están disponibles. Pero puede activarlos/desactivarlos para solucionar problemas con la instalación.
 	FI	Huomaa: koska käytät Logitech Media Serveriä vikasietotilassa, laajennukset eivät ole käytettävissä. Voit yhä ottaa ne käyttöön tai poistaa ne käytöstä korjataksesi ongelmat, joita asennuksen kanssa esiintyy.
-	FR	Remarque: en mode sans échec, les plugins du Logitech Media Server ne sont pas disponibles. Toutefois, vous pouvez toujours les activer ou les désactiver de manière à résoudre tout problème lié à l'installation.
+	FR	Remarque : en mode sans échec, les plugins du Logitech Media Server ne sont pas disponibles. Toutefois, vous pouvez toujours les activer ou les désactiver de manière à résoudre tout problème lié à l'installation.
 	IT	Nota: i plugin non sono disponibili poiché si sta eseguendo Logitech Media Server in modalità provvisoria. Per risolvere i problemi di installazione è comunque possibile attivarli o disattivarli.
 	NL	Let op: omdat Logitech Media Server in veilige modus uitgevoerd wordt, zijn de plug-ins niet beschikbaar. Je kunt ze wel in- en uitschakelen om problemen met de installatie op te lossen.
 	NO	Merk: Siden du kjører Logitech Media Server i sikkermodus, er plugin-modulene ikke tilgjengelige. Du kan allikevel aktivere/deaktivere dem for å løse problemer med installeringen.
@@ -4077,7 +4078,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	EN	Required binary was not found:
 	ES	No se ha encontrado el ejecutable requerido:
 	FI	Vaadittua binaarilukua ei löytynyt:
-	FR	Binaire introuvable:
+	FR	Binaire introuvable :
 	HE	הנתונים הבינאריים הנחוצים לא נמצאו:
 	IT	Il file binario richiesto non è stato trovato:
 	JA	ご指定のフォーマットが見つかりません:
@@ -4184,7 +4185,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	EN	Logitech Media Server will look in the Media Folders for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	Logitech Media Server buscará en las carpetas de material multimedia todos los tipos de archivo compatibles (archivos de audio y archivos CUE). Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: cue, mp4, aac
 	FI	Logitech Media Server etsii mediakansiosta kaikkia tuettuja tiedostotyyppejä (äänitiedostoja ja päivän ohjelmia). Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotunnisteet alle pilkuin erotettuina, esimerkiksi: cue, mp4, aac.
-	FR	Le Logitech Media Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans les dossiers multimédias. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple: cue, mp4, aac
+	FR	Le Logitech Media Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans les dossiers multimédias. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : cue, mp4, aac
 	HE	Logitech Media Server יבצע חיפוש בתיקיית המוסיקה אחר כל סוגי הקבצים הנתמכים (קבצים וגיליונות סימנים של שמע). כדי להשבית סוגי קבצים ספציפיים כך שלא יעובדו בעת סריקה של תיקיית המוסיקה, הזן בשדה שלהלן רשימה המופרדת באמצעות פסיקים של סיומות קבצים. לדוגמה: cue, mp4, aac
 	IT	Logitech Media Server cerca nelle cartelle dei file multimediali tutti i tipi di file supportati (file audio e cue sheet). Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio: cue, mp4, aac.
 	NL	Logitech Media Server zoekt in de mediamap naar alle ondersteunde bestandstypen (audio- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: cue, mp4, aac
@@ -4201,7 +4202,7 @@ SETUP_DISABLEDEXTENSIONSVIDEO_DESC
 	EN	The server will look in the Media Folders for all supported video file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: mov, mkv
 	ES	El servidor buscará en las carpetas de material multimedia todos los tipos de archivo de vídeo compatibles. Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: mov, mkv.
 	FI	Palvelin etsii mediakansioista kaikkia tuettuja videotiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotunnisteat alle pilkuin erotettuina, esimerkiksi: mov, mkv.
-	FR	Le serveur recherche tous les types de fichiers vidéo pris en charge dans les dossiers multimédias. Pour exclure un type de fichier vidéo de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple: mov, mkv
+	FR	Le serveur recherche tous les types de fichiers vidéo pris en charge dans les dossiers multimédias. Pour exclure un type de fichier vidéo de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : mov, mkv
 	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file video supportati. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio: mov, mkv e così via.
 	NL	De server zoekt in de mediamappen naar alle ondersteunde videobestandstypen. Als je bepaalde bestandstypen wilt uitschakelen zodat deze niet worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv. mov, mkv
 	NO	Serveren ser etter alle støttede videofilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: mov, mkv
@@ -4216,7 +4217,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	EN	The server will look in the Media Folders for all supported picture file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: bmp, gif
 	ES	El servidor buscará en las carpetas de material multimedia todos los tipos de archivo de imagen compatibles. Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: bmp, gif.
 	FI	Logitech Media Server etsii mediakansioista kaikkia tuettuja kuvatiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotyypit alle pilkuin erotettuina, esimerkiksi: bmp, gif.
-	FR	Le serveur recherche tous les types de fichiers image pris en charge dans les dossiers multimédias. Pour exclure un type de fichier image de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple: bmp, gif
+	FR	Le serveur recherche tous les types de fichiers image pris en charge dans les dossiers multimédias. Pour exclure un type de fichier image de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : bmp, gif
 	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file di immagini. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire l'elenco delle estensioni corrispondenti, separate da una virgola. Ad esempio: bmp, gif e così via.
 	NL	De server zoekt in de mediamappen naar alle ondersteunde fotobestandstypen. Als je wilt voorkomen dat bepaalde bestandstypen worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv: bmp, gif
 	NO	Serveren ser etter alle støttede bildefilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: bmp, gif
@@ -4248,7 +4249,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	EN	Logitech Media Server will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
 	ES	Logitech Media Server buscará en la carpeta de listas de reproducción todos los tipos de archivo compatibles (archivos de pista de reproducción y archivos CUE). Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de listas de reproducción, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: m3u, pls, cue
 	FI	Logitech Media Server etsii soittoluettelokansiosta kaikkia tuettuja tiedostotyyppejä (soittoluettelotiedostoja ja päivän ohjelmia). Jos haluat poistaa käytöstä tiettyjen tiedostotyyppien käsittelyn soittoluettelokansiohaun aikana, kirjoita alle pilkuilla erotettu luettelo tiedostotunnisteista, esim: m3u, pls, cue.
-	FR	Le Logitech Media Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans le dossier des listes de lecture. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple: m3u, pls, cue
+	FR	Le Logitech Media Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans le dossier des listes de lecture. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : m3u, pls, cue
 	HE	Logitech Media Server יבצע חיפוש בתיקיית המוסיקה ההשמעה אחר כל סוגי הקבצים הנתמכים (קבצים וגיליונות סימנים של רשימות השמעה). כדי להשבית סוגי קבצים ספציפיים כך שלא יעובדו בעת סריקה של תיקיית רשימות ההשמעה, הזן בשדה שלהלן רשימה המופרדת באמצעות פסיקים של סיומות קבצים. לדוגמה: m3u, pls, cue
 	IT	Logitech Media Server cercherà nella cartella delle playlist tutti i tipi di file supportati (playlist e cue sheet.). Per ignorare tipi di file specifici, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio, m3u, pls, cue
 	NL	Logitech Media Server zoekt in de playlistmap naar alle ondersteunde bestandstypen (playlist- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: m3u, pls, cue
@@ -4417,7 +4418,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	EN	Do you really want to reset your player to factory defaults?
 	ES	¿Confirma que desea restablecer los valores predeterminados de fábrica en el reproductor?
 	FI	Haluatko varmasti palauttaa soittimen tehdasasetuksiin?
-	FR	Etes-vous sûr de vouloir rétablir les paramètres par défaut de votre platine?
+	FR	Etes-vous sûr de vouloir rétablir les paramètres par défaut de votre platine ?
 	IT	Ripristinare le impostazioni di fabbrica del lettore?
 	NL	Wil je je muziekspeler echt terugzetten op de beginwaarden?
 	NO	Er du sikker på at du vil tilbakestille spilleren til fabrikkinnstillingene?
@@ -4946,7 +4947,7 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
 	ES	Éste es un control de volumen secundario que sólo es aplicable a las salidas analógicas de Squeezebox. Introduzca el valor de atenuación en decibelios. El intervalo está entre 0,0 y 63,0 en pasos de 0,5 db. El valor predeterminado es 0 (para volumen máximo). ADVERTENCIA: Si la potencia del amplificador puede reventar los altavoces, conviene usar un atenuador de línea, preamplificador o receptor como medida de seguridad.
 	FI	Tämä on toissijainen äänenvoimakkuuden säädin, joka ohjaa vain Squeezeboxin analogisia lähtöjä. Kirjoita vaimennuksen määrä desibeleinä. Alue on 0,0–63,0 puolen desibelin välein. Oletusarvo on 0 (täysi äänenvoimakkuus). VAROITUS: jos vahvistimesi on riittävän tehokas vaurioittamaan kaiuttimia, suojana tulisi yhä käyttää vastaanotinta, esivahvistinta tai linjavaimenninta.
-	FR	Il s'agit de la commande secondaire de volume qui s'applique uniquement aux sorties analogiques de la Squeezebox. Spécifiez la quantité d'atténuation en décibels. La plage s'étend de 0,0 db à 63,0 db, avec incréments de 0,5 db. La valeur par défaut est 0 (pour un volume complet). Avertissement: si votre amplificateur est assez puissant pour détruire des enceintes, vous devez utiliser un récepteur, un préamplificateur ou un atténuateur de ligne pour des raisons de sécurité.
+	FR	Il s'agit de la commande secondaire de volume qui s'applique uniquement aux sorties analogiques de la Squeezebox. Spécifiez la quantité d'atténuation en décibels. La plage s'étend de 0,0 db à 63,0 db, avec incréments de 0,5 db. La valeur par défaut est 0 (pour un volume complet). Avertissement : si votre amplificateur est assez puissant pour détruire des enceintes, vous devez utiliser un récepteur, un préamplificateur ou un atténuateur de ligne pour des raisons de sécurité.
 	HE	זוהי בקרת עוצמת קול משנית אשר חלה רק על רכיבי פלט אנלוגיים ב-Squeezebox. הזן את רמת ההיחלשות בדציבלים. הטווח הוא בין 0.0-63.0 במרווחים של 0.5 דציבלים. ברירת המחדל היא 0 (עבור עוצמת קול מלאה). אזהרה: אם עוצמת המגבר שברשותך מספיקה כדי לגרום נזק לרמקולים, יש להשתמש במקלט, מגבר קדם או מכשיר להפחתת עוצמה של אותות כאמצעי בטיחות!
 	IT	Si tratta di un controllo di volume secondario che si applica solo alle uscite analogiche dello Squeezebox. Inserire il livello di attenuazione in decibel. L'intervallo va da 0,0 a 63, 0 in incrementi di 0,5. L'impostazione predefinita è 0 (volume massimo). ATTENZIONE: l'amplificatore potrebbe danneggiare le casse in caso di volume elevato. Per sicurezza si consiglia di utilizzare un amplificatore integrato, un preamplificatore o un attenuatore di linea.
 	NL	Dit is een secundaire volume-instelling die alleen van toepassing is op de analoge uitgangen van de Squeezebox. Geef de demping op in decibels. Het bereik gaat van 0,0 tot 63,0 in stappen van 0,5 dB. De standaard is 0 (voor volledig volume). WAARSCHUWING: Als je versterker krachtig genoeg is om je speakers op te blazen, is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
@@ -5074,7 +5075,7 @@ SETUP_STARTDELAY_DESC
 	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from Logitech Media Server. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that Logitech Media Server knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
 	ES	Un reproductor puede tardar en iniciar la reproducción (antes de que el usuario oiga el audio) después de procesar el comando de inicio enviado por Logitech Media Server. Éste puede ser el caso al utilizar salidas digitales (según el equipo conectado) o al utilizar ciertos reproductores por software en algunas plataformas. En estos casos, es posible especificar el retraso aquí para que Logitech Media Server sepa con cuánta antelación debe iniciar este reproductor para que el audio de todos los reproductores sincronizados se inicie al mismo tiempo. Nota: este valor es una adición a cualquier configuración de "Retraso de audio de reproductor" (abajo).
 	FI	Saattaa kulua huomattava aika, ennen kuin soitin aloittaa toiston (ennen kuin ääni alkaa kuulua), sen jälkeen, kun Logitech Media Server on antanut aloittamiskomennon. Näin saattaa käydä, jos käytetään digitaalilähtöjä (riippuen yhdistetyistä laitteista). Joissakin käyttöjärjestelmissä esiintyy myös ongelmia soitinohjelmistojen kanssa. Tällaisessa tapauksessa viive voidaan määrittää tässä, jotta Logitech Media Server tietää, kuinka paljon etukäteen soitin pitää käynnistää, jotta ääni alkaa kuulua samanaikaisesti kaikista synkronoiduista soittimista. Huomaa: tämä viive on lisäys soittimen äänen normaaliin viiveeseen (alla).
-	FR	Il est possible qu'une platine mette un certain temps à démarrer (avant d'entendre le morceau lu) après avoir reçu la commande de démarrage du serveur. Tel peut être le cas avec des sorties numériques (en fonction de l'équipement connecté) ou avec des lecteurs logiciels sur certaines plates-formes. Dans de tels cas, il est possible de régler le délai pour que le Logitech Media Server connaisse le délai en fonction duquel il doit démarrer cette platine en avance afin que l'audio de toutes les platines synchronisées démarre en même temps. Remarque: cette valeur est ajoutée à celle définie pour Délai audio de la platine (ci-dessous).
+	FR	Il est possible qu'une platine mette un certain temps à démarrer (avant d'entendre le morceau lu) après avoir reçu la commande de démarrage du serveur. Tel peut être le cas avec des sorties numériques (en fonction de l'équipement connecté) ou avec des lecteurs logiciels sur certaines plates-formes. Dans de tels cas, il est possible de régler le délai pour que le Logitech Media Server connaisse le délai en fonction duquel il doit démarrer cette platine en avance afin que l'audio de toutes les platines synchronisées démarre en même temps. Remarque : cette valeur est ajoutée à celle définie pour "Délai audio de la platine" (ci-dessous).
 	IT	L'avvio della riproduzione di un lettore può richiedere un intervallo considerevole (prima che venga emesso l'audio) dopo l'elaborazione del comando di avvio in Logitech Media Server. Un caso del genere può verificarsi quando si utilizzano ingressi digitali (a seconda dell'apparecchiatura collegata) o con lettori software di alcune piattaforme. In questi casi il ritardo qui impostato consente di definire con quanto anticipo Logitech Media Server deve avviare il lettore per consentire l'inizio simultaneo della riproduzione in tutti i lettori sincronizzati. Nota: questo ritardo si aggiunge a quello impostato in "Ritardo audio lettore" (sotto).
 	NL	Nadat een muziekspeler de startopdracht van Logitech Media Server heeft verwerkt, kan het een tijdje duren voordat het systeem begint met afspelen (voordat je de audio hoort). Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwarespelers op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat Logitech Media Server weet hoever van tevoren dit systeem moet worden gestart om de audio uit alle gesynchroniseerde systemen tegelijk te laten beginnen. N.B. Deze optie kan ook ingesteld worden terwijl Audiovertraging muziekspeler (hieronder) actief is.
 	NO	Det kan ta noe tid før spilleren begynner avspillingen (dvs. før du hører lyden) etter at den har prosessert startkommandoen fra Logitech Media Server. Dette kan skje når du bruker digitale utganger (avhengig av utstyret som er koplet til), eller med spillerprogrammer på enkelte plattformer. Hvis dette skjer, kan du legge inn denne forsinkelsen her, slik at Logitech Media Server vet hvor mye tidligere den må starte denne spilleren for å synkronisere lyden fra alle synkroniserte spillere. Merk: dette kommer i tillegg til eventuell «Lydforsinkelse for spiller» (nedenfor).
@@ -5311,7 +5312,7 @@ SETUP_LAME_NOT_FOUND
 	EN	(<b>Note</b>: You do not appear to have LAME installed. Logitech Media Server will need the LAME MP3 encoder installed on your system to do conversion to MP3.  You can find out more about LAME <a href="http://lame.sourceforge.net/" target="_blank">here</a>.)
 	ES	<b>Nota</b>: Parece que LAME no está instalado. Logitech Media Server necesita que el codificador MP3 LAME esté instalado en el sistema para la conversión a MP3. Encontrará más información sobre LAME <a href="http://lame.sourceforge.net/" target="_blank">aquí</a>.
 	FI	(<b>Huomaa</b>: LAME ei ole asennettuna. Logitech Media Server vaatii, että LAME MP3 -kooderi on asennettuna tietokoneeseen, jotta muunnos MP3:een voidaan suorittaa.  Lisätietoa LAME-kooderista on <a href="http://lame.sourceforge.net/" target="_blank">täällä</a>.)
-	FR	<b>Remarque</b>: LAME ne semble pas être installé. Le Logitech Media Server nécessite l'installation de LAME pour effectuer la conversion au format MP3. Cliquez ici <a href="http://lame.sourceforge.net/" target="_blank"> pour en savoir plus sur LAME</a>.
+	FR	<b>Remarque</b> : LAME ne semble pas être installé. Le Logitech Media Server nécessite l'installation de LAME pour effectuer la conversion au format MP3. Cliquez ici <a href="http://lame.sourceforge.net/" target="_blank"> pour en savoir plus sur LAME</a>.
 	HE	(<b>שים לב</b>: נראה שאין ברשותך LAME מותקן. לביצוע המרות ל-MP3,‏ Logitech Media Server זקוק למקודד LAME MP3 מותקן. באפשרותך למצוא מידע נוסף אודות LAME <a href="http://lame.sourceforge.net/" target="_blank">כאן</a>.)
 	IT	<b>Nota</b>: LAME non è installato. Per eseguire la conversione al formato MP3 in Logitech Media Server, è necessario che il codificatore MP3 LAME sia installato. Ulteriori informazioni su LAME sono disponibili <a href="http://lame.sourceforge.net/" target="_blank">qui</a>.
 	JA	(<b>注意</b>: LAMEがインストールされていないようです。MP3に変換するためにはLogitech Media ServerはLAMEをインストールする必要があります。LAMEについては<a href="http://lame.sourceforge.net/" target="_blank">ここ</a>をクリックして下さい。)
@@ -5468,7 +5469,7 @@ SETUP_REPLAYGAINMODE_DESC
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. The player can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 	ES	Algunas pistas de audio contienen información de ajuste de volumen, o "Replay Gain", que se puede usar durante la reproducción para garantizar que las pistas y los álbumes suenan con el mismo nivel de volumen. Si está presente, el reproductor puede usar esa información. "Track Gain" se puede usar para garantizar que todas las pistas suenen con el mismo nivel de volumen. "Album Gain" se puede usar para garantizar que todos los álbumes suenen con el mismo nivel de volumen, pero manteniendo las diferencias entre las pistas de un álbum. La selección "Smart Gain" usa la ganancia de un álbum si las canciones sucesivas de una lista de reproducción mezclada tienen la misma ganancia de álbum o de pista.
 	FI	Jotkin ääniraidat sisältävät tietoa äänen säätämisestä. Näiden tietojen avulla voidaan varmistaa, että kaikki raidat ja levyt toistuvat samalla äänenvoimakkuudella. Soitin voi käyttää näitä tietoja, jos ne ovat käytettävissä. Raidan äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki raidat kuuluvat samalla äänenvoimakkuudella. Levyn äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki levyt kuuluvat samalla äänenvoimakkuudella. Erot samalla levyllä olevien raitojen äänenvoimakkuudessa kuitenkin säilyvät. Älykkäillä äänenvoimakkuusasetuksilla soitin käyttää levyn äänenvoimakkuutta, jos soittoluettelossa on peräkkäin useita kappaleita samalta levyltä, tai raidan äänenvoimakkuutta, jos soittoluettelossa on sekaisin kappaleita eri levyiltä.
-	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées Replay Gain, permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le gain morceau permet de normaliser le volume de chaque morceau. Avec le gain album, le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le gain intelligent permet d'utiliser le gain album si des morceaux consécutifs sont issus d'un même album. Sinon, le gain morceau est utilisé.
+	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le "gain morceau" permet de normaliser le volume de chaque morceau. Avec le "gain album", le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le "gain intelligent" permet d'utiliser le "gain album" si des morceaux consécutifs sont issus d'un même album. Sinon, le "gain morceau" est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
 	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di una playlist mista.
 	NL	Sommige muziekbestanden bevatten volumeaanpassing, of 'Replay Gain'-informatie, die gebruikt kan worden tijdens het afspelen om ervoor te zorgen dat nummers en albums met hetzelfde volume afgespeeld worden. De muziekspeler kan deze informatie gebruiken, indien aanwezig. Je kunt volumeaanpassing van nummers gebruiken om nummers met een gelijk volume af te spelen. Je kunt volumeaanpassing van albums gebruiken om albums met een gelijk volume af te spelen, maar daarbij de volumeverschillen tussen de nummers van een album bewaren. 'Slimme' aanpassingsselectie gebruikt volumeaanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volumeaanpassing van nummers voor een gemengde playlist.
@@ -5778,7 +5779,7 @@ SETUP_TRANSITIONTYPE_DESC
 	EN	The player can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
 	ES	El reproductor puede realizar una transición gradual entre canciones, ya sea mediante un encadenado o un fundido de entrada o de salida. Elija el tipo de encadenado que desee.
 	FI	Kappaleen vaihto soittimessa voi tapahtua vähitellen, joko käyttämällä ristihäivytystä kappaleiden välillä tai käyttämällä alku- tai loppuhäivytystä kappaleissa. Valitse haluamasi ristihäivytystapa.
-	FR	La Squeezebox peut joindre deux morceaux par un effet de transition (ou fondu): un fondu enchaîné ou une combinaison de fondus descendant et ascendant. Sélectionnez le type de transition souhaité.
+	FR	La Squeezebox peut joindre deux morceaux par un effet de transition (ou fondu) : un fondu enchaîné ou une combinaison de fondus descendant et ascendant. Sélectionnez le type de transition souhaité.
 	HE	הנגן יכול לעבור באופן הדרגתי בין שירים, בין אם באמצעות מעבר הדרגתי או הגברה או החלשה של שירים. בחר את סוג המעבר ההדרגתי הרצוי.
 	IT	Il lettore può passare gradualmente tra i brani, sia sfumando tra il precedente ed il successivo, sia dissolvendo in entrata o in uscita. Scegliere il tipo di transizione desiderato.
 	NL	De muziekspeler kan naadloze overgangen tussen nummers maken door crossfading tussen de nummers, of door de nummers in en uit te faden. Kies het gewenste type crossfade.
@@ -5984,11 +5985,13 @@ SETUP_TRANSITIONSMART_OFF
 SETUP_TRANSITIONSAMPLERESTRICTION
 	DE	Überblendung bei unterschiedlichen Sampleraten
 	EN	Crossfade Across Different Sample Rates
+	FR	Transitions entre différentes fréquences d'échantillonnage
 	SV	Korstona mellan olika samplingshastigheter
 
 SETUP_TRANSITIONSAMPLERESTRICTION_DESC
 	DE	In manchen Konfigurationen kann es angebracht sein, Überblendung zwischen Titeln mit unterschiedlichen Sampleraten zu deaktivieren. Dies kann etwa notwendig sein, wenn ein Player beim Überblenden nur ein Knacken oder Lärm wieder gibt.
 	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
+	FR	Il peut être approprié de désactiver les transitions entre les pistes ayant des fréquences d'échantillonnage différentes. Cela peut être nécessaire si la platine génère du bruit pendant ces transitions.
 	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som bara genererar oväsen vid sådan korstoning.
 
 SETUP_TITLEFORMAT
@@ -6083,7 +6086,7 @@ SETUP_PLAYLISTPREFIX
 	EN	Prefix:
 	ES	Prefijo:
 	FI	Etuliite:
-	FR	Préfixe:
+	FR	Préfixe :
 	IT	Prefisso:
 	JA	プレフィックス:
 	NL	Voorvoegsel:
@@ -6100,7 +6103,7 @@ SETUP_PLAYLISTSUFFIX
 	EN	Suffix:
 	ES	Sufijo:
 	FI	Jälkiliite:
-	FR	Suffixe:
+	FR	Suffixe :
 	IT	Suffisso:
 	JA	サフィックス:
 	NL	Achtervoegsel:
@@ -6242,7 +6245,7 @@ SETUP_IRMAP_DESC
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Standard" set is the one that is described in the documentation.
 	ES	Se puede optar entre diversos conjuntos de funciones de botones. Estos conjuntos asignan botones concretos del mando a distancia por infrarrojos a funciones determinadas. El conjunto "estándar" es el que se describe en la documentación.
 	FI	Voit valita painikkeiden toimintojoukkojen välillä. Näillä joukoilla tietyille infrapunakaukosäätimen painikkeille voidaan määrittää tiettyjä toimintoja. Tässä ohjekirjassa puhutaan "vakiojoukosta".
-	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonction. Ces jeux permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu Par défaut est celui documenté dans le manuel.
+	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonction. Ces jeux permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu "Par défaut" est celui documenté dans le manuel.
 	HE	באפשרותך לבחור בין ערכות של פונקציות לחצנים. ערכות אלה ממפות לחצנים ספציפיים בשלט-רחוק בטכנולוגיית אינפרה-אדום לפונקציות ספציפיות. הערכה "רגיל" היא זו המתוארת בתיעוד.
 	IT	Sono disponibili diverse serie di funzioni specifiche associabili ai singoli pulsanti del telecomando. La serie standard è descritta nella documentazione.
 	JA	ボタン機能のセットを選択することができます。これらのセットは、どのボタンがどの機能を持つかを指定します。工場出荷時ははマニュアルに出ている通りです。
@@ -6261,7 +6264,7 @@ SETTINGS_CHANGED_CONFIRM
 	EN	Some settings were changed. Do you want to save them?
 	ES	Algunas opciones han cambiado. ¿Desea guardarlas?
 	FI	Joihinkin asetuksiin tehtiin muutoksia. Haluatko tallentaa ne?
-	FR	Certains paramètres ont été modifiés. Voulez-vous les enregistrer?
+	FR	Certains paramètres ont été modifiés. Voulez-vous les enregistrer ?
 	IT	Alcune impostazioni sono state modificate. Salvarle?
 	NL	Sommige instellingen zijn gewijzigd. Wil je ze opslaan?
 	NO	Enkelte innstillinger ble endret. Vil du lagre endringene?
@@ -6312,7 +6315,7 @@ SETUP_LANGUAGE_DESC
 	EN	Choose the language that you'd like to use with Logitech Media Server.  Those marked with * were translated by the Logitech Media Server customer community.  If you find problems or would like to contribute, contact the developers at <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	ES	Elija el idioma que desea utilizar con Logitech Media Server. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de Logitech Media Server. Si tiene alguna consulta que realizar o desea aportar su contribución, póngase en contacto con los desarrolladores a <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	FI	Valitse kieli, jota haluat käyttää Logitech Media Serverissä.  Tähdellä (*) merkityt ovat Logitech Media Serverin käyttäjäyhteisön kääntämiä.  Jos löydät virheitä tai haluat kantaa oman kortesi kekoon, ota yhteyttä kehittäjiin osoitteessa <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	FR	Sélectionnez la langue à utiliser pour le Logitech Media Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Logitech Media Server. Pour signaler un problème ou si vous souhaitez contribuer, contactez les développeurs à l'adresse suivante: <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	FR	Sélectionnez la langue à utiliser pour le Logitech Media Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Logitech Media Server. Pour signaler un problème ou si vous souhaitez contribuer, contactez les développeurs à l'adresse suivante : <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	IT	Scegliere la lingua che si desidera utilizzare con Logitech Media Server. Le versioni nelle lingue contrassegnate con un asterisco (*) sono state tradotte da utenti di Logitech Media Server. Se si individuano dei problemi o si desidera fornire un contributo, contattare gli sviluppatori alla pagina <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	NL	Kies de taal die je met Logitech Media Server wilt gebruiken. De talen met een sterretje (*) zijn door de klantencommunity van Logitech Media Server vertaald. Wil je verbeteringen voorstellen of aan vertalingen bijdragen, stuur dan een e-mail naar <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	NO	Velg hvilket språk du vil bruke i Logitech Media Server. Språk markert med * er oversatt av Logitech Media Server-brukere. Hvis du oppdager problemer eller ønsker å hjelpe til, kan du sende en e-post til <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
@@ -6419,11 +6422,13 @@ SETUP_MEDIADIRS_DESC
 SETUP_SKIPSENTINEL
 	DE	Markierte Ordner überspringen
 	EN	Skip Sentinel Filename
+	FR	Nom du fichier d'exclusion
 	NL	Skip sentinel bestandsnaam
 
 SETUP_SKIPSENTINEL_DESC
 	DE	Medienordner oder -unterordner, welche eine Datei dieses Namens enthalten, werden übersprungen.
 	EN	Media (sub)folders that contain a file with this name are skipped.
+	FR	Les (sous-)dossiers multimédias contenant un fichier portant ce nom sont ignorés.
 	NL	Media (sub)folders waarin een bestand met deze naam voorkomt worden overgeslagen.
 
 SETUP_PLAYLISTDIR
@@ -6488,7 +6493,7 @@ SETUP_BAD_FILE
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
 	ES	Vaya. Parece que"%s" no es un archivo válido. Vuelva a intentarlo.
 	FI	Hups - "%s" ei tunnu olevan kelvollinen tiedosto. Yritä uudelleen.
-	FR	Le fichier %s n'est pas valide. Veuillez réessayer.
+	FR	Le fichier "%s" n'est pas valide. Veuillez réessayer.
 	HE	אופס - נראה ש-"%s" אינו קובץ חוקי. נסה שוב.
 	IT	%s non sembra essere un file valido. Riprovare.
 	JA	"%s"は正しいファイルではありません。もう一度入力してください。
@@ -6506,7 +6511,7 @@ SETUP_BAD_DIRECTORY
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
 	ES	Vaya. Parece que"%s" no es un directorio válido. Vuelva a intentarlo.
 	FI	Hups - "%s" ei tunnu olevan kelvollinen hakemisto. Yritä uudelleen.
-	FR	Le dossier %s n'est pas valide. Veuillez réessayer.
+	FR	Le dossier "%s" n'est pas valide. Veuillez réessayer.
 	HE	אופס - נראה ש-"%s" אינה ספרייה חוקית. נסה שוב.
 	IT	%s non sembra essere una directory valida. Riprovare.
 	JA	"%s"は正しいフォルダーではありません。もう一度入力してください。
@@ -6678,7 +6683,7 @@ SETUP_AUTO_RESCAN_ENABLE
 	EN	Enabled, watch for changes automatically
 	ES	Activado, detectar cambios automáticamente
 	FI	Käytössä. Muutokset tarkistetaan automaattisesti.
-	FR	Activé ; détection automatique des modifications
+	FR	Activé, détection automatique des modifications
 	IT	Attivato. Verifica modifiche automaticamente.
 	NL	Ingeschakeld, automatisch op wijzigingen controleren
 	NO	Aktivert, se etter endringer automatisk
@@ -6929,7 +6934,7 @@ SETUP_COVERART_DESC
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eg %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found).
 	ES	Cuando están disponibles, las imágenes de carátula de álbum se muestran al ver la información de un álbum o de una canción. Las imágenes de carátula se encuentran en las etiquetas ID3 para canciones individuales o pueden residir en la misma carpeta que los archivos de canciones. De forma predeterminada, se usan las imágenes llamadas "cover.jpg", "folder.jpg", "album.jpg" o "thumb.jpg". Se puede especificar un nombre de archivo adicional para usarlo para imágenes de carátula de álbum. Se pueden especificar nombres de archivo diferentes para las imágenes en miniatura o a tamaño completo. Coloque el prefijo % a la opción y podrá seguirlo de cualquier cadena con los mismos elementos disponibles para formatos de título (por ejemplo, %ARTIST - ALBUM, buscará Artist - Album.jpg que coincida con la información de artista y álbum encontrada.
 	FI	Kansikuvat näytetään (jos niitä on), kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3-otsikoista tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii cover.jpg-, folder.jpg-, album.jpg- tai thumb.jpg-tyypin kuvatiedostoja. Voit myös määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muodossa Artist - album.jpg.
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants: "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
+	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
@@ -7082,7 +7087,7 @@ SETUP_HTTPPORT_OK
 	EN	Now using port:
 	ES	Ahora se usa el puerto:
 	FI	Nyt käytössä tämä portti:
-	FR	Utiliser le port:
+	FR	Utiliser le port :
 	HE	יציאה נוכחית בשימוש:
 	IT	Porta attualmente utilizzata:
 	JA	現在のポートナンバー :
@@ -7371,6 +7376,7 @@ SETUP_AUTO_DOWNLOAD_1
 SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
+	FR	Vérifier les mises à jour maintenant
 	SV	Leta efter uppdateringar nu
 
 SETUP_SCREENSAVER
@@ -7525,7 +7531,7 @@ SETUP_SCREENSAVERTIMEOUT
 	EN	Screensaver delay time in seconds
 	ES	Tiempo de espera para protector de pantalla:
 	FI	Näytönsäästäjän viive sekunteina
-	FR	Délai de l'écran de veille:
+	FR	Délai de l'écran de veille :
 	HE	משך העיכוב של שומר המסך, בשניות
 	IT	Secondi di ritardo screen saver
 	JA	スクリーンセーバー開示時間（秒）
@@ -7648,7 +7654,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
 	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".
 	ES	Algunas máscaras ofrecen la opción de mostrar botones adicionales para los elementos que se pueden reproducir, como por ejemplo "Reproducir a continuación" o "Quitar de la lista de reproducción".
 	FI	Jotkin olemukset voivat näyttää valinnaisesti lisäpainikkeita soitettaville kohteille, esimerkiksi Soita seuraava tai Poista soittoluettelosta.
-	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que Lire à la suite ou Enlever de la liste de lecture.
+	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que "Lire à la suite" ou "Enlever de la liste de lecture".
 	IT	In alcune skin è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dalla playlist.
 	NL	Sommige skins kunnen desgewenst extra knoppen voor afspeelbare items weergeven, zoals 'Volgende afspelen' of 'Uit playlist verwijderen'.
 	NO	Noen maler kan vise tilleggsknapper for spillbare elementer, for eksempel Spill av neste eller Fjern fra spillelisten.
@@ -7714,7 +7720,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca material multimedia, se puede hacer que el servidor encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat mediahakuja, voit määrittää palvelimen etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa. Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
-	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, TRAIN sera également renvoyé comme résultat.
+	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur "RAIN" affichera les morceaux contenant le mot "RAINBOW" si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, "TRAIN" sera également renvoyé comme résultat.
 	HE	בעת חיפוש פריטי מוסיקה, באפשרותך להורות ל-Squeezebox למצוא התאמות עבור פריטים שמכילים מילים שמתחילות באותן אותיות כמו מחרוזת החיפוש או מילים שכוללות את המחרוזת לחיפוש בכל מקום שהוא במילה. לדוגמה, חיפוש בתחילתן של מילים אחר "עד" יחזיר פריטים עם המילה "עדין". חיפוש בתוך מילים יחזיר גם פריטים שמכילים את המילה "רעד".
 	IT	Quando si effettuano ricerche nei file multimediali, il server può trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono. Ad esempio, cercando tra le parole che iniziano con FERRO vengono trovate voci quali FERROVIA, mentre cercando anche all'interno delle parole vengono individuate voci come AFFERRO.
 	NL	Wanneer je naar mediabestanden zoekt, kun je naar woorden zoeken die met de letters van de zoektekst beginnen, of woorden waarin de zoektekst ergens voorkomt. Zoek je bijvoorbeeld naar 'RAIN' aan het begin van woorden, dan vind je woorden zoals 'RAINBOW'. Als je binnen woorden zoekt, worden ook woorden zoals 'TRAIN' als resultaat gegeven.
@@ -8462,7 +8468,7 @@ SETUP_LONGDATEFORMAT_DESC
 	EN	This option determines the format used for long dates (such as displayed when the player is off). The following conventions are used in the choices presented below:<br>WWWW is the full day of the week (Saturday, Sunday, etc)<br>WWW is the abbreviated day of the week (Sat, Sun, etc)<br>DD is the day of the month (leading zero removed)<br>MM is the month of the year<br>YY is the two digit year<br>YYYY is the four digit year
 	ES	Esta opción determina el formato usado para mostrar fechas largas (como las que se muestran cuando el reproductor está apagado). En las opciones que se muestran a continuación se usan estas convenciones:<br>WWWW es el nombre completo del día de la semana (Sábado, Domingo, etc)<br>WWW es el nombre abreviado del día de la semana (Sáb, Dom, etc)<br>DD es el día del mes (sin el cero inicial)<br>MM es el mes del año<br>YY es el año en dos dígitos<br>YYYY es el año en cuatro dígitos
 	FI	Tällä asetuksella määrätään pitkissä päivämäärissä (esimerkiksi ne päivämäärät, jotka näytetään, kun soitin ei ole päällä) käytetty muoto. Alla esitetyissä vaihtoehdoissa käytetään seuraavia muotoja:<br>WWWW on viikonpäivän koko nimi (lauantai, sunnuntai jne.)<br>WWW on viikonpäivän lyhennetty nimi (la, su jne.)<br>DD on kuukauden päivä (alkunolla poistettu)<br>MM on kuukausi<br>YY on kaksinumeroinen vuosi<br>YYYY on nelinumeroinen vuosi
-	FR	Cette option permet de déterminer le format utilisé pour les dates longues, affiché lorsque la platine est en veille. Les conventions suivantes peuvent être utilisées:<br>WWWW: jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW: jour de la semaine abrégé (dim, lun, mar, etc.)<br>DD: jour du mois sans zéro à gauche<br>MM: mois de l'année<br>YY: année à deux chiffres<br>YYYY: année à quatre chiffres
+	FR	Cette option permet de déterminer le format utilisé pour les dates longues, affiché lorsque la platine est en veille. Les conventions suivantes peuvent être utilisées:<br>WWWW : jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : jour de la semaine abrégé (dim, lun, mar, etc.)<br>DD : jour du mois sans zéro à gauche<br>MM : mois de l'année<br>YY : année à deux chiffres<br>YYYY : année à quatre chiffres
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש עבור תאריכים ארוכים (כפי שמוצג בשעה שהנגן כבוי). נעשה שימוש במוסכמות הבאות באפשרויות המוצגות להלן:<br>WWWW מייצג את היום המלא בשבוע (יום שבת, יום ראשון וכו')<br>WWW מייצג את היום המקוצר בשבוע (שבת, ראשון וכו')<br>DD מייצג את היום בחודש (ללא הספרה אפס המובילה)<br>MM מייצג את החודש בשנה<p>YY מייצג את השנה בשתי ספרות<br>YYYY מייצג את השנה בארבע ספרות
 	IT	Questa opzione consente di impostare il formato da utilizzare per le date lunghe (come vengono visualizzate quando il lettore è spento). Nelle opzioni indicate di seguito sono utilizzate le seguenti convenzioni:<br> WWWW indica il giorno della settimana per esteso (lunedì, martedì e così via)<br>WWW indica il giorno della settimana abbreviato (lun, mar e così via)<br>DD indica il giorno del mese (senza zero iniziale)<br>MM indica il mese dell'anno<br>YY indica l'anno composto da due cifre<br>YYYY indica l'anno composto da quattro cifre
 	JA	このオプションは長い日付のフォーマットを選択します（プレーヤーがオフの状態のとき等）。<br>WWWW は長い曜日（月曜日、火曜日、等）を表します<br>WWWは短い曜日（月、火、等）を表します<br>DDは何日かを表します<br>MMは月を表します<br>YYは2桁の年を表します<br>WWWWは4桁の年を表します。
@@ -8532,7 +8538,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	EN	This option determines the format used for short dates. The following conventions are used in the choices presented below:<br>YYYY is the four digit year<br>YY is the two digit year<br>MM is the month of the year<br>DD is the day of the month<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato usado para fechas cortas. En las opciones que se muestran a continuación se usan estas convenciones:<br>YYYY es el año en cuatro dígitos<br>YY es el año en dos dígitos<br>MM es el mes del año<br>DD es el día del mes<br>Cualquier texto al final entre paréntesis se considera un comentario y no se muestra.
 	FI	Tällä asetuksella määritetään lyhyissä päivämäärissä käytetty formaatti. Alla esitetyissä tapauksissa noudatetaan seuraavia käytäntöjä:<br>YYYY on nelinumeroinen vuosi<br>YY on kaksinumeroinen vuosi<br>MM on kuukausi<br>DD on päivä<br>Lopussa sulkeissa oleva on kommentti, jota ei näy näytössä.
-	FR	Cette option permet de déterminer le format utilisé pour les dates courtes. Les conventions suivantes peuvent être utilisées:<br>YYYY: année à quatre chiffres<br>YY: année à deux chiffres<br>MM: mois de l'année<br>DD: jour du mois<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
+	FR	Cette option permet de déterminer le format utilisé pour les dates courtes. Les conventions suivantes peuvent être utilisées:<br>YYYY : année à quatre chiffres<br>YY : année à deux chiffres<br>MM : mois de l'année<br>DD : jour du mois<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
 	HE	אפשרות זו קובעת את התבנית המשמשת להצגת תאריכים קצרים. נעשה שימוש במוסכמות הבאות באפשרויות המוצגות להלן:<br>YYYY מייצג את השנה בארבע ספרות<br>YY מייצג את השנה בשתי ספרות<br>MM מייצג את החודש בשנה<br>DD מייצג את היום בחודש כל מה שמופיע לאחר הסוגריים הוא הערה והטקסט לא מוצג.
 	IT	Questa opzione determina il formato usato per le date brevi. Le seguenti convenzioni sono usate nelle combinazioni indicate sotto:<br>YYYY indica l'anno composto da quattro cifre<br>YY indica l'anno composto da due cifre<br>MM indica il mese dell'anno<br>DD indica il giorno del mese<br>Tutto ciò che appare alla fine in parentesi è solo un commento e non viene visualizzato.
 	JA	このオプションは短い日付のフォーマットを選択します（プレーヤーがオフの状態のとき等）。<br>YYYYは4桁の年を表します<br>YYは2桁の年を表します<br>MMは月を表します<br>DDは何日かを表します<br>括弧の後ろはコメントですので、実際には表示されません。
@@ -8586,7 +8592,7 @@ SETUP_TIMEFORMAT_DESC
 	EN	This option determines the format used for times. The following conventions are used in the choices presented below:<br>hh is the hour<br>h is the hour (leading zero removed)<br>mm is the minute<br>ss is the second<br>pm is either AM or PM<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato usado para las horas. En las opciones que se muestran a continuación se usan estas convenciones: <br>hh es la hora<br>h es la hora (sin el cero inicial)<br>mm son los minutos<br>ss son los segundos<br>pm es o bien AM o bien PM<br>Cualquier texto al final entre paréntesis se considera un comentario y no se muestra.
 	FI	Tällä asetuksella määritetään ajoissa käytetty formaatti. Alla esitetyissä tapauksissa noudatetaan seuraavia käytäntöjä:<br>hh on tunti<br>h on tunti (nolla poistettu edestä)<br>mm on minuutti<br>ss on sekunti<br>pm on joko AM tai PM (aamupäivä tai iltapäivä)<br>Lopussa sulkeissa oleva on kommentti, jota ei näy näytössä.
-	FR	Cette option permet de déterminer le format utilisé pour l'heure. Les conventions suivantes peuvent être utilisées:<br>hh: heure à deux chiffres<br>h: heure sans zéro à gauche<br>mm: minutes<br>ss: secondes<br>pm: texte AM ou PM<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
+	FR	Cette option permet de déterminer le format utilisé pour l'heure. Les conventions suivantes peuvent être utilisées:<br>hh : heure à deux chiffres<br>h : heure sans zéro à gauche<br>mm : minutes<br>ss : secondes<br>pm : texte AM ou PM<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
 	HE	אפשרות זו קובעת את התבנית המשמשת להצגת שעות. נעשה שימוש במוסכמות הבאות באפשרויות המוצגות להלן:<br>hh מייצג את השעה<br>h מייצג את השעה (ללא הספרה אפס המובילה)<br>mm מייצג את הדקה<br>ss מייצג את השנייה pm מייצג<br>AM (לפני הצהריים) או PM (אחרי הצהריים)<br>כל מה שמופיע לאחר הסוגריים הוא הערה והטקסט לא מוצג.
 	IT	Questa opzione determina il formato usato per l'ora. Le seguenti convenzioni sono usate nelle scelte presentate sotto:<br>hh rappresenta l'ora<br>h rappresenta l'ora senza lo zero iniziale<br>mm rappresenta i minuti<br>ss rappresenta i secondi<br>pm può indicare AM o PM (prima di mezzogiorno o dopo mezzogiorno)<br>Tutto ciò che appare alla fine in parentesi è solo un commento e non viene visualizzato.
 	JA	このオプションは時間表示フォーマットを設定します:<br>hhは時間を表します<br>ｈは時間を表します（最初がゼロの場合は表示されません）<br>mmは分を表します<br>ssは秒を表します<br>pmは午前か午後かを表示するかを選択します<br>括弧の後ろはコメントですので、実際には表示されません。
@@ -8766,12 +8772,14 @@ SETUP_SHOWBUFFERFULLNESS
 SETUP_CORS_ALLOWED_HOSTS
 	DE	CORS akzeptierte Hosts
 	EN	CORS Allowed Hosts
+	FR	Domaines autorisés via CORS
 	NL	CORS toegestane hosts
 	SV	Tillåtna CORS servrar
 
 SETUP_CORS_ALLOWED_HOSTS_DESC
 	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Logitech Media Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "http://www.example.com".
 	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Logitech Media Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "http://www.example.com" should be good enough.
+	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Logitech Media Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "http://www.exemple.com" devrait suffire.
 	SV	Cross-Origin Resource Sharing (CORS) är en metod som gör det möjligt för en web-browser att tillåta en web-server i en domän att använda web-resurser på en server i en annan domän.<br><br>Definiera en lista med web-servrar som du vill tillåta att använda din Logitech Media Server. Servrarna i listan måste anges med protokoll (t.ex. "http"), hela servernamnet ("www.exempel.com") och postnumret om det avviker från standardnumret. I de flesta fall räcker t.ex. "http://www.exempel.com".
 
 SETUP_CSRFPROTECTIONLEVEL
@@ -8811,16 +8819,19 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 SETUP_INSECURE_HTTPS
 	DE	Unsicheres HTTPS
 	EN	Insecure HTTPS
+	FR	HTTPS non sécurisé
 	SV	Avaktivera kontroll av HTTPS-certifikat
 
 SETUP_INSECURE_HTTPS2
 	DE	Server Zertifikate bei HTTPS Verbindungen nicht überprüfen.
 	EN	Switch off certificate verification on HTTPS connections.
+	FR	Désactiver la vérification des certificats sur les connexions HTTPS.
 	SV	Kontrollera inte HTTPS-certifikat.
 
 SETUP_INSECURE_HTTPS_DESC
 	DE	"Unsicheres HTTPS" bedeutet, dass Logitech Media Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
+	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Logitech Media Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
 	SV	"Avaktivera kontroll av HTTPS-certifikat" betyder att Logitech Media Server inte kontrollerar att HTTPS-certifikaten från andra webbplatser är giltiga. <b>Det rekommenderas inte att avaktivera denna kontroll!</b> Kontroll av https-certifikat skall alltid ske men ibland kan det behövas för att kunna uppdatera ett online-mediebibliotek.
 
 SETUP_IPFILTER_HEAD
@@ -8925,7 +8936,7 @@ SETUP_FILTERRULE_DESC
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to Logitech Media Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to Logitech Media Server running on that same computer.
 	ES	Si se ha activado el bloqueo, se pueden introducir las direcciones desde las que se desea permitir la conexión a Logitech Media Server.<br><br>Este campo acepta una lista de direcciones IP específicas, comodines del tipo * e intervalos de direcciones IP en una lista separada por comas. Por ejemplo:<BR><BR><B>10.1.2.2</b> sólo permitirá la conexión de 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección IP con el formato 10.1.2.X<BR><BR><B>10.1.2.2-50</b> permitirá conexiones desde direcciones IP pertenecientes al intervalo 10.1.2.2 - 10.1.2.50<BR><BR>Por último, se pueden combinar varias entradas con comas, así: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>La dirección IP especial 127.0.0.1 permite que un navegador Web se conecte al Logitech Media Server que se esté ejecutando en ese mismo equipo.
 	FI	Jos estäminen on otettu käyttöön, voit kirjoittaa osoitteet, joiden sallit muodostaa yhteyden Logitech Media Serveriin.<br><br>Tähän kenttään voidaan lisätä luettelo tietyistä IP-osoitteista, *-tyylin yleismerkeistä ja pilkuilla erotettu luettelo IP-osoitteista. Esimerkiksi:<BR><BR><B>10.1.2.2</B> sallii ainoastaan osoitteen 10.1.2.2,<BR><BR><B>10.1.2.*</B> sallii IP-osoitteet, jotka sisältävät numerot 10.1.2.x,<BR><BR><B>10.1.2.2-50</B> sallii alueeseen 10.1.2.2 - 10.1.2.50 kuuluvat IP-osoitteet.<BR><BR>Jos osoitteita on useita, ne voidaan erottaa pilkuin, esimerkiksi näin: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>IP-osoite 127.0.0.1 sallii selaimen muodostaa yhteyden samassa tietokoneessa toimivaan Logitech Media Serveriin.
-	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Logitech Media Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule. Exemple:<BR><BR><B>10.1.2.2</B>autorise uniquement cette adresse à se connecter<BR><BR><B>10.1.2.*</B>autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B>autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Logitech Media Server s'ils se trouvent sur le même ordinateur.
+	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Logitech Media Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule. Exemple :<BR><BR><B>10.1.2.2</B> autorise uniquement cette adresse à se connecter.<BR><BR><B>10.1.2.*</B> autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter.<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B> autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple <B>10.1.2.2,172.16.1.*,192.168.1-254</B>.<BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Logitech Media Server s'ils se trouvent sur le même ordinateur.
 	HE	אם הפעלת את אפשרות החסימה, באפשרותך להזין את הכתובות שלהן ברצונך לאפשר להתחבר ל-Logitech Media Server.<br><br>בשדה זה ניתן להזין רשימה של כתובות IP ספציפיות, תווים כלליים כגון *, וטווחים של כתובות IP ברשימה המופרדת באמצעות פסיקים. לדוגמה:<BR><BR><B>‎10.1.2.2</B> יאפשר רק ל-‎‏10.1.2.2 להתחבר.<BR><BR><B>‎10.1.2.*‎</B>‎ יאפשר לכל גורם עם כתובת IP בתבנית ‎‎10.1.2.x להתחבר.<BR><BR><B>‎10.1.2.2-50</B> יאפשר לכתובות IP בטווח שבין ‎‎10.1.2.2 - 10.1.2.50‎ להתחבר.<BR><BR>לסיום, ניתן לשלב רשומות מרובות באמצעות פסיקים, לדוגמה, <B>‎10.1.2.2,172.16.1.*,192.168.1-254‎</B><BR><BR>כתובת ה-IP המיוחדת ‎127.0.0.1 מאפשרת לדפדפן אינטרנט להתחבר לשרת Logitech Media Server שפועל באותו מחשב.
 	IT	Se è stato attivato il blocco, è possibile inserire gli indirizzi a cui consentire la connessione a Logitech Media Server.<br><br>In questo campo è possibile inserire un elenco di indirizzi IP specifici, il carattere jolly * ed elenchi di intervalli di indirizzi IP separati da virgole. Ad esempio:<BR><BR>se si specifica<B>10.1.2.2</B>, viene accettata solo la connessione con l'indirizzo 10.1.2.2<BR><BR>se si specifica<B>10.1.2.*</B>, viene accettata la connessione con tutti gli indirizzi IP che iniziano con 10.1.2.x<BR><BR>se si specifica<B>10.1.2.2-50</B>, viene accettata la connessione con indirizzi IP compresi tra 10.1.2.2 e 10.1.2.50<BR><BR>Infine, è possibile specificare più indirizzi IP separandoli con virgole, ad esempio:<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 consente di connettere un browser Web a Logitech Media Server in esecuzione sullo stesso computer.
 	JA	ブロックする、と指定したのであれば、Logitech Media Serverに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがLogitech Media Serverに接続する時に接続を可能にします。
@@ -8965,7 +8976,7 @@ SETUP_BAD_VALUE
 	EN	Invalid value specified: %s
 	ES	Valor especificado no válido: %s
 	FI	Virheellinen arvo: %s
-	FR	Valeur non valide: %s
+	FR	Valeur non valide : %s
 	HE	צוין ערך לא חוקי: %s
 	IT	Valore specificato non valido: %s
 	JA	無効な数値が指定されました: %s
@@ -9052,7 +9063,7 @@ SETUP_AUTHORIZE_DESC
 	EN	You can choose to password protect Logitech Media Server Remote Control. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use Logitech Media Server Remote Control, you'll need to enter this username and password in your web browser.
 	ES	Se puede optar por proteger Logitech Media Server Remote Control. Elija "Protección por contraseña" a continuación e introduzca un nombre de usuario y una contraseña. A continuación, haga clic en Cambiar. A partir de ese momento, cuando use Logitech Media Server Remote Control, deberá introducir ese nombre de usuario y esa contraseña en el navegador Web.
 	FI	Halutessasi voit suojata Logitech Media Serverin kaukosäätimen salasanalla. Valitse alta Salasanasuojaus, anna käyttäjätunnus ja salasana ja valitse Muuta. Siitä eteenpäin sinun tarvitsee antaa käyttäjätunnus ja salasana selaimessa, kun käytät Logitech Media Serverin kaukosäädintä.
-	FR	Vous pouvez protéger la télécommande du Logitech Media Server par un mot de passe. Sélectionnez "Protection par mot de passe" ci-dessous, puis cliquez sur le bouton "Modifier". Vous devrez saisir le mot de passe pour accéder à la télécommande du Logitech Media Server.
+	FR	Vous pouvez limiter le contrôle à distance du Logitech Media Server par la mise en place d'un mot de passe. Pour cela, sélectionnez "Protection par mot de passe", renseignez ci-dessous un nom d'utilisateur et un mot de passe, puis cliquez sur le bouton "Appliquer". Vous devrez alors saisir ce nom d'utilisateur et ce mot de passe avant de contrôler Logitech Media Server à distance.
 	HE	באפשרותך לבחור להגן על ממשק האינטרנט של Logitech Media Server באמצעות סיסמה. בחר את האפשרות "הגנה באמצעות סיסמה" שלהלן והזן שם משתמש וסיסמה, ולאחר מכן לחץ על 'שנה'. מרגע זה ואילך, כאשר תשתמש בממשק האינטרנט של Logitech Media Server, יהיה עליך להזין את שם המשתמש והסיסמה בדפדפן האינטרנט.
 	IT	Si può scegliere di proteggere Logitech Media Server Remote Control con una password. Scegliere Protezione con password di seguito e inserire il nome utente e la password, quindi fare clic su Cambia. Da questo momento per utilizzare Logitech Media Server Remote Control è necessario inserire nel browser il nome utente e la password prescelti.
 	JA	Logitech Media Serverのウェブインターフェースをパスワードで保護することができます。下から”パスワード保護”を選んで、ユーザー名とパスワードを指定して、「変更」をクリックして下さい。以降、Logitech Media Serverのウェブインターフェースにアクセスするにはユーザー名とパスワードが必要になります。
@@ -9226,7 +9237,7 @@ SETUP_GROUPDISCS_DESC
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Voit määrittää, käsitelläänkö usean levyn sarjoja yhtenä levynä (yhdellä nimellä) vai useina levyinä, joilla kullakin on oma nimensä, esimerkiksi "Levyn nimi (levy 2/3)".  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom distinct pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
@@ -9291,6 +9302,7 @@ SETUP_SN_EMAIL
 SETUP_SN_SIGNOUT
 	DE	Von mysqueezebox.com abmelden
 	EN	Sign out of mysqueezebox.com
+	FR	Déconnexion de mysqueezebox.com
 
 SETUP_SN_EMAIL_DESC
 	CS	Zadejte emailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
@@ -9659,7 +9671,7 @@ SETUP_WIZARD_SUMMARY_DESC
 	EN	Squeezebox is now using the following settings:
 	ES	Squeezebox está usando esta configuración:
 	FI	Squeezebox käyttää nyt seuraavia asetuksia:
-	FR	La Squeezebox utilise les réglages suivants:
+	FR	La Squeezebox utilise les réglages suivants :
 	IT	Squeezebox utilizza attualmente le impostazioni seguenti:
 	NL	Squeezebox gebruikt nu de volgende instellingen:
 	NO	Squeezebox bruker nå følgende innstillinger:
@@ -9674,7 +9686,7 @@ SETUP_WIZARD_SUMMARY_SQN
 	EN	mysqueezebox.com Account:
 	ES	Cuenta mysqueezebox.com
 	FI	Mysqueezebox.com-tili:
-	FR	Compte mysqueezebox.com:
+	FR	Compte mysqueezebox.com :
 	IT	Account mysqueezebox.com:
 	NL	mysqueezebox.com-account:
 	NO	mysqueezebox.com-konto:
@@ -9719,7 +9731,7 @@ SETUP_WIZARD_DONE_DESC
 	EN	Your settings have been saved. You're now ready to use your Squeezebox.<br/><br/>If you selected a local music source, Logitech Media Server will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to Logitech Media Server Remote Control.
 	ES	La configuración se ha guardado. Ya puede empezar a utilizar Squeezebox.<br/><br/>Si ha seleccionado un origen de música local, Logitech Media Server iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">hacer clic aquí</a> para pasar a Logitech Media Server Remote Control.
 	FI	Asetukset on tallennettu. Olet nyt valmis käyttämään Squeezeboxia.<br/><br/>Jos valitsit paikallisen musiikkilähteen, Logitech Media Server aloittaa nyt kokoelmasi indeksoinnin. Ole kärsivällinen &mdash; voit pian käyttää kaikkia musiikkitiedostojasi.<br/><br/>Voit nyt sulkea tämän ikkunan tai jatkaa Logitech Media Serverin kaukosäätimeen <a href="/">napsauttamalla tästä</a>.
-	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la Squeezebox.<br/><br/>Si vous avez sélectionné une source musicale locale, le Logitech Media Server va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à la télécommande du Logitech Media Server.
+	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la Squeezebox.<br/><br/>Si vous avez sélectionné une source musicale locale, le Logitech Media Server va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à l'interface du Logitech Media Server.
 	IT	Le impostazioni sono state salvate. È ora possibile utilizzare lo Squeezebox.<br/><br/>Se è stata selezionata una sorgente musicale locale, Logitech Media Server avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per passare a Logitech Media Server Remote Control.
 	NL	Je instellingen zijn opgeslagen. Je kunt Squeezebox nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert Squeezebox nu je collectie. Een moment geduld &mdash; je kunt al snel bij al je muziekbestanden.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar Logitech Media Server Remote Control te gaan.
 	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk Squeezebox.<br/><br/>Hvis du velger en lokal musikkilde, vil Logitech Media Server nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til nettgrensesnittet til Logitech Media Server.
@@ -9877,7 +9889,7 @@ CURRENT_PLAYER
 	EN	Current player:
 	ES	Reproductor actual:
 	FI	Käytössä oleva soitin:
-	FR	Platine en cours:
+	FR	Platine en cours :
 	HE	נגן נוכחי:
 	IT	Lettore in uso:
 	JA	現在のプレーヤー:
@@ -11136,7 +11148,7 @@ NAME
 	EN	Name:
 	ES	Nombre:
 	FI	Nimi:
-	FR	Nom:
+	FR	Nom :
 	HE	שם:
 	IT	Nome:
 	NL	Naam:
@@ -11221,7 +11233,7 @@ THIS_PLAYLIST_AS
 	EN	this playlist as:
 	ES	Esta lista de reproducción como:
 	FI	tämä soittoluettelo nimellä:
-	FR	cette liste de lecture sous:
+	FR	cette liste de lecture sous :
 	HE	רשימת ההשמעה בתור:
 	IT	questa playlist con nome:
 	JA	このプレイリスト:
@@ -11240,7 +11252,7 @@ SAVED_THIS_PLAYLIST_AS
 	EN	Saved this playlist as:\n\n%s
 	ES	Esta lista de reproducción se ha guardado como:\n\n%s
 	FI	Soittoluettelo tallennettiin nimellä:\n\n%s
-	FR	Cette liste de lecture a été enregistrée en tant que:\n\n%s
+	FR	Cette liste de lecture a été enregistrée en tant que :\n\n%s
 	IT	Playlist salvata come:\n\n%s
 	NL	Deze playlist opslaan als:\n\n%s
 	NO	Lagret denne spillelisten som:\n\n%s
@@ -11255,7 +11267,7 @@ SAVE_THIS_PLAYLIST_AS
 	EN	Save this playlist as:
 	ES	Guardar esta lista de reproducción como:
 	FI	Tallenna soittoluettelo nimellä:
-	FR	Enregistrer cette liste de lecture sous:
+	FR	Enregistrer cette liste de lecture sous :
 	HE	שמירת רשימת ההשמעה בשם:
 	IT	Salva questa playlist con nome:
 	JA	このプレイリストを保存:
@@ -12924,7 +12936,7 @@ SELECT_ITEM
 	EN	Select item:
 	ES	Seleccionar elemento:
 	FI	Valitse kohde:
-	FR	Sélectionner un élément:
+	FR	Sélectionner un élément :
 	HE	בחירת פריט:
 	IT	Seleziona elemento:
 	NL	Item selecteren:
@@ -13432,6 +13444,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 BROWSE_ON_SERVICE
 	DE	Auf %s
 	EN	Browse on %s
+	FR	Parcourir %s
 	SV	Bläddra på %s
 
 SYNCHRONIZE
@@ -13636,6 +13649,7 @@ MOSTPLAYED
 LASTPLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Last Played
+	FR	Dernier lu
 	SV	Spelad senast
 
 PLAYCOUNT
@@ -13763,7 +13777,7 @@ NOTE
 	EN	Note:
 	ES	Nota:
 	FI	Huomaa:
-	FR	Note:
+	FR	Note :
 	HE	שים לב:
 	IT	Nota:
 	JA	注意 :
@@ -13782,7 +13796,7 @@ FILENAME_WARNING
 	EN	Illegal characters in name, Please edit.
 	ES	Caracteres no válidos en nombre, edite
 	FI	Nimessä on merkkejä, jotka eivät kelpaa. Muuta nimeä.
-	FR	Caractères non autorisés dans le nom. Veuillez le modifier
+	FR	Caractères non autorisés dans le nom. Veuillez le modifier.
 	IT	Caratteri non validi nel nome. Correggere
 	NL	Ongeldige tekens in naam. Aub wijzig.
 	NO	Ugyldige tegn i navnet, du må endre det.
@@ -13816,7 +13830,7 @@ DELETE_WARNING
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
 	ES	¿Confirma que desea eliminar? Seleccione 'Confirmar eliminación' para eliminar la lista de reproducción.
 	FI	Haluatko varmasti poistaa ? Poista soittoluettelo valitsemalla Vahvista poisto.
-	FR	Voulez-vous vraiment supprimer la liste de lecture? Cliquez sur Confirmer suppression pour supprimer la liste de lecture.
+	FR	Voulez-vous vraiment supprimer la liste de lecture ? Cliquez sur 'Confirmer suppression' pour supprimer la liste de lecture.
 	HE	האם אתה בטוח שברצונך למחוק את הפריט? סמן את האפשרות 'אישור מחיקה' למחיקת רשימת ההשמעה.
 	IT	Eliminare la playlist? Selezionare "Conferma eliminazione" per completare l'operazione.
 	NL	Weet je zeker dat je wilt verwijderen? Selecteer 'Verwijdering bevestigen' om je playlist weg te halen.
@@ -14094,6 +14108,7 @@ SERVER_STATUS_DESC
 RADIO_NEEDS_PATCH
 	DE	Sie scheinen eine Squeezebox mit veralteter Firmware zu verwenden, welche diese Logitech Media Server Version nicht als kompatibel akzeptiert. Es wird empfohlen, entweder das Community Firmware Plugin zu verwenden, oder die Firmware zu patchen (<a href="/html/docs/radio-compatibility.html" target="_blank">weitere Informationen</a>).
 	EN	You seem to be using a Squeezebox with an outdated firmware, not recognizing this version of Logitech Media Server. Please consider using the Community Firmware plugin, or patching the device's firmware (<a href="/html/docs/radio-compatibility.html" target="_blank">get more information</a>).
+	FR	Vous semblez utiliser une Squeezebox avec un micrologiciel obsolète, ne reconnaissant pas cette version de Logitech Media Server. Veuillez envisager d'utiliser le plug-in "Community Firmware" ou de corriger le micrologiciel de l'appareil (<a href="/html/docs/radio-compatibility.html" target="_blank">obtenir plus d'informations</a>).
 	SV	Du verkar använda en Squeezebox Radio med ett gammalt hårdvaruprogram som inte är kompatibelt med den här Logitech Media Server-versionen. Apparaten behöver uppdateras. <a href="/html/docs/radio-compatibility.html" target="_blank">Mer information.</a>
 
 BASIC_SERVER_SETTINGS
@@ -14973,7 +14988,7 @@ CURRENT_WEB_SKIN
 	EN	Current web skin:
 	ES	Máscara Web actual:
 	FI	Nykyinen WWW-olemus:
-	FR	Interface web en cours:
+	FR	Interface web en cours :
 	HE	מעטפת אינטרנט נוכחית:
 	IT	Skin web in uso:
 	JA	現在のウェブ外観
@@ -15007,7 +15022,7 @@ DISPLAY_PLUGINS
 	EN	Display the Extras menu on the Slim player:
 	ES	Mostrar el menú Extras en el reproductor Slim:
 	FI	Näytä Muut-valikko Slim-soittimessa:
-	FR	Afficher le menu Extras sur la platine:
+	FR	Afficher le menu Extras sur la platine :
 	IT	Visualizza il menu Extra nel lettore Slim:
 	NL	Het menu Extra's op de Slim-muziekspeler weergeven:
 	NO	Vis menyen Tillegg på Slim-spilleren:
@@ -15245,7 +15260,7 @@ NO_PLAYER_DETAILS
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Logitech Media Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un dispositivo Squeezebox o Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un dispositivo Squeezebox o Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Logitech Media Server conectándose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Logitech Media Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre bibliothèque musicale à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre bibliothèque musicale avec le Logitech Media Server en vous connectant à l'URL suivante: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
+	FR	<b>Si vous possédez une Squeezebox ou Transporter :</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter :</b><ul><li>Vous pouvez écouter votre bibliothèque musicale à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre bibliothèque musicale avec le Logitech Media Server en vous connectant à l'URL suivante : <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Logitech Media Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Logitech Media Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
@@ -15336,7 +15351,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
 	ES	Si la dirección IP del reproductor no se muestra en su pantalla, mantenga pulsado el botón BRIGHTNESS hasta que aparezca. A continuación, introduzca aquí la dirección IP que se muestra en pantalla:
 	FI	Jos soittimen IP-osoite ei näy näytössä, pidä BRIGHTNESS-painike pohjassa, kunnes osoite tulee näkyviin.  Kirjoita IP-osoite sitten tähän näyttöön:
-	FR	Si l'adresse IP de la platine ne s'affiche pas à l'écran, maintenez le bouton BRIGHTNESS enfoncé jusqu'à ce qu'elle s'affiche. Spécifiez ensuite l'adresse ici:
+	FR	Si l'adresse IP de la platine ne s'affiche pas à l'écran, maintenez le bouton BRIGHTNESS enfoncé jusqu'à ce qu'elle s'affiche. Spécifiez ensuite l'adresse ici :
 	HE	אם כתובת ה-IP של הנגן לא מוצגת על המסך, לחץ לחיצה ממושכת על הלחצן BRIGHTNESS (בהירות) עד שתוצג. לאחר מכן, הזן כאן את כתובת ה-IP שמוצגת על המסך:
 	IT	Se l'indirizzo IP del lettore non appare nel display, tenere premuto il tasto BRIGHTNESS finché non viene visualizzato. Inserire qui l'indirizzo IP visualizzato nel display:
 	JA	もしプレーヤーのIPアドレスが画面に表示されなければ、表示されるまでBRIGHTNESSボタンを押しつづけてください。そして、ここにIPアドレスを入力してください :
@@ -15390,7 +15405,7 @@ CHECKVERSION_PROBLEM
 	EN	There was a problem while checking for updates to Logitech Media Server. (Error code %s)
 	ES	Problema al buscar actualizaciones para Logitech Media Server. (Código de error %s)
 	FI	Logitech Media Server-päivitysten tarkistamisessa oli ongelmia (virhekoodi %s).
-	FR	Une erreur s'est produite pendant la recherche de mises à jour du Logitech Media Server: Code d'erreur %s.
+	FR	Une erreur s'est produite pendant la recherche de mises à jour du Logitech Media Server : Code d'erreur %s.
 	HE	התעוררה בעיה במהלך החיפוש אחר עדכונים עבור Logitech Media Server. (קוד שגיאה %s)
 	IT	Problema durante la verifica della disponibilità di aggiornamenti per Logitech Media Server. (Codice errore %s)
 	NL	Fout opgetreden tijdens het controleren op updates voor Logitech Media Server. (Foutcode %s)
@@ -15407,7 +15422,7 @@ CHECKVERSION_ERROR
 	EN	There was an error while checking for updates to Logitech Media Server:
 	ES	Error al buscar actualizaciones para Logitech Media Server:
 	FI	Logitech Media Server -päivitysten tarkistamisessa tapahtui virhe:
-	FR	Une erreur s'est produite pendant la recherche de mises à jour du Logitech Media Server:
+	FR	Une erreur s'est produite pendant la recherche de mises à jour du Logitech Media Server :
 	HE	אירעה שגיאה במהלך החיפוש אחר עדכונים עבור Logitech Media Server:
 	IT	Errore durante il tentativo di aggiornamento di Logitech Media Server:
 	NL	Fout opgetreden tijdens het controleren op updates van Logitech Media Server:
@@ -15590,7 +15605,7 @@ EXAMPLE_SHORT
 	EN	ex:
 	ES	ej.:
 	FI	esim.
-	FR	ex:
+	FR	ex :
 	HE	דוגמא:
 	IT	es:
 	NL	bijv.
@@ -15645,7 +15660,7 @@ GLOBAL_SEARCH_IN
 	EN	Search %s in:
 	ES	Buscar %s en:
 	FI	Etsi %s kohteesta:
-	FR	Rechercher %s dans:
+	FR	Rechercher %s dans :
 	IT	Cerca %s in:
 	NL	%s zoeken in:
 	NO	Søk etter %s i:
@@ -15949,24 +15964,28 @@ SEARCHING
 SEARCH_CONTAINS
 	DE	enthält
 	EN	contains
+	FR	contient
 	NL	bevat
 	SV	innehåller
 
 SEARCH_DOESNT_CONTAIN
 	DE	enthält nicht
 	EN	doesn't contain
+	FR	ne contient pas
 	NL	bevat niet
 	SV	innehåller inte
 
 SEARCH_STARTS_WITH
 	DE	beginnt mit
 	EN	starts with
+	FR	commence par
 	NL	begint met
 	SV	börjar med
 
 SEARCH_DOESNT_START_WITH
 	DE	beginnt nicht mit
 	EN	does not start with
+	FR	ne commence pas par
 	NL	begint niet met
 	SV	börjar inte med
 
@@ -16191,7 +16210,7 @@ SYNC_WITH
 	EN	Sync with:
 	ES	Sincronizar con:
 	FI	Synkronoi:
-	FR	Synchroniser à:
+	FR	Synchroniser à :
 	HE	עבור ימינה לסינכרון עם:
 	IT	Sincronizza con:
 	JA	シンクロするためにはRIGHTを押してください :
@@ -16210,7 +16229,7 @@ SYNC_X_TO
 	EN	Sync %s to:
 	ES	Sincronizar %s a:
 	FI	Synkronoi %s ja
-	FR	Synchroniser %s avec:
+	FR	Synchroniser %s avec :
 	IT	Sincronizza %s in:
 	NL	Synchronisatie %s met:
 	NO	Synkroniser %s til:
@@ -16240,7 +16259,7 @@ UNSYNC_WITH
 	EN	Unsync with:
 	ES	Desincronizar con:
 	FI	Epäsynkronoi:
-	FR	Annuler la synchronisation avec:
+	FR	Annuler la synchronisation avec :
 	HE	עבור ימינה לביטול הסינכרון עם:
 	IT	Rimuovi sincronizzazione con:
 	JA	シンクロを外す為にはRIGHTを押してください:
@@ -16259,7 +16278,7 @@ SYNCING_WITH
 	EN	Syncing with: %s
 	ES	Sincronizando con: %s
 	FI	Synkronoidaan kohteen %s kanssa
-	FR	Synchronisation avec: %s
+	FR	Synchronisation avec : %s
 	IT	Sincronizzazione in corso con: %s
 	NL	Synchronisatie met: %s
 	NO	Synkroniserer med: %s
@@ -16274,7 +16293,7 @@ UNSYNCING_FROM
 	EN	Unsyncing from: %s
 	ES	Desincronizando de: %s
 	FI	Puretaan synkronointi kohteen %s kanssa
-	FR	Désynchronisation de: %s
+	FR	Désynchronisation de : %s
 	IT	Rimozione sincronizzazione in corso da: %s
 	NL	Synchronisatie opheffen van: %s
 	NO	Fjerner synkronisering fra: %s
@@ -16306,7 +16325,7 @@ RADIO_TUNEIN
 	EN	Tune In URL
 	ES	Sintonizar URL
 	FI	Viritä URL
-	FR	Connexion radio
+	FR	Saisir une URL de radio
 	HE	התכווננות לכתובת URL
 	IT	Sintonizza URL
 	NL	URL instellen
@@ -16552,7 +16571,7 @@ RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
 	ES	URL de radio:
 	FI	Radion URL:
-	FR	URL radio:
+	FR	URL radio :
 	HE	כתובת ה-URL של הרדיו:
 	IT	URL Radio:
 	NL	Radio-URL:
@@ -16586,7 +16605,7 @@ RADIO_TUNED_IN
 	EN	Tuned into station:
 	ES	Estación sintonizada:
 	FI	Virittyneenä kanavalle:
-	FR	Connecté à la station:
+	FR	Connecté à la station :
 	HE	מכוונן לתחנה:
 	IT	Sintonizzato su stazione:
 	NL	Ingesteld op zender:
@@ -18076,7 +18095,7 @@ SQUEEZENETWORK_WANT_SWITCH
 	EN	This player is currently connected to mysqueezebox.com. Do you want it to switch back to Logitech Media Server?
 	ES	Este reproductor está conectado a mysqueezebox.com. ¿Desea regresar a Logitech Media Server?
 	FI	Tämä soitin on yhdistetty mysqueezebox.comiin. Haluatko vaihtaa sen takaisin Logitech Media Serveriin?
-	FR	Cette platine est actuellement connectée à mysqueezebox.com. Voulez-vous revenir au Logitech Media Server?
+	FR	Cette platine est actuellement connectée à mysqueezebox.com. Voulez-vous revenir au Logitech Media Server ?
 	IT	Il lettore è attualmente connesso a mysqueezebox.com. Connetterlo di nuovo a Logitech Media Server?
 	NL	Deze muziekspeler is momenteel met mysqueezebox.com verbonden. Wil je het systeem terugschakelen naar Logitech Media Server?
 	NO	Spilleren er koplet til mysqueezebox.com. Vil du bytte tilbake til Logitech Media Server?
@@ -18183,7 +18202,7 @@ SQUEEZEBOX_SERVER_WANT_SWITCH
 	EN	This player is currently connected to %s. Do you want it to switch to this Logitech Media Server?
 	ES	Este reproductor está conectado a %s. ¿Desea conectarlo a este Logitech Media Server?
 	FI	Tämä soitin on yhdistetty kohteeseen %s. Haluatko vaihtaa sen tähän Logitech Media Serveriin?
-	FR	Cette platine est actuellement connectée à %s. Voulez-vous la connecter à ce Logitech Media Server?
+	FR	Cette platine est actuellement connectée à %s. Voulez-vous la connecter à ce Logitech Media Server ?
 	IT	Questo lettore è connesso a %s. Passare a questo Logitech Media Server?
 	NL	Deze muziekspeler is momenteel verbonden met %s. Wil je het systeem terugschakelen naar deze Logitech Media Server?
 	NO	Spilleren er koplet til %s. Vil du bytte til denne Logitech Media Server?
@@ -19063,7 +19082,7 @@ SETUP_FXLOOPCLOCK_DESC
 	EN	Preferably, the external processor's output will be synchronized to its input. Choose synchronous clock mode in this case, and the incoming signal will be reclocked by Transporter's internal oscillator for minimal jitter. In asynchronous mode, Transporter will recover the clock from the incoming signal, so it is not required to be synchronized.
 	ES	Preferiblemente, la salida del procesador externo se sincronizará a su entrada. En este caso debe elegir el modo de reloj sincrónico para que el oscilador interno de Transporter vuelva a registrar la señal entrante en el reloj de palabras, con el fin de minimizar la fluctuación. En modo asincrónico, Transporter recupera el reloj de la señal entrante, por lo que no es esencial la sincronización.
 	FI	Ulkoisen prosessorin lähtösignaali synkronoidaan mieluiten sen tulosignaalin kanssa. Valitse tässä tapauksessa synkronoitu kellotila. Transporterin sisäinen oskillaattori kellottaa tällöin tulosignaalin uudelleen keskihajonnan minimoimiseksi. Epäsynkronoidussa tilassa Transporter poimii kellon tulosignaalista, joten sitä ei tarvitse synkronoida.
-	FR	La sortie du processeur externe sera synchronisée de préférence sur son entrée. Dans ce cas, sélectionnez le mode horloge synchrone: l'oscillateur interne de Transporter modifiera le signal entrant afin d'en minimiser la fluctuation. En mode asynchrone, Transporter récupérera l'horloge à partir du signal entrant, évitant ainsi de devoir procéder à sa synchronisation.
+	FR	La sortie du processeur externe sera synchronisée de préférence sur son entrée. Dans ce cas, sélectionnez le mode horloge synchrone : l'oscillateur interne de Transporter modifiera le signal entrant afin d'en minimiser la fluctuation. En mode asynchrone, Transporter récupérera l'horloge à partir du signal entrant, évitant ainsi de devoir procéder à sa synchronisation.
 	IT	L'output del processore esterno è di preferenza sincronizzato con il relativo input. In un caso simile, selezionare la modalità di clock sincrona per fare in modo che il clock del segnale in entrata sia reimpostato dall'oscillatore interno di Transporter per ridurre al minimo l'instabilità. Nella modalità asincrona, Transporter recupera il clock dal segnale in entrata e perciò non occorre che sia sincronizzato.
 	NL	Het verdient de voorkeur de uitvoer van de externe processor met zijn invoer te synchroniseren. Kies in dit geval synchrone klokmodus. Het inkomende signaal wordt dan opnieuw geklokt door de interne oscillator van Transporter voor minimale jitter. In asynchrone modus haalt Transporter de klok uit het inkomende signaal, zodat deze niet synchroon hoeft te zijn.
 	NO	Den eksterne prosessorens utsignaler skal helst være synkronisert med innsignalene. Du bør derfor velge synkron klokkemodus for dette, så blir innsignalet låst på nytt av Transporters interne oscillator, slik at avviket blir minimalt. I usynkron modus henter Transporter klokkedata fra innsignalet, slik at den ikke trenger å synkroniseres.
@@ -19078,7 +19097,7 @@ FXLOOPCLOCK_SYNCHRONOUS
 	EN	Synchronous: Transporter is master
 	ES	Sincrónico: Transporter principal
 	FI	Synkronoitu: Transporter on pääsoitin
-	FR	Synchrone: Transporter est le dispositif maître
+	FR	Synchrone : Transporter est le dispositif maître
 	IT	Sincrona: Transporter è il dispositivo principale
 	NL	Synchroon: Transporter is master
 	NO	Synkront: Transporter er master
@@ -19093,7 +19112,7 @@ FXLOOPCLOCK_ASYNCHRONOUS
 	EN	Asynchronous: External processor is master
 	ES	Asincrónico: procesador externo principal
 	FI	Epäsynkroninen: ulkoinen prosessori on pääprosessori
-	FR	Asynchrone: le processeur externe est le dispositif maître
+	FR	Asynchrone : le processeur externe est le dispositif maître
 	IT	Asincrona: il processore esterno è il dispositivo principale
 	NL	Asynchroon: Externe processor is master
 	NO	Usynkront: Ekstern prosessor er master
@@ -19341,14 +19360,17 @@ SETUP_SERVERPRIORITY
 SETUP_SHUFFLE_METHOD
 	DE	Mischmethode
 	EN	Shuffle method
+	FR	Méthode de mélange aléatoire
 
 SETUP_USE_BALANCED_SHUFFLE
 	DE	Ausbalancierter, aber langsamer mischen
 	EN	Use more balanced, but slower shuffle
+	FR	Choisir un mélange plus équilibré, mais plus lent
 
 SETUP_USE_FASTER_SHUFFLE
 	DE	Schneller, aber weniger ausbalanciert mischen
 	EN	Use faster, but less balanced shuffle
+	FR	Choisir un mélange plus rapide mais moins équilibré
 
 SETUP_SERVERPRIORITY_DESC
 	CS	Můžete zadat prioritu pro Logitech Media Server.
@@ -19510,7 +19532,7 @@ SETUP_DIGITALOUTPUTENCODING
 	EN	Digital Output Encoding
 	ES	Codificación de salida digital
 	FI	Digitaalisen lähdön koodaus
-	FR	Codage de la sortie numérique:
+	FR	Codage de la sortie numérique :
 	HE	קידוד פלט דיגיטלי
 	IT	Codifica uscita digitale
 	NL	Codering van digitale uitvoer
@@ -19768,7 +19790,7 @@ SETUP_POWEROFFDAC
 	EN	Power Off AUDIO
 	ES	Apagar audio
 	FI	Äänen katkaiseminen
-	FR	Désactiver audio:
+	FR	Désactiver audio :
 	HE	כיבוי השמע
 	IT	Disattiva audio
 	NL	Audio uitzetten
@@ -20945,7 +20967,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	EN	Logitech Media Server keeps a log file for all application related activities (Audio Streaming, Infrared, etc) here:
 	ES	Logitech Media Server mantiene un archivo de registro para todas las actividades relacionadas con la aplicación (secuencias de audio, infrarrojos, etc.) aquí:
 	FI	Logitech Media Server pitää lokitiedostoa kaikista sovelluksiin liittyvistä toiminnoista (äänen virtautus, infrapuna jne.) täällä:
-	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant:
+	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant :
 	IT	Logitech Media Server mantiene un file di registro per tutte le attività relative alle applicazioni (stream audio, raggi infrarossi e così via) nel seguente percorso:
 	NL	Logitech Media Server bewaart hier een logboek voor alle toepassingsactiviteiten (audio-streaming, infrarood, enz.):
 	NO	Logitech Media Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
@@ -20975,7 +20997,7 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	EN	Logitech Media Server keeps a log file for all scanning related activities, including iTunes & MusicIP here:
 	ES	Logitech Media Server mantiene un archivo de registro para todas las actividades de examen, incluidas las de iTunes y MusicIP aquí:
 	FI	Logitech Media Server pitää lokitiedostoa kaikista hakuihin liittyvistä toiminnoista (mukaan lukien iTunes ja MusicIP) täällä:
-	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant:
+	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant :
 	IT	Logitech Media Server mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
 	NL	Logitech Media Server bewaart hier een logboek voor alle scanactiviteiten (zoals iTunes en MusicIP):
 	NO	Logitech Media Server fører en loggfil for alle søkeaktiviteter, inkludert iTunes og MusicIP, her:
@@ -21020,7 +21042,7 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 	EN	Logitech Media Server keeps a log file for performance monitoring here:
 	ES	Logitech Media Server mantiene un archivo de registro para supervisión de rendimiento aquí:
 	FI	Logitech Media Server pitää lokitiedostoa suorituskyvystä täällä:
-	FR	Le Logitech Media Server conserve un fichier journal pour le contrôle des performances, à l'emplacement suivant:
+	FR	Le Logitech Media Server conserve un fichier journal pour le contrôle des performances, à l'emplacement suivant :
 	IT	Logitech Media Server mantiene un file di registro per monitorare le prestazioni in questa posizione:
 	NL	Logitech Media Server bewaart hier een logboek voor prestatiecontrole:
 	NO	Logitech Media Server fører en loggfil for ytelsesovervåking her:
@@ -21419,6 +21441,7 @@ PLAYLIST_PROGRESS
 ONLINE_LIBRARY_DELETED_PROGRESS
 	DE	Titel aus Online Musiksammlung werden gelöscht
 	EN	Removing online library tracks
+	FR	Suppression des morceaux de la bibliothèque en ligne
 	SV	Tar bort online-bibliotekspår
 
 MERGEVA_PROGRESS
@@ -21580,6 +21603,7 @@ VIRTUALLIBRARIES
 SETUP_LIBRARY_VIEWS_DESC
 	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
 	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
+	FR	Les bibliothèques thématiques vous permettent d'utiliser le menu Ma musique sur une sélection filtrée de morceaux. En activant ces bibliothèques vous pourrez basculer entre elles à l'aide d'un sous-menu dans Ma musique.
 	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
 	NO	Delbiblioteker gjør at du kan bruke Min musikk-menyen på et filtrert utvalg av spor. Når de er aktivert, kan du veksle mellom delbibliotekene fra en undermeny av Min musikk.
 	PL	Biblioteki tematyczne pozwalają na użycie menu "Moja muzyka" na przefiltrowanym zbiorze utworów. Do menu "Moja muzyka" zostanie dodana dodatkowa opcja, służąca do przełączania się pomiędzy bibliotekami.
@@ -21671,7 +21695,7 @@ TOTAL_TIME
 	EN	Total Time:
 	ES	Tiempo total:
 	FI	Kokonaisaika:
-	FR	Durée totale:
+	FR	Durée totale :
 	IT	Tempo totale:
 	NL	Totale tijd:
 	NO	Samlet tid:
@@ -21972,7 +21996,7 @@ JIVE_OVERWRITE_PRESET_X
 	EN	Replace %s?
 	ES	¿Sustituir %s?
 	FI	Korvataanko %s?
-	FR	Voulez-vous remplacer %s?
+	FR	Voulez-vous remplacer %s ?
 	IT	Sostituire %s?
 	NL	%s vervangen?
 	NO	Vil du erstatte %s?
@@ -22212,7 +22236,7 @@ JIVE_POPUP_ADDING_TO_PLAY_NEXT
 	EN	Adding\n%s\nto play next...
 	ES	Agregando\n%s\npara reproducir a continuación...
 	FI	Lisätään\n%s\nsoitettavaksi seuraavaksi...
-	FR	Ajout de\n%s\naprès le morceau en cours:
+	FR	Ajout de\n%s\naprès le morceau en cours...
 	IT	Aggiunta di\n%s\ncome brano successivo...
 	NL	Bezig met toevoegen van\n%s\nom als volgende af te spelen...
 	NO	Legger\n%s\ntil som neste spor ...
@@ -22557,7 +22581,7 @@ SCANNER_REMOTE_NO_URL_PROVIDED
 	EN	Unable to scan: No URL found
 	ES	No se puede realizar el examen: no se ha encontrado la URL
 	FI	Ei voi hakea: URL:ää ei löytynyt
-	FR	Impossible d'analyser: l'URL est introuvable
+	FR	Impossible d'analyser : l'URL est introuvable
 	IT	Impossibile eseguire analisi: URL non trovato
 	NL	Kan niet scannen: geen URL gevonden
 	NO	Kan ikke søke: Finner ingen url
@@ -22572,7 +22596,7 @@ SCANNER_REMOTE_INVALID_URL
 	EN	Unable to scan: Invalid URL
 	ES	No se puede realizar el examen: URL no váida
 	FI	Ei voi hakea: URL ei kelpaa
-	FR	Impossible d'analyser: l'URL n'est pas valide
+	FR	Impossible d'analyser : l'URL n'est pas valide
 	IT	Impossibile eseguire analisi: URL non valido
 	NL	Kan niet scannen: ongeldige URL
 	NO	Kan ikke søke: Ugyldig url
@@ -22587,7 +22611,7 @@ SCANNER_REMOTE_NESTED_TOO_DEEP
 	EN	Unable to scan: Playlist nested too deep
 	ES	No puede realizar el examen: la anidación de la lista de reproducción es demasiado profunda
 	FI	Ei voi hakea: soittoluettelossa on liikaa sisäkkäisiä luetteloita
-	FR	Impossible d'analyser: la liste de lecture est emboîtée trop profondément
+	FR	Impossible d'analyser : la liste de lecture est emboîtée trop profondément
 	IT	Impossibile eseguire l'analisi: la playlist contiene troppe nidificazioni
 	NL	Kan niet scannen: playlist te diep genest
 	NO	Kan ikke søke: Spillelisten ligger for langt nede
@@ -22655,7 +22679,7 @@ UPDATE_DSP_FAILURE_RESTORE
 	EN	Update failed!, restoring default
 	ES	Error al actualizar. Restaurando valores predeterminados
 	FI	Päivitys epäonnistui, palautetaan oletus
-	FR	Echec de la mise à jour; restauration des paramètres par défaut.
+	FR	Echec de la mise à jour ; restauration des paramètres par défaut.
 	IT	Aggiornamento non riuscito; verrà ripristinato il valore predefinito
 	NL	Update mislukt! Standaardinstelling wordt hersteld
 	NO	Oppdatering mislyktes, gjenoppretter standard
@@ -22835,7 +22859,7 @@ ERROR_PLAYLIST_ALMOST_FULL
 	EN	Playlist full: %s of %s tracks added
 	ES	Lista de reproducción llena: %s de %s pistas agregadas
 	FI	Soittoluettelo on täynnä: lisättiin %s/%s raitaa
-	FR	Liste de lecture pleine: %s pistes sur %s ont été ajoutées
+	FR	Liste de lecture pleine : %s pistes sur %s ont été ajoutées
 	IT	Playlist piena: aggiunti %s di %s brani
 	NL	Playlist vol: %s van %s nummers toegevoegd
 	NO	Spillelisten er full: %s av %s spor lagt til
@@ -22943,7 +22967,7 @@ CONTROLPANEL_STATUS_RUNNING
 	EN	Status: The server is running
 	ES	Estado: el servidor está en ejecución
 	FI	Tila: palvelin on käynnissä
-	FR	Etat: le serveur est en cours d'exécution.
+	FR	Etat : le serveur est en cours d'exécution.
 	IT	Stato: il server è in esecuzione
 	NL	Status: De server is actief
 	NO	Status: Serveren kjører
@@ -22958,7 +22982,7 @@ CONTROLPANEL_STATUS_STARTING
 	EN	Status: The server is starting
 	ES	Estado: el servidor está iniciando
 	FI	Tila: palvelin on käynnistymässä
-	FR	Etat: le serveur est en cours de démarrage.
+	FR	Etat : le serveur est en cours de démarrage.
 	IT	Stato: il server si sta avviando
 	NL	Status: De server wordt gestart
 	NO	Status: Serveren starter opp
@@ -22973,7 +22997,7 @@ CONTROLPANEL_STATUS_STOPPED
 	EN	Status: The server is stopped
 	ES	Estado: el servidor está detenido
 	FI	Tila: palvelin on pysäytetty
-	FR	Etat: le serveur est arrêté.
+	FR	Etat : le serveur est arrêté.
 	IT	Stato: il server è stato arrestato
 	NL	Status: De server is gestopt
 	NO	Status: Serveren er stoppet
@@ -23303,7 +23327,7 @@ CONTROLPANEL_PORTNO
 	EN	Port %s (%s):
 	ES	Puerto %s (%s):
 	FI	Portti %s (%s):
-	FR	Port %s (%s):
+	FR	Port %s (%s) :
 	IT	Porta %s (%s):
 	NL	Poort %s (%s):
 	NO	Port %s (%s):
@@ -23318,7 +23342,7 @@ CONTROLPANEL_PING
 	EN	Ping:
 	ES	Ping:
 	FI	Ping:
-	FR	Ping:
+	FR	Ping :
 	IT	Ping:
 	NL	Ping:
 	NO	Ping:
@@ -23453,7 +23477,7 @@ CONTROLPANEL_PORTBLOCKED_APPS
 	EN	The following applications might be blocking your connection:
 	ES	Es posible que las aplicaciones siguientes estén bloqueando la conexión:
 	FI	Seuraavat sovellukset saattavat estää yhteyden:
-	FR	Les applications suivantes sont susceptibles de bloquer votre connexion:
+	FR	Les applications suivantes sont susceptibles de bloquer votre connexion :
 	IT	Le seguenti applicazioni potrebbero bloccare la connessione:
 	NL	Je verbinding wordt mogelijk door de volgende toepassingen geblokkeerd:
 	NO	Følgende programmer blokkerer kanskje tilkoplingen:
@@ -23619,7 +23643,7 @@ CLEANUP_WANT_TO_STOP_SC
 	EN	Logitech Media Server has to be stopped before running the cleanup. Do you want to stop it now?
 	ES	Antes de ejecutar la limpieza, se debe detener Logitech Media Server. ¿Desea detenerlo ahora?
 	FI	Logitech Media Server täytyy pysäyttää ennen puhdistuksen suorittamista. Haluatko pysäyttää sen nyt?
-	FR	Le Logitech Media Server doit être arrêté avant le lancement du nettoyage. Souhaitez-vous l'arrêter maintenant?
+	FR	Le Logitech Media Server doit être arrêté avant le lancement du nettoyage. Souhaitez-vous l'arrêter maintenant ?
 	IT	Prima di eseguire la pulizia è necessario arrestare Logitech Media Server. Arrestarlo adesso?
 	NL	Logitech Media Server moet worden stopgezet, voordat de opschoning wordt uitgevoerd. Wil je de server nu stoppen?
 	NO	Logitech Media Server må stoppes før oppryddingen kan kjøres. Vil du stoppe den nå?
@@ -23649,7 +23673,7 @@ CLEANUP_COMMAND_LINE
 	EN	Command line options:
 	ES	Opciones de línea de comandos:
 	FI	Komentorivivalitsimet:
-	FR	Options de ligne de commande:
+	FR	Options de ligne de commande :
 	IT	Opzioni della riga di comando:
 	NL	Opdrachtregelopties:
 	NO	Kommandolinjevalg:
@@ -24597,6 +24621,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 UPDATES_LATEST_CHANGES
 	DE	Letzte Änderungen (<a href="%s" target="_blank">alle Änderungen</a>)
 	EN	Latest Changes (<a href="%s" target="_blank">all changes</a>)
+	FR	Dernières modifications (<a href="%s" target="_blank">toutes les modifications</a>)
 	NL	Laatste wijzigingen (<a href="%s" target="_blank">all changes</a>)
 	NO	Seneste endringer (<a href="%s" target="_blank">all changes</a>)
 	SV	Senaste ändringar (<a href="%s" target="_blank">alla ändringar</a>)
@@ -24604,6 +24629,7 @@ UPDATES_LATEST_CHANGES
 SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
+	FR	Ce service nécessite le module Perl IO::Socket::SSL. Vous ne pouvez pas utiliser ce service sans ce module. Veuillez utiliser le gestionnaire de paquets de votre système d'exploitation pour l'installer.
 	NL	Deze service vereist Perl module IO::Socket::SSL. Je kunt de service zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
 	SV	Den här tjänsten behöver PERL-modulen IO::Socket::SSL! utan den kan denna modul inte användas. Använd operativsystemets pakethanterare för att installera den.
 

@@ -37,7 +37,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME
 	EN	Allow standby after how many idle minutes?
 	ES	¿Permitir modo de espera después de cuántos minutos?
 	FI	Kuinka monen minuutin joutoajan jälkeen siirrytään valmiustilaan?
-	FR	Période d'inactivité avant la mise en veille (en minutes)?
+	FR	Période d'inactivité avant la mise en veille (en minutes) ?
 	IT	Attivare la modalità standby dopo quanti minuti di inattività?
 	NL	Stand-by toestaan na hoeveel minuten inactiviteit?
 	NO	Hvor mange inaktive minutter før hvilemodus?
@@ -67,7 +67,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON
 	EN	Prohibit standby if players are on?
 	ES	¿Prohibir modo de espera si los reproductores están encendidos?
 	FI	Estetäänkö valmiustilaan siirtyminen, jos soittimet ovat päällä?
-	FR	Interdire la mise en veille si des platines sont allumées?
+	FR	Interdire la mise en veille si des platines sont allumées ?
 	IT	Non attivare la modalità standby se i lettori sono accesi?
 	NL	Stand-by beletten als systemen aanstaan?
 	NO	Forhindre hvilemodus hvis spillerne er slått på?
