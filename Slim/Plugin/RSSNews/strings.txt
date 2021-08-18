@@ -358,7 +358,7 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	EN	Existing feeds:
 	ES	Fuentes existentes:
 	FI	Olemassa olevat syötteet:
-	FR	Flux existants:
+	FR	Flux existants :
 	IT	Feed esistenti:
 	NL	Bestaande kanalen:
 	NO	Eksisterende feeder:

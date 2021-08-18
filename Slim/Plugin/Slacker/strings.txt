@@ -112,7 +112,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
 	ES	Emisora no disponible: se ha excedido el límite de omisiones por hora. Puede cambiar a otra emisora o volver a intentarlo más tarde.
 	FI	Asema ei ole käytettävissä: tunnittainen ohitusraja ylittyi.  Vaihda toiselle kanavalle tai yritä myöhemmin uudelleen.
-	FR	Station non disponible: nombre limite de sauts par heure dépassé. Vous pouvez basculer vers une autre station ou réessayer ultérieurement.
+	FR	Station non disponible : nombre limite de sauts par heure dépassé. Vous pouvez basculer vers une autre station ou réessayer ultérieurement.
 	IT	Stazione non disponibile: limite orario superato. È possibile passare a un'altra stazione o riprovare più tardi.
 	NL	Station niet beschikbaar: uurlimiet voor springen overschreden. Je kunt naar een ander station overschakelen of het later opnieuw proberen.
 	NO	Stasjonen er utilgjengelig: grensen for hvor mange sanger du kan hoppe over per time har blitt overskredet. Du kan bytte stasjon eller prøve på nytt senere.

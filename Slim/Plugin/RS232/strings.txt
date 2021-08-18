@@ -22,7 +22,7 @@ PLUGIN_RS232_NAME_DESC
 	EN	RS232 access for Transporter
 	ES	Acceso de RS232 para Transporter
 	FI	RS232:n käyttö Transporterille
-	FR	Access RS232 pour Transporter
+	FR	Accès RS232 pour Transporter
 	IT	Accesso RS232 per Transporter
 	NL	RS232-toegang voor Transporter
 	NO	RS232-tilgang for Transporter

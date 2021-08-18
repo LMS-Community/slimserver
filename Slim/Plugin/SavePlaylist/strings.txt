@@ -22,7 +22,7 @@ PLAYLIST_OVERWRITE
 	EN	Go right to replace existing playlist:
 	ES	Pulse DERECHA para reemplazar la lista de reproducción existente:
 	FI	Korvaa olemassa oleva soittoluettelo siirtymällä oikealle:
-	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante:
+	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante :
 	HE	עבור ימינה להחלפת רשימת ההשמעה הנוכחית:
 	IT	Premere DESTRA per sostituire la playlist corrente:
 	NL	Druk RECHTS om de bestaande playlist te vervangen:
@@ -38,7 +38,7 @@ PLAYLIST_SAVE
 	EN	Right again to save playlist as:
 	ES	Pulse DERECHA de nuevo para guardar la lista de reproducción como:
 	FI	Tallenna soittoluettelo nimellä siirtymällä uudelleen oikealle:
-	FR	Appuyez à nouveau sur DROITE pour enregistrer la liste de lecture sous:
+	FR	Appuyez à nouveau sur DROITE pour enregistrer la liste de lecture sous :
 	HE	עבור ימינה פעם נוספת לשמירת רשימת ההשמעה בשם:
 	IT	Premere DESTRA nuovamente per salvare la playlist con nome:
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
@@ -56,7 +56,7 @@ PLAYLIST_AS
 	EN	Save current playlist as:
 	ES	Guardar la lista de reproducción actual como:
 	FI	Tallenna nykyinen soittoluettelo nimellä:
-	FR	Enregistrer la liste de lecture sous:
+	FR	Enregistrer la liste de lecture sous :
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
 	IT	Salva la playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :
@@ -74,7 +74,7 @@ PLAYLIST_SAVING
 	EN	Saving current playlist as:
 	ES	Guardando la lista de reproducción actual como:
 	FI	Nykyinen soittoluettelo tallennetaan nimellä:
-	FR	Enregistre la liste de lecture sous:
+	FR	Enregistre la liste de lecture sous :
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
 	IT	Salvataggio della playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :

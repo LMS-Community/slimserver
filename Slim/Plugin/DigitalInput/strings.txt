@@ -102,7 +102,7 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	EN	Choose a Digital Input option below:
 	ES	Elija una opción de entrada digital:
 	FI	Valitse digitaalinen tulovaihtoehto alta:
-	FR	Sélectionnez une option d'entrée numérique ci-dessous:
+	FR	Sélectionnez une option d'entrée numérique ci-dessous :
 	HE	בחר אחת מאפשרויות הקלט הדיגיטלי הבאות:
 	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
 	NL	Kies hieronder een digitale-ingangsoptie:

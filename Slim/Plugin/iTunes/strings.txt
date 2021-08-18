@@ -440,7 +440,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	EN	Define a comma separated list of iTunes playlists you don't want to be imported (eg. "Videos, Purchased").
 	ES	Defina una lista separada por comas de listas de reproducción de iTunes que no desea que se importen (por ejemplo "Vídeos, Comprados").
 	FI	Määritä pilkuilla erotettu luettelo iTunesin soittoluetteloista, joita et halua tuoda (esim. videot, ostetut).
-	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par ex.: "Vidéos, achetées").
+	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par exemple : "Vidéos, achetées").
 	IT	Definire un elenco di playlist iTunes separate da virgole che non si desidera importare (esempio: Video, Brani acquistati).
 	NL	Maak een kommagescheiden lijst van iTunes-playlists die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
 	NO	Lag en liste, adskilt med kommaer, over iTunes-spillelister du ikke vil importere (f.eks. "videoer, kjøp").
@@ -470,7 +470,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	EN	Enable this option to extract artwork stored within iTunes. Note that this operation may take a long time as the interface with iTunes is slow.
 	ES	Activar esta opción para extraer las ilustraciones almacenadas en iTunes. Tenga en cuenta que esta operación puede llevar un tiempo si la interfaz con iTunes es lenta.
 	FI	Ottamalla tämän asetuksen käyttöön voit purkaa iTunesiin tallennetut levyjen kansikuvat. Huomaa, että tämä saattaa viedä paljon aikaa, sillä iTunesin käyttöliittymä on hidas.
-	FR	Cette option permet d'extraire les pochettes stockées dans iTunes. Remarque: en raison de la lenteur de l'interface avec iTunes, cette opération risque de prendre un certain temps.
+	FR	Cette option permet d'extraire les pochettes stockées dans iTunes. Remarque : en raison de la lenteur de l'interface avec iTunes, cette opération risque de prendre un certain temps.
 	IT	Attivare questa opzione per estrarre le illustrazioni memorizzate in iTunes. Tenere presente che questa operazione può richiedere parecchio tempo poiché la comunicazione con iTunes è lenta.
 	NL	Schakel deze optie in om artwork dat in iTunes is opgeslagen, te extraheren. Deze bewerking kan lang duren omdat de interface met iTunes traag is.
 	NO	Aktiver dette alternativet hvis du vil hente ut albumomslag som er lagret i iTunes. Merk: dette kan ta en stund, da grensesnittet for iTunes er tregt.

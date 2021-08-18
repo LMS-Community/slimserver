@@ -36,6 +36,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	DE	Komponisten
 	EN	Composers
+	FR	Compositeurs
 	IT	Compositori
 	NL	Componisten
 	NO	Komponister
@@ -45,6 +46,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	DE	Rolle des Künstlers:
 	EN	Contributor Roles:
+	FR	Rôles des artistes :
 	NL	Rol van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
@@ -53,6 +55,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	DE	Anzeigen:
 	EN	Browse by:
+	FR	Parcourir par :
 	NL	Blader op:
 	NO	Bla etter:
 	PL	Przeglądaj wg:
@@ -61,6 +64,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	DE	Anwenden auf:
 	EN	Apply to:
+	FR	Appliquer à :
 	NL	Toepassen op:
 	NO	Anvendes på:
 	PL	Zastosuj do:
@@ -86,6 +90,7 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	DE	Dateisystem
 	EN	Disks and folders
+	FR	Disques et dossiers
 	NL	Schijven en mappen
 	NO	Disker og mapper
 	PL	Dyski i foldery
@@ -94,6 +99,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
+	FR	Rôles des artistes :
 	NL	Rollen van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
@@ -102,6 +108,7 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
+	FR	Toutes les bibliothèques (par défaut)
 	NL	Hele collectie (Standaard)
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
@@ -110,6 +117,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
+	FR	Masquer les doublons compressés avec perte si un fichier sans perte est disponible
 	NL	Verberg lossy versies als een lossless versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
@@ -118,6 +126,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
+	FR	Créer une bibliothèque thématique qui essaie de supprimer les pistes en double en masquant les versions avec perte si une version sans perte du même enregistrement est disponible. Ceci est particulièrement utile si vous avez une collection de morceaux à utiliser à la maison (sans perte) et sur la route (avec perte).
 	NL	Maak een deelcollectie die probeert om lossy versies te verbergen als van dezelfde opname ook een lossless versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
 	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
@@ -146,7 +155,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	EN	Top Tracks
 	ES	Pistas principales
 	FI	Suositut kappaleet
-	FR	Pistes principales
+	FR	Morceaux les plus écoutés
 	IT	Brani più ascoltati
 	NL	Topnummers
 	NO	Mest populære spor
@@ -157,6 +166,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	DE	Flop-Titel
 	EN	Flop Tracks
+	FR	Morceaux les moins écoutés
 	NL	Flopnummers
 	NO	Minst avspilte spor
 	PL	Najrzadziej słuchane
@@ -165,6 +175,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	DE	'%s' verwenden
 	EN	Use '%s'
+	FR	Utiliser '%s'
 	NL	Gebruik '%s'
 	NO	Bruk '%s'
 	PL	Przełącz na '%s'
@@ -173,6 +184,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	DE	Verwende nun '%s'
 	EN	Now using '%s'
+	FR	Utilise maintenant '%s'
 	NL	Gebruikt nu '%s'
 	NO	Bruker nå '%s'
 	PL	Przełączono na '%s'
@@ -181,6 +193,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
+	FR	Bibliothèque thématique supprimée
 	NL	Deelcollectie verwijderd
 	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
@@ -189,29 +202,34 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	DE	Hörbücher
 	EN	Audiobooks
+	FR	Livres audio
 	SV	Ljudböcker
 	NL	Luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
+	FR	Toute la musique sans les livres audio
 	SV	All musik förutom ljudböcker
 	NL	Alle muziek zonder luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
+	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
+	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	DE	Hörbuch-Autoren
 	EN	Authors
+	FR	Auteurs
 	SV	Författare
 	NL	Schrijvers

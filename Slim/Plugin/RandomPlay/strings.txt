@@ -351,7 +351,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla aleatoria de música de la biblioteca:
 	FI	Valitse satunnainen musiikkikokoelma kirjastostasi:
-	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre bibliothèque:
+	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre bibliothèque :
 	HE	בחר מיקס אקראי של מוסיקה מהספרייה:
 	IT	Scegliere una raccolta casuale di musica dalla libreria:
 	NL	Een willekeurige mix van muziek uit je collectie kiezen:
@@ -431,7 +431,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en la mezcla:
 	FI	Miksiin sisällytettävät genret:
-	FR	Genres à inclure dans le mix:
+	FR	Genres à inclure dans le mix :
 	HE	סגנונות שיש לכלול במיקס:
 	IT	Generi musicali da includere nella raccolta:
 	NL	Genres om toe te voegen aan je mix:
@@ -494,7 +494,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	EN	recently played songs.
 	ES	canciones reproducidas recientemente.
 	FI	äskettäin soitetut kappaleet.
-	FR	morceaux joués récemment.
+	FR	morceaux lus récemment.
 	HE	שירים אחרונים שהושמעו.
 	IT	ultimi brani riprodotti.
 	NL	recent gespeelde nummers.
@@ -554,11 +554,13 @@ PLUGIN_RANDOM_PRESS_RIGHT
 PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	DE	Titelmix (auf aktuelle Genres beschränkt)
 	EN	Song Mix (limited to current genres)
+	FR	Morceaux aléatoires (limités aux genres actuels)
 	NL	Nummermix (alleen binnen huidige genres)
 	NO	Sangmiks (begrenset til nåværende sjangre)
 
 PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	DE	Zufälliges Album (auf aktuelle Genres beschränkt)
 	EN	Random Album (limited to current genres)
+	FR	Album aléatoire (limité aux genres actuels)
 	NL	Willekeurig album (alleen binnen huidige genres)
 	NO	Tilfeldig album (begrenset til nåværende sjangre)

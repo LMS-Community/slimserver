@@ -37,7 +37,7 @@ PLUGIN_SONGSCANNER_SET
 	EN	Time:
 	ES	Tiempo:
 	FI	Aika:
-	FR	Heure:
+	FR	Heure :
 	IT	Ora:
 	NL	Tijd:
 	NO	Klokkeslett:

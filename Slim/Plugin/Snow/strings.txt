@@ -55,7 +55,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	EN	Snow Screensaver: Quantity of snow
 	ES	Protector de pantalla de nieve: Cantidad de nieve
 	FI	Luminäytönsäästäjä: lumen määrä
-	FR	Ecran de veille neige: Intensité
+	FR	Ecran de veille neige : Intensité
 	HE	שומר מסך שלג: כמות שלג
 	IT	Screen saver con neve: quantità di neve
 	NL	Sneeuw-schermbeveiliger: hoeveelheid sneeuw
@@ -87,7 +87,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	EN	Christmassy
 	ES	Estilo navidad
 	FI	Jouluinen
-	FR	C'est Noël!
+	FR	C'est Noël !
 	HE	בסגנון חג המולד
 	IT	Natalizia
 	NL	Kerstmisachtig
@@ -167,7 +167,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	EN	Snow Screensaver: Style of snow
 	ES	Protector de pantalla de nieve: Estilo de nieve
 	FI	Luminäytönsäästäjä: lumen tyyppi
-	FR	Ecran de veille Neige: Type
+	FR	Ecran de veille Neige : Type
 	HE	שומר מסך שלג: סגנון שלג
 	IT	Screen saver con neve: Tipo di neve
 	NL	Sneeuw-schermbeveiliger: sneeuwstijl
@@ -359,7 +359,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	EN	NEW YEAR !
 	ES	AÑO NUEVO.
 	FI	UUTTA VUOTTA!
-	FR	ANNEE!
+	FR	ANNEE !
 	HE	ישראל!
 	IT	NUOVO!
 	NL	nieuwjaar!

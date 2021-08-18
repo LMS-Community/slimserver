@@ -136,34 +136,42 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 	DE	Titel ignorieren
 	EN	Ignore Titles
+	FR	Ignorer les titres
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	DE	Geben Sie eine Komma-separierte Liste von Titeln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of titles or names. Tracks which match one of these strings will not be scrobbled.
+	FR	Définissez une liste de titres séparés par des virgules. Les morceaux qui correspondent à l'un de ces titres ne seront pas envoyés (scrobblés).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	DE	Interpreten ignorieren
 	EN	Ignore Artists
+	FR	Ignorer les artistes
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	DE	Geben Sie eine Komma-separierte Liste von Interpreten ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of artist names. Tracks which match one of these strings will not be scrobbled.
+	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	DE	Albentitel ignorieren
 	EN	Ignore Album Titles
+	FR	Ignorer les titres des albums
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	DE	Geben Sie eine Komma-separierte Liste von Albumtiteln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of album names. Tracks which match one of these strings will not be scrobbled.
+	FR	Définissez une liste de noms d'albums séparés par des virgules. Les morceaux dont l'album correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	DE	Stilrichtungen ignorieren
 	EN	Ignore Genres
+	FR	Ignorer les genres
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	DE	Geben Sie eine Komma-separierte Liste von Stilrichtungen ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of genres. Tracks which match one of these strings will not be scrobbled.
+	FR	Définissez une liste de genres séparés par des virgules. Les morceaux dont le genre correspond à l'un de ces genres ne seront pas envoyés (scrobblés).
 
 PLUGIN_AUDIOSCROBBLER_BANNED
 	CS	Tato verze Logitech Media Server byla zakázána prostřednictvím Last.fm, aktualizujte laskavě na novější verzi.
@@ -277,7 +285,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.
 	ES	Advertencia: Enviar todas las pistas se ha desactivado globalmente. Para enviar información de pistas para este reproductor, active la opción Enviar todas las pistas, en Avanzada -> Audioscrobbler de Last.fm.
 	FI	Varoitus: Kaikkien kappaleiden lähettäminen on yleisesti poistettu käytöstä.  Jos haluat lähettää tiedot tällä soittimella soitetuista kappaleista, ota Lähetä kaikki kappaleet -asetus käyttöön kohdassa Lisäasetukset -> Last.fm Audioscrobbler.
-	FR	Avertissement: l'envoi de tous les morceaux est désactivé de manière globale. Pour envoyer les informations des morceaux pour cette platine, activez l'option pour envoyer tous les morceaux dans Avancé -> Last.fm Audioscrobbler.
+	FR	Avertissement : l'envoi de tous les morceaux est désactivé de manière globale. Pour envoyer les informations des morceaux pour cette platine, activez l'option pour envoyer tous les morceaux dans Avancé -> Last.fm Audioscrobbler.
 	IT	Avviso: l'invio di tutti i brani è stato disattivato a livello globale. Per inviare i dati relativi ai brani del lettore corrente, attivare l'impostazione Invia tutti i brani, accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
 	NL	Waarschuwing: Alle nummers indienen is globaal uitgeschakeld. Als je nummergegevens voor deze muziekspeler wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
 	NO	Advarsel: Innsending av spor er deaktivert i hele systemet. Hvis du vil sende informasjon om avspilte spor fra denne spilleren, må du aktivere innstillingen Send alle spor under Avansert -> Last.fm Audioscrobbler.
@@ -292,7 +300,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	EN	Note: You must also enable Audioscrobbler for each player.  Click on the Player tab and then select the Last.fm Audioscrobbler item for each player you want to scrobble.
 	ES	Nota: además debe activar Audioscrobbler para cada reproductor. Haga clic en la ficha Reproductor y seleccione el elemento Audioscrobbler de Last.fm para cada reproductor en el que desee esta función.
 	FI	Huomaa: Audioscrobbler täytyy myös ottaa käyttöön kussakin soittimessa.  Napsauta Soitin-välilehdellä ja valitse Last.fm Audioscrobbler jokaiselle soittimelle, josta haluat lähettää tiedot kuunnelluista kappaleista Last.fm:ään.
-	FR	Remarque: vous devez également activer Audioscrobbler pour chaque platine. Cliquez sur l'onglet Platine et sélectionner Last.fm Audioscrobbler pour chaque platine.
+	FR	Remarque : vous devez également activer Audioscrobbler pour chaque platine. Cliquez sur l'onglet Platine et sélectionner Last.fm Audioscrobbler pour chaque platine.
 	IT	Nota: è inoltre necessario attivare Audioscrobbler per ogni lettore. Fare clic sulla scheda Lettore e selezionare la voce Audioscrobbler Last.fm per ogni lettore che si desidera monitorare.
 	NL	Opmerking: Je moet ook Autoscrobbler voor elke muziekspeler inschakelen. Klik op de tab Muziekspeler en selecteer het item Last.fm Audioscrobbler voor elk systeem dat je wilt scrobbelen.
 	NO	Merk: Du må også aktivere Audioscrobbler for hver spiller. Klikk på kategorien Spiller, og velg Last.fm Audioscrobbler-elementet for hver spiller du vil bruke med Audioscrobbler.
@@ -337,7 +345,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	EN	Note: To configure your Last.fm account, click on the Advanced tab and then select the Last.fm Audioscrobbler item.
 	ES	Nota: Para configurar la cuenta Last.fm, haga clic en la ficha Avanzada y seleccione el elemento Audioscrobbler de Last.fm.
 	FI	Huomaa: Voit määrittää Last.fm-tilisi asetukset napsauttamalla Lisäasetukset-välilehdellä ja valitsemalla Last.fm Audioscrobblerin.
-	FR	Remarque: pour configurer votre compte Last.fm, cliquez sur l'onglet Avancé, puis sélectionnez Last.fm Audioscrobbler.
+	FR	Remarque : pour configurer votre compte Last.fm, cliquez sur l'onglet Avancé, puis sélectionnez Last.fm Audioscrobbler.
 	IT	Nota: per configurare l'account Last.fm, fare clic sulla scheda Avanzate e selezionare la voce  Audioscrobbler Last.fm.
 	NL	Opmerking: Als je je Last.fm-account wilt configureren, klik je op de tab Geavanceerd en selecteer je het item Last.fm Audioscrobbler.
 	NO	Merk: Hvis du vil konfigurere Last.fm-kontoen din, klikker du på kategorien Avansert og velger Last.fm Audioscrobbler.
@@ -367,7 +375,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
 	EN	Scrobbling Internet Radio tracks may cause your Last.fm profile to include unwanted data.  You can disable scrobbling of all radio tracks by changing this option.  Radio tracks may still be loved, however.
 	ES	Si hace scrobble en pistas de radio por Internet, puede que su perfil de Last.fm incluya datos no deseados. Puede desactivar la función de scrobble para todas las pistas de radio si cambia esta opción. A pesar de ello, podrá seguir teniendo pistas como favoritas.
 	FI	Nettiradion raitojen tietojen lähettäminen saattaa aiheuttaa sen, että Last.fm-profiilisi sisällyttää ei-toivottuja tietoja.  Voit poistaa kaikkien radioraitojen tietojen lähettämisen käytöstä muuttamalla tämän asetuksen.  Radioraidat voidaan silti yhä nimetä rakkaiksi.
-	FR	l'envoi des morceaux des radios Internet risque d'inclure des données non sollicitées dans votre profil Last.fm. Vous pouvez désactiver l'envoi de tous les morceaux des radios Internet en modifiant cette option.  Vous pouvez tout de même continuer à faire des morceaux des coups de cœur.
+	FR	L'envoi des morceaux des radios Internet risque d'inclure des données non sollicitées dans votre profil Last.fm. Vous pouvez désactiver l'envoi de tous les morceaux des radios Internet en modifiant cette option.  Vous pouvez tout de même continuer à faire des morceaux des coups de cœur.
 	IT	La registrazione dei brani della radio su Internet potrebbe causare l'inclusione di dati indesiderati nel profilo Last.fm. È possibile disattivare la registrazione di tutti i brani della radio modificando le impostazioni dell'opzione. È comunque possibile aggiungere tali brani ai preferiti.
 	NL	Wanneer je internetradionummers scrobbelt, bevat je Last.fm-profiel misschien ongewenste gegevens. Je kunt het scrobbelen van alle radionummers uitschakelen door deze optie te wijzigen. U kunt echter nog steeds genieten van uw favoriete radionummers.
 	NO	Hvis du scrobbler spor fra Internett-radio, kan det føre til at uønsket data legges til Last.fm-profilen din. Du kan deaktivere scrobbling av alle radiospor ved å endre dette alternativet. Radiospor kan fremdeles favoriseres.
@@ -427,7 +435,7 @@ PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	EN	Use account: %s
 	ES	Usar cuenta: %s
 	FI	Käytä tiliä: %s
-	FR	Utiliser le compte: %s
+	FR	Utiliser le compte : %s
 	IT	Utilizza account: %s
 	NL	Gebruik account: %s
 	NO	Bruk konto %s
@@ -442,7 +450,7 @@ PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
 	EN	Last.fm: Love this track
 	ES	Last.fm: Esta pista es un favorito
 	FI	Last.fm: pidä tästä kappaleesta
-	FR	Last.fm: marquer ce morceau comme un coup de coeur
+	FR	Last.fm : marquer ce morceau comme un coup de coeur
 	IT	Last.fm: brano preferito
 	NL	Last.fm: Love this track
 	NO	Last.fm: Gi sporet en positiv stemme

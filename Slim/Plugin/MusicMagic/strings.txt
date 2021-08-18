@@ -173,7 +173,7 @@ SETUP_MIX_GENRE_DESC
 	EN	Restrict mix to the genre of the seed (Default: no)
 	ES	Restringir la mezcla al género de la canción inicial (valor predeterminado: no)
 	FI	Rajoita miksi siemenen genreen (oletus: ei)
-	FR	Limiter le mix au genre de la source (par défaut: non)
+	FR	Limiter le mix au genre de la source (par défaut : non)
 	HE	הגבלת המיקס לסגנון המקור (ברירת המחדל: לא)
 	IT	Consente di limitare il filtro al genere musicale. L'impostazione predefinita è no.
 	NL	Mix beperken tot het genre van de bron (standaard: Nee)
