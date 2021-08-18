@@ -2174,7 +2174,7 @@ sub forceCommit {
 
 	if (!$initialized) {
 
-		logWarning("Trying to commit transactions before DB is initialized!");
+		main::INFOLOG && $log->is_info && $log->info("Trying to commit transactions before DB is initialized!");
 		return;
 	}
 

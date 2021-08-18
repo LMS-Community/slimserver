@@ -2,7 +2,7 @@ package Slim::Utils::SQLiteHelper;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -174,8 +174,8 @@ sub collate {
 		my $lang = $prefs->get('language');
 
 		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
-		
-		if ( $collation && $currentICU ne $collation ) {	
+
+		if ( $collation && $currentICU ne $collation ) {
 			if ( !$loadedICU->{$collation} ) {
 				if ( !Slim::Schema->hasLibrary() ) {
 					# XXX for i.e. ContributorTracks many_to_many
@@ -374,7 +374,7 @@ sub postConnect {
 			my ($table) = eval { $dbh->selectrow_array('SELECT name FROM sqlite_master WHERE type="table" AND name="tracks"') };
 
 			if ($table) {
-				$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');
+				main::INFOLOG && $log->is_info && $log->info('Optimizing DB because of missing or empty sqlite_stat1 table');
 				Slim::Schema->optimizeDB();
 			}
 		}
