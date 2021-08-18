@@ -108,9 +108,7 @@ PLUGIN_DEEZER_SMART_RADIO
 	EN	Deezer Smart Radio
 
 PLUGIN_DEEZER_FLOW
-	DE	Deezer Flow (nur Premium+ Nutzer)
-	EN	Deezer Flow (Premium+ users only)
-	FR	Deezer Flow (Premium+ uniquement)
+	DE	Deezer Flow
 
 PLUGIN_DEEZER_ALBUMS_PROGRESS
 	DE	Deezer Alben

@@ -13830,7 +13830,7 @@ DELETE_WARNING
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
 	ES	¿Confirma que desea eliminar? Seleccione 'Confirmar eliminación' para eliminar la lista de reproducción.
 	FI	Haluatko varmasti poistaa ? Poista soittoluettelo valitsemalla Vahvista poisto.
-	FR	Voulez-vous vraiment supprimer la liste de lecture ? Cliquez sur 'Confirmer suppression' pour supprimer la liste de lecture.
+	FR	Voulez-vous vraiment supprimer la liste de lecture ? Cliquez sur "Confirmer suppression" pour supprimer la liste de lecture.
 	HE	האם אתה בטוח שברצונך למחוק את הפריט? סמן את האפשרות 'אישור מחיקה' למחיקת רשימת ההשמעה.
 	IT	Eliminare la playlist? Selezionare "Conferma eliminazione" per completare l'operazione.
 	NL	Weet je zeker dat je wilt verwijderen? Selecteer 'Verwijdering bevestigen' om je playlist weg te halen.
