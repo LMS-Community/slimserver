@@ -381,4 +381,5 @@ PLUGIN_EXTENSIONS_USE_UNSUPPORTED
 	EN	Use unsupported extensions
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
+	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Logitech Media Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Logitech Media Server lahm legen. Verwendung auf eigenes Risiko.
 	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.
