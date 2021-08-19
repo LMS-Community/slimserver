@@ -10,6 +10,21 @@ package Slim::Plugin::DontStopTheMusic::Plugin;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+=pod
+	Some mixer plugins like the RandomPlay plugin could potentially interfere with DSTM.
+	Therefore there's a hook for them to tell DSTM not to kick in:
+
+	1. add the canConflictWithDSTM flag to the plugin's install.xml:
+		<canConflictWithDSTM>1</canConflictWithDSTM>
+
+	2. add a method called disableDSTM() with the following signature to the Plugin.pm:
+		sub disableDSTM {
+				my ($class, $client) = @_;
+				# do whatever you need to do hear to tell DSTM to not kick in, basically
+				return myPluginIsActive($client)
+		}
+=cut
+
 use strict;
 use Scalar::Util qw(blessed);
 
@@ -174,13 +189,9 @@ sub onPlaylistChange {
 		return if $request->getParam('_url') !~ /^spotify/ || $request->getParam('_error') !~ /^103/;
 	}
 
-	# don't interfere with the automatically adding RandomPlay and SugarCube plugins
-	# stop smart mixing when a new RandomPlay mode is started or SugarCube is at work
-	if (
-		( my $plugin = isConflictingPluginActive($client) )
-		|| ( Slim::Utils::PluginManager->isEnabled('Plugins::SugarCube::Plugin') && preferences('plugin.SugarCube')->client($client)->get('sugarcube_status') )
-	) {
-		$log->warn(sprintf("Found %s active - I'm not going to interfere with it.", $plugin || 'Sugarcube'));
+	# don't interfere with the automatically adding RandomPlay and SugarCube etc. plugins
+	if ( my $plugin = isConflictingPluginActive($client) ) {
+		$log->warn(sprintf("Found %s active - I'm not going to interfere with it.", $plugin));
 		return;
 	}
 
