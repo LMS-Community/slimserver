@@ -15,23 +15,35 @@ use constant BUILD_STEPS => 7;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
 
+=pod
+	The fulltext index has an ID column which should represent an item's ID. But we don't want it
+	to match regular searches, as numbers could easily be confused with numerical title tracks. But
+	we want it to be searchable to speed up the playlist indexing. In the playlist_tracks table
+	we don't have the track's ID, but its URL. Therefore we use the file URL hash as part of the
+	ID in the FTS index. This allows us to quickly look up a track in the FTS index using the URL.
+
+	For the other FTS index items we simply buffer the ID with some random stuff to make it unlikely
+	to be found in a regular search. This is a bit of a waste of storage space, but helps us improve
+	playlist scanning performance a lot.
+=cut
+
 use constant SQL_CREATE_TRACK_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT tracks.urlmd5 || ':' || tracks.id, 'track',
+		SELECT tracks.urlmd5 || tracks.id, 'track',
 		-- weight 10
-		LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, ''),
+		UNIQUE_TOKENS(LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '')),
 		-- weight 5
-		IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' '
-			|| GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
+		UNIQUE_TOKENS(IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' '
+			|| GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' ')),
 		-- weight 3 - contributors create multiple hits, therefore only w3
-		CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' '
+		UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' '
 			|| IGNORE_CASE(comments.value) || ' ' || IGNORE_CASE(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' '
-			|| CASE WHEN tracks.channels = 1 THEN 'mono' ELSE 'stereo' END,
+			|| CASE WHEN tracks.channels = 1 THEN 'mono' ELSE 'stereo' END),
 		-- weight 1
-		CASE WHEN tracks.bitrate IS NULL THEN '' ELSE printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' END || IFNULL(tracks.samplerate, '') || ' '
+		UNIQUE_TOKENS(CASE WHEN tracks.bitrate IS NULL THEN '' ELSE printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' END || IFNULL(tracks.samplerate, '') || ' '
 			|| CASE WHEN tracks.samplerate > 0 THEN (round(tracks.samplerate, 0) / 1000) ELSE '' END || ' '
 			|| IFNULL(tracks.samplesize, '') || ' ' || REPLACE(REPLACE(tracks.url, '%%20', ' '), 'file://', '') || ' '
-			|| LOWER(IFNULL(tracks.musicbrainz_id, ''))
+			|| LOWER(IFNULL(tracks.musicbrainz_id, '')))
 
 		FROM tracks
 		LEFT JOIN contributor_track ON contributor_track.track = tracks.id
@@ -47,16 +59,16 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 
 use constant SQL_CREATE_ALBUM_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT MD5(albums.id) || ':' || albums.id, 'album',
+		SELECT 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || albums.id, 'album',
 		-- weight 10
-		LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, ''),
+		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '')),
 		-- weight 5
 		IFNULL(albums.year, ''),
 		-- weight 3
-		CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
+		UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album')),
 		-- weight 1
-		CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END || ' '
-			|| LOWER(IFNULL(albums.musicbrainz_id, ''))
+		UNIQUE_TOKENS(CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END || ' '
+			|| LOWER(IFNULL(albums.musicbrainz_id, '')))
 
 		FROM albums
 		LEFT JOIN contributor_album ON contributor_album.album = albums.id
@@ -69,9 +81,9 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 
 use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT MD5(contributors.id) || ':' || contributors.id, 'contributor',
+		SELECT 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY' || contributors.id, 'contributor',
 		-- weight 10
-		LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, ''),
+		UNIQUE_TOKENS(LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '')),
 		-- weight 5
 		'',
 		-- weight 3
@@ -86,15 +98,15 @@ use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
 ? q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT MD5(playlist_track.playlist) || ':' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
+		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
-			LEFT JOIN fulltext ON fulltext.id MATCH MD5(playlist_track.track)
+			LEFT JOIN fulltext ON fulltext.id MATCH MD5(playlist_track.track) || '*'
 		WHERE playlist_track.playlist = ?
 }
 : q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT MD5(tracks.id) || ':' || tracks.id, 'playlist', ?, '', ?, ''
+		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || tracks.id, 'playlist', ?, '', ?, ''
 		FROM tracks
 		WHERE tracks.id = ?
 };
@@ -136,6 +148,11 @@ sub initPlugin {
 		_initPopularTerms(1);
 		%ftsCache = ();
 	}, [['rescan'], ['done']] );
+
+	# trigger reindexing on upgrades to 8.3
+	$prefs->migrate(1, sub {
+		$prefs->remove('popularTerms');
+	});
 
 	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack, want_object => 1 } );
 	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack, want_object => 1 } );
@@ -234,7 +251,8 @@ sub createHelperTable {
 
 	$orderOrLimit = 'LIMIT 0' if !$tokens;
 
-	my $searchSQL = "CREATE $temp TABLE $name AS SELECT SPLIT_ID(fulltext.id) AS id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
+	# The first 32 bytes of the ID are either an MD5 of the ID, or some buster to make it "non searchable" - remove that prefix
+	my $searchSQL = "CREATE $temp TABLE $name AS SELECT SUBSTR(fulltext.id, 33) AS id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
 
 	if ( main::DEBUGLOG ) {
 		my $log2 = $sqllog->is_debug ? $sqllog : $log;
@@ -291,7 +309,7 @@ sub parseSearchTerm {
 				$token = "w10:$_*";
 
 				# log warning about search for popular term (set flag in cache to only warn once)
-				$ftsCache{uc($token)}++ || (main::DEBUGLOG && $log->is_debug && $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'"));
+				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
 		}
 		# don't search substrings for single digit numbers or single characters
@@ -318,7 +336,7 @@ sub parseSearchTerm {
 				$token = "w10:$raw";
 
 				# log warning about search for popular term (set flag in cache to only warn once)
-				$ftsCache{uc($token)}++ || (main::DEBUGLOG && $log->is_debug && $log->debug("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'"));
+				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
 		}
 
@@ -346,9 +364,9 @@ sub parseSearchTerm {
 		$isLargeResultSet = LARGE_RESULTSET if $counts && $counts > LARGE_RESULTSET;
 	}
 
-	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug("Search token ($type): '$tokens'");
-		$log->debug("Large resultset? " . ($isLargeResultSet ? 'yes' : 'no'));
+	if ( main::INFOLOG && $log->is_info ) {
+		$log->info("Search token ($type): '$tokens'");
+		$log->info("Large resultset? " . ($isLargeResultSet ? 'yes' : 'no'));
 	};
 
 	return wantarray ? ($tokens, $isLargeResultSet) : $tokens;
@@ -448,7 +466,7 @@ sub _uniqueTokens {
 	my %seen;
 	return join(' ', grep {
 		!$seen{$_}++
-	} split(/\s/, Slim::Utils::Text::ignorePunct($text)));
+	} split(/\s/, Slim::Utils::Text::ignoreCaseArticles($text, 0, 1)));
 }
 
 sub _rebuildIndex {
@@ -548,6 +566,7 @@ sub _initPopularTerms {
 	my $scanDone = shift;
 
 	return if ($popularTerms = join('|', @{ $prefs->get('popularTerms') || [] }));
+	return if Slim::Music::Import->stillScanning;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
 
@@ -555,6 +574,7 @@ sub _initPopularTerms {
 
 	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
+	($ftExists) = $dbh->selectrow_array( qq{ SELECT id FROM fulltext WHERE fulltext.id MATCH 'YXLALBUM*' } ) if $ftExists;     # 8.3: IDs must be prefixed to make them "non searchable"
 
 	if (!$ftExists) {
 		$scanlog->error("Fulltext index missing or outdated - re-building");
@@ -583,9 +603,6 @@ sub _initPopularTerms {
 
 sub postDBConnect {
 	my ($class, $dbh) = @_;
-
-	# we're using urlhash:id as the track IDs in the fulltext table
-	$dbh->sqlite_create_function( 'SPLIT_ID', 1, sub { substr($_[0], 33) } );
 
 	# some custom functions to get good data
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
