@@ -1119,8 +1119,7 @@ sub _cliQuery_done {
 						}
 						$hash{'text'} = $itemText;
 
-						if ($isPlayable) {
-							my $presetParams = _favoritesParams($item);
+						if ( my $presetParams = _favoritesParams($item) ) {							
 							if ($presetParams && !$xmlBrowseInterimCM) {
 								$hash{'presetParams'} = $presetParams;
 								$presetFavSet = 1;
