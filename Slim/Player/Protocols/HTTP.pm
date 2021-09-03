@@ -762,6 +762,9 @@ sub parseDirectHeaders {
 		{
 			$startOffset = $seekdata->{sourceStreamOffset};
 		}
+		else {
+			$startOffset -= $song->currentTrack->audio_offset;
+		}
 
 		my $streamLength = $length;
 		$streamLength -= $startOffset if $startOffset;

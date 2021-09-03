@@ -888,8 +888,14 @@ sub parseMp4Header {
 		return 0;
 	}
 	
+	# some mp4 file have wrong mdat length
+	if ($info->{audio_offset} + $info->{audio_size} > $http->response->content_length) { 
+		$log->warn("inconsistent audio offset/size $info->{audio_offset}+$info->{audio_size}and content_length ", $http->response->content_length);
+		$track->audio_size($http->response->content_length - $info->{audio_offset});
+	} else {
+		$track->audio_size($info->{audio_size});		
+	} 	
 	$track->audio_offset($info->{audio_offset});
-	$track->audio_size($info->{audio_size});
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
 	$track->channels($channels);	
