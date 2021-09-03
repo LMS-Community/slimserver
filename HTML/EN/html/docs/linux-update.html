@@ -17,6 +17,11 @@ These currently are available for .rpm and .deb based systems.<p>
 
 <ul style="direction: ltr;">
 	<li>Log in to your server machine using your username and password.</li>
-	<li>Run the following command to execute the installer</li>
-	<li><code>sudo [% distro == 'rpm' ? 'rpm -Uvh' : 'dpkg -i' %] [% installerFile %]</code></li>
+	<li>Run the following command to execute the installer:</li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -Uvh' : 'apt install' %] [% installerFile %]</code></li>
+	[% IF distro == 'deb' %]
+	<p>
+	<li>That command may fail on an old machine. Should it fail, run this command instead:</li>
+	<li><code>sudo dpkg -i [% installerFile %]</code></li>
+	[% END %]
 </ul>
