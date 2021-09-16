@@ -428,7 +428,7 @@ sub parseRSS {
 			$url = $image->{'link'};
 		}
 
-		$feed{'image'} = $url unless ref $url; # scalar value only !
+		$feed{'image'} = trim($url) unless ref $url; # scalar value only !
 	}
 	elsif ( ref $xml->{'itunes:image'} eq 'HASH' ) {
 		my $href = $xml->{'itunes:image'}->{'href'};
