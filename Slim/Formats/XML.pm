@@ -549,8 +549,9 @@ sub parseAtom {
 	);
 
 	# look for an image
-	if ( $xml->{'logo'} ) {
-		$feed{'image'} = $xml->{'logo'};
+	# but ensure it's a *scalar* value, anything else will break Jive browsing
+	if ( $xml->{'logo'} && ! ref $xml->{'logo'} ) {
+		$feed{'image'} = trim($xml->{'logo'});
 	}
 
 	my $count = 1;
