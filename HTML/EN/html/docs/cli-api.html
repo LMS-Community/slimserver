@@ -352,7 +352,7 @@
 	same method as is used in URLs; for example, &quot;The Clash?&quot;
 	would be encoded as &quot;The%20Clash%3F&quot;. This also applies to
 	<code>&lt;playerid&gt;</code>. In the examples below, the escaping
-	is not show for readability (except %20 for space).</p>
+	is not shown for readability (except %20 for space).</p>
 
 
 
@@ -514,7 +514,7 @@
 <ul>
 	<li>The Security settings of the server preferences apply to CLI
 		connections when they are established. A change in security
-		settings do not affect established connections. The connection
+		settings does not affect established connections. The connection
 		is only accepted from allowed hosts. If password protection is
 		enabled, the &quot;<a href="#login">login</a>&quot; command must
 		be the first command sent after the connection. Any error in the
@@ -537,7 +537,7 @@
 		path of &quot;__playlists/bar.m3u&quot;.</li>
 	<li>The HTTP server can return cover art for songs using the track
 		ID as returned by the CLI functions. If no cover art exists for
-		the given song, the server returns special "no artwork" image.
+		the given song, the server returns a special "no artwork" image.
 		Please refer to the <a href="artwork.html">Artwork Setup</a>
 		documentation for more details on artwork management in
 		Logitech Media Server. Use the following URL:
@@ -932,7 +932,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</ul>
 </p>
 <p>
-	If you want to query/set a preference from an other namespace than &quot;server&quot;
+	If you want to query/set a preference from a namespace other than &quot;server&quot;
 	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
 </p>
 <p>
@@ -970,8 +970,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;artworkspec&quot; command allows the caller to set custom artwor resizing
-	specifications. These are being used during a media scan to pre-cache artwork in the
+	The &quot;artworkspec&quot; command allows the caller to set custom artwork resizing
+	specifications. These are used during a media scan to pre-cache artwork in the
 	given size and format. The name is optional, but allows to recognize, which client
 	would have registered a specification.
 </p>
@@ -1026,7 +1026,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	server's internal preference value without setting it.
 </p>
 <p>
-	If you want to validate a preference from an other namespace than &quot;server&quot;
+	If you want to validate a preference from a namespace other than &quot;server&quot;
 	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
 </p>
 <p>
@@ -2060,7 +2060,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			font
 		</td>
 		<td>
-			Use value &quot;huge&quot; to have line2 displayed on a large font
+			Use value &quot;huge&quot; to have line2 displayed in a large font
 			using the entire display. The actual font used depends on the player
 			model. Otherwise the command uses the standard, 2 lines display font.
 		</td>
@@ -2227,7 +2227,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	server's internal player-specific preferences values.
 </p>
 <p>
-	If you want to query/set a preference from an other namespace than &quot;server&quot;
+	If you want to query/set a preference from a namespace other than &quot;server&quot;
 	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
 </p>
 <p>
@@ -2263,7 +2263,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	server's internal player-specific preference value without setting it.
 </p>
 <p>
-	If you want to validate a preference from an other namespace than &quot;server&quot;
+	If you want to validate a preference from a namespace other than &quot;server&quot;
 	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
 </p>
 <p>
@@ -2380,7 +2380,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</ul>
 <p>
 	If the player is currently a member of a sync-group, then all players in the sync-group
-	will be instructed to switch to the new server and reestablish the sync-group.
+	will be instructed to switch to the new server and re-establish the sync-group.
 <p>
 	Example:
 </p>
@@ -2740,7 +2740,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	library, reloading the music file information. If &quot;playlists&quot; is
 	indicated (&quot;rescan playlists&quot;), only the playlist directory is
 	rescanned. If &quot;onlinelibrary&quot; is indicated (&quot;rescan onlinelibrary&quot),
-	only the import from online music services is run If &quot;external&quot; is
+	only the import from online music services is run. If &quot;external&quot; is
 	requested, the rescan will be performed
 	using the external scanner process instead of the in-process scanner.
 	If &quot;full file://some/path&quot; is defined, then only this path will be scanned.
@@ -2940,7 +2940,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;libraries&quot; query returns a list of known library views with
-	their ID to the calle.
+	their ID to the caller.
 </p>
 <p>
 	Examples:
@@ -4859,7 +4859,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	known by the server. Please note that the &lt;start&gt; and
 	&lt;itemsPerResponse&gt; parameters apply to the individual data fields
 	below and not, as they do in other extended CLI queries, to the number
-	or songs (or artists, genres, etc.) returned; the
+	of songs (or artists, genres, etc.) returned; the
 	&quot;songinfo&quot; only ever returns information about a single song.
 </p>
 <p>
@@ -6117,7 +6117,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;play&quot; command allows to start playing the current playlist.
-	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify a fade-in period.
 
 </p>
 <p>
@@ -6173,7 +6173,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	You may use &quot;pause 1&quot; to force the player to pause,
 	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
 	toggle the pause state.
-	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period when unpausing.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify a fade-in period when unpausing.
 	The &quot;showBriefly&quot; parameter may be passed to specify not to show a pause icon on squeezeplay-based devices (as is the case with hitting 'power off' on the SBController, which pauses play but should not display an icon, see bug 13521)
 </p>
 <blockquote>
@@ -6226,7 +6226,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	&quot;?&quot;. You may jump to a particular position in a song by
 	specifying a number of seconds to seek to. You may also jump to a relative
 	position within a song by putting an explicit &quot;-&quot; or
-	&quot;+&quot; character before a number of second you would like to seek.
+	&quot;+&quot; character before a number of seconds you would like to seek.
 </p>
 <p>
 	Examples:
@@ -6344,7 +6344,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	or directory contents into the current playlist and plays starting at the
 	first item. Any songs previously in the playlist are discarded.  An optional title
 	value may be passed to set a title.  This can be useful for remote URLs.
-	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify a fade-in period.
 </p>
 <p>
 	Examples:
@@ -6797,7 +6797,7 @@ in the saved playlists folder.</p>
   song to play. An explicitly positive or negative number may be used to jump
   to a song relative to the currently playing song.
   The index can only be set if the playlist is not empty.
-  If an index parameter is set then &quot;fadeInSecs&quot; may be passed to specify fade-in period.
+  If an index parameter is set then &quot;fadeInSecs&quot; may be passed to specify a fade-in period.
   The value of the current song
   index may be obtained by passing in &quot;?&quot; as a parameter.</p>
 <p>Examples:</p>
@@ -6981,7 +6981,7 @@ in the saved playlists folder.</p>
 		<td>year|year_id</td>
 		<td>
 			Year, to restrict the results to the given year. The form year_id is accepted
-			for backwared compatibility but is deprecated.
+			for backwards compatibility but is deprecated.
 		</td>
 	</tr>
 	<tr>
@@ -6993,7 +6993,7 @@ in the saved playlists folder.</p>
 	<tr>
 		<td>folder_id</td>
 		<td>Folder ID, to restrict the results to files in this folder_id. If this
-		    parameter is provided, then any all the others are ignored.
+		    parameter is provided, then all the others are ignored.
 			<br>
 			Note that &quot;cmd:delete&quot; is not supported for folders.
 		</td>
@@ -7195,8 +7195,8 @@ in the saved playlists folder.</p>
 			progressname
 		</td>
 		<td>
-			Returned with the name for for current scan phase.
-			Not returned ifno scan is in progress.
+			Returned with the name for the current scan phase.
+			Not returned if no scan is in progress.
 		</td>
 	</tr>
 	<tr>
@@ -7535,7 +7535,7 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;model
 		</td>
 		<td>
-			Player model. Please note that only Squeezebox2 and later can remotely be disconnected.
+			Player model. Please note that only Squeezebox2 and later can be remotely disconnected.
 		</td>
 	</tr>
 
@@ -7582,14 +7582,14 @@ in the saved playlists folder.</p>
 	player, including the current playlist. Set the &lt;start&gt; parameter to
 	&quot;-&quot; to get the playlist data starting from the current song.
 	<br>
-	In this &quot;curent&quot; mode and if repeat is on, the server will attempt
+	In this &quot;current&quot; mode and if repeat is on, the server will attempt
 	to return &lt;itemsPerResponse&gt; elements, by repeating the playlist at
 	most once, unless shuffling is on and the server is configured to re-shuffle
 	the playlist at each loop (in which case it is impossible to predict the
 	song following the last one in the playlist until this last song has
 	finished playing).
 	<br>
-	Similarly, in the &quot;curent&quot; mode, if repeat
+	Similarly, in the &quot;current&quot; mode, if repeat
 	is one, only the current song is returned, regardless of the value of
 	&lt;itemsPerResponse&gt;.
 	<br>
@@ -7689,7 +7689,7 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			Returned with value &quot;invalid player&quot; if the player this
-			subscription query referred to does no longer exist.<br>
+			subscription query referred to no longer exists.<br>
 			In non subscription mode, the query simply echoes itself (i.e.
 			produces no result) if &lt;playerid&gt; is wrong.
 		</td>
@@ -8054,7 +8054,7 @@ in the saved playlists folder.</p>
 	Clients may request a reduced width display by setting the
 	width parameter in the status subscription.  Note this reduces the
 	width of the display shown on the live player screen as well as
-	for the display forwared to the cli client.
+	for the display forwarded to the cli client.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -8131,7 +8131,7 @@ in the saved playlists folder.</p>
 		<td>
 			filter
 		</td>
-		<td>Filter the output according to one of the following keywords (regulare expressions can be used):
+		<td>Filter the output according to one of the following keywords (regular expressions can be used):
 			<ul>
 				<li>filter:foldersonly - list folders only
 				<li>filter:filesonly - list files only
@@ -8372,7 +8372,7 @@ in the saved playlists folder.</p>
 	This notification notifies a client that a plugin supports volume change capability for a player.
 	This capability will override (from a user's point of view) the "digitalVolumeControl" flag that indicates whether a player's output is fixed to a certain volume (typically 100%).
 	This will be used by plugins providing external volume control, e.g. for an amplifier (IRBlaster being an example). In this scenario, the volume output of the player is typically fixed but there is still a volume control capability and the plugin controls the amp's volume instead.
-	The purpose of this notification is to let a client know that there is a volume control capability associated to a player.
+	The purpose of this notification is to let a client know that there is a volume control capability associated with  a player.
 </p>
 <p>
 	Sending a "getexternalvolumeinfo" command triggers all plugins supporting the feature to return a notification about their capabilities for each player for which they provide these capabilities.
@@ -8737,7 +8737,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 
 	<dt>alarmDefaultVolume</dt>
 	<dd>The volume level (0-100) at which alarms will sound unless they
-	have their own volume specefically set (see &quot;alarm volume&quot;).</dd>
+	have their own volume specifically set (see &quot;alarm volume&quot;).</dd>
 </dl>
 
 <br><p>See also <a href="#alarmNotify">&quot;alarm&quot;</a> under
@@ -9002,6 +9002,15 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			If set to 1, urls are returned by the query, otherwise they aren't.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			feedMode
+		</td>
+		<td>
+			If set to 1, the entire nested hierarchy of favorites is returned. In this case, the
+			type will be opml and the nested sub-items will be in each level's items array.
 		</td>
 	</tr>
 </table>
@@ -9310,7 +9319,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			search
 		</td>
 		<td>
-			When a list of items is to be returned, it can be filtered by it's
+			When a list of items is to be returned, it can be filtered by its
 			name or title.
 		</td>
 	</tr>
@@ -9320,6 +9329,15 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			If set to 1, urls are returned by the query, otherwise they aren't.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			feedMode
+		</td>
+		<td>
+			If set to 1, the entire nested hierarchy of favorites is returned. In this case, the
+			type will be opml and the nested sub-items will be in each level's items array.
 		</td>
 	</tr>
 </table>
