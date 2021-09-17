@@ -322,8 +322,12 @@ sub searchHandler {
 sub _precacheShowDetails {
 	my ($url, $feed) = @_;
 
+	# keep image for around 90 days, randomizing cache period to
+	# avoid flood of simultaneous requests in future
+	my $cacheTime = sprintf("%.3f days", 80 + rand(20));
+
 	if (my $image = $feed->{image}) {
-		$cache->set('podcast-rss-' . $url, $image, '90days');
+		$cache->set('podcast-rss-' . $url, $image, $cacheTime);
 	}
 	else {
 		# always cache image to avoid sending a flood of requests
@@ -339,7 +343,9 @@ sub _precacheShowDetails {
 		}
 	}
 
-	$cache->set('podcast_moreInfo_' . $url, \%moreInfo);
+	# keep moreInfo for around 90 days, same as image
+	# it will not change often
+	$cache->set('podcast_moreInfo_' . $url, \%moreInfo, $cacheTime);
 }
 
 sub registerProvider {
