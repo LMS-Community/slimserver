@@ -183,7 +183,14 @@ sub handleFeed {
 			playlist => $url,
 		};
 
+		# pre-cache feed data if absent
 		unless ($image && $cache->get('podcast_moreInfo_' . $url)) {
+			# first - cache a placeholder image & moreInfo to guard against retrieving
+			# the feed multiple times while browsing within the podcast menu
+			# they will be replaced with real data after feed is successfully retrieved
+			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
+			$cache->set('podcast_moreInfo_' . $url, {}, '1days');
+
 			Slim::Formats::XML->getFeedAsync(
 				sub {
 					_precacheShowDetails($url, $_[0]);
