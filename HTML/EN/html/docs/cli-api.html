@@ -41,6 +41,73 @@
 	&quot;--stdio&quot; command line option.
 </p>
 
+<h4 id="jsonrpc">jsonrpc.js</h4>
+
+<p>	
+	You can alternatively use a JSON-RPC 1.0 API over HTTP to interact with the CLI. This employs
+	POST requests sent to http://&lt;server&gt;:&lt;port&gt;/jsonrpc.js, where port is the normal 9000
+	http port instead of the 9090 CLI port.
+</p>
+<p>
+	The Content-Type header should be &quot;application/json&quot; and the body of the request should include a
+	JSON-encoded object which includes an array containing the extended query format parameters (see section Command format) 
+	as follows:
+</p>
+
+<blockquote>
+	<p>
+		<strong>
+			<code>
+				{&quot;id&quot;: 1, &quot;method&quot;: &quot;slim.request&quot;, &quot;params&quot;: [
+				&lt;playerid&gt;,
+				[&lt;command&gt;,
+				&lt;start&gt;,
+				&lt;itemsPerResponse&gt;,
+				&lt;p3&gt;, ... &lt;pN&gt;
+				]]}
+			</code>
+		</strong>
+	</p>
+</blockquote>
+
+<p>
+	The response will be a JSON-encoded object which echoes the params/id/method parameters from the request, with the
+	requested data present in the &quot;result&quot; object.
+</p>
+
+<p>
+Example:
+</p>
+<blockquote>
+	<p>
+		<strong>
+			<code>
+				curl -g -X POST -d '{"id":1,"method":"slim.request","params":["00:04:20:ab:cd:ef",["playlist","name","?"]]}' http://192.168.10:9000/jsonrpc.js
+			</code>
+		</strong>
+	</p>
+</blockquote>
+
+<p>
+Response:
+</p>
+<blockquote>
+	<p>
+		<strong>
+			<code>
+{				"params":["00:04:20:ab:cd:ef",["playlist","name","?"]],"result":{"_name":"Daily Mix"},"id":"1","method":"slim.request"}
+			</code>
+		</strong>
+	</p>
+</blockquote>
+<p>
+	For commands that are global to the server and do not require a &lt;playerid&gt;, you can substitute 0. 
+	There is no error handling when malformed or invalid requests are attempted &mdash; there will either be
+	an empty response {} or you'll observe an ECONNRESET error.
+</p>
+<p>
+	Note that percent-style encoding of parameters is not needed when using jsonrpc.js.
+</p>
 <hr>
 
 <h3 id="Changelog">Changelog</h3>
