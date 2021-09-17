@@ -193,7 +193,7 @@ sub handleFeed {
 
 			Slim::Formats::XML->getFeedAsync(
 				sub {
-					_precacheShowDetails($url, $_[0]);
+					precacheFeedData($url, $_[0]);
 				},
 				sub {
 					$log->warn("can't get $url RSS feed information: ", $_[0]);
@@ -290,7 +290,7 @@ sub searchHandler {
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
 				push @$items, $feed;
 
-				_precacheShowDetails($feed->{url}, $feed);
+				precacheFeedData($feed->{url}, $feed);
 			}
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
@@ -319,7 +319,7 @@ sub searchHandler {
 	)->get($url, @$headers);
 }
 
-sub _precacheShowDetails {
+sub precacheFeedData {
 	my ($url, $feed) = @_;
 
 	# keep image for around 90 days, randomizing cache period to
