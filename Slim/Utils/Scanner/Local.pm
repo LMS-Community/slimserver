@@ -1137,11 +1137,6 @@ sub markDone {
 
 	# Done with all tasks
 	if ( !main::SCANNER ) {
-
-=pod
-		# try to autocomplete artwork from mysqueezebox.com
-		Slim::Music::Artwork->downloadArtwork( sub {
-=cut
 		Slim::Music::Artwork->updateStandaloneArtwork( sub {
 
 			# Precache artwork, when done send rescan done event

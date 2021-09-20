@@ -73,6 +73,11 @@ my $openedport = undef;
 my $http_server_socket;
 my $connected = 0;
 
+my $IMAGE_RESIZE_REGEX = qr/\/[\w-]+_(X|\d+)x(X|\d+)
+	(?:_([mpsSfFco]))?    # resizeMode, given by a single character
+	(?:_[\da-fA-F]+)?     # background color, optional
+/x;
+
 our %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
 
@@ -1093,12 +1098,7 @@ sub generateHTTPResponse {
 	elsif ( $path =~ /\.css|\.js(?!on)|robots\.txt/ ) {
 		$isStatic = 1;
 	}
-	elsif (    $path =~ m{html/}
-			&& $path !~ /\/\w+_(X|\d+)x(X|\d+)
-                    (?:_([sSfFpc]))?        # resizeMode, given by a single character
-                    (?:_[\da-fA-F]+)? 		# background color, optional
-		/x   # extend this to also include any image that gives resizing parameters
-	) {
+	elsif ( $path =~ m{html/} && $path !~ $IMAGE_RESIZE_REGEX ) {
 		if ( $contentType ne 'text/html' && $contentType ne 'text/xml' && $contentType ne 'application/x-java-jnlp-file' ) {
 			$isStatic = 1;
 		}
@@ -1193,11 +1193,8 @@ sub generateHTTPResponse {
 
 		} elsif ($path =~ m{(?:image|music|video)/([^/]+)/(cover|thumb)} ||
 			$path =~ m{^(?:plugins/cache/icons|imageproxy)} ||
-			$path =~ /\/\w+_(X|\d+)x(X|\d+)
-	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character
-	                        (?:_[\da-fA-F]+)? 		# background color, optional
-				/x   # extend this to also include any image that gives resizing parameters
-			) {
+			$path =~ $IMAGE_RESIZE_REGEX
+		) {
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
 
