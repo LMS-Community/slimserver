@@ -172,7 +172,7 @@ sub request {
 
 	# setup audio pre-process if required
 	my $blockRef = \($song->initialAudioBlock);
-	(${*$self}{'audio_process'}, ${*$self}{'audio_stash'}) = $processor->{'init'}->($blockRef) if $processor->{'init'};
+	${*$self}{'audio_process'} = $processor->{'init'}->($blockRef) if $processor->{'init'};
 
 	# set initial block to be sent
 	${*$self}{'initialAudioBlockRef'} = $blockRef;
@@ -638,12 +638,12 @@ sub sysread {
 	my $readLength;
 
 	# do not read if we are building-up too much processed audio
-	if (${*$self}{'audio_buildup'} > $chunkSize) {
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize);
+	if (${*$self}{'audio_bytes'} > $chunkSize) {
+		${*$self}{'audio_bytes'} = ${*$self}{'audio_process'}->($_[1], $chunkSize);
 	}
 	else {
 		$readLength = readChunk($self, $_[1], $chunkSize, length($_[1] || ''));
-		${*$self}{'audio_buildup'} = ${*$self}{'audio_process'}->(${*$self}{'audio_stash'}, $_[1], $chunkSize) if ${*$self}{'audio_process'};
+		${*$self}{'audio_bytes'} = ${*$self}{'audio_process'}->($_[1], $chunkSize) if ${*$self}{'audio_process'};
 	}
 
 	# use $readLength from socket for meta interval adjustement

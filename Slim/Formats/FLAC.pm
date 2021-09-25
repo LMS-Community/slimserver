@@ -974,7 +974,11 @@ sub parseStream {
 
 sub initiateFrameAlign {
 	my $context = { aligned => 0 };
-	return (\&frameAlign, $context);
+	
+	# use a closure to hold context
+	return sub {
+		return frameAlign($context, @_);
+	}
 }
 
 sub frameAlign {
