@@ -202,7 +202,8 @@ sub handleFeed {
 		my $url = pop @need;
 		Slim::Formats::XML->getFeedAsync(
 			sub {
-				precacheFeedData($url, $_[0]);
+				# called by feed parser, so not needed here
+				# precacheFeedData($url, $_[0]);
 				$fetch->();
 			},
 			sub {
@@ -331,6 +332,11 @@ sub searchHandler {
 
 sub precacheFeedData {
 	my ($url, $feed) = @_;
+	# sanity check
+	unless (defined($url) && (ref($feed) eq 'HASH')) {
+		$log->error("Unexpected feed data for URL '$url'");
+		return;
+	}
 
 	# keep image for around 90 days, randomizing cache period to
 	# avoid flood of simultaneous requests in future
