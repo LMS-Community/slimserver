@@ -168,6 +168,8 @@ sub handleFeed {
 
 	# then existing feeds
 	my @feeds = @{$prefs->get('feeds')};
+	my @need;
+	my $fetch;
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};
@@ -183,29 +185,37 @@ sub handleFeed {
 			playlist => $url,
 		};
 
-		# pre-cache feed data if absent
+		# if pre-cached feed data is missing, initiate retrieval
 		unless ($image && $cache->get('podcast_moreInfo_' . $url)) {
-			# first - cache a placeholder image & moreInfo to guard against retrieving
+			# cache a placeholder image & moreInfo to guard against retrieving
 			# the feed multiple times while browsing within the podcast menu
 			# they will be replaced with real data after feed is successfully retrieved
 			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
 			$cache->set('podcast_moreInfo_' . $url, {}, '1days');
-
-			Slim::Formats::XML->getFeedAsync(
-				sub {
-					precacheFeedData($url, $_[0]);
-				},
-				sub {
-					$log->warn("can't get $url RSS feed information: ", $_[0]);
-				},
-				{
-					parser => 'Slim::Plugin::Podcast::Parser',
-					url => $_->{value},
-					expires => 86400
-				}
-			);
+			push (@need, $url);
 		}
 	}
+
+	# get missing cache images & moreinfo if any
+	# each feed is retrieved and parsed sequentially, to limit loading on modestly powered servers
+	$fetch = sub {
+		my $url = pop @need;
+		Slim::Formats::XML->getFeedAsync(
+			sub {
+				precacheFeedData($url, $_[0]);
+				$fetch->();
+			},
+			sub {
+				$log->warn("can't get $url RSS feed information: ", $_[0]);
+				$fetch->();
+			},
+			{
+				parser  => 'Slim::Plugin::Podcast::Parser',
+				url     => $url,
+			}
+		) if $url;
+	};
+	$fetch->();
 
 	$cb->({
 		items => $items,
