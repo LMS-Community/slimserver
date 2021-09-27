@@ -354,7 +354,11 @@ sub setADTSProcess {
 	
 	# don't want to send a header when doing AAC demuxs
 	$$bufref = '';
-	return (\&extractADTS, $codec);
+	
+	# use a closure to hold context
+	return sub {
+		return extractADTS($codec, @_);
+	}
 }	
 
 sub extractADTS {
