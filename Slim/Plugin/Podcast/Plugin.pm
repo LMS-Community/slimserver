@@ -168,6 +168,8 @@ sub handleFeed {
 
 	# then existing feeds
 	my @feeds = @{$prefs->get('feeds')};
+	my @need;
+	my $fetch;
 
 	foreach ( @feeds ) {
 		my $url = $_->{value};
@@ -183,22 +185,38 @@ sub handleFeed {
 			playlist => $url,
 		};
 
+		# if pre-cached feed data is missing, initiate retrieval
 		unless ($image && $cache->get('podcast_moreInfo_' . $url)) {
-			Slim::Formats::XML->getFeedAsync(
-				sub {
-					_precacheShowDetails($url, $_[0]);
-				},
-				sub {
-					$log->warn("can't get $url RSS feed information: ", $_[0]);
-				},
-				{
-					parser => 'Slim::Plugin::Podcast::Parser',
-					url => $_->{value},
-					expires => 86400
-				}
-			);
+			# cache a placeholder image & moreInfo to guard against retrieving
+			# the feed multiple times while browsing within the podcast menu
+			# they will be replaced with real data after feed is successfully retrieved
+			$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
+			$cache->set('podcast_moreInfo_' . $url, {}, '1days');
+			push (@need, $url);
 		}
 	}
+
+	# get missing cache images & moreinfo if any
+	# each feed is retrieved and parsed sequentially, to limit loading on modestly powered servers
+	$fetch = sub {
+		my $url = pop @need;
+		Slim::Formats::XML->getFeedAsync(
+			sub {
+				# called by feed parser, so not needed here
+				# precacheFeedData($url, $_[0]);
+				$fetch->();
+			},
+			sub {
+				$log->warn("can't get $url RSS feed information: ", $_[0]);
+				$fetch->();
+			},
+			{
+				parser  => 'Slim::Plugin::Podcast::Parser',
+				url     => $url,
+			}
+		) if $url;
+	};
+	$fetch->();
 
 	$cb->({
 		items => $items,
@@ -283,7 +301,7 @@ sub searchHandler {
 				$feed->{parser} ||= 'Slim::Plugin::Podcast::Parser';
 				push @$items, $feed;
 
-				_precacheShowDetails($feed->{url}, $feed);
+				precacheFeedData($feed->{url}, $feed);
 			}
 
 			push @$items, { name => cstring($client, 'EMPTY') } if !scalar @$items;
@@ -312,11 +330,20 @@ sub searchHandler {
 	)->get($url, @$headers);
 }
 
-sub _precacheShowDetails {
+sub precacheFeedData {
 	my ($url, $feed) = @_;
+	# sanity check
+	unless (defined($url) && (ref($feed) eq 'HASH')) {
+		$log->error("Unexpected feed data for URL '$url'");
+		return;
+	}
+
+	# keep image for around 90 days, randomizing cache period to
+	# avoid flood of simultaneous requests in future
+	my $cacheTime = sprintf("%.3f days", 80 + rand(20));
 
 	if (my $image = $feed->{image}) {
-		$cache->set('podcast-rss-' . $url, $image, '90days');
+		$cache->set('podcast-rss-' . $url, $image, $cacheTime);
 	}
 	else {
 		# always cache image to avoid sending a flood of requests
@@ -332,7 +359,9 @@ sub _precacheShowDetails {
 		}
 	}
 
-	$cache->set('podcast_moreInfo_' . $url, \%moreInfo);
+	# keep moreInfo for around 90 days, same as image
+	# it will not change often
+	$cache->set('podcast_moreInfo_' . $url, \%moreInfo, $cacheTime);
 }
 
 sub registerProvider {
