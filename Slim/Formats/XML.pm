@@ -409,7 +409,17 @@ sub parseRSS {
 	# E.g. If a broken podcast provides an empty 'url' tag, 'XMLin' would interpret it
 	# as an empty hash ref. So we explicitly guard against such occurrences.
 
-	if ( ref $xml->{'channel'}->{'image'} ) {
+	# Prefer an 'itunes:image' if it exists, because some publishers seem to mess up
+	# the standard RSS image.
+	if ( ref $xml->{'itunes:image'} eq 'HASH' ) {
+		my $href = $xml->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
+	}
+	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
+		my $href = $xml->{'channel'}->{'itunes:image'}->{'href'};
+		$feed{'image'} = $href unless ref $href;
+	}
+	elsif ( ref $xml->{'channel'}->{'image'} ) {
 
 		my $image = $xml->{'channel'}->{'image'};
 		my $url = "";
@@ -429,14 +439,6 @@ sub parseRSS {
 		}
 
 		$feed{'image'} = trim($url) unless ref $url; # scalar value only !
-	}
-	elsif ( ref $xml->{'itunes:image'} eq 'HASH' ) {
-		my $href = $xml->{'itunes:image'}->{'href'};
-		$feed{'image'} = $href unless ref $href;
-	}
-	elsif ( ref $xml->{'channel'}->{'itunes:image'} eq 'HASH' ) {
-		my $href = $xml->{'channel'}->{'itunes:image'}->{'href'};
-		$feed{'image'} = $href unless ref $href;
 	}
 
 	if (my $language = $xml->{'channel'}->{'language'}) {
