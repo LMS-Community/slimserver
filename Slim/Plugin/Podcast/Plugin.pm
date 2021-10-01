@@ -68,6 +68,7 @@ sub initPlugin {
 		provider => Slim::Plugin::Podcast::PodcastIndex->getName(),
 		newSince => 7,
 		maxNew => 7,
+		country => '',
 	});
 
 	if (main::WEBUI) {

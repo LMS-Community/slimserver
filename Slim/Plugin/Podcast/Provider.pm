@@ -8,8 +8,8 @@ package Slim::Plugin::Podcast::Provider;
 
 use strict;
 
-sub new { shift };
-
+sub new { shift }
+sub hasCountry { }
 sub getMenuItems { [ { } ] }
 
 
