@@ -301,6 +301,16 @@ PLUGIN_PODCAST_MAXNEW
 	EN	Number of new episodes per feed
 	FR	Nombre de nouveaux épisodes par flux
 
+PLUGIN_PODCAST_COUNTRY_DESC
+	DE	Suche auf ein Land beschränken (optional)
+	EN	Limit search to a country (optional)
+	FR	Limite la recherche à un pays (optionnel)
+
+PLUGIN_PODCAST_COUNTRY
+	DE	Land
+	EN	Country
+	FR	Pays	
+
 PLUGIN_PODCAST_SUBSCRIBE
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'

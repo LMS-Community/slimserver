@@ -82,4 +82,12 @@
 		[% END %]
 	[% END %]
 
+	[% IF hasCountry %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="PLUGIN_PODCAST_COUNTRY" desc="PLUGIN_PODCAST_COUNTRY_DESC" %]
+				<input type="text" class="stdedit" name="pref_country" id="pref_country" value="[% prefs.pref_country %]" size="2">
+			[% END %]
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]
