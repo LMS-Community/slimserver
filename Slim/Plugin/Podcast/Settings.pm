@@ -47,8 +47,9 @@ sub handler {
 
 sub beforeRender {
 	my ($class, $params, $client) = @_;
-	$params->{newsHandler} = defined Slim::Plugin::Podcast::Plugin::getProviderByName->can('newsHandler');
-	$params->{hasCountry} = Slim::Plugin::Podcast::Plugin::getProviderByName->hasCountry;
+	my $provider = Slim::Plugin::Podcast::Plugin::getProviderByName;
+	$params->{newsHandler} = defined $provider->can('newsHandler');
+	$params->{hasCountry} = $provider->hasCountry;
 }
 
 sub saveSettings {
