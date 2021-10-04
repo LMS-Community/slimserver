@@ -341,15 +341,11 @@ sub precacheFeedData {
 
 	# keep image for around 90 days, randomizing cache period to
 	# avoid flood of simultaneous requests in future
+	# it is not mandatory that a podcast include an image, so set
+	# suitable default
+	my $image = $feed->{image} || __PACKAGE__->_pluginDataFor('icon');
 	my $cacheTime = sprintf("%.3f days", 80 + rand(20));
-
-	if (my $image = $feed->{image}) {
-		$cache->set('podcast-rss-' . $url, $image, $cacheTime);
-	}
-	else {
-		# always cache image to avoid sending a flood of requests
-		$cache->set('podcast-rss-' . $url, __PACKAGE__->_pluginDataFor('icon'), '1days');
-	}
+	$cache->set('podcast-rss-' . $url, $image, $cacheTime);
 
 	# pre-cache some additional information to be shown in feed info menu
 	my %moreInfo;
