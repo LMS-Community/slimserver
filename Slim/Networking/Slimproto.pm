@@ -620,7 +620,7 @@ sub _disco_handler {
 		my $controller = $client->controller()->songStreamController();
 		my $handler;
 		if ($controller && $controller->isDirect() 
-			&& ($handler = $controller->protocolHandler())
+			&& ($handler = $controller->streamUrlHandler())
 			&&  $handler->can("handleDirectError") )
 		{
 			# bug 10407 - make sure ready to stream again
