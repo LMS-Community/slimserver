@@ -83,7 +83,7 @@ sub _filehandleFromNameOrString {
 
 		$output = FileHandle->new($filename, "w") || do {
 
-			logError("Could't open $filename for writing.");
+			logError("couldn't open $filename for writing.");
 			return undef;
 		};
 
