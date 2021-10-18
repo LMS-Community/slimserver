@@ -20,6 +20,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
+use Slim::Utils::Unicode;
 use Slim::Web::HTTP;
 
 my $prefs = preferences('server');
@@ -507,6 +508,10 @@ sub logFile {
 
 		my @lines;
 		while ( $count && (my $line = $file->readline()) ) {
+
+			# Decode line. The log file is encoded in utf-8, and File::ReadBackwards retrieves it raw (binmode).
+			$line = Slim::Utils::Unicode::utf8decode($line);
+
 			next if $search && $line !~ /\Q$search\E/i; 
 			
 			$line = "<span style=\"color:green\">$line<\/span>" if $line =~ /main::init.*Starting/;
