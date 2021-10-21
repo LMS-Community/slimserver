@@ -583,12 +583,15 @@ sub getStreamDelay {
 	
 	return 0 unless $client->streamingSong();
 	
-	my $bitrate = $client->streamingSong()->streambitrate() || 128000;
-	my $delay   = 0;
+	my $bitrate    = $client->streamingSong()->streambitrate() || 128000;
+	my $samplerate = $client->streamingSong()->currentTrack->samplerate() || 44100;
+	my $delay      = 0;
+
+	
 	
 	if ( $bitrate > 0 ) {
 		my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
-		my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+		my $outputBuffer = $client->outputBufferFullness() / ($samplerate * 8);
 	
 		if ( $outputDelayOnly ) {
 			$delay = $outputBuffer;
@@ -597,6 +600,8 @@ sub getStreamDelay {
 			$delay = $decodeBuffer + $outputBuffer;
 		}
 	}
+	
+	main::INFOLOG && $log->is_info && $log->info("Delay calculated as $delay with bitrate $bitrate and samplerate $samplerate");
 	
 	return $delay;
 }
