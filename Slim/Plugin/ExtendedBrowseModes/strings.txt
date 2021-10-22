@@ -1,4 +1,5 @@
 PLUGIN_EXTENDED_BROWSEMODES
+	CS	Další režimy procházení
 	DE	Erweiterte Musik Menüs
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation

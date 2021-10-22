@@ -1,7 +1,7 @@
 # String file for InfoBrowser
 
 PLUGIN_INFOBROWSER
-	CS	Informační Prohlížeč
+	CS	Informační prohlížeč
 	DA	Informationsaflæser
 	DE	Info-Browser
 	EN	Info Browser
@@ -31,7 +31,7 @@ PLUGIN_INFOBROWSER_DESC
 	SV	Hämta information från Internet och visa den på fjärrkontrollen, servern eller spelarnas skärmar. Se avsnittet om inställningar för mer information om att lägga till fler informationskällor.
 
 SETUP_PLUGIN_INFOBROWSER_DESC
-	CS	Informační Prohlížeč vám umožňuje číst informace z internetových zdrojů na displeji dálkového ovladače vašeho Squeezeboxu, serveru nebo přehrávače. Více informací lze připojit s použitím webového rozhraní pod Doplňky/Informační prohlížeč.
+	CS	Informační prohlížeč vám umožňuje číst informace z internetových zdrojů na displeji dálkového ovladače vašeho Squeezeboxu, serveru nebo přehrávače. Více informací lze připojit s použitím webového rozhraní pod Doplňky/Informační prohlížeč.
 	DA	Informationsaflæseren giver dig mulighed for at læse informationer fra internetkilder på din Squeezebox-fjernbetjening, server eller afspillerens display. Der kan føjes flere informationskilder til via den webbaserede brugerflade under Ekstra/Informationsaflæser.
 	DE	Mit dem Informations-Browser können Sie Informationen aus Internetquellen auf der Fernbedienung, dem Server oder dem Player anzeigen. Weitere Informationsquellen können Sie in der Web-Benutzeroberfläche unter 'Extras/Informations-Browser' hinzufügen.
 	EN	Information Browser allows you to read information from internet sources on your Squeezebox remote, server or player display. More information sources can be added using the web interface under Extras/Information Browser.
@@ -61,7 +61,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET
 	SV	Återställ
 
 SETUP_PLUGIN_INFOBROWSER_RESET_DESC
-	CS	Resetujte menu vrchní úrovně Info Prohlížeče na výchozí vstupy a všechny dodatečné vstupy, které jste nainstalovali.
+	CS	Resetujte menu vrchní úrovně informačního prohlížeče na výchozí vstupy a všechny dodatečné vstupy, které jste nainstalovali.
 	DA	Nulstil det øverste niveau i Informationslæseren til standardfeeds samt alle de ekstra feeds du har installeret.
 	DE	Setzt das Menü auf oberster Ebene im Informations-Browser auf die Standard-Feeds sowie die von Ihnen installierten zusätzlichen Feeds zurück.
 	EN	Reset the top level Info Browser menu to all default feeds plus all Addon feeds you have installed.
@@ -76,7 +76,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET_DESC
 	SV	Återställ huvudmenyn för Infoläsaren till alla standardflöden samt alla tilläggsflöden du har lagt till.
 
 SETUP_PLUGIN_INFOBROWSER_ADDONS
-	CS	Další informační zdroje lze zobrazit přidáním doplňků Informačního Prohlížeče. Další podrobnosti o doplňcích Informačního Prohlížeče naleznete na <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
+	CS	Další informační zdroje lze zobrazit přidáním doplňků informačního prohlížeče. Další podrobnosti o doplňcích informačního prohlížeče naleznete na <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	DA	Der kan vises informationer fra andre kilder ved at føje udvidelsesmoduler til informationsaflæseren. Der er flere oplysninger om informationsaflæseren på: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	DE	Sie können weitere Informationsquellen anzeigen, indem Sie Add-ons für den Info-Browser installieren (siehe <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>).
 	EN	Other information sources may be displayed by adding Information Browser addons.  More details of Information Browser addons can be found at: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.

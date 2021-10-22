@@ -121,7 +121,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
 	SV	Station är inte tillgänglig: Du har använt alla dina överhoppningar för den här timmen. Du kan byta till en annan station eller försöka igen senare.
 
 PLUGIN_SLACKER_FAVORITE_TRACK
-	CS	Označit jako Oblíbená položka Slacker
+	CS	Označit jako oblíbená položka Slacker
 	DA	Marker som Slacker-favorit
 	DE	Als Slacker-Favorit kennzeichnen
 	EN	Mark as Slacker favorite
@@ -136,7 +136,7 @@ PLUGIN_SLACKER_FAVORITE_TRACK
 	SV	Ange som Slacker-favorit
 
 PLUGIN_SLACKER_UNMARK_FAVORITE
-	CS	Odstranit označení Oblíbená položka Slacker
+	CS	Odstranit označení oblíbená položka Slacker
 	DA	Fjern markering som Slacker-favorit
 	DE	Kennzeichnung als Slacker-Favorit aufheben
 	EN	Unmark as Slacker favorite
