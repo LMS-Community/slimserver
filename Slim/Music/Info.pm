@@ -583,8 +583,8 @@ sub getStreamDelay {
 	
 	return 0 unless $client->streamingSong();
 	
-	my $bitrate = $client->streamingSong()->streambitrate() || 128000;		
-	my $delay   = 0;	
+	my $bitrate = $client->streamingSong()->streambitrate() || 128000;	
+	my $delay   = 0;
 	
 	if ( $bitrate > 0 ) {	
 
@@ -602,7 +602,7 @@ sub getStreamDelay {
 		}
 
 		main::INFOLOG && $log->is_info && $log->info("Delay calculated as $delay with bitrate $bitrate, samplerate $samplerate and depth $depth");
-		
+
 	}
 	
 	return $delay;
