@@ -43,9 +43,11 @@ sub serverResizesArt { 1 }
 
 sub _cached {
 	my $path = shift;
-	
+
+	return if main::NOBROWSECACHE;
+
 	my $isInfo = main::INFOLOG && $log->is_info;
-	
+
 	if ( my $cached = $cache->get($path) ) {
 		if ( $path =~ m|^music/[a-f0-9]{8}/cover| && $cached->{mtime} == 0 ) {
 			return $cached;
@@ -61,7 +63,7 @@ sub _cached {
 					return;
 				}
 			}
-	
+
 			if ( main::INFOLOG && $isInfo ) {
 				my $type = $cached->{content_type};
 				my $size = length( ${ $cached->{data_ref} } );
@@ -71,20 +73,20 @@ sub _cached {
 			return $cached;
 		}
 	}
-	
+
 	return;
 }
 
 sub artworkRequest {
 	my ( $client, $path, $params, $callback, @args ) = @_;
-	
+
 	my $isInfo = main::INFOLOG && $log->is_info;
-	
+
 	main::INFOLOG && $isInfo && $log->info("Artwork request: $path");
-	
+
 	# We need the HTTP::Response object to control caching
 	my $response = $args[1];
-	
+
 	# Handling artwork works like this:
 	# * Check if desired version exists in the cache and is fresh
 	# * If so, use it
@@ -92,74 +94,74 @@ sub artworkRequest {
 	# * Determine the absolute path to the requested object
 	# * Fire off an async resize call
 	# * When resize is done, read newly cached image and callback
-	
+
 	# XXX remote URLs (from protocol handler icon)
-	
+
 	# Check cache for this path
 	if ( $path !~ m{^imageproxy/} && (my $c = _cached($path)) ) {
 		my $ct = 'image/' . $c->{content_type};
 		$ct =~ s/jpg/jpeg/;
 		$response->content_type($ct);
-		
+
 		# Cache music URLs for 1 year, others for 1 day
 		my $exptime = $path =~ /^(?:music|image|video)/ ? ONE_YEAR : ONE_DAY;
-		
+
 		$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 		$response->expires( time() + $exptime );
-		
+
 		$callback->( $client, $params, $c->{data_ref}, @args );
-		
+
 		return;
 	}
-	
+
 	my $fullpath;
 	my $no_cache;
-	
+
 	# Parse out spec from path
 	# WxH[_m][_bg][.ext]
 	# 'X' can be used instead of either W or H to determine automatically
 	my ($spec) = File::Basename::basename($path) =~ /_?((?:[0-9X]+x[0-9X]+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
 
 	main::DEBUGLOG && $isInfo && $log->info("  Resize specification: $spec");
-	
+
 	# /music/all_items (used in BrowseDB, just returns html/images/albums.png)
 	if ( $path =~ m{^music/all_items} ) {
 		# Poor choice of special names...
 		$spec =~ s{^items/[^_]+_}{};
 		$path = 'html/images/albums_' . $spec;
-		
+
 		# Make sure we have an extension
 		if ( $path !~ /\./ ) {
 			$path .= '.png';
 		}
-		
+
 		main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
 	}
-	
+
 	# local image proxy for remote URLs
 	elsif ( $path =~ m{^imageproxy/} ) {
 		Slim::Web::ImageProxy->getImage($client, $path, $params, $callback, $spec, @args);
 		return;
 	}
-	
+
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
 	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image|video)/([0-9a-f]{8})/} ) {
 		my ($type, $id) = ($1, $2);
-		
+
 		# Special case:
 		# /music/current/cover.jpg (mentioned in CLI docs)
 		if ( $id eq 'current' && $client ) {
 			my $trackObj = Slim::Player::Playlist::track($client);
-			
+
 			if ( $trackObj && blessed $trackObj ) {
 				$id = $trackObj->coverid;
-				
+
 				# if we're dealing with a remote stream, we'll have to ask a protocol handler to return the cover URL
 				if ( $trackObj->remote ) {
 					my $url     = $trackObj->url;
 					my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-					
+
 					if ( $handler && $handler->can('getMetadataFor') ) {
 						my $remoteMeta = $handler->getMetadataFor( $client, $url );
 
@@ -168,17 +170,15 @@ sub artworkRequest {
 							if ($cover =~ /^http/) {
 								$id = 'imageproxy/' . $remoteMeta->{cover};
 								$path=~ s/music\/current/$id/;
+
+								main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
+
+								Slim::Web::Graphics::artworkRequest($client, $path, $params, $callback, @args);
+								return;
 							}
 							else {
-								# we need to restore the resize specification on the new URL
-								$cover =~ s/(\.(?:jpe?g|jpe|png|gif|bmp))$/_$spec$1/i; 
-								$path = $cover;
+								$fullpath = $path = $cover;
 							}
-
-							main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
-							
-							Slim::Web::Graphics::artworkRequest($client, $path, $params, $callback, @args);
-							return;
 						}
 					}
 				}
@@ -189,12 +189,15 @@ sub artworkRequest {
 				main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
 			}
 		}
-		
+
 		# Fetch the url and cover values
 		my $sth;
 		my ($url, $cover);
-		
-		if ( $type eq 'image' ) {
+
+		if ($fullpath) {
+			# nothing to do here!
+		}
+		elsif ( $type eq 'image' ) {
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, hash FROM images WHERE hash = ?
 			} );
@@ -230,7 +233,7 @@ sub artworkRequest {
 				my $ct = 'image/' . $format;
 				$ct =~ s/jpg/jpeg/;
 				$response->content_type($ct);
-				
+
 				$callback->( $client, $params, $res, @args );
 				return;
 			}
@@ -242,52 +245,55 @@ sub artworkRequest {
 				SELECT url, cover FROM tracks WHERE id = ?
 			} );
 		}
-		
+
 		if ( $sth ) {
 			$sth->execute($id);
 			($url, $cover) = $sth->fetchrow_array;
 			$sth->finish;
-			
+
 			# border case: 8 characters we're assuming it's a cover ID, but it could be a track ID, too
 			if ( (!$url || !$cover) && $type eq 'music' && $id =~ /\d{8}/ ) {
 				$sth = Slim::Schema->dbh->prepare_cached( qq{
 					SELECT url, cover FROM tracks WHERE id = ?
 				} );
-				
+
 				$sth->execute($id);
 				($url, $cover) = $sth->fetchrow_array;
 				$sth->finish;
 			}
 		}
-		
-		if ( !$url || !$cover ) {
+
+		if ($fullpath) {
+			# happy path - nothing to do here
+		}
+		elsif ( !$url || !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
 			if ($type eq 'image') {
-				$path = "html/images/icon_photo_";			
+				$path = "html/images/icon_photo_";
 			}
 			elsif ($type eq 'video') {
-				$path = "html/images/icon_video_";			
+				$path = "html/images/icon_video_";
 			}
 			elsif ($id =~ /^-/) {
-				$path = 'html/images/radio_';	
+				$path = 'html/images/radio_';
 			}
 			else {
 				$path = 'html/images/cover_';
 			}
-			
+
 			$path .= $spec;
 			$path =~ s/\.\w+//;
 			$path =~ s/_$//;
 			$path .= '.png';
-			
+
 			# our default artwork are PNG files
 			$spec =~ s/\.\w+$/.png/;
-			
+
 			# Don't allow browsers to cache this error image
 			$no_cache = 1;
-			
+
 			main::INFOLOG && $isInfo && $log->info("  No cover found, translated to $path");
-			
+
 			# Check cache for this image
 			if ( my $c = _cached($path) ) {
 				# Don't allow browsers to cache this error image
@@ -300,8 +306,8 @@ sub artworkRequest {
 				$callback->( $client, $params, $c->{data_ref}, @args );
 				return;
 			}
-			
-			my $skin = $params->{skinOverride} || $prefs->get('skin');			
+
+			my $skin = $params->{skinOverride} || $prefs->get('skin');
 			$fullpath = $skinMgr->fixHttpPath($skin, $path);
 		}
 		else {
@@ -312,7 +318,7 @@ sub artworkRequest {
 				: $cover;
 		}
 	}
-	
+
 	# If path begins with "plugins/cache" it is a special path
 	# meaning we need to lookup the actual path in our cache directory
 	elsif ( $path =~ m{^plugins/cache} ) {
@@ -320,76 +326,76 @@ sub artworkRequest {
 		$cachedir =~ s{/$}{};
 		$path =~ s{^plugins/cache}{$cachedir};
 	}
-	
+
 	if ( !$fullpath ) {
 		$fullpath = $path;
 	}
-	
+
 	if ( $spec ) {
 		# Strip spec off fullpath if necessary, keeping the file extension
 		my ($ext) = $spec =~ /(\.\w+)$/;
 		$ext ||= '';
 		$fullpath =~ s/_${spec}/$ext/;
 	}
-	
+
 	# Resolve full path if it's not already a full path (checks Unix and Windows path prefixes)
 	# Bug 16814: We also need to check for UNC prefix
 	if ( $fullpath !~ m{^/|^https?} && $fullpath !~ /^[a-z]:[\\\/]/i && $fullpath !~ /^\\\\/i ) {
 		my $skin = $params->{skinOverride} || $prefs->get('skin');
-		main::INFOLOG && $isInfo && $log->info("  Looking for: $fullpath in skin $skin");	
+		main::INFOLOG && $isInfo && $log->info("  Looking for: $fullpath in skin $skin");
 		$fullpath = $skinMgr->fixHttpPath($skin, $fullpath);
 	}
-	
+
 	# Support pre-sized files already in place, this is used on SB Touch
 	# for app icons because it can't handle resizing so many icons at once
 	# It is also used for requests for /cover (the original file)
 	if ( $fullpath && $fullpath =~ /(\.(?:jpe?g|jpe|png|gif|bmp))$/i ) {
 		my $ext = $1;
-		
+
 		# Add the spec back to the fullpath if there's more than the extension
 		my $fullpathspec = $fullpath;
-		
+
 		if ( $spec && $spec ne $ext ) {
 			$fullpathspec =~ s/($ext)$/_${spec}$1/;
 		}
 
 		if ( -e $fullpathspec ) {
 			main::INFOLOG && $isInfo && $log->info("  Using existing pre-cached file: $fullpathspec");
-		
+
 			my ($ext) = $fullpathspec =~ /\.(\w+)$/;
 			my $ct = 'image/' . $ext;
 			$ct =~ s/(?:jpg|jpe)/jpeg/;
 			$response->content_type($ct);
-		
+
 			my $exptime = ONE_DAY;
 			$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 			$response->expires( time() + $exptime );
-		
+
 			my $body = File::Slurp::read_file($fullpathspec);
-		
+
 			$callback->( $client, $params, \$body, @args );
 			return;
 		}
 	}
-	
+
 	if ( $fullpath && ($fullpath =~ /^https?:/ || -e $fullpath) ) {
 		main::idleStreams();
-		
+
 		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
-		
+
 		my $imageCb = sub {
 			my ($body, $format) = @_;
-			
+
 			$format ||= Slim::Music::Artwork->_imageContentType($body);
-			
+
 			if ( $body && $format && $format !~ /application/ && ref $body eq 'SCALAR' ) {
 				my $ct = $format =~ /image/ ? $format : 'image/' . $format;
 				$ct =~ s/jpg/jpeg/;
 				$response->content_type($ct);
-				
+
 				# Cache music URLs for 1 year, others for 1 day
 				my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;
-				
+
 				if ( $no_cache ) {
 					$response->header( 'Cache-Control' => 'no-cache' );
 					$response->expires( time() - 1 );
@@ -402,20 +408,20 @@ sub artworkRequest {
 			else {
 				# resize command failed, return 500
 				main::INFOLOG && $isInfo && $log->info("  Resize failed, returning 500");
-				
+
 				$log->error("Artwork resize for $path failed");
 				$response->code(500);
 				$response->content_type('text/html');
 				$response->expires( time() - 1 );
 				$response->header( 'Cache-Control' => 'no-cache' );
-				
+
 				$body = \'';
 			}
-		
+
 			main::INFOLOG && $isInfo && $log->info("  Done Resizing: $fullpath using spec $spec");
 			$callback->( $client, $params, $body, @args );
 		};
-		
+
 		# if we don't want to resize the image, just read from the tag and don't cache the full size image
 		if ( !$spec && (my $ct = Slim::Music::Info::contentType($fullpath)) ) {
 			my $formatClass = Slim::Formats->classForFormat($ct);
@@ -427,27 +433,27 @@ sub artworkRequest {
 
 			if ($body && length $body) {
 				main::INFOLOG && $isInfo && $log->info("  No Resizing required - return raw image data");
-				
+
 				$imageCb->(\$body);
 				return;
 			}
 		}
-			
+
 		my $doResize = sub {
 			my $cover = $_[0];
 			Slim::Utils::ImageResizer->resize($cover, $path, $spec, sub {
 				my ($body, $format) = @_;
-				
+
 				# if we didn't get a valid reference returned, try to read from cache
 				if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path)) ) {
 					$body = $c->{data_ref};
 					$format = $c->{content_type};
 				}
-			
+
 				$imageCb->($body, $format);
 			} );
 		};
-	
+
 		if ($fullpath =~ /^https?:/) {
 			require Slim::Web::ImageProxy;
 			$imgProxyCache ||= Slim::Web::ImageProxy::Cache->new();
@@ -478,7 +484,7 @@ sub artworkRequest {
 		# File does not exist, return 404
 		send404($client, $params, $callback, @args);
 	}
-	
+
 	return;
 }
 
@@ -488,21 +494,21 @@ sub send404 {
 	my $response = $args[1];
 
 	main::INFOLOG && $log->is_info && $log->info("  File not found, returning 404");
-	
+
 	$response->code(404);
 	$response->content_type('text/html');
 	$response->expires( time() - 1 );
 	$response->header( 'Cache-Control' => 'no-cache' );
-	
+
 	my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-	
+
 	$callback->( $client, $params, $body, @args );
 }
 
 sub parseSpec {
 	my ($class, $spec) = @_;
 	my ($width, $height, $mode, $bgcolor, $ext) = $spec =~ /^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
-	
+
 	return ($width, $height, $mode, $bgcolor, $ext);
 }
 
