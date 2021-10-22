@@ -1,4 +1,5 @@
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME
+	CS	Vzdálené hudební knihovny
 	DE	Entfernte Musiksammlungen
 	EN	Remote Music Libraries
 	FR	Bibliothèques musicales distantes
@@ -8,6 +9,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	PL	Zdalne biblioteki muzyczne
 
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
+	CS	Umožňuje přehrávání hudby z jiných serverů Logitech Music Server nebo UPnP/DLNA bez nutnosti přepínání přehrávače.
 	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung von anderen Logitech Music Server oder UPnP/DLNA Servern, ohne den Player umschalten zu müssen.
 	EN	Allow music playback from other Logitech Music Server or UPnP/DLNA servers without switching the player.
 	FR	Autorisez la lecture de musique à partir d'autres serveurs Logitech Media Server ou UPnP/DLNA sans changer de platine.
@@ -50,6 +52,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD
 	SV	Lösenord
 
 PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
+	CS	Tento Logitech Media Server je chráněn heslem. Zadejte prosím uživatelské jméno a heslo pro tento server.
 	DE	Dieser Logitech Media Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein.
 	EN	This Logitech Media Server is password protected. Please enter username and password for this server.
 	FR	Ce Logitech Media Server est protégé par mot de passe. Veuillez saisir le nom d'utilisateur et le mot de passe pour ce serveur.
@@ -58,6 +61,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
 	PL	Ta instancja Logitech Media Server jest chroniona hasłem. Proszę podać nazwę użytkownika i hasło dla tego serwera.
 
 PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
+	CS	Zadejte heslo pro jiný Logitech Media Server.
 	DE	Bitte geben Sie das Passwort für den anderen Logitech Media Server ein.
 	EN	Please enter the password for the other Logitech Media Server.
 	FR	Veuillez saisir le mot de passe de l'autre Logitech Media Server.
@@ -96,7 +100,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
 	SV	Inloggningen lyckades
 
 PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
-	CS	Není možné ověřit váš účet, zkuste znovu později.
+	CS	Není možné ověřit váš účet, zkuste to znovu později.
 	DA	Din konto kunne ikke verificeres. Prøv igen senere.
 	DE	Ihr Konto konnte nicht bestätigt werden, versuchen Sie es noch einmal.
 	EN	Unable to verify your account, please try again.
@@ -111,6 +115,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
 	SV	Det går inte att verifiera kontot. Försök igen senare.
 
 PLUGIN_REMOTE_LIBRARY_NOT_FOUND
+	CS	Ve vaší síti nebyl nalezen žádný jiný mediální server. Ujistěte se, že je spuštěný a dosažitelný. Pak to zkuste za minutu nebo dvě znovu.
 	DE	Es wurde kein anderer Medienserver im Netzwerk gefunden. Bitte stellen Sie sicher, dass einer ausgeführt wird und erreichbar ist. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	No other media server was found in your network. Please make sure it's up and running and reachable. Then try again in a minute or two.
 	FR	Aucun autre serveur multimédia n'a été trouvé sur votre réseau. Assurez-vous que le serveur est opérationnel et accessible. Puis réessayez dans une minute ou deux.
@@ -119,6 +124,7 @@ PLUGIN_REMOTE_LIBRARY_NOT_FOUND
 	PL	Nie znaleziono innego serwera mediów w twojej sieci. Upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
 
 PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
+	CS	Pokud požadovaná instance chyběla, zkontrolujte, zda je software spuštěn, a zkuste to za minutu nebo dvě znovu.
 	DE	Falls der gewünschte Server fehlt, überprüfen Sie, ob er ausgeführt wird. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	In case the desired instance was missing, make sure the software is up and running, and try again in a minute or two.
 	FR	Au cas où le serveur souhaité serait manquant, assurez-vous que le logiciel est opérationnel et réessayez dans une minute ou deux.
@@ -145,6 +151,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
 
 # Settings
 PLUGIN_REMOTE_LIBRARY_LMS_DESC
+	CS	Měl by tento server vyhledat další Logitech Media Servery ve vaší síti?
 	DE	Soll der Server nach weiteren Logitech Media Servern in Ihrem Netzwerk suchen?
 	EN	Should this server look for other Logitech Media Servers on your network?
 	FR	Ce serveur doit-il rechercher d'autres Logitech Media Servers sur le réseau ?
@@ -153,6 +160,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_DESC
 	PL	Czy ten serwer powinien wykrywać inne instancje Logitech Media Server w twojej sieci?
 
 PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
+	CS	Povoleno, hledat další Logitech Media Servery.
 	DE	Ja, nach weiteren Logitech Media Servern suchen.
 	EN	Enabled, look for other Logitech Media Servers.
 	FR	Activé, rechercher d'autres Logitech Media Servers.
@@ -161,6 +169,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
 	PL	Włączone, wyszukuj inne instancje Logitech Media Server.
 
 PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
+	CS	Zakázáno, nehledat další Logitech Media Servery.
 	DE	Nein, nicht nach Logitech Media Servern suchen.
 	EN	Disabled, do not look for other Logitech Media Servers.
 	FR	Désactivé, ne pas rechercher d'autres Logitech Media Servers.
@@ -169,11 +178,13 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 	PL	Wyłączone, nie wyszukuj innych instancji Logitech Media Server.
 
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
+	CS	Konverze typů souborů
 	DE	Dateikonvertierung
 	EN	File type conversion
 	FR	Conversion de fichiers
 
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
+	CS	Vzdálený Logitech Media Server můžete nechat převést do formátu, který lze přehrávat bez dalšího zpracování.
 	DE	Sie können den entfernten Logitech Media Server beauftragen, die Dateien in ein verständliches Format umzuwandeln.
 	EN	You can have the remote Logitech Media Server convert to a format which can be played without further processing.
 	FR	Vous pouvez demander au Logitech Media Server distant de convertir les fichiers dans un format compréhensible.
@@ -211,7 +222,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DESC
 	SV	Ska Logitech Media Server söka efter andra UPnP/DLNA-medieservrar på nätverket?
 
 PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
-	CS	Aktivováno, hledat další servery médií UPnP/DLNA.
+	CS	Povoleno, hledat další servery médií UPnP/DLNA.
 	DA	Aktiveret; søg efter andre UPnP/DLNA-medieservere.
 	DE	Ja, nach weiteren UPnP/DLNA-Medienservern suchen.
 	EN	Enabled, look for other UPnP/DLNA media servers.
@@ -227,7 +238,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
 	SV	Aktiverad: Sök efter andra UPnP/DLNA-medieservrar.
 
 PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
-	CS	Vypnuto, nehledat další UPnP/DLNA servery médií.
+	CS	Zakázáno, nehledat další servery médií UPnP/DLNA.
 	DA	Deaktiveret. Søg ikke efter andre UPnP/DLNA-medieservere.
 	DE	Nein, nicht nach UPnP/DLNA-Medienservern suchen.
 	EN	Disabled, do not look for other UPnP/DLNA media servers.
@@ -243,6 +254,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
 	SV	Aktiverad. Sök inte efter andra UPnP/DLNA-medieservrar.
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
+	CS	Vzdálené Logitech Media Servery
 	DE	Entfernte Logitech Media Server
 	EN	Remote Logitech Media Servers
 	FR	Logitech Media Servers distants
@@ -251,6 +263,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
 	PL	Zdalne instancje Logitech Media Server
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
+	CS	Za určitých okolností nelze vzdálené Logitech Media Server automaticky vyhledat (např. při použití připojení VPN). Pro tyto případy můžete zadat adresy serverů ručně. Můžete použít IP adresy nebo plně kvalifikované názvy domén. Port je obvykle 9000, ale může být i jiný. Ověřte si to na svém vzdáleném serveru.
 	DE	Unter Umständen können entfernte Logitech Media Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies gegebenenfalls auf dem entfernten Server.
 	EN	Under certain circumstances remote Logitech Media Servers can't be discovered automatically (eg. when using a VPN connection). You can manually enter server addresses to cover for these cases. You can use IP addresses or fully qualified domain names. The port usually is 9000, but can be different. Please check on your remote server.
 	FR	Parfois, les Logitech Media Servers distants ne peuvent pas être détectés automatiquement (par exemple, lors de l'utilisation d'une connexion VPN). Dans ce cas, vous pouvez saisir manuellement les adresses des serveurs. Vous pouvez utiliser des adresses IP ou des noms de domaine complets. Le port est généralement 9000, mais peut être différent. Vérifiez sur vos serveurs distants.
@@ -259,6 +272,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
 	PL	W pewnych przypadkach zdalne instancje Logitech Media Server mogą nie zostać wykryte automatycznie (np. wtedy, gdy używane jest połącznie VPN). Możesz ręcznie podać adresy IP serwerów, możesz również użyć nazw domen. Port to zwykle 9000, ale może być inny. Proszę sprawdzić konfigurację zdalnego serwera.
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
+	CS	http://vasserver:<port> nebo http://<IP adresa>:9000
 	DE	http://deinserver:<Port> oder http://<IP-Adresse>:9000
 	EN	http://yourserver:<Port> or http://<IP address>:9000
 	FR	http://votreserveur:<port> ou http://<adresse IP>:9000
@@ -267,6 +281,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
 	PL	http://twojserwer:<Port> lub http://<adres IP>:9000
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
+	CS	Ignorování nabídek UPnP/DLNA
 	DE	UPnP/DLNA Menüs ignorieren
 	EN	UPnP/DLNA Ignore Menus
 	FR	Ignorer les dossiers UPnP/DLNA
@@ -275,6 +290,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	PL	Ignorowanie menu UPnP/DLNA
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
+	CS	Definujte seznam názvů nabídek oddělených čárkou, které by měly být při procházení zdrojů UPnP/DLNA ignorovány. Může se jednat např. o nabídky s obrázky, videem nebo jinými médii, které se ve Squeezeboxu nepoužívají. Pokud nechcete žádnou složku vynechat, nechte toto pole prázdné.
 	DE	Geben Sie eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lassen Sie das Feld leer, um keine Ordner zu überspringen.
 	EN	Define a comma separated list of menu names, which should be ignored when browsing UPnP/DLNA sources. This can include eg. menus providing pictures, videos, or other media not applicable on the Squeezebox. Leave that field empty if you don't want to skip any folder.
 	FR	Définissez une liste de noms de dossiers, séparés par des virgules, à ignorer lors de la navigation dans les sources UPnP/DLNA : par exemple, les dossiers fournissant des images, des vidéos ou d'autres médias non lisibles par la platine. Laissez ce champ vide si vous souhaitez n'ignorer aucun dossier.
@@ -283,6 +299,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
 	PL	Podaj listę (rozdzieloną przecinkami) nazw elementów menu, które mają być zignorowane podczas przeglądania źródeł UPnP/DLNA. Ta lista może zawierać np. elementy menu kierujące do zdjęć, filmów lub innych mediów nieobsługiwanych przez Squeezebox. Pozostaw pole puste, jeśli chcesz, aby wszystkie pozycje menu były dostępne.
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
+	CS	Filmy, Videa, Obrázky, Movies, Video, Pictures, Images
 	DE	Filme, Videos, Fotos, Bilder, Movies, Video, Pictures, Images
 	EN	Movies, Video, Pictures, Images
 	FR	Movies, Video, Pictures, Images, Films, Vidéos, Photos

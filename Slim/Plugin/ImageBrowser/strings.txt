@@ -14,7 +14,7 @@ PLUGIN_IMAGEBROWSER_MODULE_NAME
 	SV	Bildväljare
 
 PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC
-	CS	Procházejte a prohlížejte obrázky ve vašem přehrávači Squeezebox nebo ve webovém rozhraní Logitech Media Server.
+	CS	Procházejte a prohlížejte obrázky ve vašem přehrávači Squeezebox nebo ve webovém rozhraní Logitech Media Serveru.
 	DA	Gennemse billeder på din Squeezebox eller på Logitech Media Servers onlinegrænseflade.
 	DE	Suchen Sie nach Bildern auf Ihrer Squeezebox oder der Logitech Media Server-Web-Benutzeroberfläche und zeigen Sie sie an.
 	EN	Browse and view images on your Squeezebox or in your Logitech Media Server web interface.

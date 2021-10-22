@@ -123,7 +123,7 @@ SETUP_ITUNES
 	ZH_CN	iTunes
 
 SETUP_ITUNES_DESC
-	CS	Logitech Media Server může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně  iTunes.
+	CS	Logitech Media Server může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně iTunes.
 	DA	Logitech Media Server kan bruge musikbiblioteket og afspilningslisterne fra iTunes. Alt hvad der ændres i iTunes, bliver afspejlet på afspilleren. Du skal markere feltet nedenfor hvis du vil importere oplysninger om iTunes-musikbiblioteket.
 	DE	Logitech Media Server kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
 	EN	Logitech Media Server can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
@@ -176,7 +176,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	ZH_CN	当您的iTunes音乐库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
-	CS	Umístění hudební knihovny .xml  iTunes
+	CS	Umístění hudební knihovny .xml iTunes
 	DA	Placering af iTunes Music Library.xml
 	DE	Speicherort von iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
@@ -266,7 +266,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí Logitech Media Server. Toto chování můžete změnit níže.
+	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí Logitech Media Serveru. Toto chování můžete změnit níže.
 	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i Logitech Media Server. Du kan ændre det nedenfor.
 	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in Logitech Media Server angezeigt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Logitech Media Server. You can change that behavior below.
@@ -479,7 +479,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	SV	Aktivera det här alternativet om du vill packa om bilder (exempelvis skivomslag) som är lagrade i iTunes. Tänk på att detta kan ta tid eftersom överföringen från iTunes går långsamt.
 
 SETUP_ITUNES_EXTRACT_ARTWORK
-	CS	Extrahovat obaly alb  iTunes (zkušebně)
+	CS	Extrahovat obaly alb iTunes (zkušebně)
 	DA	Hent iTunes-albumcovere (på prøvestadiet)
 	DE	iTunes-Cover verwenden (experimentell)
 	EN	Extract iTunes Artwork (experimental)

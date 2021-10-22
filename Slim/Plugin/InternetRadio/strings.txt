@@ -62,7 +62,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_LOADING
-	CS	Nahrávání TuneIn Radio...
+	CS	Načítání TuneIn Radio...
 	DA	Indlæser TuneIn Radio...
 	DE	TuneIn Radio wird geladen...
 	EN	Loading TuneIn Radio...
@@ -108,7 +108,7 @@ RADIOTIME_LANGUAGE
 	SV	Efter språk
 
 RADIOTIME_LOCAL
-	CS	Místní rozhlas
+	CS	Místní rádio
 	DA	Lokal Radio
 	DE	Lokales Radio
 	EN	Local Radio
@@ -213,7 +213,7 @@ RADIOTIME_SEARCH
 	SV	Sök på TuneIn
 
 RADIOTIME_SPORTS
-	CS	Sportovní
+	CS	Sport
 	DA	Sport
 	DE	Sport
 	EN	Sports
@@ -228,7 +228,7 @@ RADIOTIME_SPORTS
 	SV	Sport
 
 RADIOTIME_TALK
-	CS	Mluvit
+	CS	Diskusní pořady
 	DA	Tale
 	DE	Talksendungen
 	EN	Talk
@@ -243,7 +243,7 @@ RADIOTIME_TALK
 	SV	Pratradio
 
 RADIOTIME_MY_PRESETS
-	CS	Mé Předvolby
+	CS	Mé předvolby
 	DA	Mine forvalg
 	DE	Eigene Voreinstellungen
 	EN	My Presets

@@ -104,7 +104,7 @@ NO_PLAYLIST_DIR
 	ZH_CN	失误：播放表保存文件夹不存在
 
 NO_PLAYLIST_DIR_MORE
-	CS	K opravě přejděte na Nastavení serveru.
+	CS	K opravě přejděte do nastavení serveru.
 	DA	Gå til Serverindstillinger for at korrigere dette.
 	DE	Beheben Sie dieses Problem in den Server-Einstellungen.
 	EN	Visit Server Settings to fix this.

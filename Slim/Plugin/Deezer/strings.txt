@@ -59,7 +59,7 @@ PLUGIN_DEEZER_NO_TRACK
 	SV	Det gick inte att hämta radiospåret.
 
 PLUGIN_DEEZER_ERROR
-	CS	Chyba Deezer
+	CS	Chyba služby Deezer
 	DA	Deezer-fejl
 	DE	Deezer-Fehler
 	EN	Deezer Error
@@ -105,37 +105,45 @@ PLUGIN_DEEZER_SKIPS_EXCEEDED
 	SV	Gränsen för att hoppa till nästa ljudspår har överstigits. Försök igen senare.
 
 PLUGIN_DEEZER_SMART_RADIO
+	CS	Deezer Smart Radio
 	EN	Deezer Smart Radio
 
 PLUGIN_DEEZER_FLOW
+	CS	Deezer Flow
 	DE	Deezer Flow
 
 PLUGIN_DEEZER_ALBUMS_PROGRESS
+	CS	Alba Deezeru
 	DE	Deezer Alben
 	EN	Deezer Albums
 	FR	Deezer Albums
 
 PLUGIN_DEEZER_PROGRESS_READ_ALBUMS
+	CS	Načítání alb (%s)...
 	DE	Lese Alben (%s)...
 	EN	Fetching Albums (%s)...
 	FR	Récupération des albums (%s)...
 
 PLUGIN_DEEZER_ARTISTS_PROGRESS
+	CS	Umělci Deezeru
 	DE	Deezer Interpreten
 	EN	Deezer Artists
 	FR	Deezer Artistes
 
 PLUGIN_DEEZER_PROGRESS_READ_ARTISTS
+	CS	Načítání umělců (%s)...
 	DE	Lese Interpreten (%s)...
 	EN	Fetching Artists (%s)...
 	FR	Récupération des artistes (%s)...
 
 PLUGIN_DEEZER_PLAYLISTS_PROGRESS
+	CS	Seznamy skladeb Deezeru
 	DE	Deezer Wiedergabelisten
 	EN	Deezer Playlists
 	FR	Deezer Listes de lecture
 
 PLUGIN_DEEZER_PROGRESS_READ_PLAYLISTS
+	CS	Načítání seznamů skladeb (%s)...
 	DE	Lese Wiedergabelisten (%s)...
 	EN	Fetching Playlists (%s)...
 	FR	Récupération des listes de lecture (%s)...

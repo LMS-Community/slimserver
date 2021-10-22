@@ -154,7 +154,7 @@ CHOOSE_A_LANGUAGE
 	ZH_CN	请选择语言
 
 LOADING_SQUEEZEBOX_SERVER
-	CS	Nahrávání Logitech Media Server...
+	CS	Načítání Logitech Media Serveru...
 	DA	Indlæser Logitech Media Server...
 	DE	Logitech Media Server wird geladen...
 	EN	Loading Logitech Media Server...
@@ -1913,7 +1913,7 @@ ALARM_ALARM_ONETIME
 	SV	Engångsalarm
 
 ALARM_ALARM_REPEAT_DESC
-	CS	Toto nastavení vám umožní zvolit, zda se tento budík spustí více než jednou. Je-li nastaveno na  Ne, tento budík se automaticky po spuštění vypne.  Tento budík se tedy opět nespustí, pokud jej nezapnete.
+	CS	Toto nastavení vám umožní zvolit, zda se tento budík spustí více než jednou. Je-li nastaveno na Ne, tento budík se automaticky po spuštění vypne. Tento budík se tedy opět nespustí, pokud jej nezapnete.
 	DA	Indstillingen bruges til at angive om dette vækkeur skal ringe mere end én gang. Hvis du vælger Nej, bliver det automatisk slået fra når det har ringet. derefter vil vækkeuret ikke ringe igen før du slår det til igen.
 	DE	Hier können Sie bestimmen, ob dieser Wecker mehrmals ausgelöst werden soll. Wenn Sie 'Nein' wählen, wird der Wecker automatisch deaktiviert, nachdem er ausgelöst wurde. Dieser Wecker wird dann erst wieder ausgelöst, wenn Sie ihn aktivieren.
 	EN	This setting lets you choose whether this alarm will go off more than once.  If set to No, this alarm will automatically turn off after it has gone off.  This alarm will not then go off again until you turn it on.
@@ -2499,7 +2499,7 @@ WELCOME_TO_SLIMP3
 	ZH_CN	欢迎使用SLIMP3
 
 WELCOME_TO_SQUEEZEBOX_SERVER
-	CS	Vítejte do Logitech Media Server
+	CS	Vítejte v Logitech Media Serveru
 	DA	Velkommen til Logitech Media Server
 	DE	Willkommen bei Logitech Media Server
 	EN	Welcome to Logitech Media Server
@@ -3223,7 +3223,7 @@ ABOUT_SHORT
 	ZH_CN	关于
 
 WEB_XML_ERROR
-	CS	Nastala chyba při zavádění vzdáleného kanálu pro  %s: (%s)
+	CS	Nastala chyba při zavádění vzdáleného kanálu pro %s: (%s)
 	DA	Der opstod en fejl under indlæsningen af feed for %s: (%s)
 	DE	Beim Laden des Remote-Feed von %s ist ein Fehler aufgetreten: (%s)
 	EN	There was an error loading the remote feed for %s: (%s)
@@ -3257,7 +3257,7 @@ XML_ERROR
 	ZH_CN	失误
 
 XML_GET_FAILED
-	CS	Rozbor selhal
+	CS	Parsování selhalo
 	DA	Det var ikke muligt at fortolke
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
@@ -3561,7 +3561,7 @@ SETUP_GROUP_TCP_PARAMS
 	ZH_CN	TCP参数
 
 SETUP_GROUP_TCP_PARAMS_DESC
-	CS	Tato nastavení upravují parametry sítě TCP/IP ve Logitech Media Server.
+	CS	Tato nastavení upravují parametry sítě TCP/IP v Logitech Media Serveru.
 	DA	Disse indstillinger påvirker hvordan Logitech Media Server håndterer TCP/IP-parametrene.
 	DE	Diese Einstellung passt die TCP/IP-Netzwerk-Einstellungen von Logitech Media Server an.
 	EN	These settings adjust the parameters of the TCP/IP networking in Logitech Media Server.
@@ -3986,7 +3986,7 @@ SETUP_PLUGINS_SAFEMODE
 	SV	Tänk på att plugin-programmen inte är tillgängliga när du kör Logitech Media Server i felsäkert läge. Du kan fortfarande aktivera/inaktivera dem för att åtgärda problemen du hade under installationen.
 
 INSTALLERROR_INVALID_VERSION
-	CS	Tento zásuvný modul není kompatibilní s touto verzí Logitech Media Server. Prosím aktualizujte.
+	CS	Tento zásuvný modul není kompatibilní s touto verzí Logitech Media Serveru. Prosím aktualizujte.
 	DA	Udvidelsesmodulet er inkompatibelt med denne version af Logitech Media Server. Det skal opdateres.
 	DE	Plugin ist nicht kompatibel mit dieser Version von Logitech Media Server. Aktualisieren Sie die Anwendung.
 	EN	Plugin is incompatible with this version of Logitech Media Server. Please update.
@@ -4067,6 +4067,7 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 	ZH_CN	Logitech Media Server能对音像文件进行即时的格式转换以便在播放机上播放。如要撤销某些格式，请清除其复选框中的标记。此处只显示有关的可执行文件。如要查看或编辑完整的命令行，请查看convert.conf。请点击《更动》以保存您所作的设定。
 
 SETUP_FORMATS_PREFER_NATIVE
+	CS	Preferovat nativní formát (dekódování v přehrávači), kdykoli je to možné
 	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
 	EN	Prefer native format (decoding on the player) whenever possible
 	FR	Utiliser le format natif si possible (éviter le transcodage)
@@ -4132,7 +4133,7 @@ STREAM_FORMAT
 	ZH_CN	频流格式
 
 SETUP_DISABLEDEXTENSIONSAUDIO
-	CS	Nepovolené přípony audio souborů
+	CS	Zakázáné přípony audio souborů
 	DA	Fravalgte filtypenavne for lydfiler
 	DE	Deaktivierte Audio-Dateinamenerweiterungen
 	EN	Disabled Audio File Extensions
@@ -4149,7 +4150,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	ZH_CN	撤销音频文件扩展名
 
 SETUP_DISABLEDEXTENSIONSVIDEO
-	CS	Zakázány přípony videosouborů
+	CS	Zakázáné přípony video souborů
 	DA	Fravalgte videofiltypenavne
 	DE	Deaktivierte Dateierweiterungen für Videos
 	EN	Disabled Video File Extensions
@@ -4164,7 +4165,7 @@ SETUP_DISABLEDEXTENSIONSVIDEO
 	SV	Avaktiverade filtillägg för videofiler
 
 SETUP_DISABLEDEXTENSIONSIMAGES
-	CS	Zakázány přípony souborů obrázku
+	CS	Zakázáné přípony souborů obrázku
 	DA	Fravalgte filtypenavne for billedfiler
 	DE	Deaktivierte Dateierweiterungen für Bilder
 	EN	Disabled Picture File Extensions
@@ -4226,7 +4227,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	SV	Servern letar i mediemapparna efter alla bildfiler i format som stöds. Om du vill förhindra att vissa filtyper behandlas när musikmappen genomsöks kan du ange en kommaavgränsad lista med filnamnstillägg nedan. T.ex. bmp, gif
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
-	CS	Přípony souborů v seznamu skladeb nepovoleny
+	CS	Zakázáné přípony souborů v seznamu skladeb
 	DA	Fravalgte filtypenavne for afspilningslister
 	DE	Deaktivierte Wiedergabelisten-Dateinamenerweiterungen
 	EN	Disabled Playlist File Extensions
@@ -4243,7 +4244,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	ZH_CN	撤销播放表文件扩展名
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
-	CS	Logitech Media Server vyhledá ve složce Seznamy skladeb všechny podporované typy souborů (soubory seznamů skladeb  a kompilační listy (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky Seznamy skladeb, zadejte níže seznam přípon souborů oddělený čárkami. Například: m3u, pls, cue
+	CS	Logitech Media Server vyhledá ve složce Seznamy skladeb všechny podporované typy souborů (soubory seznamů skladeb a kompilační listy (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky Seznamy skladeb, zadejte níže seznam přípon souborů oddělený čárkami. Například: m3u, pls, cue
 	DA	Logitech Media Server søger efter understøttede filtyper (afspilningslister og cue-ark) i mappen Afspilningslister. Hvis du vil forhindre at bestemte filtyper bliver behandlet når mappen bliver gennemsøgt, skal du angive filtypenavnene i en kommaadskilt liste nedenfor. For eksempel: m3u, pls, cue
 	DE	Logitech Media Server durchsucht den Wiedergabelistenordner nach allen unterstützten Dateitypen (Wiedergabelistendateien und Cue Sheets). Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: cue, m3u, pls
 	EN	Logitech Media Server will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
@@ -4640,7 +4641,7 @@ SETUP_PLAYINGDISPLAYMODE_ABBR
 	SV	Nu spelas-information
 
 SETUP_PLAYINGDISPLAYMODE_DESC
-	CS	Přehrávač může zobrazit informaci o průběhu přehrávání skladby. Můžete si zvolit, jaké informace se budou standardně zobrazovat a můžete povolit nebo zakázat režimy, které chcete mít k dispozici. Opakovaným tisknutím tlačítka Právě hraje na dálkovém ovládání můžete  těmito režimy procházet.
+	CS	Přehrávač může zobrazit informaci o průběhu přehrávání skladby. Můžete si zvolit, jaké informace se budou standardně zobrazovat a můžete povolit nebo zakázat režimy, které chcete mít k dispozici. Opakovaným tisknutím tlačítka Právě hraje na dálkovém ovládání můžete těmito režimy procházet.
 	DA	På displayet kan du se hvor meget af et nummer der er spillet. Du kan vælge hvad der skal vises som standard, og desuden hvilke andre oplysninger der skal kunne vælges. Du skifter mellem de forskellige funktioner ved at trykke gentagne gange på Nu spiller, på fjernbetjeningen.
 	DE	Der Player kann den Zeitverlauf des aktuellen Titels anzeigen. Wählen Sie das Anzeigeformat.
 	EN	The player can display information on the progress of a song as it's playing. You can select the information that you wish to be displayed by default, and can enable or disable the modes that you wish to be made available. You can cycle through these modes by pressing Now Playing on the remote repeatedly.
@@ -4975,7 +4976,7 @@ SETUP_BUFFERSECS
 	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
-	CS	Při přehrávání datového proudu z Internetu si přehrávač  před začátkem přehrávání uloží do vyrovnávací paměti malý objem dat. Zadejte velikost audio dat ve vyrovnávací paměti, v sekundách od 3 do 30.  Výchozí hodnota je 3 sekundy. Pokud pozorujete zadrhávání zvuku, může pomoci zvýšení této hodnoty.
+	CS	Při přehrávání datového proudu z Internetu si přehrávač před začátkem přehrávání uloží do vyrovnávací paměti malý objem dat. Zadejte velikost audio dat ve vyrovnávací paměti, v sekundách od 3 do 30. Výchozí hodnota je 3 sekundy. Pokud pozorujete zadrhávání zvuku, může pomoci zvýšení této hodnoty.
 	DA	Når der afspilles en internetstream, gemmes en lille mængde data i bufferlageret før afspilningen begynder. Du kan angive hvor stor en mængde data der skal gemmes. Mængden angives i sekunder mellem 3 og 30, og 3 sekunder er standard. Hvis lyden hakker, hjælper det sommetider at øge værdien.
 	DE	Bei der Wiedergabe von Internetradiosendern puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie an, wie viel Audiodaten gepuffert werden soll (in Sekunden von 3 bis 30). Der Standardwert ist 3 Sekunden. Sollten Unterbrechungen bei der Wiedergabe auftreten, kann ein Erhöhung dieses Werts helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 3 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
@@ -5069,7 +5070,7 @@ SETUP_STARTDELAY
 	SV	Fördröjning för spelarstart (ms)
 
 SETUP_STARTDELAY_DESC
-	CS	Přehrávači může trvat nezanedbatelnou dobu, než spustí přehrávání (než začnete poslouchat hudbu) po  zpracování příkazu ke startu od Logitech Media Server. To může nastat v případě, když se používají digitální výstupy (v závislosti na připojením zařízení) nebo u softwarových přehrávačů na určitých platformách. V těchto případech lze nastavit zde toto zpoždění tak, aby Logitech Media Server věděl, o kolik dříve musí spustit tento přehrávač, aby hudba ze všech synchronizovaných přehrávačů začala ve stejnou dobu. Poznámka: toto se přičítá k případnému "Zpoždění audia přehrávače" (níže).
+	CS	Přehrávači může trvat nezanedbatelnou dobu, než spustí přehrávání (než začnete poslouchat hudbu) po zpracování příkazu ke startu od Logitech Media Serveru. To může nastat v případě, když se používají digitální výstupy (v závislosti na připojením zařízení) nebo u softwarových přehrávačů na určitých platformách. V těchto případech lze nastavit zde toto zpoždění tak, aby Logitech Media Server věděl, o kolik dříve musí spustit tento přehrávač, aby hudba ze všech synchronizovaných přehrávačů začala ve stejnou dobu. Poznámka: toto se přičítá k případnému "Zpoždění audia přehrávače" (níže).
 	DA	Det kan vare lidt fra du klikker på startknappen i Logitech Media Server til afspilningen begynder (før du kan høre noget). Det kan forekomme når de digitale udgange bruges (afhængigt af hvad der er tilsluttet) eller i forbindelse med softwareafspillere på nogle platforme. I så fald kan du indstille en forsinkelse her sådan at Logitech Media Server ved hvor meget tidligere afspilleren skal startes sådan at lyden på alle de synkroniserede afspillere startes på samme tid. Bemærk: Denne indstilling er i tillæg til en permanent indstilling af Lydforsinkelse for afspiller (nedenfor).
 	DE	Es kann eine gewisse Zeit dauern, bis ein Player die Wiedergabe beginnt (bis Sie die Musik hören), nachdem der von Logitech Media Server empfangene Startbefehl verarbeitet wurde. Dies kann bei der Nutzung digitaler Ausgänge (abhängig vom angeschlossenen Gerät) oder bei bestimmten Software-Playern unter bestimmten Plattformen vorkommen. Sie können dann diese Verzögerung hier festlegen, damit Logitech Media Server weiß, wie bald dieser Player gestartet werden soll, damit die Wiedergabe aus allen synchronisierten Playern gleichzeitig gestartet wird. Hinweis: Diese Verzögerung gilt zusätzlich zu 'Audioverzögerung des Players' (siehe unten).
 	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from Logitech Media Server. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that Logitech Media Server knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
@@ -5270,7 +5271,7 @@ SETUP_MAXBITRATE_DESC
 	ZH_CN	Logitech Media Server可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与Logitech Media Server的联系经过互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择Logitech Media Server流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，Logitech Media Server将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
-	CS	Logitech Media Server může automaticky konvertovat vaše hudební soubory do MP3 průběžně a tak přehrávat i jiné formáty než MP3.  Může rovněž provést rekompresi vašich souborů MP3 pro snížení přenosové rychlosti (bitrate) dat přenášených v proudu do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač k serveru přes Internet, nebo pokud máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Logitech Media Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na nižší přenosovou rychlost (bitrate), než je maximální přenosová rychlost, nebudou konvertovány.
+	CS	Logitech Media Server může automaticky konvertovat vaše hudební soubory do MP3 průběžně a tak přehrávat i jiné formáty než MP3. Může rovněž provést rekompresi vašich souborů MP3 pro snížení přenosové rychlosti (bitrate) dat přenášených v proudu do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač k serveru přes Internet, nebo pokud máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Logitech Media Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na nižší přenosovou rychlost (bitrate), než je maximální přenosová rychlost, nebudou konvertovány.
 	DA	Logitech Media Server kan løbende konvertere lydfilerne til mp3 sådan at du kan spille lydfiler i andre formater. Logitech Media Server kan også genkomprimere mp3-filerne til en lavere bithastighed sådan at der ikke sendes så mange data til afspilleren. Det kan være praktisk hvis du etablerer forbindelse til afspilleren over internettet eller midlertidigt har problemer med et trådløst netværk. Numre der er kodet som mp3 med en lavere bithastighed end den maksimale, bliver ikke konverteret.
 	DE	Logitech Media Server kann zur Wiedergabe anderer Dateiformate Musikdateien automatisch in MP3 umwandeln sowie MP3-Dateien während der Wiedergabe in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie den Player übers Internet mit dem Server verbinden oder Probleme mit dem kabellosen Netzwerk haben. Sie können die maximale Bitrate definieren, mit der Logitech Media Server an den Player übertragen soll. MP3-Titel, die mit einer kleineren Bitrate als der maximalen Bitrate kodiert wurden, werden nicht umgewandelt.
 	EN	Logitech Media Server can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  It can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to the server across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that Logitech Media Server will stream to your player.  MP3 songs encoded at a bitrate lower than the maximum bitrate won't be converted.
@@ -5306,7 +5307,7 @@ CONVERTED_TO
 	ZH_CN	已转换成
 
 SETUP_LAME_NOT_FOUND
-	CS	(<b>Poznámka</b>: Zřejmě nemáte nainstalovaný LAME. Logitech Media Server potřebuje nainstalovaný kodér LAME MP3 ve vašem systému, aby mohl převádět hudbu do MP3.  Více o LAME najdete <a href="http://lame.sourceforge.net/" target="_blank">zde</a>.)
+	CS	(<b>Poznámka</b>: Zřejmě nemáte nainstalovaný LAME. Logitech Media Server potřebuje nainstalovaný kodér LAME MP3 ve vašem systému, aby mohl převádět hudbu do MP3. Více o LAME najdete <a href="http://lame.sourceforge.net/" target="_blank">zde</a>.)
 	DA	<b>Bemærk</b>: LAME-codecet er tilsyneladende ikke installeret. Logitech Media Server skal bruge LAME til at konvertere lydfiler til mp3-format. Du kan læse mere om LAME <a href="http://lame.sourceforge.net/" target="_blank">her</a>).
 	DE	<b>Hinweis</b>: LAME scheint nicht installiert zu sein. Logitech Media Server benötigt den MP3-Kodierer LAME zum Durchführen der MP3-Konvertierung. Weitere Informationen über LAME finden Sie <a href="http://lame.sourceforge.net/" target="_blank">hier</a>.
 	EN	(<b>Note</b>: You do not appear to have LAME installed. Logitech Media Server will need the LAME MP3 encoder installed on your system to do conversion to MP3.  You can find out more about LAME <a href="http://lame.sourceforge.net/" target="_blank">here</a>.)
@@ -5393,7 +5394,7 @@ SETUP_LAMEQUALITY
 	ZH_CN	LAME质量水平
 
 SETUP_LAMEQUALITY_DESC
-	CS	Kodér LAME MP3 lze použít pro konverzi vaší hudby do formátu MP3 vhodného pro datový proud. Můžete upravit nastavení kvality pro LAME v rozsahu od 0 do 9.  9 je výchozí nastavení, které zní velmi dobře při vysokých přenosových rychlostech a spotřebovává nejméně výpočetního výkonu. 0 je nejvyšší kvalita, ale může zpomalovat váš počítač. Některé počítače, na nichž běží Logitech Media Server, nemusí být schopny při vyšším nastavení kvality provádět konverzi dostatečně rychle.
+	CS	Kodér LAME MP3 lze použít pro konverzi vaší hudby do formátu MP3 vhodného pro datový proud. Můžete upravit nastavení kvality pro LAME v rozsahu od 0 do 9. 9 je výchozí nastavení, které zní velmi dobře při vysokých přenosových rychlostech a spotřebovává nejméně výpočetního výkonu. 0 je nejvyšší kvalita, ale může zpomalovat váš počítač. Některé počítače, na nichž běží Logitech Media Server, nemusí být schopny při vyšším nastavení kvality provádět konverzi dostatečně rychle.
 	DA	LAME mp3-indkoderen kan bruges til at konvertere dine musikfiler til mp3-format sådan at de kan streames. Du kan indstille lydkvaliteten i LAME mellem 1 og 9. 9 er standardindstillingen og giver en god lydkvalitet med en høj bithastighed, og den kræver de færreste systemresurser. 0 er den højeste kvalitet, men det kan få computeren til at køre langsomt. Nogle computere med Logitech Media Server kan muligvis ikke konvertere hurtigt nok med en højere kvalitetsindstilling.
 	DE	Sie können den MP3-Kodierer LAME zum Konvertieren von Musikdateien in MP3 verwenden, damit diese übertragen werden können. Die LAME-Qualität ist ein Wert zwischen 0 und 9, wobei 9 die Standardeinstellung ist, die sehr gut bei hohen Bitraten klingt und die geringste Rechenleistung benötigt. 0 ist die höchste Qualitätsstufe, die jedoch zu Leistungseinbußen führen kann. Manche Rechner mit Logitech Media Server können die Konvertierung auf höheren Qualitätsstufen eventuell nicht schnell genug durchführen.
 	EN	The LAME MP3 encoder may be used to convert your music to MP3 format for streaming.  You can adjust the quality setting for LAME in the range 0 to 9.  9 is the default setting, which sounds very good at high bit rates and uses the least amount of computing power. 0 is the highest quality, but may slow your computer down.  Some computers running Logitech Media Server may not be able to convert fast enough with higher quality settings.
@@ -5428,7 +5429,7 @@ SETUP_MP3SILENCEPRELUDE
 	ZH_CN	音频开始的时间
 
 SETUP_MP3SILENCEPRELUDE_DESC
-	CS	Některé přijímače a D/A převodníky potřebují o něco více času, než začnou dekódovat audio z přehrávače při přehrávání hudby MP3. Můžete zadat, jakou  dobu po stisknutí tlačítka přehrávání, v sekundách, je třeba čekat, než se začne odesílat audio MP3.  Výchozí hodnota je 0, hodnota 0,25 s funguje u většiny přijímačů.
+	CS	Některé přijímače a D/A převodníky potřebují o něco více času, než začnou dekódovat audio z přehrávače při přehrávání hudby MP3. Můžete zadat, jakou dobu po stisknutí tlačítka přehrávání, v sekundách, je třeba čekat, než se začne odesílat audio MP3. Výchozí hodnota je 0, hodnota 0,25 funguje u většiny přijímačů.
 	DA	Nogle stereoreceivere og digitale til analoge-omformere tager lidt ekstra tid før de begynder af afkode lyden fra afspilleren når der afspilles i mp3-format. Du kan angive hvor lang tid der skal gå fra du klikker/trykker på Afspil til mp3-lyden sendes. Standardværdien er 0, men en værdi på 0,25 sekunder er tilstrækkelig for mange receivere.
 	DE	Bestimmte Verstärker und D/A-Wandler brauchen bei der Wiedergabe von MP3 eine gewisse Zeit, bis die Audiodekodierung beginnt. Definieren Sie hier die Wartezeit in Sekunden, die nach dem Starten der Wiedergabe abgewartet werden soll. Der Standardwert ist 0, eine Zeit von 0,25 Sekunden ist für die meisten Empfänger ausreichend.
 	EN	Some audio receivers and D/A converters need a little extra time to start decoding audio from the player when playing back MP3 audio.  You can specify how much time, in seconds, to wait after pressing play to start sending MP3 audio.  The default value is 0, a value of 0.25 seconds works for many receivers.
@@ -5629,7 +5630,7 @@ SETUP_MP3STREAMINGMETHOD
 	SV	Strömningsmetod
 
 SETUP_MP3STREAMINGMETHOD_DESC
-	CS	Při přehrávání Internet proudu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. při Direct Streaming přehrávač provede přímé spojení se serverem přehrávání audio proudů a tím mírně sníží zatížení Squeeze Center a umožní přehrávání proudu i po ztrátě spojení Squeeze Center. Proxy Streaming způsobí, že Logitech Media Server zajistí spojení a přehraje audio prostřdnictvím přehrávače.  Direct Streaming je výchozí nastavení, ale jestliže budete mít potíže s s proudy, zkuste změnit nastavení na Proxy Streaming. Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy Proxy Streaming k omezení použití širokopásmového přenosu.
+	CS	Při přehrávání datového proudu z Internetu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. Při Direct Streaming přehrávač provede přímé spojení se serverem přehrávání audio proudů a tím mírně sníží zatížení Squeeze Center a umožní přehrávání proudu i po ztrátě spojení Squeeze Center. Proxy Streaming způsobí, že Logitech Media Server zajistí spojení a přehraje audio prostřdnictvím přehrávače. Direct Streaming je výchozí nastavení, ale jestliže budete mít potíže s s proudy, zkuste změnit nastavení na Proxy Streaming. Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy Proxy Streaming k omezení použití širokopásmového přenosu.
 	DA	Når der afspilles en stream fra internettet, kan det gøres på to måder. Ved direkte streaming etableres der en direkte forbindelse mellem afspilleren og serveren der streames fra. Det reducerer belastningen af Logitech Media Server en smule og afspilningen fortsætter selvom forbindelsen til Logitech Media Server bliver afbrudt. Ved streaming via en proxy vil Logitech Media Server håndtere forbindelsen og sende lyden videre til afspilleren. Direkte streaming er standardmetoden, men hvis du har problemer med streams, kan du ændre indstillingen til Streaming via proxy. Bemærk at hvis to eller flere afspillere er synkroniseret til en stream, bliver proxymetoden altid anvendt for at begrænse brugen af båndbredde.
 	DE	Zur Wiedergabe eines Internet-Streams kann das Streaming auf zwei verschiedene Arten durchgeführt werden. Beim direkten Streaming erstellt der Player eine direkte Verbindung mit dem Audio-Streaming-Server, wodurch die Belastung von Logitech Media Server verringert wird und der Stream auch fortgesetzt werden kann, wenn die Verbindung zu Logitech Media Server unterbrochen wird. Beim Streaming über einen Proxy-Server verwaltet Logitech Media Server die Verbindung und leitet die Musik an den Player weiter. Standardmäßig wird das direkte Streaming verwendet, aber wenn Probleme mit Streams auftreten, können Sie die andere Methode versuchen. Hinweis: Wenn zwei oder mehre Player synchron auf einem Stream zugreifen, wird immer das Streaming über einen Proxy-Server verwendet, um die Bandbreitennutzung zu reduzieren.
 	EN	When playing an Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on Logitech Media Server slightly and allowing the stream to continue playing if the Logitech Media Server connection is lost.  Proxied Streaming causes Logitech Media Server to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an stream, proxied streaming is always used to reduce bandwidth usage.
@@ -6372,7 +6373,7 @@ SETUP_AUDIODIR
 	ZH_CN	音乐文件夹
 
 SETUP_AUDIODIR_DESC
-	CS	Můžete zadat složku obsahující hudební soubory, kterou bude Logitech Media Server prohledávat, a přidat do své hudební knihovny. Níže zadejte cestu ke složce. Můžete toto pole ponechat prázdné, pokud importujete informace o své knihovně hudby z  iTunes nebo MusicIP.
+	CS	Můžete zadat složku obsahující hudební soubory, kterou bude Logitech Media Server prohledávat, a přidat do své hudební knihovny. Níže zadejte cestu ke složce. Můžete toto pole ponechat prázdné, pokud importujete informace o své knihovně hudby z iTunes nebo MusicIP.
 	DA	Du kan angive en mappe med musikfiler som Logitech Media Server vil gennemsøge og føje til musikbiblioteket. Angiv stien til mappen nedenfor. Feltet kan være tomt hvis du importerer oplysninger om musikbiblioteket fra iTunes eller MusicIP.
 	DE	Geben Sie den Ordner ein, der die Musikdateien enthält, die von Logitech Media Server durchsucht und der Musiksammlung hinzugefügt werden sollen. Sie können dieses Feld leer lassen, wenn Sie die Musiksammlung über iTunes oder MusicIP importieren.
 	EN	You can specify a folder containing music files that Logitech Media Server will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MusicIP.
@@ -6843,7 +6844,7 @@ SETUP_SKIN_DESC
 	ZH_CN	您可以从如下的选项选择一个外壳作为网界面。
 
 SETUP_SKIN_OK
-	CS	Aby vaše změny začaly platit, zavřete prosím okno Logitech Media Server a znovu jej zaveďte.
+	CS	Aby vaše změny začaly platit, zavřete prosím okno Logitech Media Server a znovu jej načtěte.
 	DA	Du skal lukke Logitech Media Server-vinduet og åbne det igen for at anvende ændringerne.
 	DE	Schließen Sie Logitech Media Server und öffnen Sie es erneut, um die Änderungen zu übernehmen.
 	EN	To apply your changes please close the Logitech Media Server window and reload it.
@@ -7202,7 +7203,7 @@ SETUP_RATINGIMPLEMENTATION_DESC
 	SV	Lagring av betyg som ska användas när betygsättning visas eller lagras
 
 LOCAL_RATING_STORAGE
-	CS	Databáze Logitech Media Server
+	CS	Databáze Logitech Media Serveru
 	DA	Logitech Media Server-database
 	DE	Logitech Media Server-Datenbank
 	EN	Logitech Media Server Database
@@ -7236,7 +7237,7 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	Logitech Media Server se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Server se zobrazí zpráva.
+	CS	Logitech Media Server se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
 	DA	Logitech Media Server kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Logitech Media Servers webbaserede brugerflade.
 	DE	Logitech Media Server kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Logitech Media Server gemeldet.
 	EN	Logitech Media Server can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Logitech Media Server's web interface.
@@ -7293,6 +7294,7 @@ SETUP_CHECKVERSION_0
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
 SETUP_CHECKVERSION_DAILY
+	CS	Denně
 	DE	Täglich
 	EN	Daily
 	FR	Tous les jours
@@ -7300,6 +7302,7 @@ SETUP_CHECKVERSION_DAILY
 	SV	Daglig
 
 SETUP_CHECKVERSION_WEEKLY
+	CS	Týdně
 	DE	Wöchentlich
 	EN	Weekly
 	FR	Hebdomadaire
@@ -7307,6 +7310,7 @@ SETUP_CHECKVERSION_WEEKLY
 	SV	Veckolig
 
 SETUP_CHECKVERSION_MONTHLY
+	CS	Měsíčně
 	DE	Monatlich
 	EN	Monthly
 	FR	Mensuel
@@ -7329,7 +7333,7 @@ SETUP_AUTO_DOWNLOAD
 	SV	Automatisk nedladdning
 
 SETUP_AUTO_DOWNLOAD_DESC
-	CS	Automaticky stahovat aktualizace Logitech Media Server, pokud jsou k dispozici. Po dokončení stahování budete vyzváni k instalaci aktualizace.
+	CS	Automaticky stahovat aktualizace Logitech Media Serveru, pokud jsou k dispozici. Po dokončení stahování budete vyzváni k instalaci aktualizace.
 	DA	Hent automatisk opdateringer til Logitech Media Server når de udkommer. Når opdateringerne er overført til computeren, bliver du bedt om at installere dem
 	DE	Verfügbare Updates für Logitech Media Server werden automatisch heruntergeladen. Nach dem Herunterladen werden Sie zur Installation des Updates aufgefordert.
 	EN	Automatically download Logitech Media Server updates when they're available. You'll then be prompted to install the update as soon as the download has finished.
@@ -7374,6 +7378,7 @@ SETUP_AUTO_DOWNLOAD_1
 	SV	Ladda ner uppdateringar automatiskt när de är tillgängliga.
 
 SETUP_CHECK_NOW
+	CS	Zkontrolovat aktualizace nyní
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
 	FR	Vérifier les mises à jour maintenant
@@ -8371,7 +8376,7 @@ SETUP_DISABLESTATISTICS
 	ZH_CN	库存统计
 
 SETUP_DISABLESTATISTICS_DESC
-	CS	Když se objeví první stránka Logitech Media Server, aplikace prohledá vaši knihovnu médií a zjišťuje statistiku vaší knihovny, kterou poté zobrazí na první stránce. Můžete tuto funkci zakázat, což zkrátí dobu, po kterou se poprvé otevírá webové rozhraní, zvláště u velké knihovny médií.
+	CS	Když se objeví první stránka Logitech Media Serveru, aplikace prohledá vaši knihovnu médií a zjišťuje statistiku vaší knihovny, kterou poté zobrazí na první stránce. Můžete tuto funkci zakázat, což zkrátí dobu, po kterou se poprvé otevírá webové rozhraní, zvláště u velké knihovny médií.
 	DA	Når Logitech Media Servers hovedmenu vises, bliver dit mediebibliotek gennemsøgt, og der laves en statistik som vises på forsiden. Du kan deaktivere denne funktion, og det vil forkorte den tid det tager at åbne den webbaserede brugerflade, navnlig hvis biblioteket er stort.
 	DE	Beim Anzeigen der Logitech Media Server-Startseite wird die Medienbibliothek durchsucht, um die Statistik anzeigen zu können. Sie können diese Funktion deaktivieren, wodurch die Zeit zum Öffnen der Web-Benutzeroberfläche verkürzt wird, besonders wenn die Bibliothek sehr groß ist.
 	EN	When the Logitech Media Server front page comes up, it scans your media library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large library.
@@ -8734,7 +8739,7 @@ SETUP_WEBPROXY
 	ZH_CN	网代理
 
 SETUP_WEBPROXY_DESC
-	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení Logitech Media Server k serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
+	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení k Logitech Media Serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
 	DA	Du kan specificere IP-adresse og portnummer til en HTTP/Web-proxy som Logitech Media Server skal anvende når der tilsluttes servere udenfor dit lokale netværk. Anvend formatet xx.xx.xx.xx:yyyy, hvor xx.xx.xx.xx er proxyens IP-adresse og yyyy er proxyserverens portnummer. Lad feltet være tomt hvis du ikke ønsker at anvende en HTTP-proxy.
 	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Logitech Media Server verwenden soll, um auf Server außerhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxys und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when Logitech Media Server connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
@@ -8800,7 +8805,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	ZH_CN	CSRF保护程度
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
-	CS	Jako ochranu proti útokům typu &quot;Podvržení požadavku mezi různými stránkami (Cross Site Request Forgery - CSRF)&quot; Logitech Media Server používá speciální kontrolu požadavků HTTP na funkce, které mohou provádět změny ve vašem systému nebo manipulovat se seznamy skladeb nebo přehrávači. Můžete si zvolit úroveň kontroly, kterou bude Logitech Media Server používat.  Výchozí úroveň je Žádná. Další podrobnosti v oddíle <a href="/html/docs/http.html#csrf">Nápověda</a>.
+	CS	Jako ochranu proti útokům typu &quot;Podvržení požadavku mezi různými stránkami (Cross Site Request Forgery - CSRF)&quot; Logitech Media Server používá speciální kontrolu požadavků HTTP na funkce, které mohou provádět změny ve vašem systému nebo manipulovat se seznamy skladeb nebo přehrávači. Můžete si zvolit úroveň kontroly, kterou bude Logitech Media Server používat. Výchozí úroveň je Žádná. Další podrobnosti v oddíle <a href="/html/docs/http.html#csrf">Nápověda</a>.
 	DA	Som en beskyttelse mod såkaldte CSRF-sikkerhedstrusler (Cross Site Request Forgery, dvs. falske krydshenvisninger), undersøger Logitech Media Server alle HTTP-anmodninger om funktioner som kan ændre dit system eller dine afspilningslister, ekstra grundigt. Du kan selv indstille hvilket sikkerhedsniveau Logitech Media Server skal benytte. Standard er Ingen. Der er flere oplysninger i <a href="/html/docs/http.html#csrf">hjælpen</a>.
 	DE	Zum Schutz gegen 'Cross Site Request Forgery' (CSRF)-Sicherheitsrisiken prüft Logitech Media Server HTTP-Anforderungen auf Funktionen, die das System ändern oder Wiedergabelisten oder Player beeinträchtigen können. Sie können die Schutzstufe für Logitech Media Server festlegen. Standardmäßig ist kein Wert festgelegt. Weitere Informationen finden Sie in der <a href="/html/docs/http.html#csrf">Hilfe</a>.
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, Logitech Media Server applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for Logitech Media Server to use.  The default is None. <a href="/html/docs/http.html#csrf">See Help Section</a> for more details.
@@ -8930,7 +8935,7 @@ SETUP_FILTERRULE_HEAD
 	ZH_CN	允许的IP地址
 
 SETUP_FILTERRULE_DESC
-	CS	Pokud jste zapnuli blokování, můžete zadat adresy, kterým chcete povolit připojení ke Logitech Media Server.<br><br>Toto pole akceptuje seznam konkrétních IP adres, zástupné znaky typu *  a rozsahy IP adres v seznamu oddělovaném čárkami. Například:<BR><BR><B>10.1.2.2</B> povolí připojení pouze z adresy 10.1.2.2 <BR><BR><B>10.1.2.*</B> povolí vše s IP adresou, která bude mezi adresami 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> povolí připojení IP adres v rozsahu 10.1.2.2 - 10.1.2.50.<BR><BR>Více položek lze kombinovat a oddělovat čárkami, například <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Speciální IP adresa 127.0.0.1 povolí webovému prohlížeči připojení ke Logitech Media Server běžícímu na stejném počítači.
+	CS	Pokud jste zapnuli blokování, můžete zadat adresy, kterým chcete povolit připojení ke Logitech Media Server.<br><br>Toto pole akceptuje seznam konkrétních IP adres, zástupné znaky typu * a rozsahy IP adres v seznamu oddělovaném čárkami. Například:<BR><BR><B>10.1.2.2</B> povolí připojení pouze z adresy 10.1.2.2 <BR><BR><B>10.1.2.*</B> povolí vše s IP adresou, která bude mezi adresami 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> povolí připojení IP adres v rozsahu 10.1.2.2 - 10.1.2.50.<BR><BR>Více položek lze kombinovat a oddělovat čárkami, například <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Speciální IP adresa 127.0.0.1 povolí webovému prohlížeči připojení ke Logitech Media Server běžícímu na stejném počítači.
 	DA	Hvis blokeringsfunktionen er slået til, kan du angive adresser hvorfra der må etableres forbindelse til Logitech Media Server.<br><br>Du kan angive bestemte IP-adresser, adresser med jokertegnet * samt IP-adresseområder i en kommaadskilt liste. Eksempel:<BR><BR><B>10.1.2.2</B> tillader udelukkende 10.1.2.2 at etablere forbindelse<BR><BR><B>10.1.2.*</B> tillader forbindelser fra alt med en adresse startende med 10.1.2. og sluttende med et vilkårligt tal<BR><BR><B>10.1.2.2-50</B> tillader forbindelser fra alle IP-adresser mellem 10.1.2.2 og 10.1.2.50<BR><BR>Endelig kan du angive flere adresser og adresseområder, og adskille dem vha. et komma: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Den særlige IP-adresse 127.0.0.1 gør det muligt for en webbrowser at etablere forbindelse til Logitech Media Server som kører på den samme computer.
 	DE	Ist die Blockierung aktiviert, können Sie IP-Adressen angeben, die eine Verbindung zu Logitech Media Server herstellen dürfen.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Jokerzeichen und trennen Sie unterschiedliche IP-Adressen durch Komma.<BR><BR><B>Beispiel: 10.1.2.2</B> akzeptiert nur 10.1.2.2<BR><BR><B>10.1.2.*</B> akzeptiert alle IP-Adressen, die mit '10.1.2.' beginnen.<BR><BR><B>10.1.2.2-50</B> akzeptiert die IP-Adressen 10.1.2.2 – 10.1.2.50.<BR><BR>Sie können mehrere Einträge durch Kommas kombinieren. Beispiel:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Web-Browser die Verbindung mit Logitech Media Server auf demselben Computer.
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to Logitech Media Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to Logitech Media Server running on that same computer.
@@ -9129,7 +9134,7 @@ SETUP_PASSWORD
 	ZH_CN	密码
 
 SETUP_PASSWORD_REPEAT
-	CS	Potvrdit heslo:
+	CS	Potvrdit heslo
 	DA	Bekræft adgangskode
 	DE	Kennwort bestätigen
 	EN	Confirm Password
@@ -9545,7 +9550,7 @@ SETUP_SN_REPORT_STATS_DISABLE
 	SV	Nej, rapportera inte statistik.
 
 SETUP_NO_JAVASCRIPT
-	CS	Před přístupem ke Logitech Media Server se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Klasický</a>.
+	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Classic</a>.
 	DA	Du skal bruge en forholdsvis ny browser for at få adgang til Logitech Media Server (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 eller senere), og JavaScript skal være aktiveret i browseren. Alternativt kan du benytte et enklere layout, fx <a href="/Classic/?skipWizard=1">Klassisk</a>.
 	DE	Für den Zugriff auf Logitech Media Server benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> wählen.
 	EN	In order to access Logitech Media Server, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a>.
@@ -9710,7 +9715,7 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	SV	Musikkälla
 
 SETUP_WIZARD_DONE
-	CS	Nastavení Logitech Media Server ukončeno!
+	CS	Nastavení Logitech Media Serveru bylo dokončeno!
 	DA	Konfigurationen af Logitech Media Server er gennemført.
 	DE	Logitech Media Server wurde eingerichtet!
 	EN	Logitech Media Server Setup Done!
@@ -10568,7 +10573,7 @@ CLEAR_PLAYLIST
 
 SHOW_ARTWORK
 # SLT: please use plural here (if appropriate) - this is being used to turn on/off display of the cover arts when browsing albums
-	CS	Zobrazit předlohu
+	CS	Zobrazit obaly alb
 	DA	Vis albumcovere
 	DE	Plattenhüllen anzeigen
 	EN	Show Artwork
@@ -10584,7 +10589,7 @@ SHOW_ARTWORK
 
 SHOW_ARTWORK_SINGLE
 # SLT: please use singular here - this is being used in cases where we refer to the one single cover art of an album
-	CS	Zobrazit předlohu
+	CS	Zobrazit obal alba
 	DA	Vis albumcovere
 	DE	Plattenhülle anzeigen
 	EN	Show Artwork
@@ -12273,7 +12278,7 @@ NO_TITLE
 
 THOUSANDS_SEP
 # SLT: this is the separator used to separate thousands as in 10'000'000.00 ([[http://en.wikipedia.org/wiki/Thousands_separator]])
-	CS	,
+	CS	 
 	DA	,
 	DE	.
 	EN	,
@@ -12728,7 +12733,7 @@ LCARTISTS
 	ZH_CN	艺人名
 
 ALBUMS
-	CS	alba
+	CS	Alba
 	DA	Album
 	DE	Alben
 	EN	Albums
@@ -13175,7 +13180,7 @@ BROWSE_BY_ALL_ARTISTS
 	ZH_CN	所有艺人
 
 BROWSE_BY_ALBUMARTIST
-	CS	Interprets alba
+	CS	Interpreti alba
 	DA	Albumkunstnere
 	DE	Album-Interpreten
 	EN	Album Artists
@@ -13191,7 +13196,7 @@ BROWSE_BY_ALBUMARTIST
 	SV	Albumartister
 
 BROWSE_ALBUMARTISTS
-	CS	Procházet interprets alba
+	CS	Procházet interprety alba
 	DA	Gennemse albumkunstnere
 	DE	Album-Interpreten durchsuchen
 	EN	Browse Album Artists
@@ -13257,7 +13262,7 @@ BROWSE_BY_ARTIST_DBL
 	PL	Wykonawcy
 
 BROWSE_BY_ALBUM
-	CS	alba
+	CS	Alba
 	DA	Album
 	DE	Alben
 	EN	Albums
@@ -13363,7 +13368,7 @@ BROWSE_BY_YEAR
 	ZH_CN	浏览年份
 
 BROWSE_MUSIC_FOLDER
-	CS	Složka Hudba
+	CS	Složka hudby
 	DA	Musikmappe
 	DE	Musikordner
 	EN	Music Folder
@@ -13382,7 +13387,7 @@ BROWSE_MUSIC_FOLDER
 	ZH_CN	浏览音乐文件夹
 
 BROWSE_VIDEO_FOLDER
-	CS	Složka s videí
+	CS	Složka videí
 	DA	Mappe med videoer
 	DE	Videoordner
 	EN	Video Folder
@@ -13427,7 +13432,7 @@ BROWSE_ALL_PICTURES
 	SV	Alla bilder
 
 BROWSE_MUSIC_FOLDER_WHILE_SCANNING
-	CS	Složka Hudba není v průběhu skenování k dispozici.
+	CS	Složka hudby není v průběhu skenování k dispozici.
 	DA	Musikmappe kan ikke vælges, mens der scannes.
 	DE	Musikordner ist während des Scanvorgangs nicht verfügbar.
 	EN	Music Folder is not available while scanning.
@@ -14076,7 +14081,7 @@ PLAYERIR_SETTINGS
 	ZH_CN	红外线设置
 
 SERVER_STATUS
-	CS	Stav Logitech Media Server
+	CS	Stav Logitech Media Serveru
 	DA	Status for Logitech Media Server
 	DE	Logitech Media Server-Status
 	EN	Logitech Media Server Status
@@ -14091,7 +14096,7 @@ SERVER_STATUS
 	SV	Logitech Media Server-status
 
 SERVER_STATUS_DESC
-	CS	Informace o všech zjištěných zařízeních připojených ke Logitech Media Server
+	CS	Informace o všech zjištěných zařízeních připojených k Logitech Media Serveru
 	DA	Oplysninger om alle enheder der er sluttet til Logitech Media Server
 	DE	Informationen auf allen identifizierten mit Logitech Media Server verbundenen Geräten
 	EN	Information on all identified devices connected to Logitech Media Server
@@ -14163,7 +14168,7 @@ SERVER_SETTINGS
 	ZH_CN	服务器设置
 
 SQUEEZEBOX_SERVER_SETTINGS
-	CS	Nastavení Logitech Media Server
+	CS	Nastavení Logitech Media Serveru
 	DA	Indstillinger for Logitech Media Server
 	DE	Logitech Media Server-Einstellungen
 	EN	Logitech Media Server Settings
@@ -14384,7 +14389,7 @@ DEBUG_MENU_TRACKINFO
 	SV	Spårinformationsmeny
 
 DEBUG_NETWORK_COMETD
-	CS	Protokolování Cometd
+	CS	Protokolování protokolu Cometd
 	DA	Logføring af Cometd-protokol
 	DE	Cometd-Protokoll
 	EN	Cometd protocol logging
@@ -15001,7 +15006,7 @@ CURRENT_WEB_SKIN
 	ZH_CN	当前的网外壳：
 
 WEB_NO_COOKIES_WARNING
-	CS	Váš prohlížeč nepřijímá soubory cookie. Může to mít za následek neočekávané chování při ovládání Logitech Media Server. Než budete pokračovat, povolte příjem souborů cookie ve vašem prohlížeči.
+	CS	Váš prohlížeč nepřijímá soubory cookie. Může to mít za následek neočekávané chování při ovládání Logitech Media Serveru. Než budete pokračovat, povolte příjem souborů cookie ve vašem prohlížeči.
 	DA	Din browser accepterer ikke cookies. Det kan føre til uventede handlinger i brugen af din Logitech Media Server. Aktivér cookies i browseren inden du fortsætter.
 	DE	Ihr Browser akzeptiert keine Cookies. Dies kann zu unerwartetem Verhalten bei der Steuerung Ihres Logitech Media Servers führen. Aktivieren Sie Cookies in Ihrem Browser, bevor Sie fortfahren.
 	EN	Your browser does not accept cookies. This can lead to unexpected behaviour controlling your Logitech Media Server. Please enable cookies in your browser before you continue.
@@ -15254,7 +15259,7 @@ NO_PLAYER_FOUND
 	ZH_CN	未能找到您的播放机。
 
 NO_PLAYER_DETAILS
-	CS	<b>Pokud vlastníte Squeezebox nebo Transporter:</b><ul><li>Ujistěte se, že přehrávač je zapojen a že nastavení sítě jsou správná. Po připojení přehrávače klepněte na tlačítko Obnovit.</ul><p><b>Pokud nemáte Squeezebox ani Transporter:</b><ul><li>Můžete poslouchat hudbu ze své knihovny s pomocí <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, což je softwarová verze Squeezeboxu.<li>K poslechu hudby ze své knihovny se Logitech Media Server můžete použít softwarový přehrávač MP3 (například Winamp nebo  iTunes), který připojíte k této adrese URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	CS	<b>Pokud vlastníte Squeezebox nebo Transporter:</b><ul><li>Ujistěte se, že přehrávač je zapojen a že nastavení sítě jsou správná. Po připojení přehrávače klepněte na tlačítko Obnovit.</ul><p><b>Pokud nemáte Squeezebox ani Transporter:</b><ul><li>Můžete poslouchat hudbu ze své knihovny s pomocí <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, což je softwarová verze Squeezeboxu.<li>K poslechu hudby ze své knihovny s Logitech Media Serverem můžete použít softwarový přehrávač MP3 (například Winamp nebo iTunes), který připojíte k této adrese URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DA	<b>Hvis du har en Squeezebox eller Transporter:</b><ul><li>Kontroller at din afspiller er sluttet til, og at netværksindstillingerne er korrekte. Klik på opdateringsknappen når afspilleren er tilsluttet.</ul><p><b>Hvis du ikke har en Squeezebox eller Transporter:</b><ul><li>Du kan lytte til dit musikbibliotek vha. <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en softwareversion af Squeezebox.<li>Du kan også bruge et program til at afspille mp3-filer (fx Winamp eller iTunes) til at høre filerne sammen med Logitech Media Server ved at etablere forbindelse til denne adresse: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf Logitech Media Server zugreifen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Logitech Media Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -15291,7 +15296,7 @@ PLAYER_NEEDS_UPGRADE
 	ZH_CN	Squeezebox需要更新韧件
 
 PLAYER_NEEDS_UPGRADE_DETAILS
-	CS	Software ve vašem přehrávači je nutno aktualizovat na poslední verzi.  Stiskněte a podržte tlačítko JAS, dokud displej vašeho přehrávače neoznámí, že aktualizace začala. Aktualizace bude trvat pouze několik sekund.
+	CS	Software ve vašem přehrávači je nutno aktualizovat na poslední verzi. Stiskněte a podržte tlačítko JAS, dokud displej vašeho přehrávače neoznámí, že aktualizace začala. Aktualizace bude trvat pouze několik sekund.
 	DA	Softwaren i afspilleren skal opdateres til den nyeste version. Hold BRIGHTNESS nede indtil displayet viser at opdateringen er begyndt. Opdateringen varer kun et par sekunder.
 	DE	Die Software im Player muss auf die neueste Version aktualisiert werden. Halten Sie BRIGHTNESS gedrückt, bis angezeigt wird, dass die Aktualisierung gestartet wurde. Dieser Vorgang dauert nur ein paar Sekunden.
 	EN	The software in your player needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button until the display on your player indicates that the update has begun.  The update only takes a few seconds.
@@ -15471,7 +15476,7 @@ NEED_PLAYLIST_PATH
 	ZH_CN	您必须指定存有播放表目录的路径。
 
 CSRF_ERROR_INFO
-	CS	Chcete-li odeslat požadavek na toto URL ze Záložek/Oblíbených nebo jinými prostředky, než odkazem z webového rozhraní Logitech Media Server, musíte použít URL s bezpečnostním parametrem \"cauth\". Pokud jste dostali toto chybové hlášení při přechodu na odkaz z webového rozhraní  Logitech Media Server, měli byste se přesvědčit, zda váš webový prohlížeč (včetně proxy serverů a softwaru proti spywaru a na ochranu soukromí) umožňuje odesílání záhlaví \"Referer\". Níže je příslušné URL pro URL, na které jste se pokusili přejít.
+	CS	Chcete-li odeslat požadavek na toto URL ze Záložek/Oblíbených nebo jinými prostředky, než odkazem z webového rozhraní Logitech Media Server, musíte použít URL s bezpečnostním parametrem \"cauth\". Pokud jste dostali toto chybové hlášení při přechodu na odkaz z webového rozhraní Logitech Media Serveru, měli byste se přesvědčit, zda váš webový prohlížeč (včetně proxy serverů a softwaru proti spywaru a na ochranu soukromí) umožňuje odesílání záhlaví \"Referer\". Níže je příslušné URL pro URL, na které jste se pokusili přejít.
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Logitech Media Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Logitech Media Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
 	DE	Damit Sie diese URL aus einem Favoriten/Lesezeichen oder einem anderen Verfahren als aus der Logitech Media Server-Web-Benutzeroberfläche aufrufen können, müssen Sie eine URL mit dem Sicherheitsparameter 'cauth' verwenden. Trat dieser Fehler beim Klicken auf einen Link in der Logitech Media Server-Web-Benutzeroberfläche auf, sollten Sie prüfen, ob der Browser (sowie Proxyserver und Spyware-/Firewall-Software) das Senden von 'Referer'-Kopfzeilen zulässt. Dies ist die korrekte URL für die gewünschte Verbindung:
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
@@ -17041,7 +17046,7 @@ INFORMATION_MENU_MODULE
 	SV	Plugin-moduler
 
 INFORMATION_PLAYER_NAME
-	CS	Squeezebox název
+	CS	Název Squeezebox
 	DA	Navn på Squeezebox
 	DE	Squeezebox-Name
 	EN	Squeezebox Name
@@ -17268,7 +17273,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
 	SV	Trådlös signal
 
 INFORMATION_CLIENTS
-	CS	Rozpoznáno celkem přehrávačů
+	CS	Celkem rozpoznáno přehrávačů
 	DA	Samlet antal kendte afspillere
 	DE	Anzahl erkannter Player
 	EN	Total Players Recognized
@@ -17331,6 +17336,7 @@ INFORMATION_PLUGINDIRS
 	SV	Mappar för plugin-program
 
 INFORMATION_BINDIRS
+	CS	Složka pomocných aplikací
 	DE	Ordner für Hilfsprogramme
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
@@ -17420,7 +17426,7 @@ INFORMATION_SERVER_PORT
 	ZH_CN	服务器端口号
 
 INFORMATION_SERVER_HTTP
-	CS	Číslo portu  HTTP serveru
+	CS	Číslo portu HTTP serveru
 	DA	Serverens HTTP-portnummer
 	DE	Server-HTTP-Portnummer
 	EN	Server HTTP Port Number
@@ -17525,6 +17531,7 @@ INFORMATION_TRACKS
 	ZH_CN	音轨总数
 
 INFORMATION_PLAYLISTS
+	CS	Celkem seznamů skladeb
 	DE	Anzahl Wiedergabelisten
 	EN	Total Playlists
 	FR	Listes de lecture
@@ -17931,7 +17938,7 @@ SETUP_SCROLLPIXELS
 	ZH_CN	卷动映像点
 
 SETUP_SCROLLPIXELS_DESC
-	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely.  (Min 1, Max 20).
+	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely. (Min 1, Max 20).
 	DA	På afspillere med et grafisk display kan du justere hvor mange pixel (punkter) afspilleren skal rulle i hvert af de intervaller du angav ovenfor. Sammen med indstillingen for rullehastighed bestemmer denne indstilling hvor hurtigt og i hvilken kvalitet teksten ruller hen over displayet. Hvis du er i tvivl, bør du bruge standardindstillingen på 2 eller 3 pixel (minimum er 1, og maksimum er 20).
 	DE	Bei Playern mit grafischem Display können Sie festlegen, um wie viele Pixel pro oben definiertem Intervall sich die Laufschrift bewegen soll. Kombinieren Sie diese Einstellung mit der Laufschriftgeschwindigkeit, um das beste Ergebnis zu erzielen. Belassen Sie im Zweifelsfall den Standardwert von 2 oder 3 Pixeln (Min. 1, Max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  If in doubt leave as the default of 2 or 3 pixels.  (Min 1, Max 20).
@@ -18136,7 +18143,7 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	SV	Det går inte att få tillgång till mysqueezebox.com-tjänsterna eftersom ingen spelare är ansluten.
 
 SQUEEZENETWORK_NO_LOGIN
-	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Konfigurujte jej prosím ve webovém prohlížeči v položce Logitech Media Server Settings -> mysqueezebox.com.
+	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Prosím konfigurujte Logitech Media Server ve webovém prohlížeči v položce Nastavení -> mysqueezebox.com.
 	DA	Du skal have en konto til mysqueezebox.com for at bruge denne tjeneste. Du kan konfigurere den i en browser under Indstillinger for Logitech Media Server -> mysqueezebox.com.
 	DE	Für diesen Dienst ist ein mysqueezebox.com-Konto erforderlich. Sie können das Konto in einem Web-Browser in den Logitech Media Server-Einstellungen unter 'mysqueezebox.com' konfigurieren.
 	EN	A mysqueezebox.com account is required for this service. Please access Logitech Media Server Settings -> mysqueezebox.com with a web browser to configure.
@@ -18982,7 +18989,7 @@ SETUP_CLOCKSOURCE_DESC
 	ZH_CN	Transporter的输出可以和内置或外来的时钟源进行同步。在下列选择一个时钟源。
 
 CLOCKSOURCE_INTERNAL
-	CS	Vnitřní hodiny
+	CS	Interní hodiny
 	DA	Internt ur
 	DE	Interner Taktgeber
 	EN	Internal Clock
@@ -19121,7 +19128,7 @@ FXLOOPCLOCK_ASYNCHRONOUS
 	SV	Asynkron: Extern processor är master.
 
 VISUALIZER_EXTENDED_TEXT
-	CS	Rozšířené zobrazení  textu
+	CS	Rozšířené zobrazení textu
 	DA	Udvidet tekstvisning
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
@@ -19305,6 +19312,7 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	PL	Dostosowanie ustawień bufora
 
 SETUP_IMAGEPROXY
+	CS	Změna velikosti obalů alb
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
 	FR	Redimensionner les pochettes
@@ -19314,6 +19322,7 @@ SETUP_IMAGEPROXY
 	SV	Anpassning av skivomslagens storlek
 
 SETUP_IMAGEPROXY_DESC
+	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj streamování, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
@@ -19323,6 +19332,7 @@ SETUP_IMAGEPROXY_DESC
 	SV	Innan skivomslagen skickas till spelarna anpassas storleken på dem för att få bästa kvalitet och prestanda på spelarna. Standardinställningen är att använda mysqueezebox.com för detta men om du vill vara oberoende av mysqueezebox.com eller använder en egen strömningskälla så kan du använda Logitech Media Servers inbyggda skaleringsfunktion.
 
 SETUP_IMAGEPROXY_REMOTE
+	CS	Použít mysqueezebox.com ke změně velikosti obalů alb
 	DE	Plattenhüllen auf mysqueezebox.com anpassen
 	EN	Use mysqueezebox.com to resize artwork
 	FR	Redimensionner les pochettes avec mysqueezebox.com
@@ -19332,6 +19342,7 @@ SETUP_IMAGEPROXY_REMOTE
 	SV	Använd mysqueezebox.com för att anpassa skivomslagens storlek
 
 SETUP_IMAGEPROXY_LOCAL
+	CS	Použít Logitech Media Server ke změně velikosti obalů alb
 	DE	Plattenhüllen lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
 	FR	Redimensionner les pochettes avec Logitech Media Server
@@ -19358,16 +19369,19 @@ SETUP_SERVERPRIORITY
 	ZH_CN	Logitech Media Server服务器流程优先值
 
 SETUP_SHUFFLE_METHOD
+	CS	Metoda náhodného pořadí
 	DE	Mischmethode
 	EN	Shuffle method
 	FR	Méthode de mélange aléatoire
 
 SETUP_USE_BALANCED_SHUFFLE
+	CS	Použít vyváženější, ale pomalejšího náhodné pořadí
 	DE	Ausbalancierter, aber langsamer mischen
 	EN	Use more balanced, but slower shuffle
 	FR	Choisir un mélange plus équilibré, mais plus lent
 
 SETUP_USE_FASTER_SHUFFLE
+	CS	Použít rychlější, ale méně vyváženější náhodné pořadí
 	DE	Schneller, aber weniger ausbalanciert mischen
 	EN	Use faster, but less balanced shuffle
 	FR	Choisir un mélange plus rapide mais moins équilibré
@@ -19679,7 +19693,7 @@ SETUP_WORDCLOCKOUTPUT
 	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
-	CS	Při použití digitálních vstupů může Transporter být  nadřízeným generátorem taktu ("clock master") a vysílat taktovací signál (word clock) do svých výstupů S/PDIF. Tuto funkci je nutno povolit pouze tehdy, když zdrojové zařízení zajišťuje vstup taktovacího signálu (word clock) a kabel je připojen.
+	CS	Při použití digitálních vstupů může Transporter být nadřízeným generátorem taktu ("clock master") a vysílat taktovací signál (word clock) do svých výstupů S/PDIF. Tuto funkci je nutno povolit pouze tehdy, když zdrojové zařízení zajišťuje vstup taktovacího signálu (word clock) a kabel je připojen.
 	DA	Ved brug af de digitale indgange, kan Transporter virke som clock-master og sende et såkaldt Wordclock-signal via S/PDIF-udgangene. Denne funktion må kun aktiveres hvis kilde-enheden sender et Wordclock-signal, og kablet er forbundet.
 	DE	Wenn die digitalen Eingänge verwendet werden, kann Transporter das Signal direkt durchschleifen oder an den S/PDIF-Ausgängen ein Word Clock-Signal erzeugen.
 	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provides a word clock input and the cable is connected.
@@ -19935,7 +19949,7 @@ SETUP_ANALOGOUTMODE
 	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
-	CS	Zvolte funkci Hlasitá sluchátka/sub out port. Volba Sluchátka vypne vnitřní  reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
+	CS	Zvolte funkci Hlasitá sluchátka/sub out port. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra. Hvis du vælger Altid slået til, forbliver de indbyggede højtalere slået til, også selvom der tilsluttes hovedtelefoner.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher. Mit 'Immer Aktiv' bleiben die internen Lautsprecher aktiv, auch wenn Kopfhörer angeschlossen sind.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in.
@@ -20163,7 +20177,7 @@ SRC
 	ZH_CN	数码输入源
 
 DEBUG_ARTWORK
-	CS	Zobrazení a přiřazení předlohy
+	CS	Zobrazení a přiřazení obalu alba
 	DA	Vis og find albumcover
 	DE	Plattenhüllen Anzeige & Suche
 	EN	Artwork Display & Matching
@@ -20178,6 +20192,7 @@ DEBUG_ARTWORK
 	SV	Visning och matchning av albumomslag
 
 DEBUG_ARTWORK_IMAGEPROXY
+	CS	Proxy pro změnu velikosti obalu alba
 	DE	Plattenhüllen Grössenanpassunsproxy
 	EN	Artwork Resizing Proxy
 	FR	Redimensionner les pochettes en amont
@@ -20202,7 +20217,7 @@ DEBUG_FACTORYTEST
 	SV	Information som användes vid fabrikstestning
 
 DEBUG_FAVORITES
-	CS	Uložení a přehrávání Oblíbených
+	CS	Uložení a přehrávání oblíbených položek
 	DA	Gem og afspil favoritter
 	DE	Wiedergabe & Speichern von Favoriten
 	EN	Favorites Saving & Playing
@@ -20262,7 +20277,7 @@ DEBUG_PREFS
 	SV	Ändring och lagring av inställningar
 
 DEBUG_SERVER_SCHEDULER
-	CS	Vnitřní protokolování časového rozvrhu
+	CS	Protokolování interního časovače
 	DA	Logføring af interne tidsplaner
 	DE	Interner Scheduler
 	EN	Internal Scheduler Logging
@@ -20292,7 +20307,7 @@ DEBUG_SERVER
 	SV	Allmän serverinformation
 
 DEBUG_SERVER_SELECT
-	CS	Vnitřní protokolování výběrové smyčky (pokročilé)
+	CS	Protokolování interní výběrové smyčky (pokročilé)
 	DA	Logføring af intern løkke for valg (avanceret)
 	DE	Interner Select Loop (Fortgeschritten)
 	EN	Internal Select Loop Logging (Advanced)
@@ -20322,7 +20337,7 @@ DEBUG_SERVER_MEMORY
 	SV	Serverns minnesanvändning (avancerat)
 
 DEBUG_SERVER_TIMERS
-	CS	Informace vnitřního časovače
+	CS	Informace interního časovače
 	DA	Oplysninger om intern timer
 	DE	Interne Timer Informationen
 	EN	Internal Timer Information
@@ -20337,7 +20352,7 @@ DEBUG_SERVER_TIMERS
 	SV	Information om intern timer
 
 DEBUG_NETWORK_HTTP
-	CS	Vnitřní protokolování HTTP serveru
+	CS	Protokolování interního serveru HTTP
 	DA	Logføring af intern HTTP-server
 	DE	Interner HTTP Server
 	EN	Internal HTTP Server Logging
@@ -20367,7 +20382,7 @@ DEBUG_NETWORK_ASYNCHTTP
 	SV	Information om asynkron fjärr-HTTP-begäran
 
 DEBUG_NETWORK_ASYNCDNS
-	CS	Asynchronní protokolování DNS
+	CS	Protokolování asynchronního DNS
 	DA	Asynkron DNS-logføring
 	DE	Asynchroner DNS
 	EN	Asynchronous DNS Logging
@@ -20457,7 +20472,7 @@ DEBUG_NETWORK_JSONRPC
 	SV	Loggning av JSON-RPC-API
 
 DEBUG_FORMATS_AUDIO
-	CS	Informace o metadatech souborů a audio rozboru
+	CS	Informace o metadatech souborů a parsování audia
 	DA	Information om metadata for filer og fortolkning af lyd
 	DE	Datei Metadaten & Audio Parsing
 	EN	File Metadata & Audio Parsing Information
@@ -20472,7 +20487,7 @@ DEBUG_FORMATS_AUDIO
 	SV	Information om metadata för filer och tolkning av ljud
 
 DEBUG_FORMATS_PLAYLISTS
-	CS	Informace o rozboru seznamu skladeb
+	CS	Informace o parsování seznamu skladeb
 	DA	Information om fortolkning af afspilningslister
 	DE	Wiedergabelisten Parsing
 	EN	Playlist Parsing Information
@@ -20487,7 +20502,7 @@ DEBUG_FORMATS_PLAYLISTS
 	SV	Tolkningsinformation för spellistor
 
 DEBUG_FORMATS_XML
-	CS	Informace o rozboru XML (Picks, SHOUTcast, atd.)
+	CS	Informace o parsování XML (Picks, SHOUTcast, atd.)
 	DA	Information om fortolkning af XML (anbefalinger, Shoutcast osv.)
 	DE	XML Parsing (Picks, SHOUTcast, etc.)
 	EN	XML Parsing Information (Picks, SHOUTcast, etc)
@@ -20532,7 +20547,7 @@ DEBUG_DATABASE_MYSQL
 	SV	Process- och initieringsinformation för MySQL
 
 DEBUG_DATABASE_SQL
-	CS	Protokol SQL (Pokročilé)
+	CS	Protokolování SQL (Pokročilé)
 	DA	SQL-logføring (avanceret)
 	DE	SQL Logging (Fortgeschritten)
 	EN	SQL Logging (Advanced)
@@ -20547,7 +20562,7 @@ DEBUG_DATABASE_SQL
 	SV	SQL-loggning (avancerat)
 
 DEBUG_DATABASE_INFO
-	CS	Protokolování metadat & rozboru
+	CS	Protokolování metadat & parsování
 	DA	Logføring af metadata og fortolkning
 	DE	Metadaten & Parsen
 	EN	Metadata & Parsing Logging
@@ -20586,7 +20601,7 @@ DEBUG_OS_FILES
 	SV	Information om filsystemnivå
 
 DEBUG_OS_PATHS
-	CS	Syntaktická analýza (Parsing) cesty souborového systému
+	CS	Syntaktická analýza (parsování) cesty souborového systému
 	DA	Fortolkning af stier i filsystem
 	DE	Dateipfad-Parsing
 	EN	Filesystem Path Parsing
@@ -20631,7 +20646,7 @@ DEBUG_CONTROL_QUERIES
 	SV	Kontrollfrågeloggning (avancerat)
 
 DEBUG_CONTROL_COMMAND
-	CS	Vnitřní protokolování provedení  příkazu (pokročilé)
+	CS	Protokolování interního provedení příkazu (pokročilé)
 	DA	Logføring af intern kommandoeksekvering (avanceret)
 	DE	Interne Befehlsausführung (Fortgeschritten)
 	EN	Internal Command Execution Logging (Advanced)
@@ -20661,7 +20676,7 @@ DEBUG_PLAYER_ALARMCLOCK
 	SV	Loggning för spelarens alarmfunktion
 
 DEBUG_PLAYER_IR
-	CS	Rozbor činnosti infračerveného dálkového ovládání a mapování
+	CS	Parsování činnosti infračerveného dálkového ovládání a mapování
 	DA	Infrarød aktivitet og fortolkning
 	DE	Infrarot Aktivität & Parsing
 	EN	Infrared Activity & Map Parsing
@@ -20706,7 +20721,7 @@ DEBUG_PLAYER_UI
 	SV	Information om användargränssnitt för spelaren
 
 DEBUG_PLAYER_UI_SCREENSAVER
-	CS	Protokolování spořič obrazovky
+	CS	Protokolování spořiče obrazovky
 	DA	Logføring af pauseskærm
 	DE	Bildschirmschoner-Protokollierung
 	EN	Player Screensaver Logging
@@ -20901,7 +20916,7 @@ DEBUG_SCAN_SCANNER
 	SV	Sökning av mappar med media och spellistor
 
 DEBUG_SCAN_IMPORT
-	CS	Protokol importu metadat souborů a seznamů skladeb
+	CS	Protokolování importu metadat souborů a seznamů skladeb
 	DA	Logføring af metadataimport fra filer & afspilningslister
 	DE	Datei & Wiedergabelisten Metadaten-Import
 	EN	File & Playlist Metadata Import Logging
@@ -20946,7 +20961,7 @@ DEBUG_WIZARD
 	SV	Loggning av installationsguidens aktivitet
 
 SETUP_DEBUG_SERVER_LOG
-	CS	Soubor protokolu Logitech Media Server
+	CS	Soubor protokolu Logitech Media Serveru
 	DA	Logfil for Logitech Media Server
 	DE	Logitech Media Server-Logdatei
 	EN	Logitech Media Server Log File
@@ -21109,7 +21124,7 @@ SETUP_DEBUG_LEVEL_ERROR
 	SV	Fel
 
 SETUP_DEBUG_LEVEL_WARN
-	CS	Varovat
+	CS	Varování
 	DA	Vis advarsel
 	DE	Warnungen
 	EN	Warn
@@ -21139,7 +21154,7 @@ SETUP_DEBUG_LEVEL_INFO
 	SV	Information
 
 SETUP_DEBUG_LEVEL_DEBUG
-	CS	Debug
+	CS	Ladění
 	DA	Fejlsøgning
 	DE	Debuggen
 	EN	Debug
@@ -21229,7 +21244,7 @@ SCANNER_PROGRESS
 	SV	Information om mediesökning
 
 FAILURE_PROGRESS
-	CS	Prohledávání médií neočekávaně ukončeno (%s)
+	CS	Prohledávání médií bylo neočekávaně ukončeno (%s)
 	DA	Søgningen blev afsluttet uventet (%s)
 	DE	Durchsuchen der Mediensammlung unerwartet abgebrochen (%s)
 	EN	Media scan terminated unexpectedly (%s)
@@ -21469,7 +21484,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	SV	Hitta uppdaterade skivomslag
 
 PRECACHEARTWORK_PROGRESS
-	CS	Příprava ukládání obalu do mezipaměti
+	CS	Příprava ukládání obalu alba do mezipaměti
 	DA	Gem coverbilleder i cachelager
 	DE	Plattenhüllen werden zwischengespeichert
 	EN	Pre-caching Artwork
@@ -21689,7 +21704,7 @@ PROGRESS_IMPORTER_NO_INFO
 
 TOTAL_TIME
 # SLT: please not that this isn't the total time of a playlist, but of the scanning process
-	CS	Celkem doba:
+	CS	Celkový čas:
 	DA	Samlet tid:
 	DE	Laufzeit:
 	EN	Total Time:
@@ -21749,7 +21764,7 @@ UNINSTALL
 	SV	Avinstallera
 
 PLUGINS_CHANGED
-	CS	Změny se projeví při příštím startu aplikace u následujících plug-inů:
+	CS	Změny se projeví při příštím startu aplikace u následujících zásuvných modulů:
 	DA	Ændringerne for følgende udvidelsesmoduler vil træde i kraft næste gang programmet startes:
 	DE	Die folgenden Plugins werden beim nächsten Anwendungs-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next application restart for the following plugins:
@@ -21809,7 +21824,7 @@ RESTART_LATER
 	SV	Starta om senare
 
 RESTARTING_PLEASE_WAIT
-	CS	 Probíhá restartování Logitech Media Server. Před pokračováním chvíli vyčkejte...
+	CS	 Probíhá restartování Logitech Media Serveru. Před pokračováním chvíli vyčkejte...
 	DA	 Logitech Media Server er ved at blive genstartet. Vent et minuts tid før du fortsætter...
 	DE	 Logitech Media Server wird neu gestartet. Warten Sie einen Moment, bevor Sie fortfahren...
 	EN	 Logitech Media Server is being restarted. Please wait a minute before you continue...
@@ -21974,7 +21989,7 @@ JIVE_DELETE_PLAYLIST
 	SV	Ta bort spellistan\n%s
 
 JIVE_DELETE_FROM_FAVORITES
-	CS	Smazat oblíbené
+	CS	Smazat z oblíbených položek
 	DA	Slet favorit
 	DE	Favorit löschen
 	EN	Delete Favorite
@@ -22035,7 +22050,7 @@ JIVE_SET_AS_PRESET
 	SV	Ange som förinställd
 
 JIVE_SAVE_TO_FAVORITES
-	CS	Uložit do Oblíbených
+	CS	Uložit do oblíbených položek
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
@@ -22095,7 +22110,7 @@ ADD_TO_END
 	SV	Lägg till i slutet
 
 SAVE_TO_FAVORITES
-	CS	Uložit do Oblíbených
+	CS	Uložit do oblíbených položek
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
@@ -22763,7 +22778,7 @@ SETUP_SHOWCOUNT
 	SV	Visa menyplacering
 
 SETUP_SHOWCOUNT_DESC
-	CS	Můžete si vybrat, zda se bude poloha v nabídce zobrazovat vždy  nebo se bude zobrazovat pouze při rolování položkami nabídky. Poloha se zobrazuje ve formátu 1 ze 6, což znamená první položku v seznamu nabídky ze 6 položek.
+	CS	Můžete si vybrat, zda se bude poloha v nabídce zobrazovat vždy nebo se bude zobrazovat pouze při rolování položkami nabídky. Poloha se zobrazuje ve formátu 1 ze 6, což znamená první položku v seznamu nabídky ze 6 položek.
 	DA	Du kan angive om placeringen i menuen altid skal vises, eller om placeringen kun skal vises mens du gennemser menupunkterne. Placeringen vises i formatet 1 af 6, dvs. det første punkt i en menu med 6 punkter.
 	DE	Sie können bestimmen, ob die Position im Menü immer oder nur dann angezeigt wird, wenn Sie durch Menüpunkte schalten. Die Position wird im Format 1 von 6 angezeigt, d.h. der erste Befehl in einer Liste von 6.
 	EN	You can select whether to always show the position in the menu or to only show it while you are scrolling through menu items. The position is displayed in the format 1 of 6, indicating the first item of a menu list of 6 items.
@@ -22868,7 +22883,7 @@ ERROR_PLAYLIST_ALMOST_FULL
 	SV	Spellistan är full: %s av %s spår lades till
 
 SQUEEZEBOX_SERVER_CONNECT
-	CS	Připojit ke Logitech Media Server
+	CS	Připojit se k Logitech Media Serveru
 	DA	Etabler forbindelse til Logitech Media Server
 	DE	Mit Logitech Media Server verbinden
 	EN	Connect to Logitech Media Server
@@ -22929,7 +22944,7 @@ BACKUP_ALARM
 	SV	Reservalarm
 
 CONTROLPANEL_TITLE
-	CS	Ovládací panel Logitech Media Server
+	CS	Ovládací panel Logitech Media Serveru
 	DA	Kontrolpanel til Logitech Media Server
 	DE	Logitech Media Server-Systemsteuerung
 	EN	Logitech Media Server Control Panel
@@ -23066,7 +23081,7 @@ CONTROLPANEL_MUSIC_LIBRARY
 	SV	Bibliotek
 
 CONTROLPANEL_AUTHENTICATION_REQUIRED
-	CS	Pro přístup do Logitech Media Server je vyžadována autentizace
+	CS	Pro přístup do Logitech Media Serveru je vyžadována autentizace
 	DA	Du skal godkendes for at få adgang til Logitech Media Server
 	DE	Für den Zugriff auf Logitech Media Server ist eine Authentifizierung erforderlich
 	EN	Authentication is required to access Logitech Media Server
@@ -23201,7 +23216,7 @@ CONTROLPANEL_SHOW_SCANNER_LOG
 	SV	Visa loggfilen för sökning
 
 CONTROLPANEL_UPDATE_AVAILABLE
-	CS	Aktualizovaná verze Logitech Media Server je k dispozici a připravena k instalaci.
+	CS	Aktualizovaná verze Logitech Media Serveru je k dispozici a připravena k instalaci.
 	DA	Der findes en opdateret version af Logitech Media Server som er klar til at blive installeret.
 	DE	Eine aktualisierte Version von Logitech Media Server ist verfügbar und kann installiert werden.
 	EN	An updated version of Logitech Media Server is available and ready to install.
@@ -23216,7 +23231,7 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	SV	En uppdaterad version av Logitech Media Server finns tillgänglig och klar att installeras.
 
 PREFPANE_UPDATE_AVAILABLE
-	CS	Pro instalaci je k dispozici aktualizovaná verze Logitech Media Server. Přejděte na na Logitech Media Server v systémových vlastnostech pro spuštění aktualizace.
+	CS	Pro instalaci je k dispozici aktualizovaná verze Logitech Media Serveru. Přejděte na Logitech Media Server v systémových vlastnostech pro spuštění aktualizace.
 	DA	En opdateret version af Logitech Media Server er klar til at blive installeret. Du kan starte opgraderingen under Systemindstillinger på Logitech Media Server.
 	DE	Eine aktualisierte Version von Logitech Media Server ist verfügbar und kann installiert werden. Wählen Sie unter 'Systemeinstellungen' die Option 'Logitech Media Server', um das Update zu starten.
 	EN	An updated version of Logitech Media Server is available and ready to install. Visit the Logitech Media Server in System Preferences to start the upgrade.
@@ -23231,7 +23246,7 @@ PREFPANE_UPDATE_AVAILABLE
 	SV	En uppdaterad version av Logitech Media Server finns tillgänglig och redo att installeras. Gå till Logitech Media Server i Systeminställningar för att starta uppgraderingen.
 
 CONTROLPANEL_NO_UPDATE_AVAILABLE
-	CS	K dispozici není žádná aktualizovaná verze Logitech Media Server.
+	CS	K dispozici není žádná aktualizovaná verze Logitech Media Serveru.
 	DA	Der findes ikke en nyere version af Logitech Media Server.
 	DE	Es ist keine aktualisierte Version von Logitech Media Server verfügbar.
 	EN	There's no updated Logitech Media Server version available.
@@ -23486,7 +23501,7 @@ CONTROLPANEL_PORTBLOCKED_APPS
 	SV	Följande program kan blockera anslutningen:
 
 CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
-	CS	Pokud se Logitech Media Server narazíte na problémy s konektivitou, ujistěte se laskavě, že máte vypnutý "Plný firewall (Vždy zapnuto)"
+	CS	Pokud s Logitech Media Serverem narazíte na problémy s konektivitou, ujistěte se laskavě, že máte vypnutý "Plný firewall (Vždy zapnuto)"
 	DA	Hvis der er problemer med forbindelsen til og fra Logitech Media Server, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra
 	DE	Wenn es Verbindungsprobleme mit Logitech Media Server gibt, vergewissern Sie sich, dass die Option "Statusbehaftete Firewall (immer aktiv)" deaktiviert ist.
 	EN	If you encounter connectivity issues with Logitech Media Server, please make sure "Stateful Firewall (Always On)" is turned off
@@ -23592,7 +23607,7 @@ CLEANUP_DO
 	SV	Kör rensning
 
 CLEANUP_SUCCESS
-	CS	Čištění úspěšně dokončeno
+	CS	Čištění bylo úspěšně dokončeno
 	DA	Oprydningen er gennemført
 	DE	Bereinigung erfolgreich abgeschlossen
 	EN	Cleanup finished successfully
@@ -23607,7 +23622,7 @@ CLEANUP_SUCCESS
 	SV	Rensningen slutfördes utan problem
 
 CLEANUP_PLEASE_RESTART_SC
-	CS	Restartujte prosím Logitech Media Server k uskutečnění  změn.
+	CS	Restartujte prosím Logitech Media Server k uskutečnění změn.
 	DA	Du skal genstarte Logitech Media Server for at ændringerne kan træde i kraft.
 	DE	Logitech Media Server muss neu gestartet werden, damit die Änderungen in Kraft treten.
 	EN	Please restart Logitech Media Server for the changes to take effect.
@@ -23817,7 +23832,7 @@ CONTROLPANEL_NO_STATUS
 	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Logitech Media Server inte körs.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Logitech Media Server na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klepněte na možnost „Spustit jako správce“.
+	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Logitech Media Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klepněte na možnost „Spustit jako správce“.
 	DA	Du har ikke rettigheder til at installere eller starte/stoppe baggrundstjenesten Logitech Media Server. Start kontrolpanelet fra Startmenuen i Windows – via højrekliksmenuen klikker du på "Kør som administrator".
 	DE	Sie sind nicht dazu berechtigt, den Logitech Media Server-Hintergrunddienst zu installieren oder zu starten bzw. anzuhalten. Öffnen Sie die Systemsteuerung im Windows-Startmenü über das Kontextmenü und wählen Sie 'Als Administrator ausführen'.
 	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
@@ -24409,7 +24424,7 @@ PRESET_HOLD_TO_SAVE
 
 PRESET
 # SLT: a preset button on eg. the Radio
-	CS	Prednastavení #%s
+	CS	Přednastavení #%s
 	DA	Fast indstilling #%s
 	DE	Voreinstellung #%s
 	EN	Preset #%s
@@ -24580,7 +24595,7 @@ ON_MYSB
 	SV	På mysqueezebox.com
 
 SERVER_UPDATE_AVAILABLE
-	CS	K dispozici je nová verze Logitech Media Server (%s). <a href="%s" target="update">Pro stažení klikněte na zde</a>.
+	CS	K dispozici je nová verze Logitech Media Serveru (%s). <a href="%s" target="update">Pro stažení klikněte zde</a>.
 	DA	Der findes en ny version af Logitech Media Server (%s). <a href="%s" target="update">Klik her for at hente den</a>.
 	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="%s" target="update">Klicken Sie hier, um sie herunterzuladen</a>.
 	EN	A new version of Logitech Media Server is available (%s). <a href="%s" target="update">Click here to download</a>.
@@ -24595,7 +24610,7 @@ SERVER_UPDATE_AVAILABLE
 	SV	Det finns en ny version av Logitech Media Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
 
 SERVER_UPDATE_AVAILABLE_SHORT
-	CS	K dispozici je nová verze Logitech Media Server.
+	CS	K dispozici je nová verze Logitech Media Serveru.
 	DA	Der findes en ny version af Logitech Media Server.
 	DE	Eine neue Version von Logitech Media Server ist verfügbar.
 	EN	A new version of Logitech Media Server is available.

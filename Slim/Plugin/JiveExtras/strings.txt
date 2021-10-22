@@ -74,7 +74,7 @@ PLUGIN_JIVEEXTRAS_SOUNDS
 	SV	Ljud
 
 PLUGIN_JIVEEXTRAS_SOUNDS_DESC
-	CS	Zvolte místní nebo vzdálené zvukové soubory k použití jako volitelné zvukové efekty pro činnosti jako výběr menu ve vašem ovladači Squeezeboxu.  Tyto volitelné zvuky budou dostupné z menu Nastavení->Pokročilé->Zvukové efekty vašeho ovladače. Zvukové efekty by měly být soubory .wav obsahující 1 kanálová (mono) 16 bitová 44.1KHz data.
+	CS	Zvolte místní nebo vzdálené zvukové soubory k použití jako volitelné zvukové efekty pro činnosti jako výběr menu ve vašem ovladači Squeezeboxu. Tyto volitelné zvuky budou dostupné z menu Nastavení->Pokročilé->Zvukové efekty vašeho ovladače. Zvukové efekty by měly být soubory .wav obsahující 1 kanálová (mono) 16 bitová 44.1KHz data.
 	DA	Du kan vælge lydfiler der er gemt lokalt eller et andet sted, og bruge dem som lydeffekter ved handlinger, fx når du vælger et menupunkt på Squeezebox Controller. Disse lydeffekter kan vælges under Indstillinger -> Avanceret -> Lydeffekter på din Controller. Lydeffektfiler skal gemmes i wav-format som 1-kanals mono og 16-bit ved 44,1 kHz.
 	DE	Wählen Sie lokale oder Remote-Sounddateien als optionale Soundeffekte für Vorgänge (z.B. Menüauswahl auf dem Squeezebox Controller). Diese optionalen Sounds sind im Controller-Menü Einstellungen->Erweitert->Soundeffekte verfügbar. Soundeffektdateien sollten im Format WAV mit 1 Kanal (mono), 16 Bit und 44,1 kHz vorliegen.
 	EN	Select local or remote sound files to use as optional sounds effects for actions such as menu selections on your Squeezebox controller.  These optional sounds will be available from the Settings->Advanced->Sound Effects menu from your controller.  Sound effect files should be .wav files containing 1 channel (mono) 16 bit 44.1KHz data.

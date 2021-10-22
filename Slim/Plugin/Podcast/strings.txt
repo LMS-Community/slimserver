@@ -17,7 +17,7 @@ PLUGIN_PODCAST
 	SV	Poddsändningar
 
 PODCAST_PLAYER
-	CS	Přehrávač pro Podcasty
+	CS	Přehrávač podcastů
 	DA	Podcastafspiller
 	DE	Podcast Player
 	EN	Podcast Player
@@ -32,7 +32,7 @@ PODCAST_PLAYER
 	SV	Poddsändningsspelare
 
 PLUGIN_PODCAST_DESC
-	CS	Přístup k Podcasts
+	CS	Přístup k podcastům
 	DA	Adgang til podcasts
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
@@ -63,7 +63,7 @@ PODCAST_NOTHING_TO_PLAY
 	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
-	CS	Plugin Podcast Browser vám umožňuje prohlížet a poslouchat podcasty.
+	CS	Zásuvný modul prohlížeč podcastů vám umožňuje prohlížet a poslouchat podcasty.
 	DA	Udvidelsesmodulet til podcasts giver dig mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
@@ -111,7 +111,7 @@ PODCAST_RESETTING
 	SV	Återställer till standardpoddsändningarna
 
 PODCAST_FEEDS_CHANGE
-	CS	Seznam Podcast změněn
+	CS	Seznam podcastů změněn.
 	DA	Podcastlisten er ændret.
 	DE	Die Podcast-Liste wurde geändert.
 	EN	Podcast list changed.
@@ -127,7 +127,7 @@ PODCAST_FEEDS_CHANGE
 	SV	Poddsändningslistan har ändrats.
 
 SETUP_PLUGIN_PODCAST_RESET
-	CS	Obnovit výchozí Podcasty
+	CS	Obnovit výchozí podcasty
 	DA	Gendan standardpodcasts
 	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts
@@ -143,7 +143,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	SV	Återställ till standardpoddsändningarna
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
-	CS	Přidat nový zdroj:
+	CS	Přidat nový kanál:
 	DA	Tilføj et nyt feed:
 	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
@@ -173,7 +173,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
-	CS	Neplatný zdroj - %s
+	CS	Neplatný kanál - %s
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
@@ -188,6 +188,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	SV	Ogiltigt flöde – %s
 
 PLUGIN_PODCAST_IMPORT
+	CS	Importovat podcasty
 	DE	Podcast Liste importieren
 	EN	Import podcasts
 	FR	Importer des podcasts
@@ -196,6 +197,7 @@ PLUGIN_PODCAST_IMPORT
 	PL	Importowanie podcastów
 
 PLUGIN_PODCAST_IMPORT_FROM_MYSB
+	CS	Import podcastů z mysqueezebox.com
 	DE	Podcasts von mysqueezebox.com importieren
 	EN	Import podcasts from mysqueezebox.com
 	FR	Importer des podcasts depuis mysqueezebox.com
@@ -204,6 +206,7 @@ PLUGIN_PODCAST_IMPORT_FROM_MYSB
 	PL	Importuj podcasty z mysqueezebox.com
 
 PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
+	CS	Nenašel se seznam podcastů pro váš účet mysqueezebox.com nebo nejsou nastaveny přihlašovací údaje k účtu.
 	DE	Konnte keine Podcast Liste auf mysqueezebox.com finden. Ev. ist die mysqueezebox.com Integration nicht konfiguriert.
 	EN	Didn't find a podcast list for your mysqueezebox.com account, or account credentials are not set.
 	FR	Aucune liste de podcasts sur votre compte mysqueezebox.com (ou le compte mysqueezebox.com n'est pas configuré).
@@ -212,6 +215,7 @@ PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
 	PL	Nie znaleziono listy podcastów na twoim koncie mysqueezebox.com, lub nie podano loginu i hasła użytkownika.
 
 PLUGIN_PODCAST_PLAY_FROM_BEGINNING
+	CS	Přehrát od začátku
 	DE	Vom Anfang an wiedergeben
 	EN	Play from the beginning
 	FR	Lire depuis le début
@@ -220,6 +224,7 @@ PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	PL	Odtwórz od początku
 
 PLUGIN_PODCAST_PLAY_FROM_POSITION_X
+	CS	Přehrát z poslední pozice (%s)
 	DE	Von der letzten Position wiedergeben (%s)
 	EN	Play from last position (%s)
 	FR	Lire depuis la dernière position (%s)
@@ -228,6 +233,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	PL	Wznów od ostatniej pozycji (%s)
 
 PLUGIN_PODCAST_SKIP_BACK_SECS
+	CS	Skok o několid sekund zpět
 	DE	Zurückspringen um X Sekunden
 	EN	Jump back seconds
 	FR	Revenir en arrière de X secondes
@@ -244,6 +250,7 @@ PLUGIN_PODCAST_SKIP_BACK_DESC
 	PL	Menu kontekstowe podcastu zawiera opcję do szybkiego przewinięcia do tyłu. Domyślnie ta opcja przewija o 15 sekund do tyłu.
 
 PLUGIN_PODCAST_SKIP_BACK
+	CS	Skok o %s sekund zpět
 	DE	%s Sekunden zurück springen
 	EN	Jump back %s seconds
 	FR	Revenir en arrière de %s secondes
@@ -252,51 +259,61 @@ PLUGIN_PODCAST_SKIP_BACK
 	PL	Przewiń do tyłu o %s sekund
 
 PLUGIN_PODCAST_RECENTLY_PLAYED
+	CS	Nedávno přehrávané
 	DE	Zuletzt wiedergegeben
 	EN	Recently played
 	FR	Pistes récentes
 
 PLUGIN_PODCAST_SEARCH
+	CS	Prohledat kanály
 	DE	Shows suchen
 	EN	Search feeds
 	FR	Rechercher des flux
 
 PLUGIN_PODCAST_PROVIDER
+	CS	Poskytovatel podcastů
 	DE	Podcastverzeichnis
 	EN	Podcast provider
 	FR	Fournisseur de Podcast
 
 PLUGIN_PODCAST_PROVIDER_DESC
+	CS	Nastavit poskytovatele podcastových kanálů (agregátor).
 	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
 	EN	Set the Podcast feeds provider (aggregator).
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
 
 PLUGIN_PODCAST_SEARCH_FAILED
+	CS	Vyhledávání se nezdařilo
 	DE	Suche fehlgeschlagen
 	EN	Search failed
 	FR	Echec de recherche
 
 PLUGIN_PODCAST_WHATSNEW
+	CS	Nové epizody za posledních %s dní
 	DE	Neue Episoden der letzten %s Tage
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
 
 PLUGIN_PODCAST_AUTHOR
+	DE	Autor:
 	DE	Herausgeber:
 	EN	Author:
 	FR	Auteur :
 
 PLUGIN_PODCAST_WHATSNEW_DESC
+	CS	Nastavte, kolik dní zpětně se mají hledat nové epizody, a maximální počet epizod na tok. Všimněte si, že ručně přidané kanály nemusí být poskytovatelem sledovány
 	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
 	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
 
 PLUGIN_PODCAST_NEWSINCE
+	CS	Počet dnů historie
 	DE	Anzahl Einträge im Verlauf
 	EN	Number of history days
 	FR	Nombre de jours d'historique
 
 PLUGIN_PODCAST_MAXNEW
+	CS	Počet nových epizod na kanál
 	DE	Anzahl neuer Episoden pro Show
 	EN	Number of new episodes per feed
 	FR	Nombre de nouveaux épisodes par flux
@@ -307,21 +324,25 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	FR	Limite la recherche à un pays (optionnel)
 
 PLUGIN_PODCAST_COUNTRY
+	CS	Země
 	DE	Land
 	EN	Country
 	FR	Pays	
 
 PLUGIN_PODCAST_SUBSCRIBE
+	CS	Přihlásit se k odběru '%s'
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
+	CS	Odhlásit se z odběru '%s'
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
 	FR	Se désabonner de '%s'
 
 PLUGIN_PODCAST_DONE
+	CS	Přihlášeno/odhlášeno z kanálu...
 	DE	Abonnement angepasst...
 	EN	Subscribed/Unsubscribed from show...
 	FR	Abonné/Désabonné ...

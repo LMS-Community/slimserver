@@ -1,7 +1,7 @@
 # String file for LMA plugin
 
 PLUGIN_LMA_MODULE_NAME
-	CS	Hudební archív Live
+	CS	Live Music Archive
 	DA	Live Music Archive
 	DE	Live Music Archive
 	EN	Live Music Archive
@@ -17,7 +17,7 @@ PLUGIN_LMA_MODULE_NAME
 	SV	Live Music Archive
 
 PLUGIN_LMA_MODULE_NAME_DESC
-	CS	Přístup k hudebnímu archívu Live.
+	CS	Přístup k Live Music Archive.
 	DA	Adgang til Live Music Archive.
 	DE	Zugriff auf das Live Music Archive
 	EN	Access to the Live Music Archive.
@@ -32,7 +32,7 @@ PLUGIN_LMA_MODULE_NAME_DESC
 	SV	Tillgång till Live Music Archive
 
 PLUGIN_LMA_LOADING
-	CS	Nahrávám hudební archív Live...
+	CS	Načítání Live Music Archive...
 	DA	Indlæser Live Music Archive...
 	DE	Live Music Archive wird geladen ...
 	EN	Loading Live Music Archive...

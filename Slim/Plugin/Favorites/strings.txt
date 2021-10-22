@@ -17,7 +17,7 @@ FAVORITES
 	SV	Favoriter
 
 FAVORITES_NONE_DEFINED
-	CS	Neexistují žádné Oblíbené položky
+	CS	Neexistují žádné oblíbené položky
 	DA	Der findes ingen favoritter
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
@@ -33,7 +33,7 @@ FAVORITES_NONE_DEFINED
 	SV	Det finns inga favoriter
 
 FAVORITES_PLAYING
-	CS	Přehrávání Oblíbené položky #%s
+	CS	Přehrávání oblíbené položky #%s
 	DA	Afspiller favorit nr. %s
 	DE	Favorit Nr. %s läuft ...
 	EN	Playing favorite #%s
@@ -66,7 +66,7 @@ FAVORITES_FAVORITE_NUM
 	ZH_CN	最喜爱#
 
 FAVORITES_HOTKEYS
-	CS	Horké klávesy
+	CS	Klávesové zkratky
 	DA	Genvejstaster
 	DE	Abkürzungstasten
 	EN	Hotkeys
@@ -96,7 +96,7 @@ FAVORITES_FAVORITE
 	SV	Favorit
 
 FAVORITES_RIGHT_TO_DELETE
-	CS	Odstranit Oblíbenou položku
+	CS	Odstranit oblíbenou položku
 	DA	Slet favorit
 	DE	Favorit entfernen
 	EN	Remove Favorite
@@ -111,7 +111,7 @@ FAVORITES_RIGHT_TO_DELETE
 	SV	Ta bort favorit
 
 FAVORITES_NOT_A_FAVORITE
-	CS	Není oblíbené
+	CS	Není oblíbená položka
 	DA	Ikke en favorit
 	DE	Kein Favorit
 	EN	Not a favorite
@@ -128,7 +128,7 @@ FAVORITES_NOT_A_FAVORITE
 	ZH_CN	不是最喜爱的
 
 FAVORITES_ADDING
-	CS	Ukládání Oblíbených položek...
+	CS	Ukládání oblíbených položek...
 	DA	Gemmer favoritter...
 	DE	Favoriten werden gespeichert ...
 	EN	Saving favorites...
@@ -173,7 +173,7 @@ PLUGIN_FAVORITES_DESC
 	PL	Zapisz i edytuj ulubione
 	RU	Сохраните и отредактируйте выбранное
 	SV	Spara och redigera favoriter
-	
+
 PLUGIN_FAVORITES_USE_DSTM
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
@@ -202,7 +202,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	SV	Bläddring och redigering för opml-spellistor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	CS	Plugin Oblíbené vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Doplňky" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
+	CS	Zásuvný modul oblíbené položky vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Doplňky" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
@@ -217,7 +217,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	SV	Plugin-programmet för favoriter ger dig också möjlighet att bläddra i opml-baserade spellistor och att redigera opml-spellistor som sparats på din server. Markera alternativet nedan om du vill lägga till det här läget under Extrafunktioner på det webbaserade användargränssnittet.
 
 PLUGIN_FAVORITES_LOAD
-	CS	Nahrát
+	CS	Načíst
 	DA	Indlæs
 	DE	Laden
 	EN	Load
@@ -382,7 +382,7 @@ PLUGIN_FAVORITES_PASTE
 	SV	Klistra in
 
 PLUGIN_FAVORITES_LOADING
-	CS	Nahrávání Oblíbených položek...
+	CS	Načítání oblíbených položek...
 	DA	Indlæser Favoritter...
 	DE	Lade Favoriten...
 	EN	Loading Favorites...
@@ -427,7 +427,7 @@ PLUGIN_FAVORITES_NEWENTRY
 	SV	Ny post
 
 PLUGIN_FAVORITES_NEWFAVORITE
-	CS	Nová Oblíbená položka
+	CS	Nová oblíbená položka
 	DA	Ny favorit
 	DE	Neuer Favorit
 	EN	New Favorite
@@ -442,7 +442,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	SV	Ny favorit
 
 PLUGIN_FAVORITES_NEWURL
-	CS	Nové URL
+	CS	Nová URL
 	DA	Ny adresse
 	DE	Neue URL
 	EN	New URL
@@ -457,7 +457,7 @@ PLUGIN_FAVORITES_NEWURL
 	SV	Ny webbadress
 
 PLUGIN_FAVORITES_LOADERROR
-	CS	Chyba při nahrávání souboru
+	CS	Chyba při načítání souboru
 	DA	Fejl ved indlæsning af fil
 	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
@@ -472,7 +472,7 @@ PLUGIN_FAVORITES_LOADERROR
 	SV	Fel vid inläsning av filen
 
 PLUGIN_FAVORITES_REMOTELOADERROR
-	CS	Chyba při nahrávání URL
+	CS	Chyba při načítání URL
 	DA	Fejl ved indlæsning af adresse
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
@@ -562,7 +562,7 @@ PLUGIN_FAVORITES_URL
 	SV	Webbadress
 
 PLUGIN_FAVORITES_SAVE
-	CS	Uložit do Oblíbených
+	CS	Uložit do oblíbených položek
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
@@ -577,7 +577,7 @@ PLUGIN_FAVORITES_SAVE
 	SV	Spara i Favoriter
 
 PLUGIN_FAVORITES_REMOVE
-	CS	Odstranit z Oblíbených položek
+	CS	Odstranit z oblíbených položek
 	DA	Fjern fra Favoritter
 	DE	Aus Favoriten entfernen
 	EN	Remove from Favorites
@@ -592,6 +592,7 @@ PLUGIN_FAVORITES_REMOVE
 	SV	Ta bort från favoriter
 
 PLUGIN_FAVORITES_DONT_BROWSEDB
+	CS	Chování místních hudebních položek
 	DE	Verhalten mit lokaler Musik
 	EN	Local music items behaviour
 	FR	Comportement pour la musique locale
@@ -600,6 +601,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	PL	Sposób przeglądania ulubionych
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
+	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
 	EN	Don't browse items when selected, just play them (old behaviour)
 	FR	Jouer le favori lors de sa sélection, ne pas le parcourir (ancien comportement)
@@ -608,6 +610,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
+	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
 	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen
 	EN	When you select a favorite contributor, genre or album, drill down to its content
 	FR	Lors de la sélection d'un artiste, d'un genre ou d'un album favori, accéder à son contenu

@@ -1,5 +1,5 @@
 PLUGIN_EXTENSIONS
-	CS	Extension Downloader (Stahovač doplňků)
+	CS	Stahovač doplňků
 	DA	Hent udvidelsesmoduler
 	DE	Extension Downloader
 	EN	Extension Downloader
@@ -59,7 +59,7 @@ PLUGIN_EXTENSIONS_REPOS_DESC
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">lista</a> med adresser till databaser.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING
-	CS	<b>Výstraha:</b> Protože server automaticky stáhne software z vámi definovaných archívů, laskavě ověřte důvěryhodnost vlastníka  archívu.
+	CS	<b>Výstraha:</b> Protože server automaticky stáhne software z vámi definovaných archívů, laskavě ověřte důvěryhodnost vlastníka archívu.
 	DA	<b>Advarsel:</b> Da der automatisk bliver hentet software fra de lagersteder du definerer, skal du angive at du har tillid til ejeren af det pågældende lager.
 	DE	<b>Warnung:</b> Vergewissern Sie sich, dass Sie dem Repository-Anbieter vertrauen, da der Server die Software automatisch von den von Ihnen definierten Repositories herunterlädt.
 	EN	<b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
@@ -74,7 +74,7 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	SV	<b>Obs!</b> Eftersom servern laddar ner program automatiskt från den server du anger är det viktigt att du litar på databasens ägare.
 
 PLUGIN_EXTENSIONS_PLUGINS
-	CS	Pluginy Logitech Media Server
+	CS	Zásuvné moduly pro Logitech Media Server
 	DA	Udvidelsesmoduler til Logitech Media Server
 	DE	Logitech Media Server-Plugins
 	EN	Logitech Media Server Plugins
@@ -89,7 +89,7 @@ PLUGIN_EXTENSIONS_PLUGINS
 	SV	Plugin-program till Logitech Media Server
 
 PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
-	CS	Upgradovat Plugin na novou verzi
+	CS	Upgradovat zásuvný modul na novou verzi
 	DA	Opgrader udvidelsesmodul til en ny version
 	DE	Auf neue Plugin-Version aktualisieren
 	EN	Upgrade Plugin To A New Version
@@ -104,7 +104,7 @@ PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
 	SV	Uppgradera plugin-programmet till en ny version.
 
 PLUGIN_EXTENSIONS_PLUGINS_REMOVE
-	CS	Odstraňte v aktuálně nainstalovaný Plugin
+	CS	Odstranit aktuálně nainstalovaný zásuvný modul
 	DA	Fjern det installerede udvidelsesmodul
 	DE	Derzeit installiertes Plugin entfernen
 	EN	Remove Currently Installed Plugin
@@ -164,7 +164,7 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
-	CS	Restartujte prosím Logitech Media Server k uskutečnění  změn.
+	CS	Restartujte prosím Logitech Media Server k uskutečnění změn.
 	DA	Du skal genstarte Logitech Media Server for at ændringerne kan træde i kraft.
 	DE	Logitech Media Server muss neu gestartet werden, damit die Änderungen in Kraft treten.
 	EN	Please restart Logitech Media Server for the changes to take effect.
@@ -330,7 +330,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 
 PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	CS	Doporučené pluginy třetích stran
+	CS	Doporučené zásuvné moduly třetích stran
 	DA	Anbefalede udvidelsesmoduler fra tredjepart
 	DE	Empfohlene Plugins anderer Hersteller
 	EN	Recommended 3rd party plugins
@@ -346,7 +346,7 @@ PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 
 PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	CS	Jiné pluginy třetích stran
+	CS	Jiné zásuvné moduly třetích stran
 	DA	Udvidelsesmoduler fra tredjepart
 	DE	Plugins von Drittanbietern
 	EN	3rd party plugins
@@ -377,11 +377,13 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	SV	Logitech-tillägg
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
+	CS	Použít nepodporované rozšíření
 	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
 	FR	Utiliser des extensions non prises en charge
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
+	CS	UPOZORNĚNÍ - Jedná se o zásuvné moduly třetích stran, u kterých není zaručeno, že budou fungovat s aktuální verzí Logitech Media Serveru. Jejich autoři je opustili a již je neudržují. V nejhorším případě mohou poškodit váš Logitech Media Server. Používejte je na vlastní nebezpečí.
 	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Logitech Media Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Logitech Media Server lahm legen. Verwendung auf eigenes Risiko.
 	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Logitech Media Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Logitech Media Server de fonctionner. À utiliser à vos risques et périls.

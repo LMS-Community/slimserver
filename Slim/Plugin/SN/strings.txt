@@ -16,7 +16,7 @@ PLUGIN_SN
 	SV	tjänsthanteraren mysqueezebox.com
 
 PLUGIN_SN_DESC
-	CS	Pro služby, které nejsou podporovány na vašem Logitech Media Server přepněte na mysqueezebox.com.
+	CS	Pro služby, které nejsou podporovány na vašem Logitech Media Serveru přepněte na mysqueezebox.com.
 	DA	Skift til mysqueezebox.com for tjenester som ikke er understøttet af Logitech Media Server.
 	DE	Wechseln Sie zu mysqueezebox.com für eine Auswahl an Diensten, die nicht von Logitech Media Server unterstützt werden.
 	EN	Switch to mysqueezebox.com for services which are not supported on your Logitech Media Server.

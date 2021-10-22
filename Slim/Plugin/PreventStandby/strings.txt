@@ -16,7 +16,7 @@ PLUGIN_PREVENTSTANDBY
 	SV	Förhindra viloläge
 
 PLUGIN_PREVENTSTANDBY_DESC
-	CS	Tento plugin monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Logitech Media Server, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
+	CS	Tento zásuvný modul monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Logitech Media Serveru, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
 	DA	Dette udvidelsesmodul bruges til at overvåge Squeezebox-afspillere og forhindre at systemet går på standby mens der spilles musik, søges efter musikfiler i Logitech Media Server, afspillerne opdateres osv. Det forhindrer også at systemet går på standby blot to minutter efter at det er vækket via lokalnetværket.
 	DE	Dieses Plugin überwacht die Squeezebox-Player und verhindert, dass das System in den Standbymodus geschaltet wird während Logitech Media Server die Musiksammlung durchsucht, Player aktualisiert werden usw. Außerdem wird verhindert, dass das System zwei Minuten nach 'Wake on LAN' vorzeitig in den Standbymodus schaltet.
 	EN	This plugin monitors your SqueezeBox players and prevents the system from going into power saving standby mode while music is playing, Logitech Media Server is scanning, players are updating, etc. It will also prevent the system from prematurely going into standby two minutes after wake-on-lan.

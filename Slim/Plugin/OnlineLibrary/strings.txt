@@ -76,6 +76,7 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 	SV	Markera online-album med strömningstjänstens logo (om den är tillgänglig).
 
 PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
+	CS	Pouze znovu prohledat online hudební knihovny
 	DE	Nur Online Musiksammlung neu einlesen
 	EN	Only rescan online music library
 	FR	Analyser uniquement la bibliothèque en ligne

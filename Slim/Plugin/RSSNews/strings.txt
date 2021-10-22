@@ -17,7 +17,7 @@ PLUGIN_RSSNEWS
 	SV	RSS-nyhetsticker
 
 PLUGIN_RSSNEWS_DESC
-	CS	Přístup ke zdrojům RSS News
+	CS	Přístup k informačním kanálům RSS
 	DA	Adgang til RSS-nyhedsfeeds
 	DE	Zugriff auf RSS News Feeds
 	EN	Access to RSS News Feeds
@@ -32,7 +32,7 @@ PLUGIN_RSSNEWS_DESC
 	SV	Tillgång till RSS-nyhetsflöden
 
 PLUGIN_RSSNEWS_ADD_NEW
-	CS	Přidat nový zdroj -->
+	CS	Přidat nový kanál -->
 	DA	Tilføj nyt feed -->
 	DE	Neuen Feed hinzufügen -->
 	EN	Add new feed -->
@@ -48,7 +48,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	SV	Lägg till nytt flöde >
 
 PLUGIN_RSSNEWS_WAIT
-	CS	Vyčkejte laskavě, požaduji zdroj...
+	CS	Vyčkejte laskavě, požaduji kanál...
 	DA	Vent lidt. Anmoder om feed...
 	DE	Feed wird angefordert. Bitte warten ...
 	EN	Please wait, requesting feed...
@@ -64,7 +64,7 @@ PLUGIN_RSSNEWS_WAIT
 	SV	Begär flöde. Vänta...
 
 PLUGIN_RSSNEWS_ERROR
-	CS	Načtení RSS kanálů selhalo
+	CS	Načtení kanálů RSS selhalo
 	DA	Det lykkedes ikke at hente RSS-feed
 	DE	Fehler beim Laden des RSS-Feed
 	EN	Failed to retrieve RSS feed
@@ -128,7 +128,7 @@ PLUGIN_RSSNEWS_NAME
 	SV	RSS-nyhetsticker
 
 PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
-	CS	Nastavení spořiče obrazovky RSS News
+	CS	Nastavení spořiče obrazovky informačního kanálu RSS
 	DA	Indstillinger for pauseskærm med RSS-nyheder
 	DE	Einstellungen für RSS-Nachrichten-Bildschirmschoner
 	EN	RSS News Screensaver Settings
@@ -176,7 +176,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	SV	Aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
-	CS	Použít RSS News jako stávající spořič obrazovky
+	CS	Použít informační kanál RSS jako stávající spořič obrazovky
 	DA	Vælg RSS-nyheder som pauseskærm
 	DE	RSS-Nachrichten als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
@@ -192,7 +192,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	SV	Använd RSS-nyheter som aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
-	CS	Použít výchozí spořič obrazovky (ne RSS News)
+	CS	Použít výchozí spořič obrazovky (ne informační kanál RSS)
 	DA	Brug standardpauseskærm (ikke RSS-nyheder)
 	DE	Standard-Bildschirmschoner verwenden (nicht RSS-Nachrichten)
 	EN	Use default screensaver (not RSS News)
@@ -224,7 +224,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	SV	Aktiverar ticker som aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
-	CS	Návrat ke výchozímu spořiči obrazovky
+	CS	Návrat k výchozímu spořiči obrazovky
 	DA	Vender tilbage til standardpauseskærm
 	DE	Standard-Bildschirmschoner wird aktiviert ...
 	EN	Returning to default screensaver
@@ -240,7 +240,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
 	SV	Återställ till standardskärmsläckare
 
 PLUGIN_RSSNEWS_ERROR_IN_FEED
-	CS	Chyba syntaktické analýzy RSS kanálu
+	CS	Chyba syntaktické analýzy kanálu RSS
 	DA	Fejl ved fortolkning af RSS-feed
 	DE	Fehler beim Parsen des RSS Feed
 	EN	Error parsing RSS feed
@@ -256,7 +256,7 @@ PLUGIN_RSSNEWS_ERROR_IN_FEED
 	SV	Fel vid tolkning av RSS-flöde
 
 PLUGIN_RSSNEWS_LOADING_FEED
-	CS	Nahrávám RSS kanál...
+	CS	Načítání kanálu RSS...
 	DA	Indlæser RSS-feed...
 	DE	RSS-Feed wird geladen...
 	EN	Loading RSS feed...
@@ -272,7 +272,7 @@ PLUGIN_RSSNEWS_LOADING_FEED
 	SV	Läser in RSS-flöde...
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
-	CS	Plugin informačního proužku RSS News může být použit k prohlížení a zobrazování položek z RSS kanálů. Níže uvedené preference mohou být použity k určení, který RSS kanál použít, a k ovládání způsobu jejich zobrazení. Po skončení klikněte na tlačítko Změnit.
+	CS	Zásuvný modul informačního proužku kanálu RSS může být použit k prohlížení a zobrazování položek z kanálů RSS. Níže uvedené preference mohou být použity k určení, který kanál RSS použít, a k ovládání způsobu jejich zobrazení. Po skončení klikněte na tlačítko Změnit.
 	DA	Udvidelsesmodulet til lysavisen med RSS-nyheder kan bruges til at se nyheder fra RSS-feeds. I indstillingerne nedenfor kan du vælge hvilke RSS-feeds der skal bruges, og hvordan de skal vises. Klik på Skift når du har valgt indstillinger.
 	DE	Mit dem Plugin 'RSS-Nachrichtenticker' können Artikel aus RSS-Feeds angezeigt werden. Mit den folgenden Einstellungen können Sie festlegen, welche RSS-Feeds wie angezeigt werden sollen. Klicken Sie auf 'Ändern', wenn Sie fertig sind.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
@@ -288,7 +288,7 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	SV	Med plugin-programmet RSS-nyhetsticker kan du söka efter och visa innehåll från RSS-flöden. Nedan kan du ange vilka RSS-flöden som ska användas och hur de ska visas. Klicka på Ändra när du är klar.
 
 SETUP_PLUGIN_RSSNEWS_RESET
-	CS	Obnovit výchozí RSS kanály
+	CS	Obnovit výchozí kanály RSS
 	DA	Gendan RSS-standardfeeds
 	DE	Standard-Feeds wiederherstellen
 	EN	Reset default RSS feeds
@@ -304,7 +304,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	SV	Återställ till standard-RSS-flöden.
 
 PLUGIN_RSSNEWS_RESETTING
-	CS	Obnovení výchozích RSS kanálů
+	CS	Obnovování výchozích kanálů RSS
 	DA	Gendanner RSS-standardfeeds.
 	DE	Standard-RSS-Feeds werden wiederhergestellt ...
 	EN	Resetting to default RSS Feeds.
@@ -336,7 +336,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	SV	Visade objekt per kanal
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
-	CS	Maximální počet položek zobrazených pro každý zdroj, když je spořič obrazovky aktivní. Vyšší hodnota znamená, že spořič obrazovky zobrazí více položek před přepnutím na další zdroj.
+	CS	Maximální počet položek zobrazených pro každý kanál, když je spořič obrazovky aktivní. Vyšší hodnota znamená, že spořič obrazovky zobrazí více položek před přepnutím na další zdroj.
 	DA	Det maksimale antal overskrifter fra hvert feed der kan vises mens pauseskærmen er aktiv. En høj værdi betyder at der vises flere overskrifter før der skiftes til det næste feed.
 	DE	Die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine größere Anzahl bedeutet, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
@@ -367,7 +367,7 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_RSSNEWS_INVALID_FEED
-	CS	Neplatný zdroj - %s
+	CS	Neplatný kanál - %s
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
