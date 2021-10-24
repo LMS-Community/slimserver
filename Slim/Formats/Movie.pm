@@ -255,7 +255,7 @@ sub parseStream {
 		
 		# top 'moov' not found, need to seek beyond 'mdat'
 		$args->{_range} = $offset;
-		$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset});
+		substr($args->{_scanbuf}, $args->{_offset}) = '';
 		delete $args->{_need};
 		return $offset;
 	} elsif ($args->{_atom} eq 'moov' && $len) {
@@ -263,7 +263,7 @@ sub parseStream {
 	}	
 	
 	# finally got it, add 'moov' size it if was last atom
-	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0));
+	substr($args->{_scanbuf}, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0)) = '';
 	
 	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
 	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
@@ -367,7 +367,7 @@ sub extractADTS {
 	my @ADTSHeader = (0xFF,0xF1,0,0,0,0,0xFC);
 
 	$codec->{inbuf} .= substr($_[1], $offset);
-	$_[1] = substr($_[1], 0, $offset);
+	substr($_[1], $offset) = '';
 		
 	while ($codec->{frame_size} || $codec->{frame_index} < $codec->{entries}) {
 		my $frame_size = $codec->{frame_size} || $codec->{frames}->[$codec->{frame_index}];
@@ -384,7 +384,7 @@ sub extractADTS {
 		$consumed += $frame_size;
 	}	
 
-	$codec->{inbuf} = substr($codec->{inbuf}, $consumed);
+	substr($codec->{inbuf}, 0, $consumed, '');
 	return length $codec->{inbuf};
 }	
 	
