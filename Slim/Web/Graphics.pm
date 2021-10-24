@@ -44,7 +44,7 @@ sub serverResizesArt { 1 }
 sub _cached {
 	my $path = shift;
 
-	return if main::NOBROWSECACHE;
+	return if !main::SCANNER && main::NOBROWSECACHE;
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
