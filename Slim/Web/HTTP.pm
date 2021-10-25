@@ -489,16 +489,16 @@ sub processHTTP {
 		#PUT and DELETE are only considered valid for a raw function, so we will not go any further for these HTTP verbs
 		if ( $request->method() eq 'PUT' || $request->method() eq 'DELETE') {
 					
-				$log->is_warn && $log->warn("Bad Request: [" . join(' ', ($request->method, $request->uri)) . "]");			
+			$log->is_warn && $log->warn("Bad Request: [" . join(' ', ($request->method, $request->uri)) . "]");			
 				
-				$response->code(RC_METHOD_NOT_ALLOWED);
-				$response->content_type('text/html');
-				$response->header('Connection' => 'close');
-				$response->content_ref(filltemplatefile('html/errors/405.html', $params));
+			$response->code(RC_METHOD_NOT_ALLOWED);
+			$response->content_type('text/html');
+			$response->header('Connection' => 'close');
+			$response->content_ref(filltemplatefile('html/errors/405.html', $params));
 
-				$httpClient->send_response($response);
-				closeHTTPSocket($httpClient);
-				return;
+			$httpClient->send_response($response);
+			closeHTTPSocket($httpClient);
+			return;
 		}
 
 		# Set the request time - for If-Modified-Since
