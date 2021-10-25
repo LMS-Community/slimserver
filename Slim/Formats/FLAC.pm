@@ -1043,8 +1043,7 @@ sub frameAlign {
 	# just need to flush the buffer, make sure empty ourselves first
 	if ($context->{aligned}) {
 		if ($chunkSize < $length) {
-			$_[1] = substr($context->{inbuf}, 0, $length - $chunkSize - 1);
-			$context->{inbuf} = substr($context->{inbuf}, $length - $chunkSize - 1);
+			$_[1] = substr($context->{inbuf}, 0, $length - $chunkSize - 1, '');
 			return $chunkSize + 1;
 		}
 		else {
