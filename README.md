@@ -13,7 +13,7 @@ Unfortunately the latest Squeezebox Radio firmware (7.7.3) comes with a bug whic
 
 But there's a patch available, which you can easily install on an existing SB Radio:
 
-* On the Radio go to Settings/Advanced/Applet Installer, install the Patch Installer. The Radio will re-boot.
+* On the Radio go to Settings/Advanced/Applet Installer. Make sure "Recommended Applets Only" is unchecked, then install the Patch Installer. The Radio will re-boot.
 * Once it's back, go to Settings/Advanced/Patch Installer and install the "Version Comparison Fix".
 
 Enjoy the music on your SB Radio!
