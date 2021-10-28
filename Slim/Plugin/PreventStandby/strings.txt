@@ -46,7 +46,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME
 	SV	Efter hur många minuter ska viloläge tillåtas?
 
 PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
-	CS	Zadejte počet minut (po zastavení přehrávání nebo po obnovení systému), po kterém tento plugin znovu povolí přechod systému do pohotovostního systému. K úplnému zákazu automatického přechodu tohoto systému do pohotovostního systému zadejte 0 (nulu).
+	CS	Zadejte počet minut (po zastavení přehrávání nebo po obnovení systému), po kterém tento zásuvný modul znovu povolí přechod systému do pohotovostního systému. K úplnému zákazu automatického přechodu tohoto systému do pohotovostního systému zadejte 0 (nulu).
 	DA	Angiv det antal minutter (fra afspilningen stopper eller systemet vækkes) der skal forløbe før systemet igen kan gå på standby. Hvis du vælger 0, kan systemet ikke automatisk gå på standby.
 	DE	Geben Sie an, nach wie vielen Minuten (nachdem die Wiedergabe beendet oder das System reaktiviert wurde) das Plugin zulässt, dass das System in den Standbymodus wechselt. Wenn Sie 0 (Null) eingeben, wird der automatische Wechsel in den Standbymodus vollständig unterbunden.
 	EN	Enter the number of minutes (after playing stops or after the system resumes) at the end of which the plugin will again allow the system to go into standby. Enter 0 (zero) to completely prohibit automatic standby on this system.

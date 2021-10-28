@@ -1,7 +1,7 @@
 # String file for SongScanner plugin
 
 PLUGIN_SONGSCANNER
-	CS	Prohlížeč skladby
+	CS	Prohledávání skladby
 	DA	Analyse af nummer
 	DE	Titel-Scanner
 	EN	Song Scanner
@@ -46,7 +46,7 @@ PLUGIN_SONGSCANNER_SET
 	SV	Tid:
 
 PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
-	CS	Není možné prohlížet stopu, protože délka není známa
+	CS	Není možné prohledat stopu, protože doba trvání není známa
 	DA	Nummeret kan ikke analyseres hurtigere da dets længde er ukendt
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
 	EN	Cannot scan through track because duration unknown

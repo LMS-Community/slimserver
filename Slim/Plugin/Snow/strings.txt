@@ -177,7 +177,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	SV	Snöskärmsläckare: Snötyp
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
-	CS	Nyní přehrávám, sníh padá v pozadí
+	CS	Právě hraje, sníh padá v pozadí
 	DA	Nu spiller: sne falder bagved
 	DE	Aktuelle Wiedergabe mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
@@ -193,7 +193,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	SV	Snö i bakgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
-	CS	Nyní přehrávám, sníh padá v popředí
+	CS	Právě hraje, sníh padá v popředí
 	DA	Nu spiller: sne falder foran
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front

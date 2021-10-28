@@ -828,7 +828,7 @@ NOW_PLAYING
 	ZH_CN	播放中
 
 NOW_SCANNING
-	CS	Právě se prohledává
+	CS	Prohledávání
 	DA	Gennemsøger
 	DE	Suche läuft ...
 	EN	Now Scanning
@@ -2035,7 +2035,7 @@ ALARM_DELETING
 	SV	Tar bort alarm...
 
 ALARM_NOW_PLAYING
-	CS	Právě hraje budík
+	CS	Budík Právě hraje
 	DA	Vækkeuret spiller nu
 	DE	Aktuelle Wecker-Wiedergabe
 	EN	Alarm Clock Now Playing
@@ -3131,7 +3131,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	ZH_CN	失误：无法取得播放表
 
 ASF_UNABLE_TO_PARSE
-	CS	Chyba: Nelze zpracovat audio proud ASF
+	CS	Chyba: Nelze parsovat audio proud ASF
 	DA	Fejl: Kan ikke fortolke ASF-lydstream
 	DE	Fehler: ASF-Audiostream kann nicht verarbeitet werden
 	EN	Error: Unable to parse ASF audio stream
@@ -3971,7 +3971,7 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
 SETUP_PLUGINS_SAFEMODE
-	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici pluginy. Můžete je stále povolit / zakázat za účelem nápravy problémů, které máte s instalací.
+	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici zásuvné moduly. Stále je můžete povolit nebo zakázat, abyste vyřešili problémy s instalací.
 	DA	Bemærk: Da Logitech Media Server kører i fejlsikret tilstand, kan du ikke bruge udvidelsesmodulerne. Du kan stadig slå dem til og fra for at løse problemer med installationen.
 	DE	Hinweis: Da Sie Logitech Media Server im abgesicherten Modus ausführen, sind die Plugins nicht verfügbar. Sie können sie trotzdem aktivieren bzw. deaktivieren, wenn es Probleme mit der Installation gibt.
 	EN	Please note: as you're running Logitech Media Server in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
@@ -3986,7 +3986,7 @@ SETUP_PLUGINS_SAFEMODE
 	SV	Tänk på att plugin-programmen inte är tillgängliga när du kör Logitech Media Server i felsäkert läge. Du kan fortfarande aktivera/inaktivera dem för att åtgärda problemen du hade under installationen.
 
 INSTALLERROR_INVALID_VERSION
-	CS	Tento zásuvný modul není kompatibilní s touto verzí Logitech Media Serveru. Prosím aktualizujte.
+	CS	Zásuvný modul není kompatibilní s touto verzí Logitech Media Serveru. Prosím aktualizujte.
 	DA	Udvidelsesmodulet er inkompatibelt med denne version af Logitech Media Server. Det skal opdateres.
 	DE	Plugin ist nicht kompatibel mit dieser Version von Logitech Media Server. Aktualisieren Sie die Anwendung.
 	EN	Plugin is incompatible with this version of Logitech Media Server. Please update.
@@ -4001,7 +4001,7 @@ INSTALLERROR_INVALID_VERSION
 	SV	Plugin-programmet är inte kompatibelt med den här versionen av Logitech Media Server. Uppdatera.
 
 INSTALLERROR_INCOMPATIBLE_PLATFORM
-	CS	Plugin není kompatibilní s vaší platformou.
+	CS	Zásuvný modul není kompatibilní s vaší platformou.
 	DA	Udvidelsesmodulet er ikke kompatibelt med din platform.
 	DE	Plugin ist mit Ihrer Plattform nicht kompatibel.
 	EN	Plugin is incompatible with your platform.
@@ -4428,7 +4428,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	SV	Vill du återställa spelarens fabriksinställningar?
 
 SETUP_POWERONBRIGHTNESS
-	CS	Zapnout jas
+	CS	Jas při zapnutí
 	DA	Lysstyrke når den tændes
 	DE	Helligkeit im eingeschalteten Zustand
 	EN	Power On Brightness
@@ -4443,7 +4443,7 @@ SETUP_POWERONBRIGHTNESS
 	SV	Ljusstyrka när strömmen slås på
 
 SETUP_POWEROFFBRIGHTNESS
-	CS	Vypnout jas
+	CS	Jas při vypnutí
 	DA	Lysstyrke når afspilleren er slukket
 	DE	Helligkeit im ausgeschalteten Zustand
 	EN	Power Off Brightness
@@ -5253,7 +5253,7 @@ SETUP_MAXBITRATE
 	ZH_CN	限制比特率
 
 SETUP_MAXBITRATE_DESC
-	CS	Logitech Media Server může automaticky konvertovat vaše hudební soubory do WAV/AIFF nebo MP3 průběžně a snížit tak přenosovou rychlost (bitrate) dat přenášených datovým proudem do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač ke Logitech Media Serveru přes Internet, nebo pokud máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Logitech Media Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na nižší přenosovou rychlost (bitrate), než je maximální přenosová rychlost, nebudou konvertovány. Pokud zvolíte Bez omezení, Logitech Media Server bude posílat datový proud vašich MP3 souborů bez konverze a vaše souboru jiných typů jako nekomprimované audio PCM.
+	CS	Logitech Media Server může automaticky konvertovat vaše hudební soubory do WAV/AIFF nebo MP3 průběžně a snížit tak přenosovou rychlost (bitrate) dat přenášených datovým proudem do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač k Logitech Media Serveru přes Internet, nebo pokud máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Logitech Media Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na nižší přenosovou rychlost (bitrate), než je maximální přenosová rychlost, nebudou konvertovány. Pokud zvolíte Bez omezení, Logitech Media Server bude posílat datový proud vašich MP3 souborů bez konverze a vaše souboru jiných typů jako nekomprimované audio PCM.
 	DA	Logitech Media Server kan automatisk konvertere musikfilerne til wav/aiff eller mp3 med en lavere bithastighed sådan at der ikke sendes så mange data til afspilleren.  Det kan være praktisk hvis du etablerer forbindelse til afspilleren over internettet eller midlertidigt har problemer med et trådløst netværk.  Du kan vælge den maksimale bithastighed som Logitech Media Server kan sende til afspilleren.  Numre der er kodet som mp3 med en lavere bithastighed end den maksimale, bliver ikke konverteret.  Hvis du vælger Ingen begrænsning, vil serveren streame dine mp3-filer uden konvertering og andre filtyper i ukomprimeret PCM-format.
 	DE	Logitech Media Server kann WAV/AIFF- oder MP3-Dateien automatisch während der Wiedergabe in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie den Player übers Internet mit dem Server verbinden oder Probleme mit dem kabellosen Netzwerk haben. Sie können die maximale Bitrate definieren, mit der Logitech Media Server an den Player übertragen soll. MP3-Titel, die mit einer kleineren Bitrate als der maximalen Bitrate kodiert wurden, werden nicht umgewandelt. Wenn Sie 'Keine Beschränkung' wählen, überträgt Logitech Media Server die MP3-Dateien ohne Umwandlung und andere Dateiarten als unkomprimiertes PCM-Audio.
 	EN	Logitech Media Server can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to the server across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that Logitech Media Server will stream to your player.  MP3 songs encoded at a bitrate lower than the maximum bitrate won't be converted.  If you choose No Limit, the server will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.
@@ -5791,7 +5791,7 @@ SETUP_TRANSITIONTYPE_DESC
 	ZH_CN	Squeezebox能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音频同时淡出淡入模式。
 
 SETUP_TRANSITIONDURATION
-	CS	Doba trvání Prolínání
+	CS	Doba trvání prolínání
 	DA	Længde af blød overgang
 	DE	Dauer der Überblendung
 	EN	Crossfade Duration
@@ -5825,6 +5825,7 @@ SETUP_TRANSITIONDURATION_DESC
 	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
 
 SETUP_FADEINDURATION
+	CS	Doba trvání zesilování při přehrávání nebo obnovení
 	DE	Dauer der Einblendung
 	EN	Play or Resume fade-in duration
 	FR	Durée de montée en volume
@@ -5890,7 +5891,7 @@ TRANSITION_FADE_IN
 	ZH_CN	音频淡入
 
 TRANSITION_FADE_OUT
-	CS	Do ztracena
+	CS	Zeslabování
 	DA	Fade ud
 	DE	Ausblenden
 	EN	Fade out
@@ -6580,7 +6581,7 @@ SETUP_RESCAN_BUTTON
 	ZH_CN	重新扫描
 
 SETUP_RESCAN_DESC
-	CS	Po klepnutí na Nové hledání Logitech Media Server prohledá vaši knihovnu médií a přidá nové média nebo aktualizuje soubory, které byly změněny.
+	CS	Po klepnutí na Nové prohledání Logitech Media Server prohledá vaši knihovnu médií a přidá nové média nebo aktualizuje soubory, které byly změněny.
 	DA	Klik på Gennemsøg igen for at få Logitech Media Server til at gennemsøge dit mediebibliotek og tilføje nye mediefiler og opdatere ændrede filer.
 	DE	Klicken Sie auf 'Durchsuchen starten', damit Logitech Media Server die Medienbibliothek erneut nach neuen oder veränderten Musikstücken durchsucht.
 	EN	Click Rescan to have Logitech Media Server scan through your media library and add new media or update files that have changed.
@@ -6678,7 +6679,7 @@ SETUP_AUTO_RESCAN_DESC
 	SV	Logitech Media Server kan bevaka dina mediemappar och automatiskt upptäcka ändringar. Nya och ändrade filer bör visas i ditt bibliotek inom några minuter.
 
 SETUP_AUTO_RESCAN_ENABLE
-	CS	Aktivováno, automatické sledování změn
+	CS	Povoleno, automatické sledování změn
 	DA	Aktiveret – registrer automatisk ændringer
 	DE	Aktiviert, automatisch auf Änderungen durchsuchen
 	EN	Enabled, watch for changes automatically
@@ -6693,7 +6694,7 @@ SETUP_AUTO_RESCAN_ENABLE
 	SV	Aktiverad, sök efter ändringar automatiskt
 
 SETUP_AUTO_RESCAN_DISABLE
-	CS	Deaktivováno, pro nové média použít ruční vyhledávání
+	CS	Zakázáno, pro nové mediální soubory použít ruční prohledávání
 	DA	Deaktiveret – søg efter nye mediefiler manuelt
 	DE	Deaktiviert, manuell nach neuen Mediendateien suchen
 	EN	Disabled, manually scan for new media files
@@ -6738,7 +6739,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
 	SV	För att upptäcka ändringar i fjärrnätverksresurser eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
 
 RESCANNING
-	CS	Logitech Media Server nyní znovu prohledává vaši knihovnu médií.
+	CS	Logitech Media Server znovu prohledává vaši knihovnu médií.
 	DA	Logitech Media Server gennemsøger nu dit mediebibliotek igen.
 	DE	Logitech Media Server durchsucht Ihre Medienbibliothek erneut.
 	EN	Logitech Media Server is now rescanning your Media Library.
@@ -8935,7 +8936,7 @@ SETUP_FILTERRULE_HEAD
 	ZH_CN	允许的IP地址
 
 SETUP_FILTERRULE_DESC
-	CS	Pokud jste zapnuli blokování, můžete zadat adresy, kterým chcete povolit připojení ke Logitech Media Server.<br><br>Toto pole akceptuje seznam konkrétních IP adres, zástupné znaky typu * a rozsahy IP adres v seznamu oddělovaném čárkami. Například:<BR><BR><B>10.1.2.2</B> povolí připojení pouze z adresy 10.1.2.2 <BR><BR><B>10.1.2.*</B> povolí vše s IP adresou, která bude mezi adresami 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> povolí připojení IP adres v rozsahu 10.1.2.2 - 10.1.2.50.<BR><BR>Více položek lze kombinovat a oddělovat čárkami, například <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Speciální IP adresa 127.0.0.1 povolí webovému prohlížeči připojení ke Logitech Media Server běžícímu na stejném počítači.
+	CS	Pokud jste zapnuli blokování, můžete zadat adresy, kterým chcete povolit připojení k Logitech Media Serveru.<br><br>Toto pole akceptuje seznam konkrétních IP adres, zástupné znaky typu * a rozsahy IP adres v seznamu oddělovaném čárkami. Například:<BR><BR><B>10.1.2.2</B> povolí připojení pouze z adresy 10.1.2.2 <BR><BR><B>10.1.2.*</B> povolí vše s IP adresou, která bude mezi adresami 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> povolí připojení IP adres v rozsahu 10.1.2.2 - 10.1.2.50.<BR><BR>Více položek lze kombinovat a oddělovat čárkami, například <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Speciální IP adresa 127.0.0.1 povolí webovému prohlížeči připojení k Logitech Media Serveru běžícímu na stejném počítači.
 	DA	Hvis blokeringsfunktionen er slået til, kan du angive adresser hvorfra der må etableres forbindelse til Logitech Media Server.<br><br>Du kan angive bestemte IP-adresser, adresser med jokertegnet * samt IP-adresseområder i en kommaadskilt liste. Eksempel:<BR><BR><B>10.1.2.2</B> tillader udelukkende 10.1.2.2 at etablere forbindelse<BR><BR><B>10.1.2.*</B> tillader forbindelser fra alt med en adresse startende med 10.1.2. og sluttende med et vilkårligt tal<BR><BR><B>10.1.2.2-50</B> tillader forbindelser fra alle IP-adresser mellem 10.1.2.2 og 10.1.2.50<BR><BR>Endelig kan du angive flere adresser og adresseområder, og adskille dem vha. et komma: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Den særlige IP-adresse 127.0.0.1 gør det muligt for en webbrowser at etablere forbindelse til Logitech Media Server som kører på den samme computer.
 	DE	Ist die Blockierung aktiviert, können Sie IP-Adressen angeben, die eine Verbindung zu Logitech Media Server herstellen dürfen.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Jokerzeichen und trennen Sie unterschiedliche IP-Adressen durch Komma.<BR><BR><B>Beispiel: 10.1.2.2</B> akzeptiert nur 10.1.2.2<BR><BR><B>10.1.2.*</B> akzeptiert alle IP-Adressen, die mit '10.1.2.' beginnen.<BR><BR><B>10.1.2.2-50</B> akzeptiert die IP-Adressen 10.1.2.2 – 10.1.2.50.<BR><BR>Sie können mehrere Einträge durch Kommas kombinieren. Beispiel:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Web-Browser die Verbindung mit Logitech Media Server auf demselben Computer.
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to Logitech Media Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to Logitech Media Server running on that same computer.
@@ -9305,12 +9306,13 @@ SETUP_SN_EMAIL
 	SV	E-postadress
 
 SETUP_SN_SIGNOUT
+	CS	Odhlásit se z mysqueezebox.com
 	DE	Von mysqueezebox.com abmelden
 	EN	Sign out of mysqueezebox.com
 	FR	Déconnexion de mysqueezebox.com
 
 SETUP_SN_EMAIL_DESC
-	CS	Zadejte emailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
+	CS	Zadejte e-mailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
 	DA	Angiv e-mail-adressen som skal bruges til at logge på din konto til mysqueezebox.com.
 	DE	Geben Sie bitte die Mail-Adresse an, welche Sie zum Anmelden an mysqueezebox.com verwenden.
 	EN	Enter the email address used to login to your mysqueezebox.com account.
@@ -9445,7 +9447,7 @@ SETUP_SN_SYNC
 	SV	mysqueezebox.com-integration
 
 SETUP_SN_SYNC_DESC
-	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Server a mysqueezebox.com. Tuto funkci vypnete volbou Zakázat.
+	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Server a mysqueezebox.com. Tuto funkci vypnete volbou Zakázáno.
 	DA	Som standard synkroniseres mange af afspillerindstillingerne mellem Logitech Media Server og mysqueezebox.com. Du kan deaktivere denne funktion ved at vælge Deaktiver nedenfor.
 	DE	Standardmäßig werden zahlreiche Player-Einstellungen zwischen Logitech Media Server und mysqueezebox.com synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
 	EN	By default, many player settings are synchronized between Logitech Media Server and mysqueezebox.com.  To disable this feature, select the Disabled option below.
@@ -9460,7 +9462,7 @@ SETUP_SN_SYNC_DESC
 	SV	Som standard synkroniseras många spelarinställningar mellan Logitech Media Server och mysqueezebox.com. Du avaktiverar funktionen genom att välja Avaktiverat nedan.
 
 SETUP_SN_SYNC_ENABLE
-	CS	Povolit, udržovat nastavení přehrávače v synchronizaci.
+	CS	Povoleno, udržovat nastavení přehrávače v synchronizaci.
 	DA	Aktiveret; afspillernes indstillinger synkroniseres.
 	DE	Aktiv, Player-Einstellungen synchronisieren
 	EN	Enabled, keep player settings in sync.
@@ -9565,7 +9567,7 @@ SETUP_NO_JAVASCRIPT
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Logitech Media Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
 SETUP_WIZARD_SQN_PLEASE
-	CS	Přihlašte se svojí emailovou adresou mysqueezebox.com a heslem a pokračujte .
+	CS	Přihlašte se svojí e-mailovou adresou mysqueezebox.com a heslem a pokračujte.
 	DA	Du skal logge på med din e-mail-adresse og adgangskode til mysqueezebox.com for at fortsætte.
 	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-Mail-Adresse und Ihrem mysqueezebox.com-Kennwort an, um fortzufahren.
 	EN	Please sign in with your mysqueezebox.com email and password to continue.
@@ -11375,7 +11377,7 @@ CONFIRM_OVERWRITE
 	ZH_CN	确定重写
 
 CONFIRM_DELETE
-	CS	Potvrďte smazání
+	CS	Potvrdit smazání
 	DA	Bekræft sletning
 	DE	Löschen bestätigen
 	EN	Confirm Delete
@@ -11520,7 +11522,7 @@ CONDUCTOR
 	ZH_CN	指挥
 
 BAND
-	CS	Skupina/Orchestr
+	CS	Skupina/orchestr
 	DA	Band/orkester
 	DE	Band/Orchester
 	EN	Band/Orchestra
@@ -11699,7 +11701,7 @@ MP2
 	SV	Mp2
 
 ALC
-	CS	Bezztrátové Apple
+	CS	Apple Lossless
 	DA	Apple Lossless
 	DE	Apple Lossless
 	EN	Apple Lossless
@@ -12100,11 +12102,13 @@ DFF
 	SV	DFF
 
 DSF
+	CS	DSF
 	EN	DSF
 	NO	DSF
 	SV	DSF
 
 OPS
+	CS	Opus
 	EN	Opus
 	SV	Opus
 
@@ -12127,7 +12131,7 @@ MODIFIED
 	ZH_CN	已更改
 
 MODTIME
-	CS	Datum upraveno
+	CS	Datum úpravy
 	DA	Ændret den
 	DE	Geändert am
 	EN	Date Modified
@@ -12182,7 +12186,7 @@ COVERART
 	ZH_CN	图象
 
 FILELENGTH
-	CS	Délka souboru
+	CS	Velikost souboru
 	DA	Filstørrelse
 	DE	Dateigröße
 	EN	File Length
@@ -13432,7 +13436,7 @@ BROWSE_ALL_PICTURES
 	SV	Alla bilder
 
 BROWSE_MUSIC_FOLDER_WHILE_SCANNING
-	CS	Složka hudby není v průběhu skenování k dispozici.
+	CS	Složka hudby není v průběhu prohledávání k dispozici.
 	DA	Musikmappe kan ikke vælges, mens der scannes.
 	DE	Musikordner ist während des Scanvorgangs nicht verfügbar.
 	EN	Music Folder is not available while scanning.
@@ -13453,7 +13457,7 @@ BROWSE_ON_SERVICE
 	SV	Bläddra på %s
 
 SYNCHRONIZE
-	CS	Synchronizovat
+	CS	Synchronizace
 	DA	Synkroniser
 	DE	Synchronisieren
 	EN	Synchronize
@@ -13652,12 +13656,14 @@ MOSTPLAYED
 	ZH_CN	最常播的歌曲
 
 LASTPLAYED
+	CS	Naposledy přehrávané
 	DE	Zuletzt wiedergegeben
 	EN	Last Played
 	FR	Dernier lu
 	SV	Spelad senast
 
 PLAYCOUNT
+	CS	Počet přehrání
 	DE	Anzahl Wiedergaben
 	EN	Play Count
 	FR	Nombre de fois joué
@@ -13667,7 +13673,7 @@ PLAYCOUNT
 	SV	Antal uppspelningar
 
 ALBUM_INFO
-	CS	Info o Albu
+	CS	Informace o albu
 	DA	Oplysninger om album
 	DE	Informationen zum Album
 	EN	Album Info
@@ -13682,7 +13688,7 @@ ALBUM_INFO
 	SV	Information om album
 
 ARTIST_INFO
-	CS	Info o interpretovi
+	CS	Informace o interpretovi
 	DA	Oplysninger om kunstner
 	DE	Info zum Interpreten
 	EN	Artist Info
@@ -13697,7 +13703,7 @@ ARTIST_INFO
 	SV	Artistinformation
 
 GENRE_INFO
-	CS	Info o žánrech
+	CS	Informace o žánrech
 	DA	Oplysninger om genrer
 	DE	Infos zur Stilrichtung
 	EN	Genre Info
@@ -13712,7 +13718,7 @@ GENRE_INFO
 	SV	Genreinformation
 
 YEAR_INFO
-	CS	Info o roku
+	CS	Informace o roku
 	DA	Oplysninger om år
 	DE	Jahresangabe
 	EN	Year Info
@@ -13993,7 +13999,7 @@ MENU_SETTINGS
 	ZH_CN	菜单
 
 DISPLAY_SETTINGS
-	CS	Zobrazit
+	CS	Zobrazení
 	DA	Display
 	DE	Anzeige
 	EN	Display
@@ -14449,7 +14455,7 @@ DEBUG_SERVER_CHOOSE
 	SV	Server
 
 DEBUG_SCANNER_CHOOSE
-	CS	Snímač médií
+	CS	Prohledávaní médií
 	DA	Mediesøgning
 	DE	Medienscanner
 	EN	Media Scanner
@@ -14494,7 +14500,7 @@ DEBUG_DEFAULT
 	SV	Återställ loggningsinställningar
 
 SETUP_GROUP_DEBUG_DESC
-	CS	Logitech Media Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o provozu serveru a scanneru. Každá kategorie protokolů má určitou závažnost pro protokolování. Volba "Ladění" je nejvíce informativní, volba "Vypnuto" nejméně.
+	CS	Logitech Media Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o provozu serveru a prohledávání. Každá kategorie protokolů má určitou závažnost pro protokolování. Volba "Ladění" je nejvíce informativní, volba "Vypnuto" nejméně.
 	DA	Logitech Media Server har en række indstillinger til logføring som kan bruges til at registrere detaljerede oplysninger om serveren og søgninger. Hver logføringskategori kan indstilles til at registrere flere eller færre oplysninger. Fejlsøgning giver flest detaljer og Fra ingen.
 	DE	Logitech Media Server enthält eine Reihe von Protokolleinstellungen, mit denen Sie umfangreiche Angaben über Logitech Media Server- und Scanner-Vorgänge aufzeichnen können. Jede Protokollkategorie unterliegt einer Begrenzung in der Protokollierung ("Debug" mit der höchsten Wortanzahl, "Off" mit der niedrigsten).
 	EN	Logitech Media Server has a number of logging settings that can be used to record detailed information about server and scanner operation. Each logging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
@@ -15037,7 +15043,7 @@ DISPLAY_PLUGINS
 	SV	Visa menyn Extrafunktioner på Slim-spelaren:
 
 SHOW_PLUGINS
-	CS	Zobrazit zásuvné moduly (Pluginy)
+	CS	Zobrazit zásuvné moduly
 	DA	Vis udvidelsesmoduler
 	DE	Plugins anzeigen
 	EN	Show Plugins
@@ -15053,7 +15059,7 @@ SHOW_PLUGINS
 	SV	Visa plugin-program
 
 NO_PLUGINS
-	CS	Nejsou k dispozici žádné zásuvné moduly (pluginy).
+	CS	Nejsou k dispozici žádné zásuvné moduly.
 	DA	Der er ingen udvidelsesmoduler tilgængelige.
 	DE	Keine Plugins verfügbar.
 	EN	No Plugins available.
@@ -16998,7 +17004,7 @@ INFORMATION_MENU_SERVER
 	ZH_CN	伺服器信息
 
 INFORMATION_MENU_SCAN
-	CS	Detaily hledání médií
+	CS	Detaily prohledávání médií
 	DA	Detaljer om mediesøgning
 	DE	Details zum Medien-Scan
 	EN	Media Scan Details
@@ -17321,7 +17327,7 @@ INFORMATION_PREFSDIR
 	SV	Mappen Inställningar
 
 INFORMATION_PLUGINDIRS
-	CS	Složky zásuvných modulů (pluginů)
+	CS	Složky zásuvných modulů
 	DA	Mapper med udvidelsesmoduler
 	DE	Ordner für Extras
 	EN	Plugin Folders
@@ -19404,7 +19410,7 @@ SETUP_SERVERPRIORITY_DESC
 	ZH_CN	您可以配置Logitech Media Server服务器流程的优先设置。
 
 SETUP_SCANNERPRIORITY
-	CS	Priorita skeneru
+	CS	Priorita prohledávání
 	DA	Prioritet for gennemsøgning
 	DE	Durchsuchpriorität
 	EN	Scanner Priority
@@ -20126,7 +20132,7 @@ INFORMATION_PLAYER_VOLTAGE_ABBR
 	ZH_CN	伏特
 
 LOADING_BROWSE_MUSIC_FOLDER
-	CS	Zavádění složky Hudba...
+	CS	Zavádění složky hudby...
 	DA	Indlæser musikmappe...
 	DE	Musikordner wird geladen ...
 	EN	Loading Music Folder...
@@ -20232,7 +20238,7 @@ DEBUG_FAVORITES
 	SV	Favoriter, lägga till och spela upp
 
 DEBUG_SERVER_PLUGINS
-	CS	Zavádění zásuvného modulu (pluginu)
+	CS	Zavádění zásuvného modulu
 	DA	Udvidelsesmodulet indlæses
 	DE	Plugin Informationen
 	EN	Plugin Module Loading
@@ -20577,6 +20583,7 @@ DEBUG_DATABASE_INFO
 	SV	Loggning av metadata och tolkning
 
 DEBUG_DATABASE_VIRTUALLIBRARIES
+	CS	Zobrazení knihovny (virtuální knihovny)
 	DE	Musiksammlungs-Ansichten (Virtual Libraries)
 	EN	Library Views (virtual libraries)
 	FR	Bibliothèques thématiques (bibliothèques virtuelles)
@@ -20586,7 +20593,7 @@ DEBUG_DATABASE_VIRTUALLIBRARIES
 	SV	Delbibliotek (virtuella bibliotek)
 
 DEBUG_OS_FILES
-	CS	Informace o úrovni souborového systému
+	CS	Informace na úrovni souborového systému
 	DA	Information på filsystemnivau
 	DE	Informationen zu Dateisystem-Zugriffen
 	EN	Filesystem Level Information
@@ -20886,7 +20893,7 @@ DEBUG_PLAYER_SYNC
 	SV	Synkroniseringsloggning av flera spelare
 
 DEBUG_SCAN
-	CS	Protokolování všech hledání
+	CS	Protokolování všech prohledávání
 	DA	Logføring af alle gennemsøgninger
 	DE	Alle Scanner-Informationen
 	EN	All Scan Logging
@@ -20991,7 +20998,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	SV	Alla aktiviteter som har att göra med Logitech Media Server (ljudströmning, infraröda signaler o.s.v.) loggas här:
 
 SETUP_DEBUG_SCANNER_LOG
-	CS	Protokolový soubor prohledávače
+	CS	Protokolový soubor prohledávání
 	DA	Logfil for gennemsøgning
 	DE	Scanner Logdatei
 	EN	Scanner Log File
@@ -21021,7 +21028,7 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	SV	En loggfil skapas över alla aktiviteter som har att göra med sökningar, däribland iTunes och MusicIP, i Logitech Media Server:
 
 LINES
-	CS	řádky
+	CS	řádků
 	DA	linjer
 	DE	Zeilen
 	EN	lines
@@ -21229,7 +21236,7 @@ ENLARGE
 	SV	Förstora
 
 SCANNER_PROGRESS
-	CS	Detaily hledání médií
+	CS	Detaily prohledávání médií
 	DA	Detaljer om mediesøgning
 	DE	Details zum Medien-Scan
 	EN	Media Scan Details
@@ -21274,7 +21281,7 @@ SCAN_ABORTED_PROGRESS
 	SV	Sökningen avbröts manuellt av användaren
 
 DIRECTORY_PROGRESS
-	CS	Prohledávání adresáře
+	CS	Prohledávání adresářů
 	DA	Indeksering af mapper
 	DE	Verzeichnis wird durchsucht
 	EN	Directory Scan
@@ -21319,7 +21326,7 @@ DISCOVERING_DIRECTORY_PROGRESS
 	SV	Leta efter filer/kataloger
 
 DISCOVERING_PLAYLIST_PROGRESS
-	CS	Hledání seznamů skladeb
+	CS	Vyhledávání seznamů skladeb
 	DA	Finder afspilningslister
 	DE	Wiedergabelisten werden erkannt
 	EN	Discovering playlists
@@ -21349,7 +21356,7 @@ DIRECTORY_DELETED_PROGRESS
 	SV	Ta bort borttagna filer
 
 DIRECTORY_NEW_PROGRESS
-	CS	Vyhledávání nových hudebních souborů
+	CS	Prohledávání nových hudebních souborů
 	DA	Gennemsøger nye musikfiler
 	DE	Neue Musikdateien werden durchsucht
 	EN	Scanning new music files
@@ -21364,7 +21371,7 @@ DIRECTORY_NEW_PROGRESS
 	SV	Söka igenom nya musikfiler
 
 DIRECTORY_MEDIA_PROGRESS
-	CS	Prohledat nové soubory
+	CS	Prohedávání nových mediálních souborů
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
 	EN	Scanning new media files
@@ -21379,7 +21386,7 @@ DIRECTORY_MEDIA_PROGRESS
 	SV	Söka igenom nya mediefiler
 
 DIRECTORY_CHANGED_PROGRESS
-	CS	Skenování změněných souborů
+	CS	Prohledávání změněných souborů
 	DA	Tjekker ændrede filer
 	DE	Geänderte Dateien werden durchsucht
 	EN	Scanning changed files
@@ -21409,7 +21416,7 @@ PLAYLIST_DELETED_PROGRESS
 	SV	Ta bort borttagna spellistor
 
 PLAYLIST_NEW_PROGRESS
-	CS	Vyhledávání nových seznamů skladeb
+	CS	Prohledávání nových seznamů skladeb
 	DA	Scanner nye afspilningslister
 	DE	Neue Wiedergabelisten werden durchsucht
 	EN	Scanning new playlists
@@ -21424,7 +21431,7 @@ PLAYLIST_NEW_PROGRESS
 	SV	Söka igenom nya spellistor
 
 PLAYLIST_CHANGED_PROGRESS
-	CS	Skenování změněných seznamů skladeb
+	CS	Prohledávání změněných seznamů skladeb
 	DA	Søger efter ændrede afspilningslister
 	DE	Geänderte Wiedergabelisten werden durchsucht
 	EN	Scanning changed playlists
@@ -21439,7 +21446,7 @@ PLAYLIST_CHANGED_PROGRESS
 	SV	Söker igenom ändrade spellistor
 
 PLAYLIST_PROGRESS
-	CS	Prohledání seznamu skladeb
+	CS	Prohledávání seznamu skladeb
 	DA	Søgning efter afspilningslister
 	DE	Suche Wiedergabelisten
 	EN	Playlist Scan
@@ -21454,13 +21461,14 @@ PLAYLIST_PROGRESS
 	SV	Sökning i spellista
 
 ONLINE_LIBRARY_DELETED_PROGRESS
+	CS	Odstraňování skladeb online knihovny
 	DE	Titel aus Online Musiksammlung werden gelöscht
 	EN	Removing online library tracks
 	FR	Suppression des morceaux de la bibliothèque en ligne
 	SV	Tar bort online-bibliotekspår
 
 MERGEVA_PROGRESS
-	CS	Sloučit více interpretů
+	CS	Sloučení více interpretů
 	DA	Flet Diverse kunstnere
 	DE	Gruppiere "Diverse Artisten"
 	EN	Merge Various Artists
@@ -21475,6 +21483,7 @@ MERGEVA_PROGRESS
 	SV	Slå ihop Blandade artister
 
 UPDATESTANDALONEARTWORK_PROGRESS
+	CS	Vyhledavání aktualizovaných souborů obalů alb
 	DE	Nach aktualisierten Plattenhüllen suchen
 	EN	Find Updated Coverart Files
 	FR	Recherche des pochettes des albums actualisés
@@ -21499,7 +21508,7 @@ PRECACHEARTWORK_PROGRESS
 	SV	Cachelagrat albumomslag
 
 DOWNLOADARTWORK_PROGRESS
-	CS	Stahování obalu alba
+	CS	Stahování obalů alb
 	DA	Henter albumcovere
 	DE	Plattenhülle wird heruntergeladen
 	EN	Downloading Artwork
@@ -21514,7 +21523,7 @@ DOWNLOADARTWORK_PROGRESS
 	SV	Ladda ner albumomslag
 
 CLEANUP1_PROGRESS
-	CS	Čištění databáze č.1
+	CS	Čištění databáze č. 1
 	DA	Oprydning i database nr. 1
 	DE	Datenbankbereinigung 1. Durchgang
 	EN	Database Cleanup #1
@@ -21529,7 +21538,7 @@ CLEANUP1_PROGRESS
 	SV	Databasrensning nr 1
 
 CLEANUP2_PROGRESS
-	CS	Vyčištění databáze č. 2
+	CS	Čištění databáze č. 2
 	DA	Oprydning i database nr. 2
 	DE	Datenbankbereinigung 2. Durchgang
 	EN	Database Cleanup #2
@@ -21544,7 +21553,7 @@ CLEANUP2_PROGRESS
 	SV	Databasrensning #2
 
 DBOPTIMIZE_PROGRESS
-	CS	Optimalizovat databázi
+	CS	Optimalizování databáze
 	DA	Optimering af database
 	DE	Datenbank Optimierung
 	EN	Database Optimize
@@ -21589,6 +21598,7 @@ IMPORTER_PROGRESS_DESC
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
 
 VIRTUALLIBRARIES_PROGRESS
+	CS	Vytvořit zobrazení knihovny
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create Library Views
 	FR	Création d'une bibliothèque thématique
@@ -21598,6 +21608,7 @@ VIRTUALLIBRARIES_PROGRESS
 	SV	Skapa delbibliotek
 
 AS_VIRTUAL_LIBRARY
+	CS	Jako zobrazení knihovny
 	DE	Als Ansicht
 	EN	As Library View
 	FR	Comme une bibliothèque thématique
@@ -21607,6 +21618,7 @@ AS_VIRTUAL_LIBRARY
 	SV	Som delbibliotek
 
 VIRTUALLIBRARIES
+	CS	Zobrazení knihovny
 	DE	Bibliotheksansichten
 	EN	Library Views
 	FR	Bibliothèques thématiques
@@ -21616,6 +21628,7 @@ VIRTUALLIBRARIES
 	SV	Delbibliotek
 
 SETUP_LIBRARY_VIEWS_DESC
+	CS	Zobrazení knihovny umožňuje používat nabídku Moje hudba na filtrovaný výběr skladeb. Pokud jsou zobrazení povolena, budete mezi nimi moci přepínat z dílčí nabídky v části Moje hudba.
 	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
 	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
 	FR	Les bibliothèques thématiques vous permettent d'utiliser le menu Ma musique sur une sélection filtrée de morceaux. En activant ces bibliothèques vous pourrez basculer entre elles à l'aide d'un sous-menu dans Ma musique.
@@ -21634,6 +21647,7 @@ ALL_LIBRARY
 	SV	Hela musiksamlingen
 
 SUB_LIBRARY
+	CS	Vybrané zobrazení knihovny
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
 	FR	Bibliothèque thématique active
@@ -21658,7 +21672,7 @@ RUNNING
 	SV	Körs
 
 COMPLETE
-	CS	Dokončit
+	CS	Dokončeno
 	DA	Fuldstændig
 	DE	Beendet
 	EN	Complete
@@ -21688,7 +21702,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	SV	Sökningen av mediebiblioteket har slutförts.
 
 PROGRESS_IMPORTER_NO_INFO
-	CS	Informace o průběhu z předchozího hledání není k dispozici.
+	CS	Informace o průběhu z předchozího prohledávání není k dispozici.
 	DA	Der er ingen statusoplysninger fra den sidste indeksering.
 	DE	Fortschritts-Informationen des letzten Scans stehen nicht zur Verfügung.
 	EN	Progress information from the previous scan is not available.
@@ -21734,7 +21748,7 @@ ENABLE
 	SV	Aktivera
 
 DISABLE
-	CS	Vypnout
+	CS	Zakázat
 	DA	Deaktiver
 	DE	Deaktivieren
 	EN	Disable
@@ -21854,7 +21868,7 @@ SETUP_VIEW_SCANNING
 	SV	Sökning – Visa förlopp
 
 SETUP_VIEW_NOT_SCANNING
-	CS	Zobrazit předchozí podrobnosti hledání
+	CS	Zobrazit předchozí podrobnosti prohledávání
 	DA	Vis detaljer om sidste gennemsøgning
 	DE	Zeige Details zur vorherigen Suche
 	EN	View Previous Scan Details
@@ -22485,7 +22499,7 @@ SEEK_ERROR_MMS
 	SV	Det går inte att söka i den här WMA-strömmen.
 
 SEEK_ERROR_LIVE
-	CS	Nelze prohledávat v živém datovém proudu
+	CS	Nelze hledat v živém datovém proudu
 	DA	Der kan ikke søges i en direkte transmission
 	DE	Suchlauf in Live-Stream nicht möglich
 	EN	Cannot seek in live stream
@@ -22515,7 +22529,7 @@ SEEK_ERROR_MP3
 	SV	Det går inte att söka i den här mp3-strömmen.
 
 SEEK_ERROR_MP3_UNKNOWN_BITRATE
-	CS	Nelze vyhledávat s neznámým bitrate (přenosovou rychlostí)
+	CS	Nelze hledat s neznámým bitrate (přenosovou rychlostí)
 	DA	Der kan ikke søges med ukendt bithastighed
 	DE	Suchlauf mit unbekannter Bitrate nicht möglich
 	EN	Cannot seek with unknown bitrate
@@ -22530,7 +22544,7 @@ SEEK_ERROR_MP3_UNKNOWN_BITRATE
 	SV	Det går inte att söka med okänd bithastighet
 
 SEEK_ERROR_MP3_UNKNOWN_DURATION
-	CS	Nelze hledat s neznámým trváním
+	CS	Nelze hledat s neznámou dobou trvání
 	DA	Der kan ikke søges med ukendt varighed
 	DE	Suchlauf mit unbekannter Dauer nicht möglich
 	EN	Cannot seek with unknown duration
@@ -22545,7 +22559,7 @@ SEEK_ERROR_MP3_UNKNOWN_DURATION
 	SV	Det går inte att söka med okänd varaktighet
 
 SEEK_ERROR_TYPE_NOT_SUPPORTED
-	CS	Nelze prohledávat v datových proudech typu %s
+	CS	Nelze hledat v datových proudech typu %s
 	DA	Der kan ikke søges i en stream af typen %s
 	DE	Suchlauf in Streams des Typs %s nicht möglich
 	EN	Cannot seek in streams of type %s
@@ -22560,7 +22574,7 @@ SEEK_ERROR_TYPE_NOT_SUPPORTED
 	SV	Det går inte att söka i strömmar av typen: %s.
 
 SEEK_ERROR_REMOTE
-	CS	Nelze prohledávat vzdálené stopy
+	CS	Nelze prohledat přes vzdálené stopy
 	DA	Numre der er gemt et andet sted, kan ikke analyseres
 	DE	Scannen von Remote-Titeln nicht möglich
 	EN	Cannot scan through remote tracks
@@ -22590,7 +22604,7 @@ SEEK_ERROR_TRANSCODED
 	SV	Det går inte att söka igenom omkodade spår
 
 SCANNER_REMOTE_NO_URL_PROVIDED
-	CS	Nelze prohledávat: Nenalezeno žádné URL
+	CS	Nelze prohledat: Nenalezena žádná URL
 	DA	Det var ikke muligt af søge: Der blev ikke fundet en adresse
 	DE	Scannen nicht möglich: Keine URL gefunden
 	EN	Unable to scan: No URL found
@@ -22605,7 +22619,7 @@ SCANNER_REMOTE_NO_URL_PROVIDED
 	SV	Det går inte att söka igenom: Ingen webbadress hittades
 
 SCANNER_REMOTE_INVALID_URL
-	CS	Nelze prohledat: Neplatné URL
+	CS	Nelze prohledat: Neplatná URL
 	DA	Det var ikke muligt af søge: Ugyldig adresse.
 	DE	Scannen nicht möglich: Ungültige URL
 	EN	Unable to scan: Invalid URL
@@ -23201,7 +23215,7 @@ CONTROLPANEL_SHOW_SERVER_LOG
 	SV	Visa serverlogg
 
 CONTROLPANEL_SHOW_SCANNER_LOG
-	CS	Zobrazit protokol scanneru
+	CS	Zobrazit protokol prohledávání
 	DA	Vis gennemsøgningslogfilen
 	DE	Scannerprotokoll anzeigen
 	EN	Show scanner log

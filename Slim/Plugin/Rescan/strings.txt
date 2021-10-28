@@ -143,7 +143,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	SV	Aktiverar sökningstimern...
 
 PLUGIN_RESCAN_TIMER_ON
-	CS	Časovač prohledávání ZAPNUT
+	CS	Časovač prohledávání Zapnut
 	DA	Timer for gennemsøgning TIL
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
@@ -159,7 +159,7 @@ PLUGIN_RESCAN_TIMER_ON
 	SV	Sökningstimern är aktiverad.
 
 PLUGIN_RESCAN_TIMER_DESC
-	CS	Můžete vybrat povolení plánovaného prohledání vaší hudební knihovny každých 24 hodin. K použití této vlastnosti nastavte čas a přepněte časovač prohledávání na ZAPNUTO.
+	CS	Můžete vybrat povolení plánovaného prohledání vaší hudební knihovny každých 24 hodin. K použití této vlastnosti nastavte čas a přepněte časovač prohledávání na Zapnuto.
 	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Du indstiller klokkeslættet og indstiller Timer for gennemsøgning til TIL
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
@@ -175,7 +175,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	SV	Du kan välja att aktivera en schemalagd sökning av ditt musikbibliotek en gång per dygn. Ange ett klockslag och aktivera sökningstimern om du vill använda den här funktionen.
 
 PLUGIN_RESCAN_TIMER_OFF
-	CS	Časovač prohledávání VYPNUT
+	CS	Časovač prohledávání Vypnut
 	DA	Timer for gennemsøgning FRA
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
