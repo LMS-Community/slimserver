@@ -198,7 +198,7 @@ RADIOTIME_PODCAST
 	SV	Poddsändningar
 
 RADIOTIME_SEARCH
-	CS	Vyhledávání TuneIn
+	CS	Hledat na TuneIn
 	DA	Søg i TuneIn
 	DE	TuneIn durchsuchen
 	EN	Search TuneIn
@@ -243,7 +243,7 @@ RADIOTIME_TALK
 	SV	Pratradio
 
 RADIOTIME_MY_PRESETS
-	CS	Mé předvolby
+	CS	Moje předvolby
 	DA	Mine forvalg
 	DE	Eigene Voreinstellungen
 	EN	My Presets

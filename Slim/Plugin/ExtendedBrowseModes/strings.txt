@@ -9,6 +9,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	SV	Ytterligare blädder-menyer
 
 PLUGIN_EXTENDED_BROWSEMODES_DESC
+	CS	Vytvořte si další režimy procházení a procházejte hudební knihovnu podle alb, interpretů, skladatelů, vybraných žánrů a dalších.
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
@@ -35,6 +36,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	ZH_CN	专辑艺人
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
+	CS	Skladatelé
 	DE	Komponisten
 	EN	Composers
 	FR	Compositeurs
@@ -45,6 +47,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	SV	Kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
+	CS	Role přispěvatelů:
 	DE	Rolle des Künstlers:
 	EN	Contributor Roles:
 	FR	Rôles des artistes :
@@ -54,6 +57,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	SV	Artistroll
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
+	CS	Procházet podle:
 	DE	Anzeigen:
 	EN	Browse by:
 	FR	Parcourir par :
@@ -63,6 +67,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	SV	Bläddra efter:
 
 PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
+	CS	Použít pro:
 	DE	Anwenden auf:
 	EN	Apply to:
 	FR	Appliquer à :
@@ -89,6 +94,7 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	ZH_CN	合辑
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
+	CS	Disky a složky
 	DE	Dateisystem
 	EN	Disks and folders
 	FR	Disques et dossiers
@@ -98,6 +104,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	SV	Filer och mappar
 
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
+	CS	Role přispěvatelů:
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
 	FR	Rôles des artistes :
@@ -107,6 +114,7 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	SV	Artistroll:
 
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
+	CS	Všechny knihovny (výchozí)
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
 	FR	Toutes les bibliothèques (par défaut)
@@ -116,6 +124,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	SV	Hela musiksamlingen (standard)
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
+	CS	Skrýt ztrátové duplikáty, pokud je k dispozici bezeztrátová stopa
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
 	FR	Masquer les doublons compressés avec perte si un fichier sans perte est disponible
@@ -125,6 +134,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
+	CS	Vytvoření zobrazení knihovny, které se snaží potlačit duplicitní stopy skrytím ztrátových verzí, pokud je k dispozici bezztrátová verze stejné nahrávky. To je obzvláště užitečné, pokud uchováváte sbírku stop pro použití doma (bezeztrátová) a na cestách (ztrátová).
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
 	FR	Créer une bibliothèque thématique qui essaie de supprimer les pistes en double en masquant les versions avec perte si une version sans perte du même enregistrement est disponible. Ceci est particulièrement utile si vous avez une collection de morceaux à utiliser à la maison (sans perte) et sur la route (avec perte).
@@ -165,6 +175,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	SV	Toppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
+	CS	Skladby propadáku
 	DE	Flop-Titel
 	EN	Flop Tracks
 	FR	Morceaux les moins écoutés
@@ -174,6 +185,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
+	CS	Použít '%s'
 	DE	'%s' verwenden
 	EN	Use '%s'
 	FR	Utiliser '%s'
@@ -183,6 +195,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
+	CS	Nyní používáte '%s'
 	DE	Verwende nun '%s'
 	EN	Now using '%s'
 	FR	Utilise maintenant '%s'
@@ -192,6 +205,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	SV	Används nu '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
+	CS	Zobrazení knihovny odstraněno
 	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
 	FR	Bibliothèque thématique supprimée
@@ -201,6 +215,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	SV	Delbibliotek suddat
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
+	CS	Audioknihy
 	DE	Hörbücher
 	EN	Audiobooks
 	FR	Livres audio
@@ -208,6 +223,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	NL	Luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
+	CS	Všechna hudba bez audioknih
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
 	FR	Toute la musique sans les livres audio
@@ -215,6 +231,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	NL	Alle muziek zonder luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
+	CS	Vytvořte zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
@@ -222,6 +239,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
+	CS	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Audiokniha, Audioknihy, Mluvené, Řeč, Komedie, Mluvené a audio, Knihy a mluvené, Kabaret, Humor
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
@@ -229,6 +247,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
+	CS	Autoři
 	DE	Hörbuch-Autoren
 	EN	Authors
 	FR	Auteurs

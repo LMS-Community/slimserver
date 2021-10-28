@@ -29,7 +29,7 @@ PLUGIN_MP3TUNES_LOADING
 	SV	Loggar in...
 
 PLUGIN_MP3TUNES_MODULE_NAME_DESC
-	CS	Přístup k hudbě z vaší úschovny MP3tunes Music. Tento plugin vyžaduje účet mysqueezebox.com.
+	CS	Přístup k hudbě z vaší úschovny MP3tunes Music. Tento zásuvný modul vyžaduje účet mysqueezebox.com.
 	DA	Du kan høre numre som er gemt i din MP3tunes Music Locker. Dette udvidelsesmodul kræver at du har en konto til mysqueezebox.com.
 	DE	Zugriff auf den MP3tunes Music Locker gewähren. Dieses Plugin benötigt ein mysqueezebox.com-Konto.
 	EN	Access music from your MP3tunes Music Locker. This plugin requires a mysqueezebox.com account.

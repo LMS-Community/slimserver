@@ -524,7 +524,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	CS	Když se změní databáze vašeho MusicIP Database, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačítání.
+	CS	Když se změní databáze vašeho MusicIP, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačítání.
 	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Logitech Media Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Logitech Media Server. Hvis værdien er 0, genindlæses den ikke.
 	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Logitech Media Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Logitech Media Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your MusicIP Database changes, Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that Logitech Media Server will wait before reloading your MusicIP Database again. A value of zero disables the reload.

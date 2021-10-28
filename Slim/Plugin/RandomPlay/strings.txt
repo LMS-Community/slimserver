@@ -339,6 +339,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	SV	Välj ingen
 
 PLUGIN_RANDOM_LIBRARY_FILTER
+	CS	Použít zobrazení knihovny
 	DE	Bibliotheksansicht verwenden
 	EN	Use library view
 	NL	Gebruik deelcollectie
@@ -456,7 +457,7 @@ PLUGIN_RANDOM_CHOOSE_GENRES
 	SV	Välj genrer
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
-	CS	Zobrazí se právě přehrávané
+	CS	Zobrazí se Právě hraje
 	DA	Nu spiller vil vise
 	DE	Aktuelle Wiedergabe zeigt
 	EN	Now Playing will show
