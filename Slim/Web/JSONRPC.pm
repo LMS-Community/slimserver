@@ -277,7 +277,9 @@ sub writeResponse {
 	my $httpResponse = $context->{'httpResponse'};
 
 	if ( main::DEBUGLOG && $isDebug ) {
-		$log->debug( "JSON response: " . Data::Dump::dump($responseRef) );
+		# Deep-copy responseRef prior to dumping its content because dump()
+		# will convert int members into strings permanently
+		$log->debug( "JSON response: " . Data::Dump::dump(Storable::dclone($responseRef)) );
 	}
 
 	# Don't waste CPU cycles if we're not connected
