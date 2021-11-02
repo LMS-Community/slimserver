@@ -277,10 +277,10 @@ sub writeResponse {
 	my $httpClient   = $context->{'httpClient'};
 	my $httpResponse = $context->{'httpResponse'};
 
-	# Deep-copy responseRef prior to dumping its content because dump()
-	# will convert int members into strings permanently
-	my $responseRefCopy = Storable::dclone $responseRef;
 	if ( main::DEBUGLOG && $isDebug ) {
+		# Deep-copy responseRef prior to dumping its content because dump()
+		# will convert int members into strings permanently
+		my $responseRefCopy = Storable::dclone $responseRef;
 		$log->debug( "JSON response: " . Data::Dump::dump($responseRefCopy) );
 	}
 
