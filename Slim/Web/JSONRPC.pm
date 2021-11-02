@@ -14,6 +14,7 @@ use strict;
 use HTTP::Status qw(RC_OK RC_FORBIDDEN);
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
+use Storable::dclone;
 
 use Slim::Web::HTTP;
 use Slim::Utils::Compress;
@@ -276,8 +277,11 @@ sub writeResponse {
 	my $httpClient   = $context->{'httpClient'};
 	my $httpResponse = $context->{'httpResponse'};
 
+	# Deep-copy responseRef prior to dumping its content because dump()
+	# will convert int members into strings permanently
+	my $responseRefCopy = Storable::dclone $responseRef;
 	if ( main::DEBUGLOG && $isDebug ) {
-		$log->debug( "JSON response: " . Data::Dump::dump($responseRef) );
+		$log->debug( "JSON response: " . Data::Dump::dump($responseRefCopy) );
 	}
 
 	# Don't waste CPU cycles if we're not connected
