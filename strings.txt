@@ -20991,7 +20991,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	FI	Logitech Media Server pitää lokitiedostoa kaikista sovelluksiin liittyvistä toiminnoista (äänen virtautus, infrapuna jne.) täällä:
 	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant :
 	IT	Logitech Media Server mantiene un file di registro per tutte le attività relative alle applicazioni (stream audio, raggi infrarossi e così via) nel seguente percorso:
-	NL	Logitech Media Server bewaart hier een logboek voor alle applicatie-activiteiten (audio-streaming, infrarood, enz.):
+	NL	Logitech Media Server bewaart hier een logboek voor alle applicatieactiviteiten (audio-streaming, infrarood, enz.):
 	NO	Logitech Media Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
 	PL	Program Logitech Media Server przechowuje plik dziennika zawierający wszystkie działania dotyczące aplikacji (strumieniowe przesyłanie dźwięku, korzystanie z podczerwieni) w tym miejscu:
 	RU	Все действия приложений (потоковое аудио, ИК-выход и др.) записываются в файл журнала Logitech Media Server:
@@ -21906,7 +21906,7 @@ PERSIST_DEBUG_SETTINGS
 	FI	Tallenna kirjausasetukset käytettäväksi, kun sovellus käynnistetään seuraavaksi uudelleen
 	FR	Enregistrer les réglages de journalisation pour une utilisation au prochain démarrage de l'application
 	IT	Salva e utilizza le impostazioni di registrazione al successivo avvio dell'applicazione
-	NL	Log-instellingen opslaan voor gebruik bij volgende applicatie herstart
+	NL	Log-instellingen opslaan voor gebruik bij volgende applicatieherstart
 	NO	Lagre innstillinger for loggføring og bruk dem ved neste programstart
 	PL	Zapisz ustawienia rejestrowania w celu użycia przy kolejnym uruchomieniu aplikacji
 	RU	Сохранить настройки журнала при перезапуске приложения
