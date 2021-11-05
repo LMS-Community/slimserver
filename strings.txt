@@ -17346,7 +17346,7 @@ INFORMATION_BINDIRS
 	DE	Ordner für Hilfsprogramme
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
-	NL	Map hulptoepassingen
+	NL	Map hulpapplicaties
 	NO	Mappe for støtteprogrammer
 	PL	Folder aplikacji pomocniczych
 	SV	Mapp för hjälpprogram
@@ -20991,7 +20991,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	FI	Logitech Media Server pitää lokitiedostoa kaikista sovelluksiin liittyvistä toiminnoista (äänen virtautus, infrapuna jne.) täällä:
 	FR	Le Logitech Media Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant :
 	IT	Logitech Media Server mantiene un file di registro per tutte le attività relative alle applicazioni (stream audio, raggi infrarossi e così via) nel seguente percorso:
-	NL	Logitech Media Server bewaart hier een logboek voor alle toepassingsactiviteiten (audio-streaming, infrarood, enz.):
+	NL	Logitech Media Server bewaart hier een logboek voor alle applicatie-activiteiten (audio-streaming, infrarood, enz.):
 	NO	Logitech Media Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
 	PL	Program Logitech Media Server przechowuje plik dziennika zawierający wszystkie działania dotyczące aplikacji (strumieniowe przesyłanie dźwięku, korzystanie z podczerwieni) w tym miejscu:
 	RU	Все действия приложений (потоковое аудио, ИК-выход и др.) записываются в файл журнала Logitech Media Server:
@@ -21786,7 +21786,7 @@ PLUGINS_CHANGED
 	FI	Muutokset tulevat voimaan seuraavien laajennusten kohdalla, kun sovellus käynnistetään seuraavaksi uudelleen:
 	FR	Les modifications pour les plugins suivants seront appliquées au prochain démarrage de l'application.
 	IT	Le modifiche diventeranno effettive al successivo avvio dell'applicazione nei seguenti plugin:
-	NL	Bij de volgende herstart van de toepassing worden wijzigingen voor deze plug-ins doorgevoerd:
+	NL	Bij de volgende herstart van de applicatie worden wijzigingen voor deze plug-ins doorgevoerd:
 	NO	Endringer trer i kraft neste gang programmet startes på nytt for følgende plugin-moduler:
 	PL	W przypadku następujących dodatków zmiany zostaną wprowadzone po następnym uruchomieniu aplikacji:
 	RU	Изменения вступят в силу при следующем запуске приложения для следующих подключаемых модулей:
@@ -21906,7 +21906,7 @@ PERSIST_DEBUG_SETTINGS
 	FI	Tallenna kirjausasetukset käytettäväksi, kun sovellus käynnistetään seuraavaksi uudelleen
 	FR	Enregistrer les réglages de journalisation pour une utilisation au prochain démarrage de l'application
 	IT	Salva e utilizza le impostazioni di registrazione al successivo avvio dell'applicazione
-	NL	Log-instellingen opslaan voor gebruik bij volgende herstart van toepassing
+	NL	Log-instellingen opslaan voor gebruik bij volgende applicatie herstart
 	NO	Lagre innstillinger for loggføring og bruk dem ved neste programstart
 	PL	Zapisz ustawienia rejestrowania w celu użycia przy kolejnym uruchomieniu aplikacji
 	RU	Сохранить настройки журнала при перезапуске приложения
@@ -23478,7 +23478,7 @@ CONTROLPANEL_PORTCONFLICT
 	FI	Logitech Media Server ei ole käynnissä, mutta jokin sovellus käyttää samaa porttia (%s).
 	FR	Le Logitech Media Server n'est pas en cours d'exécution, mais une application utilise actuellement le même port (%s).
 	IT	Logitech Media Server non è in esecuzione ma qualche applicazione sta utilizzando la stessa porta (%s).
-	NL	Logitech Media Server is niet actief, maar een toepassing gebruikt dezelfde poort (%s).
+	NL	Logitech Media Server is niet actief, maar een applicatie gebruikt dezelfde poort (%s).
 	NO	Logitech Media Server kjører ikke, men et annet program bruker samme port (%s).
 	PL	Program Logitech Media Server nie jest uruchomiony, ale jakaś aplikacja używa tego samego portu (%s).
 	RU	Logitech Media Server не выполняется, но какое-то приложение использует этот же порт (%s).
@@ -23508,7 +23508,7 @@ CONTROLPANEL_PORTBLOCKED_APPS
 	FI	Seuraavat sovellukset saattavat estää yhteyden:
 	FR	Les applications suivantes sont susceptibles de bloquer votre connexion :
 	IT	Le seguenti applicazioni potrebbero bloccare la connessione:
-	NL	Je verbinding wordt mogelijk door de volgende toepassingen geblokkeerd:
+	NL	Je verbinding wordt mogelijk door de volgende applicaties geblokkeerd:
 	NO	Følgende programmer blokkerer kanskje tilkoplingen:
 	PL	Następujące aplikacje mogą blokować połączenie:
 	RU	Возможно, подключение блокируется следующими приложениями:
