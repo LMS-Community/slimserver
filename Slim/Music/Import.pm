@@ -437,7 +437,7 @@ sub runScanPostProcessing {
 		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
 		my $json = catfile( $dir, 'tracks_persistent.json' );
 		if ( -e $json ) {
-			$log->error('Migrating persistent track information from MySQL');
+			main::INFOLOG && $log->is_info && $log->info('Migrating persistent track information from MySQL');
 
 			if ( Slim::Schema::TrackPersistent->import_json($json) ) {
 				unlink $json;
@@ -477,7 +477,7 @@ sub runScanPostProcessing {
 	Slim::Music::Artwork->precacheAllArtwork;
 
 	# Always run an optimization pass at the end of our scan.
-	$log->error("Starting Database optimization.");
+	main::INFOLOG && $log->is_info && $log->info("Starting Database optimization.");
 
 	$importsRunning{'dbOptimize'} = Time::HiRes::time();
 
@@ -575,7 +575,7 @@ sub runImporter {
 		$importsRunning{$importer} = Time::HiRes::time();
 
 		# rescan each enabled Import, or scan the newly enabled Import
-		$log->error("Starting $importer scan");
+		main::INFOLOG && $log->is_info && $log->info("Starting $importer scan");
 
 		$changes = $importer->startScan;
 	}
@@ -598,7 +598,7 @@ sub runArtworkImporter {
 		$importsRunning{$importer} = Time::HiRes::time();
 
 		# rescan each enabled Import, or scan the newly enabled Import
-		$log->error("Starting $importer artwork scan");
+		main::INFOLOG && $log->is_info && $log->info("Starting $importer artwork scan");
 
 		$importer->startArtworkScan;
 
@@ -707,7 +707,7 @@ sub endImporter {
 
 	if (exists $importsRunning{$importer}) {
 
-		$log->error(sprintf("Completed %s Scan in %s seconds.",
+		main::INFOLOG && $log->is_info && $log->info(sprintf("Completed %s Scan in %s seconds.",
 			$importer, sprintf('%.3f', Time::HiRes::time() - $importsRunning{$importer})
 		));
 

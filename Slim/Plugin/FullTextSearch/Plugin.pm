@@ -472,11 +472,11 @@ sub _uniqueTokens {
 sub _rebuildIndex {
 	my $progress = shift;
 
-	$scanlog->error("Starting fulltext index build");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Starting fulltext index build");
 
 	my $dbh = Slim::Schema->dbh;
 
-	$scanlog->error("Initialize fulltext table");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Initialize fulltext table");
 
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $scanlog->error($dbh->errstr);
 	if ( CAN_FTS4 ) {
@@ -489,7 +489,7 @@ sub _rebuildIndex {
 	}
 	main::idleStreams() unless main::SCANNER;
 
-	$scanlog->error("Create fulltext index for tracks");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Create fulltext index for tracks");
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -499,7 +499,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	$scanlog->error("Create fulltext index for albums");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '', '');
@@ -508,7 +508,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	$scanlog->error("Create fulltext index for contributors");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Create fulltext index for contributors");
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -518,7 +518,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	$scanlog->error("Create fulltext index for playlists");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Create fulltext index for playlists");
 	$progress && $progress->update(string('PLAYLISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -533,7 +533,7 @@ sub _rebuildIndex {
 
 	main::idleStreams() unless main::SCANNER;
 
-	$scanlog->error("Optimize fulltext index");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Optimize fulltext index");
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -548,7 +548,7 @@ sub _rebuildIndex {
 	$progress->final(BUILD_STEPS) if $progress;
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$scanlog->error("Fulltext index build done!");
+	main::INFOLOG && $scanlog->is_info && $scanlog->info("Fulltext index build done!");
 }
 
 sub _createPlaylistItem {
@@ -577,7 +577,7 @@ sub _initPopularTerms {
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT id FROM fulltext WHERE fulltext.id MATCH 'YXLALBUM*' } ) if $ftExists;     # 8.3: IDs must be prefixed to make them "non searchable"
 
 	if (!$ftExists) {
-		$scanlog->error("Fulltext index missing or outdated - re-building");
+		main::INFOLOG && $scanlog->is_info && $scanlog->info("Fulltext index missing or outdated - re-building");
 
 		$prefs->remove('popularTerms');
 		_rebuildIndex() unless $scanDone;

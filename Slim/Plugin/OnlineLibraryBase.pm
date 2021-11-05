@@ -78,7 +78,7 @@ sub deleteRemovedTracks { if (main::SCANNER && !$main::wipe) {
 			)
 	} . (IS_SQLITE ? '' : ' ORDER BY url');
 
-	$log->error("Get removed online tracks count") unless main::SCANNER && $main::progress;
+	main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Get removed online tracks count");
 	# only remove missing tracks when looking for audio tracks
 	my $notInOnlineLibraryCount = 0;
 	($notInOnlineLibraryCount) = $dbh->selectrow_array( qq{

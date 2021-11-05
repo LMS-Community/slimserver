@@ -176,7 +176,7 @@ sub rescan {
 		$pluginHandlers = Slim::Utils::Scanner::API->getHandlers();
 	}
 
-	$log->error("Discovering audio files in $next") unless main::SCANNER && $main::progress;
+	main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Discovering audio files in $next");
 
 	# Keep track of the number of changes we've made so we can decide
 	# if we should optimize the database or not, and also so we know if
@@ -188,7 +188,7 @@ sub rescan {
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
 
-		$log->error("Start processing found tracks") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Start processing found tracks");
 
 		# Save any other dirs we need to scan (shortcuts/aliases)
 		my $others = shift || [];
@@ -196,10 +196,10 @@ sub rescan {
 
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 
-		$log->error("Connect do DB") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Connect do DB");
 		my $dbh = Slim::Schema->dbh;
 
-		$log->error("Get latest ID") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Get latest ID");
 		# Use the most recent existing track ID to prevent paged onDiskOnly query
 		# from missing any files. This will be 0 during a wipe
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
@@ -221,10 +221,10 @@ sub rescan {
 			AND             content_type $ctFilter
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
-		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Delete temporary table if exists");
 		# 2. Files that are new and not in the database.
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
-		$log->error("Re-build temporary table") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Re-build temporary table");
     	$dbh->do( qq{
     		CREATE TEMPORARY TABLE diskonly AS
 				SELECT          DISTINCT(url) as url
@@ -273,19 +273,19 @@ sub rescan {
 			}
 		}
 
-		$log->error("Get deleted tracks count") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Get deleted tracks count");
 		# only remove missing tracks when looking for audio tracks
 		my $inDBOnlyCount = 0;
 		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio|list/;
 
-		$log->error("Get new tracks count") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Get new tracks count");
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 
-		$log->error("Get changed tracks count") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Get changed tracks count");
 		my $changedOnlyCount = 0;
 		($changedOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
@@ -298,7 +298,7 @@ sub rescan {
 			sql   => $inDBOnlySQL
 		}, $args);
 
-		$log->error( "Scanning new audio files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info( "Scanning new audio files ($onDiskOnlyCount)" );
 
 		if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $onDiskOnlySth;
@@ -378,7 +378,7 @@ sub rescan {
 			}
 		}
 
-		$log->error( "Rescanning changed audio files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info( "Rescanning changed audio files ($changedOnlyCount)" );
 
 		if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $changedOnlySth;
@@ -516,7 +516,7 @@ sub deleteTracks {
 	my $toDeleteCount = $deleteDetails->{count};
 	my $toDeleteSQL = $deleteDetails->{sql};
 
-	$log->error( "Removing $name ($toDeleteCount)" ) unless main::SCANNER && $main::progress;
+	main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info( "Removing $name ($toDeleteCount)" );
 
 	if ( $toDeleteCount && !Slim::Music::Import->hasAborted() ) {
 		my $deleteSth;
@@ -902,7 +902,7 @@ sub new {
 		( Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url) )
 	) {
 		# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
-		$log->error("Handling new playlist $url") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new playlist $url");
 
 		$work = sub {
 			# XXX no DBIC objects
@@ -1084,14 +1084,14 @@ sub changed {
 		}
 	}
 	elsif ( Slim::Music::Info::isCUE($url, $content_type) ) {
-		$log->error("Handling changed cue sheet $url") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling changed cue sheet $url");
 
 		# XXX could probably be more intelligent but this works for now
 		deleted($url);
 		new($url);
 	}
 	elsif ( Slim::Music::Info::isList($url, $content_type) ) {
-		$log->error("Handling changed playlist $url") unless main::SCANNER && $main::progress;
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling changed playlist $url");
 
 		# For a changed playlist, just delete it and then re-scan it
 		deleted($url);

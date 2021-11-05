@@ -231,7 +231,7 @@ sub updateStandaloneArtwork {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	} );
 
-	$log->error("Starting updateStandaloneArtwork for $count albums");
+	main::INFOLOG && $log->is_info && $log->info("Starting updateStandaloneArtwork for $count albums");
 
 	if ( !$count ) {
 		$cb && $cb->();
@@ -654,7 +654,7 @@ sub precacheAllArtwork {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	} );
 
-	$log->error("Starting precacheArtwork for $count albums");
+	main::INFOLOG && $log->is_info && $log->info("Starting precacheArtwork for $count albums");
 
 	if ( !$count ) {
 		$cb && $cb->();
@@ -805,7 +805,7 @@ sub precacheAllArtwork {
 
 		$progress->final;
 
-		$log->error( "precacheArtwork finished in " . $progress->duration );
+		main::INFOLOG && $log->is_info && $log->info( "precacheArtwork finished in " . $progress->duration );
 
 		$cb && $cb->();
 
