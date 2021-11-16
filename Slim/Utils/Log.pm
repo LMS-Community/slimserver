@@ -163,7 +163,7 @@ sub init {
 		# Add our default root logger
 		my @levels = ('ERROR', $logtype);
 
-		if (!$::daemon || !$::quiet) {
+		if (!$::daemon && !$::quiet) {
 			push @levels, 'screen';
 		}
 

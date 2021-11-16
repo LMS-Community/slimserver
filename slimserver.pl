@@ -456,6 +456,10 @@ sub init {
 
 	} else {
 
+		if ($quiet) {
+			open STDOUT, '>>/dev/null';
+		}
+
 		save_pid_file();
 	}
 
