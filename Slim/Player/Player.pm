@@ -101,12 +101,16 @@ sub new {
 
 sub init {
 	my $client = shift;
-	my (undef, undef, $syncgroupid) = @_;
 
 	$client->SUPER::init(@_);
 
 	Slim::Hardware::IR::initClient($client);
 	Slim::Buttons::Home::updateMenu($client);
+}
+
+sub startPlayingIfNeeded {
+	my $client = shift;
+	my (undef, undef, $syncgroupid) = @_;
 
 	# fire it up!
 	$client->startup($syncgroupid);

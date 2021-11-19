@@ -1148,9 +1148,9 @@ sub _hello_handler {
 		$client->display( $display_class->new($client) );
 
 		$client->macaddress($mac);
-		$client->init($deviceids[$deviceid], $capabilities, $syncgroupid);
+		$client->init($deviceids[$deviceid], $capabilities);
 		$client->reconnect($paddr, $revision, $s, undef, undef, $syncgroupid);
-
+		$client->startPlayingIfNeeded($deviceids[$deviceid], $capabilities, $syncgroupid);
 	} else {
 
 		main::INFOLOG && $log->info("Hello from existing client: $id on ipport: $ipport{$s}");
