@@ -207,10 +207,7 @@ sub power {
 	return $currOn unless defined $on;
 	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
-	my $resume = $prefs->client($client)->get('powerOnResume');
-	$resume =~ /(.*)Off-(.*)On/;
-	my ($resumeOff, $resumeOn) = ($1,$2);
-	
+	my ($resumeOff) = $prefs->client($client)->get('powerOnResume') =~ /(.*)Off/;
 	my $controller = $client->controller();
 
 	if (!$on) {
@@ -296,22 +293,30 @@ sub power {
 
 		$controller->playerActive($client);
 
-		if (!$controller->isPlaying() && !$noplay) {
-			
-			if ($resumeOn =~ /Reset/) {
-				# reset playlist to start, but don't start the playback yet
-				$client->execute(["playlist","jump", 0, 1, 1]);
-			}
-			
-			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client)
-				&& $prefs->client($client)->get('playingAtPowerOff')) {
-				# play even if current playlist item is a remote url (bug 7426)
-				# but only if we were playing at power-off (bug 7061)
-				$client->execute(["play"]); # will resume if paused
-			}
-		}		
+		# Decide if we shall resume playing on power 
+		$client->resumeOnPower();
 	}
 }
+
+sub resumeOnPower {
+	my $client = shift;
+
+	if (!$client->controller->isPlaying()) {
+		my ($resumeOn) = $prefs->client($client)->get('powerOnResume') =~ /-(.*)On/;
+		
+		if ($resumeOn =~ /Reset/) {
+			# reset playlist to start, but don't start the playback yet
+			$client->execute(["playlist","jump", 0, 1, 1]);
+		}
+			
+		if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client)
+			&& $prefs->client($client)->get('playingAtPowerOff')) {
+			# play even if current playlist item is a remote url (bug 7426)
+			# but only if we were playing at power-off (bug 7061)
+			$client->execute(["play"]); # will resume if paused
+		}
+	}		
+}	
 
 sub welcomeScreen {
 	my $client = shift;
