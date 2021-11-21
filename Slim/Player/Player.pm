@@ -109,8 +109,8 @@ sub init {
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
+	$client->power($prefs->client($client)->get('power'));
 	$client->startup($syncgroupid);
-	$client->power($prefs->client($client)->get('power'), 0, 1);
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
 		
@@ -201,12 +201,11 @@ sub power {
 	my $client = shift;
 	my $on     = shift;
 	my $noplay = shift;
-	my $force  = shift;
 	
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
-	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) || $force;
+	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
 	my $resume = $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
@@ -251,7 +250,7 @@ sub power {
 		$client->display->renderCache()->{defaultfont} = undef;
 	 	
 	 	# Do now, not earlier so that playmode changes still work
-	 	$prefs->client($client)->set('power', $on); # Do now, not earlier so that 
+	 	$prefs->client($client)->set('power', $on); 
 	 	
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);

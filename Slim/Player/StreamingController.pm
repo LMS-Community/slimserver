@@ -944,7 +944,8 @@ sub _Continue {
 		_Streamout($self);
 	} elsif (!$bytesReceived || $seekdata) {
 		main::INFOLOG && $log->is_info && $log->info("Restarting stream at offset $bytesReceived");
-		_Stream($self, $event, {song => $song, seekdata => $seekdata, reconnect => 1});
+		# 'reconnect' should not be set as player has *not* set reconnect flag here (see SqueezeBox::reconnect)
+		_Stream($self, $event, {song => $song, seekdata => $seekdata, reconnect => 0});
 		if ($song == playingSong($self)) {
 			$song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 		}

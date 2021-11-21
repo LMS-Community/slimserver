@@ -72,12 +72,18 @@ sub reconnect {
 
 	if (!$reconnect) {
 
+		# when reconnecting after player has been forgotten, we need to power-cycle it
+		if (!defined $reconnect && $prefs->client($client)->get('power')) {
+			$prefs->client($client)->set('power', 0);
+			$client->power(1);
+		}
+		
 		if ($client->power()) {
 			$controller->playerActive($client);
 		}
 
 		if ($controller->onlyActivePlayer($client)) {
-			main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at "
+			main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " restarting play on pseudo-reconnect at "
 				. ($bytes_received ? $bytes_received : 0));
 			$controller->playerReconnect($bytes_received);
 		}
