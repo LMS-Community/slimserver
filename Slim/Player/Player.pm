@@ -294,7 +294,7 @@ sub power {
 		$controller->playerActive($client);
 
 		# Decide if we shall resume playing on power 
-		$client->resumeOnPower();
+		$client->resumeOnPower() unless $noplay;
 	}
 }
 
