@@ -1511,6 +1511,9 @@ sub generateHTTPResponse {
 		# $peerclient as this will cause streaming to the real client $client to stop.
 		delete $peerclient{$httpClient};
 
+		# Disable metadata in case this client sent an Icy-Metadata header
+		$sendMetaData{$httpClient} = 0;
+
 		addStreamingResponse($httpClient, $headers);
 
 		return;
