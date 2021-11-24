@@ -58,7 +58,7 @@ sub new {
 	# used for non blocking I/O
 	${*$sock}{'_sel'}    = IO::Select->new($sock);
 
-	return $sock->request($args);
+	return $sock->open($args);
 }
 
 sub close {
