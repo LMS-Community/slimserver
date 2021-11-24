@@ -1160,6 +1160,10 @@ sub _cliQuery_done {
 							$hash{'action'} = 'none';
 						}
 
+						if ( $item->{extid} ) {
+							$hash{extid} = $item->{extid};
+						}
+
 						if ( $item->{type} && $item->{type} eq 'localservice' ) {
 							$hash{'actions'} = {
 								go => {
