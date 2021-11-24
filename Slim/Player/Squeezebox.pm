@@ -72,12 +72,13 @@ sub reconnect {
 
 	if (!defined $reconnect) {
 		
-		# reconnection of a forgotten client -> power() in client's init would not resume
-		$client->resumeOnPower() if $client->power();
+		# reconnection of a forgotten client, need to take resume position from prefs
+		$client->resumeOnPower(1) if $client->power();
 		
 	} else {
 
 		if ($client->power()) {
+			$client->resumeOnPower();
 			$controller->playerActive($client);
 		}
 

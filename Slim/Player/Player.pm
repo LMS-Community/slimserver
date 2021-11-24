@@ -108,8 +108,8 @@ sub init {
 	Slim::Hardware::IR::initClient($client);
 	Slim::Buttons::Home::updateMenu($client);
 
-	# fire it up!
-	$client->power($prefs->client($client)->get('power'));
+	# let reconnect() decide if we need to play or not
+	$client->power($prefs->client($client)->get('power'), 1);
 	$client->startup($syncgroupid);
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
@@ -227,8 +227,9 @@ sub power {
 			$controller->playerInactive($client);
 			$prefs->client($client)->set('playingAtPowerOff', 0);
  		} else {	
-			my $playing = $controller->isPlaying(1);
-			$prefs->client($client)->set('playingAtPowerOff', $playing);
+			# make sure it's not 0 if we are playing
+			my $playing = $controller->playingSongElapsed() + 0.1 if $controller->isPlaying(1);
+			$prefs->client($client)->set('playingAtPowerOff', $playing || 0);
 			
 			# bug 8776, only pause if really playing a local file, otherwise always stop
 			# bug 10645, this is no longer necessary as the controller will stop the remote stream if necessary
@@ -299,7 +300,7 @@ sub power {
 }
 
 sub resumeOnPower {
-	my $client = shift;
+	my ($client, $cold) = @_;
 
 	if (!$client->controller->isPlaying()) {
 		my ($resumeOn) = $prefs->client($client)->get('powerOnResume') =~ /-(.*)On/;
@@ -309,11 +310,18 @@ sub resumeOnPower {
 			$client->execute(["playlist","jump", 0, 1, 1]);
 		}
 			
-		if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client)
-			&& $prefs->client($client)->get('playingAtPowerOff')) {
+		my $playing = $prefs->client($client)->get('playingAtPowerOff');
+
+		if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client) && $playing) {
 			# play even if current playlist item is a remote url (bug 7426)
 			# but only if we were playing at power-off (bug 7061)
-			$client->execute(["play"]); # will resume if paused
+			if ($cold) {
+				my $index = Slim::Player::Source::playingSongIndex($client);
+				print("COLD RESUME OF $index FROM $playing");
+				$client->execute(["playlist","jump", $index, 1, 0, { timeOffset => $playing}]);
+			} else {	
+				$client->execute(["play"]); # will resume if paused
+			}	
 		}
 	}		
 }	
