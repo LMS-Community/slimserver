@@ -124,6 +124,16 @@ sub new {
 }
 
 sub open {
+	my ($self, $args) = @_;
+	my $song = $args->{'song'};
+	
+	# last chance to get the byte offset if not already provided	
+	if ($song && $song->seekdata && $song->seekdata->{'timeOffset'} && !$song->seekdata->{'sourceStreamOffset'}) {  
+		my $seekdata = $song->getSeekData($song->seekdata->{'timeOffset'});
+		$song->seekdata($seekdata) if $seekdata;
+		main::INFOLOG && $log->info("Adding seekdata ", Data::Dump::dump($song->seekdata));
+	}	
+	
 	shift->request(@_);
 }
 
