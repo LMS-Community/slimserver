@@ -317,7 +317,6 @@ sub resumeOnPower {
 			# but only if we were playing at power-off (bug 7061)
 			if ($cold) {
 				my $index = Slim::Player::Source::playingSongIndex($client);
-				print("COLD RESUME OF $index FROM $playing");
 				$client->execute(["playlist","jump", $index, 1, 0, { timeOffset => $playing}]);
 			} else {	
 				$client->execute(["play"]); # will resume if paused
