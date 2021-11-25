@@ -227,7 +227,7 @@ sub power {
 			$controller->playerInactive($client);
 			$prefs->client($client)->set('playingAtPowerOff', 0);
  		} else {	
-			# make sure it's not 0 if we are playing
+			# make sure it's not 0 if we are playing as it represents elapsed time
 			my $playing = $controller->playingSongElapsed() + 0.1 if $controller->isPlaying(1);
 			$prefs->client($client)->set('playingAtPowerOff', $playing || 0);
 			
