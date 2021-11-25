@@ -362,6 +362,14 @@ sub open {
 	main::INFOLOG && $log->info($url);
 
 	$self->seekdata($seekdata) if $seekdata;
+
+	# last chance to get the byte offset if not already provided	
+	if ($self->seekdata && $self->seekdata->{'timeOffset'} && !$self->seekdata->{'sourceStreamOffset'}) {  
+		my $seekdata = $self->getSeekData($self->seekdata->{'timeOffset'});
+		$self->seekdata($seekdata) if $seekdata;
+		main::INFOLOG && $log->info("Adding seekdata ", Data::Dump::dump($self->seekdata));
+	}	
+
 	my $sock;
 	my $format = Slim::Music::Info::contentType($track);
 
