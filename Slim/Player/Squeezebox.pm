@@ -72,8 +72,15 @@ sub reconnect {
 
 	if (!defined $reconnect) {
 		
-		# reconnection of a forgotten client, need to take resume position from prefs
-		$client->resumeOnPower(1) if $client->power();
+		# Reconnection of a forgotten client, need to take resume position from
+		# the preferences
+		if ($client->power()) {
+			# Don't try to resume if we are synced, we might confuse others who have 
+			# moved on. I think playerActive is not need should Sync::restoreSync be
+			# removed from Client::startup. 
+			$client->resumeOnPower(1) if $controller->onlyActivePlayer($client);
+			$controller->playerActive($client);
+		}		
 		
 	} else {
 
@@ -82,7 +89,7 @@ sub reconnect {
 			$controller->playerActive($client);
 		}
 
-		# disconnected but not forgotten clients may need a restart or a proper stop
+		# Disconnected but not forgotten clients may need a restart or a proper stop
 		if (!$reconnect) {
 			if ($controller->onlyActivePlayer($client)) {
 				main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " restarting play on pseudo-reconnect at "

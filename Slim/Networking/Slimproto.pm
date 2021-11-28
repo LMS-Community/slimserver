@@ -255,6 +255,7 @@ sub slimproto_close {
 	$clientsock->close();
 
 	if ( my $client = $sock2client{$clientsock} ) {
+		delete $heartbeat{ $client->id };
 		
 		$client->tcpsock(undef);
 
@@ -276,21 +277,6 @@ sub slimproto_close {
 				# Bug 6714, delete the cached needsUpgrade value, as the player
 				# may change firmware versions before coming back
 				$client->_needsUpgrade(undef);
-				
-				# Persist playback state like we would do when turning off a player, that is, treat a vanishing
-				# player that's still playing the same way as a player that's turned off while still playing, so
-				# we can make it start playing again if it reappears and the user told us to resume playing
-				# when powering on. Make sure elapsed is not 0 if we are playing and take the last reported
-				# position, not the extrapolated one
-				my $playing = 0;
-				
-				if ($client->controller->isPlaying(1)) {
-					$playing = $client->controller->playingSongElapsed() - (Time::HiRes::time() - $heartbeat{ $client->id });
-					$playing = 0.1 if $playing <= 0;
-					main::INFOLOG && $log->is_info && $log->info("disconnected player position $playing secs");
-				}	
-
-				preferences('server')->client($client)->set('playingAtPowerOff', $playing);
 
 				# set timer to forget client
 				if ( $forget_disconnected_time ) {
@@ -302,8 +288,6 @@ sub slimproto_close {
 				}
 			}
 		}
-
-		delete $heartbeat{ $client->id };
 	}
 
 	# forget state
@@ -313,6 +297,19 @@ sub slimproto_close {
 
 sub forget_disconnected_client {
 	my $client = shift;
+	my $cprefs = preferences('server')->client($client);				
+
+	# Persist playback state like we would do when turning off a player, that is, treat a vanishing
+	# player that's still playing the same way as a player that's turned off while still playing, so
+	# we can make it start playing again if it reappears and the user told us to resume playing
+	# when powering on. 
+	$cprefs->set('playingAtPowerOff', $client->isPlaying(1));
+	
+	if ($client->isPlaying(1)) {
+		my $position = $client->controller->playingSongElapsed();
+		$cprefs->set('positionAtDisconnect', $position);					
+		main::INFOLOG && $log->is_info && $log->info("disconnected player position $position secs");
+	}
 
 	main::INFOLOG && $log->info("forgetting disconnected client");
 

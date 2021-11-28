@@ -948,7 +948,7 @@ sub _Continue {
 			$song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 		}
 	} else {
-		# this handles resuming after reboot with the caveat that if connection has been lost (no reboot) 
+		# This handles resuming after reboot with the caveat that if connection has been lost (no reboot) 
 		# while playing and before reception of next song's 1st byte, we'll resume the current song
 		main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: ". $self->playingSongElapsed());
 		_JumpToTime($self, $event, {newtime => $self->playingSongElapsed(), restartIfNoSeek => 1});

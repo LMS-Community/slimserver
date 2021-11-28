@@ -449,7 +449,7 @@ sub songElapsedSeconds {
 		$songElapsed = $elapsedSeconds;
 	}
 
-	if ($client->isPlaying(1)) {
+	if ($client->isPlaying(1) && !$client->disconnected()) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
 		$songElapsed += $timeDiff if ($timeDiff > 0);
 	}
