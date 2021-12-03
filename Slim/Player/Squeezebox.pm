@@ -70,31 +70,42 @@ sub reconnect {
 
 	my $controller = $client->controller();
 
-	if (!$reconnect) {
-
+	if (!defined $reconnect) {
+		
+		# Reconnection of a forgotten client, need to take resume position from
+		# the preferences
 		if ($client->power()) {
+			# Don't try to resume if we are synced, we might confuse others who have 
+			# moved on. I think playerActive is not need should Sync::restoreSync be
+			# removed from Client::startup. 
+			$client->resumeOnPower(1) if $controller->onlyActivePlayer($client);
 			$controller->playerActive($client);
-		}
-
-		if ($controller->onlyActivePlayer($client)) {
-			main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at "
-				. ($bytes_received ? $bytes_received : 0));
-			$controller->playerReconnect($bytes_received);
-		}
-
-		if ($client->isStopped()) {
-			# Ensure that a new client is stopped, but only on sb2s
-			if ( $client->isa('Slim::Player::Squeezebox2') ) {
-				main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " forcing stop on pseudo-reconnect");
-				$client->stop();
-			}
-		}
+		}		
+		
 	} else {
-		# bug 16881: player in a sync-group may have been made inactive upon disconnect;
-		# make sure it is active now.
+
 		if ($client->power()) {
+			$client->resumeOnPower();
 			$controller->playerActive($client);
 		}
+
+		# Disconnected but not forgotten clients may need a restart or a proper stop
+		if (!$reconnect) {
+			if ($controller->onlyActivePlayer($client)) {
+				main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " restarting play on pseudo-reconnect at "
+					. ($bytes_received ? $bytes_received : 0));
+				$controller->playerReconnect($bytes_received);
+			}
+
+			if ($client->isStopped()) {
+				# Ensure that a new client is stopped, but only on sb2s
+				if ( $client->isa('Slim::Player::Squeezebox2') ) {
+					main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " forcing stop on pseudo-reconnect");
+					$client->stop();
+				}
+			}
+		}	
+		
 	}
 
 	# reinitialize the irtime to the current time so that

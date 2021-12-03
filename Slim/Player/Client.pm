@@ -560,19 +560,12 @@ sub forgetClient {
 	}
 }
 
-sub persistPlaybackStateForPowerOff {
-	my $client = shift;
-
-	if ($client->power()) {
-		my $playing = $client->controller()->isPlaying(1);
-		$prefs->client($client)->set('playingAtPowerOff', $playing);
-	}
-}
-
 sub startup {
 	my $client = shift;
 	my $syncgroupid = shift;
 
+	# I don't think that should be done here b/c Squeezebox::reconnect does it as 
+	# well but by doing it here, $client is not activated as it is not connected
 	Slim::Player::Sync::restoreSync($client, $syncgroupid);
 
 	# restore the old playlist

@@ -377,12 +377,6 @@ sub clientForgetCommand {
 		return;
 	}
 
-	# Persist playback state like we would do when turning off a player, that is, treat a vanishing
-	# player that's still playing the same way as a player that's turned off while still playing, so
-	# we can make it start playing again if it reappears and the user told us to resume playing
-	# when powering on.
-	$client->persistPlaybackStateForPowerOff();
-
 	$client->controller()->playerInactive($client);
 
 	$client->forgetClient();

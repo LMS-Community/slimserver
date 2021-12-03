@@ -297,6 +297,19 @@ sub slimproto_close {
 
 sub forget_disconnected_client {
 	my $client = shift;
+	my $cprefs = preferences('server')->client($client);				
+
+	# Persist playback state like we would do when turning off a player, that is, treat a vanishing
+	# player that's still playing the same way as a player that's turned off while still playing, so
+	# we can make it start playing again if it reappears and the user told us to resume playing
+	# when powering on. 
+	$cprefs->set('playingAtPowerOff', $client->isPlaying(1));
+	
+	if ($client->isPlaying(1)) {
+		my $position = $client->controller->playingSongElapsed();
+		$cprefs->set('positionAtDisconnect', $position);					
+		main::INFOLOG && $log->is_info && $log->info("disconnected player position $position secs");
+	}
 
 	main::INFOLOG && $log->info("forgetting disconnected client");
 

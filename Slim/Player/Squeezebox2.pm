@@ -449,7 +449,9 @@ sub songElapsedSeconds {
 		$songElapsed = $elapsedSeconds;
 	}
 
-	if ($client->isPlaying(1)) {
+	# If we are disconnected and the only player or not master, elapsed shall not progress 
+	# anymore otherwise, extrapolate value to not confuse other players
+	if ($client->isPlaying(1) && (!$client->disconnected() || ($client->isSynced() && Slim::Player::Sync::isMaster($client)))) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
 		$songElapsed += $timeDiff if ($timeDiff > 0);
 	}
