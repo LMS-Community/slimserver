@@ -421,7 +421,7 @@ sub crackURL {
 
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
-	$path ||= '/';
+	$path = '/' . $path if $path !~ m|^/|;
 	$port ||= ((Slim::Networking::Async::HTTP->hasSSL() && $string =~ /^https/) ? 443 : 80);
 
 	my $proxied = "http://$host:$port$path" if $prefs->get('webproxy') && $host !~ /(?:localhost|127.0.0.1)/;
