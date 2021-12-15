@@ -247,8 +247,8 @@ sub playlist {
 
 		# We might have multiple contributors for a track
 		if (!$_->{'remote'}) {
-			my @contributors = split /, /, join(', ', $_->{'albumartist'}, $_->{'artist'}, $_->{'trackartist'});
-			my @ids = join(',', $_->{'albumartist_ids'}, $_->{'artist_ids'}, $_->{'trackartist_ids'}) =~ /(\b\d+\b)/g;
+			my @contributors = split /, /, join(', ', $_->{'artist'}, $_->{'trackartist'}, $_->{'albumartist'});
+			my @ids = join(',', $_->{'artist_ids'}, $_->{'trackartist_ids'}, $_->{'albumartist_ids'}) =~ /(\b\d+\b)/g;
 
 			# splitting comma separated artists sucks, as we could end up splitting Earth from Wind & Fire
 			# Do potentially slow look up of artists one by one to get the right id -> name mapping
