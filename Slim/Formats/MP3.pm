@@ -407,6 +407,9 @@ sub doTagMapping {
 		
 		$tags->{YEAR} = $year;
 	}
+
+	# Sometimes the BPM is not an integer so we try to convert.
+	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 	
 	# Clean up comments
 	if ( $tags->{COMMENT} && ref $tags->{COMMENT} eq 'ARRAY' ) {

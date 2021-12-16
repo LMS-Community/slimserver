@@ -18,6 +18,7 @@ my $sourcelog = logger('player.source');
 my %tagMapping = (
 	'Author'                => 'ARTIST',
 	'Title'                 => 'TITLE',
+	'WM/BeatsPerMinute'     => 'BPM',
 	'WM/AlbumArtist'        => 'ALBUMARTIST',
 	'WM/AlbumTitle'         => 'ALBUM',
 	'WM/Composer'           => 'COMPOSER',
@@ -66,6 +67,9 @@ sub getTag {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+
+	# Sometimes the BPM is not an integer so we try to convert.
+	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 
 	# Add additional info
 	my $stream = $info->{streams}->[0];

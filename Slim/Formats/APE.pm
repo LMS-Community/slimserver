@@ -37,6 +37,7 @@ use Audio::Scan;
 my %tagMapping = (
 	'TRACK'	       => 'TRACKNUM',
 	'DATE'         => 'YEAR',
+	'BPM'          => 'BPM',
 	'DISCNUMBER'   => 'DISC',
 	'ALBUM ARTIST' => 'ALBUMARTIST', # bug 10724 - support APEv2 Album Artist
 );
@@ -75,6 +76,9 @@ sub doTagMapping {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+
+	# Sometimes the BPM is not an integer so we try to convert.
+	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 	
 	# Flag if we have embedded cover art
 	if ( exists $tags->{'COVER ART (FRONT)'} ) {
