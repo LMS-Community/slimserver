@@ -250,12 +250,9 @@ sub _doTagMapping {
 
 		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
 	}
-	if (defined $tags->{BPM}) {
-		# Make the BPM an integer by dropping digits after decimal point.
-		if ($tags->{BPM} =~ m|^\d+\.\d+$|) {
-			($tags->{BPM} = $tags->{BPM}) =~ s/^(\d+)(\.\d+)$/$1/;
-		}
-	}
+
+	# Sometimes the BPM is not an integer so we try to convert.
+	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 }
 
 sub _addInfoTags {

@@ -68,12 +68,8 @@ sub getTag {
 		}
 	}
 
-	if (defined $tags->{BPM}) {
-		# Make the BPM an integer by dropping digits after decimal point.
-		if ($tags->{BPM} =~ m|^\d+\.\d+$|) {
-			($tags->{BPM} = $tags->{BPM}) =~ s/^(\d+)(\.\d+)$/$1/;
-		}
-	}
+	# Sometimes the BPM is not an integer so we try to convert.
+	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 
 	# Add additional info
 	my $stream = $info->{streams}->[0];
