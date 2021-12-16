@@ -1120,6 +1120,8 @@ sub findAndScanDirectoryTree {
 
 		logError("Couldn't find a topLevelObj!");
 
+		main::INFOLOG && $scannerlog->is_info && $scannerlog->info("Params: " . Data::Dump::dump($params));
+
 		return ();
 	}
 
