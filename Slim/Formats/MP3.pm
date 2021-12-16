@@ -407,6 +407,13 @@ sub doTagMapping {
 		
 		$tags->{YEAR} = $year;
 	}
+
+	if (defined $tags->{BPM}) {
+		# Make the BPM an integer by dropping digits after decimal point.
+		if ($tags->{BPM} =~ m|^\d+\.\d+$|) {
+			($tags->{BPM} = $tags->{BPM}) =~ s/^(\d+)(\.\d+)$/$1/;
+		}
+	}
 	
 	# Clean up comments
 	if ( $tags->{COMMENT} && ref $tags->{COMMENT} eq 'ARRAY' ) {

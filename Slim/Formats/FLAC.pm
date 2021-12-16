@@ -43,6 +43,7 @@ my %tagMapping = (
 	'DISCNUMBER'                => 'DISC',
 	'DISCTOTAL'                 => 'DISCC',
 	'URL'                       => 'URLTAG',
+	'BPM'                       => 'BPM',
 	'MUSICBRAINZ_SORTNAME'      => 'ARTISTSORT',
 	'MUSICBRAINZ_ALBUMARTIST'   => 'ALBUMARTIST',
 	'MUSICBRAINZ_ALBUMARTISTID' => 'MUSICBRAINZ_ALBUMARTIST_ID',
@@ -248,6 +249,12 @@ sub _doTagMapping {
 		}
 
 		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
+	}
+	if (defined $tags->{BPM}) {
+		# Make the BPM an integer by dropping digits after decimal point.
+		if ($tags->{BPM} =~ m|^\d+\.\d+$|) {
+			($tags->{BPM} = $tags->{BPM}) =~ s/^(\d+)(\.\d+)$/$1/;
+		}
 	}
 }
 

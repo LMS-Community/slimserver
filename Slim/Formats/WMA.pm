@@ -18,6 +18,7 @@ my $sourcelog = logger('player.source');
 my %tagMapping = (
 	'Author'                => 'ARTIST',
 	'Title'                 => 'TITLE',
+	'WM/BeatsPerMinute'     => 'BPM',
 	'WM/AlbumArtist'        => 'ALBUMARTIST',
 	'WM/AlbumTitle'         => 'ALBUM',
 	'WM/Composer'           => 'COMPOSER',
@@ -64,6 +65,13 @@ sub getTag {
 	while ( my ($old, $new) = each %tagMapping ) {
 		if ( exists $tags->{$old} ) {
 			$tags->{$new} = delete $tags->{$old};
+		}
+	}
+
+	if (defined $tags->{BPM}) {
+		# Make the BPM an integer by dropping digits after decimal point.
+		if ($tags->{BPM} =~ m|^\d+\.\d+$|) {
+			($tags->{BPM} = $tags->{BPM}) =~ s/^(\d+)(\.\d+)$/$1/;
 		}
 	}
 
