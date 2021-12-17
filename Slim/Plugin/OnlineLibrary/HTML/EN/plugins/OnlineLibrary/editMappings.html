@@ -38,7 +38,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					[% FOREACH mappingKey = genreMappings.keys.sort %]
+					[% FOREACH mappingKey = sortOrder %]
 					<tr>
 						<td>[% genreMappings.$mappingKey.0 %]</td>
 						<td>[% genreMappings.$mappingKey.1 %]</td>

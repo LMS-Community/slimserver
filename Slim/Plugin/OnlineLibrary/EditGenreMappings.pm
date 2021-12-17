@@ -51,13 +51,14 @@ sub handler {
 
 sub beforeRender {
 	my ($class, $params, $client) = @_;
-	$params->{genreMappings} = _getGenreMappings();
+	($params->{genreMappings}, $params->{sortOrder}) = _getGenreMappings();
 }
 
 sub _getGenreMappings {
 	my $sql = q(SELECT albums.title, albums.titlesearch, contributors.name, contributors.namesearch
 						FROM albums JOIN contributors ON contributors.id = albums.contributor
-						WHERE albums.extid IS NOT NULL;);
+						WHERE albums.extid IS NOT NULL
+						ORDER BY contributors.namesort, albums.titlesort;);
 
 	my ($title, $titlesearch, $name, $namesearch);
 
@@ -66,14 +67,16 @@ sub _getGenreMappings {
 	$sth->bind_columns(\$title, \$titlesearch, \$name, \$namesearch);
 
 	my $mappings = {};
+	my $order = [];
 	while ( $sth->fetch ) {
 		my $key = md5_hex("$titlesearch||$namesearch");
 		utf8::decode($title);
 		utf8::decode($name);
 		$mappings->{$key} = [ $title, $name, $genreMappings->get($key) ];
+		push @$order, $key;
 	}
 
-	return $mappings;
+	return ($mappings, $order);
 }
 
 1;
