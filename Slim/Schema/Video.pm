@@ -49,7 +49,7 @@ sub updateOrCreateFromResult {
 		filesize     => $result->size,
 		secs         => $result->duration_ms / 1000,
 		bitrate      => $result->bitrate,
-		channels     => 'TODO',
+		channels     => 1,
 	};
 	
 	return $class->updateOrCreateFromHash($hash);
