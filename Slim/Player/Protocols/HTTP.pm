@@ -197,26 +197,14 @@ sub readMetaData {
 	my $metadataSize = 0;
 	my $byteRead = 0;
 
-	while ($byteRead == 0) {
+	# some streaming servers might align their chunks on metadata which means that 
+	# we might wait a long while for the 1st byte. We don't want about busy loop, so
+	# exit if we don't have one. But once we have it, rest shall follow shortly
 
-		$byteRead = readChunk($self, $metadataSize, 1);
-
-		if ($!) {
-
-			if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
-
-			 	#$log->warn("Warning: Metadata byte not read! $!");
-			 	return;
-
-			 }
-			 else {
-
-				#$log->debug("Metadata byte not read, trying again: $!");
-			 }
-		}
-
-		$byteRead = defined $byteRead ? $byteRead : 0;
-	}
+	if (!readChunk($self, $metadataSize, 1)) {
+		$log->debug("Metadata byte not read, trying again: $!");
+		return undef;
+	}	
 
 	$metadataSize = ord($metadataSize) * 16;
 
@@ -231,15 +219,13 @@ sub readMetaData {
 			$byteRead = readChunk($self, $metadatapart, $metadataSize);
 
 			if ($!) {
+
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK && $! != EINTR) {
-
-					#$log->info("Metadata bytes not read! $!");
-					return;
-
+					$log->error("Metadata bytes not read! $!");
+					return -1;
 				}
 				else {
-
-					#$log->info("Metadata bytes not read, trying again: $!");
+					$log->debug("Metadata bytes not read, trying again: $!");
 				}
 			}
 
@@ -253,6 +239,8 @@ sub readMetaData {
 
 		${*$self}{'title'} = __PACKAGE__->parseMetadata($client, $self->url, $metadata);
 	}
+
+	return 1;
 }
 
 sub getFormatForURL {
@@ -627,12 +615,23 @@ sub sysread {
 	my $metaInterval = ${*$self}{'metaInterval'};
 	my $metaPointer  = ${*$self}{'metaPointer'};
 
-	if ($metaInterval && ($metaPointer + $chunkSize) > $metaInterval) {
+	# handle instream metadata for shoutcast/icecast	
+	if ($metaInterval) {
 
-		$chunkSize = $metaInterval - $metaPointer;
-
-		# This is very verbose...
-		#$log->debug("Reduced chunksize to $chunkSize for metadata");
+		if ($metaPointer == $metaInterval) {
+			# don't do anything if we can't read yet
+			$self->readMetaData() || return undef;
+			
+			$metaPointer = ${*$self}{'metaPointer'} = 0;	
+		}
+		elsif ($metaPointer > $metaInterval) {
+			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
+		}
+		
+		if ($metaPointer + $chunkSize > $metaInterval) {
+			$chunkSize = $metaInterval - $metaPointer;	
+			#$log->debug("Reduced chunksize to $chunkSize for metadata");
+		}	
 	}
 
 	my $readLength;
@@ -646,25 +645,8 @@ sub sysread {
 		${*$self}{'audio_bytes'} = ${*$self}{'audio_process'}->($_[1], $chunkSize) if ${*$self}{'audio_process'};
 	}
 
-	# use $readLength from socket for meta interval adjustement
-	if ($metaInterval && $readLength) {
-
-		$metaPointer += $readLength;
-		${*$self}{'metaPointer'} = $metaPointer;
-
-		# handle instream metadata for shoutcast/icecast
-		if ($metaPointer == $metaInterval) {
-
-			$self->readMetaData();
-
-			${*$self}{'metaPointer'} = 0;
-
-		}
-		elsif ($metaPointer > $metaInterval) {
-
-			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
-		}
-	}
+	# update metadata pointer only from *actual* sysread
+	${*$self}{'metaPointer'} += $readLength if  ${*$self}{'metaInterval'};
 
 	# when not-empty, choose return buffer length over sysread()
 	return length $_[1] if length $_[1];
