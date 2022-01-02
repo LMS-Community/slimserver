@@ -9,7 +9,7 @@ SAVE_PLAYLIST_DESC
 	FI	Tallenna soittoluettelot soittimen käyttöliittymästä
 	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
 	IT	Salva playlist dall'interfaccia del lettore
-	NL	Playlists uit de muziekspeler-UI opslaan
+	NL	Afspeellijsten vanuit de interface van de muziekspeler opslaan
 	NO	Lagre spillelister fra spillergrensesnittet
 	PL	Zapisz listy odtwarzania z interfejsu odtwarzacza
 	RU	Сохранить плей-листы из пользовательского интерфейса плеера
@@ -25,7 +25,7 @@ PLAYLIST_OVERWRITE
 	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante :
 	HE	עבור ימינה להחלפת רשימת ההשמעה הנוכחית:
 	IT	Premere DESTRA per sostituire la playlist corrente:
-	NL	Druk RECHTS om de bestaande playlist te vervangen:
+	NL	Druk RECHTS om de bestaande afspeellijst te vervangen:
 	NO	Gå til høyre for å bytte ut den eksisterende spillelisten:
 	PL	Przejdź w prawo, aby zastąpić istniejącą listę odtwarzania:
 	RU	Перейдите вправо, чтобы заменить существующий плей-лист:
@@ -42,7 +42,7 @@ PLAYLIST_SAVE
 	HE	עבור ימינה פעם נוספת לשמירת רשימת ההשמעה בשם:
 	IT	Premere DESTRA nuovamente per salvare la playlist con nome:
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
-	NL	Druk opnieuw RECHTS om playlist op te slaan als:
+	NL	Druk opnieuw RECHTS om de afspeellijst op te slaan als:
 	NO	Gå til høyre igjen for å lagre spillelisten som:
 	PL	Ponownie w prawo, aby zapisać listę odtwarzania jako:
 	RU	Снова вправо, чтобы сохранить плей-лист как:
@@ -60,7 +60,7 @@ PLAYLIST_AS
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
 	IT	Salva la playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :
-	NL	Huidige playlist opslaan als:
+	NL	Huidige afspeellijst opslaan als:
 	NO	Lagre spillelisten som:
 	PL	Zapisz bieżącą listę odtwarzania jako:
 	RU	Сохранить текущий плей-лист как:
@@ -78,7 +78,7 @@ PLAYLIST_SAVING
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
 	IT	Salvataggio della playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :
-	NL	Huidige playlist opslaan als:
+	NL	Huidige afspeellijst opslaan als:
 	NO	Lagrer spillelisten som:
 	PL	Zapisywanie bieżącej listy odtwarzania jako:
 	RU	Сохранение текущего плей-листа как:
@@ -96,7 +96,7 @@ NO_PLAYLIST_DIR
 	HE	בעיה: אין תיקייה של רשימות השמעה שמורות.
 	IT	Problema: nessuna cartella per le playlist salvate.
 	JA	エラー: プレイ  リストがみつかりません
-	NL	Probleem: geen map met opgeslagen playlists.
+	NL	Probleem: geen map met opgeslagen afspeellijsten.
 	NO	Problem: Ingen mappe for lagrede spillelister.
 	PL	Problem: brak folderu Zapisana lista odtwarzania.
 	RU	Проблема: папка "Сохраненные плей-листы" отсутствует.

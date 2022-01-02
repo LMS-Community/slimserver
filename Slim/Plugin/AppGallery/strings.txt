@@ -7,7 +7,7 @@ PLUGIN_APP_GALLERY_MODULE_NAME
 	FI	Sovellusvalikoima
 	FR	Diaporama d'applications
 	IT	Galleria applicazioni
-	NL	Toep.gallerie
+	NL	App gallerie
 	NO	Tjenesteliste
 	PL	Galeria aplikacji
 	RU	Галерея приложений
@@ -22,7 +22,7 @@ APP_CATEGORY_FEATURED
 	FI	Sisältää sovellukset
 	FR	Applications proposées
 	IT	Applicazioni esaminate
-	NL	Beschikbare toep.
+	NL	Aanbevolen Apps
 	NO	Anbefalte tjenester
 	PL	Polecane aplikacje
 	RU	Тематические приложения
@@ -37,7 +37,7 @@ APP_CATEGORY_CUSTOM_RADIO
 	FI	Mukautettava radio
 	FR	Radio personnalisée
 	IT	Radio personalizzata
-	NL	Aangepaste radio
+	NL	Persoonlijke radio
 	NO	Personlig radio
 	PL	Własne radio
 	RU	Пользовательское радио
@@ -82,7 +82,7 @@ APP_CATEGORY_PHOTO_SERVICES
 	FI	Valokuvapalvelut
 	FR	Services de photo
 	IT	Servizi di foto
-	NL	Fotoservices
+	NL	Foto services
 	NO	Fototjenester
 	PL	Usługi fotograficzne
 	RU	Службы обмена фотографиями
@@ -97,7 +97,7 @@ APP_CATEGORY_PODCAST_SERVICES
 	FI	Podcast-palvelut
 	FR	Services de podcast
 	IT	Servizi di podcast
-	NL	Podcast-services
+	NL	Podcast services
 	NO	Podkast-tjenester
 	PL	Usługi podcastów
 	RU	Службы подкастов
@@ -112,7 +112,7 @@ APP_CATEGORY_RADIO_NETWORKS
 	FI	Radioverkot
 	FR	Réseaux radio
 	IT	Reti di radio
-	NL	Radionetwerken
+	NL	Radio netwerken
 	NO	Radionettverk
 	PL	Sieci radiowe
 	RU	Радиосети
@@ -142,7 +142,7 @@ APP_CATEGORY_UTILITIES
 	FI	Toiminnot
 	FR	Utilitaires
 	IT	Utilità
-	NL	Extra
+	NL	Diensten
 	NO	Verktøy
 	PL	Narzędzia
 	RU	Служебные программы

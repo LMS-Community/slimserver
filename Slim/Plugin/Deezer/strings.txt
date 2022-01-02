@@ -107,43 +107,51 @@ PLUGIN_DEEZER_SKIPS_EXCEEDED
 PLUGIN_DEEZER_SMART_RADIO
 	CS	Deezer Smart Radio
 	EN	Deezer Smart Radio
+	NL	Deezer Smart Radio
 
 PLUGIN_DEEZER_FLOW
 	CS	Deezer Flow
 	DE	Deezer Flow
+	NL	Deezer Flow
 
 PLUGIN_DEEZER_ALBUMS_PROGRESS
 	CS	Alba Deezeru
 	DE	Deezer Alben
 	EN	Deezer Albums
 	FR	Deezer Albums
+	NL	Deezer Albums
 
 PLUGIN_DEEZER_PROGRESS_READ_ALBUMS
 	CS	Načítání alb (%s)...
 	DE	Lese Alben (%s)...
 	EN	Fetching Albums (%s)...
 	FR	Récupération des albums (%s)...
+	NL	Ophalen Albums (%s)...
 
 PLUGIN_DEEZER_ARTISTS_PROGRESS
 	CS	Umělci Deezeru
 	DE	Deezer Interpreten
 	EN	Deezer Artists
 	FR	Deezer Artistes
+	NL	Deezer Artiesten
 
 PLUGIN_DEEZER_PROGRESS_READ_ARTISTS
 	CS	Načítání umělců (%s)...
 	DE	Lese Interpreten (%s)...
 	EN	Fetching Artists (%s)...
 	FR	Récupération des artistes (%s)...
+	NL	Ophalen Artiesten (%s)...
 
 PLUGIN_DEEZER_PLAYLISTS_PROGRESS
 	CS	Seznamy skladeb Deezeru
 	DE	Deezer Wiedergabelisten
 	EN	Deezer Playlists
 	FR	Deezer Listes de lecture
+	NL	Deezer Afspeellijsten
 
 PLUGIN_DEEZER_PROGRESS_READ_PLAYLISTS
 	CS	Načítání seznamů skladeb (%s)...
 	DE	Lese Wiedergabelisten (%s)...
 	EN	Fetching Playlists (%s)...
 	FR	Récupération des listes de lecture (%s)...
+	NL	Ophalen Afspeellijsten (%s)... 
