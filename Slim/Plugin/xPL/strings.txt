@@ -10,7 +10,7 @@ PLUGIN_XPL
 	FR	Interface xPL
 	HE	ממשק xPL
 	IT	Interfaccia xPL
-	NL	xPL-interface
+	NL	xPL interface
 	NO	xPL-grensesnitt
 	PL	Interfejs xPL
 	RU	Интерфейс xPL
@@ -27,7 +27,7 @@ SETUP_GROUP_XPL
 	HE	הגדרות xPL
 	IT	Impostazioni xPL
 	JA	xPL セッティング
-	NL	xPL-instellingen
+	NL	xPL instellingen
 	NO	xPL-innstillinger
 	PL	Ustawienia protokołu xPL
 	RU	Параметры xPL
@@ -63,7 +63,7 @@ SETUP_XPLINTERVAL
 	HE	מרווח זמן של פעימה
 	IT	Intervallo di heartbeat
 	JA	インターバル
-	NL	Heartbeat-interval
+	NL	Heartbeat interval
 	NO	Intervall for hjerteslag
 	PL	Interwał pulsu
 	RU	Интервал подтверждения соединения
