@@ -9,7 +9,7 @@ PLUGIN_SONGSCANNER
 	FI	Kappaleen haku
 	FR	Analyseur de morceau
 	IT	Analisi brani
-	NL	Nummerscanner
+	NL	Nummer scanner
 	NO	Sangsøk
 	PL	Moduł przeszukiwania utworów
 	RU	Сканер песен
@@ -24,7 +24,7 @@ PLUGIN_SONGSCANNER_DESC
 	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä (Squeezebox Classic, Squeezebox Boom, Transporter)
 	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture (Squeezebox Classic, Squeezebox Boom, Transporter)
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione (Squeezebox Classic, Squeezebox Boom, Transporter)
-	NL	Muziekspelerinterface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NL	Muziekspeler interface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
 	PL	Interfejs odtwarzacza umożliwiający przejście do dowolnego miejsca w aktualnie odtwarzanym utworze (Squeezebox Classic, Squeezebox Boom, Transporter)
 	RU	Интерфейс плеера для перехода в произвольную позицию воспроизводимой песни (Squeezebox Classic, Squeezebox Boom, Transporter)
@@ -84,7 +84,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal d'avance rapide a été atteint
 	IT	È stata raggiunta la velocità di avanzamento massima
-	NL	Maximale vooruitspoelsnelheid bereikt
+	NL	Maximale snelheid voor vooruitspoelen bereikt
 	NO	Maks spolingshastighet forover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do przodu
 	RU	Достигнута макс. скорость перемотки вперед
@@ -99,7 +99,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_REW
 	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal de retour rapide a été atteint
 	IT	È stata raggiunta la velocità di riavvolgimento massima
-	NL	Maximale terugspoelsnelheid bereikt
+	NL	Maximale snelheid voor terugspoelen bereikt
 	NO	Maks spolingshastighet bakover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do tyłu
 	RU	Достигнута макс. скорость перемотки назад
