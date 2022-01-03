@@ -16,7 +16,7 @@ PLUGIN_INFOBROWSER
 	SV	Infoläsaren
 
 PLUGIN_INFOBROWSER_DESC
-	CS	Vyhledávejte informace z internetových zdrojů a zobrazení prostřednictvím displejů dálkového ovládání, serveru nebo přehrávače. Informace o přidávání informačních zdrojů viz sekce nastavení.
+	CS	Získávejte informace z internetových zdrojů a zobrazujte je prostřednictvím dálkového ovladače, serveru nebo přehrávače. Informace o přidání dalších zdrojů informací naleznete v části Nastavení.
 	DA	Hent oplysninger fra kilder på internettet, og få dem vist på fjernbetjeningen, serveren eller afspillerens display. I afsnittet med indstillinger kan du læse hvordan man tilføjer flere informationskilder.
 	DE	Liest Informationen aus Internetquellen und zeigt Sie auf der Fernbedienung, dem Server oder dem Player an. Im Abschnitt 'Einstellungen' finden Sie Hinweise zu zusätzlichen Informationsquellen.
 	EN	Retrieve information from internet sources and displaying via Remote, Server or Player displays.  See the settings section for information about adding additional information sources.
@@ -61,7 +61,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET
 	SV	Återställ
 
 SETUP_PLUGIN_INFOBROWSER_RESET_DESC
-	CS	Resetujte menu vrchní úrovně informačního prohlížeče na výchozí vstupy a všechny dodatečné vstupy, které jste nainstalovali.
+	CS	Resetujte nabídku vrchní úrovně informačního prohlížeče na výchozí vstupy a všechny dodatečné vstupy, které jste nainstalovali.
 	DA	Nulstil det øverste niveau i Informationslæseren til standardfeeds samt alle de ekstra feeds du har installeret.
 	DE	Setzt das Menü auf oberster Ebene im Informations-Browser auf die Standard-Feeds sowie die von Ihnen installierten zusätzlichen Feeds zurück.
 	EN	Reset the top level Info Browser menu to all default feeds plus all Addon feeds you have installed.

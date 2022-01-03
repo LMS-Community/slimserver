@@ -44,7 +44,7 @@ PLUGIN_CLASSICAL_ERROR
 	SV	Classical.com-fel
 
 PLUGIN_CLASSICAL_NO_INFO
-	CS	Není možné načíst informace o proudu.
+	CS	Nelze načíst informace o proudu.
 	DA	Der kunne ikke hentes oplysninger om streamen.
 	DE	Stream-Info kann nicht abgerufen werden.
 	EN	Unable to retrieve stream info.
@@ -59,7 +59,7 @@ PLUGIN_CLASSICAL_NO_INFO
 	SV	Det gick inte att hämta ströminformationen.
 
 PLUGIN_CLASSICAL_STREAM_FAILED
-	CS	Selhání zvukového proudu, přechod na další stopu.
+	CS	Selhání zvukového proudu, přechod na další skladbu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.

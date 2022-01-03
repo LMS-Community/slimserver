@@ -1,7 +1,7 @@
 # String file for PreventStandby plugin
 
 PLUGIN_PREVENTSTANDBY
-	CS	Zabránit přechodu systému do pohotovostního režimu
+	CS	Zabránění pohotovostního režimu systému
 	DA	Forhindrer at systemet går på standby
 	DE	Standbymodus verhindern
 	EN	Prevent System Standby

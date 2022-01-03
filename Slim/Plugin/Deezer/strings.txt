@@ -29,7 +29,7 @@ PLUGIN_DEEZER_ON_DEEZER
 	SV	På Deezer
 
 PLUGIN_DEEZER_STREAM_FAILED
-	CS	Selhání zvukového proudu, přechod na další stopu.
+	CS	Selhání zvukového proudu, přechod na další skladbu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
@@ -44,7 +44,7 @@ PLUGIN_DEEZER_STREAM_FAILED
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
 PLUGIN_DEEZER_NO_TRACK
-	CS	Není možné načíst stopu pro rádio.
+	CS	Nelze načíst skladbu pro rádio.
 	DA	Nummeret kunne ikke hentes fra radioen.
 	DE	Titel für Radio kann nicht abgerufen werden.
 	EN	Unable to retrieve track for radio.
@@ -75,7 +75,7 @@ PLUGIN_DEEZER_ERROR
 	SV	Deezer-fel
 
 PLUGIN_DEEZER_NO_NEXT_TRACK
-	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
+	CS	Nelze načíst další skladbu, stiskněte tlačítko PLAY a zkuste to znovu.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.

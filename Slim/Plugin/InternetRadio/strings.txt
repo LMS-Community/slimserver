@@ -32,7 +32,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
-	CS	TuneIn Radio - Místní Internetové rádio
+	CS	TuneIn Radio - Místní internetové rádio
 	DA	TuneIn Radio - lokal internetradio
 	DE	TuneIn Radio - Lokale Internetradiosender
 	EN	TuneIn Radio - Local Internet Radio

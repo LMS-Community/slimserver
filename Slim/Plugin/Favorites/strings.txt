@@ -264,7 +264,7 @@ PLUGIN_FAVORITES_IMPORT
 	SV	Importera
 
 PLUGIN_FAVORITES_LOADFILE
-	CS	URL nebo název souboru
+	CS	Adresa URL nebo název souboru
 	DA	Adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
@@ -294,7 +294,7 @@ PLUGIN_FAVORITES_SAVEFILE
 	SV	Filnamn
 
 PLUGIN_FAVORITES_IMPORTFILE
-	CS	URL nebo název souboru
+	CS	Adresa URL nebo název souboru
 	DA	Adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
@@ -444,7 +444,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	SV	Ny favorit
 
 PLUGIN_FAVORITES_NEWURL
-	CS	Nová URL
+	CS	Nová adresa URL
 	DA	Ny adresse
 	DE	Neue URL
 	EN	New URL
@@ -549,7 +549,7 @@ PLUGIN_FAVORITES_NAME
 	SV	Namn
 
 PLUGIN_FAVORITES_URL
-	CS	URL
+	CS	Adresa URL
 	DA	Internetadresse
 	DE	URL
 	EN	URL

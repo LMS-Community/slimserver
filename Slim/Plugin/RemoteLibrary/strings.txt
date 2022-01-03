@@ -100,7 +100,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
 	SV	Inloggningen lyckades
 
 PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
-	CS	Není možné ověřit váš účet, zkuste to znovu později.
+	CS	Nelze ověřit váš účet, zkuste to znovu později.
 	DA	Din konto kunne ikke verificeres. Prøv igen senere.
 	DE	Ihr Konto konnte nicht bestätigt werden, versuchen Sie es noch einmal.
 	EN	Unable to verify your account, please try again.

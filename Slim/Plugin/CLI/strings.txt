@@ -17,7 +17,7 @@ PLUGIN_CLI
 	SV	Kommandoradsgränssnitt
 
 PLUGIN_CLI_DESC
-	CS	Plug-in Command Line Interface (Povelové Rozhraní) umožňuje dálkové ovládání softwaru Squeezebox a přehrávačů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
+	CS	Zásuvný modul Command Line Interface (Povelové Rozhraní) umožňuje dálkové ovládání softwaru Squeezebox a přehrávačů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
 	DA	Udvidelsesmodulet Kommandolinjegrænseflade giver mulighed for at kontrollere Squeezebox-softwaren og -afspillerne eksternt over en TCP/IP-forbindelse, for eksempel med et automatiseringssystem fra tredjepart som AMX eller Creston.
 	DE	Mithilfe des Befehlszeilen-Plugin kann die Squeezebox-Software über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
 	EN	The Command Line Interface plugin allows Squeezebox software and the players to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
