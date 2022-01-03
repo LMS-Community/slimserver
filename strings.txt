@@ -8452,7 +8452,8 @@ SETUP_ENABLE_PERSISTENTHTTP
 SETUP_ENABLE_BUFFEREDHTTP
 	DE	HTTP(S) Datenströme zwischenspeichern
 	EN	Cache HTTP(S) streams on disk
-	FR	Cache-modus
+	FR	Cacher les flux HTTP(S) sur disque
+	NL	Cache-modus
 
 SETUP_DISABLE_ENHANCEDHTTP
 	EN	Normal streaming
@@ -13780,7 +13781,7 @@ PLAYLIST_INFO
 	ES	Información de lista de reproducción
 	FI	Soittoluettelotiedot
 	FR	Infos sur la liste de lecture
-	IT	Playlist Info
+	IT	Info Playlist
 	NL	Afspeellijst Info
 	NO	Informasjon om spilleliste
 	PL	Informacje o liście odtwarzania
@@ -15802,7 +15803,7 @@ SEARCHFOR_ARTISTS
 	HE	איתור מבצעים
 	IT	Cerca artisti
 	JA	アーチストを検索する
-	c
+	NL	Artiesten zoeken
 	NO	Søk etter artister
 	PL	Wyszukaj wykonawców
 	PT	Procurar por Artistas
@@ -15813,9 +15814,9 @@ SEARCHFOR_ARTISTS
 SEARCHFOR_ARTISTS_DBL
 	ES	Buscar artistas
 	FR	Cherche artistes
-	PL	Wyszukaj wykonawców
 	NL	Artiesten zoeken
-
+	PL	Wyszukaj wykonawców
+	
 SEARCHFOR_ALBUM
 	CS	Hledat album
 	DA	Søg efter album
@@ -15857,9 +15858,9 @@ SEARCHFOR_ALBUMS
 SEARCHFOR_ALBUMS_DBL
 	ES	Buscar álbumes
 	FR	Cherche albums
-	PL	Wyszukaj albumy
 	NL	Albums zoeken
-
+	PL	Wyszukaj albumy
+	
 SEARCHFOR_SONGS
 	CS	Hledat skladby
 	DA	Søg efter numre
@@ -15882,9 +15883,9 @@ SEARCHFOR_SONGS
 SEARCHFOR_SONGS_DBL
 	ES	Buscar Canciones
 	FR	Cherche morceaux
-	PL	Wyszukaj utwory
 	NL	Nummers zoeken
-
+	PL	Wyszukaj utwory
+	
 SEARCHFOR_SONGTITLE
 	CS	Hledat název skladby
 	DA	Søg efter titel på nummer
