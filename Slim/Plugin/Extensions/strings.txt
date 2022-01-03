@@ -7,7 +7,7 @@ PLUGIN_EXTENSIONS
 	FI	Laajennusten latausohjelma
 	FR	Outil de téléchargement d'extensions
 	IT	Utilità di download delle estensioni
-	NL	Extensiedownloader
+	NL	Extensie downloader
 	NO	Nedlasting av utvidelser
 	PL	Moduł pobierania rozszerzeń
 	RU	Загрузчик расширений
@@ -22,7 +22,7 @@ PLUGIN_EXTENSIONS_DESC
 	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Logitech Media Serverille.
 	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour le Logitech Media Server.
 	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per Logitech Media Server.
-	NL	Met de extensiedownloader kunnen optionele functies voor Logitech Media Server automatisch worden gedownload en geïnstalleerd.
+	NL	Met de extensie downloader kunnen optionele functies voor Logitech Media Server automatisch worden gedownload en geïnstalleerd.
 	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for Logitech Media Server helt gratis og helt automatisk.
 	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji programu Logitech Media Server.
 	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера Squeezebox.
@@ -37,7 +37,7 @@ PLUGIN_EXTENSIONS_REPOS
 	FI	Lisätietosäilöt
 	FR	Répertoires supplémentaires
 	IT	Archivi aggiuntivi
-	NL	Extra opslagruimten
+	NL	Additionele repositories
 	NO	Ekstra lagre
 	PL	Dodatkowe repozytoria
 	RU	Дополнительные репозитории
@@ -52,7 +52,7 @@ PLUGIN_EXTENSIONS_REPOS_DESC
 	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">täällä</a>.
 	FR	Vous pouvez ajouter des répertoires supplémentaires tiers en saisissant l'URL des répertoires ci-dessous. Pour obtenir une liste de répertoires supplémentaires, cliquez <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">ici</a>.
 	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendo l'URL del relativo archivio di seguito. Un elenco di URL degli archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">qui</a>.
-	NL	Je kunt opslagruimten voor externe uitbreidingen toevoegen door de URL voor onderstaande opslagruimte in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
+	NL	Je kunt repositories voor extensies toevoegen door de URL's van de repositories hieronder in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">tutaj</a>.
 	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">здесь</a>.
@@ -67,7 +67,7 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	FI	<b>Varoitus:</b> Koska palvelin lataa automaattisesti ohjelmistot määrittämistäsi tietosäilöistä, vahvista, että luotat tietosäilön omistajaan.
 	FR	<b>Attention :</b> le serveur télécharge automatiquement du contenu des répertoires que vous définissez. Assurez-vous par conséquent de leur fiabilité.
 	IT	<b>Attenzione:</b> verranno scaricati automaticamente prodotti software dagli archivi definiti, pertanto è consigliabile specificare archivi attendibili.
-	NL	<b>Waarschuwing:</b> Aangezien de server automatisch software downloadt van de opslagruimten die je opgeeft, moet je verifiëren dat je de eigenaar van die opslagruimte vertrouwt.
+	NL	<b>Waarschuwing:</b> Aangezien de server automatisch software downloadt van de repositories die je opgeeft, moet je verifiëren dat je de eigenaar van die repositories vertrouwt.
 	NO	<b>Advarsel: </b>Siden serveren automatisk laster ned programvare fra lagrene du angir, må du være sikker på at du stoler på eieren av lageret.
 	PL	<b>Ostrzeżenie:</b> Ponieważ serwer automatycznie pobiera oprogramowanie z wybranych repozytoriów, należy upewnić się, że są to zaufane źródła.
 	RU	<b>Предупреждение.</b> Вы должны полностью доверять владельцу репозитория, поскольку сервер будет загружать из него ПО автоматически.
@@ -82,7 +82,7 @@ PLUGIN_EXTENSIONS_PLUGINS
 	FI	Logitech Media Serverin laajennukset
 	FR	Plugins Logitech Media Server
 	IT	Plugin di Logitech Media Server
-	NL	Invoegtoepassingen voor Logitech Media Server
+	NL	Plug-ins voor Logitech Media Server
 	NO	Plugin-moduler for Logitech Media Server
 	PL	Dodatki programu Logitech Media Server
 	RU	Плагины Logitech Media Server
@@ -142,7 +142,7 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL
 	FI	Manuaalisesti asennetut laajennukset
 	FR	Extensions installées manuellement
 	IT	Estensioni installate manualmente
-	NL	Handmatig geïnstalleerde uitbreidingen
+	NL	Handmatig geïnstalleerde extensies
 	NO	Utvidelser som er manuelt installert
 	PL	Rozszerzenia zainstalowane ręcznie
 	RU	Установленные вручную расширения
@@ -187,7 +187,7 @@ PLUGIN_EXTENSIONS_REPO_ERROR
 	FI	Tietosäilö ei kelpaa
 	FR	Répertoire incorrect
 	IT	Archivio non valido
-	NL	Ongeldige opslagruimte
+	NL	Ongeldige repository
 	NO	Korrupt lager
 	PL	Złe repozytorium
 	RU	Неисправный репозиторий
@@ -232,7 +232,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP2
 	FI	Asenna laajennuksia vain tekijöiltä, joihin luotat. Haittaohjelmistot saattavat vaurioittaa tietokonettasi tai loukata tietosuojaasi.
 	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder à vos données personnelles.
 	IT	Installare solo le estensioni create dagli autori fidati. Il software dannoso può danneggiare il computer o violare la privacy degli utenti.
-	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
+	NL	Installeer alleen extensies van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
 	NO	Du bør kun installere utvidelser fra forfattere du har tillit til. Skadelig programvare kan skade datamaskinen og sette personvernet i fare.
 	PL	Instaluj tylko rozszerzenia od zaufanych autorów. Złośliwe oprogramowanie może spowodować uszkodzenie komputera lub naruszenie prywatności.
 	RU	Устанавливайте расширения только проверенных авторов. Вредоносное ПО может повредить компьютер или нарушить конфиденциальность данных.
@@ -307,7 +307,7 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	FI	Salli Logitech Media Serverin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
 	FR	Autoriser le Logitech Media Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger pour les appliquer au prochain redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
 	IT	Consente a Logitech Media Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
-	NL	Logitech Media Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je plug-ins handmatig bijwerken via deze instellingenpagina.
+	NL	Logitech Media Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je op deze pagina de plug-ins handmatig bijwerken.
 	NO	La Logitech Media Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
 	PL	Zezwala programowi Logitech Media Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
@@ -370,7 +370,7 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	FI	Logitechin laajennukset
 	FR	Extensions Logitech
 	IT	Estensioni Logitech
-	NL	Logitech-extensies
+	NL	Logitech extensies
 	NO	Logitech-tillegg
 	PL	Rozszerzenia firmy Logitech
 	RU	Расширения Logitech
@@ -381,9 +381,11 @@ PLUGIN_EXTENSIONS_USE_UNSUPPORTED
 	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
 	FR	Utiliser des extensions non prises en charge
+	NL	Gebruik niet ondersteunde extensies
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
 	CS	UPOZORNĚNÍ - Jedná se o zásuvné moduly třetích stran, u kterých není zaručeno, že budou fungovat s aktuální verzí Logitech Media Serveru. Jejich autoři je opustili a již je neudržují. V nejhorším případě mohou poškodit váš Logitech Media Server. Používejte je na vlastní nebezpečí.
 	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Logitech Media Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Logitech Media Server lahm legen. Verwendung auf eigenes Risiko.
 	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Logitech Media Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Logitech Media Server de fonctionner. À utiliser à vos risques et périls.
+	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Logitech Media Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Logitech Media Server. Gebruik op eigen risico.

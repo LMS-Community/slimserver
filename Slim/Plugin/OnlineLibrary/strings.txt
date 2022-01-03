@@ -2,63 +2,63 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME
 	DE	Online Musiksammlungsintegration
 	EN	Online Music Library Integration
 	FR	Intégration de bibliothèques en ligne
-	NL	Online Muziekcollectie Integratie
+	NL	Online Muziek Integratie
 	SV	Integration av online-musikbibliotek
 
 PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 	DE	Erweiterte Kontrolle über die Integration ihrer Online-Musiksammlungen.
 	EN	Get more control over how your online music libraries are integrated with your local music.
 	FR	Obtenez plus de contrôle sur la façon dont vos bibliothèques musicales en ligne sont intégrées à votre musique locale.
-	NL	Krijg meer controle over hoe jouw online muziekcollectie wordt geïntegreerd met jouw lokale muziek.
+	NL	Krijg meer controle over hoe jouw online muziek wordt geïntegreerd met jouw lokale muziek.
 	SV	Få mer kontroll över hur ditt online-musikbibliotek är integrerat med din lokala musik
 
 PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
 	DE	Online Sammlung integrieren aber nicht auf Änderungen überprüfen
 	EN	Integrate online library but do not automatically check for changes
 	FR	Intégrer la bibliothèque en ligne mais ne pas vérifier automatiquement les changements
-	NL	Integreer online collectie, maar controleer niet automatisch op wijzigingen
+	NL	Integreer online muziek, maar controleer niet automatisch op wijzigingen
 	SV	Integrera online-bibliotek men kolla inte automatiskt efter förändringar
 
 PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
 	DE	Online Sammlung integrieren und automatisch auf Änderungen überprüfen
 	EN	Integrate online library and automatically check for changes
 	FR	Intégrer la bibliothèque en ligne et vérifier automatiquement les changements
-	NL	Integreer online collectie en controleer automatisch op wijzigingen
+	NL	Integreer online muziek en controleer automatisch op wijzigingen
 	SV	Integrera online-bibliotek och kolla automatiskt efter förändringar
 
 PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
 	DE	Online Sammlung nicht integrieren
 	EN	Do not integrate online music collection
 	FR	Ne pas intégrer la bibliothèque en ligne
-	NL	Geen integratie van online muziekcollectie
+	NL	Geen integratie van online muziek
 	SV	Integrera inte online-bibliotek
 
 PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
 	DE	Es wurde kein unterstützter Streaming-Dienst gefunden.
 	EN	There's no supported streaming service implementation available.
 	FR	Aucun service de streaming pris en charge n'a été trouvé.
-	NL	Er is geen ondersteunde muziek streaming dienst gevonden.
+	NL	Er is geen ondersteunde online muziek streaming dienst gevonden
 	SV	Ingen understödd strömningstjänst hittades
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 	DE	Musiksammlung ohne Online-Dubletten
 	EN	Music without online duplicates
 	FR	Bibliothèque sans doublons en ligne
-	NL	Muziekcollectie zonder online duplicaten
+	NL	Mediabibliotheek zonder online duplicaten
 	SV	Musikbibliotek utan online-dubbletter
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	DE	Wenn ein Album lokal wie auch online vorhanden ist, zeige nur lokale Kopie.
 	EN	Show only local album if you have another copy in your online music collection.
 	FR	Afficher uniquement l'album local lorsqu'une copie existe dans la bibliothèque en ligne.
-	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is.
+	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is
 	SV	Visa bara det lokala albumet när en kopia finns i ditt online-bibliotek
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	DE	Nur lokale Titel (keine Streaming Dienste)
 	EN	Local tracks only (no music service)
 	FR	Morceaux locaux uniquement (pas de service de streaming)
-	NL	Alleen lokale nummers (geen muziek streaming diensten)
+	NL	Alleen lokale nummers (geen online muziek streaming diensten)
 	SV	Bara lokala spår (ingen strömningstjänst)
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
@@ -72,7 +72,7 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 	DE	Markiere Online-Alben mit Musikdienst-Logo (falls verfügbar).
 	EN	Put streaming service logo on top of album artwork (if available).
 	FR	Superposer le logo du service de streaming à la pochette de l'album (si disponible).
-	NL	Markeer online albums met een streaming dienst logo op de albumhoes (indien beschikbaar).
+	NL	Markeer online albums met een streaming dienst logo op de albumhoes (indien beschikbaar)
 	SV	Markera online-album med strömningstjänstens logo (om den är tillgänglig).
 
 PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
@@ -120,7 +120,7 @@ PLUGIN_ONLINE_LIBRARY_MATCHING
 	DE	Zutreffender Text:
 	EN	Matching Text:
 	FR	Texte correspondant :
-	NL	Toepasselijke Tekst:
+	NL	Toepasselijke tekst:
 	SV	Matchande text:
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS

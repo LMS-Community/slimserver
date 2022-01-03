@@ -24,7 +24,7 @@ PLUGIN_LINE_OUT_DESC
 	FI	Vaihda subwooferin, kuulokkeiden ja linjalähtötilan välillä Boomissa
 	FR	Basculez entre mode subwoofer, mode casque et sortie ligne sur Boom
 	IT	Passa dalla modalità subwoofer alla modalità cuffie o uscita del radioregistratore
-	NL	Tussen subwoofer-, koptelefoon- en lijnuitgangsmodus op de Boom schakelen
+	NL	Tussen subwoofer-, hoofdtelefoon- en lijnuitgangsmodus op de Boom schakelen
 	NO	Bytt mellom basshøyttaler, hodetelefoner og utgangsmodus på Boom
 	PL	Przełączanie między trybem niskich tonów subwoofera, słuchawek i wyjścia liniowego
 	RU	Переключение между сабвуфером, наушниками и линейным выходом на Squeezebox Boom

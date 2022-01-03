@@ -12,7 +12,7 @@ PLUGIN_ORANGE_FAVORITES
 	FI	Orangen Liveradio-suosikit
 	FR	Favoris Orange Liveradio
 	IT	Preferiti di Orange Liveradio
-	NL	Orange Liveradio-favorieten
+	NL	Orange Liveradio favorieten
 	NO	Orange Liveradio-favoritter
 	PL	Ulubione Orange Liveradio
 	RU	Избранное Orange Liveradio

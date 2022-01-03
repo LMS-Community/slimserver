@@ -84,7 +84,7 @@ LINE_IN_LEVEL_DESC
 	FI	Tällä asetuksella voit säätää linjatulon äänenvoimakkuutta.
 	FR	A l'aide de ce paramètre, vous pouvez régler le gain de l'entrée ligne.
 	IT	Questa impostazione consente di regolare il guadagno dell'ingresso.
-	NL	Met deze instelling kun je de lijningangsaanpassing bijstellen.
+	NL	Met deze instelling kun je de versterking van de lijningang aanpassen.
 	NO	Du kan bruke denne innstillingen til å justere gain for lydinngang.
 	PL	To ustawienie umożliwia dostosowanie wzmocnienia wejścia liniowego.
 	RU	С помощью этой настройки можно задать коэффициент усиления для линейного входа.
@@ -114,7 +114,7 @@ LINE_IN_ALWAYS_ON_DESC
 	FI	Tällä asetuksella linjan äänenvoimakkuus otetaan jatkuvaan käyttöön, jos linjatulo halutaan esimerkiksi miksata äänivirran kanssa (esim. karaokea varten).
 	FR	Cette option active l'entrée ligne en permanence pour les utilisateurs qui veulent incorporer l'entrée ligne en permanence (par exemple pour le karaoké).
 	IT	Questa opzione mantiene sempre attivato l'ingresso di linea per consentire in ogni momento il missaggio dell'audio proveniente da tale ingresso (ad esempio per il karaoke)
-	NL	Met deze optie wordt de lijningang ingeschakeld, voor gebruikers die de lijningang continu willen mixen (bijvoorbeeld voor karaoke)
+	NL	Met deze optie wordt de lijningang altijd ingeschakeld, zodat deze op elk moment kan worden gebruikt (bijvoorbeeld voor karaoke).
 	NO	Hvis du velger dette alternativet, er lydinngangen på hele tiden, slik at brukere kan mikse i lydinngangen hele tiden (for eksempel for karaoke)
 	PL	Ta opcja powoduje, że wejście liniowe jest stale włączone, co umożliwia użytkownikom miksowanie dźwięków z linią (np. w przypadku Karaoke).
 	RU	Благодаря этому параметру линейный вход постоянно включен, позволяя пользователям непрерывно создавать миксы (например, для караоке)
