@@ -9532,7 +9532,7 @@ SETUP_SN_REPORT_STATS_DESC
 	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään nimettömästi ja kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
 	FR	Pour améliorer mysqueezebox.com, nous recueillons des informations sur les radios Internet et les services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
 	IT	Al fine di migliorare mysqueezebox.com, è possibile inviare dati statistici sull'ascolto di stazioni radio in Internet e sui servizi musicali utilizzati. Il trattamento di tali dai, raccolti collettivamente e in modo anonimo, è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
-	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacybeleid</a>.)
+	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.
 	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Denne anonyme informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
 	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">zasady zachowania poufności informacji</a>).
 	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>.)
@@ -9547,7 +9547,7 @@ SETUP_SN_REPORT_STATS_ENABLE
 	FI	Kyllä, auta parantamaan mysqueezebox.com-verkkoa raportoimalla tilastot.
 	FR	Autoriser la collecte d'informations pour contribuer à l'amélioration de mysqueezebox.com.
 	IT	Sì, autorizzo la raccolta dei dati a fini statistici per migliorare mysqueezebox.com.
-	NL	Ja, statistieken rapporteren.
+	NL	Ja, help mysqueezebox.com door statistieken te rapporteren.
 	NO	Jeg vil hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon.
 	PL	Tak, pomóż w ulepszeniu usługi mysqueezebox.com przez wysyłanie statystyk.
 	RU	Да, улучшить работу mysqueezebox.com с помощью сообщения статистики.
