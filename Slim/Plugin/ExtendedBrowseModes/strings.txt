@@ -3,7 +3,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	DE	Erweiterte Musik Menüs
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation
-	NL	Extra Browser Modi
+	NL	Additionele Blader Modi
 	NO	Ytterligere browse-modi
 	PL	Dodatkowe tryby przeglądania
 	SV	Ytterligare blädder-menyer
@@ -13,7 +13,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
-	NL	Creëer extra menu's om door je muziekcollectie te browsen, via Albumartiest, Componisten, Genres te selecteren en meer.
+	NL	Creëer additionele menu's om door je mediabibliotheek te bladeren, bijvoorbeeld via Albumartiest, Componisten, Genres, enz.
 	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
 	SV	Skapa ytterligare menyer för att bläddra is musiksamlingen via albumartister, kompositörer, valda genrer osv.
@@ -118,7 +118,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
 	FR	Toutes les bibliothèques (par défaut)
-	NL	Hele collectie (Standaard)
+	NL	Hele mediabibliotheek (Standaard)
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
 	SV	Hela musiksamlingen (standard)
@@ -128,7 +128,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
 	FR	Masquer les doublons compressés avec perte si un fichier sans perte est disponible
-	NL	Verberg lossy versies als een lossless versie beschikbaar is.
+	NL	Verberg lossy versie als een lossless versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
 	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
