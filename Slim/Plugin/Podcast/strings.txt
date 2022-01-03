@@ -25,7 +25,7 @@ PODCAST_PLAYER
 	FI	Podcast-soitin
 	FR	Lecteur de podcast
 	IT	Lettore podcast
-	NL	Podcast-speler
+	NL	Podcast Speler
 	NO	Podkast-spiller
 	PL	Odtwarzacz podcastów
 	RU	Плеер подкастов
@@ -72,7 +72,7 @@ PODCAST_GROUP_DESC
 	FR	L'extra Podcast vous permet d'afficher et d'écouter des podcasts.
 	HE	יישום ה-Plugin 'דפדפן Podcast' מאפשר לך להציג ולהאזין לפריטי Podcast.
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
-	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.
+	NL	Met de Podcast plug-in kun je podcasts bekijken en beluisteren.
 	NO	Med plugin-modulen for podkastlesing kan du se og høre på podkaster.
 	PL	Dodatek Przeglądarka podcastów umożliwia wyświetlanie i słuchanie podcastów.
 	RU	Подключаемый модуль "Браузер подкастов" позволяет просматривать и прослушивать подкасты.
@@ -104,7 +104,7 @@ PODCAST_RESETTING
 	FR	Réinitialisation des podcasts par défaut
 	HE	איפוס לפריטי ה-Podcast המוגדרים כברירת מחדל
 	IT	Reimpostazione dei podcast predefiniti
-	NL	Standaard-podcasts worden opnieuw ingesteld
+	NL	Standaard podcasts worden opnieuw ingesteld
 	NO	Tilbakestiller til standardpodkaster
 	PL	Przywracanie podcastów domyślnych
 	RU	Восстановление подкастов по умолчанию
@@ -120,7 +120,7 @@ PODCAST_FEEDS_CHANGE
 	FR	Liste des podcasts modifiée.
 	HE	רשימת פריטי ה-Podcast השתנתה.
 	IT	Elenco Podcast modificato.
-	NL	Podcast-lijst gewijzigd.
+	NL	Podcast lijst gewijzigd.
 	NO	Podkast-liste endret.
 	PL	Lista podcastów została zmieniona.
 	RU	Список подкастов изменен.
@@ -136,7 +136,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	FR	Rétablir la liste des podcasts par défaut
 	HE	איפוס פריטי Podcast המוגדרים כברירת מחדל
 	IT	Reimposta podcast predefiniti
-	NL	Standaard-podcasts opnieuw instellen
+	NL	Standaard podcasts opnieuw instellen
 	NO	Tilbakestill standardpodkaster
 	PL	Przywróć podcasty domyślne
 	RU	Восстановить подкасты по умолчанию
@@ -151,7 +151,7 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	FI	Lisää uusi syöte:
 	FR	Ajouter un flux :
 	IT	Aggiungi nuovo feed:
-	NL	Nieuw kanaal toevoegen:
+	NL	Nieuwe feed toevoegen:
 	NO	Legg til en ny feed:
 	PL	Dodaj nowe źródło:
 	RU	Добавить новый веб-канал:
@@ -166,7 +166,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	FI	Olemassa olevat syötteet:
 	FR	Flux existants :
 	IT	Feed esistenti:
-	NL	Bestaande kanalen:
+	NL	Bestaande feed:
 	NO	Eksisterende feeder:
 	PL	Istniejące źródła:
 	RU	Существующие веб-каналы:
@@ -181,7 +181,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
 	IT	Feed non valido. %s
-	NL	Ongeldig kanaal - %s
+	NL	Ongeldige feed - %s
 	NO	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
@@ -210,7 +210,7 @@ PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
 	DE	Konnte keine Podcast Liste auf mysqueezebox.com finden. Ev. ist die mysqueezebox.com Integration nicht konfiguriert.
 	EN	Didn't find a podcast list for your mysqueezebox.com account, or account credentials are not set.
 	FR	Aucune liste de podcasts sur votre compte mysqueezebox.com (ou le compte mysqueezebox.com n'est pas configuré).
-	NL	Geen lijst gevonden met podcasts voor je mysqueezebox.com account, of je account is nog niet ingesteld.
+	NL	Geen lijst gevonden met podcasts voor jouw mysqueezebox.com account, of jouw account is nog niet ingesteld.
 	NO	Kunne ikke finne en podkastliste for din mysqueezebox.com-konto, eller kontodetaljer er ikke oppgitt.
 	PL	Nie znaleziono listy podcastów na twoim koncie mysqueezebox.com, lub nie podano loginu i hasła użytkownika.
 
@@ -263,86 +263,101 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Recently played
 	FR	Pistes récentes
+	NL	Recent afgespeeld
 
 PLUGIN_PODCAST_SEARCH
 	CS	Prohledat kanály
 	DE	Shows suchen
 	EN	Search feeds
 	FR	Rechercher des flux
+	NL	Zoek feeds
 
 PLUGIN_PODCAST_PROVIDER
 	CS	Poskytovatel podcastů
 	DE	Podcastverzeichnis
 	EN	Podcast provider
 	FR	Fournisseur de Podcast
+	NL	Podcast aanbieder
 
 PLUGIN_PODCAST_PROVIDER_DESC
 	CS	Nastavit poskytovatele podcastových kanálů (agregátor).
 	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
 	EN	Set the Podcast feeds provider (aggregator).
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
+	NL	Configureer de podcast feed aanbieder (aggregator) 
 
 PLUGIN_PODCAST_SEARCH_FAILED
 	CS	Vyhledávání se nezdařilo
 	DE	Suche fehlgeschlagen
 	EN	Search failed
 	FR	Echec de recherche
+	NL	Zoeken mislukt
 
 PLUGIN_PODCAST_WHATSNEW
 	CS	Nové epizody za posledních %s dní
 	DE	Neue Episoden der letzten %s Tage
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
+	NL	Nieuwe afleveringen van de laatste %s dagen
 
 PLUGIN_PODCAST_AUTHOR
 	DE	Autor:
 	DE	Herausgeber:
 	EN	Author:
 	FR	Auteur :
+	NL	Auteur:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
 	CS	Nastavte, kolik dní zpětně se mají hledat nové epizody, a maximální počet epizod na tok. Všimněte si, že ručně přidané kanály nemusí být poskytovatelem sledovány
 	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
 	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
+	NL	Stel het maximale aantal afleveringen en de hoeveelheid dagen die je wilt terugkijken voor het traceren van nieuwe afleveringen in. Houd er rekening mee dat handmatig toegevoegde feeds mogelijk niet worden bijgehouden door de aanbieder.
 
 PLUGIN_PODCAST_NEWSINCE
 	CS	Počet dnů historie
 	DE	Anzahl Einträge im Verlauf
 	EN	Number of history days
 	FR	Nombre de jours d'historique
+	NL	Aantal dagen terug
 
 PLUGIN_PODCAST_MAXNEW
 	CS	Počet nových epizod na kanál
 	DE	Anzahl neuer Episoden pro Show
 	EN	Number of new episodes per feed
 	FR	Nombre de nouveaux épisodes par flux
+	NL	Aantal nieuwe afleveringen per feed
 
 PLUGIN_PODCAST_COUNTRY_DESC
 	DE	Suche auf ein Land beschränken (optional)
 	EN	Limit search to a country (optional)
 	FR	Limite la recherche à un pays (optionnel)
+	NL	Zoekopdracht beperken tot een land (optioneel)
 
 PLUGIN_PODCAST_COUNTRY
 	CS	Země
 	DE	Land
 	EN	Country
-	FR	Pays	
+	FR	Pays
+	NL	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
 	CS	Přihlásit se k odběru '%s'
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
+	NL	Abonneren op '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
 	CS	Odhlásit se z odběru '%s'
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
 	FR	Se désabonner de '%s'
+	NL	Afmelden van '%s'
 
 PLUGIN_PODCAST_DONE
 	CS	Přihlášeno/odhlášeno z kanálu...
 	DE	Abonnement angepasst...
 	EN	Subscribed/Unsubscribed from show...
 	FR	Abonné/Désabonné ...
+	NL	Abonneren/Afmelden...
