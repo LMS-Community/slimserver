@@ -80,7 +80,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
 	SV	Ogiltigt Napster-svar från spelaren.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
-	CS	Není možná komunikace s Napster.
+	CS	Nelze komunikovat s Napster.
 	DA	Det var ikke muligt at kommunikere med Napster.
 	DE	Verbindung mit Napster nicht möglich.
 	EN	Unable to communicate with Napster.
@@ -140,7 +140,7 @@ PLUGIN_RHAPSODY_DIRECT_US_ONLY
 	SV	Napster är för närvarande endast tillgängligt i USA.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
-	CS	Selhání zvukového proudu, přechod na další stopu.
+	CS	Selhání zvukového proudu, přechod na další skladbu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
@@ -170,7 +170,7 @@ PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
 	SV	Loggar in på Napster...
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
-	CS	Získávání informací o stopě...
+	CS	Získávání informací o skladbě...
 	DA	Henter oplysninger om nummer...
 	DE	Titelinfos werden geladen...
 	EN	Getting track info...
@@ -185,7 +185,7 @@ PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
 	SV	Hämtar spårinformation...
 
 PLUGIN_RHAPSODY_DIRECT_NO_TRACK
-	CS	Není možné načíst stopu pro kanál.
+	CS	Nelze načíst skladbu pro kanál.
 	DA	Nummeret kunne ikke hentes fra kanalen.
 	DE	Titel für Sender konnte nicht geladen werden.
 	EN	Unable to retrieve track for channel.
@@ -200,7 +200,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	SV	Det går inte att hämta spåret till kanalen.
 
 PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
-	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
+	CS	Nelze načíst další skladbu, stiskněte tlačítko PLAY a zkuste to znovu.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -215,7 +215,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
-	CS	Není možné získat detaily o účtu ze mysqueezebox.com.
+	CS	Nelze získat detaily o účtu z mysqueezebox.com.
 	DA	Det var ikke muligt at hente kontodetaljer fra mysqueezebox.com.
 	DE	Konnte über das mysqueezebox.com keine Kontoinformationen finden.
 	EN	Unable to retrieve account details from mysqueezebox.com.
@@ -245,7 +245,7 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	SV	Felaktig uppspelningssession. Endast tre strömmar kan spelas upp samtidigt.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
-	CS	Napster nemůže přehrávat s tolika synchronizovanými přehrávači. Odsynchronizujte laskavě jeden nebo více přehrávačů.
+	CS	Napster nemůže přehrávat s tolika synchronizovanými přehrávači. Zrušte prosím synchronizaci jednoho nebo více přehrávačů.
 	DA	Napster kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
 	DE	Napster funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
 	EN	Napster cannot play with this many players synced.  Please unsync one or more players.
@@ -290,7 +290,7 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
-	CS	Není možné najít adresu pro Napster.
+	CS	Nelze najít adresu pro Napster.
 	DA	Adressen til Napster blev ikke fundet.
 	DE	Adresse für Napster nicht gefunden.
 	EN	Unable to find address for Napster.
@@ -305,7 +305,7 @@ PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
 	SV	Det gick inte att hitta någon Napster-adress.
 
 PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
-	CS	K použití Napster stiskněte a podržte JAS k aktualizaci vašeho firmware.
+	CS	Chcete-li používat Napster, stiskněte a podržte tlačítko BRIGHTNESS a aktualizujte firmware.
 	DA	Hvis du vil bruge Napster, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
 	DE	Wenn Sie Napster nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
 	EN	To use Napster, press and hold BRIGHTNESS to update your firmware.

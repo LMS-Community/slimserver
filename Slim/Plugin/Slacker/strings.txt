@@ -14,7 +14,7 @@ PLUGIN_SLACKER_MODULE_NAME
 	SV	Slacker
 
 PLUGIN_SLACKER_GETTING_TRACK_DETAILS
-	CS	Získávám podrobnosti o stopě...
+	CS	Získávám podrobnosti o skladbě...
 	DA	Henter detaljer om nummer...
 	DE	Titelinfos werden geladen ...
 	EN	Fetching track details...
@@ -59,7 +59,7 @@ PLUGIN_SLACKER_SESSION_BUMPED
 	SV	Du har loggat in på en annan enhet. Tryck på Play om du vill starta om.
 
 PLUGIN_SLACKER_NO_TRACKS
-	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
+	CS	Nelze načíst další skladbu, stiskněte tlačítko PLAY a zkuste to znovu.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -74,7 +74,7 @@ PLUGIN_SLACKER_NO_TRACKS
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_SLACKER_STREAM_FAILED
-	CS	Zvukový proud odpojen, přeskočení na další stopu.
+	CS	Zvukový proud odpojen, přeskočení na další skladbu.
 	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
@@ -106,7 +106,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED
 	SV	Du har använt alla dina överhoppningar för den här timmen. Du kan hoppa över låtar senare.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
-	CS	Stanice nedostupná: překročen limit přeskočení za hodinu. Můžete přepnout na jinou stanici nebo zkusit znovu později.
+	CS	Stanice není k dispozici: překročen hodinový limit přeskočení. Můžete přepnout na jinou stanici nebo to zkusit později.
 	DA	Stationen er ikke tilgængelig: Det er ikke muligt at springe over flere numre i denne time. Du kan skifte til en anden station eller prøve igen senere.
 	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie auf anderen Sender aufrufen oder es später erneut versuchen.
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
@@ -151,7 +151,7 @@ PLUGIN_SLACKER_UNMARK_FAVORITE
 	SV	Ta bort som Slacker-favorit
 
 PLUGIN_SLACKER_BAN_TRACK
-	CS	Zakázat tuto stopu
+	CS	Zakázat tuto skladbu
 	DA	Forbyd dette nummer
 	DE	Diesen Titel bannen
 	EN	Ban this track

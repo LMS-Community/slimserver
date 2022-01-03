@@ -61,7 +61,7 @@ PLUGIN_PANDORA_FIRMWARE_UPGRADE_REQUIRED
 	SV	Uppdatering av den inbyggda programvaran krävs
 
 PLUGIN_PANDORA_FIRMWARE_UPGRADE
-	CS	Pro použití Pandora stiskněte a podržte JAS (BRIGHTNESS) k aktualizaci.
+	CS	Chcete-li použít Pandoru, stiskněte a podržte tlačítko BRIGHTNESS a aktualizujte.
 	DA	Hvis du vil bruge Pandora, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
 	DE	Halten Sie zum Verwenden von Pandora BRIGHTNESS gedrückt, um die Anzeige zu aktualisieren.
 	EN	To use Pandora, press and hold BRIGHTNESS to update.
@@ -93,7 +93,7 @@ PLUGIN_PANDORA_ERROR
 	SV	Pandora-fel
 
 PLUGIN_PANDORA_CONNECTION_REFUSED
-	CS	Připojení k serveru Pandora není možné. Zkuste znovu později.
+	CS	Nelze se připojit k serveru Pandora. Zkuste to prosím později.
 	DA	Det var ikke muligt at etablere forbindelse til Pandora-serveren. Prøv igen senere.
 	DE	Verbindung zu Pandora-Server nicht möglich. Versuchen Sie es später noch einmal.
 	EN	Unable to connect to Pandora server. Please try again later.
@@ -109,7 +109,7 @@ PLUGIN_PANDORA_CONNECTION_REFUSED
 	SV	Det går inte att ansluta Pandora-servern. Försök igen senare.
 
 PLUGIN_PANDORA_STREAM_FAILED
-	CS	Zvukový proud odpojen, přeskočení na další stopu.
+	CS	Zvukový proud odpojen, přeskočení na další skladbu.
 	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
@@ -125,7 +125,7 @@ PLUGIN_PANDORA_STREAM_FAILED
 	SV	Anslutningen till ljudströmmen bröts, hoppar till nästa spår.
 
 PLUGIN_PANDORA_DEFAULT_ERROR
-	CS	Objevila se neočekávaná chyba. Zkuste znovu později.
+	CS	Došlo k neočekávané chybě. Zkuste to prosím později.
 	DA	Der opstod en uventet fejl. Prøv igen senere.
 	DE	Unerwarteter Fehler. Versuchen Sie es später noch einmal.
 	EN	An unexpected error occurred. Please try again later.
@@ -141,7 +141,7 @@ PLUGIN_PANDORA_DEFAULT_ERROR
 	SV	Ett oväntat fel uppstod. Försök igen senare.
 
 PLUGIN_PANDORA_NO_ACCOUNT
-	CS	Účet Pandora není zřízen, k registraci laskavě přejděte na %s.
+	CS	Účet Pandora není zřízen, pro registraci prosím navštivte %s.
 	DA	Der er ikke angivet en Pandora-konto. Du skal tilmelde dig på %s.
 	DE	Pandora-Konto nicht eingerichtet. Registrieren Sie sich auf %s.
 	EN	Pandora account not set, please visit %s to register.
@@ -749,7 +749,7 @@ PLUGIN_PANDORA_BOOKMARK_SONG
 	SV	Lägg till den här låten på min personliga sida på Pandora.com.
 
 PLUGIN_PANDORA_BOOKMARKING
-	CS	Označování stopy záložkou...
+	CS	Označování skladby záložkou...
 	DA	Tilføjer bogmærke for dette nummer...
 	DE	Titel mit Lesezeichen versehen ...
 	EN	Bookmarking track...
@@ -861,7 +861,7 @@ PLUGIN_PANDORA_CREATE_FROM_SONG
 	SV	Skapa en ny station med utgångspunkt från den här låten.
 
 PLUGIN_PANDORA_RATING_POSITIVE
-	CS	Schvaluji stopu...
+	CS	Dávám skladbě palec nahoru...
 	DA	Giver nummeret en positiv bedømmelse...
 	DE	Titel wird positiv bewertet...
 	EN	Giving track a thumbs up...
@@ -877,7 +877,7 @@ PLUGIN_PANDORA_RATING_POSITIVE
 	SV	Ger låten ett positivt omdöme...
 
 PLUGIN_PANDORA_RATING_POSITIVE_LINE2
-	CS	Ok, zkusíme hrát podobné skladby.
+	CS	Super, zkusíme hrát podobné skladby.
 	DA	Cool, vi forsøger at spille numre der minder om det.
 	DE	Schön, wir versuchen, ähnliche Titel zu finden.
 	EN	Cool, we'll try to play similar songs.
@@ -893,7 +893,7 @@ PLUGIN_PANDORA_RATING_POSITIVE_LINE2
 	SV	OK. Vi försöker spela liknande låtar i framtiden.
 
 PLUGIN_PANDORA_RATING_NEGATIVE
-	CS	Zamítám stopu...
+	CS	Dávám skladbě palec dolů...
 	DA	Giver nummeret en negativ bedømmelse...
 	DE	Titel wird negativ bewertet...
 	EN	Giving track a thumbs down...
@@ -957,7 +957,7 @@ PLUGIN_PANDORA_SKIPS_EXCEEDED
 	SV	Du har använt alla dina överhoppningar för den här timmen. Du kan hoppa över låtar senare.
 
 PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
-	CS	Neplatné uživatelské jméno nebo heslo. K aktualizaci informací o účtu přejděte laskavě na %s.
+	CS	Neplatné uživatelské jméno nebo heslo. Navštivte prosím %s a aktualizujte informace o svém účtu.
 	DA	Ugyldigt brugernavn eller adgangskode. Du skal opdatere din konto på %s.
 	DE	Benutzername oder Kennwort ungültig. Aktualisieren Sie Ihre Kontoangaben auf %s.
 	EN	Invalid username or password. Please visit %s to update your account information.
@@ -1037,7 +1037,7 @@ PLUGIN_PANDORA_STATION_NOT_FOUND
 	SV	Det går inte att hitta Pandora-stationen.
 
 PLUGIN_PANDORA_NO_TRACKS
-	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
+	CS	Nelze načíst další skladbu, stiskněte tlačítko PLAY a zkuste to znovu.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -1053,7 +1053,7 @@ PLUGIN_PANDORA_NO_TRACKS
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_PANDORA_PLAYLIST_END
-	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
+	CS	Nelze načíst další skladbu, stiskněte tlačítko PLAY a zkuste to znovu.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -1069,7 +1069,7 @@ PLUGIN_PANDORA_PLAYLIST_END
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_PANDORA_IDLE_STOPPING
-	CS	Překročen čas nečinnosti Pandora, pro pokračování poslechu stiskněte PLAY.
+	CS	Překročen čas nečinnosti Pandora, pro pokračování poslechu stiskněte tlačítko PLAY.
 	DA	Grænsen for inaktivitet på Pandora er overskredet. Tryk på Afspil for at fortsætte med at lytte.
 	DE	Erlaubte Pandora-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	Pandora idle time exceeded, press PLAY to continue listening.

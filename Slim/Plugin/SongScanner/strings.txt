@@ -16,7 +16,7 @@ PLUGIN_SONGSCANNER
 	SV	Låtsökaren
 
 PLUGIN_SONGSCANNER_DESC
-	CS	Interface přehrávače pro skok na libovolnou pozici za současného přehrávání skladby (Squeezebox Classic, Squeezebox Boom, Transporter)
+	CS	Rozhraní přehrávače pro přeskakování na libovolné pozice v rámci právě přehrávané skladby (pouze Squeezebox Classic, Squeezebox Boom, Transporter)
 	DA	Kontrolpanel til at springe til vilkårlige steder i det nummer som spilles (Squeezebox Classic, Squeezebox Boom, Transporter)
 	DE	Player-Schnittstelle zum Springen an zufällige Positionen im aktuellen Titel (nur Squeezebox Classic, Squeezebox Boom, Transporter)
 	EN	Player interface for jumping to arbitrary positions within the currently playing song (Squeezebox Classic, Squeezebox Boom, Transporter only)
@@ -46,7 +46,7 @@ PLUGIN_SONGSCANNER_SET
 	SV	Tid:
 
 PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
-	CS	Není možné prohledat stopu, protože doba trvání není známa
+	CS	Nelze prohledat skladbu, protože není známa doba trvání
 	DA	Nummeret kan ikke analyseres hurtigere da dets længde er ukendt
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
 	EN	Cannot scan through track because duration unknown
@@ -61,7 +61,7 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	SV	Det går inte att söka igenom spåret eftersom varaktigheten är okänd
 
 PLUGIN_SONGSCANNER_ERR_NOTRACK
-	CS	Žádná stopa
+	CS	Žádná skladba
 	DA	Ingen numre
 	DE	Kein Titel
 	EN	No track

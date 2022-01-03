@@ -1,5 +1,5 @@
 PLUGIN_UPNP_MODULE_NAME
-	CS	Rozhraní média UPnP/DLNA
+	CS	Rozhraní médií UPnP/DLNA
 	DA	UPnP/DLNA-mediegrænseflade
 	DE	UPnP/DLNA Media Interface
 	EN	UPnP/DLNA Media Interface

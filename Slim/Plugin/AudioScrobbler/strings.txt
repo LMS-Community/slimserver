@@ -29,7 +29,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	SV	Last.fm-konto(n)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
-	CS	Zadejte vaše přihlašovací jméno a heslo k Last.fm. Může být vloženo více účtů, pokud chcete převést stopy z různých přehrávačů na různé účty.
+	CS	Zadejte své přihlašovací jméno a heslo k Last.fm. Pokud chcete odesílat skladby z různých přehrávačů na různé účty, můžete zadat více účtů.
 	DA	Skriv dit brugernavn og adgangskoden til Last.fm. Du kan angive flere konti hvis du vil indsende oplysninger fra forskellige afspillere til forskellige konti.
 	DE	Geben Sie Benutzername und Kennwort für Last.fm ein. Sie können mehrere Konten eingeben, um Titel aus verschiedenen Playern an verschiedene Konten zu senden.
 	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.
@@ -44,7 +44,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	SV	Ange användarnamn och lösenord för Last.fm. Du kan ange flera konton för att skicka spår från olika spelare till olika konton.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
-	CS	Pro vymazání existujícího účtu zaškrtněte rámeček vedle účtu.
+	CS	Chcete-li odstranit existující účet, zaškrtněte políčko vedle něj.
 	DA	Hvis du vil slette en eksisterende konto, skal du markere feltet ud for den.
 	DE	Zum Löschen eines vorhandenen Kontos aktivieren Sie das entsprechende Kontrollkästchen.
 	EN	To delete an existing account, check the box next to it.
@@ -74,7 +74,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
 	SV	Ange användarnamn och lösenord för Last.fm
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
-	CS	Předat (převést) všechny přehrané stopy do Last.fm.
+	CS	Odeslat (scroblovat) všechny přehrané skladby do Last.fm.
 	DA	Indsend (scrobble) oplysninger om alle afspillede numre til Last.fm
 	DE	Alle wiedergegebenen Titel an Last.fm melden (scrobbeln).
 	EN	Submit (scrobble) all tracks played to Last.fm.
@@ -89,7 +89,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	SV	Ja, rapportera spelade spår till Last.fm (skrobbla).
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
-	CS	Povolit tuto možnost k aktualizaci vašeho profilu v Last.fm o veškerou hudbu, kterou jste poslouchali.
+	CS	Povolením této možnosti aktualizujete svůj hudební profil na Last.fm o veškerou poslouchanou hudbu.
 	DA	Aktiver denne indstilling hvis du vil opdatere din musikprofil på Last.fm med alle de numre du lytter til.
 	DE	Aktivieren Sie diese Option, um Ihr Last.fm-Musikprofil mit allen wiedergegebenen Titel zu aktualisieren.
 	EN	Enable this option to update your Last.fm music profile with all music you have listened to.
@@ -104,7 +104,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
 	SV	Aktivera det här alternativet om du vill uppdatera din musikprofil på Last.fm med all musik du lyssnar på.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
-	CS	Ano, nahlásit přehrané stopy do Last.fm
+	CS	Ano, nahlásit přehrávané skladby do Last.fm
 	DA	Ja, indsend alle afspillede numre til Last.fm.
 	DE	Ja, wiedergegebene Titel an Last.fm melden.
 	EN	Yes, report tracks played to Last.fm.
@@ -119,7 +119,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
 	SV	Ja, rapportera spelade spår till Last.fm.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
-	CS	Ne, nenahlašovat přehrané stopy do Last.fm.
+	CS	Ne, nenahlašovat přehrávané skladby do Last.fm.
 	DA	Nej, indsend ikke oplysninger om afspillede numre til Last.fm.
 	DE	Nein, wiedergegebene Titel nicht an Last.fm melden.
 	EN	No, do not report tracks played to Last.fm.
@@ -134,55 +134,63 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	SV	Nej, rapportera inte spelade spår till Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
+	CS	Ignorované názvy
 	DE	Titel ignorieren
 	EN	Ignore Titles
 	FR	Ignorer les titres
 	NL	Negeer titels
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
+	CS	Definujte seznam názvů nebo jmen oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
 	DE	Geben Sie eine Komma-separierte Liste von Titeln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of titles or names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de titres séparés par des virgules. Les morceaux qui correspondent à l'un de ces titres ne seront pas envoyés (scrobblés).
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
+	CS	Ignorovat umělce
 	DE	Interpreten ignorieren
 	EN	Ignore Artists
 	FR	Ignorer les artistes
 	NL	Negeer artiesten
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
+	CS	Definujte seznam jmen umělců oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
 	DE	Geben Sie eine Komma-separierte Liste von Interpreten ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of artist names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	NL	Definieer een door komma's gescheiden lijst van artiesten. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
+	CS	Ignorovat názvy alb
 	DE	Albentitel ignorieren
 	EN	Ignore Album Titles
 	FR	Ignorer les titres des albums
 	NL	Negeer albums
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
+	CS	Definujte seznam názvů alb oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
 	DE	Geben Sie eine Komma-separierte Liste von Albumtiteln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of album names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de noms d'albums séparés par des virgules. Les morceaux dont l'album correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	NL	Definieer een door komma's gescheiden lijst van albums. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
+	CS	Ignorovat žánry
 	DE	Stilrichtungen ignorieren
 	EN	Ignore Genres
 	FR	Ignorer les genres
 	NL	Negeer genres
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
+	CS	Definujte seznam žánrů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
 	DE	Geben Sie eine Komma-separierte Liste von Stilrichtungen ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of genres. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de genres séparés par des virgules. Les morceaux dont le genre correspond à l'un de ces genres ne seront pas envoyés (scrobblés).
 	NL	Definieer een door komma's gescheiden lijst van genres. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_BANNED
-	CS	Tato verze Logitech Media Server byla zakázána prostřednictvím Last.fm, aktualizujte laskavě na novější verzi.
+	CS	Tato verze Logitech Media Server byla zakázána prostřednictvím Last.fm, aktualizujte prosím na novější verzi.
 	DA	Denne version af Logitech Media Server ser ud til at være udelukket af Last.fm. Du bør opgradere til en nyere version.
 	DE	Last.fm scheint diese Version von Logitech Media Server nicht zuzulassen. Aktualisieren Sie auf eine neuere Version.
 	EN	This version of Logitech Media Server appears to have been banned by Last.fm, please upgrade to a newer version.
@@ -212,7 +220,7 @@ PLUGIN_AUDIOSCROBBLER_BADAUTH
 	SV	Ogiltigt användarnamn eller lösenord för Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_BADTIME
-	CS	Není možno navázat spojení s Last.fm, protože hodiny vašeho systému nejdou správně. Aktualizujte čas a zkuste znovu.
+	CS	Nelze navázat spojení s Last.fm, protože hodiny vašeho systému nejdou správně. Aktualizujte prosím hodiny a zkuste znovu.
 	DA	Det var ikke muligt at etablere forbindelse til Last.fm da systemuret går forkert. Opdater uret, og prøv igen.
 	DE	Handshake mit Last.fm nicht möglich, da die Systemuhr nicht eingestellt ist. Stellen Sie die Uhrzeit richtig ein und versuchen Sie es noch einmal.
 	EN	Unable to handshake with Last.fm because your system clock is incorrect. Please update your clock and try again.
@@ -272,7 +280,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	SV	Om du vill aktivera Audioscrobbler för den här spelaren väljer du ett konto som du vill använda.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
-	CS	Zakázáno, nepředávat stopy přehrávané na tomto přehrávači.
+	CS	Zakázáno, neodesílat skladby přehrávané na tomto přehrávači.
 	DA	Deaktiveret. Indsend ikke numre som afspilles på denne afspiller.
 	DE	Deaktiviert, auf diesem Player wiedergegebene Titel nicht senden.
 	EN	Disabled, do not submit tracks played on this player.
@@ -287,7 +295,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	SV	Avaktiverad, skicka ingen information om vilka spår som spelats på den här spelaren.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
-	CS	Výstraha: Předání všech stop je globálně zakázáno. K předání informací o stopách pro tento přehrávač povolte nastavení Předat všechny stopy v Pokročilé -> Last.fm Audioscrobbler.
+	CS	Upozornění: Odesílání všech skladeb je globálně zakázáno. K odeslání informací o skladbách pro tento přehrávač povolte nastavení Odeslat všechny skladby v Pokročilé -> Last.fm Audioscrobbler.
 	DA	Advarsel: Indstillingen Indsend oplysninger om alle numre, er slået fra overalt. Hvis du vil indsende oplysninger fra denne afspiller, skal du aktivere indstillingen der findes under til Avanceret -> Last.fm Audioscrobbler.
 	DE	Warnung: Das Senden aller Titel ist global deaktiviert. Wenn Sie Titelinformationen für diesen Player senden möchten, aktivieren Sie unter 'Erweitert -> Last.fm Audioscrobbler' die Option 'Alle Titel senden'.
 	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.
@@ -302,7 +310,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	SV	Varning! Rapporteringen är globalt avaktiverad. Om du vill rapportera spårinformation från den här spelaren aktiverar du inställningen under Avancerat > Last.fm Audioscrobbler.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
-	CS	Poznámka: Musíte také povolit Audioscrobbler pro každý přehrávač. Klikněte na záložku přehrávače a poté zvolte položku Last.fm Audioscrobbler pro každý přehrávač, který chcete převést.
+	CS	Poznámka: Musíte také povolit Audioscrobbler pro každý přehrávač. Klikněte na záložku přehrávače a poté zvolte položku Last.fm Audioscrobbler pro každý přehrávač, který chcete scroblovat.
 	DA	Bemærk: Du skal også aktivere Audioscrobbler for hver afspiller. Kik på fanen Afspiller, og vælg Last.fm Audioscrobbler for hver af de afspillere der skal indsendes oplysninger fra.
 	DE	Hinweis: Sie müssen auch Audioscrobbler für jeden Player aktivieren. Klicken Sie auf die Registerkarte 'Player' und wählen Sie die Option 'Last.fm Audioscrobbler' für die gewünschten Player.
 	EN	Note: You must also enable Audioscrobbler for each player.  Click on the Player tab and then select the Last.fm Audioscrobbler item for each player you want to scrobble.
@@ -317,7 +325,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	SV	Obs! Du måste också aktivera Audioscrobbler för varje spelare. Klicka på fliken Spelare och markera sedan Last.fm Audioscrobbler för varje spelare du vill skrobbla från.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
-	CS	Chyba při ověřování vašeho účtu u Last.fm. Zkuste znovu později. (%s)
+	CS	Při ověřování vašeho účtu na Last.fm došlo k chybě. Zkuste to prosím později. (%s)
 	DA	Der opstod en fejl ved godkendelsen af din Last.fm-konto. Prøv igen senere. (%s)
 	DE	Problem beim Prüfen Ihres Last.fm-Kontos. Versuchen Sie es später noch einmal. (%s)
 	EN	There was an error verifying your account with Last.fm. Please try again later. (%s)
@@ -362,7 +370,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO
-	CS	Převést Internetové Rádio.
+	CS	Scroblovat internetové rádio.
 	DA	Indsend oplysninger om hvilke numre jeg hører på internetradio.
 	DE	Internetradio scrobbeln.
 	EN	Scrobble Internet Radio.
@@ -377,7 +385,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO
 	SV	Skrobbla webbradio.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
-	CS	Při převádění stop z Internetových rádií může dojít k zahrnutí nechtěných dat do vašeho profilu v Last.fm. Změnou této možnosti můžete zakázat převádění všech rádiových stop. Nicméně, rozhlasové stopy mohou být stále oblíbené.
+	CS	Při scroblování skladeb z internetových rádií může dojít k zahrnutí nechtěných dat do vašeho profilu v Last.fm. Změnou této možnosti můžete zakázat převádění všech rádiových skladeb. Nicméně, rozhlasové skladby mohou být stále oblíbené.
 	DA	Hvis du indsender oplysninger om hvilke numre du hører på internetradio, vil din profil på Last.fm muligvis komme til at indeholde uønskede data. Du kan deaktivere funktionen til at indsende oplysninger om hvilke numre du hører, for alle numre du hører på radioen ved at ændre denne indstilling. Du kan dog stadig markere de numre du er vild med.
 	DE	Das Scrobbeln der Internetradiotitel kann dazu führen, dass in Ihr Last.fm-Profil unerwünschte Daten aufgenommen werden. Das Scrobbeln aller Internetradiotitel kann deaktiviert werden, indem diese Option geändert wird. Ihre liebsten Radiotitel bleiben Ihnen natürlich dennoch erhalten.
 	EN	Scrobbling Internet Radio tracks may cause your Last.fm profile to include unwanted data.  You can disable scrobbling of all radio tracks by changing this option.  Radio tracks may still be loved, however.
@@ -392,7 +400,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
 	SV	Om du väljer att skrobbla webbradiospåren kan det hända att oönskade data hamnar i din Last.fm-profil. Avaktivera skrobbling genom att ändra det här alternativet. Radiospår kan fortfarande väljas som favoriter.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
-	CS	Ano, převádět stopy Internetových rádií
+	CS	Ano, scroblovat skladby z internetových rádií
 	DA	Ja, indsend oplysninger om hvilke numre jeg hører på internetradio.
 	DE	Ja, Internetradiotitel scrobbeln.
 	EN	Yes, scrobble Internet Radio tracks.
@@ -407,7 +415,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
 	SV	Ja, skrobbla webbradiospåren.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO
-	CS	Ne, nepřevádět stopy z Internetových rádií.
+	CS	Ne, nescroblovat skladby z internetových rádií.
 	DA	Nej, indsend ikke oplysninger om hvilke numre jeg hører på internetradio.
 	DE	Nein, Internetradiotitel nicht scrobbeln.
 	EN	No, do not scrobble Internet Radio tracks.
@@ -422,7 +430,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO
 	SV	Nej, skrobbla inte webbradiospår.
 
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
-	CS	Nepřevádět
+	CS	Nescroblovat
 	DA	Indsend ikke
 	DE	Nicht scrobbeln
 	EN	Do not scrobble
@@ -452,7 +460,7 @@ PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	SV	Använd kontot: %s
 
 PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
-	CS	Last.fm: Tuhle stopu si oblíbíš
+	CS	Last.fm: Tuto skladbu milujete
 	DA	Last.fm: Jeg er vild med dette nummer
 	DE	Last.fm: Diesen Titel lieben
 	EN	Last.fm: Love this track
@@ -467,7 +475,7 @@ PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
 	SV	Last.fm: Visa att du älskar den här låten
 
 PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
-	CS	Tato stopa je oblíbená.
+	CS	Tato skladba je oblíbená.
 	DA	Du var vild med dette nummer.
 	DE	Dieser Titel wurde geliebt.
 	EN	This track has been loved.

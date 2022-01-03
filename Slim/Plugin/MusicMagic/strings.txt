@@ -456,7 +456,7 @@ SETUP_MUSICMAGIC_DESC
 	SV	Logitech Media Server kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
 
 MMMMIXTYPE_TRACKS
-	CS	Počet stop
+	CS	Počet skladeb
 	DA	Antal numre
 	DE	Anzahl Titel
 	EN	Number of Tracks

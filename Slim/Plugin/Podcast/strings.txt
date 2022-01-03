@@ -242,6 +242,7 @@ PLUGIN_PODCAST_SKIP_BACK_SECS
 	PL	Przewijanie do tyłu
 
 PLUGIN_PODCAST_SKIP_BACK_DESC
+	CS	Kontextová nabídka podcastů nabízí možnost rychlého skoku zpět v rámci podcastu. Ve výchozím nastavení tato možnost přeskočí o 15 sekund zpět.
 	DE	Das Kontextmenü bietet in Podcasts die Möglichkeit, schnell zurückzuspringen. Standardmässig sind dies 15 Sekunden. Geben Sie hier an, wie weit Sie zurückspringen wollen.
 	EN	The podcasts context menu offers an option to jump back quickly within the podcast. By default this option skips back by 15 seconds.
 	FR	Le menu contextuel des podcasts offre une option pour revenir rapidement en arrière dans le podcast. Par défaut, cette option recule de 15 secondes.
@@ -301,6 +302,7 @@ PLUGIN_PODCAST_WHATSNEW
 	NL	Nieuwe afleveringen van de laatste %s dagen
 
 PLUGIN_PODCAST_AUTHOR
+	CS	Autor:
 	DE	Autor:
 	DE	Herausgeber:
 	EN	Author:
@@ -329,6 +331,7 @@ PLUGIN_PODCAST_MAXNEW
 	NL	Aantal nieuwe afleveringen per feed
 
 PLUGIN_PODCAST_COUNTRY_DESC
+	CS	Omezit vyhledávání na zemi (volitelné)
 	DE	Suche auf ein Land beschränken (optional)
 	EN	Limit search to a country (optional)
 	FR	Limite la recherche à un pays (optionnel)

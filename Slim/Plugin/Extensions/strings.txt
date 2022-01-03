@@ -1,5 +1,5 @@
 PLUGIN_EXTENSIONS
-	CS	Stahovač doplňků
+	CS	Stahovač zásuvných modulů
 	DA	Hent udvidelsesmoduler
 	DE	Extension Downloader
 	EN	Extension Downloader
@@ -14,7 +14,7 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
-	CS	Stahovač doplňků umožňuje automatické stahování a instalaci volitelných vlastností Squezebox server.
+	CS	Stahovač zásuvných modulů umožňuje automatické stahování a instalaci volitelných vlastností Squezebox server.
 	DA	Du kan vælge om der automatisk skal hentes og installeres en række udvidelser til Squeezebox-serveren.
 	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Logitech Media Server automatisch heruntergeladen und installiert.
 	EN	Extension downloader allows automated download and installation of optional features for Logitech Media Server.
@@ -29,7 +29,7 @@ PLUGIN_EXTENSIONS_DESC
 	SV	Med hjälp av nedladdningsprogrammet kan du ladda ner olika tillägg till Logitech Media Server.
 
 PLUGIN_EXTENSIONS_REPOS
-	CS	Doplňkové archívy
+	CS	Další úložiště
 	DA	Andre lagersteder
 	DE	Zusätzliche Repositories
 	EN	Additional Repositories
@@ -44,7 +44,7 @@ PLUGIN_EXTENSIONS_REPOS
 	SV	Ytterligare databaser
 
 PLUGIN_EXTENSIONS_REPOS_DESC
-	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">zde</a>.
+	CS	Další úložiště zásuvných modulů třetích stran můžete přidat zadáním adresy URL úložiště níže. Seznam adres URL úložišť naleznete na adrese <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">zde</a>.
 	DA	Du kan tilføje adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor. Der findes en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
 	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben. Eine Liste von Repository-URLs ist <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> verfügbar.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
@@ -59,7 +59,7 @@ PLUGIN_EXTENSIONS_REPOS_DESC
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">lista</a> med adresser till databaser.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING
-	CS	<b>Výstraha:</b> Protože server automaticky stáhne software z vámi definovaných archívů, laskavě ověřte důvěryhodnost vlastníka archívu.
+	CS	<b>Upozornění:</b> Protože server bude automaticky stahovat software z vámi definovaných úložišť, ověřte si, zda vlastníkovi úložiště důvěřujete.
 	DA	<b>Advarsel:</b> Da der automatisk bliver hentet software fra de lagersteder du definerer, skal du angive at du har tillid til ejeren af det pågældende lager.
 	DE	<b>Warnung:</b> Vergewissern Sie sich, dass Sie dem Repository-Anbieter vertrauen, da der Server die Software automatisch von den von Ihnen definierten Repositories herunterlädt.
 	EN	<b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
@@ -134,7 +134,7 @@ PLUGIN_EXTENSIONS_INSTALL
 	SV	Installera
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL
-	CS	Manuálně nainstalované doplňky
+	CS	Manuálně nainstalované zásuvné moduly
 	DA	Manuelt installerede udvidelsesmoduler
 	DE	Manuell installierte Erweiterungen
 	EN	Manually installed extensions
@@ -179,7 +179,7 @@ PLUGIN_EXTENSIONS_RESTART_MSG
 	SV	Ändringarna träder i kraft när du startar om Logitech Media Server.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
-	CS	Špatný archív
+	CS	Špatné úložiště
 	DA	Ugyldigt lagersted
 	DE	Falsches Repository
 	EN	Bad repository
@@ -224,7 +224,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 	SV	Du är på väg att installera:
 
 PLUGIN_EXTENSIONS_WARNING_POPUP2
-	CS	Instalujte pouze doplňky vytvořené důvěryhodnými autory. Škodlivý software může poškodit váš počítač nebo vést k narušení vašeho soukromí.
+	CS	Instalujte pouze zásuvné moduly vytvořené důvěryhodnými autory. Škodlivý software může poškodit váš počítač nebo vést k narušení vašeho soukromí.
 	DA	Du bør kun installere udvidelsesmoduler fra forfattere du har tillid til, så du ikke kommer til at installere noget som er skadeligt og kan ødelægge computeren eller afsløre oplysninger om dig.
 	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören, oder ihre Privatsphäre verletzen.
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
@@ -362,7 +362,7 @@ PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 
 PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	CS	Rozšíření Logitech
+	CS	Zásuvné moduly Logitech
 	DA	Logitech-udvidelser
 	DE	Logitech Erweiterungen
 	EN	Logitech Extensions
@@ -377,7 +377,7 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	SV	Logitech-tillägg
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
-	CS	Použít nepodporované rozšíření
+	CS	Použít nepodporované zásuvné moduly
 	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
 	FR	Utiliser des extensions non prises en charge

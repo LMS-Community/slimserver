@@ -87,7 +87,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	SV	Spelar upp slumpmässigt valda låtar
 
 PLUGIN_RANDOM_TRACK_DISABLE
-	CS	zastavení přidávání skladeb
+	CS	přestat přidávat skladby
 	DA	tilføj ikke flere numre
 	DE	keine Titel mehr hinzuzufügen
 	EN	stop adding songs
@@ -276,7 +276,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	SV	Spelar upp slumpmässigt valda år
 
 PLUGIN_RANDOM_YEAR_DISABLE
-	CS	Přestat přidávat roky
+	CS	přestat přidávat roky
 	DA	tilføj ikke flere år
 	DE	keine Jahrgänge mehr hinzuzufügen
 	EN	stop adding years
