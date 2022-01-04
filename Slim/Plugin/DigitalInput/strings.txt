@@ -10,7 +10,7 @@ PLUGIN_DIGITAL_INPUT
 	FR	Entrées numériques
 	HE	פריטי קלט דיגיטלי
 	IT	Ingressi digitali
-	NL	Digitale ingangen
+	NL	Digitale Ingangen
 	NO	Digitale innganger
 	PL	Wejścia cyfrowe
 	RU	Цифровые входы

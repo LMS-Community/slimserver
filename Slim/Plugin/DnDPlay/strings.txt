@@ -10,7 +10,7 @@ PLUGIN_DNDPLAY_SHORT
 	DE	Musikdatei Drag & Drop
 	EN	Drag & Drop Music Files
 	FR	Glisser-déposer des fichiers audio
-	NL	Drag & drop muziekbestanden
+	NL	Drag & Drop Muziekbestanden
 	NO	Dra og slipp musikkfiler
 	PL	Przeciągnij i upuść pliki muzyczne
 

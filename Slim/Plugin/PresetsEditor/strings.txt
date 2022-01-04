@@ -3,7 +3,7 @@ PLUGIN_PRESETS_EDITOR
 	DE	Presets bearbeiten
 	EN	Presets Editor
 	FR	Editeur de présélections
-	NL	Voorinstelling aanpassen
+	NL	Voorinstelling Aanpassen
 
 PLUGIN_PRESETS_EDITOR_DESC
 	CS	Tento zásuvný modul umožňuje vizuálně upravovat konfiguraci tlačítek předvoleb Squeezeboxu.

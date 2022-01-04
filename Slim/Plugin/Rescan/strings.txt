@@ -10,7 +10,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	FR	Analyser la bibliothèque musicale
 	HE	סריקה חוזרת של ספריית המוסיקה
 	IT	Ripeti analisi della libreria musicale
-	NL	Muziekcollectie opnieuw scannen
+	NL	Opnieuw Scannen Mediabibliotheek
 	NO	Søk gjennom musikkbiblioteket
 	PL	Przeszukaj ponownie bibliotekę muzyki
 	RU	Повторно проверить медиатеку
@@ -25,7 +25,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	FI	Kirjaston automaattinen tarkistus
 	FR	Analyse de bibliothèque automatique
 	IT	Analisi automatica della libreria in corso...
-	NL	Automatisch collectie scannen
+	NL	Automatisch scannen van de mediabibliotheek
 	NO	Automatisk bibliotekssøk
 	PL	Automatyczne ponowne przeszukiwanie biblioteki
 	RU	Автоматическая проверка медиатеки
@@ -168,7 +168,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	FR	Vous pouvez faire en sorte que le serveur analyse à nouveau le contenu de votre bibliothèque toutes les 24 heures. Définissez l'heure et activez Programmation de l'analyse pour utiliser cette fonctionnalité.
 	HE	באפשרותך לבחור לאפשר סריקה חוזרת מתוזמנת של ספריית המוסיקה שלך מדי 24 שעות. קבע את השעה והגדר את 'קוצב-זמן לסריקה חוזרת' ל'מופעל' כדי להשתמש במאפיין זה.
 	IT	È possibile impostare la pianificazione dell'analisi della libreria musicale ogni 24 ore. Per utilizzare questa funzione, è sufficiente impostare l'ora di esecuzione e attivare il timer dell'analisi.
-	NL	Je kunt je muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
+	NL	Je kunt jouw muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
 	NO	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
 	PL	Możliwe jest zezwolenie na zaplanowane ponowne przeszukiwanie biblioteki muzyki co 24 godziny. Aby korzystać z tej funkcji, ustaw godzinę i Timer ponownego przeszukiwania na WŁĄCZONY.
 	RU	Вы можете запланировать проверку своей медиатеки каждые 24 часа. Для этого укажите время и включите таймер повторного сканирования.

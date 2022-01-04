@@ -13,7 +13,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
-	NL	Creëer additionele menu's om door je mediabibliotheek te bladeren, bijvoorbeeld via Albumartiest, Componisten, Genres, enz.
+	NL	Creëer additionele menu's om door jouw mediabibliotheek te bladeren, bijvoorbeeld via Albumartiest, Componisten, Genres, enz.
 	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
 	SV	Skapa ytterligare menyer för att bläddra is musiksamlingen via albumartister, kompositörer, valda genrer osv.
@@ -153,7 +153,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	FR	Albums aléatoires
 	HE	אלבומים בסדר אקראי
 	IT	Album casuali
-	NL	Willekeurige albums
+	NL	Willekeurige Albums
 	NO	Tilfeldige album
 	PL	Losowe albumy
 	RU	Произвольные альбомы
@@ -219,37 +219,37 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	DE	Hörbücher
 	EN	Audiobooks
 	FR	Livres audio
-	SV	Ljudböcker
 	NL	Luisterboeken
+	SV	Ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	CS	Všechna hudba bez audioknih
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
 	FR	Toute la musique sans les livres audio
-	SV	All musik förutom ljudböcker
 	NL	Alle muziek zonder luisterboeken
-
+	SV	All musik förutom ljudböcker
+	
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	CS	Vytvořte zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
-	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
-
+	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
+	
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	CS	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Audiokniha, Audioknihy, Mluvené, Řeč, Komedie, Mluvené a audio, Knihy a mluvené, Kabaret, Humor
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
-	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
-
+	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
+	
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	CS	Autoři
 	DE	Hörbuch-Autoren
 	EN	Authors
 	FR	Auteurs
-	SV	Författare
 	NL	Schrijvers
+	SV	Författare	

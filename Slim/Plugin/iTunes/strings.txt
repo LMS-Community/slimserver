@@ -25,7 +25,7 @@ ITUNES_DESC
 	FI	iTunes-integraatio
 	FR	Intégration iTunes
 	IT	Integrazione di iTunes
-	NL	iTunes-integratie
+	NL	iTunes integratie
 	NO	iTunes-integrering
 	PL	Integracja z programem iTunes
 	RU	Интеграция с iTunes
@@ -42,7 +42,7 @@ SETUP_ITUNESPLAYLISTFORMAT
 	HE	תבנית רשימות ההשמעה של iTunes
 	IT	Formato della playlist di iTunes
 	JA	iTunesプレイリストフォーマット
-	NL	iTunes-playlistformaat
+	NL	iTunes afspeellijst formaat
 	NO	iTunes spillelisteformat
 	PL	Format listy odtwarzania programu iTunes
 	RU	Формат плей-листа iTunes
@@ -60,7 +60,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש בעת ייבוא רשימות השמעה של iTunes.
 	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
-	NL	Bepaal hier welk formaat gebruikt moet worden bij het importeren van iTunes-playlists.
+	NL	Bepaal hier welk formaat gebruikt moet worden bij het importeren van iTunes afspeellijsten.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av iTunes-spillelister.
 	PL	Ta opcja określa format używany podczas importowania list odtwarzania programu iTunes.
 	RU	Этот параметр определяет формат для импорта плей-листов iTunes.
@@ -77,7 +77,7 @@ ITUNES_PODCASTS
 	FR	Podcasts iTunes
 	HE	פריטי Podcast של iTunes
 	IT	Podcast iTunes
-	NL	iTunes-podcasts
+	NL	iTunes podcasts
 	NO	iTunes-podkaster
 	PL	Podcasty w programie iTunes
 	RU	Подкасты iTunes
@@ -133,7 +133,7 @@ SETUP_ITUNES_DESC
 	HE	Logitech Media Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
 	IT	In Logitech Media Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	Logitech Media ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	Logitech Media Server kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle wijzigingen in iTunes worden ook op je muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
+	NL	Logitech Media Server kan gebruik maken van jouw iTunes muziekcollectie en afspeellijsten. Alle wijzigingen in iTunes worden ook op jouw muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de gegevens van jouw iTunes muziekcollectie wilt importeren.
 	NO	Logitech Media Server kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
 	PL	Program Logitech Media Server może korzystać z biblioteki muzyki i list odtwarzania programu iTunes. Wszelki zmiany wprowadzone w programie iTunes zostaną uwzględnione w odtwarzaczu. Aby zaimportować informacje z biblioteki muzyki programu iTunes, zaznacz pole wyboru poniżej.
 	RU	Logitech Media Server может использовать медиатеку и плей-листы iTunes. Все изменения, вносимые в iTunes, отражаются в плеере. Установите флажок (ниже), чтобы импортировать данные медиатеки iTunes.
@@ -151,7 +151,7 @@ SETUP_ITUNESSCANINTERVAL
 	HE	מרווח הזמן לטעינה חוזרת של iTunes
 	IT	Intervallo di ricaricamento di iTunes
 	JA	iTunes更新時間
-	NL	iTunes-herlaadinterval
+	NL	iTunes update interval
 	NO	Oppdateringsintervall for iTunes
 	PL	Interwał ponownego ładowania programu iTunes
 	RU	Интервал перезагрузки iTunes
@@ -168,7 +168,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	FR	Le Logitech Media Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר ספריית המוסיקה של iTunes משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica la libreria musicale di iTunes, Logitech Media Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
-	NL	Wanneer je iTunes-muziekcollectie wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NL	Wanneer jouw iTunes muziekcollectie wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når musikkbiblioteket til iTunes endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
 	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Logitech Media Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
 	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Logitech Media Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
@@ -204,7 +204,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Logitech Media Server, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Logitech Media Server.
 	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Logitech Media Server, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e Logitech Media Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
-	NL	Als iTunes op een andere computer draait dan Logitech Media Server, kun je hier een expliciet pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server draait.
+	NL	Als iTunes op een andere computer dan Logitech Media Server wordt uitgevoerd, kun je hier het pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server wordt uitgevoerd.
 	NO	Hvis du kjører iTunes på en annen datamaskin enn Logitech Media Server, kan du angi banen til filen iTunes Music Library.xml her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Logitech Media Server.
 	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Logitech Media Server, w tym miejscu można określić ścieżkę do pliku Music Library.xml programu iTunes. Jeżeli program iTunes działa na tym samym komputerze co program Logitech Media Server, pozostaw to pole puste.
 	RU	Если iTunes и Logitech Media Server установлены на разных компьютерах, можно напрямую задать путь к файлу XML медиатеки iTunes. Если приложение iTunes установлено на том же компьютере, что и Logitech Media Server, оставьте поле пустым.
@@ -223,7 +223,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	HE	תיקיית המוסיקה של iTunes
 	IT	Cartella iTunes Media
 	JA	iTunes音楽フォルダー
-	NL	iTunes Media-map
+	NL	iTunes Media map
 	NO	iTunes Media-mappen
 	PL	Miejsce katalogu iTunes Media
 	RU	Папка iTunes Media
@@ -241,7 +241,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Logitech Media Server, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Logitech Media Server.
 	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Logitech Media Server, è possibile indicare in questo campo il percorso esplicito della cartella iTunes Media. Se iTunes e Logitech Media Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
-	NL	Als iTunes op een andere computer dan Logitech Media Server wordt uitgevoerd, kun je hier een expliciet pad naar de iTunes Media-map opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server wordt uitgevoerd.
+	NL	Als iTunes op een andere computer dan Logitech Media Server wordt uitgevoerd, kun je hier een pad naar de iTunes Media map opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server wordt uitgevoerd.
 	NO	Hvis du kjører iTunes på en annen datamaskin enn Logitech Media Server, kan du angi banen til iTunes Media-mappen her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Logitech Media Server.
 	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Logitech Media Server, w tym miejscu można określić katalog iTunes Media. Jeżeli program iTunes działa na tym samym komputerze co program Logitech Media Server, pozostaw to pole puste.
 	RU	Если iTunes и Logitech Media Server установлены на разных компьютерах, можно напрямую задать путь к папке "iTunes Media" в iTunes. Если приложение iTunes установлено на том же компьютере, что и Logitech Media Server, оставьте поле пустым.
@@ -258,7 +258,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	FR	Morceaux désélectionnés dans iTunes
 	HE	שירים לא מסומנים ב-iTunes
 	IT	Brani non selezionati in iTunes
-	NL	Niet-geselecteerde nummers in iTunes
+	NL	Niet geselecteerde nummers in iTunes
 	NO	Umarkerte sanger i iTunes
 	PL	Niezaznaczone utwory w programie iTunes
 	RU	Неотмеченные песни в iTunes
@@ -309,7 +309,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	FR	Ne pas inclure les morceaux désélectionnés
 	HE	אין לכלול שירים לא מסומנים
 	IT	Non includere i brani non selezionati
-	NL	Niet-geselecteerde nummers niet toevoegen
+	NL	Niet geselecteerde nummers niet toevoegen
 	NO	Ikke inkluder sanger som ikke er markert
 	PL	Nie dodawaj niezaznaczonych utworów
 	RU	Не включать неотмеченные песни
@@ -325,7 +325,7 @@ DEBUG_PLUGIN_ITUNES
 	FI	iTunesin synkronointitiedot
 	FR	Informations de synchronisation iTunes
 	IT	Informazioni sulla sincronizzazione con iTunes
-	NL	Gegevens voor iTunes-synchronisatie
+	NL	Gegevens voor iTunes synchronisatie
 	NO	Synkroniseringsinformasjon for iTunes
 	PL	Informacje o synchronizacji z programem iTunes
 	RU	Сведения о синхронизации iTunes
@@ -355,7 +355,7 @@ ITUNES_PLAYLISTS_PROGRESS
 	FI	iTunes-soittoluetteloiden tuonti
 	FR	Importation de liste de lecture iTunes
 	IT	Importazione delle playlist iTunes
-	NL	iTunes-playlist importeren
+	NL	iTunes afspeellijst importeren
 	NO	Importere iTunes-spilleliste
 	PL	Importowanie listy odtwarzania z programu iTunes
 	RU	Импорт плей-листа iTunes
@@ -370,7 +370,7 @@ ITUNES_ARTWORK_PHASE_1_PROGRESS
 	FI	iTunesin lataaman kansitaiteen tuominen
 	FR	Importations de pochettes iTunes téléchargées
 	IT	Importazione copertine di iTunes scaricate
-	NL	Import van door iTunes gedownloade albumcovers
+	NL	Import van door iTunes gedownloade albumhoezen
 	NO	Importering av omslag lastet ned fra iTunes
 	PL	Importowanie okładek pobranych do programu iTunes
 	RU	Импорт обложек, загруженных в iTunes
@@ -385,7 +385,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	FI	iTunesin käyttäjän lisäämän kansitaiteen tuominen
 	FR	Importations de pochettes iTunes ajoutées par l'utilisateur
 	IT	Importazione copertine di iTunes aggiunte dall'utente
-	NL	Import van door iTunes-gebruiker toegevoegde albumcovers
+	NL	Importeren van door de gebruiker toegevoegde iTunes albumhoezen
 	NO	Importering av omslag lagt til av bruker fra iTunes
 	PL	Użytkownik programu iTunes - importowanie dodanych okładek
 	RU	Импорт обложек, добавленных пользователем iTunes
@@ -427,7 +427,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS
 	FI	Ohitetut soittoluettelot
 	FR	Listes de lecture ignorées
 	IT	Playlist ignorate
-	NL	Genegeerde playlists
+	NL	Genegeerde afspeellijsten
 	NO	Ignorerte spillelister
 	PL	Ignorowane listy odtwarzania
 	RU	Исключаемые плей-листы
@@ -442,7 +442,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	FI	Määritä pilkuilla erotettu luettelo iTunesin soittoluetteloista, joita et halua tuoda (esim. videot, ostetut).
 	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par exemple : "Vidéos, achetées").
 	IT	Definire un elenco di playlist iTunes separate da virgole che non si desidera importare (esempio: Video, Brani acquistati).
-	NL	Maak een kommagescheiden lijst van iTunes-playlists die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
+	NL	Maak een kommagescheiden lijst van iTunes afspeellijsten die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
 	NO	Lag en liste, adskilt med kommaer, over iTunes-spillelister du ikke vil importere (f.eks. "videoer, kjøp").
 	PL	Zdefiniuj listę zawierającą oddzielone przecinkami listy odtwarzania programu iTunes, których nie chcesz importować (np. „Filmy wideo, Zakupione”).
 	RU	Введите через запятую плей-листы iTunes, которые не нужно импортировать (например, "Видео, Покупки").
@@ -457,7 +457,7 @@ SETUP_ITUNES_ARTWORK
 	FI	iTunesin kansikuvat
 	FR	Pochettes iTunes
 	IT	Illustrazioni iTunes
-	NL	iTunes-artwork
+	NL	iTunes albumhoezen
 	NO	Albumomslag i iTunes
 	PL	Okładki programu iTunes
 	RU	Обложка iTunes
@@ -472,7 +472,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	FI	Ottamalla tämän asetuksen käyttöön voit purkaa iTunesiin tallennetut levyjen kansikuvat. Huomaa, että tämä saattaa viedä paljon aikaa, sillä iTunesin käyttöliittymä on hidas.
 	FR	Cette option permet d'extraire les pochettes stockées dans iTunes. Remarque : en raison de la lenteur de l'interface avec iTunes, cette opération risque de prendre un certain temps.
 	IT	Attivare questa opzione per estrarre le illustrazioni memorizzate in iTunes. Tenere presente che questa operazione può richiedere parecchio tempo poiché la comunicazione con iTunes è lenta.
-	NL	Schakel deze optie in om artwork dat in iTunes is opgeslagen, te extraheren. Deze bewerking kan lang duren omdat de interface met iTunes traag is.
+	NL	Schakel deze optie in om albumhoezen die in iTunes zijn opgeslagen, te extraheren. Deze bewerking kan lang duren omdat de interface met iTunes traag is.
 	NO	Aktiver dette alternativet hvis du vil hente ut albumomslag som er lagret i iTunes. Merk: dette kan ta en stund, da grensesnittet for iTunes er tregt.
 	PL	Włącz tę opcję, aby wyodrębnić okładki zapisane w programie iTunes. Operacja ta może wymagać długiego czasu, ponieważ interfejs programu iTunes jest powolny.
 	RU	Выберите этот параметр, чтобы извлечь обложку, сохраненную в iTunes. Помните, что эта операция может занять много времени, так как интерфейс с iTunes работает медленно.
@@ -487,7 +487,7 @@ SETUP_ITUNES_EXTRACT_ARTWORK
 	FI	Pura iTunesin kansikuvat (kokeellinen)
 	FR	Extraire les pochettes iTunes (expérimental)
 	IT	Estrai illustrazioni di iTunes (sperimentale)
-	NL	iTunes-artwork extraheren (experimenteel)
+	NL	iTunes albumhoezen extraheren (experimenteel)
 	NO	Hent albumomslag fra iTunes (eksperimentell)
 	PL	Wyodrębnij okładki programu iTunes (eksperymentalne)
 	RU	Извлечь обложку iTunes (экспериментально)

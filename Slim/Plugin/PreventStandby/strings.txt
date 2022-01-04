@@ -9,7 +9,7 @@ PLUGIN_PREVENTSTANDBY
 	FI	Estä järjestelmän siirtyminen valmiustilaan
 	FR	Empêcher la mise en veille du système
 	IT	Impedisci standby del sistema
-	NL	Stand-by van systeem voorkomen
+	NL	Stand-by Systeem Voorkomen
 	NO	Hindre hvilemodus
 	PL	Zapobiegaj przejściu systemu do trybu wstrzymania
 	RU	не переходить в режим ожидания
@@ -24,7 +24,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	FI	Tämä laajennus valvoo SqueezeBox-soittimia ja estää järjestelmää siirtymästä virtaa säästävään valmiustilaan, kun musiikkia soitetaan, kun Logitech Media Server suorittaa tarkistusta, kun soittimia päivitetään jne. Laajennus estää myös järjestelmää siirtymästä ennenaikaisesti valmiustilaan kaksi minuuttia lähiverkon herätyksen jälkeen.
 	FR	Ce plugin surveille les platines SqueezeBox et empêche le système de passer en mode veille (d'économie d'énergie) lorsqu'un morceau est en cours de lecture, le Logitech Media Server est en cours d'analyse, les platines sont mises à jour, ainsi que deux minutes après l'activation de la fonction de réveil par LAN.
 	IT	Questo plugin tiene sotto controllo i lettori SqueezeBox e impedisce che nel sistema venga attivata la modalità standby durante la riproduzione della musica, l'analisi di Squeezebox, l'aggiornamento dei lettori e così via. Impedisce inoltre che il sistema entri prematuramente in modalità standby due minuti dopo l'attivazione LAN.
-	NL	Deze plug-in houd jouw Squeezebox muziekspelers in de gaten en voorkomt dat het systeem naar energiebesparende stand-by modus gaat terwijl er bijvoorbeeld muziek speelt, Logitech Media Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-by modus gaat twee minuten na wake-on-lan.
+	NL	Deze plug-in houdt jouw Squeezebox muziekspelers in de gaten en voorkomt dat het systeem naar energiebesparende stand-by modus gaat terwijl er bijvoorbeeld muziek speelt, Logitech Media Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-by modus gaat twee minuten na wake-on-lan.
 	NO	Denne plugin-modulen overvåker SqueezeBox-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens Logitech Media Server søker, mens spillere oppdateres osv. Den forhindrer også at systemet går i for tidlig hvilemodus to minutter etter at det har blitt startet opp via et LAN.
 	PL	Ten dodatek monitoruje odtwarzacze SqueezeBox i zapobiega przejściu systemu do trybu wstrzymania w celu oszczędzania energii, kiedy odtwarzana jest muzyka, program Logitech Media Server wykonuje przeszukiwanie, trwa aktualizacja odtwarzaczy itp. Dodatek uniemożliwi także przedwczesne przejście do trybu wstrzymania po upływie dwóch minut od zadziałania funkcji wake-on-lan.
 	RU	Этот подключаемый модуль выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Logitech Media Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.

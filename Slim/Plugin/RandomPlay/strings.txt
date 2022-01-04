@@ -10,7 +10,7 @@ PLUGIN_RANDOMPLAY
 	FR	Mix aléatoire
 	HE	מיקס אקראי
 	IT	Raccolta casuale
-	NL	Willekeurige mix
+	NL	Willekeurige Mix
 	NO	Tilfeldig miks
 	PL	Składanka losowa
 	RU	Произвольный микс
@@ -25,7 +25,7 @@ PLUGIN_RANDOM_DESC
 	FI	Jukeboksi musiikillesi
 	FR	Juke-box pour votre musique
 	IT	Jukebox per la raccolta musicale personale
-	NL	Jukebox voor je muziek
+	NL	Jukebox voor jouw muziek
 	NO	Jukeboks til musikken
 	PL	Zmieniacz na Twoją muzykę
 	RU	Музыкальный автомат для ваших песен
