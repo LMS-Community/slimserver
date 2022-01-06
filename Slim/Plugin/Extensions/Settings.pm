@@ -193,7 +193,7 @@ sub _addInfo {
 				# install now if in auto mode or install or update has been explicitly selected
 				main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
 
-				Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => $entry->{'sha'} });
+				Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => lc($entry->{'sha'}) });
 
 			} else {
 

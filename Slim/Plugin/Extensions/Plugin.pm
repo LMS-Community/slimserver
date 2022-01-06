@@ -379,7 +379,7 @@ sub findUpdates {
 			main::INFOLOG && $log->info("$app action install version " . $apps->{ $app }->{'version'} .
 										($current->{ $app } ? (" from " . $current->{ $app }) : ''));
 
-			$actions->{ $app } = { action => 'install', url => $apps->{ $app }->{'url'}, sha => $apps->{ $app }->{'sha'} };
+			$actions->{ $app } = { action => 'install', url => $apps->{ $app }->{'url'}, sha => lc($apps->{ $app }->{'sha'}) };
 
 			$actions->{ $app }->{'info'} = $apps->{ $app } if $info;
 		}
@@ -525,7 +525,7 @@ sub _parseXML {
 				'version' => $entry->{'version'},
 			};
 
-			$new->{'sha'} = $entry->{'sha'} if $entry->{'sha'};
+			$new->{'sha'} = lc($entry->{'sha'}) if $entry->{'sha'};
 
 			$debug && $log->debug("entry $new->{name} vers: $new->{version} url: $new->{url}");
 
