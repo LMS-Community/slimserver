@@ -10,7 +10,7 @@ PLUGIN_CLI
 	FR	Interface de ligne de commande (CLI)
 	HE	ממשק שורת פקודה (CLI)
 	IT	Interfaccia della riga di comando
-	NL	Opdrachtregel interface (CLI)
+	NL	Opdrachtregel Interface (CLI)
 	NO	Kommandolinjegrensesnitt
 	PL	Interfejs wiersza polecenia (CLI)
 	RU	Интерфейс командной строки (CLI)

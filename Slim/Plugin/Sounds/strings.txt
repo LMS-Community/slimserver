@@ -7,7 +7,7 @@ PLUGIN_SOUNDS_MODULE_NAME
 	FI	Äänet ja tehosteet
 	FR	Effets sonores
 	IT	Suoni ed effetti
-	NL	Geluiden en effecten
+	NL	Geluiden en Effecten
 	NO	Lyder og effekter
 	PL	Dźwięki i efekty
 	RU	Звуки и эффекты

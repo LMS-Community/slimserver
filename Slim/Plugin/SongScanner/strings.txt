@@ -9,7 +9,7 @@ PLUGIN_SONGSCANNER
 	FI	Kappaleen haku
 	FR	Analyseur de morceau
 	IT	Analisi brani
-	NL	Nummer scanner
+	NL	Nummer Scanner
 	NO	Sangsøk
 	PL	Moduł przeszukiwania utworów
 	RU	Сканер песен

@@ -8827,7 +8827,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	FR	Vérification contre CSRF
 	HE	רמת הגנה מסוג CSRF
 	IT	Livello di protezione CSRF
-	NL	CSRF-beveiligingsniveau
+	NL	CSRF beveiligingsniveau
 	NO	Beskyttelsesnivå for CSRF
 	PL	Poziom ochrony CSRF
 	RU	Уровень защиты CSRF
@@ -8844,7 +8844,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	FR	Pour garantir une protection contre les risques de sécurité de type "Cross Site Request Forgery" (CSRF), le Logitech Media Server applique une vérification supplémentaire aux requêtes HTTP susceptibles d'altérer le système ou de manipuler des listes de lecture ou des platines. Vous pouvez spécifier le niveau de cette vérification. La valeur par défaut est Aucune. <a href="/html/docs/http.html#csrf">Reportez-vous à l'aide</a> pour plus d'informations.
 	HE	להתגוננות מפני "זיוף בקשות מאתרים צולבים" (CSRF)‏, Logitech Media Server מחיל בדיקה קפדנית מיוחדת על בקשות HTTP עבור פונקציות שיכולות לבצע שינויים במערכת או לטפל ברשימות השמעה או בנגנים. באפשרותך לבחור את רמת הבדיקה הקפדנית שבה ישתמש השרת. ברירת המחדל היא 'בינונית'. <a href="/html/docs/http.html#csrf">עיין במקטע העזרה</a> לקבלת פרטים נוספים.
 	IT	Per ottenere protezione da minacce alla sicurezza di tipo Cross Site Request Forgery (CSRF), Logitech Media Server controlla accuratamente le richieste HTTP di funzioni che possono determinare modifiche del sistema o manipolare le playlist o il lettore. È possibile scegliere il livello di controllo che il server deve adottare. Il livello predefinito è Nessuno. Per ulteriori informazioni, consultare la sezione <a href="/html/docs/http.html#csrf">Guida</a>.
-	NL	Ter bescherming tegen CSRF-beveiligingsbedreigingen (Cross Site Request Forgery) worden HTTP verzoeken door Logitech Media Server nauwkeurig onderzocht op functies die jouw systeem, afspeellijsten of muziekspelers kunnen wijzigen. Je kunt zelf instellen hoe nauwkeurig de server moet zijn. De standaardinstelling is 'Geen'. <a href="/html/docs/http.html#csrf">Zie de Help-sectie</a> voor meer informatie.
+	NL	Ter bescherming tegen CSRF beveiligingsbedreigingen (Cross Site Request Forgery) worden HTTP verzoeken door Logitech Media Server nauwkeurig onderzocht op functies die jouw systeem, afspeellijsten of muziekspelers kunnen wijzigen. Je kunt zelf instellen hoe nauwkeurig de server moet zijn. De standaardinstelling is 'Geen'. <a href="/html/docs/http.html#csrf">Zie de Help-sectie</a> voor meer informatie.
 	NO	Logitech Media Server beskytter seg mot CSRF-sikkerhetstrusler (Cross Site Request Forgery) ved å bruke en egen undersøkelse av http-forespørsler for funksjoner som kan utføre endringer på systemet eller manipulere spillelister og spillere. Du kan angi hvilket sikkerhetsnivå Logitech Media Server skal operere med. Standard er Ingen. Du kan finne ut mer i <a href="/html/docs/http.html#csrf">hjelp-delen</a>.
 	PL	W celu ochrony przed atakiem typu „CSRF” (Cross Site Request Forgery) program Logitech Media Server dokładnie bada żądania HTTP dotyczące funkcji, które mogą wprowadzić zmiany w systemie, bądź manipulować listami odtwarzania lub odtwarzaczami. Możliwe jest określenie poziomu badania używanego przez program Logitech Media Server. Ustawienie domyślne to Brak. <a href="/html/docs/http.html#csrf">Zapoznaj się z Pomocą</a>, aby uzyskać szczegółowe informacje.
 	RU	Для защиты от угроз безопасности CSRF (подделки межсайтовых запросов) HTTP-запросы в Logitech Media Server проходят специальную проверку на наличие функций, способных повлиять на работу системы, а также на плей-листы или плееры. В Logitech Media Server можно выбрать уровень проверки. По умолчанию проверка не выполняется. Дополнительные сведения <a href="/html/docs/http.html#csrf">см. в разделе справки</a>.
@@ -14011,7 +14011,7 @@ BASIC_PLAYER_SETTINGS
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
 	IT	Impostazioni di base
-	NL	Standaard instellingen
+	NL	Standaard Instellingen
 	NO	Standardinnstillinger
 	PL	Ustawienia podstawowe
 	RU	Основные настройки
@@ -14171,7 +14171,7 @@ BASIC_SERVER_SETTINGS
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
 	IT	Impostazioni di base
-	NL	Standaard instellingen
+	NL	Standaard Instellingen
 	NO	Standardinnstillinger
 	PL	Ustawienia podstawowe
 	RU	Основные настройки

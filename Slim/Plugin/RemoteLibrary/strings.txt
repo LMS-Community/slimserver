@@ -4,7 +4,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	EN	Remote Music Libraries
 	FR	Bibliothèques musicales distantes
 	IT	Libreria Musicale Remota
-	NL	Externe muziekcollecties
+	NL	Externe Muziekcollecties
 	NO	Eksterne musikksamlinger
 	PL	Zdalne biblioteki muzyczne
 

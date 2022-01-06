@@ -7,7 +7,7 @@ PLUGIN_MY_APPS_MODULE_NAME
 	FI	Omat sovellukset
 	FR	Mes applications
 	IT	Applicazioni
-	NL	Mijn toepassingen
+	NL	Mijn Toepassingen
 	NO	Mine tjenester
 	PL	Moje aplikacje
 	RU	Мои приложения
