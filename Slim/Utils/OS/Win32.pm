@@ -71,6 +71,9 @@ sub initDetails {
 						elsif ($major == 6 && $minor == 3) {
 							$class->{osDetails}->{'osName'} = $producttype != 1 ? 'Windows 2012 Server R2' : 'Windows 8.1';
 						}
+						elsif ($major == 10 && $minor == 0 && $build && $build >= 22000) {
+							$class->{osDetails}->{'osName'} = $producttype != 1 ? 'Windows 2022 Server' : 'Windows 11';
+						}
 						elsif ($major == 10 && $minor == 0) {
 							$class->{osDetails}->{'osName'} = $producttype != 1 ? 'Windows 2016 Server' : 'Windows 10';
 						}
