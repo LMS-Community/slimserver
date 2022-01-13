@@ -687,12 +687,15 @@ sub getMetadataFor {
 			my ($id) = _getStreamParams($trackURL);
 
 			if ($id) {
-				$meta = $cache->get("deezer_meta_$id");
-				push @need, $id if !$meta || !$meta->{cover};
+				my $trackMeta = $cache->get("deezer_meta_$id");
+				push @need, $id if !$trackMeta || !$trackMeta->{cover};
 			}
 		}
 
-		return $meta unless scalar @need;
+		if (!scalar @need) {
+			$client->master->pluginData( fetchingMeta => 0 );
+			return $meta;
+		}
 
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
