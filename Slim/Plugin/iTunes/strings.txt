@@ -270,6 +270,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i Logitech Media Server. Du kan ændre det nedenfor.
 	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in Logitech Media Server angezeigt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Logitech Media Server. You can change that behavior below.
+	EN_GB	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Logitech Media Server. You can change that behaviour below.
 	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con Logitech Media Server. Ese comportamiento se puede cambiar a continuación.
 	FI	Jos poistat valintamerkin kappaleen vierestä iTunesissä, kappale ei oletuksena tule näkyviin, kun etsit musiikkia Logitech Media Serverillä. Voit vaihtaa toiminnan alla.
 	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Logitech Media Server. Vous pouvez modifier ce comportement ci-dessous.

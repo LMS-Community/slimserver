@@ -8,6 +8,7 @@ PLUGIN_ORANGE_FAVORITES
 	DA	Orange Liveradio-favoritter
 	DE	Orange Liveradio-Favoriten
 	EN	Orange Liveradio Favorites
+	EN_GB	Orange Liveradio Favourites
 	ES	Favoritos de Orange Liveradio
 	FI	Orangen Liveradio-suosikit
 	FR	Favoris Orange Liveradio
