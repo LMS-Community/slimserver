@@ -39,6 +39,7 @@ SETUP_GROUP_XPL_DESC
 	DA	Disse indstillinger fastlægger hvordan xPL-protokollen fungerer.
 	DE	Diese Einstellungen steuern das Verhalten des xPL-Protokolls.
 	EN	These settings control the behavior of the xPL protocol
+	EN	These settings control the behaviour of the xPL protocol
 	ES	Estos parámetros controlan el comportamiento del protocolo xPL
 	FI	Näillä asetuksilla ohjataan xPL-protokollan toimintaa
 	FR	Ces réglages permettent de paramétrer le protocole xPL.

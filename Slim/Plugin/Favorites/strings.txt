@@ -5,6 +5,7 @@ FAVORITES
 	DA	Favoritter
 	DE	Favoriten
 	EN	Favorites
+	EN_GB	Favourites
 	ES	Favoritos
 	FI	Suosikit
 	FR	Favoris
@@ -21,6 +22,7 @@ FAVORITES_NONE_DEFINED
 	DA	Der findes ingen favoritter
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
+	EN_GB	No Favourites exist
 	ES	No existen favoritos
 	FI	Suosikkeja ei ole
 	FR	Aucun favori défini
@@ -37,6 +39,7 @@ FAVORITES_PLAYING
 	DA	Afspiller favorit nr. %s
 	DE	Favorit Nr. %s läuft ...
 	EN	Playing favorite #%s
+	EN_GB	Playing favourite #%s
 	ES	Reproduciendo favorito nº %s
 	FI	Soitetaan suosikki #%s
 	FR	Lecture du favori n°%s
@@ -53,6 +56,7 @@ FAVORITES_FAVORITE_NUM
 	DA	Favorit nr.
 	DE	Favorit Nr.
 	EN	Favorite #
+	EN_GB	Favourite #
 	ES	Nº de favorito
 	FI	Suosikki #
 	FR	Favori n°
@@ -85,6 +89,7 @@ FAVORITES_FAVORITE
 	DA	Favorit
 	DE	Favorit
 	EN	Favorite
+	EN_GB	Favourite
 	ES	Favorito
 	FI	Suosikki
 	FR	Favori
@@ -100,6 +105,7 @@ FAVORITES_RIGHT_TO_DELETE
 	DA	Slet favorit
 	DE	Favorit entfernen
 	EN	Remove Favorite
+	EN_GB	Remove Favourite
 	ES	Quitar favorito
 	FI	Poista suosikki
 	FR	Supprimer le favori
@@ -115,6 +121,7 @@ FAVORITES_NOT_A_FAVORITE
 	DA	Ikke en favorit
 	DE	Kein Favorit
 	EN	Not a favorite
+	EN_GB	Not a favourite
 	ES	No es un favorito
 	FI	Ei suosikki
 	FR	Pas un favori
@@ -132,6 +139,7 @@ FAVORITES_ADDING
 	DA	Gemmer favoritter...
 	DE	Favoriten werden gespeichert ...
 	EN	Saving favorites...
+	EN_GB	Saving favourites...
 	ES	Guardando favoritos...
 	FI	Tallennetaan suosikit...
 	FR	Enregistrement des favoris...
@@ -149,6 +157,7 @@ FAVORITES_DELETING
 	DA	Sletter favorit...
 	DE	Favorit wird entfernt...
 	EN	Removing favorite...
+	EN_GB	Removing favourite...
 	ES	Quitando favorito...
 	FI	Poistetaan suosikki...
 	FR	Suppression du favori...
@@ -164,6 +173,7 @@ PLUGIN_FAVORITES_DESC
 	DA	Gem og rediger dine favoritter
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
+	EN_GB	Save and edit your favourites
 	ES	Guardar y editar favoritos
 	FI	Suosikkien tallennus ja muokkaus
 	FR	Enregistrer et modifier les favoris
@@ -184,6 +194,7 @@ PLUGIN_FAVORITES_USE_DSTM
 PLUGIN_FAVORITES_USE_DSTM_DESC
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
 	EN	Register favorites as options for "Don't Stop The Music".
+	EN_GB	Register favourites as options for "Don't Stop The Music".
 	FR	Utiliser les favoris en tant qu'option pour "N'arrêtez pas la musique".
 	NO	Legg inn favoritter som valg for "Ikke stopp musikken".
 	NL	Gebruik favorieten als opties voor Don't Stop The Music.
@@ -208,6 +219,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
+	EN_GB	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
 	FI	Suosikit-laajennuksen avulla voit selata opml-pohjaisia soittoluetteloita ja muokata palvelimeen tallennettuja opml-soittoluetteloita. Lisää tämä tila kohtaan Muut palvelimen kotisivulla valitsemalla alla oleva vaihtoehto.
 	FR	Le plugin des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous "Extras" sur la page d'accueil du serveur.
@@ -388,6 +400,7 @@ PLUGIN_FAVORITES_LOADING
 	DA	Indlæser Favoritter...
 	DE	Lade Favoriten...
 	EN	Loading Favorites...
+	EN_GB	Loading Favourites...
 	ES	Cargando favoritos...
 	FI	Ladataan suosikkeja...
 	FR	Chargement des favoris...
@@ -615,6 +628,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
 	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen
 	EN	When you select a favorite contributor, genre or album, drill down to its content
+	EN_GB	When you select a favourite contributor, genre or album, drill down to its content
 	FR	Lors de la sélection d'un artiste, d'un genre ou d'un album favori, accéder à son contenu
 	NL	Als je een favoriete uitvoerende, genre of album selecteert, blader door tot de inhoud ervan
 	NO	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.

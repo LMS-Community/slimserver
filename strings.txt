@@ -20,6 +20,7 @@ LANGUAGE_CHOICES
 	DA	Dansk
 	DE	Deutsch
 	EN	English
+	EN_GB	English (British) *
 	ES	Español
 	FI	Suomi
 	FR	Français
@@ -40,6 +41,7 @@ LOCALE_WIN
 	DA	dan_dnk
 	DE	deu_deu
 	EN	enu_usa
+	EN_GB	eng_gbr
 	ES	esp_esp
 	FI	fin_fin
 	FR	fra_fra
@@ -59,6 +61,7 @@ LOCALE
 	DA	da_DK
 	DE	de_DE
 	EN	en_US
+	EN_GB	en_GB
 	ES	es_ES
 	FI	fi_FI
 	FR	fr_FR
@@ -77,7 +80,7 @@ CREDITS
 	CS	Roman Smetak
 	DA	Ulrik Mehr, Morten Fischer-Madsen
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
-	ES	Andy Spiers, Néstor Spedalieri
+	ES	Andy Spiers, Néstor Spedalieri	
 	FI	Tomi Tuominen, Jarkko Ahonen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	HE	Avi Stone
@@ -93,7 +96,7 @@ COPYRIGHT
 	CS	© 2001-2021 Logitech - verze 8.3.0
 	DA	© 2001-2021 Logitech - version 8.3.0
 	DE	© 2001-2021 Logitech Version 8.3.0
-	EN	© 2001-2021 Logitech Version 8.3.0
+	EN	© 2001-2021 Logitech Version 8.3.0	
 	ES	© 2001-2021 Logitech Versión 8.3.0
 	FI	© 2001-2021 Logitechin versio 8.3.0
 	FR	© 2001-2021 Logitech Version 8.3.0
@@ -3529,6 +3532,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	DA	Lysstyrken på afspillerens display kan indstilles forskelligt alt efter om den er tændt, slukket eller ikke i brug (pauseskærm). Lysstyrken kan også justeres automatisk når du trykker på en knap, begynder at spille et nummer eller ikke bruger den i et stykke tid. Du kan også deaktivere den automatiske regulering.
 	DE	Sie können die Helligkeit des Display für die drei Zustände 'ein', 'aus' und 'Bildschirmschoner' festlegen. Außerdem können Sie bestimmen, dass sie automatisch angepasst wird, wenn eine Taste gedrückt bzw. ein Titel wiedergegeben wird oder eine Weile lang nichts geschieht. Sie können diese automatische Funktion auch deaktivieren.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
+	EN_GB	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behaviour.
 	ES	Se puede establecer el brillo de la pantalla del reproductor cuando está encendido, apagado o inactivo (protector de pantalla). También se puede ajustar automáticamente cuando se pulsa un botón, se inicia la reproducción de una canción o se deja inactivo un tiempo. Se puede optar por desactivar este comportamiento automático.
 	FI	Soittimen näytön kirkkaus voidaan asettaa erikseen soittimen eri tiloja varten: kun soitin on päällä, kun soitin ei ole päällä, kun soitinta ei käytetä (näytönsäästäjä). Soitin voi myös säätää kirkkautta automaattisesti, kun painiketta painetaan, kun kappaleen soitto käynnistetään tai kun soitin on käyttämättä jonkin aikaa.  Kirkkauden automaattinen säätäminen on mahdollista poistaa käytöstä.
 	FR	Vous pouvez modifier la luminosité de l'afficheur de la platine lorsque celle-ci est allumée, éteinte ou en veille (avec écran de veille). Elle peut également être réglée automatiquement lorsque vous appuyez sur un bouton de la télécommande, lorsque vous commencez à lire un morceau ou lorsque la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
@@ -14255,6 +14259,7 @@ BEHAVIOR_SETTINGS
 	DA	Funktion
 	DE	Verhalten
 	EN	Behavior
+	EN_GB	Behaviour
 	ES	Comportamiento
 	FI	Toiminta
 	FR	Comportement
@@ -15526,6 +15531,7 @@ CSRF_ERROR_INFO
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Logitech Media Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Logitech Media Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
 	DE	Damit Sie diese URL aus einem Favoriten/Lesezeichen oder einem anderen Verfahren als aus der Logitech Media Server-Web-Benutzeroberfläche aufrufen können, müssen Sie eine URL mit dem Sicherheitsparameter 'cauth' verwenden. Trat dieser Fehler beim Klicken auf einen Link in der Logitech Media Server-Web-Benutzeroberfläche auf, sollten Sie prüfen, ob der Browser (sowie Proxyserver und Spyware-/Firewall-Software) das Senden von 'Referer'-Kopfzeilen zulässt. Dies ist die korrekte URL für die gewünschte Verbindung:
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
+	EN_GB	In order to request this URL from a Bookmark/Favourite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
 	ES	Para solicitar esta URL de un marcador/favorito, o por otro medio que no consista en seguir un vínculo desde la interfaz Web de Logitech Media Server, deberá usar una URL con un parámetro de seguridad \"cauth\". Si recibió este error al seguir un vínculo desde la interfaz Web de Logitech Media Server, conviene que se asegure de que el software del navegador Web (incluidos servidores y software para spyware/privacidad) permite el envío de encabezados \"Referer\". A continuación se muestra la URL correcta para la URL a la que se intentó acceder.
 	FI	Jos haluat pyytää tämän URL:n kirjanmerkistä tai suosikista tai jotenkin muuten kuin Logitech Media Serverin internet-liittymän linkin välityksellä, sinun täytyy käyttää URL:ää, jolla on \"cauth\"-suojausparametri. Jos tämä virhe tapahtui, kun napsautit Logitech Media Serverin internet-liittymässä olevaa linkkiä, varmista että selainohjelma (mukaan luettuna välityspalvelin ja vakoiluohjelmien torjuntaohjelma tai yksityisyydensuojaohjelma) sallii \"Referer\"-otsikoiden lähettämisen. Alla on kokeilemasi URL-osoitteen asianmukainen URL-osoite.
 	FR	Pour demander cette URL à partir d'un signet ou d'un moyen autre qu'à partir d'un lien dans l'interface du Logitech Media Server, vous devez utiliser l'URL avec un paramètre de sécurité \"cauth\". Si cette erreur s'est produite lorsque vous avez suivi un lien à partir de l'interface Web du Logitech Media Server, vérifiez que votre navigateur, vos serveurs proxy et votre programme anti logiciels espions autorisent l'envoi d'en-têtes \"Referer\". Vous trouverez ci-dessous l'URL correcte à utiliser à la place de l'URL spécifiée.
@@ -19199,6 +19205,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	DA	Spektrumanalyse
 	DE	Oszillograph
 	EN	Spectrum Analyzer
+	EN_GB	Spectrum Analyser
 	ES	Analizador de espectro
 	FI	Spektrianalysaattori
 	FR	Analyseur de spectre
@@ -20275,6 +20282,7 @@ DEBUG_FAVORITES
 	DA	Gem og afspil favoritter
 	DE	Wiedergabe & Speichern von Favoriten
 	EN	Favorites Saving & Playing
+	EN_GB	Favourites Saving & Playing
 	ES	Guardar y reproducir favoritos
 	FI	Suosikkien tallennus ja toisto
 	FR	Enregistrement et lecture des favoris
@@ -22057,6 +22065,7 @@ JIVE_DELETE_FROM_FAVORITES
 	DA	Slet favorit
 	DE	Favorit löschen
 	EN	Delete Favorite
+	EN_GB	Delete Favourite
 	ES	Eliminar favorito
 	FI	Poista suosikki
 	FR	Supprimer les favoris
@@ -22118,6 +22127,7 @@ JIVE_SAVE_TO_FAVORITES
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
+	EN_GB	Save to Favourites
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
@@ -22208,6 +22218,7 @@ JIVE_SEARCHFOR_HELP
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at begynde søgningen.
 	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Starten der Suche die mittlere Taste erneut.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
+	EN_GB	Use the scroll wheel to change letters, then press the centre button to select that letter. Press the centre button again to start your search.
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para iniciar la búsqueda.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Käynnistä haku painamalla keskipainiketta uudelleen.
 	FR	Utiliser la molette pour choisir une lettre, puis appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
@@ -22223,6 +22234,7 @@ JIVE_CHANGEPLAYERNAME_HELP
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at ændre navnet på afspilleren.
 	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Taste erneut, um den Namen des Players zu ändern.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
+	EN_GB	Use the scroll wheel to change letters, then press the centre button to select that letter. Press the centre button again to change the name of your player.
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para cambiar el nombre del reproductor.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Vaihda soittimen nimi painamalla keskipainiketta uudelleen.
 	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez à nouveau sur le bouton central pour modifier le nom de la platine.
@@ -22238,6 +22250,7 @@ JIVE_SAVEPLAYLIST_HELP
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at gemme afspilningslisten.
 	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Speichern der Wiedergabeliste die mittlere Taste erneut.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to save the playlist.
+	EN_GB	Use the scroll wheel to change letters, then press the centre button to select that letter. Press the centre button again to save the playlist.
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionar la deseada. Pulse de nuevo el botón central para guarda la lista de reproducción.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Tallenna soittoluettelo painamalla keskipainiketta uudelleen.
 	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central à nouveau pour enregistrer la liste de lecture.
@@ -22283,6 +22296,7 @@ JIVE_ALARMSET_HELP
 	DA	Brug drejeknappen til at skifte tal på uret, og tryk på midterknappen for at vælge det. Tryk på midterknappen når klokkeslættet er angivet for at indstille vækketidspunktet.
 	DE	Wählen Sie die gewünschte Ziffer mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Taste, nachdem Sie die Weckzeit eingestellt haben.
 	EN	Use the scroll wheel to change clock digits, then press the center button to select that digit. Press the center button after time is entered to set the alarm time.
+	EN_GB	Use the scroll wheel to change clock digits, then press the centre button to select that digit. Press the centre button after time is entered to set the alarm time.
 	ES	Cambie los dígitos del reloj con la rueda de desplazamiento y pulse el botón central para seleccionar el dígito deseado. Pulse el botón central después de introducir la hora para configurar la hora de la alarma.
 	FI	Voit vaihtaa kellon numeroita vierityskiekolla ja valita numeron keskipainikkeella. Paina keskipainiketta, kun olet asettanut herätysajan.
 	FR	Utilisez la molette pour changer les chiffres de l'horloge, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central une fois l'heure sélectionnée pour définir l'heure de l'alarme.
@@ -24095,6 +24109,7 @@ HOWTO_DOWN_CONTROLLER
 	DA	Drej knappen til højre for at markere Internetradio, og tryk på den for at vælge.
 	DE	Drehen Sie den Regler nach rechts, um Internetradio zu wählen. Drücken Sie die mittlere Taste, um die Funktion zu aktivieren.
 	EN	Spin the wheel to the right to scroll to Internet Radio, and press the center button to select.
+	EN_GB	Spin the wheel to the right to scroll to Internet Radio, and press the centre button to select.
 	ES	Gire la rueda a la derecha para desplazarse a Radio por Internet y pulse el botón central para seleccionar.
 	FI	Pyöritä kiekkoa oikealle, kunnes löydät nettiradion, ja valitse se keskipainikkeella.
 	FR	Tournez la molette vers la droite pour faire défiler vers les radios Internet et appuyez sur le bouton central pour effectuer la sélection.
@@ -24125,6 +24140,7 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	DA	Rul til Vi anbefaler, og tryk på midterknappen.
 	DE	Markieren Sie 'Unsere Empfehlungen' und drücken Sie die mittlere Taste.
 	EN	Scroll to STAFF PICKS and press the center button.
+	EN_GB	Scroll to STAFF PICKS and press the centre button.
 	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse el botón central.
 	FI	Selaa kohtaan SUOSITUKSET ja paina keskipainiketta.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton central.
@@ -24170,6 +24186,7 @@ HOWTO_INTERNET_RADIO_CONTROLLER
 	DA	Find Det bedste fra internetradio, og tryk på midterknappen.
 	DE	Markieren Sie 'Die besten Internetradiosender' und drücken Sie die mittlere Taste.
 	EN	Scroll to "Best of Internet Radio" and press the center button.
+	EN_GB	Scroll to "Best of Internet Radio" and press the centre button.
 	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse el botón central.
 	FI	Siirry internet-radion parhaisiin ja paina keskipainiketta.
 	FR	Faites défiler vers Le meilleur des radios Internet et appuyez sur le bouton central.

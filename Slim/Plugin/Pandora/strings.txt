@@ -289,6 +289,7 @@ PLUGIN_PANDORA_ADD_FAVORITES
 	DA	Føj station til favoritter
 	DE	Sender zu Favoriten hinzufügen
 	EN	Add station to favorites
+	EN_GB	Add station to favourites
 	ES	Agregar emisora a favoritos
 	FI	Lisää kanava suosikkeihin
 	FR	Ajouter la station aux favoris
@@ -305,6 +306,7 @@ PLUGIN_PANDORA_DEL_FAVORITES
 	DA	Fjern station fra favoritter
 	DE	Sender aus Favoriten entfernen
 	EN	Remove station from favorites
+	EN_GB	Remove station from favourites
 	ES	Quitar emisora de favoritos
 	FI	Poista kanava suosikeista
 	FR	Supprimer la station des favoris
