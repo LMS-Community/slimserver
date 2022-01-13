@@ -446,6 +446,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	DA	Ny favorit
 	DE	Neuer Favorit
 	EN	New Favorite
+	EN_GB	New Favourite
 	ES	Favorito nuevo
 	FI	Uusi suosikki
 	FR	Nouveau favori
@@ -581,6 +582,7 @@ PLUGIN_FAVORITES_SAVE
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
+	EN_GB	Save to Favourites
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
@@ -596,6 +598,7 @@ PLUGIN_FAVORITES_REMOVE
 	DA	Fjern fra Favoritter
 	DE	Aus Favoriten entfernen
 	EN	Remove from Favorites
+	EN_GB	Remove from Favourites
 	ES	Quitar de Favoritos
 	FI	Poista suosikeista
 	FR	Supprimer des favoris

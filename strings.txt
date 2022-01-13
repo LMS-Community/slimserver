@@ -80,7 +80,7 @@ CREDITS
 	CS	Roman Smetak
 	DA	Ulrik Mehr, Morten Fischer-Madsen
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
-	ES	Andy Spiers, Néstor Spedalieri	
+	ES	Andy Spiers, Néstor Spedalieri
 	FI	Tomi Tuominen, Jarkko Ahonen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	HE	Avi Stone
@@ -96,7 +96,7 @@ COPYRIGHT
 	CS	© 2001-2021 Logitech - verze 8.3.0
 	DA	© 2001-2021 Logitech - version 8.3.0
 	DE	© 2001-2021 Logitech Version 8.3.0
-	EN	© 2001-2021 Logitech Version 8.3.0	
+	EN	© 2001-2021 Logitech Version 8.3.0
 	ES	© 2001-2021 Logitech Versión 8.3.0
 	FI	© 2001-2021 Logitechin versio 8.3.0
 	FR	© 2001-2021 Logitech Version 8.3.0
