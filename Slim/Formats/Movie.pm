@@ -230,7 +230,15 @@ sub parseStream {
 			return 0;
 		}
 		
-		$offset += $args->{_need};
+		# if there is a stco, the first entry is the audio_offset
+		if ($args->{_atom} eq 'stco') {
+			$args->{_audio_offset} = unpack('N', substr($args->{_scanbuf}, $offset+16, 4));
+			main::DEBUGLOG && $log->is_debug && $log->debug("found audio offset with stco $args->{_audio_offset}");
+		}
+		
+		# need to dive into atoms to find optional stco
+		$offset += ($args->{_atom} !~ /^(moov|trak|mdia|minf|stbl)$/) ? $args->{_need} : 8;
+
 		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
 		
 		# mdat reached = audio offset & size acquired
@@ -273,9 +281,9 @@ sub parseStream {
 	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
 	$info->{fh} = $fh;
 	
-	# the offset is *after* the mdat atom, make size consistent
-	$info->{audio_offset} = $args->{_mdat_} + 8;
-	$info->{audio_size} -= 8;
+	# audio offset from stco or mdat position, but audio_size needs adjustment
+	$info->{audio_offset} = $args->{_audio_offset} || ($args->{_mdat_} + 8);
+	$info->{audio_size} -= $info->{audio_offset} - $args->{_mdat_};
 	
 	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
 	# MPEG-4 ADTS Scalable Sampling Rate = 104	
