@@ -125,7 +125,7 @@ PLUGIN_SLACKER_FAVORITE_TRACK
 	DA	Marker som Slacker-favorit
 	DE	Als Slacker-Favorit kennzeichnen
 	EN	Mark as Slacker favorite
-	EN_GB	Mark as Slacker favorite
+	EN_GB	Mark as Slacker favourite
 	ES	Marcar como favorito de Slacker
 	FI	Merkitse Slacker-suosikiksi
 	FR	Marquer comme favori Slacker
