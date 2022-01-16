@@ -3645,6 +3645,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	DA	Du kan selv vælge hvilke menupunkter der skal vises på øverste niveau i hovedmenuen på afspillerens display. Du kan flytte menupunkter op og ned eller fjerne dem ved at klikke på knapperne ud for dem. Klik på Tilføj hvis du vil tilføje et punkt som er fjernet fra menuen.
 	DE	Sie können die im Hauptmenü des Players verfügbaren Einträge bestimmen. Klicken Sie auf die entsprechenden Schaltflächen, um Einträge nach oben bzw. unten zu verschieben oder sie zu entfernen. Klicken Sie auf 'Hinzufügen', um einen entfernten Eintrag wieder aufzunehmen.
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
+	EN_GB	You can customise the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	ES	Se pueden personalizar las opciones que están disponibles en el nivel superior del menú Inicio en la pantalla del reproductor. Haga clic para subir o bajar elementos o para quitar elementos de menú. Haga clic en "Agregar" para añadir de nuevo un elemento que se había quitado de un menú.
 	FI	Voit mukauttaa vaihtoehtoja, jotka ovat valittavissa ylätason Koti-valikosta soittimen näytössä. Siirrä valikkokohteita ylös- tai alaspäin napsauttamalla tai poista niitä. Voit lisätä poistamasi kohdan takaisin valikkoon valitsemalla Lisää.
 	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez sur un élément pour le déplacer verticalement ou pour le supprimer. Cliquez sur "Ajouter" pour ajouter un élément qui a été supprimé.
@@ -4672,6 +4673,7 @@ SETUP_SYNCHRONIZE
 	DA	Synkroniser
 	DE	Synchronisieren
 	EN	Synchronize
+	EN_GB	Synchronise
 	ES	Sincronizar
 	FI	Synkronoi
 	FR	Synchroniser
@@ -4691,6 +4693,7 @@ SETUP_SYNCHRONIZE_DESC
 	DA	Afspilleren kan synkroniseres med andre afspillere, således at alle afspillerne spiller det samme nummer på samme tid. Vælg de afspillere du vil synkronisere, fra listen over de synkroniseringsgrupper som kan anvendes. Vælg Ingen synkronisering for at stoppe synkroniseringen.
 	DE	Der Player kann mit anderen Playern synchronisiert werden, um simultan dieselbe Musik wiederzugeben. Wählen Sie die gewünschten Player aus der Liste der verfügbaren Synchronisierungsgruppen. Wählen Sie 'Keine Synchronisierung', um die Funktion zu deaktivieren.
 	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
+	EN_GB	The player can be synchronised with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronise with from the list of available synchronisation groups. Choose No Synchronisation to stop synchronisation.
 	ES	El reproductor se puede sincronizar con otros reproductores, lo que les permite reproducir la misma música simultáneamente. Elija los reproductores con los que desear realizar la sincronización en la lista de grupos de sincronización disponibles. Elija Sin sincronización para detener la sincronización.
 	FI	Soitin voidaan synkronoida muiden soitinten kanssa. Tällöin soittimilla voidaan soittaa samaa musiikkia samanaikaisesti. Valitse synkronoitavat soittimet valittavissa olevien synkronointiryhmien luettelosta. Lopeta synkronointi valitsemalla Ei synkronointia.
 	FR	La platine peut se synchroniser à d'autres platines pour lire la même musique qu'elles. Choisissez les platines avec lesquelles vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom de la platine en cours pour arrêter la synchronisation.
@@ -4710,6 +4713,7 @@ SETUP_NO_SYNCHRONIZATION
 	DA	Ingen synkronisering
 	DE	Keine Synchronisation
 	EN	No Synchronization
+	EN_GB	No Synchronisation
 	ES	Sin sincronización
 	FI	Ei synkronointia
 	FR	Non synchronisé
@@ -4767,6 +4771,7 @@ SETUP_SYNCVOLUME
 	DA	Synkroniser lydstyrke
 	DE	Lautstärke synchronisieren
 	EN	Synchronize Volume
+	EN_GB	Synchronise Volume
 	ES	Sincronizar volumen
 	FI	Synkronoi äänenvoimakkuus
 	FR	Synchroniser le volume
@@ -4841,6 +4846,7 @@ SETUP_SYNCPOWER
 	DA	Synkroniser tænd/sluk
 	DE	Ein-/Ausschalten synchronisieren
 	EN	Synchronize Power
+	EN_GB	Synchronise Power
 	ES	Sincronizar encendido
 	FI	Synkronoi virta
 	FR	Synchroniser la mise en marche
@@ -5037,6 +5043,7 @@ SETUP_SYNCSTARTDELAY
 	DA	Forsinkelse ved start af synkroniserede afspillere (ms)
 	DE	Startverzögerung für synchronisierte Player (ms)
 	EN	Synchronized Players Startup Delay (ms)
+	EN_GB	Synchronised Players Startup Delay (ms)
 	ES	Retraso de inicio de reproductores sincronizados (ms)
 	FI	Synkronoitujen soitinten käynnistysviive (ms)
 	FR	Délai de démarrage des platines synchronisées (ms)
@@ -5052,6 +5059,7 @@ SETUP_SYNCSTARTDELAY_DESC
 	DA	Når flere afspillere er synkroniseret, vil Logitech Media Server sikre at alle afspillere starter nummeret på samme tid. For at være sikker på at alle afspillere har modtaget startkommandoen før afspilningen starter, sendes kommandoen forud, og hver afspiller venter til det rigtige tidspunkt før nummeret starter. Hvis netværket er overbelastet, hvilket kan ske hvis der er mange afspillere og/eller hvis netværket er trådløst, vil standardværdien for forsinkelsen på 200 ms måske ikke være tilstrækkelig. Du kan ændre standardværdien her hvis nødvendigt.
 	DE	Wenn mehrere Player synchronisiert sind, gibt Logitech Media Server jedem Player die Anweisung, den Titel zur gleichen Zeit zu starten. Es muss sichergestellt sein, dass jeder Player genügend Zeit hat, den Startbefehl zu empfangen, bevor die gleichzeitige Wiedergabe beginnt. Daher wird der Startbefehl vorzeitig gesendet und die Player können den richtigen Zeitpunkt abwarten. Sollte das Netzwerk überlastet sein, was vor allem auftreten kann, wenn sich viele Player im Netzwerk befinden und drahtlose Netzwerke genutzt werden, reicht die Standardverzögerung von 200 ms evtl. nicht aus. Sie können bei Bedarf den Standardwert hier ändern.
 	EN	When multiple players are synchronized, Logitech Media Server tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 200ms may not be sufficient. You can change the default here if necessary.
+	EN_GB	When multiple players are synchronised, Logitech Media Server tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 200ms may not be sufficient. You can change the default here if necessary.
 	ES	Cuando hay varios reproductores sincronizados, Logitech Media Server indica a cada uno de ellos que comience la reproducción de la pista al mismo tiempo que los otros. A fin de asegurarse de que cada reproductor tiene tiempo de recibir el comando de inicio antes de que todos los reproductores entren en acción, Logitech Media Server envía el comando de inicio por adelantado y todos los reproductores esperan hasta el momento preciso para iniciarse. Si la red está demasiado congestionada (algo especialmente probable cuando hay muchos reproductores en la red, así como en redes inalámbricas), es posible que el retraso predeterminado de 200 ms sea insuficiente. Aquí puede cambiar el valor predeterminado, si es necesario.
 	FI	Jos useita soittimia synkronoidaan, Logitech Media Server käskee kaikkia niistä aloittamaan kappaleen toiston samaan aikaan. Sen täytyy varmistaa, että jokaisella soittimella on riittävästi aikaa aloituskomennon vastaanottamiseen, ennen kuin kaikki soittimet aloittavat toiston yhdessä, joten se lähettää aloituskomennon etuajassa, ja soittimet odottavat oikeaa hetkeä toiston aloittamiseen. Jos verkkoliikenne on ruuhkaista, oletusviive 200 ms ei ole välttämättä riittävä. Näin saattaa tapahtua, jos verkossa on paljon soittimia. Tämä on yleinen ongelma myös langattomissa verkoissa. Voit muuttaa oletusviivettä tarvittaessa.
 	FR	Lorsque plusieurs platines sont synchronisées, le Logitech Media Server indique à chacune de démarrer la lecture du morceau en même temps. Le serveur vérifie que chaque platine dispose d'assez de temps pour recevoir la commande avant de démarrer. Il envoie donc la commande en avance et chaque platine attend le bon moment pour démarrer. Si le réseau est surchargé, comme cela peut être le cas si de nombreuses platines sont présentes et avec des réseaux sans fil, le délai de 200 ms par défaut peut ne pas être suffisant. Vous pouvez modifier la valeur par défaut si nécessaire.
@@ -5097,6 +5105,7 @@ SETUP_MAINTAINSYNC
 	DA	Oprethold synkronisering
 	DE	Synchronisation beibehalten
 	EN	Maintain Synchronization
+	EN_GB	Maintain Synchronisation
 	ES	Mantener sincronización
 	FI	Pidä synkronointia yllä
 	FR	Conserver la synchronisation
@@ -5112,6 +5121,7 @@ SETUP_MAINTAINSYNC_DESC
 	DA	Selv hvis flere afspillere er perfekt synkroniseret når afspilningen begynder, kan der opstå afvigelser i løbet af kort tid (som regel efter et par minutter). Forskelle på mere end 30 millisekunder er hørbare hvis du kan høre flere afspillere på samme tid. Logitech Media Server håndterer dette ved kontinuerligt at registrere hvor meget hver afspiller har spillet, og i givet fald foretage småjusteringer. Du kan slå denne funktion til og fra.
 	DE	Auch wenn mehrere Player die Wiedergabe eines Titels gleichzeitig starten, können sie nach einer gewissen Zeit (i.d.R. nach ein paar Minuten) voneinander abweichen. Eine Differenz von mehr als 30 ms ist wahrnehmbar, wenn die Ausgabe mehrerer Player gleichzeitig gehört werden kann. Logitech Media Server prüft ständig, wie viel ein Player wiedergegeben hat und nimmt bei Bedarf Änderungen vor. Sie können dieses Verhalten aktivieren bzw. deaktivieren.
 	EN	Even when several players start playing a track in perfect synchronization, they can drift apart over time (usually after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. Logitech Media Server deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
+	EN_GB	Even when several players start playing a track in perfect synchronisation, they can drift apart over time (usually after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. Logitech Media Server deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
 	ES	Aunque varios reproductores empiecen a reproducir una pista perfectamente sincronizados, pueden perder la sincronización al cabo de un tiempo (a menudo es cuestión de minutos). Si hay una diferencia de más de 30 ms (milisegundos) es perceptible cuando hay salida de música a través de varios reproductores simultáneamente. Logitech Media Server intenta remediarlo mediante el seguimiento continuo de cada reproductor y la realización de los ajustes necesarios. Esta función se puede activar o desactivar.
 	FI	Vaikka useat soittimet aloittaisivatkin kappaleen soiton täysin synkronoidusti, ajan myötä (yleensä muutaman minuutin kuluttua) niiden välille syntyy eroja. Yli 30 millisekunnin ero on havaittava, jos kuulet musiikin useista lähteistä samanaikaisesti. Logitech Media Server pyrkii korjaamaan virheen seuraamalla jatkuvasti sitä, kuinka pitkään kukin soitin on soittanut, ja tekemällä pieniä säätöjä tarpeen mukaan. Voit valita, pidätkö toiminnon käytössä.
 	FR	Même lorsque plusieurs platines commencent à lire un morceau en parfaite synchronisation, il est possible qu'elles se désynchronisent au fil du temps (après quelques minutes, en général). Une différence de plus de 30ms sera perceptible si vous pouvez entendre le son en provenance de ces platines. Le Logitech Media Server effectue le suivi des morceaux lus par chaque platine et effectue les ajustements nécessaires. Vous pouvez activer ou désactiver ce comportement.
@@ -5127,6 +5137,7 @@ SETUP_MAINTAINSYNC_ON
 	DA	Oprethold synkronisering ved afspilning
 	DE	Synchronisation bei der Wiedergabe beibehalten
 	EN	Maintain synchronization while playing
+	EN_GB	Maintain synchronisation while playing
 	ES	Mantener sincronización durante reproducción
 	FI	Pidä synkronointia yllä toiston aikana
 	FR	Conserver la synchronisation au cours de la lecture
@@ -5142,6 +5153,7 @@ SETUP_MAINTAINSYNC_OFF
 	DA	Oprethold ikke synkronisering ved afspilning
 	DE	Synchronisation nicht beibehalten
 	EN	Don't maintain synchronization
+	EN_GB	Don't maintain synchronisation
 	ES	No mantener sincronización
 	FI	Älä ylläpidä synkronointia
 	FR	Ne pas conserver la synchronisation
@@ -5187,6 +5199,7 @@ SETUP_MINSYNCADJUST
 	DA	Mindste justering ved synkronisering (ms)
 	DE	Minimale Synchronisationsanpassung (ms)
 	EN	Minimum Synchronization Adjustment (ms)
+	EN_GB	Minimum Synchronisation Adjustment (ms)
 	ES	Ajuste mínimo de sincronización (ms)
 	FI	Synkronisoinnin vähimmäissäätö (ms)
 	FR	Ajustement minimal de synchronisation (ms)
@@ -5202,6 +5215,7 @@ SETUP_MINSYNCADJUST_DESC
 	DA	Når Logitech Media Server registrerer at to synkroniserede afspillere ikke er helt synkroniseret, foretages der en mindre justering, normalt af den afspiller som er bagud. Du kan indstille hvor meget en afspiller højst må justeres. Jo større interval, jo sjældnere foretages justeringerne, og jo mere kan afspillerne miste deres synkronisering.
 	DE	Wenn Logitech Media Server erkennt, dass die Synchronisation zweier Player leicht verschoben ist, wird i.d.R. am langsameren Player eine geringfügige Anpassung vorgenommen. Sie können die minimale Anpassung für diesen Player konfigurieren. Je größer dieses Intervall ist, desto seltener werden Anpassungen vorgenommen aber desto häufiger können Abweichungen vorkommen.
 	EN	When Logitech Media Server detects that two synchronized players have gotten a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has gotten behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
+	EN_GB	When Logitech Media Server detects that two synchronised players have gotten a little bit out of synchronisation with each other, it makes a small adjustment, usually to the player that has gotten behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
 	ES	Cuando Logitech Media Server detecta una leve falta de sincronización entre dos reproductores sincronizados, realiza un pequeño ajuste, por lo general en el reproductor atrasado. Puede configurar el tamaño mínimo de los ajustes para este reproductor. Cuanto más largo sea el intervalo, menos frecuente será la realización de ajustes y mayor será la desincronización posible entre los reproductores.
 	FI	Jos Logitech Media Server havaitsee, että kaksi synkronoitua soitinta on joutunut hieman epätahtiin toistensa kanssa, se tekee pienen säädön, yleensä soittimeen, joka on jäänyt jälkeen. Voit määrittää tällaisen säädön vähimmäiskoon tälle soittimelle. Mitä suurempi intervalli on, sitä harvemmin säätöjä tehdään, mutta sitä useammin soittimet myös joutuvat epätahtiin.
 	FR	Lorsque le Logitech Media Server détecte que deux platines se sont désynchronisées, il effectue des ajustements, généralement sur la platine qui a pris du retard. Vous pouvez configurer la taille minimale de ces ajustements pour cette platine. Plus l'intervalle est important, plus les ajustements seront espacés. Les retards autorisés pour les platines seront ainsi plus importants.
@@ -5232,6 +5246,7 @@ SETUP_PACKETLATENCY_DESC
 	DA	Logitech Media Server måler automatisk netværksforsinkelsen mellem sig selv og afspilleren. Det er vigtigt når synkroniseringen skal opretholdes. Det sker at disse mål er for inkonsistente til at være praktisk anvendelige, og i så fald kan du angive en gennemsnitsværdi her.
 	DE	Logitech Media Server misst automatisch die Netzwerk-Wartezeit zwischen der Anwendung und dem Player. Dies ist zum Beibehalten der Synchronisation wichtig. Wenn diese Messungen zu inkonsistent sind, empfehlen wir, hier einen typischen Wert einzugeben.
 	EN	Logitech Media Server automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occasionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
+	EN_GB	Logitech Media Server automatically measures the network latency between it and the player. This is important when maintaining synchronisation. Occasionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
 	ES	Logitech Media Server mide automáticamente la latencia de red entre el dispositivo y el reproductor. Esto es importante al mantener la sincronización. En ocasiones, puede que estas mediciones no sean lo suficientemente coherentes para resultar útiles; en ese caso puede especificar un valor típico aquí.
 	FI	Logitech Media Server mittaa automaattisesti verkkoviiveen sen ja soittimen välillä. Tämä on tärkeää synkronoinnin ylläpitämistä varten. Toisinaan mittaukset saattava olla liian ristiriitaisia, jotta niistä olisi hyötyä. Tällaisessa tapauksessa voit määrittää tyypillisen arvon.
 	FR	Le Logitech Media Server mesure automatiquement la latence du réseau entre le serveur et la platine. Ces données sont importantes pour conserver la synchronisation entre les deux. Il arrive que ces mesures soient incohérentes, auquel cas vous devrez spécifier une valeur ici.
@@ -13502,6 +13517,7 @@ SYNCHRONIZE
 	DA	Synkroniser
 	DE	Synchronisieren
 	EN	Synchronize
+	EN_GB	Synchronise
 	ES	Sincronizar
 	FI	Synkronoi
 	FR	Synchroniser
@@ -13521,6 +13537,7 @@ NOT_SYNCHRONIZED
 	DA	Ikke synkroniseret
 	DE	Nicht synchronisiert
 	EN	Not Synchronized
+	EN_GB	Not Synchronised
 	ES	Sin sincronizar
 	FI	Ei synkronoitu
 	FR	Non synchronisé
@@ -19143,6 +19160,7 @@ SETUP_FXLOOPCLOCK_DESC
 	DA	Den eksterne processors output skal ideelt synkroniseres med dens input. Hvis du vælger synkroniseret clock-funktion, bliver det indkommende signals clockfrekvens ændret af Transporters indbyggede oscillator, hvilket giver færre vibrationer (jitter). Ved asynkron funktion, tager Transporter clock-frekvensen fra det indkommende signal, så det skal ikke synkroniseres.
 	DE	Die Ausgabe des externen Prozessors sollte mit seiner Eingabe synchronisiert werden. Wählen Sie in diesem Fall den synchronen Taktmodus. Das eingehende Signal wird dann vom internen Oszillator des Transporter auf minimale Schwankung neu getaktet. Im asynchronen Modus übernimmt der Transporter den Takt vom eingehenden Signal, es muss also nicht synchronisiert werden.
 	EN	Preferably, the external processor's output will be synchronized to its input. Choose synchronous clock mode in this case, and the incoming signal will be reclocked by Transporter's internal oscillator for minimal jitter. In asynchronous mode, Transporter will recover the clock from the incoming signal, so it is not required to be synchronized.
+	EN_GB	Preferably, the external processor's output will be synchronised to its input. Choose synchronous clock mode in this case, and the incoming signal will be reclocked by Transporter's internal oscillator for minimal jitter. In asynchronous mode, Transporter will recover the clock from the incoming signal, so it is not required to be synchronised.
 	ES	Preferiblemente, la salida del procesador externo se sincronizará a su entrada. En este caso debe elegir el modo de reloj sincrónico para que el oscilador interno de Transporter vuelva a registrar la señal entrante en el reloj de palabras, con el fin de minimizar la fluctuación. En modo asincrónico, Transporter recupera el reloj de la señal entrante, por lo que no es esencial la sincronización.
 	FI	Ulkoisen prosessorin lähtösignaali synkronoidaan mieluiten sen tulosignaalin kanssa. Valitse tässä tapauksessa synkronoitu kellotila. Transporterin sisäinen oskillaattori kellottaa tällöin tulosignaalin uudelleen keskihajonnan minimoimiseksi. Epäsynkronoidussa tilassa Transporter poimii kellon tulosignaalista, joten sitä ei tarvitse synkronoida.
 	FR	La sortie du processeur externe sera synchronisée de préférence sur son entrée. Dans ce cas, sélectionnez le mode horloge synchrone : l'oscillateur interne de Transporter modifiera le signal entrant afin d'en minimiser la fluctuation. En mode asynchrone, Transporter récupérera l'horloge à partir du signal entrant, évitant ainsi de devoir procéder à sa synchronisation.
@@ -20938,6 +20956,7 @@ DEBUG_PLAYER_SYNC
 	DA	Logføring af synkronisering af flere afspillere
 	DE	Synchronisation mehrerer Geräte
 	EN	Multi-Player Synchronization Logging
+	EN_GB	Multi-Player Synchronisation Logging
 	ES	Registro de sincronización de varios reproductores
 	FI	Usean soittimen synkronoinnin kirjaus
 	FR	Journalisation de la synchronisation des platines multiples
@@ -24586,6 +24605,7 @@ SYNC_ABOUT
 	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
 	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
 	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
+	EN_GB	Add one or more additional Squeezeboxes to use the Synchronise feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
 	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
 	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
 	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
