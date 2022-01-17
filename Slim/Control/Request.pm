@@ -32,7 +32,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
 =head1 COMMANDS & QUERIES LIST
 
- This table lists all supported commands and queries with their parameters. 
+ This table lists all supported commands and queries with their parameters.
 
  C     P0             P1                          P2                          P3               P4       P5
 
@@ -53,7 +53,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    rescanprogress  <tagged parameters>
  N    wipecache
  N    pragma          <pragma>
- 
+
  N    albums          <startindex>                <numitems>                  <tagged parameters>
  N    artists         <startindex>                <numitems>                  <tagged parameters>
  N    genres          <startindex>                <numitems>                  <tagged parameters>
@@ -65,7 +65,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  N    videos          <startindex>                <numitems>                  <tagged parameters>
  N    video_titles    <startindex>                <numitems>                  <tagged parameters>
- 
+
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
  N    playlists       edit                        <tagged parameters>
@@ -96,7 +96,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    sync            <playerindex|playerid|-|?>
  Y    mode            ?
  Y    irenable        <0|1|?|>
- 
+
  Y    alarms          <startindex>                <numitems>                  <tagged parameters>
  Y    signalstrength  ?
  Y    connected       ?
@@ -120,18 +120,18 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    play            <fadeInSecs>
  Y    playlist        add|append                  <item> (item can be a song, playlist or directory) <title> (override)
  Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
- Y    playlist        addtracks                   <searchterms>    
+ Y    playlist        addtracks                   <searchterms>
  Y    playlist        clear
  Y    playlist        delete                      <index>
  Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
- Y    playlist        deletetracks                <searchterms>   
+ Y    playlist        deletetracks                <searchterms>
  Y    playlist        index|jump                  <index|?>                   <fadeInSecs>     <0|1> (noplay)
  Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
  Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
- Y    playlist        inserttracks                <searchterms>    
+ Y    playlist        inserttracks                <searchterms>
  Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
- Y    playlist        loadtracks                  <searchterms>    
+ Y    playlist        loadtracks                  <searchterms>
  Y    playlist        move                        <fromindex>                 <toindex>
  Y    playlist        play|load|resume            <item> (item can be a song, playlist or directory) <title> (override) <fadeInSecs>
  Y    playlist        playtracks                  <searchterms>
@@ -142,7 +142,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlistcontrol <tagged parameters>
  Y    stop
  Y    time            <0..n|-n|+n|?>
- 
+
  Y    artist          ?
  Y    album           ?
  Y    duration        ?
@@ -151,9 +151,9 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    path            ?
  Y    current_title   ?
  Y    remote          ?
- 
+
  Y    playlist        tracks                      ?
- 
+
  Y    playlist        genre                       <index>                     ?
  Y    playlist        artist                      <index>                     ?
  Y    playlist        album                       <index>                     ?
@@ -161,18 +161,18 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlist        duration                    <index>                     ?
  Y    playlist        path                        <index>                     ?
  Y    playlist        remote                      <index>                     ?
- 
+
  Y    playlist        name                        ?
  Y    playlist        url                         ?
  Y    playlist        modified                    ?
  Y    playlist        playlistsinfo               <tagged parameters>
- 
+
  COMPOUND
- 
+
  N    serverstatus    <startindex>                <numitems>                  <tagged parameters>
  Y    status          <startindex>                <numitems>                  <tagged parameters>
- 
- 
+
+
  DEPRECATED (BUT STILL SUPPORTED)
  Y    mode            <play|pause|stop>
  Y    gototime        <0..n|-n|+n|?>
@@ -181,7 +181,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
 =head2 NOTIFICATION
 
- The following 'terms' are used for notifications 
+ The following 'terms' are used for notifications
 
  Y    client          disconnect
  Y    client          new
@@ -218,19 +218,19 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Requests are object that embodies all data related to performing an action or
  a query.
 
-=head2 ** client ID **          
+=head2 ** client ID **
 
    Requests store the client ID, if any, to which it applies
      my $clientid = $request->clientid();   # read
      $request->clientid($client->id());     # set
 
-   Methods are provided for convenience using a client, in particular all 
+   Methods are provided for convenience using a client, in particular all
    executeXXXX calls
      my $client = $request->client();       # read
      $request->client($client);             # set
 
    Some requests require a client to operate. This is encoded in the
-   request for error detection. These calls are unlikely to be useful to 
+   request for error detection. These calls are unlikely to be useful to
    users of the class but mentioned here for completeness.
      if ($request->needClient()) { ...      # read
      $request->needClient(1);               # set
@@ -282,10 +282,10 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 =head2 ** results **
 
    Queries, but some commands as well, do add results to a request. Results
-   are either single data points (f.e. how many elements where inserted) or 
+   are either single data points (f.e. how many elements where inserted) or
    loops (i.e. data for song 1, data being a list of single data point, data for
    song 2, etc).
-   Results are named like parameters. Obviously results are only available 
+   Results are named like parameters. Obviously results are only available
    once the request has been executed (without errors)
      my $data = $request->getResult('_value');
                                             # get a result
@@ -304,7 +304,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  parameter corresponding to the request object.
  Optionally, the subscribe routine accepts a filter, which limits calls to the
  subscriber callback to those requests matching the filter. The filter is
- in the form of an array ref containing arrays refs (one per dispatch level) 
+ in the form of an array ref containing arrays refs (one per dispatch level)
  containing lists of desirable commands (easier to code than explain, see
  examples below).
  Note that notifications are performed asynchronously from the corresponding
@@ -312,12 +312,12 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
 =head2 Example
 
- Slim::Control::Request::subscribe( \&myCallbackFunction, 
+ Slim::Control::Request::subscribe( \&myCallbackFunction,
                                      [['playlist']]);
  -> myCallbackFunction will be called for any command starting with 'playlist'
  in the table below ('playlist save', playlist loadtracks', etc).
 
- Slim::Control::Request::subscribe( \&myCallbackFunction, 
+ Slim::Control::Request::subscribe( \&myCallbackFunction,
 				                      [['playlist'], ['save', 'clear']]);
  -> myCallbackFunction will be called for commands "playlist save" and
  "playlist clear", but not for "playlist loadtracks".
@@ -351,12 +351,12 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  To add a command to the dispatch table, use the addDispatch method. If the
  method is part of the server itself, please add it to the init method below
- and update the comment table at the top of the document. 
+ and update the comment table at the top of the document.
  In a plugin, call the method from your initPlugin subroutine.
 
   Slim::Control::Request::addDispatch([<TERMS>], [<DEFINITION>]);
 
- <TERMS> is a list of the name of the command or query AND positional 
+ <TERMS> is a list of the name of the command or query AND positional
  parameters. (Strictly speaking, the function expects 2 array references).
  The name of the request can be one or more words, like "playlist clear" or
  "info total genres ?". They have to be array elements, so look like:
@@ -365,12 +365,12 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  The request mechanism uses the first array to match requests to definitions.
  There are 3 possibilities: '?' matches itself, but is not added as a param
- (the idea is that the result replaces it). Anything starting with '_' is a 
- parameter: something can be provided to give it a value: it is added to the 
- request as a named parameter. Anything else much match itself and is 
+ (the idea is that the result replaces it). Anything starting with '_' is a
+ parameter: something can be provided to give it a value: it is added to the
+ request as a named parameter. Anything else much match itself and is
  considered part of the request.
  Order matter we well: first request name, then named parameters, then ?.
- 
+
        addDispatch(['playlist', 'artist', '_index', '?'], ...
 
    -> ['playlist', 'artist', 'whatever', '?'] OK
@@ -399,29 +399,29 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
         |  |  |  |Function to call
         C  Q  T  F
 
-   Slim::Control::Request::addDispatch(['can'], 
+   Slim::Control::Request::addDispatch(['can'],
        [0, 1, 0, \&canQuery]);
 
 =head2 Grabbing a command
 
  Some plugins may require to replace or otherwise complete a built in command of
  the server (or a command added by another plugin that happened to load before).
- 
- The addDispatch call will return the function pointer of any existing 
+
+ The addDispatch call will return the function pointer of any existing
  command it replaces. There is no check on the <DEFINITION> array.
- 
- So for example, a plugin could replace the "volume" command with the 
+
+ So for example, a plugin could replace the "volume" command with the
  following code example:
- 
+
    my $original_func = addDispatch(['mixer', 'volume', '_newvalue'],
        [1, 0, 0, \&new_mixerVolumeCommand]);
-   
- Please perform all relevant checks in the new function and check the 
+
+ Please perform all relevant checks in the new function and check the
  original code for any twists to take into account, like synced players.
  Your code should either end up calling $request->setStatusDone OR call the
  original function, maybe after some parameter doctoring.
- 
- The function dynamicAutoQuery() in Queries.pm is a good example of this 
+
+ The function dynamicAutoQuery() in Queries.pm is a good example of this
  technique.
 
 =cut
@@ -445,7 +445,7 @@ our %listeners = ();            # contains the clients to the notification
 
 our %subscribers = ();          # contains the requests being subscribed to
                                 # (generaly by external users/clients)
-                                
+
 our @notificationQueue;         # contains the Requests waiting to be notified
 
 my $listenerSuperRE = qr/::/;   # regexp to screen out request which no listeners are interested in
@@ -672,7 +672,7 @@ sub init {
 
 	addDispatch(['playlisttracks', '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
 	# use query "playlists tracks"
-	
+
 ######################################################################################################################################################################
 
 	return if !main::WEBUI;
@@ -684,12 +684,12 @@ sub init {
 	#
 	# protect some commands regardless of args passed to them
 	require Slim::Web::HTTP::CSRF;
-	Slim::Web::HTTP::CSRF->protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
+	Slim::Web::HTTP::CSRF->protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist
 					playlistcontrol playlists stop stopserver restartserver wipecache prefset mode
 					power rescan sleep sync time gototime
 					mixer playerpref pref|]);
 	# protect changing setting for command + 1-arg ("?" query always allowed -- except "?" is "%3F" once escaped)
-	#Slim::Web::HTTP::CSRF->protectCommand(['power', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');	
+	#Slim::Web::HTTP::CSRF->protectCommand(['power', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');
 	# protect changing setting for command + 2 args, 2nd as new value ("?" query always allowed)
 	#Slim::Web::HTTP::CSRF->protectCommand(['mixer', 'playerpref', 'pref'],'.*','[^\?].*');	# protect changing volume ("?" query always allowed)
 
@@ -701,7 +701,7 @@ sub addDispatch {
 	my $arrayDataRef = shift; # the array containing the function to call
 
 	# the new dispatch table is of the following format:
-	# 
+	#
 	# $dispatchDB->{
 	#    verb1 => {
 	#       verb2 => {
@@ -717,7 +717,7 @@ sub addDispatch {
 	#                [ '_params1', '_params2', '?'        ], 0, 0, 0, \&func3b_query ],
 	#             ],
 	#          },
-	# 
+	#
 	# the request verbs form the hash keys, with each valid request indicated by a leaf with the special key '::'
 	# within each leaf is an array with two entries - 0 for the cmd and 1 for the query matching this request
 	# (a query is selected if the last entry in $arrayCmdRef is '?')
@@ -726,7 +726,7 @@ sub addDispatch {
 	my @request;
 	my @params;
 	my $query = 0;
-	
+
 	# split CmdRef into request verbs and param tokens
 	for my $entry (@$arrayCmdRef) {
 
@@ -789,14 +789,14 @@ sub subscribe {
 	my $subscriberFuncRef = shift || return;
 	my $requestsRef = shift;
 	my $client = shift;
-	
+
 	if ( blessed($client) ) {
 		$listeners{ $client->id . $subscriberFuncRef } = [ __requestRE($requestsRef), $subscriberFuncRef, $requestsRef, $client->id ];
 	}
 	else {
 		$listeners{$subscriberFuncRef} = [ __requestRE($requestsRef), $subscriberFuncRef, $requestsRef ];
 	}
-	
+
 	# rebuild the super regexp for the current list of listeners
 	__updateListenerSuperRE();
 
@@ -813,7 +813,7 @@ sub subscribe {
 sub unsubscribe {
 	my $subscriberFuncRef = shift;
 	my $client = shift;
-	
+
 	if ( blessed($client) ) {
 		delete $listeners{ $client->id . $subscriberFuncRef };
 	}
@@ -844,18 +844,18 @@ sub notifyFromArray {
 	}
 
 	my $request = Slim::Control::Request->new(
-		(blessed($client) ? $client->id() : undef), 
+		(blessed($client) ? $client->id() : undef),
 		$requestLineRef,
 		1, # force use of tied ixhash to maintain ordering of the array
 	);
-	
+
 	push @notificationQueue, $request;
 }
 
 # sends notifications for first entry in queue - called once per idle loop
 sub checkNotifications {
 	my $request = shift @notificationQueue || return 0;
-	
+
 	$request->notify();
 
 	return 1;
@@ -867,16 +867,16 @@ sub executeRequest {
 	my($client, $parrayref, $callbackf, $callbackargs) = @_;
 
 	# create a request from the array
-	my $request = Slim::Control::Request->new( 
-		(blessed($client) ? $client->id() : undef), 
+	my $request = Slim::Control::Request->new(
+		(blessed($client) ? $client->id() : undef),
 		$parrayref
 	);
 
 	if (defined $request && $request->isStatusDispatchable()) {
-		
+
 		# add callback params
 		$request->callbackParameters($callbackf, $callbackargs);
-		
+
 		$request->execute();
 	}
 
@@ -890,15 +890,15 @@ Removes all subscriptions for this $connectionID. Returns 1 if there were any, e
 =cut
 sub unregisterAutoExecute{
 	my $connectionID = shift;
-	
+
 	if ($subscribers{$connectionID}) {
-	
+
 		# kill any timers
 		for my $name (keys %{$subscribers{$connectionID}}) {
 			for my $clientid (keys %{$subscribers{$connectionID}{$name}}) {
-				
+
 				my $request = delete $subscribers{$connectionID}{$name}{$clientid};
-				
+
 				if (my $cleanup = $request->autoExecuteCleanup()) {
 					eval { &{$cleanup}($request, $connectionID) };
 				}
@@ -906,10 +906,10 @@ sub unregisterAutoExecute{
 				Slim::Utils::Timers::killTimers($request, \&__autoexecute);
 			}
 		}
-		
+
 		# delete everything linked to connection
 		delete $subscribers{$connectionID};
-		
+
 		return 1;
 	}
 	return 0;
@@ -967,7 +967,7 @@ so order of params and results should be maintained using IxHashes.
 sub new {
 	my $class          = shift;      # class to construct
 	my $clientid       = shift;      # clientid, if any, to which the request applies
-	my $requestLineRef = shift;      # reference to an array containing the 
+	my $requestLineRef = shift;      # reference to an array containing the
                                      # request verbs
 	my $useIxHashes    = shift;      # request requires param ordering to be maintained (cli)
 
@@ -1000,19 +1000,19 @@ sub new {
 		$self->{'_status'} = 104;
 		return $self;
 	}
-	
+
 	# parse the line
 	my $i = 0;
 	my $found;
 	my $search = $dispatchDB;
-	
+
 	# traverse the dispatch tree looking for a match on the request verbs
 	while ($search->{ $requestLineRef->[$i] }) {
 		push @request, $requestLineRef->[$i];
 		$search = $search->{ $requestLineRef->[$i++] };
 		last unless defined $requestLineRef->[$i];
 	}
-	
+
 	if ($search->{'::'}) { # '::' is the special key indicating a leaf, i.e. verbs match
 
 		# choose the parameter array based on whether last param is '?'
@@ -1047,20 +1047,20 @@ sub new {
 
 		# extract any remaining params
 		for (;$i < scalar @$requestLineRef; $i++) {
-			
+
 			if ($found->[3] && $requestLineRef->[$i] && $requestLineRef->[$i] =~ /([^:]+):(.*)/) {
-				
+
 				# tagged params
 				$params{$1} = $2;
-				
+
 			} else {
-				
+
 				# positional params
 				$params{"_p$i"} = $requestLineRef->[$i];
 			}
 		}
-		
-		$self->{'_requeststr'} = join(',', @request);			
+
+		$self->{'_requeststr'} = join(',', @request);
 
 		$self->{'_needClient'} = $found->[1];
 		$self->{'_isQuery'}    = $found->[2];
@@ -1087,14 +1087,14 @@ sub new {
 		} else {
 			# Mark as dispatchable
 			$self->{'_status'} = 1;
-		}	
+		}
 
 
 	} else {
-		
+
 		# No match in dispatch table - mark as not dispatchable & copy remaining to positional params for cli echoing
 		$self->{'_status'} = 104;
-		
+
 		for (;$i < scalar @$requestLineRef; $i++) {
 			$params{"_p$i"} = $requestLineRef->[$i];
 		}
@@ -1108,13 +1108,13 @@ sub new {
 }
 
 # makes a request out of another one, discarding results and callback data.
-# except for '_private' which we don't know about, all data is 
+# except for '_private' which we don't know about, all data is
 # duplicated
 sub virginCopy {
 	my $self = shift;
-	
+
 	my $copy = Slim::Control::Request->new($self->clientid());
-	
+
 	# fill in the scalars
 	$copy->{'_isQuery'} = $self->{'_isQuery'};
 	$copy->{'_needClient'} = $self->{'_needClient'};
@@ -1133,12 +1133,12 @@ sub virginCopy {
 	$copy->{'_request'} = \@request;
 
 	$copy->{'_params'} = $self->getParamsCopy();
-	
+
 	$self->validate();
-	
+
 	return $copy;
 }
-	
+
 
 ################################################################################
 # Read/Write basic query attributes
@@ -1148,28 +1148,28 @@ sub virginCopy {
 sub client {
 	my $self = shift;
 	my $client = shift;
-	
+
 	if (defined $client) {
 		$self->{'_clientid'} = (blessed($client) ? $client->id() : undef);
 		$self->validate();
 	}
-	
+
 	return Slim::Player::Client::getClient($self->{'_clientid'});
 }
 
 sub disconnectedClientID {
 	my $self = shift;
-	
+
 	return $self->{_disconnected_clientid};
 }
 
 # sets/returns the client ID
-sub clientid {	
+sub clientid {
 	if (defined $_[1]) {
 		$_[0]->{'_clientid'} = $_[1];
 		$_[0]->validate();
 	}
-	
+
 	return $_[0]->{'_clientid'};
 }
 
@@ -1177,7 +1177,7 @@ sub clientid {
 sub needClient {
 	my $self = shift;
 	my $needClient = shift;
-	
+
 	if (defined $needClient) {
 		$self->{'_needClient'} = $needClient;
 		$self->validate();
@@ -1190,9 +1190,9 @@ sub needClient {
 sub query {
 	my $self = shift;
 	my $isQuery = shift;
-	
+
 	$self->{'_isQuery'} = $isQuery if defined $isQuery;
-	
+
 	return $self->{'_isQuery'};
 }
 
@@ -1200,12 +1200,12 @@ sub query {
 sub function {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	if (defined $newvalue) {
 		$self->{'_func'} = $newvalue;
 		$self->validate();
 	}
-	
+
 	return $self->{'_func'};
 }
 
@@ -1213,9 +1213,9 @@ sub function {
 sub callbackEnabled {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_cb_enable'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_cb_enable'};
 }
 
@@ -1223,9 +1223,9 @@ sub callbackEnabled {
 sub callbackFunction {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_cb_func'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_cb_func'};
 }
 
@@ -1233,9 +1233,9 @@ sub callbackFunction {
 sub callbackArguments {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_cb_args'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_cb_args'};
 }
 
@@ -1243,9 +1243,9 @@ sub callbackArguments {
 sub source {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_source'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_source'};
 }
 
@@ -1253,9 +1253,9 @@ sub source {
 sub connectionID {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_connectionid'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_connectionid'};
 }
 
@@ -1263,9 +1263,9 @@ sub connectionID {
 sub autoExecuteCallback {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_ae_callback'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_ae_callback'};
 }
 
@@ -1273,45 +1273,45 @@ sub autoExecuteCallback {
 sub autoExecuteCleanup {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_ae_cleanup'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_ae_cleanup'};
 }
 
 # remove the autoExecuteCallback for this request
 sub removeAutoExecuteCallback {
 	my $self = shift;
-	
+
 	$self->{'_ae_callback'} = undef;
-	
+
 	my $cnxid       = $self->connectionID();
 	my $name        = $self->getRequestString();
 	my $clientid    = $self->clientid() || 'global';
 	my $cleanup     = $self->autoExecuteCleanup();
 	my $request2del = $subscribers{$cnxid}{$name}{$clientid};
-	
+
 	main::DEBUGLOG && $log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
 
 	delete $subscribers{$cnxid}{$name}{$clientid};
-	
+
 	if ($cleanup) {
 		eval { &{$cleanup}($self, $cnxid) };
 	}
-	
+
 	# there should not be any of those, but just to be sure
 	Slim::Utils::Timers::killTimers( $self, \&__autoexecute );
 	Slim::Utils::Timers::killTimers( $request2del, \&__autoexecute );
-	
+
 	return 1;
 }
 
 # sets/returns the source subscribe callback
-sub autoExecuteFilter {	
+sub autoExecuteFilter {
 	if ( defined $_[1] && ref $_[1] eq 'CODE' ) {
 		$_[0]->{'_ae_filter'} = $_[1];
 	}
-	
+
 	return $_[0]->{'_ae_filter'};
 }
 
@@ -1320,9 +1320,9 @@ sub autoExecuteFilter {
 sub privateData {
 	my $self = shift;
 	my $newvalue = shift;
-	
+
 	$self->{'_private'} = $newvalue if defined $newvalue;
-	
+
 	return $self->{'_private'};
 }
 
@@ -1352,7 +1352,7 @@ sub validate {
 	if (ref($self->{'_func'}) ne 'CODE') {
 
 		$self->{'_status'}   = 104;
-		
+
 	}
 	elsif ( $self->{_needClient} == 2 ) {
 		# Allowed as a disconnected client
@@ -1463,9 +1463,9 @@ sub getStatusText {
 
 sub setLanguageOverride {
 	my ($self, $lang) = @_;
-	
+
 	return if $lang eq Slim::Utils::Strings::getLanguage();
-	
+
 	$self->{'_langoverride'} = $lang;
 }
 
@@ -1481,7 +1481,7 @@ sub getLanguageOverride {
 # returns the request name. Read-only
 sub getRequestString {
 	my $self = shift;
-	
+
 	return join " ", @{$self->{_request}};
 }
 
@@ -1496,14 +1496,14 @@ sub addRequest {
 sub getRequest {
 	my $self = shift;
 	my $idx = shift;
-	
+
 	return $self->{'_request'}->[$idx];
 }
 
 sub getRequestCount {
 	my $self = shift;
 	my $idx = shift;
-	
+
 	return scalar @{$self->{'_request'}};
 }
 
@@ -1524,7 +1524,7 @@ sub addParam {
 sub addParamPos {
 	my $self = shift;
 	my $val = shift;
-	
+
 	${$self->{'_params'}}{ "_p" . keys %{$self->{'_params'}} } = $val;
 }
 
@@ -1537,18 +1537,18 @@ sub getParam {
 sub deleteParam {
 	my $self = shift;
 	my $key = shift || return;
-	
+
 	delete ${$self->{'_params'}}{$key};
 }
 
 # returns a copy of all parameters
 sub getParamsCopy {
 	my $self = shift;
-	
+
 	my %paramHash;
 
 	tie %paramHash, 'Tie::IxHash' if $self->{'_useixhash'};
-	
+
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 		$paramHash{$key} = $val;
  	}
@@ -1573,7 +1573,7 @@ sub setResultFirst {
 	my $val = shift;
 
 	#${$self->{'_results'}}{$key} = $val;
-	
+
 #	(tied %{$self->{'_results'}})->first($key => $val);
 
 	if ($self->{'_useixhash'}) {
@@ -1591,14 +1591,14 @@ sub addResultLoop {
 	my $val = shift;
 
 	my $array = $self->{_results}->{$loop} ||= [];
-	
+
 	if ( !defined $array->[$loopidx] ) {
 		my %paramHash;
 		tie %paramHash, 'Tie::IxHash' if $self->{_useixhash};
-		
+
 		$array->[$loopidx] = \%paramHash;
 	}
-	
+
 	$array->[$loopidx]->{$key} = $val;
 }
 
@@ -1615,11 +1615,11 @@ sub setResultLoopHash {
 	my $loop = shift;
 	my $loopidx = shift;
 	my $hashRef = shift;
-	
+
 	if (!defined ${$self->{'_results'}}{$loop}) {
 		${$self->{'_results'}}{$loop} = [];
 	}
-	
+
 	${$self->{'_results'}}{$loop}->[$loopidx] = $hashRef;
 }
 
@@ -1628,9 +1628,9 @@ sub sliceResultLoop {
 	my $loop     = shift;
 	my $start    = shift;
 	my $quantity = shift || 0;
-	
+
 	if (defined ${$self->{'_results'}}{$loop}) {
-		
+
 		if ($start) {
 			splice ( @{${$self->{'_results'}}{$loop}} , 0, $start);
 		}
@@ -1650,10 +1650,10 @@ sub string {
 
 	if ( my $lang = $self->getLanguageOverride() ) {
 		my $strings = Slim::Utils::Strings::loadAdditional( $lang );
-		
-		return sprintf( $strings->{$name}, @_) if $strings->{$name}; 
+
+		return sprintf( $strings->{$name}, @_) if $strings->{$name};
 	}
-	
+
 	return Slim::Utils::Strings::string($name, @_);
 }
 
@@ -1664,10 +1664,10 @@ sub sortResultLoop {
 	my $self     = shift;
 	my $loop     = shift;
 	my $field    = shift;
-	
+
 	if (defined ${$self->{'_results'}}{$loop}) {
 		my @data;
-		
+
 		if ($field eq 'weight') {
 			@data = sort { $a->{$field} <=> $b->{$field} } @{${$self->{'_results'}}{$loop}};
 		} else {
@@ -1684,27 +1684,27 @@ sub isValidQuery {
 
 sub getResults {
 	my $self = shift;
-	
+
 	return $self->{'_results'};
 }
 
 sub setRawResults {
 	my $self = shift;
-	
+
 	$self->{'_results'} = shift;
 }
 
 sub getResult {
 	my $self = shift;
 	my $key = shift || return;
-	
+
 	return ${$self->{'_results'}}{$key};
 }
 
 sub getResultLoopCount {
 	my $self = shift;
 	my $loop = shift;
-	
+
 	if (defined ${$self->{'_results'}}{$loop}) {
 		return scalar(@{${$self->{'_results'}}{$loop}});
 	}
@@ -1716,9 +1716,9 @@ sub getResultLoop {
 	my $loopidx = shift;
 	my $key = shift || return undef;
 
-	if (defined ${$self->{'_results'}}{$loop} && 
+	if (defined ${$self->{'_results'}}{$loop} &&
 		defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
-		
+
 			return ${${$self->{'_results'}}{$loop}->[$loopidx]}{$key};
 	}
 	return undef;
@@ -1730,12 +1730,12 @@ sub cleanResults {
 	my %resultHash;
 
 	tie %resultHash, 'Tie::IxHash' if $self->{'_useixhash'};
-	
+
 	# not sure this helps release memory, but can't hurt
 	delete $self->{'_results'};
 
 	$self->{'_results'} = \%resultHash;
-	
+
 	# this will reset it to dispatchable so we can execute it once more
 	$self->validate();
 }
@@ -1746,7 +1746,7 @@ sub cleanResults {
 ################################################################################
 
 # accepts a reference to an array containing references to arrays containing
-# synonyms for the query names, 
+# synonyms for the query names,
 # and returns 1 if no name match the request. Used by functions implementing
 # queries to check the dispatcher did not send them a wrong request.
 # See Queries.pm for usage examples, for example infoTotalQuery.
@@ -1775,7 +1775,7 @@ sub callbackParameters {
 	my $callbackargs = shift;
 
 	$self->{'_cb_func'} = $callbackf;
-	$self->{'_cb_args'} = $callbackargs;	
+	$self->{'_cb_args'} = $callbackargs;
 }
 
 # returns true if $param is undefined or not one of the possible values
@@ -1811,11 +1811,11 @@ sub normalize {
 	my $from = shift;
 	my $numofitems = shift;
 	my $count = shift;
-	
+
 	my $start = 0;
 	my $end   = 0;
 	my $valid = 0;
-	
+
 	$numofitems = $count if !defined $numofitems && defined $from;
 	if ($numofitems && $count) {
 
@@ -1828,10 +1828,10 @@ sub normalize {
 		if ($from < 0) {
 			$from = 0;
 		}
-	
+
 		$start = $from;
 		$end = $start + $numofitems - 1;
-	
+
 		if ($end > $lastidx) {
 			$end = $lastidx;
 		}
@@ -1869,14 +1869,14 @@ sub execute {
 
 		return;
 	}
-	
+
 	# call the execute function
 	if (my $funcPtr = $self->{'_func'}) {
 
 		# notify for commands
 		# done here so that order of calls is maintained in all cases.
 		if (!$self->query()) {
-		
+
 			push @notificationQueue, $self;
 		}
 
@@ -1890,7 +1890,7 @@ sub execute {
 			$self->dump('Request');
 		}
 	}
-	
+
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
 
@@ -1900,19 +1900,19 @@ sub execute {
 # perform end of execution, calling the callback etc...
 sub executeDone {
 	my $self = shift;
-	
+
 	# perform the callback
 	# do it unconditionally as it is used to generate the response web page
 	# smart callback routines test the request status!
 	$self->callback();
-		
+
 	if (!$self->isStatusDone()) {
-	
+
 		# remove the notification if we pushed it...
 		my $notif = pop @notificationQueue;
-		
+
 		if ((defined $notif) && ($notif != $self)) {
-		
+
 			# oops wrong one, repush it...
 			push @notificationQueue, $notif;
 		}
@@ -1925,10 +1925,10 @@ sub executeDone {
 }
 
 # allows re-calling the function. Basically a copycat of execute, without
-# notification. This enables 
+# notification. This enables
 sub jumpbacktofunc {
 	my $self = shift;
-	
+
 	# do nothing if we're done
 	if ($self->isStatusDone()) {
 
@@ -1959,9 +1959,9 @@ sub jumpbacktofunc {
 			$self->dump('Request');
 		}
 	}
-	
+
 	# contine execution unless the Request is still work in progress (async)...
-	$self->executeDone() unless $self->isStatusProcessing();	
+	$self->executeDone() unless $self->isStatusProcessing();
 }
 
 # perform callback if defined
@@ -1970,29 +1970,29 @@ sub callback {
 
 	# do nothing unless callback is enabled
 	if ($self->callbackEnabled()) {
-		
+
 		if (defined(my $funcPtr = $self->callbackFunction())) {
 
 			main::INFOLOG && $log->info("Calling callback function");
 
 			my $args = $self->callbackArguments();
-		
+
 			# if we have no arg, use the request
 			if (!defined $args) {
 
 				eval { &$funcPtr($self) };
 
-				if ($@) { 
+				if ($@) {
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
 				}
-			
+
 			# else use the provided arguments
 			} else {
 
 				eval { &$funcPtr(@$args) };
 
-				if ($@) { 
+				if ($@) {
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
 				}
@@ -2016,7 +2016,7 @@ sub notify {
 
 	# process listeners if we match the super regexp (i.e. there is an interested listener)
 	if ($self->{'_requeststr'} && $self->{'_requeststr'} =~ $listenerSuperRE) {
-		
+
 		my @l = values %listeners;
 		for my $listener ( @l ) {
 			next unless defined $listener;
@@ -2026,13 +2026,13 @@ sub notify {
 
 			my $notifyFuncRef = $listener->[1];
 			my $clientid      = $listener->[3];
-			
+
 			# If this listener is client-specific, ignore unless we have that client
 			if ( $clientid ) {
 				next if !$self->clientid;
-				
+
 				my $client = $self->client() || next;
-				
+
 				# Bug 10064: playlist notifications get sent to everyone in the sync-group
 				if ($self->isCommand([['playlist', 'newmetadata']])) {
 					next if !grep($_->id eq $clientid, $client->syncGroupActiveMembers());
@@ -2043,62 +2043,62 @@ sub notify {
 
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $funcName = $listener;
-				
+
 				if ( ref($notifyFuncRef) eq 'CODE' ) {
 					$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
 				}
-				
+
 				$log->debug(sprintf("Notifying %s of %s =~ %s",
 									$funcName, $self->getRequestString, __filterString($listener->[2])
 								   ));
 			}
-			
+
 			main::PERFMON && (my $now = AnyEvent->time);
-			
+
 			eval { &$notifyFuncRef($self) };
-			
+
 			if ($@) {
 				logError("Failed notify: $@");
 			}
-			
+
 			main::PERFMON && Slim::Utils::PerfMon->check('notify', AnyEvent->time - $now, undef, $notifyFuncRef);
 		}
 	}
-	
+
 	# handle subscriptions
 	# send the notification to all filters...
 	for my $cnxid (keys %subscribers) {
 		for my $name ($specific || keys %{$subscribers{$cnxid}}) {
 			for my $clientid (keys %{$subscribers{$cnxid}{$name}}) {
-				
+
 				my $request = $subscribers{$cnxid}{$name}{$clientid};
-				
+
 				my $relevant = 1;
-				
+
 				if (defined(my $funcPtr = $request->autoExecuteFilter())) {
-				
+
 					$relevant = 0;
-					
+
 					if (ref($funcPtr) eq 'CODE') {
-				
+
 						eval { $relevant = &{$funcPtr}($request, $self) };
-				
+
 						if ($@) {
 							my $funcName = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) : 'unk';
 							logError("While trying to run function coderef [$funcName]: [$@]");
-							
+
 							next;
 						}
 					}
 				}
-				
+
 				if ($relevant) {
-					
+
 					# delay answers by the amount returned by relevant-1
 					Slim::Utils::Timers::killOneTimer($request,
 						\&__autoexecute);
 
-					Slim::Utils::Timers::setTimer($request, 
+					Slim::Utils::Timers::setTimer($request,
 						Time::HiRes::time() + $relevant - 1,
 						\&__autoexecute);
 
@@ -2121,30 +2121,30 @@ sub registerAutoExecute{
 	my $timeout = shift;
 	my $filterFunc = shift;
 	my $cleanupFunc = shift;
-	
+
 	main::DEBUGLOG && $log->debug("registerAutoExecute()");
-	
+
 	# we shall be a query
 	return unless $self->{'_isQuery'};
-	
+
 	# we shall have a defined connectionID
 	my $cnxid = $self->connectionID() || return;
-	
+
 	# requests with a client are remembered by client
 	my $clientid = $self->clientid() || 'global';
-	
+
 	# requests are remembered by kind
 	my $name = $self->getRequestString();
-	
+
 	# store the filterFunc in the request
 	$self->autoExecuteFilter($filterFunc);
-	
+
 	# store cleanup function if it exists - this is called whenever the autoexecute is cancelled
 	if ($cleanupFunc) {
 		$self->autoExecuteCleanup($cleanupFunc);
 	}
 
-	# kill any previous subscription we might have laying around 
+	# kill any previous subscription we might have laying around
 	# (for this query/client/connection)
 	my $oldrequest = $subscribers{$cnxid}{$name}{$clientid};
 
@@ -2166,10 +2166,10 @@ sub registerAutoExecute{
 	else {
 		main::INFOLOG && $log->info("New buddy: $cnxid - $name - $clientid");
 	}
-	
+
 	# store the new subscription if this is what is asked of us
 	if ($timeout ne '-') {
-		
+
 		main::DEBUGLOG && $log->debug(".. set ourself up");
 
 		# copy the request
@@ -2180,7 +2180,7 @@ sub registerAutoExecute{
 		if ($timeout > 0) {
 			main::DEBUGLOG && $log->debug(".. starting timer: $timeout");
 			# start the timer
-			Slim::Utils::Timers::setTimer($request, 
+			Slim::Utils::Timers::setTimer($request,
 				Time::HiRes::time() + $timeout,
 				\&__autoexecute);
 		}
@@ -2194,7 +2194,7 @@ Handle encoding for external commands.
 =cut
 sub fixEncoding {
 	my $self = shift || return;
-	
+
 	map { utf8::decode($_) unless !defined($_) || ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'} };
 }
 
@@ -2209,16 +2209,16 @@ sub executeLegacy {
 	my $parrayref = shift;
 
 	# create a request from the array - using ixhashes so renderAsArray works
-	my $request = Slim::Control::Request->new( 
-		(blessed($client) ? $client->id() : undef), 
+	my $request = Slim::Control::Request->new(
+		(blessed($client) ? $client->id() : undef),
 		$parrayref,
 		1,
 	);
-	
+
 	if (defined $request) {
 
 		if ($request->{'_status'} == 1) {
-		
+
 			$request->execute();
 		}
 
@@ -2230,24 +2230,24 @@ sub executeLegacy {
 sub renderAsArray {
 	my $self = shift;
 
-	if (!$self->{'_useixhash'}) {
+	if (main::INFOLOG && $log->is_info && !$self->{'_useixhash'}) {
 		logBacktrace("request should set useIxHashes in Slim::Control::Request->new()");
 	}
 
 	my @returnArray;
-	
-	# conventions: 
+
+	# conventions:
 	# -- parameter or result with key starting with "_": value outputted
 	# -- parameter or result with key starting with "__": no output
 	# -- result starting with key ending in "_loop": is a loop
 	# -- anything else: output "key:value"
-	
+
 	# push the request terms
 	push @returnArray, @{$self->{'_request'}};
-	
+
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
-		
+
 		# no output
 		next if ($key =~ /^__/);
 
@@ -2257,7 +2257,7 @@ sub renderAsArray {
 			push @returnArray, ($key . ":" . $val);
 		}
  	}
- 	
+
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
 
@@ -2279,16 +2279,16 @@ sub renderAsArray {
 					} else {
 						push @returnArray, ($key2 . ':' . $val2);
 					}
-				}	
+				}
 			}
 			next;
 		}
-		
+
 		# array unrolled
 		if (ref $val eq 'ARRAY') {
 			$val = join (',', @{$val})
 		}
-		
+
 		if ($key =~ /^_/) {
 			push @returnArray, $val;
 		} else {
@@ -2357,17 +2357,17 @@ sub dump {
 				my $hash = ${$self->{'_results'}}{$key}->[$i];
 
 				if (ref($hash) eq 'HASH') {
-					
+
 					while (my ($key2, $val2) = each %{$hash}) {
 						main::INFOLOG && $log->info("   Result:   $i. [$key2] = [", (ref $val2 ? Data::Dump::dump($val2) : $val2), "]");
 					}
-						
+
 				}
-				
+
 				else {
-					
+
 					main::INFOLOG && $log->info('   Result:   ' . Data::Dump::dump($hash));
-					
+
 				}
 			}
 
@@ -2400,7 +2400,7 @@ sub __matchingRequest {
 
 # return compiled regexp representing the $possibleNames array of arrays
 sub __requestRE {
-	my $possibleNames = shift || return qr /./; 
+	my $possibleNames = shift || return qr /./;
 	my $regexp = '';
 
 	my $i = 0;
@@ -2440,16 +2440,16 @@ sub __updateListenerSuperRE {
 	main::DEBUGLOG && $log->debug("updated listener superRE: $listenerSuperRE");
 }
 
-# returns a string corresponding to the notification filter, used for 
+# returns a string corresponding to the notification filter, used for
 # debugging
 sub __filterString {
 	my $requestsRef = shift;
-	
+
 	if (!defined $requestsRef) {
 
 		return "(no filter)";
 	}
-	
+
 	my $str = "[";
 
 	foreach my $req (@$requestsRef) {
@@ -2458,35 +2458,35 @@ sub __filterString {
 		$str .= join(",", @list);
 		$str .= "]";
 	}
-		
+
 	$str .= "]";
 }
 
 # callback for the subscriptions.
 sub __autoexecute{
 	my $self = shift;
-	
+
 	main::DEBUGLOG && $log->debug("__autoexecute()");
-	
+
 	# we shall have somewhere to callback to
 	my $funcPtr = $self->autoExecuteCallback() || return;
-	
+
 	return unless ref($funcPtr) eq 'CODE';
-	
+
 	# we shall have a connection id to send as param
 	my $cnxid = $self->connectionID() || return;
-	
+
 	# delete the sub in case of error
 	my $deleteSub = 0;
-	
+
 	# execute ourself after some cleanup
 	$self->cleanResults;
 	$self->execute();
-	
+
 	if ($self->isStatusError()) {
 		$deleteSub = 1;
 	}
-	
+
 	# execute the callback in all cases.
 	eval { &{$funcPtr}($self, $cnxid) };
 
@@ -2496,7 +2496,7 @@ sub __autoexecute{
 		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
 		$deleteSub = 1;
 	}
-	
+
 	if ($deleteSub) {
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
