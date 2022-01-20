@@ -34,6 +34,10 @@ sub handler {
 		# mapping based on album/artist names
 		while (my ($prefName, $prefData) = each %{$params}) {
 			if ($prefName =~ /mapping_([a-f0-9]+)/) {
+				# if there was a duplicate entry, we'd get a list instead of a string - pick the first entry
+				($prefData) = grep /\w+/, @$prefData if ref $prefData;
+				$prefData =~ s/^\s+|\s+$//g;
+
 				if ($prefData) {
 					$genreMappings->set($1, $prefData);
 				}
