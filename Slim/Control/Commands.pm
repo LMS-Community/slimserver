@@ -1727,7 +1727,7 @@ sub playlistXtracksCommand {
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
-	if ( scalar @tracks && $what =~ /track\.titlesearch|contributor\.namesearch|genre\.id/i ) {
+	if ( scalar @tracks && $what =~ /track\.titlesearch|contributor\.namesearch|genre\.id|track\.year/i ) {
 		if ($prefs->get('useBalancedShuffle')) {
 			my $categoryMethod = 'artistName';
 			my $categoryRemoteItem = 'artist';
