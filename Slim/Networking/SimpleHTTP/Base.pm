@@ -62,7 +62,7 @@ sub put { shift->_createHTTPRequest( PUT => @_ ) }
 sub head { shift->_createHTTPRequest( HEAD => @_ ) }
 
 sub hasSSL { if (!main::SCANNER) {
-	Slim::Networking::Async::HTTP->hasSSL() 
+	Slim::Networking::Async::HTTP->hasSSL()
 } }
 
 sub _createHTTPRequest {
@@ -141,6 +141,7 @@ sub _createHTTPRequest {
 	}
 
 	$lang ||= $prefs->get('language') || 'en';
+	$lang =~ s/_/-/g;
 
 	unshift @_, (
 		'Accept-Language' => lc($lang),
