@@ -166,7 +166,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	SV	sluta lägga till album
 
 PLUGIN_RANDOM_CONTRIBUTOR
-	CS	Mix umělců
+	CS	Mix interpretů
 	DA	Miks baseret på tilfældig kunstner
 	DE	Interpretenmix
 	EN	Artist Mix
@@ -197,7 +197,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	SV	Slumpmässigt vald artist
 
 PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
-	CS	Přehrávání náhodně zvolených umělců
+	CS	Přehrávání náhodně zvolených interpretů
 	DA	Afspiller tilfældige kunstnere...
 	DE	Zufällige Interpreten werden wiedergegeben ...
 	EN	Playing Random Artists
@@ -537,7 +537,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	SV	Du kan alltid lägga till eller ta bort låtar från en mix. Om du vill stoppa en slumpmässig mix rensar du spellistan, eller klickar om du vill
 
 PLUGIN_RANDOM_PRESS_RIGHT
-	CS	Stiskněte VPRAVO k
+	CS	Stiskněte tlačítko VPRAVO k
 	DA	Tryk på højre for at
 	DE	Drücken Sie RECHTS um
 	EN	Press RIGHT to

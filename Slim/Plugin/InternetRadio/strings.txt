@@ -138,7 +138,7 @@ RADIOTIME_LOCATION
 	SV	Efter land
 
 RADIOTIME_WORLD
-	CS	Podle lokality
+	CS	Svět
 	DA	Efter sted
 	DE	Nach Standort
 	EN	By Location
@@ -213,7 +213,7 @@ RADIOTIME_SEARCH
 	SV	Sök på TuneIn
 
 RADIOTIME_SPORTS
-	CS	Sport
+	CS	Sportovní
 	DA	Sport
 	DE	Sport
 	EN	Sports
@@ -228,7 +228,7 @@ RADIOTIME_SPORTS
 	SV	Sport
 
 RADIOTIME_TALK
-	CS	Diskusní pořady
+	CS	Mluvit
 	DA	Tale
 	DE	Talksendungen
 	EN	Talk

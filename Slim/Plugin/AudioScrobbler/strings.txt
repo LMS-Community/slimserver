@@ -148,14 +148,14 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
-	CS	Ignorovat umělce
+	CS	Ignorovat interprety
 	DE	Interpreten ignorieren
 	EN	Ignore Artists
 	FR	Ignorer les artistes
 	NL	Negeer artiesten
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
-	CS	Definujte seznam jmen umělců oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
+	CS	Definujte seznam jmen interpretů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
 	DE	Geben Sie eine Komma-separierte Liste von Interpreten ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of artist names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
