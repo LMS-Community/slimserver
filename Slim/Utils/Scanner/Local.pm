@@ -682,7 +682,7 @@ sub deleted {
 				# Tell Contributors to rescan, if no other tracks left, remove contributor.
 				# This will also remove entries from contributor_track and contributor_album
 				for ( @$contribs ) {
-					Slim::Schema::Contributor->rescan( $_->[0] );
+					Slim::Schema::Contributor->rescan( [$_->[0]], $album && $album->id );
 				}
 
 
@@ -801,7 +801,7 @@ sub deleted {
 			Slim::Schema::Album->rescan( @albums );
 
 			# 3. Rescan contributors created from the cue sheet
-			Slim::Schema::Contributor->rescan( map { $_->{contributor} } @{$contribs} );
+			Slim::Schema::Contributor->rescan( [map { $_->{contributor} } @{$contribs}] );
 
 			# 4. Rescan genres created from the cue sheet
 			Slim::Schema::Genre->rescan( map { $_->{genre} } @{$genres} );
@@ -1001,7 +1001,7 @@ sub changed {
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
 			# This will also remove entries from contributor_track and contributor_album
 			for my $contrib ( @{ $orig->{contribs} } ) {
-				Slim::Schema::Contributor->rescan( $contrib->{contributor} );
+				Slim::Schema::Contributor->rescan( [$contrib->{contributor}], $origTrack->{album_id} );
 			}
 
 			my $album = $track->album;

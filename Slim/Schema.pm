@@ -2871,11 +2871,16 @@ sub _postCheckAttributes {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
 
+	my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST};
+	if ($artist) {
+		$cols{primary_artist} = $artist->[0];
+	}
+
 	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
 		\%cols,																	# trackColumns
 		$isCompilation,
-		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
+		$artist->[0],	                                          # primary contributor-id
 		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
@@ -3000,6 +3005,14 @@ sub _createContributorRoleRelationships {
 	$sth_delete_tracks->execute($trackId);
 
 	# Using native DBI here to improve performance during scanning
+	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
+		my $sth_track_artist = $self->dbh->prepare_cached( qq(
+			UPDATE tracks
+			SET primary_artist = ?
+			WHERE id = ?
+		) );
+		$sth_track_artist->execute( $artist->[0], $trackId );
+	}
 
 	my $sth_track = $self->dbh->prepare_cached( qq{
 		REPLACE INTO contributor_track

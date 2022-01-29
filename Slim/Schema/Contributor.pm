@@ -221,25 +221,40 @@ sub isInLibrary {
 # Rescan list of contributors, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
 sub rescan {
-	my ( $class, @ids ) = @_;
+	my ( $class, $ids, $albumId ) = @_;
 
 	my $log = logger('scan.scanner');
 
 	my $dbh = Slim::Schema->dbh;
 
-	for my $id ( @ids ) {
-		my $sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
-		} );
-		$sth->execute($id);
-		my ($count) = $sth->fetchrow_array;
-		$sth->finish;
+	my $contributorSth = $dbh->prepare_cached( qq{
+		SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
+	} );
+
+	my $albumSth = $dbh->prepare_cached( qq{
+		SELECT COUNT(1) FROM tracks WHERE album = ? AND primary_artist = ?
+	} );
+
+	for my $id ( @$ids ) {
+		$contributorSth->execute($id);
+		my ($count) = $contributorSth->fetchrow_array;
+		$contributorSth->finish;
 
 		if ( !$count ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
 
 			# This will cascade within the database to contributor_album and contributor_track
 			$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
+		}
+		# contributor->album relations aren't removed automatically when the last track with this primary_artist disappears
+		elsif ( $albumId ) {
+			$albumSth->execute($albumId, $id);
+			($count) = $albumSth->fetchrow_array;
+			$albumSth->finish;
+
+			if ( !$count ) {
+				$dbh->do( "DELETE FROM contributor_album WHERE role = 1 AND album = ? AND contributor = ?", undef, $albumId, $id );
+			}
 		}
 	}
 }
