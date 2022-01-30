@@ -141,7 +141,7 @@ SETUP_ITUNES_DESC
 	ZH_CN	Logitech Media Server可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
-	CS	Interval znovunačítání iTunes
+	CS	Interval znovunačtení iTunes
 	DA	Interval for genindlæsning af iTunes
 	DE	iTunes-Aktualisierungsintervall
 	EN	iTunes Reload Interval
@@ -159,7 +159,7 @@ SETUP_ITUNESSCANINTERVAL
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	CS	Když se změní knihovna iTunes Music, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačtením knihovny iTunes Music. Nulová hodnota zakáže opětovné načtení.
+	CS	Když se změní knihovna iTunes Music, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačítáním knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Logitech Media Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
 	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Logitech Media Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Logitech Media Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your iTunes Music Library changes Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.

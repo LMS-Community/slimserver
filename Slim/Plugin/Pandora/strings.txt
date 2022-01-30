@@ -319,7 +319,7 @@ PLUGIN_PANDORA_DEL_FAVORITES
 	SV	Ta bort stationen från favoriter
 
 PLUGIN_PANDORA_DELETE_STATION
-	CS	Vymazat tuto stanici
+	CS	Odstranit tuto stanici
 	DA	Slet denne station
 	DE	Diesen Sender löschen
 	EN	Delete this station
@@ -383,7 +383,7 @@ PLUGIN_PANDORA_RENAMING_STATION
 	SV	Byter namn på stationen...
 
 PLUGIN_PANDORA_CONFIRM_DELETE_STATION
-	CS	Stiskněte VPRAVO k vymazání
+	CS	Stiskněte tlačítko VPRAVO pro odstranění
 	DA	Tryk på højre for at slette
 	DE	Drücken Sie zum Löschen RECHTS
 	EN	Press RIGHT to delete
@@ -399,7 +399,7 @@ PLUGIN_PANDORA_CONFIRM_DELETE_STATION
 	SV	Tryck på RIGHT om du vill ta bort
 
 PLUGIN_PANDORA_DELETING_STATION
-	CS	Vymazávám stanici...
+	CS	Odstraňování stanice...
 	DA	Sletter station...
 	DE	Sender wird gelöscht ...
 	EN	Deleting station...

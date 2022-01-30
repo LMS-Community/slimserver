@@ -116,7 +116,7 @@ SETUP_MIX_SIZE_DESC
 	ZH_CN	请选择MusicIP混音量
 
 SETUP_MIX_FILTER
-	CS	Mix Filtr
+	CS	Filtr mixu
 	DA	Miksfilter
 	DE	Mixfilter
 	EN	Mix Filter
@@ -150,7 +150,7 @@ SETUP_MIX_FILTER_DESC
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Logitech Media Server内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
-	CS	Žánr Mixu
+	CS	Žánr mixu
 	DA	Miks: Genre
 	DE	Mix: Musikstil
 	EN	Mix Genre
@@ -441,7 +441,7 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	CS	Logitech Media Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, umělců a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného statusu, obzvláště při prohledávání pouze nových a změněných skladeb.
+	CS	Logitech Media Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného statusu, obzvláště při prohledávání pouze nových a změněných skladeb.
 	DA	Logitech Media Server kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
 	DE	Logitech Media Server kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
 	EN	Logitech Media Server can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
@@ -507,7 +507,7 @@ MMMMIXTYPE_MBYTES
 	ZH_CN	兆字节总数
 
 SETUP_MUSICMAGICSCANINTERVAL
-	CS	Interval znovunačítání MusicIP
+	CS	Interval znovunačtení MusicIP
 	DA	Interval for genindlæsning af MusicIP
 	DE	MusicIP-Aktualisierungsintervall
 	EN	MusicIP Reload Interval
@@ -524,7 +524,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	CS	Když se změní databáze vašeho MusicIP, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačítání.
+	CS	Když se změní databáze vašeho MusicIP, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačítáním vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Logitech Media Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Logitech Media Server. Hvis værdien er 0, genindlæses den ikke.
 	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Logitech Media Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Logitech Media Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your MusicIP Database changes, Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that Logitech Media Server will wait before reloading your MusicIP Database again. A value of zero disables the reload.
@@ -558,7 +558,7 @@ SETUP_MMSPORT
 	ZH_CN	MusicIP HTTP端口
 
 SETUP_MMSPORT_DESC
-	CS	Služba API MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení Mixéru Music IP.
+	CS	API služby MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení Mixéru Music IP.
 	DA	I grænsesnittet til MusicIP-tjenesten kan man definere en http-port der skal bruges ved forespørgsler til MusicIP. Her skal du angive det portnummer som svarer til det du valgte i indstillingerne for MusicIP Mixer.
 	DE	Mit dem MusicIP Service API können Sie einen HTTP-Anschluss für Anfragen an das MusicIP API auswählen. Geben Sie dieselbe Anschlussnummer wie in MusicIP Mixer ein.
 	EN	The MusicIP Service API allows the selection of an http port to use for queries to the MusicIP API. Enter the port number here to match the setting you have chosen in MusicIP Mixer settings.

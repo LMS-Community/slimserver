@@ -2672,7 +2672,7 @@ WELCOME_TO_CONTROLLER
 	SV	Välkommen till Controller
 
 LOGIN
-	CS	Zaregistrovat
+	CS	Přihlásit se
 	DA	Log på
 	DE	Anmelden
 	EN	Sign In
@@ -4787,7 +4787,7 @@ SETUP_SYNCVOLUME
 	ZH_CN	音量同步化
 
 SETUP_SYNCVOLUME_DESC
-	CS	Můžete si zvolit, zda hlasitosti synchronizovaných přehrávačů se budou navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klepněte na Změnit.
+	CS	Můžete si zvolit, zda hlasitosti synchronizovaných přehrávačů se budou navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klikněte na Změnit.
 	DA	Du kan vælge om lydstyrken på de synkroniserede afspillere skal være ens eller uafhængig af hinanden. Vælg nedenfor, og klik på Skift.
 	DE	Sie können die Lautstärke synchronisierter Player aufeinander abstimmen oder unabhängig belassen. Wählen Sie die gewünschte Option und klicken Sie auf 'Ändern'.
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
@@ -4861,7 +4861,7 @@ SETUP_SYNCPOWER
 	ZH_CN	电源同步化
 
 SETUP_SYNCPOWER_DESC
-	CS	Můžete si zvolit, aby se tento přehrávač vypnul sám nebo se vypnul ve skupině se všemi ostatními přehrávači. Níže proveďte volbu a klepněte na Změnit.
+	CS	Můžete si zvolit, aby se tento přehrávač vypnul sám nebo se vypnul ve skupině se všemi ostatními přehrávači. Níže proveďte volbu a klikněte na Změnit.
 	DA	Du kan vælge kun at slukke denne afspiller, eller at den slukkes sammen med alle andre afspillere i den samme gruppe. Vælg nedenfor, og klik på Skift.
 	DE	Sie können diesen Player einzeln oder zusammen mit den anderen synchronisierten Playern ein- bzw. ausschalten. Wählen Sie die gewünschte Option und klicken Sie auf 'Ändern'.
 	EN	You can choose to have this player turn off on its own, or turn off as a group with all other players in the group. Make a selection below and click Change.
@@ -5513,7 +5513,7 @@ SETUP_REPLAYGAIN_REMOTE
 	SV	Standardanpassning av volymen för strömningstjänster
 
 SETUP_REPLAYGAIN_REMOTE_DESC
-	CS	Služba vzdáleného streamování často nepodporuje žádnou formu úpravy hlasitosti. Pokud přehráváte vzdálené skladby spolu s místními, může to vést k nežádoucím změnám hlasitosti. Definujte výchozí hodnotu, která by měla být použita pro každý vzdálený stream, který sám nedefinuje hodnotu úpravy hlasitosti.
+	CS	Služba přehrávání vzdáleného datového proudu často nepodporuje žádnou formu úpravy hlasitosti. Pokud přehráváte vzdálené skladby spolu s místními, může to vést k nežádoucím změnám hlasitosti. Definujte výchozí hodnotu, která by měla být použita pro každý vzdálený datový proud, který sám nedefinuje hodnotu úpravy hlasitosti.
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
 	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
@@ -5640,7 +5640,7 @@ ALBUMREPLAYGAIN
 	ZH_CN	专辑音量调整
 
 SETUP_MP3STREAMINGMETHOD
-	CS	Metoda datových přenosových proudů
+	CS	Metoda přehrávání datového proudu
 	DA	Streamingmetode
 	DE	Streaming-Methode
 	EN	Streaming Method
@@ -5655,7 +5655,7 @@ SETUP_MP3STREAMINGMETHOD
 	SV	Strömningsmetod
 
 SETUP_MP3STREAMINGMETHOD_DESC
-	CS	Při přehrávání datového proudu z Internetu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. Při volbě "Přímý datový proud" přehrávač provede přímé spojení se serverem přehrávání zvukových proudů a tím mírně sníží zatížení Logitech Media Serveru a umožní přehrávání proudu i po ztrátě spojení s Logitech Media Serverem. Volba "Přehrávání datového proudu přes proxy" způsobí, že Logitech Media Server zajistí spojení a přehraje zvuk prostřdnictvím přehrávače. "Přímý datový proud" je výchozí nastavení, ale jestliže budete mít potíže s proudy, zkuste změnit nastavení na "Přehrávání datového proudu přes proxy". Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy "Přehrávání datového proudu přes proxy", aby se snížilo využití šířky pásma.
+	CS	Při přehrávání datového proudu z Internetu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. Při volbě "Přímé přehrávání datového proudu" přehrávač provede přímé spojení se serverem přehrávání zvukových proudů a tím mírně sníží zatížení Logitech Media Serveru a umožní přehrávání proudu i po ztrátě spojení s Logitech Media Serverem. Volba "Přehrávání datového proudu přes proxy" způsobí, že Logitech Media Server zajistí spojení a přehraje zvuk prostřdnictvím přehrávače. "Přímé přehrávání datového proudu" je výchozí nastavení, ale jestliže budete mít potíže s proudy, zkuste změnit nastavení na "Přehrávání datového proudu přes proxy". Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy "Přehrávání datového proudu přes proxy", aby se snížilo využití šířky pásma.
 	DA	Når der afspilles en stream fra internettet, kan det gøres på to måder. Ved direkte streaming etableres der en direkte forbindelse mellem afspilleren og serveren der streames fra. Det reducerer belastningen af Logitech Media Server en smule og afspilningen fortsætter selvom forbindelsen til Logitech Media Server bliver afbrudt. Ved streaming via en proxy vil Logitech Media Server håndtere forbindelsen og sende lyden videre til afspilleren. Direkte streaming er standardmetoden, men hvis du har problemer med streams, kan du ændre indstillingen til Streaming via proxy. Bemærk at hvis to eller flere afspillere er synkroniseret til en stream, bliver proxymetoden altid anvendt for at begrænse brugen af båndbredde.
 	DE	Zur Wiedergabe eines Internet-Streams kann das Streaming auf zwei verschiedene Arten durchgeführt werden. Beim direkten Streaming erstellt der Player eine direkte Verbindung mit dem Audio-Streaming-Server, wodurch die Belastung von Logitech Media Server verringert wird und der Stream auch fortgesetzt werden kann, wenn die Verbindung zu Logitech Media Server unterbrochen wird. Beim Streaming über einen Proxy-Server verwaltet Logitech Media Server die Verbindung und leitet die Musik an den Player weiter. Standardmäßig wird das direkte Streaming verwendet, aber wenn Probleme mit Streams auftreten, können Sie die andere Methode versuchen. Hinweis: Wenn zwei oder mehre Player synchron auf einem Stream zugreifen, wird immer das Streaming über einen Proxy-Server verwendet, um die Bandbreitennutzung zu reduzieren.
 	EN	When playing an Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on Logitech Media Server slightly and allowing the stream to continue playing if the Logitech Media Server connection is lost.  Proxied Streaming causes Logitech Media Server to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an stream, proxied streaming is always used to reduce bandwidth usage.
@@ -5670,7 +5670,7 @@ SETUP_MP3STREAMINGMETHOD_DESC
 	SV	När du spelar upp en ström från Internet kan det ske på två olika sätt. Direktströmning innebär att spelaren ansluts direkt till servern som strömmen kommer ifrån, vilket minskar belastningen på Logitech Media Server något och gör det möjligt att fortsätta spela även om anslutningen till Logitech Media Server skulle brytas. Proxyströmmning innebär att Logitech Media Server ansluts till servern och sedan vidarebefordrar ljudet till spelaren. Direktströmning är standard. Om du har problem med strömmar kan du prova att ändra inställningen till Proxyströmning. Observera att proxyströmning alltid används när flera spelare synkroniseras för att spela upp samma ström, eftersom detta sparar bandbredd.
 
 MP3_STREAMING_DIRECT
-	CS	Přímý datový proud
+	CS	Přímé přehrávání datového proudu
 	DA	Direkte streaming
 	DE	Direktes Streaming
 	EN	Direct Streaming
@@ -6388,7 +6388,7 @@ SETUP_LIBRARY_NAME_DESC
 	SV	Det här är namnet på ditt mediebibliotek som visas i Squeezebox-menyn My Media.
 
 SETUP_AUDIODIR
-	CS	Složka Hudba
+	CS	Složka hudby
 	DA	Musikmappe
 	DE	Musikordner
 	EN	Music Folder
@@ -6560,7 +6560,7 @@ SETUP_BAD_DIRECTORY
 	ZH_CN	"%s"似乎不是一个合法文件夹。请再次尝试。
 
 SETUP_PLAYLISTDIR_DESC
-	CS	Můžete zadat cestu k adresáři, kde jsou vaše soubory seznamů skladeb uloženy na pevném disku. (Pokud nechcete ukládat seznamy skladeb, ponechte toto pole prázdné.)
+	CS	Můžete zadat cestu k adresáři, kde jsou uloženy vaše soubory seznamů skladeb na pevném disku. (Pokud nechcete ukládat seznamy skladeb, ponechte toto pole prázdné.)
 	DA	Du kan angive stien til den mappe på harddisken hvor afspilningslisterne skal gemmes. Hvis du ikke ønsker at gemme dine afspilningslister, skal du lade feltet være tomt.
 	DE	Geben Sie hier den Ordner ein, in dem Wiedergabelistendateien gespeichert werden. Wenn Sie Wiedergabelisten nicht speichern möchten, können Sie dieses Feld leer lassen.
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
@@ -6879,7 +6879,7 @@ SETUP_SKIN_DESC
 	ZH_CN	您可以从如下的选项选择一个外壳作为网界面。
 
 SETUP_SKIN_OK
-	CS	Aby vaše změny začaly platit, zavřete prosím okno Logitech Media Server a znovu jej načtěte.
+	CS	Aby vaše změny začaly platit, zavřete prosím okno Logitech Media Serveru a znovu jej načtěte.
 	DA	Du skal lukke Logitech Media Server-vinduet og åbne det igen for at anvende ændringerne.
 	DE	Schließen Sie Logitech Media Server und öffnen Sie es erneut, um die Änderungen zu übernehmen.
 	EN	To apply your changes please close the Logitech Media Server window and reload it.
@@ -8223,7 +8223,7 @@ SETUP_ARTISTS_BROWSE_MODES
 	SV	Bläddra efter artister
 
 SETUP_ARTISTS_BROWSE_MODES_DESC
-	CS	Zvolte, zda chcete použít jeden konfigurovatelný seznam umělců, nebo dva seznamy pro Interprety alba a Všechny interpreti. Interpreti alba je seznam, ve kterém je Interpret alba jediným umělcem na albu nebo umělcem uvedeným v tagu ALBUMARTIST. Všichni interpreti je seznam všech umělců, kteří jsou uvedeni v tagu role přispěvatele (ARTIST, COMPOSER atd.). Jednotný konfigurovatelný seznam umělců naproti tomu umožňuje určit, které role přispěvatelů mají být součástí nabídky Umělec.
+	CS	Zvolte, zda chcete použít jeden konfigurovatelný seznam interpretů, nebo dva seznamy pro Interprety alba a Všechny interpreti. Interpreti alba je seznam, ve kterém je Interpret alba jediným interpretem na albu nebo interpretem uvedeným v tagu ALBUMARTIST. Všichni interpreti je seznam všech interpretů, kteří jsou uvedeni v tagu role přispěvatele (ARTIST, COMPOSER atd.). Jednotný konfigurovatelný seznam interpretů naproti tomu umožňuje určit, které role přispěvatelů mají být součástí nabídky Interptet.
 	DE	Wählen Sie, ob Sie eine einzelne, konfigurierbare Liste von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand lets you define which contributor roles should be part of the Artists menu.
 	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
@@ -8233,7 +8233,7 @@ SETUP_ARTISTS_BROWSE_MODES_DESC
 	SV	Välj om du vill ha en enda konfigurerbar artistlista eller två separata listor "Albumartister" och "Alla artister". Albumartister är en lista där albumartist är den enda artisten på ett album eller är den artist som angetts in taggen "ALBUMARTIST". "Alla artister" är en lista med alla artister från alla roller som förekommer på ett album ("ARTIST", "COMPOSER", etc.). Den enda konfigurerbara listan för artister låter dig bestämma vilka roller skall vara med i listan.
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
-	CS	Použit jediný konfigurovatelný seznam umělců
+	CS	Použít jediný konfigurovatelný seznam interpretů
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
 	FR	Utilisation d'une seule liste configurable d'artistes
@@ -8243,7 +8243,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	SV	Använd en enda konfigurerbar artistlista
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
-	CS	Použít dva samostatné seznamy pro Umělce alba a Všichni interpreti
+	CS	Použít dva samostatné seznamy pro Interpteta alba a Všechny interprety
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
 	FR	Utilisation de listes distinctes Artistes des Albums et tous les Artistes
@@ -8469,28 +8469,33 @@ SETUP_ENABLE_STATISTICS
 	ZH_CN	启用库存统计
 
 SETUP_ENHANCEDHTTP
+	CS	Režim přehrávání datového proudu pro HTTP(S)
 	EN	Streaming mode for HTTP(S)
 	FR	Mode de streaming HTTP(S)
 	NL	Streammethode voor HTTP(S)
 
 SETUP_ENHANCEDHTTP_DESC
+	CS	Pokud dojde k selhání připojení HTTP(S) k serveru, Logitech Media Server ukončí přehrávání. Může se také pokusit o jeho opětovné otevření (Trvalý režim) nebo může ukládat datové proudy (Režim mezipaměti) definované délky (podcasty, jednotlivé skladby) do vyrovnávací paměti v souborech na disku. Ty budou po přehrání datového proudu odstraněny. To může zlepšit spolehlivost u některých serverů, které očekávají stahování skladeb, nikoliv přehrávání datoého proudu, a proto uzavírají dlouhá spojení. Zároveň to ale způsobuje větší množství zápisu do souborového systému, což může potenciálně opotřebovat např. karty SD. Pokud máte dostatek místa pro ukládání souborů do vyrovnávací paměti, pak je režim "Mezipaměti" správnou cestou
 	DE	Logitech Media Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
 	EN	When a HTTP(S) connection to a server fails, Logitech Media Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go
 	FR	Lorsqu'une connexion HTTP(S) échoue, Logitech Media Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou mettre en tampon (Cacher) sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD). Le mode "Cacher" est le meilleur si vous avez de la place disque.
 	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Logitech Media Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd. 
 
 SETUP_ENABLE_PERSISTENTHTTP
+	CS	Trvalý režim
 	EN	Persistent mode
 	FR	Mode persistent
 	NL	Persistent-modus
 
 SETUP_ENABLE_BUFFEREDHTTP
+	CS	Ukládat datové proudy HTTP(S) do mezipaměti na disk
 	DE	HTTP(S) Datenströme zwischenspeichern
 	EN	Cache HTTP(S) streams on disk
 	FR	Cacher les flux HTTP(S) sur disque
 	NL	Cache-modus
 
 SETUP_DISABLE_ENHANCEDHTTP
+	CS	Normální přehrávání datového proudu
 	EN	Normal streaming
 	FR	Streaming normal
 	NL	Normaal streamen
@@ -8854,7 +8859,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	ZH_CN	CSRF保护程度
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
-	CS	Jako ochranu proti útokům typu &quot;Podvržení požadavku mezi různými stránkami (Cross Site Request Forgery - CSRF)&quot; Logitech Media Server používá speciální kontrolu požadavků HTTP na funkce, které mohou provádět změny ve vašem systému nebo manipulovat se seznamy skladeb nebo přehrávači. Můžete si zvolit úroveň kontroly, kterou bude Logitech Media Server používat. Výchozí úroveň je Žádná. Další podrobnosti v oddíle <a href="/html/docs/http.html#csrf">Nápověda</a>.
+	CS	Jako ochranu proti útokům typu &quot;Podvržení požadavku mezi různými stránkami (Cross Site Request Forgery - CSRF)&quot; Logitech Media Server používá speciální kontrolu požadavků HTTP na funkce, které mohou provádět změny ve vašem systému nebo manipulovat se seznamy skladeb nebo přehrávači. Můžete si zvolit úroveň kontroly, kterou bude Logitech Media Server používat. Výchozí úroveň je Žádná. Další podrobnosti naleznete v <a href="/html/docs/http.html#csrf">nápovědě</a>.
 	DA	Som en beskyttelse mod såkaldte CSRF-sikkerhedstrusler (Cross Site Request Forgery, dvs. falske krydshenvisninger), undersøger Logitech Media Server alle HTTP-anmodninger om funktioner som kan ændre dit system eller dine afspilningslister, ekstra grundigt. Du kan selv indstille hvilket sikkerhedsniveau Logitech Media Server skal benytte. Standard er Ingen. Der er flere oplysninger i <a href="/html/docs/http.html#csrf">hjælpen</a>.
 	DE	Zum Schutz gegen 'Cross Site Request Forgery' (CSRF)-Sicherheitsrisiken prüft Logitech Media Server HTTP-Anforderungen auf Funktionen, die das System ändern oder Wiedergabelisten oder Player beeinträchtigen können. Sie können die Schutzstufe für Logitech Media Server festlegen. Standardmäßig ist kein Wert festgelegt. Weitere Informationen finden Sie in der <a href="/html/docs/http.html#csrf">Hilfe</a>.
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, Logitech Media Server applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for Logitech Media Server to use.  The default is None. <a href="/html/docs/http.html#csrf">See Help Section</a> for more details.
@@ -9559,7 +9564,7 @@ SETUP_SN_REPORT_STATS
 	SV	Rapportera statistik
 
 SETUP_SN_REPORT_STATS_DESC
-	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistiky o poslechu internetového rádia a hudebních služeb. (Tyto anonymní informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,ce" target="_blank">strategií zachování soukromí</a>).
+	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistik o poslechu internetových rádií a hudebních služeb. (Tyto anonymní informace jsou shromažďovány souhrnně a jsou chráněny našimi <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,cs" target="_blank">zásadami ochrany osobních údajů</a>).
 	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne er anonyme og bruges samlet, og de er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
 	DE	Melden Sie zur Verbesserung von mysqueezebox.com Statistiken über den Einsatz von Internetradio und -Musikdiensten. (Diese anonymen Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzrichtlinien</a>).
 	EN	Help improve mysqueezebox.com by reporting statistics on internet radio and music service listening. (This anonymous information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
@@ -9619,7 +9624,7 @@ SETUP_NO_JAVASCRIPT
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Logitech Media Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
 SETUP_WIZARD_SQN_PLEASE
-	CS	Přihlašte se svojí e-mailovou adresou mysqueezebox.com a heslem a pokračujte.
+	CS	Pro pokračování se přihlaste pomocí e-mailu mysqueezebox.com a hesla.
 	DA	Du skal logge på med din e-mail-adresse og adgangskode til mysqueezebox.com for at fortsætte.
 	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-Mail-Adresse und Ihrem mysqueezebox.com-Kennwort an, um fortzufahren.
 	EN	Please sign in with your mysqueezebox.com email and password to continue.
@@ -9634,7 +9639,7 @@ SETUP_WIZARD_SQN_PLEASE
 	SV	Logga in med e-post och lösenord till mysqueezebox.com för att fortsätta.
 
 SETUP_WIZARD_AUDIODIR
-	CS	Místní složka Hudba
+	CS	Místní složka hudby
 	DA	Lokal musikmappe
 	DE	Lokaler Musikordner
 	EN	Local Music Folder
@@ -9649,7 +9654,7 @@ SETUP_WIZARD_AUDIODIR
 	SV	Lokal musikmapp
 
 SETUP_WIZARD_AUDIODIR_DESC
-	CS	Najděte prosím složku, kde je uložena vaše hudební sbírka.
+	CS	Přejděte do složky, kde je uložena vaše hudební sbírka.
 	DA	Du skal finde den mappe hvor din musiksamling er gemt.
 	DE	Wählen Sie den Ordner, der Ihre Musiksammlung enthält.
 	EN	Please navigate to the folder where your music collection is stored.
@@ -9664,7 +9669,7 @@ SETUP_WIZARD_AUDIODIR_DESC
 	SV	Navigera till mappen där din musiksamling finns.
 
 SETUP_WIZARD_SHARE_WIN
-	CS	<br/><br/>Pokud chcete přistupovat ke svým médiím uloženým na jiném počítači nebo na sdíleném síťovém disku, ujistěte se, že sdílený disk je připojen a je dostupný z vašeho souborového systému. Jakmile je disk dostupný, objeví se ve výběrovém okně vlevo. Pokud znáte cestu k disku, můžete ji zadat níže.
+	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdílené síťové jednotce, ujistěte se, že je sdílená jednotka připojena a dostupná pro váš souborový systém. Jakmile je jednotka dostupná, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu k jednotce, ke které chcete získat přístup, můžete ji zadat níže.
 	DA	<br/><br/>Hvis du vil have adgang til de filer som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet, og der er adgang til det. Når drevet er klar, kan det vælges i vinduet til venstre. Hvis du kender stien til det drev du vil have adgang til, kan du angive det nedenfor.
 	DE	<br/><br/>Wenn Sie auf Medien zugreifen möchten, die auf einem anderen Computer oder einem Netzlaufwerk gespeichert sind, vergewissern Sie sich, dass das Laufwerk im Dateisystem verfügbar ist. Verfügbare Laufwerke werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Laufwerks kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
@@ -9679,7 +9684,7 @@ SETUP_WIZARD_SHARE_WIN
 	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du sparat på en annan dator eller på en delad nätverksenhet så kontrollerar du att den delade enheten har monterats och är tillgänglig på ditt filsystem. När enheten är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till enheten du vill ha tillgång till kan du ange den nedan.
 
 SETUP_WIZARD_SHARE_OTHERS
-	CS	<br/><br/>Pokud chcete přistupovat ke svým médiím uloženým na jiném počítači nebo na sdílené síťové jednotce, ujistěte se, že sdílena jednotka je připojena a je dostupná z vašeho souborového systému. Jakmile je jednotka dostupná, objeví se ve výběrovém okně vlevo. Pokud znáte cestu k jednotce, ke které chcete přistupovat, můžete ji zadat níže.
+	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdíleném síťovém svazku, ujistěte se, že je sdílený svazek připojen a dostupný pro váš souborový systém. Jakmile je svazek dostupný, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu ke svazku, ke kterému chcete získat přístup, můžete ji zadat níže..
 	DA	<br/><br/>Hvis du vil have adgang til mediefiler som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet, og der er adgang til det. Når drevet er klar, kan det vælges i vinduet til venstre. Hvis du kender stien til det drev du vil have adgang til, kan du angive den nedenfor.
 	DE	<br/><br/>Wenn Sie auf Medien zugreifen möchten, die auf einem anderen Computer oder einem Netzwerk-Volume gespeichert sind, vergewissern Sie sich, dass das Volume im Dateisystem verfügbar ist. Verfügbare Volumes werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Volume kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
@@ -10658,7 +10663,7 @@ SHOW_ARTWORK_SINGLE
 	SV	Visa albumomslag
 
 HIDE_ARTWORK
-	CS	Skrýt obal alba
+	CS	Skrýt obaly alb
 	DA	Skjul albumcovere
 	DE	Plattenhüllen nicht anzeigen
 	EN	Hide Artwork
@@ -10947,7 +10952,7 @@ HUGE
 	ZH_CN	特大
 
 NONE
-	CS	Žádný
+	CS	Žádná
 	DA	Ingen
 	DE	Keine
 	EN	None
@@ -11431,7 +11436,7 @@ CONFIRM_OVERWRITE
 	ZH_CN	确定重写
 
 CONFIRM_DELETE
-	CS	Potvrdit smazání
+	CS	Potvrdit odstranění
 	DA	Bekræft sletning
 	DE	Löschen bestätigen
 	EN	Confirm Delete
@@ -12772,7 +12777,7 @@ PLAYLIST_SEARCH
 	SV	Spellistesökning
 
 LCARTISTS
-	CS	Interpreti
+	CS	interpretů
 	DA	kunstnere
 	DE	Interpreten
 	EN	artists
@@ -12810,7 +12815,7 @@ ALBUMS
 	ZH_CN	专辑
 
 LCALBUMS
-	CS	alba
+	CS	alb
 	DA	album
 	DE	Alben
 	EN	albums
@@ -12904,7 +12909,7 @@ OF
 	ZH_CN	的
 
 TO
-	CS	k
+	CS	až
 	DA	til
 	DE	bis
 	EN	to
@@ -13048,7 +13053,7 @@ SONG
 	ZH_CN	歌曲
 
 LCSONGS
-	CS	skladby
+	CS	skladbami
 	DA	numre
 	DE	Titel
 	EN	songs
@@ -13875,7 +13880,7 @@ FILENAME_WARNING
 	SV	Namnet innehåller otillåtna tecknet. Ändra namnet.
 
 RENAME_WARNING
-	CS	Název, který jste zvolili, byl již vybrán. Zvolte prosím pro svůj seznam skladeb jiný název nebo zaškrtnutím 'Potvrdit přepsání' přepište stávající seznam skladeb.
+	CS	Název, který jste zvolili, byl již vybrán. Zvolte prosím pro svůj seznam skladeb jiný název nebo zaškrtnutím "Potvrdit přepsání" přepište stávající seznam skladeb.
 	DA	Navnet du angav, er allerede i brug. Giv afspilningslisten et andet navn, eller vælg at overskrive den eksisterende.
 	DE	Dieser Name ist bereits vorhanden. Wählen Sie einen anderen für die Wiedergabeliste oder aktivieren Sie 'Überschreiben bestätigen'.
 	EN	The name you chose is already taken. Please choose another name for your playlist, or check 'confirm overwrite' to replace your existing playlist.
@@ -13894,7 +13899,7 @@ RENAME_WARNING
 	ZH_CN	您选择的名字已被使用。请选择其它的播放表名字，或选择《确定重写》替换您现有的播放表。
 
 DELETE_WARNING
-	CS	Opravdu to chcete smazat? Zaškrtněte 'Povrdit smazání', chcete-li smazat svůj seznam skladeb.
+	CS	Jste si jisti, že je chcete odstranit? Zaškrtněte políčko "Potvrdit odstranění", chcete-li odstranit svůj seznam skladeb.
 	DA	Vil du slette? Du skal markere "bekræft sletning" for at slette afspilningslisten.
 	DE	Wirklich löschen? Aktivieren Sie 'Löschen bestätigen', um die Wiedergabeliste zu löschen.
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
@@ -13947,7 +13952,7 @@ HOME_SCAN_WARNING
 	ZH_CN	Logitech Media Server正在扫描您的音乐库，这也许需要一些时间，敬请耐心稍候。
 
 SCAN_CLICK
-	CS	Chcete-li procházet přímo svoji složku médií, klepněte na
+	CS	Chcete-li procházet přímo svoji složku médií, klikněte na
 	DA	Hvis du vil gennemse hele din mediesamling, skal du klikke på
 	DE	Klicken Sie zum direkten Durchsuchen des Medienordners auf
 	EN	To browse your media folder directly, click
@@ -14662,7 +14667,7 @@ PLAYER_IP_ADDRESS
 	ZH_CN	此播放机的IP地址是
 
 PLAYER_MAC_ADDRESS
-	CS	Adresa MAC sítě Ethernet pro tento přehrávač je
+	CS	MAC adresa sítě Ethernet pro tento přehrávač je
 	DA	MAC-adressen for denne afspiller er
 	DE	Die MAC-Adresse für diesen Player ist
 	EN	The Ethernet MAC address for this player is
@@ -15251,7 +15256,7 @@ SOFTSQUEEZE_MUSIC_PLAYER
 	ZH_CN	SoftSqueeze播放机
 
 BY
-	CS	podle
+	CS	od
 	DA	af
 	DE	von
 	EN	by
@@ -15327,7 +15332,7 @@ NO_PLAYER_FOUND
 	ZH_CN	未能找到您的播放机。
 
 NO_PLAYER_DETAILS
-	CS	<b>Pokud vlastníte Squeezebox nebo Transporter:</b><ul><li>Ujistěte se, že přehrávač je zapojen a že nastavení sítě jsou správná. Po připojení přehrávače klepněte na tlačítko Obnovit.</ul><p><b>Pokud nemáte Squeezebox ani Transporter:</b><ul><li>Můžete poslouchat hudbu ze své knihovny s pomocí <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, což je softwarová verze Squeezeboxu.<li>K poslechu hudby ze své knihovny s Logitech Media Serverem můžete použít softwarový přehrávač MP3 (například Winamp nebo iTunes), který připojíte k této adrese URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	CS	<b>Pokud vlastníte Squeezebox nebo Transporter:</b><ul><li>Ujistěte se, že přehrávač je zapojen a že nastavení sítě jsou správná. Po připojení přehrávače klikněte na tlačítko Obnovit.</ul><p><b>Pokud nemáte Squeezebox ani Transporter:</b><ul><li>Můžete poslouchat hudbu ze své knihovny s pomocí <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, což je softwarová verze Squeezeboxu.<li>K poslechu hudby ze své knihovny s Logitech Media Serverem můžete použít softwarový přehrávač MP3 (například Winamp nebo iTunes), který připojíte k této adrese URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DA	<b>Hvis du har en Squeezebox eller Transporter:</b><ul><li>Kontroller at din afspiller er sluttet til, og at netværksindstillingerne er korrekte. Klik på opdateringsknappen når afspilleren er tilsluttet.</ul><p><b>Hvis du ikke har en Squeezebox eller Transporter:</b><ul><li>Du kan lytte til dit musikbibliotek vha. <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en softwareversion af Squeezebox.<li>Du kan også bruge et program til at afspille mp3-filer (fx Winamp eller iTunes) til at høre filerne sammen med Logitech Media Server ved at etablere forbindelse til denne adresse: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf Logitech Media Server zugreifen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Logitech Media Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -15544,7 +15549,7 @@ NEED_PLAYLIST_PATH
 	ZH_CN	您必须指定存有播放表目录的路径。
 
 CSRF_ERROR_INFO
-	CS	Chcete-li odeslat požadavek na toto URL ze Záložek/Oblíbených nebo jinými prostředky, než odkazem z webového rozhraní Logitech Media Server, musíte použít URL s bezpečnostním parametrem \"cauth\". Pokud jste dostali toto chybové hlášení při přechodu na odkaz z webového rozhraní Logitech Media Serveru, měli byste se přesvědčit, zda váš webový prohlížeč (včetně proxy serverů a softwaru proti spywaru a na ochranu soukromí) umožňuje odesílání záhlaví \"Referer\". Níže je příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
+	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Logitech Media Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Logitech Media Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\".  Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Logitech Media Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Logitech Media Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
 	DE	Damit Sie diese URL aus einem Favoriten/Lesezeichen oder einem anderen Verfahren als aus der Logitech Media Server-Web-Benutzeroberfläche aufrufen können, müssen Sie eine URL mit dem Sicherheitsparameter 'cauth' verwenden. Trat dieser Fehler beim Klicken auf einen Link in der Logitech Media Server-Web-Benutzeroberfläche auf, sollten Sie prüfen, ob der Browser (sowie Proxyserver und Spyware-/Firewall-Software) das Senden von 'Referer'-Kopfzeilen zulässt. Dies ist die korrekte URL für die gewünschte Verbindung:
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
@@ -15562,7 +15567,7 @@ CSRF_ERROR_INFO
 	ZH_CN	如果要从Bookmark/Favorite或其他方法请求这URL（从Logitech Media Server网界面跟随链接除外），您将需要使用以\"cauth \"为安全参数的URL。如果您从Logitech Media Server网界面跟随链接而出现错误，您需要确定您的浏览器软件（包括网代理伺服器和spyware/privacy软件）允许发送\"Referer\"倒坠。下面是您试图访问的URL的正确的URL。
 
 CSRF_ERROR_MEDIUM
-	CS	<p>Jelikož vaše úroveň ochrany CSRF je nasatvena na 'STŘEDNÍ', můžete použít stejnou &quot;;cauth=&quot; hodnotu pro libovolné URL; to znamená, že byste měli opatrnější na to, s kým sdílíte své adresy URL.</p>
+	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL..</p>
 	DA	<p>Da CSRF-beskyttelsesnivauet er sat til Mellem, kan du anvende den samme værdi for cauth= i alle internetadresser. Det betyder at du skal være forsigtig med hvem du deler dine adresser med.</p>
 	DE	<p>Da Ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
@@ -15579,7 +15584,7 @@ CSRF_ERROR_MEDIUM
 	ZH_CN	<p>由于您的CSRF保护水平被设置在'中等'，您可以在任何URL使用同样的&quot;;cauth=&quot;值；这意味着您应该在与别人分享您的URLs时更加小心。
 
 CLICK_HERE
-	CS	Klepněte sem
+	CS	Klikněte sem
 	DA	Klik her
 	DE	Hier klicken
 	EN	Click here
@@ -15796,6 +15801,7 @@ SEARCHFOR
 	ZH_CN	搜查
 
 TEXTSEARCH
+	CS	vyhledávání textu
 	DE	Textsuche
 	EN	text search
 	FR	Recherche de texte
@@ -15805,6 +15811,7 @@ TEXTSEARCH
 	SV	Textsökning
 
 NOT_IN_TEXTSEARCH
+	CS	ne ve vyhledávání textu
 	DE	nicht in Textsuche
 	EN	not in text search
 	FR	pas dans la recherche de texte
@@ -16039,6 +16046,7 @@ SEARCHING
 	ZH_CN	搜查中
 
 SEARCH_CONTAINS
+	CS	obsahuje
 	DE	enthält
 	EN	contains
 	FR	contient
@@ -16046,6 +16054,7 @@ SEARCH_CONTAINS
 	SV	innehåller
 
 SEARCH_DOESNT_CONTAIN
+	CS	neobsahuje
 	DE	enthält nicht
 	EN	doesn't contain
 	FR	ne contient pas
@@ -16053,6 +16062,7 @@ SEARCH_DOESNT_CONTAIN
 	SV	innehåller inte
 
 SEARCH_STARTS_WITH
+	CS	začíná s
 	DE	beginnt mit
 	EN	starts with
 	FR	commence par
@@ -16060,6 +16070,7 @@ SEARCH_STARTS_WITH
 	SV	börjar med
 
 SEARCH_DOESNT_START_WITH
+	CS	nezačíná s
 	DE	beginnt nicht mit
 	EN	does not start with
 	FR	ne commence pas par
@@ -16086,7 +16097,7 @@ FOUND
 	ZH_CN	已找到
 
 NO_SEARCH_RESULTS
-	CS	Nejsou žádné výsledky hledání
+	CS	Žádné výsledky vyhledávání
 	DA	Ingen søgeresultater
 	DE	Nichts gefunden
 	EN	No search results
@@ -16103,7 +16114,7 @@ NO_SEARCH_RESULTS
 	ZH_CN	无搜查成果
 
 CONTRIBUTORMATCHING
-	CS	Přiřazování interpreta
+	CS	Shoda interpretu
 	DA	Kunstnere der matcher
 	DE	Passender Interpret
 	EN	Artist matching
@@ -16122,7 +16133,7 @@ CONTRIBUTORMATCHING
 	ZH_CN	艺人匹配
 
 CONTRIBUTORSMATCHING
-	CS	Přiřazování interpretů
+	CS	Shoda interpretů
 	DA	Kunstnere der matcher
 	DE	Passende Interpreten
 	EN	Artists matching
@@ -16141,7 +16152,7 @@ CONTRIBUTORSMATCHING
 	ZH_CN	艺人匹配
 
 ALBUMMATCHING
-	CS	Přiřazování alba
+	CS	Shoda alba
 	DA	Album der matcher
 	DE	Passendes Album
 	EN	Album matching
@@ -16160,7 +16171,7 @@ ALBUMMATCHING
 	ZH_CN	专辑匹配
 
 ALBUMSMATCHING
-	CS	Přiřazování alb
+	CS	Shoda alb
 	DA	Album der matcher
 	DE	Passende Alben
 	EN	Albums matching
@@ -16179,7 +16190,7 @@ ALBUMSMATCHING
 	ZH_CN	专辑匹配
 
 TRACKMATCHING
-	CS	Přiřazování názvu skladby
+	CS	Shoda názvu skladby
 	DA	Titel der matcher
 	DE	Passender Titel
 	EN	Song title matching
@@ -16198,7 +16209,7 @@ TRACKMATCHING
 	ZH_CN	歌曲标题匹配
 
 TRACKSMATCHING
-	CS	Přiřazování skladeb
+	CS	Shoda názvů skladeb
 	DA	Numre der matcher
 	DE	Passende Titel
 	EN	Songs matching
@@ -16217,7 +16228,7 @@ TRACKSMATCHING
 	ZH_CN	歌曲标¢匹配
 
 GENREMATCHING
-	CS	Přiřazování žánrů
+	CS	Shoda žánru
 	DA	Genre der matcher
 	DE	Passende Stilrichtung
 	EN	Genre matching
@@ -16232,7 +16243,7 @@ GENREMATCHING
 	SV	Genre som matchar
 
 GENRESMATCHING
-	CS	Přiřazování žánrů
+	CS	Shoda žánrů
 	DA	Genrer der matcher
 	DE	Passende Stilrichtungen
 	EN	Genres matching
@@ -16379,7 +16390,7 @@ UNSYNCING_FROM
 	SV	Synkronisering från %s avbryts
 
 CREATE_MIX
-	CS	Vytvořit Mix
+	CS	Vytvořit mix
 	DA	Opret miks
 	DE	Mix erstellen
 	EN	Create Mix
@@ -16602,6 +16613,7 @@ URL
 	ZH_CN	网址
 
 PATH
+	CS	Cesta
 	DE	Pfad
 	EN	Path
 	FR	Chemin
@@ -16626,7 +16638,7 @@ RADIO_TUNEIN_NOW
 	ZH_CN	现在调谐
 
 RADIO_TUNEIN_DESC
-	CS	Pokud již znáte adresu URL stanice, kterou chcete poslouchat, zadejte ji zde a klikněte na tlačítko "Tune In". Můžete zadat adresu URL buď samotného radiového proudu (např. http://62.49.59.50:8000) nebo souboru seznamu skladeb, který k proudu odkazuje (např. http://www.hitzradio.com/hitzradio.pls).
+	CS	Pokud již znáte adresu URL stanice, kterou chcete poslouchat, zadejte ji zde a klikněte na tlačítko "Naladit". Můžete zadat adresu URL buď samotného radiového proudu (např. http://62.49.59.50:8000) nebo souboru seznamu skladeb, který k proudu odkazuje (např. http://www.hitzradio.com/hitzradio.pls).
 	DA	Hvis du allerede kender stationens internetadresse, kan du angive den her og klikke på Stil ind. Du kan angive adressen til selve radiostreamen (fx http://62.49.59.50:8000) eller til en afspilningsliste der henviser til den (fx http://www.hitzradio.com/hitzradio.pls).
 	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
@@ -16822,7 +16834,7 @@ HELP_RADIO
 	ZH_CN	互联网电台
 
 REMOTE_STREAMING
-	CS	Vzdálený datový proud
+	CS	Přehrávání vzdálených datových proudů
 	DA	Ekstern streaming
 	DE	Remote-Datenstrom
 	EN	Remote Streaming
@@ -17363,7 +17375,7 @@ INFORMATION_CLIENTS
 	ZH_CN	被认出的播放机总数
 
 INFORMATION_CACHEDIR
-	CS	Odkládací složka
+	CS	Složka mezipaměti
 	DA	Mappe til cache
 	DE	Zwischenspeicher-Ordner
 	EN	Cache Folder
@@ -17611,7 +17623,7 @@ INFORMATION_PLAYLISTS
 	NL	Totaal aantal afspeellijsten
 
 INFORMATION_VIDEOS
-	CS	Videí celkem
+	CS	Celkem videí
 	DA	Videoer i alt
 	DE	Anzahl Videos
 	EN	Total Videos
@@ -17626,7 +17638,7 @@ INFORMATION_VIDEOS
 	SV	Antal videoklipp
 
 INFORMATION_IMAGES
-	CS	Obrázků celkem
+	CS	Celkem obrázků
 	DA	Billeder i alt
 	DE	Anzahl Bilder
 	EN	Total Images
@@ -17956,6 +17968,7 @@ NOT
 	ZH_CN	不
 
 RANGE
+	CS	v rozsahu
 	DE	Bereich
 	EN	range
 	FR	compris entre
@@ -17965,6 +17978,7 @@ RANGE
 	SV	område
 
 NOT_IN_RANGE
+	CS	mimo rozsah
 	DE	nicht im Bereich
 	EN	not in range
 	FR	non compris entre
@@ -19304,7 +19318,7 @@ SETUP_VISUALIZERMODE_DESC
 	SV	Spelaren kan visa antingen mätare eller mer utförlig textinformation på skärmen till höger. Välj det alternativ du föredrar. Genom att trycka på visualiseringsknappen på spelaren kan du växla mellan de alternativ du har markerat nedan.
 
 SETUP_PRECACHEARTWORK
-	CS	Ukládání obalu alba
+	CS	Ukládání obalu alba do mezipaměti
 	DA	Gemmer coverbilleder i cachelager
 	DE	Plattenhüllen zwischenspeichern
 	EN	Artwork Pre-caching
@@ -19319,7 +19333,7 @@ SETUP_PRECACHEARTWORK
 	SV	Cachelagring av albumomslag
 
 SETUP_PRECACHEARTWORK_DESC
-	CS	Standardně jsou u všech obalů alb nalezených při prohledávání automaticky změněny velikosti a obaly jsou uloženy do odkládací paměti, což zlepšuje výkon při používání ovladače Squeezebox Controller nebo webového rozhraní. Toto zpomaluje proces prohledávání a je možné to zde zakázat.
+	CS	Standardně jsou u všech obalů alb nalezených při prohledávání automaticky změněny velikosti a obaly jsou uloženy do mezipaměti, což zlepšuje výkon při používání ovladače Squeezebox Controller nebo webového rozhraní. Toto zpomaluje proces prohledávání a je možné to zde zakázat.
 	DA	Som standard tilpasses størrelsen af de albumcovere der findes ved gennemsøgningen, og de gemmes i et cachelager. Dermed går det hurtigere når du bruger Squeezebox Controller eller den webbaserede brugerflade. Det gør dog gennemsøgningen langsommere, så funktionen kan deaktiveres her.
 	DE	Standardmäßig werden alle während der Suche gefundenen Plattenhüllen automatisch in der Größe angepasst und zwischengespeichert, um die Leistung zu verbessern, wenn der Squeezebox Controller oder die Web-Benutzeroberfläche genutzt wird.  Da dies die Suche verlangsamt, können Sie den Vorgang hier deaktivieren.
 	EN	By default, all cover art found during the scanning phase is automatically resized and cached to improve performance when using Squeezebox Controller or the web interface.  This does slow down the scan process, so it can be disabled here.
@@ -19334,7 +19348,7 @@ SETUP_PRECACHEARTWORK_DESC
 	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
 
 SETUP_PRECACHEARTWORK_ALL
-	CS	Ukládat obaly alb, fotografie a videa do mezipaměti cache
+	CS	Ukládat obaly alb, fotografie a videa do mezipaměti
 	DA	Gemme albumcovers samt andre albumrelaterede mediefiler
 	DE	Alben, Fotos und Videos zwischenspeichern
 	EN	Pre-cache album, photo and video artwork
@@ -19349,7 +19363,7 @@ SETUP_PRECACHEARTWORK_ALL
 	SV	Cachelagra omslag för album, foton och videor
 
 SETUP_PRECACHEARTWORK_ENABLED
-	CS	Ukládat obaly alb do mezipaměti cache
+	CS	Ukládat obaly alb do mezipaměti
 	DA	Gemme coverbilleder
 	DE	Plattenhüllen zwischenspeichern
 	EN	Pre-cache album artwork
@@ -19364,7 +19378,7 @@ SETUP_PRECACHEARTWORK_ENABLED
 	SV	Cachelagra albumomslag
 
 SETUP_PRECACHEARTWORK_DISABLED
-	CS	Neukládat obaly alb do odkládací paměti
+	CS	Neukládat obaly alb do mezipaměti
 	DA	Gem ikke coverbilleder i cachelager
 	DE	Plattenhüllen nicht zwischenspeichern
 	EN	Do not pre-cache artwork
@@ -19398,7 +19412,7 @@ SETUP_IMAGEPROXY
 	SV	Anpassning av skivomslagens storlek
 
 SETUP_IMAGEPROXY_DESC
-	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj streamování, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
+	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj přehrávání datovýh proudů, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
@@ -19452,7 +19466,7 @@ SETUP_SHUFFLE_METHOD
 	NL	Methode voor willekeurig afspelen
 
 SETUP_USE_BALANCED_SHUFFLE
-	CS	Použít vyváženější, ale pomalejšího náhodné pořadí
+	CS	Použít vyváženější, ale pomalejší náhodné pořadí
 	DE	Ausbalancierter, aber langsamer mischen
 	EN	Use more balanced, but slower shuffle
 	FR	Choisir un mélange plus équilibré, mais plus lent
@@ -20877,7 +20891,7 @@ DEBUG_PLAYER_PLAYLIST
 	SV	Kontrollinformation av spelarens spellista på toppnivå
 
 DEBUG_PLAYER_STREAMING
-	CS	Protokolování všech datových proudů přehrávače
+	CS	Protokolování přehrávání všech datových proudů přehrávače
 	DA	Logføring af streaming for alle afspillere
 	DE	Streaming aller Geräte
 	EN	All Player Streaming Logging
@@ -20892,7 +20906,7 @@ DEBUG_PLAYER_STREAMING
 	SV	Loggning av strömning för alla spelare
 
 DEBUG_PLAYER_STREAMING_DIRECT
-	CS	Protokolování přímého přehrávání datového proudu přehrávače
+	CS	Protokolování přehrávání přímého datového proudu přehrávače
 	DA	Logføring af direkte streaming til afspiller
 	DE	Player: Direct Streaming
 	EN	Player Direct Streaming Logging
@@ -20907,7 +20921,7 @@ DEBUG_PLAYER_STREAMING_DIRECT
 	SV	Loggning av direktströmning till spelare
 
 DEBUG_PLAYER_STREAMING_REMOTE
-	CS	Protokolování vzdálených datových proudů přehrávače
+	CS	Protokolování přehrávání vzdálených datových proudů přehrávače
 	DA	Logføring af ekstern streaming til afspiller
 	DE	Player: Remote Streaming
 	EN	Player Remote Streaming Logging
@@ -21417,7 +21431,7 @@ DISCOVERING_PLAYLIST_PROGRESS
 	SV	Leta spellistor
 
 DIRECTORY_DELETED_PROGRESS
-	CS	Odstraňování smazaných souborů
+	CS	Odebírání odstraněných souborů
 	DA	Fjerner slettede filer
 	DE	Gelöschte Dateien werden entfernt
 	EN	Removing deleted files
@@ -21477,7 +21491,7 @@ DIRECTORY_CHANGED_PROGRESS
 	SV	Söker igenom ändrade filer
 
 PLAYLIST_DELETED_PROGRESS
-	CS	Odstraňování smazaných seznamů skladeb
+	CS	Odebírání odstarněných seznamů skladeb
 	DA	Fjerner slettede afspilningslister
 	DE	Gelöschte Wiedergabelisten werden entfernt
 	EN	Removing deleted playlists
@@ -21570,7 +21584,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	SV	Hitta uppdaterade skivomslag
 
 PRECACHEARTWORK_PROGRESS
-	CS	Příprava ukládání obalu alba do mezipaměti
+	CS	Příprava ukládání obalů alb do mezipaměti
 	DA	Gem coverbilleder i cachelager
 	DE	Plattenhüllen werden zwischengespeichert
 	EN	Pre-caching Artwork
@@ -21945,7 +21959,7 @@ SETUP_VIEW_SCANNING
 	SV	Sökning – Visa förlopp
 
 SETUP_VIEW_NOT_SCANNING
-	CS	Zobrazit předchozí podrobnosti prohledávání
+	CS	Zobrazit podrobnosti o předchozím prohledávání
 	DA	Vis detaljer om sidste gennemsøgning
 	DE	Zeige Details zur vorherigen Suche
 	EN	View Previous Scan Details
@@ -22065,7 +22079,7 @@ JIVE_ADD_ALL
 	SV	Lägg till alla
 
 JIVE_DELETE_PLAYLIST
-	CS	Smazat seznam skladeb\n%s
+	CS	Odstranit seznam skladeb\n%s
 	DA	Slet afspilningsliste\n%s
 	DE	Wiedergabeliste löschen\n%s
 	EN	Delete Playlist\n%s
@@ -22080,7 +22094,7 @@ JIVE_DELETE_PLAYLIST
 	SV	Ta bort spellistan\n%s
 
 JIVE_DELETE_FROM_FAVORITES
-	CS	Smazat z oblíbených položek
+	CS	Odstranit z oblíbených položek
 	DA	Slet favorit
 	DE	Favorit löschen
 	EN	Delete Favorite
@@ -22747,6 +22761,7 @@ RECENT_SEARCHES
 	SV	Nyligen gjorda sökningar
 
 SAVED_SEARCH
+	CS	Uložené vyhledávání
 	DE	Gespeicherte Suche
 	EN	Saved Search
 	FR	Recherches enregistrées
@@ -22815,7 +22830,7 @@ UNMIXABLE
 	SV	%s är inte tillgängligt för det här objektet
 
 NO_MIXERS_AVAILABLE
-	CS	Nejsou k dispozici žádné mixéry
+	CS	Nejsou k dispozici žádné směšovače
 	DA	Der er ingen miksere
 	DE	Keine Mixer verfügbar
 	EN	No mixers available
@@ -23809,7 +23824,7 @@ CLEANUP_DB
 	SV	Ta bort databas med medieinformation
 
 CLEANUP_FILECACHE
-	CS	Vymazat odkládací paměť souborů obalů alb, šablon apod.
+	CS	Odstranit soubory mezipaměti obalů alb, šablon apod.
 	DA	Slet filcache med coverbilleder, skabeloner osv.
 	DE	Datei-Zwischenspeicher für Plattenhüllen, Vorlagen usw. löschen.
 	EN	Delete file cache for artwork, templates etc.
@@ -23824,7 +23839,7 @@ CLEANUP_FILECACHE
 	SV	Ta bort filcache (innehåller bla. albumomslag och mallar)
 
 CLEANUP_PREFS
-	CS	Smazat soubory předvoleb
+	CS	Odstranit soubory předvoleb
 	DA	Slet filer med indstillinger
 	DE	Einstellungsdateien löschen
 	EN	Delete preference files
@@ -23839,7 +23854,7 @@ CLEANUP_PREFS
 	SV	Ta bort inställningsfiler
 
 CLEANUP_LOGS
-	CS	Smazat protokolové soubory
+	CS	Odstranit protokolové soubory
 	DA	Slet logfiler
 	DE	Logdateien löschen
 	EN	Delete log files
@@ -23854,7 +23869,7 @@ CLEANUP_LOGS
 	SV	Ta bort loggfiler
 
 CLEANUP_CACHE
-	CS	Smazat odkládací složku, včetně databáze médií, vyrovnávací paměti obalů alb atd.
+	CS	Vyčistit složku mezipaměti, včetně databáze knihovny médií, mezipaměti obalů alb atd.
 	DA	Ryd op i cachemappen, herunder mediedatabasen, cachelagrede coverbilleder osv.
 	DE	Zwischenspeicher-Ordner mit Mediendatenbank, Plattenhüllen usw. bereinigen
 	EN	Clean cache folder, including media library database, artwork cache etc.
@@ -23899,7 +23914,7 @@ CLEANUP_DRYRUN
 	SV	Kör inte rensningen, men visa vilka filer och mappar som skulle tas bort.
 
 CLEANUP_DELETING
-	CS	Mazání
+	CS	Odstraňování
 	DA	Sletter
 	DE	Löschen
 	EN	Deleting
@@ -23929,7 +23944,7 @@ CONTROLPANEL_NO_STATUS
 	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Logitech Media Server inte körs.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Logitech Media Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klepněte na možnost „Spustit jako správce“.
+	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Logitech Media Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klikněte na možnost "Spustit jako správce".
 	DA	Du har ikke rettigheder til at installere eller starte/stoppe baggrundstjenesten Logitech Media Server. Start kontrolpanelet fra Startmenuen i Windows – via højrekliksmenuen klikker du på "Kør som administrator".
 	DE	Sie sind nicht dazu berechtigt, den Logitech Media Server-Hintergrunddienst zu installieren oder zu starten bzw. anzuhalten. Öffnen Sie die Systemsteuerung im Windows-Startmenü über das Kontextmenü und wählen Sie 'Als Administrator ausführen'.
 	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
@@ -24277,7 +24292,7 @@ WHATS_NEXT
 	SV	Jag är klar. Vad gör jag nu?
 
 CONTINUE_TO_SQUEEZEBOX_SERVER
-	CS	Pokračovat na Logitech Media Server pro správu nastavení k přehrávání vaší osobní knihovny médií.
+	CS	Pokračujte na Logitech Media Server a spravujte nastavení pro přístup k osobní knihovně médií.
 	DA	Fortsæt til Logitech Media Server hvor du kan konfigurere indstillinger for dit personlige mediebibliotek.
 	DE	Weiter zu Logitech Media Server zum Verwalten der Einstellungen zur Wiedergabe Ihrer persönlichen Medienbibliothek.
 	EN	Continue to Logitech Media Server to manage settings for accessing your personal media library.
@@ -24474,7 +24489,7 @@ LIBRARY_NOT_READY
 	SV	Inget musikbibliotek är konfigurerat eller redo att användas
 
 PRESETS_NOT_DEFINED
-	CS	Přednastavené #%s nedefinováno.
+	CS	Předvolba #%s není definována.
 	DA	Fast indstilling #%s er ikke defineret.
 	DE	Voreinstellung %s nicht definiert.
 	EN	Preset #%s not defined.
@@ -24490,7 +24505,7 @@ PRESETS_NOT_DEFINED
 	SV	Förinställningen #%s har inte angetts.
 
 PRESET_ADDING
-	CS	Ukládám zadané #%s...
+	CS	Ukládám předvolbu #%s...
 	DA	Gemmer fast indstilling #%s...
 	DE	Voreinstellung %s wird gespeichert...
 	EN	Saving preset #%s...
@@ -24508,7 +24523,7 @@ PRESET_ADDING
 
 PRESET_HOLD_TO_SAVE
 # SLT: instruction for the user to hold the button if he wants to save that preset
-	CS	Přednastavit #%s (pro uložení přidržte)
+	CS	Předvolba #%s (pro uložení přidržte)
 	DA	Fast indstilling #%s (hold knappen nede for at gemme)
 	DE	Voreinstellung #%s (zum Speichern gedrückt halten)
 	EN	Preset #%s (hold to save)
@@ -24524,7 +24539,7 @@ PRESET_HOLD_TO_SAVE
 
 PRESET
 # SLT: a preset button on eg. the Radio
-	CS	Přednastavení #%s
+	CS	Předvolba #%s
 	DA	Fast indstilling #%s
 	DE	Voreinstellung #%s
 	EN	Preset #%s
