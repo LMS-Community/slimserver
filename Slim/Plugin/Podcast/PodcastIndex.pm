@@ -14,6 +14,7 @@ use JSON::XS::VersionOneAndTwo;
 use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
 use URI::Escape;
+use List::Util qw(max);
 
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
@@ -119,7 +120,7 @@ sub newsHandler {
 			{
 				cache => 1,
 				expires => 300,
-				timeout => 15,
+				timeout => max(15, $count * 2),
 			},
 		)->get($url, @$headers);
 	}
