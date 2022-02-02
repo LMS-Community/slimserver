@@ -15,10 +15,15 @@ use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
 use URI::Escape;
 
+use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string cstring);
 
+use constant NEWS_TTL => 300;
+use constant NEWS_CACHE_KEY => 'podcast_index_news';
+
+my $cache = Slim::Utils::Cache->new();
 my $prefs = preferences('plugin.podcast');
 my $log = logger('plugin.podcast');
 
@@ -28,6 +33,10 @@ $prefs->init( { podcastindex => {
 	k => 'NTVhNTMzODM0MzU1NDM0NTQ1NTRlNDI1MTU5NTk1MzRhNDYzNzRkNA==',
 	s => 'ODQzNjc1MDc3NmQ2NDQ4MzQ3OTc4NDczNzc1MzE3MTdlNTM3YzQzNTI2ODU1NWE0MzIyNjE2ZTU0MjMyOTdhN2U2ZTQyNWU0ODQ0MjM0NTU=',
 } } );
+
+$prefs->setChange( sub {
+	$cache->remove(NEWS_CACHE_KEY);
+}, 'newSince', 'maxNew');
 
 # add a new episode menu to defaults
 sub getMenuItems {
@@ -72,6 +81,11 @@ sub getFeedsIterator {
 sub newsHandler {
 	my ($client, $cb, $args, $passthrough) = @_;
 
+	if (my $cached = $cache->get(NEWS_CACHE_KEY)) {
+		main::INFOLOG && $log->is_info && $log->info("Returning cached PodcastIndex news");
+		return $cb->({ items => $cached });
+	}
+
 	my $headers = getHeaders();
 	my @feeds = @{$prefs->get('feeds')};
 	my $count = scalar @feeds;
@@ -81,6 +95,15 @@ sub newsHandler {
 	my $items = [];
 
 	$log->info("about to get updates for $count podcast feeds");
+
+	my $cb2 = sub {
+		if (!--$count) {
+			main::INFOLOG && $log->is_info && $log->info("Done getting updates");
+			$items = [ sort { $a->{date} < $b->{date} } @$items ];
+			$cache->set(NEWS_CACHE_KEY, $items, NEWS_TTL);
+			$cb->( { items => $items } );
+		};
+	};
 
 	foreach my $feed (@feeds) {
 		my $url = 'https://api.podcastindex.org/api/1.0/episodes/byfeedurl?url=' . uri_escape($feed->{value});
@@ -103,18 +126,11 @@ sub newsHandler {
 					};
 				}
 
-				unless (--$count) {
-					$items = [ sort { $a->{date} < $b->{date} } @$items ];
-					$cb->( { items => $items } );
-				}
+				$cb2->();
 			},
 			sub {
 				$log->warn("can't get new episodes for $url ", shift->error);
-				unless (--$count) {
-					$items = [ sort { $a->{date} < $b->{date} } @$items ];
-					$cb->( { items => $items } );
-				}
-
+				$cb2->();
 			},
 			{
 				cache => 1,
@@ -130,7 +146,7 @@ sub getHeaders {
 	my $k = pack('H*', scalar(reverse(MIME::Base64::decode($config->{k}))));
 	my $s = pack('H*', scalar(reverse(MIME::Base64::decode($config->{s}))));
 	# try to fit in a 5 minutes window for cache
-	my $now = time;	
+	my $now = time;
 	$authtime = $now if $now - $authtime >= 300;
 
 	my $headers = [

@@ -285,7 +285,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
 	EN	Set the Podcast feeds provider (aggregator).
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
-	NL	Configureer de podcast feed aanbieder (aggregator) 
+	NL	Configureer de podcast feed aanbieder (aggregator)
 
 PLUGIN_PODCAST_SEARCH_FAILED
 	CS	Vyhledávání se nezdařilo
@@ -318,7 +318,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 
 PLUGIN_PODCAST_NEWSINCE
 	CS	Počet dnů historie
-	DE	Anzahl Einträge im Verlauf
+	DE	Anzahl Tage im Verlauf
 	EN	Number of history days
 	FR	Nombre de jours d'historique
 	NL	Aantal dagen terug
