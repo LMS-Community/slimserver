@@ -20,7 +20,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string cstring);
 
-use constant NEWS_TTL => 300;
+use constant NEWS_TTL => 60;
 use constant NEWS_CACHE_KEY => 'podcast_index_news';
 
 my $cache = Slim::Utils::Cache->new();
@@ -134,7 +134,7 @@ sub newsHandler {
 			},
 			{
 				cache => 1,
-				expires => 300,
+				expires => 900,
 				timeout => 30,
 			},
 		)->get($url, @$headers);
