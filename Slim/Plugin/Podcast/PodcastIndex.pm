@@ -135,7 +135,7 @@ sub newsHandler {
 			{
 				cache => 1,
 				expires => 300,
-				timeout => 15,
+				timeout => 30,
 			},
 		)->get($url, @$headers);
 	}
