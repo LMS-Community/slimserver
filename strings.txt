@@ -4077,7 +4077,7 @@ SETUP_FORMATS_PREFER_NATIVE
 	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
 	EN	Prefer native format (decoding on the player) whenever possible
 	FR	Utiliser le format natif si possible (éviter le transcodage)
-	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler) 
+	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler)
 
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
@@ -6026,7 +6026,7 @@ SETUP_TRANSITIONSAMPLERESTRICTION_DESC
 	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
 	FR	Il peut être approprié de désactiver les transitions entre les pistes ayant des fréquences d'échantillonnage différentes. Cela peut être nécessaire si la platine génère du bruit pendant ces transitions.
 	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som bara genererar oväsen vid sådan korstoning.
-	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen. 
+	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen.
 
 SETUP_TITLEFORMAT
 	CS	Formát názvu
@@ -7255,7 +7255,7 @@ LOCAL_RATING_STORAGE
 SETUP_CHECKVERSION
 	CS	Aktualizace softwaru
 	DA	Softwareopdateringer
-	DE	Aktualisierte Software
+	DE	Softwareaktualisierungen
 	EN	Software Updates
 	ES	Actualizaciones de software
 	FI	Ohjelmistopäivitykset
@@ -8479,7 +8479,7 @@ SETUP_ENHANCEDHTTP_DESC
 	DE	Logitech Media Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
 	EN	When a HTTP(S) connection to a server fails, Logitech Media Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go
 	FR	Lorsqu'une connexion HTTP(S) échoue, Logitech Media Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou mettre en tampon (Cacher) sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD). Le mode "Cacher" est le meilleur si vous avez de la place disque.
-	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Logitech Media Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd. 
+	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Logitech Media Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd.
 
 SETUP_ENABLE_PERSISTENTHTTP
 	CS	Trvalý režim
@@ -12341,22 +12341,22 @@ NO_TITLE
 
 THOUSANDS_SEP
 # SLT: this is the separator used to separate thousands as in 10'000'000.00 ([[http://en.wikipedia.org/wiki/Thousands_separator]])
-	CS	 
+	CS
 	DA	,
 	DE	.
 	EN	,
 	ES	.
-	FI	 
+	FI
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
@@ -15863,7 +15863,7 @@ SEARCHFOR_ARTISTS_DBL
 	FR	Cherche artistes
 	NL	Artiesten zoeken
 	PL	Wyszukaj wykonawców
-	
+
 SEARCHFOR_ALBUM
 	CS	Hledat album
 	DA	Søg efter album
@@ -15907,7 +15907,7 @@ SEARCHFOR_ALBUMS_DBL
 	FR	Cherche albums
 	NL	Albums zoeken
 	PL	Wyszukaj albumy
-	
+
 SEARCHFOR_SONGS
 	CS	Hledat skladby
 	DA	Søg efter numre
@@ -15932,7 +15932,7 @@ SEARCHFOR_SONGS_DBL
 	FR	Cherche morceaux
 	NL	Nummers zoeken
 	PL	Wyszukaj utwory
-	
+
 SEARCHFOR_SONGTITLE
 	CS	Hledat název skladby
 	DA	Søg efter titel på nummer
