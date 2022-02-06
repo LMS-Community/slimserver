@@ -298,9 +298,9 @@ sub rescan {
 			sql   => $inDBOnlySQL
 		}, $args);
 
-		$class->updateTracks($dbh, \$changes, \$paths, \$next, $changedOnlyCount, $changedOnlySQL, $args);
+		$class->updateTracks($dbh, \$changes, \$paths, $next, $changedOnlyCount, $changedOnlySQL, $args);
 
-		$class->addTracks($dbh, \$changes, \$paths, \$next, $onDiskOnlyCount, $onDiskOnlySQL, $args);
+		$class->addTracks($dbh, \$changes, \$paths, $next, $onDiskOnlyCount, $onDiskOnlySQL, $args);
 
 		if ( hasAborted() ) {
 			# nothing to do here - should be handled in hasAborted()
@@ -481,7 +481,7 @@ sub addTracks {
 
 			if ( $onDiskOnlySth->fetch ) {
 				$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($new) );
-				$changes++;
+				$$changes++;
 				$onDiskOnlyDone++;
 
 				new($new);
@@ -496,7 +496,7 @@ sub addTracks {
 
 					if ( !$args->{no_async} ) {
 						$args->{paths} = $paths;
-						markDone( $nextFolder => PENDING_NEW, $changes, $args );
+						markDone( $nextFolder => PENDING_NEW, $$changes, $args );
 					}
 
 					$progress && $progress->final;
@@ -565,7 +565,7 @@ sub updateTracks {
 
 			if ( $changedOnlySth->fetch ) {
 				$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($changed) );
-				$changes++;
+				$$changes++;
 				$changedOnlyDone++;
 
 				changed($changed);
@@ -578,7 +578,7 @@ sub updateTracks {
 				if ( !$changedOnlySth->rows ) {
 					if ( !$args->{no_async} ) {
 						$args->{paths} = $paths;
-						markDone( $nextFolder => PENDING_CHANGED, $changes, $args );
+						markDone( $nextFolder => PENDING_CHANGED, $$changes, $args );
 					}
 
 					$progress && $progress->final;
