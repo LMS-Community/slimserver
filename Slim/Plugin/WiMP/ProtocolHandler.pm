@@ -260,6 +260,7 @@ sub _gotTrack {
 		duration  => $info->{duration},
 		bitrate   => $format eq 'flac' ? 'PCM VBR' : ($info->{bitrate} . 'k CBR'),
 		type      => lc($format) eq 'mp4' ? 'AAC' : uc($format),
+		replay_gain => $info->{replayGain} || 0,
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
@@ -441,6 +442,18 @@ sub _gotBulkMetadataError {
 	$client->master->pluginData( fetchingMeta => 0 );
 
 	$log->warn("Error getting track metadata from SN: $error");
+}
+
+# Override replaygain to always use the supplied gain value
+sub trackGain {
+	my ( $class, $client, $url ) = @_;
+
+	my $info = $client->streamingSong()->pluginData('info') || {};
+
+	my $gain = $info->{replayGain} || 0;
+	main::INFOLOG && $log->info("Using replaygain value of $gain for TIDAL track");
+
+	return $gain;
 }
 
 sub getIcon {
