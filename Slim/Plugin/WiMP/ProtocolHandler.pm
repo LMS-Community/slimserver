@@ -275,6 +275,7 @@ sub _gotTrack {
 		sub {
 			my $meta = $cache->get('wimp_meta_' . $info->{id});
 			$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
+			$song->track->setAttributes($meta);
 			$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 			$params->{successCb}->();
 		},
@@ -282,7 +283,8 @@ sub _gotTrack {
 			my ($self, $error) = @_;
 			$log->warn( "could not find $format header $error" );
 			$params->{successCb}->();
-		} );
+		}
+	);
 }
 
 sub _gotTrackError {
@@ -442,18 +444,6 @@ sub _gotBulkMetadataError {
 	$client->master->pluginData( fetchingMeta => 0 );
 
 	$log->warn("Error getting track metadata from SN: $error");
-}
-
-# Override replaygain to always use the supplied gain value
-sub trackGain {
-	my ( $class, $client, $url ) = @_;
-
-	my $info = $client->streamingSong()->pluginData('info') || {};
-
-	my $gain = $info->{replayGain} || 0;
-	main::INFOLOG && $log->info("Using replaygain value of $gain for TIDAL track");
-
-	return $gain;
 }
 
 sub getIcon {
