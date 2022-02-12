@@ -224,10 +224,16 @@ sub handleURI {
 
 	# Detect the language the client wants content returned in
 	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
-		my @parts = split(/[,-]/, $lang);
-		$context->{lang} = uc $parts[0] if $parts[0];
-		# We support variation languages for zh and en.  Therefore, we record second part as a sub language to try and match later.
-		$context->{sublang} = uc $parts[1] if (scalar @parts) > 1;		
+		my @parts = map { s/^\s+|\s+$//g; /([\w-]+)(;q=(\d+(\.\d+)?))?/i; {l=>$1, q=>$3//1} } split(",", $lang);
+		@parts = sort { $b->{q} <=> $a->{q} } @parts;
+		$context->{lang} = uc $parts[0]->{l} if $parts[0]->{l};
+		if ( $parts[0]->{l} =~ /-/ ) {
+			# We support variation languages for zh and en.  Therefore, we record a possible sub language to try and match later.
+			$context->{sublang} = $context->{lang};
+			$context->{sublang} =~ s/-/_/;
+
+			($context->{lang}) = $context->{lang} =~ /(.*)?-/;			
+		}	
 	}
 
 	if ( my $ua = ( $httpResponse->request->header('X-User-Agent') || $httpResponse->request->header('User-Agent') ) ) {
@@ -427,10 +433,10 @@ sub requestMethod {
 		}
 
 		# test if the sub language is an available option
-		if ( $lang && $sublang ) {
+		if ( $sublang ) {
 			my $all_langs = Slim::Utils::Strings::languageOptions();
-			if (defined $all_langs->{$lang . '_' . $sublang}) {
-				$lang .= '_'  . $sublang;
+			if ( defined $all_langs->{$sublang} ) {
+				$lang = $sublang;
 			}
 		}
 
