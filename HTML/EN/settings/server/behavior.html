@@ -2,10 +2,10 @@
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_ARTISTS_BROWSE_MODES" desc="SETUP_ARTISTS_BROWSE_MODES_DESC" %]
 			<select class="stdedit" name="pref_useUnifiedArtistsList" id="useUnifiedArtistsList">[% prefs.pref_useUnifiedArtistsList %]
-	
+
 				<option [% IF prefs.pref_useUnifiedArtistsList %]selected [% END %]value="1">[% 'SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON' | string %]</option>
 				<option [% IF NOT prefs.pref_useUnifiedArtistsList%]selected [% END %]value="0">[% 'SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF' | string %]</option>
-			
+
 			</select>
 		[% END %]
 	[% END %]
@@ -17,7 +17,7 @@
 
 			<input type="checkbox" [% IF prefs.pref_conductorInArtists %]checked="1" [% END %] class="stdedit" name="pref_conductorInArtists" id="conductorInArtists" value="1" />
 			<label for="conductorInArtists" class="stdlabel">[% "CONDUCTOR" | string %]</label><br>
-	
+
 			<input type="checkbox" [% IF prefs.pref_bandInArtists %]checked="1" [% END %] class="stdedit" name="pref_bandInArtists" id="bandInArtists" value="1" />
 			<label for="bandInArtists" class="stdlabel">[% "BAND" | string %]</label>
 		[% END %]
@@ -38,7 +38,7 @@
 				<label for="pref_variousArtistAutoIdentification1" class="stdlabel">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]</label>
 			[% END %]
 		[% END %]
-		
+
 		[% WRAPPER settingGroup title="" desc="SETUP_USETPE2ASALBUMARTIST_DESC"%]
 			<input type="radio" name="pref_useTPE2AsAlbumArtist" id="pref_useTPE2AsAlbumArtist0" value="0" [% IF NOT prefs.pref_useTPE2AsAlbumArtist %]checked="checked"[% END %] />
 			<label for="pref_useTPE2AsAlbumArtist0" class="stdlabel">[% 'SETUP_USETPE2ASALBUMARTIST_0' | getstring %]</label><br/>
@@ -48,7 +48,7 @@
 
 		[% WRAPPER settingGroup title="" desc=""%]
 			<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>
-			<input type=text class="stdedit" name="pref_variousArtistsString" id="variousArtistsString" value="[% prefs.pref_variousArtistsString %]" size="40" placeholder="[% "VARIOUSARTISTS" | string | html %]">
+			<input type="text"class="stdedit" name="pref_variousArtistsString" id="variousArtistsString" value="[% prefs.pref_variousArtistsString | html %]" size="40" placeholder="[% "VARIOUSARTISTS" | string | html %]">
 		[% END %]
 	[% END %]
 
@@ -57,7 +57,7 @@
 
 			<option [% IF NOT prefs.pref_noGenreFilter %]selected [% END %]value="0">[% 'SETUP_NOGENREFILTER_0' | string %]</option>
 			<option [% IF prefs.pref_noGenreFilter%]selected [% END %]value="1">[% 'SETUP_NOGENREFILTER_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -66,7 +66,7 @@
 
 			<option [% IF NOT prefs.pref_noRoleFilter %]selected [% END %]value="0">[% 'SETUP_NOROLEFILTER_0' | string %]</option>
 			<option [% IF prefs.pref_noRoleFilter%]selected [% END %]value="1">[% 'SETUP_NOROLEFILTER_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -75,20 +75,20 @@
 
 			<option [% IF NOT prefs.pref_searchSubString %]selected [% END %]value="0">[% 'SETUP_SEARCHSUBSTRING_0' | string %]</option>
 			<option [% IF prefs.pref_searchSubString %]selected [% END %]value="1">[% 'SETUP_SEARCHSUBSTRING_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_IGNOREDARTICLES" desc="SETUP_IGNOREDARTICLES_DESC"%]
-		<input type=text class="stdedit" name="pref_ignoredarticles" id="ignoredarticles" value="[% prefs.pref_ignoredarticles %]" size="40">
+		<input type="text"class="stdedit" name="pref_ignoredarticles" id="ignoredarticles" value="[% prefs.pref_ignoredarticles | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_SPLITLIST" desc="SETUP_SPLITLIST_DESC"%]
-			<input type=text class="stdedit" name="pref_splitList" id="splitList" value="[% prefs.pref_splitList %]" size="40">
+			<input type="text"class="stdedit" name="pref_splitList" id="splitList" value="[% prefs.pref_splitList | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_BROWSEAGELIMIT" desc="SETUP_BROWSEAGELIMIT_DESC"%]
-			<input type=text class="stdedit" name="pref_browseagelimit" id="browseagelimit" value="[% prefs.pref_browseagelimit || 0 %]" size="15">
+			<input type="text"class="stdedit" name="pref_browseagelimit" id="browseagelimit" value="[% prefs.pref_browseagelimit || 0 %]" size="15">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_GROUPDISCS" desc="SETUP_GROUPDISCS_DESC"%]
@@ -96,7 +96,7 @@
 
 			<option [% IF NOT prefs.pref_groupdiscs %]selected [% END %]value="0">[% 'SETUP_GROUPDISCS_0' | string %]</option>
 			<option [% IF prefs.pref_groupdiscs %]selected [% END %]value="1">[% 'SETUP_GROUPDISCS_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -105,7 +105,7 @@
 
 			<option [% IF NOT prefs.pref_persistPlaylists %]selected [% END %]value="0">[% 'SETUP_PERSISTPLAYLISTS_0' | string %]</option>
 			<option [% IF prefs.pref_persistPlaylists %]selected [% END %]value="1">[% 'SETUP_PERSISTPLAYLISTS_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -114,7 +114,7 @@
 
 			<option [% IF NOT prefs.pref_reshuffleOnRepeat %]selected [% END %]value="0">[% 'SETUP_RESHUFFLEONREPEAT_0' | string %]</option>
 			<option [% IF prefs.pref_reshuffleOnRepeat %]selected [% END %]value="1">[% 'SETUP_RESHUFFLEONREPEAT_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -123,7 +123,7 @@
 
 			<option [% IF NOT prefs.pref_saveShuffled %]selected [% END %]value="0">[% 'SETUP_SAVESHUFFLED_0' | string %]</option>
 			<option [% IF prefs.pref_saveShuffled %]selected [% END %]value="1">[% 'SETUP_SAVESHUFFLED_1' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -135,13 +135,13 @@
 			[% FOREACH option IN ratingImplementations %]
 				<option [% IF prefs.ratingImplementation == option %]selected [% END %]value="[% option %]">[% option |string %]</option>
 			[%- END -%]
-		
+
 			</select>
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_SKIPSENTINEL" desc="SETUP_SKIPSENTINEL_DESC" %]
-		<input type="text" class="stdedit" name="pref_skipsentinel" id="skipsentinel" value="[% prefs.pref_skipsentinel %]" size="40">
+		<input type="text" class="stdedit" name="pref_skipsentinel" id="skipsentinel" value="[% prefs.pref_skipsentinel | html %]" size="40">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

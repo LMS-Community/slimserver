@@ -1,16 +1,16 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_COVERART" desc="SETUP_COVERART_DESC" %]
-		<input type="text" class="stdedit" name="pref_coverArt" id="coverArtID" value="[% prefs.pref_coverArt %]" size="40">
+		<input type="text" class="stdedit" name="pref_coverArt" id="coverArtID" value="[% prefs.pref_coverArt | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ARTFOLDER" desc="SETUP_ARTFOLDER_DESC" %]
-		<input type="text" class="stdedit selectFolder" name="pref_artfolder" id="artfolder" value="[% prefs.pref_artfolder %]" size="40">
+		<input type="text" class="stdedit selectFolder" name="pref_artfolder" id="artfolder" value="[% prefs.pref_artfolder | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_GUESSFILEFORMATS" desc="SETUP_GROUP_GUESSFILEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_guessFileFormats %]
-			<input type="text" class="stdedit" name="pref_guessFileFormats[% loop.index %]" id="pref_guessFileFormats[% loop.index %]" value="[% format %]" size="40"><br>
+			<input type="text" class="stdedit" name="pref_guessFileFormats[% loop.index %]" id="pref_guessFileFormats[% loop.index %]" value="[% format | html %]" size="40"><br>
 		[% END %]
 	[% END %]
 

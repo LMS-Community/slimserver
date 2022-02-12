@@ -4,14 +4,14 @@
 		<input type="checkbox" [% IF prefs.pref_itunes %]checked="checked"[% END %] class="stdedit" name="pref_itunes" id="itunes" />
 		<label for="itunes" class="stdlabel">[% "USE_ITUNES" | string %]</label>
 	[% END %]
-	
+
 	[% WRAPPER setting title="SETUP_ITUNES_ARTWORK" desc="SETUP_ITUNES_ARTWORK_DESC" %]
 		<input type="checkbox" [% IF prefs.pref_extract_artwork %]checked="checked"[% END %] class="stdedit" name="pref_extract_artwork" id="extract_artwork" />
 		<label for="extract_artwork" class="stdlabel">[% "SETUP_ITUNES_EXTRACT_ARTWORK" | string %]</label>
-	[% END %]		
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITUNESSCANINTERVAL" desc="SETUP_ITUNESSCANINTERVAL_DESC" %]
-		<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval %]" size="5">
+		<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval | html %]" size="5">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_IGNOREDISABLEDITUNESTRACKS" desc="SETUP_IGNOREDISABLEDITUNESTRACKS_DESC" %]
@@ -34,17 +34,17 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITUNES_LIBRARY_XML_PATH" desc="SETUP_ITUNES_LIBRARY_XML_PATH_DESC" %]
-		<input type="text" class="stdedit selectFile selectFile_xml" name="pref_xml_file" id="xml_file" value="[% prefs.pref_xml_file %]" size="40">
+		<input type="text" class="stdedit selectFile selectFile_xml" name="pref_xml_file" id="xml_file" value="[% prefs.pref_xml_file | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITUNES_LIBRARY_MUSIC_PATH" desc="SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC" %]
-		<input type="text" class="stdedit selectFolder" name="pref_music_path" id="music_path" value="[% prefs.pref_music_path %]" size="40">
+		<input type="text" class="stdedit selectFolder" name="pref_music_path" id="music_path" value="[% prefs.pref_music_path | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITUNESPLAYLISTFORMAT" desc="SETUP_ITUNESPLAYLISTFORMAT_DESC" %]
-		[% "SETUP_PLAYLISTPREFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix %]" size="40">
+		[% "SETUP_PLAYLISTPREFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix | html %]" size="40">
 		<br>
-		[% "SETUP_PLAYLISTSUFFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix %]" size="40">
+		[% "SETUP_PLAYLISTSUFFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix | html %]" size="40">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

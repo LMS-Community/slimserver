@@ -13,13 +13,13 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_SET" desc="" %]
-			<input type="text" class="stdedit" name="pref_time" id="time" value="[% prefs.pref_time %]" size="10" />
+			<input type="text" class="stdedit" name="pref_time" id="time" value="[% prefs.pref_time | html %]" size="10" />
 		[% END %]
 
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_TYPE" desc="" %]
 			<select name="pref_type">
 				[% FOREACH option = scanTypes %]
-				<option [% IF prefs.pref_type == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_type == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 			</select>
 		[% END %]

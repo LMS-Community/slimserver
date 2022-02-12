@@ -2,19 +2,19 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSAUDIO" desc="SETUP_DISABLEDEXTENSIONSAUDIO_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio | html %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSPLAYLIST" desc="SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist | html %]" size="40">
 		[% END %]
 
 		[% IF !novideo; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSVIDEO" desc="SETUP_DISABLEDEXTENSIONSVIDEO_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsvideo" id="disabledextensionsvideo" value="[% disabledextensionsvideo %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsvideo" id="disabledextensionsvideo" value="[% disabledextensionsvideo | html %]" size="40">
 		[% END; END %]
 
 		[% IF !noimage; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSIMAGES" desc="SETUP_DISABLEDEXTENSIONSIMAGES_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsimages" id="disabledextensionsimages" value="[% disabledextensionsimages %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsimages" id="disabledextensionsimages" value="[% disabledextensionsimages | html %]" size="40">
 		[% END; END %]
 	[% END %]
 

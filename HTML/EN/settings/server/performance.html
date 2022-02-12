@@ -115,12 +115,12 @@
 
 	[% IF prefs.exists('pref_autorescan_stat_interval') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
-			<input type=text class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval %]" size="15">
+			<input type="text"class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval | html %]" size="15">
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_MAXPLAYLISTLENGTH" desc="SETUP_MAXPLAYLISTLENGTH_DESC" %]
-		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength %]" size="15">
+		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength | html %]" size="15">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

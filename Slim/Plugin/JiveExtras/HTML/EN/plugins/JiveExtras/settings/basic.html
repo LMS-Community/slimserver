@@ -26,8 +26,8 @@
 					[% END %]&nbsp;
 				</td>
 				<td>
-					<input id=[% "wallpaper_name" _ idx %] type="text" class="stdedit" name=[% "wallpaper_name" _ idx %] value="[% entry.name %]">
-					<input id=[% "wallpaper" _ idx %] type="text" class="stdedit selectFile selectFile_png selectFile_jpg selectFile_jpeg selectFile_bmp" name=[% "wallpaper" _ idx %] value="[% entry.url %]">
+					<input id=[% "wallpaper_name" _ idx %] type="text" class="stdedit" name=[% "wallpaper_name" _ idx %] value="[% entry.name | html %]">
+					<input id=[% "wallpaper" _ idx %] type="text" class="stdedit selectFile selectFile_png selectFile_jpg selectFile_jpeg selectFile_bmp" name=[% "wallpaper" _ idx %] value="[% entry.url | html %]">
 					[% IF wallpaper_served.$idx %]
 						<br/><br/>[% "PLAYER_TYPE" | string %][% "COLON" | string %] [% mysize = entry.target %] [% IF sizes.$mysize %][% sizes.$mysize %][% ELSE %][% 'PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE' | string %][% END %] ([% mysize %])
 					[% END %]
@@ -43,12 +43,12 @@
 
 	<div class="settingSection">
 		<table>
-		[% FOREACH entry IN sound; idx = loop.index %] 
+		[% FOREACH entry IN sound; idx = loop.index %]
 			<tr>
 				<td class="firstColumn">[% IF sound_served.$idx %]<object data="[% sound_served.$idx %]" autoplay="false" width="120px" height="20px" />[% END %]&nbsp;</td>
 				<td>
-					<input id=[% "sound_name" _ idx %] type="text" class="stdedit" name=[% "sound_name" _ idx %] value="[% entry.name %]">
-					<input id=[% "sound" _ idx %] type="text" class="stdedit selectFile selectFile_wav" name=[% "sound" _ idx %] value="[% entry.url %]">
+					<input id=[% "sound_name" _ idx %] type="text" class="stdedit" name=[% "sound_name" _ idx %] value="[% entry.name | html %]">
+					<input id=[% "sound" _ idx %] type="text" class="stdedit selectFile selectFile_wav" name=[% "sound" _ idx %] value="[% entry.url | html %]">
 				</td>
 			</tr>
 		[% END %]

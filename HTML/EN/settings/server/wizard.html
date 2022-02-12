@@ -87,7 +87,7 @@
 
 			#noJS { color: white; }
 			#noJS a, #noJS a:visited { color: yellow; }
-			
+
 			.loading-indicator {
 				background-image: url(/Default/html/images/loading.gif);
 			}
@@ -137,14 +137,14 @@
 				border-radius: 15px 15px 0 0;
 				padding: 15px 14px 1px 25px;
 			}
-			
+
 			.box-bottom {
 				background: white;
 				border: 1px solid #666666;
 				border-top: none;
 				border-radius: 0 0 15px 15px;
 			}
-			
+
 			.box-inner {
 				position: relative;
 				border: 1px solid #666666;
@@ -157,7 +157,7 @@
 				margin: 10px;
 				list-style-type: disc;
 			}
-			
+
 			.x-panel-body {
 				background-color: transparent;
 			}
@@ -167,21 +167,21 @@
 				.x-btn-text-icon .x-btn-center .x-btn-text{
 					direction: rtl
 				}
-				
+
 				.x-btn-text-icon .x-btn-center .x-btn-text{
 					background-position: 100% 2px;
 					padding-right:18px;
 					padding-left:0;
 				}
-				
+
 				.x-layout-panel-hd-text{
 					width:100%;
 				}
-				
+
 				.x-layout-panel-hd-tools{
 					left:0;
 				}
-				
+
 				.x-layout-tools-button{
 					float:left;
 				}
@@ -236,7 +236,7 @@
 				[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
 				[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
 				[% IF sn_server; PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success'; END %]
-	
+
 				[% PROCESS jsString id='NONE' jsId='summary_none' %]
 				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
 				SqueezeJS.Strings['summary_audiodir'] += '[% stringCOLON %]';
@@ -247,11 +247,11 @@
 
 				try {
 					Wizard.init({
-						wizardDone: [% wizardDone ? 'true' : 'false' %], 
+						wizardDone: [% wizardDone ? 'true' : 'false' %],
 						useAudioDir: [% useAudiodir ? 'true' : 'false' %],
 						useiTunes: [% useiTunes ? 'true' : 'false' %],
 						useMusicIP: [% useMusicIP ? 'true' : 'false' %]
-					}); 
+					});
 				}
 				catch(e) {
 					document.getElementById('loading').style.display = 'none';
@@ -266,17 +266,17 @@
 			<span>
 				<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
 					<select name="language" id="language">
-	
+
 						[% FOREACH option = languageoptions.sort %]
 							[% IF !languageoptions.$option.search('\*') %]
 								<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option %]">[% languageoptions.$option %]</option>
 							[% END %]
 						[%- END -%]
-	
+
 						[% IF !preferredLanguage %]
 							<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
 						[% END %]
-	
+
 					</select>
 					<input name="saveLanguage" type="hidden" value="1">
 				</form>
@@ -300,7 +300,7 @@
 						<td><span id="next"></span></td>
 					<tr>
 				</table>
-			</div>				
+			</div>
 
 			<div class="inner">
 				<div class="inner_bottom"></div>
@@ -319,20 +319,20 @@
 				<div id="sqn_p" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
 				<div class="wz_desc">
-				
+
 					<div class="centeredbox">
 						<div class="box">
 							<div class="box-top">
 								<h1>[% "LOGIN" | string %]</h1>
 							</div>
-					
-							<div class="box-inner">	
+
+							<div class="box-inner">
 								<p>[% "SETUP_WIZARD_SQN_PLEASE" | string %]<br/>&nbsp;</p>
 								<table>
 									<tr>
 										<td align="right" style="white-space:nowrap">[% "SETUP_SN_EMAIL" | string %][% stringCOLON %]&nbsp;</td>
 										<td>
-											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="30">
+											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email | html %]" size="30">
 											<p id="sn_result" style="color:red">&nbsp;</p>
 										</td>
 									</tr>
@@ -354,17 +354,17 @@
 									</tr>
 								</table>
 							</div>
-					
-					
+
+
 							<div class="box-bottom">
 								&nbsp;
 							</div>
-	
+
 							<div><p style="padding: 20px;"><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></p></div>
-						</div>					
+						</div>
 
 					</div>
-					
+
 				</div>
 			</div>
 			[% END %]
@@ -379,7 +379,7 @@
 					</div>
 					<div id="audiodirselector" class="folderselector" style="position:relative"></div>
 					<div>
-						<input type="text" name="mediadirs" id="audiodir" value="[% prefs.mediadirs %]" class="wz_path">
+						<input type="text" name="mediadirs" id="audiodir" value="[% prefs.mediadirs | html %]" class="wz_path">
 					</div>
 				</div>
 			</div>
@@ -394,7 +394,7 @@
 					</div>
 					<div id="playlistdirselector" class="folderselector"></div>
 					<div>
-						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="wz_path">
+						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir | html %]" class="wz_path">
 					</div>
 				</div>
 			</div>
@@ -403,32 +403,32 @@
 				<div id="summary_h" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
 				<div class="wz_desc">
-				
+
 					<div class="box leftbox">
 						<div class="box-top">
 							<h1>[% "SIGNUP_LISTEN" | string %]</h1>
 						</div>
-				
+
 						<div class="box-inner">
 							[% IF playericon %]<img id="playerpic" src="/html/images/Players/[% playericon %]_150x150_ffffff.png">[% END %]
 							<ul class="howto">
-								<li>[% 
+								<li>[%
 									(playertype == 'boom'
 									? "HOWTO_HOME_BOOM"
 									: (playertype == 'receiver'
 										? "HOWTO_HOME_CONTROLLER"
 										: "HOWTO_HOME")) | string %]</li>
-								<li>[% 
+								<li>[%
 									(playertype == 'boom'
 									? "HOWTO_DOWN_BOOM"
 									: (playertype == 'receiver'
 										? "HOWTO_DOWN_CONTROLLER"
 										: "HOWTO_DOWN")) | string %]</li>
-								<li>[% 
+								<li>[%
 									(playertype == 'receiver'
 									? "HOWTO_STAFF_PICKS_CONTROLLER"
 									: "HOWTO_STAFF_PICKS") | string %]</li>
-								<li>[% 
+								<li>[%
 									(playertype == 'receiver'
 									? "HOWTO_INTERNET_RADIO_CONTROLLER"
 									: "HOWTO_INTERNET_RADIO") | string %]</li>
@@ -437,15 +437,15 @@
 								<li>[% "HOWTO_PAUSE" | string %]</li>
 							</ul>
 						</div>
-				
+
 						<div class="box-bottom">
 							&nbsp;
 						</div>
 					</div>
-				
-					<div class="box rightbox">				
+
+					<div class="box rightbox">
 						<h1>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</h1>
-					
+
 						[% IF sn_server %]
 						<h4>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</h4>
 						<ul class="wz_summary_list">
@@ -453,24 +453,24 @@
 						</ul>
 						<br/>
 						[% END %]
-				
+
 						<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% stringCOLON %]</h4>
 						<ul class="wz_summary_list" id="summary"></ul>
-				
+
 						<div style="height: 30px">&nbsp;</div>
-				
+
 						<div class="box-top">
 							<h1>[% "WHATS_NEXT" | string %]</h1>
 						</div>
-				
+
 						<div class="box-inner">
 							<p>[% "CONTINUE_TO_SQUEEZEBOX_SERVER" | string %]<br/>&nbsp;</p>
 						</div>
-				
+
 						<div class="box-bottom">
 							&nbsp;
 						</div>
-						
+
 					</div>
 				</div>
 			</div>

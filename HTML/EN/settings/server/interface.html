@@ -8,26 +8,26 @@
 			<option [% IF prefs.pref_skin == option %]selected [% END %]value="[% option %]">[% skinoptions.$option %]</option>
 
 		[%- END -%]
-		
+
 		</select>
 	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SHOWARTIST" desc="SETUP_SHOWARTIST_DESC" %]
 			<select class="stdedit" name="pref_showArtist" id="showArtist">
-	
+
 				<option [% IF NOT prefs.pref_showArtist %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
 				<option [% IF prefs.pref_showArtist %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_SHOWYEAR" desc="SETUP_SHOWYEAR_DESC" %]
 			<select class="stdedit" name="pref_showYear" id="showYear">
-	
+
 				<option [% IF NOT prefs.pref_showYear %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
 				<option [% IF prefs.pref_showYear %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 	[% END %]
@@ -35,73 +35,73 @@
 	[% WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_titleFormat %]
 			<input type=radio [% IF prefs.pref_titleFormatWeb == loop.index %]checked="1" [% END %]value="[% loop.index %]" name="pref_titleFormatWeb">
-			<input type="text" class="stdedit" name="pref_titleFormat[% loop.index %]" id="titleFormat[% loop.index %]" value="[% format %]" size="40"><br>
+			<input type="text" class="stdedit" name="pref_titleFormat[% loop.index %]" id="titleFormat[% loop.index %]" value="[% format | html %]" size="40"><br>
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITEMSPERPAGE" desc="SETUP_ITEMSPERPAGE_DESC" %]
-		<input type="text" class="stdedit sliderInput_10_500" name="pref_itemsPerPage" id="itemsPerPage" value="[% prefs.pref_itemsPerPage %]" size="15">
+		<input type="text" class="stdedit sliderInput_10_500" name="pref_itemsPerPage" id="itemsPerPage" value="[% prefs.pref_itemsPerPage | html %]" size="15">
 	[% END %]
 
-	[% IF useExtJS %]   
+	[% IF useExtJS %]
 		[% WRAPPER setting title="SETUP_ADDITIONAL_PLAYLIST_BUTTONS" desc="SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC"%]
 		<select class="stdedit" name="pref_additionalPlaylistButtons" id="additionalPlaylistButtons">
 
 			<option [% IF prefs.pref_additionalPlaylistButtons %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
 			<option [% IF NOT prefs.pref_additionalPlaylistButtons %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
-		
+
 		</select>
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_REFRESHRATE" desc="SETUP_REFRESHRATE_DESC" %]
-		<input type="text" class="stdedit sliderInput_2_300_5" name="pref_refreshRate" id="refreshRate" value="[% prefs.pref_refreshRate %]" size="15">
+		<input type="text" class="stdedit sliderInput_2_300_5" name="pref_refreshRate" id="refreshRate" value="[% prefs.pref_refreshRate | html %]" size="15">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_THUMBSIZE" desc="SETUP_THUMBSIZE_DESC" %]
-		<input type="text" class="stdedit sliderInput_25_250" name="pref_thumbSize" id="thumbSize" value="[% prefs.pref_thumbSize %]" size="15">
+		<input type="text" class="stdedit sliderInput_25_250" name="pref_thumbSize" id="thumbSize" value="[% prefs.pref_thumbSize | html %]" size="15">
 	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_LONGDATEFORMAT" desc="SETUP_LONGDATEFORMAT_DESC" %]
 			<select class="stdedit" name="pref_longdateFormat" id="longdateFormat">
-	
+
 			[% FOREACH option = longdateoptions.keys %]
-	
+
 				<option [% IF prefs.pref_longdateFormat == option %]selected [% END %]value="[% option %]">[% longdateoptions.$option %]</option>
-	
+
 			[%- END -%]
-			
-			</select>	
+
+			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_SHORTDATEFORMAT" desc="SETUP_SHORTDATEFORMAT_DESC" %]
 			<select class="stdedit" name="pref_shortdateFormat" id="shortdateFormat">
-	
+
 			[% FOREACH option = shortdateoptions.keys %]
-	
+
 				<option [% IF prefs.pref_shortdateFormat == option %]selected [% END %]value="[% option %]">[% shortdateoptions.$option %]</option>
-	
+
 			[%- END -%]
-			
+
 			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_TIMEFORMAT" desc="SETUP_TIMEFORMAT_DESC" %]
 			<select class="stdedit" name="pref_timeFormat" id="timeFormat">
-	
+
 			[% FOREACH option = timeoptions.keys %]
-	
+
 				<option [% IF prefs.pref_timeFormat == option %]selected [% END %]value="[% option %]">[% timeoptions.$option %]</option>
-	
+
 			[%- END -%]
-			
+
 			</select>
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_DISPLAYTEXTTIMEOUT" desc="SETUP_DISPLAYTEXTTIMEOUT_DESC"%]
-		<input type=text class="stdedit sliderInput_1_100" name="pref_displaytexttimeout" id="displaytexttimeout" value="[% prefs.pref_displaytexttimeout || 0 %]" size="15">
+		<input type="text"class="stdedit sliderInput_1_100" name="pref_displaytexttimeout" id="displaytexttimeout" value="[% prefs.pref_displaytexttimeout || 0 %]" size="15">
 	[% END %]
 
 [% PROCESS settings/footer.html %]
