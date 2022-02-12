@@ -532,7 +532,6 @@ sub updateTracks {
 
 	if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
 		my $changedOnlySth;
-		my $changedOnlyDone = 0;
 
 		$pending{$nextFolder} |= PENDING_CHANGED;
 
@@ -557,7 +556,7 @@ sub updateTracks {
 			# Page through the files, this is to avoid a long-running read query which
 			# would prevent WAL checkpoints from occurring.
 			if ( !$changedOnlySth ) {
-				my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
+				my $sql = $changedOnlySQL . " LIMIT 0, " . CHUNK_SIZE;
 				$changedOnlySth = $dbh->prepare($sql);
 				$changedOnlySth->execute;
 				$changedOnlySth->bind_col(1, \$changed);
@@ -566,7 +565,6 @@ sub updateTracks {
 			if ( $changedOnlySth->fetch ) {
 				$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($changed) );
 				$$changes++;
-				$changedOnlyDone++;
 
 				changed($changed);
 
@@ -575,7 +573,7 @@ sub updateTracks {
 			else {
 				my $more = 1;
 
-				if ( !$changedOnlySth->rows ) {
+				if ( !$changedOnlySth->rows || $changedOnlyCount == $$changes ) {
 					if ( !$args->{no_async} ) {
 						$args->{paths} = $paths;
 						markDone( $nextFolder => PENDING_CHANGED, $$changes, $args );
