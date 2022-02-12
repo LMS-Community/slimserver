@@ -30,12 +30,12 @@
 			<tr>
 				<td style="text-align:center;">
 					[% IF needsClient && menu.name %]<input type="checkbox" name="enabled[% menu_no %]" id="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
-					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
+					<input type="hidden" name="id[% menu_no %]" value="[% menu.id | html %]" />
 				</td>
 				[% IF !menu.feed && menu.id != '_new_' %]
 					<td colspan="6"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
 				[% ELSE %]
-					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 98%;" class="stdedit" /></td>
+					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name | html %]" style="width: 98%;" class="stdedit" /></td>
 					<td>
 						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
 							<option value="">[% "SUB_LIBRARY" | string %]</option>
@@ -52,8 +52,8 @@
 							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
 						</select>
 					</td>
-					<td width="30%"><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id %]" style="width: 98%;" class="stdedit" /></td>
-					<td width="30%"><input type="text" name="genreid[% menu_no %]" value="[% menu.params.genre_id %]" style="width: 98%;" class="stdedit" /></td>
+					<td width="30%"><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id | html %]" style="width: 98%;" class="stdedit" /></td>
+					<td width="30%"><input type="text" name="genreid[% menu_no %]" value="[% menu.params.genre_id | html %]" style="width: 98%;" class="stdedit" /></td>
 					<td style="text-align:center;">[% IF menu.name %]<input type="checkbox" name="delete[% menu_no %]" class="stdedit" />[% END %]</td>
 				[% END %]
 			</tr>
@@ -81,7 +81,7 @@
 					prefs.pref_enableAudioBooks %]checked="checked" [% END %] value="1" class="stdedit" />
 				<label for="enableAudioBooks">[% "PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC" | string %]</label>
 				<br/>
-				<input type="text" name="pref_audioBooksGenres" id="audioBooksGenres" value="[% prefs.pref_audioBooksGenres %]" style="width: 99%"></input>
+				<input type="text" name="pref_audioBooksGenres" id="audioBooksGenres" value="[% prefs.pref_audioBooksGenres | html %]" style="width: 99%"></input>
 			[% END %]
 		[% END %]
 	[% END %]

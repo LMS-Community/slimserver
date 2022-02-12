@@ -5,7 +5,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED" desc="SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC" %]
-		<input type="text" class="stdedit" name="pref_items_per_feed" value="[% prefs.pref_items_per_feed %]" size="5" />
+		<input type="text" class="stdedit" name="pref_items_per_feed" value="[% prefs.pref_items_per_feed | html %]" size="5" />
 	[% END %]
 
 	<div class="settingSection">
@@ -14,7 +14,7 @@
 		<tr>
 		<td class="firstColumn"><label for="new_feed" class="stdlabel">[% "PLUGIN_RSSNEWS_ADD_NEW" | string %]</label></td>
 
-		<td><input type="text" class="stdedit" name="pref_newfeed" value="[% newfeedval %]" size="60" /></td>
+		<td><input type="text" class="stdedit" name="pref_newfeed" value="[% newfeedval | html %]" size="60" /></td>
 		</tr>
 
 		<tr></tr>
@@ -28,7 +28,7 @@
 
 		<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
 
-		<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
+		<td><input name="delete" type="checkbox" value="[% pref.0 | html %]"></td>
 
 		</tr>
 

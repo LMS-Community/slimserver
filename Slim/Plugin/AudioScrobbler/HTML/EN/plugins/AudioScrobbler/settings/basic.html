@@ -5,9 +5,9 @@
 			<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE" | string %]</div>
 		[% END %]
 		[% FOR account IN prefs.pref_accounts %]
-			<input type="checkbox" name="delete" value="[% account.username %]" /> [% account.username %]<br /><br />
+			<input type="checkbox" name="delete" value="[% account.username | html %]" /> [% account.username %]<br /><br />
 		[% END %]
-		
+
 		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD" | string %]</div>
 		<input type="text" class="stdedit" name="pref_username" id="username" value="" size="20">
 		&nbsp;&nbsp;
@@ -24,11 +24,11 @@
 			</option>
 		</select>
 	[% END %]
-	
+
 	[% WRAPPER setting title="" desc="" %]
 		[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE" | string %]
 	[% END %]
-	
+
 	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO" desc="SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC" %]
 		<select class="stdedit" name="pref_include_radio" id="include_radio">
 			<option [% IF prefs.pref_include_radio == 1 %]selected="selected" [% END %]value="1">

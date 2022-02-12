@@ -1,7 +1,7 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_RADIOTIME_USERNAME" desc="" %]
-		<input type="text" class="stdedit" name="pref_username" id="username" value="[% prefs.pref_username %]">
+		<input type="text" class="stdedit" name="pref_username" id="username" value="[% prefs.pref_username | html %]">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

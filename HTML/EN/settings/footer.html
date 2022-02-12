@@ -1,6 +1,6 @@
 <!-- Begin settingsfooter.html -->
 
-<input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
+<input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken | html %]">
 
 [%- IF versionInfo -%]<br>
 
@@ -27,11 +27,11 @@
 	// add an event handler to folder/file selector fields
 	$$('.selectFolder').each(function(ele) {
 		new Ajax.FileSelector(ele, true);
-	});	
+	});
 
 	$$('.selectFile').each(function(ele) {
 		new Ajax.FileSelector(ele, false);
-	});	
+	});
 </script>
 </div>
 <div id="prefsSubmit">

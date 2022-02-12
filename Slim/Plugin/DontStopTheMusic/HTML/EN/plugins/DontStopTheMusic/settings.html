@@ -5,7 +5,7 @@
 	</p>
 	[% FOREACH handler = handlers  %]
 		<p>
-			<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit dstm_provider" name="pref_provider" id="provider[% loop.index %]" value="[% handler %]" />
+			<input type=radio [% IF prefs.pref_provider == handler %]checked[% END %] class="stdedit dstm_provider" name="pref_provider" id="provider[% loop.index %]" value="[% handler | html %]" />
 			<label for="provider[% loop.index %]" class="stdlabel">[% handler | getstring | html %]</label>
 		</p>
 	[% END %]
@@ -24,7 +24,7 @@
 	});
 </script>
 [% END; END %]
-	
+
 [% IF mainMenuItem %]
 	[% pagetitle = 'PLUGIN_DSTM' | string %]
 	[% pwd_list = BLOCK %]
@@ -32,12 +32,12 @@
 			[% "PLUGIN_DSTM" | string %]
 		</a>
 	[% END %]
-	
+
 	[% PROCESS pageheader.html dontscroll=1 %]
-	
+
 	<div id='browsedbList'>
 		<h4>[% "PLUGIN_DSTM_HELP" | string | html %]</h4>
-	
+
 		<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %]?playerid=[% playerid | uri %]">
 			<div class="settingSection">
 				[% PROCESS dstmOptions %]
@@ -61,7 +61,7 @@
 			</div>
 		</form>
 	</div>
-	
-	[% PROCESS pagefooter.html noInfoTab=1 %] 
-	
+
+	[% PROCESS pagefooter.html noInfoTab=1 %]
+
 [% ELSE; PROCESS settings/footer.html; END %]

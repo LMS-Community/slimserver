@@ -5,7 +5,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_PREVENTSTANDBY_IDLETIME" desc="PLUGIN_PREVENTSTANDBY_IDLETIME_DESC" %]
-		<input type="text" class="stdedit sliderInput_0_240" name="pref_idletime" id="idletime" value="[% prefs.pref_idletime %]" size="5">
+		<input type="text" class="stdedit sliderInput_0_240" name="pref_idletime" id="idletime" value="[% prefs.pref_idletime | html %]" size="5">
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_PREVENTSTANDBY_PLAYERSON" desc="PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC" %] &nbsp;

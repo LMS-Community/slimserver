@@ -11,7 +11,7 @@
 				'StopOff-ResetPlayOn' => 'SETUP_POWERONRESUME_STOPOFF_RESETPLAYON',
 				'StopOff-ResetOn'     => 'SETUP_POWERONRESUME_STOPOFF_RESETON',
 			} %]
-				<option [% IF prefs.pref_powerOnResume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_powerOnResume == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 			[%- END -%]
 
 		</select>
@@ -29,7 +29,7 @@
 						'2' => 'ANALOGOUTMODE_ALWAYS_ON'
 						'3' => 'ANALOGOUTMODE_ALWAYS_OFF'
 					} %]
-						<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -38,7 +38,7 @@
 
 			[% IF prefs.exists('pref_lineInLevel') %]
 				[% WRAPPER settingGroup title="LINE_IN_LEVEL" desc="LINE_IN_LEVEL_DESC" %]
-					<input type="text" class="stdedit sliderInput_0_100" name="pref_lineInLevel" id="lineInLevel" value="[% prefs.lineInLevel %]" size="5">
+					<input type="text" class="stdedit sliderInput_0_100" name="pref_lineInLevel" id="lineInLevel" value="[% prefs.lineInLevel | html %]" size="5">
 				[% END %]
 			[% END %]
 
@@ -67,7 +67,7 @@
 						'1' => 'POWEROFFDAC_WHENOFF',
 						'0' => 'POWEROFFDAC_ALWAYSON'
 					} %]
-						<option [% IF prefs.pref_powerOffDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_powerOffDac == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -82,7 +82,7 @@
 						'1' => 'DISABLEDAC_WHENOFF',
 						'0' => 'DISABLEDAC_ALWAYSON'
 					} %]
-						<option [% IF prefs.pref_disableDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_disableDac == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -104,7 +104,7 @@
 					'3' => 'TRANSITION_FADE_OUT',
 					'4' => 'TRANSITION_FADE_IN_OUT',
 				} %]
-					<option [% IF prefs.pref_transitionType == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_transitionType == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 
 				</select>
@@ -117,7 +117,7 @@
 					'0' => 'SETUP_TRANSITIONSMART_OFF',
 					'1' => 'SETUP_TRANSITIONSMART_ON',
 				} %]
-					<option [% IF prefs.pref_transitionSmart == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_transitionSmart == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 
 				</select>
@@ -130,18 +130,18 @@
 					'1' => 'NO',
 					'0' => 'YES',
 				} %]
-					<option [% IF prefs.pref_transitionSampleRestriction == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_transitionSampleRestriction == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 
 				</select>
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
-				<input type="text" class="stdedit sliderInput_0_10" name="pref_transitionDuration" id="pref_transitionDuration" value="[% prefs.pref_transitionDuration %]" size="5">
+				<input type="text" class="stdedit sliderInput_0_10" name="pref_transitionDuration" id="pref_transitionDuration" value="[% prefs.pref_transitionDuration | html %]" size="5">
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_FADEINDURATION" desc="SETUP_FADEINDURATION_DESC" %]
-				<input type="text" class="stdedit sliderInput_0_10" name="pref_fadeInDuration" id="pref_fadeInDuration" value="[% prefs.pref_fadeInDuration %]" size="5">
+				<input type="text" class="stdedit sliderInput_0_10" name="pref_fadeInDuration" id="pref_fadeInDuration" value="[% prefs.pref_fadeInDuration | html %]" size="5">
 			[% END %]
 
 		[% END %]
@@ -151,13 +151,13 @@
 		[% WRAPPER settingSection %]
 			[% IF prefs.exists('pref_bass') %]
 				[% WRAPPER settingGroup title="BASS" desc="" %]
-				<input type="text" class="stdedit sliderInput_[% minBass %]_[% maxBass %]" name="pref_bass" id="pref_bass" value="[% prefs.pref_bass %]" size="5">
+				<input type="text" class="stdedit sliderInput_[% minBass %]_[% maxBass %]" name="pref_bass" id="pref_bass" value="[% prefs.pref_bass | html %]" size="5">
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_treble') %]
 				[% WRAPPER settingGroup title="TREBLE" desc="" %]
-				<input type="text" class="stdedit sliderInput_[% minTreble %]_[% maxTreble %]" name="pref_treble" id="pref_treble" value="[% prefs.pref_treble %]" size="5">
+				<input type="text" class="stdedit sliderInput_[% minTreble %]_[% maxTreble %]" name="pref_treble" id="pref_treble" value="[% prefs.pref_treble | html %]" size="5">
 				[% END %]
 			[% END %]
 
@@ -170,18 +170,18 @@
 							'2' => 'MEDIUM',
 							'3' => 'HIGH'
 						} %]
-							<option [% IF prefs.pref_stereoxl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+							<option [% IF prefs.pref_stereoxl == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 						[%- END -%]
 					</select>
 				[% END %]
 			[% END %]
-		
+
 			[% IF prefs.exists('pref_balance') %]
 				[% WRAPPER settingGroup title="BALANCE" desc="" %]
-				<input type="text" class="stdedit sliderInput_-25_25" name="pref_balance" id="pref_balance" value="[% prefs.pref_balance %]" size="5">
+				<input type="text" class="stdedit sliderInput_-25_25" name="pref_balance" id="pref_balance" value="[% prefs.pref_balance | html %]" size="5">
 				[% END %]
 			[% END %]
-			
+
 		[% END %]
 	[% END %]
 
@@ -195,7 +195,7 @@
 					'1' => 'SETUP_DIGITALVOLUMECONTROL_ON',
 					'0' => 'SETUP_DIGITALVOLUMECONTROL_OFF'
 				} %]
-					<option [% IF prefs.pref_digitalVolumeControl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_digitalVolumeControl == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 
 				</select>
@@ -204,12 +204,12 @@
 
 			[% IF prefs.exists('pref_preampVolumeControl') %]
 				[% WRAPPER settingGroup title="SETUP_PREAMPVOLUMECONTROL" desc="SETUP_PREAMPVOLUMECONTROL_DESC" %]
-					<input type="text" class="stdedit sliderInput_0_63" name="pref_preampVolumeControl" id="pref_preampVolumeControl" value="[% prefs.pref_preampVolumeControl %]" size="15">
+					<input type="text" class="stdedit sliderInput_0_63" name="pref_preampVolumeControl" id="pref_preampVolumeControl" value="[% prefs.pref_preampVolumeControl | html %]" size="15">
 				[% END %]
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_MP3SILENCEPRELUDE" desc="SETUP_MP3SILENCEPRELUDE_DESC" %]
-				<input type="text" class="stdedit" name="pref_mp3SilencePrelude" id="pref_mp3SilencePrelude" value="[% prefs.pref_mp3SilencePrelude %]" size="15">
+				<input type="text" class="stdedit" name="pref_mp3SilencePrelude" id="pref_mp3SilencePrelude" value="[% prefs.pref_mp3SilencePrelude | html %]" size="15">
 			[% END %]
 
 
@@ -222,7 +222,7 @@
 						'0' => 'DIGITALOUTPUTENCODING_SPDIF',
 						'1' => 'DIGITALOUTPUTENCODING_AESEBU',
 					} %]
-						<option [% IF prefs.pref_digitalOutputEncoding == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_digitalOutputEncoding == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -243,7 +243,7 @@
 						'4' => 'AUDIO_SOURCE_RCA_SPDIF',
 						'5' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
 					} %]
-						<option [% IF prefs.pref_clockSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_clockSource == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -263,7 +263,7 @@
 						'3' => 'AUDIO_SOURCE_RCA_SPDIF',
 						'4' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
 					} %]
-						<option [% IF prefs.pref_fxloopSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_fxloopSource == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -280,7 +280,7 @@
 						'0' => 'FXLOOPCLOCK_SYNCHRONOUS',
 						'1' => 'FXLOOPCLOCK_ASYNCHRONOUS',
 					} %]
-						<option [% IF prefs.pref_fxloopClock == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_fxloopClock == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -297,7 +297,7 @@
 						'0' => 'POLARITYINVERSION_NORMAL',
 						'3' => 'POLARITYINVERSION_INVERTED',
 					} %]
-						<option [% IF prefs.pref_polarityInversion == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_polarityInversion == option.key %]selected [% END %]value="[% option.key | html%]">[% option.value | string %]</option>
 					[%- END -%]
 
 					</select>
@@ -316,7 +316,7 @@
 				'0' => 'WORDCLOCKOUTPUT_DISABLED',
 				'1' => 'WORDCLOCKOUTPUT_ENABLED',
 			} %]
-				<option [% IF prefs.pref_wordClockOutput == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_wordClockOutput == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 			[%- END -%]
 
 			</select>
@@ -331,7 +331,7 @@
 				'0' => 'ROLLOFFSLOW_DISABLED',
 				'1' => 'ROLLOFFSLOW_ENABLED',
 			} %]
-				<option [% IF prefs.pref_rolloffSlow == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_rolloffSlow == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 			[%- END -%]
 
 			</select>
@@ -352,7 +352,7 @@
 					<option [% IF prefs.pref_maxBitrate == '0' %]selected [% END %]value="0">[% "NO_LIMIT" | string %]</option>
 				[% END %]
 				[% FOREACH option = ['64', '96', '128', '160', '192', '224', '256', '320'] %]
-					<option [% IF prefs.pref_maxBitrate == option %]selected [% END %]value="[% option %]">[% option %] [% "KBPS" | string %]</option>
+					<option [% IF prefs.pref_maxBitrate == option %]selected [% END %]value="[% option | html %]">[% option %] [% "KBPS" | string %]</option>
 				[%- END -%]
 
 				</select>
@@ -368,7 +368,7 @@
 			<select class="stdedit" name="pref_lameQuality" id="pref_lameQuality" [% !lamefound && "disabled" %]>
 
 			[% FOREACH option = [0 .. 9] %]
-				<option [% IF prefs.pref_lameQuality == option %]selected [% END %]value="[%option %]">
+				<option [% IF prefs.pref_lameQuality == option %]selected [% END %]value="[% option | html %]">
 					[% option %] [% IF loop.first %] ([% "LAME0" | string %])
 					[% ELSIF loop.last %] ([% "LAME9" | string %])[% END %]
 				</option>
@@ -390,14 +390,14 @@
 					'2' => 'REPLAYGAIN_ALBUM_GAIN',
 					'3' => 'REPLAYGAIN_SMART_GAIN',
 				} %]
-					<option [% IF prefs.pref_replayGainMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_replayGainMode == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 				[%- END -%]
 
 				</select>
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_REPLAYGAIN_REMOTE" desc="SETUP_REPLAYGAIN_REMOTE_DESC" %]
-				<input type="text" class="stdedit sliderInput_-20_20_0.1" name="pref_remoteReplayGain" id="pref_remoteReplayGain" value="[% prefs.pref_remoteReplayGain %]" size="5">
+				<input type="text" class="stdedit sliderInput_-20_20_0.1" name="pref_remoteReplayGain" id="pref_remoteReplayGain" value="[% prefs.pref_remoteReplayGain | html %]" size="5">
 			[% END %]
 		[% END %]
 	[% END %]
@@ -410,7 +410,7 @@
 				'0' => 'MP3_STREAMING_DIRECT',
 				'1' => 'MP3_STREAMING_PROXIED',
 			} %]
-				<option [% IF prefs.pref_mp3StreamingMethod == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_mp3StreamingMethod == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 			[%- END -%]
 
 			</select>
@@ -427,7 +427,7 @@
 				'2' => 'OUTPUT_CHANNELS_RIGHT',
 				'3' => 'OUTPUT_CHANNELS_COMBINED',
 			} %]
-				<option [% IF prefs.pref_outputChannels == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_outputChannels == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 			[%- END -%]
 
 			</select>

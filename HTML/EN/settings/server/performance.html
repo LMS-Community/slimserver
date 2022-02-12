@@ -55,7 +55,7 @@
 		<table border="0" class="specs">
 			[% FOREACH pref = pref_customArtSpecs %]
 			<tr>
-				<td><input name="delete" type="checkbox" value="[% pref.key %]"></td>
+				<td><input name="delete" type="checkbox" value="[% pref.key | html %]"></td>
 				<td>[% pref.key %]</label></td>
 				<td><div>[% pref.value %]</div></td>
 			</tr>
@@ -68,7 +68,7 @@
 		<select class="stdedit" name="pref_useLocalImageproxy" id="useLocalImageproxy" [% IF imageproxies.size <= 1 %]disabled[% END %]>
 
 			[% FOREACH id = imageproxies.keys.sort %]
-			<option [% IF prefs.pref_useLocalImageproxy == id %]selected [% END %]value="[% id %]">[% imageproxies.$id %]</option>
+			<option [% IF prefs.pref_useLocalImageproxy == id %]selected [% END %]value="[% id | html %]">[% imageproxies.$id %]</option>
 			[% END %]
 
 		</select>
@@ -79,9 +79,9 @@
 			<select class="stdedit" name="pref_serverPriority" id="serverPriority">
 
 			[% option = "" %]
-			<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option | html %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
+				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option | html %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
 
 			</select>
@@ -91,9 +91,9 @@
 			<select class="stdedit" name="pref_scannerPriority" id="scannerPriority">
 
 			[% option = "" %]
-			<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option | html %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
+				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option | html %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
 
 			</select>
@@ -115,12 +115,12 @@
 
 	[% IF prefs.exists('pref_autorescan_stat_interval') %]
 		[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
-			<input type=text class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval %]" size="15">
+			<input type="text"class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval | html %]" size="15">
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_MAXPLAYLISTLENGTH" desc="SETUP_MAXPLAYLISTLENGTH_DESC" %]
-		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength %]" size="15">
+		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength | html %]" size="15">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

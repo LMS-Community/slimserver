@@ -42,7 +42,7 @@
 					<tr>
 						<td>[% genreMappings.$mappingKey.0 %]</td>
 						<td>[% genreMappings.$mappingKey.1 %]</td>
-						<td><input type="text" name="mapping_[% mappingKey %]" value="[% genreMappings.$mappingKey.2 %]" style="width:90%"></td>
+						<td><input type="text" name="mapping_[% mappingKey %]" value="[% genreMappings.$mappingKey.2 | html %]" style="width:90%"></td>
 					</tr>
 					[% END %]
 				</tbody>
