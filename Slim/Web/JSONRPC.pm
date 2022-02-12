@@ -226,6 +226,8 @@ sub handleURI {
 	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
 		my @parts = split(/[,-]/, $lang);
 		$context->{lang} = uc $parts[0] if $parts[0];
+		# We support variation languages for zh and en.  Therefore, we record second part as a sub language to try and match later.
+		$context->{sublang} = uc $parts[1] if (scalar @parts) > 1;		
 	}
 
 	if ( my $ua = ( $httpResponse->request->header('X-User-Agent') || $httpResponse->request->header('User-Agent') ) ) {
@@ -410,8 +412,9 @@ sub requestMethod {
 	if ($request->isStatusDispatchable) {
 
 		# Set language override for this request
-		my $lang = $context->{lang};
-		my $ua   = $context->{ua};
+		my $lang    = $context->{lang};
+		my $sublang = $context->{sublang};
+		my $ua      = $context->{ua};
 
 		my $finish;
 
@@ -421,6 +424,14 @@ sub requestMethod {
 				$client->controlledBy(undef);
 				$client->controllerUA(undef);
 			};
+		}
+
+		# test if the sub language is an available option
+		if ( $lang && $sublang ) {
+			my $all_langs = Slim::Utils::Strings::languageOptions();
+			if (defined $all_langs->{$lang . '_' . $sublang}) {
+				$lang .= '_'  . $sublang;
+			}
 		}
 
 		if ( $client && $lang ) {
