@@ -987,6 +987,7 @@ sub changed {
 
 			my $orig = {
 				year => $origTrack->{year},
+				album => $origTrack->{album_id} || 0,
 			};
 
 			# Fetch all contributor IDs used on the original track
@@ -1065,6 +1066,11 @@ sub changed {
 
 				# Auto-rescan mode, immediately merge VA
 				Slim::Schema->mergeSingleVAAlbum( $album->id );
+			}
+
+			# remove album if we've removed its last track
+			if ( !$album || $album->id != $orig->{album} ) {
+				Slim::Schema::Album->rescan($orig->{album});
 			}
 
 			# XXX

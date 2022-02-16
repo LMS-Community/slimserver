@@ -907,7 +907,10 @@ sub _createOrUpdateAlbum {
 		# Bug: 4140
 		# If the track is from a FLAC cue sheet, the original entry
 		# will have a 'No Album' album. See if we have a real album name.
-		if ( $title && $albumHash->{title} && $albumHash->{title} eq $noAlbum && $title ne $noAlbum ) {
+		if ( $title && $albumHash->{title} && ($albumHash->{title} eq $noAlbum && $title ne $noAlbum) || ($title ne $albumHash->{title}) ) {
+			# https://github.com/Logitech/slimserver/issues/547
+			# check whether new album already exists if we're changing album title
+			$albumId = $albumHash->{id} if $title ne $albumHash->{title};
 			$create = 1;
 		}
 	}
@@ -1028,6 +1031,12 @@ sub _createOrUpdateAlbum {
 				push @{$search}, 'albums.extid = ?';
 				push @{$values}, $extId;
 				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for External Album Id: %s", $extId));
+			}
+
+			if ($albumId) {
+				push @{$search}, 'albums.id != ?';
+				push @{$values}, $albumId;
+				main::DEBUGLOG && $isDebug && $log->debug("-- Checking whether we need to merge existing albums");
 			}
 
 			my $checkContributor;
