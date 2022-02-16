@@ -226,7 +226,7 @@ sub rescan {
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
 		$dbh->do( qq{
 			CREATE TEMPORARY TABLE diskonly AS
-				SELECT          DISTINCT(url) as url
+				SELECT          DISTINCT(url) AS url
 				FROM            scanned_files
 				WHERE           url NOT IN (
 					SELECT url FROM tracks
@@ -242,22 +242,22 @@ sub rescan {
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 3. Files that have changed mtime or size.
-		$log->error("Build temporary table for new tracks") unless main::SCANNER && $main::progress;
+		$log->error("Build temporary table for changed tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS changed');
 		$dbh->do( qq{
 			CREATE TEMPORARY TABLE changed AS
-				SELECT DISTINCT(scanned_files.url)
-				FROM scanned_files
-				JOIN tracks ON (
+				SELECT DISTINCT(scanned_files.url) AS url
+				FROM   scanned_files
+				JOIN   tracks ON (
 					scanned_files.url = tracks.url
 					AND (
 						scanned_files.timestamp != tracks.timestamp
 						OR
-						scanned_files.filesize != tracks.filesize
+						scanned_files.filesize  != tracks.filesize
 					)
 					AND tracks.content_type $ctFilter
 				)
-				WHERE scanned_files.url LIKE '$basedir%'
+				WHERE  scanned_files.url LIKE '$basedir%'
 		} );
 
 		my $changedOnlySQL = qq{
