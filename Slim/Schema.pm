@@ -905,9 +905,16 @@ sub _createOrUpdateAlbum {
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
 
 		# Bug: 4140
-		# If the track is from a FLAC cue sheet, the original entry
-		# will have a 'No Album' album. See if we have a real album name.
-		if ( $title && $albumHash->{title} && ($albumHash->{title} eq $noAlbum && $title ne $noAlbum) || ($title ne $albumHash->{title}) ) {
+		# If the track is from a FLAC cue sheet, the original entry will have a 'No Album' album. See if we have a real album name.
+		# If the album name has changed in other ways, we'll have to see whether the new name already exists.
+		# But don't rescan with online libraries - we're handling them in the Online Library integration importer.
+		if (
+			!$albumHash->{extid} && $title && $albumHash->{title}
+			&& (
+				($albumHash->{title} eq $noAlbum && $title ne $noAlbum)
+				|| ($title ne $albumHash->{title})
+			)
+		) {
 			# https://github.com/Logitech/slimserver/issues/547
 			# check whether new album already exists if we're changing album title
 			$albumId = $albumHash->{id} if $title ne $albumHash->{title};
@@ -2666,10 +2673,6 @@ sub _preCheckAttributes {
 	# Look for tags we don't want to expose in comments, and splice them out.
 	for my $c ( @{$rawcomments} ) {
 		next unless defined $c;
-
-		# Bug 15630, ignore strings which have the utf8 flag on but are in fact invalid utf8
-		# XXX - I can no longer reproduce the issues reported in 15630, but it's causing bug 17863 -michael
-		#next if utf8::is_utf8($c) && !Slim::Utils::Unicode::looks_like_utf8($c);
 
 		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
 		if ($c =~ /SoundJam_CDDB_/ ||
