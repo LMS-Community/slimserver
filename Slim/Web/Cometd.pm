@@ -155,19 +155,10 @@ sub handler {
 	my $delayedResponse; # false if we want to call sendResponse at the end of this method
 
 	for my $obj ( @{$objs} ) {
-	    
 		# Issue #765 - For comet meta messages handshake, connect, reconnect, disconnect, subscribe, unsubscribe populate 'id' field on response to ensure compatibility with the readily available npm comet library.
-		my $msgid;
-		if ( !$msgid ) {
-			# obtain 'id' from outer object if present, otherwise default to  - Here we use different variable name '$msgid' as '$id' is defined for use within slim/subscribe channel.
-			if ( $obj->{id} ) {
-				$msgid = $obj->{id};
-			} else {
-			    #default to empty string if not available.
-				$msgid = '';
-			}
-		}
-		
+		# obtain 'id' from outer object if present, otherwise default to  - Here we use different variable name '$msgid' as '$id' is defined for use within slim/subscribe channel.
+		my $msgid = $obj->{id} || '';
+
 		if ( ref $obj ne 'HASH' ) {
 			sendResponse(
 				@{$conn},
