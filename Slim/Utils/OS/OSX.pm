@@ -49,9 +49,6 @@ sub initDetails {
 
 				$class->{osDetails}->{'osArch'} = $1;
 
-			} elsif (/PowerPC/i) {
-
-				$class->{osDetails}->{'osArch'} = 'ppc';
 			}
 
 			last if $class->{osDetails}->{'osName'} && $class->{osDetails}->{'osArch'};
@@ -66,9 +63,6 @@ sub initDetails {
 		}
 		elsif ($Config{ccflags} =~ /-arch i386/) {
 			$class->{osDetails}->{osArch} = 'x86';
-		}
-		elsif ($Config{ccflags} =~ /-arch ppc/) {
-			$class->{osDetails}->{osArch} = 'ppc';
 		}
 		elsif (`uname -a` =~ /ARM64/) {
 			open(SYS, 'arch -arm64 /usr/sbin/system_profiler SPHardwareDataType -detailLevel mini 2>&1 |') or return;
