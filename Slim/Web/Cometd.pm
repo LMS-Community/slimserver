@@ -158,8 +158,7 @@ sub handler {
 		# Issue #765 - For comet meta messages handshake, connect, reconnect, disconnect, subscribe, unsubscribe populate 'id' field on response to ensure compatibility with the readily available npm comet library.
 		# obtain 'id' from outer object if present, otherwise default to  - Here we use different variable name '$msgid' as '$id' is defined for use within slim/subscribe channel.
 		my $msgid = $obj->{id} || '';
-		$msgid   *= 1.0 if $msgid;
-
+		
 		if ( ref $obj ne 'HASH' ) {
 			sendResponse(
 				@{$conn},
