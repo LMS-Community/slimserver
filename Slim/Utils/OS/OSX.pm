@@ -31,23 +31,16 @@ sub initDetails {
 
 			if (/System Version: (.+)/) {
 
-				$class->{osDetails}->{'osName'} = $1;
+				$class->{osDetails}->{'osName'} ||= $1;
 				$class->{osDetails}->{'osName'} =~ s/ \(\w+?\)$//;
 
 			} elsif (/Intel/i) {
 
-				# Determine if we are running as 32-bit or 64-bit
-				my $bits = length( pack 'L!', 1 ) == 8 ? 64 : 32;
-
-				$class->{osDetails}->{'osArch'} = 'x86';
-
-				if ( $bits == 64 ) {
-					$class->{osDetails}->{'osArch'} = 'x86_64';
-				}
+				$class->{osDetails}->{'osArch'} ||= 'x86_64';
 
 			} elsif (/Chip.*(Apple .*)/) {
 
-				$class->{osDetails}->{'osArch'} = $1;
+				$class->{osDetails}->{'osArch'} ||= $1;
 
 			}
 
@@ -58,25 +51,13 @@ sub initDetails {
 	}
 
 	if ( !$class->{osDetails}->{osArch} ) {
-		if ($Config{ccflags} =~ /-arch x86_64/) {
+		my $uname = `uname -a`;
+
+		if ($uname =~ /ARM64/i) {
+			$class->{osDetails}->{osArch} = 'Apple Silicon (x86_64 - Rosetta)';
+		}
+		else {
 			$class->{osDetails}->{osArch} = 'x86_64';
-		}
-		elsif ($Config{ccflags} =~ /-arch i386/) {
-			$class->{osDetails}->{osArch} = 'x86';
-		}
-		elsif (`uname -a` =~ /ARM64/) {
-			open(SYS, 'arch -arm64 /usr/sbin/system_profiler SPHardwareDataType -detailLevel mini 2>&1 |') or return;
-
-			while (<SYS>) {
-				if (/Chip.*(Apple .*)/) {
-					$class->{osDetails}->{'osArch'} = $1;
-					last;
-				}
-			}
-
-			close SYS;
-
-			$class->{osDetails}->{osArch} = 'Apple Silicon' if !$class->{osDetails}->{osArch};
 		}
 	}
 
