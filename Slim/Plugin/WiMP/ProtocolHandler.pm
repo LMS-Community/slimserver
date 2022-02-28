@@ -275,7 +275,7 @@ sub _gotTrack {
 		sub {
 			my $meta = $cache->get('wimp_meta_' . $info->{id});
 			$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
-			$song->track->setAttributes($meta);
+			$song->track->replay_gain($meta->{replay_gain} || 0);
 			$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 			$params->{successCb}->();
 		},
