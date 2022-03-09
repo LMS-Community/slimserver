@@ -297,16 +297,16 @@ sub rescan {
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe);
 
-		$class->deleteTracks($dbh, \$changes, \$paths, $next, {
+		$class->deleteTracks($dbh, \$changes, $paths, $next, {
 			name  => 'deleted audio files',
 			count => $inDBOnlyCount,
 			progressName => $next . '|' . ($args->{scanName} . '_deleted'),
 			sql   => $inDBOnlySQL
 		}, $args);
 
-		$class->updateTracks($dbh, \$changes, \$paths, $next, $changedOnlyCount, $changedOnlySQL, $args);
+		$class->updateTracks($dbh, \$changes, $paths, $next, $changedOnlyCount, $changedOnlySQL, $args);
 
-		$class->addTracks($dbh, \$changes, \$paths, $next, $onDiskOnlyCount, $onDiskOnlySQL, $args);
+		$class->addTracks($dbh, \$changes, $paths, $next, $onDiskOnlyCount, $onDiskOnlySQL, $args);
 
 		if ( hasAborted() ) {
 			# nothing to do here - should be handled in hasAborted()
@@ -417,7 +417,7 @@ sub deleteTracks {
 
 				if ( !$deleteSth->rows ) {
 					if ( !$args->{no_async} ) {
-						$args->{paths} = $$paths;
+						$args->{paths} = $paths;
 						markDone( $nextFolder => PENDING_DELETE, $$changes, $args );
 					}
 
