@@ -2628,27 +2628,7 @@ sub _preCheckAttributes {
 	}
 
 	# Munge the replaygain values a little
-	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
-
-		my $shortTag = $gainTag;
-		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
-
-		if (defined $attributes->{$gainTag}) {
-
-			$attributes->{$shortTag} = delete $attributes->{$gainTag};
-			$attributes->{$shortTag} =~ s/\s*dB//gi;
-			$attributes->{$shortTag} =~ s/\s//g;  # bug 15965
-			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
-
-			# Bug 15483, remove non-numeric gain tags
-			if ( $attributes->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
-				my $file = Slim::Utils::Misc::pathFromFileURL($url);
-				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
-
-				delete $attributes->{$shortTag};
-			}
-		}
-	}
+	processReplayGainTags($attributes, $url);
 
 	# We can take an array too - from vorbis comments, so be sure to handle that.
 	my $comments = [];
@@ -2760,6 +2740,33 @@ sub _preCheckAttributes {
 	}
 
 	return ($attributes, $deferredAttributes);
+}
+
+sub processReplayGainTags {
+	my ($attributes, $url) = @_;
+
+	# Munge the replaygain values a little
+	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+
+		my $shortTag = $gainTag;
+		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
+
+		if (defined $attributes->{$gainTag}) {
+
+			$attributes->{$shortTag} = delete $attributes->{$gainTag};
+			$attributes->{$shortTag} =~ s/\s*dB//gi;
+			$attributes->{$shortTag} =~ s/\s//g;  # bug 15965
+			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
+
+			# Bug 15483, remove non-numeric gain tags
+			if ( $attributes->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($url);
+				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
+
+				delete $attributes->{$shortTag};
+			}
+		}
+	}
 }
 
 sub _createGenre {

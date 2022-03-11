@@ -345,6 +345,8 @@ sub setAttributes {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug($self->url . " => ", Data::Dump::dump($attributes));
 
+	Slim::Schema::processReplayGainTags($attributes, $self->path);
+
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this
 		$key = lc($key);
