@@ -149,7 +149,6 @@ sub init {
 		# when upgrading from SBS to LMS let's check the additional tables,
 		# as the schema numbers might be overlapping, not causing a re-build
 		$dbh->do('SELECT id FROM images LIMIT 1') || die $dbh->errstr;
-		$dbh->do('SELECT id FROM videos LIMIT 1') || die $dbh->errstr;
 	};
 
 	# If we couldn't select our new 'name' column, then drop the

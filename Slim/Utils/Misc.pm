@@ -89,7 +89,7 @@ my $MAX_CACHE_ENTRIES = $prefs->get('dbhighmem') ? 512 : 32;
 
 $prefs->setChange( sub {
 	%mediadirsCache = ();
-}, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
+}, 'mediadirs', 'ignoreInAudioScan');
 
 =head1 METHODS
 
@@ -732,8 +732,6 @@ sub getMediaDirs {
 	if ($type) {
 		my $ignoreList = { map { $_, 1 } @{ getDirsPref({
 			audio => 'ignoreInAudioScan',
-			video => 'ignoreInVideoScan',
-			image => 'ignoreInImageScan',
 		}->{$type}) } };
 
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
@@ -753,29 +751,9 @@ sub getAudioDirs {
 	return getMediaDirs('audio', shift);
 }
 
-sub getVideoDirs {
-	return (main::VIDEO && main::MEDIASUPPORT) ? getMediaDirs('video', shift) : [];
-}
-
-sub getImageDirs {
-	return (main::IMAGE && main::MEDIASUPPORT) ? getMediaDirs('image', shift) : [];
-}
-
 # get list of folders which are disabled for all media
-sub getInactiveMediaDirs {
-	my @mediadirs = @{ getDirsPref('ignoreInAudioScan') };
-
-	if (main::IMAGE && main::MEDIASUPPORT && scalar @mediadirs) {
-		my $ignoreList = { map { $_, 1 } @{ getImageDirs() } };
-		@mediadirs = grep { !$ignoreList->{$_} } @mediadirs;
-	}
-
-	if (main::VIDEO && main::MEDIASUPPORT && scalar @mediadirs) {
-		my $ignoreList = { map { $_, 1 } @{ getVideoDirs() } };
-		@mediadirs = grep { !$ignoreList->{$_} } @mediadirs;
-	}
-
-	return \@mediadirs;
+sub getInactiveAudioDirs {
+	return getDirsPref('ignoreInAudioScan');
 }
 
 sub getDirsPref {

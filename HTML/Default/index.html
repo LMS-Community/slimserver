@@ -13,7 +13,6 @@
 				[% INCLUDE "html/ext/resources/css/ext-main.css" %]
 			[% END %]
 		</style>
-		[% IF hasMediaSupport %]<link rel="stylesheet" type="text/css" href="[% webroot %]html/lightbox/lightbox.css?r=[% revision %]" />[% END %]
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
 
@@ -43,7 +42,7 @@
 
 			#noJS { color: white; }
 			#noJS a, #noJS a:visited { color: yellow; }
-			
+
 			.loading-indicator {
 				background-image: url([% webroot %]html/images/loading.gif);
 			}
@@ -87,12 +86,12 @@
 			Ext.onReady(function() {
 				Main.init();
 
-				// Firefox wouldn't load the frame on first attempt. Have it load an empty page first, before the home.html 
+				// Firefox wouldn't load the frame on first attempt. Have it load an empty page first, before the home.html
 				if (Ext.isGecko)
 					frames.browser.location.href = "about:blank";
-				
+
 				var navigationUrl = "[% webroot %][% IF search; "search"; ELSE; "home"; END %].html?player=[% playerid %]&uid=[% USE date; date.now %]&query=[% search | uri %]";
-				
+
 				// we're parsing our URL to see whether the user wants to open it with a given URL in the left hand pane
 				var extendedUrl = document.URL.split('index.html/');
 				if (extendedUrl.length == 2) {
@@ -100,15 +99,15 @@
 					if (extendedUrl.length >= 1) {
 						var doc = extendedUrl[0];
 						var params = Ext.urlDecode(extendedUrl[1]);
-						
+
 						// some parameters we don't want to carry along
 						delete params.player;
 						delete params.sess;
-						
+
 						navigationUrl = (doc.match(/^http/) ? '' : '[% webroot %]') + doc + '?' + Ext.urlEncode(params);
 					}
 				}
-				 
+
 				if (frames.browser.location)
 					frames.browser.location.href = navigationUrl;
 
@@ -160,7 +159,7 @@
 				</div>
 			</div>
 		</div>
-	
+
 		<div id="rightfooter">
 			<div class="inner">
 				<div class="inner_bottom"></div>

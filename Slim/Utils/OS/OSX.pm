@@ -183,23 +183,9 @@ sub dirsFor {
 
 		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/Squeezebox');
 
-	} elsif ($dir =~ /^(?:music|videos|pictures)$/) {
+	} elsif ($dir eq 'music') {
 
-		my $mediaDir;
-
-		if ($dir eq 'music') {
-			# DHG wants LMS to default to the full Music folder, not only iTunes
-#			$mediaDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
-#			if (!-d $mediaDir) {
-				$mediaDir = catdir($ENV{'HOME'}, 'Music');
-#			}
-		}
-		elsif ($dir eq 'videos') {
-			$mediaDir = catdir($ENV{'HOME'}, 'Movies');
-		}
-		elsif ($dir eq 'pictures') {
-			$mediaDir = catdir($ENV{'HOME'}, 'Pictures');
-		}
+		my $mediaDir = catdir($ENV{'HOME'}, 'Music');
 
 		# bug 1361 expand music folder if it's an alias, or SC won't start
 		if ( my $alias = $class->pathFromMacAlias($mediaDir) ) {

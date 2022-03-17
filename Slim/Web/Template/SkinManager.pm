@@ -237,10 +237,6 @@ sub addSkinTemplate {
 
 		# we usually don't change templates while running
 		STAT_TTL  => main::NOBROWSECACHE ? 1 : 3600,
-
-		VARIABLES => {
-			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
-		},
 	});
 
 	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));

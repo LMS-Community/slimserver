@@ -28,9 +28,6 @@ use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
-use constant IMAGE        => 0;
-use constant VIDEO        => 0;
-use constant MEDIASUPPORT => IMAGE || VIDEO;
 use constant WEBUI        => 0;
 use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
@@ -128,8 +125,6 @@ sub main {
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
 		# these values are parsed separately, we don't need these values in a variable - just get them off the list
-		'noimage'      => sub {},
-		'novideo'      => sub {},
 		'nodebuglog'   => sub {},
 		'noinfolog'    => sub {},
 		'nostatistics' => sub {},
@@ -416,8 +411,6 @@ Command line options:
 	--logfile       Send all debugging messages to the specified logfile.
 	--logdir        Specify folder location for log file
 	--logconfig     Specify pre-defined logging configuration file
-	--noimage       Disable scanning for images.
-	--novideo       Disable scanning for videos.
 	--nodebuglog    Disable all debug-level logging (compiled out).
 	--noinfolog     Disable all debug-level & info-level logging (compiled out).
 	--nostatistics  Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).

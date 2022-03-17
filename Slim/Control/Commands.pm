@@ -2663,7 +2663,7 @@ sub rescanCommand {
 		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
 
 		# don't run scan if newly added entry is disabled for all media types
-		if ( grep { /\Q$singledir\E/ } @{ Slim::Utils::Misc::getInactiveMediaDirs() }) {
+		if ( grep { /\Q$singledir\E/ } @{ Slim::Utils::Misc::getInactiveAudioDirs() }) {
 			main::INFOLOG && $log->info("Ignore scan request for folder, it's disabled for all media types: $singledir");
 			$request->setStatusDone();
 			return;
@@ -2721,47 +2721,7 @@ sub rescanCommand {
 
 			Slim::Utils::Progress->clear();
 
-			# we only want to scan folders for video/pictures
-			my %seen = (); # to avoid duplicates
-			@dirs = grep {
-				!$seen{$_}++
-			} @{ Slim::Utils::Misc::getVideoDirs($singledir) }, @{ Slim::Utils::Misc::getImageDirs($singledir) };
-
-			if ( main::MEDIASUPPORT && scalar @dirs && $mode ne 'playlists' ) {
-				require Slim::Utils::Scanner::LMS;
-
-				# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
-				my $lms;
-				$lms = sub {
-					if (scalar @dirs) {
-						Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
-							scanName   => 'directory',
-							progress   => 1,
-							onFinished => sub {
-								# XXX - delay call to self for a second, or we segfault
-								Slim::Utils::Timers::setTimer(undef, time() + 1, $lms);
-							},
-						} );
-					}
-				};
-
-				# Audio scan is run first, when done, the LMS scanner is run
-				my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
-
-				if (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
-					# scan playlist folder too
-					push @$audiodirs, $playlistdir;
-				}
-
-				# XXX until libmediascan supports audio, run the audio scanner now
-				Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-					types      => 'list|audio',
-					scanName   => 'directory',
-					progress   => 1,
-					onFinished => $lms,
-				} );
-			}
-			elsif ($mode eq 'playlists') {
+			if ($mode eq 'playlists') {
 				my $playlistdir = Slim::Utils::Misc::getPlaylistDir();
 
 				# XXX until libmediascan supports audio, run the audio scanner now

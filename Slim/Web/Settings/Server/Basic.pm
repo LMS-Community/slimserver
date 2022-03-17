@@ -80,11 +80,7 @@ sub handler {
 		my @paths;
 		my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
 
-		my $ignoreFolders = {
-			audio => [],
-			video => [],
-			image => [],
-		};
+		my $ignoreFolders = [];
 
 		my $singleDirScan;
 		for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
@@ -96,15 +92,11 @@ sub handler {
 					$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
 				}
 
-				push @{ $ignoreFolders->{audio} }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
-				push @{ $ignoreFolders->{video} }, $path if !$paramRef->{"pref_ignoreInVideoScan$i"};
-				push @{ $ignoreFolders->{image} }, $path if !$paramRef->{"pref_ignoreInImageScan$i"};
+				push @{ $ignoreFolders }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
 			}
 		}
 
-		$prefs->set('ignoreInAudioScan', $ignoreFolders->{audio});
-		$prefs->set('ignoreInVideoScan', $ignoreFolders->{video});
-		$prefs->set('ignoreInImageScan', $ignoreFolders->{image});
+		$prefs->set('ignoreInAudioScan', $ignoreFolders);
 
 		my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
 
@@ -122,18 +114,14 @@ sub handler {
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	my $ignoreFolders = {
-		audio => { map { $_, 1 } @{ $prefs->get('ignoreInAudioScan') || [''] } },
-		video => { map { $_, 1 } @{ $prefs->get('ignoreInVideoScan') || [''] } },
-		image => { map { $_, 1 } @{ $prefs->get('ignoreInImageScan') || [''] } },
+		map { $_, 1 } @{ $prefs->get('ignoreInAudioScan') || [''] },
 	};
 
 	$paramRef->{mediadirs} = [];
 	foreach ( @{  $prefs->get('mediadirs') || [''] } ) {
 		push @{ $paramRef->{mediadirs} }, {
 			path  => $_,
-			audio => $ignoreFolders->{audio}->{$_},
-			video => $ignoreFolders->{video}->{$_},
-			image => $ignoreFolders->{image}->{$_},
+			audio => $ignoreFolders->{$_},
 		}
 	}
 
@@ -144,9 +132,6 @@ sub handler {
 
 	my $scanTypes = Slim::Music::Import->getScanTypes();
 	$paramRef->{'scanTypes'} = { map { $_ => $scanTypes->{$_}->{name} } grep /\d.+/, keys %$scanTypes };
-
-	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
-	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 
 	Slim::Music::Import->doQueueScanTasks(0);
 	Slim::Music::Import->nextScanTask() if $runScan || !$prefs->get('dontTriggerScanOnPrefChange');

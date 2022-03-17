@@ -593,7 +593,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
 			condition    => sub {
-				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveMediaDirs() });
+				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveAudioDirs() });
 			},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,

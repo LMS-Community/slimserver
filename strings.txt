@@ -484,21 +484,6 @@ MUSIC
 	RU	Музыка
 	SV	Musik
 
-VIDEO
-	CS	Video
-	DA	Video
-	DE	Video
-	EN	Video
-	ES	Vídeo
-	FI	Video
-	FR	Vidéo
-	IT	Video
-	NL	Video
-	NO	Video
-	PL	Wideo
-	RU	Видео
-	SV	Video
-
 PICTURES
 	CS	Obrázky
 	DA	Billeder
@@ -4158,21 +4143,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	SV	Avaktiverade filtillägg för ljudfiler
 	ZH_CN	撤销音频文件扩展名
 
-SETUP_DISABLEDEXTENSIONSVIDEO
-	CS	Zakázáné přípony video souborů
-	DA	Fravalgte videofiltypenavne
-	DE	Deaktivierte Dateierweiterungen für Videos
-	EN	Disabled Video File Extensions
-	ES	Extensiones de archivos de vídeo desactivadas
-	FI	Videotiedostojen tunnisteet poistettu käytöstä
-	FR	Extensions de fichiers vidéo désactivées
-	IT	Estensioni file video disattivate
-	NL	Uitgeschakelde extensies voor video bestanden
-	NO	Deaktiverte videofilendelser
-	PL	Wyłączone rozszerzenia plików wideo
-	RU	Отключенные расширения видеофайлов
-	SV	Avaktiverade filtillägg för videofiler
-
 SETUP_DISABLEDEXTENSIONSIMAGES
 	CS	Zakázáné přípony souborů obrázku
 	DA	Fravalgte filtypenavne for billedfiler
@@ -4204,21 +4174,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	RU	Logitech Media Server выполняет в папках мультимедиа поиск файлов всех поддерживаемых типов (аудиофайлов и плей-листов). Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: cue, mp4, aac.
 	SV	Logitech Media Server söker igenom mediemapparna efter alla filtyper som stöds (ljudfiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av musikmappen kan du ange filtilläggen för de filer som ska undantas nedan i en kommaavgränsad lista. Exempel: cue, mp4, aac
 	ZH_CN	Logitech Media Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
-
-SETUP_DISABLEDEXTENSIONSVIDEO_DESC
-	CS	Server vyhledá ve složkách s médii všechny podporované typy videosouborů. Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: mov, mkv.
-	DA	Serveren søger efter alle understøttede videofiltyper i mapperne med mediefiler. Du kan fravælge specifikke filtyper når du gennemsøger mappen med musikfiler ved at angive en kommasepareret liste over filtypenavne nedenfor, fx. mov, mkv
-	DE	Der Server durchsucht die Medienordner nach allen unterstützten Videodateitypen. Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: mov, mkv
-	EN	The server will look in the Media Folders for all supported video file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: mov, mkv
-	ES	El servidor buscará en las carpetas de material multimedia todos los tipos de archivo de vídeo compatibles. Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: mov, mkv.
-	FI	Palvelin etsii mediakansioista kaikkia tuettuja videotiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotunnisteat alle pilkuin erotettuina, esimerkiksi: mov, mkv.
-	FR	Le serveur recherche tous les types de fichiers vidéo pris en charge dans les dossiers multimédias. Pour exclure un type de fichier vidéo de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : mov, mkv
-	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file video supportati. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio: mov, mkv e così via.
-	NL	Logitech Media Server zoekt in de mediamappen naar alle ondersteunde video bestandstypen. Als je bepaalde bestandstypen wilt uitschakelen zodat deze niet worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv. mov, mkv
-	NO	Serveren ser etter alle støttede videofilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: mov, mkv
-	PL	Serwer wyszuka w folderach multimediów wszystkie obsługiwane typy plików wideo. Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: mov, mkv
-	RU	Сервер выполнит в папках мультимедиа поиск видеофайлов всех поддерживаемых типов. Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: mov, mkv
-	SV	Servern letar i mediemapparna efter alla videofiler i format som stöds. Om du vill förhindra att vissa filtyper behandlas när musikmappen genomsöks kan du ange en kommaavgränsad lista med filnamnstillägg nedan. T.ex. mov, mkv
 
 SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	CS	Server vyhledá ve složkách s médii všechny podporované typy souborů obrázku. Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: bmp, gif.
@@ -13465,36 +13420,6 @@ BROWSE_MUSIC_FOLDER
 	SV	Musikmapp
 	ZH_CN	浏览音乐文件夹
 
-BROWSE_VIDEO_FOLDER
-	CS	Složka videí
-	DA	Mappe med videoer
-	DE	Videoordner
-	EN	Video Folder
-	ES	Carpeta de vídeo
-	FI	Videokansio
-	FR	Dossier de vidéos
-	IT	Cartella video
-	NL	Videomap
-	NO	Videomappe
-	PL	Folder wideo
-	RU	Папка видео
-	SV	Videomapp
-
-BROWSE_ALL_VIDEOS
-	CS	Všechny videa
-	DA	Alle videoer
-	DE	Alle Videos
-	EN	All Videos
-	ES	Todos los vídeos
-	FI	Kaikki videot
-	FR	Toutes les vidéos
-	IT	Tutti i video
-	NL	Alle video's
-	NO	Alle videoer
-	PL	Wszystkie wideo
-	RU	Все видеоролики
-	SV	Alla videoklipp
-
 BROWSE_ALL_PICTURES
 	CS	Všechny obrázky
 	DA	Alle billeder
@@ -17639,21 +17564,6 @@ INFORMATION_PLAYLISTS
 	SV	Antal spellistor
 	NL	Totaal aantal afspeellijsten
 
-INFORMATION_VIDEOS
-	CS	Celkem videí
-	DA	Videoer i alt
-	DE	Anzahl Videos
-	EN	Total Videos
-	ES	Total de vídeos
-	FI	Videot kokonaisuudessaan
-	FR	Vidéos
-	IT	Video totali
-	NL	Totaal aantal video's
-	NO	Totalt antall videoer
-	PL	Łączna liczba wideo
-	RU	Кол-во видеороликов
-	SV	Antal videoklipp
-
 INFORMATION_IMAGES
 	CS	Celkem obrázků
 	DA	Billeder i alt
@@ -19363,21 +19273,6 @@ SETUP_PRECACHEARTWORK_DESC
 	PL	Domyślnie wszystkie okładki znalezione podczas przeszukiwania są automatycznie dopasowywane pod względem rozmiaru i buforowane w celu poprawy wydajności podczas korzystania z urządzenia Squeezebox Controller lub interfejsu internetowego. Powoduje to spowolnienie procesu przeszukiwania, więc tę opcję można wyłączyć tutaj.
 	RU	По умолчанию все обложки, обнаруженные в ходе сканирования, автоматически изменяют размер и кэшируются, чтобы улучшить производительность при работе в Squeezebox Controller или веб-интерфейсе. Поскольку данная функция может замедлить сканирование, ее можно отключить.
 	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
-
-SETUP_PRECACHEARTWORK_ALL
-	CS	Ukládat obaly alb, fotografie a videa do mezipaměti
-	DA	Gemme albumcovers samt andre albumrelaterede mediefiler
-	DE	Alben, Fotos und Videos zwischenspeichern
-	EN	Pre-cache album, photo and video artwork
-	ES	Guardar carátula de álbum, fotografía y vídeo en caché previamente
-	FI	Tallentaa levynkannet, valokuvat ja videot valmiiksi välimuistiin
-	FR	Mettre la pochette de l'album, les photos et les vidéos en pré-cache
-	IT	Inserire le copertine di album, foto e video nella pre-cache
-	NL	Albumhoezen, foto's en video's vooraf in cache opslaan
-	NO	Forhåndsbufre album-, foto- og videoomslag
-	PL	Buforuj wstępnie materiały graficzne do albumów, zdjęć i filmów wideo
-	RU	Pre-cache album, photo and video artwork
-	SV	Cachelagra omslag för album, foton och videor
 
 SETUP_PRECACHEARTWORK_ENABLED
 	CS	Ukládat obaly alb do mezipaměti

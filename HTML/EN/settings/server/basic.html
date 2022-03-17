@@ -54,8 +54,6 @@
 			<tr>
 				<th>[% 'FOLDER' | string %]</th>
 				<th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th>
-				[% IF !noimage %]<th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th>[% END %]
-				[% IF !novideo %]<th>[% 'VIDEO' | string %]</th>[% END %]
 				<th>&nbsp;</th>
 			</tr>
 
@@ -67,12 +65,6 @@
 				<td class="[% odd ? "odd" : "even" %]" align="center">
 					<input type=checkbox [% IF !mediadir.audio %]checked="1" [% END %] class="stdedit" name="pref_ignoreInAudioScan[% loop.index %]" id="ignoreInAudioScan[% loop.index %]" value="1" />
 				</td>
-				[% IF !noimage %]<td class="[% odd ? "odd" : "even" %]" align="center">
-					<input type=checkbox [% IF !mediadir.image %]checked="1" [% END %] class="stdedit" name="pref_ignoreInImageScan[% loop.index %]" id="ignoreInImageScan[% loop.index %]" value="1" />
-				</td>[% END %]
-				[% IF !novideo %]<td class="[% odd ? "odd" : "even" %]" align="center">
-					<input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" />
-				</td>[% END %]
 				<td class="[% odd ? "odd" : "even" %]" align="center" style="padding: 0 5px">
 					[% IF mediadir.path %]<input name="pref_rescan_mediadir[% loop.index %]" type=submit value="[% "SETUP_RESCAN_BUTTON" | string %]" class="stdclick disableOnScan" [% IF scanning %]disabled[% END %] />[% END %]
 				</td>

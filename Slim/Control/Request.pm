@@ -63,9 +63,6 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    years           <startindex>                <numitems>                  <tagged parameters>
  N    musicfolder     <startindex>                <numitems>                  <tagged parameters>
 
- N    videos          <startindex>                <numitems>                  <tagged parameters>
- N    video_titles    <startindex>                <numitems>                  <tagged parameters>
-
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
  N    playlists       edit                        <tagged parameters>

@@ -2,7 +2,7 @@ package Slim::Utils::OS::Synology;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 #
 # This module was initially written by Philippe Kehl <phkehl at gmx dot net>
@@ -15,8 +15,6 @@ use base qw(Slim::Utils::OS::Linux);
 
 use constant MAX_LOGSIZE => 1024*1024*1; # maximum log size: 1 MB
 use constant MUSIC_DIR   => '/volume1/music';
-use constant PHOTOS_DIR  => '/volume1/photo';
-use constant VIDEOS_DIR  => '/volume1/video';
 
 sub initDetails {
 	my $class = shift;
@@ -66,18 +64,12 @@ sub dirsFor {
 
 	my @dirs = $class->SUPER::dirsFor($dir);
 
-	if ($dir =~ /^(?:music|videos|pictures)$/) {
+	if ($dir eq 'music') {
 		my $mediaDir;
 
-		if ($dir eq 'music' && -d MUSIC_DIR) {
+		if (-d MUSIC_DIR) {
 			$mediaDir = MUSIC_DIR;
 		}
-		# elsif ($dir eq 'videos' && -d VIDEOS_DIR) {
-		# 	$mediaDir = VIDEOS_DIR;
-		# }
-		# elsif ($dir eq 'pictures' && -d PHOTOS_DIR) {
-		# 	$mediaDir = PHOTOS_DIR;
-		# }
 
 		push @dirs, $mediaDir if $mediaDir;
 	}

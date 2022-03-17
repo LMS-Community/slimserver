@@ -39,7 +39,6 @@
 		<select class="stdedit" name="pref_precacheArtwork" id="precacheArtwork">
 
 			<option [% IF prefs.pref_precacheArtwork == 1 %]selected [% END %]value="1">[% 'SETUP_PRECACHEARTWORK_ENABLED' | getstring %]</option>
-			<option [% IF prefs.pref_precacheArtwork == 2 %]selected [% END %]value="2">[% 'SETUP_PRECACHEARTWORK_ALL' | getstring %]</option>
 			<option [% IF NOT prefs.pref_precacheArtwork %]selected [% END %]value="0">[% 'SETUP_PRECACHEARTWORK_DISABLED' | getstring %]</option>
 
 		</select>

@@ -48,8 +48,6 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => 0;
-use constant VIDEO        => 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
@@ -199,17 +197,6 @@ sub HAS_AIO {
 	$HAS_AIO = 0 if !$HAS_AIO;	# Make sure it is defined now.
 
 	return $HAS_AIO;
-}
-
-my $MEDIASUPPORT;
-sub MEDIASUPPORT {
-	return $MEDIASUPPORT if defined $MEDIASUPPORT;
-
-	eval {
-		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
-	};
-
-	return $MEDIASUPPORT;
 }
 
 
@@ -763,7 +750,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo] [--nobrowsecache]
+          [--nobrowsecache]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
           [--localfile]
 
@@ -812,8 +799,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
-    --noimage        => Disable scanning for images.
-    --novideo        => Disable scanning for videos.
     --nomysqueezebox => Disable mysqueezebox.com integration.
                         Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
@@ -876,8 +861,6 @@ sub initOptions {
 		# these values are parsed separately, we don't need these values in a variable - just get them off the list
 		'nodebuglog'    => sub {},
 		'noinfolog'     => sub {},
-		'noimage'       => sub {},
-		'novideo'       => sub {},
 		'nostatistics'  => sub {},
 		'nosb1slimp3sync'=> sub {},
 		'notranscoding' => sub {},
@@ -1113,14 +1096,11 @@ sub checkDataSource {
 
 	# Count entries for all media types, run scan if all are empty
 	my $dbh = Slim::Schema->dbh;
-	my ($gc, $vc, $ic) = $dbh->selectrow_array( qq{
-		SELECT
-			(SELECT COUNT(1) FROM genres) as gc,
-			(SELECT COUNT(1) FROM videos) as vc,
-			(SELECT COUNT(1) FROM images) as ic
+	my ($gc) = $dbh->selectrow_array( qq{
+		SELECT COUNT(1) FROM genres
 	} );
 
-	if (Slim::Schema->schemaUpdated || (!$gc && !$vc && !$ic)) {
+	if (Slim::Schema->schemaUpdated || !$gc) {
 
 		logWarning("Schema updated or no media found in the database, initiating scan.");
 
