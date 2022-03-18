@@ -38,6 +38,8 @@ BEGIN {
 
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
+use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
 use constant PERFMON      => ( grep { /--perfwarn/ } @ARGV ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
@@ -46,10 +48,8 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
-use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : !ISMAC;
+use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !ISMAC;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
@@ -927,7 +927,7 @@ sub initSettings {
 		$prefs->set('cachedir', $cachedir);
 		$prefs->set('librarycachedir', $cachedir);
 	}
-	
+
 	if (defined($httpport)) {
 		$prefs->set('httpport', $httpport);
 	}
@@ -951,7 +951,7 @@ sub initSettings {
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();
-	
+
 	# tmpdir is set only through command line
 	$tmpdir = Win32::GetANSIPathName($tmpdir) if main::ISWINDOWS;
 	Slim::Utils::Misc::makeTempDir();
