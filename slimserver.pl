@@ -48,8 +48,8 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : !ISMAC;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !ISMAC;
+use constant IMAGE        => 0;
+use constant VIDEO        => 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
