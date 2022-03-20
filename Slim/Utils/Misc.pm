@@ -832,6 +832,10 @@ my %_ignoredItems = Slim::Utils::OSDetect::getOS->ignoredItems();
 $_ignoredItems{'.'}  = 1;
 $_ignoredItems{'..'} = 1;
 
+# some items which are exposed on shares on popular platforms
+$_ignoredItems{'#recycle'} = 1;
+$_ignoredItems{'#snapshot'} = 1;
+
 # Don't include old Shoutcast recently played items.
 $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
 
