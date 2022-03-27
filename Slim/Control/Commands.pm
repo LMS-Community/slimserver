@@ -25,7 +25,7 @@ through Request.pm and the mechanisms it defines.
 
 use strict;
 
-use Scalar::Util qw(blessed);
+use Scalar::Util qw(blessed looks_like_number);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 use Digest::MD5 qw(md5_hex);
@@ -3076,7 +3076,7 @@ sub syncCommand {
 		my $buddy = Slim::Player::Client::getClient($newbuddy);
 
 		# try a player index
-		if (!defined $buddy) {
+		if (looks_like_number($newbuddy) && !defined $buddy) {
 			my @clients = Slim::Player::Client::clients();
 			if (defined $clients[$newbuddy]) {
 				$buddy = $clients[$newbuddy];
