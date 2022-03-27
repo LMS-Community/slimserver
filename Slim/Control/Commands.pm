@@ -3076,9 +3076,9 @@ sub syncCommand {
 		my $buddy = Slim::Player::Client::getClient($newbuddy);
 
 		# try a player index
-		if (!defined $buddy) {
+		if (looks_like_number($newbuddy) && !defined $buddy) {
 			my @clients = Slim::Player::Client::clients();
-			if (looks_like_number($newbuddy) && defined $clients[$newbuddy]) {
+			if (defined $clients[$newbuddy]) {
 				$buddy = $clients[$newbuddy];
 			}
 		}
