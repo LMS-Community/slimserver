@@ -31,7 +31,7 @@ PLUGIN_RS232_NAME_DESC
 	SV	RS232-åtkomst för Transporter
 
 SETUP_CLI_OVER_RS232
-	CS	CLI interface přes RS232
+	CS	Příkazový řádek (CLI) přes RS232
 	DA	Kommandolinjegrænseflade via RS232
 	DE	Kommandozeileninterface (CLI) über serielle Schnittstelle
 	EN	CLI interface over RS232
