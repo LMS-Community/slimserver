@@ -903,6 +903,7 @@ sub _createOrUpdateAlbum {
 
 	if ( !$create && $track ) {
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
+		my $differentTitle = Slim::Utils::Text::ignoreCase($title, 1) ne $albumHash->{titlesearch};
 
 		# Bug: 4140
 		# If the track is from a FLAC cue sheet, the original entry will have a 'No Album' album. See if we have a real album name.
@@ -910,14 +911,11 @@ sub _createOrUpdateAlbum {
 		# But don't rescan with online libraries - we're handling them in the Online Library integration importer.
 		if (
 			!$albumHash->{extid} && $title && $albumHash->{title}
-			&& (
-				($albumHash->{title} eq $noAlbum && $title ne $noAlbum)
-				|| ($title ne $albumHash->{title})
-			)
+			&& ( ($albumHash->{title} eq $noAlbum && $title ne $noAlbum) || $differentTitle )
 		) {
 			# https://github.com/Logitech/slimserver/issues/547
 			# check whether new album already exists if we're changing album title
-			$albumId = $albumHash->{id} if $title ne $albumHash->{title};
+			$albumId = $albumHash->{id} if $differentTitle;
 			$create = 1;
 		}
 	}
