@@ -68,7 +68,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	ZH_CN	这个选项决定了导入iTunes播放表所使用的格式。
 
 ITUNES_PODCASTS
-	CS	iTunes Podcast
+	CS	Podcasty iTunes
 	DA	iTunes-podcasts
 	DE	iTunes-Podcasts
 	EN	iTunes Podcasts
@@ -176,7 +176,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	ZH_CN	当您的iTunes音乐库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
-	CS	Umístění hudební knihovny .xml iTunes
+	CS	Umístění iTunes Music Library.xml
 	DA	Placering af iTunes Music Library.xml
 	DE	Speicherort von iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
@@ -194,7 +194,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu k .xml souboru hudební knihovny iTunes. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
+	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu k souboru iTunes Music Library.xml. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
 	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til filen iTunes Music Library.xml her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
 	DE	Falls iTunes auf einem anderen Rechner als Logitech Media Server ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Logitech Media Server installiert ist.
 	EN	If you are running iTunes on a different computer than Logitech Media Server, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as Logitech Media Server.
@@ -213,7 +213,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
 #SLT: this term should match the one used in iTunes/Preferences/Advanced
-	CS	Složka iTunes Média
+	CS	Složka iTunes Media
 	DA	iTunes-mediemappe
 	DE	Ordner 'iTunes Media'
 	EN	iTunes Media Folder
@@ -231,7 +231,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	ZH_CN	iTunes音乐文件夹
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
-	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu ke složce iTunes Music. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
+	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu ke složce iTunes Media. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
 	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til iTunes-mediemappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
 	DE	Falls iTunes auf einem anderen Rechner als Logitech Media Server ausgeführt wird, können Sie hier den vollständigen Pfad zum Ordner 'iTunes Media' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Logitech Media Server installiert ist.
 	EN	If you are running iTunes on a different computer than Logitech Media Server, you may specify an explicit path to the iTunes Media folder here.  Leave this blank if you are running iTunes on the same computer as Logitech Media Server.

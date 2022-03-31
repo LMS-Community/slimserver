@@ -89,7 +89,7 @@ APP_CATEGORY_PHOTO_SERVICES
 	SV	Fototjänster
 
 APP_CATEGORY_PODCAST_SERVICES
-	CS	Služby Podcastů
+	CS	Služby podcastů
 	DA	Podcasttjenester
 	DE	Podcast-Dienste
 	EN	Podcast Services

@@ -1,7 +1,7 @@
 # String file for CLI plugin
 
 PLUGIN_CLI
-	CS	Command Line Interface (Povelové rozhraní) (CLI)
+	CS	Příkazový řádek (CLI)
 	DA	Kommandolinjegrænseflade
 	DE	Befehlszeilenschnittstelle (CLI)
 	EN	Command Line Interface (CLI)
@@ -17,7 +17,7 @@ PLUGIN_CLI
 	SV	Kommandoradsgränssnitt
 
 PLUGIN_CLI_DESC
-	CS	Zásuvný modul Command Line Interface (Povelové Rozhraní) umožňuje dálkové ovládání softwaru Squeezebox a přehrávačů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
+	CS	Zásuvný modul Příkazový řádek umožňuje dálkové ovládání softwaru Squeezebox a přehrávačů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
 	DA	Udvidelsesmodulet Kommandolinjegrænseflade giver mulighed for at kontrollere Squeezebox-softwaren og -afspillerne eksternt over en TCP/IP-forbindelse, for eksempel med et automatiseringssystem fra tredjepart som AMX eller Creston.
 	DE	Mithilfe des Befehlszeilen-Plugin kann die Squeezebox-Software über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
 	EN	The Command Line Interface plugin allows Squeezebox software and the players to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
@@ -33,7 +33,7 @@ PLUGIN_CLI_DESC
 	SV	Med plugin-programmet för kommandoradsgränssnitt kan Squeezebox-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part såsom AMX eller Crestron.
 
 SETUP_CLIPORT
-	CS	Číslo portu Command Line Interface (Povelové rozhraní)
+	CS	Číslo portu Příkazového řádku
 	DA	Portnummer til kommandolinjegrænsefladen
 	DE	Anschlussnummer der Befehlszeilenschnittstelle
 	EN	Command Line Interface Port Number
@@ -52,7 +52,7 @@ SETUP_CLIPORT
 	ZH_CN	命令行界面端口号
 
 SETUP_CLIPORT_DESC
-	CS	Můžete změnit číslo portu používaného Comand Line Interface (Povelovým rozhraním) k ovládání přehrávače.
+	CS	Můžete změnit číslo portu používaného Příkazovým řádkem k ovládání přehrávače.
 	DA	Du kan ændre hvilket portnummer der bruges til at styre afspilleren via kommandolinjegrænsefladen.
 	DE	Sie können die Anschlussnummer ändern, die von der Befehlszeilenschnittstelle zum Steuern des Players verwendet werden soll.
 	EN	You can change the port number that is used to by a command line interface to control the player.
