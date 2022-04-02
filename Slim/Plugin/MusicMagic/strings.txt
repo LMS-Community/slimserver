@@ -441,7 +441,7 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	CS	Logitech Media Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného statusu, obzvláště při prohledávání pouze nových a změněných skladeb.
+	CS	Logitech Media Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného stavu, obzvláště při prohledávání pouze nových a změněných skladeb.
 	DA	Logitech Media Server kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
 	DE	Logitech Media Server kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
 	EN	Logitech Media Server can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
@@ -684,7 +684,7 @@ MUSICIP_READSONGDATA
 	SV	Importera all låtinformation från MusicIP (långsammare)
 
 MUSICIP_MIXABLE_CHECK
-	CS	Načíst pouze mixovatelný status z MusicIP (rychlejší)
+	CS	Načíst pouze mixovatelný stav z MusicIP (rychlejší)
 	DA	Læs kun miksstatus fra MusicIP (hurtigere)
 	DE	Nur mischbaren Status von MusicIP lesen (schneller)
 	EN	Only read mixable status from MusicIP (faster)

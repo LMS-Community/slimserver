@@ -1,5 +1,5 @@
 PLUGIN_AMAZON_MODULE_NAME
-	CS	Amazon CD obchod
+	CS	Amazon - CD obchod
 	DA	Amazons cd-butik
 	DE	Amazon-CD-Store
 	EN	Amazon CD Store
@@ -14,7 +14,7 @@ PLUGIN_AMAZON_MODULE_NAME
 	SV	Amazon CD Store
 
 PLUGIN_AMAZON_ON_AMAZON
-	CS	Na Amazon
+	CS	Na Amazonu
 	DA	På Amazon
 	DE	Bei Amazon
 	EN	On Amazon

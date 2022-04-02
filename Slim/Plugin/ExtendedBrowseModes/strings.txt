@@ -144,7 +144,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
 
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
-	CS	Náhodně zvolená alba
+	CS	Náhodná alba
 	DA	Miks baseret på tilfældige album
 	DE	Zufällige Alben
 	EN	Random Albums
