@@ -1,5 +1,5 @@
 PLUGIN_SOUNDS_MODULE_NAME
-	CS	Zvuky a Efekty
+	CS	Zvuky & Efekty
 	DA	Lyde og effekter
 	DE	Sounds & Effekte
 	EN	Sounds & Effects

@@ -1,7 +1,7 @@
 # String file for Line Out plugin
 
 PLUGIN_LINE_OUT
-	CS	Výstup pro zesilovač (Line Out)
+	CS	Linkový výstup
 	DA	Linjeudgang
 	DE	Line-Out
 	EN	Line Out
@@ -16,7 +16,7 @@ PLUGIN_LINE_OUT
 	SV	Utgång
 
 PLUGIN_LINE_OUT_DESC
-	CS	Přepínat mezi subwooferem, sluchátky, a režimem výstupu mikrofonu
+	CS	Přepínání mezi režimem subwooferu, sluchátek a linkového výstupu na Boomu
 	DA	Skift mellem udgangene til subwoofer, hovedtelefoner og linjeudgangen på Boom
 	DE	Umschalten zwischen Subwoofer-, Kopfhörer- und Line-Out-Modus an der Boom.
 	EN	Toggle between sub woofer, headphone, and line out mode on Boom

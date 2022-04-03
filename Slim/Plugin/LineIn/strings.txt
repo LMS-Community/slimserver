@@ -16,7 +16,7 @@ PLUGIN_LINE_IN
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_DESC
-	CS	Vstupní linka pro mikrofon
+	CS	Vstupní linka pro Boom
 	DA	Linjeindgang på Boom
 	DE	Line-In für Boom
 	EN	Line In for Boom

@@ -4669,7 +4669,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	ZH_CN	当前播放歌曲的信息都能显示在播放机的显示屏上。您可以选择您所要显示的信息。
 
 SETUP_SYNCHRONIZE
-	CS	Synchronizovat
+	CS	Synchronizace
 	DA	Synkroniser
 	DE	Synchronisieren
 	EN	Synchronize
@@ -4767,7 +4767,7 @@ SETUP_SYNCVOLUME_OFF
 	ZH_CN	不要把播放机的音量同步化
 
 SETUP_SYNCVOLUME
-	CS	Synchronizovat hlasitost
+	CS	Synchronizace hlasitosti
 	DA	Synkroniser lydstyrke
 	DE	Lautstärke synchronisieren
 	EN	Synchronize Volume
@@ -4842,7 +4842,7 @@ SETUP_SYNCPOWER_OFF
 	ZH_CN	电源开关独立化
 
 SETUP_SYNCPOWER
-	CS	Synchronizovat napájení
+	CS	Synchronizace napájení
 	DA	Synkroniser tænd/sluk
 	DE	Ein-/Ausschalten synchronisieren
 	EN	Synchronize Power
@@ -5195,7 +5195,7 @@ SETUP_PLAYDELAY_DESC
 	SV	Det kan vara en märkbar skillnad mellan hur mycket ett spår som spelaren rapporterar till Logitech Media Server att den har spelat upp och hur mycket av spåret som lyssnaren faktiskt hört. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. Här kan du ange fördröjningen så att den kan tas med i beräkningen när synkroniseringen justeras i Logitech Media Server.
 
 SETUP_MINSYNCADJUST
-	CS	Nastavení minimální synchronizace (ms)
+	CS	Úprava minimální synchronizace (ms)
 	DA	Mindste justering ved synkronisering (ms)
 	DE	Minimale Synchronisationsanpassung (ms)
 	EN	Minimum Synchronization Adjustment (ms)
@@ -5242,7 +5242,7 @@ SETUP_PACKETLATENCY
 	SV	Svarstid för nätverkspaket (ms)
 
 SETUP_PACKETLATENCY_DESC
-	CS	Logitech Media Server automaticky měří zpoždění sítě mezi sebou a přehrávačem. To je důležité při udržování synchronizace. Občas mohou být tato měření příliš rozporná a nelze je použít a v tomto případě zde můžete zadat obvyklou hodnotu.
+	CS	Logitech Media Server automaticky měří zpoždění sítě mezi ním a přehrávačem. To je důležité při udržování synchronizace. Občas mohou být tato měření příliš nekonzistentní, než aby byla užitečná a v tomto případě zde můžete zadat obvyklou hodnotu.
 	DA	Logitech Media Server måler automatisk netværksforsinkelsen mellem sig selv og afspilleren. Det er vigtigt når synkroniseringen skal opretholdes. Det sker at disse mål er for inkonsistente til at være praktisk anvendelige, og i så fald kan du angive en gennemsnitsværdi her.
 	DE	Logitech Media Server misst automatisch die Netzwerk-Wartezeit zwischen der Anwendung und dem Player. Dies ist zum Beibehalten der Synchronisation wichtig. Wenn diese Messungen zu inkonsistent sind, empfehlen wir, hier einen typischen Wert einzugeben.
 	EN	Logitech Media Server automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occasionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
@@ -5470,7 +5470,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	ZH_CN	当播放MP3音频时，一些音频接收器和数模转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音频。缺省值为0。0.25秒的值对许多接收器都已相当足够。
 
 SETUP_REPLAYGAINMODE
-	CS	Úprava hlasitosti/Normalizace hlasitosti
+	CS	Úprava hlasitosti (Replay Gain)
 	DA	Justering af lydstyrken (Replay Gain)
 	DE	Lautstärken-Normalisierung (Replay Gain)
 	EN	Volume Adjustment/Replay Gain
@@ -5487,7 +5487,7 @@ SETUP_REPLAYGAINMODE
 	ZH_CN	音量调整/重播增益
 
 SETUP_REPLAYGAINMODE_DESC
-	CS	Některé zvukové skladby obsahují nastavení hlasitosti, čili "Zesílení při přehrání", tj. informace, které lze použít při přehrávání tak, aby skladby a alba zněly stejně hlasitě. Přehrávač může tuto informaci využít. "Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. "Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale přitom rozdíly v hlasitosti mezi skladbami v albu zůstanou zachovány. Volba "Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro mixovaný seznam skladeb.
+	CS	Některé zvukové skladby obsahují informace o nastavení hlasitosti, neboli "Replay Gain", které lze použít při přehrávání, aby skladby a alba zněly stejně hlasitě. Pokud je tato informace přítomna, přehrávač ji může použít. "Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. "Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale aby byly zachovány rozdíly v hlasitosti mezi skladbami v rámci alba. Volba "Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro smíšený seznam skladeb.
 	DA	Nogle lydfiler indeholder oplysninger om lydstyrkejustering, også kaldet Replay Gain. Oplysningerne kan anvendes ved afspilningen for at sikre at forskellige nummer og album har den samme lydstyrke. Afspilleren kan anvende denne information hvis den findes. Forstærkning af nummer kan bruges til at sikre at alle numre har samme lydstyrke. Forstærkning af album kan bruges til at sikre at alle album har samme lydstyrke, men forskellen i lydstyrke mellem de enkelte numre på et album bevares. Dynamisk forstærkning anvender forstærkning af album hvis flere på hinanden følgende numre er fra samme album, og forstærkning af numre hvis afspilningslisten består af numre fra forskellige album.
 	DE	Titel können Informationen zur Normalisierung der Lautstärke enthalten ('Replay Gain'), damit alle Titel und Alben mit derselben Lautstärke wiedergegeben werden können. Der Player kann diese Information nutzen. 'Titel-Normalisierung' stellt sicher, dass alle Titel gleich laut wiedergegeben werden. 'Album-Normalisierung' stellt sicher, dass alle Alben gleich laut wiedergegeben werden, wobei Unterschiede in der Lautstärke in den Titeln eines Albums erhalten bleiben. 'Intelligente' Normalisierung nutzt die Album-Normalisierung, wenn aufeinanderfolgende Titel vom selben Album stammen bzw. die Titel-Normalisierung für gemischte Wiedergabelisten.
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. The player can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
@@ -7689,7 +7689,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	SV	Ytterligare spellisteknappar
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
-	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávání, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
+	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávatelné položky, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
 	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.
 	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.
 	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".
@@ -7772,7 +7772,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让Squeezebox由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	CS	Filtrovat žánry na úrovni alba a skladby.
+	CS	Filtrování žánrů na úrovni alba a skladby.
 	DA	Filtrer genrer på album- og nummernivau.
 	DE	Stilrichtungen auf Album- und Titelebene filtern
 	EN	Filter Genres at the Album & Track Level.
@@ -7840,6 +7840,7 @@ SETUP_NOGENREFILTER_DESC
 	ZH_CN	您可以在当浏览音乐曲风时过滤并只显示和音乐曲风匹配的专辑和音轨。
 
 SETUP_NOROLEFILTER
+	CS	Filtrování rolí přispěvatelů na úrovni alba a skladby
 	DE	Interpreten-Rolle auf Album- und Titelebene filtern
 	EN	Filter Contributor Roles at the Album & Track Level
 	FR	Portée du filtre sur le rôle de l'artiste
@@ -7849,6 +7850,7 @@ SETUP_NOROLEFILTER
 	SV	Filtrera artistroller på album- och låtnivå
 
 SETUP_NOROLEFILTER_1
+	CS	Zobrazit všechna alba a skladby interpreta
 	DE	Alle Titel und Alben eines Interpreten anzeigen
 	EN	Show all albums and tracks for an artist
 	FR	Afficher tous les albums et morceaux d'un artiste
@@ -7858,6 +7860,7 @@ SETUP_NOROLEFILTER_1
 	SV	Visa alla album och låtar för en artist
 
 SETUP_NOROLEFILTER_0
+	CS	Zobrazit pouze skladby nebo alba, které odpovídají vybrané roli interpreta
 	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected role for an artist
 	FR	Afficher uniquement les albums et les morceaux correspondant au rôle de l'artiste
@@ -7867,6 +7870,7 @@ SETUP_NOROLEFILTER_0
 	SV	Visa bara album och låtar där artisten har den valda rollen.
 
 SETUP_NOROLEFILTER_DESC
+	CS	Při procházení umělců lze provádět filtrování, aby se zobrazovala pouze alba a skladby, které odpovídají vybrané roli (např. ALBUMARTIST, COMPOSER atd.).
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
@@ -8304,6 +8308,7 @@ SETUP_SCAN_ON_PREF_CHANGE_DESC
 	PL	Niektóre ustawienia wymagają ponownego przeszukania całej Twojej biblioteki multimedialnej do poprawnego działania. Ten proces może być uruchamiany automatycznie, lecz może spowodować zakolejkowanie wielokrotnego przeszukiwania biblioteki w przypadku zmiany kilku ustawień naraz.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
+	CS	Automaticky spustit skenování
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
 	FR	Relancer automatiquement l'analyse
@@ -8313,6 +8318,7 @@ SETUP_SCAN_ON_PREF_CHANGE_ON
 	SV	Starta sökningen automatiskt
 
 SETUP_SCAN_ON_PREF_CHANGE_OFF
+	CS	Vyzvat ke kontrole, ale nespustit ji automaticky
 	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
 	EN	Prompt to scan, but don't trigger it automatically
 	FR	Demander avant de lancer l'analyse
@@ -8377,7 +8383,7 @@ SETUP_DBHIGHMEM_NORMAL
 	SV	Normal
 
 SETUP_DBHIGHMEM_HIGH
-	CS	Vysoký (doporučeno pro přístroje s 1+ GB RAM)
+	CS	Vysoká (doporučeno pro přístroje s 1+ GB RAM)
 	DA	Høj (anbefales til computere med 1+ GB RAM)
 	DE	Hoch (empfohlen für Computer mit 1 GB RAM und mehr)
 	EN	High (recommended for machines with 1+ GB RAM)
@@ -8392,7 +8398,7 @@ SETUP_DBHIGHMEM_HIGH
 	SV	Hög (rekommenderas för datorer med mer än 1 GB RAM)
 
 SETUP_DBHIGHMEM_MAX
-	CS	Maximum (doporučeno pro knihovny s více než 50 000 skladbami a přístroje s více než 2 GB RAM)
+	CS	Maximální (doporučeno pro knihovny s více než 50 000 skladbami a přístroje s více než 2 GB RAM)
 	DE	Maximum (empfohlen für Sammlungen mit mehr als 50'000 Titeln und Computer mit 2 GB RAM und mehr)
 	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
 	FR	Maximum (recommandé pour les bibliothèques de plus de 50 000 titres et les systèmes avec au moins 2 Go de RAM)
@@ -8831,6 +8837,7 @@ SETUP_SHOWBUFFERFULLNESS
 	ZH_CN	显示缓冲存储器的丰满度
 
 SETUP_CORS_ALLOWED_HOSTS
+	CS	Povolení hostitelé CORS
 	DE	CORS akzeptierte Hosts
 	EN	CORS Allowed Hosts
 	FR	Domaines autorisés via CORS
@@ -8838,6 +8845,7 @@ SETUP_CORS_ALLOWED_HOSTS
 	SV	Tillåtna CORS servrar
 
 SETUP_CORS_ALLOWED_HOSTS_DESC
+	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Logitech Media Serveru. Položky musí obsahovat protokol (např. "http"), plný název hostitele ("www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako "http://www.example.com".
 	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Logitech Media Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "http://www.example.com".
 	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Logitech Media Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "http://www.example.com" should be good enough.
 	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Logitech Media Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "http://www.exemple.com" devrait suffire.
@@ -8879,6 +8887,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，Logitech Media Server会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="/html/docs/http.html#csrf">帮助部分</a>。
 
 SETUP_INSECURE_HTTPS
+	CS	Nezabezpečené HTTPS
 	DE	Unsicheres HTTPS
 	EN	Insecure HTTPS
 	FR	HTTPS non sécurisé
@@ -8886,6 +8895,7 @@ SETUP_INSECURE_HTTPS
 	NL	Onveilige HTTPS
 
 SETUP_INSECURE_HTTPS2
+	CS	Vypnout ověřování certifikátů u připojení HTTPS.
 	DE	Server Zertifikate bei HTTPS Verbindungen nicht überprüfen.
 	EN	Switch off certificate verification on HTTPS connections.
 	FR	Désactiver la vérification des certificats sur les connexions HTTPS.
@@ -8893,6 +8903,7 @@ SETUP_INSECURE_HTTPS2
 	NL	Uitschakelen van certificaatverificatie bij HTTPS verbindingen
 
 SETUP_INSECURE_HTTPS_DESC
+	CS	Povolením možnosti "Nezabezpečené HTTPS" se vypne ověřování certifikátů, pokud Logitech Media Server funguje jako klient HTTPS. <b>Povolení této možnosti se nedoporučuje!</b> Vypnutí ověřování certifikátů je špatnou praxí, ale za určitých okolností může být nezbytné, např. když nelze aktualizovat knihovny.
 	DE	"Unsicheres HTTPS" bedeutet, dass Logitech Media Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Logitech Media Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
@@ -9507,7 +9518,7 @@ SETUP_SN_SYNC
 	SV	mysqueezebox.com-integration
 
 SETUP_SN_SYNC_DESC
-	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Server a mysqueezebox.com. Tuto funkci vypnete volbou Zakázáno.
+	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Serverem a mysqueezebox.com. Chcete-li tuto funkci zakázat, vyberte níže možnost Zakázáno.
 	DA	Som standard synkroniseres mange af afspillerindstillingerne mellem Logitech Media Server og mysqueezebox.com. Du kan deaktivere denne funktion ved at vælge Deaktiver nedenfor.
 	DE	Standardmäßig werden zahlreiche Player-Einstellungen zwischen Logitech Media Server und mysqueezebox.com synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
 	EN	By default, many player settings are synchronized between Logitech Media Server and mysqueezebox.com.  To disable this feature, select the Disabled option below.
@@ -9627,7 +9638,7 @@ SETUP_NO_JAVASCRIPT
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Logitech Media Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
 SETUP_WIZARD_SQN_PLEASE
-	CS	Pro pokračování se přihlaste pomocí e-mailu mysqueezebox.com a hesla.
+	CS	Pro pokračování se přihlaste pomocí e-mailu a hesla mysqueezebox.com.
 	DA	Du skal logge på med din e-mail-adresse og adgangskode til mysqueezebox.com for at fortsætte.
 	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-Mail-Adresse und Ihrem mysqueezebox.com-Kennwort an, um fortzufahren.
 	EN	Please sign in with your mysqueezebox.com email and password to continue.
@@ -9969,7 +9980,7 @@ CURRENT_PLAYER
 	ZH_CN	当前的播放机：
 
 CHOOSE_PLAYER
-	CS	Zvolit přehrávač
+	CS	Vyberte přehrávač
 	DA	Vælg afspiller
 	DE	Player wählen
 	EN	Choose Player
@@ -15554,7 +15565,7 @@ NEED_PLAYLIST_PATH
 	ZH_CN	您必须指定存有播放表目录的路径。
 
 CSRF_ERROR_INFO
-	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Logitech Media Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Logitech Media Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\".  Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
+	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Logitech Media Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Logitech Media Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\". Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Logitech Media Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Logitech Media Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
 	DE	Damit Sie diese URL aus einem Favoriten/Lesezeichen oder einem anderen Verfahren als aus der Logitech Media Server-Web-Benutzeroberfläche aufrufen können, müssen Sie eine URL mit dem Sicherheitsparameter 'cauth' verwenden. Trat dieser Fehler beim Klicken auf einen Link in der Logitech Media Server-Web-Benutzeroberfläche auf, sollten Sie prüfen, ob der Browser (sowie Proxyserver und Spyware-/Firewall-Software) das Senden von 'Referer'-Kopfzeilen zulässt. Dies ist die korrekte URL für die gewünschte Verbindung:
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
@@ -18235,7 +18246,7 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	SV	Det går inte att få tillgång till mysqueezebox.com-tjänsterna eftersom ingen spelare är ansluten.
 
 SQUEEZENETWORK_NO_LOGIN
-	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Prosím konfigurujte Logitech Media Server ve webovém prohlížeči v položce Nastavení -> mysqueezebox.com.
+	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Pro konfiguraci přejděte pomocí webového prohlížeče na Logitech Media Server, položku Nastavení -> mysqueezebox.com.
 	DA	Du skal have en konto til mysqueezebox.com for at bruge denne tjeneste. Du kan konfigurere den i en browser under Indstillinger for Logitech Media Server -> mysqueezebox.com.
 	DE	Für diesen Dienst ist ein mysqueezebox.com-Konto erforderlich. Sie können das Konto in einem Web-Browser in den Logitech Media Server-Einstellungen unter 'mysqueezebox.com' konfigurieren.
 	EN	A mysqueezebox.com account is required for this service. Please access Logitech Media Server Settings -> mysqueezebox.com with a web browser to configure.
@@ -18295,7 +18306,7 @@ MUSICSOURCE_SWITCH
 	SV	Välj musikkälla att ansluta spelaren till.
 
 SQUEEZEBOX_SERVER_WANT_SWITCH
-	CS	Tento přehrávač je v aktuálně připojen k %s. Chcete ho přepnout na tento Logitech Media Server?
+	CS	Tento přehrávač je aktuálně připojen k %s. Chcete ho přepnout na tento Logitech Media Server?
 	DA	Denne afspiller er tilsluttet %s. Vil du skifte til Logitech Media Server?
 	DE	Dieser Player ist derzeit verbunden mit %s. Möchten Sie auf diese Version von Logitech Media Server umschalten?
 	EN	This player is currently connected to %s. Do you want it to switch to this Logitech Media Server?
@@ -18310,7 +18321,7 @@ SQUEEZEBOX_SERVER_WANT_SWITCH
 	SV	Den här spelaren är för närvarande ansluten till %s. Vill du växla till denna Logitech Media Server?
 
 SQUEEZEBOX_SERVER_CONNECTING
-	CS	připojování k %s...
+	CS	Připojování k %s...
 	DA	Opretter forbindelse til %s
 	DE	Verbindung zu %s...
 	EN	Connecting to %s...
@@ -20032,7 +20043,7 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
-	CS	Výstup pro zesilovač (Line Out)
+	CS	Linkový výstup
 	DA	Linjeudgang
 	DE	Line-Out
 	EN	Line Out
@@ -20047,7 +20058,7 @@ SETUP_ANALOGOUTMODE
 	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
-	CS	Zvolte funkci Hlasitá sluchátka/sub out port. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
+	CS	Zvolte funkci Sluchátka/sub out portu Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra. Hvis du vælger Altid slået til, forbliver de indbyggede højtalere slået til, også selvom der tilsluttes hovedtelefoner.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher. Mit 'Immer Aktiv' bleiben die internen Lautsprecher aktiv, auch wenn Kopfhörer angeschlossen sind.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in.
@@ -22956,7 +22967,7 @@ SETUP_MAXPLAYLISTLENGTH
 	SV	Maximal längd på spellistan
 
 SETUP_MAXPLAYLISTLENGTH_DESC
-	CS	Aby byl server chráněn před nadměrným zatížením paměti, může být omezena maximální délka seznamu skladeb, včetně seznamu Nyní hraje. Hodnota 0 znamená bez omezení. Pokud je zadána, je minimální hodnota 10.
+	CS	Aby byl server chráněn před nadměrným zatížením paměti, může být omezena maximální délka seznamu skladeb, včetně seznamu Právě hraje. Hodnota 0 znamená bez omezení. Pokud je zadána, je minimální hodnota 10.
 	DA	Du kan forhindre at serveren bruger for meget hukommelse ved at begrænse længden på afspilningslisterne, inklusive den aktive afspilningsliste. Værdien 0 angiver at længden er ubegrænset. Ellers er minimumsværdien 10.
 	DE	Um eine übermäßige Speicherverwendung auf dem Server zu verhindern, kann die Länge der Wiedergabeliste, einschließlich der aktuell abgespielten Liste, eingeschränkt werden. Bei Eingabe des Werts '0' wird keine Einschränkung vorgenommen. Wird eine Einschränkung festgelegt, muss mindestens der Wert '10' eingegeben werden.
 	EN	In order to protect the server against excessive memory use the maximum length of a playlist, including the Now-Playing playlist, can be restricted. A value of 0 means no restriction. If set then the minimum value is 10.
@@ -23094,7 +23105,7 @@ CONTROLPANEL_SERVERSTATUS
 	SV	Status
 
 CONTROLPANEL_STATUS_RUNNING
-	CS	Status: Server je spuštěn
+	CS	Stav: Server je spuštěn
 	DA	Status: Serveren kører
 	DE	Status: Der Server wird ausgeführt
 	EN	Status: The server is running
@@ -23109,7 +23120,7 @@ CONTROLPANEL_STATUS_RUNNING
 	SV	Status: Servern körs
 
 CONTROLPANEL_STATUS_STARTING
-	CS	Status: Server se spouští
+	CS	Stav: Server se spouští
 	DA	Status: Serveren startes
 	DE	Status: Der Server wird gestartet.
 	EN	Status: The server is starting
@@ -23124,7 +23135,7 @@ CONTROLPANEL_STATUS_STARTING
 	SV	Status: Servern startar
 
 CONTROLPANEL_STATUS_STOPPED
-	CS	Status: Server je zastaven
+	CS	Stav: Server je zastaven
 	DA	Status: Serveren er stoppet
 	DE	Status: Der Server wurde angehalten.
 	EN	Status: The server is stopped
@@ -23529,7 +23540,7 @@ CONTROLPANEL_ALERTS
 	SV	Varningar
 
 CONTROLPANEL_SN_FAILURE
-	CS	Nebyli jsme schopni úspěšně komunikovat se mysqueezebox.com
+	CS	Nebyli jsme schopni úspěšně komunikovat s mysqueezebox.com
 	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
 	DE	Es konnte keine Verbindung zu mysqueezebox.com hergestellt werden.
 	EN	We were not able to successfully communicate with mysqueezebox.com
@@ -23935,7 +23946,7 @@ CLEANUP_DELETING
 	SV	Raderar
 
 CONTROLPANEL_NO_STATUS
-	CS	Nejsou dostupné žádné informace o statusu. Vezměte na vědomí, že pro zobrazení informací o statusu musí být Logitech Media Server aktivní a v provozu.
+	CS	Nejsou dostupné žádné informace o stavu. Vezměte na vědomí, že pro zobrazení informací o stavu musí být Logitech Media Server aktivní a v provozu.
 	DA	Der er ingen statusoplysninger. Husk at Logitech Media Server skal køre for at du kan se statusoplysninger.
 	DE	Keine Statusinformationen verfügbar. Logitech Media Server muss eingerichtet und ausgeführt werden, damit die Statusinformationen angezeigt werden können.
 	EN	No status information available. Please note that Logitech Media Server has to be up and running in order to display its status information.

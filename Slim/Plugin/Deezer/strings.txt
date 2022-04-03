@@ -14,7 +14,7 @@ PLUGIN_DEEZER_MODULE_NAME
 	SV	Deezer
 
 PLUGIN_DEEZER_ON_DEEZER
-	CS	Na Deezer
+	CS	Na Deezeru
 	DA	På Deezer
 	DE	Auf Deezer
 	EN	On Deezer
@@ -59,7 +59,7 @@ PLUGIN_DEEZER_NO_TRACK
 	SV	Det gick inte att hämta radiospåret.
 
 PLUGIN_DEEZER_ERROR
-	CS	Chyba služby Deezer
+	CS	Chyba Deezeru
 	DA	Deezer-fejl
 	DE	Deezer-Fehler
 	EN	Deezer Error
