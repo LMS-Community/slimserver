@@ -316,7 +316,7 @@ sub add {
 		$url = $url->url;
 	}
 
-	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
+	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("url: %s title: %s type: %s parser: %s icon: %s", $url, $title, $type, $parser, $icon));
@@ -368,7 +368,7 @@ sub findUrl {
 	my $class  = shift;
 	my $url    = shift;
 
-	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
+	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs
 
 	my $index = $class->{'url-index'}->{ $url };
 
@@ -392,7 +392,7 @@ sub deleteUrl {
 		$url = $url->url;
 	}
 
-	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
+	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs
 
 	if (exists $class->{'url-index'}->{ $url }) {
 
