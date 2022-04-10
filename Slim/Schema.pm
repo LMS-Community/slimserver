@@ -1386,22 +1386,31 @@ sub _createYear {
 	}
 }
 sub _createComments {
-	my ($self, $comments, $trackId) = @_;
+	my ($self, $comments, $trackId, $create) = @_;
 
 	if ( $comments ) {
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 
+		if (!$create) {
+			my $sth_delete = $dbh->prepare_cached( qq{
+				DELETE FROM comments
+				WHERE track = ?
+			} );
+
+			$sth_delete->execute( $trackId );
+		}
+
 		# Add comments if we have them:
-		my $sth = $dbh->prepare_cached( qq{
-			REPLACE INTO comments
+		my $sth_insert = $dbh->prepare_cached( qq{
+			INSERT INTO comments
 			(track, value)
 			VALUES
 			(?, ?)
 		} );
 
 		for my $comment (@{$comments}) {
-			$sth->execute( $trackId, $comment );
+			$sth_insert->execute( $trackId, $comment );
 
 			main::DEBUGLOG && $log->is_debug && $log->debug("-- Track has comment '$comment'");
 		}
@@ -1688,7 +1697,7 @@ sub _newTrack {
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
 
 	### Create Comment rows
-	$self->_createComments($deferredAttributes->{'COMMENT'}, $trackId);
+	$self->_createComments($deferredAttributes->{'COMMENT'}, $trackId, 1);
 
 	$self->forceCommit if $args->{'commit'};
 
