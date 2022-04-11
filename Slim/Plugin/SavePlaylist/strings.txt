@@ -86,7 +86,7 @@ PLAYLIST_SAVING
 	ZH_CN	正在保存当前的播放表：
 
 NO_PLAYLIST_DIR
-	CS	Problém: Žádná složka uložených seznamů skladeb.
+	CS	Problém: Neexistuje žádná složka s uloženými seznamy skladeb.
 	DA	Problem: Der er ingen mappe til gemte afspilningslister.
 	DE	Problem: kein Wiedergabelisten-Ordner
 	EN	Problem: No Saved Playlist folder.
