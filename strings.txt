@@ -261,7 +261,7 @@ SERVER_VERSION
 	ZH_CN	Logitech Media Server版本
 
 PERL_VERSION
-	CS	Verze Perl
+	CS	Verze Perlu
 	DA	Perl-version
 	DE	Perl-Version
 	EN	Perl Version
@@ -3697,7 +3697,7 @@ SETUP_ACTIVEFONT
 	ZH_CN	字体
 
 SETUP_ACTIVEFONT_DESC
-	CS	Tlačítkem SIZE na dálkovém ovladači nebo níže uvedenými přepínači můžete přepínat mezi písmy na displeji přehrávače. V nabídce níže si můžete vybrat pořadí, v jakém se budou zobrazovat.
+	CS	Tlačítkem SIZE na dálkovém ovladači nebo níže uvedenými přepínači můžete přepínat mezi písmy na displeji přehrávače. V nabídce níže si můžete zvolit pořadí, v jakém se budou zobrazovat.
 	DA	Du kan bruge SIZE på fjernbetjeningen eller radioknapperne nedenfor til at skifte mellem skrifttyperne der bruges på displayet. Du kan vælge i hvilken rækkefølge de vises, vha. menuerne nedenfor.
 	DE	Mit der SIZE-Taste der Fernbedienung oder den Optionsschaltflächen unten können Sie zwischen den verschiedenen Schriftarten umschalten. Außerdem können Sie unten die Reihenfolge ändern.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
@@ -3733,7 +3733,7 @@ SETUP_IDLEFONT
 	ZH_CN	备用字体
 
 SETUP_IDLEFONT_DESC
-	CS	Pokud je přehrávač v režimu pohotovosti, můžete pomocí tlačítka SIZE na dálkovém ovladači nebo pomocí přepínačů níže měnit písmo v zobrazení hodin. V nabídce níže si můžete vybrat pořadí, v jakém se budou zobrazovat.
+	CS	Pokud je přehrávač v režimu pohotovosti, můžete pomocí tlačítka SIZE na dálkovém ovladači nebo pomocí přepínačů níže měnit písmo v zobrazení hodin. V nabídce níže si můžete zvolit pořadí, v jakém se budou zobrazovat.
 	DA	Når afspilleren er på standby, kan du bruge SIZE på fjernbetjeningen eller radioknapperne nedenfor til at skifte mellem skrifttyperne der bruges til uret. Du kan vælge i hvilken rækkefølge de vises, vha. menuerne nedenfor.
 	DE	Befindet sich der Player im Standbymodus, können Sie mit der SIZE-Taste der Fernbedienung oder den Optionsschaltflächen unten zwischen den verschiedenen Schriftarten umschalten. Außerdem können Sie unten die Reihenfolge ändern.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.
@@ -3807,7 +3807,7 @@ SETUP_OFFDISPLAYSIZE
 	ZH_CN	备用字体大小
 
 SETUP_SCROLLPAUSE
-	CS	Přerušit rolování
+	CS	Pauza při rolování
 	DA	Rullepause
 	DE	Laufschriftverzögerung
 	EN	Scroll Pause
@@ -3861,7 +3861,7 @@ SETUP_SCROLLRATE
 	ZH_CN	卷动速度
 
 SETUP_SCROLLRATE_DESC
-	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Scroll Pixels a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Scroll Pixels jednou za každou sekundu Scroll Rate). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,033 sekundy.
+	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Pixely rolování a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Pixely rolování jednou za každou sekundu Rychlostí rolování). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,033 sekundy.
 	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden bestemmer hvor lang tid der går mellem, at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles for tilsammen at bestemme hastigheden og billedkvaliteten (teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder). På afspillere med et tegndisplay bestemmer indstillingen hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,033 sekunder er standard.
 	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Displays vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert ist 0,033 Sekunden.
 	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.033 seconds is the default.
@@ -4392,7 +4392,7 @@ SETUP_PLAYERNAME_DESC
 	ZH_CN	为了方便在网页中的辨认，您可以为这个播放机取名。
 
 SETUP_RESET_PLAYER
-	CS	Obnovit předvolby přehrávače
+	CS	Obnovení předvoleb přehrávače
 	DA	Nulstil indstillinger for afspiller
 	DE	Player-Einstellungen zurücksetzen
 	EN	Reset player preferences
@@ -4787,7 +4787,7 @@ SETUP_SYNCVOLUME
 	ZH_CN	音量同步化
 
 SETUP_SYNCVOLUME_DESC
-	CS	Můžete si zvolit, zda hlasitosti synchronizovaných přehrávačů se budou navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klikněte na Změnit.
+	CS	Můžete si zvolit, zda se budou úrovně hlasitosti synchronizovaných přehrávačů navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klikněte na Změnit.
 	DA	Du kan vælge om lydstyrken på de synkroniserede afspillere skal være ens eller uafhængig af hinanden. Vælg nedenfor, og klik på Skift.
 	DE	Sie können die Lautstärke synchronisierter Player aufeinander abstimmen oder unabhängig belassen. Wählen Sie die gewünschte Option und klicken Sie auf 'Ändern'.
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
@@ -6148,7 +6148,7 @@ SETUP_PLAYLISTSUFFIX
 	ZH_CN	词尾：
 
 SETUP_SHOWYEAR
-	CS	U alb zobrazovat rok
+	CS	Zobrazit rok s alby
 	DA	Vis årstal ved album
 	DE	Jahr mit Alben anzeigen
 	EN	Show Year with Albums
@@ -6166,7 +6166,7 @@ SETUP_SHOWYEAR
 	ZH_CN	年份与专辑一同显示
 
 SETUP_SHOWYEAR_DESC
-	CS	Můžete si zvolit, zda se bude zobrazovat rok alba při procházení podle alb nebo podle obalů alb. Pokud je to povoleno, rok alba se bude zobrazovat vedle názvu alba.
+	CS	Můžete si zvolit zobrazení roku alba při procházení podle Alb nebo podle Obalů alb. Pokud je tato možnost povolena, rok alba se zobrazí vedle názvu alba.
 	DA	Du kan vælge om de enkelte albums udgivelsesår skal vises når du søger efter album eller covere. I givet fald vises et albums udgivelsesår ved siden af titlen.
 	DE	Ist diese Option aktiviert, wird beim Suchen nach Alben oder Plattenhüllen das Erscheinungsjahr neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
@@ -6201,7 +6201,7 @@ SETUP_SHOWARTIST
 	ZH_CN	艺人与专辑一同显示
 
 SETUP_SHOWARTIST_DESC
-	CS	Můžete si zvolit zobrazení interpreta při procházení alb. Pokud je to povoleno, interpret alba bude zobrazen vedle názvu alba.
+	CS	Můžete si zvolit zobrazení interpreta při procházení Alb. Pokud je tato možnost povolena, interpret alba se zobrazí vedle názvu alba.
 	DA	Du kan vælge om kunstnerens navn skal vises når du søger efter album. I givet fald vises kunstnerens navn ved siden af titlen.
 	DE	Ist diese Option aktiviert, wird beim Suchen nach Alben der Name des Interpreten neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album's artist will be shown next to the album title.
@@ -6218,7 +6218,7 @@ SETUP_SHOWARTIST_DESC
 	ZH_CN	您可以选择通过浏览专辑时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在专辑标题旁边。
 
 SETUP_GUESSFILEFORMATS
-	CS	Odhadnout formáty štítků (tagů)
+	CS	Odhadnutí formátů štítků (tagů)
 	DA	Gæt format for mærker
 	DE	Tag-Format erraten
 	EN	Guess Tags Formats
@@ -6454,7 +6454,7 @@ SETUP_MEDIADIRS_DESC
 	SV	Du kan ange en eller flera mappar som innehåller mediefiler som Logitech Media Server ska söka igenom och lägga till i ditt mediebibliotek. Ange sökvägarna till mappen nedan.
 
 SETUP_SKIPSENTINEL
-	CS	Přeskočit označené složky
+	CS	Přeskočení označeného názvu souboru
 	DE	Markierte Ordner überspringen
 	EN	Skip Sentinel Filename
 	FR	Nom du fichier d'exclusion
@@ -6579,7 +6579,7 @@ SETUP_PLAYLISTDIR_DESC
 	ZH_CN	您可以指定一个作为保存播放表的文件夹。（如果您不打算保存任何播放表，请腾空。）
 
 SETUP_RESCAN
-	CS	Znovu prohledat knihovnu médií
+	CS	Znovu prohledání knihovny médií
 	DA	Gennemsøg mediebibliotek igen
 	DE	Medienbibliothek erneut durchsuchen
 	EN	Rescan Media Library
@@ -7704,7 +7704,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
 	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.
 
 SETUP_SEARCHSUBSTRING
-	CS	Hledat ve slovech
+	CS	Hledání ve slovech
 	DA	Søg i ord
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
@@ -7806,7 +7806,7 @@ SETUP_NOGENREFILTER_1
 	ZH_CN	显示某个艺人所属的音轨和专辑
 
 SETUP_NOGENREFILTER_0
-	CS	Zobrazovat pouze skladby nebo alba odpovídající vybranému žánru pro interpreta
+	CS	Zobrazit pouze skladby nebo alba odpovídající vybranému žánru pro interpreta
 	DA	Vis kun numre og album som svarer til den valgte genre for en kunstner
 	DE	Nur zur gewählten Stilrichtung passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected genre for an artist
@@ -7918,7 +7918,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	ZH_CN	在浏览及搜寻艺人时，有关作曲家及乐队的歌曲信息可以包括一同显示。
 
 SETUP_PERSISTPLAYLISTS
-	CS	Udržovat seznamy skladeb klientů
+	CS	Udržování seznamů skladeb klientů
 	DA	Gem afspillernes sidste afspilningsliste
 	DE	Geräte-Wiedergabelisten beibehalten
 	EN	Maintain Client Playlists
@@ -8013,7 +8013,7 @@ SETUP_RESHUFFLEONREPEAT
 	ZH_CN	在重复后再度随机抽样
 
 SETUP_RESHUFFLEONREPEAT_DESC
-	CS	Pokud je to požadováno, Logitech Media Server může opět opět náhodně seřadit seznamy skladeb po každém úplném přehrání seznamu skladeb.
+	CS	Pokud je to požadováno, Logitech Media Server může seřadit náhodně seznamy skladeb po každém úplném přehrání seznamu skladeb.
 	DA	Numrene på afspilningslisten kan blandes i en ny vilkårlig rækkefølge når alle numrene er afspillet og afspilningen starter forfra.
 	DE	Logitech Media Server kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
 	EN	Logitech Media Server can reshuffle shuffled playlists after each complete pass through the list, if desired.
@@ -8051,7 +8051,7 @@ SETUP_RESHUFFLEONREPEAT_0
 	ZH_CN	保留原有次序
 
 SETUP_RESHUFFLEONREPEAT_1
-	CS	Pokaždé náhodně seřadit
+	CS	Pokaždé seřadit náhodně
 	DA	Ny vilkårlig rækkefølge hver gang
 	DE	Jedesmal neu mischen
 	EN	Reshuffle each time
@@ -8070,7 +8070,7 @@ SETUP_RESHUFFLEONREPEAT_1
 	ZH_CN	在每一次播放时再度随机抽样决定次序。
 
 SETUP_PLAYTRACKALBUM
-	CS	Přehrát další skladby v albu
+	CS	Přehrání další skladby v albu
 	DA	Afspil andre numre fra album
 	DE	Andere Titel des Albums wiedergeben
 	EN	Play Other Songs In Album
@@ -8212,7 +8212,7 @@ SETUP_SPLITLIST_DESC
 	SV	Logitech Media Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
 SETUP_ARTISTS_BROWSE_MODES
-	CS	Procházet interprety
+	CS	Procházení interpretů
 	DA	Gennemse kunstnere
 	DE	Künstler durchsuchen
 	EN	Browse Artists
@@ -8338,7 +8338,7 @@ SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	SV	En del ändringar av inställningarna aktiveras först efter att mediebiblioteket har sökts igenom på nytt. <a href="%s">Klicka här för att starta sökningen.</a>
 
 SETUP_DBHIGHMEM
-	CS	Konfigurovat paměť databáze
+	CS	Konfigurování paměti databáze
 	DA	Konfiguration af databasehukommelse
 	DE	Konfiguration des Datenbankspeichers
 	EN	Database Memory Config
@@ -8783,7 +8783,7 @@ SETUP_UDPCHUNKSIZE
 	ZH_CN	最大UDP数据大小
 
 SETUP_WEBPROXY
-	CS	Webový Proxy server
+	CS	Webový proxy server
 	DA	Webproxy
 	DE	Web-Proxy
 	EN	Web Proxy
@@ -8911,7 +8911,7 @@ SETUP_INSECURE_HTTPS_DESC
 	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Logitech Media Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is een slechte gewoonte om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden bijgewerkt.
 
 SETUP_IPFILTER_HEAD
-	CS	Blokovat příchozí spojení
+	CS	Blokování příchozích spojení
 	DA	Blokér indgående forbindelser
 	DE	Eingehende Verbindungen blockieren
 	EN	Block Incoming Connections
@@ -9623,7 +9623,7 @@ SETUP_SN_REPORT_STATS_DISABLE
 	SV	Nej, rapportera inte statistik.
 
 SETUP_NO_JAVASCRIPT
-	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Classic</a>.
+	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Klasický</a>.
 	DA	Du skal bruge en forholdsvis ny browser for at få adgang til Logitech Media Server (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 eller senere), og JavaScript skal være aktiveret i browseren. Alternativt kan du benytte et enklere layout, fx <a href="/Classic/?skipWizard=1">Klassisk</a>.
 	DE	Für den Zugriff auf Logitech Media Server benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> wählen.
 	EN	In order to access Logitech Media Server, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a>.
@@ -10481,7 +10481,7 @@ SHUFFLE
 	ZH_CN	随机抽样
 
 SHUFFLE_ON_SONGS
-	CS	Náhodně seřadit skladby
+	CS	Seřadit náhodně podle skladby
 	DA	Vilkårlig rækkefølge af numre
 	DE	Zufällige Titelreihenfolge
 	EN	Shuffle by Song
@@ -10500,7 +10500,7 @@ SHUFFLE_ON_SONGS
 	ZH_CN	由歌曲随机抽样
 
 SHUFFLE_ON_ALBUMS
-	CS	Náhodně seřadit podle alba
+	CS	Seřadit náhodně podle alba
 	DA	Vilkårlig rækkefølge af album
 	DE	Zufällige Albumreihenfolge
 	EN	Shuffle by Album
@@ -10519,7 +10519,7 @@ SHUFFLE_ON_ALBUMS
 	ZH_CN	由专辑随机抽样
 
 SHUFFLE_ON
-	CS	Náhodně seřadit seznam skladeb
+	CS	Seřadit náhodně seznam skladeb
 	DA	Tilfældig rækkefølge
 	DE	Wiedergabeliste mischen
 	EN	Shuffle Playlist
@@ -11063,7 +11063,7 @@ LIGHT
 	SV	Lätt
 
 THREELINE
-	CS	Trojlinka (Threeline)
+	CS	Trojitá linka
 	DA	3 linjer
 	DE	3-zeilig
 	EN	Threeline
@@ -11183,7 +11183,7 @@ SAVE
 	ZH_CN	保存
 
 SAVE_AS
-	CS	Uložit
+	CS	Uložit jako
 	DA	Gem
 	DE	Speichern unter
 	EN	Save as
@@ -12170,6 +12170,7 @@ OGF
 	SV	Ogg FLAC
 
 DFF
+	CS	DFF
 	EN	DFF
 	NO	DFF
 	SV	DFF
@@ -12278,7 +12279,7 @@ FILELENGTH
 	ZH_CN	文件长度
 
 NO_ARTIST
-	CS	Žádný interpret
+	CS	Bez interpreta
 	DA	Ingen kunstner
 	DE	Kein Interpret
 	EN	No Artist
@@ -12297,7 +12298,7 @@ NO_ARTIST
 	ZH_CN	无艺人名
 
 NO_ALBUM
-	CS	Žádné album
+	CS	Bez alba
 	DA	Intet album
 	DE	Kein Album
 	EN	No Album
@@ -12316,7 +12317,7 @@ NO_ALBUM
 	ZH_CN	无专辑
 
 NO_GENRE
-	CS	Žádný žánr
+	CS	Bez žánru
 	DA	Ingen genre
 	DE	Keine Stilrichtung
 	EN	No Genre
@@ -17822,7 +17823,7 @@ INFORMATION_DISABLED
 	ZH_CN	已撤销
 
 INFORMATION_NO_VERSION
-	CS	Není žádné číslo verze
+	CS	Bez čísla verze
 	DA	Intet versionsnummer
 	DE	Keine Versionsnummer
 	EN	No version number
@@ -18024,7 +18025,7 @@ COLON
 	ZH_CN	：
 
 SETUP_SCROLLPIXELS
-	CS	Rolovat pixely
+	CS	Pixely rolování
 	DA	Rul antal pixel
 	DE	Laufschrift: Pixel
 	EN	Scroll Pixels
@@ -18041,7 +18042,7 @@ SETUP_SCROLLPIXELS
 	ZH_CN	卷动映像点
 
 SETUP_SCROLLPIXELS_DESC
-	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely. (Min 1, Max 20).
+	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely. (Min 1, Max 20).
 	DA	På afspillere med et grafisk display kan du justere hvor mange pixel (punkter) afspilleren skal rulle i hvert af de intervaller du angav ovenfor. Sammen med indstillingen for rullehastighed bestemmer denne indstilling hvor hurtigt og i hvilken kvalitet teksten ruller hen over displayet. Hvis du er i tvivl, bør du bruge standardindstillingen på 2 eller 3 pixel (minimum er 1, og maksimum er 20).
 	DE	Bei Playern mit grafischem Display können Sie festlegen, um wie viele Pixel pro oben definiertem Intervall sich die Laufschrift bewegen soll. Kombinieren Sie diese Einstellung mit der Laufschriftgeschwindigkeit, um das beste Ergebnis zu erzielen. Belassen Sie im Zweifelsfall den Standardwert von 2 oder 3 Pixeln (Min. 1, Max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  If in doubt leave as the default of 2 or 3 pixels.  (Min 1, Max 20).
@@ -18355,7 +18356,7 @@ SETUP_SCROLLMODE
 	ZH_CN	卷动模式
 
 SETUP_SCROLLMODE_DESC
-	CS	Můžete si zvolit, jak bude přehrávač zobrazovat text na druhé řádce displeje, která je příliš dlouhá a nevejde se na obrazovku. Standardní režim horizontálního rolování počká po dobu intervalu Přerušení rolování (Scroll Pause) a pak bude rolovat text a zobrazí celou řádku. Rolování bude pokračovat, dokud bude přehrávač zobrazovat tuto obrazovku. Alternativní režimy podporují rolování textu jednou a pak se zastaví, nebo se text vůbec neroluje.
+	CS	Můžete si zvolit, jak bude přehrávač zobrazovat text na druhé řádce displeje, která je příliš dlouhá a nevejde se na obrazovku. Standardní režim horizontálního rolování počká po dobu intervalu Pauzy při rolování a pak bude rolovat text a zobrazí celou řádku. Rolování bude pokračovat, dokud bude přehrávač zobrazovat tuto obrazovku. Alternativní režimy podporují rolování textu jednou a pak se zastaví, nebo se text vůbec neroluje.
 	DA	Du kan vælge hvordan en afspiller viser tekst som er for lang til at være på displayet, i en anden linje. Ved almindelig vandret rulning, rulles der med de pauser som er angivet under Rullepause. Der rulles videre indtil hele teksten er blevet vist. Alternativt kan hele teksten rulle forbi én gang inden den stopper, eller rullefunktionen kan slås fra.
 	DE	Sie können festlegen, wie der Player Text anzeigt, der zu lang für die zweiten Zeile des Display ist. Im Standardlaufschriftmodus wird die unter 'Laufschriftverzögerung' angegebene Zeit gewartet und dann der Text als Laufschrift angezeigt. Die Laufschrift läuft, solange der Player diesen Inhalt anzeigt. Weitere Möglichkeiten sind, den Text einmal als Laufschrift anzuzeigen und dann anzuhalten oder die Laufschrift zu deaktivieren.
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
@@ -19734,7 +19735,7 @@ AUDIO_SOURCE_BALANCED_AES
 	ZH_CN	平衡AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
-	CS	BNC Coax S/PDIF
+	CS	Koaxiální BNC S/PDIF
 	DA	BNC, Koaksial, S/PDIF
 	DE	BNC Koax S/PDIF
 	EN	BNC Coax S/PDIF
@@ -19751,7 +19752,7 @@ AUDIO_SOURCE_BNC_SPDIF
 	ZH_CN	BNC S/PDIF电接口
 
 AUDIO_SOURCE_RCA_SPDIF
-	CS	RCA Coax S/PDIF
+	CS	Koaxiální RCA S/PDIF
 	DA	RCA, Koaksial, S/PDIF
 	DE	Cinch Koax S/PDIF
 	EN	RCA Coax S/PDIF
@@ -20058,7 +20059,7 @@ SETUP_ANALOGOUTMODE
 	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
-	CS	Zvolte funkci Sluchátka/sub out portu Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
+	CS	Zvolte funkci portu sluchátka/sub out Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra. Hvis du vælger Altid slået til, forbliver de indbyggede højtalere slået til, også selvom der tilsluttes hovedtelefoner.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher. Mit 'Immer Aktiv' bleiben die internen Lautsprecher aktiv, auch wenn Kopfhörer angeschlossen sind.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in.
@@ -20672,7 +20673,7 @@ DEBUG_DATABASE_SQL
 	SV	SQL-loggning (avancerat)
 
 DEBUG_DATABASE_INFO
-	CS	Protokolování metadat & parsování
+	CS	Protokolování metadat a parsování
 	DA	Logføring af metadata og fortolkning
 	DE	Metadaten & Parsen
 	EN	Metadata & Parsing Logging
@@ -21118,7 +21119,7 @@ SETUP_DEBUG_SCANNER_LOG
 	SV	Loggfil for sökning
 
 SETUP_DEBUG_SCANNER_LOG_DESC
-	CS	Logitech Media Server ukládá protokol o všech činnostech prohledávání, včetně iTunes & MusicIP zde:
+	CS	Logitech Media Server ukládá protokol o všech činnostech prohledávání, včetně iTunes a MusicIP zde:
 	DA	Logitech Media Server logfører alle gennemsøgninger, også i iTunes og MusicIP, i denne fil:
 	DE	Logitech Media Server protokolliert die Aktivitäten, die Suchvorgänge betreffen (inklusive iTunes, MusicIP), in dieser Datei:
 	EN	Logitech Media Server keeps a log file for all scanning related activities, including iTunes & MusicIP here:
@@ -22892,7 +22893,7 @@ MOREINFO
 	SV	Mer information
 
 SETUP_SHOWCOUNT
-	CS	Zobrazit počet nabídek
+	CS	Zobrazení počtu nabídek
 	DA	Vis placering på menu
 	DE	Position im Menü anzeigen
 	EN	Show Menu Count
@@ -22982,7 +22983,7 @@ SETUP_MAXPLAYLISTLENGTH_DESC
 	SV	Det går att skydda servern och undvika minnesfel genom att begränsa längden på spellistan (vilket omfattar Nu spelas-listan). 0 innebär att det inte finns någon begränsning. Om spellistan begränsas är det minsta tillåtna värdet 10.
 
 ERROR_PLAYLIST_FULL
-	CS	Seznam skladeb je plný; nepřidány žádné skladby
+	CS	Seznam skladeb je plný; nebyly přidány žádné skladby
 	DA	Afspilningslisten er fyldt; der blev ikke tilføjet nogen numre
 	DE	Wiedergabeliste ist voll; keine Titel hinzugefügt
 	EN	Playlist full; no tracks added
@@ -24650,7 +24651,7 @@ SYNC_ABOUT
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...
-	CS	Potlačit destruktivní Touch-To-Play
+	CS	Potlačení destruktivního Touch-To-Play
 	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours

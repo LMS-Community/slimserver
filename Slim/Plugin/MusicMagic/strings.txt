@@ -337,7 +337,7 @@ SETUP_MMMPLAYERSETTINGS
 	ZH_CN	播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
-	CS	Před vytvořením mixu můžete zvolit přidělení přístupu k mixovacím nastavením Music IP pro každý přehrávač. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
+	CS	Můžete si zvolit přidělení přístupu k mixovacím nastavením Music IP pro každý přehrávač před vytvořením mixu. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
 	DA	Du kan vælge at give hver enkelt afspiller adgang til indstillingerne for MusicIP Mix før du opretter et miks. Alle indstillinger som vælges på afspilleren, har forrang frem for serverindstillingerne indtil de ændres igen på afspilleren. Hvis du vil gå videre og begynde at oprette et miks vha. de eksisterende indstillinger på afspilleren og serveren, skal du vælge Nej.
 	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie 'Nein'.
 	EN	You may choose to give each player access to the MusicIP mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
@@ -609,7 +609,7 @@ MUSICMAGIC_MOODS
 	ZH_CN	MusicIP气氛混音
 
 DEBUG_PLUGIN_MUSICIP
-	CS	Přihlašování k MusicIP Mix & Export
+	CS	Protokolování MusicIP Mix a Exportu
 	DA	Logføring af MusicIP Mix og eksport
 	DE	MusicIP-Mix & Export
 	EN	MusicIP Mix & Export Logging

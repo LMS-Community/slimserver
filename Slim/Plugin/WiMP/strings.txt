@@ -28,7 +28,7 @@ PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	SV	Hämtar spårinformation...
 
 PLUGIN_WIMP_ERROR_LOGGED_OUT
-	CS	Je nám líto - při používání TIDALu ve Squeezeboxu se k ní nemůžete připojit z jiného zařízení. Zkuste prosím TIDAL ve svém Squeezeboxu použít znovu.
+	CS	Je nám líto - při používání TIDALu ve Squeezeboxu se k němu nemůžete připojit z jiného zařízení. Zkuste prosím TIDAL ve svém Squeezeboxu použít znovu.
 	DA	Vi beklager. Du kan ikke oprette forbindelse til TIDAL fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge TIDAL igen på din Squeezebox.
 	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu TIDAL herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, TIDAL auf Ihrer Squeezebox zu verwenden.
 	EN	We're sorry - you can't connect to TIDAL from another device while using it on your Squeezebox. Please try again to use TIDAL on your Squeezebox.
