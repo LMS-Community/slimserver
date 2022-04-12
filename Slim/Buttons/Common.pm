@@ -28,7 +28,7 @@ Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Common> is the central collection of functions for accessing and manipulating the Player UI state machine.  
+L<Slim::Buttons::Common> is the central collection of functions for accessing and manipulating the Player UI state machine.
 This includes navigating menus, registering and managing player modes, and accessing core UI widgets.
 
 =cut
@@ -59,7 +59,7 @@ my $SCAN_RATE_MULTIPLIER = 2;
 my $SCAN_RATE_MAX_MULTIPLIER = 256;
 
 # hash of references to functions to call when we enter a mode
-# Note:  don't add to this list, rather use the addMode() function 
+# Note:  don't add to this list, rather use the addMode() function
 # below to have the module add its mode itself
 our %modes = ();
 
@@ -84,9 +84,9 @@ our @numberLetters = (
 my $minimumVelocity = 2;
 
 # Time that you must hold the scroll button before the automatic
-# scrolling and acceleration starts. 
+# scrolling and acceleration starts.
 # in seconds.
-my $holdTimeBeforeScroll = 0.300;  
+my $holdTimeBeforeScroll = 0.300;
 
 our $scrollClientHash = {};
 
@@ -110,10 +110,10 @@ sub init {
 
 	# Home must come first!
 	Slim::Buttons::Home::init();
-	
+
 	# Initialise main settings menu next
 	Slim::Buttons::Settings::init();
-	
+
 	Slim::Buttons::Alarm::init();
 	Slim::Buttons::Block::init();
 	Slim::Buttons::Information::init();
@@ -122,12 +122,12 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::GlobalSearch::init();
-	
+
 	if (!main::NOMYSB) {
 		require Slim::Buttons::SqueezeNetwork;
 		Slim::Buttons::SqueezeNetwork::init();
 	}
-	
+
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
@@ -144,7 +144,7 @@ Clean up global hash when a client is gone
 
 sub forgetClient {
 	my $client = shift;
-	
+
 	delete $scrollClientHash->{ $client };
 }
 
@@ -235,13 +235,13 @@ sub validSavers {
 			$ret->{'offsaver'}->{$name}    = $saver->{'name'} if $saver->{'type'} =~ /OFF/;
 		}
 	}
-	
+
 	return $ret;
 }
 
 =head2 addMode ( )
 
-Register new player modes with the server. $name must be a uniqe string to identify the player mode. 
+Register new player modes with the server. $name must be a uniqe string to identify the player mode.
 
 Optional $buttonFunctions is a reference the routine to call for accessing the reference to the button
 functions used while operating in the new button mode.  This is only required if the new mode makes use
@@ -265,7 +265,7 @@ sub addMode {
 	$modes{$name} = $setModeFunction;
 	$leaveMode{$name} = $leaveModeFunction;
 }
-	
+
 # Common functions for more than one mode:
 our %functions = (
 	'dead' => sub  {},
@@ -273,7 +273,7 @@ our %functions = (
 	'fwd' => sub  {
 		my $client = shift;
 
-		# ignore if we aren't playing anything 
+		# ignore if we aren't playing anything
 		return unless Slim::Player::Playlist::count($client);
 
 		$client->execute(["playlist", "jump", "+1"]);
@@ -312,7 +312,7 @@ our %functions = (
 
 		# either starts the same song over, or the previous one, or
 		# the next one depending on whether/how we jumped
-		if ($functarg eq 'rew') { 
+		if ($functarg eq 'rew') {
 
 			my $now = Time::HiRes::time();
 
@@ -400,14 +400,14 @@ our %functions = (
 
 			$client->execute(["stop"]);
 
-			# Push into playlist, unless already there 
+			# Push into playlist, unless already there
 			if (Slim::Buttons::Common::mode($client) ne 'playlist') {
 				Slim::Buttons::Common::pushMode($client, 'playlist');
 			}
 
 			$client->showBriefly( {
 				'line' => [ "", $client->string('STOPPING') ],
-				'jive' => undef,	
+				'jive' => undef,
 			}) unless suppressStatus($client);
 		}
 	},
@@ -503,7 +503,7 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		
+
 		my $mode = Slim::Buttons::Common::mode($client);
 
 		if (!defined $buttonarg || ($mode eq 'block' && $client->modeParam('block.name') eq 'upgrade')) {
@@ -546,7 +546,7 @@ our %functions = (
 				$newBrightness = $client->brightness() - 1;
 
 			} else {
-	
+
 				$newBrightness = $client->brightness() + 1;
 			}
 
@@ -599,14 +599,14 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		
+
 		my $visModes = scalar @{ $prefs->client($client)->get('visualModes') };
 		my $vm       = $prefs->client($client)->get('visualMode');
 
 		if (!defined $vm || $vm > $visModes) {
 			$vm = 0;
 		}
-		
+
 		if (!defined $buttonarg) {
 			$buttonarg = 'toggle';
 		}
@@ -639,7 +639,7 @@ our %functions = (
 		}
 
 		# Repeat presses of 'search' will step through search menu while in the top level search menu
-		if (($client->modeParam('header') eq 'SEARCH' || 
+		if (($client->modeParam('header') eq 'SEARCH' ||
 				$client->curSelection($client->curDepth) eq 'SEARCH') && mode($client) eq 'INPUT.List') {
 
 			(Slim::Buttons::Input::List::getFunctions())->{'down'}($client);
@@ -669,7 +669,7 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
-		
+
 		if (!Slim::Schema::hasLibrary()) {
 			$client->bumpRight();
 			return;
@@ -717,7 +717,7 @@ our %functions = (
 			# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
 			} elsif (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
-				$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
+				$obj = Slim::Player::Playlist::track($client, Slim::Buttons::Playlist::browseplaylistindex($client));
 			}
 
 			# xmlbrowser mode - save type and parser params to favorites too
@@ -728,16 +728,16 @@ our %functions = (
 				$type  = $obj->{'type'} || 'link';
 				$title = $obj->{'name'};
 				$icon  = $obj->{'image'};
-				
+
 				if ( $obj->{'play'} ) {
 					$type = 'audio';
 				}
-				
+
 				# There may be an alternate URL for playlist
 				if ( $type eq 'playlist' && $obj->{playlist} && !ref $obj->{playlist}) {
 					$url = $obj->{playlist};
 				}
-				
+
 				$parser = $obj->{'parser'};
 			}
 
@@ -790,14 +790,14 @@ our %functions = (
 						type   => $type || 'audio',
 						parser => $parser,
 					} );
-					
+
 					$client->showBriefly( {
 						'line' => [ $client->string('PRESET_ADDING', $preset), $title ]
 					} );
 				}
 				else {
 					$favs->add($url, $title, $type || 'audio', $parser, undef, $icon);
-					
+
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 					} );
@@ -806,7 +806,7 @@ our %functions = (
 			# if all of that fails, send the debug with a best guess helper for tracing back
 			} else {
 
-				if ($log->is_error) { 
+				if ($log->is_error) {
 
 					$log->error("Error: No valid url found, not adding favorite!");
 
@@ -825,17 +825,17 @@ our %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'FAVORITES');
 		}
 	},
-	
+
 	# Play preset
 	'playPreset' => sub {
 		my ( $client, $button, $digit ) = @_;
-		
+
 		if ( $digit == 0 ) {
 			$digit = 10;
 		}
-		
+
 		my $preset = $prefs->client($client)->get('presets')->[ $digit - 1 ];
-		
+
 		if ( $preset && $preset->{type} =~ /audio|playlist/ ) {
 			my $url   = $preset->{URL};
 			my $title = $preset->{text};
@@ -862,7 +862,7 @@ our %functions = (
 
 				$client->execute(['playlist', 'play', $url]);
 			}
-			$client->showBriefly( 
+			$client->showBriefly(
 	                        {
               				         'jive' =>
 	                                {
@@ -949,7 +949,7 @@ our %functions = (
 				style => 'repeat' . Slim::Player::Playlist::repeat($client),
 			}
 		});
-		
+
 	},
 
 	# Volume always pushes into Slim::Buttons::Volume to allow Transporter and Boom knobs to be used
@@ -963,7 +963,7 @@ our %functions = (
 		my $buttonarg = shift;
 
 		return if (!$client->hasVolumeControl());
-		
+
 		if ($client->modeParam('parentMode') && $client->modeParam('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {
@@ -1021,7 +1021,7 @@ our %functions = (
 
 	'snooze' => sub  {
 		my $client = shift;
-		
+
 		# Bug 8860, if setting the sleep timer, a single snooze press will
 		# also adjust the timer
 		if ( $client->modeParam('sleepMode') ) {
@@ -1036,24 +1036,24 @@ our %functions = (
 			pushButton('datetime', $client);
 		}
 	},
-	
+
 	'sleep' => sub  {
 		my $client = shift;
-		
+
 		# sleep function is overridden when alarm activates
 		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 		if (defined $currentAlarm) {
-			
+
 			main::INFOLOG && $log->info("Alarm Active: sleep function override for snooze");
 			$currentAlarm->snooze;
 			return;
 		}
-		
+
 		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
 		# first make sure we're playing, and its a valid song.
 		my $remaining = 0;
 
-		if ($client->isPlaying()) { 
+		if ($client->isPlaying()) {
 
 			my $dur = $client->controller()->playingSongDuration();
 
@@ -1067,13 +1067,13 @@ our %functions = (
 
 		# find the next value for the sleep timer
 		for ($i = 0; $i <= $#sleepChoices; $i++) {
-			
+
 			# if remaining time is close to a default value, replace the default.
 			if ( int($remaining + 0.5) == $sleepChoices[$i]) {
-				
+
 				$sleepChoices[$i] = $remaining;
 			}
-			
+
 			if ( $sleepChoices[$i] > $client->currentSleepTime() ) {
 				last;
 			}
@@ -1081,15 +1081,15 @@ our %functions = (
 
 		my $sleepTime = 0;
 		if ($i > $#sleepChoices) {
-		
-			# set to remaining time if it's longer than the highest sleep option, 
+
+			# set to remaining time if it's longer than the highest sleep option,
 			# and not already set at a time longer than the highest sleep option.
-			$sleepTime = $remaining > $sleepChoices[-1] && 
+			$sleepTime = $remaining > $sleepChoices[-1] &&
 							$client->currentSleepTime <= $sleepChoices[-1] ? $remaining : 0;
-			
+
 		# case of remaining time being in between the current sleep time and the next default option.
 		} elsif ($remaining > $client->currentSleepTime && $remaining < $sleepChoices[$i]) {
-			
+
 			$sleepTime = $remaining;
 		} else {
 
@@ -1098,7 +1098,7 @@ our %functions = (
 		}
 
 		$client->execute(["sleep", $sleepTime * 60]);
-		
+
 		# This is used to enable the ability to press the snooze bar
 		# again to quickly adjust the sleep time
 		$client->modeParam( sleepMode => 1 );
@@ -1121,7 +1121,7 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $power= undef;
-		
+
 		# try to avoid toggle commands, they make life difficult for listeners
 		if ($button eq 'power_on') {
 			$power = 1;
@@ -1146,7 +1146,7 @@ our %functions = (
 		}
 
 		$client->execute(["playlist", "shuffle" , $shuffle]);
-		
+
 		my $line;
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
 			$line = $client->string('SHUFFLE_ON_ALBUMS');
@@ -1322,19 +1322,19 @@ our %functions = (
 
 	'zap' => sub {
 		my $client = shift;
-		
+
 		if (Slim::Player::Playlist::count($client) > 0) {
 
 			# we zap the displayed song in playlist mode and playing song in all others
-			my $index = mode($client) eq 'playlist' ? Slim::Buttons::Playlist::browseplaylistindex($client) : 
+			my $index = mode($client) eq 'playlist' ? Slim::Buttons::Playlist::browseplaylistindex($client) :
 				Slim::Player::Source::playingSongIndex($client);
-			
+
 			$client->showBriefly( {
-				'line' => [ $client->string('ZAPPING_FROM_PLAYLIST'), 
-							Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, $index)) ]
+				'line' => [ $client->string('ZAPPING_FROM_PLAYLIST'),
+							Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::track($client, $index)) ]
 			   }, {'firstline' => 1, block => 1 }
-			); 
-			
+			);
+
 			$client->execute(["playlist", "zap", $index]);
 		}
 	},
@@ -1353,7 +1353,7 @@ sub getFunction {
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {
 
  		return ($coderef, $2);
- 
+
  	} elsif ($coderef = $functions{$function}) {
 
  		return $coderef;
@@ -1366,7 +1366,7 @@ sub getFunction {
 
 =head2 setFunction( $mapping, $function )
 
-setFunction enables a Plugin to affect all common modes. 
+setFunction enables a Plugin to affect all common modes.
 
 Originally added to allow Favorites plugin to make holding a number be a
 shortcut to playing a users favorite station.
@@ -1441,7 +1441,7 @@ sub scroll_dynamic {
 	}
 
 	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
-	
+
 	my $knobData = $client->knobData;
 
 	my $result = undef;
@@ -1531,7 +1531,7 @@ sub scroll_dynamic {
 					}
 				}
 			}
-				
+
 			$scrollParams->{lasttime} = $time;
 			if ($result > $scrollParams->{estimateEnd}) {
 				$scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
@@ -1545,15 +1545,15 @@ sub scroll_dynamic {
 			if ($scrollParams->{estimateEnd} > $listlength) {
 				$scrollParams->{estimateEnd} = $listlength;
 			}
-			
+
 		}
-		
+
 	} else {
-	
+
 		if ($holdTime == 0) {
 			# define behavior for button press, before any acceleration
 			# kicks in.
-			
+
 			# if at the end of the list, and down is pushed, go to the beginning.
 			if ($currentPosition == $listlength-1  && $direction > 0) {
 				# if at the end of the list, and down is pushed, go to the beginning.
@@ -1577,7 +1577,7 @@ sub scroll_dynamic {
 				if ($scrollParams->{estimateEnd} <
 					$scrollParams->{estimateStart}) {
 					$scrollParams->{estimateEnd} =
-						$scrollParams->{estimateStart} + 1; 
+						$scrollParams->{estimateStart} + 1;
 				}
 			} else {
 				$scrollParams->{estimateEnd} = $result;
@@ -1597,7 +1597,7 @@ sub scroll_dynamic {
 			# timeout.
 			$scrollParams->{A} = scroll_calculateAcceleration
 				(
-				 $direction, 
+				 $direction,
 				 $scrollParams->{estimateStart},
 				 $scrollParams->{estimateEnd},
 				 $scrollParams->{Tc}
@@ -1605,12 +1605,12 @@ sub scroll_dynamic {
 			my $accel = $scrollParams->{A};
 			my $time = $holdTime - $scrollParams->{lastHoldTime};
 			my $velocity = $scrollParams->{A} * $time + $scrollParams->{V};
-			my $pos = ($scrollParams->{lastPositionReturned} == $currentPosition) ? 
-				$scrollParams->{lastPosition} : 
+			my $pos = ($scrollParams->{lastPositionReturned} == $currentPosition) ?
+				$scrollParams->{lastPosition} :
 				$currentPosition;
-			my $X = 
+			my $X =
 				(0.5 * $scrollParams->{A} * $time * $time) +
-				($scrollParams->{V} * $time) + 
+				($scrollParams->{V} * $time) +
 				$pos;
 			$scrollParams->{lastPosition} = $X; # Retain the last floating
 			                                    # point value of $X
@@ -1666,38 +1666,38 @@ sub scroll_calculateAcceleration {
 }
 
 sub scroll_getInitialScrollParams {
-	my $minimumVelocity = shift; 
+	my $minimumVelocity = shift;
 	my $listLength      = shift;
 	my $direction       = shift;
 
 	my $result = {
 		# Constants.
-		# Items/second.  Don't go any slower than this under any circumstances. 
-		minimumVelocity => $minimumVelocity,  
-					
-		# Knob -> acceleration constant.  
+		# Items/second.  Don't go any slower than this under any circumstances.
+		minimumVelocity => $minimumVelocity,
+
+		# Knob -> acceleration constant.
 		# This constant converts wheel speed (ticks/second) into 'time to complete full list' (seconds for list_items)
 		# For example, if you're spinning the knob .5 revolution (10 ticks) per second, and Kc is 2,
-		# We should traverse the entire list in 2 / 0.5 = 4 seconds.   
+		# We should traverse the entire list in 2 / 0.5 = 4 seconds.
 		Kc              => 100,
-		
+
 		KmaxScrollPct   => 1, # Maximum step, in percentage of list length
-		
+
 		KrolloverTime   => 0.8, # Time that it takes while spinning knob to roll over.
 
-		# seconds.  Finishs a list in this many seconds. 
-		Tc              => 5,   
+		# seconds.  Finishs a list in this many seconds.
+		Tc              => 5,
 
 		# Variables
 		# Starting estimate of target space.
-		estimateStart   => 0,   
-		
+		estimateStart   => 0,
+
 		# Ending estimate of target space
-		estimateEnd     => $listLength, 
-					
+		estimateEnd     => $listLength,
+
 		# The current velocity.  account for direction
 		V               => $minimumVelocity * $direction,
-		
+
 		# The current acceleration.
 		A               => 0,
 
@@ -1706,17 +1706,17 @@ sub scroll_getInitialScrollParams {
 		# the button has been released.
 		lastHoldTime    => -1,
 
-		# To make the 
+		# To make the
 		lastPosition    => 0,      # Last calculated position (floating point)
-		lastPositionReturned => 0, # Last returned position   (integer), used to detect when $currentPosition 
+		lastPositionReturned => 0, # Last returned position   (integer), used to detect when $currentPosition
 					   # has been modified outside the scroll routines.
-		
+
 		# Maintain the last direction, so that we can implement a
 		# slowdown when the user hits  the same direciton twice.
 		# i.e. he's almost to where he wants to go, but not quite
 		# there yet.  Slow velocity by half, and don't wait for
-		# pause. 
-		#lastDirection   => 0,      
+		# pause.
+		#lastDirection   => 0,
 	};
 
 	return $result;
@@ -1729,7 +1729,7 @@ Update audio mixer settings
 $client object is required.
 $feature argument is a string to determine which of teh mixer settings is to be changed: bass/treble/pitch where applicable
 $setting is a scalar value for the new mixer setting.  Optionally it may be the string 'up' or 'down to adjust the current
-value either up or down.  
+value either up or down.
 
 Holding the IR button causes the up or down adjustment to accelerate the longer the button is held.
 
@@ -1739,7 +1739,7 @@ sub mixer {
 	my $client = shift;
 	my $feature = shift; # bass/treble/pitch
 	my $setting = shift; # up/down/value
-	
+
 	my $accel = 8; # Hz/sec
 	my $rate = 50; # Hz
 	my $inc = 1;
@@ -1751,11 +1751,11 @@ sub mixer {
 	} else {
 		$inc = $client->mixerConstant($feature,'increment');
 	}
-	
+
 	if ((!$inc && $setting =~ /up|down/) || $feature !~ /volume|bass|treble|pitch/) {
 		return;
 	}
-	
+
 	my $currVal = $prefs->client($client)->get($feature);
 	if ($setting  eq 'up') {
 		$cmd = "+$inc";
@@ -1778,9 +1778,9 @@ sub mixer {
 		$client->mixerDisplay($feature);
 		return;
 	}
-		
+
 	$client->execute(["mixer", $feature, $cmd]);
-	
+
 	$client->mixerDisplay($feature);
 }
 
@@ -1863,15 +1863,15 @@ sub numberScroll {
 		# reset the scroll parameters so that the estimated start and end are at the previous letter and next letter respectively.
 		$scrollClientHash->{$client}{scrollParams}{estimateStart} =
 			firstIndexOf(chr(ord($letter)-1), $lookupsubref, $listsize);
-		$scrollClientHash->{$client}{scrollParams}{estimateEnd} = 
+		$scrollClientHash->{$client}{scrollParams}{estimateEnd} =
 			firstIndexOf(chr(ord($letter)+1), $lookupsubref, $listsize);
 	}
 	return $i;
 }
-# 
+#
 # utility function for numberScroll.  Does binary search for $letter,
 # using $lookupsubref to lookup where we are.
-# 
+#
 sub firstIndexOf
 {
 	my ($letter, $lookupsubref, $listsize)  = @_;
@@ -1890,7 +1890,7 @@ sub firstIndexOf
 			$low = $i;
 		}
 	}
-	
+
 	# skip back to the first matching item.
 	while ($i > 0 && $letter eq uc(substr($lookupsubref->($i-1), 0, 1))) {
 		$i--;
@@ -1998,7 +1998,7 @@ Push the next mode onto the client's mode stack.
 pushMode takes the following parameters:
    client - reference to a client structure
    setmode - name of mode we are pushing into
-   paramHashRef - optional reference to a hash containing the parameters for that mode. 
+   paramHashRef - optional reference to a hash containing the parameters for that mode.
       If no preset params are required, this arg is not required.
 
 =cut
@@ -2028,9 +2028,9 @@ sub pushMode {
 	}
 
 	# reset the scroll parameters
-	push (@{$scrollClientHash->{$client}{scrollParamsStack}}, 
+	push (@{$scrollClientHash->{$client}{scrollParamsStack}},
 		$scrollClientHash->{$client}{scrollParams});
-	
+
 	$scrollClientHash->{$client}{scrollParams} = scroll_getInitialScrollParams($minimumVelocity, 1, 1);
 
 	push @{$client->modeStack}, $setmode;
@@ -2080,7 +2080,7 @@ sub pushMode {
 
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
-	
+
 	$client->updateKnob(1);
 }
 
@@ -2122,14 +2122,14 @@ sub popMode {
 			}
 		}
 	}
-	
+
 	pop @{$client->modeStack};
 	pop @{$client->modeParameterStack};
 	$scrollClientHash->{$client}{scrollParams} = pop @{$scrollClientHash->{$client}{scrollParamsStack}};
-	
+
 	my $newMode = mode($client);
 
-	# Block mode is special.  Avoid running setmode again when leaving block mode as this 
+	# Block mode is special.  Avoid running setmode again when leaving block mode as this
 	# can cause confusion (eq. broken play in BMF)
 	if ($newMode && $oldMode ne 'block') {
 
@@ -2171,7 +2171,7 @@ sub popMode {
 	startPeriodicUpdates($client);
 
 	$client->updateKnob(1);
-	
+
 	return $oldMode
 }
 
@@ -2194,7 +2194,7 @@ sub pushModeLeft {
 	my $oldlines = $display->curLines();
 
 	unless ($display->hasScreen2) {
-		
+
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
@@ -2301,7 +2301,7 @@ sub msgOnScreen2 {
 	if ($client->display->hasScreen2) {
 
 		my $screen2 = $client->modeParam('screen2active');
-		
+
 		if ($screen2 && $screen2 eq 'periodic') {
 			return 1;
 		}
@@ -2312,7 +2312,7 @@ sub msgOnScreen2 {
 
 sub dateTime {
 	my $client = shift;
-	
+
 	my $line;
 
 	# Use the DateTime plugin to get the lines if it's available
@@ -2325,7 +2325,7 @@ sub dateTime {
 			'center' => [ $client->longDateF(), $client->timeF() ],
 		};
 	}
-	
+
 	return $line;
 }
 

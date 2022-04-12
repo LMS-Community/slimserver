@@ -163,7 +163,7 @@ sub refreshTrack {
 }
 
 sub url {
-	my $objOrUrl = song( @_ );
+	my $objOrUrl = track( @_ );
 
 	return ( blessed $objOrUrl ) ? $objOrUrl->url : $objOrUrl;
 }
@@ -348,7 +348,7 @@ sub removeTrack {
 	my $oldMode = Slim::Player::Source::playmode($client);
 
 	# Stop playing track, if necessary, before cuting old track(s) out of playlist
-	# in case Playlist::song() is called while stopping
+	# in case Playlist::track() is called while stopping
 	my $playingSongIndex = Slim::Player::Source::playingSongIndex($client);
 	if ($playingSongIndex >= $tracknum  && $playingSongIndex < $tracknum + $nTracks) {
 
