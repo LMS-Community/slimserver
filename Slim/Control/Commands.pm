@@ -3579,7 +3579,6 @@ sub _playlistXtracksCommand_parseDbItem {
 
 	my %classes;
 	my $class   = 'Track';
-	my $obj     = undef;
 
 	# Bug: 2569
 	# We need to ask for the right type of object.
@@ -3610,16 +3609,23 @@ sub _playlistXtracksCommand_parseDbItem {
 				$class = ucfirst($1);
 
 				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
-					$obj = -1;
+					$classes{$class} = -1;
+				}
+				# album favorites need to be filtered by contributor, too
+				elsif ($class eq 'Contributor' && (my $albumObj = $classes{Album})) {
+					my $lcClass = lc($class);
+					$classes{Album} = Slim::Schema->search('Album', {
+						titlesearch => $albumObj->titlesearch,
+						"$lcClass.$key" => $value,
+					},{
+						prefetch => $lcClass
+					})->first;
 				}
 				else {
-					$obj = Slim::Schema->single( $class, { $key => $value } );
+					$classes{$class} = Slim::Schema->search( $class, { $key => $value } )->first;
 				}
-
-				$classes{$class} = $obj;
 			}
 		}
-
 	}
 	elsif ( Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url) ) {
 
@@ -3642,7 +3648,7 @@ sub _playlistXtracksCommand_parseDbItem {
 	# Bug 4790: we get a track object of content type 'dir' if a fileurl for a directory is passed
 	# this needs scanning so pass empty list back to playlistXitemCommand in this case
 	my $terms = "";
-	while ( ($class, $obj) = each %classes ) {
+	while ( my ($class, $obj) = each %classes ) {
 		if ( blessed($obj) && (
 			$class eq 'Album' ||
 			$class eq 'Contributor' ||
