@@ -203,11 +203,11 @@ useSpecialExt="-browse" %]
 	[%- BLOCK allcontrol -%]
 		[% IF songinfo.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html %]');"
 			[% END %]
 		[% ELSIF songinfo.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html %]');"
 			[% END %]
 		[% END %]
 
