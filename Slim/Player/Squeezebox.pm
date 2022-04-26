@@ -32,6 +32,13 @@ my $prefs = preferences('server');
 my $log       = logger('network.protocol.slimproto');
 my $sourcelog = logger('player.source');
 
+use constant TRANSITION_NONE      => 0;
+use constant TRANSITION_CROSSFADE => 1;
+use constant TRANSITION_FADEIN    => 2;
+use constant TRANSITION_FADEOUT   => 3;
+use constant TRANSITION_FADEINOUT => 4;
+use constant TRANSITION_CROSSFADE_IMMEDIATE => 5;
+
 # We inherit new() completely from our parent class.
 
 sub modelName { 'Squeezebox' }
@@ -71,17 +78,17 @@ sub reconnect {
 	my $controller = $client->controller();
 
 	if (!defined $reconnect) {
-		
+
 		# Reconnection of a forgotten client, need to take resume position from
 		# the preferences
 		if ($client->power()) {
-			# Don't try to resume if we are synced, we might confuse others who have 
+			# Don't try to resume if we are synced, we might confuse others who have
 			# moved on. I think playerActive is not need should Sync::restoreSync be
-			# removed from Client::startup. 
+			# removed from Client::startup.
 			$client->resumeOnPower(1) if $controller->onlyActivePlayer($client);
 			$controller->playerActive($client);
-		}		
-		
+		}
+
 	} else {
 
 		if ($client->power()) {
@@ -104,8 +111,8 @@ sub reconnect {
 					$client->stop();
 				}
 			}
-		}	
-		
+		}
+
 	}
 
 	# reinitialize the irtime to the current time so that
@@ -480,8 +487,6 @@ sub upgradeFirmware_SDK5 {
 	$client->sendFrame('updn', \(' ')); # upgrade done
 
 	main::INFOLOG && $log->info("Firmware updated successfully.");
-
-#	Slim::Utils::Network::blocking($client->tcpsock, 0);
 
 	return undef;
 }
@@ -925,13 +930,13 @@ sub stream_s {
 	my $transitionDuration;
 
 	if ($params->{'fadeIn'}) {
-		$transitionType = 2;
+		$transitionType = TRANSITION_FADEIN;
 		$transitionDuration = $params->{'fadeIn'};
 	} elsif ($params->{'crossFade'}) {
-		$transitionType = 5;
+		$transitionType = TRANSITION_CROSSFADE_IMMEDIATE;
 		$transitionDuration = $params->{'crossFade'};
 	} else {
-		$transitionType = $prefs->client($master)->get('transitionType') || 0;
+		$transitionType = $prefs->client($master)->get('transitionType') || TRANSITION_NONE;
 		$transitionDuration = $prefs->client($master)->get('transitionDuration') || 0;
 
 		# If we need to determine dynamically
@@ -946,7 +951,7 @@ sub stream_s {
 			)
 		) {
 			main::INFOLOG && $log->info('Using smart transition mode');
-			$transitionType = 0;
+			$transitionType = TRANSITION_NONE;
 		}
 
 		# Bug 10567, allow plugins to override transition setting
@@ -972,7 +977,7 @@ sub stream_s {
 			# check against remaining time to see if sleep time matches within a minute.
 			if (int($sleeptime/60 + 0.5) == int($remaining/60 + 0.5)) {
 				main::INFOLOG && $log->info('Overriding transition due to sleeping at end of song');
-				$transitionType = 0;
+				$transitionType = TRANSITION_NONE;
 			}
 		}
 
@@ -984,21 +989,26 @@ sub stream_s {
 		# by a player preference.
 		my $transitionSampleRestriction = $prefs->client($master)->get('transitionSampleRestriction') || 0;
 
-		if ($transitionSampleRestriction && ($transitionType == 1 || $transitionType == 5) && !Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
+		if ($transitionSampleRestriction && ($transitionType == TRANSITION_CROSSFADE || $transitionType == 5) && !Slim::Player::ReplayGain->trackSampleRateMatch($master, -1)) {
 			main::INFOLOG && $log->info('Overriding crossfade due to differing sample rates or single track');
-			$transitionType = 0;
-		 } elsif ($transitionSampleRestriction) {
+			$transitionType = TRANSITION_NONE;
+		} elsif ($transitionSampleRestriction) {
 			main::INFOLOG && $log->info('Crossfade sample rate restriction enabled but not needed for this transition');
-		 }
+		}
 
-		 # this is crossfade, so only apply fade-in if we are already playing (exclude start, resume, reposition actions)
-		 if (!$master->isPlaying(1)) {
-			if ($transitionType == 2) {
-				$transitionType = 0;
-			} elsif ($transitionType == 4) {
-				$transitionType = 3;
+		# this is crossfade, so only apply fade-in if we are already playing (exclude start, resume, reposition actions)
+		if (!$master->isPlaying(1)) {
+			if ($transitionType == TRANSITION_FADEIN) {
+				$transitionType = TRANSITION_NONE;
+			} elsif ($transitionType == TRANSITION_FADEINOUT) {
+				$transitionType = TRANSITION_FADEOUT;
 			}
-		 }
+		}
+
+		if ($transitionType && $dur < $transitionDuration*2) {
+			$transitionDuration = $dur/3;
+			main::INFOLOG && $log->is_info && $log->info("Overriding transition duration, as track is very short: $transitionDuration");
+		}
 	}
 
 	if ($transitionDuration > $client->maxTransitionDuration()) {
@@ -1007,8 +1017,8 @@ sub stream_s {
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf(
-			"Starting decoder with format: %s flags: 0x%x autostart: %s buffer threshold: %s output threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
-			$formatbyte, $flags, $autostart, $bufferThreshold, $outputThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+			"Starting decoder with format: %s flags: 0x%x autostart: %s buffer threshold: %s output threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s, transitionType: %s",
+			$formatbyte, $flags, $autostart, $bufferThreshold, $outputThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels, $transitionType
 		));
 	}
 
@@ -1091,7 +1101,7 @@ sub stream {
 		0,		# bufferTthreshold
 		0,		# s/pdif auto
 		0,		# transition duration
-		0,		# transition type
+		TRANSITION_NONE,		# transition type
 		$flags,	# flags
 		0,		# outputThreshold
 		0,		# reserved
