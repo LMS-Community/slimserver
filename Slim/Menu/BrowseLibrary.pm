@@ -1456,7 +1456,7 @@ sub _albums {
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
 				$_->{'favorites_url'} = $_->{'extid'}
-					|| sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'name'}), URI::Escape::uri_escape_utf8( $_->{'artist'}));
+					|| sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'name'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
