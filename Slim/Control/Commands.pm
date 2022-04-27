@@ -2344,13 +2344,10 @@ sub playlistsDeleteCommand {
 
 
 sub _wipePlaylist {
-
 	my $playlistObj = shift;
 
-
 	if ( ! ( blessed($playlistObj) && $playlistObj->isPlaylist() ) ) {
-		$log->error('PlaylistObj not right for this sub: ', $playlistObj);
-		$log->error('PlaylistObj not right for this sub: ', $playlistObj->isPlaylist() );
+		Slim::Utils::Log::logBacktrace('PlaylistObj not right for this sub: ' . $playlistObj);
 		return 0;
 	}
 
@@ -3240,8 +3237,10 @@ sub _playlistXitem_load_done {
 
 	if ($wipePlaylist) {
 		my $playlistObj = Slim::Schema->objectForUrl($url);
-		_wipePlaylist($playlistObj);
 
+		if ($playlistObj && blessed($playlistObj) && $playlistObj->isPlaylist()) {
+			_wipePlaylist($playlistObj);
+		}
 	}
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
