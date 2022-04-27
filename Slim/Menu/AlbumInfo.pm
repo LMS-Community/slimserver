@@ -439,7 +439,7 @@ sub playAlbum {
 	return {
 		itemActions => $actions,
 		nextWindow  => 'nowPlaying',
-		type        => 'text',
+		type        => $tags->{menuMode} ? 'text' : 'link',
 		playcontrol => 'play',
 		name        => cstring($client, 'PLAY'),
 	};
@@ -472,7 +472,7 @@ sub addAlbum {
 	return {
 		itemActions => $actions,
 		nextWindow  => 'parent',
-		type        => 'text',
+		type        => $tags->{menuMode} ? 'text' : 'link',
 		playcontrol => $cmd,
 		name        => cstring($client, $add_string),
 	};
