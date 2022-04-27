@@ -17,7 +17,7 @@
 	   stringUcMORE            = "MORE" | string | ucfirst;
 	   stringUcPLAY_NEXT       = "PLAY_NEXT" | string | ucfirst;
 	   stringUcREMOVE_FROM_PLAYLIST = stringREMOVE_FROM_PLAYLIST | ucfirst;
-	   stringUcPLUGIN_FAVORITES_ADD = "PLUGIN_FAVORITES_ADD" | string | ucfirst;
+	   stringUcPLUGIN_FAVORITES_ADD = "PLUGIN_FAVORITES_SAVE" | string | ucfirst;
 	   stringUcPLUGIN_FAVORITES_REMOVE = "PLUGIN_FAVORITES_REMOVE" | string | ucfirst;
 	%]
 
@@ -37,27 +37,27 @@
 	[% BLOCK playlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_play.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcPLAY %]" title="[% stringUcPLAY %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK addlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_add.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcADD_TO_PLAYLIST %]" title="[% stringUcADD_TO_PLAYLIST %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK removelink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_delete.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringREMOVE_FROM_PLAYLIST %]" title="[% stringREMOVE_FROM_PLAYLIST %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK insertlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_queue.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcPLAY_NEXT %]" title="[% stringUcPLAY_NEXT %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK morelink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_mmmix.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcMORE %]" title="[% stringUcMORE %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK favaddlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_favorite.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcPLUGIN_FAVORITES_ADD %]" title="[% stringUcPLUGIN_FAVORITES_ADD %]"/></a>
 	[%- END %]
-	
+
 	[% BLOCK favdellink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/b_favorite_remove.gif" class="cmdLinkIcon" width="17" height="17" alt="[% stringUcPLUGIN_FAVORITES_REMOVE %]" title="[% stringUcPLUGIN_FAVORITES_REMOVE %]"/></a>
 	[%- END %]
