@@ -916,7 +916,7 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 		&& $song->isRemote()
 		&& $elapsed > 10)				# have we managed to play at least 10s?
 	{
-		if (!$song->duration() || $song->isLive()) {	# unknown duration => assume radio
+		if (!$song->duration() && $song->isLive()) {	# unknown duration => assume radio
 			main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ' after time ', $elapsed);
 			$song->retryData({ count => 0, start => Time::HiRes::time()});
 			_Stream($self, $event, {song => $song});
@@ -960,6 +960,8 @@ sub _Continue {
 			$song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 		}
 	} else {
+		# This handles resuming after reboot with the caveat that if connection has been lost (no reboot) 
+		# while playing and before reception of next song's 1st byte, we'll resume the current song
 		main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: ". $self->playingSongElapsed());
 		_JumpToTime($self, $event, {newtime => $self->playingSongElapsed(), restartIfNoSeek => 1});
 	}
@@ -1463,7 +1465,7 @@ sub _willRetry {
 		$retryTime,
 		sub {
 			_playersMessage($self, $song->currentTrack()->url, undef, 'RETRYING', undef, undef,  1);
-			if (!$song->duration() || $song->isLive()) {    # unknown duration => assume radio
+			if (!$song->duration() && $song->isLive()) {    # unknown duration => assume radio
 				main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: 0");
 				_Stream($self, undef, {song => $song, reconnect => 1});
 			} else {
