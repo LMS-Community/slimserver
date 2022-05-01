@@ -916,11 +916,23 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 		&& $song->isRemote()
 		&& $elapsed > 10)				# have we managed to play at least 10s?
 	{
-		if (!$song->duration() && $song->isLive()) {	# unknown duration => assume radio
+		if (!$song->duration() || $song->isLive()) {	# unknown duration => assume radio
 			main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ' after time ', $elapsed);
 			$song->retryData({ count => 0, start => Time::HiRes::time()});
 			_Stream($self, $event, {song => $song});
 			return;
+		} else {
+			if ($song->duration() - $elapsed < 10)		# check we have more than 10 seconds left to play.
+			{
+				if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - track is within 10 seconds of end.")};
+			} else {
+                        	# get seek data from protocol handler.
+                        	if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Getting seek data from protocol handler.")};
+                        	my $seekdata = $song->getSeekData($elapsed);
+                        	main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: ". $elapsed);
+                        	_Stream($self, undef, {song => $song, seekdata => $seekdata, reconnect => 1});
+				return;
+			}
 		}
 	}
 	
@@ -948,8 +960,6 @@ sub _Continue {
 			$song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 		}
 	} else {
-		# This handles resuming after reboot with the caveat that if connection has been lost (no reboot) 
-		# while playing and before reception of next song's 1st byte, we'll resume the current song
 		main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: ". $self->playingSongElapsed());
 		_JumpToTime($self, $event, {newtime => $self->playingSongElapsed(), restartIfNoSeek => 1});
 	}
@@ -1404,12 +1414,23 @@ sub _willRetry {
 	$song ||= streamingSong($self);
 	return 0 if !$song;
 	
-	my $retry = $song->retryData();
-	if (!$retry) {
+	# $song->retryData() will be undef is we are not retrying already.
+	if (!$song->retryData()) {
 		$log->info('no retry data');
-		return 0;
+		$song->retryData({ count => 0, start => Time::HiRes::time()});
 	}
 	
+	$song->retryData->{'count'} += 1;
+	
+	# Have we managed to play at least 10 seconds of a track and retried fewer times than there are intervals?
+	my $elapsed = $self->playingSongElapsed();
+	if ($song->retryData->{'count'} > scalar @retryIntervals || $elapsed < 10 || ($song->duration() - $elapsed < 10)) {
+		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - too many retries already or track is within 10 seconds of start or end.")};
+		return 0;
+	}
+
+
+	# Define $limit as the time until which a retry is allowed.
 	my $limit;
 	my $next = nextsong($self);
 	if (defined $next && $next != $song->index) {
@@ -1417,37 +1438,45 @@ sub _willRetry {
 	} else {
 		$limit = RETRY_LIMIT;
 	}
-	
-	my $interval = $retryIntervals[$retry->{'count'} > $#retryIntervals ? -1 : $retry->{'count'}];
+
+	# Setting $interval to -1 causes retryTime to be in the past so no retry will be attempted.	
+	my $interval = $retryIntervals[$song->retryData->{'count'} > $#retryIntervals ? -1 : $song->retryData->{'count'}];
 	my $retryTime = time() + $interval;
 
-	if ($retry->{'start'} + $limit < $retryTime) {
+	# $retryTime is when we will next retry.
+	# $retry->{'start'} + $limit is the time before which it is okay to retry.
+	if ($song->retryData->{'start'} + $limit < $retryTime) {
+		if ( main::DEBUGLOG && $synclog->is_debug ) {$log->debug("too late, give up")};
 		# too late, give up
 		$song->retryData(undef);
 		_errorOpening($self, $song->currentTrack()->url, 'RETRY_LIMIT_EXCEEDED');
 		_Stop($self);
-		$self->{'consecutiveErrors'} = 1;	# the failed retry counts as one error
+		$self->{'consecutiveErrors'}++;	# the failed retry counts as one error
 		return 0;
 	}
-	
-	$retry->{'count'} += 1;
-	my $id = ++$self->{'nextTrackCallbackId'};
-	$self->{'nextTrack'} = undef;
-	_setStreamingState($self, TRACKWAIT);
-	
+
+
+	my $queue = $self->{'songqueue'};
+	$queue->[0]->setStatus(Slim::Player::Song::STATUS_READY) if scalar @$queue;
 	Slim::Utils::Timers::setTimer(
 		$self,
 		$retryTime,
 		sub {
-			$song->setStatus(Slim::Player::Song::STATUS_READY);
-			$self->{'consecutiveErrors'} = 0;
-			_nextTrackReady($self, $id, $song);
+			_playersMessage($self, $song->currentTrack()->url, undef, 'RETRYING', undef, undef,  1);
+			if (!$song->duration() || $song->isLive()) {    # unknown duration => assume radio
+				main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: 0");
+				_Stream($self, undef, {song => $song, reconnect => 1});
+			} else {
+				# get seek data from protocol handler.
+				if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Getting seek data from protocol handler.")};
+        			my $seekdata = $song->getSeekData($elapsed);
+				main::INFOLOG && $log->is_info && $log->info("Restarting playback at time offset: ". $elapsed);
+				_Stream($self, undef, {song => $song, seekdata => $seekdata, reconnect => 1});
+			}
 		},
 		undef
 	);
 	
-	_playersMessage($self, $song->currentTrack()->url, undef, 'RETRYING', undef, 0, $interval + 1);
-
 	return 1;
 }
 
