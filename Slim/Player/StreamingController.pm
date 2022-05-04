@@ -1426,8 +1426,9 @@ sub _willRetry {
 	
 	# Have we managed to play at least 10 seconds of a track and retried fewer times than there are intervals?
 	my $elapsed = $self->playingSongElapsed();
-	if ($song->retryData->{'count'} > scalar @retryIntervals || $elapsed < 10 || ($song->duration() - $elapsed < 10)) {
-		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - too many retries already or track is within 10 seconds of start or end.")};
+        if ($song->retryData->{'count'} > scalar @retryIntervals || !$elapsed || $elapsed < 10 ||
+                !$song->duration() || ($song->duration() - $elapsed < 10)) {
+		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync, too many retries or track within 10 seconds of start or end.")};
 		return 0;
 	}
 
