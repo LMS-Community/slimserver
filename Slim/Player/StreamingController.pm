@@ -924,7 +924,7 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 		} else {
 			$log->debug("Elapsed: " . $elapsed);
 			$log->debug("Duration: " . $song->duration());
-			if (!$elapsed || !$song->duration() || $song->duration() < $elapsed || $song->duration() - $elapsed < 10)		# check we have more than 10 seconds left to play.
+			if (!$elapsed || !$song->duration() || !($elapsed < $song->duration()) || $song->duration() - $elapsed < 10)		# check we have more than 10 seconds left to play.
 			{
 				if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync or track is within 10 seconds of end.")};
 			} else {
@@ -1431,7 +1431,7 @@ sub _willRetry {
 	$log->debug("Elapsed: " . $elapsed);
         $log->debug("Duration: " . $song->duration());
         if ($song->retryData->{'count'} > scalar @retryIntervals || !$elapsed || $elapsed < 10 ||
-                !$song->duration() || $song->duration() < $elapsed || ($song->duration() - $elapsed < 10)) {
+                !$song->duration() || !($elapsed < $song->duration()) || ($song->duration() - $elapsed < 10)) {
 		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync, too many retries or track within 10 seconds of start or end.")};
 		return 0;
 	}
