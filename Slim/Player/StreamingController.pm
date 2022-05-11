@@ -924,9 +924,13 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 		} else {
 			$log->debug("Elapsed: " . $elapsed);
 			$log->debug("Duration: " . $song->duration());
-			if (!$elapsed || !$song->duration() || !($elapsed < $song->duration()) || $song->duration() - $elapsed < 10)		# check we have more than 10 seconds left to play.
+			$log->debug("bufferSize: " . master($self)->bufferSize);
+			$log->debug("songbitrate: " .  $song->bitrate());
+			$log->debug("streambitrate: " .  $song->streambitrate());
+			if (!$elapsed || !$song->duration() || !master($self)->bufferSize || !$song->streambitrate() || 
+				!($elapsed < $song->duration()) || ($song->duration() - $elapsed) < ((master($self)->bufferSize * 8) / $song->streambitrate()))		# check we have more than buffer left to play.
 			{
-				if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync or track is within 10 seconds of end.")};
+				if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync or track is within buffer length end.")};
 			} else {
                         	# get seek data from protocol handler.
                         	if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Getting seek data from protocol handler.")};
@@ -1429,10 +1433,14 @@ sub _willRetry {
 	# Have we managed to play at least 10 seconds of a track and retried fewer times than there are intervals?
 	my $elapsed = $self->playingSongElapsed();
 	$log->debug("Elapsed: " . $elapsed);
-        $log->debug("Duration: " . $song->duration());
+	$log->debug("songBytes: " . master($self)->songBytes);
+   	$log->debug("Duration: " . $song->duration());
+	$log->debug("songbitrate: " .  $song->bitrate());
+	$log->debug("streambitrate: " .  $song->streambitrate());
         if ($song->retryData->{'count'} > scalar @retryIntervals || !$elapsed || $elapsed < 10 ||
-                !$song->duration() || !($elapsed < $song->duration()) || ($song->duration() - $elapsed < 10)) {
-		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync, too many retries or track within 10 seconds of start or end.")};
+               (master($self)->songBytes && $song->duration() && $song->streambitrate() &&
+               (master($self)->songBytes >= ($song->duration() * $song->streambitrate() / 8)))) {   
+		if ( main::DEBUGLOG && $log->is_debug ) {$log->debug("Will not retry - no player sync, too many retries, track within 10 seconds of start or at end.")};
 		return 0;
 	}
 
