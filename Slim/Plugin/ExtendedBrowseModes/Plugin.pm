@@ -30,14 +30,14 @@ $prefs->init({
 		weight  => 12,
 		enabled => 1,
 	},{
-		name    => 'Classical Music by Conductor',
+		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR'),
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
 		feed    => 'artists',
 		id      => 'myMusicArtistsConductors',
 		weight  => 13,
 		enabled => 0,
 	},{
-		name    => 'Jazz Composers',
+		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS'),
 		params  => { role_id => 'COMPOSER', genre_id => 'Jazz' },
 		feed    => 'artists',
 		id      => 'myMusicArtistsJazzComposers',
