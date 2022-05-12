@@ -173,7 +173,7 @@ LOADING_SQUEEZEBOX_SERVER
 
 EN_SKIN
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké
+	CS	Tenký
 	DA	Let
 	DE	Light
 	EN	Light
@@ -3962,7 +3962,7 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
 SETUP_PLUGINS_SAFEMODE
-	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici zásuvné moduly. Stále je můžete povolit nebo zakázat, abyste vyřešili problémy s instalací.
+	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici zásuvné moduly. Přesto je můžete povolit nebo zakázat, abyste vyřešili problémy s instalací.
 	DA	Bemærk: Da Logitech Media Server kører i fejlsikret tilstand, kan du ikke bruge udvidelsesmodulerne. Du kan stadig slå dem til og fra for at løse problemer med installationen.
 	DE	Hinweis: Da Sie Logitech Media Server im abgesicherten Modus ausführen, sind die Plugins nicht verfügbar. Sie können sie trotzdem aktivieren bzw. deaktivieren, wenn es Probleme mit der Installation gibt.
 	EN	Please note: as you're running Logitech Media Server in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
@@ -6103,7 +6103,7 @@ SETUP_PLAYLISTSUFFIX
 	ZH_CN	词尾：
 
 SETUP_SHOWYEAR
-	CS	Zobrazit rok s alby
+	CS	Zobrazení roku s alby
 	DA	Vis årstal ved album
 	DE	Jahr mit Alben anzeigen
 	EN	Show Year with Albums
@@ -6139,7 +6139,7 @@ SETUP_SHOWYEAR_DESC
 	ZH_CN	您可以选择通过浏览专辑或浏览专辑图象时是否一同显示专辑的年份。当您选择一同显示时，年份信息将显示在专辑标题旁边。
 
 SETUP_SHOWARTIST
-	CS	Zobrazit interpreta s alby
+	CS	Zobrazení interpreta s alby
 	DA	Vis kunstner ved album
 	DE	Interpreten mit Alben anzeigen
 	EN	Show Artist with Albums
@@ -7091,7 +7091,7 @@ SETUP_HTTPPORT_OK
 	ZH_CN	当前正使用端口：
 
 SETUP_SAVESHUFFLED
-	CS	Uložit seznam skladeb v náhodném pořadí
+	CS	Uložení seznamu skladeb v náhodném pořadí
 	DA	Gem blandet afspilningsliste
 	DE	Zufalls-Wiedergabeliste speichern
 	EN	Save Shuffled Playlist
@@ -7227,7 +7227,7 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	Logitech Media Server se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
+	CS	Logitech Media Server se může každý den automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
 	DA	Logitech Media Server kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Logitech Media Servers webbaserede brugerflade.
 	DE	Logitech Media Server kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Logitech Media Server gemeldet.
 	EN	Logitech Media Server can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Logitech Media Server's web interface.
@@ -7825,7 +7825,7 @@ SETUP_NOROLEFILTER_0
 	SV	Visa bara album och låtar där artisten har den valda rollen.
 
 SETUP_NOROLEFILTER_DESC
-	CS	Při procházení umělců lze provádět filtrování, aby se zobrazovala pouze alba a skladby, které odpovídají vybrané roli (např. ALBUMARTIST, COMPOSER atd.).
+	CS	Při procházení interpretů lze provádět filtrování, aby se zobrazovala pouze alba a skladby, které odpovídají vybrané roli (např. ALBUMARTIST, COMPOSER atd.).
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
@@ -7949,7 +7949,7 @@ SETUP_PERSISTPLAYLISTS_0
 	ZH_CN	不要记住播放表
 
 SETUP_RESHUFFLEONREPEAT
-	CS	Při opakování znovu seřadit v náhodném pořadí
+	CS	Znovu seřazení v náhodném pořadí při opakování
 	DA	Ny vilkårlig rækkefølge ved gentagelse
 	DE	Erneutes Mischen bei Wiederholung
 	EN	Reshuffle on Repeat
@@ -8245,7 +8245,7 @@ SETUP_BROWSEAGELIMIT_DESC
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
 
 SETUP_SCAN_ON_PREF_CHANGE
-	CS	Spouštění skenování při změnách předvoleb
+	CS	Spouštění prohledávání při změnách předvoleb
 	DE	Bei Einstellungesänderungen Sammlung durchsuchen
 	EN	Trigger Scan on Preference Changes
 	FR	Lancer l'analyse après modification des préférences
@@ -8263,7 +8263,7 @@ SETUP_SCAN_ON_PREF_CHANGE_DESC
 	PL	Niektóre ustawienia wymagają ponownego przeszukania całej Twojej biblioteki multimedialnej do poprawnego działania. Ten proces może być uruchamiany automatycznie, lecz może spowodować zakolejkowanie wielokrotnego przeszukiwania biblioteki w przypadku zmiany kilku ustawień naraz.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
-	CS	Automaticky spustit skenování
+	CS	Automaticky spustit prohledávání
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
 	FR	Relancer automatiquement l'analyse
@@ -8681,7 +8681,7 @@ SETUP_ITEMSPERPAGE_DESC
 	ZH_CN	这个选项设定各个网页所显示的项目数量。
 
 SETUP_TCPREADMAXIMUM
-	CS	Maximální počet TCP zásuvek k načtení za jeden průběh
+	CS	Maximální počet soketů TCP ke čtení v jednom průchodu
 	DA	Maksimale antal TCP-sokler der kan læses pr. gennemgang
 	DE	Maximale Anzahl der zu lesenden TCP-Sockets pro Durchlauf
 	EN	Maximum number of TCP sockets to read per pass
@@ -8700,7 +8700,7 @@ SETUP_TCPREADMAXIMUM
 	ZH_CN	每次通行时读取TCP插口的最大数量
 
 SETUP_TCPWRITEMAXIMUM
-	CS	Maximální počet TCP socketů zapsaných na jeden průchod
+	CS	Maximální počet soketů TCP pro zápis v jednom průchodu
 	DA	Maksimale antal TCP-sokler der kan skrives pr. gennemgang
 	DE	Maximale Anzahl der zu schreibenden TCP-Sockets pro Durchlauf
 	EN	Maximum number of TCP sockets to write per pass
@@ -8756,7 +8756,7 @@ SETUP_WEBPROXY
 	ZH_CN	网代理
 
 SETUP_WEBPROXY_DESC
-	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení k Logitech Media Serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
+	CS	Můžete specifikovat IP adresu a port pro HTTP/Webový proxy server, které se použijí při připojení k Logitech Media Serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP webový proxy server, ponechte toto pole prázdné.
 	DA	Du kan specificere IP-adresse og portnummer til en HTTP/Web-proxy som Logitech Media Server skal anvende når der tilsluttes servere udenfor dit lokale netværk. Anvend formatet xx.xx.xx.xx:yyyy, hvor xx.xx.xx.xx er proxyens IP-adresse og yyyy er proxyserverens portnummer. Lad feltet være tomt hvis du ikke ønsker at anvende en HTTP-proxy.
 	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Logitech Media Server verwenden soll, um auf Server außerhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxys und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when Logitech Media Server connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
@@ -9050,7 +9050,7 @@ SETUP_CHANGES_SAVED
 	SV	Ändringarna har sparats.
 
 SETUP_NO_AUTHORIZE
-	CS	Není chráněno heslem
+	CS	Bez ochrany heslem
 	DA	Beskyt ikke med adgangskode
 	DE	Kein Kennwortschutz
 	EN	No password protection
@@ -9088,7 +9088,7 @@ SETUP_AUTHORIZE
 	ZH_CN	密码保护
 
 SETUP_AUTHORIZE_DESC
-	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Logitech Media Server. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Logitech Media Server zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
+	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Logitech Media Serveru. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Logitech Media Serveru zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
 	DA	Du kan vælge at beskytte adgangen til Logitech Media Servers fjernbetjening med en adgangskode. Vælg Beskyt med adgangskode, angiv et brugernavn og en adgangskode, og klik på Skift. Når du herefter ønsker at bruge Logitech Media Servers fjernbetjening, skal du angive brugernavnet og adgangskoden i browseren.
 	DE	Sie können Logitech Media Server Remote Control mit einem Kennwort schützen. Klicken Sie unten auf 'Kennwortschutz', geben Sie einen Benutzernamen und ein Kennwort ein, und klicken Sie auf 'Ändern'. Wenn Sie dann Logitech Media Server Remote Control aufrufen, müssen Sie diesen Benutzernamen und das Kennwort eingeben.
 	EN	You can choose to password protect Logitech Media Server Remote Control. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use Logitech Media Server Remote Control, you'll need to enter this username and password in your web browser.
@@ -9160,7 +9160,7 @@ SETUP_PASSWORD
 	ZH_CN	密码
 
 SETUP_PASSWORD_REPEAT
-	CS	Potvrdit heslo
+	CS	Potvrzení hesla
 	DA	Bekræft adgangskode
 	DE	Kennwort bestätigen
 	EN	Confirm Password
@@ -9175,7 +9175,7 @@ SETUP_PASSWORD_REPEAT
 	SV	Bekräfta lösenord
 
 SETUP_PASSWORD_MISMATCH
-	CS	Vámi zadaná hesla si neodpovídají.
+	CS	Vámi zadaná hesla se neshodují.
 	DA	Adgangskoderne er ikke ens.
 	DE	Die eingegebenen Kennwörter stimmen nicht überein.
 	EN	The passwords you entered do not match.
@@ -9653,7 +9653,7 @@ SETUP_WIZARD_SHARE_WIN
 	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du sparat på en annan dator eller på en delad nätverksenhet så kontrollerar du att den delade enheten har monterats och är tillgänglig på ditt filsystem. När enheten är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till enheten du vill ha tillgång till kan du ange den nedan.
 
 SETUP_WIZARD_SHARE_OTHERS
-	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdíleném síťovém svazku, ujistěte se, že je sdílený svazek připojen a dostupný pro váš souborový systém. Jakmile je svazek dostupný, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu ke svazku, ke kterému chcete získat přístup, můžete ji zadat níže..
+	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdíleném síťovém svazku, ujistěte se, že je sdílený svazek připojen a dostupný pro váš souborový systém. Jakmile je svazek dostupný, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu ke svazku, ke kterému chcete získat přístup, můžete ji zadat níže.
 	DA	<br/><br/>Hvis du vil have adgang til mediefiler som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet, og der er adgang til det. Når drevet er klar, kan det vælges i vinduet til venstre. Hvis du kender stien til det drev du vil have adgang til, kan du angive den nedenfor.
 	DE	<br/><br/>Wenn Sie auf Medien zugreifen möchten, die auf einem anderen Computer oder einem Netzwerk-Volume gespeichert sind, vergewissern Sie sich, dass das Volume im Dateisystem verfügbar ist. Verfügbare Volumes werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Volume kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
@@ -10787,6 +10787,7 @@ STEREOXL
 	SV	StereoXL
 
 BALANCE
+	CS	Vyvážení
 	EN	Balance
 	FR	Balance
 
@@ -10921,7 +10922,7 @@ HUGE
 	ZH_CN	特大
 
 NONE
-	CS	Žádná
+	CS	Žádný
 	DA	Ingen
 	DE	Keine
 	EN	None
@@ -10985,7 +10986,7 @@ HIGH
 	ZH_CN	高
 
 FULL
-	CS	Tučné
+	CS	Tučný
 	DA	Fuld
 	DE	Voll
 	EN	Full
@@ -11002,7 +11003,7 @@ FULL
 
 LIGHT
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké
+	CS	Tenký
 	DA	Let
 	DE	Light
 	EN	Light
@@ -13806,7 +13807,7 @@ NOTE
 	ZH_CN	备注：
 
 FILENAME_WARNING
-	CS	Neplatný znak v názvu, prosím upravte.
+	CS	Neplatný znak v názvu, prosím upravte ho.
 	DA	Navnet indeholder ugyldige tegn. Rediger navnet.
 	DE	Name enthält ungültige Zeichen, bitte bearbeiten.
 	EN	Illegal characters in name, Please edit.
@@ -14659,7 +14660,7 @@ BRIGHTNESS_AMBIENT
 
 LIGHT_N
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké úzké
+	CS	Tenký úzký
 	DA	Let og smal
 	DE	Schwach eng
 	EN	Light Narrow
@@ -14689,7 +14690,7 @@ STANDARD_N
 	SV	Standard, smal
 
 FULL_N
-	CS	Tučné úzké
+	CS	Tučný úzký
 	DA	Fuld og smal
 	DE	Voll eng
 	EN	Full Narrow
@@ -15509,7 +15510,7 @@ CSRF_ERROR_INFO
 	ZH_CN	如果要从Bookmark/Favorite或其他方法请求这URL（从Logitech Media Server网界面跟随链接除外），您将需要使用以\"cauth \"为安全参数的URL。如果您从Logitech Media Server网界面跟随链接而出现错误，您需要确定您的浏览器软件（包括网代理伺服器和spyware/privacy软件）允许发送\"Referer\"倒坠。下面是您试图访问的URL的正确的URL。
 
 CSRF_ERROR_MEDIUM
-	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL..</p>
+	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL.</p>
 	DA	<p>Da CSRF-beskyttelsesnivauet er sat til Mellem, kan du anvende den samme værdi for cauth= i alle internetadresser. Det betyder at du skal være forsigtig med hvem du deler dine adresser med.</p>
 	DE	<p>Da Ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
@@ -20046,7 +20047,7 @@ SETUP_POLARITYINVERSION
 	ZH_CN	电极转换
 
 SETUP_POLARITYINVERSION_DESC
-	CS	Transporter může převrátit polaritu zvukového signálu..
+	CS	Přehrávač může převrátit polaritu zvukového signálu.
 	DA	Transporter kan invertere lydsignalets polaritet.
 	DE	Der Player kann die Polarität des Audiosignals umkehren.
 	EN	The player can invert the polarity of the audio signal.
@@ -20283,7 +20284,7 @@ DEBUG_PREFS
 	SV	Ändring och lagring av inställningar
 
 DEBUG_SERVER_SCHEDULER
-	CS	Protokolování interního časovače
+	CS	Protokolování interního plánovače
 	DA	Logføring af interne tidsplaner
 	DE	Interner Scheduler
 	EN	Internal Scheduler Logging
@@ -20553,7 +20554,7 @@ DEBUG_DATABASE_MYSQL
 	SV	Process- och initieringsinformation för MySQL
 
 DEBUG_DATABASE_SQL
-	CS	Protokolování SQL (Pokročilé)
+	CS	Protokolování SQL (pokročilé)
 	DA	SQL-logføring (avanceret)
 	DE	SQL Logging (Fortgeschritten)
 	EN	SQL Logging (Advanced)
@@ -20758,7 +20759,7 @@ DEBUG_PLAYER_DISPLAY
 	SV	Information om spelarens skärm
 
 DEBUG_PLAYER_FONTS
-	CS	Displej přehrávače (Informace o Fontu & Bitmapě)
+	CS	Displej přehrávače (informace písma a bitmapy)
 	DA	Afspillerens display (oplysninger om skrifttyper og grafik)
 	DE	Player Anzeige (Schriften & Bitmaps)
 	EN	Player Display (Font & Bitmap Information)
@@ -20773,7 +20774,7 @@ DEBUG_PLAYER_FONTS
 	SV	Spelarskärm (bitmapps- och teckensnittsinformation)
 
 DEBUG_PLAYER_TEXT
-	CS	Displej přehrávače (informace na znakovém displeji)
+	CS	Displej přehrávače (informace znakového displeje)
 	DA	Afspillerens display (oplysninger om visning af tegn og symboler)
 	DE	Player Anzeige (Zeichendarstellung)
 	EN	Player Display (Character Display Information)
@@ -21403,7 +21404,7 @@ DIRECTORY_CHANGED_PROGRESS
 	SV	Söker igenom ändrade filer
 
 PLAYLIST_DELETED_PROGRESS
-	CS	Odebírání odstarněných seznamů skladeb
+	CS	Odebírání odstraněných seznamů skladeb
 	DA	Fjerner slettede afspilningslister
 	DE	Gelöschte Wiedergabelisten werden entfernt
 	EN	Removing deleted playlists
@@ -21601,7 +21602,7 @@ IMPORTER_PROGRESS_DESC
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
 
 VIRTUALLIBRARIES_PROGRESS
-	CS	Vytvořit zobrazení knihovny
+	CS	Vytváření zobrazení knihovny
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create Library Views
 	FR	Création d'une bibliothèque thématique
@@ -23121,7 +23122,7 @@ CONTROLPANEL_AUTHENTICATION_REQUIRED
 	SV	Det krävs autentisering för att komma åt Logitech Media Server
 
 CONTROLPANEL_WEB_UI
-	CS	Rozhraní na webu
+	CS	Webové rozhraní
 	DA	Webbaseret brugerflade
 	DE	Web-Benutzeroberfläche
 	EN	Web based Interface
@@ -23151,7 +23152,7 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	SV	Fjärrkontroll
 
 CONTROLPANEL_TRAY_DOUBLECLICK_WEB
-	CS	Dálkové ovládání sítě otevřete dvojitým kliknutím na ikonu na liště
+	CS	Webové dálkové ovládání otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
 	DA	Åbn Fjernbetjening via browser ved at dobbeltklikke på ikonet i systembakken
 	DE	Fernbedienung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open Web Remote Control on doubleclicking the tray icon
@@ -23166,7 +23167,7 @@ CONTROLPANEL_TRAY_DOUBLECLICK_WEB
 	SV	Öppna webbfjärrkontrollen genom att klicka på ikonen i aktivitetsfältet
 
 CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
-	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu na liště
+	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
 	DA	Åbn kontrolpanelet ved at dobbeltklikke på ikonet i systembakken
 	DE	Systemsteuerung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open the Control Panel on doubleclicking the tray icon
@@ -23376,7 +23377,7 @@ CONTROLPANEL_PORTNO
 	SV	Port %s (%s):
 
 CONTROLPANEL_PING
-	CS	Zvonění:
+	CS	Ping:
 	DA	Ping:
 	DE	Ping:
 	EN	Ping:
@@ -23902,7 +23903,7 @@ RUN_AT_LOGIN
 	SV	Kör automatiskt vid inloggning
 
 RUN_FAILSAFE
-	CS	Spustit bez veškerých uživatelských přípojek ("Bezpečný režim")
+	CS	Spustit bez zásuvných modulů ("Bezpečný režim")
 	DA	Kør uden udvidelsesmoduler (fejlsikret tilstand)
 	DE	Ohne Benutzererweiterungen ausführen ("Abgesicherter Modus")
 	EN	Run with no user extensions ("Safe Mode")
@@ -24160,7 +24161,7 @@ HOWTO_SHOWCASE
 	SV	Bläddra till Demonstration: Miles Davis och tryck på PLAY.
 
 HOWTO_VOLUME
-	CS	Upravit hlasitost.
+	CS	Upravte hlasitost.
 	DA	Juster lydstyrken.
 	DE	Regeln Sie die Lautstärke.
 	EN	Adjust the volume.

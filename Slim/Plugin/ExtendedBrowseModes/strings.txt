@@ -46,6 +46,14 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	PL	Kompozytorzy
 	SV	Kompositörer
 
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
+	CS	Klasická hudba podle dirigenta
+	EN	Classical Music by Conductor
+
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
+	CS	Jazzoví skladatelé
+	EN	Jazz Composers
+
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	CS	Role přispěvatelů:
 	DE	Rolle des Künstlers:
@@ -231,7 +239,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	SV	All musik förutom ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
-	CS	Vytvořte zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
+	CS	Vytvořit zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :

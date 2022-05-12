@@ -13,7 +13,7 @@ PLUGIN_LIBRARY_DEMO_DESC
 	NO	Plugin for å demonstrere støtte for multiple (eller virtuelle) samlinger. Denne modulen lager noen (delvis ubrukelige) virtuelle samlinger, og er mest tenkt som en inspirasjon for plugin-utviklere.
 
 PLUGIN_LIBRARY_DEMO_ARTISTS
-	CS	Umělci milující dlouhé skladby
+	CS	Interpreti milující dlouhé skladby
 	EN	Artists loving long tracks
 	FR	Artistes aimant les longs morceaux
 	NL	Artiesten met lange nummers
