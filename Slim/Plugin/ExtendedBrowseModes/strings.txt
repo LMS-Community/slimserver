@@ -48,10 +48,12 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	CS	Klasická hudba podle dirigenta
+	DE	Klassische Musik nach Dirigent
 	EN	Classical Music by Conductor
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	CS	Jazzoví skladatelé
+	DE	Jazz Komponisten
 	EN	Jazz Composers
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
@@ -260,4 +262,4 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	EN	Authors
 	FR	Auteurs
 	NL	Schrijvers
-	SV	Författare	
+	SV	Författare
