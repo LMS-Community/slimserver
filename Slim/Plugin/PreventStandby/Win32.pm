@@ -34,6 +34,10 @@ sub setBusy {
 	$SetThreadExecutionState->Call(ES_SYSTEM_REQUIRED + ES_CONTINUOUS);
 }
 
+sub setIdle {
+	$SetThreadExecutionState->Call(ES_CONTINUOUS);
+}
+
 1;
 
 __END__
