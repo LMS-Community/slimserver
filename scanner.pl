@@ -107,13 +107,14 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $onlineLibrary, $wipe, $force, $prefsFile, $priority);
-	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $cachedir);
 
 	our $LogTimestamp = 1;
 
 	my $changes = 0;
 
 	$prefs = preferences('server');
+	$cachedir = $prefs->get('cachedir');
 
 	$prefs->readonly;
 
