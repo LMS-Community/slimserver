@@ -36,7 +36,6 @@
 		<li>Update Audio::Scan to 1.05 for certain platforms (thanks ralphy!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/773">#773</a> - Update flac to 1.3.4 (macOS, Linux i386, x86_64, armhf, aarch64)</li>
 		<li>Added custom Perl 5.34 build for macOS 10.15+, in preparation for Apple's removal of Perl from macOS</li>
-		<li>Added Perl 5.34 modules for Linux x86_64</li>
 		<li>Remove support for the embedded MySQL server. We've been using SQLite for about a decade.</li>
 		<li>Remove support for PowerPC and i386 on macOS.</li>
 	</ul>
@@ -57,6 +56,7 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/700">#700</a>/<a href="https://github.com/Logitech/slimserver/pull/718">#718</a> - High CPU load during playback of certain radio streams (thanks philippe44!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/704">#704</a> - changed artist names remain in database after quick rescan</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/705">#705</a> - changing upper and lower case in file name results in double entries</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/746">#746</a> - Windows 11: PreventStandby doesn't prevent standby any more</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/749">#749</a> - fix mp4 streams where audio offset comes from STCO (thanks philippe44 && bpa!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/754">#754</a> - improve reliabilityof "what's new" podcast search (thanks philippe44!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/767">#767</a> - fix compatibility with standards compliant cometd libraries (thanks lynniemagoo!)</li>
@@ -82,6 +82,7 @@
 
 	<li>Platform Support:</li>
 	<ul>
+		<li>Added Perl 5.34 modules for Linux x86_64</li>
 	</ul>
 	<br />
 
@@ -91,6 +92,7 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/647">#647</a> - Fix podcast "Play from last position" and skip back trackinfo item (thanks mw9 and philippe44!).</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/656">#656</a> - Correct start time for streams with range offset (thanks philippe44!).</li>
 		<li>Fix resizing images with a dash in the name.</li>
+		<li>Define $::cachedir in the scanner, too, as many parts of the code rely on it.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/760">#760</a> - Fix various XSS possibilities in settings pages etc.</li>
 	</ul>
 	<br />

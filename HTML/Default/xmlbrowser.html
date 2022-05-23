@@ -37,7 +37,10 @@ USE OnlineServices;
 titleFormat = Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')};
 includeArtist = !titleFormat.match('ARTIST');
 includeAlbum  = !titleFormat.match('ALBUM');
+
+IF slideshow;
 slideshowHelpers = 'class="slideImage" onClick="return false;"';
+END;
 
 useSpecialExt="-browse" %]
 

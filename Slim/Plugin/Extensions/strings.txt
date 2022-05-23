@@ -284,7 +284,7 @@ PLUGIN_EXTENSIONS_UPDATES
 	SV	Uppdaterade plugin-program tillgängliga
 
 PLUGIN_EXTENSIONS_AUTO
-	CS	Automaticky aktualizovat zásuvné moduly
+	CS	Automatické aktualizování zásuvných modulů
 	DA	Opdater udvidelsesmoduler automatisk
 	DE	Plugins automatisch aktualisieren
 	EN	Update plugins automatically
@@ -377,7 +377,7 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 	SV	Logitech-tillägg
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
-	CS	Použít nepodporované zásuvné moduly
+	CS	Používání nepodporovaných zásuvných modulů
 	DE	Nicht unterstützte Erweiterungen
 	EN	Use unsupported extensions
 	FR	Utiliser des extensions non prises en charge
