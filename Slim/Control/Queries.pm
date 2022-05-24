@@ -840,6 +840,11 @@ sub artistsQuery {
 	# we only want external artists without tracks if there's no filtering argument given
 	my $wantExternal = $includeOnlineOnlyArtists && !$year && !$genreID && !$genreString && !$trackID && !$albumID && !$artistID;
 
+	if ($wantExternal && $libraryID) {
+		my $library = Slim::Music::VirtualLibraries->getLibrary($libraryID) || {};
+		$wantExternal = $wantExternal && !$library->{ignoreOnlineArtists};
+	}
+
 	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';
 	my $w      = [];

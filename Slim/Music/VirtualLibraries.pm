@@ -431,6 +431,11 @@ sub getLibraries {
 	return \%libraries;
 }
 
+sub getLibrary {
+	my ($class, $id) = @_;
+	return $libraries{$id};
+}
+
 sub hasLibraries {
 	return scalar keys %libraries;
 }
