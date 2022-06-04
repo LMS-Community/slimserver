@@ -2404,7 +2404,13 @@ sub __requestRE {
 
 	for my $names (@$possibleNames) {
 		$regexp .= ',' if $i++;
-		$regexp .= (scalar @$names > 1) ? '(?:' . join('|', @$names) . ')' : $names->[0];
+
+		# Bracket each name using word boundaries to avoid
+		# "play" matching "play", "playlist", and "display".
+
+		my @namelist;
+		push @namelist, '\b' . $_ . '\b' for (@$names);
+		$regexp .= '(?:' . join('|', @namelist) . ')';
 	}
 
 	return qr /$regexp/;
