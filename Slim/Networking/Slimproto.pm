@@ -278,6 +278,12 @@ sub slimproto_close {
 				# may change firmware versions before coming back
 				$client->_needsUpgrade(undef);
 
+				# Save client playback state, as if the player is turned off.
+				# This must be done *_now_*, before the client reconnects, otherwise
+				# the client->reconnect method may act on stale data. In that case,
+				# the player may start playback when it absolutely should not.
+				persistPlaybackStateForPowerOff($client);
+
 				# set timer to forget client
 				if ( $forget_disconnected_time ) {
 					main::INFOLOG && $log->is_info && $log->info("setting timer to forget client in $forget_disconnected_time secs");
@@ -295,7 +301,7 @@ sub slimproto_close {
 	delete($sock2client{$clientsock});
 }
 
-sub forget_disconnected_client {
+sub persistPlaybackStateForPowerOff {
 	my $client = shift;
 	my $cprefs = preferences('server')->client($client);
 
@@ -311,6 +317,10 @@ sub forget_disconnected_client {
 		$cprefs->set('positionAtDisconnect', $position);
 		main::INFOLOG && $log->is_info && $log->info("disconnected player position $position secs");
 	}
+}
+
+sub forget_disconnected_client {
+	my $client = shift;
 
 	main::INFOLOG && $log->info("forgetting disconnected client");
 
