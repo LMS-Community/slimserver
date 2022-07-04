@@ -320,6 +320,13 @@ sub resumeOnPower {
 			} else {	
 				$client->execute(["play"]); # will resume if paused
 			}	
+
+			# This persisted setting is no longer valid, and may cause unexpected
+			# resumption of playback in some edge cases.
+			# It will be set as and when required by future calls to 'power on' (above),
+			# or by 'Slim::Networking::Slimproto::slimproto_close' when a player is
+			# disconnected.
+			$prefs->client($client)->set('playingAtPowerOff', 0);
 		}
 	}		
 }	
