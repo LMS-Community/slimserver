@@ -306,7 +306,8 @@ sub forget_disconnected_client {
 	$cprefs->set('playingAtPowerOff', $client->isPlaying(1));
 
 	if ($client->isPlaying(1)) {
-		my $position = $client->controller->playingSongElapsed();
+		$client = $client->controller;
+		my $position = $client->playingSong()->canSeek() ? $client->playingSongElapsed() : 0;
 		$cprefs->set('positionAtDisconnect', $position);
 		main::INFOLOG && $log->is_info && $log->info("disconnected player position $position secs");
 	}
