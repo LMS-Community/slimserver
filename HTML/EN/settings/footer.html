@@ -36,7 +36,7 @@
 </div>
 <div id="prefsSubmit">
 	[%- IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
-	[% IF browserType == 'Safari' %]<input type="hidden" name="saveSettings" value="1">[% END %]
+	<input type="hidden" name="saveSettings" value="1">
 </div>
 </form>
 [%- IF NOT ajaxUpdate -%]
