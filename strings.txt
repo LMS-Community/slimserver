@@ -93,34 +93,34 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2021 Logitech - verze 8.3.0
-	DA	© 2001-2021 Logitech - version 8.3.0
-	DE	© 2001-2021 Logitech Version 8.3.0
-	EN	© 2001-2021 Logitech Version 8.3.0
-	ES	© 2001-2021 Logitech Versión 8.3.0
-	FI	© 2001-2021 Logitechin versio 8.3.0
-	FR	© 2001-2021 Logitech Version 8.3.0
-	IT	© 2001-2021 Logitech versione 8.3.0
-	NL	© 2001-2021 Logitech versie 8.3.0
-	NO	© 2001–2011 Logitech versjon 8.3.0
-	PL	© 2001-2021 Logitech wersja 8.3.0
-	RU	© Logitech, 2001-2021. Версия 8.3.0
-	SV	© 2001–2011 Logitech Version 8.3.0
+	CS	© 2001-2022 Logitech - verze 8.3.0
+	DA	© 2001-2022 Logitech - version 8.3.0
+	DE	© 2001-2022 Logitech Version 8.3.0
+	EN	© 2001-2022 Logitech Version 8.3.0
+	ES	© 2001-2022 Logitech Versión 8.3.0
+	FI	© 2001-2022 Logitechin versio 8.3.0
+	FR	© 2001-2022 Logitech Version 8.3.0
+	IT	© 2001-2022 Logitech versione 8.3.0
+	NL	© 2001-2022 Logitech versie 8.3.0
+	NO	© 2001–2022 Logitech versjon 8.3.0
+	PL	© 2001-2022 Logitech wersja 8.3.0
+	RU	© Logitech, 2001-2022. Версия 8.3.0
+	SV	© 2001–2022 Logitech Version 8.3.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2021 Logitech
-	DA	© 2001-2021 Logitech
-	DE	© 2001-2021 Logitech
-	EN	© 2001-2021 Logitech
-	ES	© 2001-2021 Logitech
-	FI	© 2001-2021 Logitech
-	FR	© 2001-2021 Logitech
-	IT	© 2001-2021 Logitech
-	NL	© 2001-2021 Logitech
-	NO	© 2001-2021 Logitech
-	PL	© 2001-2021 Logitech
-	RU	© Logitech, 2001-2021
-	SV	© 2001-2021 Logitech
+	CS	© 2001-2022 Logitech
+	DA	© 2001-2022 Logitech
+	DE	© 2001-2022 Logitech
+	EN	© 2001-2022 Logitech
+	ES	© 2001-2022 Logitech
+	FI	© 2001-2022 Logitech
+	FR	© 2001-2022 Logitech
+	IT	© 2001-2022 Logitech
+	NL	© 2001-2022 Logitech
+	NO	© 2001-2022 Logitech
+	PL	© 2001-2022 Logitech
+	RU	© Logitech, 2001-2022
+	SV	© 2001-2022 Logitech
 
 VERSION
 	CS	Verze 8.3.0 / r%s
