@@ -85,7 +85,7 @@ $prefs->setChange( sub { $_[2]->pitch($_[1]); }, 'pitch');
 $prefs->setValidate({
 	validator => sub {
 		return $_[4]->hasDigitalOut || $_[1];
-	} 
+	}
 }, 'digitalVolumeControl');
 
 sub new {
@@ -113,16 +113,16 @@ sub init {
 	$client->startup($syncgroupid);
 
 	return if $client->display->isa('Slim::Display::NoDisplay');
-		
+
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
-	$client->periodicScreenRefresh(); 
+	$client->periodicScreenRefresh();
 }
 
 # noop for most players
-sub periodicScreenRefresh {}    
+sub periodicScreenRefresh {}
 
 sub reportsTrackStart { 1 }
 
@@ -134,7 +134,7 @@ sub initPrefs {
 	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::initPrefs();
-	
+
 	# make sure digitalVolumeControl is set for players which don't have digital out
 	# some players ended up with their volume locked at 100% and no way to change it
 	if (!$client->hasDigitalOut && !$prefs->client($client)->get('digitalVolumeControl')) {
@@ -201,7 +201,7 @@ sub power {
 	my $client = shift;
 	my $on     = shift;
 	my $noplay = shift;
-	
+
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
@@ -212,13 +212,13 @@ sub power {
 
 	if (!$on) {
 		# turning player off - unsync/pause/stop player and move to off mode
-		
+
 		my $justUnsync = 0;
-		
+
 		for my $other ($client->syncedWith()) {
 			if ($other->power() && !$prefs->client($other)->get('syncPower')) {
 				$justUnsync = 1;
-				last;				
+				last;
 			}
 		}
 
@@ -226,13 +226,13 @@ sub power {
 			# Just stop this player if more than one in sync group & not all syncing-off
 			$controller->playerInactive($client);
 			$prefs->client($client)->set('playingAtPowerOff', 0);
- 		} else {	
+ 		} else {
 			my $playing = $controller->isPlaying(1);
 			$prefs->client($client)->set('playingAtPowerOff', $playing);
-			
+
 			# bug 8776, only pause if really playing a local file, otherwise always stop
 			# bug 10645, this is no longer necessary as the controller will stop the remote stream if necessary
-			
+
 			if ($playing && ($resumeOff eq 'Pause')) {
 				# Pause client mid track
 				$client->execute(["pause", 1, undef, 1]);
@@ -245,10 +245,10 @@ sub power {
 	 	}
 
 		$client->display->renderCache()->{defaultfont} = undef;
-	 	
+
 	 	# Do now, not earlier so that playmode changes still work
-	 	$prefs->client($client)->set('power', $on); 
-	 	
+	 	$prefs->client($client)->set('power', $on);
+
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);
 
@@ -263,7 +263,7 @@ sub power {
 		$client->display->renderCache()->{defaultfont} = undef;
 
 		$prefs->client($client)->set('power', $on);
-		
+
 		# turning player on - reset mode & brightness, display welcome and sync/start playing
 		$client->audio_outputs_enable(1);
 
@@ -274,26 +274,26 @@ sub power {
 		Slim::Buttons::Common::setMode($client, 'home');
 
 		$client->updateMode(0); # unblock updates
-			
+
 		# no need to initialize brightness if no display is available
 		if ( !$client->display->isa('Slim::Display::NoDisplay') ) {
 			# restore the saved brightness, unless its completely dark...
 			my $powerOnBrightness = $prefs->client($client)->get('powerOnBrightness');
-	
+
 			if ($powerOnBrightness < 1) {
 				$powerOnBrightness = 1;
 				$prefs->client($client)->set('powerOnBrightness', $powerOnBrightness);
 			}
 			$client->brightness($powerOnBrightness);
-	
+
 			my $oneline = ($client->linesPerScreen() == 1);
-	
+
 			$client->welcomeScreen();
 		}
 
 		$controller->playerActive($client);
 
-		# Decide if we shall resume playing on power 
+		# Decide if we shall resume playing on power
 		$client->resumeOnPower() unless $noplay;
 	}
 }
@@ -303,12 +303,12 @@ sub resumeOnPower {
 
 	if (!$client->controller->isPlaying()) {
 		my ($resumeOn) = $prefs->client($client)->get('powerOnResume') =~ /-(.*)On/;
-		
+
 		if ($resumeOn =~ /Reset/) {
 			# reset playlist to start, but don't start the playback yet
 			$client->execute(["playlist","jump", 0, 1, 1]);
 		}
-			
+
 		if ($resumeOn =~ /Play/ && Slim::Player::Playlist::track($client)
 			&& $prefs->client($client)->get('playingAtPowerOff')) {
 			# play even if current playlist item is a remote url (bug 7426)
@@ -317,12 +317,19 @@ sub resumeOnPower {
 				my $index = Slim::Player::Source::playingSongIndex($client);
 				my $position = $prefs->client($client)->get('positionAtDisconnect');
 				$client->execute(["playlist","jump", $index, 1, 0, { timeOffset => $position}]);
-			} else {	
+			} else {
 				$client->execute(["play"]); # will resume if paused
-			}	
+			}
+
+			# This persisted setting is no longer valid, and may cause unexpected
+			# resumption of playback in some edge cases.
+			# It will be set as and when required by future calls to 'power on' (above),
+			# or by 'Slim::Networking::Slimproto::slimproto_close' when a player is
+			# disconnected.
+			$prefs->client($client)->set('playingAtPowerOff', 0);
 		}
-	}		
-}	
+	}
+}
 
 sub welcomeScreen {
 	my $client = shift;
@@ -333,11 +340,11 @@ sub welcomeScreen {
 	my $line2 = $client->string('FREE_YOUR_MUSIC');
 
 	$client->showBriefly( {
-		'center' => [ 
+		'center' => [
 				$line1,
 				$line2
 			],
-		'fonts' => { 
+		'fonts' => {
 				'graphic-320x32' => 'standard',
 				'graphic-160x32' => 'standard_n',
 				'graphic-280x16' => 'medium',
@@ -360,7 +367,7 @@ sub maxBass {	return 100; }
 sub minBass {	return 0; }
 
 # fade the volume up or down
-# $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
+# $fade = number of seconds to fade 100% (positive to fade up, negative to fade down)
 # $callback is function reference to be called when the fade is complete
 
 sub fade_volume {
@@ -371,9 +378,9 @@ sub fade_volume {
 	# start from current position if still ramping up
 	my $vol = $fade < 0 && abs($client->volume) < abs($prefs->client($client)->get("volume")) ?
 			abs($client->volume) : abs($prefs->client($client)->get("volume"));
-				
+
 	my $now = Time::HiRes::time();
-	
+
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);
 
 	$client->_fadeVolumeUpdate( {
@@ -391,18 +398,18 @@ sub fade_volume {
 sub _fadeVolumeUpdate {
 	my $client = shift;
 	my $f = shift;
-	
+
 	# If the user manually changed the volume, stop fading
 	if ( $f->{'vol'} && $f->{'vol'} != $client->volume ) {
-		
+
 		# Bug 9752: always call callback
 		if ($f->{'cb'}) {
 			&{$f->{'cb'}}(@{$f->{'cbargs'}});
 		}
-		
+
 		return;
 	}
-	
+
 	my $now = Time::HiRes::time();
 
 	# new vol based on time since fade started to minise impact of timers firing late
@@ -411,7 +418,7 @@ sub _fadeVolumeUpdate {
 	my $rate = $f->{'rate'};
 
 	if (
-		   !$rate 
+		   !$rate
 		|| ( $rate < 0 && $f->{'vol'} < $f->{'endVol'} )
 		|| ( $rate > 0 && $f->{'vol'} > $f->{'endVol'} )
 	) {
@@ -420,7 +427,7 @@ sub _fadeVolumeUpdate {
 		$client->volume($f->{'endVol'}, 1);
 
 		if ($f->{'cb'}) {
-			
+
 			if ( $f->{'endTime'} && $f->{'endTime'} > $now ) {
 
 				# delay the callback until endTime so it occurs at approx same time as other synced players
@@ -441,18 +448,18 @@ sub _fadeVolumeUpdate {
 }
 
 # mute or un-mute volume as necessary
-# A negative volume indicates that the player is muted and should be restored 
+# A negative volume indicates that the player is muted and should be restored
 # to the absolute value when un-muted.
 sub mute {
 	my $client = shift;
-	
+
 	if (!$client->isPlayer()) {
 		return 1;
 	}
 
 	my $vol = $prefs->client($client)->get('volume');
 	my $mute = $prefs->client($client)->get('mute');
-	
+
 	if (($vol < 0) && ($mute)) {
 		# mute volume
 		# todo: there is actually a hardware mute feature
@@ -475,7 +482,7 @@ sub hasDigitalOut {
 sub hasVolumeControl {
 	return 1;
 }
-	
+
 sub sendFrame {};
 
 sub currentSongLines {
@@ -493,7 +500,7 @@ sub currentSongLines {
 	my @overlay = ();
 	my $screen2;
 	my $jive;
-	
+
 	my $playmode    = Slim::Player::Source::playmode($client);
 	my $playlistlen = Slim::Player::Playlist::count($client);
 
@@ -546,7 +553,7 @@ sub currentSongLines {
 			}
 
 		} elsif ($client->isRetrying()) {
-			
+
 			$status = $lines[0] = $client->string('RETRYING');
 
 			if ( $playlistlen == 1 ) {
@@ -560,11 +567,11 @@ sub currentSongLines {
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
 			}
-			
+
 		} else {
 
 			$status = $lines[0] = $client->string('PLAYING');
-			
+
 			if ($client->volume() < 0) {
 				$lines[0] .= " ". $client->string('LCMUTED');
 			}
@@ -576,9 +583,9 @@ sub currentSongLines {
 				);
 			}
 		}
-		
+
 		my $track = Slim::Player::Playlist::track($client);
-		
+
 		my $currentTitle;
 		my $imgKey;
 		my $artwork;
@@ -599,11 +606,11 @@ sub currentSongLines {
 					$imgKey = 'icon-id';
 					$artwork = $remoteMeta->{icon};
 				}
-				
+
 				# Format remote metadata according to title format
 				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url, 0, $remoteMeta );
 			}
-			
+
 			# If that didn't return anything, use default title
 			if ( !$currentTitle ) {
 				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url );
@@ -616,20 +623,20 @@ sub currentSongLines {
 		}
 		else {
 			$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $track->url );
-			
+
 			if ( my $album = $track->album ) {
 				$imgKey = 'icon-id';
 				$artwork = $album->artwork || 0;
 			}
 		}
-		
+
 		$lines[1] = $currentTitle;
 
 		$overlay[1] = $client->symbols('notesymbol');
 
 		# add screen2 information if required
 		if ($client->display->showExtendedText() && !$suppressDisplay && !$onScreen2) {
-			
+
 			my ($s2line1, $s2line2);
 
 			if ($track && $track->isRemoteURL) {
@@ -656,7 +663,7 @@ sub currentSongLines {
 				'line' => [ $s2line1, $s2line2 ],
 			};
 		}
-		
+
 		$jive = {
 			'type' => 'icon',
 			'text' => [ $status, $track ? $track->title : undef ],
@@ -664,7 +671,7 @@ sub currentSongLines {
 			'play-mode' => $playmode,
 			'is-remote' => $track->isRemoteURL,
 		};
-		
+
 		if ( $imgKey ) {
 			$jive->{$imgKey} = Slim::Web::ImageProxy::proxiedImage($artwork);
 		}
@@ -710,9 +717,9 @@ sub nowPlayingModeLines {
 	my $overlay;
 	my $fractioncomplete = 0;
 	my $songtime = '';
-	
+
 	my $modes = $prefs->client($client)->get('playingDisplayModes');
-	
+
 	my $mode = $modes->[ $prefs->client($client)->get('playingDisplayMode') ];
 
 	unless (defined $mode) { $mode = 1; };
@@ -724,27 +731,27 @@ sub nowPlayingModeLines {
 	my $showFullness = $modeOpts->{fullness};
 	my $showClock    = $modeOpts->{clock};
 	my $displayWidth = $display->displayWidth($screen2 ? 2 : 1);
-	
+
 	# check if we don't know how long the track is...
 	if (!$client->controller()->playingSongDuration()) {
 		$showBar = 0;
 	}
-	
+
 	if ($showFullness) {
 		$fractioncomplete = $client->usage();
 	} elsif ($showBar) {
 		$fractioncomplete = Slim::Player::Source::progress($client);
 	}
-	
+
 	if ($showFullness) {
 		$songtime = ' ' . int($fractioncomplete * 100 + 0.5)."%";
-		
-		# for remote streams where we know the bitrate, 
+
+		# for remote streams where we know the bitrate,
 		# show the number of seconds of audio in the buffer instead of a percentage
 		my $url = Slim::Player::Playlist::url($client);
 		if ( Slim::Music::Info::isRemoteURL($url) ) {
 			my $decodeBuffer = 0;
-			
+
 			# Display decode buffer as seconds if we know the bitrate, otherwise show KB
 			if ( $client->streamingSong() ) {
 				my $bitrate = $client->streamingSong()->streambitrate();
@@ -755,7 +762,7 @@ sub nowPlayingModeLines {
 					$decodeBuffer = sprintf( "%d KB", $client->bufferFullness() / 1024 );
 				}
 			}
-			
+
 			if ( $client->isa('Slim::Player::Squeezebox2') ) {
 				# Only show output buffer status on SB2 and higher
 				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
@@ -768,7 +775,7 @@ sub nowPlayingModeLines {
 			}
 		}
 
-	} elsif ($showTime) { 
+	} elsif ($showTime) {
 		$songtime = ' ' . $client->textSongTime($showTime < 0);
 	} elsif ($showClock) {
 		# show the current time in the format defined for datetime screensaver
@@ -778,7 +785,7 @@ sub nowPlayingModeLines {
 	if ($showTime || $showFullness || $showClock) {
 		$overlay = $songtime;
 	}
-	
+
 	if ($showBar) {
 		# show both the bar and the time
 		my $leftLength = $display->measureText($parts->{line}[0], 1);
@@ -787,7 +794,7 @@ sub nowPlayingModeLines {
 
 		$overlay = $bar . $songtime;
 	}
-	
+
 	$parts->{overlay}[0] = $overlay if defined($overlay);
 }
 
@@ -802,7 +809,7 @@ sub textSongTime {
 
 	if (Slim::Player::Source::playmode($client) eq "stop") {
 		$delta = 0;
-	} else {	
+	} else {
 		$delta = Slim::Player::Source::songTime($client);
 		if ($duration && $delta > $duration) {
 			$delta = $duration;
@@ -812,15 +819,15 @@ sub textSongTime {
 	# 2 and 5 display remaining time, not elapsed
 	if ($remaining) {
 		if ($duration) {
-			$delta = $duration - $delta;	
+			$delta = $duration - $delta;
 			$sign = '-';
 		}
 	}
-	
+
 	my $hrs = int($delta / (60 * 60));
 	my $min = int(($delta - $hrs * 60 * 60) / 60);
 	my $sec = $delta - ($hrs * 60 * 60 + $min * 60);
-	
+
 	if ($hrs) {
 
 		return sprintf("%s%d:%02d:%02d", $sign, $hrs, $min, $sec);
@@ -834,7 +841,7 @@ sub textSongTime {
 sub mixerDisplay {
 	my $client = shift;
 	my $feature = shift;
-	
+
 	if ($feature !~ /(?:volume|pitch|bass|treble)/) {
 		return;
 	}
@@ -868,7 +875,7 @@ sub mixerDisplay {
 			$parts = &$linefunc($client, { value => $featureValue });
 
 		} else {
-			
+
 			$headerValue = $client->volumeString($featureValue);
 
 		}
@@ -886,7 +893,7 @@ sub mixerDisplay {
 	my $featureHeader = join('', $client->string(uc($feature)), $headerValue);
 
 	if (blessed($client->display) =~ /Squeezebox2|Boom/) {
-		# XXXX hack attack: turn off visualizer when showing volume, etc.		
+		# XXXX hack attack: turn off visualizer when showing volume, etc.
 		$oldvisu = $client->modeParam('visu');
 		$savedvisu = 1;
 		$client->modeParam('visu', [0]);
@@ -944,8 +951,8 @@ sub trackJiffiesEpoch {
 				$synclog->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
 			}
 		}
-		
-		$client->jiffiesEpoch($epoch = $offset);	
+
+		$client->jiffiesEpoch($epoch = $offset);
 	}
 
 	my $diff = $offset - $epoch;
@@ -960,7 +967,7 @@ sub trackJiffiesEpoch {
 	) {
 		my $min_diff = Slim::Utils::Misc::min($jiffiesOffsetList);
 		if ( $min_diff > JIFFIES_EPOCH_MIN_ADJUST ) {
-			
+
 			# We only make jumps larger than JIFFIES_EPOCH_MAX_ADJUST if we have a full sequence of offsets.
 			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST  && @{$jiffiesOffsetList} < JIFFIES_OFFSET_TRACKING_LIST_SIZE ) {
 				# wait until we have a full list
@@ -984,19 +991,19 @@ sub jiffiesToTimestamp {
 	# rather than in trackJiffiesEpoch(), so that a bad calculated latency
 	# (which presumably would be transient) does not permanently effect
 	# our idea of the jiffies-epoch.
-	
+
 	return $client->jiffiesEpoch + $jiffies / $client->ticspersec - $client->packetLatency();
 }
-	
+
 use constant PLAY_POINT_LIST_SIZE		=> 8;		# how many to keep
 use constant MAX_STARTTIME_VARIATION	=> 0.015;	# latest apparent-stream-start-time estimate
 													# must be this close to the average
 sub publishPlayPoint {
 	my ( $client, $statusTime, $apparentStreamStartTime, $cutoffTime ) = @_;
-	
+
 	my $playPoints = $client->playPoints();
 	$client->playPoints($playPoints = []) if (!defined($playPoints));
-	
+
 	unshift(@{$playPoints}, [$statusTime, $apparentStreamStartTime]);
 
 	# remove all old and excessive play-points
@@ -1037,25 +1044,25 @@ sub rebuffer {
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
 	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || Slim::Music::Info::title($url);
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->coverid . '/cover.jpg';
-	
+
 	if ( my $bitrate = $song->streambitrate() ) {
 		$threshold = 5 * ( int($bitrate / 8) );
 	}
-	
+
 	# We could calculate a more-accurate outputThreshold, but it really is not worth it
-	
+
 	if ($threshold > $client->bufferSize() - 4000) {
 		$threshold = $client->bufferSize() - 4000;	# cheating , really for SliMP3s
 	}
-	
-	# We restart playback based on the decode buffer, 
+
+	# We restart playback based on the decode buffer,
 	# as the output buffer is not updated in pause mode.
 	my $fullness = $client->bufferFullness();
-	
+
 	main::INFOLOG && $log->info( "Rebuffering: $fullness / $threshold" );
-	
+
 	$client->bufferReady(0);
-	
+
 	$client->bufferStarted( Time::HiRes::time() ); # track when we started rebuffering
 	Slim::Utils::Timers::killTimers( $client, \&_buffering );
 	Slim::Utils::Timers::setTimer(
@@ -1068,7 +1075,7 @@ sub rebuffer {
 
 sub buffering {
 	my ($client, $bufferThreshold, $outputThreshold) = @_;
-	
+
 	my $song = $client->streamingSong();
 	my $url = $song->currentTrack()->url;
 
@@ -1076,7 +1083,7 @@ sub buffering {
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
 	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || Slim::Music::Info::title($url);
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->coverid . '/cover.jpg';
-	
+
 	# Set a timer for feedback during buffering
 	$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
 	Slim::Utils::Timers::killTimers( $client, \&_buffering );
@@ -1090,17 +1097,17 @@ sub buffering {
 
 sub _buffering {
 	my ( $client, $args ) = @_;
-	
+
 	my $log = logger('player.source');
-	
+
 	my $song = $args->{song};
 	my $threshold = $args->{'threshold'};
 	my $outputThreshold = $args->{'outputThreshold'};
-	
+
 	my $controller = $client->controller();
 	my $buffering = $controller->buffering();
 	my $syncWait = $controller->isWaitingToSync();
-	
+
 	# If the track has started, stop displaying buffering status
 	if ( (!$buffering && !$syncWait)
 		|| !$client->power) # Bug 6549, if the user powers off, stop rebuffering
@@ -1110,12 +1117,12 @@ sub _buffering {
 		$client->bufferStarted(0); # marker that we are no longer rebuffering
 		return;
 	}
-	
+
 	my $handler = $song->currentTrackHandler();
 	my $suppressPlayersMessage = $handler->can('suppressPlayersMessage') || sub {};
 
 	my ($line1, $line2, $status);
-	
+
 	# Bug 6712, give up after 30s
 	if ( $buffering == 2 && (time() > $client->bufferStarted() + 30) ) {
 		# Only show rebuffering failed status if no user activity on player or we're on the Now Playing screen
@@ -1123,51 +1130,51 @@ sub _buffering {
 		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
 
 		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
-		
+
 			my $failedString = $client->string('REBUFFERING_FAILED');
-			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString; 
-			if ( $client->linesPerScreen() == 1 ) { 	 
-				$line2 = $failedString; 	 
+			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString;
+			if ( $client->linesPerScreen() == 1 ) {
+				$line2 = $failedString;
 			} else {
 				$line2 = $args->{'title'};
 			}
 
 			$client->showBriefly( {
 				line => [ $line1, $line2 ],
-				jive => { 
-					type => 'popupplay', 
-					text => [ $failedString ], 
+				jive => {
+					type => 'popupplay',
+					text => [ $failedString ],
 					'icon-id' => Slim::Web::ImageProxy::proxiedImage($args->{'cover'})
 				},
 				cli  => undef,
 			}, { duration => 2 } );
 		}
-		
+
 		$client->bufferStarted(0);
 		$controller->jumpToTime($controller->playingSongElapsed(), 1); # restart
 		return;
 	}
-	
+
 	my $fullness = $client->bufferFullness();
 	my $outputFullness = $client->outputBufferFullness();
-	
+
 	main::INFOLOG &&                                        $log->info("Buffering... $fullness / $threshold");
 	main::INFOLOG && $outputThreshold && $outputFullness && $log->info("  +output... $outputFullness / $outputThreshold");
-	
+
 	# Bug 1827, display better buffering feedback while we wait for data
 	my $fraction = $fullness / $threshold;
-	
+
 	if ($outputThreshold && $outputFullness) {
 		$fraction += $outputFullness / $outputThreshold;
 	}
-	
+
 	my $string;
 	my $percent = sprintf "%d", $fraction * 100;
-	
+
 	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
-	
+
 	# TODO - add output-buffer calculations
-	
+
 	if (!$stillBuffering && $buffering == 2 && $client->bufferStarted()) {
 		$client->bufferReady(1);
 		$controller->playerBufferReady($client);
@@ -1196,7 +1203,7 @@ sub _buffering {
 			if ( $percent > 100 ) {
 				$percent = 99;
 			}
-			
+
 			$string = $buffering < 2 ? 'BUFFERING' : 'REBUFFERING';
 			$status = $client->string($string) . ' ' . $percent . '%';
 		}
@@ -1208,12 +1215,12 @@ sub _buffering {
 			$line2 = $args->{'title'};
 		}
 	}
-	
+
 	# Only show buffering status if no user activity on player or we're on the Now Playing screen
 	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
 	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
 	my $screen     = Slim::Buttons::Common::msgOnScreen2($client) ? 'screen2' : 'screen1';
-	
+
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 
 		if ( !$suppressPlayersMessage->($handler, $client, $song, $string) ) {
@@ -1226,7 +1233,7 @@ sub _buffering {
 			}, { duration => 1, block => 1 });
 		}
 	}
-	
+
 	# Call again unless we've reached the threshold
 	if ( $stillBuffering ) {
 		Slim::Utils::Timers::setTimer(
@@ -1235,7 +1242,7 @@ sub _buffering {
 			\&_buffering,
 			$args,
 		);
-		
+
 		$client->requestStatus(); # so we get another up date soon
 	}
 	else {
