@@ -568,3 +568,11 @@ PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	FR	Album aléatoire (limité aux genres actuels)
 	NL	Willekeurig album (alleen binnen huidige genres)
 	NO	Tilfeldig album (begrenset til nåværende sjangre)
+
+PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
+	DE	Titelmix (Genreauswahl beibehalten)
+	EN	Song Mix (keep genre selection)
+
+PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
+	DE	Zufälliges Album (Genreauswahl beibehalten)
+	EN	Random Album (keep genre selection)
