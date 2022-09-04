@@ -1,6 +1,6 @@
 package Slim::Plugin::Deezer::Importer;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2022 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -333,7 +333,7 @@ sub _prepareTrack {
 		TRACKNUM     => $track->{trackNumber},
 		GENRE        => join($splitChar, @{$album->{genres} || []}),
 		SECS         => $track->{duration},
-		YEAR         => substr($album->{releaseDate} || '', 0, 4),
+		YEAR         => substr($album->{released} || '', 0, 4),
 		COVER        => $album->{cover},
 		AUDIO        => 1,
 		EXTID        => $url,
