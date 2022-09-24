@@ -26,8 +26,8 @@
   </p>
   <hr />
   <h4>Directory Structure</h4>
-    
-<em>Logitech Media Server</em> 
+
+<em>Logitech Media Server</em>
 <ul>
   <li>html</li>
   <ul>
@@ -39,7 +39,7 @@
     <ul>
       <li>html...</li>
     </ul>
-    <li><em>YourSkin</em> 
+    <li><em>YourSkin</em>
       <ul>
         <li>html...</li>
       </ul>
@@ -53,11 +53,11 @@
     The template files in the skin directory are primarily html, with some
     server-side processing directives added.  In some cases they are complete
     pages, in others fragments which are meant to be included into a surrounding
-    page.  The interrelationships of the files are discussed below in the 
+    page.  The interrelationships of the files are discussed below in the
     <a href="#template-depend">Template Dependencies</a> section of this document.
   </p>
   <p>
-    Logitech Media Server uses the freely available 
+    Logitech Media Server uses the freely available
     <a href="http://www.template-toolkit.org/">Template Toolkit</a> version 2.13
     for its templates.  <a href="http://www.template-toolkit.org/docs/plain/index.html">
     Full documentation</a> is available at the linked web site.  Some of the simpler
@@ -65,10 +65,10 @@
     Directives</a> section.
   </p>
   <p>
-    When a dynamic page is requested, the server builds a parameter hash which 
-    is used along with the template to create the final html which is returned to 
-    the requestor. The server-side directives contain references to the keys of 
-    this parameter hash. For practical purposes this means that each template has 
+    When a dynamic page is requested, the server builds a parameter hash which
+    is used along with the template to create the final html which is returned to
+    the requestor. The server-side directives contain references to the keys of
+    this parameter hash. For practical purposes this means that each template has
     a list of variables available to it (corresponding to the keys of that
     parameter hash) which it uses with the directives to produce the desired final
     text. The list of variables available to each template is discussed below in the
@@ -571,10 +571,6 @@
     <dd>
 	The user-agent string from the client browser
     </dd>
-   <dt>browserType</dt>
-    <dd>
-	An attempt at guessing what browser is being used. Possibilities are IE, Firefox, Opera, Safari, and unknown.
-    </dd>
   </dl>
   <!--
   <h5>Client Object Properties/Methods</h5>
@@ -619,12 +615,12 @@
             </dd>
             <dt>album_count</dt>
             <dd>
-              Count of unique albums in library. Includes the word album 
+              Count of unique albums in library. Includes the word album
               or albums after the number.
             </dd>
             <dt>artist_count</dt>
             <dd>
-              Count of unique artists in library. Includes the word artist 
+              Count of unique artists in library. Includes the word artist
               or artists after the number.
             </dd>
             <dt>newVersion</dt>
@@ -641,14 +637,14 @@
             <dd>Set to 1 if setup is disabled. Not defined if setup is enabled.</dd>
             <dt>player_list</dt>
             <dd>
-              Links to player setup pages, one link per player, built using 
+              Links to player setup pages, one link per player, built using
               homeplayer_list.html.
             </dd>
             <dt>playercount</dt>
             <dd>Count of players.</dd>
             <dt>song_count</dt>
             <dd>
-              Count of songs in library. Includes the word song 
+              Count of songs in library. Includes the word song
               or songs after the number.
             </dd>
           </dl>
@@ -675,12 +671,12 @@
           <dl>
             <dt>album_count</dt>
             <dd>
-              Count of unique albums in library. Includes the word album 
+              Count of unique albums in library. Includes the word album
               or albums after the number.
             </dd>
             <dt>artist_count</dt>
             <dd>
-              Count of unique artists in library. Includes the word artist 
+              Count of unique artists in library. Includes the word artist
               or artists after the number.
             </dd>
             <dt>browse_list</dt>
@@ -710,7 +706,7 @@
             </dd>
             <dt>song_count</dt>
             <dd>
-              Count of songs in library. Includes the word song 
+              Count of songs in library. Includes the word song
               or songs after the number.
             </dd>
           </dl>
@@ -765,7 +761,7 @@
             <dt>delete</dt>
             <dt>start</dt>
           </dl>
-        </dd>   
+        </dd>
       </dl>
     <dt><strong>browse_playlist.html</strong></dt>
     <dd>
@@ -1176,13 +1172,13 @@
     this document.  The directives are discussed below in the <strong>Template
     Directives</strong> section.
   </p>
-  
-<p> When a dynamic page is requested, the server builds a parameter hash which 
-  is used along with the template to create the final html which is returned to 
-  the requestor. The server-side directives contain references to the keys of 
-  this parameter hash. For practical purposes this means that each template has 
-  a list of parameters available to it which it uses with the directives to produce 
-  the desired final text. The list of parameters available to each template is 
+
+<p> When a dynamic page is requested, the server builds a parameter hash which
+  is used along with the template to create the final html which is returned to
+  the requestor. The server-side directives contain references to the keys of
+  this parameter hash. For practical purposes this means that each template has
+  a list of parameters available to it which it uses with the directives to produce
+  the desired final text. The list of parameters available to each template is
   discussed below in the <strong>Template Parameters</strong> section.</p>
   <hr />
   <h4><a id="oldtemplate-direct">Old Template Directives</a></h4>
@@ -1198,7 +1194,7 @@
   <li>A directive cannot contain itself (even with a different parameter).</li>
   <li>Different directives can be contained within each other.</li>
   <li>Overlapping directives are also not allowed.</li>
-  <li>Line endings within the text portion of directives are allowed, so a directive 
+  <li>Line endings within the text portion of directives are allowed, so a directive
     may span multiple lines.</li>
 </ul>
   <dl>
@@ -1354,7 +1350,7 @@
     <dt><strong>[STATIC <i>html/path/here.html</i>]</strong></dt>
     <dd>
       Using the <strong>STATIC</strong> directive will include the parsed
-      contents of the file in html/path/here.html in the output, but will not parse the file for 
+      contents of the file in html/path/here.html in the output, but will not parse the file for
       template directives.
     </dd>
     <dd>

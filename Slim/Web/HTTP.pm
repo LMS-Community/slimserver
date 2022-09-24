@@ -1086,9 +1086,6 @@ sub generateHTTPResponse {
 		$response->expires( time() + $max );
 		$response->header('Cache-Control' => 'max-age=' . $max);
 	}
-	elsif ( $path !~ m{^(?:music|imageproxy)/} ) {
-		$params->{'browserType'} = $skinMgr->detectBrowser($response->request);
-	}
 
 	# XXX - this is no longer being used by any of the stock skins
 	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage)/) {
