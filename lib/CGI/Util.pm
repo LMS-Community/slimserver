@@ -2,7 +2,8 @@ package CGI::Util;
 use base 'Exporter';
 require 5.008001;
 use strict;
-use if $] >= 5.019, 'deprecate';
+# disable 'deprecate', it's causing issues on some systems (see https://github.com/Logitech/slimserver/issues/810)
+# use if $] >= 5.019, 'deprecate';
 our @EXPORT_OK = qw(rearrange rearrange_header make_attributes unescape escape
         expires ebcdic2ascii ascii2ebcdic);
 
@@ -81,7 +82,7 @@ elsif ($_EBCDIC && ord('^') == 176) { # as in codepage 037 on os400
 sub rearrange {
     my ($order,@param) = @_;
     my ($result, $leftover) = _rearrange_params( $order, @param );
-    push @$result, make_attributes( $leftover, defined $CGI::Q ? $CGI::Q->{escape} : 1 ) 
+    push @$result, make_attributes( $leftover, defined $CGI::Q ? $CGI::Q->{escape} : 1 )
     if keys %$leftover;
     @$result;
 }
@@ -102,7 +103,7 @@ sub _rearrange_params {
     if (ref($param[0]) eq 'HASH') {
     @param = %{$param[0]};
     } else {
-    return \@param 
+    return \@param
         unless (defined($param[0]) && substr($param[0],0,1) eq '-');
     }
 
@@ -204,8 +205,8 @@ sub unescape {
                 %u([Dd][c-fC-F][0-9a-fA-F]{2})   # lo
               }{
               utf8_chr(
-                   0x10000 
-                   + (hex($1) - 0xD800) * 0x400 
+                   0x10000
+                   + (hex($1) - 0xD800) * 0x400
                    + (hex($2) - 0xDC00)
                   )
               }gex;
@@ -220,7 +221,7 @@ sub unescape {
 # We cannot use the %u escapes, they were rejected by W3C, so the official
 # way is %XX-escaped utf-8 encoding.
 # Naturally, Unicode strings have to be converted to their utf-8 byte
-# representation. 
+# representation.
 # Byte strings were traditionally used directly as a sequence of octets.
 # This worked if they actually represented binary data (i.e. in CGI::Compress).
 # This also worked if these byte strings were actually utf-8 encoded; e.g.,
@@ -269,7 +270,7 @@ sub expires {
 }
 
 # This internal routine creates an expires time exactly some number of
-# hours from the current time.  It incorporates modifications from 
+# hours from the current time.  It incorporates modifications from
 # Mark Fisher.
 sub expire_calc {
     my($time) = @_;
@@ -300,7 +301,7 @@ sub expire_calc {
     } else {
       return $time;
     }
-    my $cur_time = time; 
+    my $cur_time = time;
     return ($cur_time+$offset);
 }
 
