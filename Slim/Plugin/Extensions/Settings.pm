@@ -188,7 +188,7 @@ sub _addInfo {
 		if ($entry->{'action'} eq 'install' && $entry->{'url'} && $entry->{'sha'}) {
 
 			if ($prefs->get('auto') ||
-				($params->{'saveSettings'} && ($params->{"update:$plugin"} || exists $params->{"install:$plugin"})) ) {
+				($params->{'saveSettings'} && (exists $params->{"update:$plugin"} || exists $params->{"install:$plugin"})) ) {
 
 				# install now if in auto mode or install or update has been explicitly selected
 				main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
