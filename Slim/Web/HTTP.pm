@@ -997,7 +997,7 @@ sub generateHTTPResponse {
 	}
 
 	# lots of people need this
-	my $contentType = $params->{'Content-Type'} = $Slim::Music::Info::types{$type};
+	my $contentType = $params->{'Content-Type'} ||= $Slim::Music::Info::types{$type};
 
 	if ( Slim::Web::Pages->isRawDownload($path) ) {
 		$contentType = 'application/octet-stream';
