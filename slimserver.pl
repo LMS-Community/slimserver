@@ -56,6 +56,9 @@ use constant SLIM_SERVICE => 0;
 use constant NOUPNP       => 0;
 
 use Config;
+
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
+
 my %check_inc;
 $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 

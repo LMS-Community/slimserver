@@ -39,11 +39,19 @@ our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
 
 BEGIN {
         if (main::ISWINDOWS) {
-                *EINTR       = sub () { 10004 };
-                *EBADF       = sub () { 10009 };
-                *ECHILD      = sub () { 10010 };
-                *EWOULDBLOCK = sub () { 10035 };
-                *EINPROGRESS = sub () { 10036 };
+		if (main::ISACTIVEPERL) {
+			*EINTR       = sub () { 10004 };
+			*EBADF       = sub () { 10009 };
+			*ECHILD      = sub () { 10010 };
+			*EWOULDBLOCK = sub () { 10035 };
+			*EINPROGRESS = sub () { 10036 };
+		} else {
+			*EINTR       = sub () { 4 };
+			*EBADF       = sub () { 9 };
+			*ECHILD      = sub () { 10 };
+			*EWOULDBLOCK = sub () { 140 };
+			*EINPROGRESS = sub () { 112 };
+		}
         } else {
                 require Errno;
                 import Errno qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
