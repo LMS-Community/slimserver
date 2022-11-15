@@ -125,9 +125,9 @@ sub initSearchPath {
 	$class->SUPER::initSearchPath(@_);
 
 	# Add the location of perl.exe to the helper applications folder search path.
-	my $perlpath = dirname(Slim::Utils::Misc::findbin('perl.exe'));
-	if (-d $perlpath) {
-		Slim::Utils::Misc::addFindBinPaths($perlpath);
+	my $perlpath = Slim::Utils::Misc::findbin('perl.exe');
+	if ($perlpath) {
+		Slim::Utils::Misc::addFindBinPaths(dirname($perlpath));
 	} else {
 		 main::INFOLOG && warn ("Perl.exe not found");
 	}
