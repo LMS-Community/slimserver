@@ -39,7 +39,7 @@ our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
 
 BEGIN {
         if (main::ISWINDOWS) {
-		if ($] < 5.032001) {
+		if (main::ISACTIVEPERL) {
 			*EINTR       = sub () { 10004 };
 			*EBADF       = sub () { 10009 };
 			*ECHILD      = sub () { 10010 };
