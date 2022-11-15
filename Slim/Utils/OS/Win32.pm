@@ -7,6 +7,7 @@ package Slim::Utils::OS::Win32;
 
 use strict;
 use Cwd;
+use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 use Sys::Hostname qw(hostname);
@@ -123,10 +124,13 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath(@_);
 
-	# TODO: we might want to make this a bit more intelligent
-	# as Perl is not always in that folder (eg. German Windows)
-
-	Slim::Utils::Misc::addFindBinPaths('C:\Perl\bin');
+	# Add the location of perl.exe to the helper applications folder search path.
+	my $perlpath = dirname(Slim::Utils::Misc::findbin('perl.exe'));
+	if (-d $perlpath) {
+		Slim::Utils::Misc::addFindBinPaths($perlpath);
+	} else {
+		 main::INFOLOG && warn ("Perl.exe not found");
+	}
 }
 
 sub initMySQL {}
