@@ -13,9 +13,11 @@
 
 require 5.010;
 
+use Config;
 use constant SPLASH_LOGO => 'lms_splash.png';
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
 
 # don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
 my $splash;

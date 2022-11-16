@@ -16,6 +16,7 @@ use strict;
 
 use FindBin qw($Bin);
 use lib $Bin;
+use Config;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 1;
@@ -23,6 +24,7 @@ use constant RESIZER      => 0;
 use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
