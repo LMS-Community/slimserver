@@ -1,7 +1,7 @@
 # String file for xPL plugin
 
 PLUGIN_XPL
-	CS	Interface xPL
+	CS	Rozhraní xPL
 	DA	xPL-grænseflade
 	DE	xPL-Schnittstelle
 	EN	xPL Interface
@@ -35,7 +35,7 @@ SETUP_GROUP_XPL
 	ZH_CN	xPL设置
 
 SETUP_GROUP_XPL_DESC
-	CS	Tato nastavení ovládají chování protokolu xPL
+	CS	Tato nastavení řídí chování protokolu xPL
 	DA	Disse indstillinger fastlægger hvordan xPL-protokollen fungerer.
 	DE	Diese Einstellungen steuern das Verhalten des xPL-Protokolls.
 	EN	These settings control the behavior of the xPL protocol
@@ -54,7 +54,7 @@ SETUP_GROUP_XPL_DESC
 	ZH_CN	控制xPL协议的设置
 
 SETUP_XPLINTERVAL
-	CS	Interval tepu srdce
+	CS	Interval srdečního tepu
 	DA	Pause mellem hjerteslag
 	DE	Heartbeat-Intervall
 	EN	Heartbeat Interval
@@ -72,7 +72,7 @@ SETUP_XPLINTERVAL
 	ZH_CN	心跳间隔时间
 
 SETUP_XPLIR
-	CS	Infračervené zpracování
+	CS	Zpracování infračerveného spojení
 	DA	Infrarød behandling
 	DE	Infrarot-Verarbeitung
 	EN	Infra-red Processing

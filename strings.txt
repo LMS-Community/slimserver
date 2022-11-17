@@ -93,49 +93,49 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2021 Logitech - verze 8.3.0
-	DA	© 2001-2021 Logitech - version 8.3.0
-	DE	© 2001-2021 Logitech Version 8.3.0
-	EN	© 2001-2021 Logitech Version 8.3.0
-	ES	© 2001-2021 Logitech Versión 8.3.0
-	FI	© 2001-2021 Logitechin versio 8.3.0
-	FR	© 2001-2021 Logitech Version 8.3.0
-	IT	© 2001-2021 Logitech versione 8.3.0
-	NL	© 2001-2021 Logitech versie 8.3.0
-	NO	© 2001–2011 Logitech versjon 8.3.0
-	PL	© 2001-2021 Logitech wersja 8.3.0
-	RU	© Logitech, 2001-2021. Версия 8.3.0
-	SV	© 2001–2011 Logitech Version 8.3.0
+	CS	© 2001-2022 Logitech - verze 8.4.0
+	DA	© 2001-2022 Logitech - version 8.4.0
+	DE	© 2001-2022 Logitech Version 8.4.0
+	EN	© 2001-2022 Logitech Version 8.4.0
+	ES	© 2001-2022 Logitech Versión 8.4.0
+	FI	© 2001-2022 Logitechin versio 8.4.0
+	FR	© 2001-2022 Logitech Version 8.4.0
+	IT	© 2001-2022 Logitech versione 8.4.0
+	NL	© 2001-2022 Logitech versie 8.4.0
+	NO	© 2001–2022 Logitech versjon 8.4.0
+	PL	© 2001-2022 Logitech wersja 8.4.0
+	RU	© Logitech, 2001-2022. Версия 8.4.0
+	SV	© 2001–2022 Logitech Version 8.4.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2021 Logitech
-	DA	© 2001-2021 Logitech
-	DE	© 2001-2021 Logitech
-	EN	© 2001-2021 Logitech
-	ES	© 2001-2021 Logitech
-	FI	© 2001-2021 Logitech
-	FR	© 2001-2021 Logitech
-	IT	© 2001-2021 Logitech
-	NL	© 2001-2021 Logitech
-	NO	© 2001-2021 Logitech
-	PL	© 2001-2021 Logitech
-	RU	© Logitech, 2001-2021
-	SV	© 2001-2021 Logitech
+	CS	© 2001-2022 Logitech
+	DA	© 2001-2022 Logitech
+	DE	© 2001-2022 Logitech
+	EN	© 2001-2022 Logitech
+	ES	© 2001-2022 Logitech
+	FI	© 2001-2022 Logitech
+	FR	© 2001-2022 Logitech
+	IT	© 2001-2022 Logitech
+	NL	© 2001-2022 Logitech
+	NO	© 2001-2022 Logitech
+	PL	© 2001-2022 Logitech
+	RU	© Logitech, 2001-2022
+	SV	© 2001-2022 Logitech
 
 VERSION
-	CS	Verze 8.3.0 / r%s
-	DA	Version 8.3.0 / r%s
-	DE	Version 8.3.0 / r%s
-	EN	Version 8.3.0 / r%s
-	ES	Versión 8.3.0 / r%s
-	FI	Versio 8.3.0 / r%s
-	FR	Version 8.3.0 / r%s
-	IT	Versione 8.3.0/r%s
-	NL	Versie 8.3.0 / r%s
-	NO	Versjon 8.3.0 / r%s
-	PL	Wersja 8.3.0 / r%s
-	RU	Версия 8.3.0 / r%s
-	SV	Version 8.3.0 / r%s
+	CS	Verze 8.4.0 / r%s
+	DA	Version 8.4.0 / r%s
+	DE	Version 8.4.0 / r%s
+	EN	Version 8.4.0 / r%s
+	ES	Versión 8.4.0 / r%s
+	FI	Versio 8.4.0 / r%s
+	FR	Version 8.4.0 / r%s
+	IT	Versione 8.4.0/r%s
+	NL	Versie 8.4.0 / r%s
+	NO	Versjon 8.4.0 / r%s
+	PL	Wersja 8.4.0 / r%s
+	RU	Версия 8.4.0 / r%s
+	SV	Version 8.4.0 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
@@ -173,7 +173,7 @@ LOADING_SQUEEZEBOX_SERVER
 
 EN_SKIN
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké
+	CS	Tenký
 	DA	Let
 	DE	Light
 	EN	Light
@@ -261,7 +261,7 @@ SERVER_VERSION
 	ZH_CN	Logitech Media Server版本
 
 PERL_VERSION
-	CS	Verze Perl
+	CS	Verze Perlu
 	DA	Perl-version
 	DE	Perl-Version
 	EN	Perl Version
@@ -337,7 +337,7 @@ ABOUT_SLIMDEVICES
 #
 
 SLIMP3_HOME
-	CS	SLIMP3 - Hlavní nabídka
+	CS	SLIMP3 - Doma
 	DA	SLIMP3 Hovedmenu
 	DE	SLIMP3 Hauptmenü
 	EN	SLIMP3 Home
@@ -356,7 +356,7 @@ SLIMP3_HOME
 	ZH_CN	SLIMP3主页
 
 SQUEEZEBOX_HOME
-	CS	Squeezebox - Hlavní nabídka
+	CS	Squeezebox - Doma
 	DA	Squeezebox Hovedmenu
 	DE	Squeezebox-Hauptmenü
 	EN	Squeezebox Home
@@ -375,7 +375,7 @@ SQUEEZEBOX_HOME
 	ZH_CN	Squeezebox主页
 
 SQUEEZEBOX2_HOME
-	CS	Squeezebox - Hlavní nabídka
+	CS	Squeezebox - Doma
 	DA	Squeezebox Hovedmenu
 	DE	Squeezebox-Hauptmenü
 	EN	Squeezebox Home
@@ -394,7 +394,7 @@ SQUEEZEBOX2_HOME
 	ZH_CN	Squeezebox主页
 
 TRANSPORTER_HOME
-	CS	Transporter - Hlavní nabídka
+	CS	Transporter - Doma
 	DA	Transporter Hovedmenu
 	DE	Transporter-Hauptmenü
 	EN	Transporter Home
@@ -412,7 +412,7 @@ TRANSPORTER_HOME
 	SV	Transporter Hem
 
 SOFTSQUEEZE_HOME
-	CS	SoftSqueeze - Hlavní nabídka
+	CS	SoftSqueeze - Doma
 	DA	SoftSqueeze Hovedmenu
 	DE	SoftSqueeze-Hauptmenü
 	EN	SoftSqueeze Home
@@ -431,7 +431,7 @@ SOFTSQUEEZE_HOME
 	ZH_CN	SoftSqueeze主页
 
 HOMEMENU
-	CS	Hlavní nabídka
+	CS	Doma
 	DA	Hovedmenu
 	DE	Hauptmenü
 	EN	Home
@@ -483,21 +483,6 @@ MUSIC
 	PT	Música
 	RU	Музыка
 	SV	Musik
-
-VIDEO
-	CS	Video
-	DA	Video
-	DE	Video
-	EN	Video
-	ES	Vídeo
-	FI	Video
-	FR	Vidéo
-	IT	Video
-	NL	Video
-	NO	Video
-	PL	Wideo
-	RU	Видео
-	SV	Video
 
 PICTURES
 	CS	Obrázky
@@ -1374,7 +1359,7 @@ REPEAT_ALL
 	ZH_CN	重复播放表
 
 CANCEL_SLEEP
-	CS	Ztlumení zrušeno.
+	CS	Usínání zrušeno.
 	DA	Slumrefunktion annulleret.
 	DE	Schlafmodus abgebrochen
 	EN	Sleep cancelled.
@@ -1393,7 +1378,7 @@ CANCEL_SLEEP
 	ZH_CN	倒数关机功能已消除
 
 SLEEP_CANCEL
-	CS	Zrušit opakovaný budík
+	CS	Zrušit usínání
 	DA	Annuller slumrefunktion
 	DE	Schlafmodus abbrechen
 	EN	Cancel sleep
@@ -1408,7 +1393,7 @@ SLEEP_CANCEL
 	SV	Avbryt viloläge
 
 SLEEPING_IN_X_MINUTES
-	CS	Vypnutí za %s minut
+	CS	Usínání za %s minut
 	DA	Slumrer om %s minutter
 	DE	Schlafmodus in %s Minuten
 	EN	Sleeping in %s minutes
@@ -1438,7 +1423,7 @@ X_MINUTES
 	SV	%s minuter
 
 SLEEPING_IN
-	CS	Do ztracena
+	CS	Usínání
 	DA	Slumrefunktion aktiveres om
 	DE	Schlafmodus in
 	EN	Sleeping in
@@ -1457,7 +1442,7 @@ SLEEPING_IN
 	ZH_CN	关机倒数进行中
 
 SLEEP_AT_END_OF_SONG
-	CS	Ztlumit na konci skladby
+	CS	Usnout na konci skladby
 	DA	Slumrefunktion når nummeret er slut
 	DE	Schlafmodus bei Titelende
 	EN	Sleep at end of song
@@ -1472,7 +1457,7 @@ SLEEP_AT_END_OF_SONG
 	SV	Viloläge när låten har tagit slut
 
 SLEEPING_AT_END_OF_SONG
-	CS	Ztlumit na konci skladby
+	CS	Usnout na konci skladby
 	DA	Slumrefunktion når nummeret er slut
 	DE	Schlafmodus bei Titelende
 	EN	Sleeping at end of song
@@ -1502,7 +1487,7 @@ NOTHING_CURRENTLY_PLAYING
 	SV	Just nu spelas inget upp
 
 SLEEP
-	CS	Sleep (Režim spánku)
+	CS	Usínání
 	DA	Slumre
 	DE	Schlafmodus
 	EN	Sleep
@@ -1519,7 +1504,7 @@ SLEEP
 	ZH_CN	睡眠状态
 
 SLEEPING_AT
-	CS	Ztlumení v
+	CS	Usínání v
 	DA	Slumrefunktion aktiveres om
 	DE	Schlafmodus um
 	EN	Sleeping at
@@ -1668,7 +1653,7 @@ ALARM_SET
 	SV	Alarmtid
 
 ALARM_ON
-	CS	Zapnout
+	CS	Zapnuto
 	DA	Til
 	DE	Ein
 	EN	On
@@ -2313,7 +2298,7 @@ ALARM_SHORT_DAY_0
 	SV	Sö
 
 ALARM_SHORT_DAY_1
-	CS	Mo
+	CS	Po
 	DA	Man
 	DE	Mo
 	EN	Mo
@@ -2343,7 +2328,7 @@ ALARM_SHORT_DAY_2
 	SV	Ti
 
 ALARM_SHORT_DAY_3
-	CS	My
+	CS	St
 	DA	Ons
 	DE	Mi
 	EN	We
@@ -2657,7 +2642,7 @@ WELCOME_TO_SQUEEZEPLAY
 	SV	Välkommen till SqueezePlay
 
 WELCOME_TO_CONTROLLER
-	CS	Vítejte v Ovladači
+	CS	Vítejte v Controlleru
 	DA	Velkommen til Controller
 	DE	Willkommen bei Controller!
 	EN	Welcome to Controller
@@ -2744,7 +2729,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	ZH_CN	更新Squeezebox韧件
 
 UPDATING_FIRMWARE_TRANSPORTER
-	CS	Aktualizace firmwaru Transporter.
+	CS	Aktualizace firmwaru Transporteru.
 	DA	Opdaterer Transporter-firmware.
 	DE	Transporter-Firmware wird aktualisiert...
 	EN	Updating Transporter firmware.
@@ -2844,7 +2829,7 @@ CHECKING_STREAM
 	ZH_CN	检查频流
 
 GETTING_STREAM_INFO
-	CS	Získávání informací o proudu...
+	CS	Získávání informací o datovém proudu...
 	DA	Henter oplysninger om stream...
 	DE	Streaminfos werden geladen...
 	EN	Getting stream info...
@@ -2927,7 +2912,7 @@ REBUFFERING
 	SV	Buffrar om...
 
 REBUFFERING_FAILED
-	CS	Ukládání do paměti selhalo
+	CS	Ukládání do vyrovnávací paměti selhalo
 	DA	Gendannelse af bufferlager mislykkedes
 	DE	Puffer-Aktualisierungsfehler
 	EN	Rebuffering failed
@@ -3151,7 +3136,7 @@ ASF_UNABLE_TO_PARSE
 	ZH_CN	失误：无法解析音频流
 
 HOME
-	CS	Hlavní nabídka
+	CS	Doma
 	DA	Hovedmenu
 	DE	Hauptmenü
 	EN	Home
@@ -3623,7 +3608,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
-	CS	Přizpůobení hlavní nabídky
+	CS	Přizpůobení domovské nabídky
 	DA	Tilpas hovedmenuen
 	DE	Hauptmenü
 	EN	Home Menu Customization
@@ -3641,7 +3626,7 @@ SETUP_GROUP_MENUITEMS
 	ZH_CN	主页菜单
 
 SETUP_GROUP_MENUITEMS_DESC
-	CS	Můžete si upravit volby, které se objeví ve vaší Hlavní nabídce na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na "Přidat" přidáte odstraněnou položku zpět do nabídky.
+	CS	Můžete si upravit volby, které se objeví ve vaší Domovské nabídce na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na "Přidat" přidáte odstraněnou položku zpět do nabídky.
 	DA	Du kan selv vælge hvilke menupunkter der skal vises på øverste niveau i hovedmenuen på afspillerens display. Du kan flytte menupunkter op og ned eller fjerne dem ved at klikke på knapperne ud for dem. Klik på Tilføj hvis du vil tilføje et punkt som er fjernet fra menuen.
 	DE	Sie können die im Hauptmenü des Players verfügbaren Einträge bestimmen. Klicken Sie auf die entsprechenden Schaltflächen, um Einträge nach oben bzw. unten zu verschieben oder sie zu entfernen. Klicken Sie auf 'Hinzufügen', um einen entfernten Eintrag wieder aufzunehmen.
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
@@ -3697,7 +3682,7 @@ SETUP_ACTIVEFONT
 	ZH_CN	字体
 
 SETUP_ACTIVEFONT_DESC
-	CS	Tlačítkem SIZE na dálkovém ovladači nebo níže uvedenými přepínači můžete přepínat mezi písmy na displeji přehrávače. V nabídce níže si můžete vybrat pořadí, v jakém se budou zobrazovat.
+	CS	Tlačítkem SIZE na dálkovém ovladači nebo níže uvedenými přepínači můžete přepínat mezi písmy na displeji přehrávače. V nabídce níže si můžete zvolit pořadí, v jakém se budou zobrazovat.
 	DA	Du kan bruge SIZE på fjernbetjeningen eller radioknapperne nedenfor til at skifte mellem skrifttyperne der bruges på displayet. Du kan vælge i hvilken rækkefølge de vises, vha. menuerne nedenfor.
 	DE	Mit der SIZE-Taste der Fernbedienung oder den Optionsschaltflächen unten können Sie zwischen den verschiedenen Schriftarten umschalten. Außerdem können Sie unten die Reihenfolge ändern.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
@@ -3733,7 +3718,7 @@ SETUP_IDLEFONT
 	ZH_CN	备用字体
 
 SETUP_IDLEFONT_DESC
-	CS	Pokud je přehrávač v režimu pohotovosti, můžete pomocí tlačítka SIZE na dálkovém ovladači nebo pomocí přepínačů níže měnit písmo v zobrazení hodin. V nabídce níže si můžete vybrat pořadí, v jakém se budou zobrazovat.
+	CS	Pokud je přehrávač v režimu pohotovosti, můžete pomocí tlačítka SIZE na dálkovém ovladači nebo pomocí přepínačů níže měnit písmo v zobrazení hodin. V nabídce níže si můžete zvolit pořadí, v jakém se budou zobrazovat.
 	DA	Når afspilleren er på standby, kan du bruge SIZE på fjernbetjeningen eller radioknapperne nedenfor til at skifte mellem skrifttyperne der bruges til uret. Du kan vælge i hvilken rækkefølge de vises, vha. menuerne nedenfor.
 	DE	Befindet sich der Player im Standbymodus, können Sie mit der SIZE-Taste der Fernbedienung oder den Optionsschaltflächen unten zwischen den verschiedenen Schriftarten umschalten. Außerdem können Sie unten die Reihenfolge ändern.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.
@@ -3807,7 +3792,7 @@ SETUP_OFFDISPLAYSIZE
 	ZH_CN	备用字体大小
 
 SETUP_SCROLLPAUSE
-	CS	Přerušit rolování
+	CS	Pauza při rolování
 	DA	Rullepause
 	DE	Laufschriftverzögerung
 	EN	Scroll Pause
@@ -3861,7 +3846,7 @@ SETUP_SCROLLRATE
 	ZH_CN	卷动速度
 
 SETUP_SCROLLRATE_DESC
-	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Scroll Pixels a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Scroll Pixels jednou za každou sekundu Scroll Rate). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,033 sekundy.
+	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Pixely rolování a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Pixely rolování jednou za každou sekundu Rychlostí rolování). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,033 sekundy.
 	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden bestemmer hvor lang tid der går mellem, at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles for tilsammen at bestemme hastigheden og billedkvaliteten (teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder). På afspillere med et tegndisplay bestemmer indstillingen hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,033 sekunder er standard.
 	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Displays vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert ist 0,033 Sekunden.
 	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.033 seconds is the default.
@@ -3977,7 +3962,7 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
 SETUP_PLUGINS_SAFEMODE
-	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici zásuvné moduly. Stále je můžete povolit nebo zakázat, abyste vyřešili problémy s instalací.
+	CS	Vezměte na vědomí: protože Logitech Media Server běží v bezpečném režimu, nejsou k dispozici zásuvné moduly. Přesto je můžete povolit nebo zakázat, abyste vyřešili problémy s instalací.
 	DA	Bemærk: Da Logitech Media Server kører i fejlsikret tilstand, kan du ikke bruge udvidelsesmodulerne. Du kan stadig slå dem til og fra for at løse problemer med installationen.
 	DE	Hinweis: Da Sie Logitech Media Server im abgesicherten Modus ausführen, sind die Plugins nicht verfügbar. Sie können sie trotzdem aktivieren bzw. deaktivieren, wenn es Probleme mit der Installation gibt.
 	EN	Please note: as you're running Logitech Media Server in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
@@ -4077,7 +4062,7 @@ SETUP_FORMATS_PREFER_NATIVE
 	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
 	EN	Prefer native format (decoding on the player) whenever possible
 	FR	Utiliser le format natif si possible (éviter le transcodage)
-	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler) 
+	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler)
 
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
@@ -4158,21 +4143,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	SV	Avaktiverade filtillägg för ljudfiler
 	ZH_CN	撤销音频文件扩展名
 
-SETUP_DISABLEDEXTENSIONSVIDEO
-	CS	Zakázáné přípony video souborů
-	DA	Fravalgte videofiltypenavne
-	DE	Deaktivierte Dateierweiterungen für Videos
-	EN	Disabled Video File Extensions
-	ES	Extensiones de archivos de vídeo desactivadas
-	FI	Videotiedostojen tunnisteet poistettu käytöstä
-	FR	Extensions de fichiers vidéo désactivées
-	IT	Estensioni file video disattivate
-	NL	Uitgeschakelde extensies voor video bestanden
-	NO	Deaktiverte videofilendelser
-	PL	Wyłączone rozszerzenia plików wideo
-	RU	Отключенные расширения видеофайлов
-	SV	Avaktiverade filtillägg för videofiler
-
 SETUP_DISABLEDEXTENSIONSIMAGES
 	CS	Zakázáné přípony souborů obrázku
 	DA	Fravalgte filtypenavne for billedfiler
@@ -4189,7 +4159,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES
 	SV	Avaktiverade filtillägg för bildfiler
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
-	CS	Logitech Media Server vyhledá ve složkách s médii všechny podporované typy souborů (zvukové soubory a kompilační listy (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: cue, mp4, aac
+	CS	Logitech Media Server vyhledá ve složkách s médii všechny podporované typy souborů (zvukové soubory a seznamy sbírek (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: cue, mp4, aac
 	DA	Logitech Media Server søger efter understøttede filtyper (lydfiler og cue-ark) i mapperne med mediefiler. Hvis du vil forhindre at der søges efter bestemte filtyper når mappen bliver gennemsøgt, skal du angive filtypenavnene i en kommaadskilt liste nedenfor. For eksempel: cue, mp4, aac
 	DE	Logitech Media Server durchsucht die Medienordner nach allen unterstützten Dateitypen (Audiodateien und Cue Sheets). Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: cue, mp4, aac
 	EN	Logitech Media Server will look in the Media Folders for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
@@ -4204,21 +4174,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	RU	Logitech Media Server выполняет в папках мультимедиа поиск файлов всех поддерживаемых типов (аудиофайлов и плей-листов). Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: cue, mp4, aac.
 	SV	Logitech Media Server söker igenom mediemapparna efter alla filtyper som stöds (ljudfiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av musikmappen kan du ange filtilläggen för de filer som ska undantas nedan i en kommaavgränsad lista. Exempel: cue, mp4, aac
 	ZH_CN	Logitech Media Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
-
-SETUP_DISABLEDEXTENSIONSVIDEO_DESC
-	CS	Server vyhledá ve složkách s médii všechny podporované typy videosouborů. Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: mov, mkv.
-	DA	Serveren søger efter alle understøttede videofiltyper i mapperne med mediefiler. Du kan fravælge specifikke filtyper når du gennemsøger mappen med musikfiler ved at angive en kommasepareret liste over filtypenavne nedenfor, fx. mov, mkv
-	DE	Der Server durchsucht die Medienordner nach allen unterstützten Videodateitypen. Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: mov, mkv
-	EN	The server will look in the Media Folders for all supported video file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: mov, mkv
-	ES	El servidor buscará en las carpetas de material multimedia todos los tipos de archivo de vídeo compatibles. Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: mov, mkv.
-	FI	Palvelin etsii mediakansioista kaikkia tuettuja videotiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotunnisteat alle pilkuin erotettuina, esimerkiksi: mov, mkv.
-	FR	Le serveur recherche tous les types de fichiers vidéo pris en charge dans les dossiers multimédias. Pour exclure un type de fichier vidéo de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : mov, mkv
-	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file video supportati. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio: mov, mkv e così via.
-	NL	Logitech Media Server zoekt in de mediamappen naar alle ondersteunde video bestandstypen. Als je bepaalde bestandstypen wilt uitschakelen zodat deze niet worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv. mov, mkv
-	NO	Serveren ser etter alle støttede videofilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: mov, mkv
-	PL	Serwer wyszuka w folderach multimediów wszystkie obsługiwane typy plików wideo. Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: mov, mkv
-	RU	Сервер выполнит в папках мультимедиа поиск видеофайлов всех поддерживаемых типов. Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: mov, mkv
-	SV	Servern letar i mediemapparna efter alla videofiler i format som stöds. Om du vill förhindra att vissa filtyper behandlas när musikmappen genomsöks kan du ange en kommaavgränsad lista med filnamnstillägg nedan. T.ex. mov, mkv
 
 SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	CS	Server vyhledá ve složkách s médii všechny podporované typy souborů obrázku. Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: bmp, gif.
@@ -4392,7 +4347,7 @@ SETUP_PLAYERNAME_DESC
 	ZH_CN	为了方便在网页中的辨认，您可以为这个播放机取名。
 
 SETUP_RESET_PLAYER
-	CS	Obnovit předvolby přehrávače
+	CS	Obnovení předvoleb přehrávače
 	DA	Nulstil indstillinger for afspiller
 	DE	Player-Einstellungen zurücksetzen
 	EN	Reset player preferences
@@ -4669,7 +4624,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	ZH_CN	当前播放歌曲的信息都能显示在播放机的显示屏上。您可以选择您所要显示的信息。
 
 SETUP_SYNCHRONIZE
-	CS	Synchronizovat
+	CS	Synchronizace
 	DA	Synkroniser
 	DE	Synchronisieren
 	EN	Synchronize
@@ -4767,7 +4722,7 @@ SETUP_SYNCVOLUME_OFF
 	ZH_CN	不要把播放机的音量同步化
 
 SETUP_SYNCVOLUME
-	CS	Synchronizovat hlasitost
+	CS	Synchronizace hlasitosti
 	DA	Synkroniser lydstyrke
 	DE	Lautstärke synchronisieren
 	EN	Synchronize Volume
@@ -4787,7 +4742,7 @@ SETUP_SYNCVOLUME
 	ZH_CN	音量同步化
 
 SETUP_SYNCVOLUME_DESC
-	CS	Můžete si zvolit, zda hlasitosti synchronizovaných přehrávačů se budou navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klikněte na Změnit.
+	CS	Můžete si zvolit, zda se budou úrovně hlasitosti synchronizovaných přehrávačů navzájem sledovat nebo budou nezávislé. Níže proveďte volbu a klikněte na Změnit.
 	DA	Du kan vælge om lydstyrken på de synkroniserede afspillere skal være ens eller uafhængig af hinanden. Vælg nedenfor, og klik på Skift.
 	DE	Sie können die Lautstärke synchronisierter Player aufeinander abstimmen oder unabhängig belassen. Wählen Sie die gewünschte Option und klicken Sie auf 'Ändern'.
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
@@ -4842,7 +4797,7 @@ SETUP_SYNCPOWER_OFF
 	ZH_CN	电源开关独立化
 
 SETUP_SYNCPOWER
-	CS	Synchronizovat napájení
+	CS	Synchronizace napájení
 	DA	Synkroniser tænd/sluk
 	DE	Ein-/Ausschalten synchronisieren
 	EN	Synchronize Power
@@ -5195,7 +5150,7 @@ SETUP_PLAYDELAY_DESC
 	SV	Det kan vara en märkbar skillnad mellan hur mycket ett spår som spelaren rapporterar till Logitech Media Server att den har spelat upp och hur mycket av spåret som lyssnaren faktiskt hört. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. Här kan du ange fördröjningen så att den kan tas med i beräkningen när synkroniseringen justeras i Logitech Media Server.
 
 SETUP_MINSYNCADJUST
-	CS	Nastavení minimální synchronizace (ms)
+	CS	Úprava minimální synchronizace (ms)
 	DA	Mindste justering ved synkronisering (ms)
 	DE	Minimale Synchronisationsanpassung (ms)
 	EN	Minimum Synchronization Adjustment (ms)
@@ -5242,7 +5197,7 @@ SETUP_PACKETLATENCY
 	SV	Svarstid för nätverkspaket (ms)
 
 SETUP_PACKETLATENCY_DESC
-	CS	Logitech Media Server automaticky měří zpoždění sítě mezi sebou a přehrávačem. To je důležité při udržování synchronizace. Občas mohou být tato měření příliš rozporná a nelze je použít a v tomto případě zde můžete zadat obvyklou hodnotu.
+	CS	Logitech Media Server automaticky měří zpoždění sítě mezi ním a přehrávačem. To je důležité při udržování synchronizace. Občas mohou být tato měření příliš nekonzistentní, než aby byla užitečná a v tomto případě zde můžete zadat obvyklou hodnotu.
 	DA	Logitech Media Server måler automatisk netværksforsinkelsen mellem sig selv og afspilleren. Det er vigtigt når synkroniseringen skal opretholdes. Det sker at disse mål er for inkonsistente til at være praktisk anvendelige, og i så fald kan du angive en gennemsnitsværdi her.
 	DE	Logitech Media Server misst automatisch die Netzwerk-Wartezeit zwischen der Anwendung und dem Player. Dies ist zum Beibehalten der Synchronisation wichtig. Wenn diese Messungen zu inkonsistent sind, empfehlen wir, hier einen typischen Wert einzugeben.
 	EN	Logitech Media Server automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occasionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
@@ -5470,7 +5425,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	ZH_CN	当播放MP3音频时，一些音频接收器和数模转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音频。缺省值为0。0.25秒的值对许多接收器都已相当足够。
 
 SETUP_REPLAYGAINMODE
-	CS	Úprava hlasitosti/Normalizace hlasitosti
+	CS	Úprava hlasitosti (Replay Gain)
 	DA	Justering af lydstyrken (Replay Gain)
 	DE	Lautstärken-Normalisierung (Replay Gain)
 	EN	Volume Adjustment/Replay Gain
@@ -5487,7 +5442,7 @@ SETUP_REPLAYGAINMODE
 	ZH_CN	音量调整/重播增益
 
 SETUP_REPLAYGAINMODE_DESC
-	CS	Některé zvukové skladby obsahují nastavení hlasitosti, čili "Zesílení při přehrání", tj. informace, které lze použít při přehrávání tak, aby skladby a alba zněly stejně hlasitě. Přehrávač může tuto informaci využít. "Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. "Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale přitom rozdíly v hlasitosti mezi skladbami v albu zůstanou zachovány. Volba "Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro mixovaný seznam skladeb.
+	CS	Některé zvukové skladby obsahují informace o nastavení hlasitosti, neboli "Replay Gain", které lze použít při přehrávání, aby skladby a alba zněly stejně hlasitě. Pokud je tato informace přítomna, přehrávač ji může použít. "Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. "Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale aby byly zachovány rozdíly v hlasitosti mezi skladbami v rámci alba. Volba "Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro smíšený seznam skladeb.
 	DA	Nogle lydfiler indeholder oplysninger om lydstyrkejustering, også kaldet Replay Gain. Oplysningerne kan anvendes ved afspilningen for at sikre at forskellige nummer og album har den samme lydstyrke. Afspilleren kan anvende denne information hvis den findes. Forstærkning af nummer kan bruges til at sikre at alle numre har samme lydstyrke. Forstærkning af album kan bruges til at sikre at alle album har samme lydstyrke, men forskellen i lydstyrke mellem de enkelte numre på et album bevares. Dynamisk forstærkning anvender forstærkning af album hvis flere på hinanden følgende numre er fra samme album, og forstærkning af numre hvis afspilningslisten består af numre fra forskellige album.
 	DE	Titel können Informationen zur Normalisierung der Lautstärke enthalten ('Replay Gain'), damit alle Titel und Alben mit derselben Lautstärke wiedergegeben werden können. Der Player kann diese Information nutzen. 'Titel-Normalisierung' stellt sicher, dass alle Titel gleich laut wiedergegeben werden. 'Album-Normalisierung' stellt sicher, dass alle Alben gleich laut wiedergegeben werden, wobei Unterschiede in der Lautstärke in den Titeln eines Albums erhalten bleiben. 'Intelligente' Normalisierung nutzt die Album-Normalisierung, wenn aufeinanderfolgende Titel vom selben Album stammen bzw. die Titel-Normalisierung für gemischte Wiedergabelisten.
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. The player can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
@@ -5717,7 +5672,7 @@ SETUP_OUTPUT_CHANNELS
 	SV	Utgångskanalläge
 
 SETUP_OUTPUT_CHANNELS_DESC
-	CS	Tento přehrávač můžete nakonfigurovat, aby přehrával buď levý nebo pravý kanál. Tuto funkci můžete například využít k vytvoření stereo efektu ze 2 synchronizovaných rádií Squeezebox.
+	CS	Tento přehrávač můžete nakonfigurovat tak, aby přehrával pouze levý nebo pravý kanál. To lze použít například k vytvoření stereofonního obrazu ze 2 synchronizovaných rádií Squeezebox. Oba kanály lze také zkombinovat do monofonní podoby.
 	DA	Du kan konfigurere afspilleren til kun at spille i den venstre eller højre kanal. Dette kan bruges til at oprette et stereobillede fra to synkroniserede Squeezebox-radioer, f.eks.
 	DE	Sie können diesen Player so konfigurieren, dass er nur den linken oder rechten Kanal wiedergibt. Diese Option kann zum Beispiel verwendet werden, um ein Stereobild über zwei synchronisierte Squeezebox Radios zu erstellen. Die beiden Kanäle können auch zur Wiedergabe in Mono kombiniert werden.
 	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example. Both channels can also be combined to mono.
@@ -6026,7 +5981,7 @@ SETUP_TRANSITIONSAMPLERESTRICTION_DESC
 	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
 	FR	Il peut être approprié de désactiver les transitions entre les pistes ayant des fréquences d'échantillonnage différentes. Cela peut être nécessaire si la platine génère du bruit pendant ces transitions.
 	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som bara genererar oväsen vid sådan korstoning.
-	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen. 
+	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen.
 
 SETUP_TITLEFORMAT
 	CS	Formát názvu
@@ -6148,7 +6103,7 @@ SETUP_PLAYLISTSUFFIX
 	ZH_CN	词尾：
 
 SETUP_SHOWYEAR
-	CS	U alb zobrazovat rok
+	CS	Zobrazení roku s alby
 	DA	Vis årstal ved album
 	DE	Jahr mit Alben anzeigen
 	EN	Show Year with Albums
@@ -6166,7 +6121,7 @@ SETUP_SHOWYEAR
 	ZH_CN	年份与专辑一同显示
 
 SETUP_SHOWYEAR_DESC
-	CS	Můžete si zvolit, zda se bude zobrazovat rok alba při procházení podle alb nebo podle obalů alb. Pokud je to povoleno, rok alba se bude zobrazovat vedle názvu alba.
+	CS	Můžete si zvolit zobrazení roku alba při procházení podle Alb nebo podle Obalů alb. Pokud je tato možnost povolena, rok alba se zobrazí vedle názvu alba.
 	DA	Du kan vælge om de enkelte albums udgivelsesår skal vises når du søger efter album eller covere. I givet fald vises et albums udgivelsesår ved siden af titlen.
 	DE	Ist diese Option aktiviert, wird beim Suchen nach Alben oder Plattenhüllen das Erscheinungsjahr neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
@@ -6184,7 +6139,7 @@ SETUP_SHOWYEAR_DESC
 	ZH_CN	您可以选择通过浏览专辑或浏览专辑图象时是否一同显示专辑的年份。当您选择一同显示时，年份信息将显示在专辑标题旁边。
 
 SETUP_SHOWARTIST
-	CS	Zobrazit interpreta s alby
+	CS	Zobrazení interpreta s alby
 	DA	Vis kunstner ved album
 	DE	Interpreten mit Alben anzeigen
 	EN	Show Artist with Albums
@@ -6201,7 +6156,7 @@ SETUP_SHOWARTIST
 	ZH_CN	艺人与专辑一同显示
 
 SETUP_SHOWARTIST_DESC
-	CS	Můžete si zvolit zobrazení interpreta při procházení alb. Pokud je to povoleno, interpret alba bude zobrazen vedle názvu alba.
+	CS	Můžete si zvolit zobrazení interpreta při procházení Alb. Pokud je tato možnost povolena, interpret alba se zobrazí vedle názvu alba.
 	DA	Du kan vælge om kunstnerens navn skal vises når du søger efter album. I givet fald vises kunstnerens navn ved siden af titlen.
 	DE	Ist diese Option aktiviert, wird beim Suchen nach Alben der Name des Interpreten neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album's artist will be shown next to the album title.
@@ -6218,7 +6173,7 @@ SETUP_SHOWARTIST_DESC
 	ZH_CN	您可以选择通过浏览专辑时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在专辑标题旁边。
 
 SETUP_GUESSFILEFORMATS
-	CS	Odhadnout formáty štítků (tagů)
+	CS	Odhadnutí formátů štítků (tagů)
 	DA	Gæt format for mærker
 	DE	Tag-Format erraten
 	EN	Guess Tags Formats
@@ -6454,7 +6409,7 @@ SETUP_MEDIADIRS_DESC
 	SV	Du kan ange en eller flera mappar som innehåller mediefiler som Logitech Media Server ska söka igenom och lägga till i ditt mediebibliotek. Ange sökvägarna till mappen nedan.
 
 SETUP_SKIPSENTINEL
-	CS	Přeskočit označené složky
+	CS	Přeskočení označeného názvu souboru
 	DE	Markierte Ordner überspringen
 	EN	Skip Sentinel Filename
 	FR	Nom du fichier d'exclusion
@@ -6579,7 +6534,7 @@ SETUP_PLAYLISTDIR_DESC
 	ZH_CN	您可以指定一个作为保存播放表的文件夹。（如果您不打算保存任何播放表，请腾空。）
 
 SETUP_RESCAN
-	CS	Znovu prohledat knihovnu médií
+	CS	Znovu prohledání knihovny médií
 	DA	Gennemsøg mediebibliotek igen
 	DE	Medienbibliothek erneut durchsuchen
 	EN	Rescan Media Library
@@ -7136,7 +7091,7 @@ SETUP_HTTPPORT_OK
 	ZH_CN	当前正使用端口：
 
 SETUP_SAVESHUFFLED
-	CS	Uložit seznam skladeb v náhodném pořadí
+	CS	Uložení seznamu skladeb v náhodném pořadí
 	DA	Gem blandet afspilningsliste
 	DE	Zufalls-Wiedergabeliste speichern
 	EN	Save Shuffled Playlist
@@ -7255,7 +7210,7 @@ LOCAL_RATING_STORAGE
 SETUP_CHECKVERSION
 	CS	Aktualizace softwaru
 	DA	Softwareopdateringer
-	DE	Aktualisierte Software
+	DE	Softwareaktualisierungen
 	EN	Software Updates
 	ES	Actualizaciones de software
 	FI	Ohjelmistopäivitykset
@@ -7272,7 +7227,7 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	Logitech Media Server se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
+	CS	Logitech Media Server se může každý den automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
 	DA	Logitech Media Server kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Logitech Media Servers webbaserede brugerflade.
 	DE	Logitech Media Server kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Logitech Media Server gemeldet.
 	EN	Logitech Media Server can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Logitech Media Server's web interface.
@@ -7689,7 +7644,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	SV	Ytterligare spellisteknappar
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
-	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávání, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
+	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávatelné položky, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
 	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.
 	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.
 	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".
@@ -7704,7 +7659,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
 	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.
 
 SETUP_SEARCHSUBSTRING
-	CS	Hledat ve slovech
+	CS	Hledání ve slovech
 	DA	Søg i ord
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
@@ -7772,7 +7727,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让Squeezebox由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	CS	Filtrovat žánry na úrovni alba a skladby.
+	CS	Filtrování žánrů na úrovni alba a skladby.
 	DA	Filtrer genrer på album- og nummernivau.
 	DE	Stilrichtungen auf Album- und Titelebene filtern
 	EN	Filter Genres at the Album & Track Level.
@@ -7806,7 +7761,7 @@ SETUP_NOGENREFILTER_1
 	ZH_CN	显示某个艺人所属的音轨和专辑
 
 SETUP_NOGENREFILTER_0
-	CS	Zobrazovat pouze skladby nebo alba odpovídající vybranému žánru pro interpreta
+	CS	Zobrazit pouze skladby nebo alba odpovídající vybranému žánru pro interpreta
 	DA	Vis kun numre og album som svarer til den valgte genre for en kunstner
 	DE	Nur zur gewählten Stilrichtung passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected genre for an artist
@@ -7840,6 +7795,7 @@ SETUP_NOGENREFILTER_DESC
 	ZH_CN	您可以在当浏览音乐曲风时过滤并只显示和音乐曲风匹配的专辑和音轨。
 
 SETUP_NOROLEFILTER
+	CS	Filtrování rolí přispěvatelů na úrovni alba a skladby
 	DE	Interpreten-Rolle auf Album- und Titelebene filtern
 	EN	Filter Contributor Roles at the Album & Track Level
 	FR	Portée du filtre sur le rôle de l'artiste
@@ -7849,6 +7805,7 @@ SETUP_NOROLEFILTER
 	SV	Filtrera artistroller på album- och låtnivå
 
 SETUP_NOROLEFILTER_1
+	CS	Zobrazit všechna alba a skladby interpreta
 	DE	Alle Titel und Alben eines Interpreten anzeigen
 	EN	Show all albums and tracks for an artist
 	FR	Afficher tous les albums et morceaux d'un artiste
@@ -7858,6 +7815,7 @@ SETUP_NOROLEFILTER_1
 	SV	Visa alla album och låtar för en artist
 
 SETUP_NOROLEFILTER_0
+	CS	Zobrazit pouze skladby nebo alba, které odpovídají vybrané roli interpreta
 	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected role for an artist
 	FR	Afficher uniquement les albums et les morceaux correspondant au rôle de l'artiste
@@ -7867,6 +7825,7 @@ SETUP_NOROLEFILTER_0
 	SV	Visa bara album och låtar där artisten har den valda rollen.
 
 SETUP_NOROLEFILTER_DESC
+	CS	Při procházení interpretů lze provádět filtrování, aby se zobrazovala pouze alba a skladby, které odpovídají vybrané roli (např. ALBUMARTIST, COMPOSER atd.).
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
@@ -7914,7 +7873,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	ZH_CN	在浏览及搜寻艺人时，有关作曲家及乐队的歌曲信息可以包括一同显示。
 
 SETUP_PERSISTPLAYLISTS
-	CS	Udržovat seznamy skladeb klientů
+	CS	Udržování seznamů skladeb klientů
 	DA	Gem afspillernes sidste afspilningsliste
 	DE	Geräte-Wiedergabelisten beibehalten
 	EN	Maintain Client Playlists
@@ -7990,7 +7949,7 @@ SETUP_PERSISTPLAYLISTS_0
 	ZH_CN	不要记住播放表
 
 SETUP_RESHUFFLEONREPEAT
-	CS	Při opakování znovu seřadit v náhodném pořadí
+	CS	Znovu seřazení v náhodném pořadí při opakování
 	DA	Ny vilkårlig rækkefølge ved gentagelse
 	DE	Erneutes Mischen bei Wiederholung
 	EN	Reshuffle on Repeat
@@ -8009,7 +7968,7 @@ SETUP_RESHUFFLEONREPEAT
 	ZH_CN	在重复后再度随机抽样
 
 SETUP_RESHUFFLEONREPEAT_DESC
-	CS	Pokud je to požadováno, Logitech Media Server může opět opět náhodně seřadit seznamy skladeb po každém úplném přehrání seznamu skladeb.
+	CS	Pokud je to požadováno, Logitech Media Server může seřadit náhodně seznamy skladeb po každém úplném přehrání seznamu skladeb.
 	DA	Numrene på afspilningslisten kan blandes i en ny vilkårlig rækkefølge når alle numrene er afspillet og afspilningen starter forfra.
 	DE	Logitech Media Server kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
 	EN	Logitech Media Server can reshuffle shuffled playlists after each complete pass through the list, if desired.
@@ -8047,7 +8006,7 @@ SETUP_RESHUFFLEONREPEAT_0
 	ZH_CN	保留原有次序
 
 SETUP_RESHUFFLEONREPEAT_1
-	CS	Pokaždé náhodně seřadit
+	CS	Pokaždé seřadit náhodně
 	DA	Ny vilkårlig rækkefølge hver gang
 	DE	Jedesmal neu mischen
 	EN	Reshuffle each time
@@ -8066,7 +8025,7 @@ SETUP_RESHUFFLEONREPEAT_1
 	ZH_CN	在每一次播放时再度随机抽样决定次序。
 
 SETUP_PLAYTRACKALBUM
-	CS	Přehrát další skladby v albu
+	CS	Přehrání další skladby v albu
 	DA	Afspil andre numre fra album
 	DE	Andere Titel des Albums wiedergeben
 	EN	Play Other Songs In Album
@@ -8208,7 +8167,7 @@ SETUP_SPLITLIST_DESC
 	SV	Logitech Media Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
 SETUP_ARTISTS_BROWSE_MODES
-	CS	Procházet interprety
+	CS	Procházení interpretů
 	DA	Gennemse kunstnere
 	DE	Künstler durchsuchen
 	EN	Browse Artists
@@ -8286,7 +8245,7 @@ SETUP_BROWSEAGELIMIT_DESC
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
 
 SETUP_SCAN_ON_PREF_CHANGE
-	CS	Spouštění skenování při změnách předvoleb
+	CS	Spouštění prohledávání při změnách předvoleb
 	DE	Bei Einstellungesänderungen Sammlung durchsuchen
 	EN	Trigger Scan on Preference Changes
 	FR	Lancer l'analyse après modification des préférences
@@ -8304,6 +8263,7 @@ SETUP_SCAN_ON_PREF_CHANGE_DESC
 	PL	Niektóre ustawienia wymagają ponownego przeszukania całej Twojej biblioteki multimedialnej do poprawnego działania. Ten proces może być uruchamiany automatycznie, lecz może spowodować zakolejkowanie wielokrotnego przeszukiwania biblioteki w przypadku zmiany kilku ustawień naraz.
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
+	CS	Automaticky spustit prohledávání
 	DE	Durchsuchen automatisch starten
 	EN	Trigger scan automatically
 	FR	Relancer automatiquement l'analyse
@@ -8313,6 +8273,7 @@ SETUP_SCAN_ON_PREF_CHANGE_ON
 	SV	Starta sökningen automatiskt
 
 SETUP_SCAN_ON_PREF_CHANGE_OFF
+	CS	Vyzvat ke kontrole, ale nespustit ji automaticky
 	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
 	EN	Prompt to scan, but don't trigger it automatically
 	FR	Demander avant de lancer l'analyse
@@ -8322,7 +8283,7 @@ SETUP_SCAN_ON_PREF_CHANGE_OFF
 	SV	Fråga om mediebiblioteket skall sökas igenom men starta inte automatiskt
 
 SETUP_SCAN_ON_PREF_CHANGE_PROMPT
-	CS	Některá nastavení vyžadují opětovné prohledání knihovny, aby se projevila. <a href="%s">Kliknutím sem spustíte prohledání.</a>
+	CS	Některá nastavení vyžadují opětovné prohledání knihovny, aby se projevila. <a href="%s">Kliknutím zde spustíte prohledání.</a>
 	DE	Einige Einstellungsänderungen erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
 	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
@@ -8332,7 +8293,7 @@ SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	SV	En del ändringar av inställningarna aktiveras först efter att mediebiblioteket har sökts igenom på nytt. <a href="%s">Klicka här för att starta sökningen.</a>
 
 SETUP_DBHIGHMEM
-	CS	Konfigurovat paměť databáze
+	CS	Konfigurování paměti databáze
 	DA	Konfiguration af databasehukommelse
 	DE	Konfiguration des Datenbankspeichers
 	EN	Database Memory Config
@@ -8377,7 +8338,7 @@ SETUP_DBHIGHMEM_NORMAL
 	SV	Normal
 
 SETUP_DBHIGHMEM_HIGH
-	CS	Vysoký (doporučeno pro přístroje s 1+ GB RAM)
+	CS	Vysoká (doporučeno pro přístroje s 1+ GB RAM)
 	DA	Høj (anbefales til computere med 1+ GB RAM)
 	DE	Hoch (empfohlen für Computer mit 1 GB RAM und mehr)
 	EN	High (recommended for machines with 1+ GB RAM)
@@ -8392,7 +8353,7 @@ SETUP_DBHIGHMEM_HIGH
 	SV	Hög (rekommenderas för datorer med mer än 1 GB RAM)
 
 SETUP_DBHIGHMEM_MAX
-	CS	Maximum (doporučeno pro knihovny s více než 50 000 skladbami a přístroje s více než 2 GB RAM)
+	CS	Maximální (doporučeno pro knihovny s více než 50 000 skladbami a přístroje s více než 2 GB RAM)
 	DE	Maximum (empfohlen für Sammlungen mit mehr als 50'000 Titeln und Computer mit 2 GB RAM und mehr)
 	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
 	FR	Maximum (recommandé pour les bibliothèques de plus de 50 000 titres et les systèmes avec au moins 2 Go de RAM)
@@ -8470,6 +8431,7 @@ SETUP_ENABLE_STATISTICS
 
 SETUP_ENHANCEDHTTP
 	CS	Režim přehrávání datového proudu pro HTTP(S)
+	DE	Streamingmodus für HTTP(S)
 	EN	Streaming mode for HTTP(S)
 	FR	Mode de streaming HTTP(S)
 	NL	Streammethode voor HTTP(S)
@@ -8479,10 +8441,11 @@ SETUP_ENHANCEDHTTP_DESC
 	DE	Logitech Media Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
 	EN	When a HTTP(S) connection to a server fails, Logitech Media Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go
 	FR	Lorsqu'une connexion HTTP(S) échoue, Logitech Media Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou mettre en tampon (Cacher) sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD). Le mode "Cacher" est le meilleur si vous avez de la place disque.
-	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Logitech Media Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd. 
+	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Logitech Media Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd.
 
 SETUP_ENABLE_PERSISTENTHTTP
 	CS	Trvalý režim
+	DE	Persistenter Modus
 	EN	Persistent mode
 	FR	Mode persistent
 	NL	Persistent-modus
@@ -8496,6 +8459,7 @@ SETUP_ENABLE_BUFFEREDHTTP
 
 SETUP_DISABLE_ENHANCEDHTTP
 	CS	Normální přehrávání datového proudu
+	DE	Normaler Modus
 	EN	Normal streaming
 	FR	Streaming normal
 	NL	Normaal streamen
@@ -8717,7 +8681,7 @@ SETUP_ITEMSPERPAGE_DESC
 	ZH_CN	这个选项设定各个网页所显示的项目数量。
 
 SETUP_TCPREADMAXIMUM
-	CS	Maximální počet TCP zásuvek k načtení za jeden průběh
+	CS	Maximální počet soketů TCP ke čtení v jednom průchodu
 	DA	Maksimale antal TCP-sokler der kan læses pr. gennemgang
 	DE	Maximale Anzahl der zu lesenden TCP-Sockets pro Durchlauf
 	EN	Maximum number of TCP sockets to read per pass
@@ -8736,7 +8700,7 @@ SETUP_TCPREADMAXIMUM
 	ZH_CN	每次通行时读取TCP插口的最大数量
 
 SETUP_TCPWRITEMAXIMUM
-	CS	Maximální počet TCP socketů zapsaných na jeden průchod
+	CS	Maximální počet soketů TCP pro zápis v jednom průchodu
 	DA	Maksimale antal TCP-sokler der kan skrives pr. gennemgang
 	DE	Maximale Anzahl der zu schreibenden TCP-Sockets pro Durchlauf
 	EN	Maximum number of TCP sockets to write per pass
@@ -8774,7 +8738,7 @@ SETUP_UDPCHUNKSIZE
 	ZH_CN	最大UDP数据大小
 
 SETUP_WEBPROXY
-	CS	Webový Proxy server
+	CS	Webový proxy server
 	DA	Webproxy
 	DE	Web-Proxy
 	EN	Web Proxy
@@ -8792,7 +8756,7 @@ SETUP_WEBPROXY
 	ZH_CN	网代理
 
 SETUP_WEBPROXY_DESC
-	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení k Logitech Media Serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
+	CS	Můžete specifikovat IP adresu a port pro HTTP/Webový proxy server, které se použijí při připojení k Logitech Media Serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP webový proxy server, ponechte toto pole prázdné.
 	DA	Du kan specificere IP-adresse og portnummer til en HTTP/Web-proxy som Logitech Media Server skal anvende når der tilsluttes servere udenfor dit lokale netværk. Anvend formatet xx.xx.xx.xx:yyyy, hvor xx.xx.xx.xx er proxyens IP-adresse og yyyy er proxyserverens portnummer. Lad feltet være tomt hvis du ikke ønsker at anvende en HTTP-proxy.
 	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Logitech Media Server verwenden soll, um auf Server außerhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxys und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when Logitech Media Server connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
@@ -8828,6 +8792,7 @@ SETUP_SHOWBUFFERFULLNESS
 	ZH_CN	显示缓冲存储器的丰满度
 
 SETUP_CORS_ALLOWED_HOSTS
+	CS	Povolení hostitelé CORS
 	DE	CORS akzeptierte Hosts
 	EN	CORS Allowed Hosts
 	FR	Domaines autorisés via CORS
@@ -8835,6 +8800,7 @@ SETUP_CORS_ALLOWED_HOSTS
 	SV	Tillåtna CORS servrar
 
 SETUP_CORS_ALLOWED_HOSTS_DESC
+	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Logitech Media Serveru. Položky musí obsahovat protokol (např. "http"), plný název hostitele ("www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako "http://www.example.com".
 	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Logitech Media Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "http://www.example.com".
 	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Logitech Media Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "http://www.example.com" should be good enough.
 	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Logitech Media Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "http://www.exemple.com" devrait suffire.
@@ -8876,6 +8842,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，Logitech Media Server会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="/html/docs/http.html#csrf">帮助部分</a>。
 
 SETUP_INSECURE_HTTPS
+	CS	Nezabezpečené HTTPS
 	DE	Unsicheres HTTPS
 	EN	Insecure HTTPS
 	FR	HTTPS non sécurisé
@@ -8883,6 +8850,7 @@ SETUP_INSECURE_HTTPS
 	NL	Onveilige HTTPS
 
 SETUP_INSECURE_HTTPS2
+	CS	Vypnout ověřování certifikátů u připojení HTTPS.
 	DE	Server Zertifikate bei HTTPS Verbindungen nicht überprüfen.
 	EN	Switch off certificate verification on HTTPS connections.
 	FR	Désactiver la vérification des certificats sur les connexions HTTPS.
@@ -8890,6 +8858,7 @@ SETUP_INSECURE_HTTPS2
 	NL	Uitschakelen van certificaatverificatie bij HTTPS verbindingen
 
 SETUP_INSECURE_HTTPS_DESC
+	CS	Povolením možnosti "Nezabezpečené HTTPS" se vypne ověřování certifikátů, pokud Logitech Media Server funguje jako klient HTTPS. <b>Povolení této možnosti se nedoporučuje!</b> Vypnutí ověřování certifikátů je špatnou praxí, ale za určitých okolností může být nezbytné, např. když nelze aktualizovat knihovny.
 	DE	"Unsicheres HTTPS" bedeutet, dass Logitech Media Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Logitech Media Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
@@ -8897,7 +8866,7 @@ SETUP_INSECURE_HTTPS_DESC
 	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Logitech Media Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is een slechte gewoonte om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden bijgewerkt.
 
 SETUP_IPFILTER_HEAD
-	CS	Blokovat příchozí spojení
+	CS	Blokování příchozích spojení
 	DA	Blokér indgående forbindelser
 	DE	Eingehende Verbindungen blockieren
 	EN	Block Incoming Connections
@@ -9081,7 +9050,7 @@ SETUP_CHANGES_SAVED
 	SV	Ändringarna har sparats.
 
 SETUP_NO_AUTHORIZE
-	CS	Není chráněno heslem
+	CS	Bez ochrany heslem
 	DA	Beskyt ikke med adgangskode
 	DE	Kein Kennwortschutz
 	EN	No password protection
@@ -9119,7 +9088,7 @@ SETUP_AUTHORIZE
 	ZH_CN	密码保护
 
 SETUP_AUTHORIZE_DESC
-	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Logitech Media Server. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Logitech Media Server zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
+	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Logitech Media Serveru. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Logitech Media Serveru zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
 	DA	Du kan vælge at beskytte adgangen til Logitech Media Servers fjernbetjening med en adgangskode. Vælg Beskyt med adgangskode, angiv et brugernavn og en adgangskode, og klik på Skift. Når du herefter ønsker at bruge Logitech Media Servers fjernbetjening, skal du angive brugernavnet og adgangskoden i browseren.
 	DE	Sie können Logitech Media Server Remote Control mit einem Kennwort schützen. Klicken Sie unten auf 'Kennwortschutz', geben Sie einen Benutzernamen und ein Kennwort ein, und klicken Sie auf 'Ändern'. Wenn Sie dann Logitech Media Server Remote Control aufrufen, müssen Sie diesen Benutzernamen und das Kennwort eingeben.
 	EN	You can choose to password protect Logitech Media Server Remote Control. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use Logitech Media Server Remote Control, you'll need to enter this username and password in your web browser.
@@ -9191,7 +9160,7 @@ SETUP_PASSWORD
 	ZH_CN	密码
 
 SETUP_PASSWORD_REPEAT
-	CS	Potvrdit heslo
+	CS	Potvrzení hesla
 	DA	Bekræft adgangskode
 	DE	Kennwort bestätigen
 	EN	Confirm Password
@@ -9206,7 +9175,7 @@ SETUP_PASSWORD_REPEAT
 	SV	Bekräfta lösenord
 
 SETUP_PASSWORD_MISMATCH
-	CS	Vámi zadaná hesla si neodpovídají.
+	CS	Vámi zadaná hesla se neshodují.
 	DA	Adgangskoderne er ikke ens.
 	DE	Die eingegebenen Kennwörter stimmen nicht überein.
 	EN	The passwords you entered do not match.
@@ -9504,7 +9473,7 @@ SETUP_SN_SYNC
 	SV	mysqueezebox.com-integration
 
 SETUP_SN_SYNC_DESC
-	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Server a mysqueezebox.com. Tuto funkci vypnete volbou Zakázáno.
+	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Serverem a mysqueezebox.com. Chcete-li tuto funkci zakázat, vyberte níže možnost Zakázáno.
 	DA	Som standard synkroniseres mange af afspillerindstillingerne mellem Logitech Media Server og mysqueezebox.com. Du kan deaktivere denne funktion ved at vælge Deaktiver nedenfor.
 	DE	Standardmäßig werden zahlreiche Player-Einstellungen zwischen Logitech Media Server und mysqueezebox.com synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
 	EN	By default, many player settings are synchronized between Logitech Media Server and mysqueezebox.com.  To disable this feature, select the Disabled option below.
@@ -9609,7 +9578,7 @@ SETUP_SN_REPORT_STATS_DISABLE
 	SV	Nej, rapportera inte statistik.
 
 SETUP_NO_JAVASCRIPT
-	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Classic</a>.
+	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Klasický</a>.
 	DA	Du skal bruge en forholdsvis ny browser for at få adgang til Logitech Media Server (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 eller senere), og JavaScript skal være aktiveret i browseren. Alternativt kan du benytte et enklere layout, fx <a href="/Classic/?skipWizard=1">Klassisk</a>.
 	DE	Für den Zugriff auf Logitech Media Server benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> wählen.
 	EN	In order to access Logitech Media Server, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a>.
@@ -9624,7 +9593,7 @@ SETUP_NO_JAVASCRIPT
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Logitech Media Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
 SETUP_WIZARD_SQN_PLEASE
-	CS	Pro pokračování se přihlaste pomocí e-mailu mysqueezebox.com a hesla.
+	CS	Pro pokračování se přihlaste pomocí e-mailu a hesla mysqueezebox.com.
 	DA	Du skal logge på med din e-mail-adresse og adgangskode til mysqueezebox.com for at fortsætte.
 	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-Mail-Adresse und Ihrem mysqueezebox.com-Kennwort an, um fortzufahren.
 	EN	Please sign in with your mysqueezebox.com email and password to continue.
@@ -9684,7 +9653,7 @@ SETUP_WIZARD_SHARE_WIN
 	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du sparat på en annan dator eller på en delad nätverksenhet så kontrollerar du att den delade enheten har monterats och är tillgänglig på ditt filsystem. När enheten är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till enheten du vill ha tillgång till kan du ange den nedan.
 
 SETUP_WIZARD_SHARE_OTHERS
-	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdíleném síťovém svazku, ujistěte se, že je sdílený svazek připojen a dostupný pro váš souborový systém. Jakmile je svazek dostupný, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu ke svazku, ke kterému chcete získat přístup, můžete ji zadat níže..
+	CS	<br/><br/>Pokud chcete přistupovat k médiím uloženým v jiném počítači nebo na sdíleném síťovém svazku, ujistěte se, že je sdílený svazek připojen a dostupný pro váš souborový systém. Jakmile je svazek dostupný, zobrazí se ve výběrovém okně vlevo. Pokud znáte cestu ke svazku, ke kterému chcete získat přístup, můžete ji zadat níže.
 	DA	<br/><br/>Hvis du vil have adgang til mediefiler som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet, og der er adgang til det. Når drevet er klar, kan det vælges i vinduet til venstre. Hvis du kender stien til det drev du vil have adgang til, kan du angive den nedenfor.
 	DE	<br/><br/>Wenn Sie auf Medien zugreifen möchten, die auf einem anderen Computer oder einem Netzwerk-Volume gespeichert sind, vergewissern Sie sich, dass das Volume im Dateisystem verfügbar ist. Verfügbare Volumes werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Volume kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
@@ -9789,7 +9758,7 @@ SETUP_WIZARD_DONE
 	SV	Konfigurationen av Logitech Media Server är klar!
 
 SETUP_WIZARD_DONE_DESC
-	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš Squeezebox.<br/><br/>Pokud jste zvolili místní zdroj hudby, Logitech Media Server nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">kliknutím sem</a> pokračovat na dálkové ovládání Logitech Media Server.
+	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš Squeezebox.<br/><br/>Pokud jste zvolili místní zdroj hudby, Logitech Media Server nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete toto okno zavřít nebo <a href="/">kliknutím zde</a> pokračovat na dálkové ovládání Logitech Media Server.
 	DA	Indstillingerne er gemt. Nu kan du begynde at bruge Squeezebox.<br/><br/>Hvis du valgte en lokal musikkilde, begynder Logitech Media Server at indeksere din musiksamling. Du skal bare have lidt tålmodighed, det varer ikke længe før du kan lytte til alle dine musikfiler.<br/><br/>Du kan lukke vinduet eller <a href="/">klikke her</a> for at gå til Logitech Media Servers fjernbetjening.
 	DE	Die Einstellungen wurden gespeichert. Sie können die Squeezebox jetzt verwenden.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt Logitech Media Server mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier</a> klicken, um Logitech Media Server Remote Control aufzurufen.
 	EN	Your settings have been saved. You're now ready to use your Squeezebox.<br/><br/>If you selected a local music source, Logitech Media Server will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to Logitech Media Server Remote Control.
@@ -9966,7 +9935,7 @@ CURRENT_PLAYER
 	ZH_CN	当前的播放机：
 
 CHOOSE_PLAYER
-	CS	Zvolit přehrávač
+	CS	Vyberte přehrávač
 	DA	Vælg afspiller
 	DE	Player wählen
 	EN	Choose Player
@@ -10467,7 +10436,7 @@ SHUFFLE
 	ZH_CN	随机抽样
 
 SHUFFLE_ON_SONGS
-	CS	Náhodně seřadit skladby
+	CS	Seřadit náhodně podle skladby
 	DA	Vilkårlig rækkefølge af numre
 	DE	Zufällige Titelreihenfolge
 	EN	Shuffle by Song
@@ -10486,7 +10455,7 @@ SHUFFLE_ON_SONGS
 	ZH_CN	由歌曲随机抽样
 
 SHUFFLE_ON_ALBUMS
-	CS	Náhodně seřadit podle alba
+	CS	Seřadit náhodně podle alba
 	DA	Vilkårlig rækkefølge af album
 	DE	Zufällige Albumreihenfolge
 	EN	Shuffle by Album
@@ -10505,7 +10474,7 @@ SHUFFLE_ON_ALBUMS
 	ZH_CN	由专辑随机抽样
 
 SHUFFLE_ON
-	CS	Náhodně seřadit seznam skladeb
+	CS	Seřadit náhodně seznam skladeb
 	DA	Tilfældig rækkefølge
 	DE	Wiedergabeliste mischen
 	EN	Shuffle Playlist
@@ -10818,6 +10787,7 @@ STEREOXL
 	SV	StereoXL
 
 BALANCE
+	CS	Vyvážení
 	EN	Balance
 	FR	Balance
 
@@ -10952,7 +10922,7 @@ HUGE
 	ZH_CN	特大
 
 NONE
-	CS	Žádná
+	CS	Žádný
 	DA	Ingen
 	DE	Keine
 	EN	None
@@ -11016,7 +10986,7 @@ HIGH
 	ZH_CN	高
 
 FULL
-	CS	Tučné
+	CS	Tučný
 	DA	Fuld
 	DE	Voll
 	EN	Full
@@ -11033,7 +11003,7 @@ FULL
 
 LIGHT
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké
+	CS	Tenký
 	DA	Let
 	DE	Light
 	EN	Light
@@ -11049,7 +11019,7 @@ LIGHT
 	SV	Lätt
 
 THREELINE
-	CS	Trojlinka (Threeline)
+	CS	Trojitá linka
 	DA	3 linjer
 	DE	3-zeilig
 	EN	Threeline
@@ -11169,7 +11139,7 @@ SAVE
 	ZH_CN	保存
 
 SAVE_AS
-	CS	Uložit
+	CS	Uložit jako
 	DA	Gem
 	DE	Speichern unter
 	EN	Save as
@@ -12156,6 +12126,7 @@ OGF
 	SV	Ogg FLAC
 
 DFF
+	CS	DFF
 	EN	DFF
 	NO	DFF
 	SV	DFF
@@ -12264,7 +12235,7 @@ FILELENGTH
 	ZH_CN	文件长度
 
 NO_ARTIST
-	CS	Žádný interpret
+	CS	Bez interpreta
 	DA	Ingen kunstner
 	DE	Kein Interpret
 	EN	No Artist
@@ -12283,7 +12254,7 @@ NO_ARTIST
 	ZH_CN	无艺人名
 
 NO_ALBUM
-	CS	Žádné album
+	CS	Bez alba
 	DA	Intet album
 	DE	Kein Album
 	EN	No Album
@@ -12302,7 +12273,7 @@ NO_ALBUM
 	ZH_CN	无专辑
 
 NO_GENRE
-	CS	Žádný žánr
+	CS	Bez žánru
 	DA	Ingen genre
 	DE	Keine Stilrichtung
 	EN	No Genre
@@ -12464,7 +12435,7 @@ PLAYTIME
 	SV	Speltid
 
 BPM
-	CS	Počet čtvrťových not za minutu (Beats Per Minute)
+	CS	Úderů za minutu (Beats Per Minute)
 	DA	Slag i minuttet
 	DE	Beats pro Minute
 	EN	Beats Per Minute
@@ -13450,36 +13421,6 @@ BROWSE_MUSIC_FOLDER
 	SV	Musikmapp
 	ZH_CN	浏览音乐文件夹
 
-BROWSE_VIDEO_FOLDER
-	CS	Složka videí
-	DA	Mappe med videoer
-	DE	Videoordner
-	EN	Video Folder
-	ES	Carpeta de vídeo
-	FI	Videokansio
-	FR	Dossier de vidéos
-	IT	Cartella video
-	NL	Videomap
-	NO	Videomappe
-	PL	Folder wideo
-	RU	Папка видео
-	SV	Videomapp
-
-BROWSE_ALL_VIDEOS
-	CS	Všechny videa
-	DA	Alle videoer
-	DE	Alle Videos
-	EN	All Videos
-	ES	Todos los vídeos
-	FI	Kaikki videot
-	FR	Toutes les vidéos
-	IT	Tutti i video
-	NL	Alle video's
-	NO	Alle videoer
-	PL	Wszystkie wideo
-	RU	Все видеоролики
-	SV	Alla videoklipp
-
 BROWSE_ALL_PICTURES
 	CS	Všechny obrázky
 	DA	Alle billeder
@@ -13511,6 +13452,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	SV	Musikmappen är inte tillgänglig under sökning.
 
 BROWSE_ON_SERVICE
+	CS	Procházet %s
 	DE	Auf %s
 	EN	Browse on %s
 	FR	Parcourir %s
@@ -13865,7 +13807,7 @@ NOTE
 	ZH_CN	备注：
 
 FILENAME_WARNING
-	CS	Neplatný znak v názvu, prosím upravte.
+	CS	Neplatný znak v názvu, prosím upravte ho.
 	DA	Navnet indeholder ugyldige tegn. Rediger navnet.
 	DE	Name enthält ungültige Zeichen, bitte bearbeiten.
 	EN	Illegal characters in name, Please edit.
@@ -13916,7 +13858,7 @@ DELETE_WARNING
 	ZH_CN	您确定要删除吗？请选择《确定删除》来删除您的播放表。
 
 SCAN_WARNING
-	CS	Logitech Media Server stále prohledává vaši knihovnu médií,takže některé položky se v této oblasti ještě nezobrazí.
+	CS	Logitech Media Server stále prohledává vaši knihovnu médií, takže některé položky se v této oblasti ještě nemusí objevit.
 	DA	Logitech Media Server gennemsøger stadig dit mediebibliotek. Det kan betyde at nogle elementer endnu ikke vises her.
 	DE	Logitech Media Server durchsucht immer noch die Medienbibliothek. Deshalb werden evtl. einige Objekte noch nicht in diesem Bereich angezeigt.
 	EN	Logitech Media Server is still scanning your media library, so some items may not appear in this area yet.
@@ -13952,7 +13894,7 @@ HOME_SCAN_WARNING
 	ZH_CN	Logitech Media Server正在扫描您的音乐库，这也许需要一些时间，敬请耐心稍候。
 
 SCAN_CLICK
-	CS	Chcete-li procházet přímo svoji složku médií, klikněte na
+	CS	Chcete-li procházet přímo svoji složku médií, klikněte
 	DA	Hvis du vil gennemse hele din mediesamling, skal du klikke på
 	DE	Klicken Sie zum direkten Durchsuchen des Medienordners auf
 	EN	To browse your media folder directly, click
@@ -13971,7 +13913,7 @@ SCAN_CLICK
 	ZH_CN	如果要直接浏览您的音乐文件夹，请单击
 
 HERE
-	CS	sem
+	CS	zde
 	DA	her
 	DE	hier
 	EN	here
@@ -14181,6 +14123,7 @@ SERVER_STATUS_DESC
 	SV	Information om alla identifierade enheter som anslutits till Logitech Media Server
 
 RADIO_NEEDS_PATCH
+	CS	Zdá se, že používáte zařízení Squeezebox se zastaralým firmwarem, který nerozpoznává tuto verzi Logitech Media Serveru. Zvažte prosím použití zásuvného modulu Community Firmware nebo opravu firmwaru zařízení (<a href="/html/docs/radio-compatibility.html" target="_blank">zjistit více informací</a>.
 	DE	Sie scheinen eine Squeezebox mit veralteter Firmware zu verwenden, welche diese Logitech Media Server Version nicht als kompatibel akzeptiert. Es wird empfohlen, entweder das Community Firmware Plugin zu verwenden, oder die Firmware zu patchen (<a href="/html/docs/radio-compatibility.html" target="_blank">weitere Informationen</a>).
 	EN	You seem to be using a Squeezebox with an outdated firmware, not recognizing this version of Logitech Media Server. Please consider using the Community Firmware plugin, or patching the device's firmware (<a href="/html/docs/radio-compatibility.html" target="_blank">get more information</a>).
 	FR	Vous semblez utiliser une Squeezebox avec un micrologiciel obsolète, ne reconnaissant pas cette version de Logitech Media Server. Veuillez envisager d'utiliser le plug-in "Community Firmware" ou de corriger le micrologiciel de l'appareil (<a href="/html/docs/radio-compatibility.html" target="_blank">obtenir plus d'informations</a>).
@@ -14717,7 +14660,7 @@ BRIGHTNESS_AMBIENT
 
 LIGHT_N
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenké úzké
+	CS	Tenký úzký
 	DA	Let og smal
 	DE	Schwach eng
 	EN	Light Narrow
@@ -14747,7 +14690,7 @@ STANDARD_N
 	SV	Standard, smal
 
 FULL_N
-	CS	Tučné úzké
+	CS	Tučný úzký
 	DA	Fuld og smal
 	DE	Voll eng
 	EN	Full Narrow
@@ -15549,7 +15492,7 @@ NEED_PLAYLIST_PATH
 	ZH_CN	您必须指定存有播放表目录的路径。
 
 CSRF_ERROR_INFO
-	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Logitech Media Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Logitech Media Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\".  Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
+	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Logitech Media Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Logitech Media Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\". Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Logitech Media Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Logitech Media Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
 	DE	Damit Sie diese URL aus einem Favoriten/Lesezeichen oder einem anderen Verfahren als aus der Logitech Media Server-Web-Benutzeroberfläche aufrufen können, müssen Sie eine URL mit dem Sicherheitsparameter 'cauth' verwenden. Trat dieser Fehler beim Klicken auf einen Link in der Logitech Media Server-Web-Benutzeroberfläche auf, sollten Sie prüfen, ob der Browser (sowie Proxyserver und Spyware-/Firewall-Software) das Senden von 'Referer'-Kopfzeilen zulässt. Dies ist die korrekte URL für die gewünschte Verbindung:
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the Logitech Media Server web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the Logitech Media Server web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
@@ -15567,7 +15510,7 @@ CSRF_ERROR_INFO
 	ZH_CN	如果要从Bookmark/Favorite或其他方法请求这URL（从Logitech Media Server网界面跟随链接除外），您将需要使用以\"cauth \"为安全参数的URL。如果您从Logitech Media Server网界面跟随链接而出现错误，您需要确定您的浏览器软件（包括网代理伺服器和spyware/privacy软件）允许发送\"Referer\"倒坠。下面是您试图访问的URL的正确的URL。
 
 CSRF_ERROR_MEDIUM
-	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL..</p>
+	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL.</p>
 	DA	<p>Da CSRF-beskyttelsesnivauet er sat til Mellem, kan du anvende den samme værdi for cauth= i alle internetadresser. Det betyder at du skal være forsigtig med hvem du deler dine adresser med.</p>
 	DE	<p>Da Ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
@@ -15584,7 +15527,7 @@ CSRF_ERROR_MEDIUM
 	ZH_CN	<p>由于您的CSRF保护水平被设置在'中等'，您可以在任何URL使用同样的&quot;;cauth=&quot;值；这意味着您应该在与别人分享您的URLs时更加小心。
 
 CLICK_HERE
-	CS	Klikněte sem
+	CS	Klikněte zde
 	DA	Klik her
 	DE	Hier klicken
 	EN	Click here
@@ -15863,7 +15806,7 @@ SEARCHFOR_ARTISTS_DBL
 	FR	Cherche artistes
 	NL	Artiesten zoeken
 	PL	Wyszukaj wykonawców
-	
+
 SEARCHFOR_ALBUM
 	CS	Hledat album
 	DA	Søg efter album
@@ -15907,7 +15850,7 @@ SEARCHFOR_ALBUMS_DBL
 	FR	Cherche albums
 	NL	Albums zoeken
 	PL	Wyszukaj albumy
-	
+
 SEARCHFOR_SONGS
 	CS	Hledat skladby
 	DA	Søg efter numre
@@ -15932,7 +15875,7 @@ SEARCHFOR_SONGS_DBL
 	FR	Cherche morceaux
 	NL	Nummers zoeken
 	PL	Wyszukaj utwory
-	
+
 SEARCHFOR_SONGTITLE
 	CS	Hledat název skladby
 	DA	Søg efter titel på nummer
@@ -17622,21 +17565,6 @@ INFORMATION_PLAYLISTS
 	SV	Antal spellistor
 	NL	Totaal aantal afspeellijsten
 
-INFORMATION_VIDEOS
-	CS	Celkem videí
-	DA	Videoer i alt
-	DE	Anzahl Videos
-	EN	Total Videos
-	ES	Total de vídeos
-	FI	Videot kokonaisuudessaan
-	FR	Vidéos
-	IT	Video totali
-	NL	Totaal aantal video's
-	NO	Totalt antall videoer
-	PL	Łączna liczba wideo
-	RU	Кол-во видеороликов
-	SV	Antal videoklipp
-
 INFORMATION_IMAGES
 	CS	Celkem obrázků
 	DA	Billeder i alt
@@ -17806,7 +17734,7 @@ INFORMATION_DISABLED
 	ZH_CN	已撤销
 
 INFORMATION_NO_VERSION
-	CS	Není žádné číslo verze
+	CS	Bez čísla verze
 	DA	Intet versionsnummer
 	DE	Keine Versionsnummer
 	EN	No version number
@@ -18008,7 +17936,7 @@ COLON
 	ZH_CN	：
 
 SETUP_SCROLLPIXELS
-	CS	Rolovat pixely
+	CS	Pixely rolování
 	DA	Rul antal pixel
 	DE	Laufschrift: Pixel
 	EN	Scroll Pixels
@@ -18025,7 +17953,7 @@ SETUP_SCROLLPIXELS
 	ZH_CN	卷动映像点
 
 SETUP_SCROLLPIXELS_DESC
-	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely. (Min 1, Max 20).
+	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely. (Min 1, Max 20).
 	DA	På afspillere med et grafisk display kan du justere hvor mange pixel (punkter) afspilleren skal rulle i hvert af de intervaller du angav ovenfor. Sammen med indstillingen for rullehastighed bestemmer denne indstilling hvor hurtigt og i hvilken kvalitet teksten ruller hen over displayet. Hvis du er i tvivl, bør du bruge standardindstillingen på 2 eller 3 pixel (minimum er 1, og maksimum er 20).
 	DE	Bei Playern mit grafischem Display können Sie festlegen, um wie viele Pixel pro oben definiertem Intervall sich die Laufschrift bewegen soll. Kombinieren Sie diese Einstellung mit der Laufschriftgeschwindigkeit, um das beste Ergebnis zu erzielen. Belassen Sie im Zweifelsfall den Standardwert von 2 oder 3 Pixeln (Min. 1, Max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  If in doubt leave as the default of 2 or 3 pixels.  (Min 1, Max 20).
@@ -18230,7 +18158,7 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	SV	Det går inte att få tillgång till mysqueezebox.com-tjänsterna eftersom ingen spelare är ansluten.
 
 SQUEEZENETWORK_NO_LOGIN
-	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Prosím konfigurujte Logitech Media Server ve webovém prohlížeči v položce Nastavení -> mysqueezebox.com.
+	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Pro konfiguraci přejděte pomocí webového prohlížeče na Logitech Media Server, položku Nastavení -> mysqueezebox.com.
 	DA	Du skal have en konto til mysqueezebox.com for at bruge denne tjeneste. Du kan konfigurere den i en browser under Indstillinger for Logitech Media Server -> mysqueezebox.com.
 	DE	Für diesen Dienst ist ein mysqueezebox.com-Konto erforderlich. Sie können das Konto in einem Web-Browser in den Logitech Media Server-Einstellungen unter 'mysqueezebox.com' konfigurieren.
 	EN	A mysqueezebox.com account is required for this service. Please access Logitech Media Server Settings -> mysqueezebox.com with a web browser to configure.
@@ -18290,7 +18218,7 @@ MUSICSOURCE_SWITCH
 	SV	Välj musikkälla att ansluta spelaren till.
 
 SQUEEZEBOX_SERVER_WANT_SWITCH
-	CS	Tento přehrávač je v aktuálně připojen k %s. Chcete ho přepnout na tento Logitech Media Server?
+	CS	Tento přehrávač je aktuálně připojen k %s. Chcete ho přepnout na tento Logitech Media Server?
 	DA	Denne afspiller er tilsluttet %s. Vil du skifte til Logitech Media Server?
 	DE	Dieser Player ist derzeit verbunden mit %s. Möchten Sie auf diese Version von Logitech Media Server umschalten?
 	EN	This player is currently connected to %s. Do you want it to switch to this Logitech Media Server?
@@ -18305,7 +18233,7 @@ SQUEEZEBOX_SERVER_WANT_SWITCH
 	SV	Den här spelaren är för närvarande ansluten till %s. Vill du växla till denna Logitech Media Server?
 
 SQUEEZEBOX_SERVER_CONNECTING
-	CS	připojování k %s...
+	CS	Připojování k %s...
 	DA	Opretter forbindelse til %s
 	DE	Verbindung zu %s...
 	EN	Connecting to %s...
@@ -18339,7 +18267,7 @@ SETUP_SCROLLMODE
 	ZH_CN	卷动模式
 
 SETUP_SCROLLMODE_DESC
-	CS	Můžete si zvolit, jak bude přehrávač zobrazovat text na druhé řádce displeje, která je příliš dlouhá a nevejde se na obrazovku. Standardní režim horizontálního rolování počká po dobu intervalu Přerušení rolování (Scroll Pause) a pak bude rolovat text a zobrazí celou řádku. Rolování bude pokračovat, dokud bude přehrávač zobrazovat tuto obrazovku. Alternativní režimy podporují rolování textu jednou a pak se zastaví, nebo se text vůbec neroluje.
+	CS	Můžete si zvolit, jak bude přehrávač zobrazovat text na druhé řádce displeje, která je příliš dlouhá a nevejde se na obrazovku. Standardní režim horizontálního rolování počká po dobu intervalu Pauzy při rolování a pak bude rolovat text a zobrazí celou řádku. Rolování bude pokračovat, dokud bude přehrávač zobrazovat tuto obrazovku. Alternativní režimy podporují rolování textu jednou a pak se zastaví, nebo se text vůbec neroluje.
 	DA	Du kan vælge hvordan en afspiller viser tekst som er for lang til at være på displayet, i en anden linje. Ved almindelig vandret rulning, rulles der med de pauser som er angivet under Rullepause. Der rulles videre indtil hele teksten er blevet vist. Alternativt kan hele teksten rulle forbi én gang inden den stopper, eller rullefunktionen kan slås fra.
 	DE	Sie können festlegen, wie der Player Text anzeigt, der zu lang für die zweiten Zeile des Display ist. Im Standardlaufschriftmodus wird die unter 'Laufschriftverzögerung' angegebene Zeit gewartet und dann der Text als Laufschrift angezeigt. Die Laufschrift läuft, solange der Player diesen Inhalt anzeigt. Weitere Möglichkeiten sind, den Text einmal als Laufschrift anzuzeigen und dann anzuhalten oder die Laufschrift zu deaktivieren.
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
@@ -18407,7 +18335,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	ZH_CN	不要卷动
 
 COMPILATION
-	CS	Kompilace
+	CS	Sbírka
 	DA	Kompilation
 	DE	Kompilation
 	EN	Compilation
@@ -18424,7 +18352,7 @@ COMPILATION
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTS
-	CS	Sbírka
+	CS	Sbírky
 	DA	Kompilationer
 	DE	Kompilationen
 	EN	Compilations
@@ -19268,7 +19196,7 @@ VISUALIZER_ANALOG_VUMETER
 	ZH_CN	模拟VU表
 
 VISUALIZER_DIGITAL_VUMETER
-	CS	Digitální ukazatel hlasitosti
+	CS	Digitální měřič hlasitosti
 	DA	Digitalt VU-meter
 	DE	Digitaler VU-Meter
 	EN	Digital VU Meter
@@ -19346,21 +19274,6 @@ SETUP_PRECACHEARTWORK_DESC
 	PL	Domyślnie wszystkie okładki znalezione podczas przeszukiwania są automatycznie dopasowywane pod względem rozmiaru i buforowane w celu poprawy wydajności podczas korzystania z urządzenia Squeezebox Controller lub interfejsu internetowego. Powoduje to spowolnienie procesu przeszukiwania, więc tę opcję można wyłączyć tutaj.
 	RU	По умолчанию все обложки, обнаруженные в ходе сканирования, автоматически изменяют размер и кэшируются, чтобы улучшить производительность при работе в Squeezebox Controller или веб-интерфейсе. Поскольку данная функция может замедлить сканирование, ее можно отключить.
 	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
-
-SETUP_PRECACHEARTWORK_ALL
-	CS	Ukládat obaly alb, fotografie a videa do mezipaměti
-	DA	Gemme albumcovers samt andre albumrelaterede mediefiler
-	DE	Alben, Fotos und Videos zwischenspeichern
-	EN	Pre-cache album, photo and video artwork
-	ES	Guardar carátula de álbum, fotografía y vídeo en caché previamente
-	FI	Tallentaa levynkannet, valokuvat ja videot valmiiksi välimuistiin
-	FR	Mettre la pochette de l'album, les photos et les vidéos en pré-cache
-	IT	Inserire le copertine di album, foto e video nella pre-cache
-	NL	Albumhoezen, foto's en video's vooraf in cache opslaan
-	NO	Forhåndsbufre album-, foto- og videoomslag
-	PL	Buforuj wstępnie materiały graficzne do albumów, zdjęć i filmów wideo
-	RU	Pre-cache album, photo and video artwork
-	SV	Cachelagra omslag för album, foton och videor
 
 SETUP_PRECACHEARTWORK_ENABLED
 	CS	Ukládat obaly alb do mezipaměti
@@ -19616,7 +19529,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
-	CS	Nízký
+	CS	Nízká
 	DA	Lav
 	DE	Niedrig
 	EN	Low
@@ -19718,7 +19631,7 @@ AUDIO_SOURCE_BALANCED_AES
 	ZH_CN	平衡AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
-	CS	BNC Coax S/PDIF
+	CS	Koaxiální BNC S/PDIF
 	DA	BNC, Koaksial, S/PDIF
 	DE	BNC Koax S/PDIF
 	EN	BNC Coax S/PDIF
@@ -19735,7 +19648,7 @@ AUDIO_SOURCE_BNC_SPDIF
 	ZH_CN	BNC S/PDIF电接口
 
 AUDIO_SOURCE_RCA_SPDIF
-	CS	RCA Coax S/PDIF
+	CS	Koaxiální RCA S/PDIF
 	DA	RCA, Koaksial, S/PDIF
 	DE	Cinch Koax S/PDIF
 	EN	RCA Coax S/PDIF
@@ -20027,7 +19940,7 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
-	CS	Výstup pro zesilovač (Line Out)
+	CS	Linkový výstup
 	DA	Linjeudgang
 	DE	Line-Out
 	EN	Line Out
@@ -20042,7 +19955,7 @@ SETUP_ANALOGOUTMODE
 	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
-	CS	Zvolte funkci Hlasitá sluchátka/sub out port. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
+	CS	Zvolte funkci portu sluchátka/sub out Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra. Hvis du vælger Altid slået til, forbliver de indbyggede højtalere slået til, også selvom der tilsluttes hovedtelefoner.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher. Mit 'Immer Aktiv' bleiben die internen Lautsprecher aktiv, auch wenn Kopfhörer angeschlossen sind.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in.
@@ -20134,7 +20047,7 @@ SETUP_POLARITYINVERSION
 	ZH_CN	电极转换
 
 SETUP_POLARITYINVERSION_DESC
-	CS	Transporter může převrátit polaritu zvukového signálu..
+	CS	Přehrávač může převrátit polaritu zvukového signálu.
 	DA	Transporter kan invertere lydsignalets polaritet.
 	DE	Der Player kann die Polarität des Audiosignals umkehren.
 	EN	The player can invert the polarity of the audio signal.
@@ -20371,7 +20284,7 @@ DEBUG_PREFS
 	SV	Ändring och lagring av inställningar
 
 DEBUG_SERVER_SCHEDULER
-	CS	Protokolování interního časovače
+	CS	Protokolování interního plánovače
 	DA	Logføring af interne tidsplaner
 	DE	Interner Scheduler
 	EN	Internal Scheduler Logging
@@ -20641,7 +20554,7 @@ DEBUG_DATABASE_MYSQL
 	SV	Process- och initieringsinformation för MySQL
 
 DEBUG_DATABASE_SQL
-	CS	Protokolování SQL (Pokročilé)
+	CS	Protokolování SQL (pokročilé)
 	DA	SQL-logføring (avanceret)
 	DE	SQL Logging (Fortgeschritten)
 	EN	SQL Logging (Advanced)
@@ -20656,7 +20569,7 @@ DEBUG_DATABASE_SQL
 	SV	SQL-loggning (avancerat)
 
 DEBUG_DATABASE_INFO
-	CS	Protokolování metadat & parsování
+	CS	Protokolování metadat a parsování
 	DA	Logføring af metadata og fortolkning
 	DE	Metadaten & Parsen
 	EN	Metadata & Parsing Logging
@@ -20846,7 +20759,7 @@ DEBUG_PLAYER_DISPLAY
 	SV	Information om spelarens skärm
 
 DEBUG_PLAYER_FONTS
-	CS	Displej přehrávače (Informace o Fontu & Bitmapě)
+	CS	Displej přehrávače (informace písma a bitmapy)
 	DA	Afspillerens display (oplysninger om skrifttyper og grafik)
 	DE	Player Anzeige (Schriften & Bitmaps)
 	EN	Player Display (Font & Bitmap Information)
@@ -20861,7 +20774,7 @@ DEBUG_PLAYER_FONTS
 	SV	Spelarskärm (bitmapps- och teckensnittsinformation)
 
 DEBUG_PLAYER_TEXT
-	CS	Displej přehrávače (informace na znakovém displeji)
+	CS	Displej přehrávače (informace znakového displeje)
 	DA	Afspillerens display (oplysninger om visning af tegn og symboler)
 	DE	Player Anzeige (Zeichendarstellung)
 	EN	Player Display (Character Display Information)
@@ -21102,7 +21015,7 @@ SETUP_DEBUG_SCANNER_LOG
 	SV	Loggfil for sökning
 
 SETUP_DEBUG_SCANNER_LOG_DESC
-	CS	Logitech Media Server ukládá protokol o všech činnostech prohledávání, včetně iTunes & MusicIP zde:
+	CS	Logitech Media Server ukládá protokol o všech činnostech prohledávání, včetně iTunes a MusicIP zde:
 	DA	Logitech Media Server logfører alle gennemsøgninger, også i iTunes og MusicIP, i denne fil:
 	DE	Logitech Media Server protokolliert die Aktivitäten, die Suchvorgänge betreffen (inklusive iTunes, MusicIP), in dieser Datei:
 	EN	Logitech Media Server keeps a log file for all scanning related activities, including iTunes & MusicIP here:
@@ -21162,7 +21075,7 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 	SV	Prestandaövervakning loggas här:
 
 SETUP_LOG_ZIPPED
-	CS	Archiv ZIP
+	CS	archiv ZIP
 	DE	ZIP Datei
 	EN	ZIP archive
 	FR	Fichier ZIP
@@ -21491,7 +21404,7 @@ DIRECTORY_CHANGED_PROGRESS
 	SV	Söker igenom ändrade filer
 
 PLAYLIST_DELETED_PROGRESS
-	CS	Odebírání odstarněných seznamů skladeb
+	CS	Odebírání odstraněných seznamů skladeb
 	DA	Fjerner slettede afspilningslister
 	DE	Gelöschte Wiedergabelisten werden entfernt
 	EN	Removing deleted playlists
@@ -21689,7 +21602,7 @@ IMPORTER_PROGRESS_DESC
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
 
 VIRTUALLIBRARIES_PROGRESS
-	CS	Vytvořit zobrazení knihovny
+	CS	Vytváření zobrazení knihovny
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create Library Views
 	FR	Création d'une bibliothèque thématique
@@ -21729,6 +21642,7 @@ SETUP_LIBRARY_VIEWS_DESC
 	SV	Med delbibliotek kan du bläddra i din musik baserat på filterregler. När delbibliotek är aktiverade kan du byta mellan dem i en undermeny i "Min musik".
 
 ALL_LIBRARY
+	CS	Celá hudební knihovna
 	DE	Ganze Musiksammlung
 	EN	All music library
 	FR	Bibliothèque complète
@@ -21884,7 +21798,7 @@ PLUGINS_CHANGED
 	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
 
 PLUGINS_CHANGED_NEED_RESTART
-	CS	Změny se projeví při příštím spuštění aplikace. <a href="%s">K restartování serveru klikněte sem.</a>
+	CS	Změny se projeví při příštím spuštění aplikace. <a href="%s">Kliknutím zde restartujete server.</a>
 	DA	Ændringerne vil træde i kraft næste gang programmet startes. <a href="%s">Klik her for at genstarte serveren nu.</a>
 	DE	Beim nächsten Neustart der Anwendung werden die Änderungen wirksam. <a href="%s">Klicken Sie hier, um den Server jetzt neu zu starten.</a>
 	EN	Changes will take place at the next application restart. <a href="%s">Please click here to restart the server now.</a>
@@ -22875,7 +22789,7 @@ MOREINFO
 	SV	Mer information
 
 SETUP_SHOWCOUNT
-	CS	Zobrazit počet nabídek
+	CS	Zobrazení počtu nabídek
 	DA	Vis placering på menu
 	DE	Position im Menü anzeigen
 	EN	Show Menu Count
@@ -22950,7 +22864,7 @@ SETUP_MAXPLAYLISTLENGTH
 	SV	Maximal längd på spellistan
 
 SETUP_MAXPLAYLISTLENGTH_DESC
-	CS	Aby byl server chráněn před nadměrným zatížením paměti, může být omezena maximální délka seznamu skladeb, včetně seznamu Nyní hraje. Hodnota 0 znamená bez omezení. Pokud je zadána, je minimální hodnota 10.
+	CS	Aby byl server chráněn před nadměrným zatížením paměti, může být omezena maximální délka seznamu skladeb, včetně seznamu Právě hraje. Hodnota 0 znamená bez omezení. Pokud je zadána, je minimální hodnota 10.
 	DA	Du kan forhindre at serveren bruger for meget hukommelse ved at begrænse længden på afspilningslisterne, inklusive den aktive afspilningsliste. Værdien 0 angiver at længden er ubegrænset. Ellers er minimumsværdien 10.
 	DE	Um eine übermäßige Speicherverwendung auf dem Server zu verhindern, kann die Länge der Wiedergabeliste, einschließlich der aktuell abgespielten Liste, eingeschränkt werden. Bei Eingabe des Werts '0' wird keine Einschränkung vorgenommen. Wird eine Einschränkung festgelegt, muss mindestens der Wert '10' eingegeben werden.
 	EN	In order to protect the server against excessive memory use the maximum length of a playlist, including the Now-Playing playlist, can be restricted. A value of 0 means no restriction. If set then the minimum value is 10.
@@ -22965,7 +22879,7 @@ SETUP_MAXPLAYLISTLENGTH_DESC
 	SV	Det går att skydda servern och undvika minnesfel genom att begränsa längden på spellistan (vilket omfattar Nu spelas-listan). 0 innebär att det inte finns någon begränsning. Om spellistan begränsas är det minsta tillåtna värdet 10.
 
 ERROR_PLAYLIST_FULL
-	CS	Seznam skladeb je plný; nepřidány žádné skladby
+	CS	Seznam skladeb je plný; nebyly přidány žádné skladby
 	DA	Afspilningslisten er fyldt; der blev ikke tilføjet nogen numre
 	DE	Wiedergabeliste ist voll; keine Titel hinzugefügt
 	EN	Playlist full; no tracks added
@@ -23088,7 +23002,7 @@ CONTROLPANEL_SERVERSTATUS
 	SV	Status
 
 CONTROLPANEL_STATUS_RUNNING
-	CS	Status: Server je spuštěn
+	CS	Stav: Server je spuštěn
 	DA	Status: Serveren kører
 	DE	Status: Der Server wird ausgeführt
 	EN	Status: The server is running
@@ -23103,7 +23017,7 @@ CONTROLPANEL_STATUS_RUNNING
 	SV	Status: Servern körs
 
 CONTROLPANEL_STATUS_STARTING
-	CS	Status: Server se spouští
+	CS	Stav: Server se spouští
 	DA	Status: Serveren startes
 	DE	Status: Der Server wird gestartet.
 	EN	Status: The server is starting
@@ -23118,7 +23032,7 @@ CONTROLPANEL_STATUS_STARTING
 	SV	Status: Servern startar
 
 CONTROLPANEL_STATUS_STOPPED
-	CS	Status: Server je zastaven
+	CS	Stav: Server je zastaven
 	DA	Status: Serveren er stoppet
 	DE	Status: Der Server wurde angehalten.
 	EN	Status: The server is stopped
@@ -23208,7 +23122,7 @@ CONTROLPANEL_AUTHENTICATION_REQUIRED
 	SV	Det krävs autentisering för att komma åt Logitech Media Server
 
 CONTROLPANEL_WEB_UI
-	CS	Rozhraní na webu
+	CS	Webové rozhraní
 	DA	Webbaseret brugerflade
 	DE	Web-Benutzeroberfläche
 	EN	Web based Interface
@@ -23238,7 +23152,7 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	SV	Fjärrkontroll
 
 CONTROLPANEL_TRAY_DOUBLECLICK_WEB
-	CS	Dálkové ovládání sítě otevřete dvojitým kliknutím na ikonu na liště
+	CS	Webové dálkové ovládání otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
 	DA	Åbn Fjernbetjening via browser ved at dobbeltklikke på ikonet i systembakken
 	DE	Fernbedienung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open Web Remote Control on doubleclicking the tray icon
@@ -23253,7 +23167,7 @@ CONTROLPANEL_TRAY_DOUBLECLICK_WEB
 	SV	Öppna webbfjärrkontrollen genom att klicka på ikonen i aktivitetsfältet
 
 CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
-	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu na liště
+	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
 	DA	Åbn kontrolpanelet ved at dobbeltklikke på ikonet i systembakken
 	DE	Systemsteuerung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open the Control Panel on doubleclicking the tray icon
@@ -23463,7 +23377,7 @@ CONTROLPANEL_PORTNO
 	SV	Port %s (%s):
 
 CONTROLPANEL_PING
-	CS	Zvonění:
+	CS	Ping:
 	DA	Ping:
 	DE	Ping:
 	EN	Ping:
@@ -23523,7 +23437,7 @@ CONTROLPANEL_ALERTS
 	SV	Varningar
 
 CONTROLPANEL_SN_FAILURE
-	CS	Nebyli jsme schopni úspěšně komunikovat se mysqueezebox.com
+	CS	Nebyli jsme schopni úspěšně komunikovat s mysqueezebox.com
 	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
 	DE	Es konnte keine Verbindung zu mysqueezebox.com hergestellt werden.
 	EN	We were not able to successfully communicate with mysqueezebox.com
@@ -23929,7 +23843,7 @@ CLEANUP_DELETING
 	SV	Raderar
 
 CONTROLPANEL_NO_STATUS
-	CS	Nejsou dostupné žádné informace o statusu. Vezměte na vědomí, že pro zobrazení informací o statusu musí být Logitech Media Server aktivní a v provozu.
+	CS	Nejsou dostupné žádné informace o stavu. Vezměte na vědomí, že pro zobrazení informací o stavu musí být Logitech Media Server aktivní a v provozu.
 	DA	Der er ingen statusoplysninger. Husk at Logitech Media Server skal køre for at du kan se statusoplysninger.
 	DE	Keine Statusinformationen verfügbar. Logitech Media Server muss eingerichtet und ausgeführt werden, damit die Statusinformationen angezeigt werden können.
 	EN	No status information available. Please note that Logitech Media Server has to be up and running in order to display its status information.
@@ -23989,7 +23903,7 @@ RUN_AT_LOGIN
 	SV	Kör automatiskt vid inloggning
 
 RUN_FAILSAFE
-	CS	Spustit bez veškerých uživatelských přípojek ("Bezpečný režim")
+	CS	Spustit bez zásuvných modulů ("Bezpečný režim")
 	DA	Kør uden udvidelsesmoduler (fejlsikret tilstand)
 	DE	Ohne Benutzererweiterungen ausführen ("Abgesicherter Modus")
 	EN	Run with no user extensions ("Safe Mode")
@@ -24247,7 +24161,7 @@ HOWTO_SHOWCASE
 	SV	Bläddra till Demonstration: Miles Davis och tryck på PLAY.
 
 HOWTO_VOLUME
-	CS	Upravit hlasitost.
+	CS	Upravte hlasitost.
 	DA	Juster lydstyrken.
 	DE	Regeln Sie die Lautstärke.
 	EN	Adjust the volume.
@@ -24616,7 +24530,7 @@ RETRY_LIMIT_EXCEEDED
 	SV	Anslutningsförsök misslyckades
 
 SYNC_ABOUT
-	CS	Pomocí funkce synchronizace přidejte jedno nebo více zařízení Squeezebox a využijte plný potenciál zvuku pokrývající více místností. Další informace naleznete na stránce Logitech.com.
+	CS	Přidáním jednoho nebo více dalších zařízení Squeezebox můžete používat funkci Synchronizace a využít plný potenciál zvuku ve více místnostech. Další informace naleznete na stránce Logitech.com.
 	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
 	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
 	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
@@ -24633,6 +24547,7 @@ SYNC_ABOUT
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...
+	CS	Potlačení destruktivního Touch-To-Play
 	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
@@ -24642,6 +24557,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 	SV	Ignorera Touch-to-Play
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
+	CS	Při dotyku/výběru přehrávané položky na Squeezeboxu můžete omylem nahradit právě přehrávanou položku. Toto destruktivní chování lze ovládat pomocí tohoto parametru.
 	DE	Durch das Berühren/Auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine Aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellung gesteuert werden.
 	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
@@ -24651,6 +24567,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	SV	När ett spelbart meny-alternativ väljs eller rörs vid på din Squeezebox, kan du av misstag ersätta det som spelas för ögonblicket. Detta kan förhindras med hjälp av den här inställningen.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_0
+	CS	Nepotlačovat
 	DE	Destruktives Verhalten nicht unterdrücken
 	EN	Do not defeat
 	FR	Continuer la liste de lecture en cours
@@ -24660,6 +24577,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	SV	Fråga aldrig
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_1
+	CS	Před přehráním výběru se vždy zeptat
 	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
 	EN	Always ask before playing your selection
 	FR	Toujours demander une confirmation avant de lancer le titre sélectionné
@@ -24669,6 +24587,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	SV	Fråga alltid före ditt val spelas
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_2
+	CS	Potlačovat, pokud má aktuální seznam skladeb více než jednu skladbu
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
 	EN	Defeat if current playlist has more than one track
 	FR	Demander une confirmation si la liste de lecture actuelle a plus d'un titre
@@ -24678,6 +24597,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	SV	Fråga om den nuvarande spellistan har mer än ett spår
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_3
+	CS	Potlačovat pouze v případě, že se přehrává a aktuální seznam skladeb obsahuje více než jednu skladbu
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
 	EN	Defeat only if playing and current playlist has more than one track
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
@@ -24687,6 +24607,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	SV	Fråga om den nuvarande spellistan har mer än ett spår och uppspelning pågår
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
+	CS	Potlačovat pouze v případě, že se přehrává a aktuální položka není rádiový proud
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	FR	Demander une confirmation uniquement si une radio n'est pas en cours de diffusion
@@ -24711,7 +24632,7 @@ ON_MYSB
 	SV	På mysqueezebox.com
 
 SERVER_UPDATE_AVAILABLE
-	CS	K dispozici je nová verze Logitech Media Serveru (%s). <a href="%s" target="update">Pro stažení klikněte zde</a>.
+	CS	K dispozici je nová verze Logitech Media Serveru (%s). <a href="%s" target="update">Klikněte zde pro stažení</a>.
 	DA	Der findes en ny version af Logitech Media Server (%s). <a href="%s" target="update">Klik her for at hente den</a>.
 	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="%s" target="update">Klicken Sie hier, um sie herunterzuladen</a>.
 	EN	A new version of Logitech Media Server is available (%s). <a href="%s" target="update">Click here to download</a>.
@@ -24741,7 +24662,7 @@ SERVER_UPDATE_AVAILABLE_SHORT
 	SV	Det finns en ny version av Logitech Media Server.
 
 SERVER_LINUX_UPDATE_AVAILABLE
-	CS	Je k dispozici nová verze Logitech Media Serveru (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikněte zde pro další informace</a>
+	CS	Je k dispozici nová verze Logitech Media Serveru (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikněte zde pro další informace</a>.
 	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
 	EN	A new version of Logitech Media Server is available (%s). <a href="updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
 	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.

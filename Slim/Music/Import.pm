@@ -136,9 +136,6 @@ sub launchScan {
 		$args->{"logdir=$::logdir"} = 1;
 	}
 
-	$args->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
-	$args->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
-
 	# Set scanner priority.  Use the current server priority unless
 	# scannerPriority has been specified.
 
@@ -161,9 +158,13 @@ sub launchScan {
 
 	# Bug: 3530 - use the same version of perl we were started with.
 	if ($Config{'perlpath'} && -x $Config{'perlpath'} && $command !~ /\.exe$/) {
-
 		unshift @scanArgs, $command;
 		$command  = $Config{'perlpath'};
+	}
+	# pick up our custom Perl build if in use
+	elsif (main::ISMAC && -x $^X && $^X !~ m|/usr/bin/perl|) {
+		unshift @scanArgs, $command;
+		$command = $^X;
 	}
 
 	# Pass debug flags to scanner

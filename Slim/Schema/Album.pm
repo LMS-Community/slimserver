@@ -56,10 +56,11 @@ my $log = logger('database.info');
 sub url {
 	my $self = shift;
 
-	return sprintf('db:album.title=%s', URI::Escape::uri_escape_utf8($self->title));
+	return $self->extid
+		|| sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($self->title), URI::Escape::uri_escape_utf8($self->contributor->name))
 }
 
-sub name { 
+sub name {
 	return shift->title;
 }
 
@@ -99,7 +100,7 @@ sub title {
 # return the raw title untainted by Logitech Media Server logic
 sub rawtitle {
 	my $self = shift;
-	
+
 	return $self->get_column('title');
 }
 
@@ -129,7 +130,7 @@ sub displayAsHTML {
 			FROM contributor_album, contributors
 			WHERE contributor_album.album = ? AND contributor_album.role IN (%s,%s) AND contributors.id = contributor_album.contributor
 		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
-		
+
 		my ($contributorId, $contributorName);
 		$contributor_sth->execute($form->{'albumId'});
 		$contributor_sth->bind_col( 1, \$contributorId );
@@ -240,15 +241,15 @@ sub contributorid {
 
 sub findhash {
 	my ( $class, $id ) = @_;
-	
+
 	my $sth = Slim::Schema->dbh->prepare_cached( qq{
 		SELECT * FROM albums WHERE id = ?
 	} );
-	
+
 	$sth->execute($id);
 	my $hash = $sth->fetchrow_hashref;
 	$sth->finish;
-	
+
 	return $hash || {};
 }
 
@@ -256,23 +257,23 @@ sub findhash {
 # from this album still exists in the database.  If not, delete the album.
 sub rescan {
 	my ( $class, @ids ) = @_;
-	
+
 	my $slog = logger('scan.scanner');
-	
+
 	my $dbh = Slim::Schema->dbh;
-	
-	for my $id ( @ids ) {	
+
+	for my $id ( @ids ) {
 		my $sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(*) FROM tracks WHERE album = ?
 		} );
 		$sth->execute($id);
 		my ($count) = $sth->fetchrow_array;
 		$sth->finish;
-	
+
 		if ( !$count ) {
-			main::DEBUGLOG && $slog->is_debug && $slog->debug("Removing unused album: $id");	
+			main::DEBUGLOG && $slog->is_debug && $slog->debug("Removing unused album: $id");
 			$dbh->do( "DELETE FROM albums WHERE id = ?", undef, $id );
-			
+
 			# Bug 17283, this removed album may be cached as lastAlbum in Schema
 			Slim::Schema->wipeLastAlbumCache($id);
 		}
@@ -281,7 +282,7 @@ sub rescan {
 
 sub duration {
 	my $self = shift;
-	
+
 	my $secs = 0;
 	foreach ($self->tracks) {
 		return if !defined $_->secs;

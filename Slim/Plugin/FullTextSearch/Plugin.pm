@@ -476,6 +476,10 @@ sub _rebuildIndex {
 
 	my $dbh = Slim::Schema->dbh;
 
+	# the "max" db memory settings can lead to OOM crashes when run in the server - use smaller cache temporarily
+	# see https://forums.slimdevices.com/showthread.php?116308 (using a 1M track collection...)
+	$dbh->do("PRAGMA cache_size = 20000") if preferences('server')->get('dbhighmem') && !main::SCANNER;
+
 	$scanlog->error("Initialize fulltext table");
 
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $scanlog->error($dbh->errstr);
@@ -549,6 +553,9 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	$scanlog->error("Fulltext index build done!");
+
+	# reset cache sizes to system wide settings
+	Slim::Utils::SQLiteHelper->setCacheSize();
 }
 
 sub _createPlaylistItem {
@@ -585,12 +592,11 @@ sub _initPopularTerms {
 
 	# get a list of terms which occur more than LARGE_RESULTSET times in our database
 	my $terms = $dbh->selectcol_arrayref( sprintf(qq{
-		SELECT term, d FROM (
+		SELECT term FROM (
 			SELECT term, SUM(documents) d
 			FROM fulltext_terms
 			WHERE NOT col IN ('*', 1, 0) AND LENGTH(term) > 1
 			GROUP BY term
-			ORDER BY d DESC
 		)
 		WHERE d > %i
 	}, LARGE_RESULTSET) );

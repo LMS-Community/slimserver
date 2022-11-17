@@ -28,7 +28,7 @@
 				[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]
 			</td>
 			<td colspan="2">
-				<input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" />
+				<input type="text" class="stdedit" name="newfeed" value="[% newfeedval | html %]" size="60" />
 			</td>
 		</tr>
 
@@ -46,7 +46,7 @@
 		<tr class="podcast_draggable">
 			<input name="feedorder" type="hidden" value="[% loop.index %]">
 			<td>[% pref.1 %]</label></td>
-			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
+			<td><input name="delete" type="checkbox" value="[% pref.0 | html %]"></td>
 			<td><div>[% pref.0 %]</div></td>
 		</tr>
 		[% END %]
@@ -60,13 +60,13 @@
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_PODCAST_SKIP_BACK_SECS" desc="PLUGIN_PODCAST_SKIP_BACK_DESC" %]
-		<input type="text" class="stdedit sliderInput_5_90_5" name="pref_skipSecs" id="skipSecs" value="[% prefs.pref_skipSecs %]" size="3">
+		<input type="text" class="stdedit sliderInput_5_90_5" name="pref_skipSecs" id="skipSecs" value="[% prefs.pref_skipSecs | html %]" size="3">
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_PODCAST_PROVIDER" desc="PLUGIN_PODCAST_PROVIDER_DESC" %]
 		<select class="stdedit" name="pref_provider" id="provider">
 			[% FOREACH item IN providers %]
-				<option value="[% item %]" [% IF item == prefs.pref_provider %]selected[% END %]>[% item %]</option>
+				<option value="[% item | html %]" [% IF item == prefs.pref_provider %]selected[% END %]>[% item %]</option>
 			[% END %]
 		</select>
 	[% END %]
@@ -74,10 +74,10 @@
 	[% IF newsHandler %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="PLUGIN_PODCAST_NEWSINCE" desc="PLUGIN_PODCAST_WHATSNEW_DESC" %]
-				<input type="text" class="stdedit sliderInput_1_90" name="pref_newSince" id="newSince" value="[% prefs.pref_newSince %]" size="2">
+				<input type="text" class="stdedit sliderInput_1_90" name="pref_newSince" id="newSince" value="[% prefs.pref_newSince | html %]" size="2">
 			[% END %]
 			[% WRAPPER settingGroup title="PLUGIN_PODCAST_MAXNEW" %]
-				<input type="text" class="stdedit sliderInput_1_25" name="pref_maxNew" id="maxNew" value="[% prefs.pref_maxNew %]" size="2">
+				<input type="text" class="stdedit sliderInput_1_25" name="pref_maxNew" id="maxNew" value="[% prefs.pref_maxNew | html %]" size="2">
 			[% END %]
 		[% END %]
 	[% END %]
@@ -85,7 +85,7 @@
 	[% IF hasCountry %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="PLUGIN_PODCAST_COUNTRY" desc="PLUGIN_PODCAST_COUNTRY_DESC" %]
-				<input type="text" class="stdedit" name="pref_country" id="pref_country" value="[% prefs.pref_country %]" size="2">
+				<input type="text" class="stdedit" name="pref_country" id="pref_country" value="[% prefs.pref_country | html %]" size="2">
 			[% END %]
 		[% END %]
 	[% END %]

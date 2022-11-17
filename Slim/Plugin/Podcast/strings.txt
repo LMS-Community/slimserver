@@ -188,7 +188,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	SV	Ogiltigt flöde – %s
 
 PLUGIN_PODCAST_IMPORT
-	CS	Importovat podcasty
+	CS	Importování podcastů
 	DE	Podcast Liste importieren
 	EN	Import podcasts
 	FR	Importer des podcasts
@@ -197,7 +197,7 @@ PLUGIN_PODCAST_IMPORT
 	PL	Importowanie podcastów
 
 PLUGIN_PODCAST_IMPORT_FROM_MYSB
-	CS	Import podcastů z mysqueezebox.com
+	CS	Importovat podcasty z mysqueezebox.com
 	DE	Podcasts von mysqueezebox.com importieren
 	EN	Import podcasts from mysqueezebox.com
 	FR	Importer des podcasts depuis mysqueezebox.com

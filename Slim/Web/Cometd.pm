@@ -155,6 +155,10 @@ sub handler {
 	my $delayedResponse; # false if we want to call sendResponse at the end of this method
 
 	for my $obj ( @{$objs} ) {
+		# Issue #765 - For comet meta messages handshake, connect, reconnect, disconnect, subscribe, unsubscribe populate 'id' field on response to ensure compatibility with the readily available npm comet library.
+		# obtain 'id' from outer object if present, otherwise default to  - Here we use different variable name '$msgid' as '$id' is defined for use within slim/subscribe channel.
+		my $msgid = $obj->{id} || '';
+
 		if ( ref $obj ne 'HASH' ) {
 			sendResponse(
 				@{$conn},
@@ -218,6 +222,7 @@ sub handler {
 		if ( !$manager->is_valid_clid( $clid ) ) {
 			# Invalid clientId, send advice to re-handshake
 			push @{$events}, {
+				id         => $msgid,
 				channel    => $obj->{channel},
 				clientId   => undef,
 				successful => JSON::XS::false,
@@ -241,6 +246,7 @@ sub handler {
 			};
 
 			push @{$events}, {
+				id                       => $msgid,
 				channel					 => '/meta/handshake',
 				version					 => PROTOCOL_VERSION,
 				supportedConnectionTypes => [ 'long-polling', 'streaming' ],
@@ -257,6 +263,7 @@ sub handler {
 			# We want the /meta/(re)connect response to always be the first event
 			# sent in the response, so it's stored in the special first_event slot
 			$conn->[HTTP_CLIENT]->first_event( {
+				id         => $msgid,
 				channel    => $obj->{channel},
 				clientId   => $clid,
 				successful => JSON::XS::true,
@@ -318,6 +325,7 @@ sub handler {
 
 			# disconnect them
 			push @{$events}, {
+				id         => $msgid,
 				channel    => '/meta/disconnect',
 				clientId   => $clid,
 				successful => JSON::XS::true,
@@ -344,6 +352,7 @@ sub handler {
 
 			for my $sub ( @{$subscriptions} ) {
 				push @{$events}, {
+					id           => $msgid,
 					channel      => '/meta/subscribe',
 					clientId     => $clid,
 					successful   => JSON::XS::true,
@@ -364,6 +373,7 @@ sub handler {
 
 			for my $sub ( @{$subscriptions} ) {
 				push @{$events}, {
+					id           => $msgid,
 					channel      => '/meta/unsubscribe',
 					clientId     => $clid,
 					subscription => $sub,

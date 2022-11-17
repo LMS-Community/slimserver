@@ -22,7 +22,7 @@
 	<table>
 		[% FOREACH option = nonMenuItems.sort %]
 			[% IF NOT loop.index % 2 %]<tr>[% END %]
-			<td><input type=checkbox class="stdedit" name="nonMenuItemAdd[% loop.index %]" id="nonMenuItemAdd[% loop.index %]" value="[% option %]" />
+			<td><input type=checkbox class="stdedit" name="nonMenuItemAdd[% loop.index %]" id="nonMenuItemAdd[% loop.index %]" value="[% option | html %]" />
 			[% nonMenuItems.$option %]&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			[% IF loop.index % 2 %]</tr>[% END %]
 		[%- END -%]

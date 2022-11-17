@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Logitech Media Server Copyright 2001-2021 Logitech.
+# Logitech Media Server Copyright 2001-2022 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -16,22 +16,21 @@ use strict;
 
 use FindBin qw($Bin);
 use lib $Bin;
+use Config;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 1;
 use constant RESIZER      => 0;
 use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
+use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
+use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
-use constant MEDIASUPPORT => IMAGE || VIDEO;
 use constant WEBUI        => 0;
-use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
@@ -46,7 +45,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.3.0';
+	our $VERSION = '8.4.0';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
@@ -107,13 +106,14 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $onlineLibrary, $wipe, $force, $prefsFile, $priority);
-	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $cachedir);
 
 	our $LogTimestamp = 1;
 
 	my $changes = 0;
 
 	$prefs = preferences('server');
+	$cachedir = $prefs->get('cachedir');
 
 	$prefs->readonly;
 
@@ -128,8 +128,6 @@ sub main {
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
 		# these values are parsed separately, we don't need these values in a variable - just get them off the list
-		'noimage'      => sub {},
-		'novideo'      => sub {},
 		'nodebuglog'   => sub {},
 		'noinfolog'    => sub {},
 		'nostatistics' => sub {},
@@ -416,8 +414,6 @@ Command line options:
 	--logfile       Send all debugging messages to the specified logfile.
 	--logdir        Specify folder location for log file
 	--logconfig     Specify pre-defined logging configuration file
-	--noimage       Disable scanning for images.
-	--novideo       Disable scanning for videos.
 	--nodebuglog    Disable all debug-level logging (compiled out).
 	--noinfolog     Disable all debug-level & info-level logging (compiled out).
 	--nostatistics  Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).

@@ -39,7 +39,7 @@ includeArtist = !titleFormat.match('ARTIST');
 includeAlbum  = !titleFormat.match('ALBUM');
 
 IF slideshow;
-	slideshowHelpers = 'class="slideImage" onClick="return false;"';
+slideshowHelpers = 'class="slideImage" onClick="return false;"';
 END;
 
 useSpecialExt="-browse" %]
@@ -66,12 +66,6 @@ useSpecialExt="-browse" %]
 		</script>
 
 	[% ELSE %]
-
-		[% IF slideshowTest %]
-		<link rel="stylesheet" type="text/css" href="[% webroot %]html/lightbox/lightbox.css?r=[% revision %]" />
-		<script type="text/javascript" src="[% webroot %]html/lightbox/lightbox.js?r=[% revision %]"></script>
-		[% END %]
-
 		<script type="text/javascript">
 			var orderByList;
 			[% IF orderByList %]
@@ -212,11 +206,11 @@ useSpecialExt="-browse" %]
 	[%- BLOCK allcontrol -%]
 		[% IF songinfo.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html %]');"
 			[% END %]
 		[% ELSIF songinfo.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html %]');"
 			[% END %]
 		[% END %]
 

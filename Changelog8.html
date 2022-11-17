@@ -1,25 +1,105 @@
-<h2><a name="v8.3.0" id="v8.3.0"></a>Version 8.3.0</h2>
+<h2><a name="v8.4.0" id="v8.4.0"></a>Version 8.4.0</h2>
+<ul>
+	<li><a href="#v8.3.1">Upstream fixes from Logitech Media Server 8.3.x</a></li>
+	<br />
+
+	<li>New Features:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Server Changes:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li>Update Audio::Scan to 1.06 for certain platforms (thanks ralphy, robho, slartibartfast!)</li>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/issues/829">#829</a>Don't override a content type set by a page handler.</li>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v8.3.1" id="v8.3.1"></a>Version 8.3.1</h2>
+<ul>
+	<li>New Features:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Server Changes:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/issues/826">#826</a> - Add Perl 5.36 support for Linux x86_64.</li>
+		<li>Add signed version of our custom Perl build for macOS.</li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/pull/827">#827</a>Fix installation of plugin updates - honour user's choice (thanks mw9!)</li>
+		<li>Don't use our custom Perl build on macOS 10.x - these versions come with a still working Perl 5.18.</li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v8.3.0" id="v8.3.0"></a>Version 8.3.0 - 2022-11-04 (4e15dbdff)</h2>
 <ul>
 	<li><a href="Changelog8.html#v8.2.1">Upstream fixes from Logitech Media Server 8.2.x</a></li>
 	<br />
 
 	<li>New Features:</li>
 	<ul>
+		<li>Add support for macOS 13 Ventura</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
+		<li>Remove support for media types other than audio (video, pictures). Let's make "M" music again.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/651">#651</a> - Updated French translation - thanks Frank-Berry!</li>
 		<li>Added British English translations - thanks expectingtofly!</li>
 		<li>Updated Czech translation - thanks mipa87!</li>
 		<li>Updated Dutch translation - thanks blackfiction!</li>
+		<li>Add support for TIDAL replay gain.</li>
 		<li>Dramatically improve Fulltext Search indexing for large playlists (thousands of tracks).</li>
 		<li>Improve security of LMS &lt;-&gt; mysqueezebox.com communication: don't store credentials, but only a session token.</li>
-		<li>Update Audio::Scan to 1.05 for certain platforms (thanks ralphy!)</li>
+		<li>Clean up legacy JavaScript support: update PrototypeJS and Scriptaculous to their latest builds, remove some legacy code.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/678">#678</a> - Fix up character encoding issues in Web UI Scanner progress reporting and Web UI log display (thanks mw9!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/708">#708</a> - Update to MP3, FLAC, Ogg and WMA Formats to use BPM tags - thanks kwarklabs!</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/751">#751</a> - Shuffle tracks added with "playlist loadtracks" for a given year (thanks philchillbill!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/758">#758</a> - Allow selection of regional language (eg. ZH_CH or EN_GB) through JSONRPC (thanks expectingtofly!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/785">#785</a> - Improve adding albums as favorites: don't rely on the album title alone, but use the artist to identify the album, too.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/817">#817</a> - Fix JavaScript integration in settings pages for Classic/Light (and thus Material) skins.</li>
+		<li>Remove more legacy plugins: Amazon, MP3Tunes, Orange, YALP</li>
 	</ul>
 	<br />
 
@@ -28,29 +108,44 @@
 		<li><a href="https://github.com/Logitech/slimserver/pull/673">#673</a> - Add aarch64 Linux and 64-bit macOS binaries for Monkey's Audio (APE) files (thanks ralphy!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/684">#684</a> - Updated Solaris Binaries for alac, flac, sox, faad, wvunpack, mac (thanks urknall!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/715">#715</a> - Remove I18N::LangTags - it's outdated and has been part of core Perl since 5.12.</li>
-		<li>Added Perl 5.34 modules for Linux x86_64</li>
+		<li>Added native support for Apple Silicon</li>
+		<li>Update Audio::Scan to 1.05 for certain platforms (thanks ralphy, slartibartfast!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/773">#773</a> - Update flac to 1.3.4 (macOS, Linux i386, x86_64, armhf, aarch64)</li>
+		<li>Added custom Perl 5.34 build for macOS 10.15+, in preparation for Apple's removal of Perl from macOS</li>
 		<li>Remove support for the embedded MySQL server. We've been using SQLite for about a decade.</li>
+		<li>Remove support for PowerPC and i386 on macOS.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/810">#810</a> - Remove the 'deprecate' pragma vom CGI::Util to improve compatibility with newer Perl versions.</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li>Allow seeking in mp4 files with samplerates > 65535 (32 bits) on some platforms (thanks philippe44 & ralphy)</li>
+		<li>Allow seeking in mp4 files with samplerates > 65535 (32 bits) on some platforms (thanks philippe44 &amp; ralphy)</li>
 		<li>Improve Deezer metadata lookup when adding albums/playlists through the CLI.</li>
-		<li><a href="https://github.com/andygrundman/Audio-Scan/issues/9">(Audio::Scan) #9</a> - For some WavPack DSD file the song_length_ms is incorrect (thanks aeeq & ralphy!)</li>
-		<li><a href="https://github.com/andygrundman/Audio-Scan/pulls/12">(Audio::Scan) #12</a> - ID3: Fix v2.4 extended header handling (thanks mw9 & ralphy!)</li>
+		<li><a href="https://github.com/andygrundman/Audio-Scan/issues/9">(Audio::Scan) #9</a> - For some WavPack DSD file the song_length_ms is incorrect (thanks aeeq &amp; ralphy!)</li>
+		<li><a href="https://github.com/andygrundman/Audio-Scan/pulls/12">(Audio::Scan) #12</a> - ID3: Fix v2.4 extended header handling (thanks mw9 &amp; ralphy!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/406">#406</a> - Crossfading fails with very short tracks</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/410">#410</a> - Rescan button for individual music folders does not work in Classic (and hence Material) skin.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/473">#473</a> - Broken playback functionality in Album/More</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/535">#535</a> - some CLI commands duplicate comment tag info</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/547">#547</a> - duplicate albums after adding tracks while renaming album</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/668">#668</a> - Podcasts: Pre-caching image and more-info data can bring the server to a crawl #668 (thanks mw9!)</li>
 		<li>Fix image transformation if a cover requested using /current/cover is pointing to a local file.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/699">#699</a> - Improve resume behaviour (thanks philippe44, maniac103 &amp; mw9</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/700">#700</a>/<a href="https://github.com/Logitech/slimserver/pull/718">#718</a> - High CPU load during playback of certain radio streams (thanks philippe44!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/704">#704</a> - changed artist names remain in database after quick rescan</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/705">#705</a> - changing large and lower case in file name results in double entries</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/705">#705</a> - changing upper and lower case in file name results in double entries</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/746">#746</a> - Windows 11: PreventStandby doesn't prevent standby any more</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/749">#749</a> - fix mp4 streams where audio offset comes from STCO (thanks philippe44 && bpa!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/754">#754</a> - improve reliabilityof "what's new" podcast search (thanks philippe44!)</li>
-	</ul>
-	<br />
-
-	<li>Other:</li>
-	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/pull/754">#754</a> - improve reliability of "what's new" podcast search (thanks philippe44!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/767">#767</a> - fix compatibility with standards compliant cometd libraries (thanks lynniemagoo!)</li>
+		<li><a href="https://github.com/Logitech/slimserver-vendor/issues/95">#95</a> - update faad helper binaries to fix a crash when the decoder call fails (thanks ralphy!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/777">#777</a> - When syncing with disconnected player through CLI, random player is synced</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/802">#802</a> - Log is flodded with callback warnings "Can't call method "display" on an undefined value"</li>
+		<li>Prevent a server crash while re-building the fulltext search index with huge collections.</li>
+		<li>Don't show online only artists when a virtual library view tells us to do so.</li>
+		<li>Fix IO::Socket::SSL initialization in the scanner's sync http lookup code.</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/797">#797</a> - Fix Power off/Power on behaviour - Player would resume playback of stale track when reconnecting, although nothing to be resumed.</li>
 	</ul>
 	<br />
 </ul>
@@ -65,6 +160,7 @@
 
 	<li>Platform Support:</li>
 	<ul>
+		<li>Added Perl 5.34 modules for Linux x86_64</li>
 	</ul>
 	<br />
 
@@ -74,11 +170,8 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/647">#647</a> - Fix podcast "Play from last position" and skip back trackinfo item (thanks mw9 and philippe44!).</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/656">#656</a> - Correct start time for streams with range offset (thanks philippe44!).</li>
 		<li>Fix resizing images with a dash in the name.</li>
-	</ul>
-	<br />
-
-	<li>Other:</li>
-	<ul>
+		<li>Define $::cachedir in the scanner, too, as many parts of the code rely on it.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/760">#760</a> - Fix various XSS possibilities in settings pages etc.</li>
 	</ul>
 	<br />
 </ul>
@@ -115,7 +208,7 @@
 
 	<li>Platform Support:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/18">#18</a> - Add a systemd service file for Debian based systems (thanks mw9 & tomscytale).</li>
+		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/18">#18</a> - Add a systemd service file for Debian based systems (thanks mw9 &amp; tomscytale).</li>
 		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/22">#22</a> - Add systemd service configuration for RPM based systems (thanks JohanSaaw!)</li>
 		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/25">#25</a> - Add weak dependency on perl IO::Socket:SSL in RPM (thanks JohanSaaw!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/526">#526</a> - Add Perl 5.32 and 5.30 support for Linux aarch64 platform. (thanks clivem!)</li>

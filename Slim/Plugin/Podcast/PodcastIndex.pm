@@ -99,7 +99,7 @@ sub newsHandler {
 	my $cb2 = sub {
 		if (!--$count) {
 			main::INFOLOG && $log->is_info && $log->info("Done getting updates");
-			$items = [ sort { $a->{date} < $b->{date} } @$items ];
+			$items = [ sort { $b->{date} <=> $a->{date} } @$items ];
 			$cache->set(NEWS_CACHE_KEY, $items, NEWS_TTL);
 			$cb->( { items => $items } );
 		};

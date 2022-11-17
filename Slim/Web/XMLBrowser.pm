@@ -37,7 +37,7 @@ my $prefs = preferences('server');
 my $cacheTimestamp;
 if ( !main::SCANNER ) {
 	# Wipe cached data after rescan or library change
-	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan'], ['changed','done']] );
+	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan','favorites'], ['changed','done','changed']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
 				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList) );

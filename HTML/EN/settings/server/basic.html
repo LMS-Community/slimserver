@@ -13,7 +13,7 @@
 				run: function(items) {
 					SqueezeJS.Controller.request({
 						params: [ '', [ "rescan", "?" ] ],
-			
+
 						success: function(response) {
 							response = Ext.util.JSON.decode(response.responseText);
 
@@ -37,9 +37,9 @@
 		<select class="stdedit" name="pref_language" id="language">
 
 		[% FOREACH option = languageoptions.sort %]
-			<option [% IF prefs.pref_language == option %]selected="selected" [% END %]value="[% option %]">[% languageoptions.$option %]</option>
+			<option [% IF prefs.pref_language == option %]selected="selected" [% END %]value="[% option | html %]">[% languageoptions.$option %]</option>
 		[%- END -%]
-		
+
 		</select>
 	[% END %]
 
@@ -54,8 +54,6 @@
 			<tr>
 				<th>[% 'FOLDER' | string %]</th>
 				<th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th>
-				[% IF !noimage %]<th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th>[% END %]
-				[% IF !novideo %]<th>[% 'VIDEO' | string %]</th>[% END %]
 				<th>&nbsp;</th>
 			</tr>
 
@@ -67,12 +65,6 @@
 				<td class="[% odd ? "odd" : "even" %]" align="center">
 					<input type=checkbox [% IF !mediadir.audio %]checked="1" [% END %] class="stdedit" name="pref_ignoreInAudioScan[% loop.index %]" id="ignoreInAudioScan[% loop.index %]" value="1" />
 				</td>
-				[% IF !noimage %]<td class="[% odd ? "odd" : "even" %]" align="center">
-					<input type=checkbox [% IF !mediadir.image %]checked="1" [% END %] class="stdedit" name="pref_ignoreInImageScan[% loop.index %]" id="ignoreInImageScan[% loop.index %]" value="1" />
-				</td>[% END %]
-				[% IF !novideo %]<td class="[% odd ? "odd" : "even" %]" align="center">
-					<input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" />
-				</td>[% END %]
 				<td class="[% odd ? "odd" : "even" %]" align="center" style="padding: 0 5px">
 					[% IF mediadir.path %]<input name="pref_rescan_mediadir[% loop.index %]" type=submit value="[% "SETUP_RESCAN_BUTTON" | string %]" class="stdclick disableOnScan" [% IF scanning %]disabled[% END %] />[% END %]
 				</td>
@@ -85,7 +77,7 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
-			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir %]" size="40">
+			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir | html %]" size="40">
 		[% END %]
 	[% END %]
 
@@ -93,12 +85,12 @@
 		<select class="stdedit disableOnScan" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
 
 		[% FOREACH option = scanTypes %]
-			<option [% IF scanning == option.value %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			<option [% IF scanning == option.value %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
 		[%- END -%]
-		
+
 		</select>
 		<input name="pref_rescan" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
-	
+
 [% PROCESS settings/footer.html %]

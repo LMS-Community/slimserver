@@ -4,11 +4,11 @@
 		<select name="pref_timeFormat">
 
 			<option value="" [% IF NOT prefs.pref_timeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
-	
+
 			[% FOREACH format = timeFormats %]
-	
-				<option value="[% format.key %]" [% IF prefs.pref_timeFormat == format.key %]selected[% END %]>[% format.value %]</option>
-	
+
+				<option value="[% format.key | html %]" [% IF prefs.pref_timeFormat == format.key %]selected[% END %]>[% format.value %]</option>
+
 			[% END %]
 
 		</select>
@@ -18,11 +18,11 @@
 		<select name="pref_dateFormat">
 
 			<option value="" [% IF NOT prefs.pref_dateFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTDATE" | string %]</option>
-	
+
 			[% FOREACH format = dateFormats %]
-	
-				<option value="[% format.key %]" [% IF prefs.pref_dateFormat == format.key %]selected[% END %]>[% format.value %]</option>
-	
+
+				<option value="[% format.key | html %]" [% IF prefs.pref_dateFormat == format.key %]selected[% END %]>[% format.value %]</option>
+
 			[% END %]
 
 		</select>

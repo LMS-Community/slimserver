@@ -86,7 +86,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 	<form action="[% webroot %]plugins/RandomPlay/settings.html" name="genreForm" id="genreForm">
 		<input type="hidden" name="type" value="">
 		<input type="hidden" name="addOnly" value="0">
-		<input type="hidden" name="player" value="[% player %]">
+		<input type="hidden" name="player" value="[% player | html %]">
 
 		<p>[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]</p>
 
@@ -205,7 +205,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 				<select class="stdedit" name="useLibrary" id="useLibrary">
 					<option value="">&nbsp;</option>
 					[% FOREACH value = libraries.keys %]
-					<option [% IF value == pluginRandomUseLibrary %]selected[% END %] value="[% value %]">[% libraries.$value %]</option>
+					<option [% IF value == pluginRandomUseLibrary %]selected[% END %] value="[% value | html %]">[% libraries.$value %]</option>
 					[% END %]
 				</select>
 			</p>
@@ -213,9 +213,9 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 
 		<p>
 			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
-			<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
+			<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks | html %]">
 			[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
-			<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
+			<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks | html %]">
 			[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
 		</p>
 

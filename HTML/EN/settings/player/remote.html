@@ -2,7 +2,7 @@
 [% IF prefs %]
 	[% WRAPPER setting title="SETUP_GROUP_IRSETS" desc="SETUP_GROUP_IRSETS_DESC" %]
 		[% FOREACH option = irsetlist  %]
-			<input type=hidden name="pref_irsetlist[% loop.index %]" value="[% option.key %]" />
+			<input type=hidden name="pref_irsetlist[% loop.index %]" value="[% option.key | html %]" />
 			<input type=checkbox [% IF NOT prefs.pref_disabledirsets.exists(option.key); %]checked [% END %] class="stdedit" name="pref_irsetlist[% loop.index %]" id="irsetlist[% loop.index %]" value="0" />
 			<label for="[% option.key %]" class="stdlabel">[% option.value %]</label><br>
 		[% END %]
@@ -13,7 +13,7 @@
 		[% WRAPPER setting title="SETUP_IRMAP" desc="SETUP_IRMAP_DESC" %]
 			<select class="stdedit" name="pref_irmap" id="irmap">
 				[% FOREACH option = irmapOptions  %]
-					<option [% IF prefs.pref_irmap == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+					<option [% IF prefs.pref_irmap == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value %]</option>
 				[%- END -%]
 			</select>
 		[% END %]

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl -ICPAN
 
-# Logitech Media Server Copyright 2001-2021 Logitech.
+# Logitech Media Server Copyright 2001-2022 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,9 +13,11 @@
 
 require 5.010;
 
+use Config;
 use constant SPLASH_LOGO => 'lms_splash.png';
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
 
 # don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
 my $splash;
@@ -58,7 +60,7 @@ require Getopt::Long;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Light;
 
-our $VERSION = '8.3.0';
+our $VERSION = '8.4.0';
 
 BEGIN {
 	if (ISWINDOWS) {

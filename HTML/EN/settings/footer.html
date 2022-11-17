@@ -1,6 +1,6 @@
 <!-- Begin settingsfooter.html -->
 
-<input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
+<input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken | html %]">
 
 [%- IF versionInfo -%]<br>
 
@@ -27,16 +27,16 @@
 	// add an event handler to folder/file selector fields
 	$$('.selectFolder').each(function(ele) {
 		new Ajax.FileSelector(ele, true);
-	});	
+	});
 
 	$$('.selectFile').each(function(ele) {
 		new Ajax.FileSelector(ele, false);
-	});	
+	});
 </script>
 </div>
 <div id="prefsSubmit">
 	[%- IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
-	[% IF browserType == 'Safari' %]<input type="hidden" name="saveSettings" value="1">[% END %]
+	<input type="hidden" name="saveSettings" value="1">
 </div>
 </form>
 [%- IF NOT ajaxUpdate -%]

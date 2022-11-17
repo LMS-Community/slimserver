@@ -30,7 +30,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 # https://tidal.com/browse/track/95570766
 # https://tidal.com/browse/album/95570764
 # https://tidal.com/browse/playlist/5a36919b-251c-4fa7-802c-b659aef04216
-my $URL_REGEX = qr{^https://(?:\w+\.)?tidal.com/browse/(track|playlist|album|artist)/([a-z\d-]+)}i;
+my $URL_REGEX = qr{^https://(?:\w+\.)?tidal.com/(?:browse/)?(track|playlist|album|artist|mix)/([a-z\d-]+)}i;
 Slim::Player::ProtocolHandlers->registerURLHandler($URL_REGEX, __PACKAGE__);
 
 sub isRemote { 1 }
@@ -260,6 +260,7 @@ sub _gotTrack {
 		duration  => $info->{duration},
 		bitrate   => $format eq 'flac' ? 'PCM VBR' : ($info->{bitrate} . 'k CBR'),
 		type      => lc($format) eq 'mp4' ? 'AAC' : uc($format),
+		replay_gain => $info->{replayGain} || 0,
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
@@ -274,6 +275,7 @@ sub _gotTrack {
 		sub {
 			my $meta = $cache->get('wimp_meta_' . $info->{id});
 			$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $song->track->bitrate/1000);
+			$song->track->replay_gain($meta->{replay_gain} || 0);
 			$cache->set( 'wimp_meta_' . $info->{id}, $meta, 86400 );
 			$params->{successCb}->();
 		},
@@ -281,7 +283,8 @@ sub _gotTrack {
 			my ($self, $error) = @_;
 			$log->warn( "could not find $format header $error" );
 			$params->{successCb}->();
-		} );
+		}
+	);
 }
 
 sub _gotTrackError {

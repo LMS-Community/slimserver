@@ -187,18 +187,37 @@ sub _addInfo {
 
 		if ($entry->{'action'} eq 'install' && $entry->{'url'} && $entry->{'sha'}) {
 
-			if ($prefs->get('auto') ||
-				($params->{'saveSettings'} && (exists $params->{"update:$plugin"} || exists $params->{"install:$plugin"})) ) {
+			# we distinguish between plugins that are to be installed from new
+			# and already installed plugins for which an update is available
 
-				# install now if in auto mode or install or update has been explicitly selected
-				main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
+			if (!defined $current->{$plugin}) {
+				# plugin is not installed, so this is a new install
 
-				Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => lc($entry->{'sha'}) });
+				# install now, but only if explicitly selected on the extensions settings page
+				if ($params->{'saveSettings'} && exists $params->{"install:$plugin"}) {
 
-			} else {
+					main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
+					Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => lc($entry->{'sha'}) });
 
-				# add to update list
-				push @updates, $entry->{'info'};
+				}
+			}
+			else {
+				# plugin already installed, this is an update
+
+				# install update now if in auto mode or if explicitly selected
+				if ($prefs->get('auto') ||
+					($params->{'saveSettings'} && exists $params->{"update:$plugin"}) ) {
+
+					main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
+					Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => lc($entry->{'sha'}) });
+
+				}
+
+				# otherwise just add to update list
+				else {
+					push @updates, $entry->{'info'};
+				}
+
 			}
 
 			$hide->{$plugin} = 1;

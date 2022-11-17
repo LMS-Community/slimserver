@@ -32,11 +32,11 @@ my %methods = (
 	'slim.request'        => \&requestMethod,
 );
 
+my $allLanguages = Slim::Utils::Strings::languageOptions();
 
 # init
 # initializes the JSON RPC code
 sub init {
-
 	# register our URI handler
 	Slim::Web::Pages->addRawFunction('jsonrpc.js', \&handleURI);
 
@@ -82,7 +82,7 @@ sub handleURI {
 	# see Slim::Web::CSRF::isRequestCSRFSafe
 	if (!$httpResponse->header('Access-Control-Allow-Origin') && $prefs->get('csrfProtectionLevel') && (my $request = $httpResponse->request)) {
 		my ($host, $origin);
-		eval { 
+		eval {
 			$host = $request->header('Host');
 			$origin = $request->header('Origin') || $request->header('Referer');
 		};
@@ -103,7 +103,7 @@ sub handleURI {
 				$httpResponse->content('');
 
 				$httpClient->send_response($httpResponse);
-				Slim::Web::HTTP::closeHTTPSocket($httpClient);	
+				Slim::Web::HTTP::closeHTTPSocket($httpClient);
 
 				return;
 			}
@@ -112,7 +112,7 @@ sub handleURI {
 
 	# cancel any previous subscription on this connection
 	# we must have a context defined and a subscription defined
-	if (defined($contexts{$httpClient}) && 
+	if (defined($contexts{$httpClient}) &&
 		Slim::Control::Request::unregisterAutoExecute($httpClient)) {
 
 		# we want to send a last chunk to close the connection as per HTTP...
@@ -221,11 +221,31 @@ sub handleURI {
 	$context->{'httpResponse'} = $httpResponse;
 	$context->{'procedure'} = $procedure;
 
-
 	# Detect the language the client wants content returned in
 	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
-		my @parts = split(/[,-]/, $lang);
-		$context->{lang} = uc $parts[0] if $parts[0];
+		# split locales from from the Accept-Language header, sort by priority (q), pick first value, convert to upper case
+		# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+		($lang) = map {
+			uc($_->{l})
+		} grep {
+			$_
+		} sort {
+			$b->{q} <=> $a->{q}
+		} map {
+			s/^\s+|\s+$//g;
+			/([\w-]+)(;q=(\d+(\.\d+)?))?/i;
+			{
+				l => $1,
+				q => $3 // 1
+			}
+		} split(',', $lang);
+
+		# transform locale to language code (eg. en_GB to EN_GB), fall back to EN if needed
+		if ($lang =~ s/-/_/) {
+			$lang =~ s/^([A-Z]+)_.*/$1/ if !$allLanguages->{$lang};
+		}
+
+		$context->{lang} = $lang;
 	}
 
 	if ( my $ua = ( $httpResponse->request->header('X-User-Agent') || $httpResponse->request->header('User-Agent') ) ) {
@@ -445,8 +465,8 @@ sub requestMethod {
 		if ($context->{'x-jive'}) {
 			# set this in case the query can be subscribed to
 			$request->autoExecuteCallback(\&requestWrite);
-		}	
-		
+		}
+
 		main::INFOLOG && $log->info("Dispatching...");
 
 		$request->execute();
@@ -487,7 +507,7 @@ sub requestMethod {
 		$log->warn(($clientid ? "$clientid: " : '') . "request not dispatchable!");
 		Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 		return;
-	}	
+	}
 }
 
 

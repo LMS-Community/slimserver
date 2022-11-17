@@ -185,6 +185,7 @@ PLUGIN_FAVORITES_DESC
 	SV	Spara och redigera favoriter
 
 PLUGIN_FAVORITES_USE_DSTM
+	CS	Nezastavuj přehrávání hudby
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
 	FR	N'arrêtez pas la musique
@@ -192,6 +193,7 @@ PLUGIN_FAVORITES_USE_DSTM
 	NL	Don't Stop The Music
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
+	CS	Zaregistrujte si oblíbené položky jako možnosti pro "Nezastavuj přehrávání hudby".
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
 	EN	Register favorites as options for "Don't Stop The Music".
 	EN_GB	Register favourites as options for "Don't Stop The Music".

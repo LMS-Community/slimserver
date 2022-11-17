@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Logitech Media Server Copyright 2001-2021 Logitech.
+# Logitech Media Server Copyright 2001-2022 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -38,6 +38,8 @@ BEGIN {
 
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
+use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
 use constant PERFMON      => ( grep { /--perfwarn/ } @ARGV ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
@@ -46,10 +48,6 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
-use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
@@ -58,6 +56,9 @@ use constant SLIM_SERVICE => 0;
 use constant NOUPNP       => 0;
 
 use Config;
+
+use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
+
 my %check_inc;
 $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 
@@ -154,7 +155,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.3.0';
+	our $VERSION = '8.4.0';
 
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable
@@ -199,17 +200,6 @@ sub HAS_AIO {
 	$HAS_AIO = 0 if !$HAS_AIO;	# Make sure it is defined now.
 
 	return $HAS_AIO;
-}
-
-my $MEDIASUPPORT;
-sub MEDIASUPPORT {
-	return $MEDIASUPPORT if defined $MEDIASUPPORT;
-
-	eval {
-		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
-	};
-
-	return $MEDIASUPPORT;
 }
 
 
@@ -758,12 +748,14 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--httpport <portnumber> [--httpaddr <listenip>]]
           [--advertiseaddr <ipaddress>]
           [--cliport <portnumber> [--cliaddr <listenip>]]
+          [--playeraddr <listenip>]
           [--priority <priority>]
+          [--streamaddr <listenip>]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo] [--nobrowsecache]
+          [--nobrowsecache]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
           [--localfile]
 
@@ -812,8 +804,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
-    --noimage        => Disable scanning for images.
-    --novideo        => Disable scanning for videos.
     --nomysqueezebox => Disable mysqueezebox.com integration.
                         Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
@@ -876,8 +866,6 @@ sub initOptions {
 		# these values are parsed separately, we don't need these values in a variable - just get them off the list
 		'nodebuglog'    => sub {},
 		'noinfolog'     => sub {},
-		'noimage'       => sub {},
-		'novideo'       => sub {},
 		'nostatistics'  => sub {},
 		'nosb1slimp3sync'=> sub {},
 		'notranscoding' => sub {},
@@ -927,7 +915,7 @@ sub initSettings {
 		$prefs->set('cachedir', $cachedir);
 		$prefs->set('librarycachedir', $cachedir);
 	}
-	
+
 	if (defined($httpport)) {
 		$prefs->set('httpport', $httpport);
 	}
@@ -951,7 +939,7 @@ sub initSettings {
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();
-	
+
 	# tmpdir is set only through command line
 	$tmpdir = Win32::GetANSIPathName($tmpdir) if main::ISWINDOWS;
 	Slim::Utils::Misc::makeTempDir();
@@ -1113,14 +1101,11 @@ sub checkDataSource {
 
 	# Count entries for all media types, run scan if all are empty
 	my $dbh = Slim::Schema->dbh;
-	my ($gc, $vc, $ic) = $dbh->selectrow_array( qq{
-		SELECT
-			(SELECT COUNT(1) FROM genres) as gc,
-			(SELECT COUNT(1) FROM videos) as vc,
-			(SELECT COUNT(1) FROM images) as ic
+	my ($gc) = $dbh->selectrow_array( qq{
+		SELECT COUNT(1) FROM genres
 	} );
 
-	if (Slim::Schema->schemaUpdated || (!$gc && !$vc && !$ic)) {
+	if (Slim::Schema->schemaUpdated || !$gc) {
 
 		logWarning("Schema updated or no media found in the database, initiating scan.");
 

@@ -46,6 +46,10 @@ sub new {
 	return $self;
 }
 
+sub hasSSL {
+	Slim::Networking::Async::HTTP->hasSSL()
+}
+
 # Parameters are passed to Net::HTTP::NB::formatRequest, meaning you
 # can override default headers, and pass in content.
 # Examples:

@@ -7,6 +7,7 @@ package Slim::Utils::OS::Win32;
 
 use strict;
 use Cwd;
+use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 use Sys::Hostname qw(hostname);
@@ -123,10 +124,13 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath(@_);
 
-	# TODO: we might want to make this a bit more intelligent
-	# as Perl is not always in that folder (eg. German Windows)
-
-	Slim::Utils::Misc::addFindBinPaths('C:\Perl\bin');
+	# Add the location of perl.exe to the helper applications folder search path.
+	my $perlpath = Slim::Utils::Misc::findbin('perl.exe');
+	if ($perlpath) {
+		Slim::Utils::Misc::addFindBinPaths(dirname($perlpath));
+	} else {
+		 main::INFOLOG && warn ("Perl.exe not found");
+	}
 }
 
 sub initMySQL {}
@@ -198,7 +202,7 @@ sub dirsFor {
 
 		push @dirs, $::prefsdir || $class->writablePath('prefs');
 
-	} elsif ($dir =~ /^(?:music|playlists|videos|pictures)$/) {
+	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
 		my $path;
 
@@ -243,14 +247,6 @@ sub dirsFor {
 		if ($dir =~ /^(?:music|playlists)$/) {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
 			$fallback = 'My Music';
-		}
-		elsif ($dir eq 'videos') {
-			$path = Win32::GetFolderPath(Win32::CSIDL_MYVIDEO) unless $path;
-			$fallback = 'My Videos';
-		}
-		elsif ($dir eq 'pictures') {
-			$path = Win32::GetFolderPath(Win32::CSIDL_MYPICTURES) unless $path;
-			$fallback = 'My Pictures';
 		}
 
 		# fall back if no path or invalid path is returned

@@ -41,7 +41,7 @@ my @allAttributes = (qw(
 	artistname albumname coverurl type info_link
 
 	title titlesort titlesearch album tracknum
-	timestamp filesize disc audio audio_size audio_offset year
+	timestamp added_time updated_time filesize disc audio audio_size audio_offset year
 	initial_block_fn
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
@@ -345,6 +345,8 @@ sub setAttributes {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug($self->url . " => ", Data::Dump::dump($attributes));
 
+	Slim::Schema::processReplayGainTags($attributes, $self->path);
+
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this
 		$key = lc($key);
@@ -458,6 +460,11 @@ sub duration {
 
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs && $secs > 0;
 }
+
+*modificationTime = \&Slim::Schema::Track::modificationTime;
+*addedTime = \&Slim::Schema::Track::addedTime;
+*lastUpdated = \&Slim::Schema::Track::lastUpdated;
+*buildModificationTime = \&Slim::Schema::Track::buildModificationTime;
 
 sub coverid { $_[0]->id }
 

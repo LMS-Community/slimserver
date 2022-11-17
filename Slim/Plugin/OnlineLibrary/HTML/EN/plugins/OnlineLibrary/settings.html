@@ -61,8 +61,8 @@
 							<option [% IF matcher.field == "contributor"; "selected"; END %] value="contributor">[% "ARTIST" | string %]</option>
 						</select>
 					</td>
-					<td><input type="text" name="text[% matcher_no %]" value="[% matcher.text %]" class="stdedit" /></td>
-					<td><input type="text" name="genre[% matcher_no %]" value="[% matcher.genre %]" class="stdedit" /></td>
+					<td><input type="text" name="text[% matcher_no %]" value="[% matcher.text | html %]" class="stdedit" /></td>
+					<td><input type="text" name="genre[% matcher_no %]" value="[% matcher.genre | html %]" class="stdedit" /></td>
 					<td style="text-align:center;">[% IF matcher.text && matcher.field %]<input type="checkbox" name="delete[% matcher_no %]" class="stdedit" />[% END %]</td>
 				</tr>
 			[% END %]
