@@ -1981,6 +1981,9 @@ sub _alarmEnd {
 		main::DEBUGLOG && $isDebug && $log->debug('Ignoring self-created request');
 		return;
 	}
+	elsif ($source) {
+		$log->error("Unknown source: $source");
+	}
 
 	# power always ends the alarm, whether snoozing or not
 	if ($currentAlarm->{_snoozeActive} && $request->getRequest(0) ne 'power') {
