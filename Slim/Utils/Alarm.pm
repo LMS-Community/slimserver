@@ -1978,10 +1978,12 @@ sub _alarmEnd {
 	# Don't respond to requests that we created ourselves
 	my $source = $request->source;
 	if ($source && ($source eq 'ALARM' || $source eq 'PLUGIN_RANDOMPLAY')) {
+		warn Data::Dump::dump($request, 'Alarm: ignored event');
 		main::DEBUGLOG && $isDebug && $log->debug('Ignoring self-created request');
 		return;
 	}
 	elsif ($source) {
+		warn Data::Dump::dump($request, 'Alarm: fired event');
 		$log->error("Unknown source: $source");
 	}
 
