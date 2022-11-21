@@ -2398,19 +2398,21 @@ sub __matchingRequest {
 # return compiled regexp representing the $possibleNames array of arrays
 sub __requestRE {
 	my $possibleNames = shift || return qr /./;
-	my @regexp = ();
+	my @reParts = ();
 
 	for my $names (@$possibleNames) {
 
 		# Bracket each name using word boundaries to avoid
 		# "play" matching "play", "playlist", and "display".
 
-		push @regexp,
-			'(?:' . join('|', map { "\\b$_\\b" } @$names) . ')'
-			if scalar @$names;
+		if (scalar @$names) {
+			push @reParts,
+				'(?:' . join('|', map { "\\b$_\\b" } @$names) . ')';
+		}
 	}
 
-	return qr /${\(join(',', @regexp))}/;
+	my $re = join(',', @reParts);
+	return qr /$re/;
 }
 
 # update the super filter used by notify
