@@ -1982,6 +1982,11 @@ sub _alarmEnd {
 		main::DEBUGLOG && $isDebug && $log->debug('Ignoring self-created request');
 		return;
 	}
+	elsif ($source && $source !~ m|^/[a-z0-9]+/slim/request| && $source =~ m|^/[a-z0-9]+/slim/\w+/(?:[0-9a-f]{2}:){5}[0-9a-f]{2}|i) {
+		warn Data::Dump::dump($request, 'Alarm: ignored event');
+		main::DEBUGLOG && $isDebug && $log->debug('Ignoring notification to subscriber');
+		return;
+	}
 	elsif ($source) {
 		warn Data::Dump::dump($request, 'Alarm: fired event');
 		$log->error("Unknown source: $source");
