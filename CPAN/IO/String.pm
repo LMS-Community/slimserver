@@ -1,6 +1,6 @@
 package IO::String;
 
-# Copyright 1998-2004 Gisle Aas.
+# Copyright 1998-2005 Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -8,7 +8,7 @@ package IO::String;
 require 5.005_03;
 use strict;
 use vars qw($VERSION $DEBUG $IO_CONSTANTS);
-$VERSION = "1.07";  # $Date: 2005-11-07 19:19:03 -0500 (Mon, 07 Nov 2005) $
+$VERSION = "1.08";  # $Date: 2005/12/05 12:00:47 $
 
 use Symbol ();
 
@@ -79,13 +79,7 @@ sub close
     delete *$self->{buf};
     delete *$self->{pos};
     delete *$self->{lno};
-    if ($] >= 5.006 && $[ < 5.007) {
-	# perl-5.6.x segfaults on untie, so avoid it
-    }
-    else {
-	untie *$self;
-	undef *$self;
-    }
+    undef *$self if $] eq "5.008";  # workaround for some bug
     return 1;
 }
 
@@ -549,7 +543,7 @@ L<IO::File>, L<IO::Stringy>, L<perlfunc/open>
 
 =head1 COPYRIGHT
 
-Copyright 1998-2003 Gisle Aas.
+Copyright 1998-2005 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
