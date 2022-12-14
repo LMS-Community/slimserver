@@ -796,12 +796,6 @@ sub infoComment {
 
 		next unless defined $c && $c !~ /^\s*$/;
 
-		if (!($c =~ s!\b(http://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\">$1</a>!igo)) {
-
-			# handle emusic-type urls which don't have http://
-			$c =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
-		}
-
 		$comment .= $c;
 	}
 
@@ -819,7 +813,7 @@ sub infoComment {
 					wrap => 1,
 					name => $comment,
 					label => 'COMMENT',
-
+					parseURLs => 1
 				},
 			],
 

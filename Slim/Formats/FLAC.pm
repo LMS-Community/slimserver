@@ -383,9 +383,9 @@ sub _getXMLTags {
 	# even better, use RDF::Simple::Parser
 
 	# crude regex matching until we get a real rdf/xml parser in place
-	my $mbAlbum  = qr{"(http://musicbrainz.org/(?:mm-2.1/)album/[\w-]+)"};
-	my $mbArtist = qr{"(http://musicbrainz.org/(?:mm-2.1/)artist/[\w-]+)"};
-	my $mbTrack  = qr{"(http://musicbrainz.org/(?:mm-2.1/)track/[\w-]+)"};
+	my $mbAlbum  = qr{"(https?://musicbrainz.org/(?:mm-2.1/)album/[\w-]+)"};
+	my $mbArtist = qr{"(https?://musicbrainz.org/(?:mm-2.1/)artist/[\w-]+)"};
+	my $mbTrack  = qr{"(https?://musicbrainz.org/(?:mm-2.1/)track/[\w-]+)"};
 
 	# get list of albums included in this file
 	# TODO: handle a collection of tracks without an album association (<mm:trackList> at a file level)
@@ -960,25 +960,25 @@ sub parseStream {
 
 	$info->{fh} = $fh;
 
-	# Audio::Scan tries to guess total_sample which is in FLAC header. When codec does not know, it sets it 
+	# Audio::Scan tries to guess total_sample which is in FLAC header. When codec does not know, it sets it
 	# to 0 and then Audio::Scan seeks to eof and read sample numbers from there which is incorrect here. So we
 	# assume that in best cases, FLAC has a compression ratio of 8 and use that as a limit.
 	my $maxSamples = ($buflen - $info->{audio_offset}) / ($info->{channels} * $info->{bits_per_sample} / 8) * 8;
-	
+
 	if ($maxSamples < 0 || $info->{total_samples} < $maxSamples) {
 		$log->warn("Can't estimate track duration (got $info->{song_length_ms} ms)");
 		$info->{song_length_ms} = 0;
 		$info->{total_samples} = 0;
-	} elsif ($length) {	
+	} elsif ($length) {
 		$info->{avg_bitrate} = int(8*1000 * ($length - $info->{audio_offset}) / $info->{song_length_ms});
-	}	
+	}
 
 	return $info;
 }
 
 sub initiateFrameAlign {
 	my $context = { aligned => 0 };
-	
+
 	# use a closure to hold context
 	return sub {
 		return frameAlign($context, @_);

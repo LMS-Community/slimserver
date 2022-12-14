@@ -226,6 +226,7 @@ sub addSkinTemplate {
 			'utf8encode'        => \&Slim::Utils::Unicode::utf8encode,
 			'utf8on'            => \&Slim::Utils::Unicode::utf8on,
 			'utf8off'           => \&Slim::Utils::Unicode::utf8off,
+			'parseURIs'         => \&Slim::Web::Pages::Common::createLinksInComment,
 			'resizeimage'       => [ \&_resizeImage, 1 ],
 			'imageproxy'        => [ sub {
 				return _resizeImage($_[0], $_[1], $_[2], '-');

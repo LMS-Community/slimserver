@@ -363,25 +363,6 @@ sub unescape {
 	return $in;
 }
 
-# See http://www.onlamp.com/pub/a/onlamp/2006/02/23/canary_trap.html
-# XXX - no longer used?
-=pod
-sub removeCanary {
-	my $string = shift;
-
-	for (my $i = 0;  ++$i <= 5;) {
-
-		last if $$string =~ s/^=://;
-
-		$$string = unescape($$string);
-
-		last if $$string =~ s/^=://;
-	}
-
-	return $string;
-}
-=cut
-
 sub anchorFromURL {
 	my $url = shift;
 

@@ -373,10 +373,12 @@ useSpecialExt="-browse" %]
 						[% END %]
 						[% WRAPPER weblink %]
 							[% title = item.web.value;
-							   IF !title.defined || title == ''; title = item.name; END;
-							   IF !title.defined || title == ''; title = item.title; END
+								IF !title.defined || title == ''; title = item.name; END;
+								IF !title.defined || title == ''; title = item.title; END;
+								title = title | html | html_line_break;
+								IF item.parseURLs; title = title FILTER parseURIs; END;
+								title
 							%]
-							[% title | html | html_line_break %]
 
 							[% IF includeArtist && item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
@@ -446,7 +448,7 @@ useSpecialExt="-browse" %]
 	[% IF item.simpleAlbumLink %]
 		<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% playerURI %]/" class="browseItemLink">
 	[% ELSIF item.weblink %]
-		<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %]>
+		<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %] class="link">
 	[% ELSIF item.link %]
 		<a href="[% webroot %][% item.link %]&amp;player=[% playerURI %]" target="_blank">
 	[% ELSIF item.type == 'redirect' %]
