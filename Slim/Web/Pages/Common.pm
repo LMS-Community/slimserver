@@ -170,7 +170,7 @@ sub addSongInfo {
 
 			next unless defined $comment && $comment !~ /^\s*$/;
 
-			$params->{'comment'} .= createLinksInComment($comment);
+			$params->{'comment'} .= $comment;
 		}
 
 		# handle artwork bits
@@ -188,17 +188,6 @@ sub addSongInfo {
 
 		}
 	}
-}
-
-sub createLinksInComment {
-	my ($comment) = @_;
-
-	if (!($comment =~ s!\b(https?://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
-		# handle emusic-type urls which don't have http://
-		$comment =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
-	}
-
-	return $comment;
 }
 
 sub addPlayerList {
