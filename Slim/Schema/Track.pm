@@ -240,9 +240,9 @@ sub comment {
 
 		next unless $c;
 
-		# put a slash between multiple comments.
-		$comment .= ' / ' if $comment;
-		$c =~ s/^eng(.*)/$1/;
+		# join multiple comments into a single multi-line comment
+		# consistent with Slim::Schema::RemoteTrack::comment
+		$comment .= "\n" if $comment;
 		$comment .= $c;
 	}
 

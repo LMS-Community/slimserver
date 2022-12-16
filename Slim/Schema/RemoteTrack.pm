@@ -153,9 +153,9 @@ sub _mergeComments {
 		my $comment;
 
 		foreach my $c (@$new) {
-			# put a slash between multiple comments.
-			$comment .= ' / ' if $comment;
-			$c =~ s/^eng(.*)/$1/;
+			# join multiple comments into a single multi-line comment
+			# consistent with Slim::Schema::Track::comment
+			$comment .= "\n" if $comment;
 			$comment .= $c;
 		}
 
@@ -360,7 +360,8 @@ sub setAttributes {
 				my @splitList = split(/\s+/, ($prefs->get('splitList') || ''));
 				$separator = ($splitList[0] || ';') . ' ';
 			}
-			$value = join($separator, @$value);
+			# - but don't join if it's a comment - the 'comment' method handles this
+			$value = join($separator, @$value) unless $key eq '_comment';
 		}
 
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
