@@ -451,6 +451,10 @@ div#homeMenu {
 	padding-right: 80px;
 }
 
+.browsedbListItem .wrappedMenuItem {
+	display: inline-table;
+}
+
 .progressBar {
 	padding: 6px 0;
 }

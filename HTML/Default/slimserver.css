@@ -479,6 +479,11 @@ div.pagetitleWithIcon {
 	padding-left: 6px;
 }
 
+.browsedbListItem .wrappedMenuItem {
+	display: inline-table;
+	padding-left: 6px; /* added indent helps if browser window is too narrow for content */
+}
+
 .browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
 	visibility: hidden;
 	position: absolute;
