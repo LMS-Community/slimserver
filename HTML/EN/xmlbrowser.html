@@ -260,6 +260,10 @@
 							IF !title.defined || title == ''; title = item.title; END;
 							title = title | html | html_line_break;
 							IF item.parseURLs; title = title FILTER parseURIs; END;
+							IF item.wrap;
+								# Put wrapped text into a single element. Improves display of multiline comments & lyrics.
+								title = "<span class=\"wrappedMenuItem\"> $title </span>";
+							END;
 							title
 						%]
 						[% IF item.weblink || !item.type.match('^text') %]

@@ -165,7 +165,6 @@ sub addSongInfo {
 			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($url);
 		}
 
-		# make urls in comments into links
 		for my $comment ($track->comment) {
 
 			next unless defined $comment && $comment !~ /^\s*$/;

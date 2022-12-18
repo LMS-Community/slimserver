@@ -111,6 +111,9 @@ div#browsedbList {
 	position: relative;
 }
 
+.browsedbListItem .wrappedMenuItem {
+}
+
 .browsedbListItemFullWidth {
 }
 

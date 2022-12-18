@@ -791,7 +791,6 @@ sub infoComment {
 	my $item;
 	my $comment;
 
-	# make urls in comments into links
 	for my $c ($track->comment) {
 
 		next unless defined $c && $c !~ /^\s*$/;
@@ -843,6 +842,7 @@ sub infoLyrics {
 					wrap => 1,
 					name => $lyrics,
 					label => 'LYRICS',
+					parseURLs => 1
 				},
 			],
 
