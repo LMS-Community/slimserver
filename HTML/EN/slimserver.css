@@ -15,9 +15,6 @@ body, input, select {
 	font-family: sans-serif;
 }
 
-.odd {
-}
-
 .even {
 	background-color: #d0d0d0;
 }
@@ -109,12 +106,6 @@ div#browsedbList {
 
 .browsedbListItem {
 	position: relative;
-}
-
-.browsedbListItem .wrappedMenuItem {
-}
-
-.browsedbListItemFullWidth {
 }
 
 .playlistControls {
@@ -226,12 +217,6 @@ div#browsedbHeader {
 	white-space: nowrap;
 }
 
-.playingSong {
-}
-
-.playingSongControls {
-}
-
 div#albumPopup {
 	position: fixed;
 	z-index: 90;
@@ -272,9 +257,6 @@ div#albumBackground {
 .linkbtn {
 	color: black;
 	cursor: pointer;
-}
-
-.descendinfo {
 }
 
 .waitlinkbtn {
