@@ -1,5 +1,5 @@
 PLUGIN_VIEW_TAGS
-	DE	Erweiterte Tagansicht
+	DE	Erweiterte Tag Ansicht
 	EN	Advanced Tag View
 
 PLUGIN_VIEW_TAGS_WCOM
