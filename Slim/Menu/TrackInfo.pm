@@ -1231,11 +1231,12 @@ sub infoTagDump {
 }
 
 sub tagDump {
-	my ( $client, $callback, undef, $path ) = @_;
+	my ( $client, $callback, undef, $path, $key, $title ) = @_;
 
 	return unless $callback && $path;
 
 	my $menu = [];
+	$key ||= '';
 
 	require Audio::Scan;
 	my $s = eval { Audio::Scan->scan_tags($path) };
@@ -1273,6 +1274,8 @@ sub tagDump {
 		};
 
 		for my $k ( sort keys %{$tags} ) {
+			next if $key && $k ne $key;
+
 			my $v = $tags->{$k};
 
 			if ( ref $v eq 'ARRAY' ) {
@@ -1280,7 +1283,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => $k . ': [ ' . join( ', ', @{$a} ) . ' ]',
+					name => ($title || $k) . ': [ ' . join( ', ', @{$a} ) . ' ]',
 				};
 			}
 			else {
@@ -1290,7 +1293,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => $k . ': ' . $v,
+					name => ($title || $k) . ': ' . $v,
 				};
 			}
 		}
@@ -1303,7 +1306,12 @@ sub tagDump {
 		}
 	}
 
-	$callback->( $menu );
+	if (ref $callback) {
+		$callback->( $menu );
+	}
+	else {
+		return $menu;
+	}
 }
 
 my $cachedFeed;
