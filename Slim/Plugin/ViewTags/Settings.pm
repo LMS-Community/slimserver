@@ -22,7 +22,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, @{Slim::Plugin::ViewTags::Common::getDefaultTagNames()});
+	return ($prefs, , 'toplevel', @{Slim::Plugin::ViewTags::Common::getDefaultTagNames()});
 }
 
 sub handler {

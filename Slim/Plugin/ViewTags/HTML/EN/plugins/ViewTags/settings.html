@@ -28,7 +28,14 @@
 				<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
 				<td style="text-align:center;"><input type="checkbox" name="new_url" class="stdedit"/></td>
 			</tr>
-	</table>
+		</table>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_VIEW_TAGS_LEVEL" desc="" %]
+		<select class="stdedit" name="pref_toplevel" id="toplevel">
+			<option [% IF pref_toplevel %]selected [% END %]value="1">[% "PLUGIN_VIEW_TAGS_TOPLEVEL" | string %]</option>
+			<option [% IF !pref_toplevel %]selected [% END %]value="0">[% "PLUGIN_VIEW_TAGS_MOREINFO" | string %]</option>
+		</select>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

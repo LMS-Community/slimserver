@@ -50,5 +50,17 @@ PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
 	DE	Anzuzeigender Name
 	EN	Tag name to be displayed
 
+PLUGIN_VIEW_TAGS_LEVEL
+	DE	Anzeigeebene für diese Tags
+	EN	Level at which to show these tags
+
+PLUGIN_VIEW_TAGS_TOPLEVEL
+	DE	Tags auf oberster Ebene anzeigen
+	EN	Show tags at the top level
+
+PLUGIN_VIEW_TAGS_MOREINFO
+	DE	Tags in "Weitere Infos" anzeigen
+	EN	Show tags in "More Info"
+
 PLUGIN_VIEW_TAGS_URL
 	EN	URL

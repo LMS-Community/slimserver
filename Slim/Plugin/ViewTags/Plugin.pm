@@ -28,7 +28,7 @@ sub initPlugin {
 	}
 
 	initInfoProviders();
-	$prefs->setChange(\&initInfoProviders, 'customTags');
+	$prefs->setChange(\&initInfoProviders, 'customTags', 'toplevel');
 }
 
 sub initInfoProviders {
@@ -39,12 +39,15 @@ sub initInfoProviders {
 		}
 	}
 
-	foreach my $provider (@{Slim::Plugin::ViewTags::Common::getActiveTags()}) {
-		Slim::Menu::TrackInfo->registerInfoProvider("viewTagsPlugin_${provider}" => (
-			parent => 'moreinfo',
-			before => 'tagdump',
+	foreach my $tag (@{Slim::Plugin::ViewTags::Common::getActiveTags()}) {
+		my $toplevel = $prefs->get('toplevel');
+
+		Slim::Menu::TrackInfo->registerInfoProvider("viewTagsPlugin_${tag}" => (
+			parent => $toplevel ? undef : 'moreinfo',
+			after  => $toplevel ? 'comment' : undef,
+			before => $toplevel ? undef : 'tagdump',
 			func   => sub {
-				tagItem($provider, @_);
+				tagItem($tag, @_);
 			}
 		));
 	}
