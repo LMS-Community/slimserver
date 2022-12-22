@@ -30,7 +30,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Music::TitleFormatter;
-#use Slim::Utils::Timers;
 use Slim::Web::ImageProxy qw(proxiedImage);
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
@@ -1162,6 +1161,10 @@ sub _cliQuery_done {
 
 						if ( $item->{extid} ) {
 							$hash{extid} = $item->{extid};
+						}
+
+						if ($item->{parseURLs} && Slim::Utils::Misc::canFollowWeblinks($client)) {
+							$hash{parseURLs} = 1;
 						}
 
 						if ( $item->{type} && $item->{type} eq 'localservice' ) {

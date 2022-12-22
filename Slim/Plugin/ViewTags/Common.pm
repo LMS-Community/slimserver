@@ -44,10 +44,6 @@ my %tags = (
 		name => string('PLUGIN_VIEW_TAGS_WPUB'),
 		url => 1,
 	},
-	WXXX => {
-		name => string('PLUGIN_VIEW_TAGS_WXXX'),
-		url => 1,
-	}
 );
 
 my @defaultTagNames = keys %tags;

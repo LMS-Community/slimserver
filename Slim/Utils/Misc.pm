@@ -63,6 +63,9 @@ my $scannerlog = logger('scan.scanner');
 my $ospathslog = logger('os.paths');
 my $osfileslog = logger('os.files');
 
+my $WEBLINK_SUPPORTED_UA_RE = qr/\b(?:iPeng|SqueezePad|OrangeSqueeze|Squeeze-Control)\b/i;
+my $WEBBROWSER_UA_RE = qr/\b(?:FireFox|Chrome|Safari|Mozilla)\b/i;
+
 my $canFollowAlias = 0;
 
 if (main::ISWINDOWS) {
@@ -414,6 +417,18 @@ sub crackURL {
 	}
 
 	return ($host, $port, $path, $user, $pass, $proxied);
+}
+
+sub isWebBrowser {
+	my $client = shift || return;
+	return $client && $client->controllerUA && ($client->controllerUA =~ $WEBLINK_SUPPORTED_UA_RE || $client->controllerUA =~ $WEBBROWSER_UA_RE);
+}
+
+sub canFollowWeblinks {
+	my $client = shift || return;
+	return unless $client->controllerUA;
+	return 1 if isWebBrowser($client);
+	return $client->controllerUA =~ $WEBLINK_SUPPORTED_UA_RE;
 }
 
 =head2 cloneProtocol( $url, $model )

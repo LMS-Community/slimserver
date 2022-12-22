@@ -28,6 +28,7 @@ sub initPlugin {
 	}
 
 	initInfoProviders();
+	$prefs->setChange(\&initInfoProviders, 'customTags');
 }
 
 sub initInfoProviders {
@@ -38,7 +39,6 @@ sub initInfoProviders {
 		}
 	}
 
-	my $tags = $prefs->get('tags');
 	foreach my $provider (@{Slim::Plugin::ViewTags::Common::getActiveTags()}) {
 		Slim::Menu::TrackInfo->registerInfoProvider("viewTagsPlugin_${provider}" => (
 			parent => 'moreinfo',
