@@ -450,6 +450,9 @@ sub _fadeVolumeUpdate {
 # mute or un-mute volume as necessary
 # A negative volume indicates that the player is muted and should be restored
 # to the absolute value when un-muted.
+# 2022/12/27 : I think this is totally broken and should not be used. The negative vol
+# and mute boolean never exist together and setting prefs is useless as $client->volume
+# does it as well
 sub mute {
 	my $client = shift;
 
@@ -472,6 +475,21 @@ sub mute {
 	}
 
 	$prefs->client($client)->set('volume', $vol);
+	$client->mixerDisplay('volume');
+}
+
+sub setMute {
+	my $client = shift;
+	my $aborted = shift;
+	
+	# don't do anything if ramp up/down has been interrupted
+	return if $aborted;
+	
+	my $vol = $prefs->client($client)->get('volume');
+
+	$vol *= -1;
+	$client->volume($vol);
+
 	$client->mixerDisplay('volume');
 }
 

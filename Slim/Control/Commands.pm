@@ -3206,8 +3206,8 @@ sub _sleepPowerOff {
 
 sub _mixer_mute {
 	my $client = shift;
-
-	$client->mute();
+	
+	$client->setMute(@_);
 }
 
 sub _playlistXitem_load_done {
