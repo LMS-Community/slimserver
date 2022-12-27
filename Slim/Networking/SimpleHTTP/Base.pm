@@ -126,7 +126,7 @@ sub _createHTTPRequest {
 	# request compressed data if we have zlib
 	if ( hasZlib() && !$params->{saveAs} ) {
 		unshift @_, (
-			'Accept-Encoding' => 'deflate, gzip', # deflate is less overhead than gzip
+			'Accept-Encoding' => 'gzip',
 		);
 	}
 
