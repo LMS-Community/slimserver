@@ -3,7 +3,7 @@ package Slim::Web::Pages::Common;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -39,7 +39,7 @@ sub init(){
 	Slim::Web::Pages->addPageFunction(qr/^firmware\.(?:html|xml)/,\&firmware);
 	Slim::Web::Pages->addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::Pages->addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
-	
+
 	# cleanup potential left-overs from downloading ZIPped log files
 	Slim::Utils::Misc::deleteFiles(Slim::Utils::OSDetect::dirsFor('log'), qr/^(?:server|scanner).*zip$/i);
 }
@@ -55,7 +55,7 @@ sub _lcPlural {
 
 sub addLibraryStats {
 	my ($class, $params, $client) = @_;
-	
+
 	if (!Slim::Schema::hasLibrary()) {
 		return;
 	}
@@ -68,7 +68,7 @@ sub addLibraryStats {
 
 			my $name = $p->name;
 			$name =~ s/(.*)\|//;
-			
+
 			$params->{'progress'} = {
 				'name' => $name,
 				'bar'  => Slim::Web::Pages::Progress::progressBar($p, 40),
@@ -94,7 +94,7 @@ sub addLibraryStats {
 	$params->{'artist_count'} = $class->_lcPlural($totals->{'contributor'}, 'ARTIST', 'ARTISTS');
 
 	if ( main::INFOLOG && $sqllog->is_info ) {
-		$sqllog->info(sprintf("Found %s, %s & %s", 
+		$sqllog->info(sprintf("Found %s, %s & %s",
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}
@@ -131,13 +131,13 @@ sub addSongInfo {
 	}
 
 	$url   = $track->url() if $track;
-	
+
 	# Add plugin metadata if available
 	if ( Slim::Music::Info::isRemoteURL($url) ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$params->{'plugin_meta'} = $handler->getMetadataFor( $client, $url );
-			
+
 			# Only use cover if it's a full URL
 			if ( $params->{'plugin_meta'}->{'cover'} && $params->{'plugin_meta'}->{'cover'} !~ /^http/ ) {
 				delete $params->{'plugin_meta'}->{'cover'};
@@ -165,20 +165,13 @@ sub addSongInfo {
 			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($url);
 		}
 
-		# make urls in comments into links
 		for my $comment ($track->comment) {
 
 			next unless defined $comment && $comment !~ /^\s*$/;
 
-			if (!($comment =~ s!\b(http://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\">$1</a>!igo)) {
-
-				# handle emusic-type urls which don't have http://
-				$comment =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
-			}
-
 			$params->{'comment'} .= $comment;
 		}
-	
+
 		# handle artwork bits
 		if ($track->coverArt) {
 			$params->{'coverThumb'} = $track->coverid;
@@ -200,7 +193,7 @@ sub addPlayerList {
 	my ($class, $client, $params) = @_;
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
-	
+
 	my @players = Slim::Player::Client::clients();
 
 	if (scalar(@players) > 1) {
@@ -214,7 +207,7 @@ sub addPlayerList {
 			if ($eachclient->isSynced()) {
 				$clientlist{$eachclient->id()} .= " (" . string('SYNCHRONIZED_WITH') . " " .
 					$eachclient->syncedWithNames() .")";
-			}	
+			}
 		}
 
 		$params->{'player_chooser_list'} = $class->options($client->id(), \%clientlist, $params->{'skinOverride'}, 50);
@@ -254,7 +247,7 @@ sub options {
 # start : starting index of the displayed page in the list of items
 # perPage : items per page to display, preference used by default
 # addAlpha : flag determining whether to build the alpha map, requires itemsRef
-# currentItem : the index of the "current" item in the list, 
+# currentItem : the index of the "current" item in the list,
 #                if start not supplied this will be used to determine starting page
 #
 # Hash keys set:
@@ -272,7 +265,7 @@ sub options {
 
 sub pageInfo {
 	my ($class, $args) = @_;
-	
+
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
 	my $itemsPerPage = $args->{'perPage'} || $prefs->get('itemsPerPage');
@@ -283,7 +276,7 @@ sub pageInfo {
 	my @alphaindex = ();
 	my $itemCount = 0;
 	my $end;
-	
+
 	if ($index) {
 		foreach (@$index) {
 			my $key = $_->[0];
@@ -293,7 +286,7 @@ sub pageInfo {
 			$itemCount += $_->[1];
 			push (@alphaindex, $key);
 		}
-		
+
 		if ($args->{'itemCount'} && $args->{'itemCount'} > $itemCount) {
 			$itemCount = $args->{'itemCount'};
 		}
@@ -322,7 +315,7 @@ sub pageInfo {
 		if ($args->{'currentItem'}) {
 
 			$start = int($args->{'currentItem'} / $itemsPerPage) * $itemsPerPage;
-		
+
 		} else {
 
 			$start = 0;
@@ -337,7 +330,7 @@ sub pageInfo {
 			$start = 0;
 		}
 	}
-	
+
 	$end = $start + $itemsPerPage - 1;
 
 	if ($end >= $itemCount) {
@@ -424,32 +417,32 @@ sub firmware {
 sub update_firmware {
 	my ($client, $params) = @_;
 
-	$params->{'warning'} = Slim::Player::Squeezebox1::upgradeFirmware($params->{'ipaddress'}, 10) 
+	$params->{'warning'} = Slim::Player::Squeezebox1::upgradeFirmware($params->{'ipaddress'}, 10)
 		|| string('UPGRADE_COMPLETE_DETAILS');
-	
+
 	return Slim::Web::HTTP::filltemplatefile("update_firmware.html", $params);
 }
 
 sub tuneIn {
 	my ($client, $params) = @_;
-	
+
 	if ( $params->{'url'} ) {
-		$client->execute( [ 
-			'playlist', 
-			$params->{'tuneInAdd'} ? 'add' : 'play', 
-			$params->{'url'} 
+		$client->execute( [
+			'playlist',
+			$params->{'tuneInAdd'} ? 'add' : 'play',
+			$params->{'url'}
 		] );
 	}
-	
+
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
 }
 
 sub logFile {
 	my ($class, $httpClient, $params, $response, $logfile) = @_;
-	
+
 	$logfile =~ s/log/server/;
 	$logfile .= 'LogFile';
-	
+
 	my $logFile = Slim::Utils::Log->$logfile;
 
 	if ( $params->{zip} && -f $logFile ) {
@@ -461,16 +454,16 @@ sub logFile {
 			Archive::Zip::setErrorHandler( sub {
 				$log->error("Error compressing log file: " . shift);
 			} );
-			
+
 			$zip = Archive::Zip->new();
 		};
-		
+
 		if (defined $zip) {
 			# COMPRESSION_LEVEL_FASTEST == 1
 			my $member = $zip->addFile( $logFile, basename($logFile), 1 );
-			
+
 			my $zipFile = $logFile . '.zip';
-			
+
 			# AZ_OK == 0
 			if ( $member && $zip->writeToFileNamed( $zipFile ) == 0 ) {
 				$response->code(HTTP::Status::RC_OK);
@@ -482,7 +475,7 @@ sub logFile {
 		$log->error("Error compressing log file using Archive::Zip $@ - returning uncompressed log file instead");
 		$params->{full} = 1;
 	}
-	
+
 	if ( $params->{full} && -f $logFile ) {
 		$response->code(HTTP::Status::RC_OK);
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, 'text/plain', $logFile );
@@ -496,14 +489,14 @@ sub logFile {
 	$url .= ($lines ? '&' : '?') . "search=$search" if $search;
 
 	# if we're called with a GET, then likely it was a link, use default refresh rate
-	$params->{refresh} = 10 if !defined $params->{refresh} && $response->request->method eq 'GET';	
+	$params->{refresh} = 10 if !defined $params->{refresh} && $response->request->method eq 'GET';
 
 	my $count = ($lines * 1) || 50;
 
 	$params->{logLines} = '';
-	
+
 	my $file = File::ReadBackwards->new($logFile);
-		
+
 	if ($file){
 
 		my @lines;
@@ -512,18 +505,18 @@ sub logFile {
 			# Decode line. The log file is encoded in utf-8, and File::ReadBackwards retrieves it raw (binmode).
 			$line = Slim::Utils::Unicode::utf8decode($line);
 
-			next if $search && $line !~ /\Q$search\E/i; 
-			
+			next if $search && $line !~ /\Q$search\E/i;
+
 			$line = "<span style=\"color:green\">$line<\/span>" if $line =~ /main::init.*Starting/;
 			$line = qq(<span style="color:red">$line<\/span>) if $line =~ /(error)\b/i;
 			$line = qq(<span style="color:orange">$line<\/span>) if $line =~ /(warn.*?)\b/i;
 			unshift (@lines, $line);
-			
+
 			--$count;
 		}
 		$params->{logLines} .= join('', @lines);
 
-		$file->close();			
+		$file->close();
 	};
 
 	$response->expires(0);
@@ -534,7 +527,7 @@ sub logFile {
 
 sub statusM3u {
 	my ($class, $client) = @_;
-	
+
 	# if the HTTP client has asked for a .m3u file, then always return the current playlist as an M3U
 	if (defined($client)) {
 

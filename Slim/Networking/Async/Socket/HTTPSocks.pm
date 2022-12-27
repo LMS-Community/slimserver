@@ -13,7 +13,7 @@ sub new {
 	# change PeerAddr to proxy (no deepcopy needed)
 	my %params = %args;
 	$params{PeerAddr} = $args{ProxyAddr};
-	$params{PeerPort} = $args{ProxyPort} | 1080;
+	$params{PeerPort} = $args{ProxyPort} || 1080;
 	$params{Blocking} => 1;
 	
 	# and connect parent's class to it (better block)

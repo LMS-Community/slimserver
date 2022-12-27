@@ -283,7 +283,7 @@ sub getProxy {
 
 	# remove any leading "http://"
 	if($proxy) {
-		$proxy =~ s/http:\/\///i;
+		$proxy =~ s/https?:\/\///i;
 		$proxy = $proxy . ":" .$proxy_port if($proxy_port);
 	}
 

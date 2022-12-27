@@ -26,15 +26,15 @@
 	hasArtwork = 0;
 	contentwrapper = 'contentitem';
 	container = 'contentcontainer';
-	
+
 	UNLESS ajaxUpdate && ajaxUpdate >= 1;
 		FOREACH item = items;
-			IF item.image && item.type == 'text'; hasArtwork = 1; LAST; END;	
+			IF item.image && item.type == 'text'; hasArtwork = 1; LAST; END;
 		END;
-	END;	
-	
+	END;
+
 	IF hasArtwork;
-		container = 'gallerycontainer'; 
+		container = 'gallerycontainer';
 		contentwrapper = 'galleryitem';
 	END;
 -%]
@@ -52,7 +52,7 @@
 		[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %] [% "ADD_TO_PLAYLIST" | string %]
 	</div>
 	[% END %]
-	
+
 	[% PROCESS xmlbrowser_details.html %]
 [% END %]
 
@@ -71,7 +71,7 @@
 		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
 		[% PROCESS pagebar %]
 	[% END %]
-	
+
 	[% BLOCK favoritescontrol %]<span id="controls[% item.index || index _ ((start || 0) + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
@@ -91,23 +91,23 @@
 	[% BLOCK editcmd %]
 			href="[% webroot %]edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist_id=[% playlist_id %]&amp;itempos=[% item.play_index %]"
 	[% END %]
-	
+
 	[% BLOCK editcontrols %]
 		[% IF loop.count > 0 || loop.last %]
 			[% UNLESS useExtJS %]
 				[%- WRAPPER moveuplink noTarget=1 %]
 					[%- PROCESS editcmd cmd='up' %]
 				[% END %]
-	
+
 				[%- WRAPPER movedownlink noTarget=1 %]
 					[%- PROCESS editcmd cmd='down' %]
 				[% END %]
 			[% END %]
-			
+
 			[%- WRAPPER editlink noTarget=1 %]
 				[%- PROCESS editcmd cmd='edit' %]
 			[% END %]
-		
+
 			[%- WRAPPER removelink noTarget=1 %]
 				[%- PROCESS editcmd cmd='delete' %]
 			[% END %]
@@ -117,7 +117,7 @@
 	[% BLOCK editform %]
 		<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
 			<input type="hidden" name="player" value=[% playerURI %]>
-			<input type="hidden" name="itempos" value=[% item.play_index %]>				
+			<input type="hidden" name="itempos" value=[% item.play_index %]>
 			<input type="hidden" name="playlist_id" value=[% playlist_id %]>
 			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title | html %]">[% END %]
 			<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.url %]">
@@ -125,7 +125,7 @@
 			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
 		</form>
 	[% END %]
-	
+
 	[% IF playlist_id %]
 		<div class="playlistform">
 			<form method="get" action="[% webroot %]edit_playlist.html">
@@ -160,7 +160,7 @@
 			</form>
 		</div>
 	[% END %]
-	
+
 	[%- IF songinfo;
 		PROCESS songinfo_header.html itemobj = songinfo;
 		image = undef;
@@ -174,11 +174,11 @@
 			</a>
 		</ul>
 		[% END %]
-		
+
 		[% IF playlist_id && addItem %]
 			[% PROCESS editform %]
 		[% END %]
-		
+
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
@@ -189,9 +189,9 @@
 			[%- END %]
 			[%- odd = (not odd) %]
 		[% END %]
-		
+
 		[%- FOREACH item = items %]
-		
+
 			[% IF item.ignore; NEXT; END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
@@ -212,7 +212,7 @@
 					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
-			
+
 			[% IF playlist_id && edit && loop.index == itempos %]
 				[% PROCESS editform %]
 			[% ELSIF item.type == 'search' && !item.weblink %]
@@ -226,7 +226,7 @@
 			[% ELSIF item.type == 'textarea' %]
 				[% title = (item.web.value || item.name || item.title) %] [% title | html_line_break %]
 			[% ELSE %]
-				[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
+				[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;"
 					onMouseOver="showElements(['controls[% item.index || index _ ((start || 0) + loop.index) %]'], 'inline');"
 					onMouseOut="hideElements(['controls[% item.index || index _ ((start || 0) + loop.index) %]'])">
 				[% END %]
@@ -242,7 +242,7 @@
 						[% IF item.label %]
 							[% item.label | string %]
 							[%- stringCOLON %]
-						[% END %]	
+						[% END %]
 						[% IF item.weblink %]
 							<a href="[% item.weblink %]" target="_blank">
 						[% ELSIF item.type == 'redirect' %]
@@ -256,10 +256,16 @@
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ ((start || 0) + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
 						[% title = item.web.value;
-						   IF !title.defined || title == ''; title = item.name; END;
-						   IF !title.defined || title == ''; title = item.title; END
+							IF !title.defined || title == ''; title = item.name; END;
+							IF !title.defined || title == ''; title = item.title; END;
+							title = title | html | html_line_break;
+							IF item.parseURLs; title = title FILTER parseURIs; END;
+							IF item.wrap;
+								# Put wrapped text into a single element. Improves display of multiline comments & lyrics.
+								title = "<span class=\"wrappedMenuItem\"> $title </span>";
+							END;
+							title
 						%]
-						[% title | html | html_line_break %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]

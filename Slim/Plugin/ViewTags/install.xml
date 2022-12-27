@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<extension>
+	<id>c7bb070e-2c04-4afc-8a33-e2c80b8b2341</id>
+	<name>PLUGIN_VIEW_TAGS</name>
+	<module>Slim::Plugin::ViewTags::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_VIEW_TAGS</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

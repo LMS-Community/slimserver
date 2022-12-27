@@ -1,0 +1,66 @@
+PLUGIN_VIEW_TAGS
+	DE	Erweiterte Tag Ansicht
+	EN	Advanced Tag View
+
+PLUGIN_VIEW_TAGS_WCOM
+	DE	Kommerzielle Informationen (WCOM)
+	EN	Commercial information (WCOM)
+
+PLUGIN_VIEW_TAGS_WCOP
+	DE	Copyright/Rechtliche Informationen (WCOP, LICENSE)
+	EN	Copyright/Legal information (WCOP, LICENSE)
+
+PLUGIN_VIEW_TAGS_WOAF
+	DE	Offizielle Download Website (WOAF)
+	EN	Official audio file webpage (WOAF)
+
+PLUGIN_VIEW_TAGS_WOAR
+	DE	Offizielle Interpreten Website (WOAR, WEBSITE)
+	EN	Official artist webpage (WOAR, WEBSITE)
+
+PLUGIN_VIEW_TAGS_WOAS
+	DE	Offizielle Quelle der Audiodaten (WOAS)
+	EN	Official audio source webpage (WOAS)
+
+PLUGIN_VIEW_TAGS_WORS
+	DE	Website der Radiostation (WORS)
+	EN	Radio station homepage (WORS)
+
+PLUGIN_VIEW_TAGS_WPUB
+	DE	Website des Publishers (WPUB)
+	EN	Publishers webpage (WPUB)
+
+PLUGIN_VIEW_TAGS_STD_URL
+	DE	Standardtags mit URLs
+	EN	Standard URL tags
+
+PLUGIN_VIEW_TAGS_CUSTOM_TAGS
+	DE	Zusätzliche anzuzeigende Tags
+	EN	Additional tags to show
+
+PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC
+	DE	"Tag Name" ist der eigentliche Name, wie er in der Datei gespeichert ist, z.B. "WEBSITE". Dieser Name wird auch in "Tags anzeigen" eines Titels angezeigt. "Anzuzeigender Name" ist ein benutzerfreundlicherer Name, der in der Benutzeroberfläche angezeigt wird. "URL" definiert, ob der angezeigte Wert als Link dargestellt werden soll (wenn möglich).
+	EN	"Tag name" refers to the actual tag, as stored in the file, eg. "WEBSITE". The "View Tags" menu shows these. The "Name to be displayed" is a more user friendly name to be used in the UI. "URL" defines whether the field contains a URL. In this case UIs able to link to URLs can render the content with a link.
+
+PLUGIN_VIEW_TAGS_TAG_NAME
+	DE	Tag Name
+	EN	Tag name
+
+PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
+	DE	Anzuzeigender Name
+	EN	Tag name to be displayed
+
+PLUGIN_VIEW_TAGS_LEVEL
+	DE	Anzeigeebene für diese Tags
+	EN	Level at which to show these tags
+
+PLUGIN_VIEW_TAGS_TOPLEVEL
+	DE	Tags auf oberster Ebene anzeigen
+	EN	Show tags at the top level
+
+PLUGIN_VIEW_TAGS_MOREINFO
+	DE	Tags in "Weitere Infos" anzeigen
+	EN	Show tags in "More Info"
+
+PLUGIN_VIEW_TAGS_URL
+	EN	URL

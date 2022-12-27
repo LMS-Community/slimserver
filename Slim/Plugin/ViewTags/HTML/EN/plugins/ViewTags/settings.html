@@ -1,0 +1,41 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_VIEW_TAGS_STD_URL" desc="" %]
+		[% FOREACH tag = defaultTagOrder %]
+			<div>
+				<input type="checkbox" name="pref_[% tag %]" id="vt_[% tag %]" [% key = "pref_" _ tag; IF prefs.$key %]checked="checked"[% END %] class="stdedit">
+				<label for="vt_[% tag %]" class="stdlabel">[% "PLUGIN_VIEW_TAGS_" _ tag FILTER string %]</label>
+			</div>
+		[% END %]
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_VIEW_TAGS_CUSTOM_TAGS" desc="PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC" %]
+		<table>
+			<tr>
+				<th>[% "PLUGIN_VIEW_TAGS_TAG_NAME" | string %]</th>
+				<th>[% "PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE" | string %]</th>
+				<th style="margin: 10 0 10">[% "PLUGIN_VIEW_TAGS_URL" | string %]</th>
+			</tr>
+			[% FOREACH tag = customTags.keys.sort %]
+				<tr>
+					<td><input type="text" name="[% tag %]_tag" value="[% tag | html %]" class="stdedit"/></td>
+					<td><input type="text" name="[% tag %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
+					<td style="text-align:center;"><input type="checkbox" name="[% tag %]_url" [% IF customTags.$tag.url %]checked="checked"[% END %] class="stdedit"/></td>
+				</tr>
+			[% END %]
+			<tr>
+				<td><input type="text" name="new_tag" value="" class="stdedit"/></td>
+				<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
+				<td style="text-align:center;"><input type="checkbox" name="new_url" class="stdedit"/></td>
+			</tr>
+		</table>
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_VIEW_TAGS_LEVEL" desc="" %]
+		<select class="stdedit" name="pref_toplevel" id="toplevel">
+			<option [% IF pref_toplevel %]selected [% END %]value="1">[% "PLUGIN_VIEW_TAGS_TOPLEVEL" | string %]</option>
+			<option [% IF !pref_toplevel %]selected [% END %]value="0">[% "PLUGIN_VIEW_TAGS_MOREINFO" | string %]</option>
+		</select>
+	[% END %]
+
+[% PROCESS settings/footer.html %]

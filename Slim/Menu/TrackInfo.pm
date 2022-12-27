@@ -791,16 +791,9 @@ sub infoComment {
 	my $item;
 	my $comment;
 
-	# make urls in comments into links
 	for my $c ($track->comment) {
 
 		next unless defined $c && $c !~ /^\s*$/;
-
-		if (!($c =~ s!\b(http://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\">$1</a>!igo)) {
-
-			# handle emusic-type urls which don't have http://
-			$c =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
-		}
 
 		$comment .= $c;
 	}
@@ -819,7 +812,7 @@ sub infoComment {
 					wrap => 1,
 					name => $comment,
 					label => 'COMMENT',
-
+					parseURLs => 1
 				},
 			],
 
@@ -849,6 +842,7 @@ sub infoLyrics {
 					wrap => 1,
 					name => $lyrics,
 					label => 'LYRICS',
+					parseURLs => 1
 				},
 			],
 
@@ -1237,11 +1231,12 @@ sub infoTagDump {
 }
 
 sub tagDump {
-	my ( $client, $callback, undef, $path ) = @_;
+	my ( $client, $callback, undef, $path, $key, $title ) = @_;
 
 	return unless $callback && $path;
 
 	my $menu = [];
+	$key ||= '';
 
 	require Audio::Scan;
 	my $s = eval { Audio::Scan->scan_tags($path) };
@@ -1279,6 +1274,8 @@ sub tagDump {
 		};
 
 		for my $k ( sort keys %{$tags} ) {
+			next if $key && $k ne $key;
+
 			my $v = $tags->{$k};
 
 			if ( ref $v eq 'ARRAY' ) {
@@ -1286,7 +1283,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => $k . ': [ ' . join( ', ', @{$a} ) . ' ]',
+					name => ($title || $k) . ': [ ' . join( ', ', @{$a} ) . ' ]',
 				};
 			}
 			else {
@@ -1296,7 +1293,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => $k . ': ' . $v,
+					name => ($title || $k) . ': ' . $v,
 				};
 			}
 		}
@@ -1309,7 +1306,12 @@ sub tagDump {
 		}
 	}
 
-	$callback->( $menu );
+	if (ref $callback) {
+		$callback->( $menu );
+	}
+	else {
+		return $menu;
+	}
 }
 
 my $cachedFeed;

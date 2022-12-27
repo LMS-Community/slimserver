@@ -226,6 +226,7 @@ sub addSkinTemplate {
 			'utf8encode'        => \&Slim::Utils::Unicode::utf8encode,
 			'utf8on'            => \&Slim::Utils::Unicode::utf8on,
 			'utf8off'           => \&Slim::Utils::Unicode::utf8off,
+			'parseURIs'         => \&_parseURIs,
 			'resizeimage'       => [ \&_resizeImage, 1 ],
 			'imageproxy'        => [ sub {
 				return _resizeImage($_[0], $_[1], $_[2], '-');
@@ -248,7 +249,6 @@ sub addSkinTemplate {
 	return $class->{skinTemplates}->{$skin};
 }
 
-
 sub _nonBreaking {
 	my $string = shift;
 
@@ -257,6 +257,18 @@ sub _nonBreaking {
 	return $string;
 }
 
+sub _parseURIs {
+	my ($text) = @_;
+
+	return $text unless $text;
+
+	if (!($text =~ s!\b(https?://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
+		# handle emusic-type urls which don't have http://
+		$text =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
+	}
+
+	return $text;
+}
 
 sub _resizeImage {
 	my ( $context, $width, $height, $mode, $prefix ) = @_;
