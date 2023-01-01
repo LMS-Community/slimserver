@@ -40,7 +40,7 @@ sub initDetails {
 
 			} elsif (/Chip.*(Apple .*)/) {
 
-				$class->{osDetails}->{'osArch'} ||= $1;
+				$class->{osDetails}->{'osArch'} ||= 'arm64';
 
 			}
 
@@ -53,14 +53,12 @@ sub initDetails {
 	if ( !$class->{osDetails}->{osArch} ) {
 		my $uname = `uname -a`;
 
-		if ($uname =~ /ARM64/i) {
-			$class->{osDetails}->{osArch} = 'Apple Silicon (x86_64 - Rosetta)';
-		}
-		else {
-			$class->{osDetails}->{osArch} = 'x86_64';
+		if ($uname =~ /ARM64.*x86_64/i) {
+			$class->{osDetails}->{osArch} = 'x86_64 (Rosetta)';
 		}
 	}
 
+	$class->{osDetails}->{'osArch'} ||= 'Unknown';
 	$class->{osDetails}->{'os'}  = 'Darwin';
 	$class->{osDetails}->{'uid'} = getpwuid($>);
 
