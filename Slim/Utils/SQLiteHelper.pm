@@ -25,7 +25,7 @@ use Digest::MD5 qw(md5_hex);
 use File::Basename;
 use File::Path;
 use File::Slurp;
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catfile);
 use JSON::XS::VersionOneAndTwo;
 use Time::HiRes qw(sleep);
 
@@ -35,7 +35,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
-use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
 use Slim::Utils::Strings ();
 
@@ -112,11 +111,14 @@ sub on_connect_do {
 	push @{$sql}, 'PRAGMA temp_store = MEMORY' if $prefs->get('dbhighmem');
 
 	# We create this even if main::STATISTICS is not false so that the SQL always works
-	# Track Persistent data is in another file
-	my $persistentdb = $class->_dbFile('persist.db');
+	# Track Persistent data is in another file, in the prefs folder rather than cache
+	my $persistentdb = $class->dbFile('persist.db', 'persistent');
+
+	# we need to move the persist.db out of the cache folder
+	_migrateDBFile($class->dbFile('persist.db'), $persistentdb);
 
 	# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Windows can't handle the long version
-	_migrateDBFile($class->_dbFile('squeezebox-persistent.db'), $persistentdb);
+	_migrateDBFile($class->dbFile('squeezebox-persistent.db'), $persistentdb);
 
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
 	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
@@ -330,7 +332,7 @@ sub optimizeDB {
 	# only run VACUUM in the scanner, or if no player is active
 	return if !main::SCANNER && grep { $_->power() } Slim::Player::Client::clients();
 
-	$class->vacuum('library.db');
+	$class->vacuum();
 	$class->vacuum('persist.db');
 }
 
@@ -518,7 +520,10 @@ If the $optional parameter is passed, the VACUUM will only happen if there's a c
 sub vacuum {
 	my ( $class, $db, $optional ) = @_;
 
-	my $dbFile = catfile( $prefs->get('librarycachedir'), ($db || 'library.db') );
+	my $dbFile = $class->dbFile($db || 'library.db');
+
+	# files other than the default library.db can be stored in a persistent folder
+	$dbFile = $class->dbFile($db, 'persistent') if $db && !-f $dbFile;
 
 	return unless -f $dbFile;
 	my $dbSize = -s _;
@@ -554,8 +559,13 @@ sub vacuum {
 	main::DEBUGLOG && $log->is_debug && $log->debug("VACUUM $db done!");
 }
 
-sub _dbFile {
-	my ( $class, $name ) = @_;
+sub dbFile {
+	my ( $class, $name, $persistent ) = @_;
+
+	if ($persistent) {
+		my $persistDir = Slim::Utils::Prefs::dir() || Slim::Utils::OSDetect::dirsFor('prefs');
+		return catfile($persistDir, $name);
+	}
 
 	my ($driver, $source, $username, $password) = Slim::Schema->sourceInformation;
 
