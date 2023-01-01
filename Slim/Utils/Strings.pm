@@ -42,14 +42,15 @@ our @EXPORT_OK = qw(string cstring clientString);
 use Config;
 use Digest::SHA1 qw(sha1_hex);
 use POSIX qw(setlocale LC_TIME LC_COLLATE);
-use File::Basename;
+use File::Basename qw(dirname);
 use File::Slurp qw(read_file write_file);
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use Storable;
 
 use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 
@@ -195,6 +196,9 @@ sub loadStrings {
 
 		main::INFOLOG && $log->info("String cache contains old data - reparsing string files");
 	}
+
+	# clean up legacy files, and left-overs from migrations (eg. macOS Intel -> Apple Silicon)
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^string(s|cache)\..*\.bin$/, $stringCache);
 
 	# otherwise reparse all string files
 	unless ($args->{'dontClear'}) {
