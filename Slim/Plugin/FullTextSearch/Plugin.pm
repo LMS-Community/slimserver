@@ -463,10 +463,15 @@ sub _uniqueTokens {
 
 	return '' unless $text;
 
+	# don't try to ignore case on eg. Chinese
+	if (Slim::Utils::Unicode::encodingFromString($text) !~ /^utf/) {
+		$text = Slim::Utils::Text::ignoreCaseArticles($text, 0, 1);
+	}
+
 	my %seen;
 	return join(' ', grep {
 		!$seen{$_}++
-	} split(/\s/, Slim::Utils::Text::ignoreCaseArticles($text, 0, 1)));
+	} split(/\s/, $text));
 }
 
 sub _rebuildIndex {
