@@ -368,6 +368,11 @@ sub localeDetails {
 	return ($lc_ctype, $lc_time);
 }
 
+sub noCaseFilename {
+	my ($class, $name) = @_;
+	return Slim::Utils::Unicode::utf8encode_locale($class->SUPER::noCaseFilename($name));
+}
+
 sub getSystemLanguage {
 	my $class = shift;
 

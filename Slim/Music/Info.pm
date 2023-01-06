@@ -22,7 +22,6 @@ use File::Path;
 use File::Basename;
 use File::Spec::Functions qw(catdir splitdir);
 use Path::Class;
-use POSIX qw(setlocale LC_CTYPE LC_COLLATE);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
@@ -938,31 +937,7 @@ sub fileName {
 }
 
 sub sortFilename {
-
-	use locale;
-
-	# build the sort index
-	# File sorting should look like ls -l, Windows Explorer, or Finder -
-	# really, we shouldn't be doing any of this, but we'll ignore
-	# punctuation, and fold the case. DON'T strip articles.
-	my @nocase = map {
-		lc(
-			Slim::Utils::Unicode::utf8encode_locale(
-				fileName($_)
-			)
-		)
-	} @_;
-
-	# Bug 14906: need to use native character-encoding collation sequence
-	my $oldCollate = setlocale(LC_COLLATE);
-	setlocale(LC_COLLATE, setlocale(LC_CTYPE));
-
-	# return the input array sliced by the sorted array
-	my @ret = @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
-
-	setlocale(LC_COLLATE, $oldCollate);
-
-	return @ret;
+	return Slim::Utils::OSDetect::getOS->sortFilename(@_);
 }
 
 sub isFragment {

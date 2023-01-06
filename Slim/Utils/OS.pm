@@ -350,6 +350,42 @@ sub localeDetails {
 	return ($lc_ctype, $lc_time);
 }
 
+
+=head2 sortFilename()
+
+Sort filenames as close to the underlying operating system's sorting order.
+
+File sorting should look like ls -l, Windows Explorer, or Finder -
+really, we shouldn't be doing any of this, but we'll ignore
+punctuation, and fold the case. DON'T strip articles.
+
+=cut
+
+sub sortFilename {
+	my $class = shift;
+
+	use locale;
+	require POSIX;
+
+	my @nocase = map { $class->noCaseFilename($_) } @_;
+
+	# Bug 14906: need to use native character-encoding collation sequence
+	my $oldCollate = POSIX::setlocale(POSIX::LC_COLLATE());
+	POSIX::setlocale(POSIX::LC_COLLATE(), POSIX::setlocale(POSIX::LC_CTYPE()));
+
+	# return the input array sliced by the sorted array
+	my @ret = @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
+
+	POSIX::setlocale(POSIX::LC_COLLATE(), $oldCollate);
+
+	return @ret;
+}
+
+sub noCaseFilename {
+	return lc(Slim::Music::Info::fileName($_[1]));
+}
+
+
 =head2 getSystemLanguage()
 
 Return the system's language or 'EN' as default value

@@ -2828,12 +2828,12 @@ sub readDirectoryQuery {
 			# sort folders < files
 			@fsitems = sort {
 				if ($fsitems{$a}->{d}) {
-					if ($fsitems{$b}->{d}) { uc($a) cmp uc($b) }
+					if ($fsitems{$b}->{d}) { 0 }
 					else { -1 }
 				}
 				else {
 					if ($fsitems{$b}->{d}) { 1 }
-					else { uc($a) cmp uc($b) }
+					else { 0 }
 				}
 			} @fsitems;
 

@@ -230,6 +230,30 @@ sub localeDetails {
 	return ($lc_ctype, $lc_time);
 }
 
+
+# macOS doesn't sort correctly using LC_COLLATE - use a temporary database table to do the job...
+sub sortFilename {
+	my $class = shift;
+
+	my $dbh = Slim::Schema->dbh();
+
+	$dbh->do('DROP TABLE IF EXISTS sort_filenames');
+	$dbh->do('CREATE TEMPORARY TABLE sort_filenames (name TEXT)');
+
+	my $sth = $dbh->prepare_cached("INSERT INTO sort_filenames (name) VALUES (?)");
+	foreach (@_) {
+		$sth->execute($_);
+	};
+
+	my $collate = $class->sqlHelperClass()->collate();
+
+	my @ret = map { $_->[0] } @{ $dbh->selectall_arrayref("SELECT name FROM sort_filenames ORDER BY name $collate") };
+	$dbh->do('DROP TABLE IF EXISTS sort_filenames');
+
+	return @ret;
+}
+
+
 sub getSystemLanguage {
 	my $class = shift;
 
