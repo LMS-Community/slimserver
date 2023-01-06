@@ -247,10 +247,10 @@ sub sortFilename {
 
 	my $collate = $class->sqlHelperClass()->collate();
 
-	my @ret = map { $_->[0] } @{ $dbh->selectall_arrayref("SELECT name FROM sort_filenames ORDER BY name $collate") };
+	my $ret = $dbh->selectall_arrayref("SELECT name FROM sort_filenames ORDER BY name $collate");
 	$dbh->do('DROP TABLE IF EXISTS sort_filenames');
 
-	return @ret;
+	return map { $_->[0] } @$ret;
 }
 
 
