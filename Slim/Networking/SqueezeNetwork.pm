@@ -247,19 +247,19 @@ sub login {
 
 	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . ($sid ? ' using existing session' : " as $username"));
 
-	if ($sid) {
-		$login_params = {
-			v => 'sc' . $::VERSION,
-			u => $username,
-			s => $sid,
-		};
-	}
 	# "interactive" mode is password validation - don't hash the password
-	elsif ($params{interactive}) {
+	if ($params{interactive}) {
 		$login_params = {
 			v => 'sc' . $::VERSION,
 			u => $username,
 			p => $password,
+		};
+	}
+	elsif ($sid) {
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			u => $username,
+			s => $sid,
 		};
 	}
 
