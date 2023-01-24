@@ -5349,7 +5349,7 @@ sub _getTagDataForTracks {
 	# Some helper functions to setup joins with less code
 	my $join_genre_track = sub {
 		if ( $sql !~ /JOIN genre_track/ ) {
-			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+			$sql .= 'LEFT JOIN genre_track ON genre_track.track = tracks.id ';
 		}
 	};
 
@@ -5357,13 +5357,13 @@ sub _getTagDataForTracks {
 		$join_genre_track->();
 
 		if ( $sql !~ /JOIN genres/ ) {
-			$sql .= 'JOIN genres ON genres.id = genre_track.genre ';
+			$sql .= 'LEFT JOIN genres ON genres.id = genre_track.genre ';
 		}
 	};
 
 	my $join_contributor_tracks = sub {
 		if ( $sql !~ /JOIN contributor_track/ ) {
-			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ';
+			$sql .= 'LEFT JOIN contributor_track ON contributor_track.track = tracks.id ';
 		}
 	};
 
@@ -5371,13 +5371,13 @@ sub _getTagDataForTracks {
 		$join_contributor_tracks->();
 
 		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'JOIN contributors ON contributors.id = contributor_track.contributor ';
+			$sql .= 'LEFT JOIN contributors ON contributors.id = contributor_track.contributor ';
 		}
 	};
 
 	my $join_albums = sub {
 		if ( $sql !~ /JOIN albums/ ) {
-			$sql .= 'JOIN albums ON albums.id = tracks.album ';
+			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
 		}
 	};
 
