@@ -16,6 +16,11 @@
 				</tr>
 				[% END %]
 			</table>
+			<p><br>
+				<input type="checkbox" name="pref_disablePlaylistImport" id="disablePlaylistImport" [% IF
+					prefs.pref_disablePlaylistImport %]checked="checked" [% END %] value="1" class="stdedit" />
+				<label for="disablePlaylistImport">[% "PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT" | string %]</label>
+			</p>
 		[% ELSE %]
 			<p>[% "PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE" | string %]</p>
 		[% END %]

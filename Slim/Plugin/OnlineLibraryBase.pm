@@ -126,6 +126,10 @@ sub isImportEnabled {
 	return 0;
 }
 
+sub ignorePlaylists {
+	return preferences('plugin.onlinelibrary')->get('disablePlaylistImport') ? 1 : 0;
+}
+
 sub storeTracks {
 	my ($class, $tracks, $libraryId, $accountId) = @_;
 

@@ -55,7 +55,9 @@ sub startScan { if (main::SCANNER) {
 			$class->scanArtists($accounts);
 		}
 
-		$class->scanPlaylists($accounts);
+		if (!$class->ignorePlaylists) {
+			$class->scanPlaylists($accounts);
+		}
 
 		$response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
 		$cache->set('tidal_library_fingerprint', ($http->content || ''), 30 * 86400);

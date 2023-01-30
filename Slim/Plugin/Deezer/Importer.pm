@@ -69,7 +69,9 @@ sub startScan { if (main::SCANNER) {
 			$class->scanArtists($accounts);
 		}
 
-		$class->scanPlaylists($accounts);
+		if (!$class->ignorePlaylists) {
+			$class->scanPlaylists($accounts);
+		}
 
 		my $response = $http->get(Slim::Networking::SqueezeNetwork::Sync->url(FINGERPRINT_URL));
 		$cache->set('deezer_library_fingerprint', ($response->content || ''), 30 * 86400);

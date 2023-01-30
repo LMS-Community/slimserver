@@ -70,6 +70,11 @@ PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	NL	Alleen lokale nummers (geen online muziek streaming diensten)
 	SV	Bara lokala spår (ingen strömningstjänst)
 
+PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT
+	DE	Wiedergabelisten nicht importieren.
+	EN	Don't import playlists.
+	FR	Ne pas importer les listes de lecture.
+
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 	CS	Logo hudební služby
 	DE	Musikdienst-Logo
