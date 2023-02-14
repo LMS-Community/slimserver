@@ -4,13 +4,13 @@
 			body, form {
 				margin: 0;
 			}
-			
+
 			pre {
 				margin-top: 0;
 				margin-left: 5px;
 			}
 
-			#header {
+			#log-header {
 				background: #666;
 				color: white;
 				font-size: 12px;
@@ -20,31 +20,33 @@
 				position: sticky;
 				top: 0;
 			}
-			
-			#header * {
+
+			#log-header * {
 				vertical-align: middle;
 			}
-			
-			#header a {
+
+			#log-header a {
 				color: white;
 			}
-			
-			#header span, input {
+
+			#log-header span, input {
 				margin-left: 10px;
 			}
-			
+
 			#search {
 				border: 1px;
 				height: 16px;
 				margin-left: 0;
 			}
-			
-			#header form > img, #header label {
+
+			#log-header form > img, #log-header label {
 				text-decoration: underline;
 				cursor: pointer;
 			}
 		</style>
-		
+
+		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
+
 		<script>
 			function submitForm(vars) {
 				if (vars) {
@@ -53,15 +55,15 @@
 							document.getElementById(k).value = vars[k];
 						}
 					}
-					
+
 				}
-				
+
 				console.log(document.forms[0]);
 				document.forms[0].submit();
 			}
-			
+
 			[% IF refresh %]
-			setTimeout(function() { 
+			setTimeout(function() {
 				//location.reload()
 				submitForm();
 			}, [% refresh * 1000 %]);
@@ -69,7 +71,7 @@
 		</script>
 	</head>
 	<body>
-		<div id="header">
+		<div id="log-header">
 			<form action="#bottom" method="POST">
 				<img src="[% webroot %]html/images/b_delete.gif" onclick="submitForm({lines:50,search:''})">
 				<input type="text" name="search" id="search" value="[% search %]" placeholder="[% "SEARCH" | string | html %]"></input>
@@ -87,7 +89,7 @@
 				</span>
 				<span><a href="/[% path %]?zip=1">[% "DOWNLOAD" | string %]</a></span>
 
-				<input type="hidden" name="lines" id="lines" value="[% lines %]"></input> 
+				<input type="hidden" name="lines" id="lines" value="[% lines %]"></input>
 			</form>
 		</div>
 		<pre>[% logLines %]</pre>
