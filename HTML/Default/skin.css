@@ -219,7 +219,7 @@
 /* html/images/slim-ext/btn-arrow.gif */
 .x-btn-menu-arrow-wrap .x-btn-center button,
 .x-btn-mc em.x-btn-split,
-.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, 
+.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split,
 .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
 	background-image: url('data:image/gif;base64,R0lGODlhCQANAJECAL+/v////////wAAACH5BAHoAwIALAAAAAAJAA0AAAIYhI5nicviWEwm2BsWDhBdlXDg05FTQwoFADs=');
 }
@@ -262,4 +262,26 @@ td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
 /* html/images/slim-ext/sort_desc.gif */
 .sort-desc .x-grid3-sort-icon {
 	background-image: url('data:image/gif;base64,R0lGODlhDQAFAJEAAAAAAIuLi+zs7AAAACH5BAkKAAMALAAAAAANAAUAAAIPVI4hw2y5WntKWhOtzLYAADs=');
+}
+
+/* song info lyrics */
+#songinfo_lyrics details > summary {
+	list-style: none;
+	cursor: pointer;
+	outline: none;
+}
+#songinfo_lyrics summary::-webkit-details-marker {
+	display: none;
+}
+
+#songinfo_lyrics summary::after {
+	content: ' ▸';
+}
+
+#songinfo_lyrics details[open] summary:after {
+	content: " ▾";
+}
+
+#songinfo_lyrics p {
+	padding: 8px 0px 8px 10px;
 }
