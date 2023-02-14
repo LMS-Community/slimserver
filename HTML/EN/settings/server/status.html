@@ -50,6 +50,11 @@
 	[% END %]
 [% END %]
 
+[% IF needsTimeSync %]
+	[% WRAPPER setting title="INFORMATION_TIME_DIFF" %]
+		<div>[% "INFORMATION_TIME_DIFF_DESC" | string %]</div>
+	[% END %]
+[% END %]
 
 [% IF library %]
 	[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]

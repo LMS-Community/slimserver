@@ -329,6 +329,13 @@ sub infoServer {
 		},
 	];
 
+	if ( !main::NOMYSB && $prefs->get('sn_timediff') ) {
+		push @{$items}, {
+			type => 'text',
+			name => cstring($client, 'INFORMATION_TIME_DIFF') . cstring($client, 'COLON') . ' ' . sprintf('%s %s', $prefs->get('sn_timediff'), cstring($client, 'SECONDS')),
+		};
+	}
+
 	if ( Slim::Schema::hasLibrary() ) {
 		push @{$items},	{
 			type => 'text',

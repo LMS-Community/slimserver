@@ -8,9 +8,7 @@ package Slim::Web::Settings::Server::Status;
 use strict;
 use base qw(Slim::Web::Settings);
 
-use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
-use Slim::Utils::Prefs;
 use Slim::Menu::SystemInfo;
 
 sub name {
@@ -57,6 +55,7 @@ sub handler {
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
 	$paramRef->{'radioNeedsFakeVersion'} = Slim::Networking::Discovery->needsFakeVersion;
+	$paramRef->{'needsTimeSync'} = !main::NOMYSB && Slim::Networking::SqueezeNetwork::Time->needsTimeSync;
 
 	if (Slim::Schema::hasLibrary()) {
 		# skeleton for the progress update

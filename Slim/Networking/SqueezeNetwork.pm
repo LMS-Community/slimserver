@@ -17,6 +17,7 @@ use URI::Escape qw(uri_escape);
 
 if ( !main::SCANNER ) {
 	require Slim::Networking::SqueezeNetwork::Players;
+	require Slim::Networking::SqueezeNetwork::Time;
 }
 
 use Slim::Utils::Log;
@@ -124,6 +125,7 @@ sub _init_done {
 
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
+	Slim::Networking::SqueezeNetwork::Time->init();
 
 	# add link to mysb.com favorites to our local favorites list
 	if ( $json->{favorites_url} && $prefs->get('sn_sync') ) {

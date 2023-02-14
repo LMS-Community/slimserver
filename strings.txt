@@ -17072,6 +17072,14 @@ INFORMATION_MENU_MODULE
 	RU	Подключаемые модули
 	SV	Plugin-moduler
 
+INFORMATION_TIME_DIFF
+	DE	Zeitdifferenzu zu mysqueezebox.com
+	EN	Time difference to mysqueezebox.com
+
+INFORMATION_TIME_DIFF_DESC
+	DE	Bitte übeprüfen Sie die Uhr ihres Computers und starten Sie Logitech Media Server neu. Die Uhrzeit scheint um mehrere Sekunden verschoben zu sein. Eine zu grosse Differenz kann zu Abbrüchen bei gesicherten Verbindungen und anderen unerwarteten Effekten führen.
+	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
+
 INFORMATION_PLAYER_NAME
 	CS	Název Squeezeboxu
 	DA	Navn på Squeezebox
