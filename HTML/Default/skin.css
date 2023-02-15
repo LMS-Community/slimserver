@@ -263,25 +263,3 @@ td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
 .sort-desc .x-grid3-sort-icon {
 	background-image: url('data:image/gif;base64,R0lGODlhDQAFAJEAAAAAAIuLi+zs7AAAACH5BAkKAAMALAAAAAANAAUAAAIPVI4hw2y5WntKWhOtzLYAADs=');
 }
-
-/* song info lyrics */
-#songinfo_lyrics details > summary {
-	list-style: none;
-	cursor: pointer;
-	outline: none;
-}
-#songinfo_lyrics summary::-webkit-details-marker {
-	display: none;
-}
-
-#songinfo_lyrics summary::after {
-	content: ' ▸';
-}
-
-#songinfo_lyrics details[open] summary:after {
-	content: " ▾";
-}
-
-#songinfo_lyrics p {
-	padding: 8px 0px 8px 10px;
-}
