@@ -368,8 +368,10 @@ useSpecialExt="-browse" %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]
 						[% IF item.label %]
+							[% IF item.label == "LYRICS" %]<span id="songinfo_lyrics"><details><summary>[% END %]
 							[% item.label | string %]
 							[%- stringCOLON %]
+							[% IF item.label == "LYRICS" %]</summary>[% END %]
 						[% END %]
 						[% WRAPPER weblink %]
 							[% title = item.web.value;
@@ -466,7 +468,9 @@ useSpecialExt="-browse" %]
 		<a href="[% UNLESS item.image.match("^(\/|http)") %][% webroot %][% END %][% item.image %]" target="_blank" [% slideshowHelpers %]>
 	[% END %]
 
+	[% IF item.label == "LYRICS" %]<p>[% END %]
 	[% content %]
+	[% IF item.label == "LYRICS" %]</p></details></span>[% END %]
 
 	[% IF item.type == 'playlist' || item.weblink || item.link || !item.type.match('^text') %]
 		</a>

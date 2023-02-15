@@ -219,7 +219,7 @@
 /* html/images/slim-ext/btn-arrow.gif */
 .x-btn-menu-arrow-wrap .x-btn-center button,
 .x-btn-mc em.x-btn-split,
-.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, 
+.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split,
 .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
 	background-image: url('data:image/gif;base64,R0lGODlhCQANAJECAL+/v////////wAAACH5BAHoAwIALAAAAAAJAA0AAAIYhI5nicviWEwm2BsWDhBdlXDg05FTQwoFADs=');
 }
