@@ -152,7 +152,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.3.1';
+	our $VERSION = '8.3.2';
 
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable

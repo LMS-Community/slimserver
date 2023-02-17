@@ -43,7 +43,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.3.1';
+	our $VERSION = '8.3.2';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
