@@ -4,7 +4,7 @@ package Slim::Plugin::RSSNews::Plugin;
 # Logitech Media Server Copyright 2006-2020 Logitech.
 #
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 #
 # This is a reimplementation of the old RssNews plugin based on
@@ -162,7 +162,7 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header => '{PLUGIN_RSSNEWS}',
@@ -188,9 +188,9 @@ sub setMode {
 
 sub cliQuery {
 	my $request = shift;
-	
+
 	main::INFOLOG && $log->info("Begin Function");
-	
+
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'rss_opml' );
@@ -200,7 +200,7 @@ sub cliQuery {
 # Update the hashref of RSS feeds for use with the web UI
 sub updateOPMLCache {
 	my $feeds = shift;
-	
+
 	my $outline = [];
 	for my $item ( @{$feeds} ) {
 		push @{$outline}, {
@@ -211,14 +211,14 @@ sub updateOPMLCache {
 			'items' => [],
 		};
 	}
-	
+
 	my $opml = {
 		'title' => string('PLUGIN_RSSNEWS'),
 		'url'   => 'rss_opml',			# Used so XMLBrowser can look this up in cache
 		'type'  => 'opml',
 		'items' => $outline,
 	};
-		
+
 	my $cache = Slim::Utils::Cache->new();
 	$cache->set( 'rss_opml', $opml, '10days' );
 }
@@ -256,7 +256,7 @@ sub setScreensaverRssNewsMode {
 
 	# start tickerUpdate in future after updates() caused by server mode change
 	Slim::Utils::Timers::setTimer(
-		$client, 
+		$client,
 		Time::HiRes::time() + 0.5,
 		\&tickerUpdate
 	);
@@ -270,7 +270,7 @@ sub leaveScreenSaverRssNews {
 	Slim::Utils::Timers::killTimers($client, \&tickerUpdateCheck);
 
 	delete $savers->{$client};
-	
+
 	main::INFOLOG && $log->info("Leaving screensaver mode");
 }
 
@@ -290,33 +290,33 @@ sub getNextFeed {
 	my $client = shift;
 
 	my @feeds = @{ $prefs->get('feeds') };
-	
+
 	# select the next feed and fetch it
 	my $index = $savers->{$client}->{feed_index} || 0;
 	$index++;
-	
+
 	if ( $index > scalar @feeds ) {
 		$index = 1;
 		# reset error count after looping around to the beginning
 		$savers->{$client}->{feed_error} = 0;
 	}
-	
+
 	$savers->{$client}->{feed_index} = $index;
-	
+
 	my $url = $feeds[$index - 1]->{'value'};
-	
+
 	main::INFOLOG && $log->info("Fetching next feed: $url");
-	
+
 	if ( !$savers->{$client}->{current_feed} ) {
 		$client->update( {
-			'line' => [ 
+			'line' => [
 				$client->string('PLUGIN_RSSNEWS'),
 				$client->string('PLUGIN_RSSNEWS_WAIT')
 			],
 		} );
 	}
-	
-	Slim::Formats::XML->getFeedAsync( 
+
+	Slim::Formats::XML->getFeedAsync(
 		\&gotNextFeed,
 		\&gotError,
 		{
@@ -330,12 +330,12 @@ sub getNextFeed {
 sub gotNextFeed {
 	my ( $feed, $params ) = @_;
 	my $client = $params->{'client'};
-	
+
 	# Bug 3860, If the user left screensaver mode while we were fetching the feed, cancel out
 	if ( !exists $savers->{$client} ) {
 		return;
 	}
-	
+
 	$savers->{$client}->{current_feed} = $feed;
 	$savers->{$client}->{current_url}  = $params->{'url'};
 
@@ -346,25 +346,25 @@ sub gotError {
 	my ( $error, $params ) = @_;
 	my $client = $params->{'client'};
 	my $url    = $params->{'url'};
-	
+
 	# Bug 3860, If the user left screensaver mode while we were fetching the feed, cancel out
 	if ( !exists $savers->{$client} ) {
 		return;
 	}
-	
+
 	# Bug 1664, skip broken feeds in screensaver mode
 	$log->error("While loading feed $url: $error, skipping!");
-	
+
 	my $errors = $savers->{$client}->{feed_error} || 0;
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
-	
+
 	my @feeds =  @{ $prefs->get('feeds') };
-	
+
 	if ( $errors >= scalar @feeds ) {
 
 		$log->error("All feeds failed, giving up!!");
-		
+
 		$client->update( {
 			'line' => [
 				$client->string('PLUGIN_RSSNEWS'),
@@ -372,19 +372,19 @@ sub gotError {
 			],
 		} );
 	}
-	else {	
+	else {
 		getNextFeed( $client );
 	}
 }
 
 sub tickerUpdateContinue {
 	my $client = shift;
-	
+
 	# Bug 3860, If the user left screensaver mode, cancel out
 	if ( !exists $savers->{$client} ) {
 		return;
 	}
-	
+
 	$savers->{$client}->{line1} = 0;
 
 	# add item to ticker
@@ -397,7 +397,7 @@ sub tickerUpdateContinue {
 	my $next = $newfeed ? $complete : $queue;
 
 	Slim::Utils::Timers::setTimer(
-		$client, 
+		$client,
 		Time::HiRes::time() + ( ($next > 1) ? $next : 1),
 		\&tickerUpdate
 	);
@@ -426,9 +426,9 @@ sub blankLines {
 
 	# check after the update calling this function is complete to see if ticker is empty
 	# (to refill ticker on font size change as this clears current ticker)
-	Slim::Utils::Timers::killTimers( $client, \&tickerUpdateCheck );	
+	Slim::Utils::Timers::killTimers( $client, \&tickerUpdateCheck );
 	Slim::Utils::Timers::setTimer(
-		$client, 
+		$client,
 		Time::HiRes::time() + 0.1,
 		\&tickerUpdateCheck
 	);
@@ -472,7 +472,7 @@ sub tickerLines {
 
 	# add item to ticker or display error and wait for tickerUpdate to retrieve news
 	if ( defined $feed ) {
-	
+
 		my $i = $current_items->{$url}->{'next_item'};
 
 		# handle case of feed index no longer being valid (feed refetched with less items)
@@ -483,7 +483,7 @@ sub tickerLines {
 
 		my $line1 = Slim::Formats::XML::unescapeAndTrim( $feed->{'title'} );
 		my $line2;
-		
+
 		my $title       = Slim::Formats::XML::unescapeAndTrim( $feed->{'items'}->[$i]->{'title'} );
 		my $description = Slim::Formats::XML::unescapeAndTrim( $feed->{'items'}->[$i]->{'description'} );
 
@@ -504,7 +504,7 @@ sub tickerLines {
 			$line2 = '';
 		}
 
-		# we need to limit the number of characters we add to the ticker, 
+		# we need to limit the number of characters we add to the ticker,
 		# because the server could crash rendering on pre-SqueezeboxG displays.
 		my $screensaver_chars_per_item = 1024;
 
@@ -532,7 +532,7 @@ sub tickerLines {
 			}
 		}
 
-		if ( ($current_items->{$url}->{'next_item'} - 
+		if ( ($current_items->{$url}->{'next_item'} -
 		      $current_items->{$url}->{'first_item'}) >= $screensaver_items_per_feed ) {
 
 			# displayed $screensaver_items_per_feed of this feed, move on to next saving position
@@ -542,9 +542,9 @@ sub tickerLines {
 
 		my $format = preferences('server')->get('timeFormat');
 		$format =~ s/.\%S//i;
-		
+
 		my $overlay = Slim::Utils::DateTime::timeF(undef,$format);
-		
+
 		$parts = {
 			'line'   => [ $line1 ],
 			'overlay' => [ $overlay ],
@@ -566,40 +566,6 @@ sub tickerLines {
 	$savers->{$client}->{newfeed} = $new_feed_next;
 
 	return $parts;
-}
-
-# SN only
-sub feedsForClient {
-	my $client = shift;
-	
-	my $userid = $client->playerData->userid->id;
-	
-	my @f = SDI::Service::Model::FavoriteFeed->search(
-		userid => $userid,
-		{ order_by => 'num' }
-	);
-													  
-	my @feeds = map { 
-		{ 
-			name  => Slim::Utils::Unicode::utf8decode($_->title), 
-			value => $_->url,
-		}
-	} @f;
-	
-	# check if the user deleted feeds so we don't load the defaults
-	my $deletedFeeds = preferences('server')->client($client)->get('deleted_feeds');
-	
-	# Populate with all default feeds
-	if ( !scalar @feeds && !$deletedFeeds ) {
-		@feeds = map { 
-			{ 
-				name  => $_->title, 
-				value => $_->url,
-			}
-		} SDI::Service::Model::FavoriteFeed->addDefaults( $userid );
-	}
-	
-	return @feeds;
 }
 
 1;
