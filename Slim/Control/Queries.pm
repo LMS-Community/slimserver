@@ -4956,6 +4956,7 @@ sub _songData {
 			$remoteMeta->{B} = $remoteMeta->{buttons};
 			$remoteMeta->{L} = $remoteMeta->{info_link};
 			$remoteMeta->{t} = $remoteMeta->{tracknum};
+			$remoteMeta->{y} = $remoteMeta->{year};
 		}
 	}
 
