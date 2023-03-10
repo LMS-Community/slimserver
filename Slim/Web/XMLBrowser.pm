@@ -58,7 +58,9 @@ sub handleWebIndex {
 	my $asyncArgs = $args->{'args'};
 	my $item      = $args->{'item'} || {};
 	my $pageicon  = $Slim::Web::Pages::additionalLinks{icons}{$title};
-
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug( "feed is :" . Data::Dump::dump($feed) );
+	
 	if ($title eq uc($title)) {
 		$title = string($title);
 	}
@@ -627,6 +629,7 @@ sub handleFeed {
 		if ( $url ) {
 
 			main::INFOLOG && $log->info("Playing/adding $url");
+			main::DEBUGLOG && $log->is_debug && $log->debug("streamItem is " . Data::Dump::dump($streamItem));
 
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
@@ -635,6 +638,7 @@ sub handleFeed {
 				secs    => $streamItem->{'duration'},
 				bitrate => $streamItem->{'bitrate'},
 				cover   => $streamItem->{'cover'} || $streamItem->{'image'} || $streamItem->{'icon'},
+				year	=> $streamItem->{'year'},
 			} );
 
 			$client->execute([ 'playlist', $action, $url ]);
@@ -669,6 +673,9 @@ sub handleFeed {
 			}
 
 			next if !$url;
+			
+			main::INFOLOG && $log->info("Playing/adding $url");
+			main::DEBUGLOG && $log->is_debug && $log->debug("item is " . Data::Dump::dump($item));
 
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
@@ -677,6 +684,7 @@ sub handleFeed {
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
 				cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'},
+				year	=> $item->{'year'},
 			} );
 
 			main::idleStreams();
