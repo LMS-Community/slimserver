@@ -1,0 +1,13 @@
+# Buttons 0-9 play presets, the rest of the keys are handled by Default.map
+
+[common]
+0 = playPreset_0
+1 = playPreset_1
+2 = playPreset_2
+3 = playPreset_3
+4 = playPreset_4
+5 = playPreset_5
+6 = playPreset_6
+7 = playPreset_7
+8 = playPreset_8
+9 = playPreset_9
