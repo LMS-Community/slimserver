@@ -769,8 +769,6 @@ sub reshuffle {
 		return;
 	}
 
-	return if $songcount <= 1;
-
 	my $realsong = ${$listRef}[Slim::Player::Source::playingSongIndex($client)];
 
 	if (!defined($realsong) || $dontpreservecurrsong) {
