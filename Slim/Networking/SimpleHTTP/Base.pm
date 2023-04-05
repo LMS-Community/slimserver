@@ -100,7 +100,7 @@ sub _createHTTPRequest {
 		|| $params->{timeout}
 		|| $prefs->get('remotestreamtimeout');
 
-	my $request = HTTP::Request->new( $type => $url );
+	my $request = $params->{request} || HTTP::Request->new( $type => $url );
 
 	if ( @_ % 2 ) {
 		$request->content( pop @_ );
