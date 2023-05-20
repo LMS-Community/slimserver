@@ -94,14 +94,12 @@ sub hasLineIn() {
 	return 0;
 }
 
-sub canDecodeRhapsody { 0 };
-
 sub hasScrolling { 0 }
 
 sub canDirectStream {
 	my ($client, $url, $song) = @_;
 
-	# this is client's canDirectStream, not protocol handler's 
+	# this is client's canDirectStream, not protocol handler's
 	my $handler = $song->currentTrackHandler;
 	return unless $handler && !$handler->isa("Slim::Player::Protocols::MMS");
 
@@ -122,11 +120,11 @@ sub playPoint {
 
 sub skipAhead {
 	my $client = shift;
-	
+
 	my $ret = $client->SUPER::skipAhead(@_);
-	
+
 	$client->playPoint(undef);
-	
+
 	return $ret;
 }
 
