@@ -13,3 +13,1142 @@ PLUGIN_SOUNDS_MODULE_NAME
 	RU	Звуки и эффекты
 	SV	Ljud och effekter
 
+PLUGIN_SOUNDS_ERROR
+	CS	Chyba zvuků & efektů
+	DA	Fejl ved lyde og effekter
+	DE	Fehler in Sounds & Effekte
+	EN	Sounds & Effects Error
+	ES	Error de sonidos y efectos
+	FI	Äänien ja tehosteiden virhe
+	FR	Erreur d'effets sonores
+	IT	Errore di Suoni ed effetti
+	NL	Fout in Geluiden en effecten
+	NO	Feil med lyder og effekter
+	PL	Błąd dźwięków i efektów
+	RU	Звуки и эффекты: ошибка
+	SV	Ljud och effekter: fel
+
+PLUGIN_SOUNDS_EFFECTS
+	CS	Zvukové efekty
+	DA	Lydeffekter
+	DE	Soundeffekte
+	EN	Sound Effects
+	ES	Efectos de sonido
+	FI	Äänitehosteet
+	FR	Effets sonores
+	IT	Effetti sonori
+	NL	Geluidseffecten
+	NO	Lydeffekter
+	PL	Efekty dźwiękowe
+	RU	Звуковые эффекты
+	SV	Ljudeffekter
+
+PLUGIN_SOUNDS_NATURAL
+	CS	Zvuky přírody
+	DA	Naturlige lyde
+	DE	Naturgeräusche
+	EN	Natural Sounds
+	ES	Sonidos de naturaleza
+	FI	Luonnonääniä
+	FR	Sons naturels
+	IT	Suoni della natura
+	NL	Natuurlijke geluiden
+	NO	Naturlyder
+	PL	Dźwięki natury
+	RU	Звуки природы
+	SV	Naturljud
+
+PLUGIN_SOUNDS_MUSICAL
+	CS	Hudební zvuky
+	DA	Musikalske lyde
+	DE	Musikgeräusche
+	EN	Musical Sounds
+	ES	Sonidos musicales
+	FI	Musiikkiäänet
+	FR	Sons musicaux
+	IT	Suoni musicali
+	NL	Muziekgeluiden
+	NO	Musikksnutter
+	PL	Dźwięki muzyczne
+	RU	Музыкальные звукозаписи
+	SV	Musikljud
+
+PLUGIN_SOUNDS_BARN_FIRE
+	CS	Oheň ve stodole
+	DA	Laden brænder
+	DE	Scheunenbrand
+	EN	Barn Fire
+	ES	Incendio de granero
+	FI	Palava lato
+	FR	Grange en feu
+	IT	Fienile in fiamme
+	NL	Schuurbrand
+	NO	Låvebrann
+	PL	Barn Fire
+	RU	Сарай в огне
+	SV	Barn Fire
+
+PLUGIN_SOUNDS_BLUE_HENRY
+	CS	Blue Henry
+	DA	Blue Henry
+	DE	Blue Henry
+	EN	Blue Henry
+	ES	Blue Henry
+	FI	Blue Henry
+	FR	Blue Henry
+	IT	Aspirapolvere
+	NL	Blue Henry
+	NO	Blue Henry
+	PL	Blue Henry
+	RU	Blue Henry
+	SV	Blue Henry
+
+PLUGIN_SOUNDS_BLUE_ORCHID
+	CS	Modrá orchidej
+	DA	Blue Orchid
+	DE	Blaue Orchidee
+	EN	Blue Orchid
+	ES	Orquídea azul
+	FI	Sininen orkidea
+	FR	Blue Orchid
+	IT	Orchidea blu
+	NL	Blauwe orchidee
+	NO	Blue Orchid
+	PL	Błękitna orchidea
+	RU	Синяя орхидея
+	SV	Blue Orchid
+
+PLUGIN_SOUNDS_BONGO_TECH
+	CS	Bongo Tech
+	DA	Bongotech
+	DE	Bongo Tech
+	EN	Bongo Tech
+	ES	Bongo Tech
+	FI	Bongo Tech
+	FR	Bongo Tech
+	IT	Bongo
+	NL	Bongo Tech
+	NO	Bongo Tech
+	PL	Bongo Tech
+	RU	Bongo Tech
+	SV	Bongo Tech
+
+PLUGIN_SOUNDS_BRAINFLUID
+	CS	Tekutina v mozku
+	DA	Hjernemasse
+	DE	Hirnflüssigkeit
+	EN	Brainfluid
+	ES	Fluido cerebral
+	FI	Aivoneste
+	FR	Liquide cérébral
+	IT	Fluido cerebrale
+	NL	Hersenvloeistof
+	NO	Hjernevæske
+	PL	Brainfluid
+	RU	Мозговая жидкость
+	SV	Brainfluid
+
+PLUGIN_SOUNDS_BUTTERY
+	CS	Buttery
+	DA	Buttery
+	DE	Cafeteria
+	EN	Buttery
+	ES	Despensa
+	FI	Buttery
+	FR	Butyreux
+	IT	Buttery
+	NL	Kantine
+	NO	Buttery
+	PL	Buttery
+	RU	Архив
+	SV	Buttery
+
+PLUGIN_SOUNDS_CAPPUCINO
+	CS	Cappucino
+	DA	Cappuccino
+	DE	Cappucino
+	EN	Cappucino
+	ES	Capuchino
+	FI	Cappucino
+	FR	Cappucino
+	IT	Cappuccino
+	NL	Cappucino
+	NO	Cappucino
+	PL	Cappucino
+	RU	Капучино
+	SV	Cappuccino
+
+PLUGIN_SOUNDS_COOL_CATS
+	CS	Skvělé kočky
+	DA	Cool Cats
+	DE	Coole Katzen
+	EN	Cool Cats
+	ES	Gatos
+	FI	Cool Cats
+	FR	Chats
+	IT	Cool Cats
+	NL	Cool Cats
+	NO	Cool Cats
+	PL	Cool Cats
+	RU	Счастливые коты
+	SV	Cool Cats
+
+PLUGIN_SOUNDS_CORNFLOWER
+	CS	Chrpa
+	DA	Kornblomst
+	DE	Kornblume
+	EN	Cornflower
+	ES	Aciano
+	FI	Ruiskukka
+	FR	Bleuet
+	IT	Fiordaliso
+	NL	Cornflower
+	NO	Kornblomst
+	PL	Bławatek
+	RU	Василек
+	SV	Cornflower
+
+PLUGIN_SOUNDS_CRYSTALIZE
+	CS	Krystalizovat
+	DA	Crystalize
+	DE	Kristall
+	EN	Crystalize
+	ES	Cristalización
+	FI	Crystalize
+	FR	Cristallisation
+	IT	Cristallizzazione
+	NL	Crystalize
+	NO	Crystalize
+	PL	Krystalizacja
+	RU	Кристаллизация
+	SV	Crystalize
+
+PLUGIN_SOUNDS_EXPERIMENTAL
+	CS	Experimentální
+	DA	Eksperimental
+	DE	Experimentell
+	EN	Experimental
+	ES	Experimental
+	FI	Kokeellinen
+	FR	Expérimental
+	IT	Sperimentale
+	NL	Experimenteel
+	NO	Eksperimentell
+	PL	Eksperymentalne
+	RU	Экспериментальный
+	SV	Experimental
+
+PLUGIN_SOUNDS_HIBISCUS
+	CS	Ibišek
+	DA	Hibiscus
+	DE	Hibiskus
+	EN	Hibiscus
+	ES	Hibisco
+	FI	Hibiscus
+	FR	Hibiscus
+	IT	Ibisco
+	NL	Hibiscus
+	NO	Hibiscus
+	PL	Hibiskus
+	RU	Гибискус
+	SV	Hibiscus
+
+PLUGIN_SOUNDS_JUNK_ARMOR
+	CS	Junk Armor
+	DA	Skrammelrustning
+	DE	Schrott
+	EN	Junk Armor
+	ES	Blindaje
+	FI	Romuhaarniska
+	FR	Armure
+	IT	Junk Armor
+	NL	Junk Armor
+	NO	Søppelrustning
+	PL	Junk Armor
+	RU	Ржавые доспехи
+	SV	Junk Armor
+
+PLUGIN_SOUNDS_MELANCHOLY_DAY
+	CS	Melancholický den
+	DA	Melankolsk dag
+	DE	Melancholischer Tag
+	EN	Melancholy Day
+	ES	Melancolía
+	FI	Alakuloinen päivä
+	FR	Journée mélancolique
+	IT	Giorno malinconico
+	NL	Melancholy Day
+	NO	Melankolsk dag
+	PL	Melancholy Day
+	RU	Грустный день
+	SV	Melancholy Day
+
+PLUGIN_SOUNDS_SLICKBABY
+	CS	Slickbaby
+	DA	Slickbaby
+	DE	Slickbaby
+	EN	Slickbaby
+	ES	Slickbaby
+	FI	Slickbaby
+	FR	Slickbaby
+	IT	Slickbaby
+	NL	Slickbaby
+	NO	Slickbaby
+	PL	Slickbaby
+	RU	Ловкая малышка
+	SV	Slick baby
+
+PLUGIN_SOUNDS_SLOG_IT_OUT
+	CS	Rozdejte si to
+	DA	Slog It Out
+	DE	Rauferei
+	EN	Slog It Out
+	ES	Dale que dale
+	FI	Anna palaa
+	FR	Slog It Out
+	IT	Discussione animata
+	NL	Slog It Out
+	NO	Slog It Out
+	PL	Slog It Out
+	RU	До победного конца
+	SV	Slog It Out
+
+PLUGIN_SOUNDS_SOFT_HORIZON
+	CS	Jemný horizont
+	DA	Soft Horizon
+	DE	Weicher Horizont
+	EN	Soft Horizon
+	ES	Horizonte
+	FI	Soft Horizon
+	FR	Soft Horizon
+	IT	Soft Horizon
+	NL	Zachte horizon
+	NO	Soft Horizon
+	PL	Soft Horizon
+	RU	Горизонт
+	SV	Soft Horizon
+
+PLUGIN_SOUNDS_SRI_LAMA
+	CS	Sri Lama
+	DA	Sri Lama
+	DE	Sri Lama
+	EN	Sri Lama
+	ES	Sri Lama
+	FI	Sri Lama
+	FR	Sri Lama
+	IT	Sri Lama
+	NL	Sri Lama
+	NO	Sri Lama
+	PL	Sri Lama
+	RU	Шри Лама
+	SV	Sri Lama
+
+PLUGIN_SOUNDS_STARGAZER
+	CS	Hvězdář
+	DA	Stargazer
+	DE	Sternengucker
+	EN	Stargazer
+	ES	Astrónomo
+	FI	Stargazer
+	FR	Stargazer
+	IT	Sognatore
+	NL	Sterrenkijker
+	NO	Stargazer
+	PL	Astrolog
+	RU	Звездочет
+	SV	Stargazer
+
+PLUGIN_SOUNDS_SUPER_CHEESE
+	CS	Super Cheese
+	DA	Super Cheese
+	DE	Superkäse
+	EN	Super Cheese
+	ES	Superqueso
+	FI	Super Cheese
+	FR	Super Cheese
+	IT	Super Cheese
+	NL	Super Cheese
+	NO	Super Cheese
+	PL	Super Cheese
+	RU	Суперсыр
+	SV	Super Cheese
+
+PLUGIN_SOUNDS_TAIL_HONKER
+	CS	Kanadská husa
+	DA	Båthorn
+	DE	Hupe
+	EN	Tail Honker
+	ES	Tail Honker
+	FI	Töötöttäjä
+	FR	Tail Honker
+	IT	Tail Honker
+	NL	Tail Honker
+	NO	Tuting
+	PL	Tail Honker
+	RU	Клаксон
+	SV	Tail Honker
+
+PLUGIN_SOUNDS_TONGUE_CHEEK
+	CS	Jazyk & Tvář
+	DA	Tongue & Cheek
+	DE	Zunge und Wange
+	EN	Tongue & Cheek
+	ES	Chasquido
+	FI	Tongue & Cheek
+	FR	Claquement de langue
+	IT	Tongue & Cheek
+	NL	Tongue & Cheek
+	NO	Tongue & Cheek
+	PL	Ironia
+	RU	Иронический
+	SV	Tongue & Cheek
+
+PLUGIN_SOUNDS_TRANSLAB
+	CS	TransLab
+	DA	TransLab
+	DE	TransLab
+	EN	TransLab
+	ES	Laboratorio
+	FI	TransLab
+	FR	TransLab
+	IT	TransLab
+	NL	TransLab
+	NO	TransLab
+	PL	TransLab
+	RU	TransLab
+	SV	TransLab
+
+PLUGIN_SOUNDS_TWEEDLEDUM
+	CS	Tweedledum
+	DA	Tweedledum
+	DE	Tweedledum
+	EN	Tweedledum
+	ES	Tweedledum
+	FI	Tweedledum
+	FR	Tweedledum
+	IT	Tweedledum
+	NL	Tweedledum
+	NO	Tweedledum
+	PL	Tweedledum
+	RU	Труляля
+	SV	Tweedledum
+
+PLUGIN_SOUNDS_TWENSA
+	CS	Twensa
+	DA	Twensa
+	DE	Twensa
+	EN	Twensa
+	ES	Twensa
+	FI	Twensa
+	FR	Twensa
+	IT	Twensa
+	NL	Twensa
+	NO	Twensa
+	PL	Twensa
+	RU	Twensa
+	SV	Twensa
+
+PLUGIN_SOUNDS_BABBLING_BROOK
+	CS	Bublavý potok
+	DA	Rislende bæk
+	DE	Plätschernder Bach
+	EN	Babbling Brook
+	ES	Arroyo
+	FI	Soliseva puro
+	FR	Cascade ruisselante
+	IT	Gorgoglio di ruscello
+	NL	Kabbelend beekje
+	NO	Klukkende bekk
+	PL	Babbling Brook
+	RU	Журчащий ручей
+	SV	Porlande bäck
+
+PLUGIN_SOUNDS_BUBBLES
+	CS	Bubliny
+	DA	Bobler
+	DE	Seifenblasen
+	EN	Bubbles
+	ES	Burbujas
+	FI	Kuplia
+	FR	Bulles
+	IT	Bollicine
+	NL	Luchtbellen
+	NO	Bobler
+	PL	Bąbelki
+	RU	Пузырьки
+	SV	Bubblor
+
+PLUGIN_SOUNDS_CRICKETS
+	CS	Cvrčci
+	DA	Fårekyllinger
+	DE	Grillen
+	EN	Crickets
+	ES	Grillos
+	FI	Sirkkoja
+	FR	Grillons
+	IT	Grilli
+	NL	Crickets
+	NO	Gresshopper
+	PL	Świerszcze
+	RU	Сверчки
+	SV	Syrsor
+
+PLUGIN_SOUNDS_FIRE
+	CS	Oheň
+	DA	Ild
+	DE	Feuer
+	EN	Fire
+	ES	Disparo
+	FI	Tuli
+	FR	Fire (Feu)
+	IT	Fuoco
+	NL	Brand
+	NO	Brann
+	PL	Ogień
+	RU	Огонь
+	SV	Eld
+
+PLUGIN_SOUNDS_HARD_RAIN_THUNDER
+	CS	Prudký déšť a hrom
+	DA	Hård regn og torden
+	DE	Heftiger Regen und Donner
+	EN	Hard Rain & Thunder
+	ES	Aguacero y trueno
+	FI	Rankkasade ja ukkonen
+	FR	Trombes de pluie et tonnerre
+	IT	Pioggia battente e tuoni
+	NL	Hard Rain & Thunder
+	NO	Kraftig regn og torden
+	PL	Ulewa i burza
+	RU	Ливень и гром
+	SV	Ösregn och åska
+
+PLUGIN_SOUNDS_HEARTBEAT_FAST
+	CS	Srdeční tep
+	DA	Hurtig hjertebanken
+	DE	Schnelles Herzklopfen
+	EN	Heartbeat Fast
+	ES	Latido rápido
+	FI	Nopeita sydämenlyöntejä
+	FR	Battements de cœur rapides
+	IT	Battito cardiaco veloce
+	NL	Snelle hartklopping
+	NO	Raske hjerteslag
+	PL	Szybki puls
+	RU	Биение сердца (быстрое)
+	SV	Snabba hjärtslag
+
+PLUGIN_SOUNDS_HEARTBEAT
+	CS	Srdeční tep
+	DA	Hjerteslag
+	DE	Herzschlag
+	EN	Heartbeat
+	ES	Latido
+	FI	Sydämenlyöntejä
+	FR	Battements de cœur
+	IT	Battito cardiaco
+	NL	Hartslag
+	NO	Hjerteslag
+	PL	Puls
+	RU	Биение сердца
+	SV	Hjärtslag
+
+PLUGIN_SOUNDS_HORSE_WALKING
+	CS	Koňská kopyta
+	DA	Hest der traver
+	DE	Gehendes Pferd
+	EN	Horse Walking
+	ES	Cascos de caballo
+	FI	Hevonen kävelee
+	FR	Cheval au pas
+	IT	Zoccoli di cavallo
+	NL	Lopend paard
+	NO	Lyden av hestehover
+	PL	Tętent konia
+	RU	Конная прогулка
+	SV	Häst i skritt
+
+PLUGIN_SOUNDS_HORSE_WHINNY
+	CS	Řehtání koně
+	DA	Vrinskende hest
+	DE	Pferdewiehern
+	EN	Horse Whinny
+	ES	Relincho
+	FI	Hevosen hirnuntaa
+	FR	Faible hennissement
+	IT	Nitrito di cavallo
+	NL	Gehinnik
+	NO	Hestevrinsk
+	PL	Horse Whinny
+	RU	Лошадка Винни
+	SV	Hästgnägg
+
+PLUGIN_SOUNDS_LAPPING_WAVES
+	CS	Šplouchající vlny
+	DA	Bølgeskvulp
+	DE	Schwappende Wellen
+	EN	Lapping Waves
+	ES	Olas pequeñas
+	FI	Aaltojen liplatusta
+	FR	Clapotement de vagues
+	IT	Sciabordio di onde
+	NL	Gebabbel van de golven
+	NO	Skvalpende bølger
+	PL	Przychodzące fale
+	RU	Плеск волн
+	SV	Skvalpande vågor
+
+PLUGIN_SOUNDS_MEADOWLARK
+	CS	Skřivan
+	DA	Lærke
+	DE	Vogelgezwitscher
+	EN	Meadowlark
+	ES	Alondra
+	FI	Kiurutrupiaali
+	FR	Meadowlark
+	IT	Sturnella
+	NL	Meadowlark
+	NO	Lerke
+	PL	Meadowlark
+	RU	Жаворонок
+	SV	Stare
+
+PLUGIN_SOUNDS_OCEAN_SURF
+	CS	Surfování v oceánu
+	DA	Bølgeslag
+	DE	Brandung
+	EN	Ocean Surf
+	ES	Olas
+	FI	Meren tyrskyjä
+	FR	Océan
+	IT	Onde dell'oceano
+	NL	Oceaansurf
+	NO	Dønninger
+	PL	Surfowanie po oceanie
+	RU	Океанский прибой
+	SV	Surfning
+
+PLUGIN_SOUNDS_RAIN_THUNDER
+	CS	Déšť a hrom
+	DA	Regn og torden
+	DE	Regen und Donner
+	EN	Rain & Thunder
+	ES	Lluvia y truenos
+	FI	Sade ja ukkonen
+	FR	Pluie et tonnerre
+	IT	Pioggia e tuoni
+	NL	Regen en onweer
+	NO	Regn og torden
+	PL	Deszcz i burza
+	RU	Дождь и гром
+	SV	Regn och åska
+
+PLUGIN_SOUNDS_RAIN_OUTSIDE
+	CS	Déšť zvenčí
+	DA	Regn udenfor
+	DE	Regen draußen
+	EN	Rain Outside
+	ES	Lluvia en el exterior
+	FI	Ulkona sataa
+	FR	Pluie dehors
+	IT	Pioggia
+	NL	Regen buiten
+	NO	Regn ute
+	PL	Padający deszcz
+	RU	Дождь за окном
+	SV	Regn utanför
+
+PLUGIN_SOUNDS_RAIN_SPLASHING
+	CS	Šplouchání deště
+	DA	Plaskende regn
+	DE	Regentropfen
+	EN	Rain Splashing
+	ES	Lluvia
+	FI	Sateen ropinaa
+	FR	Pluie
+	IT	Pioggia battente
+	NL	Spattende regen
+	NO	Regndråper
+	PL	Krople deszczu
+	RU	Шум дождя
+	SV	Regn
+
+PLUGIN_SOUNDS_RIVER
+	CS	Řeka
+	DA	Flod
+	DE	Fluss
+	EN	River
+	ES	Río
+	FI	Joki
+	FR	Rivière
+	IT	Fiume
+	NL	Rivier
+	NO	Elv
+	PL	Rzeka
+	RU	Река
+	SV	Flod
+
+PLUGIN_SOUNDS_ROBINS
+	CS	Červenky
+	DA	Rødkælke
+	DE	Rotkehlchen
+	EN	Robins
+	ES	Petirrojos
+	FI	Punarintoja
+	FR	Rouges-gorges
+	IT	Pettirossi
+	NL	Roodborstjes
+	NO	Meiser
+	PL	Robins
+	RU	Малиновки
+	SV	Rödhakar
+
+PLUGIN_SOUNDS_ROOSTER_CROW
+	CS	Vrána
+	DA	Hanegal
+	DE	Krähender Hahn
+	EN	Rooster Crow
+	ES	Canto de gallo
+	FI	Kukko kiekuu
+	FR	Chant du coq
+	IT	Canto del gallo
+	NL	Hanengekraai
+	NO	Hanegal
+	PL	Pianie koguta
+	RU	Кукареканье петуха
+	SV	Tuppgalande
+
+PLUGIN_SOUNDS_RURAL
+	CS	Venkov
+	DA	Landliv
+	DE	Land
+	EN	Rural
+	ES	Rural
+	FI	Maaseutu
+	FR	Rural
+	IT	Rurale
+	NL	Landelijk
+	NO	Landlig
+	PL	Wiejski
+	RU	Деревня
+	SV	Landsbyggd
+
+PLUGIN_SOUNDS_SHORE_SEAGULLS
+	CS	Pobřeží & Rackové
+	DA	Strand og måger
+	DE	Küste & Möwen
+	EN	Shore & Seagulls
+	ES	Gaviotas en la costa
+	FI	Ranta ja lokkeja
+	FR	Mouettes
+	IT	Mare e gabbiani
+	NL	Kust en zeemeeuwen
+	NO	Kyst og måker
+	PL	Brzeg morza i mewy
+	RU	Чайки на побережье
+	SV	Strand med måsar
+
+PLUGIN_SOUNDS_SPRING_PEEPERS
+	CS	Rosničky křížkované
+	DA	Løvfrø
+	DE	Froschquaken
+	EN	Spring Peepers
+	ES	Ranas americanas
+	FI	Kevään sirkuttajia
+	FR	Grenouilles
+	IT	Rane
+	NL	Kruisboomkikkers
+	NO	Småfugler
+	PL	Spring Peepers
+	RU	Прибрежная квакша
+	SV	Grodor
+
+PLUGIN_SOUNDS_STREAM_BIRDS
+	CS	Potok a ptáci
+	DA	Bæk og fugle
+	DE	Vögel am Bach
+	EN	Stream & Birds
+	ES	Riachuelo y pájaros
+	FI	Puro ja lintuja
+	FR	Ruisseau et oiseaux
+	IT	Ruscello e uccelli
+	NL	Stroom en vogels
+	NO	Bekk og fugler
+	PL	Strumień i ptaki
+	RU	Река и птицы
+	SV	Bäck och fågelkvitter
+
+PLUGIN_SOUNDS_STREAM
+	CS	Datový proud
+	DA	Stream
+	DE	Stream
+	EN	Stream
+	ES	Stream
+	FI	Virta
+	FR	Flux
+	IT	Stream
+	NL	Stream
+	NO	Strøm
+	PL	Strumień
+	RU	Поток
+	SV	Ström
+
+PLUGIN_SOUNDS_TROPICAL_AMBIENCE
+	CS	Tropické prostředí
+	DA	Tropiske stemninger
+	DE	Tropengeräusche
+	EN	Tropical Ambience
+	ES	Ambiente tropical
+	FI	Trooppinen tunnelma
+	FR	Ambiance tropicale
+	IT	Ambiente tropicale
+	NL	Tropische sfeer
+	NO	Tropical Ambience
+	PL	Tropikalny ambient
+	RU	Тропики
+	SV	Tropisk atmosfär
+
+PLUGIN_SOUNDS_WAVES
+	CS	Vlny
+	DA	Bølger
+	DE	Wellen
+	EN	Waves
+	ES	Oleaje
+	FI	Aallot
+	FR	Vagues
+	IT	Onde
+	NL	Golven
+	NO	Bølger
+	PL	Fale
+	RU	Волны
+	SV	Vågor
+
+PLUGIN_SOUNDS_WIND_WHISTLE
+	CS	Hvízdání větru
+	DA	Vindens fløjten
+	DE	Pfeifender Wind
+	EN	Wind Whistle
+	ES	Silbido de viento
+	FI	Tuulipilli
+	FR	Souffle du vent
+	IT	Sibilo del vento
+	NL	Wind Whistle
+	NO	Vind
+	PL	Gwizdek
+	RU	Свист ветра
+	SV	Vindpipa
+
+PLUGIN_SOUNDS_WIND
+	CS	Vítr
+	DA	Vind
+	DE	Wind
+	EN	Wind
+	ES	Viento
+	FI	Tuuli
+	FR	Vent
+	IT	Vento
+	NL	Wind
+	NO	Wind
+	PL	Wiatr
+	RU	Ветер
+	SV	Vind
+
+PLUGIN_SOUNDS_AMBULANCE
+	CS	Ambulance
+	DA	Ambulance
+	DE	Martinshorn
+	EN	Ambulance
+	ES	Ambulancia
+	FI	Ambulanssi
+	FR	Ambulance
+	IT	Ambulanza
+	NL	Ambulance
+	NO	Ambulanse
+	PL	Karetka pogotowia
+	RU	Скорая помощь
+	SV	Ambulans
+
+PLUGIN_SOUNDS_BLENDER
+	CS	Blender
+	DA	Blender
+	DE	Mixer
+	EN	Blender
+	ES	Licuadora
+	FI	Tehosekoitin
+	FR	Mixeur
+	IT	Frullatore
+	NL	Blender
+	NO	Blender
+	PL	Blender
+	RU	Микшер
+	SV	Mixer
+
+PLUGIN_SOUNDS_CITY
+	CS	Město
+	DA	By
+	DE	Stadt
+	EN	City
+	ES	Población
+	FI	Kaupunki
+	FR	Ville
+	IT	Città
+	NL	Plaats
+	NO	By
+	PL	Miasto
+	RU	Город
+	SV	Ort
+
+PLUGIN_SOUNDS_COINS
+	CS	Mince
+	DA	Mønter
+	DE	Münzen
+	EN	Coins
+	ES	Monedas
+	FI	Kolikoita
+	FR	Pièces
+	IT	Monete
+	NL	Munten
+	NO	Mynter
+	PL	Monety
+	RU	Монеты
+	SV	Mynt
+
+PLUGIN_SOUNDS_CROSSING_BELLS
+	CS	Zvonky na přejezdech
+	DA	Signal fra jernbaneoverskæring
+	DE	Glockengeläut
+	EN	Crossing Bells
+	ES	Campana de cruce
+	FI	Ristikelloja
+	FR	Passage à niveau
+	IT	Campanelle
+	NL	Belsignaal
+	NO	Planovergang
+	PL	Crossing Bells
+	RU	Cигнальный колокол на переезде
+	SV	Varningsklockor
+
+PLUGIN_SOUNDS_ELECTRO_FUZZ
+	CS	Electro Fuzz
+	DA	Elektroniske lyde
+	DE	Elektrisches Britzeln
+	EN	Electro Fuzz
+	ES	Electro Fuzz
+	FI	Sähkön huminaa
+	FR	Electro Fuzz
+	IT	Electro Fuzz
+	NL	Electro Fuzz
+	NO	Elektrofuzz
+	PL	Electro Fuzz
+	RU	Electro Fuzz
+	SV	Elektroniska ljud
+
+PLUGIN_SOUNDS_FOGHORN
+	CS	Siréna
+	DA	Tågehorn
+	DE	Nebelhorn
+	EN	Foghorn
+	ES	Sirena antiniebla
+	FI	Sumutorvi
+	FR	Corne de brume
+	IT	Sirena da nebbia
+	NL	Misthoorn
+	NO	Tåkelur
+	PL	Syrena ostrzegawcza
+	RU	Сирена
+	SV	Mistlur
+
+PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
+	CS	Průjezd nákladního vlaku
+	DA	Godstog kører forbi
+	DE	Vorbeifahrender Güterzug
+	EN	Freight Train Passing
+	ES	Mercancías en marcha
+	FI	Tavarajuna
+	FR	Train de marchandises au loin
+	IT	Passaggio di treno merci
+	NL	Voorbijgaande goederentrein
+	NO	Passerende tog
+	PL	Przejeżdżający pociąg towarowy
+	RU	Товарный поезд прибывает
+	SV	Godståg kör förbi
+
+PLUGIN_SOUNDS_FREIGHT_TRAIN
+	CS	Nákladní vlak
+	DA	Godstog
+	DE	Güterzug
+	EN	Freight Train
+	ES	Tren de mercancías
+	FI	Tavarajuna
+	FR	Train de marchandises
+	IT	Treno merci
+	NL	Freight Train
+	NO	Godstog
+	PL	Pociąg towarowy
+	RU	Товарный поезд
+	SV	Godståg
+
+PLUGIN_SOUNDS_HAIR_DRYER
+	CS	Fén na vlasy
+	DA	Hårtørrer
+	DE	Fön
+	EN	Hair Dryer
+	ES	Secador de pelo
+	FI	Hiustenkuivaaja
+	FR	Sèche-cheveux
+	IT	Asciugacapelli
+	NL	Haardroger
+	NO	Hårføner
+	PL	Suszarka do włosów
+	RU	Фен
+	SV	Hårtork
+
+PLUGIN_SOUNDS_MAGNETO_VAPOR
+	CS	Magneto Vapor
+	DA	Magneto Vapor
+	DE	Magneto Vapor
+	EN	Magneto Vapor
+	ES	Magneto Vapor
+	FI	Magneto Vapor
+	FR	Vapeur magnétique
+	IT	Magneto Vapor
+	NL	Magneto Vapor
+	NO	Magneto Vapor
+	PL	Magneto Vapor
+	RU	Magneto Vapor
+	SV	Magneto Vapor
+
+PLUGIN_SOUNDS_MOTORCYCLES
+	CS	Motorky
+	DA	Motorcykler
+	DE	Motorräder
+	EN	Motorcycles
+	ES	Motos
+	FI	Moottoripyöriä
+	FR	Motos
+	IT	Motocicli
+	NL	Motorcycles
+	NO	Motorsykler
+	PL	Motocykle
+	RU	Мотоциклы
+	SV	Motorcyklar
+
+PLUGIN_SOUNDS_SCUBA_DIVER
+	CS	Potápěč
+	DA	Dykker
+	DE	Taucher
+	EN	Scuba Diver
+	ES	Buceador
+	FI	Sukeltaja
+	FR	Plongeur
+	IT	Sommozzatore
+	NL	Scubaduiker
+	NO	Dykker
+	PL	Nurek
+	RU	Аквалангист
+	SV	Dykare
+
+PLUGIN_SOUNDS_SPOOKY_FEEDBACK
+	CS	Zpětná vazba připomínající ducha
+	DA	Uhyggelig feedback
+	DE	Unheimliche Rückkopplung
+	EN	Spooky Feedback
+	ES	Retroalimentación fantasmagórica
+	FI	Pelottava palaute
+	FR	Spooky
+	IT	Spooky Feedback
+	NL	Spooky Feedback
+	NO	Skummel feedback
+	PL	Spooky Feedback
+	RU	Шумовая обратная связь
+	SV	Spöklik rundgång
+
+PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
+	CS	Parní lokomotiva a píšťalka
+	DA	Damplokomotiv og fløjte
+	DE	Dampflokomotive und -pfeife
+	EN	Steam Train & Whistle
+	ES	Locomotora y pitido
+	FI	Höyryjuna ja pilli
+	FR	Train à vapeur et coup de sifflet
+	IT	Locomotiva a vapore e fischio
+	NL	Steam Train & Whistle
+	NO	Damptog og fløyte
+	PL	Lokomotywa parowa i gwizd
+	RU	Свисток паровоза
+	SV	Ånglok och vissla
+
+PLUGIN_SOUNDS_SUB_ALERT
+	CS	Dílčí výstraha
+	DA	Underadvarsel
+	DE	U-Boot-Wecker
+	EN	Sub Alert
+	ES	Alarma de submarino
+	FI	Alihälytys
+	FR	En plongée
+	IT	Avviso secondario
+	NL	Subwaarschuwing
+	NO	Undervannsalarm
+	PL	Alert podrzędny
+	RU	Предупреждающий сигнал
+	SV	Dyklarm
+
+PLUGIN_SOUNDS_TEA_KETTLE
+	CS	Čajová konvice
+	DA	Vandkedel
+	DE	Teekessel
+	EN	Tea Kettle
+	ES	Pitido
+	FI	Teepannu
+	FR	Bouilloire
+	IT	Bollitore
+	NL	Tea Kettle
+	NO	Tekjele
+	PL	Czajnik
+	RU	Чайник
+	SV	Tekanna
+
+PLUGIN_SOUNDS_TRAFFIC
+	CS	Doprava
+	DA	Trafik
+	DE	Verkehr
+	EN	Traffic
+	ES	Tráfico
+	FI	Liikenne
+	FR	Trafic
+	IT	Traffico
+	NL	Verkeer
+	NO	Trafikk
+	PL	Ruch
+	RU	Трафик
+	SV	Trafik
+
+PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
+	CS	Fanfára větrné zvonkohry
+	DA	Vindharpe der svinger
+	DE	Windspiel mit Schwung
+	EN	Wind Chime Flourish
+	ES	Repiqueteo
+	FI	Tuulikellon kilinää
+	FR	Carillons éoliens
+	IT	Tintinnio forte
+	NL	Wind Chime Flourish
+	NO	Lengre vindorgel
+	PL	Wind Chime Flourish
+	RU	Музыка ветра
+	SV	Vindspelstoner
+
+PLUGIN_SOUNDS_WIND_CHIME
+	CS	Zvonky ve větru
+	DA	Vindharpe
+	DE	Windspiel
+	EN	Wind Chime
+	ES	Campanillas
+	FI	Tuulikello
+	FR	Carillon
+	IT	Tintinnio
+	NL	Windklok
+	NO	Vindorgel
+	PL	Powiew wiatru
+	RU	Мелодия ветра
+	SV	Vindspel

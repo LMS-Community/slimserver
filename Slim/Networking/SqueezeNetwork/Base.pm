@@ -26,6 +26,7 @@ if ( main::NOMYSB ) {
 my $_Servers = {
 	sn      => 'www.mysqueezebox.com',
 	update  => 'update.mysqueezebox.com',
+	content => 'content.mysqueezebox.com',
 };
 
 sub get_server {
