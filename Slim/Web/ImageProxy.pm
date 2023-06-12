@@ -151,14 +151,23 @@ sub getImage {
 		main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
 
 		my $pre_shrunk;
+		my %headers;
 		# use external image proxy if one is defined
 		if ( $url =~ /^https?:/ && $spec && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
 			if ( my $external = $externalHandlers{$imageproxy} ) {
 				my ($host, $port, $path, $user, $pass) = Slim::Utils::Misc::crackURL($url);
 
 				if ( $external->{func} && !($host && (Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i)) ) {
-					my $url2 = $external->{func}->(uri_escape_utf8($url), $spec);
-					$url = $url2 if $url2;
+					my ($url2, $header) = $external->{func}->(uri_escape_utf8($url), $spec);
+
+					if ($url2) {
+						$url = $url2;
+
+						# parse header and add it to the request
+						if ($header =~ /(.*?):\s*(.*)/) {
+							$headers{$1} = $2;
+						}
+					}
 					$pre_shrunk = 1;
 
 					main::DEBUGLOG && $log->debug("Using custom image proxy: $url");
@@ -197,7 +206,7 @@ sub getImage {
 				},
 			);
 
-			$http->get( $url );
+			$http->get( $url, %headers );
 		}
 	};
 
