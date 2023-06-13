@@ -74,6 +74,9 @@ use strict;
 use Digest::MD5;
 use File::Spec::Functions qw(catdir);
 use File::Slurp ();
+use HTTP::Status qw(
+	RC_MOVED_PERMANENTLY
+);
 use Tie::RegexpHash;
 use URI::Escape qw(uri_escape_utf8);
 
@@ -135,6 +138,18 @@ sub getImage {
 		main::INFOLOG && $log->info("Artwork ID not found, returning 404");
 
 		_artworkError( $client, $params, $spec, 404, $callback, @args );
+		return;
+	}
+
+	if ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/) {
+		main::INFOLOG && $log->is_info && $log->info("No resizing requested - redirect to original URI: $url");
+
+		my $response = $args[1];
+		$response->code(RC_MOVED_PERMANENTLY);
+		$response->header('Location' => $url);
+
+		$callback->($client, $params, '', @args);
+
 		return;
 	}
 
@@ -428,7 +443,7 @@ sub registerHandler {
 	}
 
 	if ( ref $params{func} ne 'CODE' ) {
-		$log->error( 'registerProider called without a code reference' );
+		$log->error( 'registerProvider called without a code reference' );
 		return;
 	}
 
