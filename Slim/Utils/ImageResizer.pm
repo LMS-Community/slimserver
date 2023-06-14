@@ -58,6 +58,7 @@ sub resize {
 		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
 			my $fh = shift || do {
 				$log->error("daemon failed to connect: $!");
+				$hasDaemon = undef;
 
 				if ( --$pending_requests == 0 ) {
 					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
