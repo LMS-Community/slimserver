@@ -12312,22 +12312,22 @@ NO_TITLE
 
 THOUSANDS_SEP
 # SLT: this is the separator used to separate thousands as in 10'000'000.00 ([[http://en.wikipedia.org/wiki/Thousands_separator]])
-	CS
+	CS	 
 	DA	,
 	DE	.
 	EN	,
 	ES	.
-	FI
+	FI	 
 	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL
+	PL	 
 	PT	.
 	RU	,
-	SV
+	SV	 
 	ZH_CN	,
 
 BYTES
