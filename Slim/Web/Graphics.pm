@@ -28,6 +28,7 @@ sub init {
 	# Get cache for artwork
 	$cache = Slim::Utils::ArtworkCache->new();
 
+	Slim::Utils::ImageResizer->initDaemon();
 	Slim::Web::ImageProxy->init();
 
 	if (main::SCANNER) {

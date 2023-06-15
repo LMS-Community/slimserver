@@ -1177,6 +1177,7 @@ sub cleanup {
 	Slim::Utils::PluginManager->shutdownPlugins();
 
 	Slim::Utils::Prefs::writeAll();
+	Slim::Utils::ImageResizer->stopDaemon() if $INC{'Slim/Utils/ImageResizer.pm'};
 
 	if ($prefs->get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(

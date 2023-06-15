@@ -84,6 +84,7 @@ use Exporter::Lite;
 our @EXPORT_OK = qw(proxiedImage);
 
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::ImageResizer;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -102,6 +103,8 @@ my %queue;
 
 sub init {
 	$cache ||= Slim::Web::ImageProxy::Cache->new();
+
+	Slim::Utils::ImageResizer->initDaemon();
 
 	# clean up  stale cache files
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^imgproxy_[a-f0-9]+$/i);
