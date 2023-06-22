@@ -13,15 +13,18 @@ package Slim::Plugin::Deezer::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
+use Async::Util;
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::SqueezeNetwork;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $cache = Slim::Utils::Cache->new;
 my $prefs = preferences('server');
 my $log   = logger('plugin.deezer');
 
@@ -165,7 +168,6 @@ sub parseDirectHeaders {
 		my ($trackId) = _getStreamParams( $url );
 
 		if ($trackId) {
-			my $cache = Slim::Utils::Cache->new;
 			my $meta = $cache->get('wimp_meta_' . $trackId);
 			if ($meta && ref $meta) {
 				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
@@ -404,7 +406,7 @@ sub _gotNextRadioTrack {
 	$song->pluginData( radioTrack    => $track );
 
 	# We already have the metadata for this track, so can save calling getTrack
-	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 	my $meta = {
 		artist    => $track->{artist_name},
 		album     => $track->{album_name},
@@ -423,7 +425,6 @@ sub _gotNextRadioTrack {
 
 	$song->duration( $meta->{duration} );
 
-	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
 
 	$params->{url} = $url;
@@ -525,7 +526,7 @@ sub _gotTrack {
 	$song->pluginData( info => $info );
 
 	# Cache the rest of the track's metadata
-	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 	my $meta = {
 		artist    => $info->{artist_name},
 		album     => $info->{album_name},
@@ -540,7 +541,6 @@ sub _gotTrack {
 
 	$song->duration( $meta->{duration} );
 
-	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
 
 	# When doing flac, parse the header to be able to seek (IP3K)
@@ -651,7 +651,7 @@ sub getMetadataFor {
 
 	return {} unless $url;
 
-	my $icon = $class->getIcon();
+	my $icon = getIcon();
 	my $song = $client->currentSongForUrl($url);
 
 	if ( $url =~ /\.dzr$/ ) {
@@ -666,8 +666,6 @@ sub getMetadataFor {
 		}
 	}
 
-	my $cache = Slim::Utils::Cache->new;
-
 	# need to take the real current track url for playlists
 	$url = $song->currentTrack->url if $song && $song->isPlaylist && $song->currentTrack->url !~ /\.dzr$/;
 
@@ -676,21 +674,20 @@ sub getMetadataFor {
 	my $meta = $cache->get( 'deezer_meta_' . $trackId );
 
 	if ( !$client->master->pluginData('fetchingMeta') ) {
-
 		$client->master->pluginData( fetchingMeta => 1 );
 
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
-		push @need, $trackId if !$meta || !$meta->{cover};
+		push @need, $trackId if !$meta || !$meta->{title};
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 
 			my ($id) = _getStreamParams($trackURL);
 
-			if ($id) {
+			if ($id && $id != $trackId) {
 				my $trackMeta = $cache->get("deezer_meta_$id");
-				push @need, $id if !$trackMeta || !$trackMeta->{cover};
+				push @need, $id if !$trackMeta || !$trackMeta->{title};
 			}
 		}
 
@@ -707,21 +704,26 @@ sub getMetadataFor {
 			"/api/deezer/v1/playback/getBulkMetadata"
 		);
 
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&_gotBulkMetadata,
-			\&_gotBulkMetadataError,
-			{
-				client  => $client,
-				timeout => 60,
-				trackIds=> \@need,
-				format  => $format,
-			},
-		);
+		@need = do { my %seen; grep { !$seen{$_}++ } @need };
 
-		$http->post(
-			$metaUrl,
-			'Content-Type' => 'application/x-www-form-urlencoded',
-			'trackIds=' . join( ',', @need ),
+		Async::Util::amap(
+			inputs => \@need,
+			action => sub {
+				Slim::Plugin::Deezer::API->getTrack(@_);
+			},
+			cb => sub {
+				my ($result, $err) = @_;
+
+				$result = [ grep {
+					$err ||= $_->{error};
+					!$_->{error};
+				} @$result ];
+
+				$err && $log->error(ref $err ? $err->{message} : $err);
+
+				_gotBulkMetadata($client, \@need, $format, $result);
+			},
+			at_a_time => 10,
 		);
 	}
 
@@ -736,18 +738,13 @@ sub getMetadataFor {
 }
 
 sub _gotBulkMetadata {
-	my $http   = shift;
-	my $client = $http->params->{client};
-	my $trackIds = $http->params->{trackIds};
-	my $format = $http->params->{format};
+	my ($client, $trackIds, $format, $info) = @_;
 
 	$client->master->pluginData( fetchingMeta => 0 );
 
-	my $info = eval { from_json( $http->content ) };
-
-	if ( $@ || ref $info ne 'ARRAY' ) {
-		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
-		_invalidateTracks($client, $trackIds);
+	if ( !ref $info || ref $info ne 'ARRAY' ) {
+		$log->error( "Error fetching track metadata." );
+		# _invalidateTracks($client, $trackIds);
 		return;
 	}
 
@@ -755,9 +752,7 @@ sub _gotBulkMetadata {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 
-	# Cache metadata
-	my $cache = Slim::Utils::Cache->new;
-	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 
 	my %trackIds = map { $_ => 1 } @$trackIds;
 
@@ -779,7 +774,7 @@ sub _gotBulkMetadata {
 			icon      => $icon,
 		};
 
-		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );
+		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 ) if $meta->{title};
 
 		delete $trackIds{$trackId};
 	}
@@ -796,18 +791,6 @@ sub _gotBulkMetadata {
 	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
 }
 
-sub _gotBulkMetadataError {
-	my $http   = shift;
-	my $client = $http->params('client');
-	my $error  = $http->error;
-
-	_invalidateTracks($client, $http->params->{trackIds});
-
-	$client->master->pluginData( fetchingMeta => 0 );
-
-	$log->warn("Error getting track metadata from SN: $error");
-}
-
 sub _invalidateTracks {
 	my ($client, $trackIds, $banForGood) = @_;
 
@@ -815,8 +798,7 @@ sub _invalidateTracks {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Disable track(s) lack of metadata: " . join(', ', @$trackIds));
 
-	my $cache = Slim::Utils::Cache->new;
-	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 
 	# set default meta data for tracks without meta data
 	foreach ( @$trackIds ) {
