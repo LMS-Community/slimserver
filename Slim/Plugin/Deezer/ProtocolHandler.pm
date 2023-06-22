@@ -254,7 +254,7 @@ sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 
 	# Don't allow pause or rew on radio
-	if ( $url =~ /\.dzr$/ ) {
+	if ( $url =~ /(?<!flow)\.dzr$/ ) {
 		if ( $action eq 'pause' || $action eq 'rew' ) {
 			return 0;
 		}
