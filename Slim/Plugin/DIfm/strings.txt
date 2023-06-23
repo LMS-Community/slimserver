@@ -1,0 +1,5 @@
+PLUGIN_DI_FM_NAME
+	EN	DI.fm - Digitally Imported
+
+PLUGIN_DI_FM_DESC
+	EN	DI.FM  - Addictive Electronic Music

@@ -69,7 +69,10 @@ sub sqlHelperClass {
 }
 
 # Skip obsolete plugins, they should be deleted by installers
-sub skipPlugins {return (qw(Picks ShoutcastBrowser Webcasters Health));}
+# AudioAddict is a base class for others, thus not loaded
+sub skipPlugins {
+	return (qw(AudioAddict Picks ShoutcastBrowser Webcasters Health));
+}
 
 =head2 initSearchPath( [$baseDir] )
 
