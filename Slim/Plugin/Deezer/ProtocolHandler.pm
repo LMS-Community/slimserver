@@ -406,6 +406,8 @@ sub _gotNextRadioTrack {
 	$song->pluginData( radioTrack    => $track );
 
 	# We already have the metadata for this track, so can save calling getTrack
+	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($track)) unless $track->{duration};
+
 	my $icon = getIcon();
 	my $meta = {
 		artist    => $track->{artist_name},
