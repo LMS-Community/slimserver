@@ -1441,8 +1441,8 @@ sub apps {
 
 	my %clientApps = %{$prefs->client($client)->get('apps') || {}};
 
-	if (my $localApps = Slim::Plugin::Base->getApps) {
-		for my $plugin (@$localApps) {
+	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
+		for my $plugin (@$nonSNApps) {
 			if ($plugin->can('tag')) {
 				$clientApps{ $plugin->tag } = { plugin => $plugin };
 			}

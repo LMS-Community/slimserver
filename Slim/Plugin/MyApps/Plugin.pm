@@ -22,7 +22,7 @@ sub initPlugin {
 sub feed {
 	my $feedUrl = main::NOMYSB ? '' : Slim::Networking::SqueezeNetwork->url('/api/myapps/v1/opml');
 
-	if (my $localApps = Slim::Plugin::Base->getApps) {
+	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 
 		return sub {
 			my ($client, $callback, $args) = @_;
@@ -35,7 +35,7 @@ sub feed {
 					$feed->{'items'} = [];
 				}
 
-				for my $app (@$localApps) {
+				for my $app (@$nonSNApps) {
 
 					if ($app->condition($client)) {
 
