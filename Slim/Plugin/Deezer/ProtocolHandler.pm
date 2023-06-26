@@ -137,6 +137,7 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
 	my $length;
+	$url = $url->url if blessed $url;
 
 	# Clear previous duration, since we're using the same URL for all tracks
 	if ( $url =~ /\.dzr$/ ) {
@@ -164,7 +165,6 @@ sub parseDirectHeaders {
 	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
 		$bitrate = int($length/$song->duration*8);
 
-		$url = $url->url if blessed $url;
 		my ($trackId) = _getStreamParams( $url );
 
 		if ($trackId) {
@@ -425,7 +425,7 @@ sub _gotNextRadioTrack {
 	# We already have the metadata for this track, so can save calling getTrack
 	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($track, $meta->{duration})) unless $track->{duration};
 
-	$song->duration( $meta->{duration} );
+	Slim::Music::Info::setDuration( $url, $meta->{duration} );
 
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
 
@@ -544,7 +544,7 @@ sub _gotTrack {
 	# We already have the metadata for this track, so can save calling getTrack
 	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($info, $meta->{duration})) unless $info->{duration};
 
-	$song->duration( $meta->{duration} );
+	Slim::Music::Info::setDuration( $info->{url}, $meta->{duration} );
 
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
 
