@@ -166,8 +166,8 @@ sub _registerApps {
 	my $allApps = $res->{all_apps} || {};
 
 	# Add 3rd party plugins which have requested to be on the apps menu
-	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
-		for my $plugin (@$nonSNApps) {
+	if (my $localApps = Slim::Plugin::Base->getApps) {
+		for my $plugin (@$localApps) {
 			if ($plugin->can('tag')) {
 				$allApps->{ "nonsn_" . $plugin->tag } = { plugin => $plugin };
 			}

@@ -174,8 +174,8 @@ sub _init_error {
 # add non SN apps to Web interface if we are not logging into SN
 # normally this is done when SN provides an updated list of apps on a per player basis in S:N:SqueezeNetwork:Player
 sub _init_add_non_sn_apps {
-	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
-		for my $app (@$nonSNApps) {
+	if (my $localApps = Slim::Plugin::Base->getApps) {
+		for my $app (@$localApps) {
 			if (my $plugin = Slim::Utils::PluginManager->isEnabled($app) ) {
 				my $url = Slim::Web::Pages->getPageLink( 'apps', $plugin->{'name'} );
 				Slim::Web::Pages->addPageLinks( 'my_apps', { $plugin->{'name'} => $url } );

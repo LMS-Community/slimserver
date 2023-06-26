@@ -14,7 +14,7 @@ use constant PLUGINMENU => 'PLUGINS';
 
 my $WEIGHTS = {};
 
-my $nonSNApps;
+my $localApps = {};
 
 sub initPlugin {
 	my $class = shift;
@@ -23,7 +23,7 @@ sub initPlugin {
 	my $name  = $class->getDisplayName;
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
-	
+
 	if ( $class->can('weight') ) {
 		$WEIGHTS->{ $name } = $class->weight;
 	}
@@ -58,7 +58,7 @@ sub initPlugin {
 				RADIO        => 1,
 				SETTINGS     => 1,
 			};
-		
+
 			if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
 				Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
 			}
@@ -80,9 +80,9 @@ sub initPlugin {
 		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);
 	}
 
-	# add 3rd party plugins which wish to be in the apps menu to nonSNApps list
-	if ($class->can('menu') && $class->menu && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
-		$class->addNonSNApp();
+	# add 3rd party plugins which wish to be in the apps menu to localApps list
+	if ($class->can('menu') && $class->menu && $class->menu eq 'apps') {
+		$localApps->{$class} = 1;
 	}
 }
 
@@ -134,15 +134,8 @@ sub addWeight {
 	$WEIGHTS->{$name} = $weight if $name && $weight;
 }
 
-sub addNonSNApp {
-	my $class = shift;
-	
-	$nonSNApps ||= [];
-	push @$nonSNApps, $class;
-}
-
-sub nonSNApps {
-	return $nonSNApps
+sub getApps {
+	return [ keys %$localApps ];
 }
 
 1;
