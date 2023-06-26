@@ -405,9 +405,6 @@ sub _gotNextRadioTrack {
 	$song->pluginData( radioTitle    => $title );
 	$song->pluginData( radioTrack    => $track );
 
-	# We already have the metadata for this track, so can save calling getTrack
-	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($track)) unless $track->{duration};
-
 	my $icon = getIcon();
 	my $meta = {
 		artist    => $track->{artist_name},
@@ -424,6 +421,9 @@ sub _gotNextRadioTrack {
 			rew => 0,
 		},
 	};
+
+	# We already have the metadata for this track, so can save calling getTrack
+	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($track, $meta->{duration})) unless $track->{duration};
 
 	$song->duration( $meta->{duration} );
 
@@ -540,6 +540,9 @@ sub _gotTrack {
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
 	};
+
+	# We already have the metadata for this track, so can save calling getTrack
+	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($info, $meta->{duration})) unless $info->{duration};
 
 	$song->duration( $meta->{duration} );
 
