@@ -163,11 +163,17 @@ sub parseDirectHeaders {
 	}
 
 	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
-		$bitrate = int($length/$song->duration*8);
-
 		my ($trackId) = _getStreamParams( $url );
 
 		if ($trackId) {
+			my $duration = $song->duration;
+
+			if (!$duration && (my $info = $song->pluginData('info'))) {
+				$duration = $info->{duration};
+			}
+
+			$bitrate = $duration ? int($length/$duration*8) : _getBitrate($ct);
+
 			my $meta = $cache->get('wimp_meta_' . $trackId);
 			if ($meta && ref $meta) {
 				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
