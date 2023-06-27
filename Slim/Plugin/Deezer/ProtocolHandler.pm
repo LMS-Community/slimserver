@@ -683,7 +683,7 @@ sub getMetadataFor {
 
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
-		push @need, $trackId if !$meta || !$meta->{title};
+		push @need, $trackId if $trackId && (!$meta || !$meta->{title});
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
@@ -696,6 +696,8 @@ sub getMetadataFor {
 			}
 		}
 
+		@need = do { my %seen; grep { !$seen{$_}++ } @need };
+
 		if (!scalar @need) {
 			$client->master->pluginData( fetchingMeta => 0 );
 			return $meta;
@@ -704,12 +706,6 @@ sub getMetadataFor {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
-
-		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
-			"/api/deezer/v1/playback/getBulkMetadata"
-		);
-
-		@need = do { my %seen; grep { !$seen{$_}++ } @need };
 
 		Async::Util::amap(
 			inputs => \@need,
@@ -722,7 +718,7 @@ sub getMetadataFor {
 				$result = [ grep {
 					$err ||= $_->{error};
 					!$_->{error};
-				} @$result ];
+				} @$result || [] ];
 
 				$err && $log->error(ref $err ? $err->{message} : $err);
 

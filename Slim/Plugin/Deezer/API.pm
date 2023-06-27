@@ -64,6 +64,8 @@ sub _call {
 sub getTrack {
 	my ($class, $id, $cb) = @_;
 
+	return $cb->() unless $id;
+
 	$class->_apiDirectCall('GET', "/track/$id", {
 		cache   => 1,
 		expires => 86400 * 30,
