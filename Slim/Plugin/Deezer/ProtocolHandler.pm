@@ -13,7 +13,6 @@ package Slim::Plugin::Deezer::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
-use Async::Util;
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
 use Scalar::Util qw(blessed);
@@ -713,24 +712,25 @@ sub getMetadataFor {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 
-		Async::Util::amap(
-			inputs => \@need,
-			action => sub {
-				Slim::Plugin::Deezer::API->getTrack(@_);
+		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
+			"/api/deezer/v1/playback/getBulkMetadata"
+		);
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&_gotBulkMetadata,
+			\&_gotBulkMetadataError,
+			{
+				client  => $client,
+				timeout => 60,
+				trackIds=> \@need,
+				format  => $format,
 			},
-			cb => sub {
-				my ($result, $err) = @_;
+		);
 
-				$result = [ grep {
-					$err ||= $_->{error};
-					!$_->{error};
-				} @$result || [] ];
-
-				$err && $log->error(ref $err ? $err->{message} : $err);
-
-				_gotBulkMetadata($client, \@need, $format, $result);
-			},
-			at_a_time => 10,
+		$http->post(
+			$metaUrl,
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			'trackIds=' . join( ',', @need ),
 		);
 	}
 
@@ -745,13 +745,18 @@ sub getMetadataFor {
 }
 
 sub _gotBulkMetadata {
-	my ($client, $trackIds, $format, $info) = @_;
+	my $http   = shift;
+	my $client = $http->params->{client};
+	my $trackIds = $http->params->{trackIds};
+	my $format = $http->params->{format};
 
 	$client->master->pluginData( fetchingMeta => 0 );
 
-	if ( !ref $info || ref $info ne 'ARRAY' ) {
-		$log->error( "Error fetching track metadata." );
-		# _invalidateTracks($client, $trackIds);
+	my $info = eval { from_json( $http->content ) };
+
+	if ( $@ || ref $info ne 'ARRAY' ) {
+		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
+		_invalidateTracks($client, $trackIds);
 		return;
 	}
 
@@ -781,7 +786,7 @@ sub _gotBulkMetadata {
 			icon      => $icon,
 		};
 
-		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 ) if $meta->{title};
+		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );
 
 		delete $trackIds{$trackId};
 	}
@@ -796,6 +801,18 @@ sub _gotBulkMetadata {
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 
 	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+}
+
+sub _gotBulkMetadataError {
+	my $http   = shift;
+	my $client = $http->params('client');
+	my $error  = $http->error;
+
+	_invalidateTracks($client, $http->params->{trackIds});
+
+	$client->master->pluginData( fetchingMeta => 0 );
+
+	$log->warn("Error getting track metadata from SN: $error");
 }
 
 sub _invalidateTracks {
