@@ -236,7 +236,7 @@ sub registerLibrary {
 }
 
 sub unregisterLibrary {
-	my ($class, $id) = @_;
+	my ($class, $id, $keepClientPref) = @_;
 
 	main::INFOLOG && $log->is_info && $log->info("Unregistering library view with ID $id");
 	$id = $class->getRealId($id);
@@ -253,11 +253,13 @@ sub unregisterLibrary {
 	$sth->execute($id);
 
 	# make sure noone is using this library any more
-	foreach my $clientPref ( $serverPrefs->allClients ) {
-		$clientPref->remove('libraryId') if $clientPref->get('libraryId') eq $id;
+ 	unless ($keepClientPref) {
+		foreach my $clientPref ( $serverPrefs->allClients ) {
+			$clientPref->remove('libraryId') if $clientPref->get('libraryId') eq $id;
+		}
 	}
 
-	delete $libraries{$id};
+ 	delete $libraries{$id};
 	$prefs->remove('vlid_'  . $id);
 }
 
