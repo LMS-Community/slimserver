@@ -1,4 +1,4 @@
-package Slim::Plugin::ClassicalRadio::Plugin;
+package Slim::Plugin::RadioTunes::Plugin;
 
 # Logitech Media Server Copyright 2001-2023 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -8,7 +8,8 @@ package Slim::Plugin::ClassicalRadio::Plugin;
 use strict;
 use base qw(Slim::Plugin::AudioAddict::Plugin);
 
-sub network { 'classicalradio' }
-sub servicePageLink { 'PLUGIN_CLASSICALRADIO_LINK' }
+sub network { 'sky' }
+sub missingCredsString { 'PLUGIN_RADIOTUNES_MISSING_CREDS' }
+sub servicePageLink { 'PLUGIN_RADIOTUNES_LINK' }
 
 1;

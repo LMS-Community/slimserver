@@ -18,31 +18,40 @@ my $prefs = preferences('plugin.audioaddict');
 
 # Auth a user/pass, returns basic member information and current subscription(s)
 sub authenticate {
-	my ( $class, $cb ) = @_;
+	my ( $class, $args, $cb ) = @_;
 
 	# Avoid duplicate calls if we already know the listen key
-	if ( $prefs->get('listen_key') ) {
-		$cb->(1);
+	if ( my $listenKey = $prefs->get('listen_key') ) {
+		$cb->({
+			listen_key => $listenKey,
+			subscriptions => $prefs->get('subscriptions'),
+		});
 	}
 	else {
 		_call(
 			POST => '/members/authenticate',
 			{
-				username => $prefs->get('username'),
-				password => $prefs->get('password'),
-				_network => 'jazzradio',
+				username => $args->{username},
+				password => $args->{password},
+				_network => $args->{network},
 			},
 			sub {
 				if ( my $res = shift ) {
-					# Save listen key and subscriptions
-					$prefs->set('listen_key', $res->{listen_key});
-					$prefs->set('subscriptions', $res->{subscriptions});
+					my $listenKey = $res->{listen_key};
+					my $subscriptions = $res->{subscriptions};
 
-					$cb->(1);
+					if ($listenKey && $subscriptions) {
+						$prefs->set('listen_key', $listenKey);
+						$prefs->set('subscriptions', $subscriptions);
+
+						return $cb->({
+							listen_key => $listenKey,
+							subscriptions => $subscriptions,
+						});
+					}
 				}
-				else {
-					$cb->(undef);
-				}
+
+				$cb->();
 			},
 		);
 	}

@@ -9337,6 +9337,12 @@ SETUP_SN_SIGNOUT
 	FR	Déconnexion de mysqueezebox.com
 	NL	Afmelden bij mysqueezebox.com
 
+SETUP_SIGNOUT
+	DE	Abmelden
+	EN	Sign out
+	FR	Déconnexion
+	NL	Afmelden
+
 SETUP_SN_EMAIL_DESC
 	CS	Zadejte e-mailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
 	DA	Angiv e-mail-adressen som skal bruges til at logge på din konto til mysqueezebox.com.

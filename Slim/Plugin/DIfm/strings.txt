@@ -1,5 +1,11 @@
 PLUGIN_DI_FM_NAME
-	EN	DI.fm - Digitally Imported
+	EN	DI.FM - Digitally Imported
 
 PLUGIN_DI_FM_DESC
 	EN	DI.FM  - Addictive Electronic Music
+
+PLUGIN_DI_FM_MISSING_CREDS
+	EN	Please visit DI.FM in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_DI_FM_LINK
+	EN	To create or manage your account please visit <a href="https://www.di.fm" target="_blank">DI.FM</a>.

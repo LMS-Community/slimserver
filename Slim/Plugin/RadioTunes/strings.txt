@@ -1,0 +1,11 @@
+PLUGIN_RADIOTUNES_NAME
+	EN	RadioTunes.com
+
+PLUGIN_RADIOTUNES_DESC
+	EN	RadioTunes.com - Your daily music fix
+
+PLUGIN_RADIOTUNES_MISSING_CREDS
+	EN	Please visit RadioTunes.com in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_RADIOTUNES_LINK
+	EN	To create or manage your account please visit <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
