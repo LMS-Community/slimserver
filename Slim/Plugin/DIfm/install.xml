@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>9ce01c4c-6846-4757-8dc4-7ece9696eec3</id>
+	<name>PLUGIN_DI_FM_NAME</name>
+	<module>Slim::Plugin::DIfm::Plugin</module>
+	<icon>plugins/DIfm/html/icon.png</icon>
+	<version>1.0</version>
+	<description>PLUGIN_DI_FM_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

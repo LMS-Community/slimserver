@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>af845f27-67af-40e5-9296-a93cfacf5c1a</id>
+	<name>PLUGIN_JAZZRADIO_NAME</name>
+	<module>Slim::Plugin::JazzRadio::Plugin</module>
+	<icon>plugins/JazzRadio/html/icon.png</icon>
+	<version>1.0</version>
+	<description>PLUGIN_JAZZRADIO_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

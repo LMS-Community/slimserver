@@ -26,6 +26,7 @@ sub new {
 
 	my $self = {
 		templateDirs => [],
+		skinTemplates => {},
 	};
 
 	bless $self, $class;
@@ -42,6 +43,7 @@ sub addTemplateDirectory {
 
 	# reset cache
 	delete $class->{skinDirs};
+	$class->{skinTemplates} = {};
 
 	push @{ $class->{templateDirs} }, $dir if ( not grep({$_ eq $dir} @{ $class->{templateDirs} } ));
 }
