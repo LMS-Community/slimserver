@@ -254,7 +254,7 @@ sub unregisterLibrary {
 
 	# make sure noone is using this library any more
 	foreach my $clientPref ( $serverPrefs->allClients ) {
-		$clientPref->remove('libraryId');
+		$clientPref->remove('libraryId') if $clientPref->get('libraryId') eq $id;
 	}
 
 	delete $libraries{$id};
