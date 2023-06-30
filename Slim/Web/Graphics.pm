@@ -43,9 +43,10 @@ sub init {
 sub serverResizesArt { 1 }
 
 sub _cached {
-	my $path = shift;
+	my ($path, $force) = @_;
 
-	return if !main::SCANNER && main::NOBROWSECACHE;
+	# force reading from cache when using the external resizer daemon
+	return if !main::SCANNER && main::NOBROWSECACHE && !$force;
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
@@ -431,10 +432,10 @@ sub artworkRequest {
 		my $doResize = sub {
 			my $cover = $_[0];
 			Slim::Utils::ImageResizer->resize($cover, $path, $spec, sub {
-				my ($body, $format) = @_;
+				my ($body, $format, $readFromCache) = @_;
 
 				# if we didn't get a valid reference returned, try to read from cache
-				if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path)) ) {
+				if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = _cached($path, $readFromCache)) ) {
 					$body = $c->{data_ref};
 					$format = $c->{content_type};
 				}

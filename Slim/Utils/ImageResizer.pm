@@ -111,7 +111,8 @@ sub resize {
 						main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
 					}
 
-					$callback && $callback->();
+					# tell caller that the data is passed in the cache
+					$callback && $callback->(undef, undef, 1);
 				},
 			);
 
