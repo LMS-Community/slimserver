@@ -3,12 +3,30 @@ package Slim::Plugin::Sounds::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use File::Spec::Functions qw(catfile);
+use HTTP::Status qw(RC_NOT_FOUND RC_OK);
+use Digest::MD5 qw(md5_hex);
 
+use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Player::ProtocolHandlers;
 use Slim::Plugin::Sounds::ProtocolHandler;
+use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+use constant BASE_AUDIO_PATH => 'plugins/sounds/audio/';
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.sounds',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
+my $serverPrefs = preferences('server');
+
+# change this to whatever when the time has come.
+my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
 
 my $menus = {
 	MUSICAL => {
@@ -92,6 +110,7 @@ my $menus = {
 };
 
 my $soundsMenus;
+my %validPaths;
 # Flat list of sounds to use for alarms
 my $alarmPlaylists;
 
@@ -104,7 +123,10 @@ sub initPlugin {
 
 	# localize list of sounds
 	getSortedSounds();
-	preferences('server')->setChange(\&getSortedSounds, 'language');
+	$serverPrefs->setChange(\&getSortedSounds, 'language');
+
+	# register a handler to proxy the sounds files - it might be a https source which the players can't handle
+	Slim::Web::Pages->addRawFunction(BASE_AUDIO_PATH, \&proxyRequest);
 
 	$class->SUPER::initPlugin(
 		feed   => sub {
@@ -135,8 +157,7 @@ sub getAlarmPlaylists {
 sub getSortedSounds {
 	my ( $self, $c ) = @_;
 
-	my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
-
+	main::INFOLOG && $log->is_info && $log->info("Sorting Sounds list alphabetically");
 	my @items = sort {
 		$a->{name} cmp $b->{name};
 	} map {
@@ -149,17 +170,22 @@ sub getSortedSounds {
 
 	my @playlistItems;
 
+	my $loopUrl = Slim::Utils::Network::serverURL() . BASE_AUDIO_PATH;
+	$loopUrl =~ s/^http/loop/;
+
 	for my $menu ( @items ) {
 		# Sort each submenu after localizing
 		my @subsorted = sort {
 			$a->{name} cmp $b->{name}
 		} map {
+			my $path = $menus->{$menu->{id}}->{$_};
+			$validPaths{$path} = 1;
 			{
 				name    => string("PLUGIN_SOUNDS_$_"),
 				bitrate => 128,
 				type    => 'audio',
-				url     => "loop://$baseUrl/" . $menus->{$menu->{id}}->{$_},
-			}
+				url     => $loopUrl . $path,
+			};
 		} keys %{ $menus->{$menu->{id}} };
 
 		$menu->{items} = \@subsorted;
@@ -177,12 +203,71 @@ sub getSortedSounds {
 		delete $menu->{id};
 	}
 
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(\@items));
+
 	$alarmPlaylists = \@playlistItems;
 	return $soundsMenus = {
 		title => string('PLUGIN_SOUNDS_MODULE_NAME'),
 		type  => 'opml',
 		items => \@items
 	};
+}
+
+sub proxyRequest {
+	my ($httpClient, $response) = @_;
+
+	my ($path) = $response->request->uri->path =~ m|/${\BASE_AUDIO_PATH}(.*)|;
+
+	main::INFOLOG && $log->is_info && $log->info("Sounds file to fetch: $path");
+
+	return _notFound(@_) unless $validPaths{$path};
+
+	my $soundsFile = catfile($serverPrefs->get('cachedir'), 'Sounds', md5_hex($path));
+
+	my $sendFile = sub {
+		$response->code(HTTP::Status::RC_OK);
+		Slim::Web::HTTP::sendStreamingFile($httpClient, $response, 'audio/mpeg', $soundsFile);
+	};
+
+	if (-f $soundsFile) {
+		return $sendFile->();
+	}
+
+	my $originUrl = "http://$baseUrl/$path";
+
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			return _notFound($httpClient, $response) unless -f $soundsFile;
+
+			main::DEBUGLOG && $log->is_debug && $log->debug("Downloaded $originUrl as $soundsFile");
+
+			$sendFile->();
+		},
+		sub {
+			my ($http, $error) = @_;
+
+			$log->error("Failed to fetch $originUrl: $error");
+			_notFound($httpClient, $response);
+		},
+		{
+			saveAs => $soundsFile
+		}
+	)->get($originUrl);
+
+	return;
+}
+
+sub _notFound {
+	my ($httpClient, $response) = @_;
+
+	$log->warn("Failed to fetch Sounds file: " . $response->request->uri->path);
+
+	$response->code(RC_NOT_FOUND);
+	$response->content_type('text/html');
+	$response->header('Connection' => 'close');
+	Slim::Web::HTTP::addHTTPResponse($httpClient, $response,
+		Slim::Web::HTTP::filltemplatefile('html/errors/404.html', { path => $response->request->uri->path }
+	));
 }
 
 1;
