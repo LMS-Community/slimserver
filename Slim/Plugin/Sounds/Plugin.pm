@@ -3,6 +3,7 @@ package Slim::Plugin::Sounds::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use File::Path qw(mkpath);
 use File::Spec::Functions qw(catfile);
 use HTTP::Status qw(RC_NOT_FOUND RC_OK);
 use Digest::MD5 qw(md5_hex);
@@ -24,6 +25,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $serverPrefs = preferences('server');
+my $soundsCache = catfile($serverPrefs->get('cachedir'), 'Sounds');
 
 # change this to whatever when the time has come.
 my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
@@ -124,6 +126,7 @@ sub initPlugin {
 	# localize list of sounds
 	getSortedSounds();
 	$serverPrefs->setChange(\&getSortedSounds, 'language');
+	mkpath($soundsCache);
 
 	# register a handler to proxy the sounds files - it might be a https source which the players can't handle
 	Slim::Web::Pages->addRawFunction(BASE_AUDIO_PATH, \&proxyRequest);
@@ -222,7 +225,7 @@ sub proxyRequest {
 
 	return _notFound(@_) unless $validPaths{$path};
 
-	my $soundsFile = catfile($serverPrefs->get('cachedir'), 'Sounds', md5_hex($path));
+	my $soundsFile = catfile($soundsCache, md5_hex($path));
 
 	my $sendFile = sub {
 		$response->code(HTTP::Status::RC_OK);
