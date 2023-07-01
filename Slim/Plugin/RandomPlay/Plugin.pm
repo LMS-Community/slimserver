@@ -62,7 +62,7 @@ my $htmlTemplate = 'plugins/RandomPlay/list.html';
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.randomplay',
 	'defaultLevel' => 'ERROR',
-	'description'  => __PACKAGE__->getDisplayName(),
+	'description'  => 'PLUGIN_RANDOMPLAY',
 });
 
 my $prefs = preferences('plugin.randomplay');

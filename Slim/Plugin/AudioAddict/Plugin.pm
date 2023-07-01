@@ -8,6 +8,8 @@ package Slim::Plugin::AudioAddict::Plugin;
 use strict;
 
 use base qw(Slim::Plugin::OPMLBased);
+use File::Spec::Functions qw(catfile);
+use FindBin qw($Bin);
 
 use Slim::Plugin::AudioAddict::API;
 use Slim::Utils::Prefs;
@@ -22,6 +24,9 @@ my $prefs = preferences('plugin.audioaddict');
 
 sub initPlugin {
 	my ($class) = @_;
+
+	my ($basePackage) = __PACKAGE__ =~ /(.*)::Plugin$/;
+	Slim::Utils::Strings::loadFile(catfile($Bin, split(/::/, $basePackage), 'strings.txt'));
 
 	$class->SUPER::initPlugin(
 		feed   => sub {
