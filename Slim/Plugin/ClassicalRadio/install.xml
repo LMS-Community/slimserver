@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>c6b8aeec-11d7-403a-bf01-86f4f52d8c81</id>
+	<name>PLUGIN_CLASSICALRADIO_NAME</name>
+	<module>Slim::Plugin::ClassicalRadio::Plugin</module>
+	<icon>plugins/ClassicalRadio/html/icon.png</icon>
+	<version>1.0</version>
+	<description>PLUGIN_CLASSICALRADIO_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

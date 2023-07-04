@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<extension>
+	<id>5f441419-ca71-4d23-a6bf-5aac81662310</id>
+	<name>PLUGIN_AUDIO_ADDICT_NAME</name>
+	<version>1.0</version>
+	<description>PLUGIN_AUDIO_ADDICT_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+</extension>

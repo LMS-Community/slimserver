@@ -2,6 +2,7 @@ package Slim::Utils::ImageResizer;
 
 use strict;
 
+use Config;
 use File::Spec::Functions qw(catdir);
 use MIME::Base64 qw(encode_base64);
 use Scalar::Util qw(blessed);
@@ -15,6 +16,7 @@ use Slim::Utils::Prefs;
 # present we will use async artwork resizing via the external daemon
 use constant SOCKET_PATH    => '/tmp/sbs_artwork';
 use constant SOCKET_TIMEOUT => 15;
+use constant DAEMON_WATCHDOG_INTERVAL => 6;
 
 my $prefs = preferences('server');
 my $log   = logger('artwork');
@@ -22,9 +24,9 @@ my $log   = logger('artwork');
 my ($gdresizein, $gdresizeout, $gdresizeproc);
 
 my $pending_requests = 0;
-my $hasDaemon;
+my ($hasDaemon, $daemon, @daemonArgs);
 
-sub hasDaemon {
+sub hasDaemon { if (!main::ISWINDOWS) {
 	my ($class, $check) = @_;
 
 	if (!defined $hasDaemon || $check) {
@@ -34,7 +36,12 @@ sub hasDaemon {
 	}
 
 	return $hasDaemon;
-}
+} }
+
+sub initDaemon { if (!main::ISWINDOWS) {
+	startDaemon() if isDaemonEnabled();
+	$prefs->setChange(\&_checkDaemonStatus, 'useLocalImageproxy');
+} }
 
 sub resize {
 	my ($class, $file, $cachekey, $specs, $callback, $cache) = @_;
@@ -42,7 +49,7 @@ sub resize {
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	# Check for callback, and that the gdresized daemon running and read/writable
-	if (hasDaemon() && $callback) {
+	if (!main::ISWINDOWS && hasDaemon() && $callback) {
 		require AnyEvent::Socket;
 		require AnyEvent::Handle;
 
@@ -58,6 +65,7 @@ sub resize {
 		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
 			my $fh = shift || do {
 				$log->error("daemon failed to connect: $!");
+				$hasDaemon = undef;
 
 				if ( --$pending_requests == 0 ) {
 					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
@@ -103,7 +111,8 @@ sub resize {
 						main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
 					}
 
-					$callback && $callback->();
+					# tell caller that the data is passed in the cache
+					$callback && $callback->(undef, undef, 1);
 				},
 			);
 
@@ -152,5 +161,86 @@ sub sync_resize {
 
 	return $@ ? 0 : 1;
 }
+
+sub isDaemonEnabled { if (!main::ISWINDOWS) {
+	($prefs->get('useLocalImageproxy') || 0) == 2;
+} }
+
+sub startDaemon { if (!main::ISWINDOWS) {
+	return if $daemon && $daemon->alive;
+
+	$log->info("Starting daemon...");
+
+	@daemonArgs = ();
+	if (main::INFOLOG && $log->is_info) {
+		unshift @daemonArgs, '--debug';
+	}
+
+	my $command = Slim::Utils::OSDetect::getOS->gdresized();
+
+	if ($Config{'perlpath'} && -x $Config{'perlpath'}) {
+		unshift @daemonArgs, $command;
+		$command  = $Config{'perlpath'};
+	}
+	# pick up our custom Perl build if in use
+	elsif (main::ISMAC && -x $^X && $^X !~ m|/usr/bin/perl|) {
+		unshift @daemonArgs, $command;
+		$command = $^X;
+	}
+
+	eval {
+		$daemon = Proc::Background->new(
+			{ 'die_upon_destroy' => 1 },
+			$command,
+			@daemonArgs
+		);
+	};
+
+	if ($@) {
+		$log->error("Failed to start resizing daemon: $@");
+	}
+	elsif (main::INFOLOG && $log->is_info) {
+		$log->info('Started resizing daemon: pid ' . $daemon->pid);
+	}
+
+	_updateDaemonStatus();
+	_checkDaemonStatus();
+} }
+
+sub stopDaemon { if (!main::ISWINDOWS) {
+	$log->info("Stopping daemon...");
+	Slim::Utils::Timers::killTimers( undef, \&_checkDaemonStatus );
+	$daemon && $daemon->die;
+	_updateDaemonStatus();
+} }
+
+sub _checkDaemonStatus { if (!main::ISWINDOWS) {
+	Slim::Utils::Timers::killTimers( undef, \&_checkDaemonStatus );
+
+	if ($daemon && $daemon->alive) {
+		if (!isDaemonEnabled()) {
+			stopDaemon();
+			return;
+		}
+		# LMS thinks there's no daemon, but it's still running - restart it (but give it some time to start up)
+		elsif (!hasDaemon() && time > $daemon->start_time + 2 * DAEMON_WATCHDOG_INTERVAL) {
+			stopDaemon();
+		}
+		# restart if we changed logging options
+		elsif ( (scalar grep /debug/i, @daemonArgs) ? !$log->is_info : $log->is_info ) {
+			stopDaemon();
+		}
+	}
+
+	if(!($daemon && $daemon->alive) && isDaemonEnabled()) {
+		startDaemon();
+	}
+
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + DAEMON_WATCHDOG_INTERVAL, \&_checkDaemonStatus);
+} }
+
+sub _updateDaemonStatus { if (!main::ISWINDOWS) {
+	Slim::Utils::Timers::setTimer(1, time() + 5, \&hasDaemon);
+} }
 
 1;

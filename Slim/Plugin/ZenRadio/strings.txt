@@ -1,0 +1,11 @@
+PLUGIN_ZENRADIO_NAME
+	EN	Zen Radio
+
+PLUGIN_ZENRADIO_DESC
+	EN	Zen Radio - Relaxation & Meditation Music
+
+PLUGIN_ZENRADIO_MISSING_CREDS
+	EN	Please visit Zen Radio in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_ZENRADIO_LINK
+	EN	To create or manage your account please visit <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.

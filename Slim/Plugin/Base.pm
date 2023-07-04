@@ -23,7 +23,7 @@ sub initPlugin {
 	my $name  = $class->getDisplayName;
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
-	
+
 	if ( $class->can('weight') ) {
 		$WEIGHTS->{ $name } = $class->weight;
 	}
@@ -58,7 +58,7 @@ sub initPlugin {
 				RADIO        => 1,
 				SETTINGS     => 1,
 			};
-		
+
 			if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
 				Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
 			}
@@ -81,7 +81,7 @@ sub initPlugin {
 	}
 
 	# add 3rd party plugins which wish to be in the apps menu to nonSNApps list
-	if ($class->can('menu') && $class->menu && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
+	if ($class->can('menu') && $class->menu && $class->menu eq 'apps') {
 		$class->addNonSNApp();
 	}
 }
@@ -136,7 +136,7 @@ sub addWeight {
 
 sub addNonSNApp {
 	my $class = shift;
-	
+
 	$nonSNApps ||= [];
 	push @$nonSNApps, $class;
 }

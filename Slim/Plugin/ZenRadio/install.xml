@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>40de788c-4376-42c1-9c9f-3f228b756f2c</id>
+	<name>PLUGIN_ZENRADIO_NAME</name>
+	<module>Slim::Plugin::ZenRadio::Plugin</module>
+	<icon>plugins/ZenRadio/html/icon.png</icon>
+	<version>1.0</version>
+	<description>PLUGIN_ZENRADIO_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

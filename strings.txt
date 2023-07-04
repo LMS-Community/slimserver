@@ -9337,6 +9337,12 @@ SETUP_SN_SIGNOUT
 	FR	Déconnexion de mysqueezebox.com
 	NL	Afmelden bij mysqueezebox.com
 
+SETUP_SIGNOUT
+	DE	Abmelden
+	EN	Sign out
+	FR	Déconnexion
+	NL	Afmelden
+
 SETUP_SN_EMAIL_DESC
 	CS	Zadejte e-mailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
 	DA	Angiv e-mail-adressen som skal bruges til at logge på din konto til mysqueezebox.com.
@@ -19336,8 +19342,8 @@ SETUP_IMAGEPROXY
 
 SETUP_IMAGEPROXY_DESC
 	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj přehrávání datovýh proudů, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
-	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
-	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
+	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
+	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing. The helper can offload some of the heavy lifting to a separate process managed by the server application.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
 	NL	Om de beste kwaliteit albumhoezen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar de muziekspeler worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
 	NO	For å få høyest mulig billedkvalitet og ytelse på avspillerene, blir omslagsbilder skalert før avspillerene får dem. Som standard er det mysqueezebox.com som tar seg av dette, men hvis du vil være uavhengig av mysqueezebox.com eller kjører en intern strømmekilde, bør du vurdere å bruke Logitech Media Servers innebygde skaleringsfunksjon.
@@ -19346,7 +19352,7 @@ SETUP_IMAGEPROXY_DESC
 
 SETUP_IMAGEPROXY_REMOTE
 	CS	Použít mysqueezebox.com ke změně velikosti obalů alb
-	DE	Plattenhüllen auf mysqueezebox.com anpassen
+	DE	Bilder auf mysqueezebox.com anpassen
 	EN	Use mysqueezebox.com to resize artwork
 	FR	Redimensionner les pochettes avec mysqueezebox.com
 	NL	Gebruik mysqueezebox.com om albumhoezen te schalen
@@ -19356,13 +19362,17 @@ SETUP_IMAGEPROXY_REMOTE
 
 SETUP_IMAGEPROXY_LOCAL
 	CS	Použít Logitech Media Server ke změně velikosti obalů alb
-	DE	Plattenhüllen lokal in Logitech Media Server anpassen
+	DE	Bilder lokal in Logitech Media Server anpassen
 	EN	Use Logitech Media Server to resize artwork
 	FR	Redimensionner les pochettes avec Logitech Media Server
 	NL	Gebruik Logitech Media Server om albumhoezen te schalen
 	NO	La Logitech Media Server skalere plateomslag
 	PL	Użyj Logitech Media Server do dopasowywania okładek
 	SV	Använd Logitech Media Server för att anpassa skivomslagens storlek
+
+SETUP_IMAGEPROXY_HELPER
+	DE	Bilder mit Logitech Media Server Helferanwendung anpassen
+	EN	Use Logitech Media Server resizing helper to resize artwork
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -21484,7 +21494,7 @@ ONLINE_LIBRARY_DELETED_PROGRESS
 MERGEVA_PROGRESS
 	CS	Sloučení více interpretů
 	DA	Flet Diverse kunstnere
-	DE	Gruppiere "Diverse Artisten"
+	DE	Gruppiere "Diverse Interpreten"
 	EN	Merge Various Artists
 	ES	Fusionar varios artistas
 	FI	Yhdistä useita artisteja

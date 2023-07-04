@@ -1216,7 +1216,7 @@ sub generateHTTPResponse {
 			my $async = 0;
 			my $sentResponse = 0;
 
-			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::artworkRequest(
+			Slim::Web::Graphics::artworkRequest(
 				$client,
 				$path,
 				$params,

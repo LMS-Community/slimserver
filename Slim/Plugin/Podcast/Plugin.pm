@@ -115,8 +115,6 @@ sub initPlugin {
 		tag    => 'podcasts',
 		menu   => 'apps',
 	);
-
-	$class->addNonSNApp();
 }
 
 sub shutdownPlugin {

@@ -995,7 +995,7 @@ sub artistsQuery {
 		$sql .= 'WHERE ';
 		my $s = join( ' AND ', @{$w} );
 		$s =~ s/\%/\%\%/g;
-		$sql .= ($wantExternal ? "($s) OR (contributors.extid IS NOT NULL AND contributors.extid != '')" : $s) . ' ';
+		$sql .= (($wantExternal && !$libraryID) ? "($s) OR (contributors.extid IS NOT NULL AND contributors.extid != '')" : $s) . ' ';
 	}
 
 	my $dbh = Slim::Schema->dbh;

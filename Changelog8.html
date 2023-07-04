@@ -6,25 +6,31 @@
 	<li>New Features:</li>
 	<ul>
 		<li>New "Advanced Tag View" plugin allows you to show more information in the Track Info menu, without the need to drill down to "View Tags"</li>
+		<li>Add plugins for ClassicRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
 		<li>Add an option to import playlists from online music services.</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
+		<li>Improve integration of the external image resizing helper daemon.</li>
+		<li>Improve built-in imageproxy: don't proxy image if original size is requested, re-direct instead; add support for custom headers when using external image proxy.</li>
 		<li>Updated Dutch translation - thanks blackfiction!</li>
 		<li>Improve rendering of links in the web UI menus (comments, file download, etc.)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/846">#846</a> - Improve display of multiline lyrics and comments in the web UI (thanks mw9!)</li>
 		<li>Move persist.db out of the cache folder - it's music data which can't be restored from the music files.</li>
 		<li>Log warning if the server's time seems to be off (only if MySqueezebox integration is enabled).</li>
+		<li>Re-implement Sounds & Effects plugin to not depend on MySqueezebox for the navigation and content selection.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/862">#862</a> - Make lyrics on Default skin songinfo page collapsible (thanks AF-1!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/868">#868</a> - Populate the release year ('year') attribute for remote tracks in the player queue (thanks SamInPgh!)</li>
+		<li>Fix Napster playback on community firmware players</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
 		<li>Tweak Apple OS Architecture discovery: use the "arm64" string rather than the CPU's name (eg. "Apple M1")</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
 	</ul>
 	<br />
 
@@ -34,6 +40,8 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/622">#622</a> - __requestRE should only match words provided to Slim::Control::Request::subscribe. (thanks earlchew!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/799">#799</a> - Update IO::String to latest, fixing some odd Perl version check.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/829">#829</a> - Don't override a content type set by a page handler.</li>
+		<li>Fix Deezer SmartRadio track duration calculation.</li>
+		<li>Allow pausing Deezer Flow.</li>
 		<li>Fix browsing albums from Favorites menu.</li>
 		<li></li>
 	</ul>
@@ -69,6 +77,7 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/pull/874">#874</a> - Fix shuffling when starting off with an empty playlist (thanks robho!)</li>
+		<li>Add CPAN/auto/5.14 to lib search path for Windows builds to include Font::FreeType.</li>
 		<li>Fix another absolute path to a stylesheet in the Default skin.</li>
 	</ul>
 	<br />

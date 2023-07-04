@@ -254,6 +254,7 @@ sub init {
 		'coverArt'              => '',
 		'artfolder'             => '',
 		'thumbSize'             => 100,
+		'useLocalImageproxy'    => main::ISWINDOWS ? 1 : 2,
 		# Server Settings - jive UI
 		'jivealbumsort'		=> 'album',
 		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream

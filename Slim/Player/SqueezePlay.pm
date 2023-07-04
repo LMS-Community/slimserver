@@ -26,14 +26,15 @@ BEGIN {
 }
 
 {
-	
+
 	__PACKAGE__->mk_accessor('rw', qw(
 		_model modelName
 		myFormats
 		maxSupportedSamplerate
 		accuratePlayPoints
 		firmware
-		canDecodeRhapsody
+		# formerly canDecodeRhapsody, but we don't want to set this any more
+		_canDecodeRhapsody
 		canDecodeRtmp
 		hasDigitalOut
 		hasPreAmp
@@ -50,7 +51,7 @@ sub new {
 	my $class = shift;
 
 	my $client = $class->SUPER::new(@_);
-	
+
 	$client->init_accessor(
 		_model                  => 'squeezeplay',
 		modelName               => 'SqueezePlay',
@@ -58,7 +59,7 @@ sub new {
 		maxSupportedSamplerate  => 48000,
 		accuratePlayPoints      => 0,
 		firmware                => 0,
-		canDecodeRhapsody       => 0,
+		_canDecodeRhapsody      => 0,
 		canDecodeRtmp           => 0,
 		_canHTTPS               => 0,
 		hasDigitalOut           => 0,
@@ -81,7 +82,7 @@ my %CapabilitiesMap = (
 	MaxSampleRate           => 'maxSupportedSamplerate',
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
-	Rhap                    => 'canDecodeRhapsody',
+	Rhap                    => '_canDecodeRhapsody',
 	Rtmp                    => 'canDecodeRtmp',
 	HasDigitalOut           => 'hasDigitalOut',
 	HasPreAmp               => 'hasPreAmp',
@@ -117,7 +118,7 @@ sub revisionNumber {
 	return $num;
 }
 
-sub hasBalance { 
+sub hasBalance {
 	my $client = shift;
 	return $client->balance || $client->model =~ /controller|fab4|baby/;
 }
@@ -127,31 +128,31 @@ sub needsUpgrade {}
 sub init {
 	my $client = shift;
 	my ($model, $capabilities) = @_;
-	
+
 	$client->updateCapabilities($capabilities);
 
 	$client->sequenceNumber(0);
-	
+
 	# Do this at end so that any resync that happens has the capabilities already set
 	$client->SUPER::init(@_);
 }
 
 sub reconnect {
 	my ($client, $paddr, $revision, $tcpsock, $reconnect, $bytes_received, $syncgroupid, $capabilities) = @_;
-	
+
 	$client->updateCapabilities($capabilities);
-	
+
 	$client->SUPER::reconnect($paddr, $revision, $tcpsock, $reconnect, $bytes_received, $syncgroupid);
 }
 
 sub updateCapabilities {
-	my ($client, $capabilities) = @_; 
-	
+	my ($client, $capabilities) = @_;
+
 	if ($client && $capabilities) {
-		
+
 		# if we have capabilities then all CODECs must be declared that way
 		my @formats;
-		
+
 		for my $cap (split(/,/, $capabilities)) {
 			if ($cap =~ /^[a-z][a-z0-9]{1,4}$/) {
 				push(@formats, $cap);
@@ -163,20 +164,20 @@ sub updateCapabilities {
 				} else {
 					$value = 1;
 				}
-				
+
 				if (defined($CapabilitiesMap{$cap})) {
 					my $f = $CapabilitiesMap{$cap};
 					$client->$f($value);
-				
+
 				} elsif (!exists($CapabilitiesMap{$cap})) {
-					
+
 					# It could be possible to have a completely generic mechanism here
 					# but I have not done that for the moment
 					$log->warn("unknown capability: $cap=$value, ignored");
 				}
 			}
 		}
-		
+
 		main::INFOLOG && $log->is_info && $log->info('formats: ', join(',', @formats));
 		$client->myFormats([@formats]);
 	}
@@ -237,9 +238,9 @@ sub pcm_sample_rates {
 		352800 => '=',
 		384000 => '>',
 	);
-	
+
 	my $rate = $pcm_sample_rates{$track->samplerate()};
-	
+
 	return defined $rate ? $rate : '3';
 }
 
@@ -250,7 +251,7 @@ sub fade_volume {
 		# for long fades do standard behavior so that sleep/alarm work
 		$client->SUPER::fade_volume($fade, $callback, $callbackargs);
 	} else {
-		#SP does local audio control for mute/pause/unpause so don't do fade in/out 
+		#SP does local audio control for mute/pause/unpause so don't do fade in/out
 		my $vol = abs($prefs->client($client)->get("volume"));
 		$vol = ($fade > 0) ? $vol : 0;
 		$client->volume($vol, 1);
@@ -266,7 +267,7 @@ sub needsWeightedPlayPoint { !shift->accuratePlayPoints(); }
 
 sub playPoint {
 	my $client = shift;
-	
+
 	return $client->accuratePlayPoints()
 		? $client->SUPER::playPoint(@_)
 		: Slim::Player::Client::playPoint($client, @_);
@@ -274,17 +275,17 @@ sub playPoint {
 
 sub skipAhead {
 	my $client = shift;
-	
+
 	my $ret = $client->SUPER::skipAhead(@_);
-	
+
 	$client->playPoint(undef);
-	
+
 	return $ret;
 }
 
 sub forceReady {
 	my $client = shift;
-	
+
 	$client->readyToStream(1);
 }
 

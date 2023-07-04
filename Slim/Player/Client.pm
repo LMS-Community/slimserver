@@ -37,11 +37,11 @@ my $prefs = preferences('server');
 our $defaultPrefs = {
 	'maxBitrate'           => undef, # will be set by the client device OR default to server pref when accessed.
 	# Alarm prefs
-	'alarms'               => {},	
+	'alarms'               => {},
 	'alarmsEnabled'        => 1,
 	'alarmDefaultVolume'   => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
 	'alarmSnoozeSeconds'   => 540, # 9 minutes
-	'alarmfadeseconds'     => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name! 
+	'alarmfadeseconds'     => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name!
 	'alarmTimeoutSeconds'  => 3600, # time after which to automatically end an alarm.  false to never end
 
 	'lameQuality'          => 9,
@@ -56,10 +56,10 @@ our $defaultPrefs = {
 $prefs->setValidate({
 	validator => sub {
 		my ($pref, $new, $params, $old, $client) = @_;
-		
-		return $new <= $client->mixerConstant($pref, 'max') 
+
+		return $new <= $client->mixerConstant($pref, 'max')
 		    && $new >= $client->mixerConstant($pref, 'min');
-	} 
+	}
 }, qw(bass treble));
 
 $prefs->setChange( sub {
@@ -217,7 +217,7 @@ sub new {
 		# streaming control
 		controller              => undef,
 		bufferReady             => 0,
-		readyToStream           => 1, 
+		readyToStream           => 1,
 		streamStartTimestamp	=> undef,
 
 		# streaming state
@@ -564,7 +564,7 @@ sub startup {
 	my $client = shift;
 	my $syncgroupid = shift;
 
-	# I don't think that should be done here b/c Squeezebox::reconnect does it as 
+	# I don't think that should be done here b/c Squeezebox::reconnect does it as
 	# well but by doing it here, $client is not activated as it is not connected
 	Slim::Player::Sync::restoreSync($client, $syncgroupid);
 
@@ -1323,7 +1323,7 @@ sub setPreset {
 		text => $args->{text},
 		type => $args->{type} || 'audio',
 	};
-	$preset->{parser} = $args->{parser} if $args->{parser};		
+	$preset->{parser} = $args->{parser} if $args->{parser};
 
 
 	my $cprefs = $prefs->client($client);
@@ -1367,8 +1367,8 @@ sub syncGroupActiveMembers {return $_[0]->controller()->activePlayers();}
 
 sub isSynced {
 	my ($client, $active) = @_;
-	return ($active 
-				? $client->controller()->activePlayers() 
+	return ($active
+				? $client->controller()->activePlayers()
 				: $client->controller()->allPlayers()
 			) > 1;
 }
@@ -1405,14 +1405,14 @@ sub syncedWithNames {
 # return formatted date/time strings - overwritten in SN to respect timezone
 sub timeF {
 	return Slim::Utils::DateTime::timeF(
-		undef, 
+		undef,
 		preferences('plugin.datetime')->client($_[0])->get('timeFormat')
 	);
 }
 
 sub longDateF {
 	return Slim::Utils::DateTime::longDateF(
-		undef, 
+		undef,
 		preferences('plugin.datetime')->client($_[0])->get('dateFormat')
 	);
 }
@@ -1425,7 +1425,8 @@ sub maxSupportedSamplerate {
 	return 48000;
 }
 
-sub canDecodeRhapsody { 0 };
+# We keep this around for backwards compatibility. No core code is using it any more.
+sub canDecodeRhapsody { 1 };
 
 sub canImmediateCrossfade { 0 };
 

@@ -18,10 +18,12 @@ use URI::Escape qw(uri_escape_utf8);
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::SqueezeNetwork;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $cache = Slim::Utils::Cache->new;
 my $prefs = preferences('server');
 my $log   = logger('plugin.deezer');
 
@@ -134,6 +136,7 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
 	my $length;
+	$url = $url->url if blessed $url;
 
 	# Clear previous duration, since we're using the same URL for all tracks
 	if ( $url =~ /\.dzr$/ ) {
@@ -159,13 +162,17 @@ sub parseDirectHeaders {
 	}
 
 	if ( $ct eq 'flc' && $length && (my $song = $client->streamingSong()) ) {
-		$bitrate = int($length/$song->duration*8);
-
-		$url = $url->url if blessed $url;
 		my ($trackId) = _getStreamParams( $url );
 
 		if ($trackId) {
-			my $cache = Slim::Utils::Cache->new;
+			my $duration = $song->duration;
+
+			if (!$duration && (my $info = $song->pluginData('info'))) {
+				$duration = $info->{duration};
+			}
+
+			$bitrate = $duration ? int($length/$duration*8) : _getBitrate($ct);
+
 			my $meta = $cache->get('wimp_meta_' . $trackId);
 			if ($meta && ref $meta) {
 				$meta->{bitrate} = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
@@ -252,7 +259,7 @@ sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 
 	# Don't allow pause or rew on radio
-	if ( $url =~ /\.dzr$/ ) {
+	if ( $url =~ /(?<!flow)\.dzr$/ ) {
 		if ( $action eq 'pause' || $action eq 'rew' ) {
 			return 0;
 		}
@@ -403,8 +410,7 @@ sub _gotNextRadioTrack {
 	$song->pluginData( radioTitle    => $title );
 	$song->pluginData( radioTrack    => $track );
 
-	# We already have the metadata for this track, so can save calling getTrack
-	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 	my $meta = {
 		artist    => $track->{artist_name},
 		album     => $track->{album_name},
@@ -421,9 +427,11 @@ sub _gotNextRadioTrack {
 		},
 	};
 
-	$song->duration( $meta->{duration} );
+	# We already have the metadata for this track, so can save calling getTrack
+	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($track, $meta->{duration})) unless $track->{duration};
 
-	my $cache = Slim::Utils::Cache->new;
+	Slim::Music::Info::setDuration( $url, $meta->{duration} );
+
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
 
 	$params->{url} = $url;
@@ -525,7 +533,7 @@ sub _gotTrack {
 	$song->pluginData( info => $info );
 
 	# Cache the rest of the track's metadata
-	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 	my $meta = {
 		artist    => $info->{artist_name},
 		album     => $info->{album_name},
@@ -538,9 +546,11 @@ sub _gotTrack {
 		icon      => $icon,
 	};
 
-	$song->duration( $meta->{duration} );
+	# We already have the metadata for this track, so can save calling getTrack
+	main::INFOLOG && $log->warn("Missing duration?" . Data::Dump::dump($info, $meta->{duration})) unless $info->{duration};
 
-	my $cache = Slim::Utils::Cache->new;
+	Slim::Music::Info::setDuration( $info->{url}, $meta->{duration} );
+
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
 
 	# When doing flac, parse the header to be able to seek (IP3K)
@@ -651,7 +661,7 @@ sub getMetadataFor {
 
 	return {} unless $url;
 
-	my $icon = $class->getIcon();
+	my $icon = getIcon();
 	my $song = $client->currentSongForUrl($url);
 
 	if ( $url =~ /\.dzr$/ ) {
@@ -666,8 +676,6 @@ sub getMetadataFor {
 		}
 	}
 
-	my $cache = Slim::Utils::Cache->new;
-
 	# need to take the real current track url for playlists
 	$url = $song->currentTrack->url if $song && $song->isPlaylist && $song->currentTrack->url !~ /\.dzr$/;
 
@@ -676,23 +684,24 @@ sub getMetadataFor {
 	my $meta = $cache->get( 'deezer_meta_' . $trackId );
 
 	if ( !$client->master->pluginData('fetchingMeta') ) {
-
 		$client->master->pluginData( fetchingMeta => 1 );
 
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
-		push @need, $trackId if !$meta || !$meta->{cover};
+		push @need, $trackId if $trackId && (!$meta || !$meta->{title});
 
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 
 			my ($id) = _getStreamParams($trackURL);
 
-			if ($id) {
+			if ($id && $id != $trackId) {
 				my $trackMeta = $cache->get("deezer_meta_$id");
-				push @need, $id if !$trackMeta || !$trackMeta->{cover};
+				push @need, $id if !$trackMeta || !$trackMeta->{title};
 			}
 		}
+
+		@need = do { my %seen; grep { !$seen{$_}++ } @need };
 
 		if (!scalar @need) {
 			$client->master->pluginData( fetchingMeta => 0 );
@@ -755,9 +764,7 @@ sub _gotBulkMetadata {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 
-	# Cache metadata
-	my $cache = Slim::Utils::Cache->new;
-	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 
 	my %trackIds = map { $_ => 1 } @$trackIds;
 
@@ -815,8 +822,7 @@ sub _invalidateTracks {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Disable track(s) lack of metadata: " . join(', ', @$trackIds));
 
-	my $cache = Slim::Utils::Cache->new;
-	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $icon = getIcon();
 
 	# set default meta data for tracks without meta data
 	foreach ( @$trackIds ) {

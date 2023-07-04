@@ -3,7 +3,7 @@
 	<id>0381A1D8-7CDF-4236-BA8B-E92553162EDE</id>
 	<name>PLUGIN_SOUNDS_MODULE_NAME</name>
 	<module>Slim::Plugin::Sounds::Plugin</module>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLUGIN_SOUNDS_MODULE_NAME</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
@@ -11,10 +11,9 @@
 	<homepageURL>http://www.mysqueezebox.com/appgallery/Sounds</homepageURL>
 	<icon>plugins/Sounds/html/images/icon.png</icon>
 	<type>2</type>
-	<enforce>1</enforce>
 	<targetApplication>
 		<id>Logitech Media Server</id>
-		<minVersion>7.0</minVersion>
+		<minVersion>8.4</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

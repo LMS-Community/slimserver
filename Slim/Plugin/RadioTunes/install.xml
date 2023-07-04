@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>795a0f18-0216-4648-9fc2-d8d1a1006bb8</id>
+	<name>PLUGIN_RADIOTUNES_NAME</name>
+	<module>Slim::Plugin::RadioTunes::Plugin</module>
+	<icon>plugins/RadioTunes/html/icon.png</icon>
+	<version>1.0</version>
+	<description>PLUGIN_RADIOTUNES_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

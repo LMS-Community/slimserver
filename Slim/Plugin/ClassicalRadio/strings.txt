@@ -1,0 +1,11 @@
+PLUGIN_CLASSICALRADIO_NAME
+	EN	ClassicalRadio.com
+
+PLUGIN_CLASSICALRADIO_DESC
+	EN	ClassicalRadio.com - Beautifully Curated Classical Music
+
+PLUGIN_CLASSICALRADIO_MISSING_CREDS
+	EN	Please visit ClassicalRadio.com in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_CLASSICALRADIO_LINK
+	EN	To create or manage your account please visit <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.

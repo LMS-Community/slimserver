@@ -1,0 +1,11 @@
+PLUGIN_ROCKRADIO_NAME
+	EN	ROCKRADIO.COM
+
+PLUGIN_ROCKRADIO_DESC
+	EN	ROCKRADIO.COM | rock music for life
+
+PLUGIN_ROCKRADIO_MISSING_CREDS
+	EN	Please visit ROCKRADIO.COM in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_ROCKRADIO_LINK
+	EN	To create or manage your account please visit <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a>.

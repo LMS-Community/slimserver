@@ -1,0 +1,11 @@
+PLUGIN_JAZZRADIO_NAME
+	EN	JAZZRADIO.com
+
+PLUGIN_JAZZRADIO_DESC
+	EN	JAZZRADIO.com - Enjoy Great Jazz Music
+
+PLUGIN_JAZZRADIO_MISSING_CREDS
+	EN	Please visit JAZZRADIO.com in the Logitech Media Server Settings to add your credentials.
+
+PLUGIN_JAZZRADIO_LINK
+	EN	To create or manage your account please visit <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.

@@ -90,7 +90,7 @@ sub _amap {
     };
 
     $run->();
-    weaken $run;
+    # weaken $run;
 
     return;
 }
