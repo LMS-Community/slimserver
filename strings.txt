@@ -5075,7 +5075,7 @@ SETUP_MAINTAINSYNC_DESC
 	CS	I když přehrávače začnou přehrávat skladbu v dokonalé synchronizaci, mohou se za určitou dobu rozejít (obvykle během několika minut). Rozdíl o více než 30 ms (milisekund) již bude znatelný, pokud posloucháte současně výstup z několika přehrávačů. Logitech Media Server tento problém řeší nepřetržitým sledováním, kolik každý přehrávač odehrál a prováděním případných malých úprav. Tuto funkci můžete zapnout nebo vypnout.
 	DA	Selv hvis flere afspillere er perfekt synkroniseret når afspilningen begynder, kan der opstå afvigelser i løbet af kort tid (som regel efter et par minutter). Forskelle på mere end 30 millisekunder er hørbare hvis du kan høre flere afspillere på samme tid. Logitech Media Server håndterer dette ved kontinuerligt at registrere hvor meget hver afspiller har spillet, og i givet fald foretage småjusteringer. Du kan slå denne funktion til og fra.
 	DE	Auch wenn mehrere Player die Wiedergabe eines Titels gleichzeitig starten, können sie nach einer gewissen Zeit (i.d.R. nach ein paar Minuten) voneinander abweichen. Eine Differenz von mehr als 30 ms ist wahrnehmbar, wenn die Ausgabe mehrerer Player gleichzeitig gehört werden kann. Logitech Media Server prüft ständig, wie viel ein Player wiedergegeben hat und nimmt bei Bedarf Änderungen vor. Sie können dieses Verhalten aktivieren bzw. deaktivieren.
-	EN	Even when several players start playing a track in perfect synchronization, they can drift apart over time (usually after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. Logitech Media Server deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
+	EN	Even when several players start playing a track in perfect synchronization, they can drift apart over time (usually after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. Logitech Media Server deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behavior on or off.
 	EN_GB	Even when several players start playing a track in perfect synchronisation, they can drift apart over time (usually after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. Logitech Media Server deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
 	ES	Aunque varios reproductores empiecen a reproducir una pista perfectamente sincronizados, pueden perder la sincronización al cabo de un tiempo (a menudo es cuestión de minutos). Si hay una diferencia de más de 30 ms (milisegundos) es perceptible cuando hay salida de música a través de varios reproductores simultáneamente. Logitech Media Server intenta remediarlo mediante el seguimiento continuo de cada reproductor y la realización de los ajustes necesarios. Esta función se puede activar o desactivar.
 	FI	Vaikka useat soittimet aloittaisivatkin kappaleen soiton täysin synkronoidusti, ajan myötä (yleensä muutaman minuutin kuluttua) niiden välille syntyy eroja. Yli 30 millisekunnin ero on havaittava, jos kuulet musiikin useista lähteistä samanaikaisesti. Logitech Media Server pyrkii korjaamaan virheen seuraamalla jatkuvasti sitä, kuinka pitkään kukin soitin on soittanut, ja tekemällä pieniä säätöjä tarpeen mukaan. Voit valita, pidätkö toiminnon käytössä.
@@ -15025,7 +15025,8 @@ WEB_NO_COOKIES_WARNING
 	CS	Váš prohlížeč nepřijímá soubory cookie. Může to mít za následek neočekávané chování při ovládání Logitech Media Serveru. Než budete pokračovat, povolte příjem souborů cookie ve vašem prohlížeči.
 	DA	Din browser accepterer ikke cookies. Det kan føre til uventede handlinger i brugen af din Logitech Media Server. Aktivér cookies i browseren inden du fortsætter.
 	DE	Ihr Browser akzeptiert keine Cookies. Dies kann zu unerwartetem Verhalten bei der Steuerung Ihres Logitech Media Servers führen. Aktivieren Sie Cookies in Ihrem Browser, bevor Sie fortfahren.
-	EN	Your browser does not accept cookies. This can lead to unexpected behaviour controlling your Logitech Media Server. Please enable cookies in your browser before you continue.
+	EN	Your browser does not accept cookies. This can lead to unexpected behavior controlling your Logitech Media Server. Please enable cookies in your browser before you continue.
+	EN_GB	Your browser does not accept cookies. This can lead to unexpected behaviour controlling your Logitech Media Server. Please enable cookies in your browser before you continue.
 	ES	Su navegador no acepta cookies. Esto puede provocar un comportamiento inesperado al controlar Logitech Media Server. Active las cookies en el navegador antes de continuar.
 	FI	Selaimesi ei hyväksy evästeitä. Tämä saattaa aiheuttaa yllätyksiä Logitech Media Serverin hallinnassa. Salli evästeet selaimesta ja jatka vasta sitten.
 	FR	Votre navigateur n'accepte pas les cookies. Ceci peut affecter le fonctionnement de votre Logitech Media Server. Veuillez activer les cookies dans votre navigateur avant de continuer.
@@ -17078,7 +17079,8 @@ INFORMATION_TIME_DIFF
 
 INFORMATION_TIME_DIFF_DESC
 	DE	Bitte übeprüfen Sie die Uhr ihres Computers und starten Sie Logitech Media Server neu. Die Uhrzeit scheint um mehrere Sekunden verschoben zu sein. Eine zu grosse Differenz kann zu Abbrüchen bei gesicherten Verbindungen und anderen unerwarteten Effekten führen.
-	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
+	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behavior.
+	EN_GB	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
 
 INFORMATION_PLAYER_NAME
 	CS	Název Squeezeboxu
@@ -22143,6 +22145,7 @@ SAVE_TO_FAVORITES
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
+	EN_GB	Save to Favourites
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
@@ -24567,7 +24570,8 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	CS	Při dotyku/výběru přehrávané položky na Squeezeboxu můžete omylem nahradit právě přehrávanou položku. Toto destruktivní chování lze ovládat pomocí tohoto parametru.
 	DE	Durch das Berühren/Auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine Aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellung gesteuert werden.
-	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
+	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behavior can be controlled using this parameter.
+	EN_GB	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op jouw Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 	NO	Ved å berøre avspillbart innhold på squeezeboxmenyen, kan du ved et uhell erstatte det som spilles. Slike uønskede hendelser kan styres av denne innstillingen.
