@@ -614,7 +614,8 @@ PLUGIN_FAVORITES_REMOVE
 PLUGIN_FAVORITES_DONT_BROWSEDB
 	CS	Chování místních hudebních položek
 	DE	Verhalten mit lokaler Musik
-	EN	Local music items behaviour
+	EN	Local music items behavior
+	EN_GB	Local music items behaviour
 	FR	Comportement pour la musique locale
 	NL	Gedrag bij lokale muziek
 	NO	Oppførsel med lokal musikksamling
@@ -623,7 +624,8 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
-	EN	Don't browse items when selected, just play them (old behaviour)
+	EN	Don't browse items when selected, just play them (old behavior)
+	EN_GB	Don't browse items when selected, just play them (old behaviour)
 	FR	Jouer le favori lors de sa sélection, ne pas le parcourir (ancien comportement)
 	NL	Niet door bladeren op een geselecteerd item, maar speel af (oude gedrag)
 	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
