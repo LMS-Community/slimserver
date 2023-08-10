@@ -4957,6 +4957,8 @@ sub _songData {
 			$remoteMeta->{L} = $remoteMeta->{info_link};
 			$remoteMeta->{t} = $remoteMeta->{tracknum};
 			$remoteMeta->{y} = $remoteMeta->{year};
+			$remoteMeta->{T} = $remoteMeta->{samplerate};
+			$remoteMeta->{I} = $remoteMeta->{samplesize};
 		}
 	}
 
