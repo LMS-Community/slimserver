@@ -159,22 +159,58 @@ sub startScan {
 	$dbh->do('DROP TABLE IF EXISTS duplicate_albums');
 	$dbh->do(q(
 		CREATE TEMPORARY TABLE duplicate_albums AS
-			SELECT albums.id
+			SELECT albums.id AS online, otheralbums.id AS local
 			FROM albums
-			WHERE albums.extid IS NOT NULL
-				AND 1 IN (
-					SELECT 1
-					FROM albums otheralbums
-					WHERE otheralbums.extid IS NULL
-						AND LOWER(otheralbums.title) = LOWER(albums.title)
-						AND otheralbums.contributor = albums.contributor
-				)
+			JOIN albums otheralbums ON otheralbums.extid IS NULL AND
+				LOWER(otheralbums.title) = LOWER(albums.title) AND
+				otheralbums.contributor = albums.contributor
+			WHERE albums.extid IS NOT NULL AND
+				(
+					SELECT otheralbums.id
+						FROM albums otheralbums
+						WHERE otheralbums.extid IS NULL AND
+								LOWER(otheralbums.title) = LOWER(albums.title) AND
+								otheralbums.contributor = albums.contributor
+				) IS NOT NULL
+	) );
+
+	$dbh->do('CREATE INDEX IF NOT EXISTS online ON duplicate_albums (online)');
+	$dbh->do('CREATE INDEX IF NOT EXISTS local ON duplicate_albums (local)');
+
+	my $delAlbumSth = $dbh->prepare_cached(q(
+		DELETE FROM library_album
+		WHERE library_album.album = ? AND library = ? AND (
+			SELECT online FROM duplicate_albums WHERE online = ?
+		) IS NOT NULL
 	));
 
-	$dbh->do(q(DELETE FROM library_album WHERE library_album.album IN (SELECT id FROM duplicate_albums)));
-	$dbh->do(q(DELETE FROM library_track WHERE library_track.track in (
-		SELECT id FROM tracks WHERE tracks.album IN (SELECT id FROM duplicate_albums)
-	)));
+	my $onlineAlbumsSth = $dbh->prepare_cached(q(
+		SELECT album FROM library_album WHERE library = ? AND album IN (SELECT online FROM duplicate_albums)
+	));
+
+	my $localAlbumsSth = $dbh->prepare_cached(q(
+		SELECT album FROM library_album WHERE library = ? AND album IN (SELECT local FROM duplicate_albums WHERE online = ?)
+	));
+
+	my $libraryAlbumDelSth = $dbh->prepare_cached(q(
+		DELETE FROM library_album WHERE library = ? AND album = ?
+	));
+
+	my $libraryTrackDelSth = $dbh->prepare_cached(q(
+		DELETE FROM library_track WHERE library = ? AND track IN (SELECT id FROM tracks WHERE album = ?)
+	));
+
+	foreach my $library (keys %{ Slim::Music::VirtualLibraries->getLibraries() } ) {
+		$onlineAlbumsSth->execute($library);
+		while ( my ($onlineId) = $onlineAlbumsSth->fetchrow_array ) {
+			$localAlbumsSth->execute($library, $onlineId);
+			my $localAlbumIds = $localAlbumsSth->fetchall_arrayref;
+			foreach my $albumId (@{ $localAlbumIds || [] }) {
+				$libraryAlbumDelSth->execute($library, $albumId->[0]);
+				$libraryTrackDelSth->execute($library, $albumId->[0]);
+			}
+		}
+	}
 
 	$dbh->do('DROP TABLE IF EXISTS duplicate_albums');
 
