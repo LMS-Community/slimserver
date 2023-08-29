@@ -64,8 +64,8 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	CS	Pouze místní skladby (bez hudební služby)
-	DE	Nur lokale Titel (keine Streaming Dienste)
-	EN	Local tracks only (no music service)
+	DE	Erstelle Bibliotheksansicht ausschliesslich mit lokalen Titeln (keine Streaming Dienste)
+	EN	Create library view ith local tracks only (no music services)
 	FR	Morceaux locaux uniquement (pas de service de streaming)
 	NL	Alleen lokale nummers (geen online muziek streaming diensten)
 	SV	Bara lokala spår (ingen strömningstjänst)

@@ -1,6 +1,6 @@
 package Slim::Plugin::OnlineLibrary::Importer;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2023 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,7 +29,7 @@ sub initPlugin {
 		type   => 'post',
 		weight => 110,       # this importer needs to be run after the VirtualLibraries (weight: 100)
 		onlineLibraryOnly => 1,
-		'use'  => 1,
+		'use'  => $prefs->get('enablePreferLocalLibraryOnly'),
 	} );
 
 	my $mappings = $prefs->get('genreMappings');
@@ -153,6 +153,11 @@ package Slim::Plugin::OnlineLibrary::Importer::VirtualLibrariesCleanup;
 
 sub startScan {
 	my ($class) = @_;
+
+	if (!$prefs->get('enablePreferLocalLibraryOnly')) {
+		Slim::Music::Import->endImporter($class);
+		return;
+	}
 
 	my $dbh = Slim::Schema->dbh or return;
 
