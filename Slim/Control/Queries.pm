@@ -4738,6 +4738,7 @@ my %tagMap = (
 	                                                                    #titlesort
 	                                                                    #titlesearch
 	  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
+	  's' => ['artist_id',        '',              'artistid'],         #->contributors
 	  'e' => ['album_id',         '',              'albumid'],          #album
 	  'l' => ['album',            'ALBUM',         'albumname'],        #->album.title
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
@@ -4782,10 +4783,11 @@ my %tagMap = (
 	  'N' => ['remote_title'],                                          # remote stream title
 	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
 
+	  'g' => ['genre',            'GENRE',         'genrename'],        #->genre_track->genre.name
+	  'p' => ['genre_id',         '',              'genreid'],          #->genre_track->genre.id
 
 	# Tag    Tag name              Token              Relationship     Method          Track relationship
 	#--------------------------------------------------------------------------------------------------
-	  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
 	  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
 	  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
 
@@ -4794,8 +4796,6 @@ my %tagMap = (
 	  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
 	  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
 
-	  'g' => ['genre',             'GENRE',           'genre',         'name'],         #->genre_track->genre.name
-	  'p' => ['genre_id',          '',                'genre',         'id'],           #->genre_track->genre.id
 	  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
@@ -4912,7 +4912,7 @@ sub _songData {
 	}
 
 	# figure out the track object
-	my $track     = Slim::Schema->objectForUrl($pathOrObj);
+	my $track = Slim::Schema->objectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -4981,9 +4981,11 @@ sub _songData {
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
+	my %seen;
 
 	# loop so that stuff is returned in the order given...
 	for my $tag (split (//, $tags)) {
+		next if $seen{$tag}++;		# don't process tags multiple times
 
 		my $tagref = $tagMap{$tag} or next;
 
@@ -5010,19 +5012,41 @@ sub _songData {
 				$returnHash{artist} = $meta;
 				next;
 			}
+			elsif ( $track->isa('Slim::Schema::RemoteTrack')) {
+				next;
+			}
 
 			if ( defined(my $submethod = $tagref->[3]) ) {
 
 				my $postfix = ($tag eq 'S')?"_ids":"";
 
-				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
+				my $dbh = Slim::Schema->dbh;
+				my $contributor_sth;
 
-					my $key = lc($type) . $postfix;
-					my $contributors = $track->contributorsOfType($type) or next;
-					my @values = map { $_ = $_->$submethod() } $contributors->all;
-					my $value = join(', ', @values);
+				if ($tag eq 'S') {
+					$contributor_sth = $dbh->prepare_cached( q{
+						SELECT DISTINCT contributor FROM contributor_track WHERE track = ? AND role = ?
+					} );
+				}
+				else {
+					$contributor_sth = $dbh->prepare_cached( q{
+						SELECT DISTINCT contributors.name
+						FROM contributor_track
+							JOIN contributors ON contributors.id = contributor_track.contributor
+						WHERE track = ? AND role = ?
+					} );
+				}
+
+				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
+					$contributor_sth->execute($returnHash{'id'}, Slim::Schema::Contributor->typeToRole($type));
+					my $cons = $contributor_sth->fetchall_arrayref([0]);
+
+					next unless scalar @$cons;
+
+					my $value = join(', ', map { $_->[0] } @$cons);
 
 					if (defined $value && $value ne '') {
+						my $key = lc($type) . $postfix;
 
 						# add the tag to the result
 						$returnHash{$key} = $value;
