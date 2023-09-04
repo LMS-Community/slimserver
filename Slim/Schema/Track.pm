@@ -119,6 +119,7 @@ sub albumname {
 	my $names = Slim::Schema->dbh->selectall_arrayref('SELECT title FROM albums WHERE id = ?', {}, $self->albumid);
 
 	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
 		return $names->[0][0];
 	}
 }
@@ -130,6 +131,7 @@ sub artistName {
 	my $names = Slim::Schema->dbh->selectall_arrayref('SELECT name FROM contributors WHERE id = ?', {}, scalar $self->artistid);
 
 	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
 		return $names->[0][0];
 	}
 }
@@ -247,6 +249,7 @@ sub genrename {
 	}, {}, $self->id);
 
 	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
 		return $names->[0][0];
 	}
 }

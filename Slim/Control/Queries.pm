@@ -5043,7 +5043,7 @@ sub _songData {
 
 					next unless scalar @$cons;
 
-					my $value = join(', ', map { $_->[0] } @$cons);
+					my $value = join(', ', map { utf8::decode($_->[0]); $_->[0] } @$cons);
 
 					if (defined $value && $value ne '') {
 						my $key = lc($type) . $postfix;
