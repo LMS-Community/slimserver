@@ -102,7 +102,10 @@ sub init {
 
 # Emulate absent methods - hopefully these can be retired at some time
 sub artists {return ();}
+sub artistid {}
 sub genres {return ();}
+sub genrename {}
+sub genreid {}
 sub coverArtExists {0}
 
 sub isRemoteURL {shift->remote();}

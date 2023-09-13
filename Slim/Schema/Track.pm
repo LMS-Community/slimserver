@@ -114,8 +114,13 @@ sub albumid {
 }
 
 sub albumname {
-	if (my $album = shift->album) {
-		return $album->title;
+	my $self = shift;
+
+	my $names = Slim::Schema->dbh->selectall_arrayref('SELECT title FROM albums WHERE id = ?', {}, $self->albumid);
+
+	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
+		return $names->[0][0];
 	}
 }
 
@@ -123,11 +128,12 @@ sub albumname {
 sub artistName {
 	my $self = shift;
 
-	if (my $artist = $self->artist) {
-		return $artist->name;
-	}
+	my $names = Slim::Schema->dbh->selectall_arrayref('SELECT name FROM contributors WHERE id = ?', {}, scalar $self->artistid);
 
-	return undef;
+	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
+		return $names->[0][0];
+	}
 }
 
 sub _artistid {
@@ -228,6 +234,40 @@ sub genre {
 	my $self = shift;
 
 	return $self->genres->first;
+}
+
+sub genrename {
+	my $self = shift;
+
+	my $names = Slim::Schema->dbh->selectall_arrayref(q{
+		SELECT genres.name
+		FROM genre_track
+			JOIN genres ON genres.id = genre_track.genre
+		WHERE track = ?
+		ORDER BY genre_track.genre
+		LIMIT 1
+	}, {}, $self->id);
+
+	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
+		return $names->[0][0];
+	}
+}
+
+sub genreid {
+	my $self = shift;
+
+	my $ids = Slim::Schema->dbh->selectall_arrayref(q{
+		SELECT genre
+		FROM genre_track
+		WHERE track = ?
+		ORDER BY genre
+		LIMIT 1
+	}, {}, $self->id);
+
+	if (ref $ids && scalar ref $ids) {
+		return $ids->[0][0];
+	}
 }
 
 sub comment {

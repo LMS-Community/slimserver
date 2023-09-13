@@ -128,8 +128,6 @@ sub initSearchPath {
 	my $perlpath = Slim::Utils::Misc::findbin('perl.exe');
 	if ($perlpath) {
 		Slim::Utils::Misc::addFindBinPaths(dirname($perlpath));
-	} else {
-		 main::INFOLOG && warn ("Perl.exe not found");
 	}
 }
 

@@ -17,6 +17,7 @@
 		<li>Improve built-in imageproxy: don't proxy image if original size is requested, re-direct instead; add support for custom headers when using external image proxy.</li>
 		<li>Updated Dutch translation - thanks blackfiction!</li>
 		<li>Improve rendering of links in the web UI menus (comments, file download, etc.)</li>
+		<li>Optionally don't remove online duplicates from library views.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/846">#846</a> - Improve display of multiline lyrics and comments in the web UI (thanks mw9!)</li>
 		<li>Move persist.db out of the cache folder - it's music data which can't be restored from the music files.</li>
 		<li>Log warning if the server's time seems to be off (only if MySqueezebox integration is enabled).</li>
@@ -40,10 +41,13 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/622">#622</a> - __requestRE should only match words provided to Slim::Control::Request::subscribe. (thanks earlchew!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/799">#799</a> - Update IO::String to latest, fixing some odd Perl version check.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/829">#829</a> - Don't override a content type set by a page handler.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/905">#905</a> - Browsing in to playlists is extremely slow.</li>
+		<li><a href="https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1648813">Respect a contributor's Musicbrainz ID to separate artists of the same name.</a></li>
+		<li>Don't remove online libraries from library views unless there really is a local copy of the same album.</li>
 		<li>Fix Deezer SmartRadio track duration calculation.</li>
 		<li>Allow pausing Deezer Flow.</li>
 		<li>Fix browsing albums from Favorites menu.</li>
-		<li></li>
+		<li>Fix resizing with a defined background color.</li>
 	</ul>
 	<br />
 

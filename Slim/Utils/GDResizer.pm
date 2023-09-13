@@ -165,6 +165,7 @@ sub resize {
 		$im->resize( {
 			width       => $width,
 			height      => $height,
+			bgcolor     => hex($bgcolor),
 			keep_aspect => 1,
 		} );
 	}
@@ -176,6 +177,7 @@ sub resize {
 			$im->resize( {
 				width       => $in_width,
 				height      => $in_height,
+				bgcolor     => hex($bgcolor),
 				keep_aspect => 1,
 			} );
 		# Requested size is smaller than original -> resize to requested size
@@ -184,6 +186,7 @@ sub resize {
 			$im->resize( {
 				width       => $width,
 				height      => $height,
+				bgcolor     => hex($bgcolor),
 				keep_aspect => 1,
 			} );
 		}
