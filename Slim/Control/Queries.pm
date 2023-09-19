@@ -4771,7 +4771,7 @@ my %tagMap = (
 	  'M' => ['musicmagic_mixable', '',            'musicmagic_mixable'], #musicmagic_mixable
 	                                                                    #musicbrainz_id
 	                                                                    #lastplayed
-	                                                                    #lossless
+	  'Q' => ['lossless',         'LOSSLESS',      'lossless'],         #lossless
 	  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics
 	  'R' => ['rating',           'RATING',        'rating'],           #rating
 	  'O' => ['playcount',        'PLAYCOUNT',     'playcount'],        #playcOunt
@@ -4822,6 +4822,7 @@ my %colMap = (
 	y => 'tracks.year',
 	m => 'tracks.bpm',
 	M => sub { $_[0]->{'tracks.musicmagic_mixable'} ? 1 : 0 },
+ 	Q => 'tracks.lossless',
 	k => 'comment',
 	o => 'tracks.content_type',
 	v => 'tracks.tagversion',
@@ -5451,6 +5452,7 @@ sub _getTagDataForTracks {
 	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
 	$tags =~ /m/ && do { $c->{'tracks.bpm'} = 1 };
 	$tags =~ /M/ && do { $c->{'tracks.musicmagic_mixable'} = 1 };
+ 	$tags =~ /Q/ && do { $c->{'tracks.lossless'} = 1 };
 	$tags =~ /o/ && do { $c->{'tracks.content_type'} = 1 };
 	$tags =~ /v/ && do { $c->{'tracks.tagversion'} = 1 };
 	$tags =~ /r/ && do { $c->{'tracks.bitrate'} = 1; $c->{'tracks.vbr_scale'} = 1 };
