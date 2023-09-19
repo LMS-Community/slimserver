@@ -4774,7 +4774,7 @@ my %tagMap = (
 	  'Q' => ['lossless',         'LOSSLESS',      'lossless'],         #lossless
 	  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics
 	  'R' => ['rating',           'RATING',        'rating'],           #rating
-	  'O' => ['playcount',        'PLAYCOUNT',     'playcount'],        #playcOunt
+	  'O' => ['playcount',        'PLAYCOUNT',     'playcount'],        #playcount
 	  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain
 	                                                                    #replay_peak
 
@@ -4822,7 +4822,7 @@ my %colMap = (
 	y => 'tracks.year',
 	m => 'tracks.bpm',
 	M => sub { $_[0]->{'tracks.musicmagic_mixable'} ? 1 : 0 },
- 	Q => 'tracks.lossless',
+ 	Q => sub { $_[0]->{'tracks.lossless'} ? 1 : 0 },
 	k => 'comment',
 	o => 'tracks.content_type',
 	v => 'tracks.tagversion',
