@@ -5096,7 +5096,7 @@ sub _songData {
 			}
 
 			# correct values
-			if (($tag eq 'R' || $tag eq 'x') && $value == 0) {
+			if ($tag eq 'R' && $value == 0) {
 				$value = undef;
 			}
 			# we might need to proxy the image request to resize it
