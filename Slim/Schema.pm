@@ -206,8 +206,6 @@ sub init {
 	# Use our debug and stats class to get logging and perfmon for db queries
 	$class->storage->debugobj('Slim::Schema::Debug');
 
-	$class->updateDebug;
-
 	# Bug 17609, avoid a possible locking issue by ensuring VA object is up to date at init time
 	# instead of waiting until the first time it's called, for example through artistsQuery.
 	$class->variousArtistsObject;
@@ -249,6 +247,8 @@ sub init {
 	}
 
 	$initialized = 1;
+
+	$class->updateDebug;
 }
 
 sub hasLibrary {
