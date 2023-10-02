@@ -1129,7 +1129,6 @@ sub canRestartServer {
 }
 
 sub restartServer {
-
 	if ( canRestartServer() ) {
 		cleanup();
 		logger('')->info( 'Logitech Media Server restarting...' );
@@ -1138,11 +1137,9 @@ sub restartServer {
 			logger('')->error("Unable to restart Logitech Media Server");
 		}
 	}
-
-	# XXX - shouldn't we ignore the restart command if we can't restart?
 	else {
-		logger('')->error("Unable to restart Logitech Media Server - shutting down.");
-		stopServer();
+		logger('')->error("Unable to restart Logitech Media Server - leaving it running.");
+		return;
 	}
 
 	exit();
