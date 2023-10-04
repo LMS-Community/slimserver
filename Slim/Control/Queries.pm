@@ -272,6 +272,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
+	my $releaseType   = $request->getParam('release_type');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
@@ -475,6 +476,12 @@ sub albumsQuery {
 			push @{$p}, $libraryID;
 		}
 
+		if (defined $releaseType) {
+			my @releaseTypes = split(',', $releaseType);
+			push @{$w}, 'albums.release_type IN (' . join(', ', map {'?'} @releaseTypes) . ')';
+			push @{$p}, @releaseTypes;
+		}
+
 		if (defined $year) {
 			push @{$w}, 'albums.year = ?';
 			push @{$p}, $year;
@@ -525,6 +532,11 @@ sub albumsQuery {
 
 	if ( $tags =~ /w/ ) {
 		$c->{'albums.compilation'} = 1;
+	}
+
+	my $wantsReleaseTypes = !$prefs->get('ignoreReleaseTypes');
+	if ( $tags =~ /W/ && $wantsReleaseTypes ) {
+		$c->{'albums.release_type'} = 1;
 	}
 
 	if ( $tags =~ /E/ ) {
@@ -735,6 +747,7 @@ sub albumsQuery {
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
+			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
@@ -4796,6 +4809,7 @@ my %tagMap = (
 	  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
 	  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
 	  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
+	  'W' => ['release_type',      'RELEASETYPE',     'album',         'release_type'], #->album.release_type
 	  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
 
 	  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
@@ -4843,6 +4857,7 @@ my %colMap = (
 	I => 'tracks.samplesize',
 	u => 'tracks.url',
 	w => 'tracks.lyrics',
+	W => 'albums.release_type',
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
@@ -4962,6 +4977,7 @@ sub _songData {
 			$remoteMeta->{y} = $remoteMeta->{year};
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
+			$remoteMeta->{W} => $remoteMeta->{releasetype}
 		}
 	}
 
@@ -5540,6 +5556,11 @@ sub _getTagDataForTracks {
 		$c->{'albums.compilation'} = 1;
 	};
 
+	$tags =~ /W/ && do {
+		$join_albums->();
+		$c->{'albums.release_type'} = 1;
+	};
+
 	$tags =~ /X/ && do {
 		$join_albums->();
 		$c->{'albums.replay_gain'} = 1;
@@ -5645,6 +5666,8 @@ sub _getTagDataForTracks {
 	my %results;
 	my @resultOrder;
 
+	my $ignoreReleaseTypes = $tags =~ /W/ && $prefs->get('ignoreReleaseTypes');
+
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
@@ -5658,6 +5681,12 @@ sub _getTagDataForTracks {
 		my $id = $c->{'tracks.id'};
 
 		$results{ $id } = { map { $_ => $c->{$_} } keys %{$c} };
+
+		# if user doesn't want to distinguish release types, just return ALBUMS for all of them
+		if ($ignoreReleaseTypes) {
+			$results{ $id }->{'albums.release_type'} = 'ALBUM';
+		}
+
 		push @resultOrder, $id;
 	}
 

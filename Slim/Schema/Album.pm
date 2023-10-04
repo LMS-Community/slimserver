@@ -32,6 +32,7 @@ my $log = logger('database.info');
 		replay_gain
 		replay_peak
 		musicbrainz_id
+		release_type
 		extid
 	), title => { accessor => undef() });
 
@@ -52,6 +53,15 @@ my $log = logger('database.info');
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
 }
+
+# see https://musicbrainz.org/doc/Release_Group/Type
+my @PRIMARY_RELEASE_TYPES = qw(
+	Album
+	Single
+	EP
+	Broadcast
+	Other
+);
 
 sub url {
 	my $self = shift;
@@ -80,6 +90,21 @@ sub contributors {
 		'contributor', undef, { distinct => 1 }
 	)->search(@_);
 }
+
+sub releaseTypes {
+	my $self = shift;
+
+	my $dbh = Slim::Schema->dbh;
+	my $release_types_sth = $dbh->prepare_cached('SELECT DISTINCT(release_type) FROM albums ORDER BY release_type');
+	my $releaseTypes = [
+		grep { $_ !~ /compilation/i }
+		map { $_->[0] } @{ $dbh->selectall_arrayref($release_types_sth) || [] }
+	];
+
+	return $releaseTypes;
+}
+
+sub primaryReleaseTypes { \@PRIMARY_RELEASE_TYPES }
 
 # Update the title dynamically if we're part of a set.
 sub title {

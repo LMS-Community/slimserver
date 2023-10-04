@@ -9243,6 +9243,22 @@ LANGUAGE
 	SV	Språk
 	ZH_CN	语言
 
+SETUP_RELEASE_TYPES
+	DE	Album Veröffentlichungstypen
+	EN	Release types to include in Albums list
+
+SETUP_RELEASE_TYPES_DESC
+	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen.
+	EN	You can specify what release types you want to include in the albums list (see <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).
+
+SETUP_IGNORE_RELEASE_TYPES_0
+	DE	Alben nach Veröffentlichungstyp gruppieren (wenn möglich).
+	EN	Group albums by release type when possible.
+
+SETUP_IGNORE_RELEASE_TYPES_1
+	DE	Veröffentlichungstyp bei der Anzeige von Alben nicht berücksichtigen.
+	EN	Ignore release type when listing albums.
+
 SETUP_GROUPDISCS
 	CS	Disky skupiny
 	DA	Album med flere cd'er
@@ -11593,6 +11609,20 @@ ALBUM
 	RU	Альбом
 	SV	Album
 	ZH_CN	专辑
+
+RELEASE_TYPE_SINGLE
+	EN	Single
+
+RELEASE_TYPE_EP
+	EN	EP
+
+RELEASE_TYPE_BROADCAST
+	EN	Broadcast
+
+RELEASE_TYPE_OTHER
+	DE	Andere
+	EN	Other
+	FR	Autres
 
 DISC
 	CS	Disk

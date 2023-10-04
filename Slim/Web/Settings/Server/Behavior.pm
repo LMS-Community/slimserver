@@ -10,6 +10,9 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
 
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('BEHAVIOR_SETTINGS');
@@ -20,10 +23,10 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'),
+	return ($prefs,
 			qw(noGenreFilter noRoleFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
-			   conductorInArtists bandInArtists variousArtistAutoIdentification 
+			   conductorInArtists bandInArtists variousArtistAutoIdentification ignoreReleaseTypes
 			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
 			   skipsentinel)
 		   );
@@ -31,8 +34,51 @@ sub prefs {
 
 sub handler {
 	my ( $class, $client, $paramRef ) = @_;
-	
+
 	$paramRef->{ratingImplementations} = Slim::Schema->ratingImplementations;
+
+	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
+
+	# build list of release types, default and own
+	my $ownReleaseTypes = Slim::Schema::Album->releaseTypes;
+	$paramRef->{release_types} = [ map {
+		my $type = $_;
+		my $ucType = uc($_);
+
+		$ownReleaseTypes = [
+			grep { $_ ne $ucType } @$ownReleaseTypes
+		];
+
+		{
+			id => $ucType,
+			title => string("RELEASE_TYPE_$ucType") || $type,
+			ignore => $releaseTypesToIgnore{$ucType}
+		};
+	} grep {
+		uc($_) ne 'ALBUM'
+	} @{Slim::Schema::Album->primaryReleaseTypes} ];
+
+	foreach (grep { $_ ne 'ALBUM' } @$ownReleaseTypes) {
+		push @{$paramRef->{release_types}}, {
+			id => $_,
+			title => ucfirst($_),
+			ignore => $releaseTypesToIgnore{$_},
+		};
+	}
+
+	if ( $paramRef->{'saveSettings'} ) {
+		foreach my $releaseType (@{$paramRef->{release_types}}) {
+			if ($paramRef->{'release_type_' . $releaseType->{id}}) {
+				delete $releaseTypesToIgnore{$releaseType->{id}};
+				delete $releaseType->{ignore};
+			}
+			else {
+				$releaseTypesToIgnore{$releaseType->{id}} = $releaseType->{ignore} = 1;
+			}
+		}
+
+		$prefs->set('releaseTypesToIgnore', [ keys %releaseTypesToIgnore ]);
+	}
 
 	return $class->SUPER::handler( $client, $paramRef );
 }

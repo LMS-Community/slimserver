@@ -711,7 +711,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1402,6 +1402,14 @@ sub _albums {
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
+	}
+
+	# filter out some release types if wanted, unless we are already filtering for a release type
+	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
+	if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
+		push @searchTags, 'release_type:' . join(',', grep {
+			!$releaseTypesToIgnore{$_}
+		} @{Slim::Schema::Album->releaseTypes});
 	}
 
 	my @artistIds = grep /artist_id:/, @searchTags;

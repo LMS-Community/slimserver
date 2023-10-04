@@ -188,6 +188,8 @@ sub init {
 		'useUnifiedArtistsList' => 0,
 		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
+		'releaseTypesToIgnore'  => [],
+		'ignoreReleaseTypes'    => 0,
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',

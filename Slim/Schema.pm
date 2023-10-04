@@ -1178,6 +1178,10 @@ sub _createOrUpdateAlbum {
 	# Bug 2393 - was fixed here (now obsolete due to further code rework)
 	$albumHash->{compilation} = $isCompilation;
 
+	# let's not mess with compilation - we've already got our logic, and it's messy enough!
+	my ($releaseType) = grep { lc($_) ne 'compilation' } Slim::Music::Info::splitTag($attributes->{RELEASETYPE});
+	$albumHash->{release_type} = Slim::Utils::Text::ignoreCase( $releaseType || 'album' );
+
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
 	my $vaObjId = $vaObjId || $self->variousArtistsObject->id;
 
@@ -2669,7 +2673,7 @@ sub _preCheckAttributes {
 		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
-		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
 		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
 	)) {
 

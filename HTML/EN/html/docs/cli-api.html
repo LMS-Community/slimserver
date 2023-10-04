@@ -112,6 +112,11 @@ Response:
 
 <h3 id="Changelog">Changelog</h3>
 
+<h4 id="8.4">Changes starting from Squeezebox Server 8.4</h4>
+<ul>
+	<li>Added support for release types to <a href="#albums">albums</a>, and <a href="#titles">titles</a> queries.</li>
+</ul>
+
 <h4 id="8.2">Changes starting from Squeezebox Server 8.2</h4>
 <ul>
 	<li>Added query to figure out whether fulltext search is enabled or not (<a href="#fulltextsearch">fulltextsearch</a>).</li>
@@ -3925,6 +3930,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			W
+		</td>
+		<td>
+			&nbsp;&nbsp;release_type
+		</td>
+		<td>
+			The release type of an album, eg. "album", "ep", etc.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			a
 		</td>
 		<td>
@@ -5092,6 +5108,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			1 if the album this track belongs to is a compilation
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>W</b>
+		</td>
+		<td>
+			release_type
+		</td>
+		<td>
+			The release type of the track's album, eg. "album", "ep", etc.
 		</td>
 	</tr>
 	<tr>
