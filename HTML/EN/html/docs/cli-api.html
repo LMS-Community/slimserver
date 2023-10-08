@@ -114,7 +114,7 @@ Response:
 
 <h4 id="8.4">Changes starting from Squeezebox Server 8.4</h4>
 <ul>
-	<li>Added support for release types to <a href="#albums">albums</a>, and <a href="#titles">titles</a> queries.</li>
+	<li>Added support for release types and roles to <a href="#albums">albums</a>, and <a href="#titles">titles</a> queries.</li>
 </ul>
 
 <h4 id="8.2">Changes starting from Squeezebox Server 8.2</h4>
@@ -4007,6 +4007,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			R
+		</td>
+		<td>
+			&nbsp;&nbsp;role_ids
+		</td>
+		<td>
+			A comma separated list of role ids for the album.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			X
 		</td>
 		<td>
@@ -5112,6 +5123,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>K</b>
+		</td>
+		<td>
+			artwork_url
+		</td>
+		<td>
+			A full URL to remote artwork. Only available for certain online music services.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>W</b>
 		</td>
 		<td>
@@ -5638,6 +5660,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Contributor role ID, to restrict the results to the artist of role
 			&quot;role_id&quot;. This parameter must be a comma separated list
 			of role IDs, or a comma separated list of role tokens (eg. ALBUMARTIST, ARTIST)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			release_type
+		</td>
+		<td>
+			The release type of the track's album, eg. "album", "ep", etc.
 		</td>
 	</tr>
 	<tr>

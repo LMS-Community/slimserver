@@ -9245,6 +9245,10 @@ LANGUAGE
 
 SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
+	EN	Release types for Albums
+
+SETUP_RELEASE_TYPES_INCLUDE
+	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
 
 SETUP_RELEASE_TYPES_DESC
@@ -9252,12 +9256,20 @@ SETUP_RELEASE_TYPES_DESC
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).
 
 SETUP_IGNORE_RELEASE_TYPES_0
-	DE	Alben nach Veröffentlichungstyp gruppieren (wenn möglich).
-	EN	Group albums by release type when possible.
+	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
+	EN	Enable release type support for albums
 
 SETUP_IGNORE_RELEASE_TYPES_1
-	DE	Veröffentlichungstyp bei der Anzeige von Alben nicht berücksichtigen.
-	EN	Ignore release type when listing albums.
+	DE	Veröffentlichungstyp von Alben ignorieren
+	EN	Ignore album release types
+
+SETUP_GROUP_BY_RELEASE_TYPES_0
+	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
+	EN	Don't group an artist's releases
+
+SETUP_GROUP_BY_RELEASE_TYPES_1
+	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
+	EN	Group an artist's releases by type
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny
@@ -11612,6 +11624,9 @@ ALBUM
 
 RELEASE_TYPE_SINGLE
 	EN	Single
+
+RELEASE_TYPE_SINGLES
+	EN	Singles
 
 RELEASE_TYPE_EP
 	EN	EP

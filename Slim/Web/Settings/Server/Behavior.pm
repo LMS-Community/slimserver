@@ -26,7 +26,7 @@ sub prefs {
 	return ($prefs,
 			qw(noGenreFilter noRoleFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
-			   conductorInArtists bandInArtists variousArtistAutoIdentification ignoreReleaseTypes
+			   conductorInArtists bandInArtists variousArtistAutoIdentification ignoreReleaseTypes groupArtistAlbumsByReleaseType
 			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
 			   skipsentinel)
 		   );

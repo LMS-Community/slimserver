@@ -53,18 +53,31 @@
 	[% END %]
 
 	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_RELEASE_TYPES" desc="SETUP_RELEASE_TYPES_DESC"%]
-			[% FOREACH releaseType IN release_types %]
-				<input type="checkbox" [% IF NOT releaseType.ignore %]checked="1"[% END %] class="stdedit" name="release_type_[% releaseType.id %]" id="release_type_[% releaseType.id %]" value="1" />
-				<label for="release_type_[% releaseType.id %]" class="stdlabel">[% releaseType.title %]</label>[% IF loop.last; ""; ELSE; "<br/>"; END %]
-			[% END %]
-		[% END %]
-
-		[% WRAPPER settingGroup title="" desc=""%]
+		[% WRAPPER settingGroup title="SETUP_RELEASE_TYPES" desc=""%]
 			<select class="stdedit" name="pref_ignoreReleaseTypes" id="ignoreReleaseTypes">
 				<option [% IF NOT prefs.pref_ignoreReleaseTypes %]selected [% END %]value="0">[% 'SETUP_IGNORE_RELEASE_TYPES_0' | string %]</option>
 				<option [% IF prefs.pref_ignoreReleaseTypes %]selected [% END %]value="1">[% 'SETUP_IGNORE_RELEASE_TYPES_1' | string %]</option>
 			</select>
+		[% END %]
+
+		[% IF !prefs.pref_ignoreReleaseTypes; WRAPPER settingGroup title="" desc="" %]
+			<select class="stdedit" name="pref_groupArtistAlbumsByReleaseType" id="groupArtistAlbumsByReleaseType">
+				<option [% IF prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="1">[% 'SETUP_GROUP_BY_RELEASE_TYPES_1' | string %]</option>
+				<option [% IF NOT prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="0">[% 'SETUP_GROUP_BY_RELEASE_TYPES_0' | string %]</option>
+			</select>
+		[% END; ELSE %]
+			<input type="hidden" name="pref_groupArtistAlbumsByReleaseType" value="[% IF prefs.pref_groupArtistAlbumsByReleaseType %]1[% END %]">
+		[% END %]
+	[% END %]
+
+	[% IF !prefs.pref_ignoreReleaseTypes; WRAPPER setting title="SETUP_RELEASE_TYPES_INCLUDE" desc="SETUP_RELEASE_TYPES_DESC"%]
+		[% FOREACH releaseType IN release_types %]
+			<input type="checkbox" [% IF NOT releaseType.ignore %]checked="1"[% END %] class="stdedit" name="release_type_[% releaseType.id %]" id="release_type_[% releaseType.id %]" value="1" />
+			<label for="release_type_[% releaseType.id %]" class="stdlabel">[% releaseType.title %]</label>[% IF loop.last; ""; ELSE; "<br/>"; END %]
+		[% END %]
+	[% END; ELSE %]
+		[% FOREACH releaseType IN release_types %]
+			<input type="hidden" name="release_type_[% releaseType.id %]" value="[% IF NOT releaseType.ignore %]1[% END %]" />
 		[% END %]
 	[% END %]
 

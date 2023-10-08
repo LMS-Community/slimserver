@@ -2062,6 +2062,10 @@ sub playlistcontrolCommand {
 			$info[0] = Slim::Schema->find('Contributor', $artist_id)->name;
 		}
 
+		if (defined(my $role_id = $request->getParam('role_id'))) {
+			$what->{'contributorTracks.role'} = $role_id;
+		}
+
 		if (defined(my $album_id = $request->getParam('album_id'))) {
 			$what->{'album.id'} = $album_id;
 			my $album = Slim::Schema->find('Album', $album_id);
@@ -2072,6 +2076,10 @@ sub playlistcontrolCommand {
 		if (defined(my $year = $request->getParam('year'))) {
 			$what->{'year.id'} = $year;
 			$info[0] = $year;
+		}
+
+		if (defined(my $releaseType = $request->getParam('release_type'))) {
+			$what->{'album.release_type'} = uc($releaseType);
 		}
 
 		if (defined(my $library_id = $request->getParam('library_id'))) {
@@ -3345,6 +3353,13 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			next;
 		}
 
+		elsif ($key eq 'contributorTracks.role') {
+			my @roles = split(/,\s*/, $value);
+			push @roles, 'ARTIST' if $value =~ /^(?:ALBUMARTIST|5)$/ && !$prefs->get('useUnifiedArtistsList');
+			$find{$key} = [ { 'in' => [ map { Slim::Schema::Contributor->typeToRole($_) || $_ } @roles ] } ];
+			next;
+		}
+
 		elsif (lc($key) eq 'librarytracks.library') {
 			$library_id = $value;
 			next;
@@ -3354,6 +3369,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		elsif ($key eq 'album.compilation' && $value == 0) {
 
 			$find{$key} = [ { 'is' => undef }, { '=' => 0 } ];
+		}
+
+		elsif ($key eq 'album.release_type') {
+			$find{$key} = [ {'=' => uc($value) } ];
+			$joinMap{'contributorTracks'} = { }
 		}
 
 		# Do some mapping from the player browse mode. This is
@@ -3434,7 +3454,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 	}
 
-	#
 	if ($find{'playlist.id'} && !$find{'me.id'}) {
 
 		# Treat playlists specially - they are containers.

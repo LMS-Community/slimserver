@@ -190,6 +190,7 @@ sub init {
 		'variousArtistsString'  => undef,
 		'releaseTypesToIgnore'  => [],
 		'ignoreReleaseTypes'    => 0,
+		'groupArtistAlbumsByReleaseType' => 0,
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',

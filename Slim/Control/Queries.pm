@@ -477,7 +477,7 @@ sub albumsQuery {
 		}
 
 		if (defined $releaseType) {
-			my @releaseTypes = split(',', $releaseType);
+			my @releaseTypes = map { uc($_) } split(',', $releaseType);
 			push @{$w}, 'albums.release_type IN (' . join(', ', map {'?'} @releaseTypes) . ')';
 			push @{$p}, @releaseTypes;
 		}
@@ -547,7 +547,7 @@ sub albumsQuery {
 		$c->{'albums.replay_gain'} = 1;
 	}
 
-	if ( $tags =~ /S/ ) {
+	if ( $tags =~ /R|S/ ) {
 		$c->{'albums.contributor'} = 1;
 	}
 
@@ -689,7 +689,7 @@ sub albumsQuery {
 			);
 		};
 
-		my ($contributorSql, $contributorSth, $contributorNameSth);
+		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 
@@ -798,6 +798,16 @@ sub albumsQuery {
 
 				if ( $tags =~ /SS/ && $contributor->{id} ) {
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				}
+			}
+
+			if ( $tags =~ /R/ ) {
+				$contributorRoleSth ||= $dbh->prepare_cached("SELECT role FROM contributor_album WHERE album = ? AND contributor = ?");
+				my $rolesRef = $dbh->selectall_arrayref($contributorRoleSth, , undef, $c->{'albums.id'}, $contributorID || $c->{'albums.contributor'});
+
+				if ($rolesRef) {
+					my $roles = join(',', map { $_->[0] } @$rolesRef);
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'role_ids', $roles);
 				}
 			}
 
@@ -4206,7 +4216,7 @@ sub titlesQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
-
+	my $releaseType   = $request->getParam('release_type');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4252,6 +4262,7 @@ sub titlesQuery {
 		contributorId => $contributorID,
 		trackId       => $trackID,
 		roleId        => $roleID,
+		releaseType   => $releaseType,
 		libraryId     => $libraryID,
 		limit         => sub {
 			$count = shift;
@@ -5426,6 +5437,13 @@ sub _getTagDataForTracks {
 			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
 		}
 	};
+
+	if ( my $releaseType = $args->{releaseType} ) {
+		$join_albums->();
+		my @releaseTypes = map { uc($_) } split(',', $releaseType);
+		push @{$w}, 'albums.release_type IN (' . join(', ', map {'?'} @releaseTypes) . ')';
+		push @{$p}, @releaseTypes;
+	}
 
 	my $join_tracks_persistent = sub {
 		if ( main::STATISTICS && $sql !~ /JOIN tracks_persistent/ ) {

@@ -147,6 +147,7 @@ should be passed a reference to a real sub (not an anonymous one).
 use strict;
 use JSON::XS::VersionOneAndTwo;
 
+use Slim::Menu::BrowseLibrary::Releases;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -540,7 +541,7 @@ sub _registerBaseNodes {
 			type         => 'link',
 			name         => 'BROWSE_BY_ALBUM',
 			params       => {mode => 'albums'},
-			feed         => \&_albums,
+			feed         => \&_albumsOrReleases,
 			icon         => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
 			condition    => \&isEnabledNode,
@@ -578,7 +579,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/newmusic.png',
 			params       => {mode => 'albums', sort => 'new', wantMetadata => 1},
 			                                                  # including wantMetadata is a hack for ip3k
-			feed         => \&_albums,
+			feed         => \&_albumsOrReleases,
 			homeMenuText => 'BROWSE_NEW_MUSIC',
 			condition    => \&isEnabledNode,
 			id           => 'myMusicNewMusic',
@@ -1108,7 +1109,7 @@ sub _artists {
 				$_->{'name'}          = $_->{'artist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
-				$_->{'url'}           = \&_albums;
+				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
 				$_->{'favorites_url'} = 'db:contributor.name=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
@@ -1383,6 +1384,18 @@ my %mapArtistOrders = (
 	artistalbum      => 'album',
 	artflow          => 'yearalbum'
 );
+
+sub _albumsOrReleases {
+	my ($client, $callback, $args, $pt) = @_;
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+
+	if ($prefs->get('groupArtistAlbumsByReleaseType') && grep /^artist_id:/, @searchTags) {
+		_releases(@_);
+	}
+	else {
+		_albums(@_);
+	}
+}
 
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;

@@ -919,6 +919,7 @@ sub _createOrUpdateAlbum {
 				compilation => 0, # Will be set to 1 below, if needed
 				year        => 0,
 				contributor => $vaObjId || $self->variousArtistsObject->id,
+				release_type=> 'ALBUM',
 			};
 
 			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
