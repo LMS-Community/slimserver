@@ -140,7 +140,7 @@ sub request {
 
 	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
 	if (!$processor || $song->stripHeader) {
-		$song->initialAudioBlock('');
+		$song->initialAudioBlock('') if $song->stripHeader;
 		return $self->SUPER::request($args);
 	}
 
