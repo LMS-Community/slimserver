@@ -6,7 +6,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 
 use constant MAX_ALBUMS => 500;
-use constant PRIMARY_ARTIST_ROLES => 'ARTIST,ALBUMARTIST';
+use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST';
 
 my $log = logger('database.info');
 
@@ -15,7 +15,7 @@ sub _releases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $wantMeta   = $pt->{'wantMetadata'};
-	my $tags       = 'lWR';
+	my $tags       = 'lWRw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
@@ -54,17 +54,27 @@ sub _releases {
 	# compile list of release types and contributions
 	my %releaseTypes;
 	my %contributions;
+	my %isPrimaryArtist;
 	foreach (@$albums) {
 		my @roleIds = split(',', $_->{role_ids} || '');
 
 		# Release Types if main artist
 		if (grep { $primaryArtistIds{$_} } @roleIds) {
 			$releaseTypes{$_->{release_type}}++;
+			$isPrimaryArtist{$_->{id}}++;
+		}
+		elsif ($_->{compilation}) {
+			$releaseTypes{COMPILATION}++;
+			# don't list as track artist on a compilation
+			next if $_->{role_ids} =~ /[156]/;
 		}
 
 		# Roles on other releases
 		foreach my $roleId (@roleIds) {
 			next if $primaryArtistIds{$roleId};
+
+			# don't list as trackartist, if the artist is albumartist, too
+			next if $roleId == 6 && $isPrimaryArtist{$_->{id}};
 
 			my $role = Slim::Schema::Contributor->roleToType($roleId);
 			$contributions{$role} = $roleId if $role;
@@ -78,13 +88,13 @@ sub _releases {
 		"library_id:" . $library_id,
 	];
 
-	my %primaryReleaseTypes = map { { uc($_) => 1 } } @{Slim::Schema::Album->primaryReleaseTypes};
-	$primaryReleaseTypes{COMPILATION} = 1;     # not in the above list but we still want to ignore it here
+	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
+	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
 
-	my @sortedReleaseTypes = @{Slim::Schema::Album->primaryReleaseTypes}, sort {
+	my @sortedReleaseTypes = @primaryReleaseTypes, sort {
 		$a cmp $b
 	} grep {
-		!$primaryReleaseTypes{$_}
+		!grep /$_/, @primaryReleaseTypes;
 	} keys %releaseTypes;
 
 	foreach my $releaseType (@sortedReleaseTypes) {
@@ -102,8 +112,10 @@ sub _releases {
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_albums,
-				passthrough => [ { searchTags => [@$searchTags, "release_type:$releaseType"] } ],
-			}
+				passthrough => $releaseType eq 'COMPILATION'
+					? [ { searchTags => [@$searchTags, 'compilation:1'] } ]
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"] } ],
+			};
 		}
 	}
 
