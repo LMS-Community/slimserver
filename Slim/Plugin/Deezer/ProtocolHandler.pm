@@ -359,7 +359,7 @@ sub _getNextRadioTrack {
 		},
 	);
 
-	main::DEBUGLOG && $log->debug("Getting next radio track from SqueezeNetwork");
+	main::DEBUGLOG && $log->debug("Getting next radio track from SqueezeNetwork: $radioURL");
 
 	$http->get( $radioURL );
 }
@@ -514,7 +514,9 @@ sub _gotTrack {
 	my ($trackId, $format) = _getStreamParams( $info->{url} );
 
 	# as we don't know the format for a flow/radio station, let's keep the format of the last played track to make assumptions later on...
-	$prefs->set('latestFormat', __PACKAGE__->getFormatForURL($info->{url}));
+	if ( $client->isPlaying(1) && $client->playingSong()->track()->url !~ /\.dzr/ ) {
+		$prefs->set('latestFormat', __PACKAGE__->getFormatForURL($info->{url}));
+	}
 
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
@@ -842,7 +844,7 @@ sub _getStreamParams {
 	if ( $url =~ m{deezer://(.+)\.(mp3|flac)}i ) {
 		return ($1, lc($2) );
 	}
-	elsif ( $url =~ /deezer\.com.*\.(mp3|flac)/) {
+	elsif ( $url =~ /deezer\.com.*?\.(mp3|flac)/) {
 		return (undef, lc($1));
 	}
 }

@@ -198,7 +198,7 @@ sub dirsFor {
 
 		push @dirs, $::prefsdir || $class->writablePath('prefs');
 
-	} elsif ($dir =~ /^(?:music|playlists|videos|pictures)$/) {
+	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
 		my $path;
 
@@ -243,14 +243,6 @@ sub dirsFor {
 		if ($dir =~ /^(?:music|playlists)$/) {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
 			$fallback = 'My Music';
-		}
-		elsif ($dir eq 'videos') {
-			$path = Win32::GetFolderPath(Win32::CSIDL_MYVIDEO) unless $path;
-			$fallback = 'My Videos';
-		}
-		elsif ($dir eq 'pictures') {
-			$path = Win32::GetFolderPath(Win32::CSIDL_MYPICTURES) unless $path;
-			$fallback = 'My Pictures';
 		}
 
 		# fall back if no path or invalid path is returned

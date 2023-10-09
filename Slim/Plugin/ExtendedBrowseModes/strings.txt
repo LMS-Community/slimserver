@@ -46,6 +46,16 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	PL	Kompozytorzy
 	SV	Kompositörer
 
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
+	CS	Klasická hudba podle dirigenta
+	DE	Klassische Musik nach Dirigent
+	EN	Classical Music by Conductor
+
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
+	CS	Jazzoví skladatelé
+	DE	Jazz Komponisten
+	EN	Jazz Composers
+
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	CS	Role přispěvatelů:
 	DE	Rolle des Künstlers:
@@ -77,7 +87,7 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	SV	Använd på:
 
 PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
-	CS	Sbírka
+	CS	Sbírky
 	DA	Kompilationer
 	DE	Kompilationen
 	EN	Compilations
@@ -144,7 +154,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
 
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
-	CS	Náhodně zvolená alba
+	CS	Náhodná alba
 	DA	Miks baseret på tilfældige album
 	DE	Zufällige Alben
 	EN	Random Albums
@@ -229,15 +239,15 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	FR	Toute la musique sans les livres audio
 	NL	Alle muziek zonder luisterboeken
 	SV	All musik förutom ljudböcker
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
-	CS	Vytvořte zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
+	CS	Vytvořit zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	CS	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Audiokniha, Audioknihy, Mluvené, Řeč, Komedie, Mluvené a audio, Knihy a mluvené, Kabaret, Humor
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
@@ -245,11 +255,11 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
-	
+
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	CS	Autoři
 	DE	Hörbuch-Autoren
 	EN	Authors
 	FR	Auteurs
 	NL	Schrijvers
-	SV	Författare	
+	SV	Författare

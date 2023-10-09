@@ -74,6 +74,10 @@ sub _createHTTPRequest {
 
 	my $url = $self->url($_[1]);
 
+	if ($url =~ /^https/ && ! $self->hasSSL()) {
+		$log->warn("No HTTPS support built in, but https URL required: $url");
+	}
+
 	my $params = $self->_params;
 
 	my ($request, $timeout) = $self->SUPER::_createHTTPRequest(@_);

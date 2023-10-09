@@ -30,7 +30,7 @@
 	[% IF useTabList; pageHeaderInfo = BLOCK %]
  		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
  	[% END; END %]
- 	
+
 [% END %]
 
 [% IF playerid && needsClient; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
@@ -51,7 +51,7 @@
 
 	<input type=hidden value="0" name="useAJAX">
 	<input type=hidden value="[% page %]" name="page">
-	[% IF playerid && needsClient %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
-	[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
+	[% IF playerid && needsClient %]<input type=hidden value="[% playerid | html %]" name="playerid">[% END %]
+	[% IF player %]<input type=hidden value="[% player | html %]" name="player">[% END %]
 
 <!-- End settingsheader.html -->

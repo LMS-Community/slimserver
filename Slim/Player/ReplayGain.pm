@@ -27,13 +27,13 @@ sub fetchGainMode {
 
 	my $track  = $song->currentTrack();
 	my $url    = $track->url;
-	
+
 	# Allow plugins to override replaygain (i.e. Pandora should always use track gain)
 	my $handler = $song->currentTrackHandler();
 	if ( $handler->can('trackGain') ) {
 		return $handler->trackGain( $client, $url );
 	}
-	
+
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
 
@@ -41,9 +41,14 @@ sub fetchGainMode {
 
 		return 0;
 	}
-	
+
+	# shortcut: volatile tracks don't know album gain, always use track gain
+	if ( Slim::Music::Info::isVolatileURL($url) ) {
+		return preventClipping( $track->replay_gain(), $track->replay_peak() );
+	}
+
 	# only support track gain for remote streams
-	if ( $track->remote && !Slim::Music::Info::isVolatileURL($url) ) {
+	if ( $track->remote ) {
 		return preventClipping( $track->replay_gain() || $prefs->client($client)->get('remoteReplayGain'), $track->replay_peak() );
 	}
 
@@ -83,7 +88,7 @@ sub findTracksByIndex {
 
 	my $count         = Slim::Player::Playlist::count($client);
 	my $repeat        = Slim::Player::Playlist::repeat($client);
-	
+
 	# if no songs in the playlist, abort
 	return unless $count;
 
@@ -97,7 +102,7 @@ sub findTracksByIndex {
 	if ($compare_index < 0) {
 		# No repeat means we don't match around the edges
 		return 0 unless $repeat;
-		
+
 		return $class->trackAlbumMatch($client, $count - 1);
 	}
 	elsif ($compare_index >= $count) {
@@ -110,7 +115,7 @@ sub findTracksByIndex {
 	# Get the track objects
 	my $current_url   = Slim::Player::Playlist::track($client, $current_index);
 	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
-	
+
 	my $compare_url   = Slim::Player::Playlist::track($client, $compare_index);
 	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
 
@@ -141,7 +146,7 @@ sub trackAlbumMatch {
 
 		return 0;
 	}
-	
+
 	# For remote tracks, get metadata from the protocol handler
 	# This allows Rhapsody to support smart crossfade
 	if ( $current_track->remote ) {
@@ -149,23 +154,23 @@ sub trackAlbumMatch {
 			# Other track is not remote, fail
 			return;
 		}
-		
+
 		my $current_meta = {};
 		my $compare_meta = {};
-		
+
 		my $current_handler = Slim::Player::ProtocolHandlers->handlerForURL( $current_track->url );
 		my $compare_handler = Slim::Player::ProtocolHandlers->handlerForURL( $compare_track->url );
-		
+
 		if ( $current_handler && $current_handler->can('getMetadataFor') ) {
 			$current_meta = $current_handler->getMetadataFor( $client, $current_track->url );
 		}
-		
+
 		if ( $compare_handler && $compare_handler->can('getMetadataFor') ) {
 			$compare_meta = $compare_handler->getMetadataFor( $client, $compare_track->url );
 		}
-		
+
 		if (   $current_meta->{album}
-			&& $compare_meta->{album} 
+			&& $compare_meta->{album}
 			&& $current_meta->{album} eq $compare_meta->{album}
 		) {
 			# Album metadata matches
@@ -175,10 +180,10 @@ sub trackAlbumMatch {
 			return;
 		}
 	}
-	
+
 	# Check for album and tracknum matches as expected
 	if ($compare_track->albumid && $current_track->albumid &&
-		($compare_track->albumid == $current_track->albumid) && 
+		($compare_track->albumid == $current_track->albumid) &&
 		defined $current_track->tracknum && defined $compare_track->tracknum &&
 		(($current_track->tracknum + $offset) == $compare_track->tracknum)) {
 
@@ -262,14 +267,14 @@ sub trackSampleRateMatch {
 # Reduce the gain value if necessary to avoid clipping
 sub preventClipping {
 	my ( $gain, $peak ) = @_;
-	
+
 	if ( defined $peak && defined $gain && $peak > 0 ) {
 		my $noclip = -20 * ( log($peak) / log(10) );
 		if ( $noclip < $gain ) {
 			return $noclip;
 		}
 	}
-	
+
 	return $gain;
 }
 

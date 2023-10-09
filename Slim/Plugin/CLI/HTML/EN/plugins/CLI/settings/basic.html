@@ -5,7 +5,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_CLIPORT" desc="SETUP_CLIPORT_DESC" %]
-		<input type="text" class="stdedit" name="pref_cliport" id="cliport" value="[% prefs.pref_cliport %]" size="5">
+		<input type="text" class="stdedit" name="pref_cliport" id="cliport" value="[% prefs.pref_cliport | html %]" size="5">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

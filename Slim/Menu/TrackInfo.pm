@@ -1192,14 +1192,12 @@ sub infoFileModTime {
 
 	my $item;
 
-	if ( !$track->remote ) {
-		if ( my $age = $track->modificationTime ) {
-			$item = {
-				type => 'text',
-				label => 'MODTIME',
-				name => $age,
-			};
-		}
+	if ( my $age = $track->modificationTime ) {
+		$item = {
+			type => 'text',
+			label => 'MODTIME',
+			name => $age,
+		};
 	}
 
 	return $item;

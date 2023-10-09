@@ -32,23 +32,7 @@ function chooseSettings(value,option)
 	}
 
 	if (option) {
-		// change the mouse cursor so user gets some feedback
-		$('settingsForm').setStyle({cursor:'wait'});
-		new Ajax.Updater( { success: 'settingsRegion' }, url, {
-			method: 'post',
-			postBody: 'ajaxUpdate=1&player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]',
-			evalScripts: true,
-			asynchronous: true,
-			onFailure: function(t) {
-				alert('Error -- ' + t.responseText);
-			},
-			onComplete: function(t) {
-				$('settingsForm').setStyle({cursor:'auto'});
-				$('statusarea').update('');
-				resizeSettingsSection();
-			}
-		} );
-		//document.forms.settingsForm.action = url;
+		location.href = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]';
 	}
 }
 
@@ -56,15 +40,16 @@ function prefValidate(myPref, namespace) {
 	new Ajax.Request('/jsonrpc.js', {
 		method: 'post',
 
-		postBody: Object.toJSON({
-			id: 1, 
-			method: 'slim.request', 
+
+		postBody: JSON.stringify({
+			id: 1,
+			method: 'slim.request',
 			params: [
-				'', 
+				'',
 				[
-					'pref', 
-					'validate', 
-					namespace + ':' + myPref.name, 
+					'pref',
+					'validate',
+					namespace + ':' + myPref.name.replace(/^pref_/, ''),
 					myPref.value
 				]
 			]
@@ -110,8 +95,8 @@ function initSettingsForm() {
 			});
 		}
 	});
-	
-	new Event.observe('choose_setting', 'keypress', function(e){ 
+
+	new Event.observe('choose_setting', 'keypress', function(e){
 		var cKeyCode = e.keyCode || e.which;
 		if (cKeyCode == Event.KEY_UP || cKeyCode == Event.KEY_DOWN) {
 			Event.stop(e);
@@ -135,7 +120,7 @@ function initSettingsForm() {
 var bgColors = new Array;
 function highlightField(field, valid) {
 	if (!bgColors[field]) {
-		bgColors[field] = field.getStyle('backgroundColor'); 
+		bgColors[field] = field.getStyle('backgroundColor');
 	}
 
 	if (valid) {

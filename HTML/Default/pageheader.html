@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext[% useSpecialExt || "-all" %].css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]html/ext/resources/css/ext[% useSpecialExt || "-all" %].css?r=[% revision %]" />
 
 		[% PROCESS standardheader.html %]
 
@@ -29,7 +29,7 @@
 						'<td></td><td><button type="{0}" style="padding:0" class="x-btn-text {2}"></button></td><td></td>',
 						'</tr></tbody></table>'
 					);
-					SqueezeJS.UI.buttonTemplate.compile();	
+					SqueezeJS.UI.buttonTemplate.compile();
 
 					SqueezeJS.UI.splitButtonTemplate = new Ext.Template(
 						'<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
@@ -41,7 +41,7 @@
 					if (SqueezeJS.UI) {
 						Highlighter = new SqueezeJS.UI.Highlight({
 							unHighlight : 'content'
-						});		
+						});
 						SqueezeJS.UI.ScrollPanel.init();
 					}
 				});
@@ -75,8 +75,8 @@
 				<span id="headerSearch">
 					<form method="GET" action="[% webroot %]search.html">
 						<input type="hidden" name="player" value="[% playerid %]">
-						<input type="text" id="headerSearchInput" autocomplete="off" name="query" 
-						id="search" class="x-form-focus searchInput" style="display:none" size="30">&nbsp;<input type="image" 
+						<input type="text" id="headerSearchInput" autocomplete="off" name="query"
+						id="search" class="x-form-focus searchInput" style="display:none" size="30">&nbsp;<input type="image"
 						id="headerSearchBtn" src="[% webroot %]html/images/spacer.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
 					</form>
 				</span>

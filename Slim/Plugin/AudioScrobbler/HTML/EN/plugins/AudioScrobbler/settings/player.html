@@ -4,18 +4,18 @@
 		<select name="pref_account">
 			<option value="0">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED" | string %]</option>
 		[% FOR global_account IN prefs.pref_accounts %]
-			<option value="[% global_account.username %]" [% IF global_account.username == prefs.pref_account %]selected="selected"[% END %] />[% global_account.username %]</option>
+			<option value="[% global_account.username | html %]" [% IF global_account.username == prefs.pref_account %]selected="selected"[% END %] />[% global_account.username %]</option>
 		[% END %]
 		</select>
-		
+
 		[% IF !prefs.pref_enable_scrobbling %]
 			<br /><br />
 			[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED" | string %]
 		[% END %]
 	[% END %]
-	
+
 	[% WRAPPER setting title="" desc="" %]
 		[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE" | string %]
 	[% END %]
-	
+
 [% PROCESS settings/footer.html %]

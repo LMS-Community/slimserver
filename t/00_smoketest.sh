@@ -24,7 +24,7 @@ function finish {
 }
 trap finish EXIT
 
-./slimserver.pl --logfile=$SERVER_LOG &
+./slimserver.pl --logfile=$SERVER_LOG --nomysqueezebox &
 NODE_PID=$!
 
 wait_port $TIMEOUT || {

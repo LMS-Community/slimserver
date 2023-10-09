@@ -593,7 +593,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
 			condition    => sub {
-				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveMediaDirs() });
+				return isEnabledNode(@_) && (scalar @{ Slim::Utils::Misc::getAudioDirs() } || scalar @{ Slim::Utils::Misc::getInactiveAudioDirs() });
 			},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
@@ -1452,11 +1452,11 @@ sub _albums {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
-				# the favorites url is the album title here
+				# the favorites url is the album title and contributor name here (or extid for online albums)
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				$_->{'favorites_url'} = 'db:album.title=' .
-						URI::Escape::uri_escape_utf8( $_->{'name'} );
+				$_->{'favorites_url'} = $_->{'extid'}
+					|| sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'name'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];

@@ -65,7 +65,7 @@ PLUGIN_NETTEST_TESTING_TO
 	SV	Testar med
 
 PLUGIN_NETTEST_NOT_SUPPORTED
-	CS	Tento přehrávač nepodporuje
+	CS	Tento přehrávač není podporován
 	DA	Ikke understøttet af denne afspiller
 	DE	Auf diesem Player nicht unterstützt
 	EN	Not Supported on this Player

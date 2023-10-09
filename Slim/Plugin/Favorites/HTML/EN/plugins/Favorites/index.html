@@ -7,10 +7,10 @@ function(){
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 		[% IF entry.outline %]
 			<form name="edittitle" method="" style="display: inline; width: 100%;">
-				<input type="hidden" name="index" value="[% entry.index %]">
-				<input type="hidden" name="sess" value="[% sess %]">
+				<input type="hidden" name="index" value="[% entry.index | html %]">
+				<input type="hidden" name="sess" value="[% sess | html %]">
 				<input type="hidden" name="action" value="editset">
-				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
+				<input type="hidden" name="removeoncancel" value="[% removeoncancel | html %]">
 				<input id="edit_title_[% entry.index %]" style="width: 71%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
 					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
@@ -25,14 +25,14 @@ function(){
 			<table width="100%">
 				<tr>
 					<td width="35%">
-						<input type="hidden" name="index" value="[% entry.index %]">
-						<input type="hidden" name="sess" value="[% sess %]">
+						<input type="hidden" name="index" value="[% entry.index | html %]">
+						<input type="hidden" name="sess" value="[% sess | html %]">
 						<input type="hidden" name="action" value="editset">
-						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
+						<input type="hidden" name="removeoncancel" value="[% removeoncancel | html %]">
 						<input id="edit_title_[% entry.index %]" size="25" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td width="35%">
-						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url | html %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td>
 					[% IF useAJAX %]
@@ -53,7 +53,7 @@ function(){
 [% BLOCK titleedit %]
 <h4><form id="title" name="title" method="get" action="[% webroot %]plugins/Favorites/index.html">
 	[% "TITLE" | string %]
-	<input type="hidden" name="sess" value="[% sess %]">
+	<input type="hidden" name="sess" value="[% sess | html %]">
 	<input type="hidden" name="index" value="[% levelindex %]">
 	<input id="newtitle" type="text" class="stdedit" name="title" style="width: 70%;" value="[% title | html %]" [% IF newentry %] onClick="this.value=''"[% END %] >
 	<input type="submit" class="stdclick" value="[% 'SAVE' | string %]">
@@ -129,7 +129,7 @@ function(){
 		[% END %]
 	[% END -%]
 [% END %]
-	
+
 [% IF action == 'edit' AND useAJAX %]
 
 	[% odd = 1 - (indexOnLevel % 2) %]
@@ -143,9 +143,9 @@ function(){
 [% ELSIF action == "edittitle" AND useAJAX %]
 	[% PROCESS titleedit %]
 [% ELSE %]
-	
+
 [% pagetitle = title | getstring %]
-	
+
 [% IF useAJAX %][% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script type="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]" ></script>
@@ -218,7 +218,7 @@ function(){
 		   [%- ELSE %]
 		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]&amp;sess=[% sess %]"
 		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_PASTE" | string %]</b> [ [% deleted | html %] ]</I></a>
-		
+
 	[% END %]
 	[% IF useAJAX %]</span>[% END %]
 	[% odd = (not odd) %]
@@ -229,8 +229,8 @@ function(){
 [% IF load %]<div id='loadfile' >
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form id='loadfile' name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
-		<input type="hidden" name="sess" value="[% sess %]">
-		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="hidden" name="sess" value="[% sess | html %]">
+		<input type="hidden" name="index" value="[% levelindex | html %]">
 		<input id="loadfilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% 'PLUGIN_FAVORITES_LOADFILE' | string %]" onClick="this.value=''">
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="ajaxUpdate('index.html', 'loadfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('loadfilename').dom[% ELSE %]$('loadfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
@@ -245,8 +245,8 @@ function(){
 [% ELSIF save %]<div id='savefile'>
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
-		<input type="hidden" name="sess" value="[% sess %]">
-		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="hidden" name="sess" value="[% sess | html %]">
+		<input type="hidden" name="index" value="[% levelindex | html %]">
 		<input id="savefilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : 'PLUGIN_FAVORITES_SAVEFILE' | getstring %]" [% UNLESS filename %] onClick="this.value=''" [% END %]>
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'savefile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('savefilename').dom[% ELSE %]$('savefilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
@@ -267,8 +267,8 @@ function(){
 
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
-		<input type="hidden" name="sess" value="[% sess %]">
-		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="hidden" name="sess" value="[% sess | html %]">
+		<input type="hidden" name="index" value="[% levelindex | html %]">
 		<input id="importfilename" type="text" class="stdedit selectFile selectFile_opml selectFile_m3u selectFile_pls selectFile_asx selectFile_cue selectFile_xml selectFile_wpl" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('importfilename').dom[% ELSE %]$('importfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
@@ -284,8 +284,8 @@ function(){
 
 <div id="defaultform" [% IF editmode OR edittitle OR import OR load OR save %] style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
-		<input type="hidden" name="sess" value="[% sess %]">
-		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="hidden" name="sess" value="[% sess | html %]">
+		<input type="hidden" name="index" value="[% levelindex | html %]">
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline;" value="[% favorites ? 'PLUGIN_FAVORITES_NEWFAVORITE' : 'PLUGIN_FAVORITES_NEWENTRY' | string %]" onclick="ajaxUpdate('index.html', 'newentry&amp;index=[% levelindex %]&amp;sess=[% sess %]'[% IF initCall; ', ' _ initCall; END %]);">
 			<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_NEWFOLDER' | string %]" onclick="ajaxUpdate('index.html', 'newlevel&amp;index=[% levelindex %]&amp;sess=[% sess %]'[% IF initCall; ', ' _ initCall; END %]);">

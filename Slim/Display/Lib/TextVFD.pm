@@ -2,7 +2,7 @@ package Slim::Display::Lib::TextVFD;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 #
 #
@@ -30,12 +30,12 @@ our $MAXBRIGHTNESS = 4;
 
 my %vfdCommand = ();
 
-# these codes identify the operation to 
+# these codes identify the operation to
 # perform on each byte of data sent.
-my $vfdCodeCmd  = pack 'B8', '00000010';       
-my $vfdCodeChar = pack 'B8', '00000011'; 
+my $vfdCodeCmd  = pack 'B8', '00000010';
+my $vfdCodeChar = pack 'B8', '00000011';
 
-# vfd.pl initiliazion:  Builds %vfdCommand, an associative array containing the 
+# vfd.pl initiliazion:  Builds %vfdCommand, an associative array containing the
 # packed codes for all the noritake VFD commands
 $vfdCommand{"CFF"}		= pack 'B8', "00001100";
 $vfdCommand{"CUR"}		= pack 'B8', "00001110";
@@ -57,8 +57,8 @@ my @vfdBrightFutaba = ( (pack 'B8', "00111011"), # 0%
 				   (pack 'B8', "00111001"), # 75%
 				   (pack 'B8', "00111000")); # 100%
 
-my $noritakeBrightPrelude = 
-			   $vfdCodeCmd .  (pack 'B8', "00110011") . 
+my $noritakeBrightPrelude =
+			   $vfdCodeCmd .  (pack 'B8', "00110011") .
 			   $vfdCodeCmd .  (pack 'B8', "00000000") .
 			   $vfdCodeCmd .  (pack 'B8', "00110000") .
 			   $vfdCodeChar;
@@ -84,7 +84,7 @@ my %symbolmap = (
 		'rightarrow' => chr(0x7e),
 		'hardspace' => chr(0x20),
 		'solidblock' => chr(0x1f),
-	},	
+	},
 	'squeezeslave' => {  # These are from an Imon VFD, but squeezeslave can remap for other types
 		'rightarrow' => chr(0x10),
 		'hardspace'  => chr(0x20),
@@ -103,8 +103,8 @@ my %vfdcustomchars;
 
 sub setCustomChar {
 	my($charname, @rows)=@_;
-	
-	die unless ((@rows) == 8); 
+
+	die unless ((@rows) == 8);
 	$vfdcustomchars{$charname} = \@rows;
 }
 
@@ -144,8 +144,8 @@ my %gracefulmap = (
 );
 
 sub vfdUpdate {
-	my $client = shift;
-	my $line1  = shift; 
+	my $client = shift || return;
+	my $line1  = shift;
 	my $line2  = shift;
 
 	my %customUsed;
@@ -158,14 +158,14 @@ sub vfdUpdate {
 
 	# convert to the VFD char set
 	my $lang = $client->vfdmodel;
-	if (!$lang) { 
+	if (!$lang) {
 		$lang = 'katakana';
 	} else {
 		$lang =~ s/[^-]*-(.*)/$1/;
 	}
 
 	main::DEBUGLOG && $log->debug("vfdUpdate $lang\nline1: $line1\nline2: $line2\n");
-	
+
 	my $brightness = $client->brightness();
 
 	if (!defined($line1)) { $line1 = $spaces };
@@ -174,8 +174,8 @@ sub vfdUpdate {
 	if (defined($brightness) && ($brightness == 0)) {
 		$line1 = $spaces;
 		$line2 = $spaces;
-	} 
-	
+	}
+
 	my $line;
 
 	my $cursorchar = $Slim::Display::Text::commandmap{'cursorpos'};
@@ -193,7 +193,7 @@ sub vfdUpdate {
 
 		# Fix for bug 1294 - Windows "smart" apostrophe to a normal one.
 		# For whatever reason, utf8toLatin1() doesn't convert this to
-		# a ' - \x{2019}, so do it manually. Otherwise the server will crash. 
+		# a ' - \x{2019}, so do it manually. Otherwise the server will crash.
 		if (!Slim::Utils::Unicode::looks_like_latin1($curline)) {
 
 			$curline = Slim::Utils::Unicode::utf8toLatin1Transliterate($curline);
@@ -237,7 +237,7 @@ sub vfdUpdate {
 				$line .= substr($scan, 0, 1);
 				$linepos++;
 				$i++
-			}	
+			}
 		}
 	}
 	# Find out which custom chars we need to add, and which we can discard
@@ -298,16 +298,16 @@ sub vfdUpdate {
 	} elsif ($lang eq 'katakana'){
 		# translate iso8859-1 to vfd charset
 		$line =~ tr{\x1f\x92\x0e\x0f\x5c\x70\x7e\x7f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff}
-				   {\xff\x27\x19\x7e\x8c\xf0\x8e\x8f\x20\x98\xec\x92\xeb\x5c\x98\x8f\xde\x63\x61\x3c\xa3\x2d\x72\xb0\xdf\xb7\x32\x33\x60\xe4\xf1\x94\x2c\x31\xdf\x3e\x25\x25\x25\x3f\x81\x81\x82\x82\x80\x81\x90\x99\x45\x45\x45\x45\x49\x49\x49\x49\x44\xee\x4f\x4f\x4f\x4f\x86\x78\x30\x55\x55\x55\x8a\x59\x70\xe2\x84\x83\x84\x84\xe1\x84\x91\x99\x65\x65\x65\x65\x69\x69\x69\x69\x95\xee\x6f\x6f\x6f\x6f\xef\xfd\x88\x75\x75\x75\xf5\x79\xf0\x79};	
+				   {\xff\x27\x19\x7e\x8c\xf0\x8e\x8f\x20\x98\xec\x92\xeb\x5c\x98\x8f\xde\x63\x61\x3c\xa3\x2d\x72\xb0\xdf\xb7\x32\x33\x60\xe4\xf1\x94\x2c\x31\xdf\x3e\x25\x25\x25\x3f\x81\x81\x82\x82\x80\x81\x90\x99\x45\x45\x45\x45\x49\x49\x49\x49\x44\xee\x4f\x4f\x4f\x4f\x86\x78\x30\x55\x55\x55\x8a\x59\x70\xe2\x84\x83\x84\x84\xe1\x84\x91\x99\x65\x65\x65\x65\x69\x69\x69\x69\x95\xee\x6f\x6f\x6f\x6f\xef\xfd\x88\x75\x75\x75\xf5\x79\xf0\x79};
 	} elsif (($lang eq 'latin1') || ($lang eq 'squeezeslave')) {
 		# golly, the latin1 character map _is_ latin1.  Also, translate funky windows apostrophes to legal ones.
 		# squeezeslave uses latin1 too
 		$line =~ tr{\x92}
 				   {\x26};
 	};
-	
+
 	# start calculating the control strings
-	
+
 	my $vfddata = '';
 	my $vfdmodel = $client->vfdmodel();
 
@@ -315,7 +315,7 @@ sub vfdUpdate {
 	# not used for Squeezeslave
 	if ( $vfdmodel =~ 'futaba') {
 		$vfddata .= $vfdCodeCmd .  $vfdBrightFutaba[$brightness];
-	} elsif ( $vfdmodel ne 'squeezeslave') { 
+	} elsif ( $vfdmodel ne 'squeezeslave') {
 		$vfddata .= $noritakeBrightPrelude . $vfdBright[$brightness];
 	}
 
@@ -326,7 +326,7 @@ sub vfdUpdate {
 		my $bitmap = pack ('C8', @$bitmapref);
 		$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
 		$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
-	}	
+	}
 
 	# put us in incrementing mode and move the cursor home
 	$vfddata .= $vfdReset;
@@ -339,7 +339,7 @@ sub vfdUpdate {
 	$line = substr($line, 0, 2 * $displaywidth) . $vfdCodeCmd . $vfdCommand{"HOME2"} . substr($line, 2 * $displaywidth);
 
 	$vfddata .= $line;
-	
+
 	# set the cursor
 	if ($cur >= 0) {
 
@@ -349,12 +349,12 @@ sub vfdUpdate {
 			$vfddata .= $vfdCodeCmd.(pack 'C', (0b11000000 + $cur - $displaywidth));
 		}
 
-		# turn on  the cursor			
+		# turn on  the cursor
 		$vfddata .= $vfdCodeCmd. $vfdCommand{'CUR'};
 	}
 
 	$client->vfd($vfddata);
-	
+
 	my $len = length($vfddata);
 
 	$log->logdie("Odd vfddata: $vfddata") if ($len % 2);
@@ -364,165 +364,165 @@ sub vfdUpdate {
 # the following are the custom character definitions for the new progress/level bar...
 
 setCustomChar('notesymbol',
-				 ( 0b00000100, 
-				   0b00000110, 
-				   0b00000101, 
-				   0b00000101, 
-				   0b00001101, 
-				   0b00011100, 
-				   0b00011000, 
+				 ( 0b00000100,
+				   0b00000110,
+				   0b00000101,
+				   0b00000101,
+				   0b00001101,
+				   0b00011100,
+				   0b00011000,
 				   0b00000000 ));
 
 setCustomChar('leftprogress0',
-				 ( 0b00000111, 
-				   0b00001000, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00001000, 
-				   0b00000111, 
+				 ( 0b00000111,
+				   0b00001000,
+				   0b00010000,
+				   0b00010000,
+				   0b00010000,
+				   0b00001000,
+				   0b00000111,
 				   0b00000000 ));
 
 setCustomChar('leftprogress1',
-				 ( 0b00000111, 
-				   0b00001000, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00001000, 
-				   0b00000111, 
+				 ( 0b00000111,
+				   0b00001000,
+				   0b00011000,
+				   0b00011000,
+				   0b00011000,
+				   0b00001000,
+				   0b00000111,
 				   0b00000000 ));
 
 setCustomChar('leftprogress2',
-				 ( 0b00000111, 
-				   0b00001100, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00001100, 
-				   0b00000111, 
+				 ( 0b00000111,
+				   0b00001100,
+				   0b00011100,
+				   0b00011100,
+				   0b00011100,
+				   0b00001100,
+				   0b00000111,
 				   0b00000000 ));
 
 setCustomChar('leftprogress3',
-				 ( 0b00000111, 
-				   0b00001110, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00001110, 
-				   0b00000111, 
+				 ( 0b00000111,
+				   0b00001110,
+				   0b00011110,
+				   0b00011110,
+				   0b00011110,
+				   0b00001110,
+				   0b00000111,
 				   0b00000000 ));
 
 setCustomChar('leftprogress4',
-				 ( 0b00000111, 
-				   0b00001111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00001111, 
-				   0b00000111, 
+				 ( 0b00000111,
+				   0b00001111,
+				   0b00011111,
+				   0b00011111,
+				   0b00011111,
+				   0b00001111,
+				   0b00000111,
 				   0b00000000 ));
 
 setCustomChar('middleprogress0',
-				 ( 0b01111111, 
-				   0b00000000, 
-				   0b00000000, 
-				   0b00000000, 
-				   0b00000000, 
-				   0b00000000, 
-				   0b01111111, 
+				 ( 0b01111111,
+				   0b00000000,
+				   0b00000000,
+				   0b00000000,
+				   0b00000000,
+				   0b00000000,
+				   0b01111111,
 				   0b00000000 ));
 
 setCustomChar('middleprogress1',
-				 ( 0b01111111, 
-				   0b01110000, 
-				   0b01110000, 
-				   0b01110000, 
-				   0b01110000, 
-				   0b01110000, 
-				   0b01111111, 
+				 ( 0b01111111,
+				   0b01110000,
+				   0b01110000,
+				   0b01110000,
+				   0b01110000,
+				   0b01110000,
+				   0b01111111,
 				   0b00000000 ));
 
 setCustomChar('middleprogress2',
-				 ( 0b01111111, 
-				   0b01111000, 
-				   0b01111000, 
-				   0b01111000, 
-				   0b01111000, 
-				   0b01111000, 
-				   0b01111111, 
+				 ( 0b01111111,
+				   0b01111000,
+				   0b01111000,
+				   0b01111000,
+				   0b01111000,
+				   0b01111000,
+				   0b01111111,
 				   0b00000000 ));
 
 setCustomChar('middleprogress3',
-				 ( 0b01111111, 
-				   0b01111100, 
-				   0b01111100, 
-				   0b01111100, 
-				   0b01111100, 
-				   0b01111100, 
-				   0b01111111, 
+				 ( 0b01111111,
+				   0b01111100,
+				   0b01111100,
+				   0b01111100,
+				   0b01111100,
+				   0b01111100,
+				   0b01111111,
 				   0b00000000 ));
 
 setCustomChar('middleprogress4',
-				 ( 0b01111111, 
-				   0b01111110, 
-				   0b01111110, 
-				   0b01111110, 
-				   0b01111110, 
-				   0b01111110, 
-				   0b01111111, 
+				 ( 0b01111111,
+				   0b01111110,
+				   0b01111110,
+				   0b01111110,
+				   0b01111110,
+				   0b01111110,
+				   0b01111111,
 				   0b00000000 ));
 
 setCustomChar('rightprogress0',
-				 ( 0b01111100, 
-				   0b00000010, 
-				   0b00000001, 
-				   0b00000001, 
-				   0b00000001, 
-				   0b00000010, 
-				   0b01111100, 
+				 ( 0b01111100,
+				   0b00000010,
+				   0b00000001,
+				   0b00000001,
+				   0b00000001,
+				   0b00000010,
+				   0b01111100,
 				   0b00000000 ));
 
 setCustomChar('rightprogress1',
-				 ( 0b01111100, 
-				   0b01110010, 
-				   0b01110001, 
-				   0b01110001, 
-				   0b01110001, 
-				   0b01110010, 
-				   0b01111100, 
+				 ( 0b01111100,
+				   0b01110010,
+				   0b01110001,
+				   0b01110001,
+				   0b01110001,
+				   0b01110010,
+				   0b01111100,
 				   0b00000000 ));
 
 setCustomChar('rightprogress2',
-				 ( 0b01111100, 
-				   0b01111010, 
-				   0b01111001, 
-				   0b01111001, 
-				   0b01111001, 
-				   0b01111010, 
-				   0b01111100, 
+				 ( 0b01111100,
+				   0b01111010,
+				   0b01111001,
+				   0b01111001,
+				   0b01111001,
+				   0b01111010,
+				   0b01111100,
 				   0b00000000 ));
 
 setCustomChar('rightprogress3',
-				 ( 0b01111100, 
-				   0b01111110, 
-				   0b01111101, 
-				   0b01111101, 
-				   0b01111101, 
-				   0b01111110, 
-				   0b01111100, 
+				 ( 0b01111100,
+				   0b01111110,
+				   0b01111101,
+				   0b01111101,
+				   0b01111101,
+				   0b01111110,
+				   0b01111100,
 				   0b00000000 ));
 
 setCustomChar('rightprogress4',
-				 ( 0b01111100, 
-				   0b01111110, 
-				   0b01111111, 
-				   0b01111111, 
-				   0b01111111, 
-				   0b01111110, 
-				   0b01111100, 
+				 ( 0b01111100,
+				   0b01111110,
+				   0b01111111,
+				   0b01111111,
+				   0b01111111,
+				   0b01111110,
+				   0b01111100,
 				   0b00000000 ));
-				   
+
 setCustomChar('mixable', (
 					0b00011111,
 					0b00000000,
@@ -542,42 +542,42 @@ setCustomChar('bell', (
 					0b00011111,
 					0b00000100,
 					0b00000000   ));
-					
+
 # replaces ~ in format string
 # setup the special characters
-setCustomChar( 'toplinechar',	
-					(	0b01111111, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
+setCustomChar( 'toplinechar',
+					(	0b01111111,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
 						0b00000000	 ));
 
 # replaces = in format string
-setCustomChar( 'doublelinechar', 
-					(	0b01111111, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b01111111, 
+setCustomChar( 'doublelinechar',
+					(	0b01111111,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b01111111,
 						0b00000000	 ));
 
 setCustomChar( 'doublelinecharM',  # alternate used by Modern Font
-					(	0b00011111, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
-						0b00000000, 
+					(	0b00011111,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
+						0b00000000,
 						0b00011111	 ));
 
 # replaces ? in format string.  Used in Z, ?, 7
-setCustomChar( 'Ztop', 		
+setCustomChar( 'Ztop',
 			(      		0b01111111,
 						0b00000001,
 						0b00000001,
@@ -586,9 +586,9 @@ setCustomChar( 'Ztop',
 						0b00001000,
 						0b00010000,
 						0b00100000   ));
-                  
+
 # replaces < in format string.  Used in Z, 2, 6
-setCustomChar( 'Zbottom', 		
+setCustomChar( 'Zbottom',
 			(   		0b00000001,
 						0b00000010,
 						0b00000100,
@@ -597,9 +597,9 @@ setCustomChar( 'Zbottom',
 						0b00010000,
 						0b00011111,
 						0b00000000   ));
-                  
+
 # replaces / in format string.
-setCustomChar( 'slash', 	
+setCustomChar( 'slash',
 			 (     		0b00000001,
 						0b00000001,
 						0b00000010,
@@ -618,8 +618,8 @@ setCustomChar( 'slashM',  # alternate used by Modern Font
 						0b00010000,
 						0b00010000,
 						0b00000000   ));
-                  
-setCustomChar( 'backslash', 	
+
+setCustomChar( 'backslash',
 				( 		0b00010000,
 						0b00010000,
 						0b00001000,
@@ -639,7 +639,7 @@ setCustomChar( 'backslashM', # alternate used by Modern Font
 						0b00000001,
 						0b00000000   ));
 
-setCustomChar( 'islash', 	
+setCustomChar( 'islash',
 				(     	0b00010000,
 						0b00010000,
 						0b00010000,
@@ -648,8 +648,8 @@ setCustomChar( 'islash',
 						0b00000100,
 						0b00000011,
 						0b00000000   ));
-                   
-setCustomChar( 'ibackslash', 	
+
+setCustomChar( 'ibackslash',
 				( 		0b00000001,
 						0b00000001,
 						0b00000001,
@@ -659,7 +659,7 @@ setCustomChar( 'ibackslash',
 						0b00011000,
 						0b00000000   ));
 
-setCustomChar( 'filledcircle',		
+setCustomChar( 'filledcircle',
 					 ( 	0b00000001,
 						0b00001111,
 						0b00011111,
@@ -667,9 +667,9 @@ setCustomChar( 'filledcircle',
 						0b00011111,
 						0b00001110,
 						0b00000000,
-						0b00000000   ));	
+						0b00000000   ));
 
-setCustomChar( 'leftvbar',		
+setCustomChar( 'leftvbar',
 					 ( 	0b00010000,
 						0b00010000,
 						0b00010000,
@@ -677,9 +677,9 @@ setCustomChar( 'leftvbar',
 						0b00010000,
 						0b00010000,
 						0b00010000,
-						0b00000000   ));	
+						0b00000000   ));
 
-setCustomChar( 'rightvbar',		
+setCustomChar( 'rightvbar',
 					 ( 	0b00000001,
 						0b00000001,
 						0b00000001,
@@ -687,7 +687,7 @@ setCustomChar( 'rightvbar',
 						0b00000001,
 						0b00000001,
 						0b00000001,
-						0b00000000   ));	
+						0b00000000   ));
 
 setCustomChar('leftmark',
  					(   0b00011111,
@@ -698,7 +698,7 @@ setCustomChar('leftmark',
 						0b00000001,
 						0b00011111,
 						0b00000000   ));
-                  
+
 setCustomChar('rightmark',
 					( 	0b00011111,
 						0b00010000,
@@ -708,7 +708,7 @@ setCustomChar('rightmark',
 						0b00010000,
 						0b00011111,
 						0b00000000   ));
-                  
+
 
 my $leftvbar        = "\x1f" . "leftvbar"    . "\x1f";
 my $rightvbar       = "\x1f" . "rightvbar"   . "\x1f";
@@ -723,7 +723,7 @@ my $doublelinechar  = "\x1f" . "doublelinechar" . "\x1f";
 my $doublelinecharM = "\x1f" . "doublelinecharM". "\x1f";
 my $Zbottom         = "\x1f" . "Zbottom"     . "\x1f";
 my $Ztop            = "\x1f" . "Ztop"        . "\x1f";
-my $notesymbol      = "\x1f" . "notesymbol"  . "\x1f"; 
+my $notesymbol      = "\x1f" . "notesymbol"  . "\x1f";
 my $filledcircle    = "\x1f" . "filledcircle". "\x1f";
 my $rightarrow      = "\x1f" . "rightarrow"  . "\x1f";
 my $cursorpos       = "\x1f" . "cursorpos"   . "\x1f";
@@ -732,31 +732,31 @@ my $centerchar      = "\x1f" . "center"      . "\x1f";
 
 # double sized characters - Classic Font
 my $doubleClassic = {
-	
+
 	"(" => [ $slash,
 			 $backslash ],
-	
+
 	")" => [ $hardspace . $backslash,
 			 $hardspace . $slash ],
-	
+
 	"[" => [ $rightvbar . $toplinechar,
 			 $rightvbar . '_' ],
-	
+
 	"]" => [ $toplinechar . $leftvbar,
 			 '_' . $leftvbar],
-	
+
 	"<" => [ '/',
 			 $backslash ],
-	
+
 	">" => [ $backslash,
 			 '/' ],
-	
+
 	"{" => [ '(',
 			 '(' ],
-	
+
 	"}" => [ ')',
 			 ')' ],
-	
+
 	'"' => [ '\'\'',
 			 $hardspace . $hardspace],
 	"%" => [ 'o/', '/o'],
@@ -770,48 +770,48 @@ my $doubleClassic = {
 	";" => [ '.', ',' ],
 	"," => [ $hardspace, '/' ],
 	"`" => [ $backslash, $hardspace ],
-	
+
 	"_" => [ $hardspace . $hardspace, '_' . '_' ],
-	
+
 	"+" => [ '_' . 'L', $hardspace . $leftvbar],
-	
+
 	"*" => [ '**', '**'],
-	
+
 	'~' => [ $slash . $toplinechar, $hardspace . $hardspace ],
-	
+
 	"@" => [ $slash . 'd',
 			 $backslash . '_' ],
-	
+
 	"#" => [ '_' . $Zbottom . $Zbottom, $Ztop . $Ztop . $toplinechar ],
-	
+
 	'$' => [ '$$', '$$' ],
-	
+
 	"|" => [ '|',
 			 '|' ],
-	
+
 	"-" => [ '_' . '_',
 			 $hardspace . $hardspace ],
-	
+
 	"/" => [ $hardspace . $slash,
 			 $slash . $hardspace ],
-	
+
 	"\\" => [ $backslash . $hardspace,
 			  $hardspace . $backslash ],
-	
+
 	"=" => ['--'
 		   ,'--'],
-	
+
 	'?' => [$toplinechar . $Ztop,
 		,' .'],
 
 	$cursorpos => ['',''],
-		
+
 	$notesymbol => [ $leftvbar . $backslash , $filledcircle . " "],
 
 	$rightarrow => [ ' _' . $backslash , $hardspace . $toplinechar . '/'],
 
 	$hardspace => [ $hardspace, $hardspace],
-	
+
 	$centerchar => [$centerchar,$centerchar]
 	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
 	,'1' => [$hardspace . $slash . $leftvbar , $hardspace . $hardspace . $leftvbar]
@@ -856,31 +856,31 @@ my $doubleClassic = {
 
 # double sized characters - Modern Font
 my $doubleModern = {
-	
+
 	"(" => [ $slashM,
 			 $islash ],
-	
+
 	")" => [ $backslashM,
 			 $ibackslash ],
-	
+
 	"[" => [ $rightvbar . $toplinechar,
 			 $rightvbar . '_' ],
-	
+
 	"]" => [ $toplinechar . $leftvbar,
 			 '_' . $leftvbar],
-	
+
 	"<" => [ '/',
 			 '\\' ],
-	
+
 	">" => [ '\\',
 			 '/' ],
-	
+
 	"{" => [ '(',
 			 '(' ],
-	
+
 	"}" => [ ')',
 			 ')' ],
-	
+
 	'"' => [ '\'\'',
 			 $hardspace . $hardspace],
 	"%" => [ 'o/', '/o'],
@@ -894,48 +894,48 @@ my $doubleModern = {
 	";" => [ '.', ',' ],
 	"," => [ $hardspace, '/' ],
 	"`" => [ $backslashM, $hardspace ],
-	
+
 	"_" => [ $hardspace . $hardspace, '_' . '_' ],
-	
+
 	"+" => [ '_' . 'L', $hardspace . $leftvbar],
-	
+
 	"*" => [ '**', '**'],
-	
+
 	'~' => [ $slashM . $toplinechar, $hardspace . $hardspace ],
-	
+
 	"@" => [ $slashM . 'd',
 			 $backslashM . '_' ],
-	
+
 	"#" => [ '_' . $Zbottom . $Zbottom, $Ztop . $Ztop . $toplinechar ],
-	
+
 	'$' => [ '$$', '$$' ],
-	
+
 	"|" => [ '|',
 			 '|' ],
-	
+
 	"-" => [ '_' . '_',
 			 $hardspace . $hardspace ],
-	
+
 	"/" => [ $hardspace . $slashM,
 			 $slashM . $hardspace ],
-	
+
 	"\\" => [ $backslashM . $hardspace,
 			  $hardspace . $backslashM ],
-	
+
 	"=" => ['--'
 		   ,'--'],
-	
+
 	'?' => [$toplinechar . $Ztop,
 		,' .'],
 
 	$cursorpos => ['',''],
-		
+
 	$notesymbol => [ $leftvbar . $backslash , $filledcircle . " "],
 
 	$rightarrow => [ ' _' . $backslashM , $hardspace . $toplinechar . '/'],
 
 	$hardspace => [ $hardspace, $hardspace],
-	
+
 	$centerchar => [$centerchar,$centerchar]
 	,'0' => [$hardspace . $slashM . $backslashM, $hardspace . $islash . $ibackslash]
 	,'1' => [$hardspace . '\'' . $leftvbar , $hardspace . '_' . 'L']
@@ -973,7 +973,7 @@ my $doubleModern = {
 	,'X' => [$islash . $ibackslash , $slashM . $backslashM]
 	,'Y' => [$islash . $ibackslash, $rightvbar . $leftvbar]
 	,'Z' => [$toplinechar . '/' , '/' . '_']
-	,'Æ' => [$hardspace . $slashM . $backslashM . $doublelinecharM , 
+	,'Æ' => [$hardspace . $slashM . $backslashM . $doublelinecharM ,
              $rightvbar . $toplinechar . $toplinechar . 'L']
 	,'Ø' => [$slashM . $toplinechar . 'X', $backslashM . $Zbottom . $slashM]
 	,'Ð' => [$rightvbar . $doublelinecharM . $backslashM , $rightvbar . '_'  . $slashM]
@@ -982,7 +982,7 @@ my $doubleModern = {
 sub addDoubleChar {
 	my ($char,$doublechar) = @_;
 
-	if (!exists $doubleClassic->{$char} && ref($doublechar) eq 'ARRAY' 
+	if (!exists $doubleClassic->{$char} && ref($doublechar) eq 'ARRAY'
 		&& Slim::Display::Text::lineLength($doublechar->[0]) == Slim::Display::Text::lineLength($doublechar->[1])) {
 
 		$doubleClassic->{$char} = $doublechar;
@@ -1011,8 +1011,8 @@ sub addDoubleChar {
 sub updateDoubleChar {
 	my ($char,$doublechar) = @_;
 
-	if (ref($doublechar) eq 'ARRAY' 
-		&& Slim::Display::Text::lineLength($doublechar->[0]) == 
+	if (ref($doublechar) eq 'ARRAY'
+		&& Slim::Display::Text::lineLength($doublechar->[0]) ==
 		   Slim::Display::Text::lineLength($doublechar->[1])) {
 
 		$doubleClassic->{$char} = $doublechar;
@@ -1035,7 +1035,7 @@ sub updateDoubleChar {
 }
 
 # the font format string
-#my $double = 
+#my $double =
 	# all digits are 3 chars wide
 #	'0/~\01 /[12 ~)23 =)34]_[45]=~56 < 67 ~?78(=)89(=)9' .
 #	'0\_/01  [12 <_23 _)34  [45 _)56(_)67 / 78(_)89 / 9' .
@@ -1046,7 +1046,7 @@ sub updateDoubleChar {
 #	'K]\KL]_LM]  [MN] [NO\_/OP]  PQ\_xQR] \RS_)S' .
 #	'T~|~TU] [UV[]VW[  ]WX\/XY\/YZ~?Z' .
 #	'T | TU]_[UV\/VW\/\/WX/\XY [YZ<_Z';
-	
+
 #my $kernL = '\~\]\?\_\<\=';
 #my $kernR = '\~\[\<\_\\\\/';
 
@@ -1064,10 +1064,10 @@ sub doubleSize {
 	my $line2 = $undoubled;
 
 	my $doublechars = preferences('server')->client($client)->get('largeTextFont') ? $doubleModern : $doubleClassic;
-	
+
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
-	
+
 	main::INFOLOG && $log->info("doubling: $line2");
 
 	$line2 =~ tr/\x{00E6}\x{00F8}\x{00F0}/\x{00C6}\x{00D8}\x{00D0}/;
@@ -1075,11 +1075,11 @@ sub doubleSize {
 
 	my $lastch1 = "";
 	my $lastch2 = "";
-   
+
 	my $lastchar = "";
-	
+
 	my $split = Slim::Display::Text::splitString($line2);
-	
+
 	foreach my $char (@$split) {
 
 		if (exists($doublechars->{$char}) || exists($doublechars->{Slim::Utils::Text::matchCase($char)})) {
@@ -1095,7 +1095,7 @@ sub doubleSize {
 			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
 
 				if (($lastch1 =~ $kernL && $char1 =~ $kernR) || ($lastch2 =~ $kernL && $char2 =~ $kernR)) {
-					
+
 					if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
 
 						# Special cases to exclude kerning between
@@ -1122,7 +1122,7 @@ sub doubleSize {
 
 		$lastchar = $char;
 	}
-	
+
 	return ($newline1, $newline2);
 }
 

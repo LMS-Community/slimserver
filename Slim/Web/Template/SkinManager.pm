@@ -237,10 +237,6 @@ sub addSkinTemplate {
 
 		# we usually don't change templates while running
 		STAT_TTL  => main::NOBROWSECACHE ? 1 : 3600,
-
-		VARIABLES => {
-			hasMediaSupport => main::IMAGE && main::MEDIASUPPORT,
-		},
 	});
 
 	my $versionFile = catfile($class->templateCacheDir(), md5_hex("$::VERSION/$::REVISION"));
@@ -363,42 +359,5 @@ sub _getSkinDirs {
 sub templateCacheDir {
 	return catdir( $prefs->get('cachedir'), 'templates' );
 }
-
-
-=head2 detectBrowser ( )
-
-Attempts to figure out what the browser is by user-agent string identification
-
-=cut
-
-sub detectBrowser {
-	my ($class, $request) = @_;
-
-	my $return = 'unknown';
-
-	my $ua = $request->header('user-agent') || return $return;
-
-	if ($ua =~ /Firefox/) {
-		$return = 'Firefox';
-	} elsif ($ua =~ /Opera/) {
-		$return = 'Opera';
-	} elsif ($ua =~ /Chrome/) {
-		$return = 'Chrome';
-	} elsif ($ua =~ /Safari/) {
-		$return = 'Safari';
-	} elsif ($ua =~ /MSIE 7/) {
-		$return = 'IE7';
-	} elsif (
-		$ua =~ /MSIE/   && # does it think it's IE
-        $ua !~ /Opera/  && # make sure it's not Opera
-        $ua !~ /Linux/  && # make sure it's not Linux
-        $ua !~ /arm/)      # make sure it's not a Nokia tablet
-	{
-		$return = 'IE';
-	}
-
-	return $return;
-}
-
 
 1;

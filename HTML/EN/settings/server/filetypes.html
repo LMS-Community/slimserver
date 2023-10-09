@@ -2,20 +2,12 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSAUDIO" desc="SETUP_DISABLEDEXTENSIONSAUDIO_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio | html %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSPLAYLIST" desc="SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist %]" size="40">
+			<input type="text"class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist | html %]" size="40">
 		[% END %]
-
-		[% IF !novideo; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSVIDEO" desc="SETUP_DISABLEDEXTENSIONSVIDEO_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsvideo" id="disabledextensionsvideo" value="[% disabledextensionsvideo %]" size="40">
-		[% END; END %]
-
-		[% IF !noimage; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSIMAGES" desc="SETUP_DISABLEDEXTENSIONSIMAGES_DESC" %]
-			<input type=text class="stdedit" name="disabledextensionsimages" id="disabledextensionsimages" value="[% disabledextensionsimages %]" size="40">
-		[% END; END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_GROUP_FORMATS_CONVERSION" desc="SETUP_GROUP_FORMATS_CONVERSION_DESC" %]
@@ -45,7 +37,7 @@
 				<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]" [% format.binaries.size() <= 1 && "disabled" %]>
 
 				[%- FOREACH value = format.binaries -%]
-					<option [% IF loop.index == format.enabled %]selected [% END %]value="[% value %]">[% value | getstring %]</option>
+					<option [% IF loop.index == format.enabled %]selected [% END %]value="[% value | html %]">[% value | getstring %]</option>
 				[%- END -%]
 
 				</select>

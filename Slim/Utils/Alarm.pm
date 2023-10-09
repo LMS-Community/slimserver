@@ -463,7 +463,7 @@ sub findNextTime {
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
 					my $lastAlarmTime = $client->alarmData->{lastAlarmTime};
-					defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime)});
+					main::DEBUGLOG && $isDebug && defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime)});
 					if (! defined $lastAlarmTime || $absAlarmTime != $lastAlarmTime) {
 						$self->{_nextDue} = $absAlarmTime;
 						return $absAlarmTime;
@@ -1978,8 +1978,15 @@ sub _alarmEnd {
 	# Don't respond to requests that we created ourselves
 	my $source = $request->source;
 	if ($source && ($source eq 'ALARM' || $source eq 'PLUGIN_RANDOMPLAY')) {
-		main::DEBUGLOG && $isDebug && $log->debug('Ignoring self-created request');
+		main::DEBUGLOG && $isDebug && $log->debug("Ignoring self-created request\n", Data::Dump::dump($request));
 		return;
+	}
+	elsif ($source && $source !~ m|^/[a-z0-9]+/slim/request| && $source =~ m|^/[a-z0-9]+/slim/\w+/(?:[0-9a-f]{2}:){5}[0-9a-f]{2}|i) {
+		main::DEBUGLOG && $isDebug && $log->debug("Ignoring notification to subscriber\n", Data::Dump::dump($request));
+		return;
+	}
+	elsif (main::DEBUGLOG && $isDebug) {
+		$log->debug("Unknown source, fire the event\n", Data::Dump::dump($request));
 	}
 
 	# power always ends the alarm, whether snoozing or not

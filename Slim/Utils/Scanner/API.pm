@@ -10,20 +10,20 @@ use Slim::Utils::Log ();
 =head1 SYNOPSIS
 
 	use Slim::Utils::Scanner::API;
-	
+
 	Slim::Utils::Scanner::API->onNewTrack( {
 		want_object => 1,
 		cb => sub {
 			my ( $track, $url ) = @_;
-			
+
 			print "New track scanned: " . $track->title . "\n";
 		},
 	} );
-	
+
 	Slim::Utils::Scanner::API->onFinished( {
 		cb => sub {
 			my $changeCount = shift;
-			
+
 			print "Scan finished, $changeCount changes made\n";
 		},
 	} );
@@ -53,7 +53,7 @@ my @onFinished;
 
 sub onNewTrack {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onNewTrack, $opts;
 }
 
@@ -67,7 +67,7 @@ See onNewTrack for options information.
 
 sub onDeletedTrack {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onDeletedTrack, $opts;
 }
 
@@ -81,44 +81,8 @@ See onNewTrack for options information.
 
 sub onChangedTrack {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onChangedTrack, $opts;
-}
-
-=head2 Slim::Utils::Scanner::API->onNewImage( { cb => $cb } )
-
-Register a handler that will be called when a new image is scanned.
-
-The callback is passed an image hashref with all scan data. Note that images differ
-from tracks, and there is no support for Slim::Schema objects for images. To alter the
-data, call Slim::Schema::Image->updateOrCreateFromHash($hashref).
-
-Multiple handlers may be registered, and they are called in the order they were registered.
-
-=cut
-
-sub onNewImage {
-	my ( $class, $opts ) = @_;
-	
-	push @onNewImage, $opts;
-}
-
-=head2 Slim::Utils::Scanner::API->onNewVideo( { cb => $cb } )
-
-Register a handler that will be called when a new video is scanned.
-
-The callback is passed a video hashref with all scan data. Note that videos differ
-from tracks, and there is no support for Slim::Schema objects for videos. To alter the
-data, call Slim::Schema::Video->updateOrCreateFromHash($hashref).
-
-Multiple handlers may be registered, and they are called in the order they were registered.
-
-=cut
-
-sub onNewVideo {
-	my ( $class, $opts ) = @_;
-	
-	push @onNewVideo, $opts;
 }
 
 =head2 Slim::Utils::Scanner::API->onNewPlaylist( \%options )
@@ -135,7 +99,7 @@ Playlist objects should be avoided when possible to avoid slowing down the scann
 
 sub onNewPlaylist {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onNewPlaylist, $opts;
 }
 
@@ -152,7 +116,7 @@ and then adds it back as a new playlist.
 
 sub onDeletedPlaylist {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onDeletedPlaylist, $opts;
 }
 
@@ -168,7 +132,7 @@ the artwork precaching phase.
 
 sub onFinished {
 	my ( $class, $opts ) = @_;
-	
+
 	push @onFinished, $opts;
 }
 
@@ -176,20 +140,20 @@ sub onFinished {
 
 sub _makeDispatcher {
 	my ( $handlers, $objectClass, $type ) = @_;
-	
+
 	return 0 unless scalar @{$handlers};
-	
+
 	return sub {
 		my $opts = shift; # { id, url, obj (sometimes) }
-		
+
 		for my $h ( @{$handlers} ) {
 			if ( $opts->{id} ) { # Tracks, with object support
 				my $arg1 = $opts->{id};
-						
+
 				if ( $h->{want_object} ) {
 					$arg1 = $opts->{obj} ||= Slim::Schema->rs($objectClass)->find($arg1);
 				}
-			
+
 				eval { $h->{cb}->( $arg1, $opts->{url} ) };
 				if ( $@ ) {
 					my $method = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} ) : 'unk';
@@ -209,12 +173,12 @@ sub _makeDispatcher {
 
 sub _makeFinishedDispatcher {
 	my $handlers = shift;
-	
+
 	return 0 unless scalar @{$handlers};
-	
+
 	return sub {
 		my $count = shift;
-		
+
 		for my $h ( @{$handlers} ) {
 			eval { $h->{cb}->($count) };
 			if ( $@ ) {
@@ -225,7 +189,7 @@ sub _makeFinishedDispatcher {
 	};
 }
 
-sub getHandlers {	
+sub getHandlers {
 	return {
 		onNewTrackHandler        => _makeDispatcher( \@onNewTrack, 'Track', 'onNewTrack' ),
 		onDeletedTrackHandler    => _makeDispatcher( \@onDeletedTrack, 'Track', 'onDeletedTrack' ),

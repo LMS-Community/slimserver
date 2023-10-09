@@ -5,29 +5,17 @@
 <div id="viewSelect">
 
 	[% IF orderByList %]
-	
+
 		[% IF NOT noLabel %]<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>[% END %]
-	
+
 		<select class="stdedit" name="orderBy" id="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
-	
+
 		[% FOREACH orderType = orderByList.keys.sort %]
 			<option [% IF orderByList.$orderType == orderBy %]selected[% END %] value="[% orderByList.$orderType %]">[% orderType | string %]</option>
 		[% END %]
-	
+
 		</select>
-	
-	[% END %]
-	
-	[% IF 0 %]
-	[% IF controlGraphics && hasArtwork %]
-		[% IF artwork %]<a href="javascript:toggleGalleryView(0);"><img src="[% webroot %]html/images/list.png" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'></a>
-		[% ELSE %]<a href="javascript:toggleGalleryView(1);"><img src="[% webroot %]html/images/gallery.png" alt='[% "SWITCH_TO_GALLERY" | string %]' title='[% "SWITCH_TO_GALLERY" | string %]'></a>
-		[% END %]
-	[% ELSIF hasArtwork %]
-		([% IF artwork -%]<a href="javascript:toggleGalleryView(0);">[% "SWITCH_TO_LIST" | string %]</a>
-		[%- ELSE -%]<a href="javascript:toggleGalleryView(1);">[% "SWITCH_TO_GALLERY" | string %]</a>
-		[%- END %])
-	[% END %]
+
 	[% END %]
 
 </div>

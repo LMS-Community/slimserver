@@ -133,7 +133,6 @@ sub new_socket {
 
 			my %args = @_;
 
-			# Failed. Try again with an explicit SNI.
 			$args{SSL_hostname} //= $args{Host};
 			$args{SSL_verify_mode} //= Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
 

@@ -54,9 +54,9 @@ sub _cached {
 		}
 		elsif ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,
-			# unless it's a /music|/video|/image path, where we don't care if
+			# unless it's a /music path, where we don't care if
 			# it has changed.  The scanner should deal with changes there.
-			if ( $path !~ m{^(?:music|image|video)/} && -r $orig ) {
+			if ( $path !~ m{^music/} && -r $orig ) {
 				my $mtime = (stat _)[9];
 				if ( $cached->{mtime} != $mtime ) {
 					main::INFOLOG && $isInfo && $log->info( "  current mtime $mtime != cached mtime " . $cached->{mtime} );
@@ -104,7 +104,7 @@ sub artworkRequest {
 		$response->content_type($ct);
 
 		# Cache music URLs for 1 year, others for 1 day
-		my $exptime = $path =~ /^(?:music|image|video)/ ? ONE_YEAR : ONE_DAY;
+		my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;
 
 		$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 		$response->expires( time() + $exptime );
@@ -146,7 +146,7 @@ sub artworkRequest {
 
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
-	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image|video)/([0-9a-f]{8})/} ) {
+	elsif ( $path =~ m{^(music)/([^/]+)/} ) {
 		my ($type, $id) = ($1, $2);
 
 		# Special case:
@@ -196,15 +196,6 @@ sub artworkRequest {
 
 		if ($fullpath) {
 			# nothing to do here!
-		}
-		elsif ( $type eq 'image' ) {
-			$sth = Slim::Schema->dbh->prepare_cached( qq{
-				SELECT url, hash FROM images WHERE hash = ?
-			} );
-		}
-		elsif ( $type eq 'video' ) {
-			# do nothing here - just don't follow the other routes
-			# XXX support resizing video on demand
 		}
 		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
 			# ID is a coverid
@@ -270,9 +261,6 @@ sub artworkRequest {
 			# Invalid ID or no cover available, use generic CD image
 			if ($type eq 'image') {
 				$path = "html/images/icon_photo_";
-			}
-			elsif ($type eq 'video') {
-				$path = "html/images/icon_video_";
 			}
 			elsif ($id =~ /^-/) {
 				$path = 'html/images/radio_';

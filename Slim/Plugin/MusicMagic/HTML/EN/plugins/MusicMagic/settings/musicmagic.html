@@ -3,11 +3,11 @@
 	[% IF prefs.exists('pref_musicip') %]
 		[% WRAPPER setting title="USE_MUSICMAGIC" desc="SETUP_MUSICMAGIC_DESC" %]
 			<select class="stdedit" name="pref_musicip" id="pref_musicip">
-	
+
 				<option [% IF NOT prefs.pref_musicip %]selected [% END %]value="0">[% 'DONT_USE_MUSICMAGIC' | getstring %]</option>
 				<option [% IF prefs.pref_musicip == 2 %]selected [% END %]value="2">[% 'MUSICIP_MIXABLE_CHECK' | getstring %]</option>
 				<option [% IF prefs.pref_musicip == 1 %]selected [% END %]value="1">[% 'MUSICIP_READSONGDATA' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 	[% END %]
@@ -16,65 +16,65 @@
 		[% IF prefs.exists('pref_player_settings') %]
 			[% WRAPPER settingGroup title="SETUP_MMMPLAYERSETTINGS" desc="SETUP_MMMPLAYERSETTINGS_DESC" %]
 				<select class="stdedit" name="pref_player_settings" id="player_settings">
-		
+
 					<option [% IF NOT prefs.pref_player_settings %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
 					<option [% IF prefs.pref_player_settings %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
-				
+
 				</select>
-	
+
 			[% END %]
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_SIZE" desc="SETUP_MIX_SIZE_DESC" %]
 			<select class="stdedit" name="pref_mix_type" id="mix_type">
-	
+
 				<option [% IF prefs.pref_mix_type == 0 %]selected [% END %]value="0">[% 'MMMMIXTYPE_TRACKS' | getstring %]</option>
 				<option [% IF prefs.pref_mix_type == 1 %]selected [% END %]value="1">[% 'MMMMIXTYPE_MIN' | getstring %]</option>
 				<option [% IF prefs.pref_mix_type == 2 %]selected [% END %]value="2">[% 'MMMMIXTYPE_MBYTES' | getstring %]</option>
-			
+
 			</select>
-	
-			<input type="text" class="stdedit" name="pref_mix_size" id="mix_size" value="[% prefs.pref_mix_size %]" size="5">
+
+			<input type="text" class="stdedit" name="pref_mix_size" id="mix_size" value="[% prefs.pref_mix_size | html %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_STYLE" desc="SETUP_MIX_STYLE_DESC" %]
-			<input type="text" class="stdedit sliderInput_0_200" name="pref_mix_style" id="mix_style" value="[% prefs.pref_mix_style %]" size="5">
+			<input type="text" class="stdedit sliderInput_0_200" name="pref_mix_style" id="mix_style" value="[% prefs.pref_mix_style | html %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_VARIETY" desc="SETUP_MIX_VARIETY_DESC" %]
-			<input type="text" class="stdedit sliderInput_0_9" name="pref_mix_variety" id="mix_variety" value="[% prefs.pref_mix_variety %]" size="5">
+			<input type="text" class="stdedit sliderInput_0_9" name="pref_mix_variety" id="mix_variety" value="[% prefs.pref_mix_variety | html %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_GENRE" desc="SETUP_MIX_GENRE_DESC" %]
 			<select class="stdedit" name="pref_mix_genre" id="mix_genre">
-	
+
 				<option [% IF NOT prefs.pref_mix_genre %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
 				<option [% IF prefs.pref_mix_genre %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
-			
+
 			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_REJECT_SIZE" desc="SETUP_REJECT_SIZE_DESC" %]
 			<select class="stdedit" name="pref_reject_type" id="reject_type">
-	
+
 				<option [% IF prefs.pref_reject_type == 0 %]selected [% END %]value="0">[% 'MMMMIXTYPE_TRACKS' | getstring %]</option>
 				<option [% IF prefs.pref_reject_type == 1 %]selected [% END %]value="1">[% 'MMMMIXTYPE_MIN' | getstring %]</option>
 				<option [% IF prefs.pref_reject_type == 2 %]selected [% END %]value="2">[% 'MMMMIXTYPE_MBYTES' | getstring %]</option>
-			
+
 			</select>
-	
-			<input type="text" class="stdedit" name="pref_reject_size" id="reject_size" value="[% prefs.pref_reject_size %]" size="5">
+
+			<input type="text" class="stdedit" name="pref_reject_size" id="reject_size" value="[% prefs.pref_reject_size | html %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_FILTER" desc="SETUP_MIX_FILTER_DESC" %]
 			<select class="stdedit" name="pref_mix_filter" id="mix_filter">
-	
+
 			[% FOREACH option = filters.keys %]
-	
-				<option [% IF prefs.pref_mix_filter == option %]selected [% END %]value="[% option %]">[% filters.item(option) %]</option>
-	
+
+				<option [% IF prefs.pref_mix_filter == option %]selected [% END %]value="[% option | html %]">[% filters.item(option) %]</option>
+
 			[%- END -%]
-			
+
 			</select>
 		[% END %]
 
@@ -83,22 +83,22 @@
 	[% WRAPPER settingSection %]
 		[% IF prefs.exists('pref_scan_interval') %]
 			[% WRAPPER settingGroup title="SETUP_MUSICMAGICSCANINTERVAL" desc="SETUP_MUSICMAGICSCANINTERVAL_DESC" %]
-				<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval %]" size="5">
+				<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval | html %]" size="5">
 			[% END %]
 		[% END %]
 
 		[% IF prefs.exists('pref_port') %]
 			[% WRAPPER settingGroup title="SETUP_MMSPORT" desc="SETUP_MMSPORT_DESC" %]
-				<input type="text" class="stdedit" name="pref_port" id="port" value="[% prefs.pref_port %]" size="5">
+				<input type="text" class="stdedit" name="pref_port" id="port" value="[% prefs.pref_port | html %]" size="5">
 			[% END %]
 		[% END %]
 
 
 		[% IF prefs.exists('pref_playlist_prefix') %]
 			[% WRAPPER settingGroup title="SETUP_MUSICMAGICPLAYLISTFORMAT" desc="SETUP_MUSICMAGICPLAYLISTFORMAT_DESC" %]
-				[% "SETUP_PLAYLISTPREFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix %]" size="40">
+				[% "SETUP_PLAYLISTPREFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix | html %]" size="40">
 				<br>
-				[% "SETUP_PLAYLISTSUFFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix %]" size="40">
+				[% "SETUP_PLAYLISTSUFFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix | html %]" size="40">
 			[% END %]
 		[% END %]
 	[% END %]

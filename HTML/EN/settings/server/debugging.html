@@ -9,7 +9,7 @@
 			[% FOREACH option = logging_groups %]
 			<option value="[% option.key %]">[% option.value.label | string %]</option>
 			[%- END -%]
-		
+
 		</select>
 	[% END %]
 
@@ -47,7 +47,7 @@
 		<select class="stdedit" name="[% category.name %]" id="[% category.name %]">
 
 		[%- FOREACH value = logLevels -%]
-			<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% "SETUP_DEBUG_LEVEL_$value" | string %]</option>
+			<option [% IF value == category.current %]selected[% END %] value="[% value | html %]">[% "SETUP_DEBUG_LEVEL_$value" | string %]</option>
 		[%- END -%]
 
 		</select>

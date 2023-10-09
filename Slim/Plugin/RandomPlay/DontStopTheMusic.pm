@@ -30,6 +30,11 @@ sub init {
 		mixWithGenres('track', @_);
 	});
 
+	Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES', sub {
+		my ($client, $cb) = @_;
+		$cb->($client, ['randomplay://track']);
+	});
+
 	Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_TRACK', sub {
 		my ($client, $cb) = @_;
 		$client->execute(['randomplaygenreselectall', 0]);
@@ -38,6 +43,11 @@ sub init {
 
 	Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES', sub {
 		mixWithGenres('album', @_);
+	});
+
+	Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES', sub {
+		my ($client, $cb) = @_;
+		$cb->($client, ['randomplay://album']);
 	});
 
 	Slim::Plugin::DontStopTheMusic::Plugin->registerHandler('PLUGIN_RANDOM_ALBUM_ITEM', sub {

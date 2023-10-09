@@ -269,12 +269,12 @@
 
 						[% FOREACH option = languageoptions.sort %]
 							[% IF !languageoptions.$option.search('\*') %]
-								<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option %]">[% languageoptions.$option %]</option>
+								<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option | html %]">[% languageoptions.$option %]</option>
 							[% END %]
 						[%- END -%]
 
 						[% IF !preferredLanguage %]
-							<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+							<option selected="selected" value="[% prefs.language | html %]">[% languageoptions.${prefs.language} %]</option>
 						[% END %]
 
 					</select>
@@ -332,14 +332,14 @@
 									<tr>
 										<td align="right" style="white-space:nowrap">[% "SETUP_SN_EMAIL" | string %][% stringCOLON %]&nbsp;</td>
 										<td>
-											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="30">
+											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email | html %]" size="30">
 											<p id="sn_result" style="color:red">&nbsp;</p>
 										</td>
 									</tr>
 									<tr>
 										<td align="right">[% "SETUP_SN_PASSWORD" | string %][% stringCOLON %]&nbsp;</td>
 										<td>
-											<input type="password" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="30">
+											<input type="password" name="sn_password" id="sn_password" value="[% prefs.sn_password | html %]" size="30">
 											<p><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></p>
 											<p id="">&nbsp;</p>
 										</td>
@@ -379,7 +379,7 @@
 					</div>
 					<div id="audiodirselector" class="folderselector" style="position:relative"></div>
 					<div>
-						<input type="text" name="mediadirs" id="audiodir" value="[% prefs.mediadirs %]" class="wz_path">
+						<input type="text" name="mediadirs" id="audiodir" value="[% prefs.mediadirs | html %]" class="wz_path">
 					</div>
 				</div>
 			</div>
@@ -394,7 +394,7 @@
 					</div>
 					<div id="playlistdirselector" class="folderselector"></div>
 					<div>
-						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="wz_path">
+						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir | html %]" class="wz_path">
 					</div>
 				</div>
 			</div>

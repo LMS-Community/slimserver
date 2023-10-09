@@ -1,25 +1,25 @@
 [% PROCESS settings/header.html %]
 	[% WRAPPER setting title="SETUP_WEBPROXY" desc="SETUP_WEBPROXY_DESC" %]
-		<input type=text class="stdedit" name="pref_webproxy" id="webproxy" value="[% prefs.pref_webproxy %]" size="40">
+		<input type="text"class="stdedit" name="pref_webproxy" id="webproxy" value="[% prefs.pref_webproxy | html %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_HTTPPORT" desc="SETUP_HTTPPORT_DESC" %]
-		<input type=text class="stdedit" name="pref_httpport" id="httpport" value="[% prefs.pref_httpport %]" size="15">
+		<input type="text"class="stdedit" name="pref_httpport" id="httpport" value="[% prefs.pref_httpport | html %]" size="15">
 	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_BUFFERSECS" desc="SETUP_BUFFERSECS_DESC" %]
-			<input type=text class="stdedit sliderInput_3_30_1" name="pref_bufferSecs" id="bufferSecs" value="[% prefs.pref_bufferSecs %]" size="15">
+			<input type="text"class="stdedit sliderInput_3_30_1" name="pref_bufferSecs" id="bufferSecs" value="[% prefs.pref_bufferSecs | html %]" size="15">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_REMOTESTREAMTIMEOUT" desc="SETUP_REMOTESTREAMTIMEOUT_DESC" %]
-			<input type=text class="stdedit sliderInput_1_60" name="pref_remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.pref_remotestreamtimeout %]" size="15">
+			<input type="text"class="stdedit sliderInput_1_60" name="pref_remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.pref_remotestreamtimeout | html %]" size="15">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MAXWMARATE" desc="SETUP_MAXWMARATE_DESC" %]
 			<select class="stdedit" name="pref_maxWMArate" id="maxWMArate">
 			[% FOREACH option = ['9999', '32', '64', '96', '128', '160', '192', '256', '320'] %]
-				<option [% IF prefs.pref_maxWMArate == option %]selected [% END %]value="[% option %]">
+				<option [% IF prefs.pref_maxWMArate == option %]selected [% END %]value="[% option | html %]">
 					[% IF option == 9999 %][% "NO_LIMIT" | string %][% ELSE %][% option %] [% 'KBPS' | string %][% END %]</option>
 			[%- END -%]
 			</select>
@@ -27,7 +27,7 @@
 
 		[% IF prefs.exists('pref_syncStartDelay') %]
 			[% WRAPPER settingGroup title="SETUP_SYNCSTARTDELAY" desc="SETUP_SYNCSTARTDELAY_DESC" %]
-				<input type=text class="stdedit" name="pref_syncStartDelay" id="syncStartDelay" value="[% prefs.pref_syncStartDelay %]" size="15">
+				<input type="text"class="stdedit" name="pref_syncStartDelay" id="syncStartDelay" value="[% prefs.pref_syncStartDelay | html %]" size="15">
 			[% END %]
 		[% END %]
 
@@ -35,23 +35,23 @@
 
 	[% IF prefs.exists('pref_tcpReadMaximum') || prefs.exists('pref_tcpWriteMaximum') || prefs.exists('pref_udpChunkSize') %]
 		[% WRAPPER settingSection %]
-			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]	
+			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]
 
 			[% IF prefs.exists('pref_tcpReadMaximum') %]
 				[% WRAPPER settingGroup title="SETUP_TCPREADMAXIMUM" desc="" %]
-					<input type="text" class="stdedit" name="pref_tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.pref_tcpReadMaximum %]" size="15">		
+					<input type="text" class="stdedit" name="pref_tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.pref_tcpReadMaximum | html %]" size="15">
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_tcpWriteMaximum') %]
 				[% WRAPPER settingGroup title="SETUP_TCPWRITEMAXIMUM" desc="" %]
-					<input type="text" class="stdedit" name="pref_tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.pref_tcpWriteMaximum %]" size="15">		
+					<input type="text" class="stdedit" name="pref_tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.pref_tcpWriteMaximum | html %]" size="15">
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_udpChunkSize') %]
 				[% WRAPPER settingGroup title="SETUP_UDPCHUNKSIZE" desc="SETUP_UDPCHUNKSIZE_DESC" %]
-					<input type="text" class="stdedit" name="pref_udpChunkSize" id="udpChunkSize" value="[% prefs.pref_udpChunkSize %]" size="15">
+					<input type="text" class="stdedit" name="pref_udpChunkSize" id="udpChunkSize" value="[% prefs.pref_udpChunkSize | html %]" size="15">
 				[% END %]
 			[% END %]
 		[% END %]

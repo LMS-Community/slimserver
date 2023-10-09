@@ -449,7 +449,7 @@ sub songElapsedSeconds {
 		$songElapsed = $elapsedSeconds;
 	}
 
-	# If we are disconnected and the only player or not master, elapsed shall not progress 
+	# If we are disconnected and the only player or not master, elapsed shall not progress
 	# anymore otherwise, extrapolate value to not confuse other players
 	if ($client->isPlaying(1) && (!$client->disconnected() || ($client->isSynced() && Slim::Player::Sync::isMaster($client)))) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
@@ -667,7 +667,7 @@ sub directHeaders {
 
 			} elsif ($client->contentTypeSupported($controller->song->streamformat)) {
 
-				# If we redirected (Live365), update the original URL with the metadata from the real URL
+				# If we redirected, update the original URL with the metadata from the real URL
 				if ( my $oldURL = delete $redirects->{ $url } ) {
 
 					$controller->song->bitrate($bitrate) if $bitrate;

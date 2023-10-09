@@ -149,7 +149,6 @@ sub init {
 		# when upgrading from SBS to LMS let's check the additional tables,
 		# as the schema numbers might be overlapping, not causing a re-build
 		$dbh->do('SELECT id FROM images LIMIT 1') || die $dbh->errstr;
-		$dbh->do('SELECT id FROM videos LIMIT 1') || die $dbh->errstr;
 	};
 
 	# If we couldn't select our new 'name' column, then drop the
@@ -903,11 +902,19 @@ sub _createOrUpdateAlbum {
 
 	if ( !$create && $track ) {
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
+		my $differentTitle = Slim::Utils::Text::ignoreCase($title, 1) ne $albumHash->{titlesearch};
 
 		# Bug: 4140
-		# If the track is from a FLAC cue sheet, the original entry
-		# will have a 'No Album' album. See if we have a real album name.
-		if ( $title && $albumHash->{title} && $albumHash->{title} eq $noAlbum && $title ne $noAlbum ) {
+		# If the track is from a FLAC cue sheet, the original entry will have a 'No Album' album. See if we have a real album name.
+		# If the album name has changed in other ways, we'll have to see whether the new name already exists.
+		# But don't rescan with online libraries - we're handling them in the Online Library integration importer.
+		if (
+			!$albumHash->{extid} && $title && $albumHash->{title}
+			&& ( ($albumHash->{title} eq $noAlbum && $title ne $noAlbum) || $differentTitle )
+		) {
+			# https://github.com/Logitech/slimserver/issues/547
+			# check whether new album already exists if we're changing album title
+			$albumId = $albumHash->{id} if $differentTitle;
 			$create = 1;
 		}
 	}
@@ -1028,6 +1035,12 @@ sub _createOrUpdateAlbum {
 				push @{$search}, 'albums.extid = ?';
 				push @{$values}, $extId;
 				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for External Album Id: %s", $extId));
+			}
+
+			if ($albumId) {
+				push @{$search}, 'albums.id != ?';
+				push @{$values}, $albumId;
+				main::DEBUGLOG && $isDebug && $log->debug("-- Checking whether we need to merge existing albums");
 			}
 
 			my $checkContributor;
@@ -1372,22 +1385,31 @@ sub _createYear {
 	}
 }
 sub _createComments {
-	my ($self, $comments, $trackId) = @_;
+	my ($self, $comments, $trackId, $create) = @_;
 
 	if ( $comments ) {
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 
+		if (!$create) {
+			my $sth_delete = $dbh->prepare_cached( qq{
+				DELETE FROM comments
+				WHERE track = ?
+			} );
+
+			$sth_delete->execute( $trackId );
+		}
+
 		# Add comments if we have them:
-		my $sth = $dbh->prepare_cached( qq{
-			REPLACE INTO comments
+		my $sth_insert = $dbh->prepare_cached( qq{
+			INSERT INTO comments
 			(track, value)
 			VALUES
 			(?, ?)
 		} );
 
 		for my $comment (@{$comments}) {
-			$sth->execute( $trackId, $comment );
+			$sth_insert->execute( $trackId, $comment );
 
 			main::DEBUGLOG && $log->is_debug && $log->debug("-- Track has comment '$comment'");
 		}
@@ -1674,7 +1696,7 @@ sub _newTrack {
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
 
 	### Create Comment rows
-	$self->_createComments($deferredAttributes->{'COMMENT'}, $trackId);
+	$self->_createComments($deferredAttributes->{'COMMENT'}, $trackId, 1);
 
 	$self->forceCommit if $args->{'commit'};
 
@@ -2612,27 +2634,7 @@ sub _preCheckAttributes {
 	}
 
 	# Munge the replaygain values a little
-	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
-
-		my $shortTag = $gainTag;
-		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
-
-		if (defined $attributes->{$gainTag}) {
-
-			$attributes->{$shortTag} = delete $attributes->{$gainTag};
-			$attributes->{$shortTag} =~ s/\s*dB//gi;
-			$attributes->{$shortTag} =~ s/\s//g;  # bug 15965
-			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
-
-			# Bug 15483, remove non-numeric gain tags
-			if ( $attributes->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
-				my $file = Slim::Utils::Misc::pathFromFileURL($url);
-				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
-
-				delete $attributes->{$shortTag};
-			}
-		}
-	}
+	processReplayGainTags($attributes, $url);
 
 	# We can take an array too - from vorbis comments, so be sure to handle that.
 	my $comments = [];
@@ -2657,10 +2659,6 @@ sub _preCheckAttributes {
 	# Look for tags we don't want to expose in comments, and splice them out.
 	for my $c ( @{$rawcomments} ) {
 		next unless defined $c;
-
-		# Bug 15630, ignore strings which have the utf8 flag on but are in fact invalid utf8
-		# XXX - I can no longer reproduce the issues reported in 15630, but it's causing bug 17863 -michael
-		#next if utf8::is_utf8($c) && !Slim::Utils::Unicode::looks_like_utf8($c);
 
 		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
 		if ($c =~ /SoundJam_CDDB_/ ||
@@ -2748,6 +2746,33 @@ sub _preCheckAttributes {
 	}
 
 	return ($attributes, $deferredAttributes);
+}
+
+sub processReplayGainTags {
+	my ($attributes, $url) = @_;
+
+	# Munge the replaygain values a little
+	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+
+		my $shortTag = $gainTag;
+		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
+
+		if (defined $attributes->{$gainTag}) {
+
+			$attributes->{$shortTag} = delete $attributes->{$gainTag};
+			$attributes->{$shortTag} =~ s/\s*dB//gi;
+			$attributes->{$shortTag} =~ s/\s//g;  # bug 15965
+			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
+
+			# Bug 15483, remove non-numeric gain tags
+			if ( $attributes->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($url);
+				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
+
+				delete $attributes->{$shortTag};
+			}
+		}
+	}
 }
 
 sub _createGenre {

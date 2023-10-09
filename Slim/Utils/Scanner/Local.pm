@@ -221,13 +221,12 @@ sub rescan {
 			AND             content_type $ctFilter
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
-		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
 		# 2. Files that are new and not in the database.
+		$log->error("Build temporary table for new tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
-		$log->error("Re-build temporary table") unless main::SCANNER && $main::progress;
-    	$dbh->do( qq{
-    		CREATE TEMPORARY TABLE diskonly AS
-				SELECT          DISTINCT(url) as url
+		$dbh->do( qq{
+			CREATE TEMPORARY TABLE diskonly AS
+				SELECT          DISTINCT(url) AS url
 				FROM            scanned_files
 				WHERE           url NOT IN (
 					SELECT url FROM tracks
@@ -235,7 +234,7 @@ sub rescan {
 				)
 				AND             url LIKE '$basedir%'
 				AND             filesize != 0
-    	} );
+		} );
 
 		my $onDiskOnlySQL = qq{
 			SELECT          url
@@ -243,20 +242,27 @@ sub rescan {
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 3. Files that have changed mtime or size.
-		# XXX can this query be optimized more?
-		my $changedOnlySQL = qq{
-			SELECT DISTINCT(scanned_files.url)
-			FROM scanned_files
-			JOIN tracks ON (
-				scanned_files.url = tracks.url
-				AND (
-					scanned_files.timestamp != tracks.timestamp
-					OR
-					scanned_files.filesize != tracks.filesize
+		$log->error("Build temporary table for changed tracks") unless main::SCANNER && $main::progress;
+		$dbh->do('DROP TABLE IF EXISTS changed');
+		$dbh->do( qq{
+			CREATE TEMPORARY TABLE changed AS
+				SELECT DISTINCT(scanned_files.url) AS url
+				FROM   scanned_files
+				JOIN   tracks ON (
+					scanned_files.url = tracks.url
+					AND (
+						scanned_files.timestamp != tracks.timestamp
+						OR
+						scanned_files.filesize  != tracks.filesize
+					)
+					AND tracks.content_type $ctFilter
 				)
-				AND tracks.content_type $ctFilter
-			)
-			WHERE scanned_files.url LIKE '$basedir%'
+				WHERE  scanned_files.url LIKE '$basedir%'
+		} );
+
+		my $changedOnlySQL = qq{
+			SELECT url
+			FROM   changed
 		} . (IS_SQLITE ? '' : ' ORDER BY scanned_files.url');
 
 		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
@@ -291,171 +297,16 @@ sub rescan {
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe);
 
-		$class->deleteTracks($dbh, \$changes, \$paths, $next, {
+		$class->deleteTracks($dbh, \$changes, $paths, $next, {
 			name  => 'deleted audio files',
 			count => $inDBOnlyCount,
 			progressName => $next . '|' . ($args->{scanName} . '_deleted'),
 			sql   => $inDBOnlySQL
 		}, $args);
 
-		$log->error( "Scanning new audio files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
+		$class->updateTracks($dbh, \$changes, $paths, $next, $changedOnlyCount, $changedOnlySQL, $args);
 
-		if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
-			my $onDiskOnlySth;
-			my $onDiskOnlyDone = 0;
-
-			$pending{$next} |= PENDING_NEW;
-
-			my $progress;
-			if ( $args->{progress} ) {
-				$progress = Slim::Utils::Progress->new( {
-					type  => 'importer',
-					name  => $next . '|' . ($args->{scanName} . '_new'),
-					bar   => 1,
-					every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
-					total => $onDiskOnlyCount,
-				} );
-			}
-
-			my $new;
-			my $handle_new = sub {
-				if ( hasAborted($progress, $args->{no_async}) ) {
-					$onDiskOnlySth && $onDiskOnlySth->finish;
-					return 0;
-				}
-
-				# Page through the files, this is to avoid a long-running read query which
-				# would prevent WAL checkpoints from occurring.
-				if ( !$onDiskOnlySth ) {
-					my $sql = $onDiskOnlySQL . " LIMIT $onDiskOnlyDone, " . CHUNK_SIZE;
-					$onDiskOnlySth = $dbh->prepare($sql);
-					$onDiskOnlySth->execute;
-					$onDiskOnlySth->bind_col(1, \$new);
-				}
-
-				if ( $onDiskOnlySth->fetch ) {
-					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($new) );
-					$changes++;
-					$onDiskOnlyDone++;
-
-					new($new);
-
-					return 1;
-				}
-				else {
-					my $more = 1;
-
-					if ( !$onDiskOnlySth->rows ) {
-						$dbh->do('DROP TABLE IF EXISTS diskonly');
-
-						if ( !$args->{no_async} ) {
-							$args->{paths} = $paths;
-							markDone( $next => PENDING_NEW, $changes, $args );
-						}
-
-						$progress && $progress->final;
-						$onDiskOnlySth->finish;
-						$more = 0;
-					}
-					else {
-						# Continue paging with the next chunk
-						$onDiskOnlySth->finish;
-						undef $onDiskOnlySth;
-					}
-
-					# Commit for every chunk when using scanner.pl
-					main::SCANNER && Slim::Schema->forceCommit;
-
-					return $more;
-				}
-			};
-
-			if ( $args->{no_async} ) {
-				while ( $handle_new->() ) { }
-			}
-			else {
-				Slim::Utils::Scheduler::add_ordered_task( $handle_new );
-			}
-		}
-
-		$log->error( "Rescanning changed audio files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
-
-		if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
-			my $changedOnlySth;
-			my $changedOnlyDone = 0;
-
-			$pending{$next} |= PENDING_CHANGED;
-
-			my $progress;
-			if ( $args->{progress} ) {
-				$progress = Slim::Utils::Progress->new( {
-					type  => 'importer',
-					name  => $next . '|' . ($args->{scanName} . '_changed'),
-					bar   => 1,
-					every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
-					total => $changedOnlyCount,
-				} );
-			}
-
-			my $changed;
-			my $handle_changed = sub {
-				if ( hasAborted($progress, $args->{no_async}) ) {
-					$changedOnlySth && $changedOnlySth->finish;
-					return 0;
-				}
-
-				# Page through the files, this is to avoid a long-running read query which
-				# would prevent WAL checkpoints from occurring.
-				if ( !$changedOnlySth ) {
-					my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
-					$changedOnlySth = $dbh->prepare($sql);
-					$changedOnlySth->execute;
-					$changedOnlySth->bind_col(1, \$changed);
-				}
-
-				if ( $changedOnlySth->fetch ) {
-					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($changed) );
-					$changes++;
-					$changedOnlyDone++;
-
-					changed($changed);
-
-					return 1;
-				}
-				else {
-					my $more = 1;
-
-					if ( !$changedOnlySth->rows ) {
-						if ( !$args->{no_async} ) {
-							$args->{paths} = $paths;
-							markDone( $next => PENDING_CHANGED, $changes, $args );
-						}
-
-						$progress && $progress->final;
-						$changedOnlySth->finish;
-						$more = 0;
-					}
-					else {
-						# Continue paging with the next chunk
-						$changedOnlySth->finish;
-						undef $changedOnlySth;
-					}
-
-					# Commit for every chunk when using scanner.pl
-					main::SCANNER && Slim::Schema->forceCommit;
-
-					return $more;
-				}
-			};
-
-			if ( $args->{no_async} ) {
-				while ( $handle_changed->() ) { }
-			}
-			else {
-				Slim::Utils::Scheduler::add_ordered_task( $handle_changed );
-			}
-		}
-
+		$class->addTracks($dbh, \$changes, $paths, $next, $onDiskOnlyCount, $onDiskOnlySQL, $args);
 
 		if ( hasAborted() ) {
 			# nothing to do here - should be handled in hasAborted()
@@ -566,7 +417,7 @@ sub deleteTracks {
 
 				if ( !$deleteSth->rows ) {
 					if ( !$args->{no_async} ) {
-						$args->{paths} = $$paths;
+						$args->{paths} = $paths;
 						markDone( $nextFolder => PENDING_DELETE, $$changes, $args );
 					}
 
@@ -592,6 +443,172 @@ sub deleteTracks {
 		}
 		else {
 			Slim::Utils::Scheduler::add_ordered_task( $handle_deleted );
+		}
+	}
+}
+
+sub addTracks {
+	my ($class, $dbh, $changes, $paths, $nextFolder, $onDiskOnlyCount, $onDiskOnlySQL, $args) = @_;
+
+	$log->error( "Scanning new audio files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
+
+	if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
+		my $onDiskOnlySth;
+		my $onDiskOnlyDone = 0;
+
+		$pending{$nextFolder} |= PENDING_NEW;
+
+		my $progress;
+		if ( $args->{progress} ) {
+			$progress = Slim::Utils::Progress->new( {
+				type  => 'importer',
+				name  => $nextFolder . '|' . ($args->{scanName} . '_new'),
+				bar   => 1,
+				every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
+				total => $onDiskOnlyCount,
+			} );
+		}
+
+		my $new;
+		my $handle_new = sub {
+			if ( hasAborted($progress, $args->{no_async}) ) {
+				$onDiskOnlySth && $onDiskOnlySth->finish;
+				return 0;
+			}
+
+			# Page through the files, this is to avoid a long-running read query which
+			# would prevent WAL checkpoints from occurring.
+			if ( !$onDiskOnlySth ) {
+				my $sql = $onDiskOnlySQL . " LIMIT $onDiskOnlyDone, " . CHUNK_SIZE;
+				$onDiskOnlySth = $dbh->prepare($sql);
+				$onDiskOnlySth->execute;
+				$onDiskOnlySth->bind_col(1, \$new);
+			}
+
+			if ( $onDiskOnlySth->fetch ) {
+				$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($new) );
+				$$changes++;
+				$onDiskOnlyDone++;
+
+				new($new);
+
+				return 1;
+			}
+			else {
+				my $more = 1;
+
+				if ( !$onDiskOnlySth->rows ) {
+					$dbh->do('DROP TABLE IF EXISTS diskonly');
+
+					if ( !$args->{no_async} ) {
+						$args->{paths} = $paths;
+						markDone( $nextFolder => PENDING_NEW, $$changes, $args );
+					}
+
+					$progress && $progress->final;
+					$onDiskOnlySth->finish;
+					$more = 0;
+				}
+				else {
+					# Continue paging with the next chunk
+					$onDiskOnlySth->finish;
+					undef $onDiskOnlySth;
+				}
+
+				# Commit for every chunk when using scanner.pl
+				main::SCANNER && Slim::Schema->forceCommit;
+
+				return $more;
+			}
+		};
+
+		if ( $args->{no_async} ) {
+			while ( $handle_new->() ) { }
+		}
+		else {
+			Slim::Utils::Scheduler::add_ordered_task( $handle_new );
+		}
+	}
+}
+
+sub updateTracks {
+	my ($class, $dbh, $changes, $paths, $nextFolder, $changedOnlyCount, $changedOnlySQL, $args) = @_;
+
+	$log->error( "Rescanning changed audio files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
+
+	if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
+		my $changedOnlySth;
+		my $changedOnlyDone = 0;
+
+		$pending{$nextFolder} |= PENDING_CHANGED;
+
+		my $progress;
+		if ( $args->{progress} ) {
+			$progress = Slim::Utils::Progress->new( {
+				type  => 'importer',
+				name  => $nextFolder . '|' . ($args->{scanName} . '_changed'),
+				bar   => 1,
+				every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
+				total => $changedOnlyCount,
+			} );
+		}
+
+		my $changed;
+		my $handle_changed = sub {
+			if ( hasAborted($progress, $args->{no_async}) ) {
+				$changedOnlySth && $changedOnlySth->finish;
+				return 0;
+			}
+
+			# Page through the files, this is to avoid a long-running read query which
+			# would prevent WAL checkpoints from occurring.
+			if ( !$changedOnlySth ) {
+				my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
+				$changedOnlySth = $dbh->prepare($sql);
+				$changedOnlySth->execute;
+				$changedOnlySth->bind_col(1, \$changed);
+			}
+
+			if ( $changedOnlyDone < $changedOnlyCount && $changedOnlySth->fetch ) {
+				$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($changed) );
+				$$changes++;
+				$changedOnlyDone++;
+
+				changed($changed);
+
+				return 1;
+			}
+			else {
+				my $more = 1;
+
+				if ( $changedOnlyDone >= $changedOnlyCount || !$changedOnlySth->rows ) {
+					if ( !$args->{no_async} ) {
+						$args->{paths} = $paths;
+						markDone( $nextFolder => PENDING_CHANGED, $$changes, $args );
+					}
+
+					$progress && $progress->final;
+					$changedOnlySth->finish;
+					$more = 0;
+				}
+				else {
+					# Continue paging with the next chunk
+					$changedOnlySth->finish;
+					undef $changedOnlySth;
+				}
+
+				# Commit for every chunk when using scanner.pl
+				main::SCANNER && Slim::Schema->forceCommit;
+
+				return $more;
+			}
+		};
+
+		if ( $args->{no_async} ) {
+			while ( $handle_changed->() ) { }
+		}
+		else {
+			Slim::Utils::Scheduler::add_ordered_task( $handle_changed );
 		}
 	}
 }
@@ -970,6 +987,7 @@ sub changed {
 
 			my $orig = {
 				year => $origTrack->{year},
+				album => $origTrack->{album_id} || 0,
 			};
 
 			# Fetch all contributor IDs used on the original track
@@ -1048,6 +1066,11 @@ sub changed {
 
 				# Auto-rescan mode, immediately merge VA
 				Slim::Schema->mergeSingleVAAlbum( $album->id );
+			}
+
+			# remove album if we've removed its last track
+			if ( !$album || $album->id != $orig->{album} ) {
+				Slim::Schema::Album->rescan($orig->{album});
 			}
 
 			# XXX

@@ -11,15 +11,15 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_USERNAME" desc="" %]
-			<input type="text" class="stdedit" name="pref_username" id="username" value="[% prefs.pref_username %]" size="40">
+			<input type="text" class="stdedit" name="pref_username" id="username" value="[% prefs.pref_username | html %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_PASSWORD" desc="" %]
-			<input type="password" class="stdedit" name="pref_password" id="password" value="[% prefs.pref_password %]" size="40">
+			<input type="password" class="stdedit" name="pref_password" id="password" value="[% prefs.pref_password | html %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_PASSWORD_REPEAT" desc="" %]
-			<input type="password" class="stdedit" name="pref_password_repeat" id="password" value="[% prefs.pref_password %]" size="40">
+			<input type="password" class="stdedit" name="pref_password_repeat" id="password" value="[% prefs.pref_password | html %]" size="40">
 		[% END %]
 	[% END %]
 
@@ -34,7 +34,7 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_FILTERRULE_HEAD" desc="SETUP_FILTERRULE_DESC" %]
-			<input type="text" class="stdedit" name="pref_allowedHosts" id="allowedHosts" value="[% prefs.pref_allowedHosts %]" size="40">
+			<input type="text" class="stdedit" name="pref_allowedHosts" id="allowedHosts" value="[% prefs.pref_allowedHosts | html %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_CSRFPROTECTIONLEVEL" desc="SETUP_CSRFPROTECTIONLEVEL_DESC" %]
@@ -48,11 +48,11 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_CORS_ALLOWED_HOSTS" desc="SETUP_CORS_ALLOWED_HOSTS_DESC" %]
-			<input type="text" class="stdedit" name="pref_corsAllowedHosts" id="corsAllowedHosts" value="[% prefs.pref_corsAllowedHosts %]" size="40">
+			<input type="text" class="stdedit" name="pref_corsAllowedHosts" id="corsAllowedHosts" value="[% prefs.pref_corsAllowedHosts | html %]" size="40">
 		[% END %]
 
 		[% IF enforceInsecureHTTPS %]
-			<input type="hidden" name="pref_insecureHTTPS" value="[% prefs.pref_insecureHTTPS %]" />
+			<input type="hidden" name="pref_insecureHTTPS" value="[% prefs.pref_insecureHTTPS | html %]" />
 		[% ELSE; WRAPPER settingGroup title="SETUP_INSECURE_HTTPS" desc="SETUP_INSECURE_HTTPS_DESC" %]
 			<input type="checkbox" name="pref_insecureHTTPS" id="insecureHTTPS" [% IF prefs.pref_insecureHTTPS %] checked="checked" [% END %] />
 			<label for="insecureHTTPS">[% "SETUP_INSECURE_HTTPS2" | string %]</label>

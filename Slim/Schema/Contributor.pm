@@ -253,7 +253,7 @@ sub rescan {
 			$albumSth->finish;
 
 			if ( !$count ) {
-				$dbh->do( "DELETE FROM contributor_album WHERE role = 1 AND album = ? AND contributor = ?", undef, $albumId, $id );
+				$dbh->do( "DELETE FROM contributor_album WHERE role IN (1, 5) AND album = ? AND contributor = ?", undef, $albumId, $id );
 			}
 		}
 	}
