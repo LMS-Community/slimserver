@@ -9252,8 +9252,8 @@ SETUP_RELEASE_TYPES_INCLUDE
 	EN	Release types to include in Albums list
 
 SETUP_RELEASE_TYPES_DESC
-	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen.
-	EN	You can specify what release types you want to include in the albums list (see <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).
+	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
+	EN	You can specify what release types you want to include in the albums list (see <a href="https://beta.musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren

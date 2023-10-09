@@ -25,7 +25,7 @@ sub _releases {
 	} grep {
 		# library_id:-1 is supposed to clear/override the global library_id
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
-	}@searchTags;
+	} @searchTags;
 
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
@@ -75,9 +75,19 @@ sub _releases {
 	my $searchTags = [
 		"artist_id:$artistId",
 		"role_id:" . PRIMARY_ARTIST_ROLES,
+		"library_id:" . $library_id,
 	];
 
-	foreach my $releaseType (@{Slim::Schema::Album->primaryReleaseTypes}) {
+	my %primaryReleaseTypes = map { { uc($_) => 1 } } @{Slim::Schema::Album->primaryReleaseTypes};
+	$primaryReleaseTypes{COMPILATION} = 1;     # not in the above list but we still want to ignore it here
+
+	my @sortedReleaseTypes = @{Slim::Schema::Album->primaryReleaseTypes}, sort {
+		$a cmp $b
+	} grep {
+		!$primaryReleaseTypes{$_}
+	} keys %releaseTypes;
+
+	foreach my $releaseType (@sortedReleaseTypes) {
 		my $name;
 		my $nameToken = uc($releaseType);
 		foreach ($nameToken . 'S', $nameToken, 'RELEASE_TYPE_' . $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken) {
@@ -99,6 +109,7 @@ sub _releases {
 
 	$searchTags = [
 		"artist_id:$artistId",
+		"library_id:" . $library_id,
 	];
 
 	foreach my $role (sort keys %contributions) {
@@ -132,6 +143,7 @@ sub _releases {
 	}
 
 	$result->{offset} = $args->{index};
+	$result->{sorted} = 1;
 
 	# show album list if there's no sub-category
 	if ($result->{total} > 1 || $args->{quantity} == 1) {
