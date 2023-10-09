@@ -18412,6 +18412,14 @@ COMPILATION
 	SV	Samling
 	ZH_CN	合辑
 
+APPEARANCES
+	DE	Beteiligungen
+	EN	Appearances
+
+COMPOSITIONS
+	DE	Kompositionen
+	EN	Compositions
+
 SETUP_VARIOUSARTISTS
 	CS	Sbírky
 	DA	Kompilationer

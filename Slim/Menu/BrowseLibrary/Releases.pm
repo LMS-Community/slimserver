@@ -6,7 +6,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 
 use constant MAX_ALBUMS => 500;
-use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST';
+use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST,ARTIST';
 
 my $log = logger('database.info');
 
@@ -15,7 +15,7 @@ sub _releases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $wantMeta   = $pt->{'wantMetadata'};
-	my $tags       = 'lWRw';
+	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
@@ -56,12 +56,10 @@ sub _releases {
 	my %contributions;
 	my %isPrimaryArtist;
 	foreach (@$albums) {
-		my @roleIds = split(',', $_->{role_ids} || '');
-
 		# Release Types if main artist
-		if (grep { $primaryArtistIds{$_} } @roleIds) {
+		if ($_->{role_ids} =~ /[1,5]/) {
 			$releaseTypes{$_->{release_type}}++;
-			$isPrimaryArtist{$_->{id}}++;
+			next;
 		}
 		elsif ($_->{compilation}) {
 			$releaseTypes{COMPILATION}++;
@@ -70,6 +68,7 @@ sub _releases {
 		}
 
 		# Roles on other releases
+		my @roleIds = split(',', $_->{role_ids} || '');
 		foreach my $roleId (@roleIds) {
 			next if $primaryArtistIds{$roleId};
 
@@ -107,15 +106,9 @@ sub _releases {
 		$name ||= $releaseType;
 
 		if ($releaseTypes{uc($releaseType)}) {
-			push @items, {
-				name        => $name,
-				type        => 'playlist',
-				playlist    => \&_tracks,
-				url         => \&_albums,
-				passthrough => $releaseType eq 'COMPILATION'
+			push @items, _createItem($name, $releaseType eq 'COMPILATION'
 					? [ { searchTags => [@$searchTags, 'compilation:1'] } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"] } ],
-			};
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"] } ]);
 		}
 	}
 
@@ -124,17 +117,26 @@ sub _releases {
 		"library_id:" . $library_id,
 	];
 
+	if (delete $contributions{COMPOSER}) {
+		push @items, {
+			name        => cstring($client, 'COMPOSITIONS'),
+			type        => 'playlist',
+			playlist    => \&_tracks,
+			# for compositions we want to have the compositions only, not the albums
+			url         => \&_tracks,
+			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
+		};
+	}
+
+	if (delete $contributions{TRACKARTIST}) {
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST"] } ]);
+	}
+
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
 		$name = ucfirst($role) if $role =~ /^[A-Z_0-9]$/;
 
-		push @items, {
-			name        => $name,
-			type        => 'playlist',
-			playlist    => \&_tracks,
-			url         => \&_albums,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:$role"] } ],
-		}
+		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role"] } ]);
 	}
 
 	my $result = $args->{quantity} == 1 ? {
@@ -164,6 +166,18 @@ sub _releases {
 	else {
 		_albums($client, $callback, $args, $pt)
 	}
+}
+
+sub _createItem {
+	my ($name, $pt) = @_;
+
+	return {
+		name        => $name,
+		type        => 'playlist',
+		playlist    => \&_tracks,
+		url         => \&_albums,
+		passthrough => $pt,
+	};
 }
 
 1;
