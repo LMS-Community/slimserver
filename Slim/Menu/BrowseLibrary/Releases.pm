@@ -34,8 +34,8 @@ sub _releases {
 		$artistId = $1;
 	}
 
-	my $index = 0;
-	my $quantity = MAX_ALBUMS;
+	my $index = $args->{index};
+	my $quantity = $args->{quantity};
 	my $query = 'albums';
 
 	push @searchTags, 'tags:' . $tags if defined $tags;
@@ -43,7 +43,7 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releses sub-items etc.
-	my $requestRef = [ $query, $index, $quantity, @searchTags ];
+	my $requestRef = [ $query, 0, MAX_ALBUMS, @searchTags ];
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
 	$request->execute();
 
@@ -120,6 +120,7 @@ sub _releases {
 	if (delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
+			icon        => 'html/images/playlists.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
@@ -139,32 +140,43 @@ sub _releases {
 		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role"] } ]);
 	}
 
-	my $result = $args->{quantity} == 1 ? {
-		items => [ $items[$args->{index}] ],
-		total => $args->{quantity},
-	} : {
-		items => \@items,
-		total => scalar @items,
-	};
-
-	if ( !scalar @items ) {
-		$result->{items} = [ {
-			type  => 'text',
-			title => cstring($client, 'EMPTY'),
-		} ];
-
-		$result->{total} = 1;
+	# if there's only one category, display it directly
+	if (scalar @items == 1 && (my $handler = $items[0]->{url})) {
+		$handler->($client, $callback, $args, $pt);
 	}
-
-	$result->{offset} = $args->{index};
-	$result->{sorted} = 1;
-
-	# show album list if there's no sub-category
-	if ($result->{total} > 1 || $args->{quantity} == 1) {
-		$callback->($result);
+	# we didn't find anything
+	elsif (!scalar @items) {
+		_albums($client, $callback, $args, $pt);
 	}
+	# navigate categories if there's more than one
 	else {
-		_albums($client, $callback, $args, $pt)
+		# add extra items
+		foreach ( grep { $_ } map { $_->($artistId) } @{getExtraItems('artist')} ) {
+			push @items, $_;
+		}
+
+		# add "All" item
+		push @items, {
+			name        => cstring($client, 'ALL_ALBUMS'),
+			icon        => 'html/images/albums.png',
+			type        => 'playlist',
+			playlist    => \&_tracks,
+			url         => \&_albums,
+			passthrough => [{ searchTags => $pt->{'searchTags'} || [] }],
+		};
+
+		my $result = $quantity == 1 ? {
+			items => [ $items[$index] ],
+			total => $quantity,
+		} : {
+			items => \@items,
+			total => scalar @items,
+		};
+
+		$result->{offset} = $index;
+		$result->{sorted} = 1;
+
+		$callback->($result);
 	}
 }
 
@@ -173,6 +185,7 @@ sub _createItem {
 
 	return {
 		name        => $name,
+		icon        => 'html/images/albums.png',
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_albums,
