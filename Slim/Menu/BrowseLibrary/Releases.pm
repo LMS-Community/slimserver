@@ -27,6 +27,9 @@ sub _releases {
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @searchTags;
 
+	# we want all roles, as we're going to group
+	push @searchTags, 'role_id:1,2,3,4,5,6';
+
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
 	if (scalar @artistIds) {
@@ -56,15 +59,15 @@ sub _releases {
 	my %contributions;
 	my %isPrimaryArtist;
 	foreach (@$albums) {
+		if ($_->{compilation}) {
+			$releaseTypes{COMPILATION}++;
+			# only list outside the compilations if Composer/Conductor
+			next if $_->{role_ids} !~ /[23]/;
+		}
 		# Release Types if main artist
-		if ($_->{role_ids} =~ /[1,5]/) {
+		elsif ($_->{role_ids} =~ /[1,5]/) {
 			$releaseTypes{$_->{release_type}}++;
 			next;
-		}
-		elsif ($_->{compilation}) {
-			$releaseTypes{COMPILATION}++;
-			# don't list as track artist on a compilation
-			next if $_->{role_ids} =~ /[156]/;
 		}
 
 		# Roles on other releases
@@ -120,7 +123,7 @@ sub _releases {
 	if (delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
-			icon        => 'html/images/playlists.png',
+			image       => 'html/images/playlists.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
@@ -158,7 +161,7 @@ sub _releases {
 		# add "All" item
 		push @items, {
 			name        => cstring($client, 'ALL_ALBUMS'),
-			icon        => 'html/images/albums.png',
+			image       => 'html/images/albums.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,
 			url         => \&_albums,
@@ -185,7 +188,7 @@ sub _createItem {
 
 	return {
 		name        => $name,
-		icon        => 'html/images/albums.png',
+		image       => 'html/images/albums.png',
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_albums,

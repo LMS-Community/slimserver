@@ -1389,7 +1389,20 @@ sub _albumsOrReleases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 
-	if ($prefs->get('groupArtistAlbumsByReleaseType') && grep /^artist_id:/, @searchTags) {
+	# We only display the grouped albums if:
+	# 1. the feature is enabled
+	if ($prefs->get('groupArtistAlbumsByReleaseType')
+		# 2. a specific artist is requested
+		&& (grep /^artist_id:/, @searchTags)
+		# 3. any one of the following is true:
+		#    3a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
+		&& ($prefs->get('noRoleFilter')
+			# 3b. no specific role is requested
+			|| !(grep /^role_id:/, @searchTags)
+			# 3c. we request the album artist
+			|| (grep /^role_id:.*ALBUMARTIST/, @searchTags)
+		)
+	) {
 		_releases(@_);
 	}
 	else {
