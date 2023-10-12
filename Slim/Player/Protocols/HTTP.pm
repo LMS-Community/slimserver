@@ -138,9 +138,9 @@ sub request {
 	my $track = $song->currentTrack;
 	my $processor = $track->processors($song->wantFormat);
 
-	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
+	# no other guidance, define AudioBlock if needed so that audio_offset is skipped in requestString
 	if (!$processor || $song->stripHeader) {
-		$song->initialAudioBlock('') if $song->stripHeader;
+		$song->initialAudioBlock('');
 		return $self->SUPER::request($args);
 	}
 
@@ -179,7 +179,7 @@ sub request {
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
 	# dynamic headers need to be re-calculated every time
-	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
+	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONCE;
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
@@ -440,7 +440,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !$processor;
 
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($processor->{'initial_block_type'} == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata) {
+	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {		
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}

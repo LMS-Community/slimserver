@@ -124,8 +124,9 @@ everytime a new scanning chunk is received, until a header is successfully parse
 failure, -1 if it needs more bytes, a value > 0 to jump to that offset in the stream and a hash 
 containing parsed information when done. See Slim::Format::Movie.pm for a most complete example.
   
-- getInitialAudioBlock() is used to get such acquired header to send it to the player at the 
-beginning of playback. In most of cases, it's simple and the default function will work.
+- getInitialAudioBlock() is used to get such header that will be sent to the player at the beginning
+of playback. It is called only when there is a processor, so see explanation below to handle header 
+acquisition properly. In most of cases, it's simple and the default function will work. 
     
 The handling for every format is spread between Slim::Formats::XXX and Slim::Utils::Scanner::Remote 
 and this could be refactored a bit. In a nutshell, after parsing stream's header, it is decided if 
@@ -134,16 +135,40 @@ audio bytes to the player. Such tweaked headers can be added never, once, every 
 seeking (this also influences the possibility for a track to be directly played or proxied)
 
 Upon actual streaming of audio and when header needs to be tweaked, the Slim::Player::HTTP::request 
-will look for "processors" in the track. Such processors are set upon initial scanning. A track can
-output multiple formats, so that's why there are multiple processors possible. LMS will pickup one 
-depending on what the scan offered and what the player can accept.
+will look for "processors" in the track. Such processors are set upon initial scanning or by a 
+handler in scanURL. A track can output multiple formats, so that's why there are multiple processors 
+possible. LMS will pickup one depending on what the scan offered and what the player can accept.
 
-The relevant processor is then called in Slim::Player::HTTP and can simply create a tweaked header 
-that will then be passed to the player but it can also return a structure with a method to be called 
-for every chunk of audio data received. This is used for adts frames extraction from mp4 file, when 
-player wants 'aac' and not 'mp4'. This is also used for flac synchronization where some IP3K players
-can't resynchronize when seeking in a middle of a flac stream. The more simple case is wav file that
-just need a header tweak but then don't need further handling of audio chunks. 
+The relevant processor is then called in Slim::Player::HTTP::request and can simply create a tweaked 
+header that will then be passed to the player but it can also return a structure with a method to be 
+called for every chunk of audio data received. This is used for adts frames extraction from mp4 file, 
+when player wants 'aac' and not 'mp4'. This is also used for flac synchronization where some IP3K 
+players can't resynchronize when seeking in a middle of a flac stream. The more simple case is wav 
+file that just need a header tweak but then don't need further handling of audio chunks. 
+
+Processors must set 'initial_block_type' to either ONCE, ONSEEK or ALWAYS to set when 
+getInitialAudioBlock() will be called by Slim::Player::HTTP::request and also decide when/if direct 
+streaming is possible. When there is nothing returned by getInitialAudioBlock(), it will be treated 
+as a defined-but-empty initial block.
+
+The 'GET' request for the actual audio data uses a 'Range' byte offset to skip the header (if any). 
+If the $track->audio_offset has been set *and* the initial audio block is defined, then this is the
+range. Now, if there is a processor, it can override it by setting sourceStreamOffset but if there 
+is no processor this cannot be changed. 
+
+So understand the implication of setting $track->audio_offset. When it is not set, then the GET 
+range will be 0 unless a processor has set the sourceStreamOffset. Note that the stored initial block
+will only be sent to the player when there is a processor. 
+
+In other words, if you want LMS to GET the whole file from 0 and send it to the player but you don't 
+want/need to set a processor, then DO NOT set $track->audio_offset! 
+
+When there is a processor, direct streaming is enable only if 'initial_block_type' is set to ONSEEK
+and track starts from zero (no seekdata). Streaming will always be proxied otherwise. When there is 
+no processor, direct streaming will be attempted according to usual rules but the $track->audio_offset
+logic described above will apply and be passed to the player as range.
+
+The logic is the same when seeking, except that the byte seek offset is added.
 
 Look at Slim::Misc::Utils::Scanner::Remote and Slim::Formats::Movie or Slim::Formats::FLAC for 
 general understanding and at Slim::Plugin::WiMP::ProtocolHandler to see how a plugin can use this
