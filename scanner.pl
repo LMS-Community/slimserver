@@ -81,6 +81,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Music::ReleaseTypes;
 use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -261,6 +262,7 @@ sub main {
 		Slim::Music::Import->scanOnlineLibraryOnly($onlineLibrary);
 		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
+		Slim::Music::ReleaseTypes->init();
 
 	}
 
