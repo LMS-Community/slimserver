@@ -14,6 +14,11 @@ use Slim::Schema;
 
 use constant STEPS => 3;
 
+# Let's use Apple's definition of EP/Single:
+# https://diymusician.cdbaby.com/releasing-music/what-is-an-ep/#:~:text=EP%20stands%20for%20“extended%20play%2C”%20but%20the%20format,long%20playing%20—%20or%20“full%20length”%20—%20albums
+use constant EP_CONDITION => '((title_count <= 3 AND max_duration >= 600) OR (title_count >= 4 AND title_count <= 6 AND max_duration < 600)) AND duration < 1800';
+use constant SINGLE_CONDITION => 'title_count <= 3 AND duration < 1800 AND max_duration < 600';
+
 my $prefs = preferences('server');
 my $log = logger('database.info');
 
@@ -48,6 +53,7 @@ sub startScan {
 			SELECT album,
 				COUNT(1) AS title_count,
 				SUM(secs) AS duration,
+				MAX(secs) AS max_duration,
 				albums.compilation,
 				discc
 			FROM tracks
@@ -66,18 +72,16 @@ sub startScan {
 		WHERE id IN (
 			SELECT album
 			FROM release_type_helper
-			WHERE title_count > %s AND
-				title_count <= %s AND
-				duration < %s
+			WHERE %s
 		)
 	);
 
-	# Step 2: Singles - 0 < tracks <= 1, 1400s
-	$dbh->do(sprintf($updateSQL, 'SINGLE', 0, 1, 1400));
+	# Step 2: Singles
+	$dbh->do(sprintf($updateSQL, 'SINGLE', SINGLE_CONDITION));
 	$progress->update('.');
 
-	# Step 3: EPs - 1 < tracks <= 3, 2000s
-	$dbh->do(sprintf($updateSQL, 'EP', 1, 5, 2000));
+	# Step 3: EPs
+	$dbh->do(sprintf($updateSQL, 'EP', EP_CONDITION));
 
 	$progress->final(STEPS);
 
