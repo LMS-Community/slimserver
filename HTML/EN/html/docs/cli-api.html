@@ -115,6 +115,7 @@ Response:
 <h4 id="8.4">Changes starting from Squeezebox Server 8.4</h4>
 <ul>
 	<li>Added support for release types and roles to <a href="#albums">albums</a>, and <a href="#titles">titles</a> queries.</li>
+	<li>Added support for a list of album IDs while fetching <a href="#albums">albums</a>.</li>
 </ul>
 
 <h4 id="8.2">Changes starting from Squeezebox Server 8.2</h4>
@@ -3710,8 +3711,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			album_id
 		</td>
 		<td>
-			Album ID, to restrict the results to a single album. If
-			specified, all other filters are ignored.
+			Album ID, to restrict the results to a single album. Or a comma sparated
+			list of album IDs, to restrict the results to a specific list of albums.
+			If specified, all other filters are ignored.
 		</td>
 	</tr>
 	<tr>

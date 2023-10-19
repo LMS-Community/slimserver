@@ -303,8 +303,9 @@ sub albumsQuery {
 		push @{$p}, $trackID;
 	}
 	elsif ( defined $albumID ) {
-		push @{$w}, 'albums.id = ?';
-		push @{$p}, $albumID;
+		my @albumIds = split(',', $albumID);
+		push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
+		push @{$p}, @albumIds;
 	}
 	# ignore everything if $track_id or $album_id was specified
 	else {
@@ -5385,6 +5386,7 @@ sub _getTagDataForTracks {
 	if ( my $albumId = $args->{albumId} ) {
 		push @{$w}, 'tracks.album = ?';
 		push @{$p}, $albumId;
+		delete $args->{releaseType};
 	}
 
 	if ( my $trackId = $args->{trackId} ) {

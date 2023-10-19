@@ -79,7 +79,10 @@ sub _releases {
 			next if $roleId == 6 && $isPrimaryArtist{$_->{id}};
 
 			my $role = Slim::Schema::Contributor->roleToType($roleId);
-			$contributions{$role} = $roleId if $role;
+			if ($role) {
+				$contributions{$role} ||= [];
+				push @{$contributions{$role}}, $_->{id};
+			}
 		}
 	}
 
@@ -132,15 +135,15 @@ sub _releases {
 		};
 	}
 
-	if (delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST"] } ]);
+	if (my $albums = delete $contributions{TRACKARTIST}) {
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albums)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
 		$name = ucfirst($role) if $role =~ /^[A-Z_0-9]$/;
 
-		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role"] } ]);
+		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# if there's only one category, display it directly
