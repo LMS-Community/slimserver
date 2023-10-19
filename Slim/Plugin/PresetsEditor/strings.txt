@@ -7,10 +7,10 @@ PLUGIN_PRESETS_EDITOR
 
 PLUGIN_PRESETS_EDITOR_DESC
 	CS	Tento zásuvný modul umožňuje vizuálně upravovat konfiguraci tlačítek předvoleb Squeezeboxu.
-	DE	Dieses Plugin erlaubt es ihnen, die Preset-Tasten deiner Squeezebox zu konfigurieren.
+	DE	Dieses Plugin erlaubt es ihnen, die Preset-Tasten ihrer Squeezebox zu konfigurieren.
 	EN	This plugin allows you to visually edit the configuration of your Squeezebox preset keys.
 	FR	Ce plugin vous permet de modifier visuellement la configuration de vos touches de présélection Squeezebox.
-	NL	Met deze plug-in kan je de voorinstelling van de knoppen van de Squeezebox spelers wijzigen.  
+	NL	Met deze plug-in kan je de voorinstelling van de knoppen van de Squeezebox spelers wijzigen.
 
 PLUGIN_PRESETS_EDITOR_NEED_WEBUI
 	CS	Chcete-li používat Editor předvoleb, musíte povolit webové uživatelské rozhraní.

@@ -341,6 +341,7 @@ sub _prepareTrack {
 		EXTID        => $url,
 		TIMESTAMP    => $album->{added},
 		CONTENT_TYPE => $track->{lossless} ? 'flc' : 'mp3',
+		RELEASETYPE  => $album->{record_type},
 	};
 }
 

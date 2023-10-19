@@ -18,12 +18,13 @@
 				<th colspan="2">&nbsp;</th>
 				[% ELSE %]
 				<th></th>
-				<th>[% "NAME" | string %]</th>
+				<th width="20%">[% "NAME" | string %]</th>
 				[% END %]
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
-				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
-				<th>[% "GENRES" | string %][% "COLON" | string %]</th>
+				<th width="20%">[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
+				<th width="20%">[% "PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE" | string %]</th>
+				<th width="20%">[% "GENRES" | string %][% "COLON" | string %]</th>
 				<th>[% IF menu.id != '_new_' %][% "DELETE" | string %][% "COLON" | string %][% END %]</th>
 			</tr>
 			[% seen = 1; END %]
@@ -35,7 +36,7 @@
 				[% IF !menu.feed && menu.id != '_new_' %]
 					<td colspan="6"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
 				[% ELSE %]
-					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name | html %]" style="width: 98%;" class="stdedit" /></td>
+					<td><input type="text" name="name[% menu_no %]" value="[% menu.name | html %]" style="width: 98%;" class="stdedit" /></td>
 					<td>
 						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
 							<option value="">[% "SUB_LIBRARY" | string %]</option>
@@ -52,13 +53,15 @@
 							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
 						</select>
 					</td>
-					<td width="30%"><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id | html %]" style="width: 98%;" class="stdedit" /></td>
-					<td width="30%"><input type="text" name="genreid[% menu_no %]" value="[% menu.params.genre_id | html %]" style="width: 98%;" class="stdedit" /></td>
+					<td><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id | html %]" style="width: 98%;" class="stdedit" /></td>
+					<td><input type="text" name="releasetype[% menu_no %]" value="[% menu.params.release_type | html %]" style="width: 98%;" class="stdedit" /></td>
+					<td><input type="text" name="genreid[% menu_no %]" value="[% menu.params.genre_id | html %]" style="width: 98%;" class="stdedit" /></td>
 					<td style="text-align:center;">[% IF menu.name %]<input type="checkbox" name="delete[% menu_no %]" class="stdedit" />[% END %]</td>
 				[% END %]
 			</tr>
 		[% END %]
 			<tr><td>&nbsp;</td><td colspan="5">[% "PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT" | string %] [% roles.join(', ') %]</td></tr>
+			<tr><td>&nbsp;</td><td colspan="5">[% "PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT" | string %] [% release_types.join(', ') %]</td></tr>
 			<tr><td>&nbsp;</td><td colspan="5">[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</td></tr>
 		</table>
 	[% END %]

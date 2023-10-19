@@ -78,7 +78,7 @@ sub handler {
 
 			delete $menu->{enabled} if $serverPrefs;
 
-			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"} || $params->{"libraryid$i"});
+			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"releasetype$i"} || $params->{"genreid$i"} || $params->{"libraryid$i"});
 
 			if ( $params->{"id$i"} eq '_new_' ) {
 				$menu = {
@@ -134,6 +134,13 @@ sub handler {
 				delete $menu->{params}->{role_id};
 			}
 
+			if ($params->{"releasetype$i"}) {
+				$menu->{params}->{release_type} = $params->{"releasetype$i"};
+			}
+			else {
+				delete $menu->{params}->{release_type};
+			}
+
 			if ($params->{"genreid$i"}) {
 				$menu->{params}->{genre_id} = $params->{"genreid$i"};
 			}
@@ -169,6 +176,7 @@ sub handler {
 
 	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
 	$params->{roles} = [ Slim::Schema::Contributor->contributorRoles ];
+	$params->{release_types} = Slim::Schema::Album->releaseTypes;
 
 	$class->SUPER::handler($client, $params);
 }

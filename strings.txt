@@ -9243,6 +9243,38 @@ LANGUAGE
 	SV	Språk
 	ZH_CN	语言
 
+SETUP_RELEASE_TYPES
+	DE	Album Veröffentlichungstypen
+	EN	Release types for Albums
+
+SETUP_RELEASE_TYPES_INCLUDE
+	DE	Album Veröffentlichungstypen filtern
+	EN	Release types to include in Albums list
+
+SETUP_RELEASE_TYPES_DESC
+	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
+	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
+
+SETUP_IGNORE_RELEASE_TYPES_0
+	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
+	EN	Enable release type support for albums
+
+SETUP_IGNORE_RELEASE_TYPES_1
+	DE	Veröffentlichungstyp von Alben ignorieren
+	EN	Ignore album release types
+
+SETUP_CLEANUP_RELEASE_TYPES
+	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen selber zu erkennen.
+	EN	Try to recognize EPs and singles automatically when release type information is missing.
+
+SETUP_GROUP_BY_RELEASE_TYPES_0
+	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
+	EN	Don't group an artist's releases
+
+SETUP_GROUP_BY_RELEASE_TYPES_1
+	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
+	EN	Group an artist's releases by type
+
 SETUP_GROUPDISCS
 	CS	Disky skupiny
 	DA	Album med flere cd'er
@@ -11593,6 +11625,23 @@ ALBUM
 	RU	Альбом
 	SV	Album
 	ZH_CN	专辑
+
+RELEASE_TYPE_SINGLE
+	EN	Single
+
+RELEASE_TYPE_SINGLES
+	EN	Singles
+
+RELEASE_TYPE_EP
+	EN	EP
+
+RELEASE_TYPE_BROADCAST
+	EN	Broadcast
+
+RELEASE_TYPE_OTHER
+	DE	Andere
+	EN	Other
+	FR	Autres
 
 DISC
 	CS	Disk
@@ -18367,6 +18416,14 @@ COMPILATION
 	SV	Samling
 	ZH_CN	合辑
 
+APPEARANCES
+	DE	Beteiligungen
+	EN	Appearances
+
+COMPOSITIONS
+	DE	Kompositionen
+	EN	Compositions
+
 SETUP_VARIOUSARTISTS
 	CS	Sbírky
 	DA	Kompilationer
@@ -21620,6 +21677,10 @@ IMPORTER_PROGRESS_DESC
 	PL	Na tej stronie widoczny jest postęp każdego etapu procesu przeszukiwania.
 	RU	Здесь отображается выполнение каждого этапа сканирования.
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
+
+RELEASETYPES_PROGRESS
+	DE	Album Veröffentlichungstypen aktualisieren
+	EN	Update Album release types
 
 VIRTUALLIBRARIES_PROGRESS
 	CS	Vytváření zobrazení knihovny

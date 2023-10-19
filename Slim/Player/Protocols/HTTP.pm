@@ -11,6 +11,7 @@ use base qw(Slim::Formats::RemoteStream);
 
 use IO::Socket qw(:crlf);
 use Scalar::Util qw(blessed);
+use List::Util qw(min);
 
 use Slim::Formats::RemoteMetadata;
 use Slim::Music::Info;
@@ -86,13 +87,21 @@ sub response {
 	my $self = shift;
 	my ($args, $request, @headers) = @_;
 
+	# re-parse the request string as it might have been overloaded by subclasses
+	my $request_object = HTTP::Request->parse($request);
+
+	# do we have the range we requested
+	if ($request_object->header('Range') =~ /^bytes=(\d+)-/ &&
+		$1 != ($self->contentRange =~ /(\d+)-/)) {
+		${*$self}{'_skip'} = $1;            
+		$log->info("range request not served, skipping $1 bytes");
+	}
+
 	# HTTP headers have now been acquired in a blocking way
 	my $enhance = $self->canEnhanceHTTP($args->{'client'}, $args->{'url'});
 	return unless $enhance;
 
 	if ($enhance == PERSISTENT || !$self->contentLength) {
-		# re-parse the request string as it might have been overloaded by subclasses
-		my $request_object = HTTP::Request->parse($request);
 		my $uri = $request_object->uri;
 
 		# re-set full uri if it is not absolute (e.g. not proxied)
@@ -138,7 +147,7 @@ sub request {
 	my $track = $song->currentTrack;
 	my $processor = $track->processors($song->wantFormat);
 
-	# no other guidance, define AudioBlock to make sure that audio_offset is skipped in requestString
+	# no other guidance, define AudioBlock if needed so that audio_offset is skipped in requestString
 	if (!$processor || $song->stripHeader) {
 		$song->initialAudioBlock('');
 		return $self->SUPER::request($args);
@@ -179,7 +188,7 @@ sub request {
 	${*$self}{'initialAudioBlockRemaining'} = length $$blockRef;
 
 	# dynamic headers need to be re-calculated every time
-	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'};
+	$song->initialAudioBlock(undef) if $processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONCE;
 
 	main::DEBUGLOG && $log->debug("streaming $args->{url} with header of ", length $$blockRef, " from ",
 								  $song->seekdata ? $song->seekdata->{sourceStreamOffset} || 0 : $track->audio_offset,
@@ -440,7 +449,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !$processor;
 
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($processor->{'initial_block_type'} == Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS || $song->seekdata) {
+	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {		
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}
@@ -579,7 +588,18 @@ sub saveStream {
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
-	return CORE::sysread($_[0], $_[1], $_[2], $_[3]);
+	my $self = $_[0];   
+	return CORE::sysread($_[0], $_[1], $_[2], $_[3]) unless ${*$self}{'_skip'};
+
+	# skip what we need until done or EOF
+	my $bytes = CORE::sysread($_[0], $_[1], min(${*$self}{'_skip'}, $_[2]), $_[3]);
+	return $bytes if defined $bytes && !$bytes;
+
+	# pretend we don't have received anything until we've skipped all
+	${*$self}{'_skip'} -= $bytes if $bytes;
+	$_[1]= '';    
+	$! = EINTR;
+	return undef;
 }
 
 sub sysread {

@@ -206,8 +206,6 @@ sub init {
 	# Use our debug and stats class to get logging and perfmon for db queries
 	$class->storage->debugobj('Slim::Schema::Debug');
 
-	$class->updateDebug;
-
 	# Bug 17609, avoid a possible locking issue by ensuring VA object is up to date at init time
 	# instead of waiting until the first time it's called, for example through artistsQuery.
 	$class->variousArtistsObject;
@@ -249,6 +247,8 @@ sub init {
 	}
 
 	$initialized = 1;
+
+	$class->updateDebug;
 }
 
 sub hasLibrary {
@@ -919,6 +919,7 @@ sub _createOrUpdateAlbum {
 				compilation => 0, # Will be set to 1 below, if needed
 				year        => 0,
 				contributor => $vaObjId || $self->variousArtistsObject->id,
+				release_type=> 'ALBUM',
 			};
 
 			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
@@ -1177,6 +1178,10 @@ sub _createOrUpdateAlbum {
 
 	# Bug 2393 - was fixed here (now obsolete due to further code rework)
 	$albumHash->{compilation} = $isCompilation;
+
+	# let's not mess with compilation - we've already got our logic, and it's messy enough!
+	my ($releaseType) = grep { lc($_) ne 'compilation' } Slim::Music::Info::splitTag($attributes->{RELEASETYPE});
+	$albumHash->{release_type} = Slim::Utils::Text::ignoreCase( $releaseType || 'album' );
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
 	my $vaObjId = $vaObjId || $self->variousArtistsObject->id;
@@ -2669,7 +2674,7 @@ sub _preCheckAttributes {
 		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
-		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
 		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
 	)) {
 

@@ -147,6 +147,7 @@ should be passed a reference to a real sub (not an anonymous one).
 use strict;
 use JSON::XS::VersionOneAndTwo;
 
+use Slim::Menu::BrowseLibrary::Releases;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -540,7 +541,7 @@ sub _registerBaseNodes {
 			type         => 'link',
 			name         => 'BROWSE_BY_ALBUM',
 			params       => {mode => 'albums'},
-			feed         => \&_albums,
+			feed         => \&_albumsOrReleases,
 			icon         => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
 			condition    => \&isEnabledNode,
@@ -578,7 +579,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/newmusic.png',
 			params       => {mode => 'albums', sort => 'new', wantMetadata => 1},
 			                                                  # including wantMetadata is a hack for ip3k
-			feed         => \&_albums,
+			feed         => \&_albumsOrReleases,
 			homeMenuText => 'BROWSE_NEW_MUSIC',
 			condition    => \&isEnabledNode,
 			id           => 'myMusicNewMusic',
@@ -711,7 +712,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1108,7 +1109,7 @@ sub _artists {
 				$_->{'name'}          = $_->{'artist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
-				$_->{'url'}           = \&_albums;
+				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
 				$_->{'favorites_url'} = 'db:contributor.name=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
@@ -1384,6 +1385,31 @@ my %mapArtistOrders = (
 	artflow          => 'yearalbum'
 );
 
+sub _albumsOrReleases {
+	my ($client, $callback, $args, $pt) = @_;
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+
+	# We only display the grouped albums if:
+	# 1. the feature is enabled
+	if ($prefs->get('groupArtistAlbumsByReleaseType')
+		# 2. a specific artist is requested
+		&& (grep /^artist_id:/, @searchTags)
+		# 3. any one of the following is true:
+		#    3a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
+		&& ($prefs->get('noRoleFilter')
+			# 3b. no specific role is requested
+			|| !(grep /^role_id:/, @searchTags)
+			# 3c. we request the album artist
+			|| (grep /^role_id:.*ALBUMARTIST/, @searchTags)
+		)
+	) {
+		_releases(@_);
+	}
+	else {
+		_albums(@_);
+	}
+}
+
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
@@ -1402,6 +1428,14 @@ sub _albums {
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
+	}
+
+	# filter out some release types if wanted, unless we are already filtering for a release type
+	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
+	if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
+		push @searchTags, 'release_type:' . join(',', grep {
+			!$releaseTypesToIgnore{$_}
+		} @{Slim::Schema::Album->releaseTypes});
 	}
 
 	my @artistIds = grep /artist_id:/, @searchTags;
