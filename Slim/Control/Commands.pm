@@ -242,7 +242,7 @@ sub artworkspecCommand {
 		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
 
 		my $oldName = $specs->{$spec};
-		if ( $oldName && $oldName !~ /$name/ ) {
+		if ( $oldName && $oldName !~ /\Q$name\E/ ) {
 			$specs->{$spec} = "$oldName, $name";
 		}
 		# don't duplicate standard specs!
