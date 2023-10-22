@@ -18463,7 +18463,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
 	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
-	NL	Je kunt verzamel albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamel album laten verschijnen.
+	NL	Je kunt compilatie albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest op het compilatie album laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
 	PL	Albumy z kompilacjami mogą być wyświetlane razem w kategorii „Różni wykonawcy” lub w grupie każdego wykonawcy dostępnego w kompilacji.
 	RU	Альбомы-сборки можно выводить вместе под заголовком "Различные исполнители" или под именем каждого исполнителя в сборке.
@@ -18480,7 +18480,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	FR	Regrouper les compilations
 	HE	קיבוץ של אלבומי אוסף
 	IT	Raggruppa gli album di compilation
-	NL	Verzamel albums groeperen
+	NL	Compilatie albums groeperen
 	NO	Grupper samlealbum
 	PL	Grupuj albumy z kompilacjami
 	RU	Сгруппировать альбомы-сборки
@@ -18497,7 +18497,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	FR	Lister les albums de compilation sous chaque artiste
 	HE	סידור אלבומי אוסף ברשימה תחת כל מבצע
 	IT	Elenca gli album di compilation per singolo artista
-	NL	Verzamel albums bij individuele artiesten weergeven
+	NL	Compilatie albums bij individuele artiesten weergeven
 	NO	Vis samlealbum under hver artist
 	PL	Wyświetl albumy z kompilacjami dla każdego wykonawcy
 	RU	Альбомы-сборки для каждого исполнителя
@@ -18514,7 +18514,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
 	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
-	NL	Wanneer verzamel albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
+	NL	Wanneer compilatie albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
 	PL	Po zgrupowaniu albumów zawierających kompilacje są one domyślnie wyświetlane w kategorii „Różni wykonawcy”. Nazwę tę można zmienić poniżej.
 	RU	При группировке альбомов-сборок они по умолчанию отображаются под заголовком "Различные исполнители". Это название можно изменить ниже.
