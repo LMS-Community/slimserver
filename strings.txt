@@ -6179,7 +6179,7 @@ SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
 	ES	Suponer formatos de etiquetas
 	FI	Arvaa tunnisteiden muodot
-	FR	Repères ID3 manquants
+	FR	Déduire les tags manquants
 	HE	ניחוש תבניות תגים
 	IT	Rileva tag dal nome del file
 	JA	タグ フォーマットを推測する
@@ -6197,7 +6197,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	EN	For files that do not have reasonable tags, you can have Logitech Media Server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the application can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 	ES	Para aquellos archivos que no tengan etiquetas razonables, se puede hacer que Logitech Media Server las suponga utilizando la ruta y el nombre de archivo. Utilizando las mismas variables que en Formato de título, se puede crear un patrón para que coincida con las convenciones de nomenclatura de tal forma que el servidor pueda hacer buenas suposiciones de lo que tendrían que ser las etiquetas. La prioridad se indica en la lista siguiente. Se usa la primera coincidencia con un patrón válido.
 	FI	Jos tiedostoissa ei ole kunnollisia tunnisteita, voit määrittää Logitech Media Serverin arvaamaan tunnisteet polun ja tiedostonimen pohjalta. Voit luoda tiedostojen nimeämiskäytäntöjä vastaavan mallin käyttäen samoja muuttujia kuin nimen muodossa. Näin sovellus voi arvata hyvällä tarkkuudella, missä tunnisteiden pitäisi olla.  Prioriteetti noudattaa alla olevaa luetteloa.  Sovellus käyttää ensimmäistä kelvollista mallivastaavuutta.
-	FR	Le Logitech Media Server peut tenter de compléter les repères ID3 manquants ou incomplets de vos fichiers musicaux à partir de leur chemin ou de leur nom de fichier. En utilisant les mêmes variables que pour le format du titre, vous pouvez spécifier des masques type afin de déterminer les repères ID3. Les masques seront testés dans l'ordre ci-dessous. Le premier masque valide est appliqué.
+	FR	Logitech Media Server peut tenter de compléter les tags manquants ou incomplets des fichiers musicaux à partir des chemins ou des noms des fichiers. En utilisant les mêmes variables que pour le format du titre, vous pouvez spécifier des masques afin de déterminer les tags. Les masques seront testés dans l'ordre ci-dessous. Le premier masque valide est appliqué.
 	HE	עבור קבצים שלא כוללים תגים הגיוניים, באפשרותך להורות לשרת לנחש תגים באמצעות הנתיב ושם הקובץ. באמצעות משתנים אלה עבור תבנית השם, באפשרותך ליצור תבנית שתתאים למוסכמות מתן השמות לקבצים שבהן אתה משתמש כך שיהיה באפשרות השרת לבצע ניחוש מוצלח עבור התגים. העדיפות מתקיימת לפי הסדר המפורט להלן. נעשה שימוש בהתאמה הראשונה של תבנית חוקית.
 	IT	In caso di file non provvisti di tag appropriati, è possibile impostare Logitech Media Server in modo che individui i tag corretti in base al percorso e al nome file. Utilizzando le stesse variabili adottate per il formato titolo, è possibile creare un modello con le stesse convenzioni di denominazione del file in modo da facilitare il rilevamento dei tag appropriati tramite il server. Di seguito è indicato l'ordine di priorità adottato. Viene utilizzato il primo modello corrispondente.
 	JA	正しいタグが含まれていないファイルに関しては、サーバーが推測するよう指定できます。どのようなパターンで推測するか指定してください。
@@ -6925,7 +6925,7 @@ SETUP_COVERART_DESC
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eg %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found).
 	ES	Cuando están disponibles, las imágenes de carátula de álbum se muestran al ver la información de un álbum o de una canción. Las imágenes de carátula se encuentran en las etiquetas ID3 para canciones individuales o pueden residir en la misma carpeta que los archivos de canciones. De forma predeterminada, se usan las imágenes llamadas "cover.jpg", "folder.jpg", "album.jpg" o "thumb.jpg". Se puede especificar un nombre de archivo adicional para usarlo para imágenes de carátula de álbum. Se pueden especificar nombres de archivo diferentes para las imágenes en miniatura o a tamaño completo. Coloque el prefijo % a la opción y podrá seguirlo de cualquier cadena con los mismos elementos disponibles para formatos de título (por ejemplo, %ARTIST - ALBUM, buscará Artist - Album.jpg que coincida con la información de artista y álbum encontrada.
 	FI	Kansikuvat näytetään (jos niitä on), kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3-otsikoista tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii cover.jpg-, folder.jpg-, album.jpg- tai thumb.jpg-tyypin kuvatiedostoja. Voit myös määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muodossa Artist - album.jpg.
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
+	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un tag ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
@@ -8157,7 +8157,7 @@ SETUP_SPLITLIST_DESC
 	EN	Logitech Media Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Logitech Media Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Logitech Media Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Logitech Media Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des tags de vos fichiers musicaux. S'il détecte l'un des caractères ci-dessous dans les tags, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le tag "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	Logitech Media Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Logitech Media Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in jouw mediabestanden halen. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item apart opgeslagen. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een nummer met de tag 'J.S. Bach;Michael Tilson Thomas' zowel bij 'J.S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
@@ -9246,41 +9246,49 @@ LANGUAGE
 SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
+	FR	Types de sorties pour les albums
 	NL	Releasetypes voor Albums
 
 SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
+	FR	Types de sorties à inclure dans la liste des albums
 	NL	Releasetypes die in de Album lijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
+	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
+	FR	Activer la prise en charge des types de sorties des albums
 	NL	Releasetypes voor albums inschakelen
 
 SETUP_IGNORE_RELEASE_TYPES_1
 	DE	Veröffentlichungstyp von Alben ignorieren
 	EN	Ignore album release types
+	FR	Ignorer les types de sorties des albums
 	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
 	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen selber zu erkennen.
 	EN	Try to recognize EPs and singles automatically when release type information is missing.
+	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant.
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
 	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
 	EN	Don't group an artist's releases
+	FR	Ne pas regrouper les sorties d'un artiste par type
 	NL	Releases van een artiest niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
 	EN	Group an artist's releases by type
+	FR	Regrouper les sorties d'un artiste par type
 	NL	Releases van een artiest groeperen op type
 
 SETUP_GROUPDISCS
@@ -11652,7 +11660,7 @@ RELEASE_TYPE_BROADCAST
 RELEASE_TYPE_OTHER
 	DE	Andere
 	EN	Other
-	FR	Autres
+	FR	Autre
 	NL	Overig
 
 DISC
@@ -12270,7 +12278,7 @@ COVERART
 	EN	Artwork
 	ES	Carátula
 	FI	Kansitaide
-	FR	Pochettes
+	FR	Pochette
 	HE	עטיפה
 	IT	Copertine
 	JA	アートワーク
@@ -12385,7 +12393,7 @@ THOUSANDS_SEP
 	EN	,
 	ES	.
 	FI	 
-	FR	,
+	FR	 
 	HE	,
 	IT	.
 	JA	,
@@ -12618,7 +12626,7 @@ TAGVERSION
 	EN	Tag Version
 	ES	Versión de etiqueta
 	FI	Tunnisteen versio
-	FR	Version avec repère
+	FR	Version de tag
 	HE	גרסת תג
 	IT	Versione tag
 	JA	タグ バージョン
@@ -12637,7 +12645,7 @@ VIEW_TAGS
 	EN	View Tags
 	ES	Ver etiquetas
 	FI	Näytä tunnisteet
-	FR	Afficher les repères
+	FR	Afficher les tags
 	IT	Visualizza tag
 	NL	Tags tonen
 	NO	Vis etiketter
@@ -12652,7 +12660,7 @@ NO_TAGS_FOUND
 	EN	No tags found
 	ES	No se han encontrado etiquetas
 	FI	Tunnisteita ei löytynyt
-	FR	Aucun repère détecté
+	FR	Aucun tag détecté
 	IT	Nessun tag trovato
 	NL	Geen tags gevonden
 	NO	Finner ingen etiketter
@@ -17143,11 +17151,13 @@ INFORMATION_MENU_MODULE
 INFORMATION_TIME_DIFF
 	DE	Zeitdifferenzu zu mysqueezebox.com
 	EN	Time difference to mysqueezebox.com
+	FR	Décalage horaire avec mysqueezebox.com
 
 INFORMATION_TIME_DIFF_DESC
 	DE	Bitte übeprüfen Sie die Uhr ihres Computers und starten Sie Logitech Media Server neu. Die Uhrzeit scheint um mehrere Sekunden verschoben zu sein. Eine zu grosse Differenz kann zu Abbrüchen bei gesicherten Verbindungen und anderen unerwarteten Effekten führen.
 	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behavior.
 	EN_GB	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
+	FR	Veuillez vérifier l'horloge de votre ordinateur et redémarrer Logitech Media Server. Il semble y avoir un écart de plusieurs secondes. Un décalage horaire trop important peut entraîner des échecs de connexions sécurisées et d'autres comportements inattendus.
 
 INFORMATION_PLAYER_NAME
 	CS	Název Squeezeboxu
@@ -18432,11 +18442,13 @@ COMPILATION
 APPEARANCES
 	DE	Beteiligungen
 	EN	Appearances
+	FR	Apparitions
 	NL	Optredens
 
 COMPOSITIONS
 	DE	Kompositionen
 	EN	Compositions
+	FR	Compositions
 	NL	Composities
 
 SETUP_VARIOUSARTISTS
@@ -19416,7 +19428,7 @@ SETUP_IMAGEPROXY_DESC
 	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj přehrávání datovýh proudů, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing. The helper can offload some of the heavy lifting to a separate process managed by the server application.
-	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
+	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par un serveur : mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir d'utiliser Logitech Media Server en local pour redimensionner les pochettes. En local, la tâche peut également être confiée à un processus dédié pour décharger le serveur.
 	NL	Om de beste kwaliteit albumhoezen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar de muziekspeler worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
 	NO	For å få høyest mulig billedkvalitet og ytelse på avspillerene, blir omslagsbilder skalert før avspillerene får dem. Som standard er det mysqueezebox.com som tar seg av dette, men hvis du vil være uavhengig av mysqueezebox.com eller kjører en intern strømmekilde, bør du vurdere å bruke Logitech Media Servers innebygde skaleringsfunksjon.
 	PL	W celu uzyskania najlepszej jakości okładki i wydajności na odtwarzaczach, okładki są dopasowywane względem rozmiaru przed przesłaniem do odtwarzacza. Domyślnie jest to obsłużone przez mysqueezebox.com. Jeśli chcesz być niezależny od mysqueezebox.com, lub używasz lokalnego źródła, możesz pozwolić, aby to Logitech Media Server zajął się dopasowywaniem okładek.
@@ -19445,6 +19457,7 @@ SETUP_IMAGEPROXY_LOCAL
 SETUP_IMAGEPROXY_HELPER
 	DE	Bilder mit Logitech Media Server Helferanwendung anpassen
 	EN	Use Logitech Media Server resizing helper to resize artwork
+	FR	Redimensionner les pochettes via un processus local dédié
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -21696,6 +21709,7 @@ IMPORTER_PROGRESS_DESC
 RELEASETYPES_PROGRESS
 	DE	Album Veröffentlichungstypen aktualisieren
 	EN	Update Album release types
+	FR	Actualiser les types de sorties des albums
 	NL	Album releasetypes vernieuwen
 
 VIRTUALLIBRARIES_PROGRESS

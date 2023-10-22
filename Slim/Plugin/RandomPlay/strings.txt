@@ -343,6 +343,7 @@ PLUGIN_RANDOM_LIBRARY_FILTER
 	CS	Použít zobrazení knihovny
 	DE	Bibliotheksansicht verwenden
 	EN	Use library view
+	FR	Utiliser la vue bibliothèque
 	NL	Gebruik deelcollectie
 	NO	Bruk delbiblioteker
 
@@ -572,7 +573,9 @@ PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
 	DE	Titelmix (Genreauswahl beibehalten)
 	EN	Song Mix (keep genre selection)
+	FR	Morceaux aléatoires (conserver la sélection du genre)
 
 PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
 	DE	Zufälliges Album (Genreauswahl beibehalten)
 	EN	Random Album (keep genre selection)
+	FR	Album aléatoire (conserver la sélection du genre)
