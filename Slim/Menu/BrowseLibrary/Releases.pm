@@ -65,7 +65,7 @@ sub _releases {
 			next if $_->{role_ids} !~ /[23]/;
 		}
 		# Release Types if main artist
-		elsif ($_->{role_ids} =~ /[1,5]/) {
+		elsif ($_->{role_ids} =~ /[15]/) {
 			$releaseTypes{$_->{release_type}}++;
 			next;
 		}
