@@ -20,6 +20,8 @@ sub _releases {
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
 
+	Slim::Schema::Album->addReleaseTypeStrings();
+
 	@searchTags = grep {
 		$_ !~ /^role_id:/
 	} grep {
@@ -104,13 +106,7 @@ sub _releases {
 	} keys %releaseTypes);
 
 	foreach my $releaseType (@sortedReleaseTypes) {
-		my $name;
-		my $nameToken = uc($releaseType);
-		foreach ($nameToken . 'S', $nameToken, 'RELEASE_TYPE_' . $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken) {
-			$name = cstring($client, $_) if Slim::Utils::Strings::stringExists($_);
-			last if $name;
-		}
-		$name ||= $releaseType;
+		my $name = Slim::Schema::Album->releaseTypeName($releaseType, $client);
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'

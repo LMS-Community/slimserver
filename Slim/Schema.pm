@@ -243,6 +243,7 @@ sub init {
 		# Wipe cached data after rescan
 		Slim::Control::Request::subscribe( sub {
 			$class->wipeCaches;
+			Slim::Schema::Album->addReleaseTypeStrings;
 		}, [['rescan'], ['done']] );
 	}
 
@@ -1182,6 +1183,7 @@ sub _createOrUpdateAlbum {
 	# let's not mess with compilation - we've already got our logic, and it's messy enough!
 	my ($releaseType) = grep { lc($_) ne 'compilation' } Slim::Music::Info::splitTag($attributes->{RELEASETYPE});
 	$albumHash->{release_type} = Slim::Utils::Text::ignoreCase( $releaseType || 'album' );
+	Slim::Schema::Album->addReleaseTypeMap($releaseType, $albumHash->{release_type});
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
 	my $vaObjId = $vaObjId || $self->variousArtistsObject->id;
