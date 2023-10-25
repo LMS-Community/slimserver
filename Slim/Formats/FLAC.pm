@@ -57,6 +57,7 @@ my %tagMapping = (
 	'DESCRIPTION'               => 'COMMENT',
 	'ORIGINALYEAR'              => 'YEAR',
 	'UNSYNCEDLYRICS'            => "LYRICS",
+	'WORK'			    => 'WORK',
 
 	# J.River once again.. can't these people use existing standards?
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',
@@ -68,7 +69,7 @@ my %tagMapping = (
 	'TOTALDISCS'                => 'DISCC',
 );
 
-my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE GENRE));
+my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE GENRE WORK));
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
