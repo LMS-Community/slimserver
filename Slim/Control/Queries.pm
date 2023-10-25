@@ -276,6 +276,8 @@ sub albumsQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
+	my $work	  = $request->getParam('work_id');
+	my $composerID    = $request->getParam('composer_id');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
@@ -486,6 +488,15 @@ sub albumsQuery {
 		if (defined $year) {
 			push @{$w}, 'albums.year = ?';
 			push @{$p}, $year;
+		}
+
+		if (defined $work) {
+			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
+			push @{$w}, 'tracks.work = ?';
+			push @{$p}, $work;
+			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
+			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
+			push @{$p}, $composerID;
 		}
 
 		if (defined $genreID) {
@@ -4436,6 +4447,128 @@ sub yearsQuery {
 	$request->setStatusDone();
 }
 
+sub worksQuery {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['works']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+
+	# get our parameters
+	my $client        = $request->client();
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $work          = $request->getParam('work');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
+	my $hasAlbums     = $request->getParam('hasAlbums');
+	my $byComposer     = $request->getParam('byComposer');
+
+	# get them all by default
+	my $where = {};
+
+	my $key = ($hasAlbums || $libraryID) ? 'tracks.work' : 'id';
+
+	my $sql = "SELECT DISTINCT tracks.work, contributors.name, contributors.id FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id AND contributor_track.role = 2 JOIN contributors ON contributors.id = contributor_track.contributor ";
+	my $w   = ["$key IS NOT NULL"];
+	my $p   = [];
+
+	if (defined $work) {
+		push @{$w}, "$key = ?";
+		push @{$p}, $work;
+	}
+
+	if (defined $libraryID) {
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryID;
+	}
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+
+	my $dbh = Slim::Schema->dbh;
+
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
+
+	if ($byComposer) {
+		$sql .= "ORDER BY 2,1";
+	} else {
+		$sql .= "ORDER BY 1,2";
+	}
+
+	# now build the result
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = 'works_loop';
+		my $chunkCount = 0;
+
+
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= " LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Works query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+
+		my ($work, $composer, $composerId);
+		$sth->bind_columns(\$work, \$composer, \$composerId);
+
+		while ( $sth->fetch ) {
+			#$id += 0;
+			utf8::decode($work) if $work;
+			utf8::decode($composer) if $composer;
+			$request->addResultLoop($loopname, $chunkCount, 'id', $work);
+			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
+			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
+
+			$chunkCount++;
+
+		}
+	}
+
+	$request->addResult('count', $count);
+
+	$request->setStatusDone();
+}
+
 ################################################################################
 # Special queries
 ################################################################################
@@ -4886,6 +5019,7 @@ sub _songDataFromHash {
 
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
+	$returnHash{work} = $res->{'tracks.work'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5311,6 +5445,7 @@ Returns arrayref of hashes.
 =cut
 
 sub _getTagDataForTracks {
+
 	my ( $tags, $args ) = @_;
 
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
@@ -5318,7 +5453,7 @@ sub _getTagDataForTracks {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	my $sql      = 'SELECT %s FROM tracks ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'tracks.work' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -5691,6 +5826,7 @@ sub _getTagDataForTracks {
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
+			utf8::decode( $c->{'tracks.work'} ) if exists $c->{'tracks.work'};
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
