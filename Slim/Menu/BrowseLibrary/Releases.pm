@@ -17,6 +17,7 @@ sub _releases {
 	my $wantMeta   = $pt->{'wantMetadata'};
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
 
@@ -92,7 +93,7 @@ sub _releases {
 	my $searchTags = [
 		"artist_id:$artistId",
 		"role_id:" . PRIMARY_ARTIST_ROLES,
-		"library_id:" . $library_id,
+		"library_id:$library_id",
 	];
 
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
@@ -110,8 +111,8 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1'] } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"] } ]);
+					? [ { searchTags => [@$searchTags, 'compilation:1'], orderBy => $orderBy } ]
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"], orderBy => $orderBy } ]);
 		}
 	}
 
