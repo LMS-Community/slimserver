@@ -1424,6 +1424,7 @@ sub _albums {
 	if (!$sort || $sort !~ /^sort:(?:random|new)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
+	$sort = 'sort:' . $sort if $sort !~ /^sort:/;
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
