@@ -95,12 +95,13 @@ sub _releases {
 
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
+	my %primaryReleaseTypes = map { $_ => 1 } @primaryReleaseTypes;
 
-	my @sortedReleaseTypes = @primaryReleaseTypes, sort {
+	my @sortedReleaseTypes = (@primaryReleaseTypes, sort {
 		$a cmp $b
 	} grep {
-		!grep /$_/, @primaryReleaseTypes;
-	} keys %releaseTypes;
+		!$primaryReleaseTypes{$_};
+	} keys %releaseTypes);
 
 	foreach my $releaseType (@sortedReleaseTypes) {
 		my $name;
