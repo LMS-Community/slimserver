@@ -630,6 +630,7 @@ sub init {
 	addDispatch(['wipecache',      '_queue'],                                                          [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 	addDispatch(['years',          '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::yearsQuery]);
 	addDispatch(['works',          '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::worksQuery]);
+	addDispatch(['worksbycomposer','_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::worksQuery]);
 	addDispatch(['artwork',        '_artworkid'],                                                      [0, 0, 0, \&Slim::Control::Queries::showArtwork]);
 	addDispatch(['rating',         '_item',          '?'],                                             [0, 1, 0, \&Slim::Control::Commands::ratingCommand]);
 	addDispatch(['rating',         '_item',          '_rating'],                                       [0, 0, 0, \&Slim::Control::Commands::ratingCommand]);
