@@ -576,7 +576,7 @@ sub _registerBaseNodes {
 		{
 			type         => 'link',
 			name         => 'BROWSE_BY_COMPOSER_WORK',
-			params       => {mode => 'works', byComposer => 1},
+			params       => {mode => 'worksbycomposer', byComposer => 1},
 			feed         => \&_works,
 			icon         => 'html/images/playlists.png',
 			homeMenuText => 'BROWSE_WORKS_BY_COMPOSER',
@@ -1411,7 +1411,11 @@ sub _works {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'id'}."\n".$_->{'composer'};
+				if ( $byComposer ) {
+					$_->{'name'}          = $_->{'composer'}."\n".$_->{'id'};
+				} else {
+					$_->{'name'}          = $_->{'id'}."\n".$_->{'composer'};
+				}
 				$_->{'name2'}         = $_->{'composer'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
