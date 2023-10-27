@@ -810,6 +810,10 @@ sub objectForUrl {
 		return undef;
 	}
 
+	if ( $url =~ /^db:/) {
+		return _objForDbUrl($url);
+	}
+
 	# Create a canonical version, to make sure we only have one copy.
 	if ( $url =~ /^(file|http)/i ) {
 		$url = URI->new($url)->canonical->as_string;
@@ -853,6 +857,38 @@ sub objectForUrl {
 	}
 
 	return $track;
+}
+
+sub _objForDbUrl {
+	my ($url) = @_;
+
+	if ($url =~ /^db:(\w+)\.(.+)/ ) {
+		my ($class, $values) = ($1, $2);
+
+		my $query = {};
+		for my $term (split('&', $values)) {
+			if ($term =~ /(.*)=(.*)/) {
+				my $key = $1;
+				my $value = Slim::Utils::Misc::unescape($2);
+
+				if (utf8::is_utf8($value)) {
+					utf8::decode($value);
+					utf8::encode($value);
+				}
+
+				$query->{$key} = $value;
+			}
+		}
+
+		my $params;
+		foreach (keys %$query) {
+			if (/^(.*)\./) {
+				$params->{prefetch} = $1;
+			}
+		}
+
+		return Slim::Schema->search(ucfirst($class), $query, $params)->first;
+	}
 }
 
 sub _createOrUpdateAlbum {
