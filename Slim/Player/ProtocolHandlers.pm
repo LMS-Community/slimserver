@@ -156,29 +156,7 @@ sub iconForURL {
 	}
 
 	elsif ($url =~ /^db:(album\..*)/) {
-		my $query = {};
-		for my $term (split('&', $1)) {
-			if ($term =~ /(.*)=(.*)/) {
-				my $key = $1;
-				my $value = Slim::Utils::Misc::unescape($2);
-
-				$key =~ s/^album\./me./;
-
-				if (utf8::is_utf8($value)) {
-					utf8::decode($value);
-					utf8::encode($value);
-				}
-
-				$query->{$key} = $value;
-			}
-		}
-
-		my $params;
-		if (grep /^contributor/, keys %$query) {
-			$params->{prefetch} = 'contributor';
-		}
-
-		my $album = Slim::Schema->search('Album', $query, $params)->first;
+		my $album = Slim::Schema->objectForUrl($url);
 
 		if ($album && $album->artwork) {
 			return 'music/' . $album->artwork . '/cover.png';
