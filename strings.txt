@@ -18449,7 +18449,7 @@ COMPILATIONS
 	FR	Compilations
 	HE	אוסף
 	IT	Compilation
-	NL	Compilatie
+	NL	Compilaties
 	NO	Samling
 	PL	Kompilacja
 	RU	Сборка
