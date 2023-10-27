@@ -201,7 +201,7 @@ sub _prepareDbItems {
 
 	foreach my $item (@$items) {
 		if ( $item->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
-			my $class = ucfirst($1);
+			my $dbClass = ucfirst($1);
 			my $url = $item->{'url'};
 
 			$dbBrowseModes ||= {
@@ -218,12 +218,12 @@ sub _prepareDbItems {
 				} ],
 			};
 
-			if ( $dbBrowseModes->{$class} ) {
+			if ( $dbBrowseModes->{$dbClass} ) {
 				$item->{'type'} = 'playlist';
 				$item->{'play'} = $item->{'url'} . '&libraryTracks.library=-1';
 				$item->{'url'}  = \&_dbItem;
 				$item->{'passthrough'} = [{
-					class => $class,
+					class => $dbClass,
 					url   => $url,
 				}];
 			}
@@ -237,9 +237,9 @@ sub _prepareDbItems {
 sub _dbItem {
 	my ($client, $callback, $args, $pt) = @_;
 
-	my $class  = ucfirst( delete $pt->{'class'} );
+	my $dbClass  = ucfirst( delete $pt->{'class'} );
 
-	if ( my $dbBrowseMode = $dbBrowseModes->{$class} ) {
+	if ( my $dbBrowseMode = $dbBrowseModes->{$dbClass} ) {
 		my $obj = Slim::Schema->objectForUrl($pt->{url});
 
 		if ($obj && $obj->id) {
