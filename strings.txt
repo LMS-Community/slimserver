@@ -18439,6 +18439,23 @@ COMPILATION
 	SV	Samling
 	ZH_CN	合辑
 
+COMPILATIONS
+	CS	Sbírka
+	DA	Kompilation
+	DE	Kompilationen
+	EN	Compilations
+	ES	Compilación
+	FI	Kokoelma
+	FR	Compilations
+	HE	אוסף
+	IT	Compilation
+	NL	Compilatie
+	NO	Samling
+	PL	Kompilacja
+	RU	Сборка
+	SV	Samling
+	ZH_CN	合辑
+
 APPEARANCES
 	DE	Beteiligungen
 	EN	Appearances
