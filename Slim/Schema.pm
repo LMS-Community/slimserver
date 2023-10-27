@@ -1186,7 +1186,7 @@ sub _createOrUpdateAlbum {
 	Slim::Schema::Album->addReleaseTypeMap($releaseType, $albumHash->{release_type});
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
-	my $vaObjId = $vaObjId || $self->variousArtistsObject->id;
+	$vaObjId ||= $self->variousArtistsObject->id;
 
 	if ( $isCompilation && !$hasAlbumArtist ) {
 		$albumHash->{contributor} = $vaObjId
@@ -1926,10 +1926,10 @@ sub variousArtistsObject {
 		$vaObj->namesort( Slim::Utils::Text::ignoreCaseArticles($vaString) );
 		$vaObj->namesearch( Slim::Utils::Text::ignoreCase($vaString, 1) );
 		$vaObj->update;
-
-		# this will not change while in the external scanner
-		$vaObjId = $vaObj->id if main::SCANNER;
 	}
+
+	# this will not change while in the external scanner
+	$vaObjId = $vaObj->id if main::SCANNER;
 
 	return $vaObj;
 }
@@ -3145,7 +3145,7 @@ sub _insertHash {
 	my $colstring = join( ',', @cols );
 	my $ph        = join( ',', map { '?' } @cols );
 
-	my $sth = $dbh->prepare("INSERT INTO $table ($colstring) VALUES ($ph)");
+	my $sth = $dbh->prepare_cached("INSERT INTO $table ($colstring) VALUES ($ph)");
 	$sth->execute( map { $hash->{$_} } @cols );
 
 	return $dbh->last_insert_id(undef, undef, undef, undef);
@@ -3160,7 +3160,7 @@ sub _updateHash {
 	my @cols      = keys %{$hash};
 	my $colstring = join( ', ', map { $_ . (defined $hash->{$_} ? ' = ?' : ' = NULL') } @cols );
 
-	my $sth = $class->dbh->prepare("UPDATE $table SET $colstring WHERE $pk = ?");
+	my $sth = $class->dbh->prepare_cached("UPDATE $table SET $colstring WHERE $pk = ?");
 	$sth->execute( (grep { defined $_ } map { $hash->{$_} } @cols), $id );
 
 	$hash->{$pk} = $id;

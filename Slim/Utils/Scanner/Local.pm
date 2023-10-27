@@ -399,7 +399,7 @@ sub deleteTracks {
 			# will be removing those tracks before the next query is run.
 			if ( !$deleteSth ) {
 				my $sql = $toDeleteSQL . " LIMIT 0, " . CHUNK_SIZE;
-				$deleteSth = $dbh->prepare($sql);
+				$deleteSth = $dbh->prepare_cached($sql);
 				$deleteSth->execute;
 				$deleteSth->bind_col(1, \$deleted);
 			}
@@ -480,7 +480,7 @@ sub addTracks {
 			# would prevent WAL checkpoints from occurring.
 			if ( !$onDiskOnlySth ) {
 				my $sql = $onDiskOnlySQL . " LIMIT $onDiskOnlyDone, " . CHUNK_SIZE;
-				$onDiskOnlySth = $dbh->prepare($sql);
+				$onDiskOnlySth = $dbh->prepare_cached($sql);
 				$onDiskOnlySth->execute;
 				$onDiskOnlySth->bind_col(1, \$new);
 			}
@@ -564,7 +564,7 @@ sub updateTracks {
 			# would prevent WAL checkpoints from occurring.
 			if ( !$changedOnlySth ) {
 				my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
-				$changedOnlySth = $dbh->prepare($sql);
+				$changedOnlySth = $dbh->prepare_cached($sql);
 				$changedOnlySth->execute;
 				$changedOnlySth->bind_col(1, \$changed);
 			}
@@ -759,7 +759,7 @@ sub deleted {
 			# Bug 10636, FLAC+CUE doesn't use playlist_track entries for some reason
 			# so we need to find the virtual tracks by looking at the URL
 			if ( !scalar @{$ptracks} ) {
-				$sth = $dbh->prepare( qq{
+				$sth = $dbh->prepare_cached( qq{
 					SELECT id, album, year
 					FROM   tracks
 					WHERE  url LIKE '$url#%'
