@@ -205,6 +205,20 @@ sub rescan {
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
 		$maxTrackId ||= 0;
 
+		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
+		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
+			my $isDST = (localtime(time()))[8] ? 1 : 0;
+
+			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
+				my $offset = $isDST ? 3600 : -3600;
+
+				$log->error("DST has changed since last scan - fix timestamps in tracks table");
+
+				$dbh->do("UPDATE tracks SET timestamp = (timestamp + $offset)");
+				Slim::Music::Import->setLastScanTimeIsDST();
+			}
+		}
+
 		# Generate 3 lists of files:
 
 		# 1. Files that no longer exist on disk
@@ -264,20 +278,6 @@ sub rescan {
 			SELECT url
 			FROM   changed
 		} . (IS_SQLITE ? '' : ' ORDER BY scanned_files.url');
-
-		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
-		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
-			my $isDST = (localtime(time()))[8] ? 1 : 0;
-
-			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
-				my $offset = $isDST ? 3600 : -3600;
-
-				$log->error("DST has changed since last scan - fix timestamps in tracks table");
-
-				$dbh->do("UPDATE tracks SET timestamp = (timestamp + $offset)");
-				Slim::Music::Import->setLastScanTimeIsDST();
-			}
-		}
 
 		$log->error("Get deleted tracks count") unless main::SCANNER && $main::progress;
 		# only remove missing tracks when looking for audio tracks
