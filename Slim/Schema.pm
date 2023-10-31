@@ -1353,6 +1353,9 @@ sub _createOrUpdateAlbum {
 			main::DEBUGLOG && $isDebug && $log->debug( "Not a Comp : " . $albumHash->{title} );
 		}
 	}
+	else {
+		$albumHash->{compilation} ||= 0;
+	}
 
 	# Bug: 3911 - don't add years for tracks without albums.
 	$self->_createYear( $albumHash->{year} );
@@ -2164,6 +2167,7 @@ sub wipeCaches {
 
 	# clear the references to these singletons
 	$vaObj          = undef;
+	$vaObjId        = undef;
 	$_unknownArtist = '';
 	$_unknownGenre  = '';
 	$_unknownAlbumId = undef;
