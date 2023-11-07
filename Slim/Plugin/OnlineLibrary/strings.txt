@@ -130,6 +130,9 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	FR	Remplacement avancé de genre
 	NL	Geavanceerde instellingen voor genre vervanging
 
+PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
+	EN	Release Type
+
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	CS	Zpět na základní nastavení
 	DE	Zurück zu den Grundeinstellungen

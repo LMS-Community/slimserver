@@ -15,7 +15,8 @@ use Slim::Utils::Progress;
 use Slim::Plugin::OnlineLibrary::Libraries;
 
 my $prefs = preferences('plugin.onlinelibrary');
-my $genreMappings = preferences('plugin.onlinelibrary-genres')->all() || {};
+my $genreMappings = preferences('plugin.onlinelibrary-genres');
+my $releaseTypeMappings = preferences('plugin.onlinelibrary-releasetypes');
 
 sub initPlugin {
 	my $class = shift;
@@ -34,11 +35,11 @@ sub initPlugin {
 
 	my $mappings = $prefs->get('genreMappings');
 
-	return unless scalar @$mappings || keys %$genreMappings;
+	return unless scalar @$mappings || keys %{$genreMappings->all || {}} || keys %{$releaseTypeMappings->all || {}};
 
 	Slim::Music::Import->addImporter( $class, {
 		type   => 'post',
-		weight => 10,
+		weight => 100,
 		onlineLibraryOnly => 1,
 		'use'  => 1,
 	} );
@@ -117,26 +118,37 @@ sub startScan {
 	$sth->execute();
 	$sth->bind_columns(\$albumId, \$title, \$titlesearch, \$name, \$namesearch);
 
-	my $mappings = {};
-	my $selectSQL = q(SELECT tracks.id
-							FROM tracks
-							WHERE tracks.album = ? AND tracks.extid IS NOT NULL;);
-
 	my $trackId;
-	my $tracks_sth = $dbh->prepare_cached($selectSQL);
+	my $tracks_sth = $dbh->prepare_cached( q(
+		SELECT tracks.id
+		FROM tracks
+		WHERE tracks.album = ? AND tracks.extid IS NOT NULL
+	) );
 	$tracks_sth->bind_columns(\$trackId);
+
+	my $update_release_type_sth = $dbh->prepare_cached( q(
+		UPDATE albums
+		SET release_type = ?
+		WHERE id = ?
+	) );
 
 	while ( $sth->fetch ) {
 		$progress->update(sprintf('%s - %s', $title, $name));
 		Slim::Schema->forceCommit;
 
 		my $key = md5_hex("$titlesearch||$namesearch");
-		if (my $genreName = $genreMappings->{$key}) {
+		if (my $genreName = $genreMappings->get($key)) {
 			$tracks_sth->execute($albumId);
 
 			while ($tracks_sth->fetch) {
 				Slim::Schema::Genre->add($genreName, $trackId + 0);
 			}
+		}
+
+		if (my $releaseType = $releaseTypeMappings->get($key)) {
+			my $ucReleaseType = Slim::Utils::Text::ignoreCase($releaseType);
+			$update_release_type_sth->execute($ucReleaseType, $albumId);
+			Slim::Schema::Album->addReleaseTypeMap($releaseType, $ucReleaseType);
 		}
 	}
 

@@ -13,6 +13,7 @@ use Digest::MD5 qw(md5_hex);
 use Slim::Utils::Prefs;
 
 my $genreMappings = preferences('plugin.onlinelibrary-genres');
+my $releaseTypeMappings = preferences('plugin.onlinelibrary-releasetypes');
 
 sub new {
 	my $class = shift;
@@ -33,17 +34,11 @@ sub handler {
 	if ($params->{saveSettings}) {
 		# mapping based on album/artist names
 		while (my ($prefName, $prefData) = each %{$params}) {
-			if ($prefName =~ /mapping_([a-f0-9]+)/) {
-				# if there was a duplicate entry, we'd get a list instead of a string - pick the first entry
-				($prefData) = grep /\w+/, @$prefData if ref $prefData;
-				$prefData =~ s/^\s+|\s+$//g;
-
-				if ($prefData) {
-					$genreMappings->set($1, $prefData);
-				}
-				else {
-					$genreMappings->remove($1);
-				}
+			if ($prefName =~ /genre_([a-f0-9]+)/) {
+				_setMapping($genreMappings, $1, $prefData);
+			}
+			elsif ($prefName =~ /releasetype_([a-f0-9]+)/) {
+				_setMapping($releaseTypeMappings, $1, $prefData);
 			}
 		}
 	}
@@ -53,12 +48,27 @@ sub handler {
 	$class->SUPER::handler($client, $params);
 }
 
-sub beforeRender {
-	my ($class, $params, $client) = @_;
-	($params->{genreMappings}, $params->{sortOrder}) = _getGenreMappings();
+sub _setMapping {
+	my ($prefs, $key, $prefData) = @_;
+
+	# if there was a duplicate entry, we'd get a list instead of a string - pick the first entry
+	($prefData) = grep /\w+/, @$prefData if ref $prefData;
+	$prefData =~ s/^\s+|\s+$//g;
+
+	if ($prefData) {
+		$prefs->set($key, $prefData);
+	}
+	else {
+		$prefs->remove($key);
+	}
 }
 
-sub _getGenreMappings {
+sub beforeRender {
+	my ($class, $params, $client) = @_;
+	($params->{mappings}, $params->{sortOrder}) = _getMappings();
+}
+
+sub _getMappings {
 	my $sql = q(SELECT albums.title, albums.titlesearch, contributors.name, contributors.namesearch
 						FROM albums JOIN contributors ON contributors.id = albums.contributor
 						WHERE albums.extid IS NOT NULL
@@ -76,8 +86,8 @@ sub _getGenreMappings {
 		my $key = md5_hex("$titlesearch||$namesearch");
 		utf8::decode($title);
 		utf8::decode($name);
-		$mappings->{$key} = [ $title, $name, $genreMappings->get($key) ];
-		push @$order, $key;
+		push @$order, $key unless $mappings->{$key};
+		$mappings->{$key} ||= [ $title, $name, $genreMappings->get($key), $releaseTypeMappings->get($key) ];
 	}
 
 	return ($mappings, $order);
