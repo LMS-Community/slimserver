@@ -164,7 +164,7 @@ sub releaseTypeName {
 	$nameToken =~ s/[^a-z_0-9]/_/ig;
 
 	my $name;
-	foreach (CUSTOM_RELEASE_TYPE_PREFIX . $nameToken, $nameToken . 'S', $nameToken, 'RELEASE_TYPE_' . $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken) {
+	foreach ('RELEASE_TYPE_' . $nameToken . 'S', CUSTOM_RELEASE_TYPE_PREFIX . $nameToken, $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken, $nameToken) {
 		$name = Slim::Utils::Strings::cstring($client, $_) if Slim::Utils::Strings::stringExists($_);
 		last if $name;
 	}

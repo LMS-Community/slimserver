@@ -126,7 +126,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	CS	Pokročilá náhrada žánru
 	DE	Erweiterte Ersetzung
-	EN	Advanced genre replacement
+	EN	Advanced genre and release type replacement
 	FR	Remplacement avancé de genre
 	NL	Geavanceerde instellingen voor genre vervanging
 
@@ -159,7 +159,7 @@ PLUGIN_ONLINE_LIBRARY_MATCHING
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	CS	Nahrazení online žánru
 	DE	Online Stilrichtungen ersetzen
-	EN	Online Genre Replacement
+	EN	Online Genre and Release Type Replacement
 	FR	Remplacement des genres en ligne
 	NL	Online Genres Vervangen
 	SV	Ersätta Online genre
