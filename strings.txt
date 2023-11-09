@@ -9274,9 +9274,9 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
-	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen selber zu erkennen.
-	EN	Try to recognize EPs and singles automatically when release type information is missing.
-	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant.
+	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
+	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
+	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant ou est de type "album".
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
