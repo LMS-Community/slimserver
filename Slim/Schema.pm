@@ -2423,10 +2423,12 @@ sub _checkValidity {
 		main::DEBUGLOG && $isDebug && $log->debug("Re-reading tags from $url as it has changed.");
 
 		my $oldid = $track->id;
+		my $oldAlbum = $track->albumid;
 
 		# Do a cascading delete for has_many relationships - this will
 		# clear out Contributors, Genres, etc.
 		$track->delete;
+		Slim::Schema::Album->rescan($oldAlbum);
 
 		# Add the track back into database with the same id as the record deleted.
 		my $trackId = $self->_newTrack({
