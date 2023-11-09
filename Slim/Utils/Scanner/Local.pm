@@ -223,16 +223,24 @@ sub rescan {
 
 		# 1. Files that no longer exist on disk
 		#    and are not virtual (from a cue sheet)
+		$log->error("Build temporary table for deleted tracks") unless main::SCANNER && $main::progress;
+		$dbh->do('DROP TABLE IF EXISTS dbonly');
+		$dbh->do( qq{
+			CREATE TEMPORARY TABLE dbonly AS
+				SELECT DISTINCT(url)
+				FROM   tracks
+				WHERE  url NOT IN (
+					SELECT url FROM scanned_files
+					WHERE filesize != 0
+				)
+				AND             url LIKE '$basedir%'
+				AND             `virtual` IS NULL
+				AND             content_type $ctFilter
+		} );
+
 		my $inDBOnlySQL = qq{
-			SELECT DISTINCT(url)
-			FROM            tracks
-			WHERE           url NOT IN (
-				SELECT url FROM scanned_files
-				WHERE filesize != 0
-			)
-			AND             url LIKE '$basedir%'
-			AND             `virtual` IS NULL
-			AND             content_type $ctFilter
+			SELECT          url
+			FROM            dbonly
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 2. Files that are new and not in the database.
@@ -251,8 +259,8 @@ sub rescan {
 		} );
 
 		my $onDiskOnlySQL = qq{
-			SELECT          url
-			FROM            diskonly
+			SELECT url
+			FROM   diskonly
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 3. Files that have changed mtime or size.
@@ -371,6 +379,7 @@ sub deleteTracks {
 
 	if ( $toDeleteCount && !Slim::Music::Import->hasAborted() ) {
 		my $deleteSth;
+		my $toDeleteDone = 0;
 
 		$pending{$nextFolder} |= PENDING_DELETE;
 
@@ -395,10 +404,8 @@ sub deleteTracks {
 
 			# Page through the files, this is to avoid a long-running read query which
 			# would prevent WAL checkpoints from occurring.
-			# Note: Bug 17438, this limit query always uses the first items, because it
-			# will be removing those tracks before the next query is run.
 			if ( !$deleteSth ) {
-				my $sql = $toDeleteSQL . " LIMIT 0, " . CHUNK_SIZE;
+				my $sql = $toDeleteSQL . " LIMIT $toDeleteDone, " . CHUNK_SIZE;
 				$deleteSth = $dbh->prepare_cached($sql);
 				$deleteSth->execute;
 				$deleteSth->bind_col(1, \$deleted);
@@ -407,6 +414,7 @@ sub deleteTracks {
 			if ( $deleteSth->fetch ) {
 				$progress && $progress->update( Slim::Music::Info::isFileURL($deleted) ? Slim::Utils::Misc::pathFromFileURL($deleted) : $deleted );
 				$$changes++;
+				$toDeleteDone++;
 
 				deleted($deleted);
 
