@@ -360,6 +360,10 @@ sub showSplashScreen {
 		$file = PerlApp::extract_bound_file(SPLASH_LOGO);
 	}
 
+	else {
+		$file = SPLASH_LOGO;
+	}
+
 	if (!$file || !-f $file) {
 		$file = '../platforms/win32/res/' . SPLASH_LOGO;
 	}

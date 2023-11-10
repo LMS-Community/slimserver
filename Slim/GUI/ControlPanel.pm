@@ -182,6 +182,10 @@ sub _fixIcon {
 		$file = PerlApp::extract_bound_file($iconFile);
 	}
 
+	else {
+		$file = $iconFile;
+	}
+
 	return $file if -f $file;
 }
 
