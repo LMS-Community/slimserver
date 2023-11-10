@@ -3650,7 +3650,10 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		$request->addResult('replay_gain', Slim::Player::ReplayGain->fetchGainMode($client, $song) || 0)
+		my $trackGain = Slim::Player::ReplayGain->fetchGainMode($client, $song);
+		if (defined $trackGain) {
+			$request->addResult('replay_gain', $trackGain);
+		}
 	}
 
 	if ($client->currentSleepTime()) {
