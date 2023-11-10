@@ -7727,21 +7727,21 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让Squeezebox由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	CS	Filtrování žánrů na úrovni alba a skladby.
-	DA	Filtrer genrer på album- og nummernivau.
+	CS	Filtrování žánrů na úrovni alba a skladby
+	DA	Filtrer genrer på album- og nummernivau
 	DE	Stilrichtungen auf Album- und Titelebene filtern
-	EN	Filter Genres at the Album & Track Level.
-	ES	Filtrar géneros por álbum y pista.
-	FI	Suodata genret levy- ja raitatasolla.
+	EN	Filter Genres at the Album & Track Level
+	ES	Filtrar géneros por álbum y pista
+	FI	Suodata genret levy- ja raitatasolla
 	FR	Portée du filtre sur les genres
-	HE	סנן סגנונות ברמת האלבום והרצועה.
-	IT	Filtra i generi musicali a livello di album e brani.
-	NL	Genres op album- en nummerniveau filteren.
-	NO	Filtrer sjangere på album- og spornivå.
-	PL	Filtruj gatunki na poziomie albumu i utworu.
-	RU	Фильтровать жанры по альбому и дорожкам.
-	SV	Filtrera genrer på album- och spårnivå.
-	ZH_CN	在专辑和音轨的层面过滤音乐风格。
+	HE	סנן סגנונות ברמת האלבום והרצועה
+	IT	Filtra i generi musicali a livello di album e brani
+	NL	Genres op album- en nummerniveau filteren
+	NO	Filtrer sjangere på album- og spornivå
+	PL	Filtruj gatunki na poziomie albumu i utworu
+	RU	Фильтровать жанры по альбому и дорожкам
+	SV	Filtrera genrer på album- och spårnivå
+	ZH_CN	在专辑和音轨的层面过滤音乐风格
 
 SETUP_NOGENREFILTER_1
 	CS	Zobrazit všechny skladby a alba interpreta
