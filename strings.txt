@@ -6851,11 +6851,11 @@ SETUP_SKIN_OK
 SETUP_PLUGINS
 	CS	Zásuvné moduly (pluginy)
 	DA	Udvidelsesmoduler
-	DE	Plugins
-	EN	Plugins
+	DE	Plugins verwalten
+	EN	Manage Plugins
 	ES	Complementos
 	FI	Laajennukset
-	FR	Plugins
+	FR	Gérer les plugins
 	IT	Plugin
 	NL	Plug-ins
 	NO	Plugin-moduler
