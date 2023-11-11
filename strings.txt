@@ -6849,7 +6849,7 @@ SETUP_SKIN_OK
 	SV	Verkställ ändringarna genom att stänga Logitech Media Server-fönstret och öppna det igen.
 
 SETUP_PLUGINS
-	CS	Zásuvné moduly (pluginy)
+	CS	Správa zásuvných modulů
 	DA	Udvidelsesmoduler
 	DE	Plugins verwalten
 	EN	Manage Plugins
@@ -6857,7 +6857,7 @@ SETUP_PLUGINS
 	FI	Laajennukset
 	FR	Gérer les plugins
 	IT	Plugin
-	NL	Plug-ins
+	NL	Beheer Plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
 	RU	Подключаемые модули
