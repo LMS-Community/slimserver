@@ -37,9 +37,14 @@ my %tagMapping = (
 	TRKN => 'TRACKNUM',
 	WRT  => 'COMPOSER',
 
+	'MusicBrainz Album Id'     => 'MUSICBRAINZ_ALBUM_ID',
+	'MusicBrainz Album Type'   => 'RELEASETYPE',
+	'MusicBrainz Artist Id'    => 'MUSICBRAINZ_ARTIST_ID',
 	'MusicBrainz Album Artist' => 'ALBUMARTIST',
+	'MusicBrainz Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MusicBrainz Track Id'     => 'MUSICBRAINZ_ID',
 	'MusicBrainz Sortname'     => 'ARTISTSORT',
+	'MusicBrainz Album Status' => 'MUSICBRAINZ_ALBUM_STATUS',
 );
 
 sub getTag {
@@ -190,7 +195,7 @@ sub findFrameBoundaries {
 	if (!defined $fh || !defined $time) {
 		return 0;
 	}
-	
+
 	# I'm not sure why we need a localFh here ...
 	open(my $localFh, '<&=', $fh);
 	$localFh->seek(0, 0);
@@ -209,45 +214,45 @@ sub canSeek { 1 }
 sub parseStream {
 	my ( $class, $dataref, $args ) = @_;
 	return -1 unless defined $$dataref;
-	
+
 	# stitch new data to existing buf and init parser if needed
 	$args->{_scanbuf} .= $$dataref;
 	$args->{_need} ||= 8;
 	$args->{_offset} ||= 0;
-	
+
 	my $len = length($$dataref);
 	my $offset = $args->{_offset};
 	my $log = logger('player.streaming');
-	
+
 	while (length($args->{_scanbuf}) > $args->{_offset} + $args->{_need} + 8) {
 		$args->{_atom} = substr($args->{_scanbuf}, $offset+4, 4);
 		$args->{_need} = unpack('N', substr($args->{_scanbuf}, $offset, 4));
 		$args->{_offset} = $args->{"_$args->{_atom}_"} = $offset;
-		
+
 		# a bit of sanity check
 		if ($offset == 0 && $args->{_atom} ne 'ftyp') {
 			$log->warn("no header! this is supposed to be a mp4 track");
 			return 0;
 		}
-		
+
 		# if there is a stco, the first entry is the audio_offset
 		if ($args->{_atom} eq 'stco') {
 			$args->{_audio_offset} = unpack('N', substr($args->{_scanbuf}, $offset+16, 4));
 			main::DEBUGLOG && $log->is_debug && $log->debug("found audio offset with stco $args->{_audio_offset}");
 		}
-		
+
 		# need to dive into atoms to find optional stco
 		$offset += ($args->{_atom} !~ /^(moov|trak|mdia|minf|stbl)$/) ? $args->{_need} : 8;
 
 		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
-		
+
 		# mdat reached = audio offset & size acquired
 		if ($args->{_atom} eq 'mdat') {
 			$args->{_audio_size} = $args->{_need};
 			last;
 		}
 	}
-	
+
 	return -1 unless $args->{_mdat_};
 
 	# now make sure we have acquired a full moov atom
@@ -257,10 +262,10 @@ sub parseStream {
 			$log->warn("no 'moov' found before EOF => track probably not playable");
 			return 0;
 		}
-		
+
 		# already waiting for bottom 'moov', we need more
 		return -1 if $args->{_range};
-		
+
 		# top 'moov' not found, need to seek beyond 'mdat'
 		$args->{_range} = $offset;
 		substr($args->{_scanbuf}, $args->{_offset}) = '';
@@ -268,11 +273,11 @@ sub parseStream {
 		return $offset;
 	} elsif ($args->{_atom} eq 'moov' && $len) {
 		return -1;
-	}	
-	
+	}
+
 	# finally got it, add 'moov' size it if was last atom
 	substr($args->{_scanbuf}, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0)) = '';
-	
+
 	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
 	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
 	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
@@ -280,16 +285,16 @@ sub parseStream {
 
 	my $info = Audio::Scan->scan_fh( mp4 => $fh )->{info};
 	$info->{fh} = $fh;
-	
+
 	# audio offset from stco or mdat position, but audio_size needs adjustment
 	$info->{audio_offset} = $args->{_audio_offset} || ($args->{_mdat_} + 8);
 	$info->{audio_size} -= $info->{audio_offset} - $args->{_mdat_};
-	
+
 	# MPEG-4 audio = 64,  MPEG-4 ADTS main = 102, MPEG-4 ADTS Low Complexity = 103
-	# MPEG-4 ADTS Scalable Sampling Rate = 104	
+	# MPEG-4 ADTS Scalable Sampling Rate = 104
 	if ($info->{tracks}->[0] && $info->{tracks}->[0]->{audio_type} == 64) {
 		$info->{processors} = { 'aac' => \&setADTSProcess };
-	}	
+	}
 
 	return $info;
 }
@@ -298,7 +303,7 @@ sub setADTSProcess {
 	my ($bufref) = @_;
 	my $pos;
 	my $codec;
-	my %atoms = ( 
+	my %atoms = (
 		stsd => 16,
 		mp4a => 36,
 		meta => 12,
@@ -315,9 +320,9 @@ sub setADTSProcess {
 		my $len = unpack("N", substr($$bufref, $pos, 4));
 		my $type = substr($$bufref, $pos + 4, 4);
 		$pos += 8;
-	
+
 		last if $type eq 'mdat';
-	
+
 		if ($type eq 'esds') {
 			my $offset = 4;
 			last unless unpack("C", substr($$bufref, $pos + $offset++, 1)) == 0x03;
@@ -333,8 +338,8 @@ sub setADTSProcess {
 			$offset += 3 if $data == 0x80 || $data == 0x81 || $data == 0xfe;
 			$offset++;
 			$data = unpack("N", substr($$bufref, $pos + $offset, 4));
-			$codec->{freq_index} = ($data >> 23) & 0x0f;						
-			$codec->{channel_config} = ($data >> 19) & 0x0f;						
+			$codec->{freq_index} = ($data >> 23) & 0x0f;
+			$codec->{channel_config} = ($data >> 19) & 0x0f;
 			$codec->{object_type} = $data >> 27;
 			$codec->{object_type} = ($data >> 10) & 0x1f if $codec->{object_type} == 5 || $codec->{object_type} == 29;
 			$pos += $len - 8;
@@ -349,25 +354,25 @@ sub setADTSProcess {
 				$codec->{frames} = [ unpack("N[$codec->{entries}]", substr($$bufref, $pos + $offset)) ];
 				if ($codec->{entries} != scalar @{$codec->{frames}}) {
 					logger('player.source')->warn("inconsistent stsz entries $codec->{entries} vs ", scalar @{$codec->{frames}});
-					$codec->{entries} = scalar @{$codec->{frames}}; 
-				}	
+					$codec->{entries} = scalar @{$codec->{frames}};
+				}
 			}
 			$pos += $len - 8;
 		} else {
 			$pos += ($atoms{$type} || $len) - 8;
-		}	
-	
+		}
+
 		last if ($codec->{frame_size} || $codec->{entries}) && $codec->{channel_config};
-	}	
-	
+	}
+
 	# don't want to send a header when doing AAC demuxs
 	$$bufref = '';
-	
+
 	# use a closure to hold context
 	return sub {
 		return extractADTS($codec, @_);
 	}
-}	
+}
 
 sub extractADTS {
 	my ($codec, undef, $chunk_size, $offset) = @_;
@@ -376,27 +381,27 @@ sub extractADTS {
 
 	$codec->{inbuf} .= substr($_[1], $offset);
 	substr($_[1], $offset) = '';
-		
+
 	while ($codec->{frame_size} || $codec->{frame_index} < $codec->{entries}) {
 		my $frame_size = $codec->{frame_size} || $codec->{frames}->[$codec->{frame_index}];
 		last if $frame_size + $consumed > length($codec->{inbuf}) || length($_[1]) + $frame_size + 7 > $chunk_size;
-	
+
 		$ADTSHeader[2] = (((($codec->{object_type} & 0x3) - 1)  << 6)   + ($codec->{freq_index} << 2) + ($codec->{channel_config} >> 2));
 		$ADTSHeader[3] = ((($codec->{channel_config} & 0x3) << 6) + (($frame_size + 7) >> 11));
 		$ADTSHeader[4] = ( (($frame_size + 7) & 0x7ff) >> 3);
 		$ADTSHeader[5] = (((($frame_size + 7) & 7) << 5) + 0x1f) ;
 
 		$_[1] .= pack("CCCCCCC", @ADTSHeader) . substr($codec->{inbuf}, $consumed, $frame_size);
-		
-		$codec->{frame_index}++;		
+
+		$codec->{frame_index}++;
 		$consumed += $frame_size;
-	}	
+	}
 
 	substr($codec->{inbuf}, 0, $consumed, '');
 	return length $codec->{inbuf};
-}	
-	
-# AAAAAAAA AAAABCCD EEFFFFGH HHIJKLMM MMMMMMMM MMMOOOOO OOOOOOPP 
+}
+
+# AAAAAAAA AAAABCCD EEFFFFGH HHIJKLMM MMMMMMMM MMMOOOOO OOOOOOPP
 #
 # Header consists of 7 bytes without CRC.
 #
@@ -404,7 +409,7 @@ sub extractADTS {
 # A	12	syncword 0xFFF, all bits must be 1
 # B	1	MPEG Version: 0 for MPEG-4, 1 for MPEG-2
 # C	2	Layer: always 0
-# D	1	set to 1 as there is no CRC 
+# D	1	set to 1 as there is no CRC
 # E	2	profile, the MPEG-4 Audio Object Type minus 1
 # F	4	MPEG-4 Sampling Frequency Index (15 is forbidden)
 # G	1	private bit, guaranteed never to be used by MPEG, set to 0 when encoding, ignore when decoding
@@ -413,17 +418,17 @@ sub extractADTS {
 # J	1	home, set to 0 when encoding, ignore when decoding
 # K	1	copyrighted id bit, the next bit of a centrally registered copyright identifier, set to 0 when encoding, ignore when decoding
 # L	1	copyright id start, signals that this frame's copyright id bit is the first bit of the copyright id, set to 0 when encoding, ignore when decoding
-# M	13	frame length, this value must include 7 bytes of header 
+# M	13	frame length, this value must include 7 bytes of header
 # O	11	Buffer fullness
 # P	2	Number of AAC frames (RDBs) in ADTS frame minus 1, for maximum compatibility always use 1 AAC frame per ADTS frame
 #
 # ISO 14496 Part 3 Table 1.13
-# 
-# A: Profile (2=LC, 5=SBR, 29=PS), R: Core SampleRate, M: Main SampleRate, 
+#
+# A: Profile (2=LC, 5=SBR, 29=PS), R: Core SampleRate, M: Main SampleRate,
 # C: Channels, X: Extensions, S=???, T=???, E=extension bit
-# 
+#
 # AOT=2      AOT=5|29   AOT=2 (extended)
-# AAAA ARRR  AAAA ARRR  AAAA ARRR	
+# AAAA ARRR  AAAA ARRR  AAAA ARRR
 # RCCC CXXX  RCCC CMMM  RCCC CXXX
 #            MPPP PP    SSSS SSSS
 #                       SSST TTTT
