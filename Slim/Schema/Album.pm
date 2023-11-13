@@ -61,8 +61,8 @@ use constant CUSTOM_RELEASE_TYPE_PREFIX => 'RELEASE_TYPE_CUSTOM_';
 # see https://musicbrainz.org/doc/Release_Group/Type
 my @PRIMARY_RELEASE_TYPES = qw(
 	Album
-	Single
 	EP
+	Single
 	Broadcast
 	Other
 );
