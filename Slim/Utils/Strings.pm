@@ -628,11 +628,12 @@ sub isLanguageRegionalVersion {
 
 	my $currentLanguage = $prefs->get('language') || $failsafeLang;
 	
-	if ( $currentLanguage =~ /_/ && $lang !~ /_/ ) { # contains a regional variation e.g. EN_GB 
-		my ($mainLang) = split( /_/, $currentLanguage );
-		if ($mainLang eq $lang) {
+	if ( $lang !~ /_/ && $currentLanguage =~ /(.+)_/ ) { # contains a regional variation e.g. EN_GB 
+
+		if ( $1 eq $lang ) {
 			return $currentLanguage;
 		}
+
 	}
 
 	return; 
