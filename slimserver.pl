@@ -64,7 +64,7 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 
 # This package section is used for the windows service version of the application,
 # as built with ActiveState's PerlSvc
-if (ISWINDOWS && $PerlSvc::VERSION) {
+if (ISACTIVEPERL && $PerlSvc::VERSION) {
 	package PerlSvc;
 
 	our %Config = (

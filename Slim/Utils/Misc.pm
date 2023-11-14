@@ -1437,7 +1437,7 @@ Returns true if running as a Windows service.
 
 =cut
 
-sub runningAsService { if (main::ISWINDOWS) {
+sub runningAsService { if (main::ISACTIVEPERL) {
 
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
 		return 1;
