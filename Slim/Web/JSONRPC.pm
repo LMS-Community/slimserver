@@ -444,7 +444,10 @@ sub requestMethod {
 		}
 
 		if ( $client && $lang ) {
-			$client->languageOverride($lang);
+			# Only override if the currently selected language is not a regional version of the client language
+			if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) { 
+				$client->languageOverride($lang);
+			}
 			$client->controlledBy('squeezeplay');
 		}
 		elsif ( $lang ) {

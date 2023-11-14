@@ -623,6 +623,22 @@ sub getLanguage {
 	return $prefs->get('language') || $failsafeLang;
 }
 
+sub isLanguageRegionalVersion {
+	my $lang = shift;
+
+	my $currentLanguage = $prefs->get('language') || $failsafeLang;
+	
+	if ( $lang !~ /_/ && $currentLanguage =~ /(.+)_/ ) { # contains a regional variation e.g. EN_GB 
+
+		if ( $1 eq $lang ) {
+			return $currentLanguage;
+		}
+
+	}
+
+	return; 
+}
+
 sub setLanguage {
 	my $lang = shift;
 
