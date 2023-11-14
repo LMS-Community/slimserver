@@ -12,7 +12,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Schema;
 
-use constant STEPS => 3;
+use constant STEPS => 4;
 
 # Let's use Apple's definition of EP/Single:
 # https://diymusician.cdbaby.com/releasing-music/what-is-an-ep/#:~:text=EP%20stands%20for%20“extended%20play%2C”%20but%20the%20format,long%20playing%20—%20or%20“full%20length”%20—%20albums
@@ -82,6 +82,16 @@ sub startScan {
 
 	# Step 3: EPs
 	$dbh->do(sprintf($updateSQL, 'EP', EP_CONDITION));
+	$progress->update('.');
+
+	# Step 4: "EP" in the title
+	$dbh->do( q(
+		UPDATE albums
+			SET release_type = 'EP'
+		WHERE release_type = 'ALBUM' AND title REGEXP '[^\w.]+EP\b'
+	) );
+
+	$dbh->do('DROP TABLE IF EXISTS release_type_helper');
 
 	$progress->final(STEPS);
 

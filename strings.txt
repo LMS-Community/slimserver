@@ -93,34 +93,34 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2022 Logitech - verze 8.4.0
-	DA	© 2001-2022 Logitech - version 8.4.0
-	DE	© 2001-2022 Logitech Version 8.4.0
-	EN	© 2001-2022 Logitech Version 8.4.0
-	ES	© 2001-2022 Logitech Versión 8.4.0
-	FI	© 2001-2022 Logitechin versio 8.4.0
-	FR	© 2001-2022 Logitech Version 8.4.0
-	IT	© 2001-2022 Logitech versione 8.4.0
-	NL	© 2001-2022 Logitech versie 8.4.0
-	NO	© 2001–2022 Logitech versjon 8.4.0
-	PL	© 2001-2022 Logitech wersja 8.4.0
-	RU	© Logitech, 2001-2022. Версия 8.4.0
-	SV	© 2001–2022 Logitech Version 8.4.0
+	CS	© 2001-2023 Logitech - verze 8.4.0
+	DA	© 2001-2023 Logitech - version 8.4.0
+	DE	© 2001-2023 Logitech Version 8.4.0
+	EN	© 2001-2023 Logitech Version 8.4.0
+	ES	© 2001-2023 Logitech Versión 8.4.0
+	FI	© 2001-2023 Logitechin versio 8.4.0
+	FR	© 2001-2023 Logitech Version 8.4.0
+	IT	© 2001-2023 Logitech versione 8.4.0
+	NL	© 2001-2023 Logitech versie 8.4.0
+	NO	© 2001–2023 Logitech versjon 8.4.0
+	PL	© 2001-2023 Logitech wersja 8.4.0
+	RU	© Logitech, 2001-2023. Версия 8.4.0
+	SV	© 2001–2023 Logitech Version 8.4.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2022 Logitech
-	DA	© 2001-2022 Logitech
-	DE	© 2001-2022 Logitech
-	EN	© 2001-2022 Logitech
-	ES	© 2001-2022 Logitech
-	FI	© 2001-2022 Logitech
-	FR	© 2001-2022 Logitech
-	IT	© 2001-2022 Logitech
-	NL	© 2001-2022 Logitech
-	NO	© 2001-2022 Logitech
-	PL	© 2001-2022 Logitech
-	RU	© Logitech, 2001-2022
-	SV	© 2001-2022 Logitech
+	CS	© 2001-2023 Logitech
+	DA	© 2001-2023 Logitech
+	DE	© 2001-2023 Logitech
+	EN	© 2001-2023 Logitech
+	ES	© 2001-2023 Logitech
+	FI	© 2001-2023 Logitech
+	FR	© 2001-2023 Logitech
+	IT	© 2001-2023 Logitech
+	NL	© 2001-2023 Logitech
+	NO	© 2001-2023 Logitech
+	PL	© 2001-2023 Logitech
+	RU	© Logitech, 2001-2023
+	SV	© 2001-2023 Logitech
 
 VERSION
 	CS	Verze 8.4.0 / r%s
@@ -632,7 +632,7 @@ MUSIC_SERVICES
 	FI	Musiikkipalvelut
 	FR	Services musicaux
 	IT	Servizi di musica
-	NL	Muziekservices
+	NL	Muziekdiensten
 	NO	Musikktjenester
 	PL	Usługi muzyczne
 	RU	Музыкальные службы
@@ -733,7 +733,7 @@ CURRENT_PLAYLIST
 	HE	רשימת ההשמעה הנוכחית
 	IT	Playlist in uso
 	JA	現在のプレイリスト
-	NL	De huidige afspeellijst
+	NL	Huidige afspeellijst
 	NO	Aktiv spilleliste
 	PL	Aktualna lista odtwarzania
 	PT	Playlist Actual
@@ -1369,7 +1369,7 @@ CANCEL_SLEEP
 	HE	הגדרת שינה מבוטלת.
 	IT	Sospensione annullata
 	JA	スリープ キャンセル
-	NL	Sluimermodus uit.
+	NL	Sluimermodus uit
 	NO	Hvilemodus avbrutt
 	PL	Uśpienie anulowane
 	PT	Inactividade cancelada
@@ -2701,7 +2701,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 	HE	שדרוג הקושחה של Squeezebox.
 	IT	Aggiornamento firmware Squeezebox.
 	JA	ファームウェアをアップデートしています
-	NL	Squeezebox firmware wordt bijgewerkt.
+	NL	Squeezebox firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	PT	Atualizando firmware ...
@@ -2720,7 +2720,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	HE	עדכון הקושחה של Squeezebox.
 	IT	Aggiornamento firmware Squeezebox.
 	JA	ファームウェアをアップデートしています
-	NL	Squeezebox firmware wordt bijgewerkt.
+	NL	Squeezebox firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	PT	Atualizando firmware ...
@@ -2739,7 +2739,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	HE	עדכון הקושחה של Transporter.
 	IT	Aggiornamento firmware Transporter.
 	JA	ファームウェアをアップデートしています
-	NL	Transporter firmware wordt bijgewerkt.
+	NL	Transporter firmware updaten...
 	NO	Oppdaterer fastvaren i Transporter.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Transporter.
 	PT	Atualizando firmware ...
@@ -2756,7 +2756,7 @@ UPDATING_FIRMWARE_RECEIVER
 	FI	Squeezeboxin laitteisto-ohjelmiston päivitys.
 	FR	Mise à jour du micrologiciel Squeezebox
 	IT	Aggiornamento firmware Squeezebox.
-	NL	Squeezebox firmware wordt bijgewerkt.
+	NL	Squeezebox firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	RU	Обновление микропрограммы Squeezebox.
@@ -2771,7 +2771,7 @@ UPDATING_FIRMWARE_BOOM
 	FI	Laiteohjelmisto päivitetään.
 	FR	Mise à jour du micrologiciel.
 	IT	Aggiornamento firmware.
-	NL	Firmware wordt bijgewerkt.
+	NL	Firmware wordt geüpdatet.
 	NO	Oppdaterer fastvare.
 	PL	Aktualizowanie oprogramowania układowego.
 	RU	Обновление микропрограммы.
@@ -2804,7 +2804,7 @@ FIRMWARE_MISSING_DESC
 	FR	Le serveur ne peut se connecter à Internet pour obtenir une mise à jour du micrologiciel.
 	HE	השרת לא מצליח להתחבר לאינטרנט על מנת להשיג עדכון לקושחה.
 	IT	Impossibile connettersi a Internet per ottenere il firmware aggiornato.
-	NL	Server kan geen verbinding maken met internet om bijgewerkte firmware op te halen.
+	NL	Server kan geen verbinding maken met internet om firmware update binnen te halen.
 	NO	Serveren kan ikke kople seg til Internett for å oppdatere spillerens programvare.
 	PL	Serwer nie może połączyć się z Internetem w celu uzyskania aktualizacji oprogramowania układowego.
 	RU	Серверу не удается подключиться к Интернету для обновления микропрограммы.
@@ -3985,7 +3985,7 @@ INSTALLERROR_INVALID_VERSION
 	FI	Laajennus ei ole yhteensopiva tämän Logitech Media Server -version kanssa. Päivitä.
 	FR	Le plugin n'est pas compatible avec cette version du Logitech Media Server. Veuillez mettre à jour.
 	IT	Plugin incompatibile con questa versione di Logitech Media Server. Aggiornarlo.
-	NL	Plug-in is incompatibel met deze versie van Logitech Media Server. Werk de plug-in bij.
+	NL	Plug-in is incompatibel met deze versie van Logitech Media Server. Update de plug-in.
 	NO	Plugin-modulen er ikke kompatibel med denne versjonen av Logitech Media Server. Du bør oppdatere.
 	PL	Dodatek jest niezgodny z tą wersją programu Logitech Media Server. Dokonaj aktualizacji.
 	RU	Плагин несовместим с данной версией Logitech Media Server. Обновите программу.
@@ -5451,7 +5451,7 @@ SETUP_REPLAYGAINMODE_DESC
 	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le "gain morceau" permet de normaliser le volume de chaque morceau. Avec le "gain album", le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le "gain intelligent" permet d'utiliser le "gain album" si des morceaux consécutifs sont issus d'un même album. Sinon, le "gain morceau" est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
 	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di una playlist mista.
-	NL	Sommige muziekbestanden bevatten volume aanpassing, of 'Replay Gain' informatie, die gebruikt kan worden tijdens het afspelen. Dit zorgt ervoor dat nummers en albums met hetzelfde volume afgespeeld worden. De muziekspeler kan deze informatie gebruiken, indien aanwezig. Je kunt volume aanpassing van nummers gebruiken om nummers met een gelijk volume af te spelen. Je kunt volume aanpassing van albums gebruiken om albums met een gelijk volume af te spelen, maar daarbij de volume verschillen tussen de nummers van een album bewaren. 'Slimme' aanpassingsselectie gebruikt volume aanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volume aanpassing van nummers voor een gemengde playlist.
+	NL	Sommige muziekbestanden bevatten volume aanpassing, of 'Replay Gain' informatie, die gebruikt kan worden tijdens het afspelen. Dit zorgt ervoor dat nummers en albums met hetzelfde volume afgespeeld worden. De muziekspeler kan deze informatie gebruiken, indien aanwezig. Je kunt volume aanpassing van nummers gebruiken om nummers met een gelijk volume af te spelen. Je kunt volume aanpassing van albums gebruiken om albums met een gelijk volume af te spelen, waarbij de volume verschillen tussen de nummers van een album in stand blijven. 'Slimme' aanpassingsselectie gebruikt volume aanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volume aanpassing van nummers voor een gemengde afspeellijst.
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
@@ -5472,7 +5472,7 @@ SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
 	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
-	NL	Online streamingdiensten bieden meestal geen vorm van volume normalisering aan. Internetstreams kunnen hierdoor duidelijk harder weergegeven worden dan locale bestanden. Stel een standaardwaarde in die bij internetstreams moet worden gebruikt.
+	NL	Online streamingdiensten bieden meestal geen vorm van volume normalisering aan. Internetstreams kunnen hierdoor duidelijk harder weergegeven worden dan lokale bestanden. Stel een standaardwaarde in die bij internetstreams moet worden gebruikt.
 	NO	Strømmetjenester støtter ofte ikke volumjustering. Du kan få uønskede volumendringer hvis du veksler mellom spor fra strømmetjenester og lokale musikkfiler. Sett et standardvolum som skal brukes på alle internettstrømmer.
 	PL	Zdalne strumienie często nie przesyłają żadnych danych, które pozwalałyby na automatyczne dopasowanie głośności. Odtwarzanie utworów ze zdalnych strumieni wymieszanych z lokalnymi utworami może doprowadzić do niepożądanych zmian głośności. Ustal domyślną wartość, która będzie użyta dla każdego zdalnego strumienia, który nie określa własnego poziomu głośności.
 	SV	Strömningstjänster understöder för det mesta inte volymnormalisering. Därför kan du uppleva plötsliga volymskillnader när du byter mellan lokal musik och strömningstjänster. Bestäm ett standardvärde för volymjustering som skall användas på strömningstjänster.
@@ -6179,7 +6179,7 @@ SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
 	ES	Suponer formatos de etiquetas
 	FI	Arvaa tunnisteiden muodot
-	FR	Repères ID3 manquants
+	FR	Déduire les tags manquants
 	HE	ניחוש תבניות תגים
 	IT	Rileva tag dal nome del file
 	JA	タグ フォーマットを推測する
@@ -6197,7 +6197,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	EN	For files that do not have reasonable tags, you can have Logitech Media Server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the application can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 	ES	Para aquellos archivos que no tengan etiquetas razonables, se puede hacer que Logitech Media Server las suponga utilizando la ruta y el nombre de archivo. Utilizando las mismas variables que en Formato de título, se puede crear un patrón para que coincida con las convenciones de nomenclatura de tal forma que el servidor pueda hacer buenas suposiciones de lo que tendrían que ser las etiquetas. La prioridad se indica en la lista siguiente. Se usa la primera coincidencia con un patrón válido.
 	FI	Jos tiedostoissa ei ole kunnollisia tunnisteita, voit määrittää Logitech Media Serverin arvaamaan tunnisteet polun ja tiedostonimen pohjalta. Voit luoda tiedostojen nimeämiskäytäntöjä vastaavan mallin käyttäen samoja muuttujia kuin nimen muodossa. Näin sovellus voi arvata hyvällä tarkkuudella, missä tunnisteiden pitäisi olla.  Prioriteetti noudattaa alla olevaa luetteloa.  Sovellus käyttää ensimmäistä kelvollista mallivastaavuutta.
-	FR	Le Logitech Media Server peut tenter de compléter les repères ID3 manquants ou incomplets de vos fichiers musicaux à partir de leur chemin ou de leur nom de fichier. En utilisant les mêmes variables que pour le format du titre, vous pouvez spécifier des masques type afin de déterminer les repères ID3. Les masques seront testés dans l'ordre ci-dessous. Le premier masque valide est appliqué.
+	FR	Logitech Media Server peut tenter de compléter les tags manquants ou incomplets des fichiers musicaux à partir des chemins ou des noms des fichiers. En utilisant les mêmes variables que pour le format du titre, vous pouvez spécifier des masques afin de déterminer les tags. Les masques seront testés dans l'ordre ci-dessous. Le premier masque valide est appliqué.
 	HE	עבור קבצים שלא כוללים תגים הגיוניים, באפשרותך להורות לשרת לנחש תגים באמצעות הנתיב ושם הקובץ. באמצעות משתנים אלה עבור תבנית השם, באפשרותך ליצור תבנית שתתאים למוסכמות מתן השמות לקבצים שבהן אתה משתמש כך שיהיה באפשרות השרת לבצע ניחוש מוצלח עבור התגים. העדיפות מתקיימת לפי הסדר המפורט להלן. נעשה שימוש בהתאמה הראשונה של תבנית חוקית.
 	IT	In caso di file non provvisti di tag appropriati, è possibile impostare Logitech Media Server in modo che individui i tag corretti in base al percorso e al nome file. Utilizzando le stesse variabili adottate per il formato titolo, è possibile creare un modello con le stesse convenzioni di denominazione del file in modo da facilitare il rilevamento dei tag appropriati tramite il server. Di seguito è indicato l'ordine di priorità adottato. Viene utilizzato il primo modello corrispondente.
 	JA	正しいタグが含まれていないファイルに関しては、サーバーが推測するよう指定できます。どのようなパターンで推測するか指定してください。
@@ -6579,7 +6579,7 @@ SETUP_RESCAN_DESC
 	FR	Cliquez sur Analyser et le Logitech Media Server va à nouveau analyser son contenu.
 	HE	לחץ על 'סריקה חוזרת' כדי להורות ל-Logitech Media Server לסרוק את ספריית המוסיקה שלך ולהוסיף מוסיקה חדשה או לעדכן שירים שהשתנו.
 	IT	Fare clic su Ripeti analisi per consentire a Logitech Media Server di analizzare la libreria multimediale e aggiungere nuovi file multimediali o aggiornare quelli che sono stati modificati.
-	NL	Klik op 'Opnieuw scannen' om Logitech Media Server je mediabibliotheek te laten scannen en nieuwe media toe te voegen, of gewijzigde bestanden bij te werken.
+	NL	Klik op 'Opnieuw scannen' om de mediabibliotheek door Logitech Media Server te laten scannen en nieuwe media toe te voegen, of gewijzigde bestanden te updaten.
 	NO	Klikk på Søk på nytt for å la Logitech Media Server søke gjennom mediebiblioteket og legge til nye mediefiler eller oppdatere spor som endres.
 	PL	Kliknij przycisk Przeszukaj ponownie, aby program Logitech Media Server przeszukał bibliotekę multimediów i dodał nowe multimedia lub zaktualizował utwory, które zostały zmienione.
 	RU	Выберите "Повторное сканирование", чтобы Logitech Media Server выполнил сканирование библиотеки мультимедиа и добавил новые файлы мультимедиа или обновил изменившиеся файлы.
@@ -6849,15 +6849,15 @@ SETUP_SKIN_OK
 	SV	Verkställ ändringarna genom att stänga Logitech Media Server-fönstret och öppna det igen.
 
 SETUP_PLUGINS
-	CS	Zásuvné moduly (pluginy)
+	CS	Správa zásuvných modulů
 	DA	Udvidelsesmoduler
-	DE	Plugins
-	EN	Plugins
+	DE	Plugins verwalten
+	EN	Manage Plugins
 	ES	Complementos
 	FI	Laajennukset
-	FR	Plugins
+	FR	Gérer les plugins
 	IT	Plugin
-	NL	Plug-ins
+	NL	Beheer Plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
 	RU	Подключаемые модули
@@ -6925,7 +6925,7 @@ SETUP_COVERART_DESC
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eg %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found).
 	ES	Cuando están disponibles, las imágenes de carátula de álbum se muestran al ver la información de un álbum o de una canción. Las imágenes de carátula se encuentran en las etiquetas ID3 para canciones individuales o pueden residir en la misma carpeta que los archivos de canciones. De forma predeterminada, se usan las imágenes llamadas "cover.jpg", "folder.jpg", "album.jpg" o "thumb.jpg". Se puede especificar un nombre de archivo adicional para usarlo para imágenes de carátula de álbum. Se pueden especificar nombres de archivo diferentes para las imágenes en miniatura o a tamaño completo. Coloque el prefijo % a la opción y podrá seguirlo de cualquier cadena con los mismos elementos disponibles para formatos de título (por ejemplo, %ARTIST - ALBUM, buscará Artist - Album.jpg que coincida con la información de artista y álbum encontrada.
 	FI	Kansikuvat näytetään (jos niitä on), kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3-otsikoista tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii cover.jpg-, folder.jpg-, album.jpg- tai thumb.jpg-tyypin kuvatiedostoja. Voit myös määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muodossa Artist - album.jpg.
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
+	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un tag ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
@@ -7171,7 +7171,7 @@ SETUP_RATINGIMPLEMENTATION
 	FI	Luokituksen tallennus
 	FR	Classement du stockage
 	IT	Memorizzazione voto
-	NL	Opslaan van beoordelingen
+	NL	Opslaan van waarderingen
 	NO	Rangeringslagring
 	PL	Magazyn ocen
 	RU	Хранилище рейтингов
@@ -7186,7 +7186,7 @@ SETUP_RATINGIMPLEMENTATION_DESC
 	FI	Luokituksen tallennus, jota käytetään luokituksia tallennettaessa tai tarkasteltaessa
 	FR	Stockage du classement à utiliser lors du stockage ou de l'affichage des classements
 	IT	Archivio da utilizzare per la memorizzazione o la visualizzazione dei voti
-	NL	Te gebruiken opslag wanneer beoordelingen worden opgeslagen of bekeken
+	NL	Te gebruiken opslag wanneer waarderingen worden opgeslagen of bekeken
 	NO	Rangeringslagring til bruk ved lagring eller visning av rangeringer
 	PL	Magazyn ocen używany do zapisywania lub wyświetlania ocen
 	RU	Хранилище рейтингов для сохранения или просмотра рейтингов
@@ -7372,8 +7372,8 @@ SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
 	FR	Vérifier les mises à jour maintenant
-	SV	Leta efter uppdateringar nu
 	NL	Nu op software updates controleren
+	SV	Leta efter uppdateringar nu
 
 SETUP_SCREENSAVER
 	CS	Spořič obrazovky při přehrávání
@@ -7727,21 +7727,21 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让Squeezebox由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	CS	Filtrování žánrů na úrovni alba a skladby.
-	DA	Filtrer genrer på album- og nummernivau.
+	CS	Filtrování žánrů na úrovni alba a skladby
+	DA	Filtrer genrer på album- og nummernivau
 	DE	Stilrichtungen auf Album- und Titelebene filtern
-	EN	Filter Genres at the Album & Track Level.
-	ES	Filtrar géneros por álbum y pista.
-	FI	Suodata genret levy- ja raitatasolla.
+	EN	Filter Genres at the Album & Track Level
+	ES	Filtrar géneros por álbum y pista
+	FI	Suodata genret levy- ja raitatasolla
 	FR	Portée du filtre sur les genres
-	HE	סנן סגנונות ברמת האלבום והרצועה.
-	IT	Filtra i generi musicali a livello di album e brani.
-	NL	Genres op album- en nummerniveau filteren.
-	NO	Filtrer sjangere på album- og spornivå.
-	PL	Filtruj gatunki na poziomie albumu i utworu.
-	RU	Фильтровать жанры по альбому и дорожкам.
-	SV	Filtrera genrer på album- och spårnivå.
-	ZH_CN	在专辑和音轨的层面过滤音乐风格。
+	HE	סנן סגנונות ברמת האלבום והרצועה
+	IT	Filtra i generi musicali a livello di album e brani
+	NL	Genres op album- en nummerniveau filteren
+	NO	Filtrer sjangere på album- og spornivå
+	PL	Filtruj gatunki na poziomie albumu i utworu
+	RU	Фильтровать жанры по альбому и дорожкам
+	SV	Filtrera genrer på album- och spårnivå
+	ZH_CN	在专辑和音轨的层面过滤音乐风格
 
 SETUP_NOGENREFILTER_1
 	CS	Zobrazit všechny skladby a alba interpreta
@@ -7845,7 +7845,7 @@ SETUP_COMPOSERINARTISTS
 	HE	מלחינים, להקות ותזמורות בין המבצעים
 	IT	Compositore, gruppo e orchestra in Artisti
 	JA	「アーチスト」に、作曲家、バンド、オーケストラ
-	NL	Componist, dirigent en band in Artiesten
+	NL	Componist, Dirigent en Band in lijst met Artiesten
 	NO	Komponist, band og orkester i Artister
 	PL	Kompozytor, zespół i orkiestra jako wykonawcy
 	PT	Compositor, Banda e Orquestra em Artistas
@@ -8157,7 +8157,7 @@ SETUP_SPLITLIST_DESC
 	EN	Logitech Media Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Logitech Media Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Logitech Media Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Logitech Media Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Le Logitech Media Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des tags de vos fichiers musicaux. S'il détecte l'un des caractères ci-dessous dans les tags, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le tag "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	Logitech Media Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Logitech Media Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Logitech Media Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Logitech Media Server kan meerdere artiesten, albumtitels en genres uit de tags in jouw mediabestanden halen. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item apart opgeslagen. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een nummer met de tag 'J.S. Bach;Michael Tilson Thomas' zowel bij 'J.S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
@@ -8196,7 +8196,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
 	FR	Utilisation d'une seule liste configurable d'artistes
-	NL	Gebruik een aan te passen lijst met artiesten
+	NL	Gebruik een aan te passen lijst met Artiesten
 	NO	Bruk én enkelt, konfigurerbar artistliste
 	PL	Jedna, konfigurowalna lista wykonawców
 	SV	Använd en enda konfigurerbar artistlista
@@ -8249,7 +8249,7 @@ SETUP_SCAN_ON_PREF_CHANGE
 	DE	Bei Einstellungesänderungen Sammlung durchsuchen
 	EN	Trigger Scan on Preference Changes
 	FR	Lancer l'analyse après modification des préférences
-	NL	Start scan bij voorkeurswijzigingen
+	NL	Start scan bij aanpassen van voorkeuren
 	NO	Start gjennomsøking når innstillinger endres
 	PL	Uruchom przeszukiwanie biblioteki po zmianie ustawień
 
@@ -8287,7 +8287,7 @@ SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	DE	Einige Einstellungsänderungen erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
 	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
-	NL	Voor sommige voorkeurswijzigingen moet de mediabibliotheek opnieuw worden gescand voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
+	NL	Voor sommige voorkeur aanpassingen moet de mediabibliotheek opnieuw worden gescand voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
 	NO	Noen innstillingsendringer trer ikke i kraft før musikkbiblioteket er skannet på ny. <a href="%s">Trykk her for å starte skanning.</a>
 	PL	Niektóre ustawienia wymagają ponownego przeszukania biblioteki multimedialnej. <a href="%s">Kliknij tutaj, aby uruchomić przeszukiwanie.</a>
 	SV	En del ändringar av inställningarna aktiveras först efter att mediebiblioteket har sökts igenom på nytt. <a href="%s">Klicka här för att starta sökningen.</a>
@@ -8863,7 +8863,7 @@ SETUP_INSECURE_HTTPS_DESC
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Logitech Media Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Logitech Media Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
 	SV	"Avaktivera kontroll av HTTPS-certifikat" betyder att Logitech Media Server inte kontrollerar att HTTPS-certifikaten från andra webbplatser är giltiga. <b>Det rekommenderas inte att avaktivera denna kontroll!</b> Kontroll av https-certifikat skall alltid ske men ibland kan det behövas för att kunna uppdatera ett online-mediebibliotek.
-	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Logitech Media Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is een slechte gewoonte om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden bijgewerkt.
+	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Logitech Media Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is onverstandig om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden geüpdatet.
 
 SETUP_IPFILTER_HEAD
 	CS	Blokování příchozích spojení
@@ -9246,41 +9246,49 @@ LANGUAGE
 SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
+	FR	Types de sorties pour les albums
 	NL	Releasetypes voor Albums
 
 SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
+	FR	Types de sorties à inclure dans la liste des albums
 	NL	Releasetypes die in de Album lijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
+	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
+	FR	Activer la prise en charge des types de sorties des albums
 	NL	Releasetypes voor albums inschakelen
 
 SETUP_IGNORE_RELEASE_TYPES_1
 	DE	Veröffentlichungstyp von Alben ignorieren
 	EN	Ignore album release types
+	FR	Ignorer les types de sorties des albums
 	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
-	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen selber zu erkennen.
-	EN	Try to recognize EPs and singles automatically when release type information is missing.
-	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.  
+	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
+	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
+	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant ou est de type "album".
+	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
 	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
 	EN	Don't group an artist's releases
-	NL	Releases van een artiest niet groeperen op type 
+	FR	Ne pas regrouper les sorties d'un artiste par type
+	NL	Releases van een artiest niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
 	EN	Group an artist's releases by type
+	FR	Regrouper les sorties d'un artiste par type
 	NL	Releases van een artiest groeperen op type
 
 SETUP_GROUPDISCS
@@ -9587,7 +9595,7 @@ SETUP_SN_REPORT_STATS_DESC
 	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään nimettömästi ja kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
 	FR	Pour améliorer mysqueezebox.com, nous recueillons des informations sur les radios Internet et les services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
 	IT	Al fine di migliorare mysqueezebox.com, è possibile inviare dati statistici sull'ascolto di stazioni radio in Internet e sui servizi musicali utilizzati. Il trattamento di tali dai, raccolti collettivamente e in modo anonimo, è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
-	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.
+	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekdiensten te rapporteren. Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.
 	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Denne anonyme informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
 	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">zasady zachowania poufności informacji</a>).
 	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>.)
@@ -11643,13 +11651,28 @@ RELEASE_TYPE_SINGLES
 RELEASE_TYPE_EP
 	EN	EP
 
+RELEASE_TYPE_EPS
+	EN	EPs
+
+RELEASE_TYPE_BESTOF
+	EN	Best Of
+
+RELEASE_TYPE_BESTOFS
+	EN	Best Ofs
+
+RELEASE_TYPE_BOXSET
+	EN	Box Set
+
+RELEASE_TYPE_BOXSETS
+	EN	Box Sets
+
 RELEASE_TYPE_BROADCAST
 	EN	Broadcast
 
 RELEASE_TYPE_OTHER
 	DE	Andere
 	EN	Other
-	FR	Autres
+	FR	Autre
 	NL	Overig
 
 DISC
@@ -12267,7 +12290,7 @@ COVERART
 	EN	Artwork
 	ES	Carátula
 	FI	Kansitaide
-	FR	Pochettes
+	FR	Pochette
 	HE	עטיפה
 	IT	Copertine
 	JA	アートワーク
@@ -12382,7 +12405,7 @@ THOUSANDS_SEP
 	EN	,
 	ES	.
 	FI	 
-	FR	,
+	FR	 
 	HE	,
 	IT	.
 	JA	,
@@ -12615,7 +12638,7 @@ TAGVERSION
 	EN	Tag Version
 	ES	Versión de etiqueta
 	FI	Tunnisteen versio
-	FR	Version avec repère
+	FR	Version de tag
 	HE	גרסת תג
 	IT	Versione tag
 	JA	タグ バージョン
@@ -12634,7 +12657,7 @@ VIEW_TAGS
 	EN	View Tags
 	ES	Ver etiquetas
 	FI	Näytä tunnisteet
-	FR	Afficher les repères
+	FR	Afficher les tags
 	IT	Visualizza tag
 	NL	Tags tonen
 	NO	Vis etiketter
@@ -12649,7 +12672,7 @@ NO_TAGS_FOUND
 	EN	No tags found
 	ES	No se han encontrado etiquetas
 	FI	Tunnisteita ei löytynyt
-	FR	Aucun repère détecté
+	FR	Aucun tag détecté
 	IT	Nessun tag trovato
 	NL	Geen tags gevonden
 	NO	Finner ingen etiketter
@@ -14583,7 +14606,7 @@ SETUP_GROUP_DEBUG_DESC
 	FR	Le Logitech Media Server est doté d'un certain nombre de réglages de journalisation pouvant enregistrer des informations détaillées sur les opérations du serveur et de l'analyseur. L'enregistrement dans chaque catégorie de journalisation dépend d'un niveau de sévérité défini, le niveau "Débogage" étant le plus détaillé et "Désactivé" étant le moins détaillé.
 	HE	Logitech Media Server כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
 	IT	In Logitech Media Server sono disponibili numerose impostazioni per registrare informazioni dettagliate sul funzionamento del server e dell'analisi. Per ogni categoria di dati da registrare è possibile selezionare il livello di gravità: Debug definisce il livello più dettagliato mentre Disattivato quello meno dettagliato.
-	NL	Logitech Media Server heeft een aantal log instellingen waarmee gedetailleerde informatie over server- en scannerwerking verzameld kan worden. Elke categorie heeft een niveau, waarbij 'Debuggen' het meest uitgebreid en 'Uit' het meest beknopt is.
+	NL	Logitech Media Server heeft een aantal log instellingen waarmee gedetailleerde informatie over server- en scannerwerking verzameld kan worden. Elke categorie heeft een niveau, waarbij 'Debuggen' het meest uitgebreid en 'Uit' het meest bet is.
 	NO	Logitech Media Server har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om serveren og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
 	PL	Program Logitech Media Server udostępnia różne opcje rejestrowania szczegółowych informacji o działaniu programu i mechanizmu przeszukiwania. Każda kategoria rejestrowania ma kategorię ważności. Opcja „Debuguj” zapewnia najbardziej, a „Wył.” najmniej dokładne informacje.
 	RU	В Logitech Media Server предусмотрены различные настройки ведения журнала, с помощью которых можно записывать подробные сведения о работе сервера и сканера. У каждой категории ведения журнала есть уровень серьезности. Самый подробный уровень — "Отладка", наименее подробный — "Отключено".
@@ -15387,7 +15410,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 	HE	יש לעדכן את תוכנת הנגן לגרסה העדכנית ביותר. לחץ ממושכות על הלחצן BRIGHTNESS (בהירות) עד שניתן יהיה לראות בתצוגת הנגן שהעדכון החל. תהליך העדכון נמשך מספר שניות בלבד.
 	IT	È necessario aggiornare il software del lettore alla versione più recente. Tenere premuto il pulsante BRIGHTNESS finché nel display del lettore non viene indicato che l'aggiornamento ha avuto inizio. L'aggiornamento richiede soltanto alcuni secondi.
 	JA	Squeezeboxのソフトウェアのアップデートが必要です。アップデートを開始したことがディスプレーに表示されるまで、リモートのBRIGHTNESSボタンを押しつづけてください。アップデートは数秒で割ります。
-	NL	De software van jouw muziekspeler dient naar de laatste versie te worden bijgewerkt. Houd de knop BRIGHTNESS ingedrukt tot op het display van de muziekspeler wordt aangegeven dat de update is gestart. De update duurt maar een paar seconden.
+	NL	De software van jouw muziekspeler dient een update te krijgen naar de laatste versie. Houd de knop BRIGHTNESS ingedrukt tot op het display van de muziekspeler wordt aangegeven dat de update is gestart. De update duurt maar een paar seconden.
 	NO	Programvaren i spilleren må oppdateres til siste versjon. Trykk og hold nede BRIGHTNESS-knappen på fjernkontrollen til du ser på skjermen at oppdateringen har startet. Oppdateringen tar bare noen sekunder.
 	PL	Oprogramowanie odtwarzacza wymaga zaktualizowania do najnowszej wersji. Naciśnij i przytrzymaj przycisk BRIGHTNESS, dopóki na wyświetlaczu odtwarzacza nie pojawi się komunikat o rozpoczęciu aktualizacji. Aktualizacja potrwa tylko kilka sekund.
 	RU	Необходимо обновить ПО плеера до последней версии. Нажмите и удерживайте кнопку BRIGHTNESS, пока на экране плеера не появится уведомление о начатом обновлении. Обновление займет всего несколько секунд.
@@ -15459,7 +15482,7 @@ UPGRADE_COMPLETE_DETAILS
 	HE	העדכון הושלם.
 	IT	Aggiornamento completato.
 	JA	アップデート完了
-	NL	Het bijwerken is voltooid.
+	NL	Het updaten is voltooid.
 	NO	Oppdatering er ferdig.
 	PL	Aktualizacja została ukończona.
 	RU	Обновление завершено.
@@ -16928,7 +16951,7 @@ EDIT_PLAYLIST
 	HE	עריכת רשימת ההשמעה
 	IT	Modifica playlist
 	JA	プレイリストを編集する
-	NL	Afspeellijst bewerken
+	NL	Afspeellijst aanpassen
 	NO	Rediger spilleliste
 	PL	Edytuj listę odtwarzania
 	RU	Изменить плей-лист
@@ -16946,7 +16969,7 @@ DONE_EDITING
 	HE	העריכה הסתיימה
 	IT	Modifica completata
 	JA	編集完了
-	NL	Bewerken klaar
+	NL	Aanpassen klaar
 	NO	Endring utført
 	PL	Edycja zakończona
 	RU	Изменения внесены
@@ -17000,7 +17023,7 @@ EDIT
 	HE	עריכה
 	IT	Modifica
 	JA	編集
-	NL	Bewerken
+	NL	Aanpassen
 	NO	Rediger
 	PL	Edytuj
 	RU	Изменить
@@ -17140,11 +17163,13 @@ INFORMATION_MENU_MODULE
 INFORMATION_TIME_DIFF
 	DE	Zeitdifferenzu zu mysqueezebox.com
 	EN	Time difference to mysqueezebox.com
+	FR	Décalage horaire avec mysqueezebox.com
 
 INFORMATION_TIME_DIFF_DESC
 	DE	Bitte übeprüfen Sie die Uhr ihres Computers und starten Sie Logitech Media Server neu. Die Uhrzeit scheint um mehrere Sekunden verschoben zu sein. Eine zu grosse Differenz kann zu Abbrüchen bei gesicherten Verbindungen und anderen unerwarteten Effekten führen.
 	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behavior.
 	EN_GB	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
+	FR	Veuillez vérifier l'horloge de votre ordinateur et redémarrer Logitech Media Server. Il semble y avoir un écart de plusieurs secondes. Un décalage horaire trop important peut entraîner des échecs de connexions sécurisées et d'autres comportements inattendus.
 
 INFORMATION_PLAYER_NAME
 	CS	Název Squeezeboxu
@@ -17636,8 +17661,8 @@ INFORMATION_PLAYLISTS
 	DE	Anzahl Wiedergabelisten
 	EN	Total Playlists
 	FR	Listes de lecture
-	SV	Antal spellistor
 	NL	Totaal aantal afspeellijsten
+	SV	Antal spellistor
 
 INFORMATION_IMAGES
 	CS	Celkem obrázků
@@ -17748,7 +17773,7 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	FI	Käyttöjärjestelmä
 	FR	SE
 	IT	Sistema operativo
-	NL	Besturingssysteem
+	NL	OS
 	NO	OS
 	PL	System
 	RU	ОС
@@ -18098,6 +18123,7 @@ MIDWORDS_UPPER
 	DA	0
 	DE	1
 	EN	0
+	NL	0
 	NO	0
 	SV	0
 
@@ -18177,7 +18203,7 @@ SQUEEZENETWORK_SWITCHING
 	FR	Connexion à mysqueezebox.com, veuillez patienter...
 	HE	עובר ל-mysqueezebox.com, אנא המתן...
 	IT	Passaggio a mysqueezebox.com. Attendere...
-	NL	Bezig met overschakelen naar mysqueezebox.com. Een ogenblik geduld...
+	NL	Bezig met verbinden met mysqueezebox.com. Een ogenblik geduld...
 	NO	Bytter til mysqueezebox.com, vent litt ...
 	PL	Czekaj, trwa przełączanie do usługi mysqueezebox.com...
 	RU	Переключение на mysqueezebox.com, подождите...
@@ -18193,7 +18219,7 @@ SQUEEZENETWORK_WANT_SWITCH
 	FI	Tämä soitin on yhdistetty mysqueezebox.comiin. Haluatko vaihtaa sen takaisin Logitech Media Serveriin?
 	FR	Cette platine est actuellement connectée à mysqueezebox.com. Voulez-vous revenir au Logitech Media Server ?
 	IT	Il lettore è attualmente connesso a mysqueezebox.com. Connetterlo di nuovo a Logitech Media Server?
-	NL	Deze muziekspeler is momenteel met mysqueezebox.com verbonden. Wil je de muziekspelen terugschakelen naar Logitech Media Server?
+	NL	Deze muziekspeler is momenteel verbonden met mysqueezebox.com. Wil je de muziekspeler verbinden met Logitech Media Server?
 	NO	Spilleren er koplet til mysqueezebox.com. Vil du bytte tilbake til Logitech Media Server?
 	PL	Ten odtwarzacz jest aktualnie połączony z usługą mysqueezebox.com. Czy chcesz powrócić do programu Logitech Media Server?
 	RU	Данный плеер подключен к mysqueezebox.com. Переключиться на Logitech Media Server?
@@ -18209,7 +18235,7 @@ SQUEEZENETWORK_SB2_REQUIRED
 	FR	Cette fonction nécessite Squeezebox2 ou une version plus récente.
 	HE	מצטערים, נדרש נגן Squeezebox חדש יותר.
 	IT	È necessario uno Squeezebox più recente.
-	NL	Sorry, nieuwere Squeezebox nodig.
+	NL	Voor deze functie is een nieuwere Squeezebox vereist.
 	NO	Beklager, dette krever en nyere Squeezebox.
 	PL	Niestety wymagane jest nowsze urządzenie Squeezebox.
 	RU	Требуется новая версия Squeezebox.
@@ -18225,7 +18251,7 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	FI	Jos soitinta ei ole yhdistetty, mysqueezebox.com-palveluja ei voida käyttää.
 	FR	Impossible d'accéder aux services mysqueezebox.com sans une platine connectée.
 	IT	Impossibile accedere ai servizi mysqueezebox.com se non è collegato un lettore.
-	NL	Zonder een verbonden muziekspeler kunnen services van mysqueezebox.com niet worden opgeroepen.
+	NL	Zonder een verbonden muziekspeler kunnen diensten van mysqueezebox.com niet worden opgeroepen.
 	NO	Kan ikke bruke mysqueezebox.com-tjenester når det ikke er koplet til en spiller.
 	PL	Bez podłączenia odtwarzacza nie można uzyskać dostępu do usługi mysqueezebox.com.
 	RU	Службы mysqueezebox.com доступны только при подключенном плеере.
@@ -18240,7 +18266,7 @@ SQUEEZENETWORK_NO_LOGIN
 	FI	Tähän palveluun vaaditaan mysqueezebox.com-tili. Siirry selaimella kohtaan Logitech Media Serverin asetukset -> mysqueezebox.com ja määritä asetukset.
 	FR	Un compte mysqueezebox.com est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du Logitech Media Server -> mysqueezebox.com pour effectuer la configuration.
 	IT	Per questo servizio è richiesto un account mysqueezebox.com. Accedere a Impostazioni Logitech Media Server -> mysqueezebox.com tramite un browser Web per la configurazione.
-	NL	Voor deze service is een mysqueezebox.com-account vereist. Ga via een webbrowser naar Logitech Media Server instellingen -> mysqueezebox.com om te configureren.
+	NL	Voor deze dienst is een mysqueezebox.com-account vereist. Ga via een webbrowser naar Logitech Media Server instellingen -> mysqueezebox.com om te configureren.
 	NO	Du trenger en konto på mysqueezebox.com for å kunne benytte denne tjenesten. Gå til Logitech Media Server-innstillinger -> mysqueezebox.com i en nettleser for å konfigurere.
 	PL	W celu korzystania z tej usługi wymagane jest konto usługi mysqueezebox.com. Aby kontynuować, wybierz opcję Ustawienia programu Logitech Media Server -> mysqueezebox.com w przeglądarce internetowej.
 	RU	Для данной службы требуется учетная запись mysqueezebox.com. Чтобы настроить ее, откройте в веб-браузере страницу "Настройки Logitech Media Server" -> "mysqueezebox.com".
@@ -18300,7 +18326,7 @@ SQUEEZEBOX_SERVER_WANT_SWITCH
 	FI	Tämä soitin on yhdistetty kohteeseen %s. Haluatko vaihtaa sen tähän Logitech Media Serveriin?
 	FR	Cette platine est actuellement connectée à %s. Voulez-vous la connecter à ce Logitech Media Server ?
 	IT	Questo lettore è connesso a %s. Passare a questo Logitech Media Server?
-	NL	Deze muziekspeler is momenteel verbonden met %s. Wil je de muziekspeler terugschakelen naar Logitech Media Server?
+	NL	Deze muziekspeler is momenteel verbonden met %s. Wil je de muziekspeler verbinden met Logitech Media Server?
 	NO	Spilleren er koplet til %s. Vil du bytte til denne Logitech Media Server?
 	PL	Odtwarzacz jest aktualnie połączony z %s. Czy chcesz przełączyć go na ten program Logitech Media Server?
 	RU	Данный плеер подключен к %s. Переключиться на данный Logitech Media Server?
@@ -18418,7 +18444,24 @@ COMPILATION
 	FR	Compilation
 	HE	אוסף
 	IT	Compilation
-	NL	Verzameling
+	NL	Compilatie
+	NO	Samling
+	PL	Kompilacja
+	RU	Сборка
+	SV	Samling
+	ZH_CN	合辑
+
+COMPILATIONS
+	CS	Sbírka
+	DA	Kompilation
+	DE	Kompilationen
+	EN	Compilations
+	ES	Compilación
+	FI	Kokoelma
+	FR	Compilations
+	HE	אוסף
+	IT	Compilation
+	NL	Compilaties
 	NO	Samling
 	PL	Kompilacja
 	RU	Сборка
@@ -18428,10 +18471,14 @@ COMPILATION
 APPEARANCES
 	DE	Beteiligungen
 	EN	Appearances
+	FR	Apparitions
+	NL	Optredens
 
 COMPOSITIONS
 	DE	Kompositionen
 	EN	Compositions
+	FR	Compositions
+	NL	Composities
 
 SETUP_VARIOUSARTISTS
 	CS	Sbírky
@@ -18443,7 +18490,7 @@ SETUP_VARIOUSARTISTS
 	FR	Compilations
 	HE	אוספים
 	IT	Compilation
-	NL	Verzamelingen
+	NL	Compilaties
 	NO	Samlinger
 	PL	Kompilacje
 	RU	Сборки
@@ -18460,7 +18507,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
 	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
-	NL	Je kunt verzamel albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamel album laten verschijnen.
+	NL	Je kunt compilatie albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest op het compilatie album laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
 	PL	Albumy z kompilacjami mogą być wyświetlane razem w kategorii „Różni wykonawcy” lub w grupie każdego wykonawcy dostępnego w kompilacji.
 	RU	Альбомы-сборки можно выводить вместе под заголовком "Различные исполнители" или под именем каждого исполнителя в сборке.
@@ -18477,7 +18524,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	FR	Regrouper les compilations
 	HE	קיבוץ של אלבומי אוסף
 	IT	Raggruppa gli album di compilation
-	NL	Verzamel albums groeperen
+	NL	Compilatie albums groeperen
 	NO	Grupper samlealbum
 	PL	Grupuj albumy z kompilacjami
 	RU	Сгруппировать альбомы-сборки
@@ -18494,7 +18541,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	FR	Lister les albums de compilation sous chaque artiste
 	HE	סידור אלבומי אוסף ברשימה תחת כל מבצע
 	IT	Elenca gli album di compilation per singolo artista
-	NL	Verzamel albums bij individuele artiesten weergeven
+	NL	Compilatie albums bij individuele artiesten weergeven
 	NO	Vis samlealbum under hver artist
 	PL	Wyświetl albumy z kompilacjami dla każdego wykonawcy
 	RU	Альбомы-сборки для каждого исполнителя
@@ -18511,7 +18558,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
 	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
-	NL	Wanneer verzamel albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
+	NL	Wanneer compilatie albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
 	PL	Po zgrupowaniu albumów zawierających kompilacje są one domyślnie wyświetlane w kategorii „Różni wykonawcy”. Nazwę tę można zmienić poniżej.
 	RU	При группировке альбомов-сборок они по умолчанию отображаются под заголовком "Различные исполнители". Это название можно изменить ниже.
@@ -19410,7 +19457,7 @@ SETUP_IMAGEPROXY_DESC
 	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj přehrávání datovýh proudů, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing. The helper can offload some of the heavy lifting to a separate process managed by the server application.
-	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale sur le serveur, mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir Logitech Media Server pour redimensionner les pochettes.
+	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par un serveur : mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir d'utiliser Logitech Media Server en local pour redimensionner les pochettes. En local, la tâche peut également être confiée à un processus dédié pour décharger le serveur.
 	NL	Om de beste kwaliteit albumhoezen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar de muziekspeler worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
 	NO	For å få høyest mulig billedkvalitet og ytelse på avspillerene, blir omslagsbilder skalert før avspillerene får dem. Som standard er det mysqueezebox.com som tar seg av dette, men hvis du vil være uavhengig av mysqueezebox.com eller kjører en intern strømmekilde, bør du vurdere å bruke Logitech Media Servers innebygde skaleringsfunksjon.
 	PL	W celu uzyskania najlepszej jakości okładki i wydajności na odtwarzaczach, okładki są dopasowywane względem rozmiaru przed przesłaniem do odtwarzacza. Domyślnie jest to obsłużone przez mysqueezebox.com. Jeśli chcesz być niezależny od mysqueezebox.com, lub używasz lokalnego źródła, możesz pozwolić, aby to Logitech Media Server zajął się dopasowywaniem okładek.
@@ -19439,6 +19486,7 @@ SETUP_IMAGEPROXY_LOCAL
 SETUP_IMAGEPROXY_HELPER
 	DE	Bilder mit Logitech Media Server Helferanwendung anpassen
 	EN	Use Logitech Media Server resizing helper to resize artwork
+	FR	Redimensionner les pochettes via un processus local dédié
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -20363,7 +20411,7 @@ DEBUG_PREFS
 	FI	Asetuksien määrittäminen ja tallentaminen
 	FR	Configuration et enregistrement des préférences
 	IT	Impostazione e salvataggio delle preferenze
-	NL	Voorkeuren instellen en opslaan
+	NL	Voorkeuren aanpassen en opslaan
 	NO	Innstillinger og lagring
 	PL	Ustawianie i zapisywanie preferencji
 	RU	Настройка и сохранение предпочтений
@@ -21690,6 +21738,7 @@ IMPORTER_PROGRESS_DESC
 RELEASETYPES_PROGRESS
 	DE	Album Veröffentlichungstypen aktualisieren
 	EN	Update Album release types
+	FR	Actualiser les types de sorties des albums
 	NL	Album releasetypes vernieuwen
 
 VIRTUALLIBRARIES_PROGRESS
@@ -22799,7 +22848,7 @@ UPDATING_DSP
 	FI	Päivitetään DSP...
 	FR	Mise à jour DSP...
 	IT	Aggiornamento di DSP...
-	NL	Bezig met bijwerken van DSP...
+	NL	Bezig met updaten van DSP...
 	NO	Oppdaterer DSP ...
 	PL	Aktualizowanie procesora DSP...
 	RU	Обновление DSP...
@@ -23342,7 +23391,7 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	FI	Logitech Media Serverin päivitetty versio on käytettävissä ja valmiina asennusta varten.
 	FR	Une nouvelle version du Logitech Media Server est disponible et prête à l'installation.
 	IT	È disponibile una versione aggiornata di Logitech Media Server, pronta per essere installata.
-	NL	Bijgewerkte versie van Logitech Media Server beschikbaar voor installatie.
+	NL	Een nieuwe versie van Logitech Media Server is beschikbaar voor installatie.
 	NO	En oppdatert versjon av Logitech Media Server er tilgjengelig og klar til installering.
 	PL	Zaktualizowana wersja programu Logitech Media Server jest dostępna i gotowa do zainstalowania.
 	RU	Доступна и готова к установке обновленная версия Logitech Media Server.
@@ -23357,7 +23406,7 @@ PREFPANE_UPDATE_AVAILABLE
 	FI	Logitech Media Serverin päivitetty versio on käytettävissä ja valmiina asennusta varten. Käynnistä päivitys Logitech Media Server -kohdassa järjestelmäasetuksissa.
 	FR	Une version mise à jour du Logitech Media Server est disponible et peut être installée. Accédez à Logitech Media Server dans les Préférences système pour démarrer la mise à niveau.
 	IT	È disponibile una versione aggiornata di Logitech Media Server, pronta per essere installata. Per avviare l'aggiornamento, accedere a Logitech Media Server in Preferenze di Sistema.
-	NL	Bijgewerkte versie van Logitech Media Server beschikbaar voor installatie. Ga naar Logitech Media Server in Systeemvoorkeuren om de upgrade te starten.
+	NL	Nieuwe versie van Logitech Media Server is beschikbaar voor installatie. Ga naar Logitech Media Server in Systeemvoorkeuren om de upgrade te starten.
 	NO	En oppdatert versjon av Logitech Media Server er tilgjengelig og klar til installering. Du kan starte oppgraderingen fra Logitech Media Server i Systemvalg.
 	PL	Zaktualizowana wersja programu Logitech Media Server jest gotowa i dostępna do zainstalowania. Aby rozpocząć uaktualnianie, otwórz ekran programu Logitech Media Server w programie Preferencje systemowe.
 	RU	Доступна и готова к установке обновленная версия сервера Logitech Media Server. Чтобы начать установку обновления, посетите Logitech Media Server в приложении System Preferences.
@@ -23372,7 +23421,7 @@ CONTROLPANEL_NO_UPDATE_AVAILABLE
 	FI	Logitech Media Serveristä ei ole saatavilla päivitettyä versiota.
 	FR	Aucune nouvelle version du Logitech Media Server n'est disponible.
 	IT	Non è disponibile alcuna versione aggiornata di Logitech Media Server.
-	NL	Geen bijgewerkte versie van Logitech Media Server beschikbaar.
+	NL	Geen nieuwe versie van Logitech Media Server beschikbaar.
 	NO	Det finnes ingen oppdatert versjon av Logitech Media Server tilgjengelig.
 	PL	Brak dostępnej zaktualizowanej wersji programu Logitech Media Server.
 	RU	Нет доступных обновленных версий Logitech Media Server.
@@ -23958,7 +24007,7 @@ CONTROLPANEL_NEED_ADMINISTRATOR
 	FI	Sinulla ei ole tarvittavia oikeuksia asentaa, käynnistää tai pysäyttää Logitech Media Serverin taustapalvelua. Avaa Windowsin Käynnistä-valikosta palvelimen ohjauspaneeli napsauttamalla kakkospainiketta ja valitse pikavalikosta Suorita järjestelmänvalvojana.
 	FR	Vous ne disposez pas des droits pour installer ou arrêter/démarrer le service d'arrière-plan Logitech Media Server. Démarrez le Panneau de configuration en cliquant dessus à l'aide du bouton droit dans le menu Démarrer de Windows et en sélectionnant Exécuter en tant qu'administrateur.
 	IT	Non si dispone dei privilegi per installare o avviare/arrestare il servizio in background di Logitech Media Server. Aprire il Pannello di controllo dal menu Start di Windows utilizzando il menu di scelta rapida visualizzabile facendo clic con il pulsante destro del mouse, quindi fare clic su "Esegui come amministratore".
-	NL	Je hebt geen rechten om de achtergrondservice van Logitech Media Server te installeren of te starten/stoppen. Start het Configuratiescherm vanuit het menu Start in Windows via de rechtermuisknop en klik in het snelmenu op 'Als administrator uitvoeren'.
+	NL	Je hebt geen rechten om de achtergrondprocessen van Logitech Media Server te installeren of te starten/stoppen. Start het Configuratiescherm vanuit het menu Start in Windows via de rechtermuisknop en klik in het snelmenu op 'Als administrator uitvoeren'.
 	NO	Du har ikke rettighetene som trengs for å installere eller starte/stoppe bakgrunnstjenesten Logitech Media Server. Start kontrollpanelet fra Start-menyen i Windows ved å høyreklikke og velge Kjør som administrator.
 	PL	Brak uprawnień do uruchomienia lub zatrzymania działającej w tle usługi Logitech Media Server. Kliknij menu Start, ustaw kursor myszy nad Panelem sterowania, kliknij prawym przyciskiem myszy i wybierz polecenie Uruchom jako administrator.
 	RU	У вас нет прав на установку и запуск/остановку фоновой службы Logitech Media Server. Откройте панель управления с помощью меню "Пуск" Windows и, открыв щелчком правой кнопки мыши контекстное меню, выберите в нем пункт "Запуск от имени администратора".
@@ -24458,7 +24507,7 @@ PLUGINS_RESTART_MSG
 	FI	Laajennukset on päivitetty - ohjelma on käynnistettävä uudelleen
 	FR	Les plugins ont été mis à jour. Vous devez redémarrer le serveur.
 	IT	Sono stati aggiornati dei plugin. È necessario riavviare.
-	NL	Plug-ins zijn bijgewerkt - Herstart vereist
+	NL	Updaten plug-ins voltooid - Herstart vereist
 	NO	Plugin-modulene er oppdatert. Du må starte programmet på nytt.
 	PL	Dodatki zostały zaktualizowane – wymagane jest ponowne uruchomienie.
 	RU	Подключаемые модули были обновлены. Требуется перезагрузка.
@@ -24778,7 +24827,7 @@ SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
 	FR	Ce service nécessite le module Perl IO::Socket::SSL. Vous ne pouvez pas utiliser ce service sans ce module. Veuillez utiliser le gestionnaire de paquets de votre système d'exploitation pour l'installer.
-	NL	Deze service vereist Perl module IO::Socket::SSL. Je kunt de service zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
+	NL	Deze dienst vereist Perl module IO::Socket::SSL. Je kunt de dienst zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
 	SV	Den här tjänsten behöver PERL-modulen IO::Socket::SSL! utan den kan denna modul inte användas. Använd operativsystemets pakethanterare för att installera den.
 
 UPDATE

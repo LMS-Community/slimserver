@@ -54,9 +54,9 @@
 		<table border="0" class="specs">
 			[% FOREACH pref = pref_customArtSpecs %]
 			<tr>
-				<td><input name="delete" type="checkbox" value="[% pref.key | html %]"></td>
-				<td>[% pref.key %]</label></td>
-				<td><div>[% pref.value %]</div></td>
+				<td><input name="delete" type="checkbox" value="[% pref.key | html %]" id="[% pref.key | html %]"></td>
+				<td><label for="[% pref.key | html %]">[% pref.key | html %]</label></td>
+				<td><label for="[% pref.key | html %]">[% pref.value | html %]</label></td>
 			</tr>
 			[% END %]
 

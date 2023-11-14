@@ -36,6 +36,8 @@ sub prefs {
 sub handler {
 	my ( $class, $client, $paramRef ) = @_;
 
+	Slim::Schema::Album->addReleaseTypeStrings();
+
 	$paramRef->{ratingImplementations} = Slim::Schema->ratingImplementations;
 
 	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
@@ -52,7 +54,7 @@ sub handler {
 
 		{
 			id => $ucType,
-			title => string("RELEASE_TYPE_$ucType") || $type,
+			title => Slim::Schema::Album->releaseTypeName($type),
 			ignore => $releaseTypesToIgnore{$ucType}
 		};
 	} grep {
@@ -62,7 +64,7 @@ sub handler {
 	foreach (grep { $_ ne 'ALBUM' } @$ownReleaseTypes) {
 		push @{$paramRef->{release_types}}, {
 			id => $_,
-			title => ucfirst($_),
+			title => Slim::Schema::Album->releaseTypeName($_),
 			ignore => $releaseTypesToIgnore{$_},
 		};
 	}

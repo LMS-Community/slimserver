@@ -170,7 +170,7 @@
 		[% IF image %]
 		<ul>
 			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
-				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
+				<img src="[% image | resizeimage(150, 150, 'f', webroot) %]" alt="coverArt">
 			</a>
 		</ul>
 		[% END %]

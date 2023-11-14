@@ -17,8 +17,11 @@ sub _releases {
 	my $wantMeta   = $pt->{'wantMetadata'};
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
+
+	Slim::Schema::Album->addReleaseTypeStrings();
 
 	@searchTags = grep {
 		$_ !~ /^role_id:/
@@ -65,7 +68,7 @@ sub _releases {
 			next if $_->{role_ids} !~ /[23]/;
 		}
 		# Release Types if main artist
-		elsif ($_->{role_ids} =~ /[1,5]/) {
+		elsif ($_->{role_ids} =~ /[15]/) {
 			$releaseTypes{$_->{release_type}}++;
 			next;
 		}
@@ -90,31 +93,26 @@ sub _releases {
 	my $searchTags = [
 		"artist_id:$artistId",
 		"role_id:" . PRIMARY_ARTIST_ROLES,
-		"library_id:" . $library_id,
+		"library_id:$library_id",
 	];
 
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
+	my %primaryReleaseTypes = map { $_ => 1 } @primaryReleaseTypes;
 
-	my @sortedReleaseTypes = @primaryReleaseTypes, sort {
+	my @sortedReleaseTypes = (@primaryReleaseTypes, sort {
 		$a cmp $b
 	} grep {
-		!grep /$_/, @primaryReleaseTypes;
-	} keys %releaseTypes;
+		!$primaryReleaseTypes{$_};
+	} keys %releaseTypes);
 
 	foreach my $releaseType (@sortedReleaseTypes) {
-		my $name;
-		my $nameToken = uc($releaseType);
-		foreach ($nameToken . 'S', $nameToken, 'RELEASE_TYPE_' . $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken) {
-			$name = cstring($client, $_) if Slim::Utils::Strings::stringExists($_);
-			last if $name;
-		}
-		$name ||= $releaseType;
+		my $name = Slim::Schema::Album->releaseTypeName($releaseType, $client);
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1'] } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"] } ]);
+					? [ { searchTags => [@$searchTags, 'compilation:1'], orderBy => $orderBy } ]
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"], orderBy => $orderBy } ]);
 		}
 	}
 

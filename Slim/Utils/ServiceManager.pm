@@ -2,7 +2,7 @@ package Slim::Utils::ServiceManager;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use Exporter::Lite;
@@ -49,7 +49,7 @@ sub new {
 		$svcMgr = Slim::Utils::ServiceManager::OSX->init();
 
 	}
-	
+
 	return $svcMgr || $class->init();
 }
 
@@ -60,7 +60,7 @@ sub init {
 		checkHTTP => 0,
 		status    => SC_STATE_UNKNOWN,
 	};
-	
+
 	return bless $self, $class;
 }
 
@@ -75,7 +75,7 @@ sub initStartupType {}
 sub canStart {}
 
 sub getStartupOptions {
-	return ('', 'RUN_NEVER', 'RUN_AT_LOGIN', 'RUN_AT_BOOT');	
+	return ('', 'RUN_NEVER', 'RUN_AT_LOGIN', 'RUN_AT_BOOT');
 }
 
 sub start {}
@@ -87,7 +87,7 @@ sub checkServiceState {
 # we're called often - cache results for a second
 my %isRunning;
 sub isRunning {
-	
+
 	if (!defined $isRunning{state} || $isRunning{ttl} < time()) {
 
 		%isRunning = (
@@ -96,7 +96,7 @@ sub isRunning {
 		);
 
 	}
-	
+
 	return $isRunning{state};
 }
 

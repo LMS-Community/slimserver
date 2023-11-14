@@ -1424,6 +1424,7 @@ sub _albums {
 	if (!$sort || $sort !~ /^sort:(?:random|new)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
+	$sort = 'sort:' . $sort if $sort && $sort !~ /^sort:/;
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1470,6 +1471,8 @@ sub _albums {
 		}
 	}
 
+	my $trackArtistOnly = grep /role_id:TRACKARTIST/, @searchTags;
+
 	_generic($client, $callback, $args, 'albums',
 		[@searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
@@ -1504,7 +1507,7 @@ sub _albums {
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'artist_id'}) {
+				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly) {
 					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 				}
 

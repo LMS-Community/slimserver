@@ -120,7 +120,7 @@ sub init {
 	$os->initDetails();
 	$isWindows = $os->name eq 'win';
 	$isMac     = $os->name eq 'mac';
-	$isLinux   = $os->get('os') eq 'Linux';
+	$isLinux = $os->get('os') eq 'Linux';
 }
 
 sub getOS {

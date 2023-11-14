@@ -242,7 +242,7 @@ sub artworkspecCommand {
 		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
 
 		my $oldName = $specs->{$spec};
-		if ( $oldName && $oldName !~ /$name/ ) {
+		if ( $oldName && $oldName !~ /\Q$name\E/ ) {
 			$specs->{$spec} = "$oldName, $name";
 		}
 		# don't duplicate standard specs!
@@ -2079,7 +2079,9 @@ sub playlistcontrolCommand {
 		}
 
 		if (defined(my $releaseType = $request->getParam('release_type'))) {
-			$what->{'album.release_type'} = uc($releaseType);
+			$what->{'album.release_type'} = {
+				in => [ map { uc } split(/, ?/, $releaseType) ]
+			};
 		}
 
 		if (defined(my $library_id = $request->getParam('library_id'))) {

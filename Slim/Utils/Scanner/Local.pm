@@ -205,20 +205,42 @@ sub rescan {
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
 		$maxTrackId ||= 0;
 
+		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
+		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
+			my $isDST = (localtime(time()))[8] ? 1 : 0;
+
+			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
+				my $offset = $isDST ? 3600 : -3600;
+
+				$log->error("DST has changed since last scan - fix timestamps in tracks table");
+
+				$dbh->do("UPDATE tracks SET timestamp = (timestamp + $offset)");
+				Slim::Music::Import->setLastScanTimeIsDST();
+			}
+		}
+
 		# Generate 3 lists of files:
 
 		# 1. Files that no longer exist on disk
 		#    and are not virtual (from a cue sheet)
+		$log->error("Build temporary table for deleted tracks") unless main::SCANNER && $main::progress;
+		$dbh->do('DROP TABLE IF EXISTS dbonly');
+		$dbh->do( qq{
+			CREATE TEMPORARY TABLE dbonly AS
+				SELECT DISTINCT(url)
+				FROM   tracks
+				WHERE  url NOT IN (
+					SELECT url FROM scanned_files
+					WHERE filesize != 0
+				)
+				AND             url LIKE '$basedir%'
+				AND             `virtual` IS NULL
+				AND             content_type $ctFilter
+		} );
+
 		my $inDBOnlySQL = qq{
-			SELECT DISTINCT(url)
-			FROM            tracks
-			WHERE           url NOT IN (
-				SELECT url FROM scanned_files
-				WHERE filesize != 0
-			)
-			AND             url LIKE '$basedir%'
-			AND             `virtual` IS NULL
-			AND             content_type $ctFilter
+			SELECT          url
+			FROM            dbonly
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 2. Files that are new and not in the database.
@@ -237,8 +259,8 @@ sub rescan {
 		} );
 
 		my $onDiskOnlySQL = qq{
-			SELECT          url
-			FROM            diskonly
+			SELECT url
+			FROM   diskonly
 		} . (IS_SQLITE ? '' : ' ORDER BY url');
 
 		# 3. Files that have changed mtime or size.
@@ -264,20 +286,6 @@ sub rescan {
 			SELECT url
 			FROM   changed
 		} . (IS_SQLITE ? '' : ' ORDER BY scanned_files.url');
-
-		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
-		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
-			my $isDST = (localtime(time()))[8] ? 1 : 0;
-
-			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
-				my $offset = $isDST ? 3600 : -3600;
-
-				$log->error("DST has changed since last scan - fix timestamps in tracks table");
-
-				$dbh->do("UPDATE tracks SET timestamp = (timestamp + $offset)");
-				Slim::Music::Import->setLastScanTimeIsDST();
-			}
-		}
 
 		$log->error("Get deleted tracks count") unless main::SCANNER && $main::progress;
 		# only remove missing tracks when looking for audio tracks
@@ -371,6 +379,7 @@ sub deleteTracks {
 
 	if ( $toDeleteCount && !Slim::Music::Import->hasAborted() ) {
 		my $deleteSth;
+		my $toDeleteDone = 0;
 
 		$pending{$nextFolder} |= PENDING_DELETE;
 
@@ -395,11 +404,9 @@ sub deleteTracks {
 
 			# Page through the files, this is to avoid a long-running read query which
 			# would prevent WAL checkpoints from occurring.
-			# Note: Bug 17438, this limit query always uses the first items, because it
-			# will be removing those tracks before the next query is run.
 			if ( !$deleteSth ) {
-				my $sql = $toDeleteSQL . " LIMIT 0, " . CHUNK_SIZE;
-				$deleteSth = $dbh->prepare($sql);
+				my $sql = $toDeleteSQL . " LIMIT $toDeleteDone, " . CHUNK_SIZE;
+				$deleteSth = $dbh->prepare_cached($sql);
 				$deleteSth->execute;
 				$deleteSth->bind_col(1, \$deleted);
 			}
@@ -407,6 +414,7 @@ sub deleteTracks {
 			if ( $deleteSth->fetch ) {
 				$progress && $progress->update( Slim::Music::Info::isFileURL($deleted) ? Slim::Utils::Misc::pathFromFileURL($deleted) : $deleted );
 				$$changes++;
+				$toDeleteDone++;
 
 				deleted($deleted);
 
@@ -480,7 +488,7 @@ sub addTracks {
 			# would prevent WAL checkpoints from occurring.
 			if ( !$onDiskOnlySth ) {
 				my $sql = $onDiskOnlySQL . " LIMIT $onDiskOnlyDone, " . CHUNK_SIZE;
-				$onDiskOnlySth = $dbh->prepare($sql);
+				$onDiskOnlySth = $dbh->prepare_cached($sql);
 				$onDiskOnlySth->execute;
 				$onDiskOnlySth->bind_col(1, \$new);
 			}
@@ -564,7 +572,7 @@ sub updateTracks {
 			# would prevent WAL checkpoints from occurring.
 			if ( !$changedOnlySth ) {
 				my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
-				$changedOnlySth = $dbh->prepare($sql);
+				$changedOnlySth = $dbh->prepare_cached($sql);
 				$changedOnlySth->execute;
 				$changedOnlySth->bind_col(1, \$changed);
 			}
@@ -759,7 +767,7 @@ sub deleted {
 			# Bug 10636, FLAC+CUE doesn't use playlist_track entries for some reason
 			# so we need to find the virtual tracks by looking at the URL
 			if ( !scalar @{$ptracks} ) {
-				$sth = $dbh->prepare( qq{
+				$sth = $dbh->prepare_cached( qq{
 					SELECT id, album, year
 					FROM   tracks
 					WHERE  url LIKE '$url#%'
