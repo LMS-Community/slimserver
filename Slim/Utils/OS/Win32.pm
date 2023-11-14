@@ -124,6 +124,13 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath(@_);
 
+	# let 64 bit version access 32 bit binaries
+	if ( $class->{osDetails}->{'binArch'} =~ /-x64-/ ) {
+		my $binArch = $class->{osDetails}->{'binArch'};
+		$binArch =~ s/-x64-/-x86-/;
+		Slim::Utils::Misc::addFindBinPaths(catdir($_[0] || $class->dirsFor('Bin'), $binArch));
+	}
+
 	# Add the location of perl.exe to the helper applications folder search path.
 	my $perlpath = Slim::Utils::Misc::findbin('perl.exe');
 	if ($perlpath) {
