@@ -1488,11 +1488,7 @@ sub typeFromPath {
 
 				if (main::ISWINDOWS && $filepath =~ /\.lnk$/i) {
 
-					# TODO WIN64 - build Win32::Shortcut
-					if (main::ISACTIVEPERL && Win32::Shortcut->new($filepath)) {
-						$type = 'lnk';
-					}
-					elsif (!main::ISACTIVEPERL) {
+					if (Win32::Shortcut->new($filepath)) {
 						$type = 'lnk';
 					}
 

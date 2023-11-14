@@ -629,11 +629,7 @@ sub pathFromShortcut {
 	my $class    = shift;
 	my $fullpath = Slim::Utils::Misc::pathFromFileURL(shift);
 
-	eval {
-		require Win32::Shortcut;
-	};
-
-	return if $@;
+	require Win32::Shortcut;
 
 	my $path     = "";
 	my $shortcut = Win32::Shortcut->new($fullpath);
