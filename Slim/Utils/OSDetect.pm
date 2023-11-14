@@ -16,14 +16,14 @@ L<Slim::Utils::OSDetect> handles Operating System Specific details.
 
 =head1 SYNOPSIS
 
-	if (Slim::Utils::OSDetect::isLinux()) {
+	if (Slim::Utils::OSDetect::isWindows()) {
 
 =cut
 
 use strict;
 use FindBin qw($Bin);
 
-my ($os, $isLinux);
+my ($os, $isWindows, $isMac, $isLinux);
 
 =head1 METHODS
 
@@ -118,6 +118,8 @@ sub init {
 	}
 
 	$os->initDetails();
+	$isWindows = $os->name eq 'win';
+	$isMac     = $os->name eq 'mac';
 	$isLinux = $os->get('os') eq 'Linux';
 }
 
@@ -164,11 +166,11 @@ sub isRHorSUSE {
 }
 
 sub isWindows {
-	return main::ISWINDOWS;
+	return $isWindows;
 }
 
 sub isMac {
-	return main::ISMAC;
+	return $isMac;
 }
 
 sub isLinux {
