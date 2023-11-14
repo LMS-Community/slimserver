@@ -57,7 +57,7 @@ sub initDetails {
 
 	# The version numbers for Windows 8 onwards are identical, Win32.pm has not been updated to cover these
 	# https://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
-	elsif ($major == 6 && $minor == 2) {
+	elsif (($major == 6 && $minor == 2) || ($major == 10 && $minor == 0)) {
 
 		if ( my $wmi = Win32::OLE->GetObject( "WinMgmts://./root/cimv2" ) ) {
 			if ( my $list = $wmi->InstancesOf( "Win32_OperatingSystem" ) ) {
@@ -760,16 +760,15 @@ sub getUpdateParams {
 
 	return if main::SCANNER;
 
-	if (!$PerlSvc::VERSION) {
+	if (main::ISACTIVEPERL && !$PerlSvc::VERSION) {
 		Slim::Utils::Log::logger('server.update')->info("Running Logitech Media Server from the source - don't download the update.");
 		return;
 	}
 
-	require Win32::NetResource;
-
 	my $downloaddir;
 
 	if ($class->{osDetails}->{isWHS}) {
+		require Win32::NetResource;
 
 		my $share;
 		Win32::NetResource::NetShareGetInfo('software', $share);
@@ -793,12 +792,14 @@ sub getUpdateParams {
 	};
 }
 
-sub canAutoUpdate { 1 }
+sub canAutoUpdate { main::ISACTIVEPERL }
 
 # return file extension filter for installer
-sub installerExtension { '(?:exe|msi)' };
+sub installerExtension { main::ISACTIVEPERL ? '(?:exe|msi)' : 'zip'; }
+
 sub installerOS {
 	my $class = shift;
+	return 'win64' unless main::ISACTIVEPERL;
 	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
 }
 
@@ -852,6 +853,6 @@ sub restartServer {
 	return;
 }
 
-sub canRestartServer { return $PerlSvc::VERSION ? 1 : 0; }
+sub canRestartServer { return (main::ISACTIVEPERL && $PerlSvc::VERSION) ? 1 : 0; }
 
 1;
