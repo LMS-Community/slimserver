@@ -148,6 +148,7 @@ use strict;
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Menu::BrowseLibrary::Releases;
+use Slim::Menu::BrowseLibrary::Works;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -576,7 +577,7 @@ sub _registerBaseNodes {
 		{
 			type         => 'link',
 			name         => 'BROWSE_BY_COMPOSER_WORK',
-			params       => {mode => 'worksbycomposer', byComposer => 1},
+			params       => {mode => 'works', byComposer => 1},
 			feed         => \&_works,
 			icon         => 'html/images/playlists.png',
 			homeMenuText => 'BROWSE_WORKS_BY_COMPOSER',
@@ -736,7 +737,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id byComposer);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -765,6 +766,7 @@ sub _topLevel {
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
 		$args{'noEdit'}       = $params->{'noEdit'} if $params->{'noEdit'};
+		$args{'work_id'}       = $params->{'work_id'} if $params->{'work_id'};
 
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -1393,74 +1395,6 @@ sub _years {
 	);
 }
 
-sub _works {
-	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
-	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
-	my $byComposer = $args->{'params'}->{'byComposer'};
-
-	if ($library_id && !grep /library_id/, @searchTags) {
-		push @searchTags, 'library_id:' . $library_id if $library_id;
-	}
-
-	_generic($client, $callback, $args, 'works', [ 'hasAlbums:1', "byComposer:$byComposer", @searchTags ],
-		sub {
-			my $results = shift;
-			my $items = $results->{'works_loop'};
-			$remote_library ||= $args->{'remote_library'};
-
-			foreach (@$items) {
-				if ( $byComposer ) {
-					$_->{'name'}          = $_->{'composer'}."\n".$_->{'id'};
-				} else {
-					$_->{'name'}          = $_->{'id'}."\n".$_->{'composer'};
-				}
-				$_->{'name2'}         = $_->{'composer'};
-				$_->{'type'}          = 'playlist';
-				$_->{'playlist'}      = \&_tracks;
-				$_->{'url'}           = \&_albums;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "work_id:" . $_->{'id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:tracks.work=' . ($_->{'id'} || 0 );
-			};
-
-			my $params = _tagsToParams(\@searchTags);
-			my %actions = $remote_library ? (
-				commonVariables	=> [work_id => 'id', composer_id => 'composer_id'],
-			) : (
-				allAvailableActionsDefined => 1,
-				commonVariables	=> [work_id => 'id', composer_id => 'composer_id'],
-				info => {
-					command     => ['workinfo', 'items'],
-				},
-				items => {
-					command     => [BROWSELIBRARY, 'items'],
-					fixedParams => {
-						mode       => 'albums',
-						%$params
-					},
-				},
-				play => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load', %$params},
-				},
-				add => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add', %$params},
-				},
-				insert => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert', %$params},
-				},
-			);
-			$actions{'playall'} = $actions{'play'};
-			$actions{'addall'} = $actions{'add'};
-
-			return {items => $items, actions => \%actions, sorted => 1}, undef;
-		},
-	);
-}
-
 my %orderByList = (
 	ALBUM                => 'album',
 	SORT_YEARALBUM       => 'yearalbum',
@@ -1666,6 +1600,28 @@ sub _albums {
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1,
+				};
+
+				unshift @$extra, {
+					name        => "Works",
+					image       => 'html/images/playlists.png',
+					type        => 'link',
+					playlist    => \&_works,
+					url         => \&_works,
+					passthrough => [
+						{
+						orderBy    => undef,
+						searchTags => \@searchTags,
+						menuStyle => 'menuStyle:allSongs',
+						}
+					],
+					itemActions => {
+						allAvailableActionsDefined => 0,
+						items => {
+							command => [BROWSELIBRARY, 'items'],
+							fixedParams => { %$params, mode => "works" },
+						},
+					},
 				};
 			}
 			elsif ($search) {

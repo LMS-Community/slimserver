@@ -1403,6 +1403,52 @@ sub _createComments {
 	}
 }
 
+sub _createWork {
+	my ($self, $work, $composerID, $create) = @_;
+
+	if ( $work ) {
+		# Using native DBI here to improve performance during scanning
+		my $dbh = Slim::Schema->dbh;
+
+		if (!$create) {
+#			my $sth_delete = $dbh->prepare_cached( qq{
+#				DELETE FROM works
+#				WHERE id = ?
+#			} );
+#
+#			$sth_delete->execute( $trackId );
+		}
+
+		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $work );
+		my $titlesearch = Slim::Utils::Text::ignoreCase($work, 1);
+
+		my $sth = $dbh->prepare_cached('SELECT id FROM works WHERE titlesearch = ? AND composer = ?');
+		$sth->execute($titlesearch, $composerID);
+		my ($workID) = $sth->fetchrow_array;
+		$sth->finish;
+
+		if ( !$workID ) {
+
+			my $sth_insert = $dbh->prepare_cached( qq{
+				INSERT INTO works
+				(composer, title, titlesort, titlesearch)
+				VALUES
+				(?, ?, ?, ?)
+			} );
+
+			$sth_insert->execute( $composerID, $work, $titlesort, $titlesearch );
+
+			main::DEBUGLOG && $log->is_debug && $log->debug("-- Inserted work '$work'");
+
+			return $dbh->last_insert_id(undef, undef, undef, undef);
+
+		} else {
+
+			return $workID;
+		}
+	}
+}
+
 sub _createTrack {
 	my ($self, $columnValueHash, $persistentColumnValueHash, $source) = @_;
 
@@ -1641,6 +1687,9 @@ sub _newTrack {
 		$columnValueHash{primary_artist} = $artist->[0];
 	}
 
+	### Create Work rows
+	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $contributors->{'COMPOSER'}->[0], 1);
+
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
 		# Track does not have embedded artwork, look for standalone cover
@@ -1673,6 +1722,7 @@ sub _newTrack {
 	);
 
 	### Create Track row
+	$columnValueHash{'work'} = $workID if $workID;
 	$columnValueHash{'album'} = $albumId if !$playlist;
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
@@ -2677,7 +2727,7 @@ sub _preCheckAttributes {
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
-		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID
+		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID WORK
 	)) {
 
 		next unless defined $attributes->{$tag};

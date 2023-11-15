@@ -497,6 +497,7 @@ sub albumsQuery {
 			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
 			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
 			push @{$p}, $composerID;
+			$c->{'tracks.work'} = 1;
 		}
 
 		if (defined $genreID) {
@@ -750,6 +751,7 @@ sub albumsQuery {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -4229,6 +4231,7 @@ sub titlesQuery {
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 	my $releaseType   = $request->getParam('release_type');
+	my $workID        = $request->getParam('work_id');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4275,6 +4278,7 @@ sub titlesQuery {
 		trackId       => $trackID,
 		roleId        => $roleID,
 		releaseType   => $releaseType,
+		workId	      => $workID,
 		libraryId     => $libraryID,
 		limit         => sub {
 			$count = shift;
@@ -4470,20 +4474,26 @@ sub worksQuery {
 	my $work          = $request->getParam('work');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
-	my $byComposer     = $request->getParam('byComposer');
+	my $byComposer    = $request->getParam('byComposer');
+	my $composerID    = $request->getParam('artist_id');
 
 	# get them all by default
 	my $where = {};
 
-	my $key = ($hasAlbums || $libraryID) ? 'tracks.work' : 'id';
+	my $key = ($hasAlbums || $libraryID) ? 'tracks.work' : 'tracks.work';
 
-	my $sql = "SELECT DISTINCT tracks.work, contributors.name, contributors.id FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id AND contributor_track.role = 2 JOIN contributors ON contributors.id = contributor_track.contributor ";
+	my $sql = "SELECT DISTINCT works.title, works.id, contributors.name, contributors.id FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id AND contributor_track.role = 2 JOIN contributors ON contributors.id = contributor_track.contributor LEFT JOIN works ON works.id = tracks.work ";
 	my $w   = ["$key IS NOT NULL"];
 	my $p   = [];
 
 	if (defined $work) {
 		push @{$w}, "$key = ?";
 		push @{$p}, $work;
+	}
+
+	if (defined $composerID) {
+		push @{$w}, "contributors.id = ?";
+		push @{$p}, $composerID;
 	}
 
 	if (defined $libraryID) {
@@ -4515,9 +4525,9 @@ sub worksQuery {
 	}
 
 	if ($byComposer) {
-		$sql .= "ORDER BY 2,1";
+		$sql .= "ORDER BY contributors.namesort, works.titlesort";
 	} else {
-		$sql .= "ORDER BY 1,2";
+		$sql .= "ORDER BY works.titlesort, contributors.namesort";
 	}
 
 	# now build the result
@@ -4548,14 +4558,15 @@ sub worksQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $composer, $composerId);
-		$sth->bind_columns(\$work, \$composer, \$composerId);
+		my ($work, $workId, $composer, $composerId);
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId);
 
 		while ( $sth->fetch ) {
 			#$id += 0;
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
-			$request->addResultLoop($loopname, $chunkCount, 'id', $work);
+			$request->addResultLoop($loopname, $chunkCount, 'work', $work);
+			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
 			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
 
@@ -5019,7 +5030,7 @@ sub _songDataFromHash {
 
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
-	$returnHash{work} = $res->{'tracks.work'};
+	$returnHash{work} = $res->{'works.title'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5447,13 +5458,12 @@ Returns arrayref of hashes.
 sub _getTagDataForTracks {
 
 	my ( $tags, $args ) = @_;
-
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	my $sql      = 'SELECT %s FROM tracks ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'tracks.work' => 1 };
+	my $sql      = 'SELECT %s FROM tracks LEFT JOIN works ON works.id = tracks.work ';
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -5532,6 +5542,11 @@ sub _getTagDataForTracks {
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
+	}
+
+	if ( my $workId = $args->{workId} ) {
+		push @{$w}, 'works.id = ?';
+		push @{$p}, $workId;
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {
@@ -5826,7 +5841,7 @@ sub _getTagDataForTracks {
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
-			utf8::decode( $c->{'tracks.work'} ) if exists $c->{'tracks.work'};
+			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
