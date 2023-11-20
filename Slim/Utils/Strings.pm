@@ -388,7 +388,7 @@ sub parseStrings {
 
 		} else {
 
-			logError("Parsing line $ln: $line");
+			logError("Parsing $file line $ln: $line");
 		}
 	}
 
@@ -627,8 +627,8 @@ sub isLanguageRegionalVersion {
 	my $lang = shift;
 
 	my $currentLanguage = $prefs->get('language') || $failsafeLang;
-	
-	if ( $lang !~ /_/ && $currentLanguage =~ /(.+)_/ ) { # contains a regional variation e.g. EN_GB 
+
+	if ( $lang !~ /_/ && $currentLanguage =~ /(.+)_/ ) { # contains a regional variation e.g. EN_GB
 
 		if ( $1 eq $lang ) {
 			return $currentLanguage;
@@ -636,7 +636,7 @@ sub isLanguageRegionalVersion {
 
 	}
 
-	return; 
+	return;
 }
 
 sub setLanguage {
