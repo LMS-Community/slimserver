@@ -220,13 +220,14 @@ sub rescan {
 		}
 
 		# Generate 3 lists of files:
+		my $createTemporary = (main::DEBUGLOG && $log->is_debug) ? '' : 'TEMPORARY';
 
 		# 1. Files that no longer exist on disk
 		#    and are not virtual (from a cue sheet)
 		$log->error("Build temporary table for deleted tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS dbonly');
 		$dbh->do( qq{
-			CREATE TEMPORARY TABLE dbonly AS
+			CREATE $createTemporary TABLE dbonly AS
 				SELECT DISTINCT(url)
 				FROM   tracks
 				WHERE  url NOT IN (
@@ -247,7 +248,7 @@ sub rescan {
 		$log->error("Build temporary table for new tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
 		$dbh->do( qq{
-			CREATE TEMPORARY TABLE diskonly AS
+			CREATE $createTemporary TABLE diskonly AS
 				SELECT          DISTINCT(url) AS url
 				FROM            scanned_files
 				WHERE           url NOT IN (
@@ -267,7 +268,7 @@ sub rescan {
 		$log->error("Build temporary table for changed tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS changed');
 		$dbh->do( qq{
-			CREATE TEMPORARY TABLE changed AS
+			CREATE $createTemporary TABLE changed AS
 				SELECT DISTINCT(scanned_files.url) AS url
 				FROM   scanned_files
 				JOIN   tracks ON (
