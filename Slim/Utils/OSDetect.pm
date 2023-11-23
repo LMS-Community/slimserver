@@ -76,7 +76,13 @@ sub init {
 		} elsif ($^O =~ /^m?s?win/i) {
 
 			require Slim::Utils::OS::Win32;
-			$os = Slim::Utils::OS::Win32->new();
+			if (Slim::Utils::OS::Win32->getFlavor() eq 'Win64') {
+				require Slim::Utils::OS::Win64;
+				$os = Slim::Utils::OS::Win64->new();
+			}
+			else {
+				$os = Slim::Utils::OS::Win32->new();
+			}
 
 		} elsif ($^O =~ /linux/i) {
 

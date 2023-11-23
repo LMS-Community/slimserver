@@ -671,7 +671,12 @@ sub main {
 	# all other initialization
 	init();
 
-	while (!idle()) {}
+	if ( ISWINDOWS && !ISACTIVEPERL && $daemon ) {
+		Slim::Utils::OS::Win64->runService();
+	}
+	else {
+		while (!idle()) {}
+	}
 
 	stopServer();
 }

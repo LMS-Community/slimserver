@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Win32;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2023 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -23,6 +23,12 @@ use base qw(Slim::Utils::OS);
 my $driveList  = {};
 my $driveState = {};
 my $writablePath;
+
+sub getFlavor {
+	return (!main::ISACTIVEPERL && Win32::GetOSDisplayName() =~ /64-bit/i)
+		? 'Win64'
+		: 'Win32';
+}
 
 sub name {
 	return 'win';
@@ -124,17 +130,9 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath(@_);
 
-	# let 64 bit version access 32 bit binaries
-	if ( $class->{osDetails}->{'binArch'} =~ /-x64-/ ) {
-		my $binArch = $class->{osDetails}->{'binArch'};
-		$binArch =~ s/-x64-/-x86-/;
-		Slim::Utils::Misc::addFindBinPaths(catdir($_[0] || $class->dirsFor('Bin'), $binArch));
-	}
-
 	# Add the location of perl.exe to the helper applications folder search path.
-	my $perlpath = Slim::Utils::Misc::findbin('perl.exe');
-	if ($perlpath) {
-		Slim::Utils::Misc::addFindBinPaths(dirname($perlpath));
+	if ($^X =~ /perl\.exe/) {
+		Slim::Utils::Misc::addFindBinPaths(dirname($^X));
 	}
 }
 
@@ -792,14 +790,13 @@ sub getUpdateParams {
 	};
 }
 
-sub canAutoUpdate { main::ISACTIVEPERL }
+sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
-sub installerExtension { main::ISACTIVEPERL ? '(?:exe|msi)' : 'zip'; }
+sub installerExtension { '(?:exe|msi)' }
 
 sub installerOS {
 	my $class = shift;
-	return 'win64' unless main::ISACTIVEPERL;
 	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
 }
 
@@ -853,6 +850,6 @@ sub restartServer {
 	return;
 }
 
-sub canRestartServer { return (main::ISACTIVEPERL && $PerlSvc::VERSION) ? 1 : 0; }
+sub canRestartServer { return $PerlSvc::VERSION ? 1 : 0; }
 
 1;
