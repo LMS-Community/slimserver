@@ -30,6 +30,7 @@ sub handler {
 	$paramRef->{info} = $paramRef->{info}->{items};
 
 	$paramRef->{server}  = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_SERVER'));
+	$paramRef->{perl}    = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PERL'));
 	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY'));
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
 

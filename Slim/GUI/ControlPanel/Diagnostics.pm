@@ -277,6 +277,10 @@ sub getConflictingApp {
 		$file = PerlApp::extract_bound_file('ApplicationData.xml');
 	}
 
+	else {
+		$file = "ApplicationData.xml";
+	}
+
 	return if !-f $file;
 	
 	my $ref = XML::Simple::XMLin($file);

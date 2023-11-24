@@ -3,7 +3,7 @@ package Slim::Utils::Errno;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -38,7 +38,7 @@ use Exporter::Lite;
 our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
 
 BEGIN {
-        if (main::ISWINDOWS) {
+	if (main::ISWINDOWS) {
 		if (main::ISACTIVEPERL) {
 			*EINTR       = sub () { 10004 };
 			*EBADF       = sub () { 10009 };
@@ -52,10 +52,10 @@ BEGIN {
 			*EWOULDBLOCK = sub () { 140 };
 			*EINPROGRESS = sub () { 112 };
 		}
-        } else {
-                require Errno;
-                import Errno qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
-        }
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
+	}
 }
 
 =head1 SEE ALSO

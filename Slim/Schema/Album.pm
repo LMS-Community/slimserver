@@ -61,8 +61,8 @@ use constant CUSTOM_RELEASE_TYPE_PREFIX => 'RELEASE_TYPE_CUSTOM_';
 # see https://musicbrainz.org/doc/Release_Group/Type
 my @PRIMARY_RELEASE_TYPES = qw(
 	Album
-	Single
 	EP
+	Single
 	Broadcast
 	Other
 );
@@ -164,7 +164,7 @@ sub releaseTypeName {
 	$nameToken =~ s/[^a-z_0-9]/_/ig;
 
 	my $name;
-	foreach (CUSTOM_RELEASE_TYPE_PREFIX . $nameToken, $nameToken . 'S', $nameToken, 'RELEASE_TYPE_' . $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken) {
+	foreach ('RELEASE_TYPE_' . $nameToken . 'S', CUSTOM_RELEASE_TYPE_PREFIX . $nameToken, $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken, $nameToken) {
 		$name = Slim::Utils::Strings::cstring($client, $_) if Slim::Utils::Strings::stringExists($_);
 		last if $name;
 	}

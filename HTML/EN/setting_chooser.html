@@ -17,13 +17,15 @@
 
 [%- ELSE -%]
 
-[%- 
+[%-
 BLOCK addSetupLinks;
 	IF setuplinks;
 		sortedlinks = [];
 		sortedplugins = [];
 		FOREACH token = stringkeys.sort;
-			IF setuplinks.$token.search('plugin');
+			IF token == 'SETUP_PLUGINS';
+				sortedplugins.unshift(token);
+			ELSIF setuplinks.$token.search('plugin');
 				sortedplugins.push(token);
 			ELSE;
 				sortedlinks.push(token);

@@ -61,8 +61,13 @@ sub registerDefaultInfoProviders {
 		func  => \&infoServer,
 	) );
 
-	$class->registerInfoProvider( library => (
+	$class->registerInfoProvider( perl => (
 		after => 'server',
+		func  => \&infoPerl,
+	) );
+
+	$class->registerInfoProvider( library => (
+		after => 'perl',
 		func  => \&infoLibrary,
 	) );
 
@@ -311,22 +316,6 @@ sub infoServer {
 			name => cstring($client, 'INFORMATION_ARCHITECTURE' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 						. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
 		},
-
-		{
-			type => 'text',
-			name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
-						. $Config{'version'} . ' - ' . $Config{'archname'},
-		},
-
-		{
-			type => 'text',
-			name => 'Audio::Scan' . cstring($client, 'COLON') . ' ' . $Audio::Scan::VERSION,
-		},
-
-		{
-			type => 'text',
-			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'BLANK')),
-		},
 	];
 
 	if ( !main::NOMYSB && $prefs->get('sn_timediff') ) {
@@ -352,6 +341,48 @@ sub infoServer {
 
 	return {
 		name  => cstring($client, 'INFORMATION_MENU_SERVER'),
+		items => $items,
+	};
+}
+
+sub infoPerl {
+	my $client = shift;
+	my $tags   = shift;
+
+	my $menu   = $tags->{menuMode};
+
+	my $osDetails = Slim::Utils::OSDetect::details();
+
+	my $items = [
+		{
+			type => 'text',
+			name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
+						. $Config{'version'} . ' - ' . $Config{'archname'},
+		},
+
+		{
+			type => 'text',
+			name => 'Audio::Scan' . cstring($client, 'COLON') . ' ' . $Audio::Scan::VERSION,
+		},
+
+		{
+			type => 'text',
+			name => 'Mozilla::CA' . cstring($client, 'COLON') . ' ' . $Mozilla::CA::VERSION,
+		},
+
+		{
+			type => 'text',
+			name => sprintf("Net::SSLeay%s %s - %s", cstring($client, 'COLON'), $Net::SSLeay::VERSION, Net::SSLeay::SSLeay_version(Net::SSLeay::SSLEAY_VERSION())),
+		},
+
+		{
+			type => 'text',
+			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'BLANK')),
+		},
+	];
+
+	return {
+		name  => cstring($client, 'INFORMATION_MENU_PERL'),
 		items => $items,
 	};
 }

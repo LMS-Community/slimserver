@@ -91,6 +91,8 @@ sub startScan {
 		WHERE release_type = 'ALBUM' AND title REGEXP '[^\w.]+EP\b'
 	) );
 
+	$dbh->do('DROP TABLE IF EXISTS release_type_helper');
+
 	$progress->final(STEPS);
 
 	Slim::Music::Import->endImporter($class);

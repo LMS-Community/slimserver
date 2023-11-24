@@ -312,7 +312,7 @@ sub _resizeImage {
 		# music artwork
 		my $webroot = $context->{STASH}->{webroot};
 		if ( $url =~ m{^((?:$webroot|/)music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
-			return $1 . $resizeParams . '_o';
+			return $1 . $resizeParams . (($mode && $mode ne '-') ? "_$mode" : '_o');
 		}
 
 		# special mode "-": don't resize local urls (some already come with resize parameters)

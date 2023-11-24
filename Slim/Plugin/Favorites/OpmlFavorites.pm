@@ -201,7 +201,8 @@ sub _prepareDbItems {
 
 	foreach my $item (@$items) {
 		if ( $item->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
-			my $dbClass = $1;
+			my $dbClass = ucfirst($1);
+			my $url = $item->{'url'};
 
 			$dbBrowseModes ||= {
 				Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks, {
@@ -217,47 +218,13 @@ sub _prepareDbItems {
 				} ],
 			};
 
-			next unless $dbBrowseModes->{ucfirst($dbClass)};
-
-			my $queryParams = {};
-			my @joins;
-
-			my $query = $item->{url};
-			$query =~ s/^db://;
-
-			foreach my $condition (split /&(?:amp;)?/, $query) {
-				if ($condition =~ /^(\w+)\.(\w+)=(.+)/) {
-					my ($dbClass2, $key, $value) = ($1, $2, $3);
-
-					if ($dbBrowseModes->{ucfirst($dbClass2)}) {
-						if (!utf8::is_utf8($value) && !utf8::decode($value)) { $log->warn("The following value is not UTF-8 encoded: $value"); }
-
-						if (utf8::is_utf8($value)) {
-							utf8::decode($value);
-							utf8::encode($value);
-						}
-
-						$key = URI::Escape::uri_unescape($key);
-						$value = URI::Escape::uri_unescape($value);
-
-						if ($dbClass2 ne $dbClass) {
-							$key = "$dbClass2.$key";
-							push @joins, $dbClass2;
-						}
-
-						$queryParams->{$key} = $value;
-					}
-				}
-			}
-
-			if ( keys %$queryParams ) {
+			if ( $dbBrowseModes->{$dbClass} ) {
 				$item->{'type'} = 'playlist';
 				$item->{'play'} = $item->{'url'} . '&libraryTracks.library=-1';
 				$item->{'url'}  = \&_dbItem;
 				$item->{'passthrough'} = [{
-					class => ucfirst($dbClass),
-					query => $queryParams,
-					'join' => \@joins,
+					class => $dbClass,
+					url   => $url,
 				}];
 			}
 		}
@@ -273,7 +240,7 @@ sub _dbItem {
 	my $dbClass  = ucfirst( delete $pt->{'class'} );
 
 	if ( my $dbBrowseMode = $dbBrowseModes->{$dbClass} ) {
-		my $obj = Slim::Schema->search( $dbClass, $pt->{'query'}, { join => $pt->{'join'} } )->single();
+		my $obj = Slim::Schema->objectForUrl($pt->{url});
 
 		if ($obj && $obj->id) {
 			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id, 'library_id:-1' ];

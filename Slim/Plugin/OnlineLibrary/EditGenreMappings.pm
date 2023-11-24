@@ -13,6 +13,7 @@ use Digest::MD5 qw(md5_hex);
 use Slim::Utils::Prefs;
 
 my $genreMappings = preferences('plugin.onlinelibrary-genres');
+my $releaseTypeMappings = preferences('plugin.onlinelibrary-releasetypes');
 
 sub new {
 	my $class = shift;
@@ -33,17 +34,11 @@ sub handler {
 	if ($params->{saveSettings}) {
 		# mapping based on album/artist names
 		while (my ($prefName, $prefData) = each %{$params}) {
-			if ($prefName =~ /mapping_([a-f0-9]+)/) {
-				# if there was a duplicate entry, we'd get a list instead of a string - pick the first entry
-				($prefData) = grep /\w+/, @$prefData if ref $prefData;
-				$prefData =~ s/^\s+|\s+$//g;
-
-				if ($prefData) {
-					$genreMappings->set($1, $prefData);
-				}
-				else {
-					$genreMappings->remove($1);
-				}
+			if ($prefName =~ /genre_([a-f0-9]+)/) {
+				_setMapping($genreMappings, $1, $prefData);
+			}
+			elsif ($prefName =~ /releasetype_([a-f0-9]+)/) {
+				_setMapping($releaseTypeMappings, $1, $prefData);
 			}
 		}
 	}
@@ -53,22 +48,53 @@ sub handler {
 	$class->SUPER::handler($client, $params);
 }
 
-sub beforeRender {
-	my ($class, $params, $client) = @_;
-	($params->{genreMappings}, $params->{sortOrder}) = _getGenreMappings();
+sub _setMapping {
+	my ($prefs, $key, $prefData) = @_;
+
+	# if there was a duplicate entry, we'd get a list instead of a string - pick the first entry
+	($prefData) = grep /\w+/, @$prefData if ref $prefData;
+	$prefData =~ s/^\s+|\s+$//g;
+
+	if ($prefData) {
+		$prefs->set($key, $prefData);
+	}
+	else {
+		$prefs->remove($key);
+	}
 }
 
-sub _getGenreMappings {
-	my $sql = q(SELECT albums.title, albums.titlesearch, contributors.name, contributors.namesearch
-						FROM albums JOIN contributors ON contributors.id = albums.contributor
-						WHERE albums.extid IS NOT NULL
-						ORDER BY contributors.namesort, albums.titlesort;);
+sub beforeRender {
+	my ($class, $params, $client) = @_;
+	($params->{mappings}, $params->{sortOrder}) = _getMappings();
+}
 
-	my ($title, $titlesearch, $name, $namesearch);
+sub _getMappings {
+	my $dbh = Slim::Schema->dbh;
 
-	my $sth = Slim::Schema->dbh->prepare_cached($sql);
+	$dbh->do('DROP TABLE IF EXISTS album_track');
+	$dbh->do(q(
+		CREATE TEMPORARY TABLE album_track AS
+			SELECT DISTINCT(album) AS album, MIN(id) AS track
+			FROM tracks
+			WHERE extid IS NOT NULL
+			GROUP BY album
+	));
+	$dbh->do('CREATE INDEX IF NOT EXISTS album ON album_track (album)');
+
+	my ($title, $titlesearch, $name, $namesearch, $releasetype, $genre);
+
+	my $sth = $dbh->prepare_cached(q(
+		SELECT albums.title, albums.titlesearch, contributors.name, contributors.namesearch, genres.name, albums.release_type
+		FROM albums
+			JOIN contributors ON contributors.id = albums.contributor
+			JOIN album_track ON album_track.album = albums.id
+			JOIN genre_track ON genre_track.track = album_track.track
+			JOIN genres ON genres.id = genre_track.genre
+		WHERE albums.extid IS NOT NULL
+		ORDER BY contributors.namesort, albums.titlesort
+	));
 	$sth->execute();
-	$sth->bind_columns(\$title, \$titlesearch, \$name, \$namesearch);
+	$sth->bind_columns(\$title, \$titlesearch, \$name, \$namesearch, \$genre, \$releasetype);
 
 	my $mappings = {};
 	my $order = [];
@@ -76,9 +102,12 @@ sub _getGenreMappings {
 		my $key = md5_hex("$titlesearch||$namesearch");
 		utf8::decode($title);
 		utf8::decode($name);
-		$mappings->{$key} = [ $title, $name, $genreMappings->get($key) ];
-		push @$order, $key;
+		utf8::decode($genre);
+		push @$order, $key unless $mappings->{$key};
+		$mappings->{$key} ||= [ $title, $name, $genreMappings->get($key), $releaseTypeMappings->get($key), $genre, $releasetype ];
 	}
+
+	$dbh->do('DROP TABLE IF EXISTS album_track');
 
 	return ($mappings, $order);
 }

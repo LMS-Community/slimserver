@@ -453,11 +453,11 @@ sub setRemoteMetadata {
 		$attr->{BITRATE}   = $meta->{bitrate} * 1000;
 		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
 	}
-	
+
 	if ( $meta->{year} ) {
 		$attr->{YEAR} = $meta->{year};
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "meta data is " . Data::Dump::dump($meta) );
 		$log->debug( "Updating metadata for $url: " . Data::Dump::dump($attr) );

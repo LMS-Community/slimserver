@@ -178,8 +178,12 @@ sub _fixIcon {
 	# set the application icon
 	my $file = "../platforms/win32/res/$iconFile";
 
-	if (!-f $file && defined $PerlApp::VERSION) {
+	if (main::ISACTIVEPERL && defined $PerlApp::VERSION && !-f $file) {
 		$file = PerlApp::extract_bound_file($iconFile);
+	}
+
+	else {
+		$file = $iconFile;
 	}
 
 	return $file if -f $file;

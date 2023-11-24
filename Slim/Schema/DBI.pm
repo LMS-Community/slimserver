@@ -17,7 +17,7 @@ my $dirtyCount = 0;
 	my $class = __PACKAGE__;
 
 	my @components = qw(PK::Auto Core);
-	
+
 	if ($] > 5.007) {
 		unshift @components, 'UTF8Columns';
 	}
@@ -60,6 +60,7 @@ sub set {
 }
 
 # Walk any table and check for foreign rows that still exist.
+# TODO - can probably be removed, as it's not called any more. Probably replaced by the rescan() method in many cases (eg. Slim::Schema::Album->rescan)?
 sub removeStaleDBEntries {
 	my $class   = shift;
 	my $foreign = shift;

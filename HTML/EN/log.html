@@ -3,6 +3,7 @@
 		<style type="text/css">
 			body, form {
 				margin: 0;
+				max-width: 100% !important;
 			}
 
 			pre {
@@ -46,6 +47,13 @@
 		</style>
 
 		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
+
+		<style>
+			pre, pre span {
+				font-family: monospace !important;
+				font-size: 13px !important;
+			}
+		</style>
 
 		<script>
 			function submitForm(vars) {

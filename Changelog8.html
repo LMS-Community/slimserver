@@ -5,6 +5,7 @@
 
 	<li>New Features:</li>
 	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
 		<li>New "Advanced Tag View" plugin allows you to show more information in the Track Info menu, without the need to drill down to "View Tags"</li>
 		<li>Add plugins for ClassicRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
 		<li>Add an optional artist albums view which groups albums by release type and contribution.</li>
@@ -14,7 +15,6 @@
 
 	<li>Server Changes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
 		<li>Improve integration of the external image resizing helper daemon.</li>
 		<li>Improve built-in imageproxy: don't proxy image if original size is requested, re-direct instead; add support for custom headers when using external image proxy.</li>
 		<li>Updated Dutch translation - thanks blackfiction!</li>
@@ -37,6 +37,8 @@
 	<ul>
 		<li>Tweak Apple OS Architecture discovery: use the "arm64" string rather than the CPU's name (eg. "Apple M1")</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
+		<li>Add Perl 5.38 support for Linux x86_64.</li>
+		<li>Add <b>experimental</b> support for Windows 64-bit - requires installation of <a href="https://strawberryperl.com/releases.html">Strawberry Perl 5.32</a>!</li>
 	</ul>
 	<br />
 
@@ -48,11 +50,13 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/829">#829</a> - Don't override a content type set by a page handler.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/905">#905</a> - Browsing in to playlists is extremely slow.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/911">#911</a> - Don't shut down the server on "restartserver" when we actually can't restart it.</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/939">#939</a> - Player can't be switched from MySqueezebox.com to LMS</li>
 		<li><a href="https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1648813">Respect a contributor's Musicbrainz ID to separate artists of the same name.</a></li>
+		<li>Try harder to avoid duplicate (but empty) album entries on singles.</li>
+		<li>Clear the Various Artists ID when a scan has finished.</li>
 		<li>Don't remove online libraries from library views unless there really is a local copy of the same album.</li>
 		<li>Fix Deezer SmartRadio track duration calculation.</li>
 		<li>Allow pausing Deezer Flow.</li>
-		<li>Fix browsing albums from Favorites menu.</li>
 		<li>Fix resizing with a defined background color.</li>
 	</ul>
 	<br />
@@ -87,6 +91,7 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/pull/874">#874</a> - Fix shuffling when starting off with an empty playlist (thanks robho!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/918">#918</a> - Fix browsing down to album favorites etc.</li>
 		<li>Add CPAN/auto/5.14 to lib search path for Windows builds to include Font::FreeType.</li>
 		<li>Fix another absolute path to a stylesheet in the Default skin.</li>
 		<li>Fix an issue where registering a pre-cache resolution would cause a subsequent LMS start to fail.</li>
