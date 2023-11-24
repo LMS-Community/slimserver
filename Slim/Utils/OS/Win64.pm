@@ -14,6 +14,16 @@ use base qw(Slim::Utils::OS::Win32);
 
 my $log;
 
+sub initDetails {
+	my $class = shift;
+
+	$class->SUPER::initDetails();
+
+	$class->{osDetails}->{'osName'} = $class->{osDetails}->{'osName'} . ' (64-bit)';
+
+	return $class->{osDetails};
+}
+
 sub initSearchPath {
 	my $class = shift;
 

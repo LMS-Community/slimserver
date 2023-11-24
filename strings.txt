@@ -17114,6 +17114,10 @@ INFORMATION_MENU_SERVER
 	SV	Server-information
 	ZH_CN	伺服器信息
 
+INFORMATION_MENU_PERL
+	DE	Perl- und Modulversionen
+	EN	Perl and Module Versions
+
 INFORMATION_MENU_SCAN
 	CS	Detaily prohledávání médií
 	DA	Detaljer om mediesøgning

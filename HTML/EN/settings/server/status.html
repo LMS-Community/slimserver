@@ -43,12 +43,16 @@
 [% END %]
 [% nosubmit = 1 %]
 
-
-[% WRAPPER setting title="SERVER_STATUS" %]
-	[% FOREACH item IN server.items %]
-		<div>[% item.name %]</div>
+[% BLOCK infoItem %]
+	[% WRAPPER setting title=title %]
+		[% FOREACH item IN items %]
+			<div>[% item.name %]</div>
+		[% END %]
 	[% END %]
 [% END %]
+
+[% PROCESS infoItem title="SERVER_STATUS" items=server.items %]
+[% PROCESS infoItem title="INFORMATION_MENU_PERL" items=perl.items %]
 
 [% IF needsTimeSync %]
 	[% WRAPPER setting title="INFORMATION_TIME_DIFF" %]
@@ -56,21 +60,11 @@
 	[% END %]
 [% END %]
 
-[% IF library %]
-	[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
-		[% FOREACH item IN library.items %]
-			<div>[% item.name %]</div>
-		[% END %]
-	[% END %]
-[% END %]
+[% IF library; PROCESS infoItem title="INFORMATION_MENU_LIBRARY" items=library.items; END %]
 
 [% IF onlinelibrary %]
 	[% FOREACH service IN onlinelibrary %]
-		[% WRAPPER setting title=service.name %]
-			[% FOREACH item IN service.items %]
-				<div>[% item.name %]</div>
-			[% END %]
-		[% END %]
+		[% PROCESS infoItem title=service.name items=service.items %]
 	[% END %]
 [% END %]
 
