@@ -672,7 +672,7 @@ sub main {
 	init();
 
 	if ( ISWINDOWS && !ISACTIVEPERL && $daemon ) {
-		Slim::Utils::OS::Win64->runService();
+		Slim::Utils::OSDetect->getOS()->runService();
 	}
 	else {
 		while (!idle()) {}
@@ -1210,6 +1210,11 @@ sub remove_pid_file {
 sub END {
 
 	Slim::bootstrap::theEND();
+
+	# tell Windows Service manager to resart
+	if (ISWINDOWS && !ISACTIVEPERL && $? == Slim::Utils::OS::Win64::RESTART_STATUS) {
+		POSIX::_exit($?) if $?;
+	}
 }
 
 # start up the server if we're not running as a service.
