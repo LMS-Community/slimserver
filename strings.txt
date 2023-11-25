@@ -17117,6 +17117,7 @@ INFORMATION_MENU_SERVER
 INFORMATION_MENU_PERL
 	DE	Perl- und Modulversionen
 	EN	Perl and Module Versions
+	FR	Versions de Perl et des modules
 
 INFORMATION_MENU_SCAN
 	CS	Detaily prohledávání médií
