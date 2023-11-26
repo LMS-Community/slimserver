@@ -155,6 +155,14 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
+	# TODO - move this to the installer somehow
+	# hack a Strawberry Perl specific path into the environment variable...
+	if (ISWINDOWS && !ISACTIVEPERL) {
+		my $path = File::Basename::dirname($^X);
+		$path =~ s/\bperl\b/c/;
+		$ENV{PATH} = "$path;" . $ENV{PATH};
+	}
+
 	our $VERSION = '8.4.0';
 
 	# With EV, only use select backend
@@ -1208,12 +1216,11 @@ sub remove_pid_file {
 }
 
 sub END {
-
 	Slim::bootstrap::theEND();
 
 	# tell Windows Service manager to resart
 	if (ISWINDOWS && !ISACTIVEPERL && $? == Slim::Utils::OS::Win64::RESTART_STATUS) {
-		POSIX::_exit($?) if $?;
+		POSIX::_exit($?);
 	}
 }
 
