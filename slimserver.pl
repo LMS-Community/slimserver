@@ -158,7 +158,7 @@ BEGIN {
 	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
 	if (ISWINDOWS && !ISACTIVEPERL) {
 		my $path = File::Basename::dirname($^X);
-		$path =~ s/\bperl\b/c/;
+		$path =~ s/perl(?=.bin)/c/i;
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
 	}
 
