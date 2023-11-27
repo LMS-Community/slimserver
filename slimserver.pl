@@ -155,12 +155,11 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	# TODO - move this to the installer somehow
-	# hack a Strawberry Perl specific path into the environment variable...
+	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
 	if (ISWINDOWS && !ISACTIVEPERL) {
 		my $path = File::Basename::dirname($^X);
 		$path =~ s/\bperl\b/c/;
-		$ENV{PATH} = "$path;" . $ENV{PATH};
+		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
 	}
 
 	our $VERSION = '8.4.0';
