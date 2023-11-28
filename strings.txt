@@ -24820,6 +24820,10 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	PL	Nowa wersja Logitech Media Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
 	SV	En ny version av Logitech Media Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
 
+SERVER_WINDOWS_UPDATE_AVAILABLE
+	DE	<ul><li>Version %s - %s steht zur Installation bereit.</li><li>Melden Sie sich am Computer, der Logitech Media Server ausführt, an (%s).</li><li>Führen Sie <code>%s</code> aus und folgen Sie den Anweisungen.</li></ul>
+	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Logitech Media Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
+
 UPDATES_LATEST_CHANGES
 	CS	Nejnovější změny (<a href="%s" target="_blank">všechny změny</a>)
 	DE	Letzte Änderungen (<a href="%s" target="_blank">alle Änderungen</a>)

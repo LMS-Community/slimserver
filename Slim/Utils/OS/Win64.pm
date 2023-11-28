@@ -73,12 +73,24 @@ sub runService { if ($main::daemon) {
 } }
 
 sub getUpdateParams {
+	my ($class, $url) = @_;
+
 	return if main::SCANNER;
-	return {};
+
+	return {
+		cb => sub {
+			my ($file) = @_;
+
+			if ($file) {
+				my ($version, $revision) = $file =~ /(\d+\.\d+\.\d+)(?:.*?(\d{5,}))?/;
+				$::newVersion = Slim::Utils::Strings::string('SERVER_WINDOWS_UPDATE_AVAILABLE', $version, ($revision || 0), Slim::Utils::Network::hostName(), $file);
+			}
+		}
+	};
 }
 
-sub canAutoUpdate      { 0 }
-sub installerExtension { 'zip' }
+sub canAutoUpdate      { $_[0]->runningFromSource ? 0 : 1 }
+sub installerExtension { 'exe' }
 sub installerOS        { 'win64' }
 
 # only allow restarting if we are running as a service
@@ -93,8 +105,10 @@ sub canRestartServer   {
 }
 
 sub restartServer {
+	my ($class) = @_;
+
 	# force exit code to make Windows Service Manager restart the service
-	exit RESTART_STATUS;
+	exit RESTART_STATUS if $class->{osDetails}->{runningAsService};
 }
 
 1;
