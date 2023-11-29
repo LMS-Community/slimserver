@@ -29,7 +29,6 @@ use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Networking::Repositories;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -45,9 +44,9 @@ use constant MAX_RETRY_TIME     => 86400;
 my $dir;
 my $updatesDir;
 
-# Download location
+# Download location - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
 sub BASE {
-	return Slim::Networking::Repositories->getUrlForRepository('firmware');
+	return 'http://update.slimdevices.com/update/firmware/';
 }
 
 # Check interval when firmware can't be downloaded
