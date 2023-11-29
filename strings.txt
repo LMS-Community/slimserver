@@ -6849,15 +6849,15 @@ SETUP_SKIN_OK
 	SV	Verkställ ändringarna genom att stänga Logitech Media Server-fönstret och öppna det igen.
 
 SETUP_PLUGINS
-	CS	Zásuvné moduly (pluginy)
+	CS	Správa zásuvných modulů
 	DA	Udvidelsesmoduler
-	DE	Plugins
-	EN	Plugins
+	DE	Plugins verwalten
+	EN	Manage Plugins
 	ES	Complementos
 	FI	Laajennukset
-	FR	Plugins
+	FR	Gérer les plugins
 	IT	Plugin
-	NL	Plug-ins
+	NL	Beheer Plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
 	RU	Подключаемые модули
@@ -7727,21 +7727,21 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让Squeezebox由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	CS	Filtrování žánrů na úrovni alba a skladby.
-	DA	Filtrer genrer på album- og nummernivau.
+	CS	Filtrování žánrů na úrovni alba a skladby
+	DA	Filtrer genrer på album- og nummernivau
 	DE	Stilrichtungen auf Album- und Titelebene filtern
-	EN	Filter Genres at the Album & Track Level.
-	ES	Filtrar géneros por álbum y pista.
-	FI	Suodata genret levy- ja raitatasolla.
+	EN	Filter Genres at the Album & Track Level
+	ES	Filtrar géneros por álbum y pista
+	FI	Suodata genret levy- ja raitatasolla
 	FR	Portée du filtre sur les genres
-	HE	סנן סגנונות ברמת האלבום והרצועה.
-	IT	Filtra i generi musicali a livello di album e brani.
-	NL	Genres op album- en nummerniveau filteren.
-	NO	Filtrer sjangere på album- og spornivå.
-	PL	Filtruj gatunki na poziomie albumu i utworu.
-	RU	Фильтровать жанры по альбому и дорожкам.
-	SV	Filtrera genrer på album- och spårnivå.
-	ZH_CN	在专辑和音轨的层面过滤音乐风格。
+	HE	סנן סגנונות ברמת האלבום והרצועה
+	IT	Filtra i generi musicali a livello di album e brani
+	NL	Genres op album- en nummerniveau filteren
+	NO	Filtrer sjangere på album- og spornivå
+	PL	Filtruj gatunki na poziomie albumu i utworu
+	RU	Фильтровать жанры по альбому и дорожкам
+	SV	Filtrera genrer på album- och spårnivå
+	ZH_CN	在专辑和音轨的层面过滤音乐风格
 
 SETUP_NOGENREFILTER_1
 	CS	Zobrazit všechny skladby a alba interpreta
@@ -9274,9 +9274,9 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
-	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen selber zu erkennen.
-	EN	Try to recognize EPs and singles automatically when release type information is missing.
-	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant.
+	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
+	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
+	FR	Essayer de reconnaître automatiquement les EP et les singles lorsque le type de sortie est manquant ou est de type "album".
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
@@ -11654,6 +11654,20 @@ RELEASE_TYPE_EP
 RELEASE_TYPE_EPS
 	EN	EPs
 
+RELEASE_TYPE_BESTOF
+	EN	Best Of
+
+RELEASE_TYPE_BESTOFS
+	EN	Best Ofs
+
+RELEASE_TYPE_BOXSET
+	EN	Box Set
+	FR	Coffret
+
+RELEASE_TYPE_BOXSETS
+	EN	Box Sets
+	FR	Coffrets
+
 RELEASE_TYPE_BROADCAST
 	EN	Broadcast
 
@@ -13353,6 +13367,9 @@ BROWSE_GENRES
 BROWSE_WORKS
 	EN	Browse Works
 
+WORKS
+	EN	Classical Works
+
 BROWSE_YEARS
 	CS	Procházet roky
 	DA	Gennemse efter år
@@ -13465,9 +13482,6 @@ BROWSE_BY_SONG_DBL
 
 BROWSE_BY_WORK
 	EN	Works
-
-WORKS
-	EN	Classical Works
 
 BROWSE_BY_YEAR
 	CS	Roky
@@ -17109,6 +17123,10 @@ INFORMATION_MENU_SERVER
 	SV	Server-information
 	ZH_CN	伺服器信息
 
+INFORMATION_MENU_PERL
+	DE	Perl- und Modulversionen
+	EN	Perl and Module Versions
+
 INFORMATION_MENU_SCAN
 	CS	Detaily prohledávání médií
 	DA	Detaljer om mediesøgning
@@ -18442,6 +18460,23 @@ COMPILATION
 	HE	אוסף
 	IT	Compilation
 	NL	Compilatie
+	NO	Samling
+	PL	Kompilacja
+	RU	Сборка
+	SV	Samling
+	ZH_CN	合辑
+
+COMPILATIONS
+	CS	Sbírka
+	DA	Kompilation
+	DE	Kompilationen
+	EN	Compilations
+	ES	Compilación
+	FI	Kokoelma
+	FR	Compilations
+	HE	אוסף
+	IT	Compilation
+	NL	Compilaties
 	NO	Samling
 	PL	Kompilacja
 	RU	Сборка
