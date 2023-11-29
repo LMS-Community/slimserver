@@ -127,10 +127,10 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1,
+	'https://lms-community.github.io/lms-plugin-repository/extensions.xml' => 1,
 );
 
-my $UNSUPPORTED_REPO = 'https://github.com/LMS-Community/lms-plugin-repository/raw/master/unsupported.xml';
+my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/unsupported.xml';
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
