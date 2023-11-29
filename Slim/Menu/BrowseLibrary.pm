@@ -565,25 +565,13 @@ sub _registerBaseNodes {
 		{
 			type         => 'link',
 			name         => 'BROWSE_BY_WORK',
-			params       => {mode => 'works', byComposer => 0},
+			params       => {mode => 'works'},
 			feed         => \&_works,
 			icon         => 'html/images/playlists.png',
 			homeMenuText => 'BROWSE_WORKS',
 			condition    => \&isEnabledNode,
 			id           => 'myMusicWorks',
 			weight       => 35,
-			cache        => 1,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_COMPOSER_WORK',
-			params       => {mode => 'works', byComposer => 1},
-			feed         => \&_works,
-			icon         => 'html/images/playlists.png',
-			homeMenuText => 'BROWSE_WORKS_BY_COMPOSER',
-			condition    => \&isEnabledNode,
-			id           => 'myMusicComposerWorks',
-			weight       => 37,
 			cache        => 1,
 		},
 		{
@@ -737,7 +725,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id byComposer);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1420,13 +1408,15 @@ sub _albumsOrReleases {
 	if ($prefs->get('groupArtistAlbumsByReleaseType')
 		# 2. a specific artist is requested
 		&& (grep /^artist_id:/, @searchTags)
-		# 3. any one of the following is true:
+		# 3. not from works menu:
+		&& !(grep /^work_id:/, @searchTags)
+		# 4. any one of the following is true:
 		#    3a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
 		&& ($prefs->get('noRoleFilter')
-			# 3b. no specific role is requested
+			# 4b. no specific role is requested
 			|| !(grep /^role_id:/, @searchTags)
-			# 3c. we request the album artist
-			|| (grep /^role_id:.*ALBUMARTIST/, @searchTags)
+			# 4c. we request the album artist or composer
+			|| (grep /^role_id:.*(ALBUMARTIST|2|COMPOSER)/, @searchTags)
 		)
 	) {
 		_releases(@_);
@@ -1508,7 +1498,8 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'album'};
+				$_->{'name'}          = $_->{'work_id'} ? cstring($client,'ALBUM') . cstring($client,'COLON') . ' ' : '';
+				$_->{'name'}          .= $_->{'album'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
@@ -1533,7 +1524,7 @@ sub _albums {
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly) {
+				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
 					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 				}
 
@@ -1604,27 +1595,6 @@ sub _albums {
 					skipIfSingleton => 1,
 				};
 
-				unshift @$extra, {
-					name        => "Works",
-					image       => 'html/images/playlists.png',
-					type        => 'link',
-					playlist    => \&_works,
-					url         => \&_works,
-					passthrough => [
-						{
-						orderBy    => undef,
-						searchTags => \@searchTags,
-						menuStyle => 'menuStyle:allSongs',
-						}
-					],
-					itemActions => {
-						allAvailableActionsDefined => 0,
-						items => {
-							command => [BROWSELIBRARY, 'items'],
-							fixedParams => { %$params, mode => "works" },
-						},
-					},
-				};
 			}
 			elsif ($search) {
 				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];
@@ -1726,7 +1696,6 @@ sub _albums {
 					orderByList => $result->{orderByList},
 				}, 86400);
 			}
-
 			return $result, $extra;
 		},
 		# no need for an index bar in New Music mode

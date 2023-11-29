@@ -4235,6 +4235,7 @@ sub titlesQuery {
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 	my $releaseType   = $request->getParam('release_type');
 	my $workID        = $request->getParam('work_id');
+	my $ignoreWorkTracks = $request->getParam('ignore_work_tracks');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4243,7 +4244,8 @@ sub titlesQuery {
 	$tags = $tagsprm if defined $tagsprm;
 
 	my $collate  = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
+	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir" ';
+	$where .= $ignoreWorkTracks ? 'AND tracks.work IS NULL)' : ')';
 	my $order_by = "tracks.titlesort $collate";
 
 	if ($sort) {
@@ -4474,10 +4476,8 @@ sub worksQuery {
 	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
-	my $work          = $request->getParam('work');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
-	my $byComposer    = $request->getParam('byComposer');
 	my $composerID    = $request->getParam('artist_id');
 
 	# get them all by default
@@ -4488,11 +4488,6 @@ sub worksQuery {
 	my $sql = "SELECT DISTINCT works.title, works.id, contributors.name, contributors.id FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id AND contributor_track.role = 2 JOIN contributors ON contributors.id = contributor_track.contributor LEFT JOIN works ON works.id = tracks.work ";
 	my $w   = ["$key IS NOT NULL"];
 	my $p   = [];
-
-	if (defined $work) {
-		push @{$w}, "$key = ?";
-		push @{$p}, $work;
-	}
 
 	if (defined $composerID) {
 		push @{$w}, "contributors.id = ?";
@@ -4527,11 +4522,7 @@ sub worksQuery {
 		$total_sth->finish;
 	}
 
-	if ($byComposer) {
-		$sql .= "ORDER BY contributors.namesort, works.titlesort";
-	} else {
-		$sql .= "ORDER BY works.titlesort, contributors.namesort";
-	}
+	$sql .= "ORDER BY works.titlesort, contributors.namesort";
 
 	# now build the result
 
@@ -5545,11 +5536,6 @@ sub _getTagDataForTracks {
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
-	}
-
-	if ( my $workId = $args->{workId} ) {
-		push @{$w}, 'works.id = ?';
-		push @{$p}, $workId;
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {

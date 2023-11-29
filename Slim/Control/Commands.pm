@@ -2018,6 +2018,16 @@ sub playlistcontrolCommand {
 			return;
 		}
 
+	} elsif (defined(my $work_id = $request->getParam('work_id'))) {
+
+		my $criteria = {work => [ '=' => $work_id ]};
+
+		if (defined (my $album_id = $request->getParam('album_id'))) {
+			$criteria->{'album'} = [ '=' => $album_id ];
+		}
+
+		@tracks = Slim::Schema->search('Track', $criteria)->all;
+
 	} elsif (defined(my $track_id_list = $request->getParam('track_id'))) {
 
 		# split on commas

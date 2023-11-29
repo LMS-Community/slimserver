@@ -14,13 +14,16 @@ sub _works {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
-	my $byComposer = $args->{'params'}->{'byComposer'};
+
+	# We only want role_id of COMPOSER, regardless of what the calling function has passed:
+	my ($index) = grep { $searchTags[$_] ~~ /^role_id:/ } 0 .. $#searchTags;
+	$searchTags[$index] = "role_id:COMPOSER" if $index;
 
 	if ($library_id && !grep /library_id/, @searchTags) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
 	}
 
-	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'works', [ 'hasAlbums:1', "byComposer:$byComposer", @searchTags ],
+	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'works', [ 'hasAlbums:1', @searchTags ],
 		sub {
 			my $results = shift;
 			my $items = $results->{'works_loop'};
@@ -29,17 +32,13 @@ sub _works {
 			my $lastWork = "";
 			my $lastComposerID = 0;
 			foreach (@$items) {
-				if ( $byComposer ) {
-					$_->{'name'}          = $_->{'composer'}."\n".$_->{'work'};
-				} else {
-					$_->{'name'}          = $_->{'work'}."\n".$_->{'composer'};
-				}
+				$_->{'name'}          = $_->{'work'}."\n".$_->{'composer'};
 				$_->{'name2'}         = $_->{'composer'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:tracks.work=' . ($_->{'work'} || 0 );
+				$_->{'favorites_url'} = 'db:tracks.work=' . ($_->{'work_id'} || 0 );
 			};
 
 			my $params = _tagsToParams(\@searchTags);

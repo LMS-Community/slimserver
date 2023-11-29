@@ -4,9 +4,11 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
+use Slim::Menu::BrowseLibrary::Works;
 
 use constant MAX_ALBUMS => 500;
 use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST,ARTIST';
+use constant BROWSELIBRARY => 'browselibrary';
 
 my $log = logger('database.info');
 
@@ -48,7 +50,7 @@ sub _releases {
 
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
-	# get the artist's albums list to create releses sub-items etc.
+	# get the artist's albums list to create releases sub-items etc.
 	my $requestRef = [ $query, 0, MAX_ALBUMS, @searchTags ];
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
 	$request->execute();
@@ -121,6 +123,15 @@ sub _releases {
 		"library_id:" . $library_id,
 	];
 
+	# Only create compositions item if we have tracks which are not in classical works
+	main::INFOLOG && $log->is_info && $log->info("titles ($index, $quantity): tags ->", join(', ', @searchTags));
+	my $requestRef = [ 'titles', 0, MAX_ALBUMS, @$searchTags, "role_id:COMPOSER", "ignore_work_tracks:1" ];
+	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
+	$request->execute();
+	$log->error($request->getStatusText()) if $request->isStatusError();
+	my $titles = $request->getResult('titles_loop');
+	my $titlesCount = $request->getResult('count');
+
 	if (delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
@@ -129,8 +140,8 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
-		};
+			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "ignore_work_tracks:1"] } ],
+		} if ($titlesCount > 0);
 	}
 
 	if (my $albums = delete $contributions{TRACKARTIST}) {
@@ -143,6 +154,23 @@ sub _releases {
 
 		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
+
+	# Add item for Classical Works if the artist has any.
+	main::INFOLOG && $log->is_info && $log->info("works ($index, $quantity): tags ->", join(', ', @searchTags));
+	my $requestRef = [ 'works', 0, MAX_ALBUMS, @$searchTags, "role_id:COMPOSER" ];
+	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
+	$request->execute();
+	$log->error($request->getStatusText()) if $request->isStatusError();
+	my $works = $request->getResult('works_loop');
+
+	push @items, {
+		name        => cstring($client, 'WORKS'),
+		image       => 'html/images/playlists.png',
+		type        => 'playlist',
+		playlist    => \&_tracks,
+		url         => \&_works,
+		passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
+	} if (defined $works);
 
 	# if there's only one category, display it directly
 	if (scalar @items == 1 && (my $handler = $items[0]->{url})) {
