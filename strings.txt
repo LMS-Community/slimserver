@@ -24823,6 +24823,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 SERVER_WINDOWS_UPDATE_AVAILABLE
 	DE	<ul><li>Version %s - %s steht zur Installation bereit.</li><li>Melden Sie sich am Computer, der Logitech Media Server ausführt, an (%s).</li><li>Führen Sie <code>%s</code> aus und folgen Sie den Anweisungen.</li></ul>
 	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Logitech Media Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
+	FR	<ul><li>La version %s - %s est prête à être installée.</li><li>Connectez-vous à l'ordinateur qui héberge le Logitech Media Server (%s).</li><li>Exécutez <code>%s</code> et suivez les instructions.</li></ul>
 
 UPDATES_LATEST_CHANGES
 	CS	Nejnovější změny (<a href="%s" target="_blank">všechny změny</a>)
