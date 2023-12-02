@@ -3,12 +3,13 @@ package Slim::Menu::BrowseLibrary;
 use strict;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
 use constant MAX_ALBUMS => 500;
-use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST,ARTIST';
 
 my $log = logger('database.info');
+my $prefs = preferences('server');
 
 # Unfortunately we can't use _generic(), as there's no CLI command to get the release types
 sub _releases {
@@ -19,7 +20,18 @@ sub _releases {
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
 
-	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
+	my %primaryArtistIds;
+
+	if ($prefs->get('useUnifiedArtistsList')) {
+		foreach (Slim::Schema::Contributor->contributorRoles) {
+			if ( $prefs->get(lc($_) . 'InArtists') || $_ =~ /ALBUMARTIST|ARTIST/) {
+				$primaryArtistIds{Slim::Schema::Contributor->typeToRole($_)} = 1;
+			}
+		}
+	}
+	else {
+		%primaryArtistIds = map { $_ => 1 } Slim::Schema::Contributor->contributorRoleIds();
+	}
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -68,7 +80,7 @@ sub _releases {
 			next if $_->{role_ids} !~ /[23]/;
 		}
 		# Release Types if main artist
-		elsif ($_->{role_ids} =~ /[15]/) {
+		elsif ( grep { $primaryArtistIds{$_} } split(//, $_->{role_ids}) ) {
 			$releaseTypes{$_->{release_type}}++;
 			next;
 		}
@@ -92,7 +104,7 @@ sub _releases {
 	my @items;
 	my $searchTags = [
 		"artist_id:$artistId",
-		"role_id:" . PRIMARY_ARTIST_ROLES,
+		"role_id:" . join(',', keys %primaryArtistIds),
 		"library_id:$library_id",
 	];
 
@@ -118,7 +130,7 @@ sub _releases {
 
 	$searchTags = [
 		"artist_id:$artistId",
-		"library_id:" . $library_id,
+		"library_id:$library_id",
 	];
 
 	if (delete $contributions{COMPOSER}) {
