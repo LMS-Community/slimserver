@@ -66,6 +66,16 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	PL	Role kontrybutorów:
 	SV	Artistroll
 
+PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
+	DE	Veröffentlichungstyp:
+	EN	Release Type:
+	FR	Type de sortie :
+
+PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
+	DE	Veröffentlichungstypen:
+	EN	Release Types:
+	FR	Types de sorties :
+
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	CS	Procházet podle:
 	DE	Anzeigen:

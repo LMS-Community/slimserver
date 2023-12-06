@@ -325,12 +325,11 @@ sub _prepareTrack {
 	my $splitChar = substr(preferences('server')->get('splitList'), 0, 1);
 	my $ct = Slim::Music::Info::typeFromPath($track->{url});
 
-	return {
+	my $trackData = {
 		url          => $track->{url},
 		TITLE        => $track->{title},
 		ARTIST       => $album->{artist}->{name},
 		ARTIST_EXTID => 'wimp:artist:' . $album->{artist}->{id},
-		TRACKARTIST  => join($splitChar, map { $_->{name} } @{ $track->{artists} }),
 		ALBUM        => $album->{title},
 		ALBUM_EXTID  => 'wimp:album:' . $album->{id},
 		TRACKNUM     => $track->{trackNumber},
@@ -345,7 +344,15 @@ sub _prepareTrack {
 		TIMESTAMP    => $album->{added},
 		CONTENT_TYPE => $ct,
 		LOSSLESS     => $ct eq 'flc' ? 1 : 0,
+		RELEASETYPE  => $album->{type},
 	};
+
+	my @trackArtists = map { $_->{name} } grep { $_->{name} ne $album->{artist}->{name} } @{ $track->{artists} };
+	if (scalar @trackArtists) {
+		$trackData->{TRACKARTIST} = join($splitChar, @trackArtists);
+	}
+
+	return $trackData;
 }
 
 1;

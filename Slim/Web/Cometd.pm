@@ -854,7 +854,10 @@ sub handleRequest {
 		# Set language override for this request
 		if ( $client ) {
 			if ( $lang ) {
-				$client->languageOverride( $lang );
+				# Only override if the currently selected language is not a regional version of the client language
+				if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) {					
+					$client->languageOverride( $lang );
+				}
 			}
 
 			# XXX: this could be more specific, i.e. iPeng

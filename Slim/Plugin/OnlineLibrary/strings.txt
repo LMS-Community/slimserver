@@ -74,7 +74,7 @@ PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY_DESC
 	CS	Pouze místní skladby (bez hudební služby)
 	DE	Erstelle Bibliotheksansicht ausschliesslich mit lokalen Titeln (keine Streaming Dienste)
 	EN	Create library view with local tracks only (no music services)
-	FR	Morceaux locaux uniquement (pas de service de streaming)
+	FR	Créer une vue bibliothèque avec des morceaux locaux uniquement (pas de service de streaming)
 	NL	Alleen lokale nummers (geen online muziek streaming diensten)
 	SV	Bara lokala spår (ingen strömningstjänst)
 
@@ -126,9 +126,13 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	CS	Pokročilá náhrada žánru
 	DE	Erweiterte Ersetzung
-	EN	Advanced genre replacement
-	FR	Remplacement avancé de genre
+	EN	Advanced genre and release type replacement
+	FR	Remplacement avancé de genre et de type de sortie
 	NL	Geavanceerde instellingen voor genre vervanging
+
+PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
+	EN	Release Type
+	FR	Type de sortie
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	CS	Zpět na základní nastavení
@@ -141,7 +145,7 @@ PLUGIN_ONLINE_LIBRARY_TAG
 	CS	Tag:
 	DE	Feld:
 	EN	Tag:
-	FR	Etiquette :
+	FR	Tag :
 	NL	Tag:
 	SV	Tag:
 
@@ -156,8 +160,8 @@ PLUGIN_ONLINE_LIBRARY_MATCHING
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	CS	Nahrazení online žánru
 	DE	Online Stilrichtungen ersetzen
-	EN	Online Genre Replacement
-	FR	Remplacement des genres en ligne
+	EN	Online Genre and Release Type Replacement
+	FR	Remplacement des genres et des types de sorties en ligne
 	NL	Online Genres Vervangen
 	SV	Ersätta Online genre
 

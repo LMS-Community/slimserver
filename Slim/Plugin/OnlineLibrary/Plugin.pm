@@ -123,6 +123,8 @@ sub postinitPlugin {
 		}, values %onlineLibraryProviders);
 
 		Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
+
+		main::INFOLOG && $log->is_info && $log->info("Online Music Library Integration initialized: " . join(', ', keys %onlineLibraryProviders) . DELAY_FIRST_POLL);
 	}
 }
 
@@ -137,7 +139,10 @@ sub _pollOnlineLibraries {
 	}
 
 	# no need for polling when there's no provider
-	return unless scalar values %onlineLibraryProviders;
+	if (!scalar values %onlineLibraryProviders) {
+		main::INFOLOG && $log->is_info && $log->info("No need to poll - no online libraries available");
+		return;
+	}
 
 	# create list of apps configured on mysb.com or locally
 	my %configuredApps;
@@ -153,7 +158,10 @@ sub _pollOnlineLibraries {
 	} keys %onlineLibraryProviders;
 
 	# no need for polling if all importers are disabled
-	return unless scalar @enabledImporters;
+	if (!scalar @enabledImporters) {
+		main::INFOLOG && $log->is_info && $log->info("No need to poll - all online library polling is disabled");
+		return;
+	}
 
 	main::INFOLOG && $log->is_info && $log->info("Starting poll for updated online library...");
 

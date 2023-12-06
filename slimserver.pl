@@ -64,7 +64,7 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 
 # This package section is used for the windows service version of the application,
 # as built with ActiveState's PerlSvc
-if (ISWINDOWS && $PerlSvc::VERSION) {
+if (ISACTIVEPERL && $PerlSvc::VERSION) {
 	package PerlSvc;
 
 	our %Config = (
@@ -155,6 +155,13 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
+	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
+	if (ISWINDOWS && !ISACTIVEPERL) {
+		my $path = File::Basename::dirname($^X);
+		$path =~ s/perl(?=.bin)/c/i;
+		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
+	}
+
 	our $VERSION = '8.4.0';
 
 	# With EV, only use select backend
@@ -267,7 +274,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Networking::Repositories;
 use Slim::Utils::Firmware;
 use Slim::Control::Jive;
 use Slim::Formats::RemoteMetadata;
@@ -511,9 +517,6 @@ sub init {
 		Slim::Networking::SqueezeNetwork->init();
 	}
 
-	main::INFOLOG && $log->info("Download repositories init...");
-	Slim::Networking::Repositories->init();
-
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
@@ -671,7 +674,12 @@ sub main {
 	# all other initialization
 	init();
 
-	while (!idle()) {}
+	if ( ISWINDOWS && !ISACTIVEPERL && $daemon ) {
+		Slim::Utils::OSDetect->getOS()->runService();
+	}
+	else {
+		while (!idle()) {}
+	}
 
 	stopServer();
 }
@@ -1203,8 +1211,12 @@ sub remove_pid_file {
 }
 
 sub END {
-
 	Slim::bootstrap::theEND();
+
+	# tell Windows Service manager to resart
+	if (ISWINDOWS && !ISACTIVEPERL && $? == Slim::Utils::OS::Win64::RESTART_STATUS) {
+		POSIX::_exit($?);
+	}
 }
 
 # start up the server if we're not running as a service.

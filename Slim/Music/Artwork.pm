@@ -846,7 +846,7 @@ sub getResizeSpecs {
 	# HiDPI versions of web UI artwork
 	if ($prefs->get('precacheHiDPIArtwork')) {
 		$thumbSize *= 2;
-		push @specs, "${thumbSize}x${thumbSize}_o";
+		push @specs, "${thumbSize}x${thumbSize}_o", '100x100_o';
 	}
 
 	if ( my $customSpecs = $prefs->get('customArtSpecs') ) {

@@ -188,6 +188,9 @@ sub init {
 		'useUnifiedArtistsList' => 0,
 		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
+		'releaseTypesToIgnore'  => [],
+		'ignoreReleaseTypes'    => 0,
+		'groupArtistAlbumsByReleaseType' => 0,
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
@@ -420,8 +423,15 @@ sub init {
 	}, 'autoDownloadUpdate', 'checkVersion' );
 
 	if ( !main::SCANNER ) {
+		my $scanArtwork = sub {
+			Slim::Music::Import->setIsScanning('PRECACHEARTWORK_PROGRESS');
+			Slim::Music::Artwork->precacheAllArtwork(sub {
+				Slim::Music::Import->setIsScanning(0);
+			}, 1);
+		};
+
 		$prefs->setChange( sub {
-			return if Slim::Music::Import->stillScanning;
+			return if !Slim::Schema->hasLibrary || Slim::Music::Import->stillScanning;
 
 			my $newValues = $_[1];
 			my $oldValues = $_[3];
@@ -433,11 +443,9 @@ sub init {
 			# trigger artwork scan if we've got a new specification only
 			if ( scalar @new ) {
 				require Slim::Music::Artwork;
-
-				Slim::Music::Import->setIsScanning('PRECACHEARTWORK_PROGRESS');
-				Slim::Music::Artwork->precacheAllArtwork(sub {
-					Slim::Music::Import->setIsScanning(0);
-				}, 1);
+				Slim::Utils::Timers::killTimers(undef, $scanArtwork);
+				# delay rescan in case we were still busy getting everything set up
+				Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 10, $scanArtwork);
 			}
 		}, 'customArtSpecs');
 

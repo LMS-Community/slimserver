@@ -1218,7 +1218,7 @@ sub infoTagDump {
 
 	my $item;
 
-	if ( $track->audio && Slim::Music::Info::isFileURL($track->url) ) {
+	if ( $track->audio && (Slim::Music::Info::isFileURL($track->url) || Slim::Music::Info::isVolatile($track->url)) ) {
 		$item = {
 			name        => cstring($client, 'VIEW_TAGS'),
 			url         => \&tagDump,
@@ -1234,6 +1234,8 @@ sub tagDump {
 	my ( $client, $callback, undef, $path, $key, $title ) = @_;
 
 	return unless $callback && $path;
+
+	$path =~ s/^tmp:/file:/;
 
 	my $menu = [];
 	$key ||= '';

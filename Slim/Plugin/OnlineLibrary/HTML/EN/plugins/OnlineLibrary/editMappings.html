@@ -7,13 +7,13 @@
 
 	<script TYPE="text/javascript">
 		Ext.onReady(function () {
-			var sortableTable = Ext.get('albumGenreMappingsTable');
+			var sortableTable = Ext.get('mappingsTable');
 
 			if (sortableTable) {
 				// make the table sortable by header
 				var grid = new SqueezeJS.UI.SortableTable(sortableTable, {
 					disableSelection: false,
-					stateId: 'albumGenreMappingsTable',
+					stateId: 'mappingsTable',
 					stateful: true
 				});
 				grid.render();
@@ -28,21 +28,23 @@
 
 		<div style="padding:10px 0"><a href="[% webroot %]plugins/OnlineLibrary/settings.html">[% "PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC" | string %]</a></div>
 
-		<div class="settingSection" style="margin-top:0;margin-bottom:20px;" id="albumGenreMappings">
-			<table id="albumGenreMappingsTable">
+		<div class="settingSection" style="margin-top:0;margin-bottom:20px;" id="albumMappings">
+			<table id="mappingsTable">
 				<thead>
 					<tr>
-						<th width="35%" class="sortable">[% "ALBUM" | string %]</th>
-						<th width="35%" class="sortable">[% "ARTIST" | string %]</th>
-						<th width="30%">[% "GENRE" | string %]</th>
+						<th width="30%" class="sortable">[% "ALBUM" | string %]</th>
+						<th width="30%" class="sortable">[% "ARTIST" | string %]</th>
+						<th width="20%">[% "GENRE" | string %]</th>
+						<th width="20%">[% "PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE" | string %]</th>
 					</tr>
 				</thead>
 				<tbody>
 					[% FOREACH mappingKey = sortOrder %]
 					<tr>
-						<td>[% genreMappings.$mappingKey.0 %]</td>
-						<td>[% genreMappings.$mappingKey.1 %]</td>
-						<td><input type="text" name="mapping_[% mappingKey %]" value="[% genreMappings.$mappingKey.2 | html %]" style="width:90%"></td>
+						<td>[% mappings.$mappingKey.0 %]</td>
+						<td>[% mappings.$mappingKey.1 %]</td>
+						<td><input type="text" name="genre_[% mappingKey %]" value="[% mappings.$mappingKey.2 | html %]" [% UNLESS mappings.$mappingKey.2 %]placeholder="[% mappings.$mappingKey.4 | html %]"[% END %] style="width:90%"></td>
+						<td><input type="text" name="releasetype_[% mappingKey %]" value="[% mappings.$mappingKey.3 | html %]" [% UNLESS mappings.$mappingKey.3 %]placeholder="[% mappings.$mappingKey.5 | html %]"[% END %] style="width:90%"></td>
 					</tr>
 					[% END %]
 				</tbody>

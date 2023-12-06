@@ -3,9 +3,12 @@ PLUGIN_JAZZRADIO_NAME
 
 PLUGIN_JAZZRADIO_DESC
 	EN	JAZZRADIO.com - Enjoy Great Jazz Music
+	FR	JAZZRADIO.com - Profitez du bon jazz
 
 PLUGIN_JAZZRADIO_MISSING_CREDS
 	EN	Please visit JAZZRADIO.com in the Logitech Media Server Settings to add your credentials.
+	FR	Veuillez vous rendre dans JAZZRADIO.com dans les paramètres de Logitech Media Server pour ajouter vos informations d'identification.
 
 PLUGIN_JAZZRADIO_LINK
 	EN	To create or manage your account please visit <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.
+	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.

@@ -40,7 +40,8 @@ if ( !main::SCANNER ) {
 	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan','favorites'], ['changed','done','changed']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
-				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList) );
+		composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
+		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore) );
 }
 
 tie my %cacheables, 'Tie::RegexpHash';
@@ -58,9 +59,9 @@ sub handleWebIndex {
 	my $asyncArgs = $args->{'args'};
 	my $item      = $args->{'item'} || {};
 	my $pageicon  = $Slim::Web::Pages::additionalLinks{icons}{$title};
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug( "feed is :" . Data::Dump::dump($feed) );
-	
+
 	if ($title eq uc($title)) {
 		$title = string($title);
 	}
@@ -673,7 +674,7 @@ sub handleFeed {
 			}
 
 			next if !$url;
-			
+
 			main::INFOLOG && $log->info("Playing/adding $url");
 			main::DEBUGLOG && $log->is_debug && $log->debug("item is " . Data::Dump::dump($item));
 

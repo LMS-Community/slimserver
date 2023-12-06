@@ -12,11 +12,7 @@ Slim::Utils::Firmware
 
 =head1 SYNOPSIS
 
-This class downloads firmware during startup if it was
-not included with the distribution.  It uses synchronous
-download via LWP so that all firmware will be downloaded
-before any players connect.  If this initial download fails
-it will switch to async mode and try to download missing
+This class downloads firmware in async mode and try to download missing
 firmware every 10 minutes in the background.
 
 All downloaded firmware is verified using an SHA1 checksum
@@ -33,7 +29,6 @@ use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Networking::Repositories;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -49,9 +44,9 @@ use constant MAX_RETRY_TIME     => 86400;
 my $dir;
 my $updatesDir;
 
-# Download location
+# Download location - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
 sub BASE {
-	return Slim::Networking::Repositories->getUrlForRepository('firmware');
+	return 'http://update.slimdevices.com/update/firmware/';
 }
 
 # Check interval when firmware can't be downloaded
@@ -350,73 +345,6 @@ sub need_upgrade {
 	return;
 }
 
-=head2 download( $url, $file )
-
-Performs a synchronous file download at startup for all firmware files.
-If these fail, will set a timer for async downloads in the background in
-10 minutes or so.
-
-$file must be an absolute path.
-
-=cut
-
-sub download {
-	my ( $url, $file ) = @_;
-
-	require LWP::UserAgent;
-	my $ua = LWP::UserAgent->new(
-		env_proxy => 1,
-	);
-
-	my $error;
-
-	msg("Downloading firmware from $url, please wait...\n");
-
-	my $res = $ua->mirror( $url, $file );
-	if ( $res->is_success ) {
-
-		# Download the SHA1sum file to verify our download
-		my $res2 = $ua->mirror( "$url.sha", "$file.sha" );
-		if ( $res2->is_success ) {
-
-			my $sumfile = read_file( "$file.sha" ) or fatal("Unable to read $file.sha to verify firmware\n");
-			my ($sum) = $sumfile =~ m/([a-f0-9]{40})/;
-			unlink "$file.sha";
-
-			open my $fh, '<', $file or fatal("Unable to read $file to verify firmware\n");
-			binmode $fh;
-
-			my $sha1 = Digest::SHA1->new;
-			$sha1->addfile($fh);
-			close $fh;
-
-			if ( $sha1->hexdigest eq $sum ) {
-				logWarning("Successfully downloaded and verified $file.");
-				return 1;
-			}
-
-			unlink $file;
-
-			logError("Validation of firmware $file failed, SHA1 checksum did not match");
-		}
-		else {
-			unlink $file;
-			$error = $res2->status_line;
-		}
-	}
-	else {
-		$error = $res->status_line;
-	}
-
-	if ( $res->code == 304 ) {
-		main::INFOLOG && $log->info("File $file not modified");
-		return 0;
-	}
-
-	logError("Unable to download firmware from $url: $error");
-
-	return 0;
-}
 
 =head2 downloadAsync($file)
 

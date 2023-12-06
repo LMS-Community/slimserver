@@ -43,12 +43,16 @@
 [% END %]
 [% nosubmit = 1 %]
 
-
-[% WRAPPER setting title="SERVER_STATUS" %]
-	[% FOREACH item IN server.items %]
-		<div>[% item.name %]</div>
+[% BLOCK infoItem %]
+	[% WRAPPER setting title=title %]
+		[% FOREACH item IN items %]
+			<div>[% item.name %]</div>
+		[% END %]
 	[% END %]
 [% END %]
+
+[% PROCESS infoItem title="SERVER_STATUS" items=server.items %]
+[% PROCESS infoItem title="INFORMATION_MENU_PERL" items=perl.items %]
 
 [% IF needsTimeSync %]
 	[% WRAPPER setting title="INFORMATION_TIME_DIFF" %]
@@ -56,21 +60,11 @@
 	[% END %]
 [% END %]
 
-[% IF library %]
-	[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
-		[% FOREACH item IN library.items %]
-			<div>[% item.name %]</div>
-		[% END %]
-	[% END %]
-[% END %]
+[% IF library; PROCESS infoItem title="INFORMATION_MENU_LIBRARY" items=library.items; END %]
 
 [% IF onlinelibrary %]
 	[% FOREACH service IN onlinelibrary %]
-		[% WRAPPER setting title=service.name %]
-			[% FOREACH item IN service.items %]
-				<div>[% item.name %]</div>
-			[% END %]
-		[% END %]
+		[% PROCESS infoItem title=service.name items=service.items %]
 	[% END %]
 [% END %]
 
@@ -119,10 +113,10 @@
 	[% IF item.values.0 %]
 		[% WRAPPER setting title="SETUP_DEBUG_${item.keys.0}_LOG" desc="SETUP_DEBUG_${item.keys.0}_LOG_DESC" %]
 			<div class="prefDesc">
-				[% UNLESS simple %]<a href="/[% item.keys.0 | lower %].log" target="log">[% END %][% item.values.0 %][% UNLESS simple %]</a>
-				(<a href="/[% item.keys.0 | lower %].log?lines=100" target="log">100</a>,
-				<a href="/[% item.keys.0 | lower %].log?lines=500" target="log">500</a>,
-				<a href="/[% item.keys.0 | lower %].log?lines=1000" target="log">1000</a>
+				[% UNLESS simple %]<a href="[% webroot %][% item.keys.0 | lower %].log" target="log">[% END %][% item.values.0 %][% UNLESS simple %]</a>
+				(<a href="[% webroot %][% item.keys.0 | lower %].log?lines=100" target="log">100</a>,
+				<a href="[% webroot %][% item.keys.0 | lower %].log?lines=500" target="log">500</a>,
+				<a href="[% webroot %][% item.keys.0 | lower %].log?lines=1000" target="log">1000</a>
 				[% "LINES" | string %],
 				<a href="/[% item.keys.0 | lower %].log?full=1">[% "EVERYTHING" | string | lower %]</a>,
 				<a href="/[% item.keys.0 | lower %].log?zip=1">[% "SETUP_LOG_ZIPPED" | string %]</a>)[% END %]

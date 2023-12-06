@@ -4,6 +4,8 @@ package Slim::Schema::Album;
 use strict;
 use base 'Slim::Schema::DBI';
 
+use JSON::XS::VersionOneAndTwo;
+
 use Slim::Schema::ResultSet::Album;
 
 use Slim::Utils::Log;
@@ -32,6 +34,7 @@ my $log = logger('database.info');
 		replay_gain
 		replay_peak
 		musicbrainz_id
+		release_type
 		extid
 	), title => { accessor => undef() });
 
@@ -52,6 +55,21 @@ my $log = logger('database.info');
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
 }
+
+use constant CUSTOM_RELEASE_TYPE_PREFIX => 'RELEASE_TYPE_CUSTOM_';
+
+# see https://musicbrainz.org/doc/Release_Group/Type
+my @PRIMARY_RELEASE_TYPES = qw(
+	Album
+	EP
+	Single
+	Broadcast
+	Other
+);
+
+my %releaseTypeMap = map {
+	uc($_) => 1
+} @PRIMARY_RELEASE_TYPES;
 
 sub url {
 	my $self = shift;
@@ -79,6 +97,79 @@ sub contributors {
 	return $self->contributorAlbums->search_related(
 		'contributor', undef, { distinct => 1 }
 	)->search(@_);
+}
+
+sub releaseTypes {
+	my $self = shift;
+
+	my $dbh = Slim::Schema->dbh;
+	my $release_types_sth = $dbh->prepare_cached('SELECT DISTINCT(release_type) FROM albums ORDER BY release_type');
+	my $releaseTypes = [
+		grep { $_ !~ /compilation/i }
+		map { $_->[0] } @{ $dbh->selectall_arrayref($release_types_sth) || [] }
+	];
+
+	return $releaseTypes;
+}
+
+sub primaryReleaseTypes { \@PRIMARY_RELEASE_TYPES }
+
+sub addReleaseTypeMap {
+	my ($self, $releaseType, $normalizedReleaseType) = @_;
+
+	return unless $releaseType;
+	return if $releaseTypeMap{$normalizedReleaseType};
+
+	$releaseTypeMap{$normalizedReleaseType} = $releaseType;
+
+	my $last = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => 'releaseTypeMap'
+	} );
+
+	$last->value(to_json(\%releaseTypeMap));
+	$last->update;
+}
+
+sub addReleaseTypeStrings {
+	my $stringsObj = Slim::Schema->rs('MetaInformation')->find( {
+		'name' => 'releaseTypeMap'
+	} );
+
+	if ($stringsObj) {
+		my $strings = eval { from_json($stringsObj->value) };
+		if ($strings && ref $strings) {
+			while (my ($token, $string) = each %$strings) {
+				next if $string == 1;
+
+				$token =~ s/[^a-z_0-9]/_/ig;
+				$token = CUSTOM_RELEASE_TYPE_PREFIX . $token;
+
+				if ( !Slim::Utils::Strings::stringExists($token) ) {
+					Slim::Utils::Strings::storeExtraStrings([{
+						strings => { EN => $string},
+						token   => $token,
+					}]) if !Slim::Utils::Strings::stringExists($token);
+				}
+			}
+		}
+
+		$stringsObj->delete;
+	}
+}
+
+sub releaseTypeName {
+	my ($self, $releaseType, $client) = @_;
+
+	my $nameToken = uc($releaseType);
+	$nameToken =~ s/[^a-z_0-9]/_/ig;
+
+	my $name;
+	foreach ('RELEASE_TYPE_' . $nameToken . 'S', CUSTOM_RELEASE_TYPE_PREFIX . $nameToken, $nameToken . 'S', 'RELEASE_TYPE_' . $nameToken, $nameToken) {
+		$name = Slim::Utils::Strings::cstring($client, $_) if Slim::Utils::Strings::stringExists($_);
+		last if $name;
+	}
+
+	return $name || $releaseType;
 }
 
 # Update the title dynamically if we're part of a set.

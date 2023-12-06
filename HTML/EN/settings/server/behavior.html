@@ -52,11 +52,48 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_RELEASE_TYPES" desc=""%]
+			<select class="stdedit" name="pref_ignoreReleaseTypes" id="ignoreReleaseTypes">
+				<option [% IF NOT prefs.pref_ignoreReleaseTypes %]selected [% END %]value="0">[% 'SETUP_IGNORE_RELEASE_TYPES_0' | string %]</option>
+				<option [% IF prefs.pref_ignoreReleaseTypes %]selected [% END %]value="1">[% 'SETUP_IGNORE_RELEASE_TYPES_1' | string %]</option>
+			</select>
+		[% END %]
+
+		[% IF !prefs.pref_ignoreReleaseTypes; WRAPPER settingGroup title="" desc="" %]
+			<input type="checkbox" [% IF prefs.pref_cleanupReleaseTypes %]checked="1"[% END %] class="stdedit" name="pref_cleanupReleaseTypes" id="pref_cleanupReleaseTypes" value="1" />
+			<label for="pref_cleanupReleaseTypes" class="stdlabel">[% "SETUP_CLEANUP_RELEASE_TYPES" | string %]</label>
+		[% END; ELSE %]
+			<input type="hidden" name="pref_cleanupReleaseTypes" value="[% IF prefs.pref_cleanupReleaseTypes %]1[% END %]">
+		[% END %]
+
+		[% IF !prefs.pref_ignoreReleaseTypes; WRAPPER settingGroup title="" desc="" %]
+			<select class="stdedit" name="pref_groupArtistAlbumsByReleaseType" id="groupArtistAlbumsByReleaseType">
+				<option [% IF prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="1">[% 'SETUP_GROUP_BY_RELEASE_TYPES_1' | string %]</option>
+				<option [% IF NOT prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="0">[% 'SETUP_GROUP_BY_RELEASE_TYPES_0' | string %]</option>
+			</select>
+		[% END; ELSE %]
+			<input type="hidden" name="pref_groupArtistAlbumsByReleaseType" value="[% IF prefs.pref_groupArtistAlbumsByReleaseType %]1[% END %]">
+			<input type="hidden" name="pref_cleanupReleaseTypes" value="[% IF prefs.pref_cleanupReleaseTypes %]1[% END %]">
+		[% END %]
+	[% END %]
+
+	[% IF !prefs.pref_ignoreReleaseTypes AND NOT prefs.pref_groupArtistAlbumsByReleaseType; WRAPPER setting title="SETUP_RELEASE_TYPES_INCLUDE" desc="SETUP_RELEASE_TYPES_DESC"%]
+		[% FOREACH releaseType IN release_types %]
+			<input type="checkbox" [% IF NOT releaseType.ignore %]checked="1"[% END %] class="stdedit" name="release_type_[% releaseType.id %]" id="release_type_[% releaseType.id %]" value="1" />
+			<label for="release_type_[% releaseType.id %]" class="stdlabel">[% releaseType.title %]</label>[% IF loop.last; ""; ELSE; "<br/>"; END %]
+		[% END %]
+	[% END; ELSE %]
+		[% FOREACH releaseType IN release_types %]
+			<input type="hidden" name="release_type_[% releaseType.id %]" value="[% IF NOT releaseType.ignore %]1[% END %]" />
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_NOGENREFILTER" desc="SETUP_NOGENREFILTER_DESC"%]
 		<select class="stdedit" name="pref_noGenreFilter" id="noGenreFilter">
 
 			<option [% IF NOT prefs.pref_noGenreFilter %]selected [% END %]value="0">[% 'SETUP_NOGENREFILTER_0' | string %]</option>
-			<option [% IF prefs.pref_noGenreFilter%]selected [% END %]value="1">[% 'SETUP_NOGENREFILTER_1' | string %]</option>
+			<option [% IF prefs.pref_noGenreFilter %]selected [% END %]value="1">[% 'SETUP_NOGENREFILTER_1' | string %]</option>
 
 		</select>
 	[% END %]
@@ -65,7 +102,7 @@
 		<select class="stdedit" name="pref_noRoleFilter" id="noRoleFilter">
 
 			<option [% IF NOT prefs.pref_noRoleFilter %]selected [% END %]value="0">[% 'SETUP_NOROLEFILTER_0' | string %]</option>
-			<option [% IF prefs.pref_noRoleFilter%]selected [% END %]value="1">[% 'SETUP_NOROLEFILTER_1' | string %]</option>
+			<option [% IF prefs.pref_noRoleFilter %]selected [% END %]value="1">[% 'SETUP_NOROLEFILTER_1' | string %]</option>
 
 		</select>
 	[% END %]

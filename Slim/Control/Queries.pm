@@ -272,6 +272,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
+	my $releaseType   = $request->getParam('release_type');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
@@ -302,8 +303,9 @@ sub albumsQuery {
 		push @{$p}, $trackID;
 	}
 	elsif ( defined $albumID ) {
-		push @{$w}, 'albums.id = ?';
-		push @{$p}, $albumID;
+		my @albumIds = split(',', $albumID);
+		push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
+		push @{$p}, @albumIds;
 	}
 	# ignore everything if $track_id or $album_id was specified
 	else {
@@ -475,6 +477,12 @@ sub albumsQuery {
 			push @{$p}, $libraryID;
 		}
 
+		if (defined $releaseType) {
+			my @releaseTypes = map { uc($_) } split(',', $releaseType);
+			push @{$w}, 'albums.release_type IN (' . join(', ', map {'?'} @releaseTypes) . ')';
+			push @{$p}, @releaseTypes;
+		}
+
 		if (defined $year) {
 			push @{$w}, 'albums.year = ?';
 			push @{$p}, $year;
@@ -527,6 +535,11 @@ sub albumsQuery {
 		$c->{'albums.compilation'} = 1;
 	}
 
+	my $wantsReleaseTypes = !$prefs->get('ignoreReleaseTypes');
+	if ( $tags =~ /W/ && $wantsReleaseTypes ) {
+		$c->{'albums.release_type'} = 1;
+	}
+
 	if ( $tags =~ /E/ ) {
 		$c->{'albums.extid'} = 1;
 	}
@@ -535,7 +548,7 @@ sub albumsQuery {
 		$c->{'albums.replay_gain'} = 1;
 	}
 
-	if ( $tags =~ /S/ ) {
+	if ( $tags =~ /R|S/ ) {
 		$c->{'albums.contributor'} = 1;
 	}
 
@@ -677,7 +690,7 @@ sub albumsQuery {
 			);
 		};
 
-		my ($contributorSql, $contributorSth, $contributorNameSth);
+		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 
@@ -735,6 +748,7 @@ sub albumsQuery {
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
+			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
@@ -785,6 +799,16 @@ sub albumsQuery {
 
 				if ( $tags =~ /SS/ && $contributor->{id} ) {
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				}
+			}
+
+			if ( $tags =~ /R/ ) {
+				$contributorRoleSth ||= $dbh->prepare_cached("SELECT role FROM contributor_album WHERE album = ? AND contributor = ?");
+				my $rolesRef = $dbh->selectall_arrayref($contributorRoleSth, , undef, $c->{'albums.id'}, $contributorID || $c->{'albums.contributor'});
+
+				if ($rolesRef) {
+					my $roles = join(',', map { $_->[0] } @$rolesRef);
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'role_ids', $roles);
 				}
 			}
 
@@ -3626,7 +3650,10 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		$request->addResult('replay_gain', Slim::Player::ReplayGain->fetchGainMode($client, $song) || 0)
+		my $trackGain = Slim::Player::ReplayGain->fetchGainMode($client, $song);
+		if (defined $trackGain) {
+			$request->addResult('replay_gain', $trackGain);
+		}
 	}
 
 	if ($client->currentSleepTime()) {
@@ -4193,7 +4220,7 @@ sub titlesQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
-
+	my $releaseType   = $request->getParam('release_type');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4239,6 +4266,7 @@ sub titlesQuery {
 		contributorId => $contributorID,
 		trackId       => $trackID,
 		roleId        => $roleID,
+		releaseType   => $releaseType,
 		libraryId     => $libraryID,
 		limit         => sub {
 			$count = shift;
@@ -4796,6 +4824,7 @@ my %tagMap = (
 	  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
 	  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
 	  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
+	  'W' => ['release_type',      'RELEASETYPE',     'album',         'release_type'], #->album.release_type
 	  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
 
 	  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
@@ -4843,6 +4872,7 @@ my %colMap = (
 	I => 'tracks.samplesize',
 	u => 'tracks.url',
 	w => 'tracks.lyrics',
+	W => 'albums.release_type',
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
@@ -4962,6 +4992,7 @@ sub _songData {
 			$remoteMeta->{y} = $remoteMeta->{year};
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
+			$remoteMeta->{W} => $remoteMeta->{releasetype}
 		}
 	}
 
@@ -5358,6 +5389,7 @@ sub _getTagDataForTracks {
 	if ( my $albumId = $args->{albumId} ) {
 		push @{$w}, 'tracks.album = ?';
 		push @{$p}, $albumId;
+		delete $args->{releaseType};
 	}
 
 	if ( my $trackId = $args->{trackId} ) {
@@ -5410,6 +5442,13 @@ sub _getTagDataForTracks {
 			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
 		}
 	};
+
+	if ( my $releaseType = $args->{releaseType} ) {
+		$join_albums->();
+		my @releaseTypes = map { uc($_) } split(',', $releaseType);
+		push @{$w}, 'albums.release_type IN (' . join(', ', map {'?'} @releaseTypes) . ')';
+		push @{$p}, @releaseTypes;
+	}
 
 	my $join_tracks_persistent = sub {
 		if ( main::STATISTICS && $sql !~ /JOIN tracks_persistent/ ) {
@@ -5540,6 +5579,11 @@ sub _getTagDataForTracks {
 		$c->{'albums.compilation'} = 1;
 	};
 
+	$tags =~ /W/ && do {
+		$join_albums->();
+		$c->{'albums.release_type'} = 1;
+	};
+
 	$tags =~ /X/ && do {
 		$join_albums->();
 		$c->{'albums.replay_gain'} = 1;
@@ -5645,6 +5689,8 @@ sub _getTagDataForTracks {
 	my %results;
 	my @resultOrder;
 
+	my $ignoreReleaseTypes = $tags =~ /W/ && $prefs->get('ignoreReleaseTypes');
+
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
@@ -5658,6 +5704,12 @@ sub _getTagDataForTracks {
 		my $id = $c->{'tracks.id'};
 
 		$results{ $id } = { map { $_ => $c->{$_} } keys %{$c} };
+
+		# if user doesn't want to distinguish release types, just return ALBUMS for all of them
+		if ($ignoreReleaseTypes) {
+			$results{ $id }->{'albums.release_type'} = 'ALBUM';
+		}
+
 		push @resultOrder, $id;
 	}
 
