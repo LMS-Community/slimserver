@@ -23,9 +23,10 @@ sub _releases {
 
 	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
 
+	# unified artists list let's the user define what roles they consider main artists - but don't list composers, as we have a compositions menu...
 	if ($prefs->get('useUnifiedArtistsList')) {
 		foreach (Slim::Schema::Contributor->contributorRoles) {
-			if ( $prefs->get(lc($_) . 'InArtists') ) {
+			if ( $prefs->get(lc($_) . 'InArtists') && $_ !~ /COMPOSER|TRACKARTIST/i ) {
 				$primaryArtistIds{Slim::Schema::Contributor->typeToRole($_)} = 1;
 			}
 		}
@@ -41,7 +42,7 @@ sub _releases {
 	} @searchTags;
 
 	# we want all roles, as we're going to group
-	push @searchTags, 'role_id:1,2,3,4,5,6';
+	push @searchTags, 'role_id:' . join(',', Slim::Schema::Contributor->contributorRoleIds);
 
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
@@ -84,8 +85,7 @@ sub _releases {
 		}
 
 		# Roles on other releases
-		my @roleIds = split(',', $_->{role_ids} || '');
-		foreach my $roleId (@roleIds) {
+		foreach my $roleId ( split(',', $_->{role_ids} || '') ) {
 			next if $primaryArtistIds{$roleId};
 
 			# don't list as trackartist, if the artist is albumartist, too
@@ -149,9 +149,7 @@ sub _releases {
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
-		$name = ucfirst($role) if $role =~ /^[A-Z_0-9]$/;
-
-		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
+		push @items, _createItem($name || ucfirst($role), [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# if there's only one category, display it directly
