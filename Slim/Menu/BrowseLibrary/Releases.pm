@@ -76,10 +76,10 @@ sub _releases {
 		if ($_->{compilation}) {
 			$releaseTypes{COMPILATION}++;
 			# only list outside the compilations if Composer/Conductor
-			next if $_->{role_ids} !~ /[23]/;
+			next unless $_->{role_ids} =~ /[23]/ && $_->{role_ids} !~ /[014-9]/;
 		}
 		# Release Types if main artist
-		elsif ( grep { $primaryArtistIds{$_} } split(//, $_->{role_ids}) ) {
+		elsif ( grep { $primaryArtistIds{$_} } split(/,/, $_->{role_ids}) ) {
 			$releaseTypes{$_->{release_type}}++;
 			next;
 		}
