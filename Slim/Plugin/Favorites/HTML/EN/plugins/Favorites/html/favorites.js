@@ -7,23 +7,23 @@ var movetoHTML;
 // parse new order for source and target indices
 function reorderlist(order, offset, from, session) {
 	var params;
-	
+
 	for (var i=0; i < order.length; i++) {
 		var rexp = new RegExp("\\d+$");
 		var id = rexp.exec(order[i]);
-		
+
 		if (id == from) {
-			
+
 			// format level offset for url params
 			if (offset) {
 				offset = offset + ".";
 			} else {
 				offset = "";
 			}
-			
+
 			// pull a background result of the move command
 			ajaxUpdate('index.html', "action=move&index=" + offset + from + "&to=" + i + "&sess=" + session);
-			
+
 			break;
 		}
 	}
@@ -44,9 +44,9 @@ function initListSortable(element, session, offset) {
 	if (! $(element)) {
 		return;
 	}
-	
+
 	Position.includeScrollOffsets = true;
-	
+
 	var activeElem = null;
 	//<![CDATA[
 	Sortable.create(element, {
@@ -68,10 +68,10 @@ function initListSortable(element, session, offset) {
 var editHTML = new Array();
 function edit(id, session) {
 	var element = $('dragitem_' + id);
-	
+
 	// backup copy of line item in case of cancel
 	editHTML[id] = element.innerHTML;
-	
+
 	// pull an edit form via Ajax
 	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edit&index=' + id + '&sess=' + session, {
 		method: 'get',
@@ -84,7 +84,7 @@ function edit(id, session) {
 
 function editCancel(id, session, remove) {
 	var element = $('dragitem_' + id);
-	
+
 	element.innerHTML = editHTML[id];
 	delete editHTML[id];
 	showElements(['defaultform']);
@@ -99,17 +99,22 @@ function editCancel(id, session, remove) {
 function editSave(id, session) {
 	var element = document.getElementById('dragitem_' + id);
 	var reload = false;
-	
+
 	var newTitle = $('edit_title_' + id);
-	var params = 'action=editset&index=' + id + '&entrytitle=' + escape(newTitle.value) + '&sess=' + session;
+	var params = 'action=editset&index=' + id + '&entrytitle=' + encodeURIComponent(newTitle.value) + '&sess=' + session;
 
 	if ($('edit_url_'   + id)) {
-		var newURL = escape($('edit_url_'   + id).value);
+		var newURL = encodeURIComponent($('edit_url_'   + id).value);
 		params     = params + '&entryurl=' + newURL
 	}
 
+	if ($('edit_icon_'   + id)) {
+		var newURL = encodeURIComponent($('edit_icon_'   + id).value);
+		params     = params + '&entryicon=' + newURL
+	}
+
 	showElements(['defaultform']);
-	
+
 	// get an update of the edited line item
 	new Ajax.Request(
 	webroot + 'plugins/Favorites/index.html',
@@ -120,7 +125,7 @@ function editSave(id, session) {
 		onSuccess: function(t) {
 			if (reload)
 				document.location.reload();
-				
+
 			delete editHTML[id];
 			element.innerHTML = t.responseText;
 			new Effect.Highlight('dragitem_' + id, { endcolor: "#d5d5d5" });
@@ -135,10 +140,10 @@ function editSave(id, session) {
 
 function editTitle(id, session) {
 	var element = $('titleheader');
-	
+
 	// backup copy of line item in case of cancel
 	editHTML['titleheader'] = element.innerHTML;
-	
+
 	// pull an edit form via Ajax
 	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edittitle&index=' + id + '&sess=' + session, {
 		method: 'get',
@@ -163,7 +168,7 @@ function saveTitle(id, session) {
 	}
 
 	var newTitle = $('newtitle');
-	var params = 'index=' + id + '&title=' + escape(newTitle.value) + '&sess=' + session;
+	var params = 'index=' + id + '&title=' + encodeURIComponent(newTitle.value) + '&sess=' + session;
 
 	ajaxUpdate('index.html',params);
 }

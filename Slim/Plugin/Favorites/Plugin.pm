@@ -513,6 +513,7 @@ sub indexHandler {
 				my $entry = @$level[$indexLevel];
 
 				$entry->{'text'} = $params->{'entrytitle'};
+				$entry->{'icon'} = $params->{'entryicon'} if $params->{'entryicon'};
 
 				if (defined $params->{'entryurl'} && $params->{'entryurl'} ne $entry->{'URL'}) {
 
