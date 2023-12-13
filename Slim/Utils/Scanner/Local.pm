@@ -210,7 +210,7 @@ sub rescan {
 		# 1. Files that no longer exist on disk
 		#    and are not virtual (from a cue sheet)
 		my $inDBOnlySQL = qq{
-			SELECT DISTINCT(url)
+			SELECT DISTINCT(url) AS url
 			FROM            tracks
 			WHERE           url NOT IN (
 				SELECT url FROM scanned_files
