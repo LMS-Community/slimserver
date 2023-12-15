@@ -1929,7 +1929,7 @@ sub _favoritesParams {
 		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
 
 		if (my $icon = $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
-			$presetParams{'icon'} = proxiedImage($icon);
+			$presetParams{'icon'} = $icon;
 		}
 
 		return \%presetParams;
