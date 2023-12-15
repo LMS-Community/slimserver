@@ -595,7 +595,7 @@ sub retrievePersistent {
 
 		# Match on musicbrainz_id first
 		if ( $self->musicbrainz_id ) {
-			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
+			$trackPersistent = Slim::Schema->search('TrackPersistent', { musicbrainz_id => $self->musicbrainz_id } )->first();
 		}
 		elsif ($self->urlmd5) {
 			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
