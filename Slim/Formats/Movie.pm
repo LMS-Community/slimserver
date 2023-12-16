@@ -8,6 +8,7 @@ package Slim::Formats::Movie;
 
 use strict;
 use base qw(Slim::Formats);
+use Fcntl qw(:seek SEEK_SET);
 
 use Audio::Scan;
 
@@ -170,6 +171,7 @@ sub _doTagMapping {
 	}
 }
 
+# never used for ADTS because there is no initial block
 sub volatileInitialAudioBlock { 1 }
 
 sub getInitialAudioBlock {
@@ -181,6 +183,9 @@ sub getInitialAudioBlock {
 	if ( !exists ${*$fh}{_mp4_seek_header} && $track->url =~ /#([^-]+)-([^-]+)$/ ) {
 		$class->findFrameBoundaries( $fh, undef, $1 );
 	}
+	
+	# no seek header => ADTS file and no need of InitialAudioBlock
+	return undef if (!exists ${*$fh}{_mp4_seek_header});	
 
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
@@ -196,17 +201,39 @@ sub findFrameBoundaries {
 		return 0;
 	}
 
-	# I'm not sure why we need a localFh here ...
+	# Not sure why we need a localFh here ... but it's automatically closed by Perl
 	open(my $localFh, '<&=', $fh);
-	$localFh->seek(0, 0);
+	$localFh->seek(0, SEEK_SET);
+	
 	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $localFh, int($time * 1000) );
-	$localFh->close;
+	
+	if ($info->{tracks}->[0]) {
+		# Since getInitialAudioBlock will be called right away, stash the new seek header so
+		# we don't have to scan again
+		${*$fh}{_mp4_seek_header} = \($info->{seek_header});
+		return $info->{seek_offset};
+	} 
+	else {
+		# ADTS, need to scan bitrate
+		seek($fh, $offset, SEEK_SET);
+		my $info = Audio::Scan->scan_fh( aac => $localFh )->{info} || {};
 
-	# Since getInitialAudioBlock will be called right away, stash the new seek header so
-	# we don't have to scan again
-	${*$fh}{_mp4_seek_header} = \($info->{seek_header});
+		$offset = defined $time ? 
+		          int($info->{bitrate} * $time / 8) + $info->{audio_offset} :
+				  abs($offset);
 
-	return $info->{seek_offset};
+		# an ADTS frame is max 8191 bytes, so we'll capture one for sure					  
+		read($fh, my $buffer, 16384);
+			
+		# iterate in buffer till we find an ADTS frame... or not
+		for (my $pos = 0; ($pos = index($buffer, "\xFF\xF1", $pos)) >= 0; $pos += 2) {
+			my $length = (unpack('N', substr($buffer, $pos + 3, 4)) >> 13) & 0x1fff;
+			return $offset + $pos if substr($buffer, $pos + $length, 2) eq "\xFF\xF1";
+		}
+	}
+				
+	# nothing found
+	return -1;
 }
 
 sub canSeek { 1 }
