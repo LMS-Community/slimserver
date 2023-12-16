@@ -242,9 +242,7 @@ sub scanBitrate {
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 
 	# Scan the header for info/tags
-	seek $fh, 0, 0;
-
-	my $s = Audio::Scan->scan_fh( mp3 => $fh );
+	my $s = $class->getAudioScan($fh);
 
 	my $info = $s->{info};
 	my $tags = $s->{tags};
@@ -459,6 +457,13 @@ sub doTagMapping {
 		}
 	}
 }
+
+sub getAudioScan {
+	my ($class, $fh) = @_;
+
+	seek $fh, 0, 0;
+	return Audio::Scan->scan_fh( mp3 => $fh );
+}	
 
 sub canSeek { 1 }
 

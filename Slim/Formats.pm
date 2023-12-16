@@ -59,7 +59,7 @@ sub init {
 		'wmal' => 'Slim::Formats::WMA',
 		'alc' => 'Slim::Formats::Movie',
 		'alcx' => 'Slim::Formats::Movie',
-		'aac' => 'Slim::Formats::Movie',
+		'aac' => 'Slim::Formats::AAC',
 		'mp4' => 'Slim::Formats::Movie',
 		'mp4x' => 'Slim::Formats::Movie',
 		'sls' => 'Slim::Formats::Movie',
