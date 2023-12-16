@@ -242,7 +242,7 @@ sub scanBitrate {
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 
 	# Scan the header for info/tags
-	my $s = $class->getAudioScan($fh);
+	my $s = $class->can("getAudioScan") ? $class->getAudioScan($fh) : __PACKAGE__->getAudioScan($fh);
 
 	my $info = $s->{info};
 	my $tags = $s->{tags};
