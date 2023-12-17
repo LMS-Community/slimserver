@@ -215,7 +215,7 @@ sub findFrameBoundaries {
 	} 
 	else {
 		# ADTS, need to scan bitrate
-		seek($fh, $offset, SEEK_SET);
+		seek($localFh, 0, SEEK_SET);
 		my $info = Audio::Scan->scan_fh( aac => $localFh )->{info} || {};
 
 		$offset = defined $time ? 
@@ -223,7 +223,8 @@ sub findFrameBoundaries {
 				  abs($offset);
 
 		# an ADTS frame is max 8191 bytes, so we'll capture one for sure					  
-		read($fh, my $buffer, 16384);
+		seek($localFh, $offset, SEEK_SET);
+		read($localFh, my $buffer, 16384);
 			
 		# iterate in buffer till we find an ADTS frame... or not
 		for (my $pos = 0; ($pos = index($buffer, "\xFF\xF1", $pos)) >= 0; $pos += 2) {
