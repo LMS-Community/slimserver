@@ -2,7 +2,7 @@ package Slim::Utils::OS::Debian;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -20,7 +20,7 @@ sub initDetails {
 
 	unshift @INC, '/usr/share/squeezeboxserver';
 	unshift @INC, '/usr/share/squeezeboxserver/CPAN';
-	
+
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	unlink("$Bin/CPAN/MP3/Info.pm");
 	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
@@ -41,7 +41,7 @@ sub dirsFor {
 	my ($class, $dir) = @_;
 
 	my @dirs = ();
-	
+
 	if ($dir =~ /^(?:oldprefs|updates)$/) {
 
 		push @dirs, $class->SUPER::dirsFor($dir);
@@ -51,10 +51,10 @@ sub dirsFor {
 		push @dirs, "/usr/share/squeezeboxserver/$dir";
 
 	} elsif ($dir eq 'Plugins') {
-			
+
 		push @dirs, $class->SUPER::dirsFor($dir);
 		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezeboxserver/Plugins";
-		
+
 	} elsif ($dir =~ /^(?:strings|revision|repositories)$/) {
 
 		push @dirs, "/usr/share/squeezeboxserver";
@@ -107,14 +107,14 @@ sub scanner {
 }
 
 sub canAutoUpdate { $_[0]->runningFromSource ? 0 : 1 }
-sub installerExtension { 'deb' }; 
+sub installerExtension { 'deb' };
 
 sub installerOS {
 	my $class = shift;
-	
-	if ( $class->{osDetails}->{osArch} =~ /^arm/i ) {
+
+	if ( $class->{osDetails}->{osArch} =~ /^(arm|aarch64)/i ) {
 		return 'debarm';
-	} 
+	}
 	elsif ( $class->{osDetails}->{osArch} =~ /^x86_64/i ) {
 		return 'debamd64';
 	}
