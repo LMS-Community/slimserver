@@ -255,9 +255,12 @@ sub rescan {
 		SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
 	} );
 
-	# There may have be more than one Artist tag in the music file, so track.primary_artist does not tell the whole story. So also check for ARTIST/ALBUMARTIST in contributor_track.
+	# There may have been more than one Artist tag in the music file, so track.primary_artist does not tell the whole story. So also check for ARTIST/ALBUMARTIST in contributor_track.
 	my $albumSth = $dbh->prepare_cached( qq{
-		SELECT COUNT(1) FROM tracks JOIN contributor_track ON tracks.id=contributor_track.track WHERE album=? AND ( tracks.primary_artist=? OR contributor_track.contributor=? AND contributor_track.role IN (1,5) )
+		SELECT COUNT(1) FROM tracks 
+  		LEFT JOIN contributor_track ON tracks.id=contributor_track.track 
+    		WHERE album=? 
+      		AND ( tracks.primary_artist=? OR ( contributor_track.contributor=? AND contributor_track.role IN (1,5) ) )
 	} );
 
 	for my $id ( @$ids ) {
