@@ -4210,7 +4210,7 @@ sub titlesQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $tagsprm       = $request->getParam('tags');
-	my $sort          = $request->getParam('sort');
+	my $sort          = $request->getParam('sort') || 'title';
 	my $search        = $request->getParam('search');
 	my $genreID       = $request->getParam('genre_id');
 	my $contributorID = $request->getParam('artist_id');
@@ -4244,6 +4244,10 @@ sub titlesQuery {
 		elsif ($sort eq 'albumtrack') {
 			$tags .= 'tl';
 			$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
+		# when sorting by title and we're including albums and all that, sort by album, artist etc. too
+		elsif ($sort eq 'title' && $tags =~ /[as]/ && $tags =~ /[el]/) {
+			$order_by = "tracks.titlesort, contributors.namesort, albums.titlesort, tracks.year $collate";
 		}
 	}
 
