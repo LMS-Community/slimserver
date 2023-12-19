@@ -552,6 +552,21 @@ sub single {
 	return $class->rs(ucfirst($rsClass))->single(@_);
 }
 
+=head2 first( $class, $cond )
+
+Returns the first result from a search on the specified class' L<DBIx::Class::ResultSet>
+
+A shortcut for resultset($class)->search($cond)->first()
+
+=cut
+
+sub first {
+	my $class   = shift;
+	my $rsClass = shift;
+
+	return $class->rs(ucfirst($rsClass))->search(@_)->first();
+}
+
 =head2 count( $class, $cond, $attr )
 
 Returns the count result from a search on the specified class' L<DBIx::Class::ResultSet>

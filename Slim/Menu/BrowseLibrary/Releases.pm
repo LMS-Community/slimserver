@@ -7,7 +7,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
 use constant MAX_ALBUMS => 500;
-use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST,ARTIST';
 
 my $log = logger('database.info');
 my $prefs = preferences('server');
@@ -20,17 +19,6 @@ sub _releases {
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
-
-	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
-
-	# unified artists list let's the user define what roles they consider main artists - but don't list composers, as we have a compositions menu...
-	if ($prefs->get('useUnifiedArtistsList')) {
-		foreach (Slim::Schema::Contributor->contributorRoles) {
-			if ( $prefs->get(lc($_) . 'InArtists') && $_ !~ /COMPOSER|TRACKARTIST/i ) {
-				$primaryArtistIds{Slim::Schema::Contributor->typeToRole($_)} = 1;
-			}
-		}
-	}
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -72,37 +60,56 @@ sub _releases {
 	my %releaseTypes;
 	my %contributions;
 	my %isPrimaryArtist;
+	my %albumList;
 	foreach (@$albums) {
-		if ($_->{compilation}) {
-			$releaseTypes{COMPILATION}++;
-			# only list outside the compilations if Composer/Conductor
-			next unless $_->{role_ids} =~ /[23]/ && $_->{role_ids} !~ /[014-9]/;
-		}
-		# Release Types if main artist
-		elsif ( grep { $primaryArtistIds{$_} } split(/,/, $_->{role_ids}) ) {
+		# map to role's name for readability
+		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
+
+		my $addToMainReleases = sub {
+			$isPrimaryArtist{$_->{id}}++;
 			$releaseTypes{$_->{release_type}}++;
+			$albumList{$_->{release_type}} ||= [];
+			push @{$albumList{$_->{release_type}}}, $_->{id};
+		};
+
+		if ($_->{compilation}) {
+			$_->{release_type} = 'COMPILATION';
+			$addToMainReleases->();
+			# only list outside the compilations if Composer/Conductor
+			next unless $_->{role_ids} =~ /COMPOSER|CONDUCTOR/ && $_->{role_ids} !~ /ARTIST|BAND/;
+		}
+		# Release Types if album artist
+		elsif ( $_->{role_ids} =~ /ALBUMARTIST/ ) {
+			$addToMainReleases->();
 			next;
+		}
+		# Consider this artist the main (album) artist if there's no other, defined album artist
+		elsif ( $_->{role_ids} =~ /ARTIST/ ) {
+			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
+				album => $_->{id},
+				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+				contributor => { '!=' => $_->{artist_id} }
+			});
+
+			if (!$albumArtist) {
+				$addToMainReleases->();
+				next;
+			}
 		}
 
 		# Roles on other releases
-		foreach my $roleId ( split(',', $_->{role_ids} || '') ) {
-			next if $primaryArtistIds{$roleId};
-
+		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $_->{role_ids} || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
-			next if $roleId == 6 && $isPrimaryArtist{$_->{id}};
+			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 
-			my $role = Slim::Schema::Contributor->roleToType($roleId);
-			if ($role) {
-				$contributions{$role} ||= [];
-				push @{$contributions{$role}}, $_->{id};
-			}
+			$contributions{$role} ||= [];
+			push @{$contributions{$role}}, $_->{id};
 		}
 	}
 
 	my @items;
 	my $searchTags = [
 		"artist_id:$artistId",
-		"role_id:" . join(',', keys %primaryArtistIds),
 		"library_id:$library_id",
 	];
 
@@ -121,8 +128,8 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1'], orderBy => $orderBy } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"], orderBy => $orderBy } ]);
+					? [ { searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
 
@@ -169,7 +176,7 @@ sub _releases {
 
 		# add "All" item
 		push @items, {
-			name        => cstring($client, 'ALL_ALBUMS'),
+			name        => cstring($client, 'ALL_RELEASES'),
 			image       => 'html/images/albums.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,

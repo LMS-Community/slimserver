@@ -12949,6 +12949,25 @@ ALL_ALBUMS
 	SV	Alla album
 	ZH_CN	所有乐谱帖
 
+ALL_RELEASES
+	CS	Všechna alba
+	DA	Alle album
+	DE	Alle Veröffentlichungen
+	EN	All Releases
+	ES	Todos los álbumes
+	FI	Kaikki levyt
+	FR	Tous les albums
+	HE	כל האלבומים
+	IT	Tutti gli album
+	JA	全てのアルバム
+	NL	Alle albums
+	NO	Alle album
+	PL	Wszystkie albumy
+	PT	Todos os Álbuns
+	RU	Все альбомы
+	SV	Alla album
+	ZH_CN	所有乐谱帖
+
 OF
 	CS	z
 	DA	af

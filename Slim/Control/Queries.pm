@@ -5391,8 +5391,9 @@ sub _getTagDataForTracks {
 	}
 
 	if ( my $albumId = $args->{albumId} ) {
-		push @{$w}, 'tracks.album = ?';
-		push @{$p}, $albumId;
+		my @albumIds = split(',', $albumId);
+		push @{$w}, 'tracks.album IN (' . join(',', map {'?'} @albumIds) . ')';
+		push @{$p}, @albumIds;
 		delete $args->{releaseType};
 	}
 
