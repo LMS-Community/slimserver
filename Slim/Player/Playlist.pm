@@ -245,8 +245,6 @@ sub addTracks {
 		});
 	}
 
-	# inform controller (mainly in case last track was already fully streamed)
-	$client->controller->playlistUpdated();
 	
 	if ($insert) {
 		_insert_done($client, $canAdd);
@@ -1078,6 +1076,9 @@ sub modifyPlaylistCallback {
 	my $request = shift;
 
 	my $client  = $request->client();
+
+	# inform controller (mainly in case last track was already fully streamed)
+	$client->controller->playlistUpdated();
 
 	main::INFOLOG && $log->info("Checking if persistPlaylists is set..");
 
