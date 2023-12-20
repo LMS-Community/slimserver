@@ -245,6 +245,9 @@ sub addTracks {
 		});
 	}
 
+	# inform controller (mainly in case last track was already fully streamed)
+	$client->controller->playlistUpdated();
+	
 	if ($insert) {
 		_insert_done($client, $canAdd);
 	}

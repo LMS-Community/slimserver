@@ -2112,6 +2112,15 @@ sub closeStream {
 	$_[0]->{'songStreamController'}->close() if $_[0]->{'songStreamController'};
 }
 
+sub playlistUpdated {
+	my ($self) = @_;
+
+	if ($self->{'streamingState'} == IDLE && $self->{'playingState'} != STOPPED) {
+		main::INFOLOG && $log->info("$self->{'masterId'} playlist update while stream already finished");
+		_getNextTrack($self);
+	}
+}	
+
 ####################################################################
 # Incoming events - <<interface>> PlayControl
 
