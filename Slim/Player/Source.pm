@@ -288,8 +288,9 @@ sub _readNextChunk {
 	my $chunk  = '';
 
 	my $endofsong = undef;
+	my $samplerate = $client->streamingSong()->currentTrack->samplerate();
 
-	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
+	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3' && $samplerate >= 32000) {
 	
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...
@@ -305,8 +306,8 @@ sub _readNextChunk {
 		0 && $log->debug("We need to send $silence seconds of silence...");
 		
 		while ($silence > 0) {
-			$chunk .=  ${Slim::Web::HTTP::getStaticContent("html/lbrsilence.mp3")};
-			$silence -= (1152 / 44100);
+			$chunk .=  ${Slim::Web::HTTP::getStaticContent("html/lbrsilence-". int($samplerate/1000) . ".mp3")};
+			$silence -= (1152 / $samplerate);
 		}
 		
 		my $len = length($chunk);
