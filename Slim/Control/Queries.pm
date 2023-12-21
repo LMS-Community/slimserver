@@ -3271,6 +3271,10 @@ sub serverstatusQuery {
 		$request->addResult('version', $::VERSION);
 	}
 	$request->addResult('newversion', $::newVersion) if $::newVersion;
+	if (my $newPlugins = Slim::Utils::PluginManager->message) {
+		$request->addResult('newplugins', $newPlugins);
+	}
+
 
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));
