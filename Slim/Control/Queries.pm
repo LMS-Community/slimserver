@@ -302,14 +302,18 @@ sub albumsQuery {
 		push @{$w}, 'tracks.id = ?';
 		push @{$p}, $trackID;
 	}
-	elsif ( defined $albumID ) {
-		my @albumIds = split(',', $albumID);
-		push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
-		push @{$p}, @albumIds;
+	# ignore everything if a single $album_id was specified
+	elsif ( defined $albumID && $albumID !~ /,/ ) {
+		push @{$w}, 'albums.id = ?';
+		push @{$p}, $albumID;
 	}
-	# ignore everything if $track_id or $album_id was specified
 	else {
-		if (specified($search)) {
+		if ( defined $albumID ) {
+			my @albumIds = split(',', $albumID);
+			push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
+			push @{$p}, @albumIds;
+		}
+		elsif (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
 				Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
 					name   => 'albumsSearch',
