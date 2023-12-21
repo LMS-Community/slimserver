@@ -2223,6 +2223,16 @@ sub playerTrackStarted {
 	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 }
 
+sub playerFlushed {
+	my ($self, $client) = @_;
+
+	main::INFOLOG && $log->info($client->id);
+
+	# STMf received as a result of strm 'q' shall be ignored. Otherwise it means 
+	# we have flushed the streaming track and are ready to stream again
+	_eventAction($self, 'ReadyToStream') if $self->{'playingState'} != STOPPED;
+}	
+
 sub playerReadyToStream {
 	my ($self, $client) = @_;
 

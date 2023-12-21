@@ -147,7 +147,10 @@ sub statHandler {
 	}
 
 
-	if ($code eq 'STMd') {
+	if ($code eq 'STMf') {
+		$client->readyToStream(1);
+		$client->controller()->playerFlushed($client);
+	} elsif ($code eq 'STMd') {
 		$client->readyToStream(1);
 		$client->controller()->playerReadyToStream($client);
 	} elsif ($code eq 'STMn') {
