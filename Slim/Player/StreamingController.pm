@@ -147,8 +147,8 @@ Flush =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PLAYING
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PAUSED
+	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PLAYING
+	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PAUSED
 ],
 Skip  => 
 [	[	\&_StopGetNext,	\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -164,7 +164,6 @@ JumpToTime =>
 	[	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime],		# PLAYING
 	[	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused],		# PAUSED
 ],
-
 NextTrackReady =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_Stream],			# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
@@ -186,7 +185,6 @@ LocalEndOfStream =>
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PLAYING
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PAUSED
 ],
-
 BufferReady =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_WaitToSync,	\&_WaitToSync,	\&_BadState],		# BUFFERING
@@ -979,6 +977,9 @@ sub _Skip {
 sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	
+	# flush means that we get rid of the streaming song
+	shift $self->{'songqueue'};
+
 	foreach my $player (@{$self->{'players'}})	{
 		$player->flush();
 	}
@@ -2111,6 +2112,15 @@ sub allPlayers {
 sub closeStream {
 	$_[0]->{'songStreamController'}->close() if $_[0]->{'songStreamController'};
 }
+
+sub playlistUpdated {
+	my ($self) = @_;
+
+	if ($self->{'streamingState'} == IDLE && $self->{'playingState'} != STOPPED) {
+		main::INFOLOG && $log->info("$self->{'masterId'} playlist updated after end of last track's streaming");
+		_getNextTrack($self);
+	}
+}	
 
 ####################################################################
 # Incoming events - <<interface>> PlayControl
