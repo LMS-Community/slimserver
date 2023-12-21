@@ -2396,26 +2396,6 @@ sub _retrieveTrack {
 	return undef;
 }
 
-sub _retrieveTrackMetadata {
-	my ($self, $url, $musicbrainz_id) = @_;
-
-	return undef if !$url;
-	return undef if ref($url);
-
-	my $trackMetadata;
-
-	$trackMetadata = $self->rs('TrackMetadata')->single({ 'url' => $url });
-
-	if (blessed($trackMetadata)) {
-		return $trackMetadata;
-	}elsif($musicbrainz_id) {
-		$trackMetadata = $self->rs('TrackMetadata')->single({ 'musicbrainz_id' => $musicbrainz_id });
-		return $trackMetadata if blessed($trackMetadata);
-	}
-
-	return undef;
-}
-
 sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;

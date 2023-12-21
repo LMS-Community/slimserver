@@ -55,10 +55,10 @@ sub import_json {
 		for my $track ( @{$tracks} ) {
 			my $tp;
 			if ( $track->{mb} ) {
-				$tp = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $track->{mb} } );
+				$tp = Slim::Schema->first('TrackPersistent', { musicbrainz_id => $track->{mb} } );
 			}
 			else {
-				$tp = Slim::Schema->rs('TrackPersistent')->single( { url => $track->{url} } );
+				$tp = Slim::Schema->first('TrackPersistent', { url => $track->{url} } );
 			}
 
 			next unless $tp;
