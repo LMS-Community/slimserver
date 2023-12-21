@@ -3270,6 +3270,7 @@ sub serverstatusQuery {
 	else {
 		$request->addResult('version', $::VERSION);
 	}
+	$request->addResult('newversion', $::newVersion) if $::newVersion;
 
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));
