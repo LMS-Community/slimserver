@@ -367,8 +367,11 @@ sub readRemoteHeaders {
 	}
 
 	# https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1661990
-	elsif ( $type =~ /octet-stream/ && $url =~ /\.(\w+)/ ) {
-		$type = $1;
+	elsif ( $type =~ /octet-stream/ ) {
+		my $validTypeExtensions = join('|', Slim::Music::Info::validTypeExtensions());
+		if ($url =~ /\.($validTypeExtensions)\b/) {
+			$type = $1;
+		}
 	}
 
 	# Some Shoutcast/Icecast servers don't send content-type
