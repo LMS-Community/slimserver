@@ -84,7 +84,6 @@ use base qw(Slim::Plugin::Base);
 
 use XML::Simple;
 
-use Slim::Networking::Repositories;
 use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -127,10 +126,10 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'https://github.com/LMS-Community/lms-plugin-repository/raw/master/extensions.xml' => 1,
+	'https://lms-community.github.io/lms-plugin-repository/extensions.xml' => 1,
 );
 
-my $UNSUPPORTED_REPO = 'https://github.com/LMS-Community/lms-plugin-repository/raw/master/unsupported.xml';
+my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/unsupported.xml';
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
@@ -419,12 +418,11 @@ sub getExtensions {
 
 		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
 
-		Slim::Networking::Repositories->get(
-			$args->{'name'},
+		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse,
 			\&_noResponse,
 			{ args => $args, cache => 1 }
-		);
+		)->get( $args->{'name'} );
 	}
 }
 

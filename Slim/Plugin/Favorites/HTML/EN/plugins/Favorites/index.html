@@ -24,23 +24,26 @@ function(){
 			<form name="edittitleurl" method="">
 			<table width="100%">
 				<tr>
-					<td width="35%">
+					<td width="25%">
 						<input type="hidden" name="index" value="[% entry.index | html %]">
 						<input type="hidden" name="sess" value="[% sess | html %]">
 						<input type="hidden" name="action" value="editset">
 						<input type="hidden" name="removeoncancel" value="[% removeoncancel | html %]">
-						<input id="edit_title_[% entry.index %]" size="25" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input id="edit_title_[% entry.index %]" type="text" class="stdedit" name="entrytitle" value="[% entry.title | html %]" [% IF newentry %] onClick="this.value=''"[% END %] style="width:95%">
 					</td>
-					<td width="35%">
-						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url | html %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+					<td width="25%">
+						<input id="edit_url_[% entry.index %]" type="text" class="stdedit" name="entryurl" value="[% entry.url | html %]" [% IF newentry %] onClick="this.value=''"[% END %] style="width:95%">
+					</td>
+					<td width="25%">
+						<input id="edit_icon_[% entry.index %]" type="text" class="stdedit" name="entryicon" value="[% entry.icon | html %]" [% IF newentry %] onClick="this.value=''"[% END %] style="width:95%">
 					</td>
 					<td>
 					[% IF useAJAX %]
 						<input type="button" class="stdclick" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
 						<input type="button" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 					[% ELSE %]
-						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+						<input type="submit" style="display: inline; padding: 0 10px" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+						<input type="submit" style="display: inline; padding: 0 10px" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 					[% END %]
 					</td>
 				</tr>

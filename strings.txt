@@ -9261,6 +9261,40 @@ SETUP_RELEASE_TYPES_DESC
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
+SETUP_RELEASE_TYPES_GROUP_OPTIONS
+	EN	Release type grouping options
+	FR	Options de regroupement des types de sorties
+	DE	Gruppierungsoptionen für Release-Typen
+	NL	Groeperingsopties voor het releasetype
+
+SETUP_RELEASE_TYPES_GROUP_OPTIONS_DESC
+	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
+	FR	Créez un groupe d'albums de compositeur - toujours, jamais ou pour certains genres. Si, en raison de ce paramètre, certains rôles de compositeur ne sont pas inclus dans le groupe Albums du compositeur, ils apparaîtront à la place dans un groupe « Compositions » distinct, qui répertoriera les pistes individuelles, pas les albums. La liste des genres doit être séparée par des virgules.
+	DE	Erstellen Sie eine Gruppe „Komponistenalben“ – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe „Komponistenalben“ enthalten sind, werden sie stattdessen in einer separaten Gruppe „Kompositionen“ angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Genreliste sollte durch Kommas getrennt sein.
+	NL	Maak een Composer Albums-groep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep Componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
+	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
+
+SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
+	EN	Do not create a Composer Album group
+	FR	Ne pas créer de groupe d'albums de compositeur
+	DE	Erstellen Sie keine Composer-Album-Gruppe
+	NL	Maak geen Composer Album-groep
+	ES	No crear un grupo de Álbum de Composer
+
+SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
+	EN	Always create a Composer Album group
+	FR	Créez toujours un groupe d'album de compositeur
+	DE	Erstellen Sie immer eine Composer-Album-Gruppe
+	NL	Maak altijd een Composer Album-groep
+	ES	Crear siempre un grupo de Álbum de compositor
+
+SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
+	EN	Create a Composer Album group for these genres:
+	FR	Créez un groupe d'albums de compositeur pour ces genres :
+	DE	Erstellen Sie eine Composer-Album-Gruppe für diese Genres:
+	NL	Maak een Composer Album-groep voor deze genres:
+	ES	Crea un grupo de Álbum de compositor para estos géneros:
+
 SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
@@ -11586,6 +11620,25 @@ COMPOSER
 	SV	Kompositör
 	ZH_CN	作曲
 
+COMPOSERALBUMS
+	CS	Skladatel Alba
+	DA	Komponist Album
+	DE	Komponist Alben
+	EN	Composer Albums
+	ES	Compositor Álbumes
+	FI	Säveltäjä Levyt
+	FR	Compositeur Albums
+	HE	מלחיןאלבומים
+	IT	Compositore Album
+	JA	作曲家 アルバム
+	NL	Componist Albums
+	NO	Komponist Album
+	PL	Kompozytor Albumy
+	PT	Compositor Albums
+	RU	Композитор Альбомы
+	SV	Kompositör Album
+	ZH_CN	作曲 专辑
+
 CONDUCTOR
 	CS	Dirigent
 	DA	Dirigent
@@ -12935,6 +12988,25 @@ ALL_ALBUMS
 	DA	Alle album
 	DE	Alle Alben
 	EN	All Albums
+	ES	Todos los álbumes
+	FI	Kaikki levyt
+	FR	Tous les albums
+	HE	כל האלבומים
+	IT	Tutti gli album
+	JA	全てのアルバム
+	NL	Alle albums
+	NO	Alle album
+	PL	Wszystkie albumy
+	PT	Todos os Álbuns
+	RU	Все альбомы
+	SV	Alla album
+	ZH_CN	所有乐谱帖
+
+ALL_RELEASES
+	CS	Všechna alba
+	DA	Alle album
+	DE	Alle Veröffentlichungen
+	EN	All Releases
 	ES	Todos los álbumes
 	FI	Kaikki levyt
 	FR	Tous les albums
@@ -17126,6 +17198,7 @@ INFORMATION_MENU_SERVER
 INFORMATION_MENU_PERL
 	DE	Perl- und Modulversionen
 	EN	Perl and Module Versions
+	FR	Versions de Perl et des modules
 
 INFORMATION_MENU_SCAN
 	CS	Detaily prohledávání médií
@@ -24827,6 +24900,11 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	NO	En ny versjon av Logitech Media Server er tilgjengelig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
 	PL	Nowa wersja Logitech Media Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
 	SV	En ny version av Logitech Media Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
+
+SERVER_WINDOWS_UPDATE_AVAILABLE
+	DE	<ul><li>Version %s - %s steht zur Installation bereit.</li><li>Melden Sie sich am Computer, der Logitech Media Server ausführt, an (%s).</li><li>Führen Sie <code>%s</code> aus und folgen Sie den Anweisungen.</li></ul>
+	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Logitech Media Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
+	FR	<ul><li>La version %s - %s est prête à être installée.</li><li>Connectez-vous à l'ordinateur qui héberge le Logitech Media Server (%s).</li><li>Exécutez <code>%s</code> et suivez les instructions.</li></ul>
 
 UPDATES_LATEST_CHANGES
 	CS	Nejnovější změny (<a href="%s" target="_blank">všechny změny</a>)

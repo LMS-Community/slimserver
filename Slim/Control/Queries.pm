@@ -304,14 +304,18 @@ sub albumsQuery {
 		push @{$w}, 'tracks.id = ?';
 		push @{$p}, $trackID;
 	}
-	elsif ( defined $albumID ) {
-		my @albumIds = split(',', $albumID);
-		push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
-		push @{$p}, @albumIds;
+	# ignore everything if a single $album_id was specified
+	elsif ( defined $albumID && $albumID !~ /,/ ) {
+		push @{$w}, 'albums.id = ?';
+		push @{$p}, $albumID;
 	}
-	# ignore everything if $track_id or $album_id was specified
 	else {
-		if (specified($search)) {
+		if ( defined $albumID ) {
+			my @albumIds = split(',', $albumID);
+			push @{$w}, 'albums.id IN (' . join(',', map {'?'} @albumIds) . ')';
+			push @{$p}, @albumIds;
+		}
+		elsif (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
 				Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
 					name   => 'albumsSearch',
@@ -3283,6 +3287,11 @@ sub serverstatusQuery {
 	else {
 		$request->addResult('version', $::VERSION);
 	}
+	$request->addResult('newversion', $::newVersion) if $::newVersion;
+	if (my $newPlugins = Slim::Utils::PluginManager->message) {
+		$request->addResult('newplugins', $newPlugins);
+	}
+
 
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));
@@ -4223,7 +4232,7 @@ sub titlesQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $tagsprm       = $request->getParam('tags');
-	my $sort          = $request->getParam('sort');
+	my $sort          = $request->getParam('sort') || 'title';
 	my $search        = $request->getParam('search');
 	my $genreID       = $request->getParam('genre_id');
 	my $contributorID = $request->getParam('artist_id');
@@ -4260,6 +4269,10 @@ sub titlesQuery {
 		elsif ($sort eq 'albumtrack') {
 			$tags .= 'tl';
 			$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
+		# when sorting by title and we're including albums and all that, sort by album, artist etc. too
+		elsif ($sort eq 'title' && $tags =~ /[as]/ && $tags =~ /[el]/) {
+			$order_by = "tracks.titlesort, contributors.namesort, albums.titlesort, tracks.year $collate";
 		}
 	}
 
@@ -5523,8 +5536,9 @@ sub _getTagDataForTracks {
 	}
 
 	if ( my $albumId = $args->{albumId} ) {
-		push @{$w}, 'tracks.album = ?';
-		push @{$p}, $albumId;
+		my @albumIds = split(',', $albumId);
+		push @{$w}, 'tracks.album IN (' . join(',', map {'?'} @albumIds) . ')';
+		push @{$p}, @albumIds;
 		delete $args->{releaseType};
 	}
 

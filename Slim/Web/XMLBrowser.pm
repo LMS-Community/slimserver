@@ -41,7 +41,7 @@ if ( !main::SCANNER ) {
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
 		composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
-		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore) );
+		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres) );
 }
 
 tie my %cacheables, 'Tie::RegexpHash';

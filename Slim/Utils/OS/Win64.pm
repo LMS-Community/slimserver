@@ -12,6 +12,8 @@ use Win32::Daemon;
 
 use base qw(Slim::Utils::OS::Win32);
 
+use constant RESTART_STATUS => 42;
+
 my $log;
 
 sub initDetails {
@@ -19,7 +21,7 @@ sub initDetails {
 
 	$class->SUPER::initDetails();
 
-	$class->{osDetails}->{'osName'} = $class->{osDetails}->{'osName'} . ' (64-bit)';
+	$class->{osDetails}->{osName} = $class->{osDetails}->{osName} . ' (64-bit)';
 
 	return $class->{osDetails};
 }
@@ -30,12 +32,14 @@ sub initSearchPath {
 	$class->SUPER::initSearchPath(@_);
 
 	# let 64 bit version access 32 bit binaries
-	my $binArch = $class->{osDetails}->{'binArch'};
+	my $binArch = $class->{osDetails}->{binArch};
 	$binArch =~ s/-x64-/-x86-/;
 	Slim::Utils::Misc::addFindBinPaths(catdir($_[0] || $class->dirsFor('Bin'), $binArch));
 }
 
 sub runService { if ($main::daemon) {
+	my $class = shift;
+
 	require Slim::Utils::Log;
 
 	$log ||= Slim::Utils::Log::logger('server');
@@ -45,6 +49,7 @@ sub runService { if ($main::daemon) {
 	while ( SERVICE_STOPPED != ($state = Win32::Daemon::State()) ) {
 		if ( SERVICE_START_PENDING == $state ) {
 			main::INFOLOG && $log->is_info && $log->info("Starting Windows Service...");
+			$class->{osDetails}->{runningAsService} = 1;
 			Win32::Daemon::State( SERVICE_RUNNING );
 		}
 		elsif ( SERVICE_PAUSE_PENDING == $state ) {
@@ -68,13 +73,42 @@ sub runService { if ($main::daemon) {
 } }
 
 sub getUpdateParams {
+	my ($class, $url) = @_;
+
 	return if main::SCANNER;
-	return {};
+
+	return {
+		cb => sub {
+			my ($file) = @_;
+
+			if ($file) {
+				my ($version, $revision) = $file =~ /(\d+\.\d+\.\d+)(?:.*?(\d{5,}))?/;
+				$::newVersion = Slim::Utils::Strings::string('SERVER_WINDOWS_UPDATE_AVAILABLE', $version, ($revision || 0), Slim::Utils::Network::hostName(), $file);
+			}
+		}
+	};
 }
 
-sub canAutoUpdate      { 0 }
-sub installerExtension { 'zip' }
+sub canAutoUpdate      { $_[0]->runningFromSource ? 0 : 1 }
+sub installerExtension { 'exe' }
 sub installerOS        { 'win64' }
-sub canRestartServer   { 0 }
+
+# only allow restarting if we are running as a service
+sub canRestartServer   {
+	my ($class) = @_;
+
+	return 1 if $class->{osDetails}->{runningAsService};
+
+	$log ||= Slim::Utils::Log::logger('server');
+	$log->error("Can't restart server lack of full script path");
+	return 0;
+}
+
+sub restartServer {
+	my ($class) = @_;
+
+	# force exit code to make Windows Service Manager restart the service
+	exit RESTART_STATUS if $class->{osDetails}->{runningAsService};
+}
 
 1;
