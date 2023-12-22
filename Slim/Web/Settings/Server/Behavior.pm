@@ -29,7 +29,7 @@ sub prefs {
 				conductorInArtists bandInArtists variousArtistAutoIdentification
 				ignoreReleaseTypes cleanupReleaseTypes groupArtistAlbumsByReleaseType
 				useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
-				skipsentinel)
+				skipsentinel showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres)
 		   );
 }
 

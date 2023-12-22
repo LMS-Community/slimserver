@@ -19,6 +19,8 @@ sub _releases {
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
+	my $menuMode   = $args->{'params'}->{'menu_mode'};
+	my $menuRoles  = $args->{'params'}->{'menu_roles'};
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -64,6 +66,21 @@ sub _releases {
 	foreach (@$albums) {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
+
+		my $genreMatch = undef;
+		if ( !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum')==2 ) {
+			my $requestRef = [ 'genres', 0, MAX_ALBUMS, "album_id:".$_->{id} ];
+			my $request = Slim::Control::Request->new( undef, $requestRef );
+			$request->execute();
+			$log->error($request->getStatusText()) if $request->isStatusError();
+			my $genres= $request->getResult('genres_loop');
+			foreach my $genre (@$genres) {
+				$genreMatch ||= grep {uc($genre->{genre}) eq $_} split(/,/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
+				last if $genreMatch;
+			}
+		}
+
+		$_->{role_ids} =~ s/COMPOSER/COMPOSERALBUM/ if ( ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $genreMatch || $prefs->get('showComposerReleasesbyAlbum')==1 );
 
 		my $addToMainReleases = sub {
 			$isPrimaryArtist{$_->{id}}++;
@@ -138,7 +155,11 @@ sub _releases {
 		"library_id:$library_id",
 	];
 
-	if (delete $contributions{COMPOSER}) {
+	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+	}
+
+	if (my $albumIds = delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
 			image       => 'html/images/playlists.png',
@@ -146,12 +167,12 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
+			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
 		};
 	}
 
-	if (my $albums = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albums)] } ]);
+	if (my $albumIds = delete $contributions{TRACKARTIST}) {
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
