@@ -3,14 +3,13 @@ package Slim::Menu::BrowseLibrary;
 use strict;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
-use Slim::Menu::BrowseLibrary::Works;
 
 use constant MAX_ALBUMS => 500;
-use constant PRIMARY_ARTIST_ROLES => 'ALBUMARTIST,ARTIST';
-use constant BROWSELIBRARY => 'browselibrary';
 
 my $log = logger('database.info');
+my $prefs = preferences('server');
 
 # Unfortunately we can't use _generic(), as there's no CLI command to get the release types
 sub _releases {
@@ -20,8 +19,8 @@ sub _releases {
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
-
-	my %primaryArtistIds = map { Slim::Schema::Contributor->typeToRole($_) => 1 } split(/,/, PRIMARY_ARTIST_ROLES);
+	my $menuMode   = $args->{'params'}->{'menu_mode'};
+	my $menuRoles  = $args->{'params'}->{'menu_roles'};
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -33,7 +32,7 @@ sub _releases {
 	} @searchTags;
 
 	# we want all roles, as we're going to group
-	push @searchTags, 'role_id:1,2,3,4,5,6';
+	push @searchTags, 'role_id:' . join(',', Slim::Schema::Contributor->contributorRoleIds);
 
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
@@ -51,50 +50,92 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releases sub-items etc.
-	my $requestRef = [ $query, 0, MAX_ALBUMS, @searchTags ];
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
+	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
 	$request->execute();
 
 	$log->error($request->getStatusText()) if $request->isStatusError();
-
-	my $albums = $request->getResult('albums_loop');
 
 	# compile list of release types and contributions
 	my %releaseTypes;
 	my %contributions;
 	my %isPrimaryArtist;
-	foreach (@$albums) {
-		if ($_->{compilation}) {
-			$releaseTypes{COMPILATION}++;
-			# only list outside the compilations if Composer/Conductor
-			next if $_->{role_ids} !~ /[23]/;
+	my %albumList;
+
+	my %composerGenres = map {
+		$_ => 1
+	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
+
+	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
+	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
+
+	foreach (@{ $request->getResult('albums_loop') || [] }) {
+		# map to role's name for readability
+		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
+
+		my $genreMatch = undef;
+		if ( $checkComposerGenres ) {
+			my $request = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $_->{id} ] );
+			$request->execute();
+
+			if ($request->isStatusError()) {
+				$log->error($request->getStatusText());
+			}
+			else {
+				foreach my $genre (@{$request->getResult('genres_loop')}) {
+					last if $genreMatch = $composerGenres{uc($genre->{genre})};
+				}
+			}
 		}
-		# Release Types if main artist
-		elsif ($_->{role_ids} =~ /[15]/) {
+
+		my $addToMainReleases = sub {
+			$isPrimaryArtist{$_->{id}}++;
 			$releaseTypes{$_->{release_type}}++;
+			$albumList{$_->{release_type}} ||= [];
+			push @{$albumList{$_->{release_type}}}, $_->{id};
+		};
+
+		if ($_->{compilation}) {
+			$_->{release_type} = 'COMPILATION';
+			$addToMainReleases->();
+			# only list outside the compilations if Composer/Conductor
+			next unless $_->{role_ids} =~ /COMPOSER|CONDUCTOR/ && $_->{role_ids} !~ /ARTIST|BAND/;
+		}
+		# Release Types if album artist
+		elsif ( $_->{role_ids} =~ /ALBUMARTIST/ ) {
+			$addToMainReleases->();
 			next;
+		}
+		# Consider this artist the main (album) artist if there's no other, defined album artist
+		elsif ( $_->{role_ids} =~ /ARTIST/ ) {
+			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
+				album => $_->{id},
+				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+				contributor => { '!=' => $_->{artist_id} }
+			});
+
+			if (!$albumArtist) {
+				$addToMainReleases->();
+				next;
+			}
 		}
 
 		# Roles on other releases
-		my @roleIds = split(',', $_->{role_ids} || '');
-		foreach my $roleId (@roleIds) {
-			next if $primaryArtistIds{$roleId};
-
+		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $_->{role_ids} || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
-			next if $roleId == 6 && $isPrimaryArtist{$_->{id}};
+			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 
-			my $role = Slim::Schema::Contributor->roleToType($roleId);
-			if ($role) {
-				$contributions{$role} ||= [];
-				push @{$contributions{$role}}, $_->{id};
+			if ( $role eq 'COMPOSER' && ( $genreMatch || $allComposers ) ) {
+				$role = 'COMPOSERALBUM';
 			}
+
+			$contributions{$role} ||= [];
+			push @{$contributions{$role}}, $_->{id};
 		}
 	}
 
 	my @items;
 	my $searchTags = [
 		"artist_id:$artistId",
-		"role_id:" . PRIMARY_ARTIST_ROLES,
 		"library_id:$library_id",
 	];
 
@@ -113,26 +154,16 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1'], orderBy => $orderBy } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType"], orderBy => $orderBy } ]);
+					? [ { searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
+					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
 
-	$searchTags = [
-		"artist_id:$artistId",
-		"library_id:" . $library_id,
-	];
+	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+	}
 
-	# Only create compositions item if we have tracks which are not in classical works
-	main::INFOLOG && $log->is_info && $log->info("titles ($index, $quantity): tags ->", join(', ', @searchTags));
-	my $requestRef = [ 'titles', 0, MAX_ALBUMS, @$searchTags, "role_id:COMPOSER", "ignore_work_tracks:1" ];
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
-	$request->execute();
-	$log->error($request->getStatusText()) if $request->isStatusError();
-	my $titles = $request->getResult('titles_loop');
-	my $titlesCount = $request->getResult('count');
-
-	if (delete $contributions{COMPOSER}) {
+	if (my $albumIds = delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
 			image       => 'html/images/playlists.png',
@@ -140,19 +171,17 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "ignore_work_tracks:1"] } ],
-		} if ($titlesCount > 0);
+			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
+		};
 	}
 
-	if (my $albums = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albums)] } ]);
+	if (my $albumIds = delete $contributions{TRACKARTIST}) {
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
-		$name = ucfirst($role) if $role =~ /^[A-Z_0-9]$/;
-
-		push @items, _createItem($name, [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
+		push @items, _createItem($name || ucfirst($role), [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# Add item for Classical Works if the artist has any.
@@ -189,7 +218,7 @@ sub _releases {
 
 		# add "All" item
 		push @items, {
-			name        => cstring($client, 'ALL_ALBUMS'),
+			name        => cstring($client, 'ALL_RELEASES'),
 			image       => 'html/images/albums.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,
