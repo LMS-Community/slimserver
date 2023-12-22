@@ -147,10 +147,7 @@ sub statHandler {
 	}
 
 
-	if ($code eq 'STMf') {
-		$client->readyToStream(1);
-		$client->controller()->playerFlushed($client);
-	} elsif ($code eq 'STMd') {
+	if ($code eq 'STMd') {
 		$client->readyToStream(1);
 		$client->controller()->playerReadyToStream($client);
 	} elsif ($code eq 'STMn') {
@@ -392,6 +389,9 @@ sub flush {
 
 	$client->stream('f');
 	$client->SUPER::flush();
+	
+	# once flush, don't wait for answer, just get ready
+	$client->readyToStream(1);
 	return 1;
 }
 
