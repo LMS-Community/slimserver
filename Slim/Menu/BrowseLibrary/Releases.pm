@@ -49,7 +49,7 @@ sub _releases {
 
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
-	# get the artist's albums list to create releses sub-items etc.
+	# get the artist's albums list to create releases sub-items etc.
 	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
 	$request->execute();
 
@@ -65,12 +65,15 @@ sub _releases {
 		$_ => 1
 	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
 
+	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
+	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
+
 	foreach (@{ $request->getResult('albums_loop') || [] }) {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 
 		my $genreMatch = undef;
-		if ( !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2 ) {
+		if ( $checkComposerGenres ) {
 			my $request = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $_->{id} ] );
 			$request->execute();
 
@@ -121,9 +124,7 @@ sub _releases {
 			# don't list as trackartist, if the artist is albumartist, too
 			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 
-			if ( $role eq 'COMPOSER' && (
-				( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $genreMatch || $prefs->get('showComposerReleasesbyAlbum')
-			)) {
+			if ( $role eq 'COMPOSER' && ( $genreMatch || $allComposers ) ) {
 				$role = 'COMPOSERALBUM';
 			}
 
@@ -157,11 +158,6 @@ sub _releases {
 					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
-
-	$searchTags = [
-		"artist_id:$artistId",
-		"library_id:$library_id",
-	];
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
 		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
