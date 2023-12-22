@@ -50,37 +50,39 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releses sub-items etc.
-	my $requestRef = [ $query, 0, MAX_ALBUMS, @searchTags ];
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
+	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
 	$request->execute();
 
 	$log->error($request->getStatusText()) if $request->isStatusError();
-
-	my $albums = $request->getResult('albums_loop');
 
 	# compile list of release types and contributions
 	my %releaseTypes;
 	my %contributions;
 	my %isPrimaryArtist;
 	my %albumList;
-	foreach (@$albums) {
+
+	my %composerGenres = map {
+		$_ => 1
+	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
+
+	foreach (@{ $request->getResult('albums_loop') || [] }) {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 
 		my $genreMatch = undef;
-		if ( !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum')==2 ) {
-			my $requestRef = [ 'genres', 0, MAX_ALBUMS, "album_id:".$_->{id} ];
-			my $request = Slim::Control::Request->new( undef, $requestRef );
+		if ( !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2 ) {
+			my $request = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $_->{id} ] );
 			$request->execute();
-			$log->error($request->getStatusText()) if $request->isStatusError();
-			my $genres= $request->getResult('genres_loop');
-			foreach my $genre (@$genres) {
-				$genreMatch ||= grep {uc($genre->{genre}) eq $_} split(/,/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
-				last if $genreMatch;
+
+			if ($request->isStatusError()) {
+				$log->error($request->getStatusText());
+			}
+			else {
+				foreach my $genre (@{$request->getResult('genres_loop')}) {
+					last if $genreMatch = $composerGenres{uc($genre->{genre})};
+				}
 			}
 		}
-
-		$_->{role_ids} =~ s/COMPOSER/COMPOSERALBUM/ if ( ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $genreMatch || $prefs->get('showComposerReleasesbyAlbum')==1 );
 
 		my $addToMainReleases = sub {
 			$isPrimaryArtist{$_->{id}}++;
@@ -118,6 +120,12 @@ sub _releases {
 		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $_->{role_ids} || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
 			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
+
+			if ( $role eq 'COMPOSER' && (
+				( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $genreMatch || $prefs->get('showComposerReleasesbyAlbum')
+			)) {
+				$role = 'COMPOSERALBUM';
+			}
 
 			$contributions{$role} ||= [];
 			push @{$contributions{$role}}, $_->{id};
