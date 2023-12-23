@@ -29,7 +29,6 @@ use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Networking::Repositories;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -45,10 +44,9 @@ use constant MAX_RETRY_TIME     => 86400;
 my $dir;
 my $updatesDir;
 
-# Download location
-sub BASE {
-	return Slim::Networking::Repositories->getUrlForRepository('firmware');
-}
+# Download location and check interval - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
+sub BASE { 'http://update.slimdevices.com/update/firmware/' }
+sub CHECK_INTERVAL { 86400 * 30 }
 
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = INITIAL_RETRY_TIME;
@@ -188,11 +186,10 @@ sub init_version_done {
 
 	}
 
-	# Check again for an updated $model.version in 12 hours
-	main::DEBUGLOG && $log->debug("Scheduling next $model.version check in " . ($prefs->get('checkVersionInterval') / 3600) . " hours");
+	main::DEBUGLOG && $log->debug("Scheduling next $model.version check in " . (CHECK_INTERVAL() / 3600) . " hours");
 	Slim::Utils::Timers::setTimer(
 		undef,
-		time() + $prefs->get('checkVersionInterval'),
+		time() + CHECK_INTERVAL(),
 		sub {
 			init_firmware_download($model);
 		},

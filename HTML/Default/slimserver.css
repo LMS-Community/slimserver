@@ -1264,14 +1264,13 @@ ul.x-tree-node-ct {
 	margin: 0;
 }
 
-
-
 .helpsection dd {
 	margin-left: 20px;
 }
 
 .helpsection ul, .helpsection ol {
 	list-style-type: disc;
+	direction: ltr;
 }
 
 .helpsection blockquote, .helpsection ul {
@@ -1280,6 +1279,7 @@ ul.x-tree-node-ct {
 
 .helpsection li {
 	margin-bottom: 5px;
+	font-size: 12px;
 }
 
 

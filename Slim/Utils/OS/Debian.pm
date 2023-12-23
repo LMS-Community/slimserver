@@ -116,7 +116,7 @@ sub installerExtension { 'deb' };
 sub installerOS {
 	my $class = shift;
 
-	if ( $class->{osDetails}->{osArch} =~ /^arm/i ) {
+	if ( $class->{osDetails}->{osArch} =~ /^(arm|aarch64)/i ) {
 		return 'debarm';
 	}
 	elsif ( $class->{osDetails}->{osArch} =~ /^x86_64/i ) {

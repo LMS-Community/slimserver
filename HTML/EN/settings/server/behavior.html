@@ -89,6 +89,21 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER settingSection %]
+		[% IF !prefs.pref_ignoreReleaseTypes AND prefs.pref_groupArtistAlbumsByReleaseType; WRAPPER settingGroup title="SETUP_RELEASE_TYPES_GROUP_OPTIONS" desc="SETUP_RELEASE_TYPES_GROUP_OPTIONS_DESC" %]
+			<input type="radio" name="pref_showComposerReleasesbyAlbum" id="pref_showComposerReleasesbyAlbum0" value="0" [% IF NOT prefs.pref_showComposerReleasesbyAlbum %]checked="checked"[% END %] />
+			<label for="pref_showComposerReleasesbyAlbum0" class="stdlabel">[% 'SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0' | getstring %]</label><br/>
+			<input type="radio" name="pref_showComposerReleasesbyAlbum" id="pref_showComposerReleasesbyAlbum1" value="1" [% IF prefs.pref_showComposerReleasesbyAlbum == 1 %]checked="checked"[% END %] />
+			<label for="pref_showComposerReleasesbyAlbum1" class="stdlabel">[% 'SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1' | getstring %]</label><br/>
+			<input type="radio" name="pref_showComposerReleasesbyAlbum" id="pref_showComposerReleasesbyAlbum2" value="2" [% IF prefs.pref_showComposerReleasesbyAlbum == 2 %]checked="checked"[% END %] />
+			<label for="pref_showComposerReleasesbyAlbum2" class="stdlabel">[% 'SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2' | getstring %]</label>
+			<input type="text" class="stdedit" name="pref_showComposerReleasesbyAlbumGenres" id="showComposerReleasesbyAlbumGenres" value="[% prefs.pref_showComposerReleasesbyAlbumGenres | html %]" size="40" placeholder="[% "GENRES" | string | html %]"><br/>
+		[% END; ELSE %]
+			<input type="hidden" name="pref_showComposerReleasesbyAlbum" value="[% prefs.pref_showComposerReleasesbyAlbum %]" />
+			<input type="hidden" name="pref_showComposerReleasesbyAlbumGenres" value="[% prefs.pref_showComposerReleasesbyAlbumGenres %]" />
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_NOGENREFILTER" desc="SETUP_NOGENREFILTER_DESC"%]
 		<select class="stdedit" name="pref_noGenreFilter" id="noGenreFilter">
 

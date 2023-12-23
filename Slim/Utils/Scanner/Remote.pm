@@ -69,25 +69,25 @@ my %ogg_quality = (
 
 =head2 parseRemoteHeader( $track, $url, $format, $successCb, $errorCb );
 
-parse a remote URL to acquire header and populate $track object. When 
+parse a remote URL to acquire header and populate $track object. When
 finished, calls back success or error callback
 
 =cut
 
 my %parsers = (
-	'wma' => { parser => \&parseWMAHeader, readLimit => 128 * 1024 }, 
-	'aac' => { parser => \&parseAACHeader, readLimit => 4 * 1024 },	  	
-	'ogg' => { parser => \&parseOggHeader, readLimit => 64 },         
-	'flc' => { parser => \&parseFlacHeader },						  
-	'wav' => { parser => \&parseWavAifHeader, extra => 'format' },    
-	'aif' => { parser => \&parseWavAifHeader, extra => 'format' },    
-	'mp4' => { parser => \&parseMp4Header, extra => 'url' },			
-	'mp3' => { parser => \&parseAudioStream, extra => 'url' },			
+	'wma' => { parser => \&parseWMAHeader, readLimit => 128 * 1024 },
+	'aac' => { parser => \&parseAACHeader, readLimit => 4 * 1024 },
+	'ogg' => { parser => \&parseOggHeader, readLimit => 64 },
+	'flc' => { parser => \&parseFlacHeader },
+	'wav' => { parser => \&parseWavAifHeader, extra => 'format' },
+	'aif' => { parser => \&parseWavAifHeader, extra => 'format' },
+	'mp4' => { parser => \&parseMp4Header, extra => 'url' },
+	'mp3' => { parser => \&parseAudioStream, extra => 'url' },
 );
 
 sub parseRemoteHeader {
 	my ($track, $url, $format, $successCb, $errorCb) = @_;
-	
+
 	# first, tidy up things a bit
 	$url ||= $track->url;
 	$format =~ s/flac/flc/;
@@ -144,10 +144,10 @@ sub scanURL {
 	my $track = Slim::Schema->updateOrCreate( {
 		url => $url,
 	} );
-	
+
 	# Make sure it has a title
 	if ( !$track->title ) {
-		$args->{'title'} ||= $args->{'song'}->track->title if $args->{'song'}; 		
+		$args->{'title'} ||= $args->{'song'}->track->title if $args->{'song'};
 		$track = Slim::Music::Info::setTitle( $url, $args->{'title'} ? $args->{'title'} : $url );
 	}
 
@@ -364,6 +364,14 @@ sub readRemoteHeaders {
 	# fall back to m3u for html and text
 	elsif ( $type =~ /(?:htm|txt)/ ) {
 		$type = 'm3u';
+	}
+
+	# https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1661990
+	elsif ( $type =~ /octet-stream/ ) {
+		my $validTypeExtensions = join('|', Slim::Music::Info::validTypeExtensions());
+		if ($url =~ /\.($validTypeExtensions)\b/) {
+			$type = $1;
+		}
 	}
 
 	# Some Shoutcast/Icecast servers don't send content-type
@@ -768,18 +776,18 @@ sub parseFlacHeader {
 	Slim::Formats->loadTagFormatForType('flc');
 	my $formatClass = Slim::Formats->classForFormat('flc');
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
-	
+
 	return 1 if ref $info ne 'HASH' && $info;
 
 	$track->content_type('flc');
-	
+
 	if ($info) {
 		# don't set audio_offset & audio_size as these are not reliable here
 		$track->samplerate( $info->{samplerate} );
 		$track->samplesize( $info->{bits_per_sample} );
-		$track->channels( $info->{channels} );	
+		$track->channels( $info->{channels} );
 		# if no bitrate, swag it to allow seek
-		my $bitrate = $info->{avg_bitrate} || int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);	
+		my $bitrate = $info->{avg_bitrate} || int($info->{samplerate} * $info->{bits_per_sample} * $info->{channels} * 0.6);
 		Slim::Music::Info::setBitrate( $track, $bitrate );
 		Slim::Music::Info::setDuration( $track, $info->{song_length_ms} / 1000 );
 
@@ -788,7 +796,7 @@ sub parseFlacHeader {
 	} else {
 		# if we don't have an header, need to always process
 		$track->processors('flc', Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, \&Slim::Formats::FLAC::initiateFrameAlign );
-	}	
+	}
 
 	# All done
 	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
@@ -800,32 +808,32 @@ sub parseMp4Header {
 
 	Slim::Formats->loadTagFormatForType('mp4');
 	my $formatClass = Slim::Formats->classForFormat('mp4');
-	
+
 	# parse chunk
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
-	
+
 	if ( ref $info ne 'HASH' ) {
 		if ( !$info ) {
 			# error, can't continue
 			$log->error("unable to parse mp4 header");
 			$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 			return 0;
-		} 
+		}
 		elsif ( $info < 0 ) {
 			# need more data
 			return 1;
-		} 
+		}
 		else {
 			# please restart from offset set by $info, keep current request's custom fields...
 			my $query = Slim::Networking::Async::HTTP->new;
 			$http->disconnect;
 			$http->request->header('Range' => "bytes=$info-");
-	
+
 			# re-calculate header all the time (i.e. can't go direct at all)
 			$args->{initial_block_type} = Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS;
-		
+
 			main::INFOLOG && $log->is_info && $log->info("'mdat' reached before 'moov' at ", length($args->{_scanbuf}), " => seeking with $args->{_range}");
-	
+
 			$query->send_request( {
 				request    => $http->request,
 				onStream   => \&parseMp4Header,
@@ -834,35 +842,35 @@ sub parseMp4Header {
 						$log->error( "could not find MP4 header $error" );
 						$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 				},
-				passthrough => [ $track, $args, $url ],			
+				passthrough => [ $track, $args, $url ],
 			} );
-	
+
 			return 0;
-		}	
-	} 
+		}
+	}
 
 	# got everything we need, set the $track context
 	my ($samplesize, $channels);
 	my $samplerate = $info->{samplerate};
 	my $duration = $info->{song_length_ms} / 1000;
 	my $bitrate = $info->{avg_bitrate};
-	
+
 	if ( my $item = $info->{tracks}->[0] ) {
 		my $format = 'mp4';
-		
+
 		$samplesize = $item->{bits_per_sample};
 		$channels = $item->{channels};
 
 		# If encoding is alac, the file is lossless
 		if ( $item->{encoding} && $item->{encoding} eq 'alac' ) {
-			$format = 'alc';	
+			$format = 'alc';
 			# bitrate will be wrong b/c we only gave a header, not a real file
 			$bitrate = $duration ? $track->audio_size * 8 / $duration : 850_000;
-		} 
+		}
 		elsif ( $item->{encoding} && $item->{encoding} eq 'drms' ) {
 			$track->drm(1);
-		} 
-		
+		}
+
 		# Check for HD-AAC file, if the file has 2 tracks and AOTs of 2/37
 		if ( defined $item->{audio_object_type} && (my $item2 = $info->{tracks}->[1]) ) {
 			if ( $item->{audio_object_type} == 2 && $item2->{audio_object_type} == 37 ) {
@@ -870,50 +878,50 @@ sub parseMp4Header {
 				$format = 'sls';
 			}
 		}
-		
+
 		# use process_audio hook & format if set by parser
 		foreach ( keys %{$info->{processors}} ) {
 			$track->processors($_, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, $info->{processors}->{$_});
-		} 
-		
+		}
+
 		# change track attributes if format has been altered
 		if ( $format ne $track->content_type ) {
 			Slim::Schema->clearContentTypeCache( $track->url );
 			Slim::Music::Info::setContentType( $track->url, $format );
 			$track->content_type($format);
-		}	
+		}
 	} else	{
 		$log->warn("no playable track found");
 		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 		return 0;
 	}
-	
+
 	# some mp4 file have wrong mdat length
-	if ($info->{audio_offset} + $info->{audio_size} > $http->response->content_length) { 
+	if ($info->{audio_offset} + $info->{audio_size} > $http->response->content_length) {
 		$log->warn("inconsistent audio offset/size $info->{audio_offset}+$info->{audio_size}and content_length ", $http->response->content_length);
 		$track->audio_size($http->response->content_length - $info->{audio_offset});
 	} else {
-		$track->audio_size($info->{audio_size});		
-	} 	
+		$track->audio_size($info->{audio_size});
+	}
 	$track->audio_offset($info->{audio_offset});
 	$track->samplerate($samplerate);
 	$track->samplesize($samplesize);
-	$track->channels($channels);	
+	$track->channels($channels);
 	Slim::Music::Info::setBitrate( $track, $bitrate );
 	Slim::Music::Info::setDuration( $track, $duration );
-	
+
 	# use the audio block to stash the temp file handler
 	$track->initial_block_fn($info->{fh}->filename);
 	$info->{fh}->unlink_on_destroy(0);
-	$info->{fh}->close;	
+	$info->{fh}->close;
 	$track->processors($track->content_type, $args->{initial_block_type} // Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "mp4: %dHz, %dBits, %dch => bitrate: %dkbps (ofs:%d, len:%d, hdr:%d)",
-					$samplerate, $samplesize, $channels, int( $bitrate / 1000 ), 
+					$samplerate, $samplesize, $channels, int( $bitrate / 1000 ),
 					$track->audio_offset, $track->audio_size, length $args->{_scanbuf}) );
-	}	
-	
+	}
+
 	# All done
 	$args->{cb}->( $track, undef, @{$args->{pt} || []} );
 	return 0;
@@ -951,7 +959,7 @@ sub parseOggHeader {
 		}
 	# search for Ogg Opus header within the data - if so change the content type to opus for OggOpus
 	# OggOpus header defined: https://people.xiph.org/~giles/2013/draft-ietf-codec-oggopus.html#rfc.section.5.1
-	} 
+	}
 	elsif (substr($data, 0, 8) eq 'OpusHead') {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Ogg stream is OggOpus - setting content type [ops]");
 		Slim::Schema->clearContentTypeCache( $track->url );
@@ -977,9 +985,9 @@ sub parseWavAifHeader {
 	Slim::Formats->loadTagFormatForType($type);
 	my $formatClass = Slim::Formats->classForFormat($type);
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
-	
+
 	return 1 if ref $info ne 'HASH' && $info;
-	
+
 	if (!$info) {
 		$log->error("unable to parse $type header");
 		$args->{cb}->( $track, undef, @{$args->{pt} || []} );
@@ -988,26 +996,26 @@ sub parseWavAifHeader {
 
 	$track->samplerate($info->{samplerate});
 	$track->samplesize($info->{samplesize});
-	$track->channels($info->{channels});	
+	$track->channels($info->{channels});
 	$track->endian($type eq 'wav' || $info->{compression_type} eq 'swot' ? 0 : 1);
-	
+
 	$track->block_alignment($info->{channels} * $info->{bits_per_sample} / 8);
 	$track->audio_offset($info->{audio_offset});
 	$track->audio_size($info->{audio_size});
 
 	Slim::Music::Info::setBitrate( $track->url, $info->{bitrate} );
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "$type: %dHz, %dBits, %dch => bitrate: %dkbps (ofs: %d, len: %d)",
-					$info->{samplerate}, $info->{samplesize}, $info->{channels}, int( $info->{bitrate} / 1000 ), 
+					$info->{samplerate}, $info->{samplesize}, $info->{channels}, int( $info->{bitrate} / 1000 ),
 					$track->audio_offset, $track->audio_size ) );
-	}	
-	
+	}
+
 	# we have a dynamic header but can go direct when not seeking
 	$track->initial_block_fn($info->{fh}->filename);
 	$info->{fh}->unlink_on_destroy(0);
-	$info->{fh}->close;	
-	
+	$info->{fh}->close;
+
 	$track->processors($type, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK);
 
 	# all done
@@ -1049,7 +1057,7 @@ sub parseAudioStream {
 
 			# Read the full ID3v2 tag + some audio frames for bitrate
 			$args->{_scanlen} = $id3size + (16 * 1024);
-			
+
 			# last chance to set content_type if missing
 			Slim::Music::Info::setContentType( $track->url, 'mp3' ) unless $track->content_type;
 

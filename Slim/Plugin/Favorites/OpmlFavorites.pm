@@ -220,7 +220,7 @@ sub _prepareDbItems {
 
 			if ( $dbBrowseModes->{$dbClass} ) {
 				$item->{'type'} = 'playlist';
-				$item->{'play'} = $item->{'url'} . '&libraryTracks.library=-1';
+				$item->{'play'} = $item->{'url'} . ($item->{'url'} =~ /libraryTracks\.library/ ? '' : '&libraryTracks.library=-1');
 				$item->{'url'}  = \&_dbItem;
 				$item->{'passthrough'} = [{
 					class => $dbClass,

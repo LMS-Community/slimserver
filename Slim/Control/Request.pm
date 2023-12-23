@@ -1570,10 +1570,6 @@ sub setResultFirst {
 	my $key = shift;
 	my $val = shift;
 
-	#${$self->{'_results'}}{$key} = $val;
-
-#	(tied %{$self->{'_results'}})->first($key => $val);
-
 	if ($self->{'_useixhash'}) {
 		(tied %{$self->{'_results'}})->Unshift($key => $val);
 	} else {

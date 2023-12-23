@@ -3,6 +3,7 @@ package Slim::Utils::Update;
 use strict;
 use Time::HiRes;
 use File::Spec::Functions qw(splitpath catdir);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
@@ -11,9 +12,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
-if (main::NOMYSB) {
-	require Slim::Networking::Repositories;
-}
+use constant REPOSITORY_URL => 'https://lms-community.github.io/lms-server-repository/servers.json';
 
 my $prefs = preferences('server');
 
@@ -77,7 +76,7 @@ sub checkVersion {
 
 	main::INFOLOG && $log->info("Checking version now.");
 
-	my $url = main::NOMYSB ? (Slim::Networking::Repositories->getUrlForRepository('servers') . "$::VERSION/servers.xml") : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
+	my $url = main::NOMYSB ? REPOSITORY_URL : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
 
 	$url .= sprintf(
 		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d",
@@ -88,7 +87,7 @@ sub checkVersion {
 		$os->canAutoUpdate() ? $os->installerOS() : '',
 		$prefs->get('server_uuid'),
 		Slim::Player::Client::clientCount(),
-	);
+	) unless main::NOMYSB;
 
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 
@@ -97,7 +96,7 @@ sub checkVersion {
 	};
 
 	if (main::NOMYSB) {
-		Slim::Networking::Repositories->get($url, \&checkVersionCB, \&checkVersionError, $params);
+		Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError, $params)->get($url);
 	}
 	else {
 		Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError, $params)->get($url);
@@ -121,10 +120,10 @@ sub checkVersionCB {
 
 		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
 		if (main::NOMYSB) {
-			require XML::Simple;
-			my $versions = XML::Simple::XMLin($content);
+			my $versions = from_json($content);
 
 			my $osID = $os->installerOS() || 'default';
+			$versions = $versions->{$::VERSION} || $versions->{latest};
 
 			main::DEBUGLOG && $log->is_debug && $log->debug("Got list of installers:\n" . Data::Dump::dump($versions));
 
@@ -133,9 +132,6 @@ sub checkVersionCB {
 					if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
 						if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
 							$version = $update->{url};
-
-							# prepend URL with our download host if we didn't get an absolute URL
-							$version = Slim::Networking::Repositories->getUrlForRepository('servers') . $version unless $version =~ /^http/;
 						}
 						else {
 							$version = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $update->{version}, $update->{url});

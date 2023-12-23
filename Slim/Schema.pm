@@ -552,6 +552,21 @@ sub single {
 	return $class->rs(ucfirst($rsClass))->single(@_);
 }
 
+=head2 first( $class, $cond )
+
+Returns the first result from a search on the specified class' L<DBIx::Class::ResultSet>
+
+A shortcut for resultset($class)->search($cond)->first()
+
+=cut
+
+sub first {
+	my $class   = shift;
+	my $rsClass = shift;
+
+	return $class->rs(ucfirst($rsClass))->search(@_)->first();
+}
+
 =head2 count( $class, $cond, $attr )
 
 Returns the count result from a search on the specified class' L<DBIx::Class::ResultSet>
@@ -2426,26 +2441,6 @@ sub _retrieveTrack {
 		}
 
 		return $track;
-	}
-
-	return undef;
-}
-
-sub _retrieveTrackMetadata {
-	my ($self, $url, $musicbrainz_id) = @_;
-
-	return undef if !$url;
-	return undef if ref($url);
-
-	my $trackMetadata;
-
-	$trackMetadata = $self->rs('TrackMetadata')->single({ 'url' => $url });
-
-	if (blessed($trackMetadata)) {
-		return $trackMetadata;
-	}elsif($musicbrainz_id) {
-		$trackMetadata = $self->rs('TrackMetadata')->single({ 'musicbrainz_id' => $musicbrainz_id });
-		return $trackMetadata if blessed($trackMetadata);
 	}
 
 	return undef;

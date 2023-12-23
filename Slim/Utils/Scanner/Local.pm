@@ -228,7 +228,7 @@ sub rescan {
 		$dbh->do('DROP TABLE IF EXISTS dbonly');
 		$dbh->do( qq{
 			CREATE $createTemporary TABLE dbonly AS
-				SELECT DISTINCT(url)
+				SELECT DISTINCT(url) AS url
 				FROM   tracks
 				WHERE  url NOT IN (
 					SELECT url FROM scanned_files

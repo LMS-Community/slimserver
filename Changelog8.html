@@ -7,6 +7,7 @@
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
 		<li>New "Advanced Tag View" plugin allows you to show more information in the Track Info menu, without the need to drill down to "View Tags"</li>
+		<li>Allow editing of a favourite's icon.</li>
 		<li>Add plugins for ClassicRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
 		<li>Add an optional artist albums view which groups albums by release type and contribution.</li>
 		<li>Add an option to import playlists from online music services.</li>
@@ -20,6 +21,7 @@
 		<li>Updated Dutch translation - thanks blackfiction!</li>
 		<li>Updated French translation - thanks thanks Frank-Berry!</li>
 		<li>Improve rendering of links in the web UI menus (comments, file download, etc.)</li>
+		<li>Sort tracks in "title" sort order by artist and album, too, if they're part of the result set.</li>
 		<li>Optionally don't remove online duplicates from library views.</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/846">#846</a> - Improve display of multiline lyrics and comments in the web UI (thanks mw9!)</li>
 		<li>Move persist.db out of the cache folder - it's music data which can't be restored from the music files.</li>
@@ -29,6 +31,7 @@
 		<li>Add "Q" tag to songinfo, status queries etc. to return lossless flag for tracks (thanks AF-1!).</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/862">#862</a> - Make lyrics on Default skin songinfo page collapsible (thanks AF-1!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/868">#868</a> - Populate the release year ('year') attribute for remote tracks in the player queue (thanks SamInPgh!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/956">#956</a> - Add raw AAC (ADTS) file support (thanks philippe44!)</li>
 		<li>Fix Napster playback on community firmware players</li>
 	</ul>
 	<br />
@@ -36,9 +39,9 @@
 	<li>Platform Support:</li>
 	<ul>
 		<li>Tweak Apple OS Architecture discovery: use the "arm64" string rather than the CPU's name (eg. "Apple M1")</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
 		<li>Add Perl 5.38 support for Linux x86_64.</li>
 		<li>Add <b>experimental</b> support for Windows 64-bit - requires installation of <a href="https://strawberryperl.com/releases.html">Strawberry Perl 5.32</a>!</li>
+		<li>Update Windows installer to use latest InnoSetup 6 - dropping support for Windows XP, 2003 Server, and Windows Home Server.</li>
 	</ul>
 	<br />
 
@@ -51,6 +54,7 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/905">#905</a> - Browsing in to playlists is extremely slow.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/911">#911</a> - Don't shut down the server on "restartserver" when we actually can't restart it.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/939">#939</a> - Player can't be switched from MySqueezebox.com to LMS</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/962">#962</a> - Fix album_contributor updates in New &amp; Changed scan (thanks darrell!)</li>
 		<li><a href="https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1648813">Respect a contributor's Musicbrainz ID to separate artists of the same name.</a></li>
 		<li>Try harder to avoid duplicate (but empty) album entries on singles.</li>
 		<li>Clear the Various Artists ID when a scan has finished.</li>
@@ -63,6 +67,7 @@
 
 	<li>Other:</li>
 	<ul>
+		<li>Simplify plugin and server update repository handling.</li>
 	</ul>
 	<br />
 </ul>
@@ -84,6 +89,7 @@
 
 	<li>Platform Support:</li>
 	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
 		<li></li>
 	</ul>
 	<br />

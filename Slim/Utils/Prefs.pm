@@ -191,6 +191,8 @@ sub init {
 		'releaseTypesToIgnore'  => [],
 		'ignoreReleaseTypes'    => 0,
 		'groupArtistAlbumsByReleaseType' => 0,
+		'showComposerReleasesbyAlbum' => 2,
+		'showComposerReleasesbyAlbumGenres' => "Classical, Klassik, Classique, Klassiek",
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
