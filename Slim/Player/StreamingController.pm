@@ -978,7 +978,7 @@ sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> Trac
 	my ($self, $event, $params) = @_;
 	
 	# flush means that we get rid of the streaming song
-	shift $self->{'songqueue'};
+	shift @{$self->{'songqueue'}};
 
 	foreach my $player (@{$self->{'players'}})	{
 		$player->flush();
