@@ -1077,9 +1077,6 @@ sub modifyPlaylistCallback {
 
 	my $client  = $request->client();
 
-	# inform controller (mainly in case last track was already fully streamed)
-	$client->controller->playlistUpdated();
-
 	main::INFOLOG && $log->info("Checking if persistPlaylists is set..");
 
 	if ( !$client || !$prefs->get('persistPlaylists') ) {
