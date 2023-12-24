@@ -440,7 +440,7 @@ sub _CheckPaused {	# only called when PAUSED
 		} elsif (!$song->duration()) {
 			
 			# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
-			# Assume unknown duration means radio and so we shuould stop now
+			# Assume unknown duration means radio and so we should stop now
 			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused (no resume)");
 			
 			_Stop(@_);
@@ -2113,11 +2113,17 @@ sub closeStream {
 	$_[0]->{'songStreamController'}->close() if $_[0]->{'songStreamController'};
 }
 
-sub playlistUpdated {
+sub nextIfStreamed {
 	my ($self) = @_;
 
-	if ($self->{'streamingState'} == IDLE && $self->{'playingState'} != STOPPED) {
-		main::INFOLOG && $log->info("$self->{'masterId'} playlist updated after end of last track's streaming");
+	# this is called when we are adding/moving another track after last one
+	# or moving it upper in the list. If it has been fully streamed and we 
+	# are playing/buffering/waiting, then we need to grab next track. If we 
+	# are paused then we'll restart the process later upon resume
+	if ($self->{'streamingState'} == IDLE && 
+		$self->{'playingState'} != STOPPED && 
+		$self->{'playingState'} != PAUSED) {
+		main::INFOLOG && $log->info("getting next track to re-launch streaming process");
 		_getNextTrack($self);
 	}
 }	

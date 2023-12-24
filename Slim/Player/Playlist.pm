@@ -245,8 +245,19 @@ sub addTracks {
 		});
 	}
 
+	my $playingIndex = Slim::Player::Source::playingSongIndex($client)+1;
+	my $streamingIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+
 	if ($insert) {
 		_insert_done($client, $canAdd);
+	}
+
+	# if we are adding a track while we are playing the last one, might 
+	# need to relaunch the process if it has been streamed fully.
+	if (($playingIndex == $streamingIndex) && 
+		($streamingIndex == count($client) - 1)) {
+		$log->info("adding track while playing last, check if streaming needs relaunch");
+		$client->controller->nextIfStreamed($client);
 	}
 
 	return $canAdd;
@@ -610,8 +621,19 @@ sub moveSong {
 			if (($playingIndex != $streamingIndex) &&
 				(($streamingIndex == $src) || ($streamingIndex == $dest) ||
 				 ($playingIndex == $src) || ($playingIndex == $dest))) {
+				$log->info("moving a track right after playing one but it has been fully streamed");
 				Slim::Player::Source::flushStreamingSong($client);
 			}
+
+			# if we are either moving the last track or moving one after it, we 
+			# might need to relaunch the process if it has been streamed fully.
+			if (($playingIndex == $streamingIndex) && 
+				($streamingIndex == count($client) - 1) && 
+			    ($src == $streamingIndex || $dest == $streamingIndex)) {
+				$log->info("moving last track itsef or another track past it");
+				$client->controller->nextIfStreamed($client);
+			}
+
 
 			refreshPlaylist($client);
 		}
