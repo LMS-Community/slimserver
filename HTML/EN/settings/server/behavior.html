@@ -90,7 +90,7 @@
 	[% END %]
 
 	[% WRAPPER settingSection %]
-		[% IF !prefs.pref_ignoreReleaseTypes AND prefs.pref_groupArtistAlbumsByReleaseType; WRAPPER settingGroup title="SETUP_RELEASE_TYPES_GROUP_OPTIONS" desc="SETUP_RELEASE_TYPES_GROUP_OPTIONS_DESC" %]
+		[% IF !prefs.pref_ignoreReleaseTypes AND prefs.pref_groupArtistAlbumsByReleaseType; WRAPPER settingGroup title="SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS" desc="SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC" %]
 			<input type="radio" name="pref_showComposerReleasesbyAlbum" id="pref_showComposerReleasesbyAlbum0" value="0" [% IF NOT prefs.pref_showComposerReleasesbyAlbum %]checked="checked"[% END %] />
 			<label for="pref_showComposerReleasesbyAlbum0" class="stdlabel">[% 'SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0' | getstring %]</label><br/>
 			<input type="radio" name="pref_showComposerReleasesbyAlbum" id="pref_showComposerReleasesbyAlbum1" value="1" [% IF prefs.pref_showComposerReleasesbyAlbum == 1 %]checked="checked"[% END %] />

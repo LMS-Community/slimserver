@@ -9261,37 +9261,38 @@ SETUP_RELEASE_TYPES_DESC
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
-SETUP_RELEASE_TYPES_GROUP_OPTIONS
-	EN	Release type grouping options
-	FR	Options de regroupement des types de sorties
-	DE	Gruppierungsoptionen für Release-Typen
-	NL	Groeperingsopties voor het releasetype
+SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
+	EN	Composer album options
+	FR	Options d'album du compositeur
+	DE	Optionen für Komponistenalben
+	NL	Componist albumopties
+	ES	Opciones de álbum compositor
 
-SETUP_RELEASE_TYPES_GROUP_OPTIONS_DESC
+SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
 	FR	Créez un groupe d'albums de compositeur - toujours, jamais ou pour certains genres. Si, en raison de ce paramètre, certains rôles de compositeur ne sont pas inclus dans le groupe Albums du compositeur, ils apparaîtront à la place dans un groupe « Compositions » distinct, qui répertoriera les pistes individuelles, pas les albums. La liste des genres doit être séparée par des virgules.
-	DE	Erstellen Sie eine Gruppe „Komponistenalben“ – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe „Komponistenalben“ enthalten sind, werden sie stattdessen in einer separaten Gruppe „Kompositionen“ angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Genreliste sollte durch Kommas getrennt sein.
+	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
 	NL	Maak een Composer Albums-groep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep Componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe d'albums de compositeur
-	DE	Erstellen Sie keine Composer-Album-Gruppe
+	DE	Erstellen Sie keine Komponistenalbengruppe
 	NL	Maak geen Composer Album-groep
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créez toujours un groupe d'album de compositeur
-	DE	Erstellen Sie immer eine Composer-Album-Gruppe
+	DE	Erstellen Sie immer eine Komponistenalbengruppe
 	NL	Maak altijd een Composer Album-groep
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créez un groupe d'albums de compositeur pour ces genres :
-	DE	Erstellen Sie eine Composer-Album-Gruppe für diese Genres:
+	DE	Erstellen Sie eine Komponistenalbengruppe für diese Stilrichtungen:
 	NL	Maak een Composer Album-groep voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
@@ -11623,7 +11624,7 @@ COMPOSER
 COMPOSERALBUMS
 	CS	Skladatel Alba
 	DA	Komponist Album
-	DE	Komponist Alben
+	DE	Komponistenalben
 	EN	Composer Albums
 	ES	Compositor Álbumes
 	FI	Säveltäjä Levyt
