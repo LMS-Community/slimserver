@@ -1411,6 +1411,7 @@ my %mapArtistOrders = (
 sub _albumsOrReleases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+#$log->error("DK \@searchTags=" . Data::Dump::dump(@searchTags));
 
 	# We only display the grouped albums if:
 	# 1. the feature is enabled
@@ -1420,7 +1421,7 @@ sub _albumsOrReleases {
 		# 3. not from works menu:
 		&& !(grep /^work_id:/, @searchTags)
 		# 4. any one of the following is true:
-		#    3a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
+		#    4a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
 		&& ($prefs->get('noRoleFilter')
 			# 4b. no specific role is requested
 			|| !(grep /^role_id:/, @searchTags)
@@ -1503,12 +1504,12 @@ sub _albums {
 		sub {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
-
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'work_id'} ? cstring($client,'ALBUM') . cstring($client,'COLON') . ' ' : '';
+				$_->{'name'}          = $_->{'work_id'} ? $_->{'work_name'} . ' (' . cstring($client,'FROM') . ' ' : '';
 				$_->{'name'}          .= $_->{'album'};
+				$_->{'name'}          .= $_->{'work_id'} ? ')' : '';
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
@@ -1714,6 +1715,8 @@ sub _albums {
 
 sub _tracks {
 	my ($client, $callback, $args, $pt) = @_;
+#$log->error("DK \$args=" . Data::Dump::dump($args));
+#$log->error("DK \$pt=" . Data::Dump::dump($pt));
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'} || 'sort:albumtrack';
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
@@ -1917,8 +1920,10 @@ sub _tracks {
 			if ($getMetadata) {
 				my ($albumId) = grep {/album_id:/} @searchTags;
 				$albumId =~ s/album_id:// if $albumId;
+my ($workId) = grep {/work_id:/} @searchTags;
+$workId =~ s/work_id:// if $workId;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id } ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId } ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;

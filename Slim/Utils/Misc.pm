@@ -1048,6 +1048,8 @@ $params is a hash with the following keys, by order of priority:
 
 sub findAndScanDirectoryTree {
 	my $params = shift;
+logError("DK \$params=" . Data::Dump::dump($params));
+logBacktrace("DK ");
 
 	# Find the db entry that corresponds to the requested directory.
 	# If we don't have one - that means we're starting out from the root audiodir.

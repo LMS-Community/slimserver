@@ -183,6 +183,7 @@ sub init {
 		Track
 		Year
 		Progress
+		Work
 	/);
 	$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
 
@@ -514,7 +515,8 @@ A shortcut for resultset()
 sub rs {
 	my $class   = shift;
 	my $rsClass = ucfirst shift;
-
+$log->error("DK \$class=$class");
+$log->error("DK \$rsClass=$rsClass");
 	if ( !exists $RS_CACHE{$rsClass} ) {
 		$RS_CACHE{$rsClass} = $class->resultset($rsClass);
 	}
@@ -531,10 +533,14 @@ A shortcut for resultset($class)->search($cond, $attr)
 =cut
 
 sub search {
+$log->error("DK " . Data::Dump::dump(@_));
 	my $class   = shift;
 	my $rsClass = shift;
 
-	return $class->rs(ucfirst($rsClass))->search(@_);
+$log->error("DK $class ->rs(ucfirst($rsClass))->search(" . Data::Dump::dump(@_) . ")");
+	my $ret = $class->rs(ucfirst($rsClass))->search(@_);
+$log->error("DK \$ret=" . Data::Dump::dump($ret));
+return $ret;
 }
 
 =head2 single( $class, $cond )
@@ -2973,6 +2979,14 @@ sub _postCheckAttributes {
 	my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST};
 	if ($artist) {
 		$cols{primary_artist} = $artist->[0];
+	}
+
+	#Work
+	if (defined $attributes->{'WORK'}) {
+		my $workID = $self->_createWork($attributes->{'WORK'}, $contributors->{'COMPOSER'}->[0], 1);
+		if ($workID) {
+			$track->work($workID);
+		}
 	}
 
 	### Update Album row

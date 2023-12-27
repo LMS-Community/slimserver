@@ -79,6 +79,11 @@ sub registerDefaultInfoProviders {
 #		func      => \&showArtwork,
 #	) );
 
+	$class->registerInfoProvider( album => (
+		after => 'top',
+		func  => \&infoAlbum,
+	) );
+
 	$class->registerInfoProvider( contributors => (
 		after => 'top',
 		func  => \&infoContributors,
@@ -337,6 +342,53 @@ sub infoYear {
 	return $item;
 }
 
+sub infoAlbum {
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
+
+	my $item;
+	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+
+	my $albumName = $album->title;
+	if ( my $work = $filter->{work_id} && $albumName) {
+
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'tracks', album_id => $album->id, library_id => $library_id },
+			},
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'load', album_id => $album->id},
+			},
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'add', album_id => $album->id},
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'insert', album_id => $album->id},
+			},
+			info => {
+				command     => ['albuminfo', 'items'],
+				fixedParams => {album_id => $album->id},
+			},
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
+
+		$item = {
+			type    => 'playlist',
+			url     => 'blabla',
+			name    => $albumName,
+			label   => 'ALBUM',
+			itemActions => \%actions,
+		};
+	}
+
+	return $item;
+}
+
 sub infoDisc {
 	my ( $client, $url, $album ) = @_;
 
@@ -428,6 +480,11 @@ sub playAlbum {
 
 	return undef if !blessed($client);
 
+#$log->error("DK \$url=" . Data::Dump::dump($url));
+#$log->error("DK \$album=" . Data::Dump::dump($album));
+#$log->error("DK \$remoteMeta=" . Data::Dump::dump($remoteMeta));
+#$log->error("DK \$tags=" . Data::Dump::dump($tags));
+#$log->error("DK \$filter=" . Data::Dump::dump($filter));
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],

@@ -496,12 +496,14 @@ sub albumsQuery {
 
 		if (defined $work) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
+			$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
 			push @{$w}, 'tracks.work = ?';
 			push @{$p}, $work;
 			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
 			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
 			push @{$p}, $composerID;
 			$c->{'tracks.work'} = 1;
+			$c->{'works.title'} = 1;
 		}
 
 		if (defined $genreID) {
@@ -754,8 +756,10 @@ sub albumsQuery {
 		while ( $sth->fetch ) {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -4491,20 +4495,26 @@ sub worksQuery {
 	my $quantity      = $request->getParam('_quantity');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
-	my $composerID    = $request->getParam('artist_id');
+	my $artistID    = $request->getParam('artist_id');
+#$log->error("DK _params=" . Data::Dump::dump($request->{_params}));
 
 	# get them all by default
 	my $where = {};
 
 	my $key = ($hasAlbums || $libraryID) ? 'tracks.work' : 'tracks.work';
 
-	my $sql = "SELECT DISTINCT works.title, works.id, contributors.name, contributors.id FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id AND contributor_track.role = 2 JOIN contributors ON contributors.id = contributor_track.contributor LEFT JOIN works ON works.id = tracks.work ";
+	my $sql = "SELECT DISTINCT works.title, works.id, composer.name, composer.id FROM tracks 
+		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
+		JOIN contributors composer ON composer.id = composer_track.contributor 
+		JOIN contributor_track ON contributor_track.track = tracks.id
+		JOIN contributors ON contributors.id = contributor_track.contributor 
+		LEFT JOIN works ON works.id = tracks.work ";
 	my $w   = ["$key IS NOT NULL"];
 	my $p   = [];
 
-	if (defined $composerID) {
+	if (defined $artistID) {
 		push @{$w}, "contributors.id = ?";
-		push @{$p}, $composerID;
+		push @{$p}, $artistID;
 	}
 
 	if (defined $libraryID) {
@@ -4535,7 +4545,7 @@ sub worksQuery {
 		$total_sth->finish;
 	}
 
-	$sql .= "ORDER BY works.titlesort, contributors.namesort";
+	$sql .= $artistID ?  "ORDER BY composer.namesort, works.titlesort" : "ORDER BY works.titlesort, composer.namesort";
 
 	# now build the result
 
@@ -5463,7 +5473,8 @@ Returns arrayref of hashes.
 =cut
 
 sub _getTagDataForTracks {
-
+#$log->error("DK " . Data::Dump::dump(@_));
+#logBacktrace("DK ");
 	my ( $tags, $args ) = @_;
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 
@@ -5515,8 +5526,7 @@ sub _getTagDataForTracks {
 				},
 			});
 
-			$sql = 'SELECT %s FROM tracksSearch, tracks ';
-			unshift @{$w}, "tracks.id = tracksSearch.id";
+			$sql = 'SELECT %s FROM tracksSearch JOIN tracks ON tracks.id = tracksSearch.id LEFT JOIN works on tracks.work = works.id ';
 
 			if (!$count_only) {
 				$sort = "tracksSearch.fulltextweight DESC" . ($sort ? ", $sort" : '');
@@ -5550,6 +5560,11 @@ sub _getTagDataForTracks {
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
+	}
+
+	if ( my $workId = $args->{workId} ) {
+		push @{$w}, 'tracks.work = ?';
+		push @{$p}, $workId;
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {

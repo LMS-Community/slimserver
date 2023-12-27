@@ -1340,7 +1340,7 @@ sub _getPreviewPlaylistName {
 
 sub playlistXitemCommand {
 	my $request = shift;
-
+$log->error("DK \$request=" . Data::Dump::dump($request));
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['add', 'append', 'insert', 'insertlist', 'load', 'play', 'resume']])) {
 		$request->setStatusBadDispatch();
@@ -1355,6 +1355,9 @@ sub playlistXitemCommand {
 	my $fadeIn   = $cmd eq 'play' ? $request->getParam('_fadein') : undef;
 	my $noplay       = $request->getParam('noplay') || 0; # optional tagged param, used for resuming playlist after preview
 	my $wipePlaylist = $request->getParam('wipePlaylist') || 0; #optional tagged param, used for removing playlist after resume
+$log->error("DK \$cmd=" . Data::Dump::dump($cmd));
+$log->error("DK \$item=" . Data::Dump::dump($item));
+$log->error("DK \$title=" . Data::Dump::dump($title));
 
 	if (!defined $item) {
 		$request->setStatusBadParams();
@@ -1405,6 +1408,7 @@ sub playlistXitemCommand {
 	# hardcoding these protocols isn't the best way to do this. We should be using the protocol handler's explodePlaylist call.
 	if ($path =~ /^db:|^itunesplaylist:|^musicipplaylist:/) {
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
+logError("DK \@tracks=" . Data::Dump::dump(@tracks));
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
 			$request->setStatusDone();
 			return;
@@ -3652,6 +3656,9 @@ sub _playlistXtracksCommand_parseDbItem {
 					})->first;
 				}
 				else {
+$log->error("dk \$class = $class");
+$log->error("dk \$key = $key");
+$log->error("dk \$value = $value");
 					$classes{$class} = Slim::Schema->search( $class, { $key => $value } )->first;
 				}
 			}
