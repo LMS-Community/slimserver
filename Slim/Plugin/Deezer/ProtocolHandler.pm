@@ -24,7 +24,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 my $cache = Slim::Utils::Cache->new;
-my $prefs = preferences('server');
+my $prefs = preferences('plugin.deezer');
+my $serverprefs = preferences('server');
 my $log   = logger('plugin.deezer');
 
 # https://www.deezer.com/album/68905661?...
@@ -62,7 +63,7 @@ sub bufferThreshold {
 	my ($trackId, $format) = _getStreamParams($url);
 
 	$format ||= $ext;
-	($format eq 'flac' ? 80 : 40) * ( $prefs->get('bufferSecs') || 3 )
+	($format eq 'flac' ? 80 : 40) * ( $serverprefs->get('bufferSecs') || 3 )
 }
 
 sub canSeek {

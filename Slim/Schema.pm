@@ -2016,8 +2016,9 @@ sub variousArtistsObject {
 	# Fetch a VA object and/or update it's name if the user has changed it.
 	# XXX - exception should go here. Coming soon.
 	if (!blessed($vaObj) || !$vaObj->can('name')) {
-
-		$vaObj  = $class->rs('Contributor')->update_or_create({
+		$vaObj = $class->first('Contributor', {
+			'namesearch' => Slim::Utils::Text::ignoreCase($vaString, 1),
+		}) || $class->rs('Contributor')->update_or_create({
 			'name'       => $vaString,
 			'namesearch' => Slim::Utils::Text::ignoreCase($vaString, 1),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles($vaString),
