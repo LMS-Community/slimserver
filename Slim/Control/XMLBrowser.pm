@@ -1145,6 +1145,10 @@ sub _cliQuery_done {
 							$itemParams->{slideshow} = 1;
 						}
 
+						if ($item->{weblink} && $item->{name}) {
+							$hash{'weblink'} = $item->{weblink};
+						}
+
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
