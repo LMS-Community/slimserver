@@ -499,11 +499,13 @@ sub albumsQuery {
 			$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
 			push @{$w}, 'tracks.work = ?';
 			push @{$p}, $work;
+			$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
 			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
 			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
 			push @{$p}, $composerID;
 			$c->{'tracks.work'} = 1;
 			$c->{'works.title'} = 1;
+			$c->{'composer.name'} = 1;
 		}
 
 		if (defined $genreID) {
@@ -572,7 +574,7 @@ sub albumsQuery {
 
 	if ( $tags =~ /a/ ) {
 		# If requesting artist data, join contributor
-		if ( $sql !~ /JOIN contributors/ ) {
+		if ( $sql !~ /JOIN contributors ON/ ) {
 			if ( $sql =~ /JOIN contributor_album/ ) {
 				# Bug 17364, if looking for an artist_id value, we need to join contributors via contributor_album
 				# or No Album will not be found properly
@@ -757,9 +759,11 @@ sub albumsQuery {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
+			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});

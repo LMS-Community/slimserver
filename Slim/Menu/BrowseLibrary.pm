@@ -1507,7 +1507,8 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'work_id'} ? $_->{'work_name'} . ' (' . cstring($client,'FROM') . ' ' : '';
+				$_->{'name'}          = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
+				$_->{'name'}          .= $_->{'work_id'} ? $_->{'work_name'} . ' (' . cstring($client,'FROM') . ' ' : '';
 				$_->{'name'}          .= $_->{'album'};
 				$_->{'name'}          .= $_->{'work_id'} ? ')' : '';
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
@@ -1519,8 +1520,12 @@ sub _albums {
 				# the favorites url is the album title and contributor name here (or extid for online albums)
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				$_->{'favorites_url'} = $_->{'extid'}
-					|| sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'name'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
+				my $favoritesUrl = $_->{'work_id'}
+					? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s', 
+						URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}),
+						URI::Escape::uri_escape_utf8($_->{'work_name'}), URI::Escape::uri_escape_utf8($_->{'composer'}))
+					: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
+				$_->{'favorites_url'} = $_->{'extid'} || $favoritesUrl;
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
@@ -1920,10 +1925,10 @@ sub _tracks {
 			if ($getMetadata) {
 				my ($albumId) = grep {/album_id:/} @searchTags;
 				$albumId =~ s/album_id:// if $albumId;
-my ($workId) = grep {/work_id:/} @searchTags;
-$workId =~ s/work_id:// if $workId;
+				my ($workId) = grep {/work_id:/} @searchTags;
+				$workId =~ s/work_id:// if $workId;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId } ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, track_count => scalar @$items} ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;

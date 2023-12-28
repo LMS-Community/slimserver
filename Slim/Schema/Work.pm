@@ -20,7 +20,7 @@ use Slim::Utils::Strings qw(string);
 	$class->set_primary_key('id');
 
 	$class->has_many('tracks' => 'Slim::Schema::Track' => 'work');
-	$class->has_many('contributors' => 'Slim::Schema::Contributor' => 'id');
+	$class->belongs_to('composer' => 'Slim::Schema::Composer');
 
 	$class->resultset_class('Slim::Schema::ResultSet::Work');
 }
@@ -29,7 +29,6 @@ use Slim::Utils::Strings qw(string);
 sub url {
 	my $self = shift;
 
-#	return sprintf('db:work.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($self->title), URI::Escape::uri_escape_utf8($self->contributor->name))
 	return sprintf('db:work.id=%s', Slim::Utils::Misc::escape($self->id));
 }
 

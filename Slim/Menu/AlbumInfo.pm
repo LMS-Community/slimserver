@@ -343,13 +343,16 @@ sub infoYear {
 }
 
 sub infoAlbum {
+	# if the album listing is filtered by anything such that we're not showing all tracks, include a link to the full album in the header
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
+#$log->error("DK \$filter=" . Data::Dump::dump($filter));
+#$log->error("DK track count=" . Data::Dump::dump($album->tracks->count));
 
 	my $item;
 	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-
 	my $albumName = $album->title;
-	if ( my $work = $filter->{work_id} && $albumName) {
+	my $totalAlbumTracks = $album->tracks->count;
+	if ( $albumName && $totalAlbumTracks gt $filter->{track_count} ) {
 
 		my %actions = (
 			allAvailableActionsDefined => 1,

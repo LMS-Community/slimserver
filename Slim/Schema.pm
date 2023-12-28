@@ -184,6 +184,7 @@ sub init {
 		Year
 		Progress
 		Work
+		Composer
 	/);
 	$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
 
@@ -515,8 +516,6 @@ A shortcut for resultset()
 sub rs {
 	my $class   = shift;
 	my $rsClass = ucfirst shift;
-$log->error("DK \$class=$class");
-$log->error("DK \$rsClass=$rsClass");
 	if ( !exists $RS_CACHE{$rsClass} ) {
 		$RS_CACHE{$rsClass} = $class->resultset($rsClass);
 	}
@@ -533,14 +532,10 @@ A shortcut for resultset($class)->search($cond, $attr)
 =cut
 
 sub search {
-$log->error("DK " . Data::Dump::dump(@_));
 	my $class   = shift;
 	my $rsClass = shift;
 
-$log->error("DK $class ->rs(ucfirst($rsClass))->search(" . Data::Dump::dump(@_) . ")");
-	my $ret = $class->rs(ucfirst($rsClass))->search(@_);
-$log->error("DK \$ret=" . Data::Dump::dump($ret));
-return $ret;
+	return $class->rs(ucfirst($rsClass))->search(@_);
 }
 
 =head2 single( $class, $cond )
@@ -878,17 +873,21 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
-				$query->{$key} = $value;
+				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' );
 			}
 		}
 
 		my $params;
+		$params->{prefetch} = [];
 		foreach (keys %$query) {
 			if (/^(.*)\./) {
-				$params->{prefetch} = $1;
+				push @{ $params->{prefetch} }, $1 unless ( $1 eq 'composer' || $1 eq 'work' );
 			}
 		}
 
+$log->error("DK \$class=" . Data::Dump::dump($class));
+$log->error("DK \$query=" . Data::Dump::dump($query));
+$log->error("DK \$params=" . Data::Dump::dump($params));
 		return Slim::Schema->search(ucfirst($class), $query, $params)->first;
 	}
 }

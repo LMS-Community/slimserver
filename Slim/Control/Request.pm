@@ -869,9 +869,6 @@ sub executeRequest {
 		(blessed($client) ? $client->id() : undef),
 		$parrayref
 	);
-#logError("DK \$request=" . Data::Dump::dump($request));
-#logError("DK \$callbackf=" . Data::Dump::dump($callbackf));
-#logError("DK \$callbackargs=" . Data::Dump::dump($callbackargs));
 
 	if (defined $request && $request->isStatusDispatchable()) {
 
@@ -1876,9 +1873,6 @@ sub execute {
 
 			push @notificationQueue, $self;
 		}
-#my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-#logError("While trying to run function coderef [$funcName]");
-#logError("DK \$self=" . Data::Dump::dump($self));
 
 		eval { &{$funcPtr}($self) };
 
