@@ -19,6 +19,8 @@ sub _releases {
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
+	my $menuMode   = $args->{'params'}->{'menu_mode'};
+	my $menuRoles  = $args->{'params'}->{'menu_roles'};
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -47,23 +49,43 @@ sub _releases {
 
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
-	# get the artist's albums list to create releses sub-items etc.
-	my $requestRef = [ $query, 0, MAX_ALBUMS, @searchTags ];
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
+	# get the artist's albums list to create releases sub-items etc.
+	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
 	$request->execute();
 
 	$log->error($request->getStatusText()) if $request->isStatusError();
-
-	my $albums = $request->getResult('albums_loop');
 
 	# compile list of release types and contributions
 	my %releaseTypes;
 	my %contributions;
 	my %isPrimaryArtist;
 	my %albumList;
-	foreach (@$albums) {
+
+	my %composerGenres = map {
+		$_ => 1
+	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
+
+	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
+	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
+
+	foreach (@{ $request->getResult('albums_loop') || [] }) {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
+
+		my $genreMatch = undef;
+		if ( $checkComposerGenres ) {
+			my $request = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $_->{id} ] );
+			$request->execute();
+
+			if ($request->isStatusError()) {
+				$log->error($request->getStatusText());
+			}
+			else {
+				foreach my $genre (@{$request->getResult('genres_loop')}) {
+					last if $genreMatch = $composerGenres{uc($genre->{genre})};
+				}
+			}
+		}
 
 		my $addToMainReleases = sub {
 			$isPrimaryArtist{$_->{id}}++;
@@ -102,6 +124,10 @@ sub _releases {
 			# don't list as trackartist, if the artist is albumartist, too
 			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 
+			if ( $role eq 'COMPOSER' && ( $genreMatch || $allComposers ) ) {
+				$role = 'COMPOSERALBUM';
+			}
+
 			$contributions{$role} ||= [];
 			push @{$contributions{$role}}, $_->{id};
 		}
@@ -133,12 +159,11 @@ sub _releases {
 		}
 	}
 
-	$searchTags = [
-		"artist_id:$artistId",
-		"library_id:$library_id",
-	];
+	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+	}
 
-	if (delete $contributions{COMPOSER}) {
+	if (my $albumIds = delete $contributions{COMPOSER}) {
 		push @items, {
 			name        => cstring($client, 'COMPOSITIONS'),
 			image       => 'html/images/playlists.png',
@@ -146,12 +171,12 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
+			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
 		};
 	}
 
-	if (my $albums = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albums)] } ]);
+	if (my $albumIds = delete $contributions{TRACKARTIST}) {
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {

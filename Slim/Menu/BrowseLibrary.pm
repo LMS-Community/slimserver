@@ -526,7 +526,6 @@ sub _registerBaseNodes {
 			name         => 'BROWSE_BY_ALL_ARTISTS',
 			params       => {
 				mode => 'artists',
-				role_id => join ',', Slim::Schema::Contributor->contributorRoles(),
 			},
 			feed         => \&_artists,
 			jiveIcon     => 'html/images/artists.png',
@@ -1054,6 +1053,8 @@ sub _artists {
 	my $search     = $pt->{'search'};
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
+	my $mode = $args->{'params'}->{'mode'};
+	my $roleIdParam = $args->{'params'}->{'role_id'};
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1063,26 +1064,30 @@ sub _artists {
 	my @ptSearchTags = @searchTags;
 	@ptSearchTags = grep {$_ !~ /^genre_id:/} @ptSearchTags if _getPref('noGenreFilter', $remote_library);
 
-	if ( _getPref('noRoleFilter', $remote_library) && (my (@roles) = grep /^role_id:/, @ptSearchTags) ) {
-		@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags;
+	if ( _getPref('noRoleFilter', $remote_library) ) {
+		@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags if $mode && $mode eq 'artists';
+	} else {
 
-		# "no role filter" means the default role list _plus_ what we specifically want
+		# if single artist list, filter is the default role list _plus_ what we specifically want
 		if ( _getPref('useUnifiedArtistsList', $remote_library) ) {
+			my @roles = grep {$_ =~ /^role_id:/} @ptSearchTags;
 			@roles = map {
 				/role_id:(.*)/;
 				Slim::Schema::Contributor->roleToType($1);
-			} @roles;
+			} @roles  if @roles;
 
-			push @roles, 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST';
+			if ( $mode && $mode eq 'artists' ) {
+				push @roles, 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST';
 
-			# Loop through each pref to see if the user wants to show that contributor role.
-			foreach (Slim::Schema::Contributor->contributorRoles) {
-				if (_getPref(lc($_) . 'InArtists', $remote_library)) {
-					push @roles, $_;
+				# Loop through each pref to see if the user wants to show that contributor role.
+				foreach (Slim::Schema::Contributor->contributorRoles) {
+					if (_getPref(lc($_) . 'InArtists', $remote_library)) {
+						push @roles, $_;
+					}
 				}
-			}
 
-			push @ptSearchTags, 'role_id:' . join(',', @roles);
+				push @ptSearchTags, 'role_id:' . join(',', @roles);
+			}
 		}
 	}
 
@@ -1097,6 +1102,10 @@ sub _artists {
 	else {
 		push @searchTags, 'include_online_only_artists:1'
 	}
+
+	#For use down the line in _releases
+	push @ptSearchTags, 'menu_mode:' . $mode if $mode;
+	push @ptSearchTags, 'menu_roles:' . $roleIdParam if $roleIdParam;
 
 	_generic($client, $callback, $args, 'artists',
 		[@searchTags, ($search ? 'search:' . $search : undef)],
@@ -1391,7 +1400,7 @@ sub _albumsOrReleases {
 
 	# We only display the grouped albums if:
 	# 1. the feature is enabled
-	if ($prefs->get('groupArtistAlbumsByReleaseType')
+	if (!$prefs->get('ignoreReleaseTypes') && $prefs->get('groupArtistAlbumsByReleaseType')
 		# 2. a specific artist is requested
 		&& (grep /^artist_id:/, @searchTags)
 		# 3. any one of the following is true:
