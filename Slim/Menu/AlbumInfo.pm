@@ -345,8 +345,6 @@ sub infoYear {
 sub infoAlbum {
 	# if the album listing is filtered by anything such that we're not showing all tracks, include a link to the full album in the header
 	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
-#$log->error("DK \$filter=" . Data::Dump::dump($filter));
-#$log->error("DK track count=" . Data::Dump::dump($album->tracks->count));
 
 	my $item;
 	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
@@ -483,11 +481,6 @@ sub playAlbum {
 
 	return undef if !blessed($client);
 
-#$log->error("DK \$url=" . Data::Dump::dump($url));
-#$log->error("DK \$album=" . Data::Dump::dump($album));
-#$log->error("DK \$remoteMeta=" . Data::Dump::dump($remoteMeta));
-#$log->error("DK \$tags=" . Data::Dump::dump($tags));
-#$log->error("DK \$filter=" . Data::Dump::dump($filter));
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],

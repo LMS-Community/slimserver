@@ -4500,7 +4500,6 @@ sub worksQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
 	my $artistID    = $request->getParam('artist_id');
-#$log->error("DK _params=" . Data::Dump::dump($request->{_params}));
 
 	# get them all by default
 	my $where = {};
@@ -5477,8 +5476,6 @@ Returns arrayref of hashes.
 =cut
 
 sub _getTagDataForTracks {
-#$log->error("DK " . Data::Dump::dump(@_));
-#logBacktrace("DK ");
 	my ( $tags, $args ) = @_;
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 

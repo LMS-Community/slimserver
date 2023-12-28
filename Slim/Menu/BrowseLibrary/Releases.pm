@@ -186,29 +186,20 @@ sub _releases {
 
 	# Add item for Classical Works if the artist has any.
 	main::INFOLOG && $log->is_info && $log->info("works ($index, $quantity): tags ->", join(', ', @searchTags));
-#	my $requestRef = [ 'works', 0, MAX_ALBUMS, @$searchTags, "role_id:COMPOSER" ];
 	my $requestRef = [ 'works', 0, MAX_ALBUMS, @$searchTags ];
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
 	$request->execute();
 	$log->error($request->getStatusText()) if $request->isStatusError();
-	my $works = $request->getResult('works_loop');
-#$log->error("DK \$works=" . Data::Dump::dump($works));
 
-#$log->error("DK items=" . scalar @items);
 	push @items, {
 		name        => cstring($client, 'WORKS'),
 		image       => 'html/images/playlists.png',
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_works,
-#		passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER"] } ],
 		passthrough => [ { searchTags => [@$searchTags, "wantMetadata:1", "wantIndex:1"] } ],
 	} if ( $request->getResult('count') gt 1 || ( scalar @items && $request->getResult('count') ) );
 
-#$log->error("DK works count=" . $request->getResult('count'));
-#$log->error("DK \@\$searchTags=" . Data::Dump::dump(@$searchTags));
-#$log->error("DK \$pt=" . Data::Dump::dump($pt));
-#$log->error("DK");
 	# if there's only one category, display it directly
 	if (scalar @items == 1 && (my $handler = $items[0]->{url})) {
 		$handler->($client, $callback, $args, $pt);

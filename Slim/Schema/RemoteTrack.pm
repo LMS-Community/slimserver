@@ -55,7 +55,7 @@ my @allAttributes = (qw(
 	dlna_profile
 	stash
 	error
-	
+
 	work
 ));
 

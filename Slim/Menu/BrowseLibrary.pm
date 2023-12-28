@@ -1411,7 +1411,6 @@ my %mapArtistOrders = (
 sub _albumsOrReleases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-#$log->error("DK \@searchTags=" . Data::Dump::dump(@searchTags));
 
 	# We only display the grouped albums if:
 	# 1. the feature is enabled
@@ -1720,8 +1719,6 @@ sub _albums {
 
 sub _tracks {
 	my ($client, $callback, $args, $pt) = @_;
-#$log->error("DK \$args=" . Data::Dump::dump($args));
-#$log->error("DK \$pt=" . Data::Dump::dump($pt));
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'} || 'sort:albumtrack';
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';

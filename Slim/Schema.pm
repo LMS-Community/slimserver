@@ -885,9 +885,6 @@ sub _objForDbUrl {
 			}
 		}
 
-$log->error("DK \$class=" . Data::Dump::dump($class));
-$log->error("DK \$query=" . Data::Dump::dump($query));
-$log->error("DK \$params=" . Data::Dump::dump($params));
 		return Slim::Schema->search(ucfirst($class), $query, $params)->first;
 	}
 }

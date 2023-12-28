@@ -62,11 +62,11 @@ sub displayAsHTML {
 # delete the work.
 sub rescan {
 	my ( $class, @ids ) = @_;
-	
+
 	my $dbh = Slim::Schema->dbh;
-	
+
 	my $log = logger('scan.scanner');
-	
+
 	for my $id ( @ids ) {
 		my $sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(*) FROM tracks WHERE work = ?
@@ -74,9 +74,9 @@ sub rescan {
 		$sth->execute($id);
 		my ($count) = $sth->fetchrow_array;
 		$sth->finish;
-	
+
 		if ( !$count ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused work: $id");	
+			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused work: $id");
 			$dbh->do( "DELETE FROM works WHERE id = ?", undef, $id );
 		}
 	}
