@@ -354,6 +354,10 @@ sub parseMetadata {
 	# 2-byte length/string pairs.
 	elsif ( $metadata =~ /^Ogg(.+)/s ) {
 		my $comments = $1;
+
+		# Bug 15896, a stream had CRLF in the metadata (no conflict with utf-8)
+		$comments =~ s/\s*[\r\n]+\s*/; /g;
+
 		my $meta = {};
 		while ( $comments ) {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
@@ -361,18 +365,15 @@ sub parseMetadata {
 
 			main::DEBUGLOG && $directlog->is_debug && $directlog->debug("Ogg comment: $value");
 
-			# Bug 15896, a stream had CRLF in the metadata
-			$metadata =~ s/\s*[\r\n]+\s*/; /g;
-
 			# Look for artist/title/album
 			if ( $value =~ /ARTIST=(.+)/i ) {
-				$meta->{artist} = $1;
+				$meta->{artist} = Slim::Utils::Unicode::utf8decode_guess($1);
 			}
 			elsif ( $value =~ /ALBUM=(.+)/i ) {
-				$meta->{album} = $1;
+				$meta->{album} = Slim::Utils::Unicode::utf8decode_guess($1);
 			}
 			elsif ( $value =~ /TITLE=(.+)/i ) {
-				$meta->{title} = $1;
+				$meta->{title} = Slim::Utils::Unicode::utf8decode_guess($1);
 			}
 		}
 
