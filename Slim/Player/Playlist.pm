@@ -266,7 +266,7 @@ sub addTracks {
 sub _insert_done {
 	my ($client, $size, $callbackf, $callbackargs) = @_;
 
-	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	my $playlistIndex = Slim::Player::Source::playingSongIndex($client) + 1;
 	my $moveFrom = count($client) - $size;
 
 	if (shuffle($client)) {
