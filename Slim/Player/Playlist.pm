@@ -457,6 +457,7 @@ sub removeMultipleTracks {
 
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
+	my $flush = 0;
 
 	my $playingTrackPos   = ${shuffleList($client)}[Slim::Player::Source::playingSongIndex($client)];
 	my $streamingTrackPos = ${shuffleList($client)}[Slim::Player::Source::streamingSongIndex($client)];
@@ -484,7 +485,7 @@ sub removeMultipleTracks {
 
 			} elsif ($streamingTrackPos == $oldCount) {
 
-				Slim::Player::Source::flushStreamingSong($client);
+				$flush = 1;
 			}
 
 		} else {
@@ -550,6 +551,8 @@ sub removeMultipleTracks {
 		for my $song (@{$queue}) {
 			$song->index($oldToNewShuffled{$song->index()} || 0);
 		}
+		
+		Slim::Player::Source::flushStreamingSong($client) if $flush;
 	}
 
 	refreshPlaylist($client);
