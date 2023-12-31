@@ -277,6 +277,11 @@ sub _insert_done {
 		} else {
 			push @{$client->shufflelist}, @reshuffled;
 		}
+		# need to flush if we are changing streaming song
+		if (Slim::Player::Source::streamingSongIndex($client) == $playlistIndex % count($client)) {
+			main::INFOLOG && $log->info("add+replace streaming (not playing) track");
+			Slim::Player::Source::flushStreamingSong($client);			
+		}
 	} else {
 		if (count($client) != $size) {
 			moveSong($client, $moveFrom, $playlistIndex, $size);
@@ -624,7 +629,7 @@ sub moveSong {
 			if (($playingIndex != $streamingIndex) &&
 				(($streamingIndex == $src) || ($streamingIndex == $dest) ||
 				 ($playingIndex == $src) || ($playingIndex == $dest))) {
-				$log->info("moving a track right after playing one but it has been fully streamed");
+				$log->info("move+replace streaming (not playing) track");
 				Slim::Player::Source::flushStreamingSong($client);
 			}
 
