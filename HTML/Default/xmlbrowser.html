@@ -454,7 +454,7 @@ useSpecialExt="-browse" %]
 	[% IF item.simpleAlbumLink %]
 		<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% playerURI %]/" class="browseItemLink">
 	[% ELSIF item.weblink %]
-		<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %] class="link">
+		<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %] class="browseItemLink">
 	[% ELSIF item.link %]
 		<a href="[% webroot %][% item.link %]&amp;player=[% playerURI %]" target="_blank">
 	[% ELSIF item.type == 'redirect' %]

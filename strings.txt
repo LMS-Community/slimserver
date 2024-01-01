@@ -7283,11 +7283,19 @@ SETUP_CHECKVERSION_0
 	SV	Sök inte automatiskt efter programuppdateringar
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
+SETUP_CHECKVERSION_HOURLY
+	CS	Hodinově
+	DE	Stündlich
+	EN	Hourly
+	FR	Toutes les heures
+	NL	Elk uur
+	SV	Varje timme
+
 SETUP_CHECKVERSION_DAILY
 	CS	Denně
 	DE	Täglich
 	EN	Daily
-	FR	Tous les jours
+	FR	Quotidien
 	NL	Dagelijks
 	SV	Daglig
 
@@ -7329,7 +7337,7 @@ SETUP_AUTO_DOWNLOAD_DESC
 	EN	Automatically download Logitech Media Server updates when they're available. You'll then be prompted to install the update as soon as the download has finished.
 	ES	Descargar actualizaciones de Logitech Media Server automáticamente cuando estén disponibles. Se le indicará que instale la actualización en cuanto haya acabado la descarga.
 	FI	Lataa Logitech Media Serverin päivitykset automaattisesti, kun ne ovat saatavilla. Ohjelma kehottaa asentamaan päivityksen heti, kun se on ladattu.
-	FR	Télécharger automatiquement les mises à jour du Logitech Media Server disponibles. Vous serez ensuite invité à installer la mises à jour à la fin du téléchargement.
+	FR	Télécharger automatiquement les mises à jour du Logitech Media Server disponibles. Vous serez ensuite invité à installer la mise à jour à la fin du téléchargement.
 	IT	Scarica automaticamente gli aggiornamenti a Logitech Media Server quando sono disponibili. Al termine del download verrà chiesto di installare l'aggiornamento.
 	NL	Beschikbare updates voor Logitech Media Server automatisch downloaden. Je wordt dan gevraagd de updates te installeren zodra het downloaden is voltooid.
 	NO	Last ned Logitech Media Server-oppdateringer automatisk når de blir tilgjengelige. Du blir bedt om å installere oppdateringen når nedlastingen er fullført.
@@ -7359,7 +7367,7 @@ SETUP_AUTO_DOWNLOAD_1
 	EN	Automatically download updates when they're available.
 	ES	Descargar actualizaciones automáticamente cuando estén disponibles.
 	FI	Lataa päivitykset automaattisesti, kun ne ovat saatavilla.
-	FR	Télécharger automatiquement les mises à jour disponibles
+	FR	Télécharger automatiquement les mises à jour disponibles.
 	IT	Scarica automaticamente gli aggiornamenti quando sono disponibili.
 	NL	Updates automatisch downloaden
 	NO	Last ned oppdateringer automatisk når de blir tilgjengelige.
@@ -7828,7 +7836,7 @@ SETUP_NOROLEFILTER_DESC
 	CS	Při procházení interpretů lze provádět filtrování, aby se zobrazovala pouze alba a skladby, které odpovídají vybrané roli (např. ALBUMARTIST, COMPOSER atd.).
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
-	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc...)
+	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc.).
 	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER, enz.).
 	NO	Når du blar gjennom artister kan du filtrere ut og vise bare album og spor som stemmer overens med den valgte rollen (ALBUMARTIST, COMPOSER osv.).
 	PL	Filtrowanie może zostać włączone podczas przeglądania listy wykonawców, aby wyświetlić tylko te albumy i utwory, które są zgodne z wybraną rolą kontrybutora (np. ALBUMARTIST, COMPOSER itp.).
@@ -9263,35 +9271,35 @@ SETUP_RELEASE_TYPES_DESC
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	EN	Composer album options
-	FR	Options d'album du compositeur
+	FR	Regroupement des albums d'un compositeur
 	DE	Optionen für Komponistenalben
 	NL	Componist albumopties
 	ES	Opciones de álbum compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
-	FR	Créez un groupe d'albums de compositeur - toujours, jamais ou pour certains genres. Si, en raison de ce paramètre, certains rôles de compositeur ne sont pas inclus dans le groupe Albums du compositeur, ils apparaîtront à la place dans un groupe « Compositions » distinct, qui répertoriera les pistes individuelles, pas les albums. La liste des genres doit être séparée par des virgules.
+	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
 	NL	Maak een Composer Albums-groep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep Componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
-	FR	Ne pas créer de groupe d'albums de compositeur
+	FR	Ne pas créer de groupe "Albums du compositeur"
 	DE	Erstellen Sie keine Komponistenalbengruppe
 	NL	Maak geen Composer Album-groep
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
-	FR	Créez toujours un groupe d'album de compositeur
+	FR	Créer toujours un groupe "Albums du compositeur"
 	DE	Erstellen Sie immer eine Komponistenalbengruppe
 	NL	Maak altijd een Composer Album-groep
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
-	FR	Créez un groupe d'albums de compositeur pour ces genres :
+	FR	Créer un groupe "Albums du compositeur" pour ces genres :
 	DE	Erstellen Sie eine Komponistenalbengruppe für diese Stilrichtungen:
 	NL	Maak een Composer Album-groep voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
@@ -11628,7 +11636,7 @@ COMPOSERALBUMS
 	EN	Composer Albums
 	ES	Compositor Álbumes
 	FI	Säveltäjä Levyt
-	FR	Compositeur Albums
+	FR	Albums du compositeur
 	HE	מלחיןאלבומים
 	IT	Compositore Album
 	JA	作曲家 アルバム
@@ -23811,7 +23819,7 @@ CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
 	EN	ESET Antivirus or Smart Security can cause problems starting Logitech Media Server. If you experience failure starting Logitech Media Server, then make sure you have unchecked port filtering for SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	ES	ESET Antivirus o Smart Security pueden producir problemas a la hora de iniciar Logitech Media Server. Si no puede iniciar Logitech Media Server, asegúrese de no tener seleccionada la opción de filtrado de puertos para SqueezeSvr.exe en ESET: Configuración avanzada/Antivirus y antiespía/Protección del tráfico de Internet/HTTP, HTTPS/Navegadores de Internet.
 	FI	ESET Antivirus tai Smart Security saattavat aiheuttaa ongelmia Logitech Media Serverin käynnistyksessä. Jos Logitech Media Serverin käynnistys ei onnistu, varmista, että olet poistanut portinsuodatuksen valinnan SqueezeboxSvr.exe-tiedostolle kohteessa ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	FR	L'antivirus ESET ou Smart Security peut empêcher le démarrage du Logitech Media Server. En cas d'échec du démarrage du Logitech Media Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeSvr.exe sous ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
+	FR	L'antivirus ESET ou Smart Security peut empêcher le démarrage du Logitech Media Server. En cas d'échec du démarrage du Logitech Media Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeSvr.exe sous ESET Advanced Settings/Antivirus et antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Logitech Media Server. Se Logitech Media Server non si avvia, deselezionare il filtraggio delle porte per SqueezeSvr.exe in Impostazioni avanzate/Antivirus e antispyware/Protezione accesso Web/HTTP di ESET e nei browser HTTPS/Web.
 	NL	ESET Antivirus of Smart Security kan problemen veroorzaken bij het opstarten van Logitech Media Server. Controleer in dit geval of je het filteren van poorten hebt uitgeschakeld voor SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	NO	ESET Antivirus og Smart Security kan skape problemer med oppstarten av Logitech Media Server. Hvis du ikke får til å starte Logitech Media Server, må du sikre at du ikke har merket av for portfiltrering for SqueezeSvr.exe i ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
@@ -24217,7 +24225,7 @@ HOWTO_HOME
 	EN	Facing your Squeezebox, press the LEFT arrow on the remote until you see the Now Playing option.
 	ES	De cara a Squeezebox, pulse la flecha IZQUIERDA del mando a distancia hasta que vea la opción Reproduciendo.
 	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen vasenta nuolta, kunnes Nyt soi -ruutu tulee näyttöön.
-	FR	Appuyez sur la flèche gauche de la télécommande en la pointant vers la Squeezebox, jusqu'à ce que l'option Lecture s'affiche.
+	FR	Appuyez sur la flèche GAUCHE de la télécommande en la pointant vers la Squeezebox, jusqu'à ce que l'option Lecture s'affiche.
 	IT	Puntare il telecomando verso lo Squeezebox e premere freccia SINISTRA fino a quando non viene visualizzata l'opzione Riproduzione in corso.
 	NL	Richt de afstandsbediening naar de Squeezebox, en druk op de pijl naar LINKS tot je de optie Speelt nu ziet.
 	NO	Gå til VENSTRE på fjernkontrollen mens du står vendt mot Squeezebox, og hold knappen nede til du ser alternativet Spiller av nå.
@@ -24232,7 +24240,7 @@ HOWTO_HOME_BOOM
 	EN	Facing your Squeezebox, press HOME on the remote.
 	ES	De cara a Squeezebox, pulse HOME en el mando a distancia.
 	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen kotipainiketta.
-	FR	Appuyez sur Home sur la télécommande en la pointant vers la Squeezebox.
+	FR	Appuyez sur HOME sur la télécommande en la pointant vers la Squeezebox.
 	IT	Puntare il telecomando verso lo Squeezebox e premere HOME.
 	NL	Richt de afstandsbediening op de Squeezebox en druk op HOME.
 	NO	Trykk på HOME på fjernkontrollen mens du står vendt mot Squeezebox.
@@ -24247,7 +24255,7 @@ HOWTO_HOME_CONTROLLER
 	EN	Press HOME on the remote.
 	ES	Pulse HOME en el mando a distancia.
 	FI	Paina kaukosäätimen kotipainiketta.
-	FR	Appuyez sur Home sur la télécommande.
+	FR	Appuyez sur HOME sur la télécommande.
 	IT	Premere HOME sul telecomando.
 	NL	Druk op HOME op de afstandsbediening.
 	NO	Trykk på HOME på fjernkontrollen.
@@ -24262,7 +24270,7 @@ HOWTO_DOWN
 	EN	Press DOWN on the remote to scroll to Internet Radio, and press RIGHT to select.
 	ES	Pulse ABAJO en el mando a distancia para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
 	FI	Siirry nettiradioon kaukosäätimen alapainikkeella ja valitse kanava oikealla painikkeella.
-	FR	Appuyez sur bas pour accéder aux radios Internet puis sur le bouton droit pour effectuer la sélection.
+	FR	Appuyez sur BAS pour accéder aux radios Internet puis sur le bouton DROIT pour effectuer la sélection.
 	IT	Premere la freccia GIÙ sul telecomando per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
 	NL	Druk OMLAAG op de afstandsbediening om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
 	NO	Gå NED på fjernkontrollen for å gå til Internett-radio, og gå til HØYRE for å velge.
@@ -24277,7 +24285,7 @@ HOWTO_DOWN_BOOM
 	EN	Press DOWN on the remote (or spin the knob to the right) to scroll to Internet Radio, and press RIGHT to select.
 	ES	Pulse ABAJO en el mando a distancia (o gire la rueda central a la derecha) para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
 	FI	Siirry nettiradioon kaukosäätimen alapainikkeella (tai pyörittämällä kiekkoa oikealle) ja valitse se oikealla painikkeella.
-	FR	Appuyez sur Bas ou tournez la molette vers la droite pour faire défiler vers les radios Internet, puis appuyez sur le bouton droit pour effectuer la sélection.
+	FR	Appuyez sur BAS ou tournez la molette vers la droite pour faire défiler vers les radios Internet, puis appuyez sur le bouton DROIT pour effectuer la sélection.
 	IT	Premere la freccia GIÙ sul telecomando (o spingere il pulsante centrale verso destra) per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
 	NL	Druk OMLAAG op de afstandsbediening (of draai de regelaar naar rechts) om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
 	NO	Gå ned på fjernkontrollen (eller rull mot høyre med midtknappen) for å gå til Internett-radio, og gå til høyre  for å velge.
@@ -24354,7 +24362,7 @@ HOWTO_INTERNET_RADIO
 	EN	Scroll to "Best of Internet Radio" and press RIGHT.
 	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse DERECHA.
 	FI	Siirry kohtaan "internet-radion parhaat" ja paina oikeaa painiketta.
-	FR	Faites défiler vers Le meilleur des radios Internet et appuyez sur le bouton droit.
+	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton droit.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere DESTRA.
 	NL	Scrol naar 'De beste internetradio' en druk RECHTS.
 	NO	Gå til "Beste stasjoner" og gå til høyre.
@@ -24370,7 +24378,7 @@ HOWTO_INTERNET_RADIO_CONTROLLER
 	EN_GB	Scroll to "Best of Internet Radio" and press the centre button.
 	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse el botón central.
 	FI	Siirry internet-radion parhaisiin ja paina keskipainiketta.
-	FR	Faites défiler vers Le meilleur des radios Internet et appuyez sur le bouton central.
+	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton central.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere il pulsante centrale.
 	NL	Scrol naar 'De beste internetradio' en druk op de middelste knop.
 	NO	Gå til "Beste stasjoner" og trykk på midtknappen.
@@ -24415,7 +24423,7 @@ HOWTO_PAUSE
 	EN	To pause the track, tap PAUSE. To stop the track, press and hold the PAUSE button.
 	ES	Para poner la pista en pausa, toque PAUSE. Para detener la pista, mantenga pulsado el botón PAUSE.
 	FI	Voit keskeyttää raidan toiston napauttamalla taukopainiketta. Voit lopettaa raidan toiston kokonaan pitämällä taukopainikkeen pohjassa.
-	FR	Appuyez sur Pause pour mettre la lecture en pause. Pour arrêter la lecture, maintenez le bouton Pause enfoncé.
+	FR	Appuyez sur PAUSE pour mettre la lecture en pause. Pour arrêter la lecture, maintenez le bouton PAUSE enfoncé.
 	IT	Per sospendere la riproduzione del brano, premere leggermente il pulsante di PAUSA. Per interrompere il brano, tenere premuto tale pulsante.
 	NL	Druk op PAUSE om het nummer te pauzeren. Houd de knop PAUSE ingedrukt om het nummer te stoppen.
 	NO	Hvis du vil sette sporet på pause, trykker du lett på PAUSE. Hvis du vil stoppe sporet, holder du nede PAUSE-knappen.
@@ -24552,7 +24560,7 @@ DECODE_ERROR_200
 	EN	WMA superframes not supported
 	ES	No se admiten supercuadros WMA
 	FI	WMA-superframe-kehyksiä ei tueta
-	FR	Superframes WMA non prises en charge
+	FR	Format Superframes WMA non prises en charge
 	IT	Superframe WMA non supportati
 	NL	WMA-superframes worden niet ondersteund
 	NO	WMA superframes støttes ikke
