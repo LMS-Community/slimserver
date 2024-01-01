@@ -147,8 +147,8 @@ Flush =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PLAYING
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PAUSED
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PLAYING
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PAUSED
 ],
 Skip  => 
 [	[	\&_StopGetNext,	\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
