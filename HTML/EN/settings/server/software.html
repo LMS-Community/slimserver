@@ -5,17 +5,18 @@
 
 			<option [% IF prefs.pref_checkVersion %]selected [% END %]value="1">[% 'SETUP_CHECKVERSION_1' | string %]</option>
 			<option [% IF NOT prefs.pref_checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
-		
+
 		</select>
 
 		<br/>
-		
+
 		<select class="stdedit" name="pref_checkVersionInterval" id="checkVersionInterval">
 
-			<option value="86400">[% 'SETUP_CHECKVERSION_DAILY' | string %]</option>
+			<option [% IF prefs.pref_checkVersionInterval == 3600 %]selected [% END %]value="3600">[% 'SETUP_CHECKVERSION_HOURLY' | string %]</option>
+			<option [% IF prefs.pref_checkVersionInterval > 3600 && prefs.pref_checkVersionInterval < 604800 %]selected [% END %]value="86400">[% 'SETUP_CHECKVERSION_DAILY' | string %]</option>
 			<option [% IF prefs.pref_checkVersionInterval == 604800 %]selected [% END %]value="604800">[% 'SETUP_CHECKVERSION_WEEKLY' | string %]</option>
 			<option [% IF prefs.pref_checkVersionInterval == 2592000 %]selected [% END %]value="2592000">[% 'SETUP_CHECKVERSION_MONTHLY' | string %]</option>
-		
+
 		</select>
 	[% END %]
 
@@ -26,11 +27,11 @@
 
 			<option [% IF prefs.pref_autoDownloadUpdate %]selected [% END %]value="1">[% 'SETUP_AUTO_DOWNLOAD_1' | string %]</option>
 			<option [% IF NOT prefs.pref_autoDownloadUpdate %]selected [% END %]value="0">[% 'SETUP_AUTO_DOWNLOAD_0' | string %]</option>
-		
+
 		</select>
 	[% END %]
 	[% END %]
-	
+
 	[% IF !runningFromSource %]
 	[% WRAPPER setting title="" desc="" %]
 		<input type="submit" name="checkForUpdateNow" class="stdclick" value="[% "SETUP_CHECK_NOW" | string %]"/>

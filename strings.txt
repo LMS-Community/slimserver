@@ -7283,6 +7283,14 @@ SETUP_CHECKVERSION_0
 	SV	Sök inte automatiskt efter programuppdateringar
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
+SETUP_CHECKVERSION_HOURLY
+	CS	Hodinově
+	DE	Stündlich
+	EN	Hourly
+	FR	Toutes les heures
+	NL	Elk uur
+	SV	Varje timme
+
 SETUP_CHECKVERSION_DAILY
 	CS	Denně
 	DE	Täglich
