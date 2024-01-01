@@ -13441,6 +13441,9 @@ BROWSE_WORKS
 	EN	Browse Works
 
 WORKS
+	EN	Works
+
+WORKS_CLASSICAL
 	EN	Classical Works
 
 BROWSE_YEARS

@@ -724,7 +724,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -880,8 +880,6 @@ sub _generic {
 			$result->{total} = 1;
 		}
 
-		#$log->error(Data::Dump::dump($result));
-
 		logBacktrace('no callback') unless $callback;
 
 		$callback->($result);
@@ -1033,6 +1031,13 @@ sub searchItems {
 			icon => 'html/images/search.png',
 			url  => $browseLibraryModeMap{'albums'},
 			cachesearch => 'ALBUMS',
+		},
+		{
+			type => 'search',
+			name => cstring($client, 'BROWSE_BY_WORK'),
+			icon => 'html/images/search.png',
+			url  => $browseLibraryModeMap{'works'},
+			cachesearch => 'WORKS',
 		},
 		{
 			type => 'search',

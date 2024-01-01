@@ -79,11 +79,6 @@ sub registerDefaultInfoProviders {
 #		func      => \&showArtwork,
 #	) );
 
-	$class->registerInfoProvider( album => (
-		after => 'top',
-		func  => \&infoAlbum,
-	) );
-
 	$class->registerInfoProvider( contributors => (
 		after => 'top',
 		func  => \&infoContributors,
@@ -92,6 +87,11 @@ sub registerDefaultInfoProviders {
 	$class->registerInfoProvider( year => (
 		after => 'top',
 		func  => \&infoYear,
+	) );
+
+	$class->registerInfoProvider( fullalbum => (
+		after => 'top',
+		func  => \&infoAlbum,
 	) );
 
 	$class->registerInfoProvider( duration => (
@@ -350,7 +350,8 @@ sub infoAlbum {
 	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	my $albumName = $album->title;
 	my $totalAlbumTracks = $album->tracks->count;
-	if ( $albumName && $totalAlbumTracks gt $filter->{track_count} ) {
+
+	if ( $albumName && $totalAlbumTracks > $filter->{track_count} ) {
 
 		my %actions = (
 			allAvailableActionsDefined => 1,

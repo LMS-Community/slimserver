@@ -278,6 +278,7 @@ sub albumsQuery {
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 	my $work	  = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
+	my $fromSearch    = $request->getParam('from_search');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
@@ -492,6 +493,17 @@ sub albumsQuery {
 		if (defined $year) {
 			push @{$w}, 'albums.year = ?';
 			push @{$p}, $year;
+		}
+
+		if (defined $fromSearch) {
+			# If we've got here from a search, we don't want to show the album unless it matches all the user's search criteria.
+			# This matters for a Works search: we've shown the user a Work because it matches their criteria, but it is possible
+			# that not all albums containing the Work match the all the criteria. (In this context, a work is a group of albums.)
+			$fromSearch =~ s/ /* /g;
+			$fromSearch .= '*';
+			$fromSearch = "type:album " . $fromSearch;
+			push @{$w}, "EXISTS (select * FROM fulltext WHERE SUBSTR(fulltext.id, 33)=albums.id AND fulltext MATCH ?)";
+			push @{$p}, $fromSearch;
 		}
 
 		if (defined $work) {
@@ -3009,7 +3021,6 @@ sub rescanprogressQuery {
 
 sub searchQuery {
 	my $request = shift;
-
 	# check this is the correct query
 	if ($request->isNotQuery([['search']])) {
 		$request->setStatusBadDispatch();
@@ -3022,7 +3033,6 @@ sub searchQuery {
 	my $query    = $request->getParam('term');
 	my $extended = $request->getParam('extended');
 	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id')) || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-
 	# transliterate umlauts and accented characters
 	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
 	$query = Slim::Utils::Text::matchCase($query);
@@ -3049,6 +3059,8 @@ sub searchQuery {
 		# contributors first
 		my $cols = "me.id, me.$name";
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
+		
+#		$cols .= "'$search' AS search " if $type eq 'work';
 
 		my $sql;
 
@@ -3078,6 +3090,13 @@ sub searchQuery {
 				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.id ';
 				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
 			}
+			elsif ( $type eq 'work') {
+#				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.composer ';
+#				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+				$sql .= 'JOIN tracks ON tracks.work = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+			}
+
 			elsif ( $type eq 'album' ) {
 				$sql .= 'JOIN tracks ON tracks.album = me.id ';
 				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
@@ -3183,6 +3202,7 @@ sub searchQuery {
 
 	$doSearch->('contributor', 'name');
 	$doSearch->('album', 'title', undef, undef, ['me.artwork']);
+	$doSearch->('work', 'title');
 	$doSearch->('genre', 'name');
 	$doSearch->('track', 'title', ['me.audio = ?'], ['1'], ['me.coverid', 'me.audio']);
 
@@ -4497,23 +4517,49 @@ sub worksQuery {
 	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
+	my $search        = $request->getParam('search');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
-	my $artistID    = $request->getParam('artist_id');
+	my $artistID      = $request->getParam('artist_id');
+	my $workID        = $request->getParam('work_id');
 
 	# get them all by default
 	my $where = {};
-
-	my $key = ($hasAlbums || $libraryID) ? 'tracks.work' : 'tracks.work';
+	my $w   = ["tracks.work IS NOT NULL"];
+	my $p   = [];
 
 	my $sql = "SELECT DISTINCT works.title, works.id, composer.name, composer.id FROM tracks 
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
 		JOIN contributors composer ON composer.id = composer_track.contributor 
-		JOIN contributor_track ON contributor_track.track = tracks.id
+		JOIN contributor_track ON contributor_track.track = tracks.id 
 		JOIN contributors ON contributors.id = contributor_track.contributor 
-		LEFT JOIN works ON works.id = tracks.work ";
-	my $w   = ["$key IS NOT NULL"];
-	my $p   = [];
+		JOIN works ON works.id = tracks.work ";
+
+	if (specified($search)) {
+		if ( Slim::Schema->canFulltextSearch ) {
+			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+				name   => 'worksSearch',
+				search => $search,
+				type   => 'work',
+			});
+			$sql .= "JOIN worksSearch ON works.id = worksSearch.id ";
+		} else {
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'works.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {
+				push @{$w}, 'works.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
+		}
+	}
+
+	if (defined $workID) {
+		push @{$w}, "works.id = ?";
+		push @{$p}, $workID;
+	}
 
 	if (defined $artistID) {
 		push @{$w}, "contributors.id = ?";
@@ -4589,6 +4635,7 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
 			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
+#			$request->addResultLoop($loopname, $chunkCount, 'from_search', $search) if $search;
 
 			$chunkCount++;
 

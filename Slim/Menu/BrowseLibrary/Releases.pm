@@ -192,7 +192,7 @@ sub _releases {
 	$log->error($request->getStatusText()) if $request->isStatusError();
 
 	push @items, {
-		name        => cstring($client, 'WORKS'),
+		name        => cstring($client, 'WORKS_CLASSICAL'),
 		image       => 'html/images/playlists.png',
 		type        => 'playlist',
 		playlist    => \&_tracks,

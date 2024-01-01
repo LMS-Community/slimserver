@@ -13,13 +13,19 @@ sub _works {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	my $search     = $args->{'search'} || $pt->{'search'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
 	if ($library_id && !grep /library_id/, @searchTags) {
-		push @searchTags, 'library_id:' . $library_id if $library_id;
+		push @searchTags, 'library_id:' . $library_id;
 	}
 
-	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'works', [ 'hasAlbums:1', @searchTags ],
+	if ($search && !grep /from_search/, @searchTags) {
+		push @searchTags, 'from_search:' . $search;
+	}
+
+	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'works',
+		[ 'hasAlbums:1', @searchTags, ($search ? 'search:' . $search : undef) ],
 		sub {
 			my $results = shift;
 			my $items = $results->{'works_loop'};
