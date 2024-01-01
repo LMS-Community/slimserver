@@ -25,6 +25,7 @@ use constant CHECK_INTERVAL => 24*60*60; # check for new plugins once a day
 
 my $log   = logger('server.plugins');
 my $prefs = preferences('plugin.state');
+my $serverprefs = preferences('server');
 
 my $downloadTo;
 my $extractTo;
@@ -33,7 +34,7 @@ my $downloading = 0;
 sub init {
 	my $class = shift;
 
-	if (my $cache = preferences('server')->get('cachedir')) {
+	if (my $cache = $serverprefs->get('cachedir')) {
 
 		$downloadTo = catdir($cache, 'DownloadedPlugins');
 		$extractTo  = catdir($cache, 'InstalledPlugins');
@@ -215,7 +216,7 @@ sub _installDownload {
 
 			$log->error("digest does not match $file - $name will not be installed: expected $digest, got " . $gotDigest);
 
-			if (main::DEBUGLOG && $log->is_debug && (my $cacheDir = preferences('server')->get('cachedir'))) {
+			if (main::DEBUGLOG && $log->is_debug && (my $cacheDir = $serverprefs->get('cachedir'))) {
 				require File::Basename;
 				require File::Copy;
 
@@ -275,7 +276,8 @@ sub periodicCheckForUpdates {
 
 	$class->checkForUpdates;
 
-	Slim::Utils::Timers::setTimer($class, time() + CHECK_INTERVAL, \&periodicCheckForUpdates);
+	Slim::Utils::Timers::killTimers($class, \&periodicCheckForUpdates);
+	Slim::Utils::Timers::setTimer($class, time() + ($serverprefs->get('checkVersionInterval') || CHECK_INTERVAL), \&periodicCheckForUpdates);
 }
 
 sub checkForUpdates {
