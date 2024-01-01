@@ -190,6 +190,10 @@ sub addTracks {
 	my $playlist = playList($client);
 
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
+	
+	# do we need to plan for restart of streaming?
+	my $restart = (Slim::Player::Source::playingSongIndex($client) == Slim::Player::Source::streamingSongIndex($client)) &&
+				  (Slim::Player::Source::playingSongIndex($client) == count($client) - 1);
 
 	# How many tracks might we need to remove to make space?
 	my $need = $maxPlaylistLength ? (scalar @{$playlist} + scalar @{$tracksRef}) - $maxPlaylistLength : 0;
@@ -245,8 +249,6 @@ sub addTracks {
 		});
 	}
 
-	my $playingIndex = Slim::Player::Source::playingSongIndex($client)+1;
-	my $streamingIndex = Slim::Player::Source::streamingSongIndex($client)+1;
 
 	if ($insert) {
 		_insert_done($client, $canAdd);
@@ -254,8 +256,7 @@ sub addTracks {
 
 	# if we are adding a track while we are playing the last one, might 
 	# need to relaunch the process if it has been streamed fully.
-	if (($playingIndex == $streamingIndex) && 
-		($streamingIndex == count($client) - 1)) {
+	if ($restart) {
 		$log->info("adding track while playing last, check if streaming needs relaunch");
 		$client->controller->nextIfStreamed($client);
 	}
