@@ -4533,7 +4533,7 @@ sub worksQuery {
 		JOIN contributors composer ON composer.id = composer_track.contributor 
 		JOIN contributor_track ON contributor_track.track = tracks.id 
 		JOIN contributors ON contributors.id = contributor_track.contributor 
-		JOIN works ON works.id = tracks.work ";
+		JOIN works ON works.id = tracks.work AND works.composer = composer.id ";
 
 	if (specified($search)) {
 		if ( Slim::Schema->canFulltextSearch ) {

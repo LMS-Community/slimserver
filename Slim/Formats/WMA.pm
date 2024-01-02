@@ -40,6 +40,7 @@ my %tagMapping = (
 	'WM/Comments'           => 'COMMENT',
 	'WM/Lyrics'             => 'LYRICS',
 	'WM/Year'               => 'YEAR',
+	'WM/Work'               => 'WORK',
 
 	'MusicBrainz/Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MusicBrainz/Album Id'        => 'MUSICBRAINZ_ALBUM_ID',

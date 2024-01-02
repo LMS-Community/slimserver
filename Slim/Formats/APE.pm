@@ -36,6 +36,7 @@ use Audio::Scan;
 
 my %tagMapping = (
 	'TRACK'	       => 'TRACKNUM',
+	'WORK'         => 'WORK',
 	'DATE'         => 'YEAR',
 	'BPM'          => 'BPM',
 	'DISCNUMBER'   => 'DISC',

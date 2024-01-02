@@ -71,6 +71,7 @@ my %tagMapping = (
 	TCMP => "COMPILATION",
 	YTCP => "COMPILATION", # non-standard v2.3 frame
 	TCON => "GENRE",
+	TIT1 => "WORK",
 	TIT2 => "TITLE",
 	TPE1 => "ARTIST",
 	TPE2 => "BAND",

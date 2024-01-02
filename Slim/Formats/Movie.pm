@@ -37,6 +37,7 @@ my %tagMapping = (
 	TMPO => 'BPM',
 	TRKN => 'TRACKNUM',
 	WRT  => 'COMPOSER',
+	WRK  => 'WORK',
 
 	'MusicBrainz Album Id'     => 'MUSICBRAINZ_ALBUM_ID',
 	'MusicBrainz Album Type'   => 'RELEASETYPE',
