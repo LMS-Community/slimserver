@@ -57,7 +57,8 @@ my %tagMapping = (
 	'DESCRIPTION'               => 'COMMENT',
 	'ORIGINALYEAR'              => 'YEAR',
 	'UNSYNCEDLYRICS'            => "LYRICS",
-	'WORK'			    => 'WORK',
+	'WORK'                      => 'WORK',
+	'GROUPING'                  => 'WORK',
 
 	# J.River once again.. can't these people use existing standards?
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',
@@ -94,6 +95,9 @@ sub getTag {
 	my $s = Audio::Scan->scan($file);
 
 	return unless $s->{info}->{samplerate};
+
+	# Delete GROUPING tag if WORK tag exists
+	delete $s->{tags}->{GROUPING} if exists $s->{tags}->{GROUPING} && exists $s->{tags}->{WORK};
 
 	my $tags = $class->_getStandardTag($s);
 

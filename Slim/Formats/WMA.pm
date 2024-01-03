@@ -41,6 +41,7 @@ my %tagMapping = (
 	'WM/Lyrics'             => 'LYRICS',
 	'WM/Year'               => 'YEAR',
 	'WM/Work'               => 'WORK',
+	'WM/ContentGroupDescription' => 'WORK',
 
 	'MusicBrainz/Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MusicBrainz/Album Id'        => 'MUSICBRAINZ_ALBUM_ID',
@@ -57,6 +58,9 @@ sub getTag {
 	
 	my $s = Audio::Scan->scan($file);
 	
+	# Delete ContentGroupDescription tag if Work tag exists
+	delete $s->{tags}->{'WM/ContentGroupDescription'} if exists $s->{tags}->{'WM/ContentGroupDescription'} && exists $s->{tags}->{'WM/Work'};
+
 	my $info = $s->{info};
 	my $tags = $s->{tags};
 	

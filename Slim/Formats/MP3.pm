@@ -72,6 +72,7 @@ my %tagMapping = (
 	YTCP => "COMPILATION", # non-standard v2.3 frame
 	TCON => "GENRE",
 	TIT1 => "WORK",
+	GRP1 => "WORK",
 	TIT2 => "TITLE",
 	TPE1 => "ARTIST",
 	TPE2 => "BAND",
@@ -112,6 +113,10 @@ sub getTag {
 
 	my $s = Audio::Scan->scan( $file );
 
+	if ( exists $s->{tags}->{GRP1} ) {
+		$s->{tags}->{GRP1} =~ s/\x0//g; # scanner is returning leading null in GRP1 tag, which messes things up.
+		delete $s->{tags}->{GRP1} if exists $s->{tags}->{TIT1}; #forget GRP1 if we've got a TIT1
+	}
 	my $info = $s->{info};
 	my $tags = $s->{tags};
 
