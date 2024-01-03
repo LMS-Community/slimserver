@@ -358,7 +358,9 @@ sub parseMetadata {
 		# Bug 15896, a stream had CRLF in the metadata (no conflict with utf-8)
 		$comments =~ s/\s*[\r\n]+\s*/; /g;
 
-		my $meta = {};
+		my $song = $client->controller()->songStreamController()->song();
+		my $meta = { cover => $song->icon() };
+
 		while ( $comments ) {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
@@ -378,8 +380,6 @@ sub parseMetadata {
 		}
 
 		# Re-use wmaMeta field
-		my $song = $client->controller()->songStreamController()->song();
-
 		my $cb = sub {
 			$song->pluginData( wmaMeta => $meta );
 			Slim::Music::Info::setCurrentTitle($url, $meta->{title}, $client) if $meta->{title};
