@@ -358,7 +358,7 @@ sub parseMetadata {
 		# Bug 15896, a stream had CRLF in the metadata (no conflict with utf-8)
 		$comments =~ s/\s*[\r\n]+\s*/; /g;
 
-		my $meta = {};
+		my $meta = { cover => Slim::Utils::Cache->new()->get("remote_image_$url") };
 		while ( $comments ) {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
