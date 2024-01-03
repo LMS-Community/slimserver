@@ -40,7 +40,7 @@ my $directlog = logger('player.streaming.direct');
 my $sourcelog = logger('player.source');
 
 my $prefs = preferences('server');
-my $cache = Slim::Utils::Cache->new();
+my $cache;
 
 sub new {
 	my $class = shift;
@@ -94,7 +94,7 @@ sub response {
 	# do we have the range we requested
 	if ($request_object->header('Range') =~ /^bytes=(\d+)-/ &&
 		$1 != ($self->contentRange =~ /(\d+)-/)) {
-		${*$self}{'_skip'} = $1;            
+		${*$self}{'_skip'} = $1;
 		$log->info("range request not served, skipping $1 bytes");
 	}
 
@@ -274,6 +274,8 @@ sub parseMetadata {
 		$client, Slim::Player::Source::streamingSongIndex($client)
 	);
 
+	$cache ||= Slim::Utils::Cache->new();
+
 	# See if there is a parser for this stream
 	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 	if ( $parser ) {
@@ -450,7 +452,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !$processor;
 
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {		
+	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}
@@ -589,7 +591,7 @@ sub saveStream {
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
-	my $self = $_[0];   
+	my $self = $_[0];
 	return CORE::sysread($_[0], $_[1], $_[2], $_[3]) unless ${*$self}{'_skip'};
 
 	# skip what we need until done or EOF
@@ -598,7 +600,7 @@ sub _sysread {
 
 	# pretend we don't have received anything until we've skipped all
 	${*$self}{'_skip'} -= $bytes if $bytes;
-	$_[1]= '';    
+	$_[1]= '';
 	$! = EINTR;
 	return undef;
 }
@@ -1074,6 +1076,7 @@ sub getMetadataFor {
 	my $playlistURL = $url;
 
 	# Check for radio or OPML feeds URLs with cached covers
+	$cache ||= Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
 	# Item may be a playlist, so get the real URL playing
