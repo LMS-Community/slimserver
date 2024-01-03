@@ -40,6 +40,7 @@ my $directlog = logger('player.streaming.direct');
 my $sourcelog = logger('player.source');
 
 my $prefs = preferences('server');
+my $cache = Slim::Utils::Cache->new();
 
 sub new {
 	my $class = shift;
@@ -330,7 +331,6 @@ sub parseMetadata {
 			Slim::Music::Info::setCurrentTitle($url, $newTitle, $client);
 
 			if ($artworkUrl) {
-				my $cache = Slim::Utils::Cache->new();
 				$cache->set( "remote_image_$url", $artworkUrl, 3600 );
 
 				if ( my $song = $client->playingSong() ) {
@@ -358,7 +358,7 @@ sub parseMetadata {
 		# Bug 15896, a stream had CRLF in the metadata (no conflict with utf-8)
 		$comments =~ s/\s*[\r\n]+\s*/; /g;
 
-		my $meta = { cover => Slim::Utils::Cache->new()->get("remote_image_$url") };
+		my $meta = { cover => $cache->get("remote_image_$url") };
 		while ( $comments ) {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
@@ -1074,7 +1074,6 @@ sub getMetadataFor {
 	my $playlistURL = $url;
 
 	# Check for radio or OPML feeds URLs with cached covers
-	my $cache = Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
 	# Item may be a playlist, so get the real URL playing
