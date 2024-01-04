@@ -377,6 +377,11 @@ sub parseMetadata {
 			}
 		}
 
+		if (!$meta->{artist}) {
+			my @dashes = $meta->{title} =~ /( - )/g;
+			($meta->{artist}, $meta->{title}) = split /\s+-\s+/, $meta->{title} if scalar @dashes == 1;
+		}
+
 		# Re-use wmaMeta field
 		my $song = $client->controller()->songStreamController()->song();
 
