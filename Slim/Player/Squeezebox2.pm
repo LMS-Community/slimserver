@@ -389,6 +389,9 @@ sub flush {
 
 	$client->stream('f');
 	$client->SUPER::flush();
+	
+	# once flush, don't wait for answer, just get ready
+	$client->readyToStream(1);
 	return 1;
 }
 

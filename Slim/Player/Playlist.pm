@@ -190,6 +190,10 @@ sub addTracks {
 	my $playlist = playList($client);
 
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
+	
+	# do we need to plan for restart of streaming?
+	my $restart = (Slim::Player::Source::playingSongIndex($client) == Slim::Player::Source::streamingSongIndex($client)) &&
+				  (Slim::Player::Source::playingSongIndex($client) == count($client) - 1);
 
 	# How many tracks might we need to remove to make space?
 	my $need = $maxPlaylistLength ? (scalar @{$playlist} + scalar @{$tracksRef}) - $maxPlaylistLength : 0;
@@ -245,8 +249,16 @@ sub addTracks {
 		});
 	}
 
+
 	if ($insert) {
 		_insert_done($client, $canAdd);
+	}
+
+	# if we are adding a track while we are playing the last one, might 
+	# need to relaunch the process if it has been streamed fully.
+	if ($restart) {
+		$log->info("adding track while playing last, check if streaming needs relaunch");
+		$client->controller->nextIfStreamed($client);
 	}
 
 	return $canAdd;
@@ -255,7 +267,7 @@ sub addTracks {
 sub _insert_done {
 	my ($client, $size, $callbackf, $callbackargs) = @_;
 
-	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	my $playlistIndex = Slim::Player::Source::playingSongIndex($client) + 1;
 	my $moveFrom = count($client) - $size;
 
 	if (shuffle($client)) {
@@ -265,6 +277,11 @@ sub _insert_done {
 			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
 		} else {
 			push @{$client->shufflelist}, @reshuffled;
+		}
+		# need to flush if we are changing streaming song
+		if (Slim::Player::Source::streamingSongIndex($client) == $playlistIndex % count($client)) {
+			main::INFOLOG && $log->info("add+replace streaming (not playing) track");
+			Slim::Player::Source::flushStreamingSong($client);			
 		}
 	} else {
 		if (count($client) != $size) {
@@ -382,25 +399,25 @@ sub removeTrack {
 	}
 
 	if (!$stopped) {
-		if (Slim::Player::Source::streamingSongIndex($client) >= $tracknum  && Slim::Player::Source::streamingSongIndex($client) < $tracknum + $nTracks) {
+		
+		my $index = Slim::Player::Source::streamingSongIndex($client);
+		my $queue = $client->currentsongqueue();
+
+		# udpate index of tracks in queue but capture the streamingIndex before...
+		for my $song (@$queue) {
+			if ($tracknum < $song->index()) {
+				$song->index($song->index() - $nTracks);
+			}
+		}
+		
+		if ($index >= $tracknum && $index < $tracknum + $nTracks) {
 			# If we're removing the streaming song (which is different from
 			# the playing song), get the client to flush out the current song
 			# from its audio pipeline.
 			main::INFOLOG && $log->info("Removing currently streaming track.");
-
 			Slim::Player::Source::flushStreamingSong($client);
+		} 
 
-		} else {
-
-			my $queue = $client->currentsongqueue();
-
-			for my $song (@$queue) {
-
-				if ($tracknum < $song->index()) {
-					$song->index($song->index() - $nTracks);
-				}
-			}
-		}
 	}
 
 	if ($stopped) {
@@ -446,6 +463,7 @@ sub removeMultipleTracks {
 
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
+	my $flush = 0;
 
 	my $playingTrackPos   = ${shuffleList($client)}[Slim::Player::Source::playingSongIndex($client)];
 	my $streamingTrackPos = ${shuffleList($client)}[Slim::Player::Source::streamingSongIndex($client)];
@@ -473,7 +491,7 @@ sub removeMultipleTracks {
 
 			} elsif ($streamingTrackPos == $oldCount) {
 
-				Slim::Player::Source::flushStreamingSong($client);
+				$flush = 1;
 			}
 
 		} else {
@@ -539,6 +557,8 @@ sub removeMultipleTracks {
 		for my $song (@{$queue}) {
 			$song->index($oldToNewShuffled{$song->index()} || 0);
 		}
+		
+		Slim::Player::Source::flushStreamingSong($client) if $flush;
 	}
 
 	refreshPlaylist($client);
@@ -589,18 +609,10 @@ sub moveSong {
 
 			splice @{$listref},$dest, 0, @item;
 
+			my $queue = $client->currentsongqueue();
+
 			my $playingIndex = Slim::Player::Source::playingSongIndex($client);
 			my $streamingIndex = Slim::Player::Source::streamingSongIndex($client);
-			# If we're streaming a different song than we're playing and
-			# moving either to or from the streaming song position, flush
-			# the streaming song, because it's no longer relevant.
-			if (($playingIndex != $streamingIndex) &&
-				(($streamingIndex == $src) || ($streamingIndex == $dest) ||
-				 ($playingIndex == $src) || ($playingIndex == $dest))) {
-				Slim::Player::Source::flushStreamingSong($client);
-			}
-
-			my $queue = $client->currentsongqueue();
 
 			for my $song (@$queue) {
 				my $index = $song->index();
@@ -611,6 +623,26 @@ sub moveSong {
 					$song->index(($dest>$src)? $index - 1 : $index + 1);
 				}
 			}
+			
+			# If we're streaming a different song than we're playing and
+			# moving either to or from the streaming song position, flush
+			# the streaming song, because it's no longer relevant.
+			if (($playingIndex != $streamingIndex) &&
+				(($streamingIndex == $src) || ($streamingIndex == $dest) ||
+				 ($playingIndex == $src) || ($playingIndex == $dest))) {
+				$log->info("move+replace streaming (not playing) track");
+				Slim::Player::Source::flushStreamingSong($client);
+			}
+
+			# if we are either moving the last track or moving one after it, we 
+			# might need to relaunch the process if it has been streamed fully.
+			if (($playingIndex == $streamingIndex) && 
+				($streamingIndex == count($client) - 1) && 
+			    ($src == $streamingIndex || $dest == $streamingIndex)) {
+				$log->info("moving last track itsef or another track past it");
+				$client->controller->nextIfStreamed($client);
+			}
+
 
 			refreshPlaylist($client);
 		}

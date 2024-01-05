@@ -147,8 +147,8 @@ Flush =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PLAYING
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PAUSED
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PLAYING
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PAUSED
 ],
 Skip  => 
 [	[	\&_StopGetNext,	\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -164,7 +164,6 @@ JumpToTime =>
 	[	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime],		# PLAYING
 	[	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused],		# PAUSED
 ],
-
 NextTrackReady =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_Stream],			# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
@@ -186,7 +185,6 @@ LocalEndOfStream =>
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PLAYING
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PAUSED
 ],
-
 BufferReady =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_WaitToSync,	\&_WaitToSync,	\&_BadState],		# BUFFERING
@@ -442,7 +440,7 @@ sub _CheckPaused {	# only called when PAUSED
 		} elsif (!$song->duration()) {
 			
 			# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
-			# Assume unknown duration means radio and so we shuould stop now
+			# Assume unknown duration means radio and so we should stop now
 			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused (no resume)");
 			
 			_Stop(@_);
@@ -979,6 +977,9 @@ sub _Skip {
 sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	
+	# flush means that we get rid of the streaming song
+	shift @{$self->{'songqueue'}};
+
 	foreach my $player (@{$self->{'players'}})	{
 		$player->flush();
 	}
@@ -2111,6 +2112,21 @@ sub allPlayers {
 sub closeStream {
 	$_[0]->{'songStreamController'}->close() if $_[0]->{'songStreamController'};
 }
+
+sub nextIfStreamed {
+	my ($self) = @_;
+
+	# this is called when we are adding/moving another track after last one
+	# or moving it upper in the list. If it has been fully streamed and we 
+	# are playing/buffering/waiting, then we need to grab next track. If we 
+	# are paused then we'll restart the process later upon resume
+	if ($self->{'streamingState'} == IDLE && 
+		$self->{'playingState'} != STOPPED && 
+		$self->{'playingState'} != PAUSED) {
+		main::INFOLOG && $log->info("getting next track to re-launch streaming process");
+		_getNextTrack($self);
+	}
+}	
 
 ####################################################################
 # Incoming events - <<interface>> PlayControl
