@@ -38,7 +38,7 @@ tie my %parsers,   'Tie::RegexpHash';
 
 sub init {
 	my $class = shift;
-	
+
 	# Setup our built-in metadata parsers
 	Slim::Formats::RemoteMetadata::YALP->init();
 }
@@ -69,30 +69,30 @@ Register a new metadata provider:
 
 sub registerProvider {
 	my ( $class, %params ) = @_;
-	
+
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerProvider called without a regular expression' );
 		return;
 	}
-	
+
 	if ( ref $params{func} ne 'CODE' ) {
 		$log->error( 'registerProider called without a code reference' );
 		return;
 	}
-	
+
 	$providers{ $params{match} } = $params{func};
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata provider for " . $params{match} . ": $name" );
 	}
-	
+
 	return 1;
 }
 
 sub getProviderFor {
 	my ( $class, $url ) = @_;
-	
+
 	return $providers{ $url };
 }
 
@@ -124,31 +124,43 @@ if you want the standard metadata functions to handle the data.
 
 sub registerParser {
 	my ( $class, %params ) = @_;
-	
+
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerParser called without a regular expression' );
 		return;
 	}
-	
+
 	if ( ref $params{func} ne 'CODE' ) {
 		$log->error( 'registerParser called without a code reference' );
 		return;
 	}
-	
+
 	$parsers{ $params{match} } = $params{func};
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata parser for " . $params{match} . ": $name" );
 	}
-	
+
 	return 1;
 }
 
 sub getParserFor {
 	my ( $class, $url ) = @_;
-	
+
 	return $parsers{ $url };
+}
+
+sub getMigrationInfoData {
+	my ($class, $client) = @_;
+
+	return {
+		# docroot/static/images/migration/qr.png
+		icon   => 'https://www.uesmartradio.com/static/images/migration/qr.png',
+		artist => 'Logitech',
+		album  => cstring($client, 'MIGRATION_ANNOUNCEMENT'),
+		title  => cstring($client, 'PLEASE_FOLLOW_QR'),
+	};
 }
 
 1;

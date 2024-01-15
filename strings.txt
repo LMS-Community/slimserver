@@ -23743,3 +23743,15 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
+
+MIGRATION_ANNOUNCEMENT
+	DE	Ankündigung
+	EN	Migration Announcement
+	FR	Annonce de migration
+	NL	Migratieaankondiging
+
+PLEASE_FOLLOW_QR
+	DE	Bitte scannen Sie den QR Code
+	EN	Please follow the QR Code
+	FR	Merci de suivre le QR Code
+	NL	Volg de QR-code
