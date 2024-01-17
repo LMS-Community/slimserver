@@ -1083,6 +1083,13 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 		# User is trying to restart the current track
 		my $url         = $song->currentTrack()->url;
 		
+		if ($handler->can("canDoAction") && $handler->canDoAction($self->master(), $url, 'rewSkip') && ($self->playingSongElapsed() < 6)) {
+			main::DEBUGLOG && $log->debug("Skip back a track allowed by protocol handler and under 6 seconds has elapsed");
+			# Assume protocol handler will skip back not skip forward as 'rewSkip' action raised
+			_StopGetNext($self, $event);
+			return;
+		}
+
 		if ($handler->can("canDoAction") && !$handler->canDoAction($self->master(), $url, 'rew')) {
 			main::DEBUGLOG && $log->debug("Restart for $url disallowed by protocol handler");
 			return;
