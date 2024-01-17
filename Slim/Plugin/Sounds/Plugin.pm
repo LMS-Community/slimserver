@@ -28,7 +28,7 @@ my $serverPrefs = preferences('server');
 my $soundsCache = catfile($serverPrefs->get('cachedir'), 'Sounds');
 
 # change this to whatever when the time has come.
-my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
+my $baseUrl = 'https://downloads.slimdevices.com/sounds';
 
 my $menus = {
 	MUSICAL => {
@@ -173,7 +173,7 @@ sub getSortedSounds {
 
 	my @playlistItems;
 
-	my $loopUrl = Slim::Utils::Network::serverURL() . BASE_AUDIO_PATH;
+	my $loopUrl = Slim::Utils::Network::serverURL() . '/' . BASE_AUDIO_PATH;
 	$loopUrl =~ s/^http/loop/;
 
 	for my $menu ( @items ) {
@@ -236,7 +236,7 @@ sub proxyRequest {
 		return $sendFile->();
 	}
 
-	my $originUrl = "http://$baseUrl/$path";
+	my $originUrl = "$baseUrl/$path";
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
