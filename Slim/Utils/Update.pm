@@ -100,7 +100,6 @@ sub checkVersionCB {
 
 		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
 
-		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
 		my $versions = from_json($content);
 
 		my $osID = $os->installerOS() || 'default';

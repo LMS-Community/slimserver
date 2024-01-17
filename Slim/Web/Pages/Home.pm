@@ -35,8 +35,6 @@ sub init {
 	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, \&switchServer);
 	Slim::Web::Pages->addPageFunction(qr/^updateinfo\.(?:htm|json)/, \&updateInfo);
 
-	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') }) if !main::NOMYSB;
-
 	Slim::Web::Pages->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html" });
 	Slim::Web::Pages->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html" });
 	Slim::Web::Pages->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html" });
@@ -45,7 +43,6 @@ sub init {
 
 	Slim::Web::Pages->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
 
-	Slim::Web::Pages->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
 	Slim::Web::Pages->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
 	Slim::Web::Pages->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
 }
@@ -117,9 +114,6 @@ sub home {
 
 		my $cmpStrings = {};
 		while (my ($menu, $menuItems) = each %Slim::Web::Pages::additionalLinks ) {
-
-			next if $menu eq 'apps' && !main::NOMYSB;
-
 			$params->{additionalLinks}->{ $menu } = {
 				map {
 					$_ => $menuItems->{ $_ };
@@ -141,24 +135,14 @@ sub home {
 				)
 				||
 				(
-					!main::NOMYSB && $menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
-				)
-				||
-				(
-					!main::NOMYSB && $menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
-				)
-				||
-				(
 					( $cmpStrings->{$a} ||= lc(Slim::Buttons::Home::cmpString($client, $a)) ) cmp
 					( $cmpStrings->{$b} ||= lc(Slim::Buttons::Home::cmpString($client, $b)) )
 				)
 			} keys %{ $params->{additionalLinks}->{ $menu } } ];
 		}
 
-		if (main::NOMYSB) {
-			$params->{additionalLinks}->{my_apps} = delete $params->{additionalLinks}->{apps};
-			$params->{additionalLinkOrder}->{my_apps} = delete $params->{additionalLinkOrder}->{apps};
-		}
+		$params->{additionalLinks}->{my_apps} = delete $params->{additionalLinks}->{apps};
+		$params->{additionalLinkOrder}->{my_apps} = delete $params->{additionalLinkOrder}->{apps};
 
 		if ( !($params->{page} && $params->{page} eq 'help') ) {
 			Slim::Web::Pages::Common->addPlayerList($client, $params);
@@ -263,25 +247,7 @@ sub _updateInfoCB {
 sub switchServer {
 	my ($client, $params) = @_;
 
-	if ( !main::NOMYSB && ( lc($params->{'switchto'}) eq 'squeezenetwork'
-		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK') ) ) {
-
-		if ( _canSwitch($client) ) {
-			Slim::Utils::Timers::setTimer(
-				$client,
-				time() + 1,
-				sub {
-					my $client = shift;
-					Slim::Buttons::Common::pushModeLeft( $client, 'squeezenetwork.connect' );
-				},
-			);
-
-			$params->{'switchto'} = 'http://' . Slim::Networking::SqueezeNetwork->get_server("sn");
-		}
-
-	}
-
-	elsif ($params->{'switchto'}) {
+	if ($params->{'switchto'}) {
 
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
 			sub {
@@ -297,12 +263,6 @@ sub switchServer {
 	else {
 		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();
 
-		if ( !main::NOMYSB && _canSwitch($client) ) {
-			$params->{servers}->{'SQUEEZENETWORK'} = {
-				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')
-			};
-		}
-
 		my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
 		$params->{serverlist} = \@servers;
 	}
@@ -310,18 +270,4 @@ sub switchServer {
 	return Slim::Web::HTTP::filltemplatefile('switchserver.html', $params);
 }
 
-# Bug 7254, don't tell Ray to reconnect to SN unless it's known to be attached to the user's account
-sub _canSwitch { if (!main::NOMYSB) {
-	my $client = shift;
-
-	return ( ($client->deviceid != 7) || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) );
-} }
-
 1;
-
-__END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

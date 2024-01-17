@@ -3341,42 +3341,6 @@ sub serverstatusQuery {
 		_addPlayersLoop($request, $start, $end, $savePrefs{'player'});
 	}
 
-	if (!main::NOMYSB) {
-		# return list of players connected to SN
-		my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
-
-		$count = scalar @sn_players || 0;
-
-		$request->addResult('sn player count', $count);
-
-		($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-		if ($valid) {
-
-			my $sn_cnt = 0;
-
-			for my $player ( @sn_players ) {
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'id', $player->{id}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'name', $player->{name}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'model', $player->{model}
-				);
-
-				$sn_cnt++;
-			}
-		}
-	}
-
 	# return list of players connected to other servers
 	my $other_players = Slim::Networking::Discovery::Players::getPlayerList();
 
@@ -4825,7 +4789,7 @@ my %tagMap = (
 	  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
 	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL
 	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
-	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
+	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link
 	  'N' => ['remote_title'],                                          # remote stream title
 	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
 	  'V' => ['live_edge',        '',              'live_edge'],        # a remote live streams maximum available seek point in seconds within the current duration.

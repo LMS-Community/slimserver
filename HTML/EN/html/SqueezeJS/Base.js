@@ -787,14 +787,6 @@ SqueezeJS.SonginfoParser = {
 					}
 				}
 
-				// SqueezeJS.externalImageProxy must be a template accepting url and size values
-				if (coverart && width && SqueezeJS.externalImageProxy && publicURL) {
-					coverart = SqueezeJS.externalImageProxy.apply({
-						url: encodeURIComponent(coverart),
-						size: width
-					});
-				}
-
 				// some internal logos come without resizing parameters - add them here if size is defined
 				else if (coverart && width && !publicURL) {
 					coverart = coverart.replace(/(icon|image|cover)(\.\w+)$/, "$1_" + width + 'x' + width + "_p$2");

@@ -47,7 +47,7 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
-use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
+use constant NOMYSB       => 1;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
@@ -510,12 +510,6 @@ sub init {
 	main::INFOLOG && $log->info("Async HTTP init...");
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
-
-	if (!main::NOMYSB) {
-		main::INFOLOG && $log->info("SqueezeNetwork Init...");
-		require Slim::Networking::SqueezeNetwork;
-		Slim::Networking::SqueezeNetwork->init();
-	}
 
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;

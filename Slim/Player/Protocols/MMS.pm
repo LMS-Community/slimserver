@@ -485,18 +485,13 @@ sub setMetadata {
 
 	# Set title if available
 	if ( my $title = $wma->{tags}->{Title} ) {
+		Slim::Music::Info::setCurrentTitle($url, $title);
 
-		# Ignore title metadata for Rhapsody tracks
-		if ( $url !~ /^rhap/ ) {
-
-			Slim::Music::Info::setCurrentTitle($url, $title);
-
-			for my $everybuddy ( $client->syncGroupActiveMembers()) {
-				$everybuddy->update();
-			}
-
-			main::INFOLOG && $log->info("Setting title to '$title' from WMA metadata");
+		for my $everybuddy ( $client->syncGroupActiveMembers()) {
+			$everybuddy->update();
 		}
+
+		main::INFOLOG && $log->info("Setting title to '$title' from WMA metadata");
 	}
 }
 

@@ -826,9 +826,7 @@ sub updateMenu {
 				text => $title,
 			};
 
-			my $url = ( main::NOMYSB || $apps->{$app}->{url} =~ /^http/ )
-				? $apps->{$app}->{url}
-				: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
+			my $url = $apps->{$app}->{url};
 
 			# Create new XMLBrowser mode for this item
 			if ( !exists $home{$title} ) {

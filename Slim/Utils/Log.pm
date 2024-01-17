@@ -74,7 +74,6 @@ my $logGroups = {
 		categories => {
 			'formats.audio'          => 'DEBUG',
 			'network.asyncdns'       => 'DEBUG',
-			'network.squeezenetwork' => 'DEBUG',
 		},
 		label => 'DEBUG_RADIO',
 	},
@@ -946,8 +945,6 @@ sub logLevels {
 
 		'perfmon'                    => 'WARN, screen-raw, perfmon', # perfmon assumes this is set to WARN
 	};
-
-	$categories->{'network.squeezenetwork'} = 'ERROR' unless main::NOMYSB;
 
 	return $categories unless $group;
 

@@ -61,11 +61,11 @@ sub init {
 			'overlayRefArgs'  => 'C',
 			'init'            => \&settingsMenu,
 			'submenus'        => {
-		
+
 				# Brightness submenus
 				'AUDIO_SETTINGS'      => {
 					'useMode'         => 'INPUT.List',
-					'listRef'         => [ 
+					'listRef'         => [
 						'BASS',
 						'TREBLE',
 						'PITCH',
@@ -81,28 +81,28 @@ sub init {
 					'header'          => 'AUDIO_SETTINGS',
 					'stringHeader'    => 1,
 					'headerAddCount'  => 1,
-					'overlayRef'      => sub { 
-						return (undef, shift->symbols('rightarrow')); 
+					'overlayRef'      => sub {
+						return (undef, shift->symbols('rightarrow'));
 					},
 					'overlayRefArgs'  => 'CV',
 					'condition'       => sub { 1 },
 					'init'            => sub {
 						my $client = shift;
 						my @opts;
-						
+
 						my @settingsChoices = @{$menuParams{'SETTINGS'}{'submenus'}{'AUDIO_SETTINGS'}{'listRef'}};
 						my $menu = $menuParams{'SETTINGS'}{'submenus'}{'AUDIO_SETTINGS'}{'submenus'};
 
 						for my $setting ( @settingsChoices) {
-					
+
 							if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
-					
+
 								push @opts, $setting;
 							}
 						}
 
 						#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
-					
+
 						$client->modeParam('listRef', \@opts);
 					},
 					'submenus'        => {
@@ -119,7 +119,7 @@ sub init {
 							'initialValue' => sub { return $_[0]->volume() },
 							'condition'    => sub { 1 },
 						},
-				
+
 						'BASS'             => {
 							'useMode'      => 'INPUT.Bar',
 							'header'       => 'BASS',
@@ -138,7 +138,7 @@ sub init {
 								return $client->maxBass() - $client->minBass();
 							},
 						},
-		
+
 						'PITCH'               => {
 							'useMode'         => 'INPUT.Bar',
 							'header'          => 'PITCH',
@@ -159,7 +159,7 @@ sub init {
 								return $client->maxPitch() - $client->minPitch();
 							},
 						},
-				
+
 						'TREBLE'           => {
 							'useMode'      => 'INPUT.Bar',
 							'header'       => 'TREBLE',
@@ -178,7 +178,7 @@ sub init {
 								return $client->maxTreble() - $client->minTreble();
 							},
 						},
-				
+
 						'STEREOXL'           => {
 							'useMode'      => 'INPUT.Choice',
 							'listRef'      => [
@@ -224,11 +224,11 @@ sub init {
 							'increment'    => 1,
 							'onChange'     => sub {
 								my ($client, $value) = @_;
-								
+
 								$value = $prefs->client($client)->get('lineInLevel') + $value;
 								$prefs->client($client)->set('lineInLevel', $value);
 							},
-							
+
 							'pref'         => "lineInLevel",
 							'initialValue' => sub { $prefs->client(shift)->get('lineInLevel') },
 							'condition'    => sub {
@@ -261,7 +261,7 @@ sub init {
 								return $client->can('setLineIn') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
 							},
 						},
-				
+
 						'SETUP_TRANSITIONTYPE' => {
 							'useMode'      => 'INPUT.Choice',
 							'listRef'      => [
@@ -345,28 +345,28 @@ sub init {
 					'header'          => 'DISPLAY_SETTINGS',
 					'stringHeader'    => 1,
 					'headerAddCount'  => 1,
-					'overlayRef'      => sub { 
-						return (undef, shift->symbols('rightarrow')); 
+					'overlayRef'      => sub {
+						return (undef, shift->symbols('rightarrow'));
 					},
 					'overlayRefArgs'  => 'CV',
 					'condition'       => sub { 1 },
 					'init'            => sub {
 						my $client = shift;
 						my @opts;
-						
+
 						my @settingsChoices = @{$menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'listRef'}};
 						my $menu = $menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'submenus'};
-						
+
 						for my $setting ( @settingsChoices) {
-						
+
 							if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
-					
+
 								push @opts, $setting;
 							}
 						}
-					
+
 						#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
-					
+
 						$client->modeParam('listRef', \@opts);
 					},
 					'submenus'        => {
@@ -382,22 +382,22 @@ sub init {
 							'condition'    => sub { 1 },
 							'init'         => sub {
 								my $client = shift;
-		
+
 								my @externTF = ();
 								my $i        = 0;
-		
+
 								for my $format (@{ $prefs->client($client)->get('titleFormat') }) {
-		
+
 									push @externTF, {
 										'name'  => $prefs->get('titleFormat')->[ $format ],
 										'value' => $i++
 									};
 								}
-		
+
 								$client->modeParam('listRef', \@externTF);
 							}
 						},
-		
+
 						'TEXTSIZE'      => {
 							'useMode'      => 'INPUT.Choice',
 							'header'       => '{TEXTSIZE}',
@@ -413,18 +413,18 @@ sub init {
 							'condition'    => sub { $_[0]->display->isa('Slim::Display::Graphics'); },
 							'init'         => sub {
 								my $client = shift;
-		
+
 								my @fonts = ();
 								my $i        = 0;
-		
+
 								for my $font (@{ $prefs->client($client)->get('activeFont') }) {
-		
+
 									push @fonts, {
 										'name'  => Slim::Utils::Strings::getString($font),
 										'value' => $i++
 									};
 								}
-		
+
 								$client->modeParam('listRef', \@fonts);
 								$client->modeParam('settextsize', $prefs->client($client)->get('activeFont_curr'));
 							},
@@ -451,32 +451,32 @@ sub init {
 							'header'          => 'SETUP_GROUP_BRIGHTNESS',
 							'stringHeader'    => 1,
 							'headerAddCount'  => 1,
-							'overlayRef'      => sub { 
-								return (undef, shift->symbols('rightarrow')); 
+							'overlayRef'      => sub {
+								return (undef, shift->symbols('rightarrow'));
 							},
 							'overlayRefArgs'  => 'CV',
 							'condition'    => sub { 1 },
 							'init'            => sub {
 								my $client = shift;
 								my @opts;
-								
+
 								my @settingsChoices = @{$menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'submenus'}{'SETUP_GROUP_BRIGHTNESS'}{'listRef'}};
 								my $menu = $menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'submenus'}{'SETUP_GROUP_BRIGHTNESS'}{'submenus'};
-								
+
 								for my $setting ( @settingsChoices) {
-								
+
 									if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
-							
+
 										push @opts, $setting;
 									}
 								}
-					
+
 								#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
-					
+
 								$client->modeParam('listRef', \@opts);
 							},
 							'submenus'        => {
-			
+
 								'SETUP_POWERONBRIGHTNESS' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -489,7 +489,7 @@ sub init {
 									'init'          => \&brightnessInit,
 									'condition'    => sub { 1 },
 								},
-								
+
 								'SETUP_POWEROFFBRIGHTNESS' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -502,7 +502,7 @@ sub init {
 									'init'          => \&brightnessInit,
 									'condition'    => sub { 1 },
 								},
-						
+
 								'SETUP_IDLEBRIGHTNESS' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -525,11 +525,11 @@ sub init {
 									'increment'    => 1,
 									'onChange'     => sub {
 										my ($client, $value) = @_;
-										
+
 										$value = $prefs->client($client)->get('minAutoBrightness') + $value;
 										$prefs->client($client)->set('minAutoBrightness', $value);
 									},
-									
+
 									'pref'         => "minAutoBrightness",
 									'initialValue' => sub { $prefs->client(shift)->get('minAutoBrightness') },
 									'condition'    => sub {
@@ -547,11 +547,11 @@ sub init {
 									'increment'    => 1,
 									'onChange'     => sub {
 										my ($client, $value) = @_;
-										
+
 										$value = $prefs->client($client)->get('sensAutoBrightness') + $value;
 										$prefs->client($client)->set('sensAutoBrightness', $value);
 									},
-									
+
 									'pref'         => "sensAutoBrightness",
 									'initialValue' => sub { $prefs->client(shift)->get('sensAutoBrightness') },
 									'condition'    => sub {
@@ -561,7 +561,7 @@ sub init {
 								},
 							},
 						},
-		
+
 						# Screensavers submenus
 						'SCREENSAVERS'        => {
 							'useMode'         => 'INPUT.List',
@@ -579,7 +579,7 @@ sub init {
 							'overlayRefArgs'  => 'C',
 							'condition'    => sub { 1 },
 							'submenus'        => {
-			
+
 								'SETUP_SCREENSAVER' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -591,7 +591,7 @@ sub init {
 									'initialValue'  => sub { $prefs->client(shift)->get('screensaver') },
 									'init'          => \&screensaverInit,
 								},
-								
+
 								'SETUP_OFFSAVER' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -603,7 +603,7 @@ sub init {
 									'initialValue'  => sub { $prefs->client(shift)->get('offsaver') },
 									'init'          => \&screensaverInit,
 								},
-						
+
 								'SETUP_IDLESAVER' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -615,7 +615,7 @@ sub init {
 									'initialValue'  => sub { $prefs->client(shift)->get('idlesaver') },
 									'init'          => \&screensaverInit,
 								},
-						
+
 								'SETUP_ALARMSAVER' => {
 									'useMode'       => 'INPUT.Choice',
 									'onPlay'        => \&setPref,
@@ -629,7 +629,7 @@ sub init {
 								},
 							},
 						},
-		
+
 						'SETUP_PLAYINGDISPLAYMODE'      => {
 							'useMode'      => 'INPUT.Choice',
 							'header'       => '{SETUP_PLAYINGDISPLAYMODE}',
@@ -642,31 +642,31 @@ sub init {
 							'condition'    => sub { 1 },
 							'init'         => sub {
 								my $client = shift;
-		
+
 								my $modes = $client->display->modes;
 								my @opts  = ();
-								
+
 								my $x     = 0;
-		
+
 								for my $mode (@{ $prefs->client($client)->get('playingDisplayModes') }) {
-		
+
 									my @desc;
-		
+
 									for my $tok (@{ $modes->[$mode]{'desc'} }) {
 										push @desc, Slim::Utils::Strings::string($tok);
 									}
-		
+
 									push @opts, {
 										'name'  => join(' ', @desc),
 										'value' => $x,
 									};
 									$x++;
 								}
-		
+
 								$client->modeParam('listRef', \@opts);
 							}
 						},
-		
+
 						'SETUP_VISUALIZERMODE'         => {
 							'useMode'      => 'INPUT.Choice',
 							'onPlay'       => \&updateVisualMode,
@@ -759,17 +759,17 @@ sub init {
 					'command'      => 'playlist',
 					'subcommand'   => 'shuffle',
 				},
-	
+
 				'SYNCHRONIZE' => {
 					'useMode'   => 'synchronize',
 					'condition' => sub {
 						my $client = shift;
 
-						return $client->isSynced() || 
+						return $client->isSynced() ||
 							(scalar(Slim::Player::Sync::canSyncWith($client)) > 0);
 					},
 				},
-		
+
 				'MUSICSOURCE' => {
 					'useMode'        => 'INPUT.Choice',
 					'onRight'        => \&switchServer,
@@ -781,7 +781,7 @@ sub init {
 					'initialValue'   => Slim::Utils::Network::serverAddr(),
 					'overlayRef'     => sub {
 						my ($client, $item) = @_;
-						return [undef, 
+						return [undef,
 							Slim::Networking::Discovery::Server::is_self($item->{value})
 							? Slim::Buttons::Common::checkBoxOverlay($client, 1)
 							: $client->symbols('rightarrow')
@@ -801,13 +801,13 @@ sub setPref {
 	my $client = shift;
 	my $value = shift;
 
-	# See the hash defines above. 
+	# See the hash defines above.
 	if (ref $value eq 'HASH') {
 		$value = $value->{'value'};
 	}
 
 	my $pref = $client->modeParam('pref');
-	
+
 	$prefs->client($client)->set($pref,$value);
 	if ($pref eq 'playername') {
 		$client->execute(['name', $value]);
@@ -818,7 +818,7 @@ sub executeCommand {
 	my $client = shift;
 	my $value = shift;
 
-	# See the hash defines above. 
+	# See the hash defines above.
 	if (ref $value eq 'HASH') {
 		$value = $value->{'value'};
 	}
@@ -832,43 +832,43 @@ sub executeCommand {
 sub screensaverInit {
 	my $client = shift;
 	my $pref = $client->modeParam('pref');
-	
+
 	my %hash = %{ Slim::Buttons::Common::validSavers($client)->{$pref} };
 	my @savers;
-	
+
 	for (sort {$client->string($hash{$a}) cmp $client->string($hash{$b})} keys %hash) {
-	
+
 		push @savers, {
 			'name'  => "{".$hash{$_}."}",
 			'value' => $_,
 		};
 
 	}
-	
+
 	$client->modeParam('listRef', \@savers);
 }
 
 sub brightnessInit {
 	my $client = shift;
-	
+
 	my $hash  = $client->display->getBrightnessOptions();
 	my @options;
-	
+
 	for (sort keys %$hash) {
-	
+
 		unshift @options, {
 			'name'  => $hash->{$_},
 			'value' => $_,
 		};
 
 	}
-	
+
 	$client->modeParam('listRef', \@options);
 }
 
 sub settingsMenu {
 	my $client = shift;
-	
+
 	my %temp;
 	my @settingsChoices;
 	my $menu = $menuParams{'SETTINGS'}{'submenus'};
@@ -933,7 +933,7 @@ sub visualInit {
 	my $modeDefs = $client->display->visualizerModes();
 
 	my @visualModes;
-	my $i = 0;	
+	my $i = 0;
 
 	foreach my $mode (@$modes) {
 
@@ -950,7 +950,7 @@ sub visualInit {
 			value => $i++,
 		};
 	}
-	
+
 	$client->modeParam('listRef', \@visualModes);
 }
 
@@ -974,24 +974,15 @@ sub serverListInit {
 			name => Slim::Utils::Strings::getString($_),
 			value => Slim::Networking::Discovery::Server::getServerAddress($_)
 		};
-	}	
-
-	push @servers, {
-		name => $client->string('SQUEEZENETWORK'),
-		value => 'SQUEEZENETWORK'
-	};
+	}
 
 	$client->modeParam('listRef', \@servers);
 }
 
 sub switchServer {
 	my ($client, $server) = @_;
-	
-	if ($server->{value} eq 'SQUEEZENETWORK') {
-		Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
-	} 
 
-	elsif ( Slim::Networking::Discovery::Server::is_self($server->{value}) ) {
+	if ( Slim::Networking::Discovery::Server::is_self($server->{value}) ) {
 		$client->bumpRight();
 	}
 	else {
@@ -999,7 +990,7 @@ sub switchServer {
 		$client->showBriefly({
 			'line' => [
 				$client->string('MUSICSOURCE'),
-				$client->string('SQUEEZEBOX_SERVER_CONNECTING', $server->{name}) 
+				$client->string('SQUEEZEBOX_SERVER_CONNECTING', $server->{name})
 			]
 		});
 
@@ -1008,7 +999,7 @@ sub switchServer {
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
 			sub {
 				my ($client, $server) = @_;
-					
+
 				# don't disconnect unless we're still in this mode.
 				return unless ($client->modeParam('server.switch'));
 
@@ -1016,15 +1007,15 @@ sub switchServer {
 
 				# ensure client has disconnected before forgetting him
 				Slim::Control::Request::subscribe(
-					\&_forgetPlayer, 
-					[['client'],['disconnect']], 
+					\&_forgetPlayer,
+					[['client'],['disconnect']],
 					$client
 				);
 
 				$client->execute( [ 'connect', $server ] );
 
 			}, $server->{value});
-		
+
 		# this flag prevents disconnect if user has popped out of this mode
 		$client->modeParam('server.switch', 1);
 	}
@@ -1033,12 +1024,12 @@ sub switchServer {
 sub _forgetPlayer {
 	my $request = shift;
 	my $client  = $request->client;
-	
+
 	Slim::Control::Request::unsubscribe(\&_forgetPlayer, $client);
 
 	Slim::Control::Request::executeRequest(
 		$client,
-		['client', 'forget']);	
+		['client', 'forget']);
 }
 
 

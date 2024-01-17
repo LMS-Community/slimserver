@@ -1439,7 +1439,7 @@ sub hasScrolling { 0 }
 sub apps {
 	my $client = shift;
 
-	my %clientApps = %{$prefs->client($client)->get('apps') || {}};
+	my %clientApps;
 
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 		for my $plugin (@$nonSNApps) {

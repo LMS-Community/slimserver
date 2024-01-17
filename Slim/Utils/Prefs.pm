@@ -267,12 +267,6 @@ sub init {
 		'noupnp'                => 1,
 	);
 
-	if (!main::NOMYSB) {
-		# Server Settings - mysqueezebox.com
-		$defaults{'sn_sync'} = 1;
-		$defaults{'sn_disable_stats'} = 1;
-	}
-
 	# we can have different defaults depending on the OS
 	$os->initPrefs(\%defaults);
 
@@ -586,53 +580,6 @@ sub init {
 			}
 		}
 	}, 'timeFormat');
-
-	if (!main::NOMYSB) {
-		# Clear SN cookies from the cookie jar if the session changes
-		$prefs->setChange( sub {
-			if (!$_[1]) {
-				Slim::Networking::SqueezeNetwork->shutdown();
-			}
-
-			# XXX the sn.com hostnames can be removed later
-			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
-			$cookieJar->clear( 'www.squeezenetwork.com' );
-			$cookieJar->clear( 'www.test.squeezenetwork.com' );
-			$cookieJar->clear( 'www.mysqueezebox.com' );
-			$cookieJar->clear( 'www.test.mysqueezebox.com' );
-			$cookieJar->save();
-			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
-		}, 'sn_session' );
-
-		$prefs->setChange(sub {
-			my $newValue = $_[1];
-
-			if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
-				Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
-			}
-
-			if ( $newValue && $prefs->get('sn_session') ) {
-				require Slim::Networking::SqueezeNetwork::PrefSync;
-				Slim::Networking::SqueezeNetwork::PrefSync->init();
-			}
-		}, 'sn_sync');
-
-		$prefs->setChange( sub {
-			Slim::Utils::Timers::setTimer(
-				$_[1],
-				time() + 30,
-				sub {
-					return unless $prefs->get('sn_session');
-
-					my $isDisabled = shift;
-					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
-
-					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );
-				},
-			);
-
-		}, 'sn_disable_stats');
-	}
 
 	# Reset IR state if preference change
 	$prefs->setChange( sub {

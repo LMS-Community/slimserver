@@ -93,7 +93,7 @@ Used for player settings to validate against the current client
 =cut
 sub validFor {
 	my $class = shift;
-	
+
 	return 1;
 }
 
@@ -161,7 +161,7 @@ sub handler {
 			my (undef, $ok) = $prefsClass->set($pref, $paramRef->{'pref_' . $pref});
 
 			if ($ok) {
-				$paramRef->{'validated'}->{$pref} = 1; 
+				$paramRef->{'validated'}->{$pref} = 1;
 			}
 			else {
 				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{'pref_' . $pref}, $pref) . '<br/>';
@@ -171,7 +171,7 @@ sub handler {
 
 		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);
 		$paramRef->{'prefs'}->{'pref_' . $pref} = $prefsClass->get($pref);
-	
+
 		# XXX store prefs in legacy style, too - to be removed once we can give up on 7.0 backwards compatibility for plugins
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
 
@@ -183,7 +183,7 @@ sub handler {
 	if ($prefsClass) {
 		$paramRef->{'namespace'} = $prefsClass->namespace;
 	}
-	
+
 	# ask the user to run a scan
 	if (Slim::Utils::Prefs::preferences('server')->get('dontTriggerScanOnPrefChange') && Slim::Music::Import->hasScanTask && !$paramRef->{'warning'} && !Slim::Music::Import->stillScanning()) {
 		$paramRef->{'rescanUrl'} = $paramRef->{webroot} . $paramRef->{path} . '?doRescanNow=1';
@@ -196,11 +196,11 @@ sub handler {
 
 	if ($paramRef->{'saveSettings'} && !$paramRef->{'warning'}) {
 		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_CHANGES_SAVED');
-	}	
+	}
 
 	# Common values
 	$paramRef->{'page'} = $class->name;
-	
+
 	# Needed to generate the drop down settings chooser list.
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
@@ -211,17 +211,15 @@ sub handler {
 			$topLevelItems{$_} = 1;
 			[ $_, $paramRef->{'additionalLinks'}->{'setup'}->{$_} ];
 		}
-		grep { 
+		grep {
 			if (/ITUNES/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') }
 			elsif (/PLUGIN_PODCAST/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin') }
-			elsif (/SQUEEZENETWORK_SETTINGS/) { !main::NOMYSB }
 			else { 1 }
 		}
 		(
 			'BASIC_SERVER_SETTINGS',
 			'BASIC_PLAYER_SETTINGS',
 			'BEHAVIOR_SETTINGS',
-			'SQUEEZENETWORK_SETTINGS',
 			'ITUNES',
 			'INTERFACE_SETTINGS',
 			'SETUP_PLUGINS',
@@ -237,7 +235,7 @@ sub handler {
 	if (defined $client) {
 
 		my %playerSetupLinks;
-		
+
 		for my $settingclass (@playerSettingsClasses) {
 
 			if ($settingclass->validFor($client)) {
@@ -257,15 +255,15 @@ sub handler {
 
 		my $basic = 'BASIC_PLAYER_SETTINGS';
 
-		my @orderedLinks = 
+		my @orderedLinks =
 			map { $_->[1] }
 			sort { $a->[0] cmp $b->[0] }
 			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] }
-			grep { $_ !~ /$basic/ } 
+			grep { $_ !~ /$basic/ }
 			keys %{$paramRef->{'playersetup'}};
-	
+
 		unshift @orderedLinks, $basic if $paramRef->{'playersetup'}->{$basic};
-	
+
 		$paramRef->{'orderedLinks'} = \@orderedLinks;
 	}
 
@@ -281,7 +279,7 @@ sub handler {
 
 		$paramRef->{'orderedLinks'} = \@orderedLinks;
 	}
-	
+
 	$class->beforeRender($paramRef, $client);
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);

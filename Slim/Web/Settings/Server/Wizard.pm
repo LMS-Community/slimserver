@@ -30,9 +30,6 @@ sub handler {
 
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
-	# The hostname for mysqueezebox.com
-	$paramRef->{sn_server} = Slim::Networking::SqueezeNetwork->get_server("sn") if !main::NOMYSB;
-
 	# make sure we only enforce the wizard at the very first startup
 	if ($paramRef->{saveSettings}) {
 

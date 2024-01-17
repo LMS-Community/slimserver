@@ -110,58 +110,6 @@ Wizard = {
 			},
 
 			pageconfig: {
-				sqn_p: {
-					validator: function(){
-						var email = Ext.get('sn_email').getValue();
-						var pw = Ext.get('sn_password').getValue();
-						var disable_stats = Ext.get('sn_disable_stats').getValue();
-
-						var email_summary = Ext.get('sn_email_summary');
-						var result_summary = Ext.get('sn_result_summary');
-						var resultEl = Ext.get('sn_result');
-
-						resultEl.update('');
-						result_summary.update('');
-
-						if (email || pw) {
-							email_summary.update(email);
-
-							Ext.Ajax.request({
-								url: '/settings/server/squeezenetwork.html',
-								params: {
-									pref_sn_email: email,
-									sn_password: pw,
-									pref_sn_disable_stats: disable_stats,
-									pref_sn_sync: 1,
-									saveSettings: 1,
-									AJAX: 1
-								},
-								scope: this,
-
-								success: function(response, options){
-									var result = response.responseText.split('|');
-
-									if (result[0] == '0') {
-										resultEl.update(result[1]);
-										result_summary.update('(' + result[1] + ')');
-										Ext.get('sn_email').highlight('ffcccc');
-										Ext.get('sn_password').highlight('ffcccc');
-									}
-
-									else {
-										this.jump(1)
-									}
-								}
-							});
-						}
-
-						else {
-							email_summary.update(SqueezeJS.string('summary_none'));
-							this.jump(1)
-						}
-					}
-				},
-
 				audiodir_p: {
 					//validator: function(){
 					//	this._validatePref('server', 'audiodir');

@@ -28,7 +28,7 @@ sub fetchGainMode {
 	my $track  = $song->currentTrack();
 	my $url    = $track->url;
 
-	# Allow plugins to override replaygain (i.e. Pandora should always use track gain)
+	# Allow plugins to override replaygain
 	my $handler = $song->currentTrackHandler();
 	if ( $handler->can('trackGain') ) {
 		return $handler->trackGain( $client, $url );
@@ -148,7 +148,6 @@ sub trackAlbumMatch {
 	}
 
 	# For remote tracks, get metadata from the protocol handler
-	# This allows Rhapsody to support smart crossfade
 	if ( $current_track->remote ) {
 		if ( !$compare_track->remote ) {
 			# Other track is not remote, fail
