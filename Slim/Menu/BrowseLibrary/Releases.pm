@@ -6,7 +6,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
-use constant MAX_ALBUMS => 500;
+# Should we page through results instead of doing one huge bulk request?
+use constant MAX_ALBUMS => 1500;
 
 my $log = logger('database.info');
 my $prefs = preferences('server');
