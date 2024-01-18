@@ -4995,6 +4995,7 @@ sub _songData {
 
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
+			$remoteMeta->{E} = $remoteMeta->{extid};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{i} = $remoteMeta->{disc};
 			$remoteMeta->{K} = $remoteMeta->{cover};
