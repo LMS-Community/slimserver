@@ -5009,7 +5009,7 @@ sub _songData {
 			$remoteMeta->{y} = $remoteMeta->{year};
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
-			$remoteMeta->{W} => $remoteMeta->{releasetype}
+			$remoteMeta->{W} = $remoteMeta->{releasetype};
 		}
 	}
 
