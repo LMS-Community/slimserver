@@ -5799,7 +5799,7 @@ sub _getTagDataForTracks {
 			my $genre_info = $values{$track} ||= {};
 
 			utf8::decode($name);
-			$genre_info->{ids}   .= $genre_info->{ids} ? ', ' . $id : $id;
+			$genre_info->{ids}   .= $genre_info->{ids} ? ',' . $id : $id;
 			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
 		}
 
