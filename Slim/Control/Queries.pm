@@ -5757,7 +5757,7 @@ sub _getTagDataForTracks {
 
 			# XXX: what if name has ", " in it?
 			utf8::decode($name);
-			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
+			$role_info->{ids}   .= $role_info->{ids} ? ',' . $id : $id;
 			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
 		}
 
