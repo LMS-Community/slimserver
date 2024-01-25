@@ -2921,7 +2921,7 @@ sub _postCheckAttributes {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
 
-	my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST};
+	my $artist = $contributors->{'ALBUMARTIST'} || $contributors->{ARTIST} || $contributors->{TRACKARTIST};
 	if ($artist) {
 		$cols{primary_artist} = $artist->[0];
 	}
