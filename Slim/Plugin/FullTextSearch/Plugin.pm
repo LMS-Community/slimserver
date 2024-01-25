@@ -11,7 +11,7 @@ use Slim::Utils::Text;
 
 use constant CAN_FTS4 => Slim::Utils::Versions->compareVersions($DBD::SQLite::VERSION, 1.42) > 0;
 
-use constant BUILD_STEPS => 7;
+use constant BUILD_STEPS => 6;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
 

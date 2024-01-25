@@ -4995,6 +4995,7 @@ sub _songData {
 
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
+			$remoteMeta->{E} = $remoteMeta->{extid};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{i} = $remoteMeta->{disc};
 			$remoteMeta->{K} = $remoteMeta->{cover};
@@ -5008,7 +5009,7 @@ sub _songData {
 			$remoteMeta->{y} = $remoteMeta->{year};
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
-			$remoteMeta->{W} => $remoteMeta->{releasetype}
+			$remoteMeta->{W} = $remoteMeta->{releasetype};
 		}
 	}
 
@@ -5756,7 +5757,7 @@ sub _getTagDataForTracks {
 
 			# XXX: what if name has ", " in it?
 			utf8::decode($name);
-			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
+			$role_info->{ids}   .= $role_info->{ids} ? ',' . $id : $id;
 			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
 		}
 
@@ -5798,7 +5799,7 @@ sub _getTagDataForTracks {
 			my $genre_info = $values{$track} ||= {};
 
 			utf8::decode($name);
-			$genre_info->{ids}   .= $genre_info->{ids} ? ', ' . $id : $id;
+			$genre_info->{ids}   .= $genre_info->{ids} ? ',' . $id : $id;
 			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
 		}
 

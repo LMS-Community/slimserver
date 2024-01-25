@@ -9,13 +9,13 @@ use HTTP::Status qw(RC_NOT_FOUND RC_OK);
 use Digest::MD5 qw(md5_hex);
 
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Player::ProtocolHandlers;
 use Slim::Plugin::Sounds::ProtocolHandler;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use constant BASE_URL => 'https://downloads.slimdevices.com/sounds';
 use constant BASE_AUDIO_PATH => 'plugins/sounds/audio/';
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -26,9 +26,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $serverPrefs = preferences('server');
 my $soundsCache = catfile($serverPrefs->get('cachedir'), 'Sounds');
-
-# change this to whatever when the time has come.
-my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
 
 my $menus = {
 	MUSICAL => {
@@ -173,7 +170,7 @@ sub getSortedSounds {
 
 	my @playlistItems;
 
-	my $loopUrl = Slim::Utils::Network::serverURL() . BASE_AUDIO_PATH;
+	my $loopUrl = Slim::Utils::Network::serverURL() . '/' . BASE_AUDIO_PATH;
 	$loopUrl =~ s/^http/loop/;
 
 	for my $menu ( @items ) {
@@ -236,7 +233,7 @@ sub proxyRequest {
 		return $sendFile->();
 	}
 
-	my $originUrl = "http://$baseUrl/$path";
+	my $originUrl = BASE_URL . "/$path";
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
