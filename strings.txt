@@ -12,7 +12,7 @@
 # Also, when submitting changes, please use the latest version in CVS
 #
 # NOTE: Please keep the languages in alphabetical order by two-letter identifier.
-# 
+#
 # The two letter codes are defined by ISO 639-1
 # http://en.wikipedia.org/wiki/List_of_ISO_639_codes
 
@@ -14181,7 +14181,7 @@ PLAYER_IP_ADDRESS
 	FR	L'adresse IP de cette platine est
 	HE	כתובת ה-IP של הנגן היא
 	IT	L'indirizzo IP del lettore è
-	JA	このプレーヤーのIPアドレスは 
+	JA	このプレーヤーのIPアドレスは
 	NL	Het IP-adres van dit muzieksysteem is
 	NO	Spillerens IP-adresse er
 	PL	Adres IP tego odtwarzacza to
@@ -14200,7 +14200,7 @@ PLAYER_MAC_ADDRESS
 	FR	L'adresse MAC de cette platine est
 	HE	כתובת ה-MAC של האתרנט של הנגן היא
 	IT	L'indirizzo MAC Ethernet di questo lettore è
-	JA	このプレーヤーのMACアドレスは 
+	JA	このプレーヤーのMACアドレスは
 	NL	Het ethernet-MAC-adres van dit muzieksysteem is
 	NO	Spillerens MAC-adresse er
 	PL	Adres MAC w sieci Ethernet tego odtwarzacza to
@@ -16097,7 +16097,7 @@ RADIO_TUNEIN_DESC
 	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala aquí y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
 	FI	Jos tiedät jo sen radiokanavan URL-osoitteen, jota haluat kuunnella, kirjoita se tähän ja valitse Virittäydy kanavalle. Voit kirjoittaa joko radiovirran itsensä (esim. http://62.49.59.50:8000) tai virtaa osoittavan soittoluettelotiedoston (esim. http://www.hitzradio.com/hitzradio.pls) URL:n.
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ici et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
-	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
+	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls).
 	IT	Se si conosce già l'URL della stazione che si vuole ascoltare, inserirlo qui e fare clic sul pulsante Sintonizza. È possibile inserire l'URL dello stream della radio (esempio http://62.49.59.50:8000) o del file della playlist che punta allo stream (esempio http://www.hitzradio.com/hitzradio.pls).
 	NL	Als je de URL al weet van de zender die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio-stream zelf invoeren (bijv. http://62.49.59.50:8000), of van het playlistbestand dat naar de stream wijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 	NO	Hvis du allerede vet url-en til stasjonen du vil høre på, kan du angi den her og klikke på «Finn». Du kan enten angi url-en til selve radiostrømmen (for eksempel http://62.49.59.50:8000), eller til spillelistefilen som peker til strømmen (for eksempel http://www.hitzradio.com/hitzradio.pls).
@@ -17888,7 +17888,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación.
 	FI	Voit valita, että kaikki kokoelmalevyt näkyvät Eri artistit -kohdan alla, tai voit valita, että ne näkyvät kokoelman eri artistien nimen alla.
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
-	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף. 
+	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
 	NL	Je kunt verzamelalbums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamelalbum laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
@@ -17939,7 +17939,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación.
 	FI	Kun kokoelmalevyjä laitetaan samaan ryhmään, ne näkyvät oletuksena kohdassa Eri artistit.  Voit vaihtaa nimen alla.
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
-	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן. 
+	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
 	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder veranderen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
@@ -23894,3 +23894,14 @@ SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
 
+MIGRATION_ANNOUNCEMENT
+	DE	Ankündigung
+	EN	Migration Announcement
+	FR	Annonce de migration
+	NL	Migratieaankondiging
+
+PLEASE_FOLLOW_QR
+	DE	Bitte scannen Sie den QR Code
+	EN	Please follow the QR Code
+	FR	Merci de suivre le QR Code
+	NL	Volg de QR-code
