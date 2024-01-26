@@ -2776,7 +2776,7 @@ sub _songData {
 		if (my $migrationData = Slim::Formats::RemoteMetadata->getMigrationInfoData($request->client)) {
 			$remoteMeta->{cover} = $remoteMeta->{K} = $remoteMeta->{icon} = $migrationData->{icon};
 			$remoteMeta->{artist} = $remoteMeta->{A} = $remoteMeta->{a} = $migrationData->{artist};
-			$remoteMeta->{album} = $remoteMeta->{l} = $$migrationData->{album};
+			$remoteMeta->{album} = $remoteMeta->{l} = $migrationData->{album};
 			$remoteMeta->{title} = $migrationData->{title};
 		}
 
