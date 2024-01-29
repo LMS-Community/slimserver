@@ -190,10 +190,10 @@ sub addTracks {
 	my $playlist = playList($client);
 
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
-
-	# do we need to plan for restart of streaming?
+	
+	# we need to plan for restart of streaming in case the streaming song is the last one
 	my $restart = (Slim::Player::Source::playingSongIndex($client) == Slim::Player::Source::streamingSongIndex($client)) &&
-				  (Slim::Player::Source::playingSongIndex($client) == count($client) - 1);
+				  (Slim::Player::Source::streamingSongIndex($client) == count($client) - 1);
 
 	# How many tracks might we need to remove to make space?
 	my $need = $maxPlaylistLength ? (scalar @{$playlist} + scalar @{$tracksRef}) - $maxPlaylistLength : 0;
@@ -357,7 +357,7 @@ sub removeTrack {
 		return 0;
 	}
 	if ($tracknum + $nTracks > count($client)) {
-		$log->warn("Arrempting to remove too many tracks ($nTracks)");
+		$log->warn("Attempting to remove too many tracks ($nTracks)");
 		$nTracks = count($client) - $tracknum;
 	}
 

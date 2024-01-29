@@ -196,8 +196,8 @@ Started =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Playing,		\&_Playing,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Playing,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
-	[	\&_Invalid,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PAUSED
+	[	\&_PlayAndNext,	\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
+	[	\&_PlayAndNext,	\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PAUSED
 ],
 StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
@@ -902,7 +902,7 @@ sub nextsong {
 # in order to try to restart.
 #
 sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
-						#			ELSIF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
+						#			ELSIF [moreTracks] AND [roomInQueue] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	_setStreamingState($self, IDLE);
 	
@@ -921,8 +921,13 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 			return;
 		}
 	}
-	
-	_getNextTrack($self, $params, 1);
+
+	# see comment on _NextIfMore
+	if (scalar @{$self->{'songqueue'}} < 2) {
+		_getNextTrack($self, $params, 1);
+	} else {
+		$log->info("streaming track not started yet, will wait until then to try next track");
+	}
 }
 
 sub _Continue {
@@ -987,9 +992,17 @@ sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> Trac
 	_getNextTrack($self, $params, 1);
 }
 
-sub _NextIfMore {			# -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
+sub _NextIfMore {			# -> Idle; IF [moreTracks] AND [roomInQueue] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	_setStreamingState($self, IDLE);
+	# if we already have a playing and a streaming track, then wait until the streaming 
+	# one starts to play before getting the next one. That happens when player's buffer 
+	# is much larger than track. 
+	if (scalar @{$self->{'songqueue'}} < 2) {
+		_getNextTrack($self, $params, 1);
+	} else {
+		$log->info("streaming track not started yet, will wait until then to try next track");
+	}
 	_getNextTrack($self, $params, 1);
 }
 
@@ -1345,10 +1358,18 @@ sub _PlayIfReady {		# -> Stopped; IF [trackReady] THEN play -> Buffering, Stream
 	}
 }
 
-
 sub _PlayAndStream {		# -> PLAYING; IF [allReadyToStream] THEN play -> Streaming ENDIF
 	_Playing(@_);
 	_StreamIfReady(@_);		# Bug 5103
+}
+
+sub _PlayAndNext {			# -> PLAYING; IF [allReadyToStream] THEN play -> Streaming ENDIF
+	# this happens because the streaming track was fully streamed before the playing one
+	# was finished, so we waited for the streaming track to start playing before getting 
+	# next one, but we must now get it. 
+	_Playing(@_);
+	main::INFOLOG && $log->info('now playing already fully streaming song => get next');
+	_getNextTrack($_[0], undef, 1);
 }
 
 sub _StreamIfReady {		# IF [allReadyToStream] THEN play -> Streaming ENDIF
@@ -2124,7 +2145,7 @@ sub nextIfStreamed {
 		$self->{'playingState'} != STOPPED && 
 		$self->{'playingState'} != PAUSED) {
 		main::INFOLOG && $log->info("getting next track to re-launch streaming process");
-		_getNextTrack($self);
+		_getNextTrack($self, undef, 1);
 	}
 }	
 
