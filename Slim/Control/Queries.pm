@@ -4828,6 +4828,7 @@ my %tagMap = (
 	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
 	  'N' => ['remote_title'],                                          # remote stream title
 	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
+	  'V' => ['live_edge',        '',              'live_edge'],        # a remote live streams maximum available seek point in seconds within the current duration.
 
 	  'g' => ['genre',            'GENRE',         'genrename'],        #->genre_track->genre.name
 	  'p' => ['genre_id',         '',              'genreid'],          #->genre_track->genre.id
@@ -5010,6 +5011,7 @@ sub _songData {
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
+			$remoteMeta->{V} = $remoteMeta->{live_edge};
 		}
 	}
 
