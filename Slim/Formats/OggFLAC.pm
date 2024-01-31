@@ -12,20 +12,18 @@ my $sourcelog = logger('player.source');
 
 Get the OggFlac header. For now, we use a fixed header
 that resets MD5 and frame number to 0 upon seeking. 
-NB: that function is only used when seeking, othersise
-the entire file us used untouched.
+NB: that function is only used when seeking, otherwise
+the entire file is used unmodified.
 
 =cut
 
 sub getInitialAudioBlock {
 	my ($class, $fh, $track, $time) = @_;
 
-	open my $localFh, '<&=', $fh;
-	my $info = Audio::Scan->find_frame_fh_return_info( ogf => $localFh, 0 );
-
+	# it should be already here
+	$class->findFrameBoundaries( $fh, undef, $1 ) unless exists ${*$fh}{_ogf_seek_header};
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info('Reading initial audio block of ', length $info->{seek_header});
-
-	return $info->{seek_header};
+	return ${${*$fh}{_ogf_seek_header}};
 }
 
 =head2 findFrameBoundaries( $fh, $offset, $time )
@@ -36,10 +34,17 @@ Seeks to the Ogg block containing the sample at $time.
 
 sub findFrameBoundaries {
 	my ( $class, $fh, $offset, $time ) = @_;
-
-	return (defined $fh && defined $time) ? 
-		   Audio::Scan->find_frame_fh( ogf => $fh, int($time * 1000) ) : 
-		   0;		
+	
+	# need a localFh to have own seek pointer
+	open(my $localFh, '<&=', $fh);
+	# should not be beeded as find_frame_fh_return_info seeks 
+	$localFh->seek(0, SEEK_SET);
+	
+	# stash the header here as getInitialBlock should be called right after
+	my $info = Audio::Scan->find_frame_fh_return_info( ogf => $localFh, int($time * 1000) );
+	${*$fh}{_ogf_seek_header} = \$info->{seek_header};
+	
+	return $info->{seek_offset} || -1;
 }
 
 =head2 scanBitrate( $fh )
