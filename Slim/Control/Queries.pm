@@ -5011,7 +5011,7 @@ sub _songData {
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
-			$remoteMeta->{V} = $remoteMeta->{live_edge};
+			$remoteMeta->{V} = $remoteMeta->{live_edge}; # live edge only applicable to adaptive streaming formats (e.g. hls or dash ) currently only supported in 3rd party plugins
 		}
 	}
 
