@@ -22,7 +22,7 @@ sub getInitialAudioBlock {
 
 	# it should be already here
 	$class->findFrameBoundaries( $fh, undef, $1 ) unless exists ${*$fh}{_ogf_seek_header};
-	main::INFOLOG && $sourcelog->is_info && $sourcelog->info('Reading initial audio block of ', length $info->{seek_header});
+	main::INFOLOG && $sourcelog->is_info && $sourcelog->info('Reading initial audio block of ', length ${${*$fh}{_ogf_seek_header}});
 	return ${${*$fh}{_ogf_seek_header}};
 }
 
