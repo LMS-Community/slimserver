@@ -5011,7 +5011,22 @@ sub _songData {
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
-			$remoteMeta->{V} = $remoteMeta->{live_edge}; # live edge only applicable to adaptive streaming formats (e.g. hls or dash ) currently only supported in 3rd party plugins
+
+			$remoteMeta->{V} = -1;
+            # Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
+            if ( my $client = $request->client ) {
+                if (my $song = $client->currentSongForUrl($url)) {
+                    if ( $handler->can('isLive') )  {
+                        if ( $handler->isLive($song) ) {# Distance form the live edge, if available.
+                            $remoteMeta->{V} = $remoteMeta->{live_edge} ? $remoteMeta->{live_edge} : 0;
+                        } else { # Not Live
+                            $remoteMeta->{V} = -1;
+                        }
+                    } else { # only live if the song has isLive set
+                        $remoteMeta->{V} = $song->isLive() ? 0 : -1;
+                    }
+				}
+			}
 		}
 	}
 
