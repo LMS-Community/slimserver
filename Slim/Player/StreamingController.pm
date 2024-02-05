@@ -1213,10 +1213,10 @@ sub _Stream {				# play -> Buffering, Streaming
 
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
-	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
-	# Check that we are not trying to stream too many tracks (test moved from _StreamIfReady)
+	# track. Trying to _Stream() more than 1 shoud never happen as it is blocked in the ReadyToStream
+	# event (_NextIfMore and _RetryOrNext() methods)) and the _Stream() is delayed to Started event
 	if (scalar @$queue > 2) {
-		main::INFOLOG && $log->info("aborting streaming because songqueue too long: ", scalar @$queue);
+		$log->error("we should not be here: aborting streaming because songqueue too long: ", scalar @$queue);
 		shift @$queue while (scalar @$queue > 2);
 		return;
 	}
