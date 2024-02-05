@@ -13,6 +13,12 @@ use File::Spec::Functions qw(catfile);
 use Slim::Plugin::AudioAddict::API;
 use Slim::Utils::Prefs;
 
+our $pluginDir;
+BEGIN {
+	$pluginDir = $INC{"Slim/Plugin/AudioAddict/Plugin.pm"};
+	$pluginDir =~ s/Plugin.pm$//;
+}
+
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.audioaddict',
 	defaultLevel => 'ERROR',
@@ -24,9 +30,6 @@ my $prefs = preferences('plugin.audioaddict');
 sub initPlugin {
 	my ($class) = @_;
 
-	# as the strings are there for AudioAddict, but that isn't loaded as a plugin,
-	# we take one of its children and create the strings path from it:
-	my ($pluginDir) = map { s/DIfm/AudioAddict/; $_ } grep { m|Plugin/DIfm$| } Slim::Utils::PluginManager->dirsFor('strings');
 	Slim::Utils::Strings::loadFile(catfile($pluginDir, 'strings.txt'));
 
 	$class->SUPER::initPlugin(
