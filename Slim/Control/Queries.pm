@@ -5018,14 +5018,8 @@ sub _songData {
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
 
 			# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
-			$remoteMeta->{V} = -1;
-			if ( $song ) {
-				$remoteMeta->{V} = $song->isLive() ? 0 : -1;
-				#$remoteMeta->{live_edge} will only be populated by 3rd party handlers that support dynamic adaptive live streams
-				if ( $song->isLive() && $remoteMeta->{live_edge} ) {# Distance form the live edge, if available.
-					$remoteMeta->{V} = $remoteMeta->{live_edge};
-				}
-			}
+			# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
+			$remoteMeta->{V} = $remoteMeta->{live_edge} // ($song && $song->isLive() ? 0 : -1);
 		}
 	}
 
