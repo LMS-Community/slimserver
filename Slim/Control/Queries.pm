@@ -4828,6 +4828,7 @@ my %tagMap = (
 	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
 	  'N' => ['remote_title'],                                          # remote stream title
 	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
+	  'V' => ['live_edge',        '',              'live_edge'],        # a remote live streams maximum available seek point in seconds within the current duration.
 
 	  'g' => ['genre',            'GENRE',         'genrename'],        #->genre_track->genre.name
 	  'p' => ['genre_id',         '',              'genreid'],          #->genre_track->genre.id
@@ -4984,6 +4985,11 @@ sub _songData {
 	my $isRemote = $track->remote;
 	my $url = $track->url;
 
+	my $song;
+	if ( my $client = $request->client ) {
+		$song = $client->currentSongForUrl($url);
+	}
+
 	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
@@ -5010,18 +5016,20 @@ sub _songData {
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
+
+			# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
+			# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
+			$remoteMeta->{V} = $remoteMeta->{live_edge} // ($song && $song->isLive() ? 0 : -1);
 		}
 	}
 
 	my $parentTrack;
-	if ( my $client = $request->client ) { # Bug 13062, songinfo may be called without a client
-		if (my $song = $client->currentSongForUrl($url)) {
-			my $t = $song->currentTrack();
-			if ($t->url ne $url) {
-				$parentTrack = $track;
-				$track = $t;
-				$isRemote = $track->remote;
-			}
+	if ( $song ) {
+		my $t = $song->currentTrack();
+		if ($t->url ne $url) {
+			$parentTrack = $track;
+			$track = $t;
+			$isRemote = $track->remote;
 		}
 	}
 
