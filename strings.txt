@@ -9323,16 +9323,22 @@ SETUP_CLEANUP_RELEASE_TYPES
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
-	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
-	EN	Don't group an artist's releases
-	FR	Ne pas regrouper les sorties d'un artiste par type
-	NL	Releases van een artiest niet groeperen op type
+	DE	Die Veröffentlichungen nicht gruppieren
+	EN	Don't group releases
+	FR	Ne pas regrouper les sorties par type
+	NL	Releases niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
-	EN	Group an artist's releases by type
+	EN	Group an artist's lists by release type
 	FR	Regrouper les sorties d'un artiste par type
 	NL	Releases van een artiest groeperen op type
+
+SETUP_GROUP_BY_RELEASE_TYPES_2
+	DE	Gruppieren Sie alle Veröffentlichungen nach Typ
+	EN	Group all lists by release type
+	FR	Regrouper tous les sorties par type
+	NL	Groepeer alle releases op type
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny

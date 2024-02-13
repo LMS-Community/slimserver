@@ -1401,8 +1401,8 @@ sub _albumsOrReleases {
 	# We only display the grouped albums if:
 	# 1. the feature is enabled
 	if (!$prefs->get('ignoreReleaseTypes') && $prefs->get('groupArtistAlbumsByReleaseType')
-		# 2. a specific artist is requested
-		&& (grep /^artist_id:/, @searchTags)
+		# 2. a specific artist is requested or user wants release type groups always
+		&& ( $prefs->get('groupArtistAlbumsByReleaseType') == 2 || grep /^artist_id:/, @searchTags )
 		# 3. any one of the following is true:
 		#    3a. we don't apply a role filter (eg. drilling down from a "Composers" menu)
 		&& ($prefs->get('noRoleFilter')

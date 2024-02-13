@@ -70,6 +70,7 @@ sub _releases {
 	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
 
 	foreach (@{ $request->getResult('albums_loop') || [] }) {
+
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 
@@ -135,10 +136,6 @@ sub _releases {
 	}
 
 	my @items;
-	my $searchTags = [
-		"artist_id:$artistId",
-		"library_id:$library_id",
-	];
 
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
@@ -155,13 +152,13 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
+					? [ { searchTags => [ 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
+					: [ { searchTags => [ "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
-		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [ "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSER}) {
@@ -172,17 +169,17 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
+			passthrough => [ { searchTags => [ "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
 		};
 	}
 
 	if (my $albumIds = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [ "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
-		push @items, _createItem($name || ucfirst($role), [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
+		push @items, _createItem($name || ucfirst($role), [ { searchTags => [ "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# if there's only one category, display it directly
@@ -196,8 +193,10 @@ sub _releases {
 	# navigate categories if there's more than one
 	else {
 		# add extra items
-		foreach ( grep { $_ } map { $_->($artistId) } @{getExtraItems('artist')} ) {
-			push @items, $_;
+		if ( $artistId ) {
+			foreach ( grep { $_ } map { $_->($artistId) } @{getExtraItems('artist')} ) {
+				push @items, $_;
+			}
 		}
 
 		# add "All" item
