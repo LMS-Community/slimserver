@@ -76,31 +76,13 @@ sub checkVersion {
 
 	main::INFOLOG && $log->info("Checking version now.");
 
-	my $url = main::NOMYSB ? REPOSITORY_URL : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
-
-	$url .= sprintf(
-		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d",
-		$::VERSION,
-		$::REVISION,
-		Slim::Utils::Strings::getLanguage(),
-		$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
-		$os->canAutoUpdate() ? $os->installerOS() : '',
-		$prefs->get('server_uuid'),
-		Slim::Player::Client::clientCount(),
-	) unless main::NOMYSB;
-
-	main::DEBUGLOG && $log->debug("Using URL: $url");
-
-	my $params = {
-		cb => $cb
-	};
-
-	if (main::NOMYSB) {
-		Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError, $params)->get($url);
-	}
-	else {
-		Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError, $params)->get($url);
-	}
+	Slim::Networking::SimpleAsyncHTTP->new(
+		\&checkVersionCB,
+		\&checkVersionError,
+		{
+			cb => $cb
+		}
+	)->get(REPOSITORY_URL);
 
 	$prefs->set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
@@ -119,30 +101,24 @@ sub checkVersionCB {
 		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
 
 		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
-		if (main::NOMYSB) {
-			my $versions = from_json($content);
+		my $versions = from_json($content);
 
-			my $osID = $os->installerOS() || 'default';
-			$versions = $versions->{$::VERSION} || $versions->{latest};
+		my $osID = $os->installerOS() || 'default';
+		$versions = $versions->{$::VERSION} || $versions->{latest};
 
-			main::DEBUGLOG && $log->is_debug && $log->debug("Got list of installers:\n" . Data::Dump::dump($versions));
+		main::DEBUGLOG && $log->is_debug && $log->debug("Got list of installers:\n" . Data::Dump::dump($versions));
 
-			if ( my $update = $versions->{ $osID } ) {
-				if ( $update->{version} && $update->{revision} ) {
-					if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
-						if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
-							$version = $update->{url};
-						}
-						else {
-							$version = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $update->{version}, $update->{url});
-						}
+		if ( my $update = $versions->{ $osID } ) {
+			if ( $update->{version} && $update->{revision} ) {
+				if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
+					if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
+						$version = $update->{url};
+					}
+					else {
+						$version = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $update->{version}, $update->{url});
 					}
 				}
 			}
-		}
-		else {
-			chomp($content);
-			$version = $content;
 		}
 
 		$version ||= 0;
