@@ -9286,21 +9286,21 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe "Albums du compositeur"
-	DE	Erstellen Sie keine Komponistenalbengruppe
+	DE	Keine Komponistenalbengruppe erstellen
 	NL	Maak geen Composer Album-groep
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créer toujours un groupe "Albums du compositeur"
-	DE	Erstellen Sie immer eine Komponistenalbengruppe
+	DE	Immer eine Komponistenalbengruppe erstellen
 	NL	Maak altijd een Composer Album-groep
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créer un groupe "Albums du compositeur" pour ces genres :
-	DE	Erstellen Sie eine Komponistenalbengruppe für diese Stilrichtungen:
+	DE	Komponistenalbengruppe für diese Stilrichtungen erstellen:
 	NL	Maak een Composer Album-groep voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
@@ -9335,7 +9335,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_1
 	NL	Releases van een artiest groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_2
-	DE	Gruppieren Sie alle Veröffentlichungen nach Typ
+	DE	Alle Veröffentlichungen nach Typ gruppiere
 	EN	Group all lists by release type
 	FR	Regrouper tous les sorties par type
 	NL	Groepeer alle releases op type
@@ -12469,22 +12469,22 @@ NO_TITLE
 
 THOUSANDS_SEP
 # SLT: this is the separator used to separate thousands as in 10'000'000.00 ([[http://en.wikipedia.org/wiki/Thousands_separator]])
-	CS	 
+	CS
 	DA	,
 	DE	.
 	EN	,
 	ES	.
-	FI	 
-	FR	 
+	FI
+	FR
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL
 	PT	.
 	RU	,
-	SV	 
+	SV
 	ZH_CN	,
 
 BYTES
