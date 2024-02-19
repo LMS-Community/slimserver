@@ -12,6 +12,7 @@ use base qw(Slim::Utils::Accessor);
 use Exporter::Lite;
 use HTTP::Date ();
 use HTTP::Request;
+use URI::Escape qw(uri_escape_utf8);
 
 our @EXPORT = qw(hasZlib unzip _cacheKey);
 
@@ -304,7 +305,7 @@ sub _cacheKey {
 		$cachekey .= '-' . ($client->languageOverride || '');
 	}
 
-	return $cachekey;
+	return uri_escape_utf8($cachekey);
 }
 
 
