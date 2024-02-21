@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Logitech Media Server Copyright 2001-2022 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -162,7 +162,7 @@ BEGIN {
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
 	}
 
-	our $VERSION = '8.4.1';
+	our $VERSION = '8.5.0';
 
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable
@@ -781,8 +781,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --httpport       => Activate the web interface on the specified port.
                         Set to 0 in order disable the web server.
     --httpaddr       => Activate the web interface on the specified IP address.
-    --advertiseaddr  => IP address to report as its exposed address (UI and to mysqueezebox.com).
-                        Basically the user facing IP address.
+    --advertiseaddr  => IP address to report as its exposed address. Basically the user facing IP address.
     --cliport        => Activate the command line interface TCP/IP interface
                         on the specified port. Set to 0 in order disable the
                         command line interface server.
@@ -806,8 +805,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
-    --nomysqueezebox => Disable mysqueezebox.com integration.
-                        Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
