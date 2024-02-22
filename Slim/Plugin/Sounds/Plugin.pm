@@ -168,9 +168,6 @@ sub getSortedSounds {
 
 	my @playlistItems;
 
-	my $loopUrl = Slim::Utils::Network::serverURL() . '/' . BASE_AUDIO_PATH;
-	$loopUrl =~ s/^http/loop/;
-
 	for my $menu ( @items ) {
 		# Sort each submenu after localizing
 		my @subsorted = sort {
@@ -182,7 +179,7 @@ sub getSortedSounds {
 				name    => string("PLUGIN_SOUNDS_$_"),
 				bitrate => 128,
 				type    => 'audio',
-				url     => $loopUrl . $path,
+				url     => 'loop://' . $path,
 			};
 		} keys %{ $menus->{$menu->{id}} };
 
@@ -209,6 +206,21 @@ sub getSortedSounds {
 		type  => 'opml',
 		items => \@items
 	};
+}
+
+sub getStreamUrl {
+	my ($class, $client, $url) = @_;
+
+	my $auth = '';
+	if ( $serverPrefs->get('authorize') ) {
+		my $password = Slim::Player::Squeezebox::generate_random_string(10);
+		$client->password($password);
+		$auth = "squeezeboxXXX:$password@";
+	}
+
+	my $serverURL = "http://$auth" . Slim::Utils::Network::serverAddr() . ':' . $serverPrefs->get('httpport');
+
+	return "$serverURL/" . BASE_AUDIO_PATH . $url;
 }
 
 sub proxyRequest {
