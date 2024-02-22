@@ -155,8 +155,6 @@ sub getAlarmPlaylists {
 }
 
 sub getSortedSounds {
-	my ( $self, $c ) = @_;
-
 	main::INFOLOG && $log->is_info && $log->info("Sorting Sounds list alphabetically");
 	my @items = sort {
 		$a->{name} cmp $b->{name};
@@ -230,6 +228,7 @@ sub proxyRequest {
 	};
 
 	if (-f $soundsFile) {
+		main::INFOLOG && $log->is_info && $log->info("Serving from local cache ($soundsFile).");
 		return $sendFile->();
 	}
 
@@ -239,7 +238,7 @@ sub proxyRequest {
 		sub {
 			return _notFound($httpClient, $response) unless -f $soundsFile;
 
-			main::DEBUGLOG && $log->is_debug && $log->debug("Downloaded $originUrl as $soundsFile");
+			main::INFOLOG && $log->is_info && $log->info("Downloaded $originUrl as $soundsFile");
 
 			$sendFile->();
 		},
