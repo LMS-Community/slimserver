@@ -9,8 +9,7 @@
         <creator>Logitech</creator>
 
 	<defaultState>disabled</defaultState>
-        
-	<homepageURL>http://www.mysqueezebox.com/appgallery/Podcasts</homepageURL>
+
 	<optionsURL>plugins/Podcast/settings/basic.html</optionsURL>
 	<icon>plugins/Podcast/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->

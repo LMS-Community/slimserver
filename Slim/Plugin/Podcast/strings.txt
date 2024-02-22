@@ -187,33 +187,6 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s
 
-PLUGIN_PODCAST_IMPORT
-	CS	Importování podcastů
-	DE	Podcast Liste importieren
-	EN	Import podcasts
-	FR	Importer des podcasts
-	NL	Importeer podcasts
-	NO	Importer podkaster
-	PL	Importowanie podcastów
-
-PLUGIN_PODCAST_IMPORT_FROM_MYSB
-	CS	Importovat podcasty z mysqueezebox.com
-	DE	Podcasts von mysqueezebox.com importieren
-	EN	Import podcasts from mysqueezebox.com
-	FR	Importer des podcasts depuis mysqueezebox.com
-	NL	Importeer podcasts van mysqueezebox.com
-	NO	Importer podkaster fra mysqueezebox.com
-	PL	Importuj podcasty z mysqueezebox.com
-
-PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
-	CS	Nenašel se seznam podcastů pro váš účet mysqueezebox.com nebo nejsou nastaveny přihlašovací údaje k účtu.
-	DE	Konnte keine Podcast Liste auf mysqueezebox.com finden. Ev. ist die mysqueezebox.com Integration nicht konfiguriert.
-	EN	Didn't find a podcast list for your mysqueezebox.com account, or account credentials are not set.
-	FR	Aucune liste de podcasts sur votre compte mysqueezebox.com (ou le compte mysqueezebox.com n'est pas configuré).
-	NL	Geen lijst gevonden met podcasts voor jouw mysqueezebox.com account, of jouw account is nog niet ingesteld.
-	NO	Kunne ikke finne en podkastliste for din mysqueezebox.com-konto, eller kontodetaljer er ikke oppgitt.
-	PL	Nie znaleziono listy podcastów na twoim koncie mysqueezebox.com, lub nie podano loginu i hasła użytkownika.
-
 PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	CS	Přehrát od začátku
 	DE	Vom Anfang an wiedergeben

@@ -15,7 +15,6 @@
 		<other>disabled</other>
 	</defaultState>
 
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/MusicMagic/html/images/icon.png</icon>
 	<optionsURL>plugins/MusicMagic/settings/musicmagic.html</optionsURL>
 	<type>2</type><!-- type=extension -->

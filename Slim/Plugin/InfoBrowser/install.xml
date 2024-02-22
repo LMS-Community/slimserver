@@ -8,7 +8,6 @@
 	<description>PLUGIN_INFOBROWSER_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>
 	<icon>plugins/InfoBrowser/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->

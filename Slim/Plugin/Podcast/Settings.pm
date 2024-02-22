@@ -37,11 +37,6 @@ sub handler {
 		return;
 	}
 
-	elsif ( $params->{importFromMySB} ) {
-		$class->importFromMySB($client, $params, $callback, \@args);
-		return;
-	}
-
 	return $class->saveSettings( $client, $params, $callback, \@args );
 }
 
@@ -84,15 +79,15 @@ sub saveSettings {
 				$i++;
 			}
 		}
-		
+
 		# don't erase hidden parameters if they are not set
 		foreach (@hidden) {
 			$params->{"pref_$_"} //= $prefs->get($_);
-		}	
-		
+		}
+
 		$prefs->set( feeds => $feeds );
 	}
-	
+
 	# set the list of providers
 	$params->{providers} = Slim::Plugin::Podcast::Plugin::getProviders;
 
@@ -101,7 +96,7 @@ sub saveSettings {
 	}
 
 	my $body = $class->SUPER::handler($client, $params);
-	
+
 	return $callback->( $client, $params, $body, @$args );
 }
 
@@ -140,81 +135,6 @@ sub validateFeed {
 		}
 	);
 }
-
-sub importFromMySB {
-	my ( $class, $client, $params, $callback, $args ) = @_;
-
-	my $url = $class->getMySBPodcastsUrl();
-
-	my $ecb = sub {
-		my ( $error ) = @_;
-
-		$log->error( "Error importing feeds from mysqueezebox.com: $error" );
-		$params->{warning} .= string( 'SETUP_PLUGIN_PODCAST_INVALID_FEED', $error );
-
-		$class->saveSettings( $client, $params, $callback, $args );
-	};
-
-
-	if ( $url ) {
-		main::INFOLOG && $log->is_info && $log->info( "Trying to get podcast list from mysqueezebox.com: $url" );
-
-		Slim::Formats::XML->getFeedAsync(
-			sub {
-				my ( $feed ) = @_;
-
-				my $feeds = $prefs->get('feeds');
-				my %urls  = map { $_->{value} => 1 } @$feeds;
-
-				if ( $feed->{items} && ref $feed->{items} eq 'ARRAY' ) {
-					foreach ( @{ $feed->{items} }) {
-						my $url = $_->{url} || $_->{value};
-
-						if ( !$urls{$url} ) {
-							push @$feeds, {
-								name  => $_->{name} || $url,
-								value => $url
-							};
-
-							$urls{$url}++;
-						}
-					}
-				}
-
-				$prefs->set( feeds => $feeds );
-
-				delete $params->{saveSettings};
-
-				$class->saveSettings( $client, $params, $callback, $args );
-			},
-			$ecb,
-			{
-				url     => $url,
-				timeout => 15,
-			}
-		);
-	}
-	else {
-		$ecb->(string('PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED'))
-	}
-}
-
-sub getMySBPodcastsUrl {
-	my $url;
-
-	foreach ( @{ Slim::Utils::Favorites->new->toplevel } ) {
-		if ( $_->{URL} =~ m|^https?://.*mysqueezebox\.com/public/opml/.*/favorites\.opml| ) {
-
-			$url = $_->{URL};
-			$url =~ s/favorites/podcasts/;
-
-			last;
-		}
-	}
-
-	return $url;
-}
-
 
 1;
 

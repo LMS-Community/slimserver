@@ -59,7 +59,7 @@ Slim::Web::ImageProxy
 
 =head1 DESCRIPTION
 
-The ImageProxy module allows you to have artwork resized on the server-side without relying on mysqueezebox.com
+The ImageProxy module allows you to have artwork resized on the server-side without relying on external systems.
 
 Besides resizing artwork, custom handlers can eg. convert track IDs to image URLs, build a query string to request
 the smallest image possible for the given resizing spec etc.

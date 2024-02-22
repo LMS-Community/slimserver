@@ -9,8 +9,7 @@
 	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
-	<optionsURL>plugins/ExtendedBrowseModes/settings/browsemodes.html</optionsURL>        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<optionsURL>plugins/ExtendedBrowseModes/settings/browsemodes.html</optionsURL>
 	<icon>plugins/ExtendedBrowseModes/html/icon.png</icon>
 	<playerMenu>BROWSE_MUSIC</playerMenu>
 	<type>2</type>

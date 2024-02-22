@@ -432,7 +432,7 @@ sub registerAppMenu {
 
 	my $isInfo = $log->is_info;
 
-	# if there already is a plugin dealing with the same ID, don't initialize the mysb.com app
+	# if there already is a plugin dealing with the same ID, don't initialize the app
 	my %seen = map { $_->{id} => 1 } @pluginMenus;
 	my @new;
 
@@ -2975,7 +2975,7 @@ sub appMenus {
 					# flag as an app
 					$clone->{isApp} = 1;
 
-					# use icon as defined by MySB to allow for white-label solutions
+					# use icon as defined by the app to allow for white-label solutions
 					if ( my $icon = $apps->{$app}->{icon} ) {
 						$clone->{window}->{'icon-id'} = Slim::Web::ImageProxy::proxiedImage($icon);
 					}
@@ -2994,32 +2994,7 @@ sub appMenus {
 		else {
 			# For type=opml, use generic handler
 			if ( $apps->{$app}->{type} && $apps->{$app}->{type} eq 'opml' ) {
-				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
-
-				my $url  = $apps->{$app}->{url};
-				my $icon = $apps->{$app}->{icon};
-				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
-
-				push @{$menu}, {
-					actions => {
-						go => {
-							cmd    => [ 'opml_generic', 'items' ],
-							params => {
-								menu     => 'opml_generic',
-								opml_url => $url,
-							},
-							player => 0,
-						},
-					},
-					displayWhenOff => 0,
-					id             => 'opml' . $app,
-					isApp		=> 1,
-					node           => $node,
-					text           => $apps->{$app}->{title},
-					window         => {
-						'icon-id'  => Slim::Web::ImageProxy::proxiedImage($icon),
-					},
-				};
+				logBacktrace('Support for the OPML generic browse modes has been removed, as it relied on MySqueezebox.com');
 			}
 		}
 	}

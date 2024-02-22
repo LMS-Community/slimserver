@@ -211,7 +211,7 @@ sub load {
 		next if ($main::failsafe && !$plugins->{$name}->{'enforce'});
 
 		if ( $plugins->{$name}->{needsMySB} && $plugins->{$name}->{needsMySB} !~ /false|no/i ) {
-			main::INFOLOG && $log->info("Skipping plugin: $name - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
+			$log->error("Skipping plugin: $name - requires mysqueezebox.com, but mysqueezebox.com is no longer available.");
 			next;
 		}
 

@@ -41,7 +41,7 @@ sub feed {
 						my $tag  = $app->can('tag') && $app->tag;
 						my $icon = $app->_pluginDataFor('icon');
 
-						# Let a local plugin override a mysb.com feed
+						# Let a local plugin override an existing item.
 						# This is an ugly hack, as it's purely name based. But we don't have any ID here.
 						$feed->{'items'} = [ grep { $_->{name} ne $name } @{$feed->{'items'}} ];
 

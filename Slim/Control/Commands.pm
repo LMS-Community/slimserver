@@ -298,21 +298,11 @@ sub clientConnectCommand {
 	if ( $client->hasServ() ) {
 		my ($host, $packed);
 		$host = $request->getParam('_where');
+		$host = Slim::Utils::Network::intip($host);
 
-		if ( $host =~ /(?:squeezenetwork|mysqueezebox)\.com$/i ) {
+		if ( !$host ) {
 			$request->setStatusBadParams();
 			return;
-		}
-		elsif ( $host eq '0' ) {
-			# Logitech Media Server (used on SN)
-		}
-		else {
-			$host = Slim::Utils::Network::intip($host);
-
-			if ( !$host ) {
-				$request->setStatusBadParams();
-				return;
-			}
 		}
 
 		if ($client->controller()->allPlayers() > 1) {

@@ -1106,41 +1106,26 @@ sub getMetadataFor {
 
 	$artist ||= $track->artistName;
 
-	if ( $url =~ /archive\.org/ || $url =~ m|mysqueezebox\.com.+/lma/| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
-			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
-			return {
-				title    => $title,
-				cover    => $cover || $icon,
-				icon     => $icon,
-				type     => 'Live Music Archive',
-			};
-		}
-	}
-	else {
-		# make sure that protocol handler is what the $song wanted, not just the $url-based one
-		my $handler = $current ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+	# make sure that protocol handler is what the $song wanted, not just the $url-based one
+	my $handler = $current ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
-			return $handler->getMetadataFor( $client, $url );
-		}
-
-		my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
-
-		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
-
-		return {
-			artist   => $artist,
-			title    => $title,
-			type     => $type,
-			bitrate  => $track->prettyBitRate,
-			duration => $track->secs,
-			icon     => $icon,
-			cover    => $cover || $icon,
-		};
+	if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
+		return $handler->getMetadataFor( $client, $url );
 	}
 
-	return {};
+	my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
+
+	my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
+
+	return {
+		artist   => $artist,
+		title    => $title,
+		type     => $type,
+		bitrate  => $track->prettyBitRate,
+		duration => $track->secs,
+		icon     => $icon,
+		cover    => $cover || $icon,
+	};
 }
 
 sub getIcon {

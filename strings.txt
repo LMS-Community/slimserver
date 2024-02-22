@@ -17816,23 +17816,6 @@ MIDWORDS_UPPER
 	NO	0
 	SV	0
 
-SQUEEZENETWORK_SB2_REQUIRED
-	CS	Bohužel je nutný novější Squeezebox.
-	DA	Beklager, men denne funktion kræver en nyere Squeezebox.
-	DE	Diese Funktion benötigt eine neuere Squeezebox.
-	EN	Sorry, requires a newer Squeezebox.
-	ES	Requiere un dispositivo Squeezebox nuevo.
-	FI	Tähän vaaditaan uudempi Squeezebox.
-	FR	Cette fonction nécessite Squeezebox2 ou une version plus récente.
-	HE	מצטערים, נדרש נגן Squeezebox חדש יותר.
-	IT	È necessario uno Squeezebox più recente.
-	NL	Voor deze functie is een nieuwere Squeezebox vereist.
-	NO	Beklager, dette krever en nyere Squeezebox.
-	PL	Niestety wymagane jest nowsze urządzenie Squeezebox.
-	RU	Требуется новая версия Squeezebox.
-	SV	Detta kräver en nyare Squeezebox-spelare.
-	ZH_CN	抱歉，需要Squeezebox2。
-
 MUSICSOURCE
 	CS	Zdroj hudby
 	DA	Musikkilde

@@ -10,8 +10,7 @@
 
 	<defaultState>enabled</defaultState>
 
-	<playerMenu>HOME</playerMenu>        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<playerMenu>HOME</playerMenu>
 	<optionsURL>plugins/Favorites/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 	<enforce>1</enforce>

@@ -55,10 +55,6 @@
 
 	</div>
 
-	[% WRAPPER setting title="PLUGIN_PODCAST_IMPORT" desc="" %]
-		<input type="submit" name="importFromMySB" value="[% "PLUGIN_PODCAST_IMPORT_FROM_MYSB" | string %]" />
-	[% END %]
-
 	[% WRAPPER setting title="PLUGIN_PODCAST_SKIP_BACK_SECS" desc="PLUGIN_PODCAST_SKIP_BACK_DESC" %]
 		<input type="text" class="stdedit sliderInput_5_90_5" name="pref_skipSecs" id="skipSecs" value="[% prefs.pref_skipSecs | html %]" size="3">
 	[% END %]

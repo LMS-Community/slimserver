@@ -125,21 +125,19 @@ sub parseMenu {
 		for my $item ( @{ $opml->{items} } ) {
 			$item->{key} = 'search' if !$item->{key} && $item->{type} eq 'search';
 
-			# remap 'location' to 'world' so it gets merged with mysb's menu if needed
 			my $key = delete $item->{key};
-			my $class = $key eq 'location' ? 'world' : $key;
-			$item->{class} = ucfirst($class);
+			$item->{class} = ucfirst($key);
 
-			$weight = MENUS->{$class}->{weight} || ++$weight;
+			$weight = MENUS->{$key}->{weight} || ++$weight;
 
 			$item->{URL}   = delete $item->{url};
-			$item->{icon}  = MENUS->{$class}->{icon} || MENUS->{'default'}->{icon};
+			$item->{icon}  = MENUS->{$key}->{icon} || MENUS->{'default'}->{icon};
 			$item->{iconre} = 'radiotime';
 			$item->{weight} = $weight;
 			push @$menu, $item;
 
 			# TTP 864, Use the string token for name instead of whatever translated name we get
-			$item->{name} = 'RADIOTIME_' . uc($class);
+			$item->{name} = 'RADIOTIME_' . uc($key);
 		}
 
 		# Add special My Presets item that shows up for users with an account
@@ -257,7 +255,7 @@ sub getUsername {
 	return $prefs->get('username');
 }
 
-# set username as parsed form mysb.com url (unless it's already defined)
+# set username as parsed form url (unless it's already defined)
 sub setUsername {
 	my ( $class, $username ) = @_;
 

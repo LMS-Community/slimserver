@@ -9,8 +9,7 @@
         <creator>Logitech</creator>
 
 	<defaultState>disabled</defaultState>
-        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+
 	<optionsURL>plugins/xPL/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 

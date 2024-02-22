@@ -4,7 +4,6 @@
   <creator>Kevin Deane-Freeman, Logitech</creator>
   <defaultState>enabled</defaultState>
   <description>PLUGIN_SONGSCANNER_DESC</description>
-  <homepageURL>http://www.mysqueezebox.com/support</homepageURL>
   <id>e490c2fe-1d5b-4ecc-ba90-d15747a82589</id>
   <module>Slim::Plugin::SongScanner::Plugin</module>
   <targetApplication>

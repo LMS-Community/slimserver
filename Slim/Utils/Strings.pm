@@ -87,7 +87,7 @@ sub init {
 		checkChangedStrings();
 	}
 
-	# Load cached extra strings from mysb.com
+	# Load cached extra strings from other sources
 	loadExtraStrings();
 }
 

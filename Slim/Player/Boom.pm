@@ -50,10 +50,9 @@ our $defaultPrefs = {
 		PLUGINS
 		ALARM
 		SETTINGS
-		SQUEEZENETWORK_CONNECT
 	)],
-	'lineInAlwaysOn'       => 0, 
-	'lineInLevel'          => 50, 
+	'lineInAlwaysOn'       => 0,
+	'lineInLevel'          => 50,
 	'minAutoBrightness'    => 2,	# Minimal brightness (automatic brightness mode)
 	'sensAutoBrightness'    => 10,	# Sensitivity (automatic brightness mode)
 };
@@ -66,14 +65,14 @@ $prefs->setChange( sub { $_[2]->stereoxl($_[1]); }, 'stereoxl');
 
 $prefs->setChange(sub {
 	my ($name, $enabled, $client) = @_;
-	
+
 	if ($enabled) { $client->setLineIn(1); }
-	
+
 	# turn off if line is not playing
 	elsif (!Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
 		$client->setLineIn(0);
 	}
-	
+
 }, 'lineInAlwaysOn');
 
 $prefs->setChange(sub {
@@ -115,22 +114,22 @@ sub welcomeScreen {
 }
 
 ##
-# Special Volume control for Boom.  
-# 
+# Special Volume control for Boom.
+#
 # Boom is an oddball because it requires extremes in volume adjustment, from
-# dead-of-night-time listening to shower time.  
+# dead-of-night-time listening to shower time.
 # Additionally, we want 50% volume to be reasonable
 #
-# So....  A total dynamic range of 74dB over 100 steps is okay, the problem is how to 
+# So....  A total dynamic range of 74dB over 100 steps is okay, the problem is how to
 # distribute those steps.  When distributed evenly, center volume is way too quiet.
 # So, This algorithm moves what would be 50% (i.e. -76*.5=38dB) and moves it to the 25%
 # position.
-# 
+#
 # This is simply a mapping function from 0-100, with 2 straight lines with different slopes.
 #
 sub getVolumeParameters
 {
-	my $params = 
+	my $params =
 	{
 		totalVolumeRange => -74,       # dB
 		stepPoint        => 25,        # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
@@ -141,7 +140,7 @@ sub getVolumeParameters
 
 sub getLineInVolumeParameters
 {
-	my $params = 
+	my $params =
 	{
 		totalVolumeRange => -74,       # dB
 		stepPoint        => 25,        # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
@@ -158,23 +157,23 @@ sub init {
 
 		# Add a handler for line-in/out status changes
 		Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
-	
+
 		# Create a new event for sending LIOS updates
 		Slim::Control::Request::addDispatch(
 			['lios', '_state'],
 			[1, 0, 0, undef],
 		   );
-		
+
 		Slim::Control::Request::addDispatch(
 			['lios', 'linein', '_state'],
 			[1, 0, 0, undef],
 		   );
-		
+
 		Slim::Control::Request::addDispatch(
 			['lios', 'lineout', '_state'],
 			[1, 0, 0, undef],
 		   );
-		
+
 		Slim::Control::Request::addDispatch(
 			['boomdac', '_command'],
 			[1, 0, 0, \&Slim::Player::Boom::boomI2C]
@@ -184,7 +183,7 @@ sub init {
 			['boombright', '_bkk', '_gcp1', '_gcp2', '_bk2', '_filament_v', '_filament_p', '_annode_v', '_anode_p' ],
 			[1, 0, 0, \&Slim::Player::Boom::boomBright]
 		   );
-		
+
 		$handlersAdded = 1;
 
 	}
@@ -268,9 +267,9 @@ sub stereoxl {
 	} elsif ($StereoXL == 1) {
 		$depth_db = -6;
 	} elsif ($StereoXL == 2) {
-		$depth_db = 0; 
+		$depth_db = 0;
 	} elsif ($StereoXL == 3) {
-		$depth_db = 6; 
+		$depth_db = 6;
 	} else {
 		$depth_db = 'off';
 		logger('player.streaming.direct')->warn("Invalid stereoXL setting ($StereoXL)");
@@ -307,8 +306,8 @@ sub reconnect {
 	}
 
 	setRTCTime( $client );
-	# Uncommenting the following will modify the woofer bass extension table.  This is a map that maps 
-	# volume (in 16.16 format) to a biquad index. Index 0 provides the most bass extension, index 9 
+	# Uncommenting the following will modify the woofer bass extension table.  This is a map that maps
+	# volume (in 16.16 format) to a biquad index. Index 0 provides the most bass extension, index 9
 	# provides the least.
 	# sendBDACFrame($client, 'DACWOOFERBQ',[   658,   980, 1729, 2816, 5120, 8960, 14848, 26368, 0x8fffffff]);  # <--default built into firmware.
 	# sendBDACFrame($client, 'DACWOOFERBQ',[   658*2,   980*2, 1729*2, 2816*2, 5120*2, 8960*2, 14848*2, 26368*2, 0x8fffffff]);
@@ -316,7 +315,7 @@ sub reconnect {
 	# sendBDACFrame($client, 'DACWOOFERBQ',  [2264,   3526,  5200,  5800, 10200, 15889, 27031,  45000,     0x8FFFFFFF]);
 	sendBDACFrame($client, 'DACWOOFERBQ',   [   658,   980, 1729, 2816, 5120, 8960, 0x8fffffff, 0x8fffffff, 0x8fffffff]);
 	sendBDACFrame($client, 'DACWOOFERBQSUB',[    0 ,     0,    0,    0,    0,    0,          0, 0x8fffffff, 0x8fffffff]);
-	
+
 	# re-initialise some prefs which aren't stored on the player
 	sendTone($client, $client->SUPER::bass(), $client->SUPER::treble());
 	stereoxl($client, $prefs->client($client)->get('stereoxl'));
@@ -409,7 +408,7 @@ sub setLineIn {
 
 	# convert a source: url to a number, otherwise, just use the number
 	if (Slim::Music::Info::isLineIn($input)) {
-	
+
 		main::INFOLOG && $log->info("Got source: url: [$input]");
 
 		if ($INC{'Slim/Plugin/LineIn/Plugin.pm'}) {
@@ -440,16 +439,16 @@ sub setLineIn {
 sub setLineInLevel {
 	my $level = $_[1];
 	my $client = $_[2];
-	
+
 	main::INFOLOG && logger('player.source')->info("Setting line in level to $level");
-	
+
 	# map level to volume:
 	my $newGain = 0;
 	if ($level != 0) {
 		my $db = $client->getVolume($level, $client->getLineInVolumeParameters());
 		$newGain = $client->dBToFixed($db);
 	}
-	
+
 	sendBDACFrame($client, 'DACLINEINGAIN', $newGain);
 }
 
@@ -483,7 +482,7 @@ sub setRTCTime {
 
 	# Sync actual time in RTC
 	my ($sec, $min, $hour) = (localtime())[0..2];
-	
+
 	my ($sssBCD, $mmmBCD, $hhhBCD) = Slim::Utils::DateTime::bcdTime($sec, $min, $hour);
 
 	$data = pack( 'C', 0x03);	# Set time (hours, minutes and seconds)
@@ -502,7 +501,7 @@ sub setRTCAlarm {
 	my $client = shift;
 	my $time = shift;
 	my $volume = shift;
-	
+
 	if (defined $time) {
 		# - Alarm time needs to be set always in 24h mode
 		# - Hours and minutes are in BCD format (see Slim::Utils::DateTime::bcdTime)
@@ -542,7 +541,7 @@ sub setAnalogOutMode {
 	if (! defined $mode) {
 		$mode = $prefs->client($client)->get('analogOutMode');
 	}
-	
+
 	my $data = pack('C', $mode);
 	$client->sendFrame('audo', \$data);
 }
@@ -579,15 +578,15 @@ sub sendTone
 	my ($client, $bass, $treble) = @_;
 	$bass = -$bass     - minBass();
 	$treble = -$treble - minTreble();
-	# Do a little safety checking on the parameters.  It can get really ugly otherwise with 
+	# Do a little safety checking on the parameters.  It can get really ugly otherwise with
 	# loud scary noises coming out of boom.
-	# We should probably send the tone settings in a special packet, rather than 
-	# raw I2C.  
+	# We should probably send the tone settings in a special packet, rather than
+	# raw I2C.
 	$treble = $treble & 0xff;
 	$bass   = $bass   & 0xff;
 	if ($treble >47) {
 		$treble = 47;
-	} 
+	}
 	if ($treble < 0) {
 		$treble = 0;
 	}
@@ -597,8 +596,8 @@ sub sendTone
 	if ($bass < 0) {
 		$bass = 0;
 	}
-	
-	
+
+
 	my $i2cData = pack("CCCCC", toneI2CAddress(),0,0, $treble, $bass);
 
 	sendBDACFrame($client, 'DACI2CGEN', $i2cData);
@@ -610,7 +609,7 @@ sub sendBDACFrame {
 
 	my $log = logger('player.firmware');
 
-	my $buf = undef; 
+	my $buf = undef;
 
 	if ($type eq 'DACRESET') {
 
@@ -657,8 +656,8 @@ sub sendBDACFrame {
 	} elsif ($type eq 'DACLINEINGAIN') {
 		main::INFOLOG && $log->info("Setting line in gain");
 		$buf = pack('C',8).pack('N',$data);
-	} 
-	
+	}
+
 	if (defined $buf) {
 		$client->sendFrame('bdac', \$buf);
 	}
@@ -682,20 +681,20 @@ sub upgradeDAC {
 	open FS, $filename || return("Open failed for: $filename\n");
 
 	binmode FS;
-	
+
 	my $size = -s $filename;
-	
+
 	# place in block mode so that brightness key is now ignored
 	$client->block( {
 		'line'  => [ $client->string('UPDATING_DSP') ],
-		'fonts' => { 
+		'fonts' => {
 			'graphic-320x32' => 'light',
 			'graphic-160x32' => 'light_n',
 			'graphic-280x16' => 'small',
 			'text'           => 2,
 		},
 	}, 'upgrade', 1 );
-	
+
 	my $bytesread      = 0;
 	my $totalbytesread = 0;
 	my $lastFraction   = -1;
@@ -716,17 +715,17 @@ sub upgradeDAC {
 			$totalbytesread += $bytesread;
 
 			main::DEBUGLOG && $log->debug("Updating DAC: $totalbytesread / $size bytes");
-	
+
 			my $fraction = $totalbytesread / $size;
 
 			if (($fraction - $lastFraction) > (1/40)) {
-	
+
 				$client->showBriefly( {
-	
+
 					'line'  => [ $client->string('UPDATING_DSP'),
 					         $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
-	
-					'fonts' => { 
+
+					'fonts' => {
 						'graphic-320x32' => 'light',
 						'graphic-160x32' => 'light_n',
 						'graphic-280x16' => 'small',
@@ -735,7 +734,7 @@ sub upgradeDAC {
 					'jive'  => undef,
 					'cli'   => undef,
 				} );
-	
+
 				$lastFraction = $fraction;
 			}
 		}
@@ -766,7 +765,7 @@ sub upgradeDAC {
 # CLI I2C Example:  Set volume
 # main volume control is at i2c address 47 (2f)
 # Set volume to -20 dB.  0dB == 0x080000
-# -20 dB == 0.1 linear.  
+# -20 dB == 0.1 linear.
 # 0x00800000 * 0.1 = 0x000CCCCC
 #
 # To send this volume command to a player called 'boom' do the following from the CLI:
@@ -774,9 +773,9 @@ sub upgradeDAC {
 #     boom boomdac %2f%00%0c%cc%cc    <- back to 0 dB
 sub boomI2C {
 	my $request = shift;
-	
+
 	my $log = logger('player.firmware');
-	
+
 	# get the parameters
 	my $client     = $request->client();
 	my $i2cbytes   = $request->getParam('_command');
@@ -791,20 +790,20 @@ sub boomI2C {
 
 	$data .= pack('C', length($i2cbytes));
 	$data .= $i2cbytes;
-	
+
 	my @d = unpack("C*", $data);
 	my $msg = "Sending data to i2c bus :[";
-	
+
 	foreach my $d (@d) {
 		$msg .= sprintf("0x%02x ", ($d & 0xFF));
 	}
-	
+
 	$msg .= "]";
-	
+
 	main::DEBUGLOG && $log->debug($msg);
-	
+
 	$client->sendFrame('bdac', \$data);
-	
+
 	$request->setStatusDone();
 }
 
@@ -815,10 +814,10 @@ sub boomBright {
 	my $request = shift;
 
 	my $client     = $request->client();
-		
+
 
 	my $log = logger('player.firmware');
-	
+
 	# get the parameters
 
 	my $bkk        = $request->getParam('_bkk');
@@ -839,17 +838,17 @@ sub boomBright {
 		(!defined $filament_p)||
 		(!defined $annode_v)||
 		(!defined $anode_p))
-	    
+
 	{
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 
 	my $data = pack('CCCCCCCC', $bkk, $gcp1, $gcp2, $bk2, $filament_v, $filament_p, $annode_v, $anode_p);
-	
+
 	$client->sendFrame('brir', \$data);
-	
+
 	$request->setStatusDone();
 }
 
@@ -865,28 +864,28 @@ sub lineOutConnected {
 
 sub lineInOutStatus {
 	my ( $client, $data_ref ) = @_;
-	
+
 	my $state = unpack 'n', $$data_ref;
 
 	my $oldState = {
 		in  => $client->lineInConnected(),
 		out => $client->lineOutConnected(),
 	};
-	
+
 	Slim::Networking::Slimproto::voltage( $client, $state );
 
 	Slim::Control::Request::notifyFromArray( $client, [ 'lios', $state ] );
-	
+
 	if ($oldState->{in} != $client->lineInConnected()) {
 		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'linein', $client->lineInConnected() ] );
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
 			Slim::Plugin::LineIn::Plugin::lineInItem($client, 1);
 		}
 	}
-	
+
 	if ($oldState->{out} != $client->lineOutConnected()) {
 
-		# ask what out mode to use if user is plugging in for the first time		
+		# ask what out mode to use if user is plugging in for the first time
 		if ($prefs->client( $client)->get( 'analogOutMode' ) == -1) {
 
 			# default to headphone
@@ -897,9 +896,9 @@ sub lineInOutStatus {
 				'INPUT.Choice',
 				Slim::Buttons::Settings::analogOutMenu()
 			);
-			
+
 		}
-		
+
 		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'lineout', $client->lineOutConnected() ] );
 	}
 }
