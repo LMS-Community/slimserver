@@ -3359,6 +3359,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			my @roles = split(/,\s*/, $value);
 			push @roles, 'ARTIST' if $value =~ /^(?:ALBUMARTIST|5)$/ && !$prefs->get('useUnifiedArtistsList');
 			$find{$key} = [ { 'in' => [ map { Slim::Schema::Contributor->typeToRole($_) || $_ } @roles ] } ];
+			$joinMap{'contributorTracks'} = { 'contributorTracks' => 'track' };
 			next;
 		}
 
@@ -3473,7 +3474,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	} else {
 
 		# on search, only grab audio items.
-		$find{'audio'} = 1;
+		$find{'me.audio'} = 1;
 
 		my $vaObjId = Slim::Schema->variousArtistsObject->id;
 
