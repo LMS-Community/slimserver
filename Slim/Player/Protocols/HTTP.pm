@@ -481,7 +481,7 @@ sub readPersistentChunk {
 		$enhanced->{'first'} += $readLength;
 
 		# return sysread's result UNLESS we reach eof before expected length
-		return $readLength unless defined($readLength) && !$readLength && $enhanced->{'first'} != $self->contentLength;
+		return $readLength unless defined($readLength) && !$readLength && $enhanced->{'first'} < $self->contentLength;
 	}
 
 	# all received using persistent connection
@@ -496,7 +496,7 @@ sub readPersistentChunk {
 		$enhanced->{'status'} = CONNECTING;
 		$enhanced->{'lastSeen'} = undef;
 
-		$log->warn("Persistent streaming from $enhanced->{'first'} for ${*$self}{'url'}");
+		$log->warn("Persistent streaming from $enhanced->{'first'} up to ", $self->contentLength, " for ${*$self}{'url'}");
 
 		$enhanced->{'session'}->send_request( {
 			request   => $request,
