@@ -7,7 +7,6 @@
 	<description>PLUGIN_JIVEEXTRAS_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>

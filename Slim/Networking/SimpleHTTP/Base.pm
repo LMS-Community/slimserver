@@ -12,6 +12,7 @@ use base qw(Slim::Utils::Accessor);
 use Exporter::Lite;
 use HTTP::Date ();
 use HTTP::Request;
+use URI::Escape qw(uri_escape_utf8);
 
 our @EXPORT = qw(hasZlib unzip _cacheKey);
 
@@ -196,7 +197,7 @@ sub processResponse {
 			# By default, cached content can live for at most 1 day, this helps control the
 			# size of the cache.  We use ETag/Last Modified to check for stale data during
 			# this time.
-			my $max = 60 * 60 * 24;
+			my $max = 60 * 60 * 24 + 1;
 			my $expires; # undefined until max-age or expires header is seen, or caller defines it
 			my $no_revalidate;
 
@@ -304,7 +305,7 @@ sub _cacheKey {
 		$cachekey .= '-' . ($client->languageOverride || '');
 	}
 
-	return $cachekey;
+	return uri_escape_utf8($cachekey);
 }
 
 

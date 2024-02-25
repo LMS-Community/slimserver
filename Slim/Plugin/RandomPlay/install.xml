@@ -12,7 +12,6 @@
         <defaultState>enabled</defaultState>
         <canConflictWithDSTM>1</canConflictWithDSTM>
 
-        <homepageURL>http://www.mysqueezebox.com/support</homepageURL>
         <icon>plugins/RandomPlay/html/images/icon.png</icon>
         <type>2</type><!-- type=extension -->
 

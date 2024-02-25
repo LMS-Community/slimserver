@@ -147,8 +147,8 @@ Flush =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PLAYING
-	[	\&_Invalid,		\&_FlushGetNext,\&_FlushGetNext,\&_Invalid],		# PAUSED
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PLAYING
+	[	\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext,\&_FlushGetNext],	# PAUSED
 ],
 Skip  => 
 [	[	\&_StopGetNext,	\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -164,7 +164,6 @@ JumpToTime =>
 	[	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime,	\&_JumpToTime],		# PLAYING
 	[	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused,	\&_JumpPaused],		# PAUSED
 ],
-
 NextTrackReady =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_Stream],			# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
@@ -186,7 +185,6 @@ LocalEndOfStream =>
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PLAYING
 	[	\&_Invalid,		\&_Streamout,	\&_Invalid,		\&_Invalid],		# PAUSED
 ],
-
 BufferReady =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_WaitToSync,	\&_WaitToSync,	\&_BadState],		# BUFFERING
@@ -198,8 +196,8 @@ Started =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Playing,		\&_Playing,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Playing,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
-	[	\&_Invalid,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PAUSED
+	[	\&_PlayAndNext,	\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
+	[	\&_PlayAndNext,	\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PAUSED
 ],
 StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
@@ -442,7 +440,7 @@ sub _CheckPaused {	# only called when PAUSED
 		} elsif (!$song->duration()) {
 			
 			# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
-			# Assume unknown duration means radio and so we shuould stop now
+			# Assume unknown duration means radio and so we should stop now
 			main::INFOLOG && $log->info("Stopping remote stream upon full buffer when paused (no resume)");
 			
 			_Stop(@_);
@@ -904,7 +902,7 @@ sub nextsong {
 # in order to try to restart.
 #
 sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
-						#			ELSIF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
+						#			ELSIF [moreTracks] AND [roomInQueue] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	_setStreamingState($self, IDLE);
 	
@@ -923,8 +921,13 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 			return;
 		}
 	}
-	
-	_getNextTrack($self, $params, 1);
+
+	# see comment on _NextIfMore
+	if (scalar @{$self->{'songqueue'}} < 2) {
+		_getNextTrack($self, $params, 1);
+	} else {
+		$log->info("streaming track not started yet, will wait until then to try next track");
+	}
 }
 
 sub _Continue {
@@ -979,6 +982,9 @@ sub _Skip {
 sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	
+	# flush means that we get rid of the streaming song
+	shift @{$self->{'songqueue'}};
+
 	foreach my $player (@{$self->{'players'}})	{
 		$player->flush();
 	}
@@ -986,9 +992,17 @@ sub _FlushGetNext {			# flush -> Idle; IF [moreTracks] THEN getNextTrack -> Trac
 	_getNextTrack($self, $params, 1);
 }
 
-sub _NextIfMore {			# -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
+sub _NextIfMore {			# -> Idle; IF [moreTracks] AND [roomInQueue] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	_setStreamingState($self, IDLE);
+	# if we already have a playing and a streaming track, then wait until the streaming 
+	# one starts to play before getting the next one. That happens when player's buffer 
+	# is much larger than track. 
+	if (scalar @{$self->{'songqueue'}} < 2) {
+		_getNextTrack($self, $params, 1);
+	} else {
+		$log->info("streaming track not started yet, will wait until then to try next track");
+	}
 	_getNextTrack($self, $params, 1);
 }
 
@@ -1199,10 +1213,10 @@ sub _Stream {				# play -> Buffering, Streaming
 
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
-	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
-	# Check that we are not trying to stream too many tracks (test moved from _StreamIfReady)
+	# track. Trying to _Stream() more than 1 shoud never happen as it is blocked in the ReadyToStream
+	# event (_NextIfMore and _RetryOrNext() methods)) and the _Stream() is delayed to Started event
 	if (scalar @$queue > 2) {
-		main::INFOLOG && $log->info("aborting streaming because songqueue too long: ", scalar @$queue);
+		$log->error("we should not be here: aborting streaming because songqueue too long: ", scalar @$queue);
 		shift @$queue while (scalar @$queue > 2);
 		return;
 	}
@@ -1344,10 +1358,18 @@ sub _PlayIfReady {		# -> Stopped; IF [trackReady] THEN play -> Buffering, Stream
 	}
 }
 
-
 sub _PlayAndStream {		# -> PLAYING; IF [allReadyToStream] THEN play -> Streaming ENDIF
 	_Playing(@_);
 	_StreamIfReady(@_);		# Bug 5103
+}
+
+sub _PlayAndNext {			# -> PLAYING; IF [allReadyToStream] THEN play -> Streaming ENDIF
+	# this happens because the streaming track was fully streamed before the playing one
+	# was finished, so we waited for the streaming track to start playing before getting 
+	# next one, but we must now get it. 
+	_Playing(@_);
+	main::INFOLOG && $log->info('now playing already fully streaming song => get next');
+	_getNextTrack($_[0], undef, 1);
 }
 
 sub _StreamIfReady {		# IF [allReadyToStream] THEN play -> Streaming ENDIF
@@ -2111,6 +2133,21 @@ sub allPlayers {
 sub closeStream {
 	$_[0]->{'songStreamController'}->close() if $_[0]->{'songStreamController'};
 }
+
+sub nextIfStreamed {
+	my ($self) = @_;
+
+	# this is called when we are adding/moving another track after last one
+	# or moving it upper in the list. If it has been fully streamed and we 
+	# are playing/buffering/waiting, then we need to grab next track. If we 
+	# are paused then we'll restart the process later upon resume
+	if ($self->{'streamingState'} == IDLE && 
+		$self->{'playingState'} != STOPPED && 
+		$self->{'playingState'} != PAUSED) {
+		main::INFOLOG && $log->info("getting next track to re-launch streaming process");
+		_getNextTrack($self, undef, 1);
+	}
+}	
 
 ####################################################################
 # Incoming events - <<interface>> PlayControl

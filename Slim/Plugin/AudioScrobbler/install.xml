@@ -7,8 +7,7 @@
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<playerMenu>SETTINGS</playerMenu>        
-	<homepageURL>http://www.mysqueezebox.com/appgallery/LastFM</homepageURL>
+	<playerMenu>SETTINGS</playerMenu>
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>
 	<type>2</type>
 	<targetApplication>

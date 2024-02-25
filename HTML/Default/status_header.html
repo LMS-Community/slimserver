@@ -76,11 +76,6 @@
 	[% PROCESS jsString id='COLLAPSE' jsId='collapse' %]
 	[% PROCESS jsString id='EXPAND' jsId='expand' %]
 	[% PROCESS jsString id='UNDOCK_PLAYER_PANEL' jsId='undock' %]
-
-	Ext.onReady(function(){
-		SqueezeJS.externalImageProxy = new Ext.Template('[% imageproxy %]?u={url}&h={size}&w={size}');
-		SqueezeJS.externalImageProxy.compile();
-	});
 </script>
 
 <div id="playerbox">

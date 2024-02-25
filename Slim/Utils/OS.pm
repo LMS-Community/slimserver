@@ -514,7 +514,7 @@ sub aclFiletest {
 
 Return true if you don't want the server to download and cache firmware
 upgrades for your players. It will then tell the player to download them directly
-from SqueezeNetwork.
+from the origin server.
 
 Use this if you are running the server on low spec hardware or flash with limited capacity.
 

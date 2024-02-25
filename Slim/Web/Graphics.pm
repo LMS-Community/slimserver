@@ -148,8 +148,8 @@ sub artworkRequest {
 
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
-	elsif ( $path =~ m{^(music)/([^/]+)/} ) {
-		my ($type, $id) = ($1, $2);
+	elsif ( $path =~ m{^music/([^/]+)/} ) {
+		my $id = $1;
 
 		# Special case:
 		# /music/current/cover.jpg (mentioned in CLI docs)
@@ -245,7 +245,7 @@ sub artworkRequest {
 			$sth->finish;
 
 			# border case: 8 characters we're assuming it's a cover ID, but it could be a track ID, too
-			if ( (!$url || !$cover) && $type eq 'music' && $id =~ /\d{8}/ ) {
+			if ( (!$url || !$cover) && $id =~ /\d{8}/ ) {
 				$sth = Slim::Schema->dbh->prepare_cached( qq{
 					SELECT url, cover FROM tracks WHERE id = ?
 				} );
@@ -261,10 +261,7 @@ sub artworkRequest {
 		}
 		elsif ( !$url || !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
-			if ($type eq 'image') {
-				$path = "html/images/icon_photo_";
-			}
-			elsif ($id =~ /^-/) {
+			if ($id =~ /^-/) {
 				$path = 'html/images/radio_';
 			}
 			else {
@@ -303,7 +300,7 @@ sub artworkRequest {
 		else {
 			# Image to resize is either a cover path or the audio file if cover is
 			# a number (length of embedded art)
-			$fullpath = ($cover =~ /^\d+$/ || $type eq 'image')
+			$fullpath = $cover =~ /^\d+$/
 				? Slim::Utils::Misc::pathFromFileURL($url)
 				: $cover;
 		}

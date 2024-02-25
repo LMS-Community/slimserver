@@ -6,7 +6,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
-use constant MAX_ALBUMS => 500;
+# Should we page through results instead of doing one huge bulk request?
+use constant MAX_ALBUMS => 1500;
 
 my $log = logger('database.info');
 my $prefs = preferences('server');
@@ -69,6 +70,7 @@ sub _releases {
 	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
 
 	foreach (@{ $request->getResult('albums_loop') || [] }) {
+
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 
@@ -134,10 +136,9 @@ sub _releases {
 	}
 
 	my @items;
-	my $searchTags = [
-		"artist_id:$artistId",
-		"library_id:$library_id",
-	];
+
+	my $searchTags = [ "library_id:$library_id" ];
+	push @$searchTags, "artist_id:$artistId" if $artistId;
 
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
@@ -211,8 +212,10 @@ sub _releases {
 	# navigate categories if there's more than one
 	else {
 		# add extra items
-		foreach ( grep { $_ } map { $_->($artistId) } @{getExtraItems('artist')} ) {
-			push @items, $_;
+		if ( $artistId ) {
+			foreach ( grep { $_ } map { $_->($artistId) } @{getExtraItems('artist')} ) {
+				push @items, $_;
+			}
 		}
 
 		# add "All" item

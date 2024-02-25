@@ -3315,7 +3315,10 @@ sub serverstatusQuery {
 	else {
 		$request->addResult('version', $::VERSION);
 	}
+
 	$request->addResult('newversion', $::newVersion) if $::newVersion;
+	$request->addResult('needsrestart', 1) if Slim::Utils::PluginManager->needsRestart;
+	$request->addResult('pluginsdownloading', 1) if Slim::Utils::PluginDownloader->downloading;
 	if (my $newPlugins = Slim::Utils::PluginManager->message) {
 		$request->addResult('newplugins', $newPlugins);
 	}
@@ -3377,42 +3380,6 @@ sub serverstatusQuery {
 
 	if ($valid) {
 		_addPlayersLoop($request, $start, $end, $savePrefs{'player'});
-	}
-
-	if (!main::NOMYSB) {
-		# return list of players connected to SN
-		my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
-
-		$count = scalar @sn_players || 0;
-
-		$request->addResult('sn player count', $count);
-
-		($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-		if ($valid) {
-
-			my $sn_cnt = 0;
-
-			for my $player ( @sn_players ) {
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'id', $player->{id}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'name', $player->{name}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
-				);
-
-				$request->addResultLoop(
-					'sn_players_loop', $sn_cnt, 'model', $player->{model}
-				);
-
-				$sn_cnt++;
-			}
-		}
 	}
 
 	# return list of players connected to other servers
@@ -5017,9 +4984,10 @@ my %tagMap = (
 	  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
 	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL
 	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
-	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
+	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link
 	  'N' => ['remote_title'],                                          # remote stream title
 	  'E' => ['extid',            '',              'extid'],            # a track's external identifier (eg. on an online music service)
+	  'V' => ['live_edge',        '',              'live_edge'],        # a remote live streams maximum available seek point in seconds within the current duration.
 
 	  'g' => ['genre',            'GENRE',         'genrename'],        #->genre_track->genre.name
 	  'p' => ['genre_id',         '',              'genreid'],          #->genre_track->genre.id
@@ -5177,6 +5145,11 @@ sub _songData {
 	my $isRemote = $track->remote;
 	my $url = $track->url;
 
+	my $song;
+	if ( my $client = $request->client ) {
+		$song = $client->currentSongForUrl($url);
+	}
+
 	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
@@ -5188,6 +5161,7 @@ sub _songData {
 
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
+			$remoteMeta->{E} = $remoteMeta->{extid};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{i} = $remoteMeta->{disc};
 			$remoteMeta->{K} = $remoteMeta->{cover};
@@ -5201,19 +5175,21 @@ sub _songData {
 			$remoteMeta->{y} = $remoteMeta->{year};
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
-			$remoteMeta->{W} => $remoteMeta->{releasetype}
+			$remoteMeta->{W} = $remoteMeta->{releasetype};
+
+			# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
+			# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
+			$remoteMeta->{V} = $remoteMeta->{live_edge} // ($song && $song->isLive() ? 0 : -1);
 		}
 	}
 
 	my $parentTrack;
-	if ( my $client = $request->client ) { # Bug 13062, songinfo may be called without a client
-		if (my $song = $client->currentSongForUrl($url)) {
-			my $t = $song->currentTrack();
-			if ($t->url ne $url) {
-				$parentTrack = $track;
-				$track = $t;
-				$isRemote = $track->remote;
-			}
+	if ( $song ) {
+		my $t = $song->currentTrack();
+		if ($t->url ne $url) {
+			$parentTrack = $track;
+			$track = $t;
+			$isRemote = $track->remote;
 		}
 	}
 
@@ -5953,7 +5929,7 @@ sub _getTagDataForTracks {
 
 			# XXX: what if name has ", " in it?
 			utf8::decode($name);
-			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
+			$role_info->{ids}   .= $role_info->{ids} ? ',' . $id : $id;
 			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
 		}
 
@@ -5995,7 +5971,7 @@ sub _getTagDataForTracks {
 			my $genre_info = $values{$track} ||= {};
 
 			utf8::decode($name);
-			$genre_info->{ids}   .= $genre_info->{ids} ? ', ' . $id : $id;
+			$genre_info->{ids}   .= $genre_info->{ids} ? ',' . $id : $id;
 			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
 		}
 

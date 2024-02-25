@@ -7,11 +7,11 @@ package Slim::Plugin::AudioAddict::Settings;
 
 use strict;
 
-use FindBin qw($Bin);
-use Path::Class qw(dir);
+use File::Spec::Functions qw(catdir);
 
 use base qw(Slim::Web::Settings);
 
+use Slim::Plugin::AudioAddict::Plugin;
 use Slim::Plugin::AudioAddict::API;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -22,7 +22,7 @@ my $log   = logger('plugin.audioaddict');
 # add this plugin's HTML folder - the plugin manager would not do so, as this class must to be inherited, but not used directly
 {
 	Slim::Web::HTTP::addTemplateDirectory(
-		dir($Bin, split(/::/, __PACKAGE__))->parent->subdir('HTML')
+		catdir($Slim::Plugin::AudioAddict::Plugin::pluginDir, 'HTML')
 	);
 }
 

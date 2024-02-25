@@ -56,7 +56,6 @@ sub handler {
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
 	$paramRef->{'radioNeedsFakeVersion'} = Slim::Networking::Discovery->needsFakeVersion;
-	$paramRef->{'needsTimeSync'} = !main::NOMYSB && Slim::Networking::SqueezeNetwork::Time->needsTimeSync;
 
 	if (Slim::Schema::hasLibrary()) {
 		# skeleton for the progress update

@@ -1216,9 +1216,7 @@ sub userAgentString {
 	my $osDetails = Slim::Utils::OSDetect::details();
 
 	# We masquerade as iTunes for radio stations that really want it.
-	# Note: Using SqueezeNetwork/SqueezeCenter here until RadioTime relaxes their user-agent restrictions
 	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
-
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),

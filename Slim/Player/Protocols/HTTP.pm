@@ -40,6 +40,7 @@ my $directlog = logger('player.streaming.direct');
 my $sourcelog = logger('player.source');
 
 my $prefs = preferences('server');
+my $cache;
 
 sub new {
 	my $class = shift;
@@ -93,7 +94,7 @@ sub response {
 	# do we have the range we requested
 	if ($request_object->header('Range') =~ /^bytes=(\d+)-/ &&
 		$1 != ($self->contentRange =~ /(\d+)-/)) {
-		${*$self}{'_skip'} = $1;            
+		${*$self}{'_skip'} = $1;
 		$log->info("range request not served, skipping $1 bytes");
 	}
 
@@ -273,6 +274,8 @@ sub parseMetadata {
 		$client, Slim::Player::Source::streamingSongIndex($client)
 	);
 
+	$cache ||= Slim::Utils::Cache->new();
+
 	# See if there is a parser for this stream
 	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 	if ( $parser ) {
@@ -330,7 +333,6 @@ sub parseMetadata {
 			Slim::Music::Info::setCurrentTitle($url, $newTitle, $client);
 
 			if ($artworkUrl) {
-				my $cache = Slim::Utils::Cache->new();
 				$cache->set( "remote_image_$url", $artworkUrl, 3600 );
 
 				if ( my $song = $client->playingSong() ) {
@@ -358,7 +360,7 @@ sub parseMetadata {
 		# Bug 15896, a stream had CRLF in the metadata (no conflict with utf-8)
 		$comments =~ s/\s*[\r\n]+\s*/; /g;
 
-		my $meta = {};
+		my $meta = { cover => $cache->get("remote_image_$url") };
 		while ( $comments ) {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
@@ -375,6 +377,11 @@ sub parseMetadata {
 			elsif ( $value =~ /TITLE=(.+)/i ) {
 				$meta->{title} = Slim::Utils::Unicode::utf8decode_guess($1);
 			}
+		}
+
+		if (!$meta->{artist}) {
+			my @dashes = $meta->{title} =~ /( - )/g;
+			($meta->{artist}, $meta->{title}) = split /\s+-\s+/, $meta->{title} if scalar @dashes == 1;
 		}
 
 		# Re-use wmaMeta field
@@ -450,7 +457,7 @@ sub canDirectStreamSong {
 	return $direct if $song->stripHeader || !$processor;
 
 	# with dynamic header 2, always go direct otherwise only when not seeking
-	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {		
+	if ($processor->{'initial_block_type'} != Slim::Schema::RemoteTrack::INITIAL_BLOCK_ONSEEK || $song->seekdata) {
 		main::INFOLOG && $directlog->info("Need to add header, cannot stream direct");
 		return 0;
 	}
@@ -589,7 +596,7 @@ sub saveStream {
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
-	my $self = $_[0];   
+	my $self = $_[0];
 	return CORE::sysread($_[0], $_[1], $_[2], $_[3]) unless ${*$self}{'_skip'};
 
 	# skip what we need until done or EOF
@@ -598,7 +605,7 @@ sub _sysread {
 
 	# pretend we don't have received anything until we've skipped all
 	${*$self}{'_skip'} -= $bytes if $bytes;
-	$_[1]= '';    
+	$_[1]= '';
 	$! = EINTR;
 	return undef;
 }
@@ -1074,7 +1081,7 @@ sub getMetadataFor {
 	my $playlistURL = $url;
 
 	# Check for radio or OPML feeds URLs with cached covers
-	my $cache = Slim::Utils::Cache->new();
+	$cache ||= Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 
 	# Item may be a playlist, so get the real URL playing
@@ -1099,41 +1106,26 @@ sub getMetadataFor {
 
 	$artist ||= $track->artistName;
 
-	if ( $url =~ /archive\.org/ || $url =~ m|mysqueezebox\.com.+/lma/| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
-			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
-			return {
-				title    => $title,
-				cover    => $cover || $icon,
-				icon     => $icon,
-				type     => 'Live Music Archive',
-			};
-		}
-	}
-	else {
-		# make sure that protocol handler is what the $song wanted, not just the $url-based one
-		my $handler = $current ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
+	# make sure that protocol handler is what the $song wanted, not just the $url-based one
+	my $handler = $current ? $song->currentTrackHandler : Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-		if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
-			return $handler->getMetadataFor( $client, $url );
-		}
-
-		my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
-
-		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
-
-		return {
-			artist   => $artist,
-			title    => $title,
-			type     => $type,
-			bitrate  => $track->prettyBitRate,
-			duration => $track->secs,
-			icon     => $icon,
-			cover    => $cover || $icon,
-		};
+	if ( $handler && $handler !~ /^(?:$class|Slim::Player::Protocols::MMS|Slim::Player::Protocols::HTTPS?)$/ && $handler->can('getMetadataFor') ) {
+		return $handler->getMetadataFor( $client, $url );
 	}
 
-	return {};
+	my $type = uc( $track->content_type || '' ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
+
+	my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
+
+	return {
+		artist   => $artist,
+		title    => $title,
+		type     => $type,
+		bitrate  => $track->prettyBitRate,
+		duration => $track->secs,
+		icon     => $icon,
+		cover    => $cover || $icon,
+	};
 }
 
 sub getIcon {

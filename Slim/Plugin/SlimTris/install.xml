@@ -8,7 +8,6 @@
 	<description>SLIMTRIS_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type>
 <!-- type=extension -->
 	<targetApplication>

@@ -144,17 +144,8 @@ sub _pollOnlineLibraries {
 		return;
 	}
 
-	# create list of apps configured on mysb.com or locally
-	my %configuredApps;
-	foreach my $clientPref ( $serverPrefs->allClients ) {
-		my $apps = $clientPref->get('apps');
-		foreach my $app (values %$apps) {
-			$configuredApps{$app->{plugin}} = 1 if $app->{plugin};
-		}
-	}
-
 	my @enabledImporters = grep {
-		(/^Plugins::/ || $configuredApps{$_}) && $prefs->get($onlineLibraryProviders{$_}) == 1;
+		/^Plugins::/ && $prefs->get($onlineLibraryProviders{$_}) == 1;
 	} keys %onlineLibraryProviders;
 
 	# no need for polling if all importers are disabled

@@ -1420,8 +1420,8 @@ sub _albumsOrReleases {
 	# We only display the grouped albums if:
 	# 1. the feature is enabled
 	if (!$prefs->get('ignoreReleaseTypes') && $prefs->get('groupArtistAlbumsByReleaseType')
-		# 2. a specific artist is requested
-		&& (grep /^artist_id:/, @searchTags)
+		# 2. a specific artist is requested or user wants release type groups always
+		&& ( $prefs->get('groupArtistAlbumsByReleaseType') == 2 || grep /^artist_id:/, @searchTags )
 		# 3. not from works menu:
 		&& !(grep /^work_id:/, @searchTags)
 		# 4. any one of the following is true:

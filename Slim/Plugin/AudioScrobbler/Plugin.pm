@@ -70,7 +70,7 @@ sub initPlugin {
 		Slim::Plugin::AudioScrobbler::Settings->new;
 		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
 	}
-	
+
 	# init scrobbling prefs
 	$prefs->init({
 		enable_scrobbling => 1,
@@ -81,28 +81,13 @@ sub initPlugin {
 		ignoreArtists     => '',
 		ignoreAlbums      => '',
 	});
-	
+
 	# Subscribe to new song events
 	Slim::Control::Request::subscribe(
-		\&newsongCallback, 
+		\&newsongCallback,
 		[['playlist'], ['newsong']],
 	);
-	
-	# Track Info item for loving tracks
-	if (!main::NOMYSB) {
-		Slim::Menu::TrackInfo->registerInfoProvider( lfm_love => (
-			before => 'top',
-			func   => \&infoLoveTrack,
-		) );
-		
-		# A way for other things to notify us the user loves a track
-		Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
-			[0, 1, 1, \&loveTrack]);
-		
-		Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url', '_skip'],
-			[0, 1, 1, \&banTrack]);
-	}
-	
+
 	Slim::Control::Request::addDispatch([ 'audioscrobbler', 'settings' ],
 		[1, 1, 0, \&jiveSettingsMenu]);
 
@@ -124,13 +109,13 @@ sub shutdownPlugin {
 # Only show player UI settings menu if account is available
 sub condition {
 	my ( $class, $client ) = @_;
-	
+
 	my $accounts = getAccounts($client);
-	
+
 	if ( ref $accounts eq 'ARRAY' && scalar @{$accounts} ) {
 		return 1;
 	}
-	
+
 	return;
 }
 
@@ -144,11 +129,11 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my $listRef = [ 0 ];
-	
+
 	my $accounts = getAccounts($client);
-	
+
 	for my $account ( @{$accounts} ) {
 		push @{$listRef}, $account->{username};
 	}
@@ -160,18 +145,18 @@ sub setMode {
 		listRef        => $listRef,
 		externRef      => sub {
 			my ( $client, $account ) = @_;
-			
+
 			if ( !$account ) {
 				return $client->string('PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED');
 			}
-			
+
 			return $client->string( 'PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT', $account );
 		},
 		initialValue   => sub { $prefs->client(shift)->get('account'); },
 		overlayRef     => sub {
 			my ( $client, $account ) = @_;
 			my $overlay;
-			
+
 			my $curAccount = $prefs->client($client)->get('account') || 0;
 
 			if ( $account eq $curAccount ) {
@@ -179,10 +164,10 @@ sub setMode {
 			} else {
 				$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, 0 );
 			}
-			
+
 			return ( undef, $overlay );
 		},
-		callback      => sub { 
+		callback      => sub {
 			my ( $client, $exittype ) = @_;
 
 			$exittype = uc $exittype;
@@ -193,9 +178,9 @@ sub setMode {
 			}
 			elsif ( $exittype eq 'RIGHT' ) {
 				my $value = $client->modeParam('valueRef');
-				
+
 				my $curAccount = $prefs->client($client)->get('account') || 0;
-				
+
 				if ( $curAccount ne $$value ) {
 					changeAccount( $client, $$value );
 
@@ -211,32 +196,32 @@ sub setMode {
 
 sub changeAccount {
 	my ( $client, $account ) = @_;
-	
+
 	$prefs->client($client)->set( account => $account );
 
 	if ( $account eq '0' ) {
 		# Kill any timers so the current track is not scrobbled
 		Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
-		
+
 		# Dump queue
 		setQueue( $client, [] );
 	}
-	else {	
+	else {
 		# If you change accounts and have more than 1 track queued for scrobbling,
 		# dump all but the most recent queued track
 		my $queue = getQueue($client);
-	
+
 		my $count = scalar @{$queue};
 		if ( $count > 1 ) {
 			$log->warn( "Changed scrobble accounts with $count queued items, removing items:" );
-		
+
 			my $newQueue = [ pop @{$queue} ];
-		
+
 			for my $item ( @{$queue} ) {
 				$log->warn( '  ' . uri_unescape( $item->{t} ) );
 			}
-		
+
 			setQueue( $client, $newQueue );
 		}
 	}
@@ -251,7 +236,7 @@ sub changeAccount {
 
 sub clearSession {
 	my $client = shift;
-	
+
 	# Reset our state
 	$client->master->pluginData( session_id      => 0 );
 	$client->master->pluginData( now_playing_url => 0 );
@@ -260,16 +245,16 @@ sub clearSession {
 
 sub handshake {
 	my $params = shift || {};
-	
+
 	if ( my $client = $params->{client} ) {
 		clearSession( $client );
-		
+
 		# Get client's account information
 		if ( !$params->{username} ) {
 			$params->{username} = $prefs->client($client)->get('account');
-			
+
 			my $accounts = getAccounts($client);
-			
+
 			for my $account ( @{$accounts} ) {
 				if ( $account->{username} eq $params->{username} ) {
 					$params->{password} = $account->{password};
@@ -278,9 +263,9 @@ sub handshake {
 			}
 		}
 	}
-	
+
 	my $time = time();
-	
+
 	my $url = HANDSHAKE_URL
 		. '?hs=true&p=1.2'
 		. '&c=' . CLIENT_ID
@@ -288,7 +273,7 @@ sub handshake {
 		. '&u=' . $params->{username}
 		. '&t=' . $time
 		. '&a=' . md5_hex( $params->{password} . $time );
-	
+
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_handshakeOK,
 		\&_handshakeError,
@@ -297,9 +282,9 @@ sub handshake {
 			timeout => 30,
 		},
 	);
-	
+
 	main::DEBUGLOG && $log->debug("Handshaking with Last.fm: $url");
-	
+
 	$http->get( $url );
 }
 
@@ -307,24 +292,24 @@ sub _handshakeOK {
 	my $http   = shift;
 	my $params = $http->params('params');
 	my $client = $params->{client};
-	
+
 	my $content = $http->content;
 	my $error;
-	
+
 	if ( $content =~ /^OK/ ) {
 		my (undef, $session_id, $now_playing_url, $submit_url) = split /\n/, $content, 4;
-		
+
 		main::DEBUGLOG && $log->debug( "Handshake OK, session id: $session_id, np URL: $now_playing_url, submit URL: $submit_url" );
-		
+
 		if ( $client ) {
 			$client->master->pluginData( session_id      => $session_id );
 			$client->master->pluginData( now_playing_url => $now_playing_url );
 			$client->master->pluginData( submit_url      => $submit_url );
 			$client->master->pluginData( handshake_delay => 0 );
-		
+
 			# If there are any tracks pending in the queue, send them now
 			my $queue = getQueue($client);
-			
+
 			if ( scalar @{$queue} ) {
 				submitScrobble( $client );
 			}
@@ -344,12 +329,12 @@ sub _handshakeOK {
 		chomp $content;
 		$error = $content;
 		$http->error( $error );
-		
+
 		if ( $client ) {
 			_handshakeError( $http );
 		}
 	}
-	
+
 	if ( $error ) {
 		$log->error($error);
 		if ( $params->{ecb} ) {
@@ -371,15 +356,15 @@ sub _handshakeError {
 	my $client = $params->{client};
 
 	$log->error("Error handshaking with Last.fm: $error");
-	
+
 	if ( $params->{ecb} ) {
 		$params->{ecb}->($error);
 	}
-	
+
 	return unless $client;
-	
+
 	my $delay;
-	
+
 	if ( $delay = $client->master->pluginData('handshake_delay') ) {
 		$delay *= 2;
 		if ( $delay > 120 ) {
@@ -389,11 +374,11 @@ sub _handshakeError {
 	else {
 		$delay = 1;
 	}
-	
+
 	$client->master->pluginData( handshake_delay => $delay );
-	
+
 	$log->warn("  retrying in $delay minute(s)");
-	
+
 	Slim::Utils::Timers::killTimers( $params, \&handshake );
 	Slim::Utils::Timers::setTimer(
 		$params,
@@ -410,46 +395,46 @@ sub newsongCallback {
 	if ( ! (my $account = $prefs->client($client)->get('account')) ) {
 		return ;
 	}
-	
+
 	# If synced, only listen to the master
 	if ( $client->isSynced() ) {
 		return unless Slim::Player::Sync::isMaster($client);
 	}
-	
+
 	return unless $prefs->get('enable_scrobbling') && scalar @{ getAccounts($client) };
 
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
-	
+
 	my $duration = $track->secs;
 	my $meta;
-	
+
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
+			# this plugin provides track metadata
 			$meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
 			if ( $meta && $meta->{duration} ) {
 				$duration = $meta->{duration};
 			}
 		}
 	}
-	
+
 	# If this is a radio track (no track length) and contains a playlist index value
 	# it is the newsong notification from the station title, which we want to ignore
 	if ( !$duration && defined $request->getParam('_p3') ) {
 		main::DEBUGLOG && $log->debug( 'Ignoring radio station newsong notification' );
 		return;
 	}
-	
+
 	# report all new songs as now playing
 	my $queue = getQueue($client);
-	
+
 	if ( scalar @{$queue} && scalar @{$queue} <= 50 ) {
 		# before we submit now playing, submit all queued tracks, so that
 		# a scrobbled track doesn't clobber the now playing data
 		main::DEBUGLOG && $log->debug( 'Submitting scrobble queue before now playing track' );
-		
+
 		submitScrobble( $client, {
 			cb => sub {
 				# delay by 1 second so we don't hit the server too fast after
@@ -469,22 +454,22 @@ sub newsongCallback {
 	}
 
 	# Determine when we need to check again
-	
+
 	# Track must be > 30 seconds
 	if ( $duration && $duration < 30 ) {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
 		}
-		
+
 		return;
 	}
-	
+
 	my $title = $track->title;
-	
+
 	if ( $track->remote ) {
 		if ( $meta ) {
 			$title = $meta->{title};
-			
+
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
 				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
@@ -499,9 +484,9 @@ sub newsongCallback {
 			return;
 		}
 	}
-	
+
 	$meta ||= {};
-	
+
 	my @ignoreTitles  = split(/\s*,\s*/, $prefs->get('ignoreTitles'));
 	my @ignoreAlbums  = split(/\s*,\s*/, $prefs->get('ignoreAlbums'));
 	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
@@ -515,7 +500,7 @@ sub newsongCallback {
 		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s, %s", $title, $track->artistName || $meta->{artist}, $track->albumname || $meta->{album}, ($track->genre ? $track->genre->name : '')) );
 		return;
 	}
-	
+
 	# We check again at half the song's length or 240 seconds, whichever comes first
 	my $checktime;
 	if ( $duration ) {
@@ -525,15 +510,15 @@ sub newsongCallback {
 		# For internet radio, check again in 30 seconds
 		$checktime = 30;
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
 	}
-	
+
 	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 	Slim::Utils::Timers::setTimer(
 		$client,
-		Time::HiRes::time() + $checktime + 5,	# 5 seconds added to allow for startup and avoid unnecessary callback 
+		Time::HiRes::time() + $checktime + 5,	# 5 seconds added to allow for startup and avoid unnecessary callback
 		\&checkScrobble,
 		$track,
 		$checktime,
@@ -542,10 +527,10 @@ sub newsongCallback {
 
 sub submitNowPlaying {
 	my ( $client, $track, $retry ) = @_;
-	
+
 	# Abort if the user disabled scrobbling for this player
 	return if !$prefs->client($client)->get('account');
-	
+
 	if ( !$client->master->pluginData('now_playing_url') ) {
 		# Get a new session
 		handshake( {
@@ -556,19 +541,19 @@ sub submitNowPlaying {
 		} );
 		return;
 	}
-	
+
 	my $meta = _getMetadata($client, $track);
-	
+
 	if (!$meta) {
 		main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
 		return;
 	}
-		
+
 	elsif ( $meta->{msg} ) {
 		main::DEBUGLOG && $log->debug( $meta->{msg} );
 		return;
 	}
-	
+
 	my $post = 's=' . $client->master->pluginData('session_id')
 		. '&a=' . uri_escape_utf8( $meta->{artist} )
 		. '&t=' . uri_escape_utf8( $meta->{title} )
@@ -576,7 +561,7 @@ sub submitNowPlaying {
 		. '&l=' . ( $meta->{duration} ? int( $meta->{duration} ) : '' )
 		. '&n=' . $meta->{tracknum}
 		. '&m=' . ( $track->musicbrainz_id || '' );
-	
+
 	main::DEBUGLOG && $log->debug("Submitting Now Playing track to Last.fm: $post");
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -589,7 +574,7 @@ sub submitNowPlaying {
 			timeout => 30,
 		}
 	);
-	
+
 	$http->post(
 		$client->master->pluginData('now_playing_url'),
 		'Content-Type' => 'application/x-www-form-urlencoded',
@@ -603,19 +588,19 @@ sub _submitNowPlayingOK {
 	my $client  = $http->params('client');
 	my $track   = $http->params('track');
 	my $retry   = $http->params('retry');
-	
+
 	if ( $content =~ /^OK/ ) {
 		main::DEBUGLOG && $log->debug('Now Playing track submitted successfully');
 	}
 	elsif ( $content =~ /^BADSESSION/ ) {
 		main::DEBUGLOG && $log->debug('Now Playing failed to submit: bad session');
-		
+
 		# Re-handshake and retry once
 		handshake( {
 			client => $client,
 			cb     => sub {
 				if ( !$retry ) {
-					main::DEBUGLOG && $log->debug('Retrying failed Now Playing submission');				
+					main::DEBUGLOG && $log->debug('Retrying failed Now Playing submission');
 					submitNowPlaying( $client, $track, 'retry' );
 				}
 			},
@@ -638,14 +623,14 @@ sub _submitNowPlayingError {
 	my $client = $http->params('client');
 	my $track  = $http->params('track');
 	my $retry  = $http->params('retry');
-	
+
 	if ( $retry ) {
 		main::DEBUGLOG && $log->debug("Now Playing track failed to submit after retry: $error, giving up");
 		return;
 	}
-	
+
 	main::DEBUGLOG && $log->debug("Now Playing track failed to submit: $error, retrying in 5 seconds");
-	
+
 	# Retry once after 5 seconds
 	Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
 	Slim::Utils::Timers::setTimer(
@@ -659,49 +644,49 @@ sub _submitNowPlayingError {
 
 sub checkScrobble {
 	my ( $client, $track, $checktime, $rating ) = @_;
-	
+
 	return unless $client && $track;
-	
+
 	# Make sure player is either playing or paused
 	if ( $client->isStopped() ) {
 		main::DEBUGLOG && $log->debug( $client->id . ' no longer playing or paused, not scrobbling' );
 		return;
 	}
-	
+
 	# Make sure the track is still the currently playing track
 	my $cururl = Slim::Player::Playlist::url($client);
-	
+
 	my $meta = _getMetadata($client, $track, $cururl);
-	
+
 	my $source = 'P';
-	
+
 	if ( $track->remote ) {
 		if (!$meta) {
 			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $cururl );
 			return;
 		}
-			
+
 		# Handler must return at least artist and title
 		elsif ( $meta->{msg} ) {
 			main::DEBUGLOG && $log->debug( $meta->{msg} );
 			return;
 		}
-			
+
 		# Make sure user is still listening to the same track
 		elsif ( $track->stash->{_plugin_title} && $meta->{title} ne $track->stash->{_plugin_title} ) {
 			main::DEBUGLOG && $log->debug( $track->stash->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
 			return;
 		}
-		
+
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $cururl );
 		# Get the source type from the plugin
 		if ( $handler->can('audioScrobblerSource') ) {
 			$source = $handler->audioScrobblerSource( $client, $cururl );
-			
+
 			# Ignore radio tracks if requested, unless rating = L
 			if ( !defined $rating || $rating ne 'L' ) {
 				my $include_radio = $prefs->get('include_radio');
-				
+
 				if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
 					main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
 					return;
@@ -713,17 +698,17 @@ sub checkScrobble {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( $track->title . ' - Currently playing track has changed, not scrobbling' );
 		}
-		
+
 		return;
 	}
-	
+
 	# Check songtime for the song to see if they paused the track
 	my $songtime = Slim::Player::Source::songTime($client);
 	if ( $songtime < $checktime ) {
 		my $diff = $checktime - $songtime;
-		
+
 		main::DEBUGLOG && $log->debug( $meta->{title} . " - Not yet reached $checktime playback seconds, waiting $diff more seconds" );
-		
+
 		Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -733,14 +718,14 @@ sub checkScrobble {
 			$checktime,
 			$rating,
 		);
-		
+
 		return;
 	}
-	
+
 	main::DEBUGLOG && $log->debug( $meta->{title} . " - Queueing track for scrobbling in $checktime seconds" );
-	
+
 	my $queue = getQueue($client);
-	
+
 	push @{$queue}, {
 		_url => $cururl,
 		a    => uri_escape_utf8( $meta->{artist} ),
@@ -753,16 +738,11 @@ sub checkScrobble {
 		n    => $meta->{tracknum},
 		m    => ( $track->musicbrainz_id || '' ),
 	};
-	
+
 	setQueue( $client, $queue );
-	
-	# If the URL wasn't a Last.fm station and the user loved the track, report the Love
-	if ( !main::NOMYSB && $rating && $rating eq 'L' && $cururl !~ /^lfm/ ) {
-		submitLoveTrack( $client, $queue->[-1] );
-	}
-	
+
 	#warn "Queue is now: " . Data::Dump::dump($queue) . "\n";
-	
+
 	# Scrobble in $checktime seconds, the reason for this delay is so we can report
 	# thumbs up/down status.  The reason for the extra 10 seconds is so if there is a
 	# Now Playing request from the next track, it will do the submit instead.
@@ -776,29 +756,29 @@ sub checkScrobble {
 
 sub submitScrobble {
 	my ( $client, $params ) = @_;
-	
+
 	$params ||= {};
 	$params->{retry} ||= 0;
-	
+
 	my $cb = $params->{cb} || sub {};
-	
+
 	# Remove any other pending submit timers
 	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
 
 	my $queue = getQueue($client);
-	
+
 	if ( !scalar @{$queue} ) {
 		# Queue was already submitted, probably by the Now Playing request
 		return $cb->();
 	}
-	
+
 	# Abort if the user disabled scrobbling for this player
 	my $account = $prefs->client($client)->get('account');
 	if ( !$account ) {
 		main::DEBUGLOG && $log->debug( 'User disabled scrobbling for this player, wiping queue and not submitting' );
-		
+
 		setQueue( $client, [] );
-		
+
 		return $cb->();
 	}
 
@@ -817,20 +797,20 @@ sub submitScrobble {
 		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
 		#$log->debug( Data::Dump::dump($queue) );
 	}
-	
+
 	# Get the currently playing track
 	my $current_track;
 	if ( my $url = Slim::Player::Playlist::url($client) ) {
 		$current_track = Slim::Schema->objectForUrl( { url => $url } );
 	}
-	
+
 	my $current_item;
 	my @tmpQueue;
-	
+
 	my $post = 's=' . $client->master->pluginData('session_id');
-	
+
 	my $index = 0;
-	while ( my $item = shift @{$queue} ) {		
+	while ( my $item = shift @{$queue} ) {
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
 		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
@@ -838,36 +818,36 @@ sub submitScrobble {
 			$current_item = $item;
 			next;
 		}
-		
+
 		push @tmpQueue, $item;
-		
+
 		for my $p ( keys %{$item} ) {
 			# Skip internal items i.e. _url
 			next if $p =~ /^_/;
-			
+
 			# each value is already uri-escaped as needed
 			$post .= '&' . $p . '[' . $index . ']=' . $item->{ $p };
 		}
-		
+
 		$index++;
-		
+
 		# Max size of each scrobble request is 50 items
 		last if $index == 50;
 	}
-	
+
 	# Add the currently playing track back to the queue
 	if ( $current_item ) {
 		unshift @{$queue}, $current_item;
 	}
-	
+
 	if ( @tmpQueue ) {
 		# Only setQueue if tmpQueue is nonempty
 		# otherwise it means we didn't shift anything out of queue into tmpQueue
 		# and $queue is therefore unchanged. prevents disk writes enabling some disks to spindown
 		setQueue( $client, $queue );
-	
+
 		main::DEBUGLOG && $log->debug( "Submitting: $post" );
-	
+
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
 			\&_submitScrobbleOK,
 			\&_submitScrobbleError,
@@ -878,14 +858,14 @@ sub submitScrobble {
 				timeout  => 30,
 			},
 		);
-	
+
 		$http->post(
 			$client->master->pluginData('submit_url'),
 			'Content-Type' => 'application/x-www-form-urlencoded',
 			$post,
 		);
 	}
-	
+
 	# If there are still items left in the queue, scrobble again in a minute
 	if ( scalar @{$queue} ) {
 		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
@@ -901,14 +881,14 @@ sub submitScrobble {
 # Check if a track is still playing
 sub stillPlaying {
 	my ( $client, $track, $item ) = @_;
-	
+
 	# Bug 12240: if we have stopped (probably at the end of the playlist) then we are not still playing
 	if ($client->isStopped()) {
 		return 0;
 	}
 
 	my $meta = _getMetadata($client, $track) || return 1;
-	
+
 	if ( $meta->{title} ne uri_unescape( $item->{t} ) ) {
 		return 0;
 	}
@@ -918,13 +898,13 @@ sub stillPlaying {
 	elsif ( $meta->{artist} ne uri_unescape( $item->{a} ) ) {
 		return 0;
 	}
-	
+
 	return 1;
 }
 
 sub _getMetadata {
 	my ($client, $track, $url) = @_;
-	
+
 	$url ||= $track->url;
 
 	my $meta = {
@@ -933,21 +913,21 @@ sub _getMetadata {
 		title    => $track->title,
 		tracknum => $track->tracknum || '',
 		duration => $track->secs,
-	};	
-	
+	};
+
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta2 = $handler->getMetadataFor( $client, $url, 'forceCurrent' );	
-			
+			# this plugin provides track metadata
+			my $meta2 = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
+
 			# Handler must return at least artist and title
 			unless ( $meta2->{artist} && $meta2->{title} ) {
 				return {
 					msg => "Protocol Handler didn't return an artist and title for $url, ignoring"
 				};
 			}
-			
+
 			$meta->{artist}   = $meta2->{artist};
 			$meta->{album}    = $meta2->{album} || '';
 			$meta->{title}    = $meta2->{title};
@@ -969,10 +949,10 @@ sub _submitScrobbleOK {
 	my $tmpQueue = $http->params('tmpQueue') || [];
 	my $params   = $http->params('params');
 	my $client   = $http->params('client');
-	
+
 	if ( $content =~ /^OK/ ) {
 		main::DEBUGLOG && $log->debug( 'Scrobble submit successful' );
-		
+
 		# If we had a callback on success, call it now
 		if ( $params->{cb} ) {
 			$params->{cb}->();
@@ -981,13 +961,13 @@ sub _submitScrobbleOK {
 	elsif ( $content =~ /^BADSESSION/ ) {
 		# put the tmpQueue items back into the main queue
 		my $queue = getQueue($client);
-		
+
 		push @{$queue}, @{$tmpQueue};
-		
+
 		setQueue( $client, $queue );
-		
+
 		main::DEBUGLOG && $log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
-		
+
 		# re-handshake, this will cause a submit to occur after success
 		handshake( { client => $client } );
 	}
@@ -1010,24 +990,24 @@ sub _submitScrobbleError {
 	my $tmpQueue = $http->params('tmpQueue') || [];
 	my $params   = $http->params('params');
 	my $client   = $http->params('client');
-	
+
 	# put the tmpQueue items back into the main queue
 	my $queue = getQueue($client);
-	
+
 	push @{$queue}, @{$tmpQueue};
-	
+
 	setQueue( $client, $queue );
-	
+
 	if ( $params->{retry} == 3 ) {
 		# after 3 failures, give up and handshake
 		main::DEBUGLOG && $log->debug( "Scrobble submit failed after 3 tries, re-handshaking" );
 		handshake( { client => $client } );
 		return;
 	}
-	
+
 	my $tries = 3 - $params->{retry};
 	main::DEBUGLOG && $log->debug( "Scrobble submit failed: $error, will retry in 5 seconds ($tries tries left)" );
-	
+
 	# Retry after a short delay
 	$params->{retry}++;
 	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
@@ -1039,148 +1019,19 @@ sub _submitScrobbleError {
 	);
 }
 
-sub loveTrack { if (!main::NOMYSB) {
-	my $request = shift;
-	my $client  = $request->client || return;
-	my $url     = $request->getParam('_url');
-	
-	# Ignore if not Scrobbling
-	return if !$prefs->client($client)->get('account');
-	
-	return unless $prefs->get('enable_scrobbling');
-	
-	main::DEBUGLOG && $log->debug( "Loved: $url" );
-	
-	# Look through the queue and update the item we want to love
-	my $queue = getQueue($client);
-	
-	for my $item ( @{$queue} ) {
-		if ( $item->{_url} eq $url ) {
-			$item->{r} = 'L';
-			
-			setQueue( $client, $queue );
-			
-			# If the URL wasn't a Last.fm station, report the Love
-			if ( $url !~ /^lfm/ ) {
-				submitLoveTrack( $client, $item );
-			}
-			
-			return 1;
-		}
-	}
-	
-	# The track wasn't already in the queue, they probably rated the track
-	# before getting halfway through.  Call checkScrobble with a checktime
-	# of 0 to force it to be added to the queue with the rating of L
-	my $track = Slim::Schema->objectForUrl( { url => $url } );
-	
-	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
-	
-	checkScrobble( $client, $track, 0, 'L' );
-	
-	return 1;
-} }
-
-sub submitLoveTrack { if (!main::NOMYSB) {
-	my ( $client, $item ) = @_;
-	
-	my $username = $prefs->client($client)->get('account');
-	my $accounts = getAccounts($client);
-	my $password;
-	
-	for my $account ( @{$accounts} ) {
-		if ( $account->{username} eq $username ) {
-			$password = $account->{password};
-			last;
-		}
-	}
-	
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		sub {
-			my $http = shift;
-			main::DEBUGLOG && $log->debug( 'Love track response: ' . $http->content );
-		},
-		sub {
-			my $http = shift;
-			main::DEBUGLOG && $log->debug( 'Love track error: ' . $http->error );
-		},
-		{
-			client => $client,
-		},
-	);
-	
-	my $url = Slim::Networking::SqueezeNetwork->url(
-		'/api/lastfm/v1/scrobbling/love'
-		. '?username='  . $username
-		. '&authToken=' . md5_hex( $username . $password )
-		. '&artist='    . $item->{a}
-		. '&track='     . $item->{t}
-	);
-	
-	main::DEBUGLOG && $log->debug( 'Submitting loved track to Last.fm' );
-	
-	$http->get( $url );
-} }
-
-sub banTrack { if (!main::NOMYSB) {
-	my $request = shift;
-	my $client  = $request->client || return;
-	my $url     = $request->getParam('_url');
-	my $skip    = $request->getParam('_skip') || 0;
-
-	# Ban is only supported for Last.fm URLs
-	return unless $url =~ /^lfm/;
-	
-	# Skip to the next track
-	if ( $skip ) {
-		$client->execute([ 'playlist', 'jump', '+1' ]);
-	}
-	
-	# Ignore if not Scrobbling
-	return if !$prefs->client($client)->get('account');
-	
-	return unless $prefs->get('enable_scrobbling');
-
-	main::DEBUGLOG && $log->debug( "Banned: $url" );
-	
-	# Look through the queue and update the item we want to ban
-	my $queue = getQueue($client);
-	
-	for my $item ( @{$queue} ) {
-		if ( $item->{_url} eq $url ) {
-			$item->{r} = 'B';
-			
-			setQueue( $client, $queue );
-				
-			return 1;
-		}
-	}
-	
-	# The track wasn't already in the queue, they probably rated the track
-	# before getting halfway through.  Call checkScrobble with a checktime
-	# of 0 to force it to be added to the queue with the rating of B
-	my $track = Slim::Schema->objectForUrl( { url => $url } );
-	
-	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
-	
-	checkScrobble( $client, $track, 0, 'B' );
-	
-	return 1;
-} }
-
 # Return whether or not the given track will be scrobbled
 sub canScrobble {
 	my ( $class, $client, $track ) = @_;
-	
+
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
-	
+
 	return unless $prefs->get('enable_scrobbling');
-	
+
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
 		if ( $handler ) {
-			
+
 			# Must be over 30 seconds
 			if ( $handler->can('getMetadataFor') ) {
 				my $meta = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );
@@ -1189,7 +1040,7 @@ sub canScrobble {
 					return;
 				}
 			}
-			
+
 			# Must provide a source
 			if ( $handler->can('audioScrobblerSource') ) {
 				if ( my $source = $handler->audioScrobblerSource( $client, $track->url ) ) {
@@ -1201,7 +1052,7 @@ sub canScrobble {
 	else {
 		# Must be over 30 seconds
 		return if $track->secs && $track->secs < 30;
-		
+
 		return 1;
 	}
 
@@ -1210,60 +1061,22 @@ sub canScrobble {
 
 sub getAccounts {
 	my $client = shift;
-	
+
 	return $prefs->get('accounts') || [];
 }
 
 sub getQueue {
 	my $client = shift;
-	
+
 	return $prefs->client($client)->get('queue') || [];
 }
 
 sub setQueue {
 	my ( $client, $queue ) = @_;
-	
+
 	$prefs->client($client)->set( queue => $queue );
 }
 
-sub infoLoveTrack { if (!main::NOMYSB) {
-	my ( $client, $url, $track, $remoteMeta ) = @_;
-
-	return unless $client;
-	
-	# Ignore if the current track can't be scrobbled
-	if ( !__PACKAGE__->canScrobble( $client, $track ) ) {
-		return;
-	}
-	
-	# Ignore if this track isn't currently playing, you can only love
-	# something that is playing and being scrobbled
-	if ( $track->url ne Slim::Player::Playlist::url($client) ) {
-		return;
-	}
-	
-	return {
-		type        => 'link',
-		name        => $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'),
-		url         => \&infoLoveTrackSubmit,
-		passthrough => [ $url ],
-		favorites   => 0,
-	};
-} }
-
-sub infoLoveTrackSubmit { if (!main::NOMYSB) {
-	my ( $client, $callback, undef, $url ) = @_;
-	
-	$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
-	
-	$callback->( {
-		type        => 'text',
-		name        => $client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
-		showBriefly => 0,
-		favorites   => 0,
-	} );
-} }
-		
 sub jiveSettings {
 
 	my $client = shift;
@@ -1293,7 +1106,7 @@ sub jiveSettingsCommand {
 	$request->setStatusDone();
 
 }
-	
+
 sub jiveSettingsMenu {
 
 	my $request  = shift;

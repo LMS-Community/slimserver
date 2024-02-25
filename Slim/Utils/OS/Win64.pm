@@ -8,6 +8,7 @@ package Slim::Utils::OS::Win64;
 use strict;
 
 use File::Spec::Functions qw(catdir);
+use FindBin qw($Bin);
 use Win32::Daemon;
 
 use base qw(Slim::Utils::OS::Win32);
@@ -36,6 +37,14 @@ sub initSearchPath {
 	$binArch =~ s/-x64-/-x86-/;
 	Slim::Utils::Misc::addFindBinPaths(catdir($_[0] || $class->dirsFor('Bin'), $binArch));
 }
+
+
+sub scanner { "$Bin/scanner.pl" }
+
+sub gdresize { "$Bin/gdresize.pl" }
+
+sub gdresized { "$Bin/gdresized.pl" }
+
 
 sub runService { if ($main::daemon) {
 	my $class = shift;

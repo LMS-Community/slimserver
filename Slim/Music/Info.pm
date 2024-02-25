@@ -1148,11 +1148,6 @@ sub canSeek {
 sub isPlaylistURL {
 	my $url = shift || return 0;
 
-	# XXX: This method is pretty wrong, it says every remote URL is a playlist
-	# Bug 3484, We want rhapsody tracks to display the proper title format so they can't be
-	# seen as a playlist which forces only the title to be displayed.
-	return if $url =~ /^rhap.+wma$/;
-
 	if ($url =~ /^([a-zA-Z0-9\-]+):/) {
 
 		my $handler = Slim::Player::ProtocolHandlers->handlerForProtocol($1);

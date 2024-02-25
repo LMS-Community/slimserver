@@ -206,7 +206,7 @@ sub findFrameBoundaries {
 		return 0;
 	}
 
-	# Not sure why we need a localFh here ... but it's automatically closed by Perl
+	# Need a localFh to have own seek pointer
 	open(my $localFh, '<&=', $fh);
 	$localFh->seek(0, SEEK_SET);
 	

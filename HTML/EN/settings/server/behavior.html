@@ -69,7 +69,8 @@
 
 		[% IF !prefs.pref_ignoreReleaseTypes; WRAPPER settingGroup title="" desc="" %]
 			<select class="stdedit" name="pref_groupArtistAlbumsByReleaseType" id="groupArtistAlbumsByReleaseType">
-				<option [% IF prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="1">[% 'SETUP_GROUP_BY_RELEASE_TYPES_1' | string %]</option>
+				<option [% IF prefs.pref_groupArtistAlbumsByReleaseType == 1 %]selected [% END %]value="1">[% 'SETUP_GROUP_BY_RELEASE_TYPES_1' | string %]</option>
+				<option [% IF prefs.pref_groupArtistAlbumsByReleaseType == 2 %]selected [% END %]value="2">[% 'SETUP_GROUP_BY_RELEASE_TYPES_2' | string %]</option>
 				<option [% IF NOT prefs.pref_groupArtistAlbumsByReleaseType %]selected [% END %]value="0">[% 'SETUP_GROUP_BY_RELEASE_TYPES_0' | string %]</option>
 			</select>
 		[% END; ELSE %]

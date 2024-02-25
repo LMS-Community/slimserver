@@ -10,7 +10,6 @@
 	<defaultState>disabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>
 
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 
 	<targetApplication>

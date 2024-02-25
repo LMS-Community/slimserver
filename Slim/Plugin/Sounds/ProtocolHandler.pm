@@ -1,10 +1,11 @@
 package Slim::Plugin::Sounds::ProtocolHandler;
-
-
 # Handler for forcing loop mode
 
 use strict;
 use base 'Slim::Player::Protocols::HTTP';
+use Slim::Utils::Log;
+
+my $log = logger('plugin.sounds');
 
 # No scrobbling
 sub audioScrobblerSource { }
@@ -12,7 +13,7 @@ sub audioScrobblerSource { }
 # Loop mode only works with direct streaming
 sub canDirectStream {
 	my ( $class, $client, $url ) = @_;
-	
+
 	return $url;
 }
 
@@ -21,19 +22,33 @@ sub shouldLoop { 1 }
 # Some sounds are small, use a small buffer threshold
 sub bufferThreshold { 10 }
 
-sub usePlayerProxyStreaming { 0 } # 1 => do not use player-proxy-streaming
-
 sub canSeek { 0 }
 
 sub isAudioURL { 1 }
 
-sub isRemote { 1 }
+sub isRemote { 0 }
+
+sub getNextTrack {
+	my ( $class, $song, $successCb, $errorCb ) = @_;
+
+	my $url = $song->track()->url;
+	my $client = $song->master();
+
+	$url =~ s/^loop:\/\///;
+	$url = Slim::Plugin::Sounds::Plugin->getStreamUrl($client, $url);
+
+	main::INFOLOG && $log->is_info && $log->info("Stream loop URL: " . $url =~ s/squeez.*?:.*?@/***:***@/r);
+
+	$song->streamUrl($url);
+
+	$successCb->();
+}
 
 sub getMetadataFor {
 	my $class = shift;
-	
+
 	my $icon = Slim::Plugin::Sounds::Plugin->_pluginDataFor('icon');
-	
+
 	return {
 		cover    => $icon,
 		icon     => $icon,

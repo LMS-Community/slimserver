@@ -1452,10 +1452,7 @@ sub _cliQuery_done {
 				# XXX this is probably obsolete because of move to myapps
 				# make a best effort to make a labeled title for the search
 				my $queryTypes = {
-					rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
 					radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
-					slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
-					lma		=>	'PLUGIN_LMA_MODULE_NAME',
 				};
 
 				my $title = $search;

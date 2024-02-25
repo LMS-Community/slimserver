@@ -122,12 +122,6 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::GlobalSearch::init();
-
-	if (!main::NOMYSB) {
-		require Slim::Buttons::SqueezeNetwork;
-		Slim::Buttons::SqueezeNetwork::init();
-	}
-
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();

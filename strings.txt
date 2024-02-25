@@ -93,49 +93,49 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2023 Logitech - verze 8.4.0
-	DA	© 2001-2023 Logitech - version 8.4.0
-	DE	© 2001-2023 Logitech Version 8.4.0
-	EN	© 2001-2023 Logitech Version 8.4.0
-	ES	© 2001-2023 Logitech Versión 8.4.0
-	FI	© 2001-2023 Logitechin versio 8.4.0
-	FR	© 2001-2023 Logitech Version 8.4.0
-	IT	© 2001-2023 Logitech versione 8.4.0
-	NL	© 2001-2023 Logitech versie 8.4.0
-	NO	© 2001–2023 Logitech versjon 8.4.0
-	PL	© 2001-2023 Logitech wersja 8.4.0
-	RU	© Logitech, 2001-2023. Версия 8.4.0
-	SV	© 2001–2023 Logitech Version 8.4.0
+	CS	© 2001-2024 Logitech - verze 8.5.0
+	DA	© 2001-2024 Logitech - version 8.5.0
+	DE	© 2001-2024 Logitech Version 8.5.0
+	EN	© 2001-2024 Logitech Version 8.5.0
+	ES	© 2001-2024 Logitech Versión 8.5.0
+	FI	© 2001-2024 Logitechin versio 8.5.0
+	FR	© 2001-2024 Logitech Version 8.5.0
+	IT	© 2001-2024 Logitech versione 8.5.0
+	NL	© 2001-2024 Logitech versie 8.5.0
+	NO	© 2001–2023 Logitech versjon 8.5.0
+	PL	© 2001-2024 Logitech wersja 8.5.0
+	RU	© Logitech, 2001-2024. Версия 8.5.0
+	SV	© 2001–2023 Logitech Version 8.5.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2023 Logitech
-	DA	© 2001-2023 Logitech
-	DE	© 2001-2023 Logitech
-	EN	© 2001-2023 Logitech
-	ES	© 2001-2023 Logitech
-	FI	© 2001-2023 Logitech
-	FR	© 2001-2023 Logitech
-	IT	© 2001-2023 Logitech
-	NL	© 2001-2023 Logitech
-	NO	© 2001-2023 Logitech
-	PL	© 2001-2023 Logitech
-	RU	© Logitech, 2001-2023
-	SV	© 2001-2023 Logitech
+	CS	© 2001-2024 Logitech
+	DA	© 2001-2024 Logitech
+	DE	© 2001-2024 Logitech
+	EN	© 2001-2024 Logitech
+	ES	© 2001-2024 Logitech
+	FI	© 2001-2024 Logitech
+	FR	© 2001-2024 Logitech
+	IT	© 2001-2024 Logitech
+	NL	© 2001-2024 Logitech
+	NO	© 2001-2024 Logitech
+	PL	© 2001-2024 Logitech
+	RU	© Logitech, 2001-2024
+	SV	© 2001-2024 Logitech
 
 VERSION
-	CS	Verze 8.4.0 / r%s
-	DA	Version 8.4.0 / r%s
-	DE	Version 8.4.0 / r%s
-	EN	Version 8.4.0 / r%s
-	ES	Versión 8.4.0 / r%s
-	FI	Versio 8.4.0 / r%s
-	FR	Version 8.4.0 / r%s
-	IT	Versione 8.4.0/r%s
-	NL	Versie 8.4.0 / r%s
-	NO	Versjon 8.4.0 / r%s
-	PL	Wersja 8.4.0 / r%s
-	RU	Версия 8.4.0 / r%s
-	SV	Version 8.4.0 / r%s
+	CS	Verze 8.5.0 / r%s
+	DA	Version 8.5.0 / r%s
+	DE	Version 8.5.0 / r%s
+	EN	Version 8.5.0 / r%s
+	ES	Versión 8.5.0 / r%s
+	FI	Versio 8.5.0 / r%s
+	FR	Version 8.5.0 / r%s
+	IT	Versione 8.5.0/r%s
+	NL	Versie 8.5.0 / r%s
+	NO	Versjon 8.5.0 / r%s
+	PL	Wersja 8.5.0 / r%s
+	RU	Версия 8.5.0 / r%s
+	SV	Version 8.5.0 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
@@ -6466,7 +6466,7 @@ SETUP_ARTFOLDER_DESC
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Logitech Media Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todas las carátulas en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de carátula. Independientemente de esta ubicación, Logitech Media Server seguirá buscando carátulas en la misma ruta que cada archivo de audio si no se encuentran carátulas coincidentes en la carpeta de carátulas.
 	FI	Halutessasi voit tallentaa kaikki kansikuvat yhteen kansioon käyttäen tiedostonimien muuttujien asetusta yllä.  Kirjoita kansikuvatiedostojen sijainti tähän. Tästä huolimatta Logitech Media Server etsii yhä kansikuvia samasta polusta kuin äänitiedostoja, jos se ei löydä vastaavia kansikuvia kansikuvakansiosta.
-	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Spécifiez l'emplacement des fichiers de pochette ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le Logitech Media Server la cherchera à l'emplacement du fichier de musique.
+	FR	Vous pouvez saisir un nom de dossier où stocker toutes les pochettes. Si aucune pochette correspondante n'est trouvée dans le dossier spécifié, le Logitech Media Server recherchera la pochette à l'emplacement du fichier audio.
 	HE	באפשרותך לבחור לאחסן את כל העטיפות בתיקייה יחידה, באמצעות האפשרות לשינוי שמות קבצים שלעיל. הזן כאן את המיקום של קובצי העטיפות. ללא תלות במיקום זה, השרת עדיין יחפש עטיפות בנתיב של כל קובץ שמע אם לא נמצאו עטיפות מתאימות בתיקיית העטיפות.
 	IT	Si può scegliere di archiviare tutte le copertine in una sola cartella, usando l'opzione per i nomi di file variabili indicata sopra. Inserire qui la posizione dei file delle copertine. Se nella cartella delle copertine non viene trovata alcuna copertina corrispondente, ne viene eseguita una ricerca nello stesso percorso dei file audio .
 	JA	アートワークを１つのフォルダーにまとめて保存しても構いません。以下に入力してください。フォルダー名を指定しても、もし見つからなければ、音楽ファイルがある場所を探します。
@@ -6937,66 +6937,6 @@ SETUP_COVERART_DESC
 	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i ID3-taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
-SETUP_DOWNLOAD_ARTWORK
-	CS	Automaticky doplnit obal alba
-	DA	Hent albumcovere automatisk
-	DE	Plattenhülle automatisch vervollständigen
-	EN	Autocomplete Artwork
-	ES	Autocompletar carátula
-	FI	Viimeistele kansitaide automaattisesti
-	FR	Rechercher automatiquement la pochette
-	IT	Completamento automatico copertina
-	NL	Albumhoezen automatisch aanvullen
-	NO	Finn fram omslag automatisk
-	PL	Autouzupełnianie okładek
-	RU	Автоматически заполнить обложку
-	SV	Autokomplettera albumomslag
-
-SETUP_DOWNLOAD_ARTWORK_DESC
-	CS	Logitech Media Server se může v průběhu prohledávání knihovny pokusit o doplnění chybějících obalů alba vašich hudebních souborů. V průběhu tohoto procesu budou za účelem nalezení odpovídajícího obalu alba odeslány údaje o interpretovi a albu na server mysqueezebox.com. Upozornění: tento proces může výrazně zpomalit vyhledávání.<br><br>Obaly alba jsou poskytovány službou <a href="http://last.fm" target="_blank">Last.fm</a>.
-	DA	Logitech Media Server kan forsøge at hente manglende albumcovere til dine musikfiler mens dit bibliotek scannes. I denne proces sendes der oplysninger om kunstnere og album til mysqueezebox.com for at finde matchende albumcovere. Bemærk at denne proces kan gøre scanningen betydeligt langsommere.<br><br>Albumcovere leveres af <a href="http://last.fm" target="_blank">Last.fm</a>.
-	DE	Logitech Media Server kann beim Durchsuchen Ihrer Bibliothek fehlende Plattenhüllen für Ihre Musikdateien ergänzen. Bei diesem Vorgang werden Informationen zu Interpret und Album an mysqueezebox.com gesendet, um dort nach passenden Plattenhüllen zu suchen. Beachten Sie, dass dieser Prozess den Suchvorgang erheblich verlangsamen kann.<br><br>Plattenhüllen werden von <a href="http://last.fm" target="_blank">Last.fm</a> zur Verfügung gestellt.
-	EN	Logitech Media Server can try to complete missing artwork for your music files while it's scanning your library. This process will send artist and album information to mysqueezebox.com to discover matching cover art. Please note that this process can slow down scanning considerably.<br><br>Artwork is provided by <a href="http://last.fm" target="_blank">Last.fm</a>.
-	ES	Logitech Media Server puede intentar completar las carátulas que falten en los archivos de música mientras examina la biblioteca. Este proceso enviará información de álbum y artista a mysqueezebox.com para descubrir cubiertas que coincidan. Tenga en cuenta que este proceso puede ralentizar considerablemente el examen.<br><br>Las carátulas las proporciona <a href="http://last.fm" target="_blank">Last.fm</a>.
-	FI	Logitech Media Server voi yrittää viimeistellä musiikkitiedostojen puuttuvan kansitaiteen, kun kirjastoa tarkistetaan. Esittäjän ja albumin tiedot lähetetään osoitteeseen mysqueezebox.com, josta täsmäävää kansitaidetta etsitään. Ota huomioon, että tämä saattaa hidastaa tarkistusta huomattavasti.<br><br>Kansitaiteen tarjoaa <a href="http://last.fm" target="_blank">Last.fm</a>.
-	FR	Le Logitech Media Server peut essayer de rechercher les pochettes manquantes de vos fichiers musicaux pendant qu'il analyse votre bibliothèque. Pour ce faire, il envoie les informations des artistes et des albums à mysqueezebox.com pour trouver les pochettes correspondantes. Veuillez noter que ce processus peut considérablement ralentir l'analyse.<br><br>Les pochettes sont fournies par <a href="http://last.fm" target="_blank">Last.fm</a>.
-	IT	È possibile tentare di inserire le copertine mancanti per i file musicali mediante Logitech Media Server durante l'analisi della libreria. Tale processo prevede l'invio di informazioni su album e artisti a mysqueezebox.com per individuare le copertine corrispondenti. Il processo può rallentare notevolmente l'analisi.<br><br>Le copertine vengono fornite da <a href="http://last.fm" target="_blank">Last.fm</a>.
-	NL	Logitech Media Server kan ontbrekende albumhoezen voor je opzoeken tijdens het scannen van de mediabibliotheek. Hierbij worden gegevens van de artiest en het album verzonden naar mysqueezebox.com om te zien of er albumhoezen beschikbaar zijn. Houd er wel rekening mee dat dit het scannen aanzienlijk kan vertragen.<br><br>Albumhoezen worden aangeboden door <a href="http://last.fm" target="_blank">Last.fm</a>.
-	NO	Logitech Media Server kan forsøke å sette inn manglende omslag for musikkfilene dine under søk i biblioteket. Denne prosessen sender artist- og albuminformasjon til mysqueezebox.com for å finne fram til riktig albumomslag. Prosessen kan føre til at søket tar betraktelig lengre tid.<br><br>Det er <a href="http://last.fm" target="_blank">Last.fm</a> som leverer albumomslag.
-	PL	Program Logitech Media Server może spróbować uzupełnić brakujące okładki do plików muzycznych podczas przeszukiwania biblioteki. W ramach tego procesu informacje o wykonawcy i albumie zostaną przesłane do witryny mysqueezebox.com w celu wykrycia pasującej okładki. Uwaga: proces ten może znacząco spowolnić przeszukiwanie biblioteki.<br><br>Okładki udostępnia serwis <a href="http://last.fm" target="_blank">Last.fm</a>.
-	RU	Logitech Media Server может попробовать найти недостающие обложки для музыкальных файлов в процессе сканирования медиатеки. При этом сведения об исполнителе и альбоме будут отправляться на mysqueezebox.com, чтобы найти соответствующую обложку. Нужно учитывать, что этот процесс может значительно замедлить сканирование.<br><br>Обложки предоставляются сайтом <a href="http://last.fm" target="_blank">Last.fm</a>.
-	SV	Logitech Media Server kan försöka komplettera albumomslag som saknas för musikfilerna medan ditt bibliotek genomsöks. I den här processen skickas information om artisten och albumet till mysqueezebox.com för att hitta ett matchande albumomslag. Observera att den här processen kan göra att sökningen går betydligt långsammare.<br><br>Albumomslagen tillhandahålls av <a href="http://last.fm" target="_blank">Last.fm</a>.
-
-SETUP_DOWNLOAD_ARTWORK_ON
-	CS	Stáhnout obal alba (zkušebně)
-	DA	Hent albumcover (forsøg)
-	DE	Plattenhülle herunterladen (experimentell)
-	EN	Download album artwork (experimental)
-	ES	Descargar carátula de álbum (experimental)
-	FI	Lataa albumin kansitaide (kokeellinen)
-	FR	Télécharger la pochette de l'album (expérimental)
-	IT	Scarica copertine album (sperimentale)
-	NL	Albumhoezen downloaden (beta)
-	NO	Last ned albumomslag (eksperimentell)
-	PL	Pobierz okładki albumów (funkcja eksperymentalna)
-	RU	Загрузить обложку альбома (экспериментально)
-	SV	Ladda ner albumomslag (betafunktion)
-
-SETUP_DOWNLOAD_ARTWORK_OFF
-	CS	Nestahovat obal alba
-	DA	Hent ikke albumcover
-	DE	Plattenhülle nicht herunterladen
-	EN	Don't download album artwork
-	ES	No descargar carátula de álbum
-	FI	Älä lataa albumin kansitaidetta
-	FR	Ne pas télécharger la pochette de l'album
-	IT	Non scaricare le copertine degli album
-	NL	Albumhoezen niet downloaden
-	NO	Ikke last ned albumomslag
-	PL	Nie pobieraj okładek albumów
-	RU	Не загружать обложку альбома
-	SV	Ladda inte ner albumomslag
-
 SETUP_THUMBSIZE
 	CS	Velikost náhledů
 	DA	Størrelse på miniaturer
@@ -7227,23 +7167,11 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	Logitech Media Server se může každý den automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Logitech Media Serveru se zobrazí zpráva.
-	DA	Logitech Media Server kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Logitech Media Servers webbaserede brugerflade.
-	DE	Logitech Media Server kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Logitech Media Server gemeldet.
-	EN	Logitech Media Server can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Logitech Media Server's web interface.
-	ES	Logitech Media Server se puede conectar automáticamente a mysqueezebox.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Logitech Media Server.
-	FI	Logitech Media Server voi muodostaa automaattisesti yhteyden sivustoon mysqueezebox.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, Logitech Media Serverin internet-liittymään tulee ilmoitus siitä.
-	FR	Le serveur peut se connecter tous les jours automatiquement à mysqueezebox.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
-	HE	השרת יכול להתחבר באופן אוטומטי לכתובת mysqueezebox.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של Logitech Media Server.
-	IT	Logitech Media Server può collegarsi automaticamente al sito mysqueezebox.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di Logitech Media Server.
-	JA	サーバーソフトウェアは、毎日mysqueezebox.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
-	NL	Logitech Media Server kan automatisch verbinding maken met mysqueezebox.com om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Logitech Media Server.
-	NO	Logitech Media Server kan automatisk sjekke mysqueezebox.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
-	PL	Program Logitech Media Server może codziennie automatycznie łączyć się z witryną mysqueezebox.com w celu sprawdzenia dostępności zaktualizowanej wersji oprogramowania. Jeżeli będzie ono dostępne, w interfejsie internetowym programu Logitech Media Server zostanie wyświetlony komunikat.
-	PT	O servidor poderá ligar-se automaticamente a mysqueezebox.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
-	RU	Logitech Media Server может каждый день автоматически подключаться к сайту mysqueezebox.com и проверять наличие обновленных версий программы. При обнаружении новой версии в веб-интерфейсе Logitech Media Server появится соответствующее сообщение.
-	SV	Logitech Media Server kan automatiskt kopplas upp mot mysqueezebox.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
-	ZH_CN	服务器能够每天自动地连接到mysqueezebox.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在Logitech Media Server的网界面。
+	DE	Logitech Media Server kann automatisch jeden Tag prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Logitech Media Server gemeldet.
+	EN	Logitech Media Server can automatically check to see if an updated version of the software is available.  If it is, then a message will appear in Logitech Media Server's web interface.
+	ES	Logitech Media Server se puede conectar automáticamente comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Logitech Media Server.
+	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
+	NL	Logitech Media Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Logitech Media Server.
 
 SETUP_CHECKVERSION_1
 	CS	Automaticky kontrolovat aktualizace softwaru
@@ -9278,7 +9206,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
-	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. Les genres de la liste doivent être séparés par des virgules.
+	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
 	NL	Maak een Composer Albums-groep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep Componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
@@ -9286,21 +9214,21 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe "Albums du compositeur"
-	DE	Erstellen Sie keine Komponistenalbengruppe
+	DE	Keine Komponistenalbengruppe erstellen
 	NL	Maak geen Composer Album-groep
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créer toujours un groupe "Albums du compositeur"
-	DE	Erstellen Sie immer eine Komponistenalbengruppe
+	DE	Immer eine Komponistenalbengruppe erstellen
 	NL	Maak altijd een Composer Album-groep
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créer un groupe "Albums du compositeur" pour ces genres :
-	DE	Erstellen Sie eine Komponistenalbengruppe für diese Stilrichtungen:
+	DE	Komponistenalbengruppe für diese Stilrichtungen erstellen:
 	NL	Maak een Composer Album-groep voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
@@ -9323,16 +9251,22 @@ SETUP_CLEANUP_RELEASE_TYPES
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
-	DE	Die Veröffentlichungen eines Interpreten nicht gruppieren
-	EN	Don't group an artist's releases
-	FR	Ne pas regrouper les sorties d'un artiste par type
-	NL	Releases van een artiest niet groeperen op type
+	DE	Die Veröffentlichungen nicht gruppieren
+	EN	Don't group releases
+	FR	Ne pas regrouper les albums par type de sortie
+	NL	Releases niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
-	EN	Group an artist's releases by type
-	FR	Regrouper les sorties d'un artiste par type
+	EN	Group an artist's lists by release type
+	FR	Regrouper les albums d'un artiste par type de sortie
 	NL	Releases van een artiest groeperen op type
+
+SETUP_GROUP_BY_RELEASE_TYPES_2
+	DE	Alle Veröffentlichungen nach Typ gruppiere
+	EN	Group all lists by release type
+	FR	Regrouper toutes les listes d'albums par type de sortie
+	NL	Groepeer alle releases op type
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny
@@ -9406,273 +9340,11 @@ SETUP_GROUPDISCS_1
 	SV	Behandla boxar med flera skivor som ett album.
 	ZH_CN	把多个光碟组成的合集视为单一的专辑
 
-SETUP_SN_EMAIL
-	CS	E-mailová adresa
-	DA	E-mail-adresse
-	DE	E-Mail-Adresse
-	EN	Email Address
-	ES	Dirección de correo electrónico
-	FI	Sähköpostiosoite
-	FR	Adresse électronique
-	IT	Indirizzo di posta elettronica
-	NL	E-mailadres
-	NO	E-postadresse
-	PL	Adres e-mail
-	RU	Адрес электронной почты
-	SV	E-postadress
-
-SETUP_SN_SIGNOUT
-	CS	Odhlásit se z mysqueezebox.com
-	DE	Von mysqueezebox.com abmelden
-	EN	Sign out of mysqueezebox.com
-	FR	Déconnexion de mysqueezebox.com
-	NL	Afmelden bij mysqueezebox.com
-
 SETUP_SIGNOUT
 	DE	Abmelden
 	EN	Sign out
 	FR	Déconnexion
 	NL	Afmelden
-
-SETUP_SN_EMAIL_DESC
-	CS	Zadejte e-mailovou adresu, pod kterou se přihlašujete ke svému účtu mysqueezebox.com.
-	DA	Angiv e-mail-adressen som skal bruges til at logge på din konto til mysqueezebox.com.
-	DE	Geben Sie bitte die Mail-Adresse an, welche Sie zum Anmelden an mysqueezebox.com verwenden.
-	EN	Enter the email address used to login to your mysqueezebox.com account.
-	ES	Introduzca la dirección de correo electrónico utilizada para iniciar una sesión en su cuenta mysqueezebox.com.
-	FI	Anna sähköpostiosoite, jota käytät mysqueezebox.com-tiliin kirjautumiseen.
-	FR	Spécifiez l'adresse électronique que vous utilisez pour vous connecter au compte mysqueezebox.com.
-	IT	Inserire l'indirizzo di posta elettronica utilizzato per accedere all'account mysqueezebox.com.
-	NL	Voer het e-mailadres van jouw mysqueezebox.com account in.
-	NO	Angi e-postadressen du bruker når du logger på mysqueezebox.com.
-	PL	Wprowadź adres e-mail używany w celu logowania do konta mysqueezebox.com.
-	RU	Введите адрес электронной почты, используемый для входа по учетной записи mysqueezebox.com.
-	SV	Ange e-postadressen du använde när du loggade in på mysqueezebox.com-kontot.
-
-SETUP_SN_PASSWORD
-	CS	Heslo
-	DA	Adgangskode
-	DE	Kennwort
-	EN	Password
-	ES	Contraseña
-	FI	Salasana
-	FR	Mot de passe
-	IT	Password
-	NL	Wachtwoord
-	NO	Passord
-	PL	Hasło
-	RU	Пароль
-	SV	Lösenord
-
-SETUP_SN_PASSWORD_DESC
-	CS	Zadejte heslo ke svému účtu mysqueezebox.com.
-	DA	Indtast adgangskoden til din konto til mysqueezebox.com.
-	DE	Geben Sie bitte das Passwort für ihren mysqueezebox.com-Zugang an.
-	EN	Enter the password for your mysqueezebox.com account.
-	ES	Escriba la contraseña de su cuenta mysqueezebox.com.
-	FI	Kirjoita mysqueezebox.com-tilin salasana.
-	FR	Spécifiez le mot de passe pour votre compte mysqueezebox.com.
-	IT	Inserire la password per l'account mysqueezebox.com.
-	NL	Voer het wachtwoord van jouw mysqueezebox.com account in.
-	NO	Angi passordet for mysqueezebox.com-kontoen.
-	PL	Wprowadź hasło konta usługi mysqueezebox.com.
-	RU	Введите пароль к учетной записи mysqueezebox.com.
-	SV	Ange lösenordet för ditt mysqueezebox.com-konto.
-
-SETUP_SN_INVALID_LOGIN
-	CS	Neplatné uživatelské jméno nebo heslo mysqueezebox.com.
-	DA	Ugyldigt brugernavn eller adgangskode til mysqueezebox.com.
-	DE	mysqueezebox.com-Benutzername oder -Kennwort ungültig.
-	EN	Invalid mysqueezebox.com username or password.
-	ES	Contraseña o nombre de usuario mysqueezebox.com no válidos.
-	FI	Virheellinen mysqueezebox.comin käyttäjätunnus tai salasana.
-	FR	Nom d'utilisateur ou mot de passe mysqueezebox.com non valide.
-	IT	Nome utente o password di mysqueezebox.com non validi.
-	NL	Gebruikersnaam of wachtwoord van mysqueezebox.com ongeldig.
-	NO	Ugyldig brukernavn eller passord for mysqueezebox.com.
-	PL	Nieprawidłowa nazwa użytkownika i hasło w usłudze mysqueezebox.com.
-	RU	Недействительные имя пользователя или пароль mysqueezebox.com.
-	SV	Ogiltigt användarnamn eller lösenord för mysqueezebox.com
-
-SETUP_SN_VALID_LOGIN
-	CS	Připojeno úspěšně k mysqueezebox.com.
-	DA	Der er etableret forbindelse til mysqueezebox.com.
-	DE	Verbindung mit mysqueezebox.com wurde hergestellt.
-	EN	Connected successfully to mysqueezebox.com.
-	ES	Conexión establecida con mysqueezebox.com.
-	FI	Yhteys mysqueezebox.comiin muodostettiin.
-	FR	Connexion à mysqueezebox.com effectuée.
-	IT	Connessione a mysqueezebox.com completata.
-	NL	Verbonden met mysqueezebox.com.
-	NO	Koplet til mysqueezebox.com.
-	PL	Połączenie z usługą mysqueezebox.com powiodło się.
-	RU	Подключение к mysqueesebox.com успешно установлено.
-	SV	Ansluten till mysqueezebox.com
-
-SETUP_SN_VALIDATION_FAILED
-	CS	Při validaci vašeho účtu mysqueezebox.com došlo k neočekávané chybě. Ujistěte se, že vaše síťové připojení funguje správně.
-	DA	Der opstod en uventet fejl under validering af din konto på mysqueezebox.com. Kontroller at din netværksforbindelse fungerer som den skal.
-	DE	Unerwarteter Fehler beim Prüfen Ihres mysqueezebox.com-Kontos. Überprüfen Sie, ob die Netzwerkverbindung ordnungsgemäß funktioniert.
-	EN	An unexpected error occurred while validating your mysqueezebox.com account. Please make sure network connectivity is working fine.
-	ES	Se ha producido un error inesperado mientras validaba su cuenta de mysqueezebox.com. Asegúrese de que la conexión de red funciona correctamente.
-	FI	Odottamaton virhe mysqueezebox.com-tilisi vahvistamisessa. Tarkista, että verkkoyhteys toimii.
-	FR	Une erreur inattendue est survenue lors de la validation de votre compte mysqueezebox.com. Vérifiez que la connectivité réseau fonctionne correctement.
-	IT	Si è verificato un errore imprevisto durante la convalida dell'account mysqueezebox.com. Verificare che la connessione della rete funzioni correttamente.
-	NL	Onverwachte fout opgetreden tijdens validatie van je mysqueezebox.com account. Zorg ervoor dat de netwerkverbinding goed werkt.
-	NO	Det oppsto en uventet feil under opprettelse av mysqueezebox.com-kontoen. Kontroller at nettverkstilkoplingen fungerer.
-	PL	Podczas sprawdzania poprawności konta mysqueezebox.com wystąpił nieoczekiwany błąd. Upewnij się, że połączenie sieciowe działa prawidłowo.
-	RU	Непредвиденная ошибка при проверке вашей учетной записи mysqueezebox.com. Убедитесь, что сетевое подключение работает правильно.
-	SV	Ett oväntat fel inträffade när mysqueezebox.com-kontot skulle valideras. Kontrollera att nätverksanslutningen fungerar som den ska.
-
-SETUP_SN_FORGOT_PASSWORD
-	CS	Zapomněl jsem své heslo
-	DA	Jeg har glemt mit adgangskode
-	DE	Ich habe mein Kennwort vergessen
-	EN	I forgot my password
-	ES	He olvidado mi contraseña
-	FI	Olen unohtanut salasanani
-	FR	J'ai oublié mon mot de passe
-	IT	Ho dimenticato la password
-	NL	Ik ben mijn wachtwoord vergeten
-	NO	Jeg har glemt passordet
-	PL	Nie pamiętam hasła
-	RU	Я забыл пароль
-	SV	Jag har glömt lösenordet
-
-SETUP_SN_NEED_ACCOUNT
-	CS	Potřebuji vytvořit účet mysqueezebox.com
-	DA	Jeg vil gerne oprette en konto til  mysqueezebox.com
-	DE	Ich muss ein mysqueezebox.com-Konto erstellen
-	EN	I need to create a mysqueezebox.com account
-	ES	Necesito crear una cuenta mysqueezebox.com
-	FI	Haluan luoda mysqueezebox.com-tilin
-	FR	Je souhaite créer un compte mysqueezebox.com
-	IT	Crea un nuovo account mysqueezebox.com
-	NL	Ik moet een mysqueezebox.com account maken
-	NO	Jeg må opprette en mysqueezebox.com-konto
-	PL	Muszę utworzyć konto usługi mysqueezebox.com
-	RU	Мне нужно создать учетную запись mysqueezebox.com
-	SV	Jag behöver ett mysqueezebox.com-konto
-
-SETUP_SN_SYNC
-	CS	Integrace mysqueezebox.com
-	DA	Integration med mysqueezebox.com
-	DE	mysqueezebox.com-Integration
-	EN	mysqueezebox.com Integration
-	ES	Integración de mysqueezebox.com
-	FI	Mysqueezebox.com-integraatio
-	FR	Intégration mysqueezebox.com
-	IT	Integrazione di mysqueezebox.com
-	NL	Integratie van mysqueezebox.com
-	NO	mysqueezebox.com-integrering
-	PL	Integracja z usługą mysqueezebox.com
-	RU	Интеграция с mysqueezebox.com
-	SV	mysqueezebox.com-integration
-
-SETUP_SN_SYNC_DESC
-	CS	Standardně je mnoho nastavení přehrávače synchronizováno mezi Logitech Media Serverem a mysqueezebox.com. Chcete-li tuto funkci zakázat, vyberte níže možnost Zakázáno.
-	DA	Som standard synkroniseres mange af afspillerindstillingerne mellem Logitech Media Server og mysqueezebox.com. Du kan deaktivere denne funktion ved at vælge Deaktiver nedenfor.
-	DE	Standardmäßig werden zahlreiche Player-Einstellungen zwischen Logitech Media Server und mysqueezebox.com synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
-	EN	By default, many player settings are synchronized between Logitech Media Server and mysqueezebox.com.  To disable this feature, select the Disabled option below.
-	ES	De modo predeterminado, muchas configuraciones de reproductor se sincronizan entre Logitech Media Server y mysqueezebox.com. Para desactivar esta función, seleccione la opción Desactivado a continuación.
-	FI	Monet soitinasetukset on synkronoitu oletuksena Logitech Media Serverin ja mysqueezebox.comin välillä.  Jos haluat poistaa tämän toiminnon käytöstä, valitse alta Poista käytöstä.
-	FR	Par défaut, de nombreux réglages de platine sont synchronisés entre le Logitech Media Server et mysqueezebox.com. Pour désactiver cette fonctionnalité, sélectionnez l'option appropriée ci-dessous.
-	IT	Per impostazione predefinita numerose impostazioni del lettore in Logitech Media Server e mysqueezebox.com sono sincronizzate. Per disattivare questa caratteristica, selezionare l'opzione Disattiva in basso.
-	NL	Standaard worden vele muziekspeler instellingen tussen Logitech Media Server en mysqueezebox.com gesynchroniseerd. Als je deze functie wilt uitschakelen, selecteer je de optie Uitgeschakeld hieronder.
-	NO	Som standard er mange spillerinnstillinger synkronisert mellom Logitech Media Server og mysqueezebox.com. Hvis du vil deaktivere denne funksjonen, velger du Deaktivert nedenfor.
-	PL	Domyślnie wiele ustawień odtwarzacza jest synchronizowanych między programem Logitech Media Server a usługą mysqueezebox.com. Aby wyłączyć tę funkcję, wybierz opcję Wyłączone poniżej.
-	RU	Многие настройки плеера по умолчанию синхронизованы между Logitech Media Server и mysqueezebox.com. Чтобы отключить эту возможность, выберите ниже параметр "Отключено".
-	SV	Som standard synkroniseras många spelarinställningar mellan Logitech Media Server och mysqueezebox.com. Du avaktiverar funktionen genom att välja Avaktiverat nedan.
-
-SETUP_SN_SYNC_ENABLE
-	CS	Povoleno, udržovat nastavení přehrávače v synchronizaci.
-	DA	Aktiveret; afspillernes indstillinger synkroniseres.
-	DE	Aktiv, Player-Einstellungen synchronisieren
-	EN	Enabled, keep player settings in sync.
-	ES	Activado, mantener sincronizadas configuraciones de reproductor.
-	FI	Käytössä. Soitinten asetukset pidetään synkronoituna.
-	FR	Activé. Synchroniser les réglages de platine.
-	IT	Attiva. Mantieni sincronizzate le impostazioni del lettore.
-	NL	Ingeschakeld; instellingen van muziekspeler(s) gesynchroniseerd houden.
-	NO	Aktivert, spillerinnstillinger synkroniseres.
-	PL	Włączone, synchronizuj ustawienia odtwarzacza
-	RU	Включено, сохранять синхронизацию настроек плеера.
-	SV	Aktiverad, håll spelarinställningarna synkroniserade.
-
-SETUP_SN_SYNC_DISABLE
-	CS	Zakázáno, neudržovat nastavení přehrávače v synchronizaci.
-	DA	Deaktiveret. Synkroniser ikke afspillerindstillinger.
-	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
-	EN	Disabled, do not keep player settings in sync.
-	ES	Desactivado, no mantener sincronizadas configuraciones de reproductor.
-	FI	Poissa käytöstä. Soitinten asetuksia ei pidetä synkronoituna.
-	FR	Désactivé. Ne pas synchroniser les réglages de platine.
-	IT	Disattiva. Non mantenere sincronizzate le impostazioni del lettore.
-	NL	Uitgeschakeld; instellingen van muziekspeler(s) niet gesynchroniseerd houden.
-	NO	Av, ikke synkroniser spillerinnstillinger.
-	PL	Wyłączone, nie synchronizuj ustawień odtwarzacza
-	RU	Отключено; не сохранять синхронизацию настроек плеера.
-	SV	Avaktiverad, spelarinställningarna synkroniseras inte.
-
-SETUP_SN_REPORT_STATS
-	CS	Statistika zpráv
-	DA	Rapporter statistik
-	DE	Statistiken melden
-	EN	Report Statistics
-	ES	Notificar estadísticas
-	FI	Ilmoita tilastot
-	FR	Collecter les informations
-	IT	Invia dati a fini statistici
-	NL	Statistieken rapporteren
-	NO	Send inn statistikk
-	PL	Raportuj statystykę
-	RU	Сообщить статистику
-	SV	Rapportera statistik
-
-SETUP_SN_REPORT_STATS_DESC
-	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistik o poslechu internetových rádií a hudebních služeb. (Tyto anonymní informace jsou shromažďovány souhrnně a jsou chráněny našimi <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,cs" target="_blank">zásadami ochrany osobních údajů</a>).
-	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne er anonyme og bruges samlet, og de er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
-	DE	Melden Sie zur Verbesserung von mysqueezebox.com Statistiken über den Einsatz von Internetradio und -Musikdiensten. (Diese anonymen Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzrichtlinien</a>).
-	EN	Help improve mysqueezebox.com by reporting statistics on internet radio and music service listening. (This anonymous information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
-	ES	Ayude a mejorar mysqueezebox, proporcione estadísticas sobre el uso de radio y música por Internet (esta información anónima se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=es,es" target="_blank">política de privacidad</a>).
-	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään nimettömästi ja kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
-	FR	Pour améliorer mysqueezebox.com, nous recueillons des informations sur les radios Internet et les services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
-	IT	Al fine di migliorare mysqueezebox.com, è possibile inviare dati statistici sull'ascolto di stazioni radio in Internet e sui servizi musicali utilizzati. Il trattamento di tali dai, raccolti collettivamente e in modo anonimo, è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
-	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekdiensten te rapporteren. Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.
-	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Denne anonyme informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
-	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">zasady zachowania poufności informacji</a>).
-	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>.)
-	SV	Varför inte hjälpa oss att göra mysqueezebox.com ännu bättre genom att berätta hur du använder webbradion och musiktjänsterna? Informationen, som är helt anonym, samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=se,sw" target="_blank">sekretesspolicy</a>.
-
-SETUP_SN_REPORT_STATS_ENABLE
-	CS	Ano, pomoci zlepšovat mysqueezebox.com odesíláním statistik.
-	DA	Ja, hjælp med at forbedre mysqueezebox.com ved at indsende statistikker.
-	DE	Ja, Statistiken melden, um mysqueezebox.com zu verbessern.
-	EN	Yes, help improve mysqueezebox.com by reporting statistics.
-	ES	Sí, notificar estadísticas para mejorar mysqueezebox.com.
-	FI	Kyllä, auta parantamaan mysqueezebox.com-verkkoa raportoimalla tilastot.
-	FR	Autoriser la collecte d'informations pour contribuer à l'amélioration de mysqueezebox.com.
-	IT	Sì, autorizzo la raccolta dei dati a fini statistici per migliorare mysqueezebox.com.
-	NL	Ja, help mysqueezebox.com door statistieken te rapporteren.
-	NO	Jeg vil hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon.
-	PL	Tak, pomóż w ulepszeniu usługi mysqueezebox.com przez wysyłanie statystyk.
-	RU	Да, улучшить работу mysqueezebox.com с помощью сообщения статистики.
-	SV	Ja, rapportera statistisk så att mysqueezebox.com kan bli ännu bättre.
-
-SETUP_SN_REPORT_STATS_DISABLE
-	CS	Ne, neodesílat statistiku.
-	DA	Nej, rapporter ikke statistikker.
-	DE	Nein, Statistiken nicht melden.
-	EN	No, do not report statistics.
-	ES	No notificar estadísticas.
-	FI	Älä näytä raporttia tilastoista.
-	FR	Ne pas autoriser la collecte d'informations.
-	IT	No, non inviare dati a fini statistici.
-	NL	Nee, statistieken niet rapporteren.
-	NO	Nei, ikke rapporter statistisk informasjon.
-	PL	Nie, nie wysyłaj statystyk.
-	RU	Не сообщать статистику.
-	SV	Nej, rapportera inte statistik.
 
 SETUP_NO_JAVASCRIPT
 	CS	Před přístupem k Logitech Media Serveru se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Klasický</a>.
@@ -9688,21 +9360,6 @@ SETUP_NO_JAVASCRIPT
 	PL	Aby uzyskać dostęp do programu Logitech Media Server, sprawdź czy korzystasz z najnowszej przeglądarki (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 lub nowszej), a obsługa skryptów JavaScript w przeglądarce jest włączona. Można także użyć prostej karnacji, takiej jak <a href="/Classic/?skipWizard=1">Klasyczna</a>.
 	RU	Для доступа к Logitech Media Server необходим современный обозреватель (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 или более поздние версии), в котором включен JavaScript. Либо можно использовать упрощенную оболочку, например <a href="/Classic/?skipWizard=1">Classic</a>.
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Logitech Media Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
-
-SETUP_WIZARD_SQN_PLEASE
-	CS	Pro pokračování se přihlaste pomocí e-mailu a hesla mysqueezebox.com.
-	DA	Du skal logge på med din e-mail-adresse og adgangskode til mysqueezebox.com for at fortsætte.
-	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-Mail-Adresse und Ihrem mysqueezebox.com-Kennwort an, um fortzufahren.
-	EN	Please sign in with your mysqueezebox.com email and password to continue.
-	ES	Inicie sesión con su dirección de correo electrónico y su constraseña de mysqueezebox.com para continuar.
-	FI	Jatka kirjautumalla sisään mysqueezebox.com-verkossa rekisteröimälläsi sähköpostiosoitteella ja salasanalla.
-	FR	Connectez-vous à l'aide de votre adresse électronique et de votre mot de passe mysqueezebox.com pour continuer.
-	IT	Per continuare, accedere con l'indirizzo di posta elettronica e la password di mysqueezebox.com.
-	NL	Meld je aan met jouw e-mailadres en wachtwoord voor mysqueezebox.com om verder te gaan.
-	NO	Logg på med e-postadressen og passordet du bruker på mysqueezebox.com for å fortsette.
-	PL	Aby kontynuować zarejestruj się w usłudze mysqueezebox.com, używając adresu e-mail i hasła.
-	RU	Для продолжения войдите в систему с адресом электронной почты и паролем mysqueezebox.com.
-	SV	Logga in med e-post och lösenord till mysqueezebox.com för att fortsätta.
 
 SETUP_WIZARD_AUDIODIR
 	CS	Místní složka hudby
@@ -9808,21 +9465,6 @@ SETUP_WIZARD_SUMMARY_DESC
 	PL	Program Squeezebox aktualnie korzysta z następujących ustawień:
 	RU	В Squeezebox используются следующие настройки:
 	SV	Squeezebox använder nu följande inställningar:
-
-SETUP_WIZARD_SUMMARY_SQN
-	CS	Účet mysqueezebox.com:
-	DA	Konto til mysqueezebox.com:
-	DE	mysqueezebox.com-Konto:
-	EN	mysqueezebox.com Account:
-	ES	Cuenta mysqueezebox.com
-	FI	Mysqueezebox.com-tili:
-	FR	Compte mysqueezebox.com :
-	IT	Account mysqueezebox.com:
-	NL	mysqueezebox.com account:
-	NO	mysqueezebox.com-konto:
-	PL	Konto mysqueezebox.com:
-	RU	Учетная запись mysqueezebox.com:
-	SV	mysqueezebox.com-konto:
 
 SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	CS	Zdroj hudby
@@ -14516,36 +14158,6 @@ NETWORK_SETTINGS
 	SV	Nätverk
 	ZH_CN	网络
 
-SQUEEZENETWORK_SETTINGS
-	CS	mysqueezebox.com
-	DA	mysqueezebox.com
-	DE	mysqueezebox.com
-	EN	mysqueezebox.com
-	ES	mysqueezebox.com
-	FI	mysqueezebox.com
-	FR	mysqueezebox.com
-	IT	mysqueezebox.com
-	NL	mysqueezebox.com
-	NO	mysqueezebox.com
-	PL	mysqueezebox.com
-	RU	mysqueezebox.com
-	SV	mysqueezebox.com
-
-DEBUG_NETWORK_SQUEEZENETWORK
-	CS	Protokolování mysqueezebox.com
-	DA	Logføring af mysqueezebox.com-aktiviteter
-	DE	mysqueezebox.com-Protokoll
-	EN	mysqueezebox.com Logging
-	ES	Registro de mysqueezebox.com
-	FI	Mysqueezebox.com-verkkoon kirjautuminen
-	FR	Journalisation de mysqueezebox.com
-	IT	Registrazione di mysqueezebox.com
-	NL	Loggen van mysqueezebox.com
-	NO	mysqueezebox.com-loggføring
-	PL	Logowanie do usługi mysqueezebox.com
-	RU	Ведение журнала mysqueesebox.com
-	SV	mysqueezebox.com-loggning
-
 DEBUG_NETWORK_REPOSITORIES
 	CS	Stahování úložišť pro doplňky, aktualizace atd.
 	DE	Download Verzeichnisse für Erweiterungen, Aktualisierungen etc.
@@ -17260,17 +16872,6 @@ INFORMATION_MENU_MODULE
 	RU	Подключаемые модули
 	SV	Plugin-moduler
 
-INFORMATION_TIME_DIFF
-	DE	Zeitdifferenzu zu mysqueezebox.com
-	EN	Time difference to mysqueezebox.com
-	FR	Décalage horaire avec mysqueezebox.com
-
-INFORMATION_TIME_DIFF_DESC
-	DE	Bitte übeprüfen Sie die Uhr ihres Computers und starten Sie Logitech Media Server neu. Die Uhrzeit scheint um mehrere Sekunden verschoben zu sein. Eine zu grosse Differenz kann zu Abbrüchen bei gesicherten Verbindungen und anderen unerwarteten Effekten führen.
-	EN	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behavior.
-	EN_GB	Please check your computer's clock and re-start Logitech Media Server. It seems to be off by several seconds. Too much time difference can lead to failures in secure connections and other unexpected behaviour.
-	FR	Veuillez vérifier l'horloge de votre ordinateur et redémarrer Logitech Media Server. Il semble y avoir un écart de plusieurs secondes. Un décalage horaire trop important peut entraîner des échecs de connexions sécurisées et d'autres comportements inattendus.
-
 INFORMATION_PLAYER_NAME
 	CS	Název Squeezeboxu
 	DA	Navn på Squeezebox
@@ -18226,151 +17827,6 @@ MIDWORDS_UPPER
 	NL	0
 	NO	0
 	SV	0
-
-SQUEEZENETWORK
-	CS	mysqueezebox.com
-	DA	mysqueezebox.com
-	DE	mysqueezebox.com
-	EN	mysqueezebox.com
-	ES	mysqueezebox.com
-	FI	mysqueezebox.com
-	FR	mysqueezebox.com
-	HE	mysqueezebox.com
-	IT	mysqueezebox.com
-	NL	mysqueezebox.com
-	NO	mysqueezebox.com
-	PL	mysqueezebox.com
-	RU	mysqueezebox.com
-	SV	mysqueezebox.com
-	ZH_CN	mysqueezebox.com
-
-SQUEEZENETWORK_CONNECT
-	CS	mysqueezebox.com
-	DA	mysqueezebox.com
-	DE	mysqueezebox.com
-	EN	mysqueezebox.com
-	ES	mysqueezebox.com
-	FI	mysqueezebox.com
-	FR	mysqueezebox.com
-	IT	mysqueezebox.com
-	NL	mysqueezebox.com
-	NO	mysqueezebox.com
-	PL	mysqueezebox.com
-	RU	mysqueezebox.com
-	SV	mysqueezebox.com
-
-SQUEEZENETWORK_CONNECTING
-	CS	Připojování k mysqueezebox.com...
-	DA	Opretter forbindelse til mysqueezebox.com...
-	DE	Verbindung zu mysqueezebox.com wird hergestellt ...
-	EN	Connecting to mysqueezebox.com...
-	ES	Conectando a mysqueezebox.com...
-	FI	Muodostetaan yhteyttä mysqueezebox.com-verkkoon...
-	FR	Connexion à mysqueezebox.com...
-	HE	מתחבר ל-mysqueezebox.com...
-	IT	Connessione a mysqueezebox.com in corso...
-	NL	Verbinden met mysqueezebox.com...
-	NO	Kopler til mysqueezebox.com...
-	PL	Łączenie z usługą mysqueezebox.com...
-	RU	Подключение к mysqueezebox.com...
-	SV	Ansluter till mysqueezebox.com...
-	ZH_CN	mysqueezebox.com连接中...
-
-SQUEEZENETWORK_SWITCH
-	CS	Přepnout na mysqueezebox.com
-	DA	Skift til mysqueezebox.com
-	DE	Zu mysqueezebox.com umschalten
-	EN	Switch to mysqueezebox.com
-	ES	Cambiar a mysqueezebox.com
-	FI	Vaihda mysqueezebox.com-verkkoon
-	FR	Se connecter à mysqueezebox.com
-	HE	מעבר ל-mysqueezebox.com
-	IT	Passa a mysqueezebox.com
-	NL	Overschakelen naar mysqueezebox.com
-	NO	Bytt til mysqueezebox.com
-	PL	Przełącz na mysqueezebox.com
-	RU	Переключиться в mysqueezebox.com
-	SV	Växla till mysqueezebox.com
-	ZH_CN	切换到mysqueezebox.com
-
-SQUEEZENETWORK_SWITCHING
-	CS	Přepínání na mysqueezebox.com, počkejte prosím...
-	DA	Skifter til  mysqueezebox.com. Vent lidt...
-	DE	Verbindung zum mysqueezebox.com wird hergestellt. Bitte warten ...
-	EN	Switching to mysqueezebox.com, please wait...
-	ES	Cambiando a mysqueezebox.com, espere...
-	FI	Vaihdetaan mysqueezebox.comiin. Odota...
-	FR	Connexion à mysqueezebox.com, veuillez patienter...
-	HE	עובר ל-mysqueezebox.com, אנא המתן...
-	IT	Passaggio a mysqueezebox.com. Attendere...
-	NL	Bezig met verbinden met mysqueezebox.com. Een ogenblik geduld...
-	NO	Bytter til mysqueezebox.com, vent litt ...
-	PL	Czekaj, trwa przełączanie do usługi mysqueezebox.com...
-	RU	Переключение на mysqueezebox.com, подождите...
-	SV	Växlar till mysqueezebox.com. Vänta...
-	ZH_CN	正在切换到mysqueezebox.com，请稍等。
-
-SQUEEZENETWORK_WANT_SWITCH
-	CS	Tento přehrávač je právě připojen k mysqueezebox.com. Chcete jej přepnout zpět na Logitech Media Server?
-	DA	Afspilleren er tilsluttet mysqueezebox.com. Vil du skifte tilbage til Logitech Media Server igen?
-	DE	Dieser Player ist derzeit mit mysqueezebox.com verbunden. Möchten Sie ihn wieder mit Logitech Media Server verbinden?
-	EN	This player is currently connected to mysqueezebox.com. Do you want it to switch back to Logitech Media Server?
-	ES	Este reproductor está conectado a mysqueezebox.com. ¿Desea regresar a Logitech Media Server?
-	FI	Tämä soitin on yhdistetty mysqueezebox.comiin. Haluatko vaihtaa sen takaisin Logitech Media Serveriin?
-	FR	Cette platine est actuellement connectée à mysqueezebox.com. Voulez-vous revenir au Logitech Media Server ?
-	IT	Il lettore è attualmente connesso a mysqueezebox.com. Connetterlo di nuovo a Logitech Media Server?
-	NL	Deze muziekspeler is momenteel verbonden met mysqueezebox.com. Wil je de muziekspeler verbinden met Logitech Media Server?
-	NO	Spilleren er koplet til mysqueezebox.com. Vil du bytte tilbake til Logitech Media Server?
-	PL	Ten odtwarzacz jest aktualnie połączony z usługą mysqueezebox.com. Czy chcesz powrócić do programu Logitech Media Server?
-	RU	Данный плеер подключен к mysqueezebox.com. Переключиться на Logitech Media Server?
-	SV	Spelaren är för närvarande ansluten till mysqueezebox.com. Vill du ansluta den till Logitech Media Server istället?
-
-SQUEEZENETWORK_SB2_REQUIRED
-	CS	Bohužel je nutný novější Squeezebox.
-	DA	Beklager, men denne funktion kræver en nyere Squeezebox.
-	DE	Diese Funktion benötigt eine neuere Squeezebox.
-	EN	Sorry, requires a newer Squeezebox.
-	ES	Requiere un dispositivo Squeezebox nuevo.
-	FI	Tähän vaaditaan uudempi Squeezebox.
-	FR	Cette fonction nécessite Squeezebox2 ou une version plus récente.
-	HE	מצטערים, נדרש נגן Squeezebox חדש יותר.
-	IT	È necessario uno Squeezebox più recente.
-	NL	Voor deze functie is een nieuwere Squeezebox vereist.
-	NO	Beklager, dette krever en nyere Squeezebox.
-	PL	Niestety wymagane jest nowsze urządzenie Squeezebox.
-	RU	Требуется новая версия Squeezebox.
-	SV	Detta kräver en nyare Squeezebox-spelare.
-	ZH_CN	抱歉，需要Squeezebox2。
-
-SQUEEZENETWORK_NO_PLAYER_CONNECTED
-	CS	Nelze získat přístup ke službám mysqueezebox.com bez připojeného přehrávače.
-	DA	Du kan ikke få adgang til tjenesterne på mysqueezebox.com medmindre der er tilsluttet en afspiller.
-	DE	Sie können sich ohne Player nicht zum mysqueezebox.com verbinden.
-	EN	Cannot access mysqueezebox.com services without a player connected.
-	ES	No es posible acceder a servicios mysqueezebox.com sin un reproductor conectado.
-	FI	Jos soitinta ei ole yhdistetty, mysqueezebox.com-palveluja ei voida käyttää.
-	FR	Impossible d'accéder aux services mysqueezebox.com sans une platine connectée.
-	IT	Impossibile accedere ai servizi mysqueezebox.com se non è collegato un lettore.
-	NL	Zonder een verbonden muziekspeler kunnen diensten van mysqueezebox.com niet worden opgeroepen.
-	NO	Kan ikke bruke mysqueezebox.com-tjenester når det ikke er koplet til en spiller.
-	PL	Bez podłączenia odtwarzacza nie można uzyskać dostępu do usługi mysqueezebox.com.
-	RU	Службы mysqueezebox.com доступны только при подключенном плеере.
-	SV	Det går inte att få tillgång till mysqueezebox.com-tjänsterna eftersom ingen spelare är ansluten.
-
-SQUEEZENETWORK_NO_LOGIN
-	CS	Pro tuto službu je vyžadován účet mysqueezebox.com. Pro konfiguraci přejděte pomocí webového prohlížeče na Logitech Media Server, položku Nastavení -> mysqueezebox.com.
-	DA	Du skal have en konto til mysqueezebox.com for at bruge denne tjeneste. Du kan konfigurere den i en browser under Indstillinger for Logitech Media Server -> mysqueezebox.com.
-	DE	Für diesen Dienst ist ein mysqueezebox.com-Konto erforderlich. Sie können das Konto in einem Web-Browser in den Logitech Media Server-Einstellungen unter 'mysqueezebox.com' konfigurieren.
-	EN	A mysqueezebox.com account is required for this service. Please access Logitech Media Server Settings -> mysqueezebox.com with a web browser to configure.
-	ES	Este servicio requiere una cuenta mysqueezebox.com. Acceda a Configuración de Logitech Media Server -> mysqueezebox.com a través de un navegador Web.
-	FI	Tähän palveluun vaaditaan mysqueezebox.com-tili. Siirry selaimella kohtaan Logitech Media Serverin asetukset -> mysqueezebox.com ja määritä asetukset.
-	FR	Un compte mysqueezebox.com est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du Logitech Media Server -> mysqueezebox.com pour effectuer la configuration.
-	IT	Per questo servizio è richiesto un account mysqueezebox.com. Accedere a Impostazioni Logitech Media Server -> mysqueezebox.com tramite un browser Web per la configurazione.
-	NL	Voor deze dienst is een mysqueezebox.com-account vereist. Ga via een webbrowser naar Logitech Media Server instellingen -> mysqueezebox.com om te configureren.
-	NO	Du trenger en konto på mysqueezebox.com for å kunne benytte denne tjenesten. Gå til Logitech Media Server-innstillinger -> mysqueezebox.com i en nettleser for å konfigurere.
-	PL	W celu korzystania z tej usługi wymagane jest konto usługi mysqueezebox.com. Aby kontynuować, wybierz opcję Ustawienia programu Logitech Media Server -> mysqueezebox.com w przeglądarce internetowej.
-	RU	Для данной службы требуется учетная запись mysqueezebox.com. Чтобы настроить ее, откройте в веб-браузере страницу "Настройки Logitech Media Server" -> "mysqueezebox.com".
-	SV	Du måste ha ett mysqueezebox.com-konto för att kunna använda den här tjänsten. Öppna en webbläsare och gå till Logitech Media Server-inställningar > mysqueezebox.com om du vill konfigurera inställningarna.
 
 MUSICSOURCE
 	CS	Zdroj hudby
@@ -19554,24 +19010,9 @@ SETUP_IMAGEPROXY
 	SV	Anpassning av skivomslagens storlek
 
 SETUP_IMAGEPROXY_DESC
-	CS	Pro dosažení co nejlepší kvality grafiky a výkonu na zařízeních se velikost souborů grafiky před odesláním klientovi změní. Ve výchozím nastavení se o to stará mysqueezebox.com. Pokud chcete být nezávislí na mysqueezebox.com nebo používáte interní zdroj přehrávání datovýh proudů, možná budete chtít použít interní změnu velikosti Logitech Media Serveru.
-	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder möchten Sie unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
-	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing. The helper can offload some of the heavy lifting to a separate process managed by the server application.
-	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par un serveur : mysqueezebox.com par défaut. Pour être indépendant de mysqueezebox.com ou pour diffuser des sources locales, vous pouvez choisir d'utiliser Logitech Media Server en local pour redimensionner les pochettes. En local, la tâche peut également être confiée à un processus dédié pour décharger le serveur.
-	NL	Om de beste kwaliteit albumhoezen en prestatie van je systeem te krijgen, worden deze geschaald voordat ze naar de muziekspeler worden gestuurd. Standaard wordt dit door mysqueezebox.com gedaan. Als je onafhankelijk van mysqueezebox.com wilt zijn of een interne muziekbron gebruikt, kun je Logitech Media Server gebruiken om te schalen.
-	NO	For å få høyest mulig billedkvalitet og ytelse på avspillerene, blir omslagsbilder skalert før avspillerene får dem. Som standard er det mysqueezebox.com som tar seg av dette, men hvis du vil være uavhengig av mysqueezebox.com eller kjører en intern strømmekilde, bør du vurdere å bruke Logitech Media Servers innebygde skaleringsfunksjon.
-	PL	W celu uzyskania najlepszej jakości okładki i wydajności na odtwarzaczach, okładki są dopasowywane względem rozmiaru przed przesłaniem do odtwarzacza. Domyślnie jest to obsłużone przez mysqueezebox.com. Jeśli chcesz być niezależny od mysqueezebox.com, lub używasz lokalnego źródła, możesz pozwolić, aby to Logitech Media Server zajął się dopasowywaniem okładek.
-	SV	Innan skivomslagen skickas till spelarna anpassas storleken på dem för att få bästa kvalitet och prestanda på spelarna. Standardinställningen är att använda mysqueezebox.com för detta men om du vill vara oberoende av mysqueezebox.com eller använder en egen strömningskälla så kan du använda Logitech Media Servers inbyggda skaleringsfunktion.
-
-SETUP_IMAGEPROXY_REMOTE
-	CS	Použít mysqueezebox.com ke změně velikosti obalů alb
-	DE	Bilder auf mysqueezebox.com anpassen
-	EN	Use mysqueezebox.com to resize artwork
-	FR	Redimensionner les pochettes avec mysqueezebox.com
-	NL	Gebruik mysqueezebox.com om albumhoezen te schalen
-	NO	La mysqueezebox.com skalere plateomslag
-	PL	Użyj mysqueezebox.com do dopasowywania okładek
-	SV	Använd mysqueezebox.com för att anpassa skivomslagens storlek
+	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig in Logitech Media Server selber. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
+	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by Logitech Media Server itself. The helper can offload some of the heavy lifting to a separate process managed by the server application.
+	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par Logitech Media Server. La tâche peut également être confiée à un processus dédié pour décharger le serveur.
 
 SETUP_IMAGEPROXY_LOCAL
 	CS	Použít Logitech Media Server ke změně velikosti obalů alb
@@ -23302,21 +22743,6 @@ CONTROLPANEL_ACCOUNT
 	RU	Учетная запись
 	SV	Konto
 
-CONTROLPANEL_SN_CREDENTIALS
-	CS	Zadejte informace o vašem účtu mysqueezebox.com
-	DA	Angiv kontooplysninger til mysqueezebox.com
-	DE	Geben Sie die Daten zu Ihrem mysqueezebox.com-Konto ein
-	EN	Enter your mysqueezebox.com account information
-	ES	Introduzca su información de cuenta mysqueezebox.com:
-	FI	Anna mysqueezebox.com-tilisi tiedot
-	FR	Spécifiez les informations de votre compte mysqueezebox.com.
-	IT	Immettere i dati dell'account mysqueezebox.com
-	NL	Accountgegevens voor mysqueezebox.com invoeren
-	NO	Oppgi kontoinformasjon for mysqueezebox.com
-	PL	Wprowadź informacje o koncie mysqueezebox.com
-	RU	Введите данные учетной записи mysqueezebox.com
-	SV	Ange dina kontouppgifter för mysqueezebox.com
-
 CONTROLPANEL_STARTUP_OPTIONS
 	CS	Volby při spuštění
 	DA	Indstillinger for systemstart
@@ -23676,51 +23102,6 @@ CONTROLPANEL_ALERTS
 	PL	Alerty
 	RU	Сигналы
 	SV	Varningar
-
-CONTROLPANEL_SN_FAILURE
-	CS	Nebyli jsme schopni úspěšně komunikovat s mysqueezebox.com
-	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
-	DE	Es konnte keine Verbindung zu mysqueezebox.com hergestellt werden.
-	EN	We were not able to successfully communicate with mysqueezebox.com
-	ES	No ha sido posible comunicarse correctamente con mysqueezebox.com
-	FI	Kommunikointi osoitteen mysqueezebox.com kanssa ei onnistunut
-	FR	Communication avec mysqueezebox.com impossible.
-	IT	Impossibile comunicare con mysqueezebox.com
-	NL	Communicatie met mysqueezebox.com niet mogelijk
-	NO	Vi kunne ikke kommunisere med mysqueezebox.com
-	PL	Próba nawiązania komunikacji z witryną mysqueezebox.com nie powiodła się
-	RU	Не удалось подключиться к mysqueezebox.com
-	SV	Det gick inte att kommunicera med mysqueezebox.com
-
-CONTROLPANEL_SN_FAILURE_DESC
-	CS	Může jít o přechodný problém internetu nebo o omezení zavedené vaším ISP. Pokud problém přetrvává, ujistěte se, že váš firewall neblokuje odchozí komunikaci.
-	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side. Hvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
-	DE	Es handelt sich eventuell um ein zeitweiliges Internetproblem oder eine Einschränkung Ihres Internetanbieters. Wenn das Problem bestehen bleibt, vergewissern Sie sich, dass die Firewall den abgehenden Datenverkehr nicht blockiert.
-	EN	This might be a temporary internet issue, or a limitation imposed by your ISP. If the problem persists, please make sure your firewall is not blocking outgoing traffic.
-	ES	Puede tratarse de un problema de Internet temporal o de una limitación impuesta por su ISP. Si el problema continúa, asegúrese de que el servidor de seguridad no esté bloqueando el tráfico de salida.
-	FI	Tämä saattaa olla tilapäinen internet-ongelma tai internet-palveluntarjoajasi määrittämä rajoitus. Jos ongelma jatkuu, tarkista, ettei palomuurisi estä lähtevää liikennettä.
-	FR	Il s'agit d'un problème Internet temporaire ou d'une limitation imposée par votre FAI. Si le problème persiste, vérifiez que votre pare-feu ne bloque pas le trafic sortant.
-	IT	Potrebbe trattarsi di un problema Internet temporaneo o di una limitazione imposta dal provider di servizi Internet. Se il problema persiste, verificare che il traffico in uscita non sia bloccato dal firewall.
-	NL	Dit is misschien een tijdelijk internetprobleem, of een beperking die door jouw internetprovider is opgelegd. Als het probleem zich blijft voordoen, zorg dan dat de firewall geen uitgaand verkeer blokkeert.
-	NO	Dette kan skyldes et midlertidig problem med Internett, eller en begrensning fra Internett-leverandøren. Sjekk at brannmuren ikke blokkerer utgående trafikk hvis problemet vedvarer.
-	PL	Może to być tymczasowy problem z Internetem lub ograniczenie narzucone przez usługodawcę internetowego. Jeżeli problem nie zniknie, upewnij się, że zapora nie blokuje ruchu wychodzącego.
-	RU	Возможно, это временная проблема с Интернетом или ограничение поставщика услуг Интернета. Если проблема не исчезнет, убедитесь, что брандмауэр не блокирует исходящий трафик.
-	SV	Det kan röra sig om ett tillfälligt Internetproblem eller om begränsningar som Internetleverantören har infört. Om problemet kvarstår bör du kontrollera huruvida brandväggen blockerar utgående trafik.
-
-CONTROLPANEL_SN_PROXY
-	CS	Zjistili jsme, že váš Logitech Media Server je konfigurován k použití proxy serveru. V této konfiguraci nemůže být testována konektivita k mysqueezebox.com na portu 3483.
-	DA	Din Logitech Media Server er indstillet til at bruge en proxyserver. Det betyder at forbindelsen til mysqueezebox.com via port 3483 ikke kan afprøves.
-	DE	Ihr Logitech Media Server ist für die Verwendung eines Proxyservers konfiguriert. Bei dieser Konfiguration kann die Verbindung zu mysqueezebox.com über Port 3483 nicht getestet werden.
-	EN	We've seen that your Logitech Media Server is configured to use a proxy server. In this configuration connectivity to mysqueezebox.com on port 3483 can't be tested.
-	ES	Hemos comprobado que Logitech Media Server está configurado para utilizar un servidor proxy. Esta configuración no permite comprobar la conectividad a mysqueezebox.com en el puerto 3483.
-	FI	Logitech Media Server on määritetty käyttämään välityspalvelinta. Tässä kokoonpanossa yhteyttä sivustoon mysqueezebox.com portin 3483 kautta ei voi testata.
-	FR	La configuration de votre Logitech Media Server indique l'utilisation d'un serveur proxy. Cette configuration ne permet pas de tester la connectivité à mysqueezebox.com sur le port 3483.
-	IT	È stato rilevato che Logitech Media Server è configurato per utilizzare un server proxy. Con questa configurazione non è possibile verificare la connessione con mysqueezebox.com sulla porta 3483.
-	NL	Jouw Logitech Media Server is geconfigureerd voor gebruik van een proxyserver. In deze configuratie kan de verbinding met 'mysqueezebox.com' op poort 3483 niet worden getest.
-	NO	Logitech Media Server er konfigurert til å bruke en proxy-server. Med denne konfigureringen kan ikke tilkoplingen til mysqueezebox.com på port 3483 testes.
-	PL	Program Logitech Media Server jest skonfigurowany w celu użycia serwera proxy. W przypadku takiej konfiguracji nie można przetestować połączenia z witryną mysqueezebox.com na porcie 3483.
-	RU	Обнаружено, что ваш Logitech Media Server настроен на использование прокси-сервера. В такой конфигурации подключение к сайту mysqueezebox.com на порту 3483 невозможно проверить.
-	SV	När Logitech Media Server har konfigurerats för användning med en proxyserver går det inte att kontrollera anslutningen till port 3483 på mysqueezebox.com.
 
 CONTROLPANEL_PORTCONFLICT
 	CS	Logitech Media Server není v provozu, ale nějaká aplikace používá stejný port (%s).
@@ -24857,21 +24238,6 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	NO	Spør bare hvis avspilling er i gang, og den aktuelle spillelista ikke er en radiokanal
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie i aktualny utwór nie jest strumieniem radiowym
 	SV	Fråga bara om uppspelning pågår och det inte är en radiostation som spelas upp
-
-ON_MYSB
-	CS	Na mysqueezebox.com
-	DA	På mysqueezebox.com
-	DE	Auf mysqueezebox.com
-	EN	On mysqueezebox.com
-	ES	En mysqueezebox.com
-	FI	Sivustolla mysqueezebox.com
-	FR	Sur mysqueezebox.com
-	IT	Su mysqueezebox.com
-	NL	Op mysqueezebox.com
-	NO	På mysqueezebox.com
-	PL	W witrynie mysqueezebox.com
-	RU	На mysqueezebox.com
-	SV	På mysqueezebox.com
 
 SERVER_UPDATE_AVAILABLE
 	CS	K dispozici je nová verze Logitech Media Serveru (%s). <a href="%s" target="update">Klikněte zde pro stažení</a>.

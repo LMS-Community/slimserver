@@ -9,13 +9,13 @@ use HTTP::Status qw(RC_NOT_FOUND RC_OK);
 use Digest::MD5 qw(md5_hex);
 
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Player::ProtocolHandlers;
 use Slim::Plugin::Sounds::ProtocolHandler;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use constant BASE_URL => 'https://downloads.slimdevices.com/sounds';
 use constant BASE_AUDIO_PATH => 'plugins/sounds/audio/';
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -26,9 +26,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $serverPrefs = preferences('server');
 my $soundsCache = catfile($serverPrefs->get('cachedir'), 'Sounds');
-
-# change this to whatever when the time has come.
-my $baseUrl = Slim::Networking::SqueezeNetwork->get_server('content') . '/static/sounds';
 
 my $menus = {
 	MUSICAL => {
@@ -158,8 +155,6 @@ sub getAlarmPlaylists {
 }
 
 sub getSortedSounds {
-	my ( $self, $c ) = @_;
-
 	main::INFOLOG && $log->is_info && $log->info("Sorting Sounds list alphabetically");
 	my @items = sort {
 		$a->{name} cmp $b->{name};
@@ -173,9 +168,6 @@ sub getSortedSounds {
 
 	my @playlistItems;
 
-	my $loopUrl = Slim::Utils::Network::serverURL() . BASE_AUDIO_PATH;
-	$loopUrl =~ s/^http/loop/;
-
 	for my $menu ( @items ) {
 		# Sort each submenu after localizing
 		my @subsorted = sort {
@@ -187,7 +179,7 @@ sub getSortedSounds {
 				name    => string("PLUGIN_SOUNDS_$_"),
 				bitrate => 128,
 				type    => 'audio',
-				url     => $loopUrl . $path,
+				url     => 'loop://' . $path,
 			};
 		} keys %{ $menus->{$menu->{id}} };
 
@@ -216,6 +208,21 @@ sub getSortedSounds {
 	};
 }
 
+sub getStreamUrl {
+	my ($class, $client, $url) = @_;
+
+	my $auth = '';
+	if ( $serverPrefs->get('authorize') ) {
+		my $password = Slim::Player::Squeezebox::generate_random_string(10);
+		$client->password($password);
+		$auth = "squeezeboxXXX:$password@";
+	}
+
+	my $serverURL = "http://$auth" . Slim::Utils::Network::serverAddr() . ':' . $serverPrefs->get('httpport');
+
+	return "$serverURL/" . BASE_AUDIO_PATH . $url;
+}
+
 sub proxyRequest {
 	my ($httpClient, $response) = @_;
 
@@ -233,16 +240,17 @@ sub proxyRequest {
 	};
 
 	if (-f $soundsFile) {
+		main::INFOLOG && $log->is_info && $log->info("Serving from local cache ($soundsFile).");
 		return $sendFile->();
 	}
 
-	my $originUrl = "http://$baseUrl/$path";
+	my $originUrl = BASE_URL . "/$path";
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			return _notFound($httpClient, $response) unless -f $soundsFile;
 
-			main::DEBUGLOG && $log->is_debug && $log->debug("Downloaded $originUrl as $soundsFile");
+			main::INFOLOG && $log->is_info && $log->info("Downloaded $originUrl as $soundsFile");
 
 			$sendFile->();
 		},

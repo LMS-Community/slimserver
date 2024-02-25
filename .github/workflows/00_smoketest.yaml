@@ -10,10 +10,22 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Make sure we're running as non-root
+        run: |
+          if [ "$RUNNER_USER" == "root" ]; then
+            echo Specify non-root image when testing with act:
+            echo act -P ubuntu-22.04=ghcr.io/catthehacker/ubuntu:runner-22.04
+            exit 1
+          fi
+
       - uses: actions/checkout@v3
 
       - name: Install depedencies
-        run: sudo apt-get install -y libio-socket-ssl-perl libnet-ssleay-perl
+        run: |
+          if [ "$ACT" == "true" ]; then
+            sudo apt-get update
+          fi
+          sudo apt-get install -y libio-socket-ssl-perl libnet-ssleay-perl netcat
 
       - name: Run test
         run: bash t/00_smoketest.sh

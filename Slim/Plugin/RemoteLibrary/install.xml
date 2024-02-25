@@ -7,9 +7,8 @@
 	<description>PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/</homepageURL>
 	<icon>plugins/RemoteLibrary/html/icon.png</icon>
-	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>        
+	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>
 	<playerMenu>BROWSE_MUSIC</playerMenu>
 	<targetApplication>
 		<id>Logitech Media Server</id>

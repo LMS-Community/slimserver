@@ -9,7 +9,7 @@
 		<dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMR-1.50</dlna:X_DLNADOC>
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
-		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
+		<manufacturerURL>http://www.logitech.com</manufacturerURL>
 		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
 		<modelName>[% device.model %]</modelName>
 		<modelNumber>1</modelNumber>

@@ -7,7 +7,6 @@
 	<description>PLUGIN_MY_APPS_MODULE_NAME</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/MyApps/html/images/icon.png</icon>
 	<type>2</type>
 	<enforce>1</enforce>

@@ -7,7 +7,6 @@
 	<description>PLUGIN_EXTENSIONS_DESC</description>
     <creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
 	<enforce>1</enforce>
 	<targetApplication>

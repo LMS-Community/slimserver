@@ -3,7 +3,7 @@ package Slim::Formats::Ogg;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -44,7 +44,8 @@ my %tagMapping = (
 	'MUSICBRAINZ_ALBUMARTISTID' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MUSICBRAINZ_ALBUMID'       => 'MUSICBRAINZ_ALBUM_ID',
 	'MUSICBRAINZ_ALBUMSTATUS'   => 'MUSICBRAINZ_ALBUM_STATUS',
-	'MUSICBRAINZ_ALBUMTYPE'     => 'MUSICBRAINZ_ALBUM_TYPE',
+	'MUSICBRAINZ_ALBUMTYPE'     => 'RELEASETYPE',               # https://picard-docs.musicbrainz.org/en/appendices/tag_mapping.html#id32
+	'MUSICBRAINZ_ALBUM_TYPE'    => 'RELEASETYPE',
 	'MUSICBRAINZ_ARTISTID'      => 'MUSICBRAINZ_ARTIST_ID',
 	'MUSICBRAINZ_TRACKID'       => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
@@ -71,7 +72,7 @@ Extract and return audio information & any embedded metadata found.
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
-	
+
 	my $s = Audio::Scan->scan($file);
 	
 	# Delete GROUPING tag if WORK tag exists
@@ -79,7 +80,7 @@ sub getTag {
 
 	my $info = $s->{info};
 	my $tags = $s->{tags};
-	
+
 	return unless $info->{song_length_ms};
 
 	# Use Formats::FLAC for OggFlac and force the content type
@@ -87,7 +88,7 @@ sub getTag {
 		Slim::Formats->loadTagFormatForType('flc');
 		return (Slim::Formats::FLAC->_getStandardTag($s), 'ogf');
 	}
-	
+
 	# Map tags
 	while ( my ($old, $new) = each %tagMapping ) {
 
@@ -126,12 +127,12 @@ sub getTag {
 	}
 
 	$tags->{OFFSET} = 0; # the header is an important part of the file. don't skip it
-	
+
 	# Read cover art if available
 	if ( $tags->{ALLPICTURES} ) {
 		my $pic;
-		
-		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} }
 			@{ $tags->{ALLPICTURES} };
 
 		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
@@ -142,7 +143,7 @@ sub getTag {
 			# fall back to use lowest type image found
 			$pic = $allpics[0]->{image_data};
 		}
-		
+
 		# In 'no artwork' mode, ARTWORK is the length
 		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
 			$tags->{COVER_LENGTH} = $pic;
@@ -164,18 +165,18 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
-	
+
 	# Enable artwork in Audio::Scan
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
-	
+
 	my $s = Audio::Scan->scan_tags($file);
 	my $tags = $s->{tags};
-	
+
 	# Standard picture block, try to find the front cover first
 	if ( $tags->{ALLPICTURES} ) {
-		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} }
 			@{ $tags->{ALLPICTURES} };
-				
+
 		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
 			# in case of many type 3 (front cover) just use the first one
 			return $frontcover[0]->{image_data};
@@ -202,27 +203,27 @@ sub scanBitrate {
 	my $class = shift;
 	my $fh    = shift;
 	my $url   = shift;
-	
+
 	my $isDebug = $log->is_debug;
-	
+
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
-	
+
 	seek $fh, 0, 0;
-	
+
 	my $s = Audio::Scan->scan_fh( ogg => $fh );
-	
+
 	if ( !$s->{info}->{audio_offset} ) {
 
 		logWarning('Unable to parse Ogg stream');
 
 		return (-1, undef);
 	}
-	
+
 	my $info = $s->{info};
 	my $tags = $s->{tags};
-	
+
 	# Save tag data if available
-	if ( my $title = $tags->{TITLE} ) {		
+	if ( my $title = $tags->{TITLE} ) {
 		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
 		# so we have to format our title info manually.
 		my $track = Slim::Schema->updateOrCreate( {
@@ -233,7 +234,7 @@ sub scanBitrate {
 		} );
 
 		main::DEBUGLOG && $isDebug && $log->debug("Read Ogg tags from stream: " . Data::Dump::dump($tags));
-		
+
 		$title .= ' ' . string('BY') . ' ' . $tags->{ARTIST} if $tags->{ARTIST};
 		$title .= ' ' . string('FROM') . ' ' . $tags->{ALBUM} if $tags->{ALBUM};
 
@@ -245,7 +246,7 @@ sub scanBitrate {
 			my $coverart;
 			my $mime;
 
-			my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+			my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} }
 				@{ $tags->{ALLPICTURES} };
 
 			if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
@@ -258,7 +259,7 @@ sub scanBitrate {
 				$coverart = $allpics[0]->{image_data};
 				$mime     = $allpics[0]->{mime_type};
 			}
-			
+
 			$track->cover( length($coverart) );
 			$track->update;
 
@@ -273,7 +274,7 @@ sub scanBitrate {
 			main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
 	}
-	
+
 	my $vbr = 0;
 
 	if ( defined $info->{bitrate_upper} && defined $info->{bitrate_lower} ) {
@@ -281,14 +282,14 @@ sub scanBitrate {
 			$vbr = 1;
 		}
 	}
-	
+
 	if ( my $bitrate = ( $info->{bitrate_average} || $info->{bitrate_nominal} ) ) {
 
 		main::DEBUGLOG && $isDebug && $log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
 
 		return ( $bitrate, $vbr );
 	}
-	
+
 	logWarning("Unable to read bitrate from stream!");
 
 	return (-1, undef);
@@ -296,20 +297,20 @@ sub scanBitrate {
 
 sub getInitialAudioBlock {
 	my ($class, $fh) = @_;
-	
+
 	open my $localFh, '<&=', $fh;
-	
+
 	seek $localFh, 0, 0;
-	
+
 	my $s = Audio::Scan->scan_fh( ogg => $localFh );
-	
+
 	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug( 'Reading initial audio block: length ' . $s->{info}->{audio_offset} );
-	
+
 	seek $localFh, 0, 0;
 	read $localFh, my $buffer, $s->{info}->{audio_offset};
-	
+
 	close $localFh;
-	
+
 	return $buffer;
 }
 
@@ -327,7 +328,7 @@ sub findFrameBoundaries {
 	if ( !defined $fh || !defined $time ) {
 		return 0;
 	}
-	
+
 	return Audio::Scan->find_frame_fh( ogg => $fh, int($time * 1000) );
 }
 

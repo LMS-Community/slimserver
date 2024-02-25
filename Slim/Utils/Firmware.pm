@@ -150,7 +150,7 @@ sub init_version_done {
 	my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
 	# on some systems we don't download firmware files
-	# we'll let the player download them from squeezenetwork directly
+	# we'll let the player download them from the origin host directly
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() && BASE() !~ /^https:/ ) {
 
 		$firmwares->{$model} = {
@@ -292,7 +292,7 @@ sub url {
 		return unless ($firmwares->{$model}->{file});	# Will be available immediately if custom f/w
 	}
 
-	# on some systems return the direct link from SqueezeNetwork
+	# on some systems return the direct link from the origin server
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() && BASE() !~ /^https:/ ) {
 		return BASE() . $::VERSION . '/' . $model
 			. '_' . $firmwares->{$model}->{version}

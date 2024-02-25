@@ -8,8 +8,7 @@
 	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
-        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+
 	<icon>plugins/DigitalInput/html/images/icon.png</icon>
 	<type>2</type>
 

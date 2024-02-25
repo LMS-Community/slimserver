@@ -54,12 +54,6 @@
 [% PROCESS infoItem title="SERVER_STATUS" items=server.items %]
 [% PROCESS infoItem title="INFORMATION_MENU_PERL" items=perl.items %]
 
-[% IF needsTimeSync %]
-	[% WRAPPER setting title="INFORMATION_TIME_DIFF" %]
-		<div>[% "INFORMATION_TIME_DIFF_DESC" | string %]</div>
-	[% END %]
-[% END %]
-
 [% IF library; PROCESS infoItem title="INFORMATION_MENU_LIBRARY" items=library.items; END %]
 
 [% IF onlinelibrary %]

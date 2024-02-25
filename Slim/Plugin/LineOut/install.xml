@@ -7,8 +7,7 @@
 	<creator>Logitech</creator>
 
 	<defaultState>disabled</defaultState>
-        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+
 	<icon>plugins/LineOut/html/images/icon.png</icon>
 	<type>2</type>
 

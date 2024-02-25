@@ -270,7 +270,7 @@ sub _addInfoTags {
 	$tags->{SIZE}       = $info->{file_size};
 	$tags->{SECS}       = $info->{song_length_ms} / 1000;
 	$tags->{OFFSET}     = 0; # the header is an important part of the file. don't skip it
-	$tags->{BITRATE}    = sprintf "%d", $info->{bitrate};
+	$tags->{BITRATE}    = sprintf "%d", ($info->{bitrate} || $info->{bitrate_ogg});
 	$tags->{VBR_SCALE}  = 1;
 	$tags->{RATE}       = $info->{samplerate};
 	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
@@ -925,11 +925,11 @@ so we use this to set the track duaration value.
 =cut
 
 sub scanBitrate {
-	my ( $class, $fh, $url ) = @_;
+	my ( $class, $fh, $url, $format ) = @_;
 
 	seek $fh, 0, 0;
-
-	my $s = Audio::Scan->scan_fh( flac => $fh );
+	
+	my $s = Audio::Scan->scan_fh( $format || 'flac' => $fh );
 
 	my $info = $s->{info};
 

@@ -1,6 +1,77 @@
-<h2><a name="v8.4.0" id="v8.4.0"></a>Version 8.4.0</h2>
+<h2><a name="v8.5.0" id="v8.5.0"></a>Version 8.5.0</h2>
 <ul>
-	<li><a href="#v8.3.1">Upstream fixes from Logitech Media Server 8.3.x</a></li>
+	<li><a href="#v8.4.1">Upstream fixes from Logitech Media Server 8.4.x</a></li>
+	<br />
+
+	<li>New Features:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Server Changes:</li>
+	<ul>
+		<li>Remove all dependency on MySqueezebox.com.</li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li><a href="https://github.com/Logitech/slimserver/pull/998">#998</a> - Fix Sounds &amp; Effects playback when password protection is enabled.</li>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v8.4.1" id="v8.4.1"></a>Version 8.4.1</h2>
+<ul>
+	<li>New Features:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Server Changes:</li>
+	<ul>
+		<li>Improve Release Type readout in Ogg and WMA files.</li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li>Don't fail http caching due to extended characters in the URL.</li>
+		<li>Playing all items from a genre might fail under certain circumstances.</li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v8.4.0" id="v8.4.0"></a>Version 8.4.0 - 2024-02-08 (e225575dc)</h2>
+<ul>
+	<li><a href="#v8.3.2">Upstream fixes from Logitech Media Server 8.3.x</a></li>
 	<br />
 
 	<li>New Features:</li>
@@ -8,9 +79,10 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
 		<li>New "Advanced Tag View" plugin allows you to show more information in the Track Info menu, without the need to drill down to "View Tags"</li>
 		<li>Allow editing of a favourite's icon.</li>
-		<li>Add plugins for ClassicRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
+		<li>Add plugins for ClassicalRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
 		<li>Add an optional artist albums view which groups albums by release type and contribution. (thanks darrell-k!)</li>
 		<li>Add an option to import playlists from online music services.</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/987">#987</a> - Add OggFlac support (thanks philippe44!)</li>
 	</ul>
 	<br />
 
@@ -33,6 +105,8 @@
 		<li><a href="https://github.com/Logitech/slimserver/pull/862">#862</a> - Make lyrics on Default skin songinfo page collapsible (thanks AF-1!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/868">#868</a> - Populate the release year ('year') attribute for remote tracks in the player queue (thanks SamInPgh!)</li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/956">#956</a> - Add raw AAC (ADTS) file support (thanks philippe44!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/964">#964</a>/<a href="https://github.com/Logitech/slimserver/pull/985">#985</a> - Handle case where user moves/adds/removes tracks in a playlist while the next track is already fully streamed (thanks philippe44!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/pull/986">#986</a> - Add a 'V' query that will return the maximum seek point in seconds within the current track duration for a 'live' radio stream (thanks expectingtofly & philippe44!)</li>
 		<li>Fix Napster playback on community firmware players</li>
 	</ul>
 	<br />
@@ -56,6 +130,7 @@
 		<li><a href="https://github.com/Logitech/slimserver/issues/911">#911</a> - Don't shut down the server on "restartserver" when we actually can't restart it.</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/939">#939</a> - Player can't be switched from MySqueezebox.com to LMS</li>
 		<li><a href="https://github.com/Logitech/slimserver/issues/962">#962</a> - Fix album_contributor updates in New &amp; Changed scan (thanks darrell!)</li>
+		<li><a href="https://github.com/Logitech/slimserver/issues/979">#979</a> - New and changed contributor scanning improvements (thanks darrell!)</li>
 		<li><a href="https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1648813">Respect a contributor's Musicbrainz ID to separate artists of the same name.</a></li>
 		<li><a href="https://github.com/Logitech/slimserver/pull/969">#969</a> - Add utf-8 guess decoding on Ogg metadata - thanks philippe44!</li>
 		<li>Try harder to avoid duplicate (but empty) album entries on singles.</li>
@@ -77,18 +152,6 @@
 
 <h2><a name="v8.3.2" id="v8.3.2"></a>Version 8.3.2</h2>
 <ul>
-	<li>New Features:</li>
-	<ul>
-		<li></li>
-	</ul>
-	<br />
-
-	<li>Server Changes:</li>
-	<ul>
-		<li></li>
-	</ul>
-	<br />
-
 	<li>Platform Support:</li>
 	<ul>
 		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
@@ -103,11 +166,6 @@
 		<li>Add CPAN/auto/5.14 to lib search path for Windows builds to include Font::FreeType.</li>
 		<li>Fix another absolute path to a stylesheet in the Default skin.</li>
 		<li>Fix an issue where registering a pre-cache resolution would cause a subsequent LMS start to fail.</li>
-	</ul>
-	<br />
-
-	<li>Other:</li>
-	<ul>
 	</ul>
 	<br />
 </ul>

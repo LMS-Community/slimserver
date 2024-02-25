@@ -49,7 +49,6 @@ our $defaultPrefs = {
 		PLUGIN_DIGITAL_INPUT
 		PLUGINS
 		SETTINGS
-		SQUEEZENETWORK_CONNECT
 	)],
 };
 
@@ -119,7 +118,7 @@ sub pause {
 
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
 
-		$client->setDigitalInput(0);	
+		$client->setDigitalInput(0);
 	}
 }
 
@@ -130,7 +129,7 @@ sub stop {
 
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
 
-		$client->setDigitalInput(0);	
+		$client->setDigitalInput(0);
 	}
 }
 
@@ -141,7 +140,7 @@ sub resume {
 
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
 
-		$client->setDigitalInput(Slim::Player::Playlist::url($client));	
+		$client->setDigitalInput(Slim::Player::Playlist::url($client));
 	}
 }
 
@@ -162,7 +161,7 @@ sub power {
 		}
 	}
 
-	return $result;	
+	return $result;
 }
 
 sub setDigitalInput {
@@ -173,7 +172,7 @@ sub setDigitalInput {
 
 	# convert a source: url to a number, otherwise, just use the number
 	if (Slim::Music::Info::isDigitalInput($input)) {
-	
+
 		main::INFOLOG && $log->info("Got source: url: [$input]");
 
 		if ($INC{'Slim/Plugin/DigitalInput/Plugin.pm'}) {
@@ -202,7 +201,7 @@ sub updateEffectsLoop {
 	my $client = shift;
 
 	my $data = pack(
-		'CC', 
+		'CC',
 		$prefs->client($client)->get('fxloopSource'),
 		$prefs->client($client)->get('fxloopClock'),
 		);
@@ -213,7 +212,7 @@ sub updateRolloff {
 	my $client = shift;
 
 	my $data = pack 'C', $prefs->client($client)->get('rolloffSlow') || 0;
-	
+
 	$client->sendFrame('audr', \$data);
 }
 
@@ -230,7 +229,7 @@ sub updateKnob {
 
 		if (ref($listRef) eq 'ARRAY') {
 			$listLen = scalar(@$listRef);
-		}			
+		}
 	}
 
 	my $knobPos   = $client->knobPos || 0;
@@ -309,14 +308,14 @@ sub knobListPos {
 	} else {
 
 		# assume movement of more than 1/2 of list means wrapping round
-		my $wrap = (abs($newPos - $curPos) > $listLen / 2); 
-		
+		my $wrap = (abs($newPos - $curPos) > $listLen / 2);
+
 		if ($newPos > $curPos && !$wrap || $newPos < $curPos && $wrap) {
 			$direction = 'down';
 		} else {
 			$direction = 'up';
 		}
-		
+
 	}
 
 	return ($newPos, $newPos - $curPos, $direction, $wrap);

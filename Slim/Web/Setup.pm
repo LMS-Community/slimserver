@@ -11,42 +11,38 @@ use Slim::Utils::Log;
 
 sub initSetup {
 	my @classes = ('Slim::Web::Settings');
-	
-	push @classes, map { 
-		join('::', qw(Slim Web Settings Player), $_) 
+
+	push @classes, map {
+		join('::', qw(Slim Web Settings Player), $_)
 	} qw(
-		Alarm 
-		Audio 
-		Basic 
-		Display 
-		Menu 
-		Remote 
+		Alarm
+		Audio
+		Basic
+		Display
+		Menu
+		Remote
 		Synchronization
 	);
-	
-	push @classes, map { 
-		join('::', qw(Slim Web Settings Server), $_) 
+
+	push @classes, map {
+		join('::', qw(Slim Web Settings Server), $_)
 	} qw(
-		Basic 
-		Behavior 
-		Debugging 
-		FileSelector 
-		Index 
-		Network 
-		Performance 
-		Plugins 
-		Security 
-		Software 
-		Status 
-		TextFormatting 
-		UserInterface 
+		Basic
+		Behavior
+		Debugging
+		FileSelector
+		Index
+		Network
+		Performance
+		Plugins
+		Security
+		Software
+		Status
+		TextFormatting
+		UserInterface
 		Wizard
 	);
-	
-	if (!main::NOMYSB) {
-		push @classes, 'Slim::Web::Settings::Server::SqueezeNetwork';
-	}
-	
+
 	if (main::TRANSCODING) {
 		push @classes, 'Slim::Web::Settings::Server::FileTypes';
 	}

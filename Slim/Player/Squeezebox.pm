@@ -767,7 +767,7 @@ sub stream_s {
 		$pcmchannels     = '?';
 		$outputThreshold = 1;
 
-		# Handler may override pcmsamplesize (Rhapsody)
+		# Handler may override pcmsamplesize
 		if ( $currentTrackHandler && $currentTrackHandler->can('pcmsamplesize') ) {
 			$pcmsamplesize = $currentTrackHandler->pcmsamplesize( $client, $params );
 		}

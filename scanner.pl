@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Logitech Media Server Copyright 2001-2022 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -33,7 +33,7 @@ use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => 0;
 use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
-use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
+use constant NOMYSB       => 1;
 
 # Tell PerlApp to bundle these modules
 if (0) {
@@ -45,7 +45,7 @@ our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
-	our $VERSION = '8.4.0';
+	our $VERSION = '8.5.0';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 

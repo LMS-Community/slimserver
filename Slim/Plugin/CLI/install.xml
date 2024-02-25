@@ -10,8 +10,7 @@
 
 	<defaultState>enabled</defaultState>
 	<enforce>1</enforce>
-        
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+
 	<optionsURL>plugins/CLI/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 

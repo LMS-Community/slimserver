@@ -2,7 +2,7 @@ package Slim::Plugin::InternetRadio::TuneIn::Metadata;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -203,11 +203,7 @@ sub provider {
 		}
 	}
 
-	# Sometimes when a slimservice instances on MySB/UESR is stopped, we might end up
-	# with fetchingMeta not being reset. As pluginData is persisted in the database,
-	# this would cause a player to never display artwork again. Let's therefore add a
-	# timestamp rather than a simple flag, and ignore the timestamp, when it's old.
-	if ( !$client->pluginData('fetchingMeta') || $client->pluginData('fetchingMeta') < (time() - 3600) ) {
+	if ( !$client->pluginData('fetchingMeta') ) {
 		# Fetch metadata in the background
 		Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 		fetchMetadata( $client, $url );
@@ -422,7 +418,7 @@ sub _fetchArtwork {
 
 			if ( !$song->pluginData('stationLogo') ) {
 				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
-				
+
 				$song->pluginData( stationLogo => $track->{cover} );
 				$client->pluginData( stationLogo => $track->{cover} );
 			}
@@ -528,7 +524,7 @@ sub artworkUrl {
 	main::DEBUGLOG && $log->debug("TuneIn artwork - let's get the smallest version fitting our needs: $url, $spec");
 
 	# shortcut for station logo
-	if ( $url =~ s/(\/images\/logo)(?:[tgqd])/$1g/ 
+	if ( $url =~ s/(\/images\/logo)(?:[tgqd])/$1g/
 		|| $url =~ s/(cdn-radiotime-logos\.tunein\.com\/s\d+)[tqdg](\.png)/$1g$2/ ) {
 		main::DEBUGLOG && $log->debug("Going to get $url");
 		return $url;
@@ -539,7 +535,7 @@ sub artworkUrl {
 
 	# sometimes the sQuare image differs from the others for _logos_
 	# don't use the larger, non-square in this case, otherwide default to largest
-	$size = 'g' unless $logo && $size; 
+	$size = 'g' unless $logo && $size;
 
 	my $ext = (Slim::Web::Graphics->parseSpec($spec))[4];
 

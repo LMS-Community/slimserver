@@ -87,7 +87,7 @@ sub init {
 		checkChangedStrings();
 	}
 
-	# Load cached extra strings from mysb.com
+	# Load cached extra strings from other sources
 	loadExtraStrings();
 }
 
@@ -322,7 +322,6 @@ sub loadFile {
 	# Force the UTF-8 layer opening of the strings file.
 	open(my $fh, '<:utf8', $file) || do {
 		logError("Couldn't open $file - FATAL!");
-		die;
 	};
 
 	parseStrings($fh, $file, $args);

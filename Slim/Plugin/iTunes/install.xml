@@ -7,14 +7,13 @@
 	<version>1.0</version>
 	<description>ITUNES_DESC</description>
 	<creator>Logitech</creator>
-	
+
 	<defaultState>
 		<win>enabled</win>
 		<mac>enabled</mac>
 		<other>disabled</other>
 	</defaultState>
-	
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+
 	<optionsURL>plugins/iTunes/settings/itunes.html</optionsURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>

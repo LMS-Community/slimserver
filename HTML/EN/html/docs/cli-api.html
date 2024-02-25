@@ -112,6 +112,12 @@ Response:
 
 <h3 id="Changelog">Changelog</h3>
 
+<h4 id="8.5">Changes starting from Squeezebox Server 8.5</h4>
+<ul>
+	<li>Removed all calls and code related to MySqueezebox.com related systems.</li>
+</ul>
+
+
 <h4 id="8.4">Changes starting from Squeezebox Server 8.4</h4>
 <ul>
 	<li>Added support for release types and roles to <a href="#albums">albums</a>, and <a href="#titles">titles</a> queries.</li>
@@ -779,9 +785,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#getstring">getstring</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#setsncredentials">setsncredentials</a></code></strong>
-	</li>
-	<li>
 		<strong><code><a href="#debug">debug</a></code></strong>
 	</li>
 	<li>
@@ -1149,37 +1152,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="setsncredentials">
-	<strong>
-		<code>
-			setsncredentials
-			&lt;username&gt;
-			&lt;password&gt;
-			[&lt;sync:0|1&gt;]
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;setsncredentials&quot; command allows the caller to change
-	the credentials used to acces mysqueezebox.com resources.
-</p>
-<p>
-	Examples:
-</p>
-<blockquote>
-	<p>
-		Request:  &quot;setsncredentials me@mysqueezebox.com p@s5w0rd &lt;LF&gt;&quot;
-		<br>
-		Response: &quot;setsncredentials me@mysqueezebox.com p@s5w0rd validated:1 warning:Connected successfully to mysqueezebox.com. &lt;LF&gt;&quot;
-	</p>
-	<p>
-		Request:  &quot;setsncredentials me@mysqueezebox.com thisisnogood &lt;LF&gt;&quot;
-		<br>
-		Response: &quot;setsncredentials me@mysqueezebox.com thisisnogood validated:0 warning:Invalid mysqueezebox.com username or password. &lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
 <p id="debug">
 	<strong>
 		<code>
@@ -1475,8 +1447,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
         </strong>
 </p>
 <p>
-        The &quot;player uuid ?&quot; query returns the player uuid. The uuid is used by
-	mysqueezebox.com.
+        The &quot;player uuid ?&quot; query returns the player uuid.
 </p>
 <p>
         Example:
@@ -2432,40 +2403,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="connect">
-	<strong>
-		<code>
-			&lt;playerid&gt;
-			connect
-			&lt;ip|www.mysqueezebox.com|www.test.mysqueezebox.com&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;connect&quot; command tells a Squeezebox 2 or newer player to
-	connect to a different server address or to mysqueezebox.com.
-	<br>
-	Supported values are:
-	<ul>
-		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
-		<li><strong>www.mysqueezebox.com</strong> - Connect to MySqueezebox.com.</li>
-		<li><strong>www.test.mysqueezebox.com</strong> - Connect to MySqueezebox.com test.</li>
-	</ul>
-<p>
-	If the player is currently a member of a sync-group, then all players in the sync-group
-	will be instructed to switch to the new server and re-establish the sync-group.
-<p>
-	Example:
-</p>
-<blockquote>
-	<p>
-		Request:  &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
 <p id="client forget">
 	<strong>
 		<code>
@@ -2486,39 +2423,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p id="disconnect">
-	<strong>
-		<code>
-			disconnect
-			&lt;playerid&gt;
-			&lt;ip|www.mysqueezebox.com|www.test.mysqueezebox.com&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;disconnect&quot; command tells a Squeezebox 2 or newer player
-	on another server instance to disconnect from its server and
-	connect to us. This is the opposite of &quot;<a href="#connect">connect</a>&quot;, where we
-	tell a player connected to us to connect to a different server.
-	<br>
-	Supported values are:
-	<ul>
-		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
-		<li><strong>www.mysqueezebox.com</strong> - Connect to mysqueezebox.com.</li>
-		<li><strong>www.test.mysqueezebox.com</strong> - Connect to mysqueezebox.com test.</li>
-	</ul>
-<p>
-	Example:
-</p>
-<blockquote>
-	<p>
-		Request:  &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
@@ -5576,6 +5480,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Replay gain (in dB), if any
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<b>V</b>
+		</td>
+		<td>
+			live_edge
+		</td>
+		<td>
+			The Live edge of a remote stream.  -1 is not live, 0 is live at the edge, >0 is number of seconds from the live edge.
+		</td>
+	</tr>
 </table>
 <p>
 	Example:
@@ -7589,47 +7504,6 @@ in the saved playlists folder.</p>
 
 	<tr>
 		<td>
-			sn player count
-		</td>
-		<td>
-			Number of players connected to the current mysqueezebox.com account.
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<em>
-				For each player connected to mysqueezebox.com:
-			</em>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>id</b>
-		</td>
-		<td>
-			Player unique identifier on mysqueezebox.com.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;playerid
-		</td>
-		<td>
-			Player unique identifier (MAC address).
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;name
-		</td>
-		<td>
-			Player name.
-		</td>
-	</tr>
-
-
-	<tr>
-		<td>
 			other player count
 		</td>
 		<td>
@@ -8993,10 +8867,8 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			&nbsp;&nbsp;<b>cmd</b>
 		</td>
 		<td>
-			Command, one of &quot;lma&quot;,
-			&quot;pandora&quot;, &quot;podcast&quot;,
-			&quot;radiotime&quot;,  &quot;rhapsodydirect&quot;, &quot;shoutcast&quot;, &quot;
-			or &quot;picks&quot;, or any other, additionally installed radio or music service
+			Command, one of &quot;podcast&quot;, &quot;radiotime&quot;,
+			or any other, additionally installed radio or music service
 			type plugin. Item delimiter. <br>
 			This corresponds to the respective queries below.
 		</td>
@@ -9007,7 +8879,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			Radio plugin full display name, for example
-			&quot;Live Music Archive&quot;.
+			&quot;TuneIn&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -9078,13 +8950,13 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 
 <br>
 <h3 id="XMLBrowser">
-	Live Music Archive, Pandora, Podcasts, RadioTime, Napster, Shoutcast, Staff Picks, RSS
+	Podcasts, RadioTime, RSS
 </h3>
 <p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;lma|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
+			&lt;podcast|radiotime|rss&gt;
 			items
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
@@ -9279,61 +9151,6 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		name:Alternative | KCRW Music
 		hasitems:0
 		&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<p>
-	<strong>
-		<code>
-			&lt;playerid&gt;
-			&lt;lma|pandora|podcast|radiotime|rhapsodydirect|shoutcast|picks|rss&gt;
-			playlist
-			&lt;play|load|insert|add&gt;
-			&lt;taggedParameters&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	This command adds or plays an item. Though playback of these stations could
-	be achieved by the standard playlist methods, calling this command will
-	ensure that the station's name is displayed, not only it's url (if
-	possible).
-	<br>
-	If item_id defines an item that can't be played, but contains playable
-	subitems, then these will be played instead. This allows to eg. play all
-	tracks of a genre.
-</p>
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150">
-			<b>Tag</b>
-		</td>
-		<td>
-			<b>Description</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			item_id
-		</td>
-		<td>
-			The id of an item to be played. The id represents the hierarchical
-			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3
-		</td>
-	</tr>
-</table>
-<p>
-	Example:
-</p>
-<blockquote>
-	<p>
-		Request: &quot;6e:ef:54:e9:02:b0 shoutcast playlist play item_id:1.1&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;6e:ef:54:e9:02:b0 shoutcast playlist play item_id:1.1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
