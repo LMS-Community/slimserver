@@ -115,6 +115,7 @@ Response:
 <h4 id="8.5">Changes starting from Squeezebox Server 8.5</h4>
 <ul>
 	<li>Removed all calls and code related to MySqueezebox.com related systems.</li>
+	<li>Added "alarmData" parameter to the &quot;<a href="#status">status</a>&quot; query to report information about the upcoming alarm.</li>
 </ul>
 
 
@@ -7637,6 +7638,12 @@ in the saved playlists folder.</p>
 		</td>
 	</tr>
 	<tr>
+		<td>alarmData</td>
+		<td>
+			If set to a truthy value will return information about the next upcoming alarm.
+		</td>
+	</tr>
+	<tr>
 		<td>
 			subscribe
 		</td>
@@ -7761,6 +7768,31 @@ in the saved playlists folder.</p>
 		<td>
 			A flag telling whether the player isn't actually playing, but still waiting for data or something.
 		</td>
+	</tr>
+	<tr>
+		<td>alarm_state</td>
+		<td>
+			One of 'active' (means alarm currently going off),
+			'set' (alarm set to go off in next 24h on this player),
+			'none' (no alarm set to go off in next 24h on this player),
+			'snooze' (alarm is active but currently snoozing).
+		</td>
+	</tr>
+	<tr>
+		<td>alarm_next</td>
+		<td>Epochtime seconds when the next alarm within the next 24h is due.</td>
+	</tr>
+	<tr>
+		<td>alarm_days</td>
+		<td>A list of 0 or 1, for the days on which the alarm is set (0=Sunday).</td>
+	</tr>
+	<tr>
+		<td>alarm_snooze_seconds</td>
+		<td>The snooze duration for the upcoming alarm.</td>
+	</tr>
+	<tr>
+		<td>alarm_timeout_seconds</td>
+		<td>The alarm timeout for the upcoming alarm.</td>
 	</tr>
 	<tr>
 		<td>
