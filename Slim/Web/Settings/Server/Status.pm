@@ -55,7 +55,6 @@ sub handler {
 	$paramRef->{logs}    = _extractGroup($paramRef, cstring($client, 'SETUP_DEBUG_SERVER_LOG'));
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
-	$paramRef->{'radioNeedsFakeVersion'} = Slim::Networking::Discovery->needsFakeVersion;
 
 	if (Slim::Schema::hasLibrary()) {
 		# skeleton for the progress update

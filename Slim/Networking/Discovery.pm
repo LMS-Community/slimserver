@@ -125,17 +125,11 @@ my %TLVhandlers = (
 	'JVID' => sub { main::INFOLOG && $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
 );
 
+# We used to signal a Radio version 7 when connecting to early LMS 8.
+# But we're now working around that limitation in the Radio's firmware.
+# We're no longer warning about a potential incompatibility - it was
+# causing too much confusion. Simply fake a compatible version number.
 sub getFakeVersion {
-	if (!$needsFakeVersion) {
-		my $model = shift;
-		$log->warn(qq(
-You're using a SB $model with a buggy firmware not recognizing this version of Logitech Media Server.
-But we'll try to play nice and return a fake version number to work around this limitation...
-
-See https://github.com/Logitech/slimserver/blob/master/README.md#sb-radio-and-logitech-media-server-8.
-));
-	}
-
 	$needsFakeVersion = 1;
 	return RADIO_COMPATIBLE_VERSION;
 }

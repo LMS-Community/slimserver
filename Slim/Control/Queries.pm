@@ -3301,7 +3301,7 @@ sub serverstatusQuery {
 				squeezeplay => 'SqueezePlay'
 			}->{$model} || $model;
 
-			main::INFOLOG && logger('network.protocol')->info("Found outdated SB $model, need to return compatible version string: $ua");
+			main::DEBUGLOG && logger('network.protocol')->debug("Found outdated SB $model, need to return compatible version string: $ua");
 			$request->addResult('version', Slim::Networking::Discovery::getFakeVersion($model));
 		}
 		else {
