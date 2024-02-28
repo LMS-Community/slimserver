@@ -129,8 +129,6 @@ sub handler {
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->get('defeatDestructiveTouchToPlay') unless defined $paramRef->{'defeatDestructiveTouchToPlay'};
 	}
 
-	$paramRef->{'radioNeedsFakeVersion'} = $client->model(1) eq 'baby' && Slim::Networking::Discovery->needsFakeVersion;
-
 	my $page = $class->SUPER::handler($client, $paramRef);
 
 	if ($client && $client->display->isa('Slim::Display::Transporter')) {
