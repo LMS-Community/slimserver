@@ -3060,8 +3060,6 @@ sub searchQuery {
 		my $cols = "me.id, me.$name";
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
 		
-#		$cols .= "'$search' AS search " if $type eq 'work';
-
 		my $sql;
 
 		# we don't have a full text index for genres
@@ -3091,8 +3089,6 @@ sub searchQuery {
 				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
 			}
 			elsif ( $type eq 'work') {
-#				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.composer ';
-#				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
 				$sql .= 'JOIN tracks ON tracks.work = me.id ';
 				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 			}
