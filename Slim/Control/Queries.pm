@@ -5865,7 +5865,7 @@ sub _getTagDataForTracks {
 	if ( main::DEBUGLOG && $sqllog->is_debug ) {
 		$sqllog->debug( "_getTagDataForTracks query: $sql / " . Data::Dump::dump($p) );
 	}
-$log->error("DK sql=$sql");
+
 	my $sth = $dbh->prepare_cached($sql);
 	$sth->execute( @{$p} );
 
@@ -5914,7 +5914,6 @@ $log->error("DK sql=$sql");
 
 		push @resultOrder, $id;
 	}
-$log->error("DK results=" . Data::Dump::dump(%results));
 
 	# For tag A/S we have to run 1 additional query
 	if ( $tags =~ /[AS]/ ) {
