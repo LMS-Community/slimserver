@@ -873,7 +873,7 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
-				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' );
+				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.subtitle' );
 			}
 		}
 
@@ -881,7 +881,7 @@ sub _objForDbUrl {
 		$params->{prefetch} = [];
 		foreach (keys %$query) {
 			if (/^(.*)\./) {
-				push @{ $params->{prefetch} }, $1 unless ( $1 eq 'composer' || $1 eq 'work' );
+				push @{ $params->{prefetch} }, $1 unless ( $1 eq 'composer' || $1 eq 'work' || $1 eq 'track' );
 			}
 		}
 

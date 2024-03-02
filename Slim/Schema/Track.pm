@@ -29,7 +29,7 @@ our @allColumns = (qw(
 	timestamp added_time updated_time filesize disc remote audio audio_size audio_offset year secs
 	cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable dlna_profile
-	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual work
+	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual work subtitle
 ));
 
 {

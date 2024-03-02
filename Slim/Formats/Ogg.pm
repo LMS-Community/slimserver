@@ -52,6 +52,7 @@ my %tagMapping = (
 	'DESCRIPTION'               => 'COMMENT',
 	'WORK'                      => 'WORK',
 	'GROUPING'                  => 'WORK',
+	'SUBTITLE'                  => 'SUBTITLE',
 
 	# J.River once again.. can't these people use existing standards?
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',

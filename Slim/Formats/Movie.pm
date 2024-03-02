@@ -39,6 +39,9 @@ my %tagMapping = (
 	WRT  => 'COMPOSER',
 	WRK  => 'WORK',
 	GRP  => 'WORK',
+	'----:com.apple.iTunes:SUBTITLE' => 'SUBTITLE',
+	'SUBTITLE' => 'SUBTITLE',
+	
 
 	'MusicBrainz Album Id'     => 'MUSICBRAINZ_ALBUM_ID',
 	'MusicBrainz Album Type'   => 'RELEASETYPE',

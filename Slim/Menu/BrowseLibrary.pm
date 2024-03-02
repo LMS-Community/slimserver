@@ -724,7 +724,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1511,23 +1511,27 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
-				$_->{'name'}          .= $_->{'work_id'} ? $_->{'work_name'} . ' (' . cstring($client,'FROM') . ' ' : '';
+				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
+				if ( $_->{'work_id'} ) {
+					$_->{'name'} .= $_->{'work_name'} . ' (';
+					$_->{'name'} .= "$_->{'track_subtitle'} " if $_->{'track_subtitle'};
+					$_->{'name'} .= cstring($client,'FROM') . ' ';
+				}
 				$_->{'name'}          .= $_->{'album'};
-				$_->{'name'}          .= $_->{'work_id'} ? ')' : '';
+				$_->{'name'}          .= ')' if $_->{'work_id'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}, "subtitle:" . $_->{'track_subtitle'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
 				# the favorites url is the album title and contributor name here (or extid for online albums)
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
 				my $favoritesUrl = $_->{'work_id'}
-					? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s', 
+					? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.subtitle=%s',
 						URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}),
-						URI::Escape::uri_escape_utf8($_->{'work_name'}), URI::Escape::uri_escape_utf8($_->{'composer'}))
+						URI::Escape::uri_escape_utf8($_->{'work_name'}), URI::Escape::uri_escape_utf8($_->{'composer'}), URI::Escape::uri_escape_utf8($_->{'track_subtitle'}))
 					: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
 				$_->{'favorites_url'} = $_->{'extid'} || $favoritesUrl;
 
@@ -1562,7 +1566,6 @@ sub _albums {
 			my $extra;
 			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
-
 				if ($params->{artist_id}) {
 					$extra = [ grep { $_ } map {
 						$_->($params->{artist_id});
@@ -1570,7 +1573,7 @@ sub _albums {
 				}
 
 				my %actions = $remote_library ? (
-					commonVariables	=> [album_id => 'id'],
+					commonVariables	=> [album_id => 'id', subtitle => 'track_subtitle'],
 				) : (
 					allAvailableActionsDefined => 1,
 					info => {
@@ -1661,10 +1664,10 @@ sub _albums {
 
 			my $params = _tagsToParams(\@searchTags);
 			my %actions = $remote_library ? (
-				commonVariables	=> [album_id => 'id'],
+				commonVariables	=> [album_id => 'id', subtitle => 'track_subtitle'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [album_id => 'id'],
+				commonVariables	=> [album_id => 'id', subtitle => 'track_subtitle'],
 				info => {
 					command     => ['albuminfo', 'items'],
 					fixedParams => $params,

@@ -1844,7 +1844,6 @@ sub playlistZapCommand {
 
 sub playlistcontrolCommand {
 	my $request = shift;
-
 	main::INFOLOG && $log->info("Begin Function");
 
 	# check this is the correct command.
@@ -1991,6 +1990,10 @@ sub playlistcontrolCommand {
 
 		if (defined (my $album_id = $request->getParam('album_id'))) {
 			$criteria->{'album'} = [ '=' => $album_id ];
+		}
+
+		if (defined (my $subtitle = $request->getParam('subtitle'))) {
+			$criteria->{'subtitle'} = [ '=' => $subtitle ];
 		}
 
 		@tracks = Slim::Schema->search('Track', $criteria)->all;
@@ -3357,6 +3360,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 					$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
 				}
 
+			} elsif ( $key eq 'me.subtitle' ) {
+
+				$find{$key} = $value;
+
 			} else {
 
 				$find{$key} = Slim::Utils::Text::ignoreCase($value, 1);
@@ -3554,6 +3561,9 @@ sub _playlistXtracksCommand_parseDbItem {
 				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
 					$classes{$class} = -1;
 				}
+				elsif ( $class eq 'Track' && $key eq 'subtitle' ) {
+					$classes{$class} = $value;
+				}
 				# album favorites need to be filtered by contributor, too
 				elsif ($class eq 'Contributor' && (my $albumObj = $classes{Album})) {
 					my $lcClass = lc($class);
@@ -3610,8 +3620,13 @@ sub _playlistXtracksCommand_parseDbItem {
 		$terms .= sprintf( 'librarytracks.library=%d', $classes{LibraryTracks} );
 	}
 
+	if ( $classes{Track} ) {
+		$terms .= "&" if ( $terms ne "" );
+		$terms .= sprintf( 'track.subtitle=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
+	}
+
 	if ( $terms ne "" ) {
-			return _playlistXtracksCommand_parseSearchTerms($client, $terms);
+		return _playlistXtracksCommand_parseSearchTerms($client, $terms);
 	}
 	else {
 		return ();
