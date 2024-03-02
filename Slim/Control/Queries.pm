@@ -3742,8 +3742,7 @@ sub statusQuery {
 		$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
 	}
 
-	# give a count in menu mode no matter what
-	if ($menuMode) {
+	if ($menuMode || $request->getParam('alarmData')) {
 		# send information about the alarm state to SP
 		my $alarmNext    = Slim::Utils::Alarm->alarmInNextDay($client);
 		my $alarmComing  = $alarmNext ? 'set' : 'none';
@@ -3751,7 +3750,7 @@ sub statusQuery {
 		# alarm_state
 		# 'active': means alarm currently going off
 		# 'set':    alarm set to go off in next 24h on this player
-		# 'none':   alarm set to go off in next 24h on this player
+		# 'none':   no alarm set to go off in next 24h on this player
 		# 'snooze': alarm is active but currently snoozing
 		if (defined($alarmCurrent)) {
 			my $snoozing     = $alarmCurrent->snoozeActive();
@@ -3797,7 +3796,9 @@ sub statusQuery {
 		# send client pref for alarm timeout
 		my $alarm_timeout_seconds = $prefs->client($client)->get('alarmTimeoutSeconds');
 		$request->addResult('alarm_timeout_seconds', defined $alarm_timeout_seconds ? $alarm_timeout_seconds + 0 : 300);
+	}
 
+	if ($menuMode) {
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
 		my $presetLoop;
