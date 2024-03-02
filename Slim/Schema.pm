@@ -1476,6 +1476,7 @@ sub _createWork {
 		}
 
 		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $work );
+		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg; 
 		my $titlesearch = Slim::Utils::Text::ignoreCase($work, 1);
 
 		my $sth = $dbh->prepare_cached('SELECT id FROM works WHERE titlesearch = ? AND composer = ?');
