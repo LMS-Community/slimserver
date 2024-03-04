@@ -58,8 +58,9 @@ my %tagMapping = (
 	'ORIGINALYEAR'              => 'YEAR',
 	'UNSYNCEDLYRICS'            => "LYRICS",
 	'WORK'                      => 'WORK',
-	'GROUPING'                  => 'WORK',
+	'GROUPING'                  => 'GROUPING',
 	'SUBTITLE'                  => 'SUBTITLE',
+	'WORKSORT'                  => 'WORKSORT',
 
 	# J.River once again.. can't these people use existing standards?
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',
@@ -71,7 +72,7 @@ my %tagMapping = (
 	'TOTALDISCS'                => 'DISCC',
 );
 
-my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE GENRE WORK SUBTITLE));
+my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE GENRE WORK SUBTITLE GROUPING WORKSORT));
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
@@ -96,9 +97,6 @@ sub getTag {
 	my $s = Audio::Scan->scan($file);
 
 	return unless $s->{info}->{samplerate};
-
-	# Delete GROUPING tag if WORK tag exists
-	delete $s->{tags}->{GROUPING} if exists $s->{tags}->{GROUPING} && exists $s->{tags}->{WORK};
 
 	my $tags = $class->_getStandardTag($s);
 

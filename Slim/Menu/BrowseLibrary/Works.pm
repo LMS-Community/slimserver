@@ -33,7 +33,7 @@ sub _works {
 
 			foreach (@$items) {
 #				$_->{'name'}          = (grep /artist_id/ , @searchTags) ? $_->{'composer'}."\n".$_->{'work'} : $_->{'work'}."\n".$_->{'composer'};
-				$_->{'name'}          = (grep /artist_id/ , @searchTags) ? $_->{'composer'}."\n".$_->{'work'} : $_->{'composer'}."\n".$_->{'work'};
+				$_->{'name'}          = $_->{'composer'}."\n".$_->{'work'};
 				$_->{'name2'}         = $_->{'composer'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;

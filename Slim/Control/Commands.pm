@@ -1844,6 +1844,7 @@ sub playlistZapCommand {
 
 sub playlistcontrolCommand {
 	my $request = shift;
+
 	main::INFOLOG && $log->info("Begin Function");
 
 	# check this is the correct command.
@@ -1992,8 +1993,8 @@ sub playlistcontrolCommand {
 			$criteria->{'album'} = [ '=' => $album_id ];
 		}
 
-		if (defined (my $subtitle = $request->getParam('subtitle'))) {
-			$criteria->{'subtitle'} = [ '=' => $subtitle ];
+		if (defined (my $grouping = $request->getParam('grouping'))) {
+			$criteria->{'grouping'} = [ '=' => $grouping ];
 		}
 
 		@tracks = Slim::Schema->search('Track', $criteria)->all;
@@ -3360,7 +3361,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 					$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
 				}
 
-			} elsif ( $key eq 'me.subtitle' ) {
+			} elsif ( $key eq 'me.grouping' ) {
 
 				$find{$key} = $value;
 
@@ -3561,7 +3562,7 @@ sub _playlistXtracksCommand_parseDbItem {
 				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
 					$classes{$class} = -1;
 				}
-				elsif ( $class eq 'Track' && $key eq 'subtitle' ) {
+				elsif ( $class eq 'Track' && $key eq 'grouping' ) {
 					$classes{$class} = $value;
 				}
 				# album favorites need to be filtered by contributor, too
@@ -3622,7 +3623,7 @@ sub _playlistXtracksCommand_parseDbItem {
 
 	if ( $classes{Track} ) {
 		$terms .= "&" if ( $terms ne "" );
-		$terms .= sprintf( 'track.subtitle=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
+		$terms .= sprintf( 'track.grouping=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
 	}
 
 	if ( $terms ne "" ) {

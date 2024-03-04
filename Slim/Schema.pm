@@ -873,7 +873,7 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
-				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.subtitle' );
+				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.grouping' );
 			}
 		}
 
@@ -1460,7 +1460,7 @@ sub _createComments {
 }
 
 sub _createWork {
-	my ($self, $work, $composerID, $create) = @_;
+	my ($self, $work, $workSort, $composerID, $create) = @_;
 
 	if ( $work ) {
 		# Using native DBI here to improve performance during scanning
@@ -1475,8 +1475,8 @@ sub _createWork {
 #			$sth_delete->execute( $trackId );
 		}
 
-		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $work );
-		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg; 
+		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $workSort || $work );
+		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg unless $workSort; #Use the WORKSORT tag as is if provided, otherwise zero-pad numbers. 
 		my $titlesearch = Slim::Utils::Text::ignoreCase($work, 1);
 
 		my $sth = $dbh->prepare_cached('SELECT id FROM works WHERE titlesearch = ? AND composer = ?');
@@ -1745,7 +1745,7 @@ sub _newTrack {
 	}
 
 	### Create Work rows
-	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $contributors->{'COMPOSER'}->[0], 1);
+	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
@@ -2768,7 +2768,7 @@ sub _preCheckAttributes {
 		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
-		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID WORK
+		ALBUMARTISTSORT COMPOSERSORT CONDUCTORSORT BANDSORT ALBUM_EXTID ARTIST_EXTID WORK WORKSORT
 	)) {
 
 		next unless defined $attributes->{$tag};
@@ -2981,7 +2981,7 @@ sub _postCheckAttributes {
 
 	#Work
 	if (defined $attributes->{'WORK'}) {
-		my $workID = $self->_createWork($attributes->{'WORK'}, $contributors->{'COMPOSER'}->[0], 1);
+		my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 		if ($workID) {
 			$track->work($workID);
 		}

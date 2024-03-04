@@ -37,7 +37,7 @@ use Audio::Scan;
 my %tagMapping = (
 	'TRACK'	       => 'TRACKNUM',
 	'WORK'         => 'WORK',
-	'GROUPING'     => 'WORK',
+	'GROUPING'     => 'GROUPING',
 	'DATE'         => 'YEAR',
 	'BPM'          => 'BPM',
 	'DISCNUMBER'   => 'DISC',
@@ -52,9 +52,6 @@ sub getTag {
 	my $file  = shift || return {};
 	
 	my $s = Audio::Scan->scan($file);
-
-	# Delete GROUPING tag if WORK tag exists
-	delete $s->{tags}->{GROUPING} if exists $s->{tags}->{GROUPING} && exists $s->{tags}->{WORK};
 
 	my $info = $s->{info};
 	my $tags = $s->{tags};

@@ -72,7 +72,7 @@ my %tagMapping = (
 	YTCP => "COMPILATION", # non-standard v2.3 frame
 	TCON => "GENRE",
 	TIT1 => "WORK",
-	GRP1 => "WORK",
+	GRP1 => "GROUPING",
 	TIT2 => "TITLE",
 	TIT3 => "SUBTITLE",
 	TPE1 => "ARTIST",
@@ -116,7 +116,7 @@ sub getTag {
 
 	if ( exists $s->{tags}->{GRP1} ) {
 		$s->{tags}->{GRP1} =~ s/\x0//g; # scanner is returning leading null in GRP1 tag, which messes things up.
-		delete $s->{tags}->{GRP1} if exists $s->{tags}->{TIT1}; #forget GRP1 if we've got a TIT1
+#		delete $s->{tags}->{GRP1} if exists $s->{tags}->{TIT1}; #forget GRP1 if we've got a TIT1
 	}
 	my $info = $s->{info};
 	my $tags = $s->{tags};

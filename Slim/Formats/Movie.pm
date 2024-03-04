@@ -38,7 +38,7 @@ my %tagMapping = (
 	TRKN => 'TRACKNUM',
 	WRT  => 'COMPOSER',
 	WRK  => 'WORK',
-	GRP  => 'WORK',
+	GRP  => 'GROUPING',
 	'----:com.apple.iTunes:SUBTITLE' => 'SUBTITLE',
 	'SUBTITLE' => 'SUBTITLE',
 	
@@ -58,9 +58,6 @@ sub getTag {
 	my $file  = shift || return {};
 
 	my $s = Audio::Scan->scan( $file );
-
-	# Delete GRP (GROUPING) tag if WRK (WORK) tag exists
-	delete $s->{tags}->{GRP} if exists $s->{tags}->{GRP} && exists $s->{tags}->{WRK};
 
 	my $info = $s->{info};
 	my $tags = $s->{tags};

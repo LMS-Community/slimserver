@@ -518,7 +518,7 @@ sub albumsQuery {
 			$c->{'tracks.work'} = 1;
 			$c->{'works.title'} = 1;
 			$c->{'composer.name'} = 1;
-			$c->{'tracks.subtitle'} = 1;
+			$c->{'tracks.grouping'} = 1;
 		}
 
 		if (defined $genreID) {
@@ -616,7 +616,7 @@ sub albumsQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	$sql .= $work ? "GROUP BY tracks.subtitle, albums.id " : "GROUP BY albums.id ";
+	$sql .= $work ? "GROUP BY tracks.grouping, albums.id " : "GROUP BY albums.id ";
 
 	if ($page_key && $tags =~ /Z/) {
 		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " ORDER BY $order_by", $p));
@@ -773,12 +773,12 @@ sub albumsQuery {
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
-			utf8::decode( $c->{'tracks.subtitle'} ) if exists $c->{'tracks.subtitle'};
+			utf8::decode( $c->{'tracks.grouping'} ) if exists $c->{'tracks.grouping'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
-			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'track_subtitle', $c->{'tracks.subtitle'});
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -4240,7 +4240,7 @@ sub titlesQuery {
 	my $releaseType   = $request->getParam('release_type');
 	my $workID        = $request->getParam('work_id');
 	my $ignoreWorkTracks = $request->getParam('ignore_work_tracks');
-	my $subtitle      = $request->getParam('subtitle');
+	my $grouping      = $request->getParam('grouping');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4294,7 +4294,7 @@ sub titlesQuery {
 		releaseType   => $releaseType,
 		workId	      => $workID,
 		libraryId     => $libraryID,
-		subtitle      => $subtitle,
+		grouping      => $grouping,
 		limit         => sub {
 			$count = shift;
 
@@ -5070,7 +5070,7 @@ sub _songDataFromHash {
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
 	$returnHash{work} = $res->{'works.title'};
-	$returnHash{subtitle} = $res->{'tracks.subtitle'};
+	$returnHash{grouping} = $res->{'tracks.grouping'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5511,7 +5511,7 @@ sub _getTagDataForTracks {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	my $sql      = 'SELECT %s FROM tracks LEFT JOIN works ON works.id = tracks.work ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1, 'tracks.subtitle' => 1 };
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1, 'tracks.grouping' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -5597,9 +5597,9 @@ sub _getTagDataForTracks {
 		push @{$p}, $workId;
 	}
 
-	if ( my $subtitle = $args->{subtitle} ) {
-		push @{$w}, 'tracks.subtitle = ?';
-		push @{$p}, $subtitle;
+	if ( my $grouping = $args->{grouping} ) {
+		push @{$w}, 'tracks.grouping = ?';
+		push @{$p}, $grouping;
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {
@@ -5894,7 +5894,7 @@ sub _getTagDataForTracks {
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
-			utf8::decode( $c->{'tracks.subtitle'} ) if exists $c->{'tracks.subtitle'};
+			utf8::decode( $c->{'tracks.grouping'} ) if exists $c->{'tracks.grouping'};
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
