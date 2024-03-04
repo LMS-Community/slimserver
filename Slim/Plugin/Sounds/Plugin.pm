@@ -105,6 +105,7 @@ my $menus = {
 		TRAFFIC               => 'effects/traffic.mp3',
 		WIND_CHIME_FLOURISH   => 'effects/wind_chime_flourish.mp3',
 		WIND_CHIME            => 'effects/wind_chime.mp3',
+		ALARM_BUZZER          => 'html/slim-backup-alarm.mp3',
 	},
 };
 
@@ -219,6 +220,8 @@ sub getStreamUrl {
 	}
 
 	my $serverURL = "http://$auth" . Slim::Utils::Network::serverAddr() . ':' . $serverPrefs->get('httpport');
+
+	return "$serverURL/$url" if $url =~ /^html/;
 
 	return "$serverURL/" . BASE_AUDIO_PATH . $url;
 }
