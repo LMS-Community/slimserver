@@ -5595,13 +5595,12 @@ sub _getTagDataForTracks {
 	if ( my $workId = $args->{workId} ) {
 		push @{$w}, 'tracks.work = ?';
 		push @{$p}, $workId;
-	}
-
-	if ( my $grouping = $args->{grouping} ) {
-		push @{$w}, 'tracks.grouping = ?';
-		push @{$p}, $grouping;
-	} elsif ( exists $args->{grouping} ) {
-		push @{$w}, 'tracks.grouping IS NULL';
+		if ( my $grouping = $args->{grouping} ) {
+			push @{$w}, 'tracks.grouping = ?';
+			push @{$p}, $grouping;
+		} elsif ( exists $args->{grouping} ) {
+			push @{$w}, 'tracks.grouping IS NULL';
+		}
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {
