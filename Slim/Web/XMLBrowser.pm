@@ -998,6 +998,8 @@ sub handleFeed {
 			if ($stash->{'action'} eq 'favadd') {
 
 				my $type = $item->{'favorites_type'} || $item->{'type'} || 'link';
+				my $name = $item->{'favorites_title'} || $item->{'name'};
+				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl);
 
 				if ( $item->{'play'}
 				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)
@@ -1007,11 +1009,11 @@ sub handleFeed {
 
 				$favs->add(
 					$furl,
-					$item->{'name'},
+					$name,
 					$type,
 					$item->{'parser'},
 					1,
-					proxiedImage($item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl))
+					proxiedImage($icon)
 				);
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $furl );

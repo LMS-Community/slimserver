@@ -1915,7 +1915,7 @@ sub _favoritesParams {
 	my $item = shift;
 
 	my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
-	my $favorites_title  = $item->{title} || $item->{name};
+	my $favorites_title  = $item->{favorites_title} || $item->{title} || $item->{name};
 
 	if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
 		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} && !ref $item->{playlist}) {
@@ -1929,7 +1929,7 @@ sub _favoritesParams {
 		);
 		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
 
-		if (my $icon = $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
+		if (my $icon = $item->{favorites_icon} || $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
 			$presetParams{'icon'} = $icon;
 		}
 
