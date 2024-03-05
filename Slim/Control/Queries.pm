@@ -5600,6 +5600,8 @@ sub _getTagDataForTracks {
 	if ( my $grouping = $args->{grouping} ) {
 		push @{$w}, 'tracks.grouping = ?';
 		push @{$p}, $grouping;
+	} elsif ( exists $args->{grouping} ) {
+		push @{$w}, 'tracks.grouping IS NULL';
 	}
 
 	if ( my $libraryId = $args->{libraryId} ) {
