@@ -1795,6 +1795,8 @@ sub _tracks {
 					delete $_->{'artwork_track_id'};
 					$_->{'playall'} = 1;
 				}
+
+				$_->{'favorites_url'} = $_->{'url'};
 			}
 
 			my $params = _tagsToParams(\@searchTags);
