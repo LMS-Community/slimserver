@@ -492,7 +492,10 @@ sub newsongCallback {
 	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
 	my @ignoreGenres  = split(/\s*,\s*/, $prefs->get('ignoreGenres'));
 
-	if ( (scalar @ignoreGenres && $track->genre && grep { $track->genre->name =~ /\Q$_\E/i } @ignoreGenres )
+
+	my $genre = ($track->genre && ref $track->genre ? $track->genre->name : $track->genre) || $meta->{genre};
+
+	if ( (scalar @ignoreGenres && $genre && grep { $genre =~ /\Q$_\E/i } @ignoreGenres )
 		|| (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
 		|| (scalar @ignoreArtists && grep { ($track->artistName || $meta->{artist} || '') =~ /\Q$_\E/i } @ignoreArtists)
 		|| (scalar @ignoreAlbums && grep { ($track->albumname || $meta->{album} || '') =~ /\Q$_\E/i } @ignoreAlbums)
