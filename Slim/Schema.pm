@@ -1953,7 +1953,8 @@ sub updateOrCreateBase {
 
 			$key = lc($key);
 
-			if (defined $val && $val ne '' && exists $trackAttrs->{$key}) {
+			## Need to set grouping to null if no value passed in (may have had a value before this scan)
+			if ( (defined $val && $val ne '' || $key eq "grouping") && exists $trackAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
@@ -2799,6 +2800,13 @@ sub _preCheckAttributes {
 		$attributes->{'ALBUMNAME'} = $deferredAttributes->{'ALBUM'} if $deferredAttributes->{'ALBUM'};
 
 		# XXX maybe also want COMMENT & GENRE
+	}
+
+	# set Grouping attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
+	if ( !exists($attributes->{'GROUPING'}) || length($attributes->{'GROUPING'} =~ s/^\s+|\s+$//gr) == 0 ) {
+		$attributes->{'GROUPING'} = undef;
+	} else {
+		$attributes->{'GROUPING'} =~ s/^\s+|\s+$//g;
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
