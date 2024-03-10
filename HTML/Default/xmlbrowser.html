@@ -166,8 +166,8 @@ useSpecialExt="-browse" %]
 
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[% IF item.type == 'audio' && item.favorites_url %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
+				[% IF item.type == 'audio' && item.url %]
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
 				[% ELSIF songinfo.favorites %]
 				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 				[% ELSIF item.simpleAlbumLink && item.favorites_url %]
@@ -178,8 +178,8 @@ useSpecialExt="-browse" %]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[% IF item.type == 'audio' && item.favorites_url %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
+				[% IF item.type == 'audio' && item.url %]
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
 				[% ELSIF songinfo.favorites %]
 				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html %]');"
 				[% ELSE %]
