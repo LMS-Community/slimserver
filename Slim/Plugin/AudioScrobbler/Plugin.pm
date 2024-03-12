@@ -21,6 +21,8 @@ package Slim::Plugin::AudioScrobbler::Plugin;
 # If not yet at the time (maybe they paused), recalc and set the timer again
 # If time has passed, great, submit it
 
+# https://www.last.fm/api/submissions
+
 # Thanks to the SlimScrobbler plugin for inspiration and feature ideas.
 # http://slimscrobbler.sourceforge.net/
 
@@ -38,11 +40,10 @@ if ( main::WEBUI ) {
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Strings qw(string);
+use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Timers;
 
 use Digest::MD5 qw(md5_hex);
-use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
@@ -56,6 +57,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
 use constant CLIENT_ID     => 'ss7';
 use constant CLIENT_VER    => 'sc' . $::VERSION;
+
+my $loveHandler;
 
 sub getDisplayName {
 	return 'PLUGIN_AUDIOSCROBBLER_MODULE_NAME';
@@ -100,6 +103,25 @@ sub initPlugin {
 		my $client = $_[2] || return;
 		changeAccount( $client, $value );
 	}, 'account' );
+}
+
+# to be used by 3rd party plugins providing this feature
+sub registerLoveHandler {
+	$loveHandler = shift;
+
+	# Track Info item for loving tracks
+	if ($loveHandler) {
+		main::INFOLOG && $log->is_info && $log->info("Got a Last.fm handler registration.");
+
+		Slim::Menu::TrackInfo->registerInfoProvider( lfm_love => (
+			before => 'top',
+			func   => \&infoLoveTrack,
+		) );
+
+		# A way for other things to notify us the user loves a track
+		Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
+			[0, 1, 1, \&loveTrack]);
+	}
 }
 
 sub shutdownPlugin {
@@ -316,13 +338,13 @@ sub _handshakeOK {
 		}
 	}
 	elsif ( $content =~ /^BANNED/ ) {
-		$error = string('PLUGIN_AUDIOSCROBBLER_BANNED');
+		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BANNED');
 	}
 	elsif ( $content =~ /^BADAUTH/ ) {
-		$error = string('PLUGIN_AUDIOSCROBBLER_BADAUTH');
+		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BADAUTH');
 	}
 	elsif ( $content =~ /^BADTIME/ ) {
-		$error = string('PLUGIN_AUDIOSCROBBLER_BADTIME');
+		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BADTIME');
 	}
 	else {
 		# Other error that requires a retry
@@ -739,12 +761,17 @@ sub checkScrobble {
 		l    => ( $meta->{duration} ? int( $meta->{duration} ) : '' ),
 		b    => uri_escape_utf8( $meta->{album} ),
 		n    => $meta->{tracknum},
-		m    => ( $track->musicbrainz_id || '' ),
+		'm'  => ( $track->musicbrainz_id || '' ),
 	};
 
 	setQueue( $client, $queue );
 
-	#warn "Queue is now: " . Data::Dump::dump($queue) . "\n";
+	# If the URL wasn't a Last.fm station and the user loved the track, report the Love
+	if ( $loveHandler && $rating && $rating eq 'L' && $cururl ) {
+		submitLoveTrack( $client, $queue->[-1] );
+	}
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Queue is now: " . Data::Dump::dump($queue));
 
 	# Scrobble in $checktime seconds, the reason for this delay is so we can report
 	# thumbs up/down status.  The reason for the extra 10 seconds is so if there is a
@@ -910,6 +937,10 @@ sub _getMetadata {
 
 	$url ||= $track->url;
 
+	$track = Slim::Schema->objectForUrl( { url => $url } ) if $url && !ref $track;
+
+	return unless ref $track;
+
 	my $meta = {
 		artist   => $track->artistName || '',
 		album    => ($track->album && $track->album->get_column('title')) || '',
@@ -1022,6 +1053,42 @@ sub _submitScrobbleError {
 	);
 }
 
+sub loveTrack { if ($loveHandler) {
+	my $request = shift;
+	my $client  = $request->client || return;
+	my $url     = $request->getParam('_url');
+
+	# Ignore if not Scrobbling
+	return if !$prefs->client($client)->get('account');
+
+	return unless $prefs->get('enable_scrobbling');
+
+	main::DEBUGLOG && $log->debug( "Loved: $url" );
+
+	# Look through the queue and update the item we want to love
+	my $queue = getQueue($client);
+
+	if ( my ($item) = grep { $_->{_url} eq $url } @$queue ) {
+		submitLoveTrack( $client, $item );
+		return 1;
+	}
+
+	# The track wasn't already in the queue, they probably rated the track
+	# before getting halfway through.  Call checkScrobble with a checktime
+	# of 0 to force it to be added to the queue with the rating of L
+	my $track = Slim::Schema->objectForUrl( { url => $url } );
+
+	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+
+	checkScrobble( $client, $track, 0, 'L' );
+
+	return 1;
+} }
+
+sub submitLoveTrack { if ($loveHandler) {
+	$loveHandler->(@_);
+} }
+
 # Return whether or not the given track will be scrobbled
 sub canScrobble {
 	my ( $class, $client, $track ) = @_;
@@ -1079,6 +1146,44 @@ sub setQueue {
 
 	$prefs->client($client)->set( queue => $queue );
 }
+
+sub infoLoveTrack { if ($loveHandler) {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+
+	return unless $client;
+
+	# Ignore if the current track can't be scrobbled
+	if ( !__PACKAGE__->canScrobble( $client, $track ) ) {
+		return;
+	}
+
+	# Ignore if this track isn't currently playing, you can only love
+	# something that is playing and being scrobbled
+	if ( $track->url ne Slim::Player::Playlist::url($client) ) {
+		return;
+	}
+
+	return {
+		type        => 'link',
+		name        => $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'),
+		url         => \&infoLoveTrackSubmit,
+		passthrough => [ $url ],
+		favorites   => 0,
+	};
+} }
+
+sub infoLoveTrackSubmit { if ($loveHandler) {
+	my ( $client, $callback, undef, $url ) = @_;
+
+	$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
+
+	$callback->( {
+		type        => 'text',
+		name        => $client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
+		showBriefly => 0,
+		favorites   => 0,
+	} );
+} }
 
 sub jiveSettings {
 
