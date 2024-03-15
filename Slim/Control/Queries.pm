@@ -4486,9 +4486,9 @@ sub worksQuery {
 	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
+	my $tags          = $request->getParam('tags');
 	my $search        = $request->getParam('search');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
-	my $hasAlbums     = $request->getParam('hasAlbums');
 	my $artistID      = $request->getParam('artist_id');
 	my $workID        = $request->getParam('work_id');
 
@@ -4497,12 +4497,16 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $sql = "SELECT DISTINCT works.title, works.id, composer.name, composer.id FROM tracks 
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
+
+	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
 		JOIN contributors composer ON composer.id = composer_track.contributor 
 		JOIN contributor_track ON contributor_track.track = tracks.id 
 		JOIN contributors ON contributors.id = contributor_track.contributor 
-		JOIN works ON works.id = tracks.work AND works.composer = composer.id ";
+		JOIN works ON works.id = tracks.work AND works.composer = composer.id ';
+
+	my $page_key = "SUBSTR(composer.namesort,1,1)";
 
 	if (specified($search)) {
 		if ( Slim::Schema->canFulltextSearch ) {
@@ -4547,7 +4551,22 @@ sub worksQuery {
 		$sql .= ' ';
 	}
 
+	$sql .= " GROUP BY $columns ";
+
+	my $order_by = "ORDER BY composer.namesort, works.titlesort";
+
 	my $dbh = Slim::Schema->dbh;
+
+	if ($page_key && $tags =~ /Z/) {
+		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " $order_by", $p));
+
+		if ($tags =~ /ZZ/) {
+			$request->setStatusDone();
+			return
+		}
+	}
+
+	$sql = sprintf($sql, $columns);
 
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
@@ -4564,7 +4583,7 @@ sub worksQuery {
 	}
 
 #	$sql .= $artistID ?  "ORDER BY composer.namesort, works.titlesort" : "ORDER BY works.titlesort, composer.namesort";
-	$sql .= "ORDER BY composer.namesort, works.titlesort";
+	$sql .= $order_by;
 
 	# now build the result
 
@@ -4594,8 +4613,8 @@ sub worksQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $workId, $composer, $composerId);
-		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId);
+		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort );
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort);
 
 		while ( $sth->fetch ) {
 			#$id += 0;
@@ -4607,6 +4626,11 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
 #			$request->addResultLoop($loopname, $chunkCount, 'year', $year);
 #			$request->addResultLoop($loopname, $chunkCount, 'from_search', $search) if $search;
+
+			my $textKey;
+			utf8::decode( $nameSort ) if $nameSort;
+			$textKey = substr $nameSort, 0, 1;
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 
 			$chunkCount++;
 

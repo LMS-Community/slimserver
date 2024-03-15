@@ -25,7 +25,7 @@ sub _works {
 	}
 
 	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'works',
-		[ 'hasAlbums:1', @searchTags, ($search ? 'search:' . $search : undef) ],
+		[ @searchTags, ($search ? 'search:' . $search : undef) ],
 		sub {
 			my $results = shift;
 			my $items = $results->{'works_loop'};
@@ -76,6 +76,6 @@ sub _works {
 			$actions{'addall'} = $actions{'add'};
 
 			return {items => $items, actions => \%actions, sorted => 1}, undef;
-		},
+		}, undef, 1,
 	);
 }
