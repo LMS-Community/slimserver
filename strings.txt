@@ -93,19 +93,19 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Logitech - verze 8.5.1
-	DA	© 2001-2024 Logitech - version 8.5.1
-	DE	© 2001-2024 Logitech Version 8.5.1
-	EN	© 2001-2024 Logitech Version 8.5.1
-	ES	© 2001-2024 Logitech Versión 8.5.1
-	FI	© 2001-2024 Logitechin versio 8.5.1
-	FR	© 2001-2024 Logitech Version 8.5.1
-	IT	© 2001-2024 Logitech versione 8.5.1
-	NL	© 2001-2024 Logitech versie 8.5.1
-	NO	© 2001–2023 Logitech versjon 8.5.1
-	PL	© 2001-2024 Logitech wersja 8.5.1
-	RU	© Logitech, 2001-2024. Версия 8.5.1
-	SV	© 2001–2023 Logitech Version 8.5.1
+	CS	© 2001-2024 Logitech - verze 9.0.0
+	DA	© 2001-2024 Logitech - version 9.0.0
+	DE	© 2001-2024 Logitech Version 9.0.0
+	EN	© 2001-2024 Logitech Version 9.0.0
+	ES	© 2001-2024 Logitech Versión 9.0.0
+	FI	© 2001-2024 Logitechin versio 9.0.0
+	FR	© 2001-2024 Logitech Version 9.0.0
+	IT	© 2001-2024 Logitech versione 9.0.0
+	NL	© 2001-2024 Logitech versie 9.0.0
+	NO	© 2001–2023 Logitech versjon 9.0.0
+	PL	© 2001-2024 Logitech wersja 9.0.0
+	RU	© Logitech, 2001-2024. Версия 9.0.0
+	SV	© 2001–2023 Logitech Version 9.0.0
 
 COPYRIGHT_LOGITECH
 	CS	© 2001-2024 Logitech
@@ -123,19 +123,19 @@ COPYRIGHT_LOGITECH
 	SV	© 2001-2024 Logitech
 
 VERSION
-	CS	Verze 8.5.1 / r%s
-	DA	Version 8.5.1 / r%s
-	DE	Version 8.5.1 / r%s
-	EN	Version 8.5.1 / r%s
-	ES	Versión 8.5.1 / r%s
-	FI	Versio 8.5.1 / r%s
-	FR	Version 8.5.1 / r%s
-	IT	Versione 8.5.1/r%s
-	NL	Versie 8.5.1 / r%s
-	NO	Versjon 8.5.1 / r%s
-	PL	Wersja 8.5.1 / r%s
-	RU	Версия 8.5.1 / r%s
-	SV	Version 8.5.1 / r%s
+	CS	Verze 9.0.0 / r%s
+	DA	Version 9.0.0 / r%s
+	DE	Version 9.0.0 / r%s
+	EN	Version 9.0.0 / r%s
+	ES	Versión 9.0.0 / r%s
+	FI	Versio 9.0.0 / r%s
+	FR	Version 9.0.0 / r%s
+	IT	Versione 9.0.0/r%s
+	NL	Versie 9.0.0 / r%s
+	NO	Versjon 9.0.0 / r%s
+	PL	Wersja 9.0.0 / r%s
+	RU	Версия 9.0.0 / r%s
+	SV	Version 9.0.0 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
