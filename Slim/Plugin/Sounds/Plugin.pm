@@ -175,7 +175,7 @@ sub getSortedSounds {
 			$a->{name} cmp $b->{name}
 		} map {
 			my $path = $menus->{$menu->{id}}->{$_};
-			$validPaths{$path} = 1;
+			$validPaths{$path} = string("PLUGIN_SOUNDS_$_");
 			{
 				name    => string("PLUGIN_SOUNDS_$_"),
 				bitrate => 128,
@@ -199,7 +199,7 @@ sub getSortedSounds {
 		delete $menu->{id};
 	}
 
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(\@items));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(\@items, \%validPaths));
 
 	$alarmPlaylists = \@playlistItems;
 	return $soundsMenus = {
@@ -207,6 +207,11 @@ sub getSortedSounds {
 		type  => 'opml',
 		items => \@items
 	};
+}
+
+sub getSoundName {
+	my ($class, $path) = @_;
+	return $validPaths{$path =~ s/^loop:\/\///r};
 }
 
 sub getStreamUrl {

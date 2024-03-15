@@ -45,11 +45,12 @@ sub getNextTrack {
 }
 
 sub getMetadataFor {
-	my $class = shift;
+	my ( $class, $client, $url ) = @_;
 
 	my $icon = Slim::Plugin::Sounds::Plugin->_pluginDataFor('icon');
 
 	return {
+		title    => Slim::Plugin::Sounds::Plugin->getSoundName($url),
 		cover    => $icon,
 		icon     => $icon,
 		bitrate  => '128k CBR',

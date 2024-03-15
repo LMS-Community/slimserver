@@ -1001,7 +1001,7 @@ sub handleFeed {
 				my $name = $item->{'favorites_title'} || $item->{'name'};
 				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl);
 
-				if ( $item->{'play'}
+				if ( ($item->{'play'} && !$item->{'favorites_type'}) 
 				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)
 				) {
 					$type = 'audio';
