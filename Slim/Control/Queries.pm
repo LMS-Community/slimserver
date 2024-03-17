@@ -4491,6 +4491,7 @@ sub worksQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $artistID      = $request->getParam('artist_id');
 	my $workID        = $request->getParam('work_id');
+	my $roleID        = $request->getParam('role_id');
 
 	# get them all by default
 	my $where = {};
@@ -4526,6 +4527,14 @@ sub worksQuery {
 				push @{$w}, 'works.titlesearch LIKE ?';
 				push @{$p}, @{$strings};
 			}
+		}
+	}
+
+	if ( defined $roleID ) {
+		my @roles = split(',', $roleID);
+		if (scalar @roles) {
+			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+			push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
 		}
 	}
 

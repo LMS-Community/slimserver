@@ -32,9 +32,9 @@ sub _works {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-#				$_->{'name'}          = (grep /artist_id/ , @searchTags) ? $_->{'composer'}."\n".$_->{'work'} : $_->{'work'}."\n".$_->{'composer'};
-				$_->{'name'}          = $_->{'composer'}."\n".$_->{'work'};
-				$_->{'name2'}         = $_->{'composer'};
+				$_->{'name'}          = $_->{'composer'};
+				$_->{'name2'}         = $_->{'work'};
+				$_->{'hasMetadata'}   = 'work';
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
