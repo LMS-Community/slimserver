@@ -1754,6 +1754,7 @@ sub _tracks {
 				$_->{'name'}          = $_->{'title'};
 
 				$_->{'type'}          = 'audio';
+				$_->{'db_track'}      = 1;
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
 
