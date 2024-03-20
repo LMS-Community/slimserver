@@ -164,12 +164,13 @@ useSpecialExt="-browse" %]
 			[% END %]
 		[% END %]
 
+		<!-- The songinfo data must be selected when using favs icon from an album summary, a track summary or a list of -->
+		<!-- albums or artists, but never when using a list of tracks. In such case, Web::XMLBrowser must be used to -->
+		<!-- re-drill the tree one level below and execute the add there (see code there) -->
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[% IF item.type == 'audio' && item.url %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
-				[% ELSIF songinfo.favorites %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html | replace("'", "%27") %]');"
+				[% IF songinfo.favorites && item.type != 'audio' %]
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
 				[% ELSIF item.simpleAlbumLink && item.favorites_url %]
 				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
 				[% ELSE %]
@@ -178,10 +179,8 @@ useSpecialExt="-browse" %]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[% IF item.type == 'audio' && item.url %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
-				[% ELSIF songinfo.favorites %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.values.-1 | html | replace("'", "%27") %]');"
+				[% IF songinfo.favorites && item.type != 'audio' %]
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
 				[% ELSE %]
 				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% pageinfo.startitem %]', '[% sess %]');"
 				[% END %]
