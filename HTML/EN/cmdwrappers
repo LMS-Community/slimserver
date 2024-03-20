@@ -263,7 +263,7 @@ END %]
 			END; 
 
 			WRAPPER $linktype noTarget=1;
-				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'SqueezeJS.Utils.'; END %]toggleFavorite(this, '[% (itemobj.url || item.url) | uri  | replace("'", "%27") %]', '[% (item.text || item.title || itemobj.title || item.name) | uri  | replace("'", "%27") %]')"[% END;
+				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'SqueezeJS.Utils.'; END %]toggleFavorite(this, '[% (itemobj.url || item.url) | uri  | replace("'", "%27") %]', '[% (item.text || item.title || itemobj.title || item.name) | uri  | replace("'", "%27") %]', '[% (itemobj.icon || item.icon) | uri  | replace("'", "%27") %]')"[% END;
 			END;
 		END -%]
 [% END %]
