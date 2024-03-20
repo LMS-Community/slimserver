@@ -540,7 +540,7 @@ sub handleFeed {
 			 && !($subFeed->{type} && $subFeed->{type} eq 'search')
 			 && !(ref $subFeed->{'url'}) )
 		) {
-			$subFeed->{'image'} ||= $subFeed->{'cover'} || $subFeed->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
+			$subFeed->{'image'} ||= $subFeed->{'cover'} || $subFeed->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'}, $client);
 			$subFeed->{'image'} = proxiedImage($subFeed->{'image'});
 
 			$stash->{'streaminfo'} = {
@@ -999,9 +999,9 @@ sub handleFeed {
 
 				my $type = $item->{'favorites_type'} || $item->{'type'} || 'link';
 				my $name = $item->{'favorites_title'} || $item->{'name'};
-				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl);
+				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl, $client);
 
-				if ( ($item->{'play'} && !$item->{'favorites_type'}) 
+				if ( ($item->{'play'} && !$item->{'favorites_type'})
 				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)
 				) {
 					$type = 'audio';
