@@ -983,6 +983,8 @@ sub handleFeed {
 				}
 
 				if ($feed->{'favorites_url'} && $favs) {
+					my $icon = $feed->{'favorites_icon'} || $feed->{'icon'} || $feed->{'image'} || $feed->{'cover'};
+					$details->{'favorites_icon'} = $icon if $icon;					
 					$details->{'favorites_url'} = $feed->{'favorites_url'};
 					$details->{'favorites_icon'} = $feed->{'favorites_icon'} if $feed->{'favorites_icon'};
 					$details->{'favorites'} = $favs->hasUrl($feed->{'favorites_url'}) ? 2 : 1;
