@@ -112,7 +112,7 @@
 		</td>
 		<td>
 			[% IF type == 'update' %][% plugin.version %]
-			[% ELSIF plugin.settings %]<a href="[% plugin.settings %]">[% "SETTINGS" | string %]</a>
+			[% ELSIF plugin.settings %]<a href="[% webroot %][% plugin.settings %]">[% "SETTINGS" | string %]</a>
 			[% ELSIF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]&nbsp;</td>
 	</tr>
 [% END %]
