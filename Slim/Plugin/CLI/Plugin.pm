@@ -583,8 +583,6 @@ sub cli_process {
 
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
-
-		# Never assign a random client on SN
 		$client = Slim::Player::Client::clientRandom();
 		$clientid = blessed($client) ? $client->id() : undef;
 		$request->clientid($clientid);

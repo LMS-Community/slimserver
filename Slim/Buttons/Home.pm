@@ -656,9 +656,6 @@ sub menuOptions {
 
 	$menuChoices{""} = "";
 
-	# Exclude SN-disabled plugins
-	my $sn_disabled = $prefs->get('sn_disabled_plugins');
-
 	MENU:
 	for my $menuOption (sort keys %home) {
 
@@ -668,12 +665,6 @@ sub menuOptions {
 
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Misc::getPlaylistDir()) {
 			next;
-		}
-
-		if ( $sn_disabled ) {
-			for my $plugin ( @{$sn_disabled} ) {
-				next MENU if ($home{$menuOption}->{useMode} || '') =~ /^Slim::Plugin/ && $menuOption =~ /$plugin/i;
-			}
 		}
 
 		$menuChoices{$menuOption} = $menuOption;

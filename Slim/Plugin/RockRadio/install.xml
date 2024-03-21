@@ -8,6 +8,7 @@
 	<description>PLUGIN_ROCKRADIO_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
+	<optionsURL>plugins/rockradio/settings.html</optionsURL>
 	<type>2</type>
 	<targetApplication>
 		<id>Logitech Media Server</id>
