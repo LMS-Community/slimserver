@@ -1079,7 +1079,7 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 			);
 
 			// let's set the current player to the first player in the list
-			if (response['player count'] > 0 || response['sn player count'] > 0 || response['other player count'] > 0) {
+			if (response['player count'] > 0 || response['other player count'] > 0) {
 				var el;
 
 				this.playerList = new Ext.util.MixedCollection();
