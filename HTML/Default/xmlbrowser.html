@@ -170,7 +170,7 @@ useSpecialExt="-browse" %]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				[% IF songinfo.favorites && item.type != 'audio' %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% songinfo.favorites_title | html | replace("'", "%27") %]', '[% songinfo.favorites_icon | uri | replace("'", "%27") %]');"
 				[% ELSIF item.simpleAlbumLink && item.favorites_url %]
 				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% item.favorites_url | uri | replace("'", "%27") %]', '[% (item.name _ " " _ stringBY _ " " _ item.artist) | uri | replace("'", "%27") %]');"
 				[% ELSE %]
@@ -180,7 +180,7 @@ useSpecialExt="-browse" %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
 				[% IF songinfo.favorites && item.type != 'audio' %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% songinfo.favorites_title | html | replace("'", "%27") %]', '[% songinfo.favorites_icon | uri | replace("'", "%27") %]');"
 				[% ELSE %]
 				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | uri | replace("'", "%27") %]', '[% pageinfo.startitem %]', '[% sess %]');"
 				[% END %]
@@ -209,11 +209,11 @@ useSpecialExt="-browse" %]
 	[%- BLOCK allcontrol -%]
 		[% IF songinfo.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% songinfo.favorites_title | html | replace("'", "%27") %]', '[% songinfo.favorites_icon | uri | replace("'", "%27") %]');"
 			[% END %]
 		[% ELSIF songinfo.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% crumb.name | html | replace("'", "%27") %]');"
+				onclick="SqueezeJS.Utils.toggleFavorite(this, '[% songinfo.favorites_url | uri | replace("'", "%27") %]', '[% songinfo.favorites_title | html | replace("'", "%27") %]', [% songinfo.favorites_icon | uri | replace("'", "%27") %]');"
 			[% END %]
 		[% END %]
 
