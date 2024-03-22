@@ -853,7 +853,7 @@ SqueezeJS.Utils = {
 		return (remaining ? '-' : '') + formattedTime;
 	},
 
-	toggleFavorite : function(el, url, title) {
+	toggleFavorite : function(el, url, title, icon) {
 		var el = Ext.get(el);
 		if (el) {
 			if (SqueezeJS.UI)
@@ -861,7 +861,7 @@ SqueezeJS.Utils = {
 
 			el.getUpdateManager().showLoadIndicator = false;
 			el.load({
-				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
+				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&icon=' + icon + '&player=' + player,
 				method: 'GET'
 			});
 		}
