@@ -42,10 +42,10 @@ function ajaxUpdate(url, params) {
 	} );
 }
 
-function toggleFavorite(el, url, title) {
+function toggleFavorite(el, url, title, icon) {
 	new Ajax.Updater( { success: el }, 'plugins/Favorites/favcontrol.html', {
 		method: 'post',
-		postBody: 'url=' + url + '&title=' + title,
+		postBody: 'url=' + url + '&title=' + title + '&icon=' + icon,
 		asynchronous: true,
 		onFailure: function(t) {
 			alert('Error -- ' + t.responseText);
