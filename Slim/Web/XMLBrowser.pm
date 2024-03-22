@@ -1001,7 +1001,8 @@ sub handleFeed {
 
 				my $type = $item->{'favorites_type'} || $item->{'type'} || 'link';
 				my $name = $item->{'favorites_title'} || $item->{'name'};
-				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl, $client);
+				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || 
+						   Slim::Player::ProtocolHandlers->iconForURL($furl, $client) || 'html/images/favorites.png';
 
 				if ( ($item->{'play'} && !$item->{'favorites_type'})
 				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)
