@@ -983,8 +983,7 @@ sub handleFeed {
 				}
 
 				if ($feed->{'favorites_url'} && $favs) {
-					my $icon = $feed->{'favorites_icon'} || $feed->{'icon'} || $feed->{'image'} || $feed->{'cover'};
-					$details->{'favorites_icon'} = $icon if $icon;					
+					$details->{'favorites_icon'} = $feed->{'favorites_icon'} || $feed->{'icon'} || $feed->{'image'} || $feed->{'cover'} || Slim::Player::ProtocolHandlers->iconForURL($feed->{'favorites_url'}, $client);
 					$details->{'favorites_url'} = $feed->{'favorites_url'};
 					$details->{'favorites_title'} = $feed->{'favorites_title'} || $feed->{'title'} || $feed->{'name'};
 					$details->{'favorites'} = $favs->hasUrl($feed->{'favorites_url'}) ? 2 : 1;
