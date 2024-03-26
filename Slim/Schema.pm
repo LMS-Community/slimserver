@@ -881,9 +881,8 @@ sub _objForDbUrl {
 		my $params;
 		$params->{prefetch} = [];
 		foreach (keys %$query) {
-#			if (/^(.*)\./) {
 			if (/^(?!composer|work|track)(.*)\./) {
-				push @{ $params->{prefetch} }, $1 ; # unless ( $1 eq 'composer' || $1 eq 'work' || $1 eq 'track' );
+				push @{ $params->{prefetch} }, $1;
 			}
 		}
 
