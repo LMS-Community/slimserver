@@ -258,6 +258,7 @@ sub toggleButtonHandler {
 	$params->{itemobj} = {
 		url => $params->{url},
 		title => $params->{title},
+		icon => $params->{icon},
 	};
 
 	if ($favs && $params->{url}) {
@@ -270,7 +271,7 @@ sub toggleButtonHandler {
 
 		else {
 
-			$favs->add( $params->{url}, $params->{title} || $params->{url} );
+			$favs->add( $params->{url}, $params->{title} || $params->{url}, undef, undef, undef, $params->{icon} );
 			$params->{item}->{isFavorite} = defined $favs->findUrl($params->{url});
 		}
 	}

@@ -1183,8 +1183,8 @@ sub artistsQuery {
 			push @$p, $index, $quantity;
 		}
 
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Artists query: $sql / " . Data::Dump::dump($p) );
+		if ( main::INFOLOG && $sqllog->is_info ) {
+			$sqllog->info( "Artists query: $sql / " . Data::Dump::dump($p) );
 		}
 
 		my $sth = $dbh->prepare_cached($sql);
