@@ -26,12 +26,7 @@ use Slim::Utils::Log;
 
 my $log = logger('network.asynchttp');
 
-sub init {
-=pod
-	Slim::Networking::Slimproto::addHandler( HTTP => \&playerHTTPResponse );
-	Slim::Networking::Slimproto::addHandler( HTTE => \&playerHTTPError );
-=cut
-}
+sub init {}
 
 sub new {
 	my $class = shift;
@@ -63,26 +58,6 @@ sub _createHTTPRequest {
 	# in case of a cached response we'd return without any response data
 	return unless $request && $timeout;
 
-=pod
-	# Use the player for making the HTTP connection if requested
-	if ( my $client = $params->{usePlayer} ) {
-		# We still have to do DNS lookups in SC unless
-		# we have an IP host
-		if ( Slim::Utils::Network::ip_is_ipv4( $request->uri->host ) ) {
-			sendPlayerRequest( $request->uri->host, $self, $client, $request );
-		}
-		else {
-			my $dns = Slim::Networking::Async->new;
-			$dns->open( {
-				Host        => $request->uri->host,
-				onDNS       => \&sendPlayerRequest,
-				onError     => \&onError,
-				passthrough => [ $self, $client, $request ],
-			} );
-		}
-		return;
-	}
-=cut
 	my $params = $self->_params || {};
 
 	my $http = Slim::Networking::Async::HTTP->new( $self->_params );
@@ -117,7 +92,7 @@ sub onError {
 
 	main::PERFMON && (my $now = AnyEvent->time);
 
-	$self->ecb->( $self, $error );
+	$self->ecb->( $self, $error, $http->response );
 
 	main::PERFMON && $now && Slim::Utils::PerfMon->check('async', AnyEvent->time - $now, undef, $self->ecb);
 
@@ -179,149 +154,6 @@ sub sendCachedResponse {
 # some helpers to keep backwards compatibility
 *_cacheKey = \&Slim::Networking::SimpleHTTP::Base::_cacheKey;
 *hasZlib = \&Slim::Networking::SimpleHTTP::Base::hasZlib;
-
-=pod
-sub sendPlayerRequest {
-	my ( $ip, $self, $client, $request ) = @_;
-
-	# Set protocol
-	$request->protocol( 'HTTP/1.0' );
-
-	# Add headers
-	my $headers = $request->headers;
-
-	my $host = $request->uri->host;
-	my $port = $request->uri->port;
-	if ( $port != 80 ) {
-		$host .= ':' . $port;
-	}
-
-	# Fix URI to be relative
-	# XXX: Proxy support
-	my $fullpath = $request->uri->path_query;
-	$fullpath = "/$fullpath" unless $fullpath =~ /^\//;
-	$request->uri( $fullpath );
-
-	# Host doesn't use init_header so it will be changed if we're redirecting
-	$headers->header( Host => $host );
-
-	$headers->init_header( 'User-Agent'    => Slim::Utils::Misc::userAgentString() );
-	$headers->init_header( Accept          => '*/*' );
-	$headers->init_header( 'Cache-Control' => 'no-cache' );
-	$headers->init_header( Connection      => 'close' );
-	$headers->init_header( 'Icy-Metadata'  => 1 );
-
-	if ( $request->content ) {
-		$headers->init_header( 'Content-Length' => length( $request->content ) );
-	}
-
-	# Maintain state for http callback
-	$client->httpState( {
-		cb      => \&gotPlayerResponse,
-		ip      => $ip,
-		port    => $port,
-		request => $request,
-		self    => $self,
-	} );
-
-	my $requestStr = $request->as_string("\015\012");
-
-	my $limit = $self->{params}->{limit} || 0;
-
-	my $data = pack( 'NnCNn', Slim::Utils::Network::intip($ip), $port, 0, $limit, length($requestStr) );
-	$data   .= $requestStr;
-
-	$client->sendFrame( http => \$data );
-
-	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug(
-			  "Using player " . $client->id
-			. " to send request to $ip:$port (limit $limit):\n" . $request->as_string
-		);
-	}
-}
-
-sub gotPlayerResponse {
-	my ( $body_ref, $self, $request ) = @_;
-
-	if ( length $$body_ref ) {
-		# Buffer body chunks
-		$self->{_body} .= $$body_ref;
-
-		main::DEBUGLOG && $log->is_debug && $log->debug('Buffered ' . length($$body_ref) . ' bytes of player HTTP response');
-	}
-	else {
-		# Response done
-		# Turn the response into an HTTP::Response and handle as usual
-		my $response = HTTP::Response->parse( delete $self->{_body} );
-
-		# XXX: No support for redirects yet
-
-		my $http = Slim::Networking::Async::HTTP->new();
-		$http->request( $request );
-		$http->response( $response );
-
-		onBody( $http, $self );
-	}
-}
-
-sub playerHTTPResponse {
-	my ( $client, $data_ref ) = @_;
-
-	my $state = $client->httpState;
-
-	$state->{cb}->( $data_ref, $state->{self}, $state->{request} );
-}
-
-sub playerHTTPError {
-	my ( $client, $data_ref ) = @_;
-
-	my $reason = unpack 'C', $$data_ref;
-
-	# disconnection reasons
-	my %reasons = (
-		0   => 'Connection closed normally',              # TCP_CLOSE_FIN
-		1   => 'Connection reset by local host',          # TCP_CLOSE_LOCAL_RST
-		2   => 'Connection reset by remote host',         # TCP_CLOSE_REMOTE_RST
-		3   => 'Connection is no longer able to work',    # TCP_CLOSE_UNREACHABLE
-		4   => 'Connection timed out',                    # TCP_CLOSE_LOCAL_TIMEOUT
-		255 => 'Connection in use',
-	);
-
-	my $error = $reasons{$reason};
-
-	my $state = $client->httpState;
-	my $self  = $state->{self};
-
-	# Retry if connection was in use
-	if ( $reason == 255 ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug( "Player HTTP connection was in use, retrying..." );
-
-		Slim::Utils::Timers::setTimer(
-			undef,
-			Time::HiRes::time() + 0.5,
-			sub {
-				my $requestStr = $state->{request}->as_string("\015\012");
-
-				my $limit = $self->{params}->{limit} || 0;
-
-				my $data = pack( 'NnCNn', Slim::Utils::Network::intip( $state->{ip} ), $state->{port}, 0, $limit, length($requestStr) );
-				$data   .= $requestStr;
-
-				$client->sendFrame( http => \$data );
-			},
-		);
-
-		return;
-	}
-
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Player HTTP error: $error [$reason]" );
-
-	$self->error( $error );
-
-	$self->ecb->( $self, $error );
-}
-=cut
 
 sub close { }
 

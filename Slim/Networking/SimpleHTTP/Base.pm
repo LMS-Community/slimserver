@@ -60,6 +60,8 @@ sub post { shift->_createHTTPRequest( POST => @_ ) }
 
 sub put { shift->_createHTTPRequest( PUT => @_ ) }
 
+sub delete { shift->_createHTTPRequest( DELETE => @_ ) }
+
 sub head { shift->_createHTTPRequest( HEAD => @_ ) }
 
 sub _createHTTPRequest {
@@ -83,10 +85,7 @@ sub _createHTTPRequest {
 			if (ref $data && $data->{_time}) {
 				$self->cachedResponse( $data );
 
-				# If the data was cached within the past 5 minutes,
-				# return it immediately without revalidation, to improve
-				# UI experience
-				if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
+				if ( $self->shouldNotRevalidate($data) ) {
 					main::DEBUGLOG && $log->is_debug && $log->debug("Using cached response [$url]");
 					return $self->sendCachedResponse();
 				}
@@ -152,6 +151,15 @@ sub _createHTTPRequest {
 	}
 
 	return wantarray ? ($request, $timeout) : $request;
+}
+
+sub shouldNotRevalidate {
+	my ($self, $data) = @_;
+
+	# If the data was cached within the past 5 minutes,
+	# return it immediately without revalidation, to improve
+	# UI experience
+	return $data->{_no_revalidate} || time - $data->{_time} < 300;
 }
 
 sub sendCachedResponse {}
