@@ -72,8 +72,6 @@ use constant SQL_CREATE_WORK_ITEM => q{
 		-- weight 5
 		UNIQUE_TOKENS(IFNULL(tracks.year, '')),
 		-- weight 3
-		--UNIQUE_TOKENS(GROUP_CONCAT(fulltext.w3, ' ')),
-		--UNIQUE_TOKENS(GROUP_CONCAT(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track'), ' ')),
 		UNIQUE_TOKENS(GROUP_CONCAT(temp.w3, ' ')),
 		-- weight 1
 		''
@@ -81,8 +79,6 @@ use constant SQL_CREATE_WORK_ITEM => q{
 		FROM works
 		LEFT JOIN contributors ON contributors.id = works.composer
 		LEFT JOIN tracks ON works.id = tracks.work
-		--LEFT JOIN contributor_track ON contributor_track.track = tracks.id
-		--LEFT JOIN fulltext on SUBSTR(fulltext.id, 33) = tracks.id AND fulltext.type='track'
 		JOIN temp on tracks.id = temp.id
 
 		%s

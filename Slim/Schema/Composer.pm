@@ -44,9 +44,7 @@ my %roleToContributorMap = reverse %contributorToRoleMap;
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('namesearch' => [qw/namesearch/]);
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/name namesort/);
-	}
+	$class->utf8_columns(qw/name namesort/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Composer');
 }

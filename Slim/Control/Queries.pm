@@ -499,11 +499,23 @@ sub albumsQuery {
 			# If we've got here from a search, we don't want to show the album unless it matches all the user's search criteria.
 			# This matters for a Works search: we've shown the user a Work because it matches their criteria, but it is possible
 			# that not all albums containing the Work match the all the criteria. (In this context, a work is a group of albums.)
-			$fromSearch =~ s/ /* /g;
-			$fromSearch .= '*';
-			$fromSearch = "type:album " . $fromSearch;
-			push @{$w}, "EXISTS (select * FROM fulltext WHERE SUBSTR(fulltext.id, 33)=albums.id AND fulltext MATCH ?)";
-			push @{$p}, $fromSearch;
+			if ( Slim::Schema->canFulltextSearch ) {
+				$fromSearch =~ s/ /* /g;
+				$fromSearch .= '*';
+				$fromSearch = "type:album " . $fromSearch;
+				push @{$w}, "EXISTS (select * FROM fulltext WHERE SUBSTR(fulltext.id, 33)=albums.id AND fulltext MATCH ?)";
+				push @{$p}, $fromSearch;
+			} else {
+				my $strings = Slim::Utils::Text::searchStringSplit($fromSearch);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'albums.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {
+					push @{$w}, 'albums.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
+			}
 		}
 
 		if (defined $work) {

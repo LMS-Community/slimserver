@@ -50,9 +50,6 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRACKID'       => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
 	'DESCRIPTION'               => 'COMMENT',
-	'WORK'                      => 'WORK',
-	'GROUPING'                  => 'GROUPING',
-	'SUBTITLE'                  => 'SUBTITLE',
 
 	# J.River once again.. can't these people use existing standards?
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',

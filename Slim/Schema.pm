@@ -866,6 +866,7 @@ sub _objForDbUrl {
 		for my $term (split('&', $values)) {
 			if ($term =~ /(.*)=(.*)/) {
 				my $key = $1;
+				next if $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.grouping';
 				my $value = Slim::Utils::Misc::unescape($2);
 
 				if (utf8::is_utf8($value)) {
@@ -873,15 +874,16 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
-				$query->{$key} = $value unless ( $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.grouping' );
+				$query->{$key} = $value;
 			}
 		}
 
 		my $params;
 		$params->{prefetch} = [];
 		foreach (keys %$query) {
-			if (/^(.*)\./) {
-				push @{ $params->{prefetch} }, $1 unless ( $1 eq 'composer' || $1 eq 'work' || $1 eq 'track' );
+#			if (/^(.*)\./) {
+			if (/^(?!composer|work|track)(.*)\./) {
+				push @{ $params->{prefetch} }, $1 ; # unless ( $1 eq 'composer' || $1 eq 'work' || $1 eq 'track' );
 			}
 		}
 
