@@ -2404,6 +2404,38 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
+<p id="connect">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			connect
+			&lt;ip&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;connect&quot; command tells a Squeezebox 2 or newer player to
+	connect to a different server address.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+	</ul>
+<p>
+	If the player is currently a member of a sync-group, then all players in the sync-group
+	will be instructed to switch to the new server and re-establish the sync-group.
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request:  &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
 <p id="client forget">
 	<strong>
 		<code>
@@ -2424,6 +2456,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="disconnect">
+	<strong>
+		<code>
+			disconnect
+			&lt;playerid&gt;
+			&lt;ip&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;disconnect&quot; command tells a Squeezebox 2 or newer player
+	on another server instance to disconnect from its server and
+	connect to us. This is the opposite of &quot;<a href="#connect">connect</a>&quot;, where we
+	tell a player connected to us to connect to a different server.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+	</ul>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request:  &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
