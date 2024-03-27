@@ -944,7 +944,7 @@ sub _createOrUpdateAlbum {
 			!$albumHash->{extid} && $title && $albumHash->{title}
 			&& ( ($albumHash->{title} eq $noAlbum && $title ne $noAlbum) || $differentTitle )
 		) {
-			# https://github.com/Logitech/slimserver/issues/547
+			# https://github.com/LMS-Community/slimserver/issues/547
 			# check whether new album already exists if we're changing album title
 			$albumId = $albumHash->{id} if $differentTitle;
 			$create = 1;

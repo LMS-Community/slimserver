@@ -210,7 +210,7 @@ NOTE:
 If you're running some unsupported Linux/Unix platform, please use the buildme.sh
 script located here:
 
-https://github.com/Logitech/slimserver-vendor/tree/public/$serverVersion/CPAN
+https://github.com/LMS-Community/slimserver-vendor/tree/public/$serverVersion/CPAN
 
 If $serverVersion is outdated by the time you read this, Replace "$serverVersion" with the major version
 You should never need to do this if you're on Windows or Mac OSX. If the installers

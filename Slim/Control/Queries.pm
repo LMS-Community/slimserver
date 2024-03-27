@@ -5831,7 +5831,7 @@ sub _getTagDataForTracks {
 # Therefore we can't use SQLite's GROUP statement, but must group items ourselves.
 # If we have an index item which we already had in the list, merge all items after
 # the previous index and the current item into one. Eg. "U Ü U" -> "U" only.
-# https://github.com/Logitech/slimserver/issues/388
+# https://github.com/LMS-Community/slimserver/issues/388
 sub _createIndexList {
 	my ($pageSql, $p) = @_;
 
