@@ -1,5 +1,5 @@
 /*!
- * Ext JS Library for Logitech Media Server
+ * Ext JS Library for Lyrion Music Server
  */
 /*!
  * Ext JS Library 3.4.0
@@ -3013,7 +3013,7 @@ body.ext-ie6.x-body-masked .x-window select {
 }
 
 .x-window-dlg .x-dlg-icon .ext-mb-content{
-    zoom: 1; 
+    zoom: 1;
     margin-left: 47px;
 }
 
@@ -3072,7 +3072,7 @@ body.ext-ie6.x-body-masked .x-window select {
 }
 
 /*
-.x-color-palette em:hover, .x-color-palette span:hover{   
+.x-color-palette em:hover, .x-color-palette span:hover{
     background-color: #deecfd;
 }
 */

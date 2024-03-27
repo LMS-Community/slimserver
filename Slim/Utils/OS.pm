@@ -164,7 +164,7 @@ sub initMySQL {
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Logitech Media Server directories we
+Argument $dir is a string to indicate which of the Lyrion Music Server directories we
 need information for.
 
 =cut
@@ -445,7 +445,7 @@ sub setPriority {
 	return unless defined $priority && $priority =~ /^-?\d+$/;
 
 	# For *nix, including OSX, set whatever priority the user gives us.
-	Slim::Utils::Log::logger('server')->info("Logitech Media Server changing process priority to $priority");
+	Slim::Utils::Log::logger('server')->info("Lyrion Music Server changing process priority to $priority");
 
 	eval { setpriority (0, 0, $priority); };
 
@@ -474,7 +474,7 @@ sub getPriority {
 
 =head2 initUpdate( )
 
-Initialize download of a potential updated Logitech Media Server version.
+Initialize download of a potential updated Lyrion Music Server version.
 Not needed on Linux distributions which do manage the update through their repositories.
 
 =cut

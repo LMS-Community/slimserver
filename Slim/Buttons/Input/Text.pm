@@ -24,7 +24,7 @@ Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::Text> is a reusable Logitech Media Server module for creating a standard UI
+L<Slim::Buttons::Input::Text> is a reusable Lyrion Music Server module for creating a standard UI
 for inputting Text. Client parameters may determine the character sets available, and set
 any actions done on the resulting text.
 
@@ -206,7 +206,7 @@ our %functions = (
 			exitInput($client, 'nextChar');
 			return;
 		}
-	
+
 		nextChar($client);
 	},
 
@@ -414,10 +414,10 @@ sub init {
 
 		} elsif (uc($charsRef) eq 'BOTH') {
 			$client->modeParam('charsRef',\@BothChars);
-		
+
 		} elsif (uc($charsRef) eq 'EMAIL') {
 			$client->modeParam('charsRef',\@EmailChars);
-			
+
 		} else {
 			$client->modeParam('charsRef',\@UpperChars);
 		}
@@ -436,10 +436,10 @@ sub init {
 
 		if (uc($numberLetterRef) eq 'UPPER') {
 			$client->modeParam('numberLetterRef',\@numberLettersUpper);
-		
+
 		} elsif (uc($numberLetterRef) eq 'EMAIL') {
 			$client->modeParam('numberLetterRef',\@numberLettersEmail);
-			
+
 		} else {
 			$client->modeParam('numberLetterRef',\@numberLettersMixed);
 		}

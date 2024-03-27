@@ -492,7 +492,7 @@ sub isDriveReady {
 
 =head2 installPath()
 
-Returns the base installation directory of Logitech Media Server.
+Returns the base installation directory of Lyrion Music Server.
 
 =cut
 
@@ -559,7 +559,7 @@ sub writablePath {
 
 		else {
 			# second attempt: use the Windows API (recommended by MS)
-			# use the "Common Application Data" folder to store Logitech Media Server configuration etc.
+			# use the "Common Application Data" folder to store Lyrion Music Server configuration etc.
 			$writablePath = Win32::GetFolderPath(Win32::CSIDL_COMMON_APPDATA);
 
 			# fall back if no path or invalid path is returned
@@ -759,7 +759,7 @@ sub getUpdateParams {
 	return if main::SCANNER;
 
 	if (main::ISACTIVEPERL && !$PerlSvc::VERSION) {
-		Slim::Utils::Log::logger('server.update')->info("Running Logitech Media Server from the source - don't download the update.");
+		Slim::Utils::Log::logger('server.update')->info("Running Lyrion Music Server from the source - don't download the update.");
 		return;
 	}
 
@@ -807,7 +807,7 @@ sub restartServer {
 
 
 	if (!$class->canRestartServer()) {
-		$log->warn("Logitech Media Server can't be restarted automatically on Windows if run from the perl source.");
+		$log->warn("Lyrion Music Server can't be restarted automatically on Windows if run from the perl source.");
 		return;
 	}
 
@@ -826,7 +826,7 @@ sub restartServer {
 			Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 			".")
 		) {
-			$log->error("Couldn't restart Logitech Media Server service (squeezesvc)");
+			$log->error("Couldn't restart Lyrion Music Server service (squeezesvc)");
 		}
 		else {
 			return 1;

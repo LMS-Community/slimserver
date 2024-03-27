@@ -30,8 +30,8 @@ Slim::Buttons::Common::pushMode($client, 'INPUT.Time', \%params);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::Time> is a reusable Logitech Media Server module to create a standard UI
-for entering Time formatted strings.  This is a slimmed down variation of Input::Text 
+L<Slim::Buttons::Input::Time> is a reusable Lyrion Music Server module to create a standard UI
+for entering Time formatted strings.  This is a slimmed down variation of Input::Text
 with custom handling for limiting characters based on the timeFormat server preference
 and typical formatting of time strings. Callers include Slim::Buttons::AlarmCLock
 
@@ -129,26 +129,26 @@ our %functions = (
 
 sub lines {
 	my $client = shift;
-	
+
 	my ($line1, $line2);
-	
+
 	$line1 = $client->modeParam('header');
 
 	if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
-	
-	my $timestring = timeString($client, 
+
+	my $timestring = timeString($client,
 		Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'), $client)
 	);
-	
+
 	if (!defined($timestring)) {
 
 		return {};
 	}
 
 	$line2 = $timestring;
-	
+
 	return {
 		'line' => [ $line1, $line2 ]
 	};
@@ -160,7 +160,7 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	
+
 	#my $setMethod = shift;
 	#possibly skip the init if we are popping back to this mode
 	if (!init($client)) {
@@ -184,7 +184,7 @@ This function sets up the params for INPUT.Time.  The optional params and their 
  'callback'     = undef           # function to call to exit mode
  'parentMode'   = $client->modeStack->[-2]
 				 mode to which to pass button presses mapped to the passback function
-				 defaults to the first non-INPUT mode in or before second to last position on call stack (which should be the mode that called INPUT.Time), 
+				 defaults to the first non-INPUT mode in or before second to last position on call stack (which should be the mode that called INPUT.Time),
  'onChange'     = undef           # subroutine reference called when the value changes
  'onChangeArgs' = CV              # arguments provided to onChange subroutine, C= client object, V= current value
 
@@ -192,7 +192,7 @@ This function sets up the params for INPUT.Time.  The optional params and their 
 
 sub init {
 	my $client = shift;
-	
+
 	if (!defined($client->modeParam('parentMode'))) {
 		my $i = -2;
 
@@ -211,7 +211,7 @@ sub init {
 	if (!defined($client->modeParam('onChangeArgs'))) {
 		$client->modeParam('onChangeArgs','CV');
 	}
-	
+
 	my $valueRef = $client->modeParam('valueRef');
 
 	if (!defined($valueRef)) {
@@ -240,7 +240,7 @@ $c is the current cursor position for rendering in the display - set to -1 to no
 
 sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p, $c) = @_;
-		
+
 	my $cs = $client->symbols('cursorpos');
 
 	$c = $c || $client->modeParam('cursorPos') || 0;
@@ -257,12 +257,12 @@ sub timeString {
 			# Put the cursor before 2nd char of $p
 			my @ampm = split(//, $p);
 			$timestring .= ' ' . shift(@ampm) . $cs . shift(@ampm);
-			
+
 		} else {
 			$timestring .= ' ' . $p;
 		}
 	}
-		
+
 	# Add right arrow if cursor is in last position
 	if ($c == 2 && ! defined($p) || $c == 3) {
 		$timestring .= $client->symbols('rightarrow');
@@ -273,9 +273,9 @@ sub timeString {
 
 sub exitInput {
 	my ($client,$exitType) = @_;
-	
+
 	my $callbackFunct = $client->modeParam('callback');
-	
+
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
 		$client->update();
@@ -293,7 +293,7 @@ sub callOnChange {
 	my $client = shift;
 
 	my $onChange = $client->modeParam('onChange');
-	
+
 	if (ref($onChange) eq 'CODE') {
 		my $onChangeArgs = $client->modeParam('onChangeArgs');
 		my @args;
@@ -320,7 +320,7 @@ sub nextChar {
 sub moveCursor {
 	my $client = shift;
 	my $increment = shift || 1;
-	
+
 	my $cursorPos = $client->modeParam('cursorPos');
 
 	$cursorPos += $increment;
@@ -343,13 +343,13 @@ sub moveCursor {
 
 	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
-	
+
 	prepKnob($client, 1);
 }
 
 sub scroll {
 	my ($client, $dir) = @_;
-	
+
 	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
 	my $c = $client->modeParam('cursorPos');
 	# Don't scroll on the right arrow
@@ -370,10 +370,10 @@ sub scroll {
 
 =head2 prepKnob( $client, $digits )
 
-This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
+This function is required for updating the Transporter knob.  The knob extents are based on the listLen param,
 which changes in this mode depending on which column of the time display is being adjusted.
 
-Takes as arguments, the $client structure and whether the knob is now scrolling through a diferent list. 
+Takes as arguments, the $client structure and whether the knob is now scrolling through a diferent list.
 
 =cut
 
@@ -381,11 +381,11 @@ sub prepKnob {
 	my ($client, $newList) = @_;
 
 	my ($h, $m) = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0, $client);
-	
+
 	my $c = $client->modeParam('cursorPos');
 
 	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
-	
+
 	if ($c == 0) {
 		$client->modeParam('listLen', 24);
 		$client->modeParam('listIndex', $h);
@@ -394,7 +394,7 @@ sub prepKnob {
 		$client->modeParam('listLen', 60);
 		$client->modeParam('listIndex', $m);
 
-	} elsif ($c == 2 && $ampm) { 
+	} elsif ($c == 2 && $ampm) {
 		my $p = $h > 11 ? 1 : 0;
 		$client->modeParam('listLen', 2);
 		$client->modeParam('listIndex', $p);
@@ -409,12 +409,12 @@ sub prepKnob {
 
 =head2 scrollTime( $client,$dir,$valueRef,$c)
 
-Specialized scroll routine similar to Slim::Buttons::Common::scroll, but made specifically to handle the nature of 
+Specialized scroll routine similar to Slim::Buttons::Common::scroll, but made specifically to handle the nature of
 a formatted time string. Handles invalid values in time ranges gracefully when digits wrap.
 
 Takes the $client object as the first argument.
 
-$dir specifies the direction to scroll. 
+$dir specifies the direction to scroll.
 $valueRef is a reference to the scalar time value.
 $c specifies the current cursor position at which the digit should be scrolled.
 
@@ -422,9 +422,9 @@ $c specifies the current cursor position at which the digit should be scrolled.
 
 sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
-	
+
 	$c = $client->modeParam('cursorPos') unless defined $c;
-	
+
 	if (defined $valueRef) {
 
 		if (!ref $valueRef) {
@@ -436,7 +436,7 @@ sub scrollTime {
 
 		$valueRef = $client->modeParam('valueRef');
 	}
-	
+
 	my ($h, $m) = Slim::Utils::DateTime::splitTime($valueRef, 0, $client);
 
 	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
@@ -444,15 +444,15 @@ sub scrollTime {
 	if ($c == 0) {
 		# Scrolling is done in 24h mode regardless of 12h preference as in 12h mode it goes from 12am through to 11pm
 		$h = Slim::Buttons::Common::scroll($client, $dir, 24, $h);
-	} elsif ($c == 1) { 
+	} elsif ($c == 1) {
 		$m = Slim::Buttons::Common::scroll($client, $dir, 60, $m);
 	# 2 is the right arrow unless we're using 12 hour clock
-	} elsif ($ampm && $c == 2) { 
+	} elsif ($ampm && $c == 2) {
 		# Scrolling on am/pm simply alters the hour value by +-12
 		my $p = $h > 11 ? 1 : 0;
-		
+
 		my $newp = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
-		
+
 		# Bug 12756: recalculate the hours if $p has changed.
 		if ($p != $newp) {
 			$h = ($h + ($p ? 12 : -12)) % 24;
@@ -460,7 +460,7 @@ sub scrollTime {
 	}
 
 	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m);
-	
+
 	return $$valueRef;
 }
 
@@ -473,7 +473,7 @@ sub numberButton {
 	my ($client,$button,$digit) = @_;
 
 	#warn "$button $digit";
-	
+
 	my $now = Time::HiRes::time();
 
 	my $valueRef = $client->modeParam('valueRef');
@@ -483,7 +483,7 @@ sub numberButton {
 	if ($ampm) {
 		$p = $p eq 'PM' ? 1 : 0;
 	}
-	
+
 	my $c = $client->modeParam('cursorPos');
 
 	# Don't do anything if on the right arrow

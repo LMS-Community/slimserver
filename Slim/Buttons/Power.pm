@@ -3,7 +3,7 @@ package Slim::Buttons::Power;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -12,8 +12,8 @@ Slim::Buttons::Power
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Power> is a Logitech Media Server module to add an 'off' mode.
-The players are never truly off, instead entering and leaving this 
+L<Slim::Buttons::Power> is a Lyrion Music Server module to add an 'off' mode.
+The players are never truly off, instead entering and leaving this
 mode in reaction to the power button.
 
 =cut
@@ -46,7 +46,7 @@ sub setMode {
 	my $client = shift;
 
 	$client->lines(\&lines);
-	
+
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
 	$client->modeParam('screen2', 'power');

@@ -3,7 +3,7 @@ package Slim::Web::HTTP::CSRF;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use Digest::MD5;
@@ -24,9 +24,9 @@ sub getQueries {
 	my ($class, $request, $csrfReqParams) = @_;
 
 	my ($queryWithArgs, $queryToTest);
-	
+
 	if ($prefs->get('csrfProtectionLevel')) {
-		
+
 		$queryWithArgs = Slim::Utils::Misc::unescape($request->uri());
 
 		# next lines are ugly hacks to remove any GET args
@@ -46,14 +46,14 @@ sub getQueries {
 		$queryToTest =~ s/\bajaxUpdate=\d\&//g;
 		$queryToTest =~ s/\?\?/\?/;
 	}
-	
+
 	return ($queryWithArgs, $queryToTest);
 }
 
 
 sub testCSRFToken {
 	if ($prefs->get('csrfProtectionLevel')) {
-		
+
 		my ($class, $httpClient, $request, $response, $params, $queryWithArgs, $queryToTest, $providedPageAntiCSRFToken) = @_;
 
 		foreach my $dregexp ( keys %dangerousCommands ) {
@@ -68,7 +68,7 @@ sub testCSRFToken {
 			}
 		}
 	}
-	
+
 	return 1;
 }
 
@@ -77,24 +77,24 @@ sub testCSRFToken {
 # protect use of /settings/server/basic.html
 sub makePageToken {
 	my ($class, $req) = @_;
-	
+
 	my $secret = $prefs->get('securitySecret');
-	
+
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
 		# invalid secret!
 		# Prefs.pm should have set this!
 		$log->warn("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref");
 		return '';
 	}
-	
+
 	# make hash of URI & secret
 	# BUG: for CSRF protection level "high", perhaps there should be additional data used for this
 	my $uri = Slim::Utils::Misc::unescape($req->uri());
-	
+
 	# strip the querystring, if any
 	$uri =~ s/\?.*$//;
 	my $hash = Digest::MD5->new;
-	
+
 	# hash based on server secret and URI
 	$hash->add($uri);
 	$hash->add($secret);
@@ -103,7 +103,7 @@ sub makePageToken {
 
 sub isRequestCSRFSafe {
 	my ($class, $request, $response, $params, $providedPageAntiCSRFToken) = @_;
-	
+
 	my $rc = 0;
 
 	# XmlHttpRequest test for all the AJAX code in 7.x
@@ -146,7 +146,7 @@ sub isRequestCSRFSafe {
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
 
 			if ( $log->is_warn ) {
-				$log->warn("No valid CSRF auth code: [" . 
+				$log->warn("No valid CSRF auth code: [" .
 					join(' ', ($request->method, $request->uri, $request->header('X-Slim-CSRF')))
 				. "]");
 			}
@@ -163,7 +163,7 @@ sub isRequestCSRFSafe {
 
 sub isCsrfAuthCodeValid {
 	my ($class, $request, $providedPageAntiCSRFToken) = @_;
-	
+
 	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
 
 	if (! defined($csrfProtectionLevel) ) {
@@ -221,7 +221,7 @@ sub isCsrfAuthCodeValid {
 		if ( $class->makePageToken($request) eq $providedPageAntiCSRFToken ) {
 			return 1;
 		}
-	} 
+	}
 
 	# the code is no good (invalid or MEDIUM hash presented when using HIGH protection)!
 	return 0;
@@ -247,10 +247,10 @@ sub isCsrfAuthCodeValid {
 # protectURI: takes the same string that a function's page() method returns
 sub protectURI {
 	my ($class, $uri) = @_;
-	
+
 	my $regexp = "/${uri}\\b.*\\=";
 	$dangerousCommands{$regexp} = 1;
-	
+
 	return $uri;
 }
 
@@ -265,7 +265,7 @@ sub protectName {
 }
 
 
-# normal Logitech Media Server commands can be accessed with URLs like
+# normal Lyrion Music Server commands can be accessed with URLs like
 #   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 #   http://localhost:9000/status.html?command=pause&player=00%3A00%3A00%3A00%3A00%3A00
 # Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
@@ -278,32 +278,32 @@ sub protectName {
 sub protectCommand {
 	my $class = shift;
 	my @commands = @_;
-	
+
 	my $regexp = '';
 	for (my $pos = 0; $pos < scalar(@commands); ++$pos) {
-		
+
 		my $rePart;
-		
+
 		if ( ref($commands[$pos]) eq 'ARRAY' ) {
-			
+
 			$rePart = '\b(';
 			my $add = '';
-			
+
 			foreach my $c ( @{$commands[$pos]} ) {
 				$rePart .= "${add}p${pos}=$c\\b";
 				$add = '|';
 			}
-			
+
 			$rePart .= ')';
-		} 
-		
+		}
+
 		else {
 			$rePart = "\\bp${pos}=$commands[$pos]\\b";
 		}
-		
+
 		$regexp .= "${rePart}.*?";
 	}
-	
+
 	$dangerousCommands{$regexp} = 1;
 }
 
@@ -331,17 +331,17 @@ sub throwCSRFError {
 	# add a long SGML comment so Internet Explorer displays the page
 	my $msg = "<!--" . ( '.' x 500 ) . "-->\n<p>";
 
-	$msg .= string('CSRF_ERROR_INFO'); 
+	$msg .= string('CSRF_ERROR_INFO');
 	$msg .= "<br>\n<br>\n<A HREF=\"${authURI}\">${authURL}</A></p>";
-	
+
 	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
-	
+
 	if ( defined($csrfProtectionLevel) && $csrfProtectionLevel == 1 ) {
 		$msg .= string('CSRF_ERROR_MEDIUM');
 	}
-	
+
 	$params->{'validURL'} = $msg;
-	
+
 	# add the appropriate URL in a response header to make automated
 	# re-requests easy? (WARNING: this creates a potential Cross Site
 	# Tracing sort of vulnerability!
@@ -349,19 +349,19 @@ sub throwCSRFError {
 	# (see http://computercops.biz/article2165.html for info on XST)
 	# If you enable this, also uncomment the text regarding this on the http.html docs
 	#$response->header('X-Slim-Auth-URI' => $authURI);
-	
+
 	$response->code(RC_FORBIDDEN);
 	$response->content_type('text/html');
 	$response->header('Connection' => 'close');
 	$response->content_ref(Slim::Web::HTTP::filltemplatefile('html/errors/403.html', $params));
 
 	$httpClient->send_response($response);
-	Slim::Web::HTTP::closeHTTPSocket($httpClient);	
+	Slim::Web::HTTP::closeHTTPSocket($httpClient);
 }
 
 sub makeAuthorizedURI {
 	my ($class, $uri, $queryWithArgs) = @_;
-	
+
 	my $secret = $prefs->get('securitySecret');
 
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {

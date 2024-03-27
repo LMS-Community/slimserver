@@ -64,7 +64,7 @@ sub init {
 	return bless $self, $class;
 }
 
-# Determine how the user wants to start Logitech Media Server
+# Determine how the user wants to start Lyrion Music Server
 sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }

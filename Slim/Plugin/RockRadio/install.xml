@@ -11,7 +11,7 @@
 	<optionsURL>plugins/rockradio/settings.html</optionsURL>
 	<type>2</type>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>8.4</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

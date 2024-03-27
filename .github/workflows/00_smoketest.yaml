@@ -1,4 +1,4 @@
-name: 'Smoketest for Logitech Media Server'
+name: 'Smoketest for Lyrion Music Server'
 on:
   push:
   workflow_dispatch:

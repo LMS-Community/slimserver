@@ -1,11 +1,11 @@
-[% pagetitle = 'Squeezebox Radio/Touch/Controller und Logitech Media Server 8+' %]
+[% pagetitle = 'Squeezebox Radio/Touch/Controller und Lyrion Music Server 8+' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
-<h4>SB Radio/Touch/Controller und Logitech Media Server 8+</h4>
+<h4>SB Radio/Touch/Controller und Lyrion Music Server 8+</h4>
 
 <p>Leider hat manche Squeezebox Firmware f&uuml;r Radio, Touch und Controller einen Fehler, welcher verhindert,
-	dass das Ger&auml;t sich ohne weiteres mit Logitech Media Server 8.0 und neuer verbindet. Die Routine zum
+	dass das Ger&auml;t sich ohne weiteres mit Lyrion Music Server 8.0 und neuer verbindet. Die Routine zum
 	Vergleich der Versionsnummern ist fehlerhaft. Zwar gibt es seit Jahren einen Fix in Version 7.8, dieser wurde aber
 	nicht f&uuml; alle Ger&auml;te freigegeben. Und heute sind wir leider nicht mehr in der Lage, neue Firmware
 	f&uuml;r die Ger&auml;te zu erstellen.</p>
@@ -16,7 +16,7 @@
 	<li>Navigieren Sie auf dem Ger&auml;t zu Einstellungen/Erweitert/<i>Applet Installer</i>. Dort installiere den "Patch Installer".
 		Darauf startet das Ger&auml;t neu.</li>
 	<li>Nach dem Neustart gehen Sie zu Einstellungen/Erweitert/<i>Patch Installer</i> und installieren den "Version Comparison Fix".</li>
-	<li>Nachdem alle Ger&auml;te gepatcht sind, ist es allenfalls erforderlich, Logitech Media Server neu zu starten, um die Warnung los zu werden.</li>
+	<li>Nachdem alle Ger&auml;te gepatcht sind, ist es allenfalls erforderlich, Lyrion Music Server neu zu starten, um die Warnung los zu werden.</li>
 </ul>
 
 <p>Viel Spass weiterhin mit ihrer Squeezebox!</p>

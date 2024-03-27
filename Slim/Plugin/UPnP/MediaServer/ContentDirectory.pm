@@ -248,7 +248,7 @@ sub Browse {
 					id         => 0,
 					parentID   => -1,
 					type       => 'object.container',
-					title      => 'Logitech Media Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
+					title      => 'Lyrion Music Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 					searchable => 1,
 				} ];
 			}

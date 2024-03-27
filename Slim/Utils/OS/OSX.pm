@@ -128,7 +128,7 @@ sub initSearchPath {
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Logitech Media Server directories we
+Argument $dir is a string to indicate which of the Lyrion Music Server directories we
 need information for.
 
 =cut

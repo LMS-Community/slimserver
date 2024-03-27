@@ -22,7 +22,7 @@ Slim::Buttons::Home
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Home> is a Logitech Media Server module for creating and
+L<Slim::Buttons::Home> is a Lyrion Music Server module for creating and
 navigating a configurable multilevel menu structure.
 
 =cut

@@ -188,7 +188,7 @@ sub title {
 	);
 }
 
-# return the raw title untainted by Logitech Media Server logic
+# return the raw title untainted by Lyrion Music Server logic
 sub rawtitle {
 	my $self = shift;
 

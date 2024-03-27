@@ -9,7 +9,7 @@
 	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.9.0</minVersion>
         <maxVersion>*</maxVersion>
 	</targetApplication>

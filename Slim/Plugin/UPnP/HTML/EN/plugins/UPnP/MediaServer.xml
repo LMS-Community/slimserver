@@ -10,8 +10,8 @@
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
 		<manufacturerURL>http://www.logitech.com</manufacturerURL>
-		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
-		<modelName>Logitech Media Server [% device.version %]</modelName>
+		<modelDescription>Lyrion Music Server UPnP/DLNA Plugin</modelDescription>
+		<modelName>Lyrion Music Server [% device.version %]</modelName>
 		<modelNumber>1</modelNumber>
 		<modelURL>http://www.logitech.com/download</modelURL>
 		<serialNumber>[% device.serial %]</serialNumber>

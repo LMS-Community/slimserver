@@ -1,4 +1,4 @@
-These are HTML 'skins' for Logitech Media Server. 
+These are HTML 'skins' for Lyrion Music Server.
 
 They are written using Template Toolkit - http://www.template-toolkit.org/
 
@@ -6,11 +6,11 @@ They are written using Template Toolkit - http://www.template-toolkit.org/
 
 Classic:
 	Owner: Logitech Inc.
-	Description: This is the previous Official skin for Logitech Media Server
+	Description: This is the previous Official skin for Lyrion Music Server
 
 Default:
 	Owner: Logitech Inc.
-	Description: This is the Official skin for Logitech Media Server
+	Description: This is the Official skin for Lyrion Music Server
 
 EN:
 	Owner: Logitech Inc.

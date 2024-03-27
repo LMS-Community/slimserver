@@ -61,7 +61,7 @@ sub getTag {
 
 	return unless $info->{song_length_ms};
 
-	# Map tags onto Logitech Media Server's preferred.
+	# Map tags onto Lyrion Music Server's preferred.
 	while ( my ($old, $new) = each %tagMapping ) {
 		if ( exists $tags->{$old} ) {
 			$tags->{$new} = delete $tags->{$old};

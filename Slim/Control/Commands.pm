@@ -18,7 +18,7 @@ Slim::Control::Commands
 
 =head1 DESCRIPTION
 
-Implements most Logitech Media Server commands and is designed to be exclusively called
+Implements most Lyrion Music Server commands and is designed to be exclusively called
 through Request.pm and the mechanisms it defines.
 
 =cut

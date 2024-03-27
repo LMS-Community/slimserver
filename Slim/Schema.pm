@@ -16,7 +16,7 @@ my $track = Slim::Schema->objectForUrl($url);
 
 =head1 DESCRIPTION
 
-L<Slim::Schema> is the main entry point for all interactions with Logitech Media Server's
+L<Slim::Schema> is the main entry point for all interactions with Lyrion Music Server's
 database backend. It provides an ORM abstraction layer on top of L<DBI>,
 acting as a subclass of L<DBIx::Class::Schema>.
 
@@ -477,7 +477,7 @@ sub migrateDB {
 
 	} else {
 
-		# this occurs if a user downgrades Logitech Media Server to a version with an older schema and which does not include
+		# this occurs if a user downgrades Lyrion Music Server to a version with an older schema and which does not include
 		# the required downgrade sql scripts - attempt to drop and create the database at current schema version
 
 		if ( $log->is_warn ) {

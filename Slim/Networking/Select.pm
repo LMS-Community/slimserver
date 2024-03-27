@@ -3,7 +3,7 @@ package Slim::Networking::Select;
 
 # Logitech Media Server Copyright 2003-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -23,7 +23,7 @@ Slim::Utils::Select::addRead( $socket, \&callback )
 
 =head1 DESCRIPTION
 
-This module encapsulates all select() related code, handled by Logitech Media Server's main loop.
+This module encapsulates all select() related code, handled by Lyrion Music Server's main loop.
 
 Usually, you'll want to use higher such as L<Slim::Networking::Async::HTTP>.
 
@@ -63,7 +63,7 @@ sub _writeNoBlock {
 	my $socket = shift;
 
 	my $segment = shift(@{$writeQueue{$socket}});
-	
+
 	if (!defined $segment) {
 		removeWrite($socket);
 		return;
@@ -108,7 +108,7 @@ sub _writeNoBlock {
 		unshift @{$writeQueue{$socket}}, $segment;
 
 		addWrite($socket, \&_writeNoBlock, 1);
-	} 
+	}
 }
 
 =head2 writeNoBlockQLen( $socket )
@@ -139,9 +139,9 @@ Remove $socket and any associated chunks from being sent.
 
 sub removeWriteNoBlockQ {
 	my $socket = shift;
-	
+
 	if ( exists($writeQueue{$socket}) ) {
-		
+
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("fileno: [%d] removing writeNoBlock queue", fileno($socket)));
 		}

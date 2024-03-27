@@ -1,16 +1,16 @@
-[% pagetitle = 'Logitech Media Server Plugins' %]
+[% pagetitle = 'Lyrion Music Server Plugins' %]
 [% techinfo = '1' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
  <h4>Introduction</h4>
-<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the Logitech Media Server software. 
-The server provides a method to load custom modules at startup which are then made available to the user via remote control menus. 
-Each plugin serves as an area within the server remote menu system, available from within the Plugins menu. Plugin files are stored in 
+<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the Lyrion Music Server software.
+The server provides a method to load custom modules at startup which are then made available to the user via remote control menus.
+Each plugin serves as an area within the server remote menu system, available from within the Plugins menu. Plugin files are stored in
 the &quot;Plugins&quot; folder which is in the same folder as the server software. For simple plugins, a single file in this folder will suffice.
- For more complex plugins, you can store an entire set of files in a sub-folder, naming the main plugin file: Plugin.pm. The Plugin interface can 
- provide a very powerful 
-control and has complete access to the functionality of the server. As with the rest of the server, plugin modules are created 
+ For more complex plugins, you can store an entire set of files in a sub-folder, naming the main plugin file: Plugin.pm. The Plugin interface can
+ provide a very powerful
+control and has complete access to the functionality of the server. As with the rest of the server, plugin modules are created
 using the Perl language.</p>
 
 <h4>Perl Module Basics</h4>
@@ -20,7 +20,7 @@ using the Perl language.</p>
 		<p><pre>package Plugins::pluginname;</pre></p>
 		<p>Where <code>pluginname</code> is the name of the module (which should be the same as the filename, without the .pm extension.) This defines the 'namespace' for the module. It essentially sets up the module as an entity of its own, within the server environment. This allows you to then refer to the functions and variables within this plugin by the full reference Plugins::pluginname::function.</p>
 		<hr>
-		<h4>Logitech Media Server Plugin Hooks</h4>
+		<h4>Lyrion Music Server Plugin Hooks</h4>
 <p>Each level in the server menu hierarchy is considered a &quot;mode&quot; by the server. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and functions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
 <blockquote>
 <p><em>Example 1</em></p>
@@ -113,11 +113,11 @@ rescan has been started.  The line "my $client = shift;" is very important here 
 function calls such as: </p>
 <blockquote>
 			<pre>$client->showBriefly();</pre></blockquote>
-		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the Logitech Media Server directory.</p>
+		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the Lyrion Music Server directory.</p>
 
 <hr>
 <h4>Player Menu</h4>
-<p>By default, plugins will appear in the Plugins menu on the player. However, some plugins may be similar to others, and could be better organised into submenus.  The addMenu function allows a 
+<p>By default, plugins will appear in the Plugins menu on the player. However, some plugins may be similar to others, and could be better organised into submenus.  The addMenu function allows a
 plugin to choose its submenu location:</p>
 
 <p>The simple line subroutine, below, is taken from Picks.pm.</p>
@@ -127,7 +127,7 @@ plugin to choose its submenu location:</p>
 	return "RADIO";
 &#125;;
 </pre></blockquote>
-This will make the plugin appear in a submenu with the string token RADIO.  This submenu string can then be localized by the server to the chosen language.  Each submenu can, as an option, be added to the top level 
+This will make the plugin appear in a submenu with the string token RADIO.  This submenu string can then be localized by the server to the chosen language.  Each submenu can, as an option, be added to the top level
 menus for any player via the player settings.
 
 
@@ -173,9 +173,9 @@ MY_STRING
 <p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
 <hr>
 <h4>Web Interface</h4>
-<p>Logitech Media Server Plugins can expose their own web interface, accessible through
-the main server's web pages. To do this, include a function called 
-"webPages" which returns a list of two values: a hash reference to handler 
+<p>Lyrion Music Server Plugins can expose their own web interface, accessible through
+the main server's web pages. To do this, include a function called
+"webPages" which returns a list of two values: a hash reference to handler
 functions for the plugin's pages, and a string representing the path of
 the plugin's index page.</p>
 
@@ -225,7 +225,7 @@ the URL path must include the "plugins/&lt;pluginname&gt;/" prefix.
 
 <hr>
 <h4>ScreenSavers</h4>
-You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should 
+You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should
 be used to give the user any settings options or to set the screensaver as active or reset to default.  You can register the screensaver using the following subroutine:
 <pre>
 sub screenSaver {
@@ -297,7 +297,7 @@ sub getDisplayName {
 sub strings {  return '
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	EN	Rescan Music Library
-	
+
 PLUGIN_RESCAN_RESCANNING
 	EN	Server now rescanning...
 
@@ -315,17 +315,17 @@ sub setMode {
 	$client-&gt;lines(\&amp;lines);
 }
 
-sub enabled { 
+sub enabled {
 	my $client = shift;
 	return !Slim::Music::iTunes::useiTunesLibrary();
 }
 
 my %functions = (
-	'up' =&gt; sub { 
+	'up' =&gt; sub {
 		my $client = shift;
 		$client->bumpUp();
 	},
-	'down' =&gt; sub { 
+	'down' =&gt; sub {
 	    my $client = shift;
 		$client->bumpDown();
 	},
@@ -355,7 +355,7 @@ sub lines {
 		'line2' => $client->string('PLUGIN_RESCAN_PRESS_PLAY'),
 	};
 }
-	
+
 ################################################
 ### End of Section 2.                        ###
 ################################################
@@ -366,5 +366,5 @@ sub getFunctions {
 
 1;
 </pre>
-	
+
 [% PROCESS helpfooter.html %]

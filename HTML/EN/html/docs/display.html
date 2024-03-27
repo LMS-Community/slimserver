@@ -18,7 +18,7 @@
 <p>Arrays are used for each component of the display as the rendering code
 supports more than 2 lines of text.  This is restricted to 2 lines for
 SBG and 3 for SB2/SB3/Tranporter at present [requires appropriate
-fonts].  For example:</p> 
+fonts].  For example:</p>
 
 <pre>my $hash = {
    'line'    => [ 'Line1',
@@ -120,7 +120,7 @@ text overlapping overlays.</p>
 
 <pre>my $hash = {
    'bits' => $bitmap,
-}</pre> 
+}</pre>
 
 <p>Where $bitmap is a byte string which defines a bitmap of appropriate
 size for the display. The bitmap will be displayed on top of any other
@@ -175,7 +175,7 @@ as the currently active player font:</p>
 
 <pre>my $hash = {
    ...
-   'fonts' => { 
+   'fonts' => {
        'graphic-280x16'  => { 'overlay' => [ 'small.1' ] },
        'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
        }
@@ -195,7 +195,7 @@ also force display of overlays in single line mode:</p>
 
 <pre>my $hash = {
    ...
-   'fonts' => { 
+   'fonts' => {
        'text'  => { 'lines' => 1,
                     'displayoverlays' => 1
 		  },
@@ -277,7 +277,7 @@ called once per second:</p>
 <pre>sub lines {
    my $client = shift;
    my ($complete, $queue) = $client->scrollTickerTimeLeft();
-   
+
    my $text = 'Whatever you want to add to the ticker';
 
    return( {
@@ -335,10 +335,10 @@ optional parameters.  The optional parameters may either be positional
 parameters or named parameters in a parameter hash.</p>
 
 <pre>$client->showBriefly($hash, $duration, $firstline, $blockupdate, $scrolltoend, $brightness, $callback, $callbackargs)
-or 
-$client->showBriefly($hash, 
-                     { 'duration'     => $duration, 
-                       'firstline'    => $firstline, 
+or
+$client->showBriefly($hash,
+                     { 'duration'     => $duration,
+                       'firstline'    => $firstline,
                        'block'        => $blockupdate,
                        'scroll'       => $scrolltoend,
                        'brightness'   => $brightness,
@@ -350,7 +350,7 @@ $client->showBriefly($hash,
 	<li>$firstline - display only line[0] if in single line mode (otherwise displays line[1] in single line mode)
 	<li>$blockupdate - block display so that calls to update during	$duration do not cancel the showBriefly display (defaults to false)
 	<li>$scrolltoend - if line is too long scroll display and continue until whole line is seen.  This overrides duration.
-	<li>$brightness - brightness to display at ('powerOn', 'powerOff', 'idle' or brightness value) 
+	<li>$brightness - brightness to display at ('powerOn', 'powerOff', 'idle' or brightness value)
 	<li>$callback - function to call when animation is done, including scrolling.
 	<li>$callbackargs - callback arguments.
 
@@ -383,9 +383,9 @@ call to $client->unblock().</p>
 <p>For example:</p>
 
 <pre>$client->block( {
-   'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), 
+   'line' => [ string('PLAYER_NEEDS_UPGRADE_1'),
                string('PLAYER_NEEDS_UPGRADE_2') ],
-   'fonts' => { 
+   'fonts' => {
       'graphic-320x32' => 'standard',
       'graphic-280x16' => 'small',
       'text'           => 2,
@@ -423,7 +423,7 @@ $client->update() is called.</p>
     return {
        'line'      => [ 'Line1 text', 'Line2 text' ],
        'overlay'   => [ $client->symbols('bell') ],
-       'fonts'      => { 
+       'fonts'      => {
            'graphic-280x16'  => { 'overlay' => [ 'small.1' ] },
            'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
            'text' =>            { 'lines' => 2,
@@ -504,7 +504,7 @@ components of the current display.</p>
 
 <p>Note curDisplay returns a display hash including the screen name ('screen1'
 and 'screen2') and all line, overlay, center and font components on the
-current screen.  This is different from previous versions.</p> 
+current screen.  This is different from previous versions.</p>
 
 <p>The difference between $client->curDisplay() and $client->curLines()
 is that $client->curLines() makes a call to the mode's lines function
@@ -580,12 +580,12 @@ target="displaychars">here</a>).</p>
 display.  These may be defined by plugins and used anywhere on the
 display.</p>
 
-<p>Logitech Media Server allows you to define many custom characters using:
+<p>Lyrion Music Server allows you to define many custom characters using:
 Slim::Display::Text::setCustomChar().</p>
 
 <p>Each display screen can use up to 8 custom characters.  If more
 custom characters exist on a screen they will be replaced with a blank
-character.  [NB Logitech Media Server also uses custom characters for the
+character.  [NB Lyrion Music Server also uses custom characters for the
 predefined symbols which also count towards this limit.]</p>
 
 <p>Each custom character is 5 pixels wide and 7 pixels high plus an
@@ -594,18 +594,18 @@ pixel].</p>
 
 <p>For example to define a custom character to be called 'my-icon':</p>
 
-<pre>Slim::Display::Text::setCustomChar( 'my-icon', ( 
-		0b00000000, 
-		0b00000000, 
-		0b00000000, 
-		0b00000000, 
-		0b00011110, 
-		0b00011111, 
+<pre>Slim::Display::Text::setCustomChar( 'my-icon', (
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b00011110,
+		0b00011111,
 		0b00011111,
 
 		0b00000000
 		));
-</pre>	
+</pre>
 <p>Note: The 3 most signifcant bits of each line are not used.</p>
 
 <p>Custom characters may then be added to a display via

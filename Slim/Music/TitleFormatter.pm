@@ -428,7 +428,7 @@ sub init {
 	return 1;
 }
 
-# This does not currently have any callers in the Logitech Media Server tree.
+# This does not currently have any callers in the Lyrion Music Server tree.
 sub addFormat {
 	my $format = shift;
 	my $formatSubRef = shift;

@@ -1,4 +1,4 @@
-# Plugin for Logitech Media Server to test network bandwidth
+# Plugin for Lyrion Music Server to test network bandwidth
 #
 
 # This code is derived from code with the following copyright message:
@@ -187,8 +187,8 @@ sub setMode {
 
 		$target->power(1) if !$client->power();
 
-		Slim::Buttons::Common::pushModeLeft($target, 'Slim::Plugin::NetTest::Plugin', { 
-			'testmode'       => 'target', 
+		Slim::Buttons::Common::pushModeLeft($target, 'Slim::Plugin::NetTest::Plugin', {
+			'testmode'       => 'target',
 			'testparams'     => $client->modeParam('testparams'),
 			'updateInterval' => 1, # use periodic updates on target
 		});
@@ -343,7 +343,7 @@ sub lines {
 	if ($client->displayWidth > 160) {
 		$line    = [ $client eq $target
 					 ? $client->string('PLUGIN_NETTEST_SELECT_RATE')
-					 : $client->string('PLUGIN_NETTEST_TESTING_TO') . ' ' . $target->name 
+					 : $client->string('PLUGIN_NETTEST_TESTING_TO') . ' ' . $target->name
 					];
 		$overlay = [ $client->symbols($client->progressBar(100, $inst/100)), $text ];
 	} else {
@@ -423,15 +423,15 @@ sub cliQuery {
 	} else {
 
 		if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
-			
+
 			$request->addResult('state', 'off');
-			
+
 		} else {
-			
+
 			$request->addResult('state', 'running');
-			
+
 			my $params = $client->modeParam('testparams');
-			
+
 			$request->addResult('rate', $params->{'rate'} +0);
 			$request->addResult('inst', $params->{'inst'} +0);
 			$request->addResult('avg',  $params->{'count'} ? $params->{'sum'} / $params->{'count'} : 0);
@@ -462,15 +462,15 @@ sub cliStartTest {
 		if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
 			Slim::Buttons::Common::pushMode($client, 'Slim::Plugin::NetTest::Plugin');
 		}
-		
+
 		my $params = $client->modeParam('testparams');
-		
+
 		if ( setTest($params, undef, $rate) ) {
-			
+
 			$request->setStatusDone();
-			
+
 		} else {
-			
+
 			$request->setStatusBadParams();
 		}
 	}
@@ -501,9 +501,9 @@ sub cliStopTest {
 
 sub systemInfoMenu {
 	my ($client, $tags) = @_;
-	
+
 	return if $tags->{menuMode} || !$client;
-	
+
 	return {
 		type      => 'redirect',
 		name      => displayName(),

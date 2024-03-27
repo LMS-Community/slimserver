@@ -1165,7 +1165,7 @@ sub _timeout {
 
 =head2 init
 
-Initialise Logitech Media Server alarm functionality.  This should be called on server startup (probably from slimserver.pl).
+Initialise Lyrion Music Server alarm functionality.  This should be called on server startup (probably from slimserver.pl).
 
 =cut
 

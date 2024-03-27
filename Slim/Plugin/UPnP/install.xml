@@ -11,7 +11,7 @@
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.6</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

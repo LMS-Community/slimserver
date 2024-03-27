@@ -8,7 +8,7 @@ I've built two versions of the ExtJS framework optimized for our needs:
               to speed up page loading/building
 
 - ext-main:   this version includes all the ExtJS code required in the rest of
-              the Logitech Media Server web UI, but still much less than ext-all
+              the Lyrion Music Server web UI, but still much less than ext-all
 
 In order to build/update these two files download the latest version of ExtJS from
 extjs.com. Copy /trunk/tools/JSBuilder/JSBuilder2.jar to the extracted extjs-x.y.z
@@ -19,4 +19,4 @@ java -jar JSBuilder2.jar --projectFile ./ext-squeezebox.jsb2 --homeDir .
 
 Please note that you'll need at least Java 6 to run JSBuilder2.
 
--- Michael 
+-- Michael

@@ -36,7 +36,7 @@ use Slim::Utils::OSDetect;
 # same, Dynaloader fails.
 #
 # The workaround is to munge @INC and eval'ing the known modules that
-# we include with Logitech Media Server, first checking our CPAN path, then if
+# we include with Lyrion Music Server, first checking our CPAN path, then if
 # there are any modules that couldn't be loaded, splicing CPAN/ out,
 # and attempting to load the system version of the module. When we are
 # done, put our CPAN/ path back in @INC.
@@ -233,7 +233,7 @@ don't work for you, ask for help and/or report a bug.
 	my $failed = check_valid_versions();
 	if ( scalar keys %{$failed} ) {
 
-		print "The following CPAN modules were found but cannot work with Logitech Media Server:\n";
+		print "The following CPAN modules were found but cannot work with Lyrion Music Server:\n";
 
 		for my $module ( sort keys %{$failed} ) {
 			if ( $failed->{$module}->{loaded} eq $failed->{$module}->{need} && $failed->{$module}->{msg} ) {
@@ -248,7 +248,7 @@ don't work for you, ask for help and/or report a bug.
 		print "To fix this problem you have several options:\n";
 		print "1. Install the latest version of the module(s) using CPAN: sudo cpan Some::Module\n";
 		print "2. Update the module's package using apt-get, yum, etc.\n";
-		print "3. Run the .tar.gz version of Logitech Media Server which includes all required CPAN modules.\n";
+		print "3. Run the .tar.gz version of Lyrion Music Server which includes all required CPAN modules.\n";
 		print "\n";
 
 		exit;
@@ -295,8 +295,8 @@ sub tryModuleLoad {
 			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
 			if ($@ =~ /cannot restore segment prot after reloc/) {
 
-				print STDERR "** Logitech Media Server Error:\n";
-				print STDERR "** SELinux settings prevented Logitech Media Server from starting.\n";
+				print STDERR "** Lyrion Music Server Error:\n";
+				print STDERR "** SELinux settings prevented Lyrion Music Server from starting.\n";
 				print STDERR "** See http://wiki.slimdevices.com/index.cgi?RPM for more information.\n\n";
 				exit;
 			}

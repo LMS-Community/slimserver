@@ -99,7 +99,7 @@ my $prefs = preferences('server');
 =head2 init( )
 
 This method must be called before all other Slim::Buttons::* modules.  It
-initialises all other Logitech Media Server core button modules and registers the "Now
+initialises all other Lyrion Music Server core button modules and registers the "Now
 Playing" screensaver.
 
 =cut

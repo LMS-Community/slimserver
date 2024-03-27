@@ -190,19 +190,19 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	NL	Definieer een door komma's gescheiden lijst van genres. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_BANNED
-	CS	Tato verze Logitech Media Server byla zakázána prostřednictvím Last.fm, aktualizujte prosím na novější verzi.
-	DA	Denne version af Logitech Media Server ser ud til at være udelukket af Last.fm. Du bør opgradere til en nyere version.
-	DE	Last.fm scheint diese Version von Logitech Media Server nicht zuzulassen. Aktualisieren Sie auf eine neuere Version.
-	EN	This version of Logitech Media Server appears to have been banned by Last.fm, please upgrade to a newer version.
-	ES	Parece que Last.fm ha prohibido esta versión de Logitech Media Server. Actualícela a una versión más reciente.
-	FI	Last.fm tuntuu kieltäneen Logitech Media Serverin tämän version. Päivitä uudempaan versioon.
-	FR	Cette version du Logitech Media Server semble avoir été bannie par Last.fm. Veuillez effectuer une mise à niveau vers une version plus récente.
-	IT	È possibile che questa versione di Logitech Media Server non sia supportata in Last.fm. Eseguire l'aggiornamento a una versione successiva.
-	NL	Deze versie van Logitech Media Server wordt niet meer door Last.fm ondersteund. Upgrade naar een nieuwere versie.
-	NO	Det ser ut til at Last.fm har blokkert denne versjonen av Logitech Media Server. Du bør oppgradere til en nyere versjon.
-	PL	Ta wersja programu Logitech Media Server jest blokowana przez usługę Last.fm; uaktualnij go do nowszej wersji.
-	RU	По-видимому, эта версия Logitech Media Server запрещена на Last.fm. Обновите версию.
-	SV	Den här versionen av Logitech Media Server verkar ha spärrats av Last.fm. Uppgradera till senare version.
+	CS	Tato verze Lyrion Music Server byla zakázána prostřednictvím Last.fm, aktualizujte prosím na novější verzi.
+	DA	Denne version af Lyrion Music Server ser ud til at være udelukket af Last.fm. Du bør opgradere til en nyere version.
+	DE	Last.fm scheint diese Version von Lyrion Music Server nicht zuzulassen. Aktualisieren Sie auf eine neuere Version.
+	EN	This version of Lyrion Music Server appears to have been banned by Last.fm, please upgrade to a newer version.
+	ES	Parece que Last.fm ha prohibido esta versión de Lyrion Music Server. Actualícela a una versión más reciente.
+	FI	Last.fm tuntuu kieltäneen Lyrion Music Serverin tämän version. Päivitä uudempaan versioon.
+	FR	Cette version du Lyrion Music Server semble avoir été bannie par Last.fm. Veuillez effectuer une mise à niveau vers une version plus récente.
+	IT	È possibile che questa versione di Lyrion Music Server non sia supportata in Last.fm. Eseguire l'aggiornamento a una versione successiva.
+	NL	Deze versie van Lyrion Music Server wordt niet meer door Last.fm ondersteund. Upgrade naar een nieuwere versie.
+	NO	Det ser ut til at Last.fm har blokkert denne versjonen av Lyrion Music Server. Du bør oppgradere til en nyere versjon.
+	PL	Ta wersja programu Lyrion Music Server jest blokowana przez usługę Last.fm; uaktualnij go do nowszej wersji.
+	RU	По-видимому, эта версия Lyrion Music Server запрещена на Last.fm. Обновите версию.
+	SV	Den här versionen av Lyrion Music Server verkar ha spärrats av Last.fm. Uppgradera till senare version.
 
 PLUGIN_AUDIOSCROBBLER_BADAUTH
 	CS	Neplatné přihlašovací jméno nebo heslo k Last.fm

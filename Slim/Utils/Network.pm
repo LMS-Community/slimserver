@@ -3,7 +3,7 @@ package Slim::Utils::Network;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -41,7 +41,7 @@ Set the passed socket to be blocking (1) or non-blocking (0)
 
 =cut
 
-sub blocking {   
+sub blocking {
 	my $sock = shift;
 
  	return $sock->blocking(@_) unless main::ISWINDOWS;
@@ -86,7 +86,7 @@ sub isAllowedHost {
 		}
 
 		my @matched = (0,0,0,0);
-		
+
 		#Get each octet
 		my @allowedoctets = split /\./, $item;
 		my @hostoctets = split /\./, $host;
@@ -109,7 +109,7 @@ sub isAllowedHost {
 					# if it matches the range, pass octet match
 					$matched[$i] = 1;
 				}
-			} 
+			}
 		}
 
 		#check if all octets passed
@@ -118,7 +118,7 @@ sub isAllowedHost {
 			return 1;
 		}
 	}
-	
+
 	# No rules matched, return invalid source
 	return 0;
 }
@@ -159,7 +159,7 @@ Returns the MAC address the server is listening on (if possible).
 
 This isn't trying as hard as eg. Net::Address::Ethernet, as arp etc.
 often would take too much time on the many disconnected interfaces
-of nowadays computers. In particular macOS Sierra seems to cause issues. 
+of nowadays computers. In particular macOS Sierra seems to cause issues.
 
 =cut
 
@@ -168,19 +168,19 @@ sub serverMACAddress {
 	eval {
 		require Net::Ifconfig::Wrapper;
 		$addresses = Net::Ifconfig::Wrapper::Ifconfig('list');
-		
+
 		# we're only interested in interfaces which have a known MAC and IP address
-		$addresses = [ grep { $_->{inet} && $_->{ether} } values %$addresses ]; 
+		$addresses = [ grep { $_->{inet} && $_->{ether} } values %$addresses ];
 	};
-	
+
 	if ($addresses) {
 		my $hostAddr = serverAddr();
 		my ($address) = grep { $_->{inet}->{$hostAddr} } @$addresses;
-		
+
 		# if we didn't find our IP address, then let's pick just one of the list
 		$address ||= $addresses->[0];
 
-		return $address->{ether}; 
+		return $address->{ether};
 	}
 }
 
@@ -271,7 +271,7 @@ L<http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html>
 
 =cut
 
-sub sysreadline(*;$) { 
+sub sysreadline(*;$) {
 	my ($handle, $maxnap) = @_;
 
 	$handle = qualify_to_ref($handle, caller());
@@ -295,8 +295,8 @@ sub sysreadline(*;$) {
 
 			if (Time::HiRes::time() > $start_time + $maxnap) {
 				return $line;
-			} 
-		} 
+			}
+		}
 
 		my @ready_handles;
 
@@ -304,7 +304,7 @@ sub sysreadline(*;$) {
 
 			unless ($infinitely_patient) {
 				my $time_left = $start_time + $maxnap - Time::HiRes::time();
-			} 
+			}
 
 			next SLEEP;
 		}
@@ -318,7 +318,7 @@ sub sysreadline(*;$) {
 			while ($result = sysread($handle, my $char, 1)) {
 				$line .= $char;
 				last CHAR if $char eq "\n";
-			} 
+			}
 
 			my $err = $!;
 
@@ -340,11 +340,11 @@ sub sysreadline(*;$) {
 				}
 
 				next SLEEP;
-			} 
+			}
 
 			last INPUT_READY;
 		}
-	} 
+	}
 
 	return $line;
 }
@@ -357,21 +357,21 @@ Replacement for heavyweight Net::IP->intip. Returns 0 on error.
 
 sub intip {
 	my $ip = shift;
-	
+
 	if ( $ip !~ /^[\d\.]+$/ ) {
 		return 0;
 	}
-	
+
 	my $n   = 1;
 	my $dec = 0;
-	
+
 	for my $octet ( reverse( split /\./, $ip ) ) {
 		return 0 if $octet !~ /^\d+$/;
-		
+
 		$dec += ( $n * $octet );
 		$n *= 256;
 	}
-	
+
 	return $dec;
 }
 
@@ -383,7 +383,7 @@ Replacement for heavyweight Net::IP->iptype.
 
 sub ip_is_private {
 	my $packed_ip = inet_aton(shift) || return 0;
-	
+
 	# http://www.perlmonks.org/?node_id=791164
 	return $packed_ip =~ m{
         ^
@@ -441,7 +441,7 @@ sub ip_is_ipv4 {
 			return 0;
 		}
 	}
-	
+
 	return 1;
 }
 
@@ -453,7 +453,7 @@ Checks whether given IP address is the host's address or localhost
 
 sub ip_is_host {
 	my $ip = shift || return;
-	
+
 	return 1 if $ip eq '127.0.0.1';
 	return 1 if $ip eq serverAddr();
 
@@ -468,12 +468,12 @@ Try to figure out whether an IP address is the host's gateway
 
 sub ip_is_gateway {
 	my ($ip) = @_;
-	
+
 	# Check for invalid chars
 	return unless ip_is_ipv4($ip);
 
 	my $gateway = Slim::Utils::IPDetect::defaultGateway();
-	
+
 	return unless $gateway;
 
 	return intip($ip) == intip($gateway) ? 1 : 0;
@@ -481,7 +481,7 @@ sub ip_is_gateway {
 
 =head1 ip_on_different_network($ip)
 
-Try to figure out whether an IP address is on the same network as Logitech Media Server.
+Try to figure out whether an IP address is on the same network as Lyrion Music Server.
 It's very simplistic in that it only checks whether we're in a private network, but the
 requested IP is not (and vice versa)
 
@@ -489,10 +489,10 @@ requested IP is not (and vice versa)
 
 sub ip_on_different_network {
 	my ($ip) = @_;
-	
+
 	# Check for invalid chars
 	return unless ip_is_ipv4($ip);
-	
+
 	# if our host IP is 127.0.0.1 (lookup failed), then all networks would be different - ignore
 	return if hostAddr() eq '127.0.0.1';
 

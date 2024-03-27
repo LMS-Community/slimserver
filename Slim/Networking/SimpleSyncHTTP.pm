@@ -5,7 +5,7 @@ package Slim::Networking::SimpleSyncHTTP;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# this class provides blocking http requests from Logitech Media Server.
+# this class provides blocking http requests from Lyrion Music Server.
 
 # DO NOT USE this class in the server. It's supposed to be used in the scanner only.
 

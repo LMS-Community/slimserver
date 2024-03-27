@@ -29,7 +29,7 @@ sub init {
 	main::INFOLOG && $log->info("UPnP init...");
 
 	Slim::Plugin::RemoteLibrary::UPnP::MediaServer->init();
-	
+
 	Slim::Plugin::RemoteLibrary::Plugin->addRemoteLibraryProvider($class);
 }
 
@@ -38,25 +38,25 @@ sub getLibraryList {
 
 	my $devices = Slim::Plugin::RemoteLibrary::UPnP::MediaServer->getDevices();
 	my $items = [];
-	
+
 	foreach ( values %$devices ) {
-		# don't show LMS instances if we're using remote Logitech Media Servers, too
-		next if $_->getfriendlyname =~ /^Logitech Media Server/ && $prefs->get('useLMS');
+		# don't show LMS instances if we're using remote Lyrion Music Servers, too
+		next if $_->getfriendlyname =~ /^Lyrion Music Server/ && $prefs->get('useLMS');
 
 		my $icon = 'plugins/RemoteLibrary/html/icon.png';
 		my $description = eval { XMLin($_->getdescription) };
-		
+
 		# try to get the server's icon
 		if ( $description && $description->{device} && (my $iconList = $description->{device}->{iconList}) ) {
-			
+
 			if ( $iconList = $iconList->{icon} ) {
-				
+
 				# some servers don't return a list of icons, but only a single value
 				$iconList = [ $iconList ] unless ref $iconList eq 'ARRAY';
-				
+
 				# pick the largest, and PNG over JPG (if both of same size)
 				$iconList = [ sort {
-					$b->{height} <=> $a->{height} || $b->{width} <=> $a->{width} 
+					$b->{height} <=> $a->{height} || $b->{width} <=> $a->{width}
 					|| ($a->{mimetype} =~ /png/i && -1) || ($b->{mimetype} =~ /png/i && 1)
 					|| ($a->{url} =~ /png$/i && -1) || ($b->{url} =~ /png$/i && 1)
 				} @$iconList ];
@@ -65,11 +65,11 @@ sub getLibraryList {
 					if ($img !~ /^http/) {
 						$img = _getBaseUrl($_->getlocation) . $img;
 					}
-					
+
 					$icon = $img;
 				}
 			}
-			
+
 		}
 
 		# create menu item
@@ -84,7 +84,7 @@ sub getLibraryList {
 			}],
 		};
 	}
-	
+
 	return $items;
 }
 
@@ -96,7 +96,7 @@ sub _browseUPnP {
 	my @levels    = map { uri_unescape($_) } split("__", $hierarchy);
 
 	my $id = $levels[-1];
-	
+
 	my $browse = 'BrowseDirectChildren';
 
 	if ( $pt->{metadata} ) {
@@ -111,17 +111,17 @@ sub _browseUPnP {
 		callback    => \&gotContainer,
 		passthrough => [ $client, $cb, $args, $pt ],
 	} );
-	
+
 	return;
 }
 
 sub gotContainer {
 	my $container = shift;
 	my ($client, $cb, $args, $pt) = @_;
-	
+
 	if ( ref $container ne 'HASH' ) {
 		my $error = Slim::Utils::Strings::cstring($client, 'PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED');
-			
+
 		$cb->([{
 			name => $error,
 			type => 'textarea'
@@ -129,28 +129,28 @@ sub gotContainer {
 
 		return;
 	}
-	
+
 	my $items = [];
-	
+
 	if ( defined $container->{children} ) {
 		my $children = $container->{children};
-		
+
 		my $device    = $pt->{device};
 		my $hierarchy = $pt->{hierarchy};
 		my $getMetadata = $pt->{metadata};
 		my $playlist  = $pt->{playlist};
 		my $tracks    = [];
 		my $hasIcons;
-		
+
 		my $filterRE;
 		if ( my $ignoreFolders = $prefs->get('ignoreFolders') ) {
 			$ignoreFolders = join( '|', split(/\s*,\s*/, $ignoreFolders) );
 			$filterRE = qr/^(?:$ignoreFolders)$/i;
 		}
-				
+
 		for my $child ( @{$children} ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($child));
-			
+
 			next unless $child->{title};
 
 			if ( defined $filterRE && $child->{title} =~ $filterRE ) {
@@ -159,7 +159,7 @@ sub gotContainer {
 					next;
 				}
 			}
-			
+
 			if ( $getMetadata ) {
 				foreach ( qw(title artist album genre url) ) {
 					push @$items, {
@@ -178,7 +178,7 @@ sub gotContainer {
 						hierarchy => uri_escape( join( '__', $hierarchy, $child->{id} ) ),
 					}],
 				};
-				
+
 				if ($child->{url}) {
 					$item->{play} = $child->{url};
 					$item->{type} = 'audio';
@@ -190,7 +190,7 @@ sub gotContainer {
 					# register metadata handler
 					if ( !Slim::Formats::RemoteMetadata->getProviderFor($child->{url}) ) {
 						my $baseUrl = _getBaseUrl($child->{url});
-						
+
 						Slim::Formats::RemoteMetadata->registerProvider(
 							match => qr/\Q$baseUrl\E/,
 							func => \&getMetadata,
@@ -208,7 +208,7 @@ sub gotContainer {
 				elsif (!$child->{id}) {
 					$item->{type} = 'textarea';
 				}
-				
+
 				if ($child->{albumArtURI} && !$child->{url}) {
 					$item->{image} = proxiedImage($child->{albumArtURI});
 					$hasIcons++;
@@ -216,7 +216,7 @@ sub gotContainer {
 
 				push @$items, $item;
 			}
-		}				
+		}
 
 		# add a Play All item if there are tracks in the list
 		if (@$tracks && scalar @$tracks > 1) {
@@ -234,7 +234,7 @@ sub gotContainer {
 			};
 		}
 	}
-	
+
 	if (!scalar @$items) {
 		push @$items, {
 			name => cstring($client, 'EMPTY'),
@@ -249,15 +249,15 @@ sub getMetadata {
 	my ( $client, $url ) = @_;
 
 	my $info = $cache->get('upnp_meta_' . $url) || {};
-	
+
 	my $meta = {
 		title => $info->{title},
 	};
-	
+
 	if ( my $artist = $info->{artist} || $info->{actor} || $info->{contributor} || $info->{creator} ) {
 		$meta->{artist} = $artist;
 	}
-	
+
 	if ( my $date = $info->{date} ) {
 		 if ( $date =~ /\b(\d{4})\b/ ) {
 			 $meta->{year} = $1;
@@ -271,7 +271,7 @@ sub getMetadata {
 		originalTrackNumber => 'tracknum',
 		albumArtURI => 'cover',
 	);
-	
+
 	while ( my ($k, $attribute) = each %metaMapping ) {
 		if ( defined $attribute && defined $info->{$k} ) {
 			$meta->{$attribute || $k} = $info->{$k};
@@ -301,7 +301,7 @@ sub proxiedImage {
 		);
 		$registeredProxies{$host}++;
 	}
-	
+
 	return Slim::Web::ImageProxy::proxiedImage($url, 1);
 }
 

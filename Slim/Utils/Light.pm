@@ -6,7 +6,7 @@ package Slim::Utils::Light;
 # version 2.
 
 # This module provides some functions compatible with functions
-# from the core Logitech Media Server code, without their overhead.
+# from the core Lyrion Music Server code, without their overhead.
 # These functions are called by helper applications like SqueezeTray
 # or the control panel.
 

@@ -29,7 +29,7 @@ my ($os, $isWindows, $isMac, $isLinux);
 
 =head2 OS( )
 
-returns a string to indicate the detected operating system currently running Logitech Media Server.
+returns a string to indicate the detected operating system currently running Lyrion Music Server.
 
 =cut
 

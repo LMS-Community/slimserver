@@ -12,7 +12,7 @@ Slim::Buttons::RemoteTrackInfo
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::RemoteTrackInfo> is a Logitech Media Server module to create a UI for viewing information 
+L<Slim::Buttons::RemoteTrackInfo> is a Lyrion Music Server module to create a UI for viewing information
 about remote tracks.
 
 =cut
@@ -58,7 +58,7 @@ sub setMode {
 
 	# is it a favorite?
 	# INPUT.Choice will display 'name' dynamically
-	# 
+	#
 	# Only allow adding to favorites if the URL is something we can play.
 
 	my $favIndex;
@@ -85,7 +85,7 @@ sub setMode {
 				my $icon  = $client->modeParam('icon');
 
 				if (defined $index) {
-					
+
 					# Bug 6177, Menu to confirm favorite removal
 					Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 						title => $title,

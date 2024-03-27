@@ -24,7 +24,7 @@ PLUGIN_CLI_DESC
 	ES	El complemento de interfaz de línea de comandos permite el control remoto del software y de los reproductores Squeezebox a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
 	FI	Komentorivikäyttöliittymälaajennuksen avulla Squeezeboxin ohjelmistoa ja soittimia voidaan kauko-ohjata TCP/IP-yhteyden välityksellä, esimerkiksi AMX:n, Crestronin tai jonkin muun kolmannen osapuolen automaatiojärjestelmän avulla.
 	FR	Le plugin d'interface de ligne de commande permet de contrôler le logiciel Squeezebox et les platines à distance par le biais d'une connexion TCP/IP, par exemple par un système d'automatisation tiers, tel qu'AMX ou Crestron.
-	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-Logitech Media Server וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
+	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-Lyrion Music Server וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
 	IT	Il plugin dell'interfaccia della riga di comando consente di controllare Squeezebox e i lettori in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
 	NL	Met de opdrachtregel interface plug-in is het mogelijk om de Squeezebox software en systemen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
 	NO	Med kommandolinjegrensesnittet kan Squeezebox-programvaren og spillerne kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.

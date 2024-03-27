@@ -18,7 +18,7 @@ Slim::Control::Queries
 
 =head1 DESCRIPTION
 
-L<Slim::Control::Queries> implements most Logitech Media Server queries and is designed to
+L<Slim::Control::Queries> implements most Lyrion Music Server queries and is designed to
  be exclusively called through Request.pm and the mechanisms it defines.
 
  Except for subscribe-able queries (such as status and serverstatus), there are no

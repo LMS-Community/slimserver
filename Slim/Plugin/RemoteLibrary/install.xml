@@ -11,7 +11,7 @@
 	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>
 	<playerMenu>BROWSE_MUSIC</playerMenu>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.9</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

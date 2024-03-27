@@ -389,7 +389,7 @@ sub flush {
 
 	$client->stream('f');
 	$client->SUPER::flush();
-	
+
 	# once flush, don't wait for answer, just get ready
 	$client->readyToStream(1);
 	return 1;
@@ -907,7 +907,7 @@ sub audio_outputs_enable {
 }
 
 
-# The following settings are sync'd between the player firmware and Logitech Media Server
+# The following settings are sync'd between the player firmware and Lyrion Music Server
 our $pref_settings = {
 	'playername' => {
 		firmwareid => 0,
@@ -994,7 +994,7 @@ sub setPlayerSetting {
 	}
 }
 
-# Allow the firmware to update a pref in Logitech Media Server
+# Allow the firmware to update a pref in Lyrion Music Server
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;

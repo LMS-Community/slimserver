@@ -23,7 +23,7 @@ assert, bt, msg, msgf, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
- functions useful throughout Logitech Media Server and third party plugins.
+ functions useful throughout Lyrion Music Server and third party plugins.
 
 =cut
 
@@ -1222,7 +1222,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		'SqueezeCenter, Squeezebox Server, Logitech Media Server',
+		'SqueezeCenter, Squeezebox Server, Lyrion Music Server',
 	);
 
 	return $userAgentString;

@@ -28,10 +28,10 @@ Slim::Buttons::Information
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Information> is a Logitech Media Server module to display player library
+L<Slim::Buttons::Information> is a Lyrion Music Server module to display player library
 and module information.
 
-Displays various bits of information relating to the Logitech Media Server,
+Displays various bits of information relating to the Lyrion Music Server,
 the current player, the music library and the installed plug-in
 modules.
 
@@ -69,12 +69,12 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my $getMenu = sub {
 		my ( $client, $callback ) = @_;
 
 		my $menu = Slim::Menu::SystemInfo->menu( $client );
-		
+
 		if ( $callback ) {
 			# Callback is used during a menu refresh
 			$callback->( $menu );
@@ -83,15 +83,15 @@ sub setMode {
 			return $menu;
 		}
 	};
-	
+
 	my %params = (
 		modeName  => 'SystemInfo',
 		opml      => $getMenu->( $client ),
 		onRefresh => $getMenu,
 	);
-	
+
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-	
+
 	$client->modeParam( 'handledTransition', 1 );
 }
 

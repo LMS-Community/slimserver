@@ -3,7 +3,7 @@ package Slim::Networking::UDP;
 
 # Logitech Media Server Copyright 2001-2020 Logitech.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This module implements a UDP discovery protocol, used by Squeezebox, Transporter and SLIMP3 hardware.
@@ -40,10 +40,10 @@ sub init {
 	) or do {
 
 		# XXX - exiting in a deep sub is kinda bad. should propagate up.
-		logger('')->logdie("FATAL: There is already another copy of the Logitech Media Server running on this machine. ($!)");
+		logger('')->logdie("FATAL: There is already another copy of the Lyrion Music Server running on this machine. ($!)");
 	};
 
-	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do { 
+	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do {
 
 		logger('')->logdie("FATAL: Discovery init: Cannot set port nonblocking");
 	};
@@ -65,7 +65,7 @@ sub init {
 		main::INFOLOG && $log->info("Discovery init: Saying hello to $clientID");
 
 		Slim::Networking::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientID));
-		
+
 		# throttle the broadcasts
 		select(undef, undef, undef, 0.05);
 	}
@@ -80,9 +80,9 @@ sub readUDP {
 
 	do {
 		my $ts = Time::HiRes::time();
-		
+
 		$clientpaddr = recv($sock, $msg, 1500, 0);
-		
+
 		if ($clientpaddr) {
 
 			# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
@@ -91,12 +91,12 @@ sub readUDP {
 
 				if (main::SB1SLIMP3SYNC) {
 					if (!$Slim::Player::SLIMP3::SLIMP3Connected) {
-	
+
 						Slim::bootstrap::tryModuleLoad('Slim::Networking::SliMP3::Protocol');
 					}
-	
+
 					my $client = Slim::Networking::SliMP3::Protocol::getUdpClient($clientpaddr, $sock, $msg) || return;
-					
+
 					Slim::Networking::SliMP3::Protocol::processMessage($client, $msg, $ts);
 				} else {
 					if (!$warnNoSlimp3Support) {
@@ -105,16 +105,16 @@ sub readUDP {
 						$warnNoSlimp3Support = 1;
 					}
 				}
-	
+
 			} elsif ($msg =~/^d/) {
 
 				# Discovery request: note that SliMP3 sends deviceid and revision in the discovery
-				# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops. 
+				# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops.
 				# also, it does not send the MAC address until the [h]ello packet.
 				# Squeezebox sends all fields correctly.
 				#
 				# All players send discovery packets
-	
+
 				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
 
 				Slim::Networking::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, join(':', @mac));
@@ -128,7 +128,7 @@ sub readUDP {
 				# New extensible discovery format - pass to handler for processing
 
 				Slim::Networking::Discovery::gotTLVRequest($sock, $clientpaddr, $msg);
-	
+
 			} else {
 
 				my ($clientport, $clientip) = sockaddr_in($clientpaddr);

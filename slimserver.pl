@@ -68,8 +68,8 @@ if (ISACTIVEPERL && $PerlSvc::VERSION) {
 	package PerlSvc;
 
 	our %Config = (
-		DisplayName => 'Logitech Media Server',
-		Description => "Logitech Media Server - streaming media server",
+		DisplayName => 'Lyrion Music Server',
+		Description => "Lyrion Music Server - streaming media server",
 		ServiceName => "squeezesvc",
 		StartNow    => 0,
 	);
@@ -383,7 +383,7 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->error("Starting Logitech Media Server (v$main::VERSION, $REVISION, $BUILDDATE) perl $] - " . $main::Config{archname});
+	$log->error("Starting Lyrion Music Server (v$main::VERSION, $REVISION, $BUILDDATE) perl $] - " . $main::Config{archname});
 
 	if ($diag) {
 		eval "use diagnostics";
@@ -762,8 +762,8 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--localfile]
 
     --help           => Show this usage information.
-    --cachedir       => Directory for Logitech Media Server to save cached music and web data
-    --tmpdir         => Directory for Logitech Media Server's temporary files (cleaned on start and stop)
+    --cachedir       => Directory for Lyrion Music Server to save cached music and web data
+    --tmpdir         => Directory for Lyrion Music Server's temporary files (cleaned on start and stop)
     --diag           => Use diagnostics, shows more verbose errors.
                         Also slows down library processing considerably
     --logdir         => Specify folder location for log file
@@ -1006,7 +1006,7 @@ sub changeEffectiveUserAndGroup {
 	# Try starting as 'squeezeboxserver' instead.
 	if (!defined($user)) {
 		$user = 'squeezeboxserver';
-		print STDERR "Logitech Media Server must not be run as root!  Trying user $user instead.\n";
+		print STDERR "Lyrion Music Server must not be run as root!  Trying user $user instead.\n";
 	}
 
 
@@ -1043,7 +1043,7 @@ sub changeEffectiveUserAndGroup {
 	# Check that we're definately not trying to start as root, e.g. if
 	# we were passed '--user root' or any other used with uid 0.
 	if ($uid == 0) {
-		print STDERR "Logitech Media Server must not be run as root! Only do this if you know what you're doing!!\n";
+		print STDERR "Lyrion Music Server must not be run as root! Only do this if you know what you're doing!!\n";
 	}
 
 
@@ -1130,14 +1130,14 @@ sub canRestartServer {
 sub restartServer {
 	if ( canRestartServer() ) {
 		cleanup();
-		logger('')->info( 'Logitech Media Server restarting...' );
+		logger('')->info( 'Lyrion Music Server restarting...' );
 
 		if ( !Slim::Utils::OSDetect->getOS()->restartServer($0, \@argv) ) {
-			logger('')->error("Unable to restart Logitech Media Server");
+			logger('')->error("Unable to restart Lyrion Music Server");
 		}
 	}
 	else {
-		logger('')->error("Unable to restart Logitech Media Server - leaving it running.");
+		logger('')->error("Unable to restart Lyrion Music Server - leaving it running.");
 		return;
 	}
 
@@ -1148,13 +1148,13 @@ sub stopServer {
 
 	cleanup();
 
-	logger('')->info( 'Logitech Media Server shutting down.' );
+	logger('')->info( 'Lyrion Music Server shutting down.' );
 
 	exit();
 }
 
 sub cleanup {
-	logger('')->info("Logitech Media Server cleaning up.");
+	logger('')->info("Lyrion Music Server cleaning up.");
 
 	$::stop = 1;
 
@@ -1188,7 +1188,7 @@ sub cleanup {
 sub save_pid_file {
 	my $process_id = shift || $$;
 
-	logger('')->info("Logitech Media Server saving pid file.");
+	logger('')->info("Lyrion Music Server saving pid file.");
 
 	if (defined $pidfile) {
 		File::Slurp::write_file($pidfile, $process_id);

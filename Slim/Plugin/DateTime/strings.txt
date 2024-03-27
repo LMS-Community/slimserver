@@ -57,7 +57,7 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	ES	Valor predeterminado de servidor
 	FI	Palvelimen oletusasetus
 	FR	Valeur par défaut du serveur
-	HE	ברירת המחדל של Logitech Media Server
+	HE	ברירת המחדל של Lyrion Music Server
 	IT	Impostazioni predefinite di server
 	NL	Standaardinstelling server
 	NO	Serverstandard
@@ -73,7 +73,7 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	ES	Valor predeterminado de servidor
 	FI	Palvelimen oletusasetus
 	FR	Défaut serveur
-	HE	ברירת המחדל של Logitech Media Server
+	HE	ברירת המחדל של Lyrion Music Server
 	IT	Impostazioni predefinite di server
 	NL	Standaardinstelling server
 	NO	Server-standard

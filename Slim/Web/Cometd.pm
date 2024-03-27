@@ -382,7 +382,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
-			# A request to execute & subscribe to some Logitech Media Server event
+			# A request to execute & subscribe to some Lyrion Music Server event
 
 			# A valid /slim/subscribe message looks like this:
 			# {
@@ -486,7 +486,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
-			# A request to unsubscribe from a Logitech Media Server event, this is not the same as /meta/unsubscribe
+			# A request to unsubscribe from a Lyrion Music Server event, this is not the same as /meta/unsubscribe
 
 			# A valid /slim/unsubscribe message looks like this:
 			# {
@@ -519,7 +519,7 @@ sub handler {
 			};
 		}
 		elsif ( $obj->{channel} eq '/slim/request' ) {
-			# A request to execute a one-time Logitech Media Server event
+			# A request to execute a one-time Lyrion Music Server event
 
 			# A valid /slim/request message looks like this:
 			# {
@@ -855,7 +855,7 @@ sub handleRequest {
 		if ( $client ) {
 			if ( $lang ) {
 				# Only override if the currently selected language is not a regional version of the client language
-				if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) {					
+				if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) {
 					$client->languageOverride( $lang );
 				}
 			}

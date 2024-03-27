@@ -16,17 +16,17 @@ PLUGIN_EXTENSIONS
 PLUGIN_EXTENSIONS_DESC
 	CS	Stahovač zásuvných modulů umožňuje automatické stahování a instalaci volitelných vlastností Squezebox server.
 	DA	Du kan vælge om der automatisk skal hentes og installeres en række udvidelser til Squeezebox-serveren.
-	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Logitech Media Server automatisch heruntergeladen und installiert.
-	EN	Extension downloader allows automated download and installation of optional features for Logitech Media Server.
+	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Lyrion Music Server automatisch heruntergeladen und installiert.
+	EN	Extension downloader allows automated download and installation of optional features for Lyrion Music Server.
 	ES	El Descargador de extensiones permite descargar e instalar automáticamente funciones opcionales para el servidor Squeezebox.
-	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Logitech Media Serverille.
-	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour le Logitech Media Server.
-	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per Logitech Media Server.
-	NL	Met de extensie downloader kunnen optionele functies voor Logitech Media Server automatisch worden gedownload en geïnstalleerd.
-	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for Logitech Media Server helt gratis og helt automatisk.
-	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji programu Logitech Media Server.
+	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Lyrion Music Serverille.
+	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour le Lyrion Music Server.
+	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per Lyrion Music Server.
+	NL	Met de extensie downloader kunnen optionele functies voor Lyrion Music Server automatisch worden gedownload en geïnstalleerd.
+	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for Lyrion Music Server helt gratis og helt automatisk.
+	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji programu Lyrion Music Server.
 	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера Squeezebox.
-	SV	Med hjälp av nedladdningsprogrammet kan du ladda ner olika tillägg till Logitech Media Server.
+	SV	Med hjälp av nedladdningsprogrammet kan du ladda ner olika tillägg till Lyrion Music Server.
 
 PLUGIN_EXTENSIONS_REPOS
 	CS	Další úložiště
@@ -74,19 +74,19 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	SV	<b>Obs!</b> Eftersom servern laddar ner program automatiskt från den server du anger är det viktigt att du litar på databasens ägare.
 
 PLUGIN_EXTENSIONS_PLUGINS
-	CS	Zásuvné moduly pro Logitech Media Server
-	DA	Udvidelsesmoduler til Logitech Media Server
-	DE	Logitech Media Server-Plugins
-	EN	Logitech Media Server Plugins
-	ES	Complementos de Logitech Media Server
-	FI	Logitech Media Serverin laajennukset
-	FR	Plugins Logitech Media Server
-	IT	Plugin di Logitech Media Server
-	NL	Plug-ins voor Logitech Media Server
-	NO	Plugin-moduler for Logitech Media Server
-	PL	Dodatki programu Logitech Media Server
-	RU	Плагины Logitech Media Server
-	SV	Plugin-program till Logitech Media Server
+	CS	Zásuvné moduly pro Lyrion Music Server
+	DA	Udvidelsesmoduler til Lyrion Music Server
+	DE	Lyrion Music Server-Plugins
+	EN	Lyrion Music Server Plugins
+	ES	Complementos de Lyrion Music Server
+	FI	Lyrion Music Serverin laajennukset
+	FR	Plugins Lyrion Music Server
+	IT	Plugin di Lyrion Music Server
+	NL	Plug-ins voor Lyrion Music Server
+	NO	Plugin-moduler for Lyrion Music Server
+	PL	Dodatki programu Lyrion Music Server
+	RU	Плагины Lyrion Music Server
+	SV	Plugin-program till Lyrion Music Server
 
 PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
 	CS	Upgradovat zásuvný modul na novou verzi
@@ -164,19 +164,19 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
-	CS	Restartujte prosím Logitech Media Server k uskutečnění změn.
-	DA	Du skal genstarte Logitech Media Server for at ændringerne kan træde i kraft.
-	DE	Logitech Media Server muss neu gestartet werden, damit die Änderungen in Kraft treten.
-	EN	Please restart Logitech Media Server for the changes to take effect.
-	ES	Reinicie Logitech Media Server para que los cambios entren en vigor.
-	FI	Käynnistä Logitech Media Server uudelleen, jotta muutokset tulevat voimaan.
-	FR	Redémarrez le Logitech Media Server pour appliquer les modifications.
-	IT	Per applicare le modifiche, è necessario riavviare Logitech Media Server.
-	NL	Start Logitech Media Server opnieuw om de wijzigingen door te voeren.
-	NO	Du må starte Logitech Media Server på nytt for at endringene skal tre i kraft.
-	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program Logitech Media Server.
-	RU	Перезапустите Logitech Media Server, чтобы изменения вступили в силу.
-	SV	Ändringarna träder i kraft när du startar om Logitech Media Server.
+	CS	Restartujte prosím Lyrion Music Server k uskutečnění změn.
+	DA	Du skal genstarte Lyrion Music Server for at ændringerne kan træde i kraft.
+	DE	Lyrion Music Server muss neu gestartet werden, damit die Änderungen in Kraft treten.
+	EN	Please restart Lyrion Music Server for the changes to take effect.
+	ES	Reinicie Lyrion Music Server para que los cambios entren en vigor.
+	FI	Käynnistä Lyrion Music Server uudelleen, jotta muutokset tulevat voimaan.
+	FR	Redémarrez le Lyrion Music Server pour appliquer les modifications.
+	IT	Per applicare le modifiche, è necessario riavviare Lyrion Music Server.
+	NL	Start Lyrion Music Server opnieuw om de wijzigingen door te voeren.
+	NO	Du må starte Lyrion Music Server på nytt for at endringene skal tre i kraft.
+	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program Lyrion Music Server.
+	RU	Перезапустите Lyrion Music Server, чтобы изменения вступили в силу.
+	SV	Ändringarna träder i kraft när du startar om Lyrion Music Server.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
 	CS	Špatné úložiště
@@ -299,19 +299,19 @@ PLUGIN_EXTENSIONS_AUTO
 	SV	Uppdatera plugin-program automatiskt
 
 PLUGIN_EXTENSIONS_AUTO_DESC
-	CS	Umožnit, aby Logitech Media Server automaticky kontroloval aktualizace nainstalovaných zásuvných modulů a stahoval je tak, aby byly připraveny k použití při příštím spuštění serveru. Pokud tato možnost není vybrána, můžete zásuvné moduly aktualizovat ručně prostřednictvím této stránky nastavení.
+	CS	Umožnit, aby Lyrion Music Server automaticky kontroloval aktualizace nainstalovaných zásuvných modulů a stahoval je tak, aby byly připraveny k použití při příštím spuštění serveru. Pokud tato možnost není vybrána, můžete zásuvné moduly aktualizovat ručně prostřednictvím této stránky nastavení.
 	DA	Du kan indstille Squeezebox-serveren til automatisk at søge efter opdateringer til de installerede udvidelsesmoduler og hente dem, så de er klar til at blive brugt næste gang serveren startes. Hvis du ikke vælger denne mulighed, kan du opdatere udvidelsesmodulerne manuelt via denne side.
-	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch Logitech Media Server, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
-	EN	Allow the Logitech Media Server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
-	ES	Permite a Logitech Media Server buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
-	FI	Salli Logitech Media Serverin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
-	FR	Autoriser le Logitech Media Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger pour les appliquer au prochain redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
-	IT	Consente a Logitech Media Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
-	NL	Logitech Media Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je op deze pagina de plug-ins handmatig bijwerken.
-	NO	La Logitech Media Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
-	PL	Zezwala programowi Logitech Media Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
+	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch Lyrion Music Server, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
+	EN	Allow the Lyrion Music Server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
+	ES	Permite a Lyrion Music Server buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
+	FI	Salli Lyrion Music Serverin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
+	FR	Autoriser le Lyrion Music Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger pour les appliquer au prochain redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
+	IT	Consente a Lyrion Music Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
+	NL	Lyrion Music Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je op deze pagina de plug-ins handmatig bijwerken.
+	NO	La Lyrion Music Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
+	PL	Zezwala programowi Lyrion Music Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
-	SV	Tillåt Logitech Media Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
+	SV	Tillåt Lyrion Music Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
 PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	CS	Vezměte prosím na vědomí, že zásuvné moduly třetích stran nejsou podporovány společností Logitech a měly by být používány na vaše vlastní riziko. Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
@@ -384,8 +384,8 @@ PLUGIN_EXTENSIONS_USE_UNSUPPORTED
 	NL	Gebruik niet ondersteunde extensies
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED_DESC
-	CS	UPOZORNĚNÍ - Jedná se o zásuvné moduly třetích stran, u kterých není zaručeno, že budou fungovat s aktuální verzí Logitech Media Serveru. Jejich autoři je opustili a již je neudržují. V nejhorším případě mohou poškodit váš Logitech Media Server. Používejte je na vlastní nebezpečí.
-	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Logitech Media Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Logitech Media Server lahm legen. Verwendung auf eigenes Risiko.
-	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Logitech Media Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Logitech Media Server. Use at your own risk.
-	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Logitech Media Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Logitech Media Server de fonctionner. À utiliser à vos risques et périls.
-	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Logitech Media Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Logitech Media Server. Gebruik op eigen risico.
+	CS	UPOZORNĚNÍ - Jedná se o zásuvné moduly třetích stran, u kterých není zaručeno, že budou fungovat s aktuální verzí Lyrion Music Serveru. Jejich autoři je opustili a již je neudržují. V nejhorším případě mohou poškodit váš Lyrion Music Server. Používejte je na vlastní nebezpečí.
+	DE	ACHTUNG: Dies sind Erweiterungen von Dritten, welche unter Umständen auf dieser Version von Lyrion Music Server nicht oder nicht korrekt funktionieren. Sie werden von ihren Autoren nicht mehr unterhalten. Schlimmstenfalls könnten sie Lyrion Music Server lahm legen. Verwendung auf eigenes Risiko.
+	EN	WARNING - These are 3rd Party Plugins not guaranteed to work under the current version of Lyrion Music Server. They've been abandoned by their authors and are no longer maintained. Worst case they could break your Lyrion Music Server. Use at your own risk.
+	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Lyrion Music Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Lyrion Music Server de fonctionner. À utiliser à vos risques et périls.
+	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.

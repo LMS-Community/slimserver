@@ -5,7 +5,7 @@ package Slim::Control::Request;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# This class implements a generic request mechanism for Logitech Media Server.
+# This class implements a generic request mechanism for Lyrion Music Server.
 # More documentation is provided below the table of commands & queries
 
 =head1 NAME
@@ -14,7 +14,7 @@ Slim::Control::Request
 
 =head1 DESCRIPTION
 
-This class implements a generic request mechanism for Logitech Media Server.
+This class implements a generic request mechanism for Lyrion Music Server.
 
 The general mechansim is to create a Request object and execute it. There is
 an option of specifying a callback function, to be called once the request is
@@ -673,7 +673,7 @@ sub init {
 
 	return if !main::WEBUI;
 
-	# Normal Logitech Media Server commands can be accessed with URLs like
+	# Normal Lyrion Music Server commands can be accessed with URLs like
 	#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 	# Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
 	# not intended for use via the web interface!
@@ -1338,7 +1338,7 @@ my %statusMap = (
 	102 => 'Bad params!',
 	103 => 'Missing client!',
 	104 => 'Unknown in dispatch table',
-	105 => 'Bad Logitech Media Server config',
+	105 => 'Bad Lyrion Music Server config',
 );
 
 # validate the Request, make sure we are dispatchable
