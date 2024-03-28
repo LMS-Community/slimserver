@@ -1,8 +1,9 @@
 package Slim::Plugin::UPnP::MediaServer::MediaReceiverRegistrar;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -14,7 +15,7 @@ my $log = logger('plugin.upnp');
 
 sub init {
 	my $class = shift;
-	
+
 	Slim::Web::Pages->addPageFunction(
 		'plugins/UPnP/MediaServer/MediaReceiverRegistrar.xml',
 		\&description,
@@ -25,9 +26,9 @@ sub shutdown { }
 
 sub description {
 	my ( $client, $params ) = @_;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug('MediaServer MediaReceiverRegistrar.xml requested by ' . $params->{userAgent});
-	
+
 	return Slim::Web::HTTP::filltemplatefile( "plugins/UPnP/MediaServer/MediaReceiverRegistrar.xml", $params );
 }
 
@@ -35,7 +36,7 @@ sub description {
 
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
-	
+
 	# Send initial notify with complete data
 	Slim::Plugin::UPnP::Events->notify(
 		service => $class,

@@ -1,8 +1,9 @@
 package Slim::Utils::Unicode;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -18,7 +19,7 @@ my $enc  = Slim::Utils::Unicode::encodingFromString($string);
 =head1 DESCRIPTION
 
 This module is a wrapper around Encode:: functions, and comprises character
-set guessing, encoding, decoding and translation. 
+set guessing, encoding, decoding and translation.
 
 Most of these functions are non-ops on perl < 5.8.x
 
@@ -46,13 +47,13 @@ BEGIN {
 
 	sub hasEDD {
 		return $hasEDD if defined $hasEDD;
-	
+
 		$hasEDD = 0;
 		eval {
 			require Encode::Detect::Detector;
 			$hasEDD = 1;
 		};
-	
+
 		return $hasEDD;
 	}
 }
@@ -62,7 +63,7 @@ sub _printPath {
 	my $path = shift;
 	return 'undef' unless defined $path;
 	my $s = utf8::is_utf8($path) ? 'ON:' : 'OFF:';
-	
+
 	for (my $i = 0; $i < length($path); $i++) {
 		my $c = substr($path, $i, 1);
 		if (ord($c) > 127) {
@@ -84,7 +85,7 @@ our (
 	# We implement a decode() & encode(), so don't import those.
 	require Encode;
 	require Encode::Guess;
-	
+
 	$FB_QUIET = Encode::FB_QUIET();
 	$FB_CROAK = Encode::FB_CROAK();
 
@@ -98,16 +99,16 @@ our (
 
 	($lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
 
-	# Setup Encode::Guess	 
-	$Encode::Guess::NoUTFAutoGuess = 1;	 
-	 	 
-	# Setup suspects for Encode::Guess based on the locale - we might also	 
-	# want to use our own Language pref?	 
-	if ($lc_ctype ne 'utf8') {	 
+	# Setup Encode::Guess
+	$Encode::Guess::NoUTFAutoGuess = 1;
 
-		Encode::Guess->add_suspects($lc_ctype);	 
+	# Setup suspects for Encode::Guess based on the locale - we might also
+	# want to use our own Language pref?
+	if ($lc_ctype ne 'utf8') {
+
+		Encode::Guess->add_suspects($lc_ctype);
 	}
-	
+
 	# Regex for determining if a string contains combining marks and needs to be decomposed
 	# Combining Diacritical Marks + Combining Diacritical Marks Supplement
 	$comb_re_bits = join "|", map { latin1toUTF8(chr($_)) } (0x300..0x36F, 0x1DC0..0x1DFF);
@@ -115,13 +116,13 @@ our (
 
 =head2 currentLocale()
 
-Returns the current system locale. 
+Returns the current system locale.
 
 On Windows, this is the current code page.
 
 On OS X, it's always utf-8.
 
-On *nix, this is LC_CTYPE. 
+On *nix, this is LC_CTYPE.
 
 =cut
 
@@ -158,7 +159,7 @@ sub utf8decode_guess {
 	if (looks_like_ascii($string) || utf8::is_utf8($string)) {
 		return $string;
 	}
-	
+
 	if ( @preferedEncodings ) {
 		for my $encoding (@preferedEncodings) {
 
@@ -260,7 +261,7 @@ Return the newly encoded string.
 
 sub encode_locale {
 	my $string = shift;
-	
+
 	return Encode::encode($lc_ctype, $string, $FB_QUIET) if utf8::is_utf8($string);
 	return $string;
 }
@@ -444,7 +445,7 @@ Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
 
 sub encodingFromString {
 	my $string = shift;
-	
+
 	return 'utf8' if !$_[0] && utf8::is_utf8($string);
 
 	# Don't copy a potentially large string - just read it from the stack.
@@ -457,22 +458,22 @@ sub encodingFromString {
 		return 'utf-32';
 
 	} elsif (looks_like_utf16($string)) {
-	
+
 		return 'utf-16';
 
 	} elsif (looks_like_utf8($string)) {
-	
+
 		return 'utf8';
-		
+
 	} elsif (looks_like_latin1($string)) {
-	
+
 		return 'iso-8859-1';
 
 	} elsif (looks_like_cp1252($string)) {
-	
+
 		return 'cp1252';
 	}
-	
+
 	if ( !hasEDD() ) {
 		return 'raw';
 	}
@@ -630,7 +631,7 @@ Recompose a decomposed UTF-8 string.
 
 sub recomposeUnicode {
 	my $string = shift;
-	
+
 	require Slim::Utils::Unicode::Recompose;
 
 	$string =~ s/$Slim::Utils::Unicode::Recompose::regex/$Slim::Utils::Unicode::Recompose::table{$1}/go;
@@ -688,19 +689,19 @@ sub from_to {
 	my $string = shift;
 	my $from_encoding = shift;
 	my $to_encoding = shift;
-	
+
 	return $string if $from_encoding eq $to_encoding;
-	
+
 	# wrap transformation in eval as utf8 -> iso8859-1 could break on wide characters
 	eval {
 		$string = decode($from_encoding, $string);
 		$string = encode($to_encoding, $string);
 	};
-	
+
 	if ($@) {
 		Slim::Utils::Log->logger('server')->warn("Could not convert from $from_encoding to $to_encoding: $string ($@)");
 	}
-	
+
 	return $string;
 }
 

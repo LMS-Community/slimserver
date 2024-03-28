@@ -1,8 +1,9 @@
 package Slim::Plugin::PreventStandby::Plugin;
 
-# Logitech Media Server Copyright 2006-2020 Logitech.
+# Logitech Media Server Copyright 2006-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # PreventStandby.pm by Julian Neil (julian.neil@internode.on.net)
@@ -63,17 +64,17 @@ sub initPlugin {
 		require Slim::Plugin::PreventStandby::Win32;
 		$handler = Slim::Plugin::PreventStandby::Win32->new();
 	}
-	
+
 	elsif ($^O =~/darwin/i) {
 		require Slim::Plugin::PreventStandby::OSX;
 		$handler = Slim::Plugin::PreventStandby::OSX->new();
 	}
-	
+
 	if (!$handler) {
 		$log->warn("Failed to initialize plugin - can't prevent standby mode.");
 		return;
 	}
-	
+
 	if ( main::WEBUI ) {
 		Slim::Plugin::PreventStandby::Settings->new;
 	}
@@ -86,7 +87,7 @@ sub initPlugin {
 			$log->debug("System standby now prohibited.")
 		}
 	}
-	
+
 	$pollInterval = $handler->pollInterval || INTERVAL;
 
 	checkClientActivity();
@@ -99,45 +100,45 @@ sub checkClientActivity {
 	# Reset the idle countdown counter if 1). scanning, 2). firmware updating or playing, or
 	# 3). time-shift (i.e. DST system time change) or we've resumed from standby or hibernation..
 	my $idletime = $prefs->get('idletime');
-	
+
 	if ($idletime) {
 		$idletime *= 60;
-		
+
 		if ( Slim::Music::Import->stillScanning() || $handler->isBusy($currenttime) ) {
-			
+
 			$hasbeenidle = 0;
 			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 		}
-		
+
 		else {
-			
+
 			$hasbeenidle += $pollInterval;
-			
+
 			if ($hasbeenidle < $idletime) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 			}
 		}
 	}
-	
+
 	# If idletime is set to zero in settings, ALWAYS prevent standby..
 	# Otherwise, only prevent standby if we're still in the idle time-out period..
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
-		
+
 		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
 		$handler->setBusy($currenttime);
 	}
-	
+
 	else {
 		main::INFOLOG && $log->is_info && $log->info("Players have been idle for " . ($hasbeenidle / 60) . " minutes. Allowing System Standby...");
 		$handler->setIdle($currenttime);
 	}
 
 	$lastchecktime = $currenttime;
-	
+
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
 	Slim::Utils::Timers::setTimer(
-		undef, 
-		time + $pollInterval, 
+		undef,
+		time + $pollInterval,
 		\&checkClientActivity
 	);
 
@@ -145,16 +146,16 @@ sub checkClientActivity {
 }
 
 sub _playersBusy {
-	
+
 	my $checkpower = $prefs->get('checkpower');
-	
+
 	for my $client (Slim::Player::Client::clients()) {
-		
+
 		if ($checkpower && $client->power()) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is powered " . ($client->power() ? "on" : "off") . "...");
 			return 1;
 		}
-		
+
 		if ( $client->isUpgrading() || $client->isPlaying() || (Time::HiRes::time() - $client->lastActivityTime <= INTERVAL) ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
 			return 1;
@@ -168,20 +169,20 @@ sub _hasResumed {
 
 	# We've resumed if the current time is more than two minutes later than the last check time, or
 	# if the current time is earlier than the last check time (system time change)
-	
+
 	if ( $currenttime > ($lastchecktime + (INTERVAL * 2)) || $currenttime < $lastchecktime ) {
-		
+
 		main::DEBUGLOG && $log->debug("System has resumed...");
 		return 1;
 	}
-	
+
 	return 0;
 }
 
 
 sub idletime_change {
 	my ($pref, $value) = @_;
-	
+
 	$value ||= 0;
 
 	main::DEBUGLOG && $log->debug("Pref $pref changed to $value. Resetting idle counter.");
@@ -200,7 +201,7 @@ sub idletime_change {
 
 sub checkpower_change {
 	my ($pref, $value) = @_;
-	
+
 	$value ||= 0;
 
 	main::DEBUGLOG && $log->debug("Pref $pref changed to $value. Resetting idle counter.");

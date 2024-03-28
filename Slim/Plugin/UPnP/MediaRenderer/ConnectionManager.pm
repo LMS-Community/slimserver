@@ -1,8 +1,9 @@
 package Slim::Plugin::UPnP::MediaRenderer::ConnectionManager;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -14,7 +15,7 @@ my $log = logger('plugin.upnp');
 
 sub init {
 	my $class = shift;
-	
+
 	Slim::Web::Pages->addPageFunction(
 		'plugins/UPnP/MediaRenderer/ConnectionManager.xml',
 		\&description,
@@ -25,9 +26,9 @@ sub shutdown { }
 
 sub description {
 	my ( $client, $params ) = @_;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug('MediaRenderer ConnectionManager.xml requested by ' . $params->{userAgent});
-	
+
 	return Slim::Web::HTTP::filltemplatefile( "plugins/UPnP/MediaRenderer/ConnectionManager.xml", $params );
 }
 
@@ -35,9 +36,9 @@ sub description {
 
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
-	
+
 	my $sink = $class->_sinkProtocols($client);
-	
+
 	# Send initial notify with complete data
 	Slim::Plugin::UPnP::Events->notify(
 		service => $class,
@@ -58,7 +59,7 @@ sub unsubscribe {
 
 sub GetCurrentConnectionIDs {
 	my $class = shift;
-	
+
 	return (
 		SOAP::Data->name( ConnectionIDs => 0 ),
 	);
@@ -66,9 +67,9 @@ sub GetCurrentConnectionIDs {
 
 sub GetProtocolInfo {
 	my ( $class, $client ) = @_;
-	
+
 	my $sink = $class->_sinkProtocols($client);
-	
+
 	return (
 		SOAP::Data->name( Source => '' ),
 		SOAP::Data->name( Sink   => join ',', @{$sink} ),
@@ -77,17 +78,17 @@ sub GetProtocolInfo {
 
 sub GetCurrentConnectionInfo {
 	my ( $class, $client, $args ) = @_;
-	
+
 	if ( $args->{ConnectionID} != 0 ) {
 		return [ 706 => 'Invalid connection reference' ];
 	}
-	
+
 	my $sink = $client->pluginData->{CM_SinkProtocolInfo};
 	if ( !$sink ) {
 		$class->GetProtocolInfo($client);
 		$sink = $client->pluginData->{CM_SinkProtocolInfo};
 	}
-	
+
 	# Get mime type of currently playing song if any
 	# XXX needs to interface with AVTransport
 	my $type = '';
@@ -97,7 +98,7 @@ sub GetCurrentConnectionInfo {
 			($type) = grep { /$mime/ } @{$sink};
 		}
 	}
-	
+
 	return (
 		SOAP::Data->name( RcsID                 => 0 ),
 		SOAP::Data->name( AVTransportID         => 0 ),
@@ -132,39 +133,39 @@ sub GetCurrentConnectionInfo {
 
 sub _sinkProtocols {
 	my ( $class, $client ) = @_;
-	
+
 	my $sink = $client->pluginData->{CM_SinkProtocolInfo};
 	if ( !$sink ) {
 		my $flags = sprintf "%.8x%.24x",
 			(1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
-		
+
 		# MP3 supported by everything
 		my @formats = (
 			"http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 		);
-		
+
 		# Natively supported formats
 		my @cf = $client->formats;
-		
+
 		my $hasPCM = grep { /pcm/ } @cf;
 		my $hasAAC = grep { /aac/ } @cf;
 		my $hasWMA = grep { /wma/ } @cf;
 		my $hasWMAP = grep { /wmap/ } @cf;
 		my $hasOgg = grep { /ogg/ } @cf;
 		my $hasFLAC = grep { /flc/ } @cf;
-		
+
 		# Transcoder-supported formats
 		my $canTranscode = sub {
 			my $format = shift;
-			
+
 			my $profile
 				= $hasFLAC ? "${format}-flc-*-*"
 				: $hasPCM ? "${format}-pcm-*-*"
 				: "${format}-mp3-*-*";
-			
+
 			return main::TRANSCODING && Slim::Player::TranscodingHelper::isEnabled($profile);
 		};
-		
+
 		if ( $hasPCM ) {
 			push @formats, (
 				"http-get:*:audio/L16;rate=8000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
@@ -187,14 +188,14 @@ sub _sinkProtocols {
 				"http-get:*:audio/L16;rate=48000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasAAC || $canTranscode->('aac') ) {
-			push @formats, (		
+			push @formats, (
 				"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=AAC_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 				"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=HEAAC_L2_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasAAC || $canTranscode->('mp4') ) {
 			# Seeking not supported for remote MP4 content (OP=00)
 			push @formats, (
@@ -203,42 +204,42 @@ sub _sinkProtocols {
 				"http-get:*:audio/mp4:DLNA.ORG_PN=HEAAC_L2_ISO;DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasWMA || $canTranscode->('wma') ) {
 			push @formats, (
 				"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMABASE;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 				"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAFULL;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasWMAP || $canTranscode->('wmap') ) {
 			push @formats, (
 				"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAPRO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasOgg || $canTranscode->('ogg') ) {
 			# Seeking not supported for remote Vorbis content (OP=00)
 			push @formats, (
 				"http-get:*:application/ogg:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		if ( $hasFLAC || $canTranscode->('flc') ) {
 			# Seeking not supported for remote FLAC content (OP=00)
 			push @formats, (
 				"http-get:*:audio/x-flac:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		
+
 		# XXX Disable DLNA stuff for now
 		for ( @formats ) {
 			s/:DLNA.+/:\*/;
 		}
-		
+
 		$sink = $client->pluginData( CM_SinkProtocolInfo => \@formats );
 	}
-	
+
 	return $sink;
 }
 

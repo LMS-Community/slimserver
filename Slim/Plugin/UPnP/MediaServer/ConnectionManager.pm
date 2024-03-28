@@ -1,8 +1,9 @@
 package Slim::Plugin::UPnP::MediaServer::ConnectionManager;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -19,13 +20,13 @@ my $STATE;
 
 sub init {
 	my $class = shift;
-	
+
 	Slim::Web::Pages->addPageFunction(
 		'plugins/UPnP/MediaServer/ConnectionManager.xml',
 		\&description,
 	);
-	
-	
+
+
  	$STATE = {
 		SourceProtocolInfo   => _sourceProtocols(),
 		SinkProtocolInfo     => '',
@@ -33,7 +34,7 @@ sub init {
 		_subscribers         => 0,
 		_last_evented        => 0,
 	};
-	
+
 	# Wipe protocol info after a rescan
 	Slim::Control::Request::subscribe( \&refreshSourceProtocolInfo, [['rescan'], ['done']] );
 }
@@ -47,9 +48,9 @@ sub refreshSourceProtocolInfo {
 
 sub description {
 	my ( $client, $params ) = @_;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug('MediaServer ConnectionManager.xml requested by ' . $params->{userAgent});
-	
+
 	return Slim::Web::HTTP::filltemplatefile( "plugins/UPnP/MediaServer/ConnectionManager.xml", $params );
 }
 
@@ -57,28 +58,28 @@ sub description {
 
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
-	
+
 	# Bump the number of subscribers
 	$STATE->{_subscribers}++;
-	
+
 	# Send initial event
 	sendEvent($uuid);
 }
 
 sub event {
 	my ( $class, $var ) = @_;
-	
+
 	if ( $STATE->{_subscribers} ) {
 		# Don't send more often than every 0.2 seconds
 		Slim::Utils::Timers::killTimers( undef, \&sendEvent );
-		
+
 		my $lastAt = $STATE->{_last_evented};
 		my $sendAt = Time::HiRes::time();
-		
+
 		if ( $sendAt - $lastAt < EVENT_RATE ) {
 			$sendAt += EVENT_RATE - ($sendAt - $lastAt);
 		}
-		
+
 		Slim::Utils::Timers::setTimer(
 			undef,
 			$sendAt,
@@ -90,7 +91,7 @@ sub event {
 
 sub sendEvent {
 	my ( $uuid, $var ) = @_;
-	
+
 	if ( $var ) {
 		# Event 1 variable
 		Slim::Plugin::UPnP::Events->notify(
@@ -111,12 +112,12 @@ sub sendEvent {
 			},
 		);
 	}
-	
+
 	# Indicate when last event was sent
 	$STATE->{_last_evented} = Time::HiRes::time();
 }
 
-sub unsubscribe {	
+sub unsubscribe {
 	if ( $STATE->{_subscribers} > 0 ) {
 		$STATE->{_subscribers}--;
 	}
@@ -126,13 +127,13 @@ sub unsubscribe {
 
 sub GetCurrentConnectionIDs {
 	my $class = shift;
-	
+
 	return SOAP::Data->name( ConnectionIDs => 0 );
 }
 
 sub GetProtocolInfo {
 	my $class = shift;
-	
+
 	return (
 		SOAP::Data->name( Source => $class->_sourceProtocols ),
 		SOAP::Data->name( Sink   => '' ),
@@ -141,15 +142,15 @@ sub GetProtocolInfo {
 
 sub GetCurrentConnectionInfo {
 	my ( $class, $client, $args ) = @_;
-	
+
 	if ( !exists $args->{ConnectionID} ) {
 		return [ 402 ];
 	}
-	
+
 	if ( $args->{ConnectionID} != 0 ) {
 		return [ 706 => 'Invalid connection reference' ];
 	}
-	
+
 	return (
 		SOAP::Data->name( RcsID                 => -1 ),
 		SOAP::Data->name( AVTransportID         => -1 ),
@@ -165,24 +166,24 @@ sub GetCurrentConnectionInfo {
 
 sub _sourceProtocols {
 	my $class = shift;
-	
+
 	my @formats;
-	
+
 	# There are just too many profiles to list them all by default, so scan the database
 	# for all the ones we have actually scanned
 	my $dbh = Slim::Schema->dbh;
-	
+
 	my $audio = $dbh->selectall_arrayref( qq{
 		SELECT dlna_profile, content_type, samplerate, channels
 		FROM tracks
 		WHERE audio = 1
 	}, { Slice => {} } );
-	
+
 	my $images = $dbh->selectall_arrayref( qq{
 		SELECT DISTINCT(dlna_profile), mime_type
 		FROM images
 	}, { Slice => {} } );
-	
+
 	my $videos = $dbh->selectall_arrayref( qq{
 		SELECT DISTINCT(dlna_profile), mime_type
 		FROM videos
@@ -191,20 +192,20 @@ sub _sourceProtocols {
 	# Audio profiles, will have duplicates...
 	my %seen = ();
 	for my $row ( @{$audio} ) {
-		my $mime;			
+		my $mime;
 		if ( $row->{content_type} =~ /^(?:wav|aif|pcm)$/ ) {
 			$mime = 'audio/L16;rate=' . $row->{samplerate} . ';channels=' . $row->{channels};
 		}
 		else {
 			$mime = $Slim::Music::Info::types{ $row->{content_type} };
-			
+
 			# Bug 17882, use DLNA-required audio/mp4 instead of audio/m4a
 			$mime = 'audio/mp4' if $mime eq 'audio/m4a';
 		}
-		
+
 		my $key = $mime . ($row->{dlna_profile} || '');
 		next if $seen{$key}++;
-		
+
 		if ( $row->{dlna_profile} ) {
 			my $canseek = ($row->{dlna_profile} eq 'MP3' || $row->{dlna_profile} =~ /^WMA/);
 			push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
@@ -213,12 +214,12 @@ sub _sourceProtocols {
 			push @formats, "http-get:*:$mime:*";
 		}
 	}
-	
+
 	# Special audio transcoding profile for PCM
 	if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
 		push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
 	}
-	
+
 	# Image profiles
 	for my $row ( @{$images} ) {
 		if ( $row->{dlna_profile} ) {
@@ -230,7 +231,7 @@ sub _sourceProtocols {
 	}
 	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
 	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
-	
+
 	# Video profiles
 	for my $row ( @{$videos} ) {
 		if ( $row->{dlna_profile} ) {
@@ -240,7 +241,7 @@ sub _sourceProtocols {
 			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
 		}
 	}
-	
+
 	# Bug 17885, sort all wildcard formats to the end of the list
 	# Based on example at http://perldoc.perl.org/functions/sort.html
 	my @sortedFormats = sort {
@@ -248,8 +249,8 @@ sub _sourceProtocols {
 		||
 		uc($a) cmp uc($b)
 	} @formats;
-	
+
 	return join( ',', @sortedFormats );
-}		
+}
 
 1;
