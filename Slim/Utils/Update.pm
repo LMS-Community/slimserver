@@ -135,7 +135,7 @@ sub checkVersionCB {
 		}
 
 		# if we got an update with download URL, display it in the web UI et al.
-		elsif ($version && $version =~ /a href="downloads.slimdevices/i) {
+		elsif ($version && $version =~ /a href=.*\bdownloads\./i) {
 			$::newVersion = $version;
 		}
 	}
