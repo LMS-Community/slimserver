@@ -230,7 +230,7 @@ sub checkForUpdate {
 
 		chomp;
 
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
+		if (/LyrionMusicServer.*/i) {
 			$installer = $_;
 			last;
 		}

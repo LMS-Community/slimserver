@@ -21,7 +21,7 @@
 </ul>
 <h2>Passwort Sicherheit:</h2>
 <ul>
- <li>Wenn Sie ein Passwort f&uuml;r die Lyrion Music Server Software eingerichtet haben, m&uuml;ssen Sie die Web Adresse f&uuml;r den Zugang zum Logitechmedia Server anpassen: http://benutzername:passwort@localhost:9000/stream.mp3
+ <li>Wenn Sie ein Passwort f&uuml;r die Lyrion Music Server Software eingerichtet haben, m&uuml;ssen Sie die Web Adresse f&uuml;r den Zugang zum Lyrion Music Server anpassen: http://benutzername:passwort@localhost:9000/stream.mp3
  <li>Bitte benutzen Sie nur eigene Ger&auml;te, wenn Sie die Passwort Sicherheit f&uuml;r den Lyrion Music Server Software eingerichtet haben, oder l&ouml;schen nach Gebrauch die den Verlauf, da andernfalls Ihre Zugangsdaten in fremde H&auml;nde gelangen.
 </ul>
 <h2>Erweiterte Funktionen nutzen:</h2>

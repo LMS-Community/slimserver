@@ -28,9 +28,6 @@ my $versionFile;
 sub checkVersion {
 	my $cb = shift;
 
-	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
-
 	Slim::Utils::Timers::killTimers(0, \&checkVersion);
 
 	# don't check for updates when running from the source
@@ -317,7 +314,7 @@ sub getUpdateInstaller {
 
 		chomp;
 
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
+		if (/LyrionMusicServer.*/) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -344,7 +341,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext$/i);
 }
 
 1;

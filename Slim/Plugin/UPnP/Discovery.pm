@@ -47,7 +47,7 @@ sub init {
 
 	# Construct Server header for later use
 	my $details = Slim::Utils::OSDetect::details();
-	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 DLNADOC/1.50 LogitechMediaServer/' . $::VERSION . '/' . $::REVISION;
+	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 DLNADOC/1.50 LyrionMusicServer/' . $::VERSION . '/' . $::REVISION;
 
 	# Test if we can use ReusePort
 	my $hasReusePort = eval {
