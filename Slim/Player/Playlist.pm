@@ -1,6 +1,7 @@
 package Slim::Player::Playlist;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -190,7 +191,7 @@ sub addTracks {
 	my $playlist = playList($client);
 
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
-	
+
 	# we need to plan for restart of streaming in case the streaming song is the last one
 	my $restart = (Slim::Player::Source::playingSongIndex($client) == Slim::Player::Source::streamingSongIndex($client)) &&
 				  (Slim::Player::Source::streamingSongIndex($client) == count($client) - 1);

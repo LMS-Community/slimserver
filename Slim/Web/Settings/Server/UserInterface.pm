@@ -1,7 +1,8 @@
 package Slim::Web::Settings::Server::UserInterface;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -60,9 +61,9 @@ sub handler {
 		if ($paramRef->{'pref_skin'} ne $prefs->get('skin')) {
 			# use Classic instead of Default skin if the server's language is set to Hebrew
 			if ($prefs->get('language') eq 'HE' && $paramRef->{'pref_skin'} eq 'Default') {
-	
+
 				$paramRef->{'pref_skin'} = 'Classic';
-	
+
 			}
 
 			$paramRef->{'warning'} .= '<span id="popupWarning">' . string("SETUP_SKIN_OK") . '</span>';

@@ -1,6 +1,7 @@
 package Slim::Web::Pages::EditPlaylist;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -50,30 +51,30 @@ sub editplaylist {
 
 	if ($params->{'delete'}) {
 
-		Slim::Control::Request::executeRequest(undef, 
-			['playlists', 'edit', 'cmd:delete', 
+		Slim::Control::Request::executeRequest(undef,
+			['playlists', 'edit', 'cmd:delete',
 			'playlist_id:' . $playlist_id,
 			'index:' . $itemPos]);
 
 	} elsif (defined($params->{'form_url'})) {
 
-		Slim::Control::Request::executeRequest(undef, 
-			['playlists', 'edit', 'cmd:add', 
+		Slim::Control::Request::executeRequest(undef,
+			['playlists', 'edit', 'cmd:add',
 			'playlist_id:' . $playlist_id,
 			'title:' . $params->{'form_title'},
 			'url:' . $params->{'form_url'}]);
 
 	} elsif ($params->{'up'}) {
 
-		Slim::Control::Request::executeRequest(undef, 
-			['playlists', 'edit', 'cmd:up', 
+		Slim::Control::Request::executeRequest(undef,
+			['playlists', 'edit', 'cmd:up',
 			'playlist_id:' . $playlist_id,
 			'index:' . $itemPos]);
 
 	} elsif ($params->{'down'}) {
 
-		Slim::Control::Request::executeRequest(undef, 
-			['playlists', 'edit', 'cmd:down', 
+		Slim::Control::Request::executeRequest(undef,
+			['playlists', 'edit', 'cmd:down',
 			'playlist_id:' . $playlist_id,
 			'index:' . $itemPos]);
 
@@ -87,8 +88,8 @@ sub saveCurrentPlaylist {
 
 	if (defined $client && Slim::Player::Playlist::count($client)) {
 
-		my $title = $client->currentPlaylist ? 
-				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
+		my $title = $client->currentPlaylist ?
+				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) :
 					$client->string('UNTITLED');
 
 		if ($title ne Slim::Utils::Misc::cleanupFilename($title)) {
@@ -186,8 +187,8 @@ sub deletePlaylist {
 		$params->{'playlist.id'} = $playlist_id;
 
 	} elsif (blessed($playlistObj)) {
-	
-		my $request = Slim::Control::Request::executeRequest(undef, 
+
+		my $request = Slim::Control::Request::executeRequest(undef,
 			['playlists', 'delete', 'playlist_id:' . $playlist_id]);
 
 		if ($request && $request->getResult('writeError')) {
@@ -230,7 +231,7 @@ sub browsePlaylists {
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, ['browselibrary', 'items', 'feedMode:1', 'mode:playlists'] );
 
 	# wrap async requests
-	if ( $proxiedRequest->isStatusProcessing ) {			
+	if ( $proxiedRequest->isStatusProcessing ) {
 		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
 	} else {
 		$callback->($client, $proxiedRequest->getResults);
@@ -257,7 +258,7 @@ sub browsePlaylist {
 			timeout => 35,
 			args    => $allArgs,
 			title   => $title,
-			path    => sprintf('clixmlbrowser/clicmd=browselibrary+items&linktitle=%s&mode=playlistTracks&playlist_id=%s/', 
+			path    => sprintf('clixmlbrowser/clicmd=browselibrary+items&linktitle=%s&mode=playlistTracks&playlist_id=%s/',
 							Slim::Utils::Misc::escape($title),
 							$playlist_id),
 		} );
@@ -267,7 +268,7 @@ sub browsePlaylist {
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
 
 	# wrap async requests
-	if ( $proxiedRequest->isStatusProcessing ) {			
+	if ( $proxiedRequest->isStatusProcessing ) {
 		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
 	} else {
 		$callback->($client, $proxiedRequest->getResults);

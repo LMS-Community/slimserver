@@ -1,6 +1,7 @@
 package Slim::Plugin::iTunes::Importer;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -61,7 +62,7 @@ sub initPlugin {
 		'playlistOnly' => 1,
 		'use'          => $prefs->get('itunes'),
 	});
-	
+
 	if ( main::ISWINDOWS && $prefs->get('extract_artwork') ) {
 		require Win32;
 		require Slim::Plugin::iTunes::Importer::Artwork::Win32;
@@ -71,7 +72,7 @@ sub initPlugin {
 		} );
 	}
 	elsif ( main::ISMAC && $prefs->get('extract_artwork') ) {
-		
+
 		require Slim::Plugin::iTunes::Importer::Artwork::OSX;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::OSX', {
 			'type' => 'artwork',
@@ -95,7 +96,7 @@ sub resetState {
 
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', -1);
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChecksum', '');
-	
+
 	# Delete the iTunes artwork cache
 	my $cachedir = catdir( preferences('server')->get('librarycachedir'), 'iTunesArtwork' );
 	if ( -d $cachedir ) {
@@ -148,7 +149,7 @@ sub startScan {
 	if (!$class->useiTunesLibrary) {
 		return;
 	}
-		
+
 	my $file = $class->findMusicLibraryFile;
 
 	# Set the last change time for the next go-round.
@@ -164,7 +165,7 @@ sub startScan {
 	}
 
 	main::INFOLOG && $log->info("Get music folder from iTunes XML file");
-	
+
 	my $iTunesParser = XML::Parser->new(
 		'ErrorContext'     => 2,
 		'ProtocolEncoding' => 'UTF-8',
@@ -180,10 +181,10 @@ sub startScan {
 
 	$iTunesParser->parsefile($file);
 
-	$progress = Slim::Utils::Progress->new({ 
-		'type'  => 'importer', 
-		'name'  => 'itunes', 
-		'total' => $class->getTotalTrackCount($file), 
+	$progress = Slim::Utils::Progress->new({
+		'type'  => 'importer',
+		'name'  => 'itunes',
+		'total' => $class->getTotalTrackCount($file),
 		'bar'   => 1
 	});
 
@@ -207,7 +208,7 @@ sub startScan {
 	main::INFOLOG && $log->info("Finished scanning iTunes XML");
 
 	$class->doneScanning;
-	
+
 	# XXX return number of changes made
 	return 1;
 }
@@ -224,7 +225,7 @@ sub doneScanning {
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
 	}
-	
+
 	Slim::Music::Import->setLastScanTime( 'iTunesLastLibraryChange', $currentITunesMusicLibraryDate );
 	Slim::Music::Import->setLastScanTime( 'iTunesLastLibraryChecksum', $class->getLibraryChecksum() );
 
@@ -282,7 +283,7 @@ sub handleTrack {
 
 				# bug 7966: try the short (8.3) file name for unreadable unicode file names
 				$file2 = Slim::Utils::Unicode::utf8decode( Slim::Utils::Unicode::recomposeUnicode($file2) );
-				
+
 				if ( ($file2 = Win32::GetANSIPathName($file2)) && -e $file2 ) {
 					main::DEBUGLOG && $log->debug("Falling back to DOS style 8.3 filename: $file2");
 					$file = $file2;
@@ -298,7 +299,7 @@ sub handleTrack {
 			$file = Slim::Utils::Unicode::recomposeUnicode( $file );
 		}
 
-		# Bug 3402 
+		# Bug 3402
 		# If the file can't be found using itunes_library_music_path,
 		# we want to fall back to the real file path from the XML file
 		#
@@ -334,7 +335,7 @@ sub handleTrack {
 	}
 
 	if (Slim::Music::Info::isFileURL($url)) {
-		
+
 		if ( !$file || !-r $file ) {
 
 			# Use Data::Dump to log exactly what the wrong file path is, avoiding UTF-8 output issues
@@ -345,7 +346,7 @@ sub handleTrack {
 			Slim::Schema->search('Track', { 'url' => $url })->delete;
 
 			delete $tracks{$id};
-			
+
 			return 1;
 		}
 
@@ -426,9 +427,9 @@ sub handleTrack {
 		$cacheEntry{'RATE'}      = $curTrack->{'Sample Rate'};
 		$cacheEntry{'RATING'}    = $curTrack->{'Rating'};
 		$cacheEntry{'PLAYCOUNT'} = $curTrack->{'Play Count'};
-		
+
 		my $gain = $curTrack->{'Volume Adjustment'};
-		
+
 		# looking for a defined or non-zero volume adjustment
 		if ($gain) {
 			# itunes uses a range of -255 to 255 to be -100% (silent) to 100% (+6dB)
@@ -456,7 +457,7 @@ sub handleTrack {
 
 			return 1;
 		};
-		
+
 		# If a music folder is defined, the above updateOrCreate won't update attributes
 		# We need to make sure the persistent ID is set
 		if ( !$track->extid ) {
@@ -497,7 +498,7 @@ sub handlePlaylist {
 	# 'AGE',   # list age
 
 	$cacheEntry->{'CT'}    = 'itu';
-	$cacheEntry->{'TITLE'} = join($name, 
+	$cacheEntry->{'TITLE'} = join($name,
 		$prefs->get('playlist_prefix'),
 		$prefs->get('playlist_suffix')
 	);
@@ -634,11 +635,11 @@ sub handleEndElement {
 
 			# Set the progress to final when we're done with tracks and have moved on to playlists.
 			$progress->final;
-			
-			$progress = Slim::Utils::Progress->new({ 
-				'type'  => 'importer', 
-				'name'  => 'itunes_playlists', 
-				'total' => $class->getTotalPlaylistCount, 
+
+			$progress = Slim::Utils::Progress->new({
+				'type'  => 'importer',
+				'name'  => 'itunes_playlists',
+				'total' => $class->getTotalPlaylistCount,
 				'bar'   => 1
 			});
 

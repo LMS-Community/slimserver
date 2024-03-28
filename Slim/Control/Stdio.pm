@@ -1,8 +1,9 @@
 package Slim::Control::Stdio;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -56,7 +57,7 @@ sub processRequest {
 	if (defined($firstline)) {
 
 		# process the commands
-		chomp $firstline; 
+		chomp $firstline;
 
 		main::INFOLOG && $log->info("Got line: $firstline");
 
@@ -73,7 +74,7 @@ sub executeCmd {
 	my $command = shift;
 
 	my ($client, $arrayRef) = string_to_array($command);
-	
+
 	if (!defined $arrayRef) {
 		return;
 	}
@@ -105,7 +106,7 @@ sub string_to_array {
 
 	# Unescape
 	map { $_ = URI::Escape::uri_unescape($_) } @elements;
-		
+
 	# Check if first param is a client...
 	my $client = Slim::Player::Client::getClient($elements[0]);
 
@@ -113,7 +114,7 @@ sub string_to_array {
 		# Remove the client from the param array
 		shift @elements;
 	}
-	
+
 	return ($client, \@elements);
 }
 
@@ -128,10 +129,10 @@ sub array_to_string {
 
 	# add clientid if there is a client
 	unshift @elements, $clientid if defined $clientid;
-	
+
 	# escape all the terms
 	map { $_ = URI::Escape::uri_escape_utf8($_) } @elements;
-	
+
 	# join by space and return!
 	return join " ",  @elements;
 }

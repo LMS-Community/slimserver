@@ -2,7 +2,8 @@ package Slim::Plugin::SavePlaylist::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -44,7 +45,7 @@ our @legalMixed = (
 	['w','x','y','z','W','X','Y','Z','9'] 	# 9
 );
 
-sub getDisplayName { 
+sub getDisplayName {
 	return 'SAVE_PLAYLIST';
 }
 
@@ -53,14 +54,14 @@ sub setMode {
 	my $class  = shift;
 	my $client = shift;
 	my $push = shift;
-	
+
 	$client->lines(\&lines);
-	
+
 	if (!Slim::Utils::Misc::getPlaylistDir()) {
 		# do nothing if there is no playlist folder defined.
-		
+
 	} elsif ($push eq 'pop') {
-		
+
 		# back out one more step since we've saved the playlist and are only partly backed out.
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($client->modeParam('playlist') ne '') {
@@ -70,7 +71,7 @@ sub setMode {
 	} else {
 
 		# default to the existing title for a known playlist, otherwise just start with 'A'
-		$context{$client} = $client->currentPlaylist ? 
+		$context{$client} = $client->currentPlaylist ?
 			Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 'A';
 
 		# set cursor position to end of playlist title if the playlist is known
@@ -91,9 +92,9 @@ sub lines {
 	my $client = shift;
 
 	my ($line1, $line2, $arrow);
-	
+
 	my $playlistfile = $context{$client};
-	
+
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
 		catfile(Slim::Utils::Misc::getPlaylistDir(), $playlistfile . '.m3u')
 	);
@@ -114,7 +115,7 @@ sub lines {
 		}
 
 	} elsif (Slim::Schema->objectForUrl($newUrl)) {
-		
+
 		# Special text for overwriting an existing playlist
 		# if large text, make sure we show the message instead of the playlist name
 		if ($client->linesPerScreen == 1) {
@@ -123,7 +124,7 @@ sub lines {
 			$line1 = $client->string('PLAYLIST_OVERWRITE');
 			$line2 = $context{$client};
 		}
-		
+
 		$arrow = $client->symbols('rightarrow');
 
 	} else {
@@ -133,7 +134,7 @@ sub lines {
 		$arrow = $client->symbols('rightarrow');
 
 	}
-	
+
 	return {
 		'line'    => [ $line1, $line2 ],
 		'overlay' => [ undef, $arrow ]
@@ -172,11 +173,11 @@ sub savePluginCallback {
 		Slim::Buttons::Common::pushModeLeft($client,'Slim::Plugin::SavePlaylist::Plugin', {
 			'playlist' => $context{$client},
 		});
-			
+
 	} elsif ($type eq 'backspace') {
 
 		Slim::Buttons::Common::popModeRight($client);
-	
+
 	} else {
 
 		$client->bumpRight();
@@ -188,13 +189,13 @@ sub savePluginCallback {
 ####################################################################
 our %mapping = ('play.hold' => 'save');
 
-sub defaultMap { 
-	return \%mapping; 
+sub defaultMap {
+	return \%mapping;
 }
 
 sub initPlugin {
 	my $class = shift;
-	
+
 	%functions = (
 		'left' => sub  {
 			my $client = shift;
@@ -203,7 +204,7 @@ sub initPlugin {
 		'right' => sub  {
 			my $client = shift;
 			my $playlistfile = $context{$client};
-			
+
 			if ($playlistfile ne Slim::Utils::Misc::cleanupFilename($playlistfile)) {
 				$client->bumpRight();
 			} else {
@@ -216,14 +217,14 @@ sub initPlugin {
 		},
 	);
 
-	
+
 	# programmatically add the playlist mode function for 'save' when play.hold button is detected
 	Slim::Hardware::IR::addModeDefaultMapping('playlist', \%mapping);
 
 	our $functref = Slim::Buttons::Playlist::getFunctions();
 
 	$functref->{'save'} = $functions{'save'};
-	
+
 	$class->SUPER::initPlugin();
 }
 

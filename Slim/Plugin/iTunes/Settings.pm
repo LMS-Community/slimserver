@@ -1,6 +1,7 @@
 package Slim::Plugin::iTunes::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -41,11 +42,11 @@ sub handler {
 	$params->{'pref_extract_artwork'} = defined $params->{'pref_extract_artwork'} ? 1 : 0;
 
 	my $ret = $class->SUPER::handler($client, $params);
-	
+
 	# We need to immediately write the prefs file to disk, or the scanner may launch and
 	# use the previous prefs
 	$prefs->savenow();
-	
+
 	return $ret;
 }
 

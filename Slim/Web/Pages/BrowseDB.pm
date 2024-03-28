@@ -1,8 +1,9 @@
 package Slim::Web::Pages::BrowseDB;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -73,7 +74,7 @@ sub browsedb {
 	my $artwork   = $params->{'artwork'};
 
 	my $log       = logger('database.info');
-	
+
 	my @levels = split (',', $hierarchy);
 
 	# Make sure we're not out of bounds.
@@ -82,16 +83,16 @@ sub browsedb {
 	if ($level > $maxLevel)	{
 		$level = $maxLevel;
 	}
-	
+
 	my %args = ('mode' => $mapLevel{$levels[$level]});
 	if ($levels[$level] eq 'age') {
 		$args{'sort'} = 'new';
 	}
-	
+
 	foreach (keys %mapParams) {
 		$args{$mapParams{$_}} = $params->{$_} if (exists $params->{$_});
 	}
-	
+
 	# There is no CLI command to get artist/album/genre name from id
 	my $title;
 	if (my $titleMap = $mapTitles{$levels[0]}) {
@@ -99,9 +100,9 @@ sub browsedb {
 		$title = $obj->name if $obj;
 	}
 	$title = string($mapNames{$levels[0]}) . ' (' . $title . ')';
-	
+
 	my @verbs = ('browselibrary', 'items', 'feedMode:1', map {$_ . ':' . $args{$_}} keys %args);
-	
+
 	my $callback = sub {
 		my ($client, $feed) = @_;
 		Slim::Web::XMLBrowser->handleWebIndex( {
@@ -118,9 +119,9 @@ sub browsedb {
 	# execute CLI command
 	main::INFOLOG && $log->is_info && $log->error('Use CLI: ', join(', ', @verbs));
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
-		
+
 	# wrap async requests
-	if ( $proxiedRequest->isStatusProcessing ) {			
+	if ( $proxiedRequest->isStatusProcessing ) {
 		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
 	} else {
 		$callback->($client, $proxiedRequest->getResults);

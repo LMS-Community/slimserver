@@ -1,8 +1,9 @@
 package Slim::Web::Pages::JS;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =pod
@@ -22,16 +23,16 @@ my (%handlers);
 
 sub addJSFunction {
 	my ( $class, $jsFile, $customJSFile ) = @_;
-	
+
 	$jsFile = lc($jsFile || '');
 	$jsFile =~ s/\.html$//;
-	
+
 	if ( $jsFile && $customJSFile && $jsFile =~ /^js-?(?:main|browse)$/ ) {
 		if (!$handlers{$jsFile}) {
 			Slim::Web::Pages->addPageFunction("js-main\.html", \&handler);
 			$handlers{$jsFile} = [];
 		}
-		
+
 		push @{$handlers{$jsFile}}, $customJSFile;
 	}
 	else {
@@ -41,7 +42,7 @@ sub addJSFunction {
 
 sub handler {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
-	
+
 	my ($template) = $params->{path} =~ /(js.*?)\.html/;
 
 	# let's render those templates to include them in the main JS file
@@ -54,7 +55,7 @@ sub handler {
 			eval {
 				$params->{additionalJS} .= ${$handler->(@_)};
 			};
-			
+
 			$@ && $log->warn("Failed to render JS template: $@")
 		}
 	}

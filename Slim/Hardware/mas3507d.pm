@@ -1,9 +1,10 @@
 package Slim::Hardware::mas3507d;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -91,16 +92,16 @@ sub init {
 
 }
 
-	my @volumetable = 
-        	("FFFFA", "FFFF9", "FFFF9", "FFFF8", "FFFF7", "FFFF6", "FFFF4", "FFFF3", "FFFF1", "FFFEF", 
-        	"FFFED", "FFFEB", "FFFE9", "FFFE6", "FFFE3", "FFFDF", "FFFDB", "FFFD6", "FFFD1", "FFFCC", 
-        	"FFFC5", "FFFBE", "FFFB6", "FFFAD", "FFFA3", "FFF97", "FFF8B", "FFF7C", "FFF6C", "FFF5A", 
-        	"FFF46", "FFF2F", "FFF16", "FFEF9", "FFED9", "FFEB5", "FFE8D", "FFE60", "FFE2D", "FFDF4", 
-        	"FFDB4", "FFD6C", "FFD1B", "FFCC1", "FFC5C", "FFBEA", "FFB6A", "FFADB", "FFA3A", "FF986", 
-        	"FF8BC", "FF7D9", "FF6DA", "FF5BC", "FF47C", "FF314", "FF180", "FEFBB", "FEDBF", "FEB85", 
-        	"FE905", "FE638", "FE312", "FDF8B", "FDB95", "FD723", "FD227", "FCC8E", "FC648", "FBF3D", 
-        	"FB756", "FAE78", "FA485", "F995B", "F8CD5", "F7EC8", "F6F03", "F5D52", "F4979", "F3333", 
-        	"F1A36", "EFE2C", "EDEB6", "EBB6A", "E93CF", "E675F", "E3583", "DFD91", "DBECC", "D785E", 
+	my @volumetable =
+        	("FFFFA", "FFFF9", "FFFF9", "FFFF8", "FFFF7", "FFFF6", "FFFF4", "FFFF3", "FFFF1", "FFFEF",
+        	"FFFED", "FFFEB", "FFFE9", "FFFE6", "FFFE3", "FFFDF", "FFFDB", "FFFD6", "FFFD1", "FFFCC",
+        	"FFFC5", "FFFBE", "FFFB6", "FFFAD", "FFFA3", "FFF97", "FFF8B", "FFF7C", "FFF6C", "FFF5A",
+        	"FFF46", "FFF2F", "FFF16", "FFEF9", "FFED9", "FFEB5", "FFE8D", "FFE60", "FFE2D", "FFDF4",
+        	"FFDB4", "FFD6C", "FFD1B", "FFCC1", "FFC5C", "FFBEA", "FFB6A", "FFADB", "FFA3A", "FF986",
+        	"FF8BC", "FF7D9", "FF6DA", "FF5BC", "FF47C", "FF314", "FF180", "FEFBB", "FEDBF", "FEB85",
+        	"FE905", "FE638", "FE312", "FDF8B", "FDB95", "FD723", "FD227", "FCC8E", "FC648", "FBF3D",
+        	"FB756", "FAE78", "FA485", "F995B", "F8CD5", "F7EC8", "F6F03", "F5D52", "F4979", "F3333",
+        	"F1A36", "EFE2C", "EDEB6", "EBB6A", "E93CF", "E675F", "E3583", "DFD91", "DBECC", "D785E",
         	"D2958", "CD0AD", "C6D31", "BFD92", "B8053", "AF3CD", "A5621", "9A537", "8DEB8", "80000");
 
 sub dbToHex {
@@ -108,20 +109,20 @@ sub dbToHex {
 	return $volumetable[$db];
 }
 
-# The codes come from the MAS3507D datasheet 
+# The codes come from the MAS3507D datasheet
 
 my @trebleCodes =(
-    'b2c00',    
-    'bb400',    
-    'c1800',    
-    'c6c00',    
+    'b2c00',
+    'bb400',
+    'c1800',
+    'c6c00',
     'cbc00',
     'd0400',
     'd5000',
     'd9800',
     'de000',
-    'e2800',    
-    'e7e00',    
+    'e2800',
+    'e7e00',
     'ec000',
     'f0c00',
     'f5c00',
@@ -147,19 +148,19 @@ my @trebleCodes =(
 
 
 my @bassCodes =(
-    '9e400',    
-    'a2800',    
-    'a7400',    
-    'ac400',    
-    'b1800',    
-    'b7400',    
-    'bd400',    
-    'c3c00',    
-    'ca400',    
-    'd1800',    
-    'd8c00',    
-    'e0400',    
-    'e8000',    
+    '9e400',
+    'a2800',
+    'a7400',
+    'ac400',
+    'b1800',
+    'b7400',
+    'bd400',
+    'c3c00',
+    'ca400',
+    'd1800',
+    'd8c00',
+    'e0400',
+    'e8000',
     'efc00',
     'f7c00',
     '00000',  # midpoint (50% or no adjustment)
@@ -212,7 +213,7 @@ my @prefactorCodes =(
     '80000',
     '80000',
     '80000',
-    '80000'    
+    '80000'
 );
 
 sub getToneCode {
@@ -243,7 +244,7 @@ sub masWrite {
 
 	# Turn address and data into an array of nibbles with least significant at [0]
 	while ((length($address)) > 0) {
-		push @a, chop($address); 
+		push @a, chop($address);
 	}
 
 	if (defined $data) {
@@ -251,7 +252,7 @@ sub masWrite {
 		$data =~ s/[^0-9a-fA-F]//g;
 
 		while (length($data)>0) {
-			push @d, chop($data); 
+			push @d, chop($data);
 		}
 	}
 
@@ -299,7 +300,7 @@ sub masRead {
 	my $address = $masRegisters{"$key.address"};
 
 	while (length($address)>0) {
-		push @a, chop($address); 
+		push @a, chop($address);
 	}
 
 	if ($bank eq 'r') {

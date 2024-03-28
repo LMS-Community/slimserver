@@ -1,7 +1,8 @@
 package Slim::Plugin::MusicMagic::Common;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech
+# Logitech Media Server Copyright 2001-2024 Logitech
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,11 +30,11 @@ $prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_si
 $prefs->setChange(
 	sub {
 		my $newval = $_[1];
-		
+
 		if ($newval) {
 			Slim::Plugin::MusicMagic::Plugin->initPlugin();
 		}
-		
+
 		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
 
 		for my $c (Slim::Player::Client::clients()) {
@@ -46,11 +47,11 @@ $prefs->setChange(
 $prefs->setChange(
 	sub {
 		Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
-		
+
 		my $interval = $prefs->get('scan_interval') || 3600;
-		
+
 		main::INFOLOG && $log->info("re-setting scaninterval to $interval seconds.");
-		
+
 		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 120, \&Slim::Plugin::MusicMagic::Plugin::checker);
 	},
 'scan_interval');
@@ -75,7 +76,7 @@ sub checkDefaults {
 
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
-	
+
 	my $MMSport = $prefs->get('port');
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -156,7 +157,7 @@ sub _gotFilters {
 		$prefs->set('mix_filter', 0);
 
 	}
-	
+
 	_fetchingFiltersDone($http);
 }
 
@@ -173,13 +174,13 @@ sub _fetchingFiltersDone {
 
 	if ($callback && $class) {
 		my $body = $class->handler($client, $params);
-		$callback->( $client, $params, $body, @args );	
+		$callback->( $client, $params, $body, @args );
 	}
 }
 
 sub decode {
 	my $data = shift;
-	
+
 	my $enc = Slim::Utils::Unicode::encodingFromString($data);
 	return Slim::Utils::Unicode::utf8decode_guess($data, $enc);
 }

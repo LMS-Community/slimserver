@@ -1,7 +1,8 @@
 package Slim::Formats::Playlists::Base;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License, version 2.
@@ -22,7 +23,7 @@ sub _updateMetaData {
 	my $playlistUrl = shift;
 
 	my $attributes = {};
-	
+
 	if ( Slim::Music::Info::isVolatile($playlistUrl) ) {
 		$entry =~ s/^file/tmp/;
 	}
@@ -37,7 +38,7 @@ sub _updateMetaData {
 			$attributes = $metadata;
 		}
 	}
-	
+
 	# Bug 6294, only updateOrCreate the track if the track
 	# doesn't already exist in the database.  $attributes will be
 	# set if it's a remote playlist and we want to update the metadata
@@ -48,7 +49,7 @@ sub _updateMetaData {
 	if ( !scalar keys %{$attributes} ) {
 		$track = Slim::Schema->objectForUrl($entry);
 	}
-	
+
 	if ( !defined $track ) {
 		$track = Slim::Schema->updateOrCreate( {
 			'url'        => $entry,
@@ -57,7 +58,7 @@ sub _updateMetaData {
 			'playlist'   => Slim::Music::Info::isPlaylist($entry),
 		} );
 	}
-	
+
 	return $track;
 }
 

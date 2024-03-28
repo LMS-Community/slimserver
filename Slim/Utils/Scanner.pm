@@ -1,6 +1,7 @@
 package Slim::Utils::Scanner;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -62,20 +63,20 @@ sub scanPathOrURL {
 
 		# Do not scan remote URLs now, they will be scanned right before playback by
 		# an onJump handler.
-		
+
 		return $cb->( [ $pathOrUrl ] );
 
 	} else {
-		
+
 		if ( Slim::Music::Info::isVolatileURL($pathOrUrl) ) {
 			require Slim::Player::Protocols::Volatile;
-	
+
 			$args->{'volatile'} = $pathOrUrl;
 
 			$args->{'url'} =~ s/^tmp/file/;
 			$args->{'url'} = $pathOrUrl = Slim::Utils::Misc::pathFromFileURL($args->{'url'});
 		}
-		
+
 
 		if (Slim::Music::Info::isFileURL($pathOrUrl)) {
 
@@ -179,7 +180,7 @@ sub findFilesMatching {
 				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
 				next;
 			}
-			
+
 			# Recurse into additional shortcuts and directories.
 			if (-d $file) {
 
@@ -213,16 +214,16 @@ sub scanDirectory {
 	my $return = shift;	# if caller wants a list of items we found
 
 	my $foundItems = $return && ($args->{foundItems} || []);
-	
+
 	my $url = $args->{volatile} || $args->{url};
 
 	# Can't do much without a starting point.
 	if (!$url) {
 		return $foundItems;
 	}
-	
+
 	my @items;
-	
+
 	if ( Slim::Music::Info::isSong($url) ) {
 		push @items, {
 			url => Slim::Utils::Misc::fileURLFromPath($url),
@@ -238,7 +239,7 @@ sub scanDirectory {
 	else {
 		my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:list|audio', 'recursive:1' ] );
 		$request->execute();
-	
+
 		if ( $request->isStatusError() ) {
 			$log->error($request->getStatusText());
 		}
@@ -258,14 +259,14 @@ sub scanDirectory {
 				'checkMTime' => 1,
 				'playlist'   => 1,
 			});
-			
+
 			my $url = $_->{url};
 			if ($args->{volatile}) {
 				$url = Slim::Utils::Misc::fileURLFromPath($args->{url});
 			};
 
 			my @tracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle($playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL( $url )));
-			
+
 			if ( scalar @tracks ) {
 				push @{$foundItems}, @tracks;
 			}
@@ -277,9 +278,9 @@ sub scanDirectory {
 
 sub scanPlaylistFileHandle {
 	my $class = shift;
-	
+
 	logBacktrace("Slim::Utils::Scanner->scanPlaylistsFileHandle() is deprecated. Please use Slim::Utils::Scanner::Local instead.");
-	
+
 	my $playlistTracks = Slim::Utils::Scanner::Local::scanPlaylistFileHandle(@_);
 
 	return wantarray ? @$playlistTracks : $playlistTracks;

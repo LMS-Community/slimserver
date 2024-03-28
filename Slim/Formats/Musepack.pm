@@ -1,6 +1,7 @@
 package Slim::Formats::Musepack;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -9,7 +10,7 @@ package Slim::Formats::Musepack;
 # FILE: Slim::Formats::Musepack.pm
 #
 # DESCRIPTION:
-#   Extract APE tag information from a Musepack file and store in a hash for 
+#   Extract APE tag information from a Musepack file and store in a hash for
 #   easy retrieval.
 #
 ###############################################################################
@@ -25,7 +26,7 @@ use Slim::Formats::APE;
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
-	
+
 	my $s = Audio::Scan->scan($file);
 
 	my $info = $s->{info};
@@ -33,14 +34,14 @@ sub getTag {
 
 	# Check for the presence of the info block here
 	return unless $info->{song_length_ms};
-	
+
 	# Add info
 	$tags->{SIZE}     = $info->{file_size};
 	$tags->{BITRATE}  = $info->{bitrate};
 	$tags->{SECS}     = $info->{song_length_ms} / 1000;
 	$tags->{RATE}     = $info->{samplerate};
 	$tags->{CHANNELS} = $info->{channels};
-	
+
 	Slim::Formats::APE->doTagMapping($tags);
 
 	return $tags;

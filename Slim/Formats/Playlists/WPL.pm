@@ -1,10 +1,11 @@
 package Slim::Formats::Playlists::WPL;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -38,7 +39,7 @@ sub read {
 	}
 
 	if (exists($content->{'body'}->{'seq'}->{'media'})) {
-		
+
 		my @media = ();
 
 		if (ref $content->{'body'}->{'seq'}->{'media'} ne 'ARRAY') {
@@ -57,10 +58,10 @@ sub read {
 			main::DEBUGLOG && $log->debug("  entry from file: $entry");
 
 			if (main::ISWINDOWS) {
-				$entry = Win32::GetANSIPathName($entry);	
+				$entry = Win32::GetANSIPathName($entry);
 			}
 			else {
-				$entry = Slim::Utils::Unicode::encode_locale($entry);	
+				$entry = Slim::Utils::Unicode::encode_locale($entry);
 			}
 
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);

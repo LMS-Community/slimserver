@@ -1,7 +1,8 @@
 package Slim::Formats::Movie;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -183,9 +184,9 @@ sub getInitialAudioBlock {
 	if ( !exists ${*$fh}{_mp4_seek_header} && $track->url =~ /#([^-]+)-([^-]+)$/ ) {
 		$class->findFrameBoundaries( $fh, undef, $1 );
 	}
-	
+
 	# no seek header => ADTS file and no need of InitialAudioBlock
-	return undef if (!exists ${*$fh}{_mp4_seek_header});	
+	return undef if (!exists ${*$fh}{_mp4_seek_header});
 
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
@@ -204,35 +205,35 @@ sub findFrameBoundaries {
 	# Need a localFh to have own seek pointer
 	open(my $localFh, '<&=', $fh);
 	$localFh->seek(0, SEEK_SET);
-	
+
 	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $localFh, int($time * 1000) );
-	
+
 	if ($info->{tracks}->[0]) {
 		# Since getInitialAudioBlock will be called right away, stash the new seek header so
 		# we don't have to scan again
 		${*$fh}{_mp4_seek_header} = \($info->{seek_header});
 		return $info->{seek_offset};
-	} 
+	}
 	else {
 		# ADTS, need to scan bitrate
 		seek($localFh, 0, SEEK_SET);
 		my $info = Audio::Scan->scan_fh( aac => $localFh )->{info} || {};
 
-		$offset = defined $time ? 
+		$offset = defined $time ?
 		          int($info->{bitrate} * $time / 8) + $info->{audio_offset} :
 				  abs($offset);
 
-		# an ADTS frame is max 8191 bytes, so we'll capture one for sure					  
+		# an ADTS frame is max 8191 bytes, so we'll capture one for sure
 		seek($localFh, $offset, SEEK_SET);
 		read($localFh, my $buffer, 16384);
-			
+
 		# iterate in buffer till we find an ADTS frame... or not
 		for (my $pos = 0; ($pos = index($buffer, "\xFF\xF1", $pos)) >= 0; $pos += 2) {
 			my $length = (unpack('N', substr($buffer, $pos + 3, 4)) >> 13) & 0x1fff;
 			return $offset + $pos if substr($buffer, $pos + $length, 2) eq "\xFF\xF1";
 		}
 	}
-				
+
 	# nothing found
 	return -1;
 }

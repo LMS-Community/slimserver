@@ -1,10 +1,11 @@
 package Slim::Formats::RemoteStream;
-		  
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License, version 2.  
+# under the terms of the GNU General Public License, version 2.
 
 # This is a base class for remote stream formats to pull their metadata.
 
@@ -116,7 +117,7 @@ sub new {
 			return undef;
 		};
 	};
-	
+
 	${*$sock}{'song'} = $args->{'song'};
 
 	return $sock->open($args);
@@ -136,11 +137,11 @@ sub request {
 
 	my $class   = ref $self;
 	my $request = $self->requestString($args->{'client'}, $url, $post, $args->{'song'} ? $args->{'song'}->seekdata() : undef);
-	
+
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'bitrate'} = $args->{'bitrate'};
 	${*$self}{'infoUrl'} = $args->{'infoUrl'};
-	
+
 	main::INFOLOG && $log->info("Request: $request");
 
 	$self->syswrite($request);
@@ -156,11 +157,11 @@ sub request {
 
 		$self->close();
 
-		return undef; 	
-	} 
+		return undef;
+	}
 
 	$response = $1;
-	
+
 	if ($response < 200 || $response > 399) {
 
 		$log->warn("Warning: Invalid response code ($response) from remote stream $url");
@@ -213,7 +214,7 @@ sub request {
 	}
 
 	$self->response($args, $request, @headers) if $self->can('response');
-	
+
 	main::INFOLOG && $log->info("Opened stream!");
 
 	return $self;
@@ -331,7 +332,7 @@ sub redirect {
 
 sub DESTROY {
 	my $self = shift;
- 
+
 	if ($log->is_debug && defined ${*$self}{'url'}) {
 
 		my $class = ref($self);

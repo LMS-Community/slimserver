@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Player::Display;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,7 +30,7 @@ sub needsClient {
 sub validFor {
 	my $class = shift;
 	my $client = shift;
-	
+
 	return !$client->display->isa('Slim::Display::NoDisplay');
 }
 
@@ -41,7 +42,7 @@ sub prefs {
 		return ();
 	}
 
-	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness 
+	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness
 				scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble alwaysShowCount
 				);
 

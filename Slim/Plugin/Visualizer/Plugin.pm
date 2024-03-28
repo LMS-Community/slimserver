@@ -1,6 +1,7 @@
 package Slim::Plugin::Visualizer::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -27,7 +28,7 @@ my $initialtextofftime = 5;
 
 my %client_context = ();
 
-my %screensaver_info = ( 
+my %screensaver_info = (
 
 # Parameters for the spectrum analyzer:
 #   0 - Channels: stereo == 0, mono == 1
@@ -146,7 +147,7 @@ sub initPlugin {
 }
 
 sub valid { shift->isa('Slim::Player::Squeezebox2') }
-	
+
 
 ##################################################
 ### Screensaver display mode
@@ -213,7 +214,7 @@ sub setVisualizerMode {
 			$paramsRef = $screensaver_info{$mode}->{params}->{'squeezebox2'};
 		}
 	}
-	
+
 	$client->modeParam('visu', $paramsRef);
 	$client->modeParam('hidevisu', $screensaver_info{$mode}->{hidevisu});
 
@@ -239,7 +240,7 @@ sub setVisualizerMode {
 
 sub _showsongtransition {
 	my $request = shift;
-	
+
 	my $client = $request->client() || return;
 	my $mode   = Slim::Buttons::Common::mode($client);
 
@@ -250,18 +251,18 @@ sub _showsongtransition {
 	if (!$screensaver_info{$mode}->{'showtext'}) {
 		return;
 	}
-	
+
 	_pushon($client);
 }
 
 sub _pushon {
 	my $client = shift;
-	
+
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
 	$client->modeParam('showText', 1);
-		
+
 	$client->pushLeft;
 
 	# do it again at the next period
@@ -275,10 +276,10 @@ sub _pushon {
 
 sub _pushoff {
 	my $client = shift;
-	
+
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
-	
+
 	$client->modeParam('showText', 0);
 
 	$client->pushRight;

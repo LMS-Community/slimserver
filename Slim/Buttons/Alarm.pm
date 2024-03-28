@@ -4,7 +4,8 @@ use strict;
 # Max Spicer, May 2008
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -102,7 +103,7 @@ my @alarmMenu = (
 				my $client = shift;
 				return $client->modeParam('alarm_alarm')->enabled;
 			},
-		toggleFunc => sub {  
+		toggleFunc => sub {
 				my $client = shift;
 				my $alarm = $client->modeParam('alarm_alarm');
 				$alarm->enabled(! $alarm->enabled);
@@ -129,7 +130,7 @@ my @alarmMenu = (
 	{
 		title	=> 'ALARM_SELECT_PLAYLIST',
 		type	=> 'menu',
-		items => \&buildPlaylistMenu, 
+		items => \&buildPlaylistMenu,
 	},
 	{
 		title	=> 'SHUFFLE',
@@ -143,7 +144,7 @@ my @alarmMenu = (
 				my $client = shift;
 				return $client->modeParam('alarm_alarm')->repeat;
 			},
-		toggleFunc => sub {  
+		toggleFunc => sub {
 				my $client = shift;
 				my $alarm = $client->modeParam('alarm_alarm');
 				$alarm->repeat(! $alarm->repeat);
@@ -161,7 +162,7 @@ my @alarmMenu = (
 # The top-level menu items.
 my %menu = (
 	# Prevent any alarm from sounding
-	alarmsEnabled => 
+	alarmsEnabled =>
 	{
 		title		=> 'ALARM_ALL_ALARMS',
 		type		=> 'onOff',
@@ -170,14 +171,14 @@ my %menu = (
 
 					return Slim::Utils::Alarm->alarmsEnabled($client);
 				},
-		toggleFunc	 => sub {  
+		toggleFunc	 => sub {
 					my $client = shift;
 					Slim::Utils::Alarm->alarmsEnabled($client, ! Slim::Utils::Alarm->alarmsEnabled($client));
 				},
 	},
 
 	# Add new alarm
-	addAlarm => 
+	addAlarm =>
 	{
 		title		=> 'ALARM_ADD',
 		type		=> 'menu',
@@ -247,10 +248,10 @@ sub toggleDay {
 	main::DEBUGLOG && $log->debug("toggleDay called for day: $day");
 
 	if ($day eq 'all') {
-		$alarm->everyDay($alarm->everyDay() ? 0 : 1); 
+		$alarm->everyDay($alarm->everyDay() ? 0 : 1);
 	} else {
 		# $day should be [0-6]
-		$alarm->day($day, $alarm->day($day) ? 0 : 1); 
+		$alarm->day($day, $alarm->day($day) ? 0 : 1);
 	}
 	saveAlarm($client, $alarm);
 }
@@ -264,10 +265,10 @@ sub dayEnabled {
 	my $day = $item->{params}->{day};
 
 	if ($day eq 'all') {
-		return $alarm->everyDay;  
+		return $alarm->everyDay;
 	} else {
 		# $day should be [0-6]
-		return $alarm->day($day);  
+		return $alarm->day($day);
 	}
 }
 
@@ -304,7 +305,7 @@ sub init {
 		useMode   => 'alarm',
 		condition => sub { 1 },
 	});
-	
+
 	Slim::Buttons::Home::addMenuOption('ALARM', {
 		useMode   => 'alarm',
 		condition => sub { 1 },
@@ -314,7 +315,7 @@ sub init {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
-	
+
 	main::DEBUGLOG && $log->debug("setMode called.  method is $method");
 
 	if ($method eq 'pop') {
@@ -353,7 +354,7 @@ sub buildTopMenu {
 
 	@$listRef = ();
 
-	# Get any existing alarms and add them to the menu 
+	# Get any existing alarms and add them to the menu
 	my @alarms = Slim::Utils::Alarm->getAlarms($client);
 	my $count = 0;
 	foreach my $alarm (@alarms) {
@@ -375,11 +376,11 @@ sub buildTopMenu {
 
 	# Add alarm comes next
 	push @$listRef, $menu{addAlarm};
-	
+
 	# Alarm volume
 	unless (defined $prefs->client($client)->get('digitalVolumeControl')
 		&& !$prefs->client($client)->get('digitalVolumeControl')) {
-			
+
 		push @$listRef, $menu{volume};
 	}
 
@@ -455,7 +456,7 @@ sub getName {
 
 	if (ref $name eq 'CODE') {
 		$name = $name->();
-	
+
 	} elsif (! $item->{stringTitle}) {
 		# Tell INPUT.Choice to pass the title through string()
 		$name = '{' . $name . '}';
@@ -490,18 +491,18 @@ sub getOverlay {
 		}
 
 		if ($type eq 'checkbox') {
-			return [ undef, Slim::Buttons::Common::checkBoxOverlay($client, $checked ? 1 : 0) ];  
+			return [ undef, Slim::Buttons::Common::checkBoxOverlay($client, $checked ? 1 : 0) ];
 		} elsif ($type eq 'onOff') {
 			return [ undef, $client->string( $checked ? 'ALARM_ON' : 'ALARM_OFF' ) ];
-		} else { 
-			return [ undef, Slim::Buttons::Common::radioButtonOverlay($client, $checked ? 1 : 0) ];  
+		} else {
+			return [ undef, Slim::Buttons::Common::radioButtonOverlay($client, $checked ? 1 : 0) ];
 		}
 	} else {
 		return [ undef, $client->symbols('rightarrow') ];
 	}
 }
 
-# Exit handler to override INPUT.Choice's default exit handler in order to allow callbacks on non-right exits 
+# Exit handler to override INPUT.Choice's default exit handler in order to allow callbacks on non-right exits
 sub exitHandler {
 	my $client = shift;
 	my $exitType = shift;
@@ -543,9 +544,9 @@ sub exitRightHandler {
 		main::DEBUGLOG && $log->debug("Menu item type: '$type'");
 		my $nextMode;
 		my %modeParams = ();
-		if ($type eq 'menu') {	
+		if ($type eq 'menu') {
 			$nextMode = 'INPUT.Choice';
-			%modeParams = %choiceBaseParams;	
+			%modeParams = %choiceBaseParams;
 
 			if (ref $item->{items} eq 'CODE') {
 				$modeParams{listRef} = $item->{items}->($client, $client->modeParam('alarm_alarm'));
@@ -631,7 +632,7 @@ sub exitRightHandler {
 		if (defined $nextMode) {
 			main::DEBUGLOG && $log->debug("Pushing into $nextMode");
 			$modeParams{alarm_depth} = $client->modeParam('alarm_depth') + 1;
-			Slim::Buttons::Common::pushModeLeft($client, $nextMode, \%modeParams); 
+			Slim::Buttons::Common::pushModeLeft($client, $nextMode, \%modeParams);
 		}
 	} else {
 		main::DEBUGLOG && $log->debug('Undefined menu item type');
@@ -653,7 +654,7 @@ sub timeExitHandler {
 	my ($client, $exittype) = @_;
 
 	main::DEBUGLOG && $log->debug("exit type: $exittype");
-	
+
 	my $callbackFunct = $client->modeParam('alarm_timeCallback');
 	my $alarm = $client->modeParam('alarm_alarm');
 

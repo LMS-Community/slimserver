@@ -1,6 +1,7 @@
 package Slim::Menu::Base;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +14,7 @@ Slim::Menu::Base
 
 =head1 DESCRIPTION
 
-Provides a dynamic OPML-based menuing system to all UIs. 
+Provides a dynamic OPML-based menuing system to all UIs.
 This is the base class of various menus, like SystemInfo, TrackInfo etc.
 
 =cut
@@ -30,11 +31,11 @@ my %infoOrdering;
 
 sub init {
 	my $class = shift;
-	
+
 	$infoProvider{$class->name} = {};
 	$infoOrdering{$class->name} = [];
 
-	# Our information providers are pluggable, call the 
+	# Our information providers are pluggable, call the
 	# registerInfoProvider function to extend the details
 	# provided in the system info menu.
 	$class->registerDefaultInfoProviders();
@@ -46,12 +47,12 @@ sub init {
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	# The 'top', 'middle' and 'bottom' groups
 	# so that we can add items in absolute positions
 	$class->registerInfoProvider( top    => ( isa => '' ) );
 	$class->registerInfoProvider( middle => ( isa => '' ) );
-	$class->registerInfoProvider( bottom => ( isa => '' ) );	
+	$class->registerInfoProvider( bottom => ( isa => '' ) );
 }
 
 =head1 METHODS
@@ -89,7 +90,7 @@ sub registerInfoProvider {
 	my ( $class, $name, %details ) = @_;
 
 	$details{name} = $name; # For diagnostic purposes
-	
+
 	if (
 		   !defined $details{after}
 		&& !defined $details{before}
@@ -99,7 +100,7 @@ sub registerInfoProvider {
 		# place it in the middle.
 		$details{isa} = 'middle';
 	}
-	
+
 	$infoProvider{$class->name}->{$name} = \%details;
 
 	# Clear the array to force it to be rebuilt
@@ -115,7 +116,7 @@ but you should only do this if you know what you are doing.
 
 sub deregisterInfoProvider {
 	my ( $class, $name ) = @_;
-	
+
 	delete $infoProvider{$class->name}->{$name};
 
 	# Clear the array to force it to be rebuilt
@@ -125,34 +126,34 @@ sub deregisterInfoProvider {
 sub menu {
 	my ( $class, $client, $tags ) = @_;
 	$tags ||= {};
-	
+
 	$class->getInfoOrdering;
-		
+
 	# Now run the order, which generates all the items we need
 	my $items = [];
-	
+
 	for my $ref ( @{ $infoOrdering{$class->name} } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
-		
+
 		# Add the item
 		$class->addItem( $client, $ref, $tags, $items );
-		
+
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
 		} @{ $infoOrdering{$class->name} };
-		
+
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
-			
+
 			for my $child ( @children ) {
 				$class->addItem( $client, $child, $tags, $subitems );
 			}
 		}
 	}
-	
+
 	return {
 		name  => cstring($client, $class->name),
 		type  => 'opml',
@@ -164,20 +165,20 @@ sub menu {
 # Function to add menu items
 sub addItem {
 	my ( $class, $client, $ref, $tags, $items ) = @_;
-	
+
 	if ( defined $ref->{func} ) {
-		
+
 		my $item = eval { $ref->{func}->( $client, $tags ) };
 		if ( $@ ) {
 			$log->error( 'Menu item "' . $ref->{name} . '" failed: ' . $@ );
 			return;
 		}
-		
+
 		return unless defined $item;
-		
+
 		# skip jive-only items for non-jive UIs
 		return if $ref->{menuMode} && !$tags->{menuMode};
-		
+
 		if ( ref $item eq 'ARRAY' ) {
 			if ( scalar @{$item} ) {
 				push @{$items}, @{$item};
@@ -191,7 +192,7 @@ sub addItem {
 		}
 		else {
 			$log->error( 'Menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
-		}				
+		}
 	}
 };
 
@@ -273,18 +274,18 @@ sub getInfoProvider {
 
 sub getInfoOrdering {
 	my $class = shift;
-	
+
 	if ( !scalar @{ $infoOrdering{$class->name} || [] } ) {
-		
+
 		main::DEBUGLOG && $log->debug(sprintf("Creating order for %s menu", $class->name));
-		
+
 		# We don't know what order the entries should be in,
 		# so work that out.
 		$class->generateInfoOrderingItem( 'top' );
 		$class->generateInfoOrderingItem( 'middle' );
 		$class->generateInfoOrderingItem( 'bottom' );
 	}
-	
+
 	return $infoOrdering{$class->name};
 }
 

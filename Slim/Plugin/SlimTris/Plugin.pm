@@ -1,8 +1,9 @@
 package Slim::Plugin::SlimTris::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -25,7 +26,7 @@ my @blocks = (
 
 	['x  ',
 	 'x*x'],
-	
+
 	['x*xx'],
 
 	['xx',
@@ -101,7 +102,7 @@ our %functions = (
 				rotate($client, -1);
 			}
 			$client->update();
-			$client->modeParam('listIndex', $knobPos);			
+			$client->modeParam('listIndex', $knobPos);
 	},
 
 	'left' => sub  {
@@ -213,7 +214,7 @@ sub cleanupGrid {
 	my $scoremult = 0;
 
 	my $width = $client->displayWidth() / 8 - 1;
-	
+
 
 COL:	for (my $x = $width; $x >= 1; $x--)
 	{
@@ -222,7 +223,7 @@ COL:	for (my $x = $width; $x >= 1; $x--)
 		}
 		$scoremult *= 2;
 		$scoremult = 100 if ($scoremult == 0);
-	
+
 		for (my $x2 = $x; $x2 >= 1; $x2--) {
 			for (my $y = 1; $y < $height+1; $y++) {
 				$grid[$x2][$y] = ($x2 > 2) ? $grid[$x2-1][$y] : 0;
@@ -286,7 +287,7 @@ sub loadBlocks {
 		my @center;
 		foreach my $line (@$block) {
 			my $x = 0;
-			foreach my $char (split(//, $line)) { 
+			foreach my $char (split(//, $line)) {
 				if ($char eq '*') {
 					@center = ($x, $y);
 					push(@blockpix, [$x, $y]);
@@ -318,9 +319,9 @@ sub initGrid {
 	my $width = $client->displayWidth() / 8 - 1;
 	for (my $x = 0; $x < $width+2; $x++) {
 		for (my $y = 0; $y < $height+2; $y++) {
-	
+
 			if ($x == 0 || $y == 0 || $x == $width+1 || $y == $height+1) {
-				$grid[$x][$y] = 1;	
+				$grid[$x][$y] = 1;
 			} else {
 				$grid[$x][$y] = 0;
 			}
@@ -388,7 +389,7 @@ sub lines {
 	my $parts;
 
 	my $width = $client->displayWidth() / 8 - 1;
-	
+
 	if ($gamemode eq 'attract') {
 		$parts = {
 		    'center1' => "- S - L - I - M - T - R - I - S -",
@@ -425,22 +426,22 @@ sub lines {
 	if ($client->display->isa( "Slim::Display::Squeezebox2")) {
 		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
-			{	
+			{
 				my $column = ($bitmaps2[$dispgrid[$x][1]] | $bitmaps2[$dispgrid[$x][2]*2]) . "\x00\x00";
-				
+
 				$column |= "\x00\x00" . ($bitmaps2[$dispgrid[$x][3]] | $bitmaps2[$dispgrid[$x][4]*2]);
-				
+
 				$bits .= $column;
 			}
 		$parts->{bits} = $bits;
 	} elsif ($client->display->isa( "Slim::Display::SqueezeboxG")) {
 		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
-			{	
+			{
 				my $column = ($bitmaps[$dispgrid[$x][1]] | $bitmaps[$dispgrid[$x][2]*2]) . "\x00";
-				
+
 				$column |= "\x00" . ($bitmaps[$dispgrid[$x][3]] | $bitmaps[$dispgrid[$x][4]*2]);
-				
+
 				$bits .= $column;
 			}
 		$parts->{bits} = $bits;
@@ -457,7 +458,7 @@ sub lines {
 		};
 	}
 	return $parts;
-}	
+}
 
 #
 # convert numbers into characters.  should use custom characters.
@@ -486,38 +487,38 @@ sub loadCustomChars {
 	return unless $client->display->isa('Slim::Display::Text');
 
 	return if $loadedcustomchar;
-	
-	Slim::Display::Text::setCustomChar( 'slimtristop', ( 
-		0b00000000, 
-		0b00000000, 
-		0b00000000, 
-		0b00000000, 
-		0b11111110, 
-		0b11111111, 
+
+	Slim::Display::Text::setCustomChar( 'slimtristop', (
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b11111110,
+		0b11111111,
 		0b01111111,
 
 		0b00000000
 		));
-	Slim::Display::Text::setCustomChar( 'slimtrisbottom', ( 
-		0b11111110, 
-		0b11111111, 
-		0b01111111, 
-		0b00000000, 
-		0b00000000, 
-		0b00000000, 
+	Slim::Display::Text::setCustomChar( 'slimtrisbottom', (
+		0b11111110,
+		0b11111111,
+		0b01111111,
 		0b00000000,
-		
+		0b00000000,
+		0b00000000,
+		0b00000000,
+
 		0b00000000
 		));
-	Slim::Display::Text::setCustomChar( 'slimtrisboth', ( 
-		0b11111110, 
-		0b11111111, 
-		0b01111111, 
-		0b00000000, 
-		0b11111110, 
-		0b11111111, 
+	Slim::Display::Text::setCustomChar( 'slimtrisboth', (
+		0b11111110,
+		0b11111111,
 		0b01111111,
-		
+		0b00000000,
+		0b11111110,
+		0b11111111,
+		0b01111111,
+
 		0b00000000
 
 #		0b00011111,
@@ -530,11 +531,11 @@ sub loadCustomChars {
 #                  0b00000000
 
 		));
-		
+
 	$loadedcustomchar = 1;
 
 }
-	
+
 sub getFunctions {
 	my $class = shift;
 

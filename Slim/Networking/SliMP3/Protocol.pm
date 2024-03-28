@@ -1,6 +1,7 @@
 package Slim::Networking::SliMP3::Protocol;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -43,9 +44,9 @@ sub processMessage {
 
 		# extract the IR code and the timestamp for the IR message
 		my ($irTime, $irCodeBytes) = unpack 'xxNxxH8', $msg;
-		
+
 		$client->trackJiffiesEpoch($irTime, $msgTimeStamp);
-		
+
 		Slim::Hardware::IR::enqueue($client, $irCodeBytes, $irTime);
 
 	} elsif ($type eq 'h') {
@@ -57,7 +58,7 @@ sub processMessage {
 	} elsif ($type eq 'a') {
 
 		my ($wptr, $rptr, $seq) = unpack 'xxxxxxnnn', $msg;
-		
+
 		Slim::Networking::SliMP3::Stream::gotAck($client, $wptr, $rptr, $seq, $msgTimeStamp);
 
 	} else {
@@ -72,7 +73,7 @@ sub processMessage {
 
 Return the client based on IP address and socket.
 
-Will create a new one if necessary 
+Will create a new one if necessary
 
 =cut
 
@@ -119,11 +120,11 @@ sub getUdpClient {
 			Slim::Networking::Discovery::sayHello($sock, $clientpaddr);
 
 			return undef;
-		} 
+		}
 	}
 
 	$client->paddr($clientpaddr);
-	
+
 	return $client
 }
 

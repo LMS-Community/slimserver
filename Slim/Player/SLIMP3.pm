@@ -1,4 +1,5 @@
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -35,7 +36,7 @@ sub new {
 	my $paddr    = shift;
 	my $revision = shift;
 	my $udpsock  = shift;
-	
+
 	my $client = $class->SUPER::new($id, $paddr, $revision);
 
 	# defined only for Slimp3
@@ -97,31 +98,31 @@ sub hasIR { 1 }
 
 sub nextChunk {
 	my $client = $_[0];
-	
+
 	my $chunk = Slim::Player::Source::nextChunk(@_);
-	
+
 	if (defined($chunk) && length($$chunk) == 0) {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
-		
+
 		# Bug 10400 - need to tell the controller to get next track ready
-		# We may not actually be prepared to stream the next track yet 
+		# We may not actually be prepared to stream the next track yet
 		# but this will be checked when the controller calls isReadyToStream()
 		$client->controller()->playerReadyToStream($client);
-		
+
 		if ($client->isSynced(1)) {
 			return $chunk;	# playout
 		} else {
 			return undef;
 		}
 	}
-	
+
 	return $chunk;
 }
 
 sub underrun {
 	my $client = $_[0];
-	
+
 	if (Slim::Networking::SliMP3::Stream::isPlaying($client)) {
 		if ($client->controller()->isStreaming()) {
 			$client->controller()->playerOutputUnderrun($client);
@@ -129,10 +130,10 @@ sub underrun {
 		} else {
 			# Finished playout
 			# and fall
-		}	
+		}
 	}
 	Slim::Networking::SliMP3::Stream::stop($client);
-	$client->controller()->playerStopped($client);	
+	$client->controller()->playerStopped($client);
 }
 
 sub autostart {
@@ -142,11 +143,11 @@ sub autostart {
 
 sub heartbeat {
 	my $client = $_[0];
-	
+
 	if ( !$client->bufferReady() && $client->bytesReceivedOffset() 		# may need to signal track-start
 		&& ($client->bytesReceived() - $client->bytesReceivedOffset() - $client->bufferFullness() > 0) )
 	{
-		$client->bufferReady(1);	# to stop multiple starts 
+		$client->bufferReady(1);	# to stop multiple starts
 		$client->controller()->playerTrackStarted($client);
 	} else {
 		$client->controller->playerStatusHeartbeat($client);
@@ -155,30 +156,30 @@ sub heartbeat {
 
 sub isReadyToStream {
 	my ($client, $song) = @_;
-	
+
 	return 1 if $client->readyToStream();
-	
+
 	return 0 if $client->isSynced(1);
-	
+
 	return 1; # assume safe to stream one file after another, even if frame rates different
 }
 
 sub play {
 	my $client = shift;
 	my $params = shift;
-	
+
 	if (Slim::Networking::SliMP3::Stream::isPlaying($client)) {
 		assert(!$client->isSynced(1));
-		
+
 		$client->bytesReceivedOffset($client->streamBytes());
 		$client->bufferReady(0);
-		
+
 		return 1;
 	}
-	
+
 	$client->bytesReceivedOffset(0);
 	$client->streamBytes(0);
-		
+
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
 					defined($client->tempVolume()));
@@ -196,12 +197,12 @@ sub play {
 	# is still processing the i2c commands we just sent.
 	select(undef,undef,undef,.05);
 
-	if ( $params->{'controller'}->streamUrlHandler()->isRemote() ) {	
+	if ( $params->{'controller'}->streamUrlHandler()->isRemote() ) {
 		$client->buffering(bufferSize() / 2);
 	}
 
 	Slim::Networking::SliMP3::Stream::newStream($client, $params->{'paused'});
-	
+
 	return 1;
 }
 
@@ -268,7 +269,7 @@ sub stop {
 
 	Slim::Networking::SliMP3::Stream::stop($client);
 	$client->SUPER::stop();
-	
+
 }
 
 sub bufferFullness {
@@ -292,21 +293,21 @@ sub vfd {
 	my $frame;
 	assert($client->udpsock);
 	$frame = 'l                 '.$data;
-	send($client->udpsock, $frame, 0, $client->paddr()); 
+	send($client->udpsock, $frame, 0, $client->paddr());
 }
 
 sub udpstream {
 	my ($client, $controlcode, $wptr, $seq, $chunk) = @_;
-		        
+
 	my $frame = pack 'aCxxxxn xxn xxxxxx', (
 		'm',                            # 'm' == mp3 data
-		$controlcode,                   # control code   
+		$controlcode,                   # control code
 		$wptr,                          # wptr
 		$seq);
 
-        
+
 	$frame .= $chunk;
-        
+
 	send($client->udpsock, $frame, 0, $client->paddr());
 }
 
@@ -327,15 +328,15 @@ sub volume {
 	my $volume = $client->SUPER::volume($newvolume, @_);
 
 	if (defined($newvolume)) {
-		# volume squared seems to correlate better with the linear scale.  
+		# volume squared seems to correlate better with the linear scale.
 		# I'm sure there's something optimal, but this is better.
-	
+
 		my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume) ** 2));
-		
+
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
 		}
-		
+
 		$client->i2c(
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)
 			.Slim::Hardware::mas3507d::masWrite('rr', $level)

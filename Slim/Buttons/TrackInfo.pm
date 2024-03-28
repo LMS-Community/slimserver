@@ -1,11 +1,12 @@
 package Slim::Buttons::TrackInfo;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# Displays the extra track information screen that is got into by pressing right on an item 
+# Displays the extra track information screen that is got into by pressing right on an item
 # in the now playing screen.
 
 =head1 NAME
@@ -14,7 +15,7 @@ Slim::Buttons::TrackInfo
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::TrackInfo> is a module to handle the player UI for 
+L<Slim::Buttons::TrackInfo> is a module to handle the player UI for
 a list of information about a track in the local library.
 
 =cut
@@ -34,7 +35,7 @@ our %functions = ();
 sub init {
 
 	Slim::Buttons::Common::addMode('trackinfo', undef, \&setMode);
-	
+
 	%functions = (
 
 		'play' => sub  {
@@ -55,15 +56,15 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my $track = $client->modeParam('track');
 	my $url   = blessed($track) ? $track->url : $track;
-	
+
 	my $getMenu = sub {
 		my ( $client, $callback ) = @_;
-		
+
 		my $menu = Slim::Menu::TrackInfo->menu( $client, $url, $track );
-		
+
 		if ( $callback ) {
 			# Callback is used during a menu refresh
 			# Will not work if URL is returned instead of OPML
@@ -73,18 +74,18 @@ sub setMode {
 			return $menu;
 		}
 	};
-	
+
 	my %params = (
 		modeName  => 'TrackInfo',
 		onRefresh => $getMenu,
 		timeout   => 35,
 	);
-	
+
 	my $feed = $getMenu->( $client );
 	$params{ref $feed eq 'HASH' ? 'opml' : 'url'} = $feed;
-	
+
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-	
+
 	$client->modeParam( 'handledTransition', 1 );
 }
 

@@ -1,8 +1,9 @@
 package Slim::Networking::Discovery::Players;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # Keep track of players that are connected to other servers
@@ -55,7 +56,7 @@ sub init {
 				undef,
 				time() + 2,
 				\&Slim::Networking::Discovery::Server::fetch_servers,
-			);			
+			);
 		},
 		[['client'],['disconnect','forget']]
 	);
@@ -85,7 +86,7 @@ sub fetch_players {
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_players_done,
 		\&_players_error,
-		{ 
+		{
 			timeout => 10,
 			server  => $server,
 		}
@@ -110,7 +111,7 @@ sub _players_done {
 		$http->error( $@ || 'Invalid JSON response: ' . $http->content );
 		return _players_error( $http );
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got list of players: " . Data::Dump::dump( $res->{result}->{players_loop} ) );
 	}
@@ -118,32 +119,32 @@ sub _players_done {
 	_purge_player_list($server);
 
 	foreach my $player (@{$res->{result}->{players_loop}}) {
-		
+
 		$players->{$player->{playerid}} = {
 			name   => $player->{name} || $player->{model} . ' ' . substr($player->{playerid}, 9),
 			server => $server,
 			model  => $player->{model},
 			ttl    => time() + 2 * 60,		# remember the players no longer than two minutes
 		}
-		
+
 	}
 }
 
 sub _players_error {
 	my $http  = shift;
 	my $error = $http->error;
-	
+
 	# don't report errors when querying access protected server etc.
 	if ($error =~ /(?:401\b)/) {
 		main::INFOLOG && $log->info( "Unable to get players: $error" );
 		return;
 	}
 
-	my $proxy = Slim::Utils::Prefs::preferences('server')->get('webproxy'); 
+	my $proxy = Slim::Utils::Prefs::preferences('server')->get('webproxy');
 
-	$log->error( "Unable to get players: $error" 
+	$log->error( "Unable to get players: $error"
 		. ($proxy ? sprintf(" - please check your proxy configuration (%s)", $proxy) : '')
-	); 
+	);
 }
 
 
@@ -157,14 +158,14 @@ sub _purge_player_list {
 	my $server = shift || '';
 
 	foreach my $player (keys %{$players}) {
-		
+
 		# remove players connected to ourselves
 		# or whose server has not been seen in a while
 		if ( $players->{$player}->{server} eq $server
 			|| $players->{$player}->{ttl} < time() ) {
-				
+
 			delete $players->{$player};
-			
+
 		}
 	}
 }

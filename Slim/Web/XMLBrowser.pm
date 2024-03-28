@@ -1,7 +1,8 @@
 package Slim::Web::XMLBrowser;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -1001,7 +1002,7 @@ sub handleFeed {
 
 				my $type = $item->{'favorites_type'} || $item->{'type'} || 'link';
 				my $name = $item->{'favorites_title'} || $item->{'name'};
-				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} || 
+				my $icon = $item->{'favorites_icon'} || $item->{'image'} || $item->{'icon'} ||
 						   Slim::Player::ProtocolHandlers->iconForURL($furl, $client) || 'html/images/favorites.png';
 
 				if ( ($item->{'play'} && !$item->{'favorites_type'})

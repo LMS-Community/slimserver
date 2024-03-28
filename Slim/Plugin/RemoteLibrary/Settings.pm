@@ -1,6 +1,7 @@
 package Slim::Plugin::RemoteLibrary::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -42,14 +43,14 @@ sub handler {
 
 		$prefs->set('remoteLMS', \@array);
 	}
-	
+
 	$paramRef->{'prefs'}->{ 'pref_remoteLMS' } = [ @{ $prefs->get('remoteLMS') || [] }, '' ];
 	$paramRef->{'remoteLMSDetails'} = $prefs->get('remoteLMSDetails');
 
 	if ( defined $paramRef->{pref_useUPnP} && $paramRef->{pref_useUPnP} ne $prefs->get('useUPnP') ) {
 		# Shut down all UPnP activity - don't load module if it wasn't loaded yet
 		eval { Slim::Plugin::RemoteLibrary::UPnP::MediaServer->shutdown() };
-		
+
 		# Start it up again if the user enabled it
 		if ( $paramRef->{pref_useUPnP} ) {
 			require Slim::Plugin::RemoteLibrary::UPnP;

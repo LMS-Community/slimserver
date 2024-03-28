@@ -1,9 +1,10 @@
 package Slim::Hardware::IR;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -27,7 +28,7 @@ Example Processing Pathway for an IR 'up' button command:
     Slim::Hardware::IR::executeButton calls lookupFunction which finds the IR handler function to call.  It looks this up in Default.map under 'common'
     For knob_right or knob_left (and others), this currently calls 'up' or 'down'
     executeButton then calls Slim::Buttons::Common::getFunction, which looks up INPUT.List, up, which is defined in Slim::Buttons::Input::List.pm
-    Slim::Buttons::Input::List, up calls Slim::Buttons::Input::List::changePos 
+    Slim::Buttons::Input::List, up calls Slim::Buttons::Input::List::changePos
     Slim::Buttons::Input::List::changePos calls Slim::Buttons::Common::scroll.  This is where the acceleration algorithm takes place.
 
 =cut
@@ -71,7 +72,7 @@ sub init {
 
 	%irCodes = ();
 	%irMap = ();
-	
+
 	for my $irfile (keys %{irfiles()}) {
 		loadIRFile($irfile);
 	}
@@ -116,7 +117,7 @@ sub idle {
 	my $client = $entry->{'client'};
 
 	my $now = Time::HiRes::time();
-	
+
 	main::PERFMON && Slim::Utils::PerfMon->check('ir', $now - $entry->{'estTime'});
 
 	if (($now - $entry->{'estTime'}) < $maxIRQTime) {
@@ -134,7 +135,7 @@ sub idle {
 		}
 
 	}
-		
+
 	return 1;
 }
 
@@ -181,7 +182,7 @@ sub irfiles {
 			if (basename($file) !~ /(.+)\.ir$/) {
 				next;
 			}
-			
+
 			# NOTE: client isn't required here, but if it's been sent from setup
 			# Don't show front panel ir set for clients without a front panel
 			if (defined ($client) && !$client->hasFrontPanel() && ($1 eq 'Front_Panel')) {
@@ -278,7 +279,7 @@ sub addModeDefaultMapping {
 				$log->info("mapping [$mode] $key => $value");
 			}
 		}
-		
+
 		$irMap{$defaultMapFile}{$mode} = $mapRef;
 	}
 }
@@ -390,7 +391,7 @@ sub loadIRFile {
 
 		$irCodes{$file}{$irCode} = $buttonName;
 	}
-}	
+}
 
 # init lookup state for new client so this is not done per ir lookup
 sub initClient {
@@ -434,9 +435,9 @@ sub initClient {
 sub lookupCodeBytes {
 	my $client = shift;
 	my $irCodeBytes = shift;
-		
+
 	if (defined $irCodeBytes) {
-	
+
 		for my $irset (@{$client->ircodes}) {
 
 			if (defined (my $code = $irset->{$irCodeBytes})) {
@@ -447,7 +448,7 @@ sub lookupCodeBytes {
 			}
 		}
 	}
-	
+
 	main::INFOLOG && $log->info("$irCodeBytes -> unknown");
 
 	return undef;
@@ -465,7 +466,7 @@ sub lookup {
 		$log->warn("irCode not present");
 		return '';
 	}
-	
+
 	for my $irset (@{$client->ircodes}) {
 
 		if (defined (my $found = $irset->{$code})) {
@@ -477,7 +478,7 @@ sub lookup {
 			last;
 		}
 	}
-	
+
 	if (defined $modifier) {
 		$code .= '.' . $modifier;
 	}
@@ -538,7 +539,7 @@ sub checkRelease {
 
 		return 0;
 	}
-	
+
 	if ($startIRCodeBytes ne $client->lastircodebytes) {
 
 		# a different button was pressed, so the original must have been released
@@ -641,7 +642,7 @@ sub processIR {
 
 	# lookup the bytes, if we don't know them no point in continuing
 	my $code = lookupCodeBytes($client, $irCodeBytes);
-	
+
 	if (!defined $code) {
 
 		Slim::Control::Request::notifyFromArray($client, ['unknownir', $irCodeBytes, $irTime]);
@@ -664,8 +665,8 @@ sub processIR {
 
 		return;
 	}
-	
-	if ($timediff == 0) { 
+
+	if ($timediff == 0) {
 
 		$log->warn("Received duplicate IR timestamp: $irTime - ignoringo");
 
@@ -674,7 +675,7 @@ sub processIR {
 
 	$client->irtimediff($timediff);
 	$client->lastirtime($irTime);
-	
+
 	my $knobData = $client->knobData;
 
 	if (!($code =~ /^knob/)) {
@@ -734,7 +735,7 @@ sub processIR {
 		$client->lastirbutton($code);
 
 		my $irCode = lookupFunction($client, $code);
-		
+
 		processCode($client, $irCode, $irTime);
 
 	} elsif (($irCodeBytes eq $client->lastircodebytes) # same button press as last one
@@ -780,7 +781,7 @@ sub processIR {
 
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("irCode = [%s] timer = [%s] timediff = [%s] last = [%s]",
-				(defined $irCode ? $irCode : 'undef'), 
+				(defined $irCode ? $irCode : 'undef'),
 				$irTime,
 				$client->irtimediff,
 				$client->lastircode,
@@ -817,7 +818,7 @@ sub processFrontPanel {
 	} elsif ($dir eq 'down') {
 
 		main::INFOLOG && $log->info("IR: Front panel button press: $code");
-		
+
 		# kill any previous hold timers
 		Slim::Utils::Timers::killTimers($client, \&fireHold);
 
@@ -847,7 +848,7 @@ sub processFrontPanel {
 
 		# kill any previous hold timers
 		Slim::Utils::Timers::killTimers($client, \&fireHold);
-		
+
 		my $irCode;
 
 		# When the button is held longer than the time needed for a
@@ -899,7 +900,7 @@ sub fireHold {
 # utility functions used externally
 sub resetHoldStart {
 	my $client = shift;
-	
+
 	$client->startirhold($client->lastirtime);
 }
 
@@ -1022,7 +1023,7 @@ sub repeatCount {
 sub accelCount {
 	my $time  = shift;
 	my $accel = shift;
-	
+
 	return 0.5 * $accel * $time * $time;
 }
 

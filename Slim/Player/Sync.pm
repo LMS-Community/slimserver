@@ -1,7 +1,8 @@
 package Slim::Player::Sync;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -27,7 +28,7 @@ sub syncname {
 	my $client = shift;
 	my $ignore = shift;
 	my @buddies = $client->syncedWith();
-	
+
 	if (isMaster($client)) {
 		unshift @buddies , $client;
 	} else {
@@ -44,7 +45,7 @@ sub syncname {
 
 		push @newbuddies, $i;
 	}
-				
+
 	my @names = map {$_->name() || $_->id()} @newbuddies;
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -66,18 +67,18 @@ sub restoreSync {
 	my $client = shift;
 	my $syncgroupid = shift;
 	my $noRestart = shift;
-	
+
 	if ($client->controller()->allPlayers() > 1) {
 		# already synced (this can get called more than once when a player first connects)
 		return;
 	}
-	
+
 	if ($syncgroupid) {
 		$prefs->client($client)->set('syncgroupid', $syncgroupid);
 	} else {
 		$syncgroupid = ($prefs->client($client)->get('syncgroupid'));
 	}
-	
+
 	if ($syncgroupid) {
 		foreach my $other (Slim::Player::Client::clients()) {
 
@@ -111,17 +112,17 @@ sub canSyncWith {
 
 			# only include masters and un-sync'ed clients.
 			next if $otherclient->controller()->master() != $otherclient;
-			
+
 			push @buddies, $otherclient;
 		}
 	}
-	
+
 	return @buddies;
 }
 
 sub isMaster {
 	my $client = shift;
-	
+
 	my $controller = $client->controller();
 	return scalar $controller->allPlayers() > 1 && $client == $controller->master();
 
@@ -129,7 +130,7 @@ sub isMaster {
 
 sub isSlave {
 	my $client = shift || return undef;
-	
+
 	my $controller = $client->controller();
 	return scalar $controller->allPlayers() > 1 && $client != $controller->master();
 }

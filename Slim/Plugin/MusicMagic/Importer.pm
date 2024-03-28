@@ -1,7 +1,8 @@
 package Slim::Plugin::MusicMagic::Importer;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech
+# Logitech Media Server Copyright 2001-2024 Logitech
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -54,7 +55,7 @@ sub useMusicMagic {
 
 	my $use = $prefs->get('musicip');
 
-	if (!defined($use) && $can) { 
+	if (!defined($use) && $can) {
 
 		$prefs->set('musicip', 1);
 
@@ -88,7 +89,7 @@ sub initPlugin {
 	$MMSport = $prefs->get('port');
 
 	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
-	
+
 	my $initialized = get( "http://localhost:$MMSport/api/version", 5 );
 
 	if (defined $initialized) {
@@ -123,7 +124,7 @@ sub initPlugin {
 		@supportedFormats = ('alc', 'm4a', 'mp3', 'wma', 'ogg', 'flc', 'wav');
 	}
 	elsif (main::ISMAC) {
-		@supportedFormats = ('alc', 'm4a', 'mp3', 'ogg', 'flc', 'wav');		
+		@supportedFormats = ('alc', 'm4a', 'mp3', 'ogg', 'flc', 'wav');
 	}
 	else {
 		@supportedFormats = ('mp3', 'ogg', 'flc', 'wav');
@@ -145,7 +146,7 @@ sub startScan {
 	if (!$class->useMusicMagic) {
 		return;
 	}
-		
+
 	main::DEBUGLOG && $log->debug("Start export");
 
 	if (Slim::Music::Import->scanPlaylistsOnly) {
@@ -158,10 +159,10 @@ sub startScan {
 	}
 
 	$class->doneScanning;
-	
+
 	# XXX return number of changes made
 	return 1;
-} 
+}
 
 sub doneScanning {
 	my $class = shift;
@@ -207,10 +208,10 @@ sub exportSongs {
 
 		main::INFOLOG && $log->info("Got $count song(s).");
 
-		my $progress = Slim::Utils::Progress->new({ 
-			'type'  => 'importer', 
-			'name'  => 'musicip', 
-			'total' => $count, 
+		my $progress = Slim::Utils::Progress->new({
+			'type'  => 'importer',
+			'name'  => 'musicip',
+			'total' => $count,
 			'bar'   => 1
 		});
 
@@ -240,17 +241,17 @@ sub exportSongs {
 			local $/ = "$LF$LF";
 
 			if ($prefs->get('musicip') != 1) {
-				
+
 				while(my $content = <MMMDATA>) {
 					$class->setMixable($content, $progress);
 				}
-				
+
 			} else {
-				
+
 				while(my $content = <MMMDATA>) {
 					$class->processSong($content, $progress);
 				}
-				
+
 			}
 
 			close(MMMDATA);
@@ -269,19 +270,19 @@ sub exportSongs {
 		main::INFOLOG && $log->info("MusicIP mixable status scan for all songs not currently mixable");
 
 		my @notMixableTracks = Slim::Schema->rs('Track')->search({
-			'audio' => '1', 
-			'remote' => '0', 
-			'musicmagic_mixable' => undef, 
+			'audio' => '1',
+			'remote' => '0',
+			'musicmagic_mixable' => undef,
 			'content_type' => { in => \@supportedFormats}
 		});
 
 		my $count = @notMixableTracks;
 		main::INFOLOG && $log->info("Got $count song(s).");
 
-		my $progress = Slim::Utils::Progress->new({ 
-			'type'  => 'importer', 
-			'name'  => 'musicip', 
-			'total' => $count, 
+		my $progress = Slim::Utils::Progress->new({
+			'type'  => 'importer',
+			'name'  => 'musicip',
+			'total' => $count,
 			'bar'   => 1
 		});
 
@@ -327,7 +328,7 @@ sub setMixable {
 	my $active;
 
 	my @lines = split(/\n/, $content);
-	
+
 	for my $line (@lines) {
 
 		if ($line =~ /^(\w+)\s+(.*)/) {
@@ -345,7 +346,7 @@ sub setMixable {
 
 	if ($active eq 'yes') {
 		my $fileurl = Slim::Utils::Misc::fileURLFromPath($file);
-	
+
 		my $track = Slim::Schema->objectForUrl($fileurl)
 		|| do {
 			$log->warn("Couldn't get track for $fileurl");
@@ -412,7 +413,7 @@ sub processSong {
 	# MiP 1.6+ encode filenames as UTF-8, even on Windows.
 	# So we need to turn the string from MiP to UTF-8, which then gets
 	# turned into the local charset below with utf8encode_locale
-	# 
+	#
 	# This breaks Linux however, so only do it on Windows & OS X
 	my @keys  = qw(album artist genre name);
 
@@ -475,7 +476,7 @@ sub processSong {
 			$artistObj->musicmagic_mixable(1);
 			$artistObj->update;
 		}
-		
+
 		for my $genreObj ($track->genres) {
 			$genreObj->musicmagic_mixable(1);
 			$genreObj->update;
@@ -493,14 +494,14 @@ sub exportPlaylists {
 	if (!scalar @playlists) {
 		return;
 	}
-	
+
 	# remove MIP playlists which don't exist any more
 	foreach (Slim::Schema->search('Playlist', {
-		url => { 
+		url => {
 			like => 'musicipplaylist%'
-		} 
+		}
 	})->all) {
-		
+
 		$_->setTracks([]);
 		$_->delete;
 	}
@@ -517,7 +518,7 @@ sub exportPlaylists {
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("Got playlist %s with %d items", $listname, scalar @songs));
 		}
-		
+
 		$class->_updatePlaylist($listname, \@songs);
 	}
 }
@@ -553,7 +554,7 @@ sub _updatePlaylist {
 	my $url        = 'musicipplaylist:' . Slim::Plugin::MusicMagic::Common::escape($name);
 
 	# add this list of duplicates to our playlist library
-	$attributes{'TITLE'} = join('', 
+	$attributes{'TITLE'} = join('',
 		$prefs->get('playlist_prefix'),
 		$name,
 		$prefs->get('playlist_suffix'),
@@ -584,32 +585,32 @@ sub _updatePlaylist {
 sub get {
 	my $url     = shift;
 	my $timeout = shift || 60;
-	
+
 	my $ua = LWP::UserAgent->new(
 		timeout => $timeout,
 	);
-	
+
 	my $res = $ua->get($url);
-	
+
 	if ( $res->is_success ) {
 		return $res->content;
 	}
-	
+
 	return;
 }
 
 # Emulate LWP::Simple
 sub getstore {
 	my ( $url, $file, $timeout ) = @_;
-	
+
 	$timeout ||= 60;
-	
+
 	my $ua = LWP::UserAgent->new(
 		timeout => $timeout,
 	);
-	
+
 	my $res = $ua->get( $url, ':content_file' => $file );
-	
+
 	return $res->code;
 }
 

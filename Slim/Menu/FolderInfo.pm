@@ -1,6 +1,7 @@
 package Slim::Menu::FolderInfo;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -30,7 +31,7 @@ use Slim::Utils::Strings qw(cstring);
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'folderinfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
@@ -47,7 +48,7 @@ sub name {
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addFolder => (
@@ -106,7 +107,7 @@ sub addFolder {
 		name        => $label,
 		jive        => {
 			actions => $actions
-		}, 
+		},
 	} ];
 }
 
@@ -136,7 +137,7 @@ sub playFolder {
 		name        => cstring($client, 'PLAY'),
 		jive        => {
 			actions => $actions
-		}, 
+		},
 	} ];
 }
 
@@ -147,7 +148,7 @@ tie my %cachedFeed, 'Tie::Cache::LRU', 2;
 
 sub cliQuery {
 	my $request = shift;
-	
+
 	# WebUI or newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
@@ -164,7 +165,7 @@ sub cliQuery {
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
 	}
-	
+
 	my $client    = $request->client;
 	my $folder_id = $request->getParam('folder_id');
 	my $menuMode  = $request->getParam('menu') || 0;
@@ -182,15 +183,15 @@ sub cliQuery {
 			folder_id => $folder_id,
 			menuMode  => $menuMode,
 		};
-		
+
 		$feed = Slim::Menu::FolderInfo->menu( $client, $tags );
 	}
 	elsif ( $cachedFeed{ $connectionId } ) {
 		$feed = $cachedFeed{ $connectionId };
 	}
-	
+
 	$cachedFeed{ $connectionId } = $feed if $feed;
-	
+
 	Slim::Control::XMLBrowser::cliQuery( 'folderinfo', $feed, $request );
 }
 

@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Server::Software;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -21,17 +22,17 @@ sub page {
 
 sub prefs {
 	my @prefs = qw(checkVersion checkVersionInterval);
-	
+
 	if (Slim::Utils::OSDetect->getOS()->canAutoUpdate()) {
 		push @prefs, 'autoDownloadUpdate';
 	}
-	
+
 	return (preferences('server'), @prefs);
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $callback, @args) = @_;
-	
+
 	my $os = Slim::Utils::OSDetect->getOS();
 	$paramRef->{canAutoUpdate} = $os->canAutoUpdate();
 	$paramRef->{runningFromSource} = $os->runningFromSource();
@@ -39,7 +40,7 @@ sub handler {
 	if ($::newVersion) {
 		$paramRef->{'warning'} ||= $::newVersion;
 	}
-	
+
 	if (delete $paramRef->{checkForUpdateNow}) {
 		require Slim::Utils::Update;
 		Slim::Utils::Update::checkVersion(sub {
@@ -51,7 +52,7 @@ sub handler {
 			elsif (!$info) {
 				$info = Slim::Utils::Strings::string('CONTROLPANEL_NO_UPDATE_AVAILABLE')
 			}
-			
+
 			$paramRef->{'warning'} = $info;
 			$callback->( $client, $paramRef, $class->SUPER::handler($client, $paramRef), @args );
 		});

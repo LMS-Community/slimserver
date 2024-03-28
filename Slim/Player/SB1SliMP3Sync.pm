@@ -1,6 +1,7 @@
 package Slim::Player::SB1SliMP3Sync;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -83,15 +84,15 @@ sub purgeOldFrames {
 			$i = $k;
 		}
 	}
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			"timeOffset $timeOffset; removing "
-			. ($j+1) . " frames from total " . scalar(@{$frames}) 
+			. ($j+1) . " frames from total " . scalar(@{$frames})
 		);
 	}
-	
-	splice @{$frames}, 0, $j+1;	
+
+	splice @{$frames}, 0, $j+1;
 }
 
 sub _findTimeForOffset {
@@ -104,13 +105,13 @@ sub _findTimeForOffset {
 
 	# check if there are any frames to analyse
 	if ( length($$buffer) > 1500 ) { # make it worth our while
-	
+
 		my $pos = 0;
-		
+
 		# XXX: MPEG::Audio::Frame use here is not ideal, but it's the only place
 		# we use it, and it's not a trivial amount of work to port this to Audio::Scan
 		require MPEG::Audio::Frame;
-		
+
 		while ( my ($length, $nextPos, $seconds) = MPEG::Audio::Frame->read_ref($buffer, $pos) ) {
 			last unless ($length);
 			# Note: $length may not equal ($nextPos - $pos) if tag data has been skipped
@@ -123,7 +124,7 @@ sub _findTimeForOffset {
 				my $tim = $frames->[-1][FRAME_TIME_OFFSET] + $seconds;
 				push @{$frames}, [$off, $tim];
 			}
-			
+
 			if (main::INFOLOG &&  $log->is_info && ($length != $nextPos - $pos) ) {
 				$log->info("recordFrameOffset: ", $nextPos - $pos - $length, " bytes skipped");
 			}
@@ -164,7 +165,7 @@ sub _findTimeForOffset {
 			$i = $k;
 		}
 	}
-	
+
 	my $frameByteOffset = $frames->[$i][FRAME_BYTE_OFFSET];
 	my $timeOffset = $frames->[$i][FRAME_TIME_OFFSET];
 	if ( $byteOffset > $frameByteOffset && @{$frames} - 1 > $i ) {
@@ -181,14 +182,14 @@ sub _findTimeForOffset {
 
 sub saveStreamData {
 	my ($controller, $chunkref) = @_;
-	
+
 	return unless ($controller->activePlayers() > 1);
-	
+
 	my $master = $controller->master();
 
 	if (my $buf = $controller->initialStreamBuffer()) {
 		$$buf .= $$chunkref;
-		
+
 		# Safety check - just make sure that we are not in the process
 		# of slurping up a perhaps-infinite stream without using it.
 		# We assume min frame size of 72 bytes (24kb/s, 48000 samples/s)
@@ -207,7 +208,7 @@ sub saveStreamData {
 			my $model = $_->model();
 			last if $needFrameData = ($model eq 'slimp3' || $model eq 'squeezebox');
 		}
-		if ($needFrameData) {		
+		if ($needFrameData) {
 			my $savedChunk = $$chunkref; 	# copy
 			$controller->initialStreamBuffer(\$savedChunk);
 		}

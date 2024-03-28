@@ -1,10 +1,11 @@
 package Slim::Formats::Playlists::XSPF;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -61,7 +62,7 @@ sub read {
 
 # So far the writer has a lot more than we can read in - need to factor
 # _updateMetaData to handle more.
-# 
+#
 # Currently there aren't any callers - we may want to make this the preferred
 # default playlist format instead of M3U however. May need an extension to
 # handle #CURRTRACK type functionality.
@@ -90,7 +91,7 @@ sub write {
 			logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			next;
 		};
-		
+
 		my $track = XML::XSPF::Track->new;
 		my $title = Slim::Utils::Unicode::utf8decode( $obj->title );
 

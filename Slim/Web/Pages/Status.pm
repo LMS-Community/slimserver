@@ -1,9 +1,10 @@
 package Slim::Web::Pages::Status;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -22,7 +23,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub init {
-	
+
 	Slim::Web::Pages->addPageFunction(qr/^status_header\.(?:htm|xml)/,\&status_header);
 	Slim::Web::Pages->addPageFunction(qr/^status\.(?:htm|xml)/,\&status);
 }
@@ -42,7 +43,7 @@ sub status {
 	Slim::Web::Pages::Common->addPlayerList($client, $params);
 
 	$params->{'refresh'} = $prefs->get('refreshRate');
-	
+
 	if (!defined($client)) {
 
 		# fixed faster rate for noclients
@@ -62,17 +63,17 @@ sub status {
 	if (defined($client)) {
 
 		$songcount = Slim::Player::Playlist::count($client);
-		
+
 		$params->{'player_name'} = $client->name();
 
 		$params->{'shuffle'} = Slim::Player::Playlist::shuffle($client);
-	
+
 		$params->{'songtime'} = int(Slim::Player::Source::songTime($client));
 
-		if ($client->controller()->playingSong()) { 
+		if ($client->controller()->playingSong()) {
 			my $dur = $client->controller()->playingSongDuration();
 			if ($dur) { $dur = int($dur); }
-			$params->{'durationseconds'} = $dur; 
+			$params->{'durationseconds'} = $dur;
 		}
 
 		$params->{'repeat'} = Slim::Player::Playlist::repeat($client);
@@ -85,7 +86,7 @@ sub status {
 
 				my $remaining = $params->{'durationseconds'} - $params->{'songtime'};
 
-				if ($remaining < $params->{'refresh'}) {	
+				if ($remaining < $params->{'refresh'}) {
 					$params->{'refresh'} = ($remaining < 5) ? 5 : $remaining;
 				}
 			}
@@ -93,13 +94,13 @@ sub status {
 		} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
 
 			$params->{'modepause'} = "Pause";
-		
+
 		} else {
 			$params->{'modestop'} = "Stop";
 		}
 
 		#
-		
+
 		$params->{'sync'}    = $client->syncedWithNames();
 		$params->{'mode'}    = $client->power() ? 'on' : 'off';
 
@@ -115,38 +116,38 @@ sub status {
 
 			$params->{'sleep'} = $client->prettySleepTime();
 		}
-		
+
 		$params->{'fixedVolume'} = !$prefs->client($client)->get('digitalVolumeControl');
 		$params->{'player'} = $client->id();
 	}
-	
+
 	if ($songcount > 0) {
-		
+
 		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
 		Slim::Player::Playlist::track($client)->displayAsHTML($params);
-		
+
 		Slim::Web::Pages::Common->addSongInfo($client, $params, 1);
 
 		my ($song, $sourcebitrate, $streambitrate);
-		
+
 		if (($song = $client->playingSong())
 			&& ($sourcebitrate = $song->bitrate())
 			&& ($streambitrate = $song->streambitrate())
 			&& $sourcebitrate != $streambitrate)
 		{
-			$params->{'bitrate'} = sprintf( ' (%s %s%s ABR)', 
-				string('CONVERTED_TO'), 
+			$params->{'bitrate'} = sprintf( ' (%s %s%s ABR)',
+				string('CONVERTED_TO'),
 				$streambitrate / 1000,
-				string('KBPS')); 
+				string('KBPS'));
 		}
 
 		if (Slim::Utils::Misc::getPlaylistDir()) {
 			$params->{'cansave'} = 1;
 		}
 	}
-	
+
 	if (!$params->{'omit_playlist'}) {
 
 		$params->{'callback'} = $callback;
@@ -170,7 +171,7 @@ sub status {
 			$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client, $client->currentPlaylist);
 		}
 	}
-	
+
 	return Slim::Web::HTTP::filltemplatefile($params->{'omit_playlist'} ? "status_header.html" : "status.html" , $params);
 }
 

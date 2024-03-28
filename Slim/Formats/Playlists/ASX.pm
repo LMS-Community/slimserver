@@ -1,9 +1,10 @@
 package Slim::Formats::Playlists::ASX;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # ASX 3.0 official documentation can be found here:
@@ -30,31 +31,31 @@ sub read {
 
 	# First try for version 3.0 ASX
 	if ($content =~ /<ASX/i) {
-		
+
 		main::INFOLOG && $log->info("Parsing ASX 3.0: $file url: [$url]");
-		
-		# Deal with the common parsing problem of unescaped ampersands 	 
-		# found in many ASX files on the web. 	 
+
+		# Deal with the common parsing problem of unescaped ampersands
+		# found in many ASX files on the web.
 		$content =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
-		
+
 		# Remove HTML comments
 		$content =~ s{<!.*?(--.*?--\s*)+.*?>}{}sgx;
-		
+
 		# Convert all tags to upper case as ASX allows mixed case tags, XML does not!
 		$content =~ s{(<[^\s>]+)}{\U$1\E}mg;
 		$content =~ s/href\s*=/HREF=/ig;
-		
+
 		# Change ENTRYREF tags to ENTRY so they stay in the proper order
 		$content =~ s/ENTRYREF/ENTRY/g;
-		
+
 		# Make sure playlist is UTF-8
 		my $encoding = Slim::Utils::Unicode::encodingFromString( $content );
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Encoding of ASX playlist: $encoding" );
-		
-		if ( $encoding ne 'utf8' ) {		
+
+		if ( $encoding ne 'utf8' ) {
 			$content = Slim::Utils::Unicode::utf8decode_guess( $content, $encoding );
 		}
-		
+
 		my $parsed = eval {
 			XMLin(
 				\$content,
@@ -65,20 +66,20 @@ sub read {
 				SuppressEmpty => undef,
 			);
 		};
-		
+
 		if ( $@ ) {
 			$log->error( "Unable to parse ASX playlist:\n$@\n$content" );
 			$parsed = {};
 		}
-		
+
 		my @entries = ();
-		
+
 		# Move entry items inside repeat tags
 		if ( my $repeat = $parsed->{REPEAT} ) {
 			$parsed->{ENTRY} ||= [];
 			push @{ $parsed->{ENTRY} }, @{ $repeat->{ENTRY} };
 		}
-		
+
 		for my $entry ( @{ $parsed->{ENTRY} || [] } ) {
 			if ( my $href = $entry->{HREF} ) {
 				# It was an entryref tag
@@ -92,7 +93,7 @@ sub read {
 				my $author   = $entry->{AUTHOR} || $parsed->{AUTHOR};
 				my $duration = $entry->{DURATION};
 				my $refs     = $entry->{REF} || [];
-			
+
 				for my $ref ( @{$refs} ) {
 					if ( my $href = $ref->{HREF} ) {
 						next if $href !~ /^(http|mms)/i;
@@ -101,7 +102,7 @@ sub read {
 							author => $author,
 							href   => $href,
 						};
-						
+
 						# XXX: Including multiple ref entries per entry is not exactly
 						# correct.  Additional refs here should only be played if the
 						# first one fails, but this is difficult to implement in our
@@ -113,21 +114,21 @@ sub read {
 
 		my %seenhref = ();
 		for my $entry ( @entries ) {
-		
+
 			my $title    = $entry->{title};
 			my $author   = $entry->{author};
 			my $duration = $entry->{duration};
 			my $href     = $entry->{href};
-			
+
 			if ( ref $title ) {
 				$title = undef;
 			}
-			
+
 			# Ignore .nsc files (multicast streams)
 			# and non-HTTP/MMS protocols such as RTSP
 			next if $href =~ /\.nsc$/i;
 			next if $href !~ /^(http|mms)/i;
-			
+
 			# Bug 3160 (partial)
 			# 'ref' tags should refer to audio content, so we need to force
 			# the use of the MMS protocol handler by making sure the URI starts with mms
@@ -147,22 +148,22 @@ sub read {
 			$href = Slim::Utils::Misc::fixPath($href, $baseDir);
 
 			if ($class->playlistEntryIsValid($href, $url)) {
-			
+
 				my $secs;
 				if ($duration) {
 					my @F = split(':', $duration);
 					my $secs = $F[-1] + $F[-2] * 60;
 					if (@F > 2) {$secs += $F[-3] * 3600;}
 				}
-				
+
 				push @items, $class->_updateMetaData( $href, {
 					TITLE      => $title,
 					ARTISTNAME => $author,
-					SECS       => $secs,					
+					SECS       => $secs,
 				}, $url );
 			}
 		}
-		
+
 		if ( main::DEBUGLOG && $log->is_info ) {
 			if ( scalar @items == 0 ) {
 				$log->info( "Input ASX we didn't parse:\n$content\n" . Data::Dump::dump($parsed) );
@@ -211,7 +212,7 @@ sub read {
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("parsed " . scalar(@items) . " items out of ASX");
-	}		
+	}
 
 	return @items;
 }

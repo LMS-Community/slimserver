@@ -1,6 +1,7 @@
 package Slim::Plugin::LineIn::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -38,7 +39,7 @@ sub initPlugin {
 	my $class = shift;
 
 	main::INFOLOG && $log->info("Initializing");
-	
+
 	$class->SUPER::initPlugin();
 
 	Slim::Player::ProtocolHandlers->registerHandler('linein', 'Slim::Plugin::LineIn::ProtocolHandler');
@@ -112,11 +113,11 @@ sub lineInItem {
 
 		my @strings           = qw/ OFF ON /;
 	        my @translatedStrings = map { ucfirst($client->string($_)) } @strings;
-		my $currentSetting    = $prefs->client($client)->get('lineInAlwaysOn'); 
+		my $currentSetting    = $prefs->client($client)->get('lineInAlwaysOn');
 
 		my @choiceActions;
 		for my $i (0..$#strings) {
-			push @choiceActions, 
+			push @choiceActions,
 			{
 				player => 0,
 				cmd    => [ 'lineinalwaysoncommand' ],
@@ -168,7 +169,7 @@ sub lineInLevelMenu {
 	my $request = shift;
 	my $client = $request->client();
 
-	my $currentSetting    = $prefs->client($client)->get('lineInLevel'); 
+	my $currentSetting    = $prefs->client($client)->get('lineInLevel');
 
 	my $slider = {
 		slider      => 1,
@@ -234,7 +235,7 @@ sub setLineIn {
 					'text'    => [ $client->string('PLUGIN_LINE_IN_IN_USE') ],
 				},
 			}
-		);	
+		);
 	}
 
 	$request->setStatusDone()
@@ -242,7 +243,7 @@ sub setLineIn {
 
 sub enabled {
 	my $client = shift;
-	
+
 	# make sure this is only validated when the provided client has line in.
 	# when the client isn't given, we only need to report that the plugin is alive.
 	return $client ? $client->hasLineIn() : 1;
@@ -284,7 +285,7 @@ sub updateLineIn {
 
 	my $line1;
 	my $line2;
-	
+
 	if ($client->linesPerScreen == 1) {
 
 		$line2 = $client->doubleString('NOW_PLAYING_FROM');
@@ -302,17 +303,17 @@ sub updateLineIn {
 
 	if (blessed($obj)) {
 		if ($prefs->client($client)->get('syncgroupid')) {
-			$client->controller()->unsync($client);	
+			$client->controller()->unsync($client);
 		}
 
-		
+
 		# Remove it first if it is already there
 		$client->execute([ 'playlist', 'deleteitem', $line_in->{'url'} ] );
-		
+
 		# Bug 11809: get the index of the inserted track from the request result, rather than using skip
 		my $request = Slim::Control::Request->new($client->id, [ 'playlist', 'inserttracks', 'listRef', [ $obj ] ]);
 		$request->execute();
-		$client->execute([ 'playlist', 'index', $request->getResult('index') ]);	
+		$client->execute([ 'playlist', 'index', $request->getResult('index') ]);
 	}
 }
 
@@ -325,7 +326,7 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	updateLineIn($client);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', {
@@ -376,11 +377,11 @@ sub handleSetting {
 sub _liosCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
-	
+
 	my $enabled = $request->getParam('_state');
-	
+
 	main::DEBUGLOG && $log->debug( 'Line In state changed: ' . $enabled );
-	
+
 	if ($enabled) {
 		# XXX - not sure it's a good idea to delete current playlist?
 		# maybe we should just insert the linein:1 at the current position and play it?

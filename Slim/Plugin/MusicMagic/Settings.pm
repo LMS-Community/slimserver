@@ -1,6 +1,7 @@
 package Slim::Plugin::MusicMagic::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -30,7 +31,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(musicip scan_interval player_settings port mix_filter reject_size reject_type 
+	return ($prefs, qw(musicip scan_interval player_settings port mix_filter reject_size reject_type
 			   mix_genre mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
 }
 
@@ -40,10 +41,10 @@ sub handler {
 	if ( !$params->{'saveSettings'} && !$params->{'filters'} ) {
 
 		Slim::Plugin::MusicMagic::Common::grabFilters($class, $client, $params, $callback, @args);
-		
+
 		return undef;
 	}
-	
+
 	$params->{'filters'} = Slim::Plugin::MusicMagic::Common->getFilterList();
 
 	return $class->SUPER::handler($client, $params);

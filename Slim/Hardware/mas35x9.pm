@@ -1,9 +1,10 @@
 package Slim::Hardware::mas35x9;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -49,8 +50,8 @@ my $command_write_d0 = "e";
 my $command_write_d1 = "f";
 
 # initialization values:
-			
-my $init_control = "4f00";  # 01       AGNDC=1.3V 
+
+my $init_control = "4f00";  # 01       AGNDC=1.3V
                             # 00       disable DC/DC converters
                             # 1111     enable and reset codec/core
                             # 0        no clock divisor
@@ -131,20 +132,20 @@ sub init {
 
 		$masRegisters{$1}=$2;
 	}
-	
+
 	$isInitialized=1;
 };
 
-my @volumetable = 
-        	("FFFFA", "FFFF9", "FFFF9", "FFFF8", "FFFF7", "FFFF6", "FFFF4", "FFFF3", "FFFF1", "FFFEF", 
-        	"FFFED", "FFFEB", "FFFE9", "FFFE6", "FFFE3", "FFFDF", "FFFDB", "FFFD6", "FFFD1", "FFFCC", 
-        	"FFFC5", "FFFBE", "FFFB6", "FFFAD", "FFFA3", "FFF97", "FFF8B", "FFF7C", "FFF6C", "FFF5A", 
-        	"FFF46", "FFF2F", "FFF16", "FFEF9", "FFED9", "FFEB5", "FFE8D", "FFE60", "FFE2D", "FFDF4", 
-        	"FFDB4", "FFD6C", "FFD1B", "FFCC1", "FFC5C", "FFBEA", "FFB6A", "FFADB", "FFA3A", "FF986", 
-        	"FF8BC", "FF7D9", "FF6DA", "FF5BC", "FF47C", "FF314", "FF180", "FEFBB", "FEDBF", "FEB85", 
-        	"FE905", "FE638", "FE312", "FDF8B", "FDB95", "FD723", "FD227", "FCC8E", "FC648", "FBF3D", 
-        	"FB756", "FAE78", "FA485", "F995B", "F8CD5", "F7EC8", "F6F03", "F5D52", "F4979", "F3333", 
-        	"F1A36", "EFE2C", "EDEB6", "EBB6A", "E93CF", "E675F", "E3583", "DFD91", "DBECC", "D785E", 
+my @volumetable =
+        	("FFFFA", "FFFF9", "FFFF9", "FFFF8", "FFFF7", "FFFF6", "FFFF4", "FFFF3", "FFFF1", "FFFEF",
+        	"FFFED", "FFFEB", "FFFE9", "FFFE6", "FFFE3", "FFFDF", "FFFDB", "FFFD6", "FFFD1", "FFFCC",
+        	"FFFC5", "FFFBE", "FFFB6", "FFFAD", "FFFA3", "FFF97", "FFF8B", "FFF7C", "FFF6C", "FFF5A",
+        	"FFF46", "FFF2F", "FFF16", "FFEF9", "FFED9", "FFEB5", "FFE8D", "FFE60", "FFE2D", "FFDF4",
+        	"FFDB4", "FFD6C", "FFD1B", "FFCC1", "FFC5C", "FFBEA", "FFB6A", "FFADB", "FFA3A", "FF986",
+        	"FF8BC", "FF7D9", "FF6DA", "FF5BC", "FF47C", "FF314", "FF180", "FEFBB", "FEDBF", "FEB85",
+        	"FE905", "FE638", "FE312", "FDF8B", "FDB95", "FD723", "FD227", "FCC8E", "FC648", "FBF3D",
+        	"FB756", "FAE78", "FA485", "F995B", "F8CD5", "F7EC8", "F6F03", "F5D52", "F4979", "F3333",
+        	"F1A36", "EFE2C", "EDEB6", "EBB6A", "E93CF", "E675F", "E3583", "DFD91", "DBECC", "D785E",
         	"D2958", "CD0AD", "C6D31", "BFD92", "B8053", "AF3CD", "A5621", "9A537", "8DEB8", "80000");
 
 sub dbToHex {
@@ -210,7 +211,7 @@ sub masWrite {
 
 	# Turn address and data into an array of nibbles with least significant at [0]
 	while ((length($address)) > 0) {
-		push @a, chop($address); 
+		push @a, chop($address);
 	}
 
 	if (defined $data) {
@@ -218,7 +219,7 @@ sub masWrite {
 		$data =~ s/[^0-9a-fA-F]//g;
 
 		while (length($data)>0) {
-			push @d, chop($data); 
+			push @d, chop($data);
 		}
 	}
 
@@ -226,7 +227,7 @@ sub masWrite {
 	if ($bank eq 'direct') {
 		# a[1..0] actually contains the subaddress for these:
 		$i2c = "s$deviceWrite $a[1]$a[0] $d[3]$d[2]p$d[1]$d[0]";
-	
+
 	} elsif ($bank eq 'd0') {
 
 		$i2c = 	"s$deviceWrite $subaddr_dwrite $command_write_d0".
@@ -273,7 +274,7 @@ sub masRead {
 	my $address = $masRegisters{"$key.address"};
 
 	while (length($address)>0) {
-		push @a, chop($address); 
+		push @a, chop($address);
 	}
 
 	if ($bank eq 'r') {
@@ -1455,7 +1456,7 @@ sub uncompressed_firmware_init_string {
 #'s3e 68 e0 00 00 01 03 4e 00 00 10p60'.  # 1 bit delay of data relative to word strobe
 's3e 68 e0 00 00 01 03 46 00 00 01p11'.  # IO control init (SDIB, 16bit)
 #'s3e 68 e0 00 00 01 03 46 00 00 01p15'.  # IO control init (SDIB, 16bit, latch falling)
- 
+
 's3e 6c 00 00 00p01'.	# enable d/a, disable all a/d
 's3e 6c 00 06 00p00'.   # no input from adc
 's3e 6c 00 07 40p00'.   # 100% input from DSP(??)

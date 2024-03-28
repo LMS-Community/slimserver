@@ -1,4 +1,5 @@
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +21,7 @@ use Slim::Display::NoDisplay;
 
 sub new {
 	my ($class, $id, $paddr, $tcpsock) = @_;
-	
+
 	my $client = $class->SUPER::new($id, $paddr);
 
 	$client->streamingsocket($tcpsock);
@@ -42,7 +43,7 @@ sub bytesReceived {
 	return @_ ? $client->songBytes(shift) : $client->songBytes();
 }
 
-sub connected { 
+sub connected {
 	my $client = shift;
 
 	return ($client->streamingsocket() && $client->streamingsocket->connected()) ? 1 : 0;
@@ -84,20 +85,20 @@ sub power {
 
 sub nextChunk {
 	my $client = $_[0];
-	
+
 	my $chunk = Slim::Player::Source::nextChunk(@_);
-	
+
 	if (defined($chunk) && length($$chunk) == 0) {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
-		
+
 		$client->controller()->playerReadyToStream($client);
 
 		$client->controller()->playerStopped($client);
 
-		return undef;	
+		return undef;
 	}
-	
+
 	return $chunk;
 }
 
