@@ -148,7 +148,7 @@ div#background {
 	left: 20px;
 	height: 40px;
 	width: 158px;
-	background: url(html/images/logitech_media_server.png) no-repeat;
+	background: url(html/images/lms.png) no-repeat;
 }
 
 #lyrionLogo {
@@ -157,7 +157,7 @@ div#background {
 	right: 20px;
 	height: 40px;
 	width: 42px;
-	background: url(html/images/logitech.gif) no-repeat;
+	background: url(html/images/logo.png) no-repeat;
 }
 
 #playerChooser {
