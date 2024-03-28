@@ -46,7 +46,7 @@ my $dir;
 my $updatesDir;
 
 # Download location and check interval - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
-sub BASE { 'http://update.slimdevices.com/update/firmware/' }
+sub BASE { 'http://downloads.lms-community.org/update/firmware/' }
 sub CHECK_INTERVAL { 86400 * 30 }
 
 # Check interval when firmware can't be downloaded

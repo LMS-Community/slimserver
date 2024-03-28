@@ -123,7 +123,7 @@ sub new {
 	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL);
 	$footerSizer2->Add($btnsizer, 0, wxEXPAND);
 	$footerSizer2->AddSpacer(7);
-	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT_LOGITECH')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
+	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
 
 	my ($version) = parseRevision();
 	$version = sprintf(string('VERSION'), $version);

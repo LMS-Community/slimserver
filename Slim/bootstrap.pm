@@ -298,7 +298,7 @@ sub tryModuleLoad {
 
 				print STDERR "** Lyrion Music Server Error:\n";
 				print STDERR "** SELinux settings prevented Lyrion Music Server from starting.\n";
-				print STDERR "** See http://wiki.slimdevices.com/index.cgi?RPM for more information.\n\n";
+				print STDERR "** See https://wiki.slimdevices.com/index.php/Logitech_Media_Server_RPM.html for more information.\n\n";
 				exit;
 			}
 

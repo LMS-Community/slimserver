@@ -199,7 +199,7 @@ my $http = Slim::Networking::SimpleAsyncHTTP->new(
 );
 
 # sometime after this call, our exampleCallback will be called with the result
-$http->get("http://www.slimdevices.com");
+$http->get("https://www.lyrion.org");
 
 # that's all folks.
 

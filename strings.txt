@@ -4,7 +4,7 @@
 # This tab-delimited file contains all the text strings used in Lyrion Music Server
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
-# <translate (at) slimdevices (dot) com>
+# <translate (at) lms-community (dot) org>
 # diff files are the preferred format, but any improvements are most welcome
 #
 # Also, when submitting changes, please use the latest version in CVS
@@ -93,34 +93,19 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Logitech - verze 9.0.0
-	DA	© 2001-2024 Logitech - version 9.0.0
-	DE	© 2001-2024 Logitech Version 9.0.0
-	EN	© 2001-2024 Logitech Version 9.0.0
-	ES	© 2001-2024 Logitech Versión 9.0.0
-	FI	© 2001-2024 Logitechin versio 9.0.0
-	FR	© 2001-2024 Logitech Version 9.0.0
-	IT	© 2001-2024 Logitech versione 9.0.0
-	NL	© 2001-2024 Logitech versie 9.0.0
-	NO	© 2001–2023 Logitech versjon 9.0.0
-	PL	© 2001-2024 Logitech wersja 9.0.0
-	RU	© Logitech, 2001-2024. Версия 9.0.0
-	SV	© 2001–2023 Logitech Version 9.0.0
-
-COPYRIGHT_LOGITECH
-	CS	© 2001-2024 Logitech
-	DA	© 2001-2024 Logitech
-	DE	© 2001-2024 Logitech
-	EN	© 2001-2024 Logitech
-	ES	© 2001-2024 Logitech
-	FI	© 2001-2024 Logitech
-	FR	© 2001-2024 Logitech
-	IT	© 2001-2024 Logitech
-	NL	© 2001-2024 Logitech
-	NO	© 2001-2024 Logitech
-	PL	© 2001-2024 Logitech
-	RU	© Logitech, 2001-2024
-	SV	© 2001-2024 Logitech
+	CS	© 2001-2024 Lyrion - verze 9.0.0
+	DA	© 2001-2024 Lyrion - version 9.0.0
+	DE	© 2001-2024 Lyrion Version 9.0.0
+	EN	© 2001-2024 Lyrion Version 9.0.0
+	ES	© 2001-2024 Lyrion Versión 9.0.0
+	FI	© 2001-2024 Lyrionin versio 9.0.0
+	FR	© 2001-2024 Lyrion Version 9.0.0
+	IT	© 2001-2024 Lyrion versione 9.0.0
+	NL	© 2001-2024 Lyrion versie 9.0.0
+	NO	© 2001–2024 Lyrion versjon 9.0.0
+	PL	© 2001-2024 Lyrion wersja 9.0.0
+	RU	© Lyrion, 2001-2024. Версия 9.0.0
+	SV	© 2001–2024 Lyrion Version 9.0.0
 
 VERSION
 	CS	Verze 9.0.0 / r%s
@@ -310,25 +295,6 @@ PLAYER_VERSION
 	RU	Версия микропрограммы плеера
 	SV	Spelarens inbyggda programvaruversion
 	ZH_CN	播放机韧件版本
-
-ABOUT_SLIMDEVICES
-	CS	O společnosti Slim Devices/Logitech
-	DA	Om Slim Devices/Logitech
-	DE	Info zu Slim Devices/Logitech
-	EN	About Slim Devices/Logitech
-	ES	Acerca de Slim Devices/Logitech
-	FI	Tietoja Slim Device -laitteista / Logitechistä
-	FR	A propos de Slim Devices
-	HE	אודות Slim Devices/Logitech
-	IT	Informazioni su Slim Devices/Logitech
-	JA	スリムデバイス社について
-	NL	Over Slim Devices/Logitech
-	NO	Om Slim Devices/Logitech
-	PL	Slim Devices/Logitech - informacje
-	PT	Acerca de Slim Devices/Logitech
-	RU	О компании Slim Devices/Logitech
-	SV	Om Slim Devices/Logitech
-	ZH_CN	关于Slim Devices/Logitech
 
 #
 # Player user interface, sent by the server
@@ -8735,12 +8701,12 @@ SETUP_CORS_ALLOWED_HOSTS
 	SV	Tillåtna CORS servrar
 
 SETUP_CORS_ALLOWED_HOSTS_DESC
-	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Lyrion Music Serveru. Položky musí obsahovat protokol (např. "http"), plný název hostitele ("www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako "http://www.example.com".
-	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Lyrion Music Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "http://www.example.com".
-	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Lyrion Music Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "http://www.example.com" should be good enough.
-	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Lyrion Music Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "http://www.exemple.com" devrait suffire.
-	SV	Cross-Origin Resource Sharing (CORS) är en metod som gör det möjligt för en web-browser att tillåta en web-server i en domän att använda web-resurser på en server i en annan domän.<br><br>Definiera en lista med web-servrar som du vill tillåta att använda din Lyrion Music Server. Servrarna i listan måste anges med protokoll (t.ex. "http"), hela servernamnet ("www.exempel.com") och postnumret om det avviker från standardnumret. I de flesta fall räcker t.ex. "http://www.exempel.com".
-	NL	Cross-Origin Resource Sharing (CORS) is een mechanisme dat aanvullende HTTP headers gebruikt om een ​​browser te vertellen dat een webtoepassing die op één domein wordt uitgevoerd, toestemming heeft om toegang te krijgen tot geselecteerde bronnen van een server op een ander domein.<br>< br>Voer een door komma's gescheiden lijst in met hostnamen die je toegang wilt geven tot Lyrion Music Server. De vermeldingen moeten het protocol (bijv. "http"), de volledige hostnaam ("www.example.com") en het poortnummer bevatten (indien het poortnummer niet standaard is). In de meeste gevallen volstaat zoiets als "http://www.example.com".
+	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Lyrion Music Serveru. Položky musí obsahovat protokol (např. "http"), plný název hostitele ("www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako "https://www.example.com".
+	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Lyrion Music Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "https://www.example.com".
+	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Lyrion Music Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "https://www.example.com" should be good enough.
+	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Lyrion Music Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "https://www.exemple.com" devrait suffire.
+	SV	Cross-Origin Resource Sharing (CORS) är en metod som gör det möjligt för en web-browser att tillåta en web-server i en domän att använda web-resurser på en server i en annan domän.<br><br>Definiera en lista med web-servrar som du vill tillåta att använda din Lyrion Music Server. Servrarna i listan måste anges med protokoll (t.ex. "http"), hela servernamnet ("www.exempel.com") och postnumret om det avviker från standardnumret. I de flesta fall räcker t.ex. "https://www.exempel.com".
+	NL	Cross-Origin Resource Sharing (CORS) is een mechanisme dat aanvullende HTTP headers gebruikt om een ​​browser te vertellen dat een webtoepassing die op één domein wordt uitgevoerd, toestemming heeft om toegang te krijgen tot geselecteerde bronnen van een server op een ander domein.<br>< br>Voer een door komma's gescheiden lijst in met hostnamen die je toegang wilt geven tot Lyrion Music Server. De vermeldingen moeten het protocol (bijv. "http"), de volledige hostnaam ("www.example.com") en het poortnummer bevatten (indien het poortnummer niet standaard is). In de meeste gevallen volstaat zoiets als "https://www.example.com".
 
 SETUP_CSRFPROTECTIONLEVEL
 	CS	Úroveň ochrany CSRF
@@ -16216,7 +16182,7 @@ RADIO_PROVIDERS_CBC
 	SV	CBC
 
 RADIO_PROVIDERS_DIFM
-# SLT: "Digitally Imported" is a product name, not to be translated (http://www.di.fm/)
+# SLT: "Digitally Imported" is a product name, not to be translated (https://www.di.fm/)
 	CS	Digitally Imported
 	DA	Digitally Imported
 	DE	Digitally Imported
@@ -24131,20 +24097,20 @@ RETRY_LIMIT_EXCEEDED
 	SV	Anslutningsförsök misslyckades
 
 SYNC_ABOUT
-	CS	Přidáním jednoho nebo více dalších zařízení Squeezebox můžete používat funkci Synchronizace a využít plný potenciál zvuku ve více místnostech. Další informace naleznete na stránce Logitech.com.
-	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
-	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
-	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
-	EN_GB	Add one or more additional Squeezeboxes to use the Synchronise feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
-	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
-	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
-	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
-	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Logitech.com.
-	NL	Voeg een of meer Squeezebox muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Logitech.com voor meer informatie.
-	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Logitech.com for mer informasjon.
-	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Logitech.com.
-	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
-	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
+	CS	Přidáním jednoho nebo více dalších zařízení Squeezebox můžete používat funkci Synchronizace a využít plný potenciál zvuku ve více místnostech. Další informace naleznete na stránce Lyrion.org.
+	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Lyrion.org.
+	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter Lyrion.org.
+	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Lyrion.org for more information.
+	EN_GB	Add one or more additional Squeezeboxes to use the Synchronise feature and realize the full potential of multi-room audio. Visit Lyrion.org for more information.
+	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Lyrion.org para obtener más información.
+	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Lyrion.org.
+	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Lyrion.org pour obtenir plus d'informations.
+	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Lyrion.org.
+	NL	Voeg een of meer Squeezebox muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Lyrion.org voor meer informatie.
+	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Lyrion.org for mer informasjon.
+	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Lyrion.org.
+	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Lyrion.org.
+	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Lyrion.org.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
 # SLT - try to keep this as short as possible...

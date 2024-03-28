@@ -15,7 +15,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
-use constant BASE_URL => 'https://downloads.slimdevices.com/sounds';
+use constant BASE_URL => 'https://sounds.lms-community.org';
 use constant BASE_AUDIO_PATH => 'plugins/sounds/audio/';
 
 my $log = Slim::Utils::Log->addLogCategory({

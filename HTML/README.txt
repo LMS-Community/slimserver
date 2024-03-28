@@ -1,6 +1,6 @@
 These are HTML 'skins' for Lyrion Music Server.
 
-They are written using Template Toolkit - http://www.template-toolkit.org/
+They are written using Template Toolkit - https://www.tt2.org/
 
 ---------
 

@@ -47,7 +47,7 @@ Slim::Web::ImageProxy
 
 			# return the full URL to your resizing service
 			return sprintf(
-				'http://www.yourdomain.com/imageresizer?url=%s&width=%s&height=%s',
+				'https://www.yourdomain.com/imageresizer?url=%s&width=%s&height=%s',
 				uri_escape_utf8($url),
 				$width,
 				$height

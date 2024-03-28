@@ -7,7 +7,7 @@ package Slim::Plugin::UPnP::Plugin;
 
 # UPnP/DLNA Media Interface
 # Andy Grundman
-# andy@slimdevices.com
+# andy@hybridized.com
 #
 
 use strict;

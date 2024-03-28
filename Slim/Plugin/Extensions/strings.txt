@@ -44,19 +44,19 @@ PLUGIN_EXTENSIONS_REPOS
 	SV	Ytterligare databaser
 
 PLUGIN_EXTENSIONS_REPOS_DESC
-	CS	Další úložiště zásuvných modulů třetích stran můžete přidat zadáním adresy URL úložiště níže. Seznam adres URL úložišť naleznete na adrese <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">zde</a>.
-	DA	Du kan tilføje adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor. Der findes en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
-	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben. Eine Liste von Repository-URLs ist <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> verfügbar.
-	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
-	ES	Puede agregar repositorios de extensiones de otros fabricantes adicionales si introduce la URL para el siguiente repositorio. Encontrará una lista de direcciones URL de repositorios <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">aquí</a>.
-	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">täällä</a>.
-	FR	Vous pouvez ajouter des répertoires supplémentaires tiers en saisissant l'URL des répertoires ci-dessous. Pour obtenir une liste de répertoires supplémentaires, cliquez <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">ici</a>.
-	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendo l'URL del relativo archivio di seguito. Un elenco di URL degli archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">qui</a>.
-	NL	Je kunt repositories voor extensies toevoegen door de URL's van de repositories hieronder in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
-	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
-	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">tutaj</a>.
-	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">здесь</a>.
-	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">lista</a> med adresser till databaser.
+	CS	Další úložiště zásuvných modulů třetích stran můžete přidat zadáním adresy URL úložiště níže.
+	DA	Du kan tilføje adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor.
+	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben.
+	EN	You may add additional third-party extension repositories by entering the URL for the repository below.
+	ES	Puede agregar repositorios de extensiones de otros fabricantes adicionales si introduce la URL para el siguiente repositorio.
+	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.
+	FR	Vous pouvez ajouter des répertoires supplémentaires tiers en saisissant l'URL des répertoires ci-dessous.
+	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendo l'URL del relativo archivio di seguito.
+	NL	Je kunt repositories voor extensies toevoegen door de URL's van de repositories hieronder in te voeren.
+	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor.
+	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium.
+	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL.
+	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING
 	CS	<b>Upozornění:</b> Protože server bude automaticky stahovat software z vámi definovaných úložišť, ověřte si, zda vlastníkovi úložiště důvěřujete.
@@ -329,7 +329,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	SV	Observera att plugin-program från tredje part inte stöds av Logitech och används på egen risk. Kontakta författaren till plugin-programmen för support.
 
 PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
-# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+# These strings aren't used by the plugin itself, but in the repository XML files
 	CS	Doporučené zásuvné moduly třetích stran
 	DA	Anbefalede udvidelsesmoduler fra tredjepart
 	DE	Empfohlene Plugins anderer Hersteller
@@ -345,7 +345,7 @@ PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 	SV	Rekommenderade plugin-program från tredje part
 
 PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
-# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+# These strings aren't used by the plugin itself, but in the repository XML files
 	CS	Jiné zásuvné moduly třetích stran
 	DA	Udvidelsesmoduler fra tredjepart
 	DE	Plugins von Drittanbietern
@@ -361,7 +361,7 @@ PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 	SV	Tillägg från tredje part
 
 PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
-# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+# These strings aren't used by the plugin itself, but in the repository XML files
 	CS	Zásuvné moduly Logitech
 	DA	Logitech-udvidelser
 	DE	Logitech Erweiterungen

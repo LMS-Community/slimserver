@@ -35,7 +35,7 @@
 
 <div id="topGraphicBox">
 
-	<div id="player_logo"><a href="http://www.logitech.com/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" title="[% playermodel %]" width="134" height="19"></a></div>
+	<div id="player_logo"><a href="https://www.lyrion.org/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" title="[% playermodel %]" width="134" height="19"></a></div>
 	[% IF player_chooser_list %]
 	<div id="playerChooser">
 		<form style="text-align:right; vertical-align:middle;" method="GET" action="[% webroot %]index.html" target="_top">
@@ -65,7 +65,7 @@
 
 			[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] -%]
 
-				[%- PROCESS statusLink 
+				[%- PROCESS statusLink
 					p0         = 'mixer'
 					p1         = 'volume'
 					p2         = vol
@@ -102,7 +102,7 @@
 
 				[% index = loop.index %]
 
-				[% PROCESS statusLink 
+				[% PROCESS statusLink
 					p0         = 'playlist'
 					p1         = 'repeat'
 					p2         = index
@@ -125,7 +125,7 @@
 
 				[% index = loop.index %]
 
-				[% PROCESS statusLink 
+				[% PROCESS statusLink
 					p0         = 'playlist'
 					p1         = 'shuffle'
 					p2         = index
@@ -134,7 +134,7 @@
 					divID      = (shuffle == loop.index) ? 'valueSelected' : 'valueBold'
 				%]
 				[% IF index < 2 %]<span class="bar">|</span>[% END %]
- 
+
 			[% END %]
 		</div>
 	</div>

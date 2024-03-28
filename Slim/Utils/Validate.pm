@@ -135,7 +135,7 @@ sub port {
 =head2 hostNameOrIPAndPort( $val)
 
  Accepts any  string that matches the format of an IP and Port, or a hostname and port
- ie 127.0.0.1:9000, or slimdevices.com:9000
+ ie 127.0.0.1:9000, or lyrion.org:9000
 
  empty entry validates as empty value
 
