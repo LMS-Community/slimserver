@@ -8,7 +8,7 @@ package Slim::Plugin::RemoteLibrary::Plugin;
 
 =pod
 
-This plugin will give access to "remote libraries". This can be another Logitech Media
+This plugin will give access to "remote libraries". This can be another Lyrion Music
 Server, or some UPnP/DLNA server.
 
 3rd party plugins can hook into this menu by registering their own browse menu. During
