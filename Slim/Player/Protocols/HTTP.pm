@@ -90,11 +90,12 @@ sub response {
 
 	# re-parse the request string as it might have been overloaded by subclasses
 	my $request_object = HTTP::Request->parse($request);
+	my ($first) = $self->contentRange =~ /(\d+)-/;
 
 	# do we have the range we requested
-	if ($request_object->header('Range') =~ /^bytes=(\d+)-/ &&
-		$1 != ($self->contentRange =~ /(\d+)-/)) {
+	if ($request_object->header('Range') =~ /^bytes=(\d+)-/ && $first != $1) {
 		${*$self}{'_skip'} = $1;
+		$first = $1;
 		$log->info("range request not served, skipping $1 bytes");
 	}
 
@@ -111,7 +112,6 @@ sub response {
 			$request_object->uri("$proto://$host" . ($port ? ":$port" : '') . $uri);
 		}
 
-		my ($first) = $self->contentRange =~ /(\d+)-/;
 		my $length = $self->contentLength;
 
 		${*$self}{'_enhanced'} = {
@@ -600,13 +600,16 @@ sub _sysread {
 	return CORE::sysread($_[0], $_[1], $_[2], $_[3]) unless ${*$self}{'_skip'};
 
 	# skip what we need until done or EOF
-	my $bytes = CORE::sysread($_[0], $_[1], min(${*$self}{'_skip'}, $_[2]), $_[3]);
+	my $bytes = CORE::sysread($_[0], my $scratch, min(${*$self}{'_skip'}, 32768));
 	return $bytes if defined $bytes && !$bytes;
 
 	# pretend we don't have received anything until we've skipped all
 	${*$self}{'_skip'} -= $bytes if $bytes;
+	main::INFOLOG && $log->info("Done skipping bytes") unless ${*$self}{'_skip'};
+
+	# we should use EINTR (see S::P::Source) but this is too slow when skipping - will fix in 9.0
 	$_[1]= '';
-	$! = EINTR;
+	$! = EWOULDBLOCK;
 	return undef;
 }
 
