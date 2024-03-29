@@ -8,7 +8,7 @@ package Slim::Networking::SimpleAsyncHTTP;
 
 # this class provides non-blocking http requests from Lyrion Music Server.
 # That is, use this class for your http requests to ensure that
-# Logitech Media Server does not become unresponsive, or allow music to pause,
+# Lyrion Music Server does not become unresponsive, or allow music to pause,
 # while your code waits for a response
 
 # This class is intended for plugins and other code needing simply to

@@ -2,7 +2,7 @@ $Id: /sd/slim/7.6/branches/lms/server/lib/README 78224 2011-06-22T16:26:39.51125
 
 ------
 
-This directory contains library modules from CPAN which have been modified for Logitech Media Server.
+This directory contains library modules from CPAN which have been modified for Lyrion Music Server.
 
 We've made every effort to send patches to the upstream authors, but either
 the changes are Logitech Media Server specific, or we simply haven't heard back from
