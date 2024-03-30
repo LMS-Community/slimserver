@@ -1156,3 +1156,4 @@ PLUGIN_SOUNDS_WIND_CHIME
 PLUGIN_SOUNDS_ALARM_BUZZER
 	DE	Weckersummton
 	EN	Alarm Buzzer
+	FR	Sonnerie d'alarme
