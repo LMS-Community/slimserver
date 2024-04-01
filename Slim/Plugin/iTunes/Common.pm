@@ -418,9 +418,8 @@ sub checkDefaults {
 		# disable iTunes unless
 		# - an iTunes XML file is found
 		# - or we're on a Mac
-		# - or we're running Windows (but not Windows Home Server)
-		if (defined $class->findMusicLibraryFile() || main::ISMAC
-				|| (main::ISWINDOWS && !Slim::Utils::OSDetect->getOS()->get('isWHS'))) {
+		# - or we're running Windows
+		if (defined $class->findMusicLibraryFile() || main::ISMAC || main::ISWINDOWS) {
 			$prefs->set('itunes', 1);
 		}
 		else {

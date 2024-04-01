@@ -148,19 +148,6 @@ sub initPrefs {
 
 sub canDBHighMem { 1 }
 
-sub postInitPrefs {
-	my ($class, $prefs) = @_;
-
-	return if !$class->{osDetails}->{isWHS};
-
-	# bug 15818: on WHS we don't want iTunes to be started by default (Support request)
-	require Slim::Utils::Prefs;
-	my $pluginState = Slim::Utils::Prefs::preferences('plugin.state');
-	if (!defined $pluginState->get('iTunes')) {
-		$pluginState->set('iTunes', 'disabled');
-	}
-}
-
 sub dirsFor {
 	my ($class, $dir) = @_;
 
@@ -209,43 +196,6 @@ sub dirsFor {
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
 		my $path;
-
-		# Windows Home Server offers a Music share which is more likely to be used
-		# than the administrator's My Music folder
-		# XXX - should we continue to support WHS?
-		if ($class->{osDetails}->{isWHS} && $dir =~ /^(?:music|playlists)$/) {
-			my $objWMI = Win32::OLE->GetObject('winmgmts://./root/cimv2');
-
-			if ( $objWMI && (my $shares = $objWMI->InstancesOf('Win32_Share')) ) {
-
-				my $path2;
-				foreach my $objShare (in $shares) {
-
-					# let's be a bit more open for localized versions: musica, Musik, musique...
-					if ($objShare->Name =~ /^musi(?:c|k|que|ca)$/i) {
-						$path = '\\\\' . hostname() . '\\' . $objShare->Name;
-						last;
-					}
-					elsif ($objShare->Path =~ /shares.*?musi[ckq]/i) {
-						$path = $objShare->Path;
-						last;
-					}
-					elsif ($objShare->path =~ /musi[ckq]/i) {
-						$path2 = $objShare->Path;
-					}
-				}
-
-				undef $shares;
-
-				# we didn't find x:\shares\music, but some other share with music in the path
-				if ($path2 && !$path) {
-					$path = $path2;
-				}
-			}
-
-			undef $objWMI;
-		}
-
 		my $fallback;
 
 		if ($dir =~ /^(?:music|playlists)$/) {
@@ -757,37 +707,8 @@ sub cleanupTempDirs {
 sub getUpdateParams {
 	my ($class, $url) = @_;
 
-	return if main::SCANNER;
-
-	if (main::ISACTIVEPERL && !$PerlSvc::VERSION) {
-		Slim::Utils::Log::logger('server.update')->info("Running Lyrion Music Server from the source - don't download the update.");
-		return;
-	}
-
-	my $downloaddir;
-
-	if ($class->{osDetails}->{isWHS}) {
-		require Win32::NetResource;
-
-		my $share;
-		Win32::NetResource::NetShareGetInfo('software', $share);
-
-		# this is ugly... FR uses a localized share name
-		if (!$share || !$share->{path}) {
-			Win32::NetResource::NetShareGetInfo('logiciel', $share);
-		}
-
-		if ($share && $share->{path}) {
-			$downloaddir = $share->{path};
-
-			if (-e catdir($downloaddir, "Add-Ins")) {
-				$downloaddir = catdir($downloaddir, "Add-Ins");
-			}
-		}
-	}
-
 	return {
-		path => $downloaddir,
+		path => $class->dirsFor('updates'),
 	};
 }
 
@@ -796,10 +717,7 @@ sub canAutoUpdate { 1 }
 # return file extension filter for installer
 sub installerExtension { '(?:exe|msi)' }
 
-sub installerOS {
-	my $class = shift;
-	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
-}
+sub installerOS { 'win' }
 
 sub restartServer {
 	my $class = shift;

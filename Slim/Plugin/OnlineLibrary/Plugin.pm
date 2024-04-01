@@ -125,7 +125,7 @@ sub postinitPlugin {
 
 		Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
 
-		main::INFOLOG && $log->is_info && $log->info("Online Music Library Integration initialized: " . join(', ', keys %onlineLibraryProviders) . DELAY_FIRST_POLL);
+		main::INFOLOG && $log->is_info && $log->info("Online Music Library Integration initialized: " . join(', ', keys %onlineLibraryProviders) . ' - ' . DELAY_FIRST_POLL);
 	}
 }
 
