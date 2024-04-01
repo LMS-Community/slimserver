@@ -9446,6 +9446,18 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	RU	Источник музыки
 	SV	Musikkälla
 
+SETUP_WIZARD_PLUGINS_HEADER
+	EN	Install recommended 3rd Party Plugins
+
+SETUP_WIZARD_PLUGINS_DESC
+	EN	Add some community plugins!
+
+SETUP_WIZARD_PLUGINS_GUIDANCE
+	EN	The following are plugins have been created and recommended by the community, select below to automatically install them.  The server will need to be restarted once you have completed setup to complete install.
+
+SETUP_WIZARD_PLUGINS_LABEL
+	EN	Install the third party plugins listed below
+
 SETUP_WIZARD_DONE
 	CS	Nastavení Lyrion Music Serveru bylo dokončeno!
 	DA	Konfigurationen af Lyrion Music Server er gennemført.

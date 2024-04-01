@@ -20,14 +20,14 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $serverPrefs = preferences('server');
-my @prefs = ('mediadirs', 'playlistdir');
+my @prefs = ('mediadirs', 'playlistdir', 'installthirdpartyplugins');
 
 sub page {
 	return 'settings/server/wizard.html';
 }
 
 sub handler {
-	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
+	my ($class, $client, $paramRef, $pageSetup, @args, $response) = @_;
 
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
@@ -107,6 +107,11 @@ sub handler {
 			else {
 				$serverPrefs->set($pref, $paramRef->{$pref});
 			}
+
+			if ($pref eq 'installthirdpartyplugins' && $paramRef->{$pref} ) {
+				main::DEBUGLOG && $log->debug('Install 3rd Party Plugins');
+				_installThirdPartyPlugins();
+			}
 		}
 
 		if (main::DEBUGLOG && $log->is_debug) {
@@ -155,7 +160,53 @@ sub handler {
 		$paramRef->{playertype} = $client->model();
 	}
 
-	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+	return _getPluginList( $class, $client, $paramRef, $pageSetup, \@args ); 
+}
+
+sub _getPluginList {	
+	my ($class, $client, $paramRef, $pageSetup, $args) = @_;
+
+	Slim::Plugin::Extensions::Plugin::getExtensions({
+		'name'   => 'https://plugins.expectingtofly.co.uk/recommendedextensions.xml',
+		'type'   => 'plugin',
+		'target' => Slim::Utils::OSDetect::OS(),
+		'version'=> $::VERSION,
+		'lang'   => $Slim::Utils::Strings::currentLang,
+		'details'=> 1,
+		'cb'     => \&_getPluginListCB,
+		'pt'     => [ $class, $client, $paramRef, $pageSetup, $args ],
+		'onError'=> sub {
+							$log->error('Failed to retrieve recommended plugin list');
+							my $body =  Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+							$pageSetup->( $client, $paramRef, $body, @$args );
+					    },
+	});
+
+	return;	
+	
+}
+
+sub _getPluginListCB {
+	my ($class, $client, $paramRef, $pageSetup, $args, $res, $info) = @_;
+
+	if (scalar @$res) {
+		main::DEBUGLOG && $log->debug('Setting recommended plugin list');
+		$paramRef->{plugins} = $res;
+	}
+
+	main::DEBUGLOG && $log->debug('Populating wizard page');
+	my $body =  Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+	return $pageSetup->( $client, $paramRef, $body, @$args );
+
+}
+
+sub _installThirdPartyPlugins {
+	my $plugins = shift;
+
+	for my $plugin (@$plugins) {
+		main::DEBUGLOG && $log->debug('Installing plugin ' . $plugin->{name} );
+		Slim::Utils::PluginDownloader->install({ name => $plugin->{name}, url => $plugin->{url}, sha => lc($plugin->{sha}) });
+	}
 }
 
 1;

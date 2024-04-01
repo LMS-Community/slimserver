@@ -130,6 +130,12 @@
 				width: 400px;
 			}
 
+			.largeleftbox {
+                width: 75%;
+                max-width: 690px;
+                margin: 20 0 0 20px; 
+            }
+
 			.box-top {
 				background-image: linear-gradient(to bottom, #FFFFFF 0%, #CCCCCC);
 				border: 1px solid #666666;
@@ -340,6 +346,32 @@
 					<div>
 						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir | html %]" class="wz_path">
 					</div>
+				</div>
+			</div>
+
+			<div id="plugins_p" class="wz_page">
+				<div id="plugins_h" class="pagetitle">[% "SETUP_WIZARD_PLUGINS_HEADER" | string %]</div>				
+				<div class="wz_desc">
+					<div class="box largeleftbox">
+						<div class="box-top">
+							<h1>[% "SETUP_WIZARD_PLUGINS_DESC" | string %]</h1>
+						</div>
+						<div class="box-inner">
+							<p>[% "SETUP_WIZARD_PLUGINS_GUIDANCE" | string %]</p>
+							<br/>
+							<input name="installthirdpartyplugins" id="installthirdpartyplugins" type="checkbox" [% IF prefs.installthirdpartyplugins %] checked [% END %]>
+							<label for="installthirdpartyplugins">[% "SETUP_WIZARD_PLUGINS_LABEL" | string %]</label>
+							<br/>
+							<ul class="howto">								
+								[% FOREACH plugin = plugins %]
+									<li><strong>[% plugin.title %]</strong> - [% plugin.desc %] [% "BY" | string %] [% plugin.creator %]</li>
+								[% END %]        
+							</ul> 
+						</div>
+						<div class="box-bottom">
+							&nbsp;
+						</div>
+					</div>					
 				</div>
 			</div>
 
