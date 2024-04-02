@@ -4,7 +4,7 @@
 	<module>Slim::Plugin::LineOut::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_LINE_OUT_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>disabled</defaultState>
 

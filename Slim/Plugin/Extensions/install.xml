@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::Extensions::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_EXTENSIONS_DESC</description>
-    <creator>Logitech</creator>
+    <creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
 	<enforce>1</enforce>

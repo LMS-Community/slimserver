@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::ViewTags::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_VIEW_TAGS</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>

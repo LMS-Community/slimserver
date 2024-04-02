@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::LineIn::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_LINE_IN_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

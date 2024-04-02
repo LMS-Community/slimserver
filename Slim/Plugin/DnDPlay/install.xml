@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::DnDPlay::Plugin</module>
 	<version>0.1</version>
 	<description>PLUGIN_DNDPLAY_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

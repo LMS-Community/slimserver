@@ -6,7 +6,7 @@
         <module>Slim::Plugin::Podcast::Plugin</module>
         <version>2.0</version>
         <description>PLUGIN_PODCAST_DESC</description>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
 	<defaultState>disabled</defaultState>
 

@@ -6,7 +6,7 @@
         <module>Slim::Plugin::DateTime::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_DATETIME_DESC</description>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

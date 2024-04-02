@@ -6,7 +6,7 @@
 	<module>Slim::Plugin::PreventStandby::Plugin</module>
 	<version>3.0</version>
 	<description>PLUGIN_PREVENTSTANDBY_DESC</description>
-	<creator>Gordon Harris, Julian Neil, Slim Devices/Logitech</creator>
+	<creator>Gordon Harris, Julian Neil, Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

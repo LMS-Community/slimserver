@@ -6,7 +6,7 @@
 	<importmodule>Slim::Plugin::LibraryDemo::Plugin</importmodule>
 	<version>1.0</version>
 	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>

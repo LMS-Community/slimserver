@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::DontStopTheMusic::Plugin</module>
 	<version>1.0.0</version>
 	<description>PLUGIN_DSTM_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

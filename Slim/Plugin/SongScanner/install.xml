@@ -1,7 +1,7 @@
 <?xml version='1.0' standalone='yes'?>
 <extension>
   <name>PLUGIN_SONGSCANNER</name>
-  <creator>Kevin Deane-Freeman, Logitech</creator>
+  <creator>Kevin Deane-Freeman, Lyrion Community</creator>
   <defaultState>enabled</defaultState>
   <description>PLUGIN_SONGSCANNER_DESC</description>
   <id>e490c2fe-1d5b-4ecc-ba90-d15747a82589</id>

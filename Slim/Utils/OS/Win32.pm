@@ -451,6 +451,7 @@ sub installPath {
 
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
+	# TODO - branding
 	my $swKey = $Win32::TieRegistry::Registry->Open(
 		'LMachine/Software/Logitech/Squeezebox/',
 		{
@@ -496,6 +497,7 @@ sub writablePath {
 	unless ($writablePath) {
 
 		# the installer is writing the data folder to the registry - give this the first try
+		# TODO - branding
 		my $swKey = $Win32::TieRegistry::Registry->Open(
 			'LMachine/Software/Logitech/Squeezebox/',
 			{
@@ -544,6 +546,7 @@ sub writablePath {
 			$writablePath = catdir($writablePath, 'Squeezebox') unless $writablePath eq $Bin;
 
 			# store the key in the registry for future reference
+			# TODO - branding
 			$swKey = $Win32::TieRegistry::Registry->Open(
 				'LMachine/Software/Logitech/Squeezebox/',
 				{

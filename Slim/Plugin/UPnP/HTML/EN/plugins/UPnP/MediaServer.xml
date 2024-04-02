@@ -8,7 +8,7 @@
 		<deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
 		<dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
 		<friendlyName>[% device.name %]</friendlyName>
-		<manufacturer>Logitech</manufacturer>
+		<manufacturer>Lyrion Community</manufacturer>
 		<manufacturerURL>https://www.lyrion.org</manufacturerURL>
 		<modelDescription>Lyrion Music Server UPnP/DLNA Plugin</modelDescription>
 		<modelName>Lyrion Music Server [% device.version %]</modelName>

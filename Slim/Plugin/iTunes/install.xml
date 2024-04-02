@@ -6,7 +6,7 @@
 	<importmodule>Slim::Plugin::iTunes::Importer</importmodule>
 	<version>1.0</version>
 	<description>ITUNES_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>
 		<win>enabled</win>

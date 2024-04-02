@@ -6,7 +6,7 @@
 	<importmodule>Slim::Plugin::OnlineLibrary::Importer</importmodule>
 	<version>1.0</version>
 	<description>PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/OnlineLibrary/settings.html</optionsURL>
 	<targetApplication>

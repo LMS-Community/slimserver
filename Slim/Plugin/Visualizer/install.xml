@@ -6,7 +6,7 @@
         <module>Slim::Plugin::Visualizer::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_VISUALIZER</description>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 

@@ -6,7 +6,7 @@
 	<module>Slim::Plugin::CLI::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_CLI_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 	<enforce>1</enforce>

@@ -6,7 +6,7 @@
 	<playerMenu>PLUGINS</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_INFOBROWSER_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>
 	<icon>plugins/InfoBrowser/html/images/icon.png</icon>

@@ -6,7 +6,7 @@
 	<module>Slim::Plugin::InternetRadio::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>

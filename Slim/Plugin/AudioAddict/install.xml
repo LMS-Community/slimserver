@@ -4,6 +4,6 @@
 	<name>PLUGIN_AUDIO_ADDICT_NAME</name>
 	<version>1.0</version>
 	<description>PLUGIN_AUDIO_ADDICT_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 </extension>

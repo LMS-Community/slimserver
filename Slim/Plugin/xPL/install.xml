@@ -6,7 +6,7 @@
         <module>Slim::Plugin::xPL::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_XPL</description>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
 	<defaultState>disabled</defaultState>
 

@@ -6,7 +6,7 @@
 	<icon>plugins/ZenRadio/html/icon.png</icon>
 	<version>1.0</version>
 	<description>PLUGIN_ZENRADIO_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/zenradio/settings.html</optionsURL>
 	<type>2</type>

@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::Sounds::Plugin</module>
 	<version>1.1</version>
 	<description>PLUGIN_SOUNDS_MODULE_NAME</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<icon>plugins/Sounds/html/images/icon.png</icon>
 	<type>2</type>

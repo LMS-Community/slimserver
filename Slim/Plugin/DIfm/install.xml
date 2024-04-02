@@ -6,7 +6,7 @@
 	<icon>plugins/DIfm/html/icon.png</icon>
 	<version>1.0</version>
 	<description>PLUGIN_DI_FM_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/di/settings.html</optionsURL>
 	<type>2</type>

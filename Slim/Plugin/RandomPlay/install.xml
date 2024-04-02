@@ -7,7 +7,7 @@
         <version>1.0</version>
         <description>PLUGIN_RANDOM_DESC</description>
         <playerMenu>BROWSE_MUSIC</playerMenu>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
         <defaultState>enabled</defaultState>
         <canConflictWithDSTM>1</canConflictWithDSTM>

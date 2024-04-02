@@ -1,9 +1,8 @@
 package Slim::Buttons::Information;
 
-#	$Id$
-#
 #	Author: Kevin Walsh <kevin@cursor.biz>
-#	Copyright (c) 2003-2020 Logitech, Cursor Software Limited.
+#	Logitech Media Server Copyright 2001-2024 Logitech, Cursor Software Limited.
+#	Lyrion Music Server Copyright 2024 Lyrion Community.
 #	All rights reserved.
 #
 #	This program is free software; you can redistribute it and/or modify

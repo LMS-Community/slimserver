@@ -6,7 +6,7 @@
         <module>Slim::Plugin::RS232::Plugin</module>
         <version>1.1</version>
         <description>PLUGIN_RS232_NAME_DESC</description>
-        <creator>Logitech</creator>
+        <creator>Lyrion Community</creator>
 
 	<defaultState>disabled</defaultState>
 

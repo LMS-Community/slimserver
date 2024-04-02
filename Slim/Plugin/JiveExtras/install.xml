@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::JiveExtras::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_JIVEEXTRAS_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<targetApplication>

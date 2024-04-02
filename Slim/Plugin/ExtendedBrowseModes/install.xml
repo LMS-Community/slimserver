@@ -6,7 +6,7 @@
 	<importmodule>Slim::Plugin::ExtendedBrowseModes::Libraries</importmodule>
 	<version>1.0</version>
 	<description>PLUGIN_EXTENDED_BROWSEMODES_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/ExtendedBrowseModes/settings/browsemodes.html</optionsURL>

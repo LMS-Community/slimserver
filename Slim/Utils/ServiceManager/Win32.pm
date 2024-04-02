@@ -15,6 +15,7 @@ use Win32::Process::List;
 use Win32::Service;
 use Win32::TieRegistry ('Delimiter' => '/');
 
+# TODO - branding
 use constant SC_USER_REGISTRY_KEY => 'CUser/Software/Logitech/SqueezeCenter';
 use constant SB_USER_REGISTRY_KEY => 'CUser/Software/Logitech/Squeezebox';
 use constant SC_SERVICE_NAME => 'squeezesvc';
@@ -108,6 +109,7 @@ sub initStartupType {
 	if ($atLogin !~ /[01]/) {
 
 		# make sure our Key does exist before we can write to it
+		# TODO - branding
 		if (! (my $regKey = $Registry->{SB_USER_REGISTRY_KEY . ''})) {
 			$Registry->{'CUser/Software/Logitech/'} = {
 				'Squeezebox/' => {}

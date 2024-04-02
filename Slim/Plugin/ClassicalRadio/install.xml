@@ -6,7 +6,7 @@
 	<icon>plugins/ClassicalRadio/html/icon.png</icon>
 	<version>1.0</version>
 	<description>PLUGIN_CLASSICALRADIO_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/classicalradio/settings.html</optionsURL>
 	<type>2</type>

@@ -6,7 +6,7 @@
 	<version>1.0</version>
 	<playerMenu>GAMES</playerMenu>
 	<description>SLIMTRIS_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>disabled</defaultState>
 	<type>2</type>
 <!-- type=extension -->

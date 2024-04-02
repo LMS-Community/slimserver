@@ -314,19 +314,16 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	SV	Tillåt Lyrion Music Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
 PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
-	CS	Vezměte prosím na vědomí, že zásuvné moduly třetích stran nejsou podporovány společností Logitech a měly by být používány na vaše vlastní riziko. Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
-	DA	Bemærk at Logitech ikke yder support til udvidelsesmoduler fra tredjepart, og disse bruges på eget ansvar. Hvis du har brug for support, må du kontakte dem som har lavet udvidelsesmodulet.
-	DE	Logitech Produkte unterstützen keine Plugins anderer Hersteller. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr. Kontaktieren Sie den Kundendienst der Plugin-Hersteller.
-	EN	Please note that 3rd party plugins are unsupported by Logitech and should be used at your own risk.  Please contact plugin authors for support.
-	ES	Tenga en cuenta que Logitech no admite complementos de terceros; usted los utiliza por su cuenta y riesgo. Para obtener ayuda, póngase en contacto con los autores de los complementos.
-	FI	Ota huomioon, että Logitech ei tue muiden osapuolten valmistamia laajennuksia. Kyseisiä laajennuksia käytetään omalla vastuulla. Ota yhteys laajennusten valmistajiin tuen saamiseksi.
-	FR	Veuillez noter que les plugins tiers ne sont pas pris en charge par Logitech et que vous les utilisez à vos propres risques. Veuillez contacter les auteurs des plugins pour obtenir de l'aide.
-	IT	Tenere presente che i plugin di terzi non sono supportati da Logitech e pertanto vanno utilizzati a proprio rischio. Per assistenza, rivolgersi all'autore del plugin.
-	NL	Plug-ins van derden worden niet ondersteund door Logitech en gebruik hiervan is op eigen risico. Neem contact op met de auteur van de plug-in voor ondersteuning.
-	NO	Merk: Logitech støtter ikke plugin-moduler fra tredjeparter, du bruker disse på egen risiko. Du kan kontakte de som laget modulen for støtte.
-	PL	Uwaga! Dodatki innych firm są nieobsługiwane przez oprogramowanie firmy Logitech i powinny być używane na własną odpowiedzialność. W celu uzyskania pomocy skontaktuj się z autorem dodatku.
-	RU	Следует помнить, что Logitech не предоставляет поддержку для подключаемых модулей сторонних изготовителей, ответственность за использование которых должен нести пользователь. За поддержкой обращайтесь к авторам подключаемого модуля.
-	SV	Observera att plugin-program från tredje part inte stöds av Logitech och används på egen risk. Kontakta författaren till plugin-programmen för support.
+	CS	Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
+	DA	Hvis du har brug for support, må du kontakte dem som har lavet udvidelsesmodulet.
+	DE	Die Nutzung dieser Plugins erfolgt auf eigene Gefahr. Kontaktieren Sie den Kundendienst der Plugin-Hersteller.
+	EN	Please note that 3rd party plugins should be used at your own risk.  Please contact plugin authors for support.
+	ES	Para obtener ayuda, póngase en contacto con los autores de los complementos.
+	FI	Ota yhteys laajennusten valmistajiin tuen saamiseksi.
+	FR	Veuillez noter que vous utilisez les plugins tiers à vos propres risques. Veuillez contacter les auteurs des plugins pour obtenir de l'aide.
+	IT	Per assistenza, rivolgersi all'autore del plugin.
+	NL	Neem contact op met de auteur van de plug-in voor ondersteuning.
+	NO	Du kan kontakte de som laget modulen for støtte.
 
 PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files
@@ -359,22 +356,6 @@ PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 	PL	Pozostałe dodatki innych firm
 	RU	Другие подключаемые модули сторонних изготовителей
 	SV	Tillägg från tredje part
-
-PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
-# These strings aren't used by the plugin itself, but in the repository XML files
-	CS	Zásuvné moduly Logitech
-	DA	Logitech-udvidelser
-	DE	Logitech Erweiterungen
-	EN	Logitech Extensions
-	ES	Extensiones Logitech
-	FI	Logitechin laajennukset
-	FR	Extensions Logitech
-	IT	Estensioni Logitech
-	NL	Logitech extensies
-	NO	Logitech-tillegg
-	PL	Rozszerzenia firmy Logitech
-	RU	Расширения Logitech
-	SV	Logitech-tillägg
 
 PLUGIN_EXTENSIONS_USE_UNSUPPORTED
 	CS	Používání nepodporovaných zásuvných modulů

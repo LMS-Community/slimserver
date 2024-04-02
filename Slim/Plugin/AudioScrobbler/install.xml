@@ -5,7 +5,7 @@
 	<module>Slim::Plugin::AudioScrobbler::Plugin</module>
 	<version>1.0</version>
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 	<defaultState>enabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>

@@ -7,7 +7,7 @@
 	<importmodule>Slim::Plugin::MusicMagic::Importer</importmodule>
 	<version>1.0</version>
 	<description>MUSICMAGIC_DESC</description>
-	<creator>Logitech</creator>
+	<creator>Lyrion Community</creator>
 
 	<defaultState>
 		<mac>enabled</mac>
