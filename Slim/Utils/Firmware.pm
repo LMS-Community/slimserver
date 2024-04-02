@@ -1,6 +1,7 @@
 package Slim::Utils::Firmware;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -45,7 +46,7 @@ my $dir;
 my $updatesDir;
 
 # Download location and check interval - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
-sub BASE { 'http://update.slimdevices.com/update/firmware/' }
+sub BASE { 'http://downloads.lms-community.org/update/firmware/' }
 sub CHECK_INTERVAL { 86400 * 30 }
 
 # Check interval when firmware can't be downloaded

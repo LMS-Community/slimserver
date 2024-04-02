@@ -1,6 +1,7 @@
 package Slim::Plugin::OnlineLibrary::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -124,7 +125,7 @@ sub postinitPlugin {
 
 		Slim::Utils::Timers::setTimer(undef, time() + DELAY_FIRST_POLL, \&_pollOnlineLibraries);
 
-		main::INFOLOG && $log->is_info && $log->info("Online Music Library Integration initialized: " . join(', ', keys %onlineLibraryProviders) . DELAY_FIRST_POLL);
+		main::INFOLOG && $log->is_info && $log->info("Online Music Library Integration initialized: " . join(', ', keys %onlineLibraryProviders) . ' - ' . DELAY_FIRST_POLL);
 	}
 }
 

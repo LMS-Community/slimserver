@@ -1,6 +1,7 @@
 package Slim::Display::Transporter;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -15,7 +16,7 @@ Slim::Display::Transporter
 L<Slim::Display::Transporter>
  Display class for Transporter display
   - 2 screens
-  - 320 x 32 pixel displays 
+  - 320 x 32 pixel displays
   - client side animations
 
 =cut
@@ -49,7 +50,7 @@ our $defaultPrefs = {
 my @modes = (
 	# mode 0
 	{ desc => ['BLANK'],
-	  bar => 0, secs => 0, 	width => 320 }, 
+	  bar => 0, secs => 0, 	width => 320 },
 	# mode 1
 	{ desc => ['PROGRESS_BAR'],
 	  bar => 1, secs => 0,  width => 320 },
@@ -60,7 +61,7 @@ my @modes = (
 	{ desc => ['PROGRESS_BAR', 'AND', 'REMAINING'],
 	  bar => 1, secs => -1, width => 320 },
 	# mode 4
-	{ desc => ['ELAPSED'], 
+	{ desc => ['ELAPSED'],
 	  bar => 0, secs => 1,  width => 320 },
 	# mode 5
 	{ desc => ['REMAINING'],
@@ -178,7 +179,7 @@ sub resetDisplay {
 
 	$display->killAnimation(undef, 1);
 	$display->killAnimation(undef, 2);
-}	
+}
 
 sub bytesPerColumn {
 	return 4;
@@ -218,7 +219,7 @@ sub scrollHeader {
 	my $screenNo = shift;
 
 	my $offset = ($screenNo && $screenNo == 2) ? 640 : 0;
-	
+
 	return pack('n', $offset) . 'c' . pack ('c', 0);
 }
 
@@ -298,9 +299,9 @@ sub visualizerParams {
 	my $client = $display->client;
 
 	my $visu = $prefs->client($client)->get('visualModes')->[ $prefs->client($client)->get('visualMode') ] || 0;
-	
+
 	$visu = 0 if (!$display->showVisualizer());
-	
+
 	return $visualizers[$visu]{params};
 }
 
@@ -311,7 +312,7 @@ sub showVisualizer {
 	if ( Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::track($display->client)) ) {
 		return 0;
 	}
-	
+
 	return $display->client->power();
 }
 
@@ -320,7 +321,7 @@ sub showExtendedText {
 	my $client = $display->client;
 
 	my $visu = $prefs->client($client)->get('visualModes')->[ $prefs->client($client)->get('visualMode') ] || 0;
-	
+
 	return $visualizers[$visu]{text};
 }
 

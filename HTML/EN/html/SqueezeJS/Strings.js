@@ -1,5 +1,5 @@
 /*
- * Globally used Logitech Media Server strings.
+ * Globally used Lyrion Music Server strings.
  * This file should be PROCESSed if SqueezeJS.UI is used.
  */
 [% PROCESS jsString id='POWER' jsId='' %]

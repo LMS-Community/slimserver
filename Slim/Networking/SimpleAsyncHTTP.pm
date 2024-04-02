@@ -1,13 +1,14 @@
 package Slim::Networking::SimpleAsyncHTTP;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# this class provides non-blocking http requests from Logitech Media Server.
+# this class provides non-blocking http requests from Lyrion Music Server.
 # That is, use this class for your http requests to ensure that
-# Logitech Media Server does not become unresponsive, or allow music to pause,
+# Lyrion Music Server does not become unresponsive, or allow music to pause,
 # while your code waits for a response
 
 # This class is intended for plugins and other code needing simply to
@@ -199,13 +200,13 @@ my $http = Slim::Networking::SimpleAsyncHTTP->new(
 );
 
 # sometime after this call, our exampleCallback will be called with the result
-$http->get("http://www.slimdevices.com");
+$http->get("https://www.lyrion.org");
 
 # that's all folks.
 
 =head1 DESCRIPTION
 
-This class provides a way within the Logitech Media Server to make an http
+This class provides a way within the Lyrion Music Server to make an http
 request in an asynchronous, non-blocking way.  This is important
 because the server will remain responsive and continue streaming audio
 while your code waits for the response.

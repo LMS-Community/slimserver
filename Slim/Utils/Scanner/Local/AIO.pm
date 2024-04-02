@@ -1,7 +1,8 @@
 package Slim::Utils::Scanner::Local::AIO;
 
 #
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -65,8 +66,8 @@ sub find {
 		(stat $path)[9], # mtime
 		0,               # size, 0 for dirs
 	);
-	
-	$grp->add( aio_readdirx( $path, IO::AIO::READDIR_STAT_ORDER, sub { 
+
+	$grp->add( aio_readdirx( $path, IO::AIO::READDIR_STAT_ORDER, sub {
 		my $files = shift;
 
 		push @items, map { "$path/$_" } @{$files};
@@ -94,7 +95,7 @@ sub find {
 		$childgrp->feed( sub {
 			my $file = shift @items;
 
-			if ( !$file ) {				
+			if ( !$file ) {
 				if ( $todo > 0 ) {
 					# We still have outstanding requests, pause feeder
 					$childgrp->limit(0);
@@ -106,8 +107,8 @@ sub find {
 							$childgrp->add( aio_nop( $nop ) );
 						}
 					};
-					
-					$childgrp->add( aio_nop( $nop ) );						
+
+					$childgrp->add( aio_nop( $nop ) );
 				}
 
 				return;
@@ -137,8 +138,8 @@ sub find {
 						if ( $args->{dirs} ) {
 							push @dirs, $file;
 						}
-						
-						$childgrp->add( aio_readdirx( $file, IO::AIO::READDIR_STAT_ORDER, sub { 
+
+						$childgrp->add( aio_readdirx( $file, IO::AIO::READDIR_STAT_ORDER, sub {
 							my $files = shift;
 
 							push @items, map { "$file/$_" } @{$files};
@@ -152,7 +153,7 @@ sub find {
 				else {
 					# Make sure we want this file
 					if ( !$args->{dirs} ) {
-						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 0 ) ) {		
+						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 0 ) ) {
 							if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
 								my $orig = $file;
 

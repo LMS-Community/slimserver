@@ -1,7 +1,8 @@
 package Slim::Player::TranscodingHelper;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -86,7 +87,7 @@ sub loadConversionTables {
 			$line =~ s/^\s*//o;
 			$line =~ s/\s*$//o;
 
-			if ($line =~ /^proxy\s+(\S+)\s+(\S+)/i) {	
+			if ($line =~ /^proxy\s+(\S+)\s+(\S+)/i) {
 				$proxies{$1} = $2;
 			}
 			elsif ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/) {
@@ -356,8 +357,8 @@ sub getConvertCommand2 {
 	}
 
 	if ($prefs->get('prioritizeNative')) {
-		my @types = split /,/, ($proxies{$type} || $type);			
-		unshift @types, 'pcm' if grep /wav/, @types;	
+		my @types = split /,/, ($proxies{$type} || $type);
+		unshift @types, 'pcm' if grep /wav/, @types;
 		foreach my $type (@types) {
 			my ($format) = grep /$type/, @supportedformats;
 			@supportedformats = ($format, grep { $_ !~ $type } @supportedformats) if $format;

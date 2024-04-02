@@ -1,6 +1,7 @@
 package Slim::Display::Squeezebox2;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -71,7 +72,7 @@ my $VISUALIZER_WAVEFORM = 3;
 my @modes = (
 	# mode 0
 	{ desc => ['BLANK'],
-	  bar => 0, secs => 0,  width => 320, 
+	  bar => 0, secs => 0,  width => 320,
 	  params => [$VISUALIZER_NONE] },
 	# mode 1
 	{ desc => ['ELAPSED'],
@@ -91,11 +92,11 @@ my @modes = (
 	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] },
 	# mode 5
 	{ desc => ['VISUALIZER_VUMETER_SMALL', 'AND', 'REMAINING'],
-	  bar => 1, secs => -1, width => 278, 
-	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
-	# mode 6 
+	  bar => 1, secs => -1, width => 278,
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } ,
+	# mode 6
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL'],
-	  bar => 0, secs => 0,  width => 278, 
+	  bar => 0, secs => 0,  width => 278,
 	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] },
 	# mode 7
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL', 'AND', 'ELAPSED'],
@@ -105,9 +106,9 @@ my @modes = (
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL', 'AND', 'REMAINING'],
 	  bar => 1, secs => -1, width => 278,
 	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] },
-	# mode 9  
+	# mode 9
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER'],
-	  bar => 0, secs => 0,  width => 320, 
+	  bar => 0, secs => 0,  width => 320,
 	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] },
 	# mode 10
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'ELAPSED'],
@@ -116,8 +117,8 @@ my @modes = (
 	# mode 11
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'REMAINING'],
 	  bar => 1, secs => -1, width => 320,
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
-	# mode 12	  
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } ,
+	# mode 12
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 1, secs => 0,  width => 320, fullness => 1,
 	  params => [$VISUALIZER_NONE], },
@@ -172,7 +173,7 @@ sub resetDisplay {
 	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };
 
 	$display->killAnimation();
-}	
+}
 
 sub periodicScreenRefresh {} # noop for this player
 
@@ -188,11 +189,11 @@ sub displayWidth {
 	my $display = shift;
 	my $client = $display->client;
 
-	# if we're showing the always-on visualizer & the current buttonmode 
+	# if we're showing the always-on visualizer & the current buttonmode
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
 	my $mode = 0;
-	
+
 	if ( $display->showVisualizer() && !defined($client->modeParam('visu')) ) {
 		my $cprefs = $prefs->client($client);
 		$mode = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
@@ -243,14 +244,14 @@ sub drawFrameBuf {
 						   $transition .       # transition
 						   pack('c', $param) . # param byte
 						   $$framebufref;
-	
+
 		$client->sendFrame('grfe', \$framebuf);
 	}
-}	
+}
 
 sub showVisualizer {
 	my $client = shift->client;
-	
+
 	# show the always-on visualizer while browsing or when playing.
 	return (Slim::Player::Source::playmode($client) eq 'play') || (Slim::Buttons::Playlist::showingNowPlaying($client));
 }
@@ -296,13 +297,13 @@ sub visualizerParams {
 	my $cprefs = $prefs->client($client);
 
 	my $visu = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
-	
+
 	$visu = 0 if (!$display->showVisualizer());
-	
-	if (!defined $visu || $visu < 0) { 
-		$visu = 0; 
+
+	if (!defined $visu || $visu < 0) {
+		$visu = 0;
 	}
-	
+
 	if ($visu > $display->nmodes) {
 		$visu = $display->nmodes;
 	}
@@ -426,7 +427,7 @@ sub clientAnimationComplete {
 	# ANIM_SCREEN_2 (0x08)                           - end of first scroll on screen 2
 	# ANIM_SCROLL_ONCE (0x02) | ANIM_SCREEN_1 (0x04) - end of scroll once on screen 1
 	# ANIM_SCROLL_ONCE (0x02) | ANIM_SCREEN_2 (0x08) - end of scroll once on screen 2
-	
+
 	if (!$display->client->hasScrolling || $flags & ANIM_TRANSITION) {
 		# end of transition ANIC
 		$display->updateMode(0);
@@ -461,11 +462,11 @@ sub killAnimation {
 	# kill all server side animation in progress and clear state
 	my $display = shift;
 	my $exceptScroll = shift; # all but scrolling to be killed
-	my $screenNo = shift || 1;  
+	my $screenNo = shift || 1;
 
 	my $animate = $display->animateState();
 	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
-	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 4);	
+	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 4);
 	$display->scrollStop($screenNo) if (($display->scrollState($screenNo) > 0) && !$exceptScroll);
 	$display->animateState(0);
 	$display->updateMode(0);

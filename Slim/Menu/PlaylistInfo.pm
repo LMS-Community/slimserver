@@ -1,6 +1,7 @@
 package Slim::Menu::PlaylistInfo;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,12 +32,12 @@ my $log = logger('menu.playlistinfo');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'playlistinfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
 	);
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'playlistinfo', 'playlist', '_method' ],
 		[ 1, 1, 1, \&cliQuery ]
@@ -53,7 +54,7 @@ sub name {
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( playlistitemcount => (
@@ -97,7 +98,7 @@ sub menu {
 	# that, we will have our ordering and only need to step
 	# through it.
 	my $infoOrdering = $class->getInfoOrdering;
-	
+
 	# $remoteMeta is an empty set right now. adding to allow for parallel construction with trackinfo
 	my $remoteMeta = {};
 
@@ -112,24 +113,24 @@ sub menu {
 			return;
 		}
 	}
-	
+
 	# Function to add menu items
 	my $addItem = sub {
 		my ( $ref, $items ) = @_;
-		
+
 		if ( defined $ref->{func} ) {
-			
+
 			my $item = eval { $ref->{func}->( $client, $url, $playlist, $remoteMeta, $tags, $filter ) };
 			if ( $@ ) {
 				$log->error( 'PlaylistInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
 			}
-			
+
 			return unless defined $item;
-			
+
 			# skip jive-only items for non-jive UIs
 			return if $ref->{menuMode} && !$tags->{menuMode};
-			
+
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
 					push @{$items}, @{$item};
@@ -143,35 +144,35 @@ sub menu {
 			}
 			else {
 				$log->error( 'PlaylistInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
-			}				
+			}
 		}
 	};
-	
+
 	# Now run the order, which generates all the items we need
 	my $items = [];
-	
+
 	for my $ref ( @{ $infoOrdering } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
-		
+
 		# Add the item
 		$addItem->( $ref, $items );
-		
+
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
 		} @{ $infoOrdering };
-		
+
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
-			
+
 			for my $child ( @children ) {
 				$addItem->( $child, $subitems );
 			}
 		}
 	}
-	
+
 	return {
 		name  => $playlist->name,
 		type  => 'opml',
@@ -182,20 +183,20 @@ sub menu {
 
 sub playlistItemCount {
 	my ( $client, $url, $playlist, $remoteMeta, $tags, $filter) = @_;
-	
+
 	my $items = [];
 	my $jive;
-	
+
 	return $items if !blessed($client) || !blessed($playlist);
-	
+
 	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-	
+
 	push @{$items}, {
 		type => 'text',
-		name => cstring($client, 'INFORMATION_TRACKS') . cstring('COLON') . ' ' 
+		name => cstring($client, 'INFORMATION_TRACKS') . cstring('COLON') . ' '
 			. Slim::Utils::Misc::delimitThousands($playlist->tracks($library_id)->count),
 	};
-	
+
 	return $items;
 }
 
@@ -204,7 +205,7 @@ sub playPlaylist {
 
 	my $items = [];
 	my $jive;
-	
+
 	return $items if !blessed($client);
 
 	my $play_string   = cstring($client, 'PLAY');
@@ -221,7 +222,7 @@ sub playPlaylist {
 		},
 	};
 	$actions->{play} = $actions->{go};
-	
+
 	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
 		$actions->{go}->{params}->{library_id} = $library_id;
 	}
@@ -232,9 +233,9 @@ sub playPlaylist {
 		type        => 'text',
 		playcontrol => 'play',
 		name        => $play_string,
-		jive        => $jive, 
+		jive        => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -261,7 +262,7 @@ sub addPlaylist {
 	my $jive;
 
 	return $items if !blessed($client);
-	
+
 	my $actions = {
 		go => {
 			player => 0,
@@ -275,7 +276,7 @@ sub addPlaylist {
 	};
 	$actions->{play} = $actions->{go};
 	$actions->{add}  = $actions->{go};
-	
+
 	if ( my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
 		$actions->{go}->{params}->{library_id} = $library_id;
 	}
@@ -286,9 +287,9 @@ sub addPlaylist {
 		type        => 'text',
 		playcontrol => $cmd,
 		name        => $add_string,
-		jive        => $jive, 
+		jive        => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -320,14 +321,14 @@ sub deletePlaylist {
 				},
 			},
 			style   => 'item',
-		}, 
+		},
 	} ];
 }
 
 sub cliQuery {
 	main::DEBUGLOG && $log->is_debug && $log->debug('cliQuery');
 	my $request = shift;
-	
+
 	# WebUI or newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
@@ -344,12 +345,12 @@ sub cliQuery {
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
 	}
-	
+
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
 	my $playlistId     = $request->getParam('playlist_id');
 	my $menuMode       = $request->getParam('menu') || 0;
-	
+
 
 	my $tags = {
 		menuMode      => $menuMode,
@@ -359,9 +360,9 @@ sub cliQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 	my $feed;
-	
+
 	# Default menu
 	if ( $url ) {
 		$feed = Slim::Menu::PlaylistInfo->menu( $client, $url, undef, $tags, {
@@ -374,7 +375,7 @@ sub cliQuery {
 			library_id => $request->getParam('library_id')
 		}  );
 	}
-	
+
 	Slim::Control::XMLBrowser::cliQuery( 'playlistinfo', $feed, $request );
 }
 

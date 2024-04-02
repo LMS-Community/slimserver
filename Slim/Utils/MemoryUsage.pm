@@ -1,8 +1,8 @@
 package Slim::Utils::MemoryUsage;
 
 #
-# This module is a merging of B::TerseSize and Apache::Status 
-# put together to work with Logitech Media Server by Dan Sully
+# This module is a merging of B::TerseSize and Apache::Status
+# put together to work with Lyrion Music Server by Dan Sully
 #
 # These are not the droids you're looking for.
 #
@@ -67,27 +67,27 @@ sub init {
 			system("open scanner-memory.html") if main::ISMAC;
 		};
 	}
-	else {			
+	else {
 		Slim::Web::Pages->addPageFunction(qr/^memoryusage\.html.*/, sub {
 			my ($client, $params) = @_;
-	
+
 			my $item    = $params->{'item'};
 			my $type    = $params->{'type'};
 			my $command = $params->{'command'};
-	
+
 			unless ($item && $command) {
-	
+
 				return Slim::Utils::MemoryUsage->status_memory_usage();
 			}
-	
+
 			if (defined $item && defined $command && Slim::Utils::MemoryUsage->can($command)) {
-	
+
 				return Slim::Utils::MemoryUsage->$command($item, $type);
 			}
 		});
 	}
 }
-		
+
 
 sub UNIVERSAL::op_size {
 	$opcount++;
@@ -397,11 +397,11 @@ sub B::OP::terse_size {
 
 		if ($op->type == 0) { #OP_NULL
 
-			$targ = $name eq $desc ? " [$name]" : 
+			$targ = $name eq $desc ? " [$name]" :
 			sprintf " [%s - %s]", $name, $desc;
 
 		} else {
-			$targ = sprintf " [targ %d - %s]", $t, 
+			$targ = sprintf " [targ %d - %s]", $t,
 			padname($curpad_names[$t]);
 		}
 	}
@@ -528,7 +528,7 @@ sub B::NULL::terse_size {
 	my ($sv, $level) = @_;
 	printf("%s%s \n", indent($level), B::class($sv));
 }
-    
+
 sub B::SPECIAL::terse_size {
 	my ($sv, $level) = @_;
 	printf("%s%s #%d %s\n", indent($level), B::class($sv), $$sv, $specialsv_name[$$sv]);
@@ -574,7 +574,7 @@ sub PADLIST_size {
 			if (B::class($obj->OUTSIDE->GV) eq 'SPECIAL') {
 				$filelex{ $obj->GV->STASH->NAME }->{ $names_pv[$i] } = $vals[$i]->size;
 
-			} else { 
+			} else {
 				#XXX nested/anonsubs
 			}
 
@@ -590,7 +590,7 @@ sub PADLIST_size {
 		my $byteinfo = sprintf "[%-4s %3d bytes]", $class, $entsize;
 
 		no warnings;
-		push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n", $i, $names_pv[$i], $byteinfo, 
+		push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n", $i, $names_pv[$i], $byteinfo,
 			($is_fake ? '__SvFAKE__' : (defined $vals[$i] ? 0 : $vals[$i]->sizeval));
 	}
 
@@ -849,7 +849,7 @@ sub noh_b_terse_size {
 
 	my $html = join('',
 		'<pre>',
-		sprintf("Syntax Tree Size ($b_terse_exp{$type} order) for %s\n\n", 
+		sprintf("Syntax Tree Size ($b_terse_exp{$type} order) for %s\n\n",
 			qq{<a href="$script?item=$name&type=CODE&command=cv_dump">$name</a>}
 		),
 
@@ -918,9 +918,9 @@ sub status_memory_usage {
 		my ($subs, $opcount, $opsize) = package_size($package);
 
 		$total{$package} = {'count' => $opcount, 'size' => $opsize};
-		
+
 		main::idleStreams();
-		
+
 		$nlen = max($nlen, length $package);
 		$slen = max($slen, length $opsize);
 		$clen = max($clen, length $opcount);

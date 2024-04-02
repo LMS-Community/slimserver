@@ -1,10 +1,11 @@
 package Slim::Player::Protocols::File;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech, Vidur Apparao.
+# Logitech Media Server Copyright 2001-2024 Logitech, Vidur Apparao.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
-# version 2.  
+# version 2.
 
 use strict;
 use base qw(IO::File);
@@ -39,7 +40,7 @@ sub new {
 		${*$self}{'song'}        = $args->{'song'};
 		${*$self}{'client'}      = $args->{'client'};
 		${*$self}{'contentType'} = Slim::Music::Info::contentType($args->{'song'}->currentTrack());
-		
+
 		${*$self}{'handler'} = $class;
 	}
 
@@ -50,20 +51,20 @@ sub open {
 	my $class = shift;
 	my $args  = shift;
 
-	
+
 	my $song     = $args->{'song'};
 	my $track    = $song->currentTrack();
 	my $url      = $track->url;
 	my $client   = $args->{'client'};
 	my $seekdata = $song->seekdata();
-	
+
 	my $seekoffset = 0;
 
 	my $filepath = $class->pathFromFileURL($url);
 
 	my ($size, $duration, $offset, $samplerate, $samplesize, $channels, $blockalign, $endian, $drm) =
 		(0, 0, 0, 0, 0, 0, 0, undef, undef);
-			
+
 	# don't try and read this if we're a pipe
 	if (!-p $filepath) {
 
@@ -76,7 +77,7 @@ sub open {
 		$blockalign = $track->block_alignment() || 1;
 		$endian     = $track->endian() || '';
 		$drm        = $track->drm();
-		
+
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("duration: [$duration] size: [$size] endian [$endian] offset: [$offset] for $url");
 		}
@@ -98,12 +99,12 @@ sub open {
 
 	my $sock = $class->SUPER::new();
 	if (!$sock->SUPER::open($filepath)) {
-		logError("could not open $filepath: $!");		
+		logError("could not open $filepath: $!");
 		return undef;
 	}
-	
+
 	binmode($sock);
-	
+
 	${*$sock}{'url'}      = $url;
 	${*$sock}{'position'} = 0;
 	${*$sock}{'logicalEndOfStream'} = $size + $offset;
@@ -116,14 +117,14 @@ sub open {
 	$song->duration($duration);
 	$song->offset($offset);
 	$song->blockalign($blockalign);
-	
+
 	my $format = Slim::Music::Info::contentType($track);
-	
+
 	my $seekoffset = $offset;
 	my $streamLength = $size;
-	
+
 	if (defined $seekdata) {
-		
+
 		if (   ! $seekdata->{sourceStreamOffset}
 			&& ! $seekdata->{restartOffset}
 			&& $seekdata->{'timeOffset'}
@@ -131,7 +132,7 @@ sub open {
 		{
 			$seekdata->{sourceStreamOffset} = _timeToOffset($sock, $format, $song, $seekdata->{'timeOffset'});
 		}
-		
+
 		if ($seekdata->{restartOffset}) {								# used for reconnect
 			$streamLength = $song->streamLength();
 			$seekoffset = $seekdata->{restartOffset};
@@ -159,14 +160,14 @@ sub open {
 	{
 		my $streamClass = _streamClassForFormat($format);
 
-		if (!defined($song->initialAudioBlock()) && 
+		if (!defined($song->initialAudioBlock()) &&
 			$streamClass && $streamClass->can('getInitialAudioBlock'))
 		{
 			# We stash the initial audio block in the song because we may well want it
 			# multiple times.
 			$song->initialAudioBlock($streamClass->getInitialAudioBlock($sock, $track, $seekdata->{'timeOffset'}));
 		}
-		
+
 		if ($song->initialAudioBlock()) {
 			my $length = length($song->initialAudioBlock());
 			main::DEBUGLOG && $log->debug("Got initial audio block of size $length");
@@ -179,12 +180,12 @@ sub open {
 				${*$sock}{'initialAudioBlockRef'} = \($song->initialAudioBlock());
 				$streamLength += $length;
 			}
-			
+
 			# For some files, we can't cache the audio block because it's different each time
 			$song->initialAudioBlock(undef) if $streamClass->can('volatileInitialAudioBlock') && $streamClass->volatileInitialAudioBlock($track);
 		}
 	}
-	
+
 	if (defined $seekoffset) {
 		main::INFOLOG && $log->info("Seeking in $seekoffset into $filepath");
 		if (!defined(sysseek($sock, $seekoffset, 0))) {
@@ -199,9 +200,9 @@ sub open {
 	} else {
 		$client->songBytes(0);
 	}
-	
+
 	$song->streamLength($streamLength);
-	
+
 	# Bug 17727 - playback issues with mp3 + cue sheets on Windows
 	# there's a bug in MP3::Cut::Gapless which fails the cache file check on Windows
 	if ( !main::ISWINDOWS && $format eq 'mp3' && $track->virtual ) {
@@ -209,21 +210,21 @@ sub open {
 			# Return a gapless MP3 stream for cue sheet tracks
 			# XXX avoid calling the above stuff for these tracks, it's just wasted
 			require MP3::Cut::Gapless;
-		
+
 			my ($start_ms, $end_ms);
-		
+
 			if ( $url =~ /#([^-]+)-([^-]+)$/ ) {
 				$start_ms = sprintf "%d", $1 * 1000;
 				$end_ms   = sprintf "%d", $2 * 1000; # XXX last track should be undef
 			}
-		
+
 			if ( defined $seekdata && $seekdata->{timeOffset} ) {
 				# XXX error checks?
 				$start_ms += sprintf "%d", $seekdata->{timeOffset} * 1000;
 			}
-		
+
 			main::INFOLOG && $log->is_info && $log->info("Opening gapless MP3 stream from time $start_ms to $end_ms");
-		
+
 			${*$sock}{mp3cut} = MP3::Cut::Gapless->new(
 				file      => $filepath,
 				cache_dir => catdir( $prefs->get('librarycachedir'), 'mp3cut' ),
@@ -248,7 +249,7 @@ sub pathFromFileURL {
 sub sysread {
 	my $self = $_[0];
 	my $n	 = $_[2];
-	
+
 	if ( ${*$self}{mp3cut} ) {
 		# Get audio data from MP3::Cut::Gapless object instead of directly from the file
 		$n = ${*$self}{mp3cut}->read( $_[1], $n );
@@ -257,12 +258,12 @@ sub sysread {
 	}
 
 	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
-		
+
 		my $chunkLength = $length;
 		my $chunkref;
-		
+
 		main::DEBUGLOG && $log->debug("getting initial audio block of size $length");
-		
+
 		if ($length > $n || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
 			$chunkLength = $length > $n ? $n : $length;
 			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
@@ -272,11 +273,11 @@ sub sysread {
 			${*$self}{'initialAudioBlockRemaining'} = 0;
 			$chunkref = ${*$self}{'initialAudioBlockRef'};
 		}
-	
+
 		($_[3] ? substr($_[1], $_[3]) : $_[1]) = $$chunkref;
 		return $chunkLength;
 	}
-	
+
 	else {
 		my $remaining = ${*$self}{'logicalEndOfStream'} - ${*$self}{'position'};
 		if ($remaining <= 0) {
@@ -301,7 +302,7 @@ sub isRemote {
 
 sub audioScrobblerSource {
 	my ( $class, $client, $url ) = @_;
-	
+
 	# Scrobble as 'chosen by user' content
 	return 'P';
 }
@@ -326,7 +327,7 @@ sub _timeToOffset {
 	my $format   = shift;
 	my $song     = shift;
 	my $time     = shift;
-	
+
 	my $offset   = $song->offset() || 0;
 	my $size     = $song->totalbytes();
 	my $duration = $song->duration();
@@ -350,19 +351,19 @@ sub _timeToOffset {
 		if ( $song->currentTrack()->url =~ /#([^-]+)-([^-]+)$/ ) {
 			$time += $1;
 		}
-		
+
 		main::INFOLOG && $log->is_info && $log->info("seeking using $streamClass findFrameBoundaries(" . ($seekoffset + $offset) . ", $time)");
 		$seekoffset  = $streamClass->findFrameBoundaries($sock, $seekoffset + $offset, $time);
 	} else {
 		$seekoffset -= $seekoffset % $align;
 		$seekoffset += $offset;
 	}
-	
+
 	# Some modules may return -1 to indicate they couldn't find a frame
 	if ( $seekoffset < 1 ) {
 		$seekoffset = 0;
 	}
-	
+
 	main::INFOLOG && $log->info("$time -> $seekoffset (align: $align size: $size duration: $duration)");
 
 	return $seekoffset;
@@ -373,16 +374,16 @@ sub getSeekData {
 	my $client   = shift;
 	my $song     = shift; # ignored at the moment
 	my $time     = shift;
-	
+
 	# Do it all later at open time
 	return {timeOffset => $time};
 }
 
 sub getSeekDataByPosition {
 	my (undef, undef, $song, $bytesReceived) = @_;
-	
+
 	my $streamLength = $song->streamLength();
-	
+
 	if ( !$streamLength
 		|| $song->initialAudioBlock() && $bytesReceived < $song->initialAudioBlock() )
 	{
@@ -390,32 +391,32 @@ sub getSeekDataByPosition {
 	}
 
 	my $position = $song->totalbytes() - ($streamLength - $bytesReceived);
-	
+
 	if ($position <= 0) {
 		return undef;
 	}
-	
+
 	my $seekdata = $song->seekdata || {}; # We preserve the original seekdata so we know the time-offset, if any
 	return {%$seekdata, restartOffset => $position + $song->offset()};
 }
 
 sub canSeek {
 	my ($class, $client, $song) = @_;
-	
+
 	my $url = $song->currentTrack()->url;
-	
+
 	my $type = Slim::Music::Info::contentType($url);
-	
+
 	unless (Slim::Formats->loadTagFormatForType($type)) {return 0;}
-	
+
 	my $formatClass = Slim::Formats->classForFormat($type);
-	
-	return ($formatClass && $formatClass->can('canSeek')) ? $formatClass->canSeek($url) : 0;	
+
+	return ($formatClass && $formatClass->can('canSeek')) ? $formatClass->canSeek($url) : 0;
 }
 
 sub canSeekError {
 	my ($class, $client, $song) = @_;
-	
+
 	return ('SEEK_ERROR_TYPE_NOT_SUPPORTED', Slim::Music::Info::contentType($song->currentTrack()->url));
 }
 
@@ -423,7 +424,7 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	if (Slim::Music::Info::isSong($url)) {
-		
+
 		my $track = Slim::Schema->objectForUrl({
 			'url' => $url,
 		});
@@ -433,11 +434,11 @@ sub getIcon {
 		}
 
 	}
-	
+
 	elsif (Slim::Music::Info::isPlaylist($url)) {
 		return 'html/images/playlists.png';
 	}
-	
+
 	return 'html/images/cover.png';
 }
 

@@ -1,7 +1,8 @@
 package Slim::Player::Pipeline;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -125,7 +126,7 @@ sub new {
 
 		if ($listenWriter) {
 			${*$listenWriter}{'pipeline'} = $self;
-			${*$self}{'pipeline_listen_writer'} = $listenWriter;	
+			${*$self}{'pipeline_listen_writer'} = $listenWriter;
 			Slim::Networking::Select::addRead($listenWriter, \&acceptWriter);
 			Slim::Networking::Select::addError($listenWriter, \&selectError);
 		}
@@ -187,7 +188,7 @@ sub acceptReader {
 
 			${*$pipeline}{'pipeline_error'} = 1;
 
-			return;		
+			return;
 		}
 
 		if (!defined(Slim::Utils::Network::blocking($reader, 0))) {
@@ -196,7 +197,7 @@ sub acceptReader {
 
 			${*$pipeline}{'pipeline_error'} = 1;
 
-			return;		
+			return;
 		}
 
 		main::INFOLOG && $log->info("Pipeline reader connected");
@@ -292,7 +293,7 @@ sub sysread {
 					delete ${*$self}{'pipeline_writer'};
 					last;
 				} elsif ($! == EWOULDBLOCK || $! == EINTR) {
-					last;		
+					last;
 				} else {
 					return undef; # reflect error to caller
 				}

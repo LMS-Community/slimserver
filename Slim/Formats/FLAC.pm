@@ -1,6 +1,7 @@
 package Slim::Formats::FLAC;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -378,7 +379,7 @@ sub _getXMLTags {
 	# retrieve the xml content from the flac
 	my $xml = $s->{tags}->{APPLICATION}->{$PEEM} || return 0;
 
-	# TODO: parse this using the same xml modules Logitech Media Server uses to parse iTunes
+	# TODO: parse this using the same xml modules Lyrion Music Server uses to parse iTunes
 	# even better, use RDF::Simple::Parser
 
 	# crude regex matching until we get a real rdf/xml parser in place
@@ -921,7 +922,7 @@ sub scanBitrate {
 	my ( $class, $fh, $url, $format ) = @_;
 
 	seek $fh, 0, 0;
-	
+
 	my $s = Audio::Scan->scan_fh( $format || 'flac' => $fh );
 
 	my $info = $s->{info};

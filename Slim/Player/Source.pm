@@ -1,7 +1,8 @@
 package Slim::Player::Source;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,7 +32,7 @@ sub systell {
 sub progress {
 
 	my $client = shift->master();
-	
+
 	if (Slim::Player::Source::playmode($client) eq "stop") {
 		return 0;
 	}
@@ -53,10 +54,10 @@ sub songTime {
 
 sub _returnPlayMode {
 	my $controller = $_[0];
-	
+
 	# Should reall find out if the player is active in the sync-group but too expensive
 	return 'stop' if !$_[1]->power();
-	
+
 	my $returnedmode = $controller->isStopped ? 'stop'
 						: $controller->isPaused ? 'pause' : 'play';
 	return $returnedmode;
@@ -68,10 +69,10 @@ sub playmode {
 	my $controller = $client->controller();
 
 	assert($controller);
-	
+
 	# Short circuit.
 	return _returnPlayMode($controller, $client) unless defined $newmode;
-	
+
 	if ($newmode eq 'stop') {
 		$controller->stop($client);
 	} elsif ($newmode eq 'play') {
@@ -85,17 +86,17 @@ sub playmode {
 	} else {
 		logBacktrace($client->id . " unknown playmode: $newmode");
 	}
-	
+
 	# bug 6971
 	# set the player power item on Jive to whatever our power setting now is
 	Slim::Control::Jive::playerPower($client);
-	
+
 	my $return = _returnPlayMode($controller, $client);
-	
+
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info($client->id() . ": Current playmode: $return\n");
 	}
-		
+
 	return $return;
 }
 
@@ -112,7 +113,7 @@ sub nextChunk {
 	my $len;
 
 	return if !$client;
-	
+
 	my $queued_chunks = $client->chunks;
 
 	# if there's a chunk in the queue, then use it.
@@ -121,9 +122,9 @@ sub nextChunk {
 		$chunk = shift @$queued_chunks;
 
 		$len = length($$chunk);
-		
+
 	} else {
-		
+
 		# Bug 14117
 		# If any client in sync-group has exceeded the high water-mark, then just sleep
 		# until the queue gets drained.
@@ -152,7 +153,7 @@ sub nextChunk {
 					next if $client == $buddy;
 					push @{$buddy->chunks}, $chunk;
 				}
-				
+
 				# And save the data for analysis, if we are synced.
 				# Only really need to do this if we have any SliMP3s or SB1s in the
 				# sync group.
@@ -164,9 +165,9 @@ sub nextChunk {
 			}
 		}
 	}
-	
+
 	$client->streamReadableCallback(undef) if defined($chunk);
-	
+
 	if (defined($chunk) && ($len > $maxChunkSize)) {
 
 		0 && $log->debug("Chunk too big, pushing the excess for later.");
@@ -179,11 +180,11 @@ sub nextChunk {
 
 		$chunk = \$returned;
 	}
-	
+
 	# Bug 14117
 	# If we just dropped back to the low-water-mark, then signal waiting clients in sync-group
 	elsif (defined($chunk) && ref($queued_chunks) eq 'ARRAY' && scalar(@$queued_chunks) == QUEUED_CHUNKS_LWM) {
-		
+
 		# This is important. We must only signal the waiting streams that they may try again so
 		# long as no client is above the HWM. It is possible that a callback is still registered
 		# for an old stream connection for a client in this sync-group. We do not want to fire that (old)
@@ -197,11 +198,11 @@ sub nextChunk {
 				return $chunk;
 			}
 		}
-		
+
 		main::DEBUGLOG && $log->is_debug && $log->debug('Wake up queued clients as have drained queue for ', $client->id);
 		_wakeupOnReadable(undef, $client->controller()->master());
 	}
-	
+
 	return $chunk;
 }
 
@@ -209,13 +210,13 @@ sub nextChunk {
 # jump to a particular time in the current song
 #  should be dead-on for CBR, approximate for VBR
 #  third argument determines whether we should range check i.e. whether
-#  we should jump to the next or previous song if the newtime is 
+#  we should jump to the next or previous song if the newtime is
 #  beyond the range of the current one.
 #
 sub gototime {
 	my $client  = shift;
 	my $newtime = shift;
-	
+
 	$client->controller()->jumpToTime($newtime);
 }
 
@@ -232,7 +233,7 @@ sub playingSongIndex {
 }
 
 sub playingSong {
-	return $_[0]->controller()->playingSong(); 	 
+	return $_[0]->controller()->playingSong();
 }
 
 sub playingSongDuration {
@@ -278,10 +279,10 @@ sub _readNextChunk {
 	my $client = shift;
 	my $givenChunkSize = shift;
 	my $callback = shift;
-	
+
 	if (!defined($givenChunkSize)) {
 		$givenChunkSize = $prefs->get('udpChunkSize') * 10;
-	} 
+	}
 
 	my $chunksize = $givenChunkSize;
 
@@ -290,7 +291,7 @@ sub _readNextChunk {
 	my $endofsong = undef;
 
 	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
-	
+
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...
 		foreach my $buddy ($client->syncGroupActiveMembers()) {
@@ -301,46 +302,46 @@ sub _readNextChunk {
 				$silence = $asilence;
 			}
 		}
-		
+
 		0 && $log->debug("We need to send $silence seconds of silence...");
-		
+
 		while ($silence > 0) {
 			$chunk .=  ${Slim::Web::HTTP::getStaticContent("html/lbrsilence.mp3")};
 			$silence -= (1152 / 44100);
 		}
-		
+
 		my $len = length($chunk);
-		
+
 		main::DEBUGLOG && $log->debug("Sending $len bytes of silence.");
-		
+
 		$client->streamBytes($len);
-		
+
 		return \$chunk if ($len);
 	}
 
 	my $fd = $client->controller()->songStreamController() ? $client->controller()->songStreamController()->streamHandler() : undef;
-	
+
 	if ($fd) {
 
 		if ($chunksize > 0) {
 
 			my $readlen = $fd->sysread($chunk, $chunksize);
 
-			if (!defined($readlen)) { 
+			if (!defined($readlen)) {
 				if ($! == EWOULDBLOCK) {
 					# $log->debug("Would have blocked, will try again later.");
 					if ($callback) {
 						# This is a hack but I hesitate to use isa(Pileline) or similar.
 						# Suggestions for better, efficient implementation welcome
-						# Be careful that if the socket is not active anymore, using EWOULDBLOCK is a bad idea. The 
+						# Be careful that if the socket is not active anymore, using EWOULDBLOCK is a bad idea. The
 						# ProtocolHandler's $self might be simply a proxy for what is being really done (e.g. when using
 						# Persistent HTTP and the connection has failed at least once). The Buffered HTTP can handle this
 						# addRead because it will re-place itself in the select() loop, but it's not very elegant.
-						# The advice for future readers is to NOT use EWOULDBLOCK in your ProtocolHandler's sysread() 
+						# The advice for future readers is to NOT use EWOULDBLOCK in your ProtocolHandler's sysread()
 						# use EINTR instead which is a bit slower but totally safe.
 						Slim::Networking::Select::addRead(${*$fd}{'pipeline_reader'} || $fd, sub {_wakeupOnReadable(shift, $client);}, 1);
 					}
-					return undef;	
+					return undef;
 				} elsif ($! == EINTR) {
 					main::DEBUGLOG && $log->debug("Got EINTR, will try again later.");
 					return undef;
@@ -349,10 +350,10 @@ sub _readNextChunk {
 					return undef;
 				} else {
 					main::DEBUGLOG && $log->debug("readlen undef: ($!) " . ($! + 0));
-					$endofsong = 1; 
-				}	
-			} elsif ($readlen == 0) { 
-				main::DEBUGLOG && $log->debug("Read to end of file or pipe");  
+					$endofsong = 1;
+				}
+			} elsif ($readlen == 0) {
+				main::DEBUGLOG && $log->debug("Read to end of file or pipe");
 				$endofsong = 1;
 			} else {
 				# too verbose
@@ -392,9 +393,9 @@ bail:
 			$client->controller()->playerStreamingFailed($client);
 			return;
 		}
-		
+
 		$client->controller()->localEndOfStream();
-		
+
 		return undef;
 	}
 
@@ -410,11 +411,11 @@ bail:
 
 sub _wakeupOnReadable {
 	my ($fd, $master) = @_;
-	
+
 	main::DEBUGLOG && $log->debug($master->id);
-	
+
 	Slim::Networking::Select::removeRead($fd) if defined $fd;
-	
+
 	foreach ($master->syncGroupActiveMembers()) {
 		if (my $cb = $_->streamReadableCallback) {
 			$_->streamReadableCallback(undef);

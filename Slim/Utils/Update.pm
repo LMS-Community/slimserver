@@ -28,9 +28,6 @@ my $versionFile;
 sub checkVersion {
 	my $cb = shift;
 
-	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
-
 	Slim::Utils::Timers::killTimers(0, \&checkVersion);
 
 	# don't check for updates when running from the source
@@ -122,7 +119,7 @@ sub checkVersionCB {
 
 		$version ||= 0;
 
-		main::DEBUGLOG && $log->debug($version || 'No new Logitech Media Server version available');
+		main::DEBUGLOG && $log->debug($version || 'No new Lyrion Music Server version available');
 
 		# reset the update flag
 		setUpdateInstaller();
@@ -130,12 +127,12 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 
-			main::INFOLOG && $log->info('Triggering automatic Logitech Media Server update download...');
+			main::INFOLOG && $log->info('Triggering automatic Lyrion Music Server update download...');
 			getUpdate($version);
 		}
 
 		# if we got an update with download URL, display it in the web UI et al.
-		elsif ($version && $version =~ /a href="downloads.slimdevices/i) {
+		elsif ($version && $version =~ /a href=.*\bdownloads\./i) {
 			$::newVersion = $version;
 		}
 	}
@@ -232,12 +229,12 @@ sub downloadAsyncDone {
 
 	# make sure we got the file
 	if (!-e $tmpFile) {
-		$log->warn("Logitech Media Server installer download failed: file '$tmpFile' not stored on disk?!?");
+		$log->warn("Lyrion Music Server installer download failed: file '$tmpFile' not stored on disk?!?");
 		return;
 	}
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->warn( sprintf("Logitech Media Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("Lyrion Music Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}
@@ -317,7 +314,7 @@ sub getUpdateInstaller {
 
 		chomp;
 
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
+		if (/LyrionMusicServer.*/) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -344,7 +341,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext$/i);
 }
 
 1;

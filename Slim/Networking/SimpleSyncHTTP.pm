@@ -1,11 +1,12 @@
 package Slim::Networking::SimpleSyncHTTP;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# this class provides blocking http requests from Logitech Media Server.
+# this class provides blocking http requests from Lyrion Music Server.
 
 # DO NOT USE this class in the server. It's supposed to be used in the scanner only.
 

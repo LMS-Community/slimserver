@@ -4,9 +4,10 @@
 package Slim::Utils::Text;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -147,14 +148,14 @@ sub ignoreCaseArticles {
 	if (scalar keys %caseArticlesCache > 256) {
 		%caseArticlesCache = ();
 	}
-	
+
 	my $key = $s . ($transliterate ? '1' : '0') . $ignoreArticles;
 
 	if (!$caseArticlesCache{$key}) {
 
 		use locale;
-		
-		my $value = uc($s); 
+
+		my $value = uc($s);
 		$value = ignoreArticles($value) unless $ignoreArticles;
 		$value = ignorePunct($value);
 
@@ -166,7 +167,7 @@ sub ignoreCaseArticles {
 		$value =~ s/ +$//o;
 
 		$caseArticlesCache{$s . '0' . $ignoreArticles} = $value;
-		
+
 		if ($transliterate) {
 			# Bug 16956, Transliterate Unicode characters
 			$value = Slim::Utils::Unicode::utf8toLatin1Transliterate($value);

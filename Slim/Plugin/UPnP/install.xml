@@ -6,12 +6,12 @@
 	<version>1.0</version>
 	<description>PLUGIN_UPNP_MODULE_NAME_DESC</description>
 	<creator>Andy Grundman</creator>
-	<email>andy@slimdevices.com</email>
+	<email>andy@hybridized.com</email>
 	<defaultState>disabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>https://www.lyrion.org/</homepageURL>
 	<type>2</type>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.6</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

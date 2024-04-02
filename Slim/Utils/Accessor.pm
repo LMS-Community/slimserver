@@ -1,9 +1,10 @@
 package Slim::Utils::Accessor;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -14,7 +15,7 @@ Slim::Utils::Accessor
 
 L<Slim::Utils::Accessor>
 
- Simple accessors for Logitech Media Server objects based on Class::Accessor::Faster by Marty Pauley
+ Simple accessors for Lyrion Music Server objects based on Class::Accessor::Faster by Marty Pauley
  In addition to simple scalar accessors provides methods to arrays and hashes by index/key as used by Client and Display objects
 
 =cut
@@ -32,18 +33,18 @@ BEGIN {
 
 	sub hasXS {
 		return $hasXS if defined $hasXS;
-	
+
 		$hasXS = 0;
 		eval {
 			require Class::XSAccessor::Array;
 			die if $Class::XSAccessor::Array::VERSION lt '1.05';
 			$hasXS = 1;
 		};
-		
+
 		if ( $@ ) {
 			warn "NOTE: Class::XSAccessor 1.05+ not found, install it for better performance\n";
 		}
-	
+
 		return $hasXS;
 	}
 }
@@ -95,7 +96,7 @@ sub mk_accessor {
 		my $n = $class->_slot($field);
 
 		if ($type eq 'rw') {
-			
+
 			if ( hasXS() ) {
 				Class::XSAccessor::Array->import(
 					class     => $class,
@@ -110,7 +111,7 @@ sub mk_accessor {
 			}
 
 		} elsif ($type eq 'ro') {
-			
+
 			if ( hasXS() ) {
 				Class::XSAccessor::Array->import(
 					class   => $class,
@@ -158,7 +159,7 @@ sub mk_accessor {
 			};
 
 		} elsif ($type eq 'rw_bt') {
-			
+
 			$accessor = sub {
 				return $_[0]->[$n]                    if @_ == 1;
 				if (@_ == 2) {
@@ -199,7 +200,7 @@ sub init_accessor {
 sub _slot {
 	my $class = shift;
 	my $field = shift;
-	
+
 	my $baseclass = $class->_baseClass;
 
 	my $n = $slot{$baseclass}->{$field};
@@ -235,7 +236,7 @@ sub _baseClass {
 	if ($out[-1] eq __PACKAGE__) {
 		return $out[-2];
 	}
-	
+
 	# more complex inheritance - admit defeat!
 	# if we get here you would be better using Class::Accessor::Fast
 	warn("Potential clash in accessor allocation in Slim::Utils::Accessor for $class");

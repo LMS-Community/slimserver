@@ -127,11 +127,11 @@
 
 		<div id="changelogWrapper" style="display:none; margin-top: 15px;" class="helpsection">
 			<!-- TODO: make this URL dynamic -->
-			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/Logitech/slimserver/commits/public/" _ serverVersion) %]</h4>
+			<h4>[% "UPDATES_LATEST_CHANGES" | string("https://github.com/LMS-Community/slimserver/commits/public/" _ serverVersion) %]</h4>
 			<dl id="changelog"></dl>
 		</div>
 
-		<dt><a href="https://github.com/Logitech/slimserver/commits/public/[% serverVersion %]" target="_blank">[% "MORE" | string %]</a></dt>
+		<dt><a href="https://github.com/LMS-Community/slimserver/commits/public/[% serverVersion %]" target="_blank">[% "MORE" | string %]</a></dt>
 	[% ELSE %]
 		<h4>[% "CONTROLPANEL_NO_UPDATE_AVAILABLE" | string | html %]</h4>
 	[% END %]

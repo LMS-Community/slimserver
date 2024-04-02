@@ -1,6 +1,7 @@
 package Slim::Plugin::MusicMagic::PlayerSettings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -38,7 +39,7 @@ sub init {
 		'play' => sub {
 			my $client = shift;
 			my @oldlines = $client->curLines();
-			
+
 			Slim::Buttons::Common::popMode($client);
 			Slim::Plugin::MusicMagic::Plugin::mixerFunction($client,1);
 		},
@@ -57,7 +58,7 @@ sub init {
 			'overlayRef'      => sub { return (undef,shift->symbols('rightarrow')) },
 			'overlayRefArgs'  => 'C',
 		},
-		
+
 		'MMMsettings/mix_size' => {
 			'useMode'        => 'INPUT.Bar',
 			'header'         => 'SETUP_MIX_SIZE',
@@ -148,7 +149,7 @@ sub init {
 			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
-		
+
 		'MMMsettings/reject_type' => {
 			'useMode'        => 'INPUT.List',
 			'header'         => 'SETUP_REJECT_TYPE',
@@ -165,7 +166,7 @@ sub init {
 			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
-		
+
 		'MMMsettings/reject_size' => {
 			'useMode'        => 'INPUT.Bar',
 			'header'         => 'SETUP_REJECT_SIZE',
@@ -199,24 +200,24 @@ sub settingsOverlay {
 sub setPref {
 	my $client = shift;
 	my $value = shift;
-	
+
 	my $pref = $client->modeParam('pref');
-	
+
 	my $newvalue = $prefs->client($client)->get($pref) + $value;
-	
+
 	$prefs->client($client)->set($pref, $newvalue);
 }
 
 sub executeCommand {
 	my $client = shift;
 	my $value = shift;
-	
+
 	my $command = $client->modeParam('command');
 	my $subcmd  = $client->modeParam('subcommand');
-	
+
 	$client->execute([$command, $subcmd, $value]);
 }
-	
+
 sub settingsExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
@@ -244,7 +245,7 @@ sub settingsExitHandler {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-				
+
 					# grab client pref, or fall back to server pref if not defined
 					$value = $prefs->client($client)->get($nextParams{'initialValue'}) || $prefs->get($nextParams{'initialValue'});
 				}
@@ -254,13 +255,13 @@ sub settingsExitHandler {
 
 			if ($nextmenu eq 'MMMsettings/mix_filter') {
 				my $filters = Slim::Plugin::MusicMagic::Common->getFilterList();
-				
+
 				$nextParams{'listRef'} = [keys %{$filters}];
 				$nextParams{'externRef'} = $filters;
 				$nextParams{'listIndex'} = $prefs->client($client)->get('mix_filter');
-				
+
 			}
-			
+
 			Slim::Buttons::Common::pushModeLeft(
 				$client
 				,$nextParams{'useMode'}
@@ -292,11 +293,11 @@ sub setMode {
 	my %params              = %{$menuParams{'MMMsettings'}};
 	$params{'valueRef'}     = \$current{$client};
 	$params{'parentParams'} = $client->modeParam('parentParams');
-	
+
 	my @settingsChoices     = @defaultSettingsChoices;
-	
+
 	$params{'listRef'}      = \@settingsChoices;
-	
+
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
 

@@ -1,6 +1,7 @@
 package Slim::Plugin::PreventStandby::OSX;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -34,9 +35,9 @@ sub new {
 		$log->warn("Didn't find pmset tool - standby can't be prevented!");
 		return;
 	}
-	
+
 	main::DEBUGLOG && $log->debug("Going to use '$command' to prevent standby");
-	
+
 	return $class;
 }
 
@@ -57,13 +58,13 @@ sub setBusy {
 		Slim::Utils::Timers::killTimers( undef, \&_setShortIdleTime );
 		if ($idletime && $idletime > 2) {
 			Slim::Utils::Timers::setTimer(
-				undef, 
-				time + 60, 
+				undef,
+				time + 60,
 				\&_setShortIdleTime
 			);
 		}
 	}
-	
+
 	if (!$process || !$process->alive) {
 		main::DEBUGLOG && $log->debug("Injecting some caffeine to keep system alive: '$command'");
 		$process = Proc::Background->new($command);

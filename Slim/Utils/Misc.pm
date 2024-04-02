@@ -1,7 +1,8 @@
 package Slim::Utils::Misc;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -23,7 +24,7 @@ assert, bt, msg, msgf, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
- functions useful throughout Logitech Media Server and third party plugins.
+ functions useful throughout Lyrion Music Server and third party plugins.
 
 =cut
 
@@ -1222,7 +1223,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		'SqueezeCenter, Squeezebox Server, Logitech Media Server',
+		'SqueezeCenter, Squeezebox Server, Lyrion Music Server',
 	);
 
 	return $userAgentString;

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library for Logitech Media Server
+ * Ext JS Library for Lyrion Music Server
  */
 /*
  * Ext JS Library 3.4.0

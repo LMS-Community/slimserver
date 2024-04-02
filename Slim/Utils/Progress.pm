@@ -1,7 +1,8 @@
 package Slim::Utils::Progress;
 
 #
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -24,10 +25,10 @@ __PACKAGE__->mk_accessor( rw => qw(
 	eta
 	done
 	rate
-	
+
 	dbup
 	dball
-	
+
 	_dbid
 	_total
 ) );
@@ -86,11 +87,11 @@ Set to display a progress bar on STDOUT (used by scanner.pl).
 sub new {
 	my $class = shift;
 	my $args  = shift;
-	
+
 	my $now = Time::HiRes::time();
-	
+
 	my $self = $class->SUPER::new();
-	
+
 	$self->type( $args->{type} || 'NOTYPE' );
 	# Scanner progress names may include 'raw' path elements (bytes), needs decoding.
 	my $name = $args->{name} ? Slim::Utils::Unicode::utf8decode_locale($args->{name}) : 'NONAME';
@@ -104,12 +105,12 @@ sub new {
 
 	if ( Slim::Schema::hasLibrary() ) {
 		my $dbh = Slim::Schema->dbh;
-		
+
 		my $sth = $dbh->prepare_cached("SELECT id FROM progress WHERE type = ? AND name = ?");
 		$sth->execute( $self->type, $self->name );
 		my $row = $sth->fetchrow_hashref;
 		$sth->finish;
-		
+
 		if ( $row ) {
 			$self->_dbid( $row->{id} );
 		}
@@ -119,10 +120,10 @@ sub new {
 				undef,
 				$self->type, $self->name
 			);
-			
+
 			$self->_dbid( $dbh->last_insert_id(undef, undef, undef, undef) );
 		}
-		
+
 		$self->_update_db( {
 			total  => $self->total,
 			done   => 0,
@@ -130,13 +131,13 @@ sub new {
 			active => 1,
 		} );
 	}
-	
+
 	if ( main::SCANNER && $args->{bar} && $::progress ) {
 		$self->bar(1);
 		$self->barup(0);
 		$self->fh( \*STDOUT );
 		$self->term( -t $self->fh );
-		
+
 		$self->_initBar if $args->{total};
 	}
 
@@ -152,10 +153,10 @@ total number of elements.  Should be called before calling update for a progress
 
 sub total {
 	my ( $self, $total ) = @_;
-	
+
 	if ( defined $total ) {
 		$self->_total($total);
-	
+
 		$self->_update_db( { total => $total } );
 
 		if ( main::SCANNER && $self->bar ) {
@@ -164,7 +165,7 @@ sub total {
 			$self->_initBar;
 		}
 	}
-	
+
 	return $self->_total;
 }
 
@@ -176,7 +177,7 @@ Returns the total time spent.
 
 sub duration {
 	my $self = shift;
-	
+
 	return $self->finish - $self->start;
 }
 
@@ -184,7 +185,7 @@ sub duration {
 
 Call to update the progress instance. If $info is passed, this is stored in the database info column
 so infomation can be associated with current progress (set the 'every' param in the call to new if
-you want to rely on this being stored for every call to update). Unless $done is passed, the 
+you want to rely on this being stored for every call to update). Unless $done is passed, the
 progress is incremented by one from the previous call to update.
 
 =cut
@@ -202,15 +203,15 @@ sub update {
 	}
 
 	my $now = Time::HiRes::time();
-	
+
 	my $elapsed = $now - $self->start;
 	if ($elapsed <= 0) {
 		$elapsed = 0.01;
 	}
-    
+
 	if ( my $rate = $done / $elapsed ) {
 		$self->rate($rate);
-	
+
 		if ( my $total = $self->total ) {
 			# Calculate new ETA value if we know the total
 			$self->eta( int( ( $total - $done ) / $rate ) );
@@ -219,26 +220,26 @@ sub update {
 
 	if ( $self->dball || $now > $self->dbup + UPDATE_DB_INTERVAL ) {
 		$self->dbup($now);
-	
+
 		# Scanner progress updates may include 'raw' path elements (bytes) in 'info', needs decoding.
 		$self->_update_db( {
 			done => $done,
 			info => $info ? Slim::Utils::Unicode::utf8decode_locale($info) : '',
 		} );
-	
+
 		# Write progress JSON if applicable
 		my $os = Slim::Utils::OSDetect->getOS();
 		if ( my $json = $os->progressJSON() ) {
 			$self->_write_json($json);
 		}
-	
+
 		# If we're the scanner process, notify the server of our progress
 		if ( main::SCANNER ) {
 			my $start = $self->start;
 			my $type  = $self->type;
 			my $name  = $self->name;
 			my $total = $self->total;
-		
+
 			my $sqlHelperClass = $os->sqlHelperClass();
 			$sqlHelperClass->updateProgress( "progress:${start}||${type}||${name}||${done}||${total}||" );
 		}
@@ -258,36 +259,36 @@ Call to signal this progress instance is complete.  This updates the database an
 
 sub final {
 	my $self = shift;
-	
+
 	my $done   = shift || $self->total;
 	my $finish = Time::HiRes::time();
-	
+
 	$self->done($done);
 	$self->finish($finish);
-	
+
 	$self->_update_db( {
 		done   => $done,
 		finish => int($finish),
 		active => 0,
 		info   => undef,
 	} );
-	
+
 	# Write progress JSON if applicable
 	my $os = Slim::Utils::OSDetect->getOS();
 	if ( my $json = $os->progressJSON() ) {
 		$self->_write_json($json);
 	}
-	
+
 	# If we're the scanner process, notify the server of our progress
 	if ( main::SCANNER ) {
 		my $start  = int( $self->start );
 		my $type   = $self->type;
 		my $name   = $self->name;
 		$done = 1 if !defined $done;
-		
+
 		my $sqlHelperClass = $os->sqlHelperClass();
 		$sqlHelperClass->updateProgress( "progress:${start}||${type}||${name}||${done}||${done}||${finish}" );
-				
+
 		if ( $self->bar ) {
 			$self->_finalBar($done);
 		}
@@ -296,13 +297,13 @@ sub final {
 
 sub _update_db {
 	my ( $self, $args ) = @_;
-	
+
 	return unless $self->_dbid;
-	
+
 	my @cols = keys %{$args};
 	my $ph   = join( ', ', map { $_ . ' = ?' } @cols );
 	my @vals = map { $args->{$_} } @cols;
-	
+
 	my $sth = Slim::Schema->dbh->prepare_cached("UPDATE progress SET $ph WHERE id = ?");
 	$sth->execute( @vals, $self->_dbid );
 }
@@ -312,12 +313,12 @@ my $progress_step = 0;
 my $progress_json = [];
 sub _write_json {
 	my ( $self, $file ) = @_;
-	
+
 	my $name = $self->name;
 	if ($name =~ /(.*)\|(.*)/) {
 		$name = $2;
 	}
-	
+
 	my $data = {
 		start  => $self->start,
 		type   => $self->type,
@@ -328,14 +329,14 @@ sub _write_json {
 		rate   => $self->rate,
 		finish => $self->finish || undef,
 	};
-	
+
 	splice @{$progress_json}, $progress_step, 1, $data;
-	
+
 	# Append each new progress step to the array
 	if ( $data->{finish} ) {
 		$progress_step++;
 	}
-	
+
 	require File::Slurp;
 	File::Slurp::write_file( $file, to_json($progress_json) );
 }
@@ -343,18 +344,18 @@ sub _write_json {
 # Clear all progress information from previous runs
 sub clear {
 	my $class = shift;
-	
+
 	my $os = Slim::Utils::OSDetect->getOS();
-	
+
 	# Wipe progress JSON file
 	if ( my $json = $os->progressJSON() ) {
 		unlink $json if -e $json;
-		
+
 		# Reset progress JSON data
 		$progress_step = 0;
 		$progress_json = [];
 	}
-	
+
 	# Wipe database progress
 	if ( Slim::Schema::hasLibrary() ) {
 		Slim::Schema->dbh->do("DELETE FROM progress");
@@ -364,7 +365,7 @@ sub clear {
 =head2 cleanup
 
 Sometimes the external scanner doesn't finish in a controlled way. Clean up the progress data
-by flagging active steps inactive, and adding a message telling the user something went wrong (if needed); 
+by flagging active steps inactive, and adding a message telling the user something went wrong (if needed);
 
 =cut
 
@@ -372,14 +373,14 @@ sub cleanup {
 	my ($class, $type) = @_;
 
 	my $dbh = Slim::Schema->dbh;
-	
+
 	my $sth = $dbh->prepare( qq{
 	    UPDATE progress
 	    SET    active = 0, finish = ?, info = ''
 	    WHERE  type = ? AND active = 1 AND name != 'failure'
 	} );
 	my $found = $sth->execute( time(), $type );
-	
+
 	# if there was invalid data, flag the process as failed
 	if ( $found && $found > 0 ) {
 		$dbh->do(
@@ -387,20 +388,20 @@ sub cleanup {
 			undef,
 			$type, $type
 		);
-	}	
+	}
 }
 
 # The following code is adapted from Mail::SpamAssassin::Util::Progress which ships
 # with the following license:
 #
 # Copyright 2004 Apache Software Foundation
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -411,7 +412,7 @@ use constant HAS_TERM_READKEY => eval { main::SCANNER && require Term::ReadKey }
 
 sub _initBar { if ( main::SCANNER && $::progress ) {
 	my $self = shift;
-	
+
 	return unless $self->term;
 
 	my $fh = $self->fh;
@@ -485,7 +486,7 @@ sub _updateBar { if ( main::SCANNER && $::progress ) {
 
 	my $msgs_since = $done - $self->prev_done;
 	my $time_since = $now - $self->prev_time;
-	
+
 	$self->prev_time( $now );
 	$self->prev_done( $done );
 
@@ -517,7 +518,7 @@ sub _updateBar { if ( main::SCANNER && $::progress ) {
 		my $hour = int($eta/3600);
 		my $min  = int($eta/60) % 60;
 		my $sec  = int($eta % 60);
-		
+
 		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
 				$percentage, join('', @chars), $self->avg_msgs_per_sec, $hour, $min, $sec);
 	}

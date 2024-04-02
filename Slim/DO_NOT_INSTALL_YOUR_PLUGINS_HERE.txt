@@ -1,6 +1,6 @@
 Don't install anything here - it could be wiped during the next update.
 Thanks.
 
-The Slim/Plugin folder is for plugins installed with Logitech Media Server only. 
-Use the user plugin folder instead. The plugin paths are listed in the 
+The Slim/Plugin folder is for plugins installed with Lyrion Music Server only.
+Use the user plugin folder instead. The plugin paths are listed in the
 web UI in Settings/Status or on the player in Settings/Information.

@@ -1,6 +1,7 @@
 package Slim::Plugin::DateTime::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -41,7 +42,7 @@ $prefs->setChange( sub {
 	my $client = $_[2];
 	if ($client->isa("Slim::Player::Boom")) {
 		$client->setRTCTime();
-	}		
+	}
 }, 'timeFormat');
 
 sub getDisplayName {
@@ -132,8 +133,8 @@ sub screensaverDateTimelines {
 		# schedule another update to remove the alarm symbol during alarm
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time + 0.5, \&_flashAlarm);
 	}
-	
-# BUG 3964: comment out until Dean has a final word on the UI for this.	
+
+# BUG 3964: comment out until Dean has a final word on the UI for this.
 # 	if ($client->display->hasScreen2) {
 # 		if ($client->display->linesPerScreen == 1) {
 # 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateFormat'))];
@@ -177,9 +178,9 @@ sub dateTimeLines {
 			}
 		}
 	}
-	
+
 	my $display;
-	
+
 	$display = {
 		center  => [ $client->longDateF(), $client->timeF() ],
 		overlay => [ $overlay ],
@@ -200,7 +201,7 @@ sub showTimeOrAlarm {
 
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 	my $showAlarm = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400);
-	
+
 	# Display message with power on brightness or 4, whichever is higher
 	my $powerOnBrightness = preferences('server')->client($client)->get('powerOnBrightness');
 	if ( $powerOnBrightness < 4 ) {
@@ -216,8 +217,8 @@ sub showTimeOrAlarm {
 			'duration' => 3,
 			'name' => $sbName,
 		});
-		
-	# display next alarm time if alarm is within the next 24h		
+
+	# display next alarm time if alarm is within the next 24h
 	} elsif ($showAlarm) {
 
 		my $line = $client->symbols('bell');
@@ -230,7 +231,7 @@ sub showTimeOrAlarm {
 		# briefly display the next alarm
 		$client->showBriefly(
 			{
-				'center' => [ 
+				'center' => [
 					$client->string('ALARM_NEXT_ALARM'),
 					$line,
 				]
@@ -242,7 +243,7 @@ sub showTimeOrAlarm {
 
 sub _flashAlarm {
 	my $client = shift;
-	
+
 	$client->update( screensaverDateTimelines($client, { flash => 1 }) );
 }
 

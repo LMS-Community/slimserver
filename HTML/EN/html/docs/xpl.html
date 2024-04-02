@@ -1,26 +1,26 @@
-[% pagetitle = 'Logitech Media Server xPL Support' %]
+[% pagetitle = 'Lyrion Music Server xPL Support' %]
 [% techinfo = '1' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
 <h4>Introduction</h4>
-<p>The Logitech Media Server software includes native support for the xPL home automation protocol.
+<p>The Lyrion Music Server software includes native support for the xPL home automation protocol.
 xPL is an open standard, intended to permit the control and monitoring of devices throughout the home.
-The purpose of xPL is to provide an efficient, unified 
+The purpose of xPL is to provide an efficient, unified
 mechanism for devices to communicate with each other, and with an intelligent house manager.
-This approach leads to a truly integrated home, and makes it very 
+This approach leads to a truly integrated home, and makes it very
 easy to accomplish tasks which in the past would have required custom programming skills.
-There is xPL support for a growing list of hardware, including the popular X10 home automation 
+There is xPL support for a growing list of hardware, including the popular X10 home automation
 modules.
 </p>
 
 <h4>xPL Messages</h4>
-<p>xPL messages are text-based, and are sent on UDP port 3865.  Messages 
+<p>xPL messages are text-based, and are sent on UDP port 3865.  Messages
 are broadcast to all nodes on the network using the Ethernet broadcast address,
 allowing xPL-enabled applications, such as an intelligent house manager, to listen
 to all xPL messages and take appropriate action.</p>
 
-<p>The complete <a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=1&page=1" target="_blank">xPL Protocol Specification</a> 
+<p>The complete <a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=1&page=1" target="_blank">xPL Protocol Specification</a>
 can be found on the <a href="http://www.xplproject.org.uk/" target="_blank">Official xPL Project Site</a>, and
 is recommended reading for anyone who is interested in using the xPL protocol to greatest advantage.
 </p>
@@ -30,7 +30,7 @@ is recommended reading for anyone who is interested in using the xPL protocol to
 Scroll to the xPL section, and set xPL support to Enabled.<br>
 Click Change, then restart your server software.
 </p>
-<p>Once enabled, each player that is connected to the server (including software players) will generate an xPL heartbeat message, 
+<p>Once enabled, each player that is connected to the server (including software players) will generate an xPL heartbeat message,
 alerting other nodes on the network of it's presence.
 </p>
 
@@ -57,7 +57,7 @@ in a similar way to the &quot;button&quot; command in the command-line interface
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=8&page=1" target="_blank">
 osd.basic</a> messages are used to display text on a players screen.</p>
 
-<h4>Logitech Media Server Status Messages</h4>
+<h4>Lyrion Music Server Status Messages</h4>
 <p>Each player that is connected to the server will send out a heartbeat message as soon as it connects,
 and at intervals of between 5 and 30 minutes thereafter. The heartbeat message includes
 information about the player, such as the player's mode (playing, paused or stopped),
@@ -73,7 +73,7 @@ other nodes on your network, e.g. to fire macros in your home automation softwar
 Operation of this feature can be controlled either via the Web interface (Server Settings -&gt; Additional Server Settings -&gt; Network), or remotely by an xPL configuration manager.<br>
 The following values are supported:<br>
 <i>None</i> : No xPL message will be sent when a button is pressed.<br>
-<i>Buttons</i> : An xPL message will be sent when a recognised button code is 
+<i>Buttons</i> : An xPL message will be sent when a recognised button code is
 received, and the name of the button will be included.<br>
 <i>Raw</i> : All infra-red codes that the player can receive will cause an xPL message to be sent.
 The message will contain the raw hex value of the infra-red code. This allows the player to be used as a general purpose infra-red receiver.<br>

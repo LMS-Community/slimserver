@@ -1,6 +1,7 @@
 package Slim::Plugin::RemoteLibrary::UPnP::MediaServer;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,7 +32,7 @@ my $IGNORE_RE = qr{Rhapsody}i;
 
 sub init {
 	main::INFOLOG && $log->info('UPnP: Starting up');
-	
+
 	# Look for all UPnP media servers on the network
 	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->search( {
 		callback   => \&foundDevice,
@@ -41,14 +42,14 @@ sub init {
 
 sub shutdown {
 	main::INFOLOG && $log->info('UPnP: Shutting down');
-	
+
 	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->shutdown();
-	
+
 	while ( my ($udn, $device) = each %devices ) {
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info( sprintf( "UPnP: Removing device %s", $device->getfriendlyname ) );
 		}
-		
+
 		foundDevice( $device, 'remove' );
 	}
 }
@@ -59,22 +60,22 @@ sub getDevices {
 
 sub foundDevice {
 	my ( $device, $event ) = @_;
-	
+
 	# We'll get a callback for all UPnP devices, but we only look for media servers
 	if ( $device->getdevicetype =~ /MediaServer/ && $device->getmodelname !~ $IGNORE_RE ) {
 		if ( $event eq 'add' ) {
 
 			main::INFOLOG && $log->info("Adding new media server: " . HTML::Entities::decode( $device->getfriendlyname ));
-			
+
 			$devices{ $device->getudn } = $device;
-			
+
 			# If a UPnP server crashes, it won't send out a byebye message, so we need to poll
 			# periodically to see if this server is still alive
 			Slim::Utils::Timers::setTimer( $device, time() + 60, \&checkServerHealth );
 		}
 		elsif ( $event eq 'remove' ) {
 			delete $devices{ $device->getudn };
-			
+
 			Slim::Utils::Timers::killTimers( $device, \&checkServerHealth );
 		}
 	}
@@ -93,10 +94,10 @@ sub foundDevice {
 
 sub checkServerHealth {
 	my $device = shift;
-		
+
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&checkServerHealthOK,
-		\&checkServerHealthError, 
+		\&checkServerHealthError,
 		{
 			device  => $device,
 			Timeout => 5,
@@ -108,18 +109,18 @@ sub checkServerHealth {
 sub checkServerHealthOK {
 	my $http   = shift;
 	my $device = $http->params('device');
-	
+
 	# Device is still alive, so just set a new check timer
 	Slim::Utils::Timers::setTimer( $device, time() + 60, \&checkServerHealth );
 }
 
 sub checkServerHealthError {
 	my $http = shift;
-	
+
 	my $device = $http->params('device');
 	my $error  = $http->error;
-	
-	
+
+
 	if ( $log->is_warn ) {
 		$log->warn(sprintf("%s failed to respond at %s, removing. (%s)",
 			$device->getfriendlyname,
@@ -127,21 +128,21 @@ sub checkServerHealthError {
 			$error,
 		));
 	}
-	
+
 	# Remove the device from the control point
 	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint::removeDevice( $device );
-	
+
 	foundDevice( $device, 'remove' );
 }
 
 sub loadContainer {
 	my $args = shift;
-	
+
 	# Retarded servers such as Windows Media Connect require a certain order of XML elements (!)
 	tie my %args, 'Tie::LLHash', (
 		udn            => $args->{udn},
 		service        => 'urn:schemas-upnp-org:service:ContentDirectory:1',
-		
+
 		# SOAP params, they MUST be in this order
 		ObjectID       => $args->{id} || 0,
 		BrowseFlag     => $args->{method} || 'BrowseDirectChildren',
@@ -149,11 +150,11 @@ sub loadContainer {
 		StartingIndex  => $args->{start} || 0,
 		RequestedCount => $args->{limit} || 0,
 		SortCriteria   => '',
-		
+
 		callback       => \&gotContainer,
 		passthrough    => [ $args ],
 	);
-	
+
 	Slim::Plugin::RemoteLibrary::UPnP::ControlPoint->browse( \%args );
 }
 
@@ -161,21 +162,21 @@ sub gotContainer {
 	my $io   = shift;
 	my $args = shift;
 	my $udn  = $args->{udn};
-	
+
 	my @children;
-	
-	if ( $io ) {		
+
+	if ( $io ) {
 		# We use an IO::String object and parse in chunks to reduce memory usage
-		
+
 		local $/ = '</container>';
 
 		my $i;
-	
+
 		while ( my $chunk = <$io> ) {
-			
+
 			# This can be slow if we have a huge file to process, so give back some time
 			main::idleStreams() if !(++$i % 20);
-			
+
 			if ( $chunk =~ /<container(.*?)<\/container>/sg ) {
 				push @children, _parseChunk($1);
 			}
@@ -183,16 +184,16 @@ sub gotContainer {
 				# done with containers, do we also have items?
 				if ( $chunk =~ /<item/i ) {
 					$io = IO::String->new( \$chunk );
-					
+
 					local $/ = '</item>';
 					while ( my $itemChunk = <$io> ) {
-						
+
 						# This can be slow if we have a huge file to process, so give back some time
 						main::idleStreams() if !(++$i % 20);
-						
+
 						if ( $itemChunk =~ /<item(.*?)<\/item>/sg ) {
 							my $props = _parseChunk($1);
-							
+
 							# Cache artwork if any
 							if ( $props->{albumArtURI} && $props->{url} ) {
 								my $cache = Slim::Utils::Cache->new;
@@ -212,11 +213,11 @@ sub gotContainer {
 			'title' => Slim::Utils::Strings::string('PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED'),
 		};
 	}
-	
-	my $container = { 
+
+	my $container = {
 		children => \@children
 	};
-	
+
 	# If we are a metadata request, and have a blurbURI, fetch the blurb text
 	if ( $args->{method} eq 'BrowseMetadata' ) {
 		if ( my $blurbURI = $container->{children}->[0]->{blurbURI} ) {
@@ -231,7 +232,7 @@ sub gotContainer {
 			$http->get( $blurbURI );
 			return;
 		}
-	}		
+	}
 
 	my $callback    = $args->{callback};
 	my $passthrough = $args->{passthrough} || [];
@@ -240,7 +241,7 @@ sub gotContainer {
 
 sub _parseChunk {
 	my $node = shift;
-	
+
 	my ($title, $url);
 	my $props = {};
 
@@ -266,16 +267,16 @@ sub _parseChunk {
 
 	if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
 		$url = $1;
-		
+
 		# If the UPnP server is running on the same PC as the server, URL may be localhost
 		if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
 			my $realIP = Slim::Utils::IPDetect::IP();
 			$url       =~ s/$host/$realIP/;
 		}
-		
+
 		$props->{url} = $url;
 	}
-				
+
 	# grab all other namespace items
 	my %otherItems = $node =~ m{<\w+:(\w+)[^>]*?>([^<]+)</\w+:}g;
 	for my $key ( keys %otherItems ) {
@@ -287,17 +288,17 @@ sub _parseChunk {
 	if ( $url && $title ) {
 		Slim::Music::Info::setTitle($url, $title);
 	}
-	
+
 	return $props;
 }
 
 sub gotBlurb {
 	my $http = shift;
 	my $args = $http->params('args');
-	
+
 	my $container = $http->params('container');
 	my $content   = $http->content;
-	
+
 	if ( $content ) {
 		# translate newlines
 		$content =~ s/\\n/\n\n/g;

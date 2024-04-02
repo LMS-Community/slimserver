@@ -1,7 +1,8 @@
 package Slim::Formats::RemoteMetadata;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -61,30 +62,30 @@ Register a new metadata provider:
 
 sub registerProvider {
 	my ( $class, %params ) = @_;
-	
+
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerProvider called without a regular expression' );
 		return;
 	}
-	
+
 	if ( ref $params{func} ne 'CODE' ) {
 		$log->error( 'registerProider called without a code reference' );
 		return;
 	}
-	
+
 	$providers{ $params{match} } = $params{func};
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata provider for " . $params{match} . ": $name" );
 	}
-	
+
 	return 1;
 }
 
 sub getProviderFor {
 	my ( $class, $url ) = @_;
-	
+
 	return $providers{ $url };
 }
 
@@ -116,30 +117,30 @@ if you want the standard metadata functions to handle the data.
 
 sub registerParser {
 	my ( $class, %params ) = @_;
-	
+
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerParser called without a regular expression' );
 		return;
 	}
-	
+
 	if ( ref $params{func} ne 'CODE' ) {
 		$log->error( 'registerParser called without a code reference' );
 		return;
 	}
-	
+
 	$parsers{ $params{match} } = $params{func};
-	
+
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata parser for " . $params{match} . ": $name" );
 	}
-	
+
 	return 1;
 }
 
 sub getParserFor {
 	my ( $class, $url ) = @_;
-	
+
 	return $parsers{ $url };
 }
 

@@ -1,6 +1,7 @@
 package Slim::Plugin::iTunes::Common;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -19,7 +20,7 @@ package Slim::Plugin::iTunes::Common;
 #
 #	ignoredisableditunestracks
 #		-- if this is set (1), songs that are 'disabled' (unchecked)
-#		in iTunes will still be available to Logitech Media Server.  If this is
+#		in iTunes will still be available to Lyrion Music Server.  If this is
 #		unset (0) or undefined, disabled songs will be skipped.
 #
 #	itunesscaninterval
@@ -136,16 +137,16 @@ sub findLibraryFromRegistry {
 
 			$Win32::TieRegistry::Registry->Delimiter('/');
 			$Win32::TieRegistry::Registry->ArrayValues(0);
-			
+
 			if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
 					."/CurrentVersion/Explorer/Shell Folders/My Music"}) {
-				
+
 				$path = $folder . '\\iTunes\\iTunes Music Library.xml';
-					
+
 				if (! -r $path) {
 					$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
 				}
-				
+
 				main::INFOLOG && $log->info("Searching 'My Music' here: $folder for $path");
 
 				if ($path && -r $path) {
@@ -154,16 +155,16 @@ sub findLibraryFromRegistry {
 
 				}
 			}
-			
+
 			if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
 					."/CurrentVersion/Explorer/Shell Folders/Personal"}) {
 
 				$path = $folder . '\\My Music\\iTunes\\iTunes Music Library.xml';
-				
+
 				if (! -r $path) {
 					$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
 				}
-				
+
 				main::INFOLOG && $log->info("Searching 'Personal' here: $folder for $path");
 			}
 		}
@@ -182,11 +183,11 @@ sub findMusicLibraryFile {
 		if (-d $explicit_xml_path) {
 			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Music Library.xml');
 		}
-			 
+
 		if (!-r $explicit_xml_path) {
 			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Library.xml');
 		}
-		
+
 		if (-r $explicit_xml_path) {
 			return $explicit_xml_path;
 		}
@@ -237,7 +238,7 @@ sub findMusicLibraryFile {
 			);
 		}
 	}
-	
+
 	for my $dir (@searchdirs) {
 		$path = catfile(($dir), 'iTunes Music Library.xml');
 
@@ -245,7 +246,7 @@ sub findMusicLibraryFile {
 
 			$path = catfile(($dir), 'iTunes Library.xml');
 		}
-		
+
 		if ($path && -r $path) {
 
 			main::INFOLOG && $log->info("Found path via directory search at: $path");
@@ -261,18 +262,18 @@ sub findMusicLibraryFile {
 
 sub getLibraryChecksum {
 	my ( $class, $file ) = @_;
-	
+
 	$file ||= $class->findMusicLibraryFile();
-	
+
 	open my $fh, '<', $file;
 	binmode $fh;
-	
+
 	my $sha1 = Digest::SHA1->new;
 	$sha1->addfile($fh);
 	my $checksum = $sha1->hexdigest;
-	
+
 	close $fh;
-	
+
 	return $checksum;
 }
 
@@ -349,11 +350,11 @@ sub normalize_location {
 		my $base = Slim::Utils::Misc::fileURLFromPath($explicit_path);
 
 		$url = $stripped;
-		
+
 		my $itunesbase = $class->iTunesLibraryBasePath;
-		
+
 		$url =~ s/$itunesbase/$base/isg;
-		
+
 		$url =~ s/(\w)\/\/(\w)/$1\/$2/isg;
 
 	} else {
@@ -417,16 +418,15 @@ sub checkDefaults {
 		# disable iTunes unless
 		# - an iTunes XML file is found
 		# - or we're on a Mac
-		# - or we're running Windows (but not Windows Home Server)
-		if (defined $class->findMusicLibraryFile() || main::ISMAC 
-				|| (main::ISWINDOWS && !Slim::Utils::OSDetect->getOS()->get('isWHS'))) {
+		# - or we're running Windows
+		if (defined $class->findMusicLibraryFile() || main::ISMAC || main::ISWINDOWS) {
 			$prefs->set('itunes', 1);
 		}
 		else {
 			$prefs->set('itunes', 0);
 		}
 	}
-	
+
 	if (!defined $prefs->get('ignore_playlists')) {
 		$prefs->set('ignore_playlists', string('ITUNES_IGNORED_PLAYLISTS_DEFAULTS'))
 	}

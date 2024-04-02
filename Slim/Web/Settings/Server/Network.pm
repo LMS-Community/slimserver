@@ -1,7 +1,8 @@
 package Slim::Web::Settings::Server::Network;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -30,7 +31,7 @@ sub prefs {
 	if ($Slim::Player::SLIMP3::SLIMP3Connected) {
 		push @prefs, 'udpChunkSize';
 	}
-	
+
 	# only show following if we have multiple players
 	if (Slim::Player::Client::clients() > 1) {
 		push @prefs, 'syncStartDelay';

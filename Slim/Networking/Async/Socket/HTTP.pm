@@ -1,9 +1,10 @@
 package Slim::Networking::Async::Socket::HTTP;
 
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This class contains the socket we use for async HTTP communication
@@ -17,7 +18,7 @@ sub import {}
 
 use Socket qw(pack_sockaddr_in sockaddr_in);
 
-# IO::Socket::INET's connect method blocks, so we use our own connect method 
+# IO::Socket::INET's connect method blocks, so we use our own connect method
 # which is non-blocking.  Based on: http://www.perlmonks.org/?node_id=66135
 sub connect {
 	@_ == 2 || @_ == 3 or
@@ -37,7 +38,7 @@ sub connect {
 	# which usually handles timeouts, blocking
 	# and error handling.
 	connect($sock, $addr);
-	
+
 	# Workaround for an issue in Net::HTTP::Methods where peerport is not yet
 	# available during an async connection
 	${*$sock}{'AsyncPeerPort'} = (sockaddr_in($addr))[0];
@@ -46,7 +47,7 @@ sub connect {
 	return 1;
 }
 
-# Net::HTTP::Methods doesn't get the right peerport since we are making an 
+# Net::HTTP::Methods doesn't get the right peerport since we are making an
 # async connection, so we store it ourselves
 sub peerport {
 	my $self = shift;
@@ -71,7 +72,7 @@ sub sysread {
 		if ( ${*$self}{'httpnb_save'} =~ /^(HTTP|ICY)/ ) {
 			my $icy = ${*$self}{'httpnb_save'} =~ s/^ICY/HTTP\/1.0/;
 			${*$self}{'parsed_status_line'} = 1;
-			
+
 			if ( $icy ) {
 				$n += 5;
 				$_[1] =~ s/^ICY/HTTP\/1.0/;

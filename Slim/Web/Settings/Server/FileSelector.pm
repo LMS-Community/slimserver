@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Server::FileSelector;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -39,7 +40,7 @@ sub handler {
 		$currDir = undef if ($currDir =~ /^\\+$/);
 	}
 
-	# a correct folder	
+	# a correct folder
 	if (-d $currDir) {
 		main::DEBUGLOG && $log->debug('regular folder: ' . $currDir);
 		@subdirs = _mapDirectories($currDir);
@@ -82,13 +83,13 @@ sub handler {
 
 	$paramRef->{'folders'} = \@subdirs;
 
-	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);	
+	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }
 
 sub _mapDirectories {
 	my $currDir = shift;
 	$currDir = Slim::Utils::Unicode::encode_locale($currDir);
-	return map { catdir($currDir, $_) } readDirectory($currDir, qr/./); 
+	return map { catdir($currDir, $_) } readDirectory($currDir, qr/./);
 }
 
 1;

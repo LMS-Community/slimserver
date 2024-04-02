@@ -7,7 +7,7 @@
   <h4>Overview</h4>
   <EM>WARNING: This documentation is substantially out of date.</EM>
   <p>
-    The web interface to the Logitech Media Server makes use of customizable html
+    The web interface to the Lyrion Music Server makes use of customizable html
     templates collected together into a skin.  These skins reside in the
     <strong>html</strong> subfolder of the folder where the server software was
     installed.  The skin subfolders are presented for selection in the
@@ -27,7 +27,7 @@
   <hr />
   <h4>Directory Structure</h4>
 
-<em>Logitech Media Server</em>
+<em>Lyrion Music Server</em>
 <ul>
   <li>html</li>
   <ul>
@@ -57,9 +57,9 @@
     <a href="#template-depend">Template Dependencies</a> section of this document.
   </p>
   <p>
-    Logitech Media Server uses the freely available
-    <a href="http://www.template-toolkit.org/">Template Toolkit</a> version 2.13
-    for its templates.  <a href="http://www.template-toolkit.org/docs/plain/index.html">
+    Lyrion Music Server uses the freely available
+    <a href="https://www.tt2.org/">Template Toolkit</a> version 2.13
+    for its templates.  <a href="https://www.tt2.org/docs/plain/index.html">
     Full documentation</a> is available at the linked web site.  Some of the simpler
     directives are detailed in the <a href="#template-direct">Template
     Directives</a> section.
@@ -492,7 +492,7 @@
   <p>
     There are three types of variable available. The first are Template Toolkit
     provided, the second are provided to all pages by the server, and the third are
-    provided to specific pages by Logitech Media Server.
+    provided to specific pages by Lyrion Music Server.
   </p>
   <h5>Template Toolkit variables</h5>
   <dl>
@@ -558,7 +558,7 @@
     <dd>
       Portion of the path used to determine the virtual root. This includes the skin
       name when a skin other than the &quot;skin&quot; server preference is requested.
-      Logitech Media Server also allows a pseudo-root of /slimserver/ to be used, which also ends
+      Lyrion Music Server also allows a pseudo-root of /slimserver/ to be used, which also ends
       up in <var>webroot</var>. When creating absolute URLs <var>webroot</var> should be
       used as the root rather than simply using &quot;/&quot;.
     </dd>

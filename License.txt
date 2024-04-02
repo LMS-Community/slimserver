@@ -4,40 +4,40 @@
 Please be aware that not all software distributed by Slim Devices
 is licensed under the GPL. If you wish to redistribute any of our
 software, please be sure to first read the GPL, and then make sure
-that you are only distributing materials which we've explicity 
+that you are only distributing materials which we've explicity
 licensed for such use. Feel free to contact us if you have any
 questions, or would like permission to distribute our other non-GPL
 programs. Also, be aware that standard copyright rules apply in any
-case where no particular license is given. 
+case where no particular license is given.
 
 Each of the software products we ship are licensed as follows:
 
-- All of Logitech Media Server's perl code is licensed for redistribution 
-or inclusion in other software per version 2 of the GPL license, 
-included below for your convenience. 
+- All of Lyrion Music Server's perl code is licensed for redistribution
+or inclusion in other software per version 2 of the GPL license,
+included below for your convenience.
 
 - SoftSqueeze is (c) Richard Titmuss and is licensed under GPL.
 
 - The CODE2000 TrueType Font is (c) James Kass and is Shareware.
   See Graphics/CODE2000.HTM for more information.
 
-- Certain integral components of Slim Server, such as CPAN modules, 
-are (c) of their respective authors, and are included in Logitech Media Server
+- Certain integral components of Lyrion Music Server, such as CPAN modules,
+are (c) of their respective authors, and are included in Lyrion Music Server
 per their respective licenses.
 
-- Certain ancillary programs included in the Logitech Media Server distribution 
+- Certain ancillary programs included in the Lyrion Music Server distribution
 on our web site are licensed to us only for direct distribution to
-end-users. These include the Windows installer and Activestate 
-binaries. 
+end-users. These include the Windows installer and Activestate
+binaries.
 
-- Squeezebox firmare may not be redistributed under any 
+- Squeezebox firmare may not be redistributed under any
 circumstances. It is (c) Slim Devices, and additonally contains
 code which is (c) Ubicom. Ubicom's code is licenced to us only
 for direct distribution in binary form. You may use the firmware
 only on hardware manufactured by Slim Devices.
 
 - SLIMP3 firmware is (c) Slim Devices, and source is available
-under the Slim Devices Public Source Licence, for certain educational 
+under the Slim Devices Public Source Licence, for certain educational
 and hobbyist uses. Please read the license carefully.
 
 - Slim Devices logos, graphics, animations, and documentation are
@@ -50,8 +50,8 @@ reasonable purpose.
    - Kiss FFT, Copyright (c) 2003-2004, Mark Borgerding, licensed under
      a modified BSD license (reproduced below).
    - 16:16 fixed math routines, Copyright (c) 2001 Beartronics, licensed
-     under the "Artistic License" 
-     (http://www.opensource.org/licenses/artistic-license.html). Copies of 
+     under the "Artistic License"
+     (http://www.opensource.org/licenses/artistic-license.html). Copies of
      modified source files can be found at
      http://www.slimdevices.com/opensource/fixed_math.tar.gz.
 
@@ -364,6 +364,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #------------------------------------------------------------------
 
-The Code2000 font is copyright James Kass, distributed by permission of the author.  
+The Code2000 font is copyright James Kass, distributed by permission of the author.
 
 Details about Code2000 may be found in Graphics/CODE2000.HTM

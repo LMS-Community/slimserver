@@ -10,7 +10,7 @@
 <h2 id="Introduction">Introduction</h2>
 
 <p>
-	the Logitech Media Server provides a command-line interface to the
+	the Lyrion Music Server provides a command-line interface to the
 	players via TCP/IP.  After starting
 	the server, commands and queries may be sent by connecting to a
 	specific TCP/IP port.  The server
@@ -24,7 +24,7 @@
 	The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
 	hexadecimal 0x0A). The server accepts LF, CR or 0x00 (or any combination
 	thereof) as end of line, and replies with whatever was used for the command.
-	For strings, Logitech Media Server uses the UTF-8 character-set encoding.
+	For strings, Lyrion Music Server uses the UTF-8 character-set encoding.
 </p>
 <p>
 	To use the command line interface interactively, use the telnet
@@ -600,7 +600,7 @@ Response:
 		be the first command sent after the connection. Any error in the
 		user and/or password, or using any other command as the first
 		one, results in the server disconnecting.</li>
-	<li>All Logitech Media Server preferences apply to the CLI data. For examples, the
+	<li>All Lyrion Music Server preferences apply to the CLI data. For examples, the
 		preference about composers appearing in the artists list applies to
 		the data returned by the &quot;<a href="#artists">artists</a>&quot;
 		query.</li>
@@ -620,7 +620,7 @@ Response:
 		the given song, the server returns a special "no artwork" image.
 		Please refer to the <a href="artwork.html">Artwork Setup</a>
 		documentation for more details on artwork management in
-		Logitech Media Server. Use the following URL:
+		Lyrion Music Server. Use the following URL:
 		<blockquote>
 		  	<strong><code>
 		  	http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/cover.jpg
@@ -2404,6 +2404,38 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
+<p id="connect">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			connect
+			&lt;ip&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;connect&quot; command tells a Squeezebox 2 or newer player to
+	connect to a different server address.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+	</ul>
+<p>
+	If the player is currently a member of a sync-group, then all players in the sync-group
+	will be instructed to switch to the new server and re-establish the sync-group.
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request:  &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
 <p id="client forget">
 	<strong>
 		<code>
@@ -2424,6 +2456,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="disconnect">
+	<strong>
+		<code>
+			disconnect
+			&lt;playerid&gt;
+			&lt;ip&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;disconnect&quot; command tells a Squeezebox 2 or newer player
+	on another server instance to disconnect from its server and
+	connect to us. This is the opposite of &quot;<a href="#connect">connect</a>&quot;, where we
+	tell a player connected to us to connect to a different server.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+	</ul>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request:  &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
@@ -5506,7 +5569,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		album:All%20for%20You modificationTime:Thursday%2C%20March%201%2C%202007%2C%209:21:58%20PM
 		type:mp3 genre_id:2 bitrate:160kbps%20VBR artist_id:3 tracknum:12 tagversion:ID3v2.3.0
 		year:1995 samplerate:44100
-		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FLogitech Media Server%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
+		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FLyrion Music Server%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
 		&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -5997,7 +6060,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;pragma&quot; command executes the given pragma string against the
 	SQLite database engine.  If using MySQL, this command has no effect. For a list of
-	available pragmas, see <a href="http://www.sqlite.org/pragma.html">sqlite.org</a>.
+	available pragmas, see <a href="https://www.sqlite.org/pragma.html">sqlite.org</a>.
 	Warning: Do not use this function unless you know what you are doing!
 </p>
 <p>
@@ -7283,7 +7346,7 @@ in the saved playlists folder.</p>
 			version
 		</td>
 		<td>
-			Logitech Media Server version. Equivalent to
+			Lyrion Music Server version. Equivalent to
 			&quot;<a href="#version ?">version ?</a>&quot;
 		</td>
 	</tr>
@@ -8565,7 +8628,7 @@ in the saved playlists folder.</p>
 		<td>url (or playlisturl)</td>
 		<td>
 			URL of the alarm playlist. Default: the current playlist.
-			url should be a valid Logitech Media Server audio url.
+			url should be a valid Lyrion Music Server audio url.
 			The special value 0 means the current playlist.<br>
 			Example values:
 			<ul>

@@ -1,6 +1,7 @@
 package Slim::Plugin::UPnP::MediaServer::ContentDirectory;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -248,7 +249,7 @@ sub Browse {
 					id         => 0,
 					parentID   => -1,
 					type       => 'object.container',
-					title      => 'Logitech Media Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
+					title      => 'Lyrion Music Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 					searchable => 1,
 				} ];
 			}

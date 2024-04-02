@@ -1,6 +1,7 @@
 package Slim::Display::SqueezeboxG;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -82,7 +83,7 @@ my $nmodes = $#modes;
 
 sub init {
 	my $display = shift;
-	
+
 	# load fonts for this display if not already loaded and remember to load at startup in future
 	if (!$prefs->get('loadFontsSqueezeboxG')) {
 		$prefs->set('loadFontsSqueezeboxG', 1);
@@ -96,7 +97,7 @@ sub init {
 
 sub initPrefs {
 	my $display = shift;
-	
+
 	$prefs->client($display->client)->init($defaultPrefs);
 	$prefs->client($display->client)->init($defaultFontPrefs);
 
@@ -113,7 +114,7 @@ sub resetDisplay {
 	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };
 
 	$display->killAnimation();
-}	
+}
 
 sub bytesPerColumn {
 	return 2;
@@ -163,7 +164,7 @@ sub drawFrameBuf {
 
 		$client->sendFrame('grfd', \$framebuf);
 	}
-}	
+}
 
 sub modes {
 	return \@modes;
@@ -186,7 +187,7 @@ sub pushLeft {
 
 	my $startbits = $display->render($start)->{screen1}->{bitsref};
 	my $endbits = $display->render($end)->{screen1}->{bitsref};
-	
+
 	my $allbits = $$startbits . $$endbits;
 
 	$display->killAnimation();
@@ -204,9 +205,9 @@ sub pushRight {
 
 	my $startbits = $display->render($start)->{screen1}->{bitsref};
 	my $endbits = $display->render($end)->{screen1}->{bitsref};
-	
+
 	my $allbits = $$endbits . $$startbits;
-	
+
 	$display->killAnimation();
 	$display->pushUpdate([\$allbits, $display->screenBytes(), 0 - $display->screenBytes() / 8, 0, 0.025]);
 
@@ -237,7 +238,7 @@ sub bumpLeft {
 	my $startbits = $display->render($display->renderCache())->{screen1}->{bitsref};
 	$startbits =  (chr(0) x 16) . $$startbits;
 	$display->killAnimation();
-	$display->pushUpdate([\$startbits, 0, 8, 16, 0.125]);	
+	$display->pushUpdate([\$startbits, 0, 8, 16, 0.125]);
 }
 
 sub bumpRight {
@@ -246,21 +247,21 @@ sub bumpRight {
 	my $startbits = $display->render($display->renderCache())->{screen1}->{bitsref};
 	$startbits = $$startbits .  (chr(0) x 16);
 	$display->killAnimation();
-	$display->pushUpdate([\$startbits, 16, -8, 0, 0.125]);	
+	$display->pushUpdate([\$startbits, 16, -8, 0, 0.125]);
 }
 
 sub pushUpdate {
 	my $display = shift;
 	my $params = shift;
 	my ($allbits, $offset, $delta, $end, $deltatime) = @$params;
-	
+
 	$offset += $delta;
-	
+
 	my $len = length($$allbits);
 	my $screen;
 
 	$screen = substr($$allbits, $offset, $display->screenBytes());
-	
+
 	$display->drawFrameBuf(\$screen);
 	if ($offset != $end) {
 		$display->updateMode(1);
@@ -278,7 +279,7 @@ sub bumpUp {
 	$startbits = substr((chr(0) . $$startbits) & ((chr(0) . chr(255)) x ($display->screenBytes() / 2)), 0, $display->screenBytes());
 
 	$display->killAnimation();
-	
+
 	$display->drawFrameBuf(\$startbits);
 
 	$display->updateMode(1);
@@ -291,7 +292,7 @@ sub bumpDown {
 
 	my $startbits = $display->render($display->renderCache())->{screen1}->{bitsref};
 	$startbits = substr(($$startbits . chr(0)) & ((chr(0) . chr(255)) x ($display->screenBytes() / 2)), 1, $display->screenBytes());
-	
+
 	$display->killAnimation();
 
 	$display->drawFrameBuf(\$startbits);
@@ -320,10 +321,10 @@ sub killAnimation {
 	my $animate = $display->animateState();
 
 	Slim::Utils::Timers::killHighTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
-	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);
 	Slim::Utils::Timers::killHighTimers($display, \&endAnimation) if ($animate == 4);
 	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 5);
-	
+
 	$display->scrollStop() if (($display->scrollState() > 0) && !$exceptScroll);
 	$display->animateState(0);
 	$display->updateMode(0);

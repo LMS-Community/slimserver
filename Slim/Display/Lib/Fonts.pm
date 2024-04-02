@@ -1,6 +1,7 @@
 package Slim::Display::Lib::Fonts;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -151,7 +152,7 @@ $font2TTF{'full_n.2'}     = $font2TTF{'full.2'};
 
 
 # When using TTF to replace the following fonts, the string is has uc() run on it first
-my %font2uc = ( 
+my %font2uc = (
 	'standard.1'   => 1,
 	'standard_n.1' => 1,
 );
@@ -202,11 +203,11 @@ my $cp1252re = qr/(\x{0152}|\x{0153}|\x{0160}|\x{0161}|\x{0178}|\x{017D}|\x{017E
 my $initialized = 0;
 
 sub init {
-	
+
 	return if $initialized;
-	
+
 	$initialized = 1;
-	
+
 	loadFonts();
 
 	FONTDIRS:
@@ -214,7 +215,7 @@ sub init {
 
 		# Try a few different fonts..
 		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
-	
+
 			my $file = catdir($fontFolder, $fontFile);
 
 			if (-e $file) {
@@ -241,7 +242,7 @@ sub fontnames {
 
 sub fontheight {
 	my $fontname = shift;
-	
+
 	return $fontheight->{$fontname} if $fontname;
 }
 
@@ -275,11 +276,11 @@ sub loadExtent {
 		my $extentbytes = string($fontname, chr(0x1f));
 		$extent = unpack( '%32b*', $extentbytes );
 	}
-	
+
 	if ($fontname =~ /\.1/) { $extent = -$extent; }
-	
+
 	$fonts->{extents}->{$fontname} = $extent;
-	
+
 	main::DEBUGLOG && $log->debug(" extent of: $fontname is $extent");
 }
 
@@ -316,12 +317,12 @@ sub string {
 	my @ords = unpack($unpackTemplate, $string);
 
 	if (@ords && max(@ords) > 255) {
-		
+
 		if ($TTFFontFile && exists $font2TTF{$defaultFontname} && $canUseFreeType->()) {
 			$useTTFNow  = 1;
 			$FTFontSize = $font2TTF{$defaultFontname}->{'FTFontSize'};
 			$FTBaseline = $font2TTF{$defaultFontname}->{'FTBaseline'};
-			
+
 			$ft ||= Font::FreeType->new->face($TTFFontFile);
 
 			# If the string contains any Unicode characters which exist in our bitmap,
@@ -395,7 +396,7 @@ sub string {
 
 			$fontChange = 1;
 
-		} elsif ($ord == 29) { 
+		} elsif ($ord == 29) {
 
 			$interspace = '';
 			$tight = 1;
@@ -418,51 +419,51 @@ sub string {
 				if ( !$char_bits ) {
 
 					my $bits_tmp = '';
-					
+
 					$ft->set_char_size($FTFontSize, $FTFontSize, 96, 96);
 					my $glyph = $ft->glyph_from_char_code($ord) || $ft->glyph_from_char_code(9647); # square as fallback
 					my ($bmp, $left, $top) = $glyph->bitmap(FT_RENDER_MODE_MONO);
 					my $width  = length $bmp->[0];
 					my $height = scalar @{$bmp};
-					
+
 					my $top_padding = $FTBaseline - $top;
-					my $start_y = 0;					
+					my $start_y = 0;
 					if ($top_padding < 0) {
 						# Top of char is cut off
 						$start_y = abs($top_padding);
 						$top_padding = 0;
 					}
-					
+
 					if ($height + $top_padding > 32) {
 						# Bottom of char is cut off
 						$height = 32 - $top_padding;
 					}
-					
+
 					my $bottom_padding = 32 - $height - $top_padding + $start_y;
 					if ($bottom_padding < 0) {
 						$bottom_padding = 0;
 					}
-					
+
 					# Add left_bearing padding if any
 					for (my $x = 0; $x < $glyph->left_bearing; $x++) {
 						$bits_tmp .= '0' x 32;
 					}
-					
+
 					for (my $x = 0; $x < $width; $x++) {
 						$bits_tmp .= '0' x $top_padding;
-						
+
 						for (my $y = $start_y; $y < $height; $y++) {
 							$bits_tmp .= (substr $bmp->[$y], $x, 1) eq "\xFF" ? 1 : 0;
 						}
-						
+
 						$bits_tmp .= '0' x $bottom_padding;
 					}
-					
+
 					# Add right_bearing padding if any
 					for (my $x = 0; $x < $glyph->right_bearing; $x++) {
 						$bits_tmp .= '0' x 32;
 					}
-					
+
 					$char_bits = pack "B*", $bits_tmp;
 
 					$TTFCache{"$FTFontSize.$FTBaseline.$ord"} = $char_bits;
@@ -492,7 +493,7 @@ sub string {
 					if (length($char_bits) < 3 * length($interspace) ) {
 						$char_bits = $interspace . $char_bits . $interspace;
 					}
-					
+
 					my $len = length($char_bits);
 					$char_bits |= substr($defaultFont->[$ord0a] x $len, 0, $len);
 					$bits .= $char_bits;
@@ -511,7 +512,7 @@ sub string {
 			}
 		}
 	}
-		
+
 	return ($reverse, $bits);
 }
 
@@ -530,24 +531,24 @@ sub measureText {
 
 	return $measureTextCache{"$fontname-$string"} = length( string($fontname, $string) ) / ( $fontheight->{$fontname} / 8 );
 }
-	
+
 sub graphicsDirs {
 
 	# graphics files allowed in Graphics dir and root directory of plugins
 	return (
-		Slim::Utils::OSDetect::dirsFor('Graphics'), 
-		Slim::Utils::PluginManager->dirsFor('Graphics'), 
-	); 
+		Slim::Utils::OSDetect::dirsFor('Graphics'),
+		Slim::Utils::PluginManager->dirsFor('Graphics'),
+	);
 }
 
 sub fontCacheFile {
 	my $file = catdir( $prefs->get('cachedir'),
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts');
-	
+
 	# Add the os arch to the cache file name, to avoid crashes when going
 	# between 32-bit and 64-bit perl for example
 	$file .= '.' . Slim::Utils::OSDetect::details()->{osArch} . '.bin';
-	
+
 	return $file;
 }
 
@@ -572,8 +573,8 @@ sub fontfiles {
 			if ($file =~ /[\/\\](.+?)\.font\.bmp$/) {
 
 				$fonts{basename($1)} = $file;
-				
-				$mtimesum += (stat($file))[9]; 
+
+				$mtimesum += (stat($file))[9];
 
 				main::DEBUGLOG && $log->debug(" found: $file");
 
@@ -591,7 +592,7 @@ sub fontfiles {
 			main::DEBUGLOG && $log->debug(" ignoring prebuild cache - different mtime from files");
 
 			$defcache = undef;
-			
+
 		} else {
 
 			main::DEBUGLOG && $log->debug(" prebuild cache is valid");
@@ -603,17 +604,17 @@ sub fontfiles {
 
 sub loadFonts {
 	my $forceParse = shift;
-	
+
 	init() if !$initialized;
-	
+
 	my ($defcache, $mtimesum, %fontfiles) = fontfiles();
 
 	my $fontCache = fontCacheFile();
 
 	my $fontCacheVersion = 2; # version number of fontcache matching this code
-	
+
 	# use stored fontCache if newer than all font files and correct version
-	if (!$forceParse && ($defcache || -r $fontCache)) { 
+	if (!$forceParse && ($defcache || -r $fontCache)) {
 
 		# check cache for consitency
 		my $cacheOK = 1;
@@ -657,18 +658,18 @@ sub loadFonts {
 				$cacheOK = 0;
 			}
 		}
-	
+
 		if ( $cacheOK ) {
 			# If we loaded a cached SBG font, mark it already loaded
 			if ( exists $fonts->{'medium.1'} ) {
 				$prefs->set( 'loadFontsSqueezeboxG', 1 );
 			}
-			
+
 			# If we loaded a cached SB2 font, mark it already loaded
 			if ( exists $fonts->{'standard.1'} ) {
 				$prefs->set( 'loadFontsSqueezebox2', 1 );
 			}
-			
+
 			return;
 		}
 
@@ -721,15 +722,15 @@ sub parseFont {
 	use bytes;
 	my $g = shift;
 	my $fonttable;
-	
+
 	my $bottomIndex = scalar(@{$g}) - 1;
-	
+
 	my $bottomRow = $g->[$bottomIndex];
-	
+
 	my $width = @{scalar($bottomRow)};
-	
+
 	my $charIndex = -1;
-	
+
 	for (my $i = 0; $i < $width; $i++) {
 		#print "\n";
 		next if ($bottomRow->[$i]);
@@ -739,7 +740,7 @@ sub parseFont {
 		my @column = ();
 		while (!$bottomRow->[$i]) {
 			for (my $j = 0; $j < $bottomIndex; $j++) {
-				push @column, $g->[$j][$i]; 
+				push @column, $g->[$j][$i];
 				#print  $g->[$j][$i] ? '*' : ' ';
 			}
 			#print "\n";
@@ -754,7 +755,7 @@ sub parseFont {
 	}
 	#print "done fonttable\n";
 	return $fonttable;
-	
+
 }
 
 # parses a monochrome, uncompressed BMP file into an array for font data
@@ -767,8 +768,8 @@ sub parseBMP {
 	my $fontstring = read_file($fontfile);
 	my @font       = ();
 
-	my ($type, $fsize, $offset, 
-	    $biSize, $biWidth, $biHeight, $biPlanes, $biBitCount, $biCompression, $biSizeImage, $biFirstPaletteEntry ) 
+	my ($type, $fsize, $offset,
+	    $biSize, $biWidth, $biHeight, $biPlanes, $biBitCount, $biCompression, $biSizeImage, $biFirstPaletteEntry )
 		= unpack("a2 V xx xx V  V V V v v V V xxxx xxxx xxxx xxxx V", $fontstring);
 
 	if ($type ne "BM") {
@@ -800,10 +801,10 @@ sub parseBMP {
 		$log->warn("Font files must be uncompressed in $fontfile");
 		return undef;
 	}
-	
+
 	# skip over the BMP header and the color table
 	$fontstring = substr($fontstring, $offset);
-	
+
 	my $bitsPerLine = $biWidth - ($biWidth % 32);
 	$bitsPerLine += 32 if ($biWidth % 32); # round up to 32 pixels wide
 
@@ -831,7 +832,7 @@ sub parseBMP {
 		}
 
 		$font[$biHeight-$i-1] = \@line;
-	}	
+	}
 
 	return (\@font, $biHeight);
 }

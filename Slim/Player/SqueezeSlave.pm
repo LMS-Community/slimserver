@@ -1,7 +1,8 @@
 package Slim::Player::SqueezeSlave;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -60,7 +61,7 @@ sub hasIR { 1 }
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
 	my $client = shift;
-	
+
 	return qw(ogg flc pcm mp3);
 }
 
@@ -69,11 +70,11 @@ sub formats {
 # fixed point number (no sign, 1 integer, 7 fractional bits).
 # From FW 22 onwards, volume is sent as a 16.16 value (no sign, 16 integer,
 # 16 fractional bits), significantly increasing our fractional range.
-# Rather than test for the firmware level, we send both values in the 
+# Rather than test for the firmware level, we send both values in the
 # volume message.
 
-# We thought about sending a dB scale volume to the client, but decided 
-# against it. Sending a fixed point multiplier allows us to change 
+# We thought about sending a dB scale volume to the client, but decided
+# against it. Sending a fixed point multiplier allows us to change
 # the mapping of UI volume settings to gain as we want, without being
 # constrained by any scale other than that of the fixed point range allowed
 # by the client.
@@ -82,16 +83,16 @@ sub formats {
 # we only have 129 levels to work with now, and within 100 range,
 # that's pretty tight.
 # this table is optimized for 40 steps (like we have in the current player UI.
-my @volume_map = ( 
-0, 1, 1, 1, 2, 2, 2, 3,  3,  4, 
-5, 5, 6, 6, 7, 8, 9, 9, 10, 11, 
-12, 13, 14, 15, 16, 16, 17, 18, 19, 20, 
-22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 
-33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 
-46, 47, 48, 50, 51, 53, 54, 56, 57, 59, 
-60, 61, 63, 65, 66, 68, 69, 71, 72, 74, 
-75, 77, 79, 80, 82, 84, 85, 87, 89, 90, 
-92, 94, 96, 97, 99, 101, 103, 104, 106, 108, 110, 
+my @volume_map = (
+0, 1, 1, 1, 2, 2, 2, 3,  3,  4,
+5, 5, 6, 6, 7, 8, 9, 9, 10, 11,
+12, 13, 14, 15, 16, 16, 17, 18, 19, 20,
+22, 23, 24, 25, 26, 27, 28, 29, 30, 32,
+33, 34, 35, 37, 38, 39, 40, 42, 43, 44,
+46, 47, 48, 50, 51, 53, 54, 56, 57, 59,
+60, 61, 63, 65, 66, 68, 69, 71, 72, 74,
+75, 77, 79, 80, 82, 84, 85, 87, 89, 90,
+92, 94, 96, 97, 99, 101, 103, 104, 106, 108, 110,
 112, 113, 115, 117, 119, 121, 123, 125, 127, 128
  );
 
@@ -102,7 +103,7 @@ sub dBToFixed {
 	# Map a floating point dB value to a 16.16 fixed point value to
 	# send as a new style volume to SB2 (FW 22+).
 	my $floatmult = 10 ** ($db/20);
-	
+
 	# use 8 bits of accuracy for dB values greater than -30dB to avoid rounding errors
 	if ($db >= -30 && $db <= 0) {
 		return int($floatmult * (1 << 8) + 0.5) * (1 << 8);
@@ -133,7 +134,7 @@ sub volume {
 	if (defined($newvolume)) {
 		# Old style volume:
 		my $oldGain = $volume_map[int($volume)];
-		
+
 		my $newGain;
 		if ($volume == 0) {
 			$newGain = 0;
@@ -141,7 +142,7 @@ sub volume {
 		else {
 			# With new style volume, let's try -49.5dB as the lowest
 			# value.
-			my $db = ($volume - 100)/2;	
+			my $db = ($volume - 100)/2;
 			$newGain = $client->dBToFixed($db);
 		}
 
@@ -152,7 +153,7 @@ sub volume {
 }
 
 sub upgradeFirmware {
-	
+
 }
 
 sub needsUpgrade {
@@ -176,13 +177,13 @@ sub stop {
 
 sub songElapsedSeconds {
 	my $client = shift;
-	
+
 	return 0 if $client->isStopped() || defined $_[0];
 
 	my ($jiffies, $elapsedMilliseconds, $elapsedSeconds) = Slim::Networking::Slimproto::getPlayPointData($client);
 
 	return 0 unless $elapsedMilliseconds || $elapsedSeconds;
-	
+
 	# Use milliseconds for the song-elapsed-time if has not suffered truncation
 	my $songElapsed;
 	if (defined $elapsedMilliseconds) {
@@ -193,19 +194,19 @@ sub songElapsedSeconds {
 	} else {
 		$songElapsed = $elapsedSeconds;
 	}
-	
+
 	if ($client->isPlaying(1)) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
 		$songElapsed += $timeDiff if ($timeDiff > 0);
 	}
-	
+
 	return $songElapsed;
 }
 
 sub canDirectStream {
 	return undef;
 }
-	
+
 sub hasPreAmp {
 	return 1;
 }
@@ -240,7 +241,7 @@ sub pcm_sample_rates {
 
 sub statHandler {
 	my ($client, $code) = @_;
-	
+
 	if ($code eq 'STMd') {
 		$client->readyToStream(1);
 		$client->controller()->playerReadyToStream($client);
@@ -266,16 +267,16 @@ sub statHandler {
 		$client->controller()->playerOutputUnderrun($client);
 	} elsif ($code eq 'EoS') {
 		$client->controller()->playerEndOfStream($client);
-	} else {		
+	} else {
 		if ( !$client->bufferReady() && ($client->outputBufferFullness() > 40_000) && $client->isSynced(1) ) {
 			# Fake up buffer ready (0.25s audio)
-			$client->bufferReady(1);	# to stop multiple starts 
+			$client->bufferReady(1);	# to stop multiple starts
 			$client->controller()->playerBufferReady($client);
 		} else {
 			$client->controller->playerStatusHeartbeat($client);
 		}
-	}	
-	
+	}
+
 }
 
 #
@@ -283,7 +284,7 @@ sub statHandler {
 #
 sub resume {
 	my ($client, $at) = @_;
-	
+
 	if ($at) {
 		Slim::Utils::Timers::setHighTimer(
 			$client,
@@ -293,7 +294,7 @@ sub resume {
 	} else {
 		$client->stream('u');
 	}
-	
+
 	$client->SUPER::resume();
 	return 1;
 }
@@ -327,7 +328,7 @@ sub playPoint {
 
 # We need to implement this to allow us to receive SETD commands
 # and we need SETD to support custom display widths
-sub directBodyFrame { 
+sub directBodyFrame {
 	return 1;
 }
 
@@ -335,17 +336,17 @@ sub directBodyFrame {
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;
-	
+
 	my $value;
 	my $id = unpack('C', $$data_ref);
-        
+
 	# New SETD command 0xfe for display width
-	if ($id == 0xfe) { 
+	if ($id == 0xfe) {
 		$value = (unpack('CC', $$data_ref))[1];
 		if ($value > 10 && $value < 200) {
 			$client->display->widthOverride(1, $value);
 			$client->update;
-		} 
+		}
 	}
 }
 

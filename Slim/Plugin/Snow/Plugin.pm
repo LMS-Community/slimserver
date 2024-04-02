@@ -6,7 +6,8 @@ package Slim::Plugin::Snow::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -30,9 +31,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
+	Slim::Buttons::Common::addSaver('SCREENSAVER.snow',
 		getScreensaverSnowFunctions(),
-		\&setScreensaverSnowMode, 
+		\&setScreensaverSnowMode,
 		\&leaveScreensaverSnowMode,
 		getDisplayName(),
 	);
@@ -46,7 +47,7 @@ our %lastTime;
 our %flakes;
 
 # flag to avoid loading custom fonts multiple times
-my $loadedTextCustomChars = 0; 
+my $loadedTextCustomChars = 0;
 
 # button functions for browse directory
 my @snowSettingsChoices = ('PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF');
@@ -99,9 +100,9 @@ our %menuParams = (
 
 sub overlayFunc {
 	my $client = shift;
-	
+
 	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-	
+
 	my $nextmenu = 'snow/' . $client->modeParam('listRef')->[$client->modeParam('listIndex')];
 	if (exists($menuParams{$nextmenu})) {
 	} else {
@@ -118,7 +119,7 @@ sub snowExitHandler {
 		my $nextmenu = catdir('snow',$snow{$client}->{current});
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
-			
+
 			if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
@@ -172,10 +173,10 @@ sub setMode {
 	# install prefs
 	$prefs->client($client)->set('snowStyle',6)
 		unless defined $prefs->client($client)->get('snowStyle');
-		
+
 	$prefs->client($client)->set('snowStyleOff',6)
 		unless defined $prefs->client($client)->get('snowStyleOff');
-		
+
 	$prefs->client($client)->set('snowQuantity',1)
 		unless defined $prefs->client($client)->get('snowQuantity');
 
@@ -194,19 +195,19 @@ sub setMode {
 our %screensaverSnowFunctions = (
 	'done' => sub  {
 		my ($client, $funct, $functarg) = @_;
-		
+
 		Slim::Buttons::Common::popMode($client);
 		$client->update();
 		#pass along ir code to new mode if requested
-		
+
 		if (defined $functarg && $functarg eq 'passback') {
 			Slim::Hardware::IR::resendButton($client);
 		}
 	}
 	# disable this so you can change the size of text
-	#,'textsize' => sub { 
+	#,'textsize' => sub {
 	#	my $client = shift;
-	#	$snow{$client}->{wasDoubleSize} = !$snow{$client}->{wasDoubleSize}; 
+	#	$snow{$client}->{wasDoubleSize} = !$snow{$client}->{wasDoubleSize};
 	#}
 );
 
@@ -220,7 +221,7 @@ sub setScreensaverSnowMode {
 	$client->lines(\&screensaverSnowlines);
 	#take over 2nd screen on transporter
 	$client->modeParam('screen2', 'Snow');
-	
+
 	#$snow{$client}->{wasDoubleSize} = $client->textSize;
 	#$client->textSize(0);
 
@@ -237,12 +238,12 @@ sub setScreensaverSnowMode {
 	if ($client->isa( "Slim::Player::Squeezebox2")) {
 
 		$snow{$client}->{clientType} = 'SB2';
-	
+
 	} elsif  ($client->display->isa( "Slim::Display::SqueezeboxG" )) {
 		$snow{$client}->{clientType} = 'SBG';
-	
+
 	} else {
-		$snow{$client}->{clientType} = 'SB1';		
+		$snow{$client}->{clientType} = 'SB1';
 		if ($client->display->isa( "Slim::Display::Text") && !$loadedTextCustomChars) {
 			loadTextCustomChars();
 			$loadedTextCustomChars = 1;
@@ -273,10 +274,10 @@ sub screensaverSnowlines {
 		# automatic
 		if (Slim::Player::Source::playmode($client) eq "pause") {
 			$style = 4; # Just snow when paused
-		
+
 		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 			$style = 4; # Just snow when stopped
-		
+
 		} else {
 			$style = 1; # Now Playing when playing
 		}
@@ -292,12 +293,12 @@ sub screensaverSnowlines {
 		$lines = $client->currentSongLines();
 		#$lines = $client->nowPlayingModeLines();
 		$onlyInSpaces = ($style == 1);
-	
+
 	} elsif($style == 3) {
 		# Date/Time
 		$lines = Slim::Buttons::Common::dateTime($client);
 		$onlyInSpaces = 1;
-	
+
 	} else {
 		# Just snow
 		$simple = 1;
@@ -311,7 +312,7 @@ sub insertChar {
 	my $sym = shift;
 	my $col = shift;
 	my $len = shift;
-	return ($col > 0 ? Slim::Display::Text::subString($line, 0, $col) : '') . 
+	return ($col > 0 ? Slim::Display::Text::subString($line, 0, $col) : '') .
 		$sym .
 		($col < (40-$len) ? Slim::Display::Text::subString($line, $col+$len, 40 - $len - $col) : '');
 }
@@ -411,46 +412,46 @@ our %flakeMap = (0 => ' ',
 	33 => 'snow9',
 	34 => 'snow8',
 );
-		
+
 # SBG is 280x16, so we create a 6x16 blank and tack an empty column on in the render function
 my $blankG=
 	"\x00\x00".
 	"\x00\x00".
 	"\x00\x00";
-	
+
 my $flakeG_1=
 	"\x20\x00".
 	"\x70\x00".
 	"\x20\x00";
-	
+
 my $flakeG_2=
 	"\x08\x00".
 	"\x1c\x00".
 	"\x08\x00";
-	
+
 my $flakeG_3=
 	"\x02\x00".
 	"\x07\x00".
 	"\x02\x00";
-	
+
 my $flakeG_4=
 	"\x00\x20".
 	"\x00\x70".
 	"\x00\x20";
-	
+
 my $flakeG_5=
 	"\x00\x08".
 	"\x00\x1c".
 	"\x00\x08";
-	
+
 my $flakeG_6=
 	"\x00\x02".
 	"\x00\x07".
 	"\x00\x02";
-		
+
 our %flakeMapG = (
 	0 => $blankG,#   . $blankG,
-	
+
 	1 => $flakeG_1,
 	2 => $flakeG_2,
 	3 =>($flakeG_2 | $flakeG_1),
@@ -458,7 +459,7 @@ our %flakeMapG = (
 	5 =>($flakeG_3 | $flakeG_1),
 	6 =>($flakeG_3 | $flakeG_2),
 	7 =>($flakeG_3 | $flakeG_2 | $flakeG_1),
- 
+
 	65=> $flakeG_4,
 	66=> $flakeG_5,
 	67=>($flakeG_5 | $flakeG_4),
@@ -469,7 +470,7 @@ our %flakeMapG = (
 );
 
 #SB2 is 320x32 so we create an 4x32 blank
-our $blank2 = 
+our $blank2 =
 	"\x00\x00\x00\x00".
 	"\x00\x00\x00\x00".
 	"\x00\x00\x00\x00".
@@ -480,27 +481,27 @@ our $flake2s_1 =
 	"\x0e\x00\x00\x00".
 	"\x04\x00\x00\x00".
 	"\x00\x00\x00\x00";
-our $flake2s_2 = 
+our $flake2s_2 =
 	"\x00\x40\x00\x00".
 	"\x00\xe0\x00\x00".
 	"\x00\x40\x00\x00".
 	"\x00\x00\x00\x00";
-our $flake2s_3= 
+our $flake2s_3=
 	"\x00\x04\x00\x00".
 	"\x00\x0e\x00\x00".
 	"\x00\x04\x00\x00".
 	"\x00\x00\x00\x00";
-our $flake2s_4=  
+our $flake2s_4=
 	"\x00\x00\x04\x00".
 	"\x00\x00\x0e\x00".
 	"\x00\x00\x04\x00".
 	"\x00\x00\x00\x00";
-our $flake2s_5=  
+our $flake2s_5=
 	"\x00\x00\x00\x40".
 	"\x00\x00\x00\xe0".
 	"\x00\x00\x00\x40".
 	"\x00\x00\x00\x00";
-our $flake2s_6= 
+our $flake2s_6=
 	"\x00\x00\x00\x04".
 	"\x00\x00\x00\x0e".
 	"\x00\x00\x00\x04".
@@ -556,19 +557,19 @@ our @flakeMap2 = (
 	70=>($flake2s_6 | $flake2s_5),
 	71=>($flake2s_6 | $flake2s_5 | $flake2s_4),
 	},
-	
+
 	{
 	#medium flakes
 	0 => $blank2,
-	
+
 	1 => $flake2m_1,
-	2 => $flake2m_2,   
+	2 => $flake2m_2,
 	3 =>($flake2m_2 | $flake2m_1),
 	4 => $flake2m_3,
 	5 =>($flake2m_3 | $flake2m_1),
 	6 =>($flake2m_3 | $flake2m_2),
 	7 =>($flake2m_3 | $flake2m_2 | $flake2m_1),
-	
+
 	65=> $flake2m_4,
 	66=> $flake2m_5,
 	67=>($flake2m_5 | $flake2m_4),
@@ -643,7 +644,7 @@ our %letters_narrow = (
 	' ' => [0, [], [], [], [], [], [] ],
 	'!' => [1, [0], [], [0], [], [], [0] ],
 );
-		
+
 # paint a single flake in the torender structure
 sub paintFlake {
 	my $bigrow = shift;
@@ -652,10 +653,10 @@ sub paintFlake {
 	my $onlyIfCanRender = shift;
 	my $onlyInSpaces = shift;
 	my $lines = shift;
-	
+
 	##let the snow pile up on the bottom;
 	#$bigrow = 5 if ($bigrow > 5);
-	
+
 	my $row = int($bigrow / 3);
 	my $line = "line" . ($row+1);
 	my $col = int($bigcol / 2);
@@ -693,8 +694,8 @@ sub renderGraphicFlakes2 {
 	my $torender = shift;
 	my $lines = shift;
 	my $bits;
-	
-	my $onlyInSpaces = 0; #too tricky for for graphic displays! 
+
+	my $onlyInSpaces = 0; #too tricky for for graphic displays!
 
 	#place the flakes in $torender
 	my %flakeSize;
@@ -704,7 +705,7 @@ sub renderGraphicFlakes2 {
 	}
 
 	$lines->{bits} = '';
-	my $blank = $flakeMap2[0]{0}; 
+	my $blank = $flakeMap2[0]{0};
 	foreach my $col (0..39) {
 		my $flakeSize;
 		my $char;
@@ -745,21 +746,21 @@ sub renderGraphicFlakes {
 	my $torender = shift;
 	my $lines = shift;
 	my $bits;
-	
-	my $onlyInSpaces = 0; #too tricky for for graphic displays! 
+
+	my $onlyInSpaces = 0; #too tricky for for graphic displays!
 
 	#place the flakes in $torender
 	foreach my $flake (@{$flakes{$client}}) {
 		paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, $lines);
 	}
-	
+
 	$lines->{bits} = '';
-	my $blank = $flakeMapG{0}; 
+	my $blank = $flakeMapG{0};
 	foreach my $col (0..39) {
 		my $top = $torender->[0][$col];
 		my $bottom = $torender->[1][$col];
 		$top = 0 if ($top == -1);
-		$bottom = 0 if ($bottom == -1);	
+		$bottom = 0 if ($bottom == -1);
 		#left column
 		$bits .= $blank | $flakeMapG{$top & 7} | $flakeMapG{64|($bottom & 7)};
 		#right column
@@ -784,12 +785,12 @@ sub renderCharFlakes {
 	my $col;
 	my @oldlines = ($lines->{line1},$lines->{line2});
 	my @newlines = ('', '');
-	
+
 	#place the flakes in $torender
 	foreach my $flake (@{$flakes{$client}}) {
 		paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, $lines);
 	}
-	
+
 	foreach $row (0,1) {
 		foreach $col (0..39) {
 			my $bits = $torender->[$row][$col];
@@ -817,28 +818,28 @@ sub paintWord {
 	my $offsets = shift;
 	my $torender = shift;
 	my $lines = shift;
-	
+
 	my @text;
 	my $letter;
 	my $row;
 	my $col;
-	
+
 	my $narrow = ($client->displayWidth <= 160);
-	
-	my $letters = $narrow ? \%letters_narrow : \%letters_normal; 
-	
+
+	my $letters = $narrow ? \%letters_narrow : \%letters_normal;
+
 	my $totallen = -1;
 	map {$totallen += @{$letters->{$_}}[0] + ($narrow ? 0 : 1)} (split //, $word);
-	
+
 	my $startcol = 2 * int((($narrow ? 20 : 40) - $totallen) / 2);
-	
+
 	# Wipe out any falling snow under the letters
 	foreach $row (0..1) {
 		foreach $col (0..($totallen-1)) {
 			$torender->[$row][$startcol/2+$col] = 0;
 		}
 	}
-	
+
 	my $exiting = 0;
 	if($state > $holdTime) {
 		$state -= $holdTime;
@@ -848,19 +849,19 @@ sub paintWord {
 	my $paintedSomething = 0;
 
 	foreach $letter (split //, $word) {
-		
+
 		my $charwidth = @{$letters->{$letter}}[0];
 		foreach $row (0..5) {
-		
+
 		foreach $col (@{$letters->{$letter}[$row+1]}) {
 				my $outrow = 3 * $row - 15 + $state - $offsets->[int($col/2)];
-		
+
 				if(!$exiting) {
 					$outrow = $row if($outrow > $row); # stop at correct row
 				} else {
 					$outrow = $row if($outrow < $row); # start at correct row
 				}
-		
+
 				if($outrow >= 0 && $outrow < 6) {
 					paintFlake($outrow, $startcol + $col, $torender, 0, 0, $lines);
 					$paintedSomething = 1;
@@ -891,12 +892,12 @@ sub letItSnow {
 		#flakes on the ground don't move
 		$flake->[1] += (int(rand(3)) - 1) if ($flake->[0] < 6);
 	}
-		
+
 	# cull flakes which have left the screen
 	@{$flakes{$client}} = grep { $_->[0] < 6 && $_->[1] >= 0 && $_->[1] < 80} @{$flakes{$client}};
 	#or, use this line to let the snow pile up
 	#@{$flakes{$client}} = grep { $_->[0] < 10 && $_->[1] >= 0 && $_->[1] < 80} @{$flakes{$client}};
-		
+
 	for (0..5) {
 		if(rand(100) < (5,10,30,100)[$snow{$client}->{snowQuantity}]) {
 			push @{$flakes{$client}}, [0, int rand(80), int rand(2)];
@@ -926,38 +927,38 @@ sub letItSnow {
 			$torender->[$row][$col] = -1;
 		}
 	}
-	
+
 	# add the christmas words
 	if($showWords) {
 		if(!exists $wordState{$client}) {
-			$wordState{$client} = -1; 
+			$wordState{$client} = -1;
 			$wordIndex{$client} = 0;
 		}
-		
+
 		if($wordState{$client} == -1) {
 			# Not showing a word right now. Should we start next time?
 			$word{$client} = $client->string('PLUGIN_SCREENSAVER_SNOW_WORD_' . $wordIndex{$client});
 			$wordIndex{$client}++;
 			$wordIndex{$client} = 0 if($wordIndex{$client} == $client->string('PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS'));
 			$wordState{$client} = 0;
-			
+
 			foreach my $col (0..39) {
 				$offsets{$client}->[$col] = int(rand(24));
 			}
 		} else {
 			my $paintedSomething = paintWord($client, $word{$client}, $wordState{$client}, $offsets{$client}, $torender, $lines);
 			$wordState{$client} ++;#if($animate);
-			
+
 			if($wordState{$client} > $holdTime && !$paintedSomething) {
 				# finished with this word. Resume normal snowing
 				$wordState{$client} = -1;
 			}
 		}
 	}
-	
+
 	#render the flakes
 	$lines = renderFlakes($client,$torender, $lines, $onlyInSpaces);
-	
+
 	return $lines;
 }
 

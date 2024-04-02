@@ -1,9 +1,10 @@
 package Slim::Utils::Timers;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -56,9 +57,9 @@ Schedule a high priority timer.  See setTimer for documentation.
 
 sub setHighTimer {
 	my $w = _makeTimer(@_);
-	
+
 	$w->priority(2);
-	
+
 	return $w;
 }
 
@@ -103,21 +104,21 @@ of timers removed.
 sub killTimers {
 	my $objRef = shift;
 	my $subptr = shift || return;
-	
+
 	if ( !defined $objRef ) {
 		$objRef = '';
 	}
-	
+
 	if ( exists $TIMERS{$subptr}->{$objRef} ) {
 		for my $timer ( @{ $TIMERS{$subptr}->{$objRef} } ) {
 			$timer->cb->(EV_KILL) if $timer;
 		}
-		
+
 		delete $TIMERS{$subptr}->{$objRef};
-		
+
 		return 1;
 	}
-	
+
 	return;
 }
 
@@ -149,19 +150,19 @@ for a specific $client, for example.
 
 sub forgetTimer {
 	my $objRef = shift;
-	
+
 	my @subs = keys %TIMERS;
-	
+
 	for my $sub ( @subs ) {
 		if ( exists $TIMERS{$sub}->{$objRef} ) {
 			for my $timer ( @{ $TIMERS{$sub}->{$objRef} } ) {
 				$timer->cb->(EV_KILL) if $timer;
 			}
-			
+
 			delete $TIMERS{$sub}->{$objRef};
 		}
 	}
-	
+
 	return;
 }
 
@@ -175,26 +176,26 @@ removed, 0 if the timer could not be found.
 
 sub killSpecific {
 	my $w = shift;
-	
+
 	my @subs = keys %TIMERS;
-	
+
 	for my $sub ( @subs ) {
 		for my $objRef ( keys %{ $TIMERS{$sub} } ) {
 			my $i = 0;
 			for my $timer ( @{ $TIMERS{$sub}->{$objRef} } ) {
 				if ( defined $timer && $timer == $w ) {
 					$timer->cb->(EV_KILL);
-					
+
 					splice @{ $TIMERS{$sub}->{$objRef} }, $i, 1;
-					
+
 					return;
 				}
-				
+
 				$i++;
 			}
 		}
 	}
-	
+
 	return;
 }
 
@@ -209,11 +210,11 @@ was run, or undef if the timer does not exist.
 sub firePendingTimer {
 	my $objRef = shift;
 	my $subptr = shift;
-	
+
 	if ( !defined $objRef ) {
 		$objRef = '';
 	}
-	
+
 	if ( my $timers = $TIMERS{$subptr}->{$objRef} ) {
 		# Run the first timer and remove it
 		for my $t ( @{$timers} ) {
@@ -223,7 +224,7 @@ sub firePendingTimer {
 			}
 		}
 	}
-	
+
 	return;
 }
 
@@ -235,20 +236,20 @@ Notify this subsystem that the system clock has been changed
 
 sub timeChanged {
 	EV::now_update;
-	
+
 	# We could possibly consider going through the list of times adjusting
 	# when they should fire but it is probably not worth it.
 }
 
 sub _makeTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
-	
+
 	if ( !defined $objRef ) {
 		$objRef = '';
 	}
-	
+
 	my $now = EV::now;
-	
+
 	# We could use AnyEvent->timer here but paying the overhead
 	# cost of proxying the method is silly
 	my $w;
@@ -261,9 +262,9 @@ sub _makeTimer {
 		}
 
 		main::PERFMON && ($now = AnyEvent->time);
-		
+
 		eval { $subptr->( $objRef, @args ) };
-		
+
 		main::PERFMON && Slim::Utils::PerfMon->check('timers', AnyEvent->time - $now, undef, $subptr);
 
 		if ( $@ ) {
@@ -271,27 +272,27 @@ sub _makeTimer {
 
 			logError("Timer $name failed: $@");
 		}
-		
+
 		# Destroy the timer after it's been run
 		undef $w;
 	} );
-	
+
 	_storeTimer( $subptr, $objRef, $w );
-	
+
 	if ( !$CLEANUP ) {
 		# start periodic cleanup timer
 		$CLEANUP = 1;
-		
+
 		setTimer( undef, $now + CLEANUP_INTERVAL, \&cleanupTimers );
 	}
-	
+
 	return $w;
 }
 
 # Periodically go through and clean out empty timers
 sub cleanupTimers {
 	my @subs = keys %TIMERS;
-	
+
 	for my $sub ( @subs ) {
 		my @objs = keys %{ $TIMERS{$sub} };
 		for my $obj ( @objs ) {
@@ -304,29 +305,29 @@ sub cleanupTimers {
 					last;
 				}
 			}
-			
+
 			if ( !scalar @{$timers} ) {
 				# No timers left for this obj, remove it
 				delete $TIMERS{$sub}->{$obj};
 			}
 		}
-		
+
 		if ( !scalar keys %{ $TIMERS{$sub} } ) {
 			# No objs left for this coderef, remove it
 			delete $TIMERS{$sub};
 		}
 	}
-	
+
 	setTimer( undef, EV::now + CLEANUP_INTERVAL, \&cleanupTimers );
 }
 
 sub _storeTimer {
 	my ( $subptr, $objRef, $w ) = @_;
-	
+
 	$TIMERS{$subptr} ||= {};
 	my $slot = $TIMERS{$subptr}->{$objRef} ||= [];
 	push @{$slot}, $w;
-	
+
 	# Ensure the timer is destroyed after it fires (by undef $w above)
 	Scalar::Util::weaken( $slot->[-1] );
 }

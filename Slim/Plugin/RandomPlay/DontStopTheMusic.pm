@@ -1,12 +1,9 @@
 package Slim::Plugin::RandomPlay::DontStopTheMusic;
 
-# Originally written by Kevin Deane-Freeman (slim-mail (A_t) deane-freeman.com).
-# New world order by Dan Sully - <dan | at | slimdevices.com>
-# Fairly substantial rewrite by Max Spicer
-
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2005-2020 Logitech.
+# Logitech Media Server Copyright 2005-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

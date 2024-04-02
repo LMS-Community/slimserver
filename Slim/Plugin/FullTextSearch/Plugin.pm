@@ -402,8 +402,8 @@ sub parseSearchTerm {
 }
 
 # Calculate the record's weight: columns are weighed according to their importance
-# http://www.sqlite.org/fts3.html#matchinfo
-# http://www.sqlite.org/fts3.html#fts4aux - get information about the index and tokens
+# https://www.sqlite.org/fts3.html#matchinfo
+# https://www.sqlite.org/fts3.html#fts4aux - get information about the index and tokens
 sub _getWeight {
 	my $v = shift;
 

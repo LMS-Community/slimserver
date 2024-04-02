@@ -1,9 +1,10 @@
 package Slim::Utils::PerlRunTime;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -109,12 +110,12 @@ Use L<Devel::Peek> find the original name of a non-anonymous $coderef.
 sub realNameForCodeRef {
 	if (main::INFOLOG) {
 		my $coderef = shift;
-		
+
 		require Devel::Peek;
-	
+
 		my $gv   = Devel::Peek::CvGV($coderef);
 		my $name = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'}) || 'ANON';
-	
+
 		return $name;
 	} else {
 		return 'method-name-unavailable';

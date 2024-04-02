@@ -1,6 +1,6 @@
 package Slim::Plugin::InfoBrowser::Plugin;
 
-# InfoBrowser - an extensible information parser for Logitech Media Server 7.0
+# InfoBrowser - an extensible information parser for Lyrion Music Server 7.0
 #
 #
 # InfoBrowser provides a framework to use Squeezebox Server's xmlbrowser to fetch remote content and convert it into a format
@@ -20,10 +20,10 @@ package Slim::Plugin::InfoBrowser::Plugin;
 #
 # In this case when the content of the remote url has been fetched it is passed to the perl function
 # Plugins::InfoBrowserAddons::Folder::File::parser to parse the content into a hash which xmlbrowser will understand.
-# This allows arbitary web pages to be parsed by adding the appropriate perl parser files.  The perl module will be dynamically loaded. 
+# This allows arbitary web pages to be parsed by adding the appropriate perl parser files.  The perl module will be dynamically loaded.
 #
 # The parser may be passed a parameter string by including it after ? in the parser specification.  The parser definition is split
-# on either side of the ? to specify the perl module to load and a string to pass as third param to its parse method. 
+# on either side of the ? to specify the perl module to load and a string to pass as third param to its parse method.
 #
 # <outline text="Menu text" URL="url to fetch" parser="Plugins::InfoBrowserAddons::Folder::File?param1=1&param2=2" />
 #
@@ -34,7 +34,7 @@ package Slim::Plugin::InfoBrowser::Plugin;
 #
 # Users may remove or reorder menu entries in the top level opml menu via settings.  They may also reset the menu which will reimport all
 # default and Addon opml files.
-# 
+#
 # Authors are encouraged to publish their addons on the following wiki page:
 #   http://wiki.slimdevices.com/index.php/InformationBrowser
 #
@@ -76,7 +76,7 @@ sub initPlugin {
 
 	$menuUrl    = $class->_menuUrl;
 	@searchDirs = $class->_searchDirs;
-	
+
 	$class->importNewMenuFiles;
 
 	$class->SUPER::initPlugin;
@@ -140,10 +140,10 @@ sub importNewMenuFiles {
 
 	my @files = ();
 	my $iter  = File::Next::files(
-		{ 
-			'file_filter' => sub { /\.opml$/ }, 
-			'descend_filter' => sub { $_ ne 'HTML' } 
-		}, 
+		{
+			'file_filter' => sub { /\.opml$/ },
+			'descend_filter' => sub { $_ ne 'HTML' }
+		},
 		$class->searchDirs
 	);
 
@@ -164,7 +164,7 @@ sub _import {
 	my $class = shift;
 	my $clear = shift;
 	my $files = shift;
-	
+
 	my $menuOpml = Slim::Plugin::Favorites::Opml->new({ 'url' => $class->menuUrl });
 
 	if ($clear) {
@@ -174,7 +174,7 @@ sub _import {
 	for my $file (sort @$files) {
 
 		main::INFOLOG && $log->info("importing $file");
-	
+
 		my $import = Slim::Plugin::Favorites::Opml->new({ 'url' => $file });
 
 		if ($import->title =~ /Default/) {
@@ -240,7 +240,7 @@ sub _searchDirs {
 	my $class = shift;
 
 	my @searchDirs;
-	
+
 	# find locations of main Plugin and Addons and add these to the path searched for opml menus
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 

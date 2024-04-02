@@ -1,6 +1,7 @@
 package Slim::Menu::YearInfo;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,12 +32,12 @@ my $log = logger('menu.yearinfo');
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'yearinfo', 'items', '_index', '_quantity' ],
 		[ 0, 1, 1, \&cliQuery ]
 	);
-	
+
 	Slim::Control::Request::addDispatch(
 		[ 'yearinfo', 'playlist', '_method' ],
 		[ 1, 1, 1, \&cliQuery ]
@@ -53,7 +54,7 @@ sub name {
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
-	
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addyear => (
@@ -89,27 +90,27 @@ sub menu {
 	# through it.
 	my $infoOrdering = $class->getInfoOrdering;
 
-	
+
 	# $remoteMeta is an empty set right now. adding to allow for parallel construction with trackinfo
 	my $remoteMeta = {};
 
 	# Function to add menu items
 	my $addItem = sub {
 		my ( $ref, $items ) = @_;
-		
+
 		if ( defined $ref->{func} ) {
-			
+
 			my $item = eval { $ref->{func}->( $client, $url, $year, $remoteMeta, $tags ) };
 			if ( $@ ) {
 				$log->error( 'Yearinfo menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
 			}
-			
+
 			return unless defined $item;
-			
+
 			# skip jive-only items for non-jive UIs
 			return if $ref->{menuMode} && !$tags->{menuMode};
-			
+
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
 					push @{$items}, @{$item};
@@ -123,35 +124,35 @@ sub menu {
 			}
 			else {
 				$log->error( 'Yearinfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
-			}				
+			}
 		}
 	};
-	
+
 	# Now run the order, which generates all the items we need
 	my $items = [];
-	
+
 	for my $ref ( @{ $infoOrdering } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
-		
+
 		# Add the item
 		$addItem->( $ref, $items );
-		
+
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
 		} @{ $infoOrdering };
-		
+
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
-			
+
 			for my $child ( @children ) {
 				$addItem->( $child, $subitems );
 			}
 		}
 	}
-	
+
 	return {
 		name  => $year,
 		type  => 'opml',
@@ -168,7 +169,7 @@ sub playYear {
 	my $jive;
 
 	return $items if !blessed($client);
-	
+
 	my $play_string   = cstring($client, 'PLAY');
 
 	my $actions = {
@@ -191,9 +192,9 @@ sub playYear {
 		type        => 'text',
 		playcontrol => 'play',
 		name        => $play_string,
-		jive        => $jive, 
+		jive        => $jive,
 	};
-	
+
 	return $items;
 }
 
@@ -201,7 +202,7 @@ sub addYearEnd {
 	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
-	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_add'); 
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_add');
 }
 
 
@@ -209,7 +210,7 @@ sub addYearNext {
 	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
-	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_insert' ); 
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_insert' );
 }
 
 
@@ -218,7 +219,7 @@ sub addYear {
 
 	my $items = [];
 	my $jive;
-	
+
 	return $items if !blessed($client);
 
 	my $actions = {
@@ -241,7 +242,7 @@ sub addYear {
 		type        => 'text',
 		playcontrol => $cmd,
 		name        => $add_string,
-		jive        => $jive, 
+		jive        => $jive,
 	};
 	return $items;
 }
@@ -249,7 +250,7 @@ sub addYear {
 sub cliQuery {
 	main::DEBUGLOG && $log->is_debug && $log->debug('cliQuery');
 	my $request = shift;
-	
+
 	# WebUI or newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
@@ -266,12 +267,12 @@ sub cliQuery {
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
 	}
-	
+
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
 	my $year           = $request->getParam('year');
 	my $menuMode       = $request->getParam('menu') || 0;
-	
+
 
 	my $tags = {
 		menuMode      => $menuMode,
@@ -281,9 +282,9 @@ sub cliQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
 	my $feed;
-	
+
 	# Default menu
 	if ( $url ) {
 		$feed = Slim::Menu::YearInfo->menu( $client, $url, undef, $tags );
@@ -291,7 +292,7 @@ sub cliQuery {
 	else {
 		$feed     = Slim::Menu::YearInfo->menu( $client, undef, $year, $tags );
 	}
-	
+
 	Slim::Control::XMLBrowser::cliQuery( 'yearinfo', $feed, $request );
 }
 

@@ -1,12 +1,13 @@
 package Slim::Utils::Light;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This module provides some functions compatible with functions
-# from the core Logitech Media Server code, without their overhead.
+# from the core Lyrion Music Server code, without their overhead.
 # These functions are called by helper applications like SqueezeTray
 # or the control panel.
 
@@ -229,7 +230,7 @@ sub checkForUpdate {
 
 		chomp;
 
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
+		if (/LyrionMusicServer.*/i) {
 			$installer = $_;
 			last;
 		}

@@ -47,9 +47,9 @@
 		<li>Allow fade-in for squeezeplay client that don't handle it locally when &lt; 1s (thanks philippe44!)</li>
 		<li><a href="https://github.com/ralph-irving/squeezelite/issues/94">#94</a> - Fix playback of small streams when using HTTPS (thanks philippe44!)</li>
 		<li>Avoid re-downloading of plugin files if they've already successfully beeen downloaded.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/227">#227</a> - Update player's playlist name when the currently playing playlist is renamed.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/350">#350</a> - Several improvements playing very short and WAV files over https (thanks phlippe_44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/400">#400</a> - Don't hard-code treble/bass settings to Boom's values, but read from client model.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/227">#227</a> - Update player's playlist name when the currently playing playlist is renamed.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/350">#350</a> - Several improvements playing very short and WAV files over https (thanks phlippe_44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/400">#400</a> - Don't hard-code treble/bass settings to Boom's values, but read from client model.</li>
 	</ul>
 	<br />
 </ul>
@@ -63,12 +63,12 @@
 	<ul>
 		<li>Keep shuffled playlist order when Don't Stop The Music kicks in.</li>
 		<li>Don't overwrite RandomPlay genre selection when using RandomPlay with Don't Stop The Music</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/133">#133</a> - Add support for Opus codec (thanks andygrundmann, paul-1, ralph-irving, Roland0!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/133">#133</a> - Add support for Opus codec (thanks andygrundmann, paul-1, ralph-irving, Roland0!)</li>
 		<li>Improved Advanced Search: you can now exclude text matches on eg. the file path.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16568">#16568</a> - Provide web UI to edit presets.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18118">#18118</a> - Start a RandomPlay mix with genres from a URL.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/249">#249</a> - Support playback restore after player power loss (thanks a lot maniac103!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/255">#255</a> - Add Socks proxy (thanks a lot philippe_44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/249">#249</a> - Support playback restore after player power loss (thanks a lot maniac103!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/255">#255</a> - Add Socks proxy (thanks a lot philippe_44!)</li>
 	</ul>
 	<br />
 
@@ -97,12 +97,12 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/270">#270</a> - Fix playing MPEG-4 files with leading mdat.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/275">#275</a> - Fix encodingin readdirectory query.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/270">#270</a> - Fix playing MPEG-4 files with leading mdat.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/275">#275</a> - Fix encodingin readdirectory query.</li>
 		<li>Fix a scanner crash (out of memory) with large collections when high memory usage was enabled.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/261">#261</a> - add non-blocking https client.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/261">#261</a> - add non-blocking https client.</li>
 		<li>Search for a term including an asterisk ("*example*") could lead to all tracks/albums being returned.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/234">Improve XML parsing for images in podcasts</a> (thanks mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/234">Improve XML parsing for images in podcasts</a> (thanks mw9!)</li>
 	</ul>
 	<br />
 </ul>
@@ -362,7 +362,7 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/278">#278</a> - Correctly encode password before sending it to mysb.com for authentication. Characters like the Pound sign (&pound;) would fail.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/278">#278</a> - Correctly encode password before sending it to mysb.com for authentication. Characters like the Pound sign (&pound;) would fail.</li>
 		<li>Flush all URL to content type caches when a stream turns out to be of a different content type than initially assumed. This should work around playback issues with some mis-configured radio stations.</li>
 	</ul>
 	<br />
@@ -398,7 +398,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17901">#17901</a> - "Some settings were changed. Do you want to save them?" doesn't honor button clicked.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18078">#18078</a> - All files seen as changed after Daylight Saving time change (Windows only)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18151">#18151</a> - some server don't accept port definition in header when it's a default port.</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18152">#18152</a>, <a href="https://github.com/Logitech/slimserver/issues/143">#143</a> - HTTPS download fails: Connect times out lack of certain headers.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18152">#18152</a>, <a href="https://github.com/LMS-Community/slimserver/issues/143">#143</a> - HTTPS download fails: Connect times out lack of certain headers.</li>
 		<li>Fix several XSS vulnerabilities in the web UI.</li>
 	</ul>
 	<br />

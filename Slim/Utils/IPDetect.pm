@@ -1,8 +1,9 @@
 package Slim::Utils::IPDetect;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -48,8 +49,8 @@ sub IP {
 		$detectedIP = undef;
 	}
 
-	if (!$detectedIP) { 
-		_init(); 
+	if (!$detectedIP) {
+		_init();
 	}
 
 	return $detectedIP;
@@ -85,7 +86,7 @@ sub _init {
 
 	# This code used to try and connect to www.google.com:80 in order to
 	# find the local IP address.
-	# 
+	#
 	# Thanks to trick from Bill Fenner, trying to use a UDP socket won't
 	# send any packets out over the network, but will cause the routing
 	# table to do a lookup, so we can find our address. Don't use a high

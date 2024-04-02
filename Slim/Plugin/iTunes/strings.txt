@@ -123,22 +123,22 @@ SETUP_ITUNES
 	ZH_CN	iTunes
 
 SETUP_ITUNES_DESC
-	CS	Logitech Media Server může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně iTunes.
-	DA	Logitech Media Server kan bruge musikbiblioteket og afspilningslisterne fra iTunes. Alt hvad der ændres i iTunes, bliver afspejlet på afspilleren. Du skal markere feltet nedenfor hvis du vil importere oplysninger om iTunes-musikbiblioteket.
-	DE	Logitech Media Server kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
-	EN	Logitech Media Server can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
-	ES	Logitech Media Server puede usar la biblioteca de música y las listas de reproducción de iTunes. Cualquier cambio que se realice en iTunes se reflejará en el reproductor. Marque la casilla siguiente si desea importar la información de la biblioteca de música de iTunes.
-	FI	Logitech Media Server voi käyttää iTunesin musiikkikirjastoa ja soittoluetteloita. Kaikki iTunesiin tekemäsi muutokset heijastuvat soittimeen. Lisää valintamerkki alla olevaan ruutuun, jos haluat tuoda iTunes-musiikkikirjaston tiedot.
-	FR	Le Logitech Media Server peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
-	HE	Logitech Media Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
-	IT	In Logitech Media Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
-	JA	Logitech Media ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	Logitech Media Server kan gebruik maken van jouw iTunes muziekcollectie en afspeellijsten. Alle wijzigingen in iTunes worden ook op jouw muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de gegevens van jouw iTunes muziekcollectie wilt importeren.
-	NO	Logitech Media Server kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
-	PL	Program Logitech Media Server może korzystać z biblioteki muzyki i list odtwarzania programu iTunes. Wszelki zmiany wprowadzone w programie iTunes zostaną uwzględnione w odtwarzaczu. Aby zaimportować informacje z biblioteki muzyki programu iTunes, zaznacz pole wyboru poniżej.
-	RU	Logitech Media Server может использовать медиатеку и плей-листы iTunes. Все изменения, вносимые в iTunes, отражаются в плеере. Установите флажок (ниже), чтобы импортировать данные медиатеки iTunes.
-	SV	Musikbiblioteket och spellistorna från iTunes kan användas i Logitech Media Server. Ändringar du gör i iTunes återspeglas även på spelaren. Markera kryssrutan nedan om du vill att musikbiblioteksinformationen från iTunes ska importeras.
-	ZH_CN	Logitech Media Server可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
+	CS	Lyrion Music Server může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně iTunes.
+	DA	Lyrion Music Server kan bruge musikbiblioteket og afspilningslisterne fra iTunes. Alt hvad der ændres i iTunes, bliver afspejlet på afspilleren. Du skal markere feltet nedenfor hvis du vil importere oplysninger om iTunes-musikbiblioteket.
+	DE	Lyrion Music Server kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
+	EN	Lyrion Music Server can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
+	ES	Lyrion Music Server puede usar la biblioteca de música y las listas de reproducción de iTunes. Cualquier cambio que se realice en iTunes se reflejará en el reproductor. Marque la casilla siguiente si desea importar la información de la biblioteca de música de iTunes.
+	FI	Lyrion Music Server voi käyttää iTunesin musiikkikirjastoa ja soittoluetteloita. Kaikki iTunesiin tekemäsi muutokset heijastuvat soittimeen. Lisää valintamerkki alla olevaan ruutuun, jos haluat tuoda iTunes-musiikkikirjaston tiedot.
+	FR	Le Lyrion Music Server peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
+	HE	Lyrion Music Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
+	IT	In Lyrion Music Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
+	JA	Lyrion Music ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
+	NL	Lyrion Music Server kan gebruik maken van jouw iTunes muziekcollectie en afspeellijsten. Alle wijzigingen in iTunes worden ook op jouw muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de gegevens van jouw iTunes muziekcollectie wilt importeren.
+	NO	Lyrion Music Server kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
+	PL	Program Lyrion Music Server może korzystać z biblioteki muzyki i list odtwarzania programu iTunes. Wszelki zmiany wprowadzone w programie iTunes zostaną uwzględnione w odtwarzaczu. Aby zaimportować informacje z biblioteki muzyki programu iTunes, zaznacz pole wyboru poniżej.
+	RU	Lyrion Music Server может использовать медиатеку и плей-листы iTunes. Все изменения, вносимые в iTunes, отражаются в плеере. Установите флажок (ниже), чтобы импортировать данные медиатеки iTunes.
+	SV	Musikbiblioteket och spellistorna från iTunes kan användas i Lyrion Music Server. Ändringar du gör i iTunes återspeglas även på spelaren. Markera kryssrutan nedan om du vill att musikbiblioteksinformationen från iTunes ska importeras.
+	ZH_CN	Lyrion Music Server可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
 	CS	Interval znovunačtení iTunes
@@ -159,21 +159,21 @@ SETUP_ITUNESSCANINTERVAL
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	CS	Když se změní knihovna iTunes Music, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačítáním knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
-	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Logitech Media Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
-	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Logitech Media Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Logitech Media Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
-	EN	When your iTunes Music Library changes Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
-	ES	Cuando cambie la biblioteca de música de iTunes, Logitech Media Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que el servidor esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero desactiva la recarga.
-	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Logitech Media Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka palvelin odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
-	FR	Le Logitech Media Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
-	HE	כאשר ספריית המוסיקה של iTunes משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
-	IT	Se si modifica la libreria musicale di iTunes, Logitech Media Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
-	NL	Wanneer jouw iTunes muziekcollectie wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
-	NO	Når musikkbiblioteket til iTunes endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
-	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Logitech Media Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
-	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Logitech Media Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
-	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Logitech Media Server. Du kan ange en minimitid (i sekunder) som servern ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
-	ZH_CN	当您的iTunes音乐库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	CS	Když se změní knihovna iTunes Music, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačítáním knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
+	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
+	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
+	EN	When your iTunes Music Library changes Lyrion Music Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
+	ES	Cuando cambie la biblioteca de música de iTunes, Lyrion Music Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que el servidor esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero desactiva la recarga.
+	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Lyrion Music Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka palvelin odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
+	FR	Le Lyrion Music Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
+	HE	כאשר ספריית המוסיקה של iTunes משתנה, Lyrion Music Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Lyrion Music Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
+	IT	Se si modifica la libreria musicale di iTunes, Lyrion Music Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
+	NL	Wanneer jouw iTunes muziekcollectie wijzigt, worden de collectiegegevens automatisch door Lyrion Music Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NO	Når musikkbiblioteket til iTunes endres, importerer Lyrion Music Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
+	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Lyrion Music Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Lyrion Music Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
+	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Lyrion Music Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
+	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Lyrion Music Server. Du kan ange en minimitid (i sekunder) som servern ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
+	ZH_CN	当您的iTunes音乐库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
 	CS	Umístění iTunes Music Library.xml
@@ -194,21 +194,21 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu k souboru iTunes Music Library.xml. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
-	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til filen iTunes Music Library.xml her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
-	DE	Falls iTunes auf einem anderen Rechner als Logitech Media Server ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Logitech Media Server installiert ist.
-	EN	If you are running iTunes on a different computer than Logitech Media Server, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as Logitech Media Server.
-	ES	Si ejecuta iTunes en un equipo distinto al de Logitech Media Server, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que Logitech Media Server.
-	FI	Jos iTunes on käytössä eri tietokoneessa kuin Logitech Media Server, voit määrittää nimenomaisen polun iTunes Music Library.xml -tiedostoon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Logitech Media Server.
-	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Logitech Media Server, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Logitech Media Server.
-	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Logitech Media Server, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Logitech Media Server.
-	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Logitech Media Server, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e Logitech Media Server sono installati nello stesso computer, lasciare il campo vuoto.
+	CS	Pokud běží iTunes na jiném počítači než Lyrion Music Server, můžete zde specifikovat explicitní cestu k souboru iTunes Music Library.xml. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Lyrion Music Server.
+	DA	Hvis iTunes kører på en anden computer end Lyrion Music Server, kan du angive stien til filen iTunes Music Library.xml her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Lyrion Music Server.
+	DE	Falls iTunes auf einem anderen Rechner als Lyrion Music Server ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Lyrion Music Server installiert ist.
+	EN	If you are running iTunes on a different computer than Lyrion Music Server, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as Lyrion Music Server.
+	ES	Si ejecuta iTunes en un equipo distinto al de Lyrion Music Server, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que Lyrion Music Server.
+	FI	Jos iTunes on käytössä eri tietokoneessa kuin Lyrion Music Server, voit määrittää nimenomaisen polun iTunes Music Library.xml -tiedostoon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Lyrion Music Server.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Lyrion Music Server, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Lyrion Music Server.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Lyrion Music Server, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Lyrion Music Server.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Lyrion Music Server, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e Lyrion Music Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
-	NL	Als iTunes op een andere computer dan Logitech Media Server wordt uitgevoerd, kun je hier het pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server wordt uitgevoerd.
-	NO	Hvis du kjører iTunes på en annen datamaskin enn Logitech Media Server, kan du angi banen til filen iTunes Music Library.xml her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Logitech Media Server.
-	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Logitech Media Server, w tym miejscu można określić ścieżkę do pliku Music Library.xml programu iTunes. Jeżeli program iTunes działa na tym samym komputerze co program Logitech Media Server, pozostaw to pole puste.
-	RU	Если iTunes и Logitech Media Server установлены на разных компьютерах, можно напрямую задать путь к файлу XML медиатеки iTunes. Если приложение iTunes установлено на том же компьютере, что и Logitech Media Server, оставьте поле пустым.
-	SV	Om du kör iTunes på en annan dator än den där du kör Logitech Media Server anger du sökvägen till xml-filen för iTunes-musikbiblioteket här. Lämna fältet tomt om iTunes körs på samma dator som Logitech Media Server.
+	NL	Als iTunes op een andere computer dan Lyrion Music Server wordt uitgevoerd, kun je hier het pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Lyrion Music Server wordt uitgevoerd.
+	NO	Hvis du kjører iTunes på en annen datamaskin enn Lyrion Music Server, kan du angi banen til filen iTunes Music Library.xml her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Lyrion Music Server.
+	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Lyrion Music Server, w tym miejscu można określić ścieżkę do pliku Music Library.xml programu iTunes. Jeżeli program iTunes działa na tym samym komputerze co program Lyrion Music Server, pozostaw to pole puste.
+	RU	Если iTunes и Lyrion Music Server установлены на разных компьютерах, можно напрямую задать путь к файлу XML медиатеки iTunes. Если приложение iTunes установлено на том же компьютере, что и Lyrion Music Server, оставьте поле пустым.
+	SV	Om du kör iTunes på en annan dator än den där du kör Lyrion Music Server anger du sökvägen till xml-filen för iTunes-musikbiblioteket här. Lämna fältet tomt om iTunes körs på samma dator som Lyrion Music Server.
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
@@ -231,21 +231,21 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	ZH_CN	iTunes音乐文件夹
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
-	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu ke složce iTunes Media. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
-	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til iTunes-mediemappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
-	DE	Falls iTunes auf einem anderen Rechner als Logitech Media Server ausgeführt wird, können Sie hier den vollständigen Pfad zum Ordner 'iTunes Media' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Logitech Media Server installiert ist.
-	EN	If you are running iTunes on a different computer than Logitech Media Server, you may specify an explicit path to the iTunes Media folder here.  Leave this blank if you are running iTunes on the same computer as Logitech Media Server.
-	ES	Si ejecuta iTunes en un equipo distinto al de Logitech Media Server, puede especificar aquí una ruta explícita a la carpeta iTunes Media. Deje en blanco si ejecuta iTunes en el mismo equipo que Logitech Media Server.
-	FI	Jos iTunes on käytössä eri tietokoneessa kuin Logitech Media Server, voit määrittää nimenomaisen polun iTunes Media -kansioon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Logitech Media Server.
-	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Logitech Media Server, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Logitech Media Server.
-	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Logitech Media Server, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Logitech Media Server.
-	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Logitech Media Server, è possibile indicare in questo campo il percorso esplicito della cartella iTunes Media. Se iTunes e Logitech Media Server sono installati nello stesso computer, lasciare il campo vuoto.
+	CS	Pokud běží iTunes na jiném počítači než Lyrion Music Server, můžete zde specifikovat explicitní cestu ke složce iTunes Media. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Lyrion Music Server.
+	DA	Hvis iTunes kører på en anden computer end Lyrion Music Server, kan du angive stien til iTunes-mediemappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Lyrion Music Server.
+	DE	Falls iTunes auf einem anderen Rechner als Lyrion Music Server ausgeführt wird, können Sie hier den vollständigen Pfad zum Ordner 'iTunes Media' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Lyrion Music Server installiert ist.
+	EN	If you are running iTunes on a different computer than Lyrion Music Server, you may specify an explicit path to the iTunes Media folder here.  Leave this blank if you are running iTunes on the same computer as Lyrion Music Server.
+	ES	Si ejecuta iTunes en un equipo distinto al de Lyrion Music Server, puede especificar aquí una ruta explícita a la carpeta iTunes Media. Deje en blanco si ejecuta iTunes en el mismo equipo que Lyrion Music Server.
+	FI	Jos iTunes on käytössä eri tietokoneessa kuin Lyrion Music Server, voit määrittää nimenomaisen polun iTunes Media -kansioon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Lyrion Music Server.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Lyrion Music Server, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Lyrion Music Server.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Lyrion Music Server, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Lyrion Music Server.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Lyrion Music Server, è possibile indicare in questo campo il percorso esplicito della cartella iTunes Media. Se iTunes e Lyrion Music Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
-	NL	Als iTunes op een andere computer dan Logitech Media Server wordt uitgevoerd, kun je hier een pad naar de iTunes Media map opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Logitech Media Server wordt uitgevoerd.
-	NO	Hvis du kjører iTunes på en annen datamaskin enn Logitech Media Server, kan du angi banen til iTunes Media-mappen her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Logitech Media Server.
-	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Logitech Media Server, w tym miejscu można określić katalog iTunes Media. Jeżeli program iTunes działa na tym samym komputerze co program Logitech Media Server, pozostaw to pole puste.
-	RU	Если iTunes и Logitech Media Server установлены на разных компьютерах, можно напрямую задать путь к папке "iTunes Media" в iTunes. Если приложение iTunes установлено на том же компьютере, что и Logitech Media Server, оставьте поле пустым.
-	SV	Om du kör iTunes på en annan dator än den där du kör Logitech Media Server så anger du sökvägen till iTunes-mediemappen här. Lämna fältet tomt om iTunes körs på samma dator som Logitech Media Server.
+	NL	Als iTunes op een andere computer dan Lyrion Music Server wordt uitgevoerd, kun je hier een pad naar de iTunes Media map opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Lyrion Music Server wordt uitgevoerd.
+	NO	Hvis du kjører iTunes på en annen datamaskin enn Lyrion Music Server, kan du angi banen til iTunes Media-mappen her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Lyrion Music Server.
+	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Lyrion Music Server, w tym miejscu można określić katalog iTunes Media. Jeżeli program iTunes działa na tym samym komputerze co program Lyrion Music Server, pozostaw to pole puste.
+	RU	Если iTunes и Lyrion Music Server установлены на разных компьютерах, можно напрямую задать путь к папке "iTunes Media" в iTunes. Если приложение iTunes установлено на том же компьютере, что и Lyrion Music Server, оставьте поле пустым.
+	SV	Om du kör iTunes på en annan dator än den där du kör Lyrion Music Server så anger du sökvägen till iTunes-mediemappen här. Lämna fältet tomt om iTunes körs på samma dator som Lyrion Music Server.
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
@@ -266,22 +266,22 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí Logitech Media Serveru. Toto chování můžete změnit níže.
-	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i Logitech Media Server. Du kan ændre det nedenfor.
-	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in Logitech Media Server angezeigt. Sie können dieses Verhalten hier ändern.
-	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Logitech Media Server. You can change that behavior below.
-	EN_GB	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Logitech Media Server. You can change that behaviour below.
-	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con Logitech Media Server. Ese comportamiento se puede cambiar a continuación.
-	FI	Jos poistat valintamerkin kappaleen vierestä iTunesissä, kappale ei oletuksena tule näkyviin, kun etsit musiikkia Logitech Media Serverillä. Voit vaihtaa toiminnan alla.
-	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Logitech Media Server. Vous pouvez modifier ce comportement ci-dessous.
-	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות Logitech Media Server. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
-	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con Logitech Media Server. È possibile modificare questa impostazione di seguito.
-	NL	Standaard worden nummers die in iTunes niet aangevinkt zijn, niet in Logitech Media Server weergegeven. Je kunt dit hieronder wijzigen.
-	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Logitech Media Server. Du kan endre dette nedenfor.
-	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie Logitech Media Server. Działanie tej funkcji można zmienić poniżej.
-	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в Logitech Media Server. Изменить эту настройку можно ниже.
-	SV	När du avmarkerar en låt i iTunes visas den som standard inte längre när du bläddrar bland dina låtar i Logitech Media Server. Du kan ändra den här funktionen nedan.
-	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览Logitech Media Server的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
+	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí Lyrion Music Serveru. Toto chování můžete změnit níže.
+	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i Lyrion Music Server. Du kan ændre det nedenfor.
+	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in Lyrion Music Server angezeigt. Sie können dieses Verhalten hier ändern.
+	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Lyrion Music Server. You can change that behavior below.
+	EN_GB	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with Lyrion Music Server. You can change that behaviour below.
+	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con Lyrion Music Server. Ese comportamiento se puede cambiar a continuación.
+	FI	Jos poistat valintamerkin kappaleen vierestä iTunesissä, kappale ei oletuksena tule näkyviin, kun etsit musiikkia Lyrion Music Serverillä. Voit vaihtaa toiminnan alla.
+	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Lyrion Music Server. Vous pouvez modifier ce comportement ci-dessous.
+	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות Lyrion Music Server. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
+	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con Lyrion Music Server. È possibile modificare questa impostazione di seguito.
+	NL	Standaard worden nummers die in iTunes niet aangevinkt zijn, niet in Lyrion Music Server weergegeven. Je kunt dit hieronder wijzigen.
+	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Lyrion Music Server. Du kan endre dette nedenfor.
+	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie Lyrion Music Server. Działanie tej funkcji można zmienić poniżej.
+	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в Lyrion Music Server. Изменить эту настройку можно ниже.
+	SV	När du avmarkerar en låt i iTunes visas den som standard inte längre när du bläddrar bland dina låtar i Lyrion Music Server. Du kan ändra den här funktionen nedan.
+	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览Lyrion Music Server的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	CS	Zahrnout všechny skladby

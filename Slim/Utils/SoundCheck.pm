@@ -1,13 +1,14 @@
 package Slim::Utils::SoundCheck;
 
-# 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+#
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 #
 # Convert iTunes SoundCheck values to dB. See the POD at the end of the file.
-# 
+#
 # Thanks to Manfred Schwind for the deciphering.
 
 use strict;
@@ -21,13 +22,13 @@ sub commentTagTodB {
 		return;
 	}
 
-	# If comment is not an array it didn't come from ID3, this can happen if a 
+	# If comment is not an array it didn't come from ID3, this can happen if a
 	# FLAC file has both ID3 and Vorbis tags for example.  We can ignore it here
 	# in this case.
 	if ( !ref $tags->{COMMENT} ) {
 		return;
 	}
-	
+
 	# Normalize all comments to array refs
 	if ( !ref $tags->{COMMENT}->[0] ) {
 		$tags->{COMMENT} = [ $tags->{COMMENT} ];
@@ -40,7 +41,7 @@ sub commentTagTodB {
 		my $comment = $tags->{'COMMENT'}->[$i];
 
 		if ($comment && ref $comment eq 'ARRAY' && $comment->[1] eq 'iTunNORM') {
-			
+
 			if ( my $gain = normStringTodB($comment->[2]) ) {
 				# Bug 3207, if we already have a known gain value,
 				# combine it with the iTunNORM value
@@ -51,7 +52,7 @@ sub commentTagTodB {
 			}
 
 			splice(@{$tags->{'COMMENT'}}, $i, 1);
-			
+
 			# In case there are multiple iTunNORM tags for some reason, skip the rest
 			last;
 		}
@@ -133,7 +134,7 @@ my $dB = Slim::Utils::SoundCheck::normStringTodB($iTunNORM);
 
 The iTunNORM tag consists of 5 value pairs. These 10 values are encoded as
 ASCII Hex values of 8 characters each inside the tag (plus a space as prefix).
- 
+
 The tag can be found in MP3, AIFF, AAC and Apple Lossless files.
 
 The relevant information is what is encoded in these 5 value pairs. The first

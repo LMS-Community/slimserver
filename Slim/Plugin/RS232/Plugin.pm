@@ -1,11 +1,12 @@
 package Slim::Plugin::RS232::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# This plugin allows data to be trasmitted over the transporter 
+# This plugin allows data to be trasmitted over the transporter
 # rs232 port via the cli interface. The commands are:
 #	rs232 baud 9600  		- set the baud rate
 #	rs232 tx hello%20world	- transmit data
@@ -49,7 +50,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
 	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
-	
+
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 
 	# Initialize settings classes
@@ -135,7 +136,7 @@ sub rs232baud {
 sub rs232rxCallback {
 	my $request = shift;
 	my $client = $request->client();
-	
+
 	my $data = $request->getParam('_data');
 
 	main::DEBUGLOG && $log->debug( "RS232: rx data: " . $data . "\n");
@@ -165,7 +166,7 @@ sub rs232rxCallback {
 
 sub relayAnswerNext {
 	my $client = shift;
-	
+
 	# Add us to the select loop so we get notified
 	Slim::Networking::Select::addRead( $gSocket{$client}, \&relayAnswer);
 }
@@ -177,7 +178,7 @@ sub relayAnswer {
 	if( !defined( $client)) {
 		return;
 	}
-	
+
 	# Remove us from the select loop
 	Slim::Networking::Select::removeRead( $socket);
 

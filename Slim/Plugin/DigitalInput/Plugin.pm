@@ -1,6 +1,7 @@
 package Slim::Plugin::DigitalInput::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -36,7 +37,7 @@ sub initPlugin {
 	my $class = shift;
 
 	main::INFOLOG && $log->info("Initializing");
-	
+
 	$class->SUPER::initPlugin();
 
 	@digital_inputs = (
@@ -93,7 +94,7 @@ sub digitalInputItem {
 		node           => 'home',
 		'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
 		displayWhenOff => 0,
-		window         => { 
+		window         => {
 				titleStyle => 'album',
 				'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
 		},
@@ -209,7 +210,7 @@ sub setDigitalInput {
 
 sub enabled {
 	my $client = shift;
-	
+
 	# make sure this is only validated when the provided client has digital inputs.
 	# when the client isn't given, we only need to report that the plugin is alive.
 	return $client ? $client->hasDigitalIn() : 1;
@@ -256,7 +257,7 @@ sub updateDigitalInput {
 
 	my $line1;
 	my $line2;
-	
+
 	if ($client->linesPerScreen == 1) {
 
 		$line2 = $client->doubleString('NOW_PLAYING_FROM');
@@ -274,7 +275,7 @@ sub updateDigitalInput {
 
 	if (blessed($obj)) {
 		if ($prefs->client($client)->get('syncgroupid')) {
-			$client->controller()->unsync($client);	
+			$client->controller()->unsync($client);
 		}
 
 		$client->execute([ 'playlist', 'clear' ] );
@@ -340,11 +341,11 @@ sub handleWebList {
 	if ($client) {
 
 		my $track = Slim::Player::Playlist::track($client);
-		
+
 		if ($track) {
 			$url = $track->url;
 
-		
+
 			my $name;
 			for my $input (@digital_inputs) {
 				if ($url && $url eq $input->{'url'}) {
@@ -352,7 +353,7 @@ sub handleWebList {
 					last;
 				}
 			}
-	
+
 			if (defined $name) {
 				# pre-localised string served to template
 				$params->{'digitalInputCurrent'} = Slim::Buttons::Input::Choice::formatString(

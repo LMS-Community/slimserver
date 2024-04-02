@@ -4,10 +4,10 @@
 
 <h4>What is Artwork?</h4>
  <p>Artwork is cover art from CD albums and typically a copy of the CD/album's cover.
- The Logitech Media Server can display artwork associated with each album.
+ The Lyrion Music Server can display artwork associated with each album.
  </p>
 
-<h4>How does the Squeezebox software use it?</h4> 
+<h4>How does the Squeezebox software use it?</h4>
  <p>Artwork is displayed in several places within the Squeezebox software.
   When you import (scan) your library - the scanner uses the first picture for all other media files found in that folder.
   So you should use one folder for each album.
@@ -15,21 +15,21 @@
 <h4>Where should I store the cover art?</h4>
  <ul>
    <li>You can embed the cover art into your media files by using your favourite mp3/flac tagging tool.<br>
-   If embedded artwork is used - these pictures will always be the first used by the software.</li>     
+   If embedded artwork is used - these pictures will always be the first used by the software.</li>
    <li>You can store the artwork in the folder structure of your library.<br>
-    Logitech Media Server looks in the same folder where the song file is stored, thus you would be looking for the same artfile in this case.</li>
+    Lyrion Music Server looks in the same folder where the song file is stored, thus you would be looking for the same artfile in this case.</li>
    <li>You can store them into a separate folder for your cover art.<br>
-    There is an option in Server Settings, Advanced, Formatting to set file names for Artwork or a central location for artwork files. 
+    There is an option in Server Settings, Advanced, Formatting to set file names for Artwork or a central location for artwork files.
     You can enter a specific filename if you use something not found in the list (eg, artwork.jpg).
     You may also create filenames based on song variables.  For further
     information scroll down to <a href="#songvariables" class="browseItemLink">Filenames based on song variables</a>.
-   </li> 
+   </li>
  </ul>
-  
+
 <h4>How do I get cover art?</h4>
 <p>Many sites that sell CDs include cover art in their catalog. With most browsers, you can right click on the image and select "Save image as..."</p>
 <h4>Useful plugins</h4>
-<p>Several third party developers have written utilities to automatically retreive cover art based on the internal tags of your MP3, Ogg, Flac, or other files. See 
+<p>Several third party developers have written utilities to automatically retreive cover art based on the internal tags of your MP3, Ogg, Flac, or other files. See
 <a href="http://forums.slimdevices.com/forumdisplay.php?4-3rd-Party-Software" target="_new" class="browseItemLink"
 >3rd-Party-Software</a> for more information.</p>
 
@@ -37,7 +37,7 @@
  <p>The Music Artist Info plugin can support you to find albums with no or small artwork.
     If you enabled this plugin before a scan/rescan - it supports you with some additional Information under the extras in the main menue.
  </p>
- 
+
 <h4>Artwork file requirements</h4>
 <p>The Squeezebox supports .GIF .PNG and .JPG files.</p>
 
@@ -56,20 +56,20 @@
    <li>album.jpg, album.gif
   </ul>
 
- <p>The Logitech Media Server will use the first image file located in this search.</p>
- 
+ <p>The Lyrion Music Server will use the first image file located in this search.</p>
+
 <h4 id="songvariables">Filenames based on song variables</h4>
- <p>If your first character is %, the server then parses the rest of the string as an InfoFormat, the same as title format is created. As an example, you could create a single directory of songs and name all your artwork as artist-album.jpg.  For this, enter a setting of</p> 
-<pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> 
+ <p>If your first character is %, the server then parses the rest of the string as an InfoFormat, the same as title format is created. As an example, you could create a single directory of songs and name all your artwork as artist-album.jpg.  For this, enter a setting of</p>
+<pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre>
  <p>for Artwork or Artwork Thumbnail in the server settings section.</p>
 
- <p>Available data elements are:</p> 
+ <p>Available data elements are:</p>
   <table>
    <tbody>
     <tr>
      <td><b>Setting </td>
      <td>Description </b></td>
-    </tr>                 
+    </tr>
     <tr>
      <td>CT</td>
      <td>content type</td>
@@ -104,7 +104,7 @@
     <tr>
      <td>YEAR</td>
      <td>Year published or released.</td>
-    </tr> 
+    </tr>
     <tr>
      <td>SECS</td>
      <td>total song length in seconds</td>
@@ -116,7 +116,7 @@
     <tr>
      <td>VBR_SCALE</td>
      <td>vbr/cbr</td>
-    </tr>  
+    </tr>
     <tr>
      <td>BITRATE</td>
      <td>encoded bit rate</td>
@@ -125,11 +125,11 @@
      <td>VOLUME</td>
      <td>volume name</td>
     </tr>
-    <tr>   
+    <tr>
      <td>PATH</td>
      <td>Path to the song</td>
     </tr>
-    <tr> 
+    <tr>
      <td>FILE</td>
      <td>main file name of song</td>
     </tr>
@@ -137,24 +137,24 @@
      <td>EXT</td>
      <td>file extension of song (Type in Microsoft systems)</td>
     </tr>
-    <tr>  
+    <tr>
      <td>LONGDATE</td>
-     <td>current date, long</td> 
+     <td>current date, long</td>
     </tr>
-    <tr> 
+    <tr>
      <td>SHORTDATE</td>
      <td>current date, short</td>
     </tr>
-    <tr>   
+    <tr>
      <td>CURRTIME</td>
      <td>current time.</td>
     </tr>
-   </tbody> 
+   </tbody>
   </table>
 <p>Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.</p>
 
 <p>The above list is included for completeness, it is unlikely that anyone would actually want to have differing artwork files for songs of different bitrates, but the
-ability is in the Logitech Media Server.
+ability is in the Lyrion Music Server.
 </P>
 
 <p>Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server

@@ -1,13 +1,14 @@
 package Slim::Plugin::UPnP::Plugin;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 # UPnP/DLNA Media Interface
 # Andy Grundman
-# andy@slimdevices.com
+# andy@hybridized.com
 #
 
 use strict;

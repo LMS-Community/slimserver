@@ -1,9 +1,10 @@
 package Slim::Display::Display;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -30,7 +31,7 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
-# Display routines use the following state variables: 
+# Display routines use the following state variables:
 #   $display->updateMode(), $display->screen2updateOK(), $display->animateState(), $display->scrollState()
 #
 # updateMode: (single value for all screens)
@@ -42,12 +43,12 @@ my $prefs = preferences('server');
 #   0 = use status of updateMode
 #   1 = allow periodic updates of screen2 to bypass updateMode check [animation or showBriefly on screen 1 only]
 #
-# animateState: (single value for all screens)         Slimp3/SB1      SB1G      SB2/3/Transporter   
+# animateState: (single value for all screens)         Slimp3/SB1      SB1G      SB2/3/Transporter
 #   0 = no animation                                        x             x        x
 #   1 = client side push/bump animations                                           x
-#   2 = update scheduled (timer set to callback update)     x             x        x   
+#   2 = update scheduled (timer set to callback update)     x             x        x
 #   3 = server side push & bumpLeft/Right                   x             x
-#   4 = server side bumpUp/Down                             x             x 
+#   4 = server side bumpUp/Down                             x             x
 #   5 = server side showBriefly                             x             x        x
 #   6 = clear scrolling (scrollonce and end scrolling mode) x             x        x
 #   7 = defered showBriefly (mid client side push/bump)                            x
@@ -112,7 +113,7 @@ sub new {
 	);
 
 	$display->resetDisplay();     # init render cache
-	
+
 	return $display;
 }
 
@@ -122,7 +123,7 @@ sub init {
 	$display->initPrefs();
 
 	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
-	
+
 	$initialized = 1;
 }
 
@@ -173,7 +174,7 @@ sub update {
 	my $render = $display->render($parts, $scroll, $s2periodic);
 
 	foreach my $screenNo (1..$render->{screens}) {
-		
+
 		my $state = $display->scrollState($screenNo);
 		my $screen = $render->{'screen'.$screenNo};
 
@@ -202,7 +203,7 @@ sub update {
 			} else {
 				# same scrolling text, possibly new background
 				$display->scrollUpdateBackground($screen, $screenNo);
-			}			  
+			}
 		}
 	}
 
@@ -220,7 +221,7 @@ sub showBriefly {
 	my $display = shift;
 	my $parts   = shift;
 	my $args    = shift;
-	
+
 	return unless $initialized;
 
 	my $client = $display->client;
@@ -294,14 +295,14 @@ sub showBriefly {
 	$display->hideVisu($hideVisu);
 
 	$display->update($parts, $scrollToEnd ? 3 : undef);
-	
+
 	$display->hideVisu(0);
 	$display->screen2updateOK( ($oldDisplay->{'screen2'} && !$parts->{'screen2'} && !$display->updateMode) ? 1 : 0 );
 	$display->updateMode( $blockUpdate ? 2 : 1 );
 	$display->animateState(5);
 
 	my $callbackData;
-	
+
 	if (defined($brightness)) {
 		if ($brightness =~ /powerOn|powerOff|idle/) {
 			$brightness = $prefs->client($display->client)->get($brightness.'Brightness');
@@ -388,10 +389,10 @@ sub brightness {
 		$display->currBrightness(0) if ($display->currBrightness() < 0);
 		$display->currBrightness($display->maxBrightness()) if ($display->currBrightness() > $display->maxBrightness());
 	}
-	
+
 	my $brightness = $display->currBrightness();
 
-	if (!defined($brightness)) { $brightness = $display->maxBrightness(); }	
+	if (!defined($brightness)) { $brightness = $display->maxBrightness(); }
 
 	return $brightness;
 }
@@ -413,27 +414,27 @@ sub getBrightnessOptions {
 	}
 
 	if (defined $display->maxBrightness) {
-	
+
 		my $maxBrightness = $display->maxBrightness;
 
 		$brightnesses{4} = 4;
 
 		my @brightnessMap = $display->brightnessMap();
-		
+
 		# for large values at the end of the brightnessMap, we assume these are ambient index values
 		if ($brightnessMap[$maxBrightness] > 255 ) {
 
 			for my $brightness (4 .. $maxBrightness) {
 				if ($brightnessMap[$brightness] > 255 ) {
-		
+
 #					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
 					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT');
 					$maxBrightness--;
 				}
 			}
 		}
-		
-		
+
+
 		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
 			$maxBrightness, $display->client->string('BRIGHTNESS_BRIGHTEST')
 		);
@@ -524,7 +525,7 @@ sub scrollInit {
 	my $display = shift;
 	my $screen = shift;
 	my $screenNo = shift;
-	my $scrollonce = shift; # 0 = continue scrolling after pause, 1 = scroll to scrollend and then stop, 
+	my $scrollonce = shift; # 0 = continue scrolling after pause, 1 = scroll to scrollend and then stop,
 	                        # 2 = scroll to scrollend and then end animation (causing new update)
 
 	my $client = $display->client;
@@ -538,7 +539,7 @@ sub scrollInit {
 
 	my $now = Time::HiRes::time();
 	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
-	
+
 	# Adjust scrolling params for ticker mode, we don't want the server scrolling at 30fps
 	if ($ticker) {
 		$refresh = 0.15;
@@ -607,15 +608,15 @@ sub scrollInit {
 
 	$display->scrollData($screenNo, $scroll);
 	$display->scrollState($screenNo, $ticker ? 2 : 1);
-	
+
 	if (!$ticker && $client->hasScrolling) {
 		# Start client-side scrolling
 		$display->scrollState($screenNo, 3);
-		
+
 		my $scrollbits = ${$scroll->{scrollbitsref}};
 		my $length = length $scrollbits;
 		my $offset = 0;
-		
+
 		# Don't exceed max width the firmware can handle (10 screen widths)
 		my $maxWidth = $display->screenBytes($screenNo) * 10;
 		if ( $length > $maxWidth ) {
@@ -623,7 +624,7 @@ sub scrollInit {
 			$scroll->{scrollend} = $maxWidth - $display->screenBytes($screenNo);
 			$length = length $scrollbits;
 		}
-		
+
 		# First send the scrollable data frame
 		# Note: length of $data header must be even!
 		my $header = pack 'ccNNnnn',
@@ -634,26 +635,26 @@ sub scrollInit {
 			$pixels,
 			$scroll->{scrollonce},    # repeat flag
 			$scroll->{scrollend} / 4; # width of scroll area in pixels
-		
+
 		while ($length > 0) {
 			if ( $length > 1280 ) { # split up into normal max grf size
 				$length = 1280;
 			}
-			
+
 			my $data = $header . pack('n', $offset) . substr( $scrollbits, 0, $length, '' );
-			
+
 			$client->sendFrame( grfs => \$data );
-			$offset += $length;			
+			$offset += $length;
 			$length = length $scrollbits;
 		}
-		
+
 		# Next send the background frame, display will be updated after it is received
 		# and scrolling will begin.
 		# Note: also must have an even length
 		my $data2 = pack 'nn',
 			$screenNo,
 			$screen->{overlaystart}[$screen->{scrollline}] / 4; # width of scrollable area
-		
+
 		$data2 .= ${$scroll->{bitsref}};
 		$client->sendFrame( grfg => \$data2 );
 	}
@@ -723,7 +724,7 @@ sub scrollTickerTimeLeft {
 
 	if (!$scroll) {
 		return (0, 0);
-	} 
+	}
 
 	my $todisplay = $scroll->{dir} == 1 ? $scroll->{scrollend} - $scroll->{offset} : $scroll->{offset} + $scroll->{overlaystart};
 	my $completeTime = $todisplay / (abs($scroll->{shift}) / $scroll->{refreshInt});
@@ -741,7 +742,7 @@ sub scrollUpdate {
 
 	# update display
 	$display->scrollUpdateDisplay($scroll);
-	
+
 	# We use a direct EV timer here because this is a high-frequency repeating
 	# timer, and we can take advantage of EV's built-in repeating timer mode
 	# which isn't supported via the Slim::Utils::Timers API
@@ -803,7 +804,7 @@ sub scrollUpdate {
 			}
 		}
 	}
-	
+
 	$timer->set( 0, $scroll->{refreshTime} - $timenow );
 	$timer->again;
 }
@@ -818,7 +819,7 @@ sub endAnimation {
 	$display->screen2updateOK(0);
 	$display->endShowBriefly() if ($animate == 5);
 	$display->update($screen);
-}	
+}
 
 # called by Screensaver to check whether we should change state into screensaver mode
 sub inhibitSaver {
@@ -835,7 +836,7 @@ sub inhibitSaver {
 sub periodicScreenRefresh {
 	my $display = shift;
 
-	unless ($display->updateMode > 0  || 
+	unless ($display->updateMode > 0  ||
 			$display->scrollState == 2 ||
 			$display->animateState > 0 && $display->animateState <= 4 ||
 			$display->client->modeParam('modeUpdateInterval') ) {
@@ -869,21 +870,21 @@ sub forgetDisplay {
 
 sub string {
 	my $display = shift;
-	
+
 	my $strings = $display->displayStrings;
 	my $name = uc(shift);
-	
+
 	# Check language override
 	if ( $display->client ) {
 		if ( my $lang = $display->client->languageOverride ) {
 			$strings = Slim::Utils::Strings::loadAdditional( $lang );
 		}
-	}		
-	
+	}
+
 	if ( @_ ) {
 		return sprintf( $strings->{$name} || ( logBacktrace("missing string $name") && $name ), @_ );
 	}
-	
+
 	return $strings->{$name} || ( logBacktrace("missing string $name") && $name );
 }
 

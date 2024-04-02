@@ -1,7 +1,8 @@
 package Slim::Web::HTTP;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -564,7 +565,7 @@ sub processHTTP {
 		# CSRF: make list of params passed by HTTP client
 		my %csrfReqParams;
 
-		# XXX - unfortunately Logitech Media Server uses a query form
+		# XXX - unfortunately Lyrion Music Server uses a query form
 		# that can have a key without a value, yet it's
 		# differnet from a key with an empty value. So we have
 		# to parse out like this.
@@ -1248,7 +1249,7 @@ sub generateHTTPResponse {
 			$response->content_type('text/html');
 			$response->code(RC_NOT_FOUND);
 
-			$$body = "<h1>404 Not Found: $path</h1><p>Logitech Media Server web UI is not available in --noweb mode.</p>";
+			$$body = "<h1>404 Not Found: $path</h1><p>Lyrion Music Server web UI is not available in --noweb mode.</p>";
 
 			return prepareResponseForSending(
 				$client,
@@ -1858,7 +1859,7 @@ sub _stringifyHeaders {
 
 	$data .= sprintf("%s %s %s%s", $response->protocol(), $code, HTTP::Status::status_message($code) || "", $CRLF);
 
-	$data .= sprintf("Server: Logitech Media Server (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
+	$data .= sprintf("Server: Lyrion Music Server (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
 
 	$data .= $response->headers_as_string($CRLF);
 

@@ -1,6 +1,7 @@
 package Slim::Plugin::DnDPlay::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -38,11 +39,11 @@ sub initPlugin {
 	$prefs->init({
 		maxfilesize => 100,
 	});
-	
+
 	if (main::WEBUI) {
 		require Slim::Plugin::DnDPlay::Settings;
 		Slim::Plugin::DnDPlay::Settings->new();
-		
+
 		Slim::Web::Pages->addPageFunction("js-main-dd.js", sub {
 			my $params = $_[1];
 			$params->{maxUploadSize} = MAX_UPLOAD_SIZE;
@@ -52,12 +53,12 @@ sub initPlugin {
 		});
 
 		require Slim::Web::Pages::JS;
-		Slim::Web::Pages::JS->addJSFunction('js-main', 'js-main-dd.js');		
-	} 
-	
+		Slim::Web::Pages::JS->addJSFunction('js-main', 'js-main-dd.js');
+	}
+
 	# the file upload is handled through a custom request handler, dealing with multi-part POST requests
 	Slim::Web::Pages->addRawFunction("plugins/dndplay/upload", \&handleUpload);
-	
+
     Slim::Control::Request::addDispatch(['playlist', 'playmatch'], [1, 1, 1, \&cliPlayMatch]);
     Slim::Control::Request::addDispatch(['playlist', 'addmatch'], [1, 1, 1, \&cliPlayMatch]);
 }
@@ -69,12 +70,12 @@ sub postinitPlugin {
 
 sub handleUpload {
 	my ($httpClient, $response, $func) = @_;
-	
+
 	my $request = $response->request;
 	my $result = {};
-	
+
 	my $t = Time::HiRes::time();
-	
+
 	if ( my $client = _getClient($request) ) {
 		if ( $request->content_length > MAX_UPLOAD_SIZE ) {
 			$result = {
@@ -85,40 +86,40 @@ sub handleUpload {
 		else {
 			my $ct = $request->header('Content-Type');
 			my ($boundary) = $ct =~ /boundary=(.*)/;
-			
+
 			my %info;
 			my ($k, $v, $fh);
 
 			# open a pseudo-filehandle to the uploaded data ref for further processing
 			open TEMP, '<', $request->content_ref;
-			
+
 			while (<TEMP>) {
 				if ( Time::HiRes::time - $t > 0.1 ) {
 					main::idleStreams();
 					$t = Time::HiRes::time();
 				}
-				
+
 				# a new part starts - reset some variables
 				if ( /--\Q$boundary\E/i ) {
 					$k = $v = '';
-					
+
 					# remove potential superfluous cr/lf from the end of the file, then close it
 					if ($fh) {
 						truncate $fh, $info{size} if $info{size};
 						close $fh;
 					}
 				}
-				
+
 				# write data to file handle
 				elsif ( $fh ) {
 					print $fh $_;
 				}
-				
+
 				# we got an uploaded file
 				elsif ( !$k && /filename="(.+?)"/i ) {
 					$k = 'upload';
 				}
-				
+
 				# we got the separator after the upload file name: file data comes next. Open a file handle to write the data to.
 				elsif ( $k && $k eq 'upload' && /^\s*$/ ) {
 					($fh, $info{tempfile}) = tempfile('tmp-XXXX',
@@ -126,21 +127,21 @@ sub handleUpload {
 						UNLINK => 0
 					);
 				}
-				
+
 				# we received some variable name
 				elsif ( /\bname="(.+?)"/i ) {
 					$k = $1;
 				}
-				
+
 				# an uploaded variable's content
 				elsif ( $k && $k ne 'upload' && $_ ) {
 					s/$CRLF*$//s;
 					$info{$k} = $_ if $_;
 				}
 			}
-			
+
 			main::DEBUGLOG && $log->is_debug && $log->debug("Uploaded file information found: " . Data::Dump::dump(%info));
-			
+
 			close TEMP;
 
 			if ( !$info{name} ) {
@@ -149,7 +150,7 @@ sub handleUpload {
 			}
 			elsif ( my $url = Slim::Plugin::DnDPlay::FileManager->getFileUrl(\%info) ) {
 				$result->{url} = $url;
-				
+
 				if ($info{action}) {
 					$client->execute(['playlist', $info{action}, $url]);
 				}
@@ -159,7 +160,7 @@ sub handleUpload {
 				$result->{error} = cstring($client, 'PROBLEM_UNKNOWN_TYPE');
 				$result->{code} = 415;
 			}
-			
+
 			if ( $result->{error} && $info{tempfile} && -f $info{tempfile} ) {
 				unlink $info{tempfile};
 			}
@@ -171,7 +172,7 @@ sub handleUpload {
 			code  => 500,
 		};
 	}
-	
+
 	$log->error($result->{error}) if $result->{error};
 
 	my $content = to_json($result);
@@ -179,7 +180,7 @@ sub handleUpload {
 	$response->code($result->{code} || 200);
 	$response->header('Connection' => 'close');
 	$response->content_type('application/json');
-	
+
 	Slim::Web::HTTP::addHTTPResponse( $httpClient, $response, \$content	);
 }
 
@@ -189,9 +190,9 @@ sub formatMB {
 
 sub cliPlayMatch {
 	my $request = shift;
-	
+
 	my $client = $request->client;
-	
+
 	my $file = {
 		name => $request->getParam('name'),
 		timestamp => $request->getParam('timestamp'),
@@ -204,7 +205,7 @@ sub cliPlayMatch {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	my $action = $request->isQuery([['playlist'], ['playmatch']]) ? 'play' : 'add';
 
 	# if we have a cached or local file, we can play it
@@ -227,19 +228,19 @@ sub cliPlayMatch {
 
 sub _getClient {
 	my $request = shift;
-	
+
 	my $client;
 	if ( my $id = $request->uri->query_param('player') ) {
 		$client = Slim::Player::Client::getClient($id);
 	}
-			
+
 	if ( !$client && (my $cookie = $request->header('Cookie')) ) {
 		my $cookies = { CGI::Cookie->parse($cookie) };
 		if ( my $player = $cookies->{'Squeezebox-player'} ) {
 			$client = Slim::Player::Client::getClient( $player->value );
 		}
 	}
-	
+
 	return $client;
 }
 

@@ -1,7 +1,8 @@
 package Slim::Music::TitleFormatter;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -428,7 +429,7 @@ sub init {
 	return 1;
 }
 
-# This does not currently have any callers in the Logitech Media Server tree.
+# This does not currently have any callers in the Lyrion Music Server tree.
 sub addFormat {
 	my $format = shift;
 	my $formatSubRef = shift;

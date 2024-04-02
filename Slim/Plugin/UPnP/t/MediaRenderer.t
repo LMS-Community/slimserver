@@ -34,13 +34,13 @@ for my $dev ( @dev_list ) {
 	if ( $dev->getserialnumber =~ /^00:04:20:26:03:20/ ) { # test against a hardware SB
 		$mr = Net::UPnP::AV::MediaRenderer->new();
 		$mr->setdevice($dev);
-		
+
 		$player = $dev->getserialnumber;
-		
+
 		$cm  = $dev->getservicebyname('urn:schemas-upnp-org:service:ConnectionManager:1');
 		$rc  = $dev->getservicebyname('urn:schemas-upnp-org:service:RenderingControl:1');
 		$avt = $dev->getservicebyname('urn:schemas-upnp-org:service:AVTransport:1');
-		
+
 		print "# Using " . $dev->getfriendlyname . " for tests\n";
 		last;
 	}
@@ -62,7 +62,7 @@ print "# Subscribing to ConnectionManager...\n";
 $cm_events = GENA->new( $cm->geteventsuburl, sub {
 	my ( $req, $props ) = @_;
 	$sub_count++;
-	
+
 	is( $req->method, 'NOTIFY', 'CM notify ok' );
 	is( $req->header('Content-Length'), length($req->content), 'CM notify length ok' );
 	is( $props->{SourceProtocolInfo}, '', 'CM notify SourceProtocolInfo ok' );
@@ -78,9 +78,9 @@ print "# Subscribing to RenderingControl...\n";
 $rc_events = GENA->new( $rc->geteventsuburl, sub {
 	my ( $req, $props ) = @_;
 	$sub_count++;
-	
+
 	ok( $props->{LastChange}, 'RC notify LastChange ok' );
-	
+
 	my $lc = XMLin( $props->{LastChange} );
 	my $data = $lc->{InstanceID};
 	like( $data->{Brightness}->{val}, qr/^\d+$/, 'RC notify Brightness ok' );
@@ -107,11 +107,11 @@ print "# Subscribing to AVTransport...\n";
 $avt_events = GENA->new( $avt->geteventsuburl, sub {
 	my ( $req, $props ) = @_;
 	$sub_count++;
-	
+
 	ok( $props->{LastChange}, 'AVT notify LastChange ok' );
-	
+
 	my $lc = XMLin( $props->{LastChange} );
-	my $e = $lc->{InstanceID};	
+	my $e = $lc->{InstanceID};
 	is( $e->{AVTransportURI}->{val}, '', 'AVT AVTransportURI ok' );
 	is( $e->{AVTransportURIMetaData}->{val}, '', 'AVT AVTransportURIMetaData ok' );
 	is( $e->{AbsoluteCounterPosition}->{val}, 0, 'AVT AbsoluteCounterPosition ok' );
@@ -156,18 +156,18 @@ $sub_count = 0;
 $avt_events->set_callback( sub {
 	my ( $req, $props ) = @_;
 	$sub_count++;
-	
+
 	my $lc = XMLin( $props->{LastChange} );
-	my $e = $lc->{InstanceID};	
+	my $e = $lc->{InstanceID};
 	$e->{AVTransportURIMetaData}     = XMLin( $e->{AVTransportURIMetaData}->{val} );
 	$e->{CurrentTrackMetaData}       = XMLin( $e->{CurrentTrackMetaData}->{val} );
 	$e->{NextAVTransportURIMetaData} = XMLin( $e->{NextAVTransportURIMetaData}->{val} );
-	
+
 	my $t1id = $track1->{id};
 	my $t2id = $track2->{id};
 	my $t1cid = $track1->{coverid};
 	my $t2cid = $track2->{coverid};
-	
+
 	like( $e->{AVTransportURI}->{val}, qr{^http://.+/music/${t1id}/download$}, 'AVT AVTransportURI change ok' );
 	is( $e->{CurrentMediaDuration}->{val}, _secsToHMS($track1->{duration}), 'AVT CurrentMediaDuration change ok' );
 	is( $e->{CurrentPlayMode}->{val}, 'NORMAL', 'AVT CurrentPlayMode change ok' );
@@ -176,14 +176,14 @@ $avt_events->set_callback( sub {
 	like( $e->{CurrentTrackURI}->{val}, qr{^http://.+/music/${t1id}/download$}, 'AVT CurrentTrackURI change ok' );
 	is( $e->{CurrentTransportActions}->{val}, 'PLAY,STOP,SEEK,PAUSE,NEXT,PREVIOUS', 'AVT CurrentTransportActions change ok' );
 	like( $e->{NextAVTransportURI}->{val}, qr{^http://.+/music/${t2id}/download$}, 'AVT NextAVTransportURI change ok' );
-	cmp_ok( $e->{NumberOfTracks}->{val}, '>=', 2, 'AVT NumberOfTracks change ok' );	
+	cmp_ok( $e->{NumberOfTracks}->{val}, '>=', 2, 'AVT NumberOfTracks change ok' );
 	is( $e->{TransportState}->{val}, 'PLAYING', 'AVT TransportState -> PLAYING ok' );
-	
+
 	### Verify metadata values
-	
+
 	# AVTransportURIMetaData
 	my $cur = $e->{AVTransportURIMetaData}->{item};
-	
+
 	# Handle possible array values
 	if ( ref $cur->{'dc:contributor'} eq 'ARRAY' ) {
 		$cur->{'dc:contributor'} = $cur->{'dc:contributor'}->[0];
@@ -191,7 +191,7 @@ $avt_events->set_callback( sub {
 	if ( ref $cur->{'upnp:artist'} eq 'ARRAY' ) {
 		$cur->{'upnp:artist'} = $cur->{'upnp:artist'}->[0];
 	}
-	
+
 	is( $cur->{'dc:contributor'}, $track1->{artist}, 'AVT cur dc:contributor ok' );
 	is( $cur->{'dc:creator'}, $track1->{artist}, 'AVT cur dc:creator ok' );
 	is( $cur->{'dc:date'}, $track1->{year}, 'AVT cur dc:date ok' );
@@ -213,10 +213,10 @@ $avt_events->set_callback( sub {
 	is( $cur->{'upnp:class'}, 'object.item.audioItem.musicTrack', 'AVT cur upnp:class ok' );
 	is( $cur->{'upnp:genre'}, $track1->{genre}, 'AVT cur upnp:genre ok' );
 	is( $cur->{'upnp:originalTrackNumber'}, $track1->{tracknum}, 'AVT cur upnp:originalTrackNumber ok' );
-	
+
 	# NextAVTransportURIMetaData
 	my $next = $e->{NextAVTransportURIMetaData}->{item};
-	
+
 	# Handle possible array values
 	if ( ref $next->{'dc:contributor'} eq 'ARRAY' ) {
 		$next->{'dc:contributor'} = $next->{'dc:contributor'}->[0];
@@ -224,7 +224,7 @@ $avt_events->set_callback( sub {
 	if ( ref $next->{'upnp:artist'} eq 'ARRAY' ) {
 		$next->{'upnp:artist'} = $next->{'upnp:artist'}->[0];
 	}
-	
+
 	is( $next->{'dc:contributor'}, $track2->{artist}, 'AVT next dc:contributor ok' );
 	is( $next->{'dc:creator'}, $track2->{artist}, 'AVT next dc:creator ok' );
 	is( $next->{'dc:date'}, $track2->{year}, 'AVT next dc:date ok' );
@@ -269,22 +269,22 @@ GENA->wait(1);
 {
 	my $ec = 0;
 	my $newval;
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Volume}->{channel}, 'Master', 'RC volume change event channel ok' );
 		is( $e->{Volume}->{val}, $newval, 'RC volume change event value ok' );
 	} );
-	
+
 	# Set volume to +1 or 25, to avoid setting it to the same value and getting no event
 	my $res = _jsonrpc_get( $player, [ 'mixer', 'volume', '?' ] );
 	$newval = $res->{_volume} == 100 ? 25 : ++$res->{_volume};
 	_jsonrpc_get( $player, [ 'mixer', 'volume', $newval ] );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -295,21 +295,21 @@ GENA->wait(1);
 {
 	my $ec = 0;
 	my $newval;
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Mute}->{channel}, 'Master', 'RC mute change event channel ok' );
 		is( $e->{Mute}->{val}, $newval, 'RC mute change event value ok' );
 	} );
-	
+
 	my $res = _jsonrpc_get( $player, [ 'mixer', 'muting', '?' ] );
 	$newval = $res->{_muting} == 1 ? 0 : 1;
 	_jsonrpc_get( $player, [ 'mixer', 'muting', $newval ] );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -321,13 +321,13 @@ GENA->wait(1);
 	my $ec = 0;
 	my $onval;
 	my $offval;
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		if ($ec == 1) { # powerOnBrightness
 			is( $e->{Brightness}->{val}, $onval, 'RC powerOnBrightness change event ok' );
 		}
@@ -335,33 +335,33 @@ GENA->wait(1);
 			is( $e->{Brightness}->{val}, $offval, 'RC powerOffBrightness change event ok' );
 		}
 	} );
-	
+
 	my $res = _jsonrpc_get( $player, [ 'playerpref', 'powerOnBrightness', '?' ] );
 	$onval = $res->{_p2};
-	
+
 	$res = _jsonrpc_get( $player, [ 'playerpref', 'powerOffBrightness', '?' ] );
 	$offval = $res->{_p2};
-	
+
 	# Turn player on and change the on brightness, will event
 	_jsonrpc_get( $player, [ 'power', 1 ] );
 	$onval = $onval == 4 ? 1 : ++$onval;
 	_jsonrpc_get( $player, [ 'playerpref', 'powerOnBrightness', $onval ] );
-	
+
 	# Change off brightness while player is on, will not event
 	$offval = $offval == 4 ? 1 : ++$offval;
 	_jsonrpc_get( $player, [ 'playerpref', 'powerOffBrightness', $offval ] );
-	
+
 	GENA->wait(1);
-	
+
 	# Turn player off and change the off brightness, will event
 	_jsonrpc_get( $player, [ 'power', 0 ] );
 	$offval = $offval == 4 ? 1 : ++$offval;
 	_jsonrpc_get( $player, [ 'playerpref', 'powerOffBrightness', $offval ] );
-	
+
 	# Change on brightness while player is off, will not event
 	$onval = $onval == 4 ? 1 : ++$onval;
 	_jsonrpc_get( $player, [ 'playerpref', 'powerOnBrightness', $onval ] );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -377,21 +377,21 @@ GENA->wait(1);
 # SelectPreset
 {
 	my $ec = 0;
-	
+
 	# This changes 2 prefs but they are batched together into 1 event
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Mute}->{val}, 0, 'RC SelectPreset mute change event ok' );
 		is( $e->{Volume}->{val}, 50, 'RC SelectPreset volume change event ok' );
 	} );
-	
+
 	my $res = _action( $rc, 'SelectPreset', { PresetName => 'FactoryDefaults' } );
 	ok( !$res->{errorCode}, 'RC SelectPreset ok' );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -409,7 +409,7 @@ GENA->wait(1);
 	my $ec = 0;
 	my $power;
 	my $newval;
-	
+
 	my $res = _jsonrpc_get( $player, [ 'power', '?' ] );
 	if ( $res->{_power} ) {
 		$res = _jsonrpc_get( $player, [ 'playerpref', 'powerOnBrightness', '?' ] );
@@ -419,19 +419,19 @@ GENA->wait(1);
 		$res = _jsonrpc_get( $player, [ 'playerpref', 'powerOffBrightness', '?' ] );
 		$newval = $res->{_p2} == 4 ? 1 : ++$res->{_p2};
 	}
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Brightness}->{val}, $newval, 'RC SetBrightness change event ok' );
 	} );
-	
+
 	$res = _action( $rc, 'SetBrightness', { DesiredBrightness => $newval } );
 	ok( !$res->{errorCode}, 'RC SetBrightness ok' );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -448,26 +448,26 @@ GENA->wait(1);
 {
 	my $ec = 0;
 	my $newval;
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Mute}->{channel}, 'Master', 'RC SetMute change event channel ok' );
 		is( $e->{Mute}->{val}, $newval, 'RC SetMute change event value ok' );
 	} );
-	
+
 	my $res = _jsonrpc_get( $player, [ 'mixer', 'muting', '?' ] );
 	$newval = $res->{_muting} == 1 ? 0 : 1;
-	
+
 	$res = _action( $rc, 'SetMute', {
 		Channel     => 'Master',
 		DesiredMute => $newval,
 	} );
 	ok( !$res->{errorCode}, 'RC SetMute ok' );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -484,27 +484,27 @@ GENA->wait(1);
 {
 	my $ec = 0;
 	my $newval;
-	
+
 	$rc_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{Volume}->{channel}, 'Master', 'RC SetVolume change event channel ok' );
 		is( $e->{Volume}->{val}, $newval, 'RC SetVolume change event value ok' );
 	} );
-	
+
 	# Set volume to +1 or 25, to avoid setting it to the same value and getting no event
 	my $res = _jsonrpc_get( $player, [ 'mixer', 'volume', '?' ] );
 	$newval = $res->{_volume} == 100 ? 25 : ++$res->{_volume};
-	
+
 	$res = _action( $rc, 'SetVolume', {
 		Channel       => 'Master',
 		DesiredVolume => $newval,
 	} );
 	ok( !$res->{errorCode}, 'RC SetVolume ok' );
-	
+
 	GENA->wait(1);
 	$rc_events->clear_callback;
 
@@ -512,7 +512,7 @@ GENA->wait(1);
 }
 
 $rc_events->unsubscribe;
-	
+
 ### AVTransport
 #TEMP:
 print "# AVTransport\n";
@@ -523,12 +523,12 @@ my $cd;
 print "# Searching for MediaServer:1...\n";
 my @dev_list = $cp->search( st => 'urn:schemas-upnp-org:device:MediaServer:1', mx => 1 );
 for my $dev ( @dev_list ) {
-	if ( $dev->getmodelname !~ /^Logitech Media Server/ ) {
+	if ( $dev->getmodelname !~ /^Lyrion Music Server/ ) {
 		my $ms = Net::UPnP::AV::MediaServer->new();
 		$ms->setdevice($dev);
-		
+
 		$cd = $dev->getservicebyname('urn:schemas-upnp-org:service:ContentDirectory:1');
-		
+
 		# Require the Search method on this server
 		my $ctluri  = URI->new($cd->getposturl);
 		my $scpduri = $cd->getscpdurl;
@@ -540,7 +540,7 @@ for my $dev ( @dev_list ) {
 		}
 		my $scpd = LWP::Simple::get($scpduri);
 		next unless $scpd =~ /SearchCriteria/;
-		
+
 		print "# Using " . $dev->getfriendlyname . " for AVTransport tests\n";
 		last;
 	}
@@ -596,7 +596,7 @@ $avt_events = GENA->new( $eventuri, sub {
 	my ( $req, $props ) = @_;
 	my $lc = XMLin( $props->{LastChange} );
 	my $e = $lc->{InstanceID};
-	
+
 	# Check initial state variables
 	is( $e->{TransportState}->{val}, 'NO_MEDIA_PRESENT', 'AVT initial TransportState ok' );
 	is( $e->{TransportStatus}->{val}, 'OK', 'AVT initial TransportStatus ok' );
@@ -626,7 +626,7 @@ GENA->wait(1);
 # SetAVTransportURI
 {
 	my $ec = 0;
-	
+
 	# The code will change the first variables, followed by TransportState,
 	# so this is also a test of the event batching code
 	$avt_events->set_callback( sub {
@@ -634,7 +634,7 @@ GENA->wait(1);
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{AVTransportURI}->{val}, $item1->{res}->{content}, 'AVT SetAVTransportURI change for AVTransportURI ok' );
 		is( $e->{CurrentTrackURI}->{val}, $item1->{res}->{content}, 'AVT SetAVTransportURI change for CurrentTrackURI ok' );
 		is( $e->{AVTransportURIMetaData}->{val}, $xml1, 'AVT SetAVTransportURI change for AVTransportURIMetaData ok' );
@@ -646,19 +646,19 @@ GENA->wait(1);
 		is( $e->{PlaybackStorageMedium}->{val}, 'NETWORK', 'AVT SetAVTransportURI change for PlaybackStorageMedium ok' );
 		is( $e->{TransportState}->{val}, 'STOPPED', 'AVT SetAVTransportURI change for TransportState ok' );
 	} );
-		
+
 	my $res = _action( $avt, 'SetAVTransportURI', {
 		InstanceID         => 0,
 		CurrentURI         => $item1->{res}->{content},
 		CurrentURIMetaData => xmlEscape($xml1),
 	} );
 	ok( !$res->{errorCode}, 'AVT SetAVTransportURI ok' );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 1, 'AVT SetAVTransportURI change notify count ok' );
-	
+
 	# XXX more tests from different states:
 	# STOPPED -> STOPPED
 	# PLAYING -> PLAYING
@@ -668,37 +668,37 @@ GENA->wait(1);
 # SetNextAVTransportURI
 {
 	my $ec = 0;
-	
+
 	# This changes 2 values but they are batched together into 1 event
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		is( $e->{NextAVTransportURI}->{val}, $item2->{res}->{content}, 'AVT SetNextAVTransportURI change for NextAVTransportURI ok' );
 		is( $e->{NextAVTransportURIMetaData}->{val}, $xml2, 'AVT SetNextAVTransportURI change for NextAVTransportURIMetaData ok' );
 	} );
-		
+
 	my $res = _action( $avt, 'SetNextAVTransportURI', {
 		InstanceID      => 0,
 		NextURI         => $item2->{res}->{content},
 		NextURIMetaData => xmlEscape($xml2),
 	} );
 	ok( !$res->{errorCode}, 'AVT SetNextAVTransportURI ok' );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 1, 'AVT SetNextAVTransportURI change notify count ok' );
-	
+
 	# XXX test automatic transition from current -> next
 }
 
 # GetMediaInfo
 {
 	my $res = _action( $avt, 'GetMediaInfo', { InstanceID => 0 } );
-	
+
 	is( $res->{CurrentURI}->{content}, $item1->{res}->{content}, 'AVT GetMediaInfo CurrentURI ok' );
 	is( $res->{CurrentURIMetaData}->{content}, $xml1, 'AVT GetMediaInfo CurrentURIMetaData ok' );
 	is( $res->{MediaDuration}->{content}, $item1->{res}->{duration}, 'AVT GetMediaInfo MediaDuration ok' );
@@ -707,13 +707,13 @@ GENA->wait(1);
 	is( $res->{NrTracks}->{content}, 1, 'AVT GetMediaInfo NrTracks ok' );
 	is( $res->{PlayMedium}->{content}, 'NETWORK', 'AVT GetMediaInfo PlayMedium ok' );
 	is( $res->{RecordMedium}->{content}, 'NOT_IMPLEMENTED', 'AVT GetMediaInfo RecordMedium ok' );
-	is( $res->{WriteStatus}->{content}, 'NOT_IMPLEMENTED', 'AVT GetMediaInfo WriteStatus ok' );	
+	is( $res->{WriteStatus}->{content}, 'NOT_IMPLEMENTED', 'AVT GetMediaInfo WriteStatus ok' );
 }
 
 # GetTransportInfo
 {
 	my $res = _action( $avt, 'GetTransportInfo', { InstanceID => 0 } );
-	
+
 	is( $res->{CurrentTransportState}->{content}, 'STOPPED', 'AVT CurrentTransportState CurrentTransportState ok' );
 	is( $res->{CurrentTransportStatus}->{content}, 'OK', 'AVT GetTransportInfo CurrentTransportStatus ok' );
 	is( $res->{CurrentSpeed}->{content}, 1, 'AVT GetTransportInfo CurrentSpeed ok' );
@@ -722,7 +722,7 @@ GENA->wait(1);
 # GetPositionInfo
 {
 	my $res = _action( $avt, 'GetPositionInfo', { InstanceID => 0 } );
-	
+
 	is( $res->{Track}->{content}, 1, 'AVT GetPositionInfo Track ok' );
 	is( $res->{TrackDuration}->{content}, $item1->{res}->{duration}, 'AVT GetPositionInfo TrackDuration ok' );
 	is( $res->{TrackMetaData}->{content}, $xml1, 'AVT GetPositionInfo TrackMetaData ok' );
@@ -736,7 +736,7 @@ GENA->wait(1);
 # GetDeviceCapabilities
 {
 	my $res = _action( $avt, 'GetDeviceCapabilities', { InstanceID => 0 } );
-	
+
 	is( $res->{PlayMedia}->{content}, 'NONE,HDD,NETWORK,UNKNOWN', 'AVT GetDeviceCapabilities PlayMedia ok' );
 	is( $res->{RecMedia}->{content}, 'NOT_IMPLEMENTED', 'AVT GetDeviceCapabilities RecMedia ok' );
 	is( $res->{RecQualityModes}->{content}, 'NOT_IMPLEMENTED', 'AVT GetDeviceCapabilities RecQualityModes ok' );
@@ -745,7 +745,7 @@ GENA->wait(1);
 # GetTransportSettings
 {
 	my $res = _action( $avt, 'GetTransportSettings', { InstanceID => 0 } );
-	
+
 	is( $res->{PlayMode}->{content}, 'NORMAL', 'AVT GetTransportSettings PlayMode ok' );
 	is( $res->{RecQualityMode}->{content}, 'NOT_IMPLEMENTED', 'AVT GetTransportSettings RecQualityMode ok' );
 }
@@ -753,38 +753,38 @@ GENA->wait(1);
 # Play
 {
 	my $ec = 0;
-	
+
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		# State goes through TRANSITIONING but it will be too fast to get evented
 		is( $e->{TransportState}->{val}, 'PLAYING', 'AVT Play TransportState change to PLAYING ok' );
 	} );
-	
+
 	my $res = _action( $avt, 'Play', {
 		InstanceID => 0,
 		Speed      => 1,
 	} );
 	ok( !$res->{errorCode}, 'AVT Play ok' );
-	
+
 	# Play a second time will be ignored, with no event sent
 	_action( $avt, 'Play', {
 		InstanceID => 0,
 		Speed      => 1,
 	} );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 1, 'AVT Play notify count ok' );
-	
+
 	# Verify it's now playing
 	$res = _action( $avt, 'GetTransportInfo', { InstanceID => 0 } );
 	is( $res->{CurrentTransportState}->{content}, 'PLAYING', 'AVT Play CurrentTransportState is PLAYING ok' );
-	
+
 	sleep 4;
 	$res = _action( $avt, 'GetPositionInfo', { InstanceID => 0 } );
 	cmp_ok( $res->{AbsCount}->{content}, '>=', 1, 'AVT Play AbsCount ' . $res->{AbsCount}->{content} . ' ok' );
@@ -797,13 +797,13 @@ GENA->wait(1);
 {
 	print "# Note: Seek tests require accurate bitrate/duration, try using CBR MP3 files if this fails\n";
 	my $ec = 0;
-	
+
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		if ($ec == 1) {
 			is( $e->{TransportState}->{val}, 'TRANSITIONING', 'AVT Seek TransportState change to TRANSITIONING ok' );
 		}
@@ -811,19 +811,19 @@ GENA->wait(1);
 			is( $e->{TransportState}->{val}, 'PLAYING', 'AVT Seek TransportState change to PLAYING ok' );
 		}
 	} );
-	
+
 	my $res = _action( $avt, 'Seek', {
 		InstanceID => 0,
 		Unit       => 'ABS_TIME',
 		Target     => '0:01:00.123',
 	} );
 	ok( !$res->{errorCode}, 'AVT Seek ok' );
-	
+
 	GENA->wait(2);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 2, 'AVT Seek notify count ok' );
-	
+
 	# Check that the playback position changed correctly
 	sleep 2;
 	$res = _action( $avt, 'GetPositionInfo', { InstanceID => 0 } );
@@ -836,13 +836,13 @@ GENA->wait(1);
 # Pause
 {
 	my $ec = 0;
-	
+
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
+
 		if ($ec == 1) { # pause event
 			is( $e->{TransportState}->{val}, 'PAUSED_PLAYBACK', 'AVT Pause TransportState change to PAUSED_PLAYBACK ok' );
 		}
@@ -850,50 +850,50 @@ GENA->wait(1);
 			is( $e->{TransportState}->{val}, 'PLAYING', 'AVT Play while paused TransportState change to PLAYING ok' );
 		}
 	} );
-	
+
 	my $res = _action( $avt, 'Pause', { InstanceID => 0 } );
 	ok( !$res->{errorCode}, 'AVT Pause ok' );
-	
+
 	GENA->wait(1);
 	is( $ec, 1, 'AVT Pause notify count ok' );
-	
+
 	$res = _action( $avt, 'GetTransportInfo', { InstanceID => 0 } );
 	is( $res->{CurrentTransportState}->{content}, 'PAUSED_PLAYBACK', 'AVT Pause CurrentTransportState is PAUSED_PLAYBACK ok' );
-	
+
 	# Play while paused
 	$res = _action( $avt, 'Play', {
 		InstanceID => 0,
 		Speed      => 1,
 	} );
 	ok( !$res->{errorCode}, 'AVT Play while paused ok' );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 2, 'AVT Play while paused notify count ok' );
 }
 
 # Stop
 {
 	my $ec = 0;
-	
+
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
-		is( $e->{TransportState}->{val}, 'STOPPED', 'AVT Stop TransportState change to STOPPED ok' );		
+
+		is( $e->{TransportState}->{val}, 'STOPPED', 'AVT Stop TransportState change to STOPPED ok' );
 	} );
-	
+
 	my $res = _action( $avt, 'Stop', { InstanceID => 0 } );
 	ok( !$res->{errorCode}, 'AVT Stop ok' );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 1, 'AVT Stop notify count ok' );
-	
+
 	$res = _action( $avt, 'GetTransportInfo', { InstanceID => 0 } );
 	is( $res->{CurrentTransportState}->{content}, 'STOPPED', 'AVT Stop CurrentTransportState is STOPPED ok' );
 }
@@ -915,25 +915,25 @@ GENA->wait(1);
 # SetPlayMode
 {
 	my $ec = 0;
-	
+
 	$avt_events->set_callback( sub {
 		my ( $req, $props ) = @_;
 		$ec++;
 		my $lc = XMLin( $props->{LastChange} );
 		my $e = $lc->{InstanceID};
-		
-		is( $e->{CurrentPlayMode}->{val}, 'REPEAT_ONE', 'AVT SetPlayMode CurrentPlayMode change to REPEAT_ONE ok' );		
+
+		is( $e->{CurrentPlayMode}->{val}, 'REPEAT_ONE', 'AVT SetPlayMode CurrentPlayMode change to REPEAT_ONE ok' );
 	} );
-	
+
 	my $res = _action( $avt, 'SetPlayMode', {
 		InstanceID => 0,
 		NewPlayMode => 'REPEAT_ONE',
 	} );
 	ok( !$res->{errorCode}, 'AVT SetPlayMode ok' );
-	
+
 	GENA->wait(1);
 	$avt_events->clear_callback;
-	
+
 	is( $ec, 1, 'AVT SetPlayMode notify count ok' );
 }
 
@@ -965,13 +965,13 @@ END {
 
 sub _action {
 	my ( $service, $action, $args ) = @_;
-	
+
 	$args ||= {};
-	
+
 	my $res = $service->postaction($action, $args);
 	my $hash = XMLin( $res->gethttpresponse->getcontent );
-	
-	if ( $res->getstatuscode == 200 ) {	
+
+	if ( $res->getstatuscode == 200 ) {
 		return $hash->{'s:Body'}->{"u:${action}Response"};
 	}
 	else {
@@ -981,42 +981,42 @@ sub _action {
 
 sub _jsonrpc_get {
 	my $cmd = shift;
-	
+
 	my $client = JSON::RPC::Client->new;
 	my $uri    = 'http://localhost:9000/jsonrpc.js';
-	
+
 	# Support optional initial player param
 	my $player = '';
 	if ( !ref $cmd ) {
 		$player = $cmd;
 		$cmd = shift;
 	}
-	
+
 	my $res = $client->call( $uri, { method => 'slim.request', params => [ $player, $cmd ] } );
-	
+
 	if ( $res && $res->is_success ) {
 		return $res->content->{result};
 	}
-	
+
 	return;
 }
 
 # seconds to H:MM:SS[.F+]
 sub _secsToHMS {
 	my $secs = shift;
-	
+
 	my $elapsed = sprintf '%d:%02d:%02d', int($secs / 3600), int($secs / 60), $secs % 60;
-	
+
 	if ( $secs =~ /\.(\d+)$/ ) {
 		$elapsed .= '.' . $1;
 	}
-	
+
 	return $elapsed;
 }
 
 sub xmlEscape {
 	my $text = shift;
-	
+
 	if ( $text =~ /[\&\<\>'"]/) {
 		$text =~ s/&/&amp;/go;
 		$text =~ s/</&lt;/go;
@@ -1024,6 +1024,6 @@ sub xmlEscape {
 		$text =~ s/'/&apos;/go;
 		$text =~ s/"/&quot;/go;
 	}
-	
+
 	return $text;
 }

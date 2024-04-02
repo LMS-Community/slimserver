@@ -72,7 +72,7 @@ SETUP_MIX_TYPE
 	ES	Tipo de mezcla
 	FI	Miksin tyyppi
 	FR	Type de mix
-	HE	סוג מיקס של 
+	HE	סוג מיקס של
 	IT	Tipo di raccolta
 	NL	Mixtype
 	NO	Mikstype
@@ -123,7 +123,7 @@ SETUP_MIX_FILTER
 	ES	Filtro de mezcla
 	FI	Miksin suodatin
 	FR	Filtre de mix
-	HE	מסנן מיקסים של 
+	HE	מסנן מיקסים של
 	IT	Filtro raccolta
 	NL	Mixfilter
 	NO	Miksefilter
@@ -133,21 +133,21 @@ SETUP_MIX_FILTER
 	ZH_CN	混音过滤器
 
 SETUP_MIX_FILTER_DESC
-	CS	Můžete vytvořit pojmenované sady filtrovacích podmínek v MusicIP a zvolit ze zde uvedeného seznamu aplikaci filtrů na Mixy MusicIP ve Logitech Media Server.
-	DA	Du kan definere navngivne filterbetingelser i MusicIP og vælge at anvende disse filtre på miks fra MusicIP i Logitech Media Server.
-	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im Logitech Media Server angewendet werden soll.
-	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in Logitech Media Server.
-	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en Logitech Media Server.
-	FI	Voit luoda nimettyjä suodatinehtojoukkoja MusicIP:ssä, valita haluamasi suodattimet tässä olevasta luettelosta ja ottaa nämä suodattimet käyttöön MusicIP-mikseissä Logitech Media Serverissä.
-	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le Logitech Media Server.
-	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-Logitech Media Server.
-	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in Logitech Media Server.
-	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in Logitech Media Server toe te passen.
-	NO	Du kan lage og gi navn til dine egne sett med filterbetingelser i MusicIP, og velge fra denne listen for å bruke disse filtrene på MusicIP-mikser i Logitech Media Server.
-	PL	W usłudze MusicIP można utworzyć zestawy filtrów warunków oraz nadać im nazwy, a następnie wybrać je z listy w tym miejscu w celu zastosowania filtrów do składanek usługi MusicIP w programie Logitech Media Server.
-	RU	В MusicIP можно создавать именованные наборы фильтров и, выбирая из списка, применять эти фильтры к миксам MusicIP в Logitech Media Server.
-	SV	Du kan skapa olika uppsättningar filtervilkor i MusicIP och sedan använda dem med MusicIP Mix i Logitech Media Server. Välj filter i listan.
-	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Logitech Media Server内MusicIP混音的那些过滤器。
+	CS	Můžete vytvořit pojmenované sady filtrovacích podmínek v MusicIP a zvolit ze zde uvedeného seznamu aplikaci filtrů na Mixy MusicIP ve Lyrion Music Server.
+	DA	Du kan definere navngivne filterbetingelser i MusicIP og vælge at anvende disse filtre på miks fra MusicIP i Lyrion Music Server.
+	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im Lyrion Music Server angewendet werden soll.
+	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in Lyrion Music Server.
+	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en Lyrion Music Server.
+	FI	Voit luoda nimettyjä suodatinehtojoukkoja MusicIP:ssä, valita haluamasi suodattimet tässä olevasta luettelosta ja ottaa nämä suodattimet käyttöön MusicIP-mikseissä Lyrion Music Serverissä.
+	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le Lyrion Music Server.
+	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-Lyrion Music Server.
+	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in Lyrion Music Server.
+	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in Lyrion Music Server toe te passen.
+	NO	Du kan lage og gi navn til dine egne sett med filterbetingelser i MusicIP, og velge fra denne listen for å bruke disse filtrene på MusicIP-mikser i Lyrion Music Server.
+	PL	W usłudze MusicIP można utworzyć zestawy filtrów warunków oraz nadać im nazwy, a następnie wybrać je z listy w tym miejscu w celu zastosowania filtrów do składanek usługi MusicIP w programie Lyrion Music Server.
+	RU	В MusicIP можно создавать именованные наборы фильтров и, выбирая из списка, применять эти фильтры к миксам MusicIP в Lyrion Music Server.
+	SV	Du kan skapa olika uppsättningar filtervilkor i MusicIP och sedan använda dem med MusicIP Mix i Lyrion Music Server. Välj filter i listan.
+	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Lyrion Music Server内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
 	CS	Žánr mixu
@@ -157,7 +157,7 @@ SETUP_MIX_GENRE
 	ES	Género de mezcla
 	FI	Miksin genre
 	FR	Genre de mix
-	HE	סגנון מיקס של 
+	HE	סגנון מיקס של
 	IT	Genere raccolta
 	NL	Mixgenre
 	NO	Sjangermiks
@@ -242,7 +242,7 @@ SETUP_MIX_STYLE
 	ES	Estilo de mezcla
 	FI	Miksin tyyli
 	FR	Style du mix
-	HE	סגנון מיקס של 
+	HE	סגנון מיקס של
 	IT	Stile della raccolta
 	NL	Mixstijl
 	NO	Stilmiks
@@ -276,7 +276,7 @@ SETUP_MIX_VARIETY
 	ES	Variedad de mezcla
 	FI	Miksivalikoima
 	FR	Variété du mix
-	HE	מגוון במיקס של 
+	HE	מגוון במיקס של
 	IT	Varietà della raccolta
 	NL	Mixvariatie
 	NO	Blandingsmiks
@@ -441,19 +441,19 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	CS	Logitech Media Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného stavu, obzvláště při prohledávání pouze nových a změněných skladeb.
-	DA	Logitech Media Server kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
-	DE	Logitech Media Server kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
-	EN	Logitech Media Server can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
-	ES	Logitech Media Server puede usar el programa MusicIP como origen para la información de título y de género. O se puede usar sólo para generar mezclas instantáneas por género, artista y canción. Leer la información de título y género es mucho más lento que leer sólo el estado mezclable, especialmente cuando se examina sólo en busca de canciones nuevas y cambiadas.
-	FI	Logitech Media Server voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös käyttää sitä ainoastaan välittömien miksien luomiseen genre-, artisti- ja kappaletasolla. Nimi- ja genretietojen lukeminen on paljon hitaampaa kuin ainoastaan miksattavien tietojen lukeminen, erityisesti, kun etsitään vain uusia ja muutettuja kappaleita.
-	FR	Le Logitech Media Server peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer uniquement des mix instantanés par genre, par artiste ou par morceau. La lecture des informations de titre et de genre est plus lente que la lecture de l'état mixable uniquement, en particulier lors de la recherche des nouveaux morceaux ou des morceaux modifiés.
-	IT	In Logitech Media Server il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. In alternativa è possibile utilizzarlo solo per generare raccolte rapide in base al genere, all'artista e ai brani. La lettura di informazioni relative a titolo e genere risulta molto più lenta della lettura limitata allo stato della raccolta, in particolare durante la ricerca dei soli brani nuovi e modificati.
-	NL	Logitech Media Server kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Je kunt het ook gebruiken om alleen instantmixen te maken op genre, artiest en nummer. Het lezen van titel- en genre-informatie is veel langzamer dan het lezen van alleen de mixbaarheidsstatus, vooral wanneer er alleen op nieuwe en gewijzigde nummers wordt gescand.
-	NO	Logitech Media Server kan bruke MusicIP-programmet som kilde for tittel- og sjangerinformasjon, eller du kan bruke det til å lage mikser på et øyeblikk ut fra sjanger, artist og sang. Det går mye saktere å lese tittel- og sjangerinformasjon enn miksstatusen, særlig når du kun søker etter nye og endrede sanger.
-	PL	Program Logitech Media Server może użyć usługi MusicIP jako źródła informacji o tytułach i gatunkach. Można też użyć go tylko do szybkiego wygenerowania składanek na poziomie gatunku, wykonawcy i utworu. Odczytywanie informacji o tytule i gatunku trwa znacznie dłużej niż odczytywanie tylko stanu możliwości utworzenia składanki, szczególnie w przypadku wyszukiwania nowej i zmienionej muzyki.
-	RU	Logitech Media Server может получать от программы MusicIP информацию о названии и жанре. Можно также создавать мгновенные миксы по жанрам, исполнителям и песням. Считывание информации о названии и жанре происходит намного дольше, чем просто считывание состояния микшируемости (особенно при поиске только новых и измененных песен).
-	SV	Logitech Media Server kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
+	CS	Lyrion Music Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného stavu, obzvláště při prohledávání pouze nových a změněných skladeb.
+	DA	Lyrion Music Server kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
+	DE	Lyrion Music Server kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
+	EN	Lyrion Music Server can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
+	ES	Lyrion Music Server puede usar el programa MusicIP como origen para la información de título y de género. O se puede usar sólo para generar mezclas instantáneas por género, artista y canción. Leer la información de título y género es mucho más lento que leer sólo el estado mezclable, especialmente cuando se examina sólo en busca de canciones nuevas y cambiadas.
+	FI	Lyrion Music Server voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös käyttää sitä ainoastaan välittömien miksien luomiseen genre-, artisti- ja kappaletasolla. Nimi- ja genretietojen lukeminen on paljon hitaampaa kuin ainoastaan miksattavien tietojen lukeminen, erityisesti, kun etsitään vain uusia ja muutettuja kappaleita.
+	FR	Le Lyrion Music Server peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer uniquement des mix instantanés par genre, par artiste ou par morceau. La lecture des informations de titre et de genre est plus lente que la lecture de l'état mixable uniquement, en particulier lors de la recherche des nouveaux morceaux ou des morceaux modifiés.
+	IT	In Lyrion Music Server il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. In alternativa è possibile utilizzarlo solo per generare raccolte rapide in base al genere, all'artista e ai brani. La lettura di informazioni relative a titolo e genere risulta molto più lenta della lettura limitata allo stato della raccolta, in particolare durante la ricerca dei soli brani nuovi e modificati.
+	NL	Lyrion Music Server kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Je kunt het ook gebruiken om alleen instantmixen te maken op genre, artiest en nummer. Het lezen van titel- en genre-informatie is veel langzamer dan het lezen van alleen de mixbaarheidsstatus, vooral wanneer er alleen op nieuwe en gewijzigde nummers wordt gescand.
+	NO	Lyrion Music Server kan bruke MusicIP-programmet som kilde for tittel- og sjangerinformasjon, eller du kan bruke det til å lage mikser på et øyeblikk ut fra sjanger, artist og sang. Det går mye saktere å lese tittel- og sjangerinformasjon enn miksstatusen, særlig når du kun søker etter nye og endrede sanger.
+	PL	Program Lyrion Music Server może użyć usługi MusicIP jako źródła informacji o tytułach i gatunkach. Można też użyć go tylko do szybkiego wygenerowania składanek na poziomie gatunku, wykonawcy i utworu. Odczytywanie informacji o tytule i gatunku trwa znacznie dłużej niż odczytywanie tylko stanu możliwości utworzenia składanki, szczególnie w przypadku wyszukiwania nowej i zmienionej muzyki.
+	RU	Lyrion Music Server может получать от программы MusicIP информацию о названии и жанре. Можно также создавать мгновенные миксы по жанрам, исполнителям и песням. Считывание информации о названии и жанре происходит намного дольше, чем просто считывание состояния микшируемости (особенно при поиске только новых и измененных песен).
+	SV	Lyrion Music Server kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
 
 MMMMIXTYPE_TRACKS
 	CS	Počet skladeb
@@ -524,21 +524,21 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	CS	Když se změní databáze vašeho MusicIP, Logitech Media Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Logitech Media Server čekat před znovunačítáním vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
-	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Logitech Media Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Logitech Media Server. Hvis værdien er 0, genindlæses den ikke.
-	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Logitech Media Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Logitech Media Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
-	EN	When your MusicIP Database changes, Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that Logitech Media Server will wait before reloading your MusicIP Database again. A value of zero disables the reload.
-	ES	Cuando cambie la base de datos de MusicIP, Logitech Media Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que Logitech Media Server esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero desactiva la recarga.
-	FI	Jos MusicIP-tietokanta muuttuu, Logitech Media Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka Logitech Media Server odottaa, ennen kuin se lataa MusicIP-tietokannan uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
-	FR	Le Logitech Media Server importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le Logitech Media Server actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
-	HE	כאשר מסד הנתונים של MusicIP משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
-	IT	Se si modifica il database di MusicIP, Logitech Media Server importa automaticamente i dati della libreria. È possibile specificare per Logitech Media Server il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
-	NL	Wanneer je MusicIP-database wijzigt, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang Logitech Media Server minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
-	NO	Når databasen til MusicIP endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge Logitech Media Server skal vente med å laste inn databasen til MusicIP igjen. Hvis verdien er null, deaktiveres innlasting.
-	PL	Po zmianie informacji w bazie danych usługi MusicIP program Logitech Media Server automatycznie zaimportuje informacje o bibliotece. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bazę danych usługi MusicIP. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
-	RU	При изменении базы данных MusicIP данные медиатеки автоматически импортируются в Logitech Media Server. Для Logitech Media Server можно задать минимальный интервал времени (в секундах) перед повторной загрузкой базы данных MusicIP. Значение 0 означает отмену повторной загрузки.
-	SV	När din MusicIP-databas ändras importeras biblioteksinformationen automatiskt till Logitech Media Server. Du kan ange en minimitid (i sekunder) som Logitech Media Server ska vänta mellan varje gång informationen från MusicIP-databasen uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
-	ZH_CN	当您的MusicIP数据库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	CS	Když se změní databáze vašeho MusicIP, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Lyrion Music Server čekat před znovunačítáním vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
+	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Lyrion Music Server. Hvis værdien er 0, genindlæses den ikke.
+	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
+	EN	When your MusicIP Database changes, Lyrion Music Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that Lyrion Music Server will wait before reloading your MusicIP Database again. A value of zero disables the reload.
+	ES	Cuando cambie la base de datos de MusicIP, Lyrion Music Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que Lyrion Music Server esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero desactiva la recarga.
+	FI	Jos MusicIP-tietokanta muuttuu, Lyrion Music Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka Lyrion Music Server odottaa, ennen kuin se lataa MusicIP-tietokannan uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
+	FR	Le Lyrion Music Server importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le Lyrion Music Server actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
+	HE	כאשר מסד הנתונים של MusicIP משתנה, Lyrion Music Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Lyrion Music Server להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
+	IT	Se si modifica il database di MusicIP, Lyrion Music Server importa automaticamente i dati della libreria. È possibile specificare per Lyrion Music Server il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
+	NL	Wanneer je MusicIP-database wijzigt, worden de collectiegegevens automatisch door Lyrion Music Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang Lyrion Music Server minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NO	Når databasen til MusicIP endres, importerer Lyrion Music Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge Lyrion Music Server skal vente med å laste inn databasen til MusicIP igjen. Hvis verdien er null, deaktiveres innlasting.
+	PL	Po zmianie informacji w bazie danych usługi MusicIP program Lyrion Music Server automatycznie zaimportuje informacje o bibliotece. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Lyrion Music Server ponownie załaduje bazę danych usługi MusicIP. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
+	RU	При изменении базы данных MusicIP данные медиатеки автоматически импортируются в Lyrion Music Server. Для Lyrion Music Server можно задать минимальный интервал времени (в секундах) перед повторной загрузкой базы данных MusicIP. Значение 0 означает отмену повторной загрузки.
+	SV	När din MusicIP-databas ändras importeras biblioteksinformationen automatiskt till Lyrion Music Server. Du kan ange en minimitid (i sekunder) som Lyrion Music Server ska vänta mellan varje gång informationen från MusicIP-databasen uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
+	ZH_CN	当您的MusicIP数据库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSPORT
 	CS	HTTP port MusicIP

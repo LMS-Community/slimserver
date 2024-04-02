@@ -1,6 +1,7 @@
 package Slim::Display::Text;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -69,11 +70,11 @@ sub resetDisplay {
 	$cache->{'screen1'} = { 'ssize' => 0 };
 
 	$display->killAnimation();
-}	
+}
 
 sub linesPerScreen {
 	my $display = shift;
-	return $display->textSize() ? 1 : 2;	
+	return $display->textSize() ? 1 : 2;
 }
 
 sub displayWidth {
@@ -100,7 +101,7 @@ sub vfdmodel {
 		} else {
 			return 'noritake-katakana';
 		}
-	} elsif ($client->isa('Slim::Player::SqueezeSlave')) {  
+	} elsif ($client->isa('Slim::Player::SqueezeSlave')) {
 		return 'squeezeslave';
 	} else {
 		# Squeezebox 1
@@ -145,7 +146,7 @@ sub render {
 	#  textref         - array of refs for static result of render
 
 	# Per screen scrolling data
-	#  scroll          - scrolling state of render: 
+	#  scroll          - scrolling state of render:
 	#                    0 = no scroll, 1 = normal scroll, 2 = ticker scroll - update, 3 = ticker - no update
 	#  scrollline      - line which is scrolling [undef if no scrolling]
 	#  scrollref       - array of refs for scrolling component of render result
@@ -163,9 +164,9 @@ sub render {
 	my $screen;                     # screen definition to render
 	my $sc = $cache->{screen1};     # screen cache for this screen
 
-	if (!exists($parts->{screen1}) && 
-		(exists($parts->{line}) || exists($parts->{center}) || exists($parts->{overlay}) || 
-		 exists($parts->{ticker}) || exists($parts->{bits}))){ 
+	if (!exists($parts->{screen1}) &&
+		(exists($parts->{line}) || exists($parts->{center}) || exists($parts->{overlay}) ||
+		 exists($parts->{ticker}) || exists($parts->{bits}))){
 		$screen = $parts;           # components allowed at top level of display hash
 	} else {
 		$screen = $parts->{screen1};
@@ -193,10 +194,10 @@ sub render {
 			}
 			$displayoverlays = $text->{displayoverlays} if exists $text->{displayoverlays};
 		} else {
-			if    ($text == 1) { $double = 1; } 
+			if    ($text == 1) { $double = 1; }
 			elsif ($text == 2) { $double = 0; }
 		}
-	} 
+	}
 	if (defined($screen->{double})) {
 		$double = $screen->{double};
 	}
@@ -217,7 +218,7 @@ sub render {
 		$sc->{scrollline} = undef;
 	}
 
-	if (!$scroll) { 
+	if (!$scroll) {
 		$sc->{scroll} = 0;
 		$sc->{scrollline} = undef;
 	}
@@ -227,9 +228,9 @@ sub render {
 		$screen->{line}[1] = $screen->{line}[0];
 	}
 
-	# lines - render if changed 
+	# lines - render if changed
 	foreach my $l (0..1) {
-		if (defined($screen->{line}[$l]) && 
+		if (defined($screen->{line}[$l]) &&
 			(!defined($sc->{line}[$l]) || ($screen->{line}[$l] ne $sc->{line}[$l]))) {
 			$sc->{line}[$l] = $screen->{line}[$l];
 			next if ($double && $l == 0);
@@ -269,7 +270,7 @@ sub render {
 
 	# overlays - render if changed
 	foreach my $l (0..1) {
-		if (defined($screen->{overlay}[$l]) && 
+		if (defined($screen->{overlay}[$l]) &&
 			(!defined($sc->{overlay}[$l]) || ($screen->{overlay}[$l] ne $sc->{overlay}[$l]))) {
 			$sc->{overlay}[$l] = $screen->{overlay}[$l];
 			if (!$double || $displayoverlays) {
@@ -299,9 +300,9 @@ sub render {
 			$sc->{center}[$l] = $screen->{center}[$l];
 			next if ($double && $l == 0);
 			if (!$double) {
-				my $len = lineLength($screen->{center}[$l]); 
+				my $len = lineLength($screen->{center}[$l]);
 				if ($len < $display->displayWidth - 1) {
-					$sc->{centertext}[$l] = ' ' x (($display->displayWidth - $len)/2) . $screen->{center}[$l] . 
+					$sc->{centertext}[$l] = ' ' x (($display->displayWidth - $len)/2) . $screen->{center}[$l] .
 						' ' x ($display->displayWidth - $len - int(($display->displayWidth - $len)/2));
 				} else {
 					$sc->{centertext}[$l] = subString($screen->{center}[$l] . ' ', 0, $display->displayWidth);
@@ -378,12 +379,12 @@ sub render {
 
 		if ($sc->{centertext}[$l]) {
 			# centered text takes precedence
-			$line = subString($sc->{centertext}[$l], 0, $sc->{overlaystart}[$l]). 
+			$line = subString($sc->{centertext}[$l], 0, $sc->{overlaystart}[$l]).
 				$sc->{overlaytext}[$l];
 
 		} elsif ($sc->{linefinish}[$l] <= $sc->{overlaystart}[$l] ) {
 			# no need to scroll - assemble line + pad + overlay
-			$line = $sc->{linetext}[$l] . ' ' x ($sc->{overlaystart}[$l] - $sc->{linefinish}[$l]) . 
+			$line = $sc->{linetext}[$l] . ' ' x ($sc->{overlaystart}[$l] - $sc->{linefinish}[$l]) .
 				$sc->{overlaytext}[$l];
 
 		} elsif (!$scroll || ($sc->{scroll} && $sc->{scrollline} != $l) ) {
@@ -417,12 +418,12 @@ sub render {
 			if (!$double || $l == 0) {
 				# if doubled only set scroll state on second pass - $l = 0
 				$sc->{scroll} = 1;
-				$sc->{scrollline} = $l; 
+				$sc->{scrollline} = $l;
 				$sc->{newscroll} = 1;
 			}
 
 			$sc->{scrollref}[$l] = \$scrolltext;
-			
+
 			# add overlay only to static bitmap
 			$line = ' ' x $sc->{overlaystart}[$l] . $sc->{overlaytext}[$l];
 		}
@@ -505,7 +506,7 @@ sub bumpRight {
 	my $line2 = ${$render->{screen1}->{lineref}[1]} . $display->symbols('hardspace');
 
 	$display->killAnimation();
-	$display->pushUpdate([\$line1, \$line2, 2, -1, 0, 0.125]);	
+	$display->pushUpdate([\$line1, \$line2, 2, -1, 0, 0.125]);
 }
 
 sub bumpLeft {
@@ -516,23 +517,23 @@ sub bumpLeft {
 	my $line2 = $display->symbols('hardspace') . ${$render->{screen1}->{lineref}[1]};
 
 	$display->killAnimation();
-	$display->pushUpdate([\$line1, \$line2, -1, 1, 1, 0.125]);	
+	$display->pushUpdate([\$line1, \$line2, -1, 1, 1, 0.125]);
 }
 
 sub pushUpdate {
 	my $display = shift;
 	my $params = shift;
 	my ($line1, $line2, $offset, $delta, $end, $deltatime) = @$params;
-	
+
 	$offset += $delta;
 	# With custom widths, offset may not be a factor of the width, so fix up to avoid problems!
-	$offset=$end if ($delta > 0 && $offset > $end); 
+	$offset=$end if ($delta > 0 && $offset > $end);
 	$offset=$end if ($delta < 0 && $offset < $end);
 
 	my $screenline1 = subString($$line1, $offset, $display->displayWidth);
 	my $screenline2 = subString($$line2, $offset, $display->displayWidth);
 
-	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $screenline1, $screenline2);		
+	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $screenline1, $screenline2);
 
 	if ($offset != $end) {
 		$display->updateMode(1);
@@ -550,7 +551,7 @@ sub bumpDown {
 	my $line1 = ${$render->{screen1}->{lineref}[1]};
 	my $line2 = ' ' x $display->displayWidth;
 
-	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);		
+	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);
 
 	$display->updateMode(1);
 	$display->animateState(4);
@@ -564,7 +565,7 @@ sub bumpUp {
 	my $line1 = ' ' x $display->displayWidth;
 	my $line2 = ${$render->{screen1}->{lineref}[0]};
 
-	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);		
+	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);
 
 	$display->updateMode(1);
 	$display->animateState(4);
@@ -592,7 +593,7 @@ sub brightnessMap {
 sub modes {
 	my $display = shift;
 	# Display Modes
-	
+
 	my @modes = (
 		# mode 0
 		{ desc => ['BLANK'],
@@ -616,7 +617,7 @@ sub modes {
 		{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 		  bar => 1, secs => 0,  width => $display->displayWidth, fullness => 1, },
 	   );
-	
+
 	return \@modes;
 }
 
@@ -628,7 +629,7 @@ sub scrollUpdateDisplay {
 	my $scroll = shift;
 
 	my ($line1, $line2);
-	
+
 	my $padlen = $scroll->{overlaystart} - ($scroll->{scrollend} - $scroll->{offset});
 	$padlen = 0 if ($padlen < 0);
 	my $pad = ' ' x $padlen;
@@ -718,7 +719,7 @@ sub killAnimation {
 	my $animate = $display->animateState();
 
 	Slim::Utils::Timers::killHighTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
-	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);
 	Slim::Utils::Timers::killHighTimers($display, \&endAnimation) if ($animate == 4);
 	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 5);
 
@@ -735,7 +736,7 @@ sub textSize {
 	my $client = $display->client;
 
 	my $prefname = ($client->power()) ? "doublesize" : "offDisplaySize";
-	
+
 	if (defined($newsize)) {
 		return	$prefs->client($client)->set($prefname, $newsize);
 	} else {
@@ -763,40 +764,40 @@ sub sliderBar {
 	if ($width == 0) {
 		return "";
 	}
-	
+
 	my $charwidth = 5;
 
 	if ($value < 0) {
 		$value = 0;
 	}
-	
+
 	if ($value > 100) {
 		$value = 100;
 	}
-	
+
 	my $chart = "";
-	
+
 	my $totaldots = $charwidth + ($width - 2) * $charwidth + $charwidth;
 
 	# felix mueller discovered some rounding errors that were causing the
-	# calculations to be off.  Doing it 1000 times up seems to be better.  
+	# calculations to be off.  Doing it 1000 times up seems to be better.
 	# go figure.
 	my $dots = int( ( ( $value * 10 ) * $totaldots) / 1000);
 	my $divider = ($midpoint/100) * ($width-2);
 
 	my $val = $value/100 * $width;
 	$width = $width - 1 if $midpoint;
-	
+
 	if ($dots < 0) { $dots = 0 };
-	
+
 	if ($dots < $charwidth) {
 		$chart = $midpoint ? $display->symbols('leftprogress4') : $display->symbols('leftprogress'.$dots);
 	} else {
 		$chart = $midpoint ? $display->symbols('leftprogress0') : $display->symbols('leftprogress4');
 	}
-	
+
 	$dots -= $charwidth;
-			
+
 	if ($midpoint) {
 		for (my $i = 1; $i < $divider; $i++) {
 			if ($dots <= 0) {
@@ -832,7 +833,7 @@ sub sliderBar {
 		}
 		$dots -= $charwidth;
 	}
-		
+
 	if ($dots <= 0) {
 		$chart .= $display->symbols('rightprogress0');
 	} elsif ($dots < $charwidth && !$fullstep) {
@@ -840,7 +841,7 @@ sub sliderBar {
 	} else {
 		$chart .= $display->symbols('rightprogress4');
 	}
-	
+
 	return $chart;
 }
 
@@ -869,10 +870,10 @@ our %commandmap = (
 	'framebuf'   => "\x1eframebuf\x1e",
 	'/framebuf'  => "\x1e/framebuf\x1e",
 	'linebreak'  => "\x1elinebreak\x1e",
-	'repeat'     => "\x1erepeat\x1e", 
+	'repeat'     => "\x1erepeat\x1e",
 	'right'      => "\x1eright\x1e",
 	'scroll'     => "\x1escroll\x1e",
-	'/scroll'    => "\x1e/scroll\x1e", 
+	'/scroll'    => "\x1e/scroll\x1e",
 );
 
 sub symbols {

@@ -1,8 +1,9 @@
 package Slim::Utils::ServiceManager::OSX;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use base qw(Slim::Utils::ServiceManager);
@@ -15,7 +16,7 @@ use Slim::Utils::ServiceManager;
 sub canStart { 1 }
 sub start {
 	my ($class, $params) = @_;
-	
+
 	foreach my $path (
 		catdir($Bin, '..', 'platforms', 'osx', 'Preference Pane'),
 		catdir($Bin, '..', 'Resources'),
@@ -23,7 +24,7 @@ sub start {
 		'/Library/PreferencePanes/SqueezeCenter.prefPane/Contents/Resources',
 	) {
 		my $startScript = catdir($path, 'start-server.sh');
-		
+
 		if (-f $startScript) {
 
 			$startScript =~ s/ /\\ /g;
@@ -32,7 +33,7 @@ sub start {
 			last;
 		}
 	}
-	
+
 }
 
 sub getStartupOptions {

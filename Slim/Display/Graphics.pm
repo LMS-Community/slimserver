@@ -1,6 +1,7 @@
 package Slim::Display::Graphics;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -66,7 +67,7 @@ sub validateFonts {
 	my $height = $display->displayHeight;
 
 	my $fontsOK = 1;
-	
+
 	Slim::Display::Lib::Fonts::init();
 
 	foreach my $font (@{$prefs->client($client)->get('activeFont')}, @{$prefs->client($client)->get('idleFont')}) {
@@ -151,7 +152,7 @@ sub render {
 		#  bitsref         - ref of bitmap for static result of render
 
 		# Per screen scrolling data
-		#  scroll          - scrolling state of render: 
+		#  scroll          - scrolling state of render:
 		#                    0 = no scroll, 1 = normal scroll, 2 = ticker scroll - update, 3 = ticker - no update
 		#  scrollline      - line which is scrolling [undef if no scrolling]
 		#  scrollbitsref   - ref of bitmap for scrolling component of render result
@@ -167,16 +168,16 @@ sub render {
 		#  newscroll       - new scrollable text produced by this render - scrolling should restart
 
 		my $screen;                     # screen definition to render
-		my $sfonts;                     # non default fonts for screen 
+		my $sfonts;                     # non default fonts for screen
 		my $screen1 = ($screenNo == 1); # flag for main screen
 		my $s = 'screen'.$screenNo;     # name of screen [screen1, screen2 etc]
 		my $sc = $cache->{$s};          # screen cache for this screen
 		my $changed = 0;                # current screen has changed
 		my $screensize = $display->screenBytes($screenNo); # size of screen
 
-		if ($screen1 && !exists($parts->{screen1}) && 
-			(exists($parts->{line}) || exists($parts->{center}) || exists($parts->{overlay}) || 
-			 exists($parts->{ticker}) || exists($parts->{bits}) || !scalar keys(%$parts))){ 
+		if ($screen1 && !exists($parts->{screen1}) &&
+			(exists($parts->{line}) || exists($parts->{center}) || exists($parts->{overlay}) ||
+			 exists($parts->{ticker}) || exists($parts->{bits}) || !scalar keys(%$parts))){
 			$screen = $parts;           # screen 1 components allowed at top level of display hash
 		} else {
 			$screen = $parts->{$s};     # other screens must be within {screenX} component of hash
@@ -248,7 +249,7 @@ sub render {
 
 					foreach my $l (0..$maxLine) {
 
-						if (!$sfonts || !$cfonts || 
+						if (!$sfonts || !$cfonts ||
 							( ($sfonts->{$c}[$l] || '')  ne ($cfonts->{$c}[$l] || '') ) || $changed) {
 							$sc->{"$c"}[$l] = undef;
 							$sc->{"$c"."bits"}[$l] = '';
@@ -263,24 +264,24 @@ sub render {
 				$sc->{extent} = Slim::Display::Lib::Fonts::extent($sfonts->{line}[1]||$dfonts->{line}[1]);
 			}
 
-			if (!$scroll || $changed) { 
+			if (!$scroll || $changed) {
 				# kill any current scrolling if scrolling is disabled or fonts have changed
 				$sc->{scroll} = 0;
 				$sc->{scrollline} = undef;
 			}
 
 			# if in single line mode and nothing on line[1], copy line[0] - don't do in ticker mode
-			if (!($sfonts->{line}[0] || $dfonts->{line}[0]) && (!$screen->{line}[1] || $screen->{line}[1] eq '') && 
+			if (!($sfonts->{line}[0] || $dfonts->{line}[0]) && (!$screen->{line}[1] || $screen->{line}[1] eq '') &&
 				!exists($screen->{ticker})) {
 				$screen->{line}[1] = $screen->{line}[0];
 			}
 
-			# lines - render if changed 
+			# lines - render if changed
 			foreach my $l (0..$maxLine) {
-				if (defined($screen->{line}[$l]) && 
+				if (defined($screen->{line}[$l]) &&
 					(!defined($sc->{line}[$l]) || ($screen->{line}[$l] ne $sc->{line}[$l]))) {
 					$sc->{line}[$l] = $screen->{line}[$l];
-					($sc->{linereverse}[$l], $sc->{linebits}[$l]) = 
+					($sc->{linereverse}[$l], $sc->{linebits}[$l]) =
 						Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{line}[$l]);
 					$sc->{linefinish}[$l] = length($sc->{linebits}[$l]);
 					if ($sc->{scroll} && ($sc->{scrollline} == $l)) {
@@ -300,7 +301,7 @@ sub render {
 
 			# overlays - render if changed
 			foreach my $l (0..$maxLine) {
-				if (defined($screen->{overlay}[$l]) && 
+				if (defined($screen->{overlay}[$l]) &&
 					(!defined($sc->{overlay}[$l]) || ($screen->{overlay}[$l] ne $sc->{overlay}[$l]))) {
 					$sc->{overlay}[$l] = $screen->{overlay}[$l];
 					my $overlay;
@@ -344,7 +345,7 @@ sub render {
 				$sc->{newscroll} = 1 if ($sc->{scroll} < 2); # switching scroll mode
 				for (my $l = $maxLine; $l >= 0; $l--) { # prefer lower lines
 					if (exists($screen->{ticker}[$l]) && defined($screen->{ticker}[$l])) {
-						($reverse, $tickerbits) = 
+						($reverse, $tickerbits) =
 							Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{ticker}[$l]);
 						$sc->{scrollline} = $l;
 						last;
@@ -377,7 +378,7 @@ sub render {
 				$sc->{scroll}     = 0;
 				$sc->{scrollline} = undef;
 			}
-			
+
 			$sc->{changed} = $changed;
 			$sc->{present} = 1 unless $rerender;
 
@@ -408,7 +409,7 @@ sub render {
 				if (!$sc->{linereverse}[$l]) {
 					$bits |= substr($sc->{linebits}[$l], 0, $sc->{overlaystart}[$l]). $sc->{overlaybits}[$l];
 				} else {
-					$bits |= substr($sc->{linebits}[$l], $sc->{linefinish}[$l] - $sc->{overlaystart}[$l]) . 
+					$bits |= substr($sc->{linebits}[$l], $sc->{linefinish}[$l] - $sc->{overlaystart}[$l]) .
 						$sc->{overlaybits}[$l];
 				}
 
@@ -434,7 +435,7 @@ sub render {
 						$padBytes += $bytesPerScroll - ($len % $bytesPerScroll);
 					}
 					if ($sc->{scrolldir} == 1) {
-						$scrollbits = $sc->{linebits}[$l] . 
+						$scrollbits = $sc->{linebits}[$l] .
 							chr(0) x $padBytes . substr($sc->{linebits}[$l], 0, $screensize);
 						$sc->{scrollstart} = 0;
 						$sc->{scrollend} = $sc->{linefinish}[$l] + $padBytes;
@@ -463,7 +464,7 @@ sub render {
 				$sc->{scrollline} = $l;
 				$sc->{newscroll} = 1;
 				$sc->{scrollbitsref} = \$scrollbits;
-				
+
 				# add overlay only to static bitmap
 				$bits |= chr(0) x $sc->{overlaystart}[$l] . $sc->{overlaybits}[$l];
 			}
@@ -471,7 +472,7 @@ sub render {
 
 		# Centered text
 		foreach my $l (0..$maxLine) {
-			if (defined($sc->{center}[$l])) { 
+			if (defined($sc->{center}[$l])) {
 				$bits |= $sc->{centerbits}[$l];
 			}
 		}
@@ -495,13 +496,13 @@ sub render {
 sub brightness {
 	my $display = shift;
 	my $delta = shift;
-	
+
 	my $brightness = $display->SUPER::brightness($delta);
 
 	if (defined($delta)) {
 		my @brightnessMap = $display->brightnessMap;
 		my $brightnesscode = pack('n', $brightnessMap[$brightness]);
-		$display->client->sendFrame('grfb', \$brightnesscode); 
+		$display->client->sendFrame('grfb', \$brightnesscode);
 	}
 
 	return $brightness;
@@ -519,7 +520,7 @@ sub scrollUpdateDisplay {
 	my $display = shift;
 	my $scroll = shift;
 	my $client = $display->client || return;
-	
+
 	# don't send update if the slimproto socket is congested
 	if ( Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) != 0 ) {
 		return;
@@ -528,16 +529,16 @@ sub scrollUpdateDisplay {
 	my $data;
 
 	if ($scroll->{dir} == 1 || $scroll->{offset} >= 0) {
-		$data = $scroll->{scrollHeader} . 
+		$data = $scroll->{scrollHeader} .
 			(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlaystart}));
 	} else {
-		$data = $scroll->{scrollHeader} . 
+		$data = $scroll->{scrollHeader} .
 			(${$scroll->{bitsref}} |
-			 (substr(${$scroll->{bitsref}}, 0, abs($scroll->{offset})) . 
+			 (substr(${$scroll->{bitsref}}, 0, abs($scroll->{offset})) .
 			  substr(${$scroll->{scrollbitsref}}, 0, $scroll->{overlaystart} + $scroll->{offset})
 			 ));
-	}		
-	
+	}
+
 	$client->sendFrame( $display->graphicCommand, \$data );
 }
 
@@ -548,7 +549,7 @@ sub scrollUpdateTicker {
 
 	my $scroll   = $display->scrollData($screenNo);
 	my $padBytes = $scroll_pad_ticker * $display->bytesPerColumn;
-	my $pad      = 0;	
+	my $pad      = 0;
 	my $scrollbits;
 	my $len;
 
@@ -569,12 +570,12 @@ sub scrollUpdateTicker {
 		if ($screen->{overlaystart}[$screen->{scrollline}] > ($len + $padBytes)) {
 			$pad = $screen->{overlaystart}[$screen->{scrollline}] - $len - $padBytes;
 		}
-	
+
 		$scrollbits .= (chr(0) x $pad) . ${$screen->{scrollbitsref}};
-		
+
 		$scroll->{scrollend} = $len + $padBytes + $pad + $screen->{scrollend};
 		$scroll->{offset} = 0;
-		
+
 	} else {
 
 		$scrollbits = substr(${$scroll->{scrollbitsref}}, 0, $scroll->{offset} + $screen->{overlaystart}[$screen->{scrollline}]);
@@ -584,7 +585,7 @@ sub scrollUpdateTicker {
 		}
 
 		$scrollbits = ${$screen->{scrollbitsref}} . (chr(0) x $pad) . $scrollbits;
-		
+
 		$scroll->{offset} = $scroll->{offset} + length(${$screen->{scrollbitsref}}) + $pad;
 	}
 
@@ -599,7 +600,7 @@ sub textSize {
 
 	# grab base for prefname depending on mode
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-	
+
 	if (defined($newsize)) {
 
 		my $size = $prefs->client($client)->set($prefname."_curr", $newsize);
@@ -612,7 +613,7 @@ sub textSize {
 
 		# prefchanged callback will reset render cache defaultfont, so just redisplay here
 		$display->update($display->renderCache());
-		
+
 		return $size;
 
 	} else {
@@ -633,7 +634,7 @@ sub measureText {
 	my $text = shift || '';
 	my $line = shift;
 	my $spaces = shift; # number or additional inter-character spaces to add [overlay needs at least 1]
-	
+
 	my $fonts = $display->fonts();
 
 	if ($spaces) {
@@ -669,10 +670,10 @@ sub sliderBar {
 	my $divider= int($midpoint/100 * $spaces);
 	if (defined $cursor) {
 		$cursor = int($cursor/100 * $spaces);
-	}	
+	}
 
 	if ($dots < 0) { $dots = 0 };
-		
+
 	my $prog1 = $display->symbols('progress1');
 	my $prog2 = $display->symbols('progress2');
 	my $prog3 = $display->symbols('progress2');
@@ -705,7 +706,7 @@ sub sliderBar {
 				}
 			}
 		}
-		
+
 		if (defined $cursor && $cursor == $divider) {
 			$chart .= $cursorSymbol;
 			$chart .= $prog3;
@@ -713,7 +714,7 @@ sub sliderBar {
 			$chart .= $progEnd;
 		}
 	}
-	
+
 	# right half
 	for (my $i = $divider + 1; $i < $spaces; $i++) {
 		if ($value <= $midpoint) {
@@ -769,7 +770,7 @@ sub simpleSliderBar {
 	}
 
 	my $splicePoint = int($width * $val / 100) * $display->bytesPerColumn;
-				
+
 	return substr($sbinfo->{full}, 0, $splicePoint) . substr($sbinfo->{empty}, $splicePoint);
 }
 
@@ -787,11 +788,11 @@ sub fonts {
 
 		$size = $display->textSize();
 	}
-		
+
 	# grab base for prefname depending on mode
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	my $font = $prefs->client($client)->get($prefname)->[ $size ];
-	
+
 	my $fontref = Slim::Display::Lib::Fonts::gfonthash();
 
 	if (!$font) { return undef; };
@@ -800,7 +801,7 @@ sub fonts {
 }
 
 # code for handling name to symbol mappings
-# 
+#
 my %fontSymbols = (
 	'notesymbol'  => "\x01",
 	'rightarrow'  => "\x02",
@@ -845,7 +846,7 @@ sub symbols {
 		$line =~ s/\x1e\/font\x1e/\x1b/g;
 		$line =~ s/\x1edefaultfont\x1e/\x1b\x1b/g;
 	}
-	
+
 	return $line;
 }
 

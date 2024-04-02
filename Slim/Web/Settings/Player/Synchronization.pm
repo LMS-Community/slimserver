@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Player::Synchronization;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -47,27 +48,27 @@ sub handler {
 	if ($paramRef->{'saveSettings'}) {
 
 		if ($paramRef->{synchronize}) {
-		
+
 			if (my $otherClient = Slim::Player::Client::getClient($paramRef->{synchronize})) {
 				$otherClient->execute( [ 'sync', $client->id ] );
 			} else {
 				$client->execute( [ 'sync', '-' ] );
 			}
-			
+
 		}
 	}
 
 	# Load any option lists for dynamic options.
 	$paramRef->{'syncGroups'} = syncGroups($client);
-	
+
 	# Set current values for prefs
 	# load into prefs hash so that web template can detect exists/!exists
 	$paramRef->{'prefs'}->{synchronize} =  -1;
 
 	if ($client->isSynced()) {
 		$paramRef->{'prefs'}->{synchronize} = $client->master()->id();
-	} 
-	
+	}
+
 	return $class->SUPER::handler($client, $paramRef);
 }
 

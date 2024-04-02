@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Player::Remote;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,7 +30,7 @@ sub needsClient {
 sub validFor {
 	my $class = shift;
 	my $client = shift;
-	
+
 	return $client->hasIR;
 }
 
@@ -55,7 +56,7 @@ sub handler {
 			my @disabled = ();
 
 			for my $i (0 .. (scalar(@irsets)-1)) {
-				
+
 				# The HTML form contains 2 irsetlistN items, so if the user
 				# unchecks the box to disable a set, we won't get an arrayref
 				if ( !ref $paramRef->{'pref_irsetlist'.$i} ) {

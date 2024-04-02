@@ -1,8 +1,9 @@
 package Slim::GUI::ControlPanel::Status;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -21,24 +22,24 @@ use Slim::Utils::ServiceManager;
 
 sub new {
 	my ($self, $nb, $parent) = @_;
-	
+
 	$self = $self->SUPER::new($nb);
-	
+
 	$self->{loaded} = 0;
 	$self->{serviceState} = 0;
 
 	$self->SetAutoLayout(1);
-	
+
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
 	$mainSizer->Add(Wx::HtmlWindow->new(
-		$self, 
+		$self,
 		-1,
 		[-1, -1],
 		[-1, -1],
 		wxSUNKEN_BORDER
 	), 1, wxALL | wxGROW, 10);
-	
+
 	$self->SetSizer($mainSizer);
 
 
@@ -46,16 +47,16 @@ sub new {
 		my ($self, $event) = @_;
 		$self->_update($event);
 	});
-	
-	
+
+
 	$parent->addStatusListener('statusUpdater', sub {
 		my $state = shift;
-		
+
 		if ($state != $self->{serviceState}) {
 			$self->_update();
 		}
 	});
-	
+
 
 	return $self;
 }
@@ -68,23 +69,23 @@ sub _update {
 	if ( $child && $child->isa('Wx::HtmlWindow') && !$self->{loaded} ) {
 
 		my $svcMgr = Slim::Utils::ServiceManager->new();
-		
+
 		if ($svcMgr->isRunning()) {
 
 			my $status = get(Slim::GUI::ControlPanel->getBaseUrl(1) . '/EN/settings/server/status.html?simple=1');
 			$status = decode("utf8", $status) if $status;
-	
+
 			$child->SetPage($status || string('CONTROLPANEL_NO_STATUS'));
 			$self->{loaded} = 1;
 
 		}
 		else {
-	
+
 			$child->SetPage(string('CONTROLPANEL_NO_STATUS'));
 			$self->{loaded} = 1;
 
 		}
-		
+
 		$self->{serviceState} = $svcMgr->getServiceState();
 	}
 	else {

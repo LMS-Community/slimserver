@@ -1,8 +1,9 @@
 package Slim::Buttons::Block;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -17,7 +18,7 @@ Slim::Buttons::Block::unblock($client);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Block> is a mode for locking out further remote control interaction 
+L<Slim::Buttons::Block> is a mode for locking out further remote control interaction
 until a longer process has completed.  It is also used to provide feedback to the user
 in the form of an appropriate message and animated display during the wait for a long operation to
 complete.
@@ -121,7 +122,7 @@ sub block {
 
 =head2 unblock( $client )
 
-Releases the provided client from block mode. 
+Releases the provided client from block mode.
 
 =cut
 
@@ -147,7 +148,7 @@ sub lines {
 	my $screen1;
 
 	$client->modeParam('block.updatedscreen', 1);
-	
+
 	if ($bdata->{'static'}) {
 
 		return $parts
@@ -165,12 +166,12 @@ sub lines {
 		$bdata->{'parts'} = $parts = Storable::dclone($parts);
 
 		$screen1 = $parts->{'screen1'} ? $parts->{'screen1'} : $parts;
-		
+
 		if ($client->display->isa('Slim::Display::Graphics')) {
 
 			# For graphics players animation cycles through characters in one of the following fonts:
 			# SB2 - blockanimateSB2.1, SBG - blockanimateSBG.1
-			my $vfd   = $client->display->vfdmodel(); 
+			my $vfd   = $client->display->vfdmodel();
 			my $model = $vfd =~ /graphic-\d+x32/ ? 'SB2' : 'SBG';
 			my $font  = "blockanimate$model.1";
 			my $chars = Slim::Display::Lib::Fonts::fontchars($font);
@@ -219,9 +220,9 @@ sub lines {
 		$screen1->{'overlay'}[0] = chr($pos + 1);
 
 	} else {
-		
+
 		my $pos = int(Time::HiRes::time() / $ticklength) % (@tickchars);
-		
+
 		$screen1->{overlay}[0] = $tickchars[$pos];
 	}
 

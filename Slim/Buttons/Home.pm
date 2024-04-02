@@ -1,6 +1,7 @@
 package Slim::Buttons::Home;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -22,7 +23,7 @@ Slim::Buttons::Home
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Home> is a Logitech Media Server module for creating and
+L<Slim::Buttons::Home> is a Lyrion Music Server module for creating and
 navigating a configurable multilevel menu structure.
 
 =cut

@@ -1,8 +1,9 @@
 package Slim::Utils::DateTime;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -15,7 +16,7 @@ use Slim::Utils::Unicode;
 
 my $prefs = preferences('server');
 
-=head1 NAME 
+=head1 NAME
 
 Slim::Utils::DateTime
 
@@ -93,7 +94,7 @@ sub timeF {
 	my $ltime = shift || time();
 	my $format = shift || $prefs->get('timeFormat');
 	my $timeIsUTC = shift;
-	
+
 	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtime($ltime);
 
 	# remove leading zero if another digit follows
@@ -134,12 +135,12 @@ sub fracSecToMinSec {
 	$min = int($seconds/60);
 	$sec = $seconds%60;
 	$sec = "0$sec" if length($sec) < 2;
-	
+
 	# We want to round the last two decimals but we
 	# always round down to avoid overshooting EOF on last track
 	$fracrounded = int($seconds * 100) + 100;
 	$frac = substr($fracrounded, -2, 2);
-	
+
 	return "$min:$sec.$frac";
 }
 
@@ -171,7 +172,7 @@ sub secsToPrettyTime {
 	return $string;
 }
 
-=head2 prettyTimeToSecs( "HH:MM AM/PM" ) 
+=head2 prettyTimeToSecs( "HH:MM AM/PM" )
 
 Turns a pretty time string into seconds.
 
@@ -198,7 +199,7 @@ sub splitTime {
 	my $twelveHour = shift;
 
 	if (! defined $twelveHour) {
-		
+
 		$twelveHour = hasAmPm(shift);
 
 	}
@@ -276,7 +277,7 @@ Takes as arguments, a scalar time value or a reference to one.
 sub timeDigits {
 	my $time = shift;
 	my $client = shift;
-	
+
 	my ($h, $m, $p) = splitTime($time, undef, $client);
 
 	if ($h < 10) { $h = '0' . $h; }

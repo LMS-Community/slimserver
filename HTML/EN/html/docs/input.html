@@ -5,7 +5,7 @@
 
   <h4>Overview</h4>
   <p>
-    The Logitech Media Server software comes equipped with a number (currently five) of
+    The Lyrion Music Server software comes equipped with a number (currently five) of
     generic input modes which can be used by other modes to handle interaction
     with the user via the remote. This allows module writers to concentrate on
     what to do with the input rather than the gathering of that input.
@@ -43,7 +43,7 @@
     into the input mode are the responsibility of the calling mode.
   </p>
   <p>
-    The input mode names are <strong>INPUT.<em>modulename</em></strong>, where 
+    The input mode names are <strong>INPUT.<em>modulename</em></strong>, where
     <em>modulename</em> is the name of the .pm file. A typical entry into the
     <strong>INPUT.Text</strong> mode follows:
 <pre>
@@ -160,7 +160,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         have no doublesize equivalents. The referenced hash has keys equal
         to the character to replace, and values equal to the character to use
         in doublesize mode. For example, to replace the custom character myCustom
-        with &quot;M&quot; when doublesized would be 
+        with &quot;M&quot; when doublesized would be
         <code>&#123;Slim::Display::Display::symbol(&quot;myCustom&quot;) =&gt; &quot;M&quot;&#125;</code>
       </dd>
       <dt>charIndex</dt>
@@ -352,7 +352,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
           <li>anything beginning with &quot;sp&quot; for the space character</li>
           <li>anything beginning with &quot;eq&quot; for the = character</li>
           <li>
-            any of &quot;hash&quot;, &quot;sharp&quot;, &quot;pound&quot;, or 
+            any of &quot;hash&quot;, &quot;sharp&quot;, &quot;pound&quot;, or
             a string beginning with &quot;num&quot for the # character
           </li>
         </ul>
@@ -466,7 +466,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>Default: none</dd>
       <dd>
         A code reference which is called whenever an exit event occurs. If
-        this parameter is not supplied, <strong>INPUT.List</strong> will 
+        this parameter is not supplied, <strong>INPUT.List</strong> will
         perform a pop mode right on left exit event, bump right on right exit
         events, and a simple pop mode on other types of exit event. This
         behavior should be sufficient for simple list displays where nothing
@@ -779,24 +779,24 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
     <dl>
       <dt>up</dt>
       <dd>
-        Changes the current digit one higher in value. Repeat is allowed and accelerates. 
+        Changes the current digit one higher in value. Repeat is allowed and accelerates.
         Rolling over will increment values to the left.
       </dd>
       <dt>down</dt>
       <dd>
-       Changes the current digit one lower in value. Repeat is allowed and accelerates. 
+       Changes the current digit one lower in value. Repeat is allowed and accelerates.
        Rolling over will decrement values to the left.
       </dd>
       <dt>left</dt>
       <dd>
         The the cursor moved one place to the left. If that movement would place the cursor
-        before the first position in the string, an exit event is generated with a type 
+        before the first position in the string, an exit event is generated with a type
         of <em>left</em>. This function is not designed to be used with repeat.
       </dd>
       <dt>right</dt>
       <dd>
-        The cursor is advanced to the next position. If the cursor was at the end, 
-        then an exit event of type <em>right</em> is generated. This function is 
+        The cursor is advanced to the next position. If the cursor was at the end,
+        then an exit event of type <em>right</em> is generated. This function is
         not designed to be used with repeat.
       </dd>
       <dt>cursor</dt>
@@ -815,9 +815,9 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       </dd>
       <dt>numberLetter</dt>
       <dd>
-        This function enters a digit directly in the string. The cursor is 
-        advanced to the next character if a different button is pressed than 
-        the previous, or after an amount of time equal to the <var>displayTextTimeout</var> 
+        This function enters a digit directly in the string. The cursor is
+        advanced to the next character if a different button is pressed than
+        the previous, or after an amount of time equal to the <var>displayTextTimeout</var>
         setting passes.  This function is not designed to be used with repeat.
       </dd>
       <dt>exit</dt>
@@ -902,7 +902,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>Default: none</dd>
       <dd>
         A code reference which is called whenever an exit event occurs. If
-        this parameter is not supplied, <strong>INPUT.Bar</strong> will 
+        this parameter is not supplied, <strong>INPUT.Bar</strong> will
         perform a pop mode right on left exit event, bump right on right exit
         events, and a simple pop mode on other types of exit event. This
         behavior should be sufficient for simple list displays where nothing
@@ -915,7 +915,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>
       	If set and true then the exit callback handler function will be invoked
       	whenever the mode is left. This is most useful if the mode wants to exit
-      	if another mode is pushed. 
+      	if another mode is pushed.
       </dd>
       <dt>valueRef</dt>
       <dd>
@@ -936,19 +936,19 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>min</dt>
       <dd>Default: 0</dd>
       <dd>
-        Sets the minimum value allowed for selection.  The slider will stop and hold 
+        Sets the minimum value allowed for selection.  The slider will stop and hold
         at this value unless the user selects a greater value.
       </dd>
       <dt>max</dt>
       <dd>Default: 100</dd>
       <dd>
-        Sets the maximum value allowed for selection.  The slider will stop and hold 
+        Sets the maximum value allowed for selection.  The slider will stop and hold
         at this value unless the user selects a lesser value.
       </dd>
       <dt>mid</dt>
       <dd>Default: 0</dd>
       <dd>
-        Sets the midpoint reference for bi-directional sliders.  Accellerated scrolling 
+        Sets the midpoint reference for bi-directional sliders.  Accellerated scrolling
         will pause at this point, and the bar will display mirrored output centred on this point.
       </dd>
       <dt>cursor</dt>

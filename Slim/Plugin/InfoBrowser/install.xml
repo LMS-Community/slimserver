@@ -12,7 +12,7 @@
 	<icon>plugins/InfoBrowser/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.0a</minVersion>
         <maxVersion>*</maxVersion>
 	</targetApplication>

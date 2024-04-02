@@ -1,9 +1,10 @@
 package Slim::Networking::IO::Select;
 
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -29,7 +30,7 @@ Slim::Utils::Select::addRead( $socket, \&callback )
 
 =head1 DESCRIPTION
 
-This module encapsulates all select() related code, handled by Logitech Media Server's main loop.
+This module encapsulates all select() related code, handled by Lyrion Music Server's main loop.
 
 Usually, you'll want to use higher such as L<Slim::Networking::Async::HTTP>.
 
@@ -88,7 +89,7 @@ sub removeError {}
 
 sub _add {
 	my ( $mode, $fh, $cb, $idle ) = @_;
-	
+
 	if(main::DEBUGLOG && $log->is_debug) {
 		$log->debug(
 			sprintf('fh=>%s(%d), mode=%s, cb=%s, idle=%d',
@@ -100,9 +101,9 @@ sub _add {
 			logBacktrace('Invalid FH');
 		}
 	}
-	
+
 	return unless defined $fh && defined fileno($fh);
-	
+
 	my $w = EV::io(
 		fileno($fh),
 		$mode,
@@ -114,16 +115,16 @@ sub _add {
 			}
 
 			main::PERFMON && (my $now = AnyEvent->time);
-					
-			eval { 
+
+			eval {
 				# This die handler lets us get a correct backtrace if callback crashes
 				local $SIG{__DIE__} = 'DEFAULT';
-				
+
 				$cb->( $fh, @{ ${*$fh}{passthrough} || [] } );
 			};
 
 			main::PERFMON && Slim::Utils::PerfMon->check('io', AnyEvent->time - $now, undef, $cb);
-			
+
 			if ( $@ ) {
 				my $error = "$@";
 				my $func = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($cb) : 'unk';
@@ -133,39 +134,39 @@ sub _add {
 	);
 
 	my $slot = $mode == EV::READ ? '_ev_r' : '_ev_w';
-	
+
 	${*$fh}{$slot} = $w;
 }
 
 sub _remove {
 	my ( $mode, $fh ) = @_;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug(
 		sprintf('fh=>%s(%d), mode=%s',
 			defined($fh) ? $fh : 'undef', defined($fh) ? fileno($fh) : -1,
 			$mode == EV::READ ? 'READ' : $mode == EV::WRITE ? 'WRITE' : "??-$mode"));
-	
+
 	return unless defined $fh;
 
 	my $slot = $mode == EV::READ ? '_ev_r' : '_ev_w';
-	
+
 	my $w = ${*$fh}{$slot} || return;
-	
+
 	$w->stop;
-	
+
 	delete ${*$fh}{$slot};
 }
 
 sub loop {
 	my $type = shift;
-	
+
 	# Don't recurse more than once into the loop
 	return if $depth == 2;
-	
+
 	$depth++;
-	
+
 	EV::loop( $type );
-	
+
 	$depth--;
 }
 

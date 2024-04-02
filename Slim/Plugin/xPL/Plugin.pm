@@ -1,6 +1,7 @@
 package Slim::Plugin::xPL::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -11,7 +12,7 @@ package Slim::Plugin::xPL::Plugin;
 # GNU General Public License for more details.
 #
 #
-# xPL Protocol Support Plugin for Logitech Media Server
+# xPL Protocol Support Plugin for Lyrion Music Server
 # http://www.xplproject.org.uk/
 
 
@@ -76,7 +77,7 @@ sub initPlugin {
 			Proto     => 'udp',
 			LocalPort => $xpl_port,
 			LocalAddr => $main::localClientNetAddr
-		);	
+		);
 
 		if (!$xpl_socket) {
 			$xpl_port = $xpl_port + 1;
@@ -87,7 +88,7 @@ sub initPlugin {
 	die "Could not create socket: $!\n" unless $xpl_socket;
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
-	
+
 	Slim::Control::Request::subscribe(\&xplExecuteCallback);
 }
 
@@ -245,7 +246,7 @@ sub handleAudioMessage {
 		elsif ($xplcmd =~ /^volume (\+|-|<|>)?1?[0-9]{1,2}/) {
 			xplExecuteCmd("mixer volume $params[1]",$clientid);
 		}
-	
+
 		# Handle SlimServ-specific commands
 		my $params;
 		$xplcmd = getparam($msg, "extended");
@@ -255,7 +256,7 @@ sub handleAudioMessage {
 		}
 		if (length($xplcmd)==0) {
 			return;
-		}	
+		}
 		if (index($xplcmd,' ') > 0) {
 			$params = substr($xplcmd,index($xplcmd,' ')+1,length($xplcmd)-index($xplcmd,' ')-1);
 			$xplcmd = substr($xplcmd,0,index($xplcmd,' '));
@@ -287,7 +288,7 @@ sub handleAudioMessage {
 					$params = $params_protocol . " " . $params_user;
 	 			}
 	 		}
-			xplExecuteCmd("$xplcmd $params", $clientid);		
+			xplExecuteCmd("$xplcmd $params", $clientid);
 		}
 	}
 }
@@ -333,7 +334,7 @@ sub sendXplHBeatMsg {
 			if (blessed($albumObj) && $albumObj->can('title')) {
 				$album = $albumObj->title;
 				# Get album artist if present - for podcasts to match SQ displays
-				my $tmpobj = $albumObj->contributor;                
+				my $tmpobj = $albumObj->contributor;
 				$albumArtist = $tmpobj->name if $tmpobj->can('name');
 			}
 
@@ -342,7 +343,7 @@ sub sendXplHBeatMsg {
 			if (blessed($artistObj) && $artistObj->can('name')) {
 				$artist = $artistObj->name;
 			}
-						
+
 			# For remote streams
 			if ($track->remote) {
 				$title = $track->title if $track->can('title');
@@ -366,7 +367,7 @@ sub sendXplHBeatMsg {
 				}
 			}
 		}
-		
+
 		# emulate SQplayer UI
 		$artist = "$albumArtist, $artist" if $albumArtist && $artist ne $albumArtist;
 
@@ -447,7 +448,7 @@ sub sendxplmsg {
 
 # Retrieves a parameter from the body of an xPL message
 sub getparam {
-	my $buff = $_[0];  
+	my $buff = $_[0];
         $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"}"),length($buff)-index($buff,"}"));
 	$buff = substr($buff,index($buff,"{")+2,length($buff)-index($buff,"{")-2);
@@ -458,7 +459,7 @@ sub getparam {
 
 # Retrieves a parameter from the header of an xPL message
 sub gethdrparam {
-	my $buff = $_[0];  
+	my $buff = $_[0];
         $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"{")+2,length($buff)-index($buff,"{")-2);
 	$buff = substr($buff,0,index($buff,"}")-1);
@@ -498,7 +499,7 @@ sub handleOsdMessage {
 		my $osdcmd = lc getparam($_[0],"command");
 		my $osdmsg = getparam($_[0],"text");
 		my $osddelay = getparam($_[0],"delay");
-	
+
 		# Extract text
 		my ($text1, $text2) = split /\\n/, $osdmsg;
 
@@ -508,12 +509,12 @@ sub handleOsdMessage {
 
 		if (!defined($text2)) {
 			$text2 = ' ';
-		}	
+		}
 
 		# Escape text
 		my $esctext1 = Slim::Utils::Misc::escape($text1);
 		my $esctext2 = Slim::Utils::Misc::escape($text2);
-	
+
 		# If delay is unspecified, set to default of 5 seconds
 		if (!defined($osddelay)) {
 			$osddelay = 5;
@@ -525,7 +526,7 @@ sub handleOsdMessage {
 		xplExecuteCmd("display $esctext1 $esctext2 $osddelay",$_[1]);
 
 		# Send a confirmation message
-		my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+		my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);
 
 		sendxplmsg("xpl-trig","*","osd.confirm","command=clear\ntext=$text1\\n$text2\ndelay=$osddelay",$clientname);
 	}
@@ -542,7 +543,7 @@ sub handleRemoteMessage {
 
 # Returns the current xPL configuration of a client
 sub handleConfigCurrent {
-	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);
 
 	sendxplmsg("xpl-stat","*","config.current","newconf=$clientname\ninterval=$xpl_interval\ninfrared=$xpl_ir",$clientname);
 }
@@ -551,7 +552,7 @@ sub handleConfigCurrent {
 # The config.list message contains information about how this device may be
 # configured.
 sub handleConfigList {
-	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);
 
 	sendxplmsg("xpl-stat","*","config.list","reconf=newconf\noption=interval\noption=infrared",$clientname);
 }
@@ -604,15 +605,15 @@ sub handleConfigResponse {
 #sub newClient {
 #	return unless defined $xpl_port;
 #
-#	sendXplHBeatMsg($_[0]);        
+#	sendXplHBeatMsg($_[0]);
 #}
 
 # This routine is called by Slim::Command::execute() for each command it processes.
 sub xplExecuteCallback {
 	my $request = shift;
-	
+
 	my $client = $request->client();
-	
+
 	# callback is all client based below, so avoid a crash and shortcut all of it when no client supplied
 	if (!defined $client) {
 
@@ -622,7 +623,7 @@ sub xplExecuteCallback {
 
 	my $clientname = validInstance($client->name);
 	my $power = 'off';
-	
+
 	if ($client->can('power')){
 		$power = ($client->power()==0 ? 'off' : 'on');
 	}
@@ -630,17 +631,17 @@ sub xplExecuteCallback {
 	if ($request->isCommand([['client'], ['new']])) {
 
 		main::DEBUGLOG && $log->debug("Got new client.");
-		
+
 		sendXplHBeatMsg($client);
 	}
-	
+
 	elsif ($request->isCommand([['power']])) {
 
 		main::DEBUGLOG && $log->debug("Callback for power.");
-		
+
 		sendXplHBeatMsg($client, 1);
 	}
-	
+
 	elsif ($request->isCommand([['button']]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 
 		main::DEBUGLOG && $log->debug("Callback for button.");
@@ -649,11 +650,11 @@ sub xplExecuteCallback {
 
 		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);
 	}
-	
+
 	elsif ($request->isCommand([['ir']]) && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
 
 		main::DEBUGLOG && $log->debug("Callback for IR.");
-		
+
 		my $param = $request->getParam('_ircode');
 
 		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);

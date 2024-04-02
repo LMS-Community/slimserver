@@ -1,6 +1,7 @@
 package Slim::Music::PlaylistFolderScan;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -78,7 +79,7 @@ sub startScan {
 		main::INFOLOG && $log->info("Scan already in progress. Restarting");
 
 		$class->stillScanning(0);
-	} 
+	}
 
 	$class->stillScanning(1);
 
@@ -87,7 +88,7 @@ sub startScan {
 	}
 
 	main::INFOLOG && $log->info("Starting playlist folder scan");
-	
+
 	my $changes = Slim::Utils::Scanner::Local->rescan( $dir, {
 		types    => 'list',
 		scanName => 'playlist',
@@ -96,7 +97,7 @@ sub startScan {
 	} );
 
 	$class->doneScanning;
-	
+
 	return $changes;
 }
 

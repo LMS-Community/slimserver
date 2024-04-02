@@ -1,7 +1,7 @@
 {
     "projectName": "Ext JS",
     "deployDir": "ext-sb",
-    "licenseText": "Ext JS Library for Logitech Media Server",
+    "licenseText": "Ext JS Library for Lyrion Music Server",
     "pkgs": [{
         "name": "Ext Base",
         "file": "adapter/ext/ext-base.js",

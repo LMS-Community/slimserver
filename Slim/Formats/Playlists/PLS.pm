@@ -1,9 +1,10 @@
 package Slim::Formats::Playlists::PLS;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -46,7 +47,7 @@ sub read {
 
 		$data = Slim::Utils::Unicode::utf8decode_guess($data, $enc);
 	}
-	
+
 	# Bug 4127, make sure we have proper line-endings
 	$data =~ s/\r\n?/\n/g;
 
@@ -68,7 +69,7 @@ sub read {
 		if ($line =~ m|Title(\d+)=(.*)|i) {
 			$titles[$1] = $2;
 			next;
-		}	
+		}
 	}
 
 	for (my $i = 1; $i <= $#urls; $i++) {

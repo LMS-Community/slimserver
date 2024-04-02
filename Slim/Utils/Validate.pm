@@ -1,6 +1,7 @@
 package Slim::Utils::Validate;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -17,7 +18,7 @@ L<Slim::Utils::Validate> provides validation checks for web ui preference inputs
 =head1 SYNOPSIS
 
  'validate' => \&Slim::Utils::Validate::trueFalse,
- 
+
  return Slim::Utils::Validate::isInt($arg);
 
 =cut
@@ -134,8 +135,8 @@ sub port {
 =head2 hostNameOrIPAndPort( $val)
 
  Accepts any  string that matches the format of an IP and Port, or a hostname and port
- ie 127.0.0.1:9000, or slimdevices.com:9000
- 
+ ie 127.0.0.1:9000, or lyrion.org:9000
+
  empty entry validates as empty value
 
 =cut
@@ -174,8 +175,8 @@ sub IPPort {
 	if (length($val) == 0) {
 		return $val;
 	}
-	
-	if ($val !~ /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/) { 
+
+	if ($val !~ /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/) {
 		#not formatted properly
 		return undef;
 	}
@@ -235,7 +236,7 @@ sub number {
 =head2 inList( $val, @valList)
 
  Determine if the input $val is contained within a list of valid choices given by the @valList argument
- 
+
 =cut
 
 sub inList {
@@ -258,7 +259,7 @@ sub inList {
 =head2 isTime( $val)
 
  determine if the input string, $val matches known valid Time formats.
- 
+
 =cut
 
 sub isTime {
@@ -352,7 +353,7 @@ sub _isValidPath {
 	if ($val) {
 		$val = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::fixPath($val) );
 	}
-	
+
 	if ($type eq 'dir' && -d $val) {
 
 		return $val;

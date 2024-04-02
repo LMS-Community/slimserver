@@ -1,6 +1,7 @@
 package Slim::GUI::ControlPanel::MainFrame;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -122,7 +123,7 @@ sub new {
 	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL);
 	$footerSizer2->Add($btnsizer, 0, wxEXPAND);
 	$footerSizer2->AddSpacer(7);
-	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT_LOGITECH')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
+	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
 
 	my ($version) = parseRevision();
 	$version = sprintf(string('VERSION'), $version);

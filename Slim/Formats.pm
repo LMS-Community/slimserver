@@ -1,7 +1,8 @@
 package Slim::Formats;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -101,7 +102,7 @@ sub init {
 
 =head2 loadTagFormatForType( $type )
 
-Dynamically load the class needed to read the passed file type. 
+Dynamically load the class needed to read the passed file type.
 
 Returns true on success, false on failure.
 
@@ -111,18 +112,18 @@ Example: Slim::Formats->loadTagFormatForType('flc');
 
 sub loadTagFormatForType {
 	my ( $class, $type ) = @_;
-	
+
 	return 1 if $loadedTagClasses{$type};
-	
+
 	eval "use $tagClasses{$type}";
-	
+
 	if ( $@ ) {
 		logBacktrace("Couldn't load module: $tagClasses{$type} ($type) : [$@]");
 		return 0;
 	}
-	
+
 	$loadedTagClasses{$type} = 1;
-	
+
 	return 1;
 }
 
@@ -170,7 +171,7 @@ sub readTags {
 
 	# Only read local audio.
 	if (Slim::Music::Info::isSong($file, $type) && !$remote) {
-		
+
 		# Bug 4402, ignore if the file has gone away
 		if ( !-e $filepath ) {
 			$log->error("File missing: $filepath");
@@ -193,7 +194,7 @@ sub readTags {
 				if ($ctOverride) {
 					$type = $ctOverride;
 				}
-				
+
 				$loadedTagClasses{$type} = 1;
 			}
 		};
@@ -273,9 +274,9 @@ sub readTags {
 	$tags->{'CONTENT_TYPE'} ||= $type;
 
 	main::DEBUGLOG && $isDebug && $log->debug("Report for $file:");
-	
+
 	# XXX: can Audio::Scan make these regexes unnecessary?
-	
+
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls
 	# Bug: 3998 - Strip UTF-16 BOMs from multiple genres (or other values).
@@ -305,7 +306,7 @@ sub readTags {
 				$value =~ s/\000$//;
 				$tags->{$tag} = $value;
 			}
-			
+
 			# Bug 14587, sanity check all MusicBrainz ID tags to ensure it is a UUID and nothing more
 			if ( $tag =~ /^MUSICBRAINZ.*ID$/ ) {
 
@@ -328,10 +329,10 @@ sub readTags {
 
 			$tagCache{$original} = $value;
 		}
-		
+
 		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
 	}
-			
+
 	if (scalar (keys %tagCache) > 50) {
 		%tagCache = ();
 	}

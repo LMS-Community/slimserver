@@ -1,7 +1,8 @@
 package Slim::Player::Song;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -53,8 +54,8 @@ my @_playlistCloneAttributes = qw(
 	__PACKAGE__->mk_accessor('ro', qw(
 		handler
 	) );
-	
-	__PACKAGE__->mk_accessor('rw', 
+
+	__PACKAGE__->mk_accessor('rw',
 		@_playlistCloneAttributes,
 
 		qw(
@@ -178,8 +179,8 @@ sub clonePlaylistSong {
 
 	my $next = $new->_getNextPlaylistTrack();
 	return undef unless $next;
-	
-	return $new;	
+
+	return $new;
 }
 
 sub resetSeekdata {
@@ -202,14 +203,14 @@ sub _getNextPlaylistTrack {
 
 	# Get the next good audio track
 	my $playlist = Slim::Schema->objectForUrl( {url => $self->_track()->url, playlist => 1} );
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Getting next audio URL from playlist (after " . ($self->_currentTrack() ? $self->_currentTrack()->url : '') . ")" );	
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Getting next audio URL from playlist (after " . ($self->_currentTrack() ? $self->_currentTrack()->url : '') . ")" );
 	my $track = $playlist->getNextEntry($self->_currentTrack() ? {after => $self->_currentTrack()} : undef);
 	if ($track) {
 		$self->_currentTrack($track);
 		$self->_currentTrackHandler(Slim::Player::ProtocolHandlers->handlerForURL($track->url));
 		$self->streamUrl($track->url);
-		main::INFOLOG && $log->info( "Got next URL from playlist; track is: " . $track->url );	
-		
+		main::INFOLOG && $log->info( "Got next URL from playlist; track is: " . $track->url );
+
 	}
 	return $track;
 }
@@ -254,9 +255,9 @@ sub getNextSong {
 
 						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
-							$self->_track($newTrack);	
+							$self->_track($newTrack);
 							$self->_currentTrackHandler($handler->currentTrackHandler($self, $newTrack)) if $handler->can('currentTrackHandler');
-														
+
 							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 
 							# Replace the item on the playlist so it has the new track/URL
@@ -287,12 +288,12 @@ sub getNextSong {
 					if (!$self->_currentTrack() && !$self->_playlist()) {
 						$self->_playlist(Slim::Music::Info::isPlaylist($track, $track->content_type) ? 1 : 0);
 					}
-					
-					# if we just found a playlist					
+
+					# if we just found a playlist
 					if (!$self->_currentTrack() && $self->isPlaylist()) {
 						main::INFOLOG && $log->info("Found a playlist");
 					}
-					
+
 					# always recurse either for playlist or to continue and do getNextTrack
 					$self->getNextSong($successCb, $failCb);
 				}
@@ -321,16 +322,16 @@ sub getNextSong {
 
 	# Hooks for unconverted handlers
 	elsif ($handler->can('onDecoderUnderrun') || $handler->can('onJump')) {
-		if ($handler->can('onJump') && 
+		if ($handler->can('onJump') &&
 			!($self->owner()->{'playingState'} != Slim::Player::StreamingController::STOPPED()
 			&& $handler->can('onDecoderUnderrun')))
 		{
 			$handler->onJump(master($self), $url, $self->seekdata(), $successCb);
 		} else {
 			$handler->onDecoderUnderrun(master($self), $url, $successCb);
-		}			
-	} 
-	
+		}
+	}
+
 	else {
 		# the simple case
 		&$successCb();
@@ -362,12 +363,12 @@ sub open {
 
 	$self->seekdata($seekdata) if $seekdata;
 
-	# last chance to get the byte offset if not already provided	
-	if ($self->seekdata && $self->seekdata->{'timeOffset'} && !$self->seekdata->{'sourceStreamOffset'}) {  
+	# last chance to get the byte offset if not already provided
+	if ($self->seekdata && $self->seekdata->{'timeOffset'} && !$self->seekdata->{'sourceStreamOffset'}) {
 		my $seekdata = $self->getSeekData($self->seekdata->{'timeOffset'});
 		$self->seekdata($seekdata) if $seekdata;
 		main::INFOLOG && $log->info("Adding seekdata ", Data::Dump::dump($self->seekdata));
-	}	
+	}
 
 	my $sock;
 	my $format = Slim::Music::Info::contentType($track);
@@ -405,7 +406,7 @@ sub open {
 		push (@streamFormats, 'I') if (! $wantTranscoderSeek);
 
 		push @streamFormats, ($handler->isRemote && !Slim::Music::Info::isVolatile($handler) ? 'R' : 'F');
-		
+
 		my @formats = ( $format );
 		push (@formats, grep { $_ ne $format} keys %{$track->processors}) if $track->can('processors');
 
@@ -418,7 +419,7 @@ sub open {
 			$_,
 			\@streamFormats, [], \@wantOptions);
 			last if $transcoder;
-		}	
+		}
 
 		if (! $transcoder) {
 			logError("Couldn't create command line for $format playback for [$url]");
@@ -458,10 +459,10 @@ sub open {
 			rateLimit => 0,
 		};
 	}
-	
-	# don't modify $song in getConverterCommand2 
+
+	# don't modify $song in getConverterCommand2
 	$self->stripHeader($transcoder->{'stripHeader'});
-	
+
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
 	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self)) && (!$redir || $client->canHTTPS)) {
@@ -485,7 +486,7 @@ sub open {
 			});
 
 			if (!$sock) {
-				
+
 				# if we failed on a redirected track, retry once. Direct streaming will be disabled
 				# as redirection from HTTP to HTTPS does not work in direct mode
 				if ($track->can('redir') && $track->redir && !$redir) {
@@ -521,7 +522,7 @@ sub open {
 				if ($sock->can('bitrate') && $sock->bitrate) {
 					$self->_bitrate($sock->bitrate);
 				}
-			}	
+			}
 			# if it's one of our playlists, parse it...
 			elsif (Slim::Music::Info::isList($track, $contentType)) {
 
@@ -560,8 +561,8 @@ sub open {
 
 				$self->setStatus(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
-			}		
-		}	
+			}
+		}
 
 		if (main::TRANSCODING) {
 			if ($transcoder->{'command'} ne '-' && ! $handlerWillTranscode) {
@@ -584,10 +585,10 @@ sub open {
 				main::INFOLOG && $log->info('Tokenized command: ', Slim::Utils::Unicode::utf8decode_locale($command));
 
 				my $pipeline;
-				
-				# Bug 10451: only use Pipeline when really necessary 
+
+				# Bug 10451: only use Pipeline when really necessary
 				# and indicate if local or remote source
-				if ($usepipe) { 
+				if ($usepipe) {
 					$pipeline = Slim::Player::Pipeline->new($sock, $command, !$handler->isRemote);
 				} else {
 					# Bug: 4318
@@ -728,7 +729,7 @@ sub master              {return $_[0]->owner()->master();}
 sub track               {return $_[0]->_track();}
 sub currentTrack        {return $_[0]->_currentTrack()        || $_[0]->_track();}
 sub currentTrackHandler {return $_[0]->_currentTrackHandler() || $_[0]->handler();}
-sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}  
+sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}
 sub streamformat        {return $_[0]->_streamFormat() || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
 sub isPlaylist          {return $_[0]->_playlist();}
 sub status              {return $_[0]->_status();}
@@ -826,14 +827,14 @@ sub canDoSeek {
 		if ( $handler->can('canSeek') && $handler->canSeek( $self->master(), $self )) {
 			return $self->_canSeek(1);
 		} else {
-			$self->_canSeekError([$handler->can('canSeekError') 
+			$self->_canSeekError([$handler->can('canSeekError')
 						? $handler->canSeekError( $self->master(), $self  )
 						: ('SEEK_ERROR_TYPE_NOT_SUPPORTED')]);
 			return $self->_canSeek(0);
 		}
 
-	} 
-	
+	}
+
 	else {
 
 		if ($handler->can('canSeek')) {
@@ -877,14 +878,14 @@ sub canDoSeek {
 				}
 
 			} else {
-				$self->_canSeekError([$handler->can('canSeekError') 
+				$self->_canSeekError([$handler->can('canSeekError')
 						? $handler->canSeekError( $self->master(), $self  )
 						: ('SEEK_ERROR_REMOTE')]);
 
 				# Note: this is intended to fall through to the below code
 			}
-		} 
-		
+		}
+
 		if (Slim::Player::TranscodingHelper::getConvertCommand2(
 				$self,
 				Slim::Music::Info::contentType($self->currentTrack),

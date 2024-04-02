@@ -10,7 +10,7 @@
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/OnlineLibrary/settings.html</optionsURL>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>8.0.0</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

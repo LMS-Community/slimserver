@@ -1,6 +1,7 @@
 package Slim::Plugin::MusicMagic::ClientSettings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,7 +32,7 @@ sub page {
 
 sub prefs {
 	my ($class,$client) = @_;
-	
+
 	return ($prefs->client($client), qw(mix_filter reject_size reject_type mix_genre mix_variety mix_style mix_type mix_size));
 }
 
@@ -45,7 +46,7 @@ sub handler {
 	if ( !$params->{'saveSettings'} && !$params->{'filters'} ) {
 
 		Slim::Plugin::MusicMagic::Common::grabFilters($class, $client, $params, $callback, @args);
-		
+
 		return undef;
 	}
 

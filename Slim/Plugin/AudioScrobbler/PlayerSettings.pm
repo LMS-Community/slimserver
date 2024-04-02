@@ -1,6 +1,7 @@
 package Slim::Plugin::AudioScrobbler::PlayerSettings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -28,20 +29,20 @@ sub page {
 
 sub handler {
 	my ($class, $client, $params) = @_;
-	
+
 	if ( $client ) {
 		$params->{prefs}->{pref_accounts}           = $prefs->get('accounts') || [];
 		$params->{prefs}->{pref_enable_scrobbling}  = $prefs->get('enable_scrobbling');
-		
+
 		$params->{prefs}->{pref_account}            = $prefs->client($client)->get('account');
-		
+
 		if ( $params->{saveSettings} ) {
 			$params->{prefs}->{pref_account} = $params->{pref_account};
-			
+
 			Slim::Plugin::AudioScrobbler::Plugin::changeAccount( $client, $params->{pref_account} );
 		}
 	}
-	
+
 	return $class->SUPER::handler( $client, $params );
 }
 

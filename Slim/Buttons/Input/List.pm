@@ -1,7 +1,8 @@
 package Slim::Buttons::Input::List;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -37,7 +38,7 @@ Slim::Buttons::Input::List
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::List> is a reusable Logitech Media Server module, creating a 
+L<Slim::Buttons::Input::List> is a reusable Lyrion Music Server module, creating a
 generic framework UI for navigating through a List of items, with configurable
 display parameters and entry/leave points.
 
@@ -77,7 +78,7 @@ our %functions = (
 		my ($client, $funct, $functarg) = @_;
 
 		my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos();
-		
+
 		changePos($client, $dir, $funct, $pushDir) if $pushDir;
 	},
 
@@ -126,7 +127,7 @@ our %functions = (
 
 		$client->update;
 	},
-	
+
 	#call callback procedure
 	'exit' => sub {
 		my ($client, $funct, $functarg) = @_;
@@ -137,7 +138,7 @@ our %functions = (
 
 		exitInput($client, $functarg);
 	},
-		
+
 	'passback' => sub {
 		my ($client, $funct, $functarg) = @_;
 
@@ -197,7 +198,7 @@ sub changePos {
 
 		$onChange->(@args);
 	}
-	
+
 	if (scalar(@$listRef) < 2) {
 
 		if ($dir < 0) {
@@ -210,21 +211,21 @@ sub changePos {
 	} elsif ($newposition != $listIndex) {
 
 		$pushDir ||= '';
-		
+
 		if ($pushDir eq 'up')  {
-			
+
 			$client->pushUp();
 
 		} elsif ($pushDir eq 'down') {
-			
+
 			$client->pushDown();
 
 		} elsif ($dir < 0)  {
-			
+
 			$client->pushUp();
 
 		} else {
-			
+
 			$client->pushDown();
 		}
 	}
@@ -244,7 +245,7 @@ sub lines {
 		$client->modeParam('listIndex',$listIndex-1);
 		$listIndex--;
 	}
-	
+
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
 
 	if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
@@ -309,17 +310,17 @@ sub getExtVal {
 	if (!ref($extref)) {
 
 		return $extref;
-	
+
 	} elsif (ref($extref) eq 'CODE') {
 
 		my @args = ();
 
 		my $argtype = $client->modeParam($source . 'Args');
-	
+
 		push @args, $client    if $argtype =~ /c/i;
 		push @args, $value     if $argtype =~ /v/i;
 		push @args, $listIndex if $argtype =~ /i/i;
-	
+
 		return $extref->(@args);
 
 	} elsif (ref($extref) eq 'HASH') {
@@ -346,13 +347,13 @@ sub setMode {
 
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
-	
+
 		if (!init($client)) {
 			Slim::Buttons::Common::popModeRight($client);
 		}
-	
+
 	#}
-	
+
 	$client->lines(\&lines);
 }
 # set unsupplied parameters to the defaults
@@ -380,7 +381,7 @@ sub setMode {
 #  (C for client object, V for current value, I for list index)
 
 # other parameters used
-# isSorted = undef # whether the interal or external list is sorted 
+# isSorted = undef # whether the interal or external list is sorted
 	#(I for internal, E for external, L for lookup, undef or anything else for unsorted)
 # lookupRef = undef # function that returns the sortable version of item
 

@@ -1,6 +1,7 @@
 package Slim::Plugin::AudioScrobbler::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -32,16 +33,16 @@ sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
 	if ( $params->{saveSettings} ) {
-		
+
 		# Save existing accounts
 		$params->{pref_accounts} = $prefs->get('accounts') || [];
-		
+
 		# delete accounts
 		if ( my $delete = $params->{delete} ) {
 			if ( !ref $delete ) {
 				$delete = [ $delete ];
 			}
-			
+
 			my $newlist = [];
 			ACCOUNT:
 			for my $account ( @{ $params->{pref_accounts} } ) {
@@ -51,18 +52,18 @@ sub handler {
 						next ACCOUNT;
 					}
 				}
-				
+
 				push @{$newlist}, $account;
 			}
-			
+
 			$params->{pref_accounts} = $newlist;
 		}
-		
+
 		# Save new account
 		if ( $params->{pref_password} ) {
 			$params->{pref_password} = md5_hex( $params->{pref_password} );
 		}
-		
+
 		# If the user added a username/password, we need to verify their info
 		if ( $params->{pref_username} && $params->{pref_password} ) {
 			Slim::Plugin::AudioScrobbler::Plugin::handshake( {
@@ -72,7 +73,7 @@ sub handler {
 
 				cb       => sub {
 					# Callback for OK handshake response
-					
+
 					push @{ $params->{pref_accounts} }, {
 						username => $params->{pref_username},
 						password => $params->{pref_password},
@@ -90,7 +91,7 @@ sub handler {
 						$params->{validated}->{valid} = 1;
 					}
 					else {
-						$params->{warning} .= $msg . '<br/>';												
+						$params->{warning} .= $msg . '<br/>';
 					}
 
 					$callback->( $client, $params, $body, @args );
@@ -102,7 +103,7 @@ sub handler {
 					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
 					}
-					
+
 					$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
 
 					if ( $params->{AJAX} ) {
@@ -110,7 +111,7 @@ sub handler {
 						$params->{validated}->{valid} = 0;
 					}
 					else {
-						$params->{warning} .= $error . '<br/>';						
+						$params->{warning} .= $error . '<br/>';
 					}
 
 					delete $params->{pref_username};
@@ -124,7 +125,7 @@ sub handler {
 			return;
 		}
 	}
-	
+
 	return $class->SUPER::handler( $client, $params );
 }
 

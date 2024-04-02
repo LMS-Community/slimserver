@@ -1,13 +1,14 @@
 package Slim::Plugin::RemoteLibrary::Plugin;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 =pod
 
-This plugin will give access to "remote libraries". This can be another Logitech Media 
+This plugin will give access to "remote libraries". This can be another Lyrion Music
 Server, or some UPnP/DLNA server.
 
 3rd party plugins can hook into this menu by registering their own browse menu. During
@@ -15,9 +16,9 @@ their plugin initialization they call:
 
 	sub init {
 		my $class = shift;
-		
+
 		... # set up your plugin here
-	
+
 		Slim::Plugin::RemoteLibrary::Plugin->addRemoteLibraryProvider($class);
 	}
 
@@ -59,24 +60,24 @@ sub initPlugin {
 			return join( ', ', string('PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT'), grep { $ignoreItems{$_} == 1 } keys %ignoreItems );
 		},
 	});
-	
+
 	# some sanity checks on remote LMS URLs
 	$prefs->setChange(sub {
 		my ($prefname, $newValue) = @_;
-		
+
 		$newValue = [ map {
 			$_ = 'http://' . $_ unless m|^http://|i;
 			$_ .= ':9000' unless m|:\d+$|;
 			$_;
 		} @{ $newValue || [] }];
 	}, 'remoteLMS');
-	
+
 	$prefs->setValidate(sub {
 		# localhost is not allowed, as players wouldn't see it
 		return 0 if grep /localhost|127\.0\.0\.1/, @{ $_[1] || [] };
 		return 1;
 	}, 'remoteLMS');
-	
+
 	if ( $prefs->get('useLMS') ) {
 		require Slim::Plugin::RemoteLibrary::LMS;
 		Slim::Plugin::RemoteLibrary::LMS->init();
@@ -86,12 +87,12 @@ sub initPlugin {
 		require Slim::Plugin::RemoteLibrary::UPnP;
 		Slim::Plugin::RemoteLibrary::UPnP->init()
 	}
-	
+
 	if ( main::WEBUI ) {
-		require Slim::Plugin::RemoteLibrary::Settings;	
+		require Slim::Plugin::RemoteLibrary::Settings;
 		Slim::Plugin::RemoteLibrary::Settings->new;
 	}
-	
+
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'selectRemoteLibrary',
@@ -117,16 +118,16 @@ sub handleFeed {
 	my ($client, $cb, $args) = @_;
 
 	my $items = [];
-	
-	# there's a bug in SP which would block the menu when we re-enter a menu with a text area 
+
+	# there's a bug in SP which would block the menu when we re-enter a menu with a text area
 	# after we had left from a menu item other than the first one...
 	my $isSqueezeplay = ($client && $client->controllerUA && $client->controllerUA =~ /^SqueezePlay/) ? 1 : 0;
-	
+
 	foreach my $provider (keys %remoteLibraryProviders) {
 		next unless $provider->can('getLibraryList');
 		push @$items, @{ $provider->getLibraryList() || [] };
 	}
-		
+
 	if ( !scalar @$items ) {
 		$items = [{
 			name => cstring($client, 'PLUGIN_REMOTE_LIBRARY_NOT_FOUND'),
@@ -143,7 +144,7 @@ sub handleFeed {
 			};
 		}
 	}
-	
+
 	$cb->({
 		items => $items
 	});

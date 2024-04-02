@@ -1,6 +1,7 @@
 package Slim::Display::Boom;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -62,7 +63,7 @@ my $VISUALIZER_WAVEFORM = 3;
 my @modes = (
 	# mode 0
 	{ desc => ['BLANK'],
-	  bar => 0, secs => 0,  width => 160, 
+	  bar => 0, secs => 0,  width => 160,
 	  params => [$VISUALIZER_NONE] },
 	# mode 1
 	{ desc => ['PROGRESS_BAR'],
@@ -99,12 +100,12 @@ my @modes = (
 	# mode 9
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'REMAINING'],
 	  bar => 0, secs => -1, width => 160,
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] }, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] },
 	# mode 10
 	{ desc => ['CLOCK'],
 	  bar => 0, secs => 0, width => 160, clock => 1,
 	  params => [$VISUALIZER_NONE] },
-	# mode 11	  
+	# mode 11
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 0, secs => 0,  width => 160, fullness => 1,
 	  params => [$VISUALIZER_NONE],
@@ -166,9 +167,9 @@ sub vfdmodel {
 
 sub string {
 	my $display = shift;
-	
+
 	my $name = uc(shift);
-	
+
 	if (Slim::Utils::Strings::stringExists($name."_ABBR")) {
 		return $display->SUPER::string($name."_ABBR",@_);
 	} else {

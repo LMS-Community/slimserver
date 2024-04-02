@@ -1,7 +1,8 @@
 package Slim::Player::Squeezebox2;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -389,7 +390,7 @@ sub flush {
 
 	$client->stream('f');
 	$client->SUPER::flush();
-	
+
 	# once flush, don't wait for answer, just get ready
 	$client->readyToStream(1);
 	return 1;
@@ -907,7 +908,7 @@ sub audio_outputs_enable {
 }
 
 
-# The following settings are sync'd between the player firmware and Logitech Media Server
+# The following settings are sync'd between the player firmware and Lyrion Music Server
 our $pref_settings = {
 	'playername' => {
 		firmwareid => 0,
@@ -994,7 +995,7 @@ sub setPlayerSetting {
 	}
 }
 
-# Allow the firmware to update a pref in Logitech Media Server
+# Allow the firmware to update a pref in Lyrion Music Server
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;

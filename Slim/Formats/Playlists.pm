@@ -1,7 +1,8 @@
 package Slim::Formats::Playlists;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License, version 2.
@@ -43,7 +44,7 @@ sub parseList {
 	if ($type eq 'ssp') {
 		$type = Slim::Music::Info::typeFromSuffix($url);
 	}
-	
+
 	# Bug 9970, if a FLAC file has both an embedded cue sheet and an external
 	# cue sheet, scanner will try to scan the FLAC file as a cue sheet, resulting
 	# in reading the entire file into memory.
@@ -57,7 +58,7 @@ sub parseList {
 	my $closeFH = 0;
 
 	if ( !Slim::Music::Info::isRemoteURL($url) ) {
-		
+
 		# If a filehandle wasn't passed in, open it.
 		if (!ref($fh) || !fileno($fh)) {
 
@@ -85,10 +86,10 @@ sub parseList {
 
 			logError("While running \$playlistClass->read(): [$@]");
 		}
-				
+
 	}
 	else {
-		# Try to guess what kind of playlist it is		
+		# Try to guess what kind of playlist it is
 		$log->warn("Unknown content type $type, trying to guess");
 
 		my $content = eval { read_file($fh) };

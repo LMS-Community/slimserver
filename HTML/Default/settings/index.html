@@ -36,11 +36,11 @@
 
 					[%-
 					IF tab.0 == activePage;
-						activeTab = loop.index; 
+						activeTab = loop.index;
 					ELSIF activePage && tab.0 == 'PLAYER' && playersetup.${activePage};
 						activeTab = loop.index;
-						tab.1 = playersetup.${activePage}; 
-					END 
+						tab.1 = playersetup.${activePage};
+					END
 					-%]
 
 					{
@@ -61,7 +61,7 @@
 
 		<div id="header">
 			<span><a href="[% webroot %]" target="sc_main"><img src="[% webroot %]html/images/spacer.gif" id="squeezeboxLogo"></a></span>
-			<span><a href="http://www.logitech.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
+			<span><a href="https://www.lyrion.org" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="lyrionLogo"></a></span>
 		</div>
 
 		<div id="inner_header">
@@ -81,7 +81,7 @@
 							<td><span id="save"></span></td>
 						<tr>
 					</table>
-				</div>				
+				</div>
 			<div class="inner">
 				<div class="inner_bottom"></div>
 			</div>

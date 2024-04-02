@@ -1,7 +1,8 @@
 package Slim::Web::JSONRPC;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -445,7 +446,7 @@ sub requestMethod {
 
 		if ( $client && $lang ) {
 			# Only override if the currently selected language is not a regional version of the client language
-			if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) { 
+			if ( ! Slim::Utils::Strings::isLanguageRegionalVersion($lang) ) {
 				$client->languageOverride($lang);
 			}
 			$client->controlledBy('squeezeplay');

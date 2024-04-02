@@ -1,8 +1,9 @@
 package Slim::Networking::Discovery::Server;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -33,7 +34,7 @@ Slim::Networking::Discovery::Server
 
 =head1 DESCRIPTION
 
-This module implements a UDP discovery protocol, used by Logitech Media Server to discover other servers in the network.
+This module implements a UDP discovery protocol, used by Lyrion Music Server to discover other servers in the network.
 
 
 =head1 FUNCTIONS
@@ -71,7 +72,7 @@ sub fetch_servers {
 
 	my $ipaddr = sockaddr_in(3483, inet_aton('255.255.255.255'));
 	$udpsock->send($discovery_packet, 0, $ipaddr);
-	
+
 	$udpsock->sockopt(SO_BROADCAST, $opt);
 
 	Slim::Utils::Timers::setTimer(
@@ -89,7 +90,7 @@ purge servers from the list when they haven't been discovered in two poll cycles
 
 sub _purge_server_list {
 	foreach my $server (keys %{$server_list}) {
-		
+
 		if (!$server_list->{$server}->{ttl} || $server_list->{$server}->{ttl} < time()) {
 
 			delete $server_list->{$server};
@@ -115,7 +116,7 @@ Return a server's IP address if available
 
 sub getServerAddress {
 	my $id = shift;
-	my $server = _getServerConfig($id) || {};	
+	my $server = _getServerConfig($id) || {};
 	return $server->{IP} || $id;
 }
 
@@ -165,9 +166,9 @@ sub getWebHostAddress {
 
 sub _getServerConfig {
 	my ($id) = @_;
-	
+
 	my $server = $server_list->{$id};
-	
+
 	# if we were not given the server's key, try to find it by UUID, Name or IP address
 	if (!$server || !ref $server) {
 		my $lcId = lc($id);
@@ -175,7 +176,7 @@ sub _getServerConfig {
 			lc($_->{UUID}) eq $lcId || lc($_->{NAME}) eq $lcId || $_->{IP} eq $id
 		} values %$server_list;
 	}
-	
+
 	return $server || {};
 }
 
@@ -198,7 +199,7 @@ sub gotTLVResponse {
 
 	# chop of leading character
 	$msg = substr($msg, 1);
-	
+
 	my $len = length($msg);
 	my ($tag, $len2, $val);
 
@@ -220,7 +221,7 @@ sub gotTLVResponse {
 
 	# get server's IP address
 	if ($clientpaddr) {
-		
+
 		my ($portno, $ipaddr) = sockaddr_in($clientpaddr);
 		$server->{IP} = inet_ntoa($ipaddr);
 
@@ -230,14 +231,14 @@ sub gotTLVResponse {
 #		}
 	}
 
-	if (main::DEBUGLOG && $log->is_debug) {	
+	if (main::DEBUGLOG && $log->is_debug) {
 		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}, UUID $server->{UUID}, version $server->{VERS}");
 	}
 
 	if ($server->{NAME}) {
-		
+
 		$server->{NAME} = Slim::Utils::Unicode::utf8decode($server->{NAME});
-		
+
 		$server_list->{$server->{NAME}}        = $server;
 		$server_list->{$server->{NAME}}->{ttl} = time() + 2 * POLL_INTERVAL;
 
@@ -256,10 +257,10 @@ sub gotTLVResponse {
 
 sub is_self {
 	my $id = shift;
-	
+
 	# compare IP addresses - backwards compatible
 	return 1 if $id eq Slim::Utils::Network::serverAddr();
-	
+
 	# check based on UUID - better
 	return 1 if lc(getServerUUID($id)) eq lc($prefs->get('server_uuid'));
 }

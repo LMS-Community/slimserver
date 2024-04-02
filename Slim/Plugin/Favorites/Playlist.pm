@@ -1,7 +1,7 @@
 package Slim::Plugin::Favorites::Playlist;
 
 
-# Class to allow importing of playlist formats understood by Logitech Media Server into opml files
+# Class to allow importing of playlist formats understood by Lyrion Music Server into opml files
 
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);

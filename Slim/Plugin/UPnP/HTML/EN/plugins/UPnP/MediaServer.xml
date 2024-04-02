@@ -9,11 +9,11 @@
 		<dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
-		<manufacturerURL>http://www.logitech.com</manufacturerURL>
-		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
-		<modelName>Logitech Media Server [% device.version %]</modelName>
+		<manufacturerURL>https://www.lyrion.org</manufacturerURL>
+		<modelDescription>Lyrion Music Server UPnP/DLNA Plugin</modelDescription>
+		<modelName>Lyrion Music Server [% device.version %]</modelName>
 		<modelNumber>1</modelNumber>
-		<modelURL>http://www.logitech.com/download</modelURL>
+		<modelURL>https://www.lyrion.org/download</modelURL>
 		<serialNumber>[% device.serial %]</serialNumber>
 		<UDN>uuid:[% device.uuid %]</UDN>
 		<iconList>

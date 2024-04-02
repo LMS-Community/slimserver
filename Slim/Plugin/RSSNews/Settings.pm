@@ -1,6 +1,7 @@
 package Slim::Plugin::RSSNews::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -36,7 +37,7 @@ sub handler {
 
 		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(Slim::Plugin::RSSNews::Plugin::DEFAULT_FEEDS());
 	}
-	
+
 	my @feeds = @{ $prefs->get('feeds') };
 
 	if ( $params->{saveSettings} ) {
@@ -45,26 +46,26 @@ sub handler {
 			validateFeed( $newFeedUrl, {
 				cb  => sub {
 					my $newFeedName = shift;
-				
+
 					push @feeds, {
 						name  => $newFeedName,
 						value => $newFeedUrl,
 					};
-				
+
 					my $body = $class->saveSettings( $client, \@feeds, $params );
 					$callback->( $client, $params, $body, @args );
 				},
 				ecb => sub {
 					my $error = shift;
-				
+
 					$params->{warning}   .= Slim::Utils::Strings::string( 'SETUP_PLUGIN_RSSNEWS_INVALID_FEED', $error );
 					$params->{newfeedval} = $params->{pref_newfeed};
-				
+
 					my $body = $class->saveSettings( $client, \@feeds, $params );
 					$callback->( $client, $params, $body, @args );
 				},
 			} );
-		
+
 			return;
 		}
 	}
@@ -74,7 +75,7 @@ sub handler {
 
 sub saveSettings {
 	my ( $class, $client, $feeds, $params ) = @_;
-	
+
 	my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
 
 	for my $deleteItem  (@delete ) {
@@ -92,11 +93,11 @@ sub saveSettings {
 	$prefs->set( modified => 1 );
 
 	Slim::Plugin::RSSNews::Plugin::updateOPMLCache($feeds);
-	
+
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
 	}
-	
+
 	return $class->SUPER::handler($client, $params);
 }
 
@@ -119,19 +120,19 @@ sub validateFeed {
 
 sub _validateDone {
 	my ( $feed, $params ) = @_;
-	
+
 	my $title = $feed->{title} || $params->{url};
-	
+
 	main::INFOLOG && $log->info( "Verified feed $params->{url}, title: $title" );
-		
+
 	$params->{cb}->( $title );
 }
 
 sub _validateError {
 	my ( $error, $params ) = @_;
-	
+
 	$log->error( "Error validating feed $params->{url}: $error" );
-	
+
 	$params->{ecb}->( $error );
 }
 

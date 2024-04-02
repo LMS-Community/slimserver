@@ -1,9 +1,10 @@
 package Slim::Web::Pages;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -30,7 +31,7 @@ our %pageConditions = ();
 
 sub init {
 	# Note: init() is not run with --noweb param
-		
+
 	require Slim::Web::Pages::Common;
 	require Slim::Web::Pages::Home;
 	require Slim::Web::Pages::Status;
@@ -88,36 +89,36 @@ sub addPageLinks {
 
 sub getPageLink {
 	my ( $class, $category, $title ) = @_;
-	
+
 	if ( exists $additionalLinks{$category} ) {
 		return $additionalLinks{$category}->{$title};
 	}
-	
+
 	return;
 }
 
 sub delPageLinks {
 	my ( $class, $category, $title ) = @_;
-	
+
 	delete $additionalLinks{$category}->{$title};
 }
 
 sub delPageCategory {
 	my ( $class, $category ) = @_;
-	
+
 	delete $additionalLinks{$category};
 }
 
 sub addPageCondition {
 	my ( $class, $title, $condition ) = @_;
-	
+
 	$pageConditions{$title} = $condition;
 }
 
 
 sub addPageFunction {
 	my ( $class, $regexp, $func ) = @_;
-	
+
 	if ( !ref $regexp ) {
 		$regexp = qr/$regexp/;
 	}
@@ -187,7 +188,7 @@ sub getRawFiles {
 # remove files for downloading via http
 sub removeRawDownload {
 	my ( $class, $regexp ) = @_;
-   
+
 	delete $rawFiles{$regexp};
 	my $str = join('|', keys %rawFiles);
 	$rawFilesRegexp = $str ? qr/$str/ : undef;
@@ -195,7 +196,7 @@ sub removeRawDownload {
 
 sub isRawDownload {
 	my ( $class, $path ) = @_;
-	
+
 	return $path && $rawFilesRegexp && $path =~ $rawFilesRegexp
 }
 

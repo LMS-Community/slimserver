@@ -1,6 +1,7 @@
 package Slim::Web::Settings::Player::Alarm;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -21,7 +22,7 @@ sub new {
 
 	Slim::Web::Pages->addPageLinks('plugins', { $class->name => $class->page });
 	Slim::Web::Pages->addPageLinks('icons', { 'ALARM' => 'html/images/alarm.png' });
-	
+
 	$class->SUPER::new();
 }
 
@@ -44,7 +45,7 @@ sub prefs {
 
 	unless (defined $prefs->client($client)->get('digitalVolumeControl')
 		&& !$prefs->client($client)->get('digitalVolumeControl')) {
-			
+
 		push @prefs, 'alarmDefaultVolume';
 	}
 
@@ -60,12 +61,12 @@ sub handler {
 		id     => [],
 		remove => [],
 	};
-	
+
 	foreach (keys %{ $paramRef }) {
-		
+
 		if (/alarm_(id|remove)_(.+)/) {
-			
-			push @{ $editedAlarms->{$1} }, $2; 
+
+			push @{ $editedAlarms->{$1} }, $2;
 		}
 	}
 
@@ -80,18 +81,18 @@ sub handler {
 			if ($alarmID eq NEWALARMID) {
 
 				if ($paramRef->{'alarmtime' . NEWALARMID} && (my $alarm = Slim::Utils::Alarm->new($client, 0))) {
-					
+
 					saveAlarm($alarm, NEWALARMID, $paramRef);
-	
+
 					# saveAlarm() might have enabled alarms again, if this was the very first alarm
 					if (@{ $editedAlarms->{id} } == 1) {
 						$paramRef->{'pref_alarmsEnabled'} = $prefsClass->get('alarmsEnabled');
 					}
-				}		
+				}
 			}
 
 			elsif (my $alarm = Slim::Utils::Alarm->getAlarm($client, $alarmID)) {
-				
+
 				saveAlarm($alarm, $alarmID, $paramRef);
 			}
 		}
@@ -111,7 +112,7 @@ sub handler {
 
 	$paramRef->{'playlistOptions'} = Slim::Utils::Alarm->getPlaylists($client);
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
-	
+
 	$paramRef->{'timeFormat'} = $prefs->get('timeFormat');
 	# need to remove seconds
 	$paramRef->{'timeFormat'} =~ s/[\.,:]{1}\%S//g;
@@ -131,7 +132,7 @@ sub handler {
 
 	# Get the non-calendar alarms for this client
 	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
-	
+
 	return $class->SUPER::handler($client, $paramRef);
 }
 
@@ -139,7 +140,7 @@ sub saveAlarm {
 	my $alarm    = shift;
 	my $id       = shift;
 	my $paramRef = shift;
-	
+
 	my $playlist = $paramRef->{'alarmplaylist' . $id};
 	if ($playlist eq '') {
 		$playlist = undef;
@@ -154,7 +155,7 @@ sub saveAlarm {
 	my ($h, $m) = Slim::Utils::DateTime::splitTime($t);
 
 	if ($h > 23) {
-		
+
 		$t = Slim::Utils::DateTime::prettyTimeToSecs($h % 24 . ":$m");
 	}
 

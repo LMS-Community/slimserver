@@ -17,13 +17,13 @@ PLUGIN_DNDPLAY_SHORT
 	PL	Przeciągnij i upuść pliki muzyczne
 
 PLUGIN_DNDPLAY_DESC
-	CS	Tento zásuvný modul umožňuje přetahovat zvukové soubory ze správce souborů na ploše (Finder, Průzkumník atd.) do webového rozhraní Logitech Media Serveru a přehrávat je. Soubory, které nejsou k dispozici na Logitech Media Serveru, jsou pro přehrávání dočasně přeneseny.
-	DE	Dieses Plugin erlaubt es, Musikdateien aus dem Dateimanager des Betriebssystems (Finder, Explorer etc.) ins Logitech Media Server Web-Interface zu ziehen, um diese wiederzugeben. Dateien, die nicht im Logitech Media Server verfügbar sind, werden zur Wiedergabe temporär zum Server übertragen.
-	EN	This plugin allows you do drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the Logitech Media Server web interface to play them back. Files which are not available from the Logitech Media Server are temporarily transfered for the playback.
-	FR	Ce plugin permet de glisser-déposer des fichiers audio depuis le gestionnaire de fichiers de votre ordinateur vers l'interface Web de Logitech Media Server pour les lire. Les fichiers qui ne sont pas disponibles directement via Logitech Media Server sont temporairement transférés pour la lecture.
-	NL	Deze plug-in maakt drag & drop mogelijk van muziekbestanden, vanuit de bestandsverkenner naar de Logitech Media Server webinterface, om ze af te spelen. Bestanden die niet beschikbaar zijn in Logitech Media Server worden tijdelijk overgebracht om afgespeeld te worden.
-	NO	Denne plugin-modulen lar deg spille av lydfiler ved å dra og slippe dem fra filbehandleren (Finder, Explorer etc.) til Logitech Media Servers webgrensesnitt. Filer som ikke allerede ligger på serveren blir midlertidig overført for avspilling.
-	PL	Ten dodatek pozwala na otwarzanie plików muzycznych poprzez "przeciągnięcie" z twojego pulpitu i "upuszczenie" na interfejsie internetowym programu Logitech Media Server. Pliki, które nie są bezpośrednio dostępne dla Logitech Media Server zostaną przesłane i tymczasowo zapisane na serwerze, w celu odtworzenia.
+	CS	Tento zásuvný modul umožňuje přetahovat zvukové soubory ze správce souborů na ploše (Finder, Průzkumník atd.) do webového rozhraní Lyrion Music Serveru a přehrávat je. Soubory, které nejsou k dispozici na Lyrion Music Serveru, jsou pro přehrávání dočasně přeneseny.
+	DE	Dieses Plugin erlaubt es, Musikdateien aus dem Dateimanager des Betriebssystems (Finder, Explorer etc.) ins Lyrion Music Server Web-Interface zu ziehen, um diese wiederzugeben. Dateien, die nicht im Lyrion Music Server verfügbar sind, werden zur Wiedergabe temporär zum Server übertragen.
+	EN	This plugin allows you do drag and drop audio files from your desktop's file manager (Finder, Explorer etc.) to the Lyrion Music Server web interface to play them back. Files which are not available from the Lyrion Music Server are temporarily transfered for the playback.
+	FR	Ce plugin permet de glisser-déposer des fichiers audio depuis le gestionnaire de fichiers de votre ordinateur vers l'interface Web de Lyrion Music Server pour les lire. Les fichiers qui ne sont pas disponibles directement via Lyrion Music Server sont temporairement transférés pour la lecture.
+	NL	Deze plug-in maakt drag & drop mogelijk van muziekbestanden, vanuit de bestandsverkenner naar de Lyrion Music Server webinterface, om ze af te spelen. Bestanden die niet beschikbaar zijn in Lyrion Music Server worden tijdelijk overgebracht om afgespeeld te worden.
+	NO	Denne plugin-modulen lar deg spille av lydfiler ved å dra og slippe dem fra filbehandleren (Finder, Explorer etc.) til Lyrion Music Servers webgrensesnitt. Filer som ikke allerede ligger på serveren blir midlertidig overført for avspilling.
+	PL	Ten dodatek pozwala na otwarzanie plików muzycznych poprzez "przeciągnięcie" z twojego pulpitu i "upuszczenie" na interfejsie internetowym programu Lyrion Music Server. Pliki, które nie są bezpośrednio dostępne dla Lyrion Music Server zostaną przesłane i tymczasowo zapisane na serwerze, w celu odtworzenia.
 
 PLUGIN_DNDPLAY_NO_ITEMS
 	CS	Nebyly nalezeny žádné přehrávatelné položky. Přehrát lze pouze zvukové soubory.

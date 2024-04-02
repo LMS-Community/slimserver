@@ -1,8 +1,9 @@
 package Slim::Plugin::UPnP::Discovery;
 
-# Logitech Media Server Copyright 2003-2020 Logitech.
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 # This module handles UPnP 1.0 discovery advertisements and responses to search requests
@@ -43,10 +44,10 @@ my %UUIDS;
 
 sub init {
 	my $class = shift;
-	
+
 	# Construct Server header for later use
 	my $details = Slim::Utils::OSDetect::details();
-	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 DLNADOC/1.50 LogitechMediaServer/' . $::VERSION . '/' . $::REVISION;
+	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 DLNADOC/1.50 LyrionMusicServer/' . $::VERSION . '/' . $::REVISION;
 
 	# Test if we can use ReusePort
 	my $hasReusePort = eval {
@@ -59,30 +60,30 @@ sub init {
 		$s->close;
 		return 1;
 	};
-	
+
 	my @addresses;
 	if ( main::ISWINDOWS ) {
 		# based on http://msdn.microsoft.com/en-us/library/aa394595(v=VS.85).aspx
 		require Win32::OLE;
-		
+
 		my $objWMIService = Win32::OLE->GetObject('winmgmts:\\\\.\\root\\cimv2');
-		
+
 		if ($objWMIService) {
 			my $ipConfigSet = $objWMIService->ExecQuery("Select IPAddress, IPSubnet from Win32_NetworkAdapterConfiguration");
-			
+
 			foreach my $ipconfig (in $ipConfigSet) {
 				my $subnets   = $ipconfig->{IPSubnet};
 				my $addresses = $ipconfig->{IPAddress};
-				
+
 				next unless $subnets && $addresses;
-				
+
 				for (my $i = 0; $i < @$addresses; $i++) {
 					if (my ($addr) = $addresses->[$i] =~ /^(\d+\.\d+.\d+.\d+)$/ ){
 						push @addresses, $addr;
 						$CIDR{$addr} = Net::IPv4Addr::ipv4_parse($addr, $subnets->[$i]);
 					}
 				}
-			} 
+			}
 		}
 		# XXX - what if we fail?
 	}
@@ -99,7 +100,7 @@ sub init {
 	}
 
 	if ( @addresses ) {
-		for my $addr ( sort @addresses ) {					
+		for my $addr ( sort @addresses ) {
 			my $sock = Slim::Networking::Async::Socket::UDP->new(
 				LocalAddr => $addr,
 				LocalPort => SSDP_PORT,
@@ -116,7 +117,7 @@ sub init {
 			}
 		}
 	}
-	
+
 	# Setup a single multicast socket for listening on all interfaces
 	# Listening on each single-interface socket does not seem to work right
 	my $listensock = Slim::Networking::Async::Socket::UDP->new(
@@ -124,7 +125,7 @@ sub init {
 		ReuseAddr => 1,
 		ReusePort => $hasReusePort ? 1 : 0,
 	);
-	
+
 	if ( $listensock ) {
 		$listensock->mcast_add( SSDP_HOST, '0.0.0.0' );
 		Slim::Networking::Select::addRead( $listensock, \&_read );
@@ -138,27 +139,27 @@ sub init {
 		$log->error("Unable to open any UPnP multicast discovery sockets, you may have other UPnP software running or a permissions problem.");
 		return;
 	}
-	
+
 	main::INFOLOG && $log->is_info && $log->info( 'UPnP Discovery initialized for interfaces: ' . join(', ', sort keys %SOCKS) );
-	
+
 	return 1;
 }
 
 # Stop listening for UPnP events
 sub shutdown {
 	my $class = shift;
-	
+
 	# if anything still left in %UUIDS we need to send byebye's for them
 	for my $uuid ( keys %UUIDS ) {
 		$class->unregister($uuid);
 	}
-	
+
 	while ( my ($addr, $sock) = each %SOCKS ) {
 		Slim::Networking::Select::removeRead( $sock ) if $addr eq '0.0.0.0';
 		$sock->close;
 	}
 	%SOCKS = ();
-	
+
 	main::INFOLOG && $log->is_info && $log->info('UPnP Discovery shutdown');
 }
 
@@ -166,44 +167,44 @@ sub server { $SERVER }
 
 sub _read {
 	my $sock = shift;
-	
+
 	my $addr = recv $sock, my $ssdp, 1024, 0;
 
 	if ( !defined $addr ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Read search result failed: $!");
 		return;
 	}
-	
+
 	my ($port, $iaddr) = sockaddr_in($addr);
 	$iaddr = inet_ntoa($iaddr);
-	
+
 	#main::DEBUGLOG && $log->is_debug && $log->debug( "UPnP Discovery packet from $iaddr:$port:\n$ssdp\n" );
-	
+
 	if ( $ssdp =~ /^M-SEARCH/ ) {
 		my ($st) = $ssdp =~ /\sST:\s*([^\s]+)/i;
 		if ( $st ) {
-			# See if the search request matches any of our registered devices/services			
+			# See if the search request matches any of our registered devices/services
 			my ($mx) = $ssdp =~ /MX:\s*([^\s]+)/i;
-			
+
 			# Ignore packets without MX
 			return unless defined $mx;
-			
+
 			# DLNA 7.2.3.5, ignore M-SEARCH with source port 1900 or <1024
 			if ($port == 1900 || $port <= 1024) {
 				$log->warn( "Ignoring illegal M-SEARCH request from $iaddr:$port (port must not be 1900 or <=1024)" );
 				return;
 			}
-			
+
 			$log->is_debug && $log->debug( "M-SEARCH from $iaddr:$port for $st (mx: $mx)" );
-			
+
 			# Most devices seem to ignore the mx value and reply quickly
 			if ( $mx > 3 ) {
 				$mx = 3;
 			}
-		
+
 			for my $uuid ( keys %UUIDS ) {
 				my $msgs = [];
-				
+
 				if ( $st eq 'ssdp:all' ) {
 					# Send a response for all devices and services
 					$msgs = __PACKAGE__->_construct_messages(
@@ -229,7 +230,7 @@ sub _read {
 					# A device or service matching this urn, or a prior version
 					my $search = $1;
 					my $sver   = $2;
-					
+
 					if ( $UUIDS{$uuid}->{device} =~ /$search/ ) {
 						my ($dver) = $UUIDS{$uuid}->{device} =~ /(\d+)$/;
 						if ( $sver <= $dver ) {
@@ -250,18 +251,18 @@ sub _read {
 										ver  => $sver,
 										%{ $UUIDS{$uuid} },
 									);
-									
+
 									push @{$msgs}, @{$new};
 								}
 							}
 						}
 					}
 				}
-				
-				if ( scalar @{$msgs} ) {					
+
+				if ( scalar @{$msgs} ) {
 					my $url = $UUIDS{$uuid}->{url};
 					my $ttl = $UUIDS{$uuid}->{ttl};
-					
+
 					__PACKAGE__->_advertise(
 						type => 'reply',
 						dest => {
@@ -274,37 +275,37 @@ sub _read {
 						ttl  => $ttl,
 						mx   => $mx,
 					);
-				}				
+				}
 			}
 		}
-	}			
+	}
 }
 
 sub register {
 	my ( $class, %args ) = @_;
-	
+
 	# Remember everything about this UUID, used for replies to M-SEARCH
 	# and when the device disconnects or the server shuts down
 	$UUIDS{ $args{uuid} } = \%args;
-	
+
 	my $msgs = $class->_construct_messages(
 		type => 'all',
 		%args,
 	);
-	
+
 	# Send byebye messages before any alive messages
 	$class->_advertise(
 		type => 'byebye',
 		msgs => $msgs,
 	);
-	
+
 	$class->_advertise(
 		type => 'alive',
-		msgs => $msgs, 
+		msgs => $msgs,
 		url  => $args{url},
 		ttl  => $args{ttl},
 	);
-	
+
 	# Schedule resending of alive packets at random interval less than 1/2 the ttl
 	my $resend = int( rand( $args{ttl} / 2 ) );
 	main::DEBUGLOG && $log->is_debug && $log->debug( "Sending initial alive packets for " . $args{uuid} . ", will resend notify packets in $resend sec" );
@@ -319,21 +320,21 @@ sub register {
 
 sub reregister {
 	my ( $class, $args ) = @_;
-	
+
 	# Make sure UUID still exists, if not the device has disconnected
 	if ( exists $UUIDS{ $args->{uuid} } ) {
 		my $msgs = $class->_construct_messages(
 			type => 'all',
 			%{$args},
 		);
-		
+
 		$class->_advertise(
 			type => 'alive',
 			msgs => $msgs,
 			url  => $args->{url},
 			ttl  => $args->{ttl},
 		);
-		
+
 		my $resend = int( rand( $args->{ttl}/ 2 ) );
 		$log->is_debug && $log->debug( "Will resend notify packets in $resend sec" );
 		Slim::Utils::Timers::killTimers( $class, \&reregister );
@@ -348,52 +349,52 @@ sub reregister {
 
 sub unregister {
 	my ( $class, $uuid ) = @_;
-	
+
 	my $msgs = $class->_construct_messages(
 		type => 'all',
 		%{ $UUIDS{$uuid} },
 	);
-		
+
 	delete $UUIDS{$uuid};
-	
+
 	$class->_advertise(
 		type => 'byebye',
 		msgs => $msgs,
 	);
-	
+
 	Slim::Utils::Timers::killTimers( $class, \&reregister );
 }
 
 # Generate a static UUID for a client, using UUID or hash of MAC
 sub uuid {
 	my ( $class, $client ) = @_;
-	
+
 	my @string = split //, $client->uuid || md5_hex( $client->id );
-	
+
 	splice @string, 8, 0, '-';
 	splice @string, 13, 0, '-';
 	splice @string, 18, 0, '-';
 	splice @string, 23, 0, '-';
-	
+
 	return uc( join( '', @string ) );
 }
 
 sub _advertise {
 	my ( $class, %args ) = @_;
-	
+
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
+
 	my $type = $args{type};
 	my $dest = $args{dest};
 	my $msgs = $args{msgs};
 	my $url  = $args{url};
 	my $ttl  = $args{ttl};
 	my $mx   = $args{mx};
-	
+
 	my @out;
-	
+
 	my $port = $prefs->get('httpport');
-	
+
 	if ( $type eq 'byebye' ) {
 		for my $msg ( @{$msgs} ) {
 			push @out, join "\x0D\x0A", (
@@ -436,12 +437,12 @@ sub _advertise {
 			);
 		}
 	}
-	
+
 	if ( $type eq 'byebye' ) {
 		# Send immediately, each packet twice
 		while ( my ($addr, $sock) = each %SOCKS ) {
 			main::DEBUGLOG && $isDebug && $log->debug( 'Sending ' . scalar(@out) . " byebye packets on $addr" );
-		
+
 			for my $pkt ( @out ) {
 				for ( 1..2 ) {
 					$sock->mcast_send( $pkt, SSDP_HOST );
@@ -455,17 +456,17 @@ sub _advertise {
 		my $send = sub {
 			while ( my ($addr, $sock) = each %SOCKS ) {
 				main::DEBUGLOG && $isDebug && $log->debug( 'Sending ' . scalar(@out) . " alive packets on $addr" );
-				
+
 				if ( $addr eq '0.0.0.0' ) {
 					# Use default network address
 					$addr = Slim::Utils::Network::serverAddr();
 				}
-				
+
 				for my $pkt ( @out ) {
 					# Construct absolute address
 					my $copy = $pkt;
 					$copy =~ s{Location: }{Location: http://$addr:$port};
-					
+
 					$sock->mcast_send( $copy, SSDP_HOST );
 				}
 			}
@@ -478,7 +479,7 @@ sub _advertise {
 		# send unicast UDP to source IP/port, delayed by random interval less than MX
 		my $send = sub {
 			my $addr = sockaddr_in( $dest->{port}, inet_aton( $dest->{addr} ) );
-			
+
 			# Determine which of our local addresses is on the same subnet as the destination
 			my $local_addr;
 			for my $a ( keys %SOCKS ) {
@@ -490,20 +491,20 @@ sub _advertise {
 			if ( !$local_addr || $local_addr eq '0.0.0.0' ) {
 				$local_addr = Slim::Utils::Network::serverAddr(); # default
 			}
-			
+
 			for my $pkt ( @out ) {
 				# Construct absolute address
 				my $copy = $pkt;
 				$copy =~ s{Location: }{Location: http://$local_addr:$port};
-				
+
 				main::DEBUGLOG && $isDebug && $log->debug(
 					'Replying to ' . $dest->{addr} . ':' . $dest->{port} . ': ' . Data::Dump::dump($copy)
 				);
-				
+
 				$dest->{sock}->send( $copy, 0, $addr ) or die "Unable to send UDP reply packet: $!";
 			}
 		};
-		
+
 		Slim::Utils::Timers::setTimer(
 			undef,
 			Time::HiRes::time() + rand($mx),
@@ -514,30 +515,30 @@ sub _advertise {
 
 sub _construct_messages {
 	my ( $class, %args ) = @_;
-	
+
 	my $type = delete $args{type};
-	
+
 	my @msgs;
-	
+
 	if ( $type eq 'all' ) {
 		# 3 discovery messages for the root device
 		push @msgs, {
 			NT  => 'upnp:rootdevice',
 			USN => 'uuid:' . $args{uuid} . '::upnp:rootdevice',
 		};
-		
+
 		push @msgs, {
 			NT  => 'uuid:' . $args{uuid},
 			USN => 'uuid:' . $args{uuid},
 		};
-		
+
 		push @msgs, {
 			NT  => $args{device},
 			USN => 'uuid:' . $args{uuid} . '::' . $args{device},
 		};
-		
+
 		# No support for embedded devices
-		
+
 		# 1 discovery message per service
 		for my $service ( @{ $args{services} } ) {
 			push @msgs, {
@@ -564,7 +565,7 @@ sub _construct_messages {
 		# 1 message for this device or service
 		my $search = $1;
 		my $ver    = $args{ver};
-		
+
 		if ( $args{device} =~ /$search/ ) {
 			my $nt = 'urn:' . $search . ':' . $ver;
 			push @msgs, {
@@ -584,7 +585,7 @@ sub _construct_messages {
 			}
 		}
 	}
-	
+
 	return \@msgs;
 }
 

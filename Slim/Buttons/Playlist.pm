@@ -1,9 +1,10 @@
 package Slim::Buttons::Playlist;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -16,7 +17,7 @@ Slim::Buttons::Playlist::jump($client,$index);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Playlist> contains functions for browsing the current playlist, and displaying the information 
+L<Slim::Buttons::Playlist> contains functions for browsing the current playlist, and displaying the information
 on a player display.
 
 =cut
@@ -40,7 +41,7 @@ my %playlistParams = ();
 
 =head2 init( )
 
-This method registers the playlist mode with Logitech Media Server, and defines any functions for interaction
+This method registers the playlist mode with Lyrion Music Server, and defines any functions for interaction
  while a player is operating in this mode..
 
 Generally only called from L<Slim::Buttons::Common>
@@ -49,9 +50,9 @@ Generally only called from L<Slim::Buttons::Common>
 
 sub init {
 	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode, \&exitMode);
-	
+
 	Slim::Music::Info::setCurrentTitleChangeCallback(\&Slim::Buttons::Playlist::newTitle);
-	
+
 	# Bug 4065, Watch for changes to the playlist that require a knob update
 	Slim::Control::Request::subscribe( \&knobPlaylistCallback, [['playlist']] );
 
@@ -80,7 +81,7 @@ sub init {
 				}
 
 				if ($songcount < 2) {
-					
+
 					if ($pushDir) {
 
 						$pushDir eq 'up' ? $client->bumpUp : $client->bumpDown;
@@ -186,11 +187,11 @@ sub init {
 
 			# set browse location to the new index, proportional based on the number pressed
 			browseplaylistindex($client,$newposition);
-			
+
 			# reset showingnowplaying status
 			playlistNowPlaying($client, 0);
 
-			$client->update();	
+			$client->update();
 		},
 
 		'add' => sub  {
@@ -199,11 +200,11 @@ sub init {
 			if (Slim::Player::Playlist::count($client) > 0) {
 
 				# rec button deletes an entry if you are browsing the playlist...
-				my $songtitle = Slim::Music::Info::standardTitle($client, 
+				my $songtitle = Slim::Music::Info::standardTitle($client,
 					Slim::Player::Playlist::track($client, browseplaylistindex($client))
 				);
 
-				$client->execute(["playlist", "delete", browseplaylistindex($client)]);	
+				$client->execute(["playlist", "delete", browseplaylistindex($client)]);
 				$client->showBriefly( {
 					'line' => [ $client->string('REMOVING_FROM_PLAYLIST'), $songtitle ]
 				}, {
@@ -211,7 +212,7 @@ sub init {
 				});
 			}
 		},
-		
+
 		'play' => sub  {
 			my $client = shift;
 
@@ -234,7 +235,7 @@ sub init {
 			$client->update();
 		}
 	);
-	
+
 }
 
 =head2 playdisp ( $client, $button, $buttonarg )
@@ -249,37 +250,37 @@ sub playdisp {
 	my $buttonarg = shift;
 	my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
 	my $index = -1;
-	
+
 	#find index of the existing display mode in the pref array
 	for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
 		$index++;
 		last if $pdm == $_;
 	}
-	
+
 	$pdm = $index unless $index == -1;
-	
+
 	unless (defined $pdm) { $pdm = 1; };
 	unless (defined $buttonarg) { $buttonarg = 'toggle'; };
-	
+
 	if ($button eq 'playdisp_toggle') {
-		
+
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		
+
 		if (($playlistlen > 0) && (showingNowPlaying($client))) {
-			
+
 			$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
-			
+
 		} elsif ($playlistlen > 0) {
-			
+
 			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
 		}
-		
+
 	} else {
 		if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
 			$pdm = $buttonarg;
 		}
 	}
-	
+
 	#find mode number at the new index, and save to the prefs
 	$prefs->client($client)->set('playingDisplayMode', $pdm);
 	$client->update();
@@ -293,7 +294,7 @@ Clean up global hash when a client is gone
 
 sub forgetClient {
 	my $client = shift;
-	
+
 	delete $playlistParams{ $client };
 }
 
@@ -303,7 +304,7 @@ sub getFunctions {
 
 =head2 setMode( $client, [ $how ])
 
-setMode() is a required function for any Logitech Media Server player mode.  This is the entry point for a mode and defines any parameters required for 
+setMode() is a required function for any Lyrion Music Server player mode.  This is the entry point for a mode and defines any parameters required for
 a clean starting point. The function may also set up the reference to the applicable lines function for the player display.
 
 Requires: $client
@@ -324,7 +325,7 @@ sub setMode {
 
 	browseplaylistindex($client);
 	playlistNowPlaying($client);
-	
+
 
 	# update client every second in this mode
 	$client->modeParam('modeUpdateInterval', 1); # seconds
@@ -356,7 +357,7 @@ sub exitMode {
 
 =head2 jump( $client, [ $pos ])
 
-Allows an arbitrary jump to any track in the current playist. 
+Allows an arbitrary jump to any track in the current playist.
 
 The optional argument, $pos set the zero-based index target for the jump.  If not specified, jump will go to current track.
 
@@ -365,21 +366,21 @@ The optional argument, $pos set the zero-based index target for the jump.  If no
 sub jump {
 	my $client = shift;
 	my $pos = shift;
-	
+
 	if (playlistNowPlaying($client)) {
-		if (!defined($pos)) { 
+		if (!defined($pos)) {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
-	
+
 		main::INFOLOG && $playlistlog->info("Jumping to song index: $pos");
-	
+
 		browseplaylistindex($client,$pos);
 	}
 }
 
 sub newTitle {
 	my $url = shift;
-	
+
 	my @clients = Slim::Player::Client::clients();
 
 	for my $client ( @clients ) {
@@ -393,7 +394,7 @@ sub newTitle {
 
 #
 # Display the playlist browser
-#		
+#
 sub lines {
 	my $client = shift;
 	my $args   = shift;
@@ -420,43 +421,43 @@ sub lines {
 		my $overlay1;
 
 		if ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) {
-			$overlay1 = ' ' . (browseplaylistindex($client) + 1) . ' ' . $client->string('OUT_OF') . ' ' . 
+			$overlay1 = ' ' . (browseplaylistindex($client) + 1) . ' ' . $client->string('OUT_OF') . ' ' .
 				Slim::Player::Playlist::count($client);
 		}
 
 		my $track = Slim::Player::Playlist::track($client, browseplaylistindex($client) );
-		
+
 		my $title;
 		my $meta;
-		
+
 		# Get remote metadata for other tracks in the playlist if available
 		if ( $track->isRemoteURL ) {
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($track->url);
 
 			if ( $handler && $handler->can('getMetadataFor') ) {
 				$meta = $handler->getMetadataFor( $client, $track->url );
-				
+
 				if ( $meta->{title} ) {
 					$title = Slim::Music::Info::getCurrentTitle( $client, $track->url, 0, $meta );
 				}
 			}
 		}
-		
+
 		if ( !$title ) {
 			$title = Slim::Music::Info::standardTitle($client, $track);
 		}
-		
+
 		$parts = {
 			'line'    => [ $line1, $title ],
 			'overlay' => [ $overlay1, $client->symbols('notesymbol') ],
 		};
 
 		if ($client->display->showExtendedText()) {
-			
+
 			if ($track && !($track->isRemoteURL)) {
 
 				$parts->{'screen2'} = {
-					'line' => [ 
+					'line' => [
 					   Slim::Music::Info::displayText($client, $track, 'ALBUM'),
 					   Slim::Music::Info::displayText($client, $track, 'ARTIST'),
 					]
@@ -465,7 +466,7 @@ sub lines {
 			} elsif ($track && $meta) {
 
 				$parts->{'screen2'} = {
-					'line' => [ 
+					'line' => [
 					   Slim::Music::Info::displayText($client, $track, 'ALBUM', $meta),
 					   Slim::Music::Info::displayText($client, $track, 'ARTIST', $meta),
 					]
@@ -497,7 +498,7 @@ sub showingNowPlaying {
 
 	return (
 		defined $mode &&
-		( $mode eq 'screensaver' || 
+		( $mode eq 'screensaver' ||
 		 ($mode eq 'playlist' && ((browseplaylistindex($client) || 0) == Slim::Player::Source::playingSongIndex($client)) ) )
 	);
 }
@@ -531,7 +532,7 @@ sub playlistNowPlaying {
 	} elsif (defined $playlistParams{$client}) {
 
 		$wasshowing = @_ ? shift : $playlistParams{$client}->{'showingnowplaying'};
-		
+
 		if ($nowshowing && !$wasshowing) {
 			# make sure listIndex stays at the correct track
 			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
@@ -563,7 +564,7 @@ sub browseplaylistindex {
 	if ( main::DEBUGLOG && @_ && $playlistlog->is_debug ) {
 		$log->debug("New playlistindex: $_[0]");
 	}
-	
+
 	# update list length for the knob.  ### HACK ATTACK ###
 	# - only do when we are in mode playlist - see bug: 3561
 	# - use length of 1 for both 1 item lists and empty playlists
@@ -582,7 +583,7 @@ sub browseplaylistindex {
 	} else {
 		return Slim::Player::Source::playingSongIndex($client);
 	}
-	
+
 }
 
 =head2 knobPlaylistCallback( $request )
@@ -594,7 +595,7 @@ Watches for any playlist changes that require the knob's state to be updated
 sub knobPlaylistCallback {
 	my $request = shift;
 	my $client  = $request->client();
-	
+
 	if (defined $client && defined Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'playlist') {
 		browseplaylistindex($client);
 		$client->updateKnob(1);

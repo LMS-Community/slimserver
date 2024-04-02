@@ -9,7 +9,7 @@
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>7.0a</minVersion>
         <maxVersion>*</maxVersion>
 	</targetApplication>

@@ -1,7 +1,8 @@
 package Slim::Buttons::Input::Bar;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -18,14 +19,14 @@ Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', $params);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Home> is a Logitech Media Server module for creating and
+L<Slim::Buttons::Home> is a Lyrion Music Server module for creating and
 navigating a configurable multilevel menu structure.
 
 Avilable Parameters and their defaults:
 
  'header'          = ''    # message displayed on top line, can be a scalar, a code ref,
                            # or an array ref to a list of scalars or code refs
- 'headerArgs'      = CV    # accepts C, and V, determines if the $client(C) and or the $valueRef(V) 
+ 'headerArgs'      = CV    # accepts C, and V, determines if the $client(C) and or the $valueRef(V)
                           # are sent to the above codeRef
  'stringHeader'    = undef # if true, put the value of header through the string function
                            # before displaying it.
@@ -50,10 +51,10 @@ Avilable Parameters and their defaults:
  'cursor'	       = undef # plave a visible cursor at the specified position.
  'increment'       = 2.5   # step value for each bar character or button press.
  'barOnDouble'     = 0     # set to 1 if the bar is preferred when using large text.
- 'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
+ 'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to
                            # smooth the movement of the bar.
 
- 'knobaccelup'     = 0.05  # Constant that determines how fast the Bar accelerates when 
+ 'knobaccelup'     = 0.05  # Constant that determines how fast the Bar accelerates when
  'knobacceldown'   = 0.05  # using a knob.   up and down accelerations are different.
 
 =cut
@@ -116,13 +117,13 @@ sub init {
 			$client->modeParam($name, $initValues{$name});
 		}
 	}
-	
+
 	my $min  = getExtVal($client, 'min');
 	my $mid  = getExtVal($client, 'mid');
 	my $max  = getExtVal($client, 'max');
-	
+
 	my $step = $client->modeParam('increment');
-	
+
 	my $listRef = [];
 	my $j = 0;
 
@@ -208,7 +209,7 @@ sub init {
 
 		'knob' => sub {
 			my ($client, $funct, $functarg) = @_;
-			
+
 			my $knobPos   = $client->knobPos();
 			my $listIndex = $client->modeParam('listIndex');
 			my $log       = logger('player.ui');
@@ -270,7 +271,7 @@ sub scaledValue {
 		$unit = '';
 	}
 
-	return " ($value$unit)"	
+	return " ($value$unit)"
 }
 
 sub unscaledValue {
@@ -292,8 +293,8 @@ sub unscaledValue {
 	if (!defined $unit) {
 		$unit = '';
 	}
-	
-	return " ($value$unit)"	
+
+	return " ($value$unit)"
 }
 
 sub changePos {
@@ -302,7 +303,7 @@ sub changePos {
 	my $listRef   = $client->modeParam('listRef');
 	my $listIndex = $client->modeParam('listIndex');
 	my $valueRef  = $client->modeParam('valueRef');
-	
+
 	# Track intermediate change to value
 	if ($client->modeParam('trackValueChanges') && $$valueRef != $listRef->[$listIndex]) {
 		my $newIndex;
@@ -319,7 +320,7 @@ sub changePos {
 		# not wrapping and at end of list
 		return;
 	}
-	
+
 	my $accel = 8; # Hz/sec
 	my $rate  = 50; # Hz
 	my $mid   = getExtVal($client, 'mid') || 0;
@@ -335,22 +336,22 @@ sub changePos {
 
 	my $currVal     = $listIndex;
 	my $newposition = undef;
-	
+
 	my $knobData = $client->knobData;
-	
+
 	if ($knobData->{'_knobEvent'}) {
 		# Knob event
 		my $knobAccelerationConstant = undef;
 		#
-		# TODO make down and up parameterized so that 
-		# we can have different speeds for different controls.  
-		# I.e. volume should go down faster than up, but bass and treble should 
+		# TODO make down and up parameterized so that
+		# we can have different speeds for different controls.
+		# I.e. volume should go down faster than up, but bass and treble should
 		# be the same in both cases.
-		# 
+		#
 		if ($dir > 0) {
 			$knobAccelerationConstant = $client->modeParam('knobaccelup') || .05; # Accel going up.
 		} else {
-			$knobAccelerationConstant = $client->modeParam('knobacceldown') ||.05; # Accel going down. 
+			$knobAccelerationConstant = $client->modeParam('knobacceldown') ||.05; # Accel going down.
 		}
 		my $velocity      = $knobData->{'_velocity'};
 		my $acceleration  = $knobData->{'_acceleration'};
@@ -370,13 +371,13 @@ sub changePos {
 		}
 		$deltaX = int($deltaX);
 		$newposition = $listIndex + $deltaX;
-		
+
 	} else {
 		# Not _knobEvent (i.e. regular button event.);
 		$newposition = $listIndex + $dir;
 	}
-	
-	
+
+
 	if ($dir > 0) {
 
 		if ($currVal < ($midpoint - .5) && ($currVal + $dir) >= ($midpoint - .5)) {
@@ -400,7 +401,7 @@ sub changePos {
 	$newposition = 0 if $newposition < 0;
 
 	$$valueRef   = $listRef->[$newposition];
-	
+
 	my $val;
 	if ($dir > 0) {
 		$val = '+'.abs($listRef->[$newposition] - $listRef->[$listIndex]);
@@ -482,11 +483,11 @@ sub lines {
 			$line1 .= Slim::Buttons::Input::List::getExtVal($client, $$valueRef, $listIndex, 'headerValue');
 		}
 	}
-	
+
 	$min = getExtVal($client, 'min') || 0 unless defined $min;
 	$mid = getExtVal($client, 'mid') || 0 unless defined $mid;
 	$max = getExtVal($client, 'max') || 100 unless defined $max;
-	
+
 	my $cursor = $client->modeParam('cursor');
 	if (defined($cursor)) {
 		$cursor = $max == $min ? 0 : int(($cursor - $min)*100/($max-$min));
@@ -554,11 +555,11 @@ sub _leaveModeHandler {
 
 	Slim::Utils::Timers::killTimers($client, \&_updateScreen);
 	$client->updatePending(0);
-	
+
 	if ($exittype eq 'pop') {
 		return;	# to avoid recursion
 	}
-	
+
 	if (defined $client->modeParam('handleLeaveMode')) {
 		exitInput($client, $exittype);
 	}

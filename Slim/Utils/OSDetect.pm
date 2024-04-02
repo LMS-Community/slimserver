@@ -1,7 +1,8 @@
 package Slim::Utils::OSDetect;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,7 +30,7 @@ my ($os, $isWindows, $isMac, $isLinux);
 
 =head2 OS( )
 
-returns a string to indicate the detected operating system currently running Logitech Media Server.
+returns a string to indicate the detected operating system currently running Lyrion Music Server.
 
 =cut
 

@@ -1,6 +1,6 @@
 <h2><a name="v8.5.1" id="v8.5.1"></a>Version 8.5.1</h2>
 <ul>
-	<li><a href="#v8.5.0">Upstream fixes from Logitech Media Server 8.5.0</a></li>
+	<li><a href="#v8.4.1">Upstream fixes from Logitech Media Server 8.4.1</a></li>
 	<br />
 
 	<li>New Features:</li>
@@ -26,7 +26,7 @@
 	<ul>
 		<li>Fix definition of track-level favorites' artwork.</li>
 		<li>Correctly prefix settings links from Plugins page with the web root.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/1020">#1020</a> - Add icon to favorites in Default web UI et al. (thanks philippe44 && darrell-k)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1020">#1020</a> - Add icon to favorites in Default web UI et al. (thanks philippe44 && darrell-k)</li>
 	</ul>
 	<br />
 
@@ -47,14 +47,14 @@
 	<ul>
 		<li>Remove all dependency on MySqueezebox.com.</li>
 		<li>Remove warning about "incompatible" Radio firmware version 7.*.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/1003">#1003</a> - Add alarm information to player "status" query.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1003">#1003</a> - Add alarm information to player "status" query.</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/998">#998</a> - Fix Sounds &amp; Effects playback when password protection is enabled.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/1007">#1007</a> - Fix track favorite links in album listings (thanks darrell-k!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/998">#998</a> - Fix Sounds &amp; Effects playback when password protection is enabled.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1007">#1007</a> - Fix track favorite links in album listings (thanks darrell-k!).</li>
 	</ul>
 	<br />
 </ul>
@@ -86,13 +86,13 @@
 
 	<li>New Features:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/879">#879</a> - Add support for Release Types (see eg. on <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>).</li>
 		<li>New "Advanced Tag View" plugin allows you to show more information in the Track Info menu, without the need to drill down to "View Tags"</li>
 		<li>Allow editing of a favourite's icon.</li>
 		<li>Add plugins for ClassicalRadio.com, DI.fm, JazzRadio.com, RadioTunes.com, RockRadio.com, ZenRadio.com.</li>
 		<li>Add an optional artist albums view which groups albums by release type and contribution. (thanks darrell-k!)</li>
 		<li>Add an option to import playlists from online music services.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/987">#987</a> - Add OggFlac support (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/987">#987</a> - Add OggFlac support (thanks philippe44!)</li>
 	</ul>
 	<br />
 
@@ -106,17 +106,17 @@
 		<li>Sort tracks in "title" sort order by artist and album, too, if they're part of the result set.</li>
 		<li>Add option to check for updates every hour.</li>
 		<li>Optionally don't remove online duplicates from library views.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/846">#846</a> - Improve display of multiline lyrics and comments in the web UI (thanks mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/846">#846</a> - Improve display of multiline lyrics and comments in the web UI (thanks mw9!)</li>
 		<li>Move persist.db out of the cache folder - it's music data which can't be restored from the music files.</li>
 		<li>Log warning if the server's time seems to be off (only if MySqueezebox integration is enabled).</li>
 		<li>Re-implement Sounds & Effects plugin to not depend on MySqueezebox for the navigation and content selection.</li>
 		<li>Report actual replay gain value for the currently playing track in "status" query.</li>
 		<li>Add "Q" tag to songinfo, status queries etc. to return lossless flag for tracks (thanks AF-1!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/862">#862</a> - Make lyrics on Default skin songinfo page collapsible (thanks AF-1!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/868">#868</a> - Populate the release year ('year') attribute for remote tracks in the player queue (thanks SamInPgh!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/956">#956</a> - Add raw AAC (ADTS) file support (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/964">#964</a>/<a href="https://github.com/Logitech/slimserver/pull/985">#985</a> - Handle case where user moves/adds/removes tracks in a playlist while the next track is already fully streamed (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/986">#986</a> - Add a 'V' query that will return the maximum seek point in seconds within the current track duration for a 'live' radio stream (thanks expectingtofly & philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/862">#862</a> - Make lyrics on Default skin songinfo page collapsible (thanks AF-1!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/868">#868</a> - Populate the release year ('year') attribute for remote tracks in the player queue (thanks SamInPgh!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/956">#956</a> - Add raw AAC (ADTS) file support (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/964">#964</a>/<a href="https://github.com/LMS-Community/slimserver/pull/985">#985</a> - Handle case where user moves/adds/removes tracks in a playlist while the next track is already fully streamed (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/986">#986</a> - Add a 'V' query that will return the maximum seek point in seconds within the current track duration for a 'live' radio stream (thanks expectingtofly & philippe44!)</li>
 		<li>Fix Napster playback on community firmware players</li>
 	</ul>
 	<br />
@@ -132,17 +132,17 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/212">#212</a> - Unicode sorting for Browse Music Folder broken (thanks kimmot!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/622">#622</a> - __requestRE should only match words provided to Slim::Control::Request::subscribe. (thanks earlchew!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/799">#799</a> - Update IO::String to latest, fixing some odd Perl version check.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/829">#829</a> - Don't override a content type set by a page handler.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/905">#905</a> - Browsing in to playlists is extremely slow.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/911">#911</a> - Don't shut down the server on "restartserver" when we actually can't restart it.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/939">#939</a> - Player can't be switched from MySqueezebox.com to LMS</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/962">#962</a> - Fix album_contributor updates in New &amp; Changed scan (thanks darrell!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/979">#979</a> - New and changed contributor scanning improvements (thanks darrell!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/212">#212</a> - Unicode sorting for Browse Music Folder broken (thanks kimmot!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/622">#622</a> - __requestRE should only match words provided to Slim::Control::Request::subscribe. (thanks earlchew!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/799">#799</a> - Update IO::String to latest, fixing some odd Perl version check.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/829">#829</a> - Don't override a content type set by a page handler.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/905">#905</a> - Browsing in to playlists is extremely slow.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/911">#911</a> - Don't shut down the server on "restartserver" when we actually can't restart it.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/939">#939</a> - Player can't be switched from MySqueezebox.com to LMS</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/962">#962</a> - Fix album_contributor updates in New &amp; Changed scan (thanks darrell!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/979">#979</a> - New and changed contributor scanning improvements (thanks darrell!)</li>
 		<li><a href="https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1648813">Respect a contributor's Musicbrainz ID to separate artists of the same name.</a></li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/969">#969</a> - Add utf-8 guess decoding on Ogg metadata - thanks philippe44!</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/969">#969</a> - Add utf-8 guess decoding on Ogg metadata - thanks philippe44!</li>
 		<li>Try harder to avoid duplicate (but empty) album entries on singles.</li>
 		<li>Clear the Various Artists ID when a scan has finished.</li>
 		<li>Don't remove online libraries from library views unless there really is a local copy of the same album.</li>
@@ -164,15 +164,15 @@
 <ul>
 	<li>Platform Support:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/891">#891</a> - Add Perl 5.36 support for Linux aarch64, armv7.</li>
 		<li></li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/874">#874</a> - Fix shuffling when starting off with an empty playlist (thanks robho!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/918">#918</a> - Fix browsing down to album favorites etc.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/874">#874</a> - Fix shuffling when starting off with an empty playlist (thanks robho!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/918">#918</a> - Fix browsing down to album favorites etc.</li>
 		<li>Add CPAN/auto/5.14 to lib search path for Windows builds to include Font::FreeType.</li>
 		<li>Fix another absolute path to a stylesheet in the Default skin.</li>
 		<li>Fix an issue where registering a pre-cache resolution would cause a subsequent LMS start to fail.</li>
@@ -192,7 +192,7 @@
 	<li>Platform Support:</li>
 	<ul>
 		<li>Update Audio::Scan to 1.06 for certain platforms (thanks ralphy, robho, slartibartfast!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/826">#826</a> - Add Perl 5.36 support for Linux x86_64.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/826">#826</a> - Add Perl 5.36 support for Linux x86_64.</li>
 		<li>Add Perl 5.34 support for Linux aarch64.</li>
 		<li>Add signed version of our custom Perl build for macOS.</li>
 	</ul>
@@ -200,14 +200,14 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/827">#827</a> - Fix installation of plugin updates - honour user's choice (thanks mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/827">#827</a> - Fix installation of plugin updates - honour user's choice (thanks mw9!)</li>
 		<li>Don't use our custom Perl build on macOS 10.x - these versions come with a still working Perl 5.18.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/834">#834</a> - Fix no-transcoding playback of m4a audio (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/835">#835</a> - Improve Alarm reliability - prevent accidental/random alarm stops.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/843">#843</a> - HTTPSocks.pm - Binary OR used by mistake - Logical OR needed (thanks mw9!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/834">#834</a> - Fix no-transcoding playback of m4a audio (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/835">#835</a> - Improve Alarm reliability - prevent accidental/random alarm stops.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/843">#843</a> - HTTPSocks.pm - Binary OR used by mistake - Logical OR needed (thanks mw9!).</li>
 		<li>Remove support for "deflate" encoding type in SimpleHTTP requests: it must have been broken for over a decade!</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/852">#852</a> - No result return while using Chinese Keyword in Fulltext Search.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/857">#857</a> - Fix changing MySB credentials using the "setsncredentials" command.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/852">#852</a> - No result return while using Chinese Keyword in Fulltext Search.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/857">#857</a> - Fix changing MySB credentials using the "setsncredentials" command.</li>
 	</ul>
 	<br />
 </ul>
@@ -227,7 +227,7 @@
 	<li>Server Changes:</li>
 	<ul>
 		<li>Remove support for media types other than audio (video, pictures). Let's make "M" music again.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/651">#651</a> - Updated French translation - thanks Frank-Berry!</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/651">#651</a> - Updated French translation - thanks Frank-Berry!</li>
 		<li>Added British English translations - thanks expectingtofly!</li>
 		<li>Updated Czech translation - thanks mipa87!</li>
 		<li>Updated Dutch translation - thanks blackfiction!</li>
@@ -235,28 +235,28 @@
 		<li>Dramatically improve Fulltext Search indexing for large playlists (thousands of tracks).</li>
 		<li>Improve security of LMS &lt;-&gt; mysqueezebox.com communication: don't store credentials, but only a session token.</li>
 		<li>Clean up legacy JavaScript support: update PrototypeJS and Scriptaculous to their latest builds, remove some legacy code.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/678">#678</a> - Fix up character encoding issues in Web UI Scanner progress reporting and Web UI log display (thanks mw9!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/708">#708</a> - Update to MP3, FLAC, Ogg and WMA Formats to use BPM tags - thanks kwarklabs!</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/751">#751</a> - Shuffle tracks added with "playlist loadtracks" for a given year (thanks philchillbill!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/758">#758</a> - Allow selection of regional language (eg. ZH_CH or EN_GB) through JSONRPC (thanks expectingtofly!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/785">#785</a> - Improve adding albums as favorites: don't rely on the album title alone, but use the artist to identify the album, too.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/817">#817</a> - Fix JavaScript integration in settings pages for Classic/Light (and thus Material) skins.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/678">#678</a> - Fix up character encoding issues in Web UI Scanner progress reporting and Web UI log display (thanks mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/708">#708</a> - Update to MP3, FLAC, Ogg and WMA Formats to use BPM tags - thanks kwarklabs!</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/751">#751</a> - Shuffle tracks added with "playlist loadtracks" for a given year (thanks philchillbill!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/758">#758</a> - Allow selection of regional language (eg. ZH_CH or EN_GB) through JSONRPC (thanks expectingtofly!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/785">#785</a> - Improve adding albums as favorites: don't rely on the album title alone, but use the artist to identify the album, too.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/817">#817</a> - Fix JavaScript integration in settings pages for Classic/Light (and thus Material) skins.</li>
 		<li>Remove more legacy plugins: Amazon, MP3Tunes, Orange, YALP</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/673">#673</a> - Add aarch64 Linux and 64-bit macOS binaries for Monkey's Audio (APE) files (thanks ralphy!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/684">#684</a> - Updated Solaris Binaries for alac, flac, sox, faad, wvunpack, mac (thanks urknall!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/715">#715</a> - Remove I18N::LangTags - it's outdated and has been part of core Perl since 5.12.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/673">#673</a> - Add aarch64 Linux and 64-bit macOS binaries for Monkey's Audio (APE) files (thanks ralphy!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/684">#684</a> - Updated Solaris Binaries for alac, flac, sox, faad, wvunpack, mac (thanks urknall!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/715">#715</a> - Remove I18N::LangTags - it's outdated and has been part of core Perl since 5.12.</li>
 		<li>Added native support for Apple Silicon</li>
 		<li>Update Audio::Scan to 1.05 for certain platforms (thanks ralphy, slartibartfast!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/773">#773</a> - Update flac to 1.3.4 (macOS, Linux i386, x86_64, armhf, aarch64)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/773">#773</a> - Update flac to 1.3.4 (macOS, Linux i386, x86_64, armhf, aarch64)</li>
 		<li>Added custom Perl 5.34 build for macOS 10.15+, in preparation for Apple's removal of Perl from macOS</li>
 		<li>Remove support for the embedded MySQL server. We've been using SQLite for about a decade.</li>
 		<li>Remove support for PowerPC and i386 on macOS.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/810">#810</a> - Remove the 'deprecate' pragma vom CGI::Util to improve compatibility with newer Perl versions.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/810">#810</a> - Remove the 'deprecate' pragma vom CGI::Util to improve compatibility with newer Perl versions.</li>
 	</ul>
 	<br />
 
@@ -266,28 +266,28 @@
 		<li>Improve Deezer metadata lookup when adding albums/playlists through the CLI.</li>
 		<li><a href="https://github.com/andygrundman/Audio-Scan/issues/9">(Audio::Scan) #9</a> - For some WavPack DSD file the song_length_ms is incorrect (thanks aeeq &amp; ralphy!)</li>
 		<li><a href="https://github.com/andygrundman/Audio-Scan/pulls/12">(Audio::Scan) #12</a> - ID3: Fix v2.4 extended header handling (thanks mw9 &amp; ralphy!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/406">#406</a> - Crossfading fails with very short tracks</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/410">#410</a> - Rescan button for individual music folders does not work in Classic (and hence Material) skin.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/473">#473</a> - Broken playback functionality in Album/More</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/535">#535</a> - some CLI commands duplicate comment tag info</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/547">#547</a> - duplicate albums after adding tracks while renaming album</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/668">#668</a> - Podcasts: Pre-caching image and more-info data can bring the server to a crawl #668 (thanks mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/406">#406</a> - Crossfading fails with very short tracks</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/410">#410</a> - Rescan button for individual music folders does not work in Classic (and hence Material) skin.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/473">#473</a> - Broken playback functionality in Album/More</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/535">#535</a> - some CLI commands duplicate comment tag info</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/547">#547</a> - duplicate albums after adding tracks while renaming album</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/668">#668</a> - Podcasts: Pre-caching image and more-info data can bring the server to a crawl #668 (thanks mw9!)</li>
 		<li>Fix image transformation if a cover requested using /current/cover is pointing to a local file.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/699">#699</a> - Improve resume behaviour (thanks philippe44, maniac103 &amp; mw9</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/700">#700</a>/<a href="https://github.com/Logitech/slimserver/pull/718">#718</a> - High CPU load during playback of certain radio streams (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/704">#704</a> - changed artist names remain in database after quick rescan</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/705">#705</a> - changing upper and lower case in file name results in double entries</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/746">#746</a> - Windows 11: PreventStandby doesn't prevent standby any more</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/749">#749</a> - fix mp4 streams where audio offset comes from STCO (thanks philippe44 && bpa!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/754">#754</a> - improve reliability of "what's new" podcast search (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/767">#767</a> - fix compatibility with standards compliant cometd libraries (thanks lynniemagoo!)</li>
-		<li><a href="https://github.com/Logitech/slimserver-vendor/issues/95">#95</a> - update faad helper binaries to fix a crash when the decoder call fails (thanks ralphy!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/777">#777</a> - When syncing with disconnected player through CLI, random player is synced</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/802">#802</a> - Log is flodded with callback warnings "Can't call method "display" on an undefined value"</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/699">#699</a> - Improve resume behaviour (thanks philippe44, maniac103 &amp; mw9</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/700">#700</a>/<a href="https://github.com/LMS-Community/slimserver/pull/718">#718</a> - High CPU load during playback of certain radio streams (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/704">#704</a> - changed artist names remain in database after quick rescan</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/705">#705</a> - changing upper and lower case in file name results in double entries</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/746">#746</a> - Windows 11: PreventStandby doesn't prevent standby any more</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/749">#749</a> - fix mp4 streams where audio offset comes from STCO (thanks philippe44 && bpa!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/754">#754</a> - improve reliability of "what's new" podcast search (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/767">#767</a> - fix compatibility with standards compliant cometd libraries (thanks lynniemagoo!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-vendor/issues/95">#95</a> - update faad helper binaries to fix a crash when the decoder call fails (thanks ralphy!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/777">#777</a> - When syncing with disconnected player through CLI, random player is synced</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/802">#802</a> - Log is flodded with callback warnings "Can't call method "display" on an undefined value"</li>
 		<li>Prevent a server crash while re-building the fulltext search index with huge collections.</li>
 		<li>Don't show online only artists when a virtual library view tells us to do so.</li>
 		<li>Fix IO::Socket::SSL initialization in the scanner's sync http lookup code.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/797">#797</a> - Fix Power off/Power on behaviour - Player would resume playback of stale track when reconnecting, although nothing to be resumed.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/797">#797</a> - Fix Power off/Power on behaviour - Player would resume playback of stale track when reconnecting, although nothing to be resumed.</li>
 	</ul>
 	<br />
 </ul>
@@ -308,12 +308,12 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/646">#646</a> - Fix streaming compatibility with SliMP3 (thanks philippe44!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/647">#647</a> - Fix podcast "Play from last position" and skip back trackinfo item (thanks mw9 and philippe44!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/656">#656</a> - Correct start time for streams with range offset (thanks philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/646">#646</a> - Fix streaming compatibility with SliMP3 (thanks philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/647">#647</a> - Fix podcast "Play from last position" and skip back trackinfo item (thanks mw9 and philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/656">#656</a> - Correct start time for streams with range offset (thanks philippe44!).</li>
 		<li>Fix resizing images with a dash in the name.</li>
 		<li>Define $::cachedir in the scanner, too, as many parts of the code rely on it.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/760">#760</a> - Fix various XSS possibilities in settings pages etc.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/760">#760</a> - Fix various XSS possibilities in settings pages etc.</li>
 	</ul>
 	<br />
 </ul>
@@ -327,14 +327,14 @@
 	<li>New Features:</li>
 	<ul>
 		<li>Try to group online artists with local artists by ignoring slightly different spelling (eg. "The Beatles" vs. "Beatles", "Amy Macdonald" vs. "Amy MacDonald").</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/510">#510</a> - Add (optional) "balanced" track shuffling method, which is less random, but hopefully more pleasing to the listener.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/537">#537</a> - Add audio option to combine channels to build a mono signal (whether player is synchronized or not).</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/538">#538</a> - Add Balance setting for players which support it (thanks philippe44!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/621">#621</a> - Add Search feature to the Podcasts plugin (thanks philippe44!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/630">#630</a> - Add parsing of remote OPML list.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/627">#627</a> - Allow explodePlaylist to return an OPML list, not just an array or urls.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/510">#510</a> - Add (optional) "balanced" track shuffling method, which is less random, but hopefully more pleasing to the listener.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/537">#537</a> - Add audio option to combine channels to build a mono signal (whether player is synchronized or not).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/538">#538</a> - Add Balance setting for players which support it (thanks philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/621">#621</a> - Add Search feature to the Podcasts plugin (thanks philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/630">#630</a> - Add parsing of remote OPML list.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/627">#627</a> - Allow explodePlaylist to return an OPML list, not just an array or urls.</li>
 		<li>Enable basic track statistics (play count, last played, ratings) for online tracks imported into the library.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/581">#581</a>, <a href="https://github.com/Logitech/slimserver/pull/591">#591</a> - Create new player protocol to buffer http streams to disk or re-establish dropped connections to improve reliability (thanks philippe44!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/581">#581</a>, <a href="https://github.com/LMS-Community/slimserver/pull/591">#591</a> - Create new player protocol to buffer http streams to disk or re-establish dropped connections to improve reliability (thanks philippe44!).</li>
 	</ul>
 	<br />
 
@@ -342,36 +342,36 @@
 	<ul>
 		<li>When an online scan doesn't return any track, but previously had some, do not remove tracks from library. The empty new list is likely due to a scan failure.</li>
 		<li>Try to improve backwards compatibility with eg. Erland's plugins, which sometimes struggle with the remote tracks.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/411">#411</a> - Transcoder conversion rules: Support resampling for Ogg/Flac streams (thanks bpa/mw9!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/598">#598</a> - Shuffle tracks added with "playlist loadtracks" and certain search filters (thanks philchillbill!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/411">#411</a> - Transcoder conversion rules: Support resampling for Ogg/Flac streams (thanks bpa/mw9!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/598">#598</a> - Shuffle tracks added with "playlist loadtracks" and certain search filters (thanks philchillbill!)</li>
 		<li>Added hook for 3rd party plugins to tell DSTM not to kick in.</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/18">#18</a> - Add a systemd service file for Debian based systems (thanks mw9 &amp; tomscytale).</li>
-		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/22">#22</a> - Add systemd service configuration for RPM based systems (thanks JohanSaaw!)</li>
-		<li><a href="https://github.com/Logitech/slimserver-platforms/pull/25">#25</a> - Add weak dependency on perl IO::Socket:SSL in RPM (thanks JohanSaaw!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/526">#526</a> - Add Perl 5.32 and 5.30 support for Linux aarch64 platform. (thanks clivem!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/18">#18</a> - Add a systemd service file for Debian based systems (thanks mw9 &amp; tomscytale).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/22">#22</a> - Add systemd service configuration for RPM based systems (thanks JohanSaaw!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/25">#25</a> - Add weak dependency on perl IO::Socket:SSL in RPM (thanks JohanSaaw!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/526">#526</a> - Add Perl 5.32 and 5.30 support for Linux aarch64 platform. (thanks clivem!)</li>
 		<li>Remove Font::FreeType from Linux distributions. It's easy enough to install it using the system's package manager, and it would conflict on system where we don't provide the binary.</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/554">#554</a> - Long current playlist disappears from UI during wipe and rescan.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/601">#601</a> - "icon" for URL="file://..." entries does not work in favorites.ompl.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/629">#629</a> -  Set SO_KEEPALIVE for cli socket so they auto-close when peer disappears.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/632">#632</a> -  Keep shall in foreground when startTime is required and bitrate is missing.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/617">#617</a> -  Handle volatile redirected url, retry from original one if failed after resume.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/612">#612</a> -  Ask PH if _currentHandler shall be rewritten (HTTP->HTTPS upgrade).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/554">#554</a> - Long current playlist disappears from UI during wipe and rescan.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/601">#601</a> - "icon" for URL="file://..." entries does not work in favorites.ompl.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/629">#629</a> -  Set SO_KEEPALIVE for cli socket so they auto-close when peer disappears.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/632">#632</a> -  Keep shall in foreground when startTime is required and bitrate is missing.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/617">#617</a> -  Handle volatile redirected url, retry from original one if failed after resume.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/612">#612</a> -  Ask PH if _currentHandler shall be rewritten (HTTP->HTTPS upgrade).</li>
 	</ul>
 	<br />
 
 	<li>Other:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/528">#528</a> - On Unix-like platforms, we now ensure that plugins are installed in such a way that none of their files are writable by users other than the user running LMS, even if theyʼre stored that way in the plugin ZIP file.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/528">#528</a> - On Unix-like platforms, we now ensure that plugins are installed in such a way that none of their files are writable by users other than the user running LMS, even if theyʼre stored that way in the plugin ZIP file.</li>
 		<li>No longer include the firmware images for ip3k based players (Classic, Boom, Receiver, Transporter) with the installation packages. Logitech Media Server can download them when needed. But after about a decade without updates it's unlikely anybody would still have to update anyway.</li>
 	</ul>
 	<br />
@@ -382,7 +382,7 @@
 <ul>
 	<li>Server Changes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/522">#522</a> - add new --advertiseaddr startup parameter to tell LMS what user facing IP address to use (in case of NATed setups, like with load balancers or Kubernetes etc.) - thanks fuero!</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/522">#522</a> - add new --advertiseaddr startup parameter to tell LMS what user facing IP address to use (in case of NATed setups, like with load balancers or Kubernetes etc.) - thanks fuero!</li>
 		<li>Don't sync favorites from mysqueezebox.com when prefs syncing is disabled.</li>
 	</ul>
 	<br />
@@ -392,15 +392,15 @@
 		<li>Don't poll the Deezer library if the user doesn't have a premium subscription.</li>
 		<li>Open App Gallery item in new window/tab - fix some regexes where we'd only accept http instead of https.</li>
 		<li>Make sure we get the mysqueezebox.com based app menu even for players which are not registered there.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/508">#508</a> - Don't include the port when using default ports in host header for http requests.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/521">#521</a> - Fix http redirection on HTTPS protocol handlers (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/523">#523</a> - Fix http redirection when redirect URL is missing the protocol (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/531">#531</a> - Player's library view setting and Random Mix preference conflict with each other.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/536">#536</a> - When an album list is filtered by contributor role, the contributor's name sometimes isn't shown with the album.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/545">#545</a> - Under certain circumstances 3rd party plugins could be hidden on non-Squeezeplay based players.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/559">#559</a> - Deleting favourite via CLI using URL deletes others (thanks CDrummond!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/585">#585</a> - mp4 parser for trailing header must keep original request fields (thanks philippe44!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/593">#593</a> - Handle redirect with processors (eg. mp4 => aac) (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/508">#508</a> - Don't include the port when using default ports in host header for http requests.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/521">#521</a> - Fix http redirection on HTTPS protocol handlers (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/523">#523</a> - Fix http redirection when redirect URL is missing the protocol (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/531">#531</a> - Player's library view setting and Random Mix preference conflict with each other.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/536">#536</a> - When an album list is filtered by contributor role, the contributor's name sometimes isn't shown with the album.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/545">#545</a> - Under certain circumstances 3rd party plugins could be hidden on non-Squeezeplay based players.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/559">#559</a> - Deleting favourite via CLI using URL deletes others (thanks CDrummond!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/585">#585</a> - mp4 parser for trailing header must keep original request fields (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/593">#593</a> - Handle redirect with processors (eg. mp4 => aac) (thanks philippe44!)</li>
 	</ul>
 	<br />
 </ul>
@@ -410,8 +410,8 @@
 <ul>
 	<li>Server Changes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/489">#489</a> - Enable Deezer flac seeking for ip3k players.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/490">#490</a> - Enable "Defeat Touch To Play" for all players.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/489">#489</a> - Enable Deezer flac seeking for ip3k players.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/490">#490</a> - Enable "Defeat Touch To Play" for all players.</li>
 	</ul>
 	<br />
 
@@ -425,11 +425,11 @@
 	<ul>
 		<li>Fix Ogg Opus on Windows.</li>
 		<li>Fix advanced genre replacement in Online Music Library Integration plugin.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/485">#485</a> - HTTP range request is last byte not size.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/486">#486</a> - When using internal transcoding only, the container format must be set.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/488">#488</a> - When resampling FLAC, add targeted $RESAMPLE$,not only the source sample rate.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/501">#501</a> - Fix logging in Deezer and TIDAL importers.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/506">#506</a> - Fix Napster streaming.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/485">#485</a> - HTTP range request is last byte not size.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/486">#486</a> - When using internal transcoding only, the container format must be set.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/488">#488</a> - When resampling FLAC, add targeted $RESAMPLE$,not only the source sample rate.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/501">#501</a> - Fix logging in Deezer and TIDAL importers.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/506">#506</a> - Fix Napster streaming.</li>
 	</ul>
 	<br />
 </ul>
@@ -465,7 +465,7 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/475">#475</a> - Socket leaks when pipeline is used.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/475">#475</a> - Socket leaks when pipeline is used.</li>
 	</ul>
 	<br />
 </ul>
@@ -475,10 +475,10 @@
 <ul>
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/437">#437</a> - New Music doesn't respect the library_id parameter.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/459">#459</a> - Library items like artists (db:contributor.name=...) favorites don't return the URL in the CLI.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/460">#460</a> - Retrieving a genre by ID using the CLI is not possible.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/474">PR #474</a> - Ignore non-compliant CUE sheets (thanks oleg-kuh!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/437">#437</a> - New Music doesn't respect the library_id parameter.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/459">#459</a> - Library items like artists (db:contributor.name=...) favorites don't return the URL in the CLI.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/460">#460</a> - Retrieving a genre by ID using the CLI is not possible.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/474">PR #474</a> - Ignore non-compliant CUE sheets (thanks oleg-kuh!)</li>
 		<li>Make sure we only poll music services for changes in the library which we actually have configured.</li>
 		<li>Fix album separation of multi disc sets from online services when grouping is disabled.</li>
 		<li>Don't offer direct firmware download if players can't handle it lack of https support.</li>
@@ -496,23 +496,23 @@
 	<ul>
 		<li>Online music library integration: list your collection of albums vetted in your favorite streaming service as part of your "My Music" collection.</li>
 		<li>Improved support for Audio Books: automatically create library views and browse modes dealing with Audio Books and Authors.</li>
-		<li>Paste TIDAL or Deezer weblinks in to the Tune In field to play albums/playlists/tracks (thanks <a href="https://github.com/Logitech/slimserver/pull/360">mavit</a>!)</li>
-		<li>Keep track of recently played podcasts (thanks <a href="https://github.com/Logitech/slimserver/pull/384">philippe44</a>!)</li>
+		<li>Paste TIDAL or Deezer weblinks in to the Tune In field to play albums/playlists/tracks (thanks <a href="https://github.com/LMS-Community/slimserver/pull/360">mavit</a>!)</li>
+		<li>Keep track of recently played podcasts (thanks <a href="https://github.com/LMS-Community/slimserver/pull/384">philippe44</a>!)</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/pull/367">PR #367</a> - Improved parsing of HTTP header allows for new features (eg. AAC transcoding) and fixes some issues with streaming remote files. Thanks a lot philippe44!</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/305">PR #305</a> - use ORIGINALYEAR in FLAC files to override YEAR (thanks jcbodnar!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/267">PR #267</a> - HTTPS certificates are now validated when LMS acts as a client.  HTTPS connections to plugin repositories are no-longer retried over HTTP when they fail.  The old insecure behaviour can optionally be re-enabled, although, instead, we recommend working out why HTTPS is broken in your environment and fixing that if possible.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/308">PR #308</a> - Update faad binaries to fix several CVE-2017 security issues (thanks ralphy!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/324">PR #324</a> - Implement documented, but non-functional search in "favorites" query.</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/346">PR #346</a> - Update Audio::Scan on Windows to 1.02 (thanks ralphy!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/355">PR #355</a> - Improved metadata handling in the xPL plugin (thanks keynet!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/429">PR #429</a> - Hide library folders from scanning with a sentinel file (thanks sciurius!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/434">PR #434</a> - Support for multiple FILE commands in CUE sheets (thanks oleg-kuh!)</li>
-		<li><a href="https://github.com/Logitech/slimserver/pull/448">PR #448</a> - Add support for TIDAL over HTTPS and seeking (thanks philippe44!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/367">PR #367</a> - Improved parsing of HTTP header allows for new features (eg. AAC transcoding) and fixes some issues with streaming remote files. Thanks a lot philippe44!</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/305">PR #305</a> - use ORIGINALYEAR in FLAC files to override YEAR (thanks jcbodnar!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/267">PR #267</a> - HTTPS certificates are now validated when LMS acts as a client.  HTTPS connections to plugin repositories are no-longer retried over HTTP when they fail.  The old insecure behaviour can optionally be re-enabled, although, instead, we recommend working out why HTTPS is broken in your environment and fixing that if possible.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/308">PR #308</a> - Update faad binaries to fix several CVE-2017 security issues (thanks ralphy!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/324">PR #324</a> - Implement documented, but non-functional search in "favorites" query.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/346">PR #346</a> - Update Audio::Scan on Windows to 1.02 (thanks ralphy!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/355">PR #355</a> - Improved metadata handling in the xPL plugin (thanks keynet!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/429">PR #429</a> - Hide library folders from scanning with a sentinel file (thanks sciurius!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/434">PR #434</a> - Support for multiple FILE commands in CUE sheets (thanks oleg-kuh!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/448">PR #448</a> - Add support for TIDAL over HTTPS and seeking (thanks philippe44!)</li>
 		<li>Improved Dutch translation (thanks blackfiction!)</li>
 		<li>Read Conductor tag from m4a etc. files.</li>
 		<li>Persist some web browser side preferences like artwork mode, expanded menus etc. on the server. Safari would regularly "forget" them.</li>
@@ -534,11 +534,11 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="https://github.com/Logitech/slimserver/issues/277">#277</a> - add new flac binaries to fix seeking within remote flac streams in some locales (thanks ralphy!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/366">#366</a> - Fix gapless PCM Playback on Squeezebox1 (thanks michaldie!).</li>
-		<li><a href="https://github.com/Logitech/slimserver/issues/388">#388</a> - Fix sorting of index bar in the web UI.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/277">#277</a> - add new flac binaries to fix seeking within remote flac streams in some locales (thanks ralphy!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/313">#313</a> - Advanced Search for albums returns emtpy "Song Info ()" link.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/327">#327</a> - "playlist loadalbum" command is case sensitive and otherwise fragile.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/366">#366</a> - Fix gapless PCM Playback on Squeezebox1 (thanks michaldie!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/388">#388</a> - Fix sorting of index bar in the web UI.</li>
 		<li>Always strip BOM from M3U files, not only if the first line is a comment.</li>
 		<li>Support wav/aif remote streams (direct and proxied).</li>
 		<li>Check that destination (not source) codec is supported in direct streaming.</li>

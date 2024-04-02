@@ -5,7 +5,7 @@
 
   <h4>Overview</h4>
   <p>
-    The Player IR interface to the Squeezebox associates human actions 
+    The Player IR interface to the Squeezebox associates human actions
     (pressing a button on the remote) with functions on the server (jumping to
     the next song). There are a number of translations, or mappings between the
     human action and the server function.
@@ -29,7 +29,7 @@
     which may have been created.
   </p>
   <p>
-    The mapping files, both <em>.ir</em> and <em>.map</em>, are stored in the 
+    The mapping files, both <em>.ir</em> and <em>.map</em>, are stored in the
     <strong>IR</strong> subfolder of the folder where the Squeezebox software was
     installed. Included with the software are two <em>.ir</em> files:
     <em>jvc_dvd.ir</em> and <em>Slim_Devices_Remote.ir</em> which handle the codesets
@@ -43,7 +43,7 @@
   <h5>Code to Button Name</h5>
   <p>
     The code to button name mapping is contained within <em>.ir</em> files located
-    in the <strong>IR</strong> subfolder of the Logitech Media Server folder. The files
+    in the <strong>IR</strong> subfolder of the Lyrion Music Server folder. The files
     consist of lines with the button name followed by an equals sign (<strong>=</strong>)
     followed by the IR code in hex (no 0x necessary). Everything after a <strong>#</strong>
     is considered a comment. Leading and trailing whitespace is ignored, as is whitespace
@@ -63,7 +63,7 @@
     subfolder. Individual mappings can be disabled for a particular player by
     using the <em>disabledirsets</em> client array preference. This is
     configurable from the web interface by following the
-    &quot;[% "REMOTE_SETTINGS" | string %]&quot; 
+    &quot;[% "REMOTE_SETTINGS" | string %]&quot;
     link from the &quot;[% "PLAYER_SETTINGS" | string %]&quot; page. This can be useful if
     you have JVC equipment co-located with the player and want to prevent
     it from reacting to remote signals intended for the other equipment.
@@ -81,7 +81,7 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
   <h5>Button Name to Function</h5>
   <p>
     The button name to function mapping is contained within <em>.map</em> files
-    located in the <strong>IR</strong> subfolder of the Logitech Media Server folder.
+    located in the <strong>IR</strong> subfolder of the Lyrion Music Server folder.
     The files consist of lines with the button name followed by an equals sign
     (<strong>=</strong>) followed by the function. Everything after a
     <strong>#</strong> is considered a comment. Leading and trailing whitespace
@@ -98,10 +98,10 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
     The map file is divided up into a number of sections corresponding to the
     various modes of operation, plus a <strong>&#91;common&#93;</strong> section whose
     mappings apply to all modes. Sections start with the name of the section
-    enclosed in square brackets (<strong>&#91;&#93;</strong>). Mode classes, 
-    prefixed by all caps (eg, INPUT.list) will first match to a section headed 
-    by <strong>&#91;INPUT.list&#93;</strong> then, if no matches found will take 
-    functions from an <strong>&#91;input&#93;</strong> section.  
+    enclosed in square brackets (<strong>&#91;&#93;</strong>). Mode classes,
+    prefixed by all caps (eg, INPUT.list) will first match to a section headed
+    by <strong>&#91;INPUT.list&#93;</strong> then, if no matches found will take
+    functions from an <strong>&#91;input&#93;</strong> section.
   <p>
     Multiple button names can map to the same function. On the other hand, if
     a particular button name (including pressing style) is repeated within the
@@ -113,7 +113,7 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
   </p>
   <p>
     Functions can be passed a single parameter by appending an underscore
-    (<strong>_</strong>) to the end of the function name, followed by the parameter 
+    (<strong>_</strong>) to the end of the function name, followed by the parameter
   </p>
   <p>
     Examples:
@@ -165,7 +165,7 @@ arrow_down = dead #in a different section now, so ok to redefine button names
   </p>
   <p>
     Multiple button pressing styles can be included in the mapping with the use of the
-    '*' wildcard. Thus button.* will match all styles.  Specific sytles will override the 
+    '*' wildcard. Thus button.* will match all styles.  Specific sytles will override the
     for that style.
   </p>
   <hr>

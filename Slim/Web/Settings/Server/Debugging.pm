@@ -1,7 +1,8 @@
 package Slim::Web::Settings::Server::Debugging;
 
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -37,7 +38,7 @@ sub handler {
 		else {
 
 			for my $category (keys %{$categories}) {
-	
+
 				Slim::Utils::Log->setLogLevelForCategory(
 					$category, $paramRef->{$category}
 				);
@@ -53,7 +54,7 @@ sub handler {
 	# Pull in the dynamic debugging levels.
 	my $debugCategories = Slim::Utils::Log->allCategories;
 	my @validLogLevels  = Slim::Utils::Log->validLevels;
-	my @categories      = (); 
+	my @categories      = ();
 
 	for my $debugCategory (sort keys %{$debugCategories}) {
 
@@ -65,7 +66,7 @@ sub handler {
 			'current' => $debugCategories->{$debugCategory},
 		};
 	}
-	
+
 	$paramRef->{'logging_groups'} = Slim::Utils::Log->logGroups();
 
 	$paramRef->{'categories'} = \@categories;

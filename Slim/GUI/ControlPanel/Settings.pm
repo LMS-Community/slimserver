@@ -1,8 +1,9 @@
 package Slim::GUI::ControlPanel::Settings;
 
-# Logitech Media Server Copyright 2001-2020 Logitech.
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
@@ -32,7 +33,7 @@ sub new {
 	if ($noAdminWarning) {
 		my $string = string($noAdminWarning);
 		$string    =~ s/\\n/\n/g;
-		
+
 		my $warning = Wx::StaticText->new($self, -1, $string);
 		$warning->SetForegroundColour(wxRED);
 		my ($width) = $parent->GetSizeWH();
@@ -41,17 +42,17 @@ sub new {
 	}
 
 
-	my $statusSizer = Wx::StaticBoxSizer->new( 
+	my $statusSizer = Wx::StaticBoxSizer->new(
 		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_SERVERSTATUS')),
 		wxVERTICAL
 	);
 
 	my $statusLabel = Wx::StaticText->new($self, -1, '');
 	$statusSizer->Add($statusLabel, 0, wxALL, 10);
-	
+
 	$parent->addStatusListener($statusLabel, sub {
 		my $state = shift;
-		
+
 		if ($state == SC_STATE_STOPPED) {
 			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_STOPPED'));
 		}
@@ -61,7 +62,7 @@ sub new {
 		elsif ($state == SC_STATE_STARTING) {
 			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_STARTING'));
 		}
-		
+
 	});
 
 	# Start/Stop button
@@ -94,7 +95,7 @@ sub new {
 		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
 			Slim::GUI::ControlPanel->serverRequest('stopserver');
 		}
-		
+
 		# starting SC is heavily platform dependant
 		else {
 			&$setStartupModeHandler() if $setStartupModeHandler;
@@ -106,14 +107,14 @@ sub new {
 	$mainSizer->Add($statusSizer, 0, wxALL | wxGROW, 10);
 
 
-	my $startupSizer = Wx::StaticBoxSizer->new( 
+	my $startupSizer = Wx::StaticBoxSizer->new(
 		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_STARTUP_OPTIONS')),
 		wxVERTICAL
 	);
-	
+
 	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
 	$lbStartupMode->Enable($svcMgr->canSetStartupType());
-	
+
 	$setStartupModeHandler = sub {
 		$svcMgr->setStartupType($lbStartupMode->GetSelection()) if $setStartupMode;
 		$setStartupMode = 0;
@@ -121,40 +122,40 @@ sub new {
 
 	# use dummy listener to allow setting startup mode whether server is running or not
 	$parent->addStatusListener($lbStartupMode, sub {});
-		
+
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	
+
 	if (main::ISWINDOWS) {
 		require Win32::TieRegistry;
 		$Win32::TieRegistry::Registry->Delimiter('/');
 		my $serviceUser = $Win32::TieRegistry::Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
 		$serviceUser = '' if $serviceUser =~ /^(?:LocalSystem)$/i;
-		
+
 		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
 		$credentialsSizer->AddGrowableCol(1, 1);
 		$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
-	
+
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
 		my $username = Wx::TextCtrl->new($self, -1, $serviceUser, [-1, -1], [150, -1]);
 		$credentialsSizer->Add($username);
 		EVT_TEXT($self, $username, sub {
 			$setStartupMode = 1;
 		});
-	
+
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
 		my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
 		$credentialsSizer->Add($password);
 		EVT_TEXT($self, $password, sub {
 			$setStartupMode = 1;
 		});
-	
+
 		$startupSizer->Add($credentialsSizer, 0, wxALL, 10);
-		
+
 		my $handler = sub {
 			$username->Enable($lbStartupMode->GetSelection() == 2);
 			$password->Enable($lbStartupMode->GetSelection() == 2);
 		};
-		
+
 		&$handler();
 		EVT_CHOICE($self, $lbStartupMode, sub {
 			$setStartupMode = 1;
@@ -163,7 +164,7 @@ sub new {
 
 		# overwrite action handler for startup mode
 		$setStartupModeHandler = sub {
-		
+
 			if ($setStartupMode) {
 
 				$svcMgr->setStartupType(
@@ -175,17 +176,17 @@ sub new {
 
 			$setStartupMode = 0;
 		};
-		
+
 		# doubleclick action for tray icon
 		my $lbDoubleClickHandler = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL'), string('CONTROLPANEL_TRAY_DOUBLECLICK_WEB') ]);
 		$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} || 0);
-		
+
 		$parent->addApplyHandler($lbDoubleClickHandler, sub {
-			$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
+			$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0';
 		});
 		$startupSizer->Add($lbDoubleClickHandler, 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 	}
-		
+
 	$parent->addApplyHandler($lbStartupMode, $setStartupModeHandler);
 
 	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
@@ -197,7 +198,7 @@ sub new {
 	);
 
 	my $rescanBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
-	
+
 	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [
 		string('SETUP_STANDARDRESCAN'),
 		string('SETUP_WIPEDB'),
@@ -206,16 +207,16 @@ sub new {
 	$rescanMode->SetSelection(0);
 	$rescanBtnSizer->Add($rescanMode);
 	$parent->addStatusListener($rescanMode);
-	
+
 	$btnRescan = Wx::Button->new($self, -1, string('SETUP_RESCAN_BUTTON'));
 	$rescanBtnSizer->Add($btnRescan, 0, wxLEFT, 5);
 	$parent->addStatusListener($btnRescan);
-	
+
 	EVT_BUTTON($self, $btnRescan, sub {
 		if ($btnRescan->GetLabel() eq string('ABORT_SCAN')) {
 			Slim::GUI::ControlPanel->serverRequest('abortscan');
 		}
-		
+
 		elsif ($rescanMode->GetSelection == 0) {
 			Slim::GUI::ControlPanel->serverRequest('rescan');
 		}
@@ -227,23 +228,23 @@ sub new {
 		elsif ($rescanMode->GetSelection == 2) {
 			Slim::GUI::ControlPanel->serverRequest('rescan', 'playlists');
 		}
-		
+
 		$progressPoll->Start(100, wxTIMER_CONTINUOUS, 10) if $progressPoll && $btnRescan->GetLabel() ne string('ABORT_SCAN');
 	});
-	
+
 	$rescanSizer->Add($rescanBtnSizer, 0, wxALL | wxGROW, 10);
 
 	my $progressPanel = Wx::Panel->new($self);
 	$progressPoll = Slim::GUI::ControlPanel::ScanPoll->new($progressPanel);
 	$parent->addStatusListener($progressPanel);
-	
+
 	$rescanSizer->Add($progressPanel, 1, wxLEFT | wxRIGHT | wxGROW, 10);
-	
+
 	$mainSizer->Add($rescanSizer, 0, wxALL | wxGROW, 10);
 
 
-	$self->SetSizer($mainSizer);	
-	
+	$self->SetSizer($mainSizer);
+
 	return $self;
 }
 
@@ -267,15 +268,15 @@ my ($parent, $progressBar, $progressTime, $progressLabel, $progressInfo);
 sub new {
 	my $self = shift;
 	$parent  = shift;
-	
+
 	$self = $self->SUPER::new();
 	$self->Start(250);
-	
+
 	my $sizer = Wx::BoxSizer->new(wxVERTICAL);
-	
+
 	$progressLabel = Wx::StaticText->new($parent, -1, '');
 	$sizer->Add($progressLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
-	
+
 	my $progressSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
 	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, main::ISWINDOWS ? 20 : -1]);
@@ -284,7 +285,7 @@ sub new {
 	$progressTime = Wx::StaticText->new($parent, -1, '00:00:00');
 	$progressSizer->AddSpacer(10);
 	$progressSizer->Add($progressTime, 0, wxTOP, 3);
-	
+
 	$sizer->Add($progressSizer, 0, wxEXPAND);
 
 # re-enable ellipsizing once we're running Wx 2.9.x
@@ -295,40 +296,40 @@ sub new {
 	$sizer->AddSpacer(15);
 
 	$parent->SetSizer($sizer);
-		
+
 	return $self;
 }
 
 sub Start {
 	my ($self, $milliseconds, $oneShot, $scanInit) = @_;
-	
+
 	$isScanning = $scanInit if $scanInit;
-	
+
 	$self->SUPER::Start($milliseconds, $oneShot);
 }
 
 sub Notify {
 	my $self = shift;
-	
+
 	$progressInfo->SetLabel('');
-	
+
 	if ($svcMgr->isRunning()) {
-		
+
 		my $progress = Slim::GUI::ControlPanel->serverRequest('rescanprogress');
 
 		if ($progress && $progress->{rescan}) {
 			$self->showProgress($progress);
 			return;
 		}
-		
+
 		elsif ($progress && $progress->{lastscanfailed}) {
 			$progressLabel->SetLabel($progress->{lastscanfailed});
 		}
 
 		elsif (!$isScanning) {
-			$self->showStats();		
+			$self->showStats();
 		}
-		
+
 		elsif ($isScanning) {
 			$progressLabel->SetLabel('');
 		}
@@ -336,11 +337,11 @@ sub Notify {
 
 	# don't poll that often when no scan is running
 	$self->Start(10000, wxTIMER_CONTINUOUS);
-	
+
 	if ($isScanning) {
 		$progressBar->SetValue(100);
 		$self->Start(1000, wxTIMER_CONTINUOUS);
-		
+
 		$isScanning--;
 	}
 
@@ -353,21 +354,21 @@ sub showProgress {
 	my $progress = shift;
 
 	$isScanning = 1;
-			
+
 	$progressBar->Show();
 	$progressLabel->SetLabel('');
-						
+
 	my @steps = split(/,/, $progress->{steps} || 'directory');
 
 	if (@steps) {
-				
+
 		my $step = $steps[-1];
 		$progressBar->SetValue($progress->{$step}) if $progress->{$steps[-1]};
 		$progressLabel->SetLabel( @steps . '. ' . Slim::GUI::ControlPanel->string(uc($step) . '_PROGRESS') );
 		$progressTime->SetLabel($progress->{totaltime});
-				
+
 	}
-			
+
 	if (defined $progress->{info}) {
 		$progressInfo->SetLabel($progress->{info});
 	}
@@ -380,13 +381,13 @@ sub showProgress {
 
 sub showStats {
 	my $self = shift;
-	
+
 	my $libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999);
-			
+
 	if ($libraryStats && $libraryStats->{loop_loop}) {
 		my $libraryName = string('INFORMATION_MENU_LIBRARY');
 		my $x = 0;
-				
+
 		foreach my $item (@{$libraryStats->{loop_loop}}) {
 
 			last if ($item->{name} && $item->{name} eq $libraryName);
@@ -394,7 +395,7 @@ sub showStats {
 			$x++;
 
 		}
-				
+
 		if ($x < scalar @{$libraryStats->{loop_loop}}) {
 			$libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999, "item_id:$x");
 
@@ -402,13 +403,13 @@ sub showStats {
 				my $newLabel = '';
 
 				foreach my $item (@{$libraryStats->{loop_loop}}) {
-							
+
 					if ($item->{name}) {
 						$newLabel .= $item->{name} . "\n";
 					}
-	
+
 				}
-						
+
 				if ($newLabel) {
 					$progressBar->Hide();
 					$progressTime->SetLabel('');
@@ -421,7 +422,7 @@ sub showStats {
 
 sub Layout {
 	my $self = shift;
-	
+
 	my ($width) = $parent->GetSizeWH();
 	$progressLabel->Wrap($width);
 	$parent->Layout();
