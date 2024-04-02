@@ -1309,6 +1309,7 @@ sub _getPreviewPlaylistName {
 
 sub playlistXitemCommand {
 	my $request = shift;
+
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['add', 'append', 'insert', 'insertlist', 'load', 'play', 'resume']])) {
 		$request->setStatusBadDispatch();
@@ -1994,15 +1995,12 @@ sub playlistcontrolCommand {
 			$criteria->{'album'} = [ '=' => $album_id ];
 		}
 
-#$log->error("DK request-getParam-grouping=" . Data::Dump::dump($request->getParam('grouping')));
 		if (defined (my $grouping = $request->getParam('grouping'))) {
 			$criteria->{'grouping'} = [ '=' => $grouping ] if $grouping;
 			$criteria->{'grouping'} = [ '=' => undef ] unless $grouping;
 		}
-#$log->error("DK criteria=" . Data::Dump::dump($criteria));
 
 		@tracks = Slim::Schema->search('Track', $criteria)->all;
-#$log->error("DK tracks=" . Data::Dump::dump(@tracks));
 
 	} elsif (defined(my $track_id_list = $request->getParam('track_id'))) {
 
@@ -3367,7 +3365,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 				}
 
 			} elsif ( $key eq 'me.grouping' ) {
-#$log->error("DK value=$value");
 
 				$find{$key} = $value || undef;
 
@@ -3571,7 +3568,6 @@ sub _playlistXtracksCommand_parseDbItem {
 					$classes{$class} = -1;
 				}
 				elsif ( $class eq 'Track' && $key eq 'grouping' ) {
-#$log->error("DK value=$value");
 					$classes{$class} = $value;
 				}
 				# album favorites need to be filtered by contributor, too
@@ -3636,7 +3632,6 @@ sub _playlistXtracksCommand_parseDbItem {
 	}
 
 	if ( $terms ne "" ) {
-#$log->error("DK terms=$terms");
 		return _playlistXtracksCommand_parseSearchTerms($client, $terms);
 	}
 	else {

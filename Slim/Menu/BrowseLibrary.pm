@@ -1617,7 +1617,6 @@ sub _albums {
 					itemActions => \%actions,
 					skipIfSingleton => 1,
 				};
-
 			}
 			elsif ($search) {
 				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];
@@ -1719,6 +1718,7 @@ sub _albums {
 					orderByList => $result->{orderByList},
 				}, 86400);
 			}
+
 			return $result, $extra;
 		},
 		# no need for an index bar in New Music mode

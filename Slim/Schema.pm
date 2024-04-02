@@ -517,6 +517,7 @@ A shortcut for resultset()
 sub rs {
 	my $class   = shift;
 	my $rsClass = ucfirst shift;
+
 	if ( !exists $RS_CACHE{$rsClass} ) {
 		$RS_CACHE{$rsClass} = $class->resultset($rsClass);
 	}
