@@ -2,6 +2,8 @@ package Slim::Player::Protocols::HTTPS;
 
 use base qw(IO::Socket::SSL Slim::Player::Protocols::HTTP);
 
+use List::Util qw(min);
+
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -103,7 +105,24 @@ sub slimprotoFlags {
 # object's parent, not the package's parent
 # see http://modernperlbooks.com/mt/2009/09/when-super-isnt.html
 sub _sysread {
-	my $readLength = $_[0]->SUPER::sysread($_[1], $_[2], $_[3]);
+	my $self = $_[0];
+
+	# skip what we need until done or EOF	
+	if ( ${*$self}{'_skip'} ) {
+		my $bytes = $self->SUPER::sysread(my $scratch, min(${*$self}{'_skip'}, 32768));
+		return $bytes if defined $bytes && !$bytes;
+
+		# pretend we don't have received anything until we've skipped all
+		${*$self}{'_skip'} -= $bytes if $bytes;
+		main::INFOLOG && $log->info("Done skipping bytes") unless ${*$self}{'_skip'};
+
+		# we should use EINTR (see S::P::Source) but this is too slow when skipping - will fix in 9.0
+		$_[1]= '';
+		$! = EWOULDBLOCK;
+		return undef;
+	}
+
+	my $readLength = $self->SUPER::sysread($_[1], $_[2], $_[3]);
 
 	if (main::ISWINDOWS && !$readLength) {
 		$! = EINTR;

@@ -983,7 +983,7 @@ sub parseWavAifHeader {
 	}
 
 	$track->samplerate($info->{samplerate});
-	$track->samplesize($info->{samplesize});
+	$track->samplesize($info->{bits_per_sample});
 	$track->channels($info->{channels});
 	$track->endian($type eq 'wav' || $info->{compression_type} eq 'swot' ? 0 : 1);
 
@@ -995,7 +995,7 @@ sub parseWavAifHeader {
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( "$type: %dHz, %dBits, %dch => bitrate: %dkbps (ofs: %d, len: %d)",
-					$info->{samplerate}, $info->{samplesize}, $info->{channels}, int( $info->{bitrate} / 1000 ),
+					$info->{samplerate}, $info->{bits_per_sample}, $info->{channels}, int( $info->{bitrate} / 1000 ),
 					$track->audio_offset, $track->audio_size ) );
 	}
 
