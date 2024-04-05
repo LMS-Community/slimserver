@@ -1469,15 +1469,6 @@ sub _createWork {
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 
-		if (!$create) {
-#			my $sth_delete = $dbh->prepare_cached( qq{
-#				DELETE FROM works
-#				WHERE id = ?
-#			} );
-#
-#			$sth_delete->execute( $trackId );
-		}
-
 		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $workSort || $work );
 		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg unless $workSort; #Use the WORKSORT tag as is if provided, otherwise zero-pad numbers. 
 		my $titlesearch = Slim::Utils::Text::ignoreCase($work, 1);
