@@ -13053,13 +13053,19 @@ BROWSE_GENRES
 	SV	Bläddra efter genre
 
 BROWSE_WORKS
+	DE	Werke durchsuchen
 	EN	Browse Works
+	FR	Parcourir les œuvres
 
 WORKS
+	DE	Werke
 	EN	Works
+	FR	Œuvres
 
 WORKS_CLASSICAL
+	DE	Klassische Werke
 	EN	Classical Works
+	FR	Œuvres Classiques
 
 BROWSE_YEARS
 	CS	Procházet roky
@@ -13172,7 +13178,9 @@ BROWSE_BY_SONG_DBL
 	PL	Utwory
 
 BROWSE_BY_WORK
+	DE	Werke
 	EN	Works
+	FR	Œuvres
 
 BROWSE_BY_YEAR
 	CS	Roky
