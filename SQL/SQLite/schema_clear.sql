@@ -26,9 +26,7 @@ DELETE FROM unreadable_tracks;
 
 DELETE FROM scanned_files;
 
-DELETE FROM videos;
-
-DELETE FROM images;
+DELETE FROM works;
 
 DELETE FROM library_track;
 DELETE FROM library_album;
