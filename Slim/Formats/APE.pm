@@ -38,7 +38,6 @@ use Audio::Scan;
 my %tagMapping = (
 	'TRACK'	       => 'TRACKNUM',
 	'DATE'         => 'YEAR',
-	'BPM'          => 'BPM',
 	'DISCNUMBER'   => 'DISC',
 	'ALBUM ARTIST' => 'ALBUMARTIST', # bug 10724 - support APEv2 Album Artist
 );

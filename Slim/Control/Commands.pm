@@ -1987,6 +1987,21 @@ sub playlistcontrolCommand {
 			return;
 		}
 
+	} elsif (defined(my $work_id = $request->getParam('work_id'))) {
+
+		my $criteria = {work => [ '=' => $work_id ]};
+
+		if (defined (my $album_id = $request->getParam('album_id'))) {
+			$criteria->{'album'} = [ '=' => $album_id ];
+		}
+
+		if (defined (my $grouping = $request->getParam('grouping'))) {
+			$criteria->{'grouping'} = [ '=' => $grouping ] if $grouping;
+			$criteria->{'grouping'} = [ '=' => undef ] unless $grouping;
+		}
+
+		@tracks = Slim::Schema->search('Track', $criteria)->all;
+
 	} elsif (defined(my $track_id_list = $request->getParam('track_id'))) {
 
 		# split on commas
@@ -3317,6 +3332,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			$sort = $albumSort;
 			$joinMap{'year'} = 'year';
 
+		} elsif ($key =~ /^work\./) {
+
+			$sort = $albumSort;
+			$joinMap{'work'} = 'work';
+
 		} elsif ($key =~ /^contributor\./) {
 
 			$sort = $albumSort;
@@ -3343,6 +3363,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 				} else {
 					$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
 				}
+
+			} elsif ( $key eq 'me.grouping' ) {
+
+				$find{$key} = $value || undef;
 
 			} else {
 
@@ -3543,6 +3567,9 @@ sub _playlistXtracksCommand_parseDbItem {
 				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
 					$classes{$class} = -1;
 				}
+				elsif ( $class eq 'Track' && $key eq 'grouping' ) {
+					$classes{$class} = $value;
+				}
 				# album favorites need to be filtered by contributor, too
 				elsif ($class eq 'Contributor' && (my $albumObj = $classes{Album})) {
 					my $lcClass = lc($class);
@@ -3586,6 +3613,7 @@ sub _playlistXtracksCommand_parseDbItem {
 			$class eq 'Contributor' ||
 			$class eq 'Genre' ||
 			$class eq 'Year' ||
+			$class eq 'Work' ||
 			( blessed $obj && $obj->can('content_type') && $obj->content_type ne 'dir')
 		) ) {
 			$terms .= "&" if ( $terms ne "" );
@@ -3598,8 +3626,13 @@ sub _playlistXtracksCommand_parseDbItem {
 		$terms .= sprintf( 'librarytracks.library=%d', $classes{LibraryTracks} );
 	}
 
+	if ( defined $classes{Track} ) {
+		$terms .= "&" if ( $terms ne "" );
+		$terms .= sprintf( 'track.grouping=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
+	}
+
 	if ( $terms ne "" ) {
-			return _playlistXtracksCommand_parseSearchTerms($client, $terms);
+		return _playlistXtracksCommand_parseSearchTerms($client, $terms);
 	}
 	else {
 		return ();
