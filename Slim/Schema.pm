@@ -1465,7 +1465,7 @@ sub _createComments {
 sub _createWork {
 	my ($self, $work, $workSort, $composerID, $create) = @_;
 
-	if ( $work ) {
+	if ( $work && $composerID ) {
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 
