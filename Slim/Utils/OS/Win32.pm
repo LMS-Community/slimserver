@@ -451,9 +451,8 @@ sub installPath {
 
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
-	# TODO - branding
 	my $swKey = $Win32::TieRegistry::Registry->Open(
-		'LMachine/Software/Logitech/Squeezebox/',
+		'LMachine/Software/Lyrion/server/',
 		{
 			Access => Win32::TieRegistry::KEY_READ(),
 			Delimiter =>'/'
@@ -468,7 +467,7 @@ sub installPath {
 	# search in legacy SlimServer folder, too
 	my $installDir;
 	PF: foreach my $programFolder ($ENV{ProgramFiles}, 'C:/Program Files') {
-		foreach my $ourFolder ('Squeezebox', 'SqueezeCenter', 'SlimServer') {
+		foreach my $ourFolder ('Lyrion', 'Squeezebox') {
 
 			$installDir = File::Spec->catdir($programFolder, $ourFolder);
 			last PF if (-d $installDir);
@@ -497,9 +496,8 @@ sub writablePath {
 	unless ($writablePath) {
 
 		# the installer is writing the data folder to the registry - give this the first try
-		# TODO - branding
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Logitech/Squeezebox/',
+			'LMachine/Software/Lyrion/server/',
 			{
 				Access => Win32::TieRegistry::KEY_READ(),
 				Delimiter =>'/'
@@ -543,12 +541,11 @@ sub writablePath {
 				}
 			}
 
-			$writablePath = catdir($writablePath, 'Squeezebox') unless $writablePath eq $Bin;
+			$writablePath = catdir($writablePath, 'Lyrion') unless $writablePath eq $Bin;
 
 			# store the key in the registry for future reference
-			# TODO - branding
 			$swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/Software/Logitech/Squeezebox/',
+				'LMachine/Software/Lyrion/software/',
 				{
 					Delimiter =>'/'
 				}
