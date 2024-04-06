@@ -568,7 +568,11 @@ sub _registerBaseNodes {
 			feed         => \&_works,
 			icon         => 'html/images/playlists.png',
 			homeMenuText => 'BROWSE_WORKS',
-			condition    => \&isEnabledNode,
+			condition    => sub {
+						return unless isEnabledNode(@_);
+						my $totals = Slim::Schema->totals($_[0]);
+						return $totals->{work} if $totals;
+					},
 			id           => 'myMusicWorks',
 			weight       => 35,
 			cache        => 1,
