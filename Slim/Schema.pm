@@ -3222,6 +3222,7 @@ sub totals {
 		genre => ['genres', 0, 1, 'tags:CC'],
 		track => ['titles', 0, 1, 'tags:CC'],
 		playlist => ['playlists', 0, 1, 'tags:CC'],
+		work => ['works', 0, 1, 'tags:CC'],
 	);
 
 	while (my ($key, $query) = each %categories) {
