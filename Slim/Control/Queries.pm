@@ -4647,6 +4647,7 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
 			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
+			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
 #			$request->addResultLoop($loopname, $chunkCount, 'year', $year);
 #			$request->addResultLoop($loopname, $chunkCount, 'from_search', $search) if $search;
 

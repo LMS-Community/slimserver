@@ -198,7 +198,7 @@ sub _releases {
 
 	push @items, {
 		name        => cstring($client, 'WORKS_CLASSICAL'),
-		image       => 'html/images/playlists.png',
+		image       => 'html/images/works.png',
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_works,
