@@ -4524,14 +4524,15 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, albums.artwork";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
 		JOIN contributors composer ON composer.id = composer_track.contributor 
 		JOIN contributor_track ON contributor_track.track = tracks.id 
 		JOIN contributors ON contributors.id = contributor_track.contributor 
-		JOIN works ON works.id = tracks.work AND works.composer = composer.id ';
+		JOIN works ON works.id = tracks.work AND works.composer = composer.id 
+		JOIN albums ON tracks.album = albums.id ';
 
 	my $page_key = "SUBSTR(composer.namesort,1,1)";
 
@@ -4641,15 +4642,15 @@ sub worksQuery {
 			$sql .= " LIMIT $index, $quantity ";
 		}
 
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Works query: $sql / " . Data::Dump::dump($p) );
-		}
+#		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->error( "Works query: $sql / " . Data::Dump::dump($p) );
+#		}
 
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort );
-		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort);
+		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $cover);
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$cover);
 
 		while ( $sth->fetch ) {
 			#$id += 0;
@@ -4659,6 +4660,7 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
 			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
+			$request->addResultLoop($loopname, $chunkCount, 'image', $cover);
 #			$request->addResultLoop($loopname, $chunkCount, 'year', $year);
 #			$request->addResultLoop($loopname, $chunkCount, 'from_search', $search) if $search;
 

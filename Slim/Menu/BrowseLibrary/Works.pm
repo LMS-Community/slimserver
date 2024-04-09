@@ -35,6 +35,7 @@ sub _works {
 				$_->{'name'}          = $_->{'composer'};
 				$_->{'name2'}         = $_->{'work'};
 				$_->{'hasMetadata'}   = 'work';
+				$_->{'image'}         = 'music/' . $_->{'image'} . '/cover' if $_->{'image'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
