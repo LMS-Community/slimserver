@@ -1515,14 +1515,7 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
-				if ( $_->{'work_id'} ) {
-					$_->{'name'} .= $_->{'work_name'} . ' (';
-					$_->{'name'} .= "$_->{'grouping'} " if $_->{'grouping'};
-					$_->{'name'} .= cstring($client,'FROM') . ' ';
-				}
-				$_->{'name'}          .= $_->{'album'};
-				$_->{'name'}          .= ')' if $_->{'work_id'};
+				$_->{'name'}          = $_->{'album'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';

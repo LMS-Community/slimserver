@@ -47,6 +47,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 use Slim::Utils::Text;
+use Slim::Utils::Strings qw(cstring);
 use Slim::Web::ImageProxy qw(proxiedImage);
 
 {
@@ -794,7 +795,18 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'});
 
-			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
+			# If we're dealing here with a Work rather than the full album, add relevant information into the album name. Moved to here
+			# from BrowseLibrary.pm so that it applies to all UIs.
+			my $albumTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
+			if ( $c->{'tracks.work'} ) {
+				$albumTitle .= $c->{'works.title'} . ' (';
+				$albumTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
+				$albumTitle .= cstring($client,'FROM') . ' ';
+			}
+			$albumTitle .= $construct_title->();
+			$albumTitle .= ')' if $c->{'tracks.work'};
+
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $albumTitle);
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
 			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
@@ -5735,7 +5747,7 @@ sub _getTagDataForTracks {
 	$tags =~ /e/ && do { $c->{'tracks.album'} = 1 };
 	$tags =~ /E/ && do { $c->{'tracks.extid'} = 1 };
 	$tags =~ /d/ && do { $c->{'tracks.secs'} = 1 };
-	$tags =~ /t/ && do { $c->{'tracks.tracknum'} = 1 };
+	$tags =~ /t/ && !$args->{workId} && do { $c->{'tracks.tracknum'} = 1 };
 	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
 	$tags =~ /m/ && do { $c->{'tracks.bpm'} = 1 };
 	$tags =~ /M/ && do { $c->{'tracks.musicmagic_mixable'} = 1 };
