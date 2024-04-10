@@ -4693,7 +4693,7 @@ sub worksQuery {
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
-			$textKey = substr $nameSort, 0, 1;
+			$textKey = $composerCount == 1 && $composerId eq $artistID ? substr $titleSort, 0, 1 : substr $nameSort, 0, 1;
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 
 			$chunkCount++;
