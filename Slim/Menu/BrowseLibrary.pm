@@ -1513,6 +1513,7 @@ sub _albums {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
 			$remote_library ||= $args->{'remote_library'};
+$log->error("DK \@searchTags=" . Data::Dump::dump(@searchTags));
 
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};

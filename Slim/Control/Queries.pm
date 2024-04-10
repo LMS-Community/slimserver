@@ -249,6 +249,7 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -884,6 +885,7 @@ sub albumsQuery {
 		}
 
 	}
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $count);
 
@@ -4078,6 +4080,7 @@ do_it_again:
 
 sub songinfoQuery {
 	my $request = shift;
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -4153,6 +4156,7 @@ sub songinfoQuery {
 			}
 		}
 	}
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->setStatusDone();
 }
@@ -4240,6 +4244,7 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4354,6 +4359,7 @@ sub titlesQuery {
 		}
 
 	}
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $totalCount);
 
@@ -4494,6 +4500,7 @@ sub yearsQuery {
 
 sub worksQuery {
 	my $request = shift;
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['works']])) {
@@ -4524,7 +4531,8 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, albums.artwork";
+	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, albums.artwork";
+	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
@@ -4587,7 +4595,7 @@ sub worksQuery {
 		$sql .= ' ';
 	}
 
-	$sql .= " GROUP BY $columns ";
+	$sql .= " GROUP BY $groupBy ";
 
 	my $order_by = "ORDER BY composer.namesort, works.titlesort";
 
@@ -4618,6 +4626,20 @@ sub worksQuery {
 		$total_sth->finish;
 	}
 
+	# Get count of unique composers, the count is cached until the next rescan done event
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . 'composerCount' . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $composerCount = $cache->{$cacheKey};
+	if ( !$composerCount ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(DISTINCT cid)  FROM ( $sql ) AS t1
+		} );
+
+		$total_sth->execute( @{$p} );
+		($composerCount) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
+
 #	$sql .= $artistID ?  "ORDER BY composer.namesort, works.titlesort" : "ORDER BY works.titlesort, composer.namesort";
 	$sql .= $order_by;
 
@@ -4642,9 +4664,9 @@ sub worksQuery {
 			$sql .= " LIMIT $index, $quantity ";
 		}
 
-#		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->error( "Works query: $sql / " . Data::Dump::dump($p) );
-#		}
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Works query: $sql / " . Data::Dump::dump($p) );
+		}
 
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
@@ -4656,9 +4678,14 @@ sub worksQuery {
 			#$id += 0;
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
-			$request->addResultLoop($loopname, $chunkCount, 'work', $work);
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
-			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
+			if ( $composerCount == 1 && $composerId eq $artistID ) {
+				$request->addResultLoop($loopname, $chunkCount, 'composer', $work);
+				$request->addResultLoop($loopname, $chunkCount, 'work', " ");
+			} else {
+				$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
+				$request->addResultLoop($loopname, $chunkCount, 'work', $work);
+			}
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
 			$request->addResultLoop($loopname, $chunkCount, 'image', $cover);
 #			$request->addResultLoop($loopname, $chunkCount, 'year', $year);
@@ -4673,6 +4700,7 @@ sub worksQuery {
 
 		}
 	}
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $count);
 
@@ -5131,6 +5159,7 @@ sub _songDataFromHash {
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
 	$returnHash{work} = $res->{'works.title'};
+	$returnHash{work_id} = $res->{'works.id'};
 	$returnHash{grouping} = $res->{'tracks.grouping'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
@@ -5882,6 +5911,7 @@ sub _getTagDataForTracks {
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
 	my @cols = sort keys %{$c};
+#$log->error("DK cols=". Data::Dump::dump(@cols));
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 
 	my $dbh = Slim::Schema->dbh;
