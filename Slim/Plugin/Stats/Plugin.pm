@@ -16,16 +16,18 @@ use constant REPORT_INTERVAL => 86400 * 7;
 
 my $serverPrefs = preferences('server');
 
-my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.stats',
-	'defaultLevel' => 'WARN',
-	'description'  => __PACKAGE__->getDisplayName(),
-});
-
+my $log;
 my $id;
 
-sub initPlugin {
+# delay init, as we want to be sure we're enabled before trying to read the display name
+sub postinitPlugin {
 	$id ||= sha1_base64(preferences('server')->get('server_uuid'));
+
+	$log = Slim::Utils::Log->addLogCategory({
+		'category'     => 'plugin.stats',
+		'defaultLevel' => 'WARN',
+		'description'  => __PACKAGE__->getDisplayName(),
+	});
 
 	Slim::Utils::Timers::setTimer($id, time() + REPORT_DELAY, \&_reportStats);
 }
