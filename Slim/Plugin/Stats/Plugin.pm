@@ -22,6 +22,8 @@ my $id;
 # delay init, as we want to be sure we're enabled before trying to read the display name
 sub postinitPlugin {
 	$id ||= sha1_base64(preferences('server')->get('server_uuid'));
+	# replace / with +, as / would be interpreted as a path part
+	$id =~ s/\//+/g;
 
 	$log = Slim::Utils::Log->addLogCategory({
 		'category'     => 'plugin.stats',
@@ -29,7 +31,7 @@ sub postinitPlugin {
 		'description'  => __PACKAGE__->getDisplayName(),
 	});
 
-	Slim::Utils::Timers::setTimer($id, time() + REPORT_DELAY, \&_reportStats);
+	Slim::Utils::Timers::setTimer($id, time() + ($log->is_debug ? 3 : REPORT_DELAY), \&_reportStats);
 }
 
 sub _reportStats {
@@ -41,7 +43,8 @@ sub _reportStats {
 
 	my $data = {
 		version  => $::VERSION,
-		os       => $osDetails->{'osName'},
+		os       => lc($osDetails->{'os'}),
+		osname   => $osDetails->{'osName'},
 		platform => $osDetails->{'osArch'},
 		perl     => $Config{'version'},
 		players  => scalar (Slim::Player::Client::clients() || ()) || 0,
