@@ -566,7 +566,7 @@ sub _registerBaseNodes {
 			name         => 'BROWSE_BY_WORK',
 			params       => {mode => 'works'},
 			feed         => \&_works,
-			icon         => 'html/images/playlists.png',
+			icon         => 'html/images/works.png',
 			homeMenuText => 'BROWSE_WORKS',
 			condition    => sub {
 						return unless isEnabledNode(@_);
