@@ -11,7 +11,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 use constant REPORT_URL => 'https://stats.lms-community.org/api/instance/%s/';
-use constant REPORT_DELAY => 2.40;
+use constant REPORT_DELAY => 240;
 use constant REPORT_INTERVAL => 86400 * 7;
 
 my $serverPrefs = preferences('server');
