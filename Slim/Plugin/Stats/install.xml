@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<extension>
+	<id>1189afb0-bd15-43dd-b137-09e24d855bf6</id>
+	<name>PLUGIN_STATS_MODULE_NAME</name>
+	<module>Slim::Plugin::Stats::Plugin</module>
+	<version>1.1</version>
+	<description>PLUGIN_STATS_MODULE_DESC</description>
+	<creator>Lyrion Community, Michael Herger</creator>
+	<defaultState>disabled</defaultState>
+	<type>2</type>
+	<targetApplication>
+		<id>Lyrion Music Server</id>
+		<minVersion>8.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
