@@ -38,7 +38,13 @@ sub _reportStats {
 	Slim::Utils::Timers::killTimers($id, \&_reportStats);
 
 	my $osDetails = Slim::Utils::OSDetect::details();
-	my $plugins = [ sort map { /^(?:Slim::Plugin|Plugins)::(.*)::/; $1 }  grep { $_ ne __PACKAGE__ }Slim::Utils::PluginManager->enabledPlugins() ];
+	my $plugins = [ sort map {
+		/^(?:Slim::Plugin|Plugins)::(.*)::/
+	}  grep {
+		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($_) || {};
+		$_ ne __PACKAGE__ && !$pluginData->{enforce};
+	} Slim::Utils::PluginManager->enabledPlugins() ];
+
 	my $totals = Slim::Schema->totals();
 
 	my $data = {
