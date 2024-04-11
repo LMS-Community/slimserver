@@ -4691,6 +4691,7 @@ sub worksQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'work', $work);
 			}
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
+			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
 			$request->addResultLoop($loopname, $chunkCount, 'artist_id', $artistID) if $artistID;
 			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
 			$request->addResultLoop($loopname, $chunkCount, 'images', [@images]);

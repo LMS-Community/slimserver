@@ -44,7 +44,6 @@ sub _works {
 					URI::Escape::uri_escape_utf8($_->{'work'}), URI::Escape::uri_escape_utf8($_->{'composer'}));
 			};
 
-#$log->error("DK \@searchTags=" . Data::Dump::dump(@searchTags));
 			my $params = _tagsToParams(\@searchTags);
 			my %actions = $remote_library ? (
 				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
@@ -76,8 +75,6 @@ sub _works {
 			);
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
-#$log->error("DK \%actions=" . Data::Dump::dump(%actions));
-
 
 			return {items => $items, actions => \%actions, sorted => 1}, undef;
 		}, undef, 1,
