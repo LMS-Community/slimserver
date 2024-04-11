@@ -4244,7 +4244,6 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4312,7 +4311,8 @@ sub titlesQuery {
 	my $start;
 	my $end;
 
-	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
+
+	my $tagDataParams = {
 		where         => $where,
 		sort          => $order_by,
 		search        => $search,
@@ -4325,17 +4325,17 @@ sub titlesQuery {
 		releaseType   => $releaseType,
 		workId	      => $workID,
 		libraryId     => $libraryID,
-		grouping      => $grouping,
 		limit         => sub {
 			$count = shift;
 
 			my $valid;
 
 			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
 			return ($valid, $index, $quantity);
 		},
-	} );
+	};
+	$tagDataParams->{grouping} = $grouping if $grouping;
+	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, $tagDataParams );
 
 	if ($stillScanning) {
 		$request->addResult("rescan", 1);
@@ -4531,7 +4531,7 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, albums.artwork";
+	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork)";
 	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
@@ -4671,11 +4671,15 @@ sub worksQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $cover);
-		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$cover);
+		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $covers);
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$covers);
 
 		while ( $sth->fetch ) {
-			#$id += 0;
+
+			my @allImages = split(/,/,$covers);
+			my $image = @allImages[0];
+			my @images = @allImages[0..3];
+
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
@@ -4687,14 +4691,17 @@ sub worksQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'work', $work);
 			}
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
-			$request->addResultLoop($loopname, $chunkCount, 'image', $cover);
-#			$request->addResultLoop($loopname, $chunkCount, 'year', $year);
-#			$request->addResultLoop($loopname, $chunkCount, 'from_search', $search) if $search;
+			$request->addResultLoop($loopname, $chunkCount, 'artist_id', $artistID) if $artistID;
+			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
+			$request->addResultLoop($loopname, $chunkCount, 'images', [@images]);
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
 			$textKey = $composerCount == 1 && $composerId eq $artistID ? substr $titleSort, 0, 1 : substr $nameSort, 0, 1;
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&contributor.name=%s',
+				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));
 
 			$chunkCount++;
 
