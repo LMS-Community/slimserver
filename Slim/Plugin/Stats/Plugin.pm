@@ -49,6 +49,7 @@ sub _reportStats {
 
 	my $data = {
 		version  => $::VERSION,
+		revision => $::REVISION,
 		os       => lc($osDetails->{'os'}),
 		osname   => $osDetails->{'osName'},
 		platform => $osDetails->{'osArch'},
