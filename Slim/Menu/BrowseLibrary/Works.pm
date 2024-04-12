@@ -41,8 +41,6 @@ sub _works {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = sprintf('db:work.title=%s&contributor.name=%s',
-					URI::Escape::uri_escape_utf8($_->{'work'}), URI::Escape::uri_escape_utf8($_->{'composer'}));
 			};
 
 			my $params = _tagsToParams(\@searchTags);
@@ -51,9 +49,6 @@ sub _works {
 			) : (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
-				info => {
-					command     => ['workinfo', 'items'],
-				},
 				items => {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {

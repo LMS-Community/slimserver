@@ -567,6 +567,7 @@ sub _registerBaseNodes {
 			params       => {mode => 'works'},
 			feed         => \&_works,
 			icon         => 'html/images/works.png',
+			jiveIcon     => 'html/images/works.png',
 			homeMenuText => 'BROWSE_WORKS',
 			condition    => sub {
 						return unless isEnabledNode(@_);

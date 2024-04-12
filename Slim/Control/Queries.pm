@@ -4684,10 +4684,10 @@ sub worksQuery {
 
 		while ( $sth->fetch ) {
 
-			my @album_ids = split(/,/,$album_ids);
 			my @allImages = split(/,/,$covers);
 			my $image = @allImages[0];
-			my @images = scalar @allImages > 4 ? @allImages[0..3] : @allImages;
+			my $images = scalar @allImages > 4 ? join(',', @allImages[0..3]) : join(',',@allImages);
+			
 
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
@@ -4702,8 +4702,8 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
 			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
 			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
-			$request->addResultLoop($loopname, $chunkCount, 'images', [@images]);
-			$request->addResultLoop($loopname, $chunkCount, 'album_ids', [@album_ids]);
+			$request->addResultLoop($loopname, $chunkCount, 'images', $images);
+			$request->addResultLoop($loopname, $chunkCount, 'album_ids', $album_ids);
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
