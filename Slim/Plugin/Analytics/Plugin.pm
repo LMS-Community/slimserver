@@ -1,4 +1,4 @@
-package Slim::Plugin::Stats::Plugin;
+package Slim::Plugin::Analytics::Plugin;
 
 use strict;
 
@@ -26,16 +26,16 @@ sub postinitPlugin {
 	$id =~ s/\//+/g;
 
 	$log = Slim::Utils::Log->addLogCategory({
-		'category'     => 'plugin.stats',
+		'category'     => 'plugin.analytics',
 		'defaultLevel' => 'WARN',
 		'description'  => __PACKAGE__->getDisplayName(),
 	});
 
-	Slim::Utils::Timers::setTimer($id, time() + ($log->is_debug ? 3 : REPORT_DELAY), \&_reportStats);
+	Slim::Utils::Timers::setTimer($id, time() + ($log->is_debug ? 3 : REPORT_DELAY), \&_report);
 }
 
-sub _reportStats {
-	Slim::Utils::Timers::killTimers($id, \&_reportStats);
+sub _report {
+	Slim::Utils::Timers::killTimers($id, \&_report);
 
 	my $osDetails = Slim::Utils::OSDetect::details();
 	my $plugins = [ sort map {
@@ -69,18 +69,18 @@ sub _reportStats {
 		tracks   => $totals->{track},
 	};
 
-	main::INFOLOG && $log->is_info && $log->info("Reporting system stats");
+	main::INFOLOG && $log->is_info && $log->info("Reporting system analytics");
 	# we MUST clone the data, as Data::Dump::dump would convert numbers to strings...
 	main::DEBUGLOG && $log->is_debug && $log->debug("$id: ", Data::Dump::dump(Storable::dclone($data)));
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
-			main::INFOLOG && $log->is_info && $log->info("Successfully reported stats");
+			main::INFOLOG && $log->is_info && $log->info("Successfully reported analytics");
 			_scheduleReport();
 		},
 		sub {
 			my ($http, $error) = @_;
-			$log->error("Failed to report stats: $error");
+			$log->error("Failed to report analytics: $error");
 			_scheduleReport();
 		},
 		{
@@ -95,7 +95,7 @@ sub _reportStats {
 }
 
 sub _scheduleReport {
-	Slim::Utils::Timers::setTimer($id, time() + REPORT_INTERVAL, \&_reportStats);
+	Slim::Utils::Timers::setTimer($id, time() + REPORT_INTERVAL, \&_report);
 }
 
 1;
