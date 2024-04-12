@@ -47,6 +47,14 @@ sub _reportStats {
 
 	my $totals = Slim::Schema->totals();
 
+	my $playerTypes;
+	my @players = map {
+		$playerTypes->{$_->model}++;
+		$_->model;
+	} grep {
+		$_->model ne 'group'
+	} Slim::Player::Client::clients();
+
 	my $data = {
 		version  => $::VERSION,
 		revision => $::REVISION,
@@ -54,7 +62,8 @@ sub _reportStats {
 		osname   => $osDetails->{'osName'},
 		platform => $osDetails->{'osArch'},
 		perl     => $Config{'version'},
-		players  => scalar (Slim::Player::Client::clients() || ()) || 0,
+		players  => scalar @players,
+		playerTypes => $playerTypes,
 		plugins  => $plugins,
 		skin     => $serverPrefs->get('skin'),
 		tracks   => $totals->{track},
