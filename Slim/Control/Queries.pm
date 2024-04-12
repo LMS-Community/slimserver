@@ -522,21 +522,6 @@ sub albumsQuery {
 			}
 		}
 
-		if (defined $work) {
-			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
-			$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
-			push @{$w}, 'tracks.work = ?';
-			push @{$p}, $work;
-			$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
-			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
-			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
-			push @{$p}, $composerID;
-			$c->{'tracks.work'} = 1;
-			$c->{'works.title'} = 1;
-			$c->{'composer.name'} = 1;
-			$c->{'tracks.grouping'} = 1;
-		}
-
 		if (defined $genreID) {
 			my @genreIDs = split(/,/, $genreID);
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
@@ -553,6 +538,21 @@ sub albumsQuery {
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
 		}
+	}
+
+	if (defined $work) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
+		$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
+		push @{$w}, 'tracks.work = ?';
+		push @{$p}, $work;
+		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
+		$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
+		push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
+		push @{$p}, $composerID;
+		$c->{'tracks.work'} = 1;
+		$c->{'works.title'} = 1;
+		$c->{'composer.name'} = 1;
+		$c->{'tracks.grouping'} = 1;
 	}
 
 	if ( $tags =~ /l/ ) {
@@ -4703,7 +4703,7 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
 			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
 			$request->addResultLoop($loopname, $chunkCount, 'images', $images);
-			$request->addResultLoop($loopname, $chunkCount, 'album_ids', $album_ids);
+			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
