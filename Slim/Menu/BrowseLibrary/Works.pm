@@ -32,7 +32,6 @@ sub _works {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-#$log->error("DK work-item=" . Data::Dump::dump($_));
 				$_->{'name'}          = $_->{'composer'};
 				$_->{'name2'}         = $_->{'work'};
 				$_->{'hasMetadata'}   = 'work';
@@ -40,15 +39,15 @@ sub _works {
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'album_id'}, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
 			};
 
 			my $params = _tagsToParams(\@searchTags);
 			my %actions = $remote_library ? (
-				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
+				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id', album_id => 'album_id'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
+				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id', album_id => 'album_id'],
 				items => {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {
