@@ -32,6 +32,7 @@ sub _works {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
+#$log->error("DK work-item=" . Data::Dump::dump($_));
 				$_->{'name'}          = $_->{'composer'};
 				$_->{'name2'}         = $_->{'work'};
 				$_->{'hasMetadata'}   = 'work';

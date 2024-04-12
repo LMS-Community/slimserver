@@ -794,7 +794,7 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
-			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'});
+			$request->addResultLoop($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'}||"");
 
 			# If we're dealing here with a Work rather than the full album, add relevant information into the album name. Moved to here
 			# from BrowseLibrary.pm so that it applies to all UIs.
@@ -806,6 +806,14 @@ sub albumsQuery {
 			}
 			$albumTitle .= $construct_title->();
 			$albumTitle .= ')' if $c->{'tracks.work'};
+
+			my $favoritesUrl = $c->{'tracks.work'}
+				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
+					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
+					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.grouping'}))
+				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} || $favoritesUrl);
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $albumTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $albumTitle);
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -4531,7 +4539,7 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork)";
+	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
 	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
@@ -4671,14 +4679,15 @@ sub worksQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $covers);
-		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$covers);
+		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $covers, $album_ids);
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$covers, \$album_ids);
 
 		while ( $sth->fetch ) {
 
+			my @album_ids = split(/,/,$album_ids);
 			my @allImages = split(/,/,$covers);
 			my $image = @allImages[0];
-			my @images = @allImages[0..3];
+			my @images = scalar @allImages > 4 ? @allImages[0..3] : @allImages;
 
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
@@ -4692,9 +4701,9 @@ sub worksQuery {
 			}
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
 			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
-			$request->addResultLoop($loopname, $chunkCount, 'artist_id', $artistID) if $artistID;
 			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
 			$request->addResultLoop($loopname, $chunkCount, 'images', [@images]);
+			$request->addResultLoop($loopname, $chunkCount, 'album_ids', [@album_ids]);
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
@@ -4703,6 +4712,7 @@ sub worksQuery {
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&contributor.name=%s',
 				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $composer . cstring($client, 'COLON') . " $work");
 
 			$chunkCount++;
 

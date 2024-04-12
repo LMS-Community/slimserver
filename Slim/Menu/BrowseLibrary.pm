@@ -1515,6 +1515,7 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
+#$log->error("DK album-item=" . Data::Dump::dump($_));
 				$_->{'name'}          = $_->{'album'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
