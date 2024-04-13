@@ -27,6 +27,7 @@ $prefs->init({
 		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS'),
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
+		icon    => 'plugins/ExtendedBrowseModes/html/composers.png',
 		id      => 'myMusicArtistsComposers',
 		weight  => 12,
 		enabled => 1,
@@ -34,6 +35,7 @@ $prefs->init({
 		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR'),
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
 		feed    => 'artists',
+		icon    => 'plugins/ExtendedBrowseModes/html/conductors.png',
 		id      => 'myMusicArtistsConductors',
 		weight  => 13,
 		enabled => 0,
@@ -41,6 +43,7 @@ $prefs->init({
 		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS'),
 		params  => { role_id => 'COMPOSER', genre_id => 'Jazz' },
 		feed    => 'artists',
+		icon    => 'plugins/ExtendedBrowseModes/html/jazzcomposers.png',
 		id      => 'myMusicArtistsJazzComposers',
 		weight  => 13,
 		enabled => 0,
@@ -309,7 +312,7 @@ sub registerBrowseMode {
 	}
 	else {
 		$feed = \&Slim::Menu::BrowseLibrary::_artists;
-		$icon = 'html/images/artists.png';
+		$icon = $icon // 'html/images/artists.png';
 	}
 
 	my %params = map {
