@@ -893,7 +893,6 @@ sub albumsQuery {
 		}
 
 	}
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $count);
 
@@ -4088,7 +4087,6 @@ do_it_again:
 
 sub songinfoQuery {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -4164,7 +4162,6 @@ sub songinfoQuery {
 			}
 		}
 	}
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->setStatusDone();
 }
@@ -4367,7 +4364,6 @@ sub titlesQuery {
 		}
 
 	}
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $totalCount);
 
@@ -4560,14 +4556,25 @@ sub worksQuery {
 				type   => 'work',
 			});
 			$sql .= "JOIN worksSearch ON works.id = worksSearch.id ";
+
+			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+				name   => 'albumsSearch',
+				search => $search,
+				type   => 'album',
+			});
+			$sql .= "JOIN albumsSearch ON albums.id = albumsSearch.id ";
 		} else {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
 				push @{$w}, '(' . join( ' OR ', map { 'works.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
 				push @{$p}, @{ $strings->[0] };
+				push @{$w}, '(' . join( ' OR ', map { 'albums.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
 			}
 			else {
 				push @{$w}, 'works.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+				push @{$w}, 'albums.titlesearch LIKE ?';
 				push @{$p}, @{$strings};
 			}
 		}
@@ -4718,7 +4725,6 @@ sub worksQuery {
 
 		}
 	}
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	$request->addResult('count', $count);
 
@@ -5929,7 +5935,6 @@ sub _getTagDataForTracks {
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
 	my @cols = sort keys %{$c};
-#$log->error("DK cols=". Data::Dump::dump(@cols));
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 
 	my $dbh = Slim::Schema->dbh;
