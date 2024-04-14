@@ -1524,15 +1524,6 @@ sub _albums {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}, "grouping:" . $_->{'grouping'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
-				# the favorites url is the album title and contributor name here (or extid for online albums)
-				# album id would be (much) better, but that would screw up the favorite on a rescan
-				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $favoritesUrl = $_->{'work_id'}
-					? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
-						URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}),
-						URI::Escape::uri_escape_utf8($_->{'work_name'}), URI::Escape::uri_escape_utf8($_->{'composer'}), URI::Escape::uri_escape_utf8($_->{'grouping'}))
-					: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
-				$_->{'favorites_url'} = $_->{'extid'} || $favoritesUrl;
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];

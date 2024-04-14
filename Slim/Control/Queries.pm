@@ -796,7 +796,7 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'}||"");
 
-			# If we're dealing here with a Work rather than the full album, add relevant information into the album name. Moved to here
+			# If we're dealing here with a Work rather than the full album, add relevant information into the album name and set favorites URL for the work. Moved to here
 			# from BrowseLibrary.pm so that it applies to all UIs.
 			my $albumTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
 			if ( $c->{'tracks.work'} ) {
@@ -812,7 +812,10 @@ sub albumsQuery {
 					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.grouping'}))
 				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
-			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} || $favoritesUrl);
+
+			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
+
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $albumTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $albumTitle);
