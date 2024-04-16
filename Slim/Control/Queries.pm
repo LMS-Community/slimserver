@@ -47,6 +47,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 use Slim::Utils::Text;
+use Slim::Utils::Strings qw(cstring);
 use Slim::Web::ImageProxy qw(proxiedImage);
 
 {
@@ -802,7 +803,7 @@ sub albumsQuery {
 				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
-			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $albumTitle);
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $c->{'albums.title'});
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
