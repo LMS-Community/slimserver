@@ -47,7 +47,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 use Slim::Utils::Text;
-use Slim::Utils::Strings qw(cstring);
 use Slim::Web::ImageProxy qw(proxiedImage);
 
 {
@@ -4699,10 +4698,8 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'images', $images || "html/images/works.png");
 			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
-			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
-			$textKey = substr($composerCount == 1 && $composerId eq $artistID ? $titleSort : $nameSort, 0, 1);
-			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', substr($nameSort, 0, 1));
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&composer.name=%s',
 				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));

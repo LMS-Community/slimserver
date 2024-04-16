@@ -361,6 +361,7 @@ sub hasUrl {
 sub findUrl {
 	my $class  = shift;
 	my $url    = shift;
+
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs
 
 	my $index = $class->{'url-index'}->{ $url };
