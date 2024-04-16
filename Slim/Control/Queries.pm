@@ -249,7 +249,6 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -553,6 +552,7 @@ sub albumsQuery {
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
+		$order_by = "tracks.tracknum";
 	}
 
 	if ( $tags =~ /l/ ) {
@@ -796,29 +796,16 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'}||"");
 
-			# If we're dealing here with a Work rather than the full album, add relevant information into the album name and set favorites URL for the work. Moved to here
-			# from BrowseLibrary.pm so that it applies to all UIs.
-			my $albumTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
-			if ( $c->{'tracks.work'} ) {
-				$albumTitle .= $c->{'works.title'} . ' (';
-				$albumTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
-				$albumTitle .= cstring($client,'FROM') . ' ';
-			}
-			$albumTitle .= $construct_title->();
-			$albumTitle .= ')' if $c->{'tracks.work'};
-
 			my $favoritesUrl = $c->{'tracks.work'}
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
 					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.grouping'}))
 				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
-
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
-
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $albumTitle);
 
-			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $albumTitle);
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
 			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
@@ -1238,6 +1225,7 @@ sub artistsQuery {
 			if ($tags =~ /E/ && $extid) {
 				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
 			}
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:contributor.name=' . URI::Escape::uri_escape_utf8( $name ) );
 
 			$chunkCount++;
 
@@ -1796,6 +1784,7 @@ sub genresQuery {
 
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'genre', $name);
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:genre.name=' . URI::Escape::uri_escape_utf8( $name ));
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 
 			$chunkCount++;
@@ -2265,6 +2254,7 @@ sub mediafolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} elsif (Slim::Music::Info::isPlaylist($volatileUrl || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
+				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'favorites_url', $url);
 			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
 			} elsif (Slim::Music::Info::isSong($volatileUrl || $item)) {
@@ -2728,6 +2718,7 @@ sub playlistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, "id", $id);
 				$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
 				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
+				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "favorites_url", $eachitem->url);
 				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 				$tags =~ /E/ && $request->addResultLoop($loopname, $chunkCount, 'extid', $eachitem->extid);
 				$tags =~ /x/ && $request->addResultLoop($loopname, $chunkCount, 'remote', $eachitem->remote ? 1 : 0);
@@ -4495,7 +4486,7 @@ sub yearsQuery {
 			$id += 0;
 
 			$request->addResultLoop($loopname, $chunkCount, 'year', $id);
-
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:year.id=' . ($id || 0 ));
 			$chunkCount++;
 		}
 	}
@@ -4507,7 +4498,6 @@ sub yearsQuery {
 
 sub worksQuery {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['works']])) {
@@ -4689,38 +4679,32 @@ sub worksQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $covers, $album_ids);
-		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$covers, \$album_ids);
+		my ($work, $workId, $composer, $composerId, $nameSort, $titleSort, $images, $album_ids);
+		$sth->bind_columns(\$work, \$workId, \$composer, \$composerId, \$nameSort, \$titleSort, \$images, \$album_ids);
 
 		while ( $sth->fetch ) {
 
-			my @allImages = split(/,/,$covers);
-			my $image = @allImages[0];
-			my $images = scalar @allImages > 4 ? join(',', @allImages[0..3]) : join(',',@allImages);
-			
+			my $image = (split(/,/, $images))[0];
 
 			utf8::decode($work) if $work;
 			utf8::decode($composer) if $composer;
 			$request->addResultLoop($loopname, $chunkCount, 'work_id', $workId);
 			if ( $composerCount == 1 && $composerId eq $artistID ) {
-				$request->addResultLoop($loopname, $chunkCount, 'composer', $work);
-				$request->addResultLoop($loopname, $chunkCount, 'work', " ");
-			} else {
-				$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
-				$request->addResultLoop($loopname, $chunkCount, 'work', $work);
+				$request->addResultLoop($loopname, $chunkCount, 'single_composer', 1);
 			}
+			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
+			$request->addResultLoop($loopname, $chunkCount, 'work', $work);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
-			$request->addResultLoop($loopname, $chunkCount, 'image', "html/images/works.png");
-			$request->addResultLoop($loopname, $chunkCount, 'image', $image);
-			$request->addResultLoop($loopname, $chunkCount, 'images', $images);
+			$request->addResultLoop($loopname, $chunkCount, 'image', $image || "html/images/works.png");
+			$request->addResultLoop($loopname, $chunkCount, 'images', $images || "html/images/works.png");
 			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
 			my $textKey;
 			utf8::decode( $nameSort ) if $nameSort;
-			$textKey = $composerCount == 1 && $composerId eq $artistID ? substr $titleSort, 0, 1 : substr $nameSort, 0, 1;
+			$textKey = substr($composerCount == 1 && $composerId eq $artistID ? $titleSort : $nameSort, 0, 1);
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 
-			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&contributor.name=%s',
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&composer.name=%s',
 				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $composer . cstring($client, 'COLON') . " $work");
 

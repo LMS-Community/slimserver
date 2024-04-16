@@ -1144,8 +1144,6 @@ sub _artists {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:contributor.name=' .
-						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
 			my $extra;
 			if (scalar grep { $_ !~ /role_id|remote_library/ } @searchTags) {
@@ -1302,8 +1300,6 @@ sub _genres {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_artists;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:genre.name=' .
-						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			};
 
 			my $params = _tagsToParams(\@searchTags);
@@ -1362,7 +1358,6 @@ sub _years {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "year:" . $_->{'year'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:year.id=' . ($_->{'name'} || 0 );
 			};
 
 			my $params = _tagsToParams(\@searchTags);
@@ -1516,8 +1511,14 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
-#$log->error("DK album-item=" . Data::Dump::dump($_));
-				$_->{'name'}          = $_->{'album'};
+				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
+				if ( $_->{'work_id'} ) {
+					$_->{'name'} .= $_->{'work_name'} . ' (';
+					$_->{'name'} .= "$_->{'grouping'} " if $_->{'grouping'};
+					$_->{'name'} .= cstring($client,'FROM') . ' ';
+				}
+				$_->{'name'}          .= $_->{'album'};
+				$_->{'name'}          .= ')' if $_->{'work_id'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';
@@ -2010,7 +2011,6 @@ sub _bmf {
 					}
 				}
 				elsif ($_->{'type'} eq 'playlist' && Slim::Music::Info::isCUE($_->{'url'})) {
-					$_->{'favorites_url'} =	$_->{'url'};
 					$_->{'playlist'}	  = \&_playlistTracks;
 					$_->{'url'}           = \&_playlistTracks;
 					$_->{'passthrough'}   = [ {
@@ -2028,7 +2028,6 @@ sub _bmf {
 				elsif ($_->{'type'} eq 'playlist') {
 					$_->{'type'}          = 'audio';
 					$_->{'url'}           =~ s/^file/tmp/;
-					$_->{'favorites_url'} =	$_->{'url'};
 					$_->{'playall'}     = 1;
 
 					$_->{'itemActions'} = {
@@ -2074,7 +2073,6 @@ sub _playlists {
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'playlist'};
 				$_->{'type'}          = 'playlist';
-				$_->{'favorites_url'} =	$_->{'url'};
 				$_->{'playlist'}      = \&_playlistTracks;
 				$_->{'url'}           = \&_playlistTracks;
 				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
