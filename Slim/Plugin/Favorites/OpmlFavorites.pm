@@ -211,6 +211,11 @@ sub _prepareDbItems {
 					library_id   => -1,
 				} ],
 				Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
+				Work => [ 'work_id', \&Slim::Menu::BrowseLibrary::_works, {
+					wantMetadata => 1,
+					wantIndex    => 1,
+					library_id   => -1,
+				} ],
 				Genre       => [ 'genre_id', sub {
 					# some plugins do replace artist browse modes - make sure we go to the right place
 					my ($artistHandler) = grep { $_->{id} eq 'myMusicArtists' } @{ Slim::Menu::BrowseLibrary->_getNodeList() };

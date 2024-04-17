@@ -567,6 +567,7 @@ sub _registerBaseNodes {
 			params       => {mode => 'works'},
 			feed         => \&_works,
 			icon         => 'html/images/works.png',
+			jiveIcon     => 'html/images/works.png',
 			homeMenuText => 'BROWSE_WORKS',
 			condition    => sub {
 						return unless isEnabledNode(@_);
@@ -1143,8 +1144,6 @@ sub _artists {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:contributor.name=' .
-						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
 			my $extra;
 			if (scalar grep { $_ !~ /role_id|remote_library/ } @searchTags) {
@@ -1301,8 +1300,6 @@ sub _genres {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_artists;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:genre.name=' .
-						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			};
 
 			my $params = _tagsToParams(\@searchTags);
@@ -1361,7 +1358,6 @@ sub _years {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "year:" . $_->{'year'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = 'db:year.id=' . ($_->{'name'} || 0 );
 			};
 
 			my $params = _tagsToParams(\@searchTags);
@@ -1529,15 +1525,6 @@ sub _albums {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}, "grouping:" . $_->{'grouping'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
-				# the favorites url is the album title and contributor name here (or extid for online albums)
-				# album id would be (much) better, but that would screw up the favorite on a rescan
-				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $favoritesUrl = $_->{'work_id'}
-					? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
-						URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}),
-						URI::Escape::uri_escape_utf8($_->{'work_name'}), URI::Escape::uri_escape_utf8($_->{'composer'}), URI::Escape::uri_escape_utf8($_->{'grouping'}))
-					: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($_->{'album'}), URI::Escape::uri_escape_utf8($_->{'artist'}));
-				$_->{'favorites_url'} = $_->{'extid'} || $favoritesUrl;
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
@@ -1792,6 +1779,9 @@ sub _tracks {
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
 
+				# we don't want tracknum if displaying tracks for a work rather than an album
+				delete $_->{'tracknum'} if $_->{'work_id'};
+
 				# bug 17340 - in track lists we give the trackartist precedence over the artist
 				if ( $_->{'trackartist'} ) {
 					$_->{'artist'} = $_->{'trackartist'};
@@ -2024,7 +2014,6 @@ sub _bmf {
 					}
 				}
 				elsif ($_->{'type'} eq 'playlist' && Slim::Music::Info::isCUE($_->{'url'})) {
-					$_->{'favorites_url'} =	$_->{'url'};
 					$_->{'playlist'}	  = \&_playlistTracks;
 					$_->{'url'}           = \&_playlistTracks;
 					$_->{'passthrough'}   = [ {
@@ -2042,7 +2031,6 @@ sub _bmf {
 				elsif ($_->{'type'} eq 'playlist') {
 					$_->{'type'}          = 'audio';
 					$_->{'url'}           =~ s/^file/tmp/;
-					$_->{'favorites_url'} =	$_->{'url'};
 					$_->{'playall'}     = 1;
 
 					$_->{'itemActions'} = {
@@ -2088,7 +2076,6 @@ sub _playlists {
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'playlist'};
 				$_->{'type'}          = 'playlist';
-				$_->{'favorites_url'} =	$_->{'url'};
 				$_->{'playlist'}      = \&_playlistTracks;
 				$_->{'url'}           = \&_playlistTracks;
 				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];

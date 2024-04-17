@@ -1992,7 +1992,8 @@ sub playlistcontrolCommand {
 		my $criteria = {work => [ '=' => $work_id ]};
 
 		if (defined (my $album_id = $request->getParam('album_id'))) {
-			$criteria->{'album'} = [ '=' => $album_id ];
+			my @albumIds = split(',', $album_id);
+			$criteria->{'album'} = [ 'IN' => @albumIds ];
 		}
 
 		if (defined (my $grouping = $request->getParam('grouping'))) {

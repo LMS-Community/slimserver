@@ -588,7 +588,7 @@ sub cliQuery {
 	my $connectionId   = $request->connectionID || '';
 
 	my %filter;
-	foreach (qw(artist_id genre_id year library_id)) {
+	foreach (qw(artist_id genre_id year library_id work_id grouping)) {
 		if (my $arg = $request->getParam($_)) {
 			$filter{$_} = $arg;
 		}

@@ -35,23 +35,19 @@ sub _works {
 				$_->{'name'}          = $_->{'composer'};
 				$_->{'name2'}         = $_->{'work'};
 				$_->{'hasMetadata'}   = 'work';
+				$_->{'image'}         = $_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : 'html/images/works.png';
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
-				$_->{'favorites_url'} = sprintf('db:work.title=%s&contributor.name=%s',
-					URI::Escape::uri_escape_utf8($_->{'work'}), URI::Escape::uri_escape_utf8($_->{'composer'}));
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'album_id'}, "work_id:" . $_->{'work_id'}, "composer_id:" . $_->{'composer_id'}], remote_library => $remote_library } ];
 			};
 
 			my $params = _tagsToParams(\@searchTags);
 			my %actions = $remote_library ? (
-				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
+				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id', album_id => 'album_id'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id'],
-				info => {
-					command     => ['workinfo', 'items'],
-				},
+				commonVariables	=> [work_id => 'work_id', composer_id => 'composer_id', album_id => 'album_id'],
 				items => {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {
