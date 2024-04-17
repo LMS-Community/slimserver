@@ -797,6 +797,9 @@ sub parseMp4Header {
 	Slim::Formats->loadTagFormatForType('mp4');
 	my $formatClass = Slim::Formats->classForFormat('mp4');
 
+	# need to memorize real length at first call
+	$args->{_contentLength} ||= $http->response->content_length;
+
 	# parse chunk
 	my $info = $formatClass->parseStream($dataref, $args, $http->response->content_length);
 
@@ -871,7 +874,6 @@ sub parseMp4Header {
 		foreach ( keys %{$info->{processors}} ) {
 			$track->processors($_, Slim::Schema::RemoteTrack::INITIAL_BLOCK_ALWAYS, $info->{processors}->{$_});
 		}
-
 		# change track attributes if format has been altered
 		if ( $format ne $track->content_type ) {
 			Slim::Schema->clearContentTypeCache( $track->url );
@@ -885,9 +887,9 @@ sub parseMp4Header {
 	}
 
 	# some mp4 file have wrong mdat length
-	if ($info->{audio_offset} + $info->{audio_size} > $http->response->content_length) {
-		$log->warn("inconsistent audio offset/size $info->{audio_offset}+$info->{audio_size}and content_length ", $http->response->content_length);
-		$track->audio_size($http->response->content_length - $info->{audio_offset});
+	if ($info->{audio_offset} + $info->{audio_size} > $args->{_contentLength}) {
+		$log->warn("inconsistent audio offset/size $info->{audio_offset}+$info->{audio_size} and content_length ", $args->{_contentLength});
+		$track->audio_size($args->{_contentLength} - $info->{audio_offset});
 	} else {
 		$track->audio_size($info->{audio_size});
 	}

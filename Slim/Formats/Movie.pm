@@ -252,13 +252,13 @@ sub parseStream {
 	my $offset = $args->{_offset};
 	my $log = logger('player.streaming');
 
-	while (length($args->{_scanbuf}) > $args->{_offset} + $args->{_need} + 8) {
+	while (length($args->{_scanbuf}) > $offset + $args->{_need} + 8) {
 		$args->{_atom} = substr($args->{_scanbuf}, $offset+4, 4);
 		$args->{_need} = unpack('N', substr($args->{_scanbuf}, $offset, 4));
-		$args->{_offset} = $args->{"_$args->{_atom}_"} = $offset;
+		$args->{"_$args->{_atom}_"} = $args->{_range} + $offset;
 
 		# a bit of sanity check
-		if ($offset == 0 && $args->{_atom} ne 'ftyp') {
+		if ($offset == 0 && $args->{_range} == 0 && $args->{_atom} ne 'ftyp') {
 			$log->warn("no header! this is supposed to be a mp4 track");
 			return 0;
 		}
@@ -271,8 +271,7 @@ sub parseStream {
 
 		# need to dive into atoms to find optional stco
 		$offset += ($args->{_atom} !~ /^(moov|trak|mdia|minf|stbl)$/) ? $args->{_need} : 8;
-
-		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at $args->{_offset} of size $args->{_need}");
+		main::DEBUGLOG && $log->is_debug && $log->debug("atom $args->{_atom} at ", $args->{"_$args->{_atom}_"}, " of size $args->{_need}");
 
 		# mdat reached = audio offset & size acquired
 		if ($args->{_atom} eq 'mdat') {
@@ -281,6 +280,7 @@ sub parseStream {
 		}
 	}
 
+	$args->{_offset} = $offset;
 	return -1 unless $args->{_mdat_};
 
 	# now make sure we have acquired a full moov atom
@@ -295,16 +295,18 @@ sub parseStream {
 		return -1 if $args->{_range};
 
 		# top 'moov' not found, need to seek beyond 'mdat'
-		$args->{_range} = $offset;
-		substr($args->{_scanbuf}, $args->{_offset}) = '';
+		$args->{_range} = $args->{_offset};
+		$args->{_scanbuf} = '';
+		$args->{_offset} = 0;
 		delete $args->{_need};
-		return $offset;
+
+		return $args->{_range};
 	} elsif ($args->{_atom} eq 'moov' && $len) {
 		return -1;
 	}
 
-	# finally got it, add 'moov' size it if was last atom
-	substr($args->{_scanbuf}, $args->{_offset} + ($args->{_atom} eq 'moov' ? $args->{_need} : 0)) = '';
+	# finally got it, align to beginning of 'moov'
+	substr($args->{_scanbuf}, 0, $args->{_moov_} - $args->{_range}, '');
 
 	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
 	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
