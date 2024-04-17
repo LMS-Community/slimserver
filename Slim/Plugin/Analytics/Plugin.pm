@@ -31,7 +31,7 @@ sub postinitPlugin {
 		'description'  => __PACKAGE__->getDisplayName(),
 	});
 
-	Slim::Utils::Timers::setTimer($id, time() + ($log->is_debug ? 3 : REPORT_DELAY), \&_report);
+	Slim::Utils::Timers::setTimer($id, time() + REPORT_DELAY, \&_report);
 }
 
 sub _report {
