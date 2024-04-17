@@ -4695,8 +4695,8 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'composer', $composer);
 			$request->addResultLoop($loopname, $chunkCount, 'work', $work);
 			$request->addResultLoop($loopname, $chunkCount, 'composer_id', $composerId);
-			$request->addResultLoop($loopname, $chunkCount, 'image', $image || "html/images/works.png");
-			$request->addResultLoop($loopname, $chunkCount, 'images', $images || "html/images/works.png");
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $image);
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_ids', $images);
 			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
 			utf8::decode( $nameSort ) if $nameSort;
@@ -5787,7 +5787,7 @@ sub _getTagDataForTracks {
 	$tags =~ /e/ && do { $c->{'tracks.album'} = 1 };
 	$tags =~ /E/ && do { $c->{'tracks.extid'} = 1 };
 	$tags =~ /d/ && do { $c->{'tracks.secs'} = 1 };
-	$tags =~ /t/ && !$args->{workId} && do { $c->{'tracks.tracknum'} = 1 };
+	$tags =~ /t/ && do { $c->{'tracks.tracknum'} = 1 };
 	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
 	$tags =~ /m/ && do { $c->{'tracks.bpm'} = 1 };
 	$tags =~ /M/ && do { $c->{'tracks.musicmagic_mixable'} = 1 };

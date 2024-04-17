@@ -1754,12 +1754,16 @@ sub _tracks {
 		$tags            .= 'cJK'; # artwork
 	}
 
+$log->error("DK tags=$tags");
+$log->error("DK sort=$sort");
+$log->error("DK searchTags=" . Data::Dump::dump(@searchTags));
 	_generic($client, $callback, $args, 'titles',
 		["tags:$tags", $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items   = $results->{'titles_loop'};
 			$remote_library ||= $args->{'remote_library'};
+$log->error("DK items=" . Data::Dump::dump($items));
 
 			foreach (@$items) {
 				# Map a few items that get different tags to those expected for TitleFormatter
@@ -1778,6 +1782,9 @@ sub _tracks {
 				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
+
+				# we don't want tracknum if displaying tracks for a work rather than an album
+				delete $_->{'tracknum'} if $_->{'work_id'};
 
 				# bug 17340 - in track lists we give the trackartist precedence over the artist
 				if ( $_->{'trackartist'} ) {

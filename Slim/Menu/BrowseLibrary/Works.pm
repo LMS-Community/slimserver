@@ -35,7 +35,7 @@ sub _works {
 				$_->{'name'}          = $_->{'composer'};
 				$_->{'name2'}         = $_->{'work'};
 				$_->{'hasMetadata'}   = 'work';
-				$_->{'image'}         = 'music/' . $_->{'image'} . '/cover' if $_->{'image'};
+				$_->{'image'}         = $_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : 'html/images/works.png';
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
