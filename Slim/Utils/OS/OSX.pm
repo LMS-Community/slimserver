@@ -59,7 +59,7 @@ sub initDetails {
 		elsif ($uname =~ /RELEASE_X86_64/) {
 			$class->{osDetails}->{osArch} = 'x86_64';
 		}
-		else ($uname =~ /RELEASE_ARM64/) {
+		elsif ($uname =~ /RELEASE_ARM64/) {
 			$class->{osDetails}->{osArch} = 'arm64';
 		}
 	}
