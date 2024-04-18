@@ -438,6 +438,7 @@ sub _parseResponse {
 			KeyAttr     => {
 				title   => 'lang',
 				desc    => 'lang',
+				detaileddesc => 'lang',
 				changes => 'lang'
 			},
 			ContentKey  => '-content',
@@ -448,7 +449,7 @@ sub _parseResponse {
 				plugins => 'plugin',
 				patches => 'patch',
 			},
-			ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'patch', 'title', 'desc', 'changes' ],
+			ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'patch', 'title', 'desc', 'detaileddesc', 'changes' ],
 		 )
 	};
 
@@ -541,6 +542,11 @@ sub _parseXML {
 				}
 				$new->{desc} = '' if ref $new->{desc};
 
+				if ($entry->{'detaileddesc'} && ref $entry->{'detaileddesc'} eq 'HASH') {
+					$new->{'detaileddesc'} = $entry->{'detaileddesc'}->{ $lang } || $entry->{'detaileddesc'}->{ 'EN' };
+				}
+				$new->{detaileddesc} = '' if ref $new->{detaileddesc};
+
 				if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
 					$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
 				}
@@ -549,6 +555,9 @@ sub _parseXML {
 				}
 				$new->{changes} = '' if ref $new->{changes};
 
+				$new->{'category'} = $entry->{'category'} if $entry->{'category'};
+				$new->{'image'}    = $entry->{'image'}    if $entry->{'image'};
+				$new->{'icon'}     = $entry->{'icon'}     if $entry->{'icon'};
 				$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 				$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
 				$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
