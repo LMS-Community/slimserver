@@ -168,9 +168,13 @@ sub artworkRequest {
 						my $remoteMeta = $handler->getMetadataFor( $client, $url );
 
 						if ( $remoteMeta && (my $cover = $remoteMeta->{cover}) ) {
+							# sometimes we'd get an already proxied URL - remove the proxy params to start over
+							if ($cover =~ s/^\/?imageproxy\/(.*)\/image\.(?:png|jpg)?$/$1/) {
+								$cover = URI::Escape::uri_unescape($cover);
+							}
 
 							if ($cover =~ /^http/) {
-								$id = 'imageproxy/' . $remoteMeta->{cover};
+								$id = 'imageproxy/' . $cover;
 								$path=~ s/music\/current/$id/;
 
 								main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
