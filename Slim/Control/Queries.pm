@@ -811,8 +811,8 @@ sub albumsQuery {
 				$favoritesTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
 				$favoritesTitle .= cstring($client,'FROM') . ' ';
 			}
-			$favoritesTitle          .= $c->{'albums.title'};
-			$favoritesTitle          .= ')' if $c->{'tracks.work'};
+			$favoritesTitle .= $c->{'albums.title'};
+			$favoritesTitle .= ')' if $c->{'tracks.work'};
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_title', $favoritesTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
