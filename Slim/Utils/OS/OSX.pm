@@ -57,6 +57,12 @@ sub initDetails {
 		if ($uname =~ /ARM64.*x86_64/i) {
 			$class->{osDetails}->{osArch} = 'x86_64 (Rosetta)';
 		}
+		elsif ($uname =~ /RELEASE_X86_64/) {
+			$class->{osDetails}->{osArch} = 'x86_64';
+		}
+		elsif ($uname =~ /RELEASE_ARM64/) {
+			$class->{osDetails}->{osArch} = 'arm64';
+		}
 	}
 
 	$class->{osDetails}->{'osArch'} ||= 'Unknown';
