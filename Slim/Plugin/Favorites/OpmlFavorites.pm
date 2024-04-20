@@ -211,7 +211,7 @@ sub _prepareDbItems {
 					library_id   => -1,
 				} ],
 				Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
-				Work => [ 'work_id', \&Slim::Menu::BrowseLibrary::_works, {
+				Work        => [ 'work_id', \&Slim::Menu::BrowseLibrary::_albums, {
 					wantMetadata => 1,
 					wantIndex    => 1,
 					library_id   => -1,
@@ -220,6 +220,11 @@ sub _prepareDbItems {
 					# some plugins do replace artist browse modes - make sure we go to the right place
 					my ($artistHandler) = grep { $_->{id} eq 'myMusicArtists' } @{ Slim::Menu::BrowseLibrary->_getNodeList() };
 					$artistHandler->{feed}->(@_) if $artistHandler;
+				} ],
+				Year => [ 'year_id', \&Slim::Menu::BrowseLibrary::_albums, {
+					wantMetadata => 1,
+					wantIndex    => 1,
+					library_id   => -1,
 				} ],
 			};
 
@@ -252,6 +257,12 @@ sub _dbItem {
 
 			while ( my ($k, $v) = each %{ $dbBrowseMode->[2] || {} } ) {
 				$pt->{$k} = $v
+			}
+
+			# add searchTags from prefetched relations for limiting album display to a specific work/performance
+			if ( $pt->{'url'} =~ /&work.title/ ) {
+				push @{$pt->{'searchTags'}}, "work_id:" . $obj->tracks->first->get_column('work');
+				push @{$pt->{'searchTags'}}, "grouping:" . $obj->tracks->first->get_column('grouping');;
 			}
 
 			return $dbBrowseMode->[1]->($client, $callback, $args, $pt);

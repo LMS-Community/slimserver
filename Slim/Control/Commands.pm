@@ -1995,10 +1995,10 @@ sub playlistcontrolCommand {
 			my @albumIds = split(',', $album_id);
 			$criteria->{'album'} = [ 'IN' => @albumIds ];
 		}
-
-		if (defined (my $grouping = $request->getParam('grouping'))) {
-			$criteria->{'grouping'} = [ '=' => $grouping ] if $grouping;
-			$criteria->{'grouping'} = [ '=' => undef ] unless $grouping;
+		if ( my $grouping = $request->getParam('grouping') ) {
+			$criteria->{'grouping'} = [ '=' => $grouping ];
+		} else {
+			$criteria->{'grouping'} = [ '=' => undef ]
 		}
 
 		@tracks = Slim::Schema->search('Track', $criteria)->all;

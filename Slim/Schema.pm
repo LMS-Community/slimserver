@@ -862,13 +862,12 @@ sub _objForDbUrl {
 	my ($url) = @_;
 
 	if ($url =~ /^db:(\w+)\.(.+)/ ) {
-		my ($class, $values) = ($1, $2);
+		my ($class, $values) = ($1, "me.$2"); # need to qualify the base class because of possible duplicate column names in prefetched relations
 
 		my $query = {};
 		for my $term (split('&', $values)) {
 			if ($term =~ /(.*)=(.*)/) {
 				my $key = $1;
-				next if $key eq 'composer.name' || $key eq 'work.title' || $key eq 'track.grouping';
 				my $value = Slim::Utils::Misc::unescape($2);
 
 				if (utf8::is_utf8($value)) {
@@ -876,6 +875,10 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
+				if ($key eq "track.grouping") {
+					$key = "tracks.grouping"; # track relation is wrongly named in Slim::Schema::Album but fixing it there breaks other things, including MAI.
+					$value = undef if !$value; # empty grouping value is meaningful and needs to result in an IS NULL check in the query
+				}
 				$query->{$key} = $value;
 			}
 		}
@@ -883,10 +886,14 @@ sub _objForDbUrl {
 		my $params;
 		$params->{prefetch} = [];
 		foreach (keys %$query) {
-			if (/^(?!composer|work|track)(.*)\./) {
+			if (/^(?!composer|work|track|me)(.*)\./) { # exclude relations which need to be added as multi-level (see below), and also "me" which is of course the base class
 				push @{ $params->{prefetch} }, $1;
 			}
 		}
+
+		# add multi-level prefetch relations as needed
+		push @{ $params->{prefetch} }, [{"tracks" => {"album" => "contributor"}}, "composer"] if $class eq "work";
+		push @{ $params->{prefetch} }, {"tracks" => {"work" => "composer"}} if $class eq "album" && $query->{'work.title'};
 
 		return Slim::Schema->search(ucfirst($class), $query, $params)->first;
 	}

@@ -546,8 +546,10 @@ sub albumsQuery {
 		push @{$p}, $work;
 		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
 		$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
-		push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
-		push @{$p}, $composerID;
+		if ( defined $composerID ) {
+			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
+			push @{$p}, $composerID;
+		}
 		$c->{'tracks.work'} = 1;
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
@@ -803,7 +805,15 @@ sub albumsQuery {
 				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
-			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $c->{'albums.title'});
+			my $favoritesTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
+			if ( $c->{'tracks.work'} ) {
+				$favoritesTitle .= $c->{'works.title'} . ' (';
+				$favoritesTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
+				$favoritesTitle .= cstring($client,'FROM') . ' ';
+			}
+			$favoritesTitle          .= $c->{'albums.title'};
+			$favoritesTitle          .= ')' if $c->{'tracks.work'};
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_title', $favoritesTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -4704,7 +4714,7 @@ sub worksQuery {
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&composer.name=%s',
 				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));
-			$request->addResultLoop($loopname, $chunkCount, 'favorites_text', $composer . cstring($client, 'COLON') . " $work");
+			$request->addResultLoop($loopname, $chunkCount, 'favorites_title', $composer . cstring($client, 'COLON') . " $work");
 
 			$chunkCount++;
 
@@ -5697,7 +5707,7 @@ sub _getTagDataForTracks {
 		if ( my $grouping = $args->{grouping} ) {
 			push @{$w}, 'tracks.grouping = ?';
 			push @{$p}, $grouping;
-		} elsif ( exists $args->{grouping} ) {
+		} else {
 			push @{$w}, 'tracks.grouping IS NULL';
 		}
 	}
