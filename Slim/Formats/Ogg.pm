@@ -95,8 +95,10 @@ sub getTag {
 
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
-	if (defined $tags->{DATE} && !defined $tags->{YEAR}) {
-		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
+	foreach (qw(ORIGINALYEAR ORIGINALDATE DATE)) {
+		if (defined $tags->{$_} && !defined $tags->{YEAR}) {
+			($tags->{YEAR} = $tags->{$_}) =~ s/.*(\d\d\d\d).*/$1/;
+		}
 	}
 
 	# Sometimes the BPM is not an integer so we try to convert.
