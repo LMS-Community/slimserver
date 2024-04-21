@@ -44,6 +44,9 @@ my $log = logger('database.info');
 	$class->belongs_to('contributor' => 'Slim::Schema::Contributor');
 
 	$class->has_many('tracks'            => 'Slim::Schema::Track'            => 'album');
+	# need to duplicate this relation because it should have been 'track' not 'tracks', but changing this now would lead to breakages elsewhere.
+	# See https://github.com/LMS-Community/slimserver/pull/1060 for details.
+	$class->has_many('track'             => 'Slim::Schema::Track'            => 'album');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum' => 'album');
 
 	if ($] > 5.007) {

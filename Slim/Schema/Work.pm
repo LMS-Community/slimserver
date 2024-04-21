@@ -19,7 +19,7 @@ use Slim::Utils::Strings qw(string);
 	$class->add_columns(qw(id composer title titlesort titlesearch));
 	$class->set_primary_key('id');
 
-	$class->has_many('tracks' => 'Slim::Schema::Track' => 'work');
+	$class->has_many('track' => 'Slim::Schema::Track' => 'work');
 	$class->belongs_to('composer' => 'Slim::Schema::Composer');
 
 	$class->resultset_class('Slim::Schema::ResultSet::Work');

@@ -876,7 +876,6 @@ sub _objForDbUrl {
 				}
 
 				if ($key eq "track.grouping") {
-					$key = "tracks.grouping"; # track relation is wrongly named in Slim::Schema::Album but fixing it there breaks other things, including MAI.
 					$value = undef if !$value; # empty grouping value is meaningful and needs to result in an IS NULL check in the query
 				}
 				$query->{$key} = $value;
@@ -892,8 +891,8 @@ sub _objForDbUrl {
 		}
 
 		# add multi-level prefetch relations as needed
-		push @{ $params->{prefetch} }, [{"tracks" => {"album" => "contributor"}}, "composer"] if $class eq "work";
-		push @{ $params->{prefetch} }, {"tracks" => {"work" => "composer"}} if $class eq "album" && $query->{'work.title'};
+		push @{ $params->{prefetch} }, [{"track" => {"album" => "contributor"}}, "composer"] if $class eq "work";
+		push @{ $params->{prefetch} }, {"track" => {"work" => "composer"}} if $class eq "album" && $query->{'work.title'};
 
 		return Slim::Schema->search(ucfirst($class), $query, $params)->first;
 	}

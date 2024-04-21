@@ -798,21 +798,20 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'}||"");
 
-			my $favoritesUrl = $c->{'tracks.work'}
+			my $favoritesUrl = $work
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
 					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.grouping'}))
 				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
-			my $favoritesTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
-			if ( $c->{'tracks.work'} ) {
+			my $favoritesTitle = $c->{'albums.title'};
+			if ( $work ) {
+				$favoritesTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
 				$favoritesTitle .= $c->{'works.title'} . ' (';
 				$favoritesTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
-				$favoritesTitle .= cstring($client,'FROM') . ' ';
+				$favoritesTitle .= cstring($client,'FROM') . ' ' . $c->{'albums.title'} . ')';
 			}
-			$favoritesTitle .= $c->{'albums.title'};
-			$favoritesTitle .= ')' if $c->{'tracks.work'};
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_title', $favoritesTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
