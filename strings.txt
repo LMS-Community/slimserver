@@ -13056,19 +13056,19 @@ BROWSE_WORKS
 	DE	Werke durchsuchen
 	EN	Browse Works
 	FR	Parcourir les œuvres
-	NL	Door Composities bladeren
+	NL	Door Uitvoeringen bladeren
 
 WORKS
 	DE	Werke
 	EN	Works
 	FR	Œuvres
-	NL	Composities
+	NL	Uitvoeringen
 
 WORKS_CLASSICAL
 	DE	Klassische Werke
 	EN	Classical Works
 	FR	Œuvres Classiques
-	NL	Klassieke Composities
+	NL	Klassieke Uitvoeringen
 
 BROWSE_YEARS
 	CS	Procházet roky
@@ -13184,7 +13184,7 @@ BROWSE_BY_WORK
 	DE	Werke
 	EN	Works
 	FR	Œuvres
-	NL	Composities
+	NL	Uitvoeringen
 
 BROWSE_BY_YEAR
 	CS	Roky
