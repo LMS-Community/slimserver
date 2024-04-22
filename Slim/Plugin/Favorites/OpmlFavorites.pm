@@ -260,7 +260,7 @@ sub _dbItem {
 			}
 
 			# add searchTags from prefetched relations for limiting album display to a specific work/performance
-			if ( $pt->{'url'} =~ /\bwork.title\b/ ) {
+			if ( $pt->{'url'} =~ /&work.title/ ) {
 				push @{$pt->{'searchTags'}}, "work_id:" . $obj->track->first->get_column('work');
 				push @{$pt->{'searchTags'}}, "grouping:" . $obj->track->first->get_column('grouping');;
 			}
