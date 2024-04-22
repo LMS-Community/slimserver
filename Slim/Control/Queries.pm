@@ -554,7 +554,7 @@ sub albumsQuery {
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
-		$order_by = "tracks.tracknum";
+		$order_by .= ", tracks.tracknum";
 	}
 
 	if ( $tags =~ /l/ ) {
