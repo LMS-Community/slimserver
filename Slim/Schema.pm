@@ -945,7 +945,7 @@ sub _createOrUpdateAlbum {
 
 	if ( !$create && $track ) {
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
-		my $differentTitle = Slim::Utils::Text::ignoreCase($title, 1) ne $albumHash->{titlesearch};
+		my $differentTitle = Slim::Utils::Unicode::utf8toLatin1Transliterate($title) ne Slim::Utils::Unicode::utf8toLatin1Transliterate($albumHash->{title});
 
 		# Bug: 4140
 		# If the track is from a FLAC cue sheet, the original entry will have a 'No Album' album. See if we have a real album name.
@@ -1476,7 +1476,7 @@ sub _createWork {
 		my $dbh = Slim::Schema->dbh;
 
 		my $titlesort = Slim::Utils::Text::ignoreCaseArticles( $workSort || $work );
-		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg unless $workSort; #Use the WORKSORT tag as is if provided, otherwise zero-pad numbers. 
+		$titlesort =~ s/(\d+)/sprintf"%04d",$1/eg unless $workSort; #Use the WORKSORT tag as is if provided, otherwise zero-pad numbers.
 		my $titlesearch = Slim::Utils::Text::ignoreCase($work, 1);
 
 		my $sth = $dbh->prepare_cached('SELECT id FROM works WHERE titlesearch = ? AND composer = ?');
