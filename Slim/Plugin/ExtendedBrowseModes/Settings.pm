@@ -97,7 +97,7 @@ sub handler {
 				Slim::Menu::BrowseLibrary->deregisterNode($params->{"id$i"});
 
 				my $oldId = $menu->{id} = $params->{"id$i"};
-				$menu->{id} =~ s/^(?:myMusicAlbums|myMusicArtists)//;
+				$menu->{id} =~ s/^(?:myMusicAlbums|myMusicArtists|myMusicWorks)//;
 
 				# use the timestamp part of the id to make the sort order stick
 				my ($ts)  = $menu->{id};
@@ -106,6 +106,10 @@ sub handler {
 				if ( $feedType eq 'albums' ) {
 					$menu->{id}     = 'myMusicAlbums' . $menu->{id} if $menu->{id} !~ /^myMusic/;
 					$menu->{weight} = "25.$ts" * 1;
+				}
+				if ( $feedType eq 'works' ) {
+					$menu->{id}     = 'myMusicWorks' . $menu->{id} if $menu->{id} !~ /^myMusic/;
+					$menu->{weight} = "20.$ts" * 1;
 				}
 				else {
 					$menu->{id}     = 'myMusicArtists' . $menu->{id} if $menu->{id} !~ /^myMusic/;
