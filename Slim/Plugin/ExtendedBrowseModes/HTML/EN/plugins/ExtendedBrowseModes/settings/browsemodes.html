@@ -51,6 +51,7 @@
 							<option value="0">&nbsp;</option>
 							<option value="albums" [% IF menu.feed == 'albums' %]selected[% END %]>[% "ALBUMS" | string %]</option>
 							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
+							<option value="works" [% IF menu.feed == 'works' %]selected[% END %]>[% "WORKS" | string %]</option>
 						</select>
 					</td>
 					<td><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id | html %]" style="width: 98%;" class="stdedit" /></td>
