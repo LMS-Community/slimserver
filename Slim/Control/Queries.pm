@@ -4531,6 +4531,7 @@ sub worksQuery {
 	my $artistID      = $request->getParam('artist_id');
 	my $workID        = $request->getParam('work_id');
 	my $roleID        = $request->getParam('role_id');
+	my $genreID       = $request->getParam('genre_id');
 
 	# get them all by default
 	my $where = {};
@@ -4604,6 +4605,13 @@ sub worksQuery {
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryID;
+	}
+
+	if (defined $genreID) {
+		my @genreIDs = split(/,/, $genreID);
+		$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+		push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+		push @{$p}, @genreIDs;
 	}
 
 	if ( @{$w} ) {

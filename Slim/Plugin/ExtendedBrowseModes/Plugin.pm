@@ -310,6 +310,10 @@ sub registerBrowseMode {
 		$feed = \&Slim::Menu::BrowseLibrary::_albums;
 		$icon = 'html/images/albums.png';
 	}
+	elsif ( $item->{feed} =~ /\bworks$/ ) {
+		$feed = \&Slim::Menu::BrowseLibrary::_works;
+		$icon = 'html/images/works.png';
+	}
 	else {
 		$feed = \&Slim::Menu::BrowseLibrary::_artists;
 		$icon = $icon // 'html/images/artists.png';
