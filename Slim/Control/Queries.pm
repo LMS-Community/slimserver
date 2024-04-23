@@ -554,7 +554,7 @@ sub albumsQuery {
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
-		$order_by = "tracks.tracknum";
+		$order_by .= ", tracks.tracknum";
 	}
 
 	if ( $tags =~ /l/ ) {
@@ -4537,7 +4537,7 @@ sub worksQuery {
 	my $w   = ["tracks.work IS NOT NULL"];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id cid, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
 	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
@@ -4547,8 +4547,6 @@ sub worksQuery {
 		JOIN contributors ON contributors.id = contributor_track.contributor 
 		JOIN works ON works.id = tracks.work AND works.composer = composer.id 
 		JOIN albums ON tracks.album = albums.id ';
-
-	my $page_key = "SUBSTR(composer.namesort,1,1)";
 
 	if (specified($search)) {
 		if ( Slim::Schema->canFulltextSearch ) {
@@ -4614,9 +4612,26 @@ sub worksQuery {
 
 	$sql .= " GROUP BY $groupBy ";
 
+	my $dbh = Slim::Schema->dbh;
+
+	# Get count of unique composers, the count is cached until the next rescan done event
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . 'composerCount' . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $composerCount = $cache->{$cacheKey};
+	if ( !$composerCount ) {
+		my $ccSql = sprintf($sql, "composer.id AS cid");
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(DISTINCT cid)  FROM ( $ccSql ) AS t1
+		} );
+
+		$total_sth->execute( @{$p} );
+		($composerCount) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
+
 	my $order_by = "ORDER BY composer.namesort, works.titlesort";
 
-	my $dbh = Slim::Schema->dbh;
+	my $page_key = $composerCount == 1 ? "SUBSTR(works.titlesort,1,1)" : "SUBSTR(composer.namesort,1,1)";
 
 	if ($page_key && $tags =~ /Z/) {
 		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " $order_by", $p));
@@ -4643,21 +4658,6 @@ sub worksQuery {
 		$total_sth->finish;
 	}
 
-	# Get count of unique composers, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . 'composerCount' . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
-
-	my $composerCount = $cache->{$cacheKey};
-	if ( !$composerCount ) {
-		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(DISTINCT cid)  FROM ( $sql ) AS t1
-		} );
-
-		$total_sth->execute( @{$p} );
-		($composerCount) = $total_sth->fetchrow_array();
-		$total_sth->finish;
-	}
-
-#	$sql .= $artistID ?  "ORDER BY composer.namesort, works.titlesort" : "ORDER BY works.titlesort, composer.namesort";
 	$sql .= $order_by;
 
 	# now build the result
@@ -4708,8 +4708,13 @@ sub worksQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_ids', $images);
 			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
-			utf8::decode( $nameSort ) if $nameSort;
-			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', substr($nameSort, 0, 1));
+			if ( $composerCount == 1 ) {
+				utf8::decode( $titleSort );
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', substr($titleSort, 0, 1));
+			} else {
+				utf8::decode( $nameSort );
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', substr($nameSort, 0, 1));
+			}
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&composer.name=%s',
 				URI::Escape::uri_escape_utf8($work), URI::Escape::uri_escape_utf8($composer)));
