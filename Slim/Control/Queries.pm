@@ -4709,11 +4709,11 @@ sub worksQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'album_id', $album_ids);
 
 			if ( $composerCount == 1 ) {
-				utf8::decode( $titleSort ) if $titleSort;
-				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', substr($titleSort, 0, 1));
+				utf8::decode( $titleSort );
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', substr($titleSort, 0, 1));
 			} else {
-				utf8::decode( $nameSort ) if $nameSort;
-				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', substr($nameSort, 0, 1));
+				utf8::decode( $nameSort );
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', substr($nameSort, 0, 1));
 			}
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', sprintf('db:work.title=%s&composer.name=%s',
