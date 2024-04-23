@@ -107,7 +107,7 @@ sub handler {
 					$menu->{id}     = 'myMusicAlbums' . $menu->{id} if $menu->{id} !~ /^myMusic/;
 					$menu->{weight} = "25.$ts" * 1;
 				}
-				if ( $feedType eq 'works' ) {
+				elsif ( $feedType eq 'works' ) {
 					$menu->{id}     = 'myMusicWorks' . $menu->{id} if $menu->{id} !~ /^myMusic/;
 					$menu->{weight} = "20.$ts" * 1;
 				}
