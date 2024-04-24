@@ -954,7 +954,7 @@ sub artistsQuery {
 	my $cacheKey;
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $sort    = "contributors.namesort, contributors.musicbrainz_id $collate";
+	my $sort    = "contributors.namesort $collate, contributors.musicbrainz_id";
 
 	# Manage joins
 	if (defined $trackID) {
