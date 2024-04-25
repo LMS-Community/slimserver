@@ -5192,6 +5192,7 @@ sub _songDataFromHash {
 	$returnHash{work} = $res->{'works.title'};
 	$returnHash{work_id} = $res->{'works.id'};
 	$returnHash{grouping} = $res->{'tracks.grouping'};
+	$returnHash{subtitle} = $res->{'tracks.subtitle'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5632,7 +5633,7 @@ sub _getTagDataForTracks {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	my $sql      = 'SELECT %s FROM tracks LEFT JOIN works ON works.id = tracks.work ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1, 'tracks.grouping' => 1 };
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1, 'tracks.grouping' => 1, 'tracks.subtitle' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
