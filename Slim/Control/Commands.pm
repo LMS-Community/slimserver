@@ -3581,6 +3581,16 @@ sub _playlistXtracksCommand_parseDbItem {
 						prefetch => $lcClass
 					})->first;
 				}
+				# work favorites need to be filtered by composer, too
+				elsif ($class eq 'Composer' && (my $workObj = $classes{Work})) {
+					my $lcClass = lc($class);
+					$classes{Work} = Slim::Schema->search('Work', {
+						titlesearch => $workObj->titlesearch,
+						"$lcClass.$key" => $value,
+					},{
+						prefetch => $lcClass
+					})->first;
+				}
 				else {
 					$classes{$class} = Slim::Schema->search( $class, { $key => $value } )->first;
 				}
