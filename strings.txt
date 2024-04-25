@@ -9148,19 +9148,19 @@ SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
 	FR	Types de sorties pour les albums
-	NL	Releasetypes voor Albums
+	NL	Uitgaventypes voor Albums
 
 SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
 	FR	Types de sorties à inclure dans la liste des albums
-	NL	Releasetypes die in de Album lijst worden opgenomen
+	NL	Uitgaventypes die in de albumlijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
-	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
+	NL	Je kunt opgeven welke uitgaventypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	EN	Composer album options
