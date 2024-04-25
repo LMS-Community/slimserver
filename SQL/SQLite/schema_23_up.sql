@@ -4,6 +4,8 @@ ALTER TABLE tracks ADD grouping blob;
 ALTER TABLE albums ADD subtitle blob;
 ALTER TABLE albums ADD label blob;
 CREATE INDEX tracksWorkIndex ON tracks (work);
+
+DROP TABLE IF EXISTS works;
 CREATE TABLE works (
   id  integer PRIMARY KEY AUTOINCREMENT,
   composer integer,
