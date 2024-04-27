@@ -3100,7 +3100,7 @@ sub searchQuery {
 		# contributors first
 		my $cols = "me.id, me.$name";
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
-		
+
 		my $sql;
 
 		# we don't have a full text index for genres
@@ -5070,6 +5070,9 @@ my %tagMap = (
 	  's' => ['artist_id',        '',              'artistid'],         #->contributors
 	  'e' => ['album_id',         '',              'albumid'],          #album
 	  'l' => ['album',            'ALBUM',         'albumname'],        #->album.title
+	  'b' => ['work',             'WORK',          'worktitle'],        #->work.title
+	  'h' => ['grouping',         'GROUPING',      'grouping'],         #grouping
+	  'z' => ['subtitle',         'SUBTITLE',      'subtitle'],         #subtitle
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
 	  'D' => ['addedTime',        'ADDTIME',       'addedTime'],        #added_time
@@ -5094,7 +5097,6 @@ my %tagMap = (
 	                                                                    #endian
 	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
 	  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
-	# 'z' => ['drm',              '',              'drm'],              #drm
 	  'M' => ['musicmagic_mixable', '',            'musicmagic_mixable'], #musicmagic_mixable
 	                                                                    #musicbrainz_id
 	                                                                    #lastplayed
@@ -5177,6 +5179,9 @@ my %colMap = (
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
 	E => 'tracks.extid',
+	b => 'works.title',
+	h => 'tracks.grouping',
+	z => 'tracks.subtitle',
 );
 
 sub _songDataFromHash {
@@ -5189,10 +5194,6 @@ sub _songDataFromHash {
 
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
-	$returnHash{work} = $res->{'works.title'};
-	$returnHash{work_id} = $res->{'works.id'};
-	$returnHash{grouping} = $res->{'tracks.grouping'};
-	$returnHash{subtitle} = $res->{'tracks.subtitle'};
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5303,6 +5304,9 @@ sub _songData {
 			$remoteMeta->{T} = $remoteMeta->{samplerate};
 			$remoteMeta->{I} = $remoteMeta->{samplesize};
 			$remoteMeta->{W} = $remoteMeta->{releasetype};
+			$remoteMeta->{b} = $remoteMeta->{work};
+			$remoteMeta->{h} = $remoteMeta->{grouping};
+			$remoteMeta->{z} = $remoteMeta->{subtitle};
 
 			# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
 			# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
@@ -5632,8 +5636,8 @@ sub _getTagDataForTracks {
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	my $sql      = 'SELECT %s FROM tracks LEFT JOIN works ON works.id = tracks.work ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1, 'works.title' => 1, 'works.id' => 1, 'tracks.grouping' => 1, 'tracks.subtitle' => 1 };
+	my $sql      = 'SELECT %s FROM tracks ';
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -5678,7 +5682,7 @@ sub _getTagDataForTracks {
 				},
 			});
 
-			$sql = 'SELECT %s FROM tracksSearch JOIN tracks ON tracks.id = tracksSearch.id LEFT JOIN works on tracks.work = works.id ';
+			$sql = 'SELECT %s FROM tracksSearch JOIN tracks ON tracks.id = tracksSearch.id ';
 
 			if (!$count_only) {
 				$sort = "tracksSearch.fulltextweight DESC" . ($sort ? ", $sort" : '');
@@ -5735,6 +5739,12 @@ sub _getTagDataForTracks {
 	my $join_genre_track = sub {
 		if ( $sql !~ /JOIN genre_track/ ) {
 			$sql .= 'LEFT JOIN genre_track ON genre_track.track = tracks.id ';
+		}
+	};
+
+	my $join_works = sub {
+		if ( $sql !~ /JOIN works/ ) {
+			$sql .= 'LEFT JOIN works ON works.id = tracks.work ';
 		}
 	};
 
@@ -5833,6 +5843,13 @@ sub _getTagDataForTracks {
 	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
 	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
 	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
+	$tags =~ /b/ && do {
+		$join_works->();
+		$c->{'works.title'} = 1;
+	};
+	$tags =~ /h/ && do { $c->{'tracks.grouping'} = 1 };
+	$tags =~ /z/ && do { $c->{'tracks.subtitle'} = 1 };
+
 	$tags =~ /g/ && do {
 		$join_genres->();
 		$c->{'genres.name'} = 1;
