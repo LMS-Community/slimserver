@@ -1,0 +1,26 @@
+[% extension = installerFile.match('\.(rpm|deb)$');
+IF extension;
+	distro = extension.0;
+END;
+%]
+
+<p>Sur certaines distributions Linux, nous proposons un t&eacute;l&eacute;chargement automatique des programmes d'installation des mises &agrave; jour de Lyrion Music Server. Ceux-ci sont actuellement disponibles pour les syst&egrave;mes bas&eacute;s sur des packages .rpm et .deb.<p>
+
+[% IF distro == 'deb' %]
+<p>Votre Lyrion Music Server a t&eacute;l&eacute;charg&eacute; le dernier programme d'installation &agrave; l'emplacement suivant :</p>
+
+<pre>[% installerFile %]</pre>
+[% END %]
+
+<p>Veuillez ex&eacute;cuter les &eacute;tapes suivantes pour mettre &agrave; jour votre installation de Lyrion Music Server :</p>
+
+<ul style="direction: ltr;">
+	<li>Connectez-vous &agrave; la machine sur laquelle est install&eacute; Lyrion Music Server en utilisant votre nom d'utilisateur et votre mot de passe.</li>
+	<li>Ex&eacute;cutez la commande suivante pour d&eacute;marrer le programme d'installation :</li>
+	<li><code>sudo [% distro == 'rpm' ? 'rpm -Uvh' : 'apt install' %] [% installerFile %]</code></li>
+	[% IF distro == 'deb' %]
+	<p>
+	<li>Cette commande peut &eacute;chouer sur une ancienne machine. En cas d'&eacute;chec, essayez cette commande :</li>
+	<li><code>sudo dpkg -i [% installerFile %]</code></li>
+	[% END %]
+</ul>
