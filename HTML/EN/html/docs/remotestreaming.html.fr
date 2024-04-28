@@ -1,0 +1,40 @@
+[% pagetitle = 'REMOTE_STREAMING' | string %]
+[% PROCESS helpheader.html %]
+
+<h2>Diffusion &agrave; distance</h2>
+<ul>
+<li>Le Lyrion Music Server a &eacute;t&eacute; con&ccedil;u pour diffuser des fichiers audio (mp3, flac...) vers un lecteur Slim Devices / Logitech.<p> Cependant, il peut aussi diffuser les m&ecirc;mes fichiers vers un lecteur logiciel MP3 pr&eacute;sent sur le r&eacute;seau tel que VLC, squeezelite ou iTunes.</li>
+<li>Par souci de simplicit&eacute;, l'ordinateur sur lequel Lyrion Music Server s'ex&eacute;cute est appel&eacute; ci-dessous le &quot;serveur distant&quot;.
+</ul>
+<h2>Instructions de diffusion :</h2>
+ <ul>
+ <li>Installer et d&eacute;marrer le logiciel Lyrion Music Server sur un ordinateur du r&eacute;seau local.
+ <li>Ouvrir le flux appel&eacute; <a href="/stream.mp3">http://localhost:9000/stream.mp3</a> dans le lecteur MP3 en veillant &agrave; remplacer &quot;localhost&quot; par l'adresse IP du serveur distant. (Cela informera le serveur distant que le lecteur est pr&ecirc;t &agrave; recevoir le flux.)
+ <li>Ouvrir l'interface web de Lyrion Music Server dans un navigateur : <a href="/">http://localhost:9000</a>. Veiller encore &agrave; remplacer &quot;localhost&quot; par l'adresse IP du serveur distant.
+ <li>Une platine correspondant &agrave; l'adresse IP de la machine ex&eacute;cutant le lecteur MP3 appara&icirc;t automatiquement dans Lyrion Music Server. S&eacute;lectionner-la.
+ <li>Utiliser le panneau de gauche de l'interface par d&eacute;faut de Lyrion Music Server pour parcourir la biblioth&egrave;que musicale et s&eacute;lectionner un morceau ou une liste de lecture. La s&eacute;lection appara&icirc;tra alors dans le panneau de droite.
+ <li>Cliquer sur &quot;Lecture&quot; dans le panneau de droite pour d&eacute;marrer la lecture de la musique.
+ <li>Apr&egrave;s un court instant, la musique est restitu&eacute;e sur le lecteur MP3. (Le retard est d&ucirc; &agrave; la mise en m&eacute;moire tampon du logiciel du lecteur MP3.)
+ <li>Si la musique n'est pas diffus&eacute;e, essayer d'appuyer sur le bouton &quot;Lecture&quot; du lecteur MP3.
+ <li>Pour changer le morceau &agrave; diffuser, utiliser l'interface de Lyrion Music Server sur le serveur distant.
+</ul>
+<h2>S&eacute;curisation par mot de passe :</h2>
+
+<ul>
+ <li>Si la s&eacute;curit&eacute; par mot de passe est activ&eacute;e dans Lyrion Music Server, utiliser une URL l&eacute;g&egrave;rement diff&eacute;rente : http://username:password@localhost:9000/stream.mp3
+ <li>Dans un tel cas, veiller &agrave; n'utiliser que vos propres lecteurs ou &agrave; effacer syst&eacute;matiquement l'historique de ces derniers pour ne pas rendre public vos informations d'authentification.
+</ul>
+
+<h2>Fonctionnalit&eacute;s avanc&eacute;es :</h2>
+<ul>
+ <li>Bien entendu, la musique reste diffusable nativement vers une Squeezebox ou un Transporter au sein d'un ensemble hi-fi traditionnel.
+ <li>La diffusion native permet de b&eacute;n&eacute;ficier de toutes les fonctionnalit&eacute;s de Lyrion Music Server, comme le contr&ocirc; centralis&eacute; du volume.
+ <li>La diffusion native n&eacute;cessite une platine prenant en charge le protocole &quot;Squeezebox&quot; : Squeezebox Classic, Squeezebox Boom, Squeezebox Duet, Transporter, Squeezebox Radio, Squeezebox Touch, squeezelite...
+</ul>
+
+<div>
+<br/>
+ <p>En cas de question ou probl&egrave;me, visiter les forums d'utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a></p>
+</div>
+
+[% PROCESS helpfooter.html %]
