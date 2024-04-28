@@ -259,6 +259,29 @@ sub artistsForRoles {
 		->search_related('contributor')->distinct->all;
 }
 
+sub artistPerformsOnWork {
+	my ($self, $work, $grouping, $artist) = @_;
+
+		my $sth = Slim::Schema->dbh->prepare_cached(
+			sprintf(qq{
+				SELECT count(*)
+				from albums
+				JOIN tracks ON albums.id = tracks.album
+				JOIN contributor_track ON tracks.id = contributor_track.track
+				WHERE tracks.work = ?
+				AND albums.id = ?
+				AND contributor_track.contributor = ?
+				AND tracks.grouping %s
+			}, $grouping ? "= ?" : "IS NULL" )
+		);
+		my $bindVars = [ $work, $self->id, $artist ];
+		push @$bindVars, $grouping if $grouping;
+		$sth->execute(@$bindVars);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+		return $count
+}
+
 # Return an array of artists associated with this album.
 sub artists {
 	my $self = shift;

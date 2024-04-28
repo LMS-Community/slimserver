@@ -1931,8 +1931,10 @@ sub _tracks {
 				$albumId =~ s/album_id:// if $albumId;
 				my ($workId) = grep {/work_id:/} @searchTags;
 				$workId =~ s/work_id:// if $workId;
+				my ($grouping) = grep {/grouping:/} @searchTags;
+				$grouping =~ s/grouping:// if $grouping;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, track_count => scalar @$items} ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, grouping => $grouping, track_count => scalar @$items} ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
