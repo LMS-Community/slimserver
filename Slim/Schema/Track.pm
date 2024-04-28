@@ -91,6 +91,23 @@ sub work {
 	return shift->work;
 }
 
+sub workid {
+	my $self = shift;
+
+	return $self->get_column('work');
+}
+
+sub worktitle {
+	my $self = shift;
+
+	my $names = Slim::Schema->dbh->selectall_arrayref('SELECT title FROM works WHERE id = ?', {}, $self->workid);
+
+	if (ref $names && scalar ref $names) {
+		utf8::decode($names->[0][0]);
+		return $names->[0][0];
+	}
+}
+
 sub contributors {
 	my $self = shift;
 

@@ -59,6 +59,7 @@ my @allAttributes = (qw(
 
 	work
 	grouping
+	subtitle
 ));
 
 {
