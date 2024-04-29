@@ -743,44 +743,70 @@ sub albumsQuery {
 
 		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
-			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
+			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
+			if ( defined $work ) {
+				my @roles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
+				$contributorSql = sprintf( qq{
+					WITH temp AS (
+						SELECT
+							CASE
+								WHEN contributor_track.role = 1 THEN 'ARTIST'
+								WHEN contributor_track.role = 3 THEN 'CONDUCTOR'
+								WHEN contributor_track.role = 4 THEN 'BAND'
+							END AS role,
+							GROUP_CONCAT(DISTINCT contributors.name) AS name,
+							GROUP_CONCAT(DISTINCT contributors.id) AS id
+						FROM tracks
+						JOIN contributor_track ON tracks.id = contributor_track.track
+						JOIN contributors ON contributors.id = contributor_track.contributor
+						WHERE tracks.album = :album AND tracks.work = :work AND contributor_track.role IN (%s)
+							AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
+						GROUP BY contributor_track.role
+						ORDER BY role
+					)
+					SELECT GROUP_CONCAT(DISTINCT name) AS name, GROUP_CONCAT(DISTINCT id) AS id FROM temp
+				},
+				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles));
+			} else {
+				my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 
-			if ($prefs->get('useUnifiedArtistsList')) {
-				# Loop through each pref to see if the user wants to show that contributor role.
-				foreach (Slim::Schema::Contributor->contributorRoles) {
-					if ($prefs->get(lc($_) . 'InArtists')) {
-						push @roles, $_;
+				if ($prefs->get('useUnifiedArtistsList')) {
+					# Loop through each pref to see if the user wants to show that contributor role.
+					foreach (Slim::Schema::Contributor->contributorRoles) {
+						if ($prefs->get(lc($_) . 'InArtists')) {
+							push @roles, $_;
+						}
 					}
 				}
-			}
-
-			$contributorSql = sprintf( qq{
-				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
-				FROM contributor_album
-				JOIN contributors ON contributors.id = contributor_album.contributor
-				WHERE contributor_album.album = ? AND contributor_album.role IN (%s)
-				GROUP BY contributor_album.role
-				ORDER BY contributor_album.role DESC
-			}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
-
-			# when filtering by role, put that role at the head of the list if it wasn't in there yet
-			if ($roleID) {
-				unshift @roles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
-				my %seen;
-				@roles = reverse grep !($seen{$_}++), reverse @roles;
 
 				$contributorSql = sprintf( qq{
-					SELECT GROUP_CONCAT(c.name, ',') AS name, GROUP_CONCAT(c.id, ',') AS id
-					FROM (
-						SELECT contributors.name AS name, contributors.id AS id
-						FROM contributor_album
-							JOIN	contributors ON contributors.id = contributor_album.contributor
-						WHERE contributor_album.album = ? AND contributor_album.role IN (%s)
-						GROUP BY contributors.id
-						ORDER BY contributor_album.role DESC
-					)
-					AS c;
+					SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
+					FROM contributor_album
+					JOIN contributors ON contributors.id = contributor_album.contributor
+					WHERE contributor_album.album = :album AND contributor_album.role IN (%s)
+					GROUP BY contributor_album.role
+					ORDER BY contributor_album.role DESC
 				}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
+
+				# when filtering by role, put that role at the head of the list if it wasn't in there yet
+				if ($roleID) {
+					unshift @roles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
+					my %seen;
+					@roles = reverse grep !($seen{$_}++), reverse @roles;
+
+					$contributorSql = sprintf( qq{
+						SELECT GROUP_CONCAT(c.name, ',') AS name, GROUP_CONCAT(c.id, ',') AS id
+						FROM (
+							SELECT contributors.name AS name, contributors.id AS id
+							FROM contributor_album
+								JOIN	contributors ON contributors.id = contributor_album.contributor
+							WHERE contributor_album.album = :album AND contributor_album.role IN (%s)
+							GROUP BY contributors.id
+							ORDER BY contributor_album.role DESC
+						)
+						AS c;
+					}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
+				}
 			}
 		}
 
@@ -861,39 +887,15 @@ sub albumsQuery {
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
-			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
-			if ( defined $work ) {
-				my @roles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
-				$contributorSql = sprintf( qq{
-					WITH temp AS (
-						SELECT
-							CASE
-								WHEN contributor_track.role = 1 THEN 'ARTIST'
-								WHEN contributor_track.role = 3 THEN 'CONDUCTOR'
-								WHEN contributor_track.role = 4 THEN 'BAND'
-							END AS role,
-							GROUP_CONCAT(DISTINCT contributors.name) AS name,
-							GROUP_CONCAT(DISTINCT contributors.id) AS id
-						FROM tracks
-						JOIN contributor_track ON tracks.id = contributor_track.track
-						JOIN contributors ON contributors.id = contributor_track.contributor
-						WHERE tracks.album = ? AND tracks.work = ? AND contributor_track.role IN (%s) AND tracks.grouping %s
-						GROUP BY contributor_track.role
-						ORDER BY role
-					)
-					SELECT GROUP_CONCAT(DISTINCT name) AS name, GROUP_CONCAT(DISTINCT id) AS id FROM temp
-				},
-				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles),
-				$c->{'tracks.grouping'} ? "= ?" : "IS NULL");
-				$contributorSth = $dbh->prepare_cached($contributorSql);
-			}
 			# want multiple artists?
 			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
 				$contributorSth ||= $dbh->prepare_cached($contributorSql);
-				my $bindVars = [$c->{'albums.id'}];
-				push @$bindVars, $work if $work;
-				push @$bindVars, $c->{'tracks.grouping'} if $work && $c->{'tracks.grouping'};
-				$contributorSth->execute(@$bindVars);
+				$contributorSth->bind_param(":album", $c->{'albums.id'});
+				if ( $work ) {
+					$contributorSth->bind_param(":work", $work);
+					$contributorSth->bind_param(":grouping", $c->{'tracks.grouping'}||undef);
+				}
+				$contributorSth->execute();
 
 				my $contributor = $contributorSth->fetchrow_hashref;
 				$contributorSth->finish;
