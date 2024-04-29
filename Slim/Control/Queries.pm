@@ -865,15 +865,22 @@ sub albumsQuery {
 			if ( defined $work ) {
 				my @roles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
 				$contributorSql = sprintf( qq{
-					WITH temp as (
-					SELECT CASE WHEN contributor_track.role = 1 THEN 'ARTIST' WHEN contributor_track.role = 3 THEN 'CONDUCTOR' WHEN contributor_track.role = 4 THEN 'BAND' END role,
-					GROUP_CONCAT(DISTINCT contributors.name) AS name, GROUP_CONCAT(DISTINCT contributors.id) AS id
-					FROM tracks
-					JOIN contributor_track ON tracks.id = contributor_track.track
-					JOIN contributors ON contributors.id = contributor_track.contributor
-					WHERE tracks.album = ? AND tracks.work = ? AND contributor_track.role IN (%s) AND tracks.grouping %s
-					GROUP BY contributor_track.role
-					ORDER BY role)
+					WITH temp AS (
+						SELECT
+							CASE
+								WHEN contributor_track.role = 1 THEN 'ARTIST'
+								WHEN contributor_track.role = 3 THEN 'CONDUCTOR'
+								WHEN contributor_track.role = 4 THEN 'BAND'
+							END AS role,
+							GROUP_CONCAT(DISTINCT contributors.name) AS name,
+							GROUP_CONCAT(DISTINCT contributors.id) AS id
+						FROM tracks
+						JOIN contributor_track ON tracks.id = contributor_track.track
+						JOIN contributors ON contributors.id = contributor_track.contributor
+						WHERE tracks.album = ? AND tracks.work = ? AND contributor_track.role IN (%s) AND tracks.grouping %s
+						GROUP BY contributor_track.role
+						ORDER BY role
+					)
 					SELECT GROUP_CONCAT(DISTINCT name) AS name, GROUP_CONCAT(DISTINCT id) AS id FROM temp
 				},
 				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles),
