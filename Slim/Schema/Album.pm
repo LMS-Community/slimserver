@@ -262,26 +262,28 @@ sub artistsForRoles {
 sub artistPerformsOnWork {
 	my ($self, $work, $grouping, $artist) = @_;
 
-		my $sth = Slim::Schema->dbh->prepare_cached(
-			qq{
-				SELECT count(*)
-				from albums
-				JOIN tracks ON albums.id = tracks.album
-				JOIN contributor_track ON tracks.id = contributor_track.track
-				WHERE tracks.work = :work
-				AND albums.id = :album
-				AND contributor_track.contributor = :artist
-				AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
-			}
-		);
-		$sth->bind_param(":work", $work);
-		$sth->bind_param(":album", $self->id);
-		$sth->bind_param(":artist", $artist);
-		$sth->bind_param(":grouping", $grouping);
-		$sth->execute();
-		my ($count) = $sth->fetchrow_array;
-		$sth->finish;
-		return $count
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		qq{
+			SELECT count(*)
+			from albums
+			JOIN tracks ON albums.id = tracks.album
+			JOIN contributor_track ON tracks.id = contributor_track.track
+			WHERE tracks.work = :work
+			AND albums.id = :album
+			AND contributor_track.contributor = :artist
+			AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
+		}
+	);
+
+	$sth->bind_param(":work", $work);
+	$sth->bind_param(":album", $self->id);
+	$sth->bind_param(":artist", $artist);
+	$sth->bind_param(":grouping", $grouping);
+	$sth->execute();
+
+	my ($count) = $sth->fetchrow_array;
+	$sth->finish;
+	return $count
 }
 
 # Return an array of artists associated with this album.
