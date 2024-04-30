@@ -246,6 +246,8 @@ sub infoContributors {
 
 				next unless $contributor->isInLibrary($library_id);
 
+				next if $filter->{work_id} && !$album->artistPerformsOnWork($filter->{work_id}, $filter->{grouping}, $contributor->id);
+
 				if ($linkRoles{$role}) {
 					my $id = $contributor->id;
 
