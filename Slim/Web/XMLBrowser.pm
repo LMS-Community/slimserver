@@ -832,7 +832,7 @@ sub handleFeed {
 				} elsif ($hasMetadata eq 'album') {
 					$_->{'showYear'}   = 1 if ($prefs->get('showYear')   && $_->{'year'});
 					$_->{'showArtist'} = 1 if ($prefs->get('showArtist') && $_->{'artist'});
-#$log->error("DK item=" . Data::Dump::dump($_));
+$log->error("DK item=" . Data::Dump::dump($_));
 				}
 			}
 

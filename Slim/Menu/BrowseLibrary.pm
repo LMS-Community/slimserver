@@ -1544,13 +1544,13 @@ $log->error("DK album before=" . Data::Dump::dump($_));
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
-					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
-				}
+#				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
+#					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
+#				}
 
-				if (!$wantMeta) {
-					delete $_->{'artist'};
-				}
+#				if (!$wantMeta) {
+#					delete $_->{'artist'};
+#				}
 
 				$_->{'hasMetadata'}   = 'album';
 
