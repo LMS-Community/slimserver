@@ -1544,10 +1544,14 @@ $log->error("DK album before=" . Data::Dump::dump($_));
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide
 				# the primary artist name in name2.
+
+### Seems wrong: setting name2 just forces the artist name(s) into the list, regardless of the "showAlbums" setting (see HTML/Default/xmlbrowser.html line 417)
 #				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
 #					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 #				}
 
+### This causes the user's artist display preference to not be respected in album lists under artist searches (Slim/Web/XMLBrowser line 834),
+### but maybe you've searched for a track artist & want to see the album artist in the list!
 #				if (!$wantMeta) {
 #					delete $_->{'artist'};
 #				}

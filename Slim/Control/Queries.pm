@@ -282,9 +282,6 @@ sub albumsQuery {
 	my $work	  = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
-#$log->error("DK params=" . Data::Dump::dump($request->{_params}));
-#$log->error("DK sort=" . Data::Dump::dump($sort));
-#$log->error("DK tags=" . Data::Dump::dump($tags));
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
@@ -814,6 +811,7 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
 
+# !!!!!!!!!!!! This is just wrong - it may replace the searchTag artist with the album artist, but leave artist_id as it is!!!!!
 				if ($tags =~ /a/) {
 					# Bug 15313, this used to use $eachitem->artists which
 					# contains a lot of extra logic.
@@ -830,6 +828,7 @@ sub albumsQuery {
 
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 				}
+# !!!!!!!!!!!! So which way to go???? 
 			}
 
 			if ($tags =~ /s/) {
@@ -849,36 +848,30 @@ sub albumsQuery {
 			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
 				$contributorSth ||= $dbh->prepare_cached($contributorSql);
 				$contributorSth->bind_param(":album", $c->{'albums.id'});
-#$log->error("DK album=$c->{'albums.id'}");
-#$log->error("DK work=$work");
-#$log->error("DK grouping=$c->{'tracks.grouping'}");
 
 				if ( $work ) {
 					$contributorSth->bind_param(":work", $work);
 					$contributorSth->bind_param(":grouping", $c->{'tracks.grouping'}||undef);
 				}
 				my $contributorHash = $dbh->selectall_hashref($contributorSth,'role');
-#$log->error("DK test=" . Data::Dump::dump($contributorHash));
 				my @displayRoles = $work ? ('ARTIST','BAND','CONDUCTOR') : split(/[,\s]+/,$prefs->get('showArtist'));
+
+				# if the user wants ARTIST, but all we have is ALBUMARTIST or TRACKARTIST, try to be helpful...
+				if ( grep(/ARTIST/, @displayRoles) && !exists($contributorHash->{'1'}) && !$work) {
+					if ( exists($contributorHash->{'5'}) ) {
+						unshift(@displayRoles,'ALBUMARTIST') if !grep(/ALBUMARTIST/, @displayRoles)
+					} else {
+						unshift(@displayRoles,'TRACKARTIST') if !grep(/TRACKARTIST/, @displayRoles);
+					}
+				}
 				my @artists;
 				my @artistIds;
 				foreach my $role ( map { Slim::Schema::Contributor->typeToRole($_) } @displayRoles ) {
-#					my $i = Slim::Schema::Contributor->typeToRole($role);
-#$log->error("DK role=" . Data::Dump::dump($role));
-#$log->error("DK name=" . Data::Dump::dump($contributorHash->{$role}->{name}));
 					if ( $contributorHash->{$role}->{name} && !grep(/$contributorHash->{$role}->{name}/, @artists) ) {
 						push @artists, $contributorHash->{$role}->{name};
 						push @artistIds, $contributorHash->{$role}->{id};
 					}
 				}
-#$log->error("DK artists=" . Data::Dump::dump(join(',',@artists)));
-#$log->error("DK artistIds=" . Data::Dump::dump(join(',',@artistIds)));
-
-#				$contributorSth->execute();
-
-#				my $contributor = $contributorSth->fetchrow_hashref;
-#				$contributorSth->finish;
-#$log->error("DK contributor=" . Data::Dump::dump($contributor));
 
 				# XXX - what if the artist name itself contains ','?
 				if ( $tags =~ /aa/ && scalar @artists ) {
