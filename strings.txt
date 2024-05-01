@@ -6106,14 +6106,14 @@ SETUP_SHOWYEAR_DESC
 SETUP_SHOWARTIST
 	CS	Zobrazení interpreta s alby
 	DA	Vis kunstner ved album
-	DE	Interpreten mit Alben anzeigen
-	EN	Show Artist with Albums
-	ES	Mostrar artista con álbumes
+	DE	Interpreten-Rolle mit Alben anzeigen
+	EN	Show Artist roles with Albums
+	ES	Mostrar roles de artista con álbumes
 	FI	Näytä artisti levyn kanssa
-	FR	Affichage de l'artiste avec l'album
+	FR	Affichage de rôle de l'artiste avec l'album
 	HE	הצגת מבצע עם אלבומים
 	IT	Visualizza artista assieme agli album
-	NL	Artiest bij albums tonen
+	NL	Artiestenrollen bij albums tonen
 	NO	Vis artist ved album
 	PL	Pokazuj wykonawców z albumami
 	RU	Показать исполнителя с альбомами

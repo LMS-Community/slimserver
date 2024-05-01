@@ -1442,6 +1442,7 @@ sub _albumsOrReleases {
 
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
+$log->error("DK pt=" . Data::Dump::dump($pt));
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
@@ -1469,10 +1470,14 @@ sub _albums {
 		} @{Slim::Schema::Album->releaseTypes});
 	}
 
+$log->error("DK \@searchTags=" . Data::Dump::dump(@searchTags));
 	my @artistIds = grep /artist_id:/, @searchTags;
+$log->error("DK \@artistIds=" . Data::Dump::dump(@artistIds));
 	my $artistId;
 	if (scalar @artistIds) {
 		$artistIds[0] =~ /artist_id:(\d+)/;
+$log->error("DK \$artistIds[0]=$artistIds[0]");
+$log->error("DK \$1=$1");
 		$artistId = $1;
 	}
 
@@ -1511,6 +1516,7 @@ sub _albums {
 			$remote_library ||= $args->{'remote_library'};
 
 			foreach (@$items) {
+$log->error("DK album before=" . Data::Dump::dump($_));
 				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
 				if ( $_->{'work_id'} ) {
 					$_->{'name'} .= $_->{'work_name'} . ' (';
@@ -1532,7 +1538,7 @@ sub _albums {
 				}
 				else {
 					$_->{'artists'}    = [ $_->{'artist'} ];
-					$_->{'artist_ids'} = [ $_->{'id'} ];
+					$_->{'artist_ids'} = [ $_->{'artist_id'} ];
 				}
 
 				# If an artist was not used in the selection criteria or if one was
@@ -1552,6 +1558,7 @@ sub _albums {
 					$_->{'image'} = _proxiedImageUrl($_, $remote_library);
 					delete $_->{'artwork_track_id'};
 				}
+$log->error("DK album after=" . Data::Dump::dump($_));
 			}
 
 			my $extra;
