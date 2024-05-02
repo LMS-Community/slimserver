@@ -854,6 +854,8 @@ sub albumsQuery {
 					$contributorSth->bind_param(":grouping", $c->{'tracks.grouping'}||undef);
 				}
 				my $contributorHash = $dbh->selectall_hashref($contributorSth,'role');
+
+		###### add default, move out of loop
 				my @displayRoles = $work ? ('ARTIST','BAND','CONDUCTOR') : split(/[,\s]+/,$prefs->get('showArtist'));
 
 				# if the user wants ARTIST, but all we have is ALBUMARTIST or TRACKARTIST, try to be helpful...
@@ -867,6 +869,7 @@ sub albumsQuery {
 				my @artists;
 				my @artistIds;
 				foreach my $role ( map { Slim::Schema::Contributor->typeToRole($_) } @displayRoles ) {
+		###### need a split here (or change the query to return each id and name separately????
 					if ( $contributorHash->{$role}->{name} && !grep(/$contributorHash->{$role}->{name}/, @artists) ) {
 						push @artists, $contributorHash->{$role}->{name};
 						push @artistIds, $contributorHash->{$role}->{id};
