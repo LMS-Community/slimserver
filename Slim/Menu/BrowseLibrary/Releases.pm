@@ -23,6 +23,9 @@ sub _releases {
 	my $menuMode   = $args->{'params'}->{'menu_mode'};
 	my $menuRoles  = $args->{'params'}->{'menu_roles'};
 
+	my $ptNoSearchTags = Storable::dclone($pt);
+	delete $ptNoSearchTags->{'searchTags'};
+
 	# map menuRoles to name for readability
 	$menuRoles = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $menuRoles || ''));
 
@@ -158,13 +161,13 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
-					: [ { searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
+					? [ { %$ptNoSearchTags, searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
+					: [ { %$ptNoSearchTags, searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
-		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSER}) {
@@ -180,12 +183,12 @@ sub _releases {
 	}
 
 	if (my $albumIds = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
-		push @items, _createItem($name || ucfirst($role), [ { searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
+		push @items, _createItem($name || ucfirst($role), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# Add item for Classical Works if the artist has any.
@@ -229,7 +232,7 @@ sub _releases {
 			type        => 'playlist',
 			playlist    => \&_tracks,
 			url         => \&_albums,
-			passthrough => [{ searchTags => $pt->{'searchTags'} || [] }],
+			passthrough => [ $pt ],
 		};
 
 		my $result = $quantity == 1 ? {

@@ -1545,11 +1545,9 @@ sub _albums {
 #					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 #				}
 
-### This causes the user's artist display preference to not be respected in album lists under artist searches (Slim/Web/XMLBrowser line 834),
-### but maybe you've searched for a track artist & want to see the album artist in the list!
-#				if (!$wantMeta) {
-#					delete $_->{'artist'};
-#				}
+				if (!$wantMeta) {
+					delete $_->{'artist'};
+				}
 
 				$_->{'hasMetadata'}   = 'album';
 
