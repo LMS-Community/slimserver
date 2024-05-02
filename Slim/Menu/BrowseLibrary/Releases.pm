@@ -16,7 +16,6 @@ my $prefs = preferences('server');
 sub _releases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my $wantMeta   = $pt->{'wantMetadata'};
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};

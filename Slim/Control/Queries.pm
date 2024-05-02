@@ -746,21 +746,20 @@ sub albumsQuery {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
 			if ( defined $work ) {
 				$contributorSql = qq{
-					SELECT contributor_track.role AS role, GROUP_CONCAT(DISTINCT contributors.name) AS name, GROUP_CONCAT(DISTINCT contributors.id) AS id
+					SELECT contributor_track.role AS role, contributors.name AS name, contributors.id AS id
 					FROM tracks
 					JOIN contributor_track ON tracks.id = contributor_track.track
 					JOIN contributors ON contributors.id = contributor_track.contributor
 					WHERE tracks.album = :album AND tracks.work = :work
 						AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
-					GROUP BY contributor_track.role
+					GROUP BY contributor_track.role, contributors.name, contributors.id
 				};
 			} else {
 				$contributorSql = qq{
-					SELECT contributor_album.role AS role, GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
+					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id
 					FROM contributor_album
 					JOIN contributors ON contributors.id = contributor_album.contributor
 					WHERE contributor_album.album = :album
-					GROUP BY contributor_album.role
 				};
 			}
 		}
@@ -853,9 +852,14 @@ sub albumsQuery {
 					$contributorSth->bind_param(":work", $work);
 					$contributorSth->bind_param(":grouping", $c->{'tracks.grouping'}||undef);
 				}
-				my $contributorHash = $dbh->selectall_hashref($contributorSth,'role');
+				my $contributorArray = $dbh->selectall_arrayref($contributorSth,{ Slice => {} });
 
-		###### add default, move out of loop
+				my $contributorHash = {};
+				foreach (@$contributorArray) {
+					push @{$contributorHash->{$_->{'role'}}->{'id'}}, $_->{'id'};
+					push @{$contributorHash->{$_->{'role'}}->{'name'}}, $_->{'name'};
+				}
+
 				my @displayRoles = $work ? ('ARTIST','BAND','CONDUCTOR') : split(/[,\s]+/,$prefs->get('showArtist'));
 
 				# if the user wants ARTIST, but all we have is ALBUMARTIST or TRACKARTIST, try to be helpful...
@@ -869,10 +873,11 @@ sub albumsQuery {
 				my @artists;
 				my @artistIds;
 				foreach my $role ( map { Slim::Schema::Contributor->typeToRole($_) } @displayRoles ) {
-		###### need a split here (or change the query to return each id and name separately????
-					if ( $contributorHash->{$role}->{name} && !grep(/$contributorHash->{$role}->{name}/, @artists) ) {
-						push @artists, $contributorHash->{$role}->{name};
-						push @artistIds, $contributorHash->{$role}->{id};
+					foreach my $name ( @{$contributorHash->{$role}->{'name'}} ) {
+						push @artists, $name unless grep(/$name/, @artists);
+					}
+					foreach my $id ( @{$contributorHash->{$role}->{'id'}} ) {
+						push @artistIds, $id unless grep(/$id/, @artistIds);
 					}
 				}
 
