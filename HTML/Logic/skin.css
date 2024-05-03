@@ -1,0 +1,43 @@
+html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
+	font-size: 11px;
+}
+
+#squeezeboxLogo {
+	left: 20px;
+}
+
+#playerChooser {
+	right: 15px;
+}
+
+div#background {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	z-index: -1;
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
+	border-radius: 15px;
+}
+
+#ctrlCurrentTitle {
+	height: 30px;
+}
+
+.inner_top {
+	border-radius: 12px 12px 0 0;
+}
+
+.inner_bottom {
+	border-radius: 0 0 12px 12px;
+}
+
+#btn_help_image, #btn_settings_image {
+	background-image: url('html/images/btn_help.gif');
+	mask-image: none;
+	background-color: transparent;
+}
+
+#btn_settings_image {
+	background-image: url('html/images/btn_settings.gif');
+}
+

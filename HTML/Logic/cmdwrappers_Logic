@@ -1,0 +1,3 @@
+[%- FILTER null %]
+	[% skinPadding = 5 %]
+[% END -%]

@@ -20,7 +20,7 @@ Wizard = {
 			region: 'center',
 			layout: 'card',
 			bodyBorder: false,
-			margins: '0 15',
+			margins: '0 [% skinPadding * 3 %]',
 			cls: 'maincontent',
 			defaults: {
 				border: false
@@ -197,7 +197,7 @@ Wizard = {
 					region: 'north',
 					contentEl: 'header',
 					border: false,
-					margins: '5 5 0 5',
+					margins: '[% skinPadding %] [% skinPadding %] 0 [% skinPadding %]',
 					height: 40
 				},
 
@@ -211,7 +211,7 @@ Wizard = {
 							contentEl: 'inner_header',
 							border: false,
 							height: 16,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						},
 						this.wizard,
 						{
@@ -219,7 +219,7 @@ Wizard = {
 							contentEl: 'inner_footer',
 							border: false,
 							height: 43,
-							margins: '0 15'
+							margins: '0 [% skinPadding %]'
 						}
 					]
 				},
@@ -228,7 +228,7 @@ Wizard = {
 					region: 'south',
 					contentEl: 'footer',
 					border: false,
-					margins: '0 5 5 5',
+					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
 					height: 16
 				}
 			]
