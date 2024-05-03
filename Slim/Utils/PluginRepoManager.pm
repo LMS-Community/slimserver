@@ -1,4 +1,4 @@
-package Slim::Plugin::Extensions::Plugin;
+package Slim::Utils::PluginRepoManager;
 
 # Repository XML format:
 #
@@ -80,8 +80,6 @@ package Slim::Plugin::Extensions::Plugin;
 
 use strict;
 
-use base qw(Slim::Plugin::Base);
-
 use XML::Simple;
 
 use Slim::Control::Jive;
@@ -89,40 +87,10 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-if ( main::WEBUI ) {
-	require Slim::Plugin::Extensions::Settings;
-}
-
-my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.extensions',
-	'defaultLevel' => 'ERROR',
-	'description'  => 'PLUGIN_EXTENSIONS',
-});
-
+my $log = logger('server.plugins');
 my $prefs = preferences('plugin.extensions');
 
 $prefs->init({ repos => [], plugin => {}, auto => 0, useUnsupported => 0 });
-
-$prefs->migrate(2,
-				sub {
-					# find any plugins already installed via previous version of extension downloader and save as selected
-					# this should avoid trying to remove existing plugins when this version is first loaded
-					for my $plugin (Slim::Utils::PluginManager->installedPlugins) {
-						if (Slim::Utils::PluginManager->allPlugins->{$plugin}->{'basedir'} =~ /InstalledPlugins/) {
-							$prefs->set($plugin, 1);
-						}
-					}
-					1;
-				});
-
-$prefs->migrate(3,
-				sub {
-					# Bug: 14690 - remove any old format plugin pref (used temporarily during beta)
-					if (ref $prefs->get('plugin') ne 'HASH') {
-						$prefs->set('plugin', {});
-					}
-					1;
-				});
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
@@ -133,10 +101,8 @@ my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/un
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
-sub initPlugin {
+sub init {
 	my $class = shift;
-
-	$class->SUPER::initPlugin;
 
 	initUnsupportedRepo();
 
@@ -144,38 +110,33 @@ sub initPlugin {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
 	}
 
-	if ( main::WEBUI ) {
+	for my $repo ( @{$prefs->get('repos')} ) {
+		$class->addRepo({ repo => $repo });
+	}
 
-		for my $repo ( @{$prefs->get('repos')} ) {
-			$class->addRepo({ repo => $repo });
+	# clean out plugin entries for plugins which are manually installed
+	# this can happen if a developer moves an automatically installed plugin to a manually installed location
+	my $installPlugins = $prefs->get('plugin');
+	my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
+
+	for my $plugin (keys %$installPlugins) {
+
+		if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
+
+			$log->warn("removing $plugin from install list as it is already manually installed");
+
+			delete $installPlugins->{ $plugin };
+
+			$prefs->set('plugin', $installPlugins);
 		}
 
-		Slim::Plugin::Extensions::Settings->new;
+		# a plugin could have failed to download (Thanks Google for taking down googlecode.com!...) - let's not re-try to install it
+		elsif ( !$loadedPlugins->{ $plugin } ) {
+			$log->warn("$plugin failed to download or install in some other way. Please try again.");
 
-		# clean out plugin entries for plugins which are manually installed
-		# this can happen if a developer moves an automatically installed plugin to a manually installed location
-		my $installPlugins = $prefs->get('plugin');
-		my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
+			delete $installPlugins->{ $plugin };
 
-		for my $plugin (keys %$installPlugins) {
-
-			if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
-
-				$log->warn("removing $plugin from install list as it is already manually installed");
-
-				delete $installPlugins->{ $plugin };
-
-				$prefs->set('plugin', $installPlugins);
-			}
-
-			# a plugin could have failed to download (Thanks Google for taking down googlecode.com!...) - let's not re-try to install it
-			elsif ( !$loadedPlugins->{ $plugin } ) {
-				$log->warn("$plugin failed to download or install in some other way. Please try again.");
-
-				delete $installPlugins->{ $plugin };
-
-				$prefs->set('plugin', $installPlugins);
-			}
+			$prefs->set('plugin', $installPlugins);
 		}
 	}
 
@@ -588,6 +549,7 @@ sub _parseXML {
 
 	$args->{'cb'}->( @{$args->{'pt'}}, \@res, $info );
 }
+
 
 
 1;

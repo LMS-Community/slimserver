@@ -235,6 +235,7 @@ use Slim::Buttons::Home;
 use Slim::Buttons::Power;
 use Slim::Buttons::ScreenSaver;
 use Slim::Utils::PluginManager;
+use Slim::Utils::PluginRepoManager;
 use Slim::Buttons::Synchronize;
 use Slim::Buttons::Input::Text;
 use Slim::Buttons::Input::Time;
@@ -488,6 +489,7 @@ sub init {
 	# Find plugins and process any new ones now so we can load their strings
 	main::INFOLOG && $log->info("Server PluginManager init...");
 	Slim::Utils::PluginManager->init();
+	Slim::Utils::PluginRepoManager->init();
 
 	main::INFOLOG && $log->info("Server strings init...");
 	Slim::Utils::Strings::init();
