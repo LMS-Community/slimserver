@@ -282,6 +282,7 @@ sub albumsQuery {
 	my $work	  = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
+	my $allWorks      = $request->getParam('all_works');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
@@ -539,22 +540,25 @@ sub albumsQuery {
 		}
 	}
 
-	if (defined $work) {
+	if (defined $work || defined $allWorks) {
 		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
 		$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
-		push @{$w}, 'tracks.work = ?';
-		push @{$p}, $work;
 		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
 		$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
-		if ( defined $composerID ) {
-			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
-			push @{$p}, $composerID;
-		}
 		$c->{'tracks.work'} = 1;
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
 		$order_by .= ", tracks.tracknum";
+	}
+
+	if (defined $work) {
+		push @{$w}, 'tracks.work = ?';
+		push @{$p}, $work;
+		if ( defined $composerID ) {
+			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
+			push @{$p}, $composerID;
+		}
 	}
 
 	if ( $tags =~ /l/ ) {
@@ -634,7 +638,7 @@ sub albumsQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	$sql .= $work ? "GROUP BY tracks.grouping, albums.id " : "GROUP BY albums.id ";
+	$sql .= $work || $allWorks ? "GROUP BY tracks.grouping, tracks.work, albums.id " : "GROUP BY albums.id ";
 
 	if ($page_key && $tags =~ /Z/) {
 		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " ORDER BY $order_by", $p));
@@ -824,7 +828,7 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'grouping', $c->{'tracks.grouping'}||"");
 
-			my $favoritesUrl = $work
+			my $favoritesUrl = $work || $allWorks
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.grouping=%s',
 					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.grouping'}))
@@ -832,7 +836,7 @@ sub albumsQuery {
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
 			my $favoritesTitle = $c->{'albums.title'};
-			if ( $work ) {
+			if ( $work || $allWorks ) {
 				$favoritesTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
 				$favoritesTitle .= $c->{'works.title'} . ' (';
 				$favoritesTitle .= "$c->{'tracks.grouping'} " if $c->{'tracks.grouping'};
