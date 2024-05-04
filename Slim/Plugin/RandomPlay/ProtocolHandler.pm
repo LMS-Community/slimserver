@@ -14,8 +14,10 @@ package Slim::Plugin::RandomPlay::ProtocolHandler;
 use strict;
 use URI;
 use URI::QueryParam;
+use Slim::Utils::Log;
 
 use Slim::Plugin::RandomPlay::Plugin;
+my $log   = logger('plugin.randomplay');
 
 sub overridePlayback {
 	my ( $class, $client, $url ) = @_;
@@ -61,8 +63,7 @@ sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
 	return unless $client && $url;
-
-	my ($type) = $url =~ m{randomplay://(track|contributor|album|year)s?$};
+	my ($type) = $url =~ m{randomplay://(track|contributor|album|year|work)s?$};
 	my $title = 'PLUGIN_RANDOMPLAY';
 
 	if ($type) {
