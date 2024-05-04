@@ -14,10 +14,8 @@ package Slim::Plugin::RandomPlay::ProtocolHandler;
 use strict;
 use URI;
 use URI::QueryParam;
-use Slim::Utils::Log;
 
 use Slim::Plugin::RandomPlay::Plugin;
-my $log   = logger('plugin.randomplay');
 
 sub overridePlayback {
 	my ( $class, $client, $url ) = @_;
