@@ -416,7 +416,7 @@ sub infoDuration {
 
 	my $item;
 
-	if ( my $duration = $album->duration($filter->{work_id}) ) {
+	if ( my $duration = $album->duration($filter->{work_id}, $filter->{grouping}) ) {
 		$item = {
 			type  => 'text',
 			label => 'ALBUMLENGTH',
