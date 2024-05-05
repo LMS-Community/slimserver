@@ -651,7 +651,7 @@ sub open {
 				# bug 16003 - don't try to update the persistent DB while a scan is running
 				main::DEBUGLOG && $log->is_debug && $log->debug("Don't update the persistent DB - it's locked by the scanner.");
 			}
-			elsif ( my $persistent = $track->retrievePersistent ) {
+			elsif ( (my $persistent = $track->retrievePersistent) && !$self->seekdata ) {
 				$persistent->set( playcount  => ( $persistent->playcount || 0 ) + 1 );
 				$persistent->set( lastplayed => time() );
 				$persistent->update;
