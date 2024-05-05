@@ -249,6 +249,7 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
+$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -4451,11 +4452,15 @@ sub yearsQuery {
 	my $year          = $request->getParam('year');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
+$log->error("DK year=" . Data::Dump::dump($year));
+$log->error("DK libraryID=" . Data::Dump::dump($libraryID));
+$log->error("DK hasAlbums=" . Data::Dump::dump($hasAlbums));
 
 	# get them all by default
 	my $where = {};
 
 	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
+#	my ($key, $table) = ($hasAlbums || $libraryID) ? ('tracks.year', 'tracks') : ('id', 'years');
 
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];
