@@ -135,7 +135,7 @@ sub getIdList {
 		my %categories = (
 			album       => ['albums', 0, 999_999, 'tags:t'],
 			contributor => ['artists', 0, 999_999],
-			work        => ['albums', 0, 999_999, 'all_works:1'],
+			work        => ['albums', 0, 999_999, 'work_id:-1'],
 			track       => []
 		);
 		$categories{year}    = $categories{track};
