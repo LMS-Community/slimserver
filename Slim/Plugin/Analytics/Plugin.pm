@@ -5,6 +5,7 @@ use strict;
 use Config;
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
+use List::Util qw(min);
 
 use base qw(Slim::Plugin::Base);
 use Slim::Utils::Log;
@@ -12,12 +13,14 @@ use Slim::Utils::Prefs;
 
 use constant REPORT_URL => 'https://stats.lms-community.org/api/instance/%s/';
 use constant REPORT_DELAY => 240;
+use constant REPORT_BACKOFF_DELAY => 1800;
 use constant REPORT_INTERVAL => 86400 * 7;
 
 my $serverPrefs = preferences('server');
 
 my $log;
 my $id;
+my $backoff = 1;
 
 # delay init, as we want to be sure we're enabled before trying to read the display name
 sub postinitPlugin {
@@ -76,12 +79,12 @@ sub _report {
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			main::INFOLOG && $log->is_info && $log->info("Successfully reported analytics");
-			_scheduleReport();
+			_scheduleReport($data->{players} == 0 || $data->{tracks} == 0);
 		},
 		sub {
 			my ($http, $error) = @_;
 			$log->error("Failed to report analytics: $error");
-			_scheduleReport();
+			_scheduleReport(1);
 		},
 		{
 			timeout  => 5,
@@ -95,7 +98,17 @@ sub _report {
 }
 
 sub _scheduleReport {
-	Slim::Utils::Timers::setTimer($id, time() + REPORT_INTERVAL, \&_report);
+	my ($failed) = @_;
+	my $next = REPORT_INTERVAL;
+
+	if ($failed) {
+		$next = min(REPORT_INTERVAL, $backoff * REPORT_BACKOFF_DELAY);
+		$backoff *= 2;
+	}
+
+	main::INFOLOG && $log->is_info && $log->info("Next analytics update in $next seconds.");
+
+	Slim::Utils::Timers::setTimer($id, time() + $next, \&_report);
 }
 
 1;
