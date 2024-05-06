@@ -403,11 +403,13 @@ sub rescan {
 
 sub duration {
 	my $self = shift;
+	my $workId = shift;
+	my $grouping = shift;
 
 	my $secs = 0;
 	foreach ($self->tracks) {
 		return if !defined $_->secs;
-		$secs += $_->secs;
+		$secs += $_->secs if !$workId || $_->get_column('work') == $workId && $_->get_column('grouping') eq $grouping;
 	}
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60);
 }
