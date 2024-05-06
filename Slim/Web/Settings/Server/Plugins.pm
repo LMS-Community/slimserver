@@ -18,6 +18,8 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::PluginRepoManager;
 use Slim::Utils::OSDetect;
 
+Slim::Utils::PluginRepoManager->init();
+
 use constant MAX_DOWNLOAD_WAIT => 120;
 
 my $log = logger('server.plugins');
