@@ -2,6 +2,7 @@
 <extension>
   <name>PLUGIN_SONGSCANNER</name>
   <creator>Kevin Deane-Freeman, Lyrion Community</creator>
+  <category>misc</category>
   <defaultState>enabled</defaultState>
   <description>PLUGIN_SONGSCANNER_DESC</description>
   <id>e490c2fe-1d5b-4ecc-ba90-d15747a82589</id>

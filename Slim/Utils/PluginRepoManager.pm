@@ -39,6 +39,7 @@ package Slim::Utils::PluginRepoManager;
 #   <changes lang="EN">Changelog</changes>
 #   <changes lang="DE">Änderungen</changes>
 #   <creator>Name of Author</creator>
+#   <category>musicservices|radio|hardware|skin|information|playlists|scanning|tools|misc</category>
 #   <email>email of Author</email>
 #   <url>url for zip file</url>
 # </applet>
@@ -67,6 +68,7 @@ package Slim::Utils::PluginRepoManager;
 # changes    - localised change log of the applet or plugin (optional)
 # link       - (plugin only) url for web page describing the plugin in more detail
 # creator    - identify of author(s)
+# category   - a category under which to group the plugin
 # email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
@@ -283,6 +285,8 @@ sub getCurrentPlugins {
 			desc    => Slim::Utils::Strings::getString($entry->{'description'}),
 			error   => Slim::Utils::PluginManager->getErrorString($plugin),
 			creator => $entry->{'creator'},
+			category=> $entry->{'category'},
+			icon    => $entry->{'icon'},
 			email   => $entry->{'email'},
 			homepage=> $entry->{'homepageURL'},
 			version => $entry->{'version'},
@@ -512,6 +516,8 @@ sub _parseXML {
 
 				$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 				$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
+				$new->{'category'}= $entry->{'category'} if $entry->{'category'};
+				$new->{'icon'}    = $entry->{'icon'}    if $entry->{'icon'};
 				$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
 				$new->{'path'}    = $entry->{'path'}    if $entry->{'path'};
 

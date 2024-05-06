@@ -6,6 +6,8 @@
 	<version>1.0</version>
 	<description>PLUGIN_MY_APPS_MODULE_NAME</description>
 	<creator>Lyrion Community</creator>
+	<category>misc</category>
+
 	<defaultState>enabled</defaultState>
 	<icon>plugins/MyApps/html/images/icon.png</icon>
 	<type>2</type>

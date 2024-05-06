@@ -8,6 +8,7 @@ package Slim::Web::Settings::Server::Plugins;
 
 use strict;
 
+use JSON::XS::VersionOneAndTwo;
 use Digest::MD5;
 
 use base qw(Slim::Web::Settings);
@@ -21,6 +22,7 @@ use Slim::Utils::OSDetect;
 Slim::Utils::PluginRepoManager->init();
 
 use constant MAX_DOWNLOAD_WAIT => 120;
+use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');
 my $prefs = preferences('plugin.extensions');
@@ -320,6 +322,17 @@ sub _addInfo {
 
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
+	my $searchData = {};
+	my $categories = {};
+
+	prepareDetails($active, $searchData, $categories, 1);
+	prepareDetails($inactive, $searchData, $categories);
+	foreach (@results) {
+		prepareDetails($_->{entries}, $searchData, $categories);
+	}
+
+	$params->{'searchData'} = to_json($searchData);
+	$params->{'categories'} = to_json([ keys %$categories ]);
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
@@ -348,6 +361,30 @@ sub _addInfo {
 	}
 
 	return $class->SUPER::handler($client, $params);
+}
+
+sub prepareDetails {
+	my ($data, $searchData, $categories, $installed) = @_;
+
+	# foreach (@$active, @$inactive, map { @{$_->{entries}} } @results) {
+	foreach (@$data) {
+		$categories->{$_->{category}}++;
+		my $icon = $_->{icon};
+
+		if (!$installed && $icon && $icon !~ /^http/ && $icon =~ m|(plugins/(.*?)/html/.*)|) {
+			$_->{icon} = sprintf(GH_IMAGE_URL, $2, $1);
+		}
+		elsif (!$icon) {
+			$_->{icon} = 'html/images/' . ($_->{category} || 'misc') . '.svg';
+		}
+
+		if (!$searchData->{$_->{name}}) {
+			$searchData->{$_->{name}} = {
+				category => $_->{category} || '',
+				content  => $_->{name} . ' ' . $_->{creator} . ' ' . $_->{desc} . ' ' . $_->{email} . ' ' . $_->{title},
+			};
+		}
+	}
 }
 
 1;

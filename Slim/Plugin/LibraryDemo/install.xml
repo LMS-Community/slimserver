@@ -7,10 +7,11 @@
 	<version>1.0</version>
 	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 	<defaultState>disabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
 		<minVersion>7.9.0</minVersion>
-        <maxVersion>*</maxVersion>
+		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

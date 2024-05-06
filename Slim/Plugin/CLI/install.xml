@@ -10,6 +10,7 @@
 
 	<defaultState>enabled</defaultState>
 	<enforce>1</enforce>
+	<category>tools</category>
 
 	<optionsURL>plugins/CLI/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->

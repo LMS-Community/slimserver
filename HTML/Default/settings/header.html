@@ -41,7 +41,7 @@
 					'<td class="x-btn-ml"></td><td class="x-btn-mc"><button type="{0}" style="padding:0" class="x-btn-text {2}"></button></td><td class="x-btn-mr"></td>',
 					'</tr></tbody></table>'
 				);
-				SqueezeJS.UI.buttonTemplate.compile();	
+				SqueezeJS.UI.buttonTemplate.compile();
 
 				SqueezeJS.UI.splitButtonTemplate = new Ext.Template(
 					'<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
@@ -64,7 +64,7 @@
 							}[% loop.last ? '' : ',' %]
 						[% END %]
 					]);
-	
+
 					// remember the last loaded page - to be used when the player tab is selected next time
 					try {
 						parent.player = '[% playerURI %]';
@@ -72,14 +72,14 @@
 						parent.SqueezeJS.setCookie('Squeezebox-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
 					}
 					catch(e) {}
-					playerid = '[% playerid | uri %]';  
-	
+					playerid = '[% playerid | uri %]';
+
 				[% END %]
 
 				[% IF pageLink.size > 0 -%]
 					Settings.Page.initSettingsList([
 						[%- FOREACH link IN orderedLinks %]
-							{ 
+							{
 								id: "[% link %]",
 								current: [% page == link ? 'true' : 'false' %],
 								url: "[% needsClient ? playersetup.$link : additionalLinks.setup.$link %]",
@@ -131,7 +131,7 @@
 
 	<body class="[% bodyClass || "settings" %]">
 
-		[% IF needsClient || (pageLink.size > 0 && !noSettingsList) %]
+		[% IF needsClient || (pageLink.size > 0 && !noSettingsList) || customButtonBar %]
 		<div class="buttonbar" id="toolbar">
 			<table>
 				<tr>
@@ -141,6 +141,7 @@
 					[%- IF !noSettingsList %]
 						<td><span id="settingsSelector"></span></td>
 					[% END %]
+					[%- IF customButtonBar; customButtonBar; END %]
 				<tr>
 			</table>
 		</div>
