@@ -249,7 +249,7 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-$log->error("DK request=" . Data::Dump::dump($request));
+#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -4290,6 +4290,7 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
+$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4459,8 +4460,8 @@ $log->error("DK hasAlbums=" . Data::Dump::dump($hasAlbums));
 	# get them all by default
 	my $where = {};
 
-	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
-#	my ($key, $table) = ($hasAlbums || $libraryID) ? ('tracks.year', 'tracks') : ('id', 'years');
+#	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
+	my ($key, $table) = ($hasAlbums || $libraryID) ? ('tracks.year', 'tracks') : ('id', 'years');
 
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];
@@ -4472,7 +4473,7 @@ $log->error("DK hasAlbums=" . Data::Dump::dump($hasAlbums));
 	}
 
 	if (defined $libraryID) {
-		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+#		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryID;

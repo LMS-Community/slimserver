@@ -1555,6 +1555,10 @@ sub _albums {
 			}
 
 			my $extra;
+$log->error("DK searchTags=" . Data::Dump::dump(@searchTags));
+$log->error("DK grep=" . Data::Dump::dump(scalar grep {/^year:/} @searchTags));
+			my $skipIfSingleton = (scalar grep {/^year:/} @searchTags) ? 0 : 1;
+$log->error("DK skipIfSingleton=" . Data::Dump::dump($skipIfSingleton));
 			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
 
@@ -1606,7 +1610,7 @@ sub _albums {
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
-					skipIfSingleton => 1,
+					skipIfSingleton => $skipIfSingleton,
 				};
 			}
 			elsif ($search) {
@@ -1649,7 +1653,7 @@ sub _albums {
 					url         => \&_tracks,
 					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
-					skipIfSingleton => 1
+					skipIfSingleton => $skipIfSingleton
 				} ];
 			}
 
@@ -1709,6 +1713,7 @@ sub _albums {
 					orderByList => $result->{orderByList},
 				}, 86400);
 			}
+#$log->error("DK extra=" . Data::Dump::dump($extra));
 
 			return $result, $extra;
 		},
