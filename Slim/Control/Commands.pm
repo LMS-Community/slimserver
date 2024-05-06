@@ -1846,7 +1846,6 @@ sub playlistZapCommand {
 
 sub playlistcontrolCommand {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	main::INFOLOG && $log->info("Begin Function");
 
@@ -3212,7 +3211,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
 	my $cmd    = shift;
-$log->error("DK what=" . Data::Dump::dump($what));
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
@@ -3439,7 +3437,6 @@ $log->error("DK what=" . Data::Dump::dump($what));
 			delete $find{'playlist.id'};
 		}
 
-$log->error("DK find=" . Data::Dump::dump(%find));
 		# If we have an album and a year - remove the year, since
 		# there is no explict relationship between Track and Year.
 		if ($find{'me.album'} && $find{'year.id'}) {

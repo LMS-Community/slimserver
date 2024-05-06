@@ -755,4 +755,24 @@ sub generateCoverId {
 	return $coverid;
 }
 
+sub yearTracksNotOnYearAlbums {
+	my ($year, $lib) = @_;
+
+	my $sql = "SELECT COUNT(*) FROM tracks JOIN albums ON albums.id = tracks.album ";
+	$sql .= "JOIN library_track ON library_track.track = tracks.id " if $lib;
+	$sql .= "WHERE albums.year <> :year AND tracks.year = :year ";
+	$sql .= "AND library_track.library = :lib" if $lib;
+
+	my $sth = Slim::Schema->dbh->prepare_cached($sql);
+
+	$sth->bind_param(":year", $year);
+	$sth->bind_param(":lib", $lib) if $lib;
+
+	$sth->execute();
+
+	my ($count) = $sth->fetchrow_array;
+	$sth->finish;
+	return $count
+}
+
 1;

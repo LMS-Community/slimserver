@@ -1510,7 +1510,12 @@ sub _albums {
 			my $items = $results->{'albums_loop'};
 			$remote_library ||= $args->{'remote_library'};
 
+			my @albums;
+
 			foreach (@$items) {
+
+				push @albums, $_->{id};
+
 				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
 				if ( $_->{'work_id'} ) {
 					$_->{'name'} .= $_->{'work_name'} . ' (';
@@ -1555,10 +1560,18 @@ sub _albums {
 			}
 
 			my $extra;
-$log->error("DK searchTags=" . Data::Dump::dump(@searchTags));
-$log->error("DK grep=" . Data::Dump::dump(scalar grep {/^year:/} @searchTags));
-			my $skipIfSingleton = (scalar grep {/^year:/} @searchTags) ? 0 : 1;
-$log->error("DK skipIfSingleton=" . Data::Dump::dump($skipIfSingleton));
+
+			# Ensure we show the "All Songs" item when doing a year search and we have tracks for the year on albums that have a different year.
+			# To be clear, those songs would already appear in "All Songs", but without this check, we'd not show "All Songs" unless displaying > 1 album.
+			my $skipIfSingleton = 1;
+			my $year = (grep(/^year:/, @searchTags))[0];
+			if ( $year ) {
+				$year =~ s/^year://;
+				my $lib = (grep(/^library_id:/, @searchTags))[0];
+				$lib =~ s/^library_id:// if $lib;
+				$skipIfSingleton = 0 if Slim::Schema::Track::yearTracksNotOnYearAlbums($year, $lib);
+			}
+
 			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
 
@@ -1713,7 +1726,6 @@ $log->error("DK skipIfSingleton=" . Data::Dump::dump($skipIfSingleton));
 					orderByList => $result->{orderByList},
 				}, 86400);
 			}
-#$log->error("DK extra=" . Data::Dump::dump($extra));
 
 			return $result, $extra;
 		},

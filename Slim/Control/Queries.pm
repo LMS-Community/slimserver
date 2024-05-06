@@ -249,7 +249,6 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-#$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -4290,7 +4289,6 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
-$log->error("DK request=" . Data::Dump::dump($request));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4453,14 +4451,10 @@ sub yearsQuery {
 	my $year          = $request->getParam('year');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
-$log->error("DK year=" . Data::Dump::dump($year));
-$log->error("DK libraryID=" . Data::Dump::dump($libraryID));
-$log->error("DK hasAlbums=" . Data::Dump::dump($hasAlbums));
 
 	# get them all by default
 	my $where = {};
 
-#	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
 	my ($key, $table) = ($hasAlbums || $libraryID) ? ('tracks.year', 'tracks') : ('id', 'years');
 
 	my $sql = "SELECT DISTINCT $key FROM $table ";
@@ -4473,7 +4467,6 @@ $log->error("DK hasAlbums=" . Data::Dump::dump($hasAlbums));
 	}
 
 	if (defined $libraryID) {
-#		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryID;
@@ -4575,6 +4568,7 @@ sub worksQuery {
 	my $workID        = $request->getParam('work_id');
 	my $roleID        = $request->getParam('role_id');
 	my $genreID       = $request->getParam('genre_id');
+	my $year          = $request->getParam('year');
 
 	# get them all by default
 	my $where = {};
@@ -4622,6 +4616,11 @@ sub worksQuery {
 				push @{$p}, @{$strings};
 			}
 		}
+	}
+
+	if ( defined $year ) {
+		push @{$w}, "tracks.year = ?";
+		push @{$p}, $year;
 	}
 
 	if ( defined $roleID ) {

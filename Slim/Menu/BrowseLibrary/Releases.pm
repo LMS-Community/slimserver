@@ -37,9 +37,6 @@ sub _releases {
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @searchTags;
 
-	# we want all roles, as we're going to group
-	push @searchTags, 'role_id:' . join(',', Slim::Schema::Contributor->contributorRoleIds);
-
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
 	if (scalar @artistIds) {
@@ -142,9 +139,6 @@ sub _releases {
 
 	my @items;
 
-	my $searchTags = [ "library_id:$library_id" ];
-	push @$searchTags, "artist_id:$artistId" if $artistId;
-
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
 	my %primaryReleaseTypes = map { $_ => 1 } @primaryReleaseTypes;
@@ -160,13 +154,13 @@ sub _releases {
 
 		if ($releaseTypes{uc($releaseType)}) {
 			push @items, _createItem($name, $releaseType eq 'COMPILATION'
-					? [ { %$ptNoSearchTags, searchTags => [@$searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
-					: [ { %$ptNoSearchTags, searchTags => [@$searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
+					? [ { %$ptNoSearchTags, searchTags => [@searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]
+					: [ { %$ptNoSearchTags, searchTags => [@searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})], orderBy => $orderBy } ]);
 		}
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
-		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ { %$ptNoSearchTags, searchTags => [@searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSER}) {
@@ -177,23 +171,23 @@ sub _releases {
 			playlist    => \&_tracks,
 			# for compositions we want to have the compositions only, not the albums
 			url         => \&_tracks,
-			passthrough => [ { searchTags => [@$searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
+			passthrough => [ { searchTags => [@searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)] } ],
 		};
 	}
 
 	if (my $albumIds = delete $contributions{TRACKARTIST}) {
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [ { %$ptNoSearchTags, searchTags => [@searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)] } ]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
-		push @items, _createItem($name || ucfirst($role), [ { %$ptNoSearchTags, searchTags => [@$searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
+		push @items, _createItem($name || ucfirst($role), [ { %$ptNoSearchTags, searchTags => [@searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})] } ]);
 	}
 
 	# Add item for Classical Works if the artist has any.
-	push @$searchTags, "role_id:$menuRoles" if $menuRoles && $menuMode && $menuMode ne 'artists';
+	push @searchTags, "role_id:$menuRoles" if $menuRoles && $menuMode && $menuMode ne 'artists';
 	main::INFOLOG && $log->is_info && $log->info("works ($index, $quantity): tags ->", join(', ', @searchTags));
-	my $requestRef = [ 'works', 0, MAX_ALBUMS, @$searchTags ];
+	my $requestRef = [ 'works', 0, MAX_ALBUMS, @searchTags ];
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
 	$request->execute();
 	$log->error($request->getStatusText()) if $request->isStatusError();
@@ -204,7 +198,7 @@ sub _releases {
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_works,
-		passthrough => [ { searchTags => [@$searchTags, "wantMetadata:1", "wantIndex:1"] } ],
+		passthrough => [ { searchTags => [@searchTags, "wantMetadata:1", "wantIndex:1"] } ],
 	} if ( $request->getResult('count') > 1 || ( scalar @items && $request->getResult('count') ) );
 
 	# if there's only one category, display it directly
