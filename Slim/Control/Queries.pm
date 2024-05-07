@@ -279,7 +279,8 @@ sub albumsQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
-	my $work	  = $request->getParam('work_id');
+	# a work_id of -1 would mean "all works"
+	my $work	         = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
 
@@ -549,6 +550,8 @@ sub albumsQuery {
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
 		$order_by .= ", tracks.tracknum";
+
+		# -1 -> all works
 		if ($work ne '-1') {
 			push @{$w}, 'tracks.work = ?';
 			push @{$p}, $work;
@@ -4582,11 +4585,11 @@ sub worksQuery {
 	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
-		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
-		JOIN contributors composer ON composer.id = composer_track.contributor 
-		JOIN contributor_track ON contributor_track.track = tracks.id 
-		JOIN contributors ON contributors.id = contributor_track.contributor 
-		JOIN works ON works.id = tracks.work AND works.composer = composer.id 
+		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
+		JOIN contributors composer ON composer.id = composer_track.contributor
+		JOIN contributor_track ON contributor_track.track = tracks.id
+		JOIN contributors ON contributors.id = contributor_track.contributor
+		JOIN works ON works.id = tracks.work AND works.composer = composer.id
 		JOIN albums ON tracks.album = albums.id ';
 
 	if (specified($search)) {
