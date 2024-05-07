@@ -61,8 +61,7 @@ sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
 	return unless $client && $url;
-
-	my ($type) = $url =~ m{randomplay://(track|contributor|album|year)s?$};
+	my ($type) = $url =~ m{randomplay://(track|contributor|album|year|work)s?$};
 	my $title = 'PLUGIN_RANDOMPLAY';
 
 	if ($type) {
