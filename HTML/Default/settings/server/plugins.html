@@ -80,7 +80,7 @@
 						}
 					})
 				);
-			})
+			});
 
 			new Ext.form.TextField({
 				applyTo: 'filterInput',
@@ -167,16 +167,22 @@
 			}
 		};
 
-		Settings.Page.initCollapsableItems();
+		Settings.Page.initCollapsableItems('grid');
 	});
 </script>
 [% END; END %]
 <style>
+	div.pluginList {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+		gap: 5px;
+	}
+
+	ul.thumbWrap {
+		display: contents
+	}
+
 	div.settingSection ul.thumbWrap li.thumbWrap {
-		width: 300px;
-		/* height: 150px; */
-		margin-bottom: 5px;
-		/* background-color: #f9f9f9; */
 		border-radius: 5px;
 		border: solid 1px #eee;
 	}
@@ -187,8 +193,6 @@
 
 	div.pluginItem div {
 		padding-bottom: 5px;
-		/* font-size: 12.5px; */
-		width: 280px;
 	}
 
 	.pluginDesc, .pluginFooter {
@@ -196,6 +200,10 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		position: relative;
+	}
+
+	.pluginFooter {
+		left: 30px;
 	}
 
 	.pluginDesc:before {
@@ -214,7 +222,7 @@
 
 	.pluginItem img {
 		float: left;
-		margin: 5px 5px 5px 0;
+		margin: 0 5px 5px 0;
 		width: 25px;
 	}
 
@@ -231,25 +239,27 @@
 	}
 </style>
 [% BLOCK pluginGroup %]
-	<div class="settingSection" style="margin-top:0;margin-bottom:20px" id="[% id %]">
+	<div class="settingSection pluginList" id="[% id %]">
 		<ul class="thumbwrap">
 			[%- content | indent(4) %]
 		</ul>
 	</div>
 [% END %]
 [% BLOCK pluginDetails %]
-	<li class="thumbwrap" id="plugin-[% plugin.name %]">
-		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% Math.rand(1) %]_selector"><div class="thumbwrap">
+	<li class="thumbwrap selectorMarker" id="plugin-[% plugin.name %]" onmouseover="Highlighter.highlight(this);">
+		<div class="thumbwrap">
 			<div class="pluginItem">
 				<div>
 					[% pluginIcon = plugin.icon || "html/images/" _ (plugin.category || "misc") _ ".svg" %]
 					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
-					<div><img src="[% pluginIcon | resizeimage(25,25) %]" srcset="[% pluginIcon | resizeimage(50,50) %] 2x"></div>
-					[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
-					<label for="[% pluginName %]">
-						<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
-						&nbsp;[% plugin.title %]
-					</label>
+					<div>
+						<img src="[% pluginIcon | resizeimage(25,25) %]" srcset="[% pluginIcon | resizeimage(50,50) %] 2x">
+						[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
+						<label for="[% pluginName %]">
+							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
+							&nbsp;[% plugin.title %]
+						</label>
+					</div>
 					[% IF type != 'update' %]
 						<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />
 					[% END %]
@@ -266,8 +276,7 @@
 					[% ELSIF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]
 				</div>
 			</div>
-
-		</div></div>
+		</div>
 	</li>
 [% END %]
 [% customButtonBar = BLOCK %]
