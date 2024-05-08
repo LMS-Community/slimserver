@@ -278,7 +278,7 @@
 						<img src="[% pluginIcon | resizeimage(25,25) %]" srcset="[% pluginIcon | resizeimage(50,50) %] 2x">
 						<label for="[% pluginName %]">
 							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
-							&nbsp;[% plugin.title %]
+							&nbsp;[% plugin.title %][% IF plugin.version %] (v[% plugin.version %])[%- END -%]
 						</label>
 					</div>
 					[% IF type != 'update' %]
