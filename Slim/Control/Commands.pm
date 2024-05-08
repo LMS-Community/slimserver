@@ -1846,6 +1846,7 @@ sub playlistZapCommand {
 
 sub playlistcontrolCommand {
 	my $request = shift;
+$log->error("DK request=" . Data::Dump::dump($request->{_params}));
 
 	main::INFOLOG && $log->info("Begin Function");
 
@@ -3437,14 +3438,8 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'playlist.id'};
 		}
 
-		# If we have an album and a year - remove the year, since
-		# there is no explict relationship between Track and Year.
-		if ($find{'me.album'} && $find{'year.id'}) {
-
-			delete $find{'year.id'};
-			delete $joinMap{'year'};
-
-		} elsif ($find{'year.id'}) {
+		# restrict by tracks.year to bring playlist add into line with album/tracks listings filtered by year.
+		if ($find{'year.id'}) {
 
 			$find{'me.year'} = delete $find{'year.id'};
 			delete $joinMap{'year'};
