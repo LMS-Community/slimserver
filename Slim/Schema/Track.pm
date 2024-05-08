@@ -758,7 +758,7 @@ sub generateCoverId {
 sub yearTracksNotOnYearAlbums {
 	my ($year, $lib) = @_;
 
-	my $sql = "SELECT COUNT(*) FROM tracks JOIN albums ON albums.id = tracks.album ";
+	my $sql = "SELECT GROUP_CONCAT(DISTINCT tracks.id) FROM tracks JOIN albums ON albums.id = tracks.album ";
 	$sql .= "JOIN library_track ON library_track.track = tracks.id " if $lib;
 	$sql .= "WHERE albums.year <> :year AND tracks.year = :year ";
 	$sql .= "AND library_track.library = :lib" if $lib;

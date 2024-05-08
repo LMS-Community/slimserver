@@ -5751,8 +5751,9 @@ sub _getTagDataForTracks {
 	}
 
 	if ( my $trackId = $args->{trackId} ) {
-		push @{$w}, 'tracks.id = ?';
-		push @{$p}, $trackId;
+		my @trackIds = split(',', $trackId);
+		push @{$w}, 'tracks.id IN (' . join(',', map {'?'} @trackIds) . ')';
+		push @{$p}, @trackIds;
 	}
 
 	if ( my $year = $args->{year} ) {
