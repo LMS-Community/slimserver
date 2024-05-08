@@ -1,5 +1,5 @@
 [% IF useExtJS; extJsScripts = BLOCK %]
-[% descHeight = 70 %]
+[% descHeight = 90 %]
 <script TYPE="text/javascript">
 	var categories = [% categories %];
 	var searchData = [% searchData %];
@@ -103,10 +103,12 @@
 
 			var pluginDescriptions = Ext.query('div.pluginDesc');
 			Ext.each(pluginDescriptions, function(descEl) {
-				if (Ext.get(descEl).getHeight() > [% descHeight %]) {
+				descEl = Ext.get(descEl);
+				if (descEl.getHeight() > [% descHeight - 5 %]) {
+					descEl.addClass('pluginDescLong');
 					new Ext.ToolTip({
 						target: descEl,
-						html: descEl.innerHTML,
+						html: descEl.dom.innerHTML,
 						hideDelay: 1500,
 						maxWidth: 300
 					});
@@ -205,6 +207,7 @@
 
 	.pluginItem label {
 		font-weight: bold;
+		display: block;
 	}
 
 	.pluginItem div {
@@ -217,24 +220,25 @@
 	}
 
 	.pluginDesc, .pluginFooter {
-		max-height: [% descHeight + 20 %]px;
+		max-height: [% descHeight %]px;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		hyphens: auto;
+		overflow-wrap: break-word;
+		word-break: break-word;
 	}
 
-	.pluginDesc:before {
+	.pluginDescLong:before {
 		content: '';
 		width: 100%;
 		height: 100%;
 		position: absolute;
 		left: 0;
 		top: 0;
-		background: linear-gradient(transparent [% descHeight - 10 %]px, #f9f9f9);
+		background: linear-gradient(transparent [% descHeight - 30 %]px, white);
 	}
 
-	.mouseOver .pluginDesc:before {
-		background: linear-gradient(transparent [% descHeight - 10 %]px, #999);
+	.mouseOver .pluginDescLong:before {
+		background: linear-gradient(transparent [% descHeight - 30 %]px, #999);
 	}
 
 	.pluginItem img {
