@@ -28,6 +28,16 @@ my $log = logger('server.plugins');
 my $prefs = preferences('plugin.extensions');
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret'), time() )->hexdigest;
 
+
+sub new {
+	my $class = shift;
+
+	$class->SUPER::new();
+
+	# add link for backwards compatibility
+	Slim::Web::Pages->addPageFunction(Slim::Web::HTTP::CSRF->protectURI('plugins/Extensions/settings/basic.html'), $class);
+}
+
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('SETUP_PLUGINS');
 }
