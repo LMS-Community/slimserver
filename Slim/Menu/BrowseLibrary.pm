@@ -1607,7 +1607,7 @@ sub _albums {
 					$actions{'addall'} = $actions{'add'};
 
 					push @$extra, {
-						name        => cstring($client, 'OTHER') . " $year",
+						name        => cstring($client, 'TRACKS_FROM_OTHER_ALBUMS'),
 						image       => 'html/images/years.png',
 						type        => 'playlist',
 						playlist    => \&_tracks,
