@@ -5,7 +5,7 @@ use strict;
 use Config;
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
-use List::Util qw(min max);
+use List::Util qw(max);
 
 use base qw(Slim::Plugin::Base);
 use Slim::Utils::Log;
@@ -13,14 +13,13 @@ use Slim::Utils::Prefs;
 
 use constant REPORT_URL => 'https://stats.lms-community.org/api/instance/%s/';
 use constant REPORT_DELAY => 240;
-use constant REPORT_BACKOFF_DELAY => 1800;
-use constant REPORT_INTERVAL => 86400 * 7;
+use constant REPORT_INTERVAL => 86400 * 2;
+use constant REPORT_PLAYER_UNSEEN_DAYS => 7;
 
 my $serverPrefs = preferences('server');
 
 my $log;
 my $id;
-my $backoff = 1;
 
 # delay init, as we want to be sure we're enabled before trying to read the display name
 sub postinitPlugin {
@@ -50,6 +49,7 @@ sub _report {
 
 	my $totals = Slim::Schema->totals();
 
+	# get list of connected players
 	my ($playerTypes, $playersSeen);
 	my @players = map {
 		$playerTypes->{$_->model}++;
@@ -59,10 +59,13 @@ sub _report {
 		$_->model ne 'group'
 	} Slim::Player::Client::clients();
 
+	# get offline clients seen during the past x days
 	push @players, map {
-		$playerTypes->{$_}++;
-		$_;
-	} grep { $_ ne 'group' } _getClients($playersSeen);
+		$playerTypes->{$_->{model}}++;
+		$_->{model};
+	} grep {
+		$_->{model} ne 'group' && !$playersSeen->{$_->{mac}} && (time() - $_->{lastSeen}) < (86400 * REPORT_PLAYER_UNSEEN_DAYS)
+	} _getClients();
 
 	my $data = {
 		version  => $::VERSION,
@@ -85,12 +88,12 @@ sub _report {
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			main::INFOLOG && $log->is_info && $log->info("Successfully reported analytics");
-			_scheduleReport($data->{players} == 0 || $data->{tracks} == 0);
+			_scheduleReport();
 		},
 		sub {
 			my ($http, $error) = @_;
 			$log->error("Failed to report analytics: $error");
-			_scheduleReport(1);
+			_scheduleReport();
 		},
 		{
 			timeout  => 5,
@@ -104,17 +107,7 @@ sub _report {
 }
 
 sub _scheduleReport {
-	my ($failed) = @_;
-	my $next = REPORT_INTERVAL;
-
-	if ($failed) {
-		$next = min(REPORT_INTERVAL, $backoff * REPORT_BACKOFF_DELAY);
-		$backoff *= 2;
-	}
-
-	main::INFOLOG && $log->is_info && $log->info("Next analytics update in $next seconds.");
-
-	Slim::Utils::Timers::setTimer($id, time() + $next, \&_report);
+	Slim::Utils::Timers::setTimer($id, time() + REPORT_INTERVAL, \&_report);
 }
 
 sub _getClients {
@@ -124,8 +117,6 @@ sub _getClients {
 	foreach my $key (keys %{$serverPrefs->{prefs}}) {
 		if ($key =~ /^$Slim::Utils::Prefs::Client::clientPreferenceTag:(.*)/) {
 			my $id = $1;
-
-			next if $seen->{$id};
 
 			my $clientPrefs = Slim::Utils::Prefs::Client->new($serverPrefs, $id, 'nomigrate');
 			my $name = $clientPrefs->get('playername');
@@ -137,9 +128,11 @@ sub _getClients {
 				$ts = max($ts, $clientPrefs->{prefs}->{$_});
 			}
 
-			next if (time() - $ts) > (86400 * 7);
-
-			push @clients, _guessPlayerTypeFromMac($id, $name);
+			push @clients, {
+				mac   => $id,
+				model => _guessPlayerTypeFromMac($id, $name),
+				lastSeen => $ts,
+			};
 		}
 	}
 
@@ -178,6 +171,19 @@ my %playerTypes = (
 	'27' => 'baby',
 	'28' => 'baby',
 	'29' => 'baby',
+	# UE branded Radios
+	'2a' => 'baby',
+	'2b' => 'baby',
+	'2c' => 'baby',
+	'2d' => 'baby',
+	'2e' => 'baby',
+	'2f' => 'baby',
+	'30' => 'baby',
+	'31' => 'baby',
+	'32' => 'baby',
+	'33' => 'baby',
+	'34' => 'baby',
+	'35' => 'baby',
 );
 
 sub _guessPlayerTypeFromMac {
@@ -187,7 +193,7 @@ sub _guessPlayerTypeFromMac {
 	my $playerType = 'squeezelite';
 
 	if ($mac =~ /^00:04:20:(\d\d):/) {
-		$playerType = $playerTypes{$1} || 'squeezebox';
+		$playerType = $playerTypes{lc($1)} || 'squeezebox';
 	}
 	elsif ($mac =~ /^20:02:/) {
 		$playerType = 'group';
