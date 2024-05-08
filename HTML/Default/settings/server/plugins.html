@@ -1,4 +1,5 @@
 [% IF useExtJS; extJsScripts = BLOCK %]
+[% descHeight = 70 %]
 <script TYPE="text/javascript">
 	var categories = [% categories %];
 	var searchData = [% searchData %];
@@ -36,6 +37,11 @@
 						target.dom.checked = !target.dom.checked;
 					}
 
+					else if (target.hasClass('thumbwrap') && !target.is('ul.thumbwrap')) {
+						target = target.child("input[type=checkbox]");
+						target.dom.checked = !target.dom.checked;
+					}
+
 					else if (el = target.findParentNode('div.pluginItem', 2, true)) {
 						target = el.child("input[type=checkbox]");
 						target.dom.checked = !target.dom.checked;
@@ -52,7 +58,6 @@
 				renderTo: 'filterChooser',
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
 				text: SqueezeJS.string('setup_extensions_category_all')
-				// arrowTooltip: SqueezeJS.string('settings')
 			});
 
 			Ext.each(categories.sort(function(a, b) {
@@ -63,7 +68,6 @@
 				else if (b < a) return 1
 				else return 0;
 			}), function(category, x) {
-				console.log(category);
 				filterChooser.menu.add(
 					new Ext.menu.CheckItem({
 						text: category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all'),
@@ -97,6 +101,18 @@
 				}
 			});
 
+			var pluginDescriptions = Ext.query('div.pluginDesc');
+			Ext.each(pluginDescriptions, function(descEl) {
+				if (Ext.get(descEl).getHeight() > [% descHeight %]) {
+					new Ext.ToolTip({
+						target: descEl,
+						html: descEl.innerHTML,
+						hideDelay: 1500,
+						maxWidth: 300
+					});
+				}
+			});
+
 			function togglePluginVisibility(value, validator) {
 				var pluginItems = Ext.query('li.thumbwrap');
 
@@ -124,7 +140,6 @@
 		}
 
 		Settings.Page.submit = function(ajax, cb) {
-
 			// display warning if user wants to install "unsafe" plugins from 3rd parties or add the other repo
 			var unsafe = Ext.query('input.unsafePlugin');
 			var other  = Ext.query('input.otherrepo');
@@ -182,28 +197,30 @@
 		display: contents
 	}
 
-	div.settingSection ul.thumbWrap li.thumbWrap {
+	.settingSection ul.thumbWrap li.thumbWrap {
 		border-radius: 5px;
 		border: solid 1px #eee;
+		max-width: 370px;
 	}
 
-	div.pluginItem label {
+	.pluginItem label {
 		font-weight: bold;
 	}
 
-	div.pluginItem div {
+	.pluginItem div {
 		padding-bottom: 5px;
 	}
 
-	.pluginDesc, .pluginFooter {
-		max-height: 90px;
-		overflow: hidden;
-		text-overflow: ellipsis;
+	.pluginItem label, .pluginDesc, .pluginFooter {
 		position: relative;
+		padding-left: 30px;
 	}
 
-	.pluginFooter {
-		left: 30px;
+	.pluginDesc, .pluginFooter {
+		max-height: [% descHeight + 20 %]px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		hyphens: auto;
 	}
 
 	.pluginDesc:before {
@@ -213,15 +230,15 @@
 		position: absolute;
 		left: 0;
 		top: 0;
-		background: linear-gradient(transparent 60px, #f9f9f9);
+		background: linear-gradient(transparent [% descHeight - 10 %]px, #f9f9f9);
 	}
 
 	.mouseOver .pluginDesc:before {
-		background: linear-gradient(transparent 60px, #999);
+		background: linear-gradient(transparent [% descHeight - 10 %]px, #999);
 	}
 
 	.pluginItem img {
-		float: left;
+		position: absolute;
 		margin: 0 5px 5px 0;
 		width: 25px;
 	}
@@ -246,7 +263,8 @@
 	</div>
 [% END %]
 [% BLOCK pluginDetails %]
-	<li class="thumbwrap selectorMarker" id="plugin-[% plugin.name %]" onmouseover="Highlighter.highlight(this);">
+	[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
+	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]" onmouseover="Highlighter.highlight(this);">
 		<div class="thumbwrap">
 			<div class="pluginItem">
 				<div>
@@ -254,7 +272,6 @@
 					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
 					<div>
 						<img src="[% pluginIcon | resizeimage(25,25) %]" srcset="[% pluginIcon | resizeimage(50,50) %] 2x">
-						[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
 						<label for="[% pluginName %]">
 							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 							&nbsp;[% plugin.title %]
@@ -271,8 +288,7 @@
 				</div>
 				<div class="pluginFooter">
 					[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[% ELSIF plugin.homepage %]<a href="[% plugin.homepage %]" target="_blank">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email OR plugin.homepage %]</a>[%- END -%]
-					[% IF type == 'update' %][% plugin.version %]
-					[% ELSIF plugin.settings %]<a href="[% webroot %][% plugin.settings %]">[% "SETTINGS" | string %]</a>
+					[% IF plugin.settings %]<a href="[% webroot %][% plugin.settings %]">[% "SETTINGS" | string %]</a>
 					[% ELSIF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]
 				</div>
 			</div>

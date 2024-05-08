@@ -279,7 +279,14 @@ sub _addInfo {
 
 				# otherwise just add to update list
 				else {
-					push @updates, $entry->{'info'};
+					my $info = $entry->{'info'};
+
+					if (!$info->{'icon'}) {
+						my ($current) = grep { $_->{'name'} eq $plugin } @$active;
+						$info->{'icon'} = $current->{'icon'} if $current;
+					}
+
+					push @updates, $info;
 				}
 
 			}
