@@ -1,3 +1,4 @@
 [%- FILTER null %]
 	[% skinPadding = 5 %]
+	[% mainFooter = 16 %]
 [% END -%]

@@ -139,18 +139,12 @@ div#background {
 
 #squeezeboxLogo {
 	position: absolute;
-	top: 9px;
+	top: 10px;
 	left: 12px;
 	height: 40px;
 	width: 158px;
-	background: url(html/images/lms.png) no-repeat;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-	#squeezeboxLogo {
-	  background: url(html/images/lms@2x.png) no-repeat;
-	  background-size: 91px 25px;
-	}
+	background: url(html/images/lms.svg) no-repeat;
+	background-size: 100px;
 }
 
 #playerChooser {
@@ -173,8 +167,17 @@ div#background {
 
 #mainSpacer { width: 10px; }
 
+#inner_header .inner_top {
+	height: 9px;
+}
+
 .inner_bottom {
+	height: 5px;
 	bottom: 0;
+}
+
+.settingsFrame .inner_bottom {
+	height: 12px;
 }
 
 #leftcontent {

@@ -47,7 +47,7 @@ Help = {
 					contentEl: 'footer',
 					border: false,
 					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
-					height: 16
+					height: [% mainFooter %]
 				}
 			]
 		}

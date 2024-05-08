@@ -23,6 +23,10 @@ div#background {
 	height: 30px;
 }
 
+#inner_header .inner_top, .inner_top, .inner_bottom {
+	height: 12px;
+}
+
 .inner_top {
 	border-radius: 12px 12px 0 0;
 }
