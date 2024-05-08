@@ -556,6 +556,16 @@ sub _parseXML {
 	$args->{'cb'}->( @{$args->{'pt'}}, \@res, $info );
 }
 
+1;
 
+
+package Slim::Plugin::Extensions::Plugin;
+
+my $warned;
+
+sub getCurrentPlugins {
+	Slim::Utils::Log::logBacktrace("Slim::Plugin::Extensions doesn't exist any more. Please use Slim::Utils::PluginRepoManager instead.") if !$warned++;
+	return Slim::Utils::PluginRepoManager::getCurrentPlugins(@_);
+}
 
 1;
