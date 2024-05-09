@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_VIEW_TAGS</description>
 	<creator>Lyrion Community</creator>
+	<category>information</category>
 	<defaultState>enabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>

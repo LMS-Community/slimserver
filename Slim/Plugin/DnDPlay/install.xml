@@ -6,6 +6,7 @@
 	<version>0.1</version>
 	<description>PLUGIN_DNDPLAY_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 
 	<defaultState>enabled</defaultState>
 

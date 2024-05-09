@@ -6,6 +6,7 @@
 	<version>1.1</version>
 	<description>PLUGIN_ANALYTICS_MODULE_DESC</description>
 	<creator>Lyrion Community, Michael Herger</creator>
+	<category>tools</category>
 	<homepageURL>https://lyrion.org/analytics/learn-more/</homepageURL>
 	<type>2</type>
 	<targetApplication>

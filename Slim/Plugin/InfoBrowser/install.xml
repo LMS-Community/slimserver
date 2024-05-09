@@ -7,6 +7,8 @@
 	<version>1.0</version>
 	<description>PLUGIN_INFOBROWSER_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>information</category>
+
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>
 	<icon>plugins/InfoBrowser/html/images/icon.png</icon>
@@ -14,6 +16,6 @@
 	<targetApplication>
 		<id>Lyrion Music Server</id>
 		<minVersion>7.0a</minVersion>
-        <maxVersion>*</maxVersion>
+		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

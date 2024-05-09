@@ -7,14 +7,15 @@
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_DATETIME_DESC</description>
         <creator>Lyrion Community</creator>
+        <category>tools</category>
 
-	<defaultState>enabled</defaultState>
+        <defaultState>enabled</defaultState>
 
-	<optionsURL>plugins/DateTime/settings/basic.html</optionsURL>
-	<type>2</type><!-- type=extension -->
+        <optionsURL>plugins/DateTime/settings/basic.html</optionsURL>
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
-  	        <id>Lyrion Music Server</id>
+                <id>Lyrion Music Server</id>
                 <minVersion>7.0a</minVersion>
                 <maxVersion>*</maxVersion>
         </targetApplication>

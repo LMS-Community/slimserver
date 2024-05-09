@@ -286,6 +286,10 @@ sub _resizeImage {
 
 		my ($host) = Slim::Utils::Misc::crackURL($url);
 
+		if ( $url =~ /\.svg$/ ) {
+			return $url;
+		}
+
 		# don't use imageproxy on local network
 		if ( $host && (Slim::Utils::Network::ip_is_private($host) || $host =~ /localhost/i) ) {
 			return $url;

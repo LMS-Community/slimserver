@@ -7,15 +7,16 @@
         <version>2.0</version>
         <description>PLUGIN_PODCAST_DESC</description>
         <creator>Lyrion Community</creator>
+        <category>musicservices</category>
 
-	<defaultState>disabled</defaultState>
+        <defaultState>disabled</defaultState>
 
-	<optionsURL>plugins/Podcast/settings/basic.html</optionsURL>
-	<icon>plugins/Podcast/html/images/icon.png</icon>
-	<type>2</type><!-- type=extension -->
+        <optionsURL>plugins/Podcast/settings/basic.html</optionsURL>
+        <icon>plugins/Podcast/html/images/icon.png</icon>
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
-  	        <id>Lyrion Music Server</id>
+                <id>Lyrion Music Server</id>
                 <minVersion>7.0a</minVersion>
                 <maxVersion>*</maxVersion>
         </targetApplication>

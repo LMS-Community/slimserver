@@ -6782,6 +6782,101 @@ SETUP_PLUGINS
 	PL	Dodatki
 	RU	Подключаемые модули
 	SV	Plugin-program
+
+SETUP_EXTENSIONS_CATEGORY_ALL
+	CS	Vše
+	DA	Alle
+	DE	Alle Kategorien
+	EN	All Categories
+	ES	Todo
+	FI	Kaikki
+	FR	Tous
+	HE	הכל
+	IT	Tutti
+	JA	全て
+	NL	Alle
+	NO	Alle
+	PL	Wszystko
+	PT	Todas
+	RU	Все
+	SV	Alla
+	ZH_CN	全部
+
+SETUP_EXTENSIONS_CATEGORY_HARDWARE
+	EN	Hardware
+
+SETUP_EXTENSIONS_CATEGORY_INFO
+	CS	Informace
+	DA	Oplysninger
+	EN	Information, Metadata
+	ES	Información
+	FI	Tiedot
+	FR	Informations
+	HE	מידע
+	IT	Informazioni
+	JA	インフォメーション
+	NL	Informatie
+	NO	Informasjon
+	PL	Informacje
+	RU	Информация
+	SV	Information
+	ZH_CN	信息
+
+SETUP_EXTENSIONS_CATEGORY_MISC
+	DE	Diverses
+	EN	Miscellaneous
+
+SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES
+	DE	Streamingdienste
+	EN	Streaming Services
+
+SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
+	DA	Spillelister
+	DE	Wiedergabelisten
+	EN	Playlists
+	ES	Listas Guardadas
+	FR	Listes de lecture
+	JA	保存されたプレイリスト
+	NO	Spillelister
+	PL	Listy odtwarzania
+	SV	Låtlistor
+	ZH_CN	保存播放表
+	NL	Afspeellijst
+
+SETUP_EXTENSIONS_CATEGORY_RADIO
+	CS	Internetové rádio
+	DA	Internetradio
+	DE	Internetradio
+	EN	Internet Radio
+	ES	Radio por Internet
+	FI	Nettiradio
+	FR	Radio Internet
+	IT	Radio Internet
+	NL	Internetradio
+	NO	Internett-radio
+	PL	Radio internetowe
+	RU	Радиостанции Интернета
+	SV	Webbradio
+
+SETUP_EXTENSIONS_CATEGORY_SCANNING
+	CS	Prohledávaní médií
+	DA	Mediesøgning
+	DE	Medienscanner
+	EN	Media Scanner
+	ES	Detector de material multimedia
+	FI	Mediahaku
+	FR	Analyseur de contenu multimédia
+	IT	Analisi file multimediali
+	NL	Mediascanner
+	NO	Mediesøk
+	PL	Przeszukiwanie multimediów
+	RU	Сканер мультимедиа
+	SV	Mediesökare
+
+SETUP_EXTENSIONS_CATEGORY_TOOLS
+	DE	Werkzeuge, Hilfsmittel
+	EN	Tools
+
 SETUP_EXTENSIONS_REPOS
 	CS	Další úložiště
 	DA	Andre lagersteder

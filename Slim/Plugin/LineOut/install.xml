@@ -5,6 +5,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_LINE_OUT_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 
 	<defaultState>disabled</defaultState>
 
