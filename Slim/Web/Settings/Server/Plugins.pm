@@ -8,6 +8,7 @@ package Slim::Web::Settings::Server::Plugins;
 
 use strict;
 
+use JSON::XS::VersionOneAndTwo;
 use Digest::MD5;
 
 use base qw(Slim::Web::Settings);
@@ -21,10 +22,21 @@ use Slim::Utils::OSDetect;
 Slim::Utils::PluginRepoManager->init();
 
 use constant MAX_DOWNLOAD_WAIT => 120;
+use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');
 my $prefs = preferences('plugin.extensions');
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret'), time() )->hexdigest;
+
+
+sub new {
+	my $class = shift;
+
+	$class->SUPER::new();
+
+	# add link for backwards compatibility
+	Slim::Web::Pages->addPageFunction(Slim::Web::HTTP::CSRF->protectURI('plugins/Extensions/settings/basic.html'), $class);
+}
 
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('SETUP_PLUGINS');
@@ -277,7 +289,14 @@ sub _addInfo {
 
 				# otherwise just add to update list
 				else {
-					push @updates, $entry->{'info'};
+					my $info = $entry->{'info'};
+
+					if (!$info->{'icon'}) {
+						my ($current) = grep { $_->{'name'} eq $plugin } @$active;
+						$info->{'icon'} = $current->{'icon'} if $current;
+					}
+
+					push @updates, $info;
 				}
 
 			}
@@ -320,6 +339,17 @@ sub _addInfo {
 
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
+	my $searchData = {};
+	my $categories = {};
+
+	prepareDetails($active, $searchData, $categories, 1);
+	prepareDetails($inactive, $searchData, $categories);
+	foreach (@results) {
+		prepareDetails($_->{entries}, $searchData, $categories);
+	}
+
+	$params->{'searchData'} = to_json($searchData);
+	$params->{'categories'} = to_json([ keys %$categories ]);
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
@@ -348,6 +378,30 @@ sub _addInfo {
 	}
 
 	return $class->SUPER::handler($client, $params);
+}
+
+sub prepareDetails {
+	my ($data, $searchData, $categories, $installed) = @_;
+
+	# foreach (@$active, @$inactive, map { @{$_->{entries}} } @results) {
+	foreach (@$data) {
+		$categories->{$_->{category}}++;
+		my $icon = $_->{icon};
+
+		if (!$installed && $icon && $icon !~ /^http/ && $icon =~ m|(plugins/(.*?)/html/.*)|) {
+			$_->{icon} = sprintf(GH_IMAGE_URL, $2, $1);
+		}
+		elsif (!$icon) {
+			$_->{icon} = 'html/images/' . ($_->{category} || 'misc') . '.svg';
+		}
+
+		if (!$searchData->{$_->{name}}) {
+			$searchData->{$_->{name}} = {
+				category => $_->{category} || '',
+				content  => $_->{name} . ' ' . $_->{creator} . ' ' . $_->{desc} . ' ' . $_->{email} . ' ' . $_->{title},
+			};
+		}
+	}
 }
 
 1;

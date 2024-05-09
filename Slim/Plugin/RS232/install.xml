@@ -7,14 +7,15 @@
         <version>1.1</version>
         <description>PLUGIN_RS232_NAME_DESC</description>
         <creator>Lyrion Community</creator>
+        <category>hardware</category>
 
-	<defaultState>disabled</defaultState>
+        <defaultState>disabled</defaultState>
 
-	<optionsURL>plugins/RS232/settings/basic.html</optionsURL>
-	<type>2</type><!-- type=extension -->
+        <optionsURL>plugins/RS232/settings/basic.html</optionsURL>
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
-  	        <id>Lyrion Music Server</id>
+                <id>Lyrion Music Server</id>
                 <minVersion>7.0a</minVersion>
                 <maxVersion>*</maxVersion>
         </targetApplication>

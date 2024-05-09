@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 	<defaultState>enabled</defaultState>
 	<icon>plugins/RemoteLibrary/html/icon.png</icon>
 	<optionsURL>plugins/RemoteLibrary/settings.html</optionsURL>

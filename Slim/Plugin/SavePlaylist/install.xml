@@ -7,13 +7,14 @@
         <version>1.0</version>
         <description>SAVE_PLAYLIST_DESC</description>
         <creator>Lyrion Community</creator>
+        <category>playlists</category>
 
-	<defaultState>enabled</defaultState>
+        <defaultState>enabled</defaultState>
 
-	<type>2</type><!-- type=extension -->
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
-  	        <id>Lyrion Music Server</id>
+                <id>Lyrion Music Server</id>
                 <minVersion>7.0a</minVersion>
                 <maxVersion>*</maxVersion>
         </targetApplication>

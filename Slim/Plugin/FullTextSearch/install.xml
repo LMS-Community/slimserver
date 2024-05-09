@@ -8,6 +8,8 @@
 	<version>1.0.0</version>
 	<description>PLUGIN_FULLTEXT_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>scanning</category>
+
 	<defaultState>enabled</defaultState>
 	<type>2</type><!-- type=extension -->
 

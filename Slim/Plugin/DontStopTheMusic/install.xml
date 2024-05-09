@@ -6,6 +6,7 @@
 	<version>1.0.0</version>
 	<description>PLUGIN_DSTM_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 
 	<defaultState>enabled</defaultState>
 

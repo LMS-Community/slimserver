@@ -7,6 +7,7 @@
 	<version>3.0</version>
 	<description>PLUGIN_PREVENTSTANDBY_DESC</description>
 	<creator>Gordon Harris, Julian Neil, Lyrion Community</creator>
+	<category>tools</category>
 
 	<defaultState>enabled</defaultState>
 

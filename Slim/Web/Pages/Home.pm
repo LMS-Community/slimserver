@@ -187,7 +187,7 @@ sub home {
 sub updateInfo {
 	my ($client, $params, $callback) = @_;
 
-	my ($current) = Slim::Plugin::Extensions::Plugin::getCurrentPlugins();
+	my ($current) = Slim::Utils::PluginRepoManager::getCurrentPlugins();
 
 	my $request = Slim::Control::Request->new(undef, ['appsquery']);
 
