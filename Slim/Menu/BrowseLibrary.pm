@@ -1559,7 +1559,7 @@ sub _albums {
 			# Have we got tracks for the year from other albums (ones with a different album year)?
 			my $yearTracks = 0;
 			my $year = (grep(/^year:/, @searchTags))[0];
-			if ( $year && !(grep(/^release_type:/, @searchTags)) ) {
+			if ( $year && !(grep(/^release_type:|^work_id:/, @searchTags)) ) {
 				$year =~ s/^year://;
 				my $lib = (grep(/^library_id:/, @searchTags))[0];
 				$lib =~ s/^library_id:// if $lib;
