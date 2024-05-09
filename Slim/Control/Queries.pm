@@ -4571,7 +4571,6 @@ sub worksQuery {
 	my $search        = $request->getParam('search');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $artistID      = $request->getParam('artist_id');
-	my $workID        = $request->getParam('work_id');
 	my $roleID        = $request->getParam('role_id');
 	my $genreID       = $request->getParam('genre_id');
 	my $year          = $request->getParam('year');
@@ -4635,11 +4634,6 @@ sub worksQuery {
 			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 			push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
 		}
-	}
-
-	if (defined $workID) {
-		push @{$w}, "works.id = ?";
-		push @{$p}, $workID;
 	}
 
 	if (defined $artistID) {
@@ -5768,13 +5762,17 @@ sub _getTagDataForTracks {
 	}
 
 	if ( my $workId = $args->{workId} ) {
-		push @{$w}, 'tracks.work = ?';
-		push @{$p}, $workId;
-		if ( my $grouping = $args->{grouping} ) {
-			push @{$w}, 'tracks.grouping = ?';
-			push @{$p}, $grouping;
+		if ( $workId eq '-1' ) {
+			push @{$w}, 'tracks.work IS NOT NULL';
 		} else {
-			push @{$w}, 'tracks.grouping IS NULL';
+			push @{$w}, 'tracks.work = ?';
+			push @{$p}, $workId;
+			if ( my $grouping = $args->{grouping} ) {
+				push @{$w}, 'tracks.grouping = ?';
+				push @{$p}, $grouping;
+			} else {
+				push @{$w}, 'tracks.grouping IS NULL';
+			}
 		}
 	}
 

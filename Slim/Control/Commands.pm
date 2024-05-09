@@ -1996,9 +1996,10 @@ $log->error("DK request=" . Data::Dump::dump($request->{_params}));
 			my @albumIds = split(',', $album_id);
 			$criteria->{'album'} = [ 'IN' => @albumIds ];
 		}
+
 		if ( my $grouping = $request->getParam('grouping') ) {
 			$criteria->{'grouping'} = [ '=' => $grouping ];
-		} else {
+		} elsif ( defined $request->getParam('grouping') ) {
 			$criteria->{'grouping'} = [ '=' => undef ]
 		}
 
@@ -2053,10 +2054,16 @@ $log->error("DK request=" . Data::Dump::dump($request->{_params}));
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
-			$what->{'album.id'} = $album_id;
-			my $album = Slim::Schema->find('Album', $album_id);
-			@info    = ( $album->title, $album->contributors->first->name );
-			$artwork = $album->artwork || 0;
+			if ( scalar split(/,/,$album_id) == 1 ) {
+				$what->{'album.id'} = $album_id;
+				my $album = Slim::Schema->find('Album', $album_id);
+				@info    = ( $album->title, $album->contributors->first->name );
+				$artwork = $album->artwork || 0;
+			} else {
+				$what->{'album.id'} = {
+					in => [ split(/,/,$album_id) ]
+				};
+			}
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {

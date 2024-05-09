@@ -139,6 +139,8 @@ sub _releases {
 
 	my @items;
 
+	@searchTags = grep { $_ !~ /^tags:/ }  @searchTags;
+
 	my @primaryReleaseTypes = map { uc($_) } @{Slim::Schema::Album->primaryReleaseTypes};
 	push @primaryReleaseTypes, 'COMPILATION';    # we handle compilations differently, it's not part of the primaryReleaseTypes
 	my %primaryReleaseTypes = map { $_ => 1 } @primaryReleaseTypes;
@@ -198,7 +200,7 @@ sub _releases {
 		type        => 'playlist',
 		playlist    => \&_tracks,
 		url         => \&_works,
-		passthrough => [ { searchTags => [@searchTags, "wantMetadata:1", "wantIndex:1"] } ],
+		passthrough => [ { searchTags => [@searchTags, "work_id:-1", "wantMetadata:1", "wantIndex:1"] } ],
 	} if ( $request->getResult('count') > 1 || ( scalar @items && $request->getResult('count') ) );
 
 	# if there's only one category, display it directly
