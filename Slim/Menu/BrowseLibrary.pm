@@ -1608,7 +1608,7 @@ sub _albums {
 
 					push @$extra, {
 						name        => cstring($client, 'TRACKS_FROM_OTHER_ALBUMS'),
-						image       => 'html/images/years.png',
+						image       => 'html/images/albums.png',
 						type        => 'playlist',
 						playlist    => \&_tracks,
 						url         => \&_tracks,
