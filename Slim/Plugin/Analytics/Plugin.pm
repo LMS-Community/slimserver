@@ -190,15 +190,15 @@ sub _guessPlayerTypeFromMac {
 	my ($mac, $name) = @_;
 
 	# most likely...
-	my $playerType = 'squeezelite';
+	my $playerType = 'unknown';
 
-	if ($mac =~ /^00:04:20:(\d\d):/) {
+	if ($mac =~ /^00:04:20:([0-9a-f]{2}):/) {
 		$playerType = $playerTypes{lc($1)} || 'squeezebox';
 	}
-	elsif ($mac =~ /^20:02:/) {
+	elsif ($mac =~ /^02:00:/) {
 		$playerType = 'group';
 	}
-	elsif ($name =~ /(softsqueeze|daphile|m6encore|squeezeplay|squeezeplayer|squeezeslave)/i) {
+	elsif ($name =~ /(squeezelite|softsqueeze|daphile|m6encore|squeezeplay|squeezeplayer|squeezeslave)/i) {
 		$playerType = lc($1);
 	}
 	elsif ($name =~ /(iPengiP[ao]d|Euphony)/) {
@@ -209,6 +209,15 @@ sub _guessPlayerTypeFromMac {
 	}
 	elsif ($name =~ /squeeze.*esp|SqueezeAMP/i) {
 		$playerType = 'squeezeesp32';
+	}
+	elsif (
+		# Raspberry Pis are most likely running squeezelite
+		# see https://maclookup.app/search/vendors/result?vendor=raspberry
+		$name =~ /^pi|raspberry/i || $mac =~ /^(?:28:cd:c1|2c:cf:67|3a:45:41|b8:27:eb|d8:3a:dd|dc:a6:32|e4:5f:01)/i
+		# Philippe's bridges
+		|| $mac =~ /^(?:aa:aa|bb:bb|cc:cc):/i
+	) {
+		$playerType = 'squeezelite';
 	}
 
 	return $playerType;
