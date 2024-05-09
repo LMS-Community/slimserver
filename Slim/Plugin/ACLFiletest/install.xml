@@ -9,6 +9,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_ACL_FILETEST_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>misc</category>
 	<defaultState>disabled</defaultState>
 	<type>2</type>
 	<targetApplication>

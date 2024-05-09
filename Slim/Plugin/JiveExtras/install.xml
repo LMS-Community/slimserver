@@ -6,11 +6,12 @@
 	<version>1.0</version>
 	<description>PLUGIN_JIVEEXTRAS_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>tools</category>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
 		<minVersion>7.0a</minVersion>
-        <maxVersion>*</maxVersion>
+		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>

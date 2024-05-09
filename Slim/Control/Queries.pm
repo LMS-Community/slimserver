@@ -279,7 +279,8 @@ sub albumsQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
-	my $work	  = $request->getParam('work_id');
+	# a work_id of -1 would mean "all works"
+	my $work	         = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
 
@@ -542,20 +543,25 @@ sub albumsQuery {
 	if (defined $work) {
 		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
 		$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
-		push @{$w}, 'tracks.work = ?';
-		push @{$p}, $work;
 		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
 		$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ' unless $sql =~ /JOIN contributor_track/;
-		if ( defined $composerID ) {
-			push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
-			push @{$p}, $composerID;
-		}
 		$c->{'tracks.work'} = 1;
 		$c->{'works.title'} = 1;
 		$c->{'composer.name'} = 1;
 		$c->{'tracks.grouping'} = 1;
 		$order_by .= ", tracks.tracknum";
+
+		# -1 -> all works
+		if ($work ne '-1') {
+			push @{$w}, 'tracks.work = ?';
+			push @{$p}, $work;
+			if ( defined $composerID ) {
+				push @{$w}, 'contributor_track.contributor = ? AND contributor_track.role = 2';
+				push @{$p}, $composerID;
+			}
+		}
 	}
+
 
 	if ( $tags =~ /l/ ) {
 		# title/disc/discc is needed to construct (N of M) title
@@ -634,7 +640,7 @@ sub albumsQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	$sql .= $work ? "GROUP BY tracks.grouping, albums.id " : "GROUP BY albums.id ";
+	$sql .= $work ? "GROUP BY tracks.grouping, tracks.work, albums.id " : "GROUP BY albums.id ";
 
 	if ($page_key && $tags =~ /Z/) {
 		$request->addResult('indexList', _createIndexList(sprintf($sql, "$page_key AS n") . " ORDER BY $order_by", $p));
@@ -4579,11 +4585,11 @@ sub worksQuery {
 	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
 
 	my $sql = 'SELECT %s FROM tracks
-		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2 
-		JOIN contributors composer ON composer.id = composer_track.contributor 
-		JOIN contributor_track ON contributor_track.track = tracks.id 
-		JOIN contributors ON contributors.id = contributor_track.contributor 
-		JOIN works ON works.id = tracks.work AND works.composer = composer.id 
+		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
+		JOIN contributors composer ON composer.id = composer_track.contributor
+		JOIN contributor_track ON contributor_track.track = tracks.id
+		JOIN contributors ON contributors.id = contributor_track.contributor
+		JOIN works ON works.id = tracks.work AND works.composer = composer.id
 		JOIN albums ON tracks.album = albums.id ';
 
 	if (specified($search)) {

@@ -7,6 +7,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_ROCKRADIO_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>radio</category>
 	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/rockradio/settings.html</optionsURL>
 	<type>2</type>

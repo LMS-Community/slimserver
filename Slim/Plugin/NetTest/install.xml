@@ -6,13 +6,14 @@
   <version>1.0</version>
   <description>PLUGIN_NETTEST_DESC</description>
   <creator>Triode</creator>
+  <category>tools</category>
   <email>triode1@btinternet.com</email>
 
   <defaultState>enabled</defaultState>
 
   <type>2</type><!-- type=extension -->
   <targetApplication>
-  	<id>Lyrion Music Server</id>
+    <id>Lyrion Music Server</id>
     <minVersion>7.4</minVersion>
     <maxVersion>*</maxVersion>
   </targetApplication>
