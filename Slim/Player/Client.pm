@@ -334,8 +334,12 @@ sub init {
 sub initPrefs {
 	my $client = shift;
 
+	my $clientPrefs = $prefs->client($client);
 	# make sure any preferences unique to this client may not have set are set to the default
-	$prefs->client($client)->init($defaultPrefs);
+	$clientPrefs->init($defaultPrefs);
+
+	# keep track of what player model this is: this way analytics knows disconnected devices' types
+	$clientPrefs->set('model', $client->model);
 
 	# init display including setting any display specific preferences to default
 	if ($client->display) {
