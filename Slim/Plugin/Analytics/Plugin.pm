@@ -130,7 +130,7 @@ sub _getClients {
 
 			push @clients, {
 				mac   => $id,
-				model => _guessPlayerTypeFromMac($id, $name),
+				model => $clientPrefs->get('model') || _guessPlayerTypeFromMac($id, $name),
 				lastSeen => $ts,
 			};
 		}
@@ -218,6 +218,9 @@ sub _guessPlayerTypeFromMac {
 		|| $mac =~ /^(?:aa:aa|bb:bb|cc:cc):/i
 	) {
 		$playerType = 'squeezelite';
+	}
+	else {
+		$log->warn("Analytics is reporting unknown player type for $mac / \"$name\"");
 	}
 
 	return $playerType;
