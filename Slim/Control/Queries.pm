@@ -869,7 +869,7 @@ sub albumsQuery {
 				my @displayRoles = $work ? ('ARTIST','BAND','CONDUCTOR') : split(/[,\s]+/,$prefs->get('showArtist'));
 
 				# if the user wants ARTIST, but all we have is ALBUMARTIST or TRACKARTIST, try to be helpful...
-				if ( grep(/ARTIST/, @displayRoles) && !exists($contributorHash->{'1'}) && !$work) {
+				if ( grep(/ARTIST/, @displayRoles) && !exists($contributorHash->{'1'}) ) {
 					if ( exists($contributorHash->{'5'}) ) {
 						unshift(@displayRoles,'ALBUMARTIST') if !grep(/ALBUMARTIST/, @displayRoles)
 					} else {
