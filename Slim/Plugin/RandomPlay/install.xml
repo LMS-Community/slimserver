@@ -8,6 +8,7 @@
         <description>PLUGIN_RANDOM_DESC</description>
         <playerMenu>BROWSE_MUSIC</playerMenu>
         <creator>Lyrion Community</creator>
+        <category>tools</category>
 
         <defaultState>enabled</defaultState>
         <canConflictWithDSTM>1</canConflictWithDSTM>

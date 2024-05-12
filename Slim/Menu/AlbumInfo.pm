@@ -412,11 +412,11 @@ sub infoDisc {
 }
 
 sub infoDuration {
-	my ( $client, $url, $album ) = @_;
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
 
 	my $item;
 
-	if ( my $duration = $album->duration ) {
+	if ( my $duration = $album->duration($filter->{work_id}, $filter->{grouping}) ) {
 		$item = {
 			type  => 'text',
 			label => 'ALBUMLENGTH',

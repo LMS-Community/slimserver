@@ -50,9 +50,10 @@ my %mixTypeMap = (
 	'albums'       => 'album',
 	'year'         => 'year',
 	'artists'      => 'contributor',
+	'works'         => 'work',
 );
 
-my @mixTypes = ('track', 'contributor', 'album', 'year');
+my @mixTypes = ('track', 'contributor', 'album', 'year', 'work');
 
 # Genres for each client (don't access this directly - use getGenres())
 tie my %genres, 'Tie::Cache::LRU::Expires', EXPIRES => 86400, ENTRIES => 10;
@@ -252,6 +253,24 @@ sub initPlugin {
 			},
 		},
 		{
+			stringToken    => 'PLUGIN_RANDOM_WORK',
+			id      => 'randomworks',
+			weight  => 35,
+			style   => 'itemplay',
+			nextWindow => 'nowPlaying',
+			node    => 'randomplay',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'works' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'randomplay', 'works' ],
+				},
+			},
+		},
+		{
 			stringToken    => 'PLUGIN_RANDOM_YEAR',
 			id      => 'randomyears',
 			weight  => 40,
@@ -337,6 +356,7 @@ sub initPlugin {
 			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://contributor' },
 			{ title => '{PLUGIN_RANDOM_ALBUM}', url => 'randomplay://album' },
 			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
+			{ title => '{PLUGIN_RANDOM_WORK}', url => 'randomplay://work' },
 		]
 	);
 }
@@ -848,7 +868,7 @@ sub setMode {
 	my %params = (
 		header     => '{PLUGIN_RANDOMPLAY}',
 		headerAddCount => 1,
-		listRef    => [qw(track album contributor year genreFilter library_filter)],
+		listRef    => [qw(track album contributor year work genreFilter library_filter)],
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
 		modeName   => 'RandomPlay',
@@ -1224,6 +1244,7 @@ sub getAlarmPlaylists {
 			{ title => '{PLUGIN_RANDOM_ALBUM}', url	=> 'randomplay://album' },
 			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://contributor' },
 			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
+			{ title => '{PLUGIN_RANDOM_WORK}', url => 'randomplay://work' },
 		]
 	} ];
 }

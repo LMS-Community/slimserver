@@ -1490,7 +1490,7 @@ sub _albums {
 
 	# Under certain circumstances (random albums in web UI or with remote streams) we are only
 	# to return one item. In this case pull a list of IDs from the cache, as requesting a bunch
-	# of random albums would retun a different list than what we were showing the user.
+	# of random albums would return a different list than what we were showing the user.
 	my $cacheKey = 'randomAlbumIDs_' . ($client ? $client->id : '') if $sort && $sort =~ 'random';
 
 	# shortcut if we hit a cached list

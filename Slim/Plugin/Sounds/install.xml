@@ -6,6 +6,7 @@
 	<version>1.1</version>
 	<description>PLUGIN_SOUNDS_MODULE_NAME</description>
 	<creator>Lyrion Community</creator>
+	<category>musicservices</category>
 	<defaultState>enabled</defaultState>
 	<icon>plugins/Sounds/html/images/icon.png</icon>
 	<type>2</type>

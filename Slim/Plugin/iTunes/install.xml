@@ -7,6 +7,7 @@
 	<version>1.0</version>
 	<description>ITUNES_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>information</category>
 
 	<defaultState>
 		<win>enabled</win>

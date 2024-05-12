@@ -7,6 +7,7 @@
 	<playerMenu>GAMES</playerMenu>
 	<description>SLIMTRIS_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>misc</category>
 	<defaultState>disabled</defaultState>
 	<type>2</type>
 <!-- type=extension -->

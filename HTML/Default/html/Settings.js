@@ -18,7 +18,7 @@ Settings = {
 					margins: '5 5 0 5',
 					height: 40
 				},
-				
+
 				{
 					region: 'center',
 					layout: 'border',
@@ -88,13 +88,13 @@ Settings = {
 
 		this.tp.on('beforetabchange', function(tb, tab, ev) {
 			var modified = false;
-			
+
 			try { modified = frames.settings.Settings.Page.isModified(); }
 			catch(e){}
-			
+
 			if (!modified)
 				return true;
-				
+
 			return Settings._confirmPageChange(function(btn, a, b){
 				if (btn == 'no' || btn == 'yes') {
 					if (btn == 'yes') {
@@ -154,7 +154,7 @@ Settings = {
 
 		if (typeof page == 'object' && page.url)
 			page = page.url;
-			
+
 		if (page == null || page == 'null')
 			page = 'settings/server/basic.html?'
 
@@ -171,7 +171,7 @@ Settings = {
 	},
 
 	submitSettings : function(cb) {
-		try { 
+		try {
 			frames.settings.Settings.Page.submit(cb);
 		}
 		catch(e){ return false; }
@@ -196,7 +196,7 @@ Settings = {
 		catch(e){}
 		return modified;
 	},
-	
+
 	_confirmPageChange : function(cb) {
 		if (typeof cb == 'string') {
 			var url = cb;
@@ -229,7 +229,7 @@ Settings = {
 		});
 		return false;
 	},
-	
+
 	resetPlayer : function(url) {
 		Ext.Msg.show({
 			title: SqueezeJS.string('reset_player'),
@@ -399,13 +399,13 @@ Settings.Page = function(){
 				);
 			}
 		},
-		
+
 		initSliders : function() {
 			var items = Ext.query('input[class*=sliderInput_]');
 			var inputEl;
-			
+
 			for(var i = 0; i < items.length; i++) {
-	
+
 				if (inputEl = Ext.get(items[i])) {
 					var min, max, increment;
 					min = 0;
@@ -425,7 +425,7 @@ Settings.Page = function(){
 						max = RegExp.$2;
 						increment = RegExp.$3;
 					}
-					
+
 					new SqueezeJS.UI.SliderInput({
 						width: 200,
 						minValue: parseInt(min),
@@ -435,15 +435,15 @@ Settings.Page = function(){
 				 		cls: 'settingsSlider'
 					});
 				}
-			}			
+			}
 		},
 
 		validatePref : function(myPref, namespace) {
 			SqueezeJS.Controller.request({
 				params: ['', [
-							'pref', 
-							'validate', 
-							namespace + ':' + myPref, 
+							'pref',
+							'validate',
+							namespace + ':' + myPref,
 							Ext.get(myPref).getValue()
 						]],
 				success: function(response) {
@@ -455,10 +455,10 @@ Settings.Page = function(){
 							Settings.Page.highlightField(myPref, response.result.valid);
 					}
 				}
-				
+
 			});
 		},
-		
+
 		submit : function(cb) {
 			var items = Ext.query('input.invalid');
 
@@ -490,7 +490,7 @@ Settings.Page = function(){
 
 		highlightField : function(myPref, valid){
 			var el = Ext.get(myPref);
-			
+
 			if (el) {
 				el.highlight(valid ? '99ff99' : 'ffcccc');
 
@@ -504,7 +504,7 @@ Settings.Page = function(){
 		showWarning : function(){
 			var reload;
 			if (reload = Ext.get('popupWarning')) {
-				Ext.MessageBox.alert(SqueezeJS.string('settings'), 
+				Ext.MessageBox.alert(SqueezeJS.string('settings'),
 					Ext.util.Format.stripTags(
 						reload.dom.innerHTML.replace(/<br\/?>/ig, ' ')
 					)
@@ -512,12 +512,12 @@ Settings.Page = function(){
 				reload.update('');
 			}
 		},
-		
+
 		showRestartMessage : function() {
 			var reload = Ext.get('restartWarning');
 			if (reload) {
 				var restartUrl = reload.child('a').dom.href;
-				
+
 				Ext.MessageBox.show({
 					title: SqueezeJS.string('settings'),
 					msg: Ext.util.Format.stripTags(
@@ -536,12 +536,12 @@ Settings.Page = function(){
 				reload.update('');
 			}
 		},
-		
+
 		showRescanMessage : function() {
 			var reload = Ext.get('rescanWarning');
 			if (reload) {
 				var restartUrl = reload.child('a').dom.href;
-				
+
 				Ext.MessageBox.show({
 					title: SqueezeJS.string('settings'),
 					msg: Ext.util.Format.stripTags(
@@ -572,9 +572,9 @@ Settings.Page = function(){
 		},
 
 		setModified : function(){
-			modified = true;	
+			modified = true;
 		},
-		
+
 		resetModified : function(){
 			modified = false;
 		},
@@ -597,37 +597,38 @@ Settings.Page = function(){
 			return true;
 		},
 
-		initCollapsableItems : function(){
+		initCollapsableItems : function(displayMode){
 			var el;
 			var items = Ext.DomQuery.select('div.collapsableSection');
-	
+			displayMode = displayMode || 'block';
+
 			// collapse/expand items - collapse by default
 			for(var i = 0; i < items.length; i++) {
 				el = Ext.get(items[i]);
-				
+
 				var panel;
 				if (el) {
 					panel = el.id;
 					panel = panel.replace(/_Header/, '');
 
 					if (panel = Ext.get(panel)) {
-					
+
 						el.on("click", function(ev, target) {
 							// if the triangle image was clicked, get the parent div
 							if (target.tagName == 'IMG')
 								target = Ext.get(target).parent('div');
-							
+
 							var subPanel = target.id;
 							subPanel = subPanel.replace(/_Header/, '');
 
 							this.toggleItem(Ext.get(target), subPanel);
 						}, this);
-	
-						panel.enableDisplayMode('block');
-	
+
+						panel.enableDisplayMode(displayMode);
+
 						if (SqueezeJS.getCookie('Squeezebox-expanded-' + panel.id) == '0')
 							this.collapseItem(el, panel);
-		
+
 						else
 							this.expandItem(el, panel);
 					}
@@ -645,7 +646,7 @@ Settings.Page = function(){
 					this.expandItem(heading, el);
 			}
 		},
-	
+
 		expandItem : function(heading, panel){
 			SqueezeJS.setCookie('Squeezebox-expanded-' + panel.id, '1');
 
@@ -657,10 +658,10 @@ Settings.Page = function(){
 				panel.setVisible(true);
 			}
 		},
-	
+
 		collapseItem : function(heading, panel){
 			SqueezeJS.setCookie('Squeezebox-expanded-' + panel.id, '0');
-	
+
 			if (icon = heading.child('img:first', true))
 				Ext.get(icon).removeClass('disclosure_expanded');
 
@@ -699,11 +700,11 @@ Settings.Alarm = function() {
 					}
 				});
 			}
-		},	
-		
+		},
+
 		initTimeControls: function(timeFormat, altFormats) {
 			var items = Ext.DomQuery.select('input.timeControl');
-			
+
 			for (var i = 0; i < items.length; i++) {
 
 				new Ext.form.TimeField({

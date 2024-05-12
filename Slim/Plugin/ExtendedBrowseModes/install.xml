@@ -7,6 +7,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_EXTENDED_BROWSEMODES_DESC</description>
 	<creator>Lyrion Community</creator>
+	<category>information</category>
 
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/ExtendedBrowseModes/settings/browsemodes.html</optionsURL>
