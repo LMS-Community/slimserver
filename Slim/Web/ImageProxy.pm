@@ -145,7 +145,7 @@ sub getImage {
 		return;
 	}
 
-	if ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/) {
+	if ($url =~ /\.svg$/ || ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/)) {
 		main::INFOLOG && $log->is_info && $log->info("No resizing requested - redirect to original URI: $url");
 
 		my $response = $args[1];
