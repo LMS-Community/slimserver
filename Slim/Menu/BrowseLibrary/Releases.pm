@@ -22,7 +22,6 @@ sub _releases {
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
 	my $menuMode   = $args->{'params'}->{'menu_mode'};
 	my $menuRoles  = $args->{'params'}->{'menu_roles'};
-$log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 	# map menuRoles to name for readability
 	$menuRoles = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $menuRoles || ''));
@@ -152,20 +151,18 @@ $log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 	foreach my $releaseType (@sortedReleaseTypes) {
 		my $name = Slim::Schema::Album->releaseTypeName($releaseType, $client);
-		my $compilation = $releaseType eq 'COMPILATION' ? 1 : 0;
 
 		if ($releaseTypes{uc($releaseType)}) {
 			$pt->{'searchTags'} = $releaseType eq 'COMPILATION'
 				? [@searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})]
 				: [@searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})];
-			push @items, _createItem($name, [ $pt ]);
-
+			push @items, _createItem($name, [{%$pt}]);
 		}
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
 		$pt->{'searchTags'} = [@searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)];
-		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [ $pt ]);
+		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [{%$pt}]);
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSER}) {
@@ -182,13 +179,13 @@ $log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 	if (my $albumIds = delete $contributions{TRACKARTIST}) {
 		$pt->{'searchTags'} = [@searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)];
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [ $pt ]);
+		push @items, _createItem(cstring($client, 'APPEARANCES'), [{%$pt}]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
 		$pt->{'searchTags'} = [@searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})];
-		push @items, _createItem($name || ucfirst($role), [ $pt ]);
+		push @items, _createItem($name || ucfirst($role), [{%$pt}]);
 	}
 
 	# Add item for Classical Works if the artist has any.
@@ -210,7 +207,7 @@ $log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 	# restore original search tags
 	$pt->{'searchTags'} = [@originalSearchTags];
-	
+
 	# if there's only one category, display it directly
 	if (scalar @items == 1 && (my $handler = $items[0]->{url})) {
 		$handler->($client, $callback, $args, $pt);
@@ -255,7 +252,6 @@ $log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 sub _createItem {
 	my ($name, $pt) = @_;
-$log->error("DK \$pt=" . Data::Dump::dump($pt));
 
 	return {
 		name        => $name,
