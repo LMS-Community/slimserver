@@ -255,7 +255,7 @@ sub needsUpgrade {
 	main::INFOLOG && $log->info("Reading firmware version file: $versionFilePath");
 
 	if (!open($versionFile, "<$versionFilePath")) {
-		warn("can't open $versionFilePath\n");
+		$log->warn("can't open $versionFilePath\n");
 		return 0;
 	}
 
