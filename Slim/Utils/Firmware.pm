@@ -47,10 +47,13 @@ my $updatesDir;
 
 # Download location and check interval - this isn't a constant to allow 3rd party plugins to re-use the mechanism (eg. for the community firmware)
 sub BASE { 'http://downloads.lms-community.org/update/firmware/' }
-sub CHECK_INTERVAL { 86400 * 30 }
+sub CHECK_INTERVAL { MAX_RETRY_TIME }
 
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = INITIAL_RETRY_TIME;
+
+# folder to look for updates
+my $BASE_FOLDER = $::VERSION;
 
 # Available firmware files and versions/revisions
 my $firmwares = {};
@@ -295,7 +298,7 @@ sub url {
 
 	# on some systems return the direct link from the origin server
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() && BASE() !~ /^https:/ ) {
-		return BASE() . $::VERSION . '/' . $model
+		return BASE() . $BASE_FOLDER . '/' . $model
 			. '_' . $firmwares->{$model}->{version}
 			. '_r' . $firmwares->{$model}->{revision}
 			. '.bin';
@@ -373,7 +376,7 @@ sub downloadAsync {
 	$filesDownloading{$file} ||= [];
 
 	# URL to download
-	my $url = BASE(basename($file)) . $::VERSION . '/' . basename($file);
+	my $url = BASE(basename($file)) . $BASE_FOLDER . '/' . basename($file);
 
 	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -486,19 +489,40 @@ sub downloadAsyncError {
 	my $cb   = $http->params('cb');
 	my $pt   = $http->params('pt');
 
+	my $checkArgs = {
+		file => $file,
+		cb   => $cb,
+		pt   => $pt,
+		retry=> 1,
+	};
+
+	Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
+
 	# Clean up
 	unlink "$file.tmp" if -e "$file.tmp";
 
 	# If error was "Unable to open $file for writing", downloading will never succeed so just give up
 	# Same for "Unable to write" if we run out of disk space, for example
 	if ( $error =~ /Unable to (?:open|write)/ ) {
-		logWarning(sprintf("Firmware: Fatal error downloading %s (%s), giving up",
+		$log->error(sprintf("Fatal error downloading %s (%s), giving up",
 			$http->url,
 			$error,
 		));
 	}
+	# we can expect a failure if we're looking for the server's version number - fall back to "latest"
+	elsif ( $error =~ /^40[34] / && $BASE_FOLDER eq $::VERSION ) {
+		$log->info(sprintf("Firmware %s not found (%s), will try folder 'latest' instead of '$::VERSION'.",
+			$http->url,
+			$error,
+		));
+
+		$BASE_FOLDER = 'latest';
+
+		downloadAsync( $file, $checkArgs );
+		return;
+	}
 	else {
-		logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in %d minutes.",
+		$log->warn(sprintf("Failed to download %s (%s), will try again in %d minutes.",
 			$http->url,
 			$error,
 			int( $CHECK_TIME / 60 ),
@@ -508,15 +532,7 @@ sub downloadAsyncError {
 			$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
 		}
 
-		Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
-		Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync,
-			{
-				file => $file,
-				cb   => $cb,
-				pt   => $pt,
-				retry=> 1,
-			},
-		 );
+		Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync, $checkArgs );
 
 		# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
 		$CHECK_TIME *= 2;
