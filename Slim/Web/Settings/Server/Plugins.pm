@@ -383,7 +383,6 @@ sub _addInfo {
 sub prepareDetails {
 	my ($data, $searchData, $categories, $installed) = @_;
 
-	# foreach (@$active, @$inactive, map { @{$_->{entries}} } @results) {
 	foreach (@$data) {
 		$categories->{$_->{category}}++;
 		my $icon = $_->{icon};
