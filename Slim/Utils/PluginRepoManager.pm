@@ -520,6 +520,7 @@ sub _parseXML {
 				$new->{'icon'}    = $entry->{'icon'}    if $entry->{'icon'};
 				$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
 				$new->{'path'}    = $entry->{'path'}    if $entry->{'path'};
+				$new->{'installations'} = $entry->{'installations'} if $entry->{'installations'};
 
 			}
 

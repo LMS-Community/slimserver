@@ -21,7 +21,7 @@ use Slim::Utils::OSDetect;
 
 Slim::Utils::PluginRepoManager->init();
 
-use constant MAX_DOWNLOAD_WAIT => 120;
+use constant MAX_DOWNLOAD_WAIT => 30;
 use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');

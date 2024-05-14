@@ -7,6 +7,7 @@
 	<description>PLUGIN_VIEW_TAGS</description>
 	<creator>Lyrion Community</creator>
 	<category>information</category>
+	<optionsURL>plugins/ViewTags/settings.html</optionsURL>
 	<defaultState>enabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
