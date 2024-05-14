@@ -7730,7 +7730,7 @@ SETUP_NOROLEFILTER_DESC
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc.).
-	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER, enz.).
+	NL	Bij het browsen in artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER, enz.).
 	NO	Når du blar gjennom artister kan du filtrere ut og vise bare album og spor som stemmer overens med den valgte rollen (ALBUMARTIST, COMPOSER osv.).
 	PL	Filtrowanie może zostać włączone podczas przeglądania listy wykonawców, aby wyświetlić tylko te albumy i utwory, które są zgodne z wybraną rolą kontrybutora (np. ALBUMARTIST, COMPOSER itp.).
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
@@ -9148,19 +9148,19 @@ SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
 	FR	Types de sorties pour les albums
-	NL	Uitgaventypes voor Albums
+	NL	Releasetypes voor albums
 
 SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
 	FR	Types de sorties à inclure dans la liste des albums
-	NL	Uitgaventypes die in de albumlijst worden opgenomen
+	NL	Releasetypes die in de albumlijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
-	NL	Je kunt opgeven welke uitgaventypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
+	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	EN	Composer album options
@@ -9173,65 +9173,65 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
 	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
-	NL	Maak een componistenalbumgroep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
+	NL	Maak een groep voor componistenalbum - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe "Albums du compositeur"
 	DE	Keine Komponistenalbengruppe erstellen
-	NL	Maak geen componistenalbumgroep
+	NL	Maak geen groep van componistenalbums
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créer toujours un groupe "Albums du compositeur"
 	DE	Immer eine Komponistenalbengruppe erstellen
-	NL	Maak altijd een componistenalbumgroep
+	NL	Maak altijd een groep van componistenalbums
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créer un groupe "Albums du compositeur" pour ces genres :
 	DE	Komponistenalbengruppe für diese Stilrichtungen erstellen:
-	NL	Maak een componistenalbumgroep voor deze genres:
+	NL	Maak een groep van componistenalbums voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
 	FR	Activer la prise en charge des types de sorties des albums
-	NL	Uitgaventypes voor albums inschakelen
+	NL	Releasetypes voor albums inschakelen
 
 SETUP_IGNORE_RELEASE_TYPES_1
 	DE	Veröffentlichungstyp von Alben ignorieren
 	EN	Ignore album release types
 	FR	Ignorer les types de sorties des albums
-	NL	Uitgaventypes voor albums uitschakelen
+	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
 	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
 	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
 	FR	Essayer de reconnaître automatiquement les EPs et les singles lorsque le type de sortie est manquant ou est de type "album".
-	NL	Probeer om EPs en Singles automatisch te herkennen als uitgavetype-informatie afwezig is.
+	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
 	DE	Die Veröffentlichungen nicht gruppieren
 	EN	Don't group releases
 	FR	Ne pas regrouper les albums par type de sortie
-	NL	Uitgaven niet groeperen op type
+	NL	Releases niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
 	EN	Group an artist's lists by release type
 	FR	Regrouper les albums d'un artiste par type de sortie
-	NL	Uitgaven van een artiest groeperen op type
+	NL	Releases van een artiest groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_2
 	DE	Alle Veröffentlichungen nach Typ gruppiere
 	EN	Group all lists by release type
 	FR	Regrouper toutes les listes d'albums par type de sortie
-	NL	Groepeer alle uitgaven op type
+	NL	Groepeer alle releases op type
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny
@@ -12629,7 +12629,7 @@ ALL_RELEASES
 	HE	כל האלבומים
 	IT	Tutti gli album
 	JA	全てのアルバム
-	NL	Alle albums
+	NL	Alle releases
 	NO	Alle album
 	PL	Wszystkie albumy
 	PT	Todos os Álbuns
@@ -13056,7 +13056,7 @@ BROWSE_WORKS
 	DE	Werke durchsuchen
 	EN	Browse Works
 	FR	Parcourir les œuvres
-	NL	Door Composities bladeren
+	NL	Door composities bladeren
 
 WORKS
 	DE	Werke
@@ -13068,7 +13068,7 @@ WORKS_CLASSICAL
 	DE	Klassische Werke
 	EN	Classical Works
 	FR	Œuvres Classiques
-	NL	Klassieke Composities
+	NL	Klassieke composities
 
 BROWSE_YEARS
 	CS	Procházet roky
@@ -13762,7 +13762,7 @@ PLAYER_SETTINGS
 	HE	הגדרות נגן
 	IT	Impostazioni lettore
 	JA	プレーヤーセッティング
-	NL	Muziekspelerinstellingen
+	NL	Instellingen van muziekspeler
 	NO	Spillerinnstillinger
 	PL	Ustawienia odtwarzacza
 	PT	Configurações do Cliente
@@ -13832,7 +13832,7 @@ JIVE_PLAYER_DISPLAY_SETTINGS
 	FI	Soittimen näyttö
 	FR	Affichage du lecteur
 	IT	Display del lettore
-	NL	Muziekspelerdisplay
+	NL	Display van muziekspeler
 	NO	Spillerskjerm
 	PL	Wyświetlacz odtwarzacza
 	RU	Экран плеера
@@ -21250,7 +21250,7 @@ RELEASETYPES_PROGRESS
 	DE	Album Veröffentlichungstypen aktualisieren
 	EN	Update Album release types
 	FR	Actualiser les types de sorties des albums
-	NL	Albumuitgaventypes vernieuwen
+	NL	Albumreleasetypes vernieuwen
 
 VIRTUALLIBRARIES_PROGRESS
 	CS	Vytváření zobrazení knihovny
