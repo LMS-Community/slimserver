@@ -8575,7 +8575,7 @@ SETUP_DISABLESTATISTICS
 	FR	Statistiques de la bibliothèque
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
-	NL	Mediabibliotheekstatistieken
+	NL	Statistieken van mediabibliotheek
 	NO	Biblioteksstatistikk
 	PL	Statystyka biblioteki
 	RU	Статистика медиатеки
@@ -8608,7 +8608,7 @@ SETUP_DISABLE_STATISTICS
 	FR	Désactiver l'affichage des statistiques
 	HE	השבתת האפשרות לחישוב הנתונים הסטטיסטיים אודות הספרייה
 	IT	Disattiva statistiche libreria
-	NL	Uitschakelen van mediabibliotheekstatistieken
+	NL	Uitschakelen van statistieken
 	NO	Deaktiver visning av bibliotekstatistikk
 	PL	Wyłącz statystykę biblioteki
 	RU	Выкл. статистику медиатеки
@@ -8625,7 +8625,7 @@ SETUP_ENABLE_STATISTICS
 	FR	Activer l'affichage des statistiques
 	HE	הפעלת האפשרות לחישוב הנתונים הסטטיסטיים אודות הספרייה
 	IT	Attiva statistiche libreria
-	NL	Inschakelen van mediabibliotheekstatistieken
+	NL	Inschakelen van statistieken
 	NO	Vis statistikk for musikkbiblioteket
 	PL	Włącz statystykę biblioteki
 	RU	Включить статистику медиатеки
@@ -17052,7 +17052,7 @@ INFORMATION_MENU_PLAYER
 	HE	מידע אודות הנגן
 	IT	Informazioni sul lettore
 	JA	プレーヤー情報
-	NL	Muziekspelerinformatie
+	NL	Informatie van muziekspeler
 	NO	Spillerinformasjon
 	PL	Informacje o odtwarzaczu
 	RU	Информация о плеере
@@ -17121,7 +17121,7 @@ INFORMATION_MENU_LIBRARY
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
 	JA	ライブラリー統計
-	NL	Mediabibliotheekstatistieken
+	NL	Statistieken van mediabibliotheek
 	NO	Biblioteksstatistikk
 	PL	Statystyka biblioteki
 	RU	Статистика медиатеки
