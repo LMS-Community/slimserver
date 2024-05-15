@@ -220,7 +220,7 @@ sub _guessPlayerTypeFromMac {
 		$playerType = 'squeezelite';
 	}
 	else {
-		$log->warn("Analytics is reporting unknown player type for $mac / \"$name\"");
+		main::INFOLOG && $log->is_info && $log->info("Didn't find player type for $mac / \"$name\"");
 	}
 
 	return $playerType;
