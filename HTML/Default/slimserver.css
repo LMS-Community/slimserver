@@ -647,7 +647,7 @@ div.thumbwrap {
 .mouseOver a,
 .mouseOver .homeMenuItem {
 	color: white;
-	text-weight: bold;
+	font-weight: bold;
 }
 
 .mouseOver {
@@ -671,7 +671,7 @@ div.thumbwrap {
 
 .dragOver.selectorMarker {
 	background-color: #aaa;
-	font-color: white;
+	color: white;
 }
 
 #crumblist a.dragOver,
@@ -1136,11 +1136,6 @@ body.settingsMenu {
 	margin-bottom: 5px;
 }
 
-.pluginSection .settingGroup {
-	padding-left: 400px;
-}
-
-
 .settingSection img.playericon {
 	position: absolute;
 	top: -10px;
@@ -1153,10 +1148,6 @@ body.settingsMenu {
 	top: 0px;
 }
 
-.pluginSection .prefHelp {
-	left: 380px;
-}
-
 .prefHead {
 	font-weight: bold;
 }
@@ -1165,10 +1156,6 @@ body.settingsMenu {
 	position: absolute;
 	width: 235px;
 	left: 0;
-}
-
-.pluginSection .settingGroup .prefHead {
-	width: 385px;
 }
 
 .settingSection table {
@@ -1219,6 +1206,84 @@ div.buttonbarSpacer {
 
 .prefs .timeControl.x-form-invalid {
 	background-color: #ffcccc;
+}
+
+/* Plugins Manager */
+div.pluginList {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+	gap: 5px;
+}
+
+.pluginList ul.thumbWrap {
+	display: contents
+}
+
+.pluginList ul.thumbWrap li.thumbWrap {
+	border-radius: 5px;
+	border: solid 1px #eee;
+	max-width: 370px;
+}
+
+.pluginList .pluginItem label {
+	font-weight: bold;
+	display: block;
+}
+
+.pluginList .pluginItem div {
+	padding-bottom: 5px;
+}
+
+.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
+	position: relative;
+	padding-left: 55px;
+}
+
+.pluginList .pluginDesc, .pluginFooter {
+	max-height: 65px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	overflow-wrap: break-word;
+	word-break: break-word;
+}
+
+.pluginList .pluginDescLong:before {
+	content: '';
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: linear-gradient(transparent 35px, white);
+}
+
+.pluginList .mouseOver .pluginDescLong:before {
+	background: linear-gradient(transparent 35px, #999);
+}
+
+.pluginList .pluginItem img {
+	position: absolute;
+	margin: 0 5px 5px 0;
+	width: 50px;
+}
+
+.pluginList .pluginFooter img, .pluginList .pluginItem label img {
+	position: relative;
+	vertical-align: middle;
+	width: 15px;
+	margin: 0 0 1px 0;
+}
+
+#pluginButtonBar #filterChooser {
+	width: 200px;
+}
+
+#pluginButtonBar span {
+	vertical-align: top;
+}
+
+#pluginButtonBar .x-form-text {
+	height: 20px;
 }
 
 
