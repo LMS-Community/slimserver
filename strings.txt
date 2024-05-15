@@ -194,20 +194,8 @@ DEFAULT_SKIN
 	SV	Standard
 	ZH_CN	缺省
 
-SCREENREADER_SKIN
-	CS	Čtečka obrazovky
-	DA	Skærmaflæser
-	DE	Screen Reader
-	EN	Screen Reader
-	ES	Lector de pantalla
-	FI	Näytön lukija
-	FR	Lecteur d'écran
-	IT	Utilità lettura schermo
-	NL	Schermlezer
-	NO	Skjermleser
-	PL	Moduł odczytywania zawartości ekranu
-	RU	Программа чтения с экрана
-	SV	Skärmläsare
+LOGIC_SKIN
+	EN	Logic Teal
 
 DEFAULT_MAP
 	CS	Standardní
