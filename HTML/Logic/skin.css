@@ -16,6 +16,23 @@ html, body, tr, tr, p, div, li, input, ul, .x-btn-text, .x-tip .x-tip-body, sele
 	right: 15px;
 }
 
+#noJS {
+	position: absolute;
+	background-color: white;
+	z-index: 20002;
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
+}
+
+#loading-mask {
+	width: 120%;
+	height: 100%;
+	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
+	position: absolute;
+	z-index: 20000;
+	left: 0;
+	top: 0;
+}
+
 div#background {
 	position: absolute;
 	top: 5px;

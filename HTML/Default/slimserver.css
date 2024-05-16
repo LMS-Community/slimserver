@@ -123,9 +123,8 @@ a:hover, .link:hover,
 /* Main screen (outer frame) */
 #noJS {
 	position: absolute;
-	background-color: white;
+	background-color: #202020;
 	z-index: 20002;
-	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
 }
 
 div#background {
