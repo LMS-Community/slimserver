@@ -7,7 +7,7 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
-	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]" [% IF useExtJS %]onmouseover="Highlighter.highlight(this);"[% END %]>
+	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]">
 		<div class="thumbwrap">
 			<div class="pluginItem">
 				<div>
@@ -45,6 +45,10 @@
 	</div>
 [% END %]
 <style>
+	li.selectorMarker {
+		cursor: default;
+	}
+
 	div.pluginList {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));

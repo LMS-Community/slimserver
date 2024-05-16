@@ -21,39 +21,6 @@
 		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_TOOLS' jsId='tools' %]
 
 		if (SqueezeJS.UI) {
-			Highlight = Ext.extend(SqueezeJS.UI.Highlight, {
-				onSelectorClicked : function(ev, target){
-					if (target && target.href)
-						return;
-
-					var el;
-					target = Ext.get(target);
-
-					if (target.dom.href) {
-						// don't capture click on link!
-					}
-
-					else if (target.dom.htmlFor) {
-						target = Ext.get(target.down("input[type=checkbox]"));
-						target.dom.checked = !target.dom.checked;
-					}
-
-					else if (target.hasClass('thumbwrap') && !target.is('ul.thumbwrap')) {
-						target = target.child("input[type=checkbox]");
-						target.dom.checked = !target.dom.checked;
-					}
-
-					else if (el = target.findParentNode('div.pluginItem', 2, true)) {
-						target = el.child("input[type=checkbox]");
-						target.dom.checked = !target.dom.checked;
-					}
-				}
-			});
-
-			Highlighter = new Highlight({
-				unHighlight : 'content'
-			});
-
 			// plugin filtering
 			var filterChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'filterChooser',
@@ -221,10 +188,6 @@
 		left: 0;
 		top: 0;
 		background: linear-gradient(transparent [% descHeight - 30 %]px, white) !important;
-	}
-
-	.pluginList .mouseOver .pluginDescLong:before {
-		background: linear-gradient(transparent [% descHeight - 30 %]px, #999) !important;
 	}
 
 	#pluginButtonBar #filterChooser {
