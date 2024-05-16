@@ -10,38 +10,22 @@
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP' %]
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP2' %]
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_ALL' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_DATABASE', jsId='database' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_HARDWARE', jsId='hardware' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_INFO' jsId='information' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_MISC' jsId='misc' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES' jsId='musicservices' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_PLAYLISTS' jsId='playlists' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_RADIO' jsId='radio' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_SCANNING' jsId='scanning' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_SKIN' jsId='skin' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_TOOLS' jsId='tools' %]
 
 		if (SqueezeJS.UI) {
 			// plugin filtering
 			var filterChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'filterChooser',
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				text: SqueezeJS.string('setup_extensions_category_all')
+				text: categories[0][1]
 			});
 
-			Ext.each(categories.sort(function(a, b) {
-				a = SqueezeJS.string(a || 'setup_extensions_category_all');
-				b = SqueezeJS.string(b || 'setup_extensions_category_all');
-
-				if (a < b) return -1
-				else if (b < a) return 1
-				else return 0;
-			}), function(category, x) {
+			Ext.each(categories, function(category, x) {
+				const catId = category[0];
+				const title = category[1];
 				filterChooser.menu.add(
 					new Ext.menu.CheckItem({
-						text: category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all'),
-						value: category,
+						text: title,
+						value: catId,
 						checked: false,
 						cls: 'settingsList',
 						group: 'settingsList',
@@ -50,9 +34,9 @@
 							expandAllSections();
 
 							category = ev.value;
-							filterChooser.setText(category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all'));
-							togglePluginVisibility(category, function(s) {
-								return s.category == category;
+							filterChooser.setText(title);
+							togglePluginVisibility(catId, function(s) {
+								return s.category == catId;
 							});
 						}
 					})

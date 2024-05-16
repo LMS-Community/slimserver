@@ -18,6 +18,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 use Slim::Utils::PluginRepoManager;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Strings qw(cstring);
 
 Slim::Utils::PluginRepoManager->init();
 
@@ -339,27 +340,31 @@ sub _addInfo {
 		}
 	}
 
-	# we might need to complete local data with data fetched remotely
-	foreach (@$active, @$inactive) {
-		if (my $data = $pluginDataLookup{$_->{name}}) {
-			$_->{icon} ||= $data->{icon};
-			$_->{category} ||= $data->{category};
-		}
-	}
-
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
 	my $searchData = {};
 	my $categories = {};
 
-	prepareDetails($active, $searchData, $categories, 1);
-	prepareDetails($inactive, $searchData, $categories);
+	prepareDetails($active, $searchData, $categories, 1, \%pluginDataLookup);
+	prepareDetails($inactive, $searchData, $categories, undef, \%pluginDataLookup);
 	foreach (@results) {
-		prepareDetails($_->{entries}, $searchData, $categories);
+		prepareDetails($_->{entries}, $searchData, $categories, undef, \%pluginDataLookup);
 	}
 
+	my @categories = (
+		['', cstring($client, 'SETUP_EXTENSIONS_CATEGORY_ALL')],
+		sort {
+			$a->[0] cmp $b->[0]
+		} map {
+			[$_, cstring($client, $_) || ucfirst($_)]
+		} grep {
+			$_
+		} keys %$categories
+	);
+
 	$params->{'searchData'} = to_json($searchData);
-	$params->{'categories'} = to_json([ grep { $_ } keys %$categories ]);
+	$params->{'categoriesRaw'} = \@categories;
+	$params->{'categories'} = to_json(\@categories);
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
@@ -391,12 +396,18 @@ sub _addInfo {
 }
 
 sub prepareDetails {
-	my ($data, $searchData, $categories, $installed) = @_;
+	my ($data, $searchData, $categories, $installed, $pluginDataLookup) = @_;
 
 	foreach (@$data) {
 		$categories->{$_->{category}}++;
-		my $icon = $_->{icon};
 
+		if (my $data = $pluginDataLookup->{$_->{name}}) {
+			$_->{icon} ||= $data->{icon};
+			$_->{icon} = $data->{icon} if $data->{icon} && $_->{icon} !~ /^http/;
+			$_->{category} ||= $data->{category};
+		}
+
+		my $icon = $_->{icon};
 		if (!$installed && $icon && $icon !~ /^http/ && $icon =~ m|(plugins/(.*?)/html/.*)|) {
 			$_->{icon} = sprintf(GH_IMAGE_URL, $2, $1);
 		}
