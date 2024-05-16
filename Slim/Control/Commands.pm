@@ -2035,10 +2035,16 @@ sub playlistcontrolCommand {
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
-			$what->{'album.id'} = $album_id;
-			my $album = Slim::Schema->find('Album', $album_id);
-			@info    = ( $album->title, $album->contributors->first->name );
-			$artwork = $album->artwork || 0;
+			if ( scalar split(/,/,$album_id) == 1 ) {
+				$what->{'album.id'} = $album_id;
+				my $album = Slim::Schema->find('Album', $album_id);
+				@info    = ( $album->title, $album->contributors->first->name );
+				$artwork = $album->artwork || 0;
+			} else {
+				$what->{'album.id'} = {
+					in => [ split(/,/,$album_id) ]
+				};
+			}
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
@@ -3425,7 +3431,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 
 		if ($sort && ($sort eq $albumSort || $sort eq $albumYearSort)) {
-			if ($find{'me.album'}) {
+			if ( $find{'me.album'} && ref $find{'me.album'} eq '') {
 				# Don't need album-sort if we have a specific album-id
 				$sort = undef;
 			} else {
