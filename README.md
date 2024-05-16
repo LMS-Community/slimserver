@@ -79,6 +79,6 @@ Don't forget to give the project a star! Thanks again!
 [pulls-url]: https://github.com/LMS-Community/slimserver/pulls
 [docker-pulls-shield]: https://img.shields.io/docker/pulls/lmscommunity/logitechmediaserver?style=flat
 [docker-pulls-url]: https://hub.docker.com/r/lmscommunity/logitechmediaserver
-[lyrion-screenshot]: https://raw.githubusercontent.com/LMS-Community/lms-community.github.io/main/docs/reference/assets/winscp/9-winscp.png
+[lyrion-screenshot]: https://lyrion.org/assets/screenshot.png
 [Perl]: https://img.shields.io/badge/Written_in-perl-orange?logo=perl
 [Perl-url]: https://perl.org/
