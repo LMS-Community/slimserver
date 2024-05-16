@@ -315,6 +315,7 @@ sub _addInfo {
 
 	# pass 1 - find the higher version numbers
 	my $max = {};
+	my %pluginDataLookup;
 
 	for my $repo (@results) {
 		for my $entry (@{$repo->{'entries'}}) {
@@ -322,6 +323,7 @@ sub _addInfo {
 			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
 				$max->{$name} = $entry->{'version'};
 			}
+			$pluginDataLookup{$name} = $entry;
 		}
 	}
 
@@ -337,6 +339,14 @@ sub _addInfo {
 		}
 	}
 
+	# we might need to complete local data with data fetched remotely
+	foreach (@$active, @$inactive) {
+		if (my $data = $pluginDataLookup{$_->{name}}) {
+			$_->{icon} ||= $data->{icon};
+			$_->{category} ||= $data->{category};
+		}
+	}
+
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
 	my $searchData = {};
@@ -349,7 +359,7 @@ sub _addInfo {
 	}
 
 	$params->{'searchData'} = to_json($searchData);
-	$params->{'categories'} = to_json([ keys %$categories ]);
+	$params->{'categories'} = to_json([ grep { $_ } keys %$categories ]);
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
