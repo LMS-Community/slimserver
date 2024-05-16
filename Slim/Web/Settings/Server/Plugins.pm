@@ -392,6 +392,7 @@ sub prepareDetails {
 		}
 		elsif (!$icon) {
 			$_->{icon} = 'html/images/' . ($_->{category} || 'misc') . '.svg';
+			$_->{fallbackIcon} = 1;
 		}
 
 		if (!$searchData->{$_->{name}}) {

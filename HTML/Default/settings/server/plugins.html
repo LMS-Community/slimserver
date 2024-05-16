@@ -78,6 +78,7 @@
 						group: 'settingsList',
 						handler: function(ev) {
 							category = ev.value;
+							Ext.get('filterInput').dom.value = '';
 							filterChooser.setText(category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all')),
 							togglePluginVisibility(category, function(s) {
 								return s.category == category;
@@ -95,6 +96,7 @@
 
 				validator: function(value) {
 					var reg = new RegExp(value, 'i');
+					filterChooser.setText(SqueezeJS.string('setup_extensions_category_all')),
 
 					togglePluginVisibility(value, function(s) {
 						return reg.test(s.content);
@@ -190,16 +192,12 @@
 </script>
 [% END; END %]
 <style>
-	.pluginList ul.thumbWrap li.thumbWrap {
-		position: relative;
-	}
-
-	.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
-		padding-left: [% iconSize + 5 %]px;
-	}
-
-	.pluginList .pluginItem img {
-		width: [% iconSize %]px;
+	.pluginItem img.pluginFallbackIcon {
+		border: 1px solid #bbb;
+		border-radius: 5px;
+		background-color: #eee;
+		padding: 2px;
+		width: [% iconSize - 6 %]px !important;
 	}
 
 	.pluginList .pluginDesc, .pluginFooter {
