@@ -4,7 +4,7 @@
 <script TYPE="text/javascript">
 	var categories = [% categories %];
 	var searchData = [% searchData %];
-	var category, search;
+	var category, search, collapsableSections = [];
 
 	Ext.onReady(function() {
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP' %]
@@ -77,9 +77,11 @@
 						cls: 'settingsList',
 						group: 'settingsList',
 						handler: function(ev) {
-							category = ev.value;
 							Ext.get('filterInput').dom.value = '';
-							filterChooser.setText(category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all')),
+							expandAllSections();
+
+							category = ev.value;
+							filterChooser.setText(category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all'));
 							togglePluginVisibility(category, function(s) {
 								return s.category == category;
 							});
@@ -95,9 +97,10 @@
 				selectOnFocus: true,
 
 				validator: function(value) {
-					var reg = new RegExp(value, 'i');
-					filterChooser.setText(SqueezeJS.string('setup_extensions_category_all')),
+					filterChooser.setText(SqueezeJS.string('setup_extensions_category_all'));
+					expandAllSections();
 
+					var reg = new RegExp(value, 'i');
 					togglePluginVisibility(value, function(s) {
 						return reg.test(s.content);
 					});
@@ -141,6 +144,12 @@
 						}
 					});
 				}
+			}
+
+			function expandAllSections() {
+				collapsableSections.forEach(function(section) {
+					Settings.Page.expandItem(section[0], section[1]);
+				});
 			}
 		}
 
@@ -187,7 +196,7 @@
 			}
 		};
 
-		Settings.Page.initCollapsableItems('grid');
+		collapsableSections = Settings.Page.initCollapsableItems('grid');
 	});
 </script>
 [% END; END %]

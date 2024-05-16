@@ -602,8 +602,10 @@ Settings.Page = function(){
 			var items = Ext.DomQuery.select('div.collapsableSection');
 			displayMode = displayMode || 'block';
 
+			const collapsableItems = [];
+
 			// collapse/expand items - collapse by default
-			for(var i = 0; i < items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				el = Ext.get(items[i]);
 
 				var panel;
@@ -612,6 +614,7 @@ Settings.Page = function(){
 					panel = panel.replace(/_Header/, '');
 
 					if (panel = Ext.get(panel)) {
+						collapsableItems.push([el, panel]);
 
 						el.on("click", function(ev, target) {
 							// if the triangle image was clicked, get the parent div
@@ -634,6 +637,8 @@ Settings.Page = function(){
 					}
 				}
 			}
+
+			return collapsableItems;
 		},
 
 		toggleItem : function(heading, panel){
