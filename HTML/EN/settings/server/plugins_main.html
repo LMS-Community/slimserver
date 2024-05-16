@@ -7,7 +7,7 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
-	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]" onmouseover="Highlighter.highlight(this);">
+	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]" [% IF useExtJS %]onmouseover="Highlighter.highlight(this);"[% END %]>
 		<div class="thumbwrap">
 			<div class="pluginItem">
 				<div>
@@ -44,6 +44,58 @@
 		<span>[% "SEARCH" | string %][% "COLON" | string %] <input type="text" id="filterInput"></span>
 	</div>
 [% END %]
+<style>
+	div.pluginList {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+		gap: 5px;
+	}
+
+	.pluginList ul.thumbWrap {
+		display: contents
+	}
+
+	.pluginList ul.thumbWrap li.thumbWrap {
+		position: relative;
+		border-radius: 5px;
+		border: solid 1px #eee;
+		max-width: 370px;
+	}
+
+	.pluginList .pluginItem label {
+		font-weight: bold;
+		display: block;
+	}
+
+	.pluginList .pluginItem div {
+		padding-bottom: 5px;
+	}
+
+	.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
+		position: relative;
+		padding-left: 55px;
+	}
+
+	.pluginList .pluginDesc, .pluginFooter {
+		max-height: 650px;
+		overflow: hidden;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.pluginList .pluginItem img {
+		position: absolute;
+		margin: 0 5px 5px 0;
+		width: 50px;
+	}
+
+	.pluginList .pluginFooter img, .pluginList .pluginItem label img {
+		position: relative;
+		vertical-align: middle;
+		width: 15px;
+		margin: 0 0 1px 0;
+	}
+</style>
 [% PROCESS settings/header.html %]
 	<div class="settingsSmallIndention">
 	[% IF updates.size > 0 %]
@@ -100,8 +152,9 @@
 	[%- END -%]
 	</div>
 
-	[% WRAPPER setting title="SETUP_EXTENSIONS_AUTO" desc="SETUP_EXTENSIONS_AUTO_DESC" %]
+	[% WRAPPER setting title="SETUP_EXTENSIONS_AUTO" desc="" %]
 		<input type="checkbox" name="auto" id="auto" [% IF auto %] checked="1" [% END %] />
+		<label for="auto">[% "SETUP_EXTENSIONS_AUTO_DESC" | string %]</label>
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_EXTENSIONS_REPOS" desc="" %]

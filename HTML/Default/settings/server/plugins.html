@@ -105,7 +105,7 @@
 			var pluginDescriptions = Ext.query('div.pluginDesc');
 			Ext.each(pluginDescriptions, function(descEl) {
 				descEl = Ext.get(descEl);
-				if (descEl.getHeight() > [% descHeight - 5 %]) {
+				if (descEl.getHeight() > [% descHeight %]) {
 					descEl.addClass('pluginDescLong');
 					new Ext.ToolTip({
 						target: descEl,
@@ -190,6 +190,10 @@
 </script>
 [% END; END %]
 <style>
+	.pluginList ul.thumbWrap li.thumbWrap {
+		position: relative;
+	}
+
 	.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
 		padding-left: [% iconSize + 5 %]px;
 	}
@@ -199,15 +203,33 @@
 	}
 
 	.pluginList .pluginDesc, .pluginFooter {
-		max-height: [% descHeight %]px;
+		max-height: [% descHeight %]px !important;
 	}
 
 	.pluginList .pluginDescLong:before {
-		background: linear-gradient(transparent [% descHeight - 30 %]px, white);
+		position: absolute;
+		content: '';
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		background: linear-gradient(transparent [% descHeight - 30 %]px, white) !important;
 	}
 
 	.pluginList .mouseOver .pluginDescLong:before {
-		background: linear-gradient(transparent [% descHeight - 30 %]px, #999);
+		background: linear-gradient(transparent [% descHeight - 30 %]px, #999) !important;
+	}
+
+	#pluginButtonBar #filterChooser {
+		width: 200px;
+	}
+
+	#pluginButtonBar span {
+		vertical-align: top;
+	}
+
+	#pluginButtonBar .x-form-text {
+		height: 20px;
 	}
 </style>
 [% PROCESS settings/server/plugins_main.html %]
