@@ -356,7 +356,7 @@ sub _addInfo {
 		sort {
 			$a->[0] cmp $b->[0]
 		} map {
-			[$_, cstring($client, $_) || ucfirst($_)]
+			[$_, cstring($client, 'SETUP_EXTENSIONS_CATEGORY_' . uc($_)) || ucfirst($_)]
 		} grep {
 			$_
 		} keys %$categories
