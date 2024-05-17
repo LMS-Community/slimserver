@@ -40,13 +40,13 @@
 [% END %]
 [% customButtonBar = BLOCK %]
 	<div id="pluginButtonBar">
-		<span id="filterChooser">[%- IF !useExtJS %]
+		<span id="filterChooser">
 			<select>
-				[% FOREACH category = categoriesRaw %]
-				<option>[% category %]</option>
+				[% FOREACH category = categories %]
+				<option value="[% category.0 %]">[% category.1 %]</option>
 				[% END %]
 			</select>
-		[% END -%]</span>
+		</span>
 		<span>[% "SEARCH" | string %][% "COLON" | string %] <input type="text" id="filterInput"></span>
 	</div>
 [% END %]

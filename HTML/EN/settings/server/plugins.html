@@ -1,3 +1,51 @@
 [% descHeight = 650 %]
 [% iconSize = 50 %]
 [% PROCESS settings/server/plugins_main.html %]
+<script>
+	var searchData = [% searchData %];
+
+	var selector = $('filterChooser').down();
+	var input = $('filterInput');
+
+	selector.observe('change', function(event) {
+		input.value = '';
+		var id = event.target.value;
+		togglePluginVisibility(id, function(s) {
+			return s.category == id;
+		});
+	});
+
+	input.observe('keyup', function(event) {
+		selector.value = '';
+
+		var value = event.target.value;
+		var reg = new RegExp(value, 'i');
+		togglePluginVisibility(value, function(s) {
+			return reg.test(s.content);
+		});
+	});
+
+	function togglePluginVisibility(value, validator) {
+		var pluginItems = $$('li.thumbwrap');
+
+		if (!value) {
+			pluginItems.forEach(function(item) {
+				item.show();
+			});
+		}
+		else {
+			pluginItems.forEach(function(item) {
+				var id = item.id.replace('plugin-', '');
+
+				let s = searchData[id];
+
+				if (s && validator(s)) {
+					item.show();
+				}
+				else {
+					item.hide();
+				}
+			});
+		}
+	}
+</script>

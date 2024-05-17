@@ -2,7 +2,6 @@
 [% iconSize = 50 %]
 [% IF useExtJS; extJsScripts = BLOCK %]
 <script TYPE="text/javascript">
-	var categories = [% categories %];
 	var searchData = [% searchData %];
 	var category, search, collapsableSections = [];
 
@@ -12,16 +11,18 @@
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO' %]
 
 		if (SqueezeJS.UI) {
+			var categories = Ext.query('#filterChooser option');
+
 			// plugin filtering
 			var filterChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'filterChooser',
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				text: categories[0][1]
+				text: categories[0].innerHTML
 			});
 
 			Ext.each(categories, function(category, x) {
-				const catId = category[0];
-				const title = category[1];
+				const catId = category.value;
+				const title = category.innerHTML;
 				filterChooser.menu.add(
 					new Ext.menu.CheckItem({
 						text: title,
@@ -42,6 +43,8 @@
 					})
 				);
 			});
+
+			Ext.select("#filterChooser select").remove()
 
 			new Ext.form.TextField({
 				applyTo: 'filterInput',

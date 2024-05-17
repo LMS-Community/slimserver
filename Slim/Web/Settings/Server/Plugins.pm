@@ -363,8 +363,7 @@ sub _addInfo {
 	);
 
 	$params->{'searchData'} = to_json($searchData);
-	$params->{'categoriesRaw'} = \@categories;
-	$params->{'categories'} = to_json(\@categories);
+	$params->{'categories'} = \@categories;
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
