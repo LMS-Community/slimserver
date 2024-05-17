@@ -12,12 +12,13 @@
 
 		if (SqueezeJS.UI) {
 			var categories = Ext.query('#filterChooser option');
+			var categoriesAllLabel = categories[0].innerHTML;
 
 			// plugin filtering
 			var filterChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'filterChooser',
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				text: categories[0].innerHTML
+				text: categoriesAllLabel
 			});
 
 			Ext.each(categories, function(category, x) {
@@ -53,7 +54,7 @@
 				selectOnFocus: true,
 
 				validator: function(value) {
-					filterChooser.setText(SqueezeJS.string('setup_extensions_category_all'));
+					filterChooser.setText(categoriesAllLabel);
 					expandAllSections();
 
 					var reg = new RegExp(value, 'i');

@@ -14,7 +14,7 @@
 					[% pluginIcon = plugin.icon %]
 					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
 					<div>
-						<img src="[% pluginIcon | resizeimage(iconSize,iconSize) %]" [% IF plugin.fallbackIcon %]class="pluginFallbackIcon"[% ELSE %]srcset="[% pluginIcon | resizeimage(iconSize*2,iconSize*2) %] 2x"[% END %]>
+						<img src="[% pluginIcon | resizeimage(iconSize,iconSize) %]" [% IF plugin.fallbackIcon %]class="pluginFallbackIcon"[% ELSE %]srcset="[% pluginIcon | resizeimage(iconSize*2,iconSize*2) %] 2x"[% END %] onerror="this.onerror = null; console.log(this.src); this.classList.add('pluginFallbackIcon'); this.src = '/html/images/misc.svg'; this.srcset = '/html/images/misc.svg'">
 						<label for="[% pluginName %]">
 							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 							&nbsp;[% plugin.title %][% IF plugin.version %] (v[% plugin.version %][% IF plugin.installations %] - <img src="[% webroot %]html/images/download.svg">[%- plugin.installations; END -%])[%- END -%]
