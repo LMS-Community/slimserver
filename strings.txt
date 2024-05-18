@@ -225,7 +225,7 @@ SERVER_VERSION
 	FR	Version du Lyrion Music Server
 	HE	גרסת Lyrion Music Server‏
 	IT	Versione Lyrion Music Server
-	NL	Lyrion Music Server versie
+	NL	Lyrion Music Server-versie
 	NO	Lyrion Music Server-versjon
 	PL	Wersja Lyrion Music Server
 	PT	Versão do Lyrion Music Server
@@ -242,7 +242,7 @@ PERL_VERSION
 	FR	Version de Perl
 	HE	גרסת Perl‏
 	IT	Versione Perl
-	NL	Perl versie
+	NL	Perl-versie
 	NO	Perl-versjon
 	PL	Wersja Perl
 	PT	Versão do Perl
@@ -259,7 +259,7 @@ DATABASE_VERSION
 	FI	Tietokantaversio
 	FR	Version de la base de données
 	IT	Versione database
-	NL	Database versie
+	NL	Databaseversie
 	NO	Databaseversjon
 	PL	Wersja bazy danych
 	RU	Версия базы данных
@@ -276,7 +276,7 @@ PLAYER_VERSION
 	HE	גרסת הקושחה של הנגן
 	IT	Versione firmware del lettore
 	JA	ファームウェア・バージョン
-	NL	Firmware versie van muziekspeler
+	NL	Firmwareversie van muziekspeler
 	NO	Spillerens fastvareversjon
 	PL	Wersja oprogramowania układowego odtwarzacza
 	PT	Versão do firmware do cliente
@@ -300,7 +300,7 @@ SLIMP3_HOME
 	HE	ברוכים המאזינים
 	IT	Pagina iniziale SLIMP3
 	JA	SLIMP3 ホーム
-	NL	SLIMP3 Hoofdmenu
+	NL	SLIMP3-hoofdmenu
 	NO	SLIMP3 startside
 	PL	SLIMP3 - strona główna
 	PT	Início SLIMP3
@@ -319,7 +319,7 @@ SQUEEZEBOX_HOME
 	HE	Squeezebox - ראשי
 	IT	Pagina iniziale Squeezebox
 	JA	Squeezebox ホーム
-	NL	Squeezebox Hoofdmenu
+	NL	Squeezebox-hoofdmenu
 	NO	Squeezebox hovedmeny
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
@@ -338,7 +338,7 @@ SQUEEZEBOX2_HOME
 	HE	Squeezebox - ראשי
 	IT	Pagina iniziale Squeezebox
 	JA	Squeezebox �ーム
-	NL	Squeezebox Hoofdmenu
+	NL	Squeezebox-hoofdmenu
 	NO	Squeezebox hovedmeny
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
@@ -357,7 +357,7 @@ TRANSPORTER_HOME
 	HE	Transporter - ראשי
 	IT	Pagina iniziale Transporter
 	JA	Transporter �ーム
-	NL	Transporter Hoofdmenu
+	NL	Transporter-hoofdmenu
 	NO	Transporter hovedmeny
 	PL	Transporter - strona główna
 	PT	Início Transporter
@@ -375,7 +375,7 @@ SOFTSQUEEZE_HOME
 	HE	SoftSqueeze - ראשי
 	IT	Pagina iniziale SoftSqueeze
 	JA	SoftSqueeze ホーム
-	NL	SoftSqueeze Hoofdmenu
+	NL	SoftSqueeze-hoofdmenu
 	NO	SoftSqueeze hovedmeny
 	PL	SoftSqueeze - strona główna
 	PT	Início SoftSqueeze
@@ -600,7 +600,7 @@ MY_MUSIC
 	FI	Omat musiikkitiedostot
 	FR	Ma musique
 	IT	Musica
-	NL	Mijn Muziek
+	NL	Mijn muziek
 	NO	Min musikk
 	PL	Moja muzyka
 	RU	Моя музыка
@@ -760,7 +760,7 @@ NOW_PLAYING
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
-	NL	Speelt Nu
+	NL	Speelt nu
 	NO	Spilles nå
 	PL	Teraz odtwarzane
 	PT	A tocar...
@@ -851,7 +851,7 @@ PLAYING
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
-	NL	Speelt Nu
+	NL	Speelt nu
 	NO	Spilles nå
 	PL	Teraz odtwarzane
 	PT	A tocar
@@ -962,7 +962,7 @@ ZAPPING_FROM_PLAYLIST
 	HE	העברה לרשימת ההשמעה 'דילוג':
 	IT	Passaggio alla playlist dei brani scelti con zapping:
 	JA	プレイ リストから消去:
-	NL	Verplaatsen naar gezapte nummers afspeellijst:
+	NL	Verplaatsen naar gezapte-nummers-afspeellijst:
 	NO	Flytter til spillelisten «Zappede sanger»:
 	PL	Przenoszenie do schowka:
 	PT	Mover para a playlist rápida de músicas
@@ -1146,7 +1146,7 @@ VIEWING_PLAYLIST
 	HE	מושמע כעת...
 	IT	Riproduzione in corso...
 	JA	現在再生中...
-	NL	Speelt Nu...
+	NL	Speelt nu...
 	NO	Spiller av nå...
 	PL	Teraz odtwarzane...
 	PT	Playlist a Tocar...
@@ -1199,7 +1199,7 @@ NOW_PLAYING_FROM
 	HE	מושמע כעת מתוך:
 	IT	Riproduzione da:
 	JA	現在再生中:
-	NL	Speelt Nu van:
+	NL	Speelt nu van:
 	NO	Spiller av fra:
 	PL	Teraz odtwarzane z:
 	PT	A tocar de
@@ -1504,7 +1504,7 @@ POWER
 	HE	מתח
 	IT	Accensione
 	JA	パワー
-	NL	Aan/Uit
+	NL	Aan/uit
 	NO	Av/på
 	PL	Zasilanie
 	RU	Питание
@@ -2654,7 +2654,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 	HE	שדרוג הקושחה של Squeezebox.
 	IT	Aggiornamento firmware Squeezebox.
 	JA	ファームウェアをアップデートしています
-	NL	Squeezebox firmware updaten...
+	NL	Squeezebox-firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	PT	Atualizando firmware ...
@@ -2673,7 +2673,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	HE	עדכון הקושחה של Squeezebox.
 	IT	Aggiornamento firmware Squeezebox.
 	JA	ファームウェアをアップデートしています
-	NL	Squeezebox firmware updaten...
+	NL	Squeezebox-firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	PT	Atualizando firmware ...
@@ -2692,7 +2692,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	HE	עדכון הקושחה של Transporter.
 	IT	Aggiornamento firmware Transporter.
 	JA	ファームウェアをアップデートしています
-	NL	Transporter firmware updaten...
+	NL	Transporter-firmware updaten...
 	NO	Oppdaterer fastvaren i Transporter.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Transporter.
 	PT	Atualizando firmware ...
@@ -2709,7 +2709,7 @@ UPDATING_FIRMWARE_RECEIVER
 	FI	Squeezeboxin laitteisto-ohjelmiston päivitys.
 	FR	Mise à jour du micrologiciel Squeezebox
 	IT	Aggiornamento firmware Squeezebox.
-	NL	Squeezebox firmware updaten...
+	NL	Squeezebox-firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
 	RU	Обновление микропрограммы Squeezebox.
@@ -2757,7 +2757,7 @@ FIRMWARE_MISSING_DESC
 	FR	Le serveur ne peut se connecter à Internet pour obtenir une mise à jour du micrologiciel.
 	HE	השרת לא מצליח להתחבר לאינטרנט על מנת להשיג עדכון לקושחה.
 	IT	Impossibile connettersi a Internet per ottenere il firmware aggiornato.
-	NL	Server kan geen verbinding maken met internet om firmware update binnen te halen.
+	NL	Server kan geen verbinding maken met internet om firmwareupdate binnen te halen.
 	NO	Serveren kan ikke kople seg til Internett for å oppdatere spillerens programvare.
 	PL	Serwer nie może połączyć się z Internetem w celu uzyskania aktualizacji oprogramowania układowego.
 	RU	Серверу не удается подключиться к Интернету для обновления микропрограммы.
@@ -2791,7 +2791,7 @@ GETTING_STREAM_INFO
 	FR	Obtention des informations sur le flux...
 	HE	מקבל פרטי זרימה...
 	IT	Recupero informazioni sullo stream in corso...
-	NL	Stream info ophalen...
+	NL	Streaminfo ophalen...
 	NO	Henter informasjon om strøm ...
 	PL	Pobieranie informacji o strumieniu...
 	RU	Получение информации о потоке...
@@ -3081,7 +3081,7 @@ ASF_UNABLE_TO_PARSE
 	FR	Erreur : impossible d'analyser le flux audio ASF
 	HE	שגיאה: אין אפשרות לפצל זרימת שמע מסוג ASF
 	IT	Errore: impossibile analizzare lo stream audio ASF
-	NL	Fout: Kan ASF audiostream niet parseren
+	NL	Fout: Kan ASF audiostream niet verwerken
 	NO	Feil: Kan ikke tolke ASF-lydstrøm
 	PL	Błąd: nie można przeanalizować strumienia audio ASF
 	RU	Ошибка: сбой анализа аудиопотока ASF
@@ -3207,7 +3207,7 @@ XML_GET_FAILED
 	FR	Echec de l'analyse
 	HE	כשל בניתוח
 	IT	Analisi non riuscita
-	NL	Kan niet parseren
+	NL	Kan niet verwerken
 	NO	Tolking mislyktes
 	PL	Błąd przetwarzania
 	RU	Сбой анализа
@@ -4044,7 +4044,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	FR	Types de fichier ignorés
 	HE	סיומות מושבתות של קובצי שמע
 	IT	Estensioni file audio ignorate
-	NL	Uitgeschakelde extensies voor audio bestanden
+	NL	Uitgeschakelde extensies voor audiobestanden
 	NO	Deaktiverte lydfilendelser
 	PL	Wyłączone rozszerzenia plików audio
 	RU	Отключенные расширения аудиофайлов
@@ -4060,7 +4060,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES
 	FI	Kuvatiedostojen tunnisteet poistettu käytöstä
 	FR	Extensions de fichiers image ignorées
 	IT	Estensioni file delle immagini disattivate
-	NL	Uitgeschakelde extensies voor foto bestanden
+	NL	Uitgeschakelde extensies voor fotobestanden
 	NO	Deaktiverte bildefilendelser
 	PL	Wyłączone rozszerzenia plików obrazów
 	RU	Отключенные расширения файлов изображений
@@ -4076,7 +4076,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	FR	Le Lyrion Music Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans les dossiers multimédias. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : cue, mp4, aac
 	HE	Lyrion Music Server יבצע חיפוש בתיקיית המוסיקה אחר כל סוגי הקבצים הנתמכים (קבצים וגיליונות סימנים של שמע). כדי להשבית סוגי קבצים ספציפיים כך שלא יעובדו בעת סריקה של תיקיית המוסיקה, הזן בשדה שלהלן רשימה המופרדת באמצעות פסיקים של סיומות קבצים. לדוגמה: cue, mp4, aac
 	IT	Lyrion Music Server cerca nelle cartelle dei file multimediali tutti i tipi di file supportati (file audio e cue sheet). Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio: cue, mp4, aac.
-	NL	Lyrion Music Server zoekt in de mediamap naar alle ondersteunde audio bestandstypen (audio- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: cue, mp4, aac
+	NL	Lyrion Music Server zoekt in de mediamap naar alle ondersteunde audiobestandstypen (audio- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: cue, mp4, aac
 	NO	Lyrion Music Server leter etter alle støttede filtyper i mediemappene (lydfiler og tidsskjema). Hvis du vil utelukke bestemte filtyper fra søket, kan du angi de relevante filendelsene nedenfor, atskilt med komma. Eksempel: cue, mp4, aac
 	PL	Program Lyrion Music Server wyszuka w folderach multimediów wszystkie obsługiwane typy plików (pliki audio i informacyjne). Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: cue, mp4, aac
 	RU	Lyrion Music Server выполняет в папках мультимедиа поиск файлов всех поддерживаемых типов (аудиофайлов и плей-листов). Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: cue, mp4, aac.
@@ -4092,7 +4092,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	FI	Lyrion Music Server etsii mediakansioista kaikkia tuettuja kuvatiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotyypit alle pilkuin erotettuina, esimerkiksi: bmp, gif.
 	FR	Le serveur recherche tous les types de fichiers image pris en charge dans les dossiers multimédias. Pour exclure un type de fichier image de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : bmp, gif
 	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file di immagini. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire l'elenco delle estensioni corrispondenti, separate da una virgola. Ad esempio: bmp, gif e così via.
-	NL	Lyrion Music Server zoekt in de mediamappen naar alle ondersteunde foto bestandstypen. Als je wilt voorkomen dat bepaalde bestandstypen worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv: bmp, gif
+	NL	Lyrion Music Server zoekt in de mediamappen naar alle ondersteunde fotobestandstypen. Als je wilt voorkomen dat bepaalde bestandstypen worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv: bmp, gif
 	NO	Serveren ser etter alle støttede bildefilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: bmp, gif
 	PL	Serwer wyszuka w folderach multimediów wszystkie obsługiwane typy plików obrazów. Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: bmp, gif
 	RU	Сервер выполнит в папках мультимедиа поиск файлов изображений всех поддерживаемых типов. Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: bmp, gif.
@@ -4108,7 +4108,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	FR	Types de liste de lecture ignorés
 	HE	סיומות קבצים מושבתות של רשימות השמעה
 	IT	Estensioni file di playlist ignorate
-	NL	Uitgeschakelde afspeellijst extensies
+	NL	Uitgeschakelde afspeellijstextensies
 	NO	Deaktiverte filendelser for spillelister
 	PL	Rozszerzenia plików wyłączone na liście odtwarzania
 	RU	Отключенные расширения файлов плей-листа
@@ -4161,7 +4161,7 @@ PLAYER_ID
 	HE	מזהה נגן
 	IT	Identificativo lettore
 	JA	プレーヤーID
-	NL	Muziekspeler ID
+	NL	Muziekspeler-ID
 	NO	Spiller-ID
 	PL	Identyfikator odtwarzacza
 	RU	ID плеера
@@ -4293,7 +4293,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	FI	Haluatko varmasti palauttaa soittimen tehdasasetuksiin?
 	FR	Etes-vous sûr de vouloir rétablir les paramètres par défaut de votre platine ?
 	IT	Ripristinare le impostazioni di fabbrica del lettore?
-	NL	Wil je de muziekspeler instellingen echt terugzetten op de beginwaarden?
+	NL	Wil je de muziekspelerinstellingen echt terugzetten op de beginwaarden?
 	NO	Er du sikker på at du vil tilbakestille spilleren til fabrikkinnstillingene?
 	PL	Czy na pewno chcesz przywrócić domyślne ustawienia fabryczne odtwarzacza?
 	RU	Вернуть заводские настройки плеера по умолчанию?
@@ -4490,7 +4490,7 @@ SETUP_PLAYINGDISPLAYMODE
 	HE	מידע 'מושמע כעת'
 	IT	Informazioni sulla riproduzione in corso
 	JA	現在再生中の曲の情報
-	NL	Speelt Nu informatie
+	NL	Speelt nu informatie
 	NO	Informasjon under avspilling
 	PL	Informacje o teraz odtwarzanych
 	RU	Информация о воспроизводимой дорожке
@@ -4506,7 +4506,7 @@ SETUP_PLAYINGDISPLAYMODE_ABBR
 	FI	Nyt soi - tiedot
 	FR	Lecture des informations en cours
 	IT	Informazioni brano in corso di riproduzione
-	NL	Speelt Nu info
+	NL	Speelt nu info
 	NO	Informasjon om Spilles nå
 	PL	Informacje o teraz odtwarzanych
 	RU	Информация о воспроизводимой дорожке
@@ -5325,7 +5325,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	HE	למקלטי שמע וממירי D/A מסוימים נחוץ מעט זמן נוסף כדי להתחיל לפענח שמע מהנגן במהלך השמעה של שמע בתבנית MP3. באפשרותך לציין כמה זמן, בשניות, יש להמתין לאחר לחיצה על לחצן ההפעלה כדי להתחיל לשלוח שמע בתבנית MP3. ערך ברירת המחדל הוא 0, ערך של 0.25 שניות עובד עבור מרבית המקלטים.
 	IT	Alcuni ricevitori e convertitori audio D/A richiedono un breve intervallo prima di iniziare a decodificare l'audio del lettore per la riproduzione di MP3. È possibile specificare in secondi il tempo che si desidera fare intercorrere tra il momento in cui si preme PLAY e l'inizio dell'invio di audio MP3. Il valore predefinito è 0; un valore pari a 0,25 secondi è indicato per molti ricevitori.
 	JA	いくつかのレシーバーやD/Aコンバーターは、MP3を再生する際にデジタル信号をデコードし始めるのに時間がかかることがあります。どれくらいのスタートアップタイムが必要か、秒数で入力してください。標準は0になっています。0.25秒あればほとんどの機器で対応可能です。
-	NL	Wanneer er MP3 audio afgespeeld wordt, hebben sommige audio ontvangers en D/A-omzetters wat extra tijd nodig om het decoderen van audio van de muziekspeler te starten. Je kunt opgeven, in seconden, hoe lang er moet worden gewacht nadat het afspelen is gestart, voordat er MP3 audio wordt verzonden. De standaardwaarde is 0; de waarde 0,25 werkt voor de meeste muziekspelers.
+	NL	Wanneer er MP3-audio afgespeeld wordt, hebben sommige audio ontvangers en D/A-omzetters wat extra tijd nodig om het decoderen van audio van de muziekspeler te starten. Je kunt opgeven, in seconden, hoe lang er moet worden gewacht nadat het afspelen is gestart, voordat er MP3 audio wordt verzonden. De standaardwaarde is 0; de waarde 0,25 werkt voor de meeste muziekspelers.
 	NO	Enkelte forsterkere og D/A-omformere trenger litt ekstra tid for å starte dekoding av mp3-lyd. Du kan angi hvor mange sekunder det skal gå fra du trykker «Play» til mp3-lyden begynner å sendes. Standardverdien er 0. Verdien 0,25 sekunder fungerer bra for mange mottakere.
 	PL	Niektóre odbiorniki audio i konwertery cyfrowo-analogowe wymagają krótkiego dodatkowego czasu na rozpoczęcie dekodowania dźwięku z odtwarzacza w przypadku odtwarzania plików MP3. Możliwe jest określenie czasu oczekiwania po naciśnięciu przycisku odtwarzania przed rozpoczęciem wysyłania dźwięku w formacie MP3. Wartość domyślna wynosi 0, a wartość 0,25 sekundy jest odpowiednia dla wielu odbiorników.
 	RU	Некоторым приемникам и цифроаналоговым преобразователям (ЦАП) требуется определенное время, чтобы начать перекодирование аудио с плеера при воспроизведении аудио в формате MP3. Можно указать время ожидания (в секундах), которое должно пройти с момента нажатия клавиши воспроизведения до передачи аудио в формате MP3. Значение по умолчанию — 0, для многих плееров рекомендуется задавать значение 0,25 с.
@@ -5342,7 +5342,7 @@ SETUP_REPLAYGAINMODE
 	FR	Ajustement du volume (Replay Gain)
 	HE	כוונון עוצמת הקול/הגברה להשמעה חוזרת
 	IT	Correzione del volume / Guadagno riproduzione
-	NL	Volume aanpassing/Replay Gain
+	NL	Volumeaanpassing/Replay Gain
 	NO	Volumjustering (Replay Gain)
 	PL	Regulacja głośności/Wzmocnienie przy ponownym odtwarzaniu
 	RU	Выравнивание громкости/Replay Gain
@@ -5359,7 +5359,7 @@ SETUP_REPLAYGAINMODE_DESC
 	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le "gain morceau" permet de normaliser le volume de chaque morceau. Avec le "gain album", le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le "gain intelligent" permet d'utiliser le "gain album" si des morceaux consécutifs sont issus d'un même album. Sinon, le "gain morceau" est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
 	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di una playlist mista.
-	NL	Sommige muziekbestanden bevatten volume aanpassing, of 'Replay Gain' informatie, die gebruikt kan worden tijdens het afspelen. Dit zorgt ervoor dat nummers en albums met hetzelfde volume afgespeeld worden. De muziekspeler kan deze informatie gebruiken, indien aanwezig. Je kunt volume aanpassing van nummers gebruiken om nummers met een gelijk volume af te spelen. Je kunt volume aanpassing van albums gebruiken om albums met een gelijk volume af te spelen, waarbij de volume verschillen tussen de nummers van een album in stand blijven. 'Slimme' aanpassingsselectie gebruikt volume aanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volume aanpassing van nummers voor een gemengde afspeellijst.
+	NL	Sommige muziekbestanden bevatten volumeaanpassing, of 'Replay Gain' informatie, die gebruikt kan worden tijdens het afspelen. Dit zorgt ervoor dat nummers en albums met hetzelfde volume afgespeeld worden. De muziekspeler kan deze informatie gebruiken, indien aanwezig. Je kunt volumeaanpassing van nummers gebruiken om nummers met een gelijk volume af te spelen. Je kunt volumeaanpassing van albums gebruiken om albums met een gelijk volume af te spelen, waarbij de volumeverschillen tussen de nummers van een album in stand blijven. 'Slimme' aanpassingsselectie gebruikt volumeaanpassing van album als opeenvolgende nummers van hetzelfde album komen, of volumeaanpassing van nummers voor een gemengde afspeellijst.
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
@@ -5380,7 +5380,7 @@ SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
 	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
 	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
-	NL	Online streamingdiensten bieden meestal geen vorm van volume normalisering aan. Internetstreams kunnen hierdoor duidelijk harder weergegeven worden dan lokale bestanden. Stel een standaardwaarde in die bij internetstreams moet worden gebruikt.
+	NL	Online streamingdiensten bieden meestal geen vorm van volumenormalisering aan. Internetstreams kunnen hierdoor duidelijk harder weergegeven worden dan lokale bestanden. Stel een standaardwaarde in die bij internetstreams moet worden gebruikt.
 	NO	Strømmetjenester støtter ofte ikke volumjustering. Du kan få uønskede volumendringer hvis du veksler mellom spor fra strømmetjenester og lokale musikkfiler. Sett et standardvolum som skal brukes på alle internettstrømmer.
 	PL	Zdalne strumienie często nie przesyłają żadnych danych, które pozwalałyby na automatyczne dopasowanie głośności. Odtwarzanie utworów ze zdalnych strumieni wymieszanych z lokalnymi utworami może doprowadzić do niepożądanych zmian głośności. Ustal domyślną wartość, która będzie użyta dla każdego zdalnego strumienia, który nie określa własnego poziomu głośności.
 	SV	Strömningstjänster understöder för det mesta inte volymnormalisering. Därför kan du uppleva plötsliga volymskillnader när du byter mellan lokal musik och strömningstjänster. Bestäm ett standardvärde för volymjustering som skall användas på strömningstjänster.
@@ -5395,7 +5395,7 @@ REPLAYGAIN_DISABLED
 	FR	Désactiver l'ajustement du volume
 	HE	השבתת האפשרות לכוונון עוצמת הקול
 	IT	Disattiva correzione volume
-	NL	Geen volume aanpassing
+	NL	Geen volumeaanpassing
 	NO	Skru av volumkontroll
 	PL	Brak regulacji głośności
 	RU	Без выравнивания громкости
@@ -5427,7 +5427,7 @@ REPLAYGAIN_TRACK_GAIN
 	FR	Utiliser le gain morceau si présent
 	HE	שימוש בהגברת רצועות (אם האפשרות קיימת)
 	IT	Guadagno brano
-	NL	Volume aanpassing voor nummers
+	NL	Volumeaanpassing voor nummers
 	NO	Gain for spor
 	PL	Wzmocnienie utworu
 	RU	Выровнять по дорожкам
@@ -5444,7 +5444,7 @@ REPLAYGAIN_ALBUM_GAIN
 	FR	Utiliser le gain album si présent
 	HE	שימוש בהגברת אלבום (אם האפשרות קיימת)
 	IT	Guadagno album
-	NL	Volume aanpassing voor albums
+	NL	Volumeaanpassing voor albums
 	NO	Album gain
 	PL	Wzmocnienie albumu
 	RU	Выровнять по альбомам
@@ -5461,7 +5461,7 @@ REPLAYGAIN_SMART_GAIN
 	FR	Gain intelligent
 	HE	בחירת הגברה חכמה
 	IT	Guadagno intelligente
-	NL	Slimme volume aanpassing
+	NL	Slimme volumeaanpassing
 	NO	Smart gain
 	PL	Inteligentne wzmocnienie
 	RU	Интеллектуальное усиление
@@ -5478,7 +5478,7 @@ REPLAYGAIN
 	FR	Ajustement volume
 	HE	כוונון עוצמת הקול
 	IT	Correzione volume
-	NL	Volume aanpassing
+	NL	Volumeaanpassing
 	NO	Lydstyrkekontroll
 	PL	Regulacja głośności
 	RU	Регулировка громкости
@@ -5495,7 +5495,7 @@ ALBUMREPLAYGAIN
 	FR	Ajustement volume album
 	HE	כוונון עוצמת הקול של אלבומים
 	IT	Correzione volume album
-	NL	Volume aanpassing voor albums
+	NL	Volumeaanpassing voor albums
 	NO	Volumjustering for album
 	PL	Regulacja głośności dla albumu
 	RU	Выравнивание громкости альбома
@@ -5511,7 +5511,7 @@ SETUP_MP3STREAMINGMETHOD
 	FI	Virtautustapa
 	FR	Méthode de diffusion d'un fichier
 	IT	Metodo di streaming
-	NL	Streaming methode
+	NL	Streamingmethode
 	NO	Strømmingsmetode
 	PL	Metoda strumieniowego przesyłania plików
 	RU	Метод потоковой передачи
@@ -5839,7 +5839,7 @@ SETUP_TRANSITIONSMART_DESC
 	FI	Jos älykäs ristihäivytys on käytössä, samalta levyltä peräkkäin soitettujen kappaleiden välillä ei käytetä ristihäivytystä.
 	FR	Si les transitions intelligentes sont activées, les pistes consécutives lues à partir du même album n'utiliseront pas le paramètre Transitions.
 	IT	Se la dissolvenza intelligente è stata abilitata, i brani consecutivi che appartengono allo stesso album non utilizzeranno l'impostazione di dissolvenza.
-	NL	Als 'Slim crossfaden' is ingeschakeld, wordt de crossfade instelling niet gebruikt als er opeenvolgende nummers van hetzelfde album worden afgespeeld.
+	NL	Als 'Slim crossfaden' is ingeschakeld, wordt de crossfade-instelling niet gebruikt als er opeenvolgende nummers van hetzelfde album worden afgespeeld.
 	NO	Hvis Smart krysstoning er aktivert, vil ikke påfølgende spor fra samme album bruke krysstoning
 	PL	Jeżeli opcja Inteligentne przenikanie jest włączona, w przypadku kolejnych ścieżek z tego samego albumu opcja Przenikanie nie będzie używana.
 	RU	Если включен параметр "Интеллект. перекрестное затухание", к последующим дорожкам того же альбома настройка "Перекрестное затухание" применяться не будет.
@@ -6091,7 +6091,7 @@ SETUP_GUESSFILEFORMATS
 	HE	ניחוש תבניות תגים
 	IT	Rileva tag dal nome del file
 	JA	タグ フォーマットを推測する
-	NL	Tag formaten raden
+	NL	Tagformaten raden
 	NO	Gjett etikettformat
 	PL	Odgadnij formaty znaczników
 	RU	Определять форматы тегов
@@ -6328,7 +6328,7 @@ SETUP_SKIPSENTINEL_DESC
 	DE	Medienordner oder -unterordner, welche eine Datei dieses Namens enthalten, werden übersprungen.
 	EN	Media (sub)folders that contain a file with this name are skipped.
 	FR	Les (sous-)dossiers multimédias contenant un fichier portant ce nom sont ignorés.
-	NL	Media (sub)mappen waarin een bestand met deze naam voorkomt worden overgeslagen.
+	NL	Media-(sub)mappen waarin een bestand met deze naam voorkomt worden overgeslagen.
 
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
@@ -6341,7 +6341,7 @@ SETUP_PLAYLISTDIR
 	HE	תיקיית רשימות השמעה
 	IT	Cartella delle playlist
 	JA	現在のプレイリストフォルダー
-	NL	Afspeellijst map
+	NL	Afspeellijstmap
 	NO	Mappe for spillelister
 	PL	Folder list odtwarzania
 	PT	Directoria com Playlists
@@ -6599,7 +6599,7 @@ SETUP_AUTO_RESCAN_DISABLE
 	FI	Poistettu käytöstä. Hae uusia mediatiedostoja manuaalisesti.
 	FR	Désactivé, analyse manuelle des nouveaux fichiers multimédias
 	IT	Disattivato. Analisi manuale dei nuovi file multimediali
-	NL	Uitgeschakeld, handmatig scannen naar nieuwe / gewijzigde media
+	NL	Uitgeschakeld, handmatig scannen naar nieuwe media
 	NO	Deaktivert, søk etter nye mediefiler manuelt
 	PL	Wyłączone – przeszukuj nowe multimedia ręcznie
 	RU	Отключено, выполните поиск новых файлов мультимедиа вручную
@@ -6614,7 +6614,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL
 	FI	Jaetun verkkoresurssin tunnistusväli
 	FR	Intervalle de détection d'un partage de réseau
 	IT	Intervallo di rilevamento condivisione rete
-	NL	Interval voor netwerkmap detectie
+	NL	Interval voor netwerkmapdetectie
 	NO	Intervall for oppdagelse av delte nettverkselementer
 	PL	Interwał wykrywania udziału sieciowego
 	RU	Интервал между попытками найти общий сетевой ресурс
@@ -6765,7 +6765,7 @@ SETUP_PLUGINS
 	FI	Laajennukset
 	FR	Gérer les plugins
 	IT	Plugin
-	NL	Beheer Plug-ins
+	NL	Beheer plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
 	RU	Подключаемые модули
@@ -7136,7 +7136,7 @@ SETUP_REFRESHRATE
 	HE	תזמון לרענון הדפדפן
 	IT	Intervallo aggiornamento browser
 	JA	ブラウザーを更新するタイミング
-	NL	Refresh-interval browser
+	NL	Refreshinterval browser
 	NO	Oppdateringsintervall for leser
 	PL	Czas odświeżania przeglądarki
 	RU	Интервал обновления браузера
@@ -7420,7 +7420,7 @@ SETUP_CHECKVERSION
 	HE	עדכוני תוכנה
 	IT	Aggiornamenti al software
 	JA	ソフトウェア アップデート
-	NL	Software Updates
+	NL	Software-updates
 	NO	Programvareoppdateringer
 	PL	Aktualizacje oprogramowania
 	PT	Actualizações
@@ -7446,7 +7446,7 @@ SETUP_CHECKVERSION_1
 	HE	חיפוש אוטומטי של עדכוני תוכנה
 	IT	Verifica automaticamente se sono disponibili aggiornamenti al software
 	JA	ソフトウェアのアップデートを自動的に確認する
-	NL	Automatisch op software updates controleren
+	NL	Automatisch op software-updates controleren
 	NO	Se automatisk etter programvareoppdateringer
 	PL	Automatycznie sprawdzaj dostępność aktualizacji oprogramowania
 	PT	Verificar Versões Novas
@@ -7465,7 +7465,7 @@ SETUP_CHECKVERSION_0
 	HE	ללא חיפוש עדכוני תוכנה
 	IT	Non verificare se sono disponibili aggiornamenti al software
 	JA	ソフトウェアのアップデートを確認しない
-	NL	Niet op software updates controleren
+	NL	Niet op software-updates controleren
 	NO	Ikke se etter programvareoppdateringer
 	PL	Nie sprawdzaj dostępności aktualizacji oprogramowania
 	PT	Não Verificar
@@ -7570,7 +7570,7 @@ SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
 	FR	Vérifier les mises à jour maintenant
-	NL	Nu op software updates controleren
+	NL	Nu op software-updates controleren
 	SV	Leta efter uppdateringar nu
 
 SETUP_SCREENSAVER
@@ -7748,7 +7748,7 @@ SCREENSAVER_JUMP_BACK_NAME
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
-	NL	Speelt Nu
+	NL	Speelt nu
 	NO	Spilles nå
 	PL	Teraz odtwarzane
 	PT	A tocar...
@@ -7765,7 +7765,7 @@ SCREENSAVER_JUMP_TO_NOW_PLAYING
 	FI	Hyppää kohtaan Nyt soi
 	FR	Accéder à Lecture en cours
 	IT	Passa ai brani in corso di riproduzione
-	NL	Ga naar Speelt Nu
+	NL	Ga naar Speelt nu
 	NO	Hopp til Spilles nå
 	PL	Przejdź do teraz odtwarzanych
 	RU	Перейти к экрану "Воспроизводится"
@@ -7835,7 +7835,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	FI	Lisäsoittoluettelopainikkeet
 	FR	Boutons de liste de lecture supplémentaires
 	IT	Pulsanti aggiuntivi playlist
-	NL	Additionele afspeellijst knoppen
+	NL	Additionele afspeellijstknoppen
 	NO	Ekstra spillelisteknapper
 	PL	Dodatkowe przyciski listy odtwarzania
 	RU	Другие кнопки плей-листа
@@ -8027,7 +8027,7 @@ SETUP_NOROLEFILTER_DESC
 	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
 	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
 	FR	Le filtre permet de n'afficher que les albums ou les morceaux pour lesquels l'artiste a le rôle sélectionné (Artiste de l'Album, Compositeur, etc.).
-	NL	Bij het browsen in Artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER, enz.).
+	NL	Bij het browsen in artiesten kun je filteren zodat alleen de albums en nummers worden getoond van de geselecteerde rol (ALBUMARTIST, COMPOSER, enz.).
 	NO	Når du blar gjennom artister kan du filtrere ut og vise bare album og spor som stemmer overens med den valgte rollen (ALBUMARTIST, COMPOSER osv.).
 	PL	Filtrowanie może zostać włączone podczas przeglądania listy wykonawców, aby wyświetlić tylko te albumy i utwory, które są zgodne z wybraną rolą kontrybutora (np. ALBUMARTIST, COMPOSER itp.).
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
@@ -8043,7 +8043,7 @@ SETUP_COMPOSERINARTISTS
 	HE	מלחינים, להקות ותזמורות בין המבצעים
 	IT	Compositore, gruppo e orchestra in Artisti
 	JA	「アーチスト」に、作曲家、バンド、オーケストラ
-	NL	Componist, Dirigent en Band in lijst met Artiesten
+	NL	Componist, dirigent en band in lijst met artiesten
 	NO	Komponist, band og orkester i Artister
 	PL	Kompozytor, zespół i orkiestra jako wykonawcy
 	PT	Compositor, Banda e Orquestra em Artistas
@@ -8373,7 +8373,7 @@ SETUP_ARTISTS_BROWSE_MODES
 	FI	Etsi artisteja
 	FR	Parcourir les artistes
 	IT	Sfoglia artisti
-	NL	Door Artiesten bladeren
+	NL	Door artiesten bladeren
 	NO	Bla i artister
 	PL	Przeglądanie wykonawców
 	RU	Просмотр исполнителей
@@ -8394,7 +8394,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists
 	FR	Utilisation d'une seule liste configurable d'artistes
-	NL	Gebruik een aan te passen lijst met Artiesten
+	NL	Gebruik een aan te passen lijst met artiesten
 	NO	Bruk én enkelt, konfigurerbar artistliste
 	PL	Jedna, konfigurowalna lista wykonawców
 	SV	Använd en enda konfigurerbar artistlista
@@ -8485,7 +8485,7 @@ SETUP_SCAN_ON_PREF_CHANGE_PROMPT
 	DE	Einige Einstellungsänderungen erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
 	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
 	FR	Certains paramètrages nécessitent de relancer une analyse complète de la bibliothèque. <a href="%s">Cliquez ici pour lancer l'analyse.</a>
-	NL	Voor sommige voorkeur aanpassingen moet de mediabibliotheek opnieuw worden gescand voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
+	NL	Voor sommige voorkeuraanpassingen moet de mediabibliotheek opnieuw worden gescand voordat ze effect hebben. <a href="%s">Klik hier om de scan te starten.</a>
 	NO	Noen innstillingsendringer trer ikke i kraft før musikkbiblioteket er skannet på ny. <a href="%s">Trykk her for å starte skanning.</a>
 	PL	Niektóre ustawienia wymagają ponownego przeszukania biblioteki multimedialnej. <a href="%s">Kliknij tutaj, aby uruchomić przeszukiwanie.</a>
 	SV	En del ändringar av inställningarna aktiveras först efter att mediebiblioteket har sökts igenom på nytt. <a href="%s">Klicka här för att starta sökningen.</a>
@@ -8570,7 +8570,7 @@ SETUP_DISABLESTATISTICS
 	FR	Statistiques de la bibliothèque
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
-	NL	Mediabibliotheek statistieken
+	NL	Statistieken van mediabibliotheek
 	NO	Biblioteksstatistikk
 	PL	Statystyka biblioteki
 	RU	Статистика медиатеки
@@ -8603,7 +8603,7 @@ SETUP_DISABLE_STATISTICS
 	FR	Désactiver l'affichage des statistiques
 	HE	השבתת האפשרות לחישוב הנתונים הסטטיסטיים אודות הספרייה
 	IT	Disattiva statistiche libreria
-	NL	Uitschakelen van mediabibliotheek statistieken
+	NL	Uitschakelen van statistieken
 	NO	Deaktiver visning av bibliotekstatistikk
 	PL	Wyłącz statystykę biblioteki
 	RU	Выкл. статистику медиатеки
@@ -8620,7 +8620,7 @@ SETUP_ENABLE_STATISTICS
 	FR	Activer l'affichage des statistiques
 	HE	הפעלת האפשרות לחישוב הנתונים הסטטיסטיים אודות הספרייה
 	IT	Attiva statistiche libreria
-	NL	Inschakelen van mediabibliotheek statistieken
+	NL	Inschakelen van statistieken
 	NO	Vis statistikk for musikkbiblioteket
 	PL	Włącz statystykę biblioteki
 	RU	Включить статистику медиатеки
@@ -8927,7 +8927,7 @@ SETUP_UDPCHUNKSIZE
 	HE	גודל מרבי של נתוני UDP
 	IT	Dimensione massima dati UDP
 	JA	UDP最大データサイズ
-	NL	Maximale UDP datagrootte
+	NL	Maximale UDP-datagrootte
 	NO	Maksimum UDP-datastørrelse
 	PL	Maksymalny rozmiar danych UDP
 	PT	Tamanho máximo dos dados UDP
@@ -9015,7 +9015,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	FR	Vérification contre CSRF
 	HE	רמת הגנה מסוג CSRF
 	IT	Livello di protezione CSRF
-	NL	CSRF beveiligingsniveau
+	NL	CSRF-beveiligingsniveau
 	NO	Beskyttelsesnivå for CSRF
 	PL	Poziom ochrony CSRF
 	RU	Уровень защиты CSRF
@@ -9445,13 +9445,13 @@ SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
 	FR	Types de sorties pour les albums
-	NL	Releasetypes voor Albums
+	NL	Releasetypes voor albums
 
 SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
 	FR	Types de sorties à inclure dans la liste des albums
-	NL	Releasetypes die in de Album lijst worden opgenomen
+	NL	Releasetypes die in de albumlijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
@@ -9463,35 +9463,35 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	EN	Composer album options
 	FR	Regroupement des albums d'un compositeur
 	DE	Optionen für Komponistenalben
-	NL	Componist albumopties
+	NL	Opties voor componistenalbums
 	ES	Opciones de álbum compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
 	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
-	NL	Maak een Composer Albums-groep - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep Componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
+	NL	Maak een groep voor componistenalbum - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe "Albums du compositeur"
 	DE	Keine Komponistenalbengruppe erstellen
-	NL	Maak geen Composer Album-groep
+	NL	Maak geen groep van componistenalbums
 	ES	No crear un grupo de Álbum de Composer
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créer toujours un groupe "Albums du compositeur"
 	DE	Immer eine Komponistenalbengruppe erstellen
-	NL	Maak altijd een Composer Album-groep
+	NL	Maak altijd een groep van componistenalbums
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créer un groupe "Albums du compositeur" pour ces genres :
 	DE	Komponistenalbengruppe für diese Stilrichtungen erstellen:
-	NL	Maak een Composer Album-groep voor deze genres:
+	NL	Maak een groep van componistenalbums voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
 SETUP_IGNORE_RELEASE_TYPES_0
@@ -9510,7 +9510,7 @@ SETUP_CLEANUP_RELEASE_TYPES
 	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
 	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
 	FR	Essayer de reconnaître automatiquement les EPs et les singles lorsque le type de sortie est manquant ou est de type "album".
-	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype informatie afwezig is.
+	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
 	DE	Die Veröffentlichungen nicht gruppieren
@@ -9692,7 +9692,7 @@ SETUP_WIZARD_PLAYLISTDIR
 	FI	Soittoluettelokansio
 	FR	Dossier des listes de lecture
 	IT	Cartella playlist
-	NL	Afspeellijst map
+	NL	Afspeellijstmap
 	NO	Mappe for spillelister
 	PL	Folder list odtwarzania
 	RU	Папка "Плей-листы"
@@ -9707,7 +9707,7 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	FI	Valitse polku soittoluettelon kansioon.
 	FR	Spécifier le chemin d'accès au dossier des listes de lecture.
 	IT	Selezionare il percorso della cartella delle playlist.
-	NL	Selecteer het pad naar je afspeellijst map.
+	NL	Selecteer het pad naar je afspeellijstmap.
 	NO	Angi banen til mappen med spillelister.
 	PL	Wybierz ścieżkę do folderu listy odtwarzania.
 	RU	Выберите путь к папке плей-листов.
@@ -11544,7 +11544,7 @@ COMPOSERALBUMS
 	HE	מלחיןאלבומים
 	IT	Compositore Album
 	JA	作曲家 アルバム
-	NL	Componist Albums
+	NL	Componistenalbums
 	NO	Komponist Album
 	PL	Kompozytor Albumy
 	PT	Compositor Albums
@@ -11877,7 +11877,7 @@ M3U
 	HE	רשימת השמעה מסוג M3U
 	IT	Playlist M3U
 	JA	M3Uプレイリスト
-	NL	M3U afspeellijst
+	NL	M3U-afspeellijst
 	NO	M3U-spilleliste
 	PL	Lista odtwarzania M3U
 	RU	Плей-лист M3U
@@ -11895,7 +11895,7 @@ PLS
 	HE	רשימת השמעה מסוג PLS
 	IT	Playlist PLS
 	JA	PLSプレイリスト
-	NL	PLS afspeellijst
+	NL	PLS-afspeellijst
 	NO	PLS-spilleliste
 	PL	Lista odtwarzania PLS
 	RU	Плей-лист PLS
@@ -12024,7 +12024,7 @@ ASX
 	FR	Liste de lecture ASX
 	HE	רשימת השמעה של קבצים מסוג ASX
 	IT	Playlist ASX
-	NL	ASX afspeellijst
+	NL	ASX-afspeellijst
 	NO	ASX-spilleliste
 	PL	Lista odtwarzania ASX
 	RU	Плей-лист ASX
@@ -12141,7 +12141,7 @@ FEC
 	FR	FLAC avec cuesheet jointe
 	HE	FLAC עם גיליון סימנים קבוע
 	IT	FLAC con CUEsheet integrato
-	NL	FLAC met ingesloten CUE sheet
+	NL	FLAC met ingesloten CUE-sheet
 	NO	FLAC med innlagt «CUEsheet»
 	PL	FLAC z osadzonym plikiem CUEsheet
 	RU	FLAC с встроенным CUEsheet
@@ -12610,7 +12610,7 @@ TAGVERSION
 	HE	גרסת תג
 	IT	Versione tag
 	JA	タグ バージョン
-	NL	Tag versie
+	NL	Tag-versie
 	NO	Etikettversjon
 	PL	Wersja znacznika
 	PT	Versão da Informação
@@ -12926,7 +12926,7 @@ ALL_RELEASES
 	HE	כל האלבומים
 	IT	Tutti gli album
 	JA	全てのアルバム
-	NL	Alle albums
+	NL	Alle releases
 	NO	Alle album
 	PL	Wszystkie albumy
 	PT	Todos os Álbuns
@@ -13019,7 +13019,7 @@ PAGEINDEX
 	FI	Sivuhakemisto
 	FR	Index de page
 	IT	Indice pagine
-	NL	Pagina index
+	NL	Pagina-index
 	NO	Innholdsfortegnelse
 	PL	Indeks stron
 	RU	Индекс страницы
@@ -13264,7 +13264,7 @@ BROWSE_ARTISTS
 	FI	Etsi artisteja
 	FR	Parcourir les artistes
 	IT	Sfoglia artisti
-	NL	Door Artiesten bladeren
+	NL	Door artiesten bladeren
 	NO	Bla i artister
 	PL	Przeglądaj wykonawców
 	RU	Просмотр исполнителей
@@ -13313,7 +13313,7 @@ BROWSE_ALBUMARTISTS
 	FI	Hae levyartisti
 	FR	Parcourir les Artistes des Albums
 	IT	Sfoglia artista dell'album
-	NL	Door Albumartiesten bladeren
+	NL	Door albumartiesten bladeren
 	NO	Bla i albumartister
 	PL	Przeglądaj wykonawców albumów
 	RU	Просмотр Исполнитель альбома
@@ -13328,7 +13328,7 @@ BROWSE_ALBUMS
 	FI	Hae levyjä
 	FR	Parcourir les albums
 	IT	Sfoglia album
-	NL	Door Albums bladeren
+	NL	Door albums bladeren
 	NO	Bla i album
 	PL	Przeglądaj albumy
 	RU	Просмотр альбомов
@@ -13343,7 +13343,7 @@ BROWSE_GENRES
 	FI	Selaa genrejä
 	FR	Parcourir les genres
 	IT	Sfoglia generi
-	NL	Door Genres bladeren
+	NL	Door genres bladeren
 	NO	Bla etter sjanger
 	PL	Przeglądaj gatunki
 	RU	Просмотр жанров
@@ -13353,7 +13353,7 @@ BROWSE_WORKS
 	DE	Werke durchsuchen
 	EN	Browse Works
 	FR	Parcourir les œuvres
-	NL	Door Composities bladeren
+	NL	Door composities bladeren
 
 WORKS
 	DE	Werke
@@ -13365,7 +13365,7 @@ WORKS_CLASSICAL
 	DE	Klassische Werke
 	EN	Classical Works
 	FR	Œuvres Classiques
-	NL	Klassieke Composities
+	NL	Klassieke composities
 
 BROWSE_YEARS
 	CS	Procházet roky
@@ -13376,7 +13376,7 @@ BROWSE_YEARS
 	FI	Etsi vuosia
 	FR	Parcourir les années
 	IT	Sfoglia anni
-	NL	Door Jaren bladeren
+	NL	Door jaren bladeren
 	NO	Bla etter år
 	PL	Przeglądaj lata
 	RU	Просмотр по годам
@@ -13446,7 +13446,7 @@ BROWSE_NEW_MUSIC
 	FR	Nouveautés
 	HE	מוסיקה חדשה
 	IT	Musica recente
-	NL	Nieuwe Muziek
+	NL	Nieuwe muziek
 	NO	Ny musikk
 	PL	Nowa muzyka
 	RU	Новая музыка
@@ -13785,7 +13785,7 @@ ALBUM_INFO
 	FI	Albumin tiedot
 	FR	Informations sur l'album
 	IT	Informazioni sull'album
-	NL	Album Info
+	NL	Albuminfo
 	NO	Albuminformasjon
 	PL	Informacje o albumie
 	RU	Сведения об альбоме
@@ -13800,7 +13800,7 @@ ARTIST_INFO
 	FI	Artistitiedot
 	FR	Informations sur l'artiste
 	IT	Informazioni sull'artista
-	NL	Artiest Info
+	NL	Artiestinfo
 	NO	Artistinformasjon
 	PL	Informacje o wykonawcy
 	RU	Сведения об исполнителе
@@ -13815,7 +13815,7 @@ GENRE_INFO
 	FI	Genretiedot
 	FR	Informations sur le genre
 	IT	Informazioni sul genere
-	NL	Genre Info
+	NL	Genre-info
 	NO	Sjangerinformasjon
 	PL	Informacje o gatunku
 	RU	Сведения о жанре
@@ -13830,7 +13830,7 @@ YEAR_INFO
 	FI	Vuositiedot
 	FR	Informations sur l'année
 	IT	Informazioni sull'anno
-	NL	Jaar Info
+	NL	Jaarinfo
 	NO	Årstall
 	PL	Informacje o roku
 	RU	Сведения о годе
@@ -13847,7 +13847,7 @@ SONG_INFO
 	HE	פרטי השיר
 	IT	Informazioni sul brano
 	JA	曲の情報
-	NL	Nummer Info
+	NL	Nummerinfo
 	NO	Sanginfo
 	PL	Informacje o utworze
 	PT	Informação da Música
@@ -13864,7 +13864,7 @@ PLAYLIST_INFO
 	FI	Soittoluettelotiedot
 	FR	Infos sur la liste de lecture
 	IT	Info Playlist
-	NL	Afspeellijst Info
+	NL	Afspeellijstinfo
 	NO	Informasjon om spilleliste
 	PL	Informacje o liście odtwarzania
 	RU	Сведения о плей-листе
@@ -13879,7 +13879,7 @@ FOLDER_INFO
 	FI	Kansion tiedot
 	FR	Infos sur le répertoire
 	IT	Info cartella
-	NL	Map Info
+	NL	Mapinfo
 	NO	Mappeinformasjon
 	PL	Informacje o folderze
 	RU	Сведения о папке
@@ -14059,7 +14059,7 @@ PLAYER_SETTINGS
 	HE	הגדרות נגן
 	IT	Impostazioni lettore
 	JA	プレーヤーセッティング
-	NL	Muziekspeler instellingen
+	NL	Instellingen van muziekspeler
 	NO	Spillerinnstillinger
 	PL	Ustawienia odtwarzacza
 	PT	Configurações do Cliente
@@ -14077,7 +14077,7 @@ BASIC_PLAYER_SETTINGS
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
 	IT	Impostazioni di base
-	NL	Standaard Instellingen
+	NL	Standaardinstellingen
 	NO	Standardinnstillinger
 	PL	Ustawienia podstawowe
 	RU	Основные настройки
@@ -14129,7 +14129,7 @@ JIVE_PLAYER_DISPLAY_SETTINGS
 	FI	Soittimen näyttö
 	FR	Affichage du lecteur
 	IT	Display del lettore
-	NL	Muziekspeler display
+	NL	Display van muziekspeler
 	NO	Spillerskjerm
 	PL	Wyświetlacz odtwarzacza
 	RU	Экран плеера
@@ -14182,7 +14182,7 @@ PLAYERIR_SETTINGS
 	HE	הגדרות IR
 	IT	Impostazioni IR
 	JA	IR（リモコン）セッティング
-	NL	IR instellingen
+	NL	IR-instellingen
 	NO	IR-innstillinger
 	PL	Ustawienia podczerwieni
 	PT	Configurações de Infravermelhos
@@ -14230,7 +14230,7 @@ BASIC_SERVER_SETTINGS
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
 	IT	Impostazioni di base
-	NL	Standaard Instellingen
+	NL	Standaardinstellingen
 	NO	Standardinnstillinger
 	PL	Ustawienia podstawowe
 	RU	Основные настройки
@@ -14263,7 +14263,7 @@ SERVER_SETTINGS
 	HE	הגדרות השרת
 	IT	Impostazioni server
 	JA	サーバーセッティング
-	NL	Server instellingen
+	NL	Serverinstellingen
 	NO	Server-innstillinger
 	PL	Ustawienia serwera
 	PT	Configurações do Servidor
@@ -14282,7 +14282,7 @@ SQUEEZEBOX_SERVER_SETTINGS
 	HE	הגדרות Lyrion Music Server
 	IT	Impostazioni di Lyrion Music Server
 	JA	Lyrion Music Serverセッティング
-	NL	Lyrion Music Server instellingen
+	NL	Lyrion Music Server-instellingen
 	NO	Innstillinger for Lyrion Music Server
 	PL	Ustawienia programu Lyrion Music Server
 	PT	Configurações do Lyrion Music Server
@@ -14458,7 +14458,7 @@ DEBUG_MENU_TRACKINFO
 	FI	Kappaleen tietojen valikko
 	FR	Menu d'informations sur les pistes
 	IT	Menu informazioni sui brani
-	NL	Menu Nummer informatie
+	NL	Menu nummerinformatie
 	NO	Sporinformasjonsmeny
 	PL	Menu informacji o utworze
 	RU	Меню информации о дорожке
@@ -14473,7 +14473,7 @@ DEBUG_NETWORK_COMETD
 	FI	Cometd-protokollan kirjaus
 	FR	Journalisation du protocole Cometd
 	IT	Registrazione protocollo Cometd
-	NL	Loggen van Cometd protocol
+	NL	Loggen van Cometd-protocol
 	NO	Cometd protokoll-loggføring
 	PL	Rejestrowanie protokołu Cometd
 	RU	Ведение журнала протокола Cometd
@@ -14563,7 +14563,7 @@ DEBUG_DEFAULT
 	FI	Palauta kirjausasetukset
 	FR	Réinitialiser les préférences de journalisation
 	IT	Reimposta preferenze di registrazione
-	NL	Log voorkeuren opnieuw instellen
+	NL	Logvoorkeuren opnieuw instellen
 	NO	Tilbakestill logginnstillinger
 	PL	Resetuj preferencje rejestrowania
 	RU	Сбросить настройки ведения журнала
@@ -14609,7 +14609,7 @@ DEBUGGING_ADVANCED
 	FI	Lisälokiasetukset
 	FR	Paramètres avancés des journaux
 	IT	Impostazioni file di registro avanzate
-	NL	Geavanceerde logboek instellingen
+	NL	Geavanceerde logboekinstellingen
 	NO	Avanserte logginnstillinger
 	PL	Zaawansowane ustawienia dziennika
 	RU	Расширенные настройки журнала
@@ -14848,7 +14848,7 @@ VISUALIZER_VUMETER_SMALL
 	FR	Petit VUmètre
 	HE	VU קטן
 	IT	Indicatore VU piccolo
-	NL	Kleine VU meter
+	NL	Kleine VU-meter
 	NO	Liten VU-måler
 	PL	Mały wskaźnik wysterowania
 	RU	Малый волюметр
@@ -14865,7 +14865,7 @@ VISUALIZER_VUMETER
 	FR	VUmètre
 	HE	מד VU
 	IT	Indicatore VU
-	NL	VU meter
+	NL	VU-meter
 	NO	VU-måler
 	PL	Wskaźnik wysterowania
 	RU	Волюметр
@@ -15073,7 +15073,7 @@ CURRENT_WEB_SKIN
 	HE	מעטפת אינטרנט נוכחית:
 	IT	Skin web in uso:
 	JA	現在のウェブ外観
-	NL	Huidige web skin:
+	NL	Huidige webskin:
 	NO	Aktivt grensesnittskall:
 	PL	Aktualna karnacja internetowa:
 	PT	Tema Web actual
@@ -15175,7 +15175,7 @@ SLIMP3_MUSIC_PLAYER
 	HE	נגן מוסיקה SLIMP3
 	IT	Lettore musicale SLIMP3
 	JA	SLIMP3プレーヤー
-	NL	SLIMP3 muziekspeler
+	NL	SLIMP3-muziekspeler
 	NO	SLIMP3 musikkspiller
 	PL	Odtwarzacz muzyczny SLIMP3
 	PT	Leitor de Música SLIMP3
@@ -15194,7 +15194,7 @@ SQUEEZEBOX_MUSIC_PLAYER
 	HE	נגן מוסיקה Squeezebox
 	IT	Lettore musicale Squeezebox
 	JA	Squeezeboxプレーヤー
-	NL	Squeezebox muziekspeler
+	NL	Squeezebox-muziekspeler
 	NO	Squeezebox musikkspiller
 	PL	Odtwarzacz muzyczny Squeezebox
 	PT	Leitor de Música Squeezebox
@@ -15213,7 +15213,7 @@ SQUEEZEBOX2_MUSIC_PLAYER
 	HE	נגן מוסיקה Squeezebox
 	IT	Lettore musicale Squeezebox
 	JA	Squeezeboxプレーヤー
-	NL	Squeezebox muziekspeler
+	NL	Squeezebox-muziekspeler
 	NO	Squeezebox musikkspiller
 	PL	Odtwarzacz muzyczny Squeezebox
 	PT	Leitor de Música Squeezebox
@@ -15232,7 +15232,7 @@ TRANSPORTER_MUSIC_PLAYER
 	HE	נגן מוסיקה Transporter
 	IT	Lettore musicale Transporter
 	JA	Transporterプレーヤー
-	NL	Transporter muziekspeler
+	NL	Transporter-muziekspeler
 	NO	Transporter musikkspiller
 	PL	Odtwarzacz muzyczny Transporter
 	PT	Leitor de Música Transporter
@@ -15251,7 +15251,7 @@ SOFTSQUEEZE_MUSIC_PLAYER
 	HE	נגן מוסיקה SoftSqueeze
 	IT	Lettore musicale SoftSqueeze
 	JA	SoftSqueezeプレーヤー
-	NL	SoftSqueeze muziekspeler
+	NL	SoftSqueeze-muziekspeler
 	NO	SoftSqueeze musikkspiller
 	PL	Odtwarzacz muzyczny SoftSqueeze
 	PT	Leitor de Música SoftSqueeze
@@ -15365,7 +15365,7 @@ PLAYER_NEEDS_UPGRADE
 	HE	יש לבצע עדכון תוכנה
 	IT	È necessario aggiornare il software
 	JA	Squeezeboxソフトウェアのアップデートが必要です
-	NL	Software update vereist
+	NL	Software-update vereist
 	NO	Programvaren i spilleren din må oppdateres
 	PL	Wymagana aktualizacja oprogramowania
 	RU	Требуется обновление ПО
@@ -15401,7 +15401,7 @@ PLAYER_NEEDS_UPGRADE_1
 	HE	עדכון תוכנה
 	IT	Aggiornamento software
 	JA	Squeezeboxソフトウェアアップデート
-	NL	Software update
+	NL	Software-update
 	NO	Programvareoppdatering
 	PL	Aktualizacja oprogramowania
 	RU	Обновление ПО
@@ -15473,7 +15473,7 @@ UPGRADE_COMPLETE
 	HE	עדכון קושחה
 	IT	Aggiornamento firmware
 	JA	ファームウェアアップデート
-	NL	Firmware update
+	NL	Firmware-update
 	NO	Fastvareoppdatering
 	PL	Aktualizacja oprogramowania układowego
 	RU	Обновление микропрограммы
@@ -16667,7 +16667,7 @@ RADIO_TUNEIN_RADIOURL
 	FR	URL radio :
 	HE	כתובת ה-URL של הרדיו:
 	IT	URL Radio:
-	NL	Radio URL:
+	NL	Radio-URL:
 	NO	Radioadresse:
 	PL	Adres URL stacji radiowej:
 	RU	URL радиостанции:
@@ -16793,7 +16793,7 @@ COMMUNITY_FORUM
 	FI	Yhteisöfoorumit
 	FR	Forums de la communauté
 	IT	Forum della community
-	NL	Community forums
+	NL	Communityforums
 	NO	Brukerforum
 	PL	Fora społeczności
 	RU	Форумы сообщества
@@ -17030,7 +17030,7 @@ JIVE_SQUEEZEBOX_INFORMATION
 	FI	Squeezeboxin tiedot
 	FR	Informations sur la Squeezebox
 	IT	Informazioni su Squeezebox
-	NL	Squeezebox informatie
+	NL	Squeezeboxinformatie
 	NO	Informasjon om Squeezebox
 	PL	Squeezebox – informacje
 	RU	Информация Squeezebox
@@ -17047,7 +17047,7 @@ INFORMATION_MENU_PLAYER
 	HE	מידע אודות הנגן
 	IT	Informazioni sul lettore
 	JA	プレーヤー情報
-	NL	Muziekspeler informatie
+	NL	Informatie van muziekspeler
 	NO	Spillerinformasjon
 	PL	Informacje o odtwarzaczu
 	RU	Информация о плеере
@@ -17116,7 +17116,7 @@ INFORMATION_MENU_LIBRARY
 	HE	פרטים סטטיסטיים אודות הספרייה
 	IT	Statistiche libreria
 	JA	ライブラリー統計
-	NL	Mediabibliotheek statistieken
+	NL	Statistieken van mediabibliotheek
 	NO	Biblioteksstatistikk
 	PL	Statystyka biblioteki
 	RU	Статистика медиатеки
@@ -17132,7 +17132,7 @@ INFORMATION_MENU_MODULE
 	FI	Laajennusmoduulit
 	FR	Modules plugins
 	IT	Moduli plugin
-	NL	Plug-in modules
+	NL	Plug-in-modules
 	NO	Plugin-moduler
 	PL	Moduły dodatków
 	RU	Подключаемые модули
@@ -17147,7 +17147,7 @@ INFORMATION_PLAYER_NAME
 	FI	Squeezeboxin nimi
 	FR	Nom de la Squeezebox
 	IT	Nome Squeezebox
-	NL	Squeezebox naam
+	NL	Squeezeboxnaam
 	NO	Navn på Squeezebox
 	PL	Nazwa usługi Squeezebox
 	RU	Название Squeezebox
@@ -17212,7 +17212,7 @@ INFORMATION_FIRMWARE
 	HE	גרסת הקושחה של הנגן
 	IT	Versione firmware del lettore
 	JA	プレーヤーファームウェアバージョン
-	NL	Firmware versie van muziekspeler
+	NL	Firmwareversie van muziekspeler
 	NO	Spillerens fastvareversjon
 	PL	Wersja oprogramowania układowego odtwarzacza
 	RU	Версия микропрограммы плеера
@@ -17392,7 +17392,7 @@ INFORMATION_CACHEDIR
 	FI	Välimuistikansio
 	FR	Dossier du cache
 	IT	Cartella cache
-	NL	Cache map
+	NL	Cachemap
 	NO	Hurtigbuffermappe
 	PL	Folder pamięci podręcznej
 	RU	Папка "Кэш"
@@ -17407,7 +17407,7 @@ INFORMATION_PREFSDIR
 	FI	Määrityskansio
 	FR	Dossier des préférences
 	IT	Cartella delle preferenze
-	NL	Voorkeuren map
+	NL	Voorkeurenmap
 	NO	Mappe for innstillinger
 	PL	Folder preferencji
 	RU	Папка "Предпочтения"
@@ -17422,7 +17422,7 @@ INFORMATION_PLUGINDIRS
 	FI	Laajennuskansiot
 	FR	Dossiers des plugins
 	IT	Cartelle dei plugin
-	NL	Plug-in mappen
+	NL	Plug-in-mappen
 	NO	Plugin-mapper
 	PL	Foldery dodatków
 	RU	Папки подключаемых модулей
@@ -17433,7 +17433,7 @@ INFORMATION_BINDIRS
 	DE	Ordner für Hilfsprogramme
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
-	NL	Hulpapplicaties map
+	NL	Hulpapplicatiesmap
 	NO	Mappe for støtteprogrammer
 	PL	Folder aplikacji pomocniczych
 	SV	Mapp för hjälpprogram
@@ -17692,7 +17692,7 @@ INFORMATION_DIAGSTRING
 	FR	Informations sur la version
 	HE	מידע גרסה
 	IT	Informazioni sulla versione
-	NL	Versie informatie
+	NL	Versie-informatie
 	NO	Versjonsmerknader
 	PL	Informacje o wersji
 	RU	Информация о версии
@@ -18329,7 +18329,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
 	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
-	NL	Je kunt compilatie albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest op het compilatie album laten verschijnen.
+	NL	Je kunt compilatie-albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest op het compilatie album laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
 	PL	Albumy z kompilacjami mogą być wyświetlane razem w kategorii „Różni wykonawcy” lub w grupie każdego wykonawcy dostępnego w kompilacji.
 	RU	Альбомы-сборки можно выводить вместе под заголовком "Различные исполнители" или под именем каждого исполнителя в сборке.
@@ -18346,7 +18346,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	FR	Regrouper les compilations
 	HE	קיבוץ של אלבומי אוסף
 	IT	Raggruppa gli album di compilation
-	NL	Compilatie albums groeperen
+	NL	Compilatie-albums groeperen
 	NO	Grupper samlealbum
 	PL	Grupuj albumy z kompilacjami
 	RU	Сгруппировать альбомы-сборки
@@ -18363,7 +18363,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	FR	Lister les albums de compilation sous chaque artiste
 	HE	סידור אלבומי אוסף ברשימה תחת כל מבצע
 	IT	Elenca gli album di compilation per singolo artista
-	NL	Compilatie albums bij individuele artiesten weergeven
+	NL	Compilatie-albums bij individuele artiesten weergeven
 	NO	Vis samlealbum under hver artist
 	PL	Wyświetl albumy z kompilacjami dla każdego wykonawcy
 	RU	Альбомы-сборки для каждого исполнителя
@@ -18380,7 +18380,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
 	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
-	NL	Wanneer compilatie albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
+	NL	Wanneer compilatie-albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
 	PL	Po zgrupowaniu albumów zawierających kompilacje są one domyślnie wyświetlane w kategorii „Różni wykonawcy”. Nazwę tę można zmienić poniżej.
 	RU	При группировке альбомов-сборок они по умолчанию отображаются под заголовком "Различные исполнители". Это название можно изменить ниже.
@@ -18495,7 +18495,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
 	FR	Traiter l'étiquette TPE2 MP3 en tant que Artiste, Album
 	IT	Considera il tag MP3 TPE2 come artista dell'album
-	NL	TPE2 MP3-label als Albumartiest behandelen
+	NL	TPE2 MP3-label als albumartiest behandelen
 	NO	Behandle TPE2 mp3-etiketter som albumartist
 	PL	Używaj znacznika TPE2 pliku MP3 jako wykonawcy albumu
 	RU	Поле TPE2 тега MP3 содержит исполнителя альбома
@@ -18510,7 +18510,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	FI	Käsittele TPE2 MP3 -tagia yhtyeenä
 	FR	Traiter l'étiquette TPE2 MP3 en tant que Groupe
 	IT	Considera il tag MP3 TPE2 come Gruppo/Orchestra
-	NL	TPE2 MP3-tag als Band behandelen
+	NL	TPE2 MP3-tag als band behandelen
 	NO	Behandle TPE2 mp3-etikett som gruppe
 	PL	Używaj znacznika TPE2 pliku MP3 jako nazwy zespołu
 	RU	Поле TPE2 тега MP3 содержит группу
@@ -18812,7 +18812,7 @@ ALBUM_DISPLAY_OPTIONS
 	FI	Levyn tarkasteluasetukset
 	FR	Options d'affichage des albums
 	IT	Opzioni di visualizzazione album
-	NL	Opties voor album weergave
+	NL	Opties voor albumweergave
 	NO	Alternativer for albumvisning
 	PL	Opcje widoku albumu
 	RU	Параметры просмотра альбома
@@ -18828,7 +18828,7 @@ SORT_ARTISTALBUM
 	FR	Artiste, Album
 	HE	מבצע, אלבום
 	IT	Artista, album
-	NL	Artiest, Album
+	NL	Artiest, album
 	NO	Artist, album
 	PL	Wykonawca, album
 	RU	Исполнитель, альбом
@@ -18845,7 +18845,7 @@ SORT_ARTISTYEARALBUM
 	FR	Artiste, Année, Album
 	HE	מבצע, שנה, אלבום
 	IT	Artista, anno, album
-	NL	Artiest, Jaar, Album
+	NL	Artiest, jaar, album
 	NO	Artist, år, album
 	PL	Wykonawca, rok, album
 	RU	Исполнитель, год, альбом
@@ -18862,7 +18862,7 @@ SORT_YEARALBUM
 	FR	Année, Album
 	HE	שנה, אלבום
 	IT	Anno, album
-	NL	Jaar, Album
+	NL	Jaar, album
 	NO	År, album
 	PL	Rok, album
 	RU	Год, альбом
@@ -18879,7 +18879,7 @@ SORT_YEARARTISTALBUM
 	FR	Année, Artiste, Album
 	HE	שנה, מבצע, אלבום
 	IT	Anno, artista, album
-	NL	Jaar, Artiest, Album
+	NL	Jaar, artiest, album
 	NO	År, artist, album
 	PL	Rok, wykonawca, album
 	RU	Год, исполнитель, альбом
@@ -18896,7 +18896,7 @@ SORT_GENREALBUM
 	FR	Genre, Album
 	HE	סגנון, אלבום
 	IT	Genere, album
-	NL	Genre, Album
+	NL	Genre, album
 	NO	Sjanger, album
 	PL	Gatunek, album
 	RU	Жанр, альбом
@@ -18913,7 +18913,7 @@ SORT_GENREARTISTALBUM
 	FR	Genre, Artiste, Album
 	HE	סגנון, מבצע, אלבום
 	IT	Genere, artista, album
-	NL	Genre, Artiest, Album
+	NL	Genre, artiest, album
 	NO	Sjanger, artist, album
 	PL	Gatunek, wykonawca, album
 	RU	Жанр, исполнитель, альбом
@@ -19012,7 +19012,7 @@ SETUP_FXLOOPSOURCE_DESC
 	FI	Ulkoinen digitaaliprosessori, esimerkiksi taajuuskorjain, saattaa käsitellä signaalin s/pdif:n välityksellä, ennen kuin signaali saavuttaa Trasporterin sisäisen DAC:n. Jos tämä toiminto on käytössä, ulkoisen prosessorin pitää olla liitettynä ja toiminnassa, jotta Transporterin analogiset lähdöt toimisivat.
 	FR	Un processeur numérique externe, tel qu'un correcteur, peut être connecté par le biais de S/PDIF pour traiter le signal avant qu'il n'atteigne le convertisseur numérique-analogique interne de Transporter. Si cette option est activée, le processeur externe doit être connecté et opérationnel afin de permettre le fonctionnement des sorties analogiques de Transporter.
 	IT	È possibile collegare un processore digitale esterno, quale un equalizzatore, tramite S/PDIF per elaborare il segnale prima che raggiunga il convertitore digitale-analogico interno del Transporter. Se questa opzione è attiva, il processore esterno deve essere collegato e operativo affinché gli output analogici del Transporter funzionino.
-	NL	Via s/pdif kan een externe digitale processor, zoals een equalizer, worden aangesloten om het signaal te verwerken voordat het de interne DAC van Transporter bereikt. Als deze optie ingeschakeld is, moet de externe processor aangesloten en ingeschakeld zijn, zodat de analoge uitvoeren van Transporter functioneren.
+	NL	Via S/PDIF kan een externe digitale processor, zoals een equalizer, worden aangesloten om het signaal te verwerken voordat het de interne DAC van Transporter bereikt. Als deze optie ingeschakeld is, moet de externe processor aangesloten en ingeschakeld zijn, zodat de analoge uitvoeren van Transporter functioneren.
 	NO	En ekstern digital prosessor, for eksempel en EQ, kan koples til via S/PDIF for å prosessere signalet før det når Transporters interne D/A-omformer. Hvis dette alternativet er aktivert, må den eksterne prosessoren være koplet til og i gang for at Transporters analoge utganger skal fungere.
 	PL	Do złącza s/pdif można podłączyć zewnętrzny procesor dźwięku, na przykład korektor w celu przetwarzania sygnału przed przesłaniem do wewnętrznego konwertera DAC urządzenia Trasporter. Po włączeniu tej opcji, zewnętrzny procesor musi być podłączony i włączony, aby działały wyjścia analogowe urządzenia Transporter.
 	RU	Через выход s/pdif можно подключить внешний цифровой процессор (например, EQ), который будет обрабатывать сигнал до передачи на внутренний ЦАП устройства Transporter. Если этот параметр включен, для работы аналоговых выходов Transporter необходим подключенный и рабочий внешний процессор.
@@ -19042,7 +19042,7 @@ SETUP_FXLOOPCLOCK
 	FI	Tehosteiden silmukan kellotila
 	FR	Mode horloge de boucle d'effets
 	IT	Modalità clock ciclo di effetti
-	NL	Effectenlus klokmodus
+	NL	Klokmodus van effectenlus
 	NO	Klokkemodus: effektsløyfe
 	PL	Tryb zegara z pętlą efektów
 	RU	Режим синхронизации петель эффектов
@@ -19104,7 +19104,7 @@ VISUALIZER_EXTENDED_TEXT
 	FR	Informations texte étendues
 	HE	תצוגת טקסט מורחב
 	IT	Testo esteso
-	NL	Uitgebreide tekst weergave
+	NL	Uitgebreide tekstweergave
 	NO	Utvidet tekstvisning
 	PL	Wyświetlanie rozszerzonego tekstu
 	RU	Расширенный текстовый экран
@@ -19139,7 +19139,7 @@ VISUALIZER_ANALOG_VUMETER
 	FR	VUmètre analogique
 	HE	מד VU אנלוגי
 	IT	Indicatore VU analogico
-	NL	Analoge VU meter
+	NL	Analoge VU-meter
 	NO	Analog VU-måler
 	PL	Analogowy wskaźnik wysterowania
 	RU	Аналоговый волюметр
@@ -19156,7 +19156,7 @@ VISUALIZER_DIGITAL_VUMETER
 	FR	VUmètre numérique
 	HE	מד VU דיגיטלי
 	IT	Indicatore VU digitale
-	NL	Digitale VU meter
+	NL	Digitale VU-meter
 	NO	Digital VU-måler
 	PL	Cyfrowy wskaźnik wysterowania
 	RU	Цифровой волюметр
@@ -19294,6 +19294,7 @@ SETUP_IMAGEPROXY_HELPER
 	DE	Bilder mit Lyrion Music Server Helferanwendung anpassen
 	EN	Use Lyrion Music Server resizing helper to resize artwork
 	FR	Redimensionner les pochettes via un processus local dédié
+	NL	Gebruik de Lyrion Music Server hulpapplicatie om albumhoezen te schalen
 
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
@@ -19723,7 +19724,7 @@ ROLLOFFSLOW_DISABLED
 	FI	Sharp Roll-off -suodatin
 	FR	Filtre d'affaiblissement brusque
 	IT	Filtro sharp roll-off
-	NL	Sharp Roll-off Filter
+	NL	Steil roll-off-filter
 	NO	Skarpt dempingsfilter
 	PL	Filtr ostrego tłumienia
 	RU	Сильно сглаживающий фильтр
@@ -19738,7 +19739,7 @@ ROLLOFFSLOW_ENABLED
 	FI	Slow Roll-off -suodatin
 	FR	Filtre d'affaiblissement amorti
 	IT	Filtro slow roll-off
-	NL	Slow Roll-off Filter
+	NL	Slow roll-off filter
 	NO	Sakte dempingsfilter
 	PL	Filtr łagodnego tłumienia
 	RU	Слабо сглаживающий фильтр
@@ -20082,7 +20083,7 @@ LOADING_BROWSE_MUSIC_FOLDER
 	FR	Chargement du dossier de musique...
 	HE	טוען את תיקיית המוסיקה...
 	IT	Caricamento cartella Musica...
-	NL	Muziek map wordt geladen...
+	NL	Muziekmap wordt geladen...
 	NO	Laster musikkmappe...
 	PL	Ładowanie folderu muzyki...
 	RU	Загрузка папки "Музыка"...
@@ -20132,7 +20133,7 @@ DEBUG_ARTWORK
 	FI	Kansitaiteen näyttö ja vastaavuus
 	FR	Affichage et correspondance de pochettes
 	IT	Associazione e visualizzazione copertine
-	NL	Albumhoezen Weergave en Gevonden
+	NL	Albumhoezen weergave en gevonden
 	NO	Visning og bruk av albumomslag
 	PL	Wyświetlanie i dopasowywanie okładek
 	RU	Показ и сопоставление обложек
@@ -20143,7 +20144,7 @@ DEBUG_ARTWORK_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassunsproxy
 	EN	Artwork Resizing Proxy
 	FR	Redimensionner les pochettes en amont
-	NL	Albumhoezen Schalen Proxy
+	NL	Proxy voor schalen van albumhoezen
 	NO	Proxy for skalering av plateomslag
 	PL	Proxy dla dopasowywania rozmiarów okładek
 	SV	Proxy för ändring av skivomslagens storlek
@@ -20173,7 +20174,7 @@ DEBUG_FAVORITES
 	FI	Suosikkien tallennus ja toisto
 	FR	Enregistrement et lecture des favoris
 	IT	Salvataggio e riproduzione dei preferiti
-	NL	Opslaan en afspelen van Favorieten
+	NL	Opslaan en afspelen van favorieten
 	NO	Lagre og spille av favoritter
 	PL	Zapisywanie i odtwarzanie ulubionych
 	RU	Сохранение и воспроизведение выбранного
@@ -20188,7 +20189,7 @@ DEBUG_SERVER_PLUGINS
 	FI	Laajennusmoduulien lataaminen
 	FR	Chargement du module d'extension
 	IT	Caricamento dei moduli plugin
-	NL	Laden van plug-in module
+	NL	Laden van plug-in-module
 	NO	Plugin-modul lastes inn
 	PL	Ładowanie modułu dodatku
 	RU	Загрузка подключаемого модуля
@@ -20203,7 +20204,7 @@ DEBUG_SERVER_UPDATE
 	FI	Tietoja automaattisesta ohjelmistopäivitysten latauksista
 	FR	Informations sur les téléchargements de mise à jour logicielle automatique
 	IT	Informazioni sui download automatici di aggiornamenti del software
-	NL	Informatie over automatische download van software updates
+	NL	Informatie over automatische download van software-updates
 	NO	Informasjon om nedlasting av automatiske programvareoppdateringer
 	PL	Informacje o automatycznym pobieraniu aktualizacji oprogramowania
 	RU	Информация об автоматической загрузке обновлений программного обеспечения
@@ -20263,7 +20264,7 @@ DEBUG_SERVER_SELECT
 	FI	Sisäisen valintasilmukan kirjaus (kokeneet käyttäjät)
 	FR	Journalisation de la boucle de sélection interne (avancé)
 	IT	Registrazione ciclo di selezione interno (per utenti esperti)
-	NL	Loggen van interne selectie-loop (Geavanceerd)
+	NL	Loggen van interne selectie-loop (geavanceerd)
 	NO	Loggføring av intern select-spørringssløyfe (avansert)
 	PL	Rejestrowanie wewnętrznej pętli wyboru (zaawansowane)
 	RU	Ведение журнала внутренней команды "Выбрать петли" (дополнительно)
@@ -20278,7 +20279,7 @@ DEBUG_SERVER_MEMORY
 	FI	Palvelimen muistin käyttö (kokeneet käyttäjät)
 	FR	Utilisation de la mémoire du serveur (avancé)
 	IT	Utilizzo memoria server (per utenti esperti)
-	NL	Gebruik van server geheugen (Geavanceerd)
+	NL	Gebruik van servergeheugen (geavanceerd)
 	NO	Bruk av serverminne (avansert)
 	PL	Użycie pamięci serwera (zaawansowane)
 	RU	Использование памяти сервера (дополнительно)
@@ -20368,7 +20369,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	FI	SlimProto-protokolla (Squeezebox/Transporter)
 	FR	Protocole SlimProto (Squeezebox / Transporter)
 	IT	Protocollo SlimProto (Squeezebox / Transporter)
-	NL	SlimProto protocol (Squeezebox/Transporter)
+	NL	SlimProto-protocol (Squeezebox/Transporter)
 	NO	SlimProto-protokoll (Squeezebox/Transporter)
 	PL	Protokół SlimProto (Squeezebox / Transporter)
 	RU	Протокол SlimProto (Squeezebox / Transporter)
@@ -20383,7 +20384,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMP3
 	FI	SliMP3-protokolla
 	FR	Protocole SLIMP3
 	IT	Protocollo SliMP3
-	NL	SliMP3 protocol
+	NL	SliMP3-protocol
 	NO	SliMP3-protokoll
 	PL	Protokół SliMP3
 	RU	Протокол SliMP3
@@ -20398,7 +20399,7 @@ DEBUG_NETWORK_UPNP
 	FI	UPnP-palvelin ja laitetiedot
 	FR	Informations serveur et dispositif UPnP
 	IT	Informazioni su dispositivi e server UPnP
-	NL	Informatie over UPnP-server en apparaat
+	NL	Informatie over UPnP-server en -apparaat
 	NO	UPnP server- og enhetsinformasjon
 	PL	Informacje o serwerze UPnP i urządzeniu
 	RU	Информация о сервере и устройстве UPnP
@@ -20443,7 +20444,7 @@ DEBUG_FORMATS_PLAYLISTS
 	FI	Soittoluettelon jäsennystiedot
 	FR	Informations d'analyse de liste de lecture
 	IT	Informazioni sull'analisi delle playlist
-	NL	Informatie over afspeellijst parsering
+	NL	Informatie over afspeellijstparsering
 	NO	Analyseinformasjon om spilleliste
 	PL	Informacje o analizie listy odtwarzania
 	RU	Информация анализа плей-листа
@@ -20503,7 +20504,7 @@ DEBUG_DATABASE_SQL
 	FI	SQL-kirjaus (kokeneet käyttäjät)
 	FR	Journalisation SQL (avancé)
 	IT	Registrazione SQL (per utenti esperti)
-	NL	SQL-logboek (Geavanceerd)
+	NL	SQL-logboek (geavanceerd)
 	NO	SQL-loggføring (avansert)
 	PL	Rejestrowanie SQL (zaawansowane)
 	RU	Ведение журнала SQL (дополнительно)
@@ -20558,7 +20559,7 @@ DEBUG_OS_PATHS
 	FI	Tiedostojärjestelmän polun jäsennys
 	FR	Analyse du chemin de système de fichiers
 	IT	Analisi percorsi del file system
-	NL	Parsering systeembestand paden
+	NL	Parsering systeembestandpaden
 	NO	Filsystemets banetolking
 	PL	Analiza ścieżki systemu plików
 	RU	Анализ пути файловой системы
@@ -20573,7 +20574,7 @@ DEBUG_CONTROL_STDIO
 	FI	Standardien I/O-komentojen kirjaus (kokeneet käyttäjät)
 	FR	Journalisation de commande d'E/S standard (avancé)
 	IT	Registrazione comandi I/O standard (per utenti esperti)
-	NL	Loggen van standaard-I/O-opdrachten (Geavanceerd)
+	NL	Loggen van standaard-I/O-opdrachten (geavanceerd)
 	NO	Loggføring av standard I/O-kommandoer (avansert)
 	PL	Rejestrowanie standardowych poleceń We/Wy (zaawansowane)
 	RU	Ведение журнала стандартных команд ввода-вывода (дополнительно)
@@ -20588,7 +20589,7 @@ DEBUG_CONTROL_QUERIES
 	FI	Hallintakysymysten kirjaus (kokeneet käyttäjät)
 	FR	Journalisation des requêtes de contrôle (avancé)
 	IT	Registrazione query di controllo (per utenti esperti)
-	NL	Query-log controleren (Geavanceerd)
+	NL	Query-log controleren (geavanceerd)
 	NO	Loggføring av kontrollforespørsler (avansert)
 	PL	Kontroluj rejestrowanie zapytań (zaawansowane)
 	RU	Ведение журнала контрольных запросов (дополнительно)
@@ -20603,7 +20604,7 @@ DEBUG_CONTROL_COMMAND
 	FI	Sisäisen komennon suorituksen kirjaus (kokeneet käyttäjät)
 	FR	Journalisation d'exécution de commandes internes (avancé)
 	IT	Registrazione esecuzione comandi interni (per utenti esperti)
-	NL	Loggen van interne opdrachtuitvoering (Geavanceerd)
+	NL	Loggen van interne opdrachtuitvoering (geavanceerd)
 	NO	Loggføring av utføring av interne kommandoer (avansert)
 	PL	Rejestrowanie wykonania poleceń zewnętrznych (zaawansowane)
 	RU	Ведение журнала выполнения внутренних команд (дополнительно)
@@ -20648,7 +20649,7 @@ DEBUG_PLAYER_MENU
 	FI	Soitinvalikon kirjaaminen
 	FR	Journalisation du menu de la platine
 	IT	Registrazione del menu del lettore
-	NL	Loggen van muziekspeler menu
+	NL	Loggen van muziekspelermenu
 	NO	Loggføring av spillermeny
 	PL	Rejestrowanie menu odtwarzacza
 	RU	Ведение журнала меню плеера
@@ -20663,7 +20664,7 @@ DEBUG_PLAYER_UI
 	FI	Soittimen käyttöliittymän tiedot
 	FR	Informations de l'interface utilisateur de la platine
 	IT	Informazioni sull'interfaccia utente del lettore
-	NL	Gegevens van muziekspeler interface
+	NL	Gegevens van muziekspelerinterface
 	NO	Informasjon om spillerens brukergrensesnitt
 	PL	Informacje o interfejsie użytkownika odtwarzacza
 	RU	Информация о пользовательском интерфейсе плеера
@@ -20708,7 +20709,7 @@ DEBUG_PLAYER_FONTS
 	FI	Soittimen näyttö (fontti- ja bittikarttatiedot)
 	FR	Affichage de la platine (informations police et bitmap)
 	IT	Display del lettore (informazioni su caratteri e bitmap)
-	NL	Muziekspeler display (Lettertype en bitmap informatie)
+	NL	Muziekspelerdisplay (lettertype- en bitmapinformatie)
 	NO	Spillerskjerm (informasjon om skrifttype og punktgrafikk)
 	PL	Wyświetlacz odtwarzacza (informacje o czcionkach i mapach bitowych)
 	RU	Экран плеера (данные о шрифтах и растровых изображениях)
@@ -20723,7 +20724,7 @@ DEBUG_PLAYER_TEXT
 	FI	Soittimen näyttö (merkkien näyttämistä koskevat tiedot)
 	FR	Affichage de la platine (informations sur l'affichage des caractères)
 	IT	Display del lettore (informazioni sulla visualizzazione dei caratteri)
-	NL	Muziekspeler display (Grafisch-display informatie)
+	NL	Muziekspelerdisplay (grafisch-displayinformatie)
 	NO	Spillerskjerm (informasjon om tegnvisning)
 	PL	Wyświetlanie odtwarzacza (informacje o wyświetlaniu znaków)
 	RU	Экран плеера (сведения о символьном экране)
@@ -20798,7 +20799,7 @@ DEBUG_PLAYER_FIRMWARE
 	FI	Soittimen laitteisto-ohjelmiston päivityksen kirjaus
 	FR	Journalisation de la mise à niveau du micrologiciel de la platine
 	IT	Informazioni sull'aggiornamento del firmware del lettore
-	NL	Muziekspeler: firmware upgrade
+	NL	Muziekspeler: firmware-upgrade
 	NO	Loggføring av oppgradering av spillerens fastvare
 	PL	Rejestrowanie uaktualniania oprogramowania układowego odtwarzacza
 	RU	Ведение журнала обновления микропрограммы плеера
@@ -20844,7 +20845,7 @@ DEBUG_SCAN
 	FI	Kaikkien hakujen kirjaus
 	FR	Journalisation de toutes les activités d'analyse
 	IT	Registrazione di tutte le analisi
-	NL	Loggen van alle scan activiteiten
+	NL	Loggen van alle scanactiviteiten
 	NO	Loggføring av alle søk
 	PL	Rejestrowanie całego przeszukiwania
 	RU	Ведение журнала всех событий сканирования
@@ -20859,7 +20860,7 @@ DEBUG_SCAN_SCANNER
 	FI	Media- ja soittoluettelokansioiden tarkistus
 	FR	Analyse du dossier multimédia et des listes de lecture
 	IT	Analisi cartelle di file multimediali e playlist
-	NL	Scannen van media en afspeellijst mappen
+	NL	Scannen van media- en afspeellijstmappen
 	NO	Søker i medie- og spillelistemappe
 	PL	Przeszukiwanie folderów multimediów i list odtwarzania
 	RU	Сканирование папок с файлами мультимедиа и плей-листами
@@ -20904,7 +20905,7 @@ DEBUG_WIZARD
 	FI	Ohjatun asennuksen toimintojen kirjaus
 	FR	Journalisation des activités de l'assistant de configuration
 	IT	Registrazione attività procedura guidata di installazione
-	NL	Loggen van installatie wizard activiteit
+	NL	Loggen van installatiewizardactiviteit
 	NO	Loggføring av aktivitet i konfigurasjonsveiviser
 	PL	Rejestrowanie działań Kreatora konfiguracji
 	RU	Ведение журнала действий мастера установки
@@ -20934,7 +20935,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	FI	Lyrion Music Server pitää lokitiedostoa kaikista sovelluksiin liittyvistä toiminnoista (äänen virtautus, infrapuna jne.) täällä:
 	FR	Le Lyrion Music Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant :
 	IT	Lyrion Music Server mantiene un file di registro per tutte le attività relative alle applicazioni (stream audio, raggi infrarossi e così via) nel seguente percorso:
-	NL	Lyrion Music Server bewaart hier een logboek voor alle applicatie activiteiten (audio streaming, infrarood, enz.):
+	NL	Lyrion Music Server bewaart hier een logboek voor alle applicatie-activiteiten (audio streaming, infrarood, enz.):
 	NO	Lyrion Music Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
 	PL	Program Lyrion Music Server przechowuje plik dziennika zawierający wszystkie działania dotyczące aplikacji (strumieniowe przesyłanie dźwięku, korzystanie z podczerwieni) w tym miejscu:
 	RU	Все действия приложений (потоковое аудио, ИК-выход и др.) записываются в файл журнала Lyrion Music Server:
@@ -20964,7 +20965,7 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	FI	Lyrion Music Server pitää lokitiedostoa kaikista hakuihin liittyvistä toiminnoista (mukaan lukien iTunes ja MusicIP) täällä:
 	FR	Le Lyrion Music Server conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant :
 	IT	Lyrion Music Server mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
-	NL	Lyrion Music Server bewaart hier een logboek voor alle scan activiteiten (zoals iTunes en MusicIP):
+	NL	Lyrion Music Server bewaart hier een logboek voor alle scanactiviteiten (zoals iTunes en MusicIP):
 	NO	Lyrion Music Server fører en loggfil for alle søkeaktiviteter, inkludert iTunes og MusicIP, her:
 	PL	Program Lyrion Music Server przechowuje plik dziennika dla wszystkich działań związanych z przeszukiwaniem, w tym programem iTunes i MusicIP tutaj:
 	RU	В Lyrion Music Server сохраняет файл журнала для всех действий сканирования, включая iTunes MusicIP, здесь:
@@ -20994,7 +20995,7 @@ SETUP_DEBUG_PERFMON_LOG
 	FI	Suorituskyvyn lokitiedosto
 	FR	Fichier journal de performance
 	IT	File di registro prestazioni
-	NL	Prestatie  logboek
+	NL	Prestatielogboek
 	NO	Loggfil for ytelse
 	PL	Plik dziennika wydajności
 	RU	Файл журнала производительности
@@ -21546,7 +21547,7 @@ RELEASETYPES_PROGRESS
 	DE	Album Veröffentlichungstypen aktualisieren
 	EN	Update Album release types
 	FR	Actualiser les types de sorties des albums
-	NL	Album releasetypes vernieuwen
+	NL	Albumreleasetypes vernieuwen
 
 VIRTUALLIBRARIES_PROGRESS
 	CS	Vytváření zobrazení knihovny
@@ -21563,7 +21564,7 @@ AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 	FR	Comme une bibliothèque thématique
-	NL	Als Deelcollectie
+	NL	Als deelcollectie
 	NO	Som delbibliotek
 	PL	Jako biblioteka tematyczna
 	SV	Som delbibliotek
@@ -21858,7 +21859,7 @@ PERSIST_DEBUG_SETTINGS
 	FI	Tallenna kirjausasetukset käytettäväksi, kun sovellus käynnistetään seuraavaksi uudelleen
 	FR	Enregistrer les réglages de journalisation pour une utilisation au prochain démarrage de l'application
 	IT	Salva e utilizza le impostazioni di registrazione al successivo avvio dell'applicazione
-	NL	Log instellingen opslaan voor gebruik bij volgende applicatie herstart
+	NL	Loginstellingen opslaan voor gebruik bij volgende applicatieherstart
 	NO	Lagre innstillinger for loggføring og bruk dem ved neste programstart
 	PL	Zapisz ustawienia rejestrowania w celu użycia przy kolejnym uruchomieniu aplikacji
 	RU	Сохранить настройки журнала при перезапуске приложения
@@ -22406,7 +22407,7 @@ JIVE_PLAYER_FIRMWARE_VERSION
 	FI	FW-versio
 	FR	Version FW
 	IT	Versione FW
-	NL	Firmware versie
+	NL	Firmware-versie
 	NO	Fastvareversjon
 	PL	Wersja oprogramowania układowego
 	RU	Версия микропрограммы
@@ -22640,7 +22641,7 @@ ALBUMS_SORT_METHOD
 	FI	Levyjen lajittelutapa
 	FR	Méthode de tri des albums
 	IT	Metodo ordinamento album
-	NL	Sorteer methode voor albums
+	NL	Sorteermethode voor albums
 	NO	Albumsortering
 	PL	Metoda sortowania albumów
 	RU	Метод сортировки альбомов
@@ -22911,7 +22912,7 @@ BACKUP_ALARM
 	FI	Varahälytys
 	FR	Alarme de secours
 	IT	Sveglia di backup
-	NL	Back-up wekker
+	NL	Back-upwekker
 	NO	Ekstravekking
 	PL	Alarm zapasowy
 	RU	Резервный будильник
@@ -22926,7 +22927,7 @@ CONTROLPANEL_TITLE
 	FI	Lyrion Music Serverin ohjauspaneeli
 	FR	Panneau de configuration du Lyrion Music Server
 	IT	Pannello di controllo di Lyrion Music Server
-	NL	Lyrion Music Server configuratiescherm
+	NL	Lyrion Music Server-configuratiescherm
 	NO	Kontrollpanel for Lyrion Music Server
 	PL	Panel sterowania programu Lyrion Music Server
 	RU	Панель управления Lyrion Music Server
@@ -23093,7 +23094,7 @@ CONTROLPANEL_TRAY_DOUBLECLICK_WEB
 	FI	Avaa WWW-etähallinta kaksoisnapsauttamalla ilmaisinalueen kuvaketta
 	FR	Ouvrir la commande Web en cliquant deux fois sur l'icône de la barre d'état
 	IT	Aprire Controllo remoto Web facendo doppio clic sull'icona nell'area di notifica
-	NL	Open web afstandsbediening door te dubbelklikken op het pictogram in het systeemvak
+	NL	Open web-afstandsbediening door te dubbelklikken op het pictogram in het systeemvak
 	NO	Åpne Fjernkontroll ved dobbeltklikk på ikonet i systemstatusfeltet
 	PL	Otwórz Pilot zdalnego sterowania, klikając dwukrotnie ikonę na pasku zadań
 	RU	Открывать пульт управления по Интернету двойным щелчком по значку на панели задач
@@ -23153,7 +23154,7 @@ CONTROLPANEL_SHOW_SERVER_LOG
 	FI	Näytä palvelimen loki
 	FR	Afficher le journal du serveur
 	IT	Mostra registro del server
-	NL	Server logboek weergeven
+	NL	Serverlogboek weergeven
 	NO	Vis serverlogg
 	PL	Pokaż dziennik serwera
 	RU	Показать журнал сервера
@@ -23168,7 +23169,7 @@ CONTROLPANEL_SHOW_SCANNER_LOG
 	FI	Näytä tarkistuksen loki
 	FR	Afficher le journal de l'analyseur
 	IT	Mostra registro analisi
-	NL	Scanner logboek weergeven
+	NL	Scannerlogboek weergeven
 	NO	Vis søkelogg
 	PL	Pokaż dziennik skanera
 	RU	Показать scanner.log
@@ -23604,7 +23605,7 @@ CLEANUP_COMMAND_LINE
 	FI	Komentorivivalitsimet:
 	FR	Options de ligne de commande :
 	IT	Opzioni della riga di comando:
-	NL	Opdrachtregel opties:
+	NL	Opdrachtregelopties:
 	NO	Kommandolinjevalg:
 	PL	Opcje wiersza polecenia:
 	RU	Параметры командной строки:
@@ -23649,7 +23650,7 @@ CLEANUP_PREFS
 	FI	Poista asetustiedostot
 	FR	Supprimer les fichiers de préférence
 	IT	Elimina file delle preferenze
-	NL	Voorkeuren bestanden verwijderen
+	NL	Voorkeurenbestanden verwijderen
 	NO	Slett innstillingsfiler
 	PL	Usuń pliki preferencji
 	RU	Удалить файлы настроек
@@ -23679,7 +23680,7 @@ CLEANUP_CACHE
 	FI	Tyhjennä välimuistikansio, mukaan luettuna mediatietokanta ja kansitaiteen välimuisti.
 	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque multimédia, les pochettes, etc.
 	IT	Pulisci cartella della cache, inclusi il database della libreria multimediale, la cache delle copertine e così via.
-	NL	Cache map opschonen, inclusief mediadatabase, albumhoezen cache, enz.
+	NL	Cache-map opschonen, inclusief mediadatabase, albumhoezencache, enz.
 	NO	Tøm hurtigbuffermappen, inkludert mediedatabasen, hurtigbufrede omslag osv.
 	PL	Czyści folder pamięci podręcznej, w tym bazę danych biblioteki multimedialnej, pamięć podręczną okładek itp.
 	RU	Очистить папку кэша, включая базу данных библиотеки мультимедиа, кэш обложек и др.
@@ -23965,7 +23966,7 @@ HOWTO_STAFF_PICKS
 	FI	Selaa suosituksiin ja paina oikeaa näppäintä.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton droit.
 	IT	Scorrere fino a SCELTI DALLO STAFF e premere DESTRA.
-	NL	Scrol naar AANRADERS en druk RECHTS.
+	NL	Scroll naar AANRADERS en druk RECHTS.
 	NO	Gå til UTVALGTE STASJONER og gå til høyre.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij przycisk w prawo.
 	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите кнопку RIGHT.
@@ -23981,7 +23982,7 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	FI	Selaa kohtaan SUOSITUKSET ja paina keskipainiketta.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton central.
 	IT	Scorrere fino a SCELTI DALLO STAFF e premere il pulsante centrale.
-	NL	Scrol naar AANRADERS en druk op de middelste knop.
+	NL	Scroll naar AANRADERS en druk op de middelste knop.
 	NO	Gå til UTVALGTE STASJONER og trykk på midtknappen.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij środkowy przycisk.
 	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите центральную кнопку.
@@ -24011,7 +24012,7 @@ HOWTO_INTERNET_RADIO
 	FI	Siirry kohtaan "internet-radion parhaat" ja paina oikeaa painiketta.
 	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton droit.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere DESTRA.
-	NL	Scrol naar 'De beste internetradio' en druk RECHTS.
+	NL	Scroll naar 'De beste internetradio' en druk RECHTS.
 	NO	Gå til "Beste stasjoner" og gå til høyre.
 	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij przycisk W PRAWO.
 	RU	Прокрутите до элемента "Лучшие из радиостанций Интернета" и нажмите кнопку RIGHT.
@@ -24027,7 +24028,7 @@ HOWTO_INTERNET_RADIO_CONTROLLER
 	FI	Siirry internet-radion parhaisiin ja paina keskipainiketta.
 	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton central.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere il pulsante centrale.
-	NL	Scrol naar 'De beste internetradio' en druk op de middelste knop.
+	NL	Scroll naar 'De beste internetradio' en druk op de middelste knop.
 	NO	Gå til "Beste stasjoner" og trykk på midtknappen.
 	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij środkowy przycisk.
 	RU	Прокрутите до "Лучшие радиостанции Интернета" и нажмите центральную кнопку.
@@ -24042,7 +24043,7 @@ HOWTO_SHOWCASE
 	FI	Siirry kohtaan Esittely: Miles Davis ja paina toistopainiketta.
 	FR	Faites défiler vers Slim Showcase: Miles Davis et appuyez sur Lecture.
 	IT	Scorrere fino a Slim Showcase: Miles Davis e premere PLAY.
-	NL	Scrol naar 'Slim Showcase: Miles Davis' en druk op PLAY.
+	NL	Scroll naar 'Slim Showcase: Miles Davis' en druk op PLAY.
 	NO	Gå til Slim-scenen: Miles Davis og trykk på PLAY.
 	PL	Przewiń do opcji Prezentacja Slim: Miles Davis i naciśnij przycisk PLAY.
 	RU	Прокрутите до элемента Slim Showcase: Miles Davis и нажмите кнопку PLAY.
@@ -24178,7 +24179,7 @@ DECODE_ERROR_103
 	FI	Ei Vorbis-tiedosto
 	FR	Pas un fichier Vorbis
 	IT	Non è un file Vorbis
-	NL	Geen Vorbis bestand
+	NL	Geen Vorbis-bestand
 	NO	Ikke en Vorbis-fil
 	PL	To nie jest plik Vorbis
 	RU	Не является файлом Vorbis
@@ -24193,7 +24194,7 @@ DECODE_ERROR_104
 	FI	Bad Vorbis -otsikko
 	FR	En-tête Vorbis incorrect
 	IT	Intestazione Vorbis non valida
-	NL	Ongeldige Vorbis header
+	NL	Ongeldige Vorbis-header
 	NO	Ugyldig Vorbis-topptekst
 	PL	Zły nagłówek Vorbis
 	RU	Недопустимый заголовок Vorbis
@@ -24239,7 +24240,7 @@ PLUGINS_UPDATES_AVAILABLE
 	FI	Laajennuspäivitykset ovat saatavissa
 	FR	Des mises à jour des plugins sont disponibles
 	IT	Sono disponibili aggiornamenti per il plugin
-	NL	Plug-in updates beschikbaar
+	NL	Plug-in-updates beschikbaar
 	NO	Oppdateringer til plugin-moduler er tilgjengelige
 	PL	Dostępne są nowe aktualizacje.
 	RU	Доступны обновления подключаемых модулей
@@ -24427,7 +24428,7 @@ SYNC_ABOUT
 	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Lyrion.org.
 	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Lyrion.org pour obtenir plus d'informations.
 	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Lyrion.org.
-	NL	Voeg een of meer Squeezebox muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Lyrion.org voor meer informatie.
+	NL	Voeg een of meer Squeezebox-muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Lyrion.org voor meer informatie.
 	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Lyrion.org for mer informasjon.
 	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Lyrion.org.
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Lyrion.org.
