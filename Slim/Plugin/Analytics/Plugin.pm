@@ -50,9 +50,10 @@ sub _report {
 	my $totals = Slim::Schema->totals();
 
 	# get list of connected players
-	my ($playerTypes, $playersSeen);
+	my ($playerTypes, $playerModels, $playersSeen);
 	my @players = map {
 		$playerTypes->{$_->model}++;
+		$playerModels->{$_->modelName}++;
 		$playersSeen->{$_->id}++;
 		$_->model;
 	} grep {
@@ -62,6 +63,7 @@ sub _report {
 	# get offline clients seen during the past x days
 	push @players, map {
 		$playerTypes->{$_->{model}}++;
+		$playerModels->{$_->{modelName}}++;
 		$_->{model};
 	} grep {
 		$_->{model} ne 'group' && !$playersSeen->{$_->{mac}} && (time() - $_->{lastSeen}) < (86400 * REPORT_PLAYER_UNSEEN_DAYS)
@@ -76,6 +78,7 @@ sub _report {
 		perl     => $Config{'version'},
 		players  => scalar @players,
 		playerTypes => $playerTypes,
+		playerModels => $playerModels,
 		plugins  => $plugins,
 		skin     => $serverPrefs->get('skin'),
 		tracks   => $totals->{track},
@@ -128,11 +131,15 @@ sub _getClients {
 				$ts = max($ts, $clientPrefs->{prefs}->{$_});
 			}
 
-			push @clients, {
+			my $clientData = {
 				mac   => $id,
 				model => $clientPrefs->get('model') || _guessPlayerTypeFromMac($id, $name),
 				lastSeen => $ts,
 			};
+
+			$clientData->{modelName} = $clientPrefs->get('modelName') || ucfirst($clientData->{model});
+
+			push @clients, $clientData;
 		}
 	}
 
