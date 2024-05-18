@@ -78,7 +78,7 @@ sub _report {
 		perl     => $Config{'version'},
 		players  => scalar @players,
 		playerTypes => $playerTypes,
-		playerModel => $playerModels,
+		playerModels => $playerModels,
 		plugins  => $plugins,
 		skin     => $serverPrefs->get('skin'),
 		tracks   => $totals->{track},
