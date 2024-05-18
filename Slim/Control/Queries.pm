@@ -6057,7 +6057,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . join( '', @{$p}, @$w ) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+		my $cacheKey = md5_hex($sql . utf8::decode(join( '', @{$p}, @$w )) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {
