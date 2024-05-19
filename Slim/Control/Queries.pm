@@ -5394,7 +5394,7 @@ sub _getTagDataForTracks {
 		push @{$p}, $year;
 	}
 
-	if ( my $libraryId = $args->{libraryId} ) {
+	if ( my $libraryId = Slim::Music::VirtualLibraries->getRealId($args->{libraryId}) ) {
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryId;
