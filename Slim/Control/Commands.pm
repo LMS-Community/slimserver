@@ -3432,7 +3432,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		if ($sort && ($sort eq $albumSort || $sort eq $albumYearSort)) {
 			if ( $find{'me.album'} && ref $find{'me.album'} eq '') {
-				# Don't need album-sort if we have a specific album-id
+				# Don't need album-sort if we have a specific single album-id
 				$sort = undef;
 			} else {
 				# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
