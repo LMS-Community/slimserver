@@ -47,4 +47,3 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	PL	Domyślny wygaszacz ekranu
 	RU	Экранная заставка по умолчанию
 	SV	Standardskärmsläckare
-

@@ -133,7 +133,7 @@ PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	PL	Jeśli pożądany serwer nie został znaleziony, upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
 
 PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
-	CS	Selhal požadavek UPnP/DLNA, zkontrolujte prosím server UPnP/DLNA.
+	CS	Požadavek UPnP/DLNA se nepodařil, zkontrolujte server UPnP/DLNA.
 	DA	UPnP/DLNA-anmodning mislykkedes. Kontroller UPnP/DLNA-serveren.
 	DE	Fehler bei der UPnP/DLNA-Anforderung. Prüfen Sie den UPnP/DLNA-Server.
 	EN	UPnP/DLNA request failed, please check the UPnP/DLNA server.
@@ -306,4 +306,3 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
 	NL	Films, Video's, Foto's, Afbeeldingen
 	NO	Filmer, videoklipp, bilder, image-filer
 	PL	Movies, Video, Pictures, Images, Filmy, Obrazy, Zdjęcia, Wideo
-

@@ -39,7 +39,7 @@ PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
 	SV	Integrera inte online-bibliotek
 
 PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
-	CS	Není k dispozici žádná podporovaná implementace služby streamování.
+	CS	Není k dispozici žádná podporovaná implementace streamovací služby.
 	DE	Es wurde kein unterstützter Streaming-Dienst gefunden.
 	EN	There's no supported streaming service implementation available.
 	FR	Aucun service de streaming pris en charge n'a été trouvé.
@@ -79,6 +79,7 @@ PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY_DESC
 	SV	Bara lokala spår (ingen strömningstjänst)
 
 PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT
+	CS	Neimportovat seznamy skladeb.
 	DE	Wiedergabelisten nicht importieren.
 	EN	Don't import playlists.
 	FR	Ne pas importer les listes de lecture.
@@ -124,13 +125,14 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 	SV	Inte alla strömningstjänster använder genrer. Den här inställningen gör det möjligt att sätta en genre på en låt baserat på namnet eller artistens namn. Det kommer givetvis inte att fungera speciellt bra för stora bibliotek men det gör det möjligt att ge vissa markera vissa låtar med en genre som kan användas i biblioteksvyer.
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
-	CS	Pokročilá náhrada žánru
+	CS	Pokročilá náhrada žánru a typu vydání
 	DE	Erweiterte Ersetzung
 	EN	Advanced genre and release type replacement
 	FR	Remplacement avancé de genre et de type de sortie
 	NL	Geavanceerde instellingen voor genre vervanging
 
 PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
+	CS	Typ vydání
 	EN	Release Type
 	FR	Type de sortie
 
@@ -158,7 +160,7 @@ PLUGIN_ONLINE_LIBRARY_MATCHING
 	SV	Matchande text:
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
-	CS	Nahrazení online žánru
+	CS	Nahrazení online žánru a typu vydání
 	DE	Online Stilrichtungen ersetzen
 	EN	Online Genre and Release Type Replacement
 	FR	Remplacement des genres et des types de sorties en ligne
@@ -172,4 +174,3 @@ PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
 	FR	Morceaux dans des listes de lecture
 	NL	Totaal aantal nummers in afspeellijsten
 	SV	Antal spår i spellistan
-

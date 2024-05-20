@@ -1,7 +1,7 @@
 # String file for LineIn plugin
 
 PLUGIN_LINE_IN
-	CS	Vstupní linka
+	CS	Linkový vstup
 	DA	Linjeindgang
 	DE	Line-In
 	EN	Line In
@@ -16,7 +16,7 @@ PLUGIN_LINE_IN
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_DESC
-	CS	Vstupní linka pro Boom
+	CS	Linkový vstup pro Boom
 	DA	Linjeindgang på Boom
 	DE	Line-In für Boom
 	EN	Line In for Boom
@@ -31,7 +31,7 @@ PLUGIN_LINE_IN_DESC
 	SV	Ljudingång för Boom
 
 PLUGIN_LINE_IN_LINE_IN
-	CS	Vstupní linka
+	CS	Linkový vstup
 	DA	Linjeindgang
 	DE	Line-In
 	EN	Line In
@@ -46,7 +46,7 @@ PLUGIN_LINE_IN_LINE_IN
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_IN_USE
-	CS	Vstupní linka aktivní
+	CS	Linkový vstup aktivní
 	DA	Linjeindgangen er valgt
 	DE	Line-In ist aktiv
 	EN	Line In is active
@@ -61,7 +61,7 @@ PLUGIN_LINE_IN_IN_USE
 	SV	Ljudingången är aktiv
 
 LINE_IN_LEVEL
-	CS	Hladina vstupní linky
+	CS	Hladina linkového vstupu
 	DA	Niveau for linjeindgang
 	DE	Line-In-Pegel
 	EN	Line In Level
@@ -76,7 +76,7 @@ LINE_IN_LEVEL
 	SV	Nivå för linjeingång
 
 LINE_IN_LEVEL_DESC
-	CS	S použitím tohoto nastavení můžete upravit zisk vstupní linky.
+	CS	S použitím tohoto nastavení můžete upravit zisk linkového vstupu.
 	DA	Du kan bruge denne indstiling til at justere forstærkningen af linjeindgangens signal.
 	DE	Mit dieser Einstellung können Sie die Line-In-Verstärkung anpassen.
 	EN	Using this setting you can adjust the line in gain.
@@ -91,7 +91,7 @@ LINE_IN_LEVEL_DESC
 	SV	Med det här alternativet kan du justera hur linjeingångens signal förstärks.
 
 LINE_IN_ALWAYS_ON
-	CS	Vstupní linka vždy zapnuta
+	CS	Linkový vstup vždy zapnutý
 	DA	Linjeindgang altid til
 	DE	Line-In immer aktiv
 	EN	Line In Always On
@@ -106,7 +106,7 @@ LINE_IN_ALWAYS_ON
 	SV	Linjeingång alltid på
 
 LINE_IN_ALWAYS_ON_DESC
-	CS	Tato volba trvale zapne vstup linky, aby se uživatelé, kteří se chtějí připojit k vstupní lince, mohli kdykoli připojit (např. pro Karaoke)
+	CS	Tato volba trvale zapne linkový vstup, aby se uživatelé, kteří se chtějí připojit k linkovému vstupu, mohli kdykoli připojit (např. pro Karaoke)
 	DA	Denne indstilling aktiverer linjeindgangen hele tiden sådan at man kan mikse linjeindgangens signal ind over lydsporet, fx ved Karaoke
 	DE	Diese Option aktiviert den Line-In-Eingang permanent, damit er jederzeit nutzbar ist (z.B. für Karaoke).
 	EN	This option turns on the line input all the time, to let users who want to mix in the line in all the time (eg. for Karaoke)
@@ -119,4 +119,3 @@ LINE_IN_ALWAYS_ON_DESC
 	PL	Ta opcja powoduje, że wejście liniowe jest stale włączone, co umożliwia użytkownikom miksowanie dźwięków z linią (np. w przypadku Karaoke).
 	RU	Благодаря этому параметру линейный вход постоянно включен, позволяя пользователям непрерывно создавать миксы (например, для караоке)
 	SV	Med det här alternativet är linjeingången aktiverad hela tiden, så att du kan mixa linjeingångens signal över ljudspåret när som helst (t.ex. för karaoke)
-

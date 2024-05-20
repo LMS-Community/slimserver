@@ -173,7 +173,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
-	CS	Neplatný kanál - %s
+	CS	Neplatný kanál – %s
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
@@ -206,7 +206,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	PL	Wznów od ostatniej pozycji (%s)
 
 PLUGIN_PODCAST_SKIP_BACK_SECS
-	CS	Skok o několid sekund zpět
+	CS	Skok o několik sekund zpět
 	DE	Zurückspringen um X Sekunden
 	EN	Jump back seconds
 	FR	Revenir en arrière de X secondes
@@ -261,7 +261,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	NL	Configureer de podcast feed aanbieder (aggregator)
 
 PLUGIN_PODCAST_SEARCH_FAILED
-	CS	Vyhledávání se nezdařilo
+	CS	Vyhledávání se nepodařilo
 	DE	Suche fehlgeschlagen
 	EN	Search failed
 	FR	Echec de recherche
@@ -318,14 +318,14 @@ PLUGIN_PODCAST_COUNTRY
 	NL	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
-	CS	Přihlásit se k odběru '%s'
+	CS	Přihlásit se k odběru "%s"
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
 	NL	Abonneren op '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
-	CS	Odhlásit se z odběru '%s'
+	CS	Odhlásit se z odběru "%s"
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
 	FR	Se désabonner de '%s'

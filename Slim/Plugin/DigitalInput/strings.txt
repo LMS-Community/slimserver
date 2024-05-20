@@ -110,4 +110,3 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	PL	Wybierz opcję wejścia cyfrowego poniżej:
 	RU	Выберите цифровой вход из списка:
 	SV	Välj digital ingång nedan:
-

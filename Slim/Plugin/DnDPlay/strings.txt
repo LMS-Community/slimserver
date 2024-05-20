@@ -26,7 +26,7 @@ PLUGIN_DNDPLAY_DESC
 	PL	Ten dodatek pozwala na otwarzanie plików muzycznych poprzez "przeciągnięcie" z twojego pulpitu i "upuszczenie" na interfejsie internetowym programu Lyrion Music Server. Pliki, które nie są bezpośrednio dostępne dla Lyrion Music Server zostaną przesłane i tymczasowo zapisane na serwerze, w celu odtworzenia.
 
 PLUGIN_DNDPLAY_NO_ITEMS
-	CS	Nebyly nalezeny žádné přehrávatelné položky. Přehrát lze pouze zvukové soubory.
+	CS	Nebyly nalezeny žádné přehratelné položky. Přehrát lze pouze zvukové soubory.
 	DE	Keine der Dateien kann wiedergegeben werden. Nur Audio-Dateien werden akzeptiert.
 	EN	No playable items found. Only audio files can be played.
 	FR	Aucun élément lisible trouvé. Seuls les fichiers audio peuvent être lus.

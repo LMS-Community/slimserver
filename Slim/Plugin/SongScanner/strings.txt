@@ -104,4 +104,3 @@ PLUGIN_SONGSCANNER_MAX_RATE_REW
 	PL	Osiągnięto maksymalną szybkość przewijania do tyłu
 	RU	Достигнута макс. скорость перемотки назад
 	SV	Maximal tillbakaspolningstakt har uppnåtts
-
