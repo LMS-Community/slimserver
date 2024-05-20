@@ -340,6 +340,7 @@ sub initPrefs {
 
 	# keep track of what player model this is: this way analytics knows disconnected devices' types
 	$clientPrefs->set('model', $client->model);
+	$clientPrefs->set('modelName', $client->modelName);
 
 	# init display including setting any display specific preferences to default
 	if ($client->display) {
