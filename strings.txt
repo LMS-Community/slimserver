@@ -23431,19 +23431,19 @@ CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
 	SV	Om det uppstår anslutningsproblem med Lyrion Music Server bör du kontrollera att alternativet Tillståndskänslig brandvägg (alltid på) är avaktiverat
 
 CONTROLPANEL_CONFLICT_SCPERL
-	CS	Pokud provozujete SC s použitím verze perl, pak je to v pořádku a očekáváno.
-	DA	Hvis du kører SC i Perl-versionen, er det OK og forventet.
-	DE	Das Ausführen von SC mithilfe der Perl-Version wird akzeptiert und erwartet.
-	EN	If you're running SC using the perl version, then this is ok and expected.
-	ES	Si ejecuta SC con la versión perl, es correcto y está previsto.
-	FI	Jos SC on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
-	FR	Si vous exécutez SC à l'aide de la version perl, cet événement est attendu.
-	IT	Se è in esecuzione la versione Perl di SC, il problema non sussiste.
-	NL	Als je SC met de perl-versie uitvoert, is dit normaal gedrag.
-	NO	Hvis du kjører SC med perl-versjonen, er dette greit og forventet.
-	PL	Jeśli używasz programu SC w wersji perl, jest to poprawne i oczekiwane zachowanie.
-	RU	При выполнении SC с версией perl данное поведение ожидаемо и нормально.
-	SV	Om du kör du perlversionen av SC är detta inget fel, utan OK och förväntat.
+	CS	Pokud provozujete Lyrion Music Server s použitím verze perl, pak je to v pořádku a očekáváno.
+	DA	Hvis du kører Lyrion Music Server i Perl-versionen, er det OK og forventet.
+	DE	Das Ausführen von Lyrion Music Server mithilfe der Perl-Version wird akzeptiert und erwartet.
+	EN	If you're running Lyrion Music Server using the perl version, then this is ok and expected.
+	ES	Si ejecuta Lyrion Music Server con la versión perl, es correcto y está previsto.
+	FI	Jos Lyrion Music Server on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
+	FR	Si vous exécutez Lyrion Music Server à l'aide de la version perl, cet événement est attendu.
+	IT	Se è in esecuzione la versione Perl di Lyrion Music Server, il problema non sussiste.
+	NL	Als je Lyrion Music Server met de perl-versie uitvoert, is dit normaal gedrag.
+	NO	Hvis du kjører Lyrion Music Server med perl-versjonen, er dette greit og forventet.
+	PL	Jeśli używasz programu Lyrion Music Server w wersji perl, jest to poprawne i oczekiwane zachowanie.
+	RU	При выполнении Lyrion Music Server с версией perl данное поведение ожидаемо и нормально.
+	SV	Om du kör du perlversionen av Lyrion Music Server är detta inget fel, utan OK och förväntat.
 
 CONTROLPANEL_OTHER_ISSUE
 	CS	Nalezen možný konflikt softwaru
