@@ -1,6 +1,5 @@
 PLUGIN_VIEW_TAGS
 	CS	Pokročilé zobrazení tagů
-	EN	Advanced Tag View
 	DE	Erweiterte Tag Ansicht
 	EN	Advanced Tag View
 	FR	Vue avancée des tags
@@ -88,7 +87,7 @@ PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
 	DE	Anzuzeigender Name
 	EN	Tag name to be displayed
 	FR	Nom à afficher
-	NL	Tag naam die wordt weergegeven 
+	NL	Tag naam die wordt weergegeven
 
 PLUGIN_VIEW_TAGS_LEVEL
 	CS	Úroveň, na které se tyto tagy zobrazují
