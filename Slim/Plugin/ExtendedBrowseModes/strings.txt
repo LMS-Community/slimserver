@@ -67,11 +67,13 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	SV	Artistroll
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
+	CS	Typ vydání:
 	DE	Veröffentlichungstyp:
 	EN	Release Type:
 	FR	Type de sortie :
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
+	CS	Typy vydání:
 	DE	Veröffentlichungstypen:
 	EN	Release Types:
 	FR	Types de sorties :
@@ -205,7 +207,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
-	CS	Použít '%s'
+	CS	Použít "%s"
 	DE	'%s' verwenden
 	EN	Use '%s'
 	FR	Utiliser '%s'
@@ -215,7 +217,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
-	CS	Nyní používáte '%s'
+	CS	Nyní používáte "%s"
 	DE	Verwende nun '%s'
 	EN	Now using '%s'
 	FR	Utilise maintenant '%s'

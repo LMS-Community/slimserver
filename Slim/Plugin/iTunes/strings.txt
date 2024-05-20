@@ -159,7 +159,7 @@ SETUP_ITUNESSCANINTERVAL
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	CS	Když se změní knihovna iTunes Music, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačítáním knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
+	CS	Když se změní knihovna iTunes Music, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačtením knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
 	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your iTunes Music Library changes Lyrion Music Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
@@ -493,4 +493,3 @@ SETUP_ITUNES_EXTRACT_ARTWORK
 	PL	Wyodrębnij okładki programu iTunes (eksperymentalne)
 	RU	Извлечь обложку iTunes (экспериментально)
 	SV	Packa upp iTunes-bilder (betafunktion)
-

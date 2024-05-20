@@ -69,4 +69,3 @@ SETUP_CLIPORT_DESC
 	RU	Номер порта, используемого интерфейсом командной строки для управления плеером, можно изменить.
 	SV	Du kan ändra portnumret som används för att kontrollera spelaren via kommadoradsgränssnittet.
 	ZH_CN	您可以改变控制播放机的命令行界面所使用的端口号。
-

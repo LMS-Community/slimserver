@@ -160,4 +160,3 @@ SETUP_XPLIR_BOTH
 	RU	Оба
 	SV	Båda
 	ZH_CN	两者皆是
-

@@ -220,4 +220,3 @@ PLUGIN_RESCAN_PLEASE_WAIT
 	PL	Czekaj
 	RU	Подождите
 	SV	Ett ögonblick...
-

@@ -89,4 +89,3 @@ SETUP_PLUGIN_INFOBROWSER_ADDONS
 	PL	Inne źródła informacji można wyświetlić, instalując dodatki przeglądarki informacji. Szczegółowe informacje na temat dodatków przeglądarki informacji można znaleźć pod adresem <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	RU	Для отображения других источников можно добавлять надстройки в информационный браузер. Дополнительную информацию о надстройках для информационного браузера см. по адресу: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	SV	Andra informationskällor kan visas om du installerar tillägg för Infoläsaren. Mer information om tillägg för Infoläsaren finns på <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
-

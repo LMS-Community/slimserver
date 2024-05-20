@@ -1,5 +1,5 @@
 PLUGIN_SOUNDS_MODULE_NAME
-	CS	Zvuky & Efekty
+	CS	Zvuky a efekty
 	DA	Lyde og effekter
 	DE	Sounds & Effekte
 	EN	Sounds & Effects
@@ -14,7 +14,7 @@ PLUGIN_SOUNDS_MODULE_NAME
 	SV	Ljud och effekter
 
 PLUGIN_SOUNDS_ERROR
-	CS	Chyba zvuků & efektů
+	CS	Chyba Zvuků a efektů
 	DA	Fejl ved lyde og effekter
 	DE	Fehler in Sounds & Effekte
 	EN	Sounds & Effects Error
@@ -74,7 +74,7 @@ PLUGIN_SOUNDS_MUSICAL
 	SV	Musikljud
 
 PLUGIN_SOUNDS_BARN_FIRE
-	CS	Oheň ve stodole
+	CS	Barn Fire
 	DA	Laden brænder
 	DE	Scheunenbrand
 	EN	Barn Fire
@@ -104,7 +104,7 @@ PLUGIN_SOUNDS_BLUE_HENRY
 	SV	Blue Henry
 
 PLUGIN_SOUNDS_BLUE_ORCHID
-	CS	Modrá orchidej
+	CS	Blue Orchid
 	DA	Blue Orchid
 	DE	Blaue Orchidee
 	EN	Blue Orchid
@@ -134,7 +134,7 @@ PLUGIN_SOUNDS_BONGO_TECH
 	SV	Bongo Tech
 
 PLUGIN_SOUNDS_BRAINFLUID
-	CS	Tekutina v mozku
+	CS	Brainfluid
 	DA	Hjernemasse
 	DE	Hirnflüssigkeit
 	EN	Brainfluid
@@ -179,7 +179,7 @@ PLUGIN_SOUNDS_CAPPUCINO
 	SV	Cappuccino
 
 PLUGIN_SOUNDS_COOL_CATS
-	CS	Skvělé kočky
+	CS	Cool Cats
 	DA	Cool Cats
 	DE	Coole Katzen
 	EN	Cool Cats
@@ -194,7 +194,7 @@ PLUGIN_SOUNDS_COOL_CATS
 	SV	Cool Cats
 
 PLUGIN_SOUNDS_CORNFLOWER
-	CS	Chrpa
+	CS	Cornflower
 	DA	Kornblomst
 	DE	Kornblume
 	EN	Cornflower
@@ -209,7 +209,7 @@ PLUGIN_SOUNDS_CORNFLOWER
 	SV	Cornflower
 
 PLUGIN_SOUNDS_CRYSTALIZE
-	CS	Krystalizovat
+	CS	Crystalize
 	DA	Crystalize
 	DE	Kristall
 	EN	Crystalize
@@ -224,7 +224,7 @@ PLUGIN_SOUNDS_CRYSTALIZE
 	SV	Crystalize
 
 PLUGIN_SOUNDS_EXPERIMENTAL
-	CS	Experimentální
+	CS	Experimental
 	DA	Eksperimental
 	DE	Experimentell
 	EN	Experimental
@@ -239,7 +239,7 @@ PLUGIN_SOUNDS_EXPERIMENTAL
 	SV	Experimental
 
 PLUGIN_SOUNDS_HIBISCUS
-	CS	Ibišek
+	CS	Hibiscus
 	DA	Hibiscus
 	DE	Hibiskus
 	EN	Hibiscus
@@ -269,7 +269,7 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	SV	Junk Armor
 
 PLUGIN_SOUNDS_MELANCHOLY_DAY
-	CS	Melancholický den
+	CS	Melancholy Day
 	DA	Melankolsk dag
 	DE	Melancholischer Tag
 	EN	Melancholy Day
@@ -299,7 +299,7 @@ PLUGIN_SOUNDS_SLICKBABY
 	SV	Slick baby
 
 PLUGIN_SOUNDS_SLOG_IT_OUT
-	CS	Rozdejte si to
+	CS	Slog It Out
 	DA	Slog It Out
 	DE	Rauferei
 	EN	Slog It Out
@@ -314,7 +314,7 @@ PLUGIN_SOUNDS_SLOG_IT_OUT
 	SV	Slog It Out
 
 PLUGIN_SOUNDS_SOFT_HORIZON
-	CS	Jemný horizont
+	CS	Soft Horizon
 	DA	Soft Horizon
 	DE	Weicher Horizont
 	EN	Soft Horizon
@@ -344,7 +344,7 @@ PLUGIN_SOUNDS_SRI_LAMA
 	SV	Sri Lama
 
 PLUGIN_SOUNDS_STARGAZER
-	CS	Hvězdář
+	CS	Stargazer
 	DA	Stargazer
 	DE	Sternengucker
 	EN	Stargazer
@@ -374,7 +374,7 @@ PLUGIN_SOUNDS_SUPER_CHEESE
 	SV	Super Cheese
 
 PLUGIN_SOUNDS_TAIL_HONKER
-	CS	Kanadská husa
+	CS	Tail Honker
 	DA	Båthorn
 	DE	Hupe
 	EN	Tail Honker
@@ -389,7 +389,7 @@ PLUGIN_SOUNDS_TAIL_HONKER
 	SV	Tail Honker
 
 PLUGIN_SOUNDS_TONGUE_CHEEK
-	CS	Jazyk & Tvář
+	CS	Tongue & Cheek
 	DA	Tongue & Cheek
 	DE	Zunge und Wange
 	EN	Tongue & Cheek
@@ -524,7 +524,7 @@ PLUGIN_SOUNDS_HARD_RAIN_THUNDER
 	SV	Ösregn och åska
 
 PLUGIN_SOUNDS_HEARTBEAT_FAST
-	CS	Srdeční tep
+	CS	Rychlý srdeční tep
 	DA	Hurtig hjertebanken
 	DE	Schnelles Herzklopfen
 	EN	Heartbeat Fast
@@ -614,7 +614,7 @@ PLUGIN_SOUNDS_MEADOWLARK
 	SV	Stare
 
 PLUGIN_SOUNDS_OCEAN_SURF
-	CS	Surfování v oceánu
+	CS	Oceánský příboj
 	DA	Bølgeslag
 	DE	Brandung
 	EN	Ocean Surf
@@ -644,7 +644,7 @@ PLUGIN_SOUNDS_RAIN_THUNDER
 	SV	Regn och åska
 
 PLUGIN_SOUNDS_RAIN_OUTSIDE
-	CS	Déšť zvenčí
+	CS	Déšť venku
 	DA	Regn udenfor
 	DE	Regen draußen
 	EN	Rain Outside
@@ -659,7 +659,7 @@ PLUGIN_SOUNDS_RAIN_OUTSIDE
 	SV	Regn utanför
 
 PLUGIN_SOUNDS_RAIN_SPLASHING
-	CS	Šplouchání deště
+	CS	Stříkající déšť
 	DA	Plaskende regn
 	DE	Regentropfen
 	EN	Rain Splashing
@@ -704,7 +704,7 @@ PLUGIN_SOUNDS_ROBINS
 	SV	Rödhakar
 
 PLUGIN_SOUNDS_ROOSTER_CROW
-	CS	Vrána
+	CS	Kohoutí kokrhání
 	DA	Hanegal
 	DE	Krähender Hahn
 	EN	Rooster Crow
@@ -734,7 +734,7 @@ PLUGIN_SOUNDS_RURAL
 	SV	Landsbyggd
 
 PLUGIN_SOUNDS_SHORE_SEAGULLS
-	CS	Pobřeží & Rackové
+	CS	Pobřeží a rackové
 	DA	Strand og måger
 	DE	Küste & Möwen
 	EN	Shore & Seagulls
@@ -869,7 +869,7 @@ PLUGIN_SOUNDS_AMBULANCE
 	SV	Ambulans
 
 PLUGIN_SOUNDS_BLENDER
-	CS	Blender
+	CS	Mixér
 	DA	Blender
 	DE	Mixer
 	EN	Blender
@@ -929,7 +929,7 @@ PLUGIN_SOUNDS_CROSSING_BELLS
 	SV	Varningsklockor
 
 PLUGIN_SOUNDS_ELECTRO_FUZZ
-	CS	Electro Fuzz
+	CS	Elektronický zvuk
 	DA	Elektroniske lyde
 	DE	Elektrisches Britzeln
 	EN	Electro Fuzz
@@ -1049,7 +1049,7 @@ PLUGIN_SOUNDS_SCUBA_DIVER
 	SV	Dykare
 
 PLUGIN_SOUNDS_SPOOKY_FEEDBACK
-	CS	Zpětná vazba připomínající ducha
+	CS	Nevšední zpětná vazba
 	DA	Uhyggelig feedback
 	DE	Unheimliche Rückkopplung
 	EN	Spooky Feedback
@@ -1124,7 +1124,7 @@ PLUGIN_SOUNDS_TRAFFIC
 	SV	Trafik
 
 PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
-	CS	Fanfára větrné zvonkohry
+	CS	Tóny zvonkohry
 	DA	Vindharpe der svinger
 	DE	Windspiel mit Schwung
 	EN	Wind Chime Flourish
@@ -1139,7 +1139,7 @@ PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
 	SV	Vindspelstoner
 
 PLUGIN_SOUNDS_WIND_CHIME
-	CS	Zvonky ve větru
+	CS	Větrná zvonkohra
 	DA	Vindharpe
 	DE	Windspiel
 	EN	Wind Chime
@@ -1154,6 +1154,7 @@ PLUGIN_SOUNDS_WIND_CHIME
 	SV	Vindspel
 
 PLUGIN_SOUNDS_ALARM_BUZZER
+	CS	Bzučák budíku
 	DE	Weckersummton
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme

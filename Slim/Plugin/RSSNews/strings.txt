@@ -64,7 +64,7 @@ PLUGIN_RSSNEWS_WAIT
 	SV	Begär flöde. Vänta...
 
 PLUGIN_RSSNEWS_ERROR
-	CS	Načtení kanálů RSS selhalo
+	CS	Nepodařilo se načíst kanál RSS
 	DA	Det lykkedes ikke at hente RSS-feed
 	DE	Fehler beim Laden des RSS-Feed
 	EN	Failed to retrieve RSS feed
@@ -367,7 +367,7 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_RSSNEWS_INVALID_FEED
-	CS	Neplatný kanál - %s
+	CS	Neplatný kanál – %s
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
@@ -380,4 +380,3 @@ SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s
-
