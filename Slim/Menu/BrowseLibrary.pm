@@ -1442,6 +1442,7 @@ sub _albumsOrReleases {
 
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
+
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
@@ -1532,15 +1533,17 @@ sub _albums {
 				}
 				else {
 					$_->{'artists'}    = [ $_->{'artist'} ];
-					$_->{'artist_ids'} = [ $_->{'id'} ];
+					$_->{'artist_ids'} = [ $_->{'artist_id'} ];
 				}
 
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
-					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
-				}
+
+### Seems wrong: setting name2 just forces the artist name(s) into the list, regardless of the "showAlbums" setting (see HTML/Default/xmlbrowser.html line 417)
+#				if (!$artistId || $artistId != $_->{'artist_id'} || $trackArtistOnly || $_->{'work_id'}) {
+#					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
+#				}
 
 				if (!$wantMeta) {
 					delete $_->{'artist'};

@@ -751,68 +751,22 @@ sub albumsQuery {
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
 			if ( defined $work ) {
-				my @roles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
-				$contributorSql = sprintf( qq{
-					WITH temp AS (
-						SELECT
-							CASE
-								WHEN contributor_track.role = 1 THEN 'ARTIST'
-								WHEN contributor_track.role = 3 THEN 'CONDUCTOR'
-								WHEN contributor_track.role = 4 THEN 'BAND'
-							END AS role,
-							GROUP_CONCAT(DISTINCT contributors.name) AS name,
-							GROUP_CONCAT(DISTINCT contributors.id) AS id
-						FROM tracks
-						JOIN contributor_track ON tracks.id = contributor_track.track
-						JOIN contributors ON contributors.id = contributor_track.contributor
-						WHERE tracks.album = :album AND tracks.work = :work AND contributor_track.role IN (%s)
-							AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
-						GROUP BY contributor_track.role
-						ORDER BY role
-					)
-					SELECT GROUP_CONCAT(DISTINCT name) AS name, GROUP_CONCAT(DISTINCT id) AS id FROM temp
-				},
-				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles));
+				$contributorSql = qq{
+					SELECT contributor_track.role AS role, contributors.name AS name, contributors.id AS id
+					FROM tracks
+					JOIN contributor_track ON tracks.id = contributor_track.track
+					JOIN contributors ON contributors.id = contributor_track.contributor
+					WHERE tracks.album = :album AND tracks.work = :work
+						AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
+					GROUP BY contributor_track.role, contributors.name, contributors.id
+				};
 			} else {
-				my @roles = ( 'ARTIST', 'ALBUMARTIST' );
-
-				if ($prefs->get('useUnifiedArtistsList')) {
-					# Loop through each pref to see if the user wants to show that contributor role.
-					foreach (Slim::Schema::Contributor->contributorRoles) {
-						if ($prefs->get(lc($_) . 'InArtists')) {
-							push @roles, $_;
-						}
-					}
-				}
-
-				$contributorSql = sprintf( qq{
-					SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
+				$contributorSql = qq{
+					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id
 					FROM contributor_album
 					JOIN contributors ON contributors.id = contributor_album.contributor
-					WHERE contributor_album.album = :album AND contributor_album.role IN (%s)
-					GROUP BY contributor_album.role
-					ORDER BY contributor_album.role DESC
-				}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
-
-				# when filtering by role, put that role at the head of the list if it wasn't in there yet
-				if ($roleID) {
-					unshift @roles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
-					my %seen;
-					@roles = reverse grep !($seen{$_}++), reverse @roles;
-
-					$contributorSql = sprintf( qq{
-						SELECT GROUP_CONCAT(c.name, ',') AS name, GROUP_CONCAT(c.id, ',') AS id
-						FROM (
-							SELECT contributors.name AS name, contributors.id AS id
-							FROM contributor_album
-								JOIN	contributors ON contributors.id = contributor_album.contributor
-							WHERE contributor_album.album = :album AND contributor_album.role IN (%s)
-							GROUP BY contributors.id
-							ORDER BY contributor_album.role DESC
-						)
-						AS c;
-					}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
-				}
+					WHERE contributor_album.album = :album
+				};
 			}
 		}
 
@@ -862,6 +816,7 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
 
+# !!!!!!!!!!!! This is just wrong - it may replace the searchTag artist with the album artist, but leave artist_id as it is!!!!!
 				if ($tags =~ /a/) {
 					# Bug 15313, this used to use $eachitem->artists which
 					# contains a lot of extra logic.
@@ -878,6 +833,7 @@ sub albumsQuery {
 
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 				}
+# !!!!!!!!!!!! So which way to go???? 
 			}
 
 			if ($tags =~ /s/) {
@@ -897,25 +853,51 @@ sub albumsQuery {
 			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
 				$contributorSth ||= $dbh->prepare_cached($contributorSql);
 				$contributorSth->bind_param(":album", $c->{'albums.id'});
+
 				if ( $work ) {
 					$contributorSth->bind_param(":work", $work);
 					$contributorSth->bind_param(":grouping", $c->{'tracks.grouping'}||undef);
 				}
-				$contributorSth->execute();
+				my $contributorArray = $dbh->selectall_arrayref($contributorSth,{ Slice => {} });
 
-				my $contributor = $contributorSth->fetchrow_hashref;
-				$contributorSth->finish;
-
-				# XXX - what if the artist name itself contains ','?
-				if ( $tags =~ /aa/ && $contributor->{name} ) {
-					utf8::decode($contributor->{name});
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', (split(/,/, $contributor->{name}))[0]) if $work;
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $contributor->{name});
+				my $contributorHash = {};
+				foreach (@$contributorArray) {
+					push @{$contributorHash->{$_->{'role'}}->{'id'}}, $_->{'id'};
+					push @{$contributorHash->{$_->{'role'}}->{'name'}}, $_->{'name'};
 				}
 
-				if ( $tags =~ /SS/ && $contributor->{id} ) {
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', (split(/,/, $contributor->{id}))[0]) if $work;
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				my @displayRoles = $work ? ('ARTIST','BAND','CONDUCTOR') : split(/[,\s]+/,$prefs->get('showArtist'));
+
+				# if the user wants ARTIST, but all we have is ALBUMARTIST or TRACKARTIST, try to be helpful...
+				if ( grep(/ARTIST/, @displayRoles) && !exists($contributorHash->{'1'}) ) {
+					if ( exists($contributorHash->{'5'}) ) {
+						unshift(@displayRoles,'ALBUMARTIST') if !grep(/ALBUMARTIST/, @displayRoles)
+					} else {
+						unshift(@displayRoles,'TRACKARTIST') if !grep(/TRACKARTIST/, @displayRoles);
+					}
+				}
+				my @artists;
+				my @artistIds;
+				foreach my $role ( map { Slim::Schema::Contributor->typeToRole($_) } @displayRoles ) {
+					foreach my $name ( @{$contributorHash->{$role}->{'name'}} ) {
+						push @artists, $name unless grep(/$name/, @artists);
+					}
+					foreach my $id ( @{$contributorHash->{$role}->{'id'}} ) {
+						push @artistIds, $id unless grep(/$id/, @artistIds);
+					}
+				}
+
+				# XXX - what if the artist name itself contains ','?
+				if ( $tags =~ /aa/ && scalar @artists ) {
+					my $artists = join(',',@artists);
+					utf8::decode($artists);
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', (split(/,/, $artists))[0]) if $work;
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $artists);
+				}
+
+				if ( $tags =~ /SS/ && scalar @artistIds ) {
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', @artistIds[0]) if $work;
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', join(',',@artistIds));
 				}
 			}
 

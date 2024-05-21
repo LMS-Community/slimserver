@@ -14,12 +14,13 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SHOWARTIST" desc="SETUP_SHOWARTIST_DESC" %]
-			<select class="stdedit" name="pref_showArtist" id="showArtist">
+<!--			<select class="stdedit" name="pref_showArtist" id="showArtist">
 
 				<option [% IF NOT prefs.pref_showArtist %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
 				<option [% IF prefs.pref_showArtist %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
 
-			</select>
+			</select> -->
+			<input type="text" class="stdedit" name="pref_showArtist" id="showArtist]" value="[% prefs.pref_showArtist | html %]" size="40"><br>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_SHOWYEAR" desc="SETUP_SHOWYEAR_DESC" %]
