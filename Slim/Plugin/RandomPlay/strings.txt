@@ -313,7 +313,7 @@ PLUGIN_RANDOM_WORK_PLAYING
 	EN	Playing Random Works
 	DE	Zufällige Werke werden wiedergegeben
 	ES	Reproduciendo composiciónes aleatorios
-	FR	Lecture Œuvres aléatoires
+	FR	Lecture œuvres aléatoires
 	NL	Werk worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_WORK_DISABLE
@@ -321,7 +321,7 @@ PLUGIN_RANDOM_WORK_DISABLE
 	EN	stop adding works
 	DE	keine Werke mehr hinzuzufügen
 	ES	detener adición de composiciónes
-	FR	ne plus ajouter d'Œuvres
+	FR	ne plus ajouter d'œuvres
 	NL	stop toevoegen van werken
 
 PLUGIN_RANDOM_WORK_WEB

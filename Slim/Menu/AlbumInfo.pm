@@ -222,14 +222,49 @@ sub infoContributors {
 	my $items = [];
 	$filter ||= {};
 
-	if ( $remoteMeta->{artist} ) {
-		push @{$items}, {
-			type =>  'text',
-			name =>  $remoteMeta->{artist},
-			label => 'ARTIST',
+	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+
+	my $_addContributorItem = sub {
+		my ($items, $contributor, $role) = @_;
+
+		my $id = $contributor->id;
+
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id },
+			},
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => { cmd => 'load', artist_id => $id, library_id => $library_id },
+			},
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => { cmd => 'add', artist_id => $id, library_id => $library_id },
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => { cmd => 'insert', artist_id => $id, library_id => $library_id },
+			},
+			info => {
+				command     => ['artistinfo', 'items'],
+				fixedParams => { artist_id => $id, library_id => $library_id },
+			},
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
+
+		my $item = {
+			type    => 'playlist',
+			name    => $contributor->name,
+			label   => uc($role),
+			itemActions => \%actions,
 		};
-	}
-	else {
+		push @{$items}, $item;
+	};
+
+	if ($album->isa('Slim::Schema::Album')) {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 
 		# Loop through each pref to see if the user wants to link to that contributor role.
@@ -238,7 +273,6 @@ sub infoContributors {
 		$linkRoles{'TRACKARTIST'} = 1;
 		$linkRoles{'ALBUMARTIST'} = 1;
 
-		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 		# Loop through the contributor types and append
 		for my $role (@roles) {
@@ -249,42 +283,7 @@ sub infoContributors {
 				next if $filter->{work_id} && !$album->artistPerformsOnWork($filter->{work_id}, $filter->{grouping}, $contributor->id);
 
 				if ($linkRoles{$role}) {
-					my $id = $contributor->id;
-
-					my %actions = (
-						allAvailableActionsDefined => 1,
-						items => {
-							command     => ['browselibrary', 'items'],
-							fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id },
-						},
-						play => {
-							command     => ['playlistcontrol'],
-							fixedParams => { cmd => 'load', artist_id => $id, library_id => $library_id },
-						},
-						add => {
-							command     => ['playlistcontrol'],
-							fixedParams => { cmd => 'add', artist_id => $id, library_id => $library_id },
-						},
-						insert => {
-							command     => ['playlistcontrol'],
-							fixedParams => { cmd => 'insert', artist_id => $id, library_id => $library_id },
-						},
-						info => {
-							command     => ['artistinfo', 'items'],
-							fixedParams => { artist_id => $id, library_id => $library_id },
-						},
-					);
-					$actions{'playall'} = $actions{'play'};
-					$actions{'addall'} = $actions{'add'};
-
-					my $item = {
-						type    => 'playlist',
-						url     => 'blabla',
-						name    => $contributor->name,
-						label   => uc $role,
-						itemActions => \%actions,
-					};
-					push @{$items}, $item;
+					$_addContributorItem->($items, $contributor, $role);
 				} else {
 					my $item = {
 						type    => 'text',
@@ -296,16 +295,43 @@ sub infoContributors {
 			}
 		}
 	}
+	elsif ( $remoteMeta->{artist} ) {
+		if ( my $contributor = Slim::Schema->first('Contributor', { namesearch => Slim::Utils::Text::ignoreCase($remoteMeta->{artist}, 1) }) ) {
+			$_addContributorItem->($items, $contributor, 'ARTIST');
+		}
+		else {
+			push @{$items}, {
+				type =>  'text',
+				name =>  $remoteMeta->{artist},
+				label => 'ARTIST',
+			};
+		}
+	}
 
 	return $items;
 }
 
 sub infoYear {
-	my ( $client, $url, $album ) = @_;
+	my ( $client, $url, $album, $remoteMeta ) = @_;
 
 	my $item;
 
-	if ( my $year = $album->year ) {
+	my $year = $album->year;
+
+	if ( !$year && $remoteMeta->{year} ) {
+		if (my $yearObj = Slim::Schema->first('year', { id => $remoteMeta->{year} })) {
+			$year = $remoteMeta->{year};
+		}
+		else {
+			$item = {
+				type =>  'text',
+				name =>  $remoteMeta->{year},
+				label => 'YEAR',
+			};
+		}
+	}
+
+	if ($year) {
 
 		my %actions = (
 			allAvailableActionsDefined => 1,
@@ -335,7 +361,6 @@ sub infoYear {
 
 		$item = {
 			type    => 'playlist',
-			url     => 'blabla',
 			name    => $year,
 			label   => 'YEAR',
 			itemActions => \%actions,
