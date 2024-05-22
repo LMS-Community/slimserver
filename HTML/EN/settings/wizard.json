@@ -1,0 +1,119 @@
+{
+	"plugins": [
+		{
+			"id": "MaterialSkin",
+			"label": {
+				"EN": "Material Skin"
+			},
+			"desc": {
+				"DE": "Der <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> bietet eine moderne, reichhaltige und anpassungsfähige Benutzeroberfläche für Ihre Musiksammlung.",
+				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection."
+			},
+			"checked": true,
+			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-initial.png"
+		},
+		{
+			"id": "MusicArtistInfo",
+			"label": {
+				"DE": "Musik- und Interpreteninformation",
+				"EN": "Music and Artist Information"
+			},
+			"desc": {
+				"DE": "Das Musik- und Interpreteninformationen-Plugin bietet zusätzliche Informationen zu Ihrer Musik: Biografien, Albumkritiken, Songtexte und mehr. Es ist eine perfekte Ergänzung zum Material Skin.",
+				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin."
+			},
+			"checked": true,
+			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-mai.png"
+		},
+		{
+			"id": "Spotty",
+			"label": {
+				"DE": "Spotty Spotify Integration für LMS",
+				"EN": "Spotty Spotify implementation for LMS"
+			},
+			"desc": {
+				"DE": "Spotty ist eine Spotify Anwendung für LMS. Sie Zugriff auf ihr Spotify Premium Konto über die Squeezebox und all kompatiblen Geräte.",
+				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account."
+			},
+			"icon": "https://raw.githubusercontent.com/michaelherger/Spotty-Plugin/master/HTML/EN/plugins/Spotty/html/images/93aac68fb06348598c1e67734dfaceee.png",
+			"checked": false
+		},
+		{
+			"id": "TIDAL",
+			"label": {
+				"EN": "TIDAL"
+			},
+			"desc": {
+				"DE": "TIDAL ist eine globale Musik-Streaming-Plattform, die Künstler und Fans durch einzigartige Erlebnisse und die höchste Soundqualität näher zusammenbringt.",
+				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality."
+			},
+			"icon": "https://raw.githubusercontent.com/michaelherger/lms-plugin-tidal/main/HTML/EN/plugins/TIDAL/html/emblem.png",
+			"checked": false
+		},
+		{
+			"id": "Qobuz",
+			"label": {
+				"EN": "Qobuz"
+			},
+			"desc": {
+				"DE": "Qobuz ist eine Musik-Streaming-Plattform mit Zugriff auf über 100 Millionen Songs, die alle im Hi-Res FLAC (Free Lossless Audio Codec) Format verfügbar sind.",
+				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format."
+			},
+			"icon": "https://raw.githubusercontent.com/LMS-Community/plugin-Qobuz/master/HTML/EN/plugins/Qobuz/html/images/icon.png",
+			"checked": false
+		},
+		{
+			"id": "Deezer",
+			"label": {
+				"EN": "Deezer"
+			},
+			"icon": "https://raw.githubusercontent.com/philippe44/lms-deezer/197b69be9e8054f6cb2653502c3aa180d7ca49bd/HTML/EN/plugins/Deezer/html/deezer.png",
+			"desc": {
+				"DE": "Deezer ist ein Musikstreamingdienst, mit der du Zugang zu über 120 Millionen Songs, sowie anderen Audioinhalten wie Podcasts oder Hörbüchern aus aller Welt erhältst.",
+				"EN": "Deezer is a music streaming service that gives you access to over 120 million songs, as well as other audio content such as podcasts or audiobooks from all over the world.",
+				"FR": "Deezer est un service de streaming musical qui vous donne accès à plus de 120 millions de chansons, ainsi qu'à d'autres contenus audio tels que des podcasts ou des livres audio du monde entier."
+			}
+		},
+		{
+			"id": "RadioNowPlaying",
+			"label": {
+				"EN": "Radio Now Playing"
+			},
+			"icon": "http://dabdig.co.uk/slimserver-rep/images/RadioNowPlaying.svg",
+			"desc": {
+				"DE": "Titel, Cover und gelegentlich Programm-Informationen für mehr als 3600 Radiosender",
+				"EN": "Track, cover art and, occasionally, programme information for more than 3600 radio stations",
+				"FR": "Titre, pochette et, occasionnellement, informations sur le programme pour plus de 3600 stations de radio"
+			}
+		},
+		{
+			"id": "RadioNet",
+			"label": {
+				"DE": "Radio.net Verzeichnis",
+				"EN": "Radio.net Directory",
+				"FR": "Répertoire Radio.net"
+			},
+			"icon": "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI5Ni40NTMzNCIgdmlld0JveD0iMCAwIDI5Ni40NTMzNCAyOTYuNDUzMzQiIHdpZHRoPSIyOTYuNDUzMzQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoLjEzMzMzMzMzIDAgMCAtLjEzMzMzMzMzIDAgMjk2LjQ1MzMzKSI+PHBhdGggZD0ibTIyMjMuMzUgMGgtMjIyMy4zNXYyMjIzLjM1aDIyMjMuMzV6Ii8+PHBhdGggZD0ibTY5OS44NzEgMTM3My40Yy0zNy43OTMtMTcuMTUtNzkuNjkxLTI2Ljc5LTEyMy44Mi0yNi43OS0xNjUuODAxIDAtMzAwLjY5MiAxMzQuODktMzAwLjY5MiAzMDAuNyAwIDE2NS44IDEzNC44OTEgMzAwLjY5IDMwMC42OTIgMzAwLjY5czMwMC42ODctMTM0Ljg5IDMwMC42ODctMzAwLjY5YzAtNDQuMTMtOS42MzMtODYuMDItMjYuNzgxLTEyMy44MWw0Ni45NDEtNDYuOTZjMjcuMTU3IDUwLjkyIDQyLjU5NCAxMDkuMDMgNDIuNTk0IDE3MC43NyAwIDIwMC43My0xNjIuNzE1IDM2My40NS0zNjMuNDQxIDM2My40NS0yMDAuNzIzIDAtMzYzLjQ0Ni0xNjIuNzItMzYzLjQ0Ni0zNjMuNDVzMTYyLjcyMy0zNjMuNDYgMzYzLjQ0Ni0zNjMuNDZjNjEuNzM4IDAgMTE5Ljg1MSAxNS40NSAxNzAuNzY5IDQyLjYxeiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Im0xNTg0LjkzIDEzNTAuNDNoLTQyMC4zN2MtNzIuMTYgMC0xMzcuMjYtMjEuNzgtMTg3Ljc0LTUzLjg5bC0yNzguODUxIDI3OC44OWMxMi40NTMgMjEuMDcgMTkuNTkgNDUuNjQgMTkuNTkgNzEuODcgMCA3OC4xNS02My4zMjkgMTQxLjUtMTQxLjQ3MyAxNDEuNS03OC4xNTIgMC0xNDEuNTEyLTYzLjM1LTE0MS41MTItMTQxLjUgMC03OC4xNCA2My4zNi0xNDEuNDcgMTQxLjUxMi0xNDEuNDcgMjYuMjE5IDAgNTAuODA5IDcuMTQgNzEuODM2IDE5LjU4bDQzMC4zMjgtNDMwLjMyYzE4Ljk5IDI3LjI4IDUwLjYyIDQ1LjE1IDg2LjM4IDQ1LjE1aDQyMC40YzU4LjA4IDAgMTA1LjEtNDcuMDIgMTA1LjEtMTA1LjA5di0xNjguNzA5LTI1MS42OTljMC01OC4wODItNDcuMDYtMTA1LjEzMy0xMDUuMS0xMDUuMTMzaC00MjAuNGMtNTguMDUgMC0xMDUuMTEgNDcuMDcxLTEwNS4xMSAxMDUuMTMzdjM5OS4wMThsLTE4My4wNCAxODMuMDRjLTE4LjIwMy0yOC4yNi00Ny40NzItODQuNzQtNDcuNDcyLTE2MS42NXYtNDIwLjQwOGMwLTE3OS41ODIgMTUwLjI0Ni0zMTUuMzEyIDMzNS41NTItMzE1LjMxMmg0MjAuMzdjMTg1LjMgMCAzMzUuNTMgMTM1LjczIDMzNS41MyAzMTUuMzEydjQyMC40MDhjMCAxNzkuNTUtMTUwLjIzIDMxNS4yOC0zMzUuNTMgMzE1LjI4IiBmaWxsPSIjNjRlNjQ2IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PC9zdmc+",
+			"desc": {
+				"DE": "Dieses Plugin bietet Zugriff auf das Radio.net Internetradio-Verzeichnis",
+				"EN": "This plugin provides access to Radio.net internet radio directory",
+				"FR": "Ce plugin fournit l'accès à l'annuaire de radios Internet Radio.net"
+			}
+		},
+		{
+			"id": "Analytics",
+			"label": {
+				"DE": "Analytikdaten teilen",
+				"EN": "Report Analytics Data",
+				"FR": "Partage de données d'analyse"
+			},
+			"desc": {
+				"DE": "Durch die Bereitstellung <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">anonymer analytischer Daten</a> helfen Sie uns, den <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">Lyrion Music Server weiterzuentwickeln</a>.",
+				"EN": "By providing <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">some anonymous analytical data</a> you <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">help us further develop</a> Lyrion Music Server.",
+				"FR": "En fournissant <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">des données analytiques anonymes</a>, vous <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">nous aidez à développer</a> le serveur de musique Lyrion."
+			},
+			"checked": true,
+			"img": "/html/images/analytics.png"
+		}
+	]
+}

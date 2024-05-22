@@ -8,7 +8,6 @@
 		<link rel="stylesheet" type="text/css" href="/Default/slimserver.css" />
 
 		<style type="text/css">
-		<!--
 			html { background: #666666; }
 
 			.maincontent {
@@ -16,6 +15,15 @@
 			}
 
 			form div { cursor: default; }
+
+			.welcome_p {
+				height: 100%;
+				overflow-x: scroll;
+			}
+
+			.welcome_p.x-hide-display {
+				overflow-x: hidden;
+			}
 
 			.wz_desc {
 				padding: 10px;
@@ -59,25 +67,6 @@
 				right: 30px;
 			}
 
-			#loading-mask {
-				width: 120%;
-				height: 100%;
-				background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
-				position: absolute;
-				z-index: 20000;
-				left: 0;
-				top: 0;
-			}
-
-			#loading {
-				position: absolute;
-				left: 40%;
-				top: 40%;
-				text-align: center;
-				z-index: 20001;
-				display: none;
-			}
-
 			.x-tree .x-panel-body {
 				border: none;
 			}
@@ -98,7 +87,7 @@
 			}
 
 			.box td, .box input, .box a, .box p, .box li, .box h4 {
-				font-size: 12px;
+				font-size: 12.5px;
 				margin-bottom: 5px;
 			}
 
@@ -127,7 +116,7 @@
 
 			.centeredbox {
 				margin: 25px auto;
-				width: 400px;
+				max-width: 1000px;
 			}
 
 			.box-top {
@@ -162,56 +151,40 @@
 				background-color: transparent;
 			}
 
-			[% IF rtl %]
-				.x-layout-panel, .x-btn,
-				.x-btn-text-icon .x-btn-center .x-btn-text{
-					direction: rtl
-				}
+			div.pluginList {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(min(100%, 470px), 1fr));
+				gap: 20px;
+				margin-top: 25px;
+			}
 
-				.x-btn-text-icon .x-btn-center .x-btn-text{
-					background-position: 100% 2px;
-					padding-right:18px;
-					padding-left:0;
-				}
+			.pluginList ul.pluginWrap {
+				display: contents
+			}
 
-				.x-layout-panel-hd-text{
-					width:100%;
-				}
+			.pluginList ul.pluginWrap li.pluginItem {
+				position: relative;
+				padding: 10px 0 20px;
+				border-top: solid 2px #eee;
+				width: 450px;
+			}
 
-				.x-layout-panel-hd-tools{
-					left:0;
-				}
+			.pluginItem iframe {
+				width: 100%;
+				height: 400px;
+			}
 
-				.x-layout-tools-button{
-					float:left;
-				}
-
-				.wz_desc_right {
-					left: 0;
-				}
-
-				.x-btn-left {
-					background: url(/Default/html/images/slim-ext/btn-generic.png) no-repeat 0 -19px;
-				}
-
-				.x-btn-right {
-					background: url(/Default/html/images/slim-ext/btn-generic.png) no-repeat 0 0;
-				}
-
-				.x-btn-over .x-btn-left, .x-btn-menu-active .x-btn-left { background-position:0 -76px; }
-				.x-btn-over .x-btn-right, .x-btn-menu-active .x-btn-right { background-position:0 -57px; }
-				.x-btn-click .x-btn-left, .x-btn-pressed .x-btn-left  { background-position:0 -133px; }
-				.x-btn-click .x-btn-right, .x-btn-pressed .x-btn-right { background-position:0 -114px; }
-
-			[% END %]
-		-->
+			img.pluginIcon {
+				float: left;
+				margin-right: 10px;
+				width: 50px;
+			}
 		</style>
 	</head>
 
 	<body class="singlePanel">
 		<div id="background"></div>
 
-		<div id="loading-mask">&#160;</div>
 		<div id="loading">
 			<div class="loading-indicator">
 				[% "LOADING_SQUEEZEBOX_SERVER" | string %]
@@ -229,9 +202,12 @@
 		<script type="text/javascript" src="/Default/html/Wizard.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
+			var pluginData = [% pluginsJSON %];
+			var systemLanguage = '[% systemLanguage %]';
+
 			Ext.onReady(function(){
 				[% PROCESS jsString id='SETUP_WIZARD_PREVIOUS' jsId='previous' %]
-				[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='next' %]
+				[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='nexxt' %]
 				[% PROCESS jsString id='SETUP_WIZARD_SKIP' jsId='skip' %]
 				[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
 				[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
@@ -239,23 +215,16 @@
 				[% PROCESS jsString id='NONE' jsId='summary_none' %]
 				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
 				SqueezeJS.Strings['summary_audiodir'] += '[% stringCOLON %]';
-				[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
-				SqueezeJS.Strings['summary_playlistdir'] += '[% stringCOLON %]';
-				[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
-				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicip' %]
 
 				try {
 					Wizard.init({
-						wizardDone: [% wizardDone ? 'true' : 'false' %],
-						useAudioDir: [% useAudiodir ? 'true' : 'false' %],
-						useiTunes: [% useiTunes ? 'true' : 'false' %],
-						useMusicIP: [% useMusicIP ? 'true' : 'false' %]
+						wizardDone: [% wizardDone ? 'true' : 'false' %]
 					});
 				}
 				catch(e) {
 					document.getElementById('loading').style.display = 'none';
 					document.getElementById('noJS').style.display = 'block';
-					[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
+					[% IF !debug %]window.setTimeout(function(){location.href = '/'}, 2000);[% END %]
 				}
 			});
 		</script>
@@ -312,6 +281,36 @@
 		[% UNLESS wizardDone %]
 
 		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
+			<div id="welcome_p" class="wz_page welcome_p">
+				<div id="welcome_h" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
+
+				<div class="wz_desc">
+					<div class="box centeredbox">
+						<h1>[% "SETUP_WIZARD_WELCOME" | string %]</h1>
+						<p>[% "SETUP_WIZARD_WELCOME_INTRO" | string %]</p>
+
+						<p>[% "SETUP_WIZARD_PLUGINS_INTRO" | string %]</p>
+
+						<div class="pluginList">
+							<ul class="pluginWrap">
+								[% FOREACH plugin IN plugins %]
+								<li class="pluginItem" id="plugin-[% plugin.id %]">
+									<div>
+										[% IF plugin.icon %]<img src="[% plugin.icon | resizeimage(50,50) %]" srcset="[% plugin.icon | resizeimage(100,100) %]" class="pluginIcon">[% END %]
+										<h2><input type="checkbox" name="plugin-[% plugin.id %]" id="[% plugin.id %]" value="true" [% IF plugin.checked %]checked="checked"[% END %]><label for="[% plugin.id %]"> [% plugin.label.$systemLanguage || plugin.label.EN %]</label></h2>
+										<label for="[% plugin.id %]">
+											<p>[% plugin.desc.$systemLanguage || plugin.desc.EN %]</p>
+											[% IF plugin.img %]<img src="[% plugin.img %]" style="max-width:450px">[% END %]
+										</label>
+									</div>
+								</li>
+								[% END %]
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div id="audiodir_p" class="wz_page">
 				<div id="audiodir_h" class="pagetitle">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
 
@@ -327,78 +326,25 @@
 				</div>
 			</div>
 
-			<div id="playlistdir_p" class="wz_page">
-				<div id="playlistdir_h" class="pagetitle">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
-
-				<div class="wz_desc">
-					<div class="wz_desc_right">
-						[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
-						[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
-					</div>
-					<div id="playlistdirselector" class="folderselector"></div>
-					<div>
-						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir | html %]" class="wz_path">
-					</div>
-				</div>
-			</div>
-
 			<div id="summary_p" class="wz_page wz_finish">
 				<div id="summary_h" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
 				<div class="wz_desc">
-
-					<div class="box leftbox">
+					<div class="box centeredbox">
 						<div class="box-top">
-							<h1>[% "SIGNUP_LISTEN" | string %]</h1>
+							<h1>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</h1>
 						</div>
 
 						<div class="box-inner">
-							[% IF playericon %]<img id="playerpic" src="/html/images/Players/[% playericon %]_150x150_ffffff.png">[% END %]
-							<ul class="howto">
-								<li>[%
-									(playertype == 'boom'
-									? "HOWTO_HOME_BOOM"
-									: (playertype == 'receiver'
-										? "HOWTO_HOME_CONTROLLER"
-										: "HOWTO_HOME")) | string %]</li>
-								<li>[%
-									(playertype == 'boom'
-									? "HOWTO_DOWN_BOOM"
-									: (playertype == 'receiver'
-										? "HOWTO_DOWN_CONTROLLER"
-										: "HOWTO_DOWN")) | string %]</li>
-								<li>[%
-									(playertype == 'receiver'
-									? "HOWTO_STAFF_PICKS_CONTROLLER"
-									: "HOWTO_STAFF_PICKS") | string %]</li>
-								<li>[%
-									(playertype == 'receiver'
-									? "HOWTO_INTERNET_RADIO_CONTROLLER"
-									: "HOWTO_INTERNET_RADIO") | string %]</li>
-								<li>[% "HOWTO_SHOWCASE" | string %]</li>
-								<li>[% "HOWTO_VOLUME" | string %]</li>
-								<li>[% "HOWTO_PAUSE" | string %]</li>
-							</ul>
-						</div>
+							<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% stringCOLON %]</h4>
+							<ul class="wz_summary_list" id="summary"></ul>
 
-						<div class="box-bottom">
-							&nbsp;
-						</div>
-					</div>
+							<p>&nbsp;</p>
+							<h4>[% "SETUP_EXTENSIONS_ACTIVE" | string %][% stringCOLON %]</h4>
+							<ul class="wz_summary_list" id="summary_plugins"><li>[% EMPTY %]</li></ul>
 
-					<div class="box rightbox">
-						<h1>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</h1>
 
-						<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% stringCOLON %]</h4>
-						<ul class="wz_summary_list" id="summary"></ul>
-
-						<div style="height: 30px">&nbsp;</div>
-
-						<div class="box-top">
-							<h1>[% "WHATS_NEXT" | string %]</h1>
-						</div>
-
-						<div class="box-inner">
+							<div style="height: 30px">&nbsp;</div>
 							<p>[% "CONTINUE_TO_SQUEEZEBOX_SERVER" | string %]<br/>&nbsp;</p>
 						</div>
 

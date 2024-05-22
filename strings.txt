@@ -9650,6 +9650,17 @@ SETUP_NO_JAVASCRIPT
 	RU	Для доступа к Lyrion Music Server необходим современный обозреватель (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 или более поздние версии), в котором включен JavaScript. Либо можно использовать упрощенную оболочку, например <a href="/Classic/?skipWizard=1">Classic</a>.
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Lyrion Music Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
+SETUP_WIZARD_WELCOME
+	DE	Willkommen zum Einrichtungsassisten für ihr neues Lyrion Music Server Setup
+	EN	Welcome to the initial Lyrion Music Server setup
+
+SETUP_WIZARD_WELCOME_INTRO
+	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
+
+SETUP_WIZARD_PLUGINS_INTRO
+	DE	Wir empfehlen die Installations folgender Drittanbietererweiterungen. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Zahlreiche weitere Plugins</a> können später zu jeder Zeit hinzugefügt werden. Wählen Sie herfür später Einstellungen/Plugins verwalten.
+	EN	We recommend the installation of the following 3rd party plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Many other plugins</a> can be installed any time in Settings/Manage Plugins after the installation has completed.
+
 SETUP_WIZARD_AUDIODIR
 	CS	Místní složka hudby
 	DA	Lokal musikmappe
@@ -9741,19 +9752,19 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	SV	Ange sökväg till mappen med dina spellistor.
 
 SETUP_WIZARD_SUMMARY_DESC
-	CS	Lyrion Music Server nyní používá následující nastavení:
-	DA	Squeezebox benytter nu følgende indstillinger:
-	DE	Squeezebox nutzt jetzt folgende Einstellungen:
-	EN	Squeezebox is now using the following settings:
-	ES	Squeezebox está usando esta configuración:
-	FI	Squeezebox käyttää nyt seuraavia asetuksia:
-	FR	La Squeezebox utilise les réglages suivants :
-	IT	Squeezebox utilizza attualmente le impostazioni seguenti:
-	NL	Squeezebox gebruikt nu de volgende instellingen:
-	NO	Squeezebox bruker nå følgende innstillinger:
-	PL	Program Squeezebox aktualnie korzysta z następujących ustawień:
-	RU	В Squeezebox используются следующие настройки:
-	SV	Squeezebox använder nu följande inställningar:
+	CS	Lyrion Music Server nyní používá následující nastavení
+	DA	Lyrion Music Server benytter nu følgende indstillinger
+	DE	Lyrion Music Server nutzt jetzt folgende Einstellungen
+	EN	Lyrion Music Server is now using the following settings
+	ES	Lyrion Music Server está usando esta configuración
+	FI	Lyrion Music Server käyttää nyt seuraavia asetuksia
+	FR	La Lyrion Music Server utilise les réglages suivants
+	IT	Lyrion Music Server utilizza attualmente le impostazioni seguenti
+	NL	Lyrion Music Server gebruikt nu de volgende instellingen
+	NO	Lyrion Music Server bruker nå følgende innstillinger
+	PL	Program Lyrion Music Server aktualnie korzysta z następujących ustawień
+	RU	В Lyrion Music Server используются следующие настройки
+	SV	Lyrion Music Server använder nu följande inställningar
 
 SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	CS	Zdroj hudby

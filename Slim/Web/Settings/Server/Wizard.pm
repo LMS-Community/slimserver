@@ -8,10 +8,18 @@ package Slim::Web::Settings::Server::Wizard;
 
 use strict;
 use base qw(Slim::Web::Settings);
+
+use File::Slurp qw(read_file);
+use File::Spec::Functions qw(catfile);
+use FindBin qw($Bin);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::PluginDownloader;
+use Slim::Utils::PluginManager;
+use Slim::Utils::ExtensionsManager;
 use Slim::Utils::Timers;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -20,7 +28,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $serverPrefs = preferences('server');
-my @prefs = ('mediadirs', 'playlistdir');
+
+my @prefs = ('mediadirs');
+my @pluginsToInstall;
 
 sub page {
 	return 'settings/server/wizard.html';
@@ -84,12 +94,18 @@ sub handler {
 	foreach my $pref (@prefs) {
 
 		if ($paramRef->{saveSettings}) {
+			@pluginsToInstall = ();
+			for my $param (keys %$paramRef) {
+				if ($paramRef->{$param} && $param =~ /^plugin-(.*)$/) {
+					# my $plugin = $1;
+					push @pluginsToInstall, $1;
+				}
+			}
 
 			# if a scan is running and one of the music sources has changed, abort scan
 			if (
-				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
-					|| ($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
-				) && Slim::Music::Import->stillScanning )
+				($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
+				&& Slim::Music::Import->stillScanning )
 			{
 				main::DEBUGLOG && $log->debug('Aborting running scan, as user re-configured music source in the wizard');
 				Slim::Music::Import->abortScan();
@@ -102,15 +118,67 @@ sub handler {
 			}
 
 			if ($pref eq 'mediadirs') {
-				$serverPrefs->set($pref, [ $paramRef->{$pref} ]);
+				my $dirs = $serverPrefs->get($pref);
+				unshift @$dirs, $paramRef->{$pref};
+
+				my %seen;
+				my $scanOnChange = $serverPrefs->get('dontTriggerScanOnPrefChange');
+				$serverPrefs->set('dontTriggerScanOnPrefChange', 0);
+
+				$serverPrefs->set($pref, [ grep {
+					!$seen{$_}++
+				} @$dirs ]);
+
+				$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
 			}
 			else {
 				$serverPrefs->set($pref, $paramRef->{$pref});
 			}
+
+			Slim::Utils::ExtensionsManager::getAllPluginRepos({
+				type    => 'plugin',
+				cb => sub {
+					my ($pluginData, $error) = @_;
+
+					my (undef, undef, $inactive) = Slim::Utils::ExtensionsManager::getCurrentPlugins();
+
+					my %pluginLookup;
+					foreach (@$pluginData, @$inactive) {
+						$pluginLookup{$_->{name}} = $_;
+					}
+
+					foreach my $plugin (@pluginsToInstall) {
+						Slim::Utils::ExtensionsManager->enablePlugin($plugin);
+						my $pluginDetails = $pluginLookup{$plugin} || {};
+
+						if ($pluginDetails->{url} && $pluginDetails->{sha}) {
+							main::INFOLOG && $log->is_info && $log->info("Downloading plugin: $plugin");
+
+							# 3rd party plugin - needs to be downloaded
+							Slim::Utils::PluginDownloader->install({
+								name => $plugin,
+								url => $pluginDetails->{url},
+								sha => lc($pluginDetails->{sha})
+							});
+
+						}
+						elsif ($pluginDetails->{version}) {
+							# built-in plugin - install
+							main::INFOLOG && $log->is_info && $log->info("Installing plugin: $plugin");
+							Slim::Utils::PluginManager->load('', $plugin);
+						}
+					}
+
+					if (scalar @pluginsToInstall) {
+						Slim::Utils::Timers::killTimers(undef, \&_checkPluginDownloads);
+						Slim::Utils::Timers::setTimer(undef, time() + 1, \&_checkPluginDownloads);
+					}
+				},
+			});
 		}
 
 		if (main::DEBUGLOG && $log->is_debug) {
- 			$log->debug("$pref: " . $serverPrefs->get($pref));
+ 			$log->debug("$pref: " . Data::Dump::dump($serverPrefs->get($pref)));
 		}
 
 		if ($pref eq 'mediadirs') {
@@ -122,9 +190,12 @@ sub handler {
 		}
 	}
 
-	$paramRef->{useiTunes} = preferences('plugin.itunes')->get('itunes');
-	$paramRef->{useMusicIP} = preferences('plugin.musicip')->get('musicip');
 	$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
+	$paramRef->{debug} = main::DEBUGLOG && $log->is_debug;
+
+	my $wzData = from_json(read_file(catfile($Bin, 'HTML', 'EN', 'settings', 'wizard.json')));
+	$paramRef->{plugins} = $wzData->{plugins};
+	$paramRef->{pluginsJSON} = to_json($paramRef->{plugins});
 
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
@@ -133,29 +204,28 @@ sub handler {
 		$response->header('Location' => '/');
 	}
 
-	else {
-		# use local path if neither iTunes nor MusicIP is available, or on anything but Windows/OSX
-		$paramRef->{useAudiodir} = Slim::Utils::OSDetect::OS() !~ /^(?:mac|win)$/ || !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
-	}
-
-	if ( $paramRef->{saveSettings} ) {
-		# Disable iTunes and MusicIP plugins if they aren't being used
-		if ( !$paramRef->{useiTunes} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') ) {
-			Slim::Utils::PluginManager->disablePlugin('iTunes');
-		}
-
-		if ( !$paramRef->{useMusicIP} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
-			Slim::Utils::PluginManager->disablePlugin('MusicMagic');
-		}
-	}
-
-
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
 		$paramRef->{playertype} = $client->model();
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+}
+
+sub _checkPluginDownloads {
+	Slim::Utils::Timers::killTimers(undef, \&_checkPluginDownloads);
+
+	if (Slim::Utils::PluginDownloader->downloading) {
+		Slim::Utils::Timers::setTimer(undef, time() + 1, \&_checkPluginDownloads);
+		return;
+	}
+
+	Slim::Utils::PluginManager->init();
+	Slim::Utils::PluginManager->load('', @pluginsToInstall);
+	@pluginsToInstall = ();
+
+	# need to reload the strings, as they's be loaded after initial plugin initialization, but we're late here...
+	Slim::Utils::Strings::loadStrings();
 }
 
 1;

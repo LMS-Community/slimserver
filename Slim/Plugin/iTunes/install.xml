@@ -9,11 +9,7 @@
 	<creator>Lyrion Community</creator>
 	<category>information</category>
 
-	<defaultState>
-		<win>enabled</win>
-		<mac>enabled</mac>
-		<other>disabled</other>
-	</defaultState>
+	<defaultState>disabled</defaultState>
 
 	<optionsURL>plugins/iTunes/settings/itunes.html</optionsURL>
 	<targetApplication>
