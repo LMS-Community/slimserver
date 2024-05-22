@@ -11,6 +11,7 @@
 
 	<defaultState>enabled</defaultState>
 	<type>2</type><!-- type=extension -->
+	<optionsURL>settings/presets.html</optionsURL>
 
 	<targetApplication>
 		<id>Lyrion Music Server</id>

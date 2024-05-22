@@ -120,4 +120,3 @@ NO_PLAYLIST_DIR_MORE
 	RU	Чтобы устранить неполадку, используйте настройки сервера.
 	SV	Gå till Serverinställningar om du vill korrigera detta.
 	ZH_CN	请参考服务器配置以便修正
-

@@ -104,7 +104,7 @@ Main = {
 					region: 'north',
 					contentEl: 'header',
 					border: false,
-					margins: '5 5 0 5',
+					margins: '[% skinPadding %] [% skinPadding %] 0 [% skinPadding %]',
 					height: 40
 				},
 
@@ -112,7 +112,7 @@ Main = {
 					region: 'center',
 					layout: 'border',
 					border: false,
-					margins: '0 15',
+					margins: '0 [% skinPadding * 3 %]',
 					items: [leftpanel, rightpanel]
 				},
 
@@ -120,7 +120,7 @@ Main = {
 					region: 'south',
 					contentEl: 'footer',
 					border: false,
-					margins: '0 5 5 5',
+					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
 					height: 40
 				}
 			]

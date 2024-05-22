@@ -1,0 +1,188 @@
+[% BLOCK pluginGroup %]
+	<div class="settingSection pluginList" id="[% id %]">
+		<ul class="thumbwrap">
+			[%- content | indent(4) %]
+		</ul>
+	</div>
+[% END %]
+[% BLOCK pluginDetails %]
+	[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
+	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]">
+		<div class="thumbwrap">
+			<div class="pluginItem">
+				<div>
+					[% pluginIcon = plugin.icon %]
+					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
+					<div>
+						<img src="[% pluginIcon | resizeimage(iconSize,iconSize) %]" [% IF plugin.fallbackIcon %]class="pluginFallbackIcon"[% ELSE %]srcset="[% pluginIcon | resizeimage(iconSize*2,iconSize*2) %] 2x"[% END %] onerror="this.onerror = null; console.log(this.src); this.classList.add('pluginFallbackIcon'); this.src = '/html/images/misc.svg'; if (this.srcset) this.srcset = '/html/images/misc.svg'">
+						<label for="[% pluginName %]">
+							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
+							&nbsp;[% plugin.title %][% IF plugin.version %] (v[% plugin.version %][% IF plugin.installations %] - <img src="[% webroot %]html/images/download.svg">[%- plugin.installations; END -%])[%- END -%]
+						</label>
+					</div>
+					[% IF type != 'update' %]
+						<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />
+					[% END %]
+				</div>
+				<div>
+					<div class="pluginDesc">
+						[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]
+					</div>
+				</div>
+				<div class="pluginFooter">
+					[% IF plugin.settings %]<img src="[% webroot %]html/images/cog-outline.svg"> <a href="[% webroot %][% plugin.settings %]">[% "SETTINGS" | string %]</a>[% END %]
+					[% IF plugin.email %]<img src="[% webroot %]html/images/email-outline.svg"> <a href="mailto:[% plugin.email %]">[%- END; plugin.creator || plugin.email; IF plugin.email %]</a>[%- END -%]
+					[% IF plugin.homepage || plugin.link %]<img src="[% webroot %]html/images/web.svg"> <a href="[% plugin.homepage || plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]
+				</div>
+			</div>
+		</div>
+	</li>
+[% END %]
+[% customButtonBar = BLOCK %]
+	<div id="pluginButtonBar">
+		<span id="filterChooser">
+			<select>
+				[% FOREACH category = categories %]
+				<option value="[% category.0 %]">[% category.1 %]</option>
+				[% END %]
+			</select>
+		</span>
+		<span>[% "SEARCH" | string %][% "COLON" | string %] <input type="text" id="filterInput"></span>
+	</div>
+[% END %]
+<style>
+	li.selectorMarker {
+		cursor: default;
+	}
+
+	div.pluginList {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+		gap: 5px;
+	}
+
+	.pluginList ul.thumbWrap {
+		display: contents
+	}
+
+	.pluginList ul.thumbWrap li.thumbWrap {
+		position: relative;
+		border-radius: 5px;
+		border: solid 1px #eee;
+		max-width: 370px;
+	}
+
+	.pluginList .pluginItem label {
+		font-weight: bold;
+		display: block;
+	}
+
+	.pluginList .pluginItem div {
+		padding-bottom: 5px;
+	}
+
+	.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
+		position: relative;
+		padding-left: 55px;
+	}
+
+	.pluginList .pluginDesc, .pluginFooter {
+		max-height: 650px;
+		overflow: hidden;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.pluginList .pluginItem img {
+		position: absolute;
+		margin: 0 5px 5px 0;
+		width: 50px;
+	}
+
+	.pluginList .pluginFooter img, .pluginList .pluginItem label img {
+		position: relative;
+		vertical-align: middle;
+		width: 15px;
+		margin: 0 0 1px 0;
+	}
+</style>
+[% PROCESS settings/header.html %]
+	<div class="settingsSmallIndention">
+	[% IF updates.size > 0 %]
+
+		[% WRAPPER settingSection %]
+			<div class="prefHead collapsableSection" id="updatePlugins_Header"><img class="disclosure_repos"
+				src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_UPDATES" | getstring %]</div>
+		[%- END -%]
+
+		[% WRAPPER pluginGroup id="updatePlugins" %]
+			[% FOREACH plugin = updates.sort('title') %]
+				[% PROCESS pluginDetails type = 'update' %]
+			[% END %]
+		[%- END -%]
+
+	[% END %]
+
+	[% WRAPPER settingSection %]
+		<div class="prefHead collapsableSection" id="activePlugins_Header"><img class="disclosure_repos"
+			src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_ACTIVE" | getstring %]</div>
+	[%- END -%]
+
+	[% WRAPPER pluginGroup id="activePlugins" %]
+		[% FOREACH plugin = active.sort('title') %]
+			[% PROCESS pluginDetails type = 'enabled' %]
+		[% END %]
+	[%- END -%]
+
+	[% WRAPPER settingSection %]
+		<div class="prefHead collapsableSection" id="inactivePlugins_Header"><img class="disclosure_repos"
+			src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_INACTIVE" | getstring %]</div>
+	[%- END -%]
+
+	[% WRAPPER pluginGroup id="inactivePlugins" %]
+		[% FOREACH plugin = inactive.sort('title') %]
+			[% PROCESS pluginDetails type = 'disabled' %]
+		[% END %]
+	[%- END -%]
+
+
+	[% FOREACH repo = avail %]
+
+		[% WRAPPER settingSection %]
+			<div class="prefHead collapsableSection" id="otherPlugins[% loop.index %]_Header"><img class="disclosure_repos"
+				src="[% webroot %]html/images/spacer.gif"/>[% repo.title %]</div>
+		[%- END -%]
+
+		[% WRAPPER pluginGroup id="otherPlugins" _ loop.index %]
+			[% FOREACH plugin = repo.entries.sort('title') %]
+				[% PROCESS pluginDetails type = (repo.weight == 1 ? 'safe' : 'unsafe') %]
+			[% END %]
+		[%- END -%]
+
+	[%- END -%]
+	</div>
+
+	[% WRAPPER setting title="SETUP_EXTENSIONS_AUTO" desc="" %]
+		<input type="checkbox" name="auto" id="auto" [% IF auto %] checked="1" [% END %] />
+		<label for="auto">[% "SETUP_EXTENSIONS_AUTO_DESC" | string %]</label>
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_EXTENSIONS_REPOS" desc="" %]
+		<div>[% "SETUP_EXTENSIONS_REPOS_DESC" | string %]</div>
+		<div>[% "SETUP_EXTENSIONS_REPOS_WARNING" | string %]</div>
+
+		<div>
+		[% FOREACH entry = repos %]
+			<br/><input type="text" class="stdedit" name="repos" id="repos" value="[% entry | html %]" size="60" />
+		[% END %]
+		</div>
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_EXTENSIONS_USE_UNSUPPORTED" desc="" %]
+		<input type="checkbox" name="useUnsupported" id="useUnsupported" [% IF useUnsupported %] checked="1" [% END %] />
+		<label for="useUnsupported">[% "SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC" | string %]</label>
+	[% END %]
+
+	<input name="rand" type="hidden" value="[% rand | html %]" />
+
+[% PROCESS settings/footer.html %]

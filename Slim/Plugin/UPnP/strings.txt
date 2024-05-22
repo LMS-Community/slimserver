@@ -27,4 +27,3 @@ PLUGIN_UPNP_MODULE_NAME_DESC
 	PL	Dodaje urządzenie MediaServer i MediaRenderer audio-wideo standardu UPnP/DLNA, umożliwiając dostęp innym urządzeniom w sieci lokalnej.
 	RU	Добавляет UPnP/DLNA AV MediaServer и MediaRenderer, предоставляя возможность доступа с других устройств в локальной сети.
 	SV	Lägger till en UPnP/DLNA AV MediaServer och MediaRenderer som möjliggör åtkomst för andra enheter i det lokala nätverket.
-

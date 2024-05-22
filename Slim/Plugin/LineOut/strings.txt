@@ -29,4 +29,3 @@ PLUGIN_LINE_OUT_DESC
 	PL	Przełączanie między trybem niskich tonów subwoofera, słuchawek i wyjścia liniowego
 	RU	Переключение между сабвуфером, наушниками и линейным выходом на Squeezebox Boom
 	SV	Växla mellan baselement, hörlurar och ljudutgång på Boom.
-

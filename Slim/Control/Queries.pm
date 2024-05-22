@@ -4274,6 +4274,49 @@ sub syncGroupsQuery {
 }
 
 
+sub tagsQuery {
+	my $request = shift;
+
+	if ($request->isNotQuery([['tags']])) {
+		$request->setStatusBadConfig();
+		return;
+	}
+
+	# get our parameters
+	my $client  = $request->client;
+	my $url     = $request->getParam('url');
+	my $trackID = $request->getParam('track_id');
+
+	if (!$trackID && !$url) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# find the track
+	if (!$url && $trackID){
+		my $track = Slim::Schema->find('Track', $trackID);
+		$url = $track->url;
+	}
+
+	$url =~ s/^tmp:/file:/;
+
+	if (!Slim::Music::Info::isFileURL($url)) {
+		$request->setStatusDone();
+		return;
+	}
+
+	my $info = Slim::Menu::TrackInfo::tagDump($client, undef, undef, Slim::Utils::Misc::pathFromFileURL($url));
+
+	my $separator = cstring($client, 'COLON') . ' ';
+	foreach (@{$info || []}) {
+		my ($title, $value) = split($separator, $_->{name}) if ref $_;
+		$request->addResult($title, $value) if $title && defined $value;
+	}
+
+	$request->setStatusDone();
+}
+
+
 sub timeQuery {
 	my $request = shift;
 
@@ -5776,7 +5819,7 @@ sub _getTagDataForTracks {
 		}
 	}
 
-	if ( my $libraryId = $args->{libraryId} ) {
+	if ( my $libraryId = Slim::Music::VirtualLibraries->getRealId($args->{libraryId}) ) {
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryId;
@@ -6014,7 +6057,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . join( '', @{$p}, @$w ) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+		my $cacheKey = md5_hex($sql . utf8::decode(join( '', @{$p}, @$w )) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {

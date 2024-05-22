@@ -10,10 +10,10 @@ Help = {
 					region: 'north',
 					contentEl: 'header',
 					border: false,
-					margins: '5 5 0 5',
+					margins: '[% skinPadding %] [% skinPadding %] 0 [% skinPadding %]',
 					height: 40
 				},
-				
+
 				{
 					region: 'center',
 					layout: 'border',
@@ -24,20 +24,20 @@ Help = {
 							contentEl: 'inner_header',
 							border: false,
 							height: 16,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						},
 						{
 							region: 'center',
 							contentEl: 'maincontent',
 							border: false,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						},
 						{
 							region: 'south',
 							contentEl: 'inner_footer',
 							border: false,
 							height: 43,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						}
 					]
 				},
@@ -46,8 +46,8 @@ Help = {
 					region: 'south',
 					contentEl: 'footer',
 					border: false,
-					margins: '0 5 5 5',
-					height: 16
+					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
+					height: [% mainFooter %]
 				}
 			]
 		}

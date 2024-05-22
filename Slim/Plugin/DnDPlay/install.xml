@@ -12,6 +12,7 @@
 
 	<type>2</type>
 
+	<optionsURL>plugins/DnDPlay/settings.html</optionsURL>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
 		<minVersion>7.9</minVersion>

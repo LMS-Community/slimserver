@@ -18,10 +18,11 @@ use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 use Slim::Utils::PluginRepoManager;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Strings qw(cstring);
 
 Slim::Utils::PluginRepoManager->init();
 
-use constant MAX_DOWNLOAD_WAIT => 120;
+use constant MAX_DOWNLOAD_WAIT => 30;
 use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');
@@ -315,6 +316,7 @@ sub _addInfo {
 
 	# pass 1 - find the higher version numbers
 	my $max = {};
+	my %pluginDataLookup;
 
 	for my $repo (@results) {
 		for my $entry (@{$repo->{'entries'}}) {
@@ -322,6 +324,7 @@ sub _addInfo {
 			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
 				$max->{$name} = $entry->{'version'};
 			}
+			$pluginDataLookup{$name} = $entry;
 		}
 	}
 
@@ -342,14 +345,25 @@ sub _addInfo {
 	my $searchData = {};
 	my $categories = {};
 
-	prepareDetails($active, $searchData, $categories, 1);
-	prepareDetails($inactive, $searchData, $categories);
+	prepareDetails($active, $searchData, $categories, 1, \%pluginDataLookup);
+	prepareDetails($inactive, $searchData, $categories, undef, \%pluginDataLookup);
 	foreach (@results) {
-		prepareDetails($_->{entries}, $searchData, $categories);
+		prepareDetails($_->{entries}, $searchData, $categories, undef, \%pluginDataLookup);
 	}
 
+	my @categories = (
+		['', cstring($client, 'SETUP_EXTENSIONS_CATEGORY_ALL')],
+		sort {
+			$a->[0] cmp $b->[0]
+		} map {
+			[$_, cstring($client, 'SETUP_EXTENSIONS_CATEGORY_' . uc($_)) || ucfirst($_)]
+		} grep {
+			$_
+		} keys %$categories
+	);
+
 	$params->{'searchData'} = to_json($searchData);
-	$params->{'categories'} = to_json([ keys %$categories ]);
+	$params->{'categories'} = \@categories;
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;
 	$params->{'inactive'} = $inactive;
@@ -381,18 +395,24 @@ sub _addInfo {
 }
 
 sub prepareDetails {
-	my ($data, $searchData, $categories, $installed) = @_;
+	my ($data, $searchData, $categories, $installed, $pluginDataLookup) = @_;
 
-	# foreach (@$active, @$inactive, map { @{$_->{entries}} } @results) {
 	foreach (@$data) {
 		$categories->{$_->{category}}++;
-		my $icon = $_->{icon};
 
+		if (my $data = $pluginDataLookup->{$_->{name}}) {
+			$_->{icon} ||= $data->{icon};
+			$_->{icon} = $data->{icon} if $data->{icon} && $_->{icon} !~ /^http/;
+			$_->{category} ||= $data->{category};
+		}
+
+		my $icon = $_->{icon};
 		if (!$installed && $icon && $icon !~ /^http/ && $icon =~ m|(plugins/(.*?)/html/.*)|) {
 			$_->{icon} = sprintf(GH_IMAGE_URL, $2, $1);
 		}
 		elsif (!$icon) {
 			$_->{icon} = 'html/images/' . ($_->{category} || 'misc') . '.svg';
+			$_->{fallbackIcon} = 1;
 		}
 
 		if (!$searchData->{$_->{name}}) {

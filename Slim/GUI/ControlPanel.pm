@@ -91,13 +91,6 @@ sub new {
 
 	my $footerSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
-	# TODO - branding
-	if ($file = $self->_fixIcon('logitech-logo.png')) {
-		Wx::Image::AddHandler(Wx::PNGHandler->new());
-		my $icon = Wx::StaticBitmap->new( $panel, -1, Wx::Bitmap->new($file, wxBITMAP_TYPE_PNG) );
-		$footerSizer->Add($icon, 0, wxLEFT | wxBOTTOM, 5);
-	}
-
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
 

@@ -15,7 +15,7 @@ Settings = {
 					region: 'north',
 					contentEl: 'header',
 					border: false,
-					margins: '5 5 0 5',
+					margins: '[% skinPadding %] [% skinPadding %] 0 [% skinPadding %]',
 					height: 40
 				},
 
@@ -29,20 +29,20 @@ Settings = {
 							contentEl: 'inner_header',
 							border: false,
 							height: 32,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						},
 						{
 							region: 'center',
 							contentEl: 'maincontent',
 							border: false,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						},
 						{
 							region: 'south',
 							contentEl: 'inner_footer',
 							border: false,
 							height: 43,
-							margins: '0 15'
+							margins: '0 [% skinPadding * 3 %]'
 						}
 					]
 				},
@@ -51,8 +51,8 @@ Settings = {
 					region: 'south',
 					contentEl: 'footer',
 					border: false,
-					margins: '0 5 5 5',
-					height: 16
+					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
+					height: [% mainFooter %]
 				}
 			]
 		}
@@ -602,8 +602,10 @@ Settings.Page = function(){
 			var items = Ext.DomQuery.select('div.collapsableSection');
 			displayMode = displayMode || 'block';
 
+			const collapsableItems = [];
+
 			// collapse/expand items - collapse by default
-			for(var i = 0; i < items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				el = Ext.get(items[i]);
 
 				var panel;
@@ -612,6 +614,7 @@ Settings.Page = function(){
 					panel = panel.replace(/_Header/, '');
 
 					if (panel = Ext.get(panel)) {
+						collapsableItems.push([el, panel]);
 
 						el.on("click", function(ev, target) {
 							// if the triangle image was clicked, get the parent div
@@ -634,6 +637,8 @@ Settings.Page = function(){
 					}
 				}
 			}
+
+			return collapsableItems;
 		},
 
 		toggleItem : function(heading, panel){

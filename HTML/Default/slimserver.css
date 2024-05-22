@@ -15,8 +15,9 @@ body.main {
 
 #playlistPanel, #maincontent { background-color: #eee; }
 
-html, body, tr, tr, p, div, li, input, ul, .x-btn-text, .x-tip .x-tip-body, select {
-	font-size: 11px;
+html, body, tr, tr, p, div, li, input, ul, .x-btn-text, .x-tip .x-tip-body, select, .x-menu-list-item, .x-btn button,
+#ctrlPlaytimeCollapsed, #ctrlCurrentSongInfoCollapsed, #ctrlCurrentSongInfoCollapsed a {
+	font-size: 12.5px;
 	font-family: sans-serif;
 }
 
@@ -122,18 +123,12 @@ a:hover, .link:hover,
 /* Main screen (outer frame) */
 #noJS {
 	position: absolute;
-	background-color: white;
+	background-color: #202020;
 	z-index: 20002;
-	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
 }
 
 div#background {
-	position: absolute;
-	top: 5px;
-	left: 5px;
-	z-index: -1;
-	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
-	border-radius: 15px;
+	background: #202020;
 }
 
 #header {
@@ -144,25 +139,17 @@ div#background {
 
 #squeezeboxLogo {
 	position: absolute;
-	top: 15px;
-	left: 20px;
+	top: 10px;
+	left: 12px;
 	height: 40px;
 	width: 158px;
-	background: url(html/images/lms.png) no-repeat;
-}
-
-#lyrionLogo {
-	position: absolute;
-	top: 0px;
-	right: 20px;
-	height: 40px;
-	width: 42px;
-	background: url(html/images/logo.png) no-repeat;
+	background: url(html/images/lms.svg) no-repeat;
+	background-size: 100px;
 }
 
 #playerChooser {
 	position: absolute;
-	right: 100px;
+	right: 10px;
 }
 
 .inner {
@@ -174,16 +161,23 @@ div#background {
 }
 
 .inner_top, .inner_bottom {
-	border-radius: 12px 12px 0 0;
 	height: 12px;
 	background-color: #404040;
 }
 
 #mainSpacer { width: 10px; }
 
+#inner_header .inner_top {
+	height: 9px;
+}
+
 .inner_bottom {
-	border-radius: 0 0 12px 12px;
+	height: 5px;
 	bottom: 0;
+}
+
+.settingsFrame .inner_bottom {
+	height: 12px;
 }
 
 #leftcontent {
@@ -632,7 +626,7 @@ div.thumbwrap {
 }
 
 .menu-title {
-	font: bold 11px sans-serif;
+	font: bold 12.5px sans-serif;
 	color: #494949;
 	display: block;
 	padding: 3px;
@@ -653,7 +647,7 @@ div.thumbwrap {
 .mouseOver a,
 .mouseOver .homeMenuItem {
 	color: white;
-	text-weight: bold;
+	font-weight: bold;
 }
 
 .mouseOver {
@@ -677,7 +671,7 @@ div.thumbwrap {
 
 .dragOver.selectorMarker {
 	background-color: #aaa;
-	font-color: white;
+	color: white;
 }
 
 #crumblist a.dragOver,
@@ -929,7 +923,7 @@ form#advSearchForm.resultsPage {
 	font-weight: bold;
 	padding-left: 6px;
 	margin-bottom: 5px;
-	height: 30px;
+	height: 20px;
 }
 
 #ctrlCurrentArtist, #ctrlCurrentAlbum, #ctrlBitrate {
@@ -938,7 +932,7 @@ form#advSearchForm.resultsPage {
 	overflow: hidden;
 }
 
-#ctrlTrackInfo { height: 45px; }
+#ctrlTrackInfo { height: 55px; }
 #ctrlPlaytimePanel { height: 20px; }
 
 #ctrlCurrentTitle a {
@@ -998,7 +992,6 @@ form#advSearchForm.resultsPage {
 #ctrlPlaytimeCollapsed,
 #ctrlCurrentSongInfoCollapsed,
 #ctrlCurrentSongInfoCollapsed a {
-	font-size: 11px;
 	font-weight: normal;
 	color: #01ccc6;
 	padding-top: 1px;
@@ -1061,12 +1054,13 @@ form#advSearchForm.resultsPage {
 	background-image: url('html/images/b_search.gif');
 }
 
-#btn_help_image {
-	background-image: url('html/images/btn_help.gif');
+#btn_settings_image, #btn_help_image {
+	background-color: white;
+	mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 8a4 4 0 0 1 4 4 4 4 0 0 1 -4 4 4 4 0 0 1 -4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0 -2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0 -2-2m-2 12c-.25 0-.46-.18-.5-.42l-.37-2.65c-.63-.25-1.17-.59-1.69-.99l-2.49 1.01c-.22.08-.49 0-.61-.22l-2-3.46c-.13-.22-.07-.49.12-.64l2.11-1.66-.07-.97.07-1-2.11-1.63c-.19-.15-.25-.42-.12-.64l2-3.46c.12-.22.39-.31.61-.22l2.49 1c.52-.39 1.06-.73 1.69-.98l.37-2.65c.04-.24.25-.42.5-.42h4c.25 0 .46.18.5.42l.37 2.65c.63.25 1.17.59 1.69.98l2.49-1c.22-.09.49 0 .61.22l2 3.46c.13.22.07.49-.12.64l-2.11 1.63.07 1-.07 1 2.11 1.63c.19.15.25.42.12.64l-2 3.46c-.12.22-.39.31-.61.22l-2.49-1c-.52.39-1.06.73-1.69.98l-.37 2.65c-.04.24-.25.42-.5.42zm1.25-18-.37 2.61c-1.2.25-2.26.89-3.03 1.78l-2.41-1.04-.75 1.3 2.11 1.55c-.4 1.17-.4 2.44 0 3.6l-2.12 1.56.75 1.3 2.43-1.04c.77.88 1.82 1.52 3.01 1.76l.37 2.62h1.52l.37-2.61c1.19-.25 2.24-.89 3.01-1.77l2.43 1.04.75-1.3-2.12-1.55c.4-1.17.4-2.44 0-3.61l2.11-1.55-.75-1.3-2.41 1.04c-.77-.89-1.83-1.53-3.03-1.77l-.37-2.62z"/></svg>');
 }
 
-#btn_settings_image {
-	background-image: url('html/images/btn_settings.gif');
+#btn_help_image {
+	mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m11 18h2v-2h-2zm1-16a10 10 0 0 0 -10 10 10 10 0 0 0 10 10 10 10 0 0 0 10-10 10 10 0 0 0 -10-10m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14a4 4 0 0 0 -4 4h2a2 2 0 0 1 2-2 2 2 0 0 1 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 0 0 -4-4z"/></svg>')
 }
 
 img.btn_info_image {
@@ -1141,11 +1135,6 @@ body.settingsMenu {
 	margin-bottom: 5px;
 }
 
-.pluginSection .settingGroup {
-	padding-left: 400px;
-}
-
-
 .settingSection img.playericon {
 	position: absolute;
 	top: -10px;
@@ -1158,10 +1147,6 @@ body.settingsMenu {
 	top: 0px;
 }
 
-.pluginSection .prefHelp {
-	left: 380px;
-}
-
 .prefHead {
 	font-weight: bold;
 }
@@ -1170,10 +1155,6 @@ body.settingsMenu {
 	position: absolute;
 	width: 235px;
 	left: 0;
-}
-
-.pluginSection .settingGroup .prefHead {
-	width: 385px;
 }
 
 .settingSection table {
@@ -1325,7 +1306,7 @@ ul.x-tree-node-ct {
 }
 
 .x-form-field, .x-combo-list-item {
-	font-size: 11px;
+	font-size: 12.5px;
 }
 
 .ext-strict .x-form-text {

@@ -1234,15 +1234,14 @@ sub infoTagDump {
 sub tagDump {
 	my ( $client, $callback, undef, $path, $key, $title ) = @_;
 
-	return unless $callback && $path;
-
-	$path =~ s/^tmp:/file:/;
+	return unless $path;
 
 	my $menu = [];
 	$key ||= '';
 
 	require Audio::Scan;
 	my $s = eval { Audio::Scan->scan_tags($path) };
+	my $colon = cstring($client, 'COLON');
 
 	if ( $@ ) {
 		$menu = {
@@ -1286,7 +1285,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => ($title || $k) . ': [ ' . join( ', ', @{$a} ) . ' ]',
+					name => ($title || $k) . "$colon [ " . join( ', ', @{$a} ) . ' ]',
 				};
 			}
 			else {
@@ -1296,7 +1295,7 @@ sub tagDump {
 
 				push @{$menu}, {
 					type => 'text',
-					name => ($title || $k) . ': ' . $v,
+					name => ($title || $k) . "$colon " . $v,
 				};
 			}
 		}
@@ -1309,7 +1308,7 @@ sub tagDump {
 		}
 	}
 
-	if (ref $callback) {
+	if ($callback && ref $callback) {
 		$callback->( $menu );
 	}
 	else {

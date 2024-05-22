@@ -1,0 +1,6 @@
+---
+preprocess:
+ - cmdwrappers_Default
+ - cmdwrappers_Logic
+skinparents:
+ - Default

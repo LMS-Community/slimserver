@@ -79,4 +79,3 @@ PLUGIN_NETTEST_NOT_SUPPORTED
 	PL	Nieobsługiwane w tym odtwarzaczu
 	RU	Не поддерживается в этом плеере
 	SV	Stöds inte på den här spelaren
-

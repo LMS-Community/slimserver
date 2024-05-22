@@ -1,90 +1,51 @@
+[% descHeight = 65 %]
+[% iconSize = 50 %]
 [% IF useExtJS; extJsScripts = BLOCK %]
-[% descHeight = 90 %]
 <script TYPE="text/javascript">
-	var categories = [% categories %];
 	var searchData = [% searchData %];
-	var category, search;
+	var category, search, collapsableSections = [];
 
 	Ext.onReady(function() {
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP' %]
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP2' %]
 		[% PROCESS jsString id='SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_ALL' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_HARDWARE', jsId='hardware' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_INFO' jsId='information' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_MISC' jsId='misc' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES' jsId='musicservices' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_PLAYLISTS' jsId='playlists' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_RADIO' jsId='radio' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_SCANNING' jsId='scanning' %]
-		[% PROCESS jsString id='SETUP_EXTENSIONS_CATEGORY_TOOLS' jsId='tools' %]
 
 		if (SqueezeJS.UI) {
-			Highlight = Ext.extend(SqueezeJS.UI.Highlight, {
-				onSelectorClicked : function(ev, target){
-					if (target && target.href)
-						return;
-
-					var el;
-					target = Ext.get(target);
-
-					if (target.dom.href) {
-						// don't capture click on link!
-					}
-
-					else if (target.dom.htmlFor) {
-						target = Ext.get(target.down("input[type=checkbox]"));
-						target.dom.checked = !target.dom.checked;
-					}
-
-					else if (target.hasClass('thumbwrap') && !target.is('ul.thumbwrap')) {
-						target = target.child("input[type=checkbox]");
-						target.dom.checked = !target.dom.checked;
-					}
-
-					else if (el = target.findParentNode('div.pluginItem', 2, true)) {
-						target = el.child("input[type=checkbox]");
-						target.dom.checked = !target.dom.checked;
-					}
-				}
-			});
-
-			Highlighter = new Highlight({
-				unHighlight : 'content'
-			});
+			var categories = Ext.query('#filterChooser option');
+			var categoriesAllLabel = categories[0].innerHTML;
 
 			// plugin filtering
 			var filterChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'filterChooser',
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				text: SqueezeJS.string('setup_extensions_category_all')
+				text: categoriesAllLabel
 			});
 
-			Ext.each(categories.sort(function(a, b) {
-				a = SqueezeJS.string(a || 'setup_extensions_category_all');
-				b = SqueezeJS.string(b || 'setup_extensions_category_all');
-
-				if (a < b) return -1
-				else if (b < a) return 1
-				else return 0;
-			}), function(category, x) {
+			Ext.each(categories, function(category, x) {
+				const catId = category.value;
+				const title = category.innerHTML;
 				filterChooser.menu.add(
 					new Ext.menu.CheckItem({
-						text: category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all'),
-						value: category,
+						text: title,
+						value: catId,
 						checked: false,
 						cls: 'settingsList',
 						group: 'settingsList',
 						handler: function(ev) {
+							Ext.get('filterInput').dom.value = '';
+							expandAllSections();
+
 							category = ev.value;
-							filterChooser.setText(category ? SqueezeJS.string(category) : SqueezeJS.string('setup_extensions_category_all')),
-							togglePluginVisibility(category, function(s) {
-								return s.category == category;
+							filterChooser.setText(title);
+							togglePluginVisibility(catId, function(s) {
+								return s.category == catId;
 							});
 						}
 					})
 				);
 			});
+
+			Ext.select("#filterChooser select").remove()
 
 			new Ext.form.TextField({
 				applyTo: 'filterInput',
@@ -93,8 +54,10 @@
 				selectOnFocus: true,
 
 				validator: function(value) {
-					var reg = new RegExp(value, 'i');
+					filterChooser.setText(categoriesAllLabel);
+					expandAllSections();
 
+					var reg = new RegExp(value, 'i');
 					togglePluginVisibility(value, function(s) {
 						return reg.test(s.content);
 					});
@@ -104,7 +67,7 @@
 			var pluginDescriptions = Ext.query('div.pluginDesc');
 			Ext.each(pluginDescriptions, function(descEl) {
 				descEl = Ext.get(descEl);
-				if (descEl.getHeight() > [% descHeight - 5 %]) {
+				if (descEl.getHeight() > [% descHeight %]) {
 					descEl.addClass('pluginDescLong');
 					new Ext.ToolTip({
 						target: descEl,
@@ -138,6 +101,12 @@
 						}
 					});
 				}
+			}
+
+			function expandAllSections() {
+				collapsableSections.forEach(function(section) {
+					Settings.Page.expandItem(section[0], section[1]);
+				});
 			}
 		}
 
@@ -184,70 +153,34 @@
 			}
 		};
 
-		Settings.Page.initCollapsableItems('grid');
+		collapsableSections = Settings.Page.initCollapsableItems('grid');
 	});
 </script>
 [% END; END %]
 <style>
-	div.pluginList {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-		gap: 5px;
-	}
-
-	ul.thumbWrap {
-		display: contents
-	}
-
-	.settingSection ul.thumbWrap li.thumbWrap {
+	.pluginItem img.pluginFallbackIcon {
+		border: 1px solid #bbb;
 		border-radius: 5px;
-		border: solid 1px #eee;
-		max-width: 370px;
+		background-color: #eee;
+		padding: 2px;
+		width: [% iconSize - 6 %]px !important;
 	}
 
-	.pluginItem label {
-		font-weight: bold;
-		display: block;
+	.pluginList .pluginDesc, .pluginFooter {
+		max-height: [% descHeight %]px !important;
 	}
 
-	.pluginItem div {
-		padding-bottom: 5px;
-	}
-
-	.pluginItem label, .pluginDesc, .pluginFooter {
-		position: relative;
-		padding-left: 30px;
-	}
-
-	.pluginDesc, .pluginFooter {
-		max-height: [% descHeight %]px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		overflow-wrap: break-word;
-		word-break: break-word;
-	}
-
-	.pluginDescLong:before {
+	.pluginList .pluginDescLong:before {
+		position: absolute;
 		content: '';
 		width: 100%;
 		height: 100%;
-		position: absolute;
 		left: 0;
 		top: 0;
-		background: linear-gradient(transparent [% descHeight - 30 %]px, white);
+		background: linear-gradient(transparent [% descHeight - 30 %]px, white) !important;
 	}
 
-	.mouseOver .pluginDescLong:before {
-		background: linear-gradient(transparent [% descHeight - 30 %]px, #999);
-	}
-
-	.pluginItem img {
-		position: absolute;
-		margin: 0 5px 5px 0;
-		width: 25px;
-	}
-
-	#filterChooser {
+	#pluginButtonBar #filterChooser {
 		width: 200px;
 	}
 
@@ -259,128 +192,4 @@
 		height: 20px;
 	}
 </style>
-[% BLOCK pluginGroup %]
-	<div class="settingSection pluginList" id="[% id %]">
-		<ul class="thumbwrap">
-			[%- content | indent(4) %]
-		</ul>
-	</div>
-[% END %]
-[% BLOCK pluginDetails %]
-	[% pluginName = type == 'update' ? 'update:' _ plugin.name : plugin.name %]
-	<li class="thumbwrap selectorMarker" id="plugin-[% pluginName %]" onmouseover="Highlighter.highlight(this);">
-		<div class="thumbwrap">
-			<div class="pluginItem">
-				<div>
-					[% pluginIcon = plugin.icon || "html/images/" _ (plugin.category || "misc") _ ".svg" %]
-					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
-					<div>
-						<img src="[% pluginIcon | resizeimage(25,25) %]" srcset="[% pluginIcon | resizeimage(50,50) %] 2x">
-						<label for="[% pluginName %]">
-							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
-							&nbsp;[% plugin.title %][% IF plugin.version %] (v[% plugin.version %])[%- END -%]
-						</label>
-					</div>
-					[% IF type != 'update' %]
-						<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />
-					[% END %]
-				</div>
-				<div>
-					<div class="pluginDesc">
-						[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]
-					</div>
-				</div>
-				<div class="pluginFooter">
-					[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[% ELSIF plugin.homepage %]<a href="[% plugin.homepage %]" target="_blank">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email OR plugin.homepage %]</a>[%- END -%]
-					[% IF plugin.settings %]<a href="[% webroot %][% plugin.settings %]">[% "SETTINGS" | string %]</a>
-					[% ELSIF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]
-				</div>
-			</div>
-		</div>
-	</li>
-[% END %]
-[% customButtonBar = BLOCK %]
-	<div id="pluginButtonBar">
-		<span id="filterChooser"></span>
-		<span>[% "SEARCH" | string %][% "COLON" | string %] <input type="text" id="filterInput"></span>
-	</div>
-[% END %]
-[% PROCESS settings/header.html %]
-	<div class="settingsSmallIndention">
-	[% IF updates.size > 0 %]
-
-		[% WRAPPER settingSection %]
-			<div class="prefHead collapsableSection" id="updatePlugins_Header"><img class="disclosure_repos"
-				src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_UPDATES" | getstring %]</div>
-		[%- END -%]
-
-		[% WRAPPER pluginGroup id="updatePlugins" %]
-			[% FOREACH plugin = updates.sort('title') %]
-				[% PROCESS pluginDetails type = 'update' %]
-			[% END %]
-		[%- END -%]
-
-	[% END %]
-
-	[% WRAPPER settingSection %]
-		<div class="prefHead collapsableSection" id="activePlugins_Header"><img class="disclosure_repos"
-			src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_ACTIVE" | getstring %]</div>
-	[%- END -%]
-
-	[% WRAPPER pluginGroup id="activePlugins" %]
-		[% FOREACH plugin = active.sort('title') %]
-			[% PROCESS pluginDetails type = 'enabled' %]
-		[% END %]
-	[%- END -%]
-
-	[% WRAPPER settingSection %]
-		<div class="prefHead collapsableSection" id="inactivePlugins_Header"><img class="disclosure_repos"
-			src="[% webroot %]html/images/spacer.gif"/>[% "SETUP_EXTENSIONS_INACTIVE" | getstring %]</div>
-	[%- END -%]
-
-	[% WRAPPER pluginGroup id="inactivePlugins" %]
-		[% FOREACH plugin = inactive.sort('title') %]
-			[% PROCESS pluginDetails type = 'disabled' %]
-		[% END %]
-	[%- END -%]
-
-
-	[% FOREACH repo = avail %]
-
-		[% WRAPPER settingSection %]
-			<div class="prefHead collapsableSection" id="otherPlugins[% loop.index %]_Header"><img class="disclosure_repos"
-				src="[% webroot %]html/images/spacer.gif"/>[% repo.title %]</div>
-		[%- END -%]
-
-		[% WRAPPER pluginGroup id="otherPlugins" _ loop.index %]
-			[% FOREACH plugin = repo.entries.sort('title') %]
-				[% PROCESS pluginDetails type = (repo.weight == 1 ? 'safe' : 'unsafe') %]
-			[% END %]
-		[%- END -%]
-
-	[%- END -%]
-	</div>
-
-	[% WRAPPER setting title="SETUP_EXTENSIONS_AUTO" desc="SETUP_EXTENSIONS_AUTO_DESC" %]
-		<input type="checkbox" name="auto" id="auto" [% IF auto %] checked="1" [% END %] />
-	[% END %]
-
-	[% WRAPPER setting title="SETUP_EXTENSIONS_REPOS" desc="" %]
-		<div>[% "SETUP_EXTENSIONS_REPOS_DESC" | string %]</div>
-		<div>[% "SETUP_EXTENSIONS_REPOS_WARNING" | string %]</div>
-
-		<div>
-		[% FOREACH entry = repos %]
-			<br/><input type="text" class="stdedit" name="repos" id="repos" value="[% entry | html %]" size="60" />
-		[% END %]
-		</div>
-	[% END %]
-
-	[% WRAPPER setting title="SETUP_EXTENSIONS_USE_UNSUPPORTED" desc="" %]
-		<input type="checkbox" name="useUnsupported" id="useUnsupported" [% IF useUnsupported %] checked="1" [% END %] />
-		<label for="useUnsupported">[% "SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC" | string %]</label>
-	[% END %]
-
-	<input name="rand" type="hidden" value="[% rand | html %]" />
-
-[% PROCESS settings/footer.html %]
+[% PROCESS settings/server/plugins_main.html %]

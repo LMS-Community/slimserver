@@ -133,7 +133,7 @@ SETUP_MIX_FILTER
 	ZH_CN	混音过滤器
 
 SETUP_MIX_FILTER_DESC
-	CS	Můžete vytvořit pojmenované sady filtrovacích podmínek v MusicIP a zvolit ze zde uvedeného seznamu aplikaci filtrů na Mixy MusicIP ve Lyrion Music Server.
+	CS	Můžete vytvořit pojmenované sady filtrovacích podmínek v MusicIP a zvolit ze zde uvedeného seznamu aplikaci filtrů na MusicIP mixy v Lyrion Music Serveru.
 	DA	Du kan definere navngivne filterbetingelser i MusicIP og vælge at anvende disse filtre på miks fra MusicIP i Lyrion Music Server.
 	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im Lyrion Music Server angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in Lyrion Music Server.
@@ -150,7 +150,7 @@ SETUP_MIX_FILTER_DESC
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Lyrion Music Server内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
-	CS	Žánr mixu
+	CS	Mix žánru
 	DA	Miks: Genre
 	DE	Mix: Musikstil
 	EN	Mix Genre
@@ -167,7 +167,7 @@ SETUP_MIX_GENRE
 	ZH_CN	混音曲风
 
 SETUP_MIX_GENRE_DESC
-	CS	Omezit mix na žánr počátečního čísla (Standard: ne)
+	CS	Omezit mix na žánr výchozí skladby (Výchozí: ne)
 	DA	Begræns miks til samme genre som det første valg (Standardværdi: Nej)
 	DE	Beschränkung des Mix auf die Musikstile des Seeds (Standardwert: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
@@ -184,7 +184,7 @@ SETUP_MIX_GENRE_DESC
 	ZH_CN	将混音限制于种子的曲风（确省：不）
 
 SETUP_REJECT_TYPE
-	CS	Odmítnutý typ MusicIP
+	CS	Typ odmítnutí MusicIP
 	DA	MusicIP-afvisningstype
 	DE	MusicIP - Ablehnungsart
 	EN	MusicIP Reject Type
@@ -201,7 +201,7 @@ SETUP_REJECT_TYPE
 	ZH_CN	MusicIP拒绝种类
 
 SETUP_REJECT_SIZE
-	CS	Zamítnout velikost
+	CS	Odmítnout velikost
 	DA	Afvisningsstørrelse
 	DE	Ablehnungsgröße
 	EN	Reject Size
@@ -218,7 +218,7 @@ SETUP_REJECT_SIZE
 	ZH_CN	拒绝量
 
 SETUP_REJECT_SIZE_DESC
-	CS	Nastavte počet položek k přeskočení před opakováním typu. (Standard: 12)
+	CS	Nastavte počet položek k přeskočení před opakováním typu. (Výchozí: 12)
 	DA	Indstil antal elementer som skal springes over før en type gentages. (Standard: 12)
 	DE	Definieren Sie die Anzahl von Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird. (Standardwert: 12)
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
@@ -235,7 +235,7 @@ SETUP_REJECT_SIZE_DESC
 	ZH_CN	配置重播一类别前跳过的数量（确省:12)
 
 SETUP_MIX_STYLE
-	CS	Styl mixu
+	CS	Mix stylu
 	DA	Miks: Stil
 	DE	Mix: Stil
 	EN	Mix Style
@@ -252,7 +252,7 @@ SETUP_MIX_STYLE
 	ZH_CN	混音风格
 
 SETUP_MIX_STYLE_DESC
-	CS	Jak hodně podobné stylu interpreta ( 0 = ignorovat (standard), 200 = striktně)
+	CS	Jak moc se podobá stylu interpreta (0 = ignorovat (výchozí), 200 = striktně)
 	DA	Hvor meget som kunstnerens stil (0 = ignorer (standard), 200 = streng)
 	DE	Wie ähnlich soll der Stil des Interpreten sein? 0=ignorieren (Standard), 200=sehr ähnlich
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
@@ -269,7 +269,7 @@ SETUP_MIX_STYLE_DESC
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
 SETUP_MIX_VARIETY
-	CS	Škála mixu
+	CS	Mix rozmanitosti
 	DA	Miksx: Variation
 	DE	Mix: Vielseitigkeit
 	EN	Mix Variety
@@ -286,7 +286,7 @@ SETUP_MIX_VARIETY
 	ZH_CN	混音品种变化
 
 SETUP_MIX_VARIETY_DESC
-	CS	Jaká škála v mixu ( 0 = méně (standard), 9 = více )
+	CS	Jaká je rozmanitost mixu (0 = méně (výchozí), 9 = více)
 	DA	Hvor meget variation i mix (0 = lille (standard), 9 mere)
 	DE	Wie vielseitig soll der Mix sein? 0 = weniger (Standard), 9 = mehr
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
@@ -337,7 +337,7 @@ SETUP_MMMPLAYERSETTINGS
 	ZH_CN	播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
-	CS	Můžete si zvolit přidělení přístupu k mixovacím nastavením Music IP pro každý přehrávač před vytvořením mixu. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
+	CS	Můžete si zvolit přidělení přístupu k nastavení MusicIP mixu pro každý přehrávač před vytvořením mixu. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
 	DA	Du kan vælge at give hver enkelt afspiller adgang til indstillingerne for MusicIP Mix før du opretter et miks. Alle indstillinger som vælges på afspilleren, har forrang frem for serverindstillingerne indtil de ændres igen på afspilleren. Hvis du vil gå videre og begynde at oprette et miks vha. de eksisterende indstillinger på afspilleren og serveren, skal du vælge Nej.
 	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie 'Nein'.
 	EN	You may choose to give each player access to the MusicIP mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
@@ -354,7 +354,7 @@ SETUP_MMMPLAYERSETTINGS_DESC
 	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicIP混音设置的特权。任何播放机上的特定设置将藐视服务器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
-	CS	Nastavení MusicIP Mix
+	CS	Nastavení MusicIP mixu
 	DA	Indstillinger for MusicIP Mix
 	DE	MusicIP-Mix: Einstellungen
 	EN	MusicIP Mix Settings
@@ -406,7 +406,7 @@ USE_MUSICMAGIC
 	ZH_CN	使用MusicIP
 
 DONT_USE_MUSICMAGIC
-	CS	Nepoužívat MusicIP
+	CS	Nepoužít MusicIP
 	DA	Anvend ikke MusicIP
 	DE	MusicIP nicht verwenden
 	EN	Don't use MusicIP
@@ -490,7 +490,7 @@ MMMMIXTYPE_MIN
 	ZH_CN	分钟总数
 
 MMMMIXTYPE_MBYTES
-	CS	Počet Megabytů
+	CS	Počet megabajtů
 	DA	Antal megabyte
 	DE	Anzahl Megabyte
 	EN	Number of MegaBytes
@@ -524,7 +524,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	CS	Když se změní databáze vašeho MusicIP, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Lyrion Music Server čekat před znovunačítáním vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
+	CS	Když se změní databáze vašeho MusicIP, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Lyrion Music Server čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Lyrion Music Server. Hvis værdien er 0, genindlæses den ikke.
 	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your MusicIP Database changes, Lyrion Music Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that Lyrion Music Server will wait before reloading your MusicIP Database again. A value of zero disables the reload.
@@ -558,7 +558,7 @@ SETUP_MMSPORT
 	ZH_CN	MusicIP HTTP端口
 
 SETUP_MMSPORT_DESC
-	CS	API služby MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení Mixéru Music IP.
+	CS	API služby MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení MusicIP Mixer.
 	DA	I grænsesnittet til MusicIP-tjenesten kan man definere en http-port der skal bruges ved forespørgsler til MusicIP. Her skal du angive det portnummer som svarer til det du valgte i indstillingerne for MusicIP Mixer.
 	DE	Mit dem MusicIP Service API können Sie einen HTTP-Anschluss für Anfragen an das MusicIP API auswählen. Geben Sie dieselbe Anschlussnummer wie in MusicIP Mixer ein.
 	EN	The MusicIP Service API allows the selection of an http port to use for queries to the MusicIP API. Enter the port number here to match the setting you have chosen in MusicIP Mixer settings.
@@ -592,7 +592,7 @@ MUSICMAGIC_MIX
 	ZH_CN	MusicIP混音
 
 MUSICMAGIC_MOODS
-	CS	MusicIP Mood Mix (Mix Music IP podle nálady)
+	CS	MusicIP Mood Mix (podle nálady)
 	DA	MusicIP Mood Mix
 	DE	MusicIP-Stimmungs-Mix
 	EN	MusicIP Mood Mix
@@ -609,7 +609,7 @@ MUSICMAGIC_MOODS
 	ZH_CN	MusicIP气氛混音
 
 DEBUG_PLUGIN_MUSICIP
-	CS	Protokolování MusicIP Mix a Exportu
+	CS	Protokolování MusicIP mixu a Exportu
 	DA	Logføring af MusicIP Mix og eksport
 	DE	MusicIP-Mix & Export
 	EN	MusicIP Mix & Export Logging
@@ -624,7 +624,7 @@ DEBUG_PLUGIN_MUSICIP
 	SV	MusicIP Mix och exportloggning
 
 MUSICIP_PROGRESS
-	CS	Import Music IP
+	CS	Import MusicIP
 	DA	MusicIP: Import
 	DE	MusicIP-Import
 	EN	MusicIP Import
@@ -654,7 +654,7 @@ MUSICIP_PLAYTHISMIX
 	SV	Spela upp den här mixen
 
 MUSICIP_CREATEMIX
-	CS	Vytvořit MusicIP Mix
+	CS	Vytvořit MusicIP mix
 	DA	Opret MusicIP Mix
 	DE	MusicIP-Mix erstellen
 	EN	Create MusicIP Mix

@@ -59,4 +59,3 @@ SETUP_CLI_OVER_RS232_ENABLE
 	PL	Włącz
 	RU	Включить
 	SV	Aktivera
-

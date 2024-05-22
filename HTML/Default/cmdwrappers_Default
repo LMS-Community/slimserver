@@ -1,5 +1,7 @@
 [%- FILTER null %]
 	[% debug = 0 %]
+	[% skinPadding = 0 %]
+	[% mainFooter = 0 %]
 	[% USE Math %]
 	[% USE OnlineServices %]
 

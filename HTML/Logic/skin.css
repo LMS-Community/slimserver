@@ -1,0 +1,70 @@
+html, body, tr, tr, p, div, li, input, ul, .x-btn-text, .x-tip .x-tip-body, select, .x-menu-list-item, .x-btn button,
+#ctrlPlaytimeCollapsed, #ctrlCurrentSongInfoCollapsed, #ctrlCurrentSongInfoCollapsed a {
+	font-size: 11px;
+}
+
+/* the above are copy/pasted from Default, here are specific overrides */
+.x-form-field, .x-combo-list-item, .menu-title {
+	font-size: 11px;
+}
+
+#squeezeboxLogo {
+	left: 20px;
+}
+
+#playerChooser {
+	right: 15px;
+}
+
+#noJS {
+	position: absolute;
+	background-color: white;
+	z-index: 20002;
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
+}
+
+#loading-mask {
+	width: 120%;
+	height: 100%;
+	background: radial-gradient(ellipse at bottom, #00918d 0%,#000000 100%);
+	position: absolute;
+	z-index: 20000;
+	left: 0;
+	top: 0;
+}
+
+div#background {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	z-index: -1;
+	background: radial-gradient(ellipse farthest-side at bottom, #00918d 0%,#000000 100%);
+	border-radius: 15px;
+}
+
+#ctrlCurrentTitle {
+	height: 30px;
+}
+
+#inner_header .inner_top, .inner_top, .inner_bottom {
+	height: 12px;
+}
+
+.inner_top {
+	border-radius: 12px 12px 0 0;
+}
+
+.inner_bottom {
+	border-radius: 0 0 12px 12px;
+}
+
+#btn_help_image, #btn_settings_image {
+	background-image: url('html/images/btn_help.gif');
+	mask-image: none;
+	background-color: transparent;
+}
+
+#btn_settings_image {
+	background-image: url('html/images/btn_settings.gif');
+}
+

@@ -32,7 +32,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
-	CS	TuneIn Radio - Místní internetové rádio
+	CS	TuneIn Radio – Místní internetové rádio
 	DA	TuneIn Radio - lokal internetradio
 	DE	TuneIn Radio - Lokale Internetradiosender
 	EN	TuneIn Radio - Local Internet Radio
@@ -168,7 +168,7 @@ RADIOTIME_MUSIC
 	SV	Musik
 
 RADIOTIME_NEWS
-	CS	Novinky
+	CS	Zprávy
 	DA	Nyheder
 	DE	Nachrichten
 	EN	News
@@ -213,7 +213,7 @@ RADIOTIME_SEARCH
 	SV	Sök på TuneIn
 
 RADIOTIME_SPORTS
-	CS	Sportovní
+	CS	Sport
 	DA	Sport
 	DE	Sport
 	EN	Sports
@@ -228,7 +228,7 @@ RADIOTIME_SPORTS
 	SV	Sport
 
 RADIOTIME_TALK
-	CS	Mluvit
+	CS	Mluvené slovo
 	DA	Tale
 	DE	Talksendungen
 	EN	Talk
@@ -276,4 +276,3 @@ PLUGIN_RADIOTIME_USERNAME
 	RU	Имя пользователя
 	SV	Användarnamn
 	ZH_CN	用户名
-

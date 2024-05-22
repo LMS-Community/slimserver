@@ -30,4 +30,3 @@ SLIMTRIS_DESC
 	PL	Tetris dla urządzenia Squeezebox lub Transporter!
 	RU	Тетрис для Squeezebox или Transporter!
 	SV	Tetris för Squeezebox eller Transporter!
-
