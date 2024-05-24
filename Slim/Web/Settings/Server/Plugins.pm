@@ -118,28 +118,26 @@ sub handler {
 		$prefs->set('plugin', $plugin) if $changed;
 	}
 
-	# get plugin info from defined repos
-	my $repos = Slim::Utils::PluginRepoManager->repos;
+	my $data = { results => {}, errors => {} };
 
-	my $data = { remaining => scalar keys %$repos, results => {}, errors => {} };
+	Slim::Utils::PluginRepoManager::getAllPluginRepos({
+		details => 1,
+		stepCb  => sub {
+			my ($res, $info, $weight) = @_;
 
-	for my $repo (keys %$repos) {
-		Slim::Utils::PluginRepoManager::getExtensions({
-			'name'   => $repo,
-			'type'   => 'plugin',
-			'target' => Slim::Utils::OSDetect::OS(),
-			'version'=> $::VERSION,
-			'lang'   => $Slim::Utils::Strings::currentLang,
-			'details'=> 1,
-			'cb'     => \&_getReposCB,
-			'pt'     => [ $class, $client, $params, $callback, \@args, $data, $repos->{$repo} ],
-			'onError'=> sub { $data->{'errors'}->{ $_[0] } = $_[1] },
-		});
-	}
-
-	if (!keys %$repos) {
-		_getReposCB( $class, $client, $params, $callback, \@args, $data, undef, {}, {} );
-	}
+			if (scalar @{$res || []}) {
+				$data->{results}->{$info->{name}} = {
+					title   => $info->{title},
+					entries => $res,
+					weight  => $weight || 1,
+				};
+			}
+		},
+		cb => sub {
+			$callback->($client, $params, $class->_addInfo($client, $params, $data), @args);
+		},
+		onError => sub { $data->{errors}->{$_[0]} = $_[1] },
+	});
 }
 
 sub getRestartMessage {
@@ -193,46 +191,6 @@ sub _restartServer {
 	} else {
 
 		main::restartServer();
-	}
-}
-
-sub _getReposCB {
-	my ($class, $client, $params, $callback, $args, $data, $weight, $res, $info) = @_;
-
-	if (scalar @$res) {
-
-		$data->{'results'}->{ $info->{'name'} } = {
-			'title'   => $info->{'title'},
-			'entries' => $res,
-			'weight'  => $weight,
-		};
-	}
-
-	if ( --$data->{'remaining'} <= 0 ) {
-
-		my $pageInfo = $class->_addInfo($client, $params, $data);
-
-		my $finalize;
-		my $timeout = Time::HiRes::time() + MAX_DOWNLOAD_WAIT;
-
-		$finalize = sub {
-			Slim::Utils::Timers::killTimers(undef, $finalize);
-
-			# if a plugin is still being downloaded, wait a bit longer, or the user might restart the server before we're done
-			if ( Time::HiRes::time() <= $timeout && Slim::Utils::PluginDownloader->downloading ) {
-				Slim::Utils::Timers::setTimer(undef, time() + 1, $finalize);
-
-				main::DEBUGLOG && $log->is_debug && $log->debug("PluginDownloader is still busy - waiting a little longer...");
-				return;
-			}
-			elsif ( Time::HiRes::time() > $timeout ) {
-				$log->warn("Plugin download timed out");
-			}
-
-			$callback->($client, $params, $pageInfo, @$args);
-		};
-
-		$finalize->();
 	}
 }
 
@@ -414,6 +372,8 @@ sub prepareDetails {
 			$_->{icon} = 'html/images/' . ($_->{category} || 'misc') . '.svg';
 			$_->{fallbackIcon} = 1;
 		}
+
+		$_->{creator} = join(', ', @{$_->{creator}}) if ref $_->{creator};
 
 		if (!$searchData->{$_->{name}}) {
 			$searchData->{$_->{name}} = {

@@ -178,7 +178,7 @@ sub repos {
 
 sub initUnsupportedRepo {
 	if ($prefs->get('useUnsupported')) {
-		$repos{$UNSUPPORTED_REPO} = 1;
+		$repos{$UNSUPPORTED_REPO} = 2;
 	}
 	else {
 		delete $repos{$UNSUPPORTED_REPO};
@@ -198,60 +198,35 @@ sub appsQuery {
 
 	my $args = $request->getParam('args');
 
-	my $data = { remaining => scalar keys %repos, results => [] };
+	$request->setStatusProcessing();
 
-	for my $repo (keys %repos) {
+	my $data = { results => [] };
 
-		getExtensions({
-			'name'   => $repo,
-			'type'   => $args->{'type'},
-			'target' => $args->{'targetPlat'} || Slim::Utils::OSDetect::OS(),
-			'version'=> $args->{'targetVers'} || $::VERSION,
-			'lang'   => $args->{'lang'} || $Slim::Utils::Strings::currentLang,
-			'details'=> $args->{'details'},
-			'cb'     => \&_appsQueryCB,
-			'pt'     => [ $request, $data ],
-		});
-	}
+	Slim::Utils::PluginRepoManager::getAllPluginRepos({
+		details => $args->{details},
+		stepCb  => sub {
+			my ($res, $info, $weight) = @_;
+			push @{$data->{results}}, @{$res || []};
+		},
+		cb => sub {
+			my $actions = findUpdates($data->{results}, $args->{current}, $prefs->get($args->{type}) || {}, $args->{details});
 
-	if (!scalar keys %repos) {
+			if ($prefs->get('auto')) {
 
-		_appsQueryCB($request, $data, []);
-	}
+				$request->addResult('actions', $actions);
 
-	if (!$request->isStatusDone()) {
+			} elsif ($args->{details}) {
 
-		$request->setStatusProcessing();
-	}
-}
+				$request->addResult('updates', $actions);
 
-sub _appsQueryCB {
-	my $request = shift;
-	my $data    = shift;
-	my $res     = shift;
+			} else {
 
-	push @{$data->{'results'}}, @$res;
+				$request->addResult('updates', join(',', keys %$actions));
+			}
 
-	return if (--$data->{'remaining'} > 0);
-
-	my $args = $request->getParam('args');
-
-	my $actions = findUpdates($data->{'results'}, $args->{'current'}, $prefs->get($args->{'type'}) || {}, $args->{'details'});
-
-	if ($prefs->get('auto')) {
-
-		$request->addResult('actions', $actions);
-
-	} elsif ($args->{'details'}) {
-
-		$request->addResult('updates', $actions);
-
-	} else {
-
-		$request->addResult('updates', join(',', keys %$actions));
-	}
-
-	$request->setStatusDone();
+			$request->setStatusDone();
+		},
+	});
 }
 
 sub getCurrentPlugins {
@@ -368,6 +343,33 @@ sub findUpdates {
 	return $actions;
 }
 
+sub getAllPluginRepos {
+	my $args = shift;
+
+	Async::Util::amap(
+		inputs => [ keys %repos ],
+		action => sub {
+			my ($repo, $cb) = @_;
+
+			getExtensions({
+				name   => $repo,
+				type   => 'plugin',
+				details => $args->{details},
+				cb     => sub {
+					my ($res, $info) = @_;
+					$args->{stepCb}->($res, $info, $repos{$repo}) if $args->{stepCb};
+					$cb->($res);
+				},
+			});
+		},
+		cb => sub {
+			my ($repoData, $err) = @_;
+			$log->error($err) if $err;
+			$args->{cb}->($repoData) if $args->{cb};
+		}
+	);
+}
+
 sub getExtensions {
 	my $args = shift;
 
@@ -451,8 +453,8 @@ sub _parseXML {
 
 	my $type    = $args->{'type'};
 	my $target  = $args->{'target'};
-	my $version = $args->{'version'};
-	my $lang    = $args->{'lang'};
+	my $version = $args->{'version'} || $::VERSION;
+	my $lang    = $args->{'lang'} || $Slim::Utils::Strings::currentLang;
 	my $details = $args->{'details'};
 
 	my $targetRE = $target ? qr/$target/ : undef;

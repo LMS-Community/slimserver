@@ -191,8 +191,11 @@ sub init {
 sub load {
 	my $class = shift;
 	my $moduleType = shift || '';
+	my @pluginList = @_;
 
-	for my $name (sort keys %$plugins) {
+	@pluginList = sort keys %$plugins unless scalar @pluginList;
+
+	for my $name (@pluginList) {
 
 		my $state = $prefs->get($name);
 
