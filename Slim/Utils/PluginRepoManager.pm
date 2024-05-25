@@ -82,6 +82,7 @@ package Slim::Utils::PluginRepoManager;
 
 use strict;
 
+use Async::Util;
 use XML::Simple;
 
 use Slim::Control::Jive;
