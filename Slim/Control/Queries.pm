@@ -753,7 +753,7 @@ sub albumsQuery {
 			if ( defined $work ) {
 				my @roles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
 				$contributorSql = sprintf( qq{
-					WITH temp AS (
+					SELECT GROUP_CONCAT(DISTINCT c.name) AS name, GROUP_CONCAT(DISTINCT c.id) AS id FROM (
 						SELECT
 							CASE
 								WHEN contributor_track.role = 1 THEN 'ARTIST'
@@ -769,8 +769,7 @@ sub albumsQuery {
 							AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
 						GROUP BY contributor_track.role
 						ORDER BY role
-					)
-					SELECT GROUP_CONCAT(DISTINCT name) AS name, GROUP_CONCAT(DISTINCT id) AS id FROM temp
+					) as c
 				},
 				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles));
 			} else {

@@ -58,14 +58,16 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 };
 
 use constant SQL_CREATE_WORK_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-	
-		WITH temp(id,w3) AS (
+	DROP TABLE IF EXISTS worktemp;
+
+	CREATE TEMPORARY TABLE worktemp(id,w3) as (
 			SELECT tracks.id, UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track'))
 			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id
 			GROUP BY tracks.id
-		)
-	
+		);
+
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		
 		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(works.title, '')) || ' ' || IFNULL(works.titlesearch, '') || ' ' || IFNULL(contributors.namesearch, '')),
@@ -79,7 +81,7 @@ use constant SQL_CREATE_WORK_ITEM => q{
 		FROM works
 		LEFT JOIN contributors ON contributors.id = works.composer
 		LEFT JOIN tracks ON works.id = tracks.work
-		JOIN temp on tracks.id = temp.id
+		JOIN worktemp on tracks.id = worktemp.id
 
 		%s
 
@@ -560,7 +562,9 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for works");
 	$progress && $progress->update(string('WORKS'));
 	Slim::Schema->forceCommit if main::SCANNER;
+$log->error("DK start work fulltext");
 	$sql = sprintf(SQL_CREATE_WORK_ITEM, '', '');
+$log->error("DK end work fulltext");
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
