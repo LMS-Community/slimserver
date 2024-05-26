@@ -204,6 +204,10 @@ sub appsQuery {
 	my $data = { results => [] };
 
 	Slim::Utils::PluginRepoManager::getAllPluginRepos({
+		type    => $args->{type},
+		target  => $args->{targetPlat} || Slim::Utils::OSDetect::OS(),
+		version => $args->{tarcgetVers} || $::VERSION,
+		lang    => $args->{lang} || $Slim::Utils::Strings::currentLang,
 		details => $args->{details},
 		stepCb  => sub {
 			my ($res, $info, $weight) = @_;
@@ -353,10 +357,13 @@ sub getAllPluginRepos {
 			my ($repo, $cb) = @_;
 
 			getExtensions({
-				name   => $repo,
-				type   => 'plugin',
+				name    => $repo,
+				type    => $args->{type},
+				target  => $args->{target} || Slim::Utils::OSDetect::OS(),
+				version => $args->{version} || $::VERSION,
+				lang    => $args->{lang} || $Slim::Utils::Strings::currentLang,
 				details => $args->{details},
-				cb     => sub {
+				cb      => sub {
 					my ($res, $info) = @_;
 					$args->{stepCb}->($res, $info, $repos{$repo}) if $args->{stepCb};
 					$cb->($res);

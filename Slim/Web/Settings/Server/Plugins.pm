@@ -122,6 +122,7 @@ sub handler {
 
 	Slim::Utils::PluginRepoManager::getAllPluginRepos({
 		details => 1,
+		type    => 'plugin',
 		stepCb  => sub {
 			my ($res, $info, $weight) = @_;
 
