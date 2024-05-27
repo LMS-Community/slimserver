@@ -57,29 +57,34 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		GROUP BY tracks.id;
 };
 
+use constant SQL_DROP_WORKTEMP => q{
+	DROP TABLE IF EXISTS worktemp;
+};
+
+use constant SQL_CREATE_WORKTEMP => q{
+	CREATE TEMPORARY TABLE worktemp AS
+			SELECT tracks.id AS id, UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track')) AS w3
+			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id
+			GROUP BY tracks.id;
+};
+
 use constant SQL_CREATE_WORK_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-	
-		WITH temp(id,w3) AS (
-			SELECT tracks.id, UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track'))
-			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id
-			GROUP BY tracks.id
-		)
-	
+		
 		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(works.title, '')) || ' ' || IFNULL(works.titlesearch, '') || ' ' || IFNULL(contributors.namesearch, '')),
 		-- weight 5
 		UNIQUE_TOKENS(IFNULL(tracks.year, '')),
 		-- weight 3
-		UNIQUE_TOKENS(GROUP_CONCAT(temp.w3, ' ')),
+		UNIQUE_TOKENS(GROUP_CONCAT(worktemp.w3, ' ')),
 		-- weight 1
 		''
 
 		FROM works
 		LEFT JOIN contributors ON contributors.id = works.composer
 		LEFT JOIN tracks ON works.id = tracks.work
-		JOIN temp on tracks.id = temp.id
+		JOIN worktemp on tracks.id = worktemp.id
 
 		%s
 
@@ -560,6 +565,8 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for works");
 	$progress && $progress->update(string('WORKS'));
 	Slim::Schema->forceCommit if main::SCANNER;
+	$dbh->do(SQL_DROP_WORKTEMP) or $scanlog->error($dbh->errstr);
+	$dbh->do(SQL_CREATE_WORKTEMP) or $scanlog->error($dbh->errstr);
 	$sql = sprintf(SQL_CREATE_WORK_ITEM, '', '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
