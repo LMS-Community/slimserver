@@ -565,10 +565,8 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for works");
 	$progress && $progress->update(string('WORKS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$sql = SQL_DROP_WORKTEMP;
-	$dbh->do($sql) or $scanlog->error($dbh->errstr);
-	$sql = SQL_CREATE_WORKTEMP;
-	$dbh->do($sql) or $scanlog->error($dbh->errstr);
+	$dbh->do(SQL_DROP_WORKTEMP) or $scanlog->error($dbh->errstr);
+	$dbh->do(SQL_CREATE_WORKTEMP) or $scanlog->error($dbh->errstr);
 	$sql = sprintf(SQL_CREATE_WORK_ITEM, '', '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
