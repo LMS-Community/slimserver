@@ -368,12 +368,31 @@ sub getAllPluginRepos {
 					$args->{stepCb}->($res, $info, $repos{$repo}) if $args->{stepCb};
 					$cb->($res);
 				},
+				onError => $args->{onError},
 			});
 		},
 		cb => sub {
 			my ($repoData, $err) = @_;
 			$log->error($err) if $err;
-			$args->{cb}->($repoData) if $args->{cb};
+
+			if ($args->{cb}) {
+				my $max = {};
+
+				my @repoData = grep {
+					# prune out duplicate entries, favour higher version numbers
+					$_->{version} eq $max->{$_->{name}};
+				} map {
+					# find the higher version numbers
+					my $n = $_->{name};
+					my $v = $_->{version};
+
+					$max->{$n} = $v if !$max->{$n} || Slim::Utils::Versions->compareVersions($v, $max->{$n}) > 0;
+
+					$_;
+				} map { @$_ } @$repoData;
+
+				$args->{cb}->(\@repoData, $err);
+			}
 		}
 	);
 }
@@ -385,13 +404,13 @@ sub getExtensions {
 
 	if ( my $cached = $cache->get( $args->{'name'} . '_XML' ) ) {
 
-		main::DEBUGLOG && $log->debug("using cached extensions xml $args->{name}");
+		main::INFOLOG && $log->is_info && $log->info("using cached extensions xml $args->{name}");
 
 		_parseXML($args, $cached);
 
 	} else {
 
-		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
+		main::INFOLOG && $log->is_info && $log->info("fetching extensions xml $args->{name}");
 
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse,

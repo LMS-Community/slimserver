@@ -271,7 +271,7 @@ sub _addInfo {
 		}
 	}
 
-	# prune out duplicate entries, favour favour higher version numbers
+	# prune out duplicate entries, favour higher version numbers
 
 	# pass 1 - find the higher version numbers
 	my $max = {};
