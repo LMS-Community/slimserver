@@ -1747,10 +1747,11 @@ sub _tracks {
 	}
 
 	$tags .= 'k' if $pt->{'wantMetadata'};
-	my $titleFormat = Slim::Music::Info::standardTitleFormat($client);
-	$tags .= 'b' if $titleFormat =~ /\bWORK\b/;
-	$tags .= 'h' if $titleFormat =~ /\bGROUPING\b/;
-	$tags .= 'z' if $titleFormat =~ /\bSUBTITLE\b/;
+	my $titleFormatPlayer = Slim::Music::Info::standardTitleFormat($client);
+	my $titleFormatWeb = Slim::Music::Info::standardTitleFormat();
+	$tags .= 'b' if $titleFormatPlayer =~ /\bWORK\b/ || $titleFormatWeb =~ /\bWORK\b/;
+	$tags .= 'h' if $titleFormatPlayer =~ /\bGROUPING\b/ || $titleFormatWeb =~ /\bGROUPING\b/;
+	$tags .= 'z' if $titleFormatPlayer =~ /\bSUBTITLE\b/ || $titleFormatWeb =~ /\bSUBTITLE\b/;
 
 	my ($addAlbumToName2, $addArtistToName2);
 	if ($addAlbumToName2  = !(grep {/album_id:/} @searchTags)) {
