@@ -271,7 +271,7 @@ sub getCurrentPlugins {
 			homepage=> $entry->{'homepageURL'},
 			version => $entry->{'version'},
 			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
-			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
+			installType => $entry->{'basedir'} !~ /InstalledPlugins/ ? 'manual' : 'install',
 			enforce => $entry->{'enforce'},
 		};
 
@@ -279,7 +279,7 @@ sub getCurrentPlugins {
 
 			push @active, $entry;
 
-			if (!$entry->{'manual'}) {
+			if (!$entry->{ installType } eq 'manual') {
 				$current->{ $plugin } = $entry->{'version'};
 			}
 
