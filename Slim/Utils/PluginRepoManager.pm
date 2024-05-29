@@ -69,6 +69,7 @@ package Slim::Utils::PluginRepoManager;
 # link       - (plugin only) url for web page describing the plugin in more detail
 # creator    - identify of author(s)
 # category   - a category under which to group the plugin
+# icon       - a public URL to the plugin icon, to be shown in the plugin manager
 # email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
