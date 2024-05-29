@@ -16,7 +16,7 @@
 			<div class="pluginItem">
 				<div>
 					[% pluginIcon = plugin.icon %]
-					[% IF !pluginIcon.match("^http"); pluginIcon = webroot _ pluginIcon; END; %]
+					[% IF !pluginIcon.match("^http|^data:image"); pluginIcon = webroot _ pluginIcon; END; %]
 					<div>
 						<img src="[% pluginIcon | resizeimage(iconSize,iconSize) %]" [% IF plugin.fallbackIcon %]class="pluginFallbackIcon"[% ELSE %]srcset="[% pluginIcon | resizeimage(iconSize*2,iconSize*2) %] 2x"[% END %] onerror="this.onerror = null; console.log(this.src); this.classList.add('pluginFallbackIcon'); this.src = '/html/images/misc.svg'; if (this.srcset) this.srcset = '/html/images/misc.svg'">
 						<label for="[% pluginName %]">
