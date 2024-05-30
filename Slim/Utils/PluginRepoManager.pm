@@ -280,7 +280,7 @@ sub getCurrentPlugins {
 
 			push @active, $entry;
 
-			if (!$entry->{ installType } eq 'manual') {
+			if ($entry->{ installType } ne 'manual') {
 				$current->{ $plugin } = $entry->{'version'};
 			}
 
