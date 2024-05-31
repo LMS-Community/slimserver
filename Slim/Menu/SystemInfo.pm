@@ -366,12 +366,12 @@ sub infoPerl {
 
 		{
 			type => 'text',
-			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'BLANK')),
+			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'UNK')),
 		},
 
 		{
 			type => 'text',
-			name => 'Mozilla::CA' . cstring($client, 'COLON') . ' ' . $Mozilla::CA::VERSION,
+			name => 'Mozilla::CA' . cstring($client, 'COLON') . ' ' . ($Mozilla::CA::VERSION || cstring($client, 'UNK')),
 		},
 
 		{
