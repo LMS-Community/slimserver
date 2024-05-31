@@ -25,7 +25,7 @@
 						</label>
 					</div>
 					[% IF type != 'update' %]
-						<input name="[% plugin.installType %]:[% plugin.name %]" type="hidden" />
+						<input name="[% plugin.installType || 'install' %]:[% plugin.name %]" type="hidden" />
 					[% END %]
 				</div>
 				<div>
