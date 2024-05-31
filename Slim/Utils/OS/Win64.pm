@@ -58,7 +58,7 @@ sub runService { if ($main::daemon) {
 	my $state;
 	while ( SERVICE_STOPPED != ($state = Win32::Daemon::State()) ) {
 		if ( SERVICE_START_PENDING == $state ) {
-			main::INFOLOG && $log->is_info && $log->info("Starting Windows Service...");
+			main::INFOLOG && $log->is_info && $log->info("Running Windows Service...");
 			$class->{osDetails}->{runningAsService} = 1;
 			Win32::Daemon::State( SERVICE_RUNNING );
 		}
