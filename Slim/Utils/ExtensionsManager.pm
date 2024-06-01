@@ -1,8 +1,23 @@
-package Slim::Utils::PluginRepoManager;
+package Slim::Utils::ExtensionsManager;
+
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+# The Extensions Manager deals with Extensions Repositories. These can be plugins, applets,
+# wallpapers, or sounds. In the case of plugins it's tightly integrated with the Plugins
+# Manager and the Plugins Downloader.
+
+# The Extensions Manager keeps track of the list of extensions it has enabled. In the case
+# of plugins this can be confusing, as the Plugin Manager keeps its own state. But that
+# latter does so for all plugins, installed using the Extensions Manager or not. Therefore
+# we unfortunately have to deal with these two states.
 
 # Repository XML format:
 #
-# Each repository file may contain entries for applets, wallpapers, sounds (and in future plugins):
+# Each repository file may contain entries for applets, wallpapers, sounds, plugins:
 #
 # The xml structure is of the following format:
 #
@@ -86,7 +101,6 @@ use strict;
 use Async::Util;
 use XML::Simple;
 
-use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -158,6 +172,10 @@ sub addRepo {
 
 	$repos{$repo} = $weight;
 
+	if (!grep { $_ eq $repo } @{$class->repos}) {
+		$prefs->set('repos', [ @{$class->repos}, $repo ]);
+	}
+
 	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions, 'user');
 }
 
@@ -171,11 +189,17 @@ sub removeRepo {
 
 	delete $repos{$repo};
 
+	$prefs->set('repos', [
+		grep {
+			$_ ne $repo
+		} @{$class->repos()}
+	]);
+
 	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
 }
 
 sub repos {
-	return \%repos;
+	return $prefs->get('repos') || [];
 }
 
 sub initUnsupportedRepo {
@@ -185,6 +209,42 @@ sub initUnsupportedRepo {
 	else {
 		delete $repos{$UNSUPPORTED_REPO};
 	}
+}
+
+sub useUnsupported {
+	my ($class, $newValue) = @_;
+
+	if (defined $newValue) {
+		$prefs->set('useUnsupported', $newValue || 0);
+	}
+
+	$prefs->get('useUnsupported') ;
+}
+
+sub autoUpdate {
+	my ($class, $newValue) = @_;
+
+	if (defined $newValue) {
+		$prefs->set('auto', $newValue ? 1 : 0);
+	}
+
+	$prefs->get('auto') ;
+}
+
+sub enablePlugin {
+	my ($class, $plugin) = @_;
+
+	my $plugins = $prefs->get('plugin');
+	$plugins->{$plugin} = 1;
+	$prefs->set('plugin', $plugins);
+}
+
+sub disablePlugin {
+	my ($class, $plugin) = @_;
+
+	my $plugins = $prefs->get('plugin');
+	delete $plugins->{$plugin};
+	$prefs->set('plugin', $plugins);
 }
 
 # This query compares the list of provided apps to the policy setting for apps which should be installed
@@ -204,7 +264,7 @@ sub appsQuery {
 
 	my $data = { results => [] };
 
-	Slim::Utils::PluginRepoManager::getAllPluginRepos({
+	getAllPluginRepos({
 		type    => $args->{type},
 		target  => $args->{targetPlat} || Slim::Utils::OSDetect::OS(),
 		version => $args->{tarcgetVers} || $::VERSION,
@@ -215,7 +275,7 @@ sub appsQuery {
 			push @{$data->{results}}, @{$res || []};
 		},
 		cb => sub {
-			my $actions = findUpdates($data->{results}, $args->{current}, $prefs->get($args->{type}) || {}, $args->{details});
+			my $actions = findUpdates($data->{results}, $args->{current}, $args->{type}, $args->{details});
 
 			if ($prefs->get('auto')) {
 
@@ -298,10 +358,12 @@ sub getCurrentPlugins {
 sub findUpdates {
 	my $results = shift;
 	my $current = shift;
-	my $install = shift || {};
+	my $type    = shift;
 	my $info    = shift;
 	my $apps    = {};
 	my $actions = {};
+
+	my $install = $prefs->get($type) || {};
 
 	# find the latest version of each app we are interested in installing
 	for my $res (@$results) {
@@ -590,13 +652,25 @@ sub _parseXML {
 1;
 
 
+package Slim::Utils::PluginRepoManager;
+
+my $warned;
+
+sub getCurrentPlugins {
+	Slim::Utils::Log::logBacktrace("Slim::Utils::PluginRepoManager doesn't exist any more. Please use Slim::Utils::ExtensionsManager instead.") if !$warned++;
+	return Slim::Utils::ExtensionsManager::getCurrentPlugins(@_);
+}
+
+1;
+
+
 package Slim::Plugin::Extensions::Plugin;
 
 my $warned;
 
 sub getCurrentPlugins {
-	Slim::Utils::Log::logBacktrace("Slim::Plugin::Extensions doesn't exist any more. Please use Slim::Utils::PluginRepoManager instead.") if !$warned++;
-	return Slim::Utils::PluginRepoManager::getCurrentPlugins(@_);
+	Slim::Utils::Log::logBacktrace("Slim::Plugin::Extensions doesn't exist any more. Please use Slim::Utils::ExtensionsManager instead.") if !$warned++;
+	return Slim::Utils::ExtensionsManager::getCurrentPlugins(@_);
 }
 
 1;

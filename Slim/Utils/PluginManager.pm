@@ -19,6 +19,7 @@ use XML::Simple;
 use YAML::XS;
 use Config;
 
+use Slim::Utils::ExtensionsManager;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -30,7 +31,6 @@ my $log   = logger('server.plugins');
 
 my $prefs = preferences('plugin.state'); # per plugin state or pending state
 # valid states: disabled, enabled, needs-enable, needs-disable, needs-install, needs-uninstall
-my $extensionMgrPrefs = preferences('plugin.extensions');
 
 my $plugins   = {};
 my $loaded    = {};
@@ -802,7 +802,7 @@ sub _checkPluginVersion {
 	my $max = $manifest->{'targetApplication'}->{'maxVersion'};
 
 	# user can decide to go crazy and ignore the maxVersion
-	$max = '*' if $extensionMgrPrefs->get('useUnsupported');
+	$max = '*' if Slim::Utils::ExtensionsManager->useUnsupported();
 
 	# Didn't match the version? Next..
 	if (!Slim::Utils::Versions->checkVersion($::VERSION, $min, $max)) {

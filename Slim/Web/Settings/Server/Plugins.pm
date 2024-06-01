@@ -16,19 +16,17 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
-use Slim::Utils::PluginRepoManager;
+use Slim::Utils::ExtensionsManager;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(cstring);
 
-Slim::Utils::PluginRepoManager->init();
+Slim::Utils::ExtensionsManager->init();
 
 use constant MAX_DOWNLOAD_WAIT => 30;
 use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');
-my $prefs = preferences('plugin.extensions');
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret'), time() )->hexdigest;
-
 
 sub new {
 	my $class = shift;
@@ -63,64 +61,43 @@ sub handler {
 
 		# handle changes to auto mode
 
-		my $auto = $params->{'auto'} ? 1 : 0;
-		$prefs->set('auto', $auto) if $auto != $prefs->get('auto');
-
-		my $useUnsupported = $params->{'useUnsupported'} ? 1 : 0;
-		$prefs->set('useUnsupported', $useUnsupported) if $useUnsupported != $prefs->get('useUnsupported');
+		Slim::Utils::ExtensionsManager->autoUpdate($params->{'auto'} || 0);
+		Slim::Utils::ExtensionsManager->useUnsupported($params->{'useUnsupported'} || 0);
 
 		# handle changes to repos
 
 		my @new = grep { $_ =~ /^https?:\/\/.*\.xml/ } (ref $params->{'repos'} eq 'ARRAY' ? @{$params->{'repos'}} : $params->{'repos'});
 
-		my %current = map { $_ => 1 } @{ $prefs->get('repos') || [] };
+		my %current = map { $_ => 1 } @{ Slim::Utils::ExtensionsManager->repos() };
 		my %new     = map { $_ => 1 } @new;
-		my $changed;
 
-		for my $repo (keys %new) {
+		for my $repo (@new) {
 			if (!$current{$repo}) {
-				Slim::Utils::PluginRepoManager->addRepo({ repo => $repo });
-				$changed = 1;
+				Slim::Utils::ExtensionsManager->addRepo({ repo => $repo });
 			}
 		}
 
 		for my $repo (keys %current) {
 			if (!$new{$repo}) {
-				Slim::Utils::PluginRepoManager->removeRepo({ repo => $repo });
-				$changed = 1;
+				Slim::Utils::ExtensionsManager->removeRepo({ repo => $repo });
 			}
 		}
 
-		$prefs->set('repos', \@new) if $changed;
-
 		# set policy for which plugins are installed/uninstalled etc
-
-		my $plugin = $prefs->get('plugin');
-		undef $changed;
-
 		for my $param (keys %$params) {
-
 			if ($param =~ /^manual:(.*)/) {
 				$params->{$1} ? Slim::Utils::PluginManager->enablePlugin($1) : Slim::Utils::PluginManager->disablePlugin($1);
 			}
 
 			if ($param =~ /^install:(.*)/) {
-				if ($params->{$1} && !$plugin->{$1}) {
-					$plugin->{$1} = 1;
-					$changed = 1;
-				} elsif (!$params->{$1} && $plugin->{$1}) {
-					delete $plugin->{$1};
-					$changed = 1;
-				}
+				$params->{$1} ? Slim::Utils::ExtensionsManager->enablePlugin($1) : Slim::Utils::ExtensionsManager->disablePlugin($1);
 			}
 		}
-
-		$prefs->set('plugin', $plugin) if $changed;
 	}
 
 	my $data = { results => {}, errors => {} };
 
-	Slim::Utils::PluginRepoManager::getAllPluginRepos({
+	Slim::Utils::ExtensionsManager::getAllPluginRepos({
 		details => 1,
 		type    => 'plugin',
 		stepCb  => sub {
@@ -198,7 +175,7 @@ sub _restartServer {
 sub _addInfo {
 	my ($class, $client, $params, $data) = @_;
 
-	my ($current, $active, $inactive, $hide) = Slim::Utils::PluginRepoManager::getCurrentPlugins();
+	my ($current, $active, $inactive, $hide) = Slim::Utils::ExtensionsManager::getCurrentPlugins();
 
 	my @results = sort { $a->{'weight'} !=  $b->{'weight'} ?
 						 $a->{'weight'} <=> $b->{'weight'} :
@@ -212,7 +189,7 @@ sub _addInfo {
 
 	# find update actions and handle
 
-	my $actions = Slim::Utils::PluginRepoManager::findUpdates(\@res, $current, $prefs->get('plugin'), 'info');
+	my $actions = Slim::Utils::ExtensionsManager::findUpdates(\@res, $current, 'plugin', 'info');
 	my @updates;
 
 	for my $plugin (keys %$actions) {
@@ -239,7 +216,7 @@ sub _addInfo {
 				# plugin already installed, this is an update
 
 				# install update now if in auto mode or if explicitly selected
-				if ($prefs->get('auto') ||
+				if (Slim::Utils::ExtensionsManager->autoUpdate ||
 					($params->{'saveSettings'} && exists $params->{"update:$plugin"}) ) {
 
 					main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
@@ -299,7 +276,7 @@ sub _addInfo {
 		}
 	}
 
-	my @repos = ( @{$prefs->get('repos')}, '' );
+	my @repos = ( @{Slim::Utils::ExtensionsManager->repos()}, '' );
 
 	my $searchData = {};
 	my $categories = {};
@@ -328,9 +305,9 @@ sub _addInfo {
 	$params->{'inactive'} = $inactive;
 	$params->{'avail'}    = \@results;
 	$params->{'repos'}    = \@repos;
-	$params->{'auto'}     = $prefs->get('auto');
+	$params->{'auto'}     = Slim::Utils::ExtensionsManager->autoUpdate();
 	$params->{'rand'}     = $rand;
-	$params->{'useUnsupported'} = $prefs->get('useUnsupported');
+	$params->{'useUnsupported'} = Slim::Utils::ExtensionsManager->useUnsupported();
 
 	# don't offer the restart before the plugin download has succeeded.
 	my $needsRestart = Slim::Utils::PluginManager->needsRestart || Slim::Utils::PluginDownloader->downloading;
