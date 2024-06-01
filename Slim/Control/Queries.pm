@@ -968,6 +968,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
+	my $workID   = $request->getParam('work_id');
 	my $includeOnlineOnlyArtists = $request->getParam('include_online_only_artists');
 	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags     = $request->getParam('tags') || '';
@@ -1050,6 +1051,17 @@ sub artistsQuery {
 			$sql_va .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w_va}, 'genre_track.genre = ?';
 			push @{$p_va}, $genreID;
+		}
+
+		if (defined $workID) {
+			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ' if $sql !~ /JOIN contributor_track/;
+			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ' if $sql !~ /JOIN tracks /;
+			if ( $workID eq "-1" ) {
+				push @{$w}, 'tracks.work IS NOT NULL';
+			} else {
+				push @{$w}, 'tracks.work = ?';
+				push @{$p}, $workID;
+			}
 		}
 
 		if ( !defined $search ) {
@@ -1676,6 +1688,7 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
+	my $workID        = $request->getParam('work_id');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags          = $request->getParam('tags') || '';
 
@@ -1733,7 +1746,7 @@ sub genresQuery {
 			push @{$p}, $libraryID;
 		}
 
-		if (defined $albumID || defined $year) {
+		if (defined $albumID || defined $year || defined $workID) {
 			if ( $sql !~ /JOIN genre_track/ ) {
 				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
 			}
@@ -1748,6 +1761,14 @@ sub genresQuery {
 			if (defined $year) {
 				push @{$w}, 'tracks.year = ?';
 				push @{$p}, $year;
+			}
+			if (defined $workID) {
+				if ( $workID eq "-1" ) {
+					push @{$w}, 'tracks.work IS NOT NULL';
+				} else {
+					push @{$w}, 'tracks.work = ?';
+					push @{$p}, $workID;
+				}
 			}
 		}
 	}
