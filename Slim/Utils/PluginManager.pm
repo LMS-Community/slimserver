@@ -19,7 +19,6 @@ use XML::Simple;
 use YAML::XS;
 use Config;
 
-use Slim::Utils::ExtensionsManager;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -802,6 +801,7 @@ sub _checkPluginVersion {
 	my $max = $manifest->{'targetApplication'}->{'maxVersion'};
 
 	# user can decide to go crazy and ignore the maxVersion
+	require Slim::Utils::ExtensionsManager;
 	$max = '*' if Slim::Utils::ExtensionsManager->useUnsupported();
 
 	# Didn't match the version? Next..
