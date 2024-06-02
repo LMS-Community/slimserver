@@ -7,7 +7,7 @@
 	<description>PLUGIN_JIVEEXTRAS_DESC</description>
 	<creator>Lyrion Community</creator>
 	<category>tools</category>
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<targetApplication>
 		<id>Lyrion Music Server</id>

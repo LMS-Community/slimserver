@@ -7,7 +7,7 @@
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
 	<creator>Lyrion Community</creator>
 	<category>tools</category>
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>
 	<type>2</type>

@@ -9,7 +9,7 @@
         <creator>Lyrion Community</creator>
         <category>playlists</category>
 
-        <defaultState>enabled</defaultState>
+        <defaultState>disabled</defaultState>
 
         <type>2</type><!-- type=extension -->
 

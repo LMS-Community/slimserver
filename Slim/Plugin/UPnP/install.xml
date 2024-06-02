@@ -8,7 +8,7 @@
 	<creator>Andy Grundman</creator>
 	<email>andy@hybridized.com</email>
 	<category>tools</category>
-	<defaultState>hardware</defaultState>
+	<defaultState>disabled</defaultState>
 	<homepageURL>https://www.lyrion.org/</homepageURL>
 	<type>2</type>
 	<targetApplication>

@@ -8,7 +8,7 @@
 	<creator>Lyrion Community</creator>
 	<category>information</category>
 	<optionsURL>plugins/ViewTags/settings.html</optionsURL>
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
 		<minVersion>8.4</minVersion>

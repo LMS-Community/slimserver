@@ -9,7 +9,7 @@
         <creator>Lyrion Community</creator>
         <category>tools</category>
 
-        <defaultState>enabled</defaultState>
+        <defaultState>disabled</defaultState>
 
         <optionsURL>plugins/RSSNews/settings/basic.html</optionsURL>
         <type>2</type><!-- type=extension -->

@@ -7,6 +7,7 @@
 	<description>PLUGIN_ANALYTICS_MODULE_DESC</description>
 	<creator>Lyrion Community, Michael Herger</creator>
 	<category>tools</category>
+	<defaultState>disabled</defaultState>
 	<icon>plugins/Analytics/html/icon.png</icon>
 	<homepageURL>https://lyrion.org/analytics/learn-more/</homepageURL>
 	<type>2</type>

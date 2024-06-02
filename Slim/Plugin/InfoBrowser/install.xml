@@ -9,7 +9,7 @@
 	<creator>Lyrion Community</creator>
 	<category>information</category>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>
 	<icon>plugins/InfoBrowser/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
