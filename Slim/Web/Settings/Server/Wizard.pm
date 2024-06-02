@@ -166,6 +166,7 @@ sub handler {
 						elsif ($pluginDetails->{version}) {
 							# built-in plugin - install
 							main::INFOLOG && $log->is_info && $log->info("Installing plugin: $plugin");
+							Slim::Utils::PluginManager->_needsEnable($plugin);
 							Slim::Utils::PluginManager->load('', $plugin);
 						}
 					}
