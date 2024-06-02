@@ -19,8 +19,8 @@
 					[% IF !pluginIcon.match("^http|^data:image"); pluginIcon = webroot _ pluginIcon; END; %]
 					<div>
 						<img src="[% pluginIcon | resizeimage(iconSize,iconSize) %]" [% IF plugin.fallbackIcon %]class="pluginFallbackIcon"[% ELSE; IF !pluginIcon.match("^data|\.svg$") %]srcset="[% pluginIcon | resizeimage(iconSize*2,iconSize*2) %] 2x"[% END; END %] onerror="this.onerror = null; this.classList.add('pluginFallbackIcon'); this.src = '/html/images/misc.svg'; if (this.srcset) this.srcset = '/html/images/misc.svg'">
-						<label for="[% pluginName %]">
-							<input name="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
+						<label for="[% pluginName %]" class="headerLabel">
+							<input name="[% pluginName %]" id="[% pluginName %]" [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title | html %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 							&nbsp;[% plugin.title %] (v[% plugin.version %][% IF plugin.installations %] - <img src="[% webroot %]html/images/download.svg">[%- plugin.installations; END -%])
 						</label>
 					</div>
@@ -29,9 +29,11 @@
 					[% END %]
 				</div>
 				<div>
-					<div class="pluginDesc">
-						[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]
-					</div>
+					<label for="[% pluginName %]">
+						<div class="pluginDesc">
+							[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]
+						</div>
+					</label>
 				</div>
 				<div class="pluginFooter">
 					[% IF plugin.settings %]<img src="[% webroot %]html/images/cog-outline.svg"> <a href="[% webroot %][% plugin.settings %]">[% settingsString %]</a>[% END %]
@@ -49,6 +51,7 @@
 				[% FOREACH category = categories %]
 				<option value="[% category.0 %]">[% category.1 %]</option>
 				[% END %]
+				<option value="top">[% "SETUP_EXTENSIONS_CATEGORY_TOP" | string %]</option>
 			</select>
 		</span>
 		<span>[% "SEARCH" | string %][% "COLON" | string %] <input type="text" id="filterInput"></span>
@@ -76,7 +79,7 @@
 		max-width: 370px;
 	}
 
-	.pluginList .pluginItem label {
+	.pluginList .pluginItem label.headerLabel {
 		font-weight: bold;
 		display: block;
 	}
@@ -85,7 +88,7 @@
 		padding-bottom: 5px;
 	}
 
-	.pluginList .pluginItem label, .pluginDesc, .pluginFooter {
+	.pluginList .pluginItem label.headerLabel, .pluginDesc, .pluginFooter {
 		position: relative;
 		padding-left: 55px;
 	}

@@ -9,10 +9,20 @@
 
 	selector.observe('change', function(event) {
 		input.value = '';
+
+		var mostPopular = new Set(Object.keys(searchData).sort(function(a, b) {
+			return (searchData[b].installs || -1) - (searchData[a].installs || -1)
+		}).slice(0, 15));
+
 		var id = event.target.value;
-		togglePluginVisibility(id, function(s) {
-			return s.category == id;
-		});
+		togglePluginVisibility(id, id === 'top'
+			? function(s, id) {
+				return mostPopular.has(id);
+			}
+			: function(s) {
+				return s.category == id;
+			}
+		);
 	});
 
 	input.observe('keyup', function(event) {
@@ -39,7 +49,7 @@
 
 				let s = searchData[id];
 
-				if (s && validator(s)) {
+				if (s && validator(s, id)) {
 					item.show();
 				}
 				else {

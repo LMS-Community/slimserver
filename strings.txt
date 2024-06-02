@@ -6790,6 +6790,10 @@ SETUP_EXTENSIONS_CATEGORY_ALL
 	SV	Alla
 	ZH_CN	全部
 
+SETUP_EXTENSIONS_CATEGORY_TOP
+	DE	Populärste (nicht installierte)
+	EN	Most Popular (not installed)
+
 SETUP_EXTENSIONS_CATEGORY_DATABASE
 	CS	Hudební knihovna
 	DE	Mediendatenbank

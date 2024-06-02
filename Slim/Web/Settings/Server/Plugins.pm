@@ -357,6 +357,7 @@ sub prepareDetails {
 			$searchData->{$_->{name}} = {
 				category => $_->{category} || '',
 				content  => $_->{name} . ' ' . $_->{creator} . ' ' . $_->{desc} . ' ' . $_->{email} . ' ' . $_->{title},
+				installs => $_->{installations},
 			};
 		}
 	}
