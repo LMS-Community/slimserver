@@ -139,13 +139,6 @@ sub initSearchPath {
 
 sub initMySQL {}
 
-sub initPrefs {
-	my ($class, $prefs) = @_;
-
-	# we now have a binary control panel - don't show the wizard
-	$prefs->{wizardDone} = 1;
-}
-
 sub canDBHighMem { 1 }
 
 sub dirsFor {
