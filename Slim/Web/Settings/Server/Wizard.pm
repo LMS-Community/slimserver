@@ -31,6 +31,7 @@ my $serverPrefs = preferences('server');
 
 my @prefs = ('mediadirs');
 my @pluginsToInstall;
+my $finalizeCb;
 
 sub page {
 	return 'settings/server/wizard.html';
@@ -199,9 +200,17 @@ sub handler {
 
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
-
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
+
+		if (Slim::Utils::PluginDownloader->downloading) {
+			$finalizeCb = sub {
+				Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+				$pageSetup->( $client, $paramRef, Slim::Web::HTTP::filltemplatefile($class->page, $paramRef), $httpClient, $response );
+			};
+
+			return;
+		}
 	}
 
 	if ($client) {
@@ -226,6 +235,12 @@ sub _checkPluginDownloads {
 
 	# need to reload the strings, as they's be loaded after initial plugin initialization, but we're late here...
 	Slim::Utils::Strings::loadStrings();
+
+	# if the MaterialSkin was installed, use it
+	my %skins = Slim::Web::HTTP::skins();
+	$serverPrefs->set('skin', 'material') if $skins{MATERIAL};
+
+	$finalizeCb->() if $finalizeCb;
 }
 
 1;
