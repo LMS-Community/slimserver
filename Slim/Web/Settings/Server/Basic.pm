@@ -59,6 +59,9 @@ sub handler {
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
 		$runScan = 1;
+	} elsif ($paramRef->{'pref_restart'}) {
+		$paramRef->{restart} = 1;
+		$paramRef = Slim::Web::Settings::Server::Plugins->restartServer($paramRef, 1);
 	}
 
 	if ( $paramRef->{'saveSettings'} ) {
