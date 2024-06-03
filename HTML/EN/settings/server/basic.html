@@ -93,4 +93,10 @@
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 
+	[% IF os_can_restart %]
+		[% WRAPPER setting title="SETUP_RESTART" desc="SETUP_RESTART_DESC" %]
+			<input name="pref_restart" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESTART_BUTTON" | string %]" [% IF scanning %]disabled[% END %]>
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]

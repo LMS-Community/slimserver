@@ -159,6 +159,7 @@ sub handler {
 sub beforeRender {
 	my ($class, $paramRef) = @_;
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
+	$paramRef->{'os_can_restart'} = Slim::Utils::OSDetect->getOS()->canRestartServer();
 }
 
 1;

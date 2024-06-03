@@ -24670,3 +24670,14 @@ SETUP_YEARMENU_1
 	FR	Afficher les années des albums et des pistes
 	NL	Toon album- en trackjaren
 
+SETUP_RESTART
+	DE	Neustart
+	EN	Restart
+
+SETUP_RESTART_BUTTON
+	DE	Neu starten
+	EN	Restart
+
+SETUP_RESTART_DESC
+	DE	Klicken Sie auf 'Neu starten', damit Logitech Media Server neu startet.
+	EN	Click Restart to have Logitech Media Server restarted.
