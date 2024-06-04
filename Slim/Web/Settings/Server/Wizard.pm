@@ -195,7 +195,14 @@ sub handler {
 	$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
 	$paramRef->{debug} = main::DEBUGLOG && $log->is_debug;
 
-	my $wzData = from_json(read_file(catfile($Bin, 'HTML', 'EN', 'settings', 'wizard.json')));
+	my $wzData = {};
+	foreach (catfile($Bin, 'HTML'), Slim::Utils::OSDetect::dirsFor('HTML')) {
+		my $path = catfile($_, 'EN', 'settings', 'wizard.json');
+		if (-f $path) {
+			$wzData = from_json(read_file($path));
+		}
+	}
+
 	$paramRef->{plugins} = $wzData->{plugins};
 	$paramRef->{pluginsJSON} = to_json($paramRef->{plugins});
 
