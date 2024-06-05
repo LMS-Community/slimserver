@@ -5332,6 +5332,13 @@ sub _songDataFromHash {
 				}
 			}
 		}
+
+		# Special case for b (work), return work_id as well
+		elsif ( $tag eq 'b' ) {
+				$returnHash{'work'} = $res->{'works.title'} if $res->{'works.title'};
+				$returnHash{'work_id'} = $res->{'works.id'} if $res->{'works.id'};
+		}
+
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
 		# such as 'B' (custom button handler). They would return empty here - ignore them.
 		elsif ( my $map = $colMap{$tag} ) {
@@ -5834,8 +5841,10 @@ sub _getTagDataForTracks {
 			push @{$w}, 'tracks.work = ?';
 			push @{$p}, $workId;
 			if ( my $performance = $args->{performance} ) {
-				push @{$w}, 'tracks.performance = ?';
-				push @{$p}, $performance;
+				if ( $performance ne '-1' ) {
+					push @{$w}, 'tracks.performance = ?';
+					push @{$p}, $performance;
+				}
 			} else {
 				push @{$w}, 'tracks.performance IS NULL';
 			}
@@ -5959,6 +5968,7 @@ sub _getTagDataForTracks {
 	$tags =~ /b/ && do {
 		$join_works->();
 		$c->{'works.title'} = 1;
+		$c->{'works.id'} = 1;
 	};
 	$tags =~ /h/ && do { $c->{'tracks.grouping'} = 1 };
 	$tags =~ /1/ && do { $c->{'tracks.performance'} = 1 };

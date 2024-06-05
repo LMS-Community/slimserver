@@ -1575,7 +1575,7 @@ sub _albums {
 						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'tracks',
-							%{&_tagsToParams(\@searchTags)},
+							%{&_tagsToParams([@searchTags, "performance:-1"])},
 						},
 					},
 					play => {
@@ -1604,7 +1604,8 @@ sub _albums {
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,
-					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+#					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+					passthrough => [{ searchTags => [@searchTags, "performance:-1"], sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1,
 				};
