@@ -76,6 +76,7 @@ my %tagMapping = (
 	GRP1 => "GROUPING",
 	TIT2 => "TITLE",
 	TIT3 => "SUBTITLE",
+	TSST => "DISCSUBTITLE",
 	TPE1 => "ARTIST",
 	TPE2 => "BAND",
 	TPE3 => "CONDUCTOR",
