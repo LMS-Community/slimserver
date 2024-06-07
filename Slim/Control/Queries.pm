@@ -5339,6 +5339,12 @@ sub _songDataFromHash {
 				$returnHash{'work_id'} = $res->{'works.id'} if $res->{'works.id'};
 		}
 
+		# Special case for i (disc), return discsubtitle as well
+		elsif ( $tag eq 'i' ) {
+				$returnHash{'disc'} = $res->{'tracks.disc'} if $res->{'tracks.disc'};
+				$returnHash{'discsubtitle'} = $res->{'tracks.discsubtitle'} if $res->{'tracks.discsubtitle'};
+		}
+
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
 		# such as 'B' (custom button handler). They would return empty here - ignore them.
 		elsif ( my $map = $colMap{$tag} ) {
@@ -5964,7 +5970,10 @@ sub _getTagDataForTracks {
 	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
 	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
 	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
-	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
+	$tags =~ /i/ && do {
+		$c->{'tracks.disc'} = 1;
+		$c->{'tracks.discsubtitle'} = 1;
+	};
 	$tags =~ /b/ && do {
 		$join_works->();
 		$c->{'works.title'} = 1;
