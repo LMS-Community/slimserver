@@ -84,6 +84,8 @@ sub handler {
 		$prefs->set('releaseTypesToIgnore', [ keys %releaseTypesToIgnore ]);
 	}
 
+	$paramRef->{usesFTS} = Slim::Schema->canFulltextSearch;
+
 	return $class->SUPER::handler( $client, $paramRef );
 }
 
