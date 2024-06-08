@@ -729,7 +729,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1514,7 +1514,7 @@ sub _albums {
 				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
 				if ( $_->{'work_id'} ) {
 					$_->{'name'} .= $_->{'work_name'} . ' (';
-					$_->{'name'} .= "$_->{'grouping'} " if $_->{'grouping'};
+					$_->{'name'} .= "$_->{'performance'} " if $_->{'performance'};
 					$_->{'name'} .= cstring($client,'FROM') . ' ';
 				}
 				$_->{'name'}          .= $_->{'album'};
@@ -1524,7 +1524,7 @@ sub _albums {
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
-				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}, "grouping:" . $_->{'grouping'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}, "performance:" . $_->{'performance'}], sort => 'sort:tracknum', remote_library => $remote_library } ];
 
 				if ($_->{'artist_ids'}) {
 					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
@@ -1565,7 +1565,7 @@ sub _albums {
 				}
 
 				my %actions = $remote_library ? (
-					commonVariables	=> [album_id => 'id', grouping => 'grouping'],
+					commonVariables	=> [album_id => 'id', performance => 'performance'],
 				) : (
 					allAvailableActionsDefined => 1,
 					info => {
@@ -1575,7 +1575,7 @@ sub _albums {
 						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'tracks',
-							%{&_tagsToParams(\@searchTags)},
+							%{&_tagsToParams([@searchTags, "performance:-1"])},
 						},
 					},
 					play => {
@@ -1604,7 +1604,7 @@ sub _albums {
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,
-					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+					passthrough => [{ searchTags => [@searchTags, "performance:-1"], sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1,
 				};
@@ -1655,10 +1655,10 @@ sub _albums {
 
 			my $params = _tagsToParams(\@searchTags);
 			my %actions = $remote_library ? (
-				commonVariables	=> [album_id => 'id', grouping => 'grouping'],
+				commonVariables	=> [album_id => 'id', performance => 'performance'],
 			) : (
 				allAvailableActionsDefined => 1,
-				commonVariables	=> [album_id => 'id', grouping => 'grouping'],
+				commonVariables	=> [album_id => 'id', performance => 'performance'],
 				info => {
 					command     => ['albuminfo', 'items'],
 					fixedParams => $params,
@@ -1752,6 +1752,7 @@ sub _tracks {
 	$tags .= 'b' if $titleFormatPlayer =~ /\bWORK\b/ || $titleFormatWeb =~ /\bWORK\b/;
 	$tags .= 'h' if $titleFormatPlayer =~ /\bGROUPING\b/ || $titleFormatWeb =~ /\bGROUPING\b/;
 	$tags .= 'z' if $titleFormatPlayer =~ /\bSUBTITLE\b/ || $titleFormatWeb =~ /\bSUBTITLE\b/;
+	$tags .= '1' if $titleFormatPlayer =~ /\bPERFORMANCE\b/ || $titleFormatWeb =~ /\bPERFORMANCE\b/;
 
 	my ($addAlbumToName2, $addArtistToName2);
 	if ($addAlbumToName2  = !(grep {/album_id:/} @searchTags)) {
@@ -1932,10 +1933,10 @@ sub _tracks {
 				$albumId =~ s/album_id:// if $albumId;
 				my ($workId) = grep {/work_id:/} @searchTags;
 				$workId =~ s/work_id:// if $workId;
-				my ($grouping) = grep {/grouping:/} @searchTags;
-				$grouping =~ s/grouping:// if $grouping;
+				my ($performance) = grep {/performance:/} @searchTags;
+				$performance =~ s/performance:// if $performance;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, grouping => $grouping, track_count => scalar @$items} ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, performance => $performance, track_count => scalar @$items} ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;

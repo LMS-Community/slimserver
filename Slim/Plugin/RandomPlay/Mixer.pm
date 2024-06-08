@@ -69,7 +69,7 @@ sub findAndAdd {
 		my $request;
 		if ( $type eq 'work' ) {
 			$request = $client->execute([
-				'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('album.id=%d&work.id=%d&track.grouping=%s%s', @$id[0], @$id[1], @$id[2], $libraryParam)
+				'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('album.id=%d&work.id=%d&track.performance=%s%s', @$id[0], @$id[1], @$id[2], $libraryParam)
 			]);
 		} else {
 			$request = $client->execute([
@@ -153,7 +153,7 @@ sub getIdList {
 		$loop = 'albums_loop' if $type eq 'work';
 
 		if ( $type eq 'work' ) {
-			$idList = [ map { [$_->{id}, $_->{work_id}, $_->{grouping}] } @{ $request->getResult($loop) || [] } ];
+			$idList = [ map { [$_->{id}, $_->{work_id}, $_->{performance}] } @{ $request->getResult($loop) || [] } ];
 		} else {
 			$idList = [ map { $_->{id} } @{ $request->getResult($loop) || [] } ];
 		}

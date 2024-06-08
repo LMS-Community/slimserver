@@ -260,7 +260,7 @@ sub artistsForRoles {
 }
 
 sub artistPerformsOnWork {
-	my ($self, $work, $grouping, $artist) = @_;
+	my ($self, $work, $performance, $artist) = @_;
 
 	my $sth = Slim::Schema->dbh->prepare_cached(
 		qq{
@@ -271,14 +271,14 @@ sub artistPerformsOnWork {
 			WHERE tracks.work = :work
 			AND albums.id = :album
 			AND contributor_track.contributor = :artist
-			AND ( (:grouping IS NULL AND tracks.grouping IS NULL) OR tracks.grouping = :grouping )
+			AND ( (:performance IS NULL AND tracks.performance IS NULL) OR tracks.performance = :performance )
 		}
 	);
 
 	$sth->bind_param(":work", $work);
 	$sth->bind_param(":album", $self->id);
 	$sth->bind_param(":artist", $artist);
-	$sth->bind_param(":grouping", $grouping);
+	$sth->bind_param(":performance", $performance);
 	$sth->execute();
 
 	my ($count) = $sth->fetchrow_array;
@@ -404,12 +404,12 @@ sub rescan {
 sub duration {
 	my $self = shift;
 	my $workId = shift;
-	my $grouping = shift;
+	my $performance = shift;
 
 	my $secs = 0;
 	foreach ($self->tracks) {
 		return if !defined $_->secs;
-		$secs += $_->secs if !$workId || $_->get_column('work') == $workId && $_->get_column('grouping') eq $grouping;
+		$secs += $_->secs if !$workId || $_->get_column('work') == $workId && $_->get_column('performance') eq $performance;
 	}
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60);
 }
