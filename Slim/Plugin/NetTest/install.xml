@@ -9,7 +9,7 @@
   <category>tools</category>
   <email>triode1@btinternet.com</email>
 
-  <defaultState>enabled</defaultState>
+  <defaultState>disabled</defaultState>
 
   <type>2</type><!-- type=extension -->
   <targetApplication>

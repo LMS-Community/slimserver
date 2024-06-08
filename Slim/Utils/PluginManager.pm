@@ -30,7 +30,6 @@ my $log   = logger('server.plugins');
 
 my $prefs = preferences('plugin.state'); # per plugin state or pending state
 # valid states: disabled, enabled, needs-enable, needs-disable, needs-install, needs-uninstall
-my $extensionMgrPrefs = preferences('plugin.extensions');
 
 my $plugins   = {};
 my $loaded    = {};
@@ -191,8 +190,11 @@ sub init {
 sub load {
 	my $class = shift;
 	my $moduleType = shift || '';
+	my @pluginList = @_;
 
-	for my $name (sort keys %$plugins) {
+	@pluginList = sort keys %$plugins unless scalar @pluginList;
+
+	for my $name (@pluginList) {
 
 		my $state = $prefs->get($name);
 
@@ -799,7 +801,8 @@ sub _checkPluginVersion {
 	my $max = $manifest->{'targetApplication'}->{'maxVersion'};
 
 	# user can decide to go crazy and ignore the maxVersion
-	$max = '*' if $extensionMgrPrefs->get('useUnsupported');
+	require Slim::Utils::ExtensionsManager;
+	$max = '*' if Slim::Utils::ExtensionsManager->useUnsupported();
 
 	# Didn't match the version? Next..
 	if (!Slim::Utils::Versions->checkVersion($::VERSION, $min, $max)) {

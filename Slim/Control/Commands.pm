@@ -1997,10 +1997,10 @@ $log->error("DK request=" . Data::Dump::dump($request->{_params}));
 			$criteria->{'album'} = [ 'IN' => @albumIds ];
 		}
 
-		if ( my $grouping = $request->getParam('grouping') ) {
-			$criteria->{'grouping'} = [ '=' => $grouping ];
-		} elsif ( defined $request->getParam('grouping') ) {
-			$criteria->{'grouping'} = [ '=' => undef ]
+		if ( my $performance = $request->getParam('performance') ) {
+			$criteria->{'performance'} = [ '=' => $performance ];
+		} elsif ( defined $request->getParam('performance') ) {
+			$criteria->{'performance'} = [ '=' => undef ]
 		}
 
 		@tracks = Slim::Schema->search('Track', $criteria)->all;
@@ -3373,7 +3373,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 					$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
 				}
 
-			} elsif ( $key eq 'me.grouping' ) {
+			} elsif ( $key eq 'me.performance' ) {
 
 				$find{$key} = $value || undef;
 
@@ -3570,7 +3570,7 @@ sub _playlistXtracksCommand_parseDbItem {
 				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
 					$classes{$class} = -1;
 				}
-				elsif ( $class eq 'Track' && $key eq 'grouping' ) {
+				elsif ( $class eq 'Track' && $key eq 'performance' ) {
 					$classes{$class} = $value;
 				}
 				# album favorites need to be filtered by contributor, too
@@ -3641,7 +3641,7 @@ sub _playlistXtracksCommand_parseDbItem {
 
 	if ( defined $classes{Track} ) {
 		$terms .= "&" if ( $terms ne "" );
-		$terms .= sprintf( 'track.grouping=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
+		$terms .= sprintf( 'track.performance=%s', URI::Escape::uri_escape_utf8($classes{Track}) );
 	}
 
 	if ( $terms ne "" ) {

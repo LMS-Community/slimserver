@@ -43,7 +43,8 @@ my %tagMapping = (
 	'WM/Year'               => 'YEAR',
 	'WM/Work'               => 'WORK',
 	'WM/ContentGroupDescription' => 'GROUPING',
-	'WM/SubTitle'            => 'SUBTITLE',
+	'WM/SubTitle'           => 'SUBTITLE',
+	'WM/SetSubTitle'        => 'DISCSUBTITLE',
 
 	'MusicBrainz/Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MusicBrainz/Album Id'        => 'MUSICBRAINZ_ALBUM_ID',

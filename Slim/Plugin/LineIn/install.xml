@@ -8,7 +8,7 @@
 	<creator>Lyrion Community</creator>
 	<category>tools</category>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 
 	<icon>plugins/LineIn/html/images/icon.png</icon>
 	<type>2</type>

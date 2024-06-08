@@ -124,7 +124,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_SEARCHSUBSTRING" desc="SETUP_SEARCHSUBSTRING_DESC"%]
-		<select class="stdedit" name="pref_searchSubString" id="searchSubString">
+		<select class="stdedit" name="pref_searchSubString" id="searchSubString" [% IF usesFTS %]disabled="true"[% END %]>
 
 			<option [% IF NOT prefs.pref_searchSubString %]selected [% END %]value="0">[% 'SETUP_SEARCHSUBSTRING_0' | string %]</option>
 			<option [% IF prefs.pref_searchSubString %]selected [% END %]value="1">[% 'SETUP_SEARCHSUBSTRING_1' | string %]</option>

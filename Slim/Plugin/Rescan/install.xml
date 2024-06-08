@@ -9,7 +9,7 @@
 	<creator>Lyrion Community</creator>
 	<category>scanning</category>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 
 	<playerMenu>SETTINGS</playerMenu>
 	<optionsURL>plugins/Rescan/settings/basic.html</optionsURL>

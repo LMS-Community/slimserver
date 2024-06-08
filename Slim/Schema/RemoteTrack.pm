@@ -60,6 +60,8 @@ my @allAttributes = (qw(
 	work
 	grouping
 	subtitle
+	performance
+	discsubtitle
 ));
 
 {

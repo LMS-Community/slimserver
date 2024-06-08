@@ -40,8 +40,6 @@ my %tagMapping = (
 	WRT  => 'COMPOSER',
 	WRK  => 'WORK',
 	GRP  => 'GROUPING',
-	'----:com.apple.iTunes:SUBTITLE' => 'SUBTITLE',	
-
 	'MusicBrainz Album Id'     => 'MUSICBRAINZ_ALBUM_ID',
 	'MusicBrainz Album Type'   => 'RELEASETYPE',
 	'MusicBrainz Artist Id'    => 'MUSICBRAINZ_ARTIST_ID',
@@ -134,6 +132,13 @@ sub getCoverArt {
 
 sub _doTagMapping {
 	my ($class, $tags) = @_;
+
+	# map iTunes specific keys
+	foreach my $old (keys %$tags) {
+		my $new = $old;
+		$new =~ s/^----:com.apple.iTunes://i;
+		$tags->{$new} ||= $tags->{$old};
+	}
 
 	# map the existing tag names to the expected tag names
 	while ( my ($old, $new) = each %tagMapping ) {

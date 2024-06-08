@@ -30,9 +30,6 @@ Wizard = {
 			// our own handlers
 			activeItemPos: 0,
 			wizardDone: args.wizardDone,
-			useAudioDir: args.useAudioDir,
-			useMusicIP: args.useMusicIP,
-			useiTunes: args.useiTunes,
 
 			next: function(){
 				if (this.items.items[this.activeItemPos].finish && !this.wizardDone) {
@@ -104,60 +101,40 @@ Wizard = {
 					? SqueezeJS.string('finish')
 					: this.wizardDone
 						? SqueezeJS.string('close')
-						: SqueezeJS.string('next')
+						: SqueezeJS.string('nexxt')
 				);
 				this.buttons.next.setDisabled(this.activeItemPos > this.items.length - 1);
 			},
 
 			pageconfig: {
-				audiodir_p: {
-					//validator: function(){
-					//	this._validatePref('server', 'audiodir');
-					//},
+				welcome_p: {},
 
-					skip: function(){
-						return !this.useAudioDir;
-					},
-
-					useAudioDir: args.useAudioDir
-				},
-
-				playlistdir_p: {
-					validator: function(){
-						this._validatePref('server', 'playlistdir');
-					},
-
-					skip: function(){
-						return !this.useAudioDir;
-					},
-
-					useAudioDir: args.useAudioDir
-				},
+				audiodir_p: {},
 
 				summary_p: {
 					skip: function(){
 						// just update the summary, ...
 						Ext.get('summary').update(
-							(!(Ext.get('audiodir').dom.value || this.useiTunes || this.useMusicIP)
+							(!Ext.get('audiodir').dom.value
 								? '<li>' + SqueezeJS.string('summary_none') + '</li>'
 								: '') +
 							(Ext.get('audiodir').dom.value
 								? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>'
-								         + ('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>')
-								: '')  +
-							(this.useiTunes
-								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>'
-								: '') +
-							(this.useMusicIP
-								? '<li>' + SqueezeJS.string('summary_musicip') + '</li>'
 								: '')
 						);
+
+						var pluginList = pluginData.filter(function(plugin) {
+							var pluginEl = Ext.get(plugin.id);
+							return pluginEl && pluginEl.dom.checked;
+						}).map(function(plugin) {
+							return '<li>' + (plugin.label[systemLanguage] || plugin.label.EN) + '</li>';
+						}).join('');
+
+						Ext.get('summary_plugins').update(pluginList || '<li>' + SqueezeJS.string('summary_none') + '</li>');
+
 						// ...but never skip
 						return false;
-					},
-					useAudioDir: args.useAudioDir,
-					useMusicIP: args.useMusicIP,
-					useiTunes: args.useiTunes
+					}
 				}
 			},
 
@@ -228,8 +205,8 @@ Wizard = {
 					region: 'south',
 					contentEl: 'footer',
 					border: false,
-					margins: '0 [% skinPadding %] [% skinPadding %] [% skinPadding %]',
-					height: 16
+					margins: 0,
+					height: 0
 				}
 			]
 		});
@@ -267,7 +244,7 @@ Wizard = {
 
 				next: new Ext.Button({
 					renderTo: 'next',
-					text: SqueezeJS.string('next'),
+					text: SqueezeJS.string('nexxt'),
 					handler: this.wizard.next,
 					scope: this.wizard
 				})
@@ -294,7 +271,6 @@ Wizard = {
 		this.onResize(this.body.getWidth(), this.body.getHeight());
 
 		Ext.get('loading').hide();
-		Ext.get('loading-mask').hide();
 	},
 
 	// resize panels, folder selectors etc.

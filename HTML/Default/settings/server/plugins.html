@@ -21,7 +21,7 @@
 				text: categoriesAllLabel
 			});
 
-			Ext.each(categories, function(category, x) {
+			Ext.each(categories, function(category) {
 				const catId = category.value;
 				const title = category.innerHTML;
 				filterChooser.menu.add(
@@ -44,6 +44,29 @@
 					})
 				);
 			});
+
+			filterChooser.menu.add(
+				new Ext.menu.CheckItem({
+					text: '[% "SETUP_EXTENSIONS_CATEGORY_TOP" | string %]',
+					value: 'top',
+					checked: false,
+					cls: 'settingsList',
+					group: 'settingsList',
+					handler: function(ev) {
+						Ext.get('filterInput').dom.value = '';
+						expandAllSections();
+
+						var mostPopular = new Set(Object.keys(searchData).sort(function(a, b) {
+							return (searchData[b].installs || -1) - (searchData[a].installs || -1)
+						}).slice(0, 15));
+
+						filterChooser.setText(ev.text);
+						togglePluginVisibility(ev.value, function(s, id) {
+							return mostPopular.has(id);
+						});
+					}
+				})
+			);
 
 			Ext.select("#filterChooser select").remove()
 
@@ -93,7 +116,7 @@
 
 						let s = searchData[id];
 
-						if (s && validator(s)) {
+						if (s && validator(s, id)) {
 							item.setDisplayed(true);
 						}
 						else {

@@ -1,8 +1,23 @@
-package Slim::Utils::PluginRepoManager;
+package Slim::Utils::ExtensionsManager;
+
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2024 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+# The Extensions Manager deals with Extensions Repositories. These can be plugins, applets,
+# wallpapers, or sounds. In the case of plugins it's tightly integrated with the Plugins
+# Manager and the Plugins Downloader.
+
+# The Extensions Manager keeps track of the list of extensions it has enabled. In the case
+# of plugins this can be confusing, as the Plugin Manager keeps its own state. But that
+# latter does so for all plugins, installed using the Extensions Manager or not. Therefore
+# we unfortunately have to deal with these two states.
 
 # Repository XML format:
 #
-# Each repository file may contain entries for applets, wallpapers, sounds (and in future plugins):
+# Each repository file may contain entries for applets, wallpapers, sounds, plugins:
 #
 # The xml structure is of the following format:
 #
@@ -69,6 +84,7 @@ package Slim::Utils::PluginRepoManager;
 # link       - (plugin only) url for web page describing the plugin in more detail
 # creator    - identify of author(s)
 # category   - a category under which to group the plugin
+# icon       - a public URL to the plugin icon, to be shown in the plugin manager
 # email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
@@ -82,9 +98,9 @@ package Slim::Utils::PluginRepoManager;
 
 use strict;
 
+use Async::Util;
 use XML::Simple;
 
-use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -156,6 +172,10 @@ sub addRepo {
 
 	$repos{$repo} = $weight;
 
+	if (!grep { $_ eq $repo } @{$class->repos}) {
+		$prefs->set('repos', [ @{$class->repos}, $repo ]);
+	}
+
 	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions, 'user');
 }
 
@@ -169,20 +189,62 @@ sub removeRepo {
 
 	delete $repos{$repo};
 
+	$prefs->set('repos', [
+		grep {
+			$_ ne $repo
+		} @{$class->repos()}
+	]);
+
 	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
 }
 
 sub repos {
-	return \%repos;
+	return $prefs->get('repos') || [];
 }
 
 sub initUnsupportedRepo {
 	if ($prefs->get('useUnsupported')) {
-		$repos{$UNSUPPORTED_REPO} = 1;
+		$repos{$UNSUPPORTED_REPO} = 2;
 	}
 	else {
 		delete $repos{$UNSUPPORTED_REPO};
 	}
+}
+
+sub useUnsupported {
+	my ($class, $newValue) = @_;
+
+	if (defined $newValue) {
+		$prefs->set('useUnsupported', $newValue || 0);
+	}
+
+	$prefs->get('useUnsupported') ;
+}
+
+sub autoUpdate {
+	my ($class, $newValue) = @_;
+
+	if (defined $newValue) {
+		$prefs->set('auto', $newValue ? 1 : 0);
+	}
+
+	$prefs->get('auto') ;
+}
+
+sub enablePlugin {
+	my ($class, $plugin) = @_;
+
+	my $plugins = $prefs->get('plugin');
+	$plugins->{$plugin} = 1;
+	$prefs->set('plugin', $plugins);
+}
+
+sub disablePlugin {
+	my ($class, $plugin) = @_;
+
+	my $plugins = $prefs->get('plugin');
+	delete $plugins->{$plugin};
+	$prefs->set('plugin', $plugins);
 }
 
 # This query compares the list of provided apps to the policy setting for apps which should be installed
@@ -198,60 +260,39 @@ sub appsQuery {
 
 	my $args = $request->getParam('args');
 
-	my $data = { remaining => scalar keys %repos, results => [] };
+	$request->setStatusProcessing();
 
-	for my $repo (keys %repos) {
+	my $data = { results => [] };
 
-		getExtensions({
-			'name'   => $repo,
-			'type'   => $args->{'type'},
-			'target' => $args->{'targetPlat'} || Slim::Utils::OSDetect::OS(),
-			'version'=> $args->{'targetVers'} || $::VERSION,
-			'lang'   => $args->{'lang'} || $Slim::Utils::Strings::currentLang,
-			'details'=> $args->{'details'},
-			'cb'     => \&_appsQueryCB,
-			'pt'     => [ $request, $data ],
-		});
-	}
+	getAllPluginRepos({
+		type    => $args->{type},
+		target  => $args->{targetPlat} || Slim::Utils::OSDetect::OS(),
+		version => $args->{tarcgetVers} || $::VERSION,
+		lang    => $args->{lang} || $Slim::Utils::Strings::currentLang,
+		details => $args->{details},
+		stepCb  => sub {
+			my ($res, $info, $weight) = @_;
+			push @{$data->{results}}, @{$res || []};
+		},
+		cb => sub {
+			my $actions = findUpdates($data->{results}, $args->{current}, $args->{type}, $args->{details});
 
-	if (!scalar keys %repos) {
+			if ($prefs->get('auto')) {
 
-		_appsQueryCB($request, $data, []);
-	}
+				$request->addResult('actions', $actions);
 
-	if (!$request->isStatusDone()) {
+			} elsif ($args->{details}) {
 
-		$request->setStatusProcessing();
-	}
-}
+				$request->addResult('updates', $actions);
 
-sub _appsQueryCB {
-	my $request = shift;
-	my $data    = shift;
-	my $res     = shift;
+			} else {
 
-	push @{$data->{'results'}}, @$res;
+				$request->addResult('updates', join(',', keys %$actions));
+			}
 
-	return if (--$data->{'remaining'} > 0);
-
-	my $args = $request->getParam('args');
-
-	my $actions = findUpdates($data->{'results'}, $args->{'current'}, $prefs->get($args->{'type'}) || {}, $args->{'details'});
-
-	if ($prefs->get('auto')) {
-
-		$request->addResult('actions', $actions);
-
-	} elsif ($args->{'details'}) {
-
-		$request->addResult('updates', $actions);
-
-	} else {
-
-		$request->addResult('updates', join(',', keys %$actions));
-	}
-
-	$request->setStatusDone();
+			$request->setStatusDone();
+		},
+	});
 }
 
 sub getCurrentPlugins {
@@ -291,7 +332,7 @@ sub getCurrentPlugins {
 			homepage=> $entry->{'homepageURL'},
 			version => $entry->{'version'},
 			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
-			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
+			installType => $entry->{'basedir'} !~ /InstalledPlugins/ ? 'manual' : 'install',
 			enforce => $entry->{'enforce'},
 		};
 
@@ -299,7 +340,7 @@ sub getCurrentPlugins {
 
 			push @active, $entry;
 
-			if (!$entry->{'manual'}) {
+			if ($entry->{ installType } ne 'manual') {
 				$current->{ $plugin } = $entry->{'version'};
 			}
 
@@ -317,10 +358,12 @@ sub getCurrentPlugins {
 sub findUpdates {
 	my $results = shift;
 	my $current = shift;
-	my $install = shift || {};
+	my $type    = shift;
 	my $info    = shift;
 	my $apps    = {};
 	my $actions = {};
+
+	my $install = $prefs->get($type) || {};
 
 	# find the latest version of each app we are interested in installing
 	for my $res (@$results) {
@@ -368,6 +411,55 @@ sub findUpdates {
 	return $actions;
 }
 
+sub getAllPluginRepos {
+	my $args = shift;
+
+	Async::Util::amap(
+		inputs => [ keys %repos ],
+		action => sub {
+			my ($repo, $cb) = @_;
+
+			getExtensions({
+				name    => $repo,
+				type    => $args->{type},
+				target  => $args->{target} || Slim::Utils::OSDetect::OS(),
+				version => $args->{version} || $::VERSION,
+				lang    => $args->{lang} || $Slim::Utils::Strings::currentLang,
+				details => $args->{details},
+				cb      => sub {
+					my ($res, $info) = @_;
+					$args->{stepCb}->($res, $info, $repos{$repo}) if $args->{stepCb};
+					$cb->($res);
+				},
+				onError => $args->{onError},
+			});
+		},
+		cb => sub {
+			my ($repoData, $err) = @_;
+			$log->error($err) if $err;
+
+			if ($args->{cb}) {
+				my $max = {};
+
+				my @repoData = grep {
+					# prune out duplicate entries, favour higher version numbers
+					$_->{version} eq $max->{$_->{name}};
+				} map {
+					# find the higher version numbers
+					my $n = $_->{name};
+					my $v = $_->{version};
+
+					$max->{$n} = $v if !$max->{$n} || Slim::Utils::Versions->compareVersions($v, $max->{$n}) > 0;
+
+					$_;
+				} map { @$_ } @$repoData;
+
+				$args->{cb}->(\@repoData, $err);
+			}
+		}
+	);
+}
+
 sub getExtensions {
 	my $args = shift;
 
@@ -375,13 +467,13 @@ sub getExtensions {
 
 	if ( my $cached = $cache->get( $args->{'name'} . '_XML' ) ) {
 
-		main::DEBUGLOG && $log->debug("using cached extensions xml $args->{name}");
+		main::INFOLOG && $log->is_info && $log->info("using cached extensions xml $args->{name}");
 
 		_parseXML($args, $cached);
 
 	} else {
 
-		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
+		main::INFOLOG && $log->is_info && $log->info("fetching extensions xml $args->{name}");
 
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse,
@@ -451,8 +543,8 @@ sub _parseXML {
 
 	my $type    = $args->{'type'};
 	my $target  = $args->{'target'};
-	my $version = $args->{'version'};
-	my $lang    = $args->{'lang'};
+	my $version = $args->{'version'} || $::VERSION;
+	my $lang    = $args->{'lang'} || $Slim::Utils::Strings::currentLang;
 	my $details = $args->{'details'};
 
 	my $targetRE = $target ? qr/$target/ : undef;
@@ -560,13 +652,25 @@ sub _parseXML {
 1;
 
 
+package Slim::Utils::PluginRepoManager;
+
+my $warned;
+
+sub getCurrentPlugins {
+	Slim::Utils::Log::logBacktrace("Slim::Utils::PluginRepoManager doesn't exist any more. Please use Slim::Utils::ExtensionsManager instead.") if !$warned++;
+	return Slim::Utils::ExtensionsManager::getCurrentPlugins(@_);
+}
+
+1;
+
+
 package Slim::Plugin::Extensions::Plugin;
 
 my $warned;
 
 sub getCurrentPlugins {
-	Slim::Utils::Log::logBacktrace("Slim::Plugin::Extensions doesn't exist any more. Please use Slim::Utils::PluginRepoManager instead.") if !$warned++;
-	return Slim::Utils::PluginRepoManager::getCurrentPlugins(@_);
+	Slim::Utils::Log::logBacktrace("Slim::Plugin::Extensions doesn't exist any more. Please use Slim::Utils::ExtensionsManager instead.") if !$warned++;
+	return Slim::Utils::ExtensionsManager::getCurrentPlugins(@_);
 }
 
 1;

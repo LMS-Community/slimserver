@@ -875,8 +875,8 @@ sub _objForDbUrl {
 					utf8::encode($value);
 				}
 
-				if ($key eq "track.grouping") {
-					$value = undef if !$value; # empty grouping value is meaningful and needs to result in an IS NULL check in the query
+				if ($key eq "track.performance") {
+					$value = undef if !$value; # empty performance value is meaningful and needs to result in an IS NULL check in the query
 				}
 				$query->{$key} = $value;
 			}
@@ -1953,8 +1953,8 @@ sub updateOrCreateBase {
 
 			$key = lc($key);
 
-			## Need to set grouping to null if no value passed in (may have had a value before this scan)
-			if ( (defined $val && $val ne '' || $key eq "grouping") && exists $trackAttrs->{$key} ) {
+			## Need to set performance to null if no value passed in (may have had a value before this scan)
+			if ( (defined $val && $val ne '' || $key eq "performance") && exists $trackAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
@@ -2802,11 +2802,11 @@ sub _preCheckAttributes {
 		# XXX maybe also want COMMENT & GENRE
 	}
 
-	# set Grouping attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
-	if ( !exists($attributes->{'GROUPING'}) || length($attributes->{'GROUPING'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'GROUPING'} = undef;
+	# set Perfomance attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
+	if ( !exists($attributes->{'PERFORMANCE'}) || length($attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//gr) == 0 ) {
+		$attributes->{'PERFORMANCE'} = undef;
 	} else {
-		$attributes->{'GROUPING'} =~ s/^\s+|\s+$//g;
+		$attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//g;
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
