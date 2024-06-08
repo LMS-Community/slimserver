@@ -1604,7 +1604,6 @@ sub _albums {
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,
-#					passthrough => [{ searchTags => \@searchTags, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					passthrough => [{ searchTags => [@searchTags, "performance:-1"], sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1,

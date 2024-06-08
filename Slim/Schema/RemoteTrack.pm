@@ -61,6 +61,7 @@ my @allAttributes = (qw(
 	grouping
 	subtitle
 	performance
+	discsubtitle
 ));
 
 {
