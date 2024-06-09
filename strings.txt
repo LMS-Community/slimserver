@@ -6793,6 +6793,7 @@ SETUP_EXTENSIONS_CATEGORY_ALL
 SETUP_EXTENSIONS_CATEGORY_TOP
 	DE	Populärste (nicht installierte)
 	EN	Most Popular (not installed)
+	FR	Les plus populaires (non installés)
 
 SETUP_EXTENSIONS_CATEGORY_DATABASE
 	CS	Hudební knihovna
@@ -7930,7 +7931,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN". PLEASE NOTE: if you're using the Fulltext Search plugin, this flag does not apply.
 	ES	Cuando se busca material multimedia, se puede hacer que el servidor encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat mediahakuja, voit määrittää palvelimen etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa. Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
-	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur "RAIN" affichera les morceaux contenant le mot "RAINBOW" si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, "TRAIN" sera également renvoyé comme résultat.
+	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur "RAIN" affichera les morceaux contenant le mot "RAINBOW" si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, "TRAIN" sera également renvoyé comme résultat. Veuillez noter que ce paramètre sera ignoré si le plugin "Recherche en texte intégral" est activé.
 	HE	בעת חיפוש פריטי מוסיקה, באפשרותך להורות ל-Squeezebox למצוא התאמות עבור פריטים שמכילים מילים שמתחילות באותן אותיות כמו מחרוזת החיפוש או מילים שכוללות את המחרוזת לחיפוש בכל מקום שהוא במילה. לדוגמה, חיפוש בתחילתן של מילים אחר "עד" יחזיר פריטים עם המילה "עדין". חיפוש בתוך מילים יחזיר גם פריטים שמכילים את המילה "רעד".
 	IT	Quando si effettuano ricerche nei file multimediali, il server può trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono. Ad esempio, cercando tra le parole che iniziano con FERRO vengono trovate voci quali FERROVIA, mentre cercando anche all'interno delle parole vengono individuate voci come AFFERRO.
 	NL	Wanneer je naar mediabestanden zoekt, kun je naar woorden zoeken die met de letters van de zoektekst beginnen, of woorden waarin de zoektekst ergens voorkomt. Zoek je bijvoorbeeld naar 'RAIN' aan het begin van woorden, dan vind je woorden zoals 'RAINBOW'. Als je binnen woorden zoekt, worden ook woorden zoals 'TRAIN' als resultaat gegeven.
@@ -9657,13 +9658,16 @@ SETUP_NO_JAVASCRIPT
 SETUP_WIZARD_WELCOME
 	DE	Willkommen zum Einrichtungsassisten für ihr neues Lyrion Music Server Setup
 	EN	Welcome to the initial Lyrion Music Server setup
+	FR	Bienvenue dans l'assistant de configuration initiale du Lyrion Music Server
 
 SETUP_WIZARD_WELCOME_INTRO
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
+	FR	Cet assistant vous guidera dans la configuration initiale de votre Lyrion Music Server.
 
 SETUP_WIZARD_PLUGINS_INTRO
 	DE	Wir empfehlen die Installations folgender Drittanbietererweiterungen. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Zahlreiche weitere Plugins</a> können später zu jeder Zeit hinzugefügt werden. Wählen Sie herfür später Einstellungen/Plugins verwalten.
 	EN	We recommend the installation of the following 3rd party plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Many other plugins</a> can be installed any time in Settings/Manage Plugins after the installation has completed.
+	FR	Nous recommandons l'installation des plugins tiers suivants. (<a href="https://lyrion.org/plugins/directory/" target="lyrion">De nombreux autres plugins</a> peuvent être installés à tout moment dans "Paramètres / Gérer les plugins" une fois l'installation initiale terminée.)
 
 SETUP_WIZARD_AUDIODIR
 	CS	Místní složka hudby
@@ -9762,7 +9766,7 @@ SETUP_WIZARD_SUMMARY_DESC
 	EN	Lyrion Music Server is now using the following settings
 	ES	Lyrion Music Server está usando esta configuración
 	FI	Lyrion Music Server käyttää nyt seuraavia asetuksia
-	FR	La Lyrion Music Server utilise les réglages suivants
+	FR	Le Lyrion Music Server utilise les réglages suivants
 	IT	Lyrion Music Server utilizza attualmente le impostazioni seguenti
 	NL	Lyrion Music Server gebruikt nu de volgende instellingen
 	NO	Lyrion Music Server bruker nå følgende innstillinger
