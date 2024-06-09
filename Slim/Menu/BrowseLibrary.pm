@@ -1573,7 +1573,7 @@ sub _albums {
 					my $params = _tagsToParams([ "track_id:$yearTracks" ]);
 
 					my %actions = $remote_library ? (
-						commonVariables	=> [album_id => 'id', grouping => 'grouping'],
+						commonVariables	=> [album_id => 'id', performance => 'performance'],
 					) : (
 						allAvailableActionsDefined => 1,
 						info => {

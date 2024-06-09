@@ -1846,7 +1846,6 @@ sub playlistZapCommand {
 
 sub playlistcontrolCommand {
 	my $request = shift;
-$log->error("DK request=" . Data::Dump::dump($request->{_params}));
 
 	main::INFOLOG && $log->info("Begin Function");
 
