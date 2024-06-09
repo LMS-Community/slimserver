@@ -1936,7 +1936,7 @@ sub _tracks {
 				my ($performance) = grep {/performance:/} @searchTags;
 				$performance =~ s/performance:// if $performance;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, performance => $performance, track_count => scalar @$items} ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id, work_id => $workId, performance => $performance, track_count => $results->{'count'}} ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
