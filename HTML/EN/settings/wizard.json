@@ -7,7 +7,8 @@
 			},
 			"desc": {
 				"DE": "Der <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> bietet eine moderne, reichhaltige und anpassungsfähige Benutzeroberfläche für Ihre Musiksammlung.",
-				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection."
+				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection.",
+				"FR": "Le plugin <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> fournit une interface utilisateur moderne, riche et réactive (utilisable aisément quelle que soit la taille de l'écran) pour votre collection musicale."
 			},
 			"checked": true,
 			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-initial.png"
@@ -16,11 +17,13 @@
 			"id": "MusicArtistInfo",
 			"label": {
 				"DE": "Musik- und Interpreteninformation",
-				"EN": "Music and Artist Information"
+				"EN": "Music and Artist Information",
+				"FR": "Informations sur la Musique et les Artistes"
 			},
 			"desc": {
 				"DE": "Das Musik- und Interpreteninformationen-Plugin bietet zusätzliche Informationen zu Ihrer Musik: Biografien, Albumkritiken, Songtexte und mehr. Es ist eine perfekte Ergänzung zum Material Skin.",
-				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin."
+				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin.",
+				"FR": "Le plugin \"Informations sur la Musique et les Artistes\" fournit des informations supplémentaires sur votre musique : biographies des artistes, critiques des albums, paroles des chansons et plus encore. Il complète parfaitement le plugin Material Skin."
 			},
 			"checked": true,
 			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-mai.png"
@@ -29,11 +32,13 @@
 			"id": "Spotty",
 			"label": {
 				"DE": "Spotty Spotify Integration für LMS",
-				"EN": "Spotty Spotify implementation for LMS"
+				"EN": "Spotty Spotify implementation for LMS",
+				"FR": "Intégration Spotty Spotify pour LMS"
 			},
 			"desc": {
 				"DE": "Spotty ist eine Spotify Anwendung für LMS. Sie Zugriff auf ihr Spotify Premium Konto über die Squeezebox und all kompatiblen Geräte.",
-				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account."
+				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account.",
+				"FR": "Spotty permet de lier votre compte Spotify Premium à une Squeezebox, ou tout autre appareil compatible LMS, et d'accéder à votre musique sur Spotify."
 			},
 			"icon": "https://raw.githubusercontent.com/michaelherger/Spotty-Plugin/master/HTML/EN/plugins/Spotty/html/images/93aac68fb06348598c1e67734dfaceee.png",
 			"checked": false
@@ -45,7 +50,8 @@
 			},
 			"desc": {
 				"DE": "TIDAL ist eine globale Musik-Streaming-Plattform, die Künstler und Fans durch einzigartige Erlebnisse und die höchste Soundqualität näher zusammenbringt.",
-				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality."
+				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality.",
+				"FR": "TIDAL est une plateforme de streaming internationale qui rapproche les artistes de leurs fans à travers des contenus originaux dans la meilleure qualité audio disponible."
 			},
 			"icon": "https://raw.githubusercontent.com/michaelherger/lms-plugin-tidal/main/HTML/EN/plugins/TIDAL/html/emblem.png",
 			"checked": false
@@ -57,7 +63,8 @@
 			},
 			"desc": {
 				"DE": "Qobuz ist eine Musik-Streaming-Plattform mit Zugriff auf über 100 Millionen Songs, die alle im Hi-Res FLAC (Free Lossless Audio Codec) Format verfügbar sind.",
-				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format."
+				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format.",
+				"FR": "Qobuz est une plateforme de streaming musical donnant accès à plus de 100 millions de morceaux, souvent disponibles au format FLAC Hi-Res (Free Lossless Audio Codec)."
 			},
 			"icon": "https://raw.githubusercontent.com/LMS-Community/plugin-Qobuz/master/HTML/EN/plugins/Qobuz/html/images/icon.png",
 			"checked": false
@@ -83,7 +90,7 @@
 			"desc": {
 				"DE": "Titel, Cover und gelegentlich Programm-Informationen für mehr als 3600 Radiosender",
 				"EN": "Track, cover art and, occasionally, programme information for more than 3600 radio stations",
-				"FR": "Titre, pochette et, occasionnellement, informations sur le programme pour plus de 3600 stations de radio"
+				"FR": "Titre, pochette et, occasionnellement, informations sur le programme en cours d'écoute pour plus de 3600 stations de radio"
 			}
 		},
 		{
@@ -110,7 +117,7 @@
 			"desc": {
 				"DE": "Durch die Bereitstellung <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">anonymer analytischer Daten</a> helfen Sie uns, den <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">Lyrion Music Server weiterzuentwickeln</a>.",
 				"EN": "By providing <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">some anonymous analytical data</a> you <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">help us further develop</a> Lyrion Music Server.",
-				"FR": "En fournissant <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">des données analytiques anonymes</a>, vous <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">nous aidez à développer</a> le serveur de musique Lyrion."
+				"FR": "En fournissant <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">des données d'analyse anonymes</a>, vous nous aidez à <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">développer davantage le Lyrion Music Server</a>."
 			},
 			"checked": true,
 			"img": "/html/images/analytics.png"
