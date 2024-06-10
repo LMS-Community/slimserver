@@ -42,7 +42,7 @@ sub _report {
 	my $osDetails = Slim::Utils::OSDetect::details();
 	my $plugins = [ sort map {
 		/^(?:Slim::Plugin|Plugins)::(.*)::/
-	}  grep {
+	} grep {
 		my $pluginData = Slim::Utils::PluginManager->dataForPlugin($_) || {};
 		$_ ne __PACKAGE__ && !$pluginData->{enforce};
 	} Slim::Utils::PluginManager->enabledPlugins() ];
