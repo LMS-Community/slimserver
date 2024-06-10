@@ -78,6 +78,7 @@ my $log             = logger('scan.import');
 my $prefs           = preferences('server');
 
 my %scanQueue;
+my %recentlyScanned;
 my $ABORT = 0;
 
 my %scanTypes = (
@@ -779,8 +780,11 @@ sub initScanQueue {
 	}
 
 	require Tie::IxHash;
+	require Tie::Cache::LRU::Expires;
 
 	tie (%scanQueue, "Tie::IxHash");
+	# keep list of recently run scans to prevent race condition in which we might end in an infinite recursion.
+	tie (%recentlyScanned, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 128);
 
 	main::DEBUGLOG && $log->debug("initialize scan queue");
 
@@ -794,6 +798,11 @@ sub nextScanTask {
 
 	my $k    = shift @keys;
 	my $next = delete $scanQueue{$k};
+
+	if ($recentlyScanned{$k}++) {
+		main::INFOLOG && $log->is_info && $log->info("Skipping scan, as we run it recently: $k");
+		return;
+	}
 
 	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k && $next;
 
@@ -836,7 +845,7 @@ sub queueScanTask {
 		my $k = "$type|$mode|$singledir";
 
 		# no need to add duplicate scan
-		if ( $scanQueue{$k} ) {
+		if ( $scanQueue{$k} || $recentlyScanned{$k} ) {
 			main::DEBUGLOG && $log->debug("scan $k is already in queue - skip it");
 			return;
 		}
