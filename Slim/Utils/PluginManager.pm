@@ -366,6 +366,10 @@ sub load {
 			my $htmlDir = catdir($baseDir, 'HTML');
 
 			if (-d $htmlDir) {
+				# plugin only provides a skin, no Perl module
+				if (!$loadModule) {
+					$loaded->{$module} = $plugins->{$name};
+				}
 
 				main::DEBUGLOG && $log->debug("Adding HTML directory: [$htmlDir]");
 
