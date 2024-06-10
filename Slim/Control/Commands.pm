@@ -2068,6 +2068,10 @@ sub playlistcontrolCommand {
 		if (defined(my $year = $request->getParam('year'))) {
 			$what->{'year.id'} = $year;
 			$info[0] = $year;
+			if ( my $onlyAlbumYears = $request->getParam('only_album_years') ) {
+				$what->{'album.year'} = $year;
+				$info[0] = $year;
+			}
 		}
 
 		if (defined(my $releaseType = $request->getParam('release_type'))) {

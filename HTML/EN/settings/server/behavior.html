@@ -123,6 +123,15 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_YEARMENU" desc="SETUP_YEARMENU_DESC"%]
+		<select class="stdedit" name="pref_onlyAlbumYears" id="onlyAlbumYears">
+
+			<option [% IF prefs.pref_onlyAlbumYears %]selected [% END %]value="1">[% 'SETUP_YEARMENU_0' | string %]</option>
+			<option [% IF NOT prefs.pref_onlyAlbumYears %]selected [% END %]value="0">[% 'SETUP_YEARMENU_1' | string %]</option>
+
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_SEARCHSUBSTRING" desc="SETUP_SEARCHSUBSTRING_DESC"%]
 		<select class="stdedit" name="pref_searchSubString" id="searchSubString" [% IF usesFTS %]disabled="true"[% END %]>
 

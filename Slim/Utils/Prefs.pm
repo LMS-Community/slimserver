@@ -265,6 +265,7 @@ sub init {
 		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
+		'onlyAlbumYears'        => 1,
 	);
 
 	# we can have different defaults depending on the OS
