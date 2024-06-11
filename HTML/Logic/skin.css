@@ -68,3 +68,10 @@ div#background {
 	background-image: url('html/images/btn_settings.gif');
 }
 
+.settings .buttonbar {
+	padding: 6px 13px 0px;
+}
+
+#pluginButtonBar #filterChooser {
+	padding-right: 30px;
+}
