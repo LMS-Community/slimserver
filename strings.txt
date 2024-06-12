@@ -24647,14 +24647,26 @@ TRACKS_FROM_OTHER_ALBUMS
 	NL	Nummers van andere albums
 
 SETUP_YEARMENU
+	DE	Jahre Menü
 	EN	Year Menu
+	FR	Menu Années
+	NL	Jaarmenu
 
 SETUP_YEARMENU_DESC
+	DE	Soll das Jahresmenü nur Albumjahre oder Album- und Trackjahre anzeigen?
 	EN	Should the Year menu show album years only, or album and track years?
+	FR	Le menu Année doit-il afficher uniquement les années des albums, ou bien les années des albums et des pistes?
+	NL	Moet het jaarmenu alleen albumjaren tonen, of zowel album- als trackjaren?
 
 SETUP_YEARMENU_0
+	DE	Zeige nur Albumjahre
 	EN	Show album years only
+	FR	Afficher uniquement les années des albums
+	NL	Toon alleen albumjaren
 
 SETUP_YEARMENU_1
+	DE	Zeige Album- und Titeljahre
 	EN	Show album and track years
+	FR	Afficher les années des albums et des pistes
+	NL	Toon album- en trackjaren
 
