@@ -24638,3 +24638,23 @@ UPDATE
 	NO	Oppdaterer
 	PL	Aktualizacja
 	SV	Uppdatera
+
+TRACKS_FROM_OTHER_ALBUMS
+	DE	Titel von anderen Alben
+	EN	Tracks from other albums
+	ES	Pistas de otros álbumes
+	FR	Pistes d'autres albums
+	NL	Nummers van andere albums
+
+SETUP_YEARMENU
+	EN	Year Menu
+
+SETUP_YEARMENU_DESC
+	EN	Should the Year menu show album years only, or album and track years?
+
+SETUP_YEARMENU_0
+	EN	Show album years only
+
+SETUP_YEARMENU_1
+	EN	Show album and track years
+

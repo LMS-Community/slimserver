@@ -4385,6 +4385,7 @@ sub titlesQuery {
 	my $workID        = $request->getParam('work_id');
 	my $ignoreWorkTracks = $request->getParam('ignore_work_tracks');
 	my $performance      = $request->getParam('performance');
+	my $onlyAlbumYears = $request->getParam('only_album_years');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4439,6 +4440,7 @@ sub titlesQuery {
 		releaseType   => $releaseType,
 		workId	      => $workID,
 		libraryId     => $libraryID,
+		onlyAlbumYears=> $onlyAlbumYears,
 		limit         => sub {
 			$count = shift;
 
@@ -4524,7 +4526,7 @@ sub yearsQuery {
 	# get them all by default
 	my $where = {};
 
-	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
+	my ($key, $table) = $hasAlbums ? ('albums.year', 'albums') : ('tracks.year', 'tracks');
 
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];
@@ -4536,7 +4538,7 @@ sub yearsQuery {
 	}
 
 	if (defined $libraryID) {
-		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ' if $hasAlbums;
 		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 		push @{$w}, 'library_track.library = ?';
 		push @{$p}, $libraryID;
@@ -5831,13 +5833,9 @@ sub _getTagDataForTracks {
 	}
 
 	if ( my $trackId = $args->{trackId} ) {
-		push @{$w}, 'tracks.id = ?';
-		push @{$p}, $trackId;
-	}
-
-	if ( my $year = $args->{year} ) {
-		push @{$w}, 'tracks.year = ?';
-		push @{$p}, $year;
+		my @trackIds = split(',', $trackId);
+		push @{$w}, 'tracks.id IN (' . join(',', map {'?'} @trackIds) . ')';
+		push @{$p}, @trackIds;
 	}
 
 	if ( my $workId = $args->{workId} ) {
@@ -5903,6 +5901,16 @@ sub _getTagDataForTracks {
 			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
 		}
 	};
+
+	if ( my $year = $args->{year} ) {
+		push @{$w}, 'tracks.year = ?';
+		push @{$p}, $year;
+		if ( $args->{onlyAlbumYears} ) {
+			$join_albums->();
+			push @{$w}, 'albums.year = ?';
+			push @{$p}, $year;
+		}
+	}
 
 	if ( my $releaseType = $args->{releaseType} ) {
 		$join_albums->();

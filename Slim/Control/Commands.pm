@@ -2068,6 +2068,9 @@ sub playlistcontrolCommand {
 		if (defined(my $year = $request->getParam('year'))) {
 			$what->{'year.id'} = $year;
 			$info[0] = $year;
+			if ( $request->getParam('only_album_years') ) {
+				$what->{'album.year'} = $year;
+			}
 		}
 
 		if (defined(my $releaseType = $request->getParam('release_type'))) {
@@ -3443,16 +3446,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'playlist.id'};
 		}
 
-		# If we have an album and a year - remove the year, since
-		# there is no explict relationship between Track and Year.
-		if ($find{'me.album'} && $find{'year.id'}) {
+		# restrict by tracks.year to bring playlist add into line with album/tracks listings filtered by year.
+		if ($find{'year.id'}) {
 
-			delete $find{'year.id'};
-			delete $joinMap{'year'};
-
-		} elsif ($find{'year.id'}) {
-
-			$find{'album.year'} = delete $find{'year.id'};
+			$find{'me.year'} = delete $find{'year.id'};
 			delete $joinMap{'year'};
 		}
 

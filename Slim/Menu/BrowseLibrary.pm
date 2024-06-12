@@ -729,7 +729,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year only_album_years folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1347,7 +1347,7 @@ sub _years {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
 	}
 
-	_generic($client, $callback, $args, 'years', [ 'hasAlbums:1', @searchTags ],
+	_generic($client, $callback, $args, 'years', [ "hasAlbums:". $prefs->get('onlyAlbumYears'), @searchTags ],
 		sub {
 			my $results = shift;
 			my $items = $results->{'years_loop'};
@@ -1441,6 +1441,7 @@ sub _albumsOrReleases {
 }
 
 sub _albums {
+
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
@@ -1555,14 +1556,72 @@ sub _albums {
 			}
 
 			my $extra;
-			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
-				my $params = _tagsToParams(\@searchTags);
 
-				if ($params->{artist_id}) {
-					$extra = [ grep { $_ } map {
-						$_->($params->{artist_id});
-					} @{getExtraItems('artist')} ];
+			# Have we got tracks for the year from other albums (ones with a different album year)?
+			my $yearTracks = 0;
+			if (  my $year = (grep(/^year:/, @searchTags))[0] ) {
+				my $onlyAlbumYears = $prefs->get('onlyAlbumYears');
+				if ( !$onlyAlbumYears && $year && !(grep(/^release_type:|^work_id:/, @searchTags)) ) {
+					$year =~ s/^year://;
+					$yearTracks = Slim::Schema::Track::yearTracksNotOnYearAlbums($year, $library_id);
 				}
+				#if not showing track years, ensure "All Songs" doesn't include tracks from albums which don't have the selected year 
+				push @searchTags, "only_album_years:$onlyAlbumYears";
+			}
+
+			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
+
+				if ( $yearTracks ) {
+
+					my $params = _tagsToParams([ "track_id:$yearTracks" ]);
+
+					my %actions = $remote_library ? (
+						commonVariables	=> [album_id => 'id', performance => 'performance'],
+					) : (
+						allAvailableActionsDefined => 1,
+						info => {
+							command     => [],
+						},
+						items => {
+							command     => [BROWSELIBRARY, 'items'],
+							fixedParams => {
+								mode       => 'tracks',
+								%{&_tagsToParams([ "track_id:$yearTracks" ])},
+							},
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', %$params},
+						},
+						remove => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'delete', %$params},
+						},
+					);
+					$actions{'playall'} = $actions{'play'};
+					$actions{'addall'} = $actions{'add'};
+
+					push @$extra, {
+						name        => cstring($client, 'TRACKS_FROM_OTHER_ALBUMS'),
+						image       => 'html/images/albums.png',
+						type        => 'playlist',
+						playlist    => \&_tracks,
+						url         => \&_tracks,
+						passthrough => [{ searchTags => ["track_id:$yearTracks"], sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+						itemActions => \%actions,
+						skipIfSingleton => 0,
+					};
+				}
+
+				my $params = _tagsToParams(\@searchTags);
 
 				my %actions = $remote_library ? (
 					commonVariables	=> [album_id => 'id', performance => 'performance'],
@@ -1597,6 +1656,12 @@ sub _albums {
 				);
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'add'};
+
+				if ($params->{artist_id}) {
+					push @$extra,  grep { $_ } map {
+						$_->($params->{artist_id});
+					} @{getExtraItems('artist')};
+				}
 
 				push @$extra, {
 					name        => cstring($client, 'ALL_SONGS'),
@@ -1641,7 +1706,7 @@ sub _albums {
 					remove => {command => [BROWSELIBRARY, 'playlist', 'delete'], fixedParams => \%params},
 				);
 
-				$extra = [ {
+				push @$extra, {
 					name        => cstring($client, 'ALL_SONGS'),
 					icon        => 'html/images/albums.png',
 					type        => 'playlist',
@@ -1650,7 +1715,7 @@ sub _albums {
 					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 					skipIfSingleton => 1
-				} ];
+				};
 			}
 
 			my $params = _tagsToParams(\@searchTags);

@@ -30,7 +30,7 @@ sub prefs {
 				conductorInArtists bandInArtists variousArtistAutoIdentification
 				ignoreReleaseTypes cleanupReleaseTypes groupArtistAlbumsByReleaseType
 				useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
-				skipsentinel showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres)
+				skipsentinel showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres onlyAlbumYears)
 		   );
 }
 
