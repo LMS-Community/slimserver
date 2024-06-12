@@ -95,7 +95,7 @@
 
 	[% IF can_restart %]
 		[% WRAPPER setting title="SETUP_RESTART" desc="SETUP_RESTART_DESC" %]
-			<input name="pref_restart" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESTART_BUTTON" | string %]" [% IF scanning %]disabled[% END %]>
+			<input name="do_restart" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESTART_BUTTON" | string %]" [% IF scanning %]disabled[% END %]>
 		[% END %]
 	[% END %]
 
