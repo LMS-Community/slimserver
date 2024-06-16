@@ -13425,7 +13425,7 @@ BROWSE_YEARS
 	FI	Etsi vuosia
 	FR	Parcourir les années
 	IT	Sfoglia anni
-	NL	Door jaren bladeren
+	NL	Door jaartallen bladeren
 	NO	Bla etter år
 	PL	Przeglądaj lata
 	RU	Просмотр по годам
@@ -24650,23 +24650,23 @@ SETUP_YEARMENU
 	DE	Jahre Menü
 	EN	Year Menu
 	FR	Menu Années
-	NL	Jaarmenu
+	NL	Jaartallen Menu
 
 SETUP_YEARMENU_DESC
 	DE	Soll das Jahresmenü nur Albumjahre oder Album- und Trackjahre anzeigen?
 	EN	Should the Year menu show album years only, or album and track years?
 	FR	Le menu Années doit-il prendre en compte uniquement les années des albums ou intégrer également les années des morceaux ? (Cette option permet d'afficher les morceaux d'une année donnée même si leur album est répertorié dans une année différente.)
-	NL	Moet het jaarmenu alleen albumjaren tonen, of zowel album- als trackjaren?
+	NL	Moet het jaartallen menu alleen het jaartal van het album tonen, of zowel het jaartal van het album en het nummer?
 
 SETUP_YEARMENU_0
 	DE	Zeige nur Albumjahre
 	EN	Show album years only
 	FR	Inclure uniquement les années des albums
-	NL	Toon alleen albumjaren
+	NL	Toon alleen jaartal van het album
 
 SETUP_YEARMENU_1
 	DE	Zeige Album- und Titeljahre
 	EN	Show album and track years
 	FR	Inclure les années des albums et des morceaux
-	NL	Toon album- en trackjaren
+	NL	Toon jaartal van album en nummer
 
