@@ -244,6 +244,9 @@ sub _checkPluginDownloads {
 	# need to reload the strings, as they's be loaded after initial plugin initialization, but we're late here...
 	Slim::Utils::Strings::loadStrings();
 
+	# re-initialize the content types map
+	Slim::Music::Info::loadTypesConfig();
+
 	# if the MaterialSkin was installed, use it
 	my %skins = Slim::Web::HTTP::skins();
 	$serverPrefs->set('skin', 'material') if $skins{MATERIAL};
