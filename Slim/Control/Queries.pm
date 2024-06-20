@@ -423,14 +423,23 @@ sub albumsQuery {
 						delete $cache->{$_};
 					}
 
+					my $orderBy = 'tracks.timestamp';
+
+					my $join = '';
+					$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
+
+					if (main::STATISTICS) {
+						$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+						$orderBy = 'tracks_persistent.added';
+					}
+
 					my $countSQL = qq{
 						SELECT tracks.album
-						FROM tracks } . ($libraryID ? qq{
-							JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track
-						} : '') . qq{
+						FROM tracks
+						$join
 						WHERE tracks.album > 0
 						GROUP BY tracks.album
-						ORDER BY tracks.timestamp DESC
+						ORDER BY $orderBy DESC
 					};
 
 					# get the list of album IDs ordered by timestamp
