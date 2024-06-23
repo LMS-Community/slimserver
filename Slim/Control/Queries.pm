@@ -3849,6 +3849,10 @@ sub statusQuery {
 
 	$request->addResult("playlist_tracks", $songCount);
 
+	if ( exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'} ) {
+		$request->addResult("randomplay", Slim::Plugin::RandomPlay::Plugin::active($client) ? 1 : 0);
+	}
+
 	# send client pref for digital volume control
 	my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
 	if ( defined($digitalVolumeControl) ) {
