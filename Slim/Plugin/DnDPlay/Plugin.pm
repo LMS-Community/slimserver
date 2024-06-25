@@ -9,6 +9,7 @@ use strict;
 
 use File::Temp qw(tempfile);
 use JSON::XS::VersionOneAndTwo;
+use URI::QueryParam;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
