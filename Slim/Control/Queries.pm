@@ -3330,12 +3330,11 @@ sub serverstatusQuery_filter {
 		return 1.3;
 	}
 
-	# FIXME: prefset???
 	# we want to know about any pref in our array
 	if (defined(my $prefsPtr = $self->privateData()->{'server'})) {
-		if ($request->isCommand([['pref']])) {
+		if ($request->isCommand([['pref','prefset']])) {
 			if (defined(my $reqpref = $request->getParam('_prefname'))) {
-				if (grep($reqpref, @{$prefsPtr})) {
+				if (grep($_ eq $reqpref, @{$prefsPtr})) {
 					return 1.3;
 				}
 			}
@@ -3344,7 +3343,7 @@ sub serverstatusQuery_filter {
 	if (defined(my $prefsPtr = $self->privateData()->{'player'})) {
 		if ($request->isCommand([['playerpref']])) {
 			if (defined(my $reqpref = $request->getParam('_prefname'))) {
-				if (grep($reqpref, @{$prefsPtr})) {
+				if (grep($_ eq $reqpref, @{$prefsPtr})) {
 					return 1.3;
 				}
 			}
