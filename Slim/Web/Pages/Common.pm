@@ -464,7 +464,7 @@ sub logFile {
 		$logfile =~ s/log/server/;
 		$logfile .= 'LogFile';
 
-		$logFile = Slim::Utils::Log->$logfile;
+		eval { $logFile = Slim::Utils::Log->$logfile };
 	}
 
 	if ( $params->{zip} && -f $logFile ) {
