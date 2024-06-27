@@ -1452,7 +1452,7 @@ sub _albums {
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
-	if (!$sort || $sort !~ /^sort:(?:random|new)$/) {
+	if (!$sort || $sort !~ /^sort:(?:random|new|changed)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
 	$sort = 'sort:' . $sort if $sort && $sort !~ /^sort:/;
@@ -1485,7 +1485,7 @@ sub _albums {
 		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
 			$sort = 'sort:' . $mapped;
 		}
-		$sort = undef unless grep {$_ eq $1} ('new', 'random', values %orderByList);
+		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', values %orderByList);
 	}
 
 	# Under certain circumstances (random albums in web UI or with remote streams) we are only
@@ -1565,11 +1565,11 @@ sub _albums {
 					$year =~ s/^year://;
 					$yearTracks = Slim::Schema::Track::yearTracksNotOnYearAlbums($year, $library_id);
 				}
-				#if not showing track years, ensure "All Songs" doesn't include tracks from albums which don't have the selected year 
+				#if not showing track years, ensure "All Songs" doesn't include tracks from albums which don't have the selected year
 				push @searchTags, "only_album_years:$onlyAlbumYears";
 			}
 
-			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|random)/) {
+			if ((scalar grep { $_ !~ /remote_library/ } @searchTags) && $sort !~ /:(?:new|changed|random)/) {
 
 				if ( $yearTracks ) {
 
@@ -1758,8 +1758,8 @@ sub _albums {
 			my $result = {
 				items       => $items,
 				actions     => \%actions,
-				sorted      => (($sort && $sort =~ /^sort:(?:random|new)$/) ? 0 : 1),
-				orderByList => (defined($search) || ($sort && $sort =~ /^sort:(?:random|new)$/) ? undef : \%orderByList),
+				sorted      => (($sort && $sort =~ /^sort:(?:random|changed|new)$/) ? 0 : 1),
+				orderByList => (defined($search) || ($sort && $sort =~ /^sort:(?:random|changed|new)$/) ? undef : \%orderByList),
 			};
 
 			if ( $cacheKey && $args->{quantity} && $args->{quantity} > 1 ) {
@@ -1778,7 +1778,7 @@ sub _albums {
 			return $result, $extra;
 		},
 		# no need for an index bar in New Music mode
-		$tags, ($pt->{'wantIndex'} || $args->{'wantIndex'}) && !($sort && $sort =~ /^sort:(random|new)$/),
+		$tags, ($pt->{'wantIndex'} || $args->{'wantIndex'}) && !($sort && $sort =~ /^sort:(random|changed|new)$/),
 	);
 }
 

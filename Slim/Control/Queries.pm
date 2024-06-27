@@ -287,7 +287,7 @@ sub albumsQuery {
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -301,7 +301,7 @@ sub albumsQuery {
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	my $limit;
 	my $page_key = "SUBSTR(albums.titlesort,1,1)";
-	my $newAlbumsCacheKey = 'newAlbumIds' . Slim::Music::Import->lastScanTime . ($libraryID || Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $newAlbumsCacheKey = 'newAlbumIds' . Slim::Music::Import->lastScanTime . ($libraryID || Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) . $sort;
 
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -397,10 +397,10 @@ sub albumsQuery {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 		}
 
-		if ( $sort eq 'new' ) {
+		if ( $sort =~ /^(?:new|changed)$/ ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "tracks.timestamp desc";
+			$order_by = "tracks.timestamp DESC";
 
 			# Force quantity to not exceed max
 			if ( $quantity && $quantity > $limit ) {
@@ -423,14 +423,22 @@ sub albumsQuery {
 						delete $cache->{$_};
 					}
 
+					my $join = '';
+					$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
+
+					if (main::STATISTICS && $sort ne 'changed') {
+						$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+						$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+						$order_by = 'MIN(tracks_persistent.added, tracks.timestamp) DESC';
+					}
+
 					my $countSQL = qq{
 						SELECT tracks.album
-						FROM tracks } . ($libraryID ? qq{
-							JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track
-						} : '') . qq{
+						FROM tracks
+						$join
 						WHERE tracks.album > 0
 						GROUP BY tracks.album
-						ORDER BY tracks.timestamp DESC
+						ORDER BY $order_by
 					};
 
 					# get the list of album IDs ordered by timestamp
@@ -663,7 +671,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 
-	if ( $sort eq 'new' && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
+	if ( $sort =~ /^(?:new|changed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;

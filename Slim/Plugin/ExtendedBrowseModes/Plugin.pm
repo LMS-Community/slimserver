@@ -276,6 +276,18 @@ sub initMenus {
 			weight       => 69,
 			static       => 1,
 			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED',
+			params       => {
+				mode => 'recentlychanged',
+				sort => 'changed',
+				wantMetadata => 1,
+			},
+			feed         => 'albums',
+			id           => 'myMusicRecentlyChangeAlbums',
+			icon         => 'html/images/newmusic.png',
+			weight       => 51,
+			static       => 1,
 		};
 	}
 
@@ -308,7 +320,7 @@ sub registerBrowseMode {
 	}
 	elsif ( $item->{feed} =~ /\balbums$/ ) {
 		$feed = \&Slim::Menu::BrowseLibrary::_albums;
-		$icon = 'html/images/albums.png';
+		$icon ||= 'html/images/albums.png';
 	}
 	elsif ( $item->{feed} =~ /\bworks$/ ) {
 		$feed = \&Slim::Menu::BrowseLibrary::_works;

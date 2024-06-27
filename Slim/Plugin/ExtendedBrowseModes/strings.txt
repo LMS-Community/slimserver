@@ -181,6 +181,10 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	RU	Произвольные альбомы
 	SV	Slumpmässigt valda album
 
+PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
+	DE	Zuletzte aktualisierte Alben
+	EN	Recently Updated Albums
+
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	CS	Nejlepší skladby
 	DA	Mest populære numre
