@@ -438,13 +438,34 @@ sub tuneIn {
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
 }
 
+=pod
+# create log file handler for http://lms:9000/my.log
+Slim::Web::Pages->addPageFunction("^my.log", sub {
+	my ($client, $params, undef, $httpClient, $response) = @_;
+	return Slim::Web::Pages::Common->logFileViewer($client, $params, $httpClient, $response, '/path/to/your/log');
+});
+=cut
+
+sub logFileViewer {
+	my ($class, $client, $params, $httpClient, $response, $logfile) = @_;
+
+	$response->header("Content-Type" => "text/html; charset=utf-8");
+	if ( my $body = $class->logFile($httpClient, $params, $response, $logfile) ) {
+		return Slim::Web::HTTP::prepareResponseForSending($client, $params, $body, $httpClient, $response);
+	}
+}
+
 sub logFile {
 	my ($class, $httpClient, $params, $response, $logfile) = @_;
 
-	$logfile =~ s/log/server/;
-	$logfile .= 'LogFile';
+	my $logFile = $logfile;
 
-	my $logFile = Slim::Utils::Log->$logfile;
+	if (!-f $logFile) {
+		$logfile =~ s/log/server/;
+		$logfile .= 'LogFile';
+
+		$logFile = Slim::Utils::Log->$logfile;
+	}
 
 	if ( $params->{zip} && -f $logFile ) {
 		my $zip;
