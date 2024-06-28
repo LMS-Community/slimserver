@@ -1,7 +1,7 @@
 [% IF song_count; pageHeaderInfo = BLOCK %]
 	[% album_count %] [% "WITH" | string %] [% song_count %] [% stringBY %] [% artist_count %]
 	[% IF albumDuration %]([% "LENGTH" | string %][% stringCOLON %] [% albumDuration %])[% END %]
-[% END; END %]  
+[% END; END %]
 
 [% pagetitle = browseby | string; noSpacer = 1 %]
 
@@ -24,7 +24,7 @@
 	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 </div>
 
-[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age' || levelName = 'changed');
 		container = 'gallerycontainer';
 	ELSE;
 		container = 'contentcontainer';
@@ -32,16 +32,16 @@
 %]
 
 [%- WRAPPER $container %]
-	[% IF levelName == 'track' && (album.id || age.id) && NOT ajaxUpdate %]
-		[% IF age.id; album = age; END %]
+	[% IF levelName == 'track' && (album.id || age.id || changed.id) && NOT ajaxUpdate %]
+		[% IF age.id; album = age; ELSIF changed.id; album = changed; END %]
 		<div style="overflow: hidden; width: 99%;">
-		[% 
+		[%
 			# remove "All Songs" item and display links at the top
 			IF browse_items.size > 1;
 			songInfoPlayLinks = BLOCK;
 				PROCESS songInfoPlayLinks item = browse_items.shift();
 			END;END;
-			
+
 			contributorRoles = {};
 
 			IF !album.compilation;
@@ -60,7 +60,7 @@
 				year => album.year
 			};
 		%]</div>
-		
+
 
 	[% ELSIF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] [% UNLESS notarget %]target="cover"[% END %]>[% PROCESS coverImg resize='1' %]</a></p>
@@ -68,13 +68,13 @@
 	[% FOREACH item = browse_items -%]
 		[%- IF useAJAX %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% IF level %][% itemid = "$level"_"."_"$itemid" %][% END %][% END -%]
 		[%- PROCESS browsedbitems_list.html -%]
-		[%- IF useAJAX && NOT (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age')) %]
+		[%- IF useAJAX && NOT (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age' || item.levelName == 'changed')) %]
 			<div id="descendinfo[% itemid %]" class="descendinfo" style="display:none;"><div id="item[% itemid %]" class="descenditem"></div></div>
 		[% END -%]
 	[%- END %]
 [% END -%]
 
-[% IF useAJAX && (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age')) %]
+[% IF useAJAX && (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age' || item.levelName == 'changed')) %]
 <div id='albumBackground' style="display:none;" onClick = "javascript:hideAlbumInfo();"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
 <div id='albumPopup' style="display:none;">
 	<div id = 'closeAlbumPopup'><span id="closeAlbumText"><a href="javascript:void(1);" onClick = "javascript:hideAlbumInfo();"><img src = "[% webroot %]html/images/b_delete.gif" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"></a></span></div>

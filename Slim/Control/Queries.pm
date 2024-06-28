@@ -407,6 +407,11 @@ sub albumsQuery {
 				$quantity = $limit;
 			}
 
+			if (main::STATISTICS && $sort eq 'new') {
+				$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+				$order_by = 'MIN(tracks_persistent.added, tracks.timestamp) DESC';
+			}
+
 			# cache the most recent album IDs - need to query the tracks table, which is expensive
 			if ( !$ignoreNewAlbumsCache ) {
 				my $ids = $cache->{$newAlbumsCacheKey} || [];
@@ -426,10 +431,8 @@ sub albumsQuery {
 					my $join = '';
 					$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
 
-					if (main::STATISTICS && $sort ne 'changed') {
+					if (main::STATISTICS && $sort eq 'new') {
 						$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-						$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-						$order_by = 'MIN(tracks_persistent.added, tracks.timestamp) DESC';
 					}
 
 					my $countSQL = qq{

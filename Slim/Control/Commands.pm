@@ -3315,14 +3315,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		# Do some mapping from the player browse mode. This is
 		# already done in the web ui.
-		elsif ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
+		elsif ($key =~ /^(playlist|age|changed|album|contributor|genre|year)$/) {
 			$key = "$1.id";
 		}
 
 		# New Music browsing is working on the
 		# tracks.timestamp column, but shows years.
 		# Use the album-id in the track instead of joining with the album table.
-		if ($key eq 'album.id' || $key eq 'age.id') {
+		if ($key eq 'album.id' || $key eq 'age.id' || $key eq 'changed.id') {
 			$key = 'track.album';
 		}
 

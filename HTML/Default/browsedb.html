@@ -32,7 +32,7 @@
 [%- PROCESS pageheader.html dontscroll=1 useSpecialExt="-browse" -%]
 
 	<div id="browsedbHeader">
-		[% IF !(artwork == 1 && (levelName == 'album' || levelName == 'age')) -%]
+		[% IF !(artwork == 1 && (levelName == 'album' || levelName == 'age' || levelName == 'changed')) -%]
 			[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 		[% END -%]
 		[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
@@ -42,7 +42,7 @@
 		[%- END %]
 	</div>
 
-	[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+	[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age' || levelName == 'changed');
 			container = 'gallerycontainer';
 		ELSE;
 			container = 'contentcontainer';
@@ -54,9 +54,9 @@
 
 	[%- WRAPPER $container %]
 
-		[% IF levelName == 'track' && (album.id || age.id) %]
-			[% IF age.id; album = age; END %]
-			[% 
+		[% IF levelName == 'track' && (album.id || age.id || changed.id) %]
+			[% IF age.id; album = age; ELSIF changed.id; album = changed; END %]
+			[%
 				# remove "All Songs" item and display links at the top
 				IF browse_items.size > 1;
 					songInfoPlayLinks = BLOCK;

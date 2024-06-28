@@ -32,6 +32,7 @@ my %mapLevel = (
 	genre       => 'genres',
 	year        => 'years',
 	age         => 'albums',	# need sort:new too
+	changed     => 'albums',	# need sort:changed too
 	playlist    => 'playlists',
 	playlistTrack => 'playlistTracks'
 );
@@ -60,6 +61,7 @@ my %mapNames = (
 	genre       => 'GENRE',
 	year        => 'YEAR',
 	age         => 'ALBUM',	# need sort:new too
+	changed     => 'ALBUM',	# need sort:changed too
 	playlist    => 'PLAYLIST',
 );
 
@@ -87,6 +89,9 @@ sub browsedb {
 	my %args = ('mode' => $mapLevel{$levels[$level]});
 	if ($levels[$level] eq 'age') {
 		$args{'sort'} = 'new';
+	}
+	elsif ($levels[$level] eq 'changed') {
+		$args{'sort'} = 'changed';
 	}
 
 	foreach (keys %mapParams) {
