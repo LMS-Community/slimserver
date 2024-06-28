@@ -400,7 +400,7 @@ sub parse {
 	# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
 	_mergeCommand('DATE', 'YEAR', $cuesheet, $cuesheet);
 
-	for my $key (sort {$a <=> $b} keys %$tracks) {
+	for my $key (sort {$a cmp $b} keys %$tracks) {
 
 		my $track = $tracks->{$key};
 
@@ -437,7 +437,7 @@ sub parse {
 
 	# Check to make sure that the files are actually on disk - so we don't
 	# create bogus database entries.
-	for my $key (sort {$b <=> $a} keys %$tracks) {
+	for my $key (sort {$b cmp $a} keys %$tracks) {
 
 		my $filepath = Slim::Utils::Misc::pathFromFileURL($tracks->{$key}->{'FILENAME'});
 
@@ -486,7 +486,7 @@ sub parse {
 	}
 
 	my $lastpos = 0;
-	for my $key (sort {$b <=> $a} keys %$tracks) {
+	for my $key (sort {$b cmp $a} keys %$tracks) {
 
 		my $track = $tracks->{$key};
 		my $file = $track->{'FILENAME'};
@@ -513,7 +513,7 @@ sub parse {
 		$lastpos = $track->{'START'};
 	}
 
-	for my $key (sort {$a <=> $b} keys %$tracks) {
+	for my $key (sort {$a cmp $b} keys %$tracks) {
 
 		my $track = $tracks->{$key};
 		my $file = $track->{'FILENAME'};
@@ -544,7 +544,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (keys %$cuesheet) {
+		for my $attribute (sort {$a cmp $b} keys %$cuesheet) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
@@ -630,7 +630,7 @@ sub read {
 	my $basetrack = undef;
 
 	# Process through the individual tracks
-	for my $key (sort { $a <=> $b } keys %$tracks) {
+	for my $key (sort { $a cmp $b } keys %$tracks) {
 
 		my $track = $tracks->{$key};
 
