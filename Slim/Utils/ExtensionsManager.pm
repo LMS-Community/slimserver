@@ -119,6 +119,17 @@ my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/un
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
+$prefs->migrate(4, sub {
+	# remove invalid characters from the end of the URL. These seem to sometimes be added by the forum software
+	my %seen;
+	$prefs->set('repos', [ grep {
+		!$seen{$_}++
+	} map {
+		s/\W*$//r;
+	} @{$prefs->get('repos')} ]);
+	1;
+});
+
 sub init {
 	my $class = shift;
 
@@ -165,7 +176,7 @@ sub addRepo {
 	my $class = shift;
 	my $args = shift;
 
-	my $repo   = $args->{'repo'};
+	my $repo   = $args->{'repo'} =~ s/\W*$//r;
 	my $weight = 10;
 
 	main::INFOLOG && $log->info("adding repository $repo weight $weight");
