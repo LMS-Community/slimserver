@@ -124,6 +124,15 @@ $prefs->migrate(3,
 					1;
 				});
 
+$prefs->migrate(4,
+				sub {
+					# remove invalid characters from the end of the URL. These seem to sometimes be added by the forum software
+					$prefs->set('repos', [ map {
+						s/\W*$//r;
+					} @{$prefs->get('repos')} ]);
+					1;
+				});
+
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
 	'https://lms-community.github.io/lms-plugin-repository/extensions.xml' => 1,
@@ -186,7 +195,7 @@ sub addRepo {
 	my $class = shift;
 	my $args = shift;
 
-	my $repo   = $args->{'repo'};
+	my $repo   = $args->{'repo'} =~ s/\W*$//r;
 	my $weight = 10;
 
 	main::INFOLOG && $log->info("adding repository $repo weight $weight");
