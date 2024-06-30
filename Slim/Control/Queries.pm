@@ -400,7 +400,7 @@ sub albumsQuery {
 		if ( $sort =~ /^(?:new|changed)$/ ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "tracks.timestamp DESC";
+			$order_by = "MAX(tracks.timestamp) DESC";
 
 			# Force quantity to not exceed max
 			if ( $quantity && $quantity > $limit ) {
