@@ -12280,6 +12280,10 @@ MODTIME
 	SV	Senast ändrat
 	ZH_CN	日期已更改
 
+ADDEDTIME
+	DE	Hinzugefügt am
+	EN	Date Added
+
 DATE
 	CS	Datum
 	DA	Dato

@@ -212,9 +212,15 @@ sub registerDefaultInfoProviders {
 		func   => \&infoFileModTime,
 	) );
 
-	$class->registerInfoProvider( tagversion => (
+	$class->registerInfoProvider( addedtime => (
 		parent => 'moreinfo',
 		after  => 'modtime',
+		func   => \&infoFileAddedTime,
+	) );
+
+	$class->registerInfoProvider( tagversion => (
+		parent => 'moreinfo',
+		after  => 'addedtime',
 		func   => \&infoTagVersion,
 	) );
 
@@ -1219,6 +1225,23 @@ sub infoFileModTime {
 		$item = {
 			type => 'text',
 			label => 'MODTIME',
+			name => $age,
+		};
+	}
+
+	return $item;
+}
+
+sub infoFileAddedTime {
+	my ( $client, $url, $track ) = @_;
+
+	my $item;
+	my $persistent = $track->retrievePersistent;
+
+	if ( my $age = ($persistent && $persistent->addedTime) || $track->addedTime ) {
+		$item = {
+			type => 'text',
+			label => 'ADDEDTIME',
 			name => $age,
 		};
 	}
