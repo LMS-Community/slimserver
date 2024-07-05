@@ -409,7 +409,7 @@ sub albumsQuery {
 
 			if (main::STATISTICS && $sort eq 'new') {
 				$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-				$order_by = 'MIN(tracks_persistent.added, tracks.timestamp) DESC';
+				$order_by = 'MIN(tracks_persistent.added) DESC';
 			}
 
 			# cache the most recent album IDs - need to query the tracks table, which is expensive
