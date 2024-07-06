@@ -186,7 +186,7 @@ sub init {
 		'bandInArtists'         => 0,
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
-		'useTPE2AsAlbumArtist'  => 0,
+		'useTPE2AsAlbumArtist'  => 1,
 		'variousArtistsString'  => undef,
 		'releaseTypesToIgnore'  => [],
 		'ignoreReleaseTypes'    => 0,
