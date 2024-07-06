@@ -13501,7 +13501,7 @@ BROWSE_NEW_MUSIC
 	FR	Nouveautés
 	HE	מוסיקה חדשה
 	IT	Musica recente
-	NL	Nieuwe muziek
+	NL	Nieuwe Muziek
 	NO	Ny musikk
 	PL	Nowa muzyka
 	RU	Новая музыка
