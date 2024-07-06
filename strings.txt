@@ -12283,6 +12283,7 @@ MODTIME
 ADDEDTIME
 	DE	Hinzugefügt am
 	EN	Date Added
+	FR	Date d'ajout
 
 DATE
 	CS	Datum
