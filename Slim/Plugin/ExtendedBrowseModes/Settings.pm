@@ -53,6 +53,41 @@ sub handler {
 	my $serverPrefs = $class->getServerPrefs($client);
 
 	if ($params->{'saveSettings'}) {
+
+		my $currentRoles = $prefs->get('userDefinedRoles');
+		my $customTags = {};
+		my $id = 21;
+		my $changed = 0;
+		foreach my $pref (keys %{$params}) {
+			if ($pref =~ /(.*)_tag$/) {
+				my $key = $1;
+				my $tag = $params->{$pref};
+
+				if ( $tag ) {
+					$customTags->{$tag} = {
+						name => $params->{$key . '_name'} || $tag,
+						id => $id,
+					};
+					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
+						Slim::Utils::Strings::storeExtraStrings([{
+							strings => { EN => $customTags->{$tag}->{name}},
+							token   => $tag,
+						}]) if !Slim::Utils::Strings::stringExists($tag);
+						$changed = 1;
+					}
+					$id++;
+				}
+			}
+		}
+		foreach my $old (keys %{$currentRoles}) {
+			$changed = 1 if !$customTags->{$old};
+		}
+
+		if ( $changed ) {
+			$prefs->set('userDefinedRoles', $customTags);
+			Slim::Schema::Contributor->initializeRoles();
+		}
+
 		my $menus = $prefs->get('additionalMenuItems');
 
 		for (my $i = 1; defined $params->{"id$i"}; $i++) {
@@ -191,6 +226,8 @@ sub getServerPrefs {}
 
 sub beforeRender {
 	my ($class, $params, $client) = @_;
+
+	$params->{customTags} = $prefs->get('userDefinedRoles');
 
 	$params->{libraries} = {};
 

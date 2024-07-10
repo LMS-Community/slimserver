@@ -273,7 +273,6 @@ sub infoContributors {
 		$linkRoles{'TRACKARTIST'} = 1;
 		$linkRoles{'ALBUMARTIST'} = 1;
 
-
 		# Loop through the contributor types and append
 		for my $role (@roles) {
 			for my $contributor ( $album->artistsForRoles($role) ) {

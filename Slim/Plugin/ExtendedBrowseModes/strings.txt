@@ -279,3 +279,25 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	FR	Auteurs
 	NL	Schrijvers
 	SV	Författare
+
+PLUGIN_EXTENDED_BROWSEMODES_TAGS
+	EN	User Defined Roles
+	DE	Benutzerdefinierte Rollen
+	FR	Rôles définis par l'utilisateur
+	ES	Roles definidos por el usuario
+	NL	Door de gebruiker gedefinieerde rollen
+
+PLUGIN_EXTENDED_BROWSEMODES_ROLE
+	EN	Role
+	DE	Rolle
+	FR	Rôle
+	ES	Role
+	NL	Rol
+
+PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
+	EN	Display Text
+	DE	Text anzeigen
+	FR	Afficher le texte
+	ES	Mostrar texto
+	NL	Tekst weergeven
+

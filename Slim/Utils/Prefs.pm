@@ -96,6 +96,7 @@ my $os = Slim::Utils::OSDetect->getOS();
 $os->migratePrefsFolder($path);
 
 my $prefs = preferences('server');
+my $ebmPrefs = preferences('plugin.extendedbrowsemodes');
 
 # File paths need to be prepared in order to correctly read the file system
 $prefs->setFilepaths(qw(mediadirs ignoreInAudioScan playlistdir cachedir librarycachedir coverArt));
@@ -395,6 +396,13 @@ sub init {
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
 		qw(splitList groupdiscs useTPE2AsAlbumArtist)
+	);
+
+	$ebmPrefs->setChange(
+		sub {
+			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
+		},
+		'userDefinedRoles'
 	);
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');

@@ -10,21 +10,16 @@ use Slim::Schema::ResultSet::Contributor;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
-my %contributorToRoleMap = (
-	'ARTIST'      => 1,
-	'COMPOSER'    => 2,
-	'CONDUCTOR'   => 3,
-	'BAND'        => 4,
-	'ALBUMARTIST' => 5,
-	'TRACKARTIST' => 6,
-);
+my %contributorToRoleMap;
+my @contributorRoles;
+my @contributorRoleIds;
+my $totalContributorRoles;
+my %roleToContributorMap;
+my %contributorToRoleTextMap;
 
-my @contributorRoles = sort keys %contributorToRoleMap;
-my @contributorRoleIds = values %contributorToRoleMap;
-my $totalContributorRoles = scalar @contributorRoles;
-
-my %roleToContributorMap = reverse %contributorToRoleMap;
+initializeRoles();
 
 {
 	my $class = __PACKAGE__;
@@ -63,6 +58,29 @@ my %roleToContributorMap = reverse %contributorToRoleMap;
 	$class->resultset_class('Slim::Schema::ResultSet::Contributor');
 }
 
+sub initializeRoles {
+	%contributorToRoleMap = (
+		'ARTIST'      => 1,
+		'COMPOSER'    => 2,
+		'CONDUCTOR'   => 3,
+		'BAND'        => 4,
+		'ALBUMARTIST' => 5,
+		'TRACKARTIST' => 6,
+	);
+	if ( my $prefs = preferences('plugin.extendedbrowsemodes') ) {
+		my $userDefinedRoles = $prefs->get('userDefinedRoles');
+		while ( my($k, $v) = each (%$userDefinedRoles) ) {
+			$contributorToRoleMap{$k} = $v->{id};
+			$contributorToRoleTextMap{$k} = $v->{name};
+		}
+	}
+
+	@contributorRoles = sort keys %contributorToRoleMap;
+	@contributorRoleIds = values %contributorToRoleMap;
+	$totalContributorRoles = scalar @contributorRoles;
+	%roleToContributorMap = reverse %contributorToRoleMap;
+}
+
 sub contributorRoles {
 	return @contributorRoles;
 }
@@ -81,6 +99,10 @@ sub roleToContributorMap {
 
 sub typeToRole {
 	return $contributorToRoleMap{$_[1]} || $_[1];
+}
+
+sub typeToRoleText {
+	return $contributorToRoleTextMap{$_[1]} || $_[1];
 }
 
 sub roleToType {
