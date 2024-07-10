@@ -17,7 +17,6 @@ my @contributorRoles;
 my @contributorRoleIds;
 my $totalContributorRoles;
 my %roleToContributorMap;
-my %contributorToRoleTextMap;
 
 initializeRoles();
 
@@ -71,7 +70,6 @@ sub initializeRoles {
 		my $userDefinedRoles = $prefs->get('userDefinedRoles');
 		while ( my($k, $v) = each (%$userDefinedRoles) ) {
 			$contributorToRoleMap{$k} = $v->{id};
-			$contributorToRoleTextMap{$k} = $v->{name};
 		}
 	}
 
@@ -99,10 +97,6 @@ sub roleToContributorMap {
 
 sub typeToRole {
 	return $contributorToRoleMap{$_[1]} || $_[1];
-}
-
-sub typeToRoleText {
-	return $contributorToRoleTextMap{$_[1]} || $_[1];
 }
 
 sub roleToType {
