@@ -66,8 +66,8 @@ sub initializeRoles {
 		'ALBUMARTIST' => 5,
 		'TRACKARTIST' => 6,
 	);
-	if ( my $prefs = preferences('plugin.extendedbrowsemodes') ) {
-		my $userDefinedRoles = $prefs->get('userDefinedRoles');
+	my $prefs = preferences('server');
+	if ( my $userDefinedRoles = $prefs->get('userDefinedRoles') ) {
 		while ( my($k, $v) = each (%$userDefinedRoles) ) {
 			$contributorToRoleMap{$k} = $v->{id};
 		}

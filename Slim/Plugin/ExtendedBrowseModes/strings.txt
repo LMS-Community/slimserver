@@ -287,12 +287,15 @@ PLUGIN_EXTENDED_BROWSEMODES_TAGS
 	ES	Roles definidos por el usuario
 	NL	Door de gebruiker gedefinieerde rollen
 
+PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC
+	EN	Tell LMS about any custom contributor role tags used in the music library. For example, SOLOIST, DRUMMER, PRODUCER, etc. These can then be used as Contributor Roles in the Additional Browse Modes above. They will also appear as categories when browsing albums or artists with Release Type grouping enabled. Changes here will trigger a rescan of the music library.
+
 PLUGIN_EXTENDED_BROWSEMODES_ROLE
-	EN	Role
-	DE	Rolle
-	FR	Rôle
-	ES	Role
-	NL	Rol
+	EN	Role tag
+	DE	Rolle tag
+	FR	Rôle tag
+	ES	Role tag
+	NL	Rol tag
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
 	EN	Display Text

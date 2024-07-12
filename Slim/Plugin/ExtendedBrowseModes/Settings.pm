@@ -54,14 +54,15 @@ sub handler {
 
 	if ($params->{'saveSettings'}) {
 
-		my $currentRoles = $prefs->get('userDefinedRoles');
+		my $serverPrefs = preferences('server');
+		my $currentRoles = $serverPrefs->get('userDefinedRoles');
 		my $customTags = {};
 		my $id = 21;
 		my $changed = 0;
 		foreach my $pref (keys %{$params}) {
 			if ($pref =~ /(.*)_tag$/) {
 				my $key = $1;
-				my $tag = $params->{$pref};
+				my $tag = uc($params->{$pref});
 
 				if ( $tag ) {
 					$customTags->{$tag} = {
@@ -84,7 +85,7 @@ sub handler {
 		}
 
 		if ( $changed ) {
-			$prefs->set('userDefinedRoles', $customTags);
+			$serverPrefs->set('userDefinedRoles', $customTags);
 			Slim::Schema::Contributor->initializeRoles();
 		}
 
@@ -227,7 +228,8 @@ sub getServerPrefs {}
 sub beforeRender {
 	my ($class, $params, $client) = @_;
 
-	$params->{customTags} = $prefs->get('userDefinedRoles');
+	my $serverPrefs = preferences('server');
+	$params->{customTags} = $serverPrefs->get('userDefinedRoles');
 
 	$params->{libraries} = {};
 
