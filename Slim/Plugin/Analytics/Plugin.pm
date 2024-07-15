@@ -76,7 +76,7 @@ sub _report {
 		osname   => $osDetails->{'osName'},
 		platform => $osDetails->{'osArch'},
 		perl     => $Config{'version'},
-		players  => scalar @players,
+		players  => (scalar @players) * 1,
 		playerTypes => $playerTypes,
 		playerModels => $playerModels,
 		plugins  => $plugins,
