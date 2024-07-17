@@ -86,7 +86,6 @@ sub handler {
 
 		if ( $changed ) {
 			$serverPrefs->set('userDefinedRoles', $customTags);
-			Slim::Schema::Contributor->initializeRoles();
 		}
 
 		my $menus = $prefs->get('additionalMenuItems');

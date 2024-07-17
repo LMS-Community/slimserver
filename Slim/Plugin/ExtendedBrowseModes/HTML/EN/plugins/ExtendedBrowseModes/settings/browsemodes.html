@@ -75,8 +75,8 @@
 			</tr>
 			[% FOREACH tag = customTags.keys.sort %]
 				<tr>
-					<td><input type="text" name="[% tag %]_tag" value="[% tag | html %]" class="stdedit"/></td>
-					<td><input type="text" name="[% tag %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
+					<td><input type="text" name="[% tag | html %]_tag" value="[% tag | html %]" class="stdedit"/></td>
+					<td><input type="text" name="[% tag | html %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
 				</tr>
 			[% END %]
 			<tr>

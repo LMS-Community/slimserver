@@ -397,6 +397,8 @@ sub init {
 		qw(splitList groupdiscs useTPE2AsAlbumArtist userDefinedRoles)
 	);
 
+	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'userDefinedRoles');
+
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
 	$prefs->setChange( sub {
