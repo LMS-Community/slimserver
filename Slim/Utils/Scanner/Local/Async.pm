@@ -150,10 +150,7 @@ sub find {
 
 		$count++;
 
-		# XXX Not sure why, but sometimes there is no cached stat data available?!
-		if ( !(stat _)[9] ) {
-			stat $file;
-		}
+		stat $file;
 
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),
