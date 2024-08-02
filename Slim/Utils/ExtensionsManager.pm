@@ -112,7 +112,7 @@ $prefs->init({ repos => [], plugin => {}, auto => 0, useUnsupported => 0 });
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	'https://lms-community.github.io/lms-plugin-repository/extensions.xml' => 1,
+	'https://lyrion.org/lms-plugin-repository/extensions.xml' => 1,
 );
 
 my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/unsupported.xml';
