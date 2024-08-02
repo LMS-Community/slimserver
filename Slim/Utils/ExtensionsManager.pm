@@ -115,7 +115,7 @@ my %repos = (
 	'https://lyrion.org/lms-plugin-repository/extensions.xml' => 1,
 );
 
-my $UNSUPPORTED_REPO = 'https://lms-community.github.io/lms-plugin-repository/unsupported.xml';
+my $UNSUPPORTED_REPO = 'https://lyrion.org/lms-plugin-repository/unsupported.xml';
 
 $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
