@@ -34,6 +34,7 @@ sub _releases {
 		# library_id:-1 is supposed to clear/override the global library_id
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @searchTags;
+	push @searchTags, "role_id:$menuRoles" if $menuRoles;
 
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
@@ -51,7 +52,7 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releases sub-items etc.
-	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
+	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags, 'role_id:'. $menuRoles ? $menuRoles : join(',',Slim::Schema::Contributor->contributorRoles) ] );
 	$request->execute();
 
 	$log->error($request->getStatusText()) if $request->isStatusError();

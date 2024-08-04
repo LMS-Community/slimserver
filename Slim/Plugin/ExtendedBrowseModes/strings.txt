@@ -279,3 +279,32 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	FR	Auteurs
 	NL	Schrijvers
 	SV	Författare
+
+PLUGIN_EXTENDED_BROWSEMODES_TAGS
+	EN	User Defined Roles
+	DE	Benutzerdefinierte Rollen
+	FR	Rôles définis par l'utilisateur
+	ES	Roles definidos por el usuario
+	NL	Door de gebruiker gedefinieerde rollen
+
+PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC
+	EN	Tell LMS about any custom contributor role tags used in the music library. For example, SOLOIST, DRUMMER, PRODUCER, etc. These can then be used as Contributor Roles in the Additional Browse Modes above. They will also appear as categories when browsing albums or artists with Release Type grouping enabled. Changes here will trigger a rescan of the music library.
+	DE	Informieren Sie LMS über alle benutzerdefinierten Rollen-Tags, die in der Musikbibliothek verwendet werden. Zum Beispiel SOLOIST, DRUMMER, PRODUCER, usw. Diese können dann als Mitwirkende Rollen in den zusätzlichen Suchmodi oben verwendet werden. Sie werden auch als Kategorien angezeigt, wenn Sie Alben oder Künstler mit aktivierter Gruppierung nach Veröffentlichungstyp durchsuchen. Änderungen hier lösen einen erneuten Scan der Musikbibliothek aus.
+	FR	Indiquez à LMS toute étiquette de rôle de contributeur personnalisée utilisée dans la bibliothèque musicale. Par exemple, SOLOIST, DRUMMER, PRODUCER, etc. Ceux-ci peuvent ensuite être utilisés comme rôles de contributeur dans les modes de navigation supplémentaires ci-dessus. Ils apparaîtront également en tant que catégories lorsque vous parcourez des albums ou des artistes en activant le regroupement par type de publication. Les modifications apportées à ces catégories déclencheront une nouvelle analyse de la bibliothèque musicale.
+	ES	Informe a LMS sobre cualquier etiqueta de rol de colaborador personalizada utilizada en la biblioteca musical. Por ejemplo, SOLISTA, BATERISTA, PRODUCTOR, etc. Estas etiquetas se pueden utilizar como roles de colaborador en los modos de exploración adicionales anteriores. También aparecerán como categorías al explorar álbumes o artistas con la agrupación Tipo de publicación activada. Los cambios que se realicen aquí provocarán una nueva exploración de la biblioteca musical.
+	NL	Vertel LMS over alle aangepaste rollabels voor medewerkers die worden gebruikt in de muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Deze kunnen dan worden gebruikt als rollen voor medewerkers in de extra bladermodi hierboven. Ze verschijnen ook als categorieën wanneer u door albums of artiesten bladert met de Release Type groepering ingeschakeld. Als u hier wijzigingen aanbrengt, wordt de muziekbibliotheek opnieuw gescand.
+
+PLUGIN_EXTENDED_BROWSEMODES_ROLE
+	EN	Role tag
+	DE	Rolle tag
+	FR	Rôle tag
+	ES	Role tag
+	NL	Rol tag
+
+PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
+	EN	Display Text
+	DE	Text anzeigen
+	FR	Afficher le texte
+	ES	Mostrar texto
+	NL	Tekst weergeven
+

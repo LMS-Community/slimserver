@@ -394,8 +394,10 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist userDefinedRoles)
 	);
+
+	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'userDefinedRoles');
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
