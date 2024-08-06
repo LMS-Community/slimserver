@@ -3396,6 +3396,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 		} elsif ($value eq 'album') {
 			$sort = $albumSort;
+		} elsif ( $value =~ s/^sql=// ) {
+			# Raw SQL search query
+			$sort = $value;
+			$sort =~ s/;//g; # strip out any attempt at combining SQL statements
 		} elsif ($value !~ /^(artistalbum|albumtrack|new|random)$/) {
 			# Only use sort value if it is **not** an album sort.
 			$sort = $value;
@@ -3461,6 +3465,12 @@ sub _playlistXtracksCommand_parseSearchTerms {
 				# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
 				$joinMap{'album'} = 'album';
 			}
+		}
+
+		if ($sort && $sort =~ /tracks_persistent/) {
+			$sort =~ s/tracks_persistent/persistent/g;
+			$sort =~ s/\btracks\./me./g;
+			$joinMap{'persistent'} = 'persistent';
 		}
 
 		if ( $library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
