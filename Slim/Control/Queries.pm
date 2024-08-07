@@ -3631,12 +3631,6 @@ sub statusQuery_filter {
 		return 1;
 	}
 
-	# suppress frequent updates during volume changes
-	if ($request->isCommand([['mixer'], ['volume']])) {
-
-		return 3;
-	}
-
 	# give it a tad more time for muting to leave room for the fade to finish
 	# see bug 5255
 	if ($request->isCommand([['mixer'], ['muting']])) {
