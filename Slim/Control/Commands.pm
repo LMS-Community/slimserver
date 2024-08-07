@@ -3467,8 +3467,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 		}
 
-		if ($sort && $sort =~ /tracks_persistent/) {
-			$sort =~ s/tracks_persistent/persistent/g;
+		if ($sort && $sort =~ s/tracks_persistent/persistent/g) {
 			$sort =~ s/\btracks\./me./g;
 			$joinMap{'persistent'} = 'persistent';
 		}
