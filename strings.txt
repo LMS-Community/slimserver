@@ -7605,6 +7605,7 @@ SETUP_REFRESHRATE_DESC
 	FI	Määritä selaimen päivitysten välillä kuluva aika sekunteina.  Kappaleen toiston aikana Lyrion Music Server päivittää selaimen lähellä kappaleen loppua, jos jäljellä oleva aika on lyhyempi kuin tämä arvo (Oletus on 30, vähimmäisaika 2).
 	FR	Définissez le délai entre chaque actualisation du navigateur. Lors de la lecture d'un morceau, le Lyrion Music Server force l'actualisation vers la fin du morceau, si le nombre de secondes restantes est inférieur au nombre défini. La valeur par défaut est 30 et la valeur minimale 2.
 	HE	הגדר את פרק הזמן בין טעינות חוזרות של הדפדפן, בשניות. במהלך השמעה של שיר, השרת יגדיר את הרענון סמוך לסוף השיר, אם הוא אינו עולה על ערך זה. (ברירת המחדל היא 30, הערך המינימלי 2)
+	HU	Állítsa be a böngésző újratöltései közötti időt másodpercben.  Egy dal lejátszása közben a Lyrion Music Server a frissítést a dal végének közelébe állítja be, ha ez kisebb, mint ez az érték. (Alapértelmezett 30, minimum 2)
 	IT	Imposta l'intervallo di aggiornamento del browser in secondi. Se la durata del brano è inferiore al valore impostato, Lyrion Music Server esegue l'aggiornamento verso la fine del brano. Il valore predefinito è 30, quello minimo 2.
 	JA	ブラウザーが更新する時間を秒数で入力してください。曲を再生中の場合には、曲の最後に更新します。（工場出荷時は30秒、最小は2秒）
 	NL	Stel de tijd in seconden in waarna de browser de pagina moet vernieuwen. Lyrion Music Server zal de pagina bij het einde van een nummer vernieuwen als dit minder is dan deze waarde. De standaardwaarde is 30, minimumwaarde is 2 seconden.
@@ -7623,6 +7624,7 @@ SETUP_COVERART
 	FI	Kansitaide
 	FR	Pochettes
 	HE	עטיפה
+	HU	Borítókép
 	IT	Copertine
 	JA	アートワーク
 	NL	Albumhoezen
@@ -7642,6 +7644,7 @@ SETUP_COVERART_DESC
 	FI	Kansikuvat näytetään (jos niitä on), kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3-otsikoista tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii cover.jpg-, folder.jpg-, album.jpg- tai thumb.jpg-tyypin kuvatiedostoja. Voit myös määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muodossa Artist - album.jpg.
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un tag ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants : "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
+	HU	Az albumborítók képei, ha elérhetők, megjelennek az album vagy a dal információinak megtekintésekor.  Az alkotások képei az egyes dalokhoz tartozó ID3 címkékben találhatók, vagy a dalfájlokkal egy mappában találhatók.  Alapértelmezés szerint a „cover.jpg”, „folder.jpg”, „album.jpg” vagy „thumb.jpg” nevű képek használatosak.  Megadhat egy további fájlnevet az albumborítóképekhez. Különböző fájlneveket adhat meg az indexképekhez vagy a teljes méretű képekhez. A beállítás elé illessze be a % előtagot, és követheti azt bármilyen karakterlánccal, amely a címformátumokhoz elérhető azonos elemekből áll (pl. %ARTIST - ALBUM, megkeresi az Előadó - Album.jpg kifejezést, hogy illeszkedjen a talált előadó- és albuminformációkhoz).
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
 	NL	Als er een albumhoes beschikbaar is, wordt deze getoond wanneer je informatie over een album of nummer bekijkt. Deze afbeeldingen staan in de ID3-tags voor afzonderlijke nummers of in dezelfde map als muziekbestanden. Standaard worden afbeeldingen met de volgende namen gebruikt: folder.jpg, album.jpg of thumb.jpg. Je kunt een aanvullende bestandsnaam opgeven voor albumhoezen. Je kunt andere bestandsnamen opgeven voor miniatuurafbeeldingen of afbeeldingen op volledig formaat. Wanneer je het voorvoegsel % voor de optie zet, kun je er een willekeurige string op laten volgen die uit dezelfde elementen als titelformaten bestaat. Bijvoorbeeld, %ARTIST - ALBUM zoekt naar 'Artist - Album.jpg' om artiest- en albuminformatie te vinden.
@@ -7661,6 +7664,7 @@ SETUP_THUMBSIZE
 	FI	Pienoiskuvakoko
 	FR	Taille des vignettes
 	HE	גודל תמונה ממוזערת
+	HU	Bélyegkép mérete
 	IT	Dimensione miniature
 	JA	サムネイル サイズ
 	NL	Miniatuurgrootte
@@ -7679,6 +7683,7 @@ SETUP_THUMBSIZE_DESC
 	FI	Valitse kansikuvia haettaessa käytettyjen oletuspienoiskuvien koko kuvapisteinä (25-250). Oletusarvo on 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode Parcourir les pochettes. La valeur par défaut est 100.
 	HE	בחר את הגודל בפיקסלים (25-250) עבור התמונה הממוזערת המוגדרת כברירת מחדל בעת עיון לפי עטיפה. ברירת המחדל היא 100.
+	HU	Válassza ki az alapértelmezett miniatűr kép méretét pixelben (25-250), amikor műalkotások szerint böngészik. Az alapértelmezett 100.
 	IT	Scegliere la dimensione predefinita in pixel (25-250) delle miniature quando si sfogliano le copertine. Il valore predefinito è 100.
 	JA	アートワークでブラウズする場合の、サムネイルの大きさをピクセル数（25-250）で指定してください。工場出荷時は100です。
 	NL	Kies de grootte in pixels (25-250) voor de standaard miniatuurweergave wanneer je albumhoezen bekijkt. De standaardwaarde is 100.
@@ -7697,6 +7702,7 @@ SETUP_HTTPPORT
 	FI	WWW-palvelimen portin numero
 	FR	Numéro de port du serveur Web
 	HE	מספר היציאה של שרת האינטרנט
+	HU	Webszerver portszáma
 	IT	Numero di porta del server Web
 	JA	ウェブ サーバー ポート ナンバー
 	NL	Poortnummer van webserver
@@ -7716,6 +7722,7 @@ SETUP_HTTPPORT_DESC
 	FI	Voit vaihtaa sen portin numeroa, jota selain käyttää yhteyden muodostamiseen palvelimeen. (Oletus on 9000.)
 	FR	Vous pouvez modifier le port utilisé pour accéder au serveur à partir d'un navigateur Web. Le port par défaut est 9000.
 	HE	באפשרותך לשנות את מספר היציאה המשמש לגישה לשרת מדפדפן אינטרנט. (ברירת המחדל היא 9000.)
+	HU	Megváltoztathatja a kiszolgáló webböngészőből való eléréséhez használt portszámot. (Az alapértelmezett 9000.)
 	IT	Per l'accesso al server tramite un browser Web è possibile impostare un numero di porta diverso da quello utilizzato. Il numero di porta predefinito è 9000.
 	JA	ウェブ ブラウザーからサーバーにアクセスする為のポート ナンバーを変更することができます （標準は9000）。
 	NL	Je kunt het poortnummer wijzigen dat gebruikt wordt om de server via een webbrowser op te roepen. (Standaardpoort is 9000.)
@@ -7735,6 +7742,7 @@ SETUP_HTTPPORT_OK
 	FI	Nyt käytössä tämä portti:
 	FR	Utiliser le port :
 	HE	יציאה נוכחית בשימוש:
+	HU	A használt port:
 	IT	Porta attualmente utilizzata:
 	JA	現在のポートナンバー :
 	NL	Nu gebruikte poort:
@@ -7754,6 +7762,7 @@ SETUP_SAVESHUFFLED
 	FI	Tallenna sekoitettu soittoluettelo
 	FR	Enregistrer les listes de lecture aléatoires
 	HE	שמירת רשימת השמעה בסדר אקראי
+	HU	Kevert lejátszási lista mentése
 	IT	Salva playlist riprodotta in ordine casuale
 	JA	ランダム プレイリストを保存する
 	NL	Geshuffelde afspeellijst opslaan
@@ -7772,6 +7781,7 @@ SETUP_SAVESHUFFLED_DESC
 	FI	Jos haluat tallentaa soittoluettelon, joka on sekoitettu, voit tallentaa sen joko järjestyksessä, jossa kappaleet aluperin lisättiin, tai sekoitetussa järjestyksessä.
 	FR	Lorsque vous enregistrez une liste de lecture aléatoire, vous pouvez l'enregistrer dans l'ordre dans lequel les morceaux ont été ajoutés à l'origine ou conserver l'ordre aléatoire.
 	HE	כאשר אתה בוחר לשמור רשימת השמעה, לאחר שזו סודרה בסדר אקראי, באפשרותך לבחור לשמור אותה עם הסדר המקורי שבו נוספו השירים או בסדר לאחר הערבוב.
+	HU	Ha úgy dönt, hogy ment egy lejátszási listát, és az összekeverte, választhat, hogy a dalok hozzáadásának eredeti sorrendjében vagy a kevert sorrendben menti-e el.
 	IT	Quando si sceglie di salvare una playlist che è stata riprodotta in modo casuale è possibile decidere se salvarla nell'ordine in cui i brani sono stati aggiunti originariamente oppure in ordine casuale.
 	JA	ランダムにされたプレイリストを保存することも、元の順序で保存することも選択できます。
 	NL	Wanneer je een afspeellijst wilt opslaan die geshuffeld is, kun je deze opslaan in de originele volgorde waarin de nummers toegevoegd zijn, of in de geshuffelde volgorde.
@@ -7790,6 +7800,7 @@ SETUP_SAVESHUFFLED_1
 	FI	Tallenna soittoluettelot sekoitetussa järjestyksessä
 	FR	Enregistrer les listes de lecture dans l'ordre aléatoire
 	HE	שמירת רשימות השמעה בסדר האקראי
+	HU	Lejátszási listák mentése kevert sorrendben
 	IT	Salva le playlist in ordine casuale
 	JA	プレイリストをランダムな状態で保存する
 	NL	Afspeellijsten in geshuffelde volgorde opslaan
@@ -7808,6 +7819,7 @@ SETUP_SAVESHUFFLED_0
 	FI	Tallenna soittoluettelot järjestyksessä, jossa kappaleet lisättiin
 	FR	Enregistrer les listes de lecture dans l'ordre d'ajout des morceaux
 	HE	שמירת רשימות השמעה בסדר ההוספה של השירים
+	HU	Lejátszási listák mentése a dalok hozzáadásának sorrendjében
 	IT	Salva le playlist nell'ordine in cui sono stati aggiunti i brani
 	JA	プレイリストを元の順序で保存する
 	NL	Afspeellijsten opslaan in volgorde waarin nummers toegevoegd zijn
@@ -7825,6 +7837,7 @@ SETUP_RATINGIMPLEMENTATION
 	ES	Almacenamiento de clasificación
 	FI	Luokituksen tallennus
 	FR	Classement du stockage
+	HU	Értékelési tárhely
 	IT	Memorizzazione voto
 	NL	Opslaan van waarderingen
 	NO	Rangeringslagring
@@ -7840,6 +7853,7 @@ SETUP_RATINGIMPLEMENTATION_DESC
 	ES	Almacenamiento de clasificación que debe utilizarse al almacenar o ver clasificaciones
 	FI	Luokituksen tallennus, jota käytetään luokituksia tallennettaessa tai tarkasteltaessa
 	FR	Stockage du classement à utiliser lors du stockage ou de l'affichage des classements
+	HU	Értékelési tárhely az értékelések tárolásakor vagy megtekintésekor
 	IT	Archivio da utilizzare per la memorizzazione o la visualizzazione dei voti
 	NL	Te gebruiken opslag wanneer waarderingen worden opgeslagen of bekeken
 	NO	Rangeringslagring til bruk ved lagring eller visning av rangeringer
@@ -7855,6 +7869,7 @@ LOCAL_RATING_STORAGE
 	ES	Base de datos de Lyrion Music Server
 	FI	Lyrion Music Serverin tietokanta
 	FR	Base de données Lyrion Music Server
+	HU	Lyrion Music Server adatbázis
 	IT	Database Lyrion Music Server
 	NL	Database van Lyrion Music Server
 	NO	Lyrion Music Server-database
@@ -7871,6 +7886,7 @@ SETUP_CHECKVERSION
 	FI	Ohjelmistopäivitykset
 	FR	Mises à jour du logiciel
 	HE	עדכוני תוכנה
+	HU	Szoftverfrissítések
 	IT	Aggiornamenti al software
 	JA	ソフトウェア アップデート
 	NL	Software-updates
@@ -7886,6 +7902,7 @@ SETUP_CHECKVERSION_DESC
 	EN	Lyrion Music Server can automatically check to see if an updated version of the software is available.  If it is, then a message will appear in Lyrion Music Server's web interface.
 	ES	Lyrion Music Server se puede conectar automáticamente comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Lyrion Music Server.
 	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
+	HU	A Lyrion Music Server automatikusan ellenőrzi, hogy elérhető-e a szoftver frissített verziója.  Ha igen, akkor egy üzenet jelenik meg a Lyrion Music Server webes felületén.
 	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server.
 
 SETUP_CHECKVERSION_1
@@ -7897,6 +7914,7 @@ SETUP_CHECKVERSION_1
 	FI	Etsi ohjelmistopäivityksiä automaattisesti
 	FR	Vérifier automatiquement
 	HE	חיפוש אוטומטי של עדכוני תוכנה
+	HU	Automatikusan ellenőrizze a szoftverfrissítéseket
 	IT	Verifica automaticamente se sono disponibili aggiornamenti al software
 	JA	ソフトウェアのアップデートを自動的に確認する
 	NL	Automatisch op software-updates controleren
@@ -7916,6 +7934,7 @@ SETUP_CHECKVERSION_0
 	FI	Älä etsi ohjelmistopäivityksiä
 	FR	Ne pas vérifier
 	HE	ללא חיפוש עדכוני תוכנה
+	HU	Ne keressen szoftverfrissítéseket
 	IT	Non verificare se sono disponibili aggiornamenti al software
 	JA	ソフトウェアのアップデートを確認しない
 	NL	Niet op software-updates controleren
@@ -7931,6 +7950,7 @@ SETUP_CHECKVERSION_HOURLY
 	DE	Stündlich
 	EN	Hourly
 	FR	Toutes les heures
+	HU	Óránként
 	NL	Elk uur
 	SV	Varje timme
 
@@ -7939,6 +7959,7 @@ SETUP_CHECKVERSION_DAILY
 	DE	Täglich
 	EN	Daily
 	FR	Quotidien
+	HU	Naponta
 	NL	Dagelijks
 	SV	Daglig
 
@@ -7947,6 +7968,7 @@ SETUP_CHECKVERSION_WEEKLY
 	DE	Wöchentlich
 	EN	Weekly
 	FR	Hebdomadaire
+	HU	Hetente
 	NL	Wekelijks
 	SV	Veckolig
 
@@ -7955,6 +7977,7 @@ SETUP_CHECKVERSION_MONTHLY
 	DE	Monatlich
 	EN	Monthly
 	FR	Mensuel
+	HU	Havonta
 	NL	Maandelijks
 	SV	Månatlig
 
@@ -7966,6 +7989,7 @@ SETUP_AUTO_DOWNLOAD
 	ES	Descarga automática
 	FI	Automaattinen lataaminen
 	FR	Téléchargement automatique
+	HU	Automatikus letöltés
 	IT	Download automatico
 	NL	Automatische download
 	NO	Automatisk nedlasting
@@ -7981,6 +8005,7 @@ SETUP_AUTO_DOWNLOAD_DESC
 	ES	Descargar actualizaciones de Lyrion Music Server automáticamente cuando estén disponibles. Se le indicará que instale la actualización en cuanto haya acabado la descarga.
 	FI	Lataa Lyrion Music Serverin päivitykset automaattisesti, kun ne ovat saatavilla. Ohjelma kehottaa asentamaan päivityksen heti, kun se on ladattu.
 	FR	Télécharger automatiquement les mises à jour du Lyrion Music Server disponibles. Vous serez ensuite invité à installer la mise à jour à la fin du téléchargement.
+	HU	A Lyrion Music Server frissítéseinek automatikus letöltése, amikor azok elérhetők. A letöltés befejezése után a rendszer felkéri a frissítés telepítésére.
 	IT	Scarica automaticamente gli aggiornamenti a Lyrion Music Server quando sono disponibili. Al termine del download verrà chiesto di installare l'aggiornamento.
 	NL	Beschikbare updates voor Lyrion Music Server automatisch downloaden. Je wordt dan gevraagd de updates te installeren zodra het downloaden is voltooid.
 	NO	Last ned Lyrion Music Server-oppdateringer automatisk når de blir tilgjengelige. Du blir bedt om å installere oppdateringen når nedlastingen er fullført.
@@ -7996,6 +8021,7 @@ SETUP_AUTO_DOWNLOAD_0
 	ES	No descargar actualizaciones automáticamente
 	FI	Älä lataa päivityksiä automaattisesti
 	FR	Ne pas télécharger automatiquement les mises à jour
+	HU	Ne töltsön le automatikusan frissítéseket
 	IT	Non scaricare automaticamente gli aggiornamenti
 	NL	Updates niet automatisch downloaden
 	NO	Ikke last ned oppdateringer automatisk.
@@ -8011,6 +8037,7 @@ SETUP_AUTO_DOWNLOAD_1
 	ES	Descargar actualizaciones automáticamente cuando estén disponibles.
 	FI	Lataa päivitykset automaattisesti, kun ne ovat saatavilla.
 	FR	Télécharger automatiquement les mises à jour disponibles.
+	HU	A frissítések automatikus letöltése, amikor elérhetők.
 	IT	Scarica automaticamente gli aggiornamenti quando sono disponibili.
 	NL	Updates automatisch downloaden
 	NO	Last ned oppdateringer automatisk når de blir tilgjengelige.
@@ -8023,6 +8050,7 @@ SETUP_CHECK_NOW
 	DE	Jetzt nach Update suchen
 	EN	Check for updates now
 	FR	Vérifier les mises à jour maintenant
+	HU	Frissítések keresése most
 	NL	Nu op software-updates controleren
 	SV	Leta efter uppdateringar nu
 
@@ -8035,6 +8063,7 @@ SETUP_SCREENSAVER
 	FI	Näytönsäästäjä toiston aikana
 	FR	Ecran de veille (lecture)
 	HE	שומר מסך בעת השמעת מוסיקה
+	HU	Képernyővédő lejátszás közben
 	IT	Screen saver durante la riproduzione
 	JA	スクリーンセーバー
 	NL	Screensaver tijdens afspelen
