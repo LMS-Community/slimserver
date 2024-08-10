@@ -5978,8 +5978,8 @@ OUTPUT_CHANNELS_COMBINED
 	DE	Beide Kanäle (Mono)
 	EN	Both Channels (Mono)
 	FR	Deux Canaux (Mono)
-	NL	Beide kanalen (mono)
 	HU	Mindkét csatorna (monó)
+	NL	Beide kanalen (mono)
 
 SETUP_TRANSITIONTYPE
 	CS	Prolínání
@@ -9637,6 +9637,7 @@ SETUP_INSECURE_HTTPS_DESC
 	DE	"Unsicheres HTTPS" bedeutet, dass Lyrion Music Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Lyrion Music Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Lyrion Music Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
+	HU	A „Nem biztonságos HTTPS” engedélyezése kikapcsolja a tanúsítvány ellenőrzését, amikor a Lyrion Music Server HTTPS-kliensként működik. <b>Nem javasoljuk ennek a lehetőségnek az engedélyezését!</b> Rossz gyakorlat a tanúsítvány-ellenőrzés letiltása, de bizonyos körülmények között szükséges lehet, pl. amikor a könyvtárakat nem lehet frissíteni.
 	SV	"Avaktivera kontroll av HTTPS-certifikat" betyder att Lyrion Music Server inte kontrollerar att HTTPS-certifikaten från andra webbplatser är giltiga. <b>Det rekommenderas inte att avaktivera denna kontroll!</b> Kontroll av https-certifikat skall alltid ske men ibland kan det behövas för att kunna uppdatera ett online-mediebibliotek.
 	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Lyrion Music Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is onverstandig om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden geüpdatet.
 
@@ -9649,6 +9650,7 @@ SETUP_IPFILTER_HEAD
 	FI	Estä saapuvat yhteydet
 	FR	Bloquer les connexions entrantes
 	HE	חסימת חיבורים נכנסים
+	HU	Bejövő kapcsolatok blokkolása
 	IT	Blocca le connessioni in entrata
 	JA	外からの接続をブロックする
 	NL	Inkomende verbindingen blokkeren
@@ -9668,6 +9670,7 @@ SETUP_IPFILTER_DESC
 	FI	Tällä valinnalla voit estää lähteen IP-osoitteen lähettämät saapuvat CLI- ja HTTP-pyynnöt.
 	FR	Ce réglage permet de bloquer l'accès Web ou par ligne de commande selon l'adresse IP d'origine.
 	HE	אפשרות זו מאפשרת לך להפעיל חסימה של בקשות CLI ו-HTTP נכנסות לפי כתובת ה-IP של המקור.
+	HU	Ez az opció lehetővé teszi a bejövő CLI és HTTP kérések blokkolását a forrás IP-címe alapján.
 	IT	Questa opzione consente di bloccare le richieste CLI e HTTP in ingresso in base all'indirizzo IP di origine.
 	JA	このオプションは、外からのCLIまたはHTTP要請をIPアドレスによってブロックすることができるようにします。
 	NL	Met behulp van deze optie kunnen inkomende CLI en HTTP aanvragen op IP-adres geblokkeerd worden.
@@ -9687,6 +9690,7 @@ SETUP_IPFILTER
 	FI	Estä
 	FR	Bloquer
 	HE	חסימה
+	HU	Blokkolás
 	IT	Blocca
 	JA	ブロックする
 	NL	Blokkeren
@@ -9706,6 +9710,7 @@ SETUP_NO_IPFILTER
 	FI	Älä estä
 	FR	Ne pas bloquer
 	HE	אין לבצע חסימה
+	HU	Nincs blokkolás
 	IT	Non bloccare
 	JA	ブロックしない
 	NL	Niet blokkeren
@@ -9725,6 +9730,7 @@ SETUP_FILTERRULE_HEAD
 	FI	Sallitut IP-osoitteet
 	FR	Adresses IP autorisées
 	HE	כתובות IP מורשות
+	HU	Engedélyezett IP címek
 	IT	Indirizzi IP validi
 	JA	認められるIPアドレス
 	NL	Geldige IP-adressen
@@ -9744,6 +9750,7 @@ SETUP_FILTERRULE_DESC
 	FI	Jos estäminen on otettu käyttöön, voit kirjoittaa osoitteet, joiden sallit muodostaa yhteyden Lyrion Music Serveriin.<br><br>Tähän kenttään voidaan lisätä luettelo tietyistä IP-osoitteista, *-tyylin yleismerkeistä ja pilkuilla erotettu luettelo IP-osoitteista. Esimerkiksi:<BR><BR><B>10.1.2.2</B> sallii ainoastaan osoitteen 10.1.2.2,<BR><BR><B>10.1.2.*</B> sallii IP-osoitteet, jotka sisältävät numerot 10.1.2.x,<BR><BR><B>10.1.2.2-50</B> sallii alueeseen 10.1.2.2 - 10.1.2.50 kuuluvat IP-osoitteet.<BR><BR>Jos osoitteita on useita, ne voidaan erottaa pilkuin, esimerkiksi näin: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>IP-osoite 127.0.0.1 sallii selaimen muodostaa yhteyden samassa tietokoneessa toimivaan Lyrion Music Serveriin.
 	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Lyrion Music Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule. Exemple :<BR><BR><B>10.1.2.2</B> autorise uniquement cette adresse à se connecter.<BR><BR><B>10.1.2.*</B> autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter.<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B> autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple <B>10.1.2.2,172.16.1.*,192.168.1-254</B>.<BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Lyrion Music Server s'ils se trouvent sur le même ordinateur.
 	HE	אם הפעלת את אפשרות החסימה, באפשרותך להזין את הכתובות שלהן ברצונך לאפשר להתחבר ל-Lyrion Music Server.<br><br>בשדה זה ניתן להזין רשימה של כתובות IP ספציפיות, תווים כלליים כגון *, וטווחים של כתובות IP ברשימה המופרדת באמצעות פסיקים. לדוגמה:<BR><BR><B>‎10.1.2.2</B> יאפשר רק ל-‎‏10.1.2.2 להתחבר.<BR><BR><B>‎10.1.2.*‎</B>‎ יאפשר לכל גורם עם כתובת IP בתבנית ‎‎10.1.2.x להתחבר.<BR><BR><B>‎10.1.2.2-50</B> יאפשר לכתובות IP בטווח שבין ‎‎10.1.2.2 - 10.1.2.50‎ להתחבר.<BR><BR>לסיום, ניתן לשלב רשומות מרובות באמצעות פסיקים, לדוגמה, <B>‎10.1.2.2,172.16.1.*,192.168.1-254‎</B><BR><BR>כתובת ה-IP המיוחדת ‎127.0.0.1 מאפשרת לדפדפן אינטרנט להתחבר לשרת Lyrion Music Server שפועל באותו מחשב.
+	HU	Ha bekapcsolta a blokkolást, megadhatja azokat a címeket, amelyeknek engedélyezni szeretné a Lyrion Music Serverhez való csatlakozást.<br><br>Ez a mező bizonyos IP-címek listáját, * stílusú helyettesítő karaktereket és IP-címtartományokat fogad el vesszővel elválasztott lista. Például: <BR><BR><B>10.1.2.2</B> csak a 10.1.2.2 számára engedélyezi a csatlakozást<BR><BR><B>10.1.2.*</B> bármit engedélyez Az IP-címek a 10.1.2.x címek. A<BR><BR><B>10.1.2.2-50</B> lehetővé teszi a 10.1.2.2 - 10.1.2.50 tartományba eső IP-címek csatlakozását.<BR> <BR>Végül több bejegyzés is kombinálható vesszővel, például: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>A 127.0.0.1 speciális IP-cím lehetővé teszi a webböngésző számára, hogy csatlakozzon az ugyanazon a számítógépen futó Lyrion Music Serverhez.
 	IT	Se è stato attivato il blocco, è possibile inserire gli indirizzi a cui consentire la connessione a Lyrion Music Server.<br><br>In questo campo è possibile inserire un elenco di indirizzi IP specifici, il carattere jolly * ed elenchi di intervalli di indirizzi IP separati da virgole. Ad esempio:<BR><BR>se si specifica<B>10.1.2.2</B>, viene accettata solo la connessione con l'indirizzo 10.1.2.2<BR><BR>se si specifica<B>10.1.2.*</B>, viene accettata la connessione con tutti gli indirizzi IP che iniziano con 10.1.2.x<BR><BR>se si specifica<B>10.1.2.2-50</B>, viene accettata la connessione con indirizzi IP compresi tra 10.1.2.2 e 10.1.2.50<BR><BR>Infine, è possibile specificare più indirizzi IP separandoli con virgole, ad esempio:<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 consente di connettere un browser Web a Lyrion Music Server in esecuzione sullo stesso computer.
 	JA	ブロックする、と指定したのであれば、Lyrion Music Serverに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがLyrion Music Serverに接続する時に接続を可能にします。
 	NL	Als je 'Blokkeren' hebt ingesteld, kun je de adressen invoeren die je toegang wilt geven tot Lyrion Music Server.<br><br>Dit veld accepteert een lijst van specifieke IP-adressen, jokertekens zoals '*' en IP-adres bereiken in een kommagescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> staat alleen 10.1.2.2 toe een verbinding te maken<br><br><b>10.1.2.*</b> verleent elk IP-adres met de vorm 10.1.2.x toegang.<br><br><b>10.1.2.2-50</b> verleent IP-adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Ten slotte kunnen meerdere adressen als volgt met komma's gecombineerd worden:<b>10.1.2.2,172.16.1.*,192.168.1-254</b><br><br>Het speciale IP-adres 127.0.0.1 verleent toegang aan webbrowsers die op dezelfde computer als Lyrion Music Server zelf draaien.
@@ -9765,6 +9772,7 @@ SETUP_NEW_VALUE
 	FI	Uusi arvo kohteelle
 	FR	Nouvelle valeur pour
 	HE	ערך חדש עבור
+	HU	Új érték:
 	IT	Nuovo valore per
 	JA	新しい数値:
 	NL	Nieuwe waarde voor
@@ -9784,6 +9792,7 @@ SETUP_BAD_VALUE
 	FI	Virheellinen arvo: %s
 	FR	Valeur non valide : %s
 	HE	צוין ערך לא חוקי: %s
+	HU	Érvénytelen megadott érték: %s
 	IT	Valore specificato non valido: %s
 	JA	無効な数値が指定されました: %s
 	NL	Ongeldige waarde opgegeven: %s
@@ -9802,6 +9811,7 @@ SETTINGS_INVALIDVALUE
 	ES	Valor "%s" no válido para %s
 	FI	Virheellinen arvo: "%s" / %s
 	FR	Valeur %s non valide pour %s
+	HU	Érvénytelen „%s” érték a következőhöz: %s
 	IT	Valore "%s" non valido per %s
 	NL	Ongeldige waarde %s voor %s
 	NO	Ugyldig verdi «%s» oppgitt for %s
@@ -9817,6 +9827,7 @@ SETUP_CHANGES_SAVED
 	ES	Los cambios se han guardado.
 	FI	Muutokset on tallennettu.
 	FR	Les modifications ont été enregistrées.
+	HU	A változtatásokat elmentettük.
 	IT	Le modifiche sono state salvate.
 	NL	Wijzigingen zijn opgeslagen.
 	NO	Endringene er lagret.
@@ -9833,6 +9844,7 @@ SETUP_NO_AUTHORIZE
 	FI	Ei salasanasuojausta
 	FR	Pas de protection par mot de passe
 	HE	ללא הגנה באמצעות סיסמה
+	HU	Nincs jelszavas védelem
 	IT	Nessuna protezione con password
 	JA	パスワード保護はありません
 	NL	Geen wachtwoordbeveiliging
@@ -9852,6 +9864,7 @@ SETUP_AUTHORIZE
 	FI	Salasanasuojaus
 	FR	Protection par mot de passe
 	HE	הגנה באמצעות סיסמה
+	HU	Jelszavas védelem
 	IT	Protezione con password
 	JA	パスワード保護
 	NL	Wachtwoordbeveiliging
@@ -9871,6 +9884,7 @@ SETUP_AUTHORIZE_DESC
 	FI	Halutessasi voit suojata Lyrion Music Serverin kaukosäätimen salasanalla. Valitse alta Salasanasuojaus, anna käyttäjätunnus ja salasana ja valitse Muuta. Siitä eteenpäin sinun tarvitsee antaa käyttäjätunnus ja salasana selaimessa, kun käytät Lyrion Music Serverin kaukosäädintä.
 	FR	Vous pouvez limiter le contrôle à distance du Lyrion Music Server par la mise en place d'un mot de passe. Pour cela, sélectionnez "Protection par mot de passe", renseignez ci-dessous un nom d'utilisateur et un mot de passe, puis cliquez sur le bouton "Appliquer". Vous devrez alors saisir ce nom d'utilisateur et ce mot de passe avant de contrôler Lyrion Music Server à distance.
 	HE	באפשרותך לבחור להגן על ממשק האינטרנט של Lyrion Music Server באמצעות סיסמה. בחר את האפשרות "הגנה באמצעות סיסמה" שלהלן והזן שם משתמש וסיסמה, ולאחר מכן לחץ על 'שנה'. מרגע זה ואילך, כאשר תשתמש בממשק האינטרנט של Lyrion Music Server, יהיה עליך להזין את שם המשתמש והסיסמה בדפדפן האינטרנט.
+	HU	Kiválaszthatja a Lyrion Music Server távirányító jelszavas védelmét. Válassza lent a „Jelszavas védelem” lehetőséget, írjon be egy felhasználónevet és jelszót, majd kattintson a Módosítás gombra. Ettől kezdve a Lyrion Music Server Remote Control használatakor meg kell adnia ezt a felhasználónevet és jelszót a webböngészőben.
 	IT	Si può scegliere di proteggere Lyrion Music Server Remote Control con una password. Scegliere Protezione con password di seguito e inserire il nome utente e la password, quindi fare clic su Cambia. Da questo momento per utilizzare Lyrion Music Server Remote Control è necessario inserire nel browser il nome utente e la password prescelti.
 	JA	Lyrion Music Serverのウェブインターフェースをパスワードで保護することができます。下から”パスワード保護”を選んで、ユーザー名とパスワードを指定して、「変更」をクリックして下さい。以降、Lyrion Music Serverのウェブインターフェースにアクセスするにはユーザー名とパスワードが必要になります。
 	NL	Je kunt een wachtwoord instellen om Lyrion Music Server te bedienen op afstand. Kies hieronder 'Wachtwoordbeveiliging' en voer een gebruikersnaam en wachtwoord in. Klik dan op 'Wijzigen'. Vanaf dat moment dien je gebruikersnaam en wachtwoord in te voeren om toegang te krijgen tot Lyrion Music Server.
@@ -9890,6 +9904,7 @@ SETUP_USERNAME
 	FI	Käyttäjätunnus
 	FR	Nom d'utilisateur
 	HE	שם משתמש
+	HU	Felhasználónév
 	IT	Nome utente
 	JA	ユーザー名
 	NL	Gebruikersnaam
@@ -9908,6 +9923,7 @@ SETUP_MISSING_USERNAME
 	ES	No puede activar la autorización sin una contraseña.
 	FI	Valtuutusta ei voi ottaa käyttöön ilman salasanaa.
 	FR	Vous devez indiquer un mot de passe pour activer l'autorisation.
+	HU	Jelszó nélkül nem engedélyezheti.
 	IT	Non è consentito attivare l'autorizzazione senza una password.
 	NL	Zonder wachtwoord kun je geen autorisatie inschakelen.
 	NO	Du kan ikke aktivere autorisering uten et passord.
@@ -9924,6 +9940,7 @@ SETUP_PASSWORD
 	FI	Salasana
 	FR	Mot de passe
 	HE	סיסמה
+	HU	Jelszó
 	IT	Password
 	JA	パスワード
 	NL	Wachtwoord
@@ -9942,6 +9959,7 @@ SETUP_PASSWORD_REPEAT
 	ES	Confirmar contraseña
 	FI	Vahvista salasana
 	FR	Confirmer le mot de passe
+	HU	Jelszó megerősítése
 	IT	Conferma password
 	NL	Wachtwoord bevestigen
 	NO	Bekreft passord
@@ -9957,6 +9975,7 @@ SETUP_PASSWORD_MISMATCH
 	ES	Las contraseñas que ha introducido no coinciden.
 	FI	Antamasi salasanat eivät täsmää.
 	FR	Les mots de passe saisis ne coïncident pas.
+	HU	A megadott jelszavak nem egyeznek.
 	IT	Le password inserite non corrispondono.
 	NL	De ingevoerde wachtwoorden komen niet overeen.
 	NO	Passordene du anga stemte ikke.
@@ -9973,6 +9992,7 @@ SETUP_REMOTESTREAMTIMEOUT
 	FI	Radiokanavan aikakatkaisu
 	FR	Délai d'attente radio
 	HE	פסק זמן לתחנות רדיו
+	HU	Rádióállomás időtúllépése
 	IT	Timeout stazione radio
 	JA	インターネットラジオ局タイムアウト
 	NL	Time-out van radiostation
@@ -9991,6 +10011,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	FI	Voit määrittää ajan, jonka Lyrion Music Server yrittää muodostaa yhteyttä internet-radiokanavaan tai muuhun lähteeseen, ennen kuin se antaa periksi. Kirjoita aika sekunteina alle.
 	FR	Vous pouvez définir la durée maximale pendant laquelle le Lyrion Music Server tentera de se connecter à une radio Internet ou à une autre source distante. Spécifiez cette durée en secondes ci-dessous.
 	HE	באפשרותך להגדיר את משך הזמן שבו Lyrion Music Server ינסה להתחבר לתחנת רדיו באינטרנט או למקור אחר לפני שיפסיק. הזן את פרק הזמן, בשניות, בשדה שלהלן.
+	HU	Beállíthatja, hogy a Lyrion Music Server mennyi ideig próbáljon meg csatlakozni egy internetes rádióállomáshoz vagy más forráshoz, mielőtt feladná. Adja meg alább az időtartamot másodpercben.
 	IT	È possibile impostare l'intervallo di tempo durante il quale Lyrion Music Server tenta di connettersi a una radio Internet o a un'altra sorgente prima di abbandonare il tentativo. Inserire la durata in secondi qui sotto.
 	NL	Je kunt instellen hoe lang Lyrion Music Server moet proberen een verbinding te maken met een internetradiostation of andere bron, voordat Lyrion Music Server het opgeeft. Voer hieronder de tijd in seconden in:
 	NO	Du kan angi hvor lenge Lyrion Music Server skal forsøke å få kontakt med Internett-radiostasjonen eller andre kilder, før den gir opp. Angi tiden i sekunder nedenfor.
@@ -10008,6 +10029,7 @@ LANGUAGE
 	FI	Kieli
 	FR	Langue
 	HE	שפה
+	HU	Nyelv
 	IT	Lingua
 	JA	言語
 	NL	Taal
@@ -10023,6 +10045,7 @@ SETUP_RELEASE_TYPES
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
 	FR	Types de sorties pour les albums
+	HU	Kiadástípusok az albumokhoz
 	NL	Releasetypes voor albums
 
 SETUP_RELEASE_TYPES_INCLUDE
@@ -10030,6 +10053,7 @@ SETUP_RELEASE_TYPES_INCLUDE
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
 	FR	Types de sorties à inclure dans la liste des albums
+	HU	Az Albumok listájába felvenni kívánt kiadástípusok
 	NL	Releasetypes die in de albumlijst worden opgenomen
 
 SETUP_RELEASE_TYPES_DESC
@@ -10037,6 +10061,7 @@ SETUP_RELEASE_TYPES_DESC
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
+	HU	Megadhatja, hogy mely kiadástípusokat szeretné felvenni az albumlistába (lásd: <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Ha egy kiadáshoz nincs megadva típus, a rendszer az „Album”-t feltételezi. Az albumokat nem lehet kizárni a listáról.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
@@ -10044,6 +10069,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	EN	Composer album options
 	FR	Regroupement des albums d'un compositeur
 	DE	Optionen für Komponistenalben
+	HU	A zeneszerzői album beállításai
 	NL	Opties voor componistenalbums
 	ES	Opciones de álbum compositor
 
@@ -10052,6 +10078,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
 	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
+	HU	Hozzon létre egy zeneszerzői album csoportot – mindig, soha vagy bizonyos műfajokhoz. Ha e beállítás miatt bizonyos zeneszerzői szerepkörök nem szerepelnek a Zeneszerzői albumok csoportban, akkor azok egy külön „Kompozíciók” csoportban jelennek meg, amely az egyes számokat, nem pedig az albumokat listázza. A műfaji listát vesszővel kell elválasztani.
 	NL	Maak een groep voor componistenalbum - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 
@@ -10060,6 +10087,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	EN	Do not create a Composer Album group
 	FR	Ne pas créer de groupe "Albums du compositeur"
 	DE	Keine Komponistenalbengruppe erstellen
+	HU	Ne hozzon létre zeneszerzői albumcsoportot
 	NL	Maak geen groep van componistenalbums
 	ES	No crear un grupo de Álbum de Composer
 
@@ -10068,6 +10096,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	EN	Always create a Composer Album group
 	FR	Créer toujours un groupe "Albums du compositeur"
 	DE	Immer eine Komponistenalbengruppe erstellen
+	HU	Mindig hozzon létre egy zeneszerzői albumcsoportot
 	NL	Maak altijd een groep van componistenalbums
 	ES	Crear siempre un grupo de Álbum de compositor
 
@@ -10076,6 +10105,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	EN	Create a Composer Album group for these genres:
 	FR	Créer un groupe "Albums du compositeur" pour ces genres :
 	DE	Komponistenalbengruppe für diese Stilrichtungen erstellen:
+	HU	Hozzon létre egy zeneszerzői albumcsoportot a következő műfajokhoz:
 	NL	Maak een groep van componistenalbums voor deze genres:
 	ES	Crea un grupo de Álbum de compositor para estos géneros:
 
@@ -10084,6 +10114,7 @@ SETUP_IGNORE_RELEASE_TYPES_0
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
 	FR	Activer la prise en charge des types de sorties des albums
+	HU	Engedélyezze a kiadástípusok támogatását az albumokhoz
 	NL	Releasetypes voor albums inschakelen
 
 SETUP_IGNORE_RELEASE_TYPES_1
@@ -10091,6 +10122,7 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	DE	Veröffentlichungstyp von Alben ignorieren
 	EN	Ignore album release types
 	FR	Ignorer les types de sorties des albums
+	HU	Az albumkiadás típusainak figyelmen kívül hagyása
 	NL	Releasetypes voor albums uitschakelen
 
 SETUP_CLEANUP_RELEASE_TYPES
@@ -10098,6 +10130,7 @@ SETUP_CLEANUP_RELEASE_TYPES
 	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
 	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
 	FR	Essayer de reconnaître automatiquement les EPs et les singles lorsque le type de sortie est manquant ou est de type "album".
+	HU	Próbálja meg automatikusan felismerni az EP-ket és kislemezeket, ha a kiadás típusa „album” vagy hiányzik.
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
