@@ -1,7 +1,7 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES" desc="" %]
-		<table width="100%">
+		<table [% IF !needsClient %]width="100%"[% END %]>
 			[% IF needsClient %]
 			<tr>
 				<th>[% "ENABLE" | string %][% "COLON" | string %]&nbsp;</th>
