@@ -116,6 +116,8 @@ sub webHandler {
 sub handler {
 	my ( $conn, $message ) = @_;
 
+	my $isCLI = !$conn->[HTTP_RESPONSE];
+
 	if ( !$message ) {
 		sendResponse(
 			@{$conn},
@@ -188,7 +190,7 @@ sub handler {
 
 			# Register client with HTTP connection
 			if ( $clid ) {
-				if ( ref $conn eq 'ARRAY' ) {
+				if ( ref $conn eq 'ARRAY' && !$isCLI ) {
 					$conn->[HTTP_CLIENT]->clid( $clid );
 				}
 			}
@@ -209,7 +211,7 @@ sub handler {
 
 		# Detect the language Jive wants content returned in
 		my ($lang, $ua);
-		if ( ref $conn ) {
+		if ( ref $conn && !$isCLI ) {
 			if ( my $al = $conn->[HTTP_RESPONSE]->request->header('Accept-Language') ) {
 				$lang = uc $al;
 			}
@@ -576,7 +578,7 @@ sub handler {
 
 						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
-							if ( $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+							if ( $isCLI || $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
 								push @{$events}, $result;
 							}
 							else {
@@ -638,16 +640,16 @@ sub sendResponse {
 
 	$out ||= [];
 
-	# Add any additional pending events
-	push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
-
-	# Add special first event for /meta/(re)connect if set
-	# Note: calling first_event will remove the event from httpClient
-	if ( my $first = $httpClient->first_event ) {
-		unshift @{$out}, $first;
-	}
-
 	if ($httpResponse) {
+		# Add any additional pending events
+		push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
+
+		# Add special first event for /meta/(re)connect if set
+		# Note: calling first_event will remove the event from httpClient
+		if ( my $first = $httpClient->first_event ) {
+			unshift @{$out}, $first;
+		}
+
 		if ( $httpClient->transport && $httpClient->transport eq 'long-polling' ) {
 			# Finish a long-poll cycle by sending all pending events and removing the timer
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
@@ -658,7 +660,7 @@ sub sendResponse {
 	else {
 		# For CLI, don't send anything if there are no events
 		if ( scalar @{$out} ) {
-			sendCLIResponse( $httpClient, $httpResponse, $out );
+			sendCLIResponse( $httpClient, $out );
 		}
 	}
 }
