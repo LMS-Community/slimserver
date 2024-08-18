@@ -74,7 +74,7 @@ sub clid_for_connection {
 	my $result;
 
 	while ( my ($clid, $c) = each %{ $self->{conn} } ) {
-		if ( $conn eq $c ) {
+		if ( $conn eq $c->[0] ) {
 			$result = $clid;
 		}
 	}
