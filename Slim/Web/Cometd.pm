@@ -178,6 +178,9 @@ sub handler {
 			elsif ( $obj->{channel} eq '/meta/handshake' ) {
 				$clid = Slim::Utils::Misc::createUUID();
 				$manager->add_client( $clid );
+				if ( $isCLI ) {
+					$manager->register_connection( $clid, $conn );
+				}
 			}
 			elsif ( $obj->{channel} =~ m{^/slim/(?:subscribe|request)} && $obj->{data} ) {
 				# Pull clientId out of response channel
