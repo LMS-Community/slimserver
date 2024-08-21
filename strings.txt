@@ -10138,6 +10138,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_0
 	DE	Die Veröffentlichungen nicht gruppieren
 	EN	Don't group releases
 	FR	Ne pas regrouper les albums par type de sortie
+	HU	Ne csoportosítsa a kiadásokat
 	NL	Releases niet groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
@@ -10145,6 +10146,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_1
 	DE	Die Veröffentlichungen eines Interpreten nach Typ gruppieren
 	EN	Group an artist's lists by release type
 	FR	Regrouper les albums d'un artiste par type de sortie
+	HU	Csoportosítsa az előadók listáját kiadás típusa szerint
 	NL	Releases van een artiest groeperen op type
 
 SETUP_GROUP_BY_RELEASE_TYPES_2
@@ -10152,6 +10154,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_2
 	DE	Alle Veröffentlichungen nach Typ gruppiere
 	EN	Group all lists by release type
 	FR	Regrouper toutes les listes d'albums par type de sortie
+	HU	Csoportosítsa az összes listát kiadás típusa szerint
 	NL	Groepeer alle releases op type
 
 SETUP_GROUPDISCS
@@ -10163,6 +10166,7 @@ SETUP_GROUPDISCS
 	FI	Ryhmälevyt
 	FR	Disques multiples
 	HE	קיבוץ תקליטורים
+	HU	Lemezek csoportosítása
 	IT	Raggruppa dischi
 	JA	複数枚セットのアルバム
 	NL	Discs groeperen
@@ -10181,6 +10185,7 @@ SETUP_GROUPDISCS_DESC
 	FI	Voit määrittää, käsitelläänkö usean levyn sarjoja yhtenä levynä (yhdellä nimellä) vai useina levyinä, joilla kullakin on oma nimensä, esimerkiksi "Levyn nimi (levy 2/3)".  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
 	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom distinct pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
+	HU	Megadhatja, hogy több lemezkészletet egyetlen albumként (egyetlen névvel) vagy több albumként kezeljen-e, mindegyik lemezenként egyedi névvel, például „Album címe (2/3 lemez)”.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
 	NL	Je kunt opgeven of sets met meerdere discs als één album (met één naam) behandeld moeten worden, of als meerdere albums, elk met een unieke naam per disc, zoals 'Albumtitel (Disc 2 van 3)'. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
@@ -10199,6 +10204,7 @@ SETUP_GROUPDISCS_0
 	FI	Käsittele usean levyn sarjoja useina levyinä
 	FR	Disques multiples en tant qu'albums multiples
 	HE	טיפול בערכות של מספר תקליטורים כאלבומים מרובים
+	HU	A többlemezes készleteket több albumként kezelje
 	IT	Considera i cofanetti come album distinti
 	JA	複数枚セットのアルバムを複数のアルバムとみなす
 	NL	Sets met meerdere discs als meerdere albums behandelen
@@ -10217,6 +10223,7 @@ SETUP_GROUPDISCS_1
 	FI	Käsittele usean levyn sarjoja yhtenä levynä
 	FR	Disques multiples en tant qu'album unique
 	HE	טיפול בערכות של מספר תקליטורים כאלבום אחד
+	HU	A többlemezes készleteket egyetlen albumként kezelje
 	IT	Considera i cofanetti come un singolo album
 	JA	複数枚セットのアルバムを１つのアルバムとみなす
 	NL	Sets met meerdere discs als één album behandelen
@@ -10231,6 +10238,7 @@ SETUP_SIGNOUT
 	DE	Abmelden
 	EN	Sign out
 	FR	Déconnexion
+	HU	Kijelentkezés
 	NL	Afmelden
 
 SETUP_NO_JAVASCRIPT
@@ -10241,6 +10249,7 @@ SETUP_NO_JAVASCRIPT
 	ES	Para acceder a Lyrion Music Server, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10 o posterior, Opera 25 o posterior) con la opción JavaScript activada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1">Classic</a>.
 	FI	Lyrion Music Serverin käyttö edellyttää, että käytät uutta selainta (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 ja uudemmat). Lisäksi JavaScriptin on oltava käytössä selaimessa. Vaihtoehtoisesti voit käyttää yksinkertaisempaa olemusta, kuten esimerkiksi vaihtoehtoa <a href="/Classic/?skipWizard=1">Classic</a>.
 	FR	Pour accéder au Lyrion Music Server, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 ou version ultérieure) et activez JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1">Classic</a>.
+	HU	A Lyrion Music Server eléréséhez győződjön meg arról, hogy friss böngészőt használ (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 vagy újabb), és hogy a JavaScript engedélyezve van a böngészőjében. Alternatív megoldásként használhat egy egyszerűbb külsőt is, például a <a href="/Classic/?skipWizard=1">Classic</a>-t.
 	IT	Per accedere a Lyrion Music Server, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10 o versioni successive, Opera 25 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare una skin quale <a href="/Classic/?skipWizard=1">Classic</a>.
 	NL	Je dient een recente browser te gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10+, Opera 25 of later) en JavaScript in jouw browser inschakelen om Lyrion Music Server te kunnen benaderen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1">Classic</a>.
 	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på Lyrion Music Server. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a>.
@@ -10252,6 +10261,7 @@ SETUP_WIZARD_WELCOME
 	DE	Willkommen zum Einrichtungsassisten für ihr neues Lyrion Music Server Setup
 	EN	Welcome to the initial Lyrion Music Server setup
 	FR	Bienvenue dans l'assistant de configuration initiale du Lyrion Music Server
+	HU	Üdvözöljük a Lyrion Music Server kezdő beállításokban
 
 SETUP_WIZARD_WELCOME_INTRO
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
