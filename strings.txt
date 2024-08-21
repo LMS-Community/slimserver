@@ -14194,6 +14194,7 @@ BROWSE_ALBUMS
 	ES	Examinar álbumes
 	FI	Hae levyjä
 	FR	Parcourir les albums
+	HU	Böngéssés az albumok között
 	IT	Sfoglia album
 	NL	Door albums bladeren
 	NO	Bla i album
@@ -14209,6 +14210,7 @@ BROWSE_GENRES
 	ES	Examinar géneros
 	FI	Selaa genrejä
 	FR	Parcourir les genres
+	HU	Böngéssés a műfjok között
 	IT	Sfoglia generi
 	NL	Door genres bladeren
 	NO	Bla etter sjanger
@@ -14221,6 +14223,7 @@ BROWSE_WORKS
 	DE	Werke durchsuchen
 	EN	Browse Works
 	FR	Parcourir les œuvres
+	HU	Tallózás a művek között
 	NL	Door composities bladeren
 
 WORKS
@@ -14228,6 +14231,7 @@ WORKS
 	DE	Werke
 	EN	Works
 	FR	Œuvres
+	HU	Művek
 	NL	Composities
 
 WORKS_CLASSICAL
@@ -14235,6 +14239,7 @@ WORKS_CLASSICAL
 	DE	Klassische Werke
 	EN	Classical Works
 	FR	Œuvres Classiques
+	HU	Klasszikus művek
 	NL	Klassieke composities
 
 BROWSE_YEARS
@@ -14245,6 +14250,7 @@ BROWSE_YEARS
 	ES	Examinar años
 	FI	Etsi vuosia
 	FR	Parcourir les années
+	HU	Tallózás az évek között
 	IT	Sfoglia anni
 	NL	Door jaartallen bladeren
 	NO	Bla etter år
@@ -14267,6 +14273,7 @@ BROWSE_BY_ALBUM
 	FI	Levyt
 	FR	Albums
 	HE	אלבומים
+	HU	Albumok
 	IT	Album
 	JA	アルバムをブラウズする
 	NL	Albums
@@ -14292,6 +14299,7 @@ BROWSE_BY_ARTWORK
 	FI	Kansitaide
 	FR	Pochettes
 	HE	עטיפה
+	HU	Borító
 	IT	Copertine
 	JA	アートワークをブラウズする
 	NL	Albumhoezen
@@ -14316,6 +14324,7 @@ BROWSE_NEW_MUSIC
 	FI	Uusi musiikki
 	FR	Nouveautés
 	HE	מוסיקה חדשה
+	HU	Új zenék
 	IT	Musica recente
 	NL	Nieuwe Muziek
 	NO	Ny musikk
@@ -14333,6 +14342,7 @@ BROWSE_BY_SONG
 	FI	Kappaleet
 	FR	Morceaux
 	HE	שירים
+	HU	Zeneszámok
 	IT	Brani
 	JA	曲をブラウズする
 	NL	Nummers
@@ -14352,6 +14362,7 @@ BROWSE_BY_WORK
 	DE	Werke
 	EN	Works
 	FR	Œuvres
+	HU	Művek
 	NL	Composities
 
 BROWSE_BY_YEAR
@@ -14363,6 +14374,7 @@ BROWSE_BY_YEAR
 	FI	Vuodet
 	FR	Années
 	HE	שנים
+	HU	Évek
 	IT	Anni
 	NL	Jaren
 	NO	År
@@ -14380,6 +14392,7 @@ BROWSE_MUSIC_FOLDER
 	FI	Musiikkikansio
 	FR	Dossier de musique
 	HE	תיקיית מוסיקה
+	HU	Zenék mappája
 	IT	Cartella Musica
 	JA	音楽フォルダーをブラウズする
 	NL	Muziekmap
@@ -14398,6 +14411,7 @@ BROWSE_ALL_PICTURES
 	ES	Todas las imágenes
 	FI	Kaikki kuvat
 	FR	Toutes les images
+	HU	Minden kép
 	IT	Tutte le immagini
 	NL	Alle foto's
 	NO	Alle bilder
@@ -14413,6 +14427,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	ES	La carpeta Música no está disponible al examinar.
 	FI	Musiikkikansio ei ole käytettävissä tarkistuksen aikana.
 	FR	Le dossier de musique n'est pas disponible pour l'analyse.
+	HU	A Zene mappa nem érhető el beolvasás közben.
 	IT	La cartella Musica non è disponibile durante l’analisi.
 	NL	Muziekmap is niet beschikbaar tijdens het scannen.
 	NO	Musikkmappen er ikke tilgjengelig når søk pågår.
@@ -14426,6 +14441,7 @@ BROWSE_ON_SERVICE
 	EN	Browse on %s
 	FR	Parcourir %s
 	SV	Bläddra på %s
+	HU	Böngésszen a %s oldalon
 	NL	Blader op %s
 
 SYNCHRONIZE
@@ -14438,6 +14454,7 @@ SYNCHRONIZE
 	FI	Synkronoi
 	FR	Synchroniser
 	HE	סינכרון
+	HU	Szinkronizálás
 	IT	Sincronizza
 	JA	シンクロする
 	NL	Synchroniseren
@@ -14458,6 +14475,7 @@ NOT_SYNCHRONIZED
 	FI	Ei synkronoitu
 	FR	Non synchronisé
 	HE	לא מסונכרן
+	HU	Nincs szinkronizálva
 	IT	Non sincronizzato
 	NL	Niet gesynchroniseerd
 	NO	Ikke synkronisert
@@ -14475,6 +14493,7 @@ SYNCHRONIZED_WITH
 	FI	Synkronoitu seuraavan soittimen kanssa:
 	FR	Synchronisé avec
 	HE	מסונכרן עם
+	HU	Szinkronizálva
 	IT	Sincronizzato con
 	JA	シンクロされている
 	NL	Gesynchroniseerd met
@@ -14493,6 +14512,7 @@ PLAYER_PLUGINS
 	ES	Extras
 	FI	Muut
 	FR	Extras
+	HU	Extra
 	IT	Extra
 	NL	Extra's
 	NO	Tillegg
@@ -14508,6 +14528,7 @@ PLUGINS
 	ES	Extras
 	FI	Muut
 	FR	Extras
+	HU	Extrák
 	IT	Extra
 	NL	Extra's
 	NO	Tillegg
@@ -14524,6 +14545,7 @@ NEXT
 	FI	Seuraava
 	FR	Suivant
 	HE	הבא
+	HU	Következő
 	IT	Successivo
 	JA	次
 	NL	Volgende
@@ -14543,6 +14565,7 @@ PREVIOUS
 	FI	Edellinen
 	FR	Précédent
 	HE	הקודם
+	HU	Előző
 	IT	Indietro
 	JA	前
 	NL	Vorige
@@ -14562,6 +14585,7 @@ PREV
 	FI	Edellinen
 	FR	Précédent
 	HE	הקודם
+	HU	Előző
 	IT	Prec.
 	JA	前
 	NL	Vorige
@@ -14581,6 +14605,7 @@ FIRST
 	FI	Ensimmäinen
 	FR	Premier
 	HE	ראשון
+	HU	Első
 	IT	Primo
 	JA	最初
 	NL	Eerste
@@ -14600,6 +14625,7 @@ LAST
 	FI	Viimeinen
 	FR	Dernier
 	HE	אחרון
+	HU	Utolsó
 	IT	Ultimo
 	JA	最後
 	NL	Laatste
@@ -14619,6 +14645,7 @@ MOSTPLAYED
 	FI	Useimmin kuunnellut kappaleet
 	FR	Morceaux les plus joués
 	HE	השירים המושמעים ביותר
+	HU	Legtöbbet játszott zeneszám
 	IT	Brani più ascoltati
 	JA	最も多く再生された曲
 	NL	Meest gespeelde nummers
@@ -14635,6 +14662,7 @@ LASTPLAYED
 	EN	Last Played
 	FR	Dernier lu
 	SV	Spelad senast
+	HU	Legutóbb játszott
 	NL	Laatst gespeeld
 
 PLAYCOUNT
@@ -14642,6 +14670,7 @@ PLAYCOUNT
 	DE	Anzahl Wiedergaben
 	EN	Play Count
 	FR	Nombre de fois joué
+	HU	Lejáátszások száma
 	NL	Aantal keren afgespeeld
 	NO	Antall avspillinger
 	PL	Ilość odtworzeń
@@ -14655,6 +14684,7 @@ ALBUM_INFO
 	ES	Información de álbum
 	FI	Albumin tiedot
 	FR	Informations sur l'album
+	HU	Album információ
 	IT	Informazioni sull'album
 	NL	Albuminfo
 	NO	Albuminformasjon
@@ -14670,6 +14700,7 @@ ARTIST_INFO
 	ES	Información de artista
 	FI	Artistitiedot
 	FR	Informations sur l'artiste
+	HU	Előadó adatok
 	IT	Informazioni sull'artista
 	NL	Artiestinfo
 	NO	Artistinformasjon
@@ -14685,6 +14716,7 @@ GENRE_INFO
 	ES	Información de género
 	FI	Genretiedot
 	FR	Informations sur le genre
+	HU	Műfaj adatok
 	IT	Informazioni sul genere
 	NL	Genre-info
 	NO	Sjangerinformasjon
@@ -14700,6 +14732,7 @@ YEAR_INFO
 	ES	Información de año
 	FI	Vuositiedot
 	FR	Informations sur l'année
+	HU	Év adatok
 	IT	Informazioni sull'anno
 	NL	Jaarinfo
 	NO	Årstall
@@ -14716,6 +14749,7 @@ SONG_INFO
 	FI	Kappaleen tiedot
 	FR	Informations sur le morceau
 	HE	פרטי השיר
+	HU	Zeneszám adatok
 	IT	Informazioni sul brano
 	JA	曲の情報
 	NL	Nummerinfo
@@ -14734,6 +14768,7 @@ PLAYLIST_INFO
 	ES	Información de lista de reproducción
 	FI	Soittoluettelotiedot
 	FR	Infos sur la liste de lecture
+	HU	Műsorlista adatok
 	IT	Info Playlist
 	NL	Afspeellijstinfo
 	NO	Informasjon om spilleliste
@@ -14749,6 +14784,7 @@ FOLDER_INFO
 	ES	Información de carpeta
 	FI	Kansion tiedot
 	FR	Infos sur le répertoire
+	HU	Mappa adatok
 	IT	Info cartella
 	NL	Mapinfo
 	NO	Mappeinformasjon
@@ -14765,6 +14801,7 @@ NOTE
 	FI	Huomaa:
 	FR	Note :
 	HE	שים לב:
+	HU	Jegyzet:
 	IT	Nota:
 	JA	注意 :
 	NL	Let op:
@@ -14783,6 +14820,7 @@ FILENAME_WARNING
 	ES	Caracteres no válidos en nombre, edite
 	FI	Nimessä on merkkejä, jotka eivät kelpaa. Muuta nimeä.
 	FR	Caractères non autorisés dans le nom. Veuillez le modifier.
+	HU	Illegális karakterek a névben, kérjük, javítsa.
 	IT	Caratteri non validi nel nome. Correggere
 	NL	Ongeldige tekens in naam. Wijzig alsjeblieft.
 	NO	Ugyldige tegn i navnet, du må endre det.
@@ -14799,6 +14837,7 @@ RENAME_WARNING
 	FI	Valitsemasi nimi on jo käytössä. Valitse soittoluettelolle toinen nimi tai korvaa soittoluettelo lisäämällä valintamerkki kohtaan, jossa vahvistetaan soittoluettelon korvaaminen.
 	FR	Ce nom est déjà utilisé. Veuillez choisir un autre nom pour la liste de lecture ou cocher la case Confirmer remplacement pour remplacer la liste existante.
 	HE	השם שבחרת נמצא כבר בשימוש. בחר שם אחר עבור רשימת ההשמעה או סמן את האפשרות 'אישור החלפה' להחלפת רשימת ההשמעה הנוכחית.
+	HU	A választott név már foglalt. Kérjük, válasszon másik nevet a lejátszási listának, vagy jelölje be a „felülírás megerősítése” lehetőséget a meglévő lejátszási lista lecseréléséhez.
 	IT	Il nome scelto esiste già. Scegliere un altro nome o selezionare Conferma sovrascrittura per sostituire la playlist esistente.
 	JA	選択された名前はすでに他で使われています。他の名前を選ぶか、上書き確認をして下さい。
 	NL	De gekozen naam is al in gebruik. Kies een andere naam voor jouw afspeellijst, of selecteer 'Overschrijven bevestigen' om je bestaande afspeellijst te vervangen.
@@ -14818,6 +14857,7 @@ DELETE_WARNING
 	FI	Haluatko varmasti poistaa ? Poista soittoluettelo valitsemalla Vahvista poisto.
 	FR	Voulez-vous vraiment supprimer la liste de lecture ? Cliquez sur "Confirmer suppression" pour supprimer la liste de lecture.
 	HE	האם אתה בטוח שברצונך למחוק את הפריט? סמן את האפשרות 'אישור מחיקה' למחיקת רשימת ההשמעה.
+	HU	Biztosan törölni akarod? Jelölje be a „törlés megerősítése” lehetőséget a lejátszási lista törléséhez.
 	IT	Eliminare la playlist? Selezionare "Conferma eliminazione" per completare l'operazione.
 	NL	Weet je zeker dat je wilt verwijderen? Selecteer 'Verwijdering bevestigen' om je afspeellijst weg te halen.
 	NO	Er du sikker på at du vil slette? Merk av for «bekreft sletting» for å slette spillelisten.
@@ -14835,6 +14875,7 @@ SCAN_WARNING
 	FI	Lyrion Music Server tarkistaa yhä mediakirjastoasi. Jotkin kohteet eivät välttämättä vielä näy tässä kohdassa.
 	FR	Le Lyrion Music Server n'a pas terminé d'analyser votre bibliothèque multimédia. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
 	HE	Lyrion Music Server עדיין סורק את ספריית המוסיקה שלך, כך שייתכן שפריטים מסוימים טרם מופיעים באזור זה.
+	HU	A Lyrion Music Server még mindig vizsgálja a médiakönyvtárat, ezért előfordulhat, hogy egyes elemek még nem jelennek meg ezen a területen.
 	IT	L'analisi della libreria multimediale da parte di Lyrion Music Server è ancora in corso. Alcune voci potrebbero non essere ancora visualizzate in questa area.
 	JA	Lyrion Music Serverは、現在音楽ライブラリをスキャンしています。よって、いくつかのアイテムはまだ表示されていないかもしれません。
 	NL	Lyrion Music Server scant momenteel de mediabibliotheek en daarom worden mogelijk nog niet alle items hier getoond.
@@ -14854,6 +14895,7 @@ HOME_SCAN_WARNING
 	FI	Lyrion Music Server tarkistaa yhä mediakirjastoasi. Odota rauhassa, sillä tähän saattaa kulua hetki.
 	FR	Le Lyrion Music Server analyse le contenu de votre bibliothèque multimédia. Veuillez patienter.
 	HE	Lyrion Music Server עדיין סורק את ספריית המוסיקה שלך. אנא המתן בסבלנות; הפעולה עשויה להימשך זמן מה.
+	HU	A Lyrion Music Server még mindig vizsgálja a médiakönyvtárat. Kérjük, legyen türelmes, mert ez eltarthat egy ideig.
 	IT	L'analisi della libreria multimediale da parte di Lyrion Music Server è ancora in corso. Attendere. L'operazione potrebbe richiedere alcuni minuti.
 	NL	Lyrion Music Server scant momenteel de mediabibliotheek. Een ogenblik geduld.
 	NO	Lyrion Music Server søker fremdeles i mediebiblioteket ditt. Vær tålmodig, da dette kan ta en stund.
@@ -14871,6 +14913,7 @@ SCAN_CLICK
 	FI	Selaa mediakansiota suoraan napsauttamalla
 	FR	Pour parcourir votre dossier multimédia directement, cliquez sur
 	HE	לעיון ישיר בתיקיית המוסיקה שלך, לחץ על
+	HU	A médiamappa közvetlen böngészéséhez kattintson a gombra
 	IT	Per sfogliare direttamente la cartella dei file multimediali, fare clic su
 	JA	音楽フォルダーをブラウズするには、ここをクリックして下さい。
 	NL	Als je direct de mediamap wilt bekijken, klik je op
@@ -14890,6 +14933,7 @@ HERE
 	FI	tässä
 	FR	ici
 	HE	כאן
+	HU	itt
 	IT	qui
 	JA	ここ
 	NL	hier
@@ -14909,6 +14953,7 @@ FOR
 	FI	kohteelle
 	FR	pour
 	HE	עבור
+	HU	számára
 	IT	per
 	JA	の為
 	NL	voor
@@ -14928,6 +14973,7 @@ PLAYER_SETTINGS
 	FI	Soittimen asetukset
 	FR	Réglages de la platine
 	HE	הגדרות נגן
+	HU	Lejátszó beállításai
 	IT	Impostazioni lettore
 	JA	プレーヤーセッティング
 	NL	Instellingen van muziekspeler
@@ -14947,6 +14993,7 @@ BASIC_PLAYER_SETTINGS
 	FI	Perusasetukset
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
+	HU	Alapbeállítások
 	IT	Impostazioni di base
 	NL	Standaardinstellingen
 	NO	Standardinnstillinger
@@ -14964,6 +15011,7 @@ MENU_SETTINGS
 	FI	Valikot
 	FR	Menus
 	HE	תפריטים
+	HU	Menü
 	IT	Menu
 	JA	分
 	NL	Menu's
@@ -14982,6 +15030,7 @@ DISPLAY_SETTINGS
 	FI	Näyttö
 	FR	Affichage
 	HE	תצוגה
+	HU	Kijelző
 	IT	Visualizza
 	JA	ディスプレー
 	NL	Display
@@ -14999,6 +15048,7 @@ JIVE_PLAYER_DISPLAY_SETTINGS
 	ES	Pantalla de reproductor
 	FI	Soittimen näyttö
 	FR	Affichage du lecteur
+	HU	Lejátszó kijelző
 	IT	Display del lettore
 	NL	Display van muziekspeler
 	NO	Spillerskjerm
@@ -15015,6 +15065,7 @@ AUDIO_SETTINGS
 	FI	Ääni
 	FR	Audio
 	HE	שמע
+	HU	Audió
 	IT	Audio
 	JA	オーディオ
 	NL	Audio
@@ -15033,6 +15084,7 @@ REMOTE_SETTINGS
 	FI	Kaukosäädin
 	FR	Télécommande
 	HE	שלט-רחוק
+	HU	Távoli
 	IT	Telecomando
 	JA	リモコン
 	NL	Afstandsbediening
@@ -15051,6 +15103,7 @@ PLAYERIR_SETTINGS
 	FI	Infrapuna-asetukset
 	FR	Réglages infrarouge
 	HE	הגדרות IR
+	HU	IR beállítások
 	IT	Impostazioni IR
 	JA	IR（リモコン）セッティング
 	NL	IR-instellingen
@@ -15069,6 +15122,7 @@ SERVER_STATUS
 	ES	Estado de Lyrion Music Server
 	FI	Lyrion Music Serverin tila
 	FR	Etat du Lyrion Music Server
+	HU	Lyrion Nusic Server állapota
 	IT	Stato di Lyrion Music Server
 	NL	Status van Lyrion Music Server
 	NO	Status for Lyrion Music Server
@@ -15084,6 +15138,7 @@ SERVER_STATUS_DESC
 	ES	Información sobre todos los dispositivos identificados conectados a Lyrion Music Server
 	FI	Kaikkien tunnistettujen Lyrion Music Serveriin yhdistettyjen laitteiden tiedot
 	FR	Informations sur tous les dispositifs identifiés connectés au Lyrion Music Server
+	HU	Információ a Lyrion Music Serverhez csatlakoztatott összes azonosított eszközről
 	IT	Informazioni su tutti i dispositivi rilevati connessi a Lyrion Music Server
 	NL	Informatie over alle geïdentificeerde apparaten die met Lyrion Music Server verbonden zijn
 	NO	Informasjon om alle identifiserte enheter som er koplet til Lyrion Music Server.
@@ -15100,6 +15155,7 @@ BASIC_SERVER_SETTINGS
 	FI	Perusasetukset
 	FR	Réglages de base
 	HE	הגדרות בסיסיות
+	HU	Alapbeállítások
 	IT	Impostazioni di base
 	NL	Standaardinstellingen
 	NO	Standardinnstillinger
@@ -15116,6 +15172,7 @@ ADVANCED_SETTINGS
 	ES	Avanzada
 	FI	Lisäasetukset
 	FR	Avancé
+	HU	Kiterjesztett
 	IT	Avanzate
 	NL	Geavanceerd
 	NO	Avansert
@@ -15132,6 +15189,7 @@ SERVER_SETTINGS
 	FI	Palvelimen asetukset
 	FR	Réglages du serveur
 	HE	הגדרות השרת
+	HU	Szerverbeállítások
 	IT	Impostazioni server
 	JA	サーバーセッティング
 	NL	Serverinstellingen
@@ -15151,6 +15209,7 @@ SQUEEZEBOX_SERVER_SETTINGS
 	FI	Lyrion Music Serverin asetukset
 	FR	Réglages du Lyrion Music Server
 	HE	הגדרות Lyrion Music Server
+	HU	Lyrion Music Server beállításai
 	IT	Impostazioni di Lyrion Music Server
 	JA	Lyrion Music Serverセッティング
 	NL	Lyrion Music Server-instellingen
@@ -15170,6 +15229,7 @@ INTERFACE_SETTINGS
 	FI	Käyttöliittymä
 	FR	Interface
 	HE	ממשק
+	HU	Felület
 	IT	Interfaccia
 	JA	インターフェース
 	NL	Interface
@@ -15190,6 +15250,7 @@ BEHAVIOR_SETTINGS
 	FI	Toiminta
 	FR	Comportement
 	HE	התנהגות השרת
+	HU	Viselkedés
 	IT	Comportamento
 	JA	機能
 	NL	Gedrag
@@ -15209,6 +15270,7 @@ FORMATS_SETTINGS
 	FI	Tiedostotyypit
 	FR	Types de fichier
 	HE	סוגי קבצים
+	HU	Fájltípusok
 	IT	Tipi di file
 	JA	ファイルタイプ
 	NL	Bestandstypen
@@ -15228,6 +15290,7 @@ SECURITY_SETTINGS
 	FI	Tietoturva
 	FR	Sécurité
 	HE	אבטחה
+	HU	Biztonság
 	IT	Sicurezza
 	JA	セキュリティ
 	NL	Beveiliging
@@ -15247,6 +15310,7 @@ PERFORMANCE_SETTINGS
 	FI	Suorituskyky
 	FR	Performance
 	HE	ביצועים
+	HU	Teljesítmény
 	IT	Prestazioni
 	JA	パフォーマンス
 	NL	Prestaties
@@ -15266,6 +15330,7 @@ FORMATTING_SETTINGS
 	FI	Alustetaan
 	FR	Format
 	HE	עיצוב
+	HU	Formázás
 	IT	Formattazione
 	JA	フォーマット
 	NL	Formattering
@@ -15285,6 +15350,7 @@ NETWORK_SETTINGS
 	FI	Verkkoyhteydet
 	FR	Réseau
 	HE	רשת
+	HU	Hálózat
 	IT	Rete
 	JA	ネットワーク
 	NL	Netwerk
@@ -15300,6 +15366,7 @@ DEBUG_NETWORK_REPOSITORIES
 	DE	Download Verzeichnisse für Erweiterungen, Aktualisierungen etc.
 	EN	Download repositories for extensions, update etc.
 	FR	Télécharger les dépôts pour les plugins, mises à jour, etc.
+	HU	Letölthető tárolók a bővítményekhez, frissítésekhez stb.
 	NL	Download URL's voor extensies, updates enz.
 	NO	Nedlastingsarkiv for utvidelser, oppdateringer etc.
 	PL	Pobierz repozytoria dla dodatków, aktualizacji itp.
@@ -15313,6 +15380,7 @@ DEBUG_PLAYER_JIVE
 	ES	Compatibilidad con dispositivos basados en Squeezplay
 	FI	Tuki Squeezeplay-pohjaisille laitteille
 	FR	Assistance pour les dispositifs Squeezeplay
+	HU	Squeezplay alapú eszközök támogatása
 	IT	Supporto per i dispositivi basati su Squeezeplay
 	NL	Ondersteuning voor Squeezeplay-apparaten
 	NO	Støtte for Squeezplay-komponenter
@@ -15328,6 +15396,7 @@ DEBUG_MENU_TRACKINFO
 	ES	Menú de información de pistas
 	FI	Kappaleen tietojen valikko
 	FR	Menu d'informations sur les pistes
+	HU	Műsorszám információs menü
 	IT	Menu informazioni sui brani
 	NL	Menu nummerinformatie
 	NO	Sporinformasjonsmeny
@@ -15343,6 +15412,7 @@ DEBUG_NETWORK_COMETD
 	ES	Registro de protocolo Cometd
 	FI	Cometd-protokollan kirjaus
 	FR	Journalisation du protocole Cometd
+	HU	Cometd protokoll naplózás
 	IT	Registrazione protocollo Cometd
 	NL	Loggen van Cometd-protocol
 	NO	Cometd protokoll-loggføring
@@ -15358,6 +15428,7 @@ DEBUG_RADIO
 	ES	Radio por Internet
 	FI	Nettiradio
 	FR	Radio Internet
+	HU	Internet rádió
 	IT	Radio Internet
 	NL	Internetradio
 	NO	Internett-radio
@@ -15373,6 +15444,7 @@ DEBUG_TRANSCODING
 	ES	Transcodificador
 	FI	Muunnin
 	FR	Transcodeur
+	HU	Átkódoló
 	IT	Transcoder
 	NL	Transcoder
 	NO	Omkoding
@@ -15388,6 +15460,7 @@ DEBUG_SERVER_CHOOSE
 	ES	Servidor
 	FI	Palvelin
 	FR	Serveur
+	HU	Szerver
 	IT	Server
 	NL	Server
 	NO	Tjener
@@ -15403,6 +15476,7 @@ DEBUG_SCANNER_CHOOSE
 	ES	Detector de material multimedia
 	FI	Mediahaku
 	FR	Analyseur de contenu multimédia
+	HU	Média szkenner
 	IT	Analisi file multimediali
 	NL	Mediascanner
 	NO	Mediesøk
@@ -15418,6 +15492,7 @@ DEBUG_SELECT_SET
 	ES	Seleccione un conjunto de registros...
 	FI	Valitse lokijoukko...
 	FR	Sélectionnez l'ensemble de journaux...
+	HU	Kérjük, válassza ki a naplókzást...
 	IT	Selezionare un gruppo di registri...
 	NL	Selecteer een logboekset...
 	NO	Velg logg-sett ...
@@ -15433,6 +15508,7 @@ DEBUG_DEFAULT
 	ES	Restablecer preferencias de registro
 	FI	Palauta kirjausasetukset
 	FR	Réinitialiser les préférences de journalisation
+	HU	Naplózási beállításokat visszaállítása
 	IT	Reimposta preferenze di registrazione
 	NL	Logvoorkeuren opnieuw instellen
 	NO	Tilbakestill logginnstillinger
@@ -15449,6 +15525,7 @@ SETUP_GROUP_DEBUG_DESC
 	FI	Lyrion Music Serverissä on useita kirjausasetuksia, joilla voidaan kirjata yksityiskohtaisia tietoja palvelimen toiminnasta ja hauista. Jokaisessa kirjausluokassa voidaan asettaa kirjauksen aste. "Virheenkorjaus" on niistä monisanaisin, "Ei käytössä" vähäsanaisin.
 	FR	Le Lyrion Music Server est doté d'un certain nombre de réglages de journalisation pouvant enregistrer des informations détaillées sur les opérations du serveur et de l'analyseur. L'enregistrement dans chaque catégorie de journalisation dépend d'un niveau de sévérité défini, le niveau "Débogage" étant le plus détaillé et "Désactivé" étant le moins détaillé.
 	HE	Lyrion Music Server כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
+	HU	A Lyrion Music Server számos naplózási beállítással rendelkezik, amelyek segítségével részletes információkat rögzíthet a szerver és a szkenner működéséről. Minden naplózási kategóriának van egy súlyossága a naplózáshoz. A "Debug" a legbőbeszédesebb, az "Off" pedig a legkevésbé.
 	IT	In Lyrion Music Server sono disponibili numerose impostazioni per registrare informazioni dettagliate sul funzionamento del server e dell'analisi. Per ogni categoria di dati da registrare è possibile selezionare il livello di gravità: Debug definisce il livello più dettagliato mentre Disattivato quello meno dettagliato.
 	NL	Lyrion Music Server heeft een aantal log instellingen waarmee gedetailleerde informatie over server- en scannerwerking verzameld kan worden. Elke categorie heeft een niveau, waarbij 'Debuggen' het meest uitgebreid en 'Uit' het meest bet is.
 	NO	Lyrion Music Server har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om serveren og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
@@ -15464,6 +15541,7 @@ DEBUGGING_SETTINGS
 	ES	Registrando
 	FI	Kirjaus
 	FR	Journalisation
+	HU	Naplózás
 	IT	Registrazione
 	NL	Loggen
 	NO	Loggføring
@@ -15479,6 +15557,7 @@ DEBUGGING_ADVANCED
 	ES	Configuración de registro avanzada
 	FI	Lisälokiasetukset
 	FR	Paramètres avancés des journaux
+	HU	Speciális naplóbeállítások
 	IT	Impostazioni file di registro avanzate
 	NL	Geavanceerde logboekinstellingen
 	NO	Avanserte logginnstillinger
@@ -15495,6 +15574,7 @@ CHANGE
 	FI	Muuta
 	FR	Modifier
 	HE	שנה
+	HU	Változás
 	IT	Cambia
 	JA	変更
 	NL	Wijzigen
@@ -15514,6 +15594,7 @@ SERVER_IP_ADDRESS
 	FI	Palvelimen IP-osoite
 	FR	Adresse IP du serveur
 	HE	כתובת ה-IP של השרת
+	HU	Szerver IP címe
 	IT	Indirizzo IP del server
 	NL	IP-adres van server
 	NO	Serverens IP-adresse
@@ -15530,6 +15611,7 @@ PLAYER_IP_ADDRESS
 	FI	Tämän soittimen IP-osoite on
 	FR	L'adresse IP de cette platine est
 	HE	כתובת ה-IP של הנגן היא
+	HU	Ennek a lejátszónak az IP-címe
 	IT	L'indirizzo IP del lettore è
 	JA	このプレーヤーのIPアドレスは
 	NL	Het IP-adres van deze muziekspeler is
@@ -15549,6 +15631,7 @@ PLAYER_MAC_ADDRESS
 	FI	Tämän soittimen ethernet MAC -osoite on
 	FR	L'adresse MAC de cette platine est
 	HE	כתובת ה-MAC של האתרנט של הנגן היא
+	HU	Ennek a lejátszónak az Ethernet MAC-címe
 	IT	L'indirizzo MAC Ethernet di questo lettore è
 	JA	このプレーヤーのMACアドレスは
 	NL	Het MAC-adres van deze muziekspeler is
@@ -15567,6 +15650,7 @@ BRIGHTNESS_DIMMEST
 	ES	Atenuación máxima
 	FI	Himmein
 	FR	Réduction maximale de l'éclairage
+	HU	Halványabb
 	IT	Meno luminoso
 	NL	Meest gedimd
 	NO	Mørkest
@@ -15582,6 +15666,7 @@ BRIGHTNESS_AMBIENT
 	ES	Automático
 	FI	Automaattinen
 	FR	Automatique
+	HU	Automatikus
 	IT	Automatico
 	NL	Automatisch
 	NO	Automatisk
@@ -15598,6 +15683,7 @@ LIGHT_N
 	ES	Estrecha fina
 	FI	Kevyt ja kapea
 	FR	Etroit faible
+	HU	Világos keskeny
 	IT	Stretto chiaro
 	NL	Licht smal
 	NO	Litt smalere tekst
@@ -15613,6 +15699,7 @@ STANDARD_N
 	ES	Estrecha estándar
 	FI	Vakio kapea
 	FR	Etroit standard
+	HU	Szabványos keskeny
 	IT	Standard stretto
 	NL	Standaard smal
 	NO	Standard smal tekst
@@ -15628,6 +15715,7 @@ FULL_N
 	ES	Estrecha gruesa
 	FI	Täysi kapea
 	FR	Etroit complet
+	HU	Keskeny
 	IT	Intero stretto
 	NL	Volledig smal
 	NO	Helt smal tekst
@@ -15644,6 +15732,7 @@ BRIGHTNESS_DARK
 	FI	Tumma
 	FR	Sombre
 	HE	כהה
+	HU	Sötét
 	IT	Scuro
 	JA	暗い
 	NL	Donker
@@ -15663,6 +15752,7 @@ BRIGHTNESS_BRIGHTEST
 	FI	Kirkkain
 	FR	Luminosité maximale
 	HE	הכי בהיר
+	HU	Ragyogó
 	IT	Più luminoso
 	JA	最も明るい
 	NL	Helderst
@@ -15682,6 +15772,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	FI	Soitin voi näyttää soiton aikana tietoja siitä, kuinka pitkälle kappaletta on soitettu. Valitse tiedot, jotka haluat soittimen näyttävän.
 	FR	La platine peut afficher des informations sur la progression de la lecture d'un morceau au cours de la lecture. Sélectionnez les informations à afficher.
 	HE	הנגן יכול להציג מידע אודות התקדמות השיר במהלך ההשמעה. בחר את המידע שברצונך להציג.
+	HU	A lejátszó információkat jeleníthet meg egy dal lejátszása közben. Válassza ki a megjeleníteni kívánt információkat.
 	IT	Nel lettore è possibile visualizzare informazioni relative all'avanzamento del brano in corso. Scegliere le informazioni da visualizzare.
 	JA	プレーヤーは、曲の進み具合を表示することができます。表示したい情報を選んでください。
 	NL	De muziekspeler kan informatie over de voortgang van het huidige nummer tonen. Kies de informatie die getoond moet worden.
@@ -15701,6 +15792,7 @@ VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	FI	Pieni spektri
 	FR	Petit spectre
 	HE	ספקטרום קטן
+	HU	Kis spektrum
 	IT	Spettro piccolo
 	NL	Klein spectrum
 	NO	Lite spekter
@@ -15718,6 +15810,7 @@ VISUALIZER_VUMETER_SMALL
 	FI	Pieni VU
 	FR	Petit VUmètre
 	HE	VU קטן
+	HU	Kis VU
 	IT	Indicatore VU piccolo
 	NL	Kleine VU-meter
 	NO	Liten VU-måler
@@ -15735,6 +15828,7 @@ VISUALIZER_VUMETER
 	FI	VU-mittari
 	FR	VUmètre
 	HE	מד VU
+	HU	VU méter
 	IT	Indicatore VU
 	NL	VU-meter
 	NO	VU-måler
@@ -15752,6 +15846,7 @@ BLANK
 	FI	Ei mitään
 	FR	Rien
 	HE	ללא
+	HU	Nincs
 	IT	Niente
 	JA	なし
 	NL	Niets
@@ -15771,6 +15866,7 @@ ELAPSED
 	FI	Kulunut aika
 	FR	Temps écoulé
 	HE	זמן שחלף
+	HU	Eltelt idő
 	IT	Tempo trascorso
 	JA	経過時間
 	NL	Verstreken tijd
@@ -15790,6 +15886,7 @@ PROGRESS_BAR
 	FI	Tilanneilmaisin
 	FR	Barre de progression
 	HE	מד התקדמות
+	HU	Haladás sáv
 	IT	Barra di avanzamento
 	JA	プログレスバー
 	NL	Voortgangsindicator
@@ -15809,6 +15906,7 @@ REMAINING
 	FI	Jäljellä oleva aika
 	FR	Temps restant
 	HE	זמן שנותר
+	HU	Hátralévő idő
 	IT	Tempo rimanente
 	JA	残り時間
 	NL	Resterende tijd
@@ -15828,6 +15926,7 @@ AND
 	FI	ja
 	FR	et
 	HE	וגם
+	HU	és
 	IT	e
 	JA	と
 	NL	en
@@ -15847,6 +15946,7 @@ FORGET_PLAYER
 	FI	Unohda soitin
 	FR	Retirer la platine
 	HE	התעלמות מנגן
+	HU	Lejátszó elfelejtése
 	IT	Ignora lettore
 	JA	このプレーヤーを消去する
 	NL	Muziekspeler vergeten
@@ -15866,6 +15966,7 @@ FORGET_PLAYER_DESC
 	FI	Jos et enää käytä soitinta tai jos soitin esiintyy kahdesti soitinluettelossa, voit määrätä Lyrion Music Serverin unohtamaan soittimen.
 	FR	Si vous n'utilisez plus cette platine ou si elle apparaît plus d'une fois dans la liste des platines, vous pouvez choisir de la retirer de la liste.
 	HE	אם אינך משתמש עוד בנגן זה, או אם הנגן מופיע פעמיים ברשימת הנגנים, באפשרותך לגרום לשרת להתעלם מהנגן.
+	HU	Ha már nem használja ezt a lejátszót, vagy ez a lejátszó kétszer szerepel a lejátszók listájában, dönthet úgy, hogy a Lyrion Music Server elfelejti ezt a lejátszót.
 	IT	Se non si utilizza più questo lettore o se il lettore compare due volte nell'elenco dei lettori, si può fare in modo che Lyrion Music Server lo ignori.
 	JA	このプレーヤーをもう使用していない場合、あるいは、このプレーヤーが2つリストに載っている場合、このプレーヤーを消去することができます。
 	NL	Als je deze muziekspeler niet langer gebruikt of dit systeem twee keer voorkomt in de lijst met muziekspelers, kun je Lyrion Music Server dit systeem laten 'vergeten'.
@@ -15885,6 +15986,7 @@ FORGET_PLAYER_LINK
 	FI	Unohda tämä soitin
 	FR	Retirer cette platine
 	HE	התעלמות מנגן זה
+	HU	Felejtsd el ezt a lejátszót
 	IT	Ignora questo lettore
 	JA	このプレーヤーを消去する
 	NL	Deze muziekspeler vergeten
@@ -15904,6 +16006,7 @@ SECONDS
 	FI	sekuntia
 	FR	secondes
 	HE	שניות
+	HU	másodperc
 	IT	secondi
 	JA	秒
 	NL	seconden
@@ -15923,6 +16026,7 @@ MINUTES
 	FI	minuuttia
 	FR	minutes
 	HE	דקות
+	HU	perc
 	IT	minuti
 	JA	分
 	NL	minuten
@@ -15942,6 +16046,7 @@ CURRENT_WEB_SKIN
 	FI	Nykyinen WWW-olemus:
 	FR	Interface web en cours :
 	HE	מעטפת אינטרנט נוכחית:
+	HU	Jelenlegi web felület:
 	IT	Skin web in uso:
 	JA	現在のウェブ外観
 	NL	Huidige webskin:
@@ -15961,6 +16066,7 @@ WEB_NO_COOKIES_WARNING
 	ES	Su navegador no acepta cookies. Esto puede provocar un comportamiento inesperado al controlar Lyrion Music Server. Active las cookies en el navegador antes de continuar.
 	FI	Selaimesi ei hyväksy evästeitä. Tämä saattaa aiheuttaa yllätyksiä Lyrion Music Serverin hallinnassa. Salli evästeet selaimesta ja jatka vasta sitten.
 	FR	Votre navigateur n'accepte pas les cookies. Ceci peut affecter le fonctionnement de votre Lyrion Music Server. Veuillez activer les cookies dans votre navigateur avant de continuer.
+	HU	Az Ön böngészője nem fogadja a cookie-kat. Ez váratlan viselkedéshez vezethet a Lyrion Music Server vezérlésekor. Mielőtt folytatná, engedélyezze a cookie-kat a böngészőjében.
 	IT	Il browser in uso non accetta i cookie. Ciò può provocare un comportamento imprevisto di Lyrion Music Server. Prima di continuare, abilitare i cookie nel browser.
 	NL	Je browser accepteert geen cookies. Dit kan leiden tot onverwacht gedrag bij het bedienen van Lyrion Music Server. Schakel cookies in de browser in voordat je verder gaat.
 	NO	Nettleseren din godtar ikke informasjonskapsler. Dette kan føre til uønsket oppførsel ved bruk av Lyrion Music Server. Aktiver informasjonskapsler i nettleseren før du fortsetter.
@@ -15976,6 +16082,7 @@ DISPLAY_PLUGINS
 	ES	Mostrar el menú Extras en el reproductor Slim:
 	FI	Näytä Muut-valikko Slim-soittimessa:
 	FR	Afficher le menu Extras sur la platine :
+	HU	Jelenítse meg az Extrák menüt a Slim lejátszón:
 	IT	Visualizza il menu Extra nel lettore Slim:
 	NL	Het menu Extra's op de Slim-muziekspeler tonen:
 	NO	Vis menyen Tillegg på Slim-spilleren:
@@ -15992,6 +16099,7 @@ SHOW_PLUGINS
 	ES	Mostrar complementos
 	FI	Näytä laajennukset
 	FR	Afficher les plugins
+	HU	Beépülő modulok megjelenítése
 	IT	Mostra plugin
 	NL	Plug-ins tonen
 	NO	Vis plugin-moduler
@@ -16008,6 +16116,7 @@ NO_PLUGINS
 	ES	No hay complementos disponibles.
 	FI	Ei käytettävissä olevia laajennuksia.
 	FR	Aucun plugin disponible.
+	HU	Nincs elérhető bővítmény.
 	IT	Nessun plugin disponibile
 	NL	Geen plug-ins beschikbaar.
 	NO	Ingen plugin-moduler er tilgjengelige.
@@ -16025,6 +16134,7 @@ MUSIC_PLAYER
 	FI	Musiikkisoitin
 	FR	Platine
 	HE	נגן מוסיקה
+	HU	Lejátszó
 	IT	Lettore musicale
 	JA	プレーヤー
 	NL	Muziekspeler
@@ -16044,6 +16154,7 @@ SLIMP3_MUSIC_PLAYER
 	FI	SLIMP3-soitin
 	FR	Platine SLIMP3
 	HE	נגן מוסיקה SLIMP3
+	HU	SLIMP3 lejátszó
 	IT	Lettore musicale SLIMP3
 	JA	SLIMP3プレーヤー
 	NL	SLIMP3-muziekspeler
@@ -16063,6 +16174,7 @@ SQUEEZEBOX_MUSIC_PLAYER
 	FI	Squeezebox-soitin
 	FR	Platine Squeezebox
 	HE	נגן מוסיקה Squeezebox
+	HU	Squeezebox lejátszó
 	IT	Lettore musicale Squeezebox
 	JA	Squeezeboxプレーヤー
 	NL	Squeezebox-muziekspeler
@@ -16082,6 +16194,7 @@ SQUEEZEBOX2_MUSIC_PLAYER
 	FI	Squeezebox-soitin
 	FR	Platine Squeezebox
 	HE	נגן מוסיקה Squeezebox
+	HU	Squeezebox lejátszó
 	IT	Lettore musicale Squeezebox
 	JA	Squeezeboxプレーヤー
 	NL	Squeezebox-muziekspeler
@@ -16101,6 +16214,7 @@ TRANSPORTER_MUSIC_PLAYER
 	FI	Transporter-musiikkisoitin
 	FR	Platine Transporter
 	HE	נגן מוסיקה Transporter
+	HU	Transporter lejátszó
 	IT	Lettore musicale Transporter
 	JA	Transporterプレーヤー
 	NL	Transporter-muziekspeler
@@ -16120,6 +16234,7 @@ SOFTSQUEEZE_MUSIC_PLAYER
 	FI	SoftSqueeze-musiikkisoitin
 	FR	Platine SoftSqueeze
 	HE	נגן מוסיקה SoftSqueeze
+	HU	SoftSqueeze lejátszó
 	IT	Lettore musicale SoftSqueeze
 	JA	SoftSqueezeプレーヤー
 	NL	SoftSqueeze-muziekspeler
@@ -16139,6 +16254,7 @@ BY
 	FI	/
 	FR	par
 	HE	לפי
+	HU	által
 	IT	di
 	JA	による
 	NL	van
@@ -16158,6 +16274,7 @@ FROM
 	FI	kohteesta
 	FR	de
 	HE	מתוך
+	HU	tőle
 	IT	da
 	JA	から
 	NL	van
@@ -16177,6 +16294,7 @@ DELETE
 	FI	Poista
 	FR	Supprimer
 	HE	מחק
+	HU	Törlés
 	IT	Elimina
 	JA	削除
 	NL	Verwijderen
@@ -16196,6 +16314,7 @@ NO_PLAYER_FOUND
 	FI	Soitinta ei löytynyt.
 	FR	La platine est introuvable.
 	HE	הנגן לא נמצא.
+	HU	A lejátszód nem található.
 	IT	Lettore non trovato.
 	JA	プレーヤーが見つかりません。
 	NL	Jouw muziekspeler is niet gevonden.
