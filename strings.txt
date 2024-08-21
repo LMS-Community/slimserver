@@ -10266,11 +10266,13 @@ SETUP_WIZARD_WELCOME
 SETUP_WIZARD_WELCOME_INTRO
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
 	FR	Cet assistant vous guidera dans la configuration initiale de votre Lyrion Music Server.
+	HU	Ez az asszisztens végigvezeti Önt a Lyrion Music Server kezdeti beállításán.
 
 SETUP_WIZARD_PLUGINS_INTRO
 	DE	Wir empfehlen die Installations folgender Drittanbietererweiterungen. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Zahlreiche weitere Plugins</a> können später zu jeder Zeit hinzugefügt werden. Wählen Sie herfür später Einstellungen/Plugins verwalten.
 	EN	We recommend the installation of the following 3rd party plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Many other plugins</a> can be installed any time in Settings/Manage Plugins after the installation has completed.
 	FR	Nous recommandons l'installation des plugins tiers suivants. (<a href="https://lyrion.org/plugins/directory/" target="lyrion">De nombreux autres plugins</a> peuvent être installés à tout moment dans "Paramètres / Gérer les plugins" une fois l'installation initiale terminée.)
+	HU	Javasoljuk a következő külső beépülő modulok telepítését. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Sok más beépülő modul</a> a telepítés befejezése után bármikor telepíthető a Beállítások/Beépülő modulok kezelése menüpontban.
 
 SETUP_WIZARD_AUDIODIR
 	CS	Místní složka hudby
@@ -10280,6 +10282,7 @@ SETUP_WIZARD_AUDIODIR
 	ES	Carpeta de música local
 	FI	Paikallinen musiikkikansio
 	FR	Dossier de musique local
+	HU	Helyi zenei mappa
 	IT	Cartella locale Musica
 	NL	Map met lokale muziek
 	NO	Lokal musikkmappe
@@ -10295,6 +10298,7 @@ SETUP_WIZARD_AUDIODIR_DESC
 	ES	Acceda a la carpeta en la que está almacenada su colección de música.
 	FI	Siirry kansioon, johon musiikkikokoelmasi on tallennettu.
 	FR	Accédez au dossier contenant votre collection musicale.
+	HU	Kérjük, keresse meg azt a mappát, ahol a zenei gyűjteményét tárolja.
 	IT	Accedere alla cartella in cui è memorizzata la raccolta di musica personale.
 	NL	Navigeer naar de map waar jouw muziek is opgeslagen.
 	NO	Gå til mappen der musikken er lagret.
@@ -10310,6 +10314,7 @@ SETUP_WIZARD_SHARE_WIN
 	ES	<br/><br/>Si desea acceder al material multimedia almacenado en otro ordenador o en una unidad de red compartida, asegúrese de que ésta está montada y disponible para su sistema de archivos. Cuando la unidad esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta de la unidad a la que quiere acceder, puede introducirla aquí.
 	FI	<br/><br/>Jos haluat käyttää mediatiedostoja, jotka on tallennettu toiseen tietokoneeseen tai jaettuun verkkoasemaan, varmista että jaettu asema on yhdistetty ja tiedostojärjestelmän käytettävissä. Kun asema on käytettävissä, se ilmestyy näkyviin vasemmalla olevaan valintaikkunaan. Jos tiedät käyttämäsi aseman polun, kirjoita se alle.
 	FR	<br/><br/>Si vous souhaitez accéder à du contenu multimédia stocké sur un autre ordinateur ou sur un lecteur partagé en réseau, vérifiez que le lecteur est monté et qu'il est disponible dans votre système de fichiers. Si le lecteur est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au lecteur, vous pouvez le spécifier ci-dessous.
+	HU	<br/><br/>Ha hozzá szeretne férni egy másik számítógépen vagy megosztott hálózati meghajtón tárolt adathordozójához, győződjön meg arról, hogy a megosztott meghajtó fel van csatolva és elérhető a fájlrendszere számára. Amint a meghajtó elérhető, megjelenik a bal oldali kiválasztási ablakban. Ha ismeri az elérni kívánt meghajtó elérési útját, adja meg.
 	IT	<br/><br/>Se si desidera accedere ai file multimediali memorizzati in un altro computer o in un'unità di rete condivisa, assicurarsi che l'unità condivisa sia installata e disponibile nel file system. Se l'unità è disponibile, verrà visualizzata nella parte sinistra della finestra di selezione. Inserire di seguito il percorso dell'unità a cui si desidera accedere, se disponibile.
 	NL	<br/><br/>Wil je media oproepen die op een andere computer of op een gedeeld netwerkstation is opgeslagen, zorg dan dat het gedeelde station geactiveerd en beschikbaar is voor je bestandssysteem. Zodra het station beschikbaar is, verschijnt het in het selectievenster aan de linkerkant. Als je het pad weet van het station dat je wilt oproepen, kun je dit hieronder invoeren.
 	NO	<br/><br/>Hvis du vil ha tilgang til mediefiler som er lagret på en annen datamaskin, eller på en delt nettverksstasjon, må du sørge for at den delte stasjonen er montert og tilgjengelig på filsystemet. Så snart stasjonen er tilgjengelig, vises den i valgvinduet til venstre. Hvis du vet banen til stasjonen du vil ha tilgang til, kan du angi den nedenfor.
@@ -10325,6 +10330,7 @@ SETUP_WIZARD_SHARE_OTHERS
 	ES	<br/><br/>Si desea acceder al material multimedia almacenado en otro ordenador o en un volumen de red compartido, asegúrese de que éste está montado y disponible para su sistema de archivos. Cuando el volumen esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta del volumen al que quiere acceder, puede introducirla aquí.
 	FI	<br/><br/>Jos haluat käyttää mediatiedostoja, jotka on tallennettu toiseen tietokoneeseen tai jaettuun verkkoasemaan, varmista että jaettu asema on yhdistetty ja tiedostojärjestelmän käytettävissä. Kun asema on käytettävissä, se ilmestyy näkyviin vasemmalla olevaan valintaikkunaan. Jos tiedät käyttämäsi aseman polun, kirjoita se alle.
 	FR	<br/><br/>Si vous souhaitez accéder à du contenu multimédia stocké sur un autre ordinateur ou sur un volume partagé en réseau, vérifiez que le volume est monté et qu'il est disponible dans votre système de fichiers. Si le volume est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au volume, vous pouvez le spécifier ci-dessous.
+	HU	<br/><br/>Ha hozzá szeretne férni egy másik számítógépen vagy egy megosztott hálózati köteten tárolt médiához, győződjön meg arról, hogy a megosztott kötet fel van csatolva és elérhető a fájlrendszere számára. Amint a kötet elérhető, megjelenik a bal oldali kiválasztási ablakban. Ha ismeri az elérni kívánt kötet elérési útját, adja meg.
 	IT	<br/><br/>Se si desidera accedere ai file multimediali memorizzati in un altro computer o in un volume di rete condiviso, assicurarsi che il volume condiviso sia installato e disponibile nel file system. Se il volume è disponibile, viene visualizzato nella parte sinistra della finestra di selezione. Se si conosce il percorso del volume a cui si desidera accedere, è possibile inserirlo qui sotto.
 	NL	<br/><br/>Wil je media oproepen die op een andere computer of op een gedeeld netwerkvolume is opgeslagen, zorg dan dat het gedeelde volume geactiveerd en beschikbaar is voor je bestandssysteem. Zodra het volume beschikbaar is, verschijnt het in het selectievenster aan de linkerkant. Als je het pad weet van het volume dat je wilt oproepen, kun je dit hieronder invoeren.
 	NO	<br/><br/>Hvis du vil ha tilgang til mediefiler som er lagret på en annen datamaskin, eller på et delt dataområde på nettverket, må du sørge for at det delte dataområdet er montert og tilgjengelig på filsystemet. Så snart dataområdet er tilgjengelig, vises det i valgvinduet til venstre. Hvis du vet banen til dataområdet du vil ha tilgang til, kan du angi den nedenfor.
@@ -10340,6 +10346,7 @@ SETUP_WIZARD_PLAYLISTDIR
 	ES	Carpeta de listas de reproducción
 	FI	Soittoluettelokansio
 	FR	Dossier des listes de lecture
+	HU	Lejátszási listák mappája
 	IT	Cartella playlist
 	NL	Afspeellijstmap
 	NO	Mappe for spillelister
@@ -10355,6 +10362,7 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	ES	Seleccione la ruta de la carpeta de listas de reproducción.
 	FI	Valitse polku soittoluettelon kansioon.
 	FR	Spécifier le chemin d'accès au dossier des listes de lecture.
+	HU	Kérjük, válassza ki a lejátszási listák mappájának elérési útját.
 	IT	Selezionare il percorso della cartella delle playlist.
 	NL	Selecteer het pad naar je afspeellijstmap.
 	NO	Angi banen til mappen med spillelister.
@@ -10370,6 +10378,7 @@ SETUP_WIZARD_SUMMARY_DESC
 	ES	Lyrion Music Server está usando esta configuración
 	FI	Lyrion Music Server käyttää nyt seuraavia asetuksia
 	FR	Le Lyrion Music Server utilise les réglages suivants
+	HU	A Lyrion Music Server most a következő beállításokat használja
 	IT	Lyrion Music Server utilizza attualmente le impostazioni seguenti
 	NL	Lyrion Music Server gebruikt nu de volgende instellingen
 	NO	Lyrion Music Server bruker nå følgende innstillinger
@@ -10385,6 +10394,7 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	ES	Origen de música
 	FI	Musiikkilähde
 	FR	Source musicale
+	HU	Zeneforrás
 	IT	Sorgente musicale
 	NL	Muziekbron
 	NO	Musikkilde
@@ -10400,6 +10410,7 @@ SETUP_WIZARD_DONE
 	ES	Configuración de Lyrion Music Server completada.
 	FI	Lyrion Music Serverin asennus on valmis
 	FR	Configuration du Lyrion Music Server effectuée.
+	HU	A Lyrion zeneszerver beállítása kész!
 	IT	Configurazione di Lyrion Music Server completata
 	NL	Installatie van Lyrion Music Server voltooid!
 	NO	Konfigurasjonen for Lyrion Music Server er ferdig!
@@ -10415,6 +10426,7 @@ SETUP_WIZARD_DONE_DESC
 	ES	La configuración se ha guardado. Ya puede empezar a utilizar Squeezebox.<br/><br/>Si ha seleccionado un origen de música local, Lyrion Music Server iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">hacer clic aquí</a> para pasar a Lyrion Music Server Remote Control.
 	FI	Asetukset on tallennettu. Olet nyt valmis käyttämään Squeezeboxia.<br/><br/>Jos valitsit paikallisen musiikkilähteen, Lyrion Music Server aloittaa nyt kokoelmasi indeksoinnin. Ole kärsivällinen &mdash; voit pian käyttää kaikkia musiikkitiedostojasi.<br/><br/>Voit nyt sulkea tämän ikkunan tai jatkaa Lyrion Music Serverin kaukosäätimeen <a href="/">napsauttamalla tästä</a>.
 	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la Squeezebox.<br/><br/>Si vous avez sélectionné une source musicale locale, le Lyrion Music Server va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à l'interface du Lyrion Music Server.
+	HU	A beállításokat elmentettük. Most már készen áll a Squeezebox használatára.<br/><br/>Ha helyi zenei forrást választott, a Lyrion Music Server megkezdi a gyűjtemény indexelését. Kérjük, legyen türelmes &mdash; hamarosan hozzáférhet az összes zenei fájljához.<br/><br/>Most bezárhatja ezt az ablakot, vagy <a href="/">ide kattintva</a> továbbléphet a Lyrion zeneszerver távirányítójához .
 	IT	Le impostazioni sono state salvate. È ora possibile utilizzare lo Squeezebox.<br/><br/>Se è stata selezionata una sorgente musicale locale, Lyrion Music Server avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per passare a Lyrion Music Server Remote Control.
 	NL	Je instellingen zijn opgeslagen. Je kunt Squeezebox nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert Squeezebox nu jouw mediabibliotheek. Een moment geduld &mdash; je kunt al snel bij al jouw muziekbestanden.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar Lyrion Music Server te gaan.
 	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk Squeezebox.<br/><br/>Hvis du velger en lokal musikkilde, vil Lyrion Music Server nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til nettgrensesnittet til Lyrion Music Server.
@@ -10430,6 +10442,7 @@ SETUP_WIZARD_NEXT
 	ES	Siguiente
 	FI	Seuraava
 	FR	Suivant
+	HU	Következő
 	IT	Avanti
 	NL	Volgende
 	NO	Neste
@@ -10445,6 +10458,7 @@ SETUP_WIZARD_PREVIOUS
 	ES	Anterior
 	FI	Edellinen
 	FR	Précédent
+	HU	Előző
 	IT	Indietro
 	NL	Vorige
 	NO	Forrige
@@ -10460,6 +10474,7 @@ SETUP_WIZARD_SKIP
 	ES	Omitir
 	FI	Ohita
 	FR	Ignorer
+	HU	Átugrás
 	IT	Salta
 	NL	Overslaan
 	NO	Hopp over
@@ -10475,6 +10490,7 @@ SETUP_WIZARD_FINISH
 	ES	Finalizar
 	FI	Valmis
 	FR	Terminer
+	HU	Vége
 	IT	Fine
 	NL	Voltooien
 	NO	Fullfør
@@ -10490,6 +10506,7 @@ SETUP_WIZARD_CLOSE
 	ES	Cerrar
 	FI	Sulje
 	FR	Fermer
+	HU	Bezár
 	IT	Chiudi
 	NL	Sluiten
 	NO	Lukk
@@ -10505,6 +10522,7 @@ SETUP_SELECT_FILE
 	ES	Seleccione un archivo
 	FI	Valitse tiedosto
 	FR	Veuillez sélectionner un fichier.
+	HU	Kérjük, válasszon egy fájlt
 	IT	Selezionare un file
 	NL	Selecteer een bestand
 	NO	Velg en fil
@@ -10520,6 +10538,7 @@ SETUP_SELECT_FOLDER
 	ES	Seleccione una carpeta
 	FI	Valitse kansio
 	FR	Veuillez sélectionner un dossier.
+	HU	Kérjük, válasszon mappát
 	IT	Selezionare una cartella
 	NL	Selecteer een map
 	NO	Velg en mappe
@@ -10540,6 +10559,7 @@ PLAYER
 	FI	Soitin
 	FR	Platine
 	HE	נגן
+	HU	Lejátszó
 	IT	Lettore
 	JA	プレーヤー
 	NL	Muziekspeler
@@ -10558,6 +10578,7 @@ PLAYERS
 	ES	Reproductores
 	FI	Soittimet
 	FR	Platines
+	HU	Lejátszók
 	IT	Lettori
 	NL	Muziekspelers
 	NO	Spillere
@@ -10574,6 +10595,7 @@ CURRENT_PLAYER
 	FI	Käytössä oleva soitin:
 	FR	Platine en cours :
 	HE	נגן נוכחי:
+	HU	Jelenlegi lejátszó:
 	IT	Lettore in uso:
 	JA	現在のプレーヤー:
 	NL	Huidige muziekspeler:
@@ -10592,6 +10614,7 @@ CHOOSE_PLAYER
 	ES	Elegir reproductor
 	FI	Valitse soitin
 	FR	Sélectionner une platine
+	HU	Válassza ki a lejátszót
 	IT	Scegli lettore
 	NL	Muziekspeler kiezen
 	NO	Velg spiller
@@ -10608,6 +10631,7 @@ NOW_PLAYING_ON
 	FI	Soitetaan soittimella kohteessa
 	FR	Lecture sur la platine à
 	HE	מושמע כעת בנגן
+	HU	Jelenleg játszott
 	IT	In riproduzione sul lettore a
 	JA	プレーヤーで現在再生中
 	NL	Speelt nu op de muziekspeler van
@@ -10627,6 +10651,7 @@ SKIP
 	FI	Ohita
 	FR	Ignorer
 	HE	דילוג
+	HU	Kihagyás
 	IT	Salta
 	JA	スキップ
 	NL	Overslaan
@@ -10646,6 +10671,7 @@ FFWD
 	FI	Pikakelaus eteenpäin
 	FR	Avance rapide
 	HE	הרצה קדימה
+	HU	Gyorsan előre
 	IT	Avanti veloce
 	JA	早送り
 	NL	Vooruitspoelen
@@ -10665,6 +10691,7 @@ REW
 	FI	Takaisinkelaus
 	FR	Retour rapide
 	HE	החזרה לאחור
+	HU	Visszatekerés
 	IT	Riavvolgi
 	JA	巻戻し
 	NL	Terugspoelen
@@ -10684,6 +10711,7 @@ PLAY
 	FI	Toisto
 	FR	Lecture
 	HE	הפעלה
+	HU	Lejátszás
 	IT	Riproduci
 	JA	再生
 	NL	Afspelen
@@ -10703,6 +10731,7 @@ PLAY_THIS_SONG
 	FI	Soita tämä kappale
 	FR	Lire ce morceau
 	HE	השמעת שיר זה
+	HU	Ennek a zeneszámnak a lejátszása
 	IT	Riproduci questo brano
 	JA	この曲を再生する
 	NL	Dit nummer afspelen
@@ -10722,6 +10751,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	FI	Poista kappale soittoluettelosta
 	FR	Supprimer ce morceau de la liste de lecture
 	HE	הסרת השיר מרשימת ההשמעה
+	HU	Távolítsa el ezt a dalt a lejátszási listáról
 	IT	Rimuovi questo brano dalla playlist
 	JA	この曲をプレイリストから削除する
 	NL	Dit nummer uit de afspeellijst verwijderen
@@ -10741,6 +10771,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	FI	Lisää tämä kappale
 	FR	Ajouter ce morceau à la liste de lecture
 	HE	הוסף שיר זה לרשימת ההשמעה
+	HU	Add hozzá ezt a dalt
 	IT	Aggiungi questo brano
 	JA	この曲をプレイリストに加える
 	NL	Dit nummer toevoegen
@@ -10760,6 +10791,7 @@ PAUSE
 	FI	Tauko
 	FR	Pause
 	HE	השהייה
+	HU	Szünet
 	IT	Pausa
 	JA	一時停止
 	NL	Pauzeren
@@ -10779,6 +10811,7 @@ STOP
 	FI	Pysäytä
 	FR	Arrêt
 	HE	עצור
+	HU	Állj
 	IT	Arresta
 	JA	停止
 	NL	Stoppen
@@ -10798,6 +10831,7 @@ STOPPED
 	FI	Pysäytetty
 	FR	Arrêté
 	HE	נעצר
+	HU	Leállított
 	IT	Arrestato
 	JA	停止
 	NL	Gestopt
@@ -10817,6 +10851,7 @@ REPEAT
 	FI	Toista
 	FR	Répéter
 	HE	השמעה חוזרת
+	HU	Ismétlés
 	IT	Ripetizione
 	JA	リピート
 	NL	Herhalen
@@ -10836,6 +10871,7 @@ ONE
 	FI	yksi
 	FR	un
 	HE	אחד
+	HU	egy
 	IT	uno
 	JA	1曲
 	NL	één
@@ -10855,6 +10891,7 @@ MCONE
 	FI	Yksi
 	FR	Un
 	HE	אחד
+	HU	Egy
 	IT	Uno
 	JA	1曲
 	NL	Eén
@@ -10874,6 +10911,7 @@ ALL
 	FI	kaikki
 	FR	tous
 	HE	הכל
+	HU	mind
 	IT	tutti
 	JA	全て
 	NL	alle
@@ -10893,6 +10931,7 @@ MCALL
 	FI	Kaikki
 	FR	Tous
 	HE	הכל
+	HU	Mind
 	IT	Tutti
 	JA	全て
 	NL	Alle
@@ -10912,6 +10951,7 @@ OFF
 	FI	pois päältä
 	FR	éteint
 	HE	כבוי
+	HU	kikapcs
 	IT	disattivato
 	JA	オフ
 	NL	uit
@@ -10931,6 +10971,7 @@ ON
 	FI	päällä
 	FR	allumé
 	HE	מופעל
+	HU	bekapcs
 	IT	attivato
 	JA	オン
 	NL	aan
@@ -10950,6 +10991,7 @@ MCON
 	FI	Päällä
 	FR	Activé
 	HE	מופעל
+	HU	Bekapcs
 	IT	Attivato
 	JA	オン
 	NL	Aan
@@ -10969,6 +11011,7 @@ MCOFF
 	FI	Ei käytössä
 	FR	Désactivé
 	HE	כבוי
+	HU	Kikapcs
 	IT	Disattivato
 	JA	オフ
 	NL	Uit
@@ -10988,6 +11031,7 @@ MOVEUP
 	FI	Siirrä ylöspäin
 	FR	Haut
 	HE	העבר למעלה
+	HU	Mozgatás felfelé
 	IT	Sposta su
 	JA	上へ
 	NL	Naar boven
@@ -11007,6 +11051,7 @@ MOVEDOWN
 	FI	Siirrä alaspäin
 	FR	Bas
 	HE	העבר למטה
+	HU	Mozgatás lefelés
 	IT	Sposta giù
 	JA	下へ
 	NL	Naar beneden
@@ -11026,6 +11071,7 @@ ADD
 	FI	Lisää
 	FR	Ajouter
 	HE	הוספה
+	HU	Hozzáadás
 	IT	Aggiungi
 	JA	加える
 	NL	Toevoegen
@@ -11044,6 +11090,7 @@ PLAY_NEXT
 	ES	Reproducir a continuación
 	FI	Soita seuraava
 	FR	Lire à la suite
+	HU	Következő lejátszása
 	IT	Brano successivo
 	NL	Volgende afspelen
 	NO	Spill av neste
@@ -11059,6 +11106,7 @@ PLAY_NOW
 	ES	Reproducir ahora
 	FI	Toista nyt
 	FR	Lire maintenant
+	HU	Lejátszás most
 	IT	Riproduci ora
 	NL	Nu afspelen
 	NO	Spill av nå
@@ -11075,6 +11123,7 @@ SHUFFLE
 	FI	Sekoitus
 	FR	Mélanger
 	HE	סדר אקראי
+	HU	Keverés
 	IT	Riproduzione casuale
 	JA	ランダム
 	NL	Willekeurig
@@ -11094,6 +11143,7 @@ SHUFFLE_ON_SONGS
 	FI	Sekoita kappaleen mukaan
 	FR	Mélanger par morceau
 	HE	סידור אקראי לפי שיר
+	HU	Véletlenszerű lejátszás dal szerint
 	IT	Riproduzione casuale per brano
 	JA	トラックをランダムにする
 	NL	Willekeurig afspelen op nummer
@@ -11113,6 +11163,7 @@ SHUFFLE_ON_ALBUMS
 	FI	Sekoita levyn mukaan
 	FR	Mélanger par album
 	HE	סידור אקראי לפי אלבום
+	HU	Véletlenszerű lejátszás album szerint
 	IT	Riproduzione casuale per album
 	JA	アルバムをランダムにする
 	NL	Willekeurig afspelen op album
@@ -11132,6 +11183,7 @@ SHUFFLE_ON
 	FI	Sekoita soittoluettelo
 	FR	Mélanger la liste de lecture
 	HE	סידור אקראי של רשימת ההשמעה
+	HU	Lejástzási lista összekeverés
 	IT	Riproduzione casuale attiva
 	JA	ランダム プレイリスト
 	NL	Willekeurig afspelen aan
@@ -11151,6 +11203,7 @@ SHUFFLE_OFF
 	FI	Älä sekoita soittoluetteloa
 	FR	Ne pas mélanger la liste de lecture
 	HE	ללא סידור אקראי של רשימת ההשמעה
+	HU	Ne keverje össze a lejátszási listát
 	IT	Riproduzione casuale attiva
 	JA	プレイリストをランダムにしない
 	NL	Willekeurig afspelen uit
@@ -11170,6 +11223,7 @@ ENABLED
 	FI	Käytössä
 	FR	Activé
 	HE	מופעל
+	HU	Engedélyezve
 	IT	Abilitato
 	JA	有効
 	NL	Ingeschakeld
@@ -11188,6 +11242,7 @@ DISABLED
 	FI	Ei käytössä
 	FR	Désactivé
 	HE	מושבת
+	HU	Letiltva
 	IT	Disattivato
 	JA	無効
 	NL	Uitgeschakeld
@@ -11205,6 +11260,7 @@ NATIVE
 	ES	Nativo
 	FI	Alkuperäinen
 	FR	Natif
+	HU	Natív
 	IT	Nativo
 	NL	Systeemeigen
 	NO	Innebygd
@@ -11221,6 +11277,7 @@ SAVE_PLAYLIST
 	FI	Tallenna soittoluettelo
 	FR	Enregistrer la liste de lecture
 	HE	שמירת רשימת ההשמעה
+	HU	Lejátszási lista mentése
 	IT	Salva playlist
 	JA	プレイリストを保存する
 	NL	Afspeellijst opslaan
@@ -11239,6 +11296,7 @@ CLEAR_PLAYLIST
 	FI	Tyhjennä soittoluettelo
 	FR	Vider la liste de lecture
 	HE	ניקוי רשימת השמעה
+	HU	Lejátszási lista törlése
 	IT	Svuota playlist
 	JA	プレイリストをクリア
 	NL	Afspeellijst wissen
@@ -11258,6 +11316,7 @@ SHOW_ARTWORK
 	ES	Mostrar carátula de álbum
 	FI	Näytä kansitaide
 	FR	Afficher les pochettes
+	HU	Borító megjelenítése
 	IT	Mostra copertina
 	NL	Albumhoezen weergeven
 	NO	Vis albumomslag
@@ -11274,6 +11333,7 @@ SHOW_ARTWORK_SINGLE
 	ES	Mostrar carátula de álbum
 	FI	Näytä kansitaide
 	FR	Afficher la pochette
+	HU	Borító megjelenítése
 	IT	Mostra copertina
 	NL	Albumhoes weergeven
 	NO	Vis albumomslag
@@ -11289,6 +11349,7 @@ HIDE_ARTWORK
 	ES	Ocultar carátula de álbum
 	FI	Älä näytä kansitaidetta
 	FR	Masquer les pochettes
+	HU	Borító elrejtése 
 	IT	Nascondi copertina
 	NL	Albumhoezen verbergen
 	NO	Skjul albumomslag
@@ -11305,6 +11366,7 @@ VOLUME
 	FI	Äänenvoimakkuus
 	FR	Volume
 	HE	עוצמת קול
+	HU	Hangerő
 	IT	Volume
 	JA	ボリューム
 	NL	Volume
@@ -11324,6 +11386,7 @@ VOLUME_SOFTER
 	FI	Pehmeämpi
 	FR	Moins fort
 	HE	רך יותר
+	HU	Lágyabb
 	IT	Abbassa il volume
 	JA	ソフト
 	NL	Zachter
@@ -11343,6 +11406,7 @@ VOLUME_LOUDER
 	FI	Kovempaa
 	FR	Plus fort
 	HE	חזק יותר
+	HU	Hangosabb
 	IT	Alza il volume
 	JA	ラウドネス
 	NL	Harder
@@ -11362,6 +11426,7 @@ TREBLE
 	FI	Diskantti
 	FR	Aigus
 	HE	טרבל
+	HU	Magas
 	IT	Alti
 	JA	高音
 	NL	Treble
@@ -11381,6 +11446,7 @@ BASS
 	FI	Basso
 	FR	Graves
 	HE	בסים
+	HU	Mély
 	IT	Bassi
 	JA	低音
 	NL	Bas
@@ -11399,6 +11465,7 @@ FIXED_VOLUME
 	ES	Volumen fijo
 	FI	Kiinteä äänenvoimakkuus
 	FR	Volume fixé
+	HU	Rögzített hangerő
 	IT	Volume fisso
 	NL	Vast volume
 	NO	Fast volum
@@ -11414,6 +11481,7 @@ FIXED_VOLUME_100
 	ES	Volumen fijo 100%
 	FI	Kiinteä äänenvoimakkuus 100 %
 	FR	Volume fixé à 100 %
+	HU	Rögzített hangerő 100%
 	IT	Volume fisso 100%
 	NL	Volume vast op 100%
 	NO	Fast volum 100 %
@@ -11429,6 +11497,7 @@ STEREOXL
 	ES	StereoXL
 	FI	StereoXL
 	FR	StereoXL
+	HU	StereoXL
 	IT	StereoXL
 	NL	StereoXL
 	NO	StereoXL
@@ -11440,6 +11509,7 @@ BALANCE
 	CS	Vyvážení
 	EN	Balance
 	FR	Balance
+	HU	Balansz
 
 PITCH
 	CS	Tón
@@ -11450,6 +11520,7 @@ PITCH
 	FI	Sävelkorkeus
 	FR	Voix
 	HE	גובה צליל
+	HU	Hangmagasság
 	IT	Tono
 	JA	ピッチ
 	NL	Toonhoogte
@@ -11468,6 +11539,7 @@ TEXTSIZE
 	FI	Tekstin koko
 	FR	Taille du texte
 	HE	גודל טקסט
+	HU	Szöveg mérete
 	IT	Dimensione testo
 	JA	テキストサイズ
 	NL	Tekstgrootte
@@ -11487,6 +11559,7 @@ OFFDISPLAYSIZE
 	FI	Tekstin koko valmiustilassa
 	FR	Taille du texte en veille
 	HE	גודל טקסט במצב המתנה
+	HU	Készenléti szövegméret
 	IT	Dimensione del testo in standby
 	JA	スタンドバイ状態でのテキストサイズ
 	NL	Tekstgrootte in stand-by
@@ -11506,6 +11579,7 @@ LARGE
 	FI	Suuri
 	FR	Grand
 	HE	גדול
+	HU	Nagy
 	IT	Grande
 	JA	大
 	NL	Groot
@@ -11525,6 +11599,7 @@ SMALL
 	FI	Pieni
 	FR	Petit
 	HE	קטן
+	HU	Kicsi
 	IT	Piccolo
 	JA	小
 	NL	Klein
@@ -11544,6 +11619,7 @@ MEDIUM
 	FI	Normaali
 	FR	Moyenne
 	HE	בינוני
+	HU	Közepes
 	IT	Medio
 	JA	中
 	NL	Gemiddeld
@@ -11562,6 +11638,7 @@ HUGE
 	FI	Valtava
 	FR	Très grand
 	HE	ענק
+	HU	Hatalmas
 	IT	Molto grande
 	JA	特大
 	NL	Enorm
@@ -11580,6 +11657,7 @@ NONE
 	FI	Ei mitään
 	FR	Aucun
 	HE	ללא
+	HU	Egyik sem
 	IT	Nessuno
 	NL	Geen
 	NO	Ingen
@@ -11596,6 +11674,7 @@ LOW
 	ES	Baja
 	FI	Heikko
 	FR	Faible
+	HU	Alacsony
 	IT	Bassa
 	NL	Laag
 	NO	Lav
@@ -11611,6 +11690,7 @@ OUTDOOR
 	ES	Exterior
 	FI	Ulkoilma
 	FR	Extérieur
+	HU	Szabadtéri
 	IT	Esterna
 	NL	Buiten
 	NO	Utendørs
@@ -11627,6 +11707,7 @@ HIGH
 	FI	Suuri
 	FR	Elevé
 	HE	גבוה
+	HU	Magas
 	IT	Alta
 	NL	Hoog
 	NO	Høy
@@ -11644,6 +11725,7 @@ FULL
 	FI	Täynnä
 	FR	Plein
 	HE	מלא
+	HU	Tele
 	IT	Spesso
 	NL	Vol
 	NO	Fullt
@@ -11661,6 +11743,7 @@ LIGHT
 	FI	Valo
 	FR	Léger
 	HE	דק
+	HU	Megvilágítás
 	IT	Chiaro
 	NL	Licht
 	NO	Lett
@@ -11677,6 +11760,7 @@ THREELINE
 	FI	Kolmirivinen
 	FR	Trois lignes
 	HE	שלוש שורות
+	HU	Háromsoros
 	IT	Su tre righe
 	NL	3-regelig
 	NO	Trelinjet
@@ -11693,6 +11777,7 @@ STANDARD
 	FI	Standardi
 	FR	Standard
 	HE	רגיל
+	HU	Standard
 	IT	Standard
 	NL	Standaard
 	NO	Standard
@@ -11709,6 +11794,7 @@ TITLEFORMAT
 	FI	Kappaleen nimen muoto
 	FR	Format du titre des morceaux
 	HE	תבנית שם שיר
+	HU	Dal cím formátuma
 	IT	Formato titolo brano
 	JA	曲タイトルフォーマット
 	NL	Titelformaat
@@ -11724,6 +11810,7 @@ TITLEFORMAT_DBL
 	DE	Titelformat
 	ES	Formato de Título
 	FR	Format titres
+	HU	Dal cím formátuma
 	JA	タイトルフォーマット
 	NO	Tittelformat
 	PL	Format tytułu utworu
@@ -11740,6 +11827,7 @@ DOWNLOAD
 	FI	Lataa
 	FR	Télécharger
 	HE	הורדה
+	HU	Letöltés
 	IT	Scarica
 	JA	ダウンロード
 	NL	Downloaden
@@ -11759,6 +11847,7 @@ CLEAR
 	FI	Tyhjennä
 	FR	Effacer
 	HE	נקה
+	HU	Tiszta
 	IT	Svuota
 	JA	クリア
 	NL	Wissen
@@ -11778,6 +11867,7 @@ SAVE
 	FI	Tallenna
 	FR	Enregistrer
 	HE	שמור
+	HU	Mentés
 	IT	Salva
 	JA	保存
 	NL	Opslaan
@@ -11797,6 +11887,7 @@ SAVE_AS
 	FI	Tallenna
 	FR	Enregistrer
 	HE	שמור
+	HU	Mentés mint...
 	IT	Salva
 	JA	保存
 	NL	Opslaan als
@@ -11816,6 +11907,7 @@ RENAME
 	FI	Nimeä uudelleen
 	FR	Renommer
 	HE	שינוי שם
+	HU	Átnevezés
 	IT	Rinomina
 	JA	名前の変更
 	NL	Hernoemen
@@ -11835,6 +11927,7 @@ NAME
 	FI	Nimi:
 	FR	Nom :
 	HE	שם:
+	HU	Név:
 	IT	Nome:
 	NL	Naam:
 	NO	Navn:
@@ -11852,6 +11945,7 @@ SAVED_PLAYLISTS
 	FI	Soittoluettelot
 	FR	Listes de lecture
 	HE	רשימות השמעה
+	HU	Lejátszási lista
 	IT	Playlist
 	JA	保存されたプレイリスト
 	NL	Afspeellijsten
@@ -11867,6 +11961,7 @@ SAVED_PLAYLISTS_DBL
 	DE	Wiedergabeliste
 	ES	Listas Guardadas
 	FR	Listes de lecture
+	HU	Lejátszási lista
 	JA	保存されたプレイリスト
 	NO	Spillelister
 	PL	Listy odtwarzania
@@ -11883,6 +11978,7 @@ PLAYLISTDIR
 	FI	Tallennettujen soittoluetteloiden kansio
 	FR	Dossier des listes de lecture
 	HE	תיקיית רשימות השמעה שמורות
+	HU	Mentve a lejátszási lista mappába
 	IT	Cartella playlist salvate
 	JA	プレイリスト保存フォルダー
 	NL	Map met opgeslagen afspeellijsten
@@ -11902,6 +11998,7 @@ PLAYLISTDIR_IS_NOW
 	FI	Voit kirjoittaa polun hakemistoon, jonne soittoluettelotiedostot on tallennettu kiintolevyllä. (Voit jättää kohdan tyhjäksi, jos et halua tallentaa soittoluetteloita.)
 	FR	Vous pouvez spécifier le chemin d'accès au dossier où seront stockées les listes de lectures enregistrées. Ne spécifiez rien si vous ne souhaitez pas enregistrer de listes de lecture.
 	HE	באפשרותך להזין את הנתיב לספרייה שבה מאוחסנים הקבצים של רשימות ההשמעה השמורות בדיסק הקשיח. (אם אינך מעוניין לשמור רשימות השמעה, באפשרותך להשאיר שדה זה ריק.)
+	HU	Megadhatja annak a könyvtárnak az elérési útját, ahol a mentett lejátszási lista fájljai a merevlemezen vannak tárolva. (Ha nem akar lejátszási listákat menteni, ezt üresen hagyhatja.)
 	IT	È possibile specificare il percorso sul disco rigido in cui salvare i file delle playlist. Se non si desidera salvare le playlist, lasciare vuoto questo campo.
 	JA	プレイリストが保存してあるフォルダーへのパスを指定してください。（プレイリストを保存しないのであればブランクで結構です）
 	NL	Je kunt het pad invoeren naar een map waarin jouw afspeellijsten moeten worden opgeslagen. Je kunt dit leeg laten als je geen afspeellijsten wilt opslaan.
