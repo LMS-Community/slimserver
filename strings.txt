@@ -12018,6 +12018,7 @@ THIS_PLAYLIST_AS
 	FI	tämä soittoluettelo nimellä:
 	FR	cette liste de lecture sous :
 	HE	רשימת ההשמעה בתור:
+	HU	ezt a lejátszási listát így:
 	IT	questa playlist con nome:
 	JA	このプレイリスト:
 	NL	deze afspeellijst als:
@@ -12036,6 +12037,7 @@ SAVED_THIS_PLAYLIST_AS
 	ES	Esta lista de reproducción se ha guardado como:\n\n%s
 	FI	Soittoluettelo tallennettiin nimellä:\n\n%s
 	FR	Cette liste de lecture a été enregistrée en tant que :\n\n%s
+	HU	A lejátszási lista a következő néven el lett mentve:\n\n%s
 	IT	Playlist salvata come:\n\n%s
 	NL	Deze afspeellijst opgeslagen als:\n\n%s
 	NO	Lagret denne spillelisten som:\n\n%s
@@ -12052,6 +12054,7 @@ SAVE_THIS_PLAYLIST_AS
 	FI	Tallenna soittoluettelo nimellä:
 	FR	Enregistrer cette liste de lecture sous :
 	HE	שמירת רשימת ההשמעה בשם:
+	HU	Mentse ezt a lejátszási listát mint:
 	IT	Salva questa playlist con nome:
 	JA	このプレイリストを保存:
 	NL	Deze afspeellijst opslaan als:
@@ -12071,6 +12074,7 @@ UNTITLED
 	FI	Nimetön
 	FR	Sans titre
 	HE	ללא שם
+	HU	Cím nélkül
 	IT	Senza titolo
 	JA	タイトルなし
 	NL	Naamloos
@@ -12090,6 +12094,7 @@ THIS_ENTIRE_PLAYLIST
 	FI	Koko soittoluettelo
 	FR	Liste de lecture en entier
 	HE	כל רשימת ההשמעה
+	HU	Ez az egész lejátszási lista
 	IT	Tutta la playlist
 	JA	このプレイリスト全体
 	NL	Deze volledige afspeellijst
@@ -12109,6 +12114,7 @@ REMOVE_FROM_PLAYLIST
 	FI	Poista soittoluettelosta
 	FR	Enlever de la liste de lecture
 	HE	הסרה מרשימת ההשמעה
+	HU	Eltávolítás a lejátszási listáról
 	IT	Rimuovi dalla playlist
 	JA	プレイリストから削除
 	NL	Uit afspeellijst verwijderen
@@ -12127,6 +12133,7 @@ ADD_TO_PLAYLIST
 	ES	Agregar a la lista de reproducción actual
 	FI	Lisää nykyiseen soittoluetteloon
 	FR	Ajouter à la liste de lecture en cours
+	HU	Hozzáadás az aktuális lejátszási listához
 	IT	Aggiungi alla playlist corrente
 	NL	Aan huidige afspeellijst toevoegen
 	NO	Legg til i gjeldende spilleliste
@@ -12143,6 +12150,7 @@ CONFIRM_OVERWRITE
 	FI	Vahvista korvaaminen
 	FR	Confirmer remplacement
 	HE	אישור החלפה
+	HU	Erősítse meg a felülírást
 	IT	Conferma sovrascrittura
 	JA	上書き確認
 	NL	Overschrijven bevestigen
@@ -12161,6 +12169,7 @@ CONFIRM_DELETE
 	FI	Vahvista poisto
 	FR	Confirmer suppression
 	HE	אישור מחיקה
+	HU	Erősítse meg a törlést
 	IT	Conferma eliminazione
 	NL	Verwijderen bevestigen
 	NO	Bekreft sletting
@@ -12178,6 +12187,7 @@ TRACK
 	FI	Raita
 	FR	Piste
 	HE	רצועה
+	HU	Zeneszám
 	IT	Brano
 	JA	トラック
 	NL	Nummer
@@ -12196,6 +12206,7 @@ TRACK_NUMBER
 	ES	Número de pista
 	FI	Raidan numero
 	FR	Numéro de piste
+	HU	Szeneszám sorszáma
 	IT	Numero brano
 	NL	Nummer
 	NO	Spornummer
@@ -12212,6 +12223,7 @@ SONGTITLE
 	FI	Kappaleen nimi
 	FR	Titre du morceau
 	HE	שם השיר
+	HU	Zeneszám címe
 	IT	Titolo brano
 	JA	曲タイトル
 	NL	Titel van nummer
@@ -12231,6 +12243,7 @@ TITLE
 	FI	Kappale
 	FR	Titre
 	HE	שם
+	HU	Cím
 	IT	Titolo
 	JA	タイトル
 	NL	Titel
@@ -12250,6 +12263,7 @@ ARTIST
 	FI	Artisti
 	FR	Artiste
 	HE	מבצע
+	HU	Előadó
 	IT	Artista
 	JA	アーチスト
 	NL	Artiest
@@ -12269,6 +12283,7 @@ COMPOSER
 	FI	Säveltäjä
 	FR	Compositeur
 	HE	מלחין
+	HU	Szerző
 	IT	Compositore
 	JA	作曲家
 	NL	Componist
@@ -12288,6 +12303,7 @@ COMPOSERALBUMS
 	FI	Säveltäjä Levyt
 	FR	Albums du compositeur
 	HE	מלחיןאלבומים
+	HU	Zeneszerzői albumok
 	IT	Compositore Album
 	JA	作曲家 アルバム
 	NL	Componistenalbums
@@ -12307,6 +12323,7 @@ CONDUCTOR
 	FI	Kapellimestari
 	FR	Chef d'orchestre
 	HE	מנצח
+	HU	Karmester
 	IT	Direttore
 	JA	指揮者
 	NL	Dirigent
@@ -12325,6 +12342,7 @@ BAND
 	FI	Yhtye/orkesteri
 	FR	Groupe/Orchestre
 	HE	להקה/תזמורת
+	HU	Együttes/Zenekar
 	IT	Gruppo/Orchestra
 	JA	バンド/オーケストラ
 	NL	Band/orkest
@@ -12344,6 +12362,7 @@ ALBUM
 	FI	Levy
 	FR	Album
 	HE	אלבום
+	HU	Album
 	IT	Album
 	JA	アルバム
 	NL	Album
@@ -12387,6 +12406,7 @@ RELEASE_TYPE_OTHER
 	DE	Andere
 	EN	Other
 	FR	Autre
+	HU	Egyéb
 	NL	Overig
 
 DISC
@@ -12398,6 +12418,7 @@ DISC
 	FI	Levy
 	FR	Disque
 	HE	תקליטור
+	HU	Lemez
 	IT	Disco
 	JA	ディスク
 	NL	Disc
@@ -12417,6 +12438,7 @@ LENGTH
 	FI	Kesto
 	FR	Durée
 	HE	משך
+	HU	Időtartam
 	IT	Durata
 	JA	長さ（時間）
 	NL	Duur
@@ -12436,6 +12458,7 @@ ALBUMLENGTH
 	FI	Kesto
 	FR	Durée
 	HE	משך
+	HU	Időtartam
 	IT	Durata
 	JA	長さ（時間）
 	NL	Duur
@@ -12455,6 +12478,7 @@ TYPE
 	FI	Tiedostomuoto
 	FR	Format de fichier
 	HE	תבנית הקובץ
+	HU	Fájlforma
 	IT	Formato file
 	JA	ファイルフォーマット
 	NL	Bestandsformaat
@@ -12474,6 +12498,7 @@ DIR
 	FI	Hakemisto
 	FR	Dossier
 	HE	ספרייה
+	HU	Mappa
 	IT	Directory
 	NL	Directory
 	NO	Katalog
@@ -12491,6 +12516,7 @@ APE
 	FI	Monkey's Audio
 	FR	Monkey's Audio
 	HE	Monkey's Audio
+	HU	Monkey's Audio
 	IT	Monkey's Audio
 	NL	Monkey's Audio
 	NO	Monkey's Audio
@@ -12507,6 +12533,7 @@ MP3
 	FI	MP3
 	FR	MP3
 	HE	MP3
+	HU	MP3
 	IT	MP3
 	NL	MP3
 	NO	Mp3
@@ -12523,6 +12550,7 @@ MP2
 	FI	MP2
 	FR	MP2
 	HE	MP2
+	HU	MP2
 	IT	MP2
 	NL	MP2
 	NO	MP2
@@ -12539,6 +12567,7 @@ ALC
 	FI	Apple Lossless
 	FR	Apple Lossless
 	HE	Apple Lossless
+	HU	Apple Lossless
 	IT	Apple Lossless
 	NL	Apple Lossless
 	NO	Apple Lossless
@@ -12557,6 +12586,7 @@ MOV
 	ES	Película QuickTime
 	FI	AAC- tai .mov-tiedosto
 	FR	Vidéo QuickTime
+	HU	QuickTime Movie
 	IT	Filmato QuickTime
 	NL	QuickTime film
 	NO	QuickTime Movie
@@ -12572,6 +12602,7 @@ AAC
 	ES	AAC
 	FI	AAC
 	FR	AAC
+	HU	AAC
 	IT	AAC
 	NL	AAC
 	NO	AAC
@@ -12587,6 +12618,7 @@ MP4
 	ES	MPEG-4
 	FI	MPEG-4
 	FR	MPEG-4
+	HU	MPEG-4
 	IT	MPEG-4
 	NL	MPEG-4
 	NO	MPEG-4
@@ -12605,6 +12637,7 @@ SLS
 	ES	MPEG-4 SLS / HD-AAC
 	FI	MPEG-4 SLS / HD-AAC
 	FR	MPEG-4 SLS / HD-AAC
+	HU	MPEG-4 SLS / HD-AAC
 	IT	MPEG-4 SLS / HD-AAC
 	NL	MPEG-4 SLS / HD-AAC
 	NO	MPEG-4 SLS / HD-AAC
@@ -12621,6 +12654,7 @@ M3U
 	FI	M3U-soittoluettelo
 	FR	Liste de lecture M3U
 	HE	רשימת השמעה מסוג M3U
+	HU	M3U lejátszási lista
 	IT	Playlist M3U
 	JA	M3Uプレイリスト
 	NL	M3U-afspeellijst
@@ -12639,6 +12673,7 @@ PLS
 	FI	PLS-soittoluettelo
 	FR	Liste de lecture PLS
 	HE	רשימת השמעה מסוג PLS
+	HU	PLS lejátszsi lista
 	IT	Playlist PLS
 	JA	PLSプレイリスト
 	NL	PLS-afspeellijst
@@ -12657,6 +12692,7 @@ MPC
 	FI	Musepack
 	FR	Musepack
 	HE	Musepack
+	HU	Musepack
 	IT	Musepack
 	NL	Musepack
 	NO	Musepack
@@ -12672,6 +12708,7 @@ WVP
 	ES	WavPack
 	FI	WavPack
 	FR	WavPack
+	HU	WavPack
 	IT	WavPack
 	NL	WavPack
 	NO	WavPack
@@ -12687,6 +12724,7 @@ WVPX
 	ES	WavPack DSD
 	FI	WavPack DSD
 	FR	WavPack DSD
+	HU	WavPack DSD
 	IT	WavPack DSD
 	NL	WavPack DSD
 	NO	WavPack DSD
@@ -12707,6 +12745,7 @@ WMA
 	FI	Windows-media
 	FR	Windows Media
 	HE	Windows Media
+	HU	Windows Media
 	IT	Windows Media
 	NL	Windows Media
 	NO	Windows Media
@@ -12722,6 +12761,7 @@ WMAL
 	ES	WMA Lossless
 	FI	WMA (häviötön)
 	FR	WMA Lossless
+	HU	WMA Lossless
 	IT	WMA Lossless
 	NL	WMA Lossless
 	NO	WMA Lossless
@@ -12737,6 +12777,7 @@ WMAP
 	ES	WMA Pro
 	FI	WMA Pro
 	FR	WMA Pro
+	HU	WMA Pro
 	IT	WMA Pro
 	NL	WMA Pro
 	NO	WMAPro
@@ -12753,6 +12794,7 @@ MMS
 	FI	Microsoft Media Server
 	FR	Microsoft Media Server
 	HE	Microsoft Media Server
+	HU	Microsoft Media Server
 	IT	Microsoft Media Server
 	NL	Microsoft Media Server
 	NO	Microsoft Media Server
@@ -12769,6 +12811,7 @@ ASX
 	FI	ASX-soittoluettelo
 	FR	Liste de lecture ASX
 	HE	רשימת השמעה של קבצים מסוג ASX
+	HU	ASK lejátszási lista
 	IT	Playlist ASX
 	NL	ASX-afspeellijst
 	NO	ASX-spilleliste
@@ -12785,6 +12828,7 @@ M4P
 	FI	Suojattu AAC
 	FR	AAC protégé
 	HE	קובצי AAC מוגנים
+	HU	Védett AAC
 	IT	AAC protetto
 	JA	保護されたAAC
 	NL	Beveiligde AAC
@@ -12803,6 +12847,7 @@ AIF
 	FI	AIFF
 	FR	AIFF
 	HE	AIFF
+	HU	AIFF
 	IT	AIFF
 	NL	AIFF
 	NO	AIFF
@@ -12819,6 +12864,7 @@ UNK
 	FI	Tuntematon
 	FR	Inconnu
 	HE	לא ידוע
+	HU	Ismeretlen
 	IT	Sconosciuto
 	JA	不明
 	NL	Onbekend
@@ -12838,6 +12884,7 @@ WAV
 	FI	WAV
 	FR	WAV
 	HE	WAV
+	HU	WAV
 	IT	WAV
 	NL	WAV
 	NO	WAV
@@ -12854,6 +12901,7 @@ FLC
 	FI	FLAC
 	FR	FLAC
 	HE	FLAC
+	HU	FLAC
 	IT	FLAC
 	NL	FLAC
 	NO	FLAC
@@ -12870,6 +12918,7 @@ PCM
 	FI	PCM
 	FR	PCM
 	HE	PCM
+	HU	PCM
 	IT	PCM
 	NL	PCM
 	NO	PCM
@@ -12886,6 +12935,7 @@ FEC
 	FI	FLAC ja upotettu CUEsheet
 	FR	FLAC avec cuesheet jointe
 	HE	FLAC עם גיליון סימנים קבוע
+	HU	FLAC beágyazott CUE-val
 	IT	FLAC con CUEsheet integrato
 	NL	FLAC met ingesloten CUE-sheet
 	NO	FLAC med innlagt «CUEsheet»
@@ -12903,6 +12953,7 @@ OGG
 	FI	Ogg Vorbis
 	FR	Ogg Vorbis
 	HE	Ogg Vorbis
+	HU	Ogg Vorbis
 	IT	Ogg Vorbis
 	NL	Ogg Vorbis
 	NO	Ogg Vorbis
@@ -12919,6 +12970,7 @@ OGF
 	FI	Ogg FLAC
 	FR	Ogg FLAC
 	HE	Ogg FLAC
+	HU	Ogg FLAC
 	IT	Ogg FLAC
 	NL	Ogg FLAC
 	NO	Ogg FLAC
@@ -12952,6 +13004,7 @@ MODIFIED
 	FI	Muutettu
 	FR	Modifié
 	HE	השתנה
+	HU	Módosított
 	IT	Modificato
 	JA	変更された
 	NL	Gewijzigd
@@ -12970,6 +13023,7 @@ MODTIME
 	FI	Muokkauspäivä
 	FR	Dernière modification
 	HE	תאריך שינוי
+	HU	Módosítás dátuma
 	IT	Data modifica
 	JA	変更された日付
 	NL	Wijzigingsdatum
@@ -12984,6 +13038,7 @@ ADDEDTIME
 	DE	Hinzugefügt am
 	EN	Date Added
 	FR	Date d'ajout
+	HU	Hozzáadás dátuma
 
 DATE
 	CS	Datum
@@ -12994,6 +13049,7 @@ DATE
 	FI	Pvm
 	FR	Date
 	HE	תאריך
+	HU	Dátum
 	IT	Data
 	NL	Datum
 	NO	Dato
@@ -13011,6 +13067,7 @@ COVERART
 	FI	Kansitaide
 	FR	Pochette
 	HE	עטיפה
+	HU	Borító
 	IT	Copertine
 	JA	アートワーク
 	NL	Albumhoezen
@@ -13030,6 +13087,7 @@ FILELENGTH
 	FI	Tiedoston pituus
 	FR	Taille du fichier
 	HE	אורך הקובץ
+	HU	Fájl hossza
 	IT	Lunghezza file
 	JA	ファイルの長さ
 	NL	Bestandslengte
@@ -13049,6 +13107,7 @@ NO_ARTIST
 	FI	Ei artistia
 	FR	Pas d'artiste
 	HE	אין מבצע
+	HU	Nincs előadó
 	IT	Nessun artista
 	JA	アーチストなし
 	NL	Geen artiest
@@ -13068,6 +13127,7 @@ NO_ALBUM
 	FI	Ei levyä
 	FR	Pas d'album
 	HE	אין אלבום
+	HU	Nincs album
 	IT	Nessun album
 	JA	アルバムなし
 	NL	Geen album
@@ -13087,6 +13147,7 @@ NO_GENRE
 	FI	Ei genreä
 	FR	Pas de genre
 	HE	אין סגנון
+	HU	NIncs műfaj
 	IT	Nessun genere musicale
 	JA	ジャンルなし
 	NL	Geen genre
@@ -13106,6 +13167,7 @@ NO_TITLE
 	FI	Ei nimeä
 	FR	Pas de titre
 	HE	ללא שם
+	HU	Nincs cím
 	IT	Nessun titolo
 	JA	タイトルなし
 	NL	Geen titel
@@ -13126,6 +13188,7 @@ THOUSANDS_SEP
 	FI	 
 	FR	 
 	HE	,
+	HU	 
 	IT	.
 	JA	,
 	NL	,
@@ -13145,6 +13208,7 @@ BYTES
 	FI	Tavut
 	FR	octets
 	HE	בתים
+	HU	Byte
 	IT	Byte
 	JA	バイト
 	NL	Bytes
@@ -13164,6 +13228,7 @@ SAMPLESIZE
 	FI	Näytekoko
 	FR	Taille d'échantillonnage
 	HE	גודל דגימה
+	HU	Mintavételezés nagysága
 	IT	Campionamento
 	NL	Samplegrootte
 	NO	Samplingsstørrelse
@@ -13181,6 +13246,7 @@ BITS
 	FI	bittiä
 	FR	Bits
 	HE	סיביות
+	HU	Bit
 	IT	Bit
 	NL	Bits
 	NO	Bit
@@ -13198,6 +13264,7 @@ SAMPLERATE
 	FI	Näytteenottotaajuus
 	FR	Taux d'échantillonnage
 	HE	קצב דגימה
+	NU	Mintavételi arány
 	IT	Frequenza di campionamento
 	NL	Samplefrequentie
 	NO	Samplingsfrekvens
@@ -13215,6 +13282,7 @@ BITRATE
 	FI	Bittinopeus
 	FR	Débit binaire
 	HE	קצב סיביות
+	HU	Bitráta
 	IT	Bitrate
 	JA	ビットレート
 	NL	Bitsnelheid
@@ -13233,6 +13301,7 @@ PLAYTIME
 	ES	Tiempo de reproducción
 	FI	Soittoaika
 	FR	Durée de lecture
+	HU	Lejátszási idő
 	IT	Durata riproduzione
 	NL	Speeltijd
 	NO	Spilletid
@@ -13249,6 +13318,7 @@ BPM
 	FI	Iskua minuutissa
 	FR	Battements par minute
 	HE	פעימות לדקה (BPM)
+	HU	Ütés percenként
 	IT	Battute al minuto
 	JA	ビート数/分
 	NL	Beats per minuut
@@ -13267,6 +13337,7 @@ DRM
 	FI	Tiedosto on DRM:n lukitsema
 	FR	Ce fichier est protégé par des droits numériques (DRM)
 	HE	קובץ זה נעול באמצעות ניהול זכויות דיגיטליות
+	HU	Ezt a fájlt a Digital Rights Management zárolja
 	IT	Questo file è protetto da DRM (Digital Rights Management)
 	JA	このファイルはDigital Rights Managementによりロックされています
 	NL	Dit bestand is geblokkeerd door Digital Rights Management (DRM)
@@ -13285,6 +13356,7 @@ YEAR
 	FI	Vuosi
 	FR	Année
 	HE	שנה
+	HU	Év
 	IT	Anno
 	JA	年
 	NL	Jaar
@@ -13304,6 +13376,7 @@ GENRE
 	FI	Genre
 	FR	Genre
 	HE	סגנון
+	HU	Műfaj
 	IT	Genere musicale
 	JA	ジャンル
 	NL	Genre
@@ -13323,6 +13396,7 @@ COMMENT
 	FI	Huomautus
 	FR	Commentaire
 	HE	הערה
+	HU	Megjegyzés
 	IT	Commento
 	JA	コメント
 	NL	Opmerking
@@ -13342,6 +13416,7 @@ RATING
 	FI	Luokitus
 	FR	Classement
 	HE	דירוג
+	HU	Értékelés
 	IT	Voto
 	NL	Waardering
 	NO	Rangering
@@ -13359,6 +13434,7 @@ TAGVERSION
 	FI	Tunnisteen versio
 	FR	Version de tag
 	HE	גרסת תג
+	HU	Címke verziója
 	IT	Versione tag
 	JA	タグ バージョン
 	NL	Tag-versie
@@ -13377,6 +13453,7 @@ VIEW_TAGS
 	ES	Ver etiquetas
 	FI	Näytä tunnisteet
 	FR	Afficher les tags
+	HU	Címkék megtekintése
 	IT	Visualizza tag
 	NL	Tags tonen
 	NO	Vis etiketter
@@ -13392,6 +13469,7 @@ NO_TAGS_FOUND
 	ES	No se han encontrado etiquetas
 	FI	Tunnisteita ei löytynyt
 	FR	Aucun tag détecté
+	HU	Nem találhatók címkék
 	IT	Nessun tag trovato
 	NL	Geen tags gevonden
 	NO	Finner ingen etiketter
@@ -13408,6 +13486,7 @@ LOCATION
 	FI	Sijainti
 	FR	Emplacement
 	HE	מיקום
+	HU	Elhelyezkedés
 	IT	Posizione
 	JA	場所
 	NL	Locatie
@@ -13427,6 +13506,7 @@ KBPS
 	FI	kbps
 	FR	Kbps
 	HE	kbps
+	HU	kbps
 	IT	kbps
 	JA	kbps
 	NL	kb/s
@@ -13446,6 +13526,7 @@ NO_LIMIT
 	FI	Rajaton
 	FR	Pas de limite
 	HE	ללא הגבלה
+	HU	Nincs limit
 	IT	Nessun limite
 	JA	制限なし
 	NL	Geen limiet
@@ -13464,6 +13545,7 @@ GENRES
 	FI	Genret
 	FR	Genres
 	HE	סגנונות
+	HU	Műfajok
 	IT	Generi musicali
 	JA	ジャンル
 	NL	Genres
@@ -13483,6 +13565,7 @@ ARTISTS
 	FI	Artistit
 	FR	Artistes
 	HE	מבצעים
+	HU	Előadók
 	IT	Artisti
 	JA	アーチスト
 	NL	Artiesten
@@ -13501,6 +13584,7 @@ ARTIST_SEARCH
 	ES	Búsqueda de artista
 	FI	Artistihaku
 	FR	Recherche d'artiste
+	HU	Előadó keresés
 	IT	Ricerca artista
 	NL	Artiesten zoeken
 	NO	Søk etter artist
@@ -13516,6 +13600,7 @@ ALBUM_SEARCH
 	ES	Búsqueda de álbumes
 	FI	Levyn haku
 	FR	Recherche d'album
+	HU	Album keresés
 	IT	Ricerca album
 	NL	Albums zoeken
 	NO	Albumsøk
@@ -13531,6 +13616,7 @@ TRACK_SEARCH
 	ES	Búsqueda de pistas
 	FI	Kappalehaku
 	FR	Recherche de piste
+	HU	Zeneszám keresés
 	IT	Ricerca brano
 	NL	Nummers zoeken
 	NO	Spor søk
@@ -13546,6 +13632,7 @@ PLAYLIST_SEARCH
 	ES	Búsqueda de listas de reproducción
 	FI	Soittoluettelohaku
 	FR	Recherche de la liste de lecture
+	HU	Lejátszási lista keresés
 	IT	Ricerca playlist
 	NL	Afspeellijsten zoeken
 	NO	Søk etter spilleliste
@@ -13562,6 +13649,7 @@ LCARTISTS
 	FI	artistit
 	FR	artistes
 	HE	מבצעים
+	HU	előadók
 	IT	artisti
 	JA	アーチスト
 	NL	artiesten
@@ -13581,6 +13669,7 @@ ALBUMS
 	FI	Levyt
 	FR	Albums
 	HE	אלבומים
+	HU	Album
 	IT	Album
 	JA	アルバム
 	NL	Albums
@@ -13600,6 +13689,7 @@ LCALBUMS
 	FI	levyt
 	FR	albums
 	HE	אלבומים
+	HU	albumok
 	IT	album
 	JA	アルバム
 	NL	albums
@@ -13619,6 +13709,7 @@ ALL_SONGS
 	FI	Kaikki kappaleet
 	FR	Tous les morceaux
 	HE	כל השירים
+	HU	Minden zeneszám
 	IT	Tutti i brani
 	JA	全ての曲
 	NL	Alle nummers
@@ -13638,6 +13729,7 @@ ALL_ARTISTS
 	FI	Kaikki artistit
 	FR	Tous les Artistes
 	HE	כל המבצעים
+	HU	Minden előadó
 	IT	Tutti gli artisti
 	JA	全てのアーチスト
 	NL	Alle artiesten
@@ -13656,6 +13748,7 @@ ALL_ALBUMS
 	FI	Kaikki levyt
 	FR	Tous les albums
 	HE	כל האלבומים
+	HU	Minden album
 	IT	Tutti gli album
 	JA	全てのアルバム
 	NL	Alle albums
@@ -13675,6 +13768,7 @@ ALL_RELEASES
 	FI	Kaikki levyt
 	FR	Tous les albums
 	HE	כל האלבומים
+	HU	Minden kiadás
 	IT	Tutti gli album
 	JA	全てのアルバム
 	NL	Alle releases
@@ -13694,6 +13788,7 @@ OF
 	FI	/
 	FR	de
 	HE	מתוך
+	HU	 
 	IT	di
 	JA	の
 	NL	van
@@ -13713,6 +13808,7 @@ TO
 	FI	kohteeseen
 	FR	à
 	HE	אל
+	HU	 
 	IT	a
 	JA	へ
 	NL	tot
@@ -13732,6 +13828,7 @@ WITH
 	FI	ja
 	FR	avec
 	HE	עם
+	HU	ezzel
 	IT	con
 	JA	と
 	NL	met
@@ -13751,6 +13848,7 @@ PAGES
 	FI	Sivut
 	FR	Pages
 	HE	דפים
+	HU	Oldal
 	IT	Pagine
 	JA	ページ
 	NL	Pagina's
@@ -13769,6 +13867,7 @@ PAGEINDEX
 	ES	Índice de páginas
 	FI	Sivuhakemisto
 	FR	Index de page
+	HU	Oldalszám
 	IT	Indice pagine
 	NL	Pagina-index
 	NO	Innholdsfortegnelse
@@ -13785,6 +13884,7 @@ ITEMS
 	FI	Kohteet
 	FR	Eléments
 	HE	פריטים
+	HU	elem
 	IT	Elementi
 	NL	Items
 	NO	Elementer
@@ -13802,6 +13902,7 @@ SELECT_ITEM
 	FI	Valitse kohde:
 	FR	Sélectionner un élément :
 	HE	בחירת פריט:
+	HU	Kiválasztás
 	IT	Seleziona elemento:
 	NL	Item selecteren:
 	NO	Velg element:
@@ -13819,6 +13920,7 @@ SONGS
 	FI	Kappaleet
 	FR	Morceaux
 	HE	שירים
+	HU	Zeneszámok
 	IT	Brani
 	JA	曲
 	NL	Nummers
@@ -13838,6 +13940,7 @@ SONG
 	FI	Kappale
 	FR	Morceau
 	HE	שיר
+	HU	Zeneszám
 	IT	Brano
 	JA	曲
 	NL	Nummer
@@ -13857,6 +13960,7 @@ LCSONGS
 	FI	kappaleet
 	FR	morceaux
 	HE	שירים
+	HU	zeneszámok
 	IT	brani
 	JA	曲
 	NL	nummers
@@ -13876,6 +13980,7 @@ GALLERY
 	FI	Valikoima
 	FR	Diaporama
 	HE	גלריה
+	HU	Galária
 	IT	Galleria
 	NL	Afbeeldingen
 	NO	Galleri
@@ -13891,6 +13996,7 @@ SWITCH_TO_GALLERY
 	ES	Carátula de álbum grande
 	FI	Suuri kuva
 	FR	Grandes pochettes
+	HU	Bagy borító
 	IT	Copertina grande
 	NL	Grote albumhoezen
 	NO	Stort albumomslag
@@ -13906,6 +14012,7 @@ SWITCH_TO_LIST
 	ES	Sólo texto
 	FI	Vain teksti
 	FR	Texte uniquement
+	HU	Csak szöveg
 	IT	Solo testo
 	NL	Alleen tekst
 	NO	Bare tekst
@@ -13921,6 +14028,7 @@ SWITCH_TO_EXTENDED_LIST
 	ES	Carátula de álbum pequeña
 	FI	Pieni kansikuva
 	FR	Petites pochettes
+	HU	Kicsi borító
 	IT	Copertina piccola
 	NL	Kleine albumhoezen
 	NO	Små albumomslag
@@ -13937,6 +14045,7 @@ BROWSE
 	FI	Selaa
 	FR	Parcourir
 	HE	עיון
+	HU	Böngészés
 	IT	Sfoglia
 	NL	Bekijken
 	NO	Bla
@@ -13954,6 +14063,7 @@ BROWSE_MUSIC
 	ES	Biblioteca de música
 	FI	Musiikkikirjasto
 	FR	Bibliothèque musicale
+	HU	Zenekönyvtár
 	IT	Libreria musicale
 	NL	Muziekbibliotheek
 	NO	Musikkbibliotek
@@ -13970,6 +14080,7 @@ BROWSE_BY_GENRE
 	FI	Genret
 	FR	Genres
 	HE	סגנונות
+	HU	Műfajok
 	IT	Generi musicali
 	JA	ジャンルをブラウズする
 	NL	Genres
@@ -13996,6 +14107,7 @@ BROWSE_BY_ARTIST
 	FI	Artistit
 	FR	Artistes
 	HE	מבצעים
+	HU	Előadók
 	IT	Artisti
 	JA	アーチストをブラウズする
 	NL	Artiesten
@@ -14014,6 +14126,7 @@ BROWSE_ARTISTS
 	ES	Examinar artistas
 	FI	Etsi artisteja
 	FR	Parcourir les artistes
+	HU	Előadók böngészése
 	IT	Sfoglia artisti
 	NL	Door artiesten bladeren
 	NO	Bla i artister
@@ -14030,6 +14143,7 @@ BROWSE_BY_ALL_ARTISTS
 	FI	Kaikki artistit
 	FR	Tous les Artistes
 	HE	כל המבצעים
+	HU	Minden előadó
 	IT	Tutti gli artisti
 	JA	全てのアーチスト
 	NL	Alle artiesten
@@ -14048,6 +14162,7 @@ BROWSE_BY_ALBUMARTIST
 	FI	Levyartisti
 	FR	Artistes des Albums
 	HE	מבצע האלבום
+	HU	Album előadói
 	IT	Artista dell'album
 	NL	Albumartiesten
 	NO	Albumartister
@@ -14063,6 +14178,7 @@ BROWSE_ALBUMARTISTS
 	ES	Examinar artistas de álbum
 	FI	Hae levyartisti
 	FR	Parcourir les Artistes des Albums
+	HU	Böngéssés az album előadói között
 	IT	Sfoglia artista dell'album
 	NL	Door albumartiesten bladeren
 	NO	Bla i albumartister
