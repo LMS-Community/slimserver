@@ -373,11 +373,14 @@ sub infoPerl {
 		{
 			type => 'text',
 			name => 'Mozilla::CA' . cstring($client, 'COLON') . ' ' . ($Mozilla::CA::VERSION || cstring($client, 'UNK')),
-		},
+		};
 
-		{
-			type => 'text',
-			name => sprintf("Net::SSLeay%s %s - %s", cstring($client, 'COLON'), $Net::SSLeay::VERSION, Net::SSLeay::SSLeay_version(Net::SSLeay::SSLEAY_VERSION())),
+		# add an extra eval, as on systems missing that library we could fail the whole menu
+		eval {
+			push @{$items}, {
+				type => 'text',
+				name => sprintf("Net::SSLeay%s %s - %s", cstring($client, 'COLON'), $Net::SSLeay::VERSION, Net::SSLeay::SSLeay_version(Net::SSLeay::SSLEAY_VERSION())),
+			};
 		};
 	}
 	else {
