@@ -16295,6 +16295,7 @@ DELETE
 	FR	Supprimer
 	HE	מחק
 	HU	Törlés
+	HU	Törlés
 	IT	Elimina
 	JA	削除
 	NL	Verwijderen
@@ -16315,6 +16316,7 @@ NO_PLAYER_FOUND
 	FR	La platine est introuvable.
 	HE	הנגן לא נמצא.
 	HU	A lejátszód nem található.
+	HU	A lejátszód nem található.
 	IT	Lettore non trovato.
 	JA	プレーヤーが見つかりません。
 	NL	Jouw muziekspeler is niet gevonden.
@@ -16334,6 +16336,7 @@ NO_PLAYER_DETAILS
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Lyrion Music Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FR	<b>Si vous possédez une Squeezebox ou Transporter :</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter :</b><ul><li>Vous pouvez écouter votre bibliothèque musicale à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre bibliothèque musicale avec le Lyrion Music Server en vous connectant à l'URL suivante : <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Lyrion Music Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	HU	<b>Ha Squeezebox vagy Transporter tulajdonosa:</b><ul><li>Győződjön meg arról, hogy a lejátszó csatlakoztatva van, és a hálózati beállításai megfelelőek. A lejátszó csatlakoztatása után kattintson a Frissítés gombra.</ul><p><b>Ha nem rendelkezik Squeezebox vagy Transporter eszközzel:</b><ul><li>A zenekönyvtárát a <a segítségével hallgathatja meg. target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a Squeezebox szoftververziója.<li>Használhat MP3-lejátszó szoftvert (például Winamp vagy iTunes) a zenehallgatáshoz zenei könyvtár a Lyrion Music Serverrel a következő URL-hez való csatlakozással: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a> </ul>
 	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Lyrion Music Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
 	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat de muziekspeler op het netwerk is aangesloten en dat de netwerkinstellingen kloppen. Klik op de knop Vernieuwen wanneer de muziekspeler is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar jouw muziek luisteren met <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Lyrion Music Server naar jouw muziek te luisteren. Maak hiervoor een verbinding met de volgende URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -16353,6 +16356,7 @@ PLAYER_NEEDS_UPGRADE
 	FI	Vaaditaan ohjelmistopäivitys
 	FR	Mise à jour du logiciel nécessaire
 	HE	יש לבצע עדכון תוכנה
+	HU	Szoftverfrissítés szükséges
 	IT	È necessario aggiornare il software
 	JA	Squeezeboxソフトウェアのアップデートが必要です
 	NL	Software-update vereist
@@ -16371,6 +16375,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 	FI	Soittimessa oleva ohjelmisto pitää päivittää uusimpaan versioon.  Pidä BRIGHTNESS-painiketta pohjassa, kunnes soittimen näytössä ilmoitetaan, että ohjelmiston päivitys on alkanut.  Päivittämiseen menee vain muutama sekunti.
 	FR	Vous devez mettre le logiciel de la Squeezebox à jour à la dernière version. Maintenez le bouton BRIGHTNESS enfoncé sur la télécommande jusqu'à ce que la Squeezebox indique le début de la mise à jour. Cette procédure prend quelques secondes.
 	HE	יש לעדכן את תוכנת הנגן לגרסה העדכנית ביותר. לחץ ממושכות על הלחצן BRIGHTNESS (בהירות) עד שניתן יהיה לראות בתצוגת הנגן שהעדכון החל. תהליך העדכון נמשך מספר שניות בלבד.
+	HU	A lejátszó szoftverét a legújabb verzióra kell frissíteni.  Nyomja meg és tartsa lenyomva a FÉNYERŐ gombot, amíg a lejátszó kijelzőjén nem jelzi, hogy a frissítés megkezdődött.  A frissítés csak néhány másodpercet vesz igénybe.
 	IT	È necessario aggiornare il software del lettore alla versione più recente. Tenere premuto il pulsante BRIGHTNESS finché nel display del lettore non viene indicato che l'aggiornamento ha avuto inizio. L'aggiornamento richiede soltanto alcuni secondi.
 	JA	Squeezeboxのソフトウェアのアップデートが必要です。アップデートを開始したことがディスプレーに表示されるまで、リモートのBRIGHTNESSボタンを押しつづけてください。アップデートは数秒で割ります。
 	NL	De software van jouw muziekspeler dient een update te krijgen naar de laatste versie. Houd de knop BRIGHTNESS ingedrukt tot op het display van de muziekspeler wordt aangegeven dat de update is gestart. De update duurt maar een paar seconden.
@@ -16389,6 +16394,7 @@ PLAYER_NEEDS_UPGRADE_1
 	FI	Ohjelmiston päivitys
 	FR	Mise à jour du logiciel
 	HE	עדכון תוכנה
+	HU	Szoftverfrissítés
 	IT	Aggiornamento software
 	JA	Squeezeboxソフトウェアアップデート
 	NL	Software-update
@@ -16407,6 +16413,7 @@ PLAYER_NEEDS_UPGRADE_2
 	FI	Aloita pitämällä BRIGHTNESS-painiketta pohjassa.
 	FR	Maintenez le bouton BRIGHTNESS enfoncé pour lancer la mise à jour.
 	HE	לחץ לחיצה ממושכת על BRIGHTNESS (בהירות) כדי להתחיל.
+	HU	Nyomja meg és tartsa lenyomva a BRIGHTNESS gombot a kezdéshez.
 	IT	Tenere premuto il pulsante BRIGHTNESS per iniziare.
 	JA	開始するにはリモートのBRIGHTNESSボタンを押しつづけてください。
 	NL	Houd BRIGHTNESS ingedrukt om te starten.
@@ -16425,6 +16432,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	FI	Jos soittimen IP-osoite ei näy näytössä, pidä BRIGHTNESS-painike pohjassa, kunnes osoite tulee näkyviin.  Kirjoita IP-osoite sitten tähän näyttöön:
 	FR	Si l'adresse IP de la platine ne s'affiche pas à l'écran, maintenez le bouton BRIGHTNESS enfoncé jusqu'à ce qu'elle s'affiche. Spécifiez ensuite l'adresse ici :
 	HE	אם כתובת ה-IP של הנגן לא מוצגת על המסך, לחץ לחיצה ממושכת על הלחצן BRIGHTNESS (בהירות) עד שתוצג. לאחר מכן, הזן כאן את כתובת ה-IP שמוצגת על המסך:
+	HU	Ha a lejátszó IP-címe nem jelenik meg a képernyőn, nyomja meg és tartsa lenyomva a BRIGHTNESS gombot, amíg meg nem jelenik.  Ezután írja be ide a képernyőn megjelenő IP-címet:
 	IT	Se l'indirizzo IP del lettore non appare nel display, tenere premuto il tasto BRIGHTNESS finché non viene visualizzato. Inserire qui l'indirizzo IP visualizzato nel display:
 	JA	もしプレーヤーのIPアドレスが画面に表示されなければ、表示されるまでBRIGHTNESSボタンを押しつづけてください。そして、ここにIPアドレスを入力してください :
 	NL	Als het IP-adres van jouw muziekspeler niet op het scherm wordt weergegeven, houd je de knop BRIGHTNESS ingedrukt tot het verschijnt. Voer dan hier het weergegeven IP-adres in:
@@ -16443,6 +16451,7 @@ UPGRADE_COMPLETE_DETAILS
 	FI	Päivitys on suoritettu.
 	FR	La mise à jour a été effectuée.
 	HE	העדכון הושלם.
+	HU	A frissítés kész.
 	IT	Aggiornamento completato.
 	JA	アップデート完了
 	NL	Het updaten is voltooid.
@@ -16461,6 +16470,7 @@ UPGRADE_COMPLETE
 	FI	Laitteisto-ohjelmiston päivitys
 	FR	Mise à jour du micrologiciel
 	HE	עדכון קושחה
+	HU	Firmware frissítés
 	IT	Aggiornamento firmware
 	JA	ファームウェアアップデート
 	NL	Firmware-update
@@ -16479,6 +16489,7 @@ CHECKVERSION_PROBLEM
 	FI	Lyrion Music Server-päivitysten tarkistamisessa oli ongelmia (virhekoodi %s).
 	FR	Une erreur s'est produite pendant la recherche de mises à jour du Lyrion Music Server : Code d'erreur %s.
 	HE	התעוררה בעיה במהלך החיפוש אחר עדכונים עבור Lyrion Music Server. (קוד שגיאה %s)
+	HU	Hiba történt a Lyrion Music Server frissítéseinek keresése közben. (Hibakód: %s)
 	IT	Problema durante la verifica della disponibilità di aggiornamenti per Lyrion Music Server. (Codice errore %s)
 	NL	Fout opgetreden tijdens het controleren op updates voor Lyrion Music Server. (Foutcode %s)
 	NO	Det oppsto et problem under søk etter nye oppdateringer for Lyrion Music Server. (Feilkode %s)
@@ -16491,11 +16502,12 @@ CHECKVERSION_ERROR
 	CS	Při kontrole aktualizací pro Lyrion Music Server vznikla chyba:
 	DA	Der opstod en fejl under søgningen efter opdateringer til Lyrion Music Server:
 	DE	Beim Suchen nach einem Lyrion Music Server-Update ist ein Fehler aufgetreten:
-	EN	There was an error while checking for updates to Lyrion Music Server:
+	EN	Hiba történt a Lyrion Music Server frissítéseinek keresése közben:
 	ES	Error al buscar actualizaciones para Lyrion Music Server:
 	FI	Lyrion Music Server -päivitysten tarkistamisessa tapahtui virhe:
 	FR	Une erreur s'est produite pendant la recherche de mises à jour du Lyrion Music Server :
 	HE	אירעה שגיאה במהלך החיפוש אחר עדכונים עבור Lyrion Music Server:
+	HU	Hiba történt a Lyrion Music Server frissítéseinek keresése közben:
 	IT	Errore durante il tentativo di aggiornamento di Lyrion Music Server:
 	NL	Fout opgetreden tijdens het controleren op updates van Lyrion Music Server:
 	NO	Det oppsto en feil da det ble sett etter nye oppdateringer for Lyrion Music Server:
@@ -16513,6 +16525,7 @@ NEED_PATH
 	FI	Sinun on määritettävä polku hakemistoon, jossa mediatiedostot ovat.
 	FR	Vous devez spécifier le chemin d'accès au dossier qui contient vos fichiers multimédias.
 	HE	עליך לציין נתיב אל הספרייה שמכילה את קובצי המוסיקה שלך.
+	HU	Adja meg a médiafájlokat tartalmazó könyvtár elérési útját.
 	IT	Specificare il percorso della directory in cui sono memorizzati i file multimediali.
 	JA	音楽ファイルが保存されているフォルダーへのパスを指定しなければいけません。
 	NL	Geef het pad op naar de map waarin jouw mediabestanden staan.
@@ -16532,6 +16545,7 @@ NEED_PLAYLIST_PATH
 	FI	Sinun on määritettävä polku hakemistoon, jossa tallennetut soittoluettelot ovat.
 	FR	Vous devez spécifier le chemin d'accès du dossier qui contient vos listes de lecture enregistrées.
 	HE	עליך לציין נתיב אל ספרייה שבה יישמרו קובצי רשימות ההשמעה.
+	HU	Adja meg a mentett lejátszási listaák mappájának elérési útját.
 	IT	Specificare un percorso per il salvataggio dei file delle playlist.
 	JA	プレイリストが保存されているフォルダーへのパスを指定しなければいけません。
 	NL	Geef het pad op naar de map waarin jouw opgeslagen afspeellijsten staan.
@@ -16552,6 +16566,7 @@ CSRF_ERROR_INFO
 	FI	Jos haluat pyytää tämän URL:n kirjanmerkistä tai suosikista tai jotenkin muuten kuin Lyrion Music Serverin internet-liittymän linkin välityksellä, sinun täytyy käyttää URL:ää, jolla on \"cauth\"-suojausparametri. Jos tämä virhe tapahtui, kun napsautit Lyrion Music Serverin internet-liittymässä olevaa linkkiä, varmista että selainohjelma (mukaan luettuna välityspalvelin ja vakoiluohjelmien torjuntaohjelma tai yksityisyydensuojaohjelma) sallii \"Referer\"-otsikoiden lähettämisen. Alla on kokeilemasi URL-osoitteen asianmukainen URL-osoite.
 	FR	Pour demander cette URL à partir d'un signet ou d'un moyen autre qu'à partir d'un lien dans l'interface du Lyrion Music Server, vous devez utiliser l'URL avec un paramètre de sécurité \"cauth\". Si cette erreur s'est produite lorsque vous avez suivi un lien à partir de l'interface Web du Lyrion Music Server, vérifiez que votre navigateur, vos serveurs proxy et votre programme anti logiciels espions autorisent l'envoi d'en-têtes \"Referer\". Vous trouverez ci-dessous l'URL correcte à utiliser à la place de l'URL spécifiée.
 	HE	על מנת לבקש כתובת URL זו מפריט סימניות/מועדפים, או באמצעים שאינם שימוש בקישור ממשק האינטרנט של Lyrion Music Server, יהיה עליך להשתמש בכתובת URL עם פרמטר אבטחה מסוג ‎\"cauth\"‎. אם שגיאה זו הופיעה בעת שימוש בקישור ממשק האינטרנט של Lyrion Music Server, מומלץ לוודא שתוכנת דפדפן האינטרנט (לרבות שרתי ה-Proxy והתוכנות נגד ריגול/תוכנות להגנה על פרטיות) מאפשרת שליחה של כותרות מסוג ‎\"Referer\"‎. להלן כתובת ה-URL הנכונה עבור כתובת ה-URL שאליה ניסית לעבור.
+	HU	Ahhoz, hogy ezt az URL-t a Könyvjelzőkből vagy a Kedvencek közül (vagy más módon) kérje le, mint a Lyrion Music Server webes felületéről származó hivatkozásnál, egy \"cauth\" biztonsági paraméterrel rendelkező URL-t kell használnia. Ha ezt a hibaüzenetet kapta, amikor a Lyrion Music Server webes felületéről származó hivatkozást követett, meg kell győződnie arról, hogy a webböngésző szoftvere (beleértve a proxyszervereket és a kémprogramokat/adatvédelmi szoftvereket) lehetővé teszi a \"Referer\" fejlécek küldését. Alább látható a megkísérelt URL megfelelő URL-je.
 	IT	Per accedere all'URL da un elenco di preferiti o senza selezionare un collegamento dall'interfaccia Web di Lyrion Music Server, è necessario utilizzare un URL con il parametro di protezione \"cauth\". Se viene visualizzato questo messaggio di errore quando si seleziona un collegamento dall'interfaccia Web di Lyrion Music Server, assicurarsi che il software del browser web in uso (inclusi i server proxy e il software antispyware) consenta l'invio delle intestazioni \"Referer\". Di seguito è riportato l'URL corretto per l'URL a cui si è tentato di accedere.
 	NL	Als je deze URL wilt opvragen via een bladwijzer of favoriet, of een andere koppeling dan de koppelingen op de webinterface van Lyrion Music Server, moet je een URL met de beveiligingsparameter cauth gebruiken. Trad deze fout op toen je een koppeling in de webinterface van Lyrion Music Server volgde, dan moet je controleren of jouw webbrowsersoftware (inclusief proxyservers en spyware-/privacyprogramma's) het verzenden van de header Referer toestaat. Hieronder staat de correcte URL voor de URL die je probeerde.
 	NO	Hvis du vil bruke denne url-en fra et bokmerke eller en favoritt, eller på noen annen måte enn å følge en lenke fra nettgrensesnittet til Lyrion Music Server, må du bruke en url med sikkerhetsparameteren \"cauth\". Hvis du mottok denne feilen ved å følge en lenke fra nettgrensesnittet til Lyrion Music Server, bør du sjekke at nettleserprogrammet (inkludert proxyservere og programvare for personvern og beskyttelse mot spionvare) tillater at \"Referer\"-hoder sendes. Nedenfor ser du riktig url for url-en du prøvde å bruke.
@@ -16569,6 +16584,7 @@ CSRF_ERROR_MEDIUM
 	FI	<p>Koska CSRF-suojaustasoksi on valittu NORMAALI, voit käyttää samaa &quot;;cauth=&quot; arvoa mille tahansa URL:lle. Tämä tarkoittaa sitä, että sinun tulee olla varovainen sen suhteen, kenen kanssa jaat URL-osoitteet.</p>
 	FR	<p>Le niveau de protection CSRF étant défini à la valeur "MEDIUM", vous pouvez utiliser la même valeur ";cauth=" pour toutes les URL. Vous devez par conséquent faire preuve de prudence lorsque vous partagez vos URL.</p>
 	HE	מכיוון שרמת ההגנה מסוג CSRF נקבעה ל'בינונית', באפשרותך להשתמש באותו ערך ‎";cauth="‎ עבור כל כתובת URL שהיא; משמעות הדבר שעליך להיות זהיר יותר לגבי האנשים שעימם אתה משתף כתובות URL.
+	HU	<p>Mivel a CSRF védelmi szintje "KÖZEPES"-re van állítva, ugyanazt a &quot;;cauth=&quot; értéke bármely URL-hez; ez azt jelenti, hogy körültekintőbbnek kell lennie, hogy kivel osztja meg URL-címét.</p>
 	IT	<p>Poiché è impostato un livello di protezione CSRF medio, è possibile utilizzare lo stesso valore ";cauth=" per qualsiasi URL; ciò richiede allo stesso tempo una selezione più attenta degli utenti con i quali si condividono gli URL.</p>
 	NL	<p>Aangezien je CSRF-beveiligingsniveau is ingesteld op 'Gemiddeld' kun je dezelfde ;cauth=-waarde gebruiken voor elke URL. Dit betekent dat je voorzichtiger moet zijn met wie je je URL's deelt.</p>
 	NO	<p>Beskyttelsesnivået for CSRF er satt til middels. Du kan bruke samme «cauth»-verdi for alle url-er. Du bør da være mer forsiktig med hvem du deler url-er med.</p>
@@ -16586,6 +16602,7 @@ CLICK_HERE
 	FI	Napsauta tässä
 	FR	Cliquez ici
 	HE	לחץ כאן
+	HU	Kattintson ide
 	IT	Fare clic qui
 	JA	ここをクリックして下さい
 	NL	Klik hier
@@ -16605,6 +16622,7 @@ MUTED
 	FI	Mykistetty
 	FR	En sourdine
 	HE	מושתק
+	HU	Csendesítve
 	IT	Audio disattivato
 	JA	ミュート
 	NL	Gedempt
@@ -16624,6 +16642,7 @@ MUTE
 	FI	Mykistys
 	FR	Sourdine
 	HE	השתקה
+	HU	Csendesítés
 	IT	Disattiva audio
 	JA	ミュート
 	NL	Dempen
@@ -16642,6 +16661,7 @@ LCMUTED
 	FI	mykistetty
 	FR	en sourdine
 	HE	מושתק
+	HU	csendesítve
 	IT	audio disattivato
 	JA	ミュート
 	NL	gedempt
@@ -16661,6 +16681,7 @@ ADVANCEDSEARCH
 	FI	Laajennettu haku
 	FR	Recherche avancée
 	HE	חיפוש מתקדם
+	HU	Speciális keresés
 	IT	Ricerca avanzata
 	JA	高度の調査
 	NL	Geavanceerd zoeken
@@ -16680,6 +16701,7 @@ EXAMPLE_SHORT
 	FI	esim.
 	FR	ex :
 	HE	דוגמא:
+	HU	pl.
 	IT	es:
 	NL	bijv.
 	NO	eksempel:
@@ -16696,6 +16718,7 @@ SEARCH
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
+	HU	Keresés
 	IT	Cerca
 	JA	音楽を検索する
 	NL	Zoeken
@@ -16715,6 +16738,7 @@ GLOBAL_SEARCH
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
+	HU	Keresés
 	IT	Cerca
 	JA	音楽を検索する
 	NL	Zoeken
@@ -16734,6 +16758,7 @@ GLOBAL_SEARCH_IN
 	ES	Buscar %s en:
 	FI	Etsi %s kohteesta:
 	FR	Rechercher %s dans :
+	HU	%s keresése itt:
 	IT	Cerca %s in:
 	NL	%s zoeken in:
 	NO	Søk etter %s i:
@@ -16750,6 +16775,7 @@ SEARCHMUSIC
 	FI	Etsi musiikkia
 	FR	Rechercher
 	HE	איתור מוסיקה
+	HU	Zene keresése
 	IT	Cerca musica
 	JA	音楽を検索する
 	NL	Muziek zoeken
@@ -16768,6 +16794,7 @@ SEARCHRESULTS
 	ES	Resultados de búsqueda
 	FI	Etsinnän tulokset
 	FR	Résultats de la recherche
+	HU	Keresési eredmények
 	IT	Risultati ricerca
 	NL	Zoekresultaten
 	NO	Søkeresultater
@@ -16784,6 +16811,7 @@ SEARCHFOR
 	FI	Etsi
 	FR	Rechercher
 	HE	איתור
+	HU	Keresés
 	IT	Ricerca
 	JA	検索する
 	NL	Zoeken naar
@@ -16799,6 +16827,7 @@ TEXTSEARCH
 	DE	Textsuche
 	EN	text search
 	FR	Recherche de texte
+	HU	szöveges keresés
 	NL	tekst zoeken
 	NO	tekstsøk
 	PL	zawiera
