@@ -13264,7 +13264,7 @@ SAMPLERATE
 	FI	Näytteenottotaajuus
 	FR	Taux d'échantillonnage
 	HE	קצב דגימה
-	NU	Mintavételi arány
+	HU	Mintavételi arány
 	IT	Frequenza di campionamento
 	NL	Samplefrequentie
 	NO	Samplingsfrekvens
