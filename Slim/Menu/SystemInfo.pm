@@ -363,10 +363,12 @@ sub infoPerl {
 			type => 'text',
 			name => 'DBD::SQLite' . cstring($client, 'COLON') . " $DBD::SQLite::VERSION (sqlite " . Slim::Utils::Cache->new()->{_cache}->{dbh}->{sqlite_version} . ')'
 		},
+	];
 
-		{
+	if ( Slim::Networking::Async::HTTP->hasSSL() ) {
+		push @{$items}, {
 			type => 'text',
-			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . (Slim::Networking::Async::HTTP->hasSSL() ? $IO::Socket::SSL::VERSION : cstring($client, 'UNK')),
+			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . $IO::Socket::SSL::VERSION,
 		},
 
 		{
@@ -377,8 +379,14 @@ sub infoPerl {
 		{
 			type => 'text',
 			name => sprintf("Net::SSLeay%s %s - %s", cstring($client, 'COLON'), $Net::SSLeay::VERSION, Net::SSLeay::SSLeay_version(Net::SSLeay::SSLEAY_VERSION())),
-		},
-	];
+		};
+	}
+	else {
+		push @{$items}, {
+			type => 'text',
+			name => 'IO::Socket::SSL' . cstring($client, 'COLON') . ' ' . cstring($client, 'UNK'),
+		};
+	}
 
 	if ( Slim::Utils::OSDetect->getOS->sqlHelperClass() =~ /MySQL/i ) {
 		splice(@{$items}, 5, 0,	{
