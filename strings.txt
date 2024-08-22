@@ -16838,6 +16838,7 @@ NOT_IN_TEXTSEARCH
 	DE	nicht in Textsuche
 	EN	not in text search
 	FR	pas dans la recherche de texte
+	HU	nem a szöveges keresésben
 	NL	niet in zoekopdracht
 	NO	ikke i tekstsøk
 	PL	nie zawiera
@@ -16852,6 +16853,7 @@ SEARCHFOR_ARTIST
 	FI	Hae artistia
 	FR	Rechercher des artistes
 	HE	איתור מבצע
+	HU	Előadó keresése
 	IT	Cerca artista
 	JA	アーチストを検索する
 	NL	Artiest zoeken
@@ -16871,6 +16873,7 @@ SEARCHFOR_ARTISTS
 	FI	Hae artisteja
 	FR	Rechercher des artistes
 	HE	איתור מבצעים
+	HU	Előadó keresése
 	IT	Cerca artisti
 	JA	アーチストを検索する
 	NL	Artiesten zoeken
@@ -16896,6 +16899,7 @@ SEARCHFOR_ALBUM
 	FI	Etsi levy
 	FR	Rechercher un album
 	HE	איתור אלבום
+	HU	Album keresése
 	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Album zoeken
@@ -16915,6 +16919,7 @@ SEARCHFOR_ALBUMS
 	FI	Etsi levyjä
 	FR	Rechercher des albums
 	HE	איתור אלבומים
+	HU	Album keresése
 	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Albums zoeken
@@ -16940,6 +16945,7 @@ SEARCHFOR_SONGS
 	FI	Hae kappaleita
 	FR	Rechercher des morceaux
 	HE	איתור שירים
+	HU	Dalok keresése
 	IT	Cerca brani
 	JA	曲を検索する
 	NL	Nummers zoeken
@@ -16965,6 +16971,7 @@ SEARCHFOR_SONGTITLE
 	FI	Hae kappaleen nimeä
 	FR	Rechercher des morceaux
 	HE	איתור שם שיר
+	HU	Keresse meg a dal címében
 	IT	Cerca titolo brano
 	JA	曲のタイトルを検索する
 	NL	Titels van nummers zoeken
@@ -16984,6 +16991,7 @@ SEARCH_FOR_ARTISTS
 	FI	Hae artisteja
 	FR	Rechercher des artistes
 	HE	איתור מבצעים
+	HU	Előadók keresse
 	IT	Cerca artisti
 	JA	アーチストを検索する
 	NL	Artiesten zoeken
@@ -17003,6 +17011,7 @@ SEARCH_FOR_ALBUMS
 	FI	Etsi levyjä
 	FR	Rechercher des albums
 	HE	איתור אלבומים
+	HU	Albumok keresése
 	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Albums zoeken
@@ -17022,6 +17031,7 @@ SEARCH_FOR_SONGS
 	FI	Hae kappaleita
 	FR	Rechercher des morceaux
 	HE	איתור שירים
+	HU	Dalok keresése
 	IT	Cerca brani
 	JA	曲を検索する
 	NL	Nummers zoeken
@@ -17041,6 +17051,7 @@ SEARCH_STREAMS
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
+	HU	Keresés
 	IT	Cerca
 	NL	Zoeken
 	NO	Søk
@@ -17058,6 +17069,7 @@ SEARCHING
 	FI	Etsitään...
 	FR	Recherche en cours...
 	HE	מחפש...
+	HU	Keresés...
 	IT	Ricerca in corso...
 	JA	検索中...
 	NL	Bezig met zoeken...
@@ -17073,6 +17085,7 @@ SEARCH_CONTAINS
 	DE	enthält
 	EN	contains
 	FR	contient
+	HU	tartalmazza
 	NL	bevat
 	SV	innehåller
 
@@ -17081,6 +17094,7 @@ SEARCH_DOESNT_CONTAIN
 	DE	enthält nicht
 	EN	doesn't contain
 	FR	ne contient pas
+	HU	nem tartalmazza
 	NL	bevat niet
 	SV	innehåller inte
 
@@ -17089,6 +17103,7 @@ SEARCH_STARTS_WITH
 	DE	beginnt mit
 	EN	starts with
 	FR	commence par
+	HU	kezdődően
 	NL	begint met
 	SV	börjar med
 
@@ -17097,6 +17112,7 @@ SEARCH_DOESNT_START_WITH
 	DE	beginnt nicht mit
 	EN	does not start with
 	FR	ne commence pas par
+	HU	nem azzal kezdődik
 	NL	begint niet met
 	SV	börjar inte med
 
@@ -17109,6 +17125,7 @@ FOUND
 	FI	löytyi
 	FR	trouvé
 	HE	נמצא
+	HU	találat
 	IT	trovato
 	JA	見つかりました
 	NL	gevonden
@@ -17128,6 +17145,7 @@ NO_SEARCH_RESULTS
 	FI	Ei hakutuloksia
 	FR	Pas de résultat
 	HE	אין תוצאות חיפוש
+	HU	Nincsenek keresési eredmények
 	IT	Nessun risultato trovato
 	NL	Geen zoekresultaten gevonden
 	NO	Ingen søkeresultater
@@ -17145,6 +17163,7 @@ CONTRIBUTORMATCHING
 	FI	Artistin vastaavuus
 	FR	Artiste trouvé
 	HE	התאמת מבצע
+	HU	Egyező előadó
 	IT	Artista corrispondente
 	JA	アーチスト照合
 	NL	Gevonden artiest
@@ -17164,6 +17183,7 @@ CONTRIBUTORSMATCHING
 	FI	Artistien vastaavuus
 	FR	Artistes trouvés
 	HE	התאמת מבצעים
+	HU	Egyező előadók
 	IT	Artisti corrispondenti
 	JA	アーチスト照合
 	NL	Gevonden artiesten
@@ -17183,6 +17203,7 @@ ALBUMMATCHING
 	FI	Levyjen vastaavuus
 	FR	Album trouvé
 	HE	התאמת אלבום
+	HU	Egyező album
 	IT	Album corrispondente
 	JA	アルバム照合
 	NL	Gevonden album
@@ -17202,6 +17223,7 @@ ALBUMSMATCHING
 	FI	Vastaavat levyt
 	FR	Albums trouvés
 	HE	התאמת אלבומים
+	HU	Egyező albumok
 	IT	Album corrispondenti
 	JA	アルバム照合
 	NL	Gevonden albums
@@ -17221,6 +17243,7 @@ TRACKMATCHING
 	FI	Kappaleiden nimien vastaavuus
 	FR	Morceau trouvé
 	HE	התאמת שם שיר
+	HU	Dalcím egyezés
 	IT	Titolo corrispondente a
 	JA	曲タイトル照合
 	NL	Gevonden titel
@@ -17240,6 +17263,7 @@ TRACKSMATCHING
 	FI	Vastaavat kappaleet
 	FR	Morceaux trouvés
 	HE	התאמת שמות שירים
+	HU	Dalcím egyezés
 	IT	Brani corrispondenti
 	JA	曲タイトル照合
 	NL	Gevonden titels
@@ -17258,6 +17282,7 @@ GENREMATCHING
 	ES	Género coincidente
 	FI	Genrejen vastaavuus
 	FR	Correspondance de genres
+	HU	Műfaji egyeztetés
 	IT	Genere corrispondente a
 	NL	Gevonden genre
 	NO	Treff på sjanger
@@ -17273,6 +17298,7 @@ GENRESMATCHING
 	ES	Géneros coincidentes
 	FI	Vastaavat genret
 	FR	Correspondance de genres
+	HU	Egyező műfajok
 	IT	Generi corrispondenti a
 	NL	Gevonden genres
 	NO	Treff på sjanger
@@ -17289,6 +17315,7 @@ MORE
 	FI	Lisää
 	FR	Plus
 	HE	עוד
+	HU	Több
 	IT	Altro
 	NL	Meer
 	NO	Mer
@@ -17306,6 +17333,7 @@ MORE_MATCHES
 	FI	Lisää vastaavuuksia...
 	FR	Plus de résultats...
 	HE	התאמות נוספות...
+	HU	További egyezések...
 	IT	Altri risultati...
 	NL	Meer resultaten...
 	NO	Flere treff...
@@ -17323,6 +17351,7 @@ SYNC_WITH
 	FI	Synkronoi:
 	FR	Synchroniser à :
 	HE	עבור ימינה לסינכרון עם:
+	HU	Szinkronizálás a következővel:
 	IT	Sincronizza con:
 	JA	シンクロするためにはRIGHTを押してください :
 	NL	Synchroniseren met:
@@ -17341,6 +17370,7 @@ SYNC_X_TO
 	ES	Sincronizar %s a:
 	FI	Synkronoi %s ja
 	FR	Synchroniser %s avec :
+	HU	%s szinkronizálása ide:
 	IT	Sincronizza %s in:
 	NL	Synchronisatie %s met:
 	NO	Synkroniser %s til:
@@ -17356,6 +17386,7 @@ DO_NOT_SYNC
 	ES	No sincronizar
 	FI	Epäsynkronissa
 	FR	Pas de synchronisation
+	HU	Nincs szinkronizálás
 	IT	Nessuna sincronizzazione
 	NL	Geen synchronisatie
 	NO	Ingen synkronisering
@@ -17372,6 +17403,7 @@ UNSYNC_WITH
 	FI	Epäsynkronoi:
 	FR	Annuler la synchronisation avec :
 	HE	עבור ימינה לביטול הסינכרון עם:
+	HU	Szinkronizálás megszüntetése a következővel:
 	IT	Rimuovi sincronizzazione con:
 	JA	シンクロを外す為にはRIGHTを押してください:
 	NL	Synchronisatie opheffen met:
@@ -17390,6 +17422,7 @@ SYNCING_WITH
 	ES	Sincronizando con: %s
 	FI	Synkronoidaan kohteen %s kanssa
 	FR	Synchronisation avec : %s
+	HU	Szinkronizálás a következővel: %s
 	IT	Sincronizzazione in corso con: %s
 	NL	Synchronisatie met: %s
 	NO	Synkroniserer med: %s
@@ -17405,6 +17438,7 @@ UNSYNCING_FROM
 	ES	Desincronizando de: %s
 	FI	Puretaan synkronointi kohteen %s kanssa
 	FR	Désynchronisation de : %s
+	HU	Szinkronizálás megszüntetése : %s
 	IT	Rimozione sincronizzazione in corso da: %s
 	NL	Synchronisatie opheffen van: %s
 	NO	Fjerner synkronisering fra: %s
@@ -17421,6 +17455,7 @@ CREATE_MIX
 	FI	Luo sekoitus
 	FR	Créer un mix
 	HE	יצירת מיקס
+	HU	Keverés létrehozása
 	IT	Crea raccolta
 	NL	Mix maken
 	NO	Lag en miks
@@ -17438,6 +17473,7 @@ RADIO_TUNEIN
 	FI	Viritä URL
 	FR	Saisir une URL de radio
 	HE	התכווננות לכתובת URL
+	HU	URL betöltése
 	IT	Sintonizza URL
 	NL	URL instellen
 	NO	Finn url
@@ -17454,6 +17490,7 @@ SHOUTCAST
 	ES	SHOUTcast
 	FI	SHOUTcast
 	FR	SHOUTcast
+	HU	SHOUTcast
 	IT	SHOUTcast
 	NL	SHOUTcast
 	NO	SHOUTcast
@@ -17469,6 +17506,7 @@ RADIO_PROVIDERS_ABSOLUTE
 	ES	Absolute Radio UK
 	FI	Absolute Radio UK
 	FR	Absolute Radio UK
+	HU	Absolute Radio UK
 	IT	Absolute Radio UK
 	NL	Absolute Radio UK
 	NO	Absolute Radio UK
@@ -17484,6 +17522,7 @@ RADIO_PROVIDERS_ACCURADIO
 	ES	AccuRadio
 	FI	AccuRadio
 	FR	AccuRadio
+	HU	AccuRadio
 	IT	AccuRadio
 	NL	AccuRadio
 	NO	AccuRadio
@@ -17499,6 +17538,7 @@ RADIO_PROVIDERS_BBC
 	ES	BBC
 	FI	BBC
 	FR	BBC
+	HU	BBC
 	IT	BBC
 	NL	BBC
 	NO	BBC
@@ -17514,6 +17554,7 @@ RADIO_PROVIDERS_CBC
 	ES	CBC
 	FI	CBC
 	FR	CBC
+	HU	CBC
 	IT	CBC
 	NL	CBC
 	NO	CBC
@@ -17530,6 +17571,7 @@ RADIO_PROVIDERS_DIFM
 	ES	Digitally Imported
 	FI	Digitally Imported
 	FR	Digitally Imported
+	HU	Digitally Imported
 	IT	Digitally Imported
 	NL	Digitally Imported
 	NO	Digitally Imported
@@ -17545,6 +17587,7 @@ RADIO_PROVIDERS_SOMAFM
 	ES	SomaFM
 	FI	SomaFM
 	FR	SomaFM
+	HU	SomaFM
 	IT	SomaFM
 	NL	SomaFM
 	NO	SomaFM
@@ -17566,6 +17609,7 @@ RADIO_PROVIDERS_RADIODE
 	ES	radio.de
 	FI	radio.de
 	FR	radio.de
+	HU	radio.de
 	IT	radio.de
 	NL	radio.de
 	NO	radio.de
@@ -17581,6 +17625,7 @@ RADIO_PROVIDERS_RADIOFR
 	ES	radio.fr
 	FI	radio.fr
 	FR	radio.fr
+	HU	radio.fr
 	IT	radio.fr
 	NL	radio.fr
 	NO	radio.fr
@@ -17596,6 +17641,7 @@ RADIO_PROVIDERS_RADIOFEEDS
 	ES	RadioFeeds UK & Ireland
 	FI	RadioFeeds (Iso-Britannia ja Irlanti)
 	FR	RadioFeeds RU et Irlande
+	HU	RadioFeeds RU et Irlande
 	IT	RadioFeeds UK & Ireland
 	NL	RadioFeeds UK & Ireland
 	NO	RadioFeeds UK & Ireland
@@ -17611,6 +17657,7 @@ RADIO_PROVIDERS_RADIONOMY
 	ES	Radionomy
 	FI	Radionomy
 	FR	Radionomy
+	HU	Radionomy
 	IT	Radionomy
 	NL	Radionomy
 	NO	Radionomy
@@ -17627,6 +17674,7 @@ URL
 	FI	URL
 	FR	URL
 	HE	כתובת URL
+	HU	URL
 	IT	URL
 	NL	URL
 	NO	URL
@@ -17640,6 +17688,7 @@ PATH
 	DE	Pfad
 	EN	Path
 	FR	Chemin
+	HU	Útvonal
 	NL	Pad
 	SV	Sökväg
 
@@ -17652,6 +17701,7 @@ RADIO_TUNEIN_NOW
 	FI	Virittäydy kanavalle
 	FR	Se connecter
 	HE	התכוונן עכשיו
+	HU	Ráhangolódás
 	IT	Sintonizzati adesso
 	NL	Nu instellen
 	NO	Hent stasjon nå
@@ -17669,6 +17719,7 @@ RADIO_TUNEIN_DESC
 	FI	Jos tiedät jo sen radiokanavan URL-osoitteen, jota haluat kuunnella, kirjoita se tähän ja valitse Virittäydy kanavalle. Voit kirjoittaa joko radiovirran itsensä (esim. http://62.49.59.50:8000) tai virtaa osoittavan soittoluettelotiedoston (esim. http://www.hitzradio.com/hitzradio.pls) URL:n.
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ici et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
 	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls).
+	HU	Ha már tudja a hallgatni kívánt állomás URL-jét, írja be ide, és kattintson a „Ráhangolódás” gombra. Megadhatja magának a rádióadatfolyamnak az URL-címét (pl. http://62.49.59.50:8000), vagy az adatfolyamra mutató lejátszási listafájlt (pl. http://www.hitzradio.com/hitzradio.pls).
 	IT	Se si conosce già l'URL della stazione che si vuole ascoltare, inserirlo qui e fare clic sul pulsante Sintonizza. È possibile inserire l'URL dello stream della radio (esempio http://62.49.59.50:8000) o del file della playlist che punta allo stream (esempio http://www.hitzradio.com/hitzradio.pls).
 	NL	Als je de URL weet van de stream die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio stream (bijv. http://62.49.59.50:8000) of van de afspeellijst (bijv. http://www.hitzradio.com/hitzradio.pls) invullen.
 	NO	Hvis du allerede vet url-en til stasjonen du vil høre på, kan du angi den her og klikke på «Finn». Du kan enten angi url-en til selve radiostrømmen (for eksempel http://62.49.59.50:8000), eller til spillelistefilen som peker til strømmen (for eksempel http://www.hitzradio.com/hitzradio.pls).
@@ -17685,6 +17736,7 @@ RADIO_TUNEIN_RADIOURL
 	FI	Radion URL:
 	FR	URL radio :
 	HE	כתובת ה-URL של הרדיו:
+	HU	Rádió URL:
 	IT	URL Radio:
 	NL	Radio-URL:
 	NO	Radioadresse:
@@ -17702,6 +17754,7 @@ RADIO_TUNEIN_CHOOSE
 	FI	Virittäydy kanavalle
 	FR	Connecter
 	HE	התכוונן
+	HU	Ráhangolódás
 	IT	Sintonizza
 	NL	Instellen
 	NO	Finn
@@ -17719,6 +17772,7 @@ RADIO_TUNED_IN
 	FI	Virittyneenä kanavalle:
 	FR	Connecté à la station :
 	HE	מכוונן לתחנה:
+	HU	Állomásra hangolva:
 	IT	Sintonizzato su stazione:
 	NL	Ingesteld op zender:
 	NO	Stilt inn på stasjon:
@@ -17736,6 +17790,7 @@ HELP
 	FI	Ohje
 	FR	Aide
 	HE	עזרה
+	HU	Súgó
 	IT	Guida in linea
 	JA	ヘルプ
 	NL	Help
@@ -17755,6 +17810,7 @@ HELP_REMOTE
 	FI	Kaukosäätimen viite
 	FR	Documentation de la télécommande
 	HE	הפעלת השלט-רחוק
+	HU	Távirányító referencia
 	IT	Istruzioni telecomando
 	JA	リモートコントロールヘルプ
 	NL	Handleiding voor afstandsbediening
@@ -17774,6 +17830,7 @@ TECHNICAL_INFORMATION
 	FI	Teknisiä tietoja
 	FR	Informations techniques
 	HE	מידע טכני
+	HU	Műszaki információk
 	IT	Informazioni tecniche
 	JA	テクニカルインフォメーション
 	NL	Technische informatie
@@ -17793,6 +17850,7 @@ GETTING_STARTED
 	FI	Aloittaminen
 	FR	Guide de démarrage
 	HE	תחילת השימוש
+	HU	Kezdő lépések
 	IT	Guida introduttiva
 	JA	最初に
 	NL	Introductie
@@ -17811,6 +17869,7 @@ COMMUNITY_FORUM
 	ES	Foros de comunidad
 	FI	Yhteisöfoorumit
 	FR	Forums de la communauté
+	HU	Közösségi fórumok
 	IT	Forum della community
 	NL	Communityforums
 	NO	Brukerforum
@@ -17827,6 +17886,7 @@ FAQ
 	FI	Usein esitettyjä kysymyksiä
 	FR	Questions fréquentes
 	HE	שאלות נפוצות
+	HU	Gyakran Ismételt Kérdések
 	IT	Domande frequenti
 	JA	よく聞かれる質問
 	NL	Veelgestelde vragen
@@ -17846,6 +17906,7 @@ HELP_RADIO
 	FI	Nettiradio
 	FR	Radio Internet
 	HE	רדיו באינטרנט
+	HU	Internetes rádió
 	IT	Radio Internet
 	JA	インターネットラジオとプレイリストファイル
 	NL	Internetradio
@@ -17865,6 +17926,7 @@ REMOTE_STREAMING
 	FI	Etävirtautus
 	FR	Diffusion à distance
 	HE	הפעלת זרימה מרחוק
+	HU	Távoli adatfolyam
 	IT	Streaming remoto
 	JA	リモート ストリーミング
 	NL	Streaming op afstand
@@ -17884,6 +17946,7 @@ PLAYER_SETUP
 	FI	Soittimen käyttöönotto
 	FR	Réglage de la platine
 	HE	הגדרת הנגן
+	HU	Lejátszó beállítása
 	IT	Installazione lettore
 	JA	プレーヤーセットアップ
 	NL	Setup van muziekspeler
@@ -17903,6 +17966,7 @@ USING_REMOTE
 	FI	Kaukosäätimen käyttö
 	FR	Utilisation de la télécommande
 	HE	שימוש בשלט-רחוק
+	HU	A távirányító használata
 	IT	Utilizzo del telecomando
 	JA	リモートを使う
 	NL	Afstandsbediening gebruiken
@@ -17922,6 +17986,7 @@ STATISTICS
 	FI	Tilastot
 	FR	Statistiques
 	HE	נתונים סטטיסטיים
+	HU	Statisztika
 	IT	Statistiche
 	JA	統計
 	NL	Statistieken
@@ -17941,6 +18006,7 @@ EDIT_PLAYLIST
 	FI	Muokkaa soittoluetteloa
 	FR	Modifier la liste de lecture
 	HE	עריכת רשימת ההשמעה
+	HU	Lejátszási lista szerkesztése
 	IT	Modifica playlist
 	JA	プレイリストを編集する
 	NL	Afspeellijst aanpassen
@@ -17954,11 +18020,12 @@ DONE_EDITING
 	CS	Úpravy provedeny
 	DA	Redigering udført
 	DE	Bearbeitung abgeschlossen
-	EN	Done Editing
+	EN	Szerkesztés kész
 	ES	Edición finalizada
 	FI	Muokkaus on suoritettu
 	FR	Modification effectuée
 	HE	העריכה הסתיימה
+	HU	Szerkesztés kész
 	IT	Modifica completata
 	JA	編集完了
 	NL	Aanpassen klaar
@@ -17977,6 +18044,7 @@ UP
 	FI	Ylös
 	FR	Haut
 	HE	למעלה
+	HU	Fel
 	IT	Su
 	JA	上
 	NL	Omhoog
@@ -17995,6 +18063,7 @@ DOWN
 	FI	Alas
 	FR	Bas
 	HE	למטה
+	HU	Le
 	IT	Giù
 	JA	下
 	NL	Omlaag
@@ -18013,6 +18082,7 @@ EDIT
 	FI	Muokkaa
 	FR	Modifier
 	HE	עריכה
+	HU	Szerkesztés
 	IT	Modifica
 	JA	編集
 	NL	Aanpassen
@@ -18031,6 +18101,7 @@ INFORMATION
 	FI	Tiedot
 	FR	Informations
 	HE	מידע
+	HU	Információ
 	IT	Informazioni
 	JA	インフォメーション
 	NL	Informatie
@@ -18048,6 +18119,7 @@ JIVE_SQUEEZEBOX_INFORMATION
 	ES	Información de Squeezebox
 	FI	Squeezeboxin tiedot
 	FR	Informations sur la Squeezebox
+	HU	Squeezebox információ
 	IT	Informazioni su Squeezebox
 	NL	Squeezeboxinformatie
 	NO	Informasjon om Squeezebox
@@ -18064,6 +18136,7 @@ INFORMATION_MENU_PLAYER
 	FI	Soittimen tiedot
 	FR	Informations sur la platine
 	HE	מידע אודות הנגן
+	HU	Lejátszó információk
 	IT	Informazioni sul lettore
 	JA	プレーヤー情報
 	NL	Informatie van muziekspeler
@@ -18081,6 +18154,7 @@ INFORMATION_SPECIFIC_PLAYER
 	ES	Información de %s
 	FI	%s - tiedot
 	FR	Informations %s
+	HU	Információk: %s
 	IT	Informazioni su %s
 	NL	%s informatie
 	NO	Informasjon om %s
@@ -18097,6 +18171,7 @@ INFORMATION_MENU_SERVER
 	FI	Palvelimen tiedot
 	FR	Lyrion Music Server
 	HE	מידע אודות השרת
+	HU	Lyrion Music Server
 	IT	Lyrion Music Server
 	JA	サーバー情報
 	NL	Lyrion Music Server
@@ -18118,6 +18193,7 @@ INFORMATION_MENU_SCAN
 	ES	Detalles de examen multimedia
 	FI	Mediahaun tiedot
 	FR	Détails de l'analyse du contenu multimédia
+	HU	Média szkennelés részletei
 	IT	Dettagli analisi file multimediali
 	NL	Details van mediascan
 	NO	Detaljer om søk etter mediefiler
@@ -18134,6 +18210,7 @@ INFORMATION_MENU_LIBRARY
 	FI	Kirjaston tilastot
 	FR	Statistiques de la bibliothèque musicale
 	HE	פרטים סטטיסטיים אודות הספרייה
+	HU	Zenetár statisztika
 	IT	Statistiche libreria
 	JA	ライブラリー統計
 	NL	Statistieken van mediabibliotheek
@@ -18151,6 +18228,7 @@ INFORMATION_MENU_MODULE
 	ES	Módulos de complementos
 	FI	Laajennusmoduulit
 	FR	Modules plugins
+	HU	Beépülő modulok
 	IT	Moduli plugin
 	NL	Plug-in-modules
 	NO	Plugin-moduler
@@ -18166,6 +18244,7 @@ INFORMATION_PLAYER_NAME
 	ES	Nombre de Squeezebox
 	FI	Squeezeboxin nimi
 	FR	Nom de la Squeezebox
+	HU	Squeezebox neve
 	IT	Nome Squeezebox
 	NL	Squeezeboxnaam
 	NO	Navn på Squeezebox
@@ -18181,6 +18260,7 @@ INFORMATION_PLAYER_NAME_ABBR
 	ES	Nombre
 	FI	Nimi
 	FR	Nom
+	HU	Név
 	IT	Nome
 	NL	Naam
 	NO	Navn
@@ -18197,6 +18277,7 @@ INFORMATION_PLAYER_MODEL
 	FI	Soittimen malli
 	FR	Modèle platine
 	HE	דגם הנגן
+	HU	Lejátszó típus
 	IT	Modello del lettore
 	JA	プレーヤーモデル
 	NL	Model van muziekspeler
@@ -18214,6 +18295,7 @@ INFORMATION_PLAYER_MODEL_ABBR
 	ES	Modelo
 	FI	Malli
 	FR	Modèle
+	HU	Típus
 	IT	Modello
 	NL	Model
 	NO	Modell
@@ -18230,6 +18312,7 @@ INFORMATION_FIRMWARE
 	FI	Soittimen laitteisto-ohjelmiston versio
 	FR	Version du micrologiciel de la platine
 	HE	גרסת הקושחה של הנגן
+	HU	Lejátszó firmware verziója 
 	IT	Versione firmware del lettore
 	JA	プレーヤーファームウェアバージョン
 	NL	Firmwareversie van muziekspeler
@@ -18247,6 +18330,7 @@ INFORMATION_FIRMWARE_ABBR
 	ES	Firmware
 	FI	Laitteisto-ohjelmisto
 	FR	Micrologiciel
+	HU	Firmware
 	IT	Firmware
 	NL	Firmware
 	NO	Fastvare
@@ -18263,6 +18347,7 @@ INFORMATION_PLAYER_IP
 	FI	Soittimen IP-osoite
 	FR	Adresse IP platine
 	HE	כתובת ה-IP של הנגן
+	HU	A lejátszó IP-címe
 	IT	Indirizzo IP del lettore
 	JA	プレーヤーIPアドレス
 	NL	IP-adres van muziekspeler
@@ -18280,6 +18365,7 @@ INFORMATION_PLAYER_IP_ABBR
 	ES	IP
 	FI	IP
 	FR	IP
+	HU	IP
 	IT	IP
 	NL	IP
 	NO	IP
@@ -18296,6 +18382,7 @@ INFORMATION_PLAYER_PORT
 	FI	Soittimen portin numero
 	FR	Port de la platine
 	HE	מספר היציאה של הנגן
+	HU	Lejátszó port száma
 	IT	Porta lettore
 	NL	Poortnummer van muziekspeler
 	NO	Spillerens port
@@ -18312,6 +18399,7 @@ INFORMATION_PLAYER_PORT_ABBR
 	ES	Puerto
 	FI	Portti
 	FR	Port
+	HU	Port
 	IT	Porta
 	NL	Poort
 	NO	Port
@@ -18328,6 +18416,7 @@ INFORMATION_PLAYER_MAC
 	FI	Soittimen MAC-osoite
 	FR	Adresse MAC platine
 	HE	כתובת ה-MAC של הנגן
+	HU	Lejátszó MAC címe
 	IT	Indirizzo MAC del lettore
 	JA	プレーヤーMACアドレス
 	NL	MAC-adres van muziekspeler
@@ -18345,6 +18434,7 @@ INFORMATION_PLAYER_MAC_ABBR
 	ES	MAC
 	FI	MAC
 	FR	MAC
+	HU	MAC
 	IT	MAC
 	NL	MAC
 	NO	MAC
@@ -18361,6 +18451,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	FI	Langattoman signaalin voimakkuus
 	FR	Puissance signal sans fil
 	HE	עוצמת אות אלחוטי
+	HU	Vezeték nélküli jelerősség
 	IT	Potenza segnale rete senza fili
 	JA	ワイヤレス信号強度
 	NL	Sterkte van draadloos signaal
@@ -18378,6 +18469,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
 	ES	Señal inalámbrica
 	FI	Langaton signaali
 	FR	Signal sans fil
+	HU	Vezeték nélküli jel
 	IT	Segnale rete senza fili
 	NL	Draadloos signaal
 	NO	Trådløst signal
@@ -18394,6 +18486,7 @@ INFORMATION_CLIENTS
 	FI	Tunnistettuja soittimia yhteensä
 	FR	Platines identifiées
 	HE	מספר כולל של נגנים שזוהו
+	HU	Összes felismert lejátszó
 	IT	Totale lettori riconosciuti
 	JA	認識されたプレーヤー数
 	NL	Totaal aantal herkende muziekspelers
@@ -18411,6 +18504,7 @@ INFORMATION_CACHEDIR
 	ES	Carpeta de caché
 	FI	Välimuistikansio
 	FR	Dossier du cache
+	HU	Gyorsítótár mappa
 	IT	Cartella cache
 	NL	Cachemap
 	NO	Hurtigbuffermappe
