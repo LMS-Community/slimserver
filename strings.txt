@@ -22578,6 +22578,7 @@ SCAN_ABORTED_PROGRESS
 	ES	El usuario anuló manualmente el examen
 	FI	Käyttäjä keskeytti tarkistuksen manuaalisesti
 	FR	L'utilisateur a interrompu manuellement l'analyse
+	HU	A folyamatot a felhasználó manuálisan megszakította
 	IT	Analisi annullata manualmente dall'utente
 	NL	Mediascan handmatig afgebroken door gebruiker
 	NO	Søket ble manuelt avbrutt av brukeren
@@ -22593,6 +22594,7 @@ DIRECTORY_PROGRESS
 	ES	Examen de directorios
 	FI	Hakemistohaku
 	FR	Analyse du répertoire
+	HU	Mappa beolvasás
 	IT	Analisi delle directory
 	NL	Mappen scannen
 	NO	Katalogsøk
@@ -22608,6 +22610,7 @@ DISCOVERING_FILES_PROGRESS
 	ES	Detectando archivos/directorios de música
 	FI	Musiikkitiedostojen ja hakemistojen etsiminen
 	FR	Détection des dossiers/fichiers musicaux
+	HU	Zenei fájlok/könyvtárak felderítése
 	IT	Rilevamento di file/directory di musica
 	NL	Muziekbestanden/-mappen detecteren
 	NO	Ser etter musikkfiler/-kataloger
@@ -22623,6 +22626,7 @@ DISCOVERING_DIRECTORY_PROGRESS
 	ES	Detectando archivos/directorios
 	FI	Tiedostojen ja hakemistojen etsiminen
 	FR	Détection des fichiers/dossiers
+	HU	Zenei fájlok/könyvtárak felderítése
 	IT	Rilevamento di file/directory
 	NL	Bestanden/mappen detecteren
 	NO	Finne filer/kataloger
@@ -22638,6 +22642,7 @@ DISCOVERING_PLAYLIST_PROGRESS
 	ES	Detectando listas de reproducción
 	FI	Soittoluetteloita etsitään
 	FR	Détection de listes de lecture
+	HU	Lejátszási listák felfedezése
 	IT	Rilevazione playlist in corso
 	NL	Afspeellijsten detecteren
 	NO	Finner spillelister
@@ -22653,6 +22658,7 @@ DIRECTORY_DELETED_PROGRESS
 	ES	Quitando archivos eliminados
 	FI	Poista poistetut tiedostot
 	FR	Enlèvement des fichiers supprimés
+	HU	Törölt fájlok eltávolítása
 	IT	Rimozione dei file eliminati in corso
 	NL	Verwijderde bestanden weghalen
 	NO	Fjerner slettede filer
@@ -22668,6 +22674,7 @@ DIRECTORY_NEW_PROGRESS
 	ES	Examinando archivos de música nuevos
 	FI	Tarkistetaan uudet musiikkitiedostot
 	FR	Analyse des nouveaux fichiers musicaux
+	HU	Új zenei fájlok beolvasása
 	IT	Analisi dei nuovi file musicali
 	NL	Nieuwe muziekbestanden scannen
 	NO	Søker i nye musikkfiler
@@ -22683,6 +22690,7 @@ DIRECTORY_MEDIA_PROGRESS
 	ES	Examinando archivos nuevos
 	FI	Tarkistetaan uudet tiedostot
 	FR	Analyse des nouveaux fichiers multimédias
+	HU	Új médiafájlok szkennelése
 	IT	Analisi di nuovi file in corso
 	NL	Nieuwe bestanden scannen
 	NO	Søker i nye filer
@@ -22698,6 +22706,7 @@ DIRECTORY_CHANGED_PROGRESS
 	ES	Examinando archivos modificados
 	FI	Tarkistaa muutettuja tiedostoja
 	FR	Analyse des fichiers modifiés
+	HU	Megváltozott fájlok vizsgálata
 	IT	Analisi file modificati in corso
 	NL	Gewijzigde bestanden worden gescand
 	NO	Søker i endrede filer
@@ -22713,6 +22722,7 @@ PLAYLIST_DELETED_PROGRESS
 	ES	Quitando listas de reproducción eliminadas
 	FI	Poista poistetut soittoluettelot
 	FR	Enlèvement des listes de lecture supprimées
+	HU	Törölt lejátszási listák eltávolítása
 	IT	Rimozione delle playlist eliminate in corso
 	NL	Verwijderde afspeellijsten weghalen
 	NO	Fjerner slettede spillelister
@@ -22728,6 +22738,7 @@ PLAYLIST_NEW_PROGRESS
 	ES	Examinando listas de reproducción nuevas
 	FI	Tarkistetaan uudet soittoluettelot
 	FR	Analyse des nouvelles listes de lecture
+	HU	Új lejátszási listák keresése
 	IT	Analisi di nuove playlist in corso
 	NL	Nieuwe afspeellijsten scannen
 	NO	Søker i nye spillelister
@@ -22743,6 +22754,7 @@ PLAYLIST_CHANGED_PROGRESS
 	ES	Examinando listas de reproducción modificadas
 	FI	Tarkistaa muutettuja soittoluetteloita
 	FR	Analyse des listes de lecture modifiées
+	HU	Megváltozott lejátszási listák keresése
 	IT	Analisi playlist modificate in corso
 	NL	Gewijzigde afspeellijsten worden gescand
 	NO	Søker i endrede spillelister
@@ -22758,6 +22770,7 @@ PLAYLIST_PROGRESS
 	ES	Examen de listas de reproducción
 	FI	Soittoluetteloiden haku
 	FR	Analyse de liste de lecture
+	HU	Lejátszási lista vizsgálat
 	IT	Analisi playlist
 	NL	Scannen van afspeellijsten
 	NO	Søk etter spilleliste
@@ -22771,6 +22784,7 @@ ONLINE_LIBRARY_DELETED_PROGRESS
 	EN	Removing online library tracks
 	FR	Suppression des morceaux de la bibliothèque en ligne
 	SV	Tar bort online-bibliotekspår
+	HU	Online könyvtári számok eltávolítása
 	NL	Nummers van online bibliotheek verwijderen
 
 MERGEVA_PROGRESS
@@ -22781,6 +22795,7 @@ MERGEVA_PROGRESS
 	ES	Fusionar varios artistas
 	FI	Yhdistä useita artisteja
 	FR	Fusionner les artistes divers
+	HU	Különböző előadók egyesítése
 	IT	Raggruppamento Artisti vari
 	NL	Diverse artiesten samenvoegen
 	NO	Slå sammen diverse artister
@@ -22793,6 +22808,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	DE	Nach aktualisierten Plattenhüllen suchen
 	EN	Find Updated Coverart Files
 	FR	Recherche des pochettes des albums actualisés
+	HU	Keresse meg a frissített zenékhez tartozó albumborítókat
 	NL	Vind geüpdatete albumhoezen
 	NO	Finn oppdaterte plateomslagsfiler
 	PL	Wyszukaj zaktualizowane pliki okładek
@@ -22806,6 +22822,7 @@ PRECACHEARTWORK_PROGRESS
 	ES	Guardando carátula en caché previamente
 	FI	Levykansien tallennus valmiiksi välimuistiin
 	FR	Mise en pré-cache de la pochette
+	HU	Bórtók letárolása
 	IT	Pre-cache copertina
 	NL	Albumhoezen vooraf in cache opslaan
 	NO	Hurtigbufring av omslag på forhånd
@@ -22821,6 +22838,7 @@ DOWNLOADARTWORK_PROGRESS
 	ES	Descargando carátula
 	FI	Kansitaidetta ladataan
 	FR	Téléchargement de la pochette
+	HU	Borítók letöltése
 	IT	Download copertina in corso
 	NL	Albumhoezen downloaden
 	NO	Laster ned omslag
@@ -22836,6 +22854,7 @@ CLEANUP1_PROGRESS
 	ES	Limpieza 1 de base de datos
 	FI	Tietokannan puhdistus #1
 	FR	Nettoyage de base de données 1
+	HU	1. adatbázis-tisztítás
 	IT	Pulizia del database n. 1
 	NL	Opschonen van database 1
 	NO	Databaseopprydding #1
@@ -22851,6 +22870,7 @@ CLEANUP2_PROGRESS
 	ES	Limpieza 2 de base de datos
 	FI	Tietokannan puhdistus #2
 	FR	Nettoyage de base de données 2
+	HU	2. adatbázis-tisztítás
 	IT	Pulizia del database n. 2
 	NL	Opschonen van database 2
 	NO	Databaseopprydding #2
@@ -22866,6 +22886,7 @@ DBOPTIMIZE_PROGRESS
 	ES	Optimización de base de datos
 	FI	Tietokannan optimointi
 	FR	Optimisation de base de données
+	HU	Adatbázis optimalizálása
 	IT	Ottimizzazione database
 	NL	Database optimaliseren
 	NO	Database optimalisering
@@ -22881,6 +22902,7 @@ IMPORTER_PROGRESS
 	ES	Progreso de examen
 	FI	Tarkistuksen eteneminen
 	FR	Progression de l'analyse
+	HU	A szkennelés folyamata
 	IT	Avanzamento analisi
 	NL	Scanvoortgang
 	NO	Framdrift for søk
@@ -22896,6 +22918,7 @@ IMPORTER_PROGRESS_DESC
 	ES	Esta página muestra el progreso de cada fase del proceso de examen.
 	FI	Tällä sivulla näkyy tarkistuksen jokaisen vaiheen eteneminen.
 	FR	Cette page affiche la progression de chaque phase de l'analyse.
+	HU	Ez az oldal a szkennelési folyamat egyes fázisainak előrehaladását mutatja be.
 	IT	In questa pagina è mostrato l'avanzamento di ciascuna fase del processo di analisi.
 	NL	Op deze pagina wordt de voortgang van elke fase in het scanproces weergegeven.
 	NO	Denne siden viser framdriften for hver del av søkeprosessen.
@@ -22908,6 +22931,7 @@ RELEASETYPES_PROGRESS
 	DE	Album Veröffentlichungstypen aktualisieren
 	EN	Update Album release types
 	FR	Actualiser les types de sorties des albums
+	HU	Az album kiadás típusainak frissítése
 	NL	Albumreleasetypes vernieuwen
 
 VIRTUALLIBRARIES_PROGRESS
@@ -22915,6 +22939,7 @@ VIRTUALLIBRARIES_PROGRESS
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create Library Views
 	FR	Création d'une bibliothèque thématique
+	HU	Könyvtári nézetek létrehozása
 	NL	Deelcollectie maken
 	NO	Lag delbibliotek
 	PL	Utwórz biblioteki tematyczne
@@ -22925,6 +22950,7 @@ AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 	FR	Comme une bibliothèque thématique
+	HU	Könyvtári nézetként
 	NL	Als deelcollectie
 	NO	Som delbibliotek
 	PL	Jako biblioteka tematyczna
@@ -22935,6 +22961,7 @@ VIRTUALLIBRARIES
 	DE	Bibliotheksansichten
 	EN	Library Views
 	FR	Bibliothèques thématiques
+	HU	Könyvtári nézetek
 	NL	Deelcollecties
 	NO	Delbiblioteker
 	PL	Biblioteki tematyczne
@@ -22945,6 +22972,7 @@ SETUP_LIBRARY_VIEWS_DESC
 	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Menü Eigene Musik auswählen.
 	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
 	FR	Les bibliothèques thématiques vous permettent d'utiliser le menu Ma musique sur une sélection filtrée de morceaux. En activant ces bibliothèques vous pourrez basculer entre elles à l'aide d'un sous-menu dans Ma musique.
+	HU	A könyvtári nézetek lehetővé teszik a Saját zene menü használatát a zeneszámok szűrt választékához. Ha a nézetek engedélyezve vannak, a Saját zene almenüjéből válthat közöttük.
 	NL	Deelcollecties maken het mogelijk om Mijn Muziek te filteren op geselecteerde nummers. Wanneer ingeschakeld, kun je in een submenu in Mijn Muziek wisselen tussen je deelcollecties.
 	NO	Delbiblioteker gjør at du kan bruke Min musikk-menyen på et filtrert utvalg av spor. Når de er aktivert, kan du veksle mellom delbibliotekene fra en undermeny av Min musikk.
 	PL	Biblioteki tematyczne pozwalają na użycie menu "Moja muzyka" na przefiltrowanym zbiorze utworów. Do menu "Moja muzyka" zostanie dodana dodatkowa opcja, służąca do przełączania się pomiędzy bibliotekami.
@@ -22955,6 +22983,7 @@ ALL_LIBRARY
 	DE	Ganze Musiksammlung
 	EN	All music library
 	FR	Bibliothèque complète
+	HU	Minden zenei könyvtár
 	NL	Hele muziekcollectie
 	NO	Hele musikksamlingen
 	PL	Cała biblioteka muzyczna
@@ -22965,6 +22994,7 @@ SUB_LIBRARY
 	DE	Aktive Bibliotheksansicht
 	EN	Selected library view
 	FR	Bibliothèque thématique active
+	HU	Kiválasztott könyvtári nézet
 	NL	Geselecteerde deelcollectie
 	NO	Valgt delbibliotek
 	PL	Wybrana biblioteka tematyczna
@@ -22978,6 +23008,7 @@ RUNNING
 	ES	En ejecución
 	FI	Käynnistetty
 	FR	En cours d'exécution
+	HU	Futás
 	IT	In esecuzione
 	NL	Actief
 	NO	Kjører
@@ -22993,6 +23024,7 @@ COMPLETE
 	ES	Completado
 	FI	Valmis
 	FR	Terminé
+	HU	Kész
 	IT	Completo
 	NL	Voltooien
 	NO	Fullført
@@ -23008,6 +23040,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	ES	El servidor ha finalizado el examen de su biblioteca multimedia.
 	FI	Palvelin on nyt lopettanut mediakirjastosi tarkistuksen.
 	FR	Le serveur a terminé d'analyser la bibliothèque multimédia.
+	HU	A szerver befejezte a médiakönyvtár vizsgálatát.
 	IT	Il server ha completato l'analisi della libreria multimediale.
 	NL	De server heeft jouw mediabibliotheek gescand.
 	NO	Serveren har nå søkt gjennom mediebiblioteket.
@@ -23023,6 +23056,7 @@ PROGRESS_IMPORTER_NO_INFO
 	ES	No hay disponible ninguna información de progreso del examen previo.
 	FI	Edistymistiedot edellisestä hausta eivät ole saatavilla.
 	FR	Les informations de progression de l'analyse précédente ne sont pas disponibles.
+	HU	Az előző vizsgálat előrehaladásáról szóló információ nem érhető el.
 	IT	Le informazioni di avanzamento dell'analisi precedente non sono disponibili.
 	NL	Voortgangsinformatie van de vorige scan is niet beschikbaar.
 	NO	Ingen framdriftsinformasjon er tilgjengelig for forrige søk.
@@ -23039,6 +23073,7 @@ TOTAL_TIME
 	ES	Tiempo total:
 	FI	Kokonaisaika:
 	FR	Durée totale :
+	HU	Teljes idő:
 	IT	Tempo totale:
 	NL	Totale tijd:
 	NO	Samlet tid:
@@ -23054,6 +23089,7 @@ ENABLE
 	ES	Activar
 	FI	Ota käyttöön
 	FR	Activer
+	HU	Engedélyezés
 	IT	Attiva
 	NL	Inschakelen
 	NO	Aktiver
@@ -23069,6 +23105,7 @@ DISABLE
 	ES	Desactivar
 	FI	Poista käytöstä
 	FR	Désactiver
+	HU	Letiltás
 	IT	Disattiva
 	NL	Uitschakelen
 	NO	Deaktiver
@@ -23084,6 +23121,7 @@ UNINSTALL
 	ES	Desinstalar
 	FI	Poista asennus
 	FR	Désinstaller
+	HU	Eltávolítás
 	IT	Disinstalla
 	NL	Verwijderen
 	NO	Avinstaller
@@ -23099,6 +23137,7 @@ PLUGINS_CHANGED
 	ES	Los cambios de estos complementos entrarán en vigor la próxima vez que se inicie la aplicación:
 	FI	Muutokset tulevat voimaan seuraavien laajennusten kohdalla, kun sovellus käynnistetään seuraavaksi uudelleen:
 	FR	Les modifications pour les plugins suivants seront appliquées au prochain démarrage de l'application.
+	HU	A változások az alkalmazás következő újraindításakor lépnek életbe a következő bővítményeknél:
 	IT	Le modifiche diventeranno effettive al successivo avvio dell'applicazione nei seguenti plugin:
 	NL	Bij de volgende herstart van de applicatie worden wijzigingen voor deze plug-ins doorgevoerd:
 	NO	Endringer trer i kraft neste gang programmet startes på nytt for følgende plugin-moduler:
@@ -23114,6 +23153,7 @@ PLUGINS_CHANGED_NEED_RESTART
 	ES	Los cambios entrarán en vigor la próxima vez que se reinicie la aplicación. <a href="%s">Haga clic aquí para reiniciar el servidor ahora.</a>
 	FI	Muutokset tulevat voimaan, kun sovellus käynnistetään seuraavan kerran uudestaan. <a href="%s">Käynnistä palvelin uudelleen nyt napsauttamalla tästä.</a>
 	FR	Les modifications seront appliquées au prochain démarrage de l'application.<a href="%s">Cliquez ici pour redémarrer le serveur maintenant.</a>
+	HU	A változások az alkalmazás következő újraindításakor lépnek életbe. <a href="%s">Kérjük, kattintson ide a szerver újraindításához.</a>
 	IT	Le modifiche diventeranno effettive al successivo avvio dell'applicazione. <a href="%s">Fare clic qui per riavviare il server ora.</a>
 	NL	Bij de volgende herstart worden wijzigingen voor deze plug-ins doorgevoerd. <a href="%s">Klik hier om de server nu opnieuw te starten.</a>
 	NO	Endringer trer i kraft neste gang programmet startes på nytt. <a href="%s">Klikk her for å starte serveren på nytt nå.</a>
@@ -23129,6 +23169,7 @@ RESTART_NOW
 	ES	Reiniciar ahora
 	FI	Käynnistä uudelleen
 	FR	Redémarrer maintenant
+	HU	Újraindítás most
 	IT	Riavvia ora
 	NL	Nu herstarten
 	NO	Start på nytt nå
@@ -23144,6 +23185,7 @@ RESTART_LATER
 	ES	Reiniciar más tarde
 	FI	Käynnistä uudelleen myöhemmin
 	FR	Redémarrer ultérieurement
+	HU	Újraindítás később
 	IT	Riavviare in un secondo momento
 	NL	Later herstarten
 	NO	Start på nytt senere
@@ -23159,6 +23201,7 @@ RESTARTING_PLEASE_WAIT
 	ES	 Se está reiniciando Lyrion Music Server. Espere un minuto antes de continuar...
 	FI	 Lyrion Music Server käynnistetään uudelleen. Odota hetki ennen jatkamista...
 	FR	 Le Lyrion Music Server est en cours de redémarrage. Patientez une minute avant de continuer...
+	HU	 A Lyrion Music Server újraindítása folyamatban van. Kérjük, várjon egy percet, mielőtt folytatná...
 	IT	 È in corso il riavvio di Lyrion Music Server. Attendere un momento prima di continuare...
 	NL	 Lyrion Music Server wordt herstart. Wacht even voordat je verdergaat...
 	NO	 Lyrion Music Server startes på nytt. Vent litt før du fortsetter ...
@@ -23174,6 +23217,7 @@ SETUP_VIEW_SCANNING
 	ES	Examen - Ver progreso
 	FI	Etsitään - näytä eteneminen
 	FR	Analyse – Affichage de la progression
+	HU	Szkennelés - A folyamat megtekintése
 	IT	Analisi - Visualizza avanzamento
 	NL	Bezig met scannen - Voortgang bekijken
 	NO	Søker – Vis framdrift
@@ -23189,6 +23233,7 @@ SETUP_VIEW_NOT_SCANNING
 	ES	Ver detalles de examen previos
 	FI	Näytä edellisen tarkistuksen tiedot
 	FR	Afficher les détails de l'analyse précédente
+	HU	Tekintse meg az előző szkennelés részleteit
 	IT	Visualizza dettagli analisi precedente
 	NL	Details van vorige scan bekijken
 	NO	Vis detaljer for forrige søk
@@ -23204,6 +23249,7 @@ CLOSE
 	ES	Cerrar
 	FI	Sulje
 	FR	Fermer
+	HU	Bezás
 	IT	Chiudi
 	NL	Sluiten
 	NO	Lukk
@@ -23219,6 +23265,7 @@ PERSIST_DEBUG_SETTINGS
 	ES	Guardar configuración de registro para utilizarla en el siguiente reinicio de aplicación
 	FI	Tallenna kirjausasetukset käytettäväksi, kun sovellus käynnistetään seuraavaksi uudelleen
 	FR	Enregistrer les réglages de journalisation pour une utilisation au prochain démarrage de l'application
+	HU	Mentse el a naplózási beállításokat az alkalmazás következő újraindításához
 	IT	Salva e utilizza le impostazioni di registrazione al successivo avvio dell'applicazione
 	NL	Loginstellingen opslaan voor gebruik bij volgende applicatieherstart
 	NO	Lagre innstillinger for loggføring og bruk dem ved neste programstart
@@ -23234,6 +23281,7 @@ JIVE_PLAY_ALL_SONGS
 	ES	Reproducir todas las canciones
 	FI	Soita kaikki kappaleet
 	FR	Lire tous les morceaux
+	HU	Az összes zeneszám lejátszása
 	IT	Riproduci tutti i brani
 	NL	Alle nummers afspelen
 	NO	Spill av alle sanger
@@ -23249,6 +23297,7 @@ JIVE_PLAY_ALL
 	ES	Reproducir todo
 	FI	Toista kaikki
 	FR	Tout lire
+	HU	Az összes lejátszása
 	IT	Riproduci tutto
 	NL	Alles afspelen
 	NO	Spill av alle
@@ -23264,6 +23313,7 @@ JIVE_ALL_SONGS
 	ES	Todas las canciones
 	FI	Kaikki kappaleet
 	FR	Tous les morceaux
+	HU	Minden zeneszám
 	IT	Tutti i brani
 	NL	Alle nummers
 	NO	Alle sanger
@@ -23279,6 +23329,7 @@ JIVE_ADD_ALL_SONGS
 	ES	Agregar todas las canciones
 	FI	Lisää kaikki kappaleet
 	FR	Ajouter tous les morceaux
+	HU	Az összes zeneszám hozzáadása
 	IT	Aggiungi tutti i brani
 	NL	Alle nummers toevoegen
 	NO	Legg til alle sanger
@@ -23294,6 +23345,7 @@ JIVE_ADD_ALL
 	ES	Agregar todo
 	FI	Lisää kaikki
 	FR	Tout ajouter
+	HU	Összes hozzáadása
 	IT	Aggiungi tutto
 	NL	Alles toevoegen
 	NO	Legg til alle
@@ -23309,6 +23361,7 @@ JIVE_DELETE_PLAYLIST
 	ES	Eliminar lista de reproducción\n%s
 	FI	Poista soittoluettelo\n%s
 	FR	Supprimer la liste de lecture\n%s
+	HU	Lejátszási lista törlése\n%s
 	IT	Elimina playlist\n%s
 	NL	Afspeellijst verwijderen\n%s
 	NO	Slett spillelisten\n%s
@@ -23326,6 +23379,7 @@ JIVE_DELETE_FROM_FAVORITES
 	FI	Poista suosikki
 	FR	Supprimer les favoris
 	HE	עבור ימינה למחיקה
+	HU	Kedvenc törlése
 	IT	Elimina preferito
 	NL	Favoriet verwijderen
 	NO	Fjern favoritt
@@ -23341,6 +23395,7 @@ JIVE_OVERWRITE_PRESET_X
 	ES	¿Sustituir %s?
 	FI	Korvataanko %s?
 	FR	Voulez-vous remplacer %s ?
+	HU	Lecseréli %s?
 	IT	Sostituire %s?
 	NL	%s vervangen?
 	NO	Vil du erstatte %s?
@@ -23356,6 +23411,7 @@ JIVE_SET_PRESET_X
 	ES	Establecer memoria %s
 	FI	Määritä esiasetus %s
 	FR	Définir la présélection %s
+	HU	Előre beállított %s
 	IT	Imposta preimpostazione %s
 	NL	Voorinstelling %s instellen
 	NO	Angi forhåndsinnstilling %s
@@ -23371,6 +23427,7 @@ JIVE_SET_AS_PRESET
 	ES	Establecer como memoria
 	FI	Määritä esiasetukseksi
 	FR	Définir comme présélection
+	HU	Beállítás előre beállítottként
 	IT	Imposta come predefinito
 	NL	Als voorinstelling instellen
 	NO	Gjør til forhåndsinnstilling
@@ -23387,6 +23444,7 @@ JIVE_SAVE_TO_FAVORITES
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
+	HU	Mentés a Kedvencek közé
 	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
@@ -23402,6 +23460,7 @@ JIVE_ADD_THIS_SONG
 	ES	Agregar a la lista de reproducción actual
 	FI	Lisää nykyiseen soittoluetteloon
 	FR	Ajouter à la liste de lecture en cours
+	HU	Hozzáadás az aktuális lejátszási listához
 	IT	Aggiungi alla playlist corrente
 	NL	Aan huidige afspeellijst toevoegen
 	NO	Legg til i gjeldende spilleliste
@@ -23417,6 +23476,7 @@ JIVE_PLAY_THIS_SONG
 	ES	Reproducir esta canción
 	FI	Soita tämä kappale
 	FR	Lire ce morceau
+	HU	Játzsa le ezt a zeneszámot
 	IT	Riproduci questo brano
 	NL	Dit nummer afspelen
 	NO	Spill denne sangen
@@ -23432,6 +23492,7 @@ ADD_TO_END
 	ES	Agregar al final
 	FI	Lisää loppuun
 	FR	Ajouter à la fin
+	HU	Hozzáadás a végéhez
 	IT	Aggiungi alla fine
 	NL	Aan eind toevoegen
 	NO	Legg til på slutten
@@ -23448,6 +23509,7 @@ SAVE_TO_FAVORITES
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
+	HU	Mentés a Kedvencek közé
 	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
@@ -23463,6 +23525,7 @@ SEARCHFOR_PLAYLISTS
 	ES	Buscar listas de reproducción
 	FI	Etsi soittoluetteloita
 	FR	Rechercher des listes de lecture
+	HU	Lejátszási listák keresése
 	IT	Cerca playlist
 	NL	Naar afspeellijsten zoeken
 	NO	Søk etter spillelister
@@ -23479,6 +23542,7 @@ JIVE_SEARCHFOR_HELP
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para iniciar la búsqueda.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Käynnistä haku painamalla keskipainiketta uudelleen.
 	FR	Utiliser la molette pour choisir une lettre, puis appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
+	HU	Használja a görgőt a betűk megváltoztatásához, majd nyomja meg a középső gombot a betű kiválasztásához. Nyomja meg ismét a középső gombot a keresés elindításához.
 	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per avviare la ricerca.
 	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om je zoekopdracht te starten.
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen på nytt for å starte søket.
@@ -23495,6 +23559,7 @@ JIVE_CHANGEPLAYERNAME_HELP
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para cambiar el nombre del reproductor.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Vaihda soittimen nimi painamalla keskipainiketta uudelleen.
 	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez à nouveau sur le bouton central pour modifier le nom de la platine.
+	HU	Használja a görgőt a betűk megváltoztatásához, majd nyomja meg a középső gombot a betű kiválasztásához. Nyomja meg ismét a középső gombot a lejátszó nevének megváltoztatásához.
 	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per cambiare il nome del lettore.
 	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om de naam van de muziekspeler te wijzigen.
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen igjen for å endre navnet på spilleren.
@@ -23511,6 +23576,7 @@ JIVE_SAVEPLAYLIST_HELP
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionar la deseada. Pulse de nuevo el botón central para guarda la lista de reproducción.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Tallenna soittoluettelo painamalla keskipainiketta uudelleen.
 	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central à nouveau pour enregistrer la liste de lecture.
+	HU	Használja a görgőt a betűk megváltoztatásához, majd nyomja meg a középső gombot a betű kiválasztásához. Nyomja meg ismét a középső gombot a lejátszási lista mentéséhez.
 	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per salvare la playlist.
 	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om de afspeellijst op te slaan.
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen på nytt for å lagre spillelisten.
@@ -23526,6 +23592,7 @@ JIVE_ALLOWEDCHARS_WITHCAPS
 	ES	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FI	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FR	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	HU	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	IT	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NL	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NO	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
@@ -23541,6 +23608,7 @@ JIVE_ALLOWEDCHARS_NOCAPS
 	ES	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FI	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FR	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	HU	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	IT	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NL	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NO	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
@@ -23557,6 +23625,7 @@ JIVE_ALARMSET_HELP
 	ES	Cambie los dígitos del reloj con la rueda de desplazamiento y pulse el botón central para seleccionar el dígito deseado. Pulse el botón central después de introducir la hora para configurar la hora de la alarma.
 	FI	Voit vaihtaa kellon numeroita vierityskiekolla ja valita numeron keskipainikkeella. Paina keskipainiketta, kun olet asettanut herätysajan.
 	FR	Utilisez la molette pour changer les chiffres de l'horloge, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central une fois l'heure sélectionnée pour définir l'heure de l'alarme.
+	HU	Használja a görgőt az óra számjegyeinek megváltoztatásához, majd nyomja meg a középső gombot a számjegy kiválasztásához. Az idő megadása után nyomja meg a középső gombot az ébresztési idő beállításához.
 	IT	Utilizzare la rotellina per cambiare le cifre dell'orario, quindi premere il pulsante centrale per selezionarle. Per impostare la sveglia, premere il pulsante centrale dopo avere inserito l'ora.
 	NL	Gebruik het scrollwiel om klokcijfers te wijzigen. Druk dan op de middelste knop om dat cijfer te selecteren. Nadat de tijd is ingevoerd, druk je op de middelste knop om de alarmtijd in te stellen.
 	NO	Du kan endre klokkesifrene med rullehjulet, og velge tall med midtknappen. Når du har angitt alarmtid, trykker du på midtknappen for å bekrefte den.
@@ -23572,6 +23641,7 @@ JIVE_POPUP_ADDING_TO_PLAYLIST
 	ES	Agregando\n%s\na lista de reproducción...
 	FI	Lisätään\n%s\nsoittoluetteloon...
 	FR	Ajout de\n%s\nà la liste de lecture...
+	HU	Hozzáadás\n%s\nlejátszási listához...
 	IT	Aggiunta di\n%s\nalla playlist in corso...
 	NL	Bezig met toevoegen van\n%s\naan afspeellijst...
 	NO	Legger\n%s\ntil spillelisten...
@@ -23587,6 +23657,7 @@ JIVE_POPUP_ADDING_TO_PLAY_NEXT
 	ES	Agregando\n%s\npara reproducir a continuación...
 	FI	Lisätään\n%s\nsoitettavaksi seuraavaksi...
 	FR	Ajout de\n%s\naprès le morceau en cours...
+	HU	\n%s hozzáadása\na következő lejátszáshoz...
 	IT	Aggiunta di\n%s\ncome brano successivo...
 	NL	Bezig met toevoegen van\n%s\nom als volgende af te spelen...
 	NO	Legger\n%s\ntil som neste spor ...
@@ -23602,6 +23673,7 @@ JIVE_POPUP_ADDING
 	ES	Agregando
 	FI	Lisääminen
 	FR	Ajout
+	HU	Hozzáadás
 	IT	Aggiunta
 	NL	Toevoegen
 	NO	Legger til
@@ -23617,6 +23689,7 @@ JIVE_POPUP_REMOVING
 	ES	Quitando
 	FI	Poistetaan
 	FR	Suppression
+	HU	Removing
 	IT	Rimozione
 	NL	Verwijderen
 	NO	Fjerner
@@ -23632,6 +23705,7 @@ JIVE_POPUP_REMOVING_FROM_PLAYLIST
 	ES	Quitando\n%s\nde la lista de reproducción...
 	FI	Poistetaan\n%s\nsoittoluettelosta...
 	FR	Suppression de\n%s\nde la liste de lecture...
+	HU	\n%s\neltávolítása a lejátszási listáról...
 	IT	Eliminazione di\n%s\ndalla playlist in corso...
 	NL	Bezig met verwijderen van\n%s\nuit afspeellijst...
 	NO	Fjerner\n%s\nfra spillelisten ...
@@ -23647,6 +23721,7 @@ JIVE_POPUP_TO_PLAY_NEXT
 	ES	para reproducir a continuación...
 	FI	soitetaan seuraavaksi...
 	FR	à lire à la suite...
+	HU	játsza le legközelebb...
 	IT	come brano successivo...
 	NL	om als volgende af te spelen...
 	NO	neste låt er...
@@ -23662,6 +23737,7 @@ JIVE_POPUP_TO_PLAYLIST
 	ES	a lista de reproducción...
 	FI	soittoluetteloon...
 	FR	vers la liste de lecture...
+	HU	lejátszási listára...
 	IT	alla playlist in corso...
 	NL	aan afspeellijst...
 	NO	i spilleliste...
@@ -23677,6 +23753,7 @@ JIVE_POPUP_FROM_PLAYLIST
 	ES	de lista de reproducción...
 	FI	soittoluettelosta...
 	FR	à partir de la liste de lecture...
+	HU	a lejátszási listáról...
 	IT	dalla playlist in corso...
 	NL	uit afspeellijst...
 	NO	fra spilleliste...
@@ -23692,6 +23769,7 @@ JIVE_POPUP_NOW_PLAYING
 	ES	Reproducción en curso\n%s
 	FI	Nyt soi\n%s
 	FR	Lecture \n%s en cours
+	HU	Most játszott\n%s
 	IT	Riproduzione in corso di\n%s
 	NL	Speelt nu\n%s
 	NO	Spilles nå\n%s
@@ -23707,6 +23785,7 @@ JIVE_TURN_PLAYER_ON
 	ES	Encender %s
 	FI	Kytke päälle %s
 	FR	Activer %s
+	HU	Kapcsolja be a %s-t
 	IT	Accendi %s
 	NL	%s aanzetten
 	NO	Slå på %s
@@ -23722,6 +23801,7 @@ JIVE_TURN_PLAYER_OFF
 	ES	Apagar %s
 	FI	Sammuta %s
 	FR	Désactiver %s
+	HU	Kapcsolja ki a %s-t
 	IT	Spegni %s
 	NL	%s uitzetten
 	NO	Slå av %s
@@ -23737,6 +23817,7 @@ PLAYER_NAME
 	ES	Nombre
 	FI	Nimi
 	FR	Nom
+	HU	Név
 	IT	Nome
 	NL	Naam
 	NO	Navn
@@ -23752,6 +23833,7 @@ JIVE_PLAYER_MODEL
 	ES	Modelo
 	FI	Malli
 	FR	Modèle
+	HU	Modell
 	IT	Modello
 	NL	Model
 	NO	Modell
@@ -23767,6 +23849,7 @@ JIVE_PLAYER_FIRMWARE_VERSION
 	ES	Versión de FW
 	FI	FW-versio
 	FR	Version FW
+	HU	FW verzió
 	IT	Versione FW
 	NL	Firmware-versie
 	NO	Fastvareversjon
@@ -23782,6 +23865,7 @@ CANCEL
 	ES	Cancelar
 	FI	Peruuta
 	FR	Annuler
+	HU	Mégse
 	IT	Annulla
 	NL	Annuleren
 	NO	Avbryt
@@ -23797,6 +23881,7 @@ INSERT
 	ES	Insertar
 	FI	Lisää
 	FR	Insérer
+	HU	Beszúrás
 	IT	Inserisci
 	NL	Invoegen
 	NO	Sett inn
@@ -23812,6 +23897,7 @@ SEEK_ERROR_MMS
 	ES	Imposible desplazarse en esta secuencia WMA
 	FI	Ei voi hakea tästä WMA-virrasta
 	FR	Impossible de rechercher dans ce flux WMA
+	HU	Nem lehet keresni ebben a WMA adatfolyamban
 	IT	Impossibile eseguire ricerca in questo stream WMA
 	NL	Kan niet zoeken in deze WMA-stream
 	NO	Kan ikke søke i denne wma-strømmen
@@ -23827,6 +23913,7 @@ SEEK_ERROR_LIVE
 	ES	Imposible desplazarse en secuencia en directo
 	FI	Ei voi hakea suorasta virrasta
 	FR	Impossible de rechercher dans un flux en direct
+	HU	Nem lehet élő közvetítésben keresni
 	IT	Impossibile eseguire ricerca negli stream in diretta
 	NL	Kan niet zoeken in deze live-stream
 	NO	Kan ikke søke i direktesendt strøm
@@ -23842,6 +23929,7 @@ SEEK_ERROR_MP3
 	ES	No puede desplazarse por esta secuencia MP3
 	FI	Ei voi hakea tästä MP3-virrasta
 	FR	Impossible de rechercher dans ce flux MP3
+	HU	Nem lehet keresni ebben az MP3 adatfolyamban
 	IT	Impossibile eseguire ricerche in questo stream MP3
 	NL	Kan niet zoeken in deze MP3-stream
 	NO	Kan ikke søke i denne mp3-strømmen
@@ -23857,6 +23945,7 @@ SEEK_ERROR_MP3_UNKNOWN_BITRATE
 	ES	Imposible desplazarse con velocidad de bits desconocida
 	FI	Ei voi etsiä, kun bittinopeutta ei tunneta
 	FR	Impossible de rechercher avec un débit binaire inconnu
+	HU	Ismeretlen bitrátával nem lehet keresni
 	IT	Impossibile eseguire ricerca con bitrate sconosciuto
 	NL	Kan niet zoeken met onbekende bitsnelheid
 	NO	Kan ikke søke med ukjent bithastighet
