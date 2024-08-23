@@ -23961,6 +23961,7 @@ SEEK_ERROR_MP3_UNKNOWN_DURATION
 	ES	Imposible desplazarse con duración desconocida
 	FI	Ei voi etsiä, kun kestoa ei tunneta
 	FR	Impossible de rechercher avec une durée inconnue
+	HU	Nem kereshet ismeretlen időtartammal
 	IT	Impossibile eseguire ricerca con durata sconosciuta
 	NL	Kan niet zoeken met onbekende duur
 	NO	Kan ikke søke med ukjent varighet
@@ -23972,10 +23973,11 @@ SEEK_ERROR_TYPE_NOT_SUPPORTED
 	CS	Nelze hledat v datových proudech typu %s
 	DA	Der kan ikke søges i en stream af typen %s
 	DE	Suchlauf in Streams des Typs %s nicht möglich
-	EN	Cannot seek in streams of type %s
+	EN	Nem lehet keresni a %s típusú adatfolyamokban
 	ES	Imposible desplazarse en secuencias del tipo %s
 	FI	Ei voi hakea virroista, jotka ovat tyyppiä %s
 	FR	Impossible de rechercher dans les flux de type %s
+	HU	Nem lehet keresni a %s típusú adatfolyamokban
 	IT	Impossibile eseguire ricerca negli stream del tipo %s
 	NL	Kan niet zoeken in streams van type %s
 	NO	Kan ikke søke i strømmer av typen %s
@@ -23991,6 +23993,7 @@ SEEK_ERROR_REMOTE
 	ES	No se pueden examinar las pistas remotas
 	FI	Etäraitoja ei voi etsiä
 	FR	Impossible d'analyser des pistes distantes
+	HU	Nem lehet beolvasni a távoli műsorszámokat
 	IT	Impossibile analizzare brani remoti
 	NL	Kan niet door externe nummers scannen
 	NO	Kan ikke søke på eksterne spor
@@ -24006,6 +24009,7 @@ SEEK_ERROR_TRANSCODED
 	ES	No se puede examinar la pista transcodificada
 	FI	Koodattuja kappaleita ei voi etsiä
 	FR	Impossible d'analyser une piste transcodée
+	HU	Nem lehet beolvasni az átkódolt sávot
 	IT	Impossibile analizzare brani transcodificati
 	NL	Kan niet door getranscodeerd nummer scannen
 	NO	Kan ikke søke på transkodet spor
@@ -24021,6 +24025,7 @@ SCANNER_REMOTE_NO_URL_PROVIDED
 	ES	No se puede realizar el examen: no se ha encontrado la URL
 	FI	Ei voi hakea: URL:ää ei löytynyt
 	FR	Impossible d'analyser : l'URL est introuvable
+	HU	Nem lehet beolvasni: Nem található URL
 	IT	Impossibile eseguire analisi: URL non trovato
 	NL	Kan niet scannen: geen URL gevonden
 	NO	Kan ikke søke: Finner ingen url
@@ -24036,6 +24041,7 @@ SCANNER_REMOTE_INVALID_URL
 	ES	No se puede realizar el examen: URL no váida
 	FI	Ei voi hakea: URL ei kelpaa
 	FR	Impossible d'analyser : l'URL n'est pas valide
+	HU	Nem lehet beolvasni: Érvénytelen URL
 	IT	Impossibile eseguire analisi: URL non valido
 	NL	Kan niet scannen: ongeldige URL
 	NO	Kan ikke søke: Ugyldig url
@@ -24051,6 +24057,7 @@ SCANNER_REMOTE_NESTED_TOO_DEEP
 	ES	No puede realizar el examen: la anidación de la lista de reproducción es demasiado profunda
 	FI	Ei voi hakea: soittoluettelossa on liikaa sisäkkäisiä luetteloita
 	FR	Impossible d'analyser : la liste de lecture est emboîtée trop profondément
+	HU	Nem lehet beolvasni: A lejátszási lista túl mélyen van beágyazva
 	IT	Impossibile eseguire l'analisi: la playlist contiene troppe nidificazioni
 	NL	Kan niet scannen: afspeellijst te diep genest
 	NO	Kan ikke søke: Spillelisten ligger for langt nede
@@ -24066,6 +24073,7 @@ RECENT_SEARCHES
 	ES	Búsquedas recientes
 	FI	Viimeisimmät haut
 	FR	Recherches récentes
+	HU	Legutóbbi keresések
 	IT	Ricerche recenti
 	NL	Recente zoekopdrachten
 	NO	Nylige søk
@@ -24078,6 +24086,7 @@ SAVED_SEARCH
 	DE	Gespeicherte Suche
 	EN	Saved Search
 	FR	Recherches enregistrées
+	HU	Mentett keresés
 	NL	Opgeslagen zoekopdracht
 	NO	Lagret søk
 	SV	Sparad sökning
@@ -24090,6 +24099,7 @@ ALBUMS_SORT_METHOD
 	ES	Método de ordenación de álbumes
 	FI	Levyjen lajittelutapa
 	FR	Méthode de tri des albums
+	HU	Albumok rendezési módja
 	IT	Metodo ordinamento album
 	NL	Sorteermethode voor albums
 	NO	Albumsortering
@@ -24105,6 +24115,7 @@ UPDATING_DSP
 	ES	Actualizando DSP...
 	FI	Päivitetään DSP...
 	FR	Mise à jour DSP...
+	HU	DSP frissítése...
 	IT	Aggiornamento di DSP...
 	NL	Bezig met updaten van DSP...
 	NO	Oppdaterer DSP ...
@@ -24120,6 +24131,7 @@ UPDATE_DSP_FAILURE_RESTORE
 	ES	Error al actualizar. Restaurando valores predeterminados
 	FI	Päivitys epäonnistui, palautetaan oletus
 	FR	Echec de la mise à jour ; restauration des paramètres par défaut.
+	HU	A frissítés nem sikerült! Alapértelmezés visszaállítása
 	IT	Aggiornamento non riuscito; verrà ripristinato il valore predefinito
 	NL	Update mislukt! Standaardinstelling wordt hersteld
 	NO	Oppdatering mislyktes, gjenoppretter standard
@@ -24135,6 +24147,7 @@ UNMIXABLE
 	ES	%s no disponible para este elemento
 	FI	%s ei ole käytettävissä tälle kohteelle
 	FR	%s n'est pas disponible pour cet élément
+	HU	%s nem érhető el ehhez az elemhez
 	IT	%s non disponibile per questo elemento
 	NL	%s niet beschikbaar voor dit item
 	NO	%s er ikke tilgjengelig for dette elementet
@@ -24150,6 +24163,7 @@ NO_MIXERS_AVAILABLE
 	ES	No hay mezcladores disponibles
 	FI	Miksereitä ei ole käytettävissä
 	FR	Aucun mixeur disponible
+	HU	Nem állnak rendelkezésre keverők
 	IT	Nessuna raccolta disponibile
 	NL	Geen mixers beschikbaar
 	NO	Ingen miksere tilgjengelig
@@ -24165,6 +24179,7 @@ PLAYER_BRIGHTNESS
 	ES	Brillo de reproductor
 	FI	Soittimen kirkkaus
 	FR	Luminosité de la platine
+	HU	Lejátszó fényereje
 	IT	Luminosità lettore
 	NL	Helderheid van muziekspeler
 	NO	Lysstyrke på spiller
@@ -24180,6 +24195,7 @@ MOREINFO
 	ES	Más información
 	FI	Lisätietoja
 	FR	Plus d'infos
+	HU	További információ
 	IT	Ulteriori informazioni
 	NL	Meer informatie
 	NO	Mer informasjon
@@ -24195,6 +24211,7 @@ SETUP_SHOWCOUNT
 	ES	Mostrar recuento de menú
 	FI	Näytä paikka valikossa
 	FR	Afficher la position dans le menu
+	HU	Menüszám megjelenítése
 	IT	Mostra num. voci menu
 	NL	Toon positie in menu
 	NO	Vis antall menyelementer
@@ -24210,6 +24227,7 @@ SETUP_SHOWCOUNT_DESC
 	ES	Puede elegir si desea que siempre se muestre la posición en el menú o si desea que se muestre sólo al desplazarse por los elementos del menú. La posición se muestra en el formato 1 de 6, lo cual indica que se encuentra en el primer elemento de una lista de 6 elementos.
 	FI	Voit valita, näytetäänkö paikka valikossa aina vai ainoastaan valikoissa liikuttaessa. Paikka esitetään muodossa 1/6, joka osoittaa ensimmäistä kuudesta valikkokohteesta.
 	FR	Vous pouvez choisir de toujours afficher la position dans le menu ou de ne l'afficher que lorsque vous faites défiler les éléments du menu. La position s'affiche au format 1 sur 6, indiquant le premier élément d'une liste de 6 éléments.
+	HU	Kiválaszthatja, hogy a pozíció mindig megjelenjen-e a menüben, vagy csak a menüelemek görgetése közben. A pozíció 1/6 formátumban jelenik meg, ami a 6 elemből álló menülista első elemét jelzi.
 	IT	È possibile specificare se si desidera visualizzare sempre la posizione all'interno del menu oppure solo quando si scorrono le voci di menu. La posizione viene visualizzata nel formato 1 di 6, a indicare la prima di sei voci contenute nel menu.
 	NL	Je kunt de positie in het menu altijd tonen of alleen terwijl je door menuopties scrolt. De positie wordt in de notatie 1 van 6 aangegeven, wat wil zeggen dat het de eerste optie in een menu met 6 opties is.
 	NO	Du kan velge om plasseringen i menyen skal vises hele tiden, eller bare vises når du blar gjennom menyelementer. Plasseringen vises i formatet 1 til 6, som indikerer det første elementet i en meny med seks elementer.
@@ -24225,6 +24243,7 @@ SETUP_SHOWCOUNT_ALWAYS
 	ES	Mostrar siempre
 	FI	Näytä aina
 	FR	Toujours afficher
+	HU	Mindig látszik
 	IT	Mostra sempre
 	NL	Altijd tonen
 	NO	Vis alltid
@@ -24240,6 +24259,7 @@ SETUP_SHOWCOUNT_TEMP
 	ES	Al desplazarse
 	FI	Vierityksen aikana
 	FR	Lors du défilement
+	HU	Görgetés közben
 	IT	Durante scorrimento
 	NL	Tijdens scrollen
 	NO	Ved rulling
@@ -24255,6 +24275,7 @@ SETUP_MAXPLAYLISTLENGTH
 	ES	Longitud máxima de la lista de reproducción
 	FI	Soittoluettelon enimmäispituus
 	FR	Longueur maximale de la liste de lecture
+	HU	Maximális lejátszási lista hossza
 	IT	Lunghezza massima playlist
 	NL	Maximumlengte van afspeellijst
 	NO	Makslengde for spilleliste
@@ -24270,6 +24291,7 @@ SETUP_MAXPLAYLISTLENGTH_DESC
 	ES	Para proteger el servidor contra el uso excesivo de memoria se puede restringir la longitud máxima de una lista de reproducción, incluida la lista Reproduciendo. Si el valor es 0, no hay restricción. Si la hay, el valor mínimo es 10.
 	FI	Jotta palvelimen muistia ei kuormiteta liikaa, soittoluettelon enimmäispituutta voidaan rajoittaa, mukaan luettuna Nyt soi -soittoluettelo. Jos arvo on 0, pituutta ei ole rajoitettu. Jos arvo annetaan, pienin sallittu on 10.
 	FR	La taille maximale de la liste de lecture, y compris de la liste de lecture en cours, peut être limitée afin de prévenir toute utilisation excessive de la mémoire système. La valeur 0 indique qu'aucune restriction n'est appliquée. La valeur minimale est de 10.
+	HU	Annak érdekében, hogy megvédje a szervert a túl sok memóriahasználat ellen, korlátozhatja a lejátszási lista maximális hosszát, beleértve a Most játszott lejátszási listát is. A 0 érték azt jelenti, hogy nincs korlátozás. Ha be van állítva, akkor a minimális érték 10.
 	IT	Per evitare un uso eccessivo di memoria del server, è possibile limitare la lunghezza massima delle playlist, incluse quelle in Riproduzione in corso. Con il valore 0 non si impone alcun limite. Se si imposta un limite, il valore minimo è 10.
 	NL	Om de server tegen hoog geheugengebruik te beschermen, kan de maximumlengte van een afspeellijst worden beperkt, inclusief de afspeellijst Speelt nu. De waarde 0 betekent dat er geen beperking geldt. Indien ingesteld, is de minimumwaarde 10.
 	NO	Makslengden for spillelister kan begrenses, inkludert Spilles nå-listen, for å beskytte serveren mot overdreven minnebruk. Verdien 0 angir ingen begrensning. Hvis en begrensning angis, er minimumsverdien 10.
@@ -24285,6 +24307,7 @@ ERROR_PLAYLIST_FULL
 	ES	Lista de reproducción llena; no se han agregado pistas
 	FI	Soittoluettelo on täynnä; raitoja ei lisätty
 	FR	La liste de lecture est pleine ; aucune piste n'a été ajoutée
+	HU	A lejátszási lista megtelt; nem iskerült hozzáadni újakat
 	IT	Playlist piena. Nessun brano aggiunto.
 	NL	Afspeellijst vol; geen nummers toegevoegd
 	NO	Spillelisten er full, ingen spor ble lagt til
@@ -24300,6 +24323,7 @@ ERROR_PLAYLIST_ALMOST_FULL
 	ES	Lista de reproducción llena: %s de %s pistas agregadas
 	FI	Soittoluettelo on täynnä: lisättiin %s/%s raitaa
 	FR	Liste de lecture pleine : %s pistes sur %s ont été ajoutées
+	HU	Lejátszási lista megtelt: %s/%s szám hozzáadva
 	IT	Playlist piena: aggiunti %s di %s brani
 	NL	Afspeellijst vol: %s van %s nummers toegevoegd
 	NO	Spillelisten er full: %s av %s spor lagt til
@@ -24316,6 +24340,7 @@ SQUEEZEBOX_SERVER_CONNECT
 	FI	Muodosta yhteys Lyrion Music Serveriin
 	FR	Se connecter au Lyrion Music Server
 	HE	התחבר ל-Lyrion Music Server
+	HU	Csatlakozás a Lyrion Music Serverhez
 	IT	Connetti a Lyrion Music Server
 	NL	Verbinding maken met Lyrion Music Server
 	NO	Kople til Lyrion Music Server
@@ -24331,6 +24356,7 @@ SQUEEZEBOX_SERVER_CONNECT_ABBR
 	ES	Lyrion Music Server
 	FI	Lyrion Music Server
 	FR	Lyrion Music Server
+	HU	Lyrion Music Server
 	IT	Lyrion Music Server
 	NL	Lyrion Music Server
 	NO	Lyrion Music Server
@@ -24346,6 +24372,7 @@ CLOCK
 	ES	Reloj
 	FI	Kello
 	FR	Horloge
+	HU	Óra
 	IT	Orologio
 	NL	Klok
 	NO	Klokke
@@ -24361,6 +24388,7 @@ BACKUP_ALARM
 	ES	Alarma de emergencia
 	FI	Varahälytys
 	FR	Alarme de secours
+	HU	Biztonsági riasztás
 	IT	Sveglia di backup
 	NL	Back-upwekker
 	NO	Ekstravekking
@@ -24376,6 +24404,7 @@ CONTROLPANEL_TITLE
 	ES	Panel de control de Lyrion Music Server
 	FI	Lyrion Music Serverin ohjauspaneeli
 	FR	Panneau de configuration du Lyrion Music Server
+	HU	Lyrion Music Server vezérlőpult
 	IT	Pannello di controllo di Lyrion Music Server
 	NL	Lyrion Music Server-configuratiescherm
 	NO	Kontrollpanel for Lyrion Music Server
@@ -24392,6 +24421,7 @@ CONTROLPANEL_SERVERSTATUS
 	FI	Tila
 	FR	Etat
 	HE	מצב
+	HU	Státusz
 	IT	Stato
 	JA	ステータス
 	NL	Status
@@ -24408,6 +24438,7 @@ CONTROLPANEL_STATUS_RUNNING
 	ES	Estado: el servidor está en ejecución
 	FI	Tila: palvelin on käynnissä
 	FR	Etat : le serveur est en cours d'exécution.
+	HU	Állapot: A szerver fut
 	IT	Stato: il server è in esecuzione
 	NL	Status: De server is actief
 	NO	Status: Serveren kjører
@@ -24423,6 +24454,7 @@ CONTROLPANEL_STATUS_STARTING
 	ES	Estado: el servidor está iniciando
 	FI	Tila: palvelin on käynnistymässä
 	FR	Etat : le serveur est en cours de démarrage.
+	HU	Állapot: A szerver elindul
 	IT	Stato: il server si sta avviando
 	NL	Status: De server wordt gestart
 	NO	Status: Serveren starter opp
@@ -24438,6 +24470,7 @@ CONTROLPANEL_STATUS_STOPPED
 	ES	Estado: el servidor está detenido
 	FI	Tila: palvelin on pysäytetty
 	FR	Etat : le serveur est arrêté.
+	HU	Állapot: A szerver leállt
 	IT	Stato: il server è stato arrestato
 	NL	Status: De server is gestopt
 	NO	Status: Serveren er stoppet
@@ -24453,6 +24486,7 @@ CONTROLPANEL_ACCOUNT
 	ES	Cuenta
 	FI	Tili
 	FR	Compte
+	HU	Fiók
 	IT	Account
 	NL	Account
 	NO	Konto
@@ -24468,6 +24502,7 @@ CONTROLPANEL_STARTUP_OPTIONS
 	ES	Opciones de inicio
 	FI	Käynnistysasetukset
 	FR	Options de démarrage
+	HU	Indítási lehetőségek
 	IT	Opzioni di avvio
 	NL	Opstartopties
 	NO	Oppstartsalternativer
@@ -24483,6 +24518,7 @@ CONTROLPANEL_MUSIC_LIBRARY
 	ES	Biblioteca
 	FI	Kirjasto
 	FR	Bibliothèque
+	HU	Könyvtár
 	IT	Libreria
 	NL	Bibliotheek
 	NO	Bibliotek
@@ -24498,6 +24534,7 @@ CONTROLPANEL_AUTHENTICATION_REQUIRED
 	ES	El acceso a Lyrion Music Server requiere autenticación
 	FI	Lyrion Music Serverin käyttö vaatii todennuksen
 	FR	Une authentification est requise pour accéder au Lyrion Music Server
+	HU	A Lyrion Music Server eléréséhez hitelesítés szükséges
 	IT	Per accedere a Lyrion Music Server è necessario eseguire l'autenticazione
 	NL	Verificatie vereist voor toegang tot Lyrion Music Server
 	NO	Det kreves godkjenning for å få tilgang til Lyrion Music Server
@@ -24513,6 +24550,7 @@ CONTROLPANEL_WEB_UI
 	ES	Interfaz basada en Web
 	FI	Internet-pohjainen käyttöliittymä
 	FR	Interface Web
+	HU	Web alapú felület
 	IT	Interfaccia basata su Web
 	NL	Webinterface
 	NO	Nettbasert grensesnitt
@@ -24528,6 +24566,7 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	ES	Control remoto por Web
 	FI	Kauko-ohjaus
 	FR	Commande Web
+	HU	Webes távirányító
 	IT	Controllo remoto Web
 	NL	Afstandsbediening voor web
 	NO	Fjernkontroll
@@ -24543,6 +24582,7 @@ CONTROLPANEL_TRAY_DOUBLECLICK_WEB
 	ES	Abrir el Control remoto por Web haciendo doble clic en el icono de la bandeja
 	FI	Avaa WWW-etähallinta kaksoisnapsauttamalla ilmaisinalueen kuvaketta
 	FR	Ouvrir la commande Web en cliquant deux fois sur l'icône de la barre d'état
+	HU	Megnyitja a Webes távvezérlőt, ha duplán kattint a tálca ikonjára
 	IT	Aprire Controllo remoto Web facendo doppio clic sull'icona nell'area di notifica
 	NL	Open web-afstandsbediening door te dubbelklikken op het pictogram in het systeemvak
 	NO	Åpne Fjernkontroll ved dobbeltklikk på ikonet i systemstatusfeltet
@@ -24558,6 +24598,7 @@ CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
 	ES	Abrir el Panel de control haciendo doble clic en el icono de la bandeja
 	FI	Avaa Ohjauspaneeli kaksoisnapsauttamalla ilmaisinalueen kuvaketta
 	FR	Ouvrir le panneau de configuration en cliquant deux fois sur l'icône de la barre d'état
+	HU	Megnyitja a Vezérlőpultot, ha duplán kattint a tálca ikonjára
 	IT	Aprire il pannello di controllo facendo doppio clic sull'icona nell'area di notifica
 	NL	Open het configuratiescherm door te dubbelklikken op het pictogram in het systeemvak
 	NO	Åpne kontrollpanelet ved dobbeltklikk på ikonet i systemstatusfeltet
@@ -24573,6 +24614,7 @@ CONTROLPANEL_ADVANCED_SETTINGS_DESC
 	ES	Configuración avanzada
 	FI	Lisäasetukset
 	FR	Paramètres avancés
+	HU	Speciális beállítások
 	IT	Impostazioni avanzate
 	NL	Geavanceerde instellingen
 	NO	Avanserte innstillinger
@@ -24588,6 +24630,7 @@ CONTROLPANEL_LOGFILES
 	ES	Archivos de registro
 	FI	Lokitiedostot
 	FR	Fichiers journaux
+	HU	Naplófájlok
 	IT	File di registro
 	NL	Logboeken
 	NO	Loggfiler
@@ -24599,10 +24642,11 @@ CONTROLPANEL_SHOW_SERVER_LOG
 	CS	Zobrazit protokol serveru
 	DA	Vis serverlogfil
 	DE	Serverprotokoll anzeigen
-	EN	Show server log
+	EN	Szervernapló megjelenítése
 	ES	Mostrar registro de servidor
 	FI	Näytä palvelimen loki
 	FR	Afficher le journal du serveur
+	HU	Szervernapló megjelenítése
 	IT	Mostra registro del server
 	NL	Serverlogboek weergeven
 	NO	Vis serverlogg
@@ -24618,6 +24662,7 @@ CONTROLPANEL_SHOW_SCANNER_LOG
 	ES	Mostrar registro de examen
 	FI	Näytä tarkistuksen loki
 	FR	Afficher le journal de l'analyseur
+	HU	Szkennernapló megjelenítése
 	IT	Mostra registro analisi
 	NL	Scannerlogboek weergeven
 	NO	Vis søkelogg
@@ -24633,6 +24678,7 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	ES	Hay disponible una versión actualizada de Lyrion Music Server y está lista para instalar.
 	FI	Lyrion Music Serverin päivitetty versio on käytettävissä ja valmiina asennusta varten.
 	FR	Une nouvelle version du Lyrion Music Server est disponible et prête à l'installation.
+	HU	Elérhető a Lyrion Music Server frissített verziója, amely készen áll a telepítésre.
 	IT	È disponibile una versione aggiornata di Lyrion Music Server, pronta per essere installata.
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar voor installatie.
 	NO	En oppdatert versjon av Lyrion Music Server er tilgjengelig og klar til installering.
@@ -24648,6 +24694,7 @@ PREFPANE_UPDATE_AVAILABLE
 	ES	Hay disponible una versión actualizada de Lyrion Music Server y está lista para instalar. Visite Lyrion Music Server en Preferencias del sistema para iniciar la actualización.
 	FI	Lyrion Music Serverin päivitetty versio on käytettävissä ja valmiina asennusta varten. Käynnistä päivitys Lyrion Music Server -kohdassa järjestelmäasetuksissa.
 	FR	Une version mise à jour du Lyrion Music Server est disponible et peut être installée. Accédez à Lyrion Music Server dans les Préférences système pour démarrer la mise à niveau.
+	HU	Elérhető a Lyrion Music Server frissített verziója, amely készen áll a telepítésre. A frissítés megkezdéséhez keresse fel a Lyrion Music Servert a Rendszerbeállításokban.
 	IT	È disponibile una versione aggiornata di Lyrion Music Server, pronta per essere installata. Per avviare l'aggiornamento, accedere a Lyrion Music Server in Preferenze di Sistema.
 	NL	Nieuwe versie van Lyrion Music Server is beschikbaar voor installatie. Ga naar Lyrion Music Server in Systeemvoorkeuren om de upgrade te starten.
 	NO	En oppdatert versjon av Lyrion Music Server er tilgjengelig og klar til installering. Du kan starte oppgraderingen fra Lyrion Music Server i Systemvalg.
@@ -24663,6 +24710,7 @@ CONTROLPANEL_NO_UPDATE_AVAILABLE
 	ES	No hay disponible ninguna versión actualizada de Lyrion Music Server.
 	FI	Lyrion Music Serveristä ei ole saatavilla päivitettyä versiota.
 	FR	Aucune nouvelle version du Lyrion Music Server n'est disponible.
+	HU	Nem érhető el frissített Lyrion Music Server verzió.
 	IT	Non è disponibile alcuna versione aggiornata di Lyrion Music Server.
 	NL	Geen nieuwe versie van Lyrion Music Server beschikbaar.
 	NO	Det finnes ingen oppdatert versjon av Lyrion Music Server tilgjengelig.
@@ -24678,6 +24726,7 @@ CONTROLPANEL_CHECK_UPDATE
 	ES	Buscar actualización
 	FI	Etsi päivityksiä
 	FR	Rechercher les mises à jour
+	HU	Frissítések ellenőrzése
 	IT	Verifica disponibilità aggiornamenti
 	NL	Op update controleren
 	NO	Se etter oppdatering
@@ -24693,6 +24742,7 @@ CONTROLPANEL_DOWNLOAD_UPDATE
 	ES	Descargar actualización
 	FI	Lataa päivitys
 	FR	Télécharger la mise à jour
+	HU	Frissítés letöltése
 	IT	Scarica aggiornamento
 	NL	Update downloaden
 	NO	Last ned oppdatering
@@ -24708,6 +24758,7 @@ CONTROLPANEL_INSTALL_UPDATE
 	ES	Instalar actualización
 	FI	Asenna päivitys
 	FR	Installer la mise à jour
+	HU	Frissítés telepítése
 	IT	Installa aggiornamento
 	NL	Update installeren
 	NO	Installer oppdatering
@@ -24723,6 +24774,7 @@ CONTROLPANEL_MAINTENANCE
 	ES	Mantenimiento
 	FI	Huolto
 	FR	Entretien
+	HU	Karbantartás
 	IT	Manutenzione
 	NL	Onderhoud
 	NO	Vedlikehold
@@ -24738,6 +24790,7 @@ CONTROLPANEL_DIAGNOSTICS
 	ES	Diagnósticos
 	FI	Diagnostiikka
 	FR	Diagnostic
+	HU	Diagnosztika
 	IT	Diagnostica
 	NL	Diagnose
 	NO	Diagnose
@@ -24753,6 +24806,7 @@ CONTROLPANEL_PORTNO
 	ES	Puerto %s (%s):
 	FI	Portti %s (%s):
 	FR	Port %s (%s) :
+	HU	%s port (%s) :
 	IT	Porta %s (%s):
 	NL	Poort %s (%s):
 	NO	Port %s (%s):
@@ -24768,6 +24822,7 @@ CONTROLPANEL_PING
 	ES	Ping:
 	FI	Ping:
 	FR	Ping :
+	HU	Ping:
 	IT	Ping:
 	NL	Ping:
 	NO	Ping:
@@ -24783,6 +24838,7 @@ CONTROLPANEL_FAILED
 	ES	Fallo
 	FI	Epäonnistui
 	FR	Echec
+	HU	Sikertelen
 	IT	Non riuscito
 	NL	Mislukt
 	NO	Mislyktes
@@ -24798,6 +24854,7 @@ CONTROLPANEL_OK
 	ES	Correcto
 	FI	OK
 	FR	OK
+	HU	Rendben
 	IT	OK
 	NL	OK
 	NO	OK
@@ -24813,6 +24870,7 @@ CONTROLPANEL_ALERTS
 	ES	Alertas
 	FI	Hälytykset
 	FR	Alertes
+	HU	Figyelmeztetések
 	IT	Avvisi
 	NL	Waarschuwingen
 	NO	Varsler
@@ -24828,6 +24886,7 @@ CONTROLPANEL_PORTCONFLICT
 	ES	Lyrion Music Server no está en ejecución, pero alguna aplicación está usando el mismo puerto (%s).
 	FI	Lyrion Music Server ei ole käynnissä, mutta jokin sovellus käyttää samaa porttia (%s).
 	FR	Le Lyrion Music Server n'est pas en cours d'exécution, mais une application utilise actuellement le même port (%s).
+	HU	A Lyrion Music Server nem fut, de néhány alkalmazás ugyanazt a portot (%s) használja.
 	IT	Lyrion Music Server non è in esecuzione ma qualche applicazione sta utilizzando la stessa porta (%s).
 	NL	Lyrion Music Server is niet actief. Poort (%s) wordt door een andere applicatie gebruikt.
 	NO	Lyrion Music Server kjører ikke, men et annet program bruker samme port (%s).
@@ -24843,6 +24902,7 @@ CONTROLPANEL_PORTBLOCKED
 	ES	Lyrion Music Server está en ejecución pero no se puede contactar con él en el puerto %s.
 	FI	Lyrion Music Server on käynnissä, mutta siihen ei saada yhteyttä portissa %s.
 	FR	Le Lyrion Music Server est en cours d'exécution mais ne peut être contacté sur le port %s.
+	HU	A Lyrion Music Server fut, de nem érhető el a %s porton.
 	IT	Lyrion Music Server è in esecuzione ma non può essere contattato sulla porta %s
 	NL	Lyrion Music Server wordt uitgevoerd maar is niet toegankelijk via poort %s.
 	NO	Lyrion Music Server kjører, men kan ikke kontaktes på port %s
@@ -24858,6 +24918,7 @@ CONTROLPANEL_PORTBLOCKED_APPS
 	ES	Es posible que las aplicaciones siguientes estén bloqueando la conexión:
 	FI	Seuraavat sovellukset saattavat estää yhteyden:
 	FR	Les applications suivantes sont susceptibles de bloquer votre connexion :
+	HU	Lehetséges, hogy a következő alkalmazások blokkolják a kapcsolatot:
 	IT	Le seguenti applicazioni potrebbero bloccare la connessione:
 	NL	Jouw verbinding wordt mogelijk door de volgende applicaties geblokkeerd:
 	NO	Følgende programmer blokkerer kanskje tilkoplingen:
@@ -24873,6 +24934,7 @@ CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
 	ES	Si surgen problemas de conectividad con Lyrion Music Server, asegúrese de que la opción "Stateful Firewall (Always On)" está desactivada
 	FI	Jos Lyrion Music Serverin kanssa on yhteysongelmia, varmista, että Tilallinen palomuuri (aina käytössä) -valinta ei ole valittuna.
 	FR	Si vous rencontrez des problèmes de connectivité avec le Lyrion Music Server, vérifiez que l'option "Pare-feu stateful (toujours activé)" est désactivée.
+	HU	Ha kapcsolódási problémákat tapasztal a Lyrion Music Serverrel, kérjük, győződjön meg arról, hogy az „Állapotfüggő tűzfal (mindig bekapcsolva)” ki van kapcsolva
 	IT	In caso di problemi di connessione con Lyrion Music Server, verificare che il firewall con stato sia disattivato.
 	NL	Ondervind je verbindingsproblemen met Lyrion Music Server, zorg dan dat 'Stateful Firewall (Altijd aan)' is uitgeschakeld
 	NO	Hvis du har tilkoplingsproblemer med Lyrion Music Server, må du sørge for at "Tilstandsbevisst brannmur (Alltid på)" er slått av
@@ -24884,10 +24946,11 @@ CONTROLPANEL_CONFLICT_SCPERL
 	CS	Pokud provozujete Lyrion Music Server s použitím verze Perlu, pak je to v pořádku a očekáváno.
 	DA	Hvis du kører Lyrion Music Server i Perl-versionen, er det OK og forventet.
 	DE	Das Ausführen von Lyrion Music Server mithilfe der Perl-Version wird akzeptiert und erwartet.
-	EN	If you're running Lyrion Music Server using the perl version, then this is ok and expected.
+	EN	Ha a Lyrion Music Servert perl verzióval futtatod, akkor ez rendben van és várható.
 	ES	Si ejecuta Lyrion Music Server con la versión perl, es correcto y está previsto.
 	FI	Jos Lyrion Music Server on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
 	FR	Si vous exécutez Lyrion Music Server à l'aide de la version perl, cet événement est attendu.
+	HU	Ha a Lyrion Music Servert perl verzióval fut, akkor ez rendben van.
 	IT	Se è in esecuzione la versione Perl di Lyrion Music Server, il problema non sussiste.
 	NL	Als je Lyrion Music Server met de perl-versie uitvoert, is dit normaal gedrag.
 	NO	Hvis du kjører Lyrion Music Server med perl-versjonen, er dette greit og forventet.
@@ -24903,6 +24966,7 @@ CONTROLPANEL_OTHER_ISSUE
 	ES	Encontrado posible conflicto de software
 	FI	Löytyi mahdollinen ohjelmiston ristiriita
 	FR	Conflit logiciel possible détecté
+	HU	Lehetséges szoftverütközés található
 	IT	Possibile conflitto software rilevato
 	NL	Mogelijk softwareconflict gevonden
 	NO	Mulig programvarekonflikt oppdaget
@@ -24918,6 +24982,7 @@ CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
 	ES	ESET Antivirus o Smart Security pueden producir problemas a la hora de iniciar Lyrion Music Server. Si no puede iniciar Lyrion Music Server, asegúrese de no tener seleccionada la opción de filtrado de puertos para SqueezeSvr.exe en ESET: Configuración avanzada/Antivirus y antiespía/Protección del tráfico de Internet/HTTP, HTTPS/Navegadores de Internet.
 	FI	ESET Antivirus tai Smart Security saattavat aiheuttaa ongelmia Lyrion Music Serverin käynnistyksessä. Jos Lyrion Music Serverin käynnistys ei onnistu, varmista, että olet poistanut portinsuodatuksen valinnan SqueezeboxSvr.exe-tiedostolle kohteessa ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	FR	L'antivirus ESET ou Smart Security peut empêcher le démarrage du Lyrion Music Server. En cas d'échec du démarrage du Lyrion Music Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeSvr.exe sous ESET Advanced Settings/Antivirus et antispyware/Web access protection/HTTP, HTTPS/Web browsers.
+	HU	Az ESET Antivirus vagy a Smart Security problémákat okozhat a Lyrion Music Server indításakor. Ha a Lyrion Music Server indításakor hiba lép fel, ellenőrizze, hogy nincs-e bejelölve a SqueezeSvr.exe portszűrése az ESET Speciális beállítások/Vírusirtó és kémprogram-elhárító/Webhozzáférés-védelem/HTTP, HTTPS/Webböngészők részben.
 	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Lyrion Music Server. Se Lyrion Music Server non si avvia, deselezionare il filtraggio delle porte per SqueezeSvr.exe in Impostazioni avanzate/Antivirus e antispyware/Protezione accesso Web/HTTP di ESET e nei browser HTTPS/Web.
 	NL	ESET Antivirus of Smart Security kan problemen veroorzaken bij het opstarten van Lyrion Music Server. Controleer in dit geval of je het filteren van poorten hebt uitgeschakeld voor SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	NO	ESET Antivirus og Smart Security kan skape problemer med oppstarten av Lyrion Music Server. Hvis du ikke får til å starte Lyrion Music Server, må du sikre at du ikke har merket av for portfiltrering for SqueezeSvr.exe i ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
@@ -24934,6 +24999,7 @@ CONTROLPANEL_REFRESH
 	FI	Päivitä
 	FR	Actualiser
 	HE	רענן
+	HU	Frissítés
 	IT	Aggiorna
 	NL	Vernieuwen
 	NO	Oppdater
@@ -24949,6 +25015,7 @@ CLEANUP
 	ES	Limpieza
 	FI	Puhdistus
 	FR	Purge
+	HU	Cleanup
 	IT	Pulizia
 	NL	Opschonen
 	NO	Opprydding
@@ -24964,6 +25031,7 @@ CLEANUP_DO
 	ES	Ejecutar limpieza
 	FI	Suorita puhdistus
 	FR	Lancer le nettoyage
+	HU	Cleanup futtatása
 	IT	Esegui pulizia
 	NL	Opschoning uitvoeren
 	NO	Kjør opprydding
@@ -24979,6 +25047,7 @@ CLEANUP_SUCCESS
 	ES	La limpieza finalizó correctamente
 	FI	Puhdistus on suoritettu
 	FR	Le nettoyage a été effectué
+	HU	A tisztítás sikeresen befejeződött
 	IT	Pulizia eseguita correttamente
 	NL	Opschoning voltooid
 	NO	Opprydding fullført
@@ -24994,6 +25063,7 @@ CLEANUP_PLEASE_RESTART_SC
 	ES	Reinicie Lyrion Music Server para que los cambios entren en vigor.
 	FI	Käynnistä Lyrion Music Server uudelleen, jotta muutokset tulevat voimaan.
 	FR	Redémarrez le Lyrion Music Server pour appliquer les modifications.
+	HU	Kérjük, indítsa újra a Lyrion Music Servert, hogy a változtatások életbe lépjenek.
 	IT	Per applicare le modifiche, è necessario riavviare Lyrion Music Server.
 	NL	Start Lyrion Music Server opnieuw om de wijzigingen door te voeren.
 	NO	Du må starte Lyrion Music Server på nytt for at endringene skal tre i kraft.
@@ -25009,6 +25079,7 @@ CLEANUP_PLEASE_STOP_SC
 	ES	Detenga Lyrion Music Server antes de ejecutar la limpieza.
 	FI	Sulje Lyrion Music Server ennen puhdistuksen suorittamista.
 	FR	Arrêtez le Lyrion Music Server avant de lancer le nettoyage.
+	HU	Kérjük, állítsa le a Lyrion Music Servert a tisztítás futtatása előtt.
 	IT	Prima di eseguire la pulizia, arrestare Lyrion Music Server.
 	NL	Stop Lyrion Music Server voordat je de opschoning uitvoert.
 	NO	Stopp Lyrion Music Server før du kjører oppryddingen.
@@ -25024,6 +25095,7 @@ CLEANUP_WANT_TO_STOP_SC
 	ES	Antes de ejecutar la limpieza, se debe detener Lyrion Music Server. ¿Desea detenerlo ahora?
 	FI	Lyrion Music Server täytyy pysäyttää ennen puhdistuksen suorittamista. Haluatko pysäyttää sen nyt?
 	FR	Le Lyrion Music Server doit être arrêté avant le lancement du nettoyage. Souhaitez-vous l'arrêter maintenant ?
+	HU	A Lyrion Music Servert le kell állítani a tisztítás futtatása előtt. Szeretné most abbahagyni?
 	IT	Prima di eseguire la pulizia è necessario arrestare Lyrion Music Server. Arrestarlo adesso?
 	NL	Lyrion Music Server dient te worden stopgezet, voordat de opschoning wordt uitgevoerd. Wil je de server nu stoppen?
 	NO	Lyrion Music Server må stoppes før oppryddingen kan kjøres. Vil du stoppe den nå?
@@ -25039,6 +25111,7 @@ CLEANUP_USAGE
 	ES	Uso
 	FI	Käyttö
 	FR	Utilisation
+	HU	Használat
 	IT	Uso
 	NL	Gebruik
 	NO	Anvendelse
@@ -25054,6 +25127,7 @@ CLEANUP_COMMAND_LINE
 	ES	Opciones de línea de comandos:
 	FI	Komentorivivalitsimet:
 	FR	Options de ligne de commande :
+	HU	Parancssori lehetőségek:
 	IT	Opzioni della riga di comando:
 	NL	Opdrachtregelopties:
 	NO	Kommandolinjevalg:
@@ -25069,6 +25143,7 @@ CLEANUP_DB
 	ES	Eliminar base de datos multimedia
 	FI	Poista mediatietokanta
 	FR	Supprimer la base de données multimédia
+	HU	Médiainformációs adatbázis törlése
 	IT	Elimina database informazioni file multimediali
 	NL	Database met mediagegevens verwijderen
 	NO	Slett medieinformasjonsdatabase
@@ -25084,6 +25159,7 @@ CLEANUP_FILECACHE
 	ES	Eliminar archivo de caché para carátulas, plantillas, etc.
 	FI	Poista kansitaiteen, mallien ym. tiedostovälimuisti
 	FR	Supprimer le cache des pochettes, modèles, etc.
+	HU	Törölje a fájl gyorsítótárát az alkotásokhoz, sablonokhoz stb.
 	IT	Elimina cache per copertine, modelli e così via
 	NL	Bestandscache voor albumhoezen, sjablonen, enz. verwijderen
 	NO	Slett filhurtigbuffer for omslag, maler osv.
@@ -25099,6 +25175,7 @@ CLEANUP_PREFS
 	ES	Eliminar archivos de preferencias
 	FI	Poista asetustiedostot
 	FR	Supprimer les fichiers de préférence
+	HU	Törölje a preferencia fájlokat
 	IT	Elimina file delle preferenze
 	NL	Voorkeurenbestanden verwijderen
 	NO	Slett innstillingsfiler
@@ -25114,6 +25191,7 @@ CLEANUP_LOGS
 	ES	Eliminar archivos de registro
 	FI	Poista lokitiedostot
 	FR	Supprimer les fichiers journaux
+	HU	Törölje a naplófájlokat
 	IT	Elimina file di registro
 	NL	Logboeken verwijderen
 	NO	Slett loggfiler
@@ -25129,6 +25207,7 @@ CLEANUP_CACHE
 	ES	Limpiar carpeta de caché, incluidas base de datos multimedia, caché de carátulas, etc.
 	FI	Tyhjennä välimuistikansio, mukaan luettuna mediatietokanta ja kansitaiteen välimuisti.
 	FR	Nettoyer le dossier cache, y compris la base de données de la bibliothèque multimédia, les pochettes, etc.
+	HU	Tisztítsa meg a gyorsítótár mappáját, beleértve a médiakönyvtári adatbázist, a grafikai gyorsítótárat stb.
 	IT	Pulisci cartella della cache, inclusi il database della libreria multimediale, la cache delle copertine e così via.
 	NL	Cache-map opschonen, inclusief mediadatabase, albumhoezencache, enz.
 	NO	Tøm hurtigbuffermappen, inkludert mediedatabasen, hurtigbufrede omslag osv.
@@ -25144,6 +25223,7 @@ CLEANUP_ALL
 	ES	Borrar todo. No lo haga a menos que sepa lo que está haciendo.
 	FI	Poista kaikki - älä tee, jos et ole varma, että tiedät mitä teet!
 	FR	Tout supprimer. Sélectionnez cette option si vous êtes sûr de vouloir tout supprimer.
+	HU	Törölje le őket – csak akkor, ha tudja, mit csinál!
 	IT	Elimina tutto (in caso di dubbi, non eseguire l'operazione)
 	NL	Wis alles - doe dit alleen als je weet wat je doet!
 	NO	Slett alt ‒ Ikke gjør dette med mindre du vet hva du driver med!
@@ -25155,10 +25235,11 @@ CLEANUP_DRYRUN
 	CS	Nespustí přímo čištění, ale zobrazí, které soubory a složky budou odstraněny.
 	DA	Kør ikke oprydningen nu, men vis hvilke filer, der ville blive fjernet ved en oprydning.
 	DE	Bereinigung nicht wirklich ausführen, sondern nur betroffene Ordner und Dateien anzeigen
-	EN	Don't actually run the cleanup, but show which files and folders would be removed.
+	EN	Valójában ne futtassa a tisztítást, hanem mutassa meg, mely fájlok és mappák kerülnek eltávolításra.
 	ES	No ejecutar la limpieza, pero mostrar qué archivos y carpetas se eliminarían.
 	FI	Älä suorita puhdistusta, mutta näytä mitkä tiedostot ja kansiot poistettaisiin.
 	FR	Affiche les fichiers et dossiers devant être supprimés sans effectuer de nettoyage.
+	HU	Valójában ne futtassa a tisztítást, hanem mutassa meg, mely fájlok és mappák kerülnek eltávolításra.
 	IT	Non esegue la pulizia ma mostra i file e le cartelle che verranno rimossi.
 	NL	Voer de opschoning niet uit, maar laat zien welke bestanden en mappen verwijderd zouden worden.
 	NO	Ikke kjør faktisk opprydding, bare vis hvilke filer og mapper som ville blitt fjernet.
@@ -25174,6 +25255,7 @@ CLEANUP_DELETING
 	ES	Eliminando
 	FI	Poistetaan
 	FR	Suppression en cours
+	HU	Törlés
 	IT	Eliminazione in corso
 	NL	Verwijderen
 	NO	Sletter
@@ -25189,6 +25271,7 @@ CONTROLPANEL_NO_STATUS
 	ES	No hay información de estado disponible. Tenga en cuenta que Lyrion Music Server debe estar en ejecución para mostrar su información de estado.
 	FI	Tilatietoja ei ole saatavilla. Huomaa, että Lyrion Music Serverin on oltava käynnissä, jotta sen tilatiedot voitaisiin näyttää.
 	FR	Aucune information sur l'état n'est disponible. Notez que le Lyrion Music Server doit être en cours d'utilisation pour afficher ces informations.
+	HU	Nem áll rendelkezésre állapotinformáció. Kérjük, vegye figyelembe, hogy a Lyrion Music Servernek működnie kell az állapotinformációk megjelenítéséhez.
 	IT	Non sono disponibili informazioni sullo stato. Per visualizzare le informazioni sullo stato è necessario che Lyrion Music Server sia in esecuzione.
 	NL	Geen statusinformatie beschikbaar. Lyrion Music Server moet actief zijn om statusinformatie te kunnen weergeven.
 	NO	Ingen statusinformasjon er tilgjengelig. Lyrion Music Server må kjøre for at den skal kunne vise statusinformasjon.
@@ -25204,6 +25287,7 @@ CONTROLPANEL_NEED_ADMINISTRATOR
 	ES	No tiene privilegios para instalar o iniciar/detener el servicio en segundo plano Lyrion Music Server. Inicie el Panel de control desde el menú Inicio de Windows, mediante el menú contextual de botón derecho y haga clic en "Ejecutar como administrador".
 	FI	Sinulla ei ole tarvittavia oikeuksia asentaa, käynnistää tai pysäyttää Lyrion Music Serverin taustapalvelua. Avaa Windowsin Käynnistä-valikosta palvelimen ohjauspaneeli napsauttamalla kakkospainiketta ja valitse pikavalikosta Suorita järjestelmänvalvojana.
 	FR	Vous ne disposez pas des droits pour installer ou arrêter/démarrer le service d'arrière-plan Lyrion Music Server. Démarrez le Panneau de configuration en cliquant dessus à l'aide du bouton droit dans le menu Démarrer de Windows et en sélectionnant Exécuter en tant qu'administrateur.
+	HU	Nincs jogosultsága a Lyrion Music Server háttérszolgáltatás telepítéséhez, elindításához/leállításához. Kérjük, indítsa el a vezérlőpultot a Windows Start menüjéből, a jobb gombbal a helyi menüből, majd kattintson a "Futtatás rendszergazdaként" elemre.
 	IT	Non si dispone dei privilegi per installare o avviare/arrestare il servizio in background di Lyrion Music Server. Aprire il Pannello di controllo dal menu Start di Windows utilizzando il menu di scelta rapida visualizzabile facendo clic con il pulsante destro del mouse, quindi fare clic su "Esegui come amministratore".
 	NL	Je hebt geen rechten om de achtergrondprocessen van Lyrion Music Server te installeren of te starten/stoppen. Start het Configuratiescherm vanuit het menu Start in Windows via de rechtermuisknop en klik in het snelmenu op 'Als administrator uitvoeren'.
 	NO	Du har ikke rettighetene som trengs for å installere eller starte/stoppe bakgrunnstjenesten Lyrion Music Server. Start kontrollpanelet fra Start-menyen i Windows ved å høyreklikke og velge Kjør som administrator.
@@ -25219,6 +25303,7 @@ RUN_AT_BOOT
 	ES	Ejecutar automáticamente al iniciar el sistema
 	FI	Suorita automaattisesti järjestelmän käynnistyessä
 	FR	Démarrer automatiquement au démarrage du système
+	HU	Automatikus futás a rendszer indításakor
 	IT	Esegui automaticamente all'avvio del sistema
 	NL	Automatisch uitvoeren bij systeemstart
 	NO	Kjør automatisk når systemet starter
@@ -25230,10 +25315,11 @@ RUN_AT_LOGIN
 	CS	Spustit automaticky při přihlášení
 	DA	Kør automatisk ved logon
 	DE	Automatisch bei Anmeldung ausführen
-	EN	Automatically run at login
+	EN	Automatikus futás bejelentkezéskor
 	ES	Ejecutar automáticamente al iniciar sesión
 	FI	Suorita automaattisesti kirjautuessa
 	FR	Démarrer automatiquement lors de la connexion
+	HU	Automatikus futás bejelentkezéskor
 	IT	Esegui automaticamente all'accesso al sistema
 	NL	Automatisch uitvoeren bij aanmelden
 	NO	Kjør automatisk ved pålogging
@@ -25249,6 +25335,7 @@ RUN_FAILSAFE
 	ES	Ejecutar sin extensiones de usuario ("Modo seguro")
 	FI	Suorita ilman käyttäjätunnisteita (vikasietotila)
 	FR	Exécuter sans poste utilisateur ("Mode sans échec")
+	HU	Futtatás felhasználói bővítmények nélkül ("Csökkentett mód")
 	IT	Esegui senza estensioni utente (modalità provvisoria)
 	NL	Zonder gebruikersextensies uitvoeren ('Veilige modus')
 	NO	Kjør uten brukerutvidelser ("sikkermodus")
@@ -25264,6 +25351,7 @@ RUN_NEVER
 	ES	No iniciar automáticamente
 	FI	Älä käynnistä automaattisesti
 	FR	Ne pas démarrer automatiquement
+	HU	Ne induljon el automatikusan
 	IT	Non avviare automaticamente
 	NL	Niet automatisch starten
 	NO	Ikke start automatisk
@@ -25279,6 +25367,7 @@ START_SQUEEZEBOX_SERVER
 	ES	Iniciar Lyrion Music Server
 	FI	Käynnistä Lyrion Music Server
 	FR	Démarrer Lyrion Music Server
+	HU	Lyrion Music Server indítása
 	IT	Avvia Lyrion Music Server
 	NL	Lyrion Music Server starten
 	NO	Start Lyrion Music Server
@@ -25294,6 +25383,7 @@ STOP_SQUEEZEBOX_SERVER
 	ES	Detener Lyrion Music Server
 	FI	Pysäytä Lyrion Music Server
 	FR	Arrêter le Lyrion Music Server
+	HU	Lyrion Music Server leállítása
 	IT	Arresta Lyrion Music Server
 	NL	Lyrion Music Server stoppen
 	NO	Stopp Lyrion Music Server
@@ -25324,6 +25414,7 @@ HOWTO_HOME
 	ES	De cara a Squeezebox, pulse la flecha IZQUIERDA del mando a distancia hasta que vea la opción Reproduciendo.
 	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen vasenta nuolta, kunnes Nyt soi -ruutu tulee näyttöön.
 	FR	Appuyez sur la flèche GAUCHE de la télécommande en la pointant vers la Squeezebox, jusqu'à ce que l'option Lecture s'affiche.
+	HU	A Squeezebox felé fordulva nyomja meg a BALRA nyilat a távvezérlőn, amíg meg nem jelenik a Most játszik opció.
 	IT	Puntare il telecomando verso lo Squeezebox e premere freccia SINISTRA fino a quando non viene visualizzata l'opzione Riproduzione in corso.
 	NL	Richt de afstandsbediening naar de Squeezebox, en druk op de pijl naar LINKS tot je de optie Speelt nu ziet.
 	NO	Gå til VENSTRE på fjernkontrollen mens du står vendt mot Squeezebox, og hold knappen nede til du ser alternativet Spiller av nå.
@@ -25339,6 +25430,7 @@ HOWTO_HOME_BOOM
 	ES	De cara a Squeezebox, pulse HOME en el mando a distancia.
 	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen kotipainiketta.
 	FR	Appuyez sur HOME sur la télécommande en la pointant vers la Squeezebox.
+	HU	A Squeezebox felé fordulva nyomja meg a HOME gombot a távvezérlőn.
 	IT	Puntare il telecomando verso lo Squeezebox e premere HOME.
 	NL	Richt de afstandsbediening op de Squeezebox en druk op HOME.
 	NO	Trykk på HOME på fjernkontrollen mens du står vendt mot Squeezebox.
@@ -25354,6 +25446,7 @@ HOWTO_HOME_CONTROLLER
 	ES	Pulse HOME en el mando a distancia.
 	FI	Paina kaukosäätimen kotipainiketta.
 	FR	Appuyez sur HOME sur la télécommande.
+	HU	Nyomja meg a HOME gombot a távvezérlőn.
 	IT	Premere HOME sul telecomando.
 	NL	Druk op HOME op de afstandsbediening.
 	NO	Trykk på HOME på fjernkontrollen.
@@ -25369,6 +25462,7 @@ HOWTO_DOWN
 	ES	Pulse ABAJO en el mando a distancia para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
 	FI	Siirry nettiradioon kaukosäätimen alapainikkeella ja valitse kanava oikealla painikkeella.
 	FR	Appuyez sur BAS pour accéder aux radios Internet puis sur le bouton DROIT pour effectuer la sélection.
+	HU	A távvezérlő LE gombjával görgessen az Internet Rádió lehetőséghez, majd nyomja meg a JOBBRA gombot a kiválasztáshoz.
 	IT	Premere la freccia GIÙ sul telecomando per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
 	NL	Druk OMLAAG op de afstandsbediening om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
 	NO	Gå NED på fjernkontrollen for å gå til Internett-radio, og gå til HØYRE for å velge.
@@ -25384,6 +25478,7 @@ HOWTO_DOWN_BOOM
 	ES	Pulse ABAJO en el mando a distancia (o gire la rueda central a la derecha) para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
 	FI	Siirry nettiradioon kaukosäätimen alapainikkeella (tai pyörittämällä kiekkoa oikealle) ja valitse se oikealla painikkeella.
 	FR	Appuyez sur BAS ou tournez la molette vers la droite pour faire défiler vers les radios Internet, puis appuyez sur le bouton DROIT pour effectuer la sélection.
+	HU	Nyomja meg a DOWN gombot a távvezérlőn (vagy forgassa el a gombot jobbra) az Internet Rádió lehetőséghez való görgetéshez, majd nyomja meg a JOBBRA gombot a kiválasztáshoz.
 	IT	Premere la freccia GIÙ sul telecomando (o spingere il pulsante centrale verso destra) per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
 	NL	Druk OMLAAG op de afstandsbediening (of draai de regelaar naar rechts) om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
 	NO	Gå ned på fjernkontrollen (eller rull mot høyre med midtknappen) for å gå til Internett-radio, og gå til høyre  for å velge.
@@ -25400,6 +25495,7 @@ HOWTO_DOWN_CONTROLLER
 	ES	Gire la rueda a la derecha para desplazarse a Radio por Internet y pulse el botón central para seleccionar.
 	FI	Pyöritä kiekkoa oikealle, kunnes löydät nettiradion, ja valitse se keskipainikkeella.
 	FR	Tournez la molette vers la droite pour faire défiler vers les radios Internet et appuyez sur le bouton central pour effectuer la sélection.
+	HU	Forgassa jobbra a kereket az Internet Rádió lehetőséghez való görgetéshez, majd nyomja meg a középső gombot a kiválasztáshoz.
 	IT	Spostare la rotellina verso destra per scorrere fino a Radio Internet, quindi premere il pulsante centrale per eseguire una selezione.
 	NL	Draai het wiel naar rechts om naar 'Internetradio' te scrollen, en druk op de middelste knop om te selecteren.
 	NO	Rull hjulet mot høyre for å gå til Internett-radio, og trykk på midtknappen for å velge.
@@ -25411,10 +25507,11 @@ HOWTO_STAFF_PICKS
 	CS	Přejděte na položku VÝBĚR NAŠEHO PERSONÁLU a stiskněte tlačítko DOPRAVA.
 	DA	Rul til Vi anbefaler, og tryk på højrepilen.
 	DE	Markieren Sie 'Unsere Empfehlungen' und drücken Sie RECHTS.
-	EN	Scroll to STAFF PICKS and press RIGHT.
+	EN	Görgessen a SZOLGÁLTATÁSOK elemhez, és nyomja meg a JOBBRA gombot.
 	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse DERECHA.
 	FI	Selaa suosituksiin ja paina oikeaa näppäintä.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton droit.
+	HU	Görgessen a SZOLGÁLTATÁSOK elemhez, és nyomja meg a JOBBRA gombot.
 	IT	Scorrere fino a SCELTI DALLO STAFF e premere DESTRA.
 	NL	Scroll naar AANRADERS en druk RECHTS.
 	NO	Gå til UTVALGTE STASJONER og gå til høyre.
@@ -25431,6 +25528,7 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse el botón central.
 	FI	Selaa kohtaan SUOSITUKSET ja paina keskipainiketta.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton central.
+	HU	Görgessen a STAFF PICKS elemhez, és nyomja meg a középső gombot.
 	IT	Scorrere fino a SCELTI DALLO STAFF e premere il pulsante centrale.
 	NL	Scroll naar AANRADERS en druk op de middelste knop.
 	NO	Gå til UTVALGTE STASJONER og trykk på midtknappen.
@@ -25446,6 +25544,7 @@ INTERNET_RADIO
 	ES	Radio
 	FI	Radio
 	FR	Radio
+	HU	Radió
 	IT	Radio
 	NL	Radio
 	NO	Radio
@@ -25461,6 +25560,7 @@ HOWTO_INTERNET_RADIO
 	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse DERECHA.
 	FI	Siirry kohtaan "internet-radion parhaat" ja paina oikeaa painiketta.
 	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton droit.
+	HU	Görgessen a „Best of Internet Radio” elemhez, és nyomja meg a JOBBRA gombot.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere DESTRA.
 	NL	Scroll naar 'De beste internetradio' en druk RECHTS.
 	NO	Gå til "Beste stasjoner" og gå til høyre.
@@ -25477,6 +25577,7 @@ HOWTO_INTERNET_RADIO_CONTROLLER
 	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse el botón central.
 	FI	Siirry internet-radion parhaisiin ja paina keskipainiketta.
 	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton central.
+	HU	Görgessen a „Best of Internet Radio” elemhez, és nyomja meg a középső gombot.
 	IT	Scorrere fino a "Il meglio della radio su Internet" e premere il pulsante centrale.
 	NL	Scroll naar 'De beste internetradio' en druk op de middelste knop.
 	NO	Gå til "Beste stasjoner" og trykk på midtknappen.
@@ -25492,6 +25593,7 @@ HOWTO_SHOWCASE
 	ES	Desplácese hasta Slim Showcase: Miles Davis y pulse el botón de reproducción.
 	FI	Siirry kohtaan Esittely: Miles Davis ja paina toistopainiketta.
 	FR	Faites défiler vers Slim Showcase: Miles Davis et appuyez sur Lecture.
+	HU	Görgessen a Slim Showcase: Miles Davis elemhez, és nyomja meg a PLAY gombot.
 	IT	Scorrere fino a Slim Showcase: Miles Davis e premere PLAY.
 	NL	Scroll naar 'Slim Showcase: Miles Davis' en druk op PLAY.
 	NO	Gå til Slim-scenen: Miles Davis og trykk på PLAY.
@@ -25507,6 +25609,7 @@ HOWTO_VOLUME
 	ES	Ajuste el volumen.
 	FI	Säädä äänenvoimakkuus.
 	FR	Ajustement du volume.
+	HU	Hangerő beállítása
 	IT	Regolare il volume.
 	NL	Pas het volume aan.
 	NO	Juster volumet.
@@ -25522,6 +25625,7 @@ HOWTO_PAUSE
 	ES	Para poner la pista en pausa, toque PAUSE. Para detener la pista, mantenga pulsado el botón PAUSE.
 	FI	Voit keskeyttää raidan toiston napauttamalla taukopainiketta. Voit lopettaa raidan toiston kokonaan pitämällä taukopainikkeen pohjassa.
 	FR	Appuyez sur PAUSE pour mettre la lecture en pause. Pour arrêter la lecture, maintenez le bouton PAUSE enfoncé.
+	HU	A szám szüneteltetéséhez érintse meg a SZÜNET lehetőséget. A szám leállításához nyomja meg és tartsa lenyomva a PAUSE gombot.
 	IT	Per sospendere la riproduzione del brano, premere leggermente il pulsante di PAUSA. Per interrompere il brano, tenere premuto tale pulsante.
 	NL	Druk op PAUSE om het nummer te pauzeren. Houd de knop PAUSE ingedrukt om het nummer te stoppen.
 	NO	Hvis du vil sette sporet på pause, trykker du lett på PAUSE. Hvis du vil stoppe sporet, holder du nede PAUSE-knappen.
@@ -25537,6 +25641,7 @@ WHATS_NEXT
 	ES	Todo listo. ¿Qué más?
 	FI	Kaikki on valmista - mitä seuraavaksi?
 	FR	Passer à la suite.
+	HU	Kész vagyok – mi a következő lépés?
 	IT	La configurazione è completa. Quali sono i passaggi successivi?
 	NL	Ik heb alles ingesteld - wat nu?
 	NO	Jeg er klar ‒ hva skjer nå?
@@ -25552,6 +25657,7 @@ CONTINUE_TO_SQUEEZEBOX_SERVER
 	ES	Continuar a Lyrion Music Server para administrar la configuración de reproducción de su biblioteca multimedia personal.
 	FI	Jatka Lyrion Music Serveriin. Siellä voit määrittää henkilökohtaisen mediakirjastosi käyttöasetukset.
 	FR	Continuez vers le Lyrion Music Server pour gérer les réglages de lecture de votre bibliothèque multimédia.
+	HU	Lépjen tovább a Lyrion Music Serverre a személyes médiakönyvtár eléréséhez szükséges beállítások kezeléséhez.
 	IT	Passare a Lyrion Music Server per gestire le impostazioni di accesso alla libreria multimediale personale.
 	NL	Ga door naar Lyrion Music Server om instellingen te beheren voor het afspelen van jouw persoonlijke mediabibliotheek.
 	NO	Gå til Lyrion Music Server for å angi tilgangsinnstillinger for mediebiblioteket.
@@ -25567,6 +25673,7 @@ REDUCED_TO_PREVENT_CLIPPING
 	ES	%s para evitar clipping
 	FI	%s leikkauksen estämiseksi
 	FR	%s pour empêcher l'ecrêtage
+	HU	%s a kivágás elkerülése érdekében
 	IT	%s per impedire il clipping
 	NL	%s om clipping te voorkomen
 	NO	%s for å forhindre klipping
@@ -25583,6 +25690,7 @@ DECODE_ERROR_100
 	ES	Demasiados canales
 	FI	Liian monta kanavaa
 	FR	Trop de canaux
+	HU	Túl sok csatorna
 	IT	Troppi canali
 	NL	Te veel kanalen
 	NO	For mange kanaler
@@ -25598,6 +25706,7 @@ DECODE_ERROR_101
 	ES	No hay memoria suficiente
 	FI	Liian vähän muistia
 	FR	Mémoire épuisée
+	HU	Elfogyott a memória
 	IT	Memoria insufficiente
 	NL	Onvoldoende geheugen
 	NO	Ikke nok minne
@@ -25609,10 +25718,11 @@ DECODE_ERROR_102
 	CS	Neplatná vzorkovací frekvence
 	DA	Ugyldig samplefrekvens
 	DE	Ungültige Samplerate
-	EN	Invalid sample rate
+	EN	Érvénytelen mintavételi arány
 	ES	Frecuencia de muestreo no válida
 	FI	Virheellinen näytteenottotaajuus
 	FR	Taux d'échantillonnage non valide
+	HU	Érvénytelen mintavételi arány
 	IT	Frequenza di campionamento non valida
 	NL	Ongeldige samplefrequentie
 	NO	Ugyldig samplingsfrekvens
@@ -25628,6 +25738,7 @@ DECODE_ERROR_103
 	ES	No es un archivo Vorbis
 	FI	Ei Vorbis-tiedosto
 	FR	Pas un fichier Vorbis
+	HU	Nem Vorbis fájl
 	IT	Non è un file Vorbis
 	NL	Geen Vorbis-bestand
 	NO	Ikke en Vorbis-fil
@@ -25643,6 +25754,7 @@ DECODE_ERROR_104
 	ES	Encabezado Vorbis incorrecto
 	FI	Bad Vorbis -otsikko
 	FR	En-tête Vorbis incorrect
+	HU	Rossz Vorbis fejléc
 	IT	Intestazione Vorbis non valida
 	NL	Ongeldige Vorbis-header
 	NO	Ugyldig Vorbis-topptekst
@@ -25659,6 +25771,7 @@ DECODE_ERROR_200
 	ES	No se admiten supercuadros WMA
 	FI	WMA-superframe-kehyksiä ei tueta
 	FR	Format Superframes WMA non prises en charge
+	HU	A WMA szuperkeretek nem támogatottak
 	IT	Superframe WMA non supportati
 	NL	WMA-superframes worden niet ondersteund
 	NO	WMA superframes støttes ikke
@@ -25674,6 +25787,7 @@ DECODE_ERROR_201
 	ES	No se admite WMA Lossless
 	FI	Ei häviöttömän WMA:n tukea
 	FR	Format WMA Lossless non pris en charge
+	HU	WMA Lossless nem támogatott
 	IT	WMA Lossless non supportato
 	NL	WMA Lossless wordt niet ondersteund
 	NO	WMA Lossless støttes ikke
@@ -25685,10 +25799,11 @@ PLUGINS_UPDATES_AVAILABLE
 	CS	Jsou k dispozici aktualizace zásuvných modulů
 	DA	Der er opdaterede udvidelsesmoduler
 	DE	Plugin-Updates sind verfügbar
-	EN	Plugin updates are available
+	EN	A beépülő modulok frissítései elérhetők
 	ES	Hay actualizaciones de complementos disponibles
 	FI	Laajennuspäivitykset ovat saatavissa
 	FR	Des mises à jour des plugins sont disponibles
+	HU	A beépülő modulok frissítései elérhetők
 	IT	Sono disponibili aggiornamenti per il plugin
 	NL	Plug-in-updates beschikbaar
 	NO	Oppdateringer til plugin-moduler er tilgjengelige
@@ -25700,10 +25815,11 @@ PLUGINS_RESTART_MSG
 	CS	Byly aktualizovány zásuvné moduly – je vyžadován restart
 	DA	Udvidelsesmodulerne er blevet opdateret. Genstart serveren
 	DE	Plugins wurden aktualisiert - Neustart erforderlich
-	EN	Plugins have been updated - Restart Required
+	EN	A beépülő modulok frissítve – újraindítás szükséges
 	ES	Se han actualizado los complementos. Es necesario reiniciar.
 	FI	Laajennukset on päivitetty - ohjelma on käynnistettävä uudelleen
 	FR	Les plugins ont été mis à jour. Vous devez redémarrer le serveur.
+	HU	A beépülő modulok frissítve – újraindítás szükséges
 	IT	Sono stati aggiornati dei plugin. È necessario riavviare.
 	NL	Updaten plug-ins voltooid - Herstart vereist
 	NO	Plugin-modulene er oppdatert. Du må starte programmet på nytt.
@@ -25719,6 +25835,7 @@ NO_LIBRARY
 	ES	No hay ninguna biblioteca multimedia configurada
 	FI	Mediakirjastoa ei ole määritetty
 	FR	Aucune bibliothèque multimédia n'a été configurée
+	HU	Nincs konfigurálva médiakönyvtár
 	IT	Nessuna libreria multimediale configurata
 	NL	Geen mediabibliotheek geconfigureerd
 	NO	Ingen mediebiblioteker er konfigurert
@@ -25730,10 +25847,11 @@ LIBRARY_NOT_READY
 	CS	Nenakonfigurována žádná hudební knihovna nebo není připravena k použití
 	DA	Der er ikke konfigureret et musikbibliotek, eller det konfigurerede musikbibliotek er ikke klar
 	DE	Es ist keine Musiksammlung konfiguriert oder verwendbar
-	EN	No music library configured or not ready to be used
+	EN	Nincs konfigurálva zenekönyvtár, vagy nem áll készen a használatra
 	ES	No hay ninguna biblioteca de música configurada o no está lista para usar
 	FI	Musiikkikirjastoa ei ole määritetty tai se ei ole käyttövalmis
 	FR	Aucune bibliothèque musicale configurée ou prête à l'utilisation
+	HU	Nincs konfigurálva zenekönyvtár, vagy nem áll készen a használatra
 	IT	Nessuna libreria musicale configurata o non pronta all’uso
 	NL	Geen muziekcollectie geconfigureerd of muziekcollectie is niet klaar voor gebruik
 	NO	Ingen musikkbibliotek er konfigurert, eller så er ingen bibliotek klare til å brukes
@@ -25745,11 +25863,12 @@ PRESETS_NOT_DEFINED
 	CS	Předvolba #%s není definována.
 	DA	Fast indstilling #%s er ikke defineret.
 	DE	Voreinstellung %s nicht definiert.
-	EN	Preset #%s not defined.
+	EN	Előre beállított #%s nincs megadva.
 	ES	No se ha definido la memoria #%s.
 	FI	Esiasetusta #%s ei ole määritetty.
 	FR	Présélection n°%s non définie.
 	HE	פריט מועדף ‎#%s לא מוגדר.
+	HU	Előre beállított #%s nincs megadva.
 	IT	Preimpostazione #%s non definita.
 	NL	Voorinstelling #%s niet gedefinieerd.
 	NO	Forhåndsinnstilling nr. %s er ikke angitt.
@@ -25761,11 +25880,12 @@ PRESET_ADDING
 	CS	Ukládám předvolbu #%s...
 	DA	Gemmer fast indstilling #%s...
 	DE	Voreinstellung %s wird gespeichert...
-	EN	Saving preset #%s...
+	EN	#%s előbeállítás mentése...
 	ES	Guardando memoria #%s...
 	FI	Tallennetaan esiasetusta #%s...
 	FR	Enregistrement de la présélection n°%s...
 	HE	שומר פריטים מועדפים...
+	HU	#%s előbeállítás mentése...
 	IT	Salvataggio preimpostazione #%s in corso...
 	NL	Voorinstelling #%s wordt opgeslagen...
 	NO	Lagrer forhåndsinnstilling nr. %s ...
@@ -25783,6 +25903,7 @@ PRESET_HOLD_TO_SAVE
 	ES	Memoria #%s (mantener pulsado para guardar)
 	FI	Esiasetus #%s (tallenna pitämällä pohjassa)
 	FR	Présélection #%s (maintenir enfoncé pour enregistrer)
+	HU	Előre beállított #%s (tartsa lenyomva a mentéshez)
 	IT	Preimpostazione #%s (tenere premuto per salvare)
 	NL	Voorinstelling #%s (vasthouden om op te slaan)
 	NO	Forhåndsinnstilling nr. %s (hold nede knappen for å lagre)
@@ -25799,6 +25920,7 @@ PRESET
 	ES	Memoria #%s
 	FI	Esiasetus #%s
 	FR	Présélection #%s
+	HU	Előre beállított #%s
 	IT	Preimpostazione #%s
 	NL	Voorinstelling #%s
 	NO	Forhåndsinnstilling nr. %s
@@ -25814,6 +25936,7 @@ USB
 	ES	USB
 	FI	USB
 	FR	USB
+	HU	USB
 	IT	USB
 	NL	USB
 	NO	Usb-port
@@ -25829,6 +25952,7 @@ SD
 	ES	Tarjeta SD
 	FI	SD-kortti
 	FR	Carte SD
+	HU	SD kártya
 	IT	Scheda SD
 	NL	SD-kaart
 	NO	SD-kort
@@ -25845,6 +25969,7 @@ RETRYING
 	ES	Conexión perdida, reintentando...
 	FI	Yhteys poikki. Uusi yritys...
 	FR	Tentative de reconnexion...
+	HU	A kapcsolat megszakadt, újrapróbálkozás...
 	IT	Connessione persa, nuovo tentativo...
 	NL	Verbinding verbroken, nieuwe poging...
 	NO	Mistet forbindelsen, prøver igjen ...
@@ -25861,6 +25986,7 @@ RETRY_LIMIT_EXCEEDED
 	ES	Fallo reintentos conexión
 	FI	Yritys epäonnistui
 	FR	Echec des tentatives de connexion
+	HU	A csatlakozási próbálkozások sikertelenek
 	IT	Tentativi di connessione falliti
 	NL	Verbindingspogingen mislukt
 	NO	Gjenopprettingsforsøk mislyktes
@@ -25877,6 +26003,7 @@ SYNC_ABOUT
 	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Lyrion.org para obtener más información.
 	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Lyrion.org.
 	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Lyrion.org pour obtenir plus d'informations.
+	HU	Adjon hozzá egy vagy több további Squeezebox-ot a szinkronizálás funkció használatához, és kihasználja a többszobás hangzásban rejlő lehetőségeket. További információért látogasson el a Lyrion.org oldalra.
 	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Lyrion.org.
 	NL	Voeg een of meer Squeezebox-muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Lyrion.org voor meer informatie.
 	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Lyrion.org for mer informasjon.
@@ -25890,6 +26017,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken
 	EN	Defeat destructive Touch-To-Play
 	FR	Nouvelle sélection et liste de lecture en cours
+	HU	Nyomja le a pusztító „érintéssel való játékot”.
 	NL	Bevestigen Touch-To-Play
 	NO	Overstyr Touch-To-Play
 	PL	Zachowanie Touch-To-Play
@@ -25901,6 +26029,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behavior can be controlled using this parameter.
 	EN_GB	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter.
 	FR	La sélection d'un titre peut accidentellement remplacer la liste de lecture en cours. Ce paramètre propose plusieurs comportements suite à une sélection.
+	HU	Amikor megérint/kiválaszt egy lejátszható elemet a Squeezeboxon, véletlenül lecserélheti az éppen lejátszott tartalmat. Ez a pusztító viselkedés ezzel a paraméterrel szabályozható.
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op jouw Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 	NO	Ved å berøre avspillbart innhold på squeezeboxmenyen, kan du ved et uhell erstatte det som spilles. Slike uønskede hendelser kan styres av denne innstillingen.
 	PL	Przy wyborze/zaznaczeniu utworu można przypadkowo zastąpić aktualną listę odtwarzania. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
@@ -25911,6 +26040,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	DE	Destruktives Verhalten nicht unterdrücken
 	EN	Do not defeat
 	FR	Continuer la liste de lecture en cours
+	HU	Ne előzze meg
 	NL	Niet vragen
 	NO	Aldri spør
 	PL	Zawsze zezwalaj na odtwarzanie wybranych utworów
@@ -25921,6 +26051,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
 	EN	Always ask before playing your selection
 	FR	Toujours demander une confirmation avant de lancer le titre sélectionné
+	HU	Mindig kérdezzen rá, mielőtt lejátssza a kiválasztottat
 	NL	Altijd vragen om de selectie af te spelen
 	NO	Alltid spør om valget ditt skal avspilles
 	PL	Pytaj przed rozpoczęciem odtwarzania wybranych utworów
@@ -25931,6 +26062,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
 	EN	Defeat if current playlist has more than one track
 	FR	Demander une confirmation si la liste de lecture actuelle a plus d'un titre
+	HU	Álljon le, ha az aktuális lejátszási listán egynél több szám van
 	NL	Vragen als de huidige afspeellijst meer dan één nummer bevat
 	NO	Spør hvis den aktuelle spillelista inneholder mer enn ett spor
 	PL	Nie pozwól, gdy aktualna lista odtwarzania zawiera więcej niż jeden utwór
@@ -25941,6 +26073,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
 	EN	Defeat only if playing and current playlist has more than one track
 	FR	Demander une confirmation uniquement si la liste de lecture est en cours et a plus d'un titre
+	HU	Csak akkor álljon le, ha a lejátszott és az aktuális lejátszási listában egynél több szám van
 	NL	Alleen vragen als de huidige afspeellijst meer dan één nummer bevat
 	NO	Spør bare hvis den aktuelle spillelista inneholder mer enn ett spor og avspilling er i gang
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie oraz aktualna lista odtwarzania zawiera więcej niż jeden utwór
@@ -25951,6 +26084,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	FR	Demander une confirmation uniquement si une radio n'est pas en cours de diffusion
+	HU	Csak akkor álljon le, ha a lejátszott és az aktuális tétel nem rádiós adatfolyam
 	NL	Alleen vragen als het huidige afgespeelde nummer geen radiostream is
 	NO	Spør bare hvis avspilling er i gang, og den aktuelle spillelista ikke er en radiokanal
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie i aktualny utwór nie jest strumieniem radiowym
@@ -25964,6 +26098,7 @@ SERVER_UPDATE_AVAILABLE
 	ES	Hay disponible una nueva versión de Lyrion Music Server (%s). <a href="%s" target="update">Haga clic aquí para descargarla</a>.
 	FI	Lyrion Music Serveristä on tarjolla uusi versio (%s). <a href="%s" target="update">Lataa se napsauttamalla tässä</a>.
 	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="%s" target="update">Cliquez ici pour la télécharger</a>.
+	HU	Elérhető a Lyrion Music Server új verziója (%s). <a href="%s" target="update">Kattintson ide a letöltéshez</a>.
 	IT	È disponibile una nuova versione di Lyrion Music Server (%s). <a href="%s" target="update">Fare clic qui per scaricarla</a>.
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="%s" target="update">Klik op hier om deze te downloaden</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="%s" target="update">Klikk her for å laste den ned</a>.
@@ -25979,6 +26114,7 @@ SERVER_UPDATE_AVAILABLE_SHORT
 	ES	Hay disponible una nueva versión de Lyrion Music Server.
 	FI	Lyrion Music Serveristä on tarjolla uusi versio.
 	FR	Une nouvelle version de Lyrion Music Server est disponible.
+	HU	Megjelent a Lyrion Music Server új verziója.
 	IT	È disponibile una nuova versione di Lyrion Music Server.
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig.
@@ -25991,6 +26127,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	DE	Eine neue Version von Lyrion Music Server ist verfügbar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
 	EN	A new version of Lyrion Music Server is available (%s). <a href="updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
 	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
+	HU	Elérhető a Lyrion Music Server új verziója (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kattintson ide további információkért</a>.
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
 	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
@@ -26001,12 +26138,14 @@ SERVER_WINDOWS_UPDATE_AVAILABLE
 	DE	<ul><li>Version %s - %s steht zur Installation bereit.</li><li>Melden Sie sich am Computer, der Lyrion Music Server ausführt, an (%s).</li><li>Führen Sie <code>%s</code> aus und folgen Sie den Anweisungen.</li></ul>
 	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Lyrion Music Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
 	FR	<ul><li>La version %s - %s est prête à être installée.</li><li>Connectez-vous à l'ordinateur qui héberge le Lyrion Music Server (%s).</li><li>Exécutez <code>%s</code> et suivez les instructions.</li></ul>
+	HU	<ul><li>A %s verzió – %s elérhető a telepítéshez.</li><li>Jelentkezzen be Lyrion Music Servert (%s) futtató számítógépére.</li><li>Végezze el a <code>% parancsot. s</code>, és kövesse az utasításokat.</li></ul>
 
 UPDATES_LATEST_CHANGES
 	CS	Nejnovější změny (<a href="%s" target="_blank">všechny změny</a>)
 	DE	Letzte Änderungen (<a href="%s" target="_blank">alle Änderungen</a>)
 	EN	Latest Changes (<a href="%s" target="_blank">all changes</a>)
 	FR	Dernières modifications (<a href="%s" target="_blank">toutes les modifications</a>)
+	HU	Legújabb módosítások (<a href="%s" target="_blank">minden módosítás</a>)
 	NL	Laatste wijzigingen (<a href="%s" target="_blank">all changes</a>)
 	NO	Seneste endringer (<a href="%s" target="_blank">all changes</a>)
 	SV	Senaste ändringar (<a href="%s" target="_blank">alla ändringar</a>)
@@ -26016,6 +26155,7 @@ SERVICE_REQUIRES_HTTPS
 	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
 	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
 	FR	Ce service nécessite le module Perl IO::Socket::SSL. Vous ne pouvez pas utiliser ce service sans ce module. Veuillez utiliser le gestionnaire de paquets de votre système d'exploitation pour l'installer.
+	HU	Ehhez a szolgáltatáshoz az IO::Socket::SSL Perl modulra van szükség. A szolgáltatást a modul nélkül nem használhatja. Kérjük, használja az operációs rendszer csomagkezelőjét a telepítéshez.
 	NL	Deze dienst vereist Perl module IO::Socket::SSL. Je kunt de dienst zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
 	SV	Den här tjänsten behöver PERL-modulen IO::Socket::SSL! utan den kan denna modul inte användas. Använd operativsystemets pakethanterare för att installera den.
 
@@ -26027,6 +26167,7 @@ UPDATE
 	ES	actualización
 	FI	Päivittää
 	FR	Mise à jour
+	HU	Frissítés
 	IT	Aggiornamento
 	NL	Update
 	NO	Oppdaterer
@@ -26038,29 +26179,34 @@ TRACKS_FROM_OTHER_ALBUMS
 	EN	Tracks from other albums
 	ES	Pistas de otros álbumes
 	FR	Pistes d'autres albums
+	HU	Zeneszámok más albumokról
 	NL	Nummers van andere albums
 
 SETUP_YEARMENU
 	DE	Jahre Menü
 	EN	Year Menu
 	FR	Menu Années
+	HU	Év menü
 	NL	Jaartallen Menu
 
 SETUP_YEARMENU_DESC
 	DE	Soll das Jahresmenü nur Albumjahre oder Album- und Trackjahre anzeigen?
 	EN	Should the Year menu show album years only, or album and track years?
 	FR	Le menu Années doit-il prendre en compte uniquement les années des albums ou intégrer également les années des morceaux ? (Cette option permet d'afficher les morceaux d'une année donnée même si leur album est répertorié dans une année différente.)
+	HU	Az Év menü csak az album éveit jelenítse meg, vagy az album és a szám éveit?
 	NL	Moet het jaartallen menu alleen het jaartal van het album tonen, of zowel het jaartal van het album en het nummer?
 
 SETUP_YEARMENU_0
 	DE	Zeige nur Albumjahre
 	EN	Show album years only
 	FR	Inclure uniquement les années des albums
+	HU	Csak az album éveinek megjelenítése
 	NL	Toon alleen jaartal van het album
 
 SETUP_YEARMENU_1
 	DE	Zeige Album- und Titeljahre
 	EN	Show album and track years
 	FR	Inclure les années des albums et des morceaux
+	HU	Az album és a zeneszám éveinek megjelenítése
 	NL	Toon jaartal van album en nummer
 
