@@ -22822,7 +22822,7 @@ PRECACHEARTWORK_PROGRESS
 	ES	Guardando carátula en caché previamente
 	FI	Levykansien tallennus valmiiksi välimuistiin
 	FR	Mise en pré-cache de la pochette
-	HU	Bórtók letárolása
+	HU	Bórítók letárolása
 	IT	Pre-cache copertina
 	NL	Albumhoezen vooraf in cache opslaan
 	NO	Hurtigbufring av omslag på forhånd
