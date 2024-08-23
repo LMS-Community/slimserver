@@ -18520,6 +18520,7 @@ INFORMATION_PREFSDIR
 	ES	Carpeta de preferencias
 	FI	Määrityskansio
 	FR	Dossier des préférences
+	HU	Beállítások mappa
 	IT	Cartella delle preferenze
 	NL	Voorkeurenmap
 	NO	Mappe for innstillinger
@@ -18535,6 +18536,7 @@ INFORMATION_PLUGINDIRS
 	ES	Carpetas de extras
 	FI	Laajennuskansiot
 	FR	Dossiers des plugins
+	HU	Beépülő mappák
 	IT	Cartelle dei plugin
 	NL	Plug-in-mappen
 	NO	Plugin-mapper
@@ -18547,6 +18549,7 @@ INFORMATION_BINDIRS
 	DE	Ordner für Hilfsprogramme
 	EN	Helper Applications Folder
 	FR	Dossier pour les applications utilitaires
+	HU	Segítő alkalmazások mappa
 	NL	Hulpapplicatiesmap
 	NO	Mappe for støtteprogrammer
 	PL	Folder aplikacji pomocniczych
@@ -18560,6 +18563,7 @@ INFORMATION_ARCHITECTURE
 	ES	Arquitectura de plataforma
 	FI	Järjestelmän arkkitehtuuri
 	FR	Architecture de la plate-forme
+	HU	Platform architektúra
 	IT	Architettura piattaforma
 	NL	Platformarchitectuur
 	NO	Plattformarkitektur
@@ -18575,6 +18579,7 @@ INFORMATION_ARCHITECTURE_ABBR
 	ES	Plataforma
 	FI	Järjestelmä
 	FR	Plate-forme
+	HU	Platform
 	IT	Piattaforma
 	NL	Platform
 	NO	Plattform
@@ -18591,6 +18596,7 @@ INFORMATION_SERVER_IP
 	FI	Palvelimen IP-osoite
 	FR	Adresse IP du serveur
 	HE	כתובת ה-IP של השרת
+	HU	Szerver IP-címe
 	IT	Indirizzo IP del server
 	JA	サーバーIPアドレス
 	NL	IP-adres van server
@@ -18608,6 +18614,7 @@ INFORMATION_SERVER_IP_ABBR
 	ES	IP
 	FI	IP
 	FR	IP
+	HU	IP
 	IT	IP
 	NL	IP
 	NO	IP
@@ -18624,6 +18631,7 @@ INFORMATION_SERVER_PORT
 	FI	Palvelimen portin numero
 	FR	Port serveur
 	HE	מספר היציאה של השרת
+	HU	Szerver portszáma
 	IT	Porta server
 	NL	Poortnummer van server
 	NO	Serverport
@@ -18641,6 +18649,7 @@ INFORMATION_SERVER_HTTP
 	FI	HTTP-palvelimen portin numero
 	FR	Port HTTP du serveur
 	HE	מספר יציאת ה-HTTP של השרת
+	HU	Szerver HTTP port száma
 	IT	Porta HTTP server
 	JA	サーバーHTTPポート番号
 	NL	HTTP-poortnummer van server
@@ -18658,6 +18667,7 @@ INFORMATION_SERVER_HTTP_ABBR
 	ES	Puerto HTTP
 	FI	HTTP-portti
 	FR	Port HTTP
+	HU	HTTP port
 	IT	Porta HTTP
 	NL	HTTP-poort
 	NO	HTTP-port
@@ -18674,6 +18684,7 @@ INFORMATION_ALBUMS
 	FI	Levyjä yhteensä
 	FR	Albums
 	HE	מספר אלבומים כולל
+	HU	Összes album
 	IT	Numero album
 	JA	アルバム数
 	NL	Totaal aantal albums
@@ -18692,6 +18703,7 @@ INFORMATION_ARTISTS
 	FI	Artisteja yhteensä
 	FR	Artistes
 	HE	מספר מבצעים כולל
+	HU	Összes előadó
 	IT	Numero artisti
 	JA	アーチスト数
 	NL	Totaal aantal artiesten
@@ -18710,6 +18722,7 @@ INFORMATION_GENRES
 	FI	Genrejä yhteensä
 	FR	Genres
 	HE	מספר סגנונות כולל
+	HU	Összes műfaj
 	IT	Totale generi musicali
 	JA	ジャンル数
 	NL	Totaal aantal genres
@@ -18728,6 +18741,7 @@ INFORMATION_TRACKS
 	FI	Raitoja yhteensä
 	FR	Morceaux
 	HE	מספר רצועות כולל
+	HU	Összes zeneszám
 	IT	Totale brani
 	JA	曲数
 	NL	Totaal aantal nummers
@@ -18742,6 +18756,7 @@ INFORMATION_PLAYLISTS
 	DE	Anzahl Wiedergabelisten
 	EN	Total Playlists
 	FR	Listes de lecture
+	HU	Összes műsorlista
 	NL	Totaal aantal afspeellijsten
 	SV	Antal spellistor
 
@@ -18753,6 +18768,7 @@ INFORMATION_IMAGES
 	ES	Total de imágenes
 	FI	Kuvia yhteensä
 	FR	Images
+	HU	Összes kép
 	IT	Immagini totali
 	NL	Totaal aantal afbeeldingen
 	NO	Totalt antall bilder
@@ -18769,6 +18785,7 @@ INFORMATION_TIME
 	FI	Kokonaissoittoaika
 	FR	Durée totale
 	HE	משך השמעה כולל
+	HU	Teljes lejátszási idő
 	IT	Tempo totale d'ascolto
 	JA	総再生時間
 	NL	Totale speeltijd
@@ -18787,6 +18804,7 @@ INFORMATION_VERSION
 	FI	Versio
 	FR	Version
 	HE	גרסה
+	HU	Verzió
 	IT	Versione
 	JA	バージョン
 	NL	Versie
@@ -18805,6 +18823,7 @@ INFORMATION_DIAGSTRING
 	FI	Versiotiedot
 	FR	Informations sur la version
 	HE	מידע גרסה
+	HU	Verzió információ
 	IT	Informazioni sulla versione
 	NL	Versie-informatie
 	NO	Versjonsmerknader
@@ -18822,6 +18841,7 @@ INFORMATION_HOSTNAME
 	FI	Isäntänimi
 	FR	Nom d'hôte
 	HE	שם המארח
+	HU	Gazdanév
 	IT	Nome host
 	NL	Hostnaam
 	NO	Vertsnavn
@@ -18838,6 +18858,7 @@ INFORMATION_OPERATINGSYSTEM
 	ES	Sistema operativo
 	FI	Käyttöjärjestelmä
 	FR	Système d'exploitation
+	HU	Operációs rendszer
 	IT	Sistema operativo
 	NL	Besturingssysteem
 	NO	Operativsystem
@@ -18853,6 +18874,7 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	ES	Sistema operativo
 	FI	Käyttöjärjestelmä
 	FR	SE
+	HU	OS
 	IT	Sistema operativo
 	NL	OS
 	NO	OS
@@ -18869,6 +18891,7 @@ INFORMATION_HOSTIP
 	FI	Isännän IP-osoite
 	FR	Adresse IP hôte
 	HE	כתובת ה-IP של המארח
+	HU	Gazda IP-címe
 	IT	Indirizzo IP host
 	NL	IP-adres van host
 	NO	Verts-IP
@@ -18886,6 +18909,7 @@ INFORMATION_INSTALLED
 	FI	Asennettu
 	FR	Installé
 	HE	מותקן
+	HU	Telepítve
 	IT	Installato
 	JA	インストールされている
 	NL	Geïnstalleerd
@@ -18904,6 +18928,7 @@ INFORMATION_DISABLED
 	FI	EI KÄYTÖSSÄ
 	FR	DESACTIVE
 	HE	מושבת
+	HU	LETILTVA
 	IT	DISATTIVATO
 	JA	無効
 	NL	UITGESCHAKELD
@@ -18922,6 +18947,7 @@ INFORMATION_NO_VERSION
 	FI	Ei version numeroa
 	FR	Pas de numéro de version
 	HE	אין מספר גרסה
+	HU	Nincs verziószám
 	IT	Nessun numero di versione
 	JA	バージョン番号なし
 	NL	Geen versienummer
@@ -18940,6 +18966,7 @@ INFORMATION_DATE_FORMAT
 	FI	${shortdateFormat} / ${timeFormat}
 	FR	${shortdateFormat} à ${timeFormat}
 	HE	${shortdateFormat} ב-${timeFormat}
+	HU	${shortdateFormat}, ${timeFormat}
 	IT	${shortdateFormat} alle ${timeFormat}
 	JA	${shortdateFormat}  ${timeFormat}
 	NL	${shortdateFormat} op ${timeFormat}
@@ -18958,6 +18985,7 @@ BEFORE
 	FI	ennen
 	FR	avant
 	HE	לפני
+	HU	előtt
 	IT	prima
 	JA	前に
 	NL	voor
@@ -18976,6 +19004,7 @@ AFTER
 	FI	jälkeen
 	FR	après
 	HE	אחרי
+	HU	után
 	IT	dopo
 	JA	後
 	NL	na
@@ -18994,6 +19023,7 @@ IS
 	FI	on
 	FR	est
 	HE	הוא
+	HU	van
 	IT	è
 	JA	ある
 	NL	is
@@ -19012,6 +19042,7 @@ EQUALS
 	FI	on yhtä kuin
 	FR	égal(e) à
 	HE	שווה ל-
+	HU	egyenlő
 	IT	uguale a
 	JA	同輩
 	NL	is gelijk aan
@@ -19030,6 +19061,7 @@ LESSTHAN
 	FI	vähemmän kuin
 	FR	inférieur(e) à
 	HE	פחות מ-
+	HU	kevesebb mint
 	IT	minore di
 	JA	より少しより
 	NL	minder dan
@@ -19048,6 +19080,7 @@ GREATERTHAN
 	FI	suurempi kuin
 	FR	supérieur(e) à
 	HE	יותר מ-
+	HU	nagyobb mint
 	IT	maggiore di
 	JA	大きいより
 	NL	groter dan
@@ -19066,6 +19099,7 @@ NOT
 	FI	ei ole
 	FR	différent(e) de
 	HE	לא
+	HU	nem
 	IT	non
 	JA	ない
 	NL	niet
@@ -19080,6 +19114,7 @@ RANGE
 	DE	Bereich
 	EN	range
 	FR	compris entre
+	HU	sáv
 	NL	bereik
 	NO	område
 	PL	zakres
@@ -19090,6 +19125,7 @@ NOT_IN_RANGE
 	DE	nicht im Bereich
 	EN	not in range
 	FR	non compris entre
+	HU	nincs a sávon belül
 	NL	niet binnen bereik
 	NO	utenfor område
 	PL	poza zakresem
@@ -19106,6 +19142,7 @@ COLON
 	FI	:
 	FR	 :
 	HE	:
+	HU	:
 	IT	:
 	JA	:
 	NL	:
@@ -19141,6 +19178,7 @@ SETUP_SCROLLPIXELS_DESC
 	FI	Jos soittimessa on graafinen näyttö, voit määrittää, kuinka monta kuvapistettä soittimen näytössä vieritetään aina yllä määritetyin väliajoin. Voit säätää vierityksen nopeutta ja tarkkuutta säätämällä tätä arvoa yhdessä vieritysnopeuden kanssa. Jos et ole varma, jätä arvo oletukseen, kahteen tai kolmeen kuvapisteeseen (pienin arvo 1, suurin 20).
 	FR	Sur une platine équipée d'un affichage graphique, vous pouvez ajuster le nombre de pixels (points) dont la platine avance à chaque intervalle défini précédemment. Ajustez cette valeur en même temps que la vitesse de défilement pour régler la vitesse et la qualité de défilement. Dans le doute, conservez la valeur par défaut, de 2 ou 3 pixels (min. 1, max. 20).
 	HE	בנגן עם תצוגה גרפית, באפשרותך לכוונן את מספר הפיקסלים (נקודות) שהנגן גולל בכל מרווח זמן המוגדר לעיל. כוונן ערך זה בהתאם לקצב הגלילה כדי לכוונן את מהירות וכמות הגלילה. שים לב שערכים קטנים עם קצבי גלילה נמוכים נראים טוב, אך נדרשים עבורם שרת בעל ביצועים גבוהים ורשת פנויה. אם אינך יודע במה לבחור, השאר את ערך ברירת המחדל של 7 פיקסלים. (מינימום 1, מקסימום 20).
+	HU	Grafikus kijelzővel rendelkező lejátszón beállíthatja a pixelek (pontok) számát, amelyet a lejátszó a fent meghatározott intervallumokban görget.  Állítsa ezt a görgetési sebességgel együtt a görgetés sebességének és minőségének beállításához.  Ha kétségei vannak, hagyja az alapértelmezett 2 vagy 3 képpontot.  (Minimum 1, Max 20).
 	IT	In un lettore con display grafico è possibile impostare il numero di pixel scorsi dal lettore in ognuno degli intervalli sopra definiti. Impostare il valore insieme alla velocità di scorrimento per regolare la velocità e la qualità dello scorrimento. In caso di dubbi, mantenere il valore predefinito di 2 o 3 pixel (minimo 1, massimo 20).
 	NL	Op een muziekspeler met een grafisch display kun je het aantal pixels (punten) aanpassen waarmee de tekst in elk hierboven opgegeven interval loopt. Pas dit aan in combinatie met de tekstloopsnelheid om het tempo en de kwaliteit van de tekstloop in te stellen. Houd bij twijfel de standaardwaarde van 2 of 3 pixels aan (minimaal 1, maximaal 20).
 	NO	Hvis spilleren har en grafisk skjerm, kan du justere antall piksler (punkter) som spilleren ruller gjennom for hver tidsperiode som er definert ovenfor. Juster denne verdien i forhold til Rullefrekvens for å justere hastighet og kvalitet. Hvis du er usikker, bør du bruke standardverdien på 2 eller 3 piksler. (Minimumsverdi er 1, maksimum er 20.)
@@ -19158,6 +19196,7 @@ ANY_GENRE
 	FI	Mikä tahansa genre
 	FR	Tous les genres
 	HE	כל סגנון
+	HU	Bármilyen műfaj
 	IT	Qualsiasi genere
 	NL	Elk genre
 	NO	Alle sjangere
@@ -19175,6 +19214,7 @@ ANY_VALUE
 	FI	Mikä tahansa arvo
 	FR	Toutes les valeurs
 	HE	כל ערך
+	HU	Bármilyen érték
 	IT	Qualsiasi valore
 	NL	Elke waarde
 	NO	Vilkårlig verdi
@@ -19192,6 +19232,7 @@ ANY_TYPE
 	FI	Mikä tahansa tiedostomuoto
 	FR	Tous les formats
 	HE	כל תבנית קובץ
+	HU	Bármilyen fájlformátum
 	IT	Qualsiasi formato di file
 	NL	Elk bestandsformaat
 	NO	Alle filformater
@@ -19216,6 +19257,7 @@ MUSICSOURCE
 	ES	Origen de música
 	FI	Musiikkilähde
 	FR	Source musicale
+	HU	Zeneforrás
 	IT	Sorgente musicale
 	NL	Muziekbron
 	NO	Musikkilde
@@ -19231,6 +19273,7 @@ MEDIASOURCE
 	ES	Origen de material multimedia
 	FI	Medialähde
 	FR	Source du média
+	HU	Médiaforrás
 	IT	Sorgente multimediale
 	NL	Mediabron
 	NO	Mediekilde
@@ -19246,6 +19289,7 @@ MUSICSOURCE_SWITCH
 	ES	Seleccione el origen de música al que desea conectar el reproductor.
 	FI	Valitse musiikkilähde, johon haluat yhdistää soittimen.
 	FR	Veuillez sélectionner la source musicale à laquelle vous souhaitez connecter la platine.
+	HU	Kérjük, válassza ki azt a zeneforrást, amelyhez csatlakoztatni szeretné a lejátszót.
 	IT	Selezionare la sorgente musicale da connettere al lettore.
 	NL	Selecteer de muziekbron waarmee je jouw muziekspeler wilt verbinden.
 	NO	Velg hvilken musikkilde du vil kople spilleren til.
@@ -19261,6 +19305,7 @@ SQUEEZEBOX_SERVER_WANT_SWITCH
 	ES	Este reproductor está conectado a %s. ¿Desea conectarlo a este Lyrion Music Server?
 	FI	Tämä soitin on yhdistetty kohteeseen %s. Haluatko vaihtaa sen tähän Lyrion Music Serveriin?
 	FR	Cette platine est actuellement connectée à %s. Voulez-vous la connecter à ce Lyrion Music Server ?
+	HU	Ez a lejátszó jelenleg csatlakozik a következőhöz: %s. Szeretné, hogy átváltson erre a Lyrion zeneszerverre?
 	IT	Questo lettore è connesso a %s. Passare a questo Lyrion Music Server?
 	NL	Deze muziekspeler is momenteel verbonden met %s. Wil je de muziekspeler verbinden met Lyrion Music Server?
 	NO	Spilleren er koplet til %s. Vil du bytte til denne Lyrion Music Server?
@@ -19277,6 +19322,7 @@ SQUEEZEBOX_SERVER_CONNECTING
 	FI	Yhdistetään kohteeseen %s...
 	FR	Connexion à %s...
 	HE	מתחבר ל-%s...
+	HU	Csatlakozás a következőhöz: %s...
 	IT	Connessione a %s...
 	NL	Bezig verbinding te maken met %s...
 	NO	Kopler til %s...
@@ -19294,6 +19340,7 @@ SETUP_SCROLLMODE
 	FI	Vieritystila
 	FR	Mode de défilement
 	HE	מצב גלילה
+	HU	Görgetés mód
 	IT	Modalità scorrimento
 	NL	Tekstloopmodus
 	NO	Rullemodus
@@ -19311,6 +19358,7 @@ SETUP_SCROLLMODE_DESC
 	FI	Voit valita, miten soitin näyttää näytön toisella rivillä olevan tekstin, jos teksti on liian pitkä mahtuakseen näyttöön.  Vakiotilassa näyttö odottaa vieritystauon ajan ja vierittää sitten tekstiä vaakasuunnassa, kunnes koko rivi tulee näkyviin.  Vieritys jatkuu niin kauan, kun soitin näyttää tämän näytön.  Muissa tiloissa näyttö vierittää tekstin kerran ja lopettaa, tai se ei vieritä tekstiä näkyviin ollenkaan.
 	FR	Vous pouvez modifier la façon dont la platine affichera un texte trop long pour tenir sur l'écran. Dans le mode de défilement par défaut, la platine attendra pendant la durée de Pause avant défilement puis fera défiler horizontalement le texte jusqu'à la fin. Le défilement se répètera tant que l'affichage de la platine n'est pas modifié. Vous pouvez choisir de ne faire défiler le texte qu'une fois ou de désactiver complètement le défilement.
 	HE	באפשרותך לבחור את האופן שבו נגן יציג טקסט בשורה השנייה של התצוגה כאשר הטקסט ארוך יותר מגודל המסך. מצב הגלילה האופקית הרגילה ימתין לפרק הזמן של השהיית הגלילה ולאחר מכן יגלול את הטקסט להצגת השורה כולה. הגלילה תמשיך כל עוד הנגן מציג את הטקסט. המצבים החלופיים תומכים בגלילת הטקסט פעם אחת ולאחריה עצירה, או שלא מתבצעת כלל גלילת טקסט.
+	HU	Kiválaszthatja, hogy a lejátszó hogyan jelenítsen meg olyan szöveget a kijelző második sorában, amely túl hosszú ahhoz, hogy elférjen a képernyőn.  A szabványos vízszintes görgetési mód megvárja a görgetési szünet időtartamát, majd görgeti a szöveget a teljes sor megjelenítéséhez.  A görgetés mindaddig folytatódik, amíg a lejátszó ezt a képernyőt mutatja.  Az alternatív módok támogatják a szöveg egyszeri görgetését, majd leállítását, vagy a szöveg görgetését egyáltalán.
 	IT	È possibile selezionare come il lettore visualizza il testo troppo lungo sulla seconda riga dello schermo. La modalità di scorrimento standard attende il tempo impostato in Pausa di scorrimento e quindi fa scorrere il testo per visualizzare la riga intera. Lo scorrimento continua per tutto il tempo che il lettore visualizza questa schermata. Le modalità alternative consentono di far scorrere il testo una sola volta o di non farlo scorrere.
 	NL	Je kunt selecteren hoe het muzieksysteem de tekst op de tweede regel weergeeft, als die te lang is om in één keer in het display te laten zien. De standaardoptie Tekst laten lopen wacht tot de pauze-interval voorbij is en laat de tekst dan verder lopen. De tekst blijft lopen zolang het systeem dit scherm weergeeft. In de alternatieve modi kun je tekst één keer laten doorlopen en dan stoppen, of de tekst helemaal niet laten lopen.
 	NO	Du kan velge hvordan teksten på den andre linjen på spillerens skal vises hvis teksten er for lang til å få plass på skjermen. Med vanlig horisontal rulling står teksten stille så lenge som angitt i Pause i tekstrulling, og så ruller resten av teksten fram. Rullingen fortsetter så lenge dette vises på skjermen. De andre alternativene for rulling er å rulle til slutten av linjen og så stanse, eller å ikke rulle.
@@ -19328,6 +19376,7 @@ SETUP_SCROLLMODE_DEFAULT
 	FI	Normaali vieritys
 	FR	Mode de défilement par défaut
 	HE	גלילה רגילה
+	HU	Normál görgetés
 	IT	Scorrimento normale
 	NL	Tekst laten lopen
 	NO	Vanlig rulling
@@ -19345,6 +19394,7 @@ SETUP_SCROLLMODE_SCROLLONCE
 	FI	Vieritä kerran ja pysähdy
 	FR	Défiler une fois seulement
 	HE	גלילה אחת ולאחריה עצירה
+	HU	Görgessen egyszer és álljon meg
 	IT	Scorri solo una volta
 	NL	Tekst één keer laten lopen, dan stoppen
 	NO	Rull én gang og stans
@@ -19362,6 +19412,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	FI	Ei vieritystä
 	FR	Pas de défilement
 	HE	ללא גלילה
+	HU	Ne görgessen
 	IT	Non scorrere
 	NL	Tekst niet laten lopen
 	NO	Ikke rull
@@ -19379,6 +19430,7 @@ COMPILATION
 	FI	Kokoelma
 	FR	Compilation
 	HE	אוסף
+	HU	Válogatás
 	IT	Compilation
 	NL	Compilatie
 	NO	Samling
@@ -19396,6 +19448,7 @@ COMPILATIONS
 	FI	Kokoelma
 	FR	Compilations
 	HE	אוסף
+	HU	Válogatásek
 	IT	Compilation
 	NL	Compilaties
 	NO	Samling
@@ -19409,6 +19462,7 @@ APPEARANCES
 	DE	Beteiligungen
 	EN	Appearances
 	FR	Apparitions
+	HU	Megjelenések
 	NL	Optredens
 
 COMPOSITIONS
@@ -19427,6 +19481,7 @@ SETUP_VARIOUSARTISTS
 	FI	Kokoelmat
 	FR	Compilations
 	HE	אוספים
+	HU	Válogatás
 	IT	Compilation
 	NL	Compilaties
 	NO	Samlinger
@@ -19444,6 +19499,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	FI	Voit valita, että kaikki kokoelmalevyt näkyvät Eri artistit -kohdan alla, tai voit valita, että ne näkyvät kokoelman eri artistien nimen alla.
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
 	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף.
+	HU	Kiválaszthatja, hogy a válogatásalbumok együtt jelenjenek meg a „Különböző előadók” alatt, vagy a válogatásban szereplő egyes előadók alatt.
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
 	NL	Je kunt compilatie-albums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest op het compilatie album laten verschijnen.
 	NO	Du kan velge at samlealbum skal vises under Diverse artister, eller at de skal vises under hver artist i samlingen.
@@ -19461,6 +19517,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	FI	Laita kokoelmalevyt yhteen ryhmään
 	FR	Regrouper les compilations
 	HE	קיבוץ של אלבומי אוסף
+	HU	Csoportosítsd együtt a válogatásalbumokat
 	IT	Raggruppa gli album di compilation
 	NL	Compilatie-albums groeperen
 	NO	Grupper samlealbum
@@ -19478,6 +19535,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	FI	Luetteloi kokoelmalevyt kunkin artistin alla
 	FR	Lister les albums de compilation sous chaque artiste
 	HE	סידור אלבומי אוסף ברשימה תחת כל מבצע
+	HU	A válogatásalbumokat az egyes előadók alatt jelenítse meg
 	IT	Elenca gli album di compilation per singolo artista
 	NL	Compilatie-albums bij individuele artiesten weergeven
 	NO	Vis samlealbum under hver artist
@@ -19495,6 +19553,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	FI	Kun kokoelmalevyjä laitetaan samaan ryhmään, ne näkyvät oletuksena kohdassa Eri artistit.  Voit vaihtaa nimen alla.
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
 	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן.
+	HU	Ha a válogatásalbumokat egy csoportba rendezi, akkor alapértelmezés szerint a „Különböző előadók” alatt jelennek meg.  Ezt a nevet alább módosíthatja.
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
 	NL	Wanneer compilatie-albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
@@ -19512,6 +19571,7 @@ VARIOUSARTISTS
 	FI	Eri artisteja
 	FR	Artistes divers
 	HE	מבצעים שונים
+	HU	Különféle előadók
 	IT	Artisti vari
 	NL	Diverse artiesten
 	NO	Diverse artister
@@ -19529,6 +19589,7 @@ TRACKARTIST
 	FI	Raidan artisti
 	FR	Artiste de la piste
 	HE	מבצע הרצועה
+	HU	Zeneszám előadója
 	IT	Artista brano
 	NL	Artiest van nummer
 	NO	Sporartist
@@ -19546,6 +19607,7 @@ ALBUMARTIST
 	FI	Levyartisti
 	FR	Artiste, Album
 	HE	מבצע האלבום
+	HU	Album előadója
 	IT	Artista album
 	NL	Albumartiest
 	NO	Albumartist
@@ -19563,6 +19625,7 @@ UNSYNC
 	FI	Poista synkronointi
 	FR	Annuler la synchronisation
 	HE	ביטול סינכרון
+	HU	Szinkronizálás megszüntetése
 	IT	Rimuovi sincronizzazione
 	NL	Synchronisatie opheffen
 	NO	Avbryt synkronisering
@@ -19580,6 +19643,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	FI	Jos levyllä on lauluja, jotka on merkitty jollekin tietylle yhtyeelle, levy voidaan sijoittaa yhtyeen nimen alle tai muiden samalla levyllä esiintyvien artistien alle.  Yhtyetunnus tunnetaan myös nimellä TPE2. Joissakin ohjelmistoissa se saattaa näkyä "levyartistina".
 	FR	Les albums qui contiennent des morceaux contenant les informations d'un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Les informations sur le groupe sont appelées TPE2 ou Artiste de l'album dans certains logiciels.
 	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
+	HU	Azok az albumok, amelyek egy zenekarral megcímkézett dalokat tartalmaznak, az adott zenekar neve alatt vagy az album többi előadójával együtt szerepelhetnek.  A zenekar címke TPE2 néven is ismert, és bizonyos szoftverekben "album előadóként" jelenhet meg.
 	IT	Gli album con brani che contengono il tag Gruppo possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
 	NL	Albums met nummers die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
 	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
@@ -19595,6 +19659,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice Lyrion Music Server. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat Lyrion Music Serverin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
 	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que le Lyrion Music Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre bibliothèque musicale.
+	HU	Az MP3 címkeformátum nem biztosít szabványos módot az album előadójának meghatározására.  Egyes MP3 címkéző eszközök a TPE2 mezőt használják az album előadójához (iTunes, Winamp, Windows Media Player), míg mások a „zenekar/zenekar” szándékolt jelentésére használhatják.  Válassza ki a Lyrion Music Server használatának jelentését.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-tagtools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Lyrion Music Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Lyrion Music Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
@@ -19610,6 +19675,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
 	FR	Traiter l'étiquette TPE2 MP3 en tant que Artiste, Album
+	HU	Kezelje a TPE2 MP3 címkét album előadójaként
 	IT	Considera il tag MP3 TPE2 come artista dell'album
 	NL	TPE2 MP3-label als albumartiest behandelen
 	NO	Behandle TPE2 mp3-etiketter som albumartist
@@ -19625,6 +19691,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	ES	Tratar etiqueta TPE2 MP3 como banda
 	FI	Käsittele TPE2 MP3 -tagia yhtyeenä
 	FR	Traiter l'étiquette TPE2 MP3 en tant que Groupe
+	HU	Kezelje a TPE2 MP3 címkét előadójaként
 	IT	Considera il tag MP3 TPE2 come Gruppo/Orchestra
 	NL	TPE2 MP3-tag als band behandelen
 	NO	Behandle TPE2 mp3-etikett som gruppe
@@ -19641,6 +19708,7 @@ LYRICS
 	FI	Sanoitukset
 	FR	Paroles
 	HE	מילים
+	HU	Szöveg
 	IT	Testi
 	NL	Songtekst
 	NO	Sangtekst
@@ -19658,6 +19726,7 @@ SETUP_POWERONRESUME
 	FI	Jatka käynnistettäessä
 	FR	Reprise après démarrage
 	HE	חידוש ההפעלה
+	HU	Bekapcsolás után folytatás
 	IT	Ripristino all'accensione
 	NL	Actie bij aanzetten muziekspeler
 	NO	Fortsett ved oppstart
@@ -19675,6 +19744,7 @@ SETUP_POWERONRESUME_DESC
 	FI	Voit valita, miten soitin jatkaa nykyisen soittoluettelon soittamista, kun kytket soittimeen virran sen jälkeen, kun olet katkaissut siitä virran toiston aikana.  Asetukset koskevat tätä soitinta ja muita soittimia, jos ne on synkronoitu tämän soittimen kanssa.
 	FR	Vous pouvez choisir le type de reprise de la lecture de la liste en cours lorsque vous éteignez puis rallumez la platine. Ce réglage s'applique à cette platine et aux autres platines synchronisées.
 	HE	באפשרותך לבחור את האופן שבו הנגן מחדש את השמעת רשימת ההשמעה הנוכחית בעת לחיצה על לחצן ההפעלה/כיבוי לכיבוי הנגן ולאחר מכן פעם נוספת מאוחר יותר, להפעלתו. הגדרה זו חלה על נגן זה ועל כל יתר הנגנים המסונכרנים עם הנגן.
+	HU	Kiválaszthatja, hogy a lejátszó hogyan folytassa az aktuális lejátszási listát, amikor megnyomja a POWER gombot a lejátszó kikapcsolásához, majd ismételt bekapcsolásához.  Ez a beállítás erre a lejátszóra és a többi lejátszóra vonatkozik, amíg szinkronizálva vannak ezzel a lejátszóval.
 	IT	È possibile scegliere il modo in cui il lettore riprende la playlist corrente quando si preme il tasto POWER per spegnere il lettore e quindi lo si preme di nuovo per riaccenderlo. Questa impostazione si applica a questo lettore e a quelli sincronizzati con esso.
 	NL	Je kunt bepalen hoe de muziekspeler de huidige afspeellijst moet hervatten wanneer je het systeem uit- en later weer aanzet. Deze instelling geldt voor deze muziekspeler en andere muziekspelers zolang ze met deze muziekspeler gesynchroniseerd zijn.
 	NO	Du kan velge hvordan spilleren skal gjenoppta spillelisten når du trykker på av/på-knappen for å slå spilleren av, og så slår den på igjen senere. Denne innstillingen gjelder denne spilleren og andre spillere som er synkronisert med denne.
@@ -19691,6 +19761,7 @@ SETUP_POWERONRESUME_PAUSEOFF_NONEON
 	FI	Tauota, kun virta katkaistaan / pidä tauotettuna, kun virta kytketään
 	FR	Mettre en pause à l'arrêt / Rester en pause au démarrage
 	HE	השהייה בעת כיבוי / שימור ההשהייה בעת הפעלה
+	HU	Szünet kikapcsoláskor / Szünet marad bekapcsoláskor
 	IT	Pausa allo spegnimento / Rimani in pausa all'accensione
 	NL	Pauzeren bij uitzetten / Pauze handhaven bij aanzetten
 	NO	Stans avspilling midlertidig når av / Behold midlertidig stans ved oppstart
@@ -19708,6 +19779,7 @@ SETUP_POWERONRESUME_PAUSEOFF_PLAYON
 	FI	Tauota, kun virta katkaistaan / jatka toistoa, kun virta kytketään
 	FR	Mettre en pause à l'arrêt / Reprendre au démarrage
 	HE	השהייה בעת כיבוי / חידוש הפעלה בעת הפעלה
+	HU	Szünet kikapcsoláskor / Folytatás bekapcsoláskor
 	IT	Pausa allo spegnimento / Riprendi all'accensione
 	NL	Pauzeren bij uitzetten / Hervatten bij aanzetten
 	NO	Stans avspilling midlertidig når av / Fortsett avspilling ved oppstart
@@ -19725,6 +19797,7 @@ SETUP_POWERONRESUME_STOPOFF_PLAYON
 	FI	Pysäytä toisto, kun virta katkaistaan / jatka toistoa, kun virta kytketään
 	FR	Stopper à l'arrêt / Redémarrer le morceau au démarrage
 	HE	עצירה בעת כיבוי / הפעלה מחדש בעת הפעלה
+	HU	Leállítás kikapcsoláskor / Zeneszám újraindítása bekapcsoláskor
 	IT	Interrompi allo spegnimento / Ricomincia brano all'accensione
 	NL	Stoppen bij uitzetten / Nummer opnieuw starten bij aanzetten
 	NO	Stans avspilling når av / Start sang på nytt ved oppstart
@@ -19742,6 +19815,7 @@ SETUP_POWERONRESUME_STOPOFF_NONEON
 	FI	Lopeta, kun virta katkaistaan / jatka, kun virta kytketään
 	FR	Stopper à l'arrêt / Rester stoppé au démarrage
 	HE	עצירה בעת כיבוי / שימור העצירה בעת הפעלה
+	HU	Leállítás kikapcsoláskor / Bekapcsoláskor leállítva marad
 	IT	Interrompi allo spegnimento / Non riprendere all'accensione
 	NL	Stoppen bij uitzetten / Gestopt blijven bij aanzetten
 	NO	Stans avspilling når av / Ikke start igjen ved oppstart
@@ -19759,6 +19833,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	FI	Pysäytä toisto, kun virta katkaistaan / jatka soittoluettelon toistoa, kun virta kytketään
 	FR	Stopper à l'arrêt / Redémarrer la liste de lecture au démarrage
 	HE	עצירה בעת כיבוי / הפעלה מחדש של רשימת ההשמעה בעת הפעלה
+	HU	Leállítás kikapcsoláskor / Lejátszási lista újraindítása bekapcsoláskor
 	IT	Interrompi allo spegnimento / Riavvia playlist all'accensione
 	NL	Stoppen bij uitzetten / Afspeellijst opnieuw starten bij aanzetten
 	NO	Stans avspilling når av / Start spilleliste på nytt ved oppstart
@@ -19776,6 +19851,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETON
 	FI	Lopeta, kun virta katkaistaan / nollaa soittoluettelo, kun virta kytketään
 	FR	Stopper à l'arrêt / Réinitialiser la liste de lecture au démarrage
 	HE	עצירה בעת כיבוי / איפוס רשימת ההשמעה בעת הפעלה
+	HU	Leállítás kikapcsoláskor / Lejátszási lista visszaállítása bekapcsoláskor
 	IT	Interrompi allo spegnimento / Reimposta playlist all'accensione
 	NL	Stoppen bij uitzetten / Afspeellijst opnieuw instellen bij aanzetten
 	NO	Stans avspilling når av / Start spilleliste på nytt ved oppstart
@@ -19793,6 +19869,7 @@ ARTWORK
 	FI	Kansitaide
 	FR	Pochettes
 	HE	עטיפה
+	HU	Borító
 	IT	Copertine
 	NL	Albumhoezen
 	NO	Albumomslag
@@ -19810,6 +19887,7 @@ ONE_BY_ONE_ARTWORK
 	FI	1 x 1 -kansitaide
 	FR	Pochette 1x1
 	HE	עטיפות נפרדות
+	HU	1 x 1 borító
 	IT	Copertine una alla volta
 	NL	Albumhoezen 1-voor-1
 	NO	Bla i albumomslag
@@ -19827,6 +19905,7 @@ OBJECT_RETRIEVAL_FAILURE
 	FI	Lyrion Music Server epäonnistui etsimäsi resurssin hakemisessa.
 	FR	Le Lyrion Music Server n'a pas pu récupérer la source recherchée.
 	HE	Lyrion Music Server לא הצליח לאחזר את המשאב המבוקש.
+	HU	A Lyrion Music Server nem tudta lekérni a keresett erőforrást.
 	IT	Recupero risorsa richiesta non riuscito.
 	NL	Lyrion Music Server kan de gewenste hulpbron niet ophalen.
 	NO	Lyrion Music Server kunne ikke hente inn ressursen du så etter.
@@ -19843,6 +19922,7 @@ SETUP_LARGETEXTFONT
 	FI	Suuren tekstin fontti
 	FR	Grande police
 	HE	גופן טקסט גדול
+	HU	Nagy szöveg betűtípus
 	IT	Carattere per testo esteso
 	NL	Groot lettertype
 	NO	Stor tekst
@@ -19860,6 +19940,7 @@ SETUP_LARGETEXTFONT_DESC
 	FI	Valitse, mitä fonttia haluat käyttää, kun näytetään suurta tekstiä.
 	FR	Choisissez la police utilisée en mode texte de grande taille.
 	HE	בחר את הגופן שבו ברצונך להשתמש בעת הצגת טקסט גדול.
+	HU	Válassza ki, melyik betűtípust szeretné használni nagy szöveg megjelenítéséhez.
 	IT	Scegliere il carattere da utilizzare per testi estesi.
 	NL	Kies het lettertype dat je wilt gebruiken wanneer je grote tekst wilt weergeven.
 	NO	Velg hvilken skrifttype du vil bruke for stor tekst.
@@ -19877,6 +19958,7 @@ SETUP_LARGETEXTFONT_0
 	FI	Klassinen
 	FR	Classique
 	HE	קלאסי
+	HU	Klasszikus
 	IT	Classico
 	NL	Klassiek
 	NO	Klassisk
@@ -19894,6 +19976,7 @@ SETUP_LARGETEXTFONT_1
 	FI	Moderni
 	FR	Moderne
 	HE	מודרני
+	HU	Modern
 	IT	Moderno
 	NL	Modern
 	NO	Moderne
@@ -19911,6 +19994,7 @@ SORT_BY
 	FI	Lajitteluperuste
 	FR	Trier selon
 	HE	מיון לפי
+	HU	Rendezési sorrend
 	IT	Ordina per
 	NL	Sorteren op
 	NO	Sorter etter
@@ -19927,6 +20011,7 @@ ALBUM_DISPLAY_OPTIONS
 	ES	Opciones de visualización de álbum
 	FI	Levyn tarkasteluasetukset
 	FR	Options d'affichage des albums
+	HU	Albummegtekintési beállítások
 	IT	Opzioni di visualizzazione album
 	NL	Opties voor albumweergave
 	NO	Alternativer for albumvisning
@@ -19943,6 +20028,7 @@ SORT_ARTISTALBUM
 	FI	Artisti, levy
 	FR	Artiste, Album
 	HE	מבצע, אלבום
+	HU	Előadó, Album
 	IT	Artista, album
 	NL	Artiest, album
 	NO	Artist, album
@@ -19960,6 +20046,7 @@ SORT_ARTISTYEARALBUM
 	FI	Artisti, vuosi, levy
 	FR	Artiste, Année, Album
 	HE	מבצע, שנה, אלבום
+	HU	Előadó, év, album
 	IT	Artista, anno, album
 	NL	Artiest, jaar, album
 	NO	Artist, år, album
@@ -19977,6 +20064,7 @@ SORT_YEARALBUM
 	FI	Vuosi, levy
 	FR	Année, Album
 	HE	שנה, אלבום
+	HU	Év, album
 	IT	Anno, album
 	NL	Jaar, album
 	NO	År, album
@@ -19994,6 +20082,7 @@ SORT_YEARARTISTALBUM
 	FI	Vuosi, artisti, levy
 	FR	Année, Artiste, Album
 	HE	שנה, מבצע, אלבום
+	HU	Év, előadó, album
 	IT	Anno, artista, album
 	NL	Jaar, artiest, album
 	NO	År, artist, album
@@ -20011,6 +20100,7 @@ SORT_GENREALBUM
 	FI	Genre, levy
 	FR	Genre, Album
 	HE	סגנון, אלבום
+	HU	Műfaj, album
 	IT	Genere, album
 	NL	Genre, album
 	NO	Sjanger, album
@@ -20028,6 +20118,7 @@ SORT_GENREARTISTALBUM
 	FI	Genre, artisti, levy
 	FR	Genre, Artiste, Album
 	HE	סגנון, מבצע, אלבום
+	Hu	Műfaj, előadó, album
 	IT	Genere, artista, album
 	NL	Genre, artiest, album
 	NO	Sjanger, artist, album
@@ -20045,6 +20136,7 @@ SETUP_CLOCKSOURCE
 	FI	Kellon lähde
 	FR	Source horloge
 	HE	מקור השעון
+	HU	Óra forrása
 	IT	Origine orologio
 	NL	Bron voor klok
 	NO	Klokkesignalkilde
@@ -20062,6 +20154,7 @@ SETUP_CLOCKSOURCE_DESC
 	FI	Transporterin lähdöt voidaan synkronoida sisäisten tai ulkoisten lähteiden kanssa. Valitse kellon lähde alla.
 	FR	Les sorties audio de Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez la source de l'horloge ci-dessous.
 	HE	ניתן לסנכרן את רכיבי הפלט של התקן Transporter עם מקורות פנימיים או חיצוניים. בחר את אחד מקורות השעון שלהלן.
+	HU	A Transporter kimenetei szinkronizálhatók belső vagy külső forrásokkal. Válasszon óraforrást alább.
 	IT	Le uscite del Transporter possono essere sincronizzate con origini interne o esterne. Scegliere l'origine dell'orologio di seguito.
 	NL	De uitgangen van Transporter kunnen met interne of externe bronnen gesynchroniseerd worden. Kies hieronder een bron voor de klok.
 	NO	Transporters utganger kan synkroniseres med interne eller eksterne kilder. Velg en kilde for klokkesignal nedenfor.
@@ -20079,6 +20172,7 @@ CLOCKSOURCE_INTERNAL
 	FI	Sisäinen kello
 	FR	Horloge interne
 	HE	שעון פנימי
+	HU	Belső óra
 	IT	Orologio interno
 	NL	Interne klok
 	NO	Intern klokke
@@ -20096,6 +20190,7 @@ CLOCKSOURCE_WORD_CLOCK
 	FI	Word Clock -tulo
 	FR	Entrée word clock
 	HE	קלט שעון טקסט
+	HU	Word Clock bemenet
 	IT	Ingresso Word Clock
 	NL	Word Clock-invoer
 	NO	Word clock-inndata
@@ -20112,6 +20207,7 @@ SETUP_FXLOOPSOURCE
 	ES	Entrada de bucle de efectos
 	FI	Tehostesilmukan tulo
 	FR	Entrée de boucle d'effets
+	HU	Effekthurok bemenet
 	IT	Input ciclo di effetti
 	NL	Invoer van effectenlus
 	NO	Effektsløyfeinnsignal
@@ -20127,6 +20223,7 @@ SETUP_FXLOOPSOURCE_DESC
 	ES	Se puede conectar un procesador digital externo (p. ej. un ecualizador) a través de s/pdif para procesar la señal antes de que llegue al conversor DAC interno de Trasporter. Si esta opción se encuentra activada, el procesador externo tendrá que estar conectado y en activo para que funcionen las salidas analógicas de Transporter.
 	FI	Ulkoinen digitaaliprosessori, esimerkiksi taajuuskorjain, saattaa käsitellä signaalin s/pdif:n välityksellä, ennen kuin signaali saavuttaa Trasporterin sisäisen DAC:n. Jos tämä toiminto on käytössä, ulkoisen prosessorin pitää olla liitettynä ja toiminnassa, jotta Transporterin analogiset lähdöt toimisivat.
 	FR	Un processeur numérique externe, tel qu'un correcteur, peut être connecté par le biais de S/PDIF pour traiter le signal avant qu'il n'atteigne le convertisseur numérique-analogique interne de Transporter. Si cette option est activée, le processeur externe doit être connecté et opérationnel afin de permettre le fonctionnement des sorties analogiques de Transporter.
+	HU	Egy külső digitális processzor, például egy EQ, csatlakoztatható s/pdif-en keresztül, hogy feldolgozza a jelet, mielőtt az elérné a Transporter belső DAC-ját. Ha ez az opció engedélyezve van, akkor a külső processzornak csatlakoztatva kell lennie és működnie kell ahhoz, hogy a Transporter analóg kimenetei működjenek.
 	IT	È possibile collegare un processore digitale esterno, quale un equalizzatore, tramite S/PDIF per elaborare il segnale prima che raggiunga il convertitore digitale-analogico interno del Transporter. Se questa opzione è attiva, il processore esterno deve essere collegato e operativo affinché gli output analogici del Transporter funzionino.
 	NL	Via S/PDIF kan een externe digitale processor, zoals een equalizer, worden aangesloten om het signaal te verwerken voordat het de interne DAC van Transporter bereikt. Als deze optie ingeschakeld is, moet de externe processor aangesloten en ingeschakeld zijn, zodat de analoge uitvoeren van Transporter functioneren.
 	NO	En ekstern digital prosessor, for eksempel en EQ, kan koples til via S/PDIF for å prosessere signalet før det når Transporters interne D/A-omformer. Hvis dette alternativet er aktivert, må den eksterne prosessoren være koplet til og i gang for at Transporters analoge utganger skal fungere.
@@ -20142,6 +20239,7 @@ FXLOOPSOURCE_DISABLED
 	ES	Desactivado
 	FI	Ei käytössä
 	FR	Désactivé
+	HU	Letiltva
 	IT	Disattivato
 	NL	Uitgeschakeld
 	NO	Deaktivert
@@ -20157,6 +20255,7 @@ SETUP_FXLOOPCLOCK
 	ES	Modo de reloj de bucle de efectos
 	FI	Tehosteiden silmukan kellotila
 	FR	Mode horloge de boucle d'effets
+	HU	Óra mód az effekthurokhoz
 	IT	Modalità clock ciclo di effetti
 	NL	Klokmodus van effectenlus
 	NO	Klokkemodus: effektsløyfe
@@ -20173,6 +20272,7 @@ SETUP_FXLOOPCLOCK_DESC
 	ES	Preferiblemente, la salida del procesador externo se sincronizará a su entrada. En este caso debe elegir el modo de reloj sincrónico para que el oscilador interno de Transporter vuelva a registrar la señal entrante en el reloj de palabras, con el fin de minimizar la fluctuación. En modo asincrónico, Transporter recupera el reloj de la señal entrante, por lo que no es esencial la sincronización.
 	FI	Ulkoisen prosessorin lähtösignaali synkronoidaan mieluiten sen tulosignaalin kanssa. Valitse tässä tapauksessa synkronoitu kellotila. Transporterin sisäinen oskillaattori kellottaa tällöin tulosignaalin uudelleen keskihajonnan minimoimiseksi. Epäsynkronoidussa tilassa Transporter poimii kellon tulosignaalista, joten sitä ei tarvitse synkronoida.
 	FR	La sortie du processeur externe sera synchronisée de préférence sur son entrée. Dans ce cas, sélectionnez le mode horloge synchrone : l'oscillateur interne de Transporter modifiera le signal entrant afin d'en minimiser la fluctuation. En mode asynchrone, Transporter récupérera l'horloge à partir du signal entrant, évitant ainsi de devoir procéder à sa synchronisation.
+	HU	Előnyös, ha a külső processzor kimenete szinkronizálva van a bemenetével. Ebben az esetben válassza az óra szinkron üzemmódot, és a bejövő jelet a Transporter belső oszcillátora újra kell ütemezni a minimális jitter érdekében. Aszinkron módban a Transporter visszaállítja az órát a bejövő jelből, így nem szükséges szinkronizálni.
 	IT	L'output del processore esterno è di preferenza sincronizzato con il relativo input. In un caso simile, selezionare la modalità di clock sincrona per fare in modo che il clock del segnale in entrata sia reimpostato dall'oscillatore interno di Transporter per ridurre al minimo l'instabilità. Nella modalità asincrona, Transporter recupera il clock dal segnale in entrata e perciò non occorre che sia sincronizzato.
 	NL	Het verdient de voorkeur de uitvoer van de externe processor met zijn invoer te synchroniseren. Kies in dit geval synchrone klokmodus. Het inkomende signaal wordt dan opnieuw geklokt door de interne oscillator van Transporter voor minimale jitter. In asynchrone modus haalt Transporter de klok uit het inkomende signaal, zodat deze niet synchroon hoeft te zijn.
 	NO	Den eksterne prosessorens utsignaler skal helst være synkronisert med innsignalene. Du bør derfor velge synkron klokkemodus for dette, så blir innsignalet låst på nytt av Transporters interne oscillator, slik at avviket blir minimalt. I usynkron modus henter Transporter klokkedata fra innsignalet, slik at den ikke trenger å synkroniseres.
@@ -20188,6 +20288,7 @@ FXLOOPCLOCK_SYNCHRONOUS
 	ES	Sincrónico: Transporter principal
 	FI	Synkronoitu: Transporter on pääsoitin
 	FR	Synchrone : Transporter est le dispositif maître
+	HU	Szinkron: A Transporter a mester
 	IT	Sincrona: Transporter è il dispositivo principale
 	NL	Synchroon: Transporter is master
 	NO	Synkront: Transporter er master
@@ -20203,6 +20304,7 @@ FXLOOPCLOCK_ASYNCHRONOUS
 	ES	Asincrónico: procesador externo principal
 	FI	Epäsynkroninen: ulkoinen prosessori on pääprosessori
 	FR	Asynchrone : le processeur externe est le dispositif maître
+	HU	Aszinkron: A külső processzor a mester
 	IT	Asincrona: il processore esterno è il dispositivo principale
 	NL	Asynchroon: Externe processor is master
 	NO	Usynkront: Ekstern prosessor er master
@@ -20219,6 +20321,7 @@ VISUALIZER_EXTENDED_TEXT
 	FI	Laajennettu tekstinäyttö
 	FR	Informations texte étendues
 	HE	תצוגת טקסט מורחב
+	HU	Bővített szöveges kijelző
 	IT	Testo esteso
 	NL	Uitgebreide tekstweergave
 	NO	Utvidet tekstvisning
@@ -20237,6 +20340,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	FI	Spektrianalysaattori
 	FR	Analyseur de spectre
 	HE	מנתח הספקטרום
+	HU	Spektrum analizátor
 	IT	Analizzatore di spettro
 	NL	Spectrumanalyser
 	NO	Spektralanalyse
@@ -20254,6 +20358,7 @@ VISUALIZER_ANALOG_VUMETER
 	FI	Analoginen VU-mittari
 	FR	VUmètre analogique
 	HE	מד VU אנלוגי
+	HU	Analóg VU mérő
 	IT	Indicatore VU analogico
 	NL	Analoge VU-meter
 	NO	Analog VU-måler
@@ -20271,6 +20376,7 @@ VISUALIZER_DIGITAL_VUMETER
 	FI	Digitaalinen VU-mittari
 	FR	VUmètre numérique
 	HE	מד VU דיגיטלי
+	HU	Digitális VU mérő
 	IT	Indicatore VU digitale
 	NL	Digitale VU-meter
 	NO	Digital VU-måler
@@ -20288,6 +20394,7 @@ SETUP_VISUALIZERMODE
 	FI	Visualisointinäyttö
 	FR	Mode visualisation
 	HE	מסך מייצג ויזואלי
+	HU	Vizualis képernyő
 	IT	Visualizzatore
 	NL	Visualisatiescherm
 	NO	Effektvisning
@@ -20305,6 +20412,7 @@ SETUP_VISUALIZERMODE_DESC
 	FI	Soitin voi näyttää visualisointeja tai näyttää lisää tekstitietoja oikeanpuoleisessa näytössä. Valitse, kumman haluat soittimen näyttävän. Soittimen Visual-painiketta painamalla voit selata alla olevia vaihtoehtoja.
 	FR	La platine peut afficher différents mode de visualisation ou des informations texte étendues sur la droite de l'écran. Sélectionnez les éléments à afficher. Le bouton de visualisation de la platine permet de parcourir les modes de visualisation sélectionnés ci-dessous.
 	HE	הנגן יכול להציג מייצגים ויזואליים או מידע טקסט מורחב במסך הימני. בחר את הפרטים שברצונך להציג. הלחצן 'ויזואלי' בנגן יבצע מעבר בין כל האפשרויות שנבחרו להלן.
+	HU	A lejátszó megjelenítőket vagy kiterjesztett szöveges információkat jeleníthet meg a jobb oldali képernyőn. Válassza ki, hogy melyiket szeretné megjeleníteni. A lejátszó Vizuális gombja az alább kiválasztott opciók között váltogat.
 	IT	Nella parte destra del display del lettore è possibile visualizzare informazioni estese o visualizzatori. Scegliere ciò che si desidera visualizzare. Premendo l'apposito pulsante del lettore si attivano ciclicamente le opzioni selezionate sotto.
 	NL	De muziekspeler kan visualisaties of extra informatie op het rechterscherm tonen. Kies wat er getoond moet worden. Met de Visual-knop op het systeem kun je de hieronder geselecteerde opties doorlopen.
 	NO	Spilleren kan vise effekter eller utvidet tekstinformasjon på høyre skjerm. Velg hvilken av disse du vil se. Du kan bla i de valgte alternativene nedenfor med knappen Visual.
@@ -20320,6 +20428,7 @@ SETUP_PRECACHEARTWORK
 	ES	Guardando carátula en caché previamente
 	FI	Levykansien tallentaminen valmiiksi välimuistiin
 	FR	Mise en pré-cache de la pochette
+	HU	Az borítók előzetes gyorsítótárazása
 	IT	Immissione copertina in pre-cache
 	NL	Albumhoezen vooraf in cache opslaan
 	NO	Hurtigbufrer omslag på forhånd
@@ -20335,6 +20444,7 @@ SETUP_PRECACHEARTWORK_DESC
 	ES	De forma predeterminada, se cambia el tamaño de todas las cubiertas de álbum que se encuentran durante la fase de examen y éstas se guardan en la memoria caché para mejorar el funcionamiento de Squeezebox Controller o la interfaz Web. Esto puede ralentizar el proceso de examen, por lo que puede desactivarse desde aquí.
 	FI	Tarkistuksessa löydettyjen levykansien koot muutetaan ja tallennetaan välimuistiin oletuksena. Tämä parantaa suorituskykyä, kun käytetään Squeezebox-kaukosäädintä tai internet-käyttöliittymää.  Tämä hidastaa tarkistusta, joten toiminto voidaan poistaa käytöstä täällä.
 	FR	Par défaut, toutes les couvertures détectées lors de la phase d'analyse sont automatiquement redimensionnées et mises en cache pour améliorer les performances lors de l'utilisation du Squeezebox Controller ou de l'interface Web. Cette fonction ralentissant le processus d'analyse, vous pouvez la désactiver ici.
+	HU	A Squeezebox Controller vagy a webes felület használatakor a teljesítmény javítása érdekében alapértelmezés szerint a szkennelési szakaszban talált borítóképek automatikusan átméretezésre és gyorsítótárazásra kerülnek.  Ez lelassítja a vizsgálati folyamatot, ezért itt letiltható.
 	IT	Per impostazione predefinita, tutte le copertine rilevate durante l'analisi vengono ridimensionate e inserite nella cache al fine di migliorare le prestazioni durante l'utilizzo di Squeezebox Controller o dell'interfaccia Web. Poiché questa operazione rallenta il processo di analisi, è possibile disattivarla qui.
 	NL	Alle albumhoezen die tijdens het scannen worden gevonden, worden standaard in grootte aangepast en gecachet om prestaties te verbeteren wanneer Squeezebox Controller of de webinterface wordt gebruikt. Aangezien het scanproces hierdoor wordt vertraagd, kun je het hier desgewenst uitschakelen.
 	NO	Som standard tilpasses størrelsen på albumomslag som finnes i søk, og det hurtigbufres for å forbedre ytelsen ved bruk av Squeezebox Controller eller webgrensesnittet. Dette gjør søket tregere, så derfor kan det deaktiveres her.
@@ -20350,6 +20460,7 @@ SETUP_PRECACHEARTWORK_ENABLED
 	ES	Guardar carátula de álbum en caché previamente
 	FI	Tallenna levykannet valmiiksi välimuistiin
 	FR	Mettre la pochette de l'album en pré-cache
+	HU	Albumborító elő gyorsítótárazás
 	IT	Copertina album in pre-cache
 	NL	Albumhoezen vooraf in cache opslaan
 	NO	Forhåndsbufre albumomslag
@@ -20365,6 +20476,7 @@ SETUP_PRECACHEARTWORK_DISABLED
 	ES	No guardar carátula en caché previamente
 	FI	Älä tallenna levykansia valmiiksi välimuistiin
 	FR	Ne pas mettre la pochette en pré-cache
+	HU	Ne tárolja előre a borítót
 	IT	Non inserire le copertine nella pre-cache
 	NL	Albumhoezen niet vooraf in cache opslaan
 	NO	Ikke hurtigbufre omslag på forhånd
@@ -20377,6 +20489,7 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	DE	Spezifikationen für Zwischenspeicherung
 	EN	Custom pre-caching specifications
 	FR	paramétrage personnalisé du pré-cache
+	HU	Egyéni gyorsítótárazási specifikációk
 	NL	Aangepaste specificaties pre-caching
 	NO	Egendefinerte spesifikasjoner for forhåndsbufring
 	PL	Dostosowanie ustawień bufora
@@ -20386,6 +20499,7 @@ SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
 	FR	Redimensionner les pochettes
+	HU	Borító átméretezés
 	NL	Albumhoezen schalen
 	NO	Skalering av plateomslag
 	PL	Dopasowywanie rozmiarów okładek
@@ -20396,12 +20510,14 @@ SETUP_IMAGEPROXY_DESC
 	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie in der Grösse angepasst, um eine gute Qualität und Performance zu erreichen. Dies erfolgt standardmässig in Lyrion Music Server selber. Die Helferanwendung kann den Server entlasten, indem die Aufgabe an einen anderen Prozess übergeben wird.
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by Lyrion Music Server itself. The helper can offload some of the heavy lifting to a separate process managed by the server application.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par Lyrion Music Server. La tâche peut également être confiée à un processus dédié pour décharger le serveur.
+	HU	Annak érdekében, hogy a legjobb minőségű borítókat és teljesítményt érje el az eszközökön, a grafikai fájlokat átméretezi, mielőtt elküldi őket az ügyfélnek. Alapértelmezés szerint ezt maga a Lyrion Music Server kezeli. A segítő a nehézemelés egy részét a szerveralkalmazás által kezelt külön folyamatra terhelheti.
 
 SETUP_IMAGEPROXY_LOCAL
 	CS	Použít Lyrion Music Server ke změně velikosti obalů alb
 	DE	Bilder lokal in Lyrion Music Server anpassen
 	EN	Use Lyrion Music Server to resize artwork
 	FR	Redimensionner les pochettes avec Lyrion Music Server
+	HU	Használja a Lyrion Music Servert a borítók átméretezéséhez
 	NL	Gebruik Lyrion Music Server om albumhoezen te schalen
 	NO	La Lyrion Music Server skalere plateomslag
 	PL	Użyj Lyrion Music Server do dopasowywania okładek
@@ -20423,6 +20539,7 @@ SETUP_SERVERPRIORITY
 	FI	Palvelimen prioriteetti
 	FR	Priorité serveur
 	HE	עדיפות השרת
+	HU	Szerver prioritás
 	IT	Priorità  server
 	NL	Serverprioriteit
 	NO	Serverprioritet
@@ -20436,6 +20553,7 @@ SETUP_SHUFFLE_METHOD
 	DE	Mischmethode
 	EN	Shuffle method
 	FR	Méthode de mélange aléatoire
+	HU	Keverési módszer
 	NL	Methode voor willekeurig afspelen
 
 SETUP_USE_BALANCED_SHUFFLE
@@ -20443,6 +20561,7 @@ SETUP_USE_BALANCED_SHUFFLE
 	DE	Ausbalancierter, aber langsamer mischen
 	EN	Use more balanced, but slower shuffle
 	FR	Choisir un mélange plus équilibré, mais plus lent
+	HU	Használjon kiegyensúlyozottabb, de lassabb keverést
 	NL	Gebalanceerd, minder willekeurig
 
 SETUP_USE_FASTER_SHUFFLE
@@ -20450,6 +20569,7 @@ SETUP_USE_FASTER_SHUFFLE
 	DE	Schneller, aber weniger ausbalanciert mischen
 	EN	Use faster, but less balanced shuffle
 	FR	Choisir un mélange plus rapide mais moins équilibré
+	HU	Használjon gyorsabb, de kevésbé kiegyensúlyozott keverést
 	NL	Willekeurig, minder gebalanceerd
 
 SETUP_SERVERPRIORITY_DESC
@@ -20461,6 +20581,7 @@ SETUP_SERVERPRIORITY_DESC
 	FI	Voit määrittää Lyrion Music Serverin prioriteettitason.
 	FR	Vous pouvez fixer le niveau de priorité du Lyrion Music Server.
 	HE	באפשרותך לציין את העדיפות שבה פועל Lyrion Music Server.
+	HU	Megadhatja a Lyrion Music Server prioritását.
 	IT	È possibile specificare la priorità attribuita a Lyrion Music Server.
 	NL	Je kunt de prioriteit van Lyrion Music Server specificeren.
 	NO	Du kan angi prioritet for Lyrion Music Server.
@@ -20478,6 +20599,7 @@ SETUP_SCANNERPRIORITY
 	FI	Skannerin prioriteetti
 	FR	Priorité d'analyse
 	HE	עדיפות הסורק
+	HU	Szkenner prioritás
 	IT	Priorità analisi
 	NL	Scannerprioriteit
 	NO	Søkeprioritering
@@ -20495,6 +20617,7 @@ SETUP_SCANNERPRIORITY_DESC
 	FI	Voit määrittää tarkistuksen prioriteettitason.
 	FR	Vous pouvez fixer le niveau de priorité du processus d'analyse.
 	HE	באפשרותך לציין את העדיפות שבה פועל תהליך הסריקה.
+	HU	Megadhatja a szkennelési folyamat prioritását.
 	IT	È possibile specificare la priorità attribuita al processo di analisi.
 	NL	Je kunt de prioriteit van het scanproces specificeren.
 	NO	Du kan angi søkets prioritet.
@@ -20512,6 +20635,7 @@ SETUP_PRIORITY_CURRENT
 	FI	Nykyisen palvelimen prioriteetti
 	FR	Priorité serveur actuelle
 	HE	עדיפות נוכחית של השרת
+	HU	Jelenlegi szerver prioritás
 	IT	Priorità server in uso
 	NL	Huidige serverprioriteit
 	NO	Gjeldende serverprioritet
@@ -20529,6 +20653,7 @@ SETUP_PRIORITY_HIGH
 	FI	Suuri
 	FR	Elevé
 	HE	גבוהה
+	HU	Magas
 	IT	Alta
 	NL	Hoog
 	NO	Høy
@@ -20546,6 +20671,7 @@ SETUP_PRIORITY_ABOVE_NORMAL
 	FI	Normaalia enemmän
 	FR	Au-dessus de la normale
 	HE	מעל לממוצע
+	HU	Normálon felül
 	IT	Superiore al normale
 	NL	Boven normaal
 	NO	Over normalt
@@ -20563,6 +20689,7 @@ SETUP_PRIORITY_NORMAL
 	FI	Normaali
 	FR	Normal
 	HE	רגילה
+	HU	Nomrál
 	IT	Normale
 	NL	Normaal
 	NO	Normal
@@ -20580,6 +20707,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	FI	Normaalia alempi
 	FR	Sous la normale
 	HE	מתחת לממוצע
+	HU	Normál alatt
 	IT	Inferiore al normale
 	NL	Onder normaal
 	NO	Under normalt
@@ -20597,6 +20725,7 @@ SETUP_PRIORITY_LOW
 	FI	Heikko
 	FR	Faible
 	HE	נמוכה
+	HU	Alacsony
 	IT	Bassa
 	NL	Laag
 	NO	Lav
@@ -20614,6 +20743,7 @@ SETUP_DIGITALOUTPUTENCODING
 	FI	Digitaalisen lähdön koodaus
 	FR	Codage de la sortie numérique :
 	HE	קידוד פלט דיגיטלי
+	HU	Digitális kimenet kódolás
 	IT	Codifica uscita digitale
 	NL	Codering van digitale uitvoer
 	NO	Digital utdatakoding
@@ -20631,6 +20761,8 @@ SETUP_DIGITALOUTPUTENCODING_DESC
 	FI	Voit valita joko S/PDIF- tai AES/EBU-koodauksen digitaalisille lähdöille.
 	FR	Vous pouvez choisir le format utilisé par les sorties numériques (S/PDIF ou AES/EBU).
 	HE	ניתן לבחור בין קידוד S/PDIF ו-AES/EBU עבור הפלט הדיגיטלי.
+	HU	A digitális kimenetek S/PDIF és AES/EBU kódolása közül választhat.
+	HU	A digitális kimenetek S/PDIF és AES/EBU kódolása közül választhat.
 	IT	Per le uscite digitali è possibile scegliere tra la codifica S/PDIF e AES/EBU.
 	NL	Je kunt kiezen tussen S/PDIF- en AES/EBU-codering voor de digitale uitgangen.
 	NO	Du kan velge mellom S/PDIF- og AES/EBU-koding for digitale utsignaler.
@@ -20648,6 +20780,7 @@ DIGITALOUTPUTENCODING_SPDIF
 	FI	S/PDIF
 	FR	S/PDIF
 	HE	S/PDIF
+	HU	S/PDIF
 	IT	S/PDIF
 	NL	S/PDIF
 	NO	S/PDIF
@@ -20665,6 +20798,7 @@ DIGITALOUTPUTENCODING_AESEBU
 	FI	AES/EBU
 	FR	AES/EBU
 	HE	AES/EBU
+	HU	AES/EBU
 	IT	AES/EBU
 	NL	AES/EBU
 	NO	AES/EBU
@@ -20682,6 +20816,7 @@ AUDIO_SOURCE_BALANCED_AES
 	FI	Tasapainotettu AES/EBU
 	FR	AES/EBU équilibré
 	HE	AES/EBU מאוזן
+	HU	Kiegyensúlyozott AES/EBU
 	IT	AES/EBU bilanciato
 	NL	Gebalanceerde AES/EBU
 	NO	Balansert AES/EBU
@@ -20699,6 +20834,7 @@ AUDIO_SOURCE_BNC_SPDIF
 	FI	BNC S/PDIF -koaksiaalijohto
 	FR	Coax BNC S/PDIF
 	HE	BNC Coax S/PDIF
+	HU	BNC Coax S/PDIF
 	IT	S/PDIF coassiale per BNC
 	NL	BNC coaxiale S/PDIF
 	NO	BNC koaks S/PDIF
@@ -20716,6 +20852,7 @@ AUDIO_SOURCE_RCA_SPDIF
 	FI	RCA S/PDIF -koaksiaalijohto
 	FR	Coax RCA S/PDIF
 	HE	RCA Coax S/PDIF
+	HU	RCA Coax S/PDIF
 	IT	S/PDIF RCA coassiale
 	NL	RCA coaxiale S/PDIF
 	NO	RCA koaks S/PDIF
@@ -20733,6 +20870,7 @@ AUDIO_SOURCE_OPTICAL_SPDIF
 	FI	Optinen S/PDIF (TOSLINK)
 	FR	S/PDIF optique (TOSLINK)
 	HE	Optical S/PDIF (TOSLINK)‎
+	HU	Optikai S/PDIF (TOSLINK)
 	IT	S/PDIF ottico (TOSLINK)
 	NL	Optische S/PDIF (TOSLINK)
 	NO	Optisk S/PDIF (TOSLINK)
@@ -20750,6 +20888,7 @@ SETUP_WORDCLOCKOUTPUT
 	FI	Word Clock päällä S/PDIF-lähdöissä
 	FR	Word Clock sur les sorties S/PDIF
 	HE	שעון טקסט ברכיבי פלט מסוג S/PDIF
+	HU	Word Clock S/PDIF kimeneteken
 	IT	Wordclock su uscite S/PDIF:
 	NL	Word Clock op S/PDIF-uitgangen
 	NO	Word Clock for S/PDIF-utganger
@@ -20766,6 +20905,7 @@ SETUP_WORDCLOCKOUTPUT_DESC
 	ES	Cuando se usan las entradas digitales, Transporter puede ser el reloj principal y transmitir una señal de reloj de palabras en las salidas S/PDIF. Esta función sólo debe estar activada si el dispositivo de origen proporciona una entrada de reloj de palabras y el cable está conectado.
 	FI	Kun käytetään digitaalisia tuloja, Transporter voi toimia pääkellona ja lähettää Word Clock -signaalin S/PDIF-lähdöistään. Tämä toiminto tulee ottaa käyttöön ainoastaan, jos lähdelaitteessa on Word Clock -tulo ja johto on liitetty.
 	FR	Lorsqu'il utilise les entrées numériques, Transporter peut transférer le signal ou générer un signal word clock sur les sorties S/PDIF. Cette fonction ne devra être activée que si le dispositif source fournit une entrée word clock et le câble est connecté.
+	HU	A digitális bemenetek használatakor a Transporter lehet az óramester, és Word clock jelet továbbít az S/PDIF kimenetein. Ezt a funkciót csak akkor kell engedélyezni, ha a forráseszköz Word Clock bemenetet biztosít, és a kábel csatlakoztatva van.
 	IT	Quando si utilizzano gli ingressi digitali, Transporter può far passare il segnale o generare un segnale wordclock nelle uscite S/PDIF.
 	NL	Bij gebruik van de digitale ingangen kan de Transporter als klokbeheerder optreden en een woordkloksignaal doorlaten op de S/PDIF-uitgangen. Deze functie dient alleen ingeschakeld te worden als het bronapparaat een ingang voor een woordklok heeft en de draad is aangesloten.
 	NO	Når du bruker de digitale inngangene, kan Transporter være hovedklokke, og sende et word clock-signal via S/PDIF-utgangene. Denne funksjonen må bare aktiveres hvis kildeenheten sender word clock-inndata, og kabelen er koplet til.
@@ -20781,6 +20921,7 @@ WORDCLOCKOUTPUT_DISABLED
 	ES	Salida de reloj de palabras desactivada (Origen principal)
 	FI	Word Clock -lähtö ei ole käytössä (lähde on päälähtö)
 	FR	La sortie word clock est désactivée (la source est le dispositif maître)
+	HU	A Word Clock kimenete le van tiltva (a forrás a fő)
 	IT	Output di Word Clock disattivato (la sorgente è il dispositivo principale)
 	NL	Word Clock-uitgang is uitgeschakeld (Bron is master)
 	NO	Word clock-utdata deaktivert (kilde er master)
@@ -20796,6 +20937,7 @@ WORDCLOCKOUTPUT_ENABLED
 	ES	Salida de reloj de palabras activada (Transporter principal)
 	FI	Word Clock -lähtö on käytössä (Transporter on päälaite)
 	FR	La sortie word clock est activée (Transporter est le dispositif maître)
+	HU	Word Clock kimenet engedélyezve van (Transporter a mester)
 	IT	Output Word Clock è attivato (Transporter è il dispositivo principale)
 	NL	Word Clock-uitgang ingeschakeld (Transporter is master)
 	NO	Word clock-utdata aktivert (Transporter er master)
@@ -20811,6 +20953,7 @@ SETUP_ROLLOFFSLOW
 	ES	Filtro de desvanecimiento DAC
 	FI	DAC Roll-off -suodatin
 	FR	Filtre d'affaiblissement du convertisseur numérique-analogique
+	HU	DAC roll-off szűrő
 	IT	Filtro DAC roll-off
 	NL	DAC Roll-off Filter
 	NO	DAC-dempingsfilter
@@ -20826,6 +20969,7 @@ SETUP_ROLLOFFSLOW_DESC
 	ES	El DAC AK4396 usa como predeterminado un filtro de desvanecimiento seco, con una opción para usar un filtro de desvanecimiento lento en su lugar. Esta opción sólo afecta a las salidas analógicas.
 	FI	AK4396 DAC käyttää oletusarvoisesti sharp roll-off -suodatinta, mutta slow roll-off -suodatin on tarjolla vaihtoehtona. Tämä vaihtoehto koskee vain analogisia lähtöjä.
 	FR	Par défaut, l'AK4396 DAC utilise un filtre d'affaiblissement brusque avec une option lui permettant de le remplacer par un filtre d'affaiblissement amorti. Cette option affecte uniquement les sorties analogiques.
+	HU	Az AK4396 DAC alapértelmezés szerint éles roll-off szűrőt használ, és lehetőség van egy lassú görgős szűrő használatára is. Ez az opció csak az analóg kimenetekre vonatkozik.
 	IT	Per impostazione predefinita, con il DAC AK4396 viene utilizzato un filtro sharp roll-off, con l'opzione di utilizzare un filtro slow roll-off come alternativa. L'opzione incide solo sulle uscite analogiche.
 	NL	De AK4396 DAC gebruikt standaard een sharp roll-off filter, met een slow roll-off filter als alternatief. Deze optie is alleen van invloed op de analoge uitgangen.
 	NO	AK4396 DAC bruker automatisk et skarpt dempingsfilter, men har også et alternativ for bruk av et sakte dempingsfilter. Dette alternativet påvirker kun analog lyd.
@@ -20841,6 +20985,7 @@ ROLLOFFSLOW_DISABLED
 	ES	Filtro de desvanecimiento seco
 	FI	Sharp Roll-off -suodatin
 	FR	Filtre d'affaiblissement brusque
+	HU	Éles Roll-off szűrő
 	IT	Filtro sharp roll-off
 	NL	Steil roll-off-filter
 	NO	Skarpt dempingsfilter
@@ -20856,6 +21001,7 @@ ROLLOFFSLOW_ENABLED
 	ES	Filtro de desvanecimiento lento
 	FI	Slow Roll-off -suodatin
 	FR	Filtre d'affaiblissement amorti
+	HU	Lassú Roll-off szűrő
 	IT	Filtro slow roll-off
 	NL	Slow roll-off filter
 	NO	Sakte dempingsfilter
@@ -20872,6 +21018,7 @@ SETUP_POWEROFFDAC
 	FI	Äänen katkaiseminen
 	FR	Désactiver audio :
 	HE	כיבוי השמע
+	HU	AUDIO kikapcsolása
 	IT	Disattiva audio
 	NL	Audio uitzetten
 	NO	Slå av lyd
@@ -20889,6 +21036,7 @@ SETUP_POWEROFFDAC_DESC
 	FI	Kun Transporter on pois päältä, koko äänijärjestelmästä voidaan katkaista virta.  Jos koko äänijärjestelmästä katkaistaan virta, saattaa kuulua poksahdus.
 	FR	Lorsque Transporter est désactivé, il est possible de désactiver entièrement la section audio. Cette désactivation peut entraîner un effet de bruit.
 	HE	כאשר Transporter כבוי, ניתן לכבות לחלוטין את מקטע השמע. כיבוי מקטע השמע עלול לגרום להופעת צליל נקישה.
+	HU	Ha a Transporter ki van kapcsolva, az audio rész teljesen kikapcsolható.  Az audio rész kikapcsolása hallható pukkanást okozhat.
 	IT	Quando Transporter è disattivato, è possibile disattivare completamente l'audio. Questa operazione potrebbe dare luogo a uno schiocco.
 	NL	Wanneer de Transporter uitgeschakeld wordt, kan het audiogedeelte helemaal worden uitgezet. Je kunt dan een pop-geluid horen.
 	NO	Når Transporter er avslått, kan lyddelen slås helt av. Dette kan føre til en hørbar poppelyd.
@@ -20906,6 +21054,7 @@ POWEROFFDAC_ALWAYSON
 	FI	Ääni aina päällä
 	FR	Audio toujours activé
 	HE	שמע מופעל תמיד
+	HU	AUDIO mindig bekapcsolva
 	IT	Audio sempre attivato
 	NL	Audio altijd aan
 	NO	Lyd alltid på
@@ -20923,6 +21072,7 @@ POWEROFFDAC_WHENOFF
 	FI	Hiljennä äänenvoimakkuutta, kun virta on katkaistu
 	FR	Pas d'audio quand désactivée
 	HE	כיבוי שמע במצב כבוי
+	HU	Kapcsolja ki a hangot, ha ki van kapcsolva
 	IT	Audio disattivato se spento
 	NL	Audio uitzetten wanneer uit
 	NO	Slå av lyden når avslått
@@ -20940,6 +21090,7 @@ SETUP_DISABLEDAC
 	FI	Kytke ääni pois
 	FR	Désactiver l'audio
 	HE	כיבוי השמע
+	HU	Hang kikapcsolása
 	IT	Disattiva audio
 	NL	Audio uitzetten
 	NO	Slå av lyd
@@ -20957,6 +21108,7 @@ SETUP_DISABLEDAC_DESC
 	FI	Kun Squeezebox on pois päältä, digitaalinen/analoginen sovitin ja digitaaliset lähdöt voidaan poistaa käytöstä.  Joissakin soittimissa lähtöjen poistaminen käytöstä saattaa aiheuttaa poksahdusäänen tai melua.
 	FR	Lorsque la Squeezebox est désactivée, le convertisseur de signal analogique à numérique et les sorties numériques peuvent être désactivés. La désactivation des sorties peut entraîner des effets de bruit sur certains récepteurs.
 	HE	נגן ה-Squeezebox כיבה את הממיר מדיגיטלי-לאנלוגי וניתן להשבית את הפלט הדיגיטלי. השבתת הפלט עלולה לגרום להופעת צלילי נקישות או רעשים במקלטים מסוימים.
+	HU	Ha a Squeezebox ki van kapcsolva, a digitális-analóg konverter és a digitális kimenetek letilthatók.  A kimenetek letiltása hallható pukkanást vagy zajt okozhat egyes vevőegységekben.
 	IT	Quando Squeezebox è spento è possibile disattivare il convertitore da digitale ad analogico e le uscite digitali. In alcuni ricevitori, la disattivazione di tali uscite potrebbe provocare uno schiocco o un disturbo.
 	NL	Wanneer de Squeezebox uitstaat, kun je de digitaal-naar-analoog-omzetter (DAC) en de digitale uitgangen uitschakelen. Bij sommige ontvangers hoor je een pop-geluid of ruis, wanneer de uitgangen uitgeschakeld worden.
 	NO	Når Squeezebox er avslått, kan du deaktivere D/A-omformeren og digitale utenheter. Når du deaktiverer utenhetene kan du høre et smekk eller annen støy i enkelte mottakere.
@@ -20974,6 +21126,7 @@ DISABLEDAC_ALWAYSON
 	FI	Lähdöt aina päällä
 	FR	Sorties toujours activées
 	HE	רכיבי פלט מופעלים תמיד
+	HU	A kimenetek mindig legyenek bekapcsolva
 	IT	Uscite sempre attivate
 	NL	Uitgangen altijd aan
 	NO	Utsignal alltid på
@@ -20991,6 +21144,7 @@ DISABLEDAC_WHENOFF
 	FI	Poista lähdöt käytöstä, kun pois päältä
 	FR	Pas de sorties quand éteint
 	HE	השבת רכיבי פלט במצב כבוי
+	HU	A kimenetek kikapcsolása kikapcsolt állapotban
 	IT	Disattiva uscite se spento
 	NL	Uitgangen uitschakelen wanneer uit
 	NO	Deaktiver utsignal hvis avslått
@@ -21007,6 +21161,7 @@ SETUP_ANALOGOUTMODE
 	ES	Salida de línea
 	FI	Linjalähtö
 	FR	Sortie ligne
+	HU	Vonal kimenet
 	IT	Uscita
 	NL	Lijnuitgang
 	NO	Utgang
@@ -21022,6 +21177,7 @@ SETUP_ANALOGOUTMODE_DESC
 	ES	Elija la función del puerto de salida de auriculares o subwoofer de Boom. La opción de auriculares apagará los altavoces integrados. "Activado siempre" mantendrá activados los altavoces integrados, incluso cuando los auriculares estén conectados.
 	FI	Valitse Boomin lähtöportin toiminto (kuulokkeet/subwoofer).  Jos valitset kuulokkeet, sisäiset kaiuttimet mykistyvät. "Aina käytössä" pitää sisäisen kaiuttimen käytössä silloinkin, kun kuulokkeet on liitetty.
 	FR	Sélectionnez la fonction du port de sortie du casque/sub Boom. L'option Toujours activé garde les haut-parleurs internes activés, même si un casque est branché.
+	HU	A Boom fejhallgató/sub out port funkciójának kiválasztásakor a fejhallgató kikapcsolja a belső hangszórókat. Az „Always On” bekapcsolva hagyja a belső hangszórókat, még akkor is, ha a fejhallgató csatlakoztatva van.
 	IT	Scegliere la funzione della porta di uscita per cuffia/subwoofer del radioregistratore. L'opzione Cuffia disattiva gli altoparlanti interni. Con l'opzione Sempre attivato, gli altoparlanti interni saranno sempre attivati, anche quando sono collegate le cuffie.
 	NL	Kies de functie van de hoofdtelefoon-/subwooferuitgang voor de Boom. Met de hoofdtelefoon optie schakelen de interne speakers uit. Met 'Altijd aan' blijven de interne speakers ingeschakeld, zelfs wanneer er een hoofdtelefoon is aangesloten.
 	NO	Velg funksjonen til utgangen for hodetelefoner/basshøyttaler på Boom. Hvis du velger hodetelefoner, slås de interne høyttalerne av. Hvis du velger "Alltid på", beholdes de interne høyttalerne på, selv om hodetelefonene er koplet til.
@@ -21037,6 +21193,7 @@ ANALOGOUTMODE_SUBOUT
 	ES	Subwoofer
 	FI	Subwoofer
 	FR	Subwoofer
+	HU	Mélynyomó
 	IT	Subwoofer
 	NL	Subwoofer
 	NO	Basshøyttaler
@@ -21052,6 +21209,7 @@ ANALOGOUTMODE_HEADPHONE
 	ES	Auriculares
 	FI	Kuulokkeet
 	FR	Casques
+	HU	Fejhallgató
 	IT	Cuffie
 	NL	Hoofdtelefoon
 	NO	Hodetelefoner
@@ -21067,6 +21225,7 @@ ANALOGOUTMODE_ALWAYS_ON
 	ES	Activado siempre
 	FI	Aina käytössä
 	FR	Toujours activé
+	HU	Mindig bekapcsolva
 	IT	Sempre attivata
 	NL	Altijd aan
 	NO	Alltid på
@@ -21082,6 +21241,7 @@ ANALOGOUTMODE_ALWAYS_OFF
 	ES	Desactivado siempre
 	FI	Ei koskaan käytössä
 	FR	Toujours éteint
+	HU	Mindig kikapcsolva
 	IT	Sempre disattivata
 	NL	Altijd uit
 	NO	Alltid av
@@ -21098,6 +21258,7 @@ SETUP_POLARITYINVERSION
 	FI	Polaarisuuden kääntäminen
 	FR	Inversion de polarité
 	HE	היפוך קוטביות
+	HU	Fordított polaritás
 	IT	Inversione polarità
 	NL	Polariteitsinversie
 	NO	Omvendt polaritet
@@ -21115,6 +21276,7 @@ SETUP_POLARITYINVERSION_DESC
 	FI	Transporter voi kääntää äänisignaalin napaisuuden.
 	FR	La platine peut inverser la polarité du signal audio.
 	HE	Transporter יכול להפוך את הקוטביות של אות השמע.
+	HU	A lejátszó meg tudja fordítani az audiojel polaritását.
 	IT	Il lettore inverte la fase del segnale audio.
 	NL	De Transporter kan de polariteit van het audiosignaal omkeren.
 	NO	Transporter kan endre polariteten til lydsignalet.
@@ -21132,6 +21294,7 @@ POLARITYINVERSION_NORMAL
 	FI	Normaali napaisuus
 	FR	Polarité normale
 	HE	קוטביות רגילה
+	HU	Normál polaritás
 	IT	Polarità normale
 	NL	Normale polariteit
 	NO	Normal polaritet
@@ -21149,6 +21312,7 @@ POLARITYINVERSION_INVERTED
 	FI	Käänteinen polaarisuus
 	FR	Polarité inversée
 	HE	קוטביות הפוכה
+	HU	Fordított polaritás
 	IT	Polarità invertita
 	NL	Omgekeerde polariteit
 	NO	Omvendt polaritet
@@ -21166,6 +21330,7 @@ INFORMATION_PLAYER_VOLTAGE
 	FI	Jännite
 	FR	Tension
 	HE	מתח
+	HU	Volt
 	IT	Voltaggio
 	NL	Voltage
 	NO	Spenning
@@ -21183,6 +21348,7 @@ INFORMATION_PLAYER_VOLTAGE_ABBR
 	FI	Jännite
 	FR	Tension
 	HE	מתח
+	HU	Bolt
 	IT	Voltaggio
 	NL	Voltage
 	NO	Spenning
@@ -21200,6 +21366,7 @@ LOADING_BROWSE_MUSIC_FOLDER
 	FI	Ladataan musiikkikansiota...
 	FR	Chargement du dossier de musique...
 	HE	טוען את תיקיית המוסיקה...
+	HU	Zene mappa betöltése...
 	IT	Caricamento cartella Musica...
 	NL	Muziekmap wordt geladen...
 	NO	Laster musikkmappe...
@@ -21217,6 +21384,7 @@ LOADING
 	FI	Lataa...
 	FR	Chargement...
 	HE	טוען...
+	HU	Beolvasás...
 	IT	Caricamento...
 	NL	Laden...
 	NO	Laster...
@@ -21234,6 +21402,7 @@ SRC
 	FI	Digitaalisen tulon lähde
 	FR	Source d'entrée numérique
 	HE	מקור קלט דיגיטלי
+	HU	Digitális bemeneti forrás
 	IT	Sorgente ingresso digitale
 	NL	Digitale invoerbron
 	NO	Digital inndatakilde
@@ -21250,6 +21419,7 @@ DEBUG_ARTWORK
 	ES	Visualización y coincidencia de carátula de álbum
 	FI	Kansitaiteen näyttö ja vastaavuus
 	FR	Affichage et correspondance de pochettes
+	HU	Borítók megjelenítése és illesztése
 	IT	Associazione e visualizzazione copertine
 	NL	Albumhoezen weergave en gevonden
 	NO	Visning og bruk av albumomslag
@@ -21262,6 +21432,7 @@ DEBUG_ARTWORK_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassunsproxy
 	EN	Artwork Resizing Proxy
 	FR	Redimensionner les pochettes en amont
+	HU	Grafika átméretezési proxy
 	NL	Proxy voor schalen van albumhoezen
 	NO	Proxy for skalering av plateomslag
 	PL	Proxy dla dopasowywania rozmiarów okładek
@@ -21275,6 +21446,7 @@ DEBUG_FACTORYTEST
 	ES	Información utilizada durante pruebas de fábrica
 	FI	Tehdastesteissä käytetyt tiedot
 	FR	Informations utilisées pour les tests usine
+	HU	A gyári tesztelés során felhasznált információk
 	IT	Informazioni utilizzate durante la verifica in fabbrica
 	NL	Informatie gebruikt tijdens fabriekstesten
 	NO	Informasjon som brukes ved fabrikktesting
@@ -21291,6 +21463,7 @@ DEBUG_FAVORITES
 	ES	Guardar y reproducir favoritos
 	FI	Suosikkien tallennus ja toisto
 	FR	Enregistrement et lecture des favoris
+	HU	Kedvencek mentése és lejátszása
 	IT	Salvataggio e riproduzione dei preferiti
 	NL	Opslaan en afspelen van favorieten
 	NO	Lagre og spille av favoritter
@@ -21306,6 +21479,7 @@ DEBUG_SERVER_PLUGINS
 	ES	Carga de módulo de complementos
 	FI	Laajennusmoduulien lataaminen
 	FR	Informations sur le plugin
+	HU	Beépülő modul betöltése
 	IT	Caricamento dei moduli plugin
 	NL	Laden van plug-in-module
 	NO	Plugin-modul lastes inn
@@ -21321,6 +21495,7 @@ DEBUG_SERVER_UPDATE
 	ES	Información sobre descargas de actualizaciones de software automáticas
 	FI	Tietoja automaattisesta ohjelmistopäivitysten latauksista
 	FR	Informations sur les téléchargements automatiques de mises à jour logicielles
+	HU	Információ az automatikus szoftverfrissítések letöltéséről
 	IT	Informazioni sui download automatici di aggiornamenti del software
 	NL	Informatie over automatische download van software-updates
 	NO	Informasjon om nedlasting av automatiske programvareoppdateringer
@@ -21336,6 +21511,7 @@ DEBUG_PREFS
 	ES	Guardar y configurar preferencias
 	FI	Asetuksien määrittäminen ja tallentaminen
 	FR	Configuration et enregistrement des préférences
+	HU	Preferenciák beállítása és mentése
 	IT	Impostazione e salvataggio delle preferenze
 	NL	Voorkeuren aanpassen en opslaan
 	NO	Innstillinger og lagring
@@ -21351,6 +21527,7 @@ DEBUG_SERVER_SCHEDULER
 	ES	Registro de programador interno
 	FI	Sisäisen ajoituksen kirjaus
 	FR	Journalisation du planificateur interne
+	HU	Belső ütemező naplózása
 	IT	Registrazione pianificazione interna
 	NL	Loggen van interne planner
 	NO	Loggføring av internplanlegging
@@ -21366,6 +21543,7 @@ DEBUG_SERVER
 	ES	Información de servidor general
 	FI	Palvelimen yleiset tiedot
 	FR	Informations générales du serveur
+	HU	Általános szerverinformációk
 	IT	Informazioni generali sul server
 	NL	Algemene serverinformatie
 	NO	Generell serverinformasjon
@@ -21381,6 +21559,7 @@ DEBUG_SERVER_SELECT
 	ES	Registro de selección de bucle interno (configuración avanzada)
 	FI	Sisäisen valintasilmukan kirjaus (kokeneet käyttäjät)
 	FR	Journalisation de la boucle de sélection interne (avancé)
+	HU	Belső kiválasztó hurok naplózása (speciális)
 	IT	Registrazione ciclo di selezione interno (per utenti esperti)
 	NL	Loggen van interne selectie-loop (geavanceerd)
 	NO	Loggføring av intern select-spørringssløyfe (avansert)
@@ -21396,6 +21575,7 @@ DEBUG_SERVER_MEMORY
 	ES	Uso de memoria de servidor (configuración avanzada)
 	FI	Palvelimen muistin käyttö (kokeneet käyttäjät)
 	FR	Utilisation de la mémoire du serveur (avancé)
+	HU	Szerver memóriahasználat (speciális)
 	IT	Utilizzo memoria server (per utenti esperti)
 	NL	Gebruik van servergeheugen (geavanceerd)
 	NO	Bruk av serverminne (avansert)
@@ -21411,6 +21591,7 @@ DEBUG_SERVER_TIMERS
 	ES	Información de temporizador interno
 	FI	Sisäisen ajastimen tiedot
 	FR	Informations sur la programmation interne
+	HU	Belső időzítő információ
 	IT	Informazioni timer interno
 	NL	Informatie over interne timer
 	NO	Informasjon om intern tidsinnstilling
@@ -21426,6 +21607,7 @@ DEBUG_NETWORK_HTTP
 	ES	Registro de servidor HTTP interno
 	FI	Sisäisen HTTP-palvelimen kirjaus
 	FR	Journalisation du serveur http interne
+	HU	Belső HTTP szerver naplózás
 	IT	Registrazione server HTTP interno
 	NL	Loggen van interne HTTP-server
 	NO	Intern http-serverloggføring
@@ -21441,6 +21623,7 @@ DEBUG_NETWORK_ASYNCHTTP
 	ES	Información de solicitud de HTTP remoto asincrónico
 	FI	Epäsynkronisen HTTP-etäpyynnön tiedot
 	FR	Informations de requête http distante asynchrone
+	HU	Aszinkron távoli HTTP-kérés információi
 	IT	Informazioni sulle richieste HTTP remote asincrone
 	NL	Informatie over asynchroon extern HTTP-verzoek
 	NO	Informasjon om asynkron ekstern http-forespørsel
@@ -21456,6 +21639,7 @@ DEBUG_NETWORK_ASYNCDNS
 	ES	Registro de DNS asincrónico
 	FI	Epäsynkroninen DNS-kirjaus
 	FR	Journalisation DNS asynchrone
+	HU	Aszinkron DNS naplózás
 	IT	Registrazione DNS asincrona
 	NL	Loggen van asynchroon DNS
 	NO	Usynkron DNS-loggføring
@@ -21471,6 +21655,7 @@ DEBUG_NETWORK_PROTOCOL
 	ES	Registro de protocolo de todos los reproductores
 	FI	Kaikkien soittimien protokollien kirjaus
 	FR	Journalisation du protocole de toutes les platines
+	HU	Minden lejátszó protokoll naplózása
 	IT	Registrazione dei protocolli di tutti i lettori
 	NL	Loggen van protocols voor alle muziekspelers
 	NO	Loggføring av alle spillerprotokoller
@@ -21486,6 +21671,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	ES	Protocolo SlimProto (Squeezebox / Transporter)
 	FI	SlimProto-protokolla (Squeezebox/Transporter)
 	FR	Protocole SlimProto (Squeezebox / Transporter)
+	HU	SlimProto (Squeezebox / Transporter) protokoll
 	IT	Protocollo SlimProto (Squeezebox / Transporter)
 	NL	SlimProto-protocol (Squeezebox/Transporter)
 	NO	SlimProto-protokoll (Squeezebox/Transporter)
@@ -21501,6 +21687,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMP3
 	ES	Protocolo SliMP3
 	FI	SliMP3-protokolla
 	FR	Protocole SLIMP3
+	HU	SliMP3 protokoll
 	IT	Protocollo SliMP3
 	NL	SliMP3-protocol
 	NO	SliMP3-protokoll
@@ -21516,6 +21703,7 @@ DEBUG_NETWORK_UPNP
 	ES	Información de dispositivo y servidor UPnP
 	FI	UPnP-palvelin ja laitetiedot
 	FR	Informations serveur et dispositif UPnP
+	HU	UPnP szerver és eszköz információk
 	IT	Informazioni su dispositivi e server UPnP
 	NL	Informatie over UPnP-server en -apparaat
 	NO	UPnP server- og enhetsinformasjon
@@ -21531,6 +21719,7 @@ DEBUG_NETWORK_JSONRPC
 	ES	Registro JSON-RPC API
 	FI	JSON-RPC API -kirjaus
 	FR	Journalisation API JSON-RPC
+	HU	JSON-RPC API naplózás
 	IT	Registrazione API JSON-RPC
 	NL	Loggen van JSON-RPC API
 	NO	Loggføring av JSON-RPC API
@@ -21546,6 +21735,7 @@ DEBUG_FORMATS_AUDIO
 	ES	Información de análisis de audio y metadatos de archivo
 	FI	Tiedoston metatietojen ja äänen jäsennyksen tiedot
 	FR	Informations de métadonnées de fichier et d'analyse audio
+	HU	Fájl metaadatok és hangelemzési információk
 	IT	Informazioni sui metadati dei file e sull'analisi audio
 	NL	Informatie over audioparsering en metagegevens van bestand
 	NO	Filmetadata og lydanalyseinformasjon
@@ -21561,6 +21751,7 @@ DEBUG_FORMATS_PLAYLISTS
 	ES	Información de análisis de lista de reproducción
 	FI	Soittoluettelon jäsennystiedot
 	FR	Informations d'analyse de liste de lecture
+	HU	Lejátszási lista elemzési információi
 	IT	Informazioni sull'analisi delle playlist
 	NL	Informatie over afspeellijstparsering
 	NO	Analyseinformasjon om spilleliste
@@ -21576,6 +21767,7 @@ DEBUG_FORMATS_XML
 	ES	Información de análisis de XML (Picks, SHOUTcast, etc.)
 	FI	XML-jäsennystiedot (Picks, SHOUTcast, jne.)
 	FR	Informations d'analyse XML (Picks, SHOUTcast, etc.)
+	HU	XML-elemzési információk (Picks, SHOUTcast stb.)
 	IT	Informazioni sull'analisi XML (Picks, SHOUTcast e così via)
 	NL	XML-parseringsinformatie (aanraders, SHOUTcast, enz.)
 	NO	XML-analyseinformasjon (utvalg, SHOUTcast, osv.)
@@ -21591,6 +21783,7 @@ DEBUG_FORMATS_METADATA
 	ES	Información de metadatos de secuencia remota
 	FI	Etävirran metatiedot
 	FR	Informations de métadonnées du flux distant
+	HU	Távoli adatfolyam metaadat-információi
 	IT	Informazioni metadati streaming remoto
 	NL	Metagegevensinformatie over streaming op afstand
 	NO	Metadatainformasjon om ekstern strømming
@@ -21606,6 +21799,7 @@ DEBUG_DATABASE_MYSQL
 	ES	Información de proceso e inicialización de MySQL
 	FI	MySQL-alustuksen ja -käsittelyn tiedot
 	FR	Informations de l'initialisation et des procédures MySQL
+	HU	MySQL inicializálási és folyamatinformáció
 	IT	Informazioni sul processo e l'inizializzazione MySQL
 	NL	Initialisatie- en procesgegevens voor MySQL
 	NO	MySQL initialiserings- og prosessinformasjon
@@ -21621,6 +21815,7 @@ DEBUG_DATABASE_SQL
 	ES	Registro de SQL (configuración avanzada)
 	FI	SQL-kirjaus (kokeneet käyttäjät)
 	FR	Journalisation SQL (avancé)
+	HU	SQL naplózás (haladó)
 	IT	Registrazione SQL (per utenti esperti)
 	NL	SQL-logboek (geavanceerd)
 	NO	SQL-loggføring (avansert)
@@ -21636,6 +21831,7 @@ DEBUG_DATABASE_INFO
 	ES	Registro de metadatos y análisis
 	FI	Metatietojen ja jäsennyksen kirjaus
 	FR	Journalisation des métadonnées et de l'analyse
+	HU	Metaadatok és elemzés naplózás
 	IT	Registrazione metadati e analisi
 	NL	Loggen van metagegevens en parsering
 	NO	Loggføring av metadata og analyse
@@ -21648,6 +21844,7 @@ DEBUG_DATABASE_VIRTUALLIBRARIES
 	DE	Musiksammlungs-Ansichten (Virtual Libraries)
 	EN	Library Views (virtual libraries)
 	FR	Bibliothèques thématiques (bibliothèques virtuelles)
+	HU	Könyvtári nézetek (virtuális könyvtárak)
 	NL	Deelcollecties (virtual libraries)
 	NO	Delbiblioteker (virtuelle biblioteker)
 	PL	Biblioteki tematyczne
@@ -21661,6 +21858,7 @@ DEBUG_OS_FILES
 	ES	Información de nivel de sistema de archivos
 	FI	Tiedostojärjestelmän tasotiedot
 	FR	Informations du niveau du système de fichiers
+	HU	Fájlrendszer szintű információ
 	IT	Informazioni a livello di file system
 	NL	Informatie over systeembestanden
 	NO	Nivåinformasjon i filsystem
@@ -21676,6 +21874,7 @@ DEBUG_OS_PATHS
 	ES	Análisis de ruta de sistema de archivos
 	FI	Tiedostojärjestelmän polun jäsennys
 	FR	Analyse du chemin de système de fichiers
+	HU	Fájlrendszer elérési út elemzése
 	IT	Analisi percorsi del file system
 	NL	Parsering systeembestandpaden
 	NO	Filsystemets banetolking
@@ -21691,6 +21890,7 @@ DEBUG_CONTROL_STDIO
 	ES	Registro de comandos de E/S estándar (configuración avanzada)
 	FI	Standardien I/O-komentojen kirjaus (kokeneet käyttäjät)
 	FR	Journalisation de commande d'E/S standard (avancé)
+	HU	Szabványos I/O parancsnaplózás (speciális)
 	IT	Registrazione comandi I/O standard (per utenti esperti)
 	NL	Loggen van standaard-I/O-opdrachten (geavanceerd)
 	NO	Loggføring av standard I/O-kommandoer (avansert)
@@ -21706,6 +21906,7 @@ DEBUG_CONTROL_QUERIES
 	ES	Registro de control de consultas (configuración avanzada)
 	FI	Hallintakysymysten kirjaus (kokeneet käyttäjät)
 	FR	Journalisation des requêtes de contrôle (avancé)
+	HU	Lekérdezésnaplózás vezérlése (speciális)
 	IT	Registrazione query di controllo (per utenti esperti)
 	NL	Query-log controleren (geavanceerd)
 	NO	Loggføring av kontrollforespørsler (avansert)
@@ -21721,6 +21922,7 @@ DEBUG_CONTROL_COMMAND
 	ES	Registro de ejecución de comandos internos (configuración avanzada)
 	FI	Sisäisen komennon suorituksen kirjaus (kokeneet käyttäjät)
 	FR	Journalisation d'exécution de commandes internes (avancé)
+	HU	Belső parancsvégrehajtás naplózása (speciális)
 	IT	Registrazione esecuzione comandi interni (per utenti esperti)
 	NL	Loggen van interne opdrachtuitvoering (geavanceerd)
 	NO	Loggføring av utføring av interne kommandoer (avansert)
@@ -21736,6 +21938,7 @@ DEBUG_PLAYER_ALARMCLOCK
 	ES	Registro de reloj despertador del reproductor
 	FI	Soittimen herätyskellon kirjaus
 	FR	Journalisation du réveil de la platine
+	HU	Lejátszó riasztás naplózása
 	IT	Registrazione sveglia lettore
 	NL	Loggen van wekker muziekspeler
 	NO	Loggføring av spillerens vekkerklokke
@@ -21751,6 +21954,7 @@ DEBUG_PLAYER_IR
 	ES	Análisis de mapas y actividad de infrarrojos
 	FI	Infrapunatoiminnot ja määritysten jäsennys
 	FR	Activité infrarouge et analyse de mappage
+	HU	Infravörös tevékenység és feltérképezés
 	IT	Attività a infrarossi e analisi delle associazioni
 	NL	Infraroodactiviteit en toewijzingsparsering
 	NO	Analyse av infrarød aktivitet og kart
@@ -21766,6 +21970,7 @@ DEBUG_PLAYER_MENU
 	ES	Registro de menú de reproductor
 	FI	Soitinvalikon kirjaaminen
 	FR	Journalisation du menu de la platine
+	HU	Lejátszó menü naplózása
 	IT	Registrazione del menu del lettore
 	NL	Loggen van muziekspelermenu
 	NO	Loggføring av spillermeny
@@ -21781,6 +21986,7 @@ DEBUG_PLAYER_UI
 	ES	Información de interfaz de usuario de reproductor
 	FI	Soittimen käyttöliittymän tiedot
 	FR	Informations de l'interface utilisateur de la platine
+	HU	A lejátszó felhasználói felületének információi
 	IT	Informazioni sull'interfaccia utente del lettore
 	NL	Gegevens van muziekspelerinterface
 	NO	Informasjon om spillerens brukergrensesnitt
@@ -21796,6 +22002,7 @@ DEBUG_PLAYER_UI_SCREENSAVER
 	ES	Registro de protector de pantalla
 	FI	Näytönsäästäjänä kirjaaminen
 	FR	Journalisation d'écran de veille
+	HU	Lejátszó képernyővédő naplózás
 	IT	Registrazione del salvaschermo del lettore
 	NL	Loggen van screensaver
 	NO	Loggføring av spiller skjermsparer
@@ -21811,6 +22018,7 @@ DEBUG_PLAYER_DISPLAY
 	ES	Información de pantalla de reproductor
 	FI	Soittimen näyttötiedot
 	FR	Informations de l'affichage de la platine
+	HU	Lejátszó kijelző információ
 	IT	Informazioni sul display del lettore
 	NL	Display gegevens van muziekspeler
 	NO	Informasjon på spillerens skjerm
@@ -21826,6 +22034,7 @@ DEBUG_PLAYER_FONTS
 	ES	Pantalla de reproductor (información de fuente y mapa de bits)
 	FI	Soittimen näyttö (fontti- ja bittikarttatiedot)
 	FR	Affichage de la platine (informations police et bitmap)
+	HU	Lejátszó megjelenítése (betűtípus és bittérkép információ)
 	IT	Display del lettore (informazioni su caratteri e bitmap)
 	NL	Muziekspelerdisplay (lettertype- en bitmapinformatie)
 	NO	Spillerskjerm (informasjon om skrifttype og punktgrafikk)
@@ -21841,6 +22050,7 @@ DEBUG_PLAYER_TEXT
 	ES	Pantalla de reproductor (información de visualización de caracteres)
 	FI	Soittimen näyttö (merkkien näyttämistä koskevat tiedot)
 	FR	Affichage de la platine (informations sur l'affichage des caractères)
+	HU	Játékos kijelző (karaktermegjelenítési információ)
 	IT	Display del lettore (informazioni sulla visualizzazione dei caratteri)
 	NL	Muziekspelerdisplay (grafisch-displayinformatie)
 	NO	Spillerskjerm (informasjon om tegnvisning)
@@ -21856,6 +22066,7 @@ DEBUG_PLAYER_PLAYLIST
 	ES	Información de control de lista de reproducción de reproductor de nivel superior
 	FI	Soittimen soittoluettelon ylätason hallinnan tiedot
 	FR	Informations de contrôle de liste de lecture de la platine de niveau supérieur
+	HU	A lejátszó lejátszási listáinak információi
 	IT	Informazioni di controllo generali sulla playlist del lettore
 	NL	Informatie van afspeellijsten muziekspeler op hoofdniveau
 	NO	Kontrollinformasjon på øverste nivå for spiller/spilleliste
@@ -21871,6 +22082,7 @@ DEBUG_PLAYER_STREAMING
 	ES	Registro de envío de secuencias de todos los reproductores
 	FI	Kaikkien soitinten virtojen kirjaus
 	FR	Journalisation de la diffusion de toutes les platines
+	HU	Minden lejátszó adatfolyam naplózása
 	IT	Registrazione di tutto lo streaming del lettore
 	NL	Loggen van streaming voor alle muziekspelers
 	NO	Loggføring av all strømming til spillere
@@ -21886,6 +22098,7 @@ DEBUG_PLAYER_STREAMING_DIRECT
 	ES	Registro de envío de secuencias directo de reproductor
 	FI	Soittimen suoran virtautuksen kirjaus
 	FR	Journalisation de la diffusion directe de la platine
+	HU	Lejátszó Direct Streaming naplózás
 	IT	Registrazione dello streaming diretto del lettore
 	NL	Muziekspeler: directe streaming
 	NO	Loggføring av direktestrømming til spiller
@@ -21901,6 +22114,7 @@ DEBUG_PLAYER_STREAMING_REMOTE
 	ES	Registro de envío de secuencias de mando a distancia de reproductor
 	FI	Soittimen etävirtautuksen kirjaus
 	FR	Journalisation de la diffusion à distance de la platine
+	HU	Lejátszó Remote Streaming Logging
 	IT	Registrazione dello streaming remoto del lettore
 	NL	Muziekspeler: streaming op afstand
 	NO	Loggføring av ekstern strømming til spiller
@@ -21916,6 +22130,7 @@ DEBUG_PLAYER_FIRMWARE
 	ES	Registro de actualización de firmware de reproductor
 	FI	Soittimen laitteisto-ohjelmiston päivityksen kirjaus
 	FR	Journalisation de la mise à niveau du micrologiciel de la platine
+	HU	A lejátszó firmware-frissítésének naplózása
 	IT	Informazioni sull'aggiornamento del firmware del lettore
 	NL	Muziekspeler: firmware-upgrade
 	NO	Loggføring av oppgradering av spillerens fastvare
@@ -21931,6 +22146,7 @@ DEBUG_PLAYER_SOURCE
 	ES	Registro de conversión y origen de audio de reproductor
 	FI	Soittimen lähdeäänen ja muunnoksen kirjaus
 	FR	Journalisation de la source audio et de la conversion source de la platine
+	HU	Lejátszóforrás hang- és konverziónaplózása
 	IT	Registrazione conversione e sorgente audio del lettore
 	NL	Muziekspeler: bronaudio en -conversie
 	NO	Loggføring av lyd fra spillerkilde og konvertering
@@ -21947,6 +22163,7 @@ DEBUG_PLAYER_SYNC
 	ES	Registro de sincronización de varios reproductores
 	FI	Usean soittimen synkronoinnin kirjaus
 	FR	Journalisation de la synchronisation des platines multiples
+	HU	Több lejátszó szinkronizálás naplózás
 	IT	Registrazione della sincronizzazione di più lettori
 	NL	Loggen van synchronisatie van meerdere muziekspelers
 	NO	Loggføring av synkronisering mellom flere spillere
@@ -21962,6 +22179,7 @@ DEBUG_SCAN
 	ES	Registro de todos los exámenes
 	FI	Kaikkien hakujen kirjaus
 	FR	Journalisation de toutes les activités d'analyse
+	HU	Minden vizsgálati naplózás
 	IT	Registrazione di tutte le analisi
 	NL	Loggen van alle scanactiviteiten
 	NO	Loggføring av alle søk
@@ -21977,6 +22195,7 @@ DEBUG_SCAN_SCANNER
 	ES	Examen de carpetas de listas de reproducción y multimedia
 	FI	Media- ja soittoluettelokansioiden tarkistus
 	FR	Analyse du dossier multimédia et des listes de lecture
+	HU	Média és lejátszási lista mappa beolvasás
 	IT	Analisi cartelle di file multimediali e playlist
 	NL	Scannen van media- en afspeellijstmappen
 	NO	Søker i medie- og spillelistemappe
@@ -21992,6 +22211,7 @@ DEBUG_SCAN_IMPORT
 	ES	Registro de importación de metadatos de lista de reproducción y archivos
 	FI	Tiedostojen ja soittoluetteloiden metatietojen tuonnin kirjaus
 	FR	Journalisation de l'importation des métadonnées des fichiers et des listes de lecture
+	HU	Fájlok és lejátszási listák metaadatainak importálása
 	IT	Registrazione importazione metadati da file e playlist
 	NL	Loggen import van metagegevens van bestand en afspeellijst
 	NO	Loggføring av importering av metadata for filer og spillelister
@@ -22007,6 +22227,7 @@ DEBUG_SCAN_AUTO
 	ES	Examen automático de listas de reproducción y multimedia
 	FI	Automaattinen media- ja soittoluetteloiden tarkistus
 	FR	Analyse automatique du contenu multimédia et des listes de lecture
+	HU	Automatikus média és lejátszási lista keresés
 	IT	Analisi automatica di file multimediali e playlist
 	NL	Automatisch scannen naar muziek en afspeellijsten
 	NO	Automatisk søk etter mediefiler og spillelister
@@ -22022,6 +22243,7 @@ DEBUG_WIZARD
 	ES	Registro de actividades de asistente para instalación
 	FI	Ohjatun asennuksen toimintojen kirjaus
 	FR	Journalisation des activités de l'assistant de configuration
+	HU	A telepítővarázsló tevékenységnaplózása
 	IT	Registrazione attività procedura guidata di installazione
 	NL	Loggen van installatiewizardactiviteit
 	NO	Loggføring av aktivitet i konfigurasjonsveiviser
@@ -22037,6 +22259,7 @@ SETUP_DEBUG_SERVER_LOG
 	ES	Archivo de registro de Lyrion Music Server
 	FI	Lyrion Music Serverin lokitiedosto
 	FR	Fichier journal du Lyrion Music Server
+	HU	Lyrion Music Server naplófájl
 	IT	File di registro di Lyrion Music Server
 	NL	Logboek van Lyrion Music Server
 	NO	Lyrion Music Server loggfil
@@ -22052,6 +22275,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	ES	Lyrion Music Server mantiene un archivo de registro para todas las actividades relacionadas con la aplicación (secuencias de audio, infrarrojos, etc.) aquí:
 	FI	Lyrion Music Server pitää lokitiedostoa kaikista sovelluksiin liittyvistä toiminnoista (äänen virtautus, infrapuna jne.) täällä:
 	FR	Le Lyrion Music Server conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant :
+	HU	A Lyrion Music Server naplófájlt vezet az összes alkalmazással kapcsolatos tevékenységről (audio streaming, infravörös stb.):
 	IT	Lyrion Music Server mantiene un file di registro per tutte le attività relative alle applicazioni (stream audio, raggi infrarossi e così via) nel seguente percorso:
 	NL	Lyrion Music Server bewaart hier een logboek voor alle applicatie-activiteiten (audio streaming, infrarood, enz.):
 	NO	Lyrion Music Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
@@ -22067,6 +22291,7 @@ SETUP_DEBUG_SCANNER_LOG
 	ES	Archivo de registro de examen
 	FI	Skannerin lokitiedosto
 	FR	Fichier journal de l'analyseur
+	HU	Szkenner naplófájlja
 	IT	File di registro analisi
 	NL	Logboek van scanner
 	NO	Loggfil for søk
@@ -22082,6 +22307,7 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	ES	Lyrion Music Server mantiene un archivo de registro para todas las actividades de examen, incluidas las de iTunes y MusicIP aquí:
 	FI	Lyrion Music Server pitää lokitiedostoa kaikista hakuihin liittyvistä toiminnoista (mukaan lukien iTunes ja MusicIP) täällä:
 	FR	Le Lyrion Music Server conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant :
+	HU	A Lyrion Music Server naplófájlt vezet az összes szkenneléssel kapcsolatos tevékenységről, beleértve az iTunes-t és a MusicIP-et is:
 	IT	Lyrion Music Server mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
 	NL	Lyrion Music Server bewaart hier een logboek voor alle scanactiviteiten (zoals iTunes en MusicIP):
 	NO	Lyrion Music Server fører en loggfil for alle søkeaktiviteter, inkludert iTunes og MusicIP, her:
@@ -22097,6 +22323,7 @@ LINES
 	ES	líneas
 	FI	riviä
 	FR	lignes
+	HU	vonalak
 	IT	righe
 	NL	regels
 	NO	linjer
@@ -22112,6 +22339,7 @@ SETUP_DEBUG_PERFMON_LOG
 	ES	Archivo de registro de rendimiento
 	FI	Suorituskyvyn lokitiedosto
 	FR	Fichier journal de performance
+	HU	Teljesítménynaplófájl
 	IT	File di registro prestazioni
 	NL	Prestatielogboek
 	NO	Loggfil for ytelse
@@ -22127,6 +22355,7 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 	ES	Lyrion Music Server mantiene un archivo de registro para supervisión de rendimiento aquí:
 	FI	Lyrion Music Server pitää lokitiedostoa suorituskyvystä täällä:
 	FR	Le Lyrion Music Server conserve un fichier journal pour le contrôle des performances, à l'emplacement suivant :
+	HU	A Lyrion Music Server naplófájlt vezet a teljesítmény figyeléséhez:
 	IT	Lyrion Music Server mantiene un file di registro per monitorare le prestazioni in questa posizione:
 	NL	Lyrion Music Server bewaart hier een logboek voor prestatiecontrole:
 	NO	Lyrion Music Server fører en loggfil for ytelsesovervåking her:
@@ -22139,6 +22368,7 @@ SETUP_LOG_ZIPPED
 	DE	ZIP Datei
 	EN	ZIP archive
 	FR	Fichier ZIP
+	HU	ZIP archívum
 	NL	Zipbestand
 	NO	ZIP-arkiv
 	PL	archiwum ZIP
@@ -22153,6 +22383,7 @@ SETUP_DEBUG_LEVEL_OFF
 	FI	Ei käytössä
 	FR	Éteint
 	HE	לא פעיל
+	HU	Ki
 	IT	Disattivato
 	JA	オフ
 	NL	Uit
@@ -22171,6 +22402,7 @@ SETUP_DEBUG_LEVEL_FATAL
 	ES	Grave
 	FI	Vakava
 	FR	Fatal
+	HU	Végzetes
 	IT	Irreversibile
 	NL	Fataal
 	NO	Uopprettelig
@@ -22186,6 +22418,7 @@ SETUP_DEBUG_LEVEL_ERROR
 	ES	Error
 	FI	Virhe
 	FR	Erreur
+	HU	Hiba
 	IT	Errore
 	NL	Fout
 	NO	Feil
@@ -22201,6 +22434,7 @@ SETUP_DEBUG_LEVEL_WARN
 	ES	Advertencia
 	FI	Varoita
 	FR	Avertissement
+	HU	Figyelmeztet
 	IT	Avviso
 	NL	Waarschuwing
 	NO	Varsle
@@ -22216,6 +22450,7 @@ SETUP_DEBUG_LEVEL_INFO
 	ES	Información
 	FI	Tiedot
 	FR	Infos
+	HU	Infó
 	IT	Informazioni
 	NL	Info
 	NO	Info
@@ -22231,6 +22466,7 @@ SETUP_DEBUG_LEVEL_DEBUG
 	ES	Depuración
 	FI	Virheenkorjaus
 	FR	Débogage
+	HU	Hibakeresés
 	IT	Debug
 	NL	Debuggen
 	NO	Feilsøking
@@ -22246,6 +22482,7 @@ SAVE_SETTINGS
 	ES	Guardar configuración
 	FI	Tallenna asetukset
 	FR	Enregistrer les réglages
+	HU	Beállítások mentése
 	IT	Salva impostazioni
 	NL	Instellingen opslaan
 	NO	Lagre endringer
@@ -22261,6 +22498,7 @@ APPLY
 	ES	Aplicar
 	FI	Käytä
 	FR	Appliquer
+	HU	Alkalmaz
 	IT	Applica
 	NL	Toepassen
 	NO	Bruk
@@ -22276,6 +22514,7 @@ SHRINK
 	ES	Comprimir
 	FI	Kutista
 	FR	Réduire
+	HU	Tömörítés
 	IT	Comprimi
 	NL	Verkleinen
 	NO	Reduser
@@ -22291,6 +22530,7 @@ ENLARGE
 	ES	Ampliar
 	FI	Suurenna
 	FR	Agrandir
+	HU	Nagyít
 	IT	Ingrandisci
 	NL	Vergroten
 	NO	Forstørr
@@ -22306,6 +22546,7 @@ SCANNER_PROGRESS
 	ES	Detalles de examen multimedia
 	FI	Mediahaun tiedot
 	FR	Détails de l'analyse du contenu multimédia
+	HU	Média szkennelés részletei
 	IT	Dettagli analisi file multimediali
 	NL	Details van mediascan
 	NO	Detaljer om søk etter mediefiler
@@ -22321,6 +22562,7 @@ FAILURE_PROGRESS
 	ES	El examen de material multimedia terminó inesperadamente (%s)
 	FI	Mediahaku päättyi odottamatta (%s)
 	FR	L'analyse du contenu multimédia s'est terminée de façon inattendue (%s)
+	HU	A médiakeresés váratlanul leállt (%s)
 	IT	Analisi dei file multimediali interrotta in modo imprevisto (%s)
 	NL	Mediascan onverwacht beëindigd (%s)
 	NO	Mediesøket stoppet plutselig (%s)
