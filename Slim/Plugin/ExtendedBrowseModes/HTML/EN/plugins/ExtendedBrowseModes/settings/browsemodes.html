@@ -1,7 +1,7 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES" desc="" %]
-		<table width="100%">
+		<table [% IF !needsClient %]width="100%"[% END %]>
 			[% IF needsClient %]
 			<tr>
 				<th>[% "ENABLE" | string %][% "COLON" | string %]&nbsp;</th>
@@ -19,13 +19,13 @@
 				[% ELSE %]
 				<th></th>
 				<th width="20%">[% "NAME" | string %]</th>
-				[% END %]
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
 				<th width="20%">[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
 				<th width="20%">[% "PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE" | string %]</th>
 				<th width="20%">[% "GENRES" | string %][% "COLON" | string %]</th>
 				<th>[% IF menu.id != '_new_' %][% "DELETE" | string %][% "COLON" | string %][% END %]</th>
+				[% END %]
 			</tr>
 			[% seen = 1; END %]
 			<tr>
@@ -33,12 +33,12 @@
 					[% IF needsClient && menu.name %]<input type="checkbox" name="enabled[% menu_no %]" id="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id | html %]" />
 				</td>
-				[% IF !menu.feed && menu.id != '_new_' %]
+				[% IF (needsClient || !menu.feed) && menu.id != '_new_' %]
 					<td colspan="6"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
-				[% ELSE %]
+				[% ELSIF !needsClient %]
 					<td><input type="text" name="name[% menu_no %]" value="[% menu.name | html %]" style="width: 98%;" class="stdedit" /></td>
 					<td>
-						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
+						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0; max-width:200px">
 							<option value="">[% "SUB_LIBRARY" | string %]</option>
 							<option value="-1" [% IF menu.params.library_id == -1 %]selected[% END %]>[% "ALL_LIBRARY" | string %]</option>
 							[% FOREACH library = libraries %]
@@ -61,13 +61,15 @@
 				[% END %]
 			</tr>
 		[% END %]
+		[% IF !needsClient %]
 			<tr><td>&nbsp;</td><td colspan="5">[% "PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT" | string %] [% roles.join(', ') %]</td></tr>
 			<tr><td>&nbsp;</td><td colspan="5">[% "PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT" | string %] [% release_types.join(', ') %]</td></tr>
 			<tr><td>&nbsp;</td><td colspan="5">[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</td></tr>
+		[% END %]
 		</table>
 	[% END %]
 
-	[% WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES_TAGS" desc="PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC" %]
+	[% IF !needsClient; WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES_TAGS" desc="PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC" %]
 		<table>
 			<tr>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE" | string %]</th>
@@ -84,7 +86,7 @@
 				<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
 			</tr>
 		</table>
-	[% END %]
+	[% END; END %]
 
 	[% IF needsClient %]
 		<input type="hidden" name="pref_enableLosslessPreferred" value="[% prefs.pref_enableLosslessPreferred || 0 %]" />
