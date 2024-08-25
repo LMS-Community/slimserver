@@ -104,7 +104,7 @@ COPYRIGHT
 	ES	© 2001-2024 Lyrion Versión 9.0.0
 	FI	© 2001-2024 Lyrionin versio 9.0.0
 	FR	© 2001-2024 Lyrion Version 9.0.0
-	HU	© 2001-2024 Lyrion Version 9.0.0	
+	HU	© 2001-2024 Lyrion Version 9.0.0
 	IT	© 2001-2024 Lyrion versione 9.0.0
 	NL	© 2001-2024 Lyrion versie 9.0.0
 	NO	© 2001–2024 Lyrion versjon 9.0.0
@@ -4250,7 +4250,7 @@ SETUP_INPUTTYPE
 	FR	De
 	ZH_CN	自
 	NL	Van
-	HU	forrás: 
+	HU	forrás:
 
 STREAM_FORMAT
 	CS	Formát proudu
@@ -5488,7 +5488,7 @@ CONVERTED_TO
 	FI	Muunnettu muotoon
 	FR	Converti en
 	HE	הומר ל-
-	HU	Konvertálás: 
+	HU	Konvertálás:
 	IT	Convertito in
 	JA	以下のフォーマットに変換されました
 	NL	Geconverteerd naar
@@ -11349,7 +11349,7 @@ HIDE_ARTWORK
 	ES	Ocultar carátula de álbum
 	FI	Älä näytä kansitaidetta
 	FR	Masquer les pochettes
-	HU	Borító elrejtése 
+	HU	Borító elrejtése
 	IT	Nascondi copertina
 	NL	Albumhoezen verbergen
 	NO	Skjul albumomslag
@@ -13788,7 +13788,6 @@ OF
 	FI	/
 	FR	de
 	HE	מתוך
-	HU	 
 	IT	di
 	JA	の
 	NL	van
@@ -13808,7 +13807,6 @@ TO
 	FI	kohteeseen
 	FR	à
 	HE	אל
-	HU	 
 	IT	a
 	JA	へ
 	NL	tot
@@ -18312,7 +18310,7 @@ INFORMATION_FIRMWARE
 	FI	Soittimen laitteisto-ohjelmiston versio
 	FR	Version du micrologiciel de la platine
 	HE	גרסת הקושחה של הנגן
-	HU	Lejátszó firmware verziója 
+	HU	Lejátszó firmware verziója
 	IT	Versione firmware del lettore
 	JA	プレーヤーファームウェアバージョン
 	NL	Firmwareversie van muziekspeler
