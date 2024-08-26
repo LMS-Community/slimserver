@@ -42,7 +42,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	FI	TuneIn Radio - paikallinen internetradio
 	FR	TuneIn Radio - Radios Internet
 	HU	TuneIn Radio - Radios Internet
-	IT	TuneIn Radio - Radio Internet locale	
+	IT	TuneIn Radio - Radio Internet locale
 	NL	TuneIn Radio - lokale internetradio
 	NO	TuneIn Radio: Lokal Internett-radio
 	PL	TuneIn Radio - lokalne radio internetowe
