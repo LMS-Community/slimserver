@@ -1869,7 +1869,7 @@ ALARM_DELETE
 	DE	Wecker entfernen
 	EN	Remove Alarm
 	ES	Quitar alarma
-	HI	Riasztás törlése
+	HU	Riasztás törlése
 	FI	Poista herätys
 	FR	Supprimer le réveil
 	IT	Rimuovi sveglia
