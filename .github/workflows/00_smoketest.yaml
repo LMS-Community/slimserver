@@ -25,7 +25,7 @@ jobs:
           if [ "$ACT" == "true" ]; then
             sudo apt-get update
           fi
-          sudo apt-get install -y libio-socket-ssl-perl libnet-ssleay-perl netcat
+          sudo apt-get install -y libio-socket-ssl-perl libnet-ssleay-perl netcat-traditional
 
       - name: Test Strings File
         run: perl -ICPAN t/verifyStrings.pl
