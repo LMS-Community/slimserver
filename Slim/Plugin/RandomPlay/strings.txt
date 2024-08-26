@@ -9,6 +9,7 @@ PLUGIN_RANDOMPLAY
 	FI	Satunnainen valikoima
 	FR	Mix aléatoire
 	HE	מיקס אקראי
+	HU	Véletlenszerű keverés
 	IT	Raccolta casuale
 	NL	Willekeurige Mix
 	NO	Tilfeldig miks
@@ -24,6 +25,7 @@ PLUGIN_RANDOM_DESC
 	ES	Jukebox para su música
 	FI	Jukeboksi musiikillesi
 	FR	Juke-box pour votre musique
+	HU	Jukebox a zene élvezetéért
 	IT	Jukebox per la raccolta musicale personale
 	NL	Jukebox voor jouw muziek
 	NO	Jukeboks til musikken
@@ -36,6 +38,7 @@ PLUGIN_RANDOM_DISABLE
 	DE	Zufallsmix anhalten
 	EN	Stop Random Mix
 	FR	Arrête mix aléatoire
+	HU	Véletlenszerű keverést leállítása
 	NL	Stop Willekeurige mix
 	NO	Stopp Tilfeldig miks
 	PL	Zatrzymaj składankę losową
@@ -49,6 +52,7 @@ PLUGIN_RANDOM_DISABLED
 	FI	Satunnaisen valikoiman toisto lopetettiin
 	FR	Mix aléatoire arrêté
 	HE	המיקס האקראי נעצר
+	HU	Véletlenszerű keverés leállt
 	IT	Raccolta casuale interrotta
 	NL	Willekeurige mix gestopt
 	NO	Tilfeldig miks stanset
@@ -64,6 +68,7 @@ PLUGIN_RANDOM_TRACK
 	ES	Mezcla de canciones
 	FI	Kappalevalikoima
 	FR	Morceaux aléatoires
+	HU	Zeneszám keverés
 	IT	Raccolta di brani
 	NL	Nummermix
 	NO	Sangmiks
@@ -80,6 +85,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	FI	Toistetaan satunnaisia kappaleita
 	FR	Lecture morceaux aléatoires
 	HE	השמעת שירים בסדר אקראי
+	HU	Véletlenszerű zeneszámok lejátszása
 	IT	Riproduzione casuale di brani
 	NL	Nummers worden willekeurig afgespeeld
 	NO	Spiller av tilfeldige sanger
@@ -96,6 +102,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	FI	kappaleiden lisäämisen lopettamiseksi
 	FR	ne plus ajouter de morceaux
 	HE	הפסק להוסיף שירים
+	HU	hagyja abba a dalok hozzáadását
 	IT	interrompi aggiunta brani
 	NL	stop toevoegen van nummers
 	NO	slutte å legge til sanger
@@ -111,6 +118,7 @@ PLUGIN_RANDOM_ALBUM
 	ES	Mezcla de álbumes
 	FI	Levyvalikoima
 	FR	Albums aléatoires
+	HU	Albumok keverése
 	IT	Raccolta di album
 	NL	Albummix
 	NO	Albummiks
@@ -127,6 +135,7 @@ PLUGIN_RANDOM_ALBUM_ITEM
 	FI	Satunnainen levy
 	FR	Album aléatoire
 	HE	אלבום אקראי
+	HU	Véletlen album
 	IT	Album casuale
 	NL	Willekeurig album
 	NO	Tilfeldig album
@@ -143,6 +152,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	FI	Toistetaan satunnaisia levyjä
 	FR	Lecture albums aléatoires
 	HE	השמעת אלבומים בסדר אקראי
+	HU	Véletlenszerű albumok lejátszása
 	IT	Riproduzione casuale album
 	NL	Albums worden willekeurig afgespeeld
 	NO	Spiller av tilfeldige album
@@ -159,6 +169,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	FI	levyjen lisäämisen lopettamiseksi
 	FR	ne plus ajouter d'albums
 	HE	הפסק להוסיף אלבומים
+	HU	állítsa le az albumok hozzáadását
 	IT	interrompi aggiunta album
 	NL	stop toevoegen van albums
 	NO	slutte å legge til album
@@ -174,6 +185,7 @@ PLUGIN_RANDOM_CONTRIBUTOR
 	ES	Mezcla de artistas
 	FI	Artistivalikoima
 	FR	Artistes aléatoires
+	HU	Előadók keverése
 	IT	Raccolta di artisti
 	NL	Artiestenmix
 	NO	Miks fra artister
@@ -190,6 +202,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	FI	Satunnaiset artistit
 	FR	Artiste aléatoire
 	HE	מבצע אקראי
+	HU	Véletlenszerű előadó
 	IT	Artista casuale
 	NL	Willekeurige artiest
 	NO	Tilfeldig artist
@@ -206,6 +219,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
 	FI	Toistetaan satunnaisia artisteja
 	FR	Lecture artistes aléatoires
 	HE	השמעת מבצעים בסדר אקראי
+	HU	Véletlenszerű előadók lejátszása
 	IT	Riproduzione casuale di artisti
 	NL	Artiesten worden willekeurig afgespeeld
 	NO	Spiller av tilfeldige artister
@@ -222,6 +236,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	FI	artistien lisäämisen lopettamiseksi
 	FR	ne plus ajouter d'artistes
 	HE	הפסק להוסיף מבצעים
+	HU	hagyja abba az előadók hozzáadását
 	IT	interrompi aggiunta artisti
 	NL	stop toevoegen van artiesten
 	NO	slutte å legge til artister
@@ -237,6 +252,7 @@ PLUGIN_RANDOM_YEAR
 	ES	Mezcla de años
 	FI	Vuosivalikoima
 	FR	Années aléatoires
+	HU	Évek keverése
 	IT	Raccolta di anni
 	NL	Jaarmix
 	NO	Miks fra år
@@ -253,6 +269,7 @@ PLUGIN_RANDOM_YEAR_ITEM
 	FI	Satunnainen vuosi
 	FR	Année aléatoire
 	HE	שנה אקראית
+	HU	Véletlen év
 	IT	Anno casuale
 	NL	Willekeurig jaar
 	NO	Tilfeldig år
@@ -269,6 +286,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	FI	Toistetaan satunnaisia vuosia
 	FR	Lecture années aléatoires
 	HE	השמעת שנים בסדר אקראי
+	HU	Véletlen év lejátszása
 	IT	Riproduzione casuale per anni
 	NL	Jaren worden willekeurig afgespeeld
 	NO	Spiller av tilfeldige år
@@ -285,6 +303,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	FI	vuosien lisäämisen lopettamiseksi
 	FR	ne plus ajouter d'années
 	HE	הפסק להוסיף שנים
+	HU	hagyja abba az évek hozzáadását
 	IT	interrompi aggiunta anni
 	NL	stop toevoegen van jaren
 	NO	slutte å legge til flere år
@@ -298,6 +317,7 @@ PLUGIN_RANDOM_WORK
 	DE	Werkmix
 	ES	Mezcla de Composición
 	FR	Œuvres aléatoires
+	HU	Művek keverése
 	NL	Werkmix
 
 PLUGIN_RANDOM_WORK_ITEM
@@ -306,6 +326,7 @@ PLUGIN_RANDOM_WORK_ITEM
 	DE	Zufälliges Werk
 	ES	Composición aleatorio
 	FR	Œuvre aléatoire
+	HU	Véletlen művek
 	NL	Willekeurig werk
 
 PLUGIN_RANDOM_WORK_PLAYING
@@ -314,6 +335,7 @@ PLUGIN_RANDOM_WORK_PLAYING
 	DE	Zufällige Werke werden wiedergegeben
 	ES	Reproduciendo composiciónes aleatorios
 	FR	Lecture œuvres aléatoires
+	HU	Véletlen művek lejátszása
 	NL	Werk worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_WORK_DISABLE
@@ -322,6 +344,7 @@ PLUGIN_RANDOM_WORK_DISABLE
 	DE	keine Werke mehr hinzuzufügen
 	ES	detener adición de composiciónes
 	FR	ne plus ajouter d'œuvres
+	HU	hagyja abba a művek hozzáadását
 	NL	stop toevoegen van werken
 
 PLUGIN_RANDOM_WORK_WEB
@@ -330,6 +353,7 @@ PLUGIN_RANDOM_WORK_WEB
 	DE	Zufällige Werke
 	ES	Composición aleatorios
 	FR	Œuvres aléatoires
+	HU	Véletlenszerű művek
 	NL	Willekeurige werken
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -340,6 +364,7 @@ PLUGIN_RANDOM_GENRE_FILTER
 	ES	Incluir géneros
 	FI	Sisällytä genret
 	FR	Inclure les genres
+	HU	Műfajok kiválasztása
 	IT	Includi generi musicali
 	NL	Genres toevoegen
 	NO	Inkluder sjangere
@@ -356,6 +381,7 @@ PLUGIN_RANDOM_SELECT_ALL
 	FI	Valitse kaikki
 	FR	Sélectionner tout
 	HE	בחר הכל
+	HU	Mindegyik
 	IT	Selezionare tutto
 	NL	Alles selecteren
 	NO	Velg alle
@@ -372,6 +398,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	FI	Ei valintaa
 	FR	Aucun
 	HE	אל תבחר
+	HU	Egyik sem
 	IT	Deselezionare tutto
 	NL	Niets selecteren
 	NO	Velg ingen
@@ -384,6 +411,7 @@ PLUGIN_RANDOM_LIBRARY_FILTER
 	DE	Bibliotheksansicht verwenden
 	EN	Use library view
 	FR	Utiliser la vue bibliothèque
+	HU	Használja a könyvtári nézetet
 	NL	Gebruik deelcollectie
 	NO	Bruk delbiblioteker
 
@@ -396,6 +424,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	FI	Valitse satunnainen musiikkikokoelma kirjastostasi:
 	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre bibliothèque :
 	HE	בחר מיקס אקראי של מוסיקה מהספרייה:
+	HU	Válasszon ki véletlenszerűen zeneket a könyvtárából:
 	IT	Scegliere una raccolta casuale di musica dalla libreria:
 	NL	Een willekeurige mix van muziek uit je collectie kiezen:
 	NO	Velg en tilfeldig musikkmiks fra biblioteket:
@@ -412,6 +441,7 @@ PLUGIN_RANDOM_TRACK_WEB
 	FI	Satunnaiset kappaleet
 	FR	Morceaux aléatoires
 	HE	שירים בסדר אקראי
+	HU	Véletlenszerű dalok
 	IT	Brani casuali
 	NL	Willekeurige nummers
 	NO	Tilfeldige sanger
@@ -428,6 +458,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_WEB
 	FI	Satunnaiset artistit
 	FR	Artistes aléatoires
 	HE	מבצעים בסדר אקראי
+	HU	Véletlen előadók
 	IT	Artisti casuali
 	NL	Willekeurige artiesten
 	NO	Tilfeldige artister
@@ -444,6 +475,7 @@ PLUGIN_RANDOM_ALBUM_WEB
 	FI	Satunnaiset levyt
 	FR	Albums aléatoires
 	HE	אלבומים בסדר אקראי
+	HU	Véletlenszerű albumok
 	IT	Album casuali
 	NL	Willekeurige albums
 	NO	Tilfeldige album
@@ -460,6 +492,7 @@ PLUGIN_RANDOM_YEAR_WEB
 	FI	Satunnaiset vuodet
 	FR	Années aléatoires
 	HE	שנים בסדר אקראי
+	HU	Véletlen évek
 	IT	Anni casuali
 	NL	Willekeurige jaren
 	NO	Tilfeldige år
@@ -476,6 +509,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	FI	Miksiin sisällytettävät genret:
 	FR	Genres à inclure dans le mix :
 	HE	סגנונות שיש לכלול במיקס:
+	HU	A mixbe belefoglalandó műfajok:
 	IT	Generi musicali da includere nella raccolta:
 	NL	Genres om toe te voegen aan je mix:
 	NO	Sjangere som skal inkluderes i miksen:
@@ -491,6 +525,7 @@ PLUGIN_RANDOM_CHOOSE_GENRES
 	ES	Elegir géneros
 	FI	Valitse genret
 	FR	Choisir les genres
+	HU	Válasszon műfajokazt
 	IT	Scegli generi
 	NL	Genres kiezen
 	NO	Velg sjangere
@@ -507,6 +542,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	FI	Nyt soi -tiedot näkyvät
 	FR	Lecture en cours affichera
 	HE	יוצג הכיתוב 'מושמע כעת'
+	HU	Jelenjen meg a "Most játszott"
 	IT	Vengono visualizzati i brani in corso di riproduzione
 	NL	'Speelt nu' toont:
 	NO	Viser Spilles nå
@@ -523,6 +559,7 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	FI	tulevat kappaleet ja
 	FR	prochains morceaux et
 	HE	שירים בהמשך וגם
+	HU	soron következő dalok és
 	IT	prossimi brani e
 	NL	komende nummers en
 	NO	kommende sanger og
@@ -539,6 +576,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	FI	äskettäin soitetut kappaleet.
 	FR	morceaux lus récemment.
 	HE	שירים אחרונים שהושמעו.
+	HU	nemrég lejátszott dalok.
 	IT	ultimi brani riprodotti.
 	NL	recent gespeelde nummers.
 	NO	nylig spilte sanger.
@@ -555,6 +593,7 @@ PLUGIN_RANDOM_CONTINUOUS_MODE
 	FI	Lisää uusia kohteita, kun vanhat on soitettu
 	FR	Continuer à ajouter de nouveaux morceaux
 	HE	הוספת פריטים חדשים עם סיום הקודמים
+	HU	Adjon hozzá új elemeket, amikor a régiek elfogynak
 	IT	Aggiungere nuovi elementi al termine dei precedenti
 	NL	Nieuwe items toevoegen zodra oude eindigen
 	NO	Legg til nye elementer når de gamle er ferdigspilt
@@ -571,6 +610,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	FI	Miksiin voidaan lisätä kappaleita ja siitä voidaan poistaa kappaleita koska tahansa. Jos haluat lopettaa satunnaisen miksin soittamisen, tyhjennä soittoluettelo tai napsauta
 	FR	Vous pouvez ajouter ou supprimer des morceaux du mix à tout moment. Pour arrêter un mix aléatoire, videz votre liste de lecture ou cliquez ici pour
 	HE	באפשרותך להוסיף שירים למיקס או להסירם בכל עת. כדי לעצור מיקס אקראי, נקה את רשימת ההשמעה או לחץ כדי
+	HU	Bármikor hozzáadhat vagy eltávolíthat dalokat egyvelegéből. A véletlenszerű egyveleg leállításához törölje a lejátszási listát, vagy kattintson a gombra
 	IT	È possibile aggiungere o rimuovere brani dalla raccolta in qualsiasi momento. Per interrompere una raccolta casuale, svuotare la playlist o fare clic per
 	NL	Je kunt op elk moment nummers toevoegen aan of verwijderen uit je mix. Als je een willekeurige mix wilt stoppen, wis je de playlist of klik je op
 	NO	Du kan når som helst legge til og fjerne sanger i miksen. Hvis du vil stanse en miks, kan du enten tømme spillelisten, eller klikke for å
@@ -587,6 +627,7 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	FI	Paina oikeaa näppäintä
 	FR	Appuyez sur DROITE pour
 	HE	לחץ על הלחצן ימינה כדי
+	HU	Nyomja meg a JOBBRA gombot
 	IT	Premere il pulsante DESTRA per
 	NL	Druk RECHTS om
 	NO	Gå til høyre for å
@@ -599,6 +640,7 @@ PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	DE	Titelmix (auf aktuelle Genres beschränkt)
 	EN	Song Mix (limited to current genres)
 	FR	Morceaux aléatoires (limités aux genres actuels)
+	HU	Dalmix (az aktuális műfajokra korlátozva)
 	NL	Nummermix (alleen binnen huidige genres)
 	NO	Sangmiks (begrenset til nåværende sjangre)
 
@@ -607,6 +649,7 @@ PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	DE	Zufälliges Album (auf aktuelle Genres beschränkt)
 	EN	Random Album (limited to current genres)
 	FR	Album aléatoire (limité aux genres actuels)
+	HU	Véletlenszerű album (az aktuális műfajokra korlátozva)
 	NL	Willekeurig album (alleen binnen huidige genres)
 	NO	Tilfeldig album (begrenset til nåværende sjangre)
 
@@ -615,9 +658,11 @@ PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
 	DE	Titelmix (Genreauswahl beibehalten)
 	EN	Song Mix (keep genre selection)
 	FR	Morceaux aléatoires (conserver la sélection du genre)
+	HU	Dalmix (a műfajválasztás megtartása)
 
 PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
 	CS	Náhodné album (zachovat výběr žánrů)
 	DE	Zufälliges Album (Genreauswahl beibehalten)
 	EN	Random Album (keep genre selection)
 	FR	Album aléatoire (conserver la sélection du genre)
+	HU	Véletlenszerű album (a műfajválasztás megtartása)
