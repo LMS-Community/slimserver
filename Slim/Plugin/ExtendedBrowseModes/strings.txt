@@ -3,6 +3,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	DE	Erweiterte Musik Menüs
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation
+	HU	Kiterjesztett böngészési módok
 	NL	Additionele Blader Modi
 	NO	Ytterligere browse-modi
 	PL	Dodatkowe tryby przeglądania
@@ -13,6 +14,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
+	HU	Hozzon létre további böngészési módokat, hogy böngészhessen a zenei könyvtárában album előadói, zeneszerzői, műfajok és egyebek szerint.
 	NL	Creëer additionele menu's om door jouw mediabibliotheek te bladeren, bijvoorbeeld via Albumartiest, Componisten, Genres, enz.
 	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
@@ -27,6 +29,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	FI	Levyartisti
 	FR	Artistes, Album
 	HE	מבצע האלבום
+	HU	Album előadói
 	IT	Artista album
 	NL	Albumartiest
 	NO	Albumartists
@@ -40,6 +43,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	DE	Komponisten
 	EN	Composers
 	FR	Compositeurs
+	HU	Zeneszerzők
 	IT	Compositori
 	NL	Componisten
 	NO	Komponister
@@ -50,17 +54,20 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	CS	Klasická hudba podle dirigenta
 	DE	Klassische Musik nach Dirigent
 	EN	Classical Music by Conductor
+	HU	Klasszikus zene adott karmestertől
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	CS	Jazzoví skladatelé
 	DE	Jazz Komponisten
 	EN	Jazz Composers
+	HU	Jazz zeneszerzők
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	CS	Role přispěvatelů:
 	DE	Rolle des Künstlers:
 	EN	Contributor Roles:
 	FR	Rôles des artistes :
+	HU	Közreműködői szerepek:
 	NL	Rol van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
@@ -71,18 +78,21 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	DE	Veröffentlichungstyp:
 	EN	Release Type:
 	FR	Type de sortie :
+	HU	Kiadás típusa:
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	CS	Typy vydání:
 	DE	Veröffentlichungstypen:
 	EN	Release Types:
 	FR	Types de sorties :
+	HU	Kiadás típusai:
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	CS	Procházet podle:
 	DE	Anzeigen:
 	EN	Browse by:
 	FR	Parcourir par :
+	HU	Tallózás:
 	NL	Blader op:
 	NO	Bla etter:
 	PL	Przeglądaj wg:
@@ -93,6 +103,7 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	DE	Anwenden auf:
 	EN	Apply to:
 	FR	Appliquer à :
+	HU	Jelentkezés:
 	NL	Toepassen op:
 	NO	Anvendes på:
 	PL	Zastosuj do:
@@ -107,6 +118,7 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	FI	Kokoelmat
 	FR	Compilations
 	HE	אוספים
+	HU	Válogatások
 	IT	Compilation
 	NL	Verzamelingen
 	NO	Samlinger
@@ -120,6 +132,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	DE	Dateisystem
 	EN	Disks and folders
 	FR	Disques et dossiers
+	HU	Lemezek és mappák
 	NL	Schijven en mappen
 	NO	Disker og mapper
 	PL	Dyski i foldery
@@ -130,6 +143,7 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
 	FR	Rôles des artistes :
+	HU	Közreműködői szerepek:
 	NL	Rollen van uitvoerende:
 	NO	Utøverroller:
 	PL	Role kontrybutorów:
@@ -140,6 +154,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
 	FR	Toutes les bibliothèques (par défaut)
+	HU	Összes könyvtár (alapértelmezett)
 	NL	Hele mediabibliotheek (Standaard)
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
@@ -150,6 +165,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
 	FR	Masquer les doublons compressés avec perte si un fichier sans perte est disponible
+	HU	A veszteséges változatok elrejtése, ha elérhető veszteségmentes változat
 	NL	Verberg lossy versie als een lossless versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
@@ -160,6 +176,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
 	FR	Créer une bibliothèque thématique qui essaie de supprimer les pistes en double en masquant les versions avec perte si une version sans perte du même enregistrement est disponible. Ceci est particulièrement utile si vous avez une collection de morceaux à utiliser à la maison (sans perte) et sur la route (avec perte).
+	HU	Hozzon létre egy könyvtári nézetet, amely megpróbálja elrejteni az ismétlődő műsorszámokat a veszteséges verziók elrejtésével, ha ugyanannak a felvételnek veszteségmentes változata is elérhető. Ez különösen akkor hasznos, ha otthoni (veszteségmentes) és útközbeni (veszteséges) pályagyűjteményt tart.
 	NL	Maak een deelcollectie die probeert om lossy versies te verbergen als van dezelfde opname ook een lossless versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
 	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
@@ -174,6 +191,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	FI	Satunnaiset levyt
 	FR	Albums aléatoires
 	HE	אלבומים בסדר אקראי
+	HU	Véletlen albumok
 	IT	Album casuali
 	NL	Willekeurige Albums
 	NO	Tilfeldige album
@@ -184,6 +202,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	DE	Zuletzte aktualisierte Alben
 	EN	Recently Updated Albums
+	HU	Nemrég frissített albumok
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	CS	Nejlepší skladby
@@ -193,6 +212,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	ES	Pistas principales
 	FI	Suositut kappaleet
 	FR	Morceaux les plus écoutés
+	HU	Legjobb számok
 	IT	Brani più ascoltati
 	NL	Topnummers
 	NO	Mest populære spor
@@ -205,6 +225,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	DE	Flop-Titel
 	EN	Flop Tracks
 	FR	Morceaux les moins écoutés
+	HU	Flop zeneszámok
 	NL	Flopnummers
 	NO	Minst avspilte spor
 	PL	Najrzadziej słuchane
@@ -215,6 +236,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	DE	'%s' verwenden
 	EN	Use '%s'
 	FR	Utiliser '%s'
+	HU	'%s' használata
 	NL	Gebruik '%s'
 	NO	Bruk '%s'
 	PL	Przełącz na '%s'
@@ -225,6 +247,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	DE	Verwende nun '%s'
 	EN	Now using '%s'
 	FR	Utilise maintenant '%s'
+	HU	Most a '%s' használatával
 	NL	Gebruikt nu '%s'
 	NO	Bruker nå '%s'
 	PL	Przełączono na '%s'
@@ -235,6 +258,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	DE	Bibliotheksansicht gelöscht
 	EN	Library View Deleted
 	FR	Bibliothèque thématique supprimée
+	HU	Könyvtári nézet törölve
 	NL	Deelcollectie verwijderd
 	NO	Delbibliotek slettet
 	PL	Biblioteka tematyczna została usunięta
@@ -245,6 +269,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	DE	Hörbücher
 	EN	Audiobooks
 	FR	Livres audio
+	HU	Hangoskönyvek
 	NL	Luisterboeken
 	SV	Ljudböcker
 
@@ -253,6 +278,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	DE	Alles ohne Hörbücher
 	EN	All Music without Audiobooks
 	FR	Toute la musique sans les livres audio
+	HU	Minden zene hangoskönyvek nélkül
 	NL	Alle muziek zonder luisterboeken
 	SV	All musik förutom ljudböcker
 
@@ -261,6 +287,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
+	HU	Hozzon létre egy Hangoskönyvek könyvtárnézetet és egy hangoskönyvek nélküli nézetet a következő műfajok alapján:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 
@@ -269,6 +296,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
+	HU	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 
@@ -277,6 +305,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	DE	Hörbuch-Autoren
 	EN	Authors
 	FR	Auteurs
+	HU	Szerzők
 	NL	Schrijvers
 	SV	Författare
 
@@ -284,6 +313,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TAGS
 	EN	User Defined Roles
 	DE	Benutzerdefinierte Rollen
 	FR	Rôles définis par l'utilisateur
+	HU	Felhasználó által meghatározott szerepkörök
 	ES	Roles definidos por el usuario
 	NL	Door de gebruiker gedefinieerde rollen
 
@@ -292,6 +322,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC
 	DE	Informieren Sie LMS über alle benutzerdefinierten Rollen-Tags, die in der Musikbibliothek verwendet werden. Zum Beispiel SOLOIST, DRUMMER, PRODUCER, usw. Diese können dann als Mitwirkende Rollen in den zusätzlichen Suchmodi oben verwendet werden. Sie werden auch als Kategorien angezeigt, wenn Sie Alben oder Künstler mit aktivierter Gruppierung nach Veröffentlichungstyp durchsuchen. Änderungen hier lösen einen erneuten Scan der Musikbibliothek aus.
 	FR	Indiquez à LMS toute étiquette de rôle de contributeur personnalisée utilisée dans la bibliothèque musicale. Par exemple, SOLOIST, DRUMMER, PRODUCER, etc. Ceux-ci peuvent ensuite être utilisés comme rôles de contributeur dans les modes de navigation supplémentaires ci-dessus. Ils apparaîtront également en tant que catégories lorsque vous parcourez des albums ou des artistes en activant le regroupement par type de publication. Les modifications apportées à ces catégories déclencheront une nouvelle analyse de la bibliothèque musicale.
 	ES	Informe a LMS sobre cualquier etiqueta de rol de colaborador personalizada utilizada en la biblioteca musical. Por ejemplo, SOLISTA, BATERISTA, PRODUCTOR, etc. Estas etiquetas se pueden utilizar como roles de colaborador en los modos de exploración adicionales anteriores. También aparecerán como categorías al explorar álbumes o artistas con la agrupación Tipo de publicación activada. Los cambios que se realicen aquí provocarán una nueva exploración de la biblioteca musical.
+	HU	Mondja el az LMS-nek a zenei könyvtárban használt egyéni közreműködői szerepcímkéket. Például SZÓLISTA, DOBOS, PRODUCER stb. Ezek ezután közreműködői szerepként használhatók a fenti További böngészési módokban. Kategóriaként is megjelennek, ha olyan albumokat vagy előadókat böngész, amelyeknél a Kiadástípusok csoportosítása engedélyezett. Az itt végzett változtatások elindítják a zenei könyvtár újraellenőrzését.
 	NL	Vertel LMS over alle aangepaste rollabels voor medewerkers die worden gebruikt in de muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Deze kunnen dan worden gebruikt als rollen voor medewerkers in de extra bladermodi hierboven. Ze verschijnen ook als categorieën wanneer u door albums of artiesten bladert met de Release Type groepering ingeschakeld. Als u hier wijzigingen aanbrengt, wordt de muziekbibliotheek opnieuw gescand.
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE
@@ -299,6 +330,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE
 	DE	Rolle tag
 	FR	Rôle tag
 	ES	Role tag
+	HU	Szerepcímke
 	NL	Rol tag
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
@@ -306,5 +338,6 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
 	DE	Text anzeigen
 	FR	Afficher le texte
 	ES	Mostrar texto
+	HU	Szöveg megjelenítése
 	NL	Tekst weergeven
 
