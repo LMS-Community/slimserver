@@ -8,6 +8,7 @@ PLUGIN_INFOBROWSER
 	ES	Navegador de información
 	FI	Informaatioselain
 	FR	Navigateur info
+	HU	Információböngésző
 	IT	Browser informazioni
 	NL	Infobrowser
 	NO	Informasjonsleser
@@ -23,6 +24,7 @@ PLUGIN_INFOBROWSER_DESC
 	ES	Obtener información de orígenes de Internet y mostrarla en pantallas de mando a distancia, servidor o reproductor. En la sección sobre configuración encontrará información sobre cómo agregar orígenes de información adicionales.
 	FI	Nouda tietoa internet-lähteistä ja tarkastele sitä kaukosäätimen, palvelimen tai soittimen näytössä.  Asetuksissa on lisätietoa lisäinformaatiolähteiden lisäämisestä.
 	FR	Récupère des informations d'Internet et les affiche sur la télécommande, sur le serveur ou sur la platine. Reportez-vous à la section des réglages pour en savoir plus sur l'ajout de sources d'informations.
+	HU	Információk lekérése internetes forrásokból, és megjeleníthető a távirányítón, a szerveren vagy a lejátszón keresztül.  További információforrások hozzáadásával kapcsolatos információkért tekintse meg a beállítások szakaszt.
 	IT	Recupera le informazioni da fonti Internet e le visualizza nel display del telecomando, del server o del lettore. Consultare la sezione relativa alle impostazioni per istruzioni sull'aggiunta di altre fonti di informazioni.
 	NL	Haal informatie op uit internetbronnen en geef deze via de afstandsbediening, de server of de muziekspeler weer. Zie de instellingensectie voor informatie over het toevoegen van extra informatiebronnen.
 	NO	Hent informasjon fra Internett-kilder og på skjermene til serveren, fjernkontrollen og spilleren. Du finner mer informasjon om å legge til flere informasjonskilder under Innstillinger.
@@ -38,6 +40,7 @@ SETUP_PLUGIN_INFOBROWSER_DESC
 	ES	El Navegador de información permite leer información procedente de orígenes de Internet en la pantalla de su reproductor, servidor o mando a distancia Squeezebox. Se pueden agregar más orígenes de información desde la interfaz Web (en Extras/Navegador de información).
 	FI	Informaatioselaimen avulla voit lukea informaatiota internet-lähteistä Squeezebox-kaukosäätimen, -palvelimen tai -soittimen näytössä. Voit lisätä muita informaatiolähteitä internet-käyttöliittymässä, kohdassa Muut/Informaatioselain.
 	FR	Le Navigateur info vous permet de lire des flux d'informations en provenance d'Internet directement sur la télécommande, sur le serveur ou sur la platine. D'autres sources d'informations peuvent être ajoutées à l'aide de l'interface Web sous Extras/Navigateur info.
+	HU	Az Információböngésző lehetővé teszi az internetes forrásokból származó információk olvasását a Squeezebox távirányítóján, a szerverén vagy a lejátszóján. További információforrások hozzáadhatók a webes felületen az Extrák/Információböngésző alatt.
 	IT	Il browser informazioni consente di visualizzare le informazioni recuperate dalle fonti Internet nel telecomando di Squeezebox, nel server o nel display del lettore. È possibile aggiungere ulteriori fonti di informazioni tramite l'interfaccia Web in Extra/Browser informazioni.
 	NL	Met behulp van de Infobrowser kun je informatie uit internetbronnen op je Squeezebox-afstandsbediening, -server of -muziekspeler lezen. Je kunt meer informatiebronnen toevoegen via 'Extra's/Infobrowser' in de webinterface.
 	NO	Med informasjonsleseren kan du lese informasjon fra Internett-kilder på Squeezebox-fjernkontrollen, serveren eller spillerskjermen. Du kan legge til flere informasjonskilder ved å bruke webgrensesnittet under Tillegg/Informasjonsleser.
@@ -53,6 +56,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET
 	ES	Restablecer
 	FI	Palauta
 	FR	Réinitialiser
+	HU	Alaphelyzetbe állítás
 	IT	Reimposta
 	NL	Opnieuw instellen
 	NO	Tilbakestill
@@ -68,6 +72,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET_DESC
 	ES	Restablecer todas las fuentes predeterminadas del menú Navegador de información en el nivel superior y todas las fuentes de complementos que haya instalado.
 	FI	Palauta kaikki oletussyötteet sekä kaikki asentamasi lisäosasyötteet ylätason informaatioselainvalikkoon.
 	FR	Réinitialiser le niveau supérieur du menu du Navigateur info pour rétablir les flux par défaut et les flux des modules supplémentaires installés.
+	HU	Állítsa vissza a legfelső szintű Információböngésző menüt az összes alapértelmezett hírcsatornára, valamint az összes telepített kiegészítő hírcsatornára.
 	IT	Ripristina i feed predefiniti e quelli dei componenti aggiuntivi installati nel menu principale del Browser informazioni.
 	NL	Stel het menu Infobrowser op het hoogste niveau opnieuw in op alle standaardkanalen plus alle add-onkanalen die je hebt geïnstalleerd.
 	NO	Tilbakestill øverste menynivå i informasjonsleseren for alle standardfeeder samt alle tilleggsfeeder du har installert.
@@ -83,6 +88,7 @@ SETUP_PLUGIN_INFOBROWSER_ADDONS
 	ES	Es posible mostrar otros orígenes de información mediante complementos de Navegador de información. Encontrará más detalles sobre complementos de Navegador de información en: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	FI	Muitakin informaatiolähteitä voidaan näyttää lisäämällä informaatioselaimen lisäosia.  Informaatioselaimen lisäosista on lisätietoa osoitteessa <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	FR	Vous pouvez afficher d'autres sources d'information en ajoutant des modules supplémentaires au Navigateur info. Pour en savoir plus sur ces modules, rendez-vous à l'adresse suivante : <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
+	HU	Egyéb információforrások is megjeleníthetők Információböngésző-kiegészítők hozzáadásával.  Az Információböngésző-kiegészítők további részletei a következő címen találhatók: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index. php/Information_Browser</a>.
 	IT	Per visualizzare altre fonti di informazioni, è possibile integrare i componenti aggiuntivi del Browser informazioni. Per ulteriori informazioni su tali componenti, visitare il sito Web <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	NL	Je kunt andere informatiebronnen weergeven door Infobrowser-addons toe te voegen. Meer informatie over deze add-ons is te vinden op: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	NO	Du kan vise andre informasjonskilder ved å bruke tilleggsmoduler i informasjonsleseren. Du kan lære mer om informasjonsleseren her: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
