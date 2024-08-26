@@ -9,6 +9,7 @@ PLUGIN_DIGITAL_INPUT
 	FI	Digitaaliset tulot
 	FR	Entrées numériques
 	HE	פריטי קלט דיגיטלי
+	HU	Digitális bemenetek
 	IT	Ingressi digitali
 	NL	Digitale Ingangen
 	NO	Digitale innganger
@@ -24,6 +25,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 	ES	Entrada digital para Transporter
 	FI	Transporterin digitaalinen tulo
 	FR	Entrée numérique pour Transporter
+	HU	Digitális bemenet Transporter számára
 	IT	Ingresso digitale per Transporter
 	NL	Digitale ingang voor Transporter
 	NO	Digital inngang for Transporter
@@ -40,6 +42,7 @@ PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	FI	Tasapainotettu AES/EBU
 	FR	AES/EBU équilibré
 	HE	AES/EBU מאוזן
+	HU	Kiegyensúlyozott AES/EBU
 	IT	AES/EBU bilanciato
 	NL	Gebalanceerde AES/EBU
 	NO	Balansert AES/EBU
@@ -56,6 +59,7 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	FI	BNC S/PDIF -koaksiaalijohto
 	FR	Coax BNC S/PDIF
 	HE	BNC Coax S/PDIF
+	HU	BNC Coax S/PDIF
 	IT	S/PDIF coassiale per BNC
 	NL	BNC coaxiale S/PDIF
 	NO	BNC koaks S/PDIF
@@ -72,6 +76,7 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	FI	RCA S/PDIF -koaksiaalijohto
 	FR	Coax RCA S/PDIF
 	HE	RCA Coax S/PDIF
+	HU	RCA Coax S/PDIF
 	IT	S/PDIF RCA coassiale
 	NL	RCA coaxiale S/PDIF
 	NO	RCA koaks S/PDIF
@@ -88,6 +93,7 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	FI	Optinen S/PDIF (TOSLINK)
 	FR	S/PDIF optique (TOSLINK)
 	HE	Optical S/PDIF (TOSLINK)‎
+	HU	Optical S/PDIF (TOSLINK)
 	IT	S/PDIF ottico (TOSLINK)
 	NL	Optische S/PDIF (TOSLINK)
 	NO	Optisk S/PDIF (TOSLINK)
@@ -104,6 +110,7 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	FI	Valitse digitaalinen tulovaihtoehto alta:
 	FR	Sélectionnez une option d'entrée numérique ci-dessous :
 	HE	בחר אחת מאפשרויות הקלט הדיגיטלי הבאות:
+	HU	Válasszon egy digitális bemeneti lehetőséget az alábbiakból:
 	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
 	NL	Kies hieronder een digitale-ingangsoptie:
 	NO	Velg et alternativ for digitalinngang nedenfor:
