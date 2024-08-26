@@ -9,6 +9,7 @@ PLUGIN_CLI
 	FI	Komentorivikäyttöliittymä
 	FR	Interface de ligne de commande (CLI)
 	HE	ממשק שורת פקודה (CLI)
+	HU	Parancssori interfész (CLI)
 	IT	Interfaccia della riga di comando
 	NL	Opdrachtregel Interface (CLI)
 	NO	Kommandolinjegrensesnitt
@@ -25,6 +26,7 @@ PLUGIN_CLI_DESC
 	FI	Komentorivikäyttöliittymälaajennuksen avulla Squeezeboxin ohjelmistoa ja soittimia voidaan kauko-ohjata TCP/IP-yhteyden välityksellä, esimerkiksi AMX:n, Crestronin tai jonkin muun kolmannen osapuolen automaatiojärjestelmän avulla.
 	FR	Le plugin d'interface de ligne de commande permet de contrôler le logiciel Squeezebox et les platines à distance par le biais d'une connexion TCP/IP, par exemple par un système d'automatisation tiers, tel qu'AMX ou Crestron.
 	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-Lyrion Music Server וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
+	HU	A Command Line Interface bővítmény lehetővé teszi a Squeezebox szoftver és a lejátszók távoli vezérlését TCP/IP kapcsolaton keresztül, például egy harmadik féltől származó automatizálási rendszerrel, mint például az AMX vagy a Crestron.
 	IT	Il plugin dell'interfaccia della riga di comando consente di controllare Squeezebox e i lettori in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
 	NL	Met de opdrachtregel interface plug-in is het mogelijk om de Squeezebox software en systemen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
 	NO	Med kommandolinjegrensesnittet kan Squeezebox-programvaren og spillerne kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.
@@ -41,6 +43,7 @@ SETUP_CLIPORT
 	FI	Komentorivikäyttöliittymän portin numero
 	FR	Numéro de port de l'interface de ligne de commande
 	HE	מספר היציאה של ממשק שורת הפקודה
+	HU	Parancssori interfész portszáma
 	IT	Numero della porta dell'interfaccia a riga di comando
 	JA	コマンドライン インターフェース ポートナンバー
 	NL	Poortnummer van de opdrachtregel interface
@@ -60,6 +63,7 @@ SETUP_CLIPORT_DESC
 	FI	Voit vaihtaa sen portin numeroa, jonka välityksellä komentorivikäyttöliittymä ohjaa soitinta.
 	FR	Vous pouvez changer le port utilisé par l'interface de ligne de commande pour contrôler la platine.
 	HE	באפשרותך לשנות את מספר היציאה המשמשת את ממשק שורת הפקודה לשליטה בנגן.
+	HU	Módosíthatja a lejátszó vezérléséhez használt parancssori felület által használt portszámot.
 	IT	È possibile modificare il numero della porta usata dall'interfaccia a riga di comando per controllare il lettore.
 	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
 	NL	Je kunt het poortnummer wijzigen dat door een opdrachtregel interface gebruikt wordt om de muziekspeler te bedienen.
