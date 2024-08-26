@@ -7,18 +7,18 @@ on:
 jobs:
   linux:
     name: Run LMS to see whether it crashes immediately...
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Make sure we're running as non-root
         run: |
           if [ "$RUNNER_USER" == "root" ]; then
             echo Specify non-root image when testing with act:
-            echo act -P ubuntu-22.04=ghcr.io/catthehacker/ubuntu:runner-22.04
+            echo act -P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:runner-24.04
             exit 1
           fi
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install depedencies
         run: |
@@ -27,5 +27,8 @@ jobs:
           fi
           sudo apt-get install -y libio-socket-ssl-perl libnet-ssleay-perl netcat
 
-      - name: Run test
+      - name: Test Strings File
+        run: perl -ICPAN t/verifyStrings.pl
+
+      - name: Run Startup Test
         run: bash t/00_smoketest.sh
