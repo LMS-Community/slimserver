@@ -20116,7 +20116,7 @@ SORT_GENREARTISTALBUM
 	FI	Genre, artisti, levy
 	FR	Genre, Artiste, Album
 	HE	סגנון, מבצע, אלבום
-	Hu	Műfaj, előadó, album
+	HU	Műfaj, előadó, album
 	IT	Genere, artista, album
 	NL	Genre, artiest, album
 	NO	Sjanger, artist, album
