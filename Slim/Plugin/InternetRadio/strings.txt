@@ -6,6 +6,7 @@ PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
 	ES	Directorios de radio por Internet
 	FI	Nettiradiohakemistot
 	FR	Répertoires de radios Internet
+	HU	Internetes rádiós könyvtárak
 	IT	Directory di radio Internet
 	NL	Directory's van internetradio
 	NO	Katalog med nettradiostasjoner
@@ -24,6 +25,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	FI	TuneIn Radio
 	FR	TuneIn Radio
 	HE	TuneIn Radio
+	HU	TuneIn Radio
 	IT	TuneIn Radio
 	NL	TuneIn Radio
 	NO	TuneIn Radio
@@ -39,6 +41,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	ES	TuneIn Radio - Radio por Internet local
 	FI	TuneIn Radio - paikallinen internetradio
 	FR	TuneIn Radio - Radios Internet
+	HU	TuneIn Radio - Radios Internet
 	IT	TuneIn Radio - Radio Internet locale
 	NL	TuneIn Radio - lokale internetradio
 	NO	TuneIn Radio: Lokal Internett-radio
@@ -54,6 +57,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	ES	TuneIn Radio
 	FI	TuneIn Radio
 	FR	TuneIn Radio
+	HU	TuneIn Radio
 	IT	TuneIn Radio
 	NL	TuneIn Radio
 	NO	TuneIn Radio
@@ -70,6 +74,7 @@ PLUGIN_RADIOTIME_LOADING
 	FI	Ladataan TuneIn Radio...
 	FR	Chargement de TuneIn Radio...
 	HE	טוען את TuneIn Radio...
+	HU	TuneIn rádió betöltése...
 	IT	Caricamento TuneIn Radio...
 	NL	TuneIn Radio wordt geladen...
 	NO	Laster TuneIn Radio ..
@@ -85,6 +90,7 @@ PLUGIN_RADIOTIME_OPTIONS
 	ES	Opciones de TuneIn Radio
 	FI	TuneIn Radion asetukset
 	FR	Options de TuneIn Radio
+	HU	TuneIn rádió beállítások
 	IT	Opzioni TuneIn Radio
 	NL	Opties voor TuneIn Radio
 	NO	Alternativer for TuneIn Radio
@@ -100,6 +106,7 @@ RADIOTIME_LANGUAGE
 	ES	Por idioma
 	FI	Kielen mukaan
 	FR	Par Langue
+	HU	Nyelv szerint
 	IT	Per lingua
 	NL	Op taal
 	NO	Etter språk
@@ -115,6 +122,7 @@ RADIOTIME_LOCAL
 	ES	Radio local
 	FI	Paikallisradio
 	FR	Radios Locales
+	HU	Helyi rádió
 	IT	Radio locale
 	NL	Lokale Radio
 	NO	Lokalradio
@@ -130,6 +138,7 @@ RADIOTIME_LOCATION
 	ES	Por ubicación
 	FI	Sijainnin mukaan
 	FR	Par Lieu
+	HU	Hely szerint
 	IT	Per luogo
 	NL	Op locatie
 	NO	Etter plassering
@@ -145,6 +154,7 @@ RADIOTIME_WORLD
 	ES	Por ubicación
 	FI	Sijainnin mukaan
 	FR	Par Lieu
+	HU	Hely szerint
 	IT	Per luogo
 	NL	Op locatie
 	NO	Etter plassering
@@ -160,6 +170,7 @@ RADIOTIME_MUSIC
 	ES	Música
 	FI	Musiikki
 	FR	Musique
+	HU	Zene
 	IT	Musica
 	NL	Muziek
 	NO	Musikk
@@ -175,6 +186,7 @@ RADIOTIME_NEWS
 	ES	Noticias
 	FI	Uutiset
 	FR	Actualités
+	HU	Hírek
 	IT	Notizie
 	NL	Nieuws
 	NO	Nyheter
@@ -190,6 +202,7 @@ RADIOTIME_PODCAST
 	ES	Podcasts
 	FI	Podcastit
 	FR	Podcasts
+	HU	Podcastok
 	IT	Podcast
 	NL	Podcasts
 	NO	Podkaster
@@ -205,6 +218,7 @@ RADIOTIME_SEARCH
 	ES	Buscar en TuneIn
 	FI	Etsi TuneIn-palvelusta
 	FR	Rechercher dans TuneIn
+	HU	Keresés a TuneInben
 	IT	Cerca in TuneIn
 	NL	TuneIn doorzoeken
 	NO	Søk TuneIn
@@ -220,6 +234,7 @@ RADIOTIME_SPORTS
 	ES	Deportes
 	FI	Urheilu
 	FR	Sports
+	HU	Sport
 	IT	Sport
 	NL	Sport
 	NO	Sport
@@ -236,6 +251,7 @@ RADIOTIME_TALK
 	FI	Keskustelu
 	FR	Émissions / Débats
 	IT	Talk
+	HU	Beszélgetés
 	NL	Gesproken
 	NO	Prat
 	PL	Rozmowa
@@ -251,6 +267,7 @@ RADIOTIME_MY_PRESETS
 	FI	Esiasetukset
 	FR	Mes favoris TuneIn
 	HE	ההגדרות הקבועות מראש שלי
+	HU	Saját beállításaim
 	IT	Stazioni predefinite
 	NL	Mijn Voorkeuren
 	NO	Mine forhåndsinnstilte frekvenser
@@ -267,6 +284,7 @@ PLUGIN_RADIOTIME_USERNAME
 	FI	Käyttäjätunnus
 	FR	Nom d'utilisateur TuneIn
 	HE	שם משתמש
+	HU	TuneIn felhasználónév
 	IT	Nome utente
 	JA	ユーザー名
 	NL	Gebruikersnaam

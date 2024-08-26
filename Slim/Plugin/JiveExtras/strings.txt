@@ -7,6 +7,7 @@ PLUGIN_JIVEEXTRAS
 	ES	Personalizar dispositivo
 	FI	Mukauta laite
 	FR	Personnaliser le dispositif
+	HU	Eszköz testreszabása
 	IT	Personalizza dispositivo
 	NL	Apparaten Personaliseren
 	NO	Tilpass enheten
@@ -23,6 +24,7 @@ PLUGIN_JIVEEXTRAS_DESC
 	ES	Puede personalizar Squeezebox Controller seleccionando imágenes de papel tapiz y efectos de sonido adicionales que encontrará en los menús de configuración del controlador Squeezebox, la radio o el dispositivo táctil.
 	FI	Voit valita Squeezebox-kaukosäätimeen erilaisia taustakuvia ja äänitehosteita, jotka tulevat valittaviin kaukosäätimen, Squeezebox Radion tai Squeezebox Touchin asetusvalikkoon.
 	FR	Vous pouvez personnaliser le contrôleur Squeezebox Controller en sélectionnant d'autres images d'arrière-plan et d'autres effets sonores auxquels vous pourrez accéder par le biais des menus de réglage de votre contrôleur Squeezebox Controller, de votre Squeezebox radio ou de votre Squeezebox Touch.
+	HU	A Squeezebox Controller testreszabható további háttérképek és hangeffektusok kiválasztásával, amelyek elérhetővé válnak a Squeezebox Controller, Radio vagy Touch eszköz beállítási menüjében.
 	IT	Per personalizzare Squeezebox Controller, selezionare immagini di sfondo ed effetti sonori aggiuntivi che saranno disponibili nei menu delle impostazioni di Squeezebox Controller, Radio o Touch.
 	NL	Je kunt jouw Squeezebox Controller personaliseren door additionele achtergronden en geluiden te selecteren, die beschikbaar worden gesteld in de instellingen menu's voor jouw Squeezebox Controller-, Radio- of Touch-apparaat.
 	NO	Du kan tilpasse Squeezebox Controller ved å velge flere bilder til bakgrunnen samt lydeffekter, som så blir tilgjengelige fra innstillingsmenyen for Squeezebox Controller, Radio eller Touch.
@@ -38,6 +40,7 @@ PLUGIN_JIVEEXTRAS_WALLPAPERS
 	ES	Papeles tapiz
 	FI	Taustakuvat
 	FR	Arrière-plans
+	HU	Háttérképek
 	IT	Sfondi
 	NL	Achtergronden
 	NO	Bakgrunner
@@ -53,6 +56,7 @@ PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC
 	ES	Seleccione archivos de imagen locales o remotos para utilizar como papel tapiz del controlador. Podrá acceder a estas imágenes como opciones para papel tapiz desde el menú Configuración->Pantalla->Papel tapiz del controlador. Los archivos de papel tapiz deben tener un tamaño de 240x320 píxeles (controlador), 320x240 (radio Squeezebox) o 480x272 (Squeezebox Touch) o ser archivos .jpeg, .jpg, .png o .bmp.
 	FI	Voit valita paikallisia tai etäkuvatiedostoja kaukosäätimen taustakuvaksi.  Nämä kuvat ovat valittavissa taustakuvaksi kaukosäätimen valikosta Asetukset->Näyttö->Taustakuva.  Taustakuvatiedostojen pitää olla 240 x 320 (kaukosäädin), 320 x 240 (Squeezebox Radio) tai 480 x 272 (Squeezebox Touch) kuvapisteen .jpeg-, .jpg-, .png- tai .bmp-tiedostoja.
 	FR	Sélectionnez des fichiers image locaux ou distants comme arrière-plans de votre contrôleur. Ces images seront disponibles dans les options des arrière-plans dans le menu Réglages > Ecran > Arrière-plan de votre contrôleur. Les fichiers d'arrière-plan doivent être aux formats .jpeg, .jpg, .png ou .bmp à 240x320 pixels (contrôleur), 320x240 pixels (Squeezebox Radio) ou 480x272 (Squeezebox Touch).
+	HU	Válassza ki a helyi vagy távoli képfájlokat a vezérlő háttérképeként való használatra.  Ezek a képek a vezérlő Beállítások->Képernyő->Háttérkép menüjében elérhetők lesznek háttérképként.  A háttérképfájloknak 240x320 (Controller), 320x240 (Squeezebox Radio) vagy 480x272 (Squeezebox Touch) pixeles .jpeg, .jpg, .png vagy .bmp fájlok lehetnek.
 	IT	Selezionare i file di immagini salvati nel computer locale o in computer remoti da utilizzare come sfondi nel dispositivo di controllo. Queste immagini saranno disponibili come opzioni per lo sfondo nel menu Impostazioni->Schermo->Sfondo del dispositivo di controllo. I file degli sfondi devono essere file .jpeg, .jpg, .png o .bmp da 240x320 pixel (Controller), 320x240 pixel (Squeezebox Radio) o 480x272 pixel (Squeezebox Touch).
 	NL	Selecteer lokale of externe afbeeldingen om als achtergrond op jouw controller te gebruiken. Deze afbeeldingen zijn beschikbaar als opties voor de achtergrond via het menu Instellingen -> Scherm -> Achtergrond op jouw controller. Achtergrond bestanden moeten .jpeg-, .jpg-, .png- of .bmp bestanden zijn met 240 x 320 pixels (Controller), 320x240 (Squeezebox Radio) of 480x272 (Squeezebox Touch).
 	NO	Du kan velge lokale eller eksterne bildefiler som bakgrunn på kontrollen. Disse bildene kan hentes som bakgrunner på kontrollen via menyvalget Innstillinger -> Skjerm -> Bakgrunn. Bakgrunnsbildefilene bør være på 240 x 320 (Controller), 320 x 240 (Squeezebox Radio) eller 480 x 272 (Squeezebox Touch) piksler, og være i ett av formatene .jpeg, .jpg, .png eller .bmp.
@@ -68,6 +72,7 @@ PLUGIN_JIVEEXTRAS_SOUNDS
 	ES	Sonidos
 	FI	Äänet
 	FR	Sons
+	HU	Hangok
 	IT	Suoni
 	NL	Geluiden
 	NO	Lyder
@@ -83,6 +88,7 @@ PLUGIN_JIVEEXTRAS_SOUNDS_DESC
 	ES	Seleccione archivos de sonido locales o remotos para utilizarlos como efectos de sonido opcionales para acciones como las selecciones en el menú del controlador Squeezebox. Podrá acceder a estos sonidos opcionales desde el menú Configuración->Avanzada->Efectos de sonido del controlador. Los archivos de efectos de sonido deben ser archivos .wav con datos de 1 canal (mono) a 16 bits y 44,1 KHz.
 	FI	Voit valita paikallisia äänitiedostoja tai etä-äänitiedostoja ja käyttää niitä vaihtoehtoisina äänitehosteina toiminnoille, esimerkiksi valikkokohtien valinnoille Squeezebox-kaukosäätimessä.  Nämä valinnaiset äänet ovat valittavissa kaukosäätimen valikosta Asetukset->Lisäasetukset->Äänitehosteet.  Äänitehostetiedostojen pitää olla yksikanavaisia (monoääni) .wav-tiedostoja, jotka sisältävät 16 bittiä ja 44,1 KHz tietoa.
 	FR	Sélectionnez des fichiers son locaux ou distants comme effets sonores optionnels pour des actions telles que le choix de menus dans votre contrôleur. Ces sons seront disponibles dans le menu Réglages > Avancé > Effets sonores de votre Squeezebox Controller. Les effets sonores doivent se trouver dans des fichiers .wav contenant des données 16 bits 44,1 KHz à 1 canal (mono).
+	HU	Válassza ki a helyi vagy távoli hangfájlokat, amelyeket opcionális hangeffektusként kíván használni a műveletekhez, például a Squeezebox vezérlő menüválasztásához.  Ezek az opcionális hangok a vezérlő Beállítások->Speciális->Hangeffektusok menüjéből érhetők el.  A hangeffektusfájlok 1 csatornás (mono) 16 bites 44,1 kHz-es adatokat tartalmazó .wav fájlok legyenek.
 	IT	Selezionare i file audio salvati nel computer locale o in computer remoti da associare come effetti sonori facoltativi ad azioni quali la selezione di voci di menu di Squeezebox Controller. Questi effetti sonori saranno disponibili nel menu Impostazioni->Avanzate->Effetti sonori del dispositivo di controllo. I file degli effetti sonori devono avere l'estensione .wav e contenere dati a 1 canale (mono) da 16 bit e 44,1KHz.
 	NL	Selecteer lokale of externe geluidsbestanden om als optionele geluiden te gebruiken voor acties zoals menuselecties op je Squeezebox Controller. Deze optionele geluiden zijn beschikbaar in het menu Instellingen -> Geavanceerd -> Geluidseffecten op jouw controller. Geluidsbestanden moeten .wav bestanden met 1-kanaals (mono) 16-bits 44.1KHz gegevens zijn.
 	NO	Du kan velge lokale eller eksterne lydfiler som lydeffekter til handlinger, for eksempel til menyvalg på Squeezebox-kontrollen. Disse valgfrie lydene er tilgjengelige på kontrollen via menyvalget Innstillinger -> Avansert -> Lydeffekter. Lydeffektfiler bør være .wav-filer med dataspesifikasjonene 1-kanals (mono), 16-biters og 44,1 KHz.
@@ -98,6 +104,7 @@ PLUGIN_JIVEEXTRAS_CUSTOM
 	ES	Elemento personalizado #
 	FI	Mukauta #
 	FR	# personnalisé
+	HU	Egyéni #
 	IT	Voce pers. #
 	NL	Aangepast #
 	NO	Egendefinert nr.
@@ -113,6 +120,7 @@ PLUGIN_JIVEEXTRAS_FILEORURL
 	ES	Introduzca archivo o URL
 	FI	Anna tiedosto tai URL
 	FR	Saisir le fichier ou l'URL
+	HU	Írja be a fájlt vagy az URL-t
 	IT	Immettere file o URL
 	NL	Bestand of URL invoeren
 	NO	Angi fil eller adresse
@@ -128,6 +136,7 @@ PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE
 	ES	Tamaño desconocido
 	FI	Tuntematon koko
 	FR	Taille inconnue
+	HU	Ismeretlen méret
 	IT	Dimensione sconosciuta
 	NL	Onbekende grootte
 	NO	Ukjent størrelse

@@ -3,6 +3,7 @@ PLUGIN_FULLTEXT
 	DE	Volltextsuche
 	EN	Full text search
 	FR	Recherche en texte intégral
+	HU	Teljes szöveges keresés
 	NL	Tekst zoekfunctie
 	NO	Fulltekstsøk
 	PL	Wyszukiwanie pełnotekstowe
@@ -12,6 +13,7 @@ PLUGIN_FULLTEXT_DESC
 	DE	Diese Erweiterung ersetzt die einfache Titelsuche durch eine Volltextsuche, welche z.B. auch Titel innerhalb einer Playlist findet, oder durch einfache Eingabe von "flac" alle verlustbehafteten Dateien aus den Suchresultaten ausblendet. Deaktivieren dieses Plugins stellt die alte, einfache Titelsuche wieder her. Achtung Power-User: bei Verwendung von MySQL steht die Volltextsuche nicht zur Verfügung.
 	EN	This extension replaces the rather simplistic title search with a full text search. This would eg. find playlists with a track of the searched title, or filter out lossy files by adding "flac" to the search term. Disabling this plugin restores the old, simple title search. Powerusers please note: full text search is not available when using MySQL.
 	FR	Cette extension remplace la recherche de titre plutôt simpliste par une recherche plein texte qui, par exemple, peut trouver les listes de lecture contenant un morceau précis, tout en se limitant aux fichiers avec compression sans perte en ajoutant simplement "flac" aux termes de recherche. La désactivation de ce plugin restaure l'ancienne recherche de titre simple. (Avis aux utilisateurs expérimentés : la recherche en texte intégral n'est pas disponible lors de l'utilisation de MySQL.)
+	HU	Ez a beépülő a meglehetősen leegyszerűsített címkeresést teljes szöveges keresésre cseréli. Ez pl. lehetővé teszi, hogy keressen a lejátszási listákban a keresett dal számával, vagy szűrje ki a veszteséges fájlokat a „flac” szó hozzáadásával. A bővítmény letiltása visszaállítja a régi, egyszerű címkeresést. Profi felhasználók vegyék figyelembe: a teljes szöveges keresés nem érhető el MySQL használatakor.
 	NL	Deze plug-in vervangt een vrij basale zoekfunctie door een volledige tekst zoekfunctie. Zo kun je een afspeellijst vinden als je zoekt op titel, of filter je lossy-bestanden uit, door het toevoegen van de zoekterm 'flac'. Uitschakelen van deze plug-in herstelt de oude, bestaande zoekfunctie. Let op: de tekstzoek functie kan niet gebruikt worden met MySQL.
 	NO	Denne utvidelsen erstatter det basale tittelsøket med et fulltekstsøk. Dette vil for eksempel finne spillelister med sportitler som matcher tekstsøket, eller filtrere ut komprimerte filer ved å legge til 'flac' i søkefeltet. Ved å fravelge denne utvidelsen blir den gamle tittelsøket gjenopprettet. Advarsel til avanserte brukere: Fulltekstsøk er ikke tilgjengelig når man bruker MySQL.
 	PL	Ten dodatek zastępuje proste wyszukiwanie tytułów utworów wyszukiwaniem pełnotekstowym. To pozwoli np. na znalezienie list odtwarzania, które zawierają szukaną nazwę utworu lub na filtrowanie stratnych plików przez dodanie "flac" do wyszukiwanej frazy. Wyłączenie dodatku przywraca starą, prostą wyszukiwarkę. Notka dla poweruserów: wyszukiwanie pełnotekstowe nie jest dostępne dla MySQL.
@@ -21,6 +23,7 @@ PLUGIN_FULLTEXT_PROGRESS
 	DE	Volltext Index erstellen
 	EN	Building full text index
 	FR	Création de l'index de texte intégral
+	HU	Teljes szöveges index készítése
 	NL	Tekstindex opbouwen
 	NO	Lager fulltekstindeks
 	PL	Budowanie indeksu wyszukiwarki pełnotekstowej

@@ -10,6 +10,7 @@ FAVORITES
 	FI	Suosikit
 	FR	Favoris
 	HE	מועדפים
+	HU	Kedvencek
 	IT	Preferiti
 	NL	Favorieten
 	NO	Favoritter
@@ -27,6 +28,7 @@ FAVORITES_NONE_DEFINED
 	FI	Suosikkeja ei ole
 	FR	Aucun favori défini
 	HE	לא קיימים פריטים מועדפים
+	HU	Nincsenek kedvencek
 	IT	Nessun preferito
 	NL	Er zijn geen favorieten
 	NO	Finner ingen favoritter
@@ -44,6 +46,7 @@ FAVORITES_PLAYING
 	FI	Soitetaan suosikki #%s
 	FR	Lecture du favori n°%s
 	HE	השמעת פריט מועדף ‎#%s
+	HU	Kedvenc #%s lejátszása
 	IT	Riproduzione del brano preferito #%s
 	NL	Favoriet #%s wordt afgespeeld
 	NO	Spiller favoritt nr. %s
@@ -61,6 +64,7 @@ FAVORITES_FAVORITE_NUM
 	FI	Suosikki #
 	FR	Favori n°
 	HE	פריט מועדף #
+	HU	Kedvenc #
 	IT	Preferito #
 	NL	Favoriet nr.
 	NO	Favoritt nr.
@@ -77,6 +81,7 @@ FAVORITES_HOTKEYS
 	ES	Teclas de acceso rápido
 	FI	Pikanäppäimet
 	FR	Raccourcis
+	HU	Gyorsbillentyűk
 	IT	Tasti di scelta rapida
 	NL	Sneltoetsen
 	NO	Hurtigknapper
@@ -93,6 +98,7 @@ FAVORITES_FAVORITE
 	ES	Favorito
 	FI	Suosikki
 	FR	Favori
+	HU	Kedvenc
 	IT	Preferito
 	NL	Favoriet
 	NO	Favoritt
@@ -109,6 +115,7 @@ FAVORITES_RIGHT_TO_DELETE
 	ES	Quitar favorito
 	FI	Poista suosikki
 	FR	Supprimer le favori
+	HU	Kedvenc eltávolítása
 	IT	Rimuovi preferito
 	NL	Favoriet verwijderen
 	NO	Fjern favoritt
@@ -126,6 +133,7 @@ FAVORITES_NOT_A_FAVORITE
 	FI	Ei suosikki
 	FR	Pas un favori
 	HE	לא מוגדר כפריט מועדף
+	HU	Nem kedvenc
 	IT	Non è un preferito
 	NL	Geen favoriet
 	NO	Ikke en favoritt
@@ -144,6 +152,7 @@ FAVORITES_ADDING
 	FI	Tallennetaan suosikit...
 	FR	Enregistrement des favoris...
 	HE	שומר פריטים מועדפים...
+	HU	Kedvencek mentése...
 	IT	Salvataggio preferiti in corso...
 	NL	Favorieten worden opgeslagen...
 	NO	Lagrer favoritter...
@@ -161,6 +170,7 @@ FAVORITES_DELETING
 	ES	Quitando favorito...
 	FI	Poistetaan suosikki...
 	FR	Suppression du favori...
+	HU	Kedvenc eltávolítása...
 	IT	Rimozione preferito in corso...
 	NL	Favoriet wordt verwijderd...
 	NO	Fjerner favoritt ...
@@ -177,6 +187,7 @@ PLUGIN_FAVORITES_DESC
 	ES	Guardar y editar favoritos
 	FI	Suosikkien tallennus ja muokkaus
 	FR	Enregistrer et modifier les favoris
+	HU	Kedvencek mentése és szerkesztése
 	IT	Salva e modifica i preferiti
 	NL	Favorieten opslaan en bewerken
 	NO	Lagre og rediger favoritter
@@ -189,6 +200,7 @@ PLUGIN_FAVORITES_USE_DSTM
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
 	FR	N'arrêtez pas la musique
+	HU	Ne hagyd abba a zenét
 	NO	Ikke stopp musikken
 	NL	Don't Stop The Music
 
@@ -198,6 +210,7 @@ PLUGIN_FAVORITES_USE_DSTM_DESC
 	EN	Register favorites as options for "Don't Stop The Music".
 	EN_GB	Register favourites as options for "Don't Stop The Music".
 	FR	Utiliser les favoris en tant qu'option pour "N'arrêtez pas la musique".
+	HU	A kedvencek beállítása a „Ne hagyja abba a zenét” opcióként.
 	NO	Legg inn favoritter som valg for "Ikke stopp musikken".
 	NL	Gebruik favorieten als opties voor Don't Stop The Music.
 
@@ -209,6 +222,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	ES	Navegador/Editor de listas de reproducción OPML
 	FI	OPML-soittoluettelon selain ja editori
 	FR	Navigateur et éditeur de listes de lecture OPML
+	HU	OPML lejátszási lista böngésző és szerkesztő
 	IT	Browser ed editor delle playlist OPML
 	NL	OPML Afspeellijst Editor
 	NO	Redigerings- og leseprogram for opml-spillelister
@@ -225,6 +239,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
 	FI	Suosikit-laajennuksen avulla voit selata opml-pohjaisia soittoluetteloita ja muokata palvelimeen tallennettuja opml-soittoluetteloita. Lisää tämä tila kohtaan Muut palvelimen kotisivulla valitsemalla alla oleva vaihtoehto.
 	FR	Le plugin des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous "Extras" sur la page d'accueil du serveur.
+	HU	A kedvencek bővítmény lehetővé teszi az opml alapú lejátszási listák böngészését és a szerverén tárolt opml lejátszási listák szerkesztését is. Válassza az alábbi opciót, hogy hozzáadja ezt a módot a szerver kezdőlapjának „Extrák” részéhez.
 	IT	Il plugin dei preferiti consente anche di sfogliare le playlist in formato OPML e di modificare le playlist OPML memorizzate nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
 	NL	Met behulp van de plug-in Favorieten kun je opml afspeellijsten die op jouw server zijn opgeslagen, bekijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het server hoofdmenu.
 	NO	Med plugin-modulen for favoritter kan du bla i opml-baserte spillelister, og redigere opml-baserte spillelister som er lagret på serveren din. Du kan legge til denne modusen under "Tillegg" i hovedmenyen til serveren ved å velge alternativet nedenfor.
@@ -240,6 +255,7 @@ PLUGIN_FAVORITES_LOAD
 	ES	Cargar
 	FI	Lataa
 	FR	Charger
+	HU	Beolvasás
 	IT	Carica
 	NL	Laden
 	NO	Last inn
@@ -255,6 +271,7 @@ PLUGIN_FAVORITES_ADD
 	ES	Guardar
 	FI	Tallenna
 	FR	Enregistrer
+	HU	Mentés
 	IT	Salva
 	NL	Opslaan
 	NO	Lagre
@@ -270,6 +287,7 @@ PLUGIN_FAVORITES_IMPORT
 	ES	Importar
 	FI	Tuo
 	FR	Importer
+	HU	Importálás
 	IT	Importa
 	NL	Importeren
 	NO	Importer
@@ -285,6 +303,7 @@ PLUGIN_FAVORITES_LOADFILE
 	ES	URL o nombre de archivo
 	FI	URL tai tiedostonimi
 	FR	URL ou nom du fichier
+	HU	URL vagy fájlnév
 	IT	URL o nome file
 	NL	URL of bestandsnaam
 	NO	Url eller filnavn
@@ -300,6 +319,7 @@ PLUGIN_FAVORITES_SAVEFILE
 	ES	Nombre de archivo
 	FI	Tiedostonimi
 	FR	Nom du fichier
+	HU	Fájlnév
 	IT	Nome file
 	NL	Bestandsnaam
 	NO	Filnavn
@@ -315,6 +335,7 @@ PLUGIN_FAVORITES_IMPORTFILE
 	ES	URL o nombre de archivo
 	FI	URL tai tiedostonimi
 	FR	URL ou nom du fichier
+	HU	URL vagy fájlnév
 	IT	URL o nome file
 	NL	URL of bestandsnaam
 	NO	Url eller filnavn
@@ -330,6 +351,7 @@ PLUGIN_FAVORITES_NOFILE
 	ES	Archivo no encontrado
 	FI	Tiedostoa ei löydy
 	FR	Fichier introuvable
+	HU	A fájl nem található
 	IT	File non trovato
 	NL	Bestand niet gevonden
 	NO	Finner ikke filen
@@ -345,6 +367,7 @@ PLUGIN_FAVORITES_CANCEL
 	ES	Cancelar
 	FI	Peruuta
 	FR	Annuler
+	HU	Mégsem
 	IT	Annulla
 	NL	Annuleren
 	NO	Avbryt
@@ -360,6 +383,7 @@ PLUGIN_FAVORITES_CANCELLING
 	ES	Cancelando...
 	FI	Peruutetaan...
 	FR	Annulation...
+	HU	Megszakítás...
 	IT	Annullamento in corso...
 	NL	Bezig met annuleren...
 	NO	Avbryter ...
@@ -375,6 +399,7 @@ PLUGIN_FAVORITES_CUT
 	ES	Cortar
 	FI	Leikkaa
 	FR	Couper
+	HU	Kivágás
 	IT	Taglia
 	NL	Knippen
 	NO	Klipp ut
@@ -390,6 +415,7 @@ PLUGIN_FAVORITES_PASTE
 	ES	Pegar
 	FI	Liitä
 	FR	Coller
+	HU	Beillesztés
 	IT	Incolla
 	NL	Plakken
 	NO	Lim inn
@@ -406,6 +432,7 @@ PLUGIN_FAVORITES_LOADING
 	ES	Cargando favoritos...
 	FI	Ladataan suosikkeja...
 	FR	Chargement des favoris...
+	HU	Kedvencek betöltése...
 	IT	Caricamento dei preferiti in corso...
 	NL	Favorieten worden geladen...
 	NO	Laster favoritter...
@@ -421,6 +448,7 @@ PLUGIN_FAVORITES_NEWFOLDER
 	ES	Carpeta nueva
 	FI	Uusi kansio
 	FR	Nouveau dossier
+	HU	Új mappa
 	IT	Nuova cartella
 	NL	Nieuwe map
 	NO	Ny mappe
@@ -436,6 +464,7 @@ PLUGIN_FAVORITES_NEWENTRY
 	ES	Entrada nueva
 	FI	Uusi kohde
 	FR	Nouvelle entrée
+	HU	Új elem
 	IT	Nuova voce
 	NL	Nieuwe ingang
 	NO	Ny oppføring
@@ -452,6 +481,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	ES	Favorito nuevo
 	FI	Uusi suosikki
 	FR	Nouveau favori
+	HU	Új kedvenc
 	IT	Nuovo preferito
 	NL	Nieuwe favoriet
 	NO	Ny favoritt
@@ -467,6 +497,7 @@ PLUGIN_FAVORITES_NEWURL
 	ES	URL nueva
 	FI	Uusi URL
 	FR	Nouvelle URL
+	HU	Új URL
 	IT	Nuovo URL
 	NL	Nieuwe URL
 	NO	Ny url
@@ -482,6 +513,7 @@ PLUGIN_FAVORITES_LOADERROR
 	ES	Error al cargar archivo
 	FI	Virhe ladattaessa tiedostoa
 	FR	Erreur de chargement du fichier
+	HU	Hiba a fájl betöltésekor
 	IT	Errore durante il caricamento del file
 	NL	Fout tijdens laden bestand
 	NO	Feil ved lasting av fil
@@ -497,6 +529,7 @@ PLUGIN_FAVORITES_REMOTELOADERROR
 	ES	Error al cargar URL
 	FI	Virhe URL:n latauksessa
 	FR	Erreur de chargement de l'URL
+	HU	Hiba az URL betöltésekor
 	IT	Errore durante il caricamento dell'URL
 	NL	Fout tijdens laden URL
 	NO	Feil ved lasting av url
@@ -512,6 +545,7 @@ PLUGIN_FAVORITES_SAVEERROR
 	ES	Error al guardar archivo
 	FI	Virhe tallennettaessa tiedostoa
 	FR	Erreur d'enregistrement du fichier
+	HU	Hiba a fájl mentése közben
 	IT	Errore durante il salvataggio del file
 	NL	Fout tijdens opslaan bestand
 	NO	Feil ved lagring av fil
@@ -527,6 +561,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 	ES	Error al importar lista de reproducción
 	FI	Virhe soittoluettelon tuomisessa
 	FR	Erreur au cours de l'importation de la liste de lecture
+	HU	Hiba a lejátszási lista importálása közben
 	IT	Errore durante l'importazione della playlist
 	NL	Fout tijdens importeren van afspeellijst
 	NO	Feil ved importering av spilleliste
@@ -542,6 +577,7 @@ PLUGIN_FAVORITES_NOTITLE
 	ES	Sin título
 	FI	Ei nimeä
 	FR	Pas de titre
+	HU	Nincs cím
 	IT	Nessun titolo
 	NL	Geen titel
 	NO	Ingen tittel
@@ -557,6 +593,7 @@ PLUGIN_FAVORITES_NAME
 	ES	Nombre
 	FI	Nimi
 	FR	Nom
+	HU	Név
 	IT	Nome
 	NL	Naam
 	NO	Navn
@@ -572,6 +609,7 @@ PLUGIN_FAVORITES_URL
 	ES	URL
 	FI	URL
 	FR	URL
+	HU	URL
 	IT	URL
 	NL	URL
 	NO	Url
@@ -588,6 +626,7 @@ PLUGIN_FAVORITES_SAVE
 	ES	Guardar en favoritos
 	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
+	HU	Mentés a Kedvencek közé
 	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
@@ -604,6 +643,7 @@ PLUGIN_FAVORITES_REMOVE
 	ES	Quitar de Favoritos
 	FI	Poista suosikeista
 	FR	Supprimer des favoris
+	HU	Eltávolítás a Kedvencek közül
 	IT	Rimuovi dai preferiti
 	NL	Uit favorieten verwijderen
 	NO	Fjern fra favoritter
@@ -615,6 +655,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	CS	Chování místních hudebních položek
 	DE	Verhalten mit lokaler Musik
 	EN	Local music items behavior
+	HU	Helyi zenei tételek viselkedése
 	EN_GB	Local music items behaviour
 	FR	Comportement pour la musique locale
 	NL	Gedrag bij lokale muziek
@@ -627,6 +668,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	EN	Don't browse items when selected, just play them (old behavior)
 	EN_GB	Don't browse items when selected, just play them (old behaviour)
 	FR	Jouer le favori lors de sa sélection, ne pas le parcourir (ancien comportement)
+	HU	Ne böngésszen a kiválasztott elemek között, csak játssza le őket (régi viselkedés)
 	NL	Niet door bladeren op een geselecteerd item, maar speel af (oude gedrag)
 	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
@@ -637,6 +679,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	EN	When you select a favorite contributor, genre or album, drill down to its content
 	EN_GB	When you select a favourite contributor, genre or album, drill down to its content
 	FR	Lors de la sélection d'un artiste, d'un genre ou d'un album favori, accéder à son contenu
+	HU	Ha kiválaszt egy kedvenc közreműködőt, műfajt vagy albumot, részletezze a tartalmát
 	NL	Als je een favoriete uitvoerende, genre of album selecteert, blader door tot de inhoud ervan
 	NO	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.
 	PL	Gdy wybierzesz ulubionego wykonawcę, gatunek lub album, wyświetl utwory im odpowiadające

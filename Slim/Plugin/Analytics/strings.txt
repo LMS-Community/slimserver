@@ -3,9 +3,11 @@ PLUGIN_ANALYTICS_MODULE_NAME
 	DE	Analytikdaten teilen
 	EN	Report Analytics Data
 	FR	Partage de données d'analyse
+	HU	Az elemzési adatok megsztása
 
 PLUGIN_ANALYTICS_MODULE_DESC
 	CS	Sdílejte s komunitou LMS verzi serveru, počet přehrávačů, počet skladeb, nainstalované zásuvné moduly, operační systém, verzi Perlu, použitý vzhled a hardwarovou platformu. To nám pomůže stanovit priority dalšího vývoje. Děkujeme, že jste tento doplněk povolili! Další informace naleznete na <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	DE	Teile Analytikdaten wie Serverversion, Anzahl Geräte, Anzahl Titel, installierte Plugins, Betriebssystem, Perlversion, verwendeter Skin und die verwendete Hardware mit der LMS Community. Dies hilft uns, Prioritäten in der Entwicklung richtig zu setzen. Vielen Dank fürs Vertrauen! Mehr Infos unter <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	EN	Share your server version, number of players, number of tracks, installed plugins, operating system, Perl version, skin used, and the hardware platform with the LMS Community. This will help us prioritize further development. Thanks for enabling this plugin! Learn more on <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	FR	Partager des données telles que la version de votre serveur, le nombre de platines, le nombre de morceaux, les plugins installés, le système d'exploitation, la version de Perl, le skin utilisé et la plate-forme matérielle avec la communauté LMS, pour aider à prioriser les futurs développements. Merci pour votre confiance ! Plus d'informations sur <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
+	HU	Megosztja a szerver verzióját, a lejátszók számát, a zeneszámok számát, a telepített bővítményeket, az operációs rendszert, a Perl verziót, a használt felületet és a hardverplatformot az LMS közösséggel. Ez segít abban, hogy a további fejlesztéseket prioritásként kezeljük. Köszönjük, hogy engedélyezte ezt a bővítményt! További információ: <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
