@@ -68,7 +68,7 @@ PLUGIN_JIVEEXTRAS_SOUNDS
 	CS	Zvuky
 	DA	Lyde
 	DE	Sounds
-	EN	Hangok
+	EN	Sounds
 	ES	Sonidos
 	FI	Äänet
 	FR	Sons
