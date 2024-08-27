@@ -9,6 +9,7 @@ PLUGIN_PODCAST
 	FI	Podcast-lähetykset
 	FR	Podcasts
 	HE	פריטי Podcast
+	HU	Podcastok
 	IT	Podcast
 	NL	Podcasts
 	NO	Podkaster
@@ -24,6 +25,7 @@ PODCAST_PLAYER
 	ES	Reproductor de podcasts
 	FI	Podcast-soitin
 	FR	Lecteur de podcast
+	HU	Podcast lejátszó
 	IT	Lettore podcast
 	NL	Podcast Speler
 	NO	Podkast-spiller
@@ -39,6 +41,7 @@ PLUGIN_PODCAST_DESC
 	ES	Acceso a Podcasts
 	FI	Podcastien käyttö
 	FR	Accès aux podcasts
+	HU	Hozzáférés a podcastokhoz
 	IT	Accesso ai podcast
 	NL	Toegang tot Podcasts
 	NO	Tilgang til podkaster
@@ -55,6 +58,7 @@ PODCAST_NOTHING_TO_PLAY
 	FI	Ei soitettavaa
 	FR	Aucun podcast à lire
 	HE	אין פריטים להפעלה
+	HU	Nincs mit lejátszani
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
 	NO	Ingenting å spille av
@@ -71,6 +75,7 @@ PODCAST_GROUP_DESC
 	FI	Podcast-selainlaajennus mahdollistaa podcast-lähetysten katselun ja kuuntelun.
 	FR	L'extra Podcast vous permet d'afficher et d'écouter des podcasts.
 	HE	יישום ה-Plugin 'דפדפן Podcast' מאפשר לך להציג ולהאזין לפריטי Podcast.
+	HU	A Podcast Browser beépülő modul lehetővé teszi podcastok megtekintését és hallgatását.
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
 	NL	Met de Podcast plug-in kun je podcasts bekijken en beluisteren.
 	NO	Med plugin-modulen for podkastlesing kan du se og høre på podkaster.
@@ -87,6 +92,7 @@ PODCAST_RESET_BUTTON
 	FI	Palauta
 	FR	Réinitialiser
 	HE	איפוס
+	HU	Visszaállítás
 	IT	Reimposta
 	NL	Opnieuw instellen
 	NO	Tilbakestill
@@ -103,6 +109,7 @@ PODCAST_RESETTING
 	FI	Palautetaan oletus-podcasteihin
 	FR	Réinitialisation des podcasts par défaut
 	HE	איפוס לפריטי ה-Podcast המוגדרים כברירת מחדל
+	HU	Az alapértelmezett podcastok visszaállítása
 	IT	Reimpostazione dei podcast predefiniti
 	NL	Standaard podcasts worden opnieuw ingesteld
 	NO	Tilbakestiller til standardpodkaster
@@ -119,6 +126,7 @@ PODCAST_FEEDS_CHANGE
 	FI	Podcast-luetteloa muutettiin.
 	FR	Liste des podcasts modifiée.
 	HE	רשימת פריטי ה-Podcast השתנתה.
+	HU	A podcastok listája megváltozott.
 	IT	Elenco Podcast modificato.
 	NL	Podcast lijst gewijzigd.
 	NO	Podkast-liste endret.
@@ -135,6 +143,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	FI	Palauta oletus-podcastit
 	FR	Rétablir la liste des podcasts par défaut
 	HE	איפוס פריטי Podcast המוגדרים כברירת מחדל
+	HU	Alapértelmezett podcastok visszaállítása
 	IT	Reimposta podcast predefiniti
 	NL	Standaard podcasts opnieuw instellen
 	NO	Tilbakestill standardpodkaster
@@ -150,6 +159,7 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	ES	Agregar fuente nueva:
 	FI	Lisää uusi syöte:
 	FR	Ajouter un flux :
+	HU	Új hírcsatorna hozzáadása:
 	IT	Aggiungi nuovo feed:
 	NL	Nieuwe feed toevoegen:
 	NO	Legg til en ny feed:
@@ -165,6 +175,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	ES	Fuentes existentes:
 	FI	Olemassa olevat syötteet:
 	FR	Flux existants :
+	HU	Meglévő hírcsatornák:
 	IT	Feed esistenti:
 	NL	Bestaande feed:
 	NO	Eksisterende feeder:
@@ -180,6 +191,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	ES	Fuente no válida - %s
 	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
+	HU	Érvénytelen hírcsatorna - %s
 	IT	Feed non valido. %s
 	NL	Ongeldige feed - %s
 	NO	Ugyldig feed: %s
@@ -192,6 +204,7 @@ PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	DE	Vom Anfang an wiedergeben
 	EN	Play from the beginning
 	FR	Lire depuis le début
+	HU	Lejátszás az elejétől
 	NL	Speel af vanaf het begin
 	NO	Spill av fra begynnelsen
 	PL	Odtwórz od początku
@@ -201,6 +214,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	DE	Von der letzten Position wiedergeben (%s)
 	EN	Play from last position (%s)
 	FR	Lire depuis la dernière position (%s)
+	HU	Lejátszás az utolsó pozíciótól (%s)
 	NL	Speel af vanaf laatste positie (%s)
 	NO	Spill videre fra siste posisjon (%s)
 	PL	Wznów od ostatniej pozycji (%s)
@@ -210,6 +224,7 @@ PLUGIN_PODCAST_SKIP_BACK_SECS
 	DE	Zurückspringen um X Sekunden
 	EN	Jump back seconds
 	FR	Revenir en arrière de X secondes
+	HU	Ugorj vissza X másodpercet
 	NL	Spring seconden terug
 	NO	Hopp sekunder tilbake
 	PL	Przewijanie do tyłu
@@ -219,6 +234,7 @@ PLUGIN_PODCAST_SKIP_BACK_DESC
 	DE	Das Kontextmenü bietet in Podcasts die Möglichkeit, schnell zurückzuspringen. Standardmässig sind dies 15 Sekunden. Geben Sie hier an, wie weit Sie zurückspringen wollen.
 	EN	The podcasts context menu offers an option to jump back quickly within the podcast. By default this option skips back by 15 seconds.
 	FR	Le menu contextuel des podcasts offre une option pour revenir rapidement en arrière dans le podcast. Par défaut, cette option recule de 15 secondes.
+	HU	A podcastok helyi menüje lehetőséget kínál a gyors visszaugrásra a podcaston belül. Alapértelmezés szerint ez az opció 15 másodperccel visszaugrik.
 	NL	In het contextmenu van de podcast kun je snel terugspringen in de podcast. Standaard spring je 15 seconden terug.
 	NO	Kontekstmenyen for podkaster tilbyr å kjapt hoppe tilbake i podkasten. Standardspranget er 15 sekunder. Angi hvor langt spranget skal være.
 	PL	Menu kontekstowe podcastu zawiera opcję do szybkiego przewinięcia do tyłu. Domyślnie ta opcja przewija o 15 sekund do tyłu.
@@ -228,6 +244,7 @@ PLUGIN_PODCAST_SKIP_BACK
 	DE	%s Sekunden zurück springen
 	EN	Jump back %s seconds
 	FR	Revenir en arrière de %s secondes
+	HU	Ugrás vissza %s másodpercet
 	NL	Spring %s seconden terug
 	NO	Hopp %s sekunder tilbake
 	PL	Przewiń do tyłu o %s sekund
@@ -237,6 +254,7 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Recently played
 	FR	Pistes récentes
+	HU	Nemrég játszott
 	NL	Recent afgespeeld
 
 PLUGIN_PODCAST_SEARCH
@@ -244,6 +262,7 @@ PLUGIN_PODCAST_SEARCH
 	DE	Shows suchen
 	EN	Search feeds
 	FR	Rechercher des flux
+	HU	Hírcsatornák keresése
 	NL	Zoek feeds
 
 PLUGIN_PODCAST_PROVIDER
@@ -251,6 +270,7 @@ PLUGIN_PODCAST_PROVIDER
 	DE	Podcastverzeichnis
 	EN	Podcast provider
 	FR	Fournisseur de Podcast
+	HU	Podcast szolgáltató
 	NL	Podcast aanbieder
 
 PLUGIN_PODCAST_PROVIDER_DESC
@@ -258,6 +278,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
 	EN	Set the Podcast feeds provider (aggregator).
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
+	HU	Állítsa be a Podcast feed-szolgáltatót (összesítőt).
 	NL	Configureer de podcast feed aanbieder (aggregator)
 
 PLUGIN_PODCAST_SEARCH_FAILED
@@ -272,6 +293,7 @@ PLUGIN_PODCAST_WHATSNEW
 	DE	Neue Episoden der letzten %s Tage
 	EN	New episodes of the last %s days
 	FR	Nouveaux épisodes des %s derniers jours
+	HU	Új epizódok az elmúlt %s napból
 	NL	Nieuwe afleveringen van de laatste %s dagen
 
 PLUGIN_PODCAST_AUTHOR
@@ -280,6 +302,7 @@ PLUGIN_PODCAST_AUTHOR
 	DE	Herausgeber:
 	EN	Author:
 	FR	Auteur :
+	HU	Szerző:
 	NL	Auteur:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
@@ -287,6 +310,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
 	EN	Set how many days to look back for new episodes and maximum number of episodes per flow. Note that manually added feeds might not be tracked by provider
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
+	HU	Állítsa be, hogy hány napig nézzen vissza az új epizódok után, és adja meg az epizódok maximális számát folyamonként. Vegye figyelembe, hogy a manuálisan hozzáadott hírcsatornákat a szolgáltató nem követheti nyomon
 	NL	Stel het maximale aantal afleveringen en de hoeveelheid dagen die je wilt terugkijken voor het traceren van nieuwe afleveringen in. Houd er rekening mee dat handmatig toegevoegde feeds mogelijk niet worden bijgehouden door de aanbieder.
 
 PLUGIN_PODCAST_NEWSINCE
@@ -294,6 +318,7 @@ PLUGIN_PODCAST_NEWSINCE
 	DE	Anzahl Tage im Verlauf
 	EN	Number of history days
 	FR	Nombre de jours d'historique
+	HU	A történelem napjainak száma
 	NL	Aantal dagen terug
 
 PLUGIN_PODCAST_MAXNEW
@@ -301,6 +326,7 @@ PLUGIN_PODCAST_MAXNEW
 	DE	Anzahl neuer Episoden pro Show
 	EN	Number of new episodes per feed
 	FR	Nombre de nouveaux épisodes par flux
+	HU	Új epizódok száma hírcsatornánként
 	NL	Aantal nieuwe afleveringen per feed
 
 PLUGIN_PODCAST_COUNTRY_DESC
@@ -308,12 +334,14 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	DE	Suche auf ein Land beschränken (optional)
 	EN	Limit search to a country (optional)
 	FR	Limite la recherche à un pays (optionnel)
+	HU	Keresés korlátozása egy országra (opcionális)
 	NL	Zoekopdracht beperken tot een land (optioneel)
 
 PLUGIN_PODCAST_COUNTRY
 	CS	Země
 	DE	Land
 	EN	Country
+	HU	Ország
 	FR	Pays
 	NL	Land
 
@@ -322,6 +350,7 @@ PLUGIN_PODCAST_SUBSCRIBE
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
+	HU	Feliratkozás a következőre: '%s'
 	NL	Abonneren op '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
@@ -329,6 +358,7 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
 	FR	Se désabonner de '%s'
+	HU	Leiratkozás a következőről: '%s'
 	NL	Afmelden van '%s'
 
 PLUGIN_PODCAST_DONE
@@ -336,4 +366,5 @@ PLUGIN_PODCAST_DONE
 	DE	Abonnement angepasst...
 	EN	Subscribed/Unsubscribed from show...
 	FR	Abonné/Désabonné ...
+	HU	Feliratkozott/leiratkozott a műsorról...
 	NL	Abonneren/Afmelden...
