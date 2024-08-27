@@ -10,6 +10,7 @@ PLUGIN_NETTEST
 	FI	Verkkotesti
 	FR	Test réseau
 	HE	בדיקת הרשת
+	HU	Hálózati teszt
 	IT	Verifica rete
 	NL	Netwerktest
 	NO	Nettverkstest
@@ -26,6 +27,7 @@ PLUGIN_NETTEST_DESC
 	FI	Verkkotesti
 	FR	Test réseau
 	HE	בדיקת הרשת
+	HU	Hálózati teszt
 	IT	Verifica rete
 	NL	Netwerktest
 	NO	Nettverkstest
@@ -42,6 +44,7 @@ PLUGIN_NETTEST_SELECT_RATE
 	FI	Valitse nopeus liikkumalla ylös- tai alaspäin
 	FR	Haut/Bas pour changer le taux
 	HE	לחץ על למעלה/למטה לבחירת קצב
+	HU	Nyomja meg a Fel/Le gombot az arány kiválasztásához
 	IT	Per selezionare la velocità, premere il pulsante Su/Giù
 	NL	Druk op omhoog/omlaag om de snelheid te selecteren
 	NO	Trykk på opp/ned-knappene for å velge hastighet
@@ -57,6 +60,7 @@ PLUGIN_NETTEST_TESTING_TO
 	ES	Probando a
 	FI	Testataan
 	FR	Test de
+	HU	Tesztelés
 	IT	Esecuzione verifica su
 	NL	Testen van
 	NO	Tester mot
@@ -73,6 +77,7 @@ PLUGIN_NETTEST_NOT_SUPPORTED
 	FI	Ei tueta tässä soittimessa
 	FR	Non pris en charge par cette platine
 	HE	לא נתמך בנגן זה
+	HU	Nem támogatott ezen a lejátszón
 	IT	Non supportato in questo lettore
 	NL	Niet ondersteund op deze muziekspeler
 	NO	Ikke støttet på denne spilleren
