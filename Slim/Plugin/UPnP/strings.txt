@@ -6,6 +6,7 @@ PLUGIN_UPNP_MODULE_NAME
 	ES	Interfaz multimedia UPnP/DLNA
 	FI	UPnP/DLNA Media -käyttöliittymä
 	FR	Interface multimédia UPnP/DLNA
+	HU	UPnP/DLNA média interfész
 	IT	Interfaccia multimediale UPnP/DLNA
 	NL	UPnP/DLNA Media Interface
 	NO	UPnP/DLNA-mediegrensesnitt
@@ -21,6 +22,7 @@ PLUGIN_UPNP_MODULE_NAME_DESC
 	ES	Agrega un MediaServer y un MediaRenderer AV UPnP/DLNA, lo que permite el acceso de otros dispositivos en la red local.
 	FI	Lisää UPnP/DLNA AV MediaServer -palvelimen ja MediaRendererin, jolloin muiden laitteiden pääsy paikalliseen verkkoon sallitaan.
 	FR	Ajoute un MediaServer et un MediaRenderer UPnP/DLNA AV pour permettre l'accès au réseau local à d'autres dispositifs.
+	HU	UPnP/DLNA AV MediaServert és MediaRenderert ad hozzá, lehetővé téve a hozzáférést a helyi hálózat más eszközei számára.
 	IT	Aggiunge un UPnP/DLNA AV MediaServer and MediaRenderer, consentendo l'accesso alla rete locale da parte di altri dispositivi.
 	NL	Hiermee worden een UPnP/DLNA AV MediaServer en MediaRenderer toegevoegd, die zorgen dat andere apparaten toegang krijgen tot het lokale netwerk.
 	NO	Legger til en UPnP/DLNA AV MediaServer og MediaRenderer, slik at andre enheter på det lokale nettverket får tilgang.
