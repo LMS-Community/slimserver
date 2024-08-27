@@ -9,6 +9,7 @@ PLUGIN_XPL
 	FI	xPL-käyttöliittymä
 	FR	Interface xPL
 	HE	ממשק xPL
+	HU	xPL interfész
 	IT	Interfaccia xPL
 	NL	xPL interface
 	NO	xPL-grensesnitt
@@ -25,6 +26,7 @@ SETUP_GROUP_XPL
 	FI	xPL-asetukset
 	FR	Réglages xPL
 	HE	הגדרות xPL
+	HU	xPL beállítások
 	IT	Impostazioni xPL
 	JA	xPL セッティング
 	NL	xPL instellingen
@@ -44,6 +46,7 @@ SETUP_GROUP_XPL_DESC
 	FI	Näillä asetuksilla ohjataan xPL-protokollan toimintaa
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
 	HE	הגדרות אלה שולטות בהתנהגות של פרוטוקול ה-xPL
+	HU	Ezek a beállítások szabályozzák az xPL protokoll viselkedését
 	IT	Queste impostazioni consentono di controllare il funzionamento del protocollo xPL.
 	JA	これらのセッティングはxPLプロトコルを調節します
 	NL	Deze instellingen bepalen het gedrag van het xPL-protocol.
@@ -62,6 +65,7 @@ SETUP_XPLINTERVAL
 	FI	Sydämenlyöntien väli
 	FR	Intervalle
 	HE	מרווח זמן של פעימה
+	HU	Intervallum
 	IT	Intervallo di heartbeat
 	JA	インターバル
 	NL	Heartbeat interval
@@ -80,6 +84,7 @@ SETUP_XPLIR
 	FI	Infrapunakäsittely
 	FR	Traitement infrarouge
 	HE	עיבוד אינפרה-אדום
+	HU	Infravörös feldolgozás
 	IT	Elaborazione segnale a infrarossi
 	JA	赤外線プロセシング
 	NL	Infraroodverwerking
@@ -98,6 +103,7 @@ SETUP_XPLIR_NONE
 	FI	Ei mitään
 	FR	Aucun
 	HE	ללא
+	HU	Egyik sem
 	IT	Nessuno
 	JA	なし
 	NL	Geen
@@ -116,6 +122,7 @@ SETUP_XPLIR_BUTTONS
 	FI	Painikkeet
 	FR	Boutons
 	HE	לחצנים
+	HU	Gombok
 	IT	Pulsanti
 	JA	ボタン
 	NL	Knoppen
@@ -134,6 +141,7 @@ SETUP_XPLIR_RAW
 	FI	Raaka
 	FR	Brut
 	HE	גולמי
+	HU	Nyers
 	IT	Non elaborato
 	JA	列
 	NL	Ruw (Raw)
@@ -152,6 +160,7 @@ SETUP_XPLIR_BOTH
 	FI	Molemmat
 	FR	Les deux
 	HE	שניהם
+	HU	Minddkettő
 	IT	Entrambi
 	JA	両方
 	NL	Beide
