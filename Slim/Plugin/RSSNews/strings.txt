@@ -9,6 +9,7 @@ PLUGIN_RSSNEWS
 	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
+	HU	RSS Hírek
 	IT	RSS News Ticker
 	NL	RSS feeds
 	NO	Rss-nyhetstelegraf
@@ -24,6 +25,7 @@ PLUGIN_RSSNEWS_DESC
 	ES	Acceso a fuentes RSS nuevas
 	FI	RSS-uutissyötteiden käyttö
 	FR	Accès aux flux d'informations RSS
+	HU	Hozzáférés az RSS hírfolyamokhoz
 	IT	Accesso ai news feed RSS
 	NL	Toegang tot RSS feeds
 	NO	Tilgang til nyhets-feeder på rss
@@ -40,6 +42,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	FI	Lisää uusi syöte -->
 	FR	Ajouter flux -->
 	HE	הוסף הזנה חדשה -->
+	HU	Új hírcsatorna hozzáadása -->
 	IT	Aggiungi un nuovo feed -->
 	NL	Nieuwe feed toevoegen -->
 	NO	Legg til ny feed –>
@@ -56,6 +59,7 @@ PLUGIN_RSSNEWS_WAIT
 	FI	Odota, pyydetään syötettä...
 	FR	Veuillez patienter, connexion au flux...
 	HE	אנא המתן, מבקש הזנה...
+	HU	Kérem, várjon, feed kérése...
 	IT	Attendere. Richiesta feed in corso...
 	NL	Feed wordt opgevraagd. Een ogenblik geduld...
 	NO	Vent litt, sender forespørsel om feed...
@@ -72,6 +76,7 @@ PLUGIN_RSSNEWS_ERROR
 	FI	RSS-syötettä ei voitu noutaa
 	FR	Impossible de charger le flux
 	HE	כשל באחזור הזנת RSS
+	HU	Nem sikerült lekérni az RSS-hírcsatornát
 	IT	Impossibile recuperare feed RSS
 	NL	Fout bij ophalen RSS feed
 	NO	Innhenting av rss-feed mislyktes
@@ -88,6 +93,7 @@ PLUGIN_RSSNEWS_NO_TITLE
 	FI	Kappale ei ole käytettävissä
 	FR	Titre non disponible
 	HE	אין כותרת זמינה
+	HU	A cím nem érhető el
 	IT	Titolo non disponibile
 	NL	Titel niet beschikbaar
 	NO	Tittelen er ikke tilgjengelig
@@ -104,6 +110,7 @@ PLUGIN_RSSNEWS_SCREENSAVER
 	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
+	HU	RSS Hírek
 	IT	RSS News Ticker
 	NL	RSS feeds
 	NO	Rss-nyhetstelegraf
@@ -120,6 +127,7 @@ PLUGIN_RSSNEWS_NAME
 	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
+	HU	RSS Hírek
 	IT	RSS News Ticker
 	NL	RSS feeds
 	NO	Rss-nyhetstelegraf
@@ -136,6 +144,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	FI	RSS News -näytönsäästäjän asetukset
 	FR	Paramètres Ecran de veille Agrégateur RSS
 	HE	הגדרות שומר המסך של RSS של חדשות
+	HU	RSS Hírek Képernyővédő beállításai
 	IT	Impostazioni screen saver RSS News
 	NL	Instellingen van RSS feed screensaver
 	NO	Innstilling for skjermspareren med rss-nyheter
@@ -152,6 +161,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	FI	Valitse nykyinen näytönsäästäjä
 	FR	Sélectionner l'écran de veille en cours
 	HE	בחר את שומר המסך הנוכחי
+	HU	Válassza az Aktuális képernyővédő lehetőséget
 	IT	Seleziona lo screen saver corrente
 	NL	Huidige screensaver selecteren
 	NO	Velg gjeldende skjermsparer
@@ -168,6 +178,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	FI	Nykyinen näytönsäästäjä
 	FR	Ecran de veille en cours
 	HE	שומר המסך הנוכחי
+	HU	Aktuális képernyővédő
 	IT	Screen saver corrente
 	NL	Huidige screensaver
 	NO	Gjeldende skjermsparer
@@ -184,6 +195,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	FI	Käytä RSS Newsiä nykyisenä näytönsäästäjänä
 	FR	Utiliser l'agrégateur RSS comme écran de veille
 	HE	השתמש ב-RSS של חדשות כשומר המסך הנוכחי
+	HU	Az RSS News használata aktuális képernyővédőként
 	IT	Usa RSS News come screen saver corrente
 	NL	RSS feeds gebruiken als huidige screensaver
 	NO	Bruk rss-nyheter som standard skjermsparer
@@ -200,6 +212,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
 	FI	Käytä oletusnäytönsäästäjää (älä RSS Newsiä)
 	FR	Utiliser l'écran de veille par défaut (hors agrégateur RSS)
 	HE	השתמש בשומר המסך הנוכחי (לא RSS של חדשות)
+	HU	Alapértelmezett képernyővédő használata (nem RSS Hírek)
 	IT	Usa lo screen saver predefinito (non RSS News)
 	NL	Standaard screensaver gebruiken (geen RSS feeds)
 	NO	Bruk standard skjermsparer (ikke rss-nyheter)
@@ -216,6 +229,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	FI	Lennätinnauha aktivoidaan nykyisenä näytönsäästäjänä
 	FR	Activation de l'agrégateur RSS comme écran de veille
 	HE	מפעיל את הטיקר כשומר המסך הנוכחי
+	HU	A ticker aktiválása aktuális képernyővédőként
 	IT	Attivazione del ticker come screen saver corrente
 	NL	RSS feeds worden als screensaver ingeschakeld
 	NO	Aktiverer telegraftekst som skjermsparer
@@ -232,6 +246,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
 	FI	Palataan oletusnäytönsäästäjään
 	FR	Rétablissement de l'écran de veille par défaut
 	HE	חזרה לשומר המסך המוגדר כברירת מחדל
+	HU	Visszatérés az alapértelmezett képernyővédőhöz
 	IT	Ritorno allo screen saver predefinito
 	NL	Terug naar standaard screensaver
 	NO	Går tilbake til standard skjermsparer
@@ -248,6 +263,7 @@ PLUGIN_RSSNEWS_ERROR_IN_FEED
 	FI	Virhe RSS-syötteen jäsentämisessä
 	FR	Erreur de lecture du flux
 	HE	שגיאה בניתוח הזנת RSS
+	HU	Hiba az RSS-hírcsatorna elemzésekor
 	IT	Errore durante l'analisi del feed RSS
 	NL	Fout bij parseren RSS feed
 	NO	Feil ved analyse av rss-feed
@@ -264,6 +280,7 @@ PLUGIN_RSSNEWS_LOADING_FEED
 	FI	Ladataan RSS-syöte...
 	FR	Chargement du flux...
 	HE	טוען הזנת RSS...
+	HU	RSS feed betöltése...
 	IT	Caricamento del feed RSS...
 	NL	RSS feed wordt geladen...
 	NO	Laster inn rss-feed...
@@ -280,6 +297,7 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	FI	RSS News Ticker -laajennuksen avulla voidaan selata ja näyttää RSS-syötteiden kohteita. Alla olevilla asetuksilla voidaan määrittää, mitä RSS-syötteitä käytetään ja miten syötteet näytetään. Kun olet valmis, valitse Muuta.
 	FR	Le plugin Agrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les modifications effectuées.
 	HE	ניתן להשתמש ביישום ה-Plugin 'טיקר RSS של חדשות' לעיון בפריטים מהזנות RSS ולהצגתם. ניתן להשתמש בהעדפות שלהלן כדי לקבוע באילו הזנות RSS להשתמש וכדי לשלוט באופן ההצגה שלהן. לסיום, לחץ על הלחצן 'שנה'.
+	HU	Az RSS News Ticker beépülő modul segítségével böngészhet és megjeleníthet elemeket az RSS-hírcsatornákból. Az alábbi beállítások segítségével meghatározhatja, hogy mely RSS-hírcsatornákat használja, és szabályozza azok megjelenítési módját. Ha végzett, kattintson a Módosítás gombra.
 	IT	È possibile utilizzare il plugin RSS News Ticker per sfogliare e visualizzare argomenti dei feed RSS. Per specificare i feed RSS da utilizzare e impostarne il tipo di visualizzazione, utilizzare le preferenze indicate di seguito. Al termine delle operazioni, fare clic sul pulsante Cambia.
 	NL	Met de plug-in voor RSS feeds kun je items van RSS feeds bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS feeds je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop 'Wijzigen' wanneer je klaar bent.
 	NO	Plugin-modulen rss-nyhetstelegraf kan brukes til å lese og vise elementer fra rss-feeder. Du kan bruke innstillingene nedenfor til å avgjøre hvilke rss-feeder du vil bruke, og kontrollere hvordan de vises. Klikk på Endre når du er ferdig.
@@ -296,6 +314,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	FI	Palauta RSS-oletussyötteet
 	FR	Réinitialiser les flux RSS par défaut
 	HE	איפוס הזנות ה-RSS המוגדרות כברירת מחדל
+	HU	Az alapértelmezett RSS-hírcsatornák visszaállítása
 	IT	Reimposta i feed RSS predefiniti
 	NL	Standaard RSS feeds opnieuw instellen
 	NO	Tilbakestill standard rss-feeder
@@ -312,6 +331,7 @@ PLUGIN_RSSNEWS_RESETTING
 	FI	Palautetaan RSS-oletussyötteet.
 	FR	Réinitialisation des flux par défaut.
 	HE	איפוס להזנות RSS המוגדרות כברירת מחדל.
+	HU	Az alapértelmezett RSS-hírcsatornák visszaállítása.
 	IT	Reimpostazione sui feed RSS predefiniti.
 	NL	Standaard RSS feeds worden hersteld.
 	NO	Tilbakestiller til standard rss-feeder.
@@ -328,6 +348,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	FI	Kanavaa kohti näytetyt kohteet
 	FR	Nombre d'éléments par canal
 	HE	פריטים מוצגים לפי ערוץ
+	HU	Csatornánként megjelenített elemek
 	IT	Argomenti visualizzati per canale
 	NL	Weergegeven items per feed
 	NO	Elementer som vises per kanal
@@ -344,6 +365,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	FI	Enimmäismäärä kohteita, jotka näytetään syötettä kohden, kun näytönsäästäjä on aktiivinen. Suuri arvo merkitsee sitä, että näytönsäästäjä näyttää useampia kohteita, ennen kuin se vaihtaa seuraavaan syötteeseen.
 	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Un nombre élevé signifie que l'écran de veille affiche plus d'éléments avant de passer au flux suivant.
 	HE	המספר המרבי של פריטים המוצגים עבור כל הזנה בשעה ששומר המסך פעיל. ערך גבוה מסמל שיוצגו בשומר המסך יותר פריטים לפני מעבר להזנה הבאה.
+	HU	Az egyes hírcsatornákhoz megjelenített elemek maximális száma, amíg a képernyővédő aktív. A nagyobb érték azt jelenti, hogy a képernyővédő több elemet jelenít meg, mielőtt a következő hírfolyamra váltana.
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
 	NL	Het maximum aantal items dat per feed wordt weergegeven terwijl de screensaver actief is. Een hogere waarde betekent dat de screensaver meer items laat zien, voordat deze naar de volgende feed springt.
 	NO	Maksimalt antall elementer som vises for hver feed mens skjermspareren er aktiv. En høyere verdi gjør at skjermspareren viser flere elementer før den bytter til neste feed.
@@ -359,6 +381,7 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	ES	Fuentes existentes:
 	FI	Olemassa olevat syötteet:
 	FR	Flux existants :
+	HU	Meglévő hírcsatornák:
 	IT	Feed esistenti:
 	NL	Bestaande feeds:
 	NO	Eksisterende feeder:
@@ -374,6 +397,7 @@ SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	ES	Fuente no válida - %s
 	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
+	HU	Érvénytelen hírcsatorna - %s
 	IT	Feed non valido. %s
 	NL	Ongeldige feed - %s
 	NO	Ugyldig feed: %s
