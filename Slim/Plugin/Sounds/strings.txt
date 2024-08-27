@@ -6,6 +6,7 @@ PLUGIN_SOUNDS_MODULE_NAME
 	ES	Sonidos y efectos
 	FI	Äänet ja tehosteet
 	FR	Effets sonores
+	HU	Hangok és effektusok
 	IT	Suoni ed effetti
 	NL	Geluiden en Effecten
 	NO	Lyder og effekter
@@ -21,6 +22,7 @@ PLUGIN_SOUNDS_ERROR
 	ES	Error de sonidos y efectos
 	FI	Äänien ja tehosteiden virhe
 	FR	Erreur d'effets sonores
+	HU	Hangok és effektusok hiba
 	IT	Errore di Suoni ed effetti
 	NL	Fout in Geluiden en effecten
 	NO	Feil med lyder og effekter
@@ -36,6 +38,7 @@ PLUGIN_SOUNDS_EFFECTS
 	ES	Efectos de sonido
 	FI	Äänitehosteet
 	FR	Effets sonores
+	HU	Hangeffektusok
 	IT	Effetti sonori
 	NL	Geluidseffecten
 	NO	Lydeffekter
@@ -51,6 +54,7 @@ PLUGIN_SOUNDS_NATURAL
 	ES	Sonidos de naturaleza
 	FI	Luonnonääniä
 	FR	Sons naturels
+	HU	Természetes hangok
 	IT	Suoni della natura
 	NL	Natuurlijke geluiden
 	NO	Naturlyder
@@ -66,6 +70,7 @@ PLUGIN_SOUNDS_MUSICAL
 	ES	Sonidos musicales
 	FI	Musiikkiäänet
 	FR	Sons musicaux
+	HU	Zenei hangok
 	IT	Suoni musicali
 	NL	Muziekgeluiden
 	NO	Musikksnutter
@@ -81,6 +86,7 @@ PLUGIN_SOUNDS_BARN_FIRE
 	ES	Incendio de granero
 	FI	Palava lato
 	FR	Grange en feu
+	HU	Pajtatűz
 	IT	Fienile in fiamme
 	NL	Schuurbrand
 	NO	Låvebrann
@@ -96,6 +102,7 @@ PLUGIN_SOUNDS_BLUE_HENRY
 	ES	Blue Henry
 	FI	Blue Henry
 	FR	Blue Henry
+	HU	Kék Henrik
 	IT	Aspirapolvere
 	NL	Blue Henry
 	NO	Blue Henry
@@ -111,6 +118,7 @@ PLUGIN_SOUNDS_BLUE_ORCHID
 	ES	Orquídea azul
 	FI	Sininen orkidea
 	FR	Blue Orchid
+	HU	Kék orchidea
 	IT	Orchidea blu
 	NL	Blauwe orchidee
 	NO	Blue Orchid
@@ -126,6 +134,7 @@ PLUGIN_SOUNDS_BONGO_TECH
 	ES	Bongo Tech
 	FI	Bongo Tech
 	FR	Bongo Tech
+	HU	Bongo Tech
 	IT	Bongo
 	NL	Bongo Tech
 	NO	Bongo Tech
@@ -141,6 +150,7 @@ PLUGIN_SOUNDS_BRAINFLUID
 	ES	Fluido cerebral
 	FI	Aivoneste
 	FR	Liquide cérébral
+	HU	Agymenés
 	IT	Fluido cerebrale
 	NL	Hersenvloeistof
 	NO	Hjernevæske
@@ -156,6 +166,7 @@ PLUGIN_SOUNDS_BUTTERY
 	ES	Despensa
 	FI	Buttery
 	FR	Butyreux
+	HU	Vajas
 	IT	Buttery
 	NL	Kantine
 	NO	Buttery
@@ -171,6 +182,7 @@ PLUGIN_SOUNDS_CAPPUCINO
 	ES	Capuchino
 	FI	Cappucino
 	FR	Cappucino
+	HU	Cappucino
 	IT	Cappuccino
 	NL	Cappucino
 	NO	Cappucino
@@ -186,6 +198,7 @@ PLUGIN_SOUNDS_COOL_CATS
 	ES	Gatos
 	FI	Cool Cats
 	FR	Chats
+	HU	Cool Cats
 	IT	Cool Cats
 	NL	Cool Cats
 	NO	Cool Cats
@@ -201,6 +214,7 @@ PLUGIN_SOUNDS_CORNFLOWER
 	ES	Aciano
 	FI	Ruiskukka
 	FR	Bleuet
+	HU	Búzavirág
 	IT	Fiordaliso
 	NL	Cornflower
 	NO	Kornblomst
@@ -216,6 +230,7 @@ PLUGIN_SOUNDS_CRYSTALIZE
 	ES	Cristalización
 	FI	Crystalize
 	FR	Cristallisation
+	HU	Kristályos
 	IT	Cristallizzazione
 	NL	Crystalize
 	NO	Crystalize
@@ -231,6 +246,7 @@ PLUGIN_SOUNDS_EXPERIMENTAL
 	ES	Experimental
 	FI	Kokeellinen
 	FR	Expérimental
+	HU	Kísérleti
 	IT	Sperimentale
 	NL	Experimenteel
 	NO	Eksperimentell
@@ -246,6 +262,7 @@ PLUGIN_SOUNDS_HIBISCUS
 	ES	Hibisco
 	FI	Hibiscus
 	FR	Hibiscus
+	HU	Hibiszkusz
 	IT	Ibisco
 	NL	Hibiscus
 	NO	Hibiscus
@@ -261,6 +278,7 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	ES	Blindaje
 	FI	Romuhaarniska
 	FR	Armure
+	HU	Junk Armor
 	IT	Junk Armor
 	NL	Junk Armor
 	NO	Søppelrustning
@@ -276,6 +294,7 @@ PLUGIN_SOUNDS_MELANCHOLY_DAY
 	ES	Melancolía
 	FI	Alakuloinen päivä
 	FR	Journée mélancolique
+	HU	Melankolikus nap
 	IT	Giorno malinconico
 	NL	Melancholy Day
 	NO	Melankolsk dag
@@ -291,6 +310,7 @@ PLUGIN_SOUNDS_SLICKBABY
 	ES	Slickbaby
 	FI	Slickbaby
 	FR	Slickbaby
+	HU	Slickbaby
 	IT	Slickbaby
 	NL	Slickbaby
 	NO	Slickbaby
@@ -306,6 +326,7 @@ PLUGIN_SOUNDS_SLOG_IT_OUT
 	ES	Dale que dale
 	FI	Anna palaa
 	FR	Slog It Out
+	HU	Slog It Out
 	IT	Discussione animata
 	NL	Slog It Out
 	NO	Slog It Out
@@ -321,6 +342,7 @@ PLUGIN_SOUNDS_SOFT_HORIZON
 	ES	Horizonte
 	FI	Soft Horizon
 	FR	Soft Horizon
+	HU	Lágy horizont
 	IT	Soft Horizon
 	NL	Zachte horizon
 	NO	Soft Horizon
@@ -336,6 +358,7 @@ PLUGIN_SOUNDS_SRI_LAMA
 	ES	Sri Lama
 	FI	Sri Lama
 	FR	Sri Lama
+	HU	Sri Lama
 	IT	Sri Lama
 	NL	Sri Lama
 	NO	Sri Lama
@@ -351,6 +374,7 @@ PLUGIN_SOUNDS_STARGAZER
 	ES	Astrónomo
 	FI	Stargazer
 	FR	Stargazer
+	HU	Stargazer
 	IT	Sognatore
 	NL	Sterrenkijker
 	NO	Stargazer
@@ -366,6 +390,7 @@ PLUGIN_SOUNDS_SUPER_CHEESE
 	ES	Superqueso
 	FI	Super Cheese
 	FR	Super Cheese
+	HU	Super Cheese
 	IT	Super Cheese
 	NL	Super Cheese
 	NO	Super Cheese
@@ -381,6 +406,7 @@ PLUGIN_SOUNDS_TAIL_HONKER
 	ES	Tail Honker
 	FI	Töötöttäjä
 	FR	Tail Honker
+	HU	Tail Honker
 	IT	Tail Honker
 	NL	Tail Honker
 	NO	Tuting
@@ -396,6 +422,7 @@ PLUGIN_SOUNDS_TONGUE_CHEEK
 	ES	Chasquido
 	FI	Tongue & Cheek
 	FR	Claquement de langue
+	HU	Tongue & Cheek
 	IT	Tongue & Cheek
 	NL	Tongue & Cheek
 	NO	Tongue & Cheek
@@ -411,6 +438,7 @@ PLUGIN_SOUNDS_TRANSLAB
 	ES	Laboratorio
 	FI	TransLab
 	FR	TransLab
+	HU	TransLab
 	IT	TransLab
 	NL	TransLab
 	NO	TransLab
@@ -426,6 +454,7 @@ PLUGIN_SOUNDS_TWEEDLEDUM
 	ES	Tweedledum
 	FI	Tweedledum
 	FR	Tweedledum
+	HU	Tweedledum
 	IT	Tweedledum
 	NL	Tweedledum
 	NO	Tweedledum
@@ -441,6 +470,7 @@ PLUGIN_SOUNDS_TWENSA
 	ES	Twensa
 	FI	Twensa
 	FR	Twensa
+	HU	Twensa
 	IT	Twensa
 	NL	Twensa
 	NO	Twensa
@@ -456,6 +486,7 @@ PLUGIN_SOUNDS_BABBLING_BROOK
 	ES	Arroyo
 	FI	Soliseva puro
 	FR	Cascade ruisselante
+	HU	Babbling Brook
 	IT	Gorgoglio di ruscello
 	NL	Kabbelend beekje
 	NO	Klukkende bekk
@@ -471,6 +502,7 @@ PLUGIN_SOUNDS_BUBBLES
 	ES	Burbujas
 	FI	Kuplia
 	FR	Bulles
+	HU	Bubbles
 	IT	Bollicine
 	NL	Luchtbellen
 	NO	Bobler
@@ -486,6 +518,7 @@ PLUGIN_SOUNDS_CRICKETS
 	ES	Grillos
 	FI	Sirkkoja
 	FR	Grillons
+	HU	Tücskök
 	IT	Grilli
 	NL	Crickets
 	NO	Gresshopper
@@ -501,6 +534,7 @@ PLUGIN_SOUNDS_FIRE
 	ES	Disparo
 	FI	Tuli
 	FR	Fire (Feu)
+	HU	Tűz
 	IT	Fuoco
 	NL	Brand
 	NO	Brann
@@ -516,6 +550,7 @@ PLUGIN_SOUNDS_HARD_RAIN_THUNDER
 	ES	Aguacero y trueno
 	FI	Rankkasade ja ukkonen
 	FR	Trombes de pluie et tonnerre
+	HU	Kemény eső és mennydörgés
 	IT	Pioggia battente e tuoni
 	NL	Hard Rain & Thunder
 	NO	Kraftig regn og torden
@@ -531,6 +566,7 @@ PLUGIN_SOUNDS_HEARTBEAT_FAST
 	ES	Latido rápido
 	FI	Nopeita sydämenlyöntejä
 	FR	Battements de cœur rapides
+	HU	Gyors szívverés
 	IT	Battito cardiaco veloce
 	NL	Snelle hartklopping
 	NO	Raske hjerteslag
@@ -546,6 +582,7 @@ PLUGIN_SOUNDS_HEARTBEAT
 	ES	Latido
 	FI	Sydämenlyöntejä
 	FR	Battements de cœur
+	HU	Szívverés
 	IT	Battito cardiaco
 	NL	Hartslag
 	NO	Hjerteslag
@@ -561,6 +598,7 @@ PLUGIN_SOUNDS_HORSE_WALKING
 	ES	Cascos de caballo
 	FI	Hevonen kävelee
 	FR	Cheval au pas
+	HU	Patadobogás
 	IT	Zoccoli di cavallo
 	NL	Lopend paard
 	NO	Lyden av hestehover
@@ -576,6 +614,7 @@ PLUGIN_SOUNDS_HORSE_WHINNY
 	ES	Relincho
 	FI	Hevosen hirnuntaa
 	FR	Faible hennissement
+	HU	Ló nyerítés
 	IT	Nitrito di cavallo
 	NL	Gehinnik
 	NO	Hestevrinsk
@@ -591,6 +630,7 @@ PLUGIN_SOUNDS_LAPPING_WAVES
 	ES	Olas pequeñas
 	FI	Aaltojen liplatusta
 	FR	Clapotement de vagues
+	HU	Hullámok
 	IT	Sciabordio di onde
 	NL	Gebabbel van de golven
 	NO	Skvalpende bølger
@@ -606,6 +646,7 @@ PLUGIN_SOUNDS_MEADOWLARK
 	ES	Alondra
 	FI	Kiurutrupiaali
 	FR	Meadowlark
+	HU	Meadowlark
 	IT	Sturnella
 	NL	Meadowlark
 	NO	Lerke
@@ -621,6 +662,7 @@ PLUGIN_SOUNDS_OCEAN_SURF
 	ES	Olas
 	FI	Meren tyrskyjä
 	FR	Océan
+	HU	Óceáni szörfözés
 	IT	Onde dell'oceano
 	NL	Oceaansurf
 	NO	Dønninger
@@ -636,6 +678,7 @@ PLUGIN_SOUNDS_RAIN_THUNDER
 	ES	Lluvia y truenos
 	FI	Sade ja ukkonen
 	FR	Pluie et tonnerre
+	HU	Eső és mennydörgés
 	IT	Pioggia e tuoni
 	NL	Regen en onweer
 	NO	Regn og torden
@@ -651,6 +694,7 @@ PLUGIN_SOUNDS_RAIN_OUTSIDE
 	ES	Lluvia en el exterior
 	FI	Ulkona sataa
 	FR	Pluie dehors
+	HU	Kinti eső
 	IT	Pioggia
 	NL	Regen buiten
 	NO	Regn ute
@@ -666,6 +710,7 @@ PLUGIN_SOUNDS_RAIN_SPLASHING
 	ES	Lluvia
 	FI	Sateen ropinaa
 	FR	Pluie
+	HU	Fröccsenő eső
 	IT	Pioggia battente
 	NL	Spattende regen
 	NO	Regndråper
@@ -681,6 +726,7 @@ PLUGIN_SOUNDS_RIVER
 	ES	Río
 	FI	Joki
 	FR	Rivière
+	HU	Folyó
 	IT	Fiume
 	NL	Rivier
 	NO	Elv
@@ -696,6 +742,7 @@ PLUGIN_SOUNDS_ROBINS
 	ES	Petirrojos
 	FI	Punarintoja
 	FR	Rouges-gorges
+	HU	Robins
 	IT	Pettirossi
 	NL	Roodborstjes
 	NO	Meiser
@@ -711,6 +758,7 @@ PLUGIN_SOUNDS_ROOSTER_CROW
 	ES	Canto de gallo
 	FI	Kukko kiekuu
 	FR	Chant du coq
+	HU	Kakas
 	IT	Canto del gallo
 	NL	Hanengekraai
 	NO	Hanegal
@@ -726,6 +774,7 @@ PLUGIN_SOUNDS_RURAL
 	ES	Rural
 	FI	Maaseutu
 	FR	Rural
+	HU	Vidéki
 	IT	Rurale
 	NL	Landelijk
 	NO	Landlig
@@ -741,6 +790,7 @@ PLUGIN_SOUNDS_SHORE_SEAGULLS
 	ES	Gaviotas en la costa
 	FI	Ranta ja lokkeja
 	FR	Mouettes
+	HU	Part és sirályok
 	IT	Mare e gabbiani
 	NL	Kust en zeemeeuwen
 	NO	Kyst og måker
@@ -756,6 +806,7 @@ PLUGIN_SOUNDS_SPRING_PEEPERS
 	ES	Ranas americanas
 	FI	Kevään sirkuttajia
 	FR	Grenouilles
+	HU	Tavaszi kukucskálók
 	IT	Rane
 	NL	Kruisboomkikkers
 	NO	Småfugler
@@ -771,6 +822,7 @@ PLUGIN_SOUNDS_STREAM_BIRDS
 	ES	Riachuelo y pájaros
 	FI	Puro ja lintuja
 	FR	Ruisseau et oiseaux
+	HU	Patak és madarak
 	IT	Ruscello e uccelli
 	NL	Stroom en vogels
 	NO	Bekk og fugler
@@ -786,6 +838,7 @@ PLUGIN_SOUNDS_STREAM
 	ES	Stream
 	FI	Virta
 	FR	Flux
+	HU	Folyam
 	IT	Stream
 	NL	Stream
 	NO	Strøm
@@ -801,6 +854,7 @@ PLUGIN_SOUNDS_TROPICAL_AMBIENCE
 	ES	Ambiente tropical
 	FI	Trooppinen tunnelma
 	FR	Ambiance tropicale
+	HU	Trópusi hangulat
 	IT	Ambiente tropicale
 	NL	Tropische sfeer
 	NO	Tropical Ambience
@@ -816,6 +870,7 @@ PLUGIN_SOUNDS_WAVES
 	ES	Oleaje
 	FI	Aallot
 	FR	Vagues
+	HU	Hullámok
 	IT	Onde
 	NL	Golven
 	NO	Bølger
@@ -831,6 +886,7 @@ PLUGIN_SOUNDS_WIND_WHISTLE
 	ES	Silbido de viento
 	FI	Tuulipilli
 	FR	Souffle du vent
+	HU	Szélsíp
 	IT	Sibilo del vento
 	NL	Wind Whistle
 	NO	Vind
@@ -846,6 +902,7 @@ PLUGIN_SOUNDS_WIND
 	ES	Viento
 	FI	Tuuli
 	FR	Vent
+	HU	Szél
 	IT	Vento
 	NL	Wind
 	NO	Wind
@@ -861,6 +918,7 @@ PLUGIN_SOUNDS_AMBULANCE
 	ES	Ambulancia
 	FI	Ambulanssi
 	FR	Ambulance
+	HU	Mentőautó
 	IT	Ambulanza
 	NL	Ambulance
 	NO	Ambulanse
@@ -876,6 +934,7 @@ PLUGIN_SOUNDS_BLENDER
 	ES	Licuadora
 	FI	Tehosekoitin
 	FR	Mixeur
+	HU	Mixer
 	IT	Frullatore
 	NL	Blender
 	NO	Blender
@@ -891,6 +950,7 @@ PLUGIN_SOUNDS_CITY
 	ES	Población
 	FI	Kaupunki
 	FR	Ville
+	HU	Város
 	IT	Città
 	NL	Plaats
 	NO	By
@@ -906,6 +966,7 @@ PLUGIN_SOUNDS_COINS
 	ES	Monedas
 	FI	Kolikoita
 	FR	Pièces
+	HU	Érmék
 	IT	Monete
 	NL	Munten
 	NO	Mynter
@@ -921,6 +982,7 @@ PLUGIN_SOUNDS_CROSSING_BELLS
 	ES	Campana de cruce
 	FI	Ristikelloja
 	FR	Passage à niveau
+	HU	Crossing Bells
 	IT	Campanelle
 	NL	Belsignaal
 	NO	Planovergang
@@ -936,6 +998,7 @@ PLUGIN_SOUNDS_ELECTRO_FUZZ
 	ES	Electro Fuzz
 	FI	Sähkön huminaa
 	FR	Electro Fuzz
+	HU	Electro Fuzz
 	IT	Electro Fuzz
 	NL	Electro Fuzz
 	NO	Elektrofuzz
@@ -951,6 +1014,7 @@ PLUGIN_SOUNDS_FOGHORN
 	ES	Sirena antiniebla
 	FI	Sumutorvi
 	FR	Corne de brume
+	HU	Ködkürt
 	IT	Sirena da nebbia
 	NL	Misthoorn
 	NO	Tåkelur
@@ -966,6 +1030,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
 	ES	Mercancías en marcha
 	FI	Tavarajuna
 	FR	Train de marchandises au loin
+	HU	Tehervonat elhaladása
 	IT	Passaggio di treno merci
 	NL	Voorbijgaande goederentrein
 	NO	Passerende tog
@@ -981,6 +1046,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN
 	ES	Tren de mercancías
 	FI	Tavarajuna
 	FR	Train de marchandises
+	HU	Tehervonat
 	IT	Treno merci
 	NL	Freight Train
 	NO	Godstog
@@ -996,6 +1062,7 @@ PLUGIN_SOUNDS_HAIR_DRYER
 	ES	Secador de pelo
 	FI	Hiustenkuivaaja
 	FR	Sèche-cheveux
+	HU	Hajszárító
 	IT	Asciugacapelli
 	NL	Haardroger
 	NO	Hårføner
@@ -1011,6 +1078,7 @@ PLUGIN_SOUNDS_MAGNETO_VAPOR
 	ES	Magneto Vapor
 	FI	Magneto Vapor
 	FR	Vapeur magnétique
+	HU	Magneto Vapor
 	IT	Magneto Vapor
 	NL	Magneto Vapor
 	NO	Magneto Vapor
@@ -1026,6 +1094,7 @@ PLUGIN_SOUNDS_MOTORCYCLES
 	ES	Motos
 	FI	Moottoripyöriä
 	FR	Motos
+	HU	Motorkerékpárok
 	IT	Motocicli
 	NL	Motorcycles
 	NO	Motorsykler
@@ -1041,6 +1110,7 @@ PLUGIN_SOUNDS_SCUBA_DIVER
 	ES	Buceador
 	FI	Sukeltaja
 	FR	Plongeur
+	HU	Búvár
 	IT	Sommozzatore
 	NL	Scubaduiker
 	NO	Dykker
@@ -1056,6 +1126,7 @@ PLUGIN_SOUNDS_SPOOKY_FEEDBACK
 	ES	Retroalimentación fantasmagórica
 	FI	Pelottava palaute
 	FR	Spooky
+	HU	Kísérteties
 	IT	Spooky Feedback
 	NL	Spooky Feedback
 	NO	Skummel feedback
@@ -1071,6 +1142,7 @@ PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
 	ES	Locomotora y pitido
 	FI	Höyryjuna ja pilli
 	FR	Train à vapeur et coup de sifflet
+	HU	Steam Train & Whistle
 	IT	Locomotiva a vapore e fischio
 	NL	Steam Train & Whistle
 	NO	Damptog og fløyte
@@ -1086,6 +1158,7 @@ PLUGIN_SOUNDS_SUB_ALERT
 	ES	Alarma de submarino
 	FI	Alihälytys
 	FR	En plongée
+	HU	Riasztás
 	IT	Avviso secondario
 	NL	Subwaarschuwing
 	NO	Undervannsalarm
@@ -1101,6 +1174,7 @@ PLUGIN_SOUNDS_TEA_KETTLE
 	ES	Pitido
 	FI	Teepannu
 	FR	Bouilloire
+	HU	Tea vízforraló
 	IT	Bollitore
 	NL	Tea Kettle
 	NO	Tekjele
@@ -1116,6 +1190,7 @@ PLUGIN_SOUNDS_TRAFFIC
 	ES	Tráfico
 	FI	Liikenne
 	FR	Trafic
+	HU	Forgalom
 	IT	Traffico
 	NL	Verkeer
 	NO	Trafikk
@@ -1131,6 +1206,7 @@ PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
 	ES	Repiqueteo
 	FI	Tuulikellon kilinää
 	FR	Carillons éoliens
+	HU	Szélcsengő
 	IT	Tintinnio forte
 	NL	Wind Chime Flourish
 	NO	Lengre vindorgel
@@ -1146,6 +1222,7 @@ PLUGIN_SOUNDS_WIND_CHIME
 	ES	Campanillas
 	FI	Tuulikello
 	FR	Carillon
+	HU	Szélcsengő
 	IT	Tintinnio
 	NL	Windklok
 	NO	Vindorgel
@@ -1158,3 +1235,4 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	DE	Weckersummton
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
+	HU	Riasztócsengő
