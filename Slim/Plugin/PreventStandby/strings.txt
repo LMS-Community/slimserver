@@ -8,6 +8,7 @@ PLUGIN_PREVENTSTANDBY
 	ES	Impedir modo de espera del sistema
 	FI	Estä järjestelmän siirtyminen valmiustilaan
 	FR	Empêcher la mise en veille du système
+	HU	A rendszer készenléti állapotának megakadályozása
 	IT	Impedisci standby del sistema
 	NL	Stand-by Systeem Voorkomen
 	NO	Hindre hvilemodus
@@ -23,6 +24,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	ES	Este complemento supervisa los reproductores SqueezeBox e impide que el sistema pase al modo de espera para ahorro de energía mientras se está reproduciendo música, Lyrion Music Server está explorando, los reproductores se están actualizando, etc. También impedirá que el sistema pase prematuramente al modo de espera dos minutos después de Wake On LAN.
 	FI	Tämä laajennus valvoo SqueezeBox-soittimia ja estää järjestelmää siirtymästä virtaa säästävään valmiustilaan, kun musiikkia soitetaan, kun Lyrion Music Server suorittaa tarkistusta, kun soittimia päivitetään jne. Laajennus estää myös järjestelmää siirtymästä ennenaikaisesti valmiustilaan kaksi minuuttia lähiverkon herätyksen jälkeen.
 	FR	Ce plugin surveille les platines SqueezeBox et empêche le système de passer en mode veille (d'économie d'énergie) lorsqu'un morceau est en cours de lecture, le Lyrion Music Server est en cours d'analyse, les platines sont mises à jour, ainsi que deux minutes après l'activation de la fonction de réveil par LAN.
+	HU	Ez a beépülő modul figyeli a SqueezeBox lejátszóit, és megakadályozza, hogy a rendszer energiatakarékos készenléti módba lépjen zenelejátszás közben, a Lyrion Music Server keresése, a lejátszók frissítése stb.
 	IT	Questo plugin tiene sotto controllo i lettori SqueezeBox e impedisce che nel sistema venga attivata la modalità standby durante la riproduzione della musica, l'analisi di Squeezebox, l'aggiornamento dei lettori e così via. Impedisce inoltre che il sistema entri prematuramente in modalità standby due minuti dopo l'attivazione LAN.
 	NL	Deze plug-in houdt jouw Squeezebox muziekspelers in de gaten en voorkomt dat het systeem naar energiebesparende stand-by modus gaat terwijl er bijvoorbeeld muziek speelt, Lyrion Music Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-by modus gaat twee minuten na wake-on-lan.
 	NO	Denne plugin-modulen overvåker SqueezeBox-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens Lyrion Music Server søker, mens spillere oppdateres osv. Den forhindrer også at systemet går i for tidlig hvilemodus to minutter etter at det har blitt startet opp via et LAN.
@@ -38,6 +40,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME
 	ES	¿Permitir modo de espera después de cuántos minutos?
 	FI	Kuinka monen minuutin joutoajan jälkeen siirrytään valmiustilaan?
 	FR	Période d'inactivité avant la mise en veille (en minutes) ?
+	HU	Hány perc tétlenség után engedélyezi a készenléti állapotot?
 	IT	Attivare la modalità standby dopo quanti minuti di inattività?
 	NL	Stand-by toestaan na hoeveel minuten inactiviteit?
 	NO	Hvor mange inaktive minutter før hvilemodus?
@@ -53,6 +56,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
 	ES	Introduzca el número de minutos (después de que la reproducción se detenga o de que el sistema se reanude) transcurridos los cuales el complemento permitirá de nuevo que el sistema pase al modo de espera. Introduzca 0 (cero) para prohibir completamente el modo de espera automático en este sistema.
 	FI	Määritä, kuinka monen minuutin jälkeen (toiston keskeydyttyä tai järjestelmän palattua) laajennus sallii jälleen järjestelmän siirtymisen valmiustilaan. Arvo 0 (nolla) estää järjestelmän automaattisen valmiustilaan siirtymisen kokonaan.
 	FR	Entrez le nombre de minutes (après l'arrêt de la lecture ou après la reprise du système) après lesquelles le plugin autorise à nouveau la mise en veille du système. Entrez 0 (zéro) pour interdire complètement la mise en veille automatique de ce système.
+	HU	Adja meg, hogy hány percben (a lejátszás leállítása után vagy a rendszer újraindulása után) mennyi idő után a bővítmény ismét készenléti állapotba kapcsolja a rendszert. Írjon be 0-t (nulla), hogy teljesen letiltja az automatikus készenléti állapotot ezen a rendszeren.
 	IT	Immettere il numero di minuti che devono trascorrere (dopo il termine della riproduzione o la riattivazione del sistema) prima che il plugin consenta di nuovo al sistema di entrare in modalità standby. Immettere 0 (zero) per impedire l'attivazione automatica della modalità standby.
 	NL	Voer het aantal minuten in (nadat afspelen is gestopt of het systeem is hervat) waarna de plug-in weer toestaat dat het systeem stand-by gaat. Voer 0 (nul) in om automatische stand-by op dit systeem volledig te verhinderen.
 	NO	Angi hvor mange minutter (etter avspillingen stopper eller systemet starter opp) det skal gå før plugin-modulen tillater systemet å gå i hvilemodus. Hvis du angir 0 (null), går systemet aldri i automatisk hvilemodus.
@@ -68,6 +72,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON
 	ES	¿Prohibir modo de espera si los reproductores están encendidos?
 	FI	Estetäänkö valmiustilaan siirtyminen, jos soittimet ovat päällä?
 	FR	Interdire la mise en veille si des platines sont allumées ?
+	HU	Letiltja a készenléti állapotot, ha a lejátszó be vannak kapcsolva?
 	IT	Non attivare la modalità standby se i lettori sono accesi?
 	NL	Stand-by voorkomen als muziekspelers aan staan?
 	NO	Forhindre hvilemodus hvis spillerne er slått på?
@@ -83,6 +88,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
 	ES	Active esta opción para prohibir el modo de espera del sistema mientras los reproductores están encendidos, es decir cuando no muestren el reloj.
 	FI	Ottamalla tämän asetuksen käyttöön estät järjestelmää siirtymästä valmiustilaan soitinten ollessa päällä, eli silloin, kun kelloa ei näy.
 	FR	Activez ce réglage pour interdire la mise en veille du système lorsque des platines sont allumées (l'horloge n'est pas affichée).
+	HU	Engedélyezze ezt a beállítást, ha meg szeretné tiltani a rendszer készenléti állapotát, amikor a lejátszó be van kapcsolva, azaz nem jeleníti meg az órát.
 	IT	Attivare questa impostazione per impedire l'attivazione della modalità standby quando i lettori sono accesi, vale a dire quando non visualizzano l'orologio.
 	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muziekspelers actief zijn, d.w.z. niet de klok weergeven.
 	NO	Når denne innstillingen er aktivert, forhindrer den systemet fra å gå hvilemodus mens spillerne er slått på (altså når de ikke viser klokken).

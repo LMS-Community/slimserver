@@ -6,6 +6,7 @@ PLUGIN_MY_APPS_MODULE_NAME
 	ES	Mis aplicaciones
 	FI	Omat sovellukset
 	FR	Mes applications
+	HU	Saját alkalmazások
 	IT	Applicazioni
 	NL	Mijn Toepassingen
 	NO	Mine tjenester
@@ -18,6 +19,7 @@ PLUGIN_MY_APPS_NO_APPS
 	DE	Keine Anwendung installiert
 	EN	No App installed
 	FR	Aucune application n'est installée
+	HU	Nincs telepítve alkalmazás
 	NL	Geen toepassing geïnstalleerd
 	NO	Ingen tjenester er installert
 	PL	Brak zainstalowanych aplikacji

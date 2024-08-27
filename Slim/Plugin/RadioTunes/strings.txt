@@ -5,13 +5,16 @@ PLUGIN_RADIOTUNES_DESC
 	CS	RadioTunes.com – Vaše každodenní dávka hudby
 	EN	RadioTunes.com - Your daily music fix
 	FR	RadioTunes.com - Votre dose de musique quotidienne
+	HU	RadioTunes.com – A napi zeneadagod 
 
 PLUGIN_RADIOTUNES_MISSING_CREDS
 	CS	Prosím, navštivte RadioTunes.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	EN	Please visit RadioTunes.com in the Lyrion Music Server Settings to add your credentials.
 	FR	Veuillez vous rendre dans RadioTunes.com dans les paramètres de Lyrion Music Server pour ajouter vos informations d'identification.
+	HU	Kérjük, keresse fel a RadioTunes.com oldalt a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 
 PLUGIN_RADIOTUNES_LINK
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
 	EN	To create or manage your account please visit <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
+	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a> oldalra.

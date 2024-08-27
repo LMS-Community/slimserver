@@ -9,6 +9,7 @@ PLUGIN_SCREENSAVER_SNOW
 	FI	Luminäytönsäästäjä
 	FR	Ecran de veille Neige
 	HE	שומר מסך שלג
+	HU	Hó Képernyővédő
 	IT	Screen saver con neve
 	NL	Sneeuw screensaver
 	NO	Skjermsparer med snø
@@ -25,6 +26,7 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	FI	Luminäytönsäästäjän asetukset
 	FR	Réglages Ecran de veille Neige
 	HE	הגדרות שומר מסך שלג
+	HU	Hó Screensaver beállításai
 	IT	Impostazioni screen saver con neve
 	NL	Instellingen van sneeuw screensaver
 	NO	Innstillinger for skjermsparer med snø
@@ -41,6 +43,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	FI	Lumen määrä
 	FR	Intensité neige
 	HE	כמות שלג
+	HU	A hó mennyisége
 	IT	Quantità di neve
 	NL	Hoeveelheid sneeuw
 	NO	Snømengde
@@ -57,6 +60,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	FI	Luminäytönsäästäjä: lumen määrä
 	FR	Ecran de veille neige : Intensité
 	HE	שומר מסך שלג: כמות שלג
+	HU	Hó Képernyővédő: A hó mennyisége
 	IT	Screen saver con neve: quantità di neve
 	NL	Sneeuw screensaver: hoeveelheid sneeuw
 	NO	Skjermsparer med snø: Snømengde
@@ -73,6 +77,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	FI	Kevyitä lumikuuroja
 	FR	Quelques flocons
 	HE	משקעי שלג מתונים
+	HU	Könnyű záporok
 	IT	Leggero turbinio
 	NL	Lichte sneeuwbui
 	NO	Lette fnugg
@@ -89,6 +94,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	FI	Jouluinen
 	FR	C'est Noël !
 	HE	בסגנון חג המולד
+	HU	Karácsonyi
 	IT	Natalizia
 	NL	Kerstmis!
 	NO	Julete
@@ -105,6 +111,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	FI	Lumimyrsky
 	FR	Tempête
 	HE	סופת שלג
+	HU	Hóvihar
 	IT	Bufera
 	NL	Sneeuwstorm
 	NO	Snøstorm
@@ -121,6 +128,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	FI	Kokonaan valkoinen
 	FR	Tout blanc
 	HE	סופת שלג עזה
+	HU	Kifehéredés
 	IT	Tutto coperto
 	NL	Zware sneeuwstorm
 	NO	Blank
@@ -137,6 +145,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	FI	Lumen tyyppi, kun päällä
 	FR	Type neige (activé)
 	HE	סגנון שלג במצב מופעל
+	HU	A hó stílusa bekapcsolt állapotban
 	IT	Tipo di neve quando attivo
 	NL	Sneeuwstijl wanneer aan
 	NO	Snøtype når påslått
@@ -153,6 +162,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	FI	Lumen tyyppi, kun pois päältä
 	FR	Type neige (désactivé)
 	HE	סגנון שלג במצב כבוי
+	HU	A hó stílusa kikapcsolt állapotban
 	IT	Tipo di neve quando disattivo
 	NL	Sneeuwstijl wanneer uit
 	NO	Snøtype når avslått
@@ -169,6 +179,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	FI	Luminäytönsäästäjä: lumen tyyppi
 	FR	Ecran de veille Neige : Type
 	HE	שומר מסך שלג: סגנון שלג
+	HU	Hó Képernyővédő: A hó stílusa
 	IT	Screen saver con neve: Tipo di neve
 	NL	Sneeuw screensaver: sneeuwstijl
 	NO	Skjermsparer med snø: Snøtype
@@ -185,6 +196,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	FI	Nyt soi, taustalla sataa lunta
 	FR	Lecture + neige en arrière-plan
 	HE	מושמע כעת, שלג נופל מאחור
+	HU	Most játszott, alul esen a hó
 	IT	Riproduzione in corso. Nevicata sullo sfondo.
 	NL	Speelt nu, sneeuw valt achter
 	NO	Spilles nå, med snø i bakgrunnen
@@ -201,6 +213,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	FI	Nyt soi, edustassa sataa lunta
 	FR	Lecture + neige au premier plan
 	HE	מושמע כעת, שלג נופל מלפנים
+	HU	Most játszott, elöl esik a hó
 	IT	Riproduzione in corso. Nevicata in primo piano.
 	NL	Speelt nu, sneeuw valt voor
 	NO	Spilles nå, med snø i forgrunnen
@@ -217,6 +230,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	FI	Pvm/aika
 	FR	Date/Heure
 	HE	תאריך/שעה
+	HU	Dátum/Idő
 	IT	Data/ora
 	NL	Datum/tijd
 	NO	Dato/tid
@@ -233,6 +247,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	FI	Pelkkää lunta
 	FR	Neige seule
 	HE	שלג בלבד
+	HU	Csak hó
 	IT	Solo neve
 	NL	Alleen sneeuw
 	NO	Bare snø
@@ -249,6 +264,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	FI	Automaattinen
 	FR	Automatique
 	HE	אוטומטי
+	HU	Automatikus
 	IT	Automatico
 	NL	Automatisch
 	NO	Automatisk
@@ -265,6 +281,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	FI	Hyvää joulua
 	FR	Vœux
 	HE	ברכות לחגים
+	HU	Szezonális üdvözlet
 	IT	Buone feste
 	NL	Prettige feestdagen
 	NO	God jul!
@@ -281,6 +298,7 @@ PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	FI	5
 	FR	5
 	HE	5
+	HU	5
 	IT	5
 	NL	5
 	NO	5
@@ -297,6 +315,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	FI	ILOISTA
 	FR	JOYEUX
 	HE	חג
+	HU	BOLDOG
 	IT	BUON
 	NL	Vrolijk
 	NO	GOD
@@ -313,6 +332,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_1
 	FI	JOULUA
 	FR	NOEL
 	HE	שמח
+	HU	KARÁCSONYT
 	IT	NATALE
 	NL	Kerstmis
 	NO	JUL
@@ -329,6 +349,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	FI	JA ERITTÄIN
 	FR	ET
 	HE	לכל
+	HU	ÉS
 	IT	E FELICE
 	NL	en een heel
 	NO	OG ET
@@ -345,6 +366,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 	FI	ILOISTA
 	FR	BONNE
 	HE	עם
+	HU	BOLDOG
 	IT	ANNO
 	NL	gelukkig
 	NO	GODT
@@ -360,6 +382,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	FI	UUTTA VUOTTA!
 	FR	ANNEE !
 	HE	ישראל!
+	HU	ÚJ ÉVET
 	IT	NUOVO!
 	NL	nieuwjaar!
 	NO	NYTTÅR!

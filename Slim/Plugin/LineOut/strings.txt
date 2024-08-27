@@ -8,6 +8,7 @@ PLUGIN_LINE_OUT
 	ES	Salida de línea
 	FI	Linjalähtö
 	FR	Sortie ligne
+	HU	Vonalkimenet
 	IT	Uscita
 	NL	Lijnuitgang
 	NO	Utgang
@@ -24,6 +25,7 @@ PLUGIN_LINE_OUT_DESC
 	FI	Vaihda subwooferin, kuulokkeiden ja linjalähtötilan välillä Boomissa
 	FR	Basculez entre mode subwoofer, mode casque et sortie ligne sur Boom
 	IT	Passa dalla modalità subwoofer alla modalità cuffie o uscita del radioregistratore
+	HU	Váltás a mélysugárzó, a fejhallgató és a vonalkimeneti mód között a Boom készüléken
 	NL	Tussen subwoofer-, hoofdtelefoon- en lijnuitgangsmodus op de Boom schakelen
 	NO	Bytt mellom basshøyttaler, hodetelefoner og utgangsmodus på Boom
 	PL	Przełączanie między trybem niskich tonów subwoofera, słuchawek i wyjścia liniowego

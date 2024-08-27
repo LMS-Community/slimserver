@@ -8,6 +8,7 @@ ITUNES
 	ES	iTunes
 	FI	iTunes
 	FR	iTunes
+	HU	iTunes
 	IT	iTunes
 	NL	iTunes
 	NO	iTunes
@@ -24,6 +25,7 @@ ITUNES_DESC
 	ES	Integración de iTunes
 	FI	iTunes-integraatio
 	FR	Intégration iTunes
+	HU	iTunes integráció
 	IT	Integrazione di iTunes
 	NL	iTunes integratie
 	NO	iTunes-integrering
@@ -40,6 +42,7 @@ SETUP_ITUNESPLAYLISTFORMAT
 	FI	iTunes-soittoluetteloiden muoto
 	FR	Format des listes de lecture iTunes
 	HE	תבנית רשימות ההשמעה של iTunes
+	HU	iTunes lejátszási lista formátuma
 	IT	Formato della playlist di iTunes
 	JA	iTunesプレイリストフォーマット
 	NL	iTunes afspeellijst formaat
@@ -58,6 +61,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	FI	Tällä asetuksella määritetään iTunes-soittoluetteloiden muoto, kun soittoluettelot tuodaan.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש בעת ייבוא רשימות השמעה של iTunes.
+	HU	Ez az opció határozza meg az iTunes lejátszási listák importálásakor használt formátumot.
 	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
 	NL	Bepaal hier welk formaat gebruikt moet worden bij het importeren van iTunes afspeellijsten.
@@ -76,6 +80,7 @@ ITUNES_PODCASTS
 	FI	iTunesin podcast-lähetykset
 	FR	Podcasts iTunes
 	HE	פריטי Podcast של iTunes
+	HU	iTunes podcastok
 	IT	Podcast iTunes
 	NL	iTunes podcasts
 	NO	iTunes-podkaster
@@ -93,6 +98,7 @@ USE_ITUNES
 	FI	Käytä iTunesiä
 	FR	Utiliser iTunes
 	HE	שימוש ב-iTunes
+	HU	Használja az iTunes alkalmazást
 	IT	Usa iTunes
 	JA	iTunesを使用する
 	NL	iTunes gebruiken
@@ -112,6 +118,7 @@ SETUP_ITUNES
 	FI	iTunes
 	FR	iTunes
 	HE	iTunes
+	HU	iTunes
 	IT	iTunes
 	JA	iTunes
 	NL	iTunes
@@ -131,6 +138,7 @@ SETUP_ITUNES_DESC
 	FI	Lyrion Music Server voi käyttää iTunesin musiikkikirjastoa ja soittoluetteloita. Kaikki iTunesiin tekemäsi muutokset heijastuvat soittimeen. Lisää valintamerkki alla olevaan ruutuun, jos haluat tuoda iTunes-musiikkikirjaston tiedot.
 	FR	Le Lyrion Music Server peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
 	HE	Lyrion Music Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
+	HU	A Lyrion Music Server használhatja az iTunes zenei könyvtárát és lejátszási listáit. Az iTunes alkalmazásban végrehajtott változtatások a lejátszón is megjelennek. Jelölje be az alábbi négyzetet, ha importálni szeretné az iTunes Music Library adatait.
 	IT	In Lyrion Music Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	Lyrion Music ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	Lyrion Music Server kan gebruik maken van jouw iTunes muziekcollectie en afspeellijsten. Alle wijzigingen in iTunes worden ook op jouw muziekspeler doorgevoerd. Selecteer het vakje hieronder als je de gegevens van jouw iTunes muziekcollectie wilt importeren.
@@ -149,6 +157,7 @@ SETUP_ITUNESSCANINTERVAL
 	FI	iTunesin latausväli
 	FR	Délai d'actualisation iTunes
 	HE	מרווח הזמן לטעינה חוזרת של iTunes
+	HU	iTunes újratöltési időköz
 	IT	Intervallo di ricaricamento di iTunes
 	JA	iTunes更新時間
 	NL	iTunes update interval
@@ -167,6 +176,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Lyrion Music Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka palvelin odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
 	FR	Le Lyrion Music Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר ספריית המוסיקה של iTunes משתנה, Lyrion Music Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Lyrion Music Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
+	HU	Amikor az iTunes Music Library megváltozik, a Lyrion Music Server automatikusan importálja a könyvtár adatait.  Megadhatja azt a minimális időt (másodpercben), ameddig a szerver várjon, mielőtt újra betölti az iTunes Music Library-t. A nulla érték letiltja az újratöltést.
 	IT	Se si modifica la libreria musicale di iTunes, Lyrion Music Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
 	NL	Wanneer jouw iTunes muziekcollectie wijzigt, worden de collectiegegevens automatisch door Lyrion Music Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når musikkbiblioteket til iTunes endres, importerer Lyrion Music Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
@@ -184,6 +194,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	FI	iTunes Music Library.xml -tiedoston sijainti
 	FR	Emplacement du fichier iTunes Music Library.xml
 	HE	המיקום של iTunes Music Library.xml
+	HU	iTunes Music Library.xml helye
 	IT	Posizione del file Music Library.xml di iTunes
 	JA	iTunes音楽ライブラリー xmlファイルの場所
 	NL	Locatie van iTunes Music Library.xml
@@ -202,6 +213,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	FI	Jos iTunes on käytössä eri tietokoneessa kuin Lyrion Music Server, voit määrittää nimenomaisen polun iTunes Music Library.xml -tiedostoon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Lyrion Music Server.
 	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Lyrion Music Server, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Lyrion Music Server.
 	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Lyrion Music Server, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Lyrion Music Server.
+	HU	Ha az iTunes programot egy másik számítógépen futtatja, mint a Lyrion Music Servert, itt megadhat egy explicit elérési utat az iTunes Music Library.xml fájlhoz.  Hagyja üresen, ha az iTunes programot ugyanazon a számítógépen futtatja, mint a Lyrion Music Server.
 	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Lyrion Music Server, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e Lyrion Music Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
 	NL	Als iTunes op een andere computer dan Lyrion Music Server wordt uitgevoerd, kun je hier het pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Lyrion Music Server wordt uitgevoerd.
@@ -221,6 +233,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	FI	iTunes Media -kansio
 	FR	Dossier iTunes Media
 	HE	תיקיית המוסיקה של iTunes
+	HU	iTunes Media mappa
 	IT	Cartella iTunes Media
 	JA	iTunes音楽フォルダー
 	NL	iTunes Media map
@@ -239,6 +252,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	FI	Jos iTunes on käytössä eri tietokoneessa kuin Lyrion Music Server, voit määrittää nimenomaisen polun iTunes Media -kansioon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Lyrion Music Server.
 	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Lyrion Music Server, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Lyrion Music Server.
 	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו Lyrion Music Server, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן Lyrion Music Server.
+	HU	Ha az iTunes programot egy másik számítógépen futtatja, mint a Lyrion Music Servert, itt megadhat egy explicit elérési utat az iTunes Media mappához.  Hagyja üresen, ha az iTunes programot ugyanazon a számítógépen futtatja, mint a Lyrion Music Server.
 	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato Lyrion Music Server, è possibile indicare in questo campo il percorso esplicito della cartella iTunes Media. Se iTunes e Lyrion Music Server sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
 	NL	Als iTunes op een andere computer dan Lyrion Music Server wordt uitgevoerd, kun je hier een pad naar de iTunes Media map opgeven. Laat dit veld leeg als iTunes op dezelfde computer als Lyrion Music Server wordt uitgevoerd.
@@ -257,6 +271,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	FI	Kappaleet, joita ei ole valittu iTunesissä
 	FR	Morceaux désélectionnés dans iTunes
 	HE	שירים לא מסומנים ב-iTunes
+	HU	Nincsenek bejelölve dalok az iTunesban
 	IT	Brani non selezionati in iTunes
 	NL	Niet geselecteerde nummers in iTunes
 	NO	Umarkerte sanger i iTunes
@@ -275,6 +290,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	FI	Jos poistat valintamerkin kappaleen vierestä iTunesissä, kappale ei oletuksena tule näkyviin, kun etsit musiikkia Lyrion Music Serverillä. Voit vaihtaa toiminnan alla.
 	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au Lyrion Music Server. Vous pouvez modifier ce comportement ci-dessous.
 	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות Lyrion Music Server. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
+	HU	Alapértelmezés szerint, ha eltávolítja a pipát egy dal mellett az iTunes alkalmazásban, az adott dal nem jelenik meg, amikor a Lyrion Music Serverrel böngészi a zenét. Ezt a viselkedést az alábbiakban módosíthatja.
 	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con Lyrion Music Server. È possibile modificare questa impostazione di seguito.
 	NL	Standaard worden nummers die in iTunes niet aangevinkt zijn, niet in Lyrion Music Server weergegeven. Je kunt dit hieronder wijzigen.
 	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Lyrion Music Server. Du kan endre dette nedenfor.
@@ -292,6 +308,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	FI	Sisällytä kaikki kappaleet
 	FR	Inclure tous les morceaux
 	HE	יש לכלול את כל השירים
+	HU	Tartalmazza az összes dalt
 	IT	Includi tutti i brani
 	NL	Alle nummers toevoegen
 	NO	Inkluder alle sanger
@@ -309,6 +326,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	FI	Älä sisällytä kappaleita, joita ei ole valittu
 	FR	Ne pas inclure les morceaux désélectionnés
 	HE	אין לכלול שירים לא מסומנים
+	HU	Ne tartalmazza a nem jelölt dalokat
 	IT	Non includere i brani non selezionati
 	NL	Niet geselecteerde nummers niet toevoegen
 	NO	Ikke inkluder sanger som ikke er markert
@@ -325,6 +343,7 @@ DEBUG_PLUGIN_ITUNES
 	ES	Información sobre sincronización de iTunes
 	FI	iTunesin synkronointitiedot
 	FR	Informations de synchronisation iTunes
+	HU	iTunes szinkronizálási információk
 	IT	Informazioni sulla sincronizzazione con iTunes
 	NL	Gegevens voor iTunes synchronisatie
 	NO	Synkroniseringsinformasjon for iTunes
@@ -340,6 +359,7 @@ ITUNES_PROGRESS
 	ES	Importación de iTunes
 	FI	iTunesin tuonti
 	FR	Importation iTunes
+	HU	iTunes Import
 	IT	Importazione da iTunes
 	NL	iTunes importeren
 	NO	iTunes-importering
@@ -351,10 +371,11 @@ ITUNES_PLAYLISTS_PROGRESS
 	CS	Import seznamu skladeb iTunes
 	DA	Import af iTunes-spilleliste
 	DE	iTunes Wiedergabelisten Import
-	EN	iTunes Playlist Import
+	EN	iTunes műsorlista import
 	ES	Importación de lista de reproducción de iTunes
 	FI	iTunes-soittoluetteloiden tuonti
 	FR	Importation de liste de lecture iTunes
+	HU	iTunes Playlist Import
 	IT	Importazione delle playlist iTunes
 	NL	iTunes afspeellijst importeren
 	NO	Importere iTunes-spilleliste
@@ -370,6 +391,7 @@ ITUNES_ARTWORK_PHASE_1_PROGRESS
 	ES	Importación de carátulas descargadas de iTunes
 	FI	iTunesin lataaman kansitaiteen tuominen
 	FR	Importations de pochettes iTunes téléchargées
+	HU	iTunes letöltött borítók importálása
 	IT	Importazione copertine di iTunes scaricate
 	NL	Import van door iTunes gedownloade albumhoezen
 	NO	Importering av omslag lastet ned fra iTunes
@@ -385,6 +407,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	ES	Importación de carátulas agregadas por el usuario de iTunes
 	FI	iTunesin käyttäjän lisäämän kansitaiteen tuominen
 	FR	Importations de pochettes iTunes ajoutées par l'utilisateur
+	HU	iTunes felhasználó által hozzáadott borítók importálása
 	IT	Importazione copertine di iTunes aggiunte dall'utente
 	NL	Importeren van door de gebruiker toegevoegde iTunes albumhoezen
 	NO	Importering av omslag lagt til av bruker fra iTunes
@@ -412,6 +435,7 @@ ITUNES_IGNORED_PLAYLISTS_DEFAULTS
 	ES	Biblioteca, Vídeos, Películas, Programas de televisión, Música, Comprado, Películas alquiladas, Descargado
 	FI	Kirjasto, videot, elokuvat, tv-ohjelmat, musiikki, ostetut, vuokraelokuvat, Ladattu
 	FR	Bibliothèque, Vidéos, Films, Séries TV, Musique, Achats, Films en location, Téléchargé
+	HU	Könyvtár, videók, filmek, tévéműsorok, zenék, megvásárolt, kölcsönzött filmek, letöltöttek
 	IT	Libreria, Video, Filmati, Spettacoli TV, Musica, Acquisti, Filmati noleggiati, Scaricati
 	NL	Bibliotheek, Video's, Films, Tv-programma's, Muziek, Aangeschaft, Gehuurde films, Gedownload
 	NO	Bibliotek, Videoer, Filmer, TV-programmer, Musikk, Kjøpt, Leide filmer, Lastet ned
@@ -427,6 +451,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS
 	ES	Listas de reproducción omitidas
 	FI	Ohitetut soittoluettelot
 	FR	Listes de lecture ignorées
+	HU	Figyelmen kívül hagyott lejátszási listák
 	IT	Playlist ignorate
 	NL	Genegeerde afspeellijsten
 	NO	Ignorerte spillelister
@@ -442,6 +467,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	ES	Defina una lista separada por comas de listas de reproducción de iTunes que no desea que se importen (por ejemplo "Vídeos, Comprados").
 	FI	Määritä pilkuilla erotettu luettelo iTunesin soittoluetteloista, joita et halua tuoda (esim. videot, ostetut).
 	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par exemple : "Vidéos, achetées").
+	HU	Adjon meg egy vesszővel elválasztott listát azokról az iTunes lejátszási listákról, amelyeket nem szeretne importálni (pl. „Videók, megvásárolt”).
 	IT	Definire un elenco di playlist iTunes separate da virgole che non si desidera importare (esempio: Video, Brani acquistati).
 	NL	Maak een kommagescheiden lijst van iTunes afspeellijsten die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
 	NO	Lag en liste, adskilt med kommaer, over iTunes-spillelister du ikke vil importere (f.eks. "videoer, kjøp").
@@ -457,6 +483,7 @@ SETUP_ITUNES_ARTWORK
 	ES	Ilustración de iTunes
 	FI	iTunesin kansikuvat
 	FR	Pochettes iTunes
+	HU	iTunes bórítók
 	IT	Illustrazioni iTunes
 	NL	iTunes albumhoezen
 	NO	Albumomslag i iTunes
@@ -472,6 +499,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	ES	Activar esta opción para extraer las ilustraciones almacenadas en iTunes. Tenga en cuenta que esta operación puede llevar un tiempo si la interfaz con iTunes es lenta.
 	FI	Ottamalla tämän asetuksen käyttöön voit purkaa iTunesiin tallennetut levyjen kansikuvat. Huomaa, että tämä saattaa viedä paljon aikaa, sillä iTunesin käyttöliittymä on hidas.
 	FR	Cette option permet d'extraire les pochettes stockées dans iTunes. Remarque : en raison de la lenteur de l'interface avec iTunes, cette opération risque de prendre un certain temps.
+	HU	Engedélyezze ezt az opciót az iTunesban tárolt borítók kibontásához. Vegye figyelembe, hogy ez a művelet sokáig tarthat, mivel az iTunes felület lassú.
 	IT	Attivare questa opzione per estrarre le illustrazioni memorizzate in iTunes. Tenere presente che questa operazione può richiedere parecchio tempo poiché la comunicazione con iTunes è lenta.
 	NL	Schakel deze optie in om albumhoezen die in iTunes zijn opgeslagen, te extraheren. Deze bewerking kan lang duren omdat de interface met iTunes traag is.
 	NO	Aktiver dette alternativet hvis du vil hente ut albumomslag som er lagret i iTunes. Merk: dette kan ta en stund, da grensesnittet for iTunes er tregt.
@@ -487,6 +515,7 @@ SETUP_ITUNES_EXTRACT_ARTWORK
 	ES	Extraer ilustración de iTunes (experimental)
 	FI	Pura iTunesin kansikuvat (kokeellinen)
 	FR	Extraire les pochettes iTunes (expérimental)
+	HU	iTunes borítók kibontása (kísérleti)
 	IT	Estrai illustrazioni di iTunes (sperimentale)
 	NL	iTunes albumhoezen extraheren (experimenteel)
 	NO	Hent albumomslag fra iTunes (eksperimentell)

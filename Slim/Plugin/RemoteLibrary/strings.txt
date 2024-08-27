@@ -3,6 +3,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	DE	Entfernte Musiksammlungen
 	EN	Remote Music Libraries
 	FR	Bibliothèques musicales distantes
+	HU	Távoli zenei könyvtárak
 	IT	Libreria Musicale Remota
 	NL	Externe Muziekcollecties
 	NO	Eksterne musikksamlinger
@@ -13,6 +14,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
 	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung von anderen Lyrion Music Server oder UPnP/DLNA Servern, ohne den Player umschalten zu müssen.
 	EN	Allow music playback from other Lyrion Music Server or UPnP/DLNA servers without switching the player.
 	FR	Autorisez la lecture de musique à partir d'autres serveurs Lyrion Music Server ou UPnP/DLNA sans changer de platine.
+	HU	Lehetővé teszi a zenelejátszást más Lyrion Music Server vagy UPnP/DLNA szerverekről a lejátszó váltása nélkül.
 	NL	Deze plug-in maakt het mogelijk muziek af te spelen van een andere Lyrion Music Server of UPnP/DLNA-server, zonder van muziekspeler te wisselen.
 	NO	Denne modulen gjør det mulig å spille av musikk fra andre Lyrion Music Servere eller UPnP/DLNA-servere, uten å måtte koble om spilleren.
 	PL	Odtwarzanie muzyki z innych instancji Lyrion Music Server lub ze źródeł UPnP/DLNA, bez konieczności przełączania odtwarzacza.
@@ -26,6 +28,7 @@ PLUGIN_REMOTE_LIBRARY_USERNAME
 	FI	Käyttäjätunnus
 	FR	Nom d'utilisateur
 	HE	שם משתמש
+	HU	Felhasználónév
 	IT	Nome utente
 	JA	ユーザー名
 	NL	Gebruikersnaam
@@ -44,6 +47,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD
 	ES	Contraseña
 	FI	Salasana
 	FR	Mot de passe
+	HU	Jelszó
 	IT	Password
 	NL	Wachtwoord
 	NO	Passord
@@ -56,6 +60,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
 	DE	Dieser Lyrion Music Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein.
 	EN	This Lyrion Music Server is password protected. Please enter username and password for this server.
 	FR	Ce Lyrion Music Server est protégé par mot de passe. Veuillez saisir le nom d'utilisateur et le mot de passe pour ce serveur.
+	HU	Ez a Lyrion Music Server jelszóval védett. Kérjük, adja meg a szerver felhasználónevét és jelszavát.
 	NL	Deze Lyrion Music Server is beveiligd met een wachtwoord. Voer je gebruikersnaam en wachtwoord voor deze server in.
 	NO	Denne Lyrion Music Serveren er passordbeskyttet. Oppgi brukernavn og passord for serveren.
 	PL	Ta instancja Lyrion Music Server jest chroniona hasłem. Proszę podać nazwę użytkownika i hasło dla tego serwera.
@@ -65,6 +70,7 @@ PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
 	DE	Bitte geben Sie das Passwort für den anderen Lyrion Music Server ein.
 	EN	Please enter the password for the other Lyrion Music Server.
 	FR	Veuillez saisir le mot de passe de l'autre Lyrion Music Server.
+	HU	Kérjük, adja meg a másik Lyrion zeneszerver jelszavát.
 	NL	Voer je wachtwoord in van de andere Lyrion Music Server.
 	NO	Vær så snill å skrive inn passordet for den andre Lyrion Music Serveren.
 	PL	Proszę podać hasło do zdalnej instancji Lyrion Music Server.
@@ -77,6 +83,7 @@ PLUGIN_REMOTE_LIBRARY_INVALID_USERNAME_PASSWORD
 	ES	Contraseña o nombre de usuario no válido.
 	FI	Virheellinen käyttäjätunnus tai salasana.
 	FR	Nom d'utilisateur ou mot de passe non valide.
+	HU	Érvénytelen felhasználónév vagy jelszó.
 	IT	Nome utente o password non validi.
 	NL	Gebruikersnaam of wachtwoord ongeldig.
 	NO	Ugyldig brukernavn eller passord.
@@ -92,6 +99,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
 	ES	Inicio de sesión realizado correctamente
 	FI	Kirjautuminen onnistui
 	FR	Connexion effectuée
+	HU	Sikeres bejelentkezés
 	IT	Accesso riuscito
 	NL	Aanmelding geslaagd
 	NO	Du er logget på
@@ -107,6 +115,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
 	ES	Imposible verificar su cuenta, vuelva a intentarlo.
 	FI	Tiliä ei voi vahvistaa, yritä myöhemmin uudelleen.
 	FR	Vérification de votre compte impossible. Réessayez.
+	HU	Nem sikerült ellenőrizni fiókját, próbálja újra.
 	IT	Impossibile verificare l'account. Riprovare.
 	NL	Je account kan niet worden geverifieerd; probeer het opnieuw.
 	NO	Kunne ikke godkjenne kontoen din. Prøv igjen senere.
@@ -119,6 +128,7 @@ PLUGIN_REMOTE_LIBRARY_NOT_FOUND
 	DE	Es wurde kein anderer Medienserver im Netzwerk gefunden. Bitte stellen Sie sicher, dass einer ausgeführt wird und erreichbar ist. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	No other media server was found in your network. Please make sure it's up and running and reachable. Then try again in a minute or two.
 	FR	Aucun autre serveur multimédia n'a été trouvé sur votre réseau. Assurez-vous que le serveur est opérationnel et accessible. Puis réessayez dans une minute ou deux.
+	HU	Nem található más médiaszerver a hálózatán. Kérjük, győződjön meg arról, hogy működik, és elérhető. Ezután próbálja újra egy-két perc múlva.
 	NL	Er is geen andere mediaserver op je netwerk gevonden. Zorg ervoor dat deze beschikbaar en bereikbaar is. Probeer na een paar minuten weer.
 	NO	Fant ingen annen mediaserver i nettverket ditt. Vær så snill å sørge for at serveren er oppe og tilgjengelig, og prøv igjen om et minutt eller to.
 	PL	Nie znaleziono innego serwera mediów w twojej sieci. Upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
@@ -128,6 +138,7 @@ PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	DE	Falls der gewünschte Server fehlt, überprüfen Sie, ob er ausgeführt wird. Und probieren Sie es in ein, zwei Minuten noch einmal.
 	EN	In case the desired instance was missing, make sure the software is up and running, and try again in a minute or two.
 	FR	Au cas où le serveur souhaité serait manquant, assurez-vous que le logiciel est opérationnel et réessayez dans une minute ou deux.
+	HU	Abban az esetben, ha a kívánt példány hiányzik, ellenőrizze, hogy a szoftver működik-e, és egy-két perc múlva próbálkozzon újra.
 	NL	Als de gewenste locatie niet wordt gevonden, zorg ervoor dat de software beschikbaar en bereikbaar is, en probeer na een paar minuten weer.
 	NO	Dersom den ønskede serveren manglet, vær så snill å sørge for at serverprogrammet er oppe og går, og forsøk igjen om et par minutter.
 	PL	Jeśli pożądany serwer nie został znaleziony, upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
@@ -141,6 +152,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
 	FI	UPnP/DLNA-pyyntö epäonnistui, tarkista UPnP/DLNA-palvelin.
 	FR	Echec de la requête UPnP/DLNA. Veuillez vérifier le serveur UPnP/DLNA.
 	HE	כשל בבקשת UPnP/DLNA, בדוק את שרת ה-UPnP/DLNA.
+	HU	Az UPnP/DLNA kérés sikertelen, kérjük ellenőrizze az UPnP/DLNA szervert.
 	IT	Richiesta UPnP/DLNA non riuscita. Verificare il server UPnP/DLNA.
 	NL	UPnP/DLNA-verzoek mislukt. Controleer de UPnP/DLNA-server.
 	NO	UPnP/DLNA-forespørsel mislyktes. Kontroller UPnP/DLNA-serveren.
@@ -155,6 +167,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_DESC
 	DE	Soll der Server nach weiteren Lyrion Music Servern in Ihrem Netzwerk suchen?
 	EN	Should this server look for other Lyrion Music Servers on your network?
 	FR	Ce serveur doit-il rechercher d'autres Lyrion Music Servers sur le réseau ?
+	HU	Ennek a szervernek más Lyrion zeneszervereket kell keresnie a hálózatán?
 	NL	Moet deze server zoeken naar andere Lyrion Music Servers in je netwerk?
 	NO	Skal denne serveren se etter andre Lyrion Music Servere på nettverket ditt?
 	PL	Czy ten serwer powinien wykrywać inne instancje Lyrion Music Server w twojej sieci?
@@ -164,6 +177,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
 	DE	Ja, nach weiteren Lyrion Music Servern suchen.
 	EN	Enabled, look for other Lyrion Music Servers.
 	FR	Activé, rechercher d'autres Lyrion Music Servers.
+	HU	Engedélyezve, keressen más Lyrion zeneszervereket.
 	NL	Ingeschakeld, zoek naar andere Lyrion Music Servers.
 	NO	Ja, se etter andre Lyrion Music Servere.
 	PL	Włączone, wyszukuj inne instancje Lyrion Music Server.
@@ -173,6 +187,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 	DE	Nein, nicht nach Lyrion Music Servern suchen.
 	EN	Disabled, do not look for other Lyrion Music Servers.
 	FR	Désactivé, ne pas rechercher d'autres Lyrion Music Servers.
+	HU	Letiltva, ne keressen más Lyrion zeneszervereket.
 	NL	Uitgeschakeld, niet naar andere Lyrion Music Servers zoeken.
 	NO	Nei, ikke se etter andre Lyrion Music Servere.
 	PL	Wyłączone, nie wyszukuj innych instancji Lyrion Music Server.
@@ -182,12 +197,14 @@ PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
 	DE	Dateikonvertierung
 	EN	File type conversion
 	FR	Conversion de fichiers
+	HU	Fájltípus konvertálás
 
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
 	CS	Vzdálený Lyrion Music Server můžete nechat převést do formátu, který lze přehrávat bez dalšího zpracování.
 	DE	Sie können den entfernten Lyrion Music Server beauftragen, die Dateien in ein verständliches Format umzuwandeln.
 	EN	You can have the remote Lyrion Music Server convert to a format which can be played without further processing.
 	FR	Vous pouvez demander au Lyrion Music Server distant de convertir les fichiers dans un format compréhensible.
+	HU	A távoli Lyrion Music Servert olyan formátumra konvertálhatja, amely további feldolgozás nélkül lejátszható.
 
 PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
 	CS	Klient UPnP/DLNA
@@ -198,6 +215,7 @@ PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
 	FI	UPnP/DLNA-asiakas
 	FR	Client UPnP/DLNA
 	HE	לקוח UPnP/DLNA
+	HU	UPnP/DLNA kliens
 	IT	Client UPnP/DLNA
 	NL	UPnP/DLNA-client
 	NO	UPnP/DLNA-klient
@@ -214,6 +232,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DESC
 	FI	Haluatko, että Lyrion Music Server etsii muita UPnP/DLNA-mediapalvelimia verkosta?
 	FR	Le Lyrion Music Server doit-il rechercher d'autres serveurs UPnP/DLNA sur le réseau ?
 	HE	האם ברצונך ש-Lyrion Music Server יחפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA ברשת שלך?
+	HU	A Lyrion Music Server keressen más UPnP/DLNA médiaszervereket a hálózatán?
 	IT	Cercare altri server multimediali UPnP/DLNA nella rete?
 	NL	Moet Lyrion Music Server naar andere UPnP/DLNA-mediaservers op je netwerk zoeken?
 	NO	Vil du at Lyrion Music Server skal se etter andre UPnP/DLNA-medieservere i nettverket?
@@ -230,6 +249,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
 	FI	Käytössä, etsi muita UPnP/DLNA-mediapalvelimia.
 	FR	Activé, rechercher d'autres serveurs UPnP/DLNA.
 	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA.
+	HU	Engedélyezve, keressen más UPnP/DLNA médiaszervereket.
 	IT	Attivato. Cerca altri server multimediali UPnP/DLNA.
 	NL	Ingeschakeld, naar andere UPnP/DLNA-mediaservers zoeken.
 	NO	På, se etter andre UPnP/DLNA-medietjenere.
@@ -246,6 +266,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
 	FI	Ei käytössä, älä etsi muita UPnP/DLNA-mediapalvelimia.
 	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP/DLNA.
 	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP/DLNA.
+	HU	Letiltva, ne keressen más UPnP/DLNA médiaszervereket.
 	IT	Disattivato. Non cercare altri server multimediali UPnP/DLNA.
 	NL	Uitgeschakeld, niet naar andere UPnP/DLNA-mediaservers zoeken.
 	NO	Av. Lyrion Music Server vil ikke se etter andre UPnP/DLNA-medieservere.
@@ -258,6 +279,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
 	DE	Entfernte Lyrion Music Server
 	EN	Remote Lyrion Music Servers
 	FR	Lyrion Music Servers distants
+	HU	Távoli Lyrion zeneszerverek
 	NL	Externe Lyrion Music Servers
 	NO	Eksterne Lyrion Music Servere
 	PL	Zdalne instancje Lyrion Music Server
@@ -267,6 +289,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
 	DE	Unter Umständen können entfernte Lyrion Music Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies gegebenenfalls auf dem entfernten Server.
 	EN	Under certain circumstances remote Lyrion Music Servers can't be discovered automatically (eg. when using a VPN connection). You can manually enter server addresses to cover for these cases. You can use IP addresses or fully qualified domain names. The port usually is 9000, but can be different. Please check on your remote server.
 	FR	Parfois, les Lyrion Music Servers distants ne peuvent pas être détectés automatiquement (par exemple, lors de l'utilisation d'une connexion VPN). Dans ce cas, vous pouvez saisir manuellement les adresses des serveurs. Vous pouvez utiliser des adresses IP ou des noms de domaine complets. Le port est généralement 9000, mais peut être différent. Vérifiez sur vos serveurs distants.
+	HU	Bizonyos körülmények között a távoli Lyrion zeneszerverek nem fedezhetők fel automatikusan (pl. VPN-kapcsolat használatakor). Manuálisan megadhatja a szervercímeket az ilyen esetek fedezésére. Használhat IP-címeket vagy teljesen minősített domain neveket. A port általában 9000, de ettől eltérő is lehet. Kérjük, ellenőrizze a távoli szerverét.
 	NL	Onder bepaalde omstandigheden kunnen Lyrion Music Servers niet automatisch worden gevonden (bv. bij gebruik van een VPN-verbinding). In dit geval kun je het serveradres handmatig invoeren. Je kunt hiervoor het IP-adres of complete domeinnaam gebruiken. De standaard poort is 9000, maar kan afwijken. Kijk dit na op je externe server.
 	NO	Under noen omstendigheter kan ikke eksterne Lyrion Music Servere oppdages automatisk (f.eks. når du bruker VPN-tilkobling). Du kan i så fall skrive inn serveradressen manuelt, enten med IP-adresse eller fullt domenenavn. Standardport er 9000, men kan være noe annet - sjekk den eksterne serveren.
 	PL	W pewnych przypadkach zdalne instancje Lyrion Music Server mogą nie zostać wykryte automatycznie (np. wtedy, gdy używane jest połącznie VPN). Możesz ręcznie podać adresy IP serwerów, możesz również użyć nazw domen. Port to zwykle 9000, ale może być inny. Proszę sprawdzić konfigurację zdalnego serwera.
@@ -276,6 +299,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
 	DE	http://deinserver:<Port> oder http://<IP-Adresse>:9000
 	EN	http://yourserver:<Port> or http://<IP address>:9000
 	FR	http://votreserveur:<port> ou http://<adresse IP>:9000
+	HU	http://szerver:<Port> vagy http://<IP-cím>:9000
 	NL	http://jouwserver:<Poort> of http://<IP-adres>:9000
 	NO	http://dinserver:<Port> eller http://<IP-adresse>:9000
 	PL	http://twojserwer:<Port> lub http://<adres IP>:9000
@@ -285,6 +309,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	DE	UPnP/DLNA Menüs ignorieren
 	EN	UPnP/DLNA Ignore Menus
 	FR	Ignorer les dossiers UPnP/DLNA
+	HU	UPnP/DLNA Menük figyelmen kívül hagyása
 	NL	UPnP/DLNA Menu's negeren
 	NO	Ignorer UPnP-/DLNA-menyer
 	PL	Ignorowanie menu UPnP/DLNA
@@ -294,6 +319,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
 	DE	Geben Sie eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lassen Sie das Feld leer, um keine Ordner zu überspringen.
 	EN	Define a comma separated list of menu names, which should be ignored when browsing UPnP/DLNA sources. This can include eg. menus providing pictures, videos, or other media not applicable on the Squeezebox. Leave that field empty if you don't want to skip any folder.
 	FR	Définissez une liste de noms de dossiers, séparés par des virgules, à ignorer lors de la navigation dans les sources UPnP/DLNA : par exemple, les dossiers fournissant des images, des vidéos ou d'autres médias non lisibles par la platine. Laissez ce champ vide si vous souhaitez n'ignorer aucun dossier.
+	HU	Adja meg a menünevek vesszővel elválasztott listáját, amelyet figyelmen kívül kell hagyni az UPnP/DLNA források böngészésekor. Ez magában foglalhatja pl. képeket, videókat vagy egyéb médiát tartalmazó menük, amelyek nem alkalmazhatók a Squeezeboxon. Hagyja üresen ezt a mezőt, ha nem szeretne kihagyni egyetlen mappát sem.
 	NL	Maak een met komma's gescheiden lijst van menu-items, die tijdens het browsen van UPnP/DLNA moeten worden genegeerd. Dit kunnen menu's zijn die verwijzen naar foto's, video's, of andere media die niet van toepassing zijn op de Squeezebox. Laat het veld leeg als je geen enkele map wilt overslaan.
 	NO	Lag en kommaseparert liste av menynavn, som skal ignoreres når man blar i UPnP-/DLNA-kilder. Denne kan for eksempel inneholde menyer som inneholder bilder, videoer eller andre mediefiler som ikke kan brukes med Squeezeboxen. La feltet være tomt dersom du ikke vil hoppe over noen mapper.
 	PL	Podaj listę (rozdzieloną przecinkami) nazw elementów menu, które mają być zignorowane podczas przeglądania źródeł UPnP/DLNA. Ta lista może zawierać np. elementy menu kierujące do zdjęć, filmów lub innych mediów nieobsługiwanych przez Squeezebox. Pozostaw pole puste, jeśli chcesz, aby wszystkie pozycje menu były dostępne.
@@ -303,6 +329,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
 	DE	Filme, Videos, Fotos, Bilder, Movies, Video, Pictures, Images
 	EN	Movies, Video, Pictures, Images
 	FR	Movies, Video, Pictures, Images, Films, Vidéos, Photos
+	HU	Filmek, Videók, Képek
 	NL	Films, Video's, Foto's, Afbeeldingen
 	NO	Filmer, videoklipp, bilder, image-filer
 	PL	Movies, Video, Pictures, Images, Filmy, Obrazy, Zdjęcia, Wideo

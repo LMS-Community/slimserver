@@ -2,6 +2,7 @@ PLUGIN_LIBRARY_DEMO
 	CS	Ukázka dílčí knihovny
 	EN	Sub-Library demo
 	FR	Démo de sous-bibliothèque
+	HU	Alkönyvtár demo
 	NL	Sub-collectie demo
 	NO	Underbibliotek-demo
 
@@ -9,6 +10,7 @@ PLUGIN_LIBRARY_DEMO_DESC
 	CS	Zásuvný modul pro demonstraci podpory více (nebo virtuálních) knihoven. Tento zásuvný modul vytvoří několik (částečně zbytečných) virtuálních knihoven. Je určen především jako inspirace pro vývojáře zásuvných modulů.
 	EN	Plugin to demonstrate support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries. It's mostly intended as an inspiration for plugin developers.
 	FR	Plugin pour démontrer la prise en charge de plusieurs bibliothèques (virtuelles). Ce plugin créera des bibliothèques virtuelles en partie inutiles. Il est plutôt une source d'inspiration pour les développeurs de plugins.
+	HU	Beépülő modul több (vagy virtuális) könyvtár támogatásának demonstrálására. Ez a beépülő modul létrehoz néhány (részben haszontalan) virtuális könyvtárat. Leginkább a bővítmények fejlesztői számára készült inspirációnak.
 	NL	Plug-in om de ondersteuning van meerdere (of virtuele) collecties te demonstreren. Deze plug-in maakt (deels nutteloze) virtuele collecties aan. Het is meer bedoelt als een inspiratiebron voor plug-inontwikkelaars.
 	NO	Plugin for å demonstrere støtte for multiple (eller virtuelle) samlinger. Denne modulen lager noen (delvis ubrukelige) virtuelle samlinger, og er mest tenkt som en inspirasjon for plugin-utviklere.
 
@@ -16,6 +18,7 @@ PLUGIN_LIBRARY_DEMO_ARTISTS
 	CS	Interpreti milující dlouhé skladby
 	EN	Artists loving long tracks
 	FR	Artistes aimant les longs morceaux
+	HU	Előadók, akik szeretik a hosszú számokat
 	NL	Artiesten met lange nummers
 	NO	Artister som er glad i lange spor
 
@@ -23,5 +26,6 @@ PLUGIN_LIBRARY_DEMO_ALBUMS
 	CS	Alba s přídavky a dalšími dlouhými skladbami
 	EN	Albums with outros and other longish tracks
 	FR	Albums avec outros et autres morceaux longs
+	HU	Albumok outrókkal és más hosszú dalokkal
 	NL	Albums met outro's en andere lange nummers
 	NO	Albumer med outroer og andre lange spor
