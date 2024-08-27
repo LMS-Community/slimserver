@@ -8,6 +8,7 @@ PLUGIN_SONGSCANNER
 	ES	Examen de canciones
 	FI	Kappaleen haku
 	FR	Analyseur de morceau
+	HU	Dalelemző
 	IT	Analisi brani
 	NL	Nummer Scanner
 	NO	Sangsøk
@@ -23,6 +24,7 @@ PLUGIN_SONGSCANNER_DESC
 	ES	Interfaz del reproductor para saltar a posiciones aleatorias dentro de la canción que se está reproduciendo en ese momento (Squeezebox Classic, Squeezebox Boom, Transporter)
 	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä (Squeezebox Classic, Squeezebox Boom, Transporter)
 	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture (Squeezebox Classic, Squeezebox Boom, Transporter)
+	HU	A lejátszó felülete tetszőleges pozícióba ugráshoz az éppen lejátszott dalon belül (csak a Squeezebox Classic, Squeezebox Boom, Transporter)
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NL	Muziekspeler interface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
@@ -38,6 +40,7 @@ PLUGIN_SONGSCANNER_SET
 	ES	Tiempo:
 	FI	Aika:
 	FR	Heure :
+	HU	Idő:
 	IT	Ora:
 	NL	Tijd:
 	NO	Klokkeslett:
@@ -53,6 +56,7 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	ES	No se puede examinar la pista porque se desconoce su duración
 	FI	Raitaa ei voi selata, koska sen kestoa ei tunneta
 	FR	Impossible d'analyser la piste car la durée est inconnue
+	HU	Nem lehet beolvasni a számot, mert az időtartam ismeretlen
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
 	NL	Kan niet door nummer scannen omdat duur onbekend is
 	NO	Kan ikke søke igjennom sporet fordi varigheten er ukjent
@@ -68,6 +72,7 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 	ES	No hay ninguna pista
 	FI	Ei raitaa
 	FR	Aucune piste
+	HU	Nincs szám
 	IT	Nessun brano
 	NL	Geen nummer
 	NO	Ingen spor
@@ -83,6 +88,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	ES	Se ha alcanzado la velocidad máxima de avance rápido
 	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal d'avance rapide a été atteint
+	HU	Elérte a maximális gyors előretekerési sebességet
 	IT	È stata raggiunta la velocità di avanzamento massima
 	NL	Maximale snelheid voor vooruitspoelen bereikt
 	NO	Maks spolingshastighet forover er nådd
@@ -98,6 +104,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_REW
 	ES	Se ha alcanzado la velocidad máxima de rebobinado
 	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal de retour rapide a été atteint
+	HU	Elérte a maximális visszatekerési sebességet
 	IT	È stata raggiunta la velocità di riavvolgimento massima
 	NL	Maximale snelheid voor terugspoelen bereikt
 	NO	Maks spolingshastighet bakover er nådd
