@@ -9,6 +9,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	FI	Visualisointinäytönsäästäjä
 	FR	Ecran de veille Visualisation
 	HE	שומר מסך מייצג ויזואלי
+	HU	Vizualizáló Képernyővédő
 	IT	Screen saver con visualizzatore
 	NL	Visualisatie screensaver
 	NO	Skjermsparer med effektvisning
@@ -25,6 +26,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	FI	Tarvitaan Squeezebox2
 	FR	Squeezebox2 requise
 	HE	יש צורך בנגן Squeezebox2
+	HU	Squeezebox2 szükséges
 	IT	È richiesto Squeezebox2
 	NL	Vereist Squeezebox2
 	NO	Krever Squeezebox2
@@ -41,6 +43,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	FI	Oletusnäytönsäästäjä
 	FR	Ecran de veille par défaut
 	HE	ברירת מחדל
+	HU	Alapértelmezett képernyővédő
 	IT	Screen saver predefinito
 	NL	Standaard screensaver
 	NO	Standard skjermsparer
