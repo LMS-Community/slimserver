@@ -371,11 +371,11 @@ ITUNES_PLAYLISTS_PROGRESS
 	CS	Import seznamu skladeb iTunes
 	DA	Import af iTunes-spilleliste
 	DE	iTunes Wiedergabelisten Import
-	EN	iTunes műsorlista import
+	EN	iTunes Playlist Import
 	ES	Importación de lista de reproducción de iTunes
 	FI	iTunes-soittoluetteloiden tuonti
 	FR	Importation de liste de lecture iTunes
-	HU	iTunes Playlist Import
+	HU	iTunes műsorlista import
 	IT	Importazione delle playlist iTunes
 	NL	iTunes afspeellijst importeren
 	NO	Importere iTunes-spilleliste
