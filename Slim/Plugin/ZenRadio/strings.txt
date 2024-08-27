@@ -5,13 +5,16 @@ PLUGIN_ZENRADIO_DESC
 	CS	Zen Radio – Relaxační a meditační hudba
 	EN	Zen Radio - Relaxation & Meditation Music
 	FR	Zen Radio - Musique de relaxation et de méditation
+	HU	Zen Radio - Relaxációs és meditációs zene
 
 PLUGIN_ZENRADIO_MISSING_CREDS
 	CS	Prosím, navštivte Zen Radio v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	EN	Please visit Zen Radio in the Lyrion Music Server Settings to add your credentials.
 	FR	Veuillez vous rendre dans Zen Radio dans les paramètres de Lyrion Music Server pour ajouter vos informations d'identification.
+	HU	Kérjük, keresse fel a Zen Radiot a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 
 PLUGIN_ZENRADIO_LINK
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	EN	To create or manage your account please visit <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
+	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> oldalra.
