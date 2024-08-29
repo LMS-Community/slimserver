@@ -4648,6 +4648,7 @@ sub worksQuery {
 	my $roleID        = $request->getParam('role_id');
 	my $genreID       = $request->getParam('genre_id');
 	my $year          = $request->getParam('year');
+	my $workID        = $request->getParam('work_id');
 
 	# get them all by default
 	my $where = {};
@@ -4697,6 +4698,11 @@ sub worksQuery {
 		}
 	}
 
+	if ( defined $workID ) {
+		push @{$w}, "works.id = ?";
+		push @{$p}, $workID;
+	}
+
 	if ( defined $year ) {
 		push @{$w}, "tracks.year = ?";
 		push @{$p}, $year;
@@ -4734,24 +4740,35 @@ sub worksQuery {
 		$sql .= ' ';
 	}
 
-	$sql .= " GROUP BY $groupBy ";
-
 	my $dbh = Slim::Schema->dbh;
 
 	# Get count of unique composers, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . 'composerCount' . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $ccSql = sprintf($sql, "COUNT(DISTINCT composer.id)");
+	my $cacheKey = md5_hex($ccSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $composerCount = $cache->{$cacheKey};
 	if ( !$composerCount ) {
-		my $ccSql = sprintf($sql, "composer.id AS cid");
-		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(DISTINCT cid)  FROM ( $ccSql ) AS t1
-		} );
+		my $total_sth = $dbh->prepare_cached($ccSql);
 
 		$total_sth->execute( @{$p} );
 		($composerCount) = $total_sth->fetchrow_array();
 		$total_sth->finish;
 	}
+
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cSql = sprintf($sql, "COUNT(DISTINCT works.id||composer.id)");
+	my $cacheKey = md5_hex($cSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached($cSql);
+
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
+
+	$sql .= " GROUP BY $groupBy ";
 
 	my $order_by = "ORDER BY composer.namesort, works.titlesort";
 
@@ -4767,20 +4784,6 @@ sub worksQuery {
 	}
 
 	$sql = sprintf($sql, $columns);
-
-	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
-
-	my $count = $cache->{$cacheKey};
-	if ( !$count ) {
-		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(1) FROM ( $sql ) AS t1
-		} );
-
-		$total_sth->execute( @{$p} );
-		($count) = $total_sth->fetchrow_array();
-		$total_sth->finish;
-	}
 
 	$sql .= $order_by;
 
