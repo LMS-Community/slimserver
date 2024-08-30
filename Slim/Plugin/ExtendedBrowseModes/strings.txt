@@ -55,12 +55,14 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	DE	Klassische Musik nach Dirigent
 	EN	Classical Music by Conductor
 	HU	Klasszikus zene adott karmestertől
+	NL	Klassieke muziek van Dirigent
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	CS	Jazzoví skladatelé
 	DE	Jazz Komponisten
 	EN	Jazz Composers
 	HU	Jazz zeneszerzők
+	NL	Jazz Componisten
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	CS	Role přispěvatelů:
@@ -76,9 +78,10 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	CS	Typ vydání:
 	DE	Veröffentlichungstyp:
-	EN	Release Type:
+	EN	Release type:
 	FR	Type de sortie :
 	HU	Kiadás típusa:
+	NL	Release type:
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	CS	Typy vydání:
@@ -86,6 +89,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	EN	Release Types:
 	FR	Types de sorties :
 	HU	Kiadás típusai:
+	NL	Release typen:
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	CS	Procházet podle:
@@ -155,7 +159,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	EN	All Library (Default)
 	FR	Toutes les bibliothèques (par défaut)
 	HU	Összes könyvtár (alapértelmezett)
-	NL	Hele mediabibliotheek (Standaard)
+	NL	Hele mediabibliotheek (standaard)
 	NO	Hele musikksamlingen (Standard)
 	PL	Cała biblioteka (domyślnie)
 	SV	Hela musiksamlingen (standard)
@@ -203,6 +207,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	DE	Zuletzte aktualisierte Alben
 	EN	Recently Updated Albums
 	HU	Nemrég frissített albumok
+	NL	Recent Gewijzigde Albums
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	CS	Nejlepší skladby
@@ -323,7 +328,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC
 	FR	Indiquez à LMS toute étiquette de rôle de contributeur personnalisée utilisée dans la bibliothèque musicale. Par exemple, SOLOIST, DRUMMER, PRODUCER, etc. Ceux-ci peuvent ensuite être utilisés comme rôles de contributeur dans les modes de navigation supplémentaires ci-dessus. Ils apparaîtront également en tant que catégories lorsque vous parcourez des albums ou des artistes en activant le regroupement par type de publication. Les modifications apportées à ces catégories déclencheront une nouvelle analyse de la bibliothèque musicale.
 	ES	Informe a LMS sobre cualquier etiqueta de rol de colaborador personalizada utilizada en la biblioteca musical. Por ejemplo, SOLISTA, BATERISTA, PRODUCTOR, etc. Estas etiquetas se pueden utilizar como roles de colaborador en los modos de exploración adicionales anteriores. También aparecerán como categorías al explorar álbumes o artistas con la agrupación Tipo de publicación activada. Los cambios que se realicen aquí provocarán una nueva exploración de la biblioteca musical.
 	HU	Mondja el az LMS-nek a zenei könyvtárban használt egyéni közreműködői szerepcímkéket. Például SZÓLISTA, DOBOS, PRODUCER stb. Ezek ezután közreműködői szerepként használhatók a fenti További böngészési módokban. Kategóriaként is megjelennek, ha olyan albumokat vagy előadókat böngész, amelyeknél a Kiadástípusok csoportosítása engedélyezett. Az itt végzett változtatások elindítják a zenei könyvtár újraellenőrzését.
-	NL	Vertel LMS over alle aangepaste rollabels voor medewerkers die worden gebruikt in de muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Deze kunnen dan worden gebruikt als rollen voor medewerkers in de extra bladermodi hierboven. Ze verschijnen ook als categorieën wanneer u door albums of artiesten bladert met de Release Type groepering ingeschakeld. Als u hier wijzigingen aanbrengt, wordt de muziekbibliotheek opnieuw gescand.
+	NL	Vertel LMS over alle uitvoerende rollen die je hebt getagged in jouw muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Deze kunnen dan worden gebruikt als uitvoerende rollen in de additionele blader modi hierboven. Ze verschijnen ook als categorieën wanneer je door albums of artiesten bladert met de Release Type groepering ingeschakeld. Als je hier wijzigingen aanbrengt, wordt de muziekbibliotheek opnieuw gescand.
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE
 	EN	Role tag
