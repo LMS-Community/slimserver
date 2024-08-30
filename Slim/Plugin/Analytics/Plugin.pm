@@ -72,6 +72,7 @@ sub _report {
 	my $data = {
 		version  => $::VERSION,
 		revision => $::REVISION,
+		language => $serverPrefs->get('language') || 'EN',
 		os       => lc($osDetails->{'os'}),
 		osname   => $osDetails->{'osName'},
 		platform => $osDetails->{'osArch'},
