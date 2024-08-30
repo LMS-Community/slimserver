@@ -15,6 +15,9 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use POSIX qw(LC_CTYPE LC_TIME);
 
+# the new menubar item comes as an application in something like "Lyrion Music Server.app/Contents/Resources/server"
+use constant IS_MENU_ITEM => $Bin =~ m|app/Contents/Resources/server| ? 1 : 0;
+
 my $canFollowAlias;
 
 sub name {
@@ -372,6 +375,10 @@ sub initUpdate {
 	return if $updateCheckInitialized;
 
 	my $log = Slim::Utils::Log::logger('server.update');
+	$log->error(IS_MENU_ITEM ? 'menu item' : 'nope');
+
+	return if IS_MENU_ITEM;
+
 	my $err = "Failed to install LaunchAgent for the update checker";
 
 	my $launcherPlist = catfile($ENV{HOME}, 'Library', 'LaunchAgents', $plistLabel . '.plist');
@@ -443,8 +450,8 @@ sub getUpdateParams {
 
 sub canAutoUpdate { 1 }
 
-sub installerExtension { 'pkg' };
-sub installerOS { 'osx' }
+sub installerExtension { IS_MENU_ITEM ? 'zip' : 'pkg' };
+sub installerOS { IS_MENU_ITEM ? 'macos' : 'osx' }
 
 sub canRestartServer { 1 }
 
