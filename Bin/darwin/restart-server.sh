@@ -1,8 +1,15 @@
-#! /bin/sh
-SCRIPTS="../platforms/osx/Preference Pane"
+#!/bin/sh
+# the menu bar item is expecting the scripts in the parent folder
+SCRIPTS=".."
 
+# the pref pane is expecting it next door
 if [ ! -e "$SCRIPTS/stop-server.sh" ]; then
 	SCRIPTS="../Resources"
+fi
+
+# fallback for easy testing
+if [ ! -e "$SCRIPTS/stop-server.sh" ]; then
+    SCRIPTS="../platforms/osx/Preference Pane"
 fi
 
 "$SCRIPTS/stop-server.sh"
