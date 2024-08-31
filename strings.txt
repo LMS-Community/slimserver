@@ -16500,7 +16500,7 @@ CHECKVERSION_ERROR
 	CS	Při kontrole aktualizací pro Lyrion Music Server vznikla chyba:
 	DA	Der opstod en fejl under søgningen efter opdateringer til Lyrion Music Server:
 	DE	Beim Suchen nach einem Lyrion Music Server-Update ist ein Fehler aufgetreten:
-	EN	Hiba történt a Lyrion Music Server frissítéseinek keresése közben:
+	EN	There was an error while checking for updates to Lyrion Music Server:
 	ES	Error al buscar actualizaciones para Lyrion Music Server:
 	FI	Lyrion Music Server -päivitysten tarkistamisessa tapahtui virhe:
 	FR	Une erreur s'est produite pendant la recherche de mises à jour du Lyrion Music Server :
@@ -18018,7 +18018,7 @@ DONE_EDITING
 	CS	Úpravy provedeny
 	DA	Redigering udført
 	DE	Bearbeitung abgeschlossen
-	EN	Szerkesztés kész
+	EN	Done Editing
 	ES	Edición finalizada
 	FI	Muokkaus on suoritettu
 	FR	Modification effectuée
@@ -23971,7 +23971,7 @@ SEEK_ERROR_TYPE_NOT_SUPPORTED
 	CS	Nelze hledat v datových proudech typu %s
 	DA	Der kan ikke søges i en stream af typen %s
 	DE	Suchlauf in Streams des Typs %s nicht möglich
-	EN	Nem lehet keresni a %s típusú adatfolyamokban
+	EN	Cannot seek in streams of type %s
 	ES	Imposible desplazarse en secuencias del tipo %s
 	FI	Ei voi hakea virroista, jotka ovat tyyppiä %s
 	FR	Impossible de rechercher dans les flux de type %s
@@ -24640,7 +24640,7 @@ CONTROLPANEL_SHOW_SERVER_LOG
 	CS	Zobrazit protokol serveru
 	DA	Vis serverlogfil
 	DE	Serverprotokoll anzeigen
-	EN	Szervernapló megjelenítése
+	EN	Show server log
 	ES	Mostrar registro de servidor
 	FI	Näytä palvelimen loki
 	FR	Afficher le journal du serveur
@@ -24944,7 +24944,7 @@ CONTROLPANEL_CONFLICT_SCPERL
 	CS	Pokud provozujete Lyrion Music Server s použitím verze Perlu, pak je to v pořádku a očekáváno.
 	DA	Hvis du kører Lyrion Music Server i Perl-versionen, er det OK og forventet.
 	DE	Das Ausführen von Lyrion Music Server mithilfe der Perl-Version wird akzeptiert und erwartet.
-	EN	Ha a Lyrion Music Servert perl verzióval futtatod, akkor ez rendben van és várható.
+	EN	If you're running Lyrion Music Server using the perl version, then this is ok and expected.
 	ES	Si ejecuta Lyrion Music Server con la versión perl, es correcto y está previsto.
 	FI	Jos Lyrion Music Server on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
 	FR	Si vous exécutez Lyrion Music Server à l'aide de la version perl, cet événement est attendu.
@@ -25233,7 +25233,7 @@ CLEANUP_DRYRUN
 	CS	Nespustí přímo čištění, ale zobrazí, které soubory a složky budou odstraněny.
 	DA	Kør ikke oprydningen nu, men vis hvilke filer, der ville blive fjernet ved en oprydning.
 	DE	Bereinigung nicht wirklich ausführen, sondern nur betroffene Ordner und Dateien anzeigen
-	EN	Valójában ne futtassa a tisztítást, hanem mutassa meg, mely fájlok és mappák kerülnek eltávolításra.
+	EN	Don't actually run the cleanup, but show which files and folders would be removed.
 	ES	No ejecutar la limpieza, pero mostrar qué archivos y carpetas se eliminarían.
 	FI	Älä suorita puhdistusta, mutta näytä mitkä tiedostot ja kansiot poistettaisiin.
 	FR	Affiche les fichiers et dossiers devant être supprimés sans effectuer de nettoyage.
@@ -25313,7 +25313,7 @@ RUN_AT_LOGIN
 	CS	Spustit automaticky při přihlášení
 	DA	Kør automatisk ved logon
 	DE	Automatisch bei Anmeldung ausführen
-	EN	Automatikus futás bejelentkezéskor
+	EN	Automatically run at login
 	ES	Ejecutar automáticamente al iniciar sesión
 	FI	Suorita automaattisesti kirjautuessa
 	FR	Démarrer automatiquement lors de la connexion
@@ -25505,7 +25505,7 @@ HOWTO_STAFF_PICKS
 	CS	Přejděte na položku VÝBĚR NAŠEHO PERSONÁLU a stiskněte tlačítko DOPRAVA.
 	DA	Rul til Vi anbefaler, og tryk på højrepilen.
 	DE	Markieren Sie 'Unsere Empfehlungen' und drücken Sie RECHTS.
-	EN	Görgessen a SZOLGÁLTATÁSOK elemhez, és nyomja meg a JOBBRA gombot.
+	EN	Scroll to STAFF PICKS and press RIGHT.
 	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse DERECHA.
 	FI	Selaa suosituksiin ja paina oikeaa näppäintä.
 	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton droit.
@@ -25716,7 +25716,7 @@ DECODE_ERROR_102
 	CS	Neplatná vzorkovací frekvence
 	DA	Ugyldig samplefrekvens
 	DE	Ungültige Samplerate
-	EN	Érvénytelen mintavételi arány
+	EN	Invalid sample rate
 	ES	Frecuencia de muestreo no válida
 	FI	Virheellinen näytteenottotaajuus
 	FR	Taux d'échantillonnage non valide
@@ -25797,7 +25797,7 @@ PLUGINS_UPDATES_AVAILABLE
 	CS	Jsou k dispozici aktualizace zásuvných modulů
 	DA	Der er opdaterede udvidelsesmoduler
 	DE	Plugin-Updates sind verfügbar
-	EN	A beépülő modulok frissítései elérhetők
+	EN	Plugin updates are available
 	ES	Hay actualizaciones de complementos disponibles
 	FI	Laajennuspäivitykset ovat saatavissa
 	FR	Des mises à jour des plugins sont disponibles
@@ -25813,7 +25813,7 @@ PLUGINS_RESTART_MSG
 	CS	Byly aktualizovány zásuvné moduly – je vyžadován restart
 	DA	Udvidelsesmodulerne er blevet opdateret. Genstart serveren
 	DE	Plugins wurden aktualisiert - Neustart erforderlich
-	EN	A beépülő modulok frissítve – újraindítás szükséges
+	EN	Plugins have been updated - Restart Required
 	ES	Se han actualizado los complementos. Es necesario reiniciar.
 	FI	Laajennukset on päivitetty - ohjelma on käynnistettävä uudelleen
 	FR	Les plugins ont été mis à jour. Vous devez redémarrer le serveur.
@@ -25845,7 +25845,7 @@ LIBRARY_NOT_READY
 	CS	Nenakonfigurována žádná hudební knihovna nebo není připravena k použití
 	DA	Der er ikke konfigureret et musikbibliotek, eller det konfigurerede musikbibliotek er ikke klar
 	DE	Es ist keine Musiksammlung konfiguriert oder verwendbar
-	EN	Nincs konfigurálva zenekönyvtár, vagy nem áll készen a használatra
+	EN	No music library configured or not ready to be used
 	ES	No hay ninguna biblioteca de música configurada o no está lista para usar
 	FI	Musiikkikirjastoa ei ole määritetty tai se ei ole käyttövalmis
 	FR	Aucune bibliothèque musicale configurée ou prête à l'utilisation
@@ -25861,7 +25861,7 @@ PRESETS_NOT_DEFINED
 	CS	Předvolba #%s není definována.
 	DA	Fast indstilling #%s er ikke defineret.
 	DE	Voreinstellung %s nicht definiert.
-	EN	Előre beállított #%s nincs megadva.
+	EN	Preset #%s not defined.
 	ES	No se ha definido la memoria #%s.
 	FI	Esiasetusta #%s ei ole määritetty.
 	FR	Présélection n°%s non définie.
@@ -25878,7 +25878,7 @@ PRESET_ADDING
 	CS	Ukládám předvolbu #%s...
 	DA	Gemmer fast indstilling #%s...
 	DE	Voreinstellung %s wird gespeichert...
-	EN	#%s előbeállítás mentése...
+	EN	Saving preset #%s...
 	ES	Guardando memoria #%s...
 	FI	Tallennetaan esiasetusta #%s...
 	FR	Enregistrement de la présélection n°%s...
