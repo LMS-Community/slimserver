@@ -111,6 +111,12 @@ Wizard = {
 
 				audiodir_p: {},
 
+				playlistdir_p: {
+					validator: function(){
+						this._validatePref('server', 'playlistdir');
+					}
+				},
+
 				summary_p: {
 					skip: function(){
 						// just update the summary, ...
@@ -120,6 +126,7 @@ Wizard = {
 								: '') +
 							(Ext.get('audiodir').dom.value
 								? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>'
+								         + ('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>')
 								: '')
 						);
 

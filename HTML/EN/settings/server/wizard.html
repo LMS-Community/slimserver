@@ -215,6 +215,8 @@
 				[% PROCESS jsString id='NONE' jsId='summary_none' %]
 				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
 				SqueezeJS.Strings['summary_audiodir'] += '[% stringCOLON %]';
+				[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
+				SqueezeJS.Strings['summary_playlistdir'] += '[% stringCOLON %]';
 
 				try {
 					Wizard.init({
@@ -322,6 +324,21 @@
 					<div id="audiodirselector" class="folderselector" style="position:relative"></div>
 					<div>
 						<input type="text" name="mediadirs" id="audiodir" value="[% prefs.mediadirs | html %]" class="wz_path">
+					</div>
+				</div>
+			</div>
+
+			<div id="playlistdir_p" class="wz_page">
+				<div id="playlistdir_h" class="pagetitle">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
+
+				<div class="wz_desc">
+					<div class="wz_desc_right">
+						[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
+						[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+					</div>
+					<div id="playlistdirselector" class="folderselector"></div>
+					<div>
+						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir | html %]" class="wz_path">
 					</div>
 				</div>
 			</div>

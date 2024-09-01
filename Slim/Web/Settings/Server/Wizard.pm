@@ -29,7 +29,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $serverPrefs = preferences('server');
 
-my @prefs = ('mediadirs');
+my @prefs = ('mediadirs', 'playlistdir');
 my @pluginsToInstall;
 my $finalizeCb;
 
@@ -105,8 +105,9 @@ sub handler {
 
 			# if a scan is running and one of the music sources has changed, abort scan
 			if (
-				($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
-				&& Slim::Music::Import->stillScanning )
+				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
+					|| ($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
+				) && Slim::Music::Import->stillScanning )
 			{
 				main::DEBUGLOG && $log->debug('Aborting running scan, as user re-configured music source in the wizard');
 				Slim::Music::Import->abortScan();
