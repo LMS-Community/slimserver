@@ -20,21 +20,21 @@ LANGUAGE_CHOICES
 	DA	Dansk
 	DE	Deutsch
 	EN	English
-	EN_GB	English (British) *
+	EN_GB	English (British)
 	ES	Español
 	FI	Suomi
 	FR	Français
-	HE	עברית *
+	HE	עברית
 	HU	Magyar
 	IT	Italiano
-	JA	日本語 *
+	JA	日本語
 	NL	Nederlands
 	NO	Norsk
 	PL	Polski
-	PT	Português *
+	PT	Português
 	RU	Русский
 	SV	Svenska
-	ZH_CN	简体中文 *
+	ZH_CN	简体中文
 
 LOCALE_WIN
 # SLT: please do not translate this value
@@ -6576,20 +6576,20 @@ SETUP_LANGUAGE
 	ZH_CN	语言
 
 SETUP_LANGUAGE_DESC
-	CS	Vyberte jazyk, který chcete používat na Lyrion Music Serveru. Položky označené * byly přeloženy komunitou zákazníků Lyrion Music Serveru. Pokud zjistíte nějaké problémy nebo budete chtít přispět, kontaktujte vývojáře na adrese <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	DA	Vælg det sprog som teksten i Lyrion Music Servers brugerflade skal vises på. De sprog som er markeret med en stjerne (*), er oversat af Lyrion Music Servers brugergrupper. Hvis du opdager fejl eller ønsker at bidrage, kan du kontakte udviklerne på <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	DE	Wählen Sie die Sprache für Lyrion Music Server. Die mit * markierten Sprachen wurden durch die Lyrion Music Server-Community bereitgestellt. Falls Probleme auftreten oder Sie Verbesserungsvorschläge haben, wenden Sie sich an die Entwickler unter <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	EN	Choose the language that you'd like to use with Lyrion Music Server.  Those marked with * were translated by the Lyrion Music Server customer community.  If you find problems or would like to contribute, contact the developers at <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	ES	Elija el idioma que desea utilizar con Lyrion Music Server. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de Lyrion Music Server. Si tiene alguna consulta que realizar o desea aportar su contribución, póngase en contacto con los desarrolladores a <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	FI	Valitse kieli, jota haluat käyttää Lyrion Music Serverissä.  Tähdellä (*) merkityt ovat Lyrion Music Serverin käyttäjäyhteisön kääntämiä.  Jos löydät virheitä tai haluat kantaa oman kortesi kekoon, ota yhteyttä kehittäjiin osoitteessa <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	FR	Sélectionnez la langue à utiliser pour le Lyrion Music Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Lyrion Music Server. Pour signaler un problème ou si vous souhaitez contribuer, contactez les développeurs à l'adresse suivante : <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	HU	Válassza ki a Lyrion Music Serverrel használni kívánt nyelvet.  A *-gal jelölteket a Lyrion Music Server ügyfélközössége fordította.  Ha problémákat talál, vagy szeretne hozzájárulni, lépjen kapcsolatba a fejlesztőkkel a <a href="http://forums.slimdevices.com">forums.slimdevices.com</a> címen.
-	IT	Scegliere la lingua che si desidera utilizzare con Lyrion Music Server. Le versioni nelle lingue contrassegnate con un asterisco (*) sono state tradotte da utenti di Lyrion Music Server. Se si individuano dei problemi o si desidera fornire un contributo, contattare gli sviluppatori alla pagina <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	NL	Kies de taal die je voor Lyrion Music Server wilt gebruiken. De talen met een sterretje (*) zijn door de community van Lyrion Music Server vertaald. Wil je verbeteringen voorstellen of aan vertalingen bijdragen, stuur dan een e-mail naar <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	NO	Velg hvilket språk du vil bruke i Lyrion Music Server. Språk markert med * er oversatt av Lyrion Music Server-brukere. Hvis du oppdager problemer eller ønsker å hjelpe til, kan du sende en e-post til <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	PL	Wybierz język programu Lyrion Music Server. Tłumaczenia na języki oznaczone * zostały wykonane przez społeczność użytkowników programu Lyrion Music Server. W przypadku znalezienia problemów lub jeżeli chcesz rozpocząć współpracę, skontaktuj się z twórcami pod adresem <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	RU	Выберите язык программы Lyrion Music Server. На языки, помеченные звездочкой (*), программа была переведена сообществом пользователей Lyrion Music Server. Если вы найдете ошибки или захотите сотрудничать с нами, напишите по адресу <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	SV	Välj språk för Lyrion Music Server. Språkversioner markerade med en asterisk (*) har översatts av Lyrion Music Server-användare. Om du stöter på problem eller om du vill hjälpa till med översättningen kan du ta kontakt med programutvecklarna på <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	CS	Vyberte jazyk, který chcete používat na Lyrion Music Serveru. Pokud zjistíte nějaké problémy nebo budete chtít přispět, kontaktujte vývojáře na adrese <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	DA	Vælg det sprog som teksten i Lyrion Music Servers brugerflade skal vises på. Hvis du opdager fejl eller ønsker at bidrage, kan du kontakte udviklerne på <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	DE	Wählen Sie die Sprache für Lyrion Music Server. Falls Probleme auftreten oder Sie Verbesserungsvorschläge haben, wenden Sie sich an die Entwickler unter <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	EN	Choose the language that you'd like to use with Lyrion Music Server. If you find problems or would like to contribute, contact the developers at <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	ES	Elija el idioma que desea utilizar con Lyrion Music Server. Si tiene alguna consulta que realizar o desea aportar su contribución, póngase en contacto con los desarrolladores a <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	FI	Valitse kieli, jota haluat käyttää Lyrion Music Serverissä. Jos löydät virheitä tai haluat kantaa oman kortesi kekoon, ota yhteyttä kehittäjiin osoitteessa <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	FR	Sélectionnez la langue à utiliser pour le Lyrion Music Server. Pour signaler un problème ou si vous souhaitez contribuer, contactez les développeurs à l'adresse suivante : <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	HU	Válassza ki a Lyrion Music Serverrel használni kívánt nyelvet. Ha problémákat talál, vagy szeretne hozzájárulni, lépjen kapcsolatba a fejlesztőkkel a <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a> címen.
+	IT	Scegliere la lingua che si desidera utilizzare con Lyrion Music Server. Se si individuano dei problemi o si desidera fornire un contributo, contattare gli sviluppatori alla pagina <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	NL	Kies de taal die je voor Lyrion Music Server wilt gebruiken. Wil je verbeteringen voorstellen of aan vertalingen bijdragen, stuur dan een e-mail naar <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	NO	Velg hvilket språk du vil bruke i Lyrion Music Server. Hvis du oppdager problemer eller ønsker å hjelpe til, kan du sende en e-post til <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	PL	Wybierz język programu Lyrion Music Server. W przypadku znalezienia problemów lub jeżeli chcesz rozpocząć współpracę, skontaktuj się z twórcami pod adresem <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	RU	Выберите язык программы Lyrion Music Server. Если вы найдете ошибки или захотите сотрудничать с нами, напишите по адресу <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
+	SV	Välj språk för Lyrion Music Server. Om du stöter på problem eller om du vill hjälpa till med översättningen kan du ta kontakt med programutvecklarna på <a href="https://lyrion.org/contributing/adding-translations/">Lyrion.org</a>.
 
 SETUP_LIBRARY_NAME
 	CS	Název knihovny médií
