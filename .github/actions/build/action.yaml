@@ -49,11 +49,6 @@ runs:
           echo "LMS_TAG=--tag=stable" >> $GITHUB_OUTPUT
         fi
 
-        # TODO - correct Docker registry!
-        echo TEMPORARY DOCKER DEV ONLY!!!!
-        sed -ie "s/lmscommunity/mherger/" platforms/buildme.pl
-        egrep "tag.*logitechmediaserver" platforms/buildme.pl
-
 
     - name: Set up macOS environment
       if: ${{ startsWith(inputs.build-params, 'macos') }}
