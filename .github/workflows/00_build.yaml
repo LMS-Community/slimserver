@@ -9,7 +9,8 @@ on:
         type: string
         description: 'The branch from which to build from'
         required: true
-        default: ${{ github.event.repository.default_branch }}
+        # TODO - make this dynamic
+        default: public/9.0
       build_type:
         type: choice
         description: 'Is this a nightly or a release build?'
