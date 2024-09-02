@@ -102,7 +102,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   docker:
-    if: false
     name: Build LMS for Docker
     runs-on: ubuntu-22.04
 
