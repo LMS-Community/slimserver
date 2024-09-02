@@ -1,0 +1,137 @@
+name: Build Logitech Media Server
+description: Build Logitech Media Server with the given parameters
+inputs:
+  build-params:
+    description: Parameters needed to run the `buildme.pl` script
+    required: true
+    default: ubuntu-latest
+  build-type:
+    description: "`nightly` or `production`"
+    required: true
+    default: nightly
+  ssh-connect-string:
+    description: Connection string to be used to to connect to the locally run build host.
+  AWS_KEY_ID:
+    description: The key ID to use to upload to S3
+  AWS_SECRET_ACCESS_KEY:
+    description: The secret to use to upload to S3
+
+runs:
+  using: composite
+  steps:
+    - name: Get LMS version number
+      shell: bash
+      id: getversion
+      run: |
+        MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
+        MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
+
+        echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
+        echo "GIT_BRANCH=public/$MAJOR.$MINOR" >> $GITHUB_OUTPUT
+
+
+    - name: Check out LMS platform code
+      uses: actions/checkout@v4
+      with:
+        repository: Logitech/slimserver-platforms
+        path: platforms
+        ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
+
+
+    - name: Set up Docker environment
+      if: ${{ startsWith(inputs.build-params, 'docker') }}
+      id: dockersetup
+      shell: bash
+      run: |
+        if [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "8.5" ]; then
+          echo "LMS_TAG=--tag=dev" >> $GITHUB_OUTPUT
+        else
+          echo "LMS_TAG=--tag=stable" >> $GITHUB_OUTPUT
+        fi
+
+        # TODO - correct Docker registry!
+        echo TEMPORARY DOCKER DEV ONLY!!!!
+        sed -ie "s/lmscommunity/mherger/" platforms/buildme.pl
+        egrep "tag.*logitechmediaserver" platforms/buildme.pl
+
+
+    - name: Set up macOS environment
+      if: ${{ startsWith(inputs.build-params, 'macos') }}
+      shell: bash
+      run: |
+        # set up Platypus - see https://github.com/sveinbjornt/Platypus/issues/270#issuecomment-2312235079
+        echo "Creating directory structures"
+        mkdir -p /usr/local/bin || echo $?
+        mkdir -p /usr/local/share/platypus || echo $?
+
+        cd platforms/osx/platypus
+
+        echo "Copying resources to share directory"
+        sudo cp -nfr ScriptExec MainMenu.nib /usr/local/share/platypus
+        sudo chmod -R 755 /usr/local/share/platypus
+
+        echo "Installing command line tool"
+        sudo cp -nf platypus /usr/local/bin
+        sudo chmod +x /usr/local/bin/platypus
+
+
+    - name: Set up Windows environment
+      if: ${{ startsWith(inputs.build-params, 'win64') }}
+      shell: bash
+      run: |
+        cp -nf platforms/win32/tools/* 'c:\Program Files\Git\usr\bin\'
+
+
+    - name: Build ${{ inputs.build-params }} package on ${{ runner.os }} (self-hosted runner)
+      if: ${{ inputs.ssh-connect-string != '' }}
+      shell: bash
+      run: |
+        ssh ${{ inputs.ssh-connect-string }} "mkdir -p $BASEDIR; rm -rf $BASEDIR/publish"
+        rsync -a --delete server platforms ${{ inputs.ssh-connect-string }}:$BASEDIR/
+
+        ssh ${{ inputs.ssh-connect-string }} "cd $BASEDIR && platforms/buildme.pl --build ${{ inputs.build-params }} --buildDir \$(pwd)/work --sourceDir \$(pwd) --destDir \$(pwd)/publish --releaseType ${{ inputs.build-type }}"
+
+        rm -rf publish
+        mkdir -p publish
+        scp ${{ inputs.ssh-connect-string }}:$BASEDIR/publish/* publish/
+
+
+    - name: Build ${{ inputs.build-params }} package on ${{ runner.os }}
+      if: ${{ inputs.ssh-connect-string == '' }}
+      shell: bash
+      run: |
+        SRC_PATH=$PWD
+
+        BUILD_PATH=$SRC_PATH/work
+        DEST_PATH=$SRC_PATH/publish
+
+        mkdir -p $BUILD_PATH
+        mkdir -p $DEST_PATH
+
+        platforms/buildme.pl --build ${{ inputs.build-params }} ${{ steps.dockersetup.outputs.LMS_TAG }} --buildDir $BUILD_PATH --sourceDir $SRC_PATH --destDir $DEST_PATH --releaseType ${{ inputs.build-type }}
+
+    - name: Verify results
+      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      shell: bash
+      run: |
+        if [ ! -f publish/* ]; then
+          exit 1;
+        fi
+
+    - name: Upload artifacts
+      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      shell: bash
+      run: |
+        mkdir -p $HOME/.aws
+        echo "[downloads]" > $HOME/.aws/credentials
+        # region is irrelevant for Cloudflare R2, but required by the aws CLI tool
+        echo "region=us-east-1" >> $HOME/.aws/credentials
+        echo "aws_access_key_id=${{ inputs.AWS_KEY_ID }}" >> $HOME/.aws/credentials
+        echo "aws_secret_access_key=${{ inputs.AWS_SECRET_ACCESS_KEY }}" >> $HOME/.aws/credentials
+
+        for f in publish/?yrion?usic?erver*;
+        do
+          aws --profile downloads --endpoint-url https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com s3 cp $f s3://downloads/${{ inputs.build-type }}/
+        done
+
+        rm -f $HOME/.aws/credentials

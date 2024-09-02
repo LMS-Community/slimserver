@@ -1,0 +1,189 @@
+name: Build LMS
+
+# Test using act: act -W .github/workflows/00_build.yaml --pull=false
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: string
+        description: 'The branch from which to build from'
+        required: true
+        default: ${{ github.event.repository.default_branch }}
+      build_type:
+        type: choice
+        description: 'Is this a nightly or a release build?'
+        required: true
+        default: 'nightly'
+        options:
+          - nightly
+          - release
+
+jobs:
+  macLegacy:
+    name: Build LMS for Mac (Legacy)
+    runs-on: self-hosted
+    timeout-minutes: 20
+    env:
+      BASEDIR: gh-build
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: macosx
+          build-type: ${{ inputs.build_type }}
+          ssh-connect-string: ${{ secrets.MAC_CONNECT_STRING }}
+          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+  mac:
+    name: Build LMS for Mac (MenuBar Item)
+    runs-on: macos-12
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: macos
+          build-type: ${{ inputs.build_type }}
+          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+  linux:
+    name: Build LMS for Linux
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        flavour:
+          - [debian, "--x86_64"]
+          - [debian, "--arm"]
+          - [debian, "--i386"]
+          - [debian, ""]
+          - [rpm, ""]
+          - [tarball, "--arm"]
+          - [tarball, ""]
+          - [tarball, "--encore"]
+          - [tarball, "--noCPAN"]
+
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Prepare build environment
+        if: ${{ matrix.flavour[0] != 'tarball' }}
+        run: |
+          sudo apt update
+          sudo apt install apt-transport-https debhelper devscripts
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: ${{ matrix.flavour[0] }} ${{ matrix.flavour[1] }}
+          build-type: ${{ inputs.build_type }}
+          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+  docker:
+    if: false
+    name: Build LMS for Docker
+    runs-on: ubuntu-22.04
+
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: docker
+          build-type: ${{ inputs.build_type }}
+
+  win64:
+    name: Build LMS for Windows (64-bit)
+    runs-on: windows-2022
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: win64
+          build-type: ${{ inputs.build_type }}
+          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+  win32:
+    name: Build LMS for Windows (Legacy 32-bit)
+    runs-on: self-hosted
+    timeout-minutes: 30
+    env:
+      BASEDIR: gh-build
+    steps:
+      # we must check out here, as  otherwise the build action is not available
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+
+      - name: Launch build process
+        uses: ./server/.github/actions/build
+        with:
+          build-params: win32
+          build-type: ${{ inputs.build_type }}
+          ssh-connect-string: ${{ secrets.WIN_CONNECT_STRING }}
+          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+  updateRepoFile:
+    name: Trigger repository file update
+    if: ${{ always() && inputs.build_type == 'nightly' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs:
+      - macLegacy
+      - mac
+      - linux
+      - win64
+      - win32
+    permissions:
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.DEPLOYMENT_KEY }}
+        run: gh workflow run update-server-repository.yml -R https://github.com/LMS-Community/lms-server-repository
