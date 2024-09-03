@@ -4656,7 +4656,7 @@ sub worksQuery {
 	my $p   = [];
 
 	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
-	my $groupBy = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort";
+	my $groupBy = "tracks.work, composer.id";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
