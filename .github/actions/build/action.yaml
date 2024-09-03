@@ -42,8 +42,9 @@ runs:
       if: ${{ startsWith(inputs.build-params, 'docker') }}
       id: dockersetup
       shell: bash
+      # TODO - needs to be smarter! And cover "prod".
       run: |
-        if [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "8.5" ]; then
+        if [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
           echo "LMS_TAG=--tag=dev" >> $GITHUB_OUTPUT
         else
           echo "LMS_TAG=--tag=stable" >> $GITHUB_OUTPUT
