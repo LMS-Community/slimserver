@@ -2,7 +2,7 @@ name: Build LMS Scheduler
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '5 4 * * *'
+    - cron:  '40 2 * * *'
 
 jobs:
   check:
