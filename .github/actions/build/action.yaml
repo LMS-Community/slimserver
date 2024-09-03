@@ -6,7 +6,7 @@ inputs:
     required: true
     default: ubuntu-latest
   build-type:
-    description: "`nightly` or `production`"
+    description: "`nightly` or `release`"
     required: true
     default: nightly
   ssh-connect-string:
@@ -42,12 +42,17 @@ runs:
       if: ${{ startsWith(inputs.build-params, 'docker') }}
       id: dockersetup
       shell: bash
-      # TODO - needs to be smarter! And cover "prod".
+      # TODO - needs to be smarter!
       run: |
-        if [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
+        if [ "${{ inputs.build-type }}" = "release" ]; then
+          echo "LMS_TAG=--tag=latest" >> $GITHUB_OUTPUT
+        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
           echo "LMS_TAG=--tag=dev" >> $GITHUB_OUTPUT
-        else
+        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "8.5" ]; then
           echo "LMS_TAG=--tag=stable" >> $GITHUB_OUTPUT
+        else
+          echo "UNKNOWN DOCKER TARGET TAG"
+          exit 1
         fi
 
 
