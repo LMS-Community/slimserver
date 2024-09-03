@@ -172,7 +172,7 @@ jobs:
 
   updateRepoFile:
     name: Trigger repository file update
-    if: ${{ always() && inputs.build_type == 'nightly' }}
+    if: ${{ success() && inputs.build_type == 'nightly' }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     needs:
