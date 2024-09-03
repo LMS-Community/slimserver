@@ -204,7 +204,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	SV	Slumpmässigt valda album
 
 PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
-	DE	Zuletzte aktualisierte Alben
+	DE	Zuletzt aktualisierte Alben
 	EN	Recently Updated Albums
 	HU	Nemrég frissített albumok
 	NL	Recent Gewijzigde Albums
