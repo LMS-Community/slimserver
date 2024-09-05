@@ -74,7 +74,7 @@ use constant MENUS => {
 	},
 };
 
-use constant PARTNER_ID  => 16;
+use constant PARTNER_ID  => 15;
 use constant MAIN_URL    => 'http://opml.radiotime.com/Index.aspx?partnerId=' . PARTNER_ID;
 use constant ERROR_URL   => 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=' . PARTNER_ID;
 use constant PRESETS_URL => 'http://opml.radiotime.com/Browse.ashx?c=presets&partnerId=' . PARTNER_ID;
