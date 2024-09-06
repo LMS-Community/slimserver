@@ -855,7 +855,7 @@ sub handleFeed {
 			my $i = 0;
 
 			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
-			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN ALBUMLENGTH COMPILATION WORK));
+			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN ALBUMLENGTH COMPILATION WORK RELEASE_TYPE));
 
 			foreach my $item ( @{ $feed->{'albumData'} || $stash->{'items'} } ) {
 

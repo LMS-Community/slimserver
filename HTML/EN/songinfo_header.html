@@ -124,6 +124,10 @@
 			[% item = itemobj.albumlength.name; title = "LENGTH"; PROCESS songInfoItem %]
 		[% END %]
 
+		[% IF itemobj.release_type %]
+			[% item = itemobj.release_type.name | html; title = "RELEASE_TYPE"; PROCESS songInfoItem %]
+		[% END %]
+
 		[% IF itemobj.album.compilation || itemobj.compilation %]
 			[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
 		[% END %]

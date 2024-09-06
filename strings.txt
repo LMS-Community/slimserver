@@ -12373,6 +12373,12 @@ ALBUM
 	SV	Album
 	ZH_CN	专辑
 
+RELEASE_TYPE
+	DE	Veröffentlichungstyp
+	EN	Release type
+	FR	Type de sorties
+	NL	Releasetype
+
 RELEASE_TYPE_SINGLE
 	EN	Single
 

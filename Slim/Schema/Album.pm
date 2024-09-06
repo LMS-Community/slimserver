@@ -175,6 +175,11 @@ sub releaseTypeName {
 	return $name || $releaseType;
 }
 
+sub releaseType {
+	my ($self, $client) = @_;
+	return $self->releaseTypeName($self->release_type, $client);
+}
+
 # Update the title dynamically if we're part of a set.
 sub title {
 	my $self = shift;

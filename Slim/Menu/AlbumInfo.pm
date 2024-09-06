@@ -110,8 +110,13 @@ sub registerDefaultInfoProviders {
 		func  => \&infoDisc,
 	) );
 
-	$class->registerInfoProvider( compilation => (
+	$class->registerInfoProvider( releaseType => (
 		after => 'year',
+		func  => \&infoReleaseType,
+	) );
+
+	$class->registerInfoProvider( compilation => (
+		after => 'releaseType',
 		func  => \&infoCompilation,
 	) );
 
@@ -446,6 +451,22 @@ sub infoDuration {
 			type  => 'text',
 			label => 'ALBUMLENGTH',
 			name  => $duration,
+		};
+	}
+
+	return $item;
+}
+
+sub infoReleaseType {
+	my ( $client, $url, $album ) = @_;
+
+	my $item;
+
+	if ( $album->release_type ) {
+		$item = {
+			type  => 'text',
+			label => 'RELEASE_TYPE',
+			name  => $album->releaseType,
 		};
 	}
 
