@@ -72,21 +72,14 @@ sub initDetails {
 	$class->{osDetails}->{'os'}  = 'Darwin';
 	$class->{osDetails}->{'uid'} = getpwuid($>);
 
-	# XXX - do we still need this? They're empty on my system, and created if needed in some other place anyway
 	for my $dir (
 		'Library/Application Support/Squeezebox',
 		'Library/Application Support/Squeezebox/Plugins',
-		'Library/Application Support/Squeezebox/Graphics',
-		'Library/Application Support/Squeezebox/html',
-		'Library/Application Support/Squeezebox/IR',
 		'Library/Logs/Squeezebox'
 	) {
 
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
 	}
-
-	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/Squeezebox";
-	unshift @INC, "/Library/Application Support/Squeezebox";
 
 	return $class->{osDetails};
 }
@@ -153,7 +146,6 @@ sub dirsFor {
 	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
 
 		push @dirs, "$ENV{'HOME'}/Library/Application Support/Squeezebox/$dir";
-		push @dirs, "/Library/Application Support/Squeezebox/$dir";
 		push @dirs, catdir($Bin, $dir);
 
 	} elsif ($dir eq 'log') {
