@@ -4656,7 +4656,6 @@ sub worksQuery {
 	my $p   = [];
 
 	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
-	my $groupBy = "tracks.work, composer.id";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
@@ -4742,6 +4741,8 @@ sub worksQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
+	my $stillScanning = Slim::Music::Import->stillScanning();
+
 	# Get count of unique composers, the count is cached until the next rescan done event
 	my $ccSql = sprintf($sql . " GROUP BY composer.id", "'c'");
 	my $cacheKey = md5_hex($ccSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
@@ -4756,12 +4757,16 @@ sub worksQuery {
 		($composerCount) = $total_sth->fetchrow_array();
 		$total_sth->finish;
 	}
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $composerCount;
+	}
 
-	$sql .= " GROUP BY $groupBy ";
+
+	$sql .= " GROUP BY tracks.work, composer.id ";
 
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cSql = sprintf($sql, "'c'");
-	my $cacheKey = md5_hex($cSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	$cacheKey = md5_hex($cSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -4772,6 +4777,9 @@ sub worksQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
+	}
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
 	}
 
 	my $order_by = "ORDER BY composer.namesort, works.titlesort";
@@ -4793,7 +4801,7 @@ sub worksQuery {
 
 	# now build the result
 
-	if (Slim::Music::Import->stillScanning()) {
+	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
