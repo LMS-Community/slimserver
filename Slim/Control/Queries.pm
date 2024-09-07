@@ -4572,6 +4572,7 @@ sub yearsQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
+		$cache->{$cacheKey} = $count;
 	}
 
 	$sql .= "ORDER BY $key DESC";
