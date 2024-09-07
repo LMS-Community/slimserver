@@ -698,10 +698,10 @@ sub albumsQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
-	}
 
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
 	}
 
 	if ($stillScanning) {
@@ -1223,10 +1223,10 @@ sub artistsQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
-	}
 
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
 	}
 
 	my $totalCount = $count || 0;
@@ -1821,10 +1821,10 @@ sub genresQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
-	}
 
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
 	}
 
 	# now build the result
@@ -4757,9 +4757,10 @@ sub worksQuery {
 		$total_sth->execute( @{$p} );
 		($composerCount) = $total_sth->fetchrow_array();
 		$total_sth->finish;
-	}
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $composerCount;
+
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $composerCount;
+		}
 	}
 
 
@@ -4778,9 +4779,10 @@ sub worksQuery {
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
 		$total_sth->finish;
-	}
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
+
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
 	}
 
 	my $order_by = "ORDER BY composer.namesort, works.titlesort";
