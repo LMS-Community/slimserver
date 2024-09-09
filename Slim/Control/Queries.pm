@@ -4624,6 +4624,7 @@ sub yearsQuery {
 
 sub worksQuery {
 	my $request = shift;
+$log->error("DK _params=" . Data::Dump::dump($request->{_params}));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['works']])) {
@@ -4698,7 +4699,7 @@ sub worksQuery {
 		}
 	}
 
-	if ( defined $workID ) {
+	if ( defined $workID && $workID ne '-1') {
 		push @{$w}, "works.id = ?";
 		push @{$p}, $workID;
 	}
