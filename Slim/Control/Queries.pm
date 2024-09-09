@@ -4698,7 +4698,6 @@ sub worksQuery {
 		}
 	}
 
-warn $workID;
 	if ( defined $workID && $workID != -1 ) {
 		push @{$w}, "works.id = ?";
 		push @{$p}, $workID;
