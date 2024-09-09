@@ -175,7 +175,7 @@ sub advancedSearch {
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
-			$newKey =~ s/_(rating|playcount|value|titlesearch|namesearch|)\b/\.$1/;
+			$newKey =~ s/_(rating|playcount|value|titlesearch|namesearch|release_type|)\b/\.$1/;
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
@@ -233,17 +233,6 @@ sub advancedSearch {
 				$query{$newKey}->{'>'} = '0';
 			}
 
-=pod Shall we treat an undefined rating the same as 0?
-			if ($newKey eq 'persistent.rating' && $op eq '<') {
-				$query{$newKey} = {
-					'or' => [
-						$newKey => { '=' => undef },
-						$newKey => $query{$newKey},
-					],
-				};
-			}
-=cut
-
 			delete $params->{$key};
 
 			next;
@@ -265,7 +254,7 @@ sub advancedSearch {
 		#
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/(.+)_(titlesearch|namesearch|value|)$/$1\.$2/) {
+		if ($newKey =~ s/(.+)_(titlesearch|namesearch|value|release_type|)$/$1\.$2/) {
 			$joins{$1}++ if $1 ne 'me';
 
 			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
@@ -427,7 +416,7 @@ sub advancedSearch {
 
 	$query{'me.audio'} = 1;
 
-	if ($query{'album.titlesearch'} || $joins{'album'}) {
+	if ($query{'album.titlesearch'} || $query{'album.release_type'} || $joins{'album'}) {
 
 		push @joins, 'album';
 	}
@@ -596,22 +585,6 @@ sub fillInSearchResults {
 			'level'        => 1,
 			'searchResult' => 1,
 		);
-
-=pod
-		if ($type eq 'contributor') {
-
-			$form{'attributes'} .= '&contributor.role=ALL';
-			$form{'hierarchy'}  = 'contributor,album,track';
-
-		} elsif ($type eq 'album') {
-
-			$form{'hierarchy'} = 'album,track';
-
-		} elsif ($type eq 'genre') {
-
-			$form{'hierarchy'} = 'genre,contributor,album,track';
-		}
-=cut
 
 		if ($favorites && (my $url = $obj->url) ) {
 			if (Slim::Music::Info::isURL($url)) {
