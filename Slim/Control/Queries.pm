@@ -4751,8 +4751,12 @@ sub worksQuery {
 	my $composerCount = $cache->{$cacheKey};
 	if ( !$composerCount ) {
 		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(1)  FROM ( $ccSql ) AS t1
+			SELECT COUNT(1) FROM ( $ccSql ) AS t1
 		} );
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Composer count query: SELECT COUNT(1) FROM ( $ccSql ) AS t1 / " . Data::Dump::dump($p) );
+		}
 
 		$total_sth->execute( @{$p} );
 		($composerCount) = $total_sth->fetchrow_array();
@@ -4775,6 +4779,10 @@ sub worksQuery {
 		my $total_sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(1) FROM ( $cSql ) AS t1
 		} );
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Works totals query: SELECT COUNT(1) FROM ( $cSql ) AS t1 / " . Data::Dump::dump($p) );
+		}
 
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
@@ -4812,7 +4820,7 @@ sub worksQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	if ($valid) {
+	if ($valid && $tags ne 'CC') {
 
 		my $loopname = 'works_loop';
 		my $chunkCount = 0;
