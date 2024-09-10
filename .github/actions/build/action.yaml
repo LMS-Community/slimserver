@@ -75,6 +75,9 @@ runs:
         sudo cp -nf platypus /usr/local/bin
         sudo chmod +x /usr/local/bin/platypus
 
+        # required by create-dmg if we want to get a customized icon
+        brew install graphicsmagick imagemagick
+
 
     - name: Set up Windows environment
       if: ${{ startsWith(inputs.build-params, 'win64') }}
