@@ -3202,25 +3202,28 @@ sub searchQuery {
 		}
 
 		if ( $libraryID ) {
-			my $exists;
 			if ( $type eq 'contributor') {
-				$exists = 'EXISTS (SELECT * FROM contributor_track, library_track WHERE library_track.track = contributor_track.track AND contributor_track.contributor = me.id';
+				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
 			}
 			elsif ( $type eq 'work') {
-				$exists = 'EXISTS (SELECT * FROM tracks, library_track WHERE library_track.track = tracks.id AND tracks.work = me.id';
+				$sql .= 'JOIN tracks ON tracks.work = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 			}
 
 			elsif ( $type eq 'album' ) {
-				$exists = 'EXISTS (SELECT * FROM tracks, library_track WHERE library_track.track = tracks.id AND tracks.album = me.id';
+				$sql .= 'JOIN tracks ON tracks.album = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 			}
 			elsif ( $type eq 'genre' ) {
-				$exists = 'EXISTS (SELECT * FROM genre_track, library_track WHERE library_track.track = genre_track.track AND genre_track.genre = me.id';
+				$sql .= 'JOIN genre_track ON genre_track.genre = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
 			}
 			elsif ( $type eq 'track' ) {
-				$exists = 'EXISTS (SELECT * FROM library_track WHERE library_track.track = me.id';
+				$sql .= 'JOIN library_track ON library_track.track = me.id ';
 			}
 
-			push @{$w}, "$exists AND library_track.library = ?)";
+			push @{$w}, 'library_track.library = ?';
 			push @{$p}, $libraryID;
 		}
 
