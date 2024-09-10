@@ -57,7 +57,7 @@ runs:
 
 
     - name: Set up macOS environment
-      if: ${{ startsWith(inputs.build-params, 'macos') }}
+      if: ${{ inputs.build-params == 'macos' }}
       shell: bash
       run: |
         # set up Platypus - see https://github.com/sveinbjornt/Platypus/issues/270#issuecomment-2312235079
@@ -76,7 +76,7 @@ runs:
         sudo chmod +x /usr/local/bin/platypus
 
         # required by create-dmg if we want to get a customized icon
-        brew install graphicsmagick imagemagick
+        brew install -q graphicsmagick imagemagick
 
 
     - name: Set up Windows environment
@@ -139,3 +139,9 @@ runs:
         done
 
         rm -f $HOME/.aws/credentials
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.build-params }}
+        path: publish

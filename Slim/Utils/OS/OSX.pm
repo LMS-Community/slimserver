@@ -451,7 +451,7 @@ sub installerExtension {
 	if (IS_MENUBAR_ITEM) {
 		# remove pref pane installer
 		Slim::Utils::Misc::deleteFiles($updateFolder, qr/^LyrionMusicServer.*\.pkg$/i);
-		return 'zip';
+		return 'dmg';
 	};
 
 	# remove menu bar item installer
