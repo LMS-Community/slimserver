@@ -510,16 +510,18 @@ sub albumsQuery {
 			push @{$p}, $year;
 		}
 
-		if (defined $fromSearch) {
+		if (defined $fromSearch && !defined $search) {
 			# If we've got here from a search, we don't want to show the album unless it matches all the user's search criteria.
 			# This matters for a Works search: we've shown the user a Work because it matches their criteria, but it is possible
 			# that not all albums containing the Work match the all the criteria. (In this context, a work is a group of albums.)
 			if ( Slim::Schema->canFulltextSearch ) {
-				$fromSearch =~ s/ /* /g;
-				$fromSearch .= '*';
-				$fromSearch = "type:album " . $fromSearch;
-				push @{$w}, "EXISTS (select * FROM fulltext WHERE SUBSTR(fulltext.id, 33)=albums.id AND fulltext MATCH ?)";
-				push @{$p}, $fromSearch;
+				Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+					name   => 'albumsSearch',
+					search => $fromSearch,
+					type   => 'album',
+					createPrimaryKey => 1,
+				});
+				$sql .= "JOIN albumsSearch ON albums.id = albumsSearch.id ";
 			} else {
 				my $strings = Slim::Utils::Text::searchStringSplit($fromSearch);
 				if ( ref $strings->[0] eq 'ARRAY' ) {
@@ -3185,6 +3187,7 @@ sub searchQuery {
 				name   => 'quickSearch',
 				search => $search,
 				type   => $type,
+				createPrimaryKey => 1,
 				checkLargeResultset => sub {
 					my $isLarge = shift;
 					return ($isLarge && $isLarge > ($index + $quantity)) ? ('ORDER BY fulltextweight DESC LIMIT ' . $isLarge) : '';
@@ -3199,28 +3202,25 @@ sub searchQuery {
 		}
 
 		if ( $libraryID ) {
+			my $exists;
 			if ( $type eq 'contributor') {
-				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+				$exists = 'EXISTS (SELECT * FROM contributor_track, library_track WHERE library_track.track = contributor_track.track AND contributor_track.contributor = me.id';
 			}
 			elsif ( $type eq 'work') {
-				$sql .= 'JOIN tracks ON tracks.work = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+				$exists = 'EXISTS (SELECT * FROM tracks, library_track WHERE library_track.track = tracks.id AND tracks.work = me.id';
 			}
 
 			elsif ( $type eq 'album' ) {
-				$sql .= 'JOIN tracks ON tracks.album = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+				$exists = 'EXISTS (SELECT * FROM tracks, library_track WHERE library_track.track = tracks.id AND tracks.album = me.id';
 			}
 			elsif ( $type eq 'genre' ) {
-				$sql .= 'JOIN genre_track ON genre_track.genre = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
+				$exists = 'EXISTS (SELECT * FROM genre_track, library_track WHERE library_track.track = genre_track.track AND genre_track.genre = me.id';
 			}
 			elsif ( $type eq 'track' ) {
-				$sql .= 'JOIN library_track ON library_track.track = me.id ';
+				$exists = 'EXISTS (SELECT * FROM library_track WHERE library_track.track = me.id';
 			}
 
-			push @{$w}, 'library_track.library = ?';
+			push @{$w}, "$exists AND library_track.library = ?)";
 			push @{$p}, $libraryID;
 		}
 
@@ -4672,6 +4672,7 @@ sub worksQuery {
 				name   => 'worksSearch',
 				search => $search,
 				type   => 'work',
+				createPrimaryKey => 1,
 			});
 			$sql .= "JOIN worksSearch ON works.id = worksSearch.id ";
 
@@ -4679,6 +4680,7 @@ sub worksQuery {
 				name   => 'albumsSearch',
 				search => $search,
 				type   => 'album',
+				createPrimaryKey => 1,
 			});
 			$sql .= "JOIN albumsSearch ON albums.id = albumsSearch.id ";
 		} else {
@@ -4722,8 +4724,7 @@ sub worksQuery {
 	}
 
 	if (defined $libraryID) {
-		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-		push @{$w}, 'library_track.library = ?';
+		push @{$w}, 'EXISTS (SELECT * FROM library_album WHERE library_album.album = albums.id AND library_album.library = ?)';
 		push @{$p}, $libraryID;
 	}
 
