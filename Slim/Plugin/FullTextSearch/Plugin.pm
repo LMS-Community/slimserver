@@ -287,13 +287,14 @@ sub createHelperTable {
 	$orderOrLimit = 'LIMIT 0' if !$tokens;
 
 	# The first 32 bytes of the ID are either an MD5 of the ID, or some buster to make it "non searchable" - remove that prefix
-	my $searchSQL = "CREATE $temp TABLE $name AS SELECT SUBSTR(fulltext.id, 33) AS id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
+	my $searchSQL = "INSERT INTO $name SELECT SUBSTR(fulltext.id, 33) AS id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
 
 	if ( main::DEBUGLOG ) {
 		my $log2 = $sqllog->is_debug ? $sqllog : $log;
 		$log2->is_debug && $log2->debug( "Fulltext search query ($type): $searchSQL" );
 	}
 
+	$dbh->do("CREATE $temp TABLE $name (id INTEGER PRIMARY KEY, fulltextweight INTEGER)");
 	$dbh->do($searchSQL);
 }
 

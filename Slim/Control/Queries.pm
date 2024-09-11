@@ -510,16 +510,17 @@ sub albumsQuery {
 			push @{$p}, $year;
 		}
 
-		if (defined $fromSearch) {
+		if (defined $fromSearch && !defined $search) {
 			# If we've got here from a search, we don't want to show the album unless it matches all the user's search criteria.
 			# This matters for a Works search: we've shown the user a Work because it matches their criteria, but it is possible
 			# that not all albums containing the Work match the all the criteria. (In this context, a work is a group of albums.)
 			if ( Slim::Schema->canFulltextSearch ) {
-				$fromSearch =~ s/ /* /g;
-				$fromSearch .= '*';
-				$fromSearch = "type:album " . $fromSearch;
-				push @{$w}, "EXISTS (select * FROM fulltext WHERE SUBSTR(fulltext.id, 33)=albums.id AND fulltext MATCH ?)";
-				push @{$p}, $fromSearch;
+				Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+					name   => 'albumsSearch',
+					search => $fromSearch,
+					type   => 'album',
+				});
+				$sql .= "JOIN albumsSearch ON albums.id = albumsSearch.id ";
 			} else {
 				my $strings = Slim::Utils::Text::searchStringSplit($fromSearch);
 				if ( ref $strings->[0] eq 'ARRAY' ) {
@@ -4653,7 +4654,7 @@ sub worksQuery {
 
 	# get them all by default
 	my $where = {};
-	my $w   = ["tracks.work IS NOT NULL"];
+	my $w   = [];
 	my $p   = [];
 
 	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
@@ -4667,20 +4668,24 @@ sub worksQuery {
 		JOIN albums ON tracks.album = albums.id ';
 
 	if (specified($search)) {
+
 		if ( Slim::Schema->canFulltextSearch ) {
 			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
 				name   => 'worksSearch',
 				search => $search,
 				type   => 'work',
 			});
-			$sql .= "JOIN worksSearch ON works.id = worksSearch.id ";
-
 			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
 				name   => 'albumsSearch',
 				search => $search,
 				type   => 'album',
 			});
-			$sql .= "JOIN albumsSearch ON albums.id = albumsSearch.id ";
+			$sql = 'SELECT %s FROM workssearch
+				join works on works.id=workssearch.id
+				join tracks on tracks.work=workssearch.id
+				join albums on albums.id=tracks.album
+				join albumsSearch on albumsSearch.id=albums.id
+				join contributors composer on composer.id=works.composer ';
 		} else {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
@@ -4696,42 +4701,46 @@ sub worksQuery {
 				push @{$p}, @{$strings};
 			}
 		}
-	}
 
-	if ( defined $workID && $workID != -1 ) {
-		push @{$w}, "works.id = ?";
-		push @{$p}, $workID;
-	}
+	} else {
 
-	if ( defined $year ) {
-		push @{$w}, "tracks.year = ?";
-		push @{$p}, $year;
-	}
+		push @{$w}, "tracks.work IS NOT NULL";
 
-	if ( defined $roleID ) {
-		my @roles = split(',', $roleID);
-		if (scalar @roles) {
-			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
-			push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
+		if ( defined $workID && $workID != -1 ) {
+			push @{$w}, "works.id = ?";
+			push @{$p}, $workID;
 		}
-	}
 
-	if (defined $artistID) {
-		push @{$w}, "contributors.id = ?";
-		push @{$p}, $artistID;
+		if ( defined $year ) {
+			push @{$w}, "tracks.year = ?";
+			push @{$p}, $year;
+		}
+
+		if ( defined $roleID ) {
+			my @roles = split(',', $roleID);
+			if (scalar @roles) {
+				push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+				push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
+			}
+		}
+
+		if (defined $artistID) {
+			push @{$w}, "contributors.id = ?";
+			push @{$p}, $artistID;
+		}
+
+		if (defined $genreID) {
+			my @genreIDs = split(/,/, $genreID);
+			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+			push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+			push @{$p}, @genreIDs;
+		}
+
 	}
 
 	if (defined $libraryID) {
-		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-		push @{$w}, 'library_track.library = ?';
+		push @{$w}, 'EXISTS (SELECT 1 FROM library_album WHERE library_album.album = albums.id AND library_album.library = ?)';
 		push @{$p}, $libraryID;
-	}
-
-	if (defined $genreID) {
-		my @genreIDs = split(/,/, $genreID);
-		$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
-		push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
-		push @{$p}, @genreIDs;
 	}
 
 	if ( @{$w} ) {
