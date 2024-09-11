@@ -81,6 +81,8 @@ sub initDetails {
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
 	}
 
+	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/Squeezebox";
+
 	return $class->{osDetails};
 }
 
