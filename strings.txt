@@ -92,7 +92,7 @@ CREDITS
 	JA	Ken Hokugo
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet, Willem Oepkes, Daan Oudenhoven
 	NO	Øyvind L. Eggen, Georg Engstrand, Simen E. Sandberg
-	PT	Walter Wullschleger, Bruno Rodrigues, Paulo Mannheimer
+	PT	Walter Wullschleger, Bruno Rodrigues, Paulo Mannheimer, Luis DuLac
 	SV	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
 	ZH_CN	Kok-Bin Lee
 
@@ -109,6 +109,7 @@ COPYRIGHT
 	NL	© 2001-2024 Lyrion versie 9.0.0
 	NO	© 2001–2024 Lyrion versjon 9.0.0
 	PL	© 2001-2024 Lyrion wersja 9.0.0
+	PT	© 2001-2024 Lyrion wersão 9.0.0
 	RU	© Lyrion, 2001-2024. Версия 9.0.0
 	SV	© 2001–2024 Lyrion Version 9.0.0
 
@@ -125,6 +126,7 @@ VERSION
 	NL	Versie 9.0.0 / r%s
 	NO	Versjon 9.0.0 / r%s
 	PL	Wersja 9.0.0 / r%s
+	PT	Versão 9.0.0 / r%s
 	RU	Версия 9.0.0 / r%s
 	SV	Version 9.0.0 / r%s
 
@@ -161,6 +163,7 @@ LOADING_SQUEEZEBOX_SERVER
 	NL	Lyrion Music Server wordt geladen...
 	NO	Laster inn Lyrion Music Server ...
 	PL	Trwa ładowanie programu Lyrion Music Server...
+	PT	Carregando Lyrion Music Server...
 	RU	Загрузка Lyrion Music Server...
 	SV	Lyrion Music Server startas
 
@@ -180,7 +183,7 @@ EN_SKIN
 	NL	Licht
 	NO	Lett
 	PL	Lekki
-	PT	Leve
+	PT	Ligeiro
 	RU	Светлый
 	SV	Lätt
 	ZH_CN	清淡
@@ -200,6 +203,7 @@ DEFAULT_SKIN
 	NL	Standaard
 	NO	Standard
 	PL	Domyślny
+	PT	Pré-defenida
 	RU	По умолчанию
 	SV	Standard
 	ZH_CN	缺省
@@ -222,7 +226,7 @@ DEFAULT_MAP
 	NL	Standaard
 	NO	Standard
 	PL	Standardowe
-	PT	Padrão
+	PT	Standard
 	RU	Стандартный
 	SV	Standard
 	ZH_CN	标准
@@ -276,6 +280,7 @@ DATABASE_VERSION
 	NL	Databaseversie
 	NO	Databaseversjon
 	PL	Wersja bazy danych
+	PT	Versão da base de dados
 	RU	Версия базы данных
 	SV	Databasversion
 
@@ -294,7 +299,7 @@ PLAYER_VERSION
 	NL	Firmwareversie van muziekspeler
 	NO	Spillerens fastvareversjon
 	PL	Wersja oprogramowania układowego odtwarzacza
-	PT	Versão do firmware do cliente
+	PT	Versão do firmware do reprodutor
 	RU	Версия микропрограммы плеера
 	SV	Spelarens inbyggda programvaruversion
 	ZH_CN	播放机韧件版本
@@ -438,7 +443,7 @@ LIBRARY_CONTAINS
 	NL	Inhoud van de mediabibliotheek
 	NO	Medieblioteket inneholder
 	PL	Twoja biblioteka multimedialna zawiera
-	PT	O arquivo de música contém
+	PT	O arquivo de música contêm
 	RU	Ваша библиотека мультимедиа содержит
 	SV	Mediebiblioteket innehåller
 	ZH_CN	您的音乐库存有
@@ -473,6 +478,7 @@ PICTURES
 	NL	Foto's
 	NO	Bilder
 	PL	Obrazy
+	PT	Imagens
 	RU	Изображения
 	SV	Bilder
 
@@ -489,6 +495,7 @@ PICTURE
 	NL	Foto
 	NO	Bilde
 	PL	Obraz
+	PT	Imagem
 	RU	Фото
 	SV	Bild
 
@@ -567,7 +574,7 @@ ONLY_ONE
 	NL	Slechts één item beschikbaar!
 	NO	Det er bare ett element her!
 	PL	Tutaj znajduje się tylko jeden element!
-	PT	Existe apenas um item para escolher!
+	PT	Só existe apenas um item!
 	RU	Доступен только один элемент!
 	SV	Det finns bara ett objekt!
 	ZH_CN	此处只有一个项目！
@@ -587,6 +594,7 @@ SCREENSAVERS
 	NL	Screensaver
 	NO	Skjermsparere
 	PL	Wygaszacze ekranu
+	PT	Protector de ecran
 	RU	Экранные заставки
 	SV	Skärmsläckare
 	ZH_CN	屏幕保护程序
@@ -604,6 +612,7 @@ RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
+	PT	Radio
 	RU	Радиостанция
 	SV	Radio
 
@@ -620,6 +629,7 @@ MUSIC_SERVICES
 	NL	Muziekdiensten
 	NO	Musikktjenester
 	PL	Usługi muzyczne
+	PT	Serviços de musica
 	RU	Музыкальные службы
 	SV	Musiktjänster
 
@@ -636,6 +646,7 @@ MY_MUSIC
 	NL	Mijn muziek
 	NO	Min musikk
 	PL	Moja muzyka
+	PT	Minha musica
 	RU	Моя музыка
 	SV	Min musik
 
@@ -652,6 +663,7 @@ MUSIC_STORES
 	NL	Muziekwinkels
 	NO	Musikkbutikker
 	PL	Sklepy muzyczne
+	PT	Lojas de musica
 	RU	Музыкальные магазины
 	SV	Musikaffärer
 
@@ -670,6 +682,7 @@ GAMES
 	NL	Games
 	NO	Spill
 	PL	Gry
+	PT	Jogos
 	RU	Игры
 	SV	Spel
 	ZH_CN	游戏
@@ -746,6 +759,7 @@ PLAYLISTS
 	NL	Afspeellijsten
 	NO	Spillelister
 	PL	Listy odtwarzania
+	PT	Playlist
 	RU	Плей-листы
 	SV	Spellistor
 	ZH_CN	播放表
@@ -765,7 +779,7 @@ PAUSED_ON
 	NL	Gepauzeerd bij
 	NO	Midlertidig stanset ved
 	PL	Wstrzymane w
-	PT	Pausado na
+	PT	Em pausa na
 	RU	Приостановлено на
 	SV	Nu pausad på
 	ZH_CN	暂停于
@@ -883,6 +897,7 @@ EXECUTE
 	NL	Uitvoeren
 	NO	Utfør
 	PL	Wykonaj
+	PT	Executar
 	RU	Выполнить
 	SV	Utför
 
@@ -941,7 +956,7 @@ PAUSED
 	NL	Gepauzeerd
 	NO	Pause
 	PL	Wstrzymane
-	PT	Pausado
+	PT	Em pausa
 	RU	Пауза
 	SV	Pausad
 	ZH_CN	已暂停
@@ -960,6 +975,7 @@ SQUEEZEBOX_SERVER
 	NL	Lyrion Music Server
 	NO	Lyrion Music Server
 	PL	Lyrion Music Server
+	PT	Lyrion Music Server
 	RU	Lyrion Music Server
 	SV	Lyrion Music Server
 	ZH_CN	Lyrion Music Server
@@ -1018,7 +1034,7 @@ ZAPPING_FROM_PLAYLIST
 	NL	Verplaatsen naar gezapte-nummers-afspeellijst:
 	NO	Flytter til spillelisten «Zappede sanger»:
 	PL	Przenoszenie do schowka:
-	PT	Mover para a playlist rápida de músicas
+	PT	Mover para a playlist de músicas excluídas:
 	RU	В плей-лист "Стертые песни":
 	SV	Flyttar till spellistan med ignorerade låtar.
 	ZH_CN	迁往废弃播放表中：
@@ -1038,7 +1054,7 @@ ZAPPED_SONGS
 	NL	Gezapte nummers
 	NO	Zappede sanger
 	PL	Schowek
-	PT	Playlist Rápida de Músicas
+	PT	Playlist de músicas excluídas
 	RU	Стертые песни
 	SV	Ignorerade låtar
 	ZH_CN	已废弃的歌曲
@@ -1077,6 +1093,7 @@ ADDING_TO_PLAYLIST_DBL
 	NL	Bezig met toevoegen
 	NO	Legger til
 	PL	Dodawanie
+	PT	Adicionando
 	RU	Добавление
 	SV	Lägger till
 	ZH_CN	列入中
@@ -1096,7 +1113,7 @@ INSERT_TO_PLAYLIST
 	NL	Toevoegen om als volgende af te spelen:
 	NO	Legger til som neste låt:
 	PL	Dodawanie do odtworzenia jako następny:
-	PT	Adicionar e tocar a seguir
+	PT	Adicionar para tocar a seguir
 	RU	Добавление для воспроизведения:
 	SV	Lägger till som nästa låt:
 	ZH_CN	列入并紧接在下一首播放
@@ -1115,6 +1132,7 @@ INSERT_TO_PLAYLIST_DBL
 	NL	Bezig met toevoegen
 	NO	Legger til
 	PL	Dodawanie
+	PT	Adicionando
 	RU	Добавление
 	SV	Lägger till
 	ZH_CN	列入中
@@ -1154,7 +1172,7 @@ PLAYING_RANDOMLY_FROM
 	NL	Willekeurig afspelen vanaf:
 	NO	Spiller i vilkårlig rekkefølge fra:
 	PL	Odtwarzanie losowe z:
-	PT	A tocar aleatoriamente de
+	PT	A tocar aleatoriamente de:
 	RU	Перемешать начиная с:
 	SV	Spelar blandat från:
 	ZH_CN	随机抽样播放中：
@@ -1173,6 +1191,7 @@ PLAYING_RANDOMLY_FROM_DBL
 	NL	Willekeurig afspelen
 	NO	Tilfeldig rekkefølge
 	PL	Odtwarzaj losowo
+	PT	Reprodução aleatoria
 	RU	В случайном порядке
 	SV	Spela blandat
 	ZH_CN	随机抽样播放
@@ -1192,7 +1211,7 @@ CLEARING_PLAYLIST
 	NL	Afspeellijst wordt gewist...
 	NO	Tømmer spillelisten...
 	PL	Czyszczenie listy odtwarzania...
-	PT	A limpar a playlist...
+	PT	Apagando a playlist...
 	RU	Очистка плей-листа...
 	SV	Rensar spellistan...
 	ZH_CN	正在清除播放表...
@@ -1212,7 +1231,7 @@ VIEWING_PLAYLIST
 	NL	Speelt nu...
 	NO	Spiller av nå...
 	PL	Teraz odtwarzane...
-	PT	Playlist a Tocar...
+	PT	Reproduzindo...
 	RU	Воспроизводится...
 	SV	Nu spelas...
 	ZH_CN	播放中...
@@ -1250,6 +1269,7 @@ PLAYLIST_CANT_WRITE
 	NL	Kan afspeellijst niet opslaan.
 	NO	Kunne ikke lagre spillelisten.
 	PL	Nie można zapisać listy odtwarzania.
+	PT	Não foi possível guardar a playlist.
 	RU	Не удалось сохранить плей-лист.
 	SV	Spellistan gick inte att spara.
 
@@ -1268,7 +1288,7 @@ NOW_PLAYING_FROM
 	NL	Speelt nu van:
 	NO	Spiller av fra:
 	PL	Teraz odtwarzane z:
-	PT	A tocar de
+	PT	Reproduzindo de:
 	RU	Воспроизводится с:
 	SV	Nu spelas från:
 	ZH_CN	播放中：
@@ -1287,6 +1307,7 @@ NOW_PLAYING_FROM_DBL
 	NL	Bezig met afspelen
 	NO	Spiller av
 	PL	Odtwarzanie
+	PT	Reproduzindo
 	RU	Воспроизведение
 	SV	Spelar
 	ZH_CN	播放中
@@ -1324,6 +1345,7 @@ CHOICE_OFF
 	NL	Uit
 	NO	Av
 	PL	Wył.
+	PT	Desactivado
 	RU	Выкл
 	SV	Av
 
@@ -1342,7 +1364,7 @@ REPEAT_ONE
 	NL	Huidig nummer herhalen
 	NO	Gjenta sang
 	PL	Powtórz bieżący utwór
-	PT	A repetir a música actual
+	PT	Repetir a música actual
 	RU	Повторить текущую песню
 	SV	Repetera aktuell låt
 	ZH_CN	重复一曲模式
@@ -1360,6 +1382,7 @@ REPEAT_ONE_ABBR
 	NL	Nummer herhalen
 	NO	Gjenta sang
 	PL	Powtórz utwór
+	PT	Repetir musica
 	RU	Повторить песню
 	SV	Upprepa låt
 
@@ -1378,7 +1401,7 @@ REPEAT_ALL
 	NL	Afspeellijst herhalen
 	NO	Gjenta spilleliste
 	PL	Powtórz listę odtwarzania
-	PT	A repetir a playlist toda
+	PT	Repetir a playlist
 	RU	Повтор плей-листа
 	SV	Upprepa spellista
 	ZH_CN	重复播放表
@@ -1398,7 +1421,7 @@ CANCEL_SLEEP
 	NL	Sluimermodus uit
 	NO	Hvilemodus avbrutt
 	PL	Uśpienie anulowane
-	PT	Inactividade cancelada
+	PT	Suspensão cancelada
 	RU	Спящий режим отменен.
 	SV	Viloläge avbrutet.
 	ZH_CN	倒数关机功能已消除
@@ -1416,6 +1439,7 @@ SLEEP_CANCEL
 	NL	Sluimermodus annuleren
 	NO	Avbryt hvilemodus
 	PL	Anuluj uśpienie
+	PT	Cancelar suspensão
 	RU	Отменить спящий режим
 	SV	Avbryt viloläge
 
@@ -1432,6 +1456,7 @@ SLEEPING_IN_X_MINUTES
 	NL	Sluimermodus over %s minuten
 	NO	Hvilemodus om %s minutter
 	PL	Uśpienie za %s min
+	PT	Suspender dentro de %s minutos
 	RU	Спящий режим через %s мин.
 	SV	Växlar till viloläge om %s minuter.
 
@@ -1466,7 +1491,7 @@ SLEEPING_IN
 	NL	Sluimermodus in
 	NO	Hvilemodus om
 	PL	Uśpienie za
-	PT	Inactivo dentro de
+	PT	Suspensão dentro de
 	RU	Спящий режим после
 	SV	Viloläge aktiveras om
 	ZH_CN	关机倒数进行中
@@ -1484,6 +1509,7 @@ SLEEP_AT_END_OF_SONG
 	NL	Sluimermodus aan einde van nummer
 	NO	Hvilemodus etter avsluttet sang
 	PL	Włącz uśpienie po zakończeniu utworu
+	PT	Suspender no final da musica
 	RU	Спящий режим в конце песни
 	SV	Viloläge när låten har tagit slut
 
@@ -1500,6 +1526,7 @@ SLEEPING_AT_END_OF_SONG
 	NL	Sluimermodus aan einde van nummer
 	NO	Går i hvilemodus etter avsluttet sang
 	PL	Usypianie po zakończeniu utworu
+	PT	Suspenso no final da musica
 	RU	Спящий режим в конце песни
 	SV	Viloläge när låten har tagit slut
 
@@ -1516,6 +1543,7 @@ NOTHING_CURRENTLY_PLAYING
 	NL	Momenteel wordt niets afgespeeld
 	NO	Ingenting spilles for øyeblikket
 	PL	Brak aktualnie odtwarzanych elementów
+	PT	Nada está sendo reproduzido
 	RU	Сейчас воспроизведение остановлено
 	SV	Just nu spelas inget upp
 
@@ -1533,6 +1561,7 @@ SLEEP
 	NL	Sluimermodus
 	NO	Hvilemodus
 	PL	Uśpienie
+	PT	Suspender
 	RU	Спящий режим
 	SV	Viloläge
 	ZH_CN	睡眠状态
@@ -1551,6 +1580,7 @@ SLEEPING_AT
 	NL	Sluimermodus bij
 	NO	Hvilemodus
 	PL	Uśpienie o
+	PT	Suspender em
 	RU	Спящий режим в
 	SV	Viloläge vid
 	ZH_CN	进入睡眠状态
@@ -1570,7 +1600,7 @@ POWERING_OFF
 	NL	Stand-by wordt ingeschakeld...
 	NO	Hvilemodus...
 	PL	Przechodzenie w tryb gotowości...
-	PT	A Desligar
+	PT	A entrar em stanby...
 	RU	В режим ожидания...
 	SV	Går till viloläge...
 	ZH_CN	进入备用状态中...
@@ -1591,6 +1621,7 @@ POWER
 	NL	Aan/uit
 	NO	Av/på
 	PL	Zasilanie
+	PT	Ligar
 	RU	Питание
 	SV	Av/på
 	ZH_CN	电源开关
@@ -1608,6 +1639,7 @@ EXPAND
 	NL	Uitvouwen
 	NO	Utvid
 	PL	Rozwiń
+	PT	Expandir
 	RU	Развернуть
 	SV	Expandera
 
@@ -1624,6 +1656,7 @@ COLLAPSE
 	NL	Samenvouwen
 	NO	Skjul
 	PL	Zwiń
+	PT	Contrair
 	RU	Свернуть
 	SV	Komprimera
 
@@ -1640,6 +1673,7 @@ UNDOCK_PLAYER_PANEL
 	NL	Paneel van muziekspeler ontkoppelen
 	NO	Løsne spillerpanel
 	PL	Oddokuj okienko odtwarzacza
+	PT	Desacoplar painel de reprodução
 	RU	Разблокировать панель плеера
 	SV	Frigör spelarpanelen
 
@@ -1676,6 +1710,7 @@ ALARM_ALARM
 	NL	Wekker
 	NO	Alarm
 	PL	Budzik
+	PT	Alarme
 	RU	Будильник
 	SV	Alarm
 
@@ -1692,6 +1727,7 @@ ALARM_SET
 	NL	Wektijd instellen
 	NO	Still vekkerklokke
 	PL	Godzina alarmu
+	PT	Definir hora do alarme
 	RU	Время будильника
 	SV	Alarmtid
 
@@ -1710,7 +1746,7 @@ ALARM_ON
 	NL	Aan
 	NO	På
 	PL	Wł.
-	PT	Ligad
+	PT	Ligado
 	RU	Вкл
 	SV	På
 	ZH_CN	启用
@@ -1748,6 +1784,7 @@ ALARM_SELECT_PLAYLIST
 	NL	Weksignaal
 	NO	Vekkerklokkelyd
 	PL	Dźwięk alarmu
+	PT	Som do alarme
 	RU	Сигнал будильника
 	SV	Larmsignal
 
@@ -1764,6 +1801,7 @@ ALARM_USE_CURRENT_PLAYLIST
 	NL	Huidige afspeellijst gebruiken
 	NO	Bruk gjeldende spilleliste
 	PL	Użyj aktualnej listy odtwarzania
+	PT	Usa a playlist actual
 	RU	Использовать текущий плей-лист
 	SV	Använd aktuell spellista
 
@@ -1780,6 +1818,7 @@ ALARM_VOLUME
 	NL	Volume weksignaal
 	NO	Vekkerklokkevolum
 	PL	Głośność alarmu
+	PT	Volume do alarme
 	RU	Громкость будильника
 	SV	Alarmvolym
 
@@ -1796,6 +1835,7 @@ ALARM_VOLUME_DESC
 	NL	Met deze instelling kun je het volume voor het weksignaal instellen.
 	NO	Med denne innstillingen kan du angi volumet på vekkingen.
 	PL	To ustawienie umożliwia wybranie poziomu głośności używanego po uruchomieniu alarmu.
+	PT	Este parametro permite definir o volume do alarme
 	RU	С помощью этой настройки можно выбрать уровень громкости будильника.
 	SV	Med den här inställningen väljer du volymen för alarmet.
 
@@ -1812,6 +1852,7 @@ ALARM_NEXT_ALARM
 	NL	Volgende wekker:
 	NO	Neste vekking:
 	PL	Następny alarm:
+	PT	Próximo alarme:
 	RU	Следующий будильник:
 	SV	Nästa alarm:
 
@@ -1828,6 +1869,7 @@ ALARM_ADD
 	NL	Wekker toevoegen
 	NO	Legg til vekking
 	PL	Dodaj alarm
+	PT	Adicionar alarme
 	RU	Добавить будильник
 	SV	Lägg till alarm
 
@@ -1844,6 +1886,7 @@ ALARM_ADD_DESC
 	NL	Je kunt zoveel wekkers toevoegen als je wilt. Elke wekker kan ingesteld worden om elke dag af te gaan, alleen op specifieke dagen of slechts eenmaal. Selecteer 'Wekker toevoegen' om een nieuwe wekker toe te voegen.
 	NO	Du kan legge inn så mange vekkinger du ønsker. Hver vekking kan stilles inn til å gå hver dag, på visse dager eller bare én gang. Velg Legg til vekking for å legge til en ny vekking.
 	PL	Możesz dodać dowolną liczbę alarmów. Każdy alarm może zostać uruchomiony codziennie, w wybranym dniu lub tylko raz. Aby rozpocząć dodawanie nowego alarmu, wybierz opcję „Dodaj alarm”.
+	PT	Pode adicionar tantos alarmes quantos queira. Cada alarme pode ser programado para que dispare diariamente, só em determinados dias ou em uma só vez. Seleccione "Adicione alarme" para criar um novo alarme.
 	RU	Можно добавить любое число будильников. Каждый будильник может звонить ежедневно, только по определенным дням или один раз. Щелкните "Добавить будильник", чтобы добавить новый будильник.
 	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill ställa in ett nytt alarm.
 
@@ -1860,6 +1903,7 @@ ALARM_NEW
 	NL	Nieuwe wekker
 	NO	Ny vekking
 	PL	Nowy alarm
+	PT	Novo alarme
 	RU	Новый будильник
 	SV	Nytt alarm
 
@@ -1876,6 +1920,7 @@ ALARM_DELETE
 	NL	Wekker verwijderen
 	NO	Fjern vekking
 	PL	Usuń alarm
+	PT	Remover alarme
 	RU	Удалить будильник
 	SV	Ta bort alarm
 
@@ -1892,6 +1937,7 @@ ALARM_ALARM_ENABLED
 	NL	Ingeschakeld
 	NO	Aktivert
 	PL	Włączony
+	PT	Activado
 	RU	Включено
 	SV	Aktiverat
 
@@ -1908,6 +1954,7 @@ ALARM_ALL_ALARMS_ENABLED
 	NL	Alle wekkers ingeschakeld
 	NO	Alle vekkinger aktivert
 	PL	Wszystkie alarmy włączone
+	PT	Todos os alarmes activados
 	RU	Все будильники включены
 	SV	Alla alarm har aktiverats
 
@@ -1924,6 +1971,7 @@ ALARM_ALL_ALARMS_DISABLED
 	NL	Alle wekkers uitgeschakeld
 	NO	Alle vekkinger deaktivert
 	PL	Wszystkie alarmy wyłączone
+	PT	Todos os alarmes desactivados
 	RU	Все будильники выключены
 	SV	Alla alarm har avaktiverats
 
@@ -1940,6 +1988,7 @@ ALARM_ALARM_REPEAT
 	NL	Wekker herhalen
 	NO	Gjenta vekking
 	PL	Powtórz alarm
+	PT	Repetir alarme
 	RU	Повторить будильник
 	SV	Upprepa alarm
 
@@ -1956,6 +2005,7 @@ ALARM_ALARM_ONETIME
 	NL	Eénmalige wekker
 	NO	Engangsvekking
 	PL	Alarm jednorazowy
+	PT	Alarme unico
 	RU	Одноразовый будильник
 	SV	Engångsalarm
 
@@ -1972,6 +2022,7 @@ ALARM_ALARM_REPEAT_DESC
 	NL	Hiermee kun je instellen of deze wekker meermaals moet afgaan. Als je 'Nee' instelt, wordt de wekker automatisch uitgeschakeld nadat het is afgegaan. De wekker gaat pas weer af als je deze weer inschakelt.
 	NO	Med denne innstillingen kan du velge om vekkingen skal spilles mer enn én gang. Hvis innstillingen settes til Nei, vil vekkingen automatisk slås av etter at den har blitt spilt. Denne vekkingen spilles altså ikke igjen før du slår den på.
 	PL	To ustawienie umożliwia określenie, czy alarm zostanie uruchomiony więcej niż raz. Po wybraniu opcji Nie alarm wyłączy się automatycznie po uruchomieniu. Ten alarm nie zostanie uruchomiony, aż do ponownego włączenia.
+	PT	Esta opção permite que escolha se o alarme se repita mais que uma vez. Se a opção for "Não" o alarme desligar-se-á depois de tocar. Não tornará a tocar até que o torne a ligar.
 	RU	Данная настройка позволяет выбрать, будет ли будильник звонить больше одного раза. Если выбрано значение "Нет", будильник автоматически отключится после первого звонка. Он не будет больше звонить, если не включить его снова.
 	SV	Med den här inställningen väljer du om alarmet ska ringa mer än en gång. Om du anger Nej avaktiveras alarmet automatiskt när det har ringt. Alarmet ringer sedan inte igen förrän du aktiverar det igen.
 
@@ -1988,6 +2039,7 @@ ALARM_ALL_ALARMS
 	NL	Alle wekkers
 	NO	Alle vekkinger
 	PL	Wszystkie alarmy
+	PT	Todos os alarmes
 	RU	Все будильники
 	SV	Alla alarm
 
@@ -2004,6 +2056,7 @@ ALARM_ALARMS_ENABLED_DESC
 	NL	Hiermee kun je alle wekkers tegelijk in-/uitschakelen. Als dit op 'Uit' is ingesteld, gaat er geen wekker af.
 	NO	Med denne innstillingen kan du slå av og på alle vekkinger samtidig. Hvis innstillingen settes til Av, blir ingen vekkinger aktivert.
 	PL	Ta opcja umożliwia natychmiastowe włączenie lub wyłączenie alarmów. Po wybraniu ustawienia Wył. alarm nie zostanie uruchomiony.
+	PT	Esta opção permite activar/desactivar todos os alarmes de uma sóa vez. Se optar por Desligado nenhum alarme será activado.
 	RU	Эта настройка позволяет включить/выключить все будильники. Если она отключена, будильники выключены не будут.
 	SV	Med den här inställningen kan du aktivera/avaktivera alla alarm på en gång.Om du väljer inställningen Av avaktiveras alla alarm.
 
@@ -2021,6 +2074,7 @@ ALARM_FADE
 	NL	Weksignaal infaden
 	NO	Skru vekkerklokken på gradvis
 	PL	Stopniowo zwiększaj głośność
+	PT	Alarme com volume progressivo
 	RU	Усиление сигналов будильников
 	SV	Tona in alarm
 	ZH_CN	闹钟缓慢切入
@@ -2038,6 +2092,7 @@ ALARM_SET_TIME
 	NL	Tijd instellen
 	NO	Still klokken
 	PL	Ustaw godzinę
+	PT	Definir hora
 	RU	Установка времени
 	SV	Ställ klockan
 
@@ -2054,6 +2109,7 @@ ALARM_SET_DAYS
 	NL	Dagen kiezen
 	NO	Velg dager
 	PL	Wybierz dni
+	PT	Definir dias
 	RU	Выбрать дни
 	SV	Välj dagar
 
@@ -2070,6 +2126,7 @@ ALARM_SAVING
 	NL	Wekker wordt opgeslagen...
 	NO	Lagrer alarm...
 	PL	Zapisywanie alarmu...
+	PT	Guardando alarme ...
 	RU	Сохранение будильника...
 	SV	Sparar alarm...
 
@@ -2086,6 +2143,7 @@ ALARM_DELETING
 	NL	Wekker wordt verwijderd...
 	NO	Fjerner vekking...
 	PL	Usuwanie alarmu...
+	PT	Removendo alarme...
 	RU	Удаление будильника...
 	SV	Tar bort alarm...
 
@@ -2104,7 +2162,7 @@ ALARM_NOW_PLAYING
 	NL	Weksignaal speelt nu
 	NO	Vekkerklokken spiller nå
 	PL	Budzik - teraz odtwarzane
-	PT	A Tocar o Alarme
+	PT	Alarme a tocar
 	RU	Звонящий будильник
 	SV	Alarmfunktionen Nu spelas
 	ZH_CN	闹钟播放中
@@ -2122,6 +2180,7 @@ ALARM_SNOOZE
 	NL	Weksignaal wordt gesnoozed...
 	NO	Slumrer vekkerklokken ...
 	PL	Drzemka...
+	PT	Activando a repetição do alarme...
 	RU	В режим повтора сигнала...
 	SV	Aktiverar snoozefunktion...
 
@@ -2138,6 +2197,7 @@ ALARM_SNOOZE_ENDED
 	NL	Snooze beëindigd
 	NO	Slumring over
 	PL	Drzemka zakończona
+	PT	Repetição terminada
 	RU	Выход из режима повторения сигнала
 	SV	Snoozefunktion avslutad
 
@@ -2154,6 +2214,7 @@ SETUP_SNOOZE_MINUTES
 	NL	Snoozeduur (in minuten)
 	NO	Slumretid (minutter)
 	PL	Czas drzemki (w minutach)
+	PT	A repetir em (minutos)
 	RU	Интервал повтора сигнала (мин.)
 	SV	Snoozetid (i minuter)
 
@@ -2170,6 +2231,7 @@ SETUP_SNOOZE_MINUTES_DESC
 	NL	Hiermee kun je instellen hoelang een weksignaal wordt gepauzeerd wanneer je op de snooze drukt.
 	NO	Med denne innstillingen kan du velge hvor lenge en vekking skal stoppe når du trykker på slumreknappen.
 	PL	To ustawienie umożliwia określenie czasu wstrzymania alarmu po naciśnięciu przycisku drzemki.
+	PT	Esta opção permite que defina por quanto tempo o alarme pausa quando carrega no botão de Repetir (Snooze)
 	RU	С помощью этой настройки можно выбрать длительность паузы будильника после нажатия кнопки повтора сигнала.
 	SV	Med den här inställningen anger du hur länge alarmet ska avaktiveras när du trycker på snoozeknappen.
 
@@ -2186,6 +2248,7 @@ SETUP_ALARM_TIMEOUT
 	NL	Time-out van weksignaal (in minuten)
 	NO	Tidsavbrudd for vekkerklokke (minutter)
 	PL	Limit czasu alarmu (w minutach)
+	PT	Duração do alarme (em minutos)
 	RU	Перерыв в работе будильника (мин.)
 	SV	Tidsgräns för alarm (i minuter)
 
@@ -2202,6 +2265,7 @@ SETUP_ALARM_TIMEOUT_DESC
 	NL	Hiermee kun je kiezen hoelang weksignalen afgaan voordat ze automatisch stoppen. Als deze optie op 0 is ingesteld, gaan weksignalen af tot ze handmatig worden gestopt.
 	NO	Med denne innstillingen kan du velge hvor lenge vekkinger skal spilles av før de stopper automatisk. Hvis innstillingen settes til 0, vil vekkingen spille helt til den slås av manuelt.
 	PL	To ustawienie umożliwia określenie czasu działania alarmu przed automatycznym zatrzymaniem. Ustawienie wartości 0 spowoduje działanie alarmów, aż do ręcznego zatrzymania.
+	PT	Esta opção permite-lhe definir por quanto tempo irão os alarmes tocar antes de pararem automaticamente. Se escolher 0 tocarão continuadamente até que manualmente os pare.
 	RU	С помощью данной настройки можно задать длительность звонка будильников до автоматической остановки. Если задано значение 0, звонки будильника можно остановить только вручную.
 	SV	Med den här inställningen anger du hur länge alarmen ringer innan de stängs av automatiskt. Om du anger 0 ringer alarmen tills de stängs av manuellt.
 
@@ -2218,6 +2282,7 @@ ALARM_STOPPED
 	NL	Wekker gestopt
 	NO	Alarm stanset
 	PL	Alarm zatrzymany
+	PT	Alarme desligado
 	RU	Будильники остановлены
 	SV	Alarm stoppat
 
@@ -2235,6 +2300,7 @@ ALARM_EVERY_DAY
 	NL	Elke dag
 	NO	Hver dag
 	PL	Codziennie
+	PT	Todos os dias
 	RU	Ежедневно
 	SV	Varje dag
 	ZH_CN	每一天
@@ -2253,6 +2319,7 @@ ALARM_DAY0
 	NL	Zondag
 	NO	søndag
 	PL	Niedziela
+	PT	Domingo
 	RU	Воскресенье
 	SV	Söndag
 	ZH_CN	星期日
@@ -2271,6 +2338,7 @@ ALARM_DAY1
 	NL	Maandag
 	NO	Mandag
 	PL	Poniedziałek
+	PT	2ª Feira
 	RU	Понедельник
 	SV	Måndag
 	ZH_CN	星期一
@@ -2289,6 +2357,7 @@ ALARM_DAY2
 	NL	Dinsdag
 	NO	Tirsdag
 	PL	Wtorek
+	PT	3ª Feira
 	RU	Вторник
 	SV	Tisdag
 	ZH_CN	星期二
@@ -2307,6 +2376,7 @@ ALARM_DAY3
 	NL	Woensdag
 	NO	Onsdag
 	PL	Środa
+	PT	4ª Feira
 	RU	Среда
 	SV	Onsdag
 	ZH_CN	星期三
@@ -2325,6 +2395,7 @@ ALARM_DAY4
 	NL	Donderdag
 	NO	torsdag
 	PL	Czwartek
+	PT	5ª Feira
 	RU	Четверг
 	SV	Torsdag
 	ZH_CN	星期四
@@ -2343,6 +2414,7 @@ ALARM_DAY5
 	NL	Vrijdag
 	NO	Fredag
 	PL	Piątek
+	PT	6ª Feira
 	RU	Пятница
 	SV	Fredag
 	ZH_CN	星期五
@@ -2361,6 +2433,7 @@ ALARM_DAY6
 	NL	Zaterdag
 	NO	Lørdag
 	PL	Sobota
+	PT	Sábado
 	RU	Суббота
 	SV	Lördag
 	ZH_CN	星期六
@@ -2378,6 +2451,7 @@ ALARM_SHORT_DAY_0
 	NL	zo
 	NO	søn
 	PL	Ni
+	PT	Dom
 	RU	Вс
 	SV	Sö
 
@@ -2394,6 +2468,7 @@ ALARM_SHORT_DAY_1
 	NL	ma
 	NO	man
 	PL	Po
+	PT	2ªF
 	RU	Пн
 	SV	Må
 
@@ -2410,6 +2485,7 @@ ALARM_SHORT_DAY_2
 	NL	di
 	NO	tirs
 	PL	Wt
+	PT	3ªF
 	RU	Вт
 	SV	Ti
 
@@ -2426,6 +2502,7 @@ ALARM_SHORT_DAY_3
 	NL	wo
 	NO	ons
 	PL	Śr
+	PT	4ªF
 	RU	Ср
 	SV	On
 
@@ -2442,6 +2519,7 @@ ALARM_SHORT_DAY_4
 	NL	do
 	NO	tors
 	PL	Czw
+	PT	5ªF
 	RU	Чт
 	SV	To
 
@@ -2458,6 +2536,7 @@ ALARM_SHORT_DAY_5
 	NL	vr
 	NO	fre
 	PL	Pi
+	PT	6ªF
 	RU	Пт
 	SV	Fr
 
@@ -2474,6 +2553,7 @@ ALARM_SHORT_DAY_6
 	NL	za
 	NO	lør
 	PL	So
+	PT	Sab
 	RU	Сб
 	SV	Lö
 
@@ -2491,6 +2571,7 @@ SLIMP3
 	NL	SLIMP3
 	NO	SLIMP3
 	PL	SLIMP3
+	PT	SLIMP3
 	RU	SLIMP3
 	SV	SLIMP3
 
@@ -2508,6 +2589,7 @@ SQUEEZEBOX
 	NL	Squeezebox
 	NO	Squeezebox
 	PL	Squeezebox
+	PT	Squeezebox
 	RU	Squeezebox
 	SV	Squeezebox
 
@@ -2525,6 +2607,7 @@ SQUEEZEBOX2
 	NL	Squeezebox2/v3
 	NO	Squeezebox2/v3
 	PL	Squeezebox2/v3
+	PT	Squeezebox2/v3
 	RU	Squeezebox2/v3
 	SV	Squeezebox 2/v3
 
@@ -2542,6 +2625,7 @@ TRANSPORTER
 	NL	Transporter
 	NO	Transporter
 	PL	Transporter
+	PT	Transporter
 	RU	Transporter
 	SV	Transporter
 
@@ -2559,6 +2643,7 @@ SOFTSQUEEZE
 	NL	SoftSqueeze
 	NO	SoftSqueeze
 	PL	SoftSqueeze
+	PT	SoftSqueeze
 	RU	SoftSqueeze
 	SV	SoftSqueeze
 
@@ -2695,6 +2780,7 @@ WELCOME_TO_RECEIVER
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
 	PL	Squeezebox — Zapraszamy
+	PT	Bem-vindo ao Squeezebox
 	RU	Добро пожаловать в Squeezebox
 	SV	Välkommen till Squeezebox!
 
@@ -2711,6 +2797,7 @@ WELCOME_TO_SQUEEZESLAVE
 	NL	Welkom bij SqueezeSlave
 	NO	Velkommen til SqueezeSlave
 	PL	SqueezeSlave - Zapraszamy
+	PT	Bem-vindo ao Squeezeslave
 	RU	Добро пожаловать в SqueezeSlave!
 	SV	Välkommen till SqueezeSlave!
 
@@ -2727,6 +2814,7 @@ WELCOME_TO_BOOM
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
 	PL	Squeezebox — Zapraszamy
+	PT	Bem-vindo ao Squeezebox
 	RU	Добро пожаловать в Squeezebox
 	SV	Välkommen till Squeezebox!
 
@@ -2743,6 +2831,7 @@ WELCOME_TO_SQUEEZEPLAY
 	NL	Welkom bij SqueezePlay
 	NO	Velkommen til SqueezePlay
 	PL	SqueezePlay - Zapraszamy
+	PT	Bem-vindo ao Squeezeplay
 	RU	Добро пожаловать в SqueezePlay
 	SV	Välkommen till SqueezePlay
 
@@ -2759,6 +2848,7 @@ WELCOME_TO_CONTROLLER
 	NL	Welkom bij Controller
 	NO	Velkommen til Controller
 	PL	Controller - Zapraszamy
+	PT	Bem-vindo ao Controller
 	RU	Добро пожаловать в Controller
 	SV	Välkommen till Controller
 
@@ -2775,6 +2865,7 @@ LOGIN
 	NL	Aanmelden
 	NO	Logg på
 	PL	Zarejestruj się
+	PT	Iniciar sessão
 	RU	Войти
 	SV	Logga in
 
@@ -2871,6 +2962,7 @@ UPDATING_FIRMWARE_RECEIVER
 	NL	Squeezebox-firmware updaten...
 	NO	Oppdaterer Squeezebox-fastvare.
 	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
+	PT	Atualizando firmware de Squeezebox.
 	RU	Обновление микропрограммы Squeezebox.
 	SV	Uppdaterar Squeezebox-spelarens inbyggda programvara.
 
@@ -2887,6 +2979,7 @@ UPDATING_FIRMWARE_BOOM
 	NL	Firmware wordt geüpdatet.
 	NO	Oppdaterer fastvare.
 	PL	Aktualizowanie oprogramowania układowego.
+	PT	Actualizando firmware.
 	RU	Обновление микропрограммы.
 	SV	Inbyggt program uppdateras
 
@@ -2904,6 +2997,7 @@ FIRMWARE_MISSING
 	NL	Fout: Ontbrekende firmware
 	NO	Feil: Mangler fastvare
 	PL	Błąd: brak oprogramowania układowego
+	PT	Error: Firmware em falta
 	RU	Ошибка: отсутствует микропрограмма
 	SV	Fel: Inbyggd maskinvara saknas.
 	ZH_CN	失误：韧件丢失
@@ -2922,6 +3016,7 @@ FIRMWARE_MISSING_DESC
 	NL	Server kan geen verbinding maken met internet om firmwareupdate binnen te halen.
 	NO	Serveren kan ikke kople seg til Internett for å oppdatere spillerens programvare.
 	PL	Serwer nie może połączyć się z Internetem w celu uzyskania aktualizacji oprogramowania układowego.
+	PT	O servidor não consegue ligar-se à Internet para obter a actualização do firmware.
 	RU	Серверу не удается подключиться к Интернету для обновления микропрограммы.
 	SV	Servern kan inte ansluta till Internet och hämta spelarens inbyggda programvara.
 	ZH_CN	服务器无法连接互联网并取得韧件更新。
@@ -2940,6 +3035,7 @@ CHECKING_STREAM
 	NL	Stream controleren...
 	NO	Kontrollerer datastrøm...
 	PL	Sprawdzanie strumienia...
+	PT	Verificando o stream ...
 	RU	Проверка потока...
 	SV	Kontrollerar ström...
 	ZH_CN	检查频流
@@ -2958,6 +3054,7 @@ GETTING_STREAM_INFO
 	NL	Streaminfo ophalen...
 	NO	Henter informasjon om strøm ...
 	PL	Pobieranie informacji o strumieniu...
+	PT	Obtendo a informação do stream...
 	RU	Получение информации о потоке...
 	SV	Hämtar ströminformation...
 
@@ -2974,6 +3071,7 @@ GETTING_TRACK_DETAILS
 	NL	Nummerdetails ophalen...
 	NO	Henter spordetaljer ...
 	PL	Pobieranie szczegółów utworu...
+	PT	Obtendo detalhes
 	RU	Получение сведений о дорожке...
 	SV	Hämtar spårinformation...
 
@@ -3011,6 +3109,7 @@ BUFFERING
 	NL	Opslaan in buffer
 	NO	Fyller bufferen
 	PL	Buforowanie
+	PT	Buffering
 	RU	Буферизация
 	SV	Buffrar
 	ZH_CN	缓冲装载中
@@ -3029,6 +3128,7 @@ REBUFFERING
 	NL	Opnieuw bufferen...
 	NO	Fyller bufferen på nytt...
 	PL	Ponowne buforowanie...
+	PT	Rebuffering...
 	RU	Повторная буферизация...
 	SV	Buffrar om...
 
@@ -3045,6 +3145,7 @@ REBUFFERING_FAILED
 	NL	Opnieuw bufferen mislukt
 	NO	Kunne ikke bufre på nytt
 	PL	Ponowne buforowanie nie powiodło się
+	PT	Rebuffering falhou
 	RU	Сбой повторной буферизации
 	SV	Det gick inte att buffra om
 
@@ -3062,6 +3163,7 @@ WAITING_TO_SYNC
 	NL	Wachten op sync...
 	NO	Venter på synkronisering...
 	PL	Oczekiwanie na synchronizację...
+	PT	Esperando a sincronização
 	RU	Ожидание синхронизации...
 	SV	Inväntar synkronisering...
 	ZH_CN	等待同步
@@ -3120,6 +3222,7 @@ PROBLEM_OPENING_REMOTE_URL
 	NL	Fout: Kan externe URL niet openen voor:
 	NO	Feil: Kan ikke åpne den eksterne adressen
 	PL	Błąd: nie można otworzyć zdalnego adresu URL
+	PT	Erro: Não foi possível abrir a URL remota
 	RU	Ошибка: сбой открытия удаленного URL
 	SV	Fel: Fel: Det går inte att öppna den externa webbadressen.
 	ZH_CN	失误：无法连接网址
@@ -3137,6 +3240,7 @@ PROBLEM_CONVERT_FILE
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 	NO	Problem: Kan ikke spille av filtype for:
 	PL	Problem: nie można odtworzyć typu pliku dla:
+	PT	Problema: Impossível reproduzir o tipo de ficheiro:
 	RU	Проблема: сбой воспроизведения типа файла для:
 	SV	Problem: Det går inte att spela upp filtypen för:
 
@@ -3153,6 +3257,7 @@ PROBLEM_CONVERT_FILE_WMA_LOSSLESS
 	NL	Probleem: WMA Lossless vereist Windows
 	NO	Problem: WMA Lossless krever Windows
 	PL	Problem: format Bezstratny WMA wymaga systemu Windows
+	PT	Problema: WMA Lossless requer Windows
 	RU	Проблема: для WMA Lossless требуется Windows
 	SV	Problem: WMA Lossless kräver Windows
 
@@ -3169,6 +3274,7 @@ PROBLEM_CONVERT_STREAM
 	NL	Probleem: Kan stream niet converteren:
 	NO	Problem: Kan ikke konvertere strøm:
 	PL	Problem: nie można przekonwertować strumienia:
+	PT	Problema: Impossível converter o stream
 	RU	Проблема: невозможно преобразовать поток:
 	SV	Problem: Det gick inte att konvertera strömmen:
 
@@ -3185,6 +3291,7 @@ PROBLEM_CONVERTING_STREAM
 	NL	Fout: DRM in bestand:
 	NO	Feil: DRM i fil:
 	PL	Błąd: mechanizm DRM w pliku:
+	PT	Erro: ficheiro contendo DRM
 	RU	Ошибка: DRM в файле:
 	SV	Fel: DRM i filen:
 
@@ -3201,6 +3308,7 @@ PROBLEM_UNKNOWN_TYPE
 	NL	Fout: Onbekend bestandstype voor:
 	NO	Feil: Ikke gjenkjent filtype for:
 	PL	Błąd: nierozpoznany typ pliku dla:
+	PT	Erro: Tipo de ficheiro não reconhecido de:
 	RU	Ошибка: нераспознаваемый тип файла для:
 	SV	Fel: Okänd filtyp för:
 
@@ -3217,6 +3325,7 @@ UNSUPPORTED_SAMPLE_RATE
 	NL	Niet ondersteunde samplefrequentie
 	NO	Denne samplingsfrekvensen støttes ikke
 	PL	Nieobsługiwana częstotliwość próbkowania
+	PT	Sa,ple rate não suportado
 	RU	Неподдерживаемая частота дискретизации
 	SV	Samplingsfrekvensen stöds ej
 
@@ -3234,6 +3343,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	NL	Fout: Afspeellijst is leeg
 	NO	Feil: Spillelisten er tom
 	PL	Błąd: nie znaleziono elementów na liście odtwarzania
+	PT	Erro: Não se encontram items na playlist
 	RU	Ошибка: не найдены элементы плей-листа
 	SV	Fel: Spellistan är tom.
 
@@ -3249,6 +3359,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	NL	Fout: Kan geen verbinding maken om afspeellijst op te halen
 	NO	Feil: Kan ikke koble til for å hente spilleliste
 	PL	Błąd: nie można połączyć się, aby odzyskać listę odtwarzania
+	PT	Erro: Não se consegue conectar para obter a playlist
 	SV	Fel: Kan inte ansluta för att hämta spellista
 	ZH_CN	失误：无法取得播放表
 
@@ -3266,6 +3377,7 @@ ASF_UNABLE_TO_PARSE
 	NL	Fout: Kan ASF audiostream niet verwerken
 	NO	Feil: Kan ikke tolke ASF-lydstrøm
 	PL	Błąd: nie można przeanalizować strumienia audio ASF
+	PT	Erro: impossívelanalisar o fluxo audio ASF
 	RU	Ошибка: сбой анализа аудиопотока ASF
 	SV	Fel: Det går inte att tolka ASF-ljudströmmen.
 	ZH_CN	失误：无法解析音频流
@@ -3305,6 +3417,7 @@ STATUS
 	NL	Status
 	NO	Status
 	PL	Stan
+	PT	Estado
 	RU	Статус
 	SV	Status
 	ZH_CN	状态
@@ -3363,6 +3476,7 @@ WEB_XML_ERROR
 	NL	Fout tijdens laden van externe feed voor %s: (%s)
 	NO	Det oppsto en feil under lasting av ekstern feed for %s: (%s)
 	PL	Błąd podczas ładowania zdalnego źródła dla %s: (%s)
+	PT	Ocorreu um erro ao carregar o feed remoto de %s:  (%s)
 	RU	Ошибка при загрузке удаленного веб-канала для %s: (%s)
 	SV	Ett fel uppstod när fjärrflödet för %s lästes in: (%s)
 	ZH_CN	载入远方信息时发生失误%s: (%s)
@@ -3381,6 +3495,7 @@ XML_ERROR
 	NL	Fout
 	NO	Feil
 	PL	Błąd
+	PT	Erro
 	RU	Ошибка
 	SV	Fel
 	ZH_CN	失误
@@ -3399,6 +3514,7 @@ XML_GET_FAILED
 	NL	Kan niet verwerken
 	NO	Tolking mislyktes
 	PL	Błąd przetwarzania
+	PT	Erro no fluxo
 	RU	Сбой анализа
 	SV	Det gick inte att tolka
 	ZH_CN	解析失误
@@ -3417,6 +3533,7 @@ XML_LOADING
 	NL	Bezig met ophalen...
 	NO	Henter...
 	PL	Pobieranie...
+	PT	Carregando...
 	RU	Получение...
 	SV	Hämtar...
 	ZH_CN	读取中
@@ -3435,6 +3552,7 @@ XML_LINK
 	NL	Link
 	NO	Kopling
 	PL	Łącze
+	PT	Link
 	RU	Ссылка
 	SV	Länk
 	ZH_CN	链路
@@ -3453,6 +3571,7 @@ XML_DATE
 	NL	Datum
 	NO	Dato
 	PL	Data
+	PT	Data
 	RU	Дата
 	SV	Datum
 	ZH_CN	日期
@@ -3471,6 +3590,7 @@ XML_EDITOR
 	NL	Redacteur
 	NO	Redigeringsprogram
 	PL	Edytor
+	PT	Editor
 	RU	Редактор
 	SV	Redigerare
 	ZH_CN	编辑
@@ -3489,6 +3609,7 @@ XML_ENCLOSURE
 	NL	Bijlage
 	NO	Vedlegg
 	PL	Załącznik
+	PT	Enclosure
 	RU	Вложение
 	SV	Kabinett
 	ZH_CN	框架
@@ -3525,6 +3646,7 @@ XML_FEED_DESCRIPTION
 	NL	Over deze feed
 	NO	Om denne feeden
 	PL	Informacje o źródle
+	PT	Àcerca deste fee
 	RU	Об этом веб-канале
 	SV	Om det här flödet
 	ZH_CN	关于这饲址
@@ -3543,6 +3665,7 @@ XML_SUBTITLE
 	NL	Ondertitel
 	NO	Tekst
 	PL	Podtytuł
+	PT	Subtítulo
 	RU	Субтитры
 	SV	Undertitel
 	ZH_CN	字幕
@@ -3561,6 +3684,7 @@ XML_SUMMARY
 	NL	Samenvatting
 	NO	Sammendrag
 	PL	Podsumowanie
+	PT	Resumo
 	RU	Сводка
 	SV	Sammanfattning
 	ZH_CN	简介
@@ -3579,6 +3703,7 @@ XML_EXPLICIT
 	NL	Expliciet
 	NO	Støtende
 	PL	Bez cenzury
+	PT	Explícito
 	RU	Непристойный
 	SV	Explicit
 	ZH_CN	说明
@@ -3597,6 +3722,7 @@ NUMBER_OF_LISTENERS
 	NL	Aantal luisteraars
 	NO	Antall lyttere
 	PL	Liczba słuchaczy
+	PT	Numero de ouvintes
 	RU	Число слушателей
 	SV	Antal lyssnare
 	ZH_CN	听众数量
@@ -3615,6 +3741,7 @@ DESCRIPTION
 	NL	Beschrijving
 	NO	Beskrivelse
 	PL	Opis
+	PT	Descrição
 	RU	Описание
 	SV	Beskrivning
 	ZH_CN	陈述
@@ -3634,6 +3761,7 @@ SOURCE
 	NO	Kilde
 	PL	Źródło
 	RU	Источник
+	PT	Origem
 	SV	Källa
 	ZH_CN	源头
 
@@ -3685,6 +3813,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	NL	De helderheid van het display kan afgestemd worden op de status van het systeem: aan, uit, of in ruststand (screensaver). De helderheid kan ook automatisch aangepast worden wanneer je op een knop drukt, het afspelen van een nummer start of een tijdje niets doet. Je kunt dit automatische gedrag desgewenst uitschakelen.
 	NO	Du kan angi ulike innstillinger for lysstyrke avhengig av om spilleren er av, på eller inaktiv (skjermsparer). Dette kan justeres automatisk når du trykker på en knapp, starter avspilling eller lar spilleren stå i fred en stund. Du kan velge å deaktivere disse automatiske justeringene.
 	PL	Jasność wyświetlacza odtwarzacza można ustawić dla trybu włączenia, wyłączenia lub bezczynności (wygaszacz ekranu). Można także ustawić ją automatycznie dla naciśnięcia przycisku, rozpoczęcia odtwarzania lub nieużywania przez pewien czas. To automatyczne działanie można wyłączyć.
+	PT	O brilho do ecran do reprodutor pode ser definido para quando está ligado, quando está desligado ou em espera (screensaver). Pode tambem ser ajustado automaticamente quando prime um botão, quando começa a tocar uma musica ou se o deixa inactivo por algum tempo. Pode tambem optar por desactivar este comportamento automatico.
 	RU	Можно настроить яркость экрана плеера во включенном, выключенном или неактивном состоянии (экранная заставка). Она также может настраиваться автоматически, когда пользователь нажимает кнопку, начинает воспроизведение песни или на какое-то время перестает пользоваться устройством. Это автоматическое поведение можно отключить.
 	SV	Du kan ange olika inställningar för spelarskärmens ljusstyrka beroende på om spelaren är påslagen, avstängd eller i viloläge (skärmsläckare). Ljusstyrkan kan också justeras automatiskt när du trycker på en knapp, börjar spela upp en låt, eller inte rör spelaren på ett tag. De här automatiska justeringarna kan avaktiveras.
 	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的光亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏光亮度。用户可选择是否采用此项自动光亮度调节功能。
@@ -3744,7 +3873,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	NL	Dit zijn de indelingen die geselecteerd kunnen worden, zowel in de webinterface als in de instellingen van de muziekspeler. Als je een indeling wilt verwijderen, maak je het tekstvakje leeg. Wil je een indeling toevoegen, dan zet je het in een leeg vakje. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (nummer als int), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br> De huidige selectie is de indeling die op de webpagina's gebruikt zal worden.
 	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og på spillerne. Tøm boksen for å fjerne et format. Du legger til et nytt format ved å oppgi det i en tom boks. Tilgjengelige dataelementer er CT (innholdstype), TITLE (tittel), GENRE (sjanger), TRACKNUM (spornummer), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totalt antall sekunder, oppgitt som et heltall), DURATION (minutter og sekunder), BITRATE, LONGDATE (dagens dato i langt format), SHORTDATE (dagens dato i kort format) og CURRTIME (klokkeslett nå). Elementer kan separeres med ethvert tegn, eller ingen. Skilletegnet vises bare om dataelementet finnes.<br>Det valgte formatet er det som blir brukt på nettsidene.
 	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
-	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
+	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no reprodutor. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
 	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
 	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
@@ -3764,7 +3893,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	NL	Dit zijn de indelingen die geselecteerd kunnen worden, zowel in de webinterface als in de instellingen van de muziekspeler. Als je een indeling wilt verwijderen, maak je het tekstvakje leeg. Wil je een indeling toevoegen, dan zet je het in een leeg vakje. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (nummer als int), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br> De huidige selectie is de indeling die op de webpagina's gebruikt zal worden.
 	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og på spillerne. Tøm boksen for å fjerne et format. Du legger til et nytt format ved å oppgi det i en tom boks. Tilgjengelige dataelementer er CT (innholdstype), TITLE (tittel), GENRE (sjanger), TRACKNUM (spornummer), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totalt antall sekunder, oppgitt som et heltall), DURATION (minutter og sekunder), BITRATE, LONGDATE (dagens dato i langt format), SHORTDATE (dagens dato i kort format) og CURRTIME (klokkeslett nå). Elementer kan separeres med ethvert tegn, eller ingen. Skilletegnet vises bare om dataelementet finnes.<br>Det valgte formatet er det som blir brukt på nettsidene.
 	PL	Są to formaty dostępne do wyboru w odtwarzaczu. Aby wprowadzić nowy format do wyboru na odtwarzaczu, wybierz jeden z listy rozwijanej i zapisz ustawienia.<br>Aktualny wybór to format, który będzie używany na odtwarzaczu.<br>Jeżeli chcesz dodać nowy format, niedostępny w liscie rozwijanej, przejdź do: Ustawienia serwera > Interfejs > Format tytułu
-	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
+	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no reprodutor. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
 	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
 	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
@@ -3843,6 +3972,7 @@ SETUP_ACTIVEFONT
 	NL	Lettertype
 	NO	Skrifttype
 	PL	Czcionka
+	PT	Tipo de letra
 	RU	Шрифт
 	SV	Typsnitt
 	ZH_CN	字体
@@ -3862,6 +3992,7 @@ SETUP_ACTIVEFONT_DESC
 	NL	Je kunt de knop SIZE op de afstandsbediening, of de keuzerondjes hieronder gebruiken om tussen lettertypen op het display van de muziekspeler te schakelen. Via de onderstaande menu's kun je bepalen in welke volgorde ze verschijnen.
 	NO	Du kan bruke SIZE-knappen på fjernkontrollen eller knappene under for å velge mellom ulike skrifttyper for spillerens skjerm. I menyene nedenfor kan du også stille inn i hvilken rekkefølge skrifttypene vises.
 	PL	Przycisk SIZE na pilocie lub przyciski opcji poniżej umożliwiają przełączanie czcionek na wyświetlaczu odtwarzacza. Możliwe jest wybranie kolejności wyświetlania za pomocą menu poniżej.
+	PT	Pode usar o botão SIZE no comando ou os botões seguintes para alterar o tipo de letra no ecran do reprodutor. Pode alterar a ordem em que aparecem no menu abaixo
 	RU	С помощью кнопки SIZE пульта ДУ или нижеприведенных переключателей можно переключаться между шрифтами экрана плеера. Порядок их вывода можно задать с помощью следующих меню.
 	SV	Du kan använda knappen SIZE på fjärrkontrollen eller knapparna nedan för att byta teckensnitt på spelarens skärm. Du kan välja i vilken ordning de ska visas med hjälp av menyerna nedan.
 	ZH_CN	您可使用遥控器的大小按钮或如下的无线电按钮设定播放机显示屏的字体大小。您可在如下的菜单设定它们出现的排序。
@@ -3881,6 +4012,7 @@ SETUP_IDLEFONT
 	NL	Lettertype in stand-by
 	NO	Skrifttype i hvilemodus
 	PL	Czcionka stanu gotowości
+	PT	Tipo de letra em modo de espera
 	RU	Шрифт режима ожидания
 	SV	Typsnitt i viloläge
 	ZH_CN	备用字体
@@ -3900,6 +4032,7 @@ SETUP_IDLEFONT_DESC
 	NL	Je kunt de knop SIZE op de afstandsbediening, of de keuzerondjes hieronder gebruiken om tussen lettertypen voor de klokdisplay te schakelen wanneer de muziekspeler stand-by staat. Via de onderstaande menu's kun je bepalen in welke volgorde ze verschijnen.
 	NO	Når spilleren er i hvilemodus, kan du bruke SIZE-knappen på fjernkontrollen eller knappene under for å velge mellom ulike skrifttyper for klokkeskjermen. I menyene nedenfor kan du også stille inn i hvilken rekkefølge skrifttypene vises.
 	PL	Gdy odtwarzacz działa w trybie gotowości, można użyć przycisku SIZE na pilocie lub przycisków opcji poniżej, aby zmienić czcionki wyświetlania zegara. Kolejność ich wyświetlania można wybrać z menu poniżej.
+	PT	Quando o reprodutor está em Standny, pode usar o botão SIZE no controle remoto ou os botões de opçãpo seguintes para alterar o tipo de letra no relógio. Pode definir a ordem em que aparecem nos menus seguintes.
 	RU	Когда плеер находится в режиме ожидания, с помощью кнопки SIZE на пульте ДУ или расположенных ниже переключателей можно изменять размеры шрифта экрана часов. Следующие меню позволяют выбрать порядок их отображения.
 	SV	När spelaren befinner sig i viloläge kan du använda knappen SIZE på fjärrkontrollen eller knapparna nedan för att byta teckensnitt på klockskärmen. Du kan välja i vilken ordning de ska visas med hjälp av menyerna nedan.
 	ZH_CN	当播放机在备用状态时，您可使用遥控器的大小按钮或如下的无线电按钮设定播放机时间显示的字体大小。您可在如下的菜单设定它们出现的排序。
@@ -3939,6 +4072,7 @@ SETUP_DOUBLESIZE_DESC
 	NL	Een tekstgrootte voor het scherm van de muziekspeler kiezen
 	NO	Velg tekststørrelse for spillerens skjerm
 	PL	Wybierz rozmiar tekstu na wyświetlaczu odtwarzacza
+	PT	Defina o tamanho do texto a nostrar no ecran do reprodutor
 	RU	Выберите размер текста для экрана плеера
 	SV	Välj textstorlek för spelarens skärm.
 	ZH_CN	请选择播放机显示屏的字体大小
@@ -3978,6 +4112,7 @@ SETUP_SCROLLPAUSE
 	NL	Tekstlooppauze
 	NO	Pause i tekstrulling
 	PL	Wstrzymanie przewijania
+	PT	Scroll Pausa
 	RU	Пауза при прокрутке
 	SV	Rullningspaus
 	ZH_CN	暂停卷动
@@ -3997,6 +4132,7 @@ SETUP_SCROLLPAUSE_DESC
 	NL	Je kunt aanpassen hoe lang de muziekspeler wacht voordat het lopen van de tekst op het display start. Voer een waarde in (in seconden) die aangeeft hoe lang er gewacht moet worden voordat de tekst gaat lopen, of voordat de tekst herhaald wordt. Voer 0 in om helemaal niet te wachten en de tekst direct te laten lopen. De standaardinstelling is 3,6 seconden.
 	NO	Du kan justere hvor lenge spilleren venter før den starter sidelengs tekstrulling på skjermen. Angi hvor mange sekunder den skal vente før den ruller, eller mellom rulling. Skriv null hvis du ikke vil ha noen pause, men heller vil at teksten skal begynne å rulle med én gang. Standard er 3,6 sekunder.
 	PL	Czas, po jakim odtwarzacz rozpoczyna przewijanie tekstu w poziomie na ekranie odtwarzacza można dostosować. Wprowadź wartość oczekiwania w sekundach przed rozpoczęciem przewijania lub między kolejnymi przewijaniami. Wartość zero wyłącza oczekiwanie i powoduje natychmiastowe przewijanie. Wartość domyślna to 3,6 sekundy.
+	PT	Pode ajustar o tempo que o reprodutor demorará antes de iniciar um scrolling horizontal do tetxto no ecran. Introduza um valor em segundos para o tempo de espera antes do scrolling ou entre scrollings. Introduza o valor zero para que não haja qualquer pausa e o scrolling se inicie imediatamente. O tempo de espera pré-definido é de 3,6 segundos.
 	RU	Можно задать время, по истечении которого плеер начинает горизонтальную прокрутку текста на экране. Введите значение в секундах для времени ожидания до начала прокрутки или между прокрутками. Для немедленной прокрутки без пауз введите «0». Значение по умолчанию — 3,6 с.
 	SV	Du kan justera fördröjningen innan textremsan börja rulla över spelarens skärm. Ange ett värde (i sekunder) innan textremsan börjar rulla, eller innan den börjar på nytt efter att ha rullat en gång över skärmen. Ange noll om du vill att textremsan börjar rulla direkt utan fördröjning. Standard är 3,6 sekunder.
 	ZH_CN	您可调整播放机开始进行横跨文字卷动前的等待值。输入一个以秒为单位的等待值为在卷动之前或在卷动之间的等待时间。如要立刻进行卷动请输入零为等待值。缺省值为3.6秒。
@@ -4016,6 +4152,7 @@ SETUP_SCROLLRATE
 	NL	Tekstloopsnelheid
 	NO	Rullefrekvens
 	PL	Szybkość przewijania
+	PT	Velocidade de scrolling
 	RU	Скорость прокрутки
 	SV	Rullningshastighet
 	ZH_CN	卷动速度
@@ -4035,6 +4172,7 @@ SETUP_SCROLLRATE_DESC
 	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muziekspeler met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens volgens het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een muziekspeler met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde, in seconden, in voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. De standaardwaarde is 0,033 seconden.
 	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av skjermen. På en spiller med grafisk skjerm kan denne innstillingen benyttes sammen med Rullepiksler for å styre rullehastighet og kvalitet. (Teksten vil rulle i henhold til Rullepiksler for hvert intervall angitt under Rullefrekvens.) På en spiller med tegnskjerm vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere tall vil gjøre rullingen raskere. 0,033 sekunder er standard.
 	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna.
+	PT	Pode ajustar a velocidade a que o texto se move no ecran. A velocidade de scrolling define o tempo entre actualizações do ecran. Num reprodutor com ecran grafico este parametro pode ser ajustado em conbinação com os Scroll Pixels para ajustar a qualidade e velocidade do scrolling (o texto mover-se-á segundo o valor do Scroll Pixels por cada valor em segundos da Velocidade de scrolling definida). Num reprodutor com ecran de texto define o tempo de duração antes da entrada do caracter seguinte. Introduza um valor em segundos para o tempo de espera entre actualizações. Quanto menor for o numero mais rápido será o scrolling. Por defeito o valor é 0,033 segundos.
 	RU	Можно настроить скорость прокрутки теста на экране. Параметр «Скорость прокрутки» определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром «Число пикселей прокрутки», при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. Значение по умолчанию 0,033 с.
 	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
@@ -4052,6 +4190,7 @@ DOUBLE-LINE
 	NL	Grote tekst
 	NO	Stor skrift
 	PL	Duży tekst
+	PT	Texto grande
 	RU	Крупный текст
 	SV	Stor text
 
@@ -4090,7 +4229,7 @@ SETUP_GROUP_IRSETS_DESC
 	NL	Je kunt instellen op welke infraroodsignalen de muziekspeler moet reageren, en welke het moet negeren. Selecteer hieronder een naam om een codeset voor de afstandsbediening te activeren. Haal het vinkje weg om de codeset te deactiveren.
 	NO	Du kan velge om denne spilleren skal reagere på eller ignorere visse infrarøde signaler fra fjernkontrollen. Du kan aktivere et kodesett for en fjernkontroll ved å merke av ved navnet nedenfor. Du kan deaktivere et kodesett ved å fjerne avmerkingen.
 	PL	Odtwarzacz można ustawić tak, aby reagował na określone sygnały pilota na podczerwień lub je ignorował. Aby włączyć zestaw kodów pilota zdalnego sterowania, zaznacz pole wyboru obok nazwy poniżej. Aby wyłączyć zestaw kodów, usuń zaznaczenie.
-	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu cliente. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
+	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu reprodutor. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
 	RU	Можно настроить, на какие инфракрасные сигналы пульта плеер будет реагировать, а какие — игнорировать. Чтобы включить набор кодов пульта ДУ, установите флажок рядом с его именем. Чтобы отключить его, снимите флажок.
 	SV	Du kan välja om denna spelare ska svara till eller ignorera signaler från vissa fjärrkontroller. Om du vill aktivera en fjärrkontrolls koduppsättning, markerar du rutan bredvid namnet nedan och klickar på Ändra. Om du vill avaktivera en koduppsättning avmarkerar du rutan och klickar på Ändra.
 	ZH_CN	您可选择让这个播放机对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
@@ -4108,6 +4247,7 @@ SETUP_GROUP_PLUGINS
 	NL	Plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
+	PT	Plugins
 	RU	Подключаемые модули
 	SV	Plugin-program
 
@@ -4124,6 +4264,7 @@ INSTALLERROR_INVALID_VERSION
 	NL	Plug-in is incompatibel met deze versie van Lyrion Music Server. Update de plug-in.
 	NO	Plugin-modulen er ikke kompatibel med denne versjonen av Lyrion Music Server. Du bør oppdatere.
 	PL	Dodatek jest niezgodny z tą wersją programu Lyrion Music Server. Dokonaj aktualizacji.
+	PT	O Plugin é incompatível com esta versão do Lyrion Music Server
 	RU	Плагин несовместим с данной версией Lyrion Music Server. Обновите программу.
 	SV	Plugin-programmet är inte kompatibelt med den här versionen av Lyrion Music Server. Uppdatera.
 
@@ -4140,6 +4281,7 @@ INSTALLERROR_INCOMPATIBLE_PLATFORM
 	NL	Plug-in is incompatibel met je platform.
 	NO	Plugin-modulen er ikke kompatibel med plattformen din.
 	PL	Dodatek jest niezgodny z platformą.
+	PT	O Plugin é incompatível com a sua plataforma.
 	RU	Плагин несовместим с данной платформой.
 	SV	Plugin-programmet är inte kompatibelt med din plattform.
 
@@ -4156,6 +4298,7 @@ INSTALLERROR_FAILED_TO_LOAD
 	NL	Plug-in kan niet worden geladen
 	NO	Plugin-modulen ble ikke lastet inn
 	PL	Załadowanie dodatku nie powiodło się
+	PT	O Plugin não foi carregado
 	RU	Сбой загрузки подключаемого модуля
 	SV	Det gick inte att läsa in plugin-programmet
 
@@ -4174,6 +4317,7 @@ SETUP_GROUP_FORMATS_CONVERSION
 	NL	Conversieset-up voor bestandsformaten
 	NO	Innstillinger for konvertering mellom filformater
 	PL	Konfiguracja konwersji formatów plików
+	PT	Configuração das conversões entre tipo de ficheiro
 	RU	Настройка преобразования форматов файлов
 	SV	Inställningar för konvertering mellan filformat
 	ZH_CN	文件格式转换设置
@@ -4193,6 +4337,7 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 	NL	Lyrion Music Server kan audioformaten direct tijdens het afspelen converteren. Je kunt specifieke formaten hieronder uitschakelen door het vinkje weg te halen. Alleen de naam van het programmabestand wordt weergegeven. Als je de hele opdrachtregel wilt zien, moet je 'convert.conf' openen. Klik op 'Wijzigen' om je instellingen op te slaan.
 	NO	Lyrion Music Server kan konvertere lydfilformater på direkten, slik at filene kan spilles av på spilleren. Du kan deaktivere formater nedenfor, ved å fjerne markeringen ved dem. Bare binærnavnet vises her. Hvis du vil se/redigere hele kommandolinjen, må du åpne convert.conf. Klikk Endre for å lagre endringene.
 	PL	Program Lyrion Music Server może przekonwertować formaty plików audio w locie w celu umożliwienia odtworzenia. Poszczególne formaty można wyłączyć poniżej, usuwając zaznaczenie pól wyboru. W tym miejscu widoczna jest tylko nazwa pliku binarnego. Aby wyświetlić/edytować tekst w całym wierszu polecenia, należy otworzyć plik convert.conf. Kliknij przycisk Zmień, aby zapisać zmiany.
+	PT	O Lyrion Music Server pode converter tipos de ficheiro em tempo real para serem tocados no seu reprodutor. Em baixo poderá descativar alguns tipos de ficheiros marcado-os como tal. Aqui só é mostrado o nome do binário. Para ver ou editar toda a linha de comandos terá que abrir o convert.conf. Clique em Alterar para salvar as alterações.
 	RU	Lyrion Music Server может в реальном времени преобразовывать форматы аудиофайлов для воспроизведения на плеере. Можно отключить те или иные форматы, сняв соответствующие флажки. Здесь отображается только имя двоичного файла. Чтобы просмотреть или изменить всю командную строку, нужно открыть файл convert.conf. Щелкните "Изменить", чтобы сохранить изменения.
 	SV	Lyrion Music Server kan konvertera ljudfiler under uppspelning. Du kan avaktivera specifika format nedan genom att avmarkera dem. Här visas endast namnet på den binära filen. Om du vill se eller redigera hela kommandoraden måste du öppna convert.conf. Spara ändringarna genom att klicka på Ändra.
 	ZH_CN	Lyrion Music Server能对音像文件进行即时的格式转换以便在播放机上播放。如要撤销某些格式，请清除其复选框中的标记。此处只显示有关的可执行文件。如要查看或编辑完整的命令行，请查看convert.conf。请点击《更动》以保存您所作的设定。
@@ -4204,6 +4349,7 @@ SETUP_FORMATS_PREFER_NATIVE
 	FR	Utiliser le format natif si possible (éviter le transcodage)
 	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler)
 	HU	Amikor csak lehetséges, részesítse előnyben a natív formátumot (dekódolás a lejátszón).
+	PT	Utilizar de preferência o formato nativo se possível (evitar a conversão no reprodutor).
 
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
@@ -4220,6 +4366,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	NL	Vereiste programma is niet gevonden:
 	NO	Finner ikke påkrevd program:
 	PL	Wymagany plik binarny nie został znaleziony:
+	PT	Não encontrado o binário requerido:
 	RU	Требуемый двоичный файл не найден:
 	SV	En nödvändig binärfil kunde inte hittas:
 	ZH_CN	所需的可执行文件不存在：
@@ -4239,6 +4386,7 @@ FILE_FORMAT
 	NL	Bestandsformaat
 	NO	Filformat
 	PL	Format pliku
+	PT	Formato de ficheiro
 	RU	Формат файла
 	SV	Filformat
 	ZH_CN	文件格式
@@ -4251,6 +4399,7 @@ SETUP_INPUTTYPE
 	ZH_CN	自
 	NL	Van
 	HU	forrás:
+	PT	De
 
 STREAM_FORMAT
 	CS	Formát proudu
@@ -4267,6 +4416,7 @@ STREAM_FORMAT
 	NL	Streamformaat
 	NO	Format for strømming
 	PL	Format strumienia
+	PT	Formato do Stream
 	RU	Формат потока
 	SV	Strömformat
 	ZH_CN	频流格式
@@ -4285,6 +4435,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	NL	Uitgeschakelde extensies voor audiobestanden
 	NO	Deaktiverte lydfilendelser
 	PL	Wyłączone rozszerzenia plików audio
+	PT	Desactivar as extensões dos ficheiros audio
 	RU	Отключенные расширения аудиофайлов
 	SV	Avaktiverade filtillägg för ljudfiler
 	ZH_CN	撤销音频文件扩展名
@@ -4302,6 +4453,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES
 	NL	Uitgeschakelde extensies voor fotobestanden
 	NO	Deaktiverte bildefilendelser
 	PL	Wyłączone rozszerzenia plików obrazów
+	PT	Desactivar as extensões dos ficheiros de imagem
 	RU	Отключенные расширения файлов изображений
 	SV	Avaktiverade filtillägg för bildfiler
 
@@ -4319,6 +4471,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	NL	Lyrion Music Server zoekt in de mediamap naar alle ondersteunde audiobestandstypen (audio- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: cue, mp4, aac
 	NO	Lyrion Music Server leter etter alle støttede filtyper i mediemappene (lydfiler og tidsskjema). Hvis du vil utelukke bestemte filtyper fra søket, kan du angi de relevante filendelsene nedenfor, atskilt med komma. Eksempel: cue, mp4, aac
 	PL	Program Lyrion Music Server wyszuka w folderach multimediów wszystkie obsługiwane typy plików (pliki audio i informacyjne). Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: cue, mp4, aac
+	PT	O Lyrion Music Server procurará na Pasta de Musica por todo o tipo de ficheiros suportados (ficheiros audio ou cue). Para desactivar o processamento de ficheiros de audio específicos durante o scanning da Pasta de Musica introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : cue, mp4, aac.
 	RU	Lyrion Music Server выполняет в папках мультимедиа поиск файлов всех поддерживаемых типов (аудиофайлов и плей-листов). Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: cue, mp4, aac.
 	SV	Lyrion Music Server söker igenom mediemapparna efter alla filtyper som stöds (ljudfiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av musikmappen kan du ange filtilläggen för de filer som ska undantas nedan i en kommaavgränsad lista. Exempel: cue, mp4, aac
 	ZH_CN	Lyrion Music Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
@@ -4336,6 +4489,7 @@ SETUP_DISABLEDEXTENSIONSIMAGES_DESC
 	NL	Lyrion Music Server zoekt in de mediamappen naar alle ondersteunde fotobestandstypen. Als je wilt voorkomen dat bepaalde bestandstypen worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv: bmp, gif
 	NO	Serveren ser etter alle støttede bildefilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: bmp, gif
 	PL	Serwer wyszuka w folderach multimediów wszystkie obsługiwane typy plików obrazów. Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: bmp, gif
+	PT	O Lyrion Music Server procurará na Pasta de Musica por todo o tipo de ficheiros suportados. Para desactivar o processamento de tipos de ficheiros específicos durante o scanning da Pasta de Musica introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : bmp, gif.
 	RU	Сервер выполнит в папках мультимедиа поиск файлов изображений всех поддерживаемых типов. Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: bmp, gif.
 	SV	Servern letar i mediemapparna efter alla bildfiler i format som stöds. Om du vill förhindra att vissa filtyper behandlas när musikmappen genomsöks kan du ange en kommaavgränsad lista med filnamnstillägg nedan. T.ex. bmp, gif
 
@@ -4353,6 +4507,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	NL	Uitgeschakelde afspeellijstextensies
 	NO	Deaktiverte filendelser for spillelister
 	PL	Rozszerzenia plików wyłączone na liście odtwarzania
+	PT	Extensões dos ficheiros da Lista de Reprodução desactivadas
 	RU	Отключенные расширения файлов плей-листа
 	SV	Avaktiverade filtillägg för spellistor
 	ZH_CN	撤销播放表文件扩展名
@@ -4371,6 +4526,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	NL	Lyrion Music Server zoekt in de afspeellijst map naar alle ondersteunde bestandstypen (afspeellijst- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: m3u, pls, cue
 	NO	Lyrion Music Server leter etter alle støttede filtyper i spillelistemappen (spillelistefiler og tidsskjema). Hvis du vil utelukke bestemte filtyper fra søket, kan du angi de relevante filnavnene nedenfor, atskilt med komma. Eksempel: m3u, pls, cue
 	PL	Program Lyrion Music Server wyszuka w folderze list odtwarzania wszystkie obsługiwane typy plików (pliki list odtwarzania i informacyjne). Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu list odtwarzania, wprowadź poniżej listę rozszerzeń plików rozdzieloną przecinkami, np.: m3u, pls, cue.
+	PT	O Lyrion Music Server procurará na Pasta das Listas de Repodução por todo o tipo de ficheiros suportados (Lista de Reprodução ou cue). Para desactivar o processamento de ficheirosespecíficos durante o scanning da Pasta das Listas de Repodução introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : m3u, pls, cue.
 	RU	Lyrion Music Server выполняет в папке "Плей-листы" поиск всех поддерживаемых типов файлов (файлов плей-листов и микрофонных материалов). Чтобы отключить обработку определенных типов файлов при сканировании папки "Плей-листы", введите список файловых расширений через запятую. Например: m3u, pls, cue
 	SV	Lyrion Music Server söker igenom mappen med spellistor efter filer av alla de typer som stöds (spellistefiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av spellistemappen kan du ange en kommaseparerad lista över filtillägg nedan. Exempel: m3u, pls, cue
 	ZH_CN	Lyrion Music Server会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
@@ -4390,6 +4546,7 @@ PLAYER_TYPE
 	NL	Type muziekspeler
 	NO	Spillertype
 	PL	Typ odtwarzacza
+	PT	Tipo de Reprodutor
 	RU	Тип плеера
 	SV	Spelartyp
 	ZH_CN	播放机类别
@@ -4409,6 +4566,7 @@ PLAYER_ID
 	NL	Muziekspeler-ID
 	NO	Spiller-ID
 	PL	Identyfikator odtwarzacza
+	PT	ID do reprodutor
 	RU	ID плеера
 	SV	Spelar-ID
 	ZH_CN	播放机身份证明
@@ -4428,6 +4586,7 @@ COMMAND
 	NL	Opdracht
 	NO	Kommando
 	PL	Polecenie
+	PT	Comando
 	RU	Команда
 	SV	Kommando
 	ZH_CN	命令
@@ -4447,6 +4606,7 @@ DECODER
 	NL	Decoder
 	NO	Dekoder
 	PL	Dekoder
+	PT	Descodificador
 	RU	Декодер
 	SV	Avkodare
 	ZH_CN	译解器
@@ -4478,7 +4638,7 @@ SETUP_PLAYERNAME
 	NL	Naam van muziekspeler
 	NO	Spillernavn
 	PL	Nazwa odtwarzacza
-	PT	Nome do Cliente
+	PT	Nome do Reprodutor
 	RU	Название плеера
 	SV	Spelarnamn
 	ZH_CN	播放机名字
@@ -4498,7 +4658,7 @@ SETUP_PLAYERNAME_DESC
 	NL	Je kunt deze muziekspeler een naam geven om hem van andere muziekspelers te onderscheiden.
 	NO	Du kan gi denne spilleren et navn som brukes til å identifisere den på disse nettsidene.
 	PL	Odtwarzaczowi można nadać nazwę, która będzie go identyfikować na tych stronach internetowych.
-	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
+	PT	Pode escolher um nome para identificar este reprodutor nas páginas web do servidor.
 	RU	Плееру можно присвоить имя, по которому будет производиться его идентификация на этих веб-страницах.
 	SV	Du kan ange ett namn för spelaren. Namnet användas sedan för att identifiera spelaren på de här webbsidorna.
 	ZH_CN	为了方便在网页中的辨认，您可以为这个播放机取名。
@@ -4516,6 +4676,7 @@ SETUP_RESET_PLAYER
 	NL	Voorkeuren van muziekspeler opnieuw instellen
 	NO	Tilbakestill spillerinnstillinger
 	PL	Resetuj preferencje odtwarzacza
+	PT	Reset da preferências do reprodutor
 	RU	Сброс настроек плеера
 	SV	Återställ spelarinställningar
 
@@ -4532,6 +4693,7 @@ SETUP_RESET_PLAYER_DESC
 	NL	Je kunt de instellingen van de muziekspeler, zoals naam, titelformaat, menu's, enz., op de fabriekswaarden terugzetten. De hardware instellingen van het systeem, zoals netwerkparameters, worden niet teruggezet.
 	NO	Du kan tilbakestille spillerinnstillinger som spillernavn, tittelformat, menyer osv. til fabrikkinnstillingene. Dette tilbakestiller ikke spillerens maskinvareinnstillinger, som for eksempel nettverksparametre.
 	PL	Możliwe jest przywrócenie ustawień odtwarzacza, takich jak nazwa odtwarzacza, format tytułu, menu itp. do domyślnych wartości fabrycznych. Należy pamiętać, że nie spowoduje to zresetowania ustawień sprzętowych odtwarzacza, np. parametrów sieciowych.
+	PT	Pode fazer o reset para as definições de fábrica de um reprodutor como por exemplo; o nome, o formato do título, os menus, etc. Note que esta acção não fará o reset às definições de hardware ex: parametros e definições de rede
 	RU	Можно сбросить такие настройки плеера, как название, формат названия, меню и др., вернув заводские значения по умолчанию. Обратите внимание, что аппаратные настройки (например, параметры сети) сброшены не будут.
 	SV	Du kan återställa en spelares inställningar, t.ex. spelarnamn, titelformat och menyer, till fabriksinställningarna. Observera att spelarens maskinvaruinställningar, t.ex. nätverksparametrar, inte återställs.
 
@@ -4548,6 +4710,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	NL	Wil je de muziekspelerinstellingen echt terugzetten op de beginwaarden?
 	NO	Er du sikker på at du vil tilbakestille spilleren til fabrikkinnstillingene?
 	PL	Czy na pewno chcesz przywrócić domyślne ustawienia fabryczne odtwarzacza?
+	PT	Confirma que quer efectuar o reset do reprodutor para os valores de fabrica?
 	RU	Вернуть заводские настройки плеера по умолчанию?
 	SV	Vill du återställa spelarens fabriksinställningar?
 
@@ -4564,6 +4727,7 @@ SETUP_POWERONBRIGHTNESS
 	NL	Helderheid wanneer aan
 	NO	Lysstyrke når på
 	PL	Jasność po włączeniu
+	PT	Brilho ao ligar
 	RU	Включить яркость
 	SV	Ljusstyrka när strömmen slås på
 
@@ -4580,6 +4744,7 @@ SETUP_POWEROFFBRIGHTNESS
 	NL	Helderheid wanneer uit
 	NO	Lysstyrke når av
 	PL	Jasność po wyłączeniu zasilania
+	PT	Brilho ao deligar
 	RU	Выключить яркость
 	SV	Ljusstyrka i avstängt läge
 
@@ -4596,6 +4761,7 @@ SETUP_IDLEBRIGHTNESS
 	NL	Helderheid in ruststand
 	NO	Lysstyrke i hvilemodus
 	PL	Jasność w trybie bezczynności
+	PT	Brilho durante inactividade
 	RU	Яркость при неактивности
 	SV	Ljusstyrka i viloläge
 
@@ -4612,6 +4778,7 @@ SETUP_POWERONBRIGHTNESS_ABBR
 	NL	Wanneer actief
 	NO	Når aktiv
 	PL	Gdy aktywne
+	PT	Enquanto activo
 	RU	При активности
 	SV	I aktivt läge
 
@@ -4628,6 +4795,7 @@ SETUP_POWEROFFBRIGHTNESS_ABBR
 	NL	Wanneer uit
 	NO	Når av
 	PL	Po wyłączeniu
+	PT	Enquanto desligado
 	RU	При выкл.
 	SV	I avstängt läge
 
@@ -4644,6 +4812,7 @@ SETUP_IDLEBRIGHTNESS_ABBR
 	NL	Inactief
 	NO	Inaktiv
 	PL	Bezczynne
+	PT	Inactivo
 	RU	Неактивен
 	SV	Inaktiv
 
@@ -4660,6 +4829,7 @@ SETUP_MINAUTOBRIGHTNESS
 	NL	Minimale helderheid (automatisch)
 	NO	Minimal lysstyrke (Automatisk)
 	PL	Minimalna jasność (automatycznie)
+	PT	Brilho minímo (automatico)
 	RU	Минимальная яркость (Авто)
 	SV	Minimal ljusstyrka (automatiskt)
 
@@ -4676,6 +4846,7 @@ SETUP_MINAUTOBRIGHTNESS_ABBR
 	NL	Min. helderheid (autom.)
 	NO	Min. lysstyrke (Auto)
 	PL	Min. jasność (auto)
+	PT	Brilho min. (auto)
 	RU	Мин. яркость (Авто)
 	SV	Min. ljusstyrka (auto)
 
@@ -4692,6 +4863,7 @@ SETUP_MINAUTOBRIGHTNESS_DESC
 	NL	Pas het minimale helderheidsniveau voor automatische helderheidsinstellingen aan.
 	NO	Juster minstenivå for lysstyrke i innstillinger for automatisk lysstyrke.
 	PL	Ustaw minimalną wartość automatycznego ustawienia jasności.
+	PT	Ajustar o nível minímo para a configuração de brilho automatico.
 	RU	Задайте минимальный уровень яркости для автоматической настройки яркости.
 	SV	Justera den minsta möjliga ljusnivån för den automatiska inställningen av ljusstyrkan.
 
@@ -4724,6 +4896,7 @@ SETUP_SENSAUTOBRIGHTNESS_ABBR
 	NL	Gev. helderheid (autom.)
 	NO	Føls. lysstyrke (Auto)
 	PL	Jasność czułości (auto)
+	PT	Sens. do brilho (auto)
 	RU	Чувст. яркости (Авто)
 	SV	Käns. för ljusstyrkan (auto)
 
@@ -4740,6 +4913,7 @@ SETUP_SENSAUTOBRIGHTNESS_DESC
 	NL	Pas de gevoeligheid voor automatische helderheidsinstellingen aan.
 	NO	Juster følsomheten for automatisk lysstyrke.
 	PL	Dostosowuje czułość ustawień automatycznej jasności.
+	PT	Ajustar a sensibilidade para configuração de brilho automática.
 	RU	Задать чувствительность автоматических настроек яркости.
 	SV	Ändra känsligheten för automatisk ljusstyrka.
 
@@ -4758,6 +4932,7 @@ SETUP_PLAYINGDISPLAYMODE
 	NL	Speelt nu informatie
 	NO	Informasjon under avspilling
 	PL	Informacje o teraz odtwarzanych
+	PT	Tocando (informação)
 	RU	Информация о воспроизводимой дорожке
 	SV	Nu spelas-information
 	ZH_CN	播放中信息
@@ -4775,6 +4950,7 @@ SETUP_PLAYINGDISPLAYMODE_ABBR
 	NL	Speelt nu info
 	NO	Informasjon om Spilles nå
 	PL	Informacje o teraz odtwarzanych
+	PT	Informação do que está tocando
 	RU	Информация о воспроизводимой дорожке
 	SV	Nu spelas-information
 
@@ -4793,7 +4969,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	NL	De muziekspeler kan informatie over de voortgang van een nummer weergeven, tijdens het afspelen. Kies de informatie die weergegeven moet worden.
 	NO	Spilleren kan vise hvor mye av sangen som er spilt av under avspillingen. Du kan selv velge hvilken informasjon du vil se som standard, og aktivere og deaktivere moduser. Du kan bla gjennom disse modusene ved å trykke på NOW PLAYING på fjernkontrollen flere ganger.
 	PL	Odtwarzacz umożliwia wyświetlanie informacji o postępie odtwarzania utworu. Możliwe jest wybranie informacji wyświetlanych domyślnie oraz włączenie lub wyłączenie trybów, które mają być dostępne. Aby przełączać się między tymi trybami, należy naciskać przycisk Now Playing na pilocie.
-	PT	O cliente pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
+	PT	O reprodutor pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
 	RU	В плеере может выводиться информация о ходе воспроизведения песни. Можно выбрать, какая информация будет отображаться по умолчанию, и включить режимы, которые необходимо сделать доступными. Переключаться между этими режимами можно с помощью циклических нажатий кнопки "Воспроизводится" на пульте ДУ.
 	SV	Uppspelningsinformation om den aktuella låten kan visas på spelarens skärm. Du kan välja vilken information som ska visas som standard och aktivera/avaktivera andra lägen som du vill ska vara tillgängliga. Du kan växla mellan de olika lägena genom att trycka på knappen NOW PLAYING på fjärrkontrollen upprepade gånger.
 	ZH_CN	当前播放歌曲的信息都能显示在播放机的显示屏上。您可以选择您所要显示的信息。
@@ -4835,7 +5011,7 @@ SETUP_SYNCHRONIZE_DESC
 	NL	De muziekspeler kan met andere muziekspelers gesynchroniseerd worden. De muziekspelers spelen dan dezelfde muziek. Kies de systemen waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchronisatiegroepen. Kies 'Geen synchronisatie' om deze functie te annuleren.
 	NO	Spilleren kan synkroniseres med andre spillere, slik at de spiller samme musikk samtidig. Velg spillerne du ønsker å synkronisere med fra listen over synkroniseringsgrupper. Velg Ingen synkronisering for å stoppe synkroniseringen.
 	PL	Odtwarzacz można zsynchronizować z innymi odtwarzaczami, co umożliwia im jednoczesne odtwarzanie muzyki. Wybierz odtwarzacze do zsynchronizowania z listy dostępnych grup synchronizacji. Wybierz opcję Bez synchronizacji, aby zatrzymać synchronizację.
-	PT	O cliente por estar sincronizado com outros clientes, permitindo que toquem todos a mesma música em simultâneo. Escolha os clientes que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
+	PT	O reprodutor pode estar sincronizado com outros, permitindo que toquem todos a mesma música em simultâneo. Escolha os reprodutores que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
 	RU	Плеер можно синхронизовать с другими плеерами, чтобы они воспроизводили одну и ту же музыку одновременно. Выберите синхронизуемые плееры из списка доступных групп синхронизации. Чтобы остановить синхронизацию, выберите "Без синхронизации".
 	SV	Spelaren kan synkroniseras med andra spelare så att de alla spelar upp samma musik samtidigt. Välj de spelare du vill synkronisera med i listan över tillgängliga synkroniseringsgrupper. Om du vill stoppa synkroniseringen väljer du Ingen synkronisering.
 	ZH_CN	这个播放机能和其他播放机进行同步，以便让所有播放机同时播放同样的音乐。您可以从同步小组名单中选择同步对象。若要撤销同步请选择不要同步。
@@ -4876,7 +5052,7 @@ SETUP_SYNCVOLUME_ON
 	NL	Volume van muziekspeler synchroniseren
 	NO	Synkroniser spillerens volum
 	PL	Synchronizuj głośność odtwarzacza
-	PT	Sincronizar o volume do cliente
+	PT	Sincronizar o volume do reprodutor
 	RU	Синхронизация громкости плеера
 	SV	Synkronisera spelarens volym
 	ZH_CN	把播放机的音量同步化
@@ -4896,7 +5072,7 @@ SETUP_SYNCVOLUME_OFF
 	NL	Volume van muziekspeler niet synchroniseren
 	NO	Ikke synkroniser spillerens volum
 	PL	Nie synchronizuj głośności odtwarzacza
-	PT	Não sincronizar o volume do cliente
+	PT	Não sincronizar o volume do reprodutor
 	RU	Не синхронизовать громкость плеера
 	SV	Synkronisera inte spelarens volym
 	ZH_CN	不要把播放机的音量同步化
@@ -4937,7 +5113,7 @@ SETUP_SYNCVOLUME_DESC
 	NL	Je kunt het volume van gesynchroniseerde muziekspelers op elkaar afstemmen of deze onafhankelijk instellen. Maak hieronder een selectie en klik op de knop Wijzigen.
 	NO	Du kan velge å spore lydnivået mellom synkroniserte spillere, eller la lydnivået være en individuell innstilling i hver spiller. Foreta et valg nedenfor, og klikk Endre.
 	PL	Poziom głośności zsynchronizowanych odtwarzaczy może być przez nie śledzony lub można ustawić go niezależnie. Wybierz opcję poniżej i kliknij przycisk Zmień.
-	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
+	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários reprodutores. Altere abaixo e clique em "Modificar"
 	RU	Можно задать синхронизируемые или независимые уровни громкости для синхронизованных плееров. Выберите нужный вариант и нажмите кнопку "Изменить".
 	SV	Du kan välja om synkroniserade spelare ska ha samma volymnivå eller om de ska vara oberoende. Välj nedan och klicka sedan på Ändra.
 	ZH_CN	您可以选择将同步小组内的播放机的音量独立化或进行全体音量即时追踪同步化。请选择并点击《更动》。
@@ -4957,6 +5133,7 @@ SETUP_SYNCPOWER_ON
 	NL	In groep uit-/aanzetten
 	NO	Slå av/på med gruppe
 	PL	Wyłączanie/włączanie zasilania w grupie
+	PT	Ligar/Desligar com o grupo
 	RU	Вкл./выкл. вместе с группой
 	SV	På/av med gruppen
 	ZH_CN	电源开关小组化
@@ -4976,6 +5153,7 @@ SETUP_SYNCPOWER_OFF
 	NL	Apart uit-/aanzetten
 	NO	Slå av/på separat
 	PL	Oddzielne wyłączanie/włączanie
+	PT	Ligar/Desligar separadamente
 	RU	Отдельное выкл/вкл питания
 	SV	På/av individuellt
 	ZH_CN	电源开关独立化
@@ -4996,6 +5174,7 @@ SETUP_SYNCPOWER
 	NL	Aan/uit synchroniseren
 	NO	Synkroniser strøm av/på
 	PL	Zasilanie przy synchronizacji
+	PT	Sincronizar Ligar
 	RU	Синхронизовать мощность
 	SV	Synkronisera av/på
 	ZH_CN	电源同步化
@@ -5015,6 +5194,7 @@ SETUP_SYNCPOWER_DESC
 	NL	Je kunt ervoor kiezen om deze muziekspeler apart uit te zetten, of als deel van een groep uit te zetten. Maak hieronder een selectie en klik op de knop Wijzigen.
 	NO	Du kan velge å la denne spilleren slå seg av alene, eller samkjørt med de andre spillerne i gruppen. Velg nedenfor, og trykk «Endre».
 	PL	Odtwarzacz ten może wyłączać się samodzielnie lub jako grupa z innymi odtwarzaczami. Wybierz opcję poniżej i kliknij przycisk Zmień.
+	PT	Pode escolher que este reprodutor se desligue sozinho ou que se apague junto com todos os outros reprodutores do grupo com que está sincronização. Faça a selecção abaixo e prima Alterar.
 	RU	Можно выбрать, будет ли данный плеер выключаться отдельно или вместе с другими плеерами данной группы. Выберите нужный вариант и нажмите кнопку "Изменить".
 	SV	Du kan välja att låta den här spelaren stängas av oberoende av andra spelare, eller tillsammans med andra spelare i en grupp. Gör dina val nedan och klicka sedan på Ändra.
 	ZH_CN	您可以选择将这个播放机的电源切断独立化、或与其他播放机小组一起切断。请选择并点击《更动》。
@@ -5032,6 +5212,7 @@ SETUP_DIGITALVOLUMECONTROL_ON
 	NL	Volumeknoppen regelen uitgangen
 	NO	Volumkontrollen justerer utganger
 	PL	Wyjścia elementów regulacji głośności
+	PT	Os controles de volume ajustam o volume das saídas
 	RU	Выходы выравнивания громкости
 	SV	Utsignalen justeras med volymkontrollerna
 
@@ -5048,6 +5229,7 @@ SETUP_DIGITALVOLUMECONTROL_OFF
 	NL	Uitvoerniveau is vastgezet op 100%
 	NO	Utgangsnivået er fastsatt til 100 %
 	PL	Poziom sygnału wyjściowego jest stały i ma wartość 100%
+	PT	O nível de saída fixa-se em 100%
 	RU	Заданный уровень выхода — 100%
 	SV	Nivån för utsignalen är konstant 100 %
 
@@ -5064,6 +5246,7 @@ SETUP_DIGITALVOLUMECONTROL
 	NL	Volumeregelaar
 	NO	Volumkontroll
 	PL	Regulacja głośności
+	PT	Controle de volume
 	RU	Регулировка громкости
 	SV	Volymknappar
 
@@ -5080,6 +5263,7 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	NL	Je kunt de volumeregeling op 100% vastzetten als je de volumeregeling op jouw versterker gebruikt of als perfecte digitale doorvoer is vereist. Dit is zowel op digitaal als analoog volume van invloed.
 	NO	Du kan fastsette volumet til 100% hvis du bruker volumkontrollen på forsterkeren til å styre lydnivået, eller hvis du trenger perfekt digital gjennomgang. Dette påvirker både digitalt og analogt volum.
 	PL	Jeżeli do sterowania głośnością używany jest regulator wzmacniacza lub wymagane jest przesyłanie sygnału cyfrowego wysokiej jakość, możliwe jest stałe ustawienie poziomu głośności na 100%. Ma to wpływ na głośność cyfrową i analogową.
+	PT	Pode fixar o controle do volume em 100% se usar o controle de volume do seu amplificador para controlar o Loudness ou se precisa de um passhem perfeita pelo digital. Isto afecta tanto o volume digital como o analógico.
 	RU	Можно установить уровень громкости 100%, если громкость настраивается на усилителе или требуется безупречное качество цифровой передачи. Этот параметр влияет на громкость цифрового и аналогового сигнала.
 	SV	Du kan ställa in volymen på 100% om du använder volymkontrollen på förstärkaren för att justera ljudnivån eller om du vill ha perfekt digital genomströmning. Detta påverkar både digital och analog volym.
 
@@ -5097,6 +5281,7 @@ SETUP_PREAMPVOLUMECONTROL
 	NL	Volumeregelaar van voorversterker
 	NO	Volumjustering for forforsterker
 	PL	Sterowanie głośnością przedwzmacniacza
+	PT	Control de volume do pré-amplificador
 	RU	Управление громкостью предусилителя
 	SV	Volymkontroll för förförstärkare
 	ZH_CN	前级音量控制
@@ -5115,6 +5300,7 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	NL	Dit is een secundaire volumeregelaar die alleen van toepassing is op de analoge uitgangen van de Squeezebox. Geef de demping op in decibels. Het bereik gaat van 0,0 tot 63,0 in stappen van 0,5 dB. De standaard is 0 (voor maximaal volume). WAARSCHUWING: Als je versterker krachtig genoeg is om de speakers op te blazen, is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
 	NO	Dette er en sekundær volumjustering som kun gjelder analogutgangen til Squeezebox. Angi demping i desibel. Spekteret for demping er 0,0 til 63,0 i trinn på 0,5 dB. Standarden er 0 (fullt volum). ADVARSEL: Hvis forsterkeren er kraftig nok til å vrenge høyttalerne, bør du i tillegg ha en receiver, forforsterker eller linjedemper for sikkerhets skyld!
 	PL	Jest to dodatkowy regulator głośności związany tylko z wyjściami analogowymi w urządzeniu Squeezebox. Wprowadź poziom tłumienia w decybelach. Zakres wynosi od 0,0 do 63,0 w krokach co 0,5 db. Wartość domyślna to 0 (maksymalna głośność). OSTRZEŻENIE: jeżeli wzmacniacz ma wystarczającą moc, aby uszkodzić głośniki, jako zabezpieczenia należy użyć tunera, przedwzmacniacza lub tłumika linii!
+	PT	Este é o controle de volume secundário o qual só se aplica à saída analógica do Squeezebox. Introduza o valar de atenuação em decibeis. O intervalo é entre 0,0 e 63,0 em pasos de 0,5 db. O valor predeterminado é 0 (para volume máximo). ADVERTÊNCIA: Se a potência do amplificador for capaz de rebentar com os altifalantes, convem usar um atenuador de línha, um preamplificador ou um receptor como medida de segurança.
 	RU	Это вспомогательный регулятор громкости, воздействующий только на аналоговые выходы Squeezebox. Введите ослабление в дБ. Значение может находиться в диапазоне 0,0–63,0 и изменяется с шагом 0,5 дБ. По умолчанию задано значение 0 (полная громкость). ПРЕДУПРЕЖДЕНИЕ. Если ваш усилитель достаточно мощный, чтобы повредить динамики, в целях безопасности следует использовать ресивер, предварительный усилитель или линейный аттенюатор!
 	SV	Det här är en sekundär volymkontroll som endast gäller Squeezebox-spelarens analoga utgångar. Ange dämpningen i decibel. Det giltiga intervallet är 0,0–63,0 i steg på 0,5. Standardinställningen är 0 (full volym). VARNING! Om förstärkaren är så kraftfull att högtalarna kan sprängas bör en mottagare, förförstärkare eller linjedämpare ändå användas som en säkerhetsåtgärd.
 	ZH_CN	这项功能是针对Squeezebox模拟输出音量的控制。以分贝为单位输入减益比量。设置范围为0.0至63.0，间隔为0.5分贝。确省为0（最大音量）。
@@ -5133,6 +5319,7 @@ SETUP_BUFFERSECS
 	NL	Buffer voor radiostations in seconden
 	NO	Bufferlengde for Internett-radio i sekunder
 	PL	Sekundy buforu stacji radiowej
+	PT	Buffer em segundos das emissoras de radio
 	RU	Секунд буферизации для радиостанции
 	SV	Storlek på buffert för Internetradio i sekunder
 	ZH_CN	收音机频道缓冲秒数
@@ -5151,6 +5338,7 @@ SETUP_BUFFERSECS_DESC
 	NL	Bij het afspelen van een internetstream plaatst de muziekspeler een kleine hoeveelheid gegevens in de buffer, voordat het afspelen start. Specificeer in seconden hoeveel audiogegevens moeten worden gebufferd. De standaardwaarde is 3, de maximumwaarde 30 seconden. Als de audio hapert, kan het helpen de buffer te vergroten.
 	NO	Ved avspilling av Internett-strømmer vil spilleren mellomlagre en liten datamengde før den begynner avspillingen. Angi størrelsen på dette mellomlageret (3–30 sekunder). Standardverdien er 3 sekunder. Hvis du opplever at lyden er hakkete, kan det hjelpe å øke denne verdien.
 	PL	Podczas odtwarzania strumienia internetowego odtwarzacz buforuje niewielką ilość danych przed rozpoczęciem odtwarzania. Określ ilość danych audio do buforowania w sekundach od 3 do 30. Wartość domyślna to 3 sekundy. Jeżeli dźwięk będzie odtwarzany z przerwami, zwiększenie tej wartości może rozwiązać problem.
+	PT	Ao reproduzir streams da internet, o reprodutor armazena no buffer uma pequena quantidade de dados antes de iniciar a reprodução. Especifique a o tamanho do buffer pretendido, em segundos, de 3 a 30s. O valor predeterminado é de 3 segundos. Se o é audio intermitente, pode que tentar que melhorar este aspecto aumentando esse valor.
 	RU	Перед воспроизведением интернет-потока плеер буферизует небольшой объем данных. Укажите размер буферизуемых аудиоданных в секундах, от 3 до 30. Значение по умолчанию — 3 с. Увеличив это значение, можно устранить прерывистость воспроизведения аудио.
 	SV	När strömmat innehåll spelas upp från Internet så buffrar spelaren en liten mängd data innan uppspelningen börjar. Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder. Om uppspelningen hackar kan det hjälpa att öka det här värdet.
 
@@ -5168,6 +5356,7 @@ SETUP_MAXWMARATE
 	NL	Maximale bitsnelheid van WMA stream
 	NO	Maksimal bithastighet for wma-strømmer
 	PL	Maksymalna szybkość transmisji bitów strumienia WMA
+	PT	Velocidade de bits do stream WMA máximo
 	RU	Максимальная скорость потоковой передачи WMA
 	SV	Maximal bithastighet för WMA-ström
 	ZH_CN	最高WMA频流比特率
@@ -5186,6 +5375,7 @@ SETUP_MAXWMARATE_DESC
 	NL	Sommige WMA streams hebben meerdere bitsnelheden voor streaming. Lyrion Music Server selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 	NO	Enkelte WMA-strømmer kan strømmes med ulike bithastigheter. Lyrion Music Server velger som standard den høyeste bithastigheten som er tilgjengelig, men hvis du har en treg Internett-forbindelse, kan du angi en lavere verdi her, som forteller Lyrion Music Server makshastigheten den kan velge.
 	PL	W niektóre strumieniach WMA dostępnych jest kilka szybkości transmisji bitów do przesyłania strumieniowego. Domyślnie program Lyrion Music Server wybierze strumień z najwyższą dostępną szybkością transmisji bitów, ale jeżeli używane jest wolniejsze połączenie internetowe, można w tym miejscu ustawić niższą wartość w celu ograniczenia maksymalnej szybkości, jaką można wybrać w przypadku strumieni o kilku szybkościach.
+	PT	Alguns streams WMA permitem vários bitrates.  Por defeito oLyrion Music Server irá seleccionar o bitrate mais alto disponível. Contudo se tiver uma ligação à internet lenta poderá seleccionar um valor mais baixo para limitar o bitrate máximo que pode ser escolhido quando existirem multiplos disponíveis.
 	RU	В некоторых потоках WMA доступно несколько скоростей передачи для потокового воспроизведения. По умолчанию Lyrion Music Server выбирает поток с самой высокой скоростью передачи. Но при медленном соединении с Интернетом можно ограничить максимально доступное значение скорости передачи, сделав его более низким.
 	SV	Vissa WMA-strömmar har flera olika bithastigheter. Som standard väljer Lyrion Music Server den högsta tillgängliga bithastigheten. Om du har en långsammare Internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
 
@@ -5203,6 +5393,7 @@ SETUP_SYNCSTARTDELAY
 	NL	Opstartvertraging bij gesynchroniseerde muziekspelers (ms)
 	NO	Forsinkelse ved oppstart av synkroniserte spillere (ms)
 	PL	Opóźnienie uruchomienia zsynchronizowanych odtwarzaczy (ms)
+	PT	Delay no inicio de reprodutores sincronizados (ms)
 	RU	Задержка при запуске синхронизованных плееров (мс)
 	SV	Fördröjning vid start av synkroniserade spelare (ms)
 
@@ -5220,6 +5411,7 @@ SETUP_SYNCSTARTDELAY_DESC
 	NL	Wanneer meerdere muziekspelers worden gesynchroniseerd, geeft Lyrion Music Server elk systeem de opdracht het nummer op hetzelfde moment te starten. Lyrion Music Server moet ervoor zorgen dat elk systeem genoeg tijd heeft om de startopdracht te ontvangen voordat alle systemen samen starten. Zodoende wordt de startopdracht van tevoren verzonden en wacht elk systeem tot het juiste moment om te starten. Als het netwerkverkeer overbelast is, wat voornamelijk kan gebeuren bij netwerken met vele systemen of bij draadloze netwerken, is de standaardvertraging van 200 milliseconden misschien niet voldoende. Je kunt de standaardvertraging hier desgewenst wijzigen.
 	NO	Når flere spillere er synkronisert, sender Lyrion Music Server beskjed til hver spiller om å begynne avspilling samtidig. Den må sikre at hver spiller får tid til å motta kommandoen før de alle starter samtidig, så den sender derfor startkommandoen på forhånd, og så venter spillerne til riktig øyeblikk før de starter. Hvis det er mye nettverkstrafikk, noe som kan skje hvis det er mange spillere på nettverket og ved bruk av trådløse nettverk, kan det hende at standardforsinkelsen på 200 ms er for kort. Hvis nødvendig kan du endre standardverdien her.
 	PL	W przypadku zsynchronizowania kilku odtwarzaczy program Lyrion Music Server wysyła do każdego odtwarzacza polecenie rozpoczęcia odtwarzania utworu w tym samym czasie. Program musi sprawdzić, czy każdy odtwarzacz ma czas na odebranie polecenia rozpoczęcia przed rozpoczęciem jednoczesnego odtwarzania, więc wysyła wcześniej polecenie rozpoczęcia, a odtwarzacze rozpoczynają pracę w odpowiedniej chwili. W przypadku nadmiernego przeciążenia sieci, które występuje szczególnie wtedy, gdy w sieciach standardowych i bezprzewodowych używana jest duża liczba odtwarzaczy, domyślne opóźnienie o długości 200 ms może być niewystarczające. W razie potrzeby wartość domyślną można zmienić tutaj.
+	PT	Quando multiplos reprodutores estiverem sincronizados o Lyrion Music Server instruirá todos para começarem cada musica ao mesmo tempo. Necessita pois que cada reprodutor tenha o tempo necessario para receber o comando para iniciar a reprodução antes que todos se iniciem juntos. Para isso envia o comando antes do tempo e os reprodutores esperam até ao momento correcto para iniciaram a reprodução. Se existir uma congestão de trafego excessiva na rede física ou wireless então o valor por defeito de 200ms pode não ser suficiente. Poderá alterar esse valor aqui se for necessario.
 	RU	При синхронизации нескольких плееров Lyrion Music Server дает каждому из них команду начать воспроизведение дорожки в одно и то же время. Для этого необходимо убедиться, что каждый плеер получит команду запуска до всеобщего начала воспроизведения, поэтому данная команда отправляется ему заранее. После получения команды каждый плеер ожидает запуска. При сильной загрузке сети, что особенно характерно для сетей со множеством плееров и для беспроводных сетей, задержка по умолчанию, равная 200 мс, может быть недостаточной. При необходимости это значение можно изменить.
 	SV	När flera spelare synkroniserats ser Lyrion Music Server till att alla spelare börjar spela upp låten samtidigt. Det måste finnas tid för startkommandot att gå fram till var och en av spelarna innan låten börjar spelas upp. Därför skickas kommandot i förväg, och spelarna väntar sedan till rätt startögonblick. Om trafiken på nätverket är mycket tät, något som kan hända framför allt när många spelare anslutits och med trådlösa nätverk, kanske inte standardfördröjningen på 200 millisekunder räcker till. Du kan ändra standardinställningen här vid behov.
 
@@ -5236,6 +5428,7 @@ SETUP_STARTDELAY
 	NL	Startvertraging van muziekspeler (ms)
 	NO	Forsinket oppstart av spiller (ms)
 	PL	Opóźnienie uruchomienia odtwarzacza (ms)
+	PT	Delay de inicio do reprodutor (ms)
 	RU	Задержка запуска плеера (мс)
 	SV	Fördröjning för spelarstart (ms)
 
@@ -5252,6 +5445,7 @@ SETUP_STARTDELAY_DESC
 	NL	Nadat een muziekspeler de startopdracht van Lyrion Music Server heeft verwerkt, kan het een tijdje duren voordat het systeem begint met afspelen (voordat je de audio hoort). Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwarespelers op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat Lyrion Music Server weet hoever van tevoren dit systeem moet worden gestart om de audio uit alle gesynchroniseerde systemen tegelijk te laten beginnen. Deze optie kan ook ingesteld worden terwijl Audiovertraging muziekspeler (hieronder) actief is.
 	NO	Det kan ta noe tid før spilleren begynner avspillingen (dvs. før du hører lyden) etter at den har prosessert startkommandoen fra Lyrion Music Server. Dette kan skje når du bruker digitale utganger (avhengig av utstyret som er koplet til), eller med spillerprogrammer på enkelte plattformer. Hvis dette skjer, kan du legge inn denne forsinkelsen her, slik at Lyrion Music Server vet hvor mye tidligere den må starte denne spilleren for å synkronisere lyden fra alle synkroniserte spillere. Merk: dette kommer i tillegg til eventuell «Lydforsinkelse for spiller» (nedenfor).
 	PL	Rozpoczęcie odtwarzania (zanim usłyszysz dźwięk) po przetworzeniu przez odtwarzacz polecenia uruchomienia z programu Lyrion Music Server może być zauważalnie opóźnione. Może to mieć miejsce w przypadku korzystania z wyjść cyfrowych (w zależności od podłączonych urządzeń) lub odtwarzaczy programowych na niektórych platformach. W takich przypadkach opóźnienie to można ustawić tutaj, aby program Lyrion Music Server uruchomił odtwarzacz odpowiednio wcześniej w celu jednoczesnego uruchomienia wszystkich zsynchronizowanych odtwarzaczy. Uwaga: opcja ta stanowi dodatek dla ustawienia „Opóźnienie dźwięku odtwarzacza” (poniżej).
+	PT	Um reprdutor poderá demorar a começar a tocar (antes de se ouvir o audio) depois de processar o comando de inicio de reprodução do Lyrion Music Server. Pode ser o caso de saídas digitais (dependendo do equipamento de ligação) ou de reprodutores via software em algumas plataformas. Em alguns casos esse atraso poderá ser definido aqui para que o Lyrion Music Server saiba que quanto tempo antes deverá inciar a reprodução neste reprodutor para que a musica comece simultaneamente em todos os reprodutores sincronizados. Nota: Este valor é adicional a qualquer configuração no "Delay no Audio do Reprodutor" (abaixo).
 	RU	После обработки команды запуска Lyrion Music Server плеер может начать воспроизведение лишь через некоторое время (до того, как появится звук). Обычно это происходит при работе с цифровыми выходами (в зависимости от подключенного оборудования) или с программными плеерами на некоторых платформах. В этих случаях можно настроить длительность задержки таким образом, чтобы Lyrion Music Server запускал данный плеер заблаговременно и звук со всех синхронизованных плееров появлялся в одно и то же время. Примечание: этот параметр дополняет любое из текущих значений "Задержка звука плеера" (см. ниже).
 	SV	Det kan ta en ganska lång stund från det att en spelare tar emot startkommandot från Lyrion Music Server till det att du hör musiken börja spelas upp. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. För att undvika problemet kan du ange fördröjningen här. Då kan den här spelaren startas motsvarande antal sekunder i förväg, så att ljudet från alla de synkroniserade spelarna börjar spelas upp samtidigt. Obs! det här läggs till eventuell Ljudfördröjning för spelare (se nedan).
 
@@ -5269,6 +5463,7 @@ SETUP_MAINTAINSYNC
 	NL	Synchronisatie handhaven
 	NO	Oppretthold synkronisering
 	PL	Zachowaj synchronizację
+	PT	Manter a sincronização
 	RU	Сохранять синхронизацию
 	SV	Upprätthåll synkronisering
 
@@ -5286,6 +5481,7 @@ SETUP_MAINTAINSYNC_DESC
 	NL	Zelfs wanneer verschillende muziekspelers een nummer vanaf het begin perfect gesynchroniseerd afspelen, kunnen ze op een gegeven moment van elkaar afwijken (meestal na een paar minuten). Een verschil van meer dan 30 milliseconden is merkbaar als je de uitvoer van meerdere systemen tegelijk kunt horen. Lyrion Music Server lost dit op door voortdurend bij te houden hoeveel elk systeem heeft afgespeeld en waar nodig kleine aanpassingen te maken. Je kunt dit gedrag in- of uitschakelen.
 	NO	Selv når flere spillere spiller samme spor og er perfekt synkronisert, kan de gli fra hverandre over tid (vanligvis etter noen få minutter). Hvis forskjellen mellom to avspillinger er på mer enn rundt 30 millisekunder, vil du kunne merke det hvis du hører lyden fra flere spillere samtidig. Lyrion Music Server håndterer dette ved å spore hvor mye hver spiller til enhver tid har spilt av, og ved å gjøre små endringer etter behov. Du kan slå denne justeringen av og på.
 	PL	Nawet jeżeli kilka odtwarzaczy rozpocznie odtwarzanie utworu dokładnie w tym samym momencie, po pewnym czasie (zwykle po kilku minutach) nie będą już zsynchronizowane. Różnica większa niż 30 ms (milisekund) będzie zauważana w przypadku słuchania dźwięku z kilku odtwarzaczy jednocześnie. Program Lyrion Music Server rozwiązuje ten problem przez stałe śledzenie, jaka część utworu została odtworzona przez dany odtwarzacz i wprowadzanie niewielkich zmian w razie potrzeby. Funkcję tę można włączyć lub wyłączyć.
+	PT	Mesmo quando vários reprodutores comecem a tocar uma musica em perfeira sincronização poderá acontecer que decorrendo algum tempo comecem a perder essa sincronização (usualmente depois de alguns minutos). Uma diferença de mais de 30 milisegundos será perceptível se ouvir o som de vários reprodutores simultaneamente. O Lyrion Music Server aborda este problema ao continuadamente verificar o que cada reprodutor já tocou e introduzindo pequenos ajustes, qaundp necessários. Pode ligar ou desligar esta capacidade.
 	RU	Даже если несколько плееров начинают воспроизводить дорожку абсолютно синхронно, со временем (обычно через несколько минут) могут появиться расхождения. Расхождения более 30 мс будут заметны, если одновременно слушать музыку из нескольких плееров. Lyrion Music Server решает эту проблему, отслеживая время работы каждого плеера и корректируя ход воспроизведения. Эту функцию можно включать и отключать.
 	SV	Även om när flera spelare är perfekt synkroniserade när en låt börjar spelas upp, kan de komma i otakt senare (vanligtvis efter ett par minuter). Det går att höra tidsskillnader på över 30 millisekunder från flera spelare samtidigt. I Lyrion Music Server hanteras det här problemet med att speltiden för varje spelare spåras, så att justeringar kan göras vid behov. Du kan aktivera eller avaktivera den här funktionen.
 
@@ -5303,6 +5499,7 @@ SETUP_MAINTAINSYNC_ON
 	NL	Synchronisatie tijdens afspelen handhaven
 	NO	Oppretthold synkronisering under avspilling
 	PL	Zachowaj synchronizację podczas odtwarzania
+	PT	Manter a syncronização durante a reprodução
 	RU	Сохранять синхронизацию во время воспроизведения
 	SV	Upprätthåll synkronisering vid uppspelning
 
@@ -5320,6 +5517,7 @@ SETUP_MAINTAINSYNC_OFF
 	NL	Synchronisatie niet handhaven
 	NO	Ikke oppretthold synkronisering
 	PL	Nie zachowuj synchronizacji
+	PT	Não manter a sincronização
 	RU	Не сохранять синхронизацию
 	SV	Upprätthåll inte synkronisering
 
@@ -5336,6 +5534,7 @@ SETUP_PLAYDELAY
 	NL	Audiovertraging muziekspeler (ms)
 	NO	Lydforsinkelse for spiller (ms)
 	PL	Opóźnienie dźwięku odtwarzacza (ms)
+	PT	Delay no Audio do Reprodutor
 	RU	Задержка звука плеера (мс)
 	SV	Ljudfördröjning för spelare (ms)
 
@@ -5352,6 +5551,7 @@ SETUP_PLAYDELAY_DESC
 	NL	Er kan een merkbaar verschil zijn tussen hoeveel van een door de muziekspeler gerapporteerd nummer naar Lyrion Music Server is afgespeeld en hoeveel audio is gehoord. Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwaresystemen op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat Lyrion Music Server er rekening mee kan houden bij het aanpassen van de synchronisatie.
 	NO	Det kan være markant forskjell på hvor mye av et spor som har blitt spilt av ifølge Lyrion Music Server, og hvor mye lyd som faktisk har kommet ut. Dette kan skje når du bruker digitale utganger (avhengig av utstyret som er koplet til), eller med spillerprogrammer på enkelte plattformer. Hvis dette skjer, kan du legge inn denne forsinkelsen her, slik at Lyrion Music Server tar den med i beregningen når den justerer synkroniseringen.
 	PL	Różnica między czasem odtworzenia utworu przesłanym przez odtwarzacz do programu Lyrion Music Server, a odtworzonym dźwiękiem może być znaczna. Może to mieć miejsce w przypadku korzystania z wyjść cyfrowych (w zależności od podłączonych urządzeń) lub odtwarzaczy programowych na niektórych platformach. W takich przypadkach opóźnienie to można ustawić tutaj, aby program Lyrion Music Server uwzględniał je podczas dostosowywania synchronizacji.
+	PT	Poderá existir uma diferença notavel entre o que um reprodutor reporta ter tocado de uma determinada musica e o qye foi na realidade ouvido. Isto pode ser o caso de saídas digitais (dependendo do equipamento de ligação) ou ou de reprodutores via software em algumas plataformas. Nestes casos o valor desse atraso pode ser definido aqui para que o Lyrion Music Server o tenha em consideração quando ajustar a sincronização.
 	RU	Существует значительная разница между отчетом плеера о воспроизведенной части дорожки Lyrion Music Server и фактической продолжительностью прослушанного аудио. Это бывает при использовании цифровых выходов (в зависимости от подключенного оборудования) или программных плееров на некоторых платформах. Для таких случаев здесь можно задать величину задержки, учитываемую Lyrion Music Server при настройке синхронизации.
 	SV	Det kan vara en märkbar skillnad mellan hur mycket ett spår som spelaren rapporterar till Lyrion Music Server att den har spelat upp och hur mycket av spåret som lyssnaren faktiskt hört. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. Här kan du ange fördröjningen så att den kan tas med i beräkningen när synkroniseringen justeras i Lyrion Music Server.
 
@@ -5369,6 +5569,7 @@ SETUP_MINSYNCADJUST
 	NL	Minimale synchronisatieaanpassing (ms)
 	NO	Minimumsjustering for synkronisering (ms)
 	PL	Minimalna regulacja synchronizacji (ms)
+	PT	Ajuste minimo de sincronização (ms)
 	RU	Мин. корректировка синхронизации (мс)
 	SV	Minsta justering vid synkronisering (ms)
 
@@ -5402,6 +5603,7 @@ SETUP_PACKETLATENCY
 	NL	Vertraging netwerkpakket (ms)
 	NO	Forsinkelser i nettverkspakker (ms)
 	PL	Opóźnienie pakietów sieciowych (ms)
+	PT	Latência do pacote de rede )ms)
 	RU	Задержка сетевых пакетов (мс)
 	SV	Svarstid för nätverkspaket (ms)
 
@@ -5437,6 +5639,7 @@ SETUP_MAXBITRATE
 	NL	Bitsnelheid limiteren
 	NO	Begrensning av bithastighet
 	PL	Ograniczenie szybkości transmisji bitów
+	PT	Bitrate limite
 	RU	Ограничение скорости передачи
 	SV	Gräns för bithastighet
 	ZH_CN	限制比特率
@@ -5494,6 +5697,7 @@ CONVERTED_TO
 	NL	Geconverteerd naar
 	NO	Konvertert til
 	PL	Przekonwertowane na
+	PT	Convertido para
 	RU	Преобразовано в
 	SV	Konverterad till
 	ZH_CN	已转换成
@@ -5513,6 +5717,7 @@ SETUP_LAME_NOT_FOUND
 	NL	(<b>Let op</b>: Het lijkt erop dat LAME niet geïnstalleerd is. Lyrion Music Server heeft het MP3 codeerprogramma LAME nodig voor conversie naar MP3. Je kunt <a href="http://lame.sourceforge.net/" target="_blank">hier</a> meer informatie over LAME vinden.)
 	NO	(<b>Merk</b>: Det ser ikke ut til at LAME er installert. Lyrion Music Server trenger mp3-koderen LAME for å konvertere til mp3. Du kan lese mer om LAME <a href="http://lame.sourceforge.net/" target="_blank">her</a>.)
 	PL	(<b>Uwaga</b>: Koder LAME nie jest zainstalowany. Program Lyrion Music Server wymaga zainstalowania w systemie kodera LAME MP3 w celu przeprowadzenia konwersji do formatu MP3. Więcej informacji na temat kodera LAME można znaleźć <a href="http://lame.sourceforge.net/" target="_blank">tutaj</a>.)
+	PT	<b>Nota</b>: Parece que o LAME não está instalado. O Lyrion Music Server necessita que o codificador MP3 LAME esteja instalado no sistema para a conversão a MP3. Encontrará mais informação sobre LAME <a href="http://lame.sourceforge.net/" target="_blank">aquí</a>.
 	RU	(<b>Примечание</b>. Кодировщик LAME не установлен. Чтобы Lyrion Music Server мог выполнить преобразование в MP3, в системе должен быть установлен кодировщик LAME MP3. Дополнительные сведения о кодировщике LAME см. <a href="http://lame.sourceforge.net/" target="_blank">здесь</a>.)
 	SV	(<b>Obs!</b> Det verkar inte som om du har installerat LAME. Mp3-kodaren LAME krävs för att Lyrion Music Server ska kunna konvertera filer till mp3-format. Mer information om LAME finns <a href="http://lame.sourceforge.net/" target="_blank">här</a>.)
 	ZH_CN	(<b>注意</b>: 您似乎没有在此计算机内安装LAME。Lyrion Music Server需要用到您计算机的LAME MP3编码器进行MP3格式转换。您能从<a href="http://lame.sourceforge.net/" target="_blank">这里</a>查阅更多有关LAME的资料。)
@@ -6294,6 +6499,7 @@ FOLDERS
 	NL	Mappen
 	NO	Mapper
 	PL	Foldery
+	PT	Directorios
 	RU	Папки
 	SV	Mappar
 
@@ -6311,6 +6517,7 @@ YES
 	NL	Ja
 	NO	Ja
 	PL	Tak
+	PT	Sim
 	RU	Да
 	SV	Ja
 	ZH_CN	是
@@ -6329,6 +6536,7 @@ NO
 	NL	Nee
 	NO	Nei
 	PL	Nie
+	PT	Não
 	RU	Нет
 	SV	Nej
 	ZH_CN	否
@@ -6347,6 +6555,7 @@ SETUP_PLAYLISTPREFIX
 	NL	Voorvoegsel:
 	NO	Prefiks:
 	PL	Prefiks:
+	PT	Prefixo:
 	RU	Префикс:
 	SV	Prefix:
 	ZH_CN	前缀：
@@ -6365,6 +6574,7 @@ SETUP_PLAYLISTSUFFIX
 	NL	Achtervoegsel:
 	NO	Filetternavn:
 	PL	Przyrostek:
+	PT	Sufixo:
 	RU	Суффикс:
 	SV	Suffix:
 	ZH_CN	词尾：
@@ -6383,6 +6593,7 @@ SETUP_SHOWYEAR
 	JA	アルバム年を表示する
 	NL	Jaar bij albums tonen
 	NO	Vis årstall ved album
+	PT	Mostrar o ano com os albuns
 	PL	Pokaż rok w albumach
 	RU	Показывать год выхода альбома
 	SV	Visa år med album
@@ -6421,6 +6632,7 @@ SETUP_SHOWARTIST
 	NL	Artiest bij albums tonen
 	NO	Vis artist ved album
 	PL	Pokazuj wykonawców z albumami
+	PT	Mostrar o artista com albuns
 	RU	Показать исполнителя с альбомами
 	SV	Visa artist med album
 	ZH_CN	艺人与专辑一同显示
@@ -6458,6 +6670,7 @@ SETUP_GUESSFILEFORMATS
 	NL	Tagformaten raden
 	NO	Gjett etikettformat
 	PL	Odgadnij formaty znaczników
+	PT	Deduzir formatos dos tags
 	RU	Определять форматы тегов
 	SV	Gissa taggformat
 	ZH_CN	猜测标签格式
@@ -6534,6 +6747,7 @@ SETTINGS_CHANGED_CONFIRM
 	NL	Sommige instellingen zijn gewijzigd. Wil je ze opslaan?
 	NO	Enkelte innstillinger ble endret. Vil du lagre endringene?
 	PL	Niektóre ustawienia zostały zmienione, czy chcesz je zapisać?
+	PT	Alguns parametros forma alterados. Quer guarda-los?
 	RU	Некоторые настройки изменились. Сохранить?
 	SV	Vissa inställningar har ändrats. Vill du spara dem?
 
@@ -6604,6 +6818,7 @@ SETUP_LIBRARY_NAME
 	NL	Naam van mediabibliotheek
 	NO	Navn på mediebibliotek
 	PL	Nazwa biblioteki multimedialnej
+	PT	Nome da biblioteca multimédia
 	RU	Имя библиотеки мультимедиа
 	SV	Mediebiblioteksnamn
 
@@ -6674,6 +6889,7 @@ SETUP_MEDIADIRS
 	NL	Mediamappen
 	NO	Mediemapper
 	PL	Foldery multimedialne
+	PT	Directórios de material multimédia
 	RU	Папки мультимедиа
 	SV	Mediemappar
 
@@ -6700,6 +6916,7 @@ SETUP_SKIPSENTINEL
 	FR	Nom du fichier d'exclusion
 	NL	Bestandsnaam voor uitsluitingen
 	HU	A megadott fájlnév kihagyása
+	PT	Excluir ficheiro deste tipo
 
 SETUP_SKIPSENTINEL_DESC
 	CS	(Pod)složky médií, které obsahují soubor s tímto názvem, jsou přeskočeny.
@@ -6744,6 +6961,7 @@ SETUP_ARTFOLDER
 	NL	Map met albumhoezen
 	NO	Mappe for albumomslag
 	PL	Folder okładek
+	PT	Directório de artwork
 	RU	Папка "Обложки"
 	SV	Mapp för omslagsbilder
 	ZH_CN	封面图象文件夹
@@ -6840,6 +7058,7 @@ SETUP_RESCAN
 	NL	Mediabibliotheek opnieuw scannen
 	NO	Søk gjennom mediebiblioteket på nytt
 	PL	Przeszukaj ponownie bibliotekę multimedialną
+	PT	Rescan da biblioteca multimédia
 	RU	Повторное сканирование библиотеки мультимедиа
 	SV	Sök igenom mediebiblioteket igen
 	ZH_CN	重新扫描音乐库
@@ -7173,6 +7392,7 @@ SETUP_PLUGINS
 	NL	Beheer plug-ins
 	NO	Plugin-moduler
 	PL	Dodatki
+	PT	Gerir Plugins
 	RU	Подключаемые модули
 	SV	Plugin-program
 
@@ -7335,6 +7555,7 @@ SETUP_EXTENSIONS_REPOS_DESC
 	NL	Je kunt repositories voor extensies toevoegen door de URL's van de repositories hieronder in te voeren.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium.
+	PT	Pode juntar repositórios de extensões de terceiros adicionando a URL do cada repositório aqui em baixo
 	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL.
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg.
 
@@ -7351,6 +7572,7 @@ SETUP_EXTENSIONS_REPOS_WARNING
 	NL	<b>Waarschuwing:</b> Aangezien de server automatisch software downloadt van de repositories die je opgeeft, moet je verifiëren dat je de eigenaar van die repositories vertrouwt.
 	NO	<b>Advarsel: </b>Siden serveren automatisk laster ned programvare fra lagrene du angir, må du være sikker på at du stoler på eieren av lageret.
 	PL	<b>Ostrzeżenie:</b> Ponieważ serwer automatycznie pobiera oprogramowanie z wybranych repozytoriów, należy upewnić się, że są to zaufane źródła.
+	PT	<b>Advertência</b> Dado que o servidor fará o download automáticamente do software dos repositórios que defina, verifique que confía no propietário do repositório.
 	RU	<b>Предупреждение.</b> Вы должны полностью доверять владельцу репозитория, поскольку сервер будет загружать из него ПО автоматически.
 	SV	<b>Obs!</b> Eftersom servern laddar ner program automatiskt från den server du anger är det viktigt att du litar på databasens ägare.
 
@@ -7367,6 +7589,7 @@ SETUP_EXTENSIONS_RESTART_MSG
 	NL	Start Lyrion Music Server opnieuw om de wijzigingen door te voeren.
 	NO	Du må starte Lyrion Music Server på nytt for at endringene skal tre i kraft.
 	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program Lyrion Music Server.
+	PT	Reinicie o Lyrion Music Server para que as alterações entrem em vigor.
 	RU	Перезапустите Lyrion Music Server, чтобы изменения вступили в силу.
 	SV	Ändringarna träder i kraft när du startar om Lyrion Music Server.
 
@@ -7447,6 +7670,7 @@ SETUP_EXTENSIONS_ACTIVE
 	NL	Actieve plug-ins
 	NO	Aktive plugin-moduler
 	PL	Włączone dodatki
+	PT	Plugins activos
 	RU	Активные подключаемые модули
 	SV	Aktiva plugin-program
 
@@ -7463,6 +7687,7 @@ SETUP_EXTENSIONS_INACTIVE
 	NL	Inactieve plug-ins
 	NO	Inaktive plugin-moduler
 	PL	Wyłączone dodatki
+	PT	Plugins Iinactivos
 	RU	Неактивные подключаемые модули
 	SV	Inaktiva plugin-program
 
@@ -7495,6 +7720,7 @@ SETUP_EXTENSIONS_AUTO
 	NL	Plug-ins automatisch bijwerken
 	NO	Oppdater plugin-moduler automatisk
 	PL	Automatycznie aktualizuj dodatki
+	PT	Actualizar plugins automaticamente
 	RU	Обновить подключаемые модули автоматически
 	SV	Uppdatera plugin-program automatiskt
 
@@ -7511,6 +7737,7 @@ SETUP_EXTENSIONS_AUTO_DESC
 	NL	Lyrion Music Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je op deze pagina de plug-ins handmatig bijwerken.
 	NO	La Lyrion Music Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
 	PL	Zezwala programowi Lyrion Music Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
+	PT	Permita que o Lyrion Music Server automaticamente procure actualizações dos plugins instalados, faça o seu download para que no proximo arranque do servdiro estejam prontos a a a serusados. Se esta opçãp não for selccionada poderá proceder à sua actualização nesta pagina.
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
 	SV	Tillåt Lyrion Music Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
@@ -7558,6 +7785,7 @@ SETUP_EXTENSIONS_OTHER_REPOSITORIES
 	NL	Plug-ins van derden
 	NO	Tredjeparts plugin-moduler
 	PL	Pozostałe dodatki innych firm
+	PT	Plugins de terceiros
 	RU	Другие подключаемые модули сторонних изготовителей
 	SV	Tillägg från tredje part
 
@@ -7568,6 +7796,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED
 	FR	Utiliser des plugins non pris en charge
 	NL	Gebruik niet ondersteunde extensies
 	HU	Nem támogatott bővítmények használatámak engedélyezése
+	PT	Usar extensões não suportadas
 
 SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	CS	UPOZORNĚNÍ – Jedná se o zásuvné moduly třetích stran, u kterých není zaručeno, že budou fungovat s aktuální verzí Lyrion Music Serveru. Jejich autoři je opustili a již je neudržují. V nejhorším případě mohou poškodit váš Lyrion Music Server. Používejte je na vlastní nebezpečí.
@@ -7592,6 +7821,7 @@ SETUP_REFRESHRATE
 	NL	Refreshinterval browser
 	NO	Oppdateringsintervall for leser
 	PL	Czas odświeżania przeglądarki
+	PT	Intervalo de refrescamento do browser
 	RU	Интервал обновления браузера
 	SV	Uppdateringsintervall för webbläsare
 	ZH_CN	浏览器刷新时间
@@ -7670,6 +7900,7 @@ SETUP_THUMBSIZE
 	NL	Miniatuurgrootte
 	NO	Miniatyrstørrelse
 	PL	Rozmiar miniatury
+	PT	Tamanho dos thumbnails
 	RU	Размер эскиза
 	SV	Storlek på miniatyrer
 	ZH_CN	指图大小
@@ -7769,6 +8000,7 @@ SETUP_SAVESHUFFLED
 	NO	Lagre omrokkert spilleliste
 	PL	Zapisz losową listę odtwarzania
 	RU	Сохранить перемешанный плей-лист
+	PT	Guardar lista de reprodução aleatória
 	SV	Spara blandad spellista
 	ZH_CN	保存随机抽样的播放表
 
@@ -7806,6 +8038,7 @@ SETUP_SAVESHUFFLED_1
 	NL	Afspeellijsten in geshuffelde volgorde opslaan
 	NO	Lagre spillelister i tilfeldig rekkefølge
 	PL	Zapisz listy odtwarzania w kolejności losowej
+	PT	Salvar playlists em ordenção aleatória
 	RU	Сохранять плей-листы после перемешивания
 	SV	Spara spellistor i blandad ordning
 	ZH_CN	保存播放表在随机抽样后的次序
@@ -7825,6 +8058,7 @@ SETUP_SAVESHUFFLED_0
 	NL	Afspeellijsten opslaan in volgorde waarin nummers toegevoegd zijn
 	NO	Lagre spillelister i original rekkefølge
 	PL	Zapisz listy odtwarzania w kolejności dodania utworów
+	PT	Salvar playlists na ordem em que foram adicionados
 	RU	Сохранить плей-листы в порядке добавления песен
 	SV	Spara spellistor i ursprunglig ordning
 	ZH_CN	保存播放表原来次序
@@ -8104,6 +8338,7 @@ SETUP_OFFSAVER
 	NL	Screensaver wanneer uit
 	NO	Skjermsparer når avskrudd
 	PL	Wygaszacz ekranu po wyłączeniu
+	PT	Protector de ecran quando apagado
 	RU	Экранная заставка при выкл.
 	SV	Skärmsläckare i avstängt läge
 	ZH_CN	屏幕保护程序（关机时）
@@ -8139,6 +8374,7 @@ SETUP_IDLESAVER
 	NO	Skjermsparer når stoppet
 	PL	Wygaszacz ekranu po zatrzymaniu
 	RU	Экранная заставка при остановке
+	PT	Protector de ecran quando parado
 	SV	Skärmsläckare i stoppat läge
 	ZH_CN	屏幕保护程序（停止播放时）
 
@@ -8171,6 +8407,7 @@ SETUP_ALARMSAVER
 	NL	Screensaver tijdens wekker
 	NO	Skjermsparer når alarmen ringer
 	PL	Wygaszacz ekranu podczas odtwarzania alarmu
+	PT	Protector de ecran quando soa o alarme
 	RU	Экранная заставка при звучании будильника
 	SV	Skärmsläckare när alarmet är i gång
 
@@ -8335,6 +8572,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	NL	Additionele afspeellijstknoppen
 	NO	Ekstra spillelisteknapper
 	PL	Dodatkowe przyciski listy odtwarzania
+	PT	Botões adicionais da lista de reprodução
 	RU	Другие кнопки плей-листа
 	SV	Ytterligare spellisteknappar
 
@@ -8369,6 +8607,7 @@ SETUP_SEARCHSUBSTRING
 	NO	Søk i ord
 	PL	Wyszukaj w słowach
 	RU	Поиск внутри слов
+	PT	Procurar nas palavras
 	SV	Sök inom ord
 	ZH_CN	在词内搜寻
 
@@ -8440,6 +8679,7 @@ SETUP_NOGENREFILTER
 	NL	Genres op album- en nummerniveau filteren
 	NO	Filtrer sjangere på album- og spornivå
 	PL	Filtruj gatunki na poziomie albumu i utworu
+	PT	Filtrar Géneros ao nível de Album e Pista
 	RU	Фильтровать жанры по альбому и дорожкам
 	SV	Filtrera genrer på album- och spårnivå
 	ZH_CN	在专辑和音轨的层面过滤音乐风格
@@ -8459,6 +8699,7 @@ SETUP_NOGENREFILTER_1
 	NO	Vis alle spor og album for en artist
 	PL	Pokaż dowolne utwory i albumy danego wykonawcy
 	RU	Показать дорожки и альбомы исполнителя
+	PT	Mostrar todas as pista e álbuns de um artista
 	SV	Visa alla spår och album från en artist
 	ZH_CN	显示某个艺人所属的音轨和专辑
 
@@ -8476,6 +8717,7 @@ SETUP_NOGENREFILTER_0
 	NL	Toon alleen nummers of albums die overeenkomen met het geselecteerde genre voor een artiest
 	NO	Kun vis spor eller album som passer den angitte sjanger for en artist
 	PL	Pokazuj tylko utwory lub albumy zgodne z wybranym gatunkiem lub wykonawcą
+	PT	Mostrar sómente pistas e albuns que coincidam com o género selccionado para um artista
 	RU	Только дорожки или альбомы, совпадающие с выбранным жанром исполнителя
 	SV	Visa bara spår eller album av artisten som matchar den valda genren
 	ZH_CN	只显示和某个艺人的音乐风格匹配的音轨和专辑
@@ -8597,7 +8839,7 @@ SETUP_PERSISTPLAYLISTS
 	NL	Afspeellijst muziekspeler bijhouden
 	NO	Husk klientspillelister
 	PL	Zachowaj listy odtwarzania klienta
-	PT	Manter as Playlists dos Clientes
+	PT	Manter as Playlists dos reprodutores
 	RU	Сохранять клиентские плей-листы
 	SV	Behåll klientspellistor
 	ZH_CN	维护Client播放表
@@ -8837,7 +9079,7 @@ SETUP_IGNOREDARTICLES
 	NL	Lidwoorden die bij het sorteren genegeerd moeten worden
 	NO	Artikler som skal ignoreres ved sortering
 	PL	Przedimki ignorowane przy sortowaniu
-	PT	Articos a ignorar ao ordenar nomes de artistas
+	PT	Artigos a ignorar ao ordenar nomes de artistas
 	RU	Артикли, игнорируемые при сортировке
 	SV	Artiklar som ska ignoreras vid sortering
 	ZH_CN	进行排序时应忽略的词汇
@@ -8872,6 +9114,7 @@ SETUP_SPLITLIST
 	NL	Scheidingsteken voor meerdere items in tags
 	NO	Skilletegn for flere elementer i etiketter
 	PL	Separator kilku elementów w znacznikach
+	PT	Separador para multiplos elementos em tags
 	RU	Разделитель для нескольких элементов в тегах
 	SV	Avgränsare för flera objekt i taggar
 
@@ -8905,6 +9148,7 @@ SETUP_ARTISTS_BROWSE_MODES
 	NL	Door artiesten bladeren
 	NO	Bla i artister
 	PL	Przeglądanie wykonawców
+	PT	Examinar artistas
 	RU	Просмотр исполнителей
 	SV	Bläddra efter artister
 
@@ -8928,6 +9172,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	NL	Gebruik een aan te passen lijst met artiesten
 	NO	Bruk én enkelt, konfigurerbar artistliste
 	PL	Jedna, konfigurowalna lista wykonawców
+	PT	Use um unica lista de artistas configuravel
 	SV	Använd en enda konfigurerbar artistlista
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
@@ -8939,6 +9184,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	NL	Gebruik aparte lijsten voor Albumartiesten en Alle Artiesten
 	NO	Bruk to adskilte lister for Albumartister og Alle artister
 	PL	Dwie osobne listy: "Wykonawcy albumów" oraz "Wszyscy wykonawcy"
+	PT	Use listas separadas para Artistas do album e Todos os artistas
 	SV	Använd separata listor för "Albumartister" och "Alla artister"
 
 SETUP_BROWSEAGELIMIT
@@ -8955,6 +9201,7 @@ SETUP_BROWSEAGELIMIT
 	NL	Limiet voor nieuwe muziek
 	NO	Grense for ny musikk
 	PL	Limit nowej muzyki
+	PT	Limite para Nova musica
 	RU	Предел новой музыки
 	SV	Gräns för ny musik
 	ZH_CN	新进音乐数量显示限制
@@ -9250,7 +9497,7 @@ SETUP_LONGDATEFORMAT_DESC
 	NL	Met deze optie wordt de lange datumnotatie ingesteld (zoals weergegeven wanneer de muziekspeler uitstaat). In de onderstaande opties worden de volgende conventies gebruikt:<br>WWWW is de dag van de week voluit geschreven (zondag, maandag, enz.)<br>WWW is de afkorting van de dag van de week (zon, maa, enz.)<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YY is het jaar in twee cijfers <br>YYYY is het jaar in vier cijfers
 	NO	Denne innstillingen angir formatet for lange datoer (vises f.eks når spilleren er av). Følgende format benyttes i alternativene nedenfor:<br>WWWW er ukedag (lørdag, søndag, osv.)<br>WWW er forkortet navn på ukedag (lør, søn, osv.)<br>DD er dagen i måneden (uten null foran)<br>MM er måneden<br>YY er tosifret årstall<br>YYYY er firesifret årstall
 	PL	Ta opcja określa format używany w długich datach (wyświetlanych na przykład po wyłączeniu odtwarzacza). W poniższych opcjach używane są następujące konwencje:<br>WWWW to pełny dzień tygodnia (Sobota, Niedziela itp.)<br>WWW to skrócony dzień tygodnia (Sob, Nie itp.)<br>DD to dzień miesiąca (bez początkowego zera)<br>MM to miesiąc roku<br>RR to rok dwucyfrowy<br>RRRR to rok czterocyfrowy
-	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o cliente está desligado). São usadas as seguintes convenções para as opções abaixo
+	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o reprodutor está desligado). São usadas as seguintes convenções para as opções abaixo
 	RU	Данный параметр определяет формат, используемый для длинных дат (например, отображаемых, когда плеер выключен). Доступны следующие условные обозначения :<br>НННН — полное название дня недели (суббота, воскресенье)<br>ННН — сокращенное название дня недели (сб, вс и др.)<br>ДД — это день месяца (без первого нуля)<br>ММ — это месяц года<br>ГГ — это год, обозначенный двумя цифрами<br>ГГГГ — это год, обозначенный четырьмя цифрами
 	SV	Här väljer du långt datumformat (används för att visa datum när spelaren är avstängd). Följande konventioner används för alternativen nedan:<br>WWWW är veckodagen (lördag, söndag, o.s.v.).<br>WWW är veckodagen i förkortad form (lör, sön, o.s.v.).<br>DD är dagen i månaden (utan inledande nolla).<br>MM är månaden.<br>YY är det tvåsiffriga årtalet.<br>YYYY är det fyrsiffriga årtalet.
 	ZH_CN	这个选项决定了显示完整日期所使用的格式（譬如在播放机关机状态时）。以下是各个选择所使用的惯例：<br>WWWW=星期（星期六、星期天、等）<br>WWW=简化的星期（六、日、等）<br>DD=日（主导零被去除）<br>MM=简化的月份<br>YY=两位数的年份<br>YYYY=四位数的年份
@@ -10047,6 +10294,7 @@ SETUP_RELEASE_TYPES
 	FR	Types de sorties pour les albums
 	HU	Kiadástípusok az albumokhoz
 	NL	Releasetypes voor albums
+	PT	Tipo de lançamento para os albuns
 
 SETUP_RELEASE_TYPES_INCLUDE
 	CS	Typy vydání zahrnuté do seznamu Alb
@@ -10055,6 +10303,7 @@ SETUP_RELEASE_TYPES_INCLUDE
 	FR	Types de sorties à inclure dans la liste des albums
 	HU	Az Albumok listájába felvenni kívánt kiadástípusok
 	NL	Releasetypes die in de albumlijst worden opgenomen
+	PT	Tipos de lançamentos para serem incluídos na Lista de albuns
 
 SETUP_RELEASE_TYPES_DESC
 	CS	Můžete určit, jaké typy vydání chcete zahrnout do seznamu alb (viz <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Pokud vydání nemá definovaný typ, předpokládá se "Album". Alba nelze z tohoto seznamu vyloučit.
@@ -10072,6 +10321,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	HU	A zeneszerzői album beállításai
 	NL	Opties voor componistenalbums
 	ES	Opciones de álbum compositor
+	PT	Opções para Compositor do album
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	CS	Vytvořit skupinu Alba skladatele – vždy, nikdy nebo pro určité žánry. Pokud kvůli tomuto nastavení nejsou některé skladatelské role zahrnuty do skupiny Alba skladatele, zobrazí se místo toho v samostatné skupině "Kompozice", která bude obsahovat seznam jednotlivých skladeb, nikoli alb. Seznam žánrů by měl být oddělen čárkou.
@@ -10124,6 +10374,8 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	FR	Ignorer les types de sorties des albums
 	HU	Az albumkiadás típusainak figyelmen kívül hagyása
 	NL	Releasetypes voor albums uitschakelen
+	PT	Ignore o tipo de lançamento dos albuns
+	PT	Ignore o tipo de lançamento dos albuns
 
 SETUP_CLEANUP_RELEASE_TYPES
 	CS	Zkusit automaticky rozpoznat EP a singly, pokud je informace o typu vydání "album" nebo chybí.
@@ -10132,6 +10384,7 @@ SETUP_CLEANUP_RELEASE_TYPES
 	FR	Essayer de reconnaître automatiquement les EPs et les singles lorsque le type de sortie est manquant ou est de type "album".
 	HU	Próbálja meg automatikusan felismerni az EP-ket és kislemezeket, ha a kiadás típusa „album” vagy hiányzik.
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
+	PT	Tentar de reconhecer EPs e singles automaticamente quando ainformação sobre o tipo de lançamento for "album" ou não existir
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
 	CS	Neseskupovat vydání
@@ -10140,6 +10393,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_0
 	FR	Ne pas regrouper les albums par type de sortie
 	HU	Ne csoportosítsa a kiadásokat
 	NL	Releases niet groeperen op type
+	PT	Não agrupar lançamentos
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
 	CS	Seskupit seznamy interpretů podle typu vydání
@@ -10148,6 +10402,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_1
 	FR	Regrouper les albums d'un artiste par type de sortie
 	HU	Csoportosítsa az előadók listáját kiadás típusa szerint
 	NL	Releases van een artiest groeperen op type
+	PT	Agrupar numa lista de artistas por tipo de lançamento
 
 SETUP_GROUP_BY_RELEASE_TYPES_2
 	CS	Seskupit všechny seznamy podle typu vydání
@@ -10156,6 +10411,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_2
 	FR	Regrouper toutes les listes d'albums par type de sortie
 	HU	Csoportosítsa az összes listát kiadás típusa szerint
 	NL	Groepeer alle releases op type
+	PT	Agrupar todas as listas por tipo de lançamento
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny
@@ -10172,6 +10428,7 @@ SETUP_GROUPDISCS
 	NL	Discs groeperen
 	NO	Grupper disker
 	PL	Grupuj dyski
+	PT	Agrupar discos
 	RU	Группировать диски
 	SV	Gruppera skivor
 	ZH_CN	组合光碟
@@ -10210,6 +10467,7 @@ SETUP_GROUPDISCS_0
 	NL	Sets met meerdere discs als meerdere albums behandelen
 	NO	Behandle sett med flere plater som flere album
 	PL	Traktuj zestaw kilku dysków jako kilka albumów
+	PT	Tratar conjuntos de multi-discos como multiplos albuns
 	RU	Наборы из нескольких дисков как несколько альбомов
 	SV	Behandla de ingående skivorna i en box som enskilda album.
 	ZH_CN	把多个光碟组成的合集视为个别单独的专辑
@@ -10229,6 +10487,7 @@ SETUP_GROUPDISCS_1
 	NL	Sets met meerdere discs als één album behandelen
 	NO	Behandle sett med flere plater som deler av samme album
 	PL	Traktuj zestaw kilku dysków jako jeden album
+	PT	Tratar conjuntos de multi-discos como um só album
 	RU	Наборы из нескольких дисков как единый альбом
 	SV	Behandla boxar med flera skivor som ett album.
 	ZH_CN	把多个光碟组成的合集视为单一的专辑
@@ -10565,7 +10824,7 @@ PLAYER
 	NL	Muziekspeler
 	NO	Spiller
 	PL	Odtwarzacz
-	PT	Cliente
+	PT	Reprodutor
 	RU	Плеер
 	SV	Spelare
 	ZH_CN	播放机
@@ -10601,7 +10860,7 @@ CURRENT_PLAYER
 	NL	Huidige muziekspeler:
 	NO	Gjeldende spiller:
 	PL	Aktualny odtwarzacz:
-	PT	Cliente Actual
+	PT	reprodutor Actual
 	RU	Текущий плеер:
 	SV	Aktuell spelare:
 	ZH_CN	当前的播放机：
@@ -10637,7 +10896,7 @@ NOW_PLAYING_ON
 	NL	Speelt nu op de muziekspeler van
 	NO	Spilles nå på
 	PL	Teraz odtwarzane na odtwarzaczu w
-	PT	A tocar no cliente Slim Player em
+	PT	A tocar no reprodutor Slim Player em
 	RU	Воспроизводится на плеере по адресу
 	SV	Nu spelas på spelaren
 	ZH_CN	播放机播放中：
@@ -11229,6 +11488,7 @@ ENABLED
 	NL	Ingeschakeld
 	NO	Aktivert
 	PL	Włączony
+	PT	Activado
 	RU	Включено
 	SV	Aktiverat
 	ZH_CN	启动
@@ -11248,6 +11508,7 @@ DISABLED
 	NL	Uitgeschakeld
 	NO	Deaktivert
 	PL	Wyłączone
+	PT	Desactivado
 	RU	Отключено
 	SV	Avaktiverat
 	ZH_CN	撤销
@@ -13741,6 +14002,7 @@ ALL_ARTISTS
 	NL	Alle artiesten
 	NO	Alle artister
 	PL	Wszyscy wykonawcy
+	PT	Todos os artistas
 	RU	Все исполнители
 	SV	Alla artister
 	ZH_CN	所有艺人
@@ -14171,6 +14433,7 @@ BROWSE_BY_ALBUMARTIST
 	NL	Albumartiesten
 	NO	Albumartister
 	PL	Wykonawcy albumów
+	PT	Artistas do Album
 	RU	Исполнитель альбома
 	SV	Albumartister
 
@@ -14187,6 +14450,7 @@ BROWSE_ALBUMARTISTS
 	NL	Door albumartiesten bladeren
 	NO	Bla i albumartister
 	PL	Przeglądaj wykonawców albumów
+	PT	Examinar artistas do album
 	RU	Просмотр Исполнитель альбома
 	SV	Bläddra efter albumartister
 
@@ -14203,6 +14467,7 @@ BROWSE_ALBUMS
 	NL	Door albums bladeren
 	NO	Bla i album
 	PL	Przeglądaj albumy
+	PT	Examinar albuns
 	RU	Просмотр альбомов
 	SV	Bläddra efter album
 
@@ -14219,6 +14484,7 @@ BROWSE_GENRES
 	NL	Door genres bladeren
 	NO	Bla etter sjanger
 	PL	Przeglądaj gatunki
+	PT	Examinar géneros
 	RU	Просмотр жанров
 	SV	Bläddra efter genre
 
@@ -14229,6 +14495,7 @@ BROWSE_WORKS
 	FR	Parcourir les œuvres
 	HU	Tallózás a művek között
 	NL	Door composities bladeren
+	PT	Examinar obras
 
 WORKS
 	CS	Díla
@@ -14237,6 +14504,7 @@ WORKS
 	FR	Œuvres
 	HU	Művek
 	NL	Composities
+	PT	Obras
 
 WORKS_CLASSICAL
 	CS	Klasická díla
@@ -14245,6 +14513,7 @@ WORKS_CLASSICAL
 	FR	Œuvres Classiques
 	HU	Klasszikus művek
 	NL	Klassieke composities
+	PT	Obras Classicas
 
 BROWSE_YEARS
 	CS	Procházet roky
@@ -14259,6 +14528,7 @@ BROWSE_YEARS
 	NL	Door jaartallen bladeren
 	NO	Bla etter år
 	PL	Przeglądaj lata
+	PT	Examinar anos
 	RU	Просмотр по годам
 	SV	Bläddra efter år
 
@@ -14983,7 +15253,7 @@ PLAYER_SETTINGS
 	NL	Instellingen van muziekspeler
 	NO	Spillerinnstillinger
 	PL	Ustawienia odtwarzacza
-	PT	Configurações do Cliente
+	PT	Configurações do reprodutor
 	RU	Настройки плеера
 	SV	Spelarinställningar
 	ZH_CN	播放机设置
@@ -15002,6 +15272,7 @@ BASIC_PLAYER_SETTINGS
 	NL	Standaardinstellingen
 	NO	Standardinnstillinger
 	PL	Ustawienia podstawowe
+	PT	Configuração básica
 	RU	Основные настройки
 	SV	Grundinställningar
 	ZH_CN	基本配置
@@ -15131,6 +15402,7 @@ SERVER_STATUS
 	NL	Status van Lyrion Music Server
 	NO	Status for Lyrion Music Server
 	PL	Stan programu Lyrion Music Server
+	PT	Estado do Lyrion Music Server
 	RU	Статус Lyrion Music Server
 	SV	Lyrion Music Server-status
 
@@ -15147,6 +15419,7 @@ SERVER_STATUS_DESC
 	NL	Informatie over alle geïdentificeerde apparaten die met Lyrion Music Server verbonden zijn
 	NO	Informasjon om alle identifiserte enheter som er koplet til Lyrion Music Server.
 	PL	Informacje na wszystkich zidentyfikowanych urządzeniach połączonych ze Lyrion Music Server
+	PT	Indetificação de todos os equipamentos identificados conectados ao Lyrion Music Server
 	RU	Информация обо всех найденных устройствах, подключенных к Lyrion Music Server
 	SV	Information om alla identifierade enheter som anslutits till Lyrion Music Server
 
@@ -15181,6 +15454,7 @@ ADVANCED_SETTINGS
 	NL	Geavanceerd
 	NO	Avansert
 	PL	Zaawansowane
+	PT	Avançados
 	RU	Дополнительно
 	SV	Avancerat
 
@@ -15621,7 +15895,7 @@ PLAYER_IP_ADDRESS
 	NL	Het IP-adres van deze muziekspeler is
 	NO	Spillerens IP-adresse er
 	PL	Adres IP tego odtwarzacza to
-	PT	O endereço IP deste cliente é
+	PT	O endereço IP deste reprodutor é
 	RU	IP-адрес данного плеера —
 	SV	Spelarens IP-adress är
 	ZH_CN	此播放机的IP地址是
@@ -15641,7 +15915,7 @@ PLAYER_MAC_ADDRESS
 	NL	Het MAC-adres van deze muziekspeler is
 	NO	Spillerens MAC-adresse er
 	PL	Adres MAC w sieci Ethernet tego odtwarzacza to
-	PT	O endereço MAC deste cliente é
+	PT	O endereço MAC deste reprodutor é
 	RU	MAC-адрес Ethernet данного плеера следующий
 	SV	Spelarens Ethernet-MAC-adress är
 	ZH_CN	此播放机的以太网MAC地址是
@@ -15782,7 +16056,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	NL	De muziekspeler kan informatie over de voortgang van het huidige nummer tonen. Kies de informatie die getoond moet worden.
 	NO	Spilleren kan vise hvor mye av sangen som er spilt av under avspillingen. Velg hvilken informasjon du vil se.
 	PL	Odtwarzacz może wyświetlić informacje o postępie odtwarzania utworu. Wybierz informacje, które chcesz wyświetlić.
-	PT	O cliente pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
+	PT	O reprodutor pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
 	RU	В плеере может выводиться ход воспроизведения песни. Выберите необходимую информацию для отображения.
 	SV	Uppspelningsinformation om den aktuella låten kan visas på spelarens skärm. Välj den information du vill ska visas.
 	ZH_CN	播放机可以在播放音乐的同时显示有关歌曲信息。请选择您所要希望看到的信息。
@@ -15956,7 +16230,7 @@ FORGET_PLAYER
 	NL	Muziekspeler vergeten
 	NO	Glem spiller
 	PL	Nie używaj odtwarzacza
-	PT	Esquecer cliente
+	PT	Esquecer reprodutor
 	RU	Удалить плеер
 	SV	Ta bort spelare
 	ZH_CN	遗忘此播放机
@@ -15976,7 +16250,7 @@ FORGET_PLAYER_DESC
 	NL	Als je deze muziekspeler niet langer gebruikt of dit systeem twee keer voorkomt in de lijst met muziekspelers, kun je Lyrion Music Server dit systeem laten 'vergeten'.
 	NO	Hvis du ikke bruker denne spilleren, eller hvis den vises to ganger i listen over spillere, kan du få Lyrion Music Server til å glemme den.
 	PL	Jeżeli odtwarzacz nie jest już używany lub jest wyświetlany dwukrotnie na liście odtwarzaczy, program Lyrion Music Server może nie używać tego odtwarzacza.
-	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
+	PT	Se não usar mais este reprodutor (nome ou IP), ou se o reprodutor aparecer várias vezes, pode "esquecê-lo".
 	RU	Если данный плеер больше не используется или отображается в списке плееров дважды, можно удалить его из Lyrion Music Server.
 	SV	Om du inte använder den här spelaren eller om den visas två gånger i listan över spelare, kan Lyrion Music Server ta bort spelaren.
 	ZH_CN	如果您不再使用这个播放机或这个播放机重复出现，您可以选择让服务器遗忘这个播放机。
@@ -15996,7 +16270,7 @@ FORGET_PLAYER_LINK
 	NL	Deze muziekspeler vergeten
 	NO	Glem denne spilleren
 	PL	Nie używaj tego odtwarzacza
-	PT	Esquecer este cliente
+	PT	Esquecer este reprodutor
 	RU	Удалить плеер
 	SV	Ta bort den här spelaren
 	ZH_CN	遗忘此播放机
@@ -16091,7 +16365,7 @@ DISPLAY_PLUGINS
 	NL	Het menu Extra's op de Slim-muziekspeler tonen:
 	NO	Vis menyen Tillegg på Slim-spilleren:
 	PL	Wyświetl menu Dodatki w odtwarzaczu Slim:
-	PT	Mostrar menu de Extras no cliente Slim
+	PT	Mostrar menu de Extras no reprodutor Slim
 	RU	Отображать в плеере Slim меню "Дополнения":
 	SV	Visa menyn Extrafunktioner på Slim-spelaren:
 
@@ -16326,7 +16600,7 @@ NO_PLAYER_FOUND
 	NL	Jouw muziekspeler is niet gevonden.
 	NO	Kunne ikke finne spilleren.
 	PL	Nie znaleziono odtwarzacza.
-	PT	Não foi encontrado nenhum cliente.
+	PT	Não foi encontrado nenhum reprodutor.
 	RU	Ваш плеер не найден.
 	SV	Det gick inte att hitta spelaren.
 	ZH_CN	未能找到您的播放机。
@@ -16346,7 +16620,7 @@ NO_PLAYER_DETAILS
 	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat de muziekspeler op het netwerk is aangesloten en dat de netwerkinstellingen kloppen. Klik op de knop Vernieuwen wanneer de muziekspeler is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar jouw muziek luisteren met <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Lyrion Music Server naar jouw muziek te luisteren. Maak hiervoor een verbinding met de volgende URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	NO	<b>Hvis du har en Squeezebox eller en Transporter:</b><ul><li>Kontroller at spilleren er plugget inn, og at nettverksinnstillingene stemmer. Klikk på Oppdater så snart spilleren er koplet til.</ul><p><b>Hvis du ikke har en Squeezebox eller en Transporter:</b><ul><li>Du kan lytte til musikkbiblioteket ditt med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvareversjon av Squeezebox.<li>Du kan bruke mp3-spiller-programvare (som Winamp eller iTunes) til å lytte til musikkbiblioteket ditt med Lyrion Music Server ved å gå til denne url-en: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PL	<b>Jeżeli korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Sprawdź, czy odtwarzacz jest podłączony do źródła zasilania, a ustawienia sieciowe są prawidłowe. Po podłączeniu odtwarzacza kliknij przycisk Odśwież.</ul><p><b>Jeżeli nie korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Możesz słuchać muzyki z biblioteki, używając programu <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, programowej wersji urządzenia Squeezebox.<li>W celu słuchania muzyki z biblioteki w programie Lyrion Music Server możesz użyć oprogramowania odtwarzacza plików MP3 (na przykład Winamp lub iTunes), przechodząc pod następujący adres URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
+	PT	Verifique se o reprodutor está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
 	RU	<b>Если вы приобрели Squeezebox или Transporter.</b><ul><li> Убедитесь, что плеер подключен и настройки сети правильные. После подключения плеера к сети нажмите кнопку "Обновить".</ul><p><b>Если вы не приобрели Squeezebox и Transporter.</b><ul><li> Можете слушать песни из своей медиатеки с помощью <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a> — программной версии Squeezebox.<li>А благодаря программе для MP3-плееров (Winamp или iTunes) вы сможете слушать музыку в Lyrion Music Server, подключившись к следующему URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	SV	<b>Om du har en Squeezebox- eller Transporter-spelare</b><ul><li>kontrollerar du att spelaren är ansluten och att nätverksinställningarna är korrekta. Klicka på uppdateringsknappen när spelaren är ansluten.</ul><p><b>Om du inte har någon Squeezebox- eller Transporter-spelare</b><ul><li>kan du lyssna på ditt musikbibliotek med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvaruversion av Squeezebox.<li>Du kan använda program för mp3-spelare som Winamp och iTunes för att lyssna på ditt musikbibliotek via Lyrion Music Server genom att ansluta till den här webbadressen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	ZH_CN	<b>如果您拥有Squeezebox播放机：</b><ul><li>请确保播放机已插电及其网络设置无误。当您的播放机连接好后请单击《刷新》。</ul><p><b>如果您未能拥有Squeezebox播放机：</b><ul><li>您可以利用软体式播放机<a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>从您的音乐库播放音乐。<li>您可以利用MP3播放软件如Winamp或iTunes来欣赏Lyrion Music Server所流出的音乐。请连接到此URL：<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>。
@@ -17956,7 +18230,7 @@ PLAYER_SETUP
 	NL	Setup van muziekspeler
 	NO	Spillerinnstillinger
 	PL	Konfiguracja odtwarzacza
-	PT	Configurações dos Clientes
+	PT	Configurações dos reprodutores
 	RU	Настройка плеера
 	SV	Installation av spelare
 	ZH_CN	播放机设置
@@ -18146,6 +18420,7 @@ INFORMATION_MENU_PLAYER
 	NL	Informatie van muziekspeler
 	NO	Spillerinformasjon
 	PL	Informacje o odtwarzaczu
+	PT	Informação do reprodutor
 	RU	Информация о плеере
 	SV	Spelarinformation
 	ZH_CN	播放表信息
@@ -18188,6 +18463,7 @@ INFORMATION_MENU_PERL
 	DE	Perl- und Modulversionen
 	EN	Perl and Module Versions
 	FR	Versions de Perl et des modules
+	PT	Versões de Perl e Módulos
 
 INFORMATION_MENU_SCAN
 	CS	Detaily prohledávání médií
@@ -18202,6 +18478,7 @@ INFORMATION_MENU_SCAN
 	NL	Details van mediascan
 	NO	Detaljer om søk etter mediefiler
 	PL	Szczegóły przeszukiwania multimediów
+	PT	Detalhes do scan de ficheiro multimédia
 	RU	Сведения о сканировании мультимедиа
 	SV	Information om mediesökning
 
@@ -18220,6 +18497,7 @@ INFORMATION_MENU_LIBRARY
 	NL	Statistieken van mediabibliotheek
 	NO	Biblioteksstatistikk
 	PL	Statystyka biblioteki
+	PT	Estatística da biblioteca
 	RU	Статистика медиатеки
 	SV	Biblioteksstatistik
 	ZH_CN	音乐库统计
@@ -18287,6 +18565,7 @@ INFORMATION_PLAYER_MODEL
 	NL	Model van muziekspeler
 	NO	Spillermodell
 	PL	Model odtwarzacza
+	PT	Modelo do reprodutor
 	RU	Модель плеера
 	SV	Spelarmodell
 	ZH_CN	播放机型号
@@ -18357,6 +18636,7 @@ INFORMATION_PLAYER_IP
 	NL	IP-adres van muziekspeler
 	NO	Spillerens IP-adresse
 	PL	Adres IP odtwarzacza
+	PT	Endereço IP do reprodutor
 	RU	IP-адрес плеера
 	SV	Spelarens IP-adress
 	ZH_CN	播放机IP地址
@@ -18426,6 +18706,7 @@ INFORMATION_PLAYER_MAC
 	NL	MAC-adres van muziekspeler
 	NO	Spillerens MAC-adresse
 	PL	Adres MAC odtwarzacza
+	PT	Endereço MAC do reprodutor
 	RU	MAC-адрес плеера
 	SV	Spelarens MAC-adress
 	ZH_CN	播放机MAC地址
@@ -18461,6 +18742,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	NL	Sterkte van draadloos signaal
 	NO	Trådløs signalstyrke
 	PL	Siła sygnału sieci bezprzewodowej
+	PT	Intensidade do sinal rede sem fios
 	RU	Уровень беспроводного сигнала
 	SV	Trådlös signalstyrka
 	ZH_CN	无线讯号强度
@@ -18478,6 +18760,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
 	NL	Draadloos signaal
 	NO	Trådløst signal
 	PL	Sygnał sieci bezprzewodowej
+	PT	Sinal rede sem fios
 	RU	Беспроводной сигнал
 	SV	Trådlös signal
 
@@ -18496,6 +18779,7 @@ INFORMATION_CLIENTS
 	NL	Totaal aantal herkende muziekspelers
 	NO	Totalt antall tilkoplede spillere
 	PL	Razem rozpoznanych odtwarzaczy
+	PT	Total de reprodutores reconhecidos
 	RU	Всего распознанных плееров
 	SV	Totalt antal anslutna spelare
 	ZH_CN	被认出的播放机总数
@@ -18513,6 +18797,7 @@ INFORMATION_CACHEDIR
 	NL	Cachemap
 	NO	Hurtigbuffermappe
 	PL	Folder pamięci podręcznej
+	PT	Directório de cache
 	RU	Папка "Кэш"
 	SV	Cachemapp
 
@@ -18529,6 +18814,7 @@ INFORMATION_PREFSDIR
 	NL	Voorkeurenmap
 	NO	Mappe for innstillinger
 	PL	Folder preferencji
+	PT	Directório das preferências
 	RU	Папка "Предпочтения"
 	SV	Mappen Inställningar
 
@@ -18545,6 +18831,7 @@ INFORMATION_PLUGINDIRS
 	NL	Plug-in-mappen
 	NO	Plugin-mapper
 	PL	Foldery dodatków
+	PT	Directório dos plugins
 	RU	Папки подключаемых модулей
 	SV	Mappar för plugin-program
 
@@ -18556,6 +18843,7 @@ INFORMATION_BINDIRS
 	HU	Segítő alkalmazások mappa
 	NL	Hulpapplicatiesmap
 	NO	Mappe for støtteprogrammer
+	PT	Directório das ajudas às aplicações
 	PL	Folder aplikacji pomocniczych
 	SV	Mapp för hjälpprogram
 
@@ -18572,6 +18860,7 @@ INFORMATION_ARCHITECTURE
 	NL	Platformarchitectuur
 	NO	Plattformarkitektur
 	PL	Architektura platformy
+	PT	Arquitetura da plataforma
 	RU	Архитектура платформы
 	SV	Plattformsarkitektur
 
@@ -18588,6 +18877,7 @@ INFORMATION_ARCHITECTURE_ABBR
 	NL	Platform
 	NO	Plattform
 	PL	Platforma
+	PT	Platforma
 	RU	Платформа
 	SV	Plattform
 
@@ -18606,6 +18896,7 @@ INFORMATION_SERVER_IP
 	NL	IP-adres van server
 	NO	Serverens IP-adresse
 	PL	Adres IP serwera
+	PT	Endereço IP do Servidor
 	RU	IP-адрес сервера
 	SV	Serverns IP-adress
 	ZH_CN	服务器IP地址
@@ -18623,6 +18914,7 @@ INFORMATION_SERVER_IP_ABBR
 	NL	IP
 	NO	IP
 	PL	Adres IP
+	PT	IP
 	RU	IP-адрес
 	SV	IP
 
@@ -18640,6 +18932,7 @@ INFORMATION_SERVER_PORT
 	NL	Poortnummer van server
 	NO	Serverport
 	PL	Numer portu serwera
+	PT	Numero da porta do servidor
 	RU	Номер порта сервера
 	SV	Serverportnummer
 	ZH_CN	服务器端口号
@@ -18659,6 +18952,7 @@ INFORMATION_SERVER_HTTP
 	NL	HTTP-poortnummer van server
 	NO	HTTP-serverens portnummer
 	PL	Numer portu HTTP serwera
+	PT	Numero da porta HTTP do servidor
 	RU	Номер HTTP-порта сервера
 	SV	HTTP-serverns portnummer
 	ZH_CN	服务器HTTP端口号
@@ -18676,6 +18970,7 @@ INFORMATION_SERVER_HTTP_ABBR
 	NL	HTTP-poort
 	NO	HTTP-port
 	PL	Port HTTP
+	PT	Porta HTTP
 	RU	HTTP-порт
 	SV	HTTP-port
 
@@ -18694,6 +18989,7 @@ INFORMATION_ALBUMS
 	NL	Totaal aantal albums
 	NO	Totalt antall album
 	PL	Razem albumów
+	PT	Total de albuns
 	RU	Всего альбомов
 	SV	Totalt antal album
 	ZH_CN	专辑总数
@@ -18713,6 +19009,7 @@ INFORMATION_ARTISTS
 	NL	Totaal aantal artiesten
 	NO	Totalt antall artister
 	PL	Razem wykonawców
+	PT	Total de artistas
 	RU	Всего исполнителей
 	SV	Totalt antal artister
 	ZH_CN	艺人总数
@@ -18732,6 +19029,7 @@ INFORMATION_GENRES
 	NL	Totaal aantal genres
 	NO	Totalt antall sjangere
 	PL	Razem gatunków
+	PT	Total de géneros
 	RU	Всего жанров
 	SV	Totalt antal genrer
 	ZH_CN	歌曲曲风总数
@@ -18751,6 +19049,7 @@ INFORMATION_TRACKS
 	NL	Totaal aantal nummers
 	NO	Totalt antall spor
 	PL	Całkowita liczba utworów
+	PT	Total de pistas
 	RU	Всего дорожек
 	SV	Totalt antal spår
 	ZH_CN	音轨总数
@@ -18763,6 +19062,7 @@ INFORMATION_PLAYLISTS
 	HU	Összes műsorlista
 	NL	Totaal aantal afspeellijsten
 	SV	Antal spellistor
+	PT	Total de playlists
 
 INFORMATION_IMAGES
 	CS	Celkem obrázků
@@ -18777,6 +19077,7 @@ INFORMATION_IMAGES
 	NL	Totaal aantal afbeeldingen
 	NO	Totalt antall bilder
 	PL	Łącznie obrazów
+	PT	Total de imagens
 	RU	Кол-во изображений
 	SV	Antal bilder
 
@@ -18795,6 +19096,7 @@ INFORMATION_TIME
 	NL	Totale speeltijd
 	NO	Samlet avspillingstid
 	PL	Całkowity czas odtwarzania
+	PT	Total de tempo de reprodução
 	RU	Общее время воспроизведения
 	SV	Total speltid
 	ZH_CN	播放时间总长
@@ -18814,6 +19116,7 @@ INFORMATION_VERSION
 	NL	Versie
 	NO	Versjon
 	PL	Wersja
+	PT	Versão
 	RU	Версия
 	SV	Version
 	ZH_CN	版本
@@ -18832,6 +19135,7 @@ INFORMATION_DIAGSTRING
 	NL	Versie-informatie
 	NO	Versjonsmerknader
 	PL	Informacje o wersji
+	PT	Informação da versão
 	RU	Информация о версии
 	SV	Versionsinfo
 	ZH_CN	版本信息
@@ -18850,6 +19154,7 @@ INFORMATION_HOSTNAME
 	NL	Hostnaam
 	NO	Vertsnavn
 	PL	Nazwa hosta
+	PT	Nome do host
 	RU	Имя хоста
 	SV	Värdnamn
 	ZH_CN	主机名字
@@ -18867,6 +19172,7 @@ INFORMATION_OPERATINGSYSTEM
 	NL	Besturingssysteem
 	NO	Operativsystem
 	PL	System operacyjny
+	PT	Sistema operativo
 	RU	Операционная система
 	SV	Operativsystem
 
@@ -18883,6 +19189,7 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	NL	OS
 	NO	OS
 	PL	System
+	PT	Sistema operativo
 	RU	ОС
 	SV	Operativsystem
 
@@ -18900,6 +19207,7 @@ INFORMATION_HOSTIP
 	NL	IP-adres van host
 	NO	Verts-IP
 	PL	Adres IP hosta
+	PT	Endereºo IP do host
 	RU	IP-адрес узла
 	SV	Värdens IP-adress
 	ZH_CN	主机IP地址
@@ -18919,6 +19227,7 @@ INFORMATION_INSTALLED
 	NL	Geïnstalleerd
 	NO	Installert
 	PL	Zainstalowane
+	PT	Instalado
 	RU	Установлено
 	SV	Installerad
 	ZH_CN	已安装
@@ -18938,6 +19247,7 @@ INFORMATION_DISABLED
 	NL	UITGESCHAKELD
 	NO	Deaktivert
 	PL	WYŁĄCZONE
+	PT	DESACTIVADO
 	RU	Отключено
 	SV	Avaktiverat
 	ZH_CN	已撤销
@@ -18957,6 +19267,7 @@ INFORMATION_NO_VERSION
 	NL	Geen versienummer
 	NO	Ingen versjonsnummer
 	PL	Brak numeru wersji
+	PT	Sem versão numero
 	RU	Нет номера версии
 	SV	Inget versionsnummer
 	ZH_CN	无版本号
@@ -18976,6 +19287,7 @@ INFORMATION_DATE_FORMAT
 	NL	${shortdateFormat} op ${timeFormat}
 	NO	${shortdateFormat} kl ${timeFormat}
 	PL	${shortdateFormat} o ${timeFormat}
+	PT	${shortdateFormat} às ${timeFormat}
 	RU	${shortdateFormat} в ${timeFormat}
 	SV	${shortdateFormat} klockan ${timeFormat}
 	ZH_CN	${shortdateFormat}  ${timeFormat}
@@ -18995,6 +19307,7 @@ BEFORE
 	NL	voor
 	NO	før
 	PL	przed
+	PT	antes
 	RU	до
 	SV	före
 	ZH_CN	之前
@@ -19014,6 +19327,7 @@ AFTER
 	NL	na
 	NO	etter
 	PL	po
+	PT	depois
 	RU	после
 	SV	efter
 	ZH_CN	之后
@@ -19033,6 +19347,7 @@ IS
 	NL	is
 	NO	er
 	PL	jest
+	PT	é
 	RU	является
 	SV	är
 	ZH_CN	是
@@ -19052,6 +19367,7 @@ EQUALS
 	NL	is gelijk aan
 	NO	tilsvarer
 	PL	równa się
+	PT	igual a
 	RU	равно
 	SV	är lika med
 	ZH_CN	等于
@@ -19071,6 +19387,7 @@ LESSTHAN
 	NL	minder dan
 	NO	mindre enn
 	PL	mniej niż
+	PT	menos que
 	RU	меньше чем
 	SV	mindre än
 	ZH_CN	小于
@@ -19090,6 +19407,7 @@ GREATERTHAN
 	NL	groter dan
 	NO	større enn
 	PL	więcej niż
+	PT	maior que
 	RU	больше, чем
 	SV	mer än
 	ZH_CN	大于
@@ -19109,6 +19427,7 @@ NOT
 	NL	niet
 	NO	ikke
 	PL	nie
+	PT	não
 	RU	не
 	SV	inte
 	ZH_CN	不
@@ -19122,6 +19441,7 @@ RANGE
 	NL	bereik
 	NO	område
 	PL	zakres
+	PT	compreendido entre
 	SV	område
 
 NOT_IN_RANGE
@@ -19133,6 +19453,7 @@ NOT_IN_RANGE
 	NL	niet binnen bereik
 	NO	utenfor område
 	PL	poza zakresem
+	PT	não compreendido entre
 	SV	utanför område
 
 # The space before the French : is there on purpose.
@@ -19152,6 +19473,7 @@ COLON
 	NL	:
 	NO	:
 	PL	:
+	PT	:
 	RU	:
 	SV	:
 	ZH_CN	：
@@ -19169,6 +19491,7 @@ SETUP_SCROLLPIXELS
 	NL	Tekstlooppixels
 	NO	Rullepiksler
 	PL	Przewijaj piksele
+	PT	Scroll de pixeis
 	RU	Пикселей прокрутки
 	SV	Pixelhastighet
 	ZH_CN	卷动映像点
@@ -19457,6 +19780,7 @@ COMPILATIONS
 	NL	Compilaties
 	NO	Samling
 	PL	Kompilacja
+	PT	Compilações
 	RU	Сборка
 	SV	Samling
 	ZH_CN	合辑
@@ -19468,6 +19792,7 @@ APPEARANCES
 	FR	Apparitions
 	HU	Megjelenések
 	NL	Optredens
+	PT	Aparições
 
 COMPOSITIONS
 	CS	Kompozice
@@ -19475,6 +19800,7 @@ COMPOSITIONS
 	EN	Compositions
 	FR	Compositions
 	NL	Composities
+	PT	Composições
 
 SETUP_VARIOUSARTISTS
 	CS	Sbírky
@@ -19490,6 +19816,7 @@ SETUP_VARIOUSARTISTS
 	NL	Compilaties
 	NO	Samlinger
 	PL	Kompilacje
+	PT	Compilações
 	RU	Сборки
 	SV	Samlingar
 	ZH_CN	合辑
@@ -19562,6 +19889,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	NL	Wanneer compilatie-albums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder wijzigen.
 	NO	Når samlealbum grupperes sammen, sorteres de under «Diverse artister» som standard. Du kan endre det navnet nedenfor.
 	PL	Po zgrupowaniu albumów zawierających kompilacje są one domyślnie wyświetlane w kategorii „Różni wykonawcy”. Nazwę tę można zmienić poniżej.
+	PT	Quando albuns de compilação estiverem agrupados juntos aparecem sob "Various Artist" por defeito. Pode mudar esse nome abaixo
 	RU	При группировке альбомов-сборок они по умолчанию отображаются под заголовком "Различные исполнители". Это название можно изменить ниже.
 	SV	När samlingsskivor grupperas tillsammans visas de som standard under Blandade artister. Du kan ändra namnet nedan.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
@@ -19580,6 +19908,7 @@ VARIOUSARTISTS
 	NL	Diverse artiesten
 	NO	Diverse artister
 	PL	Różni wykonawcy
+	PT	Vários artistas
 	RU	Различные исполнители
 	SV	Blandade artister
 	ZH_CN	多位艺人
@@ -19598,6 +19927,7 @@ TRACKARTIST
 	NL	Artiest van nummer
 	NO	Sporartist
 	PL	Wykonawca utworu
+	PT	Artista da pista
 	RU	Исполнитель дорожки
 	SV	Spårets artist
 	ZH_CN	音轨艺人
@@ -19616,6 +19946,7 @@ ALBUMARTIST
 	NL	Albumartiest
 	NO	Albumartist
 	PL	Wykonawca albumu
+	PT	Artista do album
 	RU	Исполнитель альбома
 	SV	Albumartist
 	ZH_CN	专辑艺人
@@ -19634,6 +19965,7 @@ UNSYNC
 	NL	Synchronisatie opheffen
 	NO	Avbryt synkronisering
 	PL	Wyłącz synchronizację
+	PT	Desincronizar
 	RU	Отменить синхронизацию
 	SV	Avsluta synkronisering
 	ZH_CN	非同步
@@ -19684,6 +20016,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	NL	TPE2 MP3-label als albumartiest behandelen
 	NO	Behandle TPE2 mp3-etiketter som albumartist
 	PL	Używaj znacznika TPE2 pliku MP3 jako wykonawcy albumu
+	PT	Trate a tag TPE2 como o Artista do albun
 	RU	Поле TPE2 тега MP3 содержит исполнителя альбома
 	SV	Behandla mp3-taggen TPE2 som albumartist
 
@@ -19700,6 +20033,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	NL	TPE2 MP3-tag als band behandelen
 	NO	Behandle TPE2 mp3-etikett som gruppe
 	PL	Używaj znacznika TPE2 pliku MP3 jako nazwy zespołu
+	PT	Trate a tag TPE2 como Banda
 	RU	Поле TPE2 тега MP3 содержит группу
 	SV	Behandla mp3-taggen TPE2 som band
 
@@ -22268,6 +22602,7 @@ SETUP_DEBUG_SERVER_LOG
 	NL	Logboek van Lyrion Music Server
 	NO	Lyrion Music Server loggfil
 	PL	Plik dziennika programu Lyrion Music Server
+	PT	Arquivo de log do Lyrion Music Server
 	RU	Файл журнала Lyrion Music Server
 	SV	Loggfil för Lyrion Music Server
 
@@ -22284,6 +22619,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	NL	Lyrion Music Server bewaart hier een logboek voor alle applicatie-activiteiten (audio streaming, infrarood, enz.):
 	NO	Lyrion Music Server fører en loggfil for alle programrelaterte aktiviteter (lydstrømming, infrarøde signaler osv.) her:
 	PL	Program Lyrion Music Server przechowuje plik dziennika zawierający wszystkie działania dotyczące aplikacji (strumieniowe przesyłanie dźwięku, korzystanie z podczerwieni) w tym miejscu:
+	PT	Lyrion Music Server mantem u arquivo de log para todas as actividades relacionadas com a aplicação (sequências de audio, infravermelhos, etc.) aquí:
 	RU	Все действия приложений (потоковое аудио, ИК-выход и др.) записываются в файл журнала Lyrion Music Server:
 	SV	Alla aktiviteter som har att göra med Lyrion Music Server (ljudströmning, infraröda signaler o.s.v.) loggas här:
 
@@ -22300,6 +22636,7 @@ SETUP_DEBUG_SCANNER_LOG
 	NL	Logboek van scanner
 	NO	Loggfil for søk
 	PL	Plik dziennika modułu przeszukiwania
+	PT	Ficheiro de log dos scans
 	RU	Файл журнала сканера
 	SV	Loggfil for sökning
 
@@ -22376,6 +22713,7 @@ SETUP_LOG_ZIPPED
 	NL	Zipbestand
 	NO	ZIP-arkiv
 	PL	archiwum ZIP
+	PT	arquivo ZIP
 	SV	ZIP-arkiv
 
 SETUP_DEBUG_LEVEL_OFF
@@ -22507,6 +22845,7 @@ APPLY
 	NL	Toepassen
 	NO	Bruk
 	PL	Zastosuj
+	PT	Aplicar
 	RU	Применить
 	SV	Verkställ
 
@@ -22523,6 +22862,7 @@ SHRINK
 	NL	Verkleinen
 	NO	Reduser
 	PL	Zmniejsz
+	PT	Comprimir
 	RU	Сжатие
 	SV	Krymp
 
@@ -23049,6 +23389,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	NL	De server heeft jouw mediabibliotheek gescand.
 	NO	Serveren har nå søkt gjennom mediebiblioteket.
 	PL	Serwer zakończył przeszukiwanie biblioteki multimedialnej.
+	PT	O servidor finalizou o scan da sua biblioteca multimedia.
 	RU	Сервер завершил сканирование библиотеки мультимедиа.
 	SV	Sökningen av mediebiblioteket har slutförts.
 
@@ -23082,6 +23423,7 @@ TOTAL_TIME
 	NL	Totale tijd:
 	NO	Samlet tid:
 	PL	Całkowity czas:
+	PT	Tempo total:
 	RU	Общее время:
 	SV	Total tid:
 
@@ -23242,6 +23584,7 @@ SETUP_VIEW_NOT_SCANNING
 	NL	Details van vorige scan bekijken
 	NO	Vis detaljer for forrige søk
 	PL	Wyświetl szczegóły poprzedniego przeszukiwania
+	PT	Ver detalhes do scan anterior
 	RU	Сведения предыдущего сканирования
 	SV	Visa information om föregående sökning
 
@@ -23258,6 +23601,7 @@ CLOSE
 	NL	Sluiten
 	NO	Lukk
 	PL	Zamknij
+	PT	Fechar
 	RU	Закрыть
 	SV	Stäng
 
@@ -23274,6 +23618,7 @@ PERSIST_DEBUG_SETTINGS
 	NL	Loginstellingen opslaan voor gebruik bij volgende applicatieherstart
 	NO	Lagre innstillinger for loggføring og bruk dem ved neste programstart
 	PL	Zapisz ustawienia rejestrowania w celu użycia przy kolejnym uruchomieniu aplikacji
+	PT	Guardar configuração de login para ser utilizada no próximo reinício da aplicação
 	RU	Сохранить настройки журнала при перезапуске приложения
 	SV	Spara loggningsinställningar till nästa programstart
 
@@ -25312,6 +25657,7 @@ RUN_AT_BOOT
 	NL	Automatisch uitvoeren bij systeemstart
 	NO	Kjør automatisk når systemet starter
 	PL	Uruchom automatycznie po uruchomieniu systemu
+	PT	Executar automaticamente ao iniciar o sistema
 	RU	Запускать автоматически при запуске системы
 	SV	Kör automatiskt vid systemstart
 
@@ -25328,6 +25674,7 @@ RUN_AT_LOGIN
 	NL	Automatisch uitvoeren bij aanmelden
 	NO	Kjør automatisk ved pålogging
 	PL	Uruchom automatycznie po zalogowaniu
+	PT	Executar automaticamente ao login
 	RU	Запускать автоматически при входе в систему
 	SV	Kör automatiskt vid inloggning
 
@@ -25344,6 +25691,7 @@ RUN_FAILSAFE
 	NL	Zonder gebruikersextensies uitvoeren ('Veilige modus')
 	NO	Kjør uten brukerutvidelser ("sikkermodus")
 	PL	Uruchom bez rozszerzeń użytkownika („tryb bezpieczny”)
+	PT	Executar sem carregar as extensões do utilizador ("Safe Mode")
 	RU	Запустить без пользовательских расширений ("Безопасный режим")
 	SV	Kör utan användartillägg (Felsäkert läge)
 
@@ -25360,6 +25708,7 @@ RUN_NEVER
 	NL	Niet automatisch starten
 	NO	Ikke start automatisk
 	PL	Nie uruchamiaj automatycznie
+	PT	Não iniciar automaticamente
 	RU	Не запускать автоматически
 	SV	Starta inte automatiskt
 
@@ -25376,6 +25725,7 @@ START_SQUEEZEBOX_SERVER
 	NL	Lyrion Music Server starten
 	NO	Start Lyrion Music Server
 	PL	Uruchom program Lyrion Music Server
+	PT	Iniciar Lyrion Music Server
 	RU	Запустить Lyrion Music Server
 	SV	Starta Lyrion Music Server
 
@@ -25392,6 +25742,7 @@ STOP_SQUEEZEBOX_SERVER
 	NL	Lyrion Music Server stoppen
 	NO	Stopp Lyrion Music Server
 	PL	Zatrzymaj program Lyrion Music Server
+	PT	Parar o Lyrion Music Server
 	RU	Остановить Lyrion Music Server
 	SV	Stoppa Lyrion Music Server
 
@@ -25407,6 +25758,7 @@ SIGNUP_LISTEN
 	NL	Luister eens naar muziek!
 	NO	Lytt til musikk!
 	PL	Posłuchaj muzyki!
+	PT	Ouvir um pouco de musica!
 	RU	Послушайте музыку!
 	SV	Lyssna på musik!
 
@@ -25424,6 +25776,7 @@ HOWTO_HOME
 	NO	Gå til VENSTRE på fjernkontrollen mens du står vendt mot Squeezebox, og hold knappen nede til du ser alternativet Spiller av nå.
 	PL	Patrząc w kierunku urządzenia Squeezebox, naciśnij strzałkę W LEWO na pilocie aż do wyświetlenia opcji Teraz odtwarzane.
 	RU	Направьте пульт ДУ на Squeezebox и нажимайте кнопку LEFT, пока не появится параметр "Воспроизводится".
+	PT	De frente para o Squeezebox prima a seta para a Esquerda no controle remoto até que lhe apareça a opção NOW PLAYING.
 	SV	Rikta fjärrkontrollen mot Squeezebox och tryck på vänsterpilen på fjärrkontrollen för att visa alternativet Aktuellt spår.
 
 HOWTO_HOME_BOOM
@@ -25439,6 +25792,7 @@ HOWTO_HOME_BOOM
 	NL	Richt de afstandsbediening op de Squeezebox en druk op HOME.
 	NO	Trykk på HOME på fjernkontrollen mens du står vendt mot Squeezebox.
 	PL	Stojąc w kierunku urządzenia Squeezebox, naciśnij przycisk HOME na pilocie.
+	PT	De frente para o Squeezebox prima HOME no controle remoto.
 	RU	Направьте пульт ДУ на Squeezebox и нажмите кнопку HOME.
 	SV	Rikta fjärrkontrollen mot Squeezebox och tryck på HOME.
 
@@ -25455,6 +25809,7 @@ HOWTO_HOME_CONTROLLER
 	NL	Druk op HOME op de afstandsbediening.
 	NO	Trykk på HOME på fjernkontrollen.
 	PL	Naciśnij przycisk HOME na pilocie.
+	PT	Prima HOME no controle remoto.
 	RU	Нажмите на пульте кнопку HOME.
 	SV	Tryck på HOME på fjärrkontrollen.
 
@@ -25471,6 +25826,7 @@ HOWTO_DOWN
 	NL	Druk OMLAAG op de afstandsbediening om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
 	NO	Gå NED på fjernkontrollen for å gå til Internett-radio, og gå til HØYRE for å velge.
 	PL	Naciśnij przycisk W DÓŁ, aby przejść do opcji Radio internetowe, a następnie naciśnij przycisk W PRAWO, aby wybrać.
+	PT	Prima DOWN no controle remoto até chegar a radio pela Internet, Prima RIGHT para seleccionar.
 	RU	На пульте ДУ нажмите кнопку DOWN, чтобы прокрутить до элемента "Радиостанции Интернета", и нажмите кнопку RIGHT, чтобы выбрать его.
 	SV	Bläddra till webbradio genom att trycka på nerknappen på fjärrkontrollen. Tryck därefter på högerknappen för att välja.
 
@@ -25488,6 +25844,7 @@ HOWTO_DOWN_BOOM
 	NO	Gå ned på fjernkontrollen (eller rull mot høyre med midtknappen) for å gå til Internett-radio, og gå til høyre  for å velge.
 	PL	Naciśnij przycisk W DÓŁ na pilocie (lub obróć pokrętło w prawo), aby przejść do opcji Radio internetowe i naciśnij przycisk W PRAWO, aby wybrać.
 	RU	Нажмите на пульте ДУ кнопку DOWN (или прокрутите ручку вправо), чтобы перейти к элементу "Радиостанции Интернета", и нажмите для его выбора кнопку RIGHT.
+	PT	Prima DOWN no controle remoto (ou rode o botão para a direita) até chegar a radio pela Internet, Prima RIGHT para seleccionar.
 	SV	Bläddra till webbradion genom att trycka på nerknappen på fjärrkontrollen (eller vrid mittenknappen åt höger). Tryck på högerknappen för att göra ditt val.
 
 HOWTO_DOWN_CONTROLLER
@@ -25504,6 +25861,7 @@ HOWTO_DOWN_CONTROLLER
 	NL	Draai het wiel naar rechts om naar 'Internetradio' te scrollen, en druk op de middelste knop om te selecteren.
 	NO	Rull hjulet mot høyre for å gå til Internett-radio, og trykk på midtknappen for å velge.
 	PL	Obróć pokrętło w prawo, aby przejść do opcji Radio internetowe i naciśnij środkowy przycisk, aby wybrać.
+	PT	Gire a roda para a direita até chegar a Radio pela Internet.Prima o botão central para seleccionar.
 	RU	Прокрутите колесико вправо до элемента "Радиостанции Интернета" и нажмите центральную кнопку, чтобы выбрать его.
 	SV	Rulla med hjulet för att bläddra till webbradion. Använd mittenknappen för att välja.
 
@@ -25520,6 +25878,7 @@ HOWTO_STAFF_PICKS
 	NL	Scroll naar AANRADERS en druk RECHTS.
 	NO	Gå til UTVALGTE STASJONER og gå til høyre.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij przycisk w prawo.
+	PT	Faça scroll até Staff Picks e prima o botão RIGHT.
 	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите кнопку RIGHT.
 	SV	Bläddra till VÅRA FAVORITER och tryck på högerknappen.
 
@@ -25537,6 +25896,7 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	NL	Scroll naar AANRADERS en druk op de middelste knop.
 	NO	Gå til UTVALGTE STASJONER og trykk på midtknappen.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij środkowy przycisk.
+	PT	Faça scroll até Staff Picks e prima o botão central.
 	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите центральную кнопку.
 	SV	Bläddra till Våra favoriter och tryck på mittenknappen.
 
@@ -25553,6 +25913,7 @@ INTERNET_RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
+	PT	Radio
 	RU	Радиостанция
 	SV	Radio
 
@@ -25569,6 +25930,7 @@ HOWTO_INTERNET_RADIO
 	NL	Scroll naar 'De beste internetradio' en druk RECHTS.
 	NO	Gå til "Beste stasjoner" og gå til høyre.
 	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij przycisk W PRAWO.
+	PT	Faça scroll até "Best of Internet Radio" e prima o botão RIGHT.
 	RU	Прокрутите до элемента "Лучшие из радиостанций Интернета" и нажмите кнопку RIGHT.
 	SV	Bläddra till Webbradiofavoriter och tryck på högerknappen.
 
@@ -25586,6 +25948,7 @@ HOWTO_INTERNET_RADIO_CONTROLLER
 	NL	Scroll naar 'De beste internetradio' en druk op de middelste knop.
 	NO	Gå til "Beste stasjoner" og trykk på midtknappen.
 	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij środkowy przycisk.
+	PT	Faça scroll até "Best of Internet Radio" e prima o botão central.
 	RU	Прокрутите до "Лучшие радиостанции Интернета" и нажмите центральную кнопку.
 	SV	Bläddra till Webbradiofavoriter och tryck på mittenknappen.
 
@@ -25602,6 +25965,7 @@ HOWTO_SHOWCASE
 	NL	Scroll naar 'Slim Showcase: Miles Davis' en druk op PLAY.
 	NO	Gå til Slim-scenen: Miles Davis og trykk på PLAY.
 	PL	Przewiń do opcji Prezentacja Slim: Miles Davis i naciśnij przycisk PLAY.
+	PT	Faça scroll até Slim Showcase: Miles Davis e prima PLAY.
 	RU	Прокрутите до элемента Slim Showcase: Miles Davis и нажмите кнопку PLAY.
 	SV	Bläddra till Demonstration: Miles Davis och tryck på PLAY.
 
@@ -25618,6 +25982,7 @@ HOWTO_VOLUME
 	NL	Pas het volume aan.
 	NO	Juster volumet.
 	PL	Ustaw głośność.
+	PT	Ajuste do volume
 	RU	Выровнять звук.
 	SV	Justera volymen.
 
@@ -25634,6 +25999,7 @@ HOWTO_PAUSE
 	NL	Druk op PAUSE om het nummer te pauzeren. Houd de knop PAUSE ingedrukt om het nummer te stoppen.
 	NO	Hvis du vil sette sporet på pause, trykker du lett på PAUSE. Hvis du vil stoppe sporet, holder du nede PAUSE-knappen.
 	PL	Aby wstrzymać odtwarzanie, wybierz przycisk PAUSE. Aby zatrzymać odtwarzanie, naciśnij i przytrzymaj przycisk PAUSE.
+	PT	Para pausar a reprodução da pista prima em PAUSE. Para a parar, mantenha pressionado o botão PAUSE.
 	RU	Чтобы приостановить дорожку, коснитесь кнопки PAUSE. Чтобы остановить дорожку, нажмите и удерживайте кнопку PAUSE.
 	SV	Tryck på paus om du vill pausa spåret. Håll ner paus för att stoppa spåret.
 
@@ -25650,6 +26016,7 @@ WHATS_NEXT
 	NL	Ik heb alles ingesteld - wat nu?
 	NO	Jeg er klar ‒ hva skjer nå?
 	PL	Konfiguracja ukończona - co dalej?
+	PT	Configuração completa - e a seguir?
 	RU	Все настроено — что дальше?
 	SV	Jag är klar. Vad gör jag nu?
 
@@ -25667,6 +26034,7 @@ CONTINUE_TO_SQUEEZEBOX_SERVER
 	NO	Gå til Lyrion Music Server for å angi tilgangsinnstillinger for mediebiblioteket.
 	PL	Przejdź do programu Lyrion Music Server, aby zarządzać ustawieniami odtwarzania osobistej biblioteki multimedialnej.
 	RU	Перейти в Lyrion Music Server для управления настройками доступа к личной библиотеке мультимедиа.
+	PT	Continuar prar o Lyrion Music Server para administrar a configuração de reprodução da sua biblioteca multimedia.
 	SV	Fortsätt till Lyrion Music Server för att hantera inställningarna för uppspelning av ditt personliga mediebibliotek.
 
 REDUCED_TO_PREVENT_CLIPPING
@@ -25682,6 +26050,7 @@ REDUCED_TO_PREVENT_CLIPPING
 	NL	%s om clipping te voorkomen
 	NO	%s for å forhindre klipping
 	PL	%s, aby zapobiec obcinaniu
+	PT	%s para evitar clipping
 	RU	%s для предотвращения амплитудного ограничения
 	SV	%s för att förhindra distorsion
 
@@ -25699,6 +26068,7 @@ DECODE_ERROR_100
 	NL	Te veel kanalen
 	NO	For mange kanaler
 	PL	Zbyt wiele kanałów
+	PT	Demasiados canais
 	RU	Слишком много каналов
 	SV	Det finns för många kanaler
 
@@ -25715,6 +26085,7 @@ DECODE_ERROR_101
 	NL	Onvoldoende geheugen
 	NO	Ikke nok minne
 	PL	Za mało pamięci
+	PT	Memoria insuficiente
 	RU	Недостаточно памяти
 	SV	Det finns inte tillräckligt med minne
 
@@ -25731,6 +26102,7 @@ DECODE_ERROR_102
 	NL	Ongeldige samplefrequentie
 	NO	Ugyldig samplingsfrekvens
 	PL	Nieprawidłowa częstotliwość próbkowania
+	PT	Sample rate inválido
 	RU	Недопустимая частота дискретизации
 	SV	Felaktig samplingsfrekvens
 
@@ -25747,6 +26119,7 @@ DECODE_ERROR_103
 	NL	Geen Vorbis-bestand
 	NO	Ikke en Vorbis-fil
 	PL	To nie jest plik Vorbis
+	PT	Não é um ficheiro Vorbis
 	RU	Не является файлом Vorbis
 	SV	Det är inte en Vorbis-fil
 
@@ -25763,6 +26136,7 @@ DECODE_ERROR_104
 	NL	Ongeldige Vorbis-header
 	NO	Ugyldig Vorbis-topptekst
 	PL	Zły nagłówek Vorbis
+	PT	Header do Vobis incorrecta
 	RU	Недопустимый заголовок Vorbis
 	SV	Felaktigt Vorbis-huvud
 
@@ -25780,6 +26154,7 @@ DECODE_ERROR_200
 	NL	WMA-superframes worden niet ondersteund
 	NO	WMA superframes støttes ikke
 	PL	Superramki WMA nie są obsługiwane
+	PT	WMA superframes não suportado
 	RU	Суперкадры WMA не поддерживаются
 	SV	WMA-superramar stöds inte
 
@@ -25796,6 +26171,7 @@ DECODE_ERROR_201
 	NL	WMA Lossless wordt niet ondersteund
 	NO	WMA Lossless støttes ikke
 	PL	Format Bezstratny WMA nie jest obsługiwany
+	PT	WMA lossless não suportado
 	RU	WMA Lossless не поддерживается
 	SV	Förlustfri WMA stöds inte
 
@@ -25812,6 +26188,7 @@ PLUGINS_UPDATES_AVAILABLE
 	NL	Plug-in-updates beschikbaar
 	NO	Oppdateringer til plugin-moduler er tilgjengelige
 	PL	Dostępne są nowe aktualizacje.
+	PT	Estão disponíveis actualizações dos Plugins
 	RU	Доступны обновления подключаемых модулей
 	SV	Plugin-uppdateringar finns tillgängliga
 
@@ -25828,6 +26205,7 @@ PLUGINS_RESTART_MSG
 	NL	Updaten plug-ins voltooid - Herstart vereist
 	NO	Plugin-modulene er oppdatert. Du må starte programmet på nytt.
 	PL	Dodatki zostały zaktualizowane – wymagane jest ponowne uruchomienie.
+	PT	Os Plugins forma actualizados - Necessário reiniciar o servidor.
 	RU	Подключаемые модули были обновлены. Требуется перезагрузка.
 	SV	Plugin-programmen har uppdaterats. Omstart krävs.
 
@@ -25844,6 +26222,7 @@ NO_LIBRARY
 	NL	Geen mediabibliotheek geconfigureerd
 	NO	Ingen mediebiblioteker er konfigurert
 	PL	Nie skonfigurowano biblioteki multimedialnej
+	PT	Não está configurada nenhuma biblioteca de musica
 	RU	Не настроено ни одной библиотеки мультимедиа
 	SV	Inget mediebibliotek konfigurerat
 
@@ -25860,6 +26239,7 @@ LIBRARY_NOT_READY
 	NL	Geen muziekcollectie geconfigureerd of muziekcollectie is niet klaar voor gebruik
 	NO	Ingen musikkbibliotek er konfigurert, eller så er ingen bibliotek klare til å brukes
 	PL	Biblioteka muzyczna nie została skonfigurowana lub nie jest gotowa do użycia
+	PT	Não está configurada nenhuma biblioteca de musica ou não está pronta a ser utilizada
 	RU	Нет настроенных музыкальных библиотек, или они не готовы к использованию
 	SV	Inget musikbibliotek är konfigurerat eller redo att användas
 
@@ -25877,6 +26257,7 @@ PRESETS_NOT_DEFINED
 	NL	Voorinstelling #%s niet gedefinieerd.
 	NO	Forhåndsinnstilling nr. %s er ikke angitt.
 	PL	Ustawienie domyślne #%s nie zdefiniowane.
+	PT	Pré-definição não definida.
 	RU	Предустановки #%s не определены.
 	SV	Förinställningen #%s har inte angetts.
 
@@ -25894,6 +26275,7 @@ PRESET_ADDING
 	NL	Voorinstelling #%s wordt opgeslagen...
 	NO	Lagrer forhåndsinnstilling nr. %s ...
 	PL	Zapisywanie zdefiniowanego ustawienia #%s...
+	PT	Salvando pré-definição #%s...
 	RU	Сохранение набора настроек #%s...
 	SV	Förinställning #%s sparas...
 	ZH_CN	保存最喜爱的...
@@ -25912,6 +26294,7 @@ PRESET_HOLD_TO_SAVE
 	NL	Voorinstelling #%s (vasthouden om op te slaan)
 	NO	Forhåndsinnstilling nr. %s (hold nede knappen for å lagre)
 	PL	Zdefiniowane ustawienie #%s (przytrzymaj, aby zapisać)
+	PT	Pré-definição #%s (mantenha pressionado para salvar)
 	RU	Установить #%s (для сохранения нажать и удерживать)
 	SV	Förinställning av #%s (håll ner för att spara)
 
@@ -25929,6 +26312,7 @@ PRESET
 	NL	Voorinstelling #%s
 	NO	Forhåndsinnstilling nr. %s
 	PL	Zdefiniowane ustawienie #%s
+	PT	Pré-definição #%s
 	RU	Установить #%s
 	SV	Förinställning av #%s
 
@@ -25945,6 +26329,7 @@ USB
 	NL	USB
 	NO	Usb-port
 	PL	USB
+	PT	USB
 	RU	USB
 	SV	USB-port
 
@@ -25961,6 +26346,7 @@ SD
 	NL	SD-kaart
 	NO	SD-kort
 	PL	Karta SD
+	PT	Cartão SD
 	RU	SD-карта
 	SV	SD-kort
 
@@ -25978,6 +26364,7 @@ RETRYING
 	NL	Verbinding verbroken, nieuwe poging...
 	NO	Mistet forbindelsen, prøver igjen ...
 	PL	Wznawianie połączenia...
+	PT	Perda de conexão, retentando...
 	RU	Нет подключения, еще раз...
 	SV	Anslutning bröts. Försöker igen...
 
@@ -25995,6 +26382,7 @@ RETRY_LIMIT_EXCEEDED
 	NL	Verbindingspogingen mislukt
 	NO	Gjenopprettingsforsøk mislyktes
 	PL	Niepowodzenie prób połączenia
+	PT	Falharam as tentativas de conexão
 	RU	Повторные попытки подключения закончились неудачей
 	SV	Anslutningsförsök misslyckades
 
@@ -26012,6 +26400,7 @@ SYNC_ABOUT
 	NL	Voeg een of meer Squeezebox-muziekspelers toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Lyrion.org voor meer informatie.
 	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Lyrion.org for mer informasjon.
 	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Lyrion.org.
+	PT	Adicione u ou mais Squeezeboxes para poder usar a função Sincronizar e aproveitar as possibilidade de ter audio em multiplas dependencias simultaneamente. Visite Lyrion.org para mais infromações.
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Lyrion.org.
 	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Lyrion.org.
 
@@ -26025,6 +26414,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP
 	NL	Bevestigen Touch-To-Play
 	NO	Overstyr Touch-To-Play
 	PL	Zachowanie Touch-To-Play
+	PT	Ignorar Touch-To-Play
 	SV	Ignorera Touch-to-Play
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
@@ -26037,6 +26427,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
 	NL	Bij het aanraken/selecteren van een afspeelbaar item op jouw Squeezebox, kun je per ongeluk vervangen wat op dat moment wordt afgespeeld. Dit gedrag kan worden aangepast met behulp van deze instelling.
 	NO	Ved å berøre avspillbart innhold på squeezeboxmenyen, kan du ved et uhell erstatte det som spilles. Slike uønskede hendelser kan styres av denne innstillingen.
 	PL	Przy wyborze/zaznaczeniu utworu można przypadkowo zastąpić aktualną listę odtwarzania. To destrukcyjne zachowanie może być zmienione za pomocą tej opcji.
+	PT	Quando selecionando uma musica a ser reproduzida no Squeezebox pode acidentalmente substituir a musica que está a ser tocada. Este comportamento pode ser controlado usando este parametro.
 	SV	När ett spelbart meny-alternativ väljs eller rörs vid på din Squeezebox, kan du av misstag ersätta det som spelas för ögonblicket. Detta kan förhindras med hjälp av den här inställningen.
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_0
@@ -26048,6 +26439,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_0
 	NL	Niet vragen
 	NO	Aldri spør
 	PL	Zawsze zezwalaj na odtwarzanie wybranych utworów
+	PT	Não suprimir
 	SV	Fråga aldrig
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_1
@@ -26059,6 +26451,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_1
 	NL	Altijd vragen om de selectie af te spelen
 	NO	Alltid spør om valget ditt skal avspilles
 	PL	Pytaj przed rozpoczęciem odtwarzania wybranych utworów
+	PT	Perguntar sempre antes de reproduzir a selecção
 	SV	Fråga alltid före ditt val spelas
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_2
@@ -26070,6 +26463,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_2
 	NL	Vragen als de huidige afspeellijst meer dan één nummer bevat
 	NO	Spør hvis den aktuelle spillelista inneholder mer enn ett spor
 	PL	Nie pozwól, gdy aktualna lista odtwarzania zawiera więcej niż jeden utwór
+	PT	Suprimir se a playlist actual tiver mais que uma musica
 	SV	Fråga om den nuvarande spellistan har mer än ett spår
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_3
@@ -26081,6 +26475,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_3
 	NL	Alleen vragen als de huidige afspeellijst meer dan één nummer bevat
 	NO	Spør bare hvis den aktuelle spillelista inneholder mer enn ett spor og avspilling er i gang
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie oraz aktualna lista odtwarzania zawiera więcej niż jeden utwór
+	PT	Suprimir apenas se estiver a reproduzir e a playlist actual tiver mais que uma musica
 	SV	Fråga om den nuvarande spellistan har mer än ett spår och uppspelning pågår
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP_4
@@ -26092,6 +26487,7 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	NL	Alleen vragen als het huidige afgespeelde nummer geen radiostream is
 	NO	Spør bare hvis avspilling er i gang, og den aktuelle spillelista ikke er en radiokanal
 	PL	Nie pozwól tylko wtedy, gdy trwa odtwarzanie i aktualny utwór nie jest strumieniem radiowym
+	PT	Suprimir apenas se estiver a reproduzir e o item actual não for um stream de rádio
 	SV	Fråga bara om uppspelning pågår och det inte är en radiostation som spelas upp
 
 SERVER_UPDATE_AVAILABLE
@@ -26107,6 +26503,7 @@ SERVER_UPDATE_AVAILABLE
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="%s" target="update">Klik op hier om deze te downloaden</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="%s" target="update">Klikk her for å laste den ned</a>.
 	PL	Dostępna jest nowa wersja oprogramowania Lyrion Music Server (%s). <a href="%s" target="update">Kliknij tutaj, aby pobrać</a>.
+	PT	Está disponível uma nova versão do Lyrion Music Server (%s). <a href="%s" target="update">Faça clique aquí para a descarregar</a>.
 	RU	Доступна новая версия Lyrion Music Server (%s). <a href="%s" target="update">Для загрузки щелкните здесь</a>.
 	SV	Det finns en ny version av Lyrion Music Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
 
@@ -26123,6 +26520,7 @@ SERVER_UPDATE_AVAILABLE_SHORT
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig.
 	PL	Dostępna jest nowa wersja oprogramowania Lyrion Music Server.
+	PT	Está disponível uma nova versão do Lyrion Music Server.
 	RU	Доступна новая версия Lyrion Music Server.
 	SV	Det finns en ny version av Lyrion Music Server.
 
@@ -26135,6 +26533,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
 	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
+	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
 	SV	En ny version av Lyrion Music Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
 
 SERVER_WINDOWS_UPDATE_AVAILABLE
@@ -26143,6 +26542,7 @@ SERVER_WINDOWS_UPDATE_AVAILABLE
 	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Lyrion Music Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
 	FR	<ul><li>La version %s - %s est prête à être installée.</li><li>Connectez-vous à l'ordinateur qui héberge le Lyrion Music Server (%s).</li><li>Exécutez <code>%s</code> et suivez les instructions.</li></ul>
 	HU	<ul><li>A %s verzió – %s elérhető a telepítéshez.</li><li>Jelentkezzen be Lyrion Music Servert (%s) futtató számítógépére.</li><li>Végezze el a <code>% parancsot. s</code>, és kövesse az utasításokat.</li></ul>
+	PT	ul><li>A versão %s - %s está disponível para ser instalada.</li><li>Faça login no computador onde tem instalado o Lyrion Music Server (%s).</li><li>Execute <code>%s</code> e siga as instruções.</li></ul>
 
 UPDATES_LATEST_CHANGES
 	CS	Nejnovější změny (<a href="%s" target="_blank">všechny změny</a>)
@@ -26152,6 +26552,7 @@ UPDATES_LATEST_CHANGES
 	HU	Legújabb módosítások (<a href="%s" target="_blank">minden módosítás</a>)
 	NL	Laatste wijzigingen (<a href="%s" target="_blank">all changes</a>)
 	NO	Seneste endringer (<a href="%s" target="_blank">all changes</a>)
+	PT	Ultimas modificações (<a href="%s" target="_blank">todas as modificações</a>)
 	SV	Senaste ändringar (<a href="%s" target="_blank">alla ändringar</a>)
 
 SERVICE_REQUIRES_HTTPS
@@ -26161,6 +26562,7 @@ SERVICE_REQUIRES_HTTPS
 	FR	Ce service nécessite le module Perl IO::Socket::SSL. Vous ne pouvez pas utiliser ce service sans ce module. Veuillez utiliser le gestionnaire de paquets de votre système d'exploitation pour l'installer.
 	HU	Ehhez a szolgáltatáshoz az IO::Socket::SSL Perl modulra van szükség. A szolgáltatást a modul nélkül nem használhatja. Kérjük, használja az operációs rendszer csomagkezelőjét a telepítéshez.
 	NL	Deze dienst vereist Perl module IO::Socket::SSL. Je kunt de dienst zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
+	PT	Este serviço requere o módulo Perl UO::Socket::SSL! Não poderá usar o serviço sem este módulo. Use o gestor de aplicativos do seu sistema operativo para o instalar.
 	SV	Den här tjänsten behöver PERL-modulen IO::Socket::SSL! utan den kan denna modul inte användas. Använd operativsystemets pakethanterare för att installera den.
 
 UPDATE
@@ -26176,6 +26578,7 @@ UPDATE
 	NL	Update
 	NO	Oppdaterer
 	PL	Aktualizacja
+	PT	Actualização
 	SV	Uppdatera
 
 TRACKS_FROM_OTHER_ALBUMS
@@ -26185,6 +26588,7 @@ TRACKS_FROM_OTHER_ALBUMS
 	FR	Pistes d'autres albums
 	HU	Zeneszámok más albumokról
 	NL	Nummers van andere albums
+	PT	Pistas de outros albuns
 
 SETUP_YEARMENU
 	DE	Jahre Menü
@@ -26192,6 +26596,7 @@ SETUP_YEARMENU
 	FR	Menu Années
 	HU	Év menü
 	NL	Jaartallen Menu
+	PT	Menu Ano
 
 SETUP_YEARMENU_DESC
 	DE	Soll das Jahresmenü nur Albumjahre oder Album- und Trackjahre anzeigen?
@@ -26199,6 +26604,7 @@ SETUP_YEARMENU_DESC
 	FR	Le menu Années doit-il prendre en compte uniquement les années des albums ou intégrer également les années des morceaux ? (Cette option permet d'afficher les morceaux d'une année donnée même si leur album est répertorié dans une année différente.)
 	HU	Az Év menü csak az album éveit jelenítse meg, vagy az album és a szám éveit?
 	NL	Moet het jaartallen menu alleen het jaartal van het album tonen, of zowel het jaartal van het album en het nummer?
+	PT	O menu Ano deverá mostar só o ano do album ou de ambos, do album e da pista?
 
 SETUP_YEARMENU_0
 	DE	Zeige nur Albumjahre
@@ -26206,6 +26612,7 @@ SETUP_YEARMENU_0
 	FR	Inclure uniquement les années des albums
 	HU	Csak az album éveinek megjelenítése
 	NL	Toon alleen jaartal van het album
+	PT	Mostrar sómente o ano do album
 
 SETUP_YEARMENU_1
 	DE	Zeige Album- und Titeljahre
@@ -26213,4 +26620,5 @@ SETUP_YEARMENU_1
 	FR	Inclure les années des albums et des morceaux
 	HU	Az album és a zeneszám éveinek megjelenítése
 	NL	Toon jaartal van album en nummer
+	PT	Mostrar o ano do album e de cada pista
 
