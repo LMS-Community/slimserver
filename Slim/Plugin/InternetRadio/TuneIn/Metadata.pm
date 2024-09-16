@@ -12,7 +12,7 @@ use Slim::Formats::RemoteMetadata;
 use Slim::Formats::XML;
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Plugin::InternetRadio::TuneIn;
+use Slim::Plugin::InternetRadio::TuneIn qw(PARTNER_ID);
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -24,7 +24,6 @@ my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
 my $cache = Slim::Utils::Cache->new();
 
-use constant PARTNER_ID => 16;
 use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID;
 use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID . '&serial=';
 use constant ICON       => 'plugins/TuneIn/html/images/icon.png';
