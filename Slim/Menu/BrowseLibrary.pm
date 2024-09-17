@@ -1832,7 +1832,9 @@ sub _tracks {
 			my $items   = $results->{'titles_loop'};
 			$remote_library ||= $args->{'remote_library'};
 
+			my $trackIds;
 			foreach (@$items) {
+				$trackIds .= $_->{'id'} . ',';
 				# Map a few items that get different tags to those expected for TitleFormatter
 				# Currently missing composer, conductor, band because of additional cost of 'A' tag query
 				$_->{'ct'}            = $_->{'type'};
@@ -1947,6 +1949,7 @@ sub _tracks {
 					sort       => 'albumtrack',
 					menuStyle  => 'menuStyle:allSongs',
 					search     => 'sql=' . $sql,
+					track_id   => $trackIds,
 				);
 
 				my %allSongsActions = (

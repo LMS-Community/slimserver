@@ -5831,7 +5831,7 @@ sub _getTagDataForTracks {
 
 	# Normalize any search parameters
 	my $search = $args->{search};
-	if ( $search && specified($search) ) {
+	if ( $search && specified($search) && !$args->{trackId} ) {
 		if ( $search =~ s/^sql=// ) {
 			# Raw SQL search query
 			$search =~ s/;//g; # strip out any attempt at combining SQL statements
