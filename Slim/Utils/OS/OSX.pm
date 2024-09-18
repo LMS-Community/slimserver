@@ -387,9 +387,9 @@ sub initUpdate {
 
 		my $moreParams;
 		if (IS_MENUBAR_ITEM) {
-			$moreParams = sprintf("<string>%s</string>", Slim::Utils::Strings::string('CONTROLPANEL_UPDATE_AVAILABLE'));
-			$moreParams .= sprintf("<string>%s</string>", Slim::Utils::Strings::string('SQUEEZEBOX_SERVER'));
-			$moreParams = Slim::Utils::Unicode::utf8off($moreParams);
+			$moreParams = sprintf("<string>%s</string>", Slim::Utils::Strings::string('SQUEEZEBOX_SERVER'));
+			$moreParams .= sprintf("<string>%s</string>", Slim::Utils::Strings::string('CONTROLPANEL_UPDATE_AVAILABLE'));
+			utf8::decode($moreParams);
 		}
 
 		print UPDATE_CHECKER qq(<?xml version="1.0" encoding="UTF-8"?>

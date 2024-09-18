@@ -22,14 +22,15 @@ use Slim::Utils::OSDetect;
 Slim::Utils::OSDetect::init();
 
 if ( my $installer = Slim::Utils::Light->checkForUpdate() ) {
+	require File::Basename;
+	my $pwd = File::Basename::dirname($0);
+
 	# new Menubar Item would pass localized strings for a notification
 	if (@ARGV) {
-		`osascript -e 'display notification "$ARGV[0]" with title "$ARGV[1]"'`;
+		`LMS_NOTIFICATION_TITLE="$ARGV[0]" LMS_NOTIFICATION_CONTENT="$ARGV[1]" open $pwd/lms-notify.app`;
 	}
 	# legacy: run the preference pane
 	else {
-		require File::Basename;
-		my $pwd = File::Basename::dirname($0);
 		`osascript $pwd/openprefs.scpt`;
 	}
 }
