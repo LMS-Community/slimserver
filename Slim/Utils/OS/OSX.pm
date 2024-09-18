@@ -385,11 +385,18 @@ sub initUpdate {
 		require File::Basename;
 		my $folder = File::Basename::dirname($script);
 
-		my $moreParams;
+		my $envVariables;
 		if (IS_MENUBAR_ITEM) {
-			$moreParams = sprintf("<string>%s</string>", Slim::Utils::Strings::string('SQUEEZEBOX_SERVER'));
-			$moreParams .= sprintf("<string>%s</string>", Slim::Utils::Strings::string('CONTROLPANEL_UPDATE_AVAILABLE'));
-			utf8::decode($moreParams);
+			$envVariables = sprintf(q(
+				<key>EnvironmentVariables</key>
+				<dict>
+					<key>LMS_NOTIFICATION_TITLE</key>
+					<string>%s</string>
+					<key>LMS_NOTIFICATION_CONTENT</key>
+					<string>%s</string>
+				</dict>
+			), Slim::Utils::Strings::string('SQUEEZEBOX_SERVER'), Slim::Utils::Strings::string('CONTROLPANEL_UPDATE_AVAILABLE'));
+			utf8::decode($envVariables);
 		}
 
 		print UPDATE_CHECKER qq(<?xml version="1.0" encoding="UTF-8"?>
@@ -401,8 +408,8 @@ sub initUpdate {
 	<key>ProgramArguments</key>
 	<array>
 		<string>$script</string>
-		$moreParams
 	</array>
+	$envVariables
 	<key>RunAtLoad</key>
 	<true/>
 	<key>WorkingDirectory</key>
