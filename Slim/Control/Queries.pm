@@ -368,9 +368,9 @@ sub albumsQuery {
 				elsif ($prefs->get('useUnifiedArtistsList')) {
 					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
 
-					# Loop through each pref to see if the user wants to show that contributor role.
+					# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
 					foreach (Slim::Schema::Contributor->contributorRoles) {
-						if ($prefs->get(lc($_) . 'InArtists')) {
+						if ( $prefs->get(lc($_) . 'InArtists') || Slim::Schema::Contributor->typeToRole($_) > 20 ) {
 							push @roles, $_;
 						}
 					}
