@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '1.08';
+our $VERSION = '1.10';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -268,16 +268,17 @@ Not yet supported by find_frame.
 
 =back
 
-=head2 find_frame_return_info( $mp4_path, $timestamp_in_ms )
+=head2 find_frame_return_info( $path, $timestamp_in_ms )
 
-The header of an MP4 file contains various metadata that refers to the structure of
+The header of an MP4/OggFlac file contains various metadata that refers to the structure of
 the audio data, making seeking more difficult to perform. This method will return
 the usual $info hash with 2 additional keys:
 
     seek_offset - The seek offset in bytes
-    seek_header - A rewritten MP4 header that can be prepended to the audio data
-                  found at seek_offset to construct a valid bitstream. Specifically,
-                  the following boxes are rewritten: stts, stsc, stsz, stco
+    seek_header - A rewritten MP4/OggFlac header that can be prepended to the audio data
+                  found at seek_offset to construct a valid bitstream. Specifically, for MP4
+                  the following boxes are rewritten: stts, stsc, stsz, stco. For FLAC, the
+                  number of samples and md5 in STREAMINFO are zero'd 
 
 For example, to seek 30 seconds into a file and write out a new MP4 file seeked to
 this point:
