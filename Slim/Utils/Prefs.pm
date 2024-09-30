@@ -394,8 +394,29 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist userDefinedRoles)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist)
 	);
+
+	$prefs->setChange( sub {
+		my $newRoles = $_[1];
+		my $oldRoles = $_[3];
+		my $changed = 0;
+		if (%$oldRoles != %$newRoles) {
+			$changed = 1;
+		} else {
+			my %cmp = map { $_ => 1 } keys %$oldRoles;
+			for my $key (keys %$newRoles) {
+				last unless exists $cmp{$key};
+				delete $cmp{$key};
+			}
+			if (%cmp) {
+				$changed = 1;
+			}
+		}
+		if ( $changed ) {
+			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
+		}
+	}, 'userDefinedRoles' );
 
 	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'userDefinedRoles');
 

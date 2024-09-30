@@ -74,16 +74,19 @@
 			<tr>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT" | string %]</th>
+				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE_EXCLUDE" | string %]</th>
 			</tr>
 			[% FOREACH tag = customTags.keys.sort %]
 				<tr>
 					<td><input type="text" name="[% tag | html %]_tag" value="[% tag | html %]" class="stdedit"/></td>
 					<td><input type="text" name="[% tag | html %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
+					<td style="text-align:center;"><input type="checkbox" [% IF customTags.$tag.exclude %]checked="1" [% END %] name="[% tag | html %]_exclude" value="1" class="stdedit" /></td>
 				</tr>
 			[% END %]
 			<tr>
 				<td><input type="text" name="new_tag" value="" class="stdedit"/></td>
 				<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
+				<td style="text-align:center;"><input type="checkbox" name="new_exclude" class="stdedit" /></td>
 			</tr>
 		</table>
 	[% END; END %]
