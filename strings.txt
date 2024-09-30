@@ -1,5 +1,4 @@
 # Main Lyrion Music Server strings file
-
 #
 # This tab-delimited file contains all the text strings used in Lyrion Music Server
 # The format should be self explanatory. To submit a new language, or a better
@@ -2022,7 +2021,7 @@ ALARM_ALARM_REPEAT_DESC
 	NL	Hiermee kun je instellen of deze wekker meermaals moet afgaan. Als je 'Nee' instelt, wordt de wekker automatisch uitgeschakeld nadat het is afgegaan. De wekker gaat pas weer af als je deze weer inschakelt.
 	NO	Med denne innstillingen kan du velge om vekkingen skal spilles mer enn én gang. Hvis innstillingen settes til Nei, vil vekkingen automatisk slås av etter at den har blitt spilt. Denne vekkingen spilles altså ikke igjen før du slår den på.
 	PL	To ustawienie umożliwia określenie, czy alarm zostanie uruchomiony więcej niż raz. Po wybraniu opcji Nie alarm wyłączy się automatycznie po uruchomieniu. Ten alarm nie zostanie uruchomiony, aż do ponownego włączenia.
-	PT	Esta opção permite que escolha se o alarme se repita mais que uma vez. Se a opção for "Não" o alarme desligar-se-á depois de tocar. Não tornará a tocar até que o torne a ligar.
+	PT	Esta opção permite que escolha se o alarme se repita mais que uma vez. Se a opção for "Não" o alarme desligar-se-á depois de tocar. Não tornará a tocar até que o torne a ligar. 
 	RU	Данная настройка позволяет выбрать, будет ли будильник звонить больше одного раза. Если выбрано значение "Нет", будильник автоматически отключится после первого звонка. Он не будет больше звонить, если не включить его снова.
 	SV	Med den här inställningen väljer du om alarmet ska ringa mer än en gång. Om du anger Nej avaktiveras alarmet automatiskt när det har ringt. Alarmet ringer sedan inte igen förrän du aktiverar det igen.
 
@@ -2056,7 +2055,7 @@ ALARM_ALARMS_ENABLED_DESC
 	NL	Hiermee kun je alle wekkers tegelijk in-/uitschakelen. Als dit op 'Uit' is ingesteld, gaat er geen wekker af.
 	NO	Med denne innstillingen kan du slå av og på alle vekkinger samtidig. Hvis innstillingen settes til Av, blir ingen vekkinger aktivert.
 	PL	Ta opcja umożliwia natychmiastowe włączenie lub wyłączenie alarmów. Po wybraniu ustawienia Wył. alarm nie zostanie uruchomiony.
-	PT	Esta opção permite activar/desactivar todos os alarmes de uma sóa vez. Se optar por Desligado nenhum alarme será activado.
+	PT	Esta opção permite activar/desactivar todos os alarmes de uma sóa vez. Se optar por Desligado nenhum alarme será activado. 
 	RU	Эта настройка позволяет включить/выключить все будильники. Если она отключена, будильники выключены не будут.
 	SV	Med den här inställningen kan du aktivera/avaktivera alla alarm på en gång.Om du väljer inställningen Av avaktiveras alla alarm.
 
@@ -2074,7 +2073,7 @@ ALARM_FADE
 	NL	Weksignaal infaden
 	NO	Skru vekkerklokken på gradvis
 	PL	Stopniowo zwiększaj głośność
-	PT	Alarme com volume progressivo
+	PT	Alarme com volume progressivo 
 	RU	Усиление сигналов будильников
 	SV	Tona in alarm
 	ZH_CN	闹钟缓慢切入
@@ -2231,7 +2230,7 @@ SETUP_SNOOZE_MINUTES_DESC
 	NL	Hiermee kun je instellen hoelang een weksignaal wordt gepauzeerd wanneer je op de snooze drukt.
 	NO	Med denne innstillingen kan du velge hvor lenge en vekking skal stoppe når du trykker på slumreknappen.
 	PL	To ustawienie umożliwia określenie czasu wstrzymania alarmu po naciśnięciu przycisku drzemki.
-	PT	Esta opção permite que defina por quanto tempo o alarme pausa quando carrega no botão de Repetir (Snooze)
+	PT	Esta opção permite que defina por quanto tempo o alarme pausa quando carrega no botão de Repetir (Snooze) 
 	RU	С помощью этой настройки можно выбрать длительность паузы будильника после нажатия кнопки повтора сигнала.
 	SV	Med den här inställningen anger du hur länge alarmet ska avaktiveras när du trycker på snoozeknappen.
 
@@ -2979,7 +2978,7 @@ UPDATING_FIRMWARE_BOOM
 	NL	Firmware wordt geüpdatet.
 	NO	Oppdaterer fastvare.
 	PL	Aktualizowanie oprogramowania układowego.
-	PT	Actualizando firmware.
+	PT	Actualizando firmware.	 
 	RU	Обновление микропрограммы.
 	SV	Inbyggt program uppdateras
 
@@ -3071,7 +3070,7 @@ GETTING_TRACK_DETAILS
 	NL	Nummerdetails ophalen...
 	NO	Henter spordetaljer ...
 	PL	Pobieranie szczegółów utworu...
-	PT	Obtendo detalhes
+	PT	Obtendo detalhes  
 	RU	Получение сведений о дорожке...
 	SV	Hämtar spårinformation...
 
@@ -3865,7 +3864,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), BITRATE, LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Éstos son los formatos disponibles para seleccionar, tanto en la interfaz Web como en los reproductores. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista), COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), WORK, GROUPING, SUBTITLE, COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en las páginas Web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe/orchestre), ALBUM, WORK (œuvre), GROUPING (regroupement / interprétation d'une œuvre), SUBTITLE (titre secondaire), COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
+	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, WORK (œuvre), GROUPING (regroupement / interprétation d'une œuvre), SUBTITLE (titre secondaire), COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
 	HU	Ezek a formátumok választhatók a webes felületen és a lejátszókon egyaránt. Formátum eltávolításához törölje a szövegmezőt, új formátum megadásához helyezze az üresbe. A rendelkezésre álló adatelemek a következők: CT (tartalomtípus), TITLE, GENRE, TRACKNUM (a zeneszám száma mint int), FS (fájlméret), ELŐADÓ, ZENESZERZŐ, VEZÉR, BAND, ALBUM, MŰ, CSOPORTOSÍTÁS, FELIRAT, MEGJEGYZÉS, ÉV, MÁSODPERC (összes másodperc), DURATION (perc és másodperc), BITRATE, LONGDATE (aktuális dátum, hosszú), SHORTDATE (aktuális dátum, rövid), CURRTIME (aktuális idő). Az elemek bármivel (vagy semmivel) elválaszthatók. Az elválasztókat csak akkor használja, ha az adatelemek jelen vannak.<br>A Jelenlegi kijelölés az a formátum, amelyet a weboldalak használnak.
 	IT	Questi formati sono selezionabili sia per l'interfaccia Web, sia per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, immettere il testo appropriato nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano sotto forma di numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE, LONGDATE (data corrente in formato esteso), SHORTDATE (data corrente in formato abbreviato), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzare separatori. I separatori vengono utilizzati solo in presenza di dati.<br>Nelle pagine Web verrà utilizzato il formato correntemente selezionato.
@@ -3885,7 +3884,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	EN	These are the formats available for selection on this player. To add an additional format for selection at the player, select one from the drop-down and save the settings.<br>The Current selection is the format that will be used on the player.<br>If you want to add new formats not available in the drop-down, go to Server Settings > Interface > Title Format.
 	ES	Éstos son los formatos disponibles para seleccionar, tanto en la interfaz Web como en los reproductores. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista), COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), WORK, GROUPING, SUBTITLE, COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en las páginas Web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe/orchestre), ALBUM, WORK (œuvre), GROUPING (regroupement / interprétation d'une œuvre), SUBTITLE (titre secondaire), COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
+	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données : CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, WORK (œuvre), GROUPING (regroupement / interprétation d'une œuvre), SUBTITLE (titre secondaire), COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
 	HU	Ezen a lejátszón ezek a formátumok választhatók. Ha további formátumot szeretne hozzáadni a lejátszón történő kiválasztáshoz, válasszon egyet a legördülő menüből, és mentse a beállításokat.<br>A Jelenlegi kijelölés az a formátum, amelyet a lejátszó használni fog.<br>Ha új formátumokat szeretne hozzáadni nem érhető el a legördülő listában, lépjen a Szerverbeállítások > Interfész > Címformátum menüpontra.
 	IT	Questi formati sono selezionabili sia per l'interfaccia Web, sia per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, immettere il testo appropriato nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano sotto forma di numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE, LONGDATE (data corrente in formato esteso), SHORTDATE (data corrente in formato abbreviato), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzare separatori. I separatori vengono utilizzati solo in presenza di dati.<br>Nelle pagine Web verrà utilizzato il formato correntemente selezionato.
@@ -4132,7 +4131,7 @@ SETUP_SCROLLPAUSE_DESC
 	NL	Je kunt aanpassen hoe lang de muziekspeler wacht voordat het lopen van de tekst op het display start. Voer een waarde in (in seconden) die aangeeft hoe lang er gewacht moet worden voordat de tekst gaat lopen, of voordat de tekst herhaald wordt. Voer 0 in om helemaal niet te wachten en de tekst direct te laten lopen. De standaardinstelling is 3,6 seconden.
 	NO	Du kan justere hvor lenge spilleren venter før den starter sidelengs tekstrulling på skjermen. Angi hvor mange sekunder den skal vente før den ruller, eller mellom rulling. Skriv null hvis du ikke vil ha noen pause, men heller vil at teksten skal begynne å rulle med én gang. Standard er 3,6 sekunder.
 	PL	Czas, po jakim odtwarzacz rozpoczyna przewijanie tekstu w poziomie na ekranie odtwarzacza można dostosować. Wprowadź wartość oczekiwania w sekundach przed rozpoczęciem przewijania lub między kolejnymi przewijaniami. Wartość zero wyłącza oczekiwanie i powoduje natychmiastowe przewijanie. Wartość domyślna to 3,6 sekundy.
-	PT	Pode ajustar o tempo que o reprodutor demorará antes de iniciar um scrolling horizontal do tetxto no ecran. Introduza um valor em segundos para o tempo de espera antes do scrolling ou entre scrollings. Introduza o valor zero para que não haja qualquer pausa e o scrolling se inicie imediatamente. O tempo de espera pré-definido é de 3,6 segundos.
+	PT	Pode ajustar o tempo que o reprodutor demorará antes de iniciar um scrolling horizontal do tetxto no ecran. Introduza um valor em segundos para o tempo de espera antes do scrolling ou entre scrollings. Introduza o valor zero para que não haja qualquer pausa e o scrolling se inicie imediatamente. O tempo de espera pré-definido é de 3,6 segundos. 
 	RU	Можно задать время, по истечении которого плеер начинает горизонтальную прокрутку текста на экране. Введите значение в секундах для времени ожидания до начала прокрутки или между прокрутками. Для немедленной прокрутки без пауз введите «0». Значение по умолчанию — 3,6 с.
 	SV	Du kan justera fördröjningen innan textremsan börja rulla över spelarens skärm. Ange ett värde (i sekunder) innan textremsan börjar rulla, eller innan den börjar på nytt efter att ha rullat en gång över skärmen. Ange noll om du vill att textremsan börjar rulla direkt utan fördröjning. Standard är 3,6 sekunder.
 	ZH_CN	您可调整播放机开始进行横跨文字卷动前的等待值。输入一个以秒为单位的等待值为在卷动之前或在卷动之间的等待时间。如要立刻进行卷动请输入零为等待值。缺省值为3.6秒。
@@ -4172,7 +4171,7 @@ SETUP_SCROLLRATE_DESC
 	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muziekspeler met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens volgens het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een muziekspeler met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde, in seconden, in voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. De standaardwaarde is 0,033 seconden.
 	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av skjermen. På en spiller med grafisk skjerm kan denne innstillingen benyttes sammen med Rullepiksler for å styre rullehastighet og kvalitet. (Teksten vil rulle i henhold til Rullepiksler for hvert intervall angitt under Rullefrekvens.) På en spiller med tegnskjerm vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere tall vil gjøre rullingen raskere. 0,033 sekunder er standard.
 	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna.
-	PT	Pode ajustar a velocidade a que o texto se move no ecran. A velocidade de scrolling define o tempo entre actualizações do ecran. Num reprodutor com ecran grafico este parametro pode ser ajustado em conbinação com os Scroll Pixels para ajustar a qualidade e velocidade do scrolling (o texto mover-se-á segundo o valor do Scroll Pixels por cada valor em segundos da Velocidade de scrolling definida). Num reprodutor com ecran de texto define o tempo de duração antes da entrada do caracter seguinte. Introduza um valor em segundos para o tempo de espera entre actualizações. Quanto menor for o numero mais rápido será o scrolling. Por defeito o valor é 0,033 segundos.
+	PT	Pode ajustar a velocidade a que o texto se move no ecran. A velocidade de scrolling define o tempo entre actualizações do ecran. Num reprodutor com ecran grafico este parametro pode ser ajustado em conbinação com os Scroll Pixels para ajustar a qualidade e velocidade do scrolling (o texto mover-se-á segundo o valor do Scroll Pixels por cada valor em segundos da Velocidade de scrolling definida). Num reprodutor com ecran de texto define o tempo de duração antes da entrada do caracter seguinte. Introduza um valor em segundos para o tempo de espera entre actualizações. Quanto menor for o numero mais rápido será o scrolling. Por defeito o valor é 0,033 segundos. 
 	RU	Можно настроить скорость прокрутки теста на экране. Параметр «Скорость прокрутки» определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром «Число пикселей прокрутки», при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. Значение по умолчанию 0,033 с.
 	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
@@ -4252,7 +4251,7 @@ SETUP_GROUP_PLUGINS
 	SV	Plugin-program
 
 INSTALLERROR_INVALID_VERSION
-	CS	Zásuvný modul není kompatibilní s touto verzí Lyrion Music Serveru. Prosím aktualizujte.
+	CS	Zásuvný modul není kompatibilní s touto verzí Lyrion Music Serveru. Prosím aktualizujte. 
 	DA	Udvidelsesmodulet er inkompatibelt med denne version af Lyrion Music Server. Det skal opdateres.
 	DE	Plugin ist nicht kompatibel mit dieser Version von Lyrion Music Server. Aktualisieren Sie die Anwendung.
 	EN	Plugin is incompatible with this version of Lyrion Music Server. Please update.
@@ -4265,7 +4264,7 @@ INSTALLERROR_INVALID_VERSION
 	NO	Plugin-modulen er ikke kompatibel med denne versjonen av Lyrion Music Server. Du bør oppdatere.
 	PL	Dodatek jest niezgodny z tą wersją programu Lyrion Music Server. Dokonaj aktualizacji.
 	PT	O Plugin é incompatível com esta versão do Lyrion Music Server
-	RU	Плагин несовместим с данной версией Lyrion Music Server. Обновите программу.
+	RU	Плагин несовместим с данной версией Lyrion Music Server. Обновите программу. Por favor actualize
 	SV	Plugin-programmet är inte kompatibelt med den här versionen av Lyrion Music Server. Uppdatera.
 
 INSTALLERROR_INCOMPATIBLE_PLATFORM
@@ -4526,7 +4525,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	NL	Lyrion Music Server zoekt in de afspeellijst map naar alle ondersteunde bestandstypen (afspeellijst- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: m3u, pls, cue
 	NO	Lyrion Music Server leter etter alle støttede filtyper i spillelistemappen (spillelistefiler og tidsskjema). Hvis du vil utelukke bestemte filtyper fra søket, kan du angi de relevante filnavnene nedenfor, atskilt med komma. Eksempel: m3u, pls, cue
 	PL	Program Lyrion Music Server wyszuka w folderze list odtwarzania wszystkie obsługiwane typy plików (pliki list odtwarzania i informacyjne). Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu list odtwarzania, wprowadź poniżej listę rozszerzeń plików rozdzieloną przecinkami, np.: m3u, pls, cue.
-	PT	O Lyrion Music Server procurará na Pasta das Listas de Repodução por todo o tipo de ficheiros suportados (Lista de Reprodução ou cue). Para desactivar o processamento de ficheirosespecíficos durante o scanning da Pasta das Listas de Repodução introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : m3u, pls, cue.
+	PT O Lyrion Music Server procurará na Pasta das Listas de Repodução por todo o tipo de ficheiros suportados (Lista de Reprodução ou cue). Para desactivar o processamento de ficheirosespecíficos durante o scanning da Pasta das Listas de Repodução introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : m3u, pls, cue.
 	RU	Lyrion Music Server выполняет в папке "Плей-листы" поиск всех поддерживаемых типов файлов (файлов плей-листов и микрофонных материалов). Чтобы отключить обработку определенных типов файлов при сканировании папки "Плей-листы", введите список файловых расширений через запятую. Например: m3u, pls, cue
 	SV	Lyrion Music Server söker igenom mappen med spellistor efter filer av alla de typer som stöds (spellistefiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av spellistemappen kan du ange en kommaseparerad lista över filtillägg nedan. Exempel: m3u, pls, cue
 	ZH_CN	Lyrion Music Server会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
@@ -4880,6 +4879,7 @@ SETUP_SENSAUTOBRIGHTNESS
 	NL	Helderheidsgevoeligheid (automatisch)
 	NO	Følsomhet for lysstyrke (Automatisk)
 	PL	Czułość jasności (automatyczna)
+	PT	
 	RU	Чувствительность яркости (Авто)
 	SV	Känslighet för ljusstyrka (automatiskt)
 
@@ -5356,7 +5356,7 @@ SETUP_MAXWMARATE
 	NL	Maximale bitsnelheid van WMA stream
 	NO	Maksimal bithastighet for wma-strømmer
 	PL	Maksymalna szybkość transmisji bitów strumienia WMA
-	PT	Velocidade de bits do stream WMA máximo
+	PT	Velocidade de bits do stream WMA máximo 
 	RU	Максимальная скорость потоковой передачи WMA
 	SV	Maximal bithastighet för WMA-ström
 	ZH_CN	最高WMA频流比特率
@@ -5603,7 +5603,7 @@ SETUP_PACKETLATENCY
 	NL	Vertraging netwerkpakket (ms)
 	NO	Forsinkelser i nettverkspakker (ms)
 	PL	Opóźnienie pakietów sieciowych (ms)
-	PT	Latência do pacote de rede )ms)
+	PT	Latência do pacote de rede )ms) 
 	RU	Задержка сетевых пакетов (мс)
 	SV	Svarstid för nätverkspaket (ms)
 
@@ -6499,7 +6499,7 @@ FOLDERS
 	NL	Mappen
 	NO	Mapper
 	PL	Foldery
-	PT	Directorios
+	PY	Directórios
 	RU	Папки
 	SV	Mappar
 
@@ -7133,6 +7133,7 @@ SETUP_STANDARDRESCAN
 	NL	Nieuwe en gewijzigde mediabestanden zoeken
 	NO	Søk etter nye og endrede mediefiler
 	PL	Wyszukaj nowe i zmienione pliki multimedialne
+	PT	Procurar arquivos multimédia novos ou modificados
 	RU	Поиск новых и измененных файлов мультимедиа
 	SV	Sök efter nya eller ändrade mediefiler
 	ZH_CN	扫描时只寻找新的或已更改的音乐
@@ -7151,6 +7152,7 @@ SETUP_PLAYLISTRESCAN
 	NL	Alleen afspeellijsten opnieuw scannen
 	NO	Bare søk på nytt etter spillelister
 	PL	Przeszukaj ponownie tylko listy odtwarzania
+	PT	Só fazer scan a playlists
 	RU	Повтор сканирования только плей-листов
 	SV	Sök bara igenom spellistorna på nytt
 	ZH_CN	重新扫描播放表而已。
@@ -7168,6 +7170,7 @@ SETUP_AUTO_RESCAN
 	NL	Wijzigingen automatisch detecteren
 	NO	Registrer endringer automatisk
 	PL	Automatycznie wykrywaj zmiany
+	PT	Detectar modificações automaticamente 
 	RU	Автоматически обнаруживать изменения
 	SV	Upptäck ändringar automatiskt
 
@@ -7285,6 +7288,7 @@ RESCANNING_SHORT
 	NL	Mediabibliotheek wordt opnieuw gescand...
 	NO	Søker gjennom mediebiblioteket på nytt...
 	PL	Ponowne przeszukiwanie biblioteki multimedialnej...
+	PT	Novo scanning da colecção multimédia
 	RU	Повторное сканирование библиотеки мультимедиа...
 	SV	Söker igenom mediebibliotek igen...
 	ZH_CN	重新扫描音乐库中...
@@ -7555,7 +7559,7 @@ SETUP_EXTENSIONS_REPOS_DESC
 	NL	Je kunt repositories voor extensies toevoegen door de URL's van de repositories hieronder in te voeren.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium.
-	PT	Pode juntar repositórios de extensões de terceiros adicionando a URL do cada repositório aqui em baixo
+	PT	Pode juntar repositórios de extensões de terceiros adicionando a URL do cada repositório aqui em baixo 
 	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL.
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg.
 
@@ -7805,6 +7809,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Lyrion Music Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Lyrion Music Server de fonctionner. À utiliser à vos risques et périls.
 	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
+	PT	AVISO - Estes plugins de terceiros não é garantido que funcionem neste versão do Lyrion Music Server. Foram abandonados pelos seus autores e hoje já não são mantidos. No pior dos casos poderão fazer com que o Lyrion Music Server deixe de funcionar. Utilizar à sua própria conta e responsabilidade.
 
 SETUP_REFRESHRATE
 	CS	Doba obnovení prohlížeče
@@ -7821,7 +7826,7 @@ SETUP_REFRESHRATE
 	NL	Refreshinterval browser
 	NO	Oppdateringsintervall for leser
 	PL	Czas odświeżania przeglądarki
-	PT	Intervalo de refrescamento do browser
+	PT	Tempo entre actualizações do browser
 	RU	Интервал обновления браузера
 	SV	Uppdateringsintervall för webbläsare
 	ZH_CN	浏览器刷新时间
@@ -7841,6 +7846,7 @@ SETUP_REFRESHRATE_DESC
 	NL	Stel de tijd in seconden in waarna de browser de pagina moet vernieuwen. Lyrion Music Server zal de pagina bij het einde van een nummer vernieuwen als dit minder is dan deze waarde. De standaardwaarde is 30, minimumwaarde is 2 seconden.
 	NO	Angi tiden mellom hver oppdatering i nettleseren i sekunder. Når en sang spilles, foretar Lyrion Music Server en oppdatering mot slutten av sangen, selv om gjenværende tid er mindre enn angitt. (Standardverdi er 30, minimumsverdi er 2)
 	PL	Ustaw czas w sekundach do ponownego załadowania przeglądarki. Podczas odtwarzania utworu program Lyrion Music Server ustawi odświeżenie pod koniec utworu, jeżeli czas będzie krótszy od tej wartości (ustawienie domyślne to 30, minimalne to 2).
+	PT	Defina em segundos o tempo de refrescamento do browser. Quanto reproduz uma musica o Lyrion Muisc Server refrescará a pagina perto do fim da dita musica se for inferior a este valor. (Valor por defeito 30, mínimo 2).
 	RU	Задайте время между перезагрузками браузера в секундах. При воспроизведении Lyrion Music Server будет делать обновление в конце песни, если ее длительность меньше этого значения. (По умолчанию — 30, минимум — 2.)
 	SV	Ange (i sekunder) med vilka tidsintervall webbläsaren ska uppdatera sidan.  Standardvärdet är 30 sekunder och minimivärdet är 2 sekunder. När en låt spelas upp sker uppdateringen mot slutet av låten om den är kortare än värdet som anges här.
 	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度服务器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
@@ -8406,7 +8412,7 @@ SETUP_ALARMSAVER
 	IT	Screen saver quando suona la sveglia
 	NL	Screensaver tijdens wekker
 	NO	Skjermsparer når alarmen ringer
-	PL	Wygaszacz ekranu podczas odtwarzania alarmu
+	PL	Wygaszacz ekranu podczas odtwarzania alarme
 	PT	Protector de ecran quando soa o alarme
 	RU	Экранная заставка при звучании будильника
 	SV	Skärmsläckare när alarmet är i gång
@@ -9156,7 +9162,7 @@ SETUP_ARTISTS_BROWSE_MODES_DESC
 	CS	Zvolte, zda chcete použít jeden konfigurovatelný seznam interpretů, nebo dva seznamy pro Interprety alba a Všechny interpreti. Interpreti alba je seznam, ve kterém je Interpret alba jediným interpretem na albu nebo interpretem uvedeným v tagu ALBUMARTIST. Všichni interpreti je seznam všech interpretů, kteří jsou uvedeni v tagu role přispěvatele (ARTIST, COMPOSER atd.). Jednotný konfigurovatelný seznam interpretů naproti tomu umožňuje určit, které role přispěvatelů mají být součástí nabídky Interpret.
 	DE	Wählen Sie, ob Sie eine einzelne, konfigurierbare Liste von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand lets you define which contributor roles should be part of the Artists menu.
-	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une liste pour "Artistes des albums" et une autre pour "Tous les artistes". "Artistes des albums" ne répertorie que l'artiste principal de chaque album (seul artiste de l'album ou artiste spécifié dans le tag ALBUMARTIST). "Tous les artistes" répertorie tous les artistes quel que soit leur rôle (artiste, compositeur etc.). La liste configurable "Artistes" vous permet de spécifier les rôles à prendre en compte.
+	FR	Choisissez si vous voulez avoir une seule liste configurable d'artistes, ou une pour l'Artistes des Albums et une autre pour tous les artistes. Artistes des Albums ne répertorie que l'artiste principal de chaque album. Tous les Artistes répertorie tous les artistes quel que soit leur rôle (ARTISTE, COMPOSITEUR etc.). La liste configurable Artistes vous permet de spécifier les rôles qui doivent être pris en compte.
 	HU	Válassza ki, hogy egyetlen, konfigurálható előadólistát, vagy két listát kíván-e használni az Album-előadók és az Összes előadó számára. Az Album Artists egy olyan lista, ahol az album előadója az egyetlen előadó az albumon, vagy az ALBUMARTIST címkében megadott előadó. Az Összes előadó minden olyan előadó listája, amely egy közreműködői szerepkör címkéjében szerepel (MŰVÉSZ, ZENESZERZŐ stb.). A művészek egyetlen, konfigurálható listája viszont lehetővé teszi annak meghatározását, hogy mely közreműködői szerepek legyenek az Előadók menüben.
 	NL	Kies of je een enkele, aan te passen lijst met artiesten wilt, of twee lijsten voor Albumartiesten en Alle Artiesten. Albumartiesten is een lijst waar de albumartiest de enige artiest op het album is, of waar de artiest in de 'ALBUMARTIST' tag vermeld staat. Alle Artiesten is een lijst met alle artiesten die in een tag voorkomen met een uitvoerende rol (ARTIST, COMPOSER, enz.). In de enkele, aan te passen lijst met artiesten, kan je aangeven welke uitvoerende rollen in de lijst moeten worden opgenomen.
 	NO	Velg om du vil ha én konfigurerbar Artister-liste, eller to lister for Albumartister og Alle artister. Albumartister er en liste hvor albumartisten enten er den eneste artisten på et album, eller artisten som er angitt av ALBUMARTIST-taggen. Alle artister er en liste over samtlige artister som er tagget som medvirkende (ARTIST, COMPOSER osv.). Velger du den enkeltstående, konfigurerbare artistlista, derimot, kan du velge hvilke medvirkende roller som skal føres opp i lista.
@@ -9179,7 +9185,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	CS	Použít dva samostatné seznamy pro Interpreta alba a Všechny interprety
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
-	FR	Utilisation de listes distinctes "Artistes des albums" et "Tous les artistes"
+	FR	Utilisation de listes distinctes Artistes des Albums et tous les Artistes
 	HU	Használjon két külön listát az Album előadóihoz és az összes előadóhoz
 	NL	Gebruik aparte lijsten voor Albumartiesten en Alle Artiesten
 	NO	Bruk to adskilte lister for Albumartister og Alle artister
@@ -10079,6 +10085,7 @@ SETUP_CHANGES_SAVED
 	NL	Wijzigingen zijn opgeslagen.
 	NO	Endringene er lagret.
 	PL	Zmiany zostały zapisane.
+	PT	Alterações salvas.
 	RU	Изменения сохранены.
 	SV	Ändringarna har sparats.
 
@@ -12637,7 +12644,7 @@ ALBUM
 RELEASE_TYPE
 	DE	Veröffentlichungstyp
 	EN	Release type
-	FR	Type de sortie
+	FR	Type de sorties
 	NL	Releasetype
 
 RELEASE_TYPE_SINGLE
@@ -13994,7 +14001,7 @@ ALL_ARTISTS
 	EN	All Artists
 	ES	Todos los artistas
 	FI	Kaikki artistit
-	FR	Tous les artistes
+	FR	Tous les Artistes
 	HE	כל המבצעים
 	HU	Minden előadó
 	IT	Tutti gli artisti
@@ -14407,7 +14414,7 @@ BROWSE_BY_ALL_ARTISTS
 	EN	All Artists
 	ES	Todos los artistas
 	FI	Kaikki artistit
-	FR	Tous les artistes
+	FR	Tous les Artistes
 	HE	כל המבצעים
 	HU	Minden előadó
 	IT	Tutti gli artisti
@@ -14415,6 +14422,7 @@ BROWSE_BY_ALL_ARTISTS
 	NL	Alle artiesten
 	NO	Alle artister
 	PL	Wszyscy wykonawcy
+	PT	Todos os artistas
 	RU	Все исполнители
 	SV	Alla artister
 	ZH_CN	所有艺人
@@ -14426,7 +14434,7 @@ BROWSE_BY_ALBUMARTIST
 	EN	Album Artists
 	ES	Artistas de álbum
 	FI	Levyartisti
-	FR	Artistes des albums
+	FR	Artistes des Albums
 	HE	מבצע האלבום
 	HU	Album előadói
 	IT	Artista dell'album
@@ -14444,7 +14452,7 @@ BROWSE_ALBUMARTISTS
 	EN	Browse Album Artists
 	ES	Examinar artistas de álbum
 	FI	Hae levyartisti
-	FR	Parcourir les artistes des albums
+	FR	Parcourir les Artistes des Albums
 	HU	Böngéssés az album előadói között
 	IT	Sfoglia artista dell'album
 	NL	Door albumartiesten bladeren
@@ -14553,7 +14561,7 @@ BROWSE_BY_ALBUM
 	NL	Albums
 	NO	Album
 	PL	Albumy
-	PT	Escolher por Álbum
+	PT	Escolher por Album
 	RU	Альбомы
 	SV	Album
 	ZH_CN	浏览专辑
@@ -14563,6 +14571,7 @@ BROWSE_BY_ALBUM_DBL
 	ES	Examinar por Álbum
 	FR	Albums
 	PL	Albumy
+	PT	Escolher por Album
 
 BROWSE_BY_ARTWORK
 	CS	Obal alba
@@ -14579,6 +14588,7 @@ BROWSE_BY_ARTWORK
 	NL	Albumhoezen
 	NO	Albumomslag
 	PL	Okładki
+	PT	Escolher por Capa
 	RU	Обложка
 	SV	Albumomslag
 	ZH_CN	浏览图象
@@ -14588,6 +14598,7 @@ BROWSE_BY_ARTWORK_DBL
 	ES	Examinar por Arte de Tapa
 	FR	Pochettes
 	PL	Okładka
+	PT	Escolher por Capa
 
 BROWSE_NEW_MUSIC
 	CS	Nová hudba
@@ -14603,6 +14614,7 @@ BROWSE_NEW_MUSIC
 	NL	Nieuwe Muziek
 	NO	Ny musikk
 	PL	Nowa muzyka
+	PT	Nova Musica
 	RU	Новая музыка
 	SV	Ny musik
 	ZH_CN	最新引进的音乐
@@ -14631,6 +14643,7 @@ BROWSE_BY_SONG_DBL
 	ES	Examinar por canción
 	FR	Morceaux
 	PL	Utwory
+	PT	Escolher por Musica
 
 BROWSE_BY_WORK
 	DE	Werke
@@ -14638,6 +14651,7 @@ BROWSE_BY_WORK
 	FR	Œuvres
 	HU	Művek
 	NL	Composities
+	PT	Escolher por Obra
 
 BROWSE_BY_YEAR
 	CS	Roky
@@ -14653,6 +14667,7 @@ BROWSE_BY_YEAR
 	NL	Jaren
 	NO	År
 	PL	Lata
+	PT	Anos
 	RU	Годы
 	SV	År
 	ZH_CN	浏览年份
@@ -14690,6 +14705,7 @@ BROWSE_ALL_PICTURES
 	NL	Alle foto's
 	NO	Alle bilder
 	PL	Wszystkie obrazy
+	PT	Todas as imagens
 	RU	Все изображения
 	SV	Alla bilder
 
@@ -14706,6 +14722,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	NL	Muziekmap is niet beschikbaar tijdens het scannen.
 	NO	Musikkmappen er ikke tilgjengelig når søk pågår.
 	PL	Folder muzyczny nie jest dostępny, gdy trwa przeszukiwanie.
+	PT	O directório com as musicas não está disponível para scanning.
 	RU	Во время сканирования папка "Музыка" недоступна.
 	SV	Musikmappen är inte tillgänglig under sökning.
 
@@ -14717,6 +14734,7 @@ BROWSE_ON_SERVICE
 	SV	Bläddra på %s
 	HU	Böngésszen a %s oldalon
 	NL	Blader op %s
+	PT	Examinar em %s
 
 SYNCHRONIZE
 	CS	Synchronizace
@@ -14734,7 +14752,7 @@ SYNCHRONIZE
 	NL	Synchroniseren
 	NO	Synkroniser
 	PL	Synchronizuj
-	PT	Sincroninar
+	PT	Sincronizar
 	RU	Синхронизация
 	SV	Synkronisera
 	ZH_CN	同步
@@ -14754,6 +14772,7 @@ NOT_SYNCHRONIZED
 	NL	Niet gesynchroniseerd
 	NO	Ikke synkronisert
 	PL	Nie zsynchronizowano
+	PT	Não sincronizado
 	RU	Без синхронизации
 	SV	Inte synkroniserad
 	ZH_CN	不同步
@@ -14791,6 +14810,7 @@ PLAYER_PLUGINS
 	NL	Extra's
 	NO	Tillegg
 	PL	Dodatki
+	PT	Extras
 	RU	Дополнения
 	SV	Extrafunktioner
 
@@ -14807,6 +14827,7 @@ PLUGINS
 	NL	Extra's
 	NO	Tillegg
 	PL	Dodatki
+	PT	Extras
 	RU	Дополнения
 	SV	Extrafunktioner
 
@@ -15419,7 +15440,7 @@ SERVER_STATUS_DESC
 	NL	Informatie over alle geïdentificeerde apparaten die met Lyrion Music Server verbonden zijn
 	NO	Informasjon om alle identifiserte enheter som er koplet til Lyrion Music Server.
 	PL	Informacje na wszystkich zidentyfikowanych urządzeniach połączonych ze Lyrion Music Server
-	PT	Indetificação de todos os equipamentos identificados conectados ao Lyrion Music Server
+	PT	Identificação de todos os equipamentos conhecidos conectados ao Lyrion Music Server
 	RU	Информация обо всех найденных устройствах, подключенных к Lyrion Music Server
 	SV	Information om alla identifierade enheter som anslutits till Lyrion Music Server
 
@@ -15454,7 +15475,7 @@ ADVANCED_SETTINGS
 	NL	Geavanceerd
 	NO	Avansert
 	PL	Zaawansowane
-	PT	Avançados
+	PT	Avançada
 	RU	Дополнительно
 	SV	Avancerat
 
@@ -18385,6 +18406,7 @@ INFORMATION
 	NL	Informatie
 	NO	Informasjon
 	PL	Informacje
+	PT	Informação
 	RU	Информация
 	SV	Information
 	ZH_CN	信息
@@ -18860,7 +18882,7 @@ INFORMATION_ARCHITECTURE
 	NL	Platformarchitectuur
 	NO	Plattformarkitektur
 	PL	Architektura platformy
-	PT	Arquitetura da plataforma
+	PT	Arquitetura da plataforma 
 	RU	Архитектура платформы
 	SV	Plattformsarkitektur
 
@@ -19377,7 +19399,7 @@ LESSTHAN
 	DA	mindre end
 	DE	kleiner als
 	EN	less than
-	ES	menos que
+	ES	
 	FI	vähemmän kuin
 	FR	inférieur(e) à
 	HE	פחות מ-
@@ -19397,7 +19419,7 @@ GREATERTHAN
 	DA	større end
 	DE	größer als
 	EN	greater than
-	ES	mayor que
+	ES	
 	FI	suurempi kuin
 	FR	supérieur(e) à
 	HE	יותר מ-
@@ -19977,7 +19999,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 	ES	Los álbumes que contienen canciones con etiquetas de una banda pueden aparecer en listas por esa banda o con los otros artistas de ese álbum. La etiqueta "band" se conoce también como TPE2 y puede aparecer en algún software como "album artist".
 	FI	Jos levyllä on lauluja, jotka on merkitty jollekin tietylle yhtyeelle, levy voidaan sijoittaa yhtyeen nimen alle tai muiden samalla levyllä esiintyvien artistien alle.  Yhtyetunnus tunnetaan myös nimellä TPE2. Joissakin ohjelmistoissa se saattaa näkyä "levyartistina".
-	FR	Les albums ayant des morceaux dont un tag contient un nom de groupe/orchestre peuvent être listés sous ce nom ou sous le nom des autres artistes de l'album. Le tag groupe/orchestre est appelé TPE2 ou "Artiste de l'album" dans certains logiciels.
+	FR	Les albums qui contiennent des morceaux contenant les informations d'un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Les informations sur le groupe sont appelées TPE2 ou Artiste de l'album dans certains logiciels.
 	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
 	HU	Azok az albumok, amelyek egy zenekarral megcímkézett dalokat tartalmaznak, az adott zenekar neve alatt vagy az album többi előadójával együtt szerepelhetnek.  A zenekar címke TPE2 néven is ismert, és bizonyos szoftverekben "album előadóként" jelenhet meg.
 	IT	Gli album con brani che contengono il tag Gruppo possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
@@ -19994,7 +20016,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like Lyrion Music Server to use.  Changing this setting will start a rescan of your music library.
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice Lyrion Music Server. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat Lyrion Music Serverin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
-	FR	Les tags MP3 ne fournissent aucun moyen standard pour définir un artiste d'album. Certains outils de gestion de tags MP3 utilisent le champ TPE2 pour stocker l'artiste de l'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser en tant que "Groupe/Orchestre". Sélectionnez la signification que le Lyrion Music Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre bibliothèque musicale.
+	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que le Lyrion Music Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre bibliothèque musicale.
 	HU	Az MP3 címkeformátum nem biztosít szabványos módot az album előadójának meghatározására.  Egyes MP3 címkéző eszközök a TPE2 mezőt használják az album előadójához (iTunes, Winamp, Windows Media Player), míg mások a „zenekar/zenekar” szándékolt jelentésére használhatják.  Válassza ki a Lyrion Music Server használatának jelentését.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-tagtools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Lyrion Music Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
@@ -20010,7 +20032,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	EN	Treat TPE2 MP3 tag as Album Artist
 	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
-	FR	Traiter le tag MP3 TPE2 en tant qu'artiste de l'album
+	FR	Traiter l'étiquette TPE2 MP3 en tant que Artiste, Album
 	HU	Kezelje a TPE2 MP3 címkét album előadójaként
 	IT	Considera il tag MP3 TPE2 come artista dell'album
 	NL	TPE2 MP3-label als albumartiest behandelen
@@ -20027,7 +20049,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	EN	Treat TPE2 MP3 tag as Band
 	ES	Tratar etiqueta TPE2 MP3 como banda
 	FI	Käsittele TPE2 MP3 -tagia yhtyeenä
-	FR	Traiter le tag MP3 TPE2 en tant que groupe/orchestre
+	FR	Traiter l'étiquette TPE2 MP3 en tant que Groupe
 	HU	Kezelje a TPE2 MP3 címkét előadójaként
 	IT	Considera il tag MP3 TPE2 come Gruppo/Orchestra
 	NL	TPE2 MP3-tag als band behandelen
@@ -21806,6 +21828,7 @@ DEBUG_FAVORITES
 	NL	Opslaan en afspelen van favorieten
 	NO	Lagre og spille av favoritter
 	PL	Zapisywanie i odtwarzanie ulubionych
+	PT	Guardar e reproduzir favoritos
 	RU	Сохранение и воспроизведение выбранного
 	SV	Favoriter, lägga till och spela upp
 
@@ -22669,6 +22692,7 @@ LINES
 	NL	regels
 	NO	linjer
 	PL	wiersze
+	PT	linhas
 	RU	строки
 	SV	rader
 
@@ -22685,6 +22709,7 @@ SETUP_DEBUG_PERFMON_LOG
 	NL	Prestatielogboek
 	NO	Loggfil for ytelse
 	PL	Plik dziennika wydajności
+	PT	Ficheiro de registo da performance
 	RU	Файл журнала производительности
 	SV	Prestandaloggfil
 
@@ -22701,6 +22726,7 @@ SETUP_DEBUG_PERFMON_LOG_DESC
 	NL	Lyrion Music Server bewaart hier een logboek voor prestatiecontrole:
 	NO	Lyrion Music Server fører en loggfil for ytelsesovervåking her:
 	PL	Program Lyrion Music Server przechowuje plik dziennika do monitorowania wydajności w tym miejscu:
+	PT	Lyrion Music Server mantem um arquivo de registo para supervisão da performance aquí:
 	RU	Файл журнала мониторинга производительности Lyrion Music Server хранится здесь:
 	SV	Prestandaövervakning loggas här:
 
@@ -22731,7 +22757,7 @@ SETUP_DEBUG_LEVEL_OFF
 	NL	Uit
 	NO	Av
 	PL	Wył.
-	PT	Não
+	PT	Apagado
 	RU	Выкл
 	SV	Av
 	ZH_CN	熄机
@@ -22749,6 +22775,7 @@ SETUP_DEBUG_LEVEL_FATAL
 	NL	Fataal
 	NO	Uopprettelig
 	PL	Niskie
+	PT	Fatal
 	RU	Критический
 	SV	Allvarligt fel
 
@@ -22765,6 +22792,7 @@ SETUP_DEBUG_LEVEL_ERROR
 	NL	Fout
 	NO	Feil
 	PL	Błąd
+	PT	Erro
 	RU	Ошибка
 	SV	Fel
 
@@ -22781,6 +22809,7 @@ SETUP_DEBUG_LEVEL_WARN
 	NL	Waarschuwing
 	NO	Varsle
 	PL	Ostrzegaj
+	PT	Advertência
 	RU	Предупреждение
 	SV	Varna
 
@@ -22797,6 +22826,7 @@ SETUP_DEBUG_LEVEL_INFO
 	NL	Info
 	NO	Info
 	PL	Informacje
+	PT	Informação
 	RU	Информация
 	SV	Information
 
@@ -22813,6 +22843,7 @@ SETUP_DEBUG_LEVEL_DEBUG
 	NL	Debuggen
 	NO	Feilsøking
 	PL	Debuguj
+	PT	Debug
 	RU	Отладка
 	SV	Felsök
 
@@ -22829,6 +22860,7 @@ SAVE_SETTINGS
 	NL	Instellingen opslaan
 	NO	Lagre endringer
 	PL	Zapisz ustawienia
+	PT	Guardar configuração
 	RU	Сохранить настройки
 	SV	Spara inställningar
 
@@ -22879,6 +22911,7 @@ ENLARGE
 	NL	Vergroten
 	NO	Forstørr
 	PL	Powiększ
+	PT	Ampliar
 	RU	Увеличить
 	SV	Förstora
 
@@ -22895,6 +22928,7 @@ SCANNER_PROGRESS
 	NL	Details van mediascan
 	NO	Detaljer om søk etter mediefiler
 	PL	Szczegóły przeszukiwania multimediów
+	PT	Detalhes do scan aos ficheiros multimedia
 	RU	Сведения о сканировании мультимедиа
 	SV	Information om mediesökning
 
@@ -22911,6 +22945,7 @@ FAILURE_PROGRESS
 	NL	Mediascan onverwacht beëindigd (%s)
 	NO	Mediesøket stoppet plutselig (%s)
 	PL	Przeszukiwanie multimediów zostało przerwane nieoczekiwanie (%s)
+	PT	O scan aos ficheiros de media terminou abruptamente (%s)
 	RU	Сканирование мультимедиа было неожиданно прервано (%s)
 	SV	Mediesökningen avslutades oväntat (%s)
 
@@ -22927,6 +22962,7 @@ SCAN_ABORTED_PROGRESS
 	NL	Mediascan handmatig afgebroken door gebruiker
 	NO	Søket ble manuelt avbrutt av brukeren
 	PL	Przeszukiwanie zostało ręcznie przerwane przez użytkownika
+	PT	O utilizador abortou manualmente o scan
 	RU	Сканирование было прервано пользователем
 	SV	Sökningen avbröts manuellt av användaren
 
@@ -22943,6 +22979,7 @@ DIRECTORY_PROGRESS
 	NL	Mappen scannen
 	NO	Katalogsøk
 	PL	Przeszukiwanie katalogu
+	PT	Scan aos directórios
 	RU	Сканирование каталога
 	SV	Mappsökning
 
@@ -22959,6 +22996,7 @@ DISCOVERING_FILES_PROGRESS
 	NL	Muziekbestanden/-mappen detecteren
 	NO	Ser etter musikkfiler/-kataloger
 	PL	Wykrywanie plików muzycznych i katalogów
+	PT	Detectando arquivos/directórios de musica
 	RU	Поиск файлов/папок с музыкой
 	SV	Leta efter musikfiler/kataloger
 
@@ -22975,6 +23013,7 @@ DISCOVERING_DIRECTORY_PROGRESS
 	NL	Bestanden/mappen detecteren
 	NO	Finne filer/kataloger
 	PL	Wykrywanie plików i katalogów
+	PT	Detectando arquivos/directórios
 	RU	Поиск файлов/папок
 	SV	Leta efter filer/kataloger
 
@@ -22991,6 +23030,7 @@ DISCOVERING_PLAYLIST_PROGRESS
 	NL	Afspeellijsten detecteren
 	NO	Finner spillelister
 	PL	Trwa wykrywanie list odtwarzania
+	PT	Detectando playlists
 	RU	Выбор плей-листов
 	SV	Leta spellistor
 
@@ -23007,6 +23047,7 @@ DIRECTORY_DELETED_PROGRESS
 	NL	Verwijderde bestanden weghalen
 	NO	Fjerner slettede filer
 	PL	Kasowanie usuniętych plików
+	PT	Removendo ficheiros eliminados
 	RU	Убрать удаленные файлы
 	SV	Ta bort borttagna filer
 
@@ -23023,6 +23064,7 @@ DIRECTORY_NEW_PROGRESS
 	NL	Nieuwe muziekbestanden scannen
 	NO	Søker i nye musikkfiler
 	PL	Trwa przeszukiwanie nowych plików muzycznych
+	PT	Procurando novos arquivos de musica
 	RU	Сканирование новых музыкальных файлов
 	SV	Söka igenom nya musikfiler
 
@@ -23039,6 +23081,7 @@ DIRECTORY_MEDIA_PROGRESS
 	NL	Nieuwe bestanden scannen
 	NO	Søker i nye filer
 	PL	Trwa przeszukiwanie nowych plików
+	PT	Procurando novos ficheiros de media
 	RU	Сканирование новых файлов
 	SV	Söka igenom nya mediefiler
 
@@ -23055,6 +23098,7 @@ DIRECTORY_CHANGED_PROGRESS
 	NL	Gewijzigde bestanden worden gescand
 	NO	Søker i endrede filer
 	PL	Przeszukiwanie zmienionych plików
+	PT	Examinando ficheiros modificados
 	RU	Сканирование измененных файлов
 	SV	Söker igenom ändrade filer
 
@@ -23071,6 +23115,7 @@ PLAYLIST_DELETED_PROGRESS
 	NL	Verwijderde afspeellijsten weghalen
 	NO	Fjerner slettede spillelister
 	PL	Kasowanie usuniętych list odtwarzania
+	PT	Removendo playlists eliminadas
 	RU	Убрать удаленные плей-листы
 	SV	Ta bort borttagna spellistor
 
@@ -23087,6 +23132,7 @@ PLAYLIST_NEW_PROGRESS
 	NL	Nieuwe afspeellijsten scannen
 	NO	Søker i nye spillelister
 	PL	Trwa przeszukiwanie nowych list odtwarzania
+	PT	Procurando novas playlists
 	RU	Сканирование новых плей-листов
 	SV	Söka igenom nya spellistor
 
@@ -23103,6 +23149,7 @@ PLAYLIST_CHANGED_PROGRESS
 	NL	Gewijzigde afspeellijsten worden gescand
 	NO	Søker i endrede spillelister
 	PL	Przeszukiwanie zmienionych list odtwarzania
+	PT	Procurando playlists alteradas
 	RU	Сканирование измененных плей-листов
 	SV	Söker igenom ändrade spellistor
 
@@ -23119,6 +23166,7 @@ PLAYLIST_PROGRESS
 	NL	Scannen van afspeellijsten
 	NO	Søk etter spilleliste
 	PL	Przeszukiwanie listy odtwarzania
+	PT	Examinando as playlists
 	RU	Сканирование плей-листа
 	SV	Sökning i spellista
 
@@ -23144,6 +23192,7 @@ MERGEVA_PROGRESS
 	NL	Diverse artiesten samenvoegen
 	NO	Slå sammen diverse artister
 	PL	Połącz różnych wykonawców
+	PT	Reagrupar varios artistas
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
 
@@ -23156,6 +23205,7 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	NL	Vind geüpdatete albumhoezen
 	NO	Finn oppdaterte plateomslagsfiler
 	PL	Wyszukaj zaktualizowane pliki okładek
+	PT	Procurar imagens de capa dos albuns actualizados
 	SV	Hitta uppdaterade skivomslag
 
 PRECACHEARTWORK_PROGRESS
@@ -23171,6 +23221,7 @@ PRECACHEARTWORK_PROGRESS
 	NL	Albumhoezen vooraf in cache opslaan
 	NO	Hurtigbufring av omslag på forhånd
 	PL	Wstępnie buforowanie okładki
+	PT	Guardando artwork em cache 
 	RU	Предварительное кэширование обложки
 	SV	Cachelagrat albumomslag
 
@@ -23188,6 +23239,7 @@ DOWNLOADARTWORK_PROGRESS
 	NO	Laster ned omslag
 	PL	Pobieranie okładek
 	RU	Загрузка обложки
+	PT	Download em curso de artwork
 	SV	Ladda ner albumomslag
 
 CLEANUP1_PROGRESS
@@ -23203,6 +23255,7 @@ CLEANUP1_PROGRESS
 	NL	Opschonen van database 1
 	NO	Databaseopprydding #1
 	PL	Czyszczenie bazy danych nr 1
+	PT	Limpeza da base de dados nº1 
 	RU	Очистка базы данных №1
 	SV	Databasrensning nr 1
 
@@ -23219,6 +23272,7 @@ CLEANUP2_PROGRESS
 	NL	Opschonen van database 2
 	NO	Databaseopprydding #2
 	PL	Czyszczenie bazy danych nr 2
+	PT	Limpeza da base de dados nº2 
 	RU	Очистка базы данных №2
 	SV	Databasrensning #2
 
@@ -23235,6 +23289,7 @@ DBOPTIMIZE_PROGRESS
 	NL	Database optimaliseren
 	NO	Database optimalisering
 	PL	Optymalizacja bazy danych
+	PT	Optimização da base de dados
 	RU	Оптимизация базы данных
 	SV	Optimering av databas
 
@@ -23251,6 +23306,7 @@ IMPORTER_PROGRESS
 	NL	Scanvoortgang
 	NO	Framdrift for søk
 	PL	Postęp przeszukiwania
+	PT	Progresso do scanning
 	RU	Ход сканирования
 	SV	Sökningsförlopp
 
@@ -23267,6 +23323,7 @@ IMPORTER_PROGRESS_DESC
 	NL	Op deze pagina wordt de voortgang van elke fase in het scanproces weergegeven.
 	NO	Denne siden viser framdriften for hver del av søkeprosessen.
 	PL	Na tej stronie widoczny jest postęp każdego etapu procesu przeszukiwania.
+	PT	Esta página mostra o progresso de cada fase do scanning em curso
 	RU	Здесь отображается выполнение каждого этапа сканирования.
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
 
@@ -23277,6 +23334,7 @@ RELEASETYPES_PROGRESS
 	FR	Actualiser les types de sorties des albums
 	HU	Az album kiadás típusainak frissítése
 	NL	Albumreleasetypes vernieuwen
+	PT	Actualização do tipo de lançamento dos albuns
 
 VIRTUALLIBRARIES_PROGRESS
 	CS	Vytváření zobrazení knihovny
@@ -23287,6 +23345,7 @@ VIRTUALLIBRARIES_PROGRESS
 	NL	Deelcollectie maken
 	NO	Lag delbibliotek
 	PL	Utwórz biblioteki tematyczne
+	PT	Criar vistas da colecção
 	SV	Skapa delbibliotek
 
 AS_VIRTUAL_LIBRARY
@@ -23298,6 +23357,7 @@ AS_VIRTUAL_LIBRARY
 	NL	Als deelcollectie
 	NO	Som delbibliotek
 	PL	Jako biblioteka tematyczna
+	PT	Como uma vista da colecção
 	SV	Som delbibliotek
 
 VIRTUALLIBRARIES
@@ -23309,6 +23369,7 @@ VIRTUALLIBRARIES
 	NL	Deelcollecties
 	NO	Delbiblioteker
 	PL	Biblioteki tematyczne
+	PT	Colecções por temas
 	SV	Delbibliotek
 
 SETUP_LIBRARY_VIEWS_DESC
@@ -23331,6 +23392,7 @@ ALL_LIBRARY
 	NL	Hele muziekcollectie
 	NO	Hele musikksamlingen
 	PL	Cała biblioteka muzyczna
+	PT	Colecção completa
 	SV	Hela musiksamlingen
 
 SUB_LIBRARY
@@ -23342,6 +23404,7 @@ SUB_LIBRARY
 	NL	Geselecteerde deelcollectie
 	NO	Valgt delbibliotek
 	PL	Wybrana biblioteka tematyczna
+	PT	Vista da colecção seleccionada
 	SV	Valt delbibliotek
 
 RUNNING
@@ -23357,6 +23420,7 @@ RUNNING
 	NL	Actief
 	NO	Kjører
 	PL	Uruchomiony
+	PT	Executando
 	RU	Выполняется
 	SV	Körs
 
@@ -23373,6 +23437,7 @@ COMPLETE
 	NL	Voltooien
 	NO	Fullført
 	PL	Gotowe
+	PT	Completado
 	RU	Завершено
 	SV	Fullständig
 
@@ -23389,7 +23454,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	NL	De server heeft jouw mediabibliotheek gescand.
 	NO	Serveren har nå søkt gjennom mediebiblioteket.
 	PL	Serwer zakończył przeszukiwanie biblioteki multimedialnej.
-	PT	O servidor finalizou o scan da sua biblioteca multimedia.
+	PT	O servidor finalizou o scan da sua colecção multimedia.
 	RU	Сервер завершил сканирование библиотеки мультимедиа.
 	SV	Sökningen av mediebiblioteket har slutförts.
 
@@ -23406,6 +23471,7 @@ PROGRESS_IMPORTER_NO_INFO
 	NL	Voortgangsinformatie van de vorige scan is niet beschikbaar.
 	NO	Ingen framdriftsinformasjon er tilgjengelig for forrige søk.
 	PL	Informacje o postępie z poprzedniego przeszukiwania są niedostępne.
+	PT	A informação do progresso do scan anterior não está disponível
 	RU	Информация о ходе выполнения предыдущего сканирования недоступна.
 	SV	Det finns ingen förloppsinformation för den föregående sökningen tillgänglig.
 
@@ -23440,6 +23506,7 @@ ENABLE
 	NL	Inschakelen
 	NO	Aktiver
 	PL	Włącz
+	PT	Activar
 	RU	Включить
 	SV	Aktivera
 
@@ -23456,6 +23523,7 @@ DISABLE
 	NL	Uitschakelen
 	NO	Deaktiver
 	PL	Wyłącz
+	PT	Desactivar
 	RU	Отключить
 	SV	Avaktivera
 
@@ -23472,6 +23540,7 @@ UNINSTALL
 	NL	Verwijderen
 	NO	Avinstaller
 	PL	Odinstaluj
+	PT	Desinstalar
 	RU	Удаление
 	SV	Avinstallera
 
@@ -23488,6 +23557,7 @@ PLUGINS_CHANGED
 	NL	Bij de volgende herstart van de applicatie worden wijzigingen voor deze plug-ins doorgevoerd:
 	NO	Endringer trer i kraft neste gang programmet startes på nytt for følgende plugin-moduler:
 	PL	W przypadku następujących dodatków zmiany zostaną wprowadzone po następnym uruchomieniu aplikacji:
+	PT	As alterações introduzidas ficarão activas na próxima vez que iniciar o programa. 
 	RU	Изменения вступят в силу при следующем запуске приложения для следующих подключаемых модулей:
 	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
 
@@ -23504,6 +23574,7 @@ PLUGINS_CHANGED_NEED_RESTART
 	NL	Bij de volgende herstart worden wijzigingen voor deze plug-ins doorgevoerd. <a href="%s">Klik hier om de server nu opnieuw te starten.</a>
 	NO	Endringer trer i kraft neste gang programmet startes på nytt. <a href="%s">Klikk her for å starte serveren på nytt nå.</a>
 	PL	Zmiany zostaną wprowadzone po następnym uruchomieniu aplikacji. <a href="%s">Kliknij tutaj, aby uruchomić ponownie serwer teraz.</a>
+	PT	As alterações serão introduzidas na próxima vez que iniciar o programa. <a href="%s">Clique aqui para reiniciar o servidor agora.</a>
 	RU	Изменения будут применены при следующем перезапуске приложения. <a href="%s">Щелкните здесь, чтобы перезагрузить сервер сейчас.</a>
 	SV	Ändringarna träder i kraft nästa gång programmet startas. <a href="%s">Klicka här för att starta om servern.</a>
 
@@ -23520,6 +23591,7 @@ RESTART_NOW
 	NL	Nu herstarten
 	NO	Start på nytt nå
 	PL	Uruchom ponownie teraz
+	PT	Reiniciar agora
 	RU	Перезапустить сейчас
 	SV	Starta om nu
 
@@ -23536,6 +23608,7 @@ RESTART_LATER
 	NL	Later herstarten
 	NO	Start på nytt senere
 	PL	Uruchom ponownie później
+	PT	Reiniciar mais tarde
 	RU	Перезапустить позже
 	SV	Starta om senare
 
@@ -23552,6 +23625,7 @@ RESTARTING_PLEASE_WAIT
 	NL	 Lyrion Music Server wordt herstart. Wacht even voordat je verdergaat...
 	NO	 Lyrion Music Server startes på nytt. Vent litt før du fortsetter ...
 	PL	 Trwa ponowne uruchamianie programu Lyrion Music Server. Poczekaj chwilę, aby kontynuować...
+	ES	 Lyrion Music Server está a reiniciar. Espere um minuto antes de continuar...			
 	RU	 Lyrion Music Server перезапускается. Подождите...
 	SV	 Lyrion Music Server startas om. Vänta en minut innan du fortsätter...
 
@@ -23568,6 +23642,7 @@ SETUP_VIEW_SCANNING
 	NL	Bezig met scannen - Voortgang bekijken
 	NO	Søker – Vis framdrift
 	PL	Przeszukiwanie - wyświetl postęp
+	PT	Scanning...Ver progresso
 	RU	Сканирование — ход выполнения
 	SV	Sökning – Visa förlopp
 
@@ -23733,6 +23808,7 @@ JIVE_DELETE_FROM_FAVORITES
 	NL	Favoriet verwijderen
 	NO	Fjern favoritt
 	PL	Usuń ulubione
+	PT	Eliminar favorito
 	RU	Удалить элемент выбранного
 	SV	Ta bort favorit
 
@@ -23798,6 +23874,7 @@ JIVE_SAVE_TO_FAVORITES
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
+	PT	Salvar em favoritos
 	RU	Сохранить в избранном
 	SV	Spara i Favoriter
 
@@ -26145,7 +26222,7 @@ DECODE_ERROR_200
 	CS	Superrámce WMA nejsou podporovány
 	DA	WMA-superframes understøttes ikke
 	DE	Keine Unterstützung für WMA-Superframes
-	EN	WMA superframes not supported
+	EN	Wnot supported
 	ES	No se admiten supercuadros WMA
 	FI	WMA-superframe-kehyksiä ei tueta
 	FR	Format Superframes WMA non prises en charge
@@ -26533,7 +26610,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
 	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
-	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
+	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>. 
 	SV	En ny version av Lyrion Music Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
 
 SERVER_WINDOWS_UPDATE_AVAILABLE
