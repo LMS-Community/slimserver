@@ -1,0 +1,17 @@
+# Run `perlimports -i Slim` to tidy `use` and `require` statements.
+# https://metacpan.org/dist/App-perlimports/view/script/perlimports
+
+cache                           = false
+ignore_modules                  = []
+ignore_modules_filename         = ""
+ignore_modules_pattern          = "^Tie::"
+ignore_modules_pattern_filename = ""
+libs                            = ["lib", "CPAN", "."]
+log_filename                    = ""
+log_level                       = "warn"
+never_export_modules            = []
+never_export_modules_filename   = ""
+padding                         = false
+preserve_duplicates             = false
+preserve_unused                 = false
+tidy_whitespace                 = true

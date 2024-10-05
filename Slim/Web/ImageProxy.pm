@@ -72,12 +72,7 @@ original artwork is of considerable size, where the bandwidth to download the im
 =cut
 
 use strict;
-use Digest::MD5;
-use File::Spec::Functions qw(catdir);
-use File::Slurp ();
-use HTTP::Status qw(
-	RC_MOVED_PERMANENTLY
-);
+use HTTP::Status qw(RC_MOVED_PERMANENTLY);
 use Tie::RegexpHash;
 use URI::Escape qw(uri_escape_utf8);
 
