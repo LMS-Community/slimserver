@@ -1046,14 +1046,14 @@ sub artistsQuery {
 			# include user-defined roles that user wants in artist list
 			my @udr;
 			foreach (keys %{$prefs->get('userDefinedRoles')}) {
-				push @udr, $_ if !$prefs->get('userDefinedRoles')->{$_}->{'exclude'};
+				push @udr, $_ if $prefs->get('userDefinedRoles')->{$_}->{'include'};
 			}
 			$roles = Slim::Schema->artistOnlyRoles(@udr);
 		}
 		else {
 			# include user-defined roles that user wants in artist list
 			my $udr = $prefs->get('userDefinedRoles');
-			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } grep { Slim::Schema::Contributor->typeToRole($_) <= 20 || $udr->{$_} && !$udr->{$_}->{'exclude'} }
+			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } grep { Slim::Schema::Contributor->typeToRole($_) <= 20 || $udr->{$_} && $udr->{$_}->{'include'} }
 				Slim::Schema::Contributor->contributorRoles() ];
 		}
 

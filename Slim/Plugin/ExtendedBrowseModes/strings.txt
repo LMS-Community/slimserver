@@ -347,11 +347,11 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
 	HU	Szöveg megjelenítése
 	NL	Tekst weergeven
 
-PLUGIN_EXTENDED_BROWSEMODES_ROLE_EXCLUDE
-	EN	Exclude from artist lists
-	DE	Aus Künstlerlisten ausschließen
-	FR	Exclure des listes d'artistes
-	ES	Excluir de las listas de artistas
-	HU	Kizárás az előadók listájáról
-	NL	Uitsluiten van artiestenlijsten
+PLUGIN_EXTENDED_BROWSEMODES_ROLE_INCLUDE
+	EN	Include with artist lists
+	DE	In Künstlerlisten aufnehmen
+	FR	Inclure avec les listes d'artistes
+	ES	Incluir con listas de artistas
+	HU	Tartalmazza az előadók listáját
+	NL	Opnemen bij artiestenlijsten
 
