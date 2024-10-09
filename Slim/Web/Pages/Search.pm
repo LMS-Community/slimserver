@@ -28,6 +28,7 @@ use constant MAX_ADV_RESULTS => 200;
 my $log = logger('network.http');
 my $sqlLog = logger('database.sql');
 my $prefs = preferences('advancedSearch');
+my $serverPrefs = preferences('server');
 
 sub init {
 
@@ -508,7 +509,11 @@ sub _initActiveRoles {
 		$params->{'search'}->{'contributor_namesearch'}->{'active' . $_} = 1 if $params->{'search.contributor_namesearch.active' . $_};
 	}
 
-	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
+	my @udr;
+	foreach (keys %{$serverPrefs->get('userDefinedRoles')}) {
+		push @udr, $_ if $serverPrefs->get('userDefinedRoles')->{$_}->{'include'};
+	}
+	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles(@udr) } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
 sub _getSavedSearches {
