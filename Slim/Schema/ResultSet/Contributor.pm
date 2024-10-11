@@ -23,7 +23,7 @@ sub searchNames {
 	};
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
-	if (my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST')) {
+	if (my $roles = Slim::Schema->artistOnlyRoles()) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';

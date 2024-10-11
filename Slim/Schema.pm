@@ -2335,6 +2335,7 @@ sub artistOnlyRoles {
 	my %roles = (
 		'ARTIST'      => 1,
 		'ALBUMARTIST' => 1,
+		'TRACKARTIST' => 1,
 	);
 
 	# If the user has requested explict roles to be added, do so.
