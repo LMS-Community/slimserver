@@ -1043,7 +1043,7 @@ sub artistsQuery {
 			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ];
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
-			$roles = Slim::Schema->artistOnlyRoles();
+			$roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
 		}
 		else {
 			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->contributorRoles() ];

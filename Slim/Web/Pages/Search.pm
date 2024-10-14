@@ -508,7 +508,7 @@ sub _initActiveRoles {
 		$params->{'search'}->{'contributor_namesearch'}->{'active' . $_} = 1 if $params->{'search.contributor_namesearch.active' . $_};
 	}
 
-	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
+	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles('TRACKARTIST') } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
 sub _getSavedSearches {
