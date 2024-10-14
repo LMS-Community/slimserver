@@ -31,13 +31,13 @@ L<Slim::Control::Queries> implements most Lyrion Music Server queries and is des
 use strict;
 
 use File::Basename qw(basename);
-use Storable;
+use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
 use List::Util qw(first);
-use MIME::Base64 qw(encode_base64 decode_base64);
+use MIME::Base64 ();
 use Scalar::Util qw(blessed);
-use URI::Escape;
+use URI::Escape ();
 use Tie::Cache::LRU::Expires;
 
 use Slim::Music::VirtualLibraries;
@@ -366,14 +366,7 @@ sub albumsQuery {
 					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 				}
 				elsif ($prefs->get('useUnifiedArtistsList')) {
-					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
-
-					# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
-					foreach (Slim::Schema::Contributor->contributorRoles) {
-						if ( $prefs->get(lc($_) . 'InArtists') || Slim::Schema::Contributor->typeToRole($_) > 20 ) {
-							push @roles, $_;
-						}
-					}
+					@roles = Slim::Schema::Contributor->unifiedArtistsListRoles();
 				}
 				else {
 					@roles = Slim::Schema::Contributor->contributorRoles();
@@ -1044,13 +1037,13 @@ sub artistsQuery {
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
 			# include user-defined roles that user wants in artist list
-			$roles = Slim::Schema->artistOnlyRoles( Slim::Schema::Contributor->getUserDefinedRolesToInclude(),'TRACKARTIST' );
+			$roles = Slim::Schema->artistOnlyRoles( Slim::Schema::Contributor->getUserDefinedRolesToInclude(), 'TRACKARTIST' );
 		}
 		else {
 			# include user-defined roles that user wants in artist list
-			my $udr = $prefs->get('userDefinedRoles');
-			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } grep { Slim::Schema::Contributor->typeToRole($_) <= 20 || $udr->{$_} && $udr->{$_}->{'include'} }
-				Slim::Schema::Contributor->contributorRoles() ];
+			$roles = [ map {
+				Slim::Schema::Contributor->typeToRole($_);
+			} Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->getUserDefinedRolesToInclude() ];
 		}
 
 		if ( defined $genreID ) {
@@ -6062,16 +6055,7 @@ sub _getTagDataForTracks {
 			push @roles, 'ARTIST' if $args->{roleId} eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
-			# Tag 'a' returns either ARTIST or TRACKARTIST role
-			# Bug 16791: Need to include ALBUMARTIST too
-			@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
-
-			# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
-			foreach (Slim::Schema::Contributor->contributorRoles) {
-				if ( $prefs->get(lc($_) . 'InArtists') || Slim::Schema::Contributor->typeToRole($_) > 20 ) {
-					push @roles, $_;
-				}
-			}
+			@roles = Slim::Schema::Contributor->unifiedArtistsListRoles();
 		}
 		else {
 			@roles = Slim::Schema::Contributor->contributorRoles();

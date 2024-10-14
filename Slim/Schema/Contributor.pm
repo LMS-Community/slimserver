@@ -4,7 +4,7 @@ package Slim::Schema::Contributor;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use Scalar::Util qw(blessed);
+use List::Util qw(max);
 
 use Slim::Schema::ResultSet::Contributor;
 
@@ -12,11 +12,15 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+use constant MIN_CUSTOM_ROLE_ID => 21;
+
 my %contributorToRoleMap;
 my @contributorRoles;
 my @contributorRoleIds;
 my $totalContributorRoles;
 my %roleToContributorMap;
+
+my $prefs = preferences('server');
 
 initializeRoles();
 
@@ -66,11 +70,9 @@ sub initializeRoles {
 		'ALBUMARTIST' => 5,
 		'TRACKARTIST' => 6,
 	);
-	my $prefs = preferences('server');
-	if ( my $userDefinedRoles = $prefs->get('userDefinedRoles') ) {
-		while ( my($k, $v) = each (%$userDefinedRoles) ) {
-			$contributorToRoleMap{$k} = $v->{id};
-		}
+
+	while ( my ($k, $v) = each %{ $prefs->get('userDefinedRoles') } ) {
+		$contributorToRoleMap{$k} ||= $v->{id};
 	}
 
 	@contributorRoles = sort keys %contributorToRoleMap;
@@ -81,6 +83,20 @@ sub initializeRoles {
 
 sub contributorRoles {
 	return @contributorRoles;
+}
+
+sub defaultContributorRoles {
+	return grep { __PACKAGE__->typeToRole($_) < MIN_CUSTOM_ROLE_ID } contributorRoles();
+}
+
+sub unifiedArtistsListRoles {
+	my @roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
+
+	# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
+	push @roles, grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();
+	push @roles, getUserDefinedRolesToInclude();
+
+	return grep { $_ } @roles;
 }
 
 sub contributorRoleIds {
@@ -104,12 +120,13 @@ sub roleToType {
 }
 
 sub getUserDefinedRolesToInclude {
-	my $prefs = preferences('server');
-	my @udr;
-	foreach (keys %{$prefs->get('userDefinedRoles')}) {
-		push @udr, $_ if $prefs->get('userDefinedRoles')->{$_}->{'include'};
-	}
-	return @udr;
+	# de-reference the pref so we don't accidentally change it below
+	my %udr = %{$prefs->get('userDefinedRoles')};
+	return grep { $udr{$_}->{include} } contributorRoles();
+}
+
+sub getMinCustomRoleId {
+	return max(MIN_CUSTOM_ROLE_ID, max(contributorRoleIds()) + 1);
 }
 
 sub extIds {
