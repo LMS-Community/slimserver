@@ -103,6 +103,15 @@ sub roleToType {
 	return $roleToContributorMap{$_[1]};
 }
 
+sub getUserDefinedRolesToInclude {
+	my $prefs = preferences('server');
+	my @udr;
+	foreach (keys %{$prefs->get('userDefinedRoles')}) {
+		push @udr, $_ if $prefs->get('userDefinedRoles')->{$_}->{'include'};
+	}
+	return @udr;
+}
+
 sub extIds {
 	my ($self) = @_;
 	return [ split(',', $self->extid || '') ];

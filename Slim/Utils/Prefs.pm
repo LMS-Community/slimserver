@@ -400,25 +400,12 @@ sub init {
 	$prefs->setChange( sub {
 		my $newRoles = $_[1];
 		my $oldRoles = $_[3];
-		my $changed = 0;
-		if (%$oldRoles != %$newRoles) {
-			$changed = 1;
-		} else {
-			my %cmp = map { $_ => 1 } keys %$oldRoles;
-			for my $key (keys %$newRoles) {
-				last unless exists $cmp{$key};
-				delete $cmp{$key};
-			}
-			if (%cmp) {
-				$changed = 1;
-			}
-		}
-		if ( $changed ) {
+
+		if ( %$oldRoles - %$newRoles || (scalar grep {!exists $newRoles->{$_}} keys %$oldRoles) ) {
 			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
+			Slim::Schema::Contributor->initializeRoles()
 		}
 	}, 'userDefinedRoles' );
-
-	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'userDefinedRoles');
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
@@ -558,7 +545,7 @@ sub init {
 		# Rebuild Jive cache if VA setting is changed
 		$prefs->setChange( sub {
 			Slim::Schema->wipeCaches();
-		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'useUnifiedArtistsList');
+		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'useUnifiedArtistsList', 'userDefinedRoles');
 
 		$prefs->setChange( sub {
 			Slim::Control::Queries->wipeCaches();

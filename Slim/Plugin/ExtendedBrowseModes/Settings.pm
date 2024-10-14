@@ -9,14 +9,13 @@ package Slim::Plugin::ExtendedBrowseModes::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 use Storable;
+use List::Util qw(max);
 
 use Slim::Music::VirtualLibraries;
 use Slim::Plugin::ExtendedBrowseModes::Plugin;
-use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
-use List::Util qw(max);
 
 use constant AUDIOBOOKS_MENUS => [{
 	name    => 'PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS',
@@ -33,7 +32,6 @@ use constant AUDIOBOOKS_MENUS => [{
 	weight  => 15,
 	enabled => 0,
 }];
-my $log   = logger('prefs');
 my $prefs = preferences('plugin.extendedbrowsemodes');
 my $serverPrefs = preferences('server');
 
@@ -56,12 +54,7 @@ sub handler {
 	if ($params->{'saveSettings'} && !$class->needsClient) {
 		# custom role handling
 		my $currentRoles = $serverPrefs->get('userDefinedRoles');
-
-		my $id = 20;
-		foreach (keys %{ $currentRoles }) {
-			$id = max($id, $currentRoles->{$_}->{id});
-		}
-		$id++;
+		my $id = %$currentRoles ? max(map { $_->{id} } values %$currentRoles) + 1 : 21;
 
 		my $customTags = {};
 		my $changed = 0;
@@ -78,8 +71,7 @@ sub handler {
 						include => $params->{$key . '_include'},
 					};
 					if ( !$currentRoles->{$tag}
-						|| $currentRoles->{$tag}
-							&& ( $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} || $currentRoles->{$tag}->{include} ne $customTags->{$tag}->{include} ) ) {
+						|| $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} || $currentRoles->{$tag}->{include} ne $customTags->{$tag}->{include} ) {
 						Slim::Utils::Strings::storeExtraStrings([{
 							strings => { EN => $customTags->{$tag}->{name}},
 							token   => $tag,
