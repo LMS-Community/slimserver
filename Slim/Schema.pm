@@ -2360,6 +2360,7 @@ sub artistOnlyRoles {
 	}
 
 	return [ sort map { Slim::Schema::Contributor->typeToRole($_) } keys %roles ];
+
 }
 
 sub registerRatingImplementation {
