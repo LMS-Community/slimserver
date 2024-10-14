@@ -2347,7 +2347,7 @@ sub artistOnlyRoles {
 
 	# And if the user has asked for ALL, give them it.
 	if ($roles{'ALL'}) {
-		return undef;
+		return [ Slim::Schema::Contributor->contributorRoleIds ];
 	}
 
 	# Loop through each pref to see if the user wants to show that contributor role.
@@ -2359,13 +2359,7 @@ sub artistOnlyRoles {
 		}
 	}
 
-	# If we're using all roles, don't bother with the constraint.
-	if (scalar keys %roles != Slim::Schema::Contributor->totalContributorRoles) {
-
-		return [ sort map { Slim::Schema::Contributor->typeToRole($_) } keys %roles ];
-	}
-
-	return undef;
+	return [ sort map { Slim::Schema::Contributor->typeToRole($_) } keys %roles ];
 }
 
 sub registerRatingImplementation {

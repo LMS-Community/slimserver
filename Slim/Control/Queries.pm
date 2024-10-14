@@ -1044,7 +1044,7 @@ sub artistsQuery {
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
 			# include user-defined roles that user wants in artist list
-			$roles = Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude());
+			$roles = Slim::Schema->artistOnlyRoles( Slim::Schema::Contributor->getUserDefinedRolesToInclude(),'TRACKARTIST' );
 		}
 		else {
 			# include user-defined roles that user wants in artist list
