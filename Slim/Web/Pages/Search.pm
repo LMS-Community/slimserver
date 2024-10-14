@@ -510,7 +510,7 @@ sub _initActiveRoles {
 	}
 
 	$params->{'search'}->{'contributor_namesearch'} = {
-		map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles(getUserDefinedRolesToInclude()) }
+		map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude()) }
 	} unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
