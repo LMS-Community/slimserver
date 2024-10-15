@@ -1528,9 +1528,11 @@ sub _createTrack {
 			$columnValueHash->{urlmd5},
 		);
 
+		my $externalTrack = $columnValueHash->{extid} && $columnValueHash->{url} eq $columnValueHash->{extid};
+
 		# retrievePersistent will always return undef or a track metadata object
 		if ( !$trackPersistentHash ) {
-			$persistentColumnValueHash->{added}  = time();
+			$persistentColumnValueHash->{added}  = ($externalTrack && $columnValueHash->{timestamp}) || time();
 			$persistentColumnValueHash->{url}    = $columnValueHash->{url};
 			$persistentColumnValueHash->{urlmd5} = $columnValueHash->{urlmd5};
 
@@ -1551,6 +1553,10 @@ sub _createTrack {
 			# Always update url/urlmd5 as these values may have changed if we looked up using musicbrainz_id
 			$trackPersistentHash->{url}    = $columnValueHash->{url};
 			$trackPersistentHash->{urlmd5} = $columnValueHash->{urlmd5};
+
+			if ($externalTrack && $columnValueHash->{timestamp}) {
+				$trackPersistentHash->{added} = $columnValueHash->{timestamp}
+			}
 
 			$self->_updateHash( tracks_persistent => $trackPersistentHash, 'id' );
 		}
