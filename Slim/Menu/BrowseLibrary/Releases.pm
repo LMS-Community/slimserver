@@ -52,7 +52,7 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releases sub-items etc.
-	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags, 'role_id:'. $menuRoles ? $menuRoles : join(',',Slim::Schema::Contributor->contributorRoles) ] );
+	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags, 'role_id:'. ($menuRoles ? $menuRoles : join(',',Slim::Schema::Contributor->contributorRoles)) ] );
 	$request->execute();
 
 	$log->error($request->getStatusText()) if $request->isStatusError();

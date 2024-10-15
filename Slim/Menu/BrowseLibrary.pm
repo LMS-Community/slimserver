@@ -1101,15 +1101,7 @@ sub _artists {
 			} @roles  if @roles;
 
 			if ( $mode && $mode eq 'artists' ) {
-				push @roles, 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST';
-
-				# Loop through each pref to see if the user wants to show that contributor role.
-				foreach (Slim::Schema::Contributor->contributorRoles) {
-					if (_getPref(lc($_) . 'InArtists', $remote_library)) {
-						push @roles, $_;
-					}
-				}
-
+				push @roles, Slim::Schema::Contributor->unifiedArtistsListRoles();
 				push @ptSearchTags, 'role_id:' . join(',', @roles);
 			}
 		}

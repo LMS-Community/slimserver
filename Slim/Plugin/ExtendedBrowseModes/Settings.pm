@@ -8,11 +8,10 @@ package Slim::Plugin::ExtendedBrowseModes::Settings;
 
 use strict;
 use base qw(Slim::Web::Settings);
-use Storable;
+use Storable ();
 
 use Slim::Music::VirtualLibraries;
 use Slim::Plugin::ExtendedBrowseModes::Plugin;
-use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
@@ -32,7 +31,6 @@ use constant AUDIOBOOKS_MENUS => [{
 	weight  => 15,
 	enabled => 0,
 }];
-
 my $prefs = preferences('plugin.extendedbrowsemodes');
 my $serverPrefs = preferences('server');
 
@@ -55,8 +53,9 @@ sub handler {
 	if ($params->{'saveSettings'} && !$class->needsClient) {
 		# custom role handling
 		my $currentRoles = $serverPrefs->get('userDefinedRoles');
+		my $customRoleId = Slim::Schema::Contributor->getMinCustomRoleId();
+
 		my $customTags = {};
-		my $id = 21;
 		my $changed = 0;
 
 		foreach my $pref (keys %{$params}) {
@@ -67,23 +66,25 @@ sub handler {
 				if ( $tag ) {
 					$customTags->{$tag} = {
 						name => $params->{$key . '_name'} || $tag,
-						id => $id,
+						id => $currentRoles->{$tag} ? $currentRoles->{$tag}->{id} : $customRoleId++,
+						include => $params->{$key . '_include'},
 					};
-					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
+
+					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name}
+						|| $currentRoles->{$tag}->{include} ne $customTags->{$tag}->{include}
+					) {
 						Slim::Utils::Strings::storeExtraStrings([{
 							strings => { EN => $customTags->{$tag}->{name}},
 							token   => $tag,
-						}]) if !Slim::Utils::Strings::stringExists($tag);
+						}]);
 						$changed = 1;
 					}
-					$id++;
 				}
 			}
 		}
 
-		foreach my $old (keys %{$currentRoles}) {
-			$changed = 1 if !$customTags->{$old};
-		}
+		# set changed flag if we removed an item from the list
+		$changed ||= grep { !$customTags->{$_} } keys %$currentRoles;
 
 		if ( $changed ) {
 			$serverPrefs->set('userDefinedRoles', $customTags);

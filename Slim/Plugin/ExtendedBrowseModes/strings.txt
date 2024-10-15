@@ -340,10 +340,18 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE
 	NL	Rol tag
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
-	EN	Display Text
+	EN	Display text
 	DE	Text anzeigen
 	FR	Afficher le texte
 	ES	Mostrar texto
 	HU	Szöveg megjelenítése
 	NL	Tekst weergeven
+
+PLUGIN_EXTENDED_BROWSEMODES_ROLE_INCLUDE
+	EN	Include with artist lists
+	DE	In Künstlerlisten aufnehmen
+	FR	Inclure avec les listes d'artistes
+	ES	Incluir con listas de artistas
+	HU	Tartalmazza az előadók listáját
+	NL	Opnemen bij artiestenlijsten
 

@@ -10,10 +10,7 @@ package Slim::Web::Pages::Search;
 use strict;
 
 use Date::Parse qw(str2time);
-use File::Spec::Functions qw(:ALL);
-use Digest::MD5 qw(md5_hex);
-use Scalar::Util qw(blessed);
-use Storable;
+use Storable ();
 
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc;
@@ -508,7 +505,11 @@ sub _initActiveRoles {
 		$params->{'search'}->{'contributor_namesearch'}->{'active' . $_} = 1 if $params->{'search.contributor_namesearch.active' . $_};
 	}
 
-	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles('TRACKARTIST') } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
+	$params->{'search'}->{'contributor_namesearch'} = {
+		map { ('active' . $_) => 1 } @{
+			Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude(), 'TRACKARTIST')
+		}
+	} unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
 sub _getSavedSearches {

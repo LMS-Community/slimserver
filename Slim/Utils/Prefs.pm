@@ -184,6 +184,7 @@ sub init {
 		'composerInArtists'     => 0,
 		'conductorInArtists'    => 0,
 		'bandInArtists'         => 0,
+		'userDefinedRoles'      => {},
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
 		'useTPE2AsAlbumArtist'  => 1,
@@ -394,10 +395,18 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist userDefinedRoles)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist)
 	);
 
-	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'userDefinedRoles');
+	$prefs->setChange( sub {
+		my $newRoles = $_[1];
+		my $oldRoles = $_[3];
+
+		if ( %$oldRoles - %$newRoles || (scalar grep {!exists $newRoles->{$_}} keys %$oldRoles) ) {
+			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
+			Slim::Schema::Contributor->initializeRoles()
+		}
+	}, 'userDefinedRoles' );
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
@@ -537,7 +546,7 @@ sub init {
 		# Rebuild Jive cache if VA setting is changed
 		$prefs->setChange( sub {
 			Slim::Schema->wipeCaches();
-		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'useUnifiedArtistsList');
+		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'useUnifiedArtistsList', 'userDefinedRoles');
 
 		$prefs->setChange( sub {
 			Slim::Control::Queries->wipeCaches();
@@ -623,10 +632,7 @@ L<Slim::Utils::Prefs::OldPrefs>
 =cut
 
 
-# FIXME - support functions - should these be here?
-
-use FindBin qw($Bin);
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir splitdir);
 use Digest::MD5;
 
 sub makeSecuritySecret {
