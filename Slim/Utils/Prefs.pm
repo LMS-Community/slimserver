@@ -184,6 +184,7 @@ sub init {
 		'composerInArtists'     => 0,
 		'conductorInArtists'    => 0,
 		'bandInArtists'         => 0,
+		'userDefinedRoles'      => {},
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
 		'useTPE2AsAlbumArtist'  => 1,
@@ -631,10 +632,7 @@ L<Slim::Utils::Prefs::OldPrefs>
 =cut
 
 
-# FIXME - support functions - should these be here?
-
-use FindBin qw($Bin);
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir splitdir);
 use Digest::MD5;
 
 sub makeSecuritySecret {
