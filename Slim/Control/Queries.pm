@@ -3981,7 +3981,7 @@ sub statusQuery {
 
 		if ( $menuMode ) {
 			# Set required tags for menuMode
-			$tags = 'aAlKNcxJ';
+			$tags = 'aAlKNcxJy';
 		}
 		# DD - total playtime for the current playlist, nothing else returned
 		elsif ( $tags =~ /DD/ ) {
@@ -5105,7 +5105,7 @@ sub _addJivePlaylistControls {
 
 # **********************************************************************
 # *** This is a performance-critical method ***
-# Take cake to understand the performance implications of any changes.
+# Take care to understand the performance implications of any changes.
 
 sub _addJiveSong {
 	my $request   = shift; # request
@@ -5117,7 +5117,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'aAlKNcxJ',			# tags needed for our entities
+		'aAlKNcxJy',			# tags needed for our entities
 	);
 
 	my $isRemote = $songData->{remote};
@@ -5128,6 +5128,7 @@ sub _addJiveSong {
 	my $title  = $text;
 	my $album  = $songData->{album};
 	my $artist = $songData->{artist};
+	my $year   = $songData->{year};
 
 	# Bug 15779, include other role data
 	# XXX may want to include all contributor roles here?
@@ -5189,7 +5190,8 @@ sub _addJiveSong {
 		$request->addResultLoop($loop, $count, 'track', '');
 	}
 	if ( defined($album) ) {
-		$request->addResultLoop($loop, $count, 'album', $album);
+		my $parenYear = defined($year) && $year > 0 ? " ($year)" : '';
+		$request->addResultLoop($loop, $count, 'album', $album . $parenYear);
 	} else {
 		$request->addResultLoop($loop, $count, 'album', '');
 	}
