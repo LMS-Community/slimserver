@@ -14,4 +14,4 @@ never_export_modules_filename   = ""
 padding                         = false
 preserve_duplicates             = false
 preserve_unused                 = false
-tidy_whitespace                 = true
+tidy_whitespace                 = false
