@@ -238,7 +238,7 @@ sub infoContributors {
 			allAvailableActionsDefined => 1,
 			items => {
 				command     => ['browselibrary', 'items'],
-				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id },
+				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, role_id => $role},
 			},
 			play => {
 				command     => ['playlistcontrol'],
@@ -272,13 +272,6 @@ sub infoContributors {
 	if ($album->isa('Slim::Schema::Album')) {
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 
-		# Loop through each pref to see if the user wants to link to that contributor role.
-		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
-		$linkRoles{'ARTIST'} = 1;
-		$linkRoles{'TRACKARTIST'} = 1;
-		$linkRoles{'ALBUMARTIST'} = 1;
-
-
 		# Loop through the contributor types and append
 		for my $role (@roles) {
 			for my $contributor ( $album->artistsForRoles($role) ) {
@@ -287,16 +280,7 @@ sub infoContributors {
 
 				next if $filter->{work_id} && !$album->artistPerformsOnWork($filter->{work_id}, $filter->{performance}, $contributor->id);
 
-				if ($linkRoles{$role}) {
-					$_addContributorItem->($items, $contributor, $role);
-				} else {
-					my $item = {
-						type    => 'text',
-						name    => $contributor->name,
-						label   => uc $role,
-					};
-					push @{$items}, $item;
-				}
+				$_addContributorItem->($items, $contributor, $role);
 			}
 		}
 	}
