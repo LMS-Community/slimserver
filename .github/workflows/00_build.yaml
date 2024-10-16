@@ -46,7 +46,7 @@ jobs:
 
   mac:
     name: Build LMS for Mac (MenuBar Item)
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       # we must check out here, as  otherwise the build action is not available
       - name: Check out LMS code
