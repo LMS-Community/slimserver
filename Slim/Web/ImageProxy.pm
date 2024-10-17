@@ -72,6 +72,8 @@ original artwork is of considerable size, where the bandwidth to download the im
 =cut
 
 use strict;
+use File::Slurp qw(read_file);
+use File::stat qw(stat);
 use HTTP::Status qw(
 	RC_MOVED_PERMANENTLY
 );
@@ -308,7 +310,7 @@ sub _resizeFromFile {
 		my $cachekey = $item->{cachekey};
 
 		# no need to resize data if we've got it from an external image proxy
-		if ( ($spec =~ /^\.(?:png|jpe?g)/i || $item->{pre_shrunk}) && $http && $http->headers->content_type =~ /image\/(png|jpe?g)/ ) {
+		if ( ($spec =~ /^\.(?:png|jpe?g|svg)/i || $item->{pre_shrunk}) && $http && $http->headers->content_type =~ /image\/(png|jpe?g|svg)/ ) {
 			main::DEBUGLOG && $log->debug("No resizing required - already resized remotely, or original size requested");
 
 			my $ct = $1;
@@ -324,6 +326,22 @@ sub _resizeFromFile {
 			_setHeaders($args->[1], $ct);
 
 			$callback && $callback->( $client, $params, $fullpath, @$args );
+		}
+		elsif ( $spec =~ /^\.svg/i and ($http ? $http->headers->content_type =~ /image\/svg\+xml/ : 1) ) {
+			main::DEBUGLOG && $log->debug("No resizing required - scalable vector graphics");
+
+			my $mtime = stat($fullpath)->mtime;
+			my $data = read_file($fullpath, {'binmode' => ':raw'});
+			$cache->set( $cachekey, {
+				content_type  => 'svg',
+				mtime         => $mtime,
+				original_path => $fullpath,
+				data_ref      => \$data,
+			} );
+
+			_setHeaders($args->[1], 'image/svg+xml');
+
+			$callback && $callback->( $client, $params, \$data, @$args );
 		}
 		else {
 			Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
@@ -364,6 +382,7 @@ sub _setHeaders {
 
 	my $ct = $format =~ /image/ ? $format : "image/$format";
 	$ct =~ s/jpg/jpeg/;
+	$ct .= '+xml' if $ct eq 'image/svg';
 
 	$response->content_type($ct);
 	$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
