@@ -23,6 +23,8 @@ on:
 jobs:
   macLegacy:
     name: Build LMS for Mac (Legacy)
+    # disable - no longer provided starting LMS9
+    if: false
     runs-on: self-hosted
     timeout-minutes: 20
     env:
