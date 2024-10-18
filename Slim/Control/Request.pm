@@ -1529,7 +1529,8 @@ sub addParamPos {
 
 # get a parameter by name
 sub getParam {
-	return $_[0]->{'_params'}->{ $_[1] };
+	my $r = $_[0]->{'_params'}->{ $_[1] };
+	return ($r ne '') ? $r : undef;
 }
 
 # delete a parameter by name
