@@ -184,6 +184,7 @@ sub init {
 		'composerInArtists'     => 0,
 		'conductorInArtists'    => 0,
 		'bandInArtists'         => 0,
+		'trackartistInArtists'  => 0,
 		'userDefinedRoles'      => {},
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
@@ -546,7 +547,7 @@ sub init {
 		# Rebuild Jive cache if VA setting is changed
 		$prefs->setChange( sub {
 			Slim::Schema->wipeCaches();
-		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'useUnifiedArtistsList', 'userDefinedRoles');
+		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'trackartistInArtists', 'useUnifiedArtistsList', 'userDefinedRoles');
 
 		$prefs->setChange( sub {
 			Slim::Control::Queries->wipeCaches();
