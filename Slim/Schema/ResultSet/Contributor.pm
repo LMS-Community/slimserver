@@ -23,7 +23,7 @@ sub searchNames {
 	};
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
-	if (my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST')) {
+	if (my $roles = Slim::Schema->artistOnlyRoles()) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';
@@ -46,7 +46,7 @@ sub countTotal {
 	my $cond  = {};
 	my @joins = ();
 	my $roles = $prefs->get('useUnifiedArtistsList')
-		? Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude(), 'TRACKARTIST')
+		? Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude())
 		: [ Slim::Schema::Contributor->contributorRoleIds ];
 
 	# The user may not want to include all the composers / conductors

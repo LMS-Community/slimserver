@@ -299,7 +299,7 @@ sub artists {
 	my @artists = $self->artistsForRoles('ALBUMARTIST');
 
 	# If the user wants to use BAND as album artist, pull that.
-	if (scalar @artists == 0 && $prefs->get('bandInArtists')) {
+	if (scalar @artists == 0 && $prefs->get('bandInArtists')) { ##?????
 
 		@artists = $self->artistsForRoles('BAND');
 	}

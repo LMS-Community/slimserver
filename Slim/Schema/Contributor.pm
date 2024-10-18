@@ -90,7 +90,7 @@ sub defaultContributorRoles {
 }
 
 sub unifiedArtistsListRoles {
-	my @roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
+	my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 
 	# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
 	push @roles, grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();

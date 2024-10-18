@@ -41,7 +41,7 @@ if ( !main::SCANNER ) {
 	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan','favorites'], ['changed','done','changed']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
-		composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
+		composerInArtists conductorInArtists bandInArtists trackartistInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
 		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres onlyAlbumYears userDefinedRoles) );
 }
 
