@@ -298,8 +298,9 @@ sub artists {
 	# First try to fetch an explict album artist
 	my @artists = $self->artistsForRoles('ALBUMARTIST');
 
+	# TODO - is this still needed? - see https://github.com/LMS-Community/slimserver/pull/1186/files#r1806833273
 	# If the user wants to use BAND as album artist, pull that.
-	if (scalar @artists == 0 && $prefs->get('bandInArtists')) { ##?????
+	if (scalar @artists == 0 && $prefs->get('bandInArtists')) {
 
 		@artists = $self->artistsForRoles('BAND');
 	}
