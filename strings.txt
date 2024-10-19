@@ -8791,7 +8791,7 @@ SETUP_COMPOSERINARTISTS
 	EN	Track Artist, Composer, Band and Orchestra in Artists
 	ES	Artista de pista, Compositor, banda y orquesta en artistas
 	FI	Raidan artisti, Säveltäjä, yhtye ja orkesteri artisteissa
-	FR	Artiste de la piste, Compositeur, groupe et orchestre dans les artistes
+	FR	Artiste du morceau, compositeur, groupe/orchestre dans les artistes
 	HE	מלחינים, להקות ותזמורות בין המבצעים,  מבצע הרצועה
 	HU	Zeneszám előadója, Zeneszerző, együttes és zenekar a előadóknál
 	IT	Artista brano, Compositore, gruppo e orchestra in Artisti
@@ -8811,7 +8811,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	EN	Song information about track artists, composers, bands and orchestras can be included in the artists list for browsing and search.
 	ES	La información de canción sobre artistas de pista, compositores, bandas y orquestas se puede incluir en la lista de artistas para examinar y buscar.
 	FI	Artistiluetteloon voidaan lisätä kappaletietoja säveltäjistä, yhtyeistä ja orkestereista selaamista ja hakuja varten.
-	FR	Les informations relatives au artistes de la piste, compositeur, au groupe et à l'orchestre contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
+	FR	Les informations relatives aux artistes des morceaux, compositeurs, groupes/orchestres peuvent être ajoutées à la liste des artistes pour le parcours de bibliothèque et les recherches.
 	HE	ניתן לכלול פרטי שירים אודות מלחינים, להקות ותזמורות ברשימת המבצעים לצורך עיון וחיפוש.
 	HU	A zeneszerzőkről, együttesekről és zenekarokról szóló dalinformációk böngészéshez és kereséshez felvehetők az előadók listájába.
 	IT	Per ogni brano, nell'elenco degli artisti è possibile includere informazioni su compositore, gruppo e orchestra a fini di consultazione e ricerca.

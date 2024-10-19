@@ -350,7 +350,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT
 PLUGIN_EXTENDED_BROWSEMODES_ROLE_INCLUDE
 	EN	Include with artist lists
 	DE	In Künstlerlisten aufnehmen
-	FR	Inclure avec les listes d'artistes
+	FR	Inclure dans les listes d'artistes
 	ES	Incluir con listas de artistas
 	HU	Tartalmazza az előadók listáját
 	NL	Opnemen bij artiestenlijsten
