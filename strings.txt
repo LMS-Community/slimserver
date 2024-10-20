@@ -9091,7 +9091,7 @@ SETUP_IGNOREDARTICLES_DESC
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.  Changing this setting will start a rescan of your music library.
 	ES	Una lista de artículos ("the", "les", "los", etc.) que se deben omitir al principio de los nombres de artista, canción o álbum al ordenar. Separe varios artículos con espacio o deje esta lista en blanco para desactivar este comportamiento. Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Luettelo artistin, kappaleen tai levyn nimen edessä olevista artikkeleista ("the", "les", "los", jne.), jotka ohitetaan lajitellessa. Erota artikkelit välilyönnillä tai tai jätä luettelo tyhjäksi, jos haluat poistaa toiminnan käytöstä.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Liste d'articles (le, les, los, etc.) à ignorer au début des noms d'artistes, de chansons ou d'albums lors du tri alphabétique. Vous devez séparer les articles par des espaces. Vous pouvez également laisser la zone de saisir vide pour désactiver ce comportement. Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	רשימת מיליות (ה היידוע, אותיות בכל"מ, "the"‏, "les"‏, "los" וכו') שיש להתעלם מהן בתחילת השמות של מבצעים, שירים או אלבומים במהלך מיון. הפרד בין מיליות באמצעות רווחים או השאר את הרשימה ריקה כדי להשבית התנהגות זו. שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	HU	Azon szövegek listája ("the", "les", "los" stb.), amelyeket figyelmen kívül kell hagyni az előadók, dalok vagy albumok nevének elején a rendezés során. A viselkedés letiltásához válasszon el több szót szóközzel, vagy hagyja üresen ezt a listát.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Elenco di articoli ("the", "gli", "i", "le") anteposti ai nomi di artisti, brani o album, da ignorare nell'ordinamento. Inserire i diversi articoli separati da spazi o lasciare vuoto l'elenco se si desidera disattivare questa funzionalità. Se si modifica questa impostazione, viene ripetuta l'analisi della libreria musicale.
@@ -9125,7 +9125,7 @@ SETUP_SPLITLIST_DESC
 	EN	Lyrion Music Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Lyrion Music Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Lyrion Music Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Lyrion Music Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Le Lyrion Music Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des tags de vos fichiers musicaux. S'il détecte l'un des caractères ci-dessous dans les tags, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le tag "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Le Lyrion Music Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des tags de vos fichiers musicaux. S'il détecte l'un des caractères ci-dessous dans les tags, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le tag "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	Lyrion Music Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Lyrion Music Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	HU	A Lyrion Music Server több előadót, albumcímet és műfajt is kinyerhet a zenefájlokon belüli címkékből.  Ha megtalálja az alábbi szavakat vagy karaktereket a címkékben, akkor minden egyes elemhez külön listát hoz létre.  Például, ha pontosvesszőt tesz az alábbi listába, akkor a „J. S. Bach;Michael Tilson Thomas” előadói címkével ellátott dal megjelenik mind a „J. S. Bach”, mind a „Michael Tilson Thomas” előadói területén.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Lyrion Music Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
@@ -10440,7 +10440,7 @@ SETUP_GROUPDISCS_DESC
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Voit määrittää, käsitelläänkö usean levyn sarjoja yhtenä levynä (yhdellä nimellä) vai useina levyinä, joilla kullakin on oma nimensä, esimerkiksi "Levyn nimi (levy 2/3)".  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom distinct pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom distinct pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre bibliothèque musicale sera à nouveau analysée.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	HU	Megadhatja, hogy több lemezkészletet egyetlen albumként (egyetlen névvel) vagy több albumként kezeljen-e, mindegyik lemezenként egyedi névvel, például „Album címe (2/3 lemez)”.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
@@ -14664,7 +14664,7 @@ BROWSE_MUSIC_FOLDER
 	EN	Music Folder
 	ES	Carpeta de música
 	FI	Musiikkikansio
-	FR	Dossier de musique
+	FR	Dossiers de musique
 	HE	תיקיית מוסיקה
 	HU	Zenék mappája
 	IT	Cartella Musica
@@ -14700,7 +14700,7 @@ BROWSE_MUSIC_FOLDER_WHILE_SCANNING
 	EN	Music Folder is not available while scanning.
 	ES	La carpeta Música no está disponible al examinar.
 	FI	Musiikkikansio ei ole käytettävissä tarkistuksen aikana.
-	FR	Le dossier de musique n'est pas disponible pour l'analyse.
+	FR	Les dossiers de musique ne sont pas disponibles pendant l'analyse.
 	HU	A Zene mappa nem érhető el beolvasás közben.
 	IT	La cartella Musica non è disponibile durante l’analisi.
 	NL	Muziekmap is niet beschikbaar tijdens het scannen.
@@ -21702,7 +21702,7 @@ LOADING_BROWSE_MUSIC_FOLDER
 	EN	Loading Music Folder...
 	ES	Cargando carpeta de música...
 	FI	Ladataan musiikkikansiota...
-	FR	Chargement du dossier de musique...
+	FR	Chargement des dossiers de musique...
 	HE	טוען את תיקיית המוסיקה...
 	HU	Zene mappa betöltése...
 	IT	Caricamento cartella Musica...
