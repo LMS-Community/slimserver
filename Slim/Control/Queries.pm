@@ -6055,7 +6055,7 @@ sub _getTagDataForTracks {
 			push @roles, 'ARTIST' if $args->{roleId} eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
-			@roles = Slim::Schema::Contributor->unifiedArtistsListRoles();
+			@roles = Slim::Schema::Contributor->unifiedArtistsListRoles('TRACKARTIST');
 		}
 		else {
 			@roles = Slim::Schema::Contributor->contributorRoles();
