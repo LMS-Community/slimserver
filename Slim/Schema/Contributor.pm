@@ -103,7 +103,7 @@ sub activeContributorRoles {
 	my $includeTrackArtist = shift;
 
 	my @roles = ( 'ARTIST', 'ALBUMARTIST' );
-	push @roles, 'TRACKARTIST' if $includeTrackArtist;
+	push @roles, 'TRACKARTIST' if $includeTrackArtist && !$prefs->get('trackartistInArtists');
 
 	# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
 	push @roles, grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();
