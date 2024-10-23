@@ -366,7 +366,7 @@ sub albumsQuery {
 					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 				}
 				elsif ($prefs->get('useUnifiedArtistsList')) {
-					@roles = Slim::Schema::Contributor->unifiedArtistsListRoles();
+					@roles = Slim::Schema::Contributor->activeContributorRoles(1);
 				}
 				else {
 					@roles = Slim::Schema::Contributor->contributorRoles();
@@ -1037,13 +1037,15 @@ sub artistsQuery {
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
 			# include user-defined roles that user wants in artist list
-			$roles = Slim::Schema->artistOnlyRoles( Slim::Schema::Contributor->getUserDefinedRolesToInclude() );
+			$roles = [ map {
+				Slim::Schema::Contributor->typeToRole($_);
+			} Slim::Schema::Contributor->activeContributorRoles(0) ];
 		}
 		else {
 			# include user-defined roles that user wants in artist list
 			$roles = [ map {
 				Slim::Schema::Contributor->typeToRole($_);
-			} Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->getUserDefinedRolesToInclude() ];
+			} Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->userDefinedRoles(1) ];
 		}
 
 		if ( defined $genreID ) {
@@ -6055,7 +6057,7 @@ sub _getTagDataForTracks {
 			push @roles, 'ARTIST' if $args->{roleId} eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
-			@roles = Slim::Schema::Contributor->unifiedArtistsListRoles('TRACKARTIST');
+			@roles = Slim::Schema::Contributor->activeContributorRoles(1);
 		}
 		else {
 			@roles = Slim::Schema::Contributor->contributorRoles();

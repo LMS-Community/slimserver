@@ -89,16 +89,25 @@ sub defaultContributorRoles {
 	return grep { __PACKAGE__->typeToRole($_) < MIN_CUSTOM_ROLE_ID } contributorRoles();
 }
 
-sub unifiedArtistsListRoles {
+sub userDefinedRoles {
 	my $self  = shift;
-	my @add   = @_;
+	my $activeOnly = shift;
+
+	# de-reference the pref so we don't accidentally change it below
+	my %udr = %{$prefs->get('userDefinedRoles')};
+	return grep { $activeOnly ? $udr{$_}->{include} : $udr{$_} } contributorRoles();
+}
+
+sub activeContributorRoles {
+	my $self  = shift;
+	my $includeTrackArtist = shift;
 
 	my @roles = ( 'ARTIST', 'ALBUMARTIST' );
-	push @roles, @add if scalar @add;
+	push @roles, 'TRACKARTIST' if $includeTrackArtist;
 
 	# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
 	push @roles, grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();
-	push @roles, getUserDefinedRolesToInclude();
+	push @roles, __PACKAGE__->userDefinedRoles(1);
 
 	return grep { $_ } @roles;
 }
@@ -121,12 +130,6 @@ sub typeToRole {
 
 sub roleToType {
 	return $roleToContributorMap{$_[1]};
-}
-
-sub getUserDefinedRolesToInclude {
-	# de-reference the pref so we don't accidentally change it below
-	my %udr = %{$prefs->get('userDefinedRoles')};
-	return grep { $udr{$_}->{include} } contributorRoles();
 }
 
 sub getMinCustomRoleId {

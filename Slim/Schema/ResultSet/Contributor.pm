@@ -46,7 +46,9 @@ sub countTotal {
 	my $cond  = {};
 	my @joins = ();
 	my $roles = $prefs->get('useUnifiedArtistsList')
-		? Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude())
+		? [ map {
+			Slim::Schema::Contributor->typeToRole($_);
+		} Slim::Schema::Contributor->activeContributorRoles(0) ]
 		: [ Slim::Schema::Contributor->contributorRoleIds ];
 
 	# The user may not want to include all the composers / conductors
