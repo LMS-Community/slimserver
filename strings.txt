@@ -8785,33 +8785,33 @@ SETUP_NOROLEFILTER_DESC
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
 
 SETUP_COMPOSERINARTISTS
-	CS	Interpret skladby, Skladatel, Skupina a Orchestr v Interpretech
-	DA	Nummerets kunstner, Komponist, band og orkester i Kunstnere
-	DE	Titelinterpret, Komponist, Gruppe und Orchester in Interpreten
-	EN	Track Artist, Composer, Band and Orchestra in Artists
-	ES	Artista de pista, Compositor, banda y orquesta en artistas
-	FI	Raidan artisti, Säveltäjä, yhtye ja orkesteri artisteissa
-	FR	Artiste du morceau, compositeur, groupe/orchestre dans les artistes
-	HE	מלחינים, להקות ותזמורות בין המבצעים,  מבצע הרצועה
-	HU	Zeneszám előadója, Zeneszerző, együttes és zenekar a előadóknál
-	IT	Artista brano, Compositore, gruppo e orchestra in Artisti
+	CS	Skladatel, Skupina a Orchestr v Interpretech
+	DA	Komponist, band og orkester i Kunstnere
+	DE	Komponist, Gruppe und Orchester in Interpreten
+	EN	Composer, Band and Orchestra in Artists
+	ES	Compositor, banda y orquesta en artistas
+	FI	Säveltäjä, yhtye ja orkesteri artisteissa
+	FR	Compositeur, groupe et orchestre dans les artistes
+	HE	מלחינים, להקות ותזמורות בין המבצעים
+	HU	Zeneszerző, együttes és zenekar a előadóknál
+	IT	Compositore, gruppo e orchestra in Artisti
 	JA	「アーチスト」に、作曲家、バンド、オーケストラ
-	NL	Artiest van nummer, Componist, dirigent en band in lijst met artiesten
-	NO	Sporartist, Komponist, band og orkester i Artister
-	PL	Wykonawca utworu, Kompozytor, zespół i orkiestra jako wykonawcy
-	PT	Artista da pista, Compositor, Banda e Orquestra em Artistas
-	RU	Исполнитель дорожки, Поле "Исполнители": композитор, группа и оркестр
-	SV	Spårets artist, Kompositör, band och orkester i Artister
-	ZH_CN	音轨艺人有关艺人的作曲家及乐队信息
+	NL	Componist, dirigent en band in lijst met artiesten
+	NO	Komponist, band og orkester i Artister
+	PL	Kompozytor, zespół i orkiestra jako wykonawcy
+	PT	Compositor, Banda e Orquestra em Artistas
+	RU	Поле "Исполнители": композитор, группа и оркестр
+	SV	Kompositör, band och orkester i Artister
+	ZH_CN	有关艺人的作曲家及乐队信息
 
 SETUP_COMPOSERINARTISTS_DESC
 	CS	Informace o skladatelích, skupinách a orchestrech mohou být přidány do seznamu interpretů pro procházení a vyhledávání.
 	DA	Der kan vises oplysninger om hvem der har komponeret og hvem der spiller de forskellige numre, i listen med kunstnere når du gennemser eller søger i din musiksamling.
-	DE	Titelinformationen über Nummerets kunstner, Komponist, Gruppe und Orchester können in der Interpretenliste und beim Suchen aufgenommen werden.
-	EN	Song information about track artists, composers, bands and orchestras can be included in the artists list for browsing and search.
-	ES	La información de canción sobre artistas de pista, compositores, bandas y orquestas se puede incluir en la lista de artistas para examinar y buscar.
+	DE	Titelinformationen über Komponist, Gruppe und Orchester können in der Interpretenliste und beim Suchen aufgenommen werden.
+	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
+	ES	La información de canción sobre compositores, bandas y orquestas se puede incluir en la lista de artistas para examinar y buscar.
 	FI	Artistiluetteloon voidaan lisätä kappaletietoja säveltäjistä, yhtyeistä ja orkestereista selaamista ja hakuja varten.
-	FR	Les informations relatives aux artistes des morceaux, compositeurs, groupes/orchestres peuvent être ajoutées à la liste des artistes pour le parcours de bibliothèque et les recherches.
+	FR	Les informations relatives au compositeur, au groupe et à l'orchestre contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
 	HE	ניתן לכלול פרטי שירים אודות מלחינים, להקות ותזמורות ברשימת המבצעים לצורך עיון וחיפוש.
 	HU	A zeneszerzőkről, együttesekről és zenekarokról szóló dalinformációk böngészéshez és kereséshez felvehetők az előadók listájába.
 	IT	Per ogni brano, nell'elenco degli artisti è possibile includere informazioni su compositore, gruppo e orchestra a fini di consultazione e ricerca.

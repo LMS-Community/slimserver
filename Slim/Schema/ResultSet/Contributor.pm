@@ -28,7 +28,7 @@ sub searchNames {
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';
 	}
-	
+
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	$attrs->{'order_by'} ||= "me.namesort $collate";
@@ -45,9 +45,11 @@ sub countTotal {
 
 	my $cond  = {};
 	my @joins = ();
-	my $roles = $prefs->get('useUnifiedArtistsList')
-		? Slim::Schema->artistOnlyRoles(Slim::Schema::Contributor::getUserDefinedRolesToInclude())
-		: [ Slim::Schema::Contributor->contributorRoleIds ];
+	my $roles = [
+		$prefs->get('useUnifiedArtistsList')
+			? sort map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->unifiedArtistsListRoles()
+			: Slim::Schema::Contributor->contributorRoleIds
+	];
 
 	# The user may not want to include all the composers / conductors
 	if ($roles) {
@@ -64,7 +66,7 @@ sub countTotal {
 
 		push @joins, 'contributorAlbums';
 	}
-	
+
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	return $self->search($cond, {

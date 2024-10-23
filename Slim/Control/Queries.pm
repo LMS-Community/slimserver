@@ -778,15 +778,11 @@ sub albumsQuery {
 				},
 				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles));
 			} else {
+				# TODO - should this be using Slim::Schema->artistOnlyRoles?
 				my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 
 				if ($prefs->get('useUnifiedArtistsList')) {
-					# Loop through each pref to see if the user wants to show that contributor role.
-					foreach (Slim::Schema::Contributor->contributorRoles) {
-						if ($prefs->get(lc($_) . 'InArtists')) {
-							push @roles, $_;
-						}
-					}
+					@roles = Slim::Schema::Contributor->unifiedArtistsListRoles();
 				}
 
 				$contributorSql = sprintf( qq{
@@ -1033,18 +1029,17 @@ sub artistsQuery {
 		my $roles;
 		if ($roleID) {
 			$roleID .= ',ARTIST' if $aa_merge;
-			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ];
+			$roles = [ split(/,/, $roleID ) ];
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
-			# include user-defined roles that user wants in artist list
-			$roles = Slim::Schema->artistOnlyRoles( Slim::Schema::Contributor->getUserDefinedRolesToInclude() );
+			$roles = [ Slim::Schema::Contributor->unifiedArtistsListRoles() ];
 		}
 		else {
 			# include user-defined roles that user wants in artist list
-			$roles = [ map {
-				Slim::Schema::Contributor->typeToRole($_);
-			} Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->getUserDefinedRolesToInclude() ];
+			$roles = [ Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->getUserDefinedRolesToInclude() ];
 		}
+
+		$roles = [ sort map { Slim::Schema::Contributor->typeToRole($_) } @$roles ];
 
 		if ( defined $genreID ) {
 			my @genreIDs = split(/,/, $genreID);

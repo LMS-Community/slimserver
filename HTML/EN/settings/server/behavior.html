@@ -12,9 +12,6 @@
 
 	[% IF prefs.pref_useUnifiedArtistsList; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_COMPOSERINARTISTS" desc="SETUP_COMPOSERINARTISTS_DESC" %]
-			<input type="checkbox" [% IF prefs.pref_trackartistInArtists %]checked="1" [% END %] class="stdedit" name="pref_trackartistInArtists" id="trackartistInArtists" value="1" />
-			<label for="trackartistInArtists" class="stdlabel">[% "TRACKARTIST" | string %]</label><br>
-
 			<input type="checkbox" [% IF prefs.pref_composerInArtists %]checked="1" [% END %] class="stdedit" name="pref_composerInArtists" id="composerInArtists" value="1" />
 			<label for="composerInArtists" class="stdlabel">[% "COMPOSER" | string %]</label><br>
 
@@ -25,7 +22,6 @@
 			<label for="bandInArtists" class="stdlabel">[% "BAND" | string %]</label>
 		[% END %]
 	[% END; ELSE %]
-		<input type="hidden" name="pref_trackartistInArtists" value="[% prefs.pref_trackartistInArtists | html %]" />
 		<input type="hidden" name="pref_composerInArtists" value="[% prefs.pref_composerInArtists | html %]" />
 		<input type="hidden" name="pref_conductorInArtists" value="[% prefs.pref_conductorInArtists | html %]" />
 		<input type="hidden" name="pref_bandInArtists" value="[% prefs.pref_bandInArtists | html %]" />
