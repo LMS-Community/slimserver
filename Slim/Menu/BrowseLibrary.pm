@@ -1101,7 +1101,7 @@ sub _artists {
 			} @roles  if @roles;
 
 			if ( $mode && $mode eq 'artists' ) {
-				push @roles, Slim::Schema::Contributor->unifiedArtistsListRoles();
+				push @roles, Slim::Schema::Contributor->activeContributorRoles(1);
 				push @ptSearchTags, 'role_id:' . join(',', @roles);
 			}
 		}
