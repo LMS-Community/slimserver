@@ -74,6 +74,7 @@ sub _releases {
 
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
+		my ($defaultRoles, $userDefinedRoles) = Slim::Schema::Contributor->splitDefaultAndCustomRoles($_->{role_ids});
 
 		my $genreMatch = undef;
 		if ( $checkComposerGenres ) {
@@ -101,29 +102,32 @@ sub _releases {
 			$_->{release_type} = 'COMPILATION';
 			$addToMainReleases->();
 			# only list outside the compilations if Composer/Conductor
-			next unless $_->{role_ids} =~ /COMPOSER|CONDUCTOR/ && $_->{role_ids} !~ /ARTIST|BAND/;
+			next unless ( $defaultRoles =~ /COMPOSER|CONDUCTOR/ || $userDefinedRoles ) && $defaultRoles !~ /ARTIST|BAND/;
 		}
 		# Release Types if album artist
 		elsif ( $_->{role_ids} =~ /ALBUMARTIST/ ) {
-			$addToMainReleases->();
-			next;
+			$addToMainReleases->() if $defaultRoles;
+			next unless $userDefinedRoles;
 		}
 		# Consider this artist the main (album) artist if there's no other, defined album artist
 		elsif ( $_->{role_ids} =~ /ARTIST/ ) {
-			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
-				album => $_->{id},
-				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-				contributor => { '!=' => $_->{artist_id} }
-			});
+			if ( $defaultRoles ) {
+				my $albumArtist = Slim::Schema->first('ContributorAlbum', {
+					album => $_->{id},
+					role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+					contributor => { '!=' => $_->{artist_id} }
+				});
 
-			if (!$albumArtist) {
-				$addToMainReleases->();
-				next;
+				if (!$albumArtist) {
+					$addToMainReleases->();
+					next unless $userDefinedRoles;
+
+				}
 			}
 		}
 
 		# Roles on other releases
-		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $_->{role_ids} || '') ) {
+		foreach my $role ( grep { $_ ne 'ALBUMARTIST' && $_ ne 'ARTIST' } split(',', $_->{role_ids} || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
 			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 

@@ -89,6 +89,25 @@ sub defaultContributorRoles {
 	return grep { __PACKAGE__->typeToRole($_) < MIN_CUSTOM_ROLE_ID } contributorRoles();
 }
 
+sub splitDefaultAndCustomRoles {
+	my $self = shift;
+	my $roles = shift;
+
+	my @allDefaultRoles = defaultContributorRoles();
+	my @roles = split(',', $roles || '');
+	my @defaultRoles;
+	my @userDefinedRoles;
+
+	foreach my $role (@roles) {
+		if ( grep {$_ eq $role} @allDefaultRoles ) {
+			push @defaultRoles, $role;
+		} else {
+			push @userDefinedRoles, $role;
+		}
+	}
+	return (join(',', @defaultRoles), join(',', @userDefinedRoles));
+}
+
 sub userDefinedRoles {
 	my $self  = shift;
 	my $activeOnly = shift;
