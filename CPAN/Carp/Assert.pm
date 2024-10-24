@@ -1,14 +1,14 @@
 package Carp::Assert;
 
-require 5.004;
-
+require 5.006;
 use strict qw(subs vars);
+use warnings;
 use Exporter;
 
 use vars qw(@ISA $VERSION %EXPORT_TAGS);
 
 BEGIN {
-    $VERSION = '0.18';
+    $VERSION = '0.22';
 
     @ISA = qw(Exporter);
 
@@ -111,19 +111,30 @@ Carp::Assert - executable comments
 
 =head1 DESCRIPTION
 
-=for testing
-use Carp::Assert;
+=begin testing
 
+BEGIN {
+    local %ENV = %ENV;
+    delete @ENV{qw(PERL_NDEBUG NDEBUG)};
+    require Carp::Assert;
+    Carp::Assert->import;
+}
+
+local %ENV = %ENV;
+delete @ENV{qw(PERL_NDEBUG NDEBUG)};
+
+=end testing
 
     "We are ready for any unforseen event that may or may not 
     occur."
         - Dan Quayle
 
 Carp::Assert is intended for a purpose like the ANSI C library
-assert.h.  If you're already familiar with assert.h, then you can
+L<assert.h|http://en.wikipedia.org/wiki/Assert.h>.
+If you're already familiar with assert.h, then you can
 probably skip this and go straight to the FUNCTIONS section.
 
-Assertions are the explict expressions of your assumptions about the
+Assertions are the explicit expressions of your assumptions about the
 reality your program is expected to deal with, and a declaration of
 those which it is not.  They are used to prevent your program from
 blissfully processing garbage inputs (garbage in, garbage out becomes
@@ -381,18 +392,6 @@ sub shouldnt ($$) {
     return undef;
 }
 
-# Sorry, I couldn't resist.
-sub shouldn't ($$) {     # emacs cperl-mode madness #' sub {
-    my $env_ndebug = exists $ENV{PERL_NDEBUG} ? $ENV{PERL_NDEBUG}
-                                              : $ENV{'NDEBUG'};
-    if( $env_ndebug ) {
-        return undef;
-    }
-    else {
-        shouldnt($_[0], $_[1]);
-    }
-}
-
 =back
 
 =head1 Debugging vs Production
@@ -468,7 +467,7 @@ subroutine (even if that subroutine does nothing).
 Forgetting the C<if DEBUG> on an C<affirm()> is not so bad.  While you
 still have the overhead of calling a subroutine (one that does
 nothing) it will B<not> evaluate its code block and that can save
-alot.
+a lot.
 
 Try to remember the B<if DEBUG>.
 
@@ -494,26 +493,56 @@ working on at the same time.
 
 =head1 BUGS, CAVETS and other MUSINGS
 
-Someday, Perl will have an inline pragma, and the C<if DEBUG>
-bletcherousness will go away.
+=head2 Conflicts with C<POSIX.pm>
+
+The C<POSIX> module exports an C<assert> routine which will conflict with C<Carp::Assert> if both are used in the same namespace.  If you are using both together, prevent C<POSIX> from exporting like so:
+
+    use POSIX ();
+    use Carp::Assert;
+
+Since C<POSIX> exports way too much, you should be using it like that anyway.
+
+=head2 C<affirm> and C<$^S>
 
 affirm() mucks with the expression's caller and it is run in an eval
 so anything that checks $^S will be wrong.
 
-Yes, there is a C<shouldn't> routine.  It mostly works, but you B<must>
-put the C<if DEBUG> after it.
+=head2 missing C<if DEBUG>
 
 It would be nice if we could warn about missing C<if DEBUG>.
 
 
+=head1 SEE ALSO
+
+L<assert.h|http://en.wikipedia.org/wiki/Assert.h> - the wikipedia
+page about C<assert.h>.
+
+L<Carp::Assert::More> provides a set of convenience functions
+that are wrappers around C<Carp::Assert>.
+
+L<Sub::Assert> provides support for subroutine pre- and post-conditions.
+The documentation says it's slow.
+
+L<PerlX::Assert> provides compile-time assertions, which are usually
+optimised away at compile time. Currently part of the L<Moops>
+distribution, but may get its own distribution sometime in 2014.
+
+L<Devel::Assert> also provides an C<assert> function, for Perl >= 5.8.1.
+
+L<assertions> provides an assertion mechanism for Perl >= 5.9.0.
+
+=head1 REPOSITORY
+
+L<https://github.com/schwern/Carp-Assert>
+
 =head1 COPYRIGHT
 
-Copyright 2002 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
+Copyright 2001-2007 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
 
 This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
 
-See F<http://www.perl.com/perl/misc/Artistic.html>
+See F<http://dev.perl.org/licenses/>
 
 
 =head1 AUTHOR
