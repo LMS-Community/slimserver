@@ -93,14 +93,19 @@ sub splitDefaultAndCustomRoles {
 	my $self = shift;
 	my $roles = shift;
 
-	return {
-		defaultRoles => (join(',', grep {
-			my $x = $_; grep {$x eq $_} defaultContributorRoles()
-			} split(',', $roles || ''))),
-		userDefinedRoles => (join(',', grep {
-			my $x = $_; !grep {$x eq $_} defaultContributorRoles()
-			} split(',', $roles || ''))),
-	};
+	my @allDefaultRoles = defaultContributorRoles();
+	my @roles = split(',', $roles || '');
+	my @defaultRoles;
+	my @userDefinedRoles;
+
+	foreach my $role (@roles) {
+		if ( grep {$_ eq $role} @allDefaultRoles ) {
+			push @defaultRoles, $role;
+		} else {
+			push @userDefinedRoles, $role;
+		}
+	}
+	return (join(',', @defaultRoles), join(',', @userDefinedRoles));
 }
 
 sub userDefinedRoles {
