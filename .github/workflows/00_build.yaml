@@ -21,30 +21,29 @@ on:
           - release
 
 jobs:
-  macLegacy:
-    name: Build LMS for Mac (Legacy)
-    # disable - no longer provided starting LMS9
-    if: false
-    runs-on: self-hosted
-    timeout-minutes: 20
-    env:
-      BASEDIR: gh-build
-    steps:
-      # we must check out here, as  otherwise the build action is not available
-      - name: Check out LMS code
-        uses: actions/checkout@v4
-        with:
-          path: server
-          ref: ${{ inputs.branch }}
+  # comment out this step, as disabling it would fail the success() check later
+  # macLegacy:
+  #   name: Build LMS for Mac (Legacy)
+  #   runs-on: self-hosted
+  #   timeout-minutes: 20
+  #   env:
+  #     BASEDIR: gh-build
+  #   steps:
+  #     # we must check out here, as  otherwise the build action is not available
+  #     - name: Check out LMS code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         path: server
+  #         ref: ${{ inputs.branch }}
 
-      - name: Launch build process
-        uses: ./server/.github/actions/build
-        with:
-          build-params: macosx
-          build-type: ${{ inputs.build_type }}
-          ssh-connect-string: ${{ secrets.MAC_CONNECT_STRING }}
-          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  #     - name: Launch build process
+  #       uses: ./server/.github/actions/build
+  #       with:
+  #         build-params: macosx
+  #         build-type: ${{ inputs.build_type }}
+  #         ssh-connect-string: ${{ secrets.MAC_CONNECT_STRING }}
+  #         AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   mac:
     name: Build LMS for Mac (MenuBar Item)

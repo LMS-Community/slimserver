@@ -119,7 +119,7 @@ runs:
           exit 1;
         fi
 
-    - name: Upload artifacts
+    - name: Upload artifacts to R2
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
       shell: bash
       run: |
@@ -138,6 +138,7 @@ runs:
         rm -f $HOME/.aws/credentials
 
     - name: Archive artifacts
+      if: ${{ !startsWith(inputs.build-params, 'docker') }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.build-params }}
