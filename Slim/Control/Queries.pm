@@ -292,14 +292,19 @@ sub albumsQuery {
 	my $releaseType   = $request->getParam('release_type');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
-	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 	# a work_id of -1 would mean "all works"
 	my $work	         = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
+	my $sort          = $request->getParam('sort') || ($roleID && !$work ? 'artistalbum' : 'album');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
+	my $rolesort;
+	if ( defined $sort && Slim::Schema::Contributor->roleToContributorMap()->{$sort} ) {
+		$rolesort = $sort;
+		$sort = 'album';
+	}
 	# FIXME: missing genrealbum, genreartistalbum
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
 		$request->setStatusBadParams();
@@ -579,6 +584,18 @@ sub albumsQuery {
 		}
 	}
 
+	if ( $rolesort ) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
+		$sql .= "LEFT JOIN contributor_track AS rolesort_track ON rolesort_track.track = tracks.id AND rolesort_track.role = $rolesort ";
+		$sql .= 'LEFT JOIN contributors AS rolesort ON rolesort.id = rolesort_track.contributor ';
+		my $col = 'GROUP_CONCAT(DISTINCT rolesort.name)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.name';
+		$col = 'GROUP_CONCAT(DISTINCT rolesort.id)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.id';
+		$order_by = "CASE WHEN GROUP_CONCAT(DISTINCT rolesort.namesort) IS NULL THEN 1 ELSE 0 END, GROUP_CONCAT(DISTINCT rolesort.namesort) $collate, " . $order_by;
+	}
 
 	if ( $tags =~ /l/ ) {
 		# title/disc/discc is needed to construct (N of M) title
@@ -802,6 +819,7 @@ sub albumsQuery {
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'rolesort.name'} ) if exists $c->{'rolesort.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
@@ -887,6 +905,12 @@ sub albumsQuery {
 					unshift @artists, $c->{'contributors.name'} if $c->{'contributors.name'};
 					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
 				}
+				# if role_sort specified, put the role artist at the top of the list
+				if ($c->{'rolesort.name'}) {
+					unshift @artists, $c->{'rolesort.name'} if $c->{'rolesort.name'};
+					unshift @artistIds, $c->{'rolesort.id'} if $c->{'rolesort.id'};
+				}
+
 				@artists = Slim::Utils::Misc::uniq(@artists);
 				@artistIds = Slim::Utils::Misc::uniq(@artistIds);
 
