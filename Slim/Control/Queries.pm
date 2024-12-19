@@ -293,7 +293,7 @@ sub albumsQuery {
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	# a work_id of -1 would mean "all works"
-	my $work	         = $request->getParam('work_id');
+	my $work	  = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
 	my $sort          = $request->getParam('sort') || ($roleID && !$work ? 'artistalbum' : 'album');
@@ -3201,8 +3201,11 @@ sub rolesQuery {
 		}
 
 		if (defined $albumID) {
-			push @{$w}, 'contributor_album.album = ?';
-			push @{$p}, $albumID;
+			my @albums = split(',', $albumID);
+			if (scalar @albums) {
+				push @{$p}, @albums;
+				push @{$w}, 'contributor_album.album IN (' . join(', ', map {'?'} @albums) . ')';
+			}
 		}
 
 		if (defined $year || defined $workID) {
