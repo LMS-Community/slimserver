@@ -825,6 +825,7 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'performance', $c->{'tracks.performance'}||"");
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'rolesort_name', $c->{'rolesort.name'}||"");
 
 			my $favoritesUrl = $work
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
