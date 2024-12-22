@@ -3237,7 +3237,7 @@ sub rolesQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	if (defined $trackID) {
+	if (defined $trackID || defined $workID) {
 		$sql = sprintf($sql, 'DISTINCT contributor_track.role');
 	} else {
 		$sql = sprintf($sql, 'DISTINCT contributor_album.role');
