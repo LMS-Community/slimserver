@@ -594,7 +594,11 @@ sub albumsQuery {
 		$col = 'GROUP_CONCAT(DISTINCT rolesort.id)';
 		$c->{$col} = 1;
 		$as->{$col} = 'rolesort.id';
+		$col = 'GROUP_CONCAT(DISTINCT rolesort.namesort)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.namesort';
 		$order_by = "CASE WHEN GROUP_CONCAT(DISTINCT rolesort.namesort) IS NULL THEN 1 ELSE 0 END, GROUP_CONCAT(DISTINCT rolesort.namesort) $collate, " . $order_by;
+		$page_key = "COALESCE(SUBSTR(rolesort.namesort,1,1), '-')";
 	}
 
 	if ( $tags =~ /l/ ) {
@@ -867,7 +871,10 @@ sub albumsQuery {
 			if ($tags =~ /s/) {
 				#FIXME: see if multiple char textkey is doable for year/genre sort
 				my $textKey;
-				if ($sort eq 'artflow' || $sort eq 'artistalbum') {
+				if ($rolesort) {
+					utf8::decode( $c->{'rolesort.namesort'} ) if exists $c->{'rolesort.namesort'};
+					$textKey = $c->{'rolesort.namesort'} ? substr $c->{'rolesort.namesort'}, 0, 1 : '-';
+				} elsif ($sort eq 'artflow' || $sort eq 'artistalbum') {
 					utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
 					$textKey = substr $c->{'contributors.namesort'}, 0, 1;
 				} elsif ( $sort eq 'album' ) {
@@ -3164,6 +3171,7 @@ sub rolesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $workID        = $request->getParam('work_id');
+	my $genreID       = $request->getParam('genre_id');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags          = $request->getParam('tags') || '';
 
@@ -3209,7 +3217,7 @@ sub rolesQuery {
 			}
 		}
 
-		if (defined $year || defined $workID) {
+		if (defined $year || defined $workID || defined $genreID) {
 			$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
 			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
 
@@ -3225,6 +3233,12 @@ sub rolesQuery {
 					push @{$p}, $workID;
 				}
 			}
+			if (defined $genreID) {
+				my @genreIDs = split(/,/, $genreID);
+				$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+				push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+				push @{$p}, @genreIDs;
+			}
 		}
 	}
 
@@ -3237,7 +3251,7 @@ sub rolesQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	if (defined $trackID || defined $workID) {
+	if (defined $trackID || defined $workID || defined $genreID) {
 		$sql = sprintf($sql, 'DISTINCT contributor_track.role');
 	} else {
 		$sql = sprintf($sql, 'DISTINCT contributor_album.role');
