@@ -640,7 +640,7 @@ sub albumsQuery {
 		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
 		$c->{$col} = 1;
 		$as->{$col} = 'group_count';
-		$col = "(SELECT GROUP_CONCAT(SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
+		$col = "(SELECT GROUP_CONCAT(COALESCE(SUBSTR('00000'||disc,-5),'00001') || SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
 		$c->{$col} = 1;
 		$as->{$col} = 'group_structure';
 	}
@@ -845,7 +845,7 @@ sub albumsQuery {
 					my $previousGroup;
 					my $groupSeen = {};
 					foreach ( sort split(',,', $c->{'group_structure'}) ) {
-						my $thisTrackGroup = substr($_, 5);
+						my $thisTrackGroup = substr($_, 10);
 						if ( $previousGroup ne $thisTrackGroup ) {
 							if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
 								last;
