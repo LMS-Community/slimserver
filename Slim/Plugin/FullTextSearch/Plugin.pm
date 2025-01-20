@@ -515,7 +515,7 @@ sub _rebuildIndex {
 	my $dbh = Slim::Schema->dbh;
 
 	# the "max" db memory settings can lead to OOM crashes when run in the server - use smaller cache temporarily
-	# see https://forums.slimdevices.com/showthread.php?116308 (using a 1M track collection...)
+	# see https://forums.lyrion.org/showthread.php?116308 (using a 1M track collection...)
 	$dbh->do("PRAGMA cache_size = 20000") if preferences('server')->get('dbhighmem') && !main::SCANNER;
 
 	$scanlog->error("Initialize fulltext table");

@@ -327,7 +327,7 @@ sub string {
 
 			# If the string contains any Unicode characters which exist in our bitmap,
 			# use the bitmap version instead of the TTF version
-			# http://forums.slimdevices.com/showthread.php?t=42087
+			# https://forums.lyrion.org/showthread.php?t=42087
 			if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
 				$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
 			}

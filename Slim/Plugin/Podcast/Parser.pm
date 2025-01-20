@@ -38,7 +38,7 @@ sub parse {
 		next unless $item->{enclosure} && keys %{$item->{enclosure}};
 
 		# remove "link" item, as it confuses XMLBrowser
-		# see http://forums.slimdevices.com/showthread.php?t=100446
+		# see https://forums.lyrion.org/showthread.php?t=100446
 		$item->{link} = '';
 
 		$item->{line1} = $item->{title} || $item->{name};
@@ -54,7 +54,7 @@ sub parse {
 		if ($s || $m || $h) {
 			$item->{duration} = $h*3600 + $m*60 + $s;
 		}
-		
+
 		my $url = $item->{enclosure}->{url};
 		$item->{enclosure}->{url} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 
@@ -78,19 +78,19 @@ sub parse {
 
 		# cache what we have anyway
 		$cache->set("$key-duration", $item->{duration}, '30days');
-		
+
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
 		if ( $from && $from < $item->{duration} - 15 ) {
 			$position = Slim::Utils::DateTime::timeFormat($from);
 			$position =~ s/^0+[:\.]//;
-			
-			# remote_image is now cached, so replace enclosure with a play attribute 
+
+			# remote_image is now cached, so replace enclosure with a play attribute
 			# so that XMLBrowser shows a sub-menu *and* we can play from top
 			my $enclosure = delete $item->{enclosure};
 			$item->{on_select} = 'play';
 			$item->{play} = Slim::Plugin::Podcast::Plugin::wrapUrl($url);
 			$item->{type}  = 'link';
-			
+
 			$item->{items} = [{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
 				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
