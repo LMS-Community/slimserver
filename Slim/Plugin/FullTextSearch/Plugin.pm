@@ -306,6 +306,10 @@ sub dropHelperTable {
 sub parseSearchTerm {
 	my ($class, $search, $type) = @_;
 
+	# We're struggling with non-latin characters on Windows, but I'm not sure whether it's a scan or a search time issue...
+	# https://forums.lyrion.org/forum/developer-forums/developers/1747258
+	$search = Slim::Utils::Unicode::utf8toLatin1Transliterate($search) if main::ISWINDOWS;
+
 	$search = lc($search || '');
 
 	# Check if we have an open double quote and close it if needed

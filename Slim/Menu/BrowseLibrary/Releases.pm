@@ -8,6 +8,7 @@ use Slim::Utils::Strings qw(cstring);
 
 # Should we page through results instead of doing one huge bulk request?
 use constant MAX_ALBUMS => 1500;
+use constant LIST_LIMIT => 980; # SQL parameter limit is 999. This is used to limit the number of album_ids passed in. Leave some room for other searchTags.
 
 my $log = logger('database.info');
 my $prefs = preferences('server');
@@ -16,15 +17,18 @@ my $prefs = preferences('server');
 sub _releases {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my @originalSearchTags = @searchTags;
 	my $tags       = 'lWRSw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $orderBy    = $args->{'orderBy'} || $pt->{'orderBy'};
 	my $menuMode   = $args->{'params'}->{'menu_mode'};
 	my $menuRoles  = $args->{'params'}->{'menu_roles'};
+	my $search     = $args->{'search'};
+
+	push @searchTags, "search:$search" if $search && !grep /search:/, @searchTags;
+	my @originalSearchTags = @searchTags;
 
 	# map menuRoles to name for readability
-	$menuRoles = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $menuRoles || ''));
+	$menuRoles = join(',', map { Slim::Schema::Contributor->roleToType($_) || $_ } split(',', $menuRoles || ''));
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -34,7 +38,7 @@ sub _releases {
 		# library_id:-1 is supposed to clear/override the global library_id
 		$_ && $_ !~ /(?:library_id\s*:\s*-1|remote_library)/
 	} @searchTags;
-	push @searchTags, "role_id:$menuRoles" if $menuRoles;
+	push @searchTags, "role_id:$menuRoles" if $menuRoles && $menuMode ne 'artists';
 
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
@@ -52,10 +56,10 @@ sub _releases {
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @searchTags));
 
 	# get the artist's albums list to create releases sub-items etc.
-	my $request = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags, 'role_id:'. ($menuRoles ? $menuRoles : join(',',Slim::Schema::Contributor->contributorRoles)) ] );
-	$request->execute();
+	my $releasesRequest = Slim::Control::Request->new( undef, [ $query, 0, MAX_ALBUMS, @searchTags ] );
+	$releasesRequest->execute();
 
-	$log->error($request->getStatusText()) if $request->isStatusError();
+	$log->error($releasesRequest->getStatusText()) if $releasesRequest->isStatusError();
 
 	# compile list of release types and contributions
 	my %releaseTypes;
@@ -66,43 +70,43 @@ sub _releases {
 	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
 	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
 
-	foreach (@{ $request->getResult('albums_loop') || [] }) {
+	foreach my $release (@{ $releasesRequest->getResult('albums_loop') || [] }) {
 
 		# map to role's name for readability
-		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
-		my ($defaultRoles, $userDefinedRoles) = Slim::Schema::Contributor->splitDefaultAndCustomRoles($_->{role_ids});
+		$release->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $release->{role_ids} || ''));
+		my ($defaultRoles, $userDefinedRoles) = Slim::Schema::Contributor->splitDefaultAndCustomRoles($release->{role_ids});
 
 		my $genreMatch = undef;
 		if ( $checkComposerGenres ) {
-			my $request = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $_->{id} ] );
-			$request->execute();
+			my $genresRequest = Slim::Control::Request->new( undef, [ 'genres', 0, MAX_ALBUMS, 'album_id:' . $release->{id} ] );
+			$genresRequest->execute();
 
-			if ($request->isStatusError()) {
-				$log->error($request->getStatusText());
+			if ($genresRequest->isStatusError()) {
+				$log->error($genresRequest->getStatusText());
 			}
 			else {
-				foreach my $genre (@{$request->getResult('genres_loop')}) {
+				foreach my $genre (@{$genresRequest->getResult('genres_loop')}) {
 					last if $genreMatch = Slim::Schema::Genre->isMyClassicalGenre($genre->{genre});
 				}
 			}
 		}
 
 		my $addToMainReleases = sub {
-			$isPrimaryArtist{$_->{id}}++;
-			$releaseTypes{$_->{release_type}}++;
-			$albumList{$_->{release_type}} ||= [];
-			push @{$albumList{$_->{release_type}}}, $_->{id};
+			$isPrimaryArtist{$release->{id}}++;
+			$releaseTypes{$release->{release_type}}++;
+			$albumList{$release->{release_type}} ||= [];
+			push @{$albumList{$release->{release_type}}}, $release->{id};
 		};
 
 		my $addUserDefinedRoles = sub {
 			foreach my $role ( split(',', $userDefinedRoles || '') ) {
 				$contributions{$role} ||= [];
-				push @{$contributions{$role}}, $_->{id};
+				push @{$contributions{$role}}, $release->{id};
 			}
 		};
 
-		if ($_->{compilation}) {
-			$_->{release_type} = 'COMPILATION';
+		if ($release->{compilation}) {
+			$release->{release_type} = 'COMPILATION';
 			$addToMainReleases->();
 			# only list default roles outside the compilations if Composer/Conductor
 			if ( $defaultRoles !~ /COMPOSER|CONDUCTOR/ || $defaultRoles =~ /ARTIST|BAND/ ) {
@@ -119,7 +123,7 @@ sub _releases {
 		# Consider this artist the main (album) artist if there's no other, defined album artist
 		elsif ( $defaultRoles =~ /ARTIST/ ) {
 			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
-				album => $_->{id},
+				album => $release->{id},
 				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
 				contributor => { '!=' => $artistId }
 			});
@@ -134,14 +138,14 @@ sub _releases {
 		# Default roles on other releases
 		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $defaultRoles || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
-			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
+			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$release->{id}};
 
 			if ( $role eq 'COMPOSER' && ( $genreMatch || $allComposers ) ) {
 				$role = 'COMPOSERALBUM';
 			}
 
 			$contributions{$role} ||= [];
-			push @{$contributions{$role}}, $_->{id};
+			push @{$contributions{$role}}, $release->{id};
 		}
 
 		# User-defined roles
@@ -163,9 +167,10 @@ sub _releases {
 	} keys %releaseTypes);
 
 	foreach my $releaseType (@sortedReleaseTypes) {
-		my $name = Slim::Schema::Album->releaseTypeName($releaseType, $client);
 
 		if ($releaseTypes{uc($releaseType)}) {
+			my $name = Slim::Schema::Album->releaseTypeName($releaseType, $client);
+			$name = _limitList($client, $albumList{$releaseType}, $name);
 			$pt->{'searchTags'} = $releaseType eq 'COMPILATION'
 				? [@searchTags, 'compilation:1', "album_id:" . join(',', @{$albumList{$releaseType}})]
 				: [@searchTags, "compilation:0", "release_type:$releaseType", "album_id:" . join(',', @{$albumList{$releaseType}})];
@@ -174,13 +179,17 @@ sub _releases {
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSERALBUM}) {
+		my $name = cstring($client, 'COMPOSERALBUMS');
+		$name = _limitList($client, $albumIds, $name);
 		$pt->{'searchTags'} = [@searchTags, "role_id:COMPOSER", "album_id:" . join(',', @$albumIds)];
-		push @items, _createItem(cstring($client, 'COMPOSERALBUMS'), [{%$pt}]);
+		push @items, _createItem($name, [{%$pt}]);
 	}
 
 	if (my $albumIds = delete $contributions{COMPOSER}) {
+		my $name = cstring($client, 'COMPOSITIONS');
+		$name = _limitList($client, $albumIds, $name);
 		push @items, {
-			name        => cstring($client, 'COMPOSITIONS'),
+			name        => $name,
 			image       => 'html/images/playlists.png',
 			type        => 'playlist',
 			playlist    => \&_tracks,
@@ -191,24 +200,26 @@ sub _releases {
 	}
 
 	if (my $albumIds = delete $contributions{TRACKARTIST}) {
+		my $name = cstring($client, 'APPEARANCES');
+		$name = _limitList($client, $albumIds, $name);
 		$pt->{'searchTags'} = [@searchTags, "role_id:TRACKARTIST", "album_id:" . join(',', @$albumIds)];
-		push @items, _createItem(cstring($client, 'APPEARANCES'), [{%$pt}]);
+		push @items, _createItem($name, [{%$pt}]);
 	}
 
 	foreach my $role (sort keys %contributions) {
 		my $name = cstring($client, $role) if Slim::Utils::Strings::stringExists($role);
+		$name = _limitList($client, $contributions{$role}, $name || ucfirst($role));
 		$pt->{'searchTags'} = [@searchTags, "role_id:$role", "album_id:" . join(',', @{$contributions{$role}})];
-		push @items, _createItem($name || ucfirst($role), [{%$pt}]);
+		push @items, _createItem($name, [{%$pt}]);
 	}
 
 	# Add item for Classical Works if the artist has any.
 	push @searchTags, "role_id:$menuRoles" if $menuRoles && $menuMode && $menuMode ne 'artists';
 	push @searchTags, "genre_id:" . Slim::Schema::Genre->myClassicalGenreIds() if $checkComposerGenres;
 	main::INFOLOG && $log->is_info && $log->info("works ($index, $quantity): tags ->", join(', ', @searchTags));
-	my $requestRef = [ 'works', 0, MAX_ALBUMS, @searchTags ];
-	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
-	$request->execute();
-	$log->error($request->getStatusText()) if $request->isStatusError();
+	my $worksRequest = Slim::Control::Request->new( undef, [ 'works', 0, MAX_ALBUMS, @searchTags ] );
+	$worksRequest->execute();
+	$log->error($worksRequest->getStatusText()) if $worksRequest->isStatusError();
 
 	push @items, {
 		name        => cstring($client, 'WORKS_CLASSICAL'),
@@ -217,7 +228,7 @@ sub _releases {
 		playlist    => \&_tracks,
 		url         => \&_works,
 		passthrough => [ { searchTags => [@searchTags, "work_id:-1", "wantMetadata:1", "wantIndex:1"] } ],
-	} if ( $request->getResult('count') > 1 || ( scalar @items && $request->getResult('count') ) );
+	} if ( $worksRequest->getResult('count') > 1 || ( scalar @items && $worksRequest->getResult('count') ) );
 
 	# restore original search tags
 	$pt->{'searchTags'} = [@originalSearchTags];
@@ -275,6 +286,16 @@ sub _createItem {
 		url         => \&_albums,
 		passthrough => $pt,
 	};
+}
+
+sub _limitList {
+	my ($client, $listRef, $name) = @_;
+	my $albumCount = scalar @$listRef;
+	if ( $albumCount > LIST_LIMIT ) {
+		splice @$listRef, LIST_LIMIT;
+		$name .= ' ' . cstring($client, 'FIRST_N_ALBUMS', LIST_LIMIT);
+	}
+	return $name;
 }
 
 1;

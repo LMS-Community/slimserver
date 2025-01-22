@@ -26349,3 +26349,10 @@ SETUP_MYCLASSICALGENRES_DESC
 	FR	Précisez les genres concernés par les œuvres et les compositeurs. Séparez-les par des virgules.
 	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
 
+FIRST_N_ALBUMS
+	DE	(erste %s Alben)
+	EN	(first %s albums)
+	ES	(primeros %s álbumes)
+	FR	(premiers %s albums)
+	NL	(eerste %s albums)
+
