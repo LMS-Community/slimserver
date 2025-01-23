@@ -104,29 +104,11 @@ runs:
           exit 1;
         fi
 
-    - name: Upload artifacts to R2
-      if: ${{ !startsWith(inputs.build-params, 'docker') && github.repository_owner == 'LMS-Community' }}
-      shell: bash
-      run: |
-        mkdir -p $HOME/.aws
-        echo "[downloads]" > $HOME/.aws/credentials
-        # region is irrelevant for Cloudflare R2, but required by the aws CLI tool
-        echo "region=us-east-1" >> $HOME/.aws/credentials
-        echo "aws_access_key_id=${{ inputs.AWS_KEY_ID }}" >> $HOME/.aws/credentials
-        echo "aws_secret_access_key=${{ inputs.AWS_SECRET_ACCESS_KEY }}" >> $HOME/.aws/credentials
-
-        TARGET_FOLDER="${{ inputs.build-type }}"
-
-        if [ "${{ inputs.build-type }}" = "release" ]; then
-          TARGET_FOLDER="LyrionMusicServer_v${{ steps.getversion.outputs.LMS_FULL_VERSION }}"
-        fi
-
-        for f in publish/?yrion?usic?erver*;
-        do
-          aws --profile downloads --endpoint-url https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com s3 cp $f s3://downloads/$TARGET_FOLDER/
-        done
-
-        rm -f $HOME/.aws/credentials
+    - name: Set-up s5cmd
+      if: ${{ !startsWith(inputs.build-params, 'docker') && !startsWith(inputs.build-params, 'win64') }}
+      uses: peak/action-setup-s5cmd@main
+      with:
+        version: v2.3.0
 
     - name: Archive artifacts
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
@@ -134,3 +116,28 @@ runs:
       with:
         name: ${{ inputs.build-params }}
         path: publish
+
+    - name: Upload artifacts to R2
+      if: ${{ !startsWith(inputs.build-params, 'docker') && github.repository_owner == 'LMS-Community' }}
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+      run: |
+        TARGET_FOLDER="${{ inputs.build-type }}"
+
+        if [ "${{ inputs.build-type }}" = "release" ]; then
+          TARGET_FOLDER="LyrionMusicServer_v${{ steps.getversion.outputs.LMS_FULL_VERSION }}"
+        fi
+
+        ENDPOINT_URL="https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com"
+        S3_CMD="aws --endpoint-url $ENDPOINT_URL s3"
+        if command -v s5cmd 2>&1 >/dev/null; then
+          S3_CMD="s5cmd --endpoint-url $ENDPOINT_URL"
+        fi
+
+        for f in publish/?yrion?usic?erver*;
+        do
+          $S3_CMD cp $f s3://downloads/$TARGET_FOLDER/
+        done

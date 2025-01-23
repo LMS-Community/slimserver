@@ -596,6 +596,7 @@ sub _rebuildIndex {
 
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
+	main::idleStreams() unless main::SCANNER;
 
 	$dbh->do("DROP TABLE IF EXISTS fulltext_terms;") or $scanlog->error($dbh->errstr);
 	$dbh->do("CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);") or $scanlog->error($dbh->errstr);
@@ -628,34 +629,43 @@ sub _initPopularTerms {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
 
+	if (!_ftExists() && !$scanDone) {
+		$scanlog->error("Fulltext index missing or outdated - re-building");
+
+		$prefs->remove('popularTerms');
+		_rebuildIndex();
+	}
+
+	if (_ftExists()) {
+		# get a list of terms which occur more than LARGE_RESULTSET times in our database
+		my $terms = Slim::Schema->dbh->selectcol_arrayref( sprintf(qq{
+			SELECT term FROM (
+				SELECT term, SUM(documents) d
+				FROM fulltext_terms
+				WHERE NOT col IN ('*', 1, 0) AND LENGTH(term) > 1
+				GROUP BY term
+			)
+			WHERE d > %i
+		}, LARGE_RESULTSET) );
+
+		$prefs->set('popularTerms', $terms);
+		$popularTerms = join('|', @{$prefs->get('popularTerms')});
+
+		main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$terms));
+	}
+	else {
+		$log->warn("Fulltext index missing - can't analyze popular terms");
+	}
+}
+
+sub _ftExists {
 	my $dbh = Slim::Schema->dbh;
 
 	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT id FROM fulltext WHERE fulltext.id MATCH 'YXLALBUM*' } ) if $ftExists;     # 8.3: IDs must be prefixed to make them "non searchable"
 
-	if (!$ftExists) {
-		$scanlog->error("Fulltext index missing or outdated - re-building");
-
-		$prefs->remove('popularTerms');
-		_rebuildIndex() unless $scanDone;
-	}
-
-	# get a list of terms which occur more than LARGE_RESULTSET times in our database
-	my $terms = $dbh->selectcol_arrayref( sprintf(qq{
-		SELECT term FROM (
-			SELECT term, SUM(documents) d
-			FROM fulltext_terms
-			WHERE NOT col IN ('*', 1, 0) AND LENGTH(term) > 1
-			GROUP BY term
-		)
-		WHERE d > %i
-	}, LARGE_RESULTSET) );
-
-	$prefs->set('popularTerms', $terms);
-	$popularTerms = join('|', @{$prefs->get('popularTerms')});
-
-	main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$terms));
+	return $ftExists;
 }
 
 sub postDBConnect {
