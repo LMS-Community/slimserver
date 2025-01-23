@@ -105,8 +105,9 @@ runs:
         fi
 
     - name: Set-up s5cmd
-      if: ${{ !startsWith(inputs.build-params, 'docker') && !startsWith(inputs.build-params, 'win64') }}
-      uses: peak/action-setup-s5cmd@main
+      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      uses: ./server/.github/actions/setup-s5cmd
+      # uses: peak/action-setup-s5cmd@main
       with:
         version: v2.3.0
 
