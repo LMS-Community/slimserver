@@ -275,7 +275,7 @@ sub init {
 		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
 		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
 		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
-		'worksScan'=> $prefs->get("showComposerReleasesbyAlbum") || 2,
+		'worksScan'             => $prefs->get("showComposerReleasesbyAlbum") || 2,
 	);
 
 	# we can have different defaults depending on the OS
@@ -294,6 +294,9 @@ sub init {
 
 	# initialise any new prefs
 	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
+
+	# remove some SN/MySB legacy
+	$prefs->remove(qw(snInitErrors snLastSyncDown sn_disable_stats sn_disabled_plugins sn_email sn_protocolhandlers sn_session sn_sync));
 
 	# perform OS-specific post-init steps
 	$os->postInitPrefs($prefs);

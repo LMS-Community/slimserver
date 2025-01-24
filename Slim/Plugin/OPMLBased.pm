@@ -20,12 +20,12 @@ my %cli_next = ();
 
 sub initPlugin {
 	my ( $class, %args ) = @_;
-	
+
 	if ( $args{is_app} ) {
 		# Put all apps in the apps menu
 		$args{menu} = 'apps';
 	}
-	
+
 	{
 		no strict 'refs';
 		*{$class.'::'.'feed'}   = sub { $args{feed} } if $args{feed};
@@ -38,9 +38,9 @@ sub initPlugin {
 	if (!$class->_pluginDataFor('icon')) {
 		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}
-	
+
 	$class->initCLI( %args );
-	
+
 	if ( my $menu = $class->initJive( %args ) ) {
 		if ( $args{is_app} ) {
 			Slim::Control::Jive::registerAppMenu($menu);
@@ -54,21 +54,14 @@ sub initPlugin {
 }
 
 # add "hidden" items to Jive home menu for individual OPMLbased items
-# this allows individual items to be optionally added to the 
+# this allows individual items to be optionally added to the
 # top-level menu through the CustomizeHomeMenu applet
 sub initJive {
 	my ( $class, %args ) = @_;
-	
-	# Exclude disabled plugins
-	if ( my $disabled = $prefs->get('sn_disabled_plugins') ) {
-		for my $plugin ( @{$disabled} ) {
-			return if $class =~ /^Slim::Plugin::${plugin}::/;
-		}
-	}
 
 	my $icon = $class->_pluginDataFor('icon') ? proxiedImage($class->_pluginDataFor('icon')) : 'html/images/radio.png';
 	my $name = $class->getDisplayName();
-	
+
 	my @jiveMenu = ( {
 		stringToken    => (uc($name) eq $name) ? $name : undef, # Only use string() if it is uppercase
 		text           => $name,
@@ -77,7 +70,7 @@ sub initJive {
 		node           => $args{node} || $args{menu} || 'plugins',
 		weight         => $class->weight,
 		displayWhenOff => 0,
-		window         => { 
+		window         => {
 				'icon-id' => $icon,
 				titleStyle => 'album',
 		},
@@ -91,7 +84,7 @@ sub initJive {
 			},
 		},
 	} );
-	
+
 	# Bug 12336, additional items for type=search
 	if ( $args{type} && $args{type} eq 'search' ) {
 		$jiveMenu[0]->{actions}->{go}->{params}->{search} = '__TAGGEDINPUT__';
@@ -114,18 +107,18 @@ sub initJive {
 
 sub initCLI {
 	my ( $class, %args ) = @_;
-	
+
 	my $cliQuery = sub {
 	 	my $request = shift;
 		Slim::Control::XMLBrowser::cliQuery( $args{tag}, $class->feed( $request->client ), $request );
 	};
-	
+
 	# CLI support
 	Slim::Control::Request::addDispatch(
 		[ $args{tag}, 'items', '_index', '_quantity' ],
 	    [ 1, 1, 1, $cliQuery ]
 	);
-	
+
 	Slim::Control::Request::addDispatch(
 		[ $args{tag}, 'playlist', '_method' ],
 		[ 1, 1, 1, $cliQuery ]
@@ -149,11 +142,11 @@ sub setMode {
 	}
 
 	my $name = $class->getDisplayName();
-	
+
 	my $type = $class->type;
-	
+
 	my $title = (uc($name) eq $name) ? $client->string( $name ) : $name;
-	
+
 	if ( $type eq 'link' ) {
 		my %params = (
 			header   => $name,
@@ -164,7 +157,7 @@ sub setMode {
 		);
 
 		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-		
+
 		# we'll handle the push in a callback
 		$client->modeParam( handledTransition => 1 );
 	}
@@ -180,7 +173,7 @@ sub setMode {
 				timeout => 35,
 			},
 		);
-		
+
 		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Text', \%params );
 	}
 }
@@ -206,7 +199,7 @@ sub cliRadiosQuery {
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			my $type = $class->type;
-			
+
 			if ( $type eq 'link' ) {
 				$data = {
 					text         => $title,
@@ -261,7 +254,7 @@ sub cliRadiosQuery {
 			elsif ( $type eq 'search' ) {
 				$type = 'xmlbrowser_search';
 			}
-			
+
 			$data = {
 				cmd    => $tag,
 				name   => $title,
@@ -270,26 +263,14 @@ sub cliRadiosQuery {
 				weight => $weight,
 			};
 		}
-		
-		# Exclude disabled plugins
-		my $disabled = $prefs->get('sn_disabled_plugins');
-		
-		if ( $disabled ) {
-			for my $plugin ( @{$disabled} ) {
-				if ( $class =~ /^Slim::Plugin::${plugin}::/ ) {
-					$data = {};
-					last;
-				}
-			}
-		}
-		
+
 		# Filter out items which don't match condition
 		if ( $class->can('condition') && $request->client ) {
 			if ( !$class->condition( $request->client ) ) {
 				$data = {};
 			}
 		}
-		
+
 		# let our super duper function do all the hard work
 		Slim::Control::Queries::dynamicAutoQuery( $request, $cli_menu, $cli_next{ $class }->{ $cli_menu }, $data );
 	};
@@ -297,26 +278,26 @@ sub cliRadiosQuery {
 
 sub webPages {
 	my $class = shift;
-	
+
 	# Only setup webpages here if a menu is defined by the plugin
 	return unless $class->menu;
 
 	my $title = $class->getDisplayName();
 	my $url   = 'plugins/' . $class->tag() . '/index.html';
-	
+
 	# default location for plugins is 'plugins' in the web UI, but 'extras' in SP...
 	my $menu  = $class->menu();
 	$menu = 'plugins' if $menu eq 'extras';
-	
+
 	Slim::Web::Pages->addPageLinks( $menu, { $title => $url } );
-	
+
 	if ( $class->can('condition') ) {
 		Slim::Web::Pages->addPageCondition( $title, sub { $class->condition(shift); } );
 	}
 
 	Slim::Web::Pages->addPageFunction( $url, sub {
 		my $client = $_[0];
-		
+
 		Slim::Web::XMLBrowser->handleWebIndex( {
 			client  => $client,
 			feed    => $class->feed( $client ),
