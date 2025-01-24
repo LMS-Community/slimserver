@@ -154,7 +154,7 @@ sub addReleaseTypeStrings {
 			}
 		}
 
-		$stringsObj->delete;
+		$stringsObj->delete unless Slim::Music::Import->stillScanning();
 	}
 }
 

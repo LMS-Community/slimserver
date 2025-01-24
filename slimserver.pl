@@ -987,7 +987,7 @@ sub checkDataSource {
 
 	$prefs->set('mediadirs', $mediadirs) if $modified;
 
-	return if !Slim::Schema::hasLibrary();
+	return if !Slim::Schema::hasLibrary() || !$prefs->get('wizardDone');
 
 	$sqlHelperClass->checkDataSource();
 

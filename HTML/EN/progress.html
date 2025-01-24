@@ -4,9 +4,9 @@
 	</pre>
 [%- ELSE -%]
 	[% pagetitle = (type || "SCANNER") _ "_PROGRESS" | string %]
-	
+
 	[% pageHeaderMenu = pagetitle %]
-	
+
 	[%- IF !abortScan -%]
 
 		[% pageHeaderScripts = BLOCK %]
@@ -32,14 +32,19 @@
 		</script>
 		[% END %]
 
-		[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
-
 	[% END %]
-	
+
+	[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
+
 	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
 	[%- IF abortScan -%]
 		<div>[% "SCAN_ABORTED" | string %]</div>
+		<script type="text/javascript">
+			setTimeout(function() {
+				window.location.href = "[% webroot %][% path %]?playerid=[% playerid | uri %]&player=[% player | uri %]";
+			}, 5000);
+		</script>
 	[% END %]
 
 	[% IF desc && type && !ajaxUpdate %]<div id="browsedbHeader"><br/>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
@@ -52,8 +57,8 @@
 				<div class="progressItem">
 					<span id="Name[% num %]"></span>&nbsp;
 					<span id="Count[% num %]">
-						&nbsp;(<span id="Done[% num %]"></span><span 
-							id="XofY[% num %]">&nbsp;[% "OF" | string %]&nbsp;</span><span 
+						&nbsp;(<span id="Done[% num %]"></span><span
+							id="XofY[% num %]">&nbsp;[% "OF" | string %]&nbsp;</span><span
 							id="Total[% num %]"></span>)
 					</span>&nbsp;
 					<span id="Active[% num %]"></span>&nbsp;
@@ -72,7 +77,7 @@
 		[% odd = (not odd) %]
 	[% END %]
 
-	[% IF scanning && !ajaxUpdate %]<div><br/><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a></div>[% END %]
+	[% IF !ajaxUpdate %]<div id="abortscanlink" style="display: none;"><br/><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a></div>[% END %]
 	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
 	[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]

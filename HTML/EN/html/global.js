@@ -89,7 +89,6 @@ function showElements(myAry,style) {
 		var div = myAry[i];
 
 		if ($(div)) {
-			//document.getElementByID(div).style.display = 'block';
 			$(div).style.display = style;
 		}
 	}
@@ -119,16 +118,14 @@ function refreshElement(element, value, truncate) {
 // this function parses the response into a hash object used in all update functions
 function parseData(thisData) {
 	var lines = thisData.split("\n");
-	var returnData = new Array();
+	var returnData = {};
 
 	for (i=0; i<lines.length; i++) {
-		var comment = /^#/;
-		var blank = /^\s*$/;
-		var preTag = /<\\*pre>/;
-		var commentLine = lines[i].match(comment);
-		var blankLine = lines[i].match(blank);
+		var preTag = lines[i].match(/<\/*pre>/);
+		var commentLine = lines[i].match(/^#/);
+		var blankLine = lines[i].match(/^\s*$/);
 
-		if (!commentLine && !blankLine && preTag) {
+		if (!commentLine && !blankLine && !preTag) {
 			var keyValue = lines[i].split('|');
 			var key = keyValue[0];
 			var value = keyValue[1];

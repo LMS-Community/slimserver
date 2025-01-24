@@ -60,6 +60,7 @@ my $prefs = preferences('server');
 #   3 = client-side scrolling
 
 my $log = logger('player.display');
+my $serverLog = logger('server');
 
 my $initialized;
 
@@ -881,17 +882,24 @@ sub string {
 		}
 	}
 
-	if ( @_ ) {
-		return sprintf( $strings->{$name} || ( logBacktrace("missing string $name") && $name ), @_ );
+	if (!$strings->{$name}) {
+		$serverLog->is_info && logBacktrace("missing string $name");
+		return $name;
 	}
 
-	return $strings->{$name} || ( logBacktrace("missing string $name") && $name );
+	return sprintf($strings->{$name} || $name, @_) if @_;
+	return $strings->{$name};
 }
 
 sub doubleString {
 	my $strings = shift->displayStrings;
 	my $name = uc(shift);
-	return $strings->{$name.'_DBL'} || $strings->{$name} || logBacktrace("missing string $name") && '';
+
+	$strings->{$name.'_DBL'} && return $strings->{$name.'_DBL'};
+	$strings->{$name}        && return $strings->{$name};
+
+	$serverLog->is_info() && logBacktrace("missing string $name");
+	return $name;
 }
 
 sub notify {

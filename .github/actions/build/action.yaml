@@ -21,6 +21,7 @@ runs:
       shell: bash
       id: getversion
       run: |
+        echo "::group::Get LMS version number"
         MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
         MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
         PATCH=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f3)
@@ -28,6 +29,7 @@ runs:
         echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
         echo "LMS_FULL_VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
         echo "GIT_BRANCH=public/$MAJOR.$MINOR" >> $GITHUB_OUTPUT
+        echo "::endgroup::"
 
 
     - name: Check out LMS platform code
@@ -60,6 +62,7 @@ runs:
       if: ${{ inputs.build-params == 'macos' }}
       shell: bash
       run: |
+        echo "::group::Set up macOS environment"
         # set up Platypus - see https://github.com/sveinbjornt/Platypus/issues/270#issuecomment-2312235079
         echo "Creating directory structures"
         mkdir -p /usr/local/bin || echo $?
@@ -74,18 +77,22 @@ runs:
         echo "Installing command line tool"
         sudo cp -nf platypus /usr/local/bin
         sudo chmod +x /usr/local/bin/platypus
+        echo "::endgroup::"
 
 
     - name: Set up Windows environment
       if: ${{ startsWith(inputs.build-params, 'win64') }}
       shell: bash
       run: |
+        echo "::group::Set up Windows environment"
         cp -nf platforms/win32/tools/* 'c:\Program Files\Git\usr\bin\'
+        echo "::endgroup::"
 
 
     - name: Build ${{ inputs.build-params }} package on ${{ runner.os }}
       shell: bash
       run: |
+        echo "::group::Build ${{ inputs.build-params }} package on ${{ runner.os }}"
         SRC_PATH=$PWD
 
         BUILD_PATH=$SRC_PATH/work
@@ -95,6 +102,7 @@ runs:
         mkdir -p $DEST_PATH
 
         platforms/buildme.pl --build ${{ inputs.build-params }} ${{ steps.dockersetup.outputs.LMS_TAG }} --buildDir $BUILD_PATH --sourceDir $SRC_PATH --destDir $DEST_PATH --releaseType ${{ inputs.build-type }}
+        echo "::endgroup::"
 
     - name: Verify results
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
@@ -126,6 +134,7 @@ runs:
         AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: us-east-1
       run: |
+        echo "::group::Upload artifacts to R2"
         TARGET_FOLDER="${{ inputs.build-type }}"
 
         if [ "${{ inputs.build-type }}" = "release" ]; then
@@ -142,3 +151,4 @@ runs:
         do
           $S3_CMD cp $f s3://downloads/$TARGET_FOLDER/
         done
+        echo "::endgroup::"

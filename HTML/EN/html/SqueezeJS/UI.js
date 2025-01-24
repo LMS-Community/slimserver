@@ -2234,8 +2234,12 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 					Ext.get('abortscanlink').hide();
 			}
 
-			else
+			else {
 				Ext.get('message').update(decodeURIComponent(result.message));
+
+				if (Ext.get('abortscanlink'))
+					Ext.get('abortscanlink').show();
+			}
 
 			progressTimer.delay(5000)
 		}
