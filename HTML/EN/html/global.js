@@ -128,7 +128,7 @@ function parseData(thisData) {
 		if (!commentLine && !blankLine && !preTag) {
 			var keyValue = lines[i].split('|');
 			var key = keyValue[0];
-			var value = keyValue[1];
+			var value = keyValue[1].replace(/^\s+$/, '');
 			returnData[key] = value;
 		}
 	}

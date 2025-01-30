@@ -8476,7 +8476,7 @@ SETUP_NO_SCREENSAVERS
 	DA	Der ser ikke ud til at være installeret nogen pauseskærme. Vil du installere pauseskærmen Dato og tid?
 	DE	Es scheinen keine Bildschirmschoner installiert zu sein. Möchten Sie den Bildschirmschoner "Datum und Uhrzeit" installieren?
 	EN	There seem to be no screensavers installed. Do you want to install the Date and Time screensaver?
-	FR	Aucun écran de veille ne semble avoir été installé. Voulez-vous installer l'économiseur d'écran Date et heure ?
+	FR	Aucun écran de veille ne semble avoir été installé. Voulez-vous installer l'économiseur d'écran "Date et Heure" ?
 	NL	Er lijken geen screensavers geïnstalleerd te zijn. Wil je de schermbeveiliging Datum en tijd installeren?
 
 SETUP_INSTALL
@@ -26254,7 +26254,7 @@ SETUP_ALBUMLINKROLES_DESC
 	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptkünstler des Albums wird immer angezeigt. Wenn Sie Alben/Veröffentlichungen nach Rolle durchsuchen, werden auch die Mitwirkenden für die Rolle angezeigt, die gerade durchsucht wird.
 	EN	You can choose which roles to show as links in album listings. The main album contributor as identified by the music scanner will always be shown. Also, when browsing albums/releases by role, the Contributors for the role being browsed will be shown.
 	ES	Puedes elegir qué roles quieres que aparezcan como enlaces en las listas de álbumes. Siempre se mostrará el colaborador principal del álbum identificado por el escáner de música. Además, al buscar álbumes/lanzamientos por rol, se mostrarán los colaboradores del rol que se está explorando.
-	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album identifié par l'analyseur de musique sera toujours affiché. De plus, lorsque vous parcourez des albums/sorties par rôle, les contributeurs du rôle parcouru seront affichés.
+	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album identifié par l'analyseur de musique sera toujours affiché. De plus, lorsque vous parcourez des albums par rôle, les contributeurs du rôle parcouru seront affichés.
 	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik. Az albumok/kiadások szerepkör szerinti böngészése során a böngészett szerepkörhöz tartozó közreműködők is megjelennek.
 	NL	U kunt kiezen welke rollen u als links in albumlijsten wilt weergeven. De belangrijkste albumbijdrager zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven. Bij het doorbladeren van albums/releases op rol worden ook de bijdragers voor de rol die wordt doorzocht weergegeven.
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado. Além disso, ao navegar por álbuns/lançamentos por função, os Colaboradores para a função que está sendo navegada serão mostrados.
@@ -26353,6 +26353,6 @@ FIRST_N_ALBUMS
 	DE	(erste %s Alben)
 	EN	(first %s albums)
 	ES	(primeros %s álbumes)
-	FR	(premiers %s albums)
+	FR	(%s premiers albums)
 	NL	(eerste %s albums)
 
