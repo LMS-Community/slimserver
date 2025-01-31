@@ -211,8 +211,6 @@ sub handler {
 	$paramRef->{pluginsJSON} = to_json($paramRef->{plugins});
 
 	$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
-	Slim::Music::Import->doQueueScanTasks(0);
-	Slim::Music::Import->nextScanTask();
 
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
@@ -221,6 +219,9 @@ sub handler {
 
 		if (Slim::Utils::PluginDownloader->downloading) {
 			$finalizeCb = sub {
+				Slim::Music::Import->doQueueScanTasks(0);
+				Slim::Music::Import->nextScanTask();
+
 				Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 				$pageSetup->( $client, $paramRef, Slim::Web::HTTP::filltemplatefile($class->page, $paramRef), $httpClient, $response );
 			};
@@ -228,6 +229,9 @@ sub handler {
 			return;
 		}
 	}
+
+	Slim::Music::Import->doQueueScanTasks(0);
+	Slim::Music::Import->nextScanTask();
 
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
