@@ -788,18 +788,6 @@ sub initLogging {
 	});
 }
 
-sub initClass {
-	my $class = shift;
-
-	Slim::bootstrap::tryModuleLoad($class);
-
-	if ($@) {
-		logError("Couldn't load $class: $@");
-	} else {
-		$class->initPlugin;
-	}
-}
-
 sub initSettings {
 
 	Slim::Utils::Prefs::init();

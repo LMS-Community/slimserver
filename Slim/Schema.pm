@@ -3262,7 +3262,7 @@ sub totals {
 	);
 
 	while (my ($key, $query) = each %categories) {
-		if ( !$totalCache->{$key} ) {
+		if ( !defined $totalCache->{$key} ) {
 			push @$query, 'library_id:' . $library_id if $library_id;
 			my $request = Slim::Control::Request::executeRequest($client, $query);
 			$totalCache->{$key} = $request->getResult('count');

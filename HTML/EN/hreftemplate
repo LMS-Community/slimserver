@@ -148,7 +148,7 @@ href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;
 
 [%# this is the href to the work of item %]
 [% BLOCK workItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringWORK %]%20([% (item.text || item.itemobj.work.id) | uri %])&amp;work_id=[% (item.workId || item.itemobj.work.id) %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringWORK %]%20([% (item.text || item.itemobj.work.id) | uri %])&amp;work_id=[% (item.workId || item.itemobj.work.id) %]&amp;album_id=[% (item.albumId || item.itemobj.albumId) %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the year of item %]

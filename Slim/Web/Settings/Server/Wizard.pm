@@ -107,11 +107,13 @@ sub handler {
 
 	# install plugins if needed
 	if ($paramRef->{saveSettings}) {
+		my %installedPlugins = map { $_ => 1 } Slim::Utils::PluginManager->installedPlugins();
+
 		@pluginsToInstall = ();
 		for my $param (keys %$paramRef) {
 			if ($paramRef->{$param} && $param =~ /^plugin-(.*)$/) {
-				# my $plugin = $1;
-				push @pluginsToInstall, $1;
+				my $plugin = $1;
+				push @pluginsToInstall, $plugin if !$installedPlugins{$plugin};
 			}
 		}
 
@@ -155,7 +157,7 @@ sub handler {
 					Slim::Utils::Timers::setTimer(undef, time() + 1, \&_checkPluginDownloads);
 				}
 			},
-		});
+		}) if (scalar @pluginsToInstall);
 	}
 
 	foreach my $pref (@prefs) {
