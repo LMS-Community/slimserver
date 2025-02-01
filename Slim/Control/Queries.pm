@@ -4200,6 +4200,16 @@ sub statusQuery {
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
 			}
+
+			# we rely on the following items to be available when evaluating album contiguity
+			# better make sure we have all the data we need available!
+			if ($tags =~ /2/) {
+				$tags .= 't' if $tags !~ /t/; # tracknum
+				$tags .= 'e' if $tags !~ /e/; # album_id
+				$tags .= 'b' if $tags !~ /b/; # work_id
+				$tags .= 'h' if $tags !~ /h/; # grouping
+				$tags .= '1' if $tags !~ /1/; # performance
+			}
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song
@@ -4257,7 +4267,12 @@ sub statusQuery {
 				$idx = $start;
 				my $totalDuration = 0;
 
-				foreach( @tracks ) {
+				my $lastAlbumTrack = 0;
+				my $lastAlbum = 0;
+				my $albumNumber = 0; # a sequential id of each album instance in the play queue (albums/tracks could be repeated)
+				my %groups;
+
+				foreach ( @tracks ) {
 					# Use songData for track, if remote use the object directly
 					my $data = ref $_ ? $_ : $songData->{$_};
 
@@ -4281,6 +4296,25 @@ sub statusQuery {
 									$data, $tags,
 									'playlist index', $idx, $fast
 								);
+
+						if ( $tags =~ /2/ ) {
+							# build a hash containing an array of hash refs to the playlist_loop items for each identified album group in the play queue.
+							my $track = @{ $request->getResult('playlist_loop') }[$count];
+							my $albumTrack = $track->{'album_id'} * 10000 + $track->{'tracknum'}; # used to detect a new album or a repeat of tracks from the same album
+
+							my $group = "$track->{'work_id'}##$track->{'grouping'}##$track->{'performance'}";
+
+							if ( $track->{'album_id'} != $lastAlbum || $albumTrack < $lastAlbumTrack ) {
+								++$albumNumber;
+							}
+
+							$lastAlbum = $track->{'album_id'};
+							$lastAlbumTrack = $albumTrack;
+
+							$track->{_trackGroup} = $group;
+							$groups{$albumNumber} ||= [];
+							push @{$groups{$albumNumber}}, $track;
+						}
 					}
 
 					$count++;
@@ -4291,6 +4325,36 @@ sub statusQuery {
 					main::idleStreams() if ! ($count % 20);
 				}
 
+				if ( $tags =~ /2/ ) {
+					# process each album group in the playlist. $albumGroupData is an array of hash refs to the playlist_loop entries for the $albumGroup.
+					while (my ($albumGroup, $albumGroupData) = each %groups) {
+						$albumGroupData ||= [];
+
+						my $nonContiguous;
+						my $previousGroup;
+						my $groupSeen = {};
+
+						# determine whether album group contains contiguous or non-contiguous groups of tracks
+						foreach my $track ( sort { $a->{tracknum} <=> $b->{tracknum} } @$albumGroupData ) {
+							my $thisTrackGroup = $track->{_trackGroup};
+							if ( $previousGroup ne $thisTrackGroup ) {
+								if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
+									last;
+								}
+								else {
+									$groupSeen->{$thisTrackGroup} = 1;
+									$previousGroup = $thisTrackGroup;
+								}
+							}
+						}
+
+						# now set the contiguous_groups flag in the playlist_loop array.
+						foreach ( @$albumGroupData ) {
+							$_->{'contiguous_groups'} = $nonContiguous ? 0 : 1;
+							delete $_{_trackGroup};
+						}
+					}
+				}
 				if ($totalOnly) {
 					$request->addResult('playlist duration', $totalDuration || 0);
 				}
