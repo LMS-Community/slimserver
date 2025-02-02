@@ -4351,7 +4351,7 @@ sub statusQuery {
 						# now set the contiguous_groups flag in the playlist_loop array.
 						foreach ( @$albumGroupData ) {
 							$_->{'contiguous_groups'} = $nonContiguous ? 0 : 1;
-							delete $_{_trackGroup};
+							delete $_->{_trackGroup};
 						}
 					}
 				}
