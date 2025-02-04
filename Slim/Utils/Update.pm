@@ -132,7 +132,8 @@ sub checkVersionCB {
 		}
 
 		# if we got an update with download URL, display it in the web UI et al.
-		elsif ($version && $version =~ /a href=.*\bdownloads\./i) {
+		elsif ($version && $version =~ /a href="(http.*\bdownloads\.[^"]+)/i) {
+			$prefs->set('serverUpdateAvailable', $1);
 			$::newVersion = $version;
 		}
 	}

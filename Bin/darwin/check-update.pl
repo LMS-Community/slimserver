@@ -15,6 +15,7 @@ BEGIN {
 
 use constant RESIZER => 0;
 use constant SCANNER => 0;
+use constant INFOLOG => 0;
 
 use Slim::Utils::Light;
 use Slim::Utils::OSDetect;

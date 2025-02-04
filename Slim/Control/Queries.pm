@@ -661,6 +661,9 @@ sub albumsQuery {
 		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
 		$c->{$col} = 1;
 		$as->{$col} = 'group_count';
+		$col = "(SELECT GROUP_CONCAT(COALESCE(SUBSTR('00000'||disc,-5),'00001') || SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
+		$c->{$col} = 1;
+		$as->{$col} = 'group_structure';
 	}
 
 	if ( @{$w} ) {
@@ -858,7 +861,28 @@ sub albumsQuery {
 			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
-			$tags =~ /2/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+
+			if ( $tags =~ /2/ ) {
+				my $nonContiguous;
+				if ( $c->{'group_count'} > 1 ) {
+					my $previousGroup;
+					my $groupSeen = {};
+					foreach ( sort split(',,', $c->{'group_structure'}) ) {
+						my $thisTrackGroup = substr($_, 10);
+						if ( $previousGroup ne $thisTrackGroup ) {
+							if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
+								last;
+							}
+							else {
+								$groupSeen->{$thisTrackGroup} = 1;
+								$previousGroup = $thisTrackGroup;
+							}
+						}
+					}
+				}
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+				$request->addResultLoop($loopname, $chunkCount, 'contiguous_groups', $nonContiguous ? 0 : 1);
+			}
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
@@ -937,8 +961,17 @@ sub albumsQuery {
 			}
 
 			if ( $tags =~ /R/ ) {
-				$contributorRoleSth ||= $dbh->prepare_cached("SELECT role FROM contributor_album WHERE album = ? AND contributor = ?");
-				my $rolesRef = $dbh->selectall_arrayref($contributorRoleSth, , undef, $c->{'albums.id'}, $contributorID || $c->{'albums.contributor'});
+				my $rolesRef;
+				my $contributorRoleSql = "SELECT role FROM contributor_album WHERE album = ?";
+
+				if ( $contributorID ) {
+					$contributorRoleSql .= " AND contributor = ?";
+					$contributorRoleSth ||= $dbh->prepare_cached($contributorRoleSql);
+					$rolesRef = $dbh->selectall_arrayref( $contributorRoleSth, undef, ($c->{'albums.id'}, $contributorID) );
+				} else {
+					$contributorRoleSth ||= $dbh->prepare_cached($contributorRoleSql);
+					$rolesRef = $dbh->selectall_arrayref( $contributorRoleSth, undef, ($c->{'albums.id'}) );
+				}
 
 				if ($rolesRef) {
 					my $roles = join(',', map { $_->[0] } @$rolesRef);
@@ -4209,6 +4242,16 @@ sub statusQuery {
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
 			}
+
+			# we rely on the following items to be available when evaluating album contiguity
+			# better make sure we have all the data we need available!
+			if ($tags =~ /2/) {
+				$tags .= 't' if $tags !~ /t/; # tracknum
+				$tags .= 'e' if $tags !~ /e/; # album_id
+				$tags .= 'b' if $tags !~ /b/; # work_id
+				$tags .= 'h' if $tags !~ /h/; # grouping
+				$tags .= '1' if $tags !~ /1/; # performance
+			}
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song
@@ -4266,7 +4309,12 @@ sub statusQuery {
 				$idx = $start;
 				my $totalDuration = 0;
 
-				foreach( @tracks ) {
+				my $lastAlbumTrack = 0;
+				my $lastAlbum = 0;
+				my $albumNumber = 0; # a sequential id of each album instance in the play queue (albums/tracks could be repeated)
+				my %groups;
+
+				foreach ( @tracks ) {
 					# Use songData for track, if remote use the object directly
 					my $data = ref $_ ? $_ : $songData->{$_};
 
@@ -4290,6 +4338,25 @@ sub statusQuery {
 									$data, $tags,
 									'playlist index', $idx, $fast
 								);
+
+						if ( $tags =~ /2/ ) {
+							# build a hash containing an array of hash refs to the playlist_loop items for each identified album group in the play queue.
+							my $track = @{ $request->getResult('playlist_loop') }[$count];
+							my $albumTrack = $track->{'album_id'} * 10000 + $track->{'tracknum'}; # used to detect a new album or a repeat of tracks from the same album
+
+							my $group = "$track->{'work_id'}##$track->{'grouping'}##$track->{'performance'}";
+
+							if ( $track->{'album_id'} != $lastAlbum || $albumTrack < $lastAlbumTrack ) {
+								++$albumNumber;
+							}
+
+							$lastAlbum = $track->{'album_id'};
+							$lastAlbumTrack = $albumTrack;
+
+							$track->{_trackGroup} = $group;
+							$groups{$albumNumber} ||= [];
+							push @{$groups{$albumNumber}}, $track;
+						}
 					}
 
 					$count++;
@@ -4300,6 +4367,36 @@ sub statusQuery {
 					main::idleStreams() if ! ($count % 20);
 				}
 
+				if ( $tags =~ /2/ ) {
+					# process each album group in the playlist. $albumGroupData is an array of hash refs to the playlist_loop entries for the $albumGroup.
+					while (my ($albumGroup, $albumGroupData) = each %groups) {
+						$albumGroupData ||= [];
+
+						my $nonContiguous;
+						my $previousGroup;
+						my $groupSeen = {};
+
+						# determine whether album group contains contiguous or non-contiguous groups of tracks
+						foreach my $track ( sort { $a->{tracknum} <=> $b->{tracknum} } @$albumGroupData ) {
+							my $thisTrackGroup = $track->{_trackGroup};
+							if ( $previousGroup ne $thisTrackGroup ) {
+								if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
+									last;
+								}
+								else {
+									$groupSeen->{$thisTrackGroup} = 1;
+									$previousGroup = $thisTrackGroup;
+								}
+							}
+						}
+
+						# now set the contiguous_groups flag in the playlist_loop array.
+						foreach ( @$albumGroupData ) {
+							$_->{'contiguous_groups'} = $nonContiguous ? 0 : 1;
+							delete $_->{_trackGroup};
+						}
+					}
+				}
 				if ($totalOnly) {
 					$request->addResult('playlist duration', $totalDuration || 0);
 				}
@@ -4844,6 +4941,7 @@ sub worksQuery {
 	my $genreID       = $request->getParam('genre_id');
 	my $year          = $request->getParam('year');
 	my $workID        = $request->getParam('work_id');
+	my $albumID       = $request->getParam('album_id');
 
 	# get them all by default
 	my $where = {};
@@ -4905,6 +5003,12 @@ sub worksQuery {
 				push @{$p}, @works;
 				push @{$w}, 'works.id IN (' . join(', ', map {'?'} @works) . ')';
 			}
+		}
+
+		if ( defined $albumID ) {
+			# remove anything nasty that might have crept into the parameter
+			$albumID = join(',', grep /^\d+$/, split(',', $albumID));
+			push @{$w}, "albums.id IN ($albumID)";
 		}
 
 		if ( defined $year ) {
@@ -6345,7 +6449,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . utf8::decode(join( '', @{$p}, @$w )) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+		my $cacheKey = md5_hex($sql . Slim::Utils::Unicode::utf8on(join( ':', @$p, @$w )) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {

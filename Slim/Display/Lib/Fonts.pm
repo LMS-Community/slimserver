@@ -95,8 +95,8 @@ my ($ft, $TTFFontFile);
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
 %TTFCache = ();
 
-# template for unpacking strings: U - unpacks Unicode chars into ords, C - is needed for 5.6 perl's
-my $unpackTemplate = ($] > 5.007) ? 'U*' : 'C*';
+# template for unpacking strings: U - unpacks Unicode chars into ords
+my $unpackTemplate = 'U*';
 
 my $bidiR = qr/\p{BidiClass:R}/;
 my $bidiL = qr/\p{BidiClass:L}/;
@@ -327,7 +327,7 @@ sub string {
 
 			# If the string contains any Unicode characters which exist in our bitmap,
 			# use the bitmap version instead of the TTF version
-			# http://forums.slimdevices.com/showthread.php?t=42087
+			# https://forums.lyrion.org/showthread.php?t=42087
 			if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
 				$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
 			}

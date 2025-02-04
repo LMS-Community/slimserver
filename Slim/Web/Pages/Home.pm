@@ -39,7 +39,7 @@ sub init {
 	Slim::Web::Pages->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html" });
 	Slim::Web::Pages->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html" });
 	Slim::Web::Pages->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html" });
-	Slim::Web::Pages->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com" });
+	Slim::Web::Pages->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"https://forums.lyrion.org" });
 
 	Slim::Web::Pages->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
 

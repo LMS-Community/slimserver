@@ -65,7 +65,7 @@ my $scannerlog = logger('scan.scanner');
 my $ospathslog = logger('os.paths');
 my $osfileslog = logger('os.files');
 
-my $WEBLINK_SUPPORTED_UA_RE = qr/\b(?:iPeng|SqueezePad|OrangeSqueeze|Squeeze-Control|Squeezer|OpenSqueeze)\b/i;
+my $WEBLINK_SUPPORTED_UA_RE = qr/\b(?:iPeng|SqueezePad|OrangeSqueeze|Squeeze-Control|Squeezer|OpenSqueeze|SqueezeClient)\b/i;
 my $WEBBROWSER_UA_RE = qr/\b(?:FireFox|Chrome|Safari|Mozilla)\b/i;
 
 my $canFollowAlias = 0;
@@ -233,22 +233,6 @@ sub pathFromFileURL {
 		logBacktrace("Path isn't a file URL: $url");
 
 		return $url;
-	}
-
-	# Bug: 1786
-	#
-	# Work around a perl bug that exists in 5.8.0, 5.8.1 & 5.8.2? - where
-	# a join() can return garbage because it's internal scratch space
-	# wasn't properly cleared with a UTF8 string that previously went
-	# through it. The call to $uri->file() below contains such a join, and
-	# was causing bogus data to be returned on OSX 10.3.x systems.
-	#
-	# See
-	# http://lists.bestpractical.com/pipermail/rt-devel/2004-January/005283.html
-	# for some more information.
-	if ($] > 5.007 && $] <= 5.008002) {
-
-		$url = Slim::Utils::Unicode::utf8off($url);
 	}
 
 	# Bug 3589, support win32 backslashes in URLs, file://C:\foo\bar

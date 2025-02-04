@@ -9,6 +9,7 @@ PLUGIN_LIBRARY_DEMO
 
 PLUGIN_LIBRARY_DEMO_DESC
 	CS	Zásuvný modul pro demonstraci podpory více (nebo virtuálních) knihoven. Tento zásuvný modul vytvoří několik (částečně zbytečných) virtuálních knihoven. Je určen především jako inspirace pro vývojáře zásuvných modulů.
+	DA	Udvidelsesmodul (plugin) til at demonstrere understøttelse af flere (eller virtuelle) biblioteker. Dette modul vil skabe nogle (delvist ubrugelige) virtuelle biblioteker. Det er mest tænkt som en inspiration for plugin-udviklere.
 	EN	Plugin to demonstrate support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries. It's mostly intended as an inspiration for plugin developers.
 	FR	Plugin pour démontrer la prise en charge de plusieurs bibliothèques (virtuelles). Ce plugin créera des bibliothèques virtuelles en partie inutiles. Il est plutôt une source d'inspiration pour les développeurs de plugins.
 	HU	Beépülő modul több (vagy virtuális) könyvtár támogatásának demonstrálására. Ez a beépülő modul létrehoz néhány (részben haszontalan) virtuális könyvtárat. Leginkább a bővítmények fejlesztői számára készült inspirációnak.

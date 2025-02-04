@@ -355,7 +355,7 @@ sub readRemoteHeaders {
 		$type = 'm3u';
 	}
 
-	# https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1661990
+	# https://forums.lyrion.org/forum/user-forums/logitech-media-server/1661990
 	elsif ( $type =~ /octet-stream/ ) {
 		my $validTypeExtensions = join('|', Slim::Music::Info::validTypeExtensions());
 		if ($url =~ /\.($validTypeExtensions)\b/) {

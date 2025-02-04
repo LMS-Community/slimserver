@@ -427,6 +427,12 @@ sub _cliQuery_done {
 				delete $subFeed->{fetched};
 			}
 
+			# Invalidate previously fetched data if it was fetched with a smaller quantity than requested now
+			if ($subFeed->{fetched} && $subFeed->{fetchSize} && $subFeed->{fetchSize} < $quantity) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("  Invalidating short cached data (has ", $subFeed->{fetchSize}, " want $quantity)");
+				delete $subFeed->{fetched};
+			}
+
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'}
@@ -1499,6 +1505,7 @@ sub _cliQuery_done {
 # After fetching, insert the contents into the original feed
 sub _cliQuerySubFeed_done {
 	my ( $feed, $params ) = @_;
+	my $request = $params->{request};
 
 	# If there's a command we need to run, run it.  This is used in various
 	# places to trigger actions from an OPML result, such as to start playing
@@ -1506,7 +1513,7 @@ sub _cliQuerySubFeed_done {
 	if ( $feed->{command} ) {
 
 		my @p = map { uri_unescape($_) } split / /, $feed->{command};
-		my $client = $params->{request}->client();
+		my $client = $request->client();
 
 		if ($client) {
 			main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
@@ -1545,6 +1552,7 @@ sub _cliQuerySubFeed_done {
 	}
 
 	$subFeed->{'fetched'} = 1;
+	$subFeed->{'fetchSize'} = $request->getParam('_quantity');
 
 	# Pass-through forceRefresh flag
 	if ( $feed->{forceRefresh} ) {

@@ -11,7 +11,7 @@
 
 	<li>Server Changes:</li>
 	<ul>
-		<li></li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1245">#1245</a> - Added a Simple WebSocket client capability for 3rd Party Plugins to support this protocol (expectingtofly)</li>
 	</ul>
 	<br />
 
@@ -20,24 +20,29 @@
 		<li>Make Docker a first class citizan: add Slim::Utils::OS::Docker insted of a Custom.pm</li>
 		<li>Remove Win32 legacy support files, code, control panels, build pipeline, etc.</li>
 		<li>Remove legacy Mac installer from build pipeline.</li>
+		<li>Remove code dealing with Perl &lt; 5.10.</li>
+		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/73">#73</a> - Add a note about setting the hostname in a Docker container (thanks @hartzell!)</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1287">#1287</a> - fix method name for spdr protocol handler.</li>
 		<li></li>
 	</ul>
 	<br />
 
 	<li>Other:</li>
 	<ul>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1245">#1245</a> - Added a Simple WebSocket client capability for 3rd Party Plugins to support this protocol (expectingtofly)</li>
+		<li>Remove more left-overs from removed picture/video scanning.</li>
+		<li>Remove more left-overs from removed MySqueezebox integration.</li>
 	</ul>
 	<br />
 </ul>
 
 
-<h2><a name="v9.0.1" id="v9.0.1"></a>Version 9.0.1</h2>
+<h2><a name="v9.0.2" id="v9.0.2"></a>Version 9.0.2</h2>
 <ul>
 	<li>New Features:</li>
 	<ul>
@@ -47,7 +52,54 @@
 
 	<li>Server Changes:</li>
 	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li>Improve Windows installer to give better feedback on service start failure.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/85">#85</a> - Change permissions of user running LMS in Docker. Use "squeezeboxserver" group instead of "nogroup" (thanks @osnieh!)</li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li>Mitigate an <a href="https://forums.lyrion.org/forum/developer-forums/developers/1747258">issue with uppercase umlauts and other non-latin characters</a> in the full text search on Windows.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1193">#1193</a> - Don't throw error when fulltext search is being used before the end of a scan.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1288">#1288</a> - Update Carp::Assert to latest to fix compatibility with recent Perl versions.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1303">#1303</a> - Fix an issue where browsing releases would sometimes create thousands of parameters (and more - thanks @darrel-k!).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1306">#1306</a> - Don't run the scanner before we're done with the setup wizard.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1307">#1307</a> - Fix scanner progress information in the web UI.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1309">#1309</a> - Limit works advanced search to discovered albums. (@darrel-k)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issue/1314">#1314</a> - The server would seemingly hang when trying to connect to the Material skin as long as no work has been found.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1319">#1319</a> - Don't filter by release types if user pref is ignoreReleaseTypes (@darrel-k).</li>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1315">#1315</a> - Return contiguous/non-contiguous flag in statusQuery (thanks @darrel-k).</li>
+		<li></li>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v9.0.1" id="v9.0.1"></a>Version 9.0.1 - 2025-01-09 (e3effbe91)</h2>
+<ul>
+	<li>New Features:</li>
+	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1267">#1267</a> - Provide easy installation of Date and Time screensaver for Classic/Boom/Transporter users.</li>
+	</ul>
+	<br />
+
+	<li>Server Changes:</li>
+	<ul>
 		<li>Analytics: only check a small, well defined list of pref changes to decide whether a disconnected player had been active recently.</li>
+		<li>Initialize autoincrement start value for contributors table to prevent ID re-use on full wipe &amp; rescans.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1259">#1259</a> - Improve the way in which we initialize a "track added" timestamp. Use the file's timestamp on initial imports.</li>
 	</ul>
 	<br />
 
@@ -56,9 +108,11 @@
 		<li>Fix helper search path initialisation on older macOS using Perl 5.18.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/74">#74</a> - Speed up Perl installation during an initial installation on Windows.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/75">#75</a> - Make sure newly installed LMS on Windows is running before sending the user to the web page.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/76">#76</a> - Start/stop LMS on Mac when the menu bar item is started/stopped.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/77">#77</a> - Add instructions to the macOS DMG file. Improve overall user experience.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/78">#78</a> - Fix crypto library linking issues in the Docker image.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/80">#80</a> - Reset update status when updating fromt he macOS menu bar item.</li>
+		<li>Have a newly installed LMS on Windows use "Lyrion" as the data path, rather than "Squeezebox".</li>
 	</ul>
 	<br />
 
@@ -66,6 +120,7 @@
 	<ul>
 		<li>Only re-initialize menu settings for connected players - otherwise Analytics considers them "active" due to a prefs change.</li>
 		<li>Fix display of final "Scan done" message in Material skin.</li>
+		<li>Fix track count caching in "titles" query.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1235">#1235</a> - Need to utf8Decode album title for new &amp; changed (thanks @darrel-k!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1237">#1237</a> - Fix create table syntax for MySQL (MariaDB) (thanks @JKDingwall!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1238">#1238</a> - Merge multiple works per track into one single work (thanks @darrel-k!)</li>
@@ -73,14 +128,9 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1242">#1242</a> - Fix plugin download - must wait for the download to finish before restarting the server</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1247">#1247</a> - Fix display of final "Scan done" message and "Abort scan" link in Material/Classic skins.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1250">#1250</a> - Radio stations wouldn't show album artwork any more.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1264">#1246</a> - Windows registry value "DataPath" is in the wrong place.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1273">#1273</a> - Remove grouping & discsubtitle in new &amp; changed scan if tags were removed (thanks @darrel-k!)</li>
 	</ul>
-	<br />
-
-	<li>Other:</li>
-	<ul>
-		<li></li>
-	</ul>
-	<br />
 </ul>
 
 

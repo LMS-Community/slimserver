@@ -89,14 +89,11 @@ sub _filehandleFromNameOrString {
 		};
 
 		# Always write out in UTF-8 with a BOM.
-		if ($] > 5.007) {
+		binmode($output, ":raw");
 
-			binmode($output, ":raw");
+		print $output $File::BOM::enc2bom{'utf8'};
 
-			print $output $File::BOM::enc2bom{'utf8'};
-
-			binmode($output, ":encoding(utf8)");
-		}
+		binmode($output, ":encoding(utf8)");
 
 	} else {
 

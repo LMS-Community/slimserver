@@ -805,7 +805,7 @@ sub nextScanTask {
 		return;
 	}
 
-	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k && $next;
+	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $next;
 
 	$next->execute() if $next;
 

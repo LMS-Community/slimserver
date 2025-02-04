@@ -32,7 +32,7 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	# tell the server not to trigger a rescan immediately, but let it queue up requests
-	# this is neede to prevent multiple scans to be triggered by change handlers for paths etc.
+	# this is needed to prevent multiple scans to be triggered by change handlers for paths etc.
 	Slim::Music::Import->doQueueScanTasks(1);
 	my $runScan;
 

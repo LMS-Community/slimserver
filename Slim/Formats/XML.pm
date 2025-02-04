@@ -769,13 +769,6 @@ sub unescapeAndTrim {
 	# strip all markup tags
 	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
 
-	# the following taken from Rss News plugin, but apparently
-	# it results in an unnecessary decode, which actually causes problems
-	# and things seem to work fine without it, so commenting it out.
-	#if ($] >= 5.008) {
-	#	utf8::decode($data);
-	#}
-
 	return $data;
 }
 

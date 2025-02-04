@@ -87,6 +87,7 @@ my %tagMapping = (
 our $initialized         = 0;
 my $trackAttrs           = {};
 my $trackPersistentAttrs = {};
+my $firstScan;
 
 my %ratingImplementations = (
 	'LOCAL_RATING_STORAGE' => \&_defaultRatingImplementation,
@@ -149,17 +150,13 @@ sub init {
 	eval {
 		local $dbh->{HandleError} = sub {};
 		$dbh->do('SELECT name FROM metainformation') || die $dbh->errstr;
-
-		# when upgrading from SBS to LMS let's check the additional tables,
-		# as the schema numbers might be overlapping, not causing a re-build
-		$dbh->do('SELECT id FROM images LIMIT 1') || die $dbh->errstr;
 	};
 
 	# If we couldn't select our new 'name' column, then drop the
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
 	if ( $@ ) {
-		main::INFOLOG && $log->is_info && $log->info("Creating new database - empty, outdated or invalid database found");
+		main::INFOLOG && $log->is_info && $log->info("Creating new database - empty, outdated or invalid database found: $@");
 
 		eval {
 			$dbh->do('DROP TABLE IF EXISTS metainformation');
@@ -1531,6 +1528,12 @@ sub _createTrack {
 	### Create TrackPersistent row
 
 	if ( main::STATISTICS && $columnValueHash->{'audio'} ) {
+		if (!defined $firstScan) {
+			# if no track has been played yet, we consider this a first scan
+			my $counts = $dbh->selectall_arrayref('SELECT count(1) FROM tracks_persistent WHERE lastPlayed IS NOT NULL OR playCount IS NOT NULL;');
+			$firstScan = $counts->[0]->[0] ? 0 : 1;
+		}
+
 		# Pull the track persistent data
 		my $trackPersistentHash = Slim::Schema::TrackPersistent->findhash(
 			$columnValueHash->{musicbrainz_id},
@@ -1538,10 +1541,14 @@ sub _createTrack {
 		);
 
 		my $externalTrack = $columnValueHash->{extid} && $columnValueHash->{url} eq $columnValueHash->{extid};
+		my $useTimestampAsAdded = $externalTrack || $firstScan;
 
 		# retrievePersistent will always return undef or a track metadata object
 		if ( !$trackPersistentHash ) {
-			$persistentColumnValueHash->{added}  = ($externalTrack && $columnValueHash->{timestamp}) || time();
+			# https://github.com/LMS-Community/slimserver/issues/1259
+			# when we are running the very first scan, we consider the file's timestamp the time added
+			# once we have seen some activity, use the actual time as the time added
+			$persistentColumnValueHash->{added}  = ($useTimestampAsAdded && $columnValueHash->{timestamp}) || time();
 			$persistentColumnValueHash->{url}    = $columnValueHash->{url};
 			$persistentColumnValueHash->{urlmd5} = $columnValueHash->{urlmd5};
 
@@ -1971,8 +1978,8 @@ sub updateOrCreateBase {
 
 			$key = lc($key);
 
-			## Need to set performance to null if no value passed in (may have had a value before this scan)
-			if ( (defined $val && $val ne '' || $key eq "performance") && exists $trackAttrs->{$key} ) {
+			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
+			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
@@ -2817,11 +2824,15 @@ sub _preCheckAttributes {
 		# XXX maybe also want COMMENT & GENRE
 	}
 
-	# set Perfomance attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
-	if ( !exists($attributes->{'PERFORMANCE'}) || length($attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'PERFORMANCE'} = undef;
-	} else {
-		$attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//g;
+	# set Perfomance/grouping/discsubtitle attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
+	foreach (qw/PERFORMANCE GROUPING DISCSUBTITLE/) {
+		my $newAttribute = $attributes->{$_} // '';
+		$newAttribute =~ s/^\s+|\s+$//g;
+		if ( length($newAttribute) == 0 ) {
+			$attributes->{$_} = undef;
+		} else {
+			$attributes->{$_} = $newAttribute;
+		}
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
@@ -3251,7 +3262,7 @@ sub totals {
 	);
 
 	while (my ($key, $query) = each %categories) {
-		if ( !$totalCache->{$key} ) {
+		if ( !defined $totalCache->{$key} ) {
 			push @$query, 'library_id:' . $library_id if $library_id;
 			my $request = Slim::Control::Request::executeRequest($client, $query);
 			$totalCache->{$key} = $request->getResult('count');

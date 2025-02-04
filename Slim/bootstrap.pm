@@ -87,10 +87,6 @@ sub loadModules {
 		#system("/usr/bin/chcon -R -t texrel_shlib_t $archDir");
 	}
 
-	if ($] <= 5.007) {
-		push @$required_modules, qw(Storable Digest::MD5);
-	}
-
 	my @SlimINC = ();
 
 	Slim::Utils::OSDetect::init();

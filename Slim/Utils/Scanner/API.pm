@@ -45,8 +45,6 @@ Multiple handlers may be registered, and they are called in the order they were 
 my @onNewTrack;
 my @onDeletedTrack;
 my @onChangedTrack;
-my @onNewImage;
-my @onNewVideo;
 my @onNewPlaylist;
 my @onDeletedPlaylist;
 my @onFinished;
@@ -160,13 +158,6 @@ sub _makeDispatcher {
 					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{url} . " ($method): $@");
 				}
 			}
-			else { # Images/Videos
-				eval { $h->{cb}->( $opts->{hashref} ) };
-				if ( $@ ) {
-					my $method = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} ) : 'unk';
-					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{hashref}->{url} . " ($method): $@");
-				}
-			}
 		}
 	};
 }
@@ -194,12 +185,6 @@ sub getHandlers {
 		onNewTrackHandler        => _makeDispatcher( \@onNewTrack, 'Track', 'onNewTrack' ),
 		onDeletedTrackHandler    => _makeDispatcher( \@onDeletedTrack, 'Track', 'onDeletedTrack' ),
 		onChangedTrackHandler    => _makeDispatcher( \@onChangedTrack, 'Track', 'onChangedTrack' ),
-		onNewImageHandler        => _makeDispatcher( \@onNewImage, undef, 'onNewImage' ),
-		# onDeletedImageHandler
-		# onChangedImageHandler
-		onNewVideoHandler        => _makeDispatcher( \@onNewVideo, undef, 'onNewVideo' ),
-		# onDeletedVideoHandler
-		# onChangedVideoHandler
 		onNewPlaylistHandler     => _makeDispatcher( \@onNewPlaylist, 'Playlist', 'onNewPlaylist' ),
 		onDeletedPlaylistHandler => _makeDispatcher( \@onDeletedPlaylist, 'Playlist', 'onDeletedPlaylist' ),
 		onFinishedHandler        => _makeFinishedDispatcher( \@onFinished ),

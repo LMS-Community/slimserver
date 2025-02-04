@@ -202,10 +202,6 @@ sub Browse {
 
 	# Home Menu
 	# ---------
-	# Music
-	# Video
-	# Pictures
-
 	# Music (/music)
 	# -----
 	# Artists (/a)                                             artists
@@ -237,7 +233,7 @@ sub Browse {
 	# Tracks (/t) (cannot be browsed)
 	#   Track 1 (/t/<id>)
 
-	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video|images)$}) ) { # top-level menu
+	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id eq '/music') ) { # top-level menu
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/music', parentID => 0, type => $type, title => $string->('MUSIC') },
@@ -512,115 +508,6 @@ sub Browse {
 			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 		}
 
-		### Video
-		elsif ( $id =~ m{^/va} ) { # All Videos
-			if ( $id =~ m{/([0-9a-f]{8})$} ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUlF"
-					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUlF";
-			}
-			else {
-				$cmd = "video_titles $start $limit tags:dorfcwhtnDUlF";
-			}
-		}
-
-		elsif ( $id =~ m{^/vf} ) {      # folders
-			my ($folderId) = $id =~ m{^/vf/(.+)};
-
-			if ( $folderId ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJF"
-					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJF";
-			}
-
-			elsif ( $id eq '/vf' ) {
-				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJF";
-			}
-		}
-
-		### Images
-		elsif ( $id =~ m{^/ia} ) { # All Images
-			if ( $id =~ m{/([0-9a-f]{8})$} ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlOF"
-					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlOF";
-			}
-			else {
-				$cmd = "image_titles $start $limit tags:ofwhtnDUlOF";
-			}
-		}
-
-		elsif ( $id =~ m{^/if} ) {      # folders
-			my ($folderId) = $id =~ m{^/if/(.+)};
-
-			if ( $folderId ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJF"
-					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJF";
-			}
-
-			elsif ( $id eq '/if' ) {
-				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJF";
-			}
-		}
-
-		elsif ( $id =~ m{^/il} ) {      # albums
-			my ($albumId) = $id =~ m{^/il/(.+)};
-
-			if ( $albumId ) {
-				$albumId = main::ISWINDOWS ? uri_escape($albumId) : uri_escape_utf8($albumId);
-
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlOF"
-					: "image_titles 0 1 albums:1";
-			}
-
-			elsif ( $id eq '/il' ) {
-				$cmd = "image_titles $start $limit albums:1";
-			}
-		}
-
-		elsif ( $id =~ m{^/(?:it|id)} ) { # timeline hierarchy
-
-			my ($tlId) = $id =~ m{^/(?:it|id)/(.+)};
-			my ($year, $month, $day, $pic) = $tlId ? split('/', $tlId) : ();
-
-			if ( $pic ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlOF"
-					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlOF";
-			}
-
-			# if we've got a full date, show pictures
-			elsif ( $year && $month && $day ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlOF"
-					: "image_titles 0 1 timeline:days search:$year-$month"; # XXX should this have tags?
-			}
-
-			# show days for a given month/year
-			elsif ( $year && $month ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:days search:$year-$month"
-					: "image_titles 0 1 timeline:months search:$year";
-			}
-
-			# show months for a given year
-			elsif ( $year ) {
-				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:months search:$year"
-					: "image_titles 0 1 timeline:years";
-			}
-
-			elsif ( $id eq '/it' ) {
-				$cmd = "image_titles $start $limit timeline:years";
-			}
-
-			elsif ( $id eq '/id' ) {
-				$cmd = "image_titles $start $limit timeline:dates";
-			}
-		}
-
 		if ( !$cmd ) {
 			return [ 701 => 'No such object' ];
 		}
@@ -699,16 +586,8 @@ sub Search {
 	my ($sortsql, $stags) = _decodeSortCriteria($sort, $table);
 	$tags .= $stags;
 
-	if ($cmd eq 'image_titles') {
-		$tags .= 'ofwhtnDUlOF';
-	}
-	elsif ($cmd eq 'video_titles') {
-		$tags .= 'dorfcwhtnDUlF';
-	}
-	else {
-		# Avoid 'A' and 'G' tags because they will run extra queries
-		$tags .= 'agldyorfTIctnDUFH';
-	}
+	# Avoid 'A' and 'G' tags because they will run extra queries
+	$tags .= 'agldyorfTIctnDUFH';
 
 	if ( $sort && !$sortsql ) {
 		return [ 709 => 'Unsupported or invalid sort criteria' ];
@@ -741,7 +620,7 @@ sub Search {
 		cmd      => $cmd,
 		results  => $results,
 		flag     => '',
-		id       => $table eq 'tracks' ? '/t' : $table eq 'videos' ? '/v' : '/i',
+		id       => '/t',
 		filter   => $filter,
 
 		request_addr => $request_addr,
@@ -1036,9 +915,7 @@ sub _arrayToDIDLLite {
 
 			# DLNA 7.3.67.4, add searchClass info
 			if ($id == 0 && ($filterall || $filter =~ /upnp:searchClass/) ) {
-				$xml .= qq{<upnp:searchClass includeDerived="0">object.item.audioItem</upnp:searchClass>}
-					  . qq{<upnp:searchClass includeDerived="0">object.item.imageItem</upnp:searchClass>}
-					  . qq{<upnp:searchClass includeDerived="0">object.item.videoItem</upnp:searchClass>};
+				$xml .= qq{<upnp:searchClass includeDerived="0">object.item.audioItem</upnp:searchClass>};
 			}
 
 			$xml .= '</container>';
@@ -1066,21 +943,6 @@ sub _decodeSearchCriteria {
 	# Fix quotes and apos
 	$search =~ s/&quot;/"/g;
 	$search =~ s/&apos;/'/g;
-
-	# Handle derivedfrom
-	if ( $search =~ s/upnp:class derivedfrom "([^"]+)"/1=1/ig ) {
-		my $sclass = $1;
-		if ( $sclass =~ /object\.item\.videoItem/i ) {
-			$cmd = 'video_titles';
-			$table = 'videos';
-			$idcol = 'hash';
-		}
-		elsif ( $sclass =~ /object\.item\.imageItem/i ) {
-			$cmd = 'image_titles';
-			$table = 'images';
-			$idcol = 'hash';
-		}
-	}
 
 	# Tweak all title/namesearch columns to use the normalized version
 	if ( $search =~ /(dc:title|dc:creator|upnp:artist|upnp:album|upnp:genre)\s+contains\s+"([^"]+)"/ ) {

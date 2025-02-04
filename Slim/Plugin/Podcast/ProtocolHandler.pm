@@ -39,6 +39,15 @@ sub scanUrl {
 		my $track = shift;
 
 		if ($track) {
+			# XXXX - this doesn't really belong here. But somewhere down the scanUrl() rabbit hole
+			#        we seem to convert %21 with !. Which breaks some podcast URLs. And I don't want
+			#        to open that can of worms right now. - mh
+			if (new URI($track->url)->path =~ /!/ && new URI($httpUrl)->path !~ /!/) {
+				my $uri = $track->url;
+				$uri =~ s/!/%21/g;
+				$track->url($uri);
+			}
+
 			main::INFOLOG && $log->info("Scanned podcast $url => ", $track->url, " from ($startTime) for title: ", $song->track->title);
 
 			# use the scanned track to get streamable url, ignore scanned title and coverart

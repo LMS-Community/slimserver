@@ -531,6 +531,10 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
+
+	# Reset the update flag upon each start
+	$prefs->remove('serverUpdateAvailable');
+
 	if ( !$os->runningFromSource && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
@@ -784,18 +788,6 @@ sub initLogging {
 	});
 }
 
-sub initClass {
-	my $class = shift;
-
-	Slim::bootstrap::tryModuleLoad($class);
-
-	if ($@) {
-		logError("Couldn't load $class: $@");
-	} else {
-		$class->initPlugin;
-	}
-}
-
 sub initSettings {
 
 	Slim::Utils::Prefs::init();
@@ -893,10 +885,8 @@ sub changeEffectiveUserAndGroup {
 	my ($uid, $pgid, @sgids, $gid);
 
 	# Don't allow the server to be started as root.
-	# MySQL can't be run as root, and it's generally a bad idea anyways.
-	# Try starting as 'squeezeboxserver' instead.
 	if (!defined($user)) {
-		$user = 'squeezeboxserver';
+		$user = 'nobody';
 		print STDERR "Lyrion Music Server must not be run as root!  Trying user $user instead.\n";
 	}
 
@@ -985,7 +975,7 @@ sub checkDataSource {
 
 	$prefs->set('mediadirs', $mediadirs) if $modified;
 
-	return if !Slim::Schema::hasLibrary();
+	return if !Slim::Schema::hasLibrary() || !$prefs->get('wizardDone');
 
 	$sqlHelperClass->checkDataSource();
 
@@ -1070,6 +1060,7 @@ sub cleanup {
 	Slim::Utils::PluginManager->shutdownPlugins();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Write out prefs changes.");
+	$prefs->remove('serverUpdateAvailable');
 	Slim::Utils::Prefs::writeAll();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Stop image resizer daemon.");

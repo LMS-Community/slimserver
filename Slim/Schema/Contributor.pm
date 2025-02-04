@@ -61,9 +61,7 @@ initializeRoles();
 
 	$class->many_to_many('albums', 'contributorAlbums' => 'album', undef, { 'distinct' => 1 });
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/name namesort/);
-	}
+	$class->utf8_columns(qw/name namesort/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Contributor');
 }

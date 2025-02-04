@@ -110,6 +110,13 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 				[% desc = '' %]
 			[% END %]
 
+			[% IF saveropts.alarmsaver.size == 0 %]
+				[% WRAPPER settingGroup title="" %]
+					<div>[% "SETUP_NO_SCREENSAVERS" | string %]</div>
+					<div><input name="installScreensavers" id="installScreensavers" type="submit" class="stdclick" value="[% "SETUP_INSTALL" | string %]"></div>
+				[% END %]
+			[% END %]
+
 			[% WRAPPER settingGroup title="SETUP_SCREENSAVERTIMEOUT" desc="" %]
 				<input type="text" class="stdedit sliderInput_0_300" name="pref_screensavertimeout" id="screensavertimeout" value="[% prefs.pref_screensavertimeout | html %]" size="15">
 			[% END %]

@@ -56,9 +56,7 @@ our @allColumns = (qw(
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 	$class->has_many('libraryTracks'     => 'Slim::Schema::LibraryTrack');
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/title titlesort lyrics/);
-	}
+	$class->utf8_columns(qw/title titlesort lyrics/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
 

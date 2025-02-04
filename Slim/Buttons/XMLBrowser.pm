@@ -679,6 +679,8 @@ sub gotOPML {
 				}
 
 				return $name;
+			} elsif ($hasMetadata eq 'work') {
+				return $item->{name} . $client->string('COLON') . " $item->{name2}";
 			} else {
 				return $item->{name};
 			}

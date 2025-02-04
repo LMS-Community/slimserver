@@ -13,6 +13,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
 
+use constant DATE_TIME_SCREENSAVER_PLUGIN => 'DateTime';
+
 my $prefs = preferences('server');
 
 sub name {
@@ -64,6 +66,13 @@ sub handler {
 	# reset all client preferences to factory defaults
 	if ($paramRef->{resetprefs}) {
 		$client->resetPrefs();
+	}
+
+	# install the Date and Time screensaver if desired
+	if ($paramRef->{installScreensavers}) {
+		Slim::Utils::ExtensionsManager->enablePlugin(DATE_TIME_SCREENSAVER_PLUGIN);
+		Slim::Utils::PluginManager->_needsEnable(DATE_TIME_SCREENSAVER_PLUGIN);
+		Slim::Utils::PluginManager->load('', DATE_TIME_SCREENSAVER_PLUGIN);
 	}
 
 	# array prefs handled by this handler not handler::SUPER

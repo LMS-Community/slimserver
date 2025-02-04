@@ -34,7 +34,7 @@
 
 <div>
 <br/>
- <p>En cas de question ou probl&egrave;me, visiter les forums d'utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a></p>
+ <p>En cas de question ou probl&egrave;me, visiter les forums d'utilisateurs &agrave; l'adresse <a href="https://forums.lyrion.org/">https://forums.lyrion.org/</a></p>
 </div>
 
 [% PROCESS helpfooter.html %]

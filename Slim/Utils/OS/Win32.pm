@@ -507,8 +507,7 @@ sub writablePath {
 				}
 			}
 
-			# TODO - we should be able to use Lyrion here...
-			$writablePath = catdir($writablePath, 'Squeezebox') unless $writablePath eq $Bin;
+			$writablePath = catdir($writablePath, 'Lyrion') unless $writablePath eq $Bin;
 
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(

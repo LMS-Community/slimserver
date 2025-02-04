@@ -263,9 +263,9 @@ sub _parseURIs {
 
 	return $text unless $text;
 
-	if (!($text =~ s!\b(https?://[A-Za-z0-9\-_\.\!~*'();/?:@%&=+$,]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
+	if (!($text =~ s!\b(https?://[-A-Z\d_.~*'();/?:@%&=+,#\$\!]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
 		# handle emusic-type urls which don't have http://
-		$text =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@%&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
+		$text =~   s!\b(www\.[-A-Z\d_.~*'();/?:@%&=+,#\$\!]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
 	}
 
 	return $text;

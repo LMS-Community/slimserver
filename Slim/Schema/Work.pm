@@ -25,6 +25,8 @@ use Slim::Utils::Strings qw(string);
 	$class->utf8_columns(qw/title titlesort/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Work');
+
+	$class->mk_group_accessors(column => 'albumId');
 }
 
 # For saving favorites
