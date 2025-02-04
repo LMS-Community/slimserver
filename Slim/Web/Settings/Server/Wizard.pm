@@ -175,10 +175,15 @@ sub handler {
 			if ($pref eq 'mediadirs') {
 				my $dirs = $serverPrefs->get($pref);
 				unshift @$dirs, $paramRef->{$pref};
+				$dirs = [ Slim::Utils::Misc::uniq(@$dirs) ];
 
-				$serverPrefs->set($pref, [ Slim::Utils::Misc::uniq(@$dirs) ]);
+				main::DEBUGLOG && $log->is_debug() && $log->debug('Setting music folder: ' . Data::Dump::dump($dirs));
+
+				$serverPrefs->set($pref, $dirs);
+				Slim::Control::Request::executeRequest(undef, ['wipecache', 'queue']);
 			}
 			else {
+				main::DEBUGLOG && $log->is_debug() && $log->debug("Setting $pref folder: $paramRef->{$pref}");
 				$serverPrefs->set($pref, $paramRef->{$pref});
 			}
 		}
@@ -219,8 +224,7 @@ sub handler {
 
 		if (Slim::Utils::PluginDownloader->downloading) {
 			$finalizeCb = sub {
-				Slim::Music::Import->doQueueScanTasks(0);
-				Slim::Music::Import->nextScanTask();
+				_triggerScan();
 
 				Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 				$pageSetup->( $client, $paramRef, Slim::Web::HTTP::filltemplatefile($class->page, $paramRef), $httpClient, $response );
@@ -230,8 +234,7 @@ sub handler {
 		}
 	}
 
-	Slim::Music::Import->doQueueScanTasks(0);
-	Slim::Music::Import->nextScanTask();
+	_triggerScan();
 
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
@@ -239,6 +242,12 @@ sub handler {
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+}
+
+sub _triggerScan {
+	main::DEBUGLOG && $log->is_debug && $log->debug('Now finally run a full wipe & resacan.');
+	Slim::Music::Import->doQueueScanTasks(0);
+	Slim::Music::Import->nextScanTask();
 }
 
 sub _checkPluginDownloads {
