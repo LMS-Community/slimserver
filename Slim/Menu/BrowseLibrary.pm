@@ -1455,11 +1455,13 @@ sub _albums {
 	}
 
 	# filter out some release types if wanted, unless we are already filtering for a release type
-	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
-	if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
-		push @searchTags, 'release_type:' . join(',', grep {
-			!$releaseTypesToIgnore{$_}
-		} @{Slim::Schema::Album->releaseTypes});
+	if ( !$prefs->get('ignoreReleaseTypes') ) {
+		my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
+		if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
+			push @searchTags, 'release_type:' . join(',', grep {
+				!$releaseTypesToIgnore{$_}
+			} @{Slim::Schema::Album->releaseTypes});
+		}
 	}
 
 	my @artistIds = grep /artist_id:/, @searchTags;
