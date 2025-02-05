@@ -276,6 +276,7 @@ sub albumsQuery {
 	}
 
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
+Slim::Utils::Log::logError("DK \$request->getParam('sort')=" . Data::Dump::dump($request->getParam('sort')));
 
 	# get our parameters
 	my $client        = $request->client();
@@ -3242,12 +3243,10 @@ sub rolesQuery {
 			push @{$p}, $libraryID;
 		}
 
-		if (defined $albumID) {
-			my @albums = split(',', $albumID);
-			if (scalar @albums) {
-				push @{$p}, @albums;
-				push @{$w}, 'contributor_album.album IN (' . join(', ', map {'?'} @albums) . ')';
-			}
+		if ( defined $albumID ) {
+			# remove anything nasty that might have crept into the parameter
+			$albumID = join(',', grep /^\d+$/, split(',', $albumID));
+			push @{$w}, "contributor_album.album IN ($albumID)";
 		}
 
 		if (defined $year || defined $workID || defined $genreID) {
