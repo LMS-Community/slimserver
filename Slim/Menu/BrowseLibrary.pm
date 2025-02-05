@@ -1473,7 +1473,6 @@ sub _albums {
 		SORT_ARTISTYEARALBUM => 'artflow',
 	);
 
-
 	# Remove artist from sort order if selection includes artist
 	if ($sort && $sort =~ /sort:(.*)/) {
 		my $mapped;
