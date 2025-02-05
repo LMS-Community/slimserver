@@ -276,7 +276,6 @@ sub albumsQuery {
 	}
 
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
-Slim::Utils::Log::logError("DK \$request->getParam('sort')=" . Data::Dump::dump($request->getParam('sort')));
 
 	# get our parameters
 	my $client        = $request->client();
@@ -301,13 +300,8 @@ Slim::Utils::Log::logError("DK \$request->getParam('sort')=" . Data::Dump::dump(
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
-	my $rolesort;
-	if ( defined $sort && Slim::Schema::Contributor->roleToContributorMap()->{$sort} ) {
-		$rolesort = $sort;
-		$sort = 'album';
-	}
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random', Slim::Schema::Contributor->contributorRoleIds() ])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -585,9 +579,9 @@ Slim::Utils::Log::logError("DK \$request->getParam('sort')=" . Data::Dump::dump(
 		}
 	}
 
-	if ( $rolesort ) {
+	if ( Slim::Schema::Contributor->roleToType($sort) ) {
 		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
-		$sql .= "LEFT JOIN contributor_track AS rolesort_track ON rolesort_track.track = tracks.id AND rolesort_track.role = $rolesort ";
+		$sql .= "LEFT JOIN contributor_track AS rolesort_track ON rolesort_track.track = tracks.id AND rolesort_track.role = $sort ";
 		$sql .= 'LEFT JOIN contributors AS rolesort ON rolesort.id = rolesort_track.contributor ';
 		my $col = 'GROUP_CONCAT(DISTINCT rolesort.name)';
 		$c->{$col} = 1;
@@ -896,7 +890,7 @@ Slim::Utils::Log::logError("DK \$request->getParam('sort')=" . Data::Dump::dump(
 			if ($tags =~ /s/) {
 				#FIXME: see if multiple char textkey is doable for year/genre sort
 				my $textKey;
-				if ($rolesort) {
+				if (Slim::Schema::Contributor->roleToType($sort)) {
 					utf8::decode( $c->{'rolesort.namesort'} ) if exists $c->{'rolesort.namesort'};
 					$textKey = $c->{'rolesort.namesort'} ? substr $c->{'rolesort.namesort'}, 0, 1 : '-';
 				} elsif ($sort eq 'artflow' || $sort eq 'artistalbum') {

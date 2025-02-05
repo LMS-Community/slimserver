@@ -1476,17 +1476,11 @@ sub _albums {
 
 	# Remove artist from sort order if selection includes artist
 	if ($sort && $sort =~ /sort:(.*)/) {
-Slim::Utils::Log::logError("DK \$1=" . $1);
-Slim::Utils::Log::logError("DK \$&=" . $&);
-Slim::Utils::Log::logError("DK \$sort=" . $sort);
 		my $mapped;
-Slim::Utils::Log::logError("DK \$artistId=" . $artistId);
 		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
 			$sort = 'sort:' . $mapped;
 		}
-Slim::Utils::Log::logError("DK \%orderByList=" . Data::Dump::dump(%orderByList));
 		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', values %orderByList, Slim::Schema::Contributor::contributorRoleIds());
-Slim::Utils::Log::logError("DK \$sort=" . Data::Dump::dump($sort));
 	}
 
 	# Under certain circumstances (random albums in web UI or with remote streams) we are only
@@ -1761,10 +1755,8 @@ Slim::Utils::Log::logError("DK \$sort=" . Data::Dump::dump($sort));
 			my $rolesRequest = Slim::Control::Request->new( undef, [ 'roles', 0, 1000, "tags:t", "album_id:" . join(',', @albumList) ] );
 			$rolesRequest->execute();
 			foreach my $role (@{ $rolesRequest->getResult('roles_loop') || [] }) {
-Slim::Utils::Log::logError("DK \$role=" . Data::Dump::dump("$role->{'role_id'} $role->{'role_name'}"));
 				$orderByList{$role->{'role_name'}} = $role->{'role_id'} unless $role->{'role_name'} =~ /^ARTIST$|^ALBUMARTIST$/;
 			}
-Slim::Utils::Log::logError("DK \%orderByList=" . Data::Dump::dump(%orderByList));
 
 			my $result = {
 				items       => $items,
