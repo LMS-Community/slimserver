@@ -292,16 +292,16 @@ sub albumsQuery {
 	my $releaseType   = $request->getParam('release_type');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
-	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 	# a work_id of -1 would mean "all works"
-	my $work	         = $request->getParam('work_id');
+	my $work	  = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
+	my $sort          = $request->getParam('sort') || ($roleID && !$work ? 'artistalbum' : 'album');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random', Slim::Schema::Contributor->contributorRoleIds() ])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -579,6 +579,22 @@ sub albumsQuery {
 		}
 	}
 
+	if ( Slim::Schema::Contributor->roleToType($sort) ) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
+		$sql .= "LEFT JOIN contributor_track AS rolesort_track ON rolesort_track.track = tracks.id AND rolesort_track.role = $sort ";
+		$sql .= 'LEFT JOIN contributors AS rolesort ON rolesort.id = rolesort_track.contributor ';
+		my $col = 'GROUP_CONCAT(DISTINCT rolesort.name)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.name';
+		$col = 'GROUP_CONCAT(DISTINCT rolesort.id)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.id';
+		$col = 'GROUP_CONCAT(DISTINCT rolesort.namesort)';
+		$c->{$col} = 1;
+		$as->{$col} = 'rolesort.namesort';
+		$order_by = "CASE WHEN GROUP_CONCAT(DISTINCT rolesort.namesort) IS NULL THEN 1 ELSE 0 END, GROUP_CONCAT(DISTINCT rolesort.namesort) $collate, " . $order_by;
+		$page_key = "COALESCE(SUBSTR(rolesort.namesort,1,1), '-')";
+	}
 
 	if ( $tags =~ /l/ ) {
 		# title/disc/discc is needed to construct (N of M) title
@@ -805,11 +821,13 @@ sub albumsQuery {
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'rolesort.name'} ) if exists $c->{'rolesort.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'performance', $c->{'tracks.performance'}||"");
+			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'rolesort_name', $c->{'rolesort.name'});
 
 			my $favoritesUrl = $work
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
@@ -872,7 +890,10 @@ sub albumsQuery {
 			if ($tags =~ /s/) {
 				#FIXME: see if multiple char textkey is doable for year/genre sort
 				my $textKey;
-				if ($sort eq 'artflow' || $sort eq 'artistalbum') {
+				if (Slim::Schema::Contributor->roleToType($sort)) {
+					utf8::decode( $c->{'rolesort.namesort'} ) if exists $c->{'rolesort.namesort'};
+					$textKey = $c->{'rolesort.namesort'} ? substr $c->{'rolesort.namesort'}, 0, 1 : '-';
+				} elsif ($sort eq 'artflow' || $sort eq 'artistalbum') {
 					utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
 					$textKey = substr $c->{'contributors.namesort'}, 0, 1;
 				} elsif ( $sort eq 'album' ) {
@@ -911,6 +932,12 @@ sub albumsQuery {
 					unshift @artists, $c->{'contributors.name'} if $c->{'contributors.name'};
 					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
 				}
+				# if role_sort specified, put the role artist at the top of the list
+				if ($c->{'rolesort.name'}) {
+					unshift @artists, $c->{'rolesort.name'} if $c->{'rolesort.name'};
+					unshift @artistIds, $c->{'rolesort.id'} if $c->{'rolesort.id'};
+				}
+
 				@artists = Slim::Utils::Misc::uniq(@artists);
 				@artistIds = Slim::Utils::Misc::uniq(@artistIds);
 
@@ -3172,6 +3199,7 @@ sub rolesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $workID        = $request->getParam('work_id');
+	my $genreID       = $request->getParam('genre_id');
 	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags          = $request->getParam('tags') || '';
 
@@ -3209,12 +3237,13 @@ sub rolesQuery {
 			push @{$p}, $libraryID;
 		}
 
-		if (defined $albumID) {
-			push @{$w}, 'contributor_album.album = ?';
-			push @{$p}, $albumID;
+		if ( defined $albumID ) {
+			# remove anything nasty that might have crept into the parameter
+			$albumID = join(',', grep /^\d+$/, split(',', $albumID));
+			push @{$w}, "contributor_album.album IN ($albumID)";
 		}
 
-		if (defined $year || defined $workID) {
+		if (defined $year || defined $workID || defined $genreID) {
 			$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
 			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
 
@@ -3230,6 +3259,12 @@ sub rolesQuery {
 					push @{$p}, $workID;
 				}
 			}
+			if (defined $genreID) {
+				my @genreIDs = split(/,/, $genreID);
+				$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+				push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+				push @{$p}, @genreIDs;
+			}
 		}
 	}
 
@@ -3242,7 +3277,7 @@ sub rolesQuery {
 
 	my $dbh = Slim::Schema->dbh;
 
-	if (defined $trackID) {
+	if (defined $trackID || defined $workID || defined $genreID) {
 		$sql = sprintf($sql, 'DISTINCT contributor_track.role');
 	} else {
 		$sql = sprintf($sql, 'DISTINCT contributor_album.role');

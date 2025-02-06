@@ -1389,14 +1389,6 @@ sub _years {
 	);
 }
 
-my %orderByList = (
-	ALBUM                => 'album',
-	SORT_YEARALBUM       => 'yearalbum',
-	SORT_YEARARTISTALBUM => 'yearartistalbum',
-	SORT_ARTISTALBUM     => 'artistalbum',
-	SORT_ARTISTYEARALBUM => 'artflow',
-);
-
 my %mapArtistOrders = (
 	album            => 'album',
 	yearalbum        => 'yearalbum',
@@ -1473,13 +1465,21 @@ sub _albums {
 
 	$tags .= 'y' unless grep {/^year:/} @searchTags;
 
+	my %orderByList = (
+		ALBUM                => 'album',
+		SORT_YEARALBUM       => 'yearalbum',
+		SORT_YEARARTISTALBUM => 'yearartistalbum',
+		SORT_ARTISTALBUM     => 'artistalbum',
+		SORT_ARTISTYEARALBUM => 'artflow',
+	);
+
 	# Remove artist from sort order if selection includes artist
 	if ($sort && $sort =~ /sort:(.*)/) {
 		my $mapped;
 		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
 			$sort = 'sort:' . $mapped;
 		}
-		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', values %orderByList);
+		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', values %orderByList, Slim::Schema::Contributor::contributorRoleIds());
 	}
 
 	# Under certain circumstances (random albums in web UI or with remote streams) we are only
@@ -1504,6 +1504,7 @@ sub _albums {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
 			$remote_library ||= $args->{'remote_library'};
+			my @albumList;
 
 			foreach (@$items) {
 				$_->{'name'} = $_->{'composer'} ? $_->{'composer'} . cstring($client, 'COLON') . ' ' : '';
@@ -1547,6 +1548,7 @@ sub _albums {
 					$_->{'image'} = _proxiedImageUrl($_, $remote_library);
 					delete $_->{'artwork_track_id'};
 				}
+				push @albumList, $_->{'id'};
 			}
 
 			my $extra;
@@ -1748,6 +1750,12 @@ sub _albums {
 			);
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
+
+			my $rolesRequest = Slim::Control::Request->new( undef, [ 'roles', 0, 1000, "tags:t", "album_id:" . join(',', @albumList) ] );
+			$rolesRequest->execute();
+			foreach my $role (@{ $rolesRequest->getResult('roles_loop') || [] }) {
+				$orderByList{$role->{'role_name'}} = $role->{'role_id'} unless $role->{'role_name'} =~ /^ARTIST$|^ALBUMARTIST$/;
+			}
 
 			my $result = {
 				items       => $items,
