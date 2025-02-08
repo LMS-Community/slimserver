@@ -99,10 +99,7 @@
 					}
 				}
 
-				if (frames.browser.location)
-					frames.browser.location.href = navigationUrl;
-				else if (document.browser.location)
-					document.browser.location.href = navigationUrl;
+				SqueezeJS.Utils.setBrowseLocation(navigationUrl);
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';

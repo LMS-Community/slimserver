@@ -810,7 +810,7 @@ SqueezeJS.SonginfoParser = {
 
 SqueezeJS.Utils = {
 	replacePlayerIDinUrl : function(url, id){
-		if (!id)
+		if (!id || !url)
 			return url;
 
 		if (typeof url == 'object' && url.search != null) {
@@ -898,6 +898,13 @@ SqueezeJS.Utils = {
 		});
 
 		return parts;
+	},
+
+	setBrowseLocation: function(url) {
+		if (frames.browser.location)
+			frames.browser.location.href = url;
+		else if (document.browser.location)
+			document.browser.location.replace(url);
 	}
 };
 
