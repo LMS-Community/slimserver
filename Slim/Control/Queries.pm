@@ -777,8 +777,8 @@ sub albumsQuery {
 				join(',', @linkRoleIds));
 			} else {
 				my @linkRoles = Slim::Schema::Contributor->allAlbumLinkRoles();
-				# when filtering by role, put that role at the head of the list if it wasn't in there yet
-				if ($roleID) {
+				# when filtering by role and not by contributor, put that role at the head of the list if it wasn't in there yet
+				if ($roleID && !$contributorID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
 					@linkRoles = Slim::Utils::Misc::uniq(@linkRoles);
 				}

@@ -30,6 +30,12 @@ PLUGIN_SOUNDS_ERROR
 	RU	Звуки и эффекты: ошибка
 	SV	Ljud och effekter: fel
 
+PLUGIN_SOUNDS_ALARMS
+	DE	Weckertöne
+	EN	Alarm Sounds
+	FR	Sons d'alarme
+	NL	Alarmgeluiden
+
 PLUGIN_SOUNDS_EFFECTS
 	CS	Zvukové efekty
 	DA	Lydeffekter
@@ -1237,3 +1243,93 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
 	HU	Riasztócsengő
+
+PLUGIN_SOUNDS_ALARM_ACCELERATING
+	DE	Beschleunigendes Biepen
+	EN	Accelerating beep
+	FR	Bip accéléré
+	NL	Versnellende piep
+
+PLUGIN_SOUNDS_ALARM_HIGH_BEEP
+	DE	Hohes Biepen
+	EN	High beep
+	FR	Bip aigu
+	NL	Hoge piep
+
+PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
+	DE	Einfacher Signalton
+	EN	Simple beep
+	FR	Bip simple
+	NL	Eenvoudige piep
+
+PLUGIN_SOUNDS_ALARM_BEDSIDE
+	DE	Vierfacher Signalton
+	EN	Quadrupel beep
+	FR	Bip quadruple
+	NL	Viervoudige piep
+
+PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
+	DE	Elektronisches Piepen
+	EN	Electronical beep
+	FR	Bip électronique
+	NL	Elektronische piep
+
+PLUGIN_SOUNDS_ALARM_DIGITAL
+	DE	Tiefes Piepen
+	EN	Low beep
+	FR	Bip grave
+	NL	Lage piep
+
+PLUGIN_SOUNDS_ALARM_DISTORTED
+	DE	Verzerrtes Piepen
+	EN	Distorted beep
+	FR	Bip distordu
+	NL	Vervormde piep
+
+PLUGIN_SOUNDS_ALARM_DUAL_TONE
+	DE	Wechselndes Piepen
+	EN	Alternating beep
+	FR	Bip alterné
+	NL	Afwisselende piep
+
+PLUGIN_SOUNDS_ALARM_ELECTRONICAL
+	DE	Elektronisches Piepen 2
+	EN	Electronical beep 2
+	FR	Bip électronique 2
+	NL	Elektronische piep 2
+
+PLUGIN_SOUNDS_ALARM_FUTURISTIC
+	DE	Futuristischer Alarm
+	EN	Futuristic alarm
+	FR	Alarme futuriste
+	NL	Futuristisch alarm
+
+PLUGIN_SOUNDS_ALARM_PHONE
+	DE	Klingelndes Telefon
+	EN	Ringing phone
+	FR	Téléphone qui sonne
+	NL	Rinkelende telefoon
+
+PLUGIN_SOUNDS_ALARM_RINGING
+	DE	Klingelnder Alarm
+	EN	Ringing alarm
+	FR	Alarme sonore
+	NL	Rinkelend alarm
+
+PLUGIN_SOUNDS_ALARM_RINGTONE
+	DE	Klingelton
+	EN	Ringtone
+	FR	Sonnerie
+	NL	Beltoon
+
+PLUGIN_SOUNDS_ALARM_TIC_TAC
+	DE	Tick-Tack
+	EN	Tic-Tac
+	FR	Tic-Tac
+	NL	Tik-Tak
+
+PLUGIN_SOUNDS_ALARM_TICKING
+	DE	Tickende Uhr
+	EN	Ticking clock
+	FR	Horloge qui tic-tac
+	NL	Tikkende klok
