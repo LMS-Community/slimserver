@@ -26884,6 +26884,7 @@ SETUP_WORKSSCAN
 	EN	Works scanning
 	ES	Escaneo de obras
 	FR	Recherche d'œuvres
+	HU	Művek beolvasása
 	NL	Scannen van werken
 
 SETUP_WORKSSCAN_1
@@ -26891,6 +26892,7 @@ SETUP_WORKSSCAN_1
 	EN	Scan whole library for works
 	ES	Escanea toda la biblioteca en busca de obras
 	FR	Parcourez toute la bibliothèque à la recherche d'œuvres
+	HU	Szkennelje be a teljes könyvtárat művekért
 	NL	Scan de hele bibliotheek op werken
 
 SETUP_WORKSSCAN_2
@@ -26898,6 +26900,7 @@ SETUP_WORKSSCAN_2
 	EN	Limit works scan to "My work and composer album genres" (above)
 	ES	Limitar el escaneo de obras a "Mis géneros para las obras y álbumes de compositores" (arriba)
 	FR	Limiter la recherche des œuvres aux "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
+	HU	A művek beolvasásának korlátozása a „Saját műveim és zeneszerzői albumaim műfajaira” (fent)
 	NL	Beperk de werkscan tot "Mijn genres voor werken en albums van componisten" (hierboven)
 
 SETUP_WORKSSCAN_0
@@ -26905,6 +26908,7 @@ SETUP_WORKSSCAN_0
 	EN	Do not scan for Works
 	ES	No buscar obras
 	FR	Ne pas rechercher d'œuvres
+	HU	Ne keressen műveket
 	NL	Niet scannen op werken
 
 SETUP_MYCLASSICALGENRES
@@ -26922,6 +26926,7 @@ SETUP_MYCLASSICALGENRES_DESC
 	EN	Use these genres for works and composer albums. Separate with commas.
 	ES	Utiliza estos géneros para obras y álbumes de compositores. Separe con comas.
 	FR	Précisez les genres concernés par les œuvres et les compositeurs. Séparez-les par des virgules.
+	HU	Használja ezeket a műfajokat a művekhez és zeneszerzői albumokhoz. Vesszővel válassza el.
 	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
 
 FIRST_N_ALBUMS
@@ -26929,5 +26934,6 @@ FIRST_N_ALBUMS
 	EN	(first %s albums)
 	ES	(primeros %s álbumes)
 	FR	(%s premiers albums)
+	HU	(első %s album)
 	NL	(eerste %s albums)
 
