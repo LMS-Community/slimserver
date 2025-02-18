@@ -315,7 +315,7 @@ sub readTags {
 				foreach my $mbID ( Slim::Music::Info::splitTag($value) ) {
 					if ( $tag eq 'MUSICBRAINZ_DISCID' && $mbID =~ /^[0-9a-z_\.-]{28}$/i ) {
 						push @mbIDs, lc($1);
-					} elsif ( $mbID =~ /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
+					} elsif ( $mbID =~ /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i ) {
 						push @mbIDs, lc($1);
 					}
 					else {
@@ -327,9 +327,10 @@ sub readTags {
 					}
 				}
 				$tags->{$tag} = \@mbIDs;
+				$tagCache{$original} = \@mbIDs;
+			} else {
+				$tagCache{$original} = $value;
 			}
-
-			$tagCache{$original} = $value;
 		}
 
 		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
