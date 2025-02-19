@@ -1008,7 +1008,7 @@ sub splitTag {
 
 	# Handle Vorbis comments where the tag can be an array.
 	if (ref($tag) eq 'ARRAY') {
-
+		map { $_ =~ s/^\s+|\s+$//g; } @$tag;
 		return @$tag;
 	}
 
@@ -1061,6 +1061,7 @@ sub splitTag {
 		return @splitTags;
 	}
 
+	$tag =~ s/^\s+|\s+$//g;
 	return $tag;
 }
 
