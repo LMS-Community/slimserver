@@ -326,11 +326,10 @@ sub readTags {
 						next TAG;
 					}
 				}
-				$tags->{$tag} = \@mbIDs;
-				$tagCache{$original} = \@mbIDs;
-			} else {
-				$tagCache{$original} = $value;
+				$value = $tags->{$tag} = \@mbIDs;
 			}
+
+			$tagCache{$original} = $value;
 		}
 
 		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
