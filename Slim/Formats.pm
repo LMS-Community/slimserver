@@ -307,28 +307,6 @@ sub readTags {
 				$tags->{$tag} = $value;
 			}
 
-			# Bug 14587, sanity check all MusicBrainz ID tags to ensure it is a UUID and nothing more
-			if ( $tag =~ /^MUSICBRAINZ.*ID$/ ) {
-				my @mbIDs;
-				# DiscID has a different format:
-				# http://wiki.musicbrainz.org/Disc_ID_Calculation
-				foreach my $mbID ( Slim::Music::Info::splitTag($value) ) {
-					if ( $tag eq 'MUSICBRAINZ_DISCID' && $mbID =~ /^[0-9a-z_\.-]{28}$/i ) {
-						push @mbIDs, lc($1);
-					} elsif ( $mbID =~ /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i ) {
-						push @mbIDs, lc($1);
-					}
-					else {
-						if ( main::DEBUGLOG && $log->is_debug ) {
-							$log->debug("Invalid MusicBrainz tag found in $file: $tag -> $value");
-						}
-						delete $tags->{$tag};
-						next TAG;
-					}
-				}
-				$value = $tags->{$tag} = \@mbIDs;
-			}
-
 			$tagCache{$original} = $value;
 		}
 

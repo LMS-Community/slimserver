@@ -2638,9 +2638,30 @@ sub _preCheckAttributes {
 	my %mappedValues;
 
 	# Normalize attribute names
-	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+	TAG: while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
 		# don't overwrite mapped values
 		next if $mappedValues{$key};
+
+		# Remove invalid Musicbrainz tags and clean valid ones. Moved from Slim::Formats::readTags so we catch cuesheet tags which are read in playlist processing.
+		if ( $key =~ /^MUSICBRAINZ.*ID$/ ) {
+			my @mbIDs;
+			# DiscID has a different format:
+			# http://wiki.musicbrainz.org/Disc_ID_Calculation
+			foreach my $mbID ( Slim::Music::Info::splitTag($val) ) {
+				if ( $key eq 'MUSICBRAINZ_DISCID' && $mbID =~ /^[0-9a-z_\.-]{28}$/i ) {
+					push @mbIDs, lc($1);
+				} elsif ( $mbID =~ /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i ) {
+					push @mbIDs, lc($1);
+				}
+				else {
+					if ( main::DEBUGLOG && $log->is_debug ) {
+						$log->error("Invalid MusicBrainz tag found in " . Slim::Utils::Misc::pathFromFileURL($url) . ": $key -> $val");
+					}
+					next TAG;
+				}
+			}
+			$val = \@mbIDs;
+		}
 
 		if ( my $mappedKey = $tagMapping{lc($key)} ) {
 			$mappedValues{ uc($mappedKey) } = $attributes->{ uc($mappedKey) } = $val;
