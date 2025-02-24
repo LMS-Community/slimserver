@@ -4039,6 +4039,11 @@ sub statusQuery {
 		$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
 	}
 
+	my $hasDigitalOut = $client->hasDigitalOut();
+	if ( defined ($hasDigitalOut) ) {
+		$request->addResult('has_digital_out', $hasDigitalOut + 0);		
+	}
+
 	if ($menuMode || $request->getParam('alarmData')) {
 		# send information about the alarm state to SP
 		my $alarmNext    = Slim::Utils::Alarm->alarmInNextDay($client);
