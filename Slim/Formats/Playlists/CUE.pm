@@ -564,6 +564,8 @@ sub parse {
 
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
+
+		Slim::Formats::sanitizeTagValues($track, $filename);
 	}
 
 	# Bug 8443, if no tracks contain a URI element, it's an invalid cue
