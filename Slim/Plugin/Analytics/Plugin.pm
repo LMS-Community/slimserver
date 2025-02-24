@@ -133,7 +133,7 @@ sub _getClients {
 
 			my $clientData = {
 				mac   => $id,
-				model => $clientPrefs->get('model') || _guessPlayerTypeFromMac($id, $name),
+				model => $clientPrefs->get('model') || _guessPlayerType($id, $name),
 				lastSeen => $ts,
 			};
 
@@ -193,7 +193,7 @@ my %playerTypes = (
 	'35' => 'baby',
 );
 
-sub _guessPlayerTypeFromMac {
+sub _guessPlayerType {
 	my ($mac, $name) = @_;
 
 	# most likely...

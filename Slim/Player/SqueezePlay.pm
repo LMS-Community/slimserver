@@ -29,7 +29,7 @@ BEGIN {
 {
 
 	__PACKAGE__->mk_accessor('rw', qw(
-		_model modelName
+		_model _modelName
 		myFormats
 		maxSupportedSamplerate
 		accuratePlayPoints
@@ -55,7 +55,7 @@ sub new {
 
 	$client->init_accessor(
 		_model                  => 'squeezeplay',
-		modelName               => 'SqueezePlay',
+		_modelName              => 'SqueezePlay',
 		myFormats               => [qw(ogg flc aif pcm mp3)],	# in order of preference
 		maxSupportedSamplerate  => 48000,
 		accuratePlayPoints      => 0,
@@ -75,11 +75,11 @@ sub new {
 	return $client;
 }
 
-# model=squeezeplay,modelName=SqueezePlay,ogg,flc,pcm,mp3,tone,MaxSampleRate=96000
+# Model=squeezeplay,ModelName=SqueezePlay,ogg,flc,pcm,mp3,tone,MaxSampleRate=96000
 
 my %CapabilitiesMap = (
 	Model                   => '_model',
-	ModelName               => 'modelName',
+	ModelName               => '_modelName',
 	MaxSampleRate           => 'maxSupportedSamplerate',
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
@@ -97,11 +97,24 @@ my %CapabilitiesMap = (
 
 	# deprecated
 	model                   => '_model',
-	modelName               => 'modelName',
+	modelName               => '_modelName',
 );
 
 sub model {
 	return shift->_model;
+}
+
+sub modelName {
+	my ($client, $modelName) = @_;
+
+	$client->_modelName($modelName) if defined $modelName;
+
+	# If we are a pCP player, then we want to append -pCP to the model name
+	if ($client->model eq 'squeezelite' && $client->_modelName !~ /pCP/i && $client->revision && $client->revision =~ /-pCP/i) {
+		$client->_modelName($client->_modelName . '-pCP');
+	}
+
+	return $client->_modelName;
 }
 
 sub canHTTPS {
