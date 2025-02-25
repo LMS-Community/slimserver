@@ -912,7 +912,8 @@ sub _createOrUpdateAlbum {
 	my $disc      = $attributes->{DISC};
 	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
-	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID}[0]; # Surely there is only one MB album id!
+	# Surely there is only one MB album id!
+	my $brainzId  = ref $attributes->{MUSICBRAINZ_ALBUM_ID} ? $attributes->{MUSICBRAINZ_ALBUM_ID}[0] : $attributes->{MUSICBRAINZ_ALBUM_ID};
 	my $extId     = $attributes->{EXTID} || $attributes->{ALBUM_EXTID};
 
 	# if we have a disc number from an online service, default disc count to 1

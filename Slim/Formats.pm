@@ -275,13 +275,7 @@ sub readTags {
 
 	main::DEBUGLOG && $isDebug && $log->debug("Report for $file:");
 
-	# XXX: can Audio::Scan make these regexes unnecessary?
-
 	sanitizeTagValues($tags, $file);
-
-	if (scalar (keys %tagCache) > 50) {
-		%tagCache = ();
-	}
 
 	return $tags;
 }
@@ -345,6 +339,10 @@ sub sanitizeTagValues {
 		}
 
 		main::DEBUGLOG && $log->is_debug && $value && $log->debug(". $tag : $value");
+	}
+
+	if (scalar (keys %tagCache) > 50) {
+		%tagCache = ();
 	}
 }
 
