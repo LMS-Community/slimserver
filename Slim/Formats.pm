@@ -281,7 +281,21 @@ sub readTags {
 }
 
 sub sanitizeTagValues {
-	my ($tags, $file) = @_;
+	my ($tags, $file, $cue, $embedded) = @_;
+
+	# external cue sheet hasn't been through tag mapping, so do it now.
+	if ( $cue && !$embedded && $tags->{'FILENAME'} ) {
+		my $type = Slim::Music::Info::typeFromPath(Slim::Utils::Misc::pathFromFileURL($tags->{'FILENAME'}));
+		if ($type) {
+			my $tagReaderClass = Slim::Formats->classForFormat($type);
+			if ($tagReaderClass) {
+				Slim::Formats->loadTagFormatForType($type);
+				if ( $tagReaderClass->can('doTagMapping') ) {
+					$tagReaderClass->doTagMapping($tags);
+				}
+			}
+		}
+	}
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls

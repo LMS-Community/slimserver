@@ -227,6 +227,10 @@ sub _getStandardTag {
 	return $tags;
 }
 
+sub doTagMapping {
+	return _doTagMapping(@_);
+}
+
 sub _doTagMapping {
 	my ($class, $tags) = @_;
 

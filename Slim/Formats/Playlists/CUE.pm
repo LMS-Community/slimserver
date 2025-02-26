@@ -367,7 +367,7 @@ sub parse {
 			}
 		} else {
 
-			# handle remaning Commands as a list of keys and values.
+			# handle remaining Commands as a list of keys and values.
 			($cuesheet, $tracks) = _addCommand($cuesheet,
 											 $tracks,
 											 $inAlbum,
@@ -565,7 +565,7 @@ sub parse {
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
 
-		Slim::Formats::sanitizeTagValues($track, $filename);
+		Slim::Formats::sanitizeTagValues($track, $filename, 'cue', $embedded);
 	}
 
 	# Bug 8443, if no tracks contain a URI element, it's an invalid cue
