@@ -2644,6 +2644,9 @@ sub _preCheckAttributes {
 
 	# Normalize attribute names
 	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+		if ( $key =~ /^MUSICBRAINZ.*ID$/ && $val && ref $val ne 'ARRAY' ) {
+			logWarning("$key ($val) in " . Slim::Utils::Misc::pathFromFileURL($url) . " has not been validated by Slim::Formats::sanitizeTagValues");
+		}
 		# don't overwrite mapped values
 		next if $mappedValues{$key};
 

@@ -292,7 +292,7 @@ sub sanitizeTagValues {
 			my $original = $value;
 
 			use bytes;
-			if ( my $cached = $tagCache{$value} ) {
+			if ( my $cached = $tagCache{$tag}{$value} ) {
 				$tags->{$tag} = $cached;
 				next;
 
@@ -335,7 +335,7 @@ sub sanitizeTagValues {
 				$value = $tags->{$tag} = \@mbIDs;
 			}
 
-			$tagCache{$original} = $value;
+			$tagCache{$tag}{$original} = $value;
 		}
 
 		main::DEBUGLOG && $log->is_debug && $value && $log->debug(". $tag : $value");

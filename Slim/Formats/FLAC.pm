@@ -221,17 +221,13 @@ sub _getStandardTag {
 	my $tags = $s->{tags} || {};
 
 	$class->_addInfoTags($s, $tags);
-	$class->_doTagMapping($tags);
+	$class->doTagMapping($tags);
 	$class->_addArtworkTags($s, $tags);
 
 	return $tags;
 }
 
 sub doTagMapping {
-	return _doTagMapping(@_);
-}
-
-sub _doTagMapping {
 	my ($class, $tags) = @_;
 
 	# Map ID3 tags first, so FLAC tags win out
@@ -536,7 +532,7 @@ sub _getXMLTags {
 
 			%{$tracks->{$cuesheetTrack}} = (%{$defaultTags}, %{$tracks->{$cuesheetTrack}});
 
-			$class->_doTagMapping($tracks->{$cuesheetTrack});
+			$class->doTagMapping($tracks->{$cuesheetTrack});
 		}
 	}
 
@@ -631,7 +627,7 @@ sub _getNumberedVCs {
 
 		%{$tracks->{$num}} = (%{$defaultTags}, %{$tracks->{$num}});
 
-		$class->_doTagMapping($tracks->{$num});
+		$class->doTagMapping($tracks->{$num});
 
 		$tracks->{$num}->{TRACKNUM} = $num unless exists $tracks->{$num}->{TRACKNUM};
 	}
@@ -730,7 +726,7 @@ sub _getCDDBTags {
 
 		%{$tracks->{$key}} = (%{$tags}, %{$tracks->{$key}});
 
-		$class->_doTagMapping($tracks->{$key});
+		$class->doTagMapping($tracks->{$key});
 	}
 
 	return $items;
@@ -787,7 +783,7 @@ sub _getCUEinVCs {
 			}
 		}
 
-		$class->_doTagMapping($tracks->{$key});
+		$class->doTagMapping($tracks->{$key});
 
 		$items++;
 	}
