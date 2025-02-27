@@ -275,7 +275,13 @@ sub readTags {
 
 	main::DEBUGLOG && $isDebug && $log->debug("Report for $file:");
 
-	# XXX: can Audio::Scan make these regexes unnecessary?
+	sanitizeTagValues($tags, $file);
+
+	return $tags;
+}
+
+sub sanitizeTagValues {
+	my ($tags, $file) = @_;
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls
@@ -286,7 +292,7 @@ sub readTags {
 			my $original = $value;
 
 			use bytes;
-			if ( my $cached = $tagCache{$value} ) {
+			if ( my $cached = $tagCache{$tag}{$value} ) {
 				$tags->{$tag} = $cached;
 				next;
 
@@ -329,17 +335,15 @@ sub readTags {
 				$value = $tags->{$tag} = \@mbIDs;
 			}
 
-			$tagCache{$original} = $value;
+			$tagCache{$tag}{$original} = $value;
 		}
 
-		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
+		main::DEBUGLOG && $log->is_debug && $value && $log->debug(". $tag : $value");
 	}
 
 	if (scalar (keys %tagCache) > 50) {
 		%tagCache = ();
 	}
-
-	return $tags;
 }
 
 1;
