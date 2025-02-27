@@ -908,7 +908,8 @@ sub _createOrUpdateAlbum {
 	my $disc      = $attributes->{DISC};
 	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
-	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID}[0]; # Surely there is only one MB album id!
+	# Surely there is only one MB album id!
+	my $brainzId  = ref $attributes->{MUSICBRAINZ_ALBUM_ID} ? $attributes->{MUSICBRAINZ_ALBUM_ID}[0] : $attributes->{MUSICBRAINZ_ALBUM_ID};
 	my $extId     = $attributes->{EXTID} || $attributes->{ALBUM_EXTID};
 
 	# if we have a disc number from an online service, default disc count to 1
@@ -2639,6 +2640,9 @@ sub _preCheckAttributes {
 
 	# Normalize attribute names
 	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+		if ( $key =~ /^MUSICBRAINZ.*ID$/ && $val && ref $val ne 'ARRAY' ) {
+			logWarning("$key ($val) in " . Slim::Utils::Misc::pathFromFileURL($url) . " has not been validated by Slim::Formats::sanitizeTagValues");
+		}
 		# don't overwrite mapped values
 		next if $mappedValues{$key};
 
