@@ -24,7 +24,9 @@ jobs:
             const candidates = [];
             const repoData = JSON.parse(repoStatus.data);
 
-            Object.keys(repoData).forEach(version => {
+            Object.keys(repoData).sort((a, b) => {
+              return 0.5 - Math.random();
+            }).forEach(version => {
               const matches = version.match(/(\d+\.\d+)\.\d+/);
               if (matches && matches.length == 2) {
                 const versionBuilds = repoData[version];
