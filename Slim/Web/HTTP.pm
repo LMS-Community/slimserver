@@ -2,7 +2,7 @@ package Slim::Web::HTTP;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -649,7 +649,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( !main::WEBUI || $path =~ m{^(?:html|music|plugins|apps|settings|firmware|clixmlbrowser|index\.html|imageproxy)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|contributor|plugins|apps|settings|firmware|clixmlbrowser|index\.html|imageproxy)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -1004,7 +1004,7 @@ sub generateHTTPResponse {
 		$contentType = 'application/octet-stream';
 	}
 
-	if ( $path =~ /music\/[0-9a-f]+\/(?:download|cover)/ || $path =~ /^imageproxy\// ) {
+	if ( $path =~ /music\/[0-9a-f]+\/(?:download|cover)/ || /contributor\/[0-9a-f]+\/image/ || $path =~ /^imageproxy\// ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
 	}
@@ -1202,6 +1202,7 @@ sub generateHTTPResponse {
 			return 0;
 
 		} elsif ($path =~ m{music/([^/]+)/(cover|thumb)} ||
+			$path =~ m{contributor/([^/]+)/image} ||
 			$path =~ m{^(?:plugins/cache/icons|imageproxy)} ||
 			$path =~ $IMAGE_RESIZE_REGEX
 		) {
@@ -2539,7 +2540,7 @@ sub closeStreamingSocket {
 sub shouldHandleCookies {
 	my ($path) = @_;
 	return unless $path;
-	return $path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)};
+	return $path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|contributor/[a-f\d]+/image|imageproxy/.*/image)};
 }
 
 sub checkAuthorization {

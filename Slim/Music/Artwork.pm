@@ -2,7 +2,7 @@ package Slim::Music::Artwork;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -19,6 +19,7 @@ L<Slim::Music::Artwork>
 
 use strict;
 
+use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
@@ -402,6 +403,36 @@ sub readCoverArt {
 
 	return ($body, $contentType, $path);
 }
+
+
+sub generateImageId {
+	my ( $class, $args ) = @_;
+
+	my $image = $args->{image} || '';
+	my $imageId;
+	my $mtime;
+	my $size;
+
+	if ( $image =~ /^https?/ ) {
+		$mtime = $size = 1;
+	}
+	elsif ( $image =~ /^\d+$/ ) {
+		# Cache is based on mtime/size of the file containing embedded art
+		$mtime = $args->{mtime};
+		$size  = $args->{size};
+	}
+	elsif ( -e $image ) {
+		# Cache is based on mtime/size of artwork file
+		($size, $mtime) = (stat _)[7, 9];
+	}
+
+	if ( $mtime && $size ) {
+		$imageId = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+	}
+
+	return $imageId;
+}
+
 
 # Private class methods
 sub _imageContentType {

@@ -1,5 +1,11 @@
 package Slim::Utils::ImageResizer;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 
 use Config;
@@ -49,7 +55,8 @@ sub resize {
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	# Check for callback, and that the gdresized daemon running and read/writable
-	if (!main::ISWINDOWS && hasDaemon() && $callback) {
+	# unfortunately AnyEvent seems to struggle with wide characters...
+	if (!main::ISWINDOWS && hasDaemon() && $callback && !utf8::is_utf8($file)) {
 		require AnyEvent::Socket;
 		require AnyEvent::Handle;
 
@@ -64,7 +71,7 @@ sub resize {
 		# Daemon available, do an async resize
 		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
 			my $fh = shift || do {
-				$log->error("daemon failed to connect: $!");
+				$log->error("daemon failed to connect: $! ($file)");
 				$hasDaemon = undef;
 
 				if ( --$pending_requests == 0 ) {

@@ -1,5 +1,11 @@
 package Slim::Web::Graphics;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 
 use Scalar::Util qw(blessed);
@@ -56,9 +62,9 @@ sub _cached {
 		}
 		elsif ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,
-			# unless it's a /music path, where we don't care if
+			# unless it's a /music or /contributor path, where we don't care if
 			# it has changed.  The scanner should deal with changes there.
-			if ( $path !~ m{^music/} && -r $orig ) {
+			if ( $path !~ m{^music/|^contributor/} && -r $orig ) {
 				my $mtime = (stat _)[9];
 				if ( $cached->{mtime} != $mtime ) {
 					main::INFOLOG && $isInfo && $log->info( "  current mtime $mtime != cached mtime " . $cached->{mtime} );
@@ -106,7 +112,7 @@ sub artworkRequest {
 		$response->content_type($ct);
 
 		# Cache music URLs for 1 year, others for 1 day
-		my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;
+		my $exptime = $path =~ /^music|^contributor/ ? ONE_YEAR : ONE_DAY;
 
 		$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 		$response->expires( time() + $exptime );
@@ -308,6 +314,32 @@ sub artworkRequest {
 				? Slim::Utils::Misc::pathFromFileURL($url)
 				: $cover;
 		}
+	}
+
+	elsif ( $path =~ m{^contributor/([^/]+)/} ) {
+		my $id = $1;
+
+		main::INFOLOG && $log->is_info && $log->info("  Looking for contributor picture for $id");
+
+		my $sth = Slim::Schema->dbh->prepare_cached( qq{
+			SELECT picture FROM contributors WHERE pictureid = ? LIMIT 1
+		} );
+
+		$sth->execute($id);
+		my ($url) = $sth->fetchrow_array;
+		$sth->finish;
+
+		if ($url) {
+			$fullpath = Slim::Utils::Misc::pathFromFileURL($url);
+			$fullpath = Slim::Utils::Unicode::utf8on($fullpath) if $fullpath;
+		}
+		else {
+			my $path = 'html/images/artists.png';
+			my $skin = $params->{skinOverride} || $prefs->get('skin');
+			$fullpath = $skinMgr->fixHttpPath($skin, $path);
+		}
+
+		main::INFOLOG && $log->is_info && $log->info("  Found contributor picture at $fullpath");
 	}
 
 	# If path begins with "plugins/cache" it is a special path

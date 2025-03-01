@@ -1,7 +1,7 @@
 package Slim::Control::Queries;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -1213,8 +1213,10 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /E/ ? ', contributors.extid' : ''))
-			. 'GROUP BY contributors.id ';
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort'
+		. ($tags =~ /E/ ? ', contributors.extid' : '')
+		. ($tags =~ /p/ ? ', contributors.pictureid' : '')
+		) . 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
 
@@ -1291,9 +1293,10 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($id, $name, $namesort, $extid);
+		my ($id, $name, $namesort, $pictureid, $extid);
 		my @bind = (\$id, \$name, \$namesort);
 		push @bind, \$extid if $tags =~ /E/;
+		push @bind, \$pictureid if $tags =~ /p/;
 		$sth->bind_columns(@bind);
 
 		my $process = sub {
@@ -1304,15 +1307,16 @@ sub artistsQuery {
 
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
+
 			if ($tags =~ /s/) {
 				# Bug 11070: Don't display large V at beginning of browse Artists
 				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
-			if ($tags =~ /E/ && $extid) {
-				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
-			}
+			$request->addResultLoop($loopname, $chunkCount, 'extid', $extid) if $tags =~ /E/ && $extid;
+			$request->addResultLoop($loopname, $chunkCount, 'pictureid', $pictureid) if $tags =~ /p/ && $pictureid;
+
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:contributor.name=' . URI::Escape::uri_escape_utf8( $name ) );
 
 			$chunkCount++;
