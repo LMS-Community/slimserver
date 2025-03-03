@@ -30,8 +30,7 @@ use Slim::Utils::Scanner::Local;
 my $log = logger('scan.import');
 my $prefs = preferences('server');
 
-my $imageFolder = $prefs->get('artfolder');
-my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, $specs, $i);
+my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, @artworkFolders, $specs, $i);
 
 # when walking up the folder hierarchy, don't go above these folders
 my $audioDirs = { map { $_ => 1 } @{Slim::Utils::Misc::getAudioDirs()} };
@@ -59,9 +58,9 @@ sub startArtworkScan {
 
 	main::INFOLOG && $log->info("Starting contributor picture scan");
 
-	if ( !($imageFolder && -d $imageFolder) ) {
-		$log->error('Artwork Folder does not exist: ' . $imageFolder);
-		$imageFolder = undef;
+	my $imageFolder = $prefs->get('artfolder');
+	if ( $imageFolder && -d $imageFolder ) {
+		$class->addArtworkFolder($imageFolder);
 	}
 
 	$sth_album_folders = $dbh->prepare_cached(qq{
@@ -129,7 +128,11 @@ sub _getArtistPhotoURL {
 
 		main::INFOLOG && $log->is_info && $log->info("Looking for pictures of  " . $artist->{name});
 
-		my $img = imageInFolder($imageFolder, @$candidates) if $imageFolder;
+		my $img;
+		foreach my $folder (@artworkFolders) {
+			$img = imageInFolder($folder, @$candidates);
+			last if $img;
+		}
 
 		if (!$img) {
 			my $artist_id = $artist->{id};
@@ -188,6 +191,17 @@ sub _getArtistPhotoURL {
 	}
 
 	return 0;
+}
+
+sub addArtworkFolder {
+	my ($class, $folder) = @_;
+
+	if (!($folder && -d $folder)) {
+		$log->warn("Invalid folder: $folder");
+		return;
+	}
+
+	@artworkFolders = Slim::Utils::Misc::uniq(@artworkFolders, $folder);
 }
 
 sub sanitizedNameVariants {
