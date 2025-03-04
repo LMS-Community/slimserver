@@ -130,7 +130,7 @@ sub artworkRequest {
 	# 'X' can be used instead of either W or H to determine automatically
 	my ($spec) = File::Basename::basename($path) =~ /_?((?:[0-9X]+x[0-9X]+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
 
-	main::DEBUGLOG && $isInfo && $log->info("  Resize specification: $spec");
+	main::INFOLOG && $isInfo && $log->info("  Resize specification: $spec");
 
 	# /music/all_items (used in BrowseDB, just returns html/images/albums.png)
 	if ( $path =~ m{^music/all_items} ) {

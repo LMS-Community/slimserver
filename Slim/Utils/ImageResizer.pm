@@ -71,7 +71,7 @@ sub resize {
 		# Daemon available, do an async resize
 		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
 			my $fh = shift || do {
-				$log->error("daemon failed to connect: $! ($file)");
+				$log->warn("daemon failed to connect: $!");
 				$hasDaemon = undef;
 
 				if ( --$pending_requests == 0 ) {
