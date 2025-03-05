@@ -4041,7 +4041,7 @@ sub statusQuery {
 
 	my $hasDigitalOut = $client->hasDigitalOut();
 	if ( defined ($hasDigitalOut) ) {
-		$request->addResult('has_digital_out', $hasDigitalOut + 0);		
+		$request->addResult('has_digital_out', $hasDigitalOut + 0);
 	}
 
 	if ($menuMode || $request->getParam('alarmData')) {
@@ -5548,6 +5548,11 @@ my %tagMap = (
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+
+	# Tags handled in code only
+	#--------------------------------------------------------------------------------------------------
+	# '2': contiguity of tracks on album
+	# 'CC': counts of an entity
 
 );
 
