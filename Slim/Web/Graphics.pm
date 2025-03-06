@@ -319,10 +319,10 @@ sub artworkRequest {
 	elsif ( $path =~ m{^contributor/([^/]+)/} ) {
 		my $id = $1;
 
-		main::INFOLOG && $log->is_info && $log->info("  Looking for contributor picture for $id");
+		main::INFOLOG && $log->is_info && $log->info("  Looking for contributor portrait for $id");
 
 		my $sth = Slim::Schema->dbh->prepare_cached( qq{
-			SELECT picture FROM contributors WHERE pictureid = ? LIMIT 1
+			SELECT portrait FROM contributors WHERE portraitid = ? LIMIT 1
 		} );
 
 		$sth->execute($id);
@@ -339,7 +339,7 @@ sub artworkRequest {
 			$fullpath = $skinMgr->fixHttpPath($skin, $path);
 		}
 
-		main::INFOLOG && $log->is_info && $log->info("  Found contributor picture at $fullpath");
+		main::INFOLOG && $log->is_info && $log->info("  Found contributor portrait at $fullpath");
 	}
 
 	# If path begins with "plugins/cache" it is a special path

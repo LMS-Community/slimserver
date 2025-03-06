@@ -645,6 +645,10 @@ sub albumsQuery {
 		$as->{$col} = 'group_structure';
 	}
 
+	if ( $tags =~ /4/ && !$work ) {
+		$c->{'contributors.portraitid'} = 1;
+	}
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		my $s .= join( ' AND ', @{$w} );
@@ -864,9 +868,8 @@ sub albumsQuery {
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
-				if ($tags =~ /a/) {
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
-				}
+				$tags =~ /a/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
+				$tags =~ /4/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'portraitid', $c->{'contributors.portraitid'});
 			}
 
 			if ($tags =~ /s/) {
@@ -1215,7 +1218,7 @@ sub artistsQuery {
 
 	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort'
 		. ($tags =~ /E/ ? ', contributors.extid' : '')
-		. ($tags =~ /p/ ? ', contributors.pictureid' : '')
+		. ($tags =~ /4/ ? ', contributors.portraitid' : '')
 		) . 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
@@ -1293,10 +1296,10 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($id, $name, $namesort, $pictureid, $extid);
+		my ($id, $name, $namesort, $portraitid, $extid);
 		my @bind = (\$id, \$name, \$namesort);
 		push @bind, \$extid if $tags =~ /E/;
-		push @bind, \$pictureid if $tags =~ /p/;
+		push @bind, \$portraitid if $tags =~ /4/;
 		$sth->bind_columns(@bind);
 
 		my $process = sub {
@@ -1315,7 +1318,7 @@ sub artistsQuery {
 			}
 
 			$request->addResultLoop($loopname, $chunkCount, 'extid', $extid) if $tags =~ /E/ && $extid;
-			$request->addResultLoop($loopname, $chunkCount, 'pictureid', $pictureid) if $tags =~ /p/ && $pictureid;
+			$request->addResultLoop($loopname, $chunkCount, 'portraitid', $portraitid) if $tags =~ /4/ && $portraitid;
 
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:contributor.name=' . URI::Escape::uri_escape_utf8( $name ) );
 
@@ -5541,6 +5544,7 @@ my %tagMap = (
 	#--------------------------------------------------------------------------------------------------
 	  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
 	  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
+	  '4' => ['portraitid',        '',                'primary_artist','portraitid'],    #->contributors.portraitid
 
 	  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
 	  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
@@ -5568,6 +5572,7 @@ my %colMap = (
 	P => 'genre_ids',
 	a => 'contributors.name',
 	's' => 'contributors.id',
+	4 => 'contributors.portraitid',
 	l => 'albums.title',
 	e => 'tracks.album',
 	d => 'tracks.secs',
@@ -6354,6 +6359,11 @@ sub _getTagDataForTracks {
 	$tags =~ /s/ && do {
 		$join_contributors->();
 		$c->{'contributors.id'} = 1;
+	};
+
+	$tags =~ /4/ && do {
+		$join_contributors->();
+		$c->{'contributors.portraitid'} = 1;
 	};
 
 	$tags =~ /l/ && do {

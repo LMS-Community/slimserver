@@ -56,7 +56,7 @@ sub startArtworkScan {
 
 	$dbh = Slim::Schema->dbh;
 
-	main::INFOLOG && $log->info("Starting contributor picture scan");
+	main::INFOLOG && $log->info("Starting contributor portrait scan");
 
 	my $imageFolder = $prefs->get('artfolder');
 	if ( $imageFolder && -d $imageFolder ) {
@@ -72,14 +72,14 @@ sub startArtworkScan {
 	});
 
 	$sth_contributor_picture = $dbh->prepare_cached(qq{
-		SELECT picture, pictureid
+		SELECT portrait, portraitid
 		FROM contributors
 		WHERE id = ?
 	});
 
 	$sth_update_contributor_picture = $dbh->prepare_cached(qq{
 		UPDATE contributors
-		SET picture = ?, pictureid = ?
+		SET portrait = ?, portraitid = ?
 		WHERE id = ?
 	});
 
@@ -173,14 +173,14 @@ sub _getArtistPhotoURL {
 			my $contributorPicture = $dbh->selectrow_arrayref($sth_contributor_picture, undef, $artist->{id});
 
 			if ( $imgId && !($contributorPicture && $contributorPicture->[1] eq $imgId) ) {
-				# updated or new picture
+				# updated or new portrait
 				$sth_update_contributor_picture->execute($url, $imgId, $artist->{id});
 
 				Slim::Utils::ImageResizer->resize($img, "contributor/$imgId/image_", $specs) if $specs;
 			}
 		}
 		else {
-			$log->warn("No picture found for " . $artist->{name});
+			$log->warn("No portrait found for " . $artist->{name});
 		}
 
 		return 1;

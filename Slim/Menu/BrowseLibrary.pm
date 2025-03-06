@@ -1119,7 +1119,7 @@ sub _artists {
 		push @searchTags, 'include_online_only_artists:1'
 	}
 
-	$queryTags .= 'p' unless $prefs->get('noContributorPictures');
+	$queryTags .= '4' unless $prefs->get('noContributorPictures');
 
 	#For use down the line in _releases
 	push @ptSearchTags, 'menu_mode:' . $mode if $mode;
@@ -1144,8 +1144,8 @@ sub _artists {
 				if ( $noContributorPictures) {
 					# no pictures wanted
 				}
-				elsif ( $_->{'pictureid'} ) {
-					$_->{'image'} = 'contributor/' . $_->{'pictureid'} . '/image';
+				elsif ( $_->{'portraitid'} ) {
+					$_->{'image'} = 'contributor/' . $_->{'portraitid'} . '/image';
 				}
 				else {
 					$_->{'icon'} = 'html/images/artists.png';
