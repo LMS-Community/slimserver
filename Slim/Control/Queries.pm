@@ -557,7 +557,7 @@ sub albumsQuery {
 		}
 	}
 
-	if (defined $work) {
+	if ($work) {
 		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
 		$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
 		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
@@ -761,7 +761,7 @@ sub albumsQuery {
 		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth, @linkRoleIds);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
-			if ( defined $work ) {
+			if ($work) {
 				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } ( 'ARTIST', 'BAND', 'CONDUCTOR' );
 				$contributorSql = sprintf( qq{
 					SELECT contributor_track.role AS role, contributors.name AS name, contributors.id AS id
