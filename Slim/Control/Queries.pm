@@ -4039,9 +4039,14 @@ sub statusQuery {
 		$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
 	}
 
+	# indicate whether the player's volume control is active
 	my $hasDigitalOut = $client->hasDigitalOut();
-	if ( defined ($hasDigitalOut) ) {
-		$request->addResult('has_digital_out', $hasDigitalOut + 0);		
+	if ( defined($digitalVolumeControl) && defined($hasDigitalOut) ) {
+		my $useVolumeControl = 0;
+		if ($digitalVolumeControl || !$hasDigitalOut) {
+			$useVolumeControl = 1;
+		}
+		$request->addResult('use_volume_control', $useVolumeControl);
 	}
 
 	if ($menuMode || $request->getParam('alarmData')) {
