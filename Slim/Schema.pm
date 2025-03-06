@@ -2658,6 +2658,35 @@ sub _preCheckAttributes {
 		}
 	}
 
+	# If we've got an ARTISTS tag, treat it as a reference list of all individual artists associated with the track.
+	# Use it to fix ARTIST, ALBUMARTIST, ARTISTSORT and ALBUMARTISTSORT that may have been tagged by Musicbrainz
+	# with compound values.
+	# eg:
+	#	ALBUMARTIST="Panda Bear & Sonic Boom"
+	#	ARTIST="Panda Bear & Sonic Boom"
+	#	ARTISTS=["Panda Bear", "Sonic Boom"]
+	if ( $attributes->{'ARTISTS'} && ($attributes->{'MUSICBRAINZ_ARTIST_ID'} || $attributes->{'MUSICBRAINZ_ALBUMARTIST_ID'}) ) {
+		my (@newAA, @newA, @newAAS, @newAS);
+		foreach ( Slim::Music::Info::splitTag($attributes->{'ARTISTS'}) ) {
+			if ( $attributes->{'ALBUMARTIST'} && $attributes->{'ALBUMARTIST'} =~ $_ ) {
+				push @newAA, $_;
+			}
+			if ( $attributes->{'ARTIST'} && $attributes->{'ARTIST'} =~ $_ ) {
+				push @newA, $_;
+			}
+			if ( $attributes->{'ALBUMARTISTSORT'} && $attributes->{'ALBUMARTISTSORT'} =~ $_ ) {
+				push @newAAS, $_;
+			}
+			if ( $attributes->{'ARTISTSORT'} && $attributes->{'ARTISTSORT'} =~ $_ ) {
+				push @newAS, $_;
+			}
+		}
+		$attributes->{'ALBUMARTIST'} = \@newAA if scalar @newAA;
+		$attributes->{'ARTIST'} = \@newA if scalar @newA;
+		$attributes->{'ALBUMARTISTSORT'} = \@newAAS if scalar @newAAS;
+		$attributes->{'ARTISTSORT'} = \@newAS if scalar @newAS;
+	}
+
 	# Bug 9359, don't allow tags named 'ID'
 	if ( exists $attributes->{'ID'} ) {
 		delete $attributes->{'ID'};
