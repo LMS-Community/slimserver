@@ -321,13 +321,16 @@ sub artworkRequest {
 
 		main::INFOLOG && $log->is_info && $log->info("  Looking for contributor portrait for $id");
 
-		my $sth = Slim::Schema->dbh->prepare_cached( qq{
-			SELECT portrait FROM contributors WHERE portraitid = ? LIMIT 1
-		} );
+		my $url;
+		if ($id) {
+			my $sth = Slim::Schema->dbh->prepare_cached( qq{
+				SELECT portrait FROM contributors WHERE portraitid = ? LIMIT 1
+			} );
 
-		$sth->execute($id);
-		my ($url) = $sth->fetchrow_array;
-		$sth->finish;
+			$sth->execute($id);
+			($url) = $sth->fetchrow_array;
+			$sth->finish;
+		}
 
 		if ($url) {
 			$fullpath = Slim::Utils::Misc::pathFromFileURL($url);
