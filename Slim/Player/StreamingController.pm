@@ -1004,7 +1004,6 @@ sub _NextIfMore {			# -> Idle; IF [moreTracks] AND [roomInQueue] THEN getNextTra
 	} else {
 		$log->info("streaming track not started yet, will wait until then to try next track");
 	}
-	_getNextTrack($self, $params, 1);
 }
 
 # This action is only called for StreamingFailed; buffering or wait-to-sync
