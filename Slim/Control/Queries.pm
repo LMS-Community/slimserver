@@ -557,7 +557,7 @@ sub albumsQuery {
 		}
 	}
 
-	if (defined $work) {
+	if ($work) {
 		$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
 		$sql .= 'JOIN works ON tracks.work = works.id ' unless $sql =~ /JOIN works/;
 		$sql .= 'JOIN contributors AS composer ON works.composer = composer.id ' ;
@@ -765,7 +765,7 @@ sub albumsQuery {
 		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth, @linkRoleIds);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
-			if ( defined $work ) {
+			if ($work) {
 				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } ( 'ARTIST', 'BAND', 'CONDUCTOR' );
 				$contributorSql = sprintf( qq{
 					SELECT contributor_track.role AS role, contributors.name AS name, contributors.id AS id
@@ -4046,9 +4046,11 @@ sub statusQuery {
 		$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
 	}
 
+	# indicate whether the player's volume control is active
 	my $hasDigitalOut = $client->hasDigitalOut();
-	if ( defined ($hasDigitalOut) ) {
-		$request->addResult('has_digital_out', $hasDigitalOut + 0);
+	if ( defined($digitalVolumeControl) && defined($hasDigitalOut) ) {
+		my $useVolumeControl = ($digitalVolumeControl || !$hasDigitalOut) ? 1 : 0;
+		$request->addResult('use_volume_control', $useVolumeControl);
 	}
 
 	if ($menuMode || $request->getParam('alarmData')) {
