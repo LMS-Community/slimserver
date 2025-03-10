@@ -251,7 +251,6 @@ sub _colNamesWithASMapping {
 	my ($c, $as, $sql) = @_;
 
 	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL
 	# ** use customised 'AS' if provided in $as->{<column>} **
 	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . ($as->{$_} || $_) . "'" } @cols );

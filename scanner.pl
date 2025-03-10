@@ -412,7 +412,6 @@ Command line options:
 	--playlists     Only scan files in your playlistdir.
 	--onlinelibrary Only update online library content
 	--progress      Show a progress bar of the scan.
-	--dbtype TYPE   Force database type (valid values are MySQL or SQLite)
 	--prefsdir      Specify alternative preferences directory.
 	--priority      set process priority from -20 (high) to 20 (low)
 	--logfile       Send all debugging messages to the specified logfile.

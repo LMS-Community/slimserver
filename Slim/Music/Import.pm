@@ -436,11 +436,11 @@ sub runScanPostProcessing {
 	return 1 if !Slim::Schema::hasLibrary();
 
 	if (main::STATISTICS) {
-		# Look for and import persistent data migrated from MySQL
+		# Look for and import persistent data
 		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
 		my $json = catfile( $dir, 'tracks_persistent.json' );
 		if ( -e $json ) {
-			$log->error('Migrating persistent track information from MySQL');
+			$log->error('Migrating persistent track information from tracks_persistent.json');
 
 			if ( Slim::Schema::TrackPersistent->import_json($json) ) {
 				unlink $json;

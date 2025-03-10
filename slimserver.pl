@@ -707,7 +707,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --checkstrings   => Enable reloading of changed string files for plugin development
     --charset        => Force a character set to be used, eg. utf8 on Linux devices
                         which don't have full utf8 locale installed
-    --dbtype         => Force database type (valid values are MySQL or SQLite)
     --logging        => Enable logging for the specified comma separated categories
     --localfile      => Enable LocalFile protocol handling for locally connected squeezelite service
 

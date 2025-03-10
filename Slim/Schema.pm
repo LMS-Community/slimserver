@@ -143,7 +143,6 @@ sub init {
 	}
 
 	# Bug: 4076
-	# If a user was using MySQL with 6.3.x (unsupported), their
 	# metainformation table won't be dropped with the schema_1_up.sql
 	# file, since the metainformation table doesn't get dropped to
 	# maintain state. We need to wipe the DB and start over.
@@ -1303,7 +1302,7 @@ sub _createOrUpdateAlbum {
 		}
 	}
 
-	# Check that these are the correct types. Otherwise MySQL will not accept the values.
+	# Check that these are the correct types.
 	if ( defined $disc && $disc =~ /^\d+$/ ) {
 		$albumHash->{disc} = $disc;
 	}
