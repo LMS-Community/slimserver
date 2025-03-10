@@ -252,7 +252,7 @@ sub doTagMapping {
 			$tags->{DATE} = $years[0];
 		}
 
-		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
+		$tags->{YEAR} = $class->sanitizeYearTag($tags->{DATE});
 	}
 
 	# Sometimes the BPM is not an integer so we try to convert.
