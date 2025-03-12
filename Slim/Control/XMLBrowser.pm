@@ -1130,6 +1130,9 @@ sub _cliQuery_done {
 						}
 						$hash{'text'} = $itemText;
 
+						# allow SlimBrowse to support duration
+						$hash{'duration'} = $item->{'duration'};
+      
 						if ($isPlayable) {
 							my $presetParams = _favoritesParams($item);
 							if ($presetParams && !$xmlBrowseInterimCM) {
