@@ -44,6 +44,8 @@ initializeRoles();
 		namesearch
 		musicbrainz_id
 		extid
+		portraitid
+		portrait
 	));
 
 	$class->set_primary_key('id');

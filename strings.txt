@@ -6981,8 +6981,8 @@ SETUP_ARTFOLDER
 SETUP_ARTFOLDER_DESC
 	CS	Můžete si zvolit ukládání všech vašich obalů alb do jedné složky s pomocí volby proměnných názvů souborů výše. Zde zadejte umístění souborů obalů alb. Bez ohledu na toto umístění bude Lyrion Music Server stále hledat obaly alb na stejné cestě jako každý zvukový soubor, pokud nebude ve složce obalů alb nalezen žádný odpovídající obal alba.
 	DA	Du kan vælge at gemme alle albumcovere i en enkelt mappe og bruge indstillingen til variable filnavne ovenfor. Her skal du angive hvor filerne med albumcoverne er placeret. Uanset hvor mappen er placeret, vil Lyrion Music Server stadig se efter coverbilleder i samme mappe som de enkelte lydfiler hvis der ikke blev fundet et cover i mappen med albumcovere.
-	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
-	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
+	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen und Künstlerportraits in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
+	EN	You may choose to store all your artwork (album covers, contributor portraits) in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todas las carátulas en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de carátula. Independientemente de esta ubicación, Lyrion Music Server seguirá buscando carátulas en la misma ruta que cada archivo de audio si no se encuentran carátulas coincidentes en la carpeta de carátulas.
 	FI	Halutessasi voit tallentaa kaikki kansikuvat yhteen kansioon käyttäen tiedostonimien muuttujien asetusta yllä.  Kirjoita kansikuvatiedostojen sijainti tähän. Tästä huolimatta Lyrion Music Server etsii yhä kansikuvia samasta polusta kuin äänitiedostoja, jos se ei löydä vastaavia kansikuvia kansikuvakansiosta.
 	FR	Vous pouvez saisir un nom de dossier où stocker toutes les pochettes. Si aucune pochette correspondante n'est trouvée dans le dossier spécifié, le Lyrion Music Server recherchera la pochette à l'emplacement du fichier audio.
@@ -6996,6 +6996,18 @@ SETUP_ARTFOLDER_DESC
 	RU	Можно хранить все обложки в единой папке, пользуясь вышеописанной функцией изменяемых имен файлов. Введите в это поле расположение файлов обложек. Независимо от данного расположения Lyrion Music Server будет по-прежнему выполнять поиск обложек в папке каждого аудиофайла, если в папке обложек не обнаружится необходимых обложек.
 	SV	Du kan välja att spara alla albumomslag i en och samma mapp med hjälp av alternativet för variabla filnamn ovan. Ange sökvägen till omslagsfilerna här. Oavsett sökvägen du anger här kommer Lyrion Music Server att söka efter omslagsbilder i samma mapp som var och en av ljudfilerna om inget omslag hittas i mappen för omslagsfiler.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
+
+SETUP_NO_PORTRAITS
+	DE	Künstlerbilder
+	EN	Artist Portraits
+
+SETUP_NO_PORTRAITS_ON
+	DE	Beim Blättern durch Künstler keine Bilder zeigen
+	EN	Don't show pictures when browsing artists
+
+SETUP_NO_PORTRAITS_OFF
+	DE	Beim Blättern durch Künstler Bilder anzeigen
+	EN	Show pictures when browsing artists
 
 SETUP_BAD_FILE
 	CS	Ouha – "%s" asi nebude platný soubor. Zkuste to znovu.
@@ -23316,6 +23328,10 @@ MERGEVA_PROGRESS
 	PL	Połącz różnych wykonawców
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
+
+CONTRIBUTOR_PICTURE_PROGRESS
+	DE	Nach Künstlerbildern suchen
+	EN	Looking for contributor pictures
 
 UPDATESTANDALONEARTWORK_PROGRESS
 	CS	Vyhledávání aktualizovaných souborů obalů alb
