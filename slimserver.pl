@@ -163,7 +163,7 @@ BEGIN {
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
 	}
 
-	our $VERSION = '9.0.2';
+	our $VERSION = '9.0.3';
 
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable
