@@ -189,7 +189,7 @@ jobs:
       - name: Tag that thang
         run: |
           cd server
-          VERSION=test-$(grep "our \$VERSION" -m1 slimserver.pl | cut -d"'" -f2)
+          VERSION=$(grep "our \$VERSION" -m1 slimserver.pl | cut -d"'" -f2)
           git config user.name "LMS Server Repository Updater"
           git config user.email "gitmaster@lms-community.org"
           git tag -a -m -f "$VERSION"
