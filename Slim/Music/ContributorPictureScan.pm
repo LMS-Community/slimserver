@@ -229,7 +229,7 @@ sub imageInFolder {
 
 	return unless $folder && @names;
 
-	main::INFOLOG && $log->info("Trying to find artwork in $folder");
+	main::INFOLOG && $log->info("Trying to find artwork in $folder for pictures called " . join(', ', map { "'$_'" } @names));
 
 	my $file;
 	my %seen;
