@@ -172,7 +172,7 @@ jobs:
 
   tagRelease:
     name: Tag the current release
-    if: ${{ success() && inputs.built_type == 'release' && github.repository_owner == 'LMS-Community' }}
+    if: ${{ success() && inputs.build_type == 'release' && github.repository_owner == 'LMS-Community' }}
     runs-on: ubuntu-latest
     needs:
       - updateRepoFile
