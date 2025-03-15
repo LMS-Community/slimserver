@@ -22,9 +22,9 @@ runs:
       id: getversion
       run: |
         echo "::group::Get LMS version number"
-        MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
-        MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
-        PATCH=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f3)
+        MAJOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f1)
+        MINOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f2)
+        PATCH=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f3)
 
         echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
         echo "LMS_FULL_VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
