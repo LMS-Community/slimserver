@@ -6985,7 +6985,7 @@ SETUP_ARTFOLDER_DESC
 	EN	You may choose to store all your artwork (album covers, contributor portraits) in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todas las carátulas en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de carátula. Independientemente de esta ubicación, Lyrion Music Server seguirá buscando carátulas en la misma ruta que cada archivo de audio si no se encuentran carátulas coincidentes en la carpeta de carátulas.
 	FI	Halutessasi voit tallentaa kaikki kansikuvat yhteen kansioon käyttäen tiedostonimien muuttujien asetusta yllä.  Kirjoita kansikuvatiedostojen sijainti tähän. Tästä huolimatta Lyrion Music Server etsii yhä kansikuvia samasta polusta kuin äänitiedostoja, jos se ei löydä vastaavia kansikuvia kansikuvakansiosta.
-	FR	Vous pouvez saisir un nom de dossier où stocker toutes les pochettes. Si aucune pochette correspondante n'est trouvée dans le dossier spécifié, le Lyrion Music Server recherchera la pochette à l'emplacement du fichier audio.
+	FR	Vous pouvez choisir de stocker toutes vos pochettes d'albums et portraits de contributeurs/artistes dans un seul dossier, en utilisant l'option de noms de fichiers ci-dessus et en indiquant un emplacement ici. Si aucune illustration n'est trouvée dans ce dossier, Lyrion Music Server cherchera à l'emplacement du fichier audio.
 	HE	באפשרותך לבחור לאחסן את כל העטיפות בתיקייה יחידה, באמצעות האפשרות לשינוי שמות קבצים שלעיל. הזן כאן את המיקום של קובצי העטיפות. ללא תלות במיקום זה, השרת עדיין יחפש עטיפות בנתיב של כל קובץ שמע אם לא נמצאו עטיפות מתאימות בתיקיית העטיפות.
 	HU	Dönthet úgy, hogy az összes grafikát egyetlen mappában tárolja a fenti változó fájlnevek beállításával.  Adja meg itt a grafikai fájlok helyét. Ettől a helytől függetlenül a Lyrion Music Server továbbra is ugyanazon az útvonalon keresi a grafikákat, mint az egyes hangfájlok, ha nem található megfelelő grafikát az Artwork mappában.
 	IT	Si può scegliere di archiviare tutte le copertine in una sola cartella, usando l'opzione per i nomi di file variabili indicata sopra. Inserire qui la posizione dei file delle copertine. Se nella cartella delle copertine non viene trovata alcuna copertina corrispondente, ne viene eseguita una ricerca nello stesso percorso dei file audio .
@@ -7000,14 +7000,17 @@ SETUP_ARTFOLDER_DESC
 SETUP_NO_PORTRAITS
 	DE	Künstlerbilder
 	EN	Artist Portraits
+	FR	Photos d'artistes
 
 SETUP_NO_PORTRAITS_ON
 	DE	Beim Blättern durch Künstler keine Bilder zeigen
 	EN	Don't show pictures when browsing artists
+	FR	Ne pas afficher de photos lors du parcours des artistes
 
 SETUP_NO_PORTRAITS_OFF
 	DE	Beim Blättern durch Künstler Bilder anzeigen
 	EN	Show pictures when browsing artists
+	FR	Afficher les photos lors du parcours des artistes
 
 SETUP_BAD_FILE
 	CS	Ouha – "%s" asi nebude platný soubor. Zkuste to znovu.
@@ -23332,6 +23335,7 @@ MERGEVA_PROGRESS
 CONTRIBUTOR_PICTURE_PROGRESS
 	DE	Nach Künstlerbildern suchen
 	EN	Looking for contributor pictures
+	FR	Recherche des photos d'artistes/contributeurs
 
 UPDATESTANDALONEARTWORK_PROGRESS
 	CS	Vyhledávání aktualizovaných souborů obalů alb
