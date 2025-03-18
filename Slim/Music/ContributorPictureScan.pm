@@ -87,7 +87,10 @@ sub startArtworkScan {
 		SELECT COUNT(*) FROM contributors
 	}) || (0);
 
-	my $sth = $dbh->prepare('SELECT id, name FROM contributors');
+	my $sth = $dbh->prepare($main::wipe
+		? 'SELECT id, name FROM contributors'
+		: 'SELECT id, name, portrait, portraitid FROM contributors'
+	);
 	$sth->execute();
 
 	my $progress = undef;
@@ -119,25 +122,43 @@ sub _getArtistPhotoURL {
 
 	# get next artist from db
 	if ( my $artist = ($params->{sth}->fetchrow_hashref) ) {
+		my ($img, $candidates);
+
 		$artist->{name} = Slim::Utils::Unicode::utf8decode($artist->{name});
-
-		my $candidates = sanitizedNameVariants($artist->{name});
-
 		$progress->update( $artist->{name} ) if $progress;
 		time() > $i && ($i = time + 5) && Slim::Schema->forceCommit;
 
-		main::INFOLOG && $log->is_info && $log->info("Looking for pictures of  " . $artist->{name});
+		# don't re-evaluate if we already have a portrait
+		if (main::SCANNER && !$main::wipe && $artist->{portrait} && $artist->{portraitid}) {
+			my $pictureId = Slim::Music::Artwork->generateImageId({
+				image => Slim::Utils::Misc::pathFromFileURL($artist->{portrait}),
+				url   => $artist->{portrait},
+			}) || '';
 
-		my $img;
-		foreach my $folder (@artworkFolders) {
-			$img = imageInFolder($folder, @$candidates);
-			last if $img;
+			# return early if existing image hasn't changed
+			if ($pictureId eq $artist->{portraitid}) {
+				return 1;
+			}
+			elsif ($pictureId) {
+				$img = Slim::Utils::Misc::pathFromFileURL($artist->{portrait});
+			}
 		}
 
+		# check if we have a portrait in the artwork folder(s)
 		if (!$img) {
-			my $artist_id = $artist->{id};
+			$candidates = sanitizedNameVariants($artist->{name});
 
-			$sth_album_folders->execute($artist_id);
+			main::INFOLOG && $log->is_info && $log->info("Looking for pictures of  " . $artist->{name});
+
+			foreach my $folder (@artworkFolders) {
+				$img = imageInFolder($folder, @$candidates);
+				last if $img;
+			}
+		}
+
+		# check if we have a portrait in the album folders (and up)
+		if (!$img) {
+			$sth_album_folders->execute($artist->{id});
 
 			my %seen;
 			ALBUMFOLDER: while (my $track = $sth_album_folders->fetchrow_hashref) {
@@ -152,7 +173,7 @@ sub _getArtistPhotoURL {
 					my $grandparent = $dir->parent->parent->stringify if $parent && !$audioDirs->{$parent};
 
 					foreach ($parent, $path, $grandparent) {
-						next if !$_ || $seen{$_}++;
+						next if !$_ || $seen{$_}++ || $audioDirs->{$_};
 						$img = imageInFolder($_, @$candidates, 'artist', 'contributor');
 						last ALBUMFOLDER if $img;
 					}
@@ -232,11 +253,9 @@ sub imageInFolder {
 	main::INFOLOG && $log->info("Trying to find artwork in $folder for pictures called " . join(', ', map { "'$_'" } @names));
 
 	my $file;
-	my %seen;
 
 	LOOKUP: foreach my $name (@names) {
-		next if $seen{$name}++;
-		foreach my $ext ('jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF') {
+		foreach my $ext ('jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG') {
 			my $candidate = catdir($folder, $name . ".$ext");
 
 			if (-f $candidate) {
