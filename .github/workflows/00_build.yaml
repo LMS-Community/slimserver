@@ -96,7 +96,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
         run: |
           sudo apt update
           sudo apt install -y apt-transport-https debhelper devscripts
