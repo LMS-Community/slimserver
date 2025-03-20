@@ -539,7 +539,7 @@ sub init {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,
-			time() + 30,
+			time() + (logger('server.update')->is_info ? 2 : 30),
 			\&Slim::Utils::Update::checkVersion,
 		);
 	}
