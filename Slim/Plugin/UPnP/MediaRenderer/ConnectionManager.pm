@@ -153,8 +153,8 @@ sub _sinkProtocols {
 		my $hasWMAP = grep { /wmap/ } @cf;
 		my $hasOgg = grep { /ogg/ } @cf;
 		my $hasFLAC = grep { /flc/ } @cf;
-  		my $hasWav = grep { /wav/ } @cf;
-  		my $hasOpus = grep { /ops/ } @cf;
+		my $hasWav = grep { /wav/ } @cf;
+		my $hasOpus = grep { /ops/ } @cf;
 
 		# Transcoder-supported formats
 		my $canTranscode = sub {
@@ -234,12 +234,12 @@ sub _sinkProtocols {
 			);
 		}
 
-  		if ( $hasWav || $canTranscode->('wav') ) {
+		if ( $hasWav || $canTranscode->('wav') ) {
 			push @formats, (
 				"http-get:*:audio/wav:DLNA.ORG_PN=WAV;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-		  if ( $hasOpus || $canTranscode->('ops') ) {
+		if ( $hasOpus || $canTranscode->('ops') ) {
 			push @formats, (
 				"http-get:*:audio/opus:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
