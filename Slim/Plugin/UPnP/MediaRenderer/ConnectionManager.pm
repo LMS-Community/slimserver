@@ -240,6 +240,7 @@ sub _sinkProtocols {
 			);
 		}
 		if ( $hasOpus || $canTranscode->('ops') ) {
+  			# Seeking not supported for remote Opus content (OP=00)
 			push @formats, (
 				"http-get:*:audio/opus:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
