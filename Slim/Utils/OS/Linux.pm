@@ -76,7 +76,7 @@ sub getFlavor {
 	# parse new-school operating system identification file if available
 	if (-f '/etc/os-release' && open(OS_RELEASE, '/etc/os-release')) {
 		while (<OS_RELEASE>) {
-			if (/^NAME="(.*?)"/i) {
+			if (/^NAME="?(.*)"?/i) {
 				$osName = lc($1);
 				last;
 			}
