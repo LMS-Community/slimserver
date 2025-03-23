@@ -1,6 +1,7 @@
 package Slim::Utils::Update;
 
 use strict;
+use File::Slurp qw(write_file);
 use Time::HiRes;
 use Digest::MD5;
 use File::Spec::Functions qw(splitpath catdir);
@@ -282,6 +283,10 @@ sub downloadAsyncDone {
 
 	unlink $file;
 	my $success = rename $tmpFile, $file;
+	if ($md5) {
+		my ($a, $b, $filename) = splitpath($file);
+		write_file($file . '.md5.txt', "$md5  $filename");
+	}
 
 	if (-e $file) {
 		setUpdateInstaller($file, $params->{cb}) ;
