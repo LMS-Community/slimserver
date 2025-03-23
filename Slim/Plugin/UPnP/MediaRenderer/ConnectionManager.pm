@@ -153,7 +153,7 @@ sub _sinkProtocols {
 		my $hasWMAP = grep { /wmap/ } @cf;
 		my $hasOgg = grep { /ogg/ } @cf;
 		my $hasFLAC = grep { /flc/ } @cf;
-  		my $hasWav = grep { /wav/ } @cf;
+		my $hasWav = grep { /wav/ } @cf;
 		my $hasOpus = grep { /ops/ } @cf;
 
 		# Transcoder-supported formats
@@ -240,12 +240,12 @@ sub _sinkProtocols {
 			);
 		}
 		if ( $hasOpus || $canTranscode->('ops') ) {
-  			# Seeking not supported for remote Opus content (OP=00)
+			# Seeking not supported for remote Opus content (OP=00)
 			push @formats, (
 				"http-get:*:audio/opus:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
 		}
-  
+
 		# XXX Disable DLNA stuff for now
 		for ( @formats ) {
 			s/:DLNA.+/:\*/;
