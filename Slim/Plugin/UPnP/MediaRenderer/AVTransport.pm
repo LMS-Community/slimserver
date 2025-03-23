@@ -380,7 +380,35 @@ sub GetTransportInfo {
 		return [ 718 => 'Invalid InstanceID' ];
 	}
 
+	# Use playmode to make sure TransportState is updated before returning values
+	# Required for Control Points that do not support eventing
+
+	my $mode = Slim::Player::Source::playmode($client);
 	my $state = $client->pluginData()->{AVT};
+
+	# Change to STOPPED unless we are in NO_MEDIA_PRESENT
+	if ( $mode eq 'stop' && ($state->{TransportState} ne 'NO_MEDIA_PRESENT' ||
+		$state->{TransportState} ne 'STOPPED') ) {
+
+		$class->changeState( $client, {
+			TransportState => 'STOPPED',
+		} );	
+		main::DEBUGLOG && $log->is_debug && $log->debug("Changing state to STOPPED");
+	}
+	elsif ( $mode eq 'pause' && $state->{TransportState} ne 'PAUSED_PLAYBACK') {
+
+		$class->changeState( $client, {
+			TransportState => 'PAUSED_PLAYBACK',
+		} );
+		main::DEBUGLOG && $log->is_debug && $log->debug("Changing state to PAUSED_PLAYBACK");
+	}
+	elsif ( $mode eq 'play' && $state->{TransportState} ne 'PLAYING' ) {
+
+		$class->changeState( $client, {
+			TransportState => 'PLAYING',
+		} );
+		main::DEBUGLOG && $log->is_debug && $log->debug("Changing state to PLAYING");
+	}
 
 	return (
 		SOAP::Data->name( CurrentTransportState  => $state->{TransportState} ),
