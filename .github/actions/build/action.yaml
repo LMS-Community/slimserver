@@ -121,6 +121,8 @@ runs:
 
     - name: Set-up s5cmd
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      # don't fail, as we can fall back to aws-cli
+      continue-on-error: true
       uses: ./server/.github/actions/setup-s5cmd
       # uses: peak/action-setup-s5cmd@main
       continue-on-error: true
