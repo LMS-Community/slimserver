@@ -45,6 +45,11 @@ sub newClient {
 
 	# Initialize all state variables
 	$client->pluginData( AVT => _initialState() );
+
+	# Subscribe to LMS events for this client
+	Slim::Control::Request::subscribe(
+		\&clientEvent, [['playlist']], $client,
+	);
 }
 
 sub disconnectClient { }
@@ -125,11 +130,6 @@ sub clientEvent {
 
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
-
-	# Subscribe to events for this client
-	Slim::Control::Request::subscribe(
-		\&clientEvent, [['playlist']], $client,
-	);
 
 	# Bump the number of subscribers for this client
 	my $pd = $client->pluginData();
