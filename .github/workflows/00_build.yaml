@@ -22,7 +22,7 @@ on:
 
 jobs:
   mac:
-    name: Build LMS for Mac (MenuBar Item)
+    name: Build LMS for Mac
     runs-on: macos-13
     env:
       BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
