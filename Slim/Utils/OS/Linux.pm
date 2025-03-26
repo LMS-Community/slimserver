@@ -104,6 +104,11 @@ sub getFlavor {
 	} elsif (-f '/etc/synoinfo.conf' || -f '/etc.defaults/synoinfo.conf') {
 
 		return 'Synology DiskStation';
+
+	} elsif ($osName =~ /picoreplayer/ ) {
+
+		return 'piCorePlayer';
+
 	}
 
 	return 'Linux';

@@ -111,6 +111,11 @@ sub init {
 				require Slim::Utils::OS::Synology;
 				$os = Slim::Utils::OS::Synology->new();
 
+			} elsif ($os =~ /piCorePlayer/i) {
+
+				require Slim::Utils::OS::pCP;
+				$os = Slim::Utils::OS::pCP->new();
+
 			} else {
 
 				$os = Slim::Utils::OS::Linux->new();
