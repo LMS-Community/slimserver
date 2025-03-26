@@ -3,6 +3,9 @@ package Slim::Schema::Track;
 
 use strict;
 use base 'Slim::Schema::DBI';
+__PACKAGE__->load_components(
+  "VirtualColumns",
+);
 
 use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
@@ -42,6 +45,8 @@ our @allColumns = (qw(
 		@allColumns,
 		coverid => { accessor => '_coverid' }, # use a wrapper method for coverid
 	);
+
+	$class->add_virtual_columns('added_from_work');
 
 	$class->set_primary_key('id');
 

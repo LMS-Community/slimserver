@@ -1859,6 +1859,7 @@ sub playlistcontrolCommand {
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
 	my $jumpIndex           = $request->getParam('play_index');
+	my $addedFromWork            = $request->getParam('added_from_work');
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
@@ -1987,7 +1988,7 @@ sub playlistcontrolCommand {
 			return;
 		}
 
-	} elsif (defined(my $work_id = $request->getParam('work_id'))) {
+	} elsif (defined(my $work_id = $request->getParam('work_id')) && $request->getParam('work_id') ne '-1') {
 
 		my $criteria = {work => [ '=' => $work_id ]};
 
@@ -2037,6 +2038,10 @@ sub playlistcontrolCommand {
 		# rather than re-invent the wheel, use _playlistXtracksCommand_parseSearchTerms
 
 		my $what = {};
+
+		if (defined(my $work_id = $request->getParam('work_id')) && $work_id eq '-1') {
+			$what->{'track.work'} = { '!=' => [undef] };
+		}
 
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
 			$what->{'genre.id'} = { 'in' => [ split(/,/, $genre_id) ] };
@@ -2098,6 +2103,12 @@ sub playlistcontrolCommand {
 
 	# don't call Xtracks if we got no songs
 	if (@tracks) {
+
+		if ($request->getParam('work_id')) {
+			foreach my $track (@tracks) {
+				$track->added_from_work("1");
+			}
+		}
 
 		if ($load || $add || $insert) {
 
