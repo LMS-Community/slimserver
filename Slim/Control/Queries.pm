@@ -4253,7 +4253,7 @@ sub statusQuery {
 				foreach my $track ( Slim::Player::Playlist::songs($client, $start, $end) ) {
 					next unless defined $track;
 
-					$addedFromWork{$count} = $track->get_column('added_from_work');
+					$addedFromWork{$count} = $track->added_from_work;
 
 					if ( $track->remote ) {
 						push @tracks, $track;

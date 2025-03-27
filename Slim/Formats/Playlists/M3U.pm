@@ -294,7 +294,7 @@ sub write {
 				print $output "#EXTINF:$secs,$title\n";
 			}
 
-			if (my $addedFromWork = $item->get_column('added_from_work')) {
+			if (my $addedFromWork = $item->added_from_work) {
 				print $output "#ADDEDFROMWORK:$addedFromWork\n";
 			}
 		}

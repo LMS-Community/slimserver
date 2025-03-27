@@ -3,9 +3,6 @@ package Slim::Schema::Track;
 
 use strict;
 use base 'Slim::Schema::DBI';
-__PACKAGE__->load_components(
-  "VirtualColumns",
-);
 
 use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
@@ -46,8 +43,6 @@ our @allColumns = (qw(
 		coverid => { accessor => '_coverid' }, # use a wrapper method for coverid
 	);
 
-	$class->add_virtual_columns('added_from_work');
-
 	$class->set_primary_key('id');
 
 	# setup our relationships
@@ -77,6 +72,9 @@ our @allColumns = (qw(
 
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
+
+	# For the playlist queue entry context when Track is used to store/retrieve play queue entries.
+	$class->mk_group_accessors('simple' => 'added_from_work');
 }
 
 # Wrappers - to make sure that the UTF-8 code is called. I really just want to

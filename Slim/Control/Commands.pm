@@ -1859,7 +1859,7 @@ sub playlistcontrolCommand {
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
 	my $jumpIndex           = $request->getParam('play_index');
-	my $addedFromWork            = $request->getParam('added_from_work');
+	my $addedFromWork       = $request->getParam('added_from_work');
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
