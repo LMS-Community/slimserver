@@ -4249,11 +4249,11 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-				my (@tracks, @trackIds, %addedFromWork);
+				my (@tracks, @trackIds, @addedFromWork);
 				foreach my $track ( Slim::Player::Playlist::songs($client, $start, $end) ) {
 					next unless defined $track;
 
-					$addedFromWork{$count} = $track->added_from_work;
+					push @addedFromWork, $track->added_from_work;
 
 					if ( $track->remote ) {
 						push @tracks, $track;
@@ -4262,9 +4262,7 @@ sub statusQuery {
 						push @tracks, $track->id;
 						push @trackIds, $tracks[-1];
 					}
-					$count++
 				}
-				$count = 0;
 
 				# get hash of tagged data for all tracks
 				my $songData = _getTagDataForTracks( $tags, {
@@ -4303,7 +4301,7 @@ sub statusQuery {
 						}
 					}
 					else {
-						$data->{'added_from_work'} = $addedFromWork{$count};
+						$data->{'added_from_work'} = @addedFromWork[$count];
 						_addSong(	$request, $loop, $count,
 									$data, $tags,
 									'playlist index', $idx, $fast
