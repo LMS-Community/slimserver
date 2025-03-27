@@ -18,6 +18,7 @@ use base qw(Slim::Utils::OS::Linux);
 use File::Spec::Functions qw(catdir);
 
 use constant MAX_LOGSIZE => 1024*1024*1; # maximum log size: 1 MB
+use constant UPDATE_DIR => '/tmp/slimupdate';
 
 sub initDetails {
 	my $class = shift;
