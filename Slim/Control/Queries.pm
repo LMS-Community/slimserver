@@ -4301,10 +4301,9 @@ sub statusQuery {
 						}
 					}
 					else {
-						$data->{'added_from_work'} = @addedFromWork[$count];
 						_addSong(	$request, $loop, $count,
 									$data, $tags,
-									'playlist index', $idx, $fast
+									'playlist index', $idx, $fast, @addedFromWork[$count]
 								);
 
 						if ( $tags =~ /2/ ) {
@@ -5277,17 +5276,18 @@ sub dynamicAutoQuery {
 ################################################################################
 
 sub _addSong {
-	my $request   = shift; # request
-	my $loop      = shift; # loop
-	my $index     = shift; # loop index
-	my $pathOrObj = shift; # song path or object, or hash from titlesQuery
-	my $tags      = shift; # tags to use
-	my $prefixKey = shift; # prefix key, if any
-	my $prefixVal = shift; # prefix value, if any
-	my $fast      = shift;
+	my $request       = shift; # request
+	my $loop          = shift; # loop
+	my $index         = shift; # loop index
+	my $pathOrObj     = shift; # song path or object, or hash from titlesQuery
+	my $tags          = shift; # tags to use
+	my $prefixKey     = shift; # prefix key, if any
+	my $prefixVal     = shift; # prefix value, if any
+	my $fast          = shift;
+	my $addedFromWork = shift;
 
 	# get the hash with the data
-	my $hashRef = _songData($request, $pathOrObj, $tags, $fast);
+	my $hashRef = _songData($request, $pathOrObj, $tags, $fast, $addedFromWork);
 
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
@@ -5611,7 +5611,7 @@ my %colMap = (
 );
 
 sub _songDataFromHash {
-	my ( $request, $res, $tags, $fast ) = @_;
+	my ( $request, $res, $tags, $fast, $addedFromWork ) = @_;
 
 	my %returnHash;
 
@@ -5620,7 +5620,7 @@ sub _songDataFromHash {
 
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
-	$returnHash{added_from_work} = $res->{added_from_work} if $res->{added_from_work};
+	$returnHash{added_from_work} = $addedFromWork;
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5688,14 +5688,15 @@ sub _songDataFromHash {
 }
 
 sub _songData {
-	my $request   = shift; # current request object
-	my $pathOrObj = shift; # song path or object
-	my $tags      = shift; # tags to use
-	my $fast      = shift; # don't use Tie::IxHash for performance
+	my $request       = shift; # current request object
+	my $pathOrObj     = shift; # song path or object
+	my $tags          = shift; # tags to use
+	my $fast          = shift; # don't use Tie::IxHash for performance
+	my $addedFromWork = shift;
 
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
-		return _songDataFromHash($request, $pathOrObj, $tags, $fast);
+		return _songDataFromHash($request, $pathOrObj, $tags, $fast, $addedFromWork);
 	}
 
 	# figure out the track object
@@ -5781,6 +5782,7 @@ sub _songData {
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
+	$returnHash{'added_from_work'} = $addedFromWork;
 	my %seen;
 
 	# loop so that stuff is returned in the order given...
@@ -5806,6 +5808,11 @@ sub _songData {
 			$returnHash{$tagref->[0]} = 1;
 		}
 
+		# special case: return composer and work for tag 'b'
+		elsif ($tag eq 'b') {
+			$returnHash{work} = $remoteMeta->{$tag};
+			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
+		}
 		# special case artists (tag A and S)
 		elsif ($tag eq 'A' || $tag eq 'S') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
