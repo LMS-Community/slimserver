@@ -1430,7 +1430,9 @@ sub typeFromSuffix {
 	my $defaultType = shift || 'unk';
 
 	if (defined $path && $path =~ m%\.([^./]+)$%) {
-		return $suffixes{lc($1)};
+		if(exists($suffixes{lc($1)})) {
+			return $suffixes{lc($1)};
+		}
 	}
 
 	return $defaultType;
