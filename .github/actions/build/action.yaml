@@ -40,6 +40,14 @@ runs:
         ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
 
 
+    - name: Check out pCP platform code
+      if: ${{ startsWith(inputs.build-params, 'pcp') }}
+      uses: actions/checkout@v4
+      with:
+        repository: picoreplayer/lms-update-script
+        path: platforms/pcp
+        ref: prebuilt_tcz
+
     - name: Set up Docker environment
       if: ${{ startsWith(inputs.build-params, 'docker') }}
       id: dockersetup
