@@ -15,54 +15,9 @@ sub getFormatForURL {
 	my $class = shift;
 	my $url = shift;
 
-	# Previously this just returned 'mp3', this caused some streams to have
-	# an incorrect type set. It doesn't seem to have any effect on playback,
-	# it just changes the format listed in the SqueezePlay UI when the user
-	# selects more info. 
-
-	# attempted to use the built in method below but this caused Lyrion
-	# to lock up and consume a lot of memory. It's probably not meant to
-	# be used for streams.
-	# my $type = Slim::Music::Info::typeFromPath($url, 'mp3');
-
-	my $i = rindex($url, ".");
-	if($i ne -1){
-
-		my $ext = substr $url, $i + 1;
-		$ext = lc($ext);
-		my $return;
-
-		my %code_ref = (
-
-			# Added other formats, it can't hurt right?
-			mp3 => sub { $return = 'mp3'; },
-			mpeg => sub { $return = 'mp3'; },
-			ogg => sub { $return = 'ogg'; },
-			flac => sub { $return = 'flc'; },
-			flc => sub { $return = 'flc'; },
-			wav => sub { $return = 'wav'; },
-			aif => sub { $return = 'aif'; },
-			aiff => sub { $return = 'aif'; },
-			wma => sub { $return = 'wma'; },
-			aac => sub { $return = 'aac'; },
-			ape => sub { $return = 'ape'; },
-			wvpk => sub { $return = 'wvp'; },
-			l16 => sub { $return = 'pcm'; },
-			l24 => sub { $return = 'pcm'; },
-			opus => sub { $return = 'ops'; },
-			m4a => sub { $return = 'alc'; },
-		);
-
-		if ( exists $code_ref{$ext} ) {
-
-			$code_ref{$ext}->();
-			main::DEBUGLOG && $log->is_debug && $log->debug( 'Extension ' . $ext . ' , returned ' . $return . ' : ' . $url );
-			return $return;
-		}
-	}
-	# if all else fails, default to mp3 to maintain previous behaviour.
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Extension Default returned mp3 ' . $url);
-	return 'mp3';
+	# if typeFromSuffix can't find a result it returns the mp3 default.
+	my $type = Slim::Music::Info::typeFromSuffix($url, 'mp3');
+	return $type;
 }
 
 # XXX use DLNA.ORG_OP value, and/or MIME type
@@ -124,24 +79,23 @@ sub getMetadataFor {
 	# needs to be managed to only show those tracks. Any extra tracks will have
 	# the metadata for CurrentURI returned.
 
-	# $url =~ s/^http/upnp/; is returning an empty string for some reason so 
-	# stripping upnp/http from url so it can be compared.
-	my $strippedUrl = substr $url, 4;
-	my $pd   = $client->pluginData();
+ 	# convert prefix to match AVTransport format
+	$url =~ s/^upnp/http/;
+	
+	my $pd = $client->pluginData();
 	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
-	my $res  = $meta->{res};
-	my $currentUri = substr $res->{uri}, 4;
+	my $res = $meta->{res};
+	my $currentUri = $res->{uri};
 
-	# if $url doesn't match CurrentURI check against NextUri
-	if( $strippedUrl ne $currentUri){
+	if( $url ne $currentUri){
 		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
 
 		# check for cleared NextUri
 		if( ref($nextMeta) eq 'HASH'){
 			my $nextRes = $nextMeta->{res};
-			$currentUri = substr $nextRes->{uri}, 4;
+			$currentUri = $nextRes->{uri};
 
-			if( $strippedUrl eq $currentUri){
+			if( $url eq $currentUri){
 				$meta = $nextMeta;
 				$res = $nextRes;
 			}
