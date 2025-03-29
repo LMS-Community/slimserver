@@ -1,5 +1,10 @@
 package Slim::Schema::Track;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
 
 use strict;
 use base 'Slim::Schema::DBI';
@@ -56,9 +61,7 @@ our @allColumns = (qw(
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 	$class->has_many('libraryTracks'     => 'Slim::Schema::LibraryTrack');
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/title titlesort lyrics/);
-	}
+	$class->utf8_columns(qw/title titlesort lyrics/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
 
@@ -751,28 +754,12 @@ sub coverurl {
 sub generateCoverId {
 	my ( $classOrSelf, $args ) = @_;
 
-	my $coverid;
- 	my $mtime;
-	my $size;
-
-	if ( $args->{cover} =~ /^https?/ ) {
-		$mtime = $size = 1;
-	}
-	elsif ( $args->{cover} =~ /^\d+$/ ) {
-		# Cache is based on mtime/size of the file containing embedded art
-		$mtime = $args->{mtime};
-		$size  = $args->{size};
-	}
-	elsif ( -e $args->{cover} ) {
-		# Cache is based on mtime/size of artwork file
-		($size, $mtime) = (stat _)[7, 9];
-	}
-
-	if ( $mtime && $size ) {
-		$coverid = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
-	}
-
-	return $coverid;
+	return Slim::Music::Artwork->generateImageId({
+		image => $args->{cover},
+		url   => $args->{url},
+		mtime => $args->{mtime},
+		size  => $args->{size},
+	});
 }
 
 1;

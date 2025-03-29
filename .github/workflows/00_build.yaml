@@ -22,7 +22,7 @@ on:
 
 jobs:
   mac:
-    name: Build LMS for Mac (MenuBar Item)
+    name: Build LMS for Mac
     runs-on: macos-13
     env:
       BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -85,6 +85,7 @@ jobs:
           - [tarball, ""]
           - [tarball, "--encore"]
           - [tarball, "--noCPAN"]
+          - [pcp, ""]
 
     steps:
       # we must check out here, as  otherwise the build action is not available
@@ -95,10 +96,10 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
         run: |
           sudo apt update
-          sudo apt install apt-transport-https debhelper devscripts
+          sudo apt install -y apt-transport-https debhelper devscripts
 
       - name: Launch build process
         uses: ./server/.github/actions/build
@@ -169,3 +170,28 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.DEPLOYMENT_KEY }}
         run: gh workflow run update-server-repository.yml -R https://github.com/LMS-Community/lms-server-repository
+
+  tagRelease:
+    name: Tag the current release
+    if: ${{ success() && inputs.build_type == 'release' && github.repository_owner == 'LMS-Community' }}
+    runs-on: ubuntu-latest
+    needs:
+      - updateRepoFile
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      # no easy way to avoid another checkout?
+      - name: Check out LMS code
+        uses: actions/checkout@v4
+        with:
+          path: server
+          ref: ${{ inputs.branch }}
+      - name: Tag that thang
+        run: |
+          cd server
+          VERSION=$(grep "our \$VERSION" -m1 slimserver.pl | cut -d"'" -f2)
+          git config user.name "LMS Server Repository Updater"
+          git config user.email "gitmaster@lms-community.org"
+          git tag -a -m -f "$VERSION"
+          git push origin refs/tags/$VERSION

@@ -97,38 +97,38 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Lyrion – verze 9.0.3
-	DA	© 2001-2024 Lyrion - version 9.0.3
-	DE	© 2001-2024 Lyrion Version 9.0.3
-	EN	© 2001-2024 Lyrion Version 9.0.3
-	ES	© 2001-2024 Lyrion Versión 9.0.3
-	FI	© 2001-2024 Lyrionin versio 9.0.3
-	FR	© 2001-2024 Lyrion Version 9.0.3
-	HU	© 2001-2024 Lyrion Version 9.0.3
-	IT	© 2001-2024 Lyrion versione 9.0.3
-	NL	© 2001-2024 Lyrion versie 9.0.3
-	NO	© 2001–2024 Lyrion versjon 9.0.3
-	PL	© 2001-2024 Lyrion wersja 9.0.3
-	PT	© 2001-2024 Lyrion wersão 9.0.3
-	RU	© Lyrion, 2001-2024. Версия 9.0.3
-	SV	© 2001–2024 Lyrion Version 9.0.3
+	CS	© 2001-2024 Lyrion – verze 9.1.0
+	DA	© 2001-2024 Lyrion - version 9.1.0
+	DE	© 2001-2024 Lyrion Version 9.1.0
+	EN	© 2001-2024 Lyrion Version 9.1.0
+	ES	© 2001-2024 Lyrion Versión 9.1.0
+	FI	© 2001-2024 Lyrionin versio 9.1.0
+	FR	© 2001-2024 Lyrion Version 9.1.0
+	HU	© 2001-2024 Lyrion Version 9.1.0
+	IT	© 2001-2024 Lyrion versione 9.1.0
+	NL	© 2001-2024 Lyrion versie 9.1.0
+	NO	© 2001–2024 Lyrion versjon 9.1.0
+	PL	© 2001-2024 Lyrion wersja 9.1.0
+	PT	© 2001-2024 Lyrion wersão 9.1.0
+	RU	© Lyrion, 2001-2024. Версия 9.1.0
+	SV	© 2001–2024 Lyrion Version 9.1.0
 
 VERSION
-	CS	Verze 9.0.3 / r%s
-	DA	Version 9.0.3 / r%s
-	DE	Version 9.0.3 / r%s
-	EN	Version 9.0.3 / r%s
-	ES	Versión 9.0.3 / r%s
-	FI	Versio 9.0.3 / r%s
-	HU	Versio 9.0.3 / r%s
-	FR	Version 9.0.3 / r%s
-	IT	Versione 9.0.3/r%s
-	NL	Versie 9.0.3 / r%s
-	NO	Versjon 9.0.3 / r%s
-	PL	Wersja 9.0.3 / r%s
-	PT	Versão 9.0.3 / r%s
-	RU	Версия 9.0.3 / r%s
-	SV	Version 9.0.3 / r%s
+	CS	Verze 9.1.0 / r%s
+	DA	Version 9.1.0 / r%s
+	DE	Version 9.1.0 / r%s
+	EN	Version 9.1.0 / r%s
+	ES	Versión 9.1.0 / r%s
+	FI	Versio 9.1.0 / r%s
+	HU	Versio 9.1.0 / r%s
+	FR	Version 9.1.0 / r%s
+	IT	Versione 9.1.0/r%s
+	NL	Versie 9.1.0 / r%s
+	NO	Versjon 9.1.0 / r%s
+	PL	Wersja 9.1.0 / r%s
+	PT	Versão 9.1.0 / r%s
+	RU	Версия 9.1.0 / r%s
+	SV	Version 9.1.0 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
@@ -6981,11 +6981,11 @@ SETUP_ARTFOLDER
 SETUP_ARTFOLDER_DESC
 	CS	Můžete si zvolit ukládání všech vašich obalů alb do jedné složky s pomocí volby proměnných názvů souborů výše. Zde zadejte umístění souborů obalů alb. Bez ohledu na toto umístění bude Lyrion Music Server stále hledat obaly alb na stejné cestě jako každý zvukový soubor, pokud nebude ve složce obalů alb nalezen žádný odpovídající obal alba.
 	DA	Du kan vælge at gemme alle albumcovere i en enkelt mappe og bruge indstillingen til variable filnavne ovenfor. Her skal du angive hvor filerne med albumcoverne er placeret. Uanset hvor mappen er placeret, vil Lyrion Music Server stadig se efter coverbilleder i samme mappe som de enkelte lydfiler hvis der ikke blev fundet et cover i mappen med albumcovere.
-	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
-	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
+	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen und Künstlerportraits in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
+	EN	You may choose to store all your artwork (album covers, contributor portraits) in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todas las carátulas en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de carátula. Independientemente de esta ubicación, Lyrion Music Server seguirá buscando carátulas en la misma ruta que cada archivo de audio si no se encuentran carátulas coincidentes en la carpeta de carátulas.
 	FI	Halutessasi voit tallentaa kaikki kansikuvat yhteen kansioon käyttäen tiedostonimien muuttujien asetusta yllä.  Kirjoita kansikuvatiedostojen sijainti tähän. Tästä huolimatta Lyrion Music Server etsii yhä kansikuvia samasta polusta kuin äänitiedostoja, jos se ei löydä vastaavia kansikuvia kansikuvakansiosta.
-	FR	Vous pouvez saisir un nom de dossier où stocker toutes les pochettes. Si aucune pochette correspondante n'est trouvée dans le dossier spécifié, le Lyrion Music Server recherchera la pochette à l'emplacement du fichier audio.
+	FR	Vous pouvez choisir de stocker toutes vos pochettes d'albums et portraits de contributeurs/artistes dans un seul dossier, en utilisant l'option de noms de fichiers ci-dessus et en indiquant un emplacement ici. Si aucune illustration n'est trouvée dans ce dossier, Lyrion Music Server cherchera à l'emplacement du fichier audio.
 	HE	באפשרותך לבחור לאחסן את כל העטיפות בתיקייה יחידה, באמצעות האפשרות לשינוי שמות קבצים שלעיל. הזן כאן את המיקום של קובצי העטיפות. ללא תלות במיקום זה, השרת עדיין יחפש עטיפות בנתיב של כל קובץ שמע אם לא נמצאו עטיפות מתאימות בתיקיית העטיפות.
 	HU	Dönthet úgy, hogy az összes grafikát egyetlen mappában tárolja a fenti változó fájlnevek beállításával.  Adja meg itt a grafikai fájlok helyét. Ettől a helytől függetlenül a Lyrion Music Server továbbra is ugyanazon az útvonalon keresi a grafikákat, mint az egyes hangfájlok, ha nem található megfelelő grafikát az Artwork mappában.
 	IT	Si può scegliere di archiviare tutte le copertine in una sola cartella, usando l'opzione per i nomi di file variabili indicata sopra. Inserire qui la posizione dei file delle copertine. Se nella cartella delle copertine non viene trovata alcuna copertina corrispondente, ne viene eseguita una ricerca nello stesso percorso dei file audio .
@@ -6996,6 +6996,21 @@ SETUP_ARTFOLDER_DESC
 	RU	Можно хранить все обложки в единой папке, пользуясь вышеописанной функцией изменяемых имен файлов. Введите в это поле расположение файлов обложек. Независимо от данного расположения Lyrion Music Server будет по-прежнему выполнять поиск обложек в папке каждого аудиофайла, если в папке обложек не обнаружится необходимых обложек.
 	SV	Du kan välja att spara alla albumomslag i en och samma mapp med hjälp av alternativet för variabla filnamn ovan. Ange sökvägen till omslagsfilerna här. Oavsett sökvägen du anger här kommer Lyrion Music Server att söka efter omslagsbilder i samma mapp som var och en av ljudfilerna om inget omslag hittas i mappen för omslagsfiler.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
+
+SETUP_NO_PORTRAITS
+	DE	Künstlerbilder
+	EN	Artist Portraits
+	FR	Photos d'artistes
+
+SETUP_NO_PORTRAITS_ON
+	DE	Beim Blättern durch Künstler keine Bilder zeigen
+	EN	Don't show pictures when browsing artists
+	FR	Ne pas afficher de photos lors du parcours des artistes
+
+SETUP_NO_PORTRAITS_OFF
+	DE	Beim Blättern durch Künstler Bilder anzeigen
+	EN	Show pictures when browsing artists
+	FR	Afficher les photos lors du parcours des artistes
 
 SETUP_BAD_FILE
 	CS	Ouha – "%s" asi nebude platný soubor. Zkuste to znovu.
@@ -22133,6 +22148,9 @@ DEBUG_NETWORK_ASYNCHTTP
 	RU	Сведения асинхронного удаленного HTTP-запроса
 	SV	Information om asynkron fjärr-HTTP-begäran
 
+DEBUG_NETWORK_WS
+	EN	Web Sockets Client Information
+
 DEBUG_NETWORK_ASYNCDNS
 	CS	Protokolování asynchronního DNS
 	DA	Asynkron DNS-logføring
@@ -23313,6 +23331,11 @@ MERGEVA_PROGRESS
 	PL	Połącz różnych wykonawców
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
+
+CONTRIBUTOR_PICTURE_PROGRESS
+	DE	Nach Künstlerbildern suchen
+	EN	Looking for contributor pictures
+	FR	Recherche des photos d'artistes/contributeurs
 
 UPDATESTANDALONEARTWORK_PROGRESS
 	CS	Vyhledávání aktualizovaných souborů obalů alb
@@ -24921,280 +24944,6 @@ BACKUP_ALARM
 	RU	Резервный будильник
 	SV	Reservalarm
 
-CONTROLPANEL_TITLE
-	CS	Ovládací panel Lyrion Music Serveru
-	DA	Kontrolpanel til Lyrion Music Server
-	DE	Lyrion Music Server-Systemsteuerung
-	EN	Lyrion Music Server Control Panel
-	ES	Panel de control de Lyrion Music Server
-	FI	Lyrion Music Serverin ohjauspaneeli
-	FR	Panneau de configuration du Lyrion Music Server
-	HU	Lyrion Music Server vezérlőpult
-	IT	Pannello di controllo di Lyrion Music Server
-	NL	Lyrion Music Server-configuratiescherm
-	NO	Kontrollpanel for Lyrion Music Server
-	PL	Panel sterowania programu Lyrion Music Server
-	RU	Панель управления Lyrion Music Server
-	SV	Kontrollpanelen för Lyrion Music Server
-
-CONTROLPANEL_SERVERSTATUS
-	CS	Stav
-	DA	Status
-	DE	Status
-	EN	Status
-	ES	Estado
-	FI	Tila
-	FR	Etat
-	HE	מצב
-	HU	Státusz
-	IT	Stato
-	JA	ステータス
-	NL	Status
-	NO	Status
-	PL	Stan
-	RU	Статус
-	SV	Status
-
-CONTROLPANEL_STATUS_RUNNING
-	CS	Stav: Server je spuštěn
-	DA	Status: Serveren kører
-	DE	Status: Der Server wird ausgeführt
-	EN	Status: The server is running
-	ES	Estado: el servidor está en ejecución
-	FI	Tila: palvelin on käynnissä
-	FR	Etat : le serveur est en cours d'exécution.
-	HU	Állapot: A szerver fut
-	IT	Stato: il server è in esecuzione
-	NL	Status: De server is actief
-	NO	Status: Serveren kjører
-	PL	Stan: Serwer działa
-	RU	Состояние: сервер выполняется
-	SV	Status: Servern körs
-
-CONTROLPANEL_STATUS_STARTING
-	CS	Stav: Server se spouští
-	DA	Status: Serveren startes
-	DE	Status: Der Server wird gestartet.
-	EN	Status: The server is starting
-	ES	Estado: el servidor está iniciando
-	FI	Tila: palvelin on käynnistymässä
-	FR	Etat : le serveur est en cours de démarrage.
-	HU	Állapot: A szerver elindul
-	IT	Stato: il server si sta avviando
-	NL	Status: De server wordt gestart
-	NO	Status: Serveren starter opp
-	PL	Stan: Trwa uruchamianie serwera
-	RU	Состояние: сервер запускается
-	SV	Status: Servern startar
-
-CONTROLPANEL_STATUS_STOPPED
-	CS	Stav: Server je zastaven
-	DA	Status: Serveren er stoppet
-	DE	Status: Der Server wurde angehalten.
-	EN	Status: The server is stopped
-	ES	Estado: el servidor está detenido
-	FI	Tila: palvelin on pysäytetty
-	FR	Etat : le serveur est arrêté.
-	HU	Állapot: A szerver leállt
-	IT	Stato: il server è stato arrestato
-	NL	Status: De server is gestopt
-	NO	Status: Serveren er stoppet
-	PL	Stan: Serwer jest zatrzymany
-	RU	Состояние: сервер остановлен
-	SV	Status: Servern har stoppats
-
-CONTROLPANEL_ACCOUNT
-	CS	Účet
-	DA	Konto
-	DE	Konto
-	EN	Account
-	ES	Cuenta
-	FI	Tili
-	FR	Compte
-	HU	Fiók
-	IT	Account
-	NL	Account
-	NO	Konto
-	PL	Konto
-	RU	Учетная запись
-	SV	Konto
-
-CONTROLPANEL_STARTUP_OPTIONS
-	CS	Volby při spuštění
-	DA	Indstillinger for systemstart
-	DE	Startoptionen
-	EN	Startup Options
-	ES	Opciones de inicio
-	FI	Käynnistysasetukset
-	FR	Options de démarrage
-	HU	Indítási lehetőségek
-	IT	Opzioni di avvio
-	NL	Opstartopties
-	NO	Oppstartsalternativer
-	PL	Opcje Autostartu
-	RU	Параметры запуска
-	SV	Startalternativ
-
-CONTROLPANEL_MUSIC_LIBRARY
-	CS	Knihovna
-	DA	Bibliotek
-	DE	Bibliothek
-	EN	Library
-	ES	Biblioteca
-	FI	Kirjasto
-	FR	Bibliothèque
-	HU	Könyvtár
-	IT	Libreria
-	NL	Bibliotheek
-	NO	Bibliotek
-	PL	Biblioteka
-	RU	Медиатека
-	SV	Bibliotek
-
-CONTROLPANEL_AUTHENTICATION_REQUIRED
-	CS	Pro přístup do Lyrion Music Serveru je vyžadována autentizace
-	DA	Du skal godkendes for at få adgang til Lyrion Music Server
-	DE	Für den Zugriff auf Lyrion Music Server ist eine Authentifizierung erforderlich
-	EN	Authentication is required to access Lyrion Music Server
-	ES	El acceso a Lyrion Music Server requiere autenticación
-	FI	Lyrion Music Serverin käyttö vaatii todennuksen
-	FR	Une authentification est requise pour accéder au Lyrion Music Server
-	HU	A Lyrion Music Server eléréséhez hitelesítés szükséges
-	IT	Per accedere a Lyrion Music Server è necessario eseguire l'autenticazione
-	NL	Verificatie vereist voor toegang tot Lyrion Music Server
-	NO	Det kreves godkjenning for å få tilgang til Lyrion Music Server
-	PL	W celu uzyskania dostępu do programu Lyrion Music Server wymagane jest uwierzytelnienie
-	RU	Для доступа к Lyrion Music Server требуется проверка подлинности
-	SV	Det krävs autentisering för att komma åt Lyrion Music Server
-
-CONTROLPANEL_WEB_UI
-	CS	Webové rozhraní
-	DA	Webbaseret brugerflade
-	DE	Web-Benutzeroberfläche
-	EN	Web based Interface
-	ES	Interfaz basada en Web
-	FI	Internet-pohjainen käyttöliittymä
-	FR	Interface Web
-	HU	Web alapú felület
-	IT	Interfaccia basata su Web
-	NL	Webinterface
-	NO	Nettbasert grensesnitt
-	PL	Interfejs internetowy
-	RU	Веб-интерфейс
-	SV	Webbaserat gränssnitt
-
-CONTROLPANEL_WEB_CONTROL_DESC
-	CS	Webové dálkové ovládání
-	DA	Fjernbetjening via browser
-	DE	Fernbedienung
-	EN	Web Remote Control
-	ES	Control remoto por Web
-	FI	Kauko-ohjaus
-	FR	Commande Web
-	HU	Webes távirányító
-	IT	Controllo remoto Web
-	NL	Afstandsbediening voor web
-	NO	Fjernkontroll
-	PL	Pilot zdalnego sterowania
-	RU	Пульт управления по Интернету
-	SV	Fjärrkontroll
-
-CONTROLPANEL_TRAY_DOUBLECLICK_WEB
-	CS	Webové dálkové ovládání otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
-	DA	Åbn Fjernbetjening via browser ved at dobbeltklikke på ikonet i systembakken
-	DE	Fernbedienung per Doppelklick auf das Symbol in der Taskleiste öffnen
-	EN	Open Web Remote Control on doubleclicking the tray icon
-	ES	Abrir el Control remoto por Web haciendo doble clic en el icono de la bandeja
-	FI	Avaa WWW-etähallinta kaksoisnapsauttamalla ilmaisinalueen kuvaketta
-	FR	Ouvrir la commande Web en cliquant deux fois sur l'icône de la barre d'état
-	HU	Megnyitja a Webes távvezérlőt, ha duplán kattint a tálca ikonjára
-	IT	Aprire Controllo remoto Web facendo doppio clic sull'icona nell'area di notifica
-	NL	Open web-afstandsbediening door te dubbelklikken op het pictogram in het systeemvak
-	NO	Åpne Fjernkontroll ved dobbeltklikk på ikonet i systemstatusfeltet
-	PL	Otwórz Pilot zdalnego sterowania, klikając dwukrotnie ikonę na pasku zadań
-	RU	Открывать пульт управления по Интернету двойным щелчком по значку на панели задач
-	SV	Öppna webbfjärrkontrollen genom att klicka på ikonen i aktivitetsfältet
-
-CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
-	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu v oznamovací oblasti
-	DA	Åbn kontrolpanelet ved at dobbeltklikke på ikonet i systembakken
-	DE	Systemsteuerung per Doppelklick auf das Symbol in der Taskleiste öffnen
-	EN	Open the Control Panel on doubleclicking the tray icon
-	ES	Abrir el Panel de control haciendo doble clic en el icono de la bandeja
-	FI	Avaa Ohjauspaneeli kaksoisnapsauttamalla ilmaisinalueen kuvaketta
-	FR	Ouvrir le panneau de configuration en cliquant deux fois sur l'icône de la barre d'état
-	HU	Megnyitja a Vezérlőpultot, ha duplán kattint a tálca ikonjára
-	IT	Aprire il pannello di controllo facendo doppio clic sull'icona nell'area di notifica
-	NL	Open het configuratiescherm door te dubbelklikken op het pictogram in het systeemvak
-	NO	Åpne kontrollpanelet ved dobbeltklikk på ikonet i systemstatusfeltet
-	PL	Otwórz Panel sterowania, klikając dwukrotnie ikonę na pasku zadań
-	RU	Открывать панель управления двойным щелчком по значку на панели задач
-	SV	Öppna Kontrollpanelen genom att klicka på ikonen i fältet
-
-CONTROLPANEL_ADVANCED_SETTINGS_DESC
-	CS	Upřesnit nastavení
-	DA	Avancerede indstillinger
-	DE	Erweiterte Einstellungen
-	EN	Advanced Settings
-	ES	Configuración avanzada
-	FI	Lisäasetukset
-	FR	Paramètres avancés
-	HU	Speciális beállítások
-	IT	Impostazioni avanzate
-	NL	Geavanceerde instellingen
-	NO	Avanserte innstillinger
-	PL	Ustawienia zaawansowane
-	RU	Дополнительные настройки
-	SV	Avancerade inställningar
-
-CONTROLPANEL_LOGFILES
-	CS	Protokolovací soubory
-	DA	Logfiler
-	DE	Protokolldateien
-	EN	Log Files
-	ES	Archivos de registro
-	FI	Lokitiedostot
-	FR	Fichiers journaux
-	HU	Naplófájlok
-	IT	File di registro
-	NL	Logboeken
-	NO	Loggfiler
-	PL	Pliki dziennika
-	RU	Файлы журнала
-	SV	Loggfiler
-
-CONTROLPANEL_SHOW_SERVER_LOG
-	CS	Zobrazit protokol serveru
-	DA	Vis serverlogfil
-	DE	Serverprotokoll anzeigen
-	EN	Show server log
-	ES	Mostrar registro de servidor
-	FI	Näytä palvelimen loki
-	FR	Afficher le journal du serveur
-	HU	Szervernapló megjelenítése
-	IT	Mostra registro del server
-	NL	Serverlogboek weergeven
-	NO	Vis serverlogg
-	PL	Pokaż dziennik serwera
-	RU	Показать журнал сервера
-	SV	Visa serverlogg
-
-CONTROLPANEL_SHOW_SCANNER_LOG
-	CS	Zobrazit protokol prohledávání
-	DA	Vis gennemsøgningslogfilen
-	DE	Scannerprotokoll anzeigen
-	EN	Show scanner log
-	ES	Mostrar registro de examen
-	FI	Näytä tarkistuksen loki
-	FR	Afficher le journal de l'analyseur
-	HU	Szkennernapló megjelenítése
-	IT	Mostra registro analisi
-	NL	Scannerlogboek weergeven
-	NO	Vis søkelogg
-	PL	Pokaż dziennik skanera
-	RU	Показать scanner.log
-	SV	Visa loggfilen för sökning
-
 CONTROLPANEL_UPDATE_AVAILABLE
 	CS	Aktualizovaná verze Lyrion Music Serveru je k dispozici a připravena k instalaci.
 	DA	Der findes en opdateret version af Lyrion Music Server som er klar til at blive installeret.
@@ -25242,278 +24991,6 @@ CONTROLPANEL_NO_UPDATE_AVAILABLE
 	PL	Brak dostępnej zaktualizowanej wersji programu Lyrion Music Server.
 	RU	Нет доступных обновленных версий Lyrion Music Server.
 	SV	Det finns ingen uppdaterad version av Lyrion Music Server tillgänglig.
-
-CONTROLPANEL_CHECK_UPDATE
-	CS	Hledat aktualizace
-	DA	Søg efter opdateringer
-	DE	Nach Update suchen
-	EN	Check for update
-	ES	Buscar actualización
-	FI	Etsi päivityksiä
-	FR	Rechercher les mises à jour
-	HU	Frissítések ellenőrzése
-	IT	Verifica disponibilità aggiornamenti
-	NL	Op update controleren
-	NO	Se etter oppdatering
-	PL	Sprawdź dostępność aktualizacji
-	RU	Проверить наличие обновления
-	SV	Sök efter uppdatering
-
-CONTROLPANEL_DOWNLOAD_UPDATE
-	CS	Stáhnout aktualizaci
-	DA	Hent opdatering
-	DE	Update herunterladen
-	EN	Download update
-	ES	Descargar actualización
-	FI	Lataa päivitys
-	FR	Télécharger la mise à jour
-	HU	Frissítés letöltése
-	IT	Scarica aggiornamento
-	NL	Update downloaden
-	NO	Last ned oppdatering
-	PL	Pobierz aktualizację
-	RU	Загрузить обновление
-	SV	Ladda ner uppdatering
-
-CONTROLPANEL_INSTALL_UPDATE
-	CS	Instalovat aktualizaci
-	DA	Installer opdatering
-	DE	Update installieren
-	EN	Install update
-	ES	Instalar actualización
-	FI	Asenna päivitys
-	FR	Installer la mise à jour
-	HU	Frissítés telepítése
-	IT	Installa aggiornamento
-	NL	Update installeren
-	NO	Installer oppdatering
-	PL	Zainstaluj aktualizację
-	RU	Установить обновление
-	SV	Installera uppdatering
-
-CONTROLPANEL_MAINTENANCE
-	CS	Údržba
-	DA	Vedligeholdelse
-	DE	Reinigen der Maus
-	EN	Maintenance
-	ES	Mantenimiento
-	FI	Huolto
-	FR	Entretien
-	HU	Karbantartás
-	IT	Manutenzione
-	NL	Onderhoud
-	NO	Vedlikehold
-	PL	Konserwacja
-	RU	Обслуживание
-	SV	Underhåll
-
-CONTROLPANEL_DIAGNOSTICS
-	CS	Diagnostika
-	DA	Diagnosticering
-	DE	Diagnose
-	EN	Diagnostics
-	ES	Diagnósticos
-	FI	Diagnostiikka
-	FR	Diagnostic
-	HU	Diagnosztika
-	IT	Diagnostica
-	NL	Diagnose
-	NO	Diagnose
-	PL	Diagnostyka
-	RU	Диагностика
-	SV	Diagnostik
-
-CONTROLPANEL_PORTNO
-	CS	Port %s (%s):
-	DA	Port %s (%s):
-	DE	Port %s (%s):
-	EN	Port %s (%s):
-	ES	Puerto %s (%s):
-	FI	Portti %s (%s):
-	FR	Port %s (%s) :
-	HU	%s port (%s) :
-	IT	Porta %s (%s):
-	NL	Poort %s (%s):
-	NO	Port %s (%s):
-	PL	Port %s (%s):
-	RU	Порт %s (%s):
-	SV	Port %s (%s):
-
-CONTROLPANEL_PING
-	CS	Ping:
-	DA	Ping:
-	DE	Ping:
-	EN	Ping:
-	ES	Ping:
-	FI	Ping:
-	FR	Ping :
-	HU	Ping:
-	IT	Ping:
-	NL	Ping:
-	NO	Ping:
-	PL	Ping:
-	RU	Ping:
-	SV	Ping:
-
-CONTROLPANEL_FAILED
-	CS	Selhání
-	DA	Mislykkedes
-	DE	Fehlgeschlagen
-	EN	Failed
-	ES	Fallo
-	FI	Epäonnistui
-	FR	Echec
-	HU	Sikertelen
-	IT	Non riuscito
-	NL	Mislukt
-	NO	Mislyktes
-	PL	Niepowodzenie
-	RU	Сбой
-	SV	Åtgärden kunde inte genomföras
-
-CONTROLPANEL_OK
-	CS	OK
-	DA	OK
-	DE	OK
-	EN	OK
-	ES	Correcto
-	FI	OK
-	FR	OK
-	HU	Rendben
-	IT	OK
-	NL	OK
-	NO	OK
-	PL	OK
-	RU	ОК
-	SV	OK
-
-CONTROLPANEL_ALERTS
-	CS	Výstrahy
-	DA	Advarsler
-	DE	Benachrichtigungen
-	EN	Alerts
-	ES	Alertas
-	FI	Hälytykset
-	FR	Alertes
-	HU	Figyelmeztetések
-	IT	Avvisi
-	NL	Waarschuwingen
-	NO	Varsler
-	PL	Alerty
-	RU	Сигналы
-	SV	Varningar
-
-CONTROLPANEL_PORTCONFLICT
-	CS	Lyrion Music Server není v provozu, ale nějaká aplikace používá stejný port (%s).
-	DA	Lyrion Music Server kører ikke, men et andet program benytter den samme port (%s).
-	DE	Lyrion Music Server wird nicht ausgeführt. Port (%s) wird von einer anderen Anwendung verwendet.
-	EN	Lyrion Music Server is not running, but some application is using the same port (%s).
-	ES	Lyrion Music Server no está en ejecución, pero alguna aplicación está usando el mismo puerto (%s).
-	FI	Lyrion Music Server ei ole käynnissä, mutta jokin sovellus käyttää samaa porttia (%s).
-	FR	Le Lyrion Music Server n'est pas en cours d'exécution, mais une application utilise actuellement le même port (%s).
-	HU	A Lyrion Music Server nem fut, de néhány alkalmazás ugyanazt a portot (%s) használja.
-	IT	Lyrion Music Server non è in esecuzione ma qualche applicazione sta utilizzando la stessa porta (%s).
-	NL	Lyrion Music Server is niet actief. Poort (%s) wordt door een andere applicatie gebruikt.
-	NO	Lyrion Music Server kjører ikke, men et annet program bruker samme port (%s).
-	PL	Program Lyrion Music Server nie jest uruchomiony, ale jakaś aplikacja używa tego samego portu (%s).
-	RU	Lyrion Music Server не выполняется, но какое-то приложение использует этот же порт (%s).
-	SV	Lyrion Music Server körs inte men något program använder samma port (%s).
-
-CONTROLPANEL_PORTBLOCKED
-	CS	Lyrion Music Server je v provozu, ale nemůže se spojit s portem %s.
-	DA	Lyrion Music Server kører men kan ikke kontaktes på port %s.
-	DE	Lyrion Music Server wird ausgeführt, kann aber an Port %s nicht erreicht werden.
-	EN	Lyrion Music Server is running but can't be contacted on port %s.
-	ES	Lyrion Music Server está en ejecución pero no se puede contactar con él en el puerto %s.
-	FI	Lyrion Music Server on käynnissä, mutta siihen ei saada yhteyttä portissa %s.
-	FR	Le Lyrion Music Server est en cours d'exécution mais ne peut être contacté sur le port %s.
-	HU	A Lyrion Music Server fut, de nem érhető el a %s porton.
-	IT	Lyrion Music Server è in esecuzione ma non può essere contattato sulla porta %s
-	NL	Lyrion Music Server wordt uitgevoerd maar is niet toegankelijk via poort %s.
-	NO	Lyrion Music Server kjører, men kan ikke kontaktes på port %s
-	PL	Program Lyrion Music Server działa, ale nie można skontaktować się z nim na porcie %s.
-	RU	Lyrion Music Server выполняется, но подключение через порт %s невозможно.
-	SV	Lyrion Music Server körs men går inte att ansluta till port %s.
-
-CONTROLPANEL_PORTBLOCKED_APPS
-	CS	Vaše spojení mohou blokovat následující aplikace:
-	DA	Følgende programmer blokerer muligvis forbindelsen:
-	DE	Folgende Anwendungen blockieren unter Umständen die Verbindung:
-	EN	The following applications might be blocking your connection:
-	ES	Es posible que las aplicaciones siguientes estén bloqueando la conexión:
-	FI	Seuraavat sovellukset saattavat estää yhteyden:
-	FR	Les applications suivantes sont susceptibles de bloquer votre connexion :
-	HU	Lehetséges, hogy a következő alkalmazások blokkolják a kapcsolatot:
-	IT	Le seguenti applicazioni potrebbero bloccare la connessione:
-	NL	Jouw verbinding wordt mogelijk door de volgende applicaties geblokkeerd:
-	NO	Følgende programmer blokkerer kanskje tilkoplingen:
-	PL	Następujące aplikacje mogą blokować połączenie:
-	RU	Возможно, подключение блокируется следующими приложениями:
-	SV	Följande program kan blockera anslutningen:
-
-CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
-	CS	Pokud se vyskytnou problémy s připojením k Lyrion Music Serveru, ujistěte se, že je vypnuta funkce "Stateful Firewall (Always On)"
-	DA	Hvis der er problemer med forbindelsen til og fra Lyrion Music Server, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra
-	DE	Wenn es Verbindungsprobleme mit Lyrion Music Server gibt, vergewissern Sie sich, dass die Option "Statusbehaftete Firewall (immer aktiv)" deaktiviert ist.
-	EN	If you encounter connectivity issues with Lyrion Music Server, please make sure "Stateful Firewall (Always On)" is turned off
-	ES	Si surgen problemas de conectividad con Lyrion Music Server, asegúrese de que la opción "Stateful Firewall (Always On)" está desactivada
-	FI	Jos Lyrion Music Serverin kanssa on yhteysongelmia, varmista, että Tilallinen palomuuri (aina käytössä) -valinta ei ole valittuna.
-	FR	Si vous rencontrez des problèmes de connectivité avec le Lyrion Music Server, vérifiez que l'option "Pare-feu stateful (toujours activé)" est désactivée.
-	HU	Ha kapcsolódási problémákat tapasztal a Lyrion Music Serverrel, kérjük, győződjön meg arról, hogy az „Állapotfüggő tűzfal (mindig bekapcsolva)” ki van kapcsolva
-	IT	In caso di problemi di connessione con Lyrion Music Server, verificare che il firewall con stato sia disattivato.
-	NL	Ondervind je verbindingsproblemen met Lyrion Music Server, zorg dan dat 'Stateful Firewall (Altijd aan)' is uitgeschakeld
-	NO	Hvis du har tilkoplingsproblemer med Lyrion Music Server, må du sørge for at "Tilstandsbevisst brannmur (Alltid på)" er slått av
-	PL	W przypadku wystąpienia problemów z łącznością w programie Squeezebox, upewnij się, że opcja „Zapora stanowa (zawsze włączona)” jest wyłączona
-	RU	При возникновении проблем с подключением к Lyrion Music Server убедитесь, что параметр "Брандмауэр с отслеживанием состояния (Всегда включено)" отключен
-	SV	Om det uppstår anslutningsproblem med Lyrion Music Server bör du kontrollera att alternativet Tillståndskänslig brandvägg (alltid på) är avaktiverat
-
-CONTROLPANEL_CONFLICT_SCPERL
-	CS	Pokud provozujete Lyrion Music Server s použitím verze Perlu, pak je to v pořádku a očekáváno.
-	DA	Hvis du kører Lyrion Music Server i Perl-versionen, er det OK og forventet.
-	DE	Das Ausführen von Lyrion Music Server mithilfe der Perl-Version wird akzeptiert und erwartet.
-	EN	If you're running Lyrion Music Server using the perl version, then this is ok and expected.
-	ES	Si ejecuta Lyrion Music Server con la versión perl, es correcto y está previsto.
-	FI	Jos Lyrion Music Server on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
-	FR	Si vous exécutez Lyrion Music Server à l'aide de la version perl, cet événement est attendu.
-	HU	Ha a Lyrion Music Servert perl verzióval fut, akkor ez rendben van.
-	IT	Se è in esecuzione la versione Perl di Lyrion Music Server, il problema non sussiste.
-	NL	Als je Lyrion Music Server met de perl-versie uitvoert, is dit normaal gedrag.
-	NO	Hvis du kjører Lyrion Music Server med perl-versjonen, er dette greit og forventet.
-	PL	Jeśli używasz programu Lyrion Music Server w wersji perl, jest to poprawne i oczekiwane zachowanie.
-	RU	При выполнении Lyrion Music Server с версией perl данное поведение ожидаемо и нормально.
-	SV	Om du kör du perlversionen av Lyrion Music Server är detta inget fel, utan OK och förväntat.
-
-CONTROLPANEL_OTHER_ISSUE
-	CS	Nalezen možný konflikt softwaru
-	DA	Der er fundet en mulig softwarekonflikt
-	DE	Möglicher Software-Konflikt gefunden
-	EN	Possible software conflict found
-	ES	Encontrado posible conflicto de software
-	FI	Löytyi mahdollinen ohjelmiston ristiriita
-	FR	Conflit logiciel possible détecté
-	HU	Lehetséges szoftverütközés található
-	IT	Possibile conflitto software rilevato
-	NL	Mogelijk softwareconflict gevonden
-	NO	Mulig programvarekonflikt oppdaget
-	PL	Znaleziono potencjalny konflikt oprogramowania
-	RU	Обнаружен возможный конфликт ПО
-	SV	Eventuellt programvarukonflikt upptäcktes
-
-CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
-	CS	ESET Antivirus nebo Smart Security může při spuštění Lyrion Music Serveru způsobovat problémy. Pokud dojde k chybě při spuštění Lyrion Music Serveru, ujistěte se, že jste zrušili zaškrtnutí filtrování portů pro SqueezeboxSvr.exe v Pokročilém nastavení ESET / Antivirus a antispyware / Ochrana webového přístupu / HTTP, HTTPS / Webové prohlížeče.
-	DA	ESET Antivirus eller Smart Security kan skabe problemer når du starter Lyrion Music Server. Hvis du ikke kan starte Lyrion Music Server, skal du sørge for at porten som bruges af SqueezeSvr.exe, ikke er lukket i ESET Advanced Settings/Antivirus og antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	DE	ESET Antivirus oder ESET Smart Security können beim Starten von Lyrion Music Server Probleme verursachen. Wenn beim Starten von Lyrion Music Server Fehler auftreten, sollten Sie prüfen, ob Sie unter ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers die Portfilterung für 'SqueezeSvr.exe' deaktiviert haben.
-	EN	ESET Antivirus or Smart Security can cause problems starting Lyrion Music Server. If you experience failure starting Lyrion Music Server, then make sure you have unchecked port filtering for SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	ES	ESET Antivirus o Smart Security pueden producir problemas a la hora de iniciar Lyrion Music Server. Si no puede iniciar Lyrion Music Server, asegúrese de no tener seleccionada la opción de filtrado de puertos para SqueezeSvr.exe en ESET: Configuración avanzada/Antivirus y antiespía/Protección del tráfico de Internet/HTTP, HTTPS/Navegadores de Internet.
-	FI	ESET Antivirus tai Smart Security saattavat aiheuttaa ongelmia Lyrion Music Serverin käynnistyksessä. Jos Lyrion Music Serverin käynnistys ei onnistu, varmista, että olet poistanut portinsuodatuksen valinnan SqueezeboxSvr.exe-tiedostolle kohteessa ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	FR	L'antivirus ESET ou Smart Security peut empêcher le démarrage du Lyrion Music Server. En cas d'échec du démarrage du Lyrion Music Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeSvr.exe sous ESET Advanced Settings/Antivirus et antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	HU	Az ESET Antivirus vagy a Smart Security problémákat okozhat a Lyrion Music Server indításakor. Ha a Lyrion Music Server indításakor hiba lép fel, ellenőrizze, hogy nincs-e bejelölve a SqueezeSvr.exe portszűrése az ESET Speciális beállítások/Vírusirtó és kémprogram-elhárító/Webhozzáférés-védelem/HTTP, HTTPS/Webböngészők részben.
-	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Lyrion Music Server. Se Lyrion Music Server non si avvia, deselezionare il filtraggio delle porte per SqueezeSvr.exe in Impostazioni avanzate/Antivirus e antispyware/Protezione accesso Web/HTTP di ESET e nei browser HTTPS/Web.
-	NL	ESET Antivirus of Smart Security kan problemen veroorzaken bij het opstarten van Lyrion Music Server. Controleer in dit geval of je het filteren van poorten hebt uitgeschakeld voor SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	NO	ESET Antivirus og Smart Security kan skape problemer med oppstarten av Lyrion Music Server. Hvis du ikke får til å starte Lyrion Music Server, må du sikre at du ikke har merket av for portfiltrering for SqueezeSvr.exe i ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	PL	Program ESET Antivirus lub Smart Security może powodować problemy z uruchomieniem programu Lyrion Music Server. W przypadku napotkania problemu z uruchomieniem programu Lyrion Music Server należy sprawdzić, czy wyłączono opcję filtrowania portów dla programu SqueezeSvr.exe w ustawieniach zaawansowanych funkcji antywirusowych i anty-spyware programu ESET, a także w ustawieniach zabezpieczeń dostępu do sieci Web oraz protokołów HTTP/HTTPS przeglądarki internetowej.
-	RU	Антивирусная программа ESET или Smart Security может привести к неполадкам при запуске Lyrion Music Server. Если возникают ошибки при запуске Lyrion Music Server, убедитесь, что для SqueezeSvr.exe отключена фильтрация портов в разделе ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	SV	Om ESET Antivirus och Smart Security är installerade kan det uppstå problem när Lyrion Music Server ska startas. Vid eventuella problem bör du kontrollera att du har avmarkerat portfiltrering för SqueezeboxSvr.exe i ESET under Avancerade inställningar/Skydd mot virus och spionprogram/Webbåtkomstskydd/HTTP, HTTPS/Webbläsare.
 
 CONTROLPANEL_REFRESH
 	CS	Obnovit
@@ -25787,38 +25264,6 @@ CLEANUP_DELETING
 	PL	Usuwanie
 	RU	Удаление
 	SV	Raderar
-
-CONTROLPANEL_NO_STATUS
-	CS	Nejsou dostupné žádné informace o stavu. Vezměte na vědomí, že pro zobrazení informací o stavu musí být Lyrion Music Server aktivní a v provozu.
-	DA	Der er ingen statusoplysninger. Husk at Lyrion Music Server skal køre for at du kan se statusoplysninger.
-	DE	Keine Statusinformationen verfügbar. Lyrion Music Server muss eingerichtet und ausgeführt werden, damit die Statusinformationen angezeigt werden können.
-	EN	No status information available. Please note that Lyrion Music Server has to be up and running in order to display its status information.
-	ES	No hay información de estado disponible. Tenga en cuenta que Lyrion Music Server debe estar en ejecución para mostrar su información de estado.
-	FI	Tilatietoja ei ole saatavilla. Huomaa, että Lyrion Music Serverin on oltava käynnissä, jotta sen tilatiedot voitaisiin näyttää.
-	FR	Aucune information sur l'état n'est disponible. Notez que le Lyrion Music Server doit être en cours d'utilisation pour afficher ces informations.
-	HU	Nem áll rendelkezésre állapotinformáció. Kérjük, vegye figyelembe, hogy a Lyrion Music Servernek működnie kell az állapotinformációk megjelenítéséhez.
-	IT	Non sono disponibili informazioni sullo stato. Per visualizzare le informazioni sullo stato è necessario che Lyrion Music Server sia in esecuzione.
-	NL	Geen statusinformatie beschikbaar. Lyrion Music Server moet actief zijn om statusinformatie te kunnen weergeven.
-	NO	Ingen statusinformasjon er tilgjengelig. Lyrion Music Server må kjøre for at den skal kunne vise statusinformasjon.
-	PL	Brak dostępnych informacji o stanie. Aby możliwe było wyświetlenie informacji o stanie programu Lyrion Music Server, musi on być uruchomiony.
-	RU	Сведения о состоянии недоступны. Сведения о состоянии выводятся только в том случае, если Lyrion Music Server выполняется.
-	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Lyrion Music Server inte körs.
-
-CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Lyrion Music Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klikněte na možnost "Spustit jako správce".
-	DA	Du har ikke rettigheder til at installere eller starte/stoppe baggrundstjenesten Lyrion Music Server. Start kontrolpanelet fra Startmenuen i Windows – via højrekliksmenuen klikker du på "Kør som administrator".
-	DE	Sie sind nicht dazu berechtigt, den Lyrion Music Server-Hintergrunddienst zu installieren oder zu starten bzw. anzuhalten. Öffnen Sie die Systemsteuerung im Windows-Startmenü über das Kontextmenü und wählen Sie 'Als Administrator ausführen'.
-	EN	You don't have privileges to install or start/stop the Lyrion Music Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
-	ES	No tiene privilegios para instalar o iniciar/detener el servicio en segundo plano Lyrion Music Server. Inicie el Panel de control desde el menú Inicio de Windows, mediante el menú contextual de botón derecho y haga clic en "Ejecutar como administrador".
-	FI	Sinulla ei ole tarvittavia oikeuksia asentaa, käynnistää tai pysäyttää Lyrion Music Serverin taustapalvelua. Avaa Windowsin Käynnistä-valikosta palvelimen ohjauspaneeli napsauttamalla kakkospainiketta ja valitse pikavalikosta Suorita järjestelmänvalvojana.
-	FR	Vous ne disposez pas des droits pour installer ou arrêter/démarrer le service d'arrière-plan Lyrion Music Server. Démarrez le Panneau de configuration en cliquant dessus à l'aide du bouton droit dans le menu Démarrer de Windows et en sélectionnant Exécuter en tant qu'administrateur.
-	HU	Nincs jogosultsága a Lyrion Music Server háttérszolgáltatás telepítéséhez, elindításához/leállításához. Kérjük, indítsa el a vezérlőpultot a Windows Start menüjéből, a jobb gombbal a helyi menüből, majd kattintson a "Futtatás rendszergazdaként" elemre.
-	IT	Non si dispone dei privilegi per installare o avviare/arrestare il servizio in background di Lyrion Music Server. Aprire il Pannello di controllo dal menu Start di Windows utilizzando il menu di scelta rapida visualizzabile facendo clic con il pulsante destro del mouse, quindi fare clic su "Esegui come amministratore".
-	NL	Je hebt geen rechten om de achtergrondprocessen van Lyrion Music Server te installeren of te starten/stoppen. Start het Configuratiescherm vanuit het menu Start in Windows via de rechtermuisknop en klik in het snelmenu op 'Als administrator uitvoeren'.
-	NO	Du har ikke rettighetene som trengs for å installere eller starte/stoppe bakgrunnstjenesten Lyrion Music Server. Start kontrollpanelet fra Start-menyen i Windows ved å høyreklikke og velge Kjør som administrator.
-	PL	Brak uprawnień do uruchomienia lub zatrzymania działającej w tle usługi Lyrion Music Server. Kliknij menu Start, ustaw kursor myszy nad Panelem sterowania, kliknij prawym przyciskiem myszy i wybierz polecenie Uruchom jako administrator.
-	RU	У вас нет прав на установку и запуск/остановку фоновой службы Lyrion Music Server. Откройте панель управления с помощью меню "Пуск" Windows и, открыв щелчком правой кнопки мыши контекстное меню, выберите в нем пункт "Запуск от имени администратора".
-	SV	Du har inte behörighet att installera eller starta/stoppa Lyrion Music Server-bakgrundstjänsten. Starta kontrollpanelen från Start-menyn i Windows via den snabbmeny som visas när du högerklickar och klicka på Kör som administratör.
 
 RUN_AT_BOOT
 	CS	Spustit automaticky při startu systému

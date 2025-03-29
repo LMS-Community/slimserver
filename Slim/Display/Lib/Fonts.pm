@@ -95,8 +95,8 @@ my ($ft, $TTFFontFile);
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
 %TTFCache = ();
 
-# template for unpacking strings: U - unpacks Unicode chars into ords, C - is needed for 5.6 perl's
-my $unpackTemplate = ($] > 5.007) ? 'U*' : 'C*';
+# template for unpacking strings: U - unpacks Unicode chars into ords
+my $unpackTemplate = 'U*';
 
 my $bidiR = qr/\p{BidiClass:R}/;
 my $bidiL = qr/\p{BidiClass:L}/;

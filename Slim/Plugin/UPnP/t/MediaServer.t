@@ -258,76 +258,6 @@ ok( !$cm_events->renew, 'CM renew after unsubscribe failed ok' );
 	is( $container->{'-searchable'}, 0, 'CD: BrowseMetadata ObjectID /music, searchable ok' );
 	is( $container->{'dc:title'}, 'Music', 'CD: BrowseMetadata ObjectID /music, dc:title ok' );
 }
-
-# Browse video menu
-{
-	# Fetch first menu item only
-	my $res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseDirectChildren',
-		ObjectID       => '/video',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 1,
-		SortCriteria   => '',
-	} );
-
-	is( $res->{NumberReturned}->{t}, 1, 'CD: Browse ObjectID /video RequestedCount 1, NumberReturned ok' );
-	is( $res->{TotalMatches}->{t}, 2, 'CD: Browse ObjectID /video RequestedCount 1, TotalMatches ok' );
-
-	my $menu = xml2hash( $res->{Result}->{t}, text => 't', array => [ 'container' ] );
-	my $container = $menu->{'DIDL-Lite'}->{container};
-	is( scalar @{$container}, 1, 'CD: Browse ObjectID /video RequestedCount 1, container count ok' );
-
-	my $item1 = $container->[0];
-	is( $item1->{'-id'}, '/v', 'CD: Browse ObjectID /video RequestedCount 1, container 1 id ok' );
-	is( $item1->{'-parentID'}, '/video', 'CD: Browse ObjectID /video RequestedCount 1, container 1 parentID ok' );
-	is( $item1->{'-restricted'}, 1, 'CD: Browse ObjectID /video RequestedCount 1, container 1 restricted ok' );
-	is( $item1->{'-searchable'}, 0, 'CD: Browse ObjectID /video RequestedCount 1, container 1 searchable ok' );
-	is( $item1->{'dc:title'}, 'Video Folder', 'CD: Browse ObjectID /video RequestedCount 1, container 1 dc:title ok' );
-	is( $item1->{'upnp:class'}, 'object.container', 'CD: Browse ObjectID /video RequestedCount 1, container 1 upnp:class ok' );
-
-	# Fetch rest of menu, with sorting
-	$res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseDirectChildren',
-		ObjectID       => '/video',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 2,
-		SortCriteria   => '+dc:title',
-	} );
-
-	is( $res->{NumberReturned}->{t}, 2, 'CD: Browse ObjectID /video RequestedCount 2, NumberReturned ok' );
-	is( $res->{TotalMatches}->{t}, 2, 'CD: Browse ObjectID /video RequestedCount 2, TotalMatches ok' );
-
-	my $menu = xml2hash( $res->{Result}->{t}, text => 't', array => [ 'container' ] );
-	$container = $menu->{'DIDL-Lite'}->{container};
-	is( scalar @{$container}, 2, 'CD: Browse ObjectID /video RequestedCount 2, container count ok' );
-
-	# Check sorting is correct
-	is( $container->[0]->{'-id'}, '/va', 'CD: Browse ObjectID /video RequestedCount 2, sorted container 1 id ok' );
-	is( $container->[-1]->{'-id'}, '/v', 'CD: Browse ObjectID /video RequestedCount 2, sorted container 2 id ok' );
-
-	# Test video menu metadata
-	$res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseMetadata',
-		ObjectID       => '/video',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 0,
-		SortCriteria   => '',
-	} );
-
-	is( $res->{TotalMatches}->{t}, 1, 'BrowseMetadata ObjectID /video TotalMatches is 1' );
-	is( $res->{NumberReturned}->{t}, 1, 'BrowseMetadata ObjectID /video NumberReturned is 1' );
-
-	$menu = xml2hash( $res->{Result}->{t}, text => 't' );
-	$container = $menu->{'DIDL-Lite'}->{container};
-
-	is( $container->{'-id'}, '/video', 'CD: BrowseMetadata ObjectID /video, id ok' );
-	is( $container->{'-parentID'}, 0, 'CD: BrowseMetadata ObjectID /video, parentID ok' );
-	is( $container->{'-searchable'}, 0, 'CD: BrowseMetadata ObjectID /video, searchable ok' );
-	is( $container->{'dc:title'}, 'Video', 'CD: BrowseMetadata ObjectID /video, dc:title ok' );
-}
 exit;
 
 # Test localized dc:title values
@@ -1351,76 +1281,6 @@ my $playlist;
 	is_deeply( $item, $track, "$tid BrowseMetadata ok" );
 }
 
-### All Videos (/va)
-
-# Test browsing All Videos menu
-my $video;
-{
-	my $res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseDirectChildren',
-		ObjectID       => '/va',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 100,
-		SortCriteria   => '',
-	} );
-
-	my $menu = xml2hash( $res->{Result}->{t}, text => 't', array => [ 'container' ] );
-	my $container = $menu->{'DIDL-Lite'}->{container};
-
-	# Skip Various Artists artist if it's there
-	$video = $container->[0];
-
-	like( $video->{'-id'}, qr{^/va/\d+/v$}, 'Video container id ok' );
-	is( $video->{'-parentID'}, '/a', 'Video container parentID ok' );
-	ok( $video->{'dc:title'}, 'Video container dc:title ok' );
-	ok( $video->{'upnp:album'}, 'Video container upnp:album ok' );
-	is( $video->{'upnp:class'}, 'object.container.person.musicArtist', 'Video container upnp:class ok' );
-
-	# Test BrowseMetadata on videos item
-	$res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseMetadata',
-		ObjectID       => '/va',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 0,
-		SortCriteria   => '',
-	} );
-
-	is( $res->{TotalMatches}->{t}, 1, '/va BrowseMetadata TotalMatches is 1' );
-	is( $res->{NumberReturned}->{t}, 1, '/va BrowseMetadata NumberReturned is 1' );
-
-	$menu = xml2hash( $res->{Result}->{t}, text => 't' );
-	$container = $menu->{'DIDL-Lite'}->{container};
-
-	is( $container->{'-id'}, '/va', '/va BrowseMetadata id ok' );
-	is( $container->{'-parentID'}, '/video', '/va BrowseMetadata parentID ok' );
-	is( $container->{'dc:title'}, 'All Videos', '/va BrowseMetadata dc:title ok' );
-	is( $container->{'upnp:class'}, 'object.container', '/va BrowseMetadata upnp:class ok' );
-
-	# Test BrowseMetadata on a video
-	$res = _action( $cd, 'Browse', {
-		BrowseFlag     => 'BrowseMetadata',
-		ObjectID       => $video->{'-id'},
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 0,
-		SortCriteria   => '',
-	} );
-
-	is( $res->{TotalMatches}->{t}, 1, 'Video BrowseMetadata TotalMatches is 1' );
-	is( $res->{NumberReturned}->{t}, 1, 'Video BrowseMetadata NumberReturned is 1' );
-
-	$menu = xml2hash( $res->{Result}->{t}, text => 't' );
-	$container = $menu->{'DIDL-Lite'}->{container};
-
-	is( $container->{'-id'}, $video->{'-id'}, 'Video BrowseMetadata id ok' );
-	is( $container->{'-parentID'}, $video->{'-parentID'}, 'Video BrowseMetadata parentID ok' );
-	is( $container->{'dc:title'}, $video->{'dc:title'}, 'Video BrowseMetadata dc:title ok' );
-	is( $container->{'upnp:album'}, $video->{'upnp:album'}, 'Video BrowseMetadata upnp:album ok' );
-	is( $container->{'upnp:class'}, $video->{'upnp:class'}, 'Video BrowseMetadata upnp:class ok' );
-}
-
 ### Search
 
 # Windows 7 WMP uses this query to build a complete index of all audio tracks on the server
@@ -1467,52 +1327,6 @@ my $video;
 
 	like( $track->{'-id'}, qr{^/t/\d+$}, 'Revue Search result id ok' );
 	is( $track->{'-parentID'}, '/t', 'Revue Search result parentID ok' );
-}
-
-# Test searching for new videos only
-{
-	my $res = _action( $cd, 'Search', {
-		ContainerID    => 0,
-		SearchCriteria => 'pv:lastUpdated > 0 and upnp:class derivedfrom "object.item.videoItem"',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 10,
-		SortCriteria   => '-pv:lastUpdated',
-	} );
-
-	cmp_ok( $res->{TotalMatches}->{t}, '>', 0, "Video Search TotalMatches is >0" );
-	cmp_ok( $res->{NumberReturned}->{t}, '>', 0, "Video Search NumberReturned is >0" );
-
-	my $menu = xml2hash( $res->{Result}->{t}, text => 't' );
-	my $items = $menu->{'DIDL-Lite'}->{item};
-
-	my $video = $items->[0];
-
-	like( $video->{'-id'}, qr{^/v/[0-9a-f]{8}$}, 'Video Search result id ok' );
-	is( $video->{'-parentID'}, '/v', 'Video Search result parentID ok' );
-}
-
-# Test searching for images
-{
-	my $res = _action( $cd, 'Search', {
-		ContainerID    => 0,
-		SearchCriteria => 'pv:lastUpdated > 0 and upnp:class derivedfrom "object.item.imageItem"',
-		Filter         => '*',
-		StartingIndex  => 0,
-		RequestedCount => 10,
-		SortCriteria   => '-pv:lastUpdated',
-	} );
-
-	cmp_ok( $res->{TotalMatches}->{t}, '>', 0, "Image Search TotalMatches is >0" );
-	cmp_ok( $res->{NumberReturned}->{t}, '>', 0, "Image Search NumberReturned is >0" );
-
-	my $menu = xml2hash( $res->{Result}->{t}, text => 't' );
-	my $items = $menu->{'DIDL-Lite'}->{item};
-
-	my $image = $items->[0];
-
-	like( $image->{'-id'}, qr{^/i/[0-9a-f]{8}$}, 'Image Search result id ok' );
-	is( $image->{'-parentID'}, '/i', 'Image Search result parentID ok' );
 }
 exit;
 

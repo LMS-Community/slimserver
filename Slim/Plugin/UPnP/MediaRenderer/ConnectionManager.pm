@@ -153,6 +153,8 @@ sub _sinkProtocols {
 		my $hasWMAP = grep { /wmap/ } @cf;
 		my $hasOgg = grep { /ogg/ } @cf;
 		my $hasFLAC = grep { /flc/ } @cf;
+		my $hasWav = grep { /wav/ } @cf;
+		my $hasOpus = grep { /ops/ } @cf;
 
 		# Transcoder-supported formats
 		my $canTranscode = sub {
@@ -228,7 +230,19 @@ sub _sinkProtocols {
 		if ( $hasFLAC || $canTranscode->('flc') ) {
 			# Seeking not supported for remote FLAC content (OP=00)
 			push @formats, (
-				"http-get:*:audio/x-flac:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
+				"http-get:*:audio/flac:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
+			);
+		}
+
+		if ( $hasWav || $canTranscode->('wav') ) {
+			push @formats, (
+				"http-get:*:audio/wav:DLNA.ORG_PN=WAV;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
+			);
+		}
+		if ( $hasOpus || $canTranscode->('ops') ) {
+			# Seeking not supported for remote Opus content (OP=00)
+			push @formats, (
+				"http-get:*:audio/opus:DLNA.ORG_OP=00;DLNA.ORG_FLAGS=$flags",
 			);
 		}
 

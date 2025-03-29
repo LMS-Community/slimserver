@@ -48,9 +48,6 @@ our $defaultPrefs = {
 	'remoteReplayGain'   => -5,
 	'disableDac'         => 0,
 	'minSyncAdjust'      => 10,	# ms
-	'snLastSyncUp'       => -1,
-	'snLastSyncDown'     => -1,
-	'snSyncInterval'     => 30,
 	'outputChannels'     => 0,
 	'balance'            => 0,
 };

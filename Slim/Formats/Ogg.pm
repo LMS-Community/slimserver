@@ -27,6 +27,8 @@ use strict;
 use base qw(Slim::Formats);
 
 use Fcntl qw(:seek);
+use List::Util qw(first);
+
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 
@@ -95,11 +97,9 @@ sub getTag {
 
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
-	foreach (qw(ORIGINALYEAR ORIGINALDATE DATE)) {
-		if (defined $tags->{$_} && !defined $tags->{YEAR}) {
-			($tags->{YEAR} = $tags->{$_}) =~ s/.*(\d\d\d\d).*/$1/;
-		}
-	}
+	$tags->{YEAR} ||= first { $_ } map {
+		$class->sanitizeYearTag($tags->{$_})
+	} qw(ORIGINALYEAR ORIGINALDATE DATE);
 
 	# Sometimes the BPM is not an integer so we try to convert.
 	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};

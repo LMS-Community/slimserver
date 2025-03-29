@@ -562,7 +562,7 @@ sub browseplaylistindex {
 	my $client = shift;
 
 	if ( main::DEBUGLOG && @_ && $playlistlog->is_debug ) {
-		$log->debug("New playlistindex: $_[0]");
+		$playlistlog->debug("New playlistindex: $_[0]");
 	}
 
 	# update list length for the knob.  ### HACK ATTACK ###

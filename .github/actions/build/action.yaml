@@ -22,9 +22,9 @@ runs:
       id: getversion
       run: |
         echo "::group::Get LMS version number"
-        MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
-        MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
-        PATCH=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f3)
+        MAJOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f1)
+        MINOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f2)
+        PATCH=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f3)
 
         echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
         echo "LMS_FULL_VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
@@ -40,6 +40,14 @@ runs:
         ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
 
 
+    - name: Check out pCP platform code
+      if: ${{ startsWith(inputs.build-params, 'pcp') }}
+      uses: actions/checkout@v4
+      with:
+        repository: picoreplayer/lms-update-script
+        path: platforms/pcp
+
+
     - name: Set up Docker environment
       if: ${{ startsWith(inputs.build-params, 'docker') }}
       id: dockersetup
@@ -49,9 +57,9 @@ runs:
         if [ "${{ inputs.build-type }}" = "release" ]; then
           echo "LMS_TAG=--tag=rc" >> $GITHUB_OUTPUT
         elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.1" ]; then
-          echo "LMS_TAG=--tag=dev" >> $GITHUB_OUTPUT
+          echo "LMS_TAG=--tag=dev,${{ steps.getversion.outputs.LMS_FULL_VERSION }}-dev" >> $GITHUB_OUTPUT
         elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
-          echo "LMS_TAG=--tag=stable" >> $GITHUB_OUTPUT
+          echo "LMS_TAG=--tag=stable,${{ steps.getversion.outputs.LMS_FULL_VERSION }}-stable" >> $GITHUB_OUTPUT
         else
           echo "UNKNOWN DOCKER TARGET TAG"
           exit 1
@@ -114,6 +122,8 @@ runs:
 
     - name: Set-up s5cmd
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      # don't fail, as we can fall back to aws-cli
+      continue-on-error: true
       uses: ./server/.github/actions/setup-s5cmd
       # uses: peak/action-setup-s5cmd@main
       with:

@@ -1,5 +1,10 @@
 package Slim::Schema::Contributor;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
 
 use strict;
 use base 'Slim::Schema::DBI';
@@ -44,6 +49,8 @@ initializeRoles();
 		namesearch
 		musicbrainz_id
 		extid
+		portraitid
+		portrait
 	));
 
 	$class->set_primary_key('id');
@@ -61,9 +68,7 @@ initializeRoles();
 
 	$class->many_to_many('albums', 'contributorAlbums' => 'album', undef, { 'distinct' => 1 });
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/name namesort/);
-	}
+	$class->utf8_columns(qw/name namesort/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Contributor');
 }

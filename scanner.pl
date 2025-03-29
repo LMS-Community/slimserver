@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -25,7 +25,7 @@ use constant RESIZER      => 0;
 use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
+use constant ISACTIVEPERL => 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
@@ -36,24 +36,18 @@ use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
 use constant NOMYSB       => 1;
 
-# Tell PerlApp to bundle these modules
-if (0) {
-	require 'auto/Compress/Raw/Zlib/autosplit.ix';
-	require Cache::FileCache;
-}
-
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
 	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
-	if (ISWINDOWS && !ISACTIVEPERL) {
+	if (ISWINDOWS) {
 		my $path = File::Basename::dirname($^X);
 		$path =~ s/perl(?=.bin)/c/i;
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
 	}
 
-	our $VERSION = '9.0.3';
+	our $VERSION = '9.1.0';
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
@@ -89,6 +83,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Music::ContributorPictureScan;
 use Slim::Music::ReleaseTypes;
 use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
@@ -270,6 +265,7 @@ sub main {
 		Slim::Music::Import->scanOnlineLibraryOnly($onlineLibrary);
 		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
+		Slim::Music::ContributorPictureScan->init;
 		Slim::Music::ReleaseTypes->init();
 
 	}
@@ -418,7 +414,6 @@ Command line options:
 	--playlists     Only scan files in your playlistdir.
 	--onlinelibrary Only update online library content
 	--progress      Show a progress bar of the scan.
-	--dbtype TYPE   Force database type (valid values are MySQL or SQLite)
 	--prefsdir      Specify alternative preferences directory.
 	--priority      set process priority from -20 (high) to 20 (low)
 	--logfile       Send all debugging messages to the specified logfile.

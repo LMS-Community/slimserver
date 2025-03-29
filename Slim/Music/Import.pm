@@ -1,7 +1,7 @@
 package Slim::Music::Import;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -436,11 +436,11 @@ sub runScanPostProcessing {
 	return 1 if !Slim::Schema::hasLibrary();
 
 	if (main::STATISTICS) {
-		# Look for and import persistent data migrated from MySQL
+		# Look for and import persistent data
 		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
 		my $json = catfile( $dir, 'tracks_persistent.json' );
 		if ( -e $json ) {
-			$log->error('Migrating persistent track information from MySQL');
+			$log->error('Migrating persistent track information from tracks_persistent.json');
 
 			if ( Slim::Schema::TrackPersistent->import_json($json) ) {
 				unlink $json;
@@ -467,9 +467,6 @@ sub runScanPostProcessing {
 
 		$class->runArtworkImporter($importer);
 	}
-
-	# If we ever find an artwork provider...
-	#Slim::Music::Artwork->downloadArtwork();
 
 	# update standalone artwork if it's been changed without the music file being changed (don't run on a wipe & rescan)
 	$importsRunning{'updateStandaloneArtwork'} = Time::HiRes::time();

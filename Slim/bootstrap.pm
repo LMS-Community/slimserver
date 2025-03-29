@@ -87,10 +87,6 @@ sub loadModules {
 		#system("/usr/bin/chcon -R -t texrel_shlib_t $archDir");
 	}
 
-	if ($] <= 5.007) {
-		push @$required_modules, qw(Storable Digest::MD5);
-	}
-
 	my @SlimINC = ();
 
 	Slim::Utils::OSDetect::init();
@@ -193,11 +189,7 @@ sub loadModules {
 
 		print "The following modules failed to load: $failed\n\n";
 
-		if ( main::ISACTIVEPERL ) {
-			print "To run from source on Windows 32-bit, please install ActivePerl 5.14.\n";
-			print "http://downloads.activestate.com/ActivePerl/releases/\n\n";
-		}
-		elsif ( main::ISWINDOWS ) {
+		if ( main::ISWINDOWS ) {
 			print "To run from source on Windows 64-bit, please install dependencies using Strawberry Perl 5.32.\n";
 			print "https://strawberryperl.com/releases.html\n\n";
 		}

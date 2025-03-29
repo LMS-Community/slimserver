@@ -65,6 +65,8 @@ Initializes the entire MySQL subsystem - creates the config file, and starts the
 sub init {
 	my $class = shift;
 
+	$log->error("MySQL is no longer supported! Use at your own risk - and don't complain if it doesn't work. Remove the 'dbsource' from your configuration.");
+
 	# Reset dbsource pref if it's not for MySQL
 	if ( $prefs->get('dbsource') !~ /^dbi:mysql/ ) {
 		$prefs->set( dbsource => default_dbsource() );
@@ -74,10 +76,6 @@ sub init {
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
 	if ($prefs->get('dbsource') !~ /port=9092/) {
-
-		main::INFOLOG && $log->info("Not starting MySQL - looks to be user/system configured.");
-		Slim::Utils::OSDetect::getOS->initMySQL($class);
-
 		return 1;
 	}
 

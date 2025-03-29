@@ -50,7 +50,7 @@ sub blocking {
 	my $nonblocking = $_[0] ? "0" : "1";
 	my $retval = ioctl($sock, 0x8004667e, \$nonblocking);
 
-	if (!defined($retval) && $] >= 5.008) {
+	if (!defined($retval)) {
 		$retval = "0 but true";
 	}
 

@@ -346,6 +346,12 @@ sub sanitizeTagValues {
 	}
 }
 
+sub sanitizeYearTag {
+	my ($class, $year) = @_;
+	$year =~ s/.*(\d\d\d\d).*/$1/ if $year;
+	return $year;
+}
+
 1;
 
 __END__

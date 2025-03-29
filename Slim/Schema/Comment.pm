@@ -15,9 +15,7 @@ use base 'Slim::Schema::DBI';
 
 	$class->belongs_to(track => 'Slim::Schema::Track');
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/value/);
-	}
+	$class->utf8_columns(qw/value/);
 }
 
 1;

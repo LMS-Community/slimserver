@@ -2,7 +2,7 @@ package Slim::Schema;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -143,24 +143,19 @@ sub init {
 	}
 
 	# Bug: 4076
-	# If a user was using MySQL with 6.3.x (unsupported), their
 	# metainformation table won't be dropped with the schema_1_up.sql
 	# file, since the metainformation table doesn't get dropped to
 	# maintain state. We need to wipe the DB and start over.
 	eval {
 		local $dbh->{HandleError} = sub {};
 		$dbh->do('SELECT name FROM metainformation') || die $dbh->errstr;
-
-		# when upgrading from SBS to LMS let's check the additional tables,
-		# as the schema numbers might be overlapping, not causing a re-build
-		$dbh->do('SELECT id FROM images LIMIT 1') || die $dbh->errstr;
 	};
 
 	# If we couldn't select our new 'name' column, then drop the
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
 	if ( $@ ) {
-		main::INFOLOG && $log->is_info && $log->info("Creating new database - empty, outdated or invalid database found");
+		main::INFOLOG && $log->is_info && $log->info("Creating new database - empty, outdated or invalid database found: $@");
 
 		eval {
 			$dbh->do('DROP TABLE IF EXISTS metainformation');
@@ -1307,7 +1302,7 @@ sub _createOrUpdateAlbum {
 		}
 	}
 
-	# Check that these are the correct types. Otherwise MySQL will not accept the values.
+	# Check that these are the correct types.
 	if ( defined $disc && $disc =~ /^\d+$/ ) {
 		$albumHash->{disc} = $disc;
 	}

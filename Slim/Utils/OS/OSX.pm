@@ -20,6 +20,9 @@ use POSIX qw(LC_CTYPE LC_TIME);
 use constant IS_MENUBAR_ITEM => $Bin =~ m|app/Contents/| ? 1 : 0;
 use constant CHECK_MENUBAR_ITEM_DURATION => 30;
 
+# Enable this for update checker testing/development
+use constant UPGRADE_TESTING => 0;
+
 my $canFollowAlias;
 
 sub name {
@@ -160,7 +163,7 @@ sub dirsFor {
 
 		push @dirs, $Bin;
 
-	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
+	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
 
 		push @dirs, "$ENV{'HOME'}/Library/Application Support/Squeezebox/$dir";
 		push @dirs, catdir($Bin, $dir);
@@ -210,7 +213,7 @@ sub dirsFor {
 		push @dirs, "$Bin/../..";
 
 	# we don't want these values to return a value
-	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
+	} elsif ($dir =~ /^(?:libpath)$/) {
 
 	} else {
 
@@ -523,6 +526,31 @@ sub handleMenuBarItemActivity {
 	elsif (main::INFOLOG && $log->is_info) {
 		$log->info('The Menu Bar Item is still running - let\'s keep the service running');
 	}
+}
+
+# if update checker testing is enabled, return false, even if we're running from source
+# this really should only be used when I'm testing locally - mh
+my $updateCheckInitialized;
+sub runningFromSource {
+	my $isRunningFromSource = shelf->SUPER::runningFromSource(@_);
+
+	if (UPGRADE_TESTING && $isRunningFromSource) {
+		return if $updateCheckInitialized++;
+
+		require Slim::Utils::Update;
+		Slim::Utils::Timers::setTimer(
+			undef,
+			time() + 3,
+			\&Slim::Utils::Update::checkVersion,
+		);
+
+		# reset the last time we checked for updates so we check immediately
+		Slim::Utils::Prefs::preferences('server')->set('checkVersionLastTime', 0);
+
+		return 1;
+	}
+
+	return $isRunningFromSource;
 }
 
 1;

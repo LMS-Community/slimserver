@@ -660,7 +660,7 @@ sub infoFormat {
 	# use a safe format string if none specified
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
-	if ($str && $] > 5.007) {
+	if ($str) {
 
 		my $old = $str;
 		if ( !($str = $formatCache{$old}) ) {

@@ -147,7 +147,7 @@ sub writeList {
 
 		if ($@) {
 
-			logError("While running \$playlistClass->read(): [$@]");
+			logError("While running \$playlistClass->write(): [$@]");
 		}
 	}
 

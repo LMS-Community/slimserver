@@ -15,25 +15,9 @@
 require 5.010;
 
 use Config;
-use constant SPLASH_LOGO => 'lms_splash.png';
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
-use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
-
-# don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
-my $splash;
-my $useWx = (!ISMAC || $^X =~ /wxPerl/i) && eval {
-	require Wx;
-
-	showSplashScreen();
-
-	require Wx::Event;
-	require Slim::GUI::ControlPanel;
-
-	return 1;
-};
-
-print "$@\n" if $@ && ISWINDOWS;
+use constant ISACTIVEPERL => 0;
 
 use strict;
 use Socket;
@@ -61,14 +45,7 @@ require Getopt::Long;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Light;
 
-our $VERSION = '9.0.3';
-
-BEGIN {
-	if (ISWINDOWS) {
-		eval { require Wx::Perl::Packager; }
-	}
-}
-
+our $VERSION = '9.1.0';
 
 if (DEBUG && $@) {
 	print "GUI can't be loaded: $@\n";
@@ -80,7 +57,7 @@ sub main {
 	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
 
-	if (checkForSC() && !$useWx) {
+	if (checkForSC()) {
 		print sprintf("\n%s\n\n", Slim::Utils::Light::string('CLEANUP_PLEASE_STOP_SC'));
 		exit;
 	}
@@ -107,26 +84,8 @@ sub main {
 	});
 
 	unless (scalar @$folders) {
-
-		# show simple GUI if possible
-		if ($useWx) {
-
-			my $app = Slim::GUI::ControlPanel->new({
-				folderCB => \&getFolderList,
-				cleanCB  => \&cleanup,
-				options  => options(),
-			});
-
-			$splash->Destroy();
-
-			$app->MainLoop;
-			exit;
-		}
-
-		else {
-			usage();
-			exit;
-		}
+		usage();
+		exit;
 	}
 
 	cleanup($folders, $dryrun);
@@ -332,12 +291,12 @@ sub cleanup {
 	my ($folders, $dryrun) = @_;
 
 	for my $item (@$folders) {
-		print sprintf("\n%s %s...\n", Slim::Utils::Light::string('CLEANUP_DELETING'), $item->{label}) unless $useWx;
+		print sprintf("\n%s %s...\n", Slim::Utils::Light::string('CLEANUP_DELETING'), $item->{label});
 
 		foreach ( @{$item->{folders}} ) {
 			next unless $_;
 
-			print "-> $_\n" if (-e $_ && !$useWx);
+			print "-> $_\n" if -e $_;
 
 			next if $dryrun;
 
@@ -349,39 +308,6 @@ sub cleanup {
 				unlink $_;
 			}
 		}
-	}
-}
-
-sub showSplashScreen {
-	return unless $^O =~ /win/i;
-
-	my $file;
-
-	if (defined $PerlApp::VERSION) {
-		$file = PerlApp::extract_bound_file(SPLASH_LOGO);
-	}
-
-	else {
-		$file = SPLASH_LOGO;
-	}
-
-	if (!$file || !-f $file) {
-		$file = '../platforms/win32/res/' . SPLASH_LOGO;
-	}
-
-	Wx::Image::AddHandler(Wx::PNGHandler->new());
-
-	if (my $bitmap = Wx::Bitmap->new($file, Wx::wxBITMAP_TYPE_PNG())) {
-
-		$splash = Wx::SplashScreen->new(
-			$bitmap,
-			Wx::wxSPLASH_CENTRE_ON_SCREEN() | Wx::wxSPLASH_NO_TIMEOUT(),
-			0,
-			undef,
-			-1, [-1, -1], [-1, -1],
-			Wx::wxSIMPLE_BORDER() | Wx::wxSTAY_ON_TOP()
-		);
-
 	}
 }
 

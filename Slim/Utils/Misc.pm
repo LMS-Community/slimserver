@@ -235,22 +235,6 @@ sub pathFromFileURL {
 		return $url;
 	}
 
-	# Bug: 1786
-	#
-	# Work around a perl bug that exists in 5.8.0, 5.8.1 & 5.8.2? - where
-	# a join() can return garbage because it's internal scratch space
-	# wasn't properly cleared with a UTF8 string that previously went
-	# through it. The call to $uri->file() below contains such a join, and
-	# was causing bogus data to be returned on OSX 10.3.x systems.
-	#
-	# See
-	# http://lists.bestpractical.com/pipermail/rt-devel/2004-January/005283.html
-	# for some more information.
-	if ($] > 5.007 && $] <= 5.008002) {
-
-		$url = Slim::Utils::Unicode::utf8off($url);
-	}
-
 	# Bug 3589, support win32 backslashes in URLs, file://C:\foo\bar
 	$url =~ s/\\/\//g;
 
@@ -1435,21 +1419,6 @@ sub shouldCacheURL {
 
 	return 1;
 }
-
-=head2 runningAsService ( )
-
-Returns true if running as a Windows service.
-
-=cut
-
-sub runningAsService { if (main::ISACTIVEPERL) {
-
-	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
-		return 1;
-	}
-
-	return 0;
-} }
 
 =head2 validMacAddress ( )
 

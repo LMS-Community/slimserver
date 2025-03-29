@@ -49,9 +49,7 @@ my $log = logger('database.info');
 	$class->has_many('track'             => 'Slim::Schema::Track'            => 'album');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum' => 'album');
 
-	if ($] > 5.007) {
-		$class->utf8_columns(qw/title titlesort/);
-	}
+	$class->utf8_columns(qw/title titlesort/);
 
 	$class->resultset_class('Slim::Schema::ResultSet::Album');
 

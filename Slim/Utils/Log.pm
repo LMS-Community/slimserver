@@ -893,6 +893,7 @@ sub logLevels {
 
 		'network.asyncdns'           => 'ERROR',
 		'network.asynchttp'          => 'ERROR',
+		'network.ws'                 => 'ERROR',
 		'network.http'               => 'ERROR',
 		'network.protocol'           => 'ERROR',
 		'network.protocol.slimproto' => 'ERROR',
@@ -907,7 +908,6 @@ sub logLevels {
 		'formats.metadata'           => 'ERROR',
 
 		'database.info'              => 'ERROR',
-		'database.mysql'             => 'ERROR',
 		'database.sql'               => 'ERROR',
 		'database.virtuallibraries'  => 'ERROR',
 

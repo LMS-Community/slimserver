@@ -110,22 +110,9 @@ sub loadStrings {
 	my $language   = '';
 	my $stringname = '';
 
-	# server string file
-	my $file;
-
-	# let's see whether this is a PerlApp/Tray compiled executable
-	if (defined $PerlApp::VERSION) {
-		$file = PerlApp::extract_bound_file('strings.txt');
-	}
-	elsif (defined $PerlTray::VERSION) {
-		$file = PerlTray::extract_bound_file('strings.txt');
-	}
-
 	# try to find the strings.txt file from our installation
-	unless ($file && -f $file) {
-		my $path = $os->dirsFor('strings');
-		$file = catdir($path, 'strings.txt');
-	}
+	my $path = $os->dirsFor('strings');
+	my $file = catdir($path, 'strings.txt');
 
 	open(STRINGS, "<:utf8", $file) || do {
 		warn "Couldn't open file [$file]!";

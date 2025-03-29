@@ -44,14 +44,6 @@ sub initSearchPath {
 	Slim::Utils::Misc::addFindBinPaths(catdir($_[0] || $class->dirsFor('Bin'), $binArch));
 }
 
-
-sub scanner { "$Bin/scanner.pl" }
-
-sub gdresize { "$Bin/gdresize.pl" }
-
-sub gdresized { "$Bin/gdresized.pl" }
-
-
 sub runService { if ($main::daemon) {
 	my $class = shift;
 

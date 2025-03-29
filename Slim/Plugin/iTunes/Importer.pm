@@ -16,9 +16,7 @@ use File::Path qw(rmtree);
 use XML::Parser;
 
 INIT: {
-	if ($] > 5.007) {
-		require Encode;
-	}
+	require Encode;
 }
 
 use Slim::Player::ProtocolHandlers;
@@ -269,7 +267,7 @@ sub handleTrack {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
 
-		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
+		if ($file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
 
 			my $file2 = $file;
 
@@ -578,11 +576,7 @@ sub handleCharElement {
 
 	if ($inTracks && $inValue) {
 
-		if ($] > 5.007) {
-			$item{$currentKey} .= $value;
-		} else {
-			$item{$currentKey} .= Slim::Utils::Unicode::utf8toLatin1($value);
-		}
+		$item{$currentKey} .= $value;
 
 		return;
 	}

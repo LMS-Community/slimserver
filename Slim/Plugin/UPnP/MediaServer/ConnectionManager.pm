@@ -179,16 +179,6 @@ sub _sourceProtocols {
 		WHERE audio = 1
 	}, { Slice => {} } );
 
-	my $images = $dbh->selectall_arrayref( qq{
-		SELECT DISTINCT(dlna_profile), mime_type
-		FROM images
-	}, { Slice => {} } );
-
-	my $videos = $dbh->selectall_arrayref( qq{
-		SELECT DISTINCT(dlna_profile), mime_type
-		FROM videos
-	}, { Slice => {} } );
-
 	# Audio profiles, will have duplicates...
 	my %seen = ();
 	for my $row ( @{$audio} ) {
@@ -218,28 +208,6 @@ sub _sourceProtocols {
 	# Special audio transcoding profile for PCM
 	if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
 		push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
-	}
-
-	# Image profiles
-	for my $row ( @{$images} ) {
-		if ( $row->{dlna_profile} ) {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
-		}
-		else {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
-		}
-	}
-	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
-	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
-
-	# Video profiles
-	for my $row ( @{$videos} ) {
-		if ( $row->{dlna_profile} ) {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ';DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000';
-		}
-		else {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
-		}
 	}
 
 	# Bug 17885, sort all wildcard formats to the end of the list

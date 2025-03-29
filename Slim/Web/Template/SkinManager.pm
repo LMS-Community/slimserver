@@ -2,7 +2,7 @@ package Slim::Web::Template::SkinManager;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -263,9 +263,9 @@ sub _parseURIs {
 
 	return $text unless $text;
 
-	if (!($text =~ s!\b(https?://[A-Za-z0-9\-_\.\!~*'();/?:@%&=+$,]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
+	if (!($text =~ s!\b(https?://[-A-Z\d_.~*'();/?:@%&=+,#\$\!]+)!<a href=\"$1\" target=\"_blank\" class="link">$1</a>!igo)) {
 		# handle emusic-type urls which don't have http://
-		$text =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@%&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
+		$text =~   s!\b(www\.[-A-Z\d_.~*'();/?:@%&=+,#\$\!]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
 	}
 
 	return $text;
@@ -309,7 +309,7 @@ sub _resizeImage {
 
 		# music artwork
 		my $webroot = $context->{STASH}->{webroot};
-		if ( $url =~ m{^((?:$webroot|/)music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
+		if ( $url =~ m{^((?:$webroot|/)music/.*/cover)(?:\.jpg)?$} || $url =~ m{^((?:$webroot|/)contributor/.*/image)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
 			return $1 . $resizeParams . (($mode && $mode ne '-') ? "_$mode" : '_o');
 		}
 
