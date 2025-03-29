@@ -124,7 +124,7 @@ sub clientEvent {
 					# Remove track that just finished playing. The protocol handler
 					# can only return metadata for currentURI and NextURI, so keep
 					# the playlist limited to those 2 tracks
-					Slim::Player::Playlist::removeTrack($client, 0);
+					$client->execute(["playlist", "delete", 0);
 
 					# change state variables
 					$class->changeState( $client, {
@@ -377,7 +377,7 @@ sub SetNextAVTransportURI {
 		# Next track queued on the control point has changed while
 		# currentURI is still playing. Remove it from the playlist
 		# ready for the updated NextURI.
-		Slim::Player::Playlist::removeTrack($client, 1);
+		$client->execute(["playlist", "delete", 1);
 	}
 
 	if ( exists $args->{NextURI} && $args->{NextURI} eq '' ) {
