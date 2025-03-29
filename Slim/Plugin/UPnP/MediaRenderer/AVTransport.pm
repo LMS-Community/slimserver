@@ -103,7 +103,7 @@ sub clientEvent {
 	# for gapless playback support.
 	if ( $cmd eq 'newsong' ) {
 		my $playlist = Slim::Player::Playlist::playList($client);
-		if( scalar @{$playlist} > 1){
+		if ( scalar @{$playlist} > 1 ){
 			if ( my $song = ($client->playingSong() || $client->streamingSong()) ) {
 
 				my $pd = $client->pluginData();
@@ -114,7 +114,7 @@ sub clientEvent {
 				# Convert URI to protocol handler
 				$currentURI =~ s/^http/upnp/; 
 
-				if( $track->url ne $currentURI){
+				if ( $track->url ne $currentURI ){
 
 					# player has moved on to next track, copy NextURI to CurrentURI
 					$pd->{avt_AVTransportURIMetaData_hash} = $pd->{avt_NextAVTransportURIMetaData_hash};
@@ -247,7 +247,7 @@ sub changeState {
 		}
 	}
 
-	if ($count) {
+	if ( $count ) {
 		main::INFOLOG && $log->is_info && $log->info( $client->id . ' state change: ' . Data::Dump::dump($changed) );
 		$class->sendEvent( $client, $client->id, $changed );
 	}
@@ -400,7 +400,7 @@ sub SetNextAVTransportURI {
 		$upnp_uri =~ s/^http/upnp/;
   
 		# only update if NextURI has changed or it's not queued yet
-		if ($pd->{avt_NextAVTransportURIMetaData_hash} ne $meta || scalar @{$playlist} < 2){
+		if ( $pd->{avt_NextAVTransportURIMetaData_hash} ne $meta || scalar @{$playlist} < 2 ){
 
 			Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
 			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );		
