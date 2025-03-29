@@ -87,15 +87,15 @@ sub getMetadataFor {
 	my $res = $meta->{res};
 	my $currentUri = $res->{uri};
 
-	if( $url ne $currentUri){
+	if ( $url ne $currentUri ){
 		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
 
 		# check for cleared NextUri
-		if( ref($nextMeta) eq 'HASH'){
+		if ( ref($nextMeta) eq 'HASH' ){
 			my $nextRes = $nextMeta->{res};
 			$currentUri = $nextRes->{uri};
 
-			if( $url eq $currentUri){
+			if ( $url eq $currentUri ){
 				$meta = $nextMeta;
 				$res = $nextRes;
 			}
