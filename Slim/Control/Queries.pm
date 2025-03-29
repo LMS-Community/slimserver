@@ -5553,6 +5553,7 @@ my %tagMap = (
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+	  '2' => 1,									    # to trigger addition of the input parameter
 
 	# Tags handled in code only
 	#--------------------------------------------------------------------------------------------------
@@ -5620,7 +5621,6 @@ sub _songDataFromHash {
 
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
-	$returnHash{added_from_work} = $addedFromWork;
 
 	my @contributorRoles = Slim::Schema::Contributor->contributorRoles;
 
@@ -5671,6 +5671,11 @@ sub _songDataFromHash {
 				my $isClassical = Slim::Schema::Genre->isMyClassicalGenre($res->{'genres'}, ',');
 				$returnHash{'isClassical'} = $isClassical if $isClassical;
 			}
+		}
+
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
 		}
 
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
@@ -5782,7 +5787,6 @@ sub _songData {
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
-	$returnHash{'added_from_work'} = $addedFromWork;
 	my %seen;
 
 	# loop so that stuff is returned in the order given...
@@ -5813,6 +5817,12 @@ sub _songData {
 			$returnHash{work} = $remoteMeta->{$tag};
 			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
 		}
+
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
+		}
+
 		# special case artists (tag A and S)
 		elsif ($tag eq 'A' || $tag eq 'S') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
