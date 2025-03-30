@@ -34,7 +34,7 @@ sub new {
 	my $client    = $args->{client};
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug( 'Remote streaming UPnP track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
@@ -43,7 +43,7 @@ sub new {
 		client  => $client,
 		bitrate => 128_000, # XXX
 	} ) || return;
-	
+
 	${*$sock}{contentType} = 'audio/mpeg'; # XXX
 
 	return $sock;
@@ -65,7 +65,7 @@ sub audioScrobblerSource { 'P' }
 
 sub isRepeatingStream {
 	my (undef, $song) = @_;
-	
+
 	return 0; # XXX playlists, REPEAT_ONE, REPEAT_ALL, SHUFFLE
 }
 
@@ -79,9 +79,9 @@ sub getMetadataFor {
 	# needs to be managed to only show those tracks. Any extra tracks will have
 	# the metadata for CurrentURI returned.
 
- 	# convert prefix to match AVTransport format
+	# convert prefix to match AVTransport format
 	$url =~ s/^upnp/http/;
-	
+
 	my $pd = $client->pluginData();
 	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
 	my $res = $meta->{res};
