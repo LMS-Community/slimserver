@@ -75,6 +75,9 @@ our @allColumns = (qw(
 
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
+
+	# For the playlist queue entry context when Track is used to store/retrieve play queue entries.
+	$class->mk_group_accessors('simple' => 'added_from_work');
 }
 
 # Wrappers - to make sure that the UTF-8 code is called. I really just want to

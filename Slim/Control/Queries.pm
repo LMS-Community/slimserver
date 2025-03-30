@@ -4255,9 +4255,11 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-				my (@tracks, @trackIds);
+				my (@tracks, @trackIds, @addedFromWork);
 				foreach my $track ( Slim::Player::Playlist::songs($client, $start, $end) ) {
 					next unless defined $track;
+
+					push @addedFromWork, $track->added_from_work;
 
 					if ( $track->remote ) {
 						push @tracks, $track;
@@ -4307,7 +4309,7 @@ sub statusQuery {
 					else {
 						_addSong(	$request, $loop, $count,
 									$data, $tags,
-									'playlist index', $idx, $fast
+									'playlist index', $idx, $fast, @addedFromWork[$count]
 								);
 
 						if ( $tags =~ /2/ ) {
@@ -5280,17 +5282,18 @@ sub dynamicAutoQuery {
 ################################################################################
 
 sub _addSong {
-	my $request   = shift; # request
-	my $loop      = shift; # loop
-	my $index     = shift; # loop index
-	my $pathOrObj = shift; # song path or object, or hash from titlesQuery
-	my $tags      = shift; # tags to use
-	my $prefixKey = shift; # prefix key, if any
-	my $prefixVal = shift; # prefix value, if any
-	my $fast      = shift;
+	my $request       = shift; # request
+	my $loop          = shift; # loop
+	my $index         = shift; # loop index
+	my $pathOrObj     = shift; # song path or object, or hash from titlesQuery
+	my $tags          = shift; # tags to use
+	my $prefixKey     = shift; # prefix key, if any
+	my $prefixVal     = shift; # prefix value, if any
+	my $fast          = shift;
+	my $addedFromWork = shift;
 
 	# get the hash with the data
-	my $hashRef = _songData($request, $pathOrObj, $tags, $fast);
+	my $hashRef = _songData($request, $pathOrObj, $tags, $fast, $addedFromWork);
 
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
@@ -5557,6 +5560,7 @@ my %tagMap = (
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+	  '2' => 1,									    # to trigger addition of the input parameter
 
 	# Tags handled in code only
 	#--------------------------------------------------------------------------------------------------
@@ -5616,7 +5620,7 @@ my %colMap = (
 );
 
 sub _songDataFromHash {
-	my ( $request, $res, $tags, $fast ) = @_;
+	my ( $request, $res, $tags, $fast, $addedFromWork ) = @_;
 
 	my %returnHash;
 
@@ -5677,6 +5681,11 @@ sub _songDataFromHash {
 			}
 		}
 
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' && $addedFromWork ) {
+			$returnHash{added_from_work} = $addedFromWork;
+		}
+
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
 		# such as 'B' (custom button handler). They would return empty here - ignore them.
 		elsif ( my $map = $colMap{$tag} ) {
@@ -5692,14 +5701,15 @@ sub _songDataFromHash {
 }
 
 sub _songData {
-	my $request   = shift; # current request object
-	my $pathOrObj = shift; # song path or object
-	my $tags      = shift; # tags to use
-	my $fast      = shift; # don't use Tie::IxHash for performance
+	my $request       = shift; # current request object
+	my $pathOrObj     = shift; # song path or object
+	my $tags          = shift; # tags to use
+	my $fast          = shift; # don't use Tie::IxHash for performance
+	my $addedFromWork = shift;
 
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
-		return _songDataFromHash($request, $pathOrObj, $tags, $fast);
+		return _songDataFromHash($request, $pathOrObj, $tags, $fast, $addedFromWork);
 	}
 
 	# figure out the track object
@@ -5808,6 +5818,17 @@ sub _songData {
 		# only include it if it is true
 		elsif ($tag eq 'x' && $isRemote) {
 			$returnHash{$tagref->[0]} = 1;
+		}
+
+		# special case: return composer and work for tag 'b'
+		elsif ($tag eq 'b') {
+			$returnHash{work} = $remoteMeta->{$tag};
+			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
+		}
+
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' && $addedFromWork ) {
+			$returnHash{added_from_work} = $addedFromWork;
 		}
 
 		# special case artists (tag A and S)

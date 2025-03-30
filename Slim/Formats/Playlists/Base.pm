@@ -21,6 +21,7 @@ sub _updateMetaData {
 	my $entry    = shift;
 	my $metadata = shift;
 	my $playlistUrl = shift;
+	my $addedFromWork = shift;
 
 	my $attributes = {};
 
@@ -48,6 +49,7 @@ sub _updateMetaData {
 
 	if ( !scalar keys %{$attributes} ) {
 		$track = Slim::Schema->objectForUrl($entry);
+		$track->added_from_work($addedFromWork);
 	}
 
 	if ( !defined $track ) {
