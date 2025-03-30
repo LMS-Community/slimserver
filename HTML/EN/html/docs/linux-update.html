@@ -1,8 +1,20 @@
-[% extension = installerFile.match('\.(rpm|deb)$');
+[% extension = installerFile.match('\.(rpm|deb|tcz)$');
 IF extension;
 	distro = extension.0;
 END;
 %]
+
+[% IF distro == 'tcz' %]
+
+<p>On piCorePlayer we provide a script to download and update Lyrion Music Server.
+	This script will update your local copy of LMS to the latest build.<p>
+
+<p>Please use
+	<script language="JavaScript">
+	document.write('<a href="' + window.location.protocol + '//' + window.location.hostname + ':80' + '/cgi-bin/lms-update.cgi?ACTION=Nightly' + '" >this Link</a> ' );
+	</script> to update LMS using the piCorePlayer interface.</p>
+
+[% ELSE %]
 
 <p>On some Linux distributions we provide an automatic download of Lyrion Music Server update installers.
 These currently are available for .rpm and .deb based systems.<p>
@@ -25,3 +37,5 @@ These currently are available for .rpm and .deb based systems.<p>
 	<li><code>sudo dpkg -i [% installerFile %]</code></li>
 	[% END %]
 </ul>
+
+[% END %]

@@ -85,15 +85,7 @@ sub getUpdateParams {
 	}
 
 	return {
-		cb => sub {
-			my ($file) = @_;
-
-			if ($file) {
-				my ($version, $revision) = $file =~ /(\d+\.\d+\.\d+)(?:.*?(\d{5,}))?/;
-				$revision ||= 0;
-				$::newVersion = Slim::Utils::Strings::string('PCP_UPDATE_AVAILABLE', "$version - $revision", $file);
-			}		
-		}
+		cb => \&Slim::Utils::OS::Linux::signalUpdateReady
 	};
 }
 
