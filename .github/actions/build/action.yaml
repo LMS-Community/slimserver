@@ -46,7 +46,6 @@ runs:
       with:
         repository: picoreplayer/lms-update-script
         path: platforms/pcp
-        ref: prebuilt_tcz
 
     - name: Set up Docker environment
       if: ${{ startsWith(inputs.build-params, 'docker') }}

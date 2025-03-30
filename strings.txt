@@ -26747,14 +26747,6 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
 	SV	En ny version av Lyrion Music Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
 
-PCP_UPDATE_AVAILABLE
-	DE	Eine neue Version von Lyrion Music Server ist verfügbar (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
-	EN	A new version of Lyrion Music Server is available (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Click here for further information</a>.         
-	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
-	NL	Er is een nieuwe versie van Lyrion Music Server beschikbaar (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Klik op hier</a>.
-	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
-	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="/html/docs/pcp-update.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
-
 SERVER_WINDOWS_UPDATE_AVAILABLE
 	CS	<ul><li>Verze %s – %s je k dispozici pro instalaci.</li><li>Přihlaste se do počítače se spuštěným Lyrion Music Serverem (%s).</li><li>Spusťe <code>%s</code> a postupujte podle pokynů.</li></ul>
 	DA	<ul><li>Version %s - %s er tilgængelig for installation.</li><li>Log ind på computeren som kører Lyrion Music Server (%s).</li><li>Eksekver <code>%s</code> og følg instruktionerne.</li></ul>
