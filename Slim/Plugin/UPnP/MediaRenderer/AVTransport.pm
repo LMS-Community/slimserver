@@ -99,6 +99,45 @@ sub clientEvent {
 		return;
 	}
 
+	# Player jumped to new song, check if NextURI needs to be moved to CurrentURI
+	# for gapless playback support.
+	if ( $cmd eq 'newsong' ) {
+		my $playlist = Slim::Player::Playlist::playList($client);
+		if ( scalar @{$playlist} > 1 ){
+			if ( my $song = ($client->playingSong() || $client->streamingSong()) ) {
+
+				my $pd = $client->pluginData();
+				my $currentURI = $pd->{AVT}->{CurrentTrackURI};
+				my $currentURIMetadata = $pd->{AVT}->{CurrentTrackMetaData};
+				my $track = $song->currentTrack;
+
+				# Convert URI to protocol handler
+				$currentURI =~ s/^http/upnp/; 
+
+				if ( $track->url ne $currentURI ){
+
+					# player has moved on to next track, copy NextURI to CurrentURI
+					$pd->{avt_AVTransportURIMetaData_hash} = $pd->{avt_NextAVTransportURIMetaData_hash};
+					$currentURI = $pd->{AVT}->{NextAVTransportURI};
+					$currentURIMetadata = $pd->{AVT}->{NextAVTransportURIMetaData};
+
+					# Remove track that just finished playing. The protocol handler
+					# can only return metadata for currentURI and NextURI, so keep
+					# the playlist limited to those 2 tracks
+					$client->execute( [ 'playlist', 'delete', 0 ] );
+
+					# change state variables
+					$class->changeState( $client, {
+						CurrentTrackURI				=> $currentURI,
+						CurrentTrackMetaData		=> $currentURIMetadata,
+						AVTransportURI				=> $currentURI,
+						AVTransportURIMetaData		=> $currentURIMetadata,
+					} );
+				}
+			}
+		}
+	}
+
 	# Use playmode to handle TransportState changes on any kind of event
 	my $mode = Slim::Player::Source::playmode($client);
 
@@ -208,7 +247,7 @@ sub changeState {
 		}
 	}
 
-	if ($count) {
+	if ( $count ) {
 		main::INFOLOG && $log->is_info && $log->info( $client->id . ' state change: ' . Data::Dump::dump($changed) );
 		$class->sendEvent( $client, $client->id, $changed );
 	}
@@ -330,17 +369,50 @@ sub SetNextAVTransportURI {
 		return [ 718 => 'Invalid InstanceID' ];
 	}
 
-	my $meta = $class->_DIDLLiteToHash( $args->{NextURIMetaData} );
+	my $playlist = Slim::Player::Playlist::playList($client);
+	my $pd = $client->pluginData();
 
-	# XXX parse playlist?
+	if (scalar @{$playlist} > 1 ){
 
-	if ( !$meta->{res} ) {
-		return [ 714 => 'Illegal MIME-type' ];
+		# Next track queued on the control point has changed while
+		# currentURI is still playing. Remove it from the playlist
+		# ready for the updated NextURI.
+		$client->execute( [ 'playlist', 'delete', 1 ] );
 	}
 
-	# Save hash version of metadata
-	$client->pluginData( avt_NextAVTransportURIMetaData_hash => $meta );
+	if ( exists $args->{NextURI} && $args->{NextURI} eq '' ) {
+	
+		# NextURI is blank, clear metadata
+		$pd->{avt_NextAVTransportURIMetaData_hash} = '';
+		main::DEBUGLOG && $log->is_debug && $log->debug("NextURI cleared");
+	} else {
 
+ 		my $meta = $class->_DIDLLiteToHash( $args->{NextURIMetaData} );
+
+		# XXX parse playlist?
+
+		if ( !$meta->{res} ) {
+			return [ 714 => 'Illegal MIME-type' ];
+		}
+
+		# Convert URI to protocol handler
+		my $upnp_uri = $meta->{res}->{uri};
+		$upnp_uri =~ s/^http/upnp/;
+  
+		# only update if NextURI has changed or it's not queued yet
+		if ( $pd->{avt_NextAVTransportURIMetaData_hash} ne $meta || scalar @{$playlist} < 2 ){
+
+			Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
+			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );		
+
+			# Save hash version of metadata
+			$pd->{avt_NextAVTransportURIMetaData_hash} = $meta;
+
+			# use insert to make sure it is queued next.
+			$client->execute( [ 'playlist', 'insert', $upnp_uri, $meta->{title} ] );	
+			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $upnp_uri . ":" . $meta->{title});
+		}
+	}
 	# Change state variables
 	$class->changeState( $client, {
 		NextAVTransportURI         => $args->{NextURI},
