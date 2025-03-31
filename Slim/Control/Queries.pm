@@ -5560,7 +5560,7 @@ my %tagMap = (
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
-	  '2' => 1,									    # to trigger addition of the input parameter
+	  '2' => [1],                                                                       # to trigger addition of the input parameter
 
 	# Tags handled in code only
 	#--------------------------------------------------------------------------------------------------
