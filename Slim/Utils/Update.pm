@@ -384,7 +384,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext(\.md5\.txt)?$/i);
 }
 
 1;
