@@ -5682,8 +5682,8 @@ sub _songDataFromHash {
 		}
 
 		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
-		elsif ( $tag eq '2' && $addedFromWork ) {
-			$returnHash{added_from_work} = $addedFromWork;
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
 		}
 
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
@@ -5827,8 +5827,8 @@ sub _songData {
 		}
 
 		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
-		elsif ( $tag eq '2' && $addedFromWork ) {
-			$returnHash{added_from_work} = $addedFromWork;
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
 		}
 
 		# special case artists (tag A and S)
