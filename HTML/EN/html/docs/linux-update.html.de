@@ -6,12 +6,16 @@ END;
 
 [% IF distro == 'tcz' %]
 
-<p>Auf piCorePlayer stellen wir ein Skript zum Herunterladen und Aktualisieren von Lyrion Music Server zur Verf&uuml;gung.
-	Dieses Skript aktualisiert Ihre lokale Kopie von LMS auf den neuesten Stand.<p>
+<p>piCorePlayer stellt ein Skript zum Herunterladen und Aktualisieren von Lyrion Music Server zur Verf&uuml;gung.
+	Dieses Skript aktualisiert Ihr LMS auf den neuesten Stand.<p>
 
-<p>Verwenden Sie
+	<button onclick="window.location.href='http://' + window.location.hostname + ':80/cgi-bin/writetolms.cgi?ACTION=Update';">
+		Lyrion Music Server aktualisieren und neu starten
+	</button>
+
+<p>...oder folgen Sie
 	<script language="JavaScript">
-	document.write('<a href="' + window.location.protocol + '//' + window.location.hostname + ':80' + '/cgi-bin/lms-update.cgi?ACTION=Nightly' + '" >diesen Link</a> ' );
+	document.write('<a href="' + window.location.protocol + '//' + window.location.hostname + ':80' + '/cgi-bin/lms-update.cgi?ACTION=Nightly' + '" >diesem Link</a> ' );
 	</script> zur Aktualisierung des LMS &uuml;ber die piCorePlayer-Schnittstelle.</p>
 
 [% ELSE %]

@@ -9,7 +9,11 @@ END;
 <p>On piCorePlayer we provide a script to download and update Lyrion Music Server.
 	This script will update your local copy of LMS to the latest build.<p>
 
-<p>Please use
+	<button onclick="window.location.href='http://' + window.location.hostname + ':80/cgi-bin/writetolms.cgi?ACTION=Update';">
+		Update &amp; restart Lyrion Music Server
+	</button>
+
+<p>...or use
 	<script language="JavaScript">
 	document.write('<a href="' + window.location.protocol + '//' + window.location.hostname + ':80' + '/cgi-bin/lms-update.cgi?ACTION=Nightly' + '" >this Link</a> ' );
 	</script> to update LMS using the piCorePlayer interface.</p>
