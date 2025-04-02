@@ -810,6 +810,10 @@ $_ignoredItems{'..'} = 1;
 # some items which are exposed on shares on popular platforms
 $_ignoredItems{'#recycle'} = 1;
 $_ignoredItems{'#snapshot'} = 1;
+$_ignoredItems{'.AppleDouble'} = 1;
+$_ignoredItems{'.AppleDB'} = 1;
+$_ignoredItems{'.AppleDesktop'} = 1;
+$_ignoredItems{'.DS_Store'} = 1;
 
 # Don't include old Shoutcast recently played items.
 $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
