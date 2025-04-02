@@ -112,6 +112,13 @@ jobs:
   docker:
     name: Build LMS for Docker
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        registry:
+          # Docker Hub
+          - lmscommunity
+          # GitHub Container Registry
+          - ghcr.io/${{ github.repository_owner }}
 
     steps:
       # we must check out here, as  otherwise the build action is not available
@@ -125,15 +132,24 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
+        if: ${{ !startsWith(matrix.registry, 'ghcr') }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Login to ghcr.io
+        if: ${{ startsWith(matrix.registry, 'ghcr') }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Launch build process
         uses: ./server/.github/actions/build
         with:
-          build-params: docker
+          build-params: docker --registry "${{ matrix.registry }}"
           build-type: ${{ inputs.build_type }}
 
   win64:
