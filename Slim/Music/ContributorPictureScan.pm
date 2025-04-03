@@ -83,14 +83,21 @@ sub startArtworkScan {
 		WHERE id = ?
 	});
 
-	my ($count) = $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM contributors
-	}) || (0);
+	my $roles = join( ',', map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->activeContributorRoles() );
 
-	my $sth = $dbh->prepare($main::wipe
-		? 'SELECT id, name FROM contributors'
-		: 'SELECT id, name, portrait, portraitid FROM contributors'
-	);
+	my $sql = qq{
+		SELECT id, name, portrait, portraitid
+		FROM contributors
+			LEFT JOIN contributor_album ON contributor_album.contributor = contributors.id
+		WHERE contributor_album.role IS NULL OR contributor_album.role IN ($roles)
+		GROUP BY contributors.id
+	};
+
+	my ($count) = $dbh->selectrow_array( qq{ SELECT COUNT(*) FROM ($sql) } ) || (0);
+
+	$sql =~ s/, portrait, portraitid// if $main::wipe;
+
+	my $sth = $dbh->prepare($sql);
 	$sth->execute();
 
 	my $progress = undef;
