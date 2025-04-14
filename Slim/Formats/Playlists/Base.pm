@@ -49,7 +49,6 @@ sub _updateMetaData {
 
 	if ( !scalar keys %{$attributes} ) {
 		$track = Slim::Schema->objectForUrl($entry);
-		$track->added_from_work($addedFromWork);
 	}
 
 	if ( !defined $track ) {
@@ -60,6 +59,8 @@ sub _updateMetaData {
 			'playlist'   => Slim::Music::Info::isPlaylist($entry),
 		} );
 	}
+
+	$track->added_from_work($addedFromWork) if $track;
 
 	return $track;
 }
