@@ -52,6 +52,7 @@ use Slim::Web::Pages;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
 use Slim::Web::Cometd;
+use Slim::Web::SqueezeosTimezone;
 use Slim::Utils::Prefs;
 
 use constant HALFYEAR	 => 60 * 60 * 24 * 180;
@@ -133,6 +134,9 @@ sub init {
 
 	# Initialize Cometd
 	Slim::Web::Cometd::init();
+
+	# Initialize SqueezeOS TimeZone request
+	Slim::Web::SqueezeosTimezone::init();
 }
 
 sub init2 {
