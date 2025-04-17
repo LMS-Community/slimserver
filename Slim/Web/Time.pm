@@ -35,22 +35,14 @@ sub init {
 }
 
 # Holds the Timezone string retrieved from a successful API call.
-# Although it may be '' if the string failed validation.
-my $cachedAPIresult;
+my $cachedTimeZone;
 
 sub tzAPIrequest {
 	my ($httpClient, $response) = @_;
 
-	if (defined $cachedAPIresult) {
-		# Did it pass validation ? Or do we have '' ?
-		if ($cachedAPIresult) {
-			$log->info("TimeZone query: Returning \"$cachedAPIresult\" to SqueezeOS device (from cache)");
-			_sendHTTPresponse($httpClient, $response, RC_OK, $cachedAPIresult);
-		}
-		else {
-			$log->error("TimeZone query: Cached timezone was invalid. Returning 204 response to SqueezeOS device");
-			_sendHTTPresponse($httpClient, $response, RC_NO_CONTENT, '');
-		}
+	if ($cachedTimeZone) {
+		$log->info("TimeZone query: Returning \"$cachedTimeZone\" to SqueezeOS device (from cache)");
+		_sendHTTPresponse($httpClient, $response, RC_OK, $cachedTimeZone);
 		return;
 	}
 
@@ -93,7 +85,7 @@ sub tzAPIsuccess {
 	# 204 (No content) response.
 
 	my $tz = $res->{'timezone'};
-	if (!defined $tz || ref $tz) {
+	if (!$tz || ref $tz) {
 		$log->error('Unexpected JSON response, expected a timezone string: ' . $http->content);
 		_sendHTTPresponse($httpClient, $response, RC_INTERNAL_SERVER_ERROR, '');
 		return;
@@ -139,10 +131,10 @@ sub tzAPIsuccess {
 	# All done, cache the result for re-use next time, and return result
 	# to SqueezeOS.
 	# But a 204 (No content) response if TimeZone failed validation.
-	$cachedAPIresult = $tz;
 
 	if ($tz) {
 		$log->info("TimeZone query: Returning \"$tz\" to SqueezeOS device");
+		$cachedTimeZone = $tz;
 		_sendHTTPresponse($httpClient, $response, RC_OK, $tz);
 	} else {
 		$log->error("TimeZone query: Retrieved TimeZone \"$savedTz\" did not pass validation checks");
