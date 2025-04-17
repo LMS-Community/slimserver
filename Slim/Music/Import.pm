@@ -314,7 +314,7 @@ sub setLastScanTimeIsDST {
 		'name' => 'lastRescanTimeIsDST'
 	} );
 
-	$last->value( (localtime(time()))[8] ? 1 : 0 );
+	$last->value( Slim::Utils::DateTime->isDST() );
 	$last->update;
 }
 

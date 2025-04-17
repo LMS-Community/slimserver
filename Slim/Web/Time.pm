@@ -1,5 +1,10 @@
 package Slim::Web::Time;
 
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 # Implements a simple HTTP endpoint '/time/tz' that provides a SqueezeOS based
 # player with a default, Olson formatted, TimeZone string. The player will
 # make the request whenever its own TimeZone has not been initialized. This
@@ -17,14 +22,12 @@ package Slim::Web::Time;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_NO_CONTENT RC_INTERNAL_SERVER_ERROR);
-use Slim::Web::HTTP;
-use Slim::Networking::SimpleAsyncHTTP;
 use JSON::XS::VersionOneAndTwo;
-use Slim::Utils::Log;
 
-# The server/url that provides us with date/time data, including an Olson
-# formatted TimeZone. The response is JSON formatted.
-use constant TZGUESS_URL => 'https://stats.lms-community.org/api/time';
+use Slim::Web::HTTP;
+use Slim::Web::Pages;
+use Slim::Utils::DateTime;
+use Slim::Utils::Log;
 
 my $log = logger('network.http');
 
@@ -46,16 +49,16 @@ sub tzAPIrequest {
 		return;
 	}
 
-	# API call to retrieve date/time data
-	Slim::Networking::SimpleAsyncHTTP->new(
-		\&tzAPIsuccess,
-		\&tzAPIerror,
-		{
-			timeout    => 10,
-			httpClient => $httpClient,
-			response   => $response,
+	Slim::Utils::DateTime::getTZName(sub {
+		my ($tz, $err) = @_;
+
+		if ($err) {
+			$log->error("TimeZone query: Failed to get TimeZone - $err");
+			return _sendHTTPresponse($httpClient, $response, RC_INTERNAL_SERVER_ERROR, '');
 		}
-	)->get(TZGUESS_URL);
+
+		return tzAPIsuccess($httpClient, $response, $tz);
+	});
 }
 
 
@@ -65,33 +68,14 @@ sub tzAPIrequest {
 # string fails.
 
 sub tzAPIsuccess {
+	my ($httpClient, $response, $tz) = @_;
 
-	my $http       = shift;
-	my $httpClient = $http->params('httpClient');
-	my $response   = $http->params('response');
-
-	# Server response should look like:
-	# {"datetime":"2025-04-03T11:39:10.351+01:00","timezone":"Europe/London","offset":"GMT+1","offsetHours":1,"offsetMinutes":60,"isInDST":true}
-
-	my $res = eval { from_json($http->content) };
-	if ($@ || ref $res ne 'HASH') {
-		$log->error($@ || 'Invalid JSON response: ' . $http->content);
-		_sendHTTPresponse($httpClient, $response, RC_INTERNAL_SERVER_ERROR, '');
-		return;
-	}
-
-	# '$tz' will hold the Olson formatted TimeZone to be returned.
-	# Setting '$tz' to '' signals a validation failure, and triggers a
-	# 204 (No content) response.
-
-	my $tz = $res->{'timezone'};
 	if (!$tz || ref $tz) {
-		$log->error('Unexpected JSON response, expected a timezone string: ' . $http->content);
+		$log->error('Unexpected JSON response, expected a timezone string: ' . $tz);
 		_sendHTTPresponse($httpClient, $response, RC_INTERNAL_SERVER_ERROR, '');
 		return;
 	}
 
-	$tz = "$tz"; # ensure $tz is a string scalar
 	# Trim any leading/trailing white space, should it be there.
 	$tz =~ s/\A\s+|\s+\z//g;
 
@@ -135,23 +119,13 @@ sub tzAPIsuccess {
 	if ($tz) {
 		$log->info("TimeZone query: Returning \"$tz\" to SqueezeOS device");
 		$cachedTimeZone = $tz;
-		_sendHTTPresponse($httpClient, $response, RC_OK, $tz);
+		return _sendHTTPresponse($httpClient, $response, RC_OK, $tz);
 	} else {
 		$log->error("TimeZone query: Retrieved TimeZone \"$savedTz\" did not pass validation checks");
-		_sendHTTPresponse($httpClient, $response, RC_NO_CONTENT, '');
+		return _sendHTTPresponse($httpClient, $response, RC_NO_CONTENT, '');
 	}
 }
 
-
-# Log the error and return a 500 code to SqueezeOS.
-
-sub tzAPIerror {
-	my $http       = shift;
-	my $httpClient = $http->params('httpClient');
-	my $response   = $http->params('response');
-	$log->error("TimeZone query: Failed to get TimeZone from ", join("\n", $http->url, $http->error));
-	_sendHTTPresponse($httpClient, $response, RC_INTERNAL_SERVER_ERROR, '');
-}
 
 # Helper function to dispatch the HTTP response
 
