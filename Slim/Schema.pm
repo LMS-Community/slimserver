@@ -1981,6 +1981,10 @@ sub updateOrCreateBase {
 			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
 			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
 
+				# Bug 7731, filter out duplicate keys that end up as array refs
+				# https://github.com/LMS-Community/slimserver/issues/1378
+				$val = $val->[0] if ( ref $val eq 'ARRAY' );
+
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
 				$track->set_column($key, $val);
