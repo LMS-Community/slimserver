@@ -7842,6 +7842,12 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
 
+SETUP_EXTENSIONS_TOGGLE_VIEW
+	DE	Zwischen Listen- und Gitteransicht umschalten
+	EN	Toggle between grid and list view
+	FR	Basculer entre la grille et la liste
+	NL	Schakelen tussen raster- en lijstweergave
+
 SETUP_REFRESHRATE
 	CS	Doba obnovení prohlížeče
 	DA	Opdateringsinterval for browser
