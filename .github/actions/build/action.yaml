@@ -151,13 +151,21 @@ runs:
         fi
 
         ENDPOINT_URL="https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com"
-        S3_CMD="aws --endpoint-url $ENDPOINT_URL s3"
-        if command -v s5cmd 2>&1 >/dev/null; then
-          S3_CMD="s5cmd --endpoint-url $ENDPOINT_URL"
-        fi
+        AWS_CMD="aws --endpoint-url $ENDPOINT_URL s3"
+        S5_CMD="s5cmd --endpoint-url $ENDPOINT_URL"
 
-        for f in publish/?yrion?usic?erver*;
-        do
-          $S3_CMD cp $f s3://downloads/$TARGET_FOLDER/
+        # Try s5cmd first, fall back to aws cli if it fails
+        for f in publish/?yrion?usic?erver*; do
+          if command -v s5cmd 2>&1 >/dev/null; then
+            if $S5_CMD cp $f s3://downloads/$TARGET_FOLDER/; then
+              echo "Successfully uploaded $f using s5cmd"
+            else
+              echo "s5cmd upload failed for $f, falling back to aws cli"
+              $AWS_CMD cp $f s3://downloads/$TARGET_FOLDER/
+            fi
+          else
+            echo "s5cmd not available, using aws cli"
+            $AWS_CMD cp $f s3://downloads/$TARGET_FOLDER/
+          fi
         done
         echo "::endgroup::"
