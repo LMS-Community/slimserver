@@ -42,7 +42,7 @@
 	viewToggle.on('click', function() {
 		var view = viewToggle.src.match(/grid|list/)[0];
 		var newView = view === 'grid' ? 'list' : 'grid';
-		viewToggle.src = '[% webroot %]html/images/' + newView + '.svg';
+		viewToggle.src = viewToggle.src.replace(view+'.svg', newView+'.svg');
 		setCookie('Squeezebox-viewMode', newView);
 
 		if (newView === 'list') {
