@@ -1943,7 +1943,7 @@ sub infoTotalQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs', 'duration']])) {
+	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs', 'duration', 'playlists', 'works', 'labels']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1969,6 +1969,15 @@ sub infoTotalQuery {
 	}
 	elsif ($entity eq 'songs') {
 		$request->addResult("_$entity", $totals->{track});
+	}
+	elsif ($entity eq 'playlists') {
+		$request->addResult("_$entity", $totals->{playlist});
+	}
+	elsif ($entity eq 'works') {
+		$request->addResult("_$entity", $totals->{work});
+	}
+	elsif ($entity eq 'labels') {
+		$request->addResult("_$entity", $totals->{label});
 	}
 	elsif ($entity eq 'duration') {
 		$request->addResult("_$entity", Slim::Schema->totalTime($request->client));
@@ -3790,6 +3799,9 @@ sub serverstatusQuery {
 		$request->addResult("info total artists", $totals->{contributor});
 		$request->addResult("info total genres", $totals->{genre});
 		$request->addResult("info total songs", $totals->{track});
+		$request->addResult("info total playlists", $totals->{playlist});
+		$request->addResult("info total works", $totals->{work});
+		$request->addResult("info total labels", $totals->{label});
 		$request->addResult("info total duration", Slim::Schema->totalTime());
 	}
 

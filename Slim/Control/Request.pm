@@ -501,7 +501,10 @@ sub init {
 	addDispatch(['info',           'total',          'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'artists',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
+	addDispatch(['info',           'total',          'labels',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
+	addDispatch(['info',           'total',          'playlists',  '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'songs',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
+	addDispatch(['info',           'total',          'works',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'duration',   '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['ir',             '_ircode',        '_time'],                                         [1, 0, 0, \&Slim::Control::Commands::irCommand]);
 	addDispatch(['irenable',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::irenableQuery]);
