@@ -14628,6 +14628,17 @@ BROWSE_GENRES
 	RU	Просмотр жанров
 	SV	Bläddra efter genre
 
+BROWSE_LABELS
+	CS	Procházet nahrávací společnosti
+	DA	Gennemse pladeselskaber
+	DE	Plattenlabels durchsuchen
+	EN	Browse Labels
+	ES	Explorar sellos discográficos
+	FR	Parcourir les labels d'enregistrement
+	HU	Lemezkiadók böngészése
+	NL	Bladeren door platenlabels
+	PT	Procurar etiquetas de discos
+
 BROWSE_WORKS
 	CS	Procházet díla
 	DA	Gennemsøg værker
@@ -14788,6 +14799,14 @@ BROWSE_BY_SONG_DBL
 	ES	Examinar por canción
 	FR	Morceaux
 	PL	Utwory
+
+BROWSE_BY_LABEL
+	DA	pladeselskab
+	DE	Plattenlabel
+	EN	Record Label
+	FR	Label d'enregistrement
+	HU	Lemezkiadó
+	NL	Platenmaatschappij
 
 BROWSE_BY_WORK
 	DA	Værker

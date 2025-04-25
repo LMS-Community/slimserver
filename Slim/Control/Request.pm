@@ -509,6 +509,7 @@ sub init {
 	addDispatch(['libraries'],                                                                         [0, 1, 0, \&Slim::Control::Queries::librariesQuery]);
 	addDispatch(['libraries',      'getid'],                                                           [1, 1, 0, \&Slim::Control::Queries::librariesQuery]);
 	addDispatch(['linesperscreen', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
+	addDispatch(['labels',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::labelsQuery]);
 	addDispatch(['logging'],                                                                           [0, 0, 1, \&Slim::Control::Commands::loggingCommand]);
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);

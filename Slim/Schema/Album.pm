@@ -36,6 +36,7 @@ my $log = logger('database.info');
 		musicbrainz_id
 		release_type
 		extid
+		label
 	), title => { accessor => undef() });
 
 	$class->set_primary_key('id');

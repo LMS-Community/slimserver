@@ -296,6 +296,7 @@ sub albumsQuery {
 	my $work	         = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
+	my $label         = $request->getParam('record_label');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
@@ -512,6 +513,11 @@ sub albumsQuery {
 		if (defined $year) {
 			push @{$w}, 'albums.year = ?';
 			push @{$p}, $year;
+		}
+
+		if (defined $label) {
+			push @{$w}, 'albums.label = ?';
+			push @{$p}, $label;
 		}
 
 		if (defined $fromSearch && !defined $search) {
@@ -1985,6 +1991,147 @@ sub irenableQuery {
 	my $client = $request->client();
 
 	$request->addResult('_irenable', $client->irenable());
+
+	$request->setStatusDone();
+}
+
+sub labelsQuery {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['labels']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+
+	# get our parameters
+	my $client        = $request->client();
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $year          = $request->getParam('year');
+	my $contributorID = $request->getParam('artist_id');
+	my $workID        = $request->getParam('work_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
+	my $tags          = $request->getParam('tags') || '';
+
+	my $sql  = 'SELECT distinct label FROM albums ';
+	my $w    = [];
+	my $p    = [];
+	push @{$w}, 'albums.label IS NOT NULL';
+
+	if (defined $contributorID) {
+
+	$sql .= 'JOIN contributor_album ON albums.id = contributor_album.contributor ';
+		# handle the case where we're asked for the VA id => return compilations
+		if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+			push @{$w}, 'albums.compilation = ?';
+			push @{$p}, 1;
+		}
+		else {
+			push @{$w}, 'contributor_album.contributor = ?';
+			push @{$p}, $contributorID;
+		}
+	}
+
+	if ( $libraryID ) {
+		$sql .= 'JOIN library_album ON library_album.album = albums.id ';
+		push @{$w}, 'library_album.library = ?';
+		push @{$p}, $libraryID;
+	}
+
+	if (defined $year) {
+		push @{$w}, 'albums.year = ?';
+		push @{$p}, $year;
+	}
+	if (defined $workID) {
+		$sql .= "JOIN tracks on tracks.album = albums.id ";
+		if ( $workID eq "-1" ) {
+			push @{$w}, 'tracks.work IS NOT NULL';
+		} else {
+			push @{$w}, 'tracks.work = ?';
+			push @{$p}, $workID;
+		}
+	}
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
+	}
+
+	my $dbh = Slim::Schema->dbh;
+
+	my $stillScanning = Slim::Music::Import->stillScanning();
+
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
+	}
+
+	# now build the result
+
+	if ($stillScanning) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid && $tags ne 'CC') {
+
+		$sql .= 'ORDER BY 1 ';
+
+		my $loopname = 'labels_loop';
+		my $chunkCount = 0;
+
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Labels query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+
+		my ($label);
+		$sth->bind_columns( \$label );
+
+		while ( $sth->fetch ) {
+
+			$request->addResultLoop($loopname, $chunkCount, 'record_label', $label);
+
+			$chunkCount++;
+
+			main::idleStreams() if !($chunkCount % 5);
+		}
+	}
+
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
