@@ -3,6 +3,7 @@ ALTER TABLE tracks ADD subtitle blob;
 ALTER TABLE tracks ADD grouping blob;
 ALTER TABLE albums ADD subtitle blob;
 ALTER TABLE albums ADD label blob;
+CREATE INDEX albumsLabelIndex ON albums (label);
 CREATE INDEX tracksWorkIndex ON tracks (work);
 
 DROP TABLE IF EXISTS works;
