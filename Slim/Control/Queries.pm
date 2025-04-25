@@ -195,7 +195,7 @@ sub alarmsQuery {
 	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $filter	 = $request->getParam('filter');
+	my $filter   = $request->getParam('filter');
 	my $alarmDOW = $request->getParam('dow');
 
 	# being nice: we'll still be accepting 'defined' though this doesn't make sense any longer
@@ -293,7 +293,7 @@ sub albumsQuery {
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 	# a work_id of -1 would mean "all works"
-	my $work	         = $request->getParam('work_id');
+	my $work          = $request->getParam('work_id');
 	my $composerID    = $request->getParam('composer_id');
 	my $fromSearch    = $request->getParam('from_search');
 	my $label         = $request->getParam('record_label');
@@ -2028,7 +2028,7 @@ sub labelsQuery {
 
 	if (defined $contributorID) {
 
-	$sql .= 'JOIN contributor_album ON albums.id = contributor_album.contributor ';
+		$sql .= 'JOIN contributor_album ON albums.id = contributor_album.contributor ';
 		# handle the case where we're asked for the VA id => return compilations
 		if ($contributorID == Slim::Schema->variousArtistsObject->id) {
 			push @{$w}, 'albums.compilation = ?';
@@ -2101,7 +2101,7 @@ sub labelsQuery {
 
 	if ($valid && $tags ne 'CC') {
 
-		$sql .= 'ORDER BY 1 ';
+		$sql .= 'ORDER BY albums.label ';
 
 		my $loopname = 'labels_loop';
 		my $chunkCount = 0;

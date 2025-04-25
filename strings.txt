@@ -14801,7 +14801,7 @@ BROWSE_BY_SONG_DBL
 	PL	Utwory
 
 BROWSE_BY_LABEL
-	DA	pladeselskab
+	DA	Pladeselskab
 	DE	Plattenlabel
 	EN	Record Label
 	FR	Label d'enregistrement

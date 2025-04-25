@@ -2816,7 +2816,7 @@ sub _preCheckAttributes {
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'DISC'} = $attributes->{'DISC'} if $attributes->{'DISC'};
 
-	$deferredAttributes->{'LABEL'} = $attributes->{'LABEL'}||undef;
+	$deferredAttributes->{'LABEL'} = $attributes->{'LABEL'} || undef;
 
 	# thumb has gone away, since we have GD resizing.
 	delete $attributes->{'THUMB'};
