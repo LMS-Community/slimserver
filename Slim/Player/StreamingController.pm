@@ -277,7 +277,7 @@ sub _eventAction {
 		if ($params) {
 			my $s = "params:";
 			foreach my $p (keys %$params) {
-				$s .= " $p => " . (defined $params->{$p} ? $params->{$p} : 'undef');
+				$s .= " $p => " . (defined $params->{$p} ? dumpFiltered($params->{$p}) : 'undef');
 			}
 			$log->debug($s);
 		}
@@ -2226,6 +2226,7 @@ sub playerStopped {
 		my $song = playingSong($self);
 		if ($song && $song->status() == Slim::Player::Song::STATUS_PLAYING) {
 			$song->setStatus(Slim::Player::Song::STATUS_FINISHED);
+			$self->resetSongqueue(0);
 		}
 	}
 
