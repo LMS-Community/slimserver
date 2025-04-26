@@ -102,14 +102,15 @@ sub clientEvent {
 	# Player jumped to new song, check if NextURI needs to be moved to CurrentURI
 	# for gapless playback support.
 	if ( $cmd eq 'newsong' ) {
-
 		my $pd = $client->pluginData();
 		my $currentURI = $pd->{AVT}->{CurrentTrackURI};
 
 		# only run if a controller has sent a track ie) currentURI is set.
 		if ( $currentURI ne '' ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("playlist $cmd event, currentURI: $currentURI");
+
 			my $playlist = Slim::Player::Playlist::playList($client);
-			if( scalar @{$playlist} > 1 ){
+			if ( scalar @{$playlist} > 1 ) {
 				if ( my $song = ($client->playingSong() || $client->streamingSong()) ) {
 
 					my $nextURI = $pd->{AVT}->{NextAVTransportURI};
@@ -117,12 +118,13 @@ sub clientEvent {
 					my $track = $song->currentTrack;
 
 					# Convert URI to protocol handler
-					$currentURI =~ s/^http/upnp/; 
+					$currentURI =~ s/^http/upnp/;
 					$nextURI =~ s/^http/upnp/;
 
 					# Only continue if the track has transitioned to nextURI
 					# this also provides a check if the track not a upnp track
 					if ( $track->url eq $nextURI ) {
+						main::DEBUGLOG && $log->is_debug && $log->debug("playlist $cmd event, queueing next track");
 
 						# player has moved on to next track, copy NextURI to CurrentURI
 						$pd->{avt_AVTransportURIMetaData_hash} = $pd->{avt_NextAVTransportURIMetaData_hash};
@@ -140,8 +142,14 @@ sub clientEvent {
 							AVTransportURIMetaData		=> $currentURIMetadata,
 						} );
 					}
+					elsif (main::DEBUGLOG && $log->is_debug) {
+						$log->debug("playlist $cmd event, not upnp track");
+					}
 				}
 			}
+		}
+		elsif ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug("playlist $cmd event, currentURI is empty, not upnp track");
 		}
 	}
 
@@ -412,20 +420,20 @@ sub SetNextAVTransportURI {
 			# Convert URI to protocol handler
 			$upnp_uri =~ s/^http/upnp/;
 			Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
-			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );		
+			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );
 
 			$pd->{avt_NextAVTransportURIMetaData_hash} = $meta;
 
 			# use insert to make sure it is queued next.
-			$client->execute( [ 'playlist', 'insert', $upnp_uri, $meta->{title} ] );	
+			$client->execute( [ 'playlist', 'insert', $upnp_uri, $meta->{title} ] );
 			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $upnp_uri . ":" . $meta->{title});
 		}
 	}
 
 	# Change state variables
 	$class->changeState( $client, {
-		NextAVTransportURI			=> $args->{NextURI},
-		NextAVTransportURIMetaData	=> $args->{NextURIMetaData},
+		NextAVTransportURI         => $args->{NextURI},
+		NextAVTransportURIMetaData => $args->{NextURIMetaData},
 	} );
 
 	return;
