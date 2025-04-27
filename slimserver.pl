@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -539,7 +539,7 @@ sub init {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,
-			time() + 30,
+			time() + (logger('server.update')->is_info ? 2 : 30),
 			\&Slim::Utils::Update::checkVersion,
 		);
 	}
@@ -707,7 +707,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --checkstrings   => Enable reloading of changed string files for plugin development
     --charset        => Force a character set to be used, eg. utf8 on Linux devices
                         which don't have full utf8 locale installed
-    --dbtype         => Force database type (valid values are MySQL or SQLite)
     --logging        => Enable logging for the specified comma separated categories
     --localfile      => Enable LocalFile protocol handling for locally connected squeezelite service
 

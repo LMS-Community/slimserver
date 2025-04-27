@@ -1,7 +1,7 @@
 package Slim::Utils::Scanner::Local;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -208,7 +208,7 @@ sub rescan {
 
 		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
 		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
-			my $isDST = (localtime(time()))[8] ? 1 : 0;
+			my $isDST = Slim::Utils::DateTime->isDST();
 
 			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
 				my $offset = $isDST ? 3600 : -3600;

@@ -8,13 +8,14 @@
 [![Issues][issues-shield]][issues-url]
 [![Pull requests][pulls-shield]][pulls-url]
 [![Docker pulls][docker-pulls-shield]][docker-pulls-url]
+[![ghcr pulls][ghcr-pulls-shield]][ghcr-pulls-url]
 
 <br />
 <div align="center">
   <a href="https://github.com/LMS-Community/slimserver">
     <img src="https://raw.githubusercontent.com/LMS-Community/slimserver-platforms/public/9.0/win32/res/SqueezeCenter.ico" alt="Logo" width="128" height="128">
   </a>
-  
+
   <h3 align="center">Lyrion Music Server</h3>
 
   <p align="center">
@@ -27,7 +28,7 @@
     ·
     <a href="https://github.com/LMS-Community/slimserver/issues/new?labels=enhancement">Request Feature</a>
   </p>
-  
+
 </div>
 
 ## About The Project
@@ -77,8 +78,10 @@ Don't forget to give the project a star! Thanks again!
 [issues-url]: https://github.com/LMS-Community/slimserver/issues
 [pulls-shield]: https://img.shields.io/github/issues-pr/LMS-Community/slimserver.svg?style=flat
 [pulls-url]: https://github.com/LMS-Community/slimserver/pulls
+[ghcr-pulls-shield]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fstats.lms-community.org%2Fapi%2Fpackages%2Fpulls&query=%24.pulls&label=ghcr.io%20pulls&style=flat
+[ghcr-pulls-url]: https://github.com/LMS-Community/slimserver/pkgs/container/lyrionmusicserver
 [docker-pulls-shield]: https://img.shields.io/docker/pulls/lmscommunity/lyrionmusicserver?style=flat
 [docker-pulls-url]: https://hub.docker.com/r/lmscommunity/lyrionmusicserver
 [lyrion-screenshot]: https://lyrion.org/assets/screenshot.png
-[Perl]: https://img.shields.io/badge/Written_in-perl-orange?logo=perl
+[Perl]: https://img.shields.io/badge/Written_in-perl-orange?style=flat
 [Perl-url]: https://perl.org/

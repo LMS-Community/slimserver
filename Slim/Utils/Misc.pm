@@ -31,7 +31,7 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(assert msg msgf errorMsg specified);
+our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered);
 
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
@@ -794,6 +794,10 @@ $_ignoredItems{'..'} = 1;
 # some items which are exposed on shares on popular platforms
 $_ignoredItems{'#recycle'} = 1;
 $_ignoredItems{'#snapshot'} = 1;
+$_ignoredItems{'.AppleDouble'} = 1;
+$_ignoredItems{'.AppleDB'} = 1;
+$_ignoredItems{'.AppleDesktop'} = 1;
+$_ignoredItems{'.DS_Store'} = 1;
 
 # Don't include old Shoutcast recently played items.
 $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
@@ -1331,6 +1335,49 @@ sub errorMsg {
 	# Force an error message & write to the log.
 	msg("ERROR: $msg\n", 1);
 }
+
+
+=head2 dumpFiltered( $object )
+
+	Uses Data::Dump to dump the object, but filters out some of the
+	less useful or noisy information.
+
+=cut
+
+sub dumpFiltered {
+	my ($object) = @_;
+
+	# Data::Dump is only loaded if in INFO or DEBUG mode
+	if (main::INFOLOG && ref $object) {
+		return Data::Dump::dumpf($object, sub {
+			my ($ctx, $obj) = @_;
+
+			return { object => _dumpClient($obj) } if $ctx->object_isa('Slim::Player::Client');
+			return { object => _dumpTrack($obj) } if $ctx->object_isa('Slim::Schema::Track') || $ctx->object_isa('Slim::Schema::RemoteTrack');
+
+			return { object => [
+				[ $obj->handler, _dumpTrack($obj->track) ],
+				$ctx->class,
+			] } if $ctx->object_isa('Slim::Player::Song');
+
+			# warn 'class: ' . $ctx->class;
+			# warn 'reftype: ' . $ctx->reftype;
+			# warn 'container_class: ' . $ctx->container_class;
+			# warn 'container_self: ' . $ctx->container_self;
+			# warn 'depth: ' . $ctx->depth;
+			# warn 'expr: ' . $ctx->expr;
+
+			# default behaviour
+			return;
+		})
+	}
+
+	return $object;
+}
+
+sub _dumpClient { $_[0] && [ $_[0]->name, $_[0]->id, ref $_[0] ] }
+sub _dumpTrack { $_[0] && [ $_[0]->title, $_[0]->url, ref $_[0] ] }
+
 
 =head2 delimitThousands( $len)
 

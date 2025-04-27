@@ -547,7 +547,9 @@ sub addTrack {
 	if ( $cmd eq 'delete' ) {
 
 		# Do not add this item if only one item in playlist
-		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
+		# BUG: 17980 (2012-06-14) - Allow item removal even if playlist has only 1 item
+		# Just comment out for now in case impact on UI should turn out to be sub-optimal
+		#return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
 		$actions = {
 			go => {

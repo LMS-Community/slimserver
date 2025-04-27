@@ -46,6 +46,7 @@
 [%- END -%]
 [%- customButtonBar = BLOCK -%]
 	<div id="pluginButtonBar">
+		<img src="[% webroot %]html/images/[% cookies.${"Squeezebox-viewMode"}.value == "list" ? "list" : "grid" %].svg" title="[% "SETUP_EXTENSIONS_TOGGLE_VIEW" | string %]" id="viewToggle" />
 		<span id="filterChooser">
 			<select>
 				[% FOREACH category = categories %]
@@ -109,12 +110,65 @@
 	.pluginList .pluginFooter img, .pluginList .pluginItem label img {
 		position: relative;
 		vertical-align: middle;
-		width: 15px;
+		width: 15px !important;
 		margin: 0 0 1px 0;
+	}
+
+	#viewToggle {
+		width: 10px;
+		height: 10px;
+		border: 1px solid black;
+		border-radius: 3px;
+		padding: 2px;
+		cursor: pointer;
+		vertical-align: top;
+	}
+
+	#pluginListPanel.pluginListList div.pluginList {
+		grid-template-columns: none;
+		gap: 0;
+	}
+
+	#pluginListPanel.pluginListList .pluginList ul.thumbWrap li.thumbWrap {
+		width: 100%;
+		max-width: 100%;
+		border-radius: 3px;
+		border: none;
+	}
+
+	#pluginListPanel.pluginListList div.thumbWrap {
+		width: 100%;
+		padding: 0;
+	}
+
+	#pluginListPanel.pluginListList div.pluginList .pluginItem {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 20% 55% 25%;
+	}
+
+	#pluginListPanel.pluginListList .pluginList .pluginItem img {
+		width: [% iconSize / 2 %]px;
+	}
+
+	#pluginListPanel.pluginListList .pluginList .pluginItem label.headerLabel {
+		padding-left: 30px;
+	}
+
+	#pluginListPanel.pluginListList .pluginDesc {
+		padding-left: 5px;
+	}
+
+	#pluginListPanel.pluginListList .pluginFooter {
+		padding-left: 15px;
+	}
+
+	#pluginListPanel.pluginListList div.pluginList .pluginItem div {
+		width: 100%;
 	}
 </style>
 [% PROCESS settings/header.html %]
-	<div class="settingsSmallIndention">
+	<div id="pluginListPanel" class="settingsSmallIndention [% cookies.${"Squeezebox-viewMode"}.value == "list" ? "pluginListList" : "" %]">
 	[% IF updates.size > 0 %]
 
 		[% WRAPPER settingSection %]

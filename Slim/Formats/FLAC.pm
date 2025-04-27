@@ -57,6 +57,7 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
 	'DESCRIPTION'               => 'COMMENT',
 	'ORIGINALYEAR'              => 'YEAR',
+	'ORIGINALDATE'              => 'DATE',
 	'UNSYNCEDLYRICS'            => "LYRICS",
 
 	# J.River once again.. can't these people use existing standards?
@@ -252,7 +253,7 @@ sub doTagMapping {
 			$tags->{DATE} = $years[0];
 		}
 
-		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
+		$tags->{YEAR} = $class->sanitizeYearTag($tags->{DATE});
 	}
 
 	# Sometimes the BPM is not an integer so we try to convert.

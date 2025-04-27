@@ -163,7 +163,7 @@ sub dirsFor {
 
 		push @dirs, $Bin;
 
-	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
+	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
 
 		push @dirs, "$ENV{'HOME'}/Library/Application Support/Squeezebox/$dir";
 		push @dirs, catdir($Bin, $dir);
@@ -213,7 +213,7 @@ sub dirsFor {
 		push @dirs, "$Bin/../..";
 
 	# we don't want these values to return a value
-	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
+	} elsif ($dir =~ /^(?:libpath)$/) {
 
 	} else {
 

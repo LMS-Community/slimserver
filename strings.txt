@@ -6981,11 +6981,11 @@ SETUP_ARTFOLDER
 SETUP_ARTFOLDER_DESC
 	CS	Můžete si zvolit ukládání všech vašich obalů alb do jedné složky s pomocí volby proměnných názvů souborů výše. Zde zadejte umístění souborů obalů alb. Bez ohledu na toto umístění bude Lyrion Music Server stále hledat obaly alb na stejné cestě jako každý zvukový soubor, pokud nebude ve složce obalů alb nalezen žádný odpovídající obal alba.
 	DA	Du kan vælge at gemme alle albumcovere i en enkelt mappe og bruge indstillingen til variable filnavne ovenfor. Her skal du angive hvor filerne med albumcoverne er placeret. Uanset hvor mappen er placeret, vil Lyrion Music Server stadig se efter coverbilleder i samme mappe som de enkelte lydfiler hvis der ikke blev fundet et cover i mappen med albumcovere.
-	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
-	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
+	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen und Künstlerportraits in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht Lyrion Music Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
+	EN	You may choose to store all your artwork (album covers, contributor portraits) in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, Lyrion Music Server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todas las carátulas en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de carátula. Independientemente de esta ubicación, Lyrion Music Server seguirá buscando carátulas en la misma ruta que cada archivo de audio si no se encuentran carátulas coincidentes en la carpeta de carátulas.
 	FI	Halutessasi voit tallentaa kaikki kansikuvat yhteen kansioon käyttäen tiedostonimien muuttujien asetusta yllä.  Kirjoita kansikuvatiedostojen sijainti tähän. Tästä huolimatta Lyrion Music Server etsii yhä kansikuvia samasta polusta kuin äänitiedostoja, jos se ei löydä vastaavia kansikuvia kansikuvakansiosta.
-	FR	Vous pouvez saisir un nom de dossier où stocker toutes les pochettes. Si aucune pochette correspondante n'est trouvée dans le dossier spécifié, le Lyrion Music Server recherchera la pochette à l'emplacement du fichier audio.
+	FR	Vous pouvez choisir de stocker toutes vos pochettes d'albums et portraits de contributeurs/artistes dans un seul dossier, en utilisant l'option de noms de fichiers ci-dessus et en indiquant un emplacement ici. Si aucune illustration n'est trouvée dans ce dossier, Lyrion Music Server cherchera à l'emplacement du fichier audio.
 	HE	באפשרותך לבחור לאחסן את כל העטיפות בתיקייה יחידה, באמצעות האפשרות לשינוי שמות קבצים שלעיל. הזן כאן את המיקום של קובצי העטיפות. ללא תלות במיקום זה, השרת עדיין יחפש עטיפות בנתיב של כל קובץ שמע אם לא נמצאו עטיפות מתאימות בתיקיית העטיפות.
 	HU	Dönthet úgy, hogy az összes grafikát egyetlen mappában tárolja a fenti változó fájlnevek beállításával.  Adja meg itt a grafikai fájlok helyét. Ettől a helytől függetlenül a Lyrion Music Server továbbra is ugyanazon az útvonalon keresi a grafikákat, mint az egyes hangfájlok, ha nem található megfelelő grafikát az Artwork mappában.
 	IT	Si può scegliere di archiviare tutte le copertine in una sola cartella, usando l'opzione per i nomi di file variabili indicata sopra. Inserire qui la posizione dei file delle copertine. Se nella cartella delle copertine non viene trovata alcuna copertina corrispondente, ne viene eseguita una ricerca nello stesso percorso dei file audio .
@@ -6996,6 +6996,21 @@ SETUP_ARTFOLDER_DESC
 	RU	Можно хранить все обложки в единой папке, пользуясь вышеописанной функцией изменяемых имен файлов. Введите в это поле расположение файлов обложек. Независимо от данного расположения Lyrion Music Server будет по-прежнему выполнять поиск обложек в папке каждого аудиофайла, если в папке обложек не обнаружится необходимых обложек.
 	SV	Du kan välja att spara alla albumomslag i en och samma mapp med hjälp av alternativet för variabla filnamn ovan. Ange sökvägen till omslagsfilerna här. Oavsett sökvägen du anger här kommer Lyrion Music Server att söka efter omslagsbilder i samma mapp som var och en av ljudfilerna om inget omslag hittas i mappen för omslagsfiler.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
+
+SETUP_NO_PORTRAITS
+	DE	Künstlerbilder
+	EN	Artist Portraits
+	FR	Photos d'artistes
+
+SETUP_NO_PORTRAITS_ON
+	DE	Beim Blättern durch Künstler keine Bilder zeigen
+	EN	Don't show pictures when browsing artists
+	FR	Ne pas afficher de photos lors du parcours des artistes
+
+SETUP_NO_PORTRAITS_OFF
+	DE	Beim Blättern durch Künstler Bilder anzeigen
+	EN	Show pictures when browsing artists
+	FR	Afficher les photos lors du parcours des artistes
 
 SETUP_BAD_FILE
 	CS	Ouha – "%s" asi nebude platný soubor. Zkuste to znovu.
@@ -7826,6 +7841,12 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Lyrion Music Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Lyrion Music Server de fonctionner. À utiliser à vos risques et périls.
 	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
+
+SETUP_EXTENSIONS_TOGGLE_VIEW
+	DE	Zwischen Listen- und Gitteransicht umschalten
+	EN	Toggle between grid and list view
+	FR	Basculer entre la grille et la liste
+	NL	Schakelen tussen raster- en lijstweergave
 
 SETUP_REFRESHRATE
 	CS	Doba obnovení prohlížeče
@@ -9493,8 +9514,8 @@ SETUP_ENHANCEDHTTP
 SETUP_ENHANCEDHTTP_DESC
 	CS	Pokud dojde k selhání připojení HTTP(S) k serveru, Lyrion Music Server ukončí přehrávání. Může se také pokusit o jeho opětovné otevření (Trvalý režim) nebo může ukládat datové proudy (Režim mezipaměti) definované délky (podcasty, jednotlivé skladby) do vyrovnávací paměti v souborech na disku. Ty budou po přehrání datového proudu odstraněny. To může zlepšit spolehlivost u některých serverů, které očekávají stahování skladeb, nikoliv přehrávání datového proudu, a proto uzavírají dlouhá spojení. Zároveň to ale způsobuje větší množství zápisu do souborového systému, což může potenciálně opotřebovat např. karty SD. Pokud máte dostatek místa pro ukládání souborů do vyrovnávací paměti, pak je režim "Mezipaměti" správnou cestou
 	DA	Når en HTTP(S) forbindelse til en server fejler, vil Lyrion Music Server afslutte afspilningen. LMS kan forsøge at genåbne (Persistent mode) eller buffere (Cache mode) streams af forudefineret længde (podcasts, enkelte numre) til en disk fil. Disse bliver fjernet når afspilningen er afsluttet. Dette kan forbedre pålideligheden med nogle servere som forventer numrene downloades i stedet for at blive streamet og som derfor lukker langvarige forbindelser. Det kan medføre mere skrivning til filsystemet, hvilket potentielt kan forårsage slidtage på f.eks. SD kort. Hvis du har plads nok til at cache filerne, er det den bedste løsning
-	DE	Lyrion Music Server kann HTTP(S) Datenströme mit definierter Länge (Podcasts, einzelne Lieder) im Dateisystem zwischenspeichern. Sie würden wieder gelöscht, sobald der Strom zu Ende gespielt ist. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
-	EN	When a HTTP(S) connection to a server fails, Lyrion Music Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go
+	DE	Wenn eine HTTP(S)-Verbindung zu einem Server fehlschlägt, beendet Lyrion Music Server die Wiedergabe (Normaler Modus). Er kann auch versuchen, die Verbindung wieder zu öffnen (Persistenter Modus), oder er kann Streams von bestimmter Länge (Podcasts, einzelne Tracks) auf der Festplatte zwischenspeichern (Cache Modus). Diese Dateien werden entfernt, sobald der Stream abgespielt wurde. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
+	EN	When a HTTP(S) connection to a server fails, Lyrion Music Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go.
 	FR	Lorsqu'une connexion HTTP(S) échoue, Lyrion Music Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou mettre en tampon (Cacher) sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD). Le mode "Cacher" est le meilleur si vous avez de la place disque.
 	HU	Ha a HTTP(S) kapcsolat meghiúsul egy szerverrel, a Lyrion Music Server leállítja a lejátszást. Megpróbálhatja újra megnyitni (Persistent mód), vagy pufferelhet meghatározott hosszúságú adatfolyamokat (Cache mód) (podcastok, egyetlen sáv) a lemezfájlokon. Ezeket a stream lejátszása után eltávolítjuk. Ez javíthatja a megbízhatóságot egyes kiszolgálók esetében, amelyek a műsorszámok letöltését várják, nem pedig streamelve, és így lezárják a hosszú kapcsolatokat. De ez több írást is okoz a fájlrendszerben, ami esetleg elhasználódhat pl. SD kártyák. Ha van elég hely a fájlok puffereléséhez, akkor a „Cache” mód a megfelelő megoldás
 	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Lyrion Music Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd.
@@ -9511,7 +9532,7 @@ SETUP_ENABLE_PERSISTENTHTTP
 SETUP_ENABLE_BUFFEREDHTTP
 	CS	Ukládat datové proudy HTTP(S) do mezipaměti na disk
 	DA	Cache HTTP(S) streams til disk
-	DE	HTTP(S) Datenströme zwischenspeichern
+	DE	HTTP(S) Datenströme zwischenspeichern (Cache Modus)
 	EN	Cache HTTP(S) streams on disk
 	FR	Cacher les flux HTTP(S) sur disque
 	HU	Gyorsítótárazza a HTTP(S) adatfolyamokat a lemezen
@@ -23316,6 +23337,11 @@ MERGEVA_PROGRESS
 	PL	Połącz różnych wykonawców
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
+
+CONTRIBUTOR_PICTURE_PROGRESS
+	DE	Nach Künstlerbildern suchen
+	EN	Looking for contributor pictures
+	FR	Recherche des photos d'artistes/contributeurs
 
 UPDATESTANDALONEARTWORK_PROGRESS
 	CS	Vyhledávání aktualizovaných souborů obalů alb

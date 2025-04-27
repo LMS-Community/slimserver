@@ -1,14 +1,18 @@
 [% descHeight = 650 %]
 [% iconSize = 50 %]
+[% pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+[% END %]
 [% PROCESS settings/server/plugins_main.html %]
 <script>
 	var searchData = [% searchData %];
 
-	var selector = $('filterChooser').down();
-	var input = $('filterInput');
+	var filterChooser = $('filterChooser').down();
+	var filterInput = $('filterInput');
+	var viewToggle = $('viewToggle');
 
-	selector.observe('change', function(event) {
-		input.value = '';
+	filterChooser.observe('change', function(event) {
+		filterInput.value = '';
 
 		var mostPopular = new Set(Object.keys(searchData).sort(function(a, b) {
 			return (searchData[b].installs || -1) - (searchData[a].installs || -1)
@@ -25,8 +29,8 @@
 		);
 	});
 
-	input.observe('keyup', function(event) {
-		selector.value = '';
+	filterInput.observe('keyup', function(event) {
+		filterChooser.value = '';
 
 		var value = event.target.value;
 		var reg = new RegExp(value, 'i');
@@ -35,16 +39,30 @@
 		});
 	});
 
+	viewToggle.on('click', function() {
+		var view = viewToggle.src.match(/grid|list/)[0];
+		var newView = view === 'grid' ? 'list' : 'grid';
+		viewToggle.src = viewToggle.src.replace(view+'.svg', newView+'.svg');
+		setCookie('Squeezebox-viewMode', newView);
+
+		if (newView === 'list') {
+			$('pluginListPanel').addClassName('pluginListList');
+		}
+		else {
+			$('pluginListPanel').removeClassName('pluginListList');
+		}
+	});
+
 	function togglePluginVisibility(value, validator) {
-		var pluginItems = $$('li.thumbwrap');
+		var pluginListPanel = $$('li.thumbwrap');
 
 		if (!value) {
-			pluginItems.forEach(function(item) {
+			pluginListPanel.forEach(function(item) {
 				item.show();
 			});
 		}
 		else {
-			pluginItems.forEach(function(item) {
+			pluginListPanel.forEach(function(item) {
 				var id = item.id.replace('plugin-', '');
 
 				let s = searchData[id];

@@ -399,6 +399,7 @@ sub parse {
 
 	# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
 	_mergeCommand('DATE', 'YEAR', $cuesheet, $cuesheet);
+	$cuesheet->{YEAR} = Slim::Formats->sanitizeYearTag($cuesheet->{YEAR}) if defined $cuesheet->{YEAR};
 
 	for my $key (sort {$a <=> $b} keys %$tracks) {
 
@@ -425,6 +426,7 @@ sub parse {
 
 		# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
 		_mergeCommand('DATE', 'YEAR', $track, $track);
+		$track->{YEAR} = Slim::Formats->sanitizeYearTag($track->{YEAR}) if defined $track->{YEAR};
 
 		_mergeCommand('DISCNUMBER', 'DISC', $track, $track);
 	}

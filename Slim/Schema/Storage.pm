@@ -53,36 +53,7 @@ sub dbh {
 sub throw_exception {
 	my ($self, $msg) = @_;
 
-	# Try and bring up the database if we can't connect.
-	if ($msg =~ /Connection failed/ && $sqlHelperClass =~ /MySQL/i) {
-
-		my $lockFile = File::Spec->catdir(preferences('server')->get('librarycachedir'), 'mysql.startup');
-
-		if (!-f $lockFile) {
-
-			write_file($lockFile, 'starting');
-
-			logWarning("Unable to connect to the database - trying to bring it up!");
-
-			$@ = '';
-
-			if ( $sqlHelperClass && $sqlHelperClass->init( $self->_dbh ) ) {
-
-				eval { $self->ensure_connected };
-
-				if ($@) {
-					logError("Unable to connect to the database - even tried restarting it twice!");
-					logError("Check the event log for errors on Windows. Fatal. Exiting.");
-					exit;
-				}
-			}
-
-			unlink($lockFile);
-
-			return;
-		}
-
-	} elsif ($msg =~ /SQLite.*(?:database disk image is malformed|is not a database)/i) {
+	if ($msg =~ /SQLite.*(?:database disk image is malformed|is not a database)/i) {
 
 		$msg =~ m{/((?:library|persist)\.db)}i;
 

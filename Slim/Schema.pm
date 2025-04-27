@@ -2,7 +2,7 @@ package Slim::Schema;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -143,7 +143,6 @@ sub init {
 	}
 
 	# Bug: 4076
-	# If a user was using MySQL with 6.3.x (unsupported), their
 	# metainformation table won't be dropped with the schema_1_up.sql
 	# file, since the metainformation table doesn't get dropped to
 	# maintain state. We need to wipe the DB and start over.
@@ -1303,7 +1302,7 @@ sub _createOrUpdateAlbum {
 		}
 	}
 
-	# Check that these are the correct types. Otherwise MySQL will not accept the values.
+	# Check that these are the correct types.
 	if ( defined $disc && $disc =~ /^\d+$/ ) {
 		$albumHash->{disc} = $disc;
 	}
@@ -1981,6 +1980,10 @@ sub updateOrCreateBase {
 
 			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
 			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
+
+				# Bug 7731, filter out duplicate keys that end up as array refs
+				# https://github.com/LMS-Community/slimserver/issues/1378
+				$val = $val->[0] if ( ref $val eq 'ARRAY' );
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 

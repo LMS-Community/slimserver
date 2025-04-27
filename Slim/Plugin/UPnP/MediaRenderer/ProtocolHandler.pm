@@ -11,7 +11,14 @@ my $log = logger('plugin.upnp');
 
 sub isRemote { 1 }
 
-sub getFormatForURL { 'mp3' } # XXX
+sub getFormatForURL {
+	my $class = shift;
+	my $url = shift;
+
+	# if typeFromSuffix can't find a result it returns the mp3 default.
+	my $type = Slim::Music::Info::typeFromSuffix($url, 'mp3');
+	return $type;
+}
 
 # XXX use DLNA.ORG_OP value, and/or MIME type
 sub canSeek { 1 } # We'll assume Range requests are supported by all servers,
@@ -27,7 +34,7 @@ sub new {
 	my $client    = $args->{client};
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
-	
+
 	main::DEBUGLOG && $log->is_debug && $log->debug( 'Remote streaming UPnP track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
@@ -36,7 +43,7 @@ sub new {
 		client  => $client,
 		bitrate => 128_000, # XXX
 	} ) || return;
-	
+
 	${*$sock}{contentType} = 'audio/mpeg'; # XXX
 
 	return $sock;
@@ -58,7 +65,7 @@ sub audioScrobblerSource { 'P' }
 
 sub isRepeatingStream {
 	my (undef, $song) = @_;
-	
+
 	return 0; # XXX playlists, REPEAT_ONE, REPEAT_ALL, SHUFFLE
 }
 
@@ -66,11 +73,35 @@ sub isRepeatingStream {
 
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
-	
-	my $pd   = $client->pluginData();
+
+	# This returns metadata for any tracks added to the playlist via the plugin.
+
+	# convert protocal handler
+	$url =~ s/^upnp/http/;
+
+	my $pd = $client->pluginData();
 	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
-	my $res  = $meta->{res};
-	
+	my $res = $meta->{res};
+	my $currentUri = $res->{uri};
+
+	# if $url doesn't match CurrentURI check against NextUri
+	if ( $url && $currentUri && $url ne $currentUri ) {
+		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
+
+		# check for cleared NextUri
+		if ( ref($nextMeta) eq 'HASH' ) {
+
+			my $nextRes = $nextMeta->{res};
+			$currentUri = $nextRes->{uri};
+
+			if ( $currentUri && $url eq $currentUri ) {
+				$meta = $nextMeta;
+				$res = $nextRes;
+			}
+		}
+	}
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
 	return {
 		artist   => $meta->{artist},
 		album    => $meta->{album},

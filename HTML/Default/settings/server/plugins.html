@@ -131,6 +131,22 @@
 					Settings.Page.expandItem(section[0], section[1]);
 				});
 			}
+
+			// grid/list view switch
+			var viewToggle = Ext.get('viewToggle');
+			viewToggle.on('click', function() {
+				var view = viewToggle.dom.src.match(/grid|list/)[0];
+				var newView = view === 'grid' ? 'list' : 'grid';
+				viewToggle.dom.src = '[% webroot %]html/images/' + newView + '.svg';
+				SqueezeJS.setCookie('Squeezebox-viewMode', newView);
+
+				if (view === 'list') {
+					Ext.get('pluginListPanel').removeClass('pluginListList');
+				}
+				else {
+					Ext.get('pluginListPanel').addClass('pluginListList');
+				}
+			});
 		}
 
 		Settings.Page.submit = function(ajax, cb) {
@@ -181,6 +197,12 @@
 </script>
 [% END; END %]
 <style>
+	#viewToggle {
+		width: 14px !important;
+		height: 14px !important;
+		margin-top: 1px;
+	}
+
 	.pluginItem img.pluginFallbackIcon {
 		border: 1px solid #bbb;
 		border-radius: 5px;
@@ -216,6 +238,10 @@
 
 	#pluginButtonBar .x-form-text {
 		height: 20px;
+	}
+
+	#pluginListPanel.pluginListList .pluginList .pluginItem img.pluginFallbackIcon {
+		width: [% (iconSize - 10) / 2 %]px !important;
 	}
 </style>
 [% PROCESS settings/server/plugins_main.html %]

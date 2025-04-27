@@ -1,7 +1,9 @@
 package Slim::Utils::Update;
 
 use strict;
+use File::Slurp qw(write_file);
 use Time::HiRes;
+use Digest::MD5;
 use File::Spec::Functions qw(splitpath catdir);
 use JSON::XS::VersionOneAndTwo;
 
@@ -90,7 +92,7 @@ sub checkVersionCB {
 	my $http = shift;
 	my $cb = $http->params('cb');
 
-	my $version;
+	my ($version, $md5);
 
 	# store result in global variable, to be displayed by browser
 	if ($http->code =~ /^2\d\d/) {
@@ -109,6 +111,7 @@ sub checkVersionCB {
 				if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
 					if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
 						$version = $update->{url};
+						$md5 = $update->{md5};
 					}
 					else {
 						$version = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $update->{version}, $update->{url});
@@ -128,7 +131,7 @@ sub checkVersionCB {
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 
 			main::INFOLOG && $log->info('Triggering automatic Lyrion Music Server update download...');
-			getUpdate($version);
+			getUpdate($version, $md5);
 		}
 
 		# if we got an update with download URL, display it in the web UI et al.
@@ -160,7 +163,7 @@ sub checkVersionError {
 
 # download the installer
 sub getUpdate {
-	my $url = shift;
+	my ($url, $md5) = @_;
 
 	my $params = $os->getUpdateParams($url);
 
@@ -209,6 +212,7 @@ sub getUpdate {
 				saveAs => $tmpFile,
 				file   => $file,
 				params => $params,
+				md5    => $md5,
 			},
 		);
 
@@ -225,26 +229,64 @@ sub downloadAsyncDone {
 	my $file    = $http->params('file');
 	my $tmpFile = $http->params('saveAs');
 	my $params  = $http->params('params') || {};
+	my $md5     = $http->params('md5');
 
 	my $path    = $params->{'path'};
 
 	# make sure we got the file
 	if (!-e $tmpFile) {
-		$log->warn("Lyrion Music Server installer download failed: file '$tmpFile' not stored on disk?!?");
+		$log->warn("Installer download failed: file '$tmpFile' not stored on disk?!?");
 		return;
 	}
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->warn( sprintf("Lyrion Music Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("Installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}
 
+	if ($md5) {
+		my $digest;
+		eval {
+			# "With OO style, you can break the message arbitrarily. This means that we are no longer limited
+			#  to have space for the whole message in memory, i.e. we can handle messages of any size."
+			# https://metacpan.org/pod/Digest::MD5#EXAMPLES
+			my $md5 = Digest::MD5->new;
+			open my $fh, '<:raw', $tmpFile;
+			while (<$fh>) {
+				$md5->add($_);
+			}
+			close $fh;
+			$digest = $md5->hexdigest;
+		};
+
+		if ($@) {
+			$log->error("Error calculating MD5 checksum: $@");
+		}
+		elsif (main::DEBUGLOG && $log->is_debug) {
+			$log->debug("Verified expected MD5 checksum: $digest");
+		}
+
+		if ($digest ne $md5) {
+			$log->warn("Installer file checksum mismatch: expected $md5, got $digest");
+			unlink $tmpFile;
+			return;
+		}
+	}
+
 	cleanup($path);
 
-	main::INFOLOG && $log->is_info && $log->info("Successfully downloaded update installer file '$tmpFile'. Saving as $file");
+	if (main::INFOLOG && $log->is_info) {
+		$log->info("Successfully downloaded update installer file '$tmpFile'.");
+		$log->info("Saving as $file");
+	}
+
 	unlink $file;
 	my $success = rename $tmpFile, $file;
+	if ($md5) {
+		my ($a, $b, $filename) = splitpath($file);
+		write_file($file . '.md5.txt', "$md5  $filename");
+	}
 
 	if (-e $file) {
 		setUpdateInstaller($file, $params->{cb}) ;
@@ -315,7 +357,7 @@ sub getUpdateInstaller {
 
 		chomp;
 
-		if (/LyrionMusicServer.*/) {
+		if (/LyrionMusicServer.*/i) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -342,7 +384,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^LyrionMusicServer.*\.$ext(\.md5\.txt)?$/i);
 }
 
 1;

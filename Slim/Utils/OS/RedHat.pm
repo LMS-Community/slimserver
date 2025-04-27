@@ -39,7 +39,7 @@ sub dirsFor {
 
 		push @dirs, $class->SUPER::dirsFor($dir);
 
-	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
+	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|SQL|lib|Bin)$/) {
 
 		push @dirs, "/usr/share/lyrionmusicserver/$dir";
 
@@ -56,12 +56,6 @@ sub dirsFor {
 	} elsif ($dir eq 'libpath') {
 
 		push @dirs, "/usr/share/lyrionmusicserver";
-
-	# Because we use the system MySQL, we need to point to the right
-	# directory for the errmsg. files. Default to english.
-	} elsif ($dir eq 'mysql-language') {
-
-		push @dirs, "/usr/share/mysql/english";
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 

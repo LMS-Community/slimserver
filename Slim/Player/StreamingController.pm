@@ -277,7 +277,7 @@ sub _eventAction {
 		if ($params) {
 			my $s = "params:";
 			foreach my $p (keys %$params) {
-				$s .= " $p => " . (defined $params->{$p} ? $params->{$p} : 'undef');
+				$s .= " $p => " . (defined $params->{$p} ? dumpFiltered($params->{$p}) : 'undef');
 			}
 			$log->debug($s);
 		}
@@ -1004,7 +1004,6 @@ sub _NextIfMore {			# -> Idle; IF [moreTracks] AND [roomInQueue] THEN getNextTra
 	} else {
 		$log->info("streaming track not started yet, will wait until then to try next track");
 	}
-	_getNextTrack($self, $params, 1);
 }
 
 # This action is only called for StreamingFailed; buffering or wait-to-sync
@@ -2227,6 +2226,7 @@ sub playerStopped {
 		my $song = playingSong($self);
 		if ($song && $song->status() == Slim::Player::Song::STATUS_PLAYING) {
 			$song->setStatus(Slim::Player::Song::STATUS_FINISHED);
+			$self->resetSongqueue(0);
 		}
 	}
 
