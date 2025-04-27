@@ -1272,6 +1272,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;
 
+	my $replayGain = Slim::Player::ReplayGain->fetchGainMode($self->master(), $song);
+
 	# bug 10438
 	$self->resetFrameData();
 
@@ -1299,6 +1301,8 @@ sub _Stream {				# play -> Buffering, Streaming
 		if ($song->currentTrackHandler()->can('onStream')) {
 			$song->currentTrackHandler()->onStream($player, $song);
 		}
+		
+		$player->replayGain($replayGain);  # store this for status queries
 
 		my %params = (
 			'paused'      => $paused,
@@ -1306,7 +1310,7 @@ sub _Stream {				# play -> Buffering, Streaming
 			'controller'  => $songStreamController,
 			'url'         => $songStreamController->streamUrl(),
 			'reconnect'   => $reconnect,
-			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($self->master(), $song),
+			'replay_gain' => $replayGain,
 			'seekdata'    => $seekdata,
 			'fadeIn'      => $myFadeIn,
 			# we never set the 'loop' parameter
