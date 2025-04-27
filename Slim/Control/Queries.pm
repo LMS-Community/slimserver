@@ -3962,7 +3962,7 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		my $trackGain = Slim::Player::ReplayGain->fetchGainMode($client, $song);
+		my $trackGain = $client->replayGain();
 		if (defined $trackGain) {
 			$request->addResult('replay_gain', $trackGain);
 		}
