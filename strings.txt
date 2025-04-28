@@ -3147,7 +3147,7 @@ GETTING_TRACK_DETAILS
 	PT	Obtendo detalhes
 	RU	Получение сведений о дорожке...
 	SV	Hämtar spårinformation...
-	ZH_CN 获取曲目详情...
+	ZH_CN	获取曲目详情...
 
 CONNECTING_FOR
 	CS	Připojování...
@@ -5532,7 +5532,7 @@ SETUP_SYNCSTARTDELAY_DESC
 	PT	Quando multiplos reprodutores estiverem sincronizados o Lyrion Music Server instruirá todos para começarem cada musica ao mesmo tempo. Necessita pois que cada reprodutor tenha o tempo necessario para receber o comando para iniciar a reprodução antes que todos se iniciem juntos. Para isso envia o comando antes do tempo e os reprodutores esperam até ao momento correcto para iniciaram a reprodução. Se existir uma congestão de trafego excessiva na rede física ou wireless então o valor por defeito de 200ms pode não ser suficiente. Poderá alterar esse valor aqui se for necessario.
 	RU	При синхронизации нескольких плееров Lyrion Music Server дает каждому из них команду начать воспроизведение дорожки в одно и то же время. Для этого необходимо убедиться, что каждый плеер получит команду запуска до всеобщего начала воспроизведения, поэтому данная команда отправляется ему заранее. После получения команды каждый плеер ожидает запуска. При сильной загрузке сети, что особенно характерно для сетей со множеством плееров и для беспроводных сетей, задержка по умолчанию, равная 200 мс, может быть недостаточной. При необходимости это значение можно изменить.
 	SV	När flera spelare synkroniserats ser Lyrion Music Server till att alla spelare börjar spela upp låten samtidigt. Det måste finnas tid för startkommandot att gå fram till var och en av spelarna innan låten börjar spelas upp. Därför skickas kommandot i förväg, och spelarna väntar sedan till rätt startögonblick. Om trafiken på nätverket är mycket tät, något som kan hända framför allt när många spelare anslutits och med trådlösa nätverk, kanske inte standardfördröjningen på 200 millisekunder räcker till. Du kan ändra standardinställningen här vid behov.
-	ZH_CN	当多个播放器同步时，Lyration Music Server告诉每个播放器同时开始曲目。它需要确保每个播放器在一起开始之前都有时间接收开始命令，因此它会提前发送开始命令，每个播放器都会等待合适的时机开始。如果存在过度的网络拥塞，尤其是在网络上有许多播放器和无线网络的情况下，那么默认的200ms延迟可能不够。如有必要，您可以在此处更改默认值。
+	ZH_CN	当多个播放器同步时，Lyrion Music Server告诉每个播放器同时开始曲目。它需要确保每个播放器在一起开始之前都有时间接收开始命令，因此它会提前发送开始命令，每个播放器都会等待合适的时机开始。如果存在过度的网络拥塞，尤其是在网络上有许多播放器和无线网络的情况下，那么默认的200ms延迟可能不够。如有必要，您可以在此处更改默认值。
 
 SETUP_STARTDELAY
 	CS	Zpoždění spuštění přehrávače (ms)
@@ -9643,7 +9643,7 @@ SETUP_DBHIGHMEM_NORMAL
 	PL	Normalna
 	RU	Обычный
 	SV	Normal
-	ZH_CN 	正常
+	ZH_CN	正常
 
 SETUP_DBHIGHMEM_HIGH
 	CS	Vysoká (doporučeno pro přístroje s 1+ GB RAM)
@@ -9673,7 +9673,7 @@ SETUP_DBHIGHMEM_MAX
 	NO	Maksimal (anbefalt for musikksamlinger med mer enn 50 000 spor og servere med minst 2 GB RAM)
 	PL	Maksymalna (zalecana dla bibliotek zawierających ponad 50.000 utworów i komputerów wyposażonych w co najmniej 2 GB RAM)
 	SV	Maximum (rekommenderat för mediebibliotek med mer än 50 000 låtar och en dator med minst 2 GB RAM)
-	ZH_CN 	最大（建议用于包含超过50,000首歌曲的库和具有2+ GB RAM的机器）
+	ZH_CN	最大（建议用于包含超过50,000首歌曲的库和具有2+ GB RAM的机器）
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -9755,7 +9755,7 @@ SETUP_ENHANCEDHTTP
 	FR	Mode de streaming HTTP(S)
 	HU	Streamelési mód a HTTP(S) számára
 	NL	Streammethode voor HTTP(S)
-	ZH_CN HTTP(S)流媒体模式
+	ZH_CN	HTTP(S)流媒体模式
 
 SETUP_ENHANCEDHTTP_DESC
 	CS	Pokud dojde k selhání připojení HTTP(S) k serveru, Lyrion Music Server ukončí přehrávání. Může se také pokusit o jeho opětovné otevření (Trvalý režim) nebo může ukládat datové proudy (Režim mezipaměti) definované délky (podcasty, jednotlivé skladby) do vyrovnávací paměti v souborech na disku. Ty budou po přehrání datového proudu odstraněny. To může zlepšit spolehlivost u některých serverů, které očekávají stahování skladeb, nikoliv přehrávání datového proudu, a proto uzavírají dlouhá spojení. Zároveň to ale způsobuje větší množství zápisu do souborového systému, což může potenciálně opotřebovat např. karty SD. Pokud máte dostatek místa pro ukládání souborů do vyrovnávací paměti, pak je režim "Mezipaměti" správnou cestou
@@ -9775,7 +9775,7 @@ SETUP_ENABLE_PERSISTENTHTTP
 	FR	Mode persistent
 	HU	Állandó mód
 	NL	Persistent-modus
-	ZH_CN 持久模式
+	ZH_CN	持久模式
 
 SETUP_ENABLE_BUFFEREDHTTP
 	CS	Ukládat datové proudy HTTP(S) do mezipaměti na disk
@@ -9785,7 +9785,7 @@ SETUP_ENABLE_BUFFEREDHTTP
 	FR	Cacher les flux HTTP(S) sur disque
 	HU	Gyorsítótárazza a HTTP(S) adatfolyamokat a lemezen
 	NL	Cache-modus
-	ZH_CN 将HTTP（S）流缓存到磁盘上
+	ZH_CN	将HTTP（S）流缓存到磁盘上
 
 SETUP_DISABLE_ENHANCEDHTTP
 	CS	Normální přehrávání datového proudu
@@ -9987,7 +9987,7 @@ SETUP_TIMEFORMAT_DEFAULT
 	PL	%H:%M
 	RU	|%H:%M
 	SV	%H:%M
-	ZH_CN %H:%M
+	ZH_CN	%H:%M
 
 SETUP_ITEMSPERPAGE
 	CS	Počet položek na stránce
@@ -12203,7 +12203,7 @@ STEREOXL
 	PL	StereoXL
 	RU	Режим StereoXL
 	SV	StereoXL
-	ZH_CN StereoXL
+	ZH_CN	StereoXL
 
 BALANCE
 	CS	Vyvážení
@@ -13312,7 +13312,7 @@ ALC
 	PL	Bezstratne Apple
 	RU	Apple Lossless
 	SV	Apple förlustfri
-	ZH_CN 	Apple Lossless
+	ZH_CN	Apple Lossless
 
 ALCX
 	EN	Apple Lossless leading audio
@@ -13366,7 +13366,7 @@ MP4
 	PL	MP4
 	RU	MPEG-4
 	SV	MPEG-4
-	ZH_CN MPEG-4
+	ZH_CN	MPEG-4
 
 MP4X
 	EN	MPEG-4 leading audio
@@ -18390,7 +18390,7 @@ SHOUTCAST
 	PL	SHOUTcast
 	RU	SHOUTcast
 	SV	SHOUTcast
-	ZH_CN SHOUTcast
+	ZH_CN	SHOUTcast
 
 RADIO_PROVIDERS_ABSOLUTE
 	CS	Absolute Radio UK
@@ -18441,7 +18441,7 @@ RADIO_PROVIDERS_BBC
 	PL	BBC
 	RU	BBC
 	SV	BBC
-	ZH_CN 	BBC
+	ZH_CN	BBC
 
 RADIO_PROVIDERS_CBC
 	CS	CBC
@@ -18493,7 +18493,7 @@ RADIO_PROVIDERS_SOMAFM
 	PL	SomaFM
 	RU	SomaFM
 	SV	SomaFM
-	ZH_CN SomaFM
+	ZH_CN	SomaFM
 
 RADIO_PROVIDERS_SKYFM
 	EN	RadioTunes
@@ -18517,7 +18517,7 @@ RADIO_PROVIDERS_RADIODE
 	PL	radio.de
 	RU	radio.de
 	SV	radio.de
-	ZH_CN radio.de
+	ZH_CN	radio.de
 
 RADIO_PROVIDERS_RADIOFR
 	CS	radio.fr
@@ -19296,7 +19296,7 @@ INFORMATION_PLAYER_IP_ABBR
 	PL	Adres IP
 	RU	IP-адрес
 	SV	IP
-	ZH_CN IP
+	ZH_CN	IP
 
 INFORMATION_PLAYER_PORT
 	CS	Číslo portu přehrávače
@@ -19625,7 +19625,7 @@ INFORMATION_SERVER_HTTP_ABBR
 	PT	Porta HTTP
 	RU	HTTP-порт
 	SV	HTTP-port
-	ZH_CN HTTP Port
+	ZH_CN	HTTP Port
 
 INFORMATION_ALBUMS
 	CS	Celkem alb
@@ -24395,20 +24395,20 @@ RESTART_LATER
 	ZH_CN	稍后重启
 
 RESTARTING_PLEASE_WAIT
-	CS	 Probíhá restartování Lyrion Music Serveru. Před pokračováním chvíli vyčkejte...
-	DA	 Lyrion Music Server er ved at blive genstartet. Vent et minuts tid før du fortsætter...
-	DE	 Lyrion Music Server wird neu gestartet. Warten Sie einen Moment, bevor Sie fortfahren...
-	EN	 Lyrion Music Server is being restarted. Please wait a minute before you continue...
-	ES	 Se está reiniciando Lyrion Music Server. Espere un minuto antes de continuar...
-	FI	 Lyrion Music Server käynnistetään uudelleen. Odota hetki ennen jatkamista...
-	FR	 Le Lyrion Music Server est en cours de redémarrage. Patientez une minute avant de continuer...
-	HU	 A Lyrion Music Server újraindítása folyamatban van. Kérjük, várjon egy percet, mielőtt folytatná...
-	IT	 È in corso il riavvio di Lyrion Music Server. Attendere un momento prima di continuare...
-	NL	 Lyrion Music Server wordt herstart. Wacht even voordat je verdergaat...
-	NO	 Lyrion Music Server startes på nytt. Vent litt før du fortsetter ...
-	PL	 Trwa ponowne uruchamianie programu Lyrion Music Server. Poczekaj chwilę, aby kontynuować...
-	RU	 Lyrion Music Server перезапускается. Подождите...
-	SV	 Lyrion Music Server startas om. Vänta en minut innan du fortsätter...
+	CS	Probíhá restartování Lyrion Music Serveru. Před pokračováním chvíli vyčkejte...
+	DA	Lyrion Music Server er ved at blive genstartet. Vent et minuts tid før du fortsætter...
+	DE	Lyrion Music Server wird neu gestartet. Warten Sie einen Moment, bevor Sie fortfahren...
+	EN	Lyrion Music Server is being restarted. Please wait a minute before you continue...
+	ES	Se está reiniciando Lyrion Music Server. Espere un minuto antes de continuar...
+	FI	Lyrion Music Server käynnistetään uudelleen. Odota hetki ennen jatkamista...
+	FR	Le Lyrion Music Server est en cours de redémarrage. Patientez une minute avant de continuer...
+	HU	A Lyrion Music Server újraindítása folyamatban van. Kérjük, várjon egy percet, mielőtt folytatná...
+	IT	È in corso il riavvio di Lyrion Music Server. Attendere un momento prima di continuare...
+	NL	Lyrion Music Server wordt herstart. Wacht even voordat je verdergaat...
+	NO	Lyrion Music Server startes på nytt. Vent litt før du fortsetter ...
+	PL	Trwa ponowne uruchamianie programu Lyrion Music Server. Poczekaj chwilę, aby kontynuować...
+	RU	Lyrion Music Server перезапускается. Подождите...
+	SV	Lyrion Music Server startas om. Vänta en minut innan du fortsätter...
 	ZH_CN	Lyrion Music Server正在重启。请等待一分钟后再继续...
 
 SETUP_VIEW_SCANNING
