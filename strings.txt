@@ -99,12 +99,9 @@ CREDITS
 COPYRIGHT
 	CS	© 2001-2024 Lyrion – verze 9.1.0
 	DA	© 2001-2024 Lyrion - version 9.1.0
-	DE	© 2001-2024 Lyrion Version 9.1.0
 	EN	© 2001-2024 Lyrion Version 9.1.0
 	ES	© 2001-2024 Lyrion Versión 9.1.0
 	FI	© 2001-2024 Lyrionin versio 9.1.0
-	FR	© 2001-2024 Lyrion Version 9.1.0
-	HU	© 2001-2024 Lyrion Version 9.1.0
 	IT	© 2001-2024 Lyrion versione 9.1.0
 	NL	© 2001-2024 Lyrion versie 9.1.0
 	NO	© 2001–2024 Lyrion versjon 9.1.0
@@ -115,20 +112,16 @@ COPYRIGHT
 
 VERSION
 	CS	Verze 9.1.0 / r%s
-	DA	Version 9.1.0 / r%s
-	DE	Version 9.1.0 / r%s
 	EN	Version 9.1.0 / r%s
 	ES	Versión 9.1.0 / r%s
 	FI	Versio 9.1.0 / r%s
 	HU	Versio 9.1.0 / r%s
-	FR	Version 9.1.0 / r%s
 	IT	Versione 9.1.0/r%s
 	NL	Versie 9.1.0 / r%s
 	NO	Versjon 9.1.0 / r%s
 	PL	Wersja 9.1.0 / r%s
 	PT	Versão 9.1.0 / r%s
 	RU	Версия 9.1.0 / r%s
-	SV	Version 9.1.0 / r%s
 	ZH_CN	版本 9.1.0 / r%s
 
 CHOOSE_A_LANGUAGE
@@ -217,22 +210,15 @@ LOGIC_SKIN
 
 DEFAULT_MAP
 	CS	Standardní
-	DA	Standard
-	DE	Standard
 	EN	Standard
 	ES	Estándar
 	FI	Standardi
-	FR	Standard
 	HE	רגיל
 	HU	Alapértelmezett
-	IT	Standard
 	JA	スタンダード
 	NL	Standaard
-	NO	Standard
 	PL	Standardowe
-	PT	Standard
 	RU	Стандартный
-	SV	Standard
 	ZH_CN	标准
 
 SERVER_VERSION
@@ -610,20 +596,9 @@ SCREENSAVERS
 
 RADIO
 	CS	Rádio
-	DA	Radio
-	DE	Radio
 	EN	Radio
-	ES	Radio
-	FI	Radio
-	FR	Radio
 	HU	Rádió
-	IT	Radio
-	NL	Radio
-	NO	Radio
-	PL	Radio
-	PT	Radio
 	RU	Радиостанция
-	SV	Radio
 	ZH_CN	收音机
 
 MUSIC_SERVICES
@@ -710,12 +685,10 @@ PLAYLIST
 	FR	Liste de lecture
 	HE	רשימת השמעה
 	HU	Műsorlista
-	IT	Playlist
 	JA	プレイ リスト
 	NL	Afspeellijst
 	NO	Spilleliste
 	PL	Lista odtwarzania
-	PT	Playlist
 	RU	Плей-лист
 	SV	Spellista
 	ZH_CN	播放表
@@ -730,11 +703,8 @@ PLAYLIST_SHORT
 	FI	Soittoluet.
 	FR	Liste
 	HU	Lista
-	IT	Playlist
-	NL	Playlist
 	NO	Liste
 	PL	Lista
-	PT	Playlist
 	RU	Плей-лист
 	SV	Lista
 	ZH_CN	播放表
@@ -977,23 +947,7 @@ PAUSED
 	ZH_CN	已暂停
 
 SQUEEZEBOX_SERVER
-	CS	Lyrion Music Server
-	DA	Lyrion Music Server
-	DE	Lyrion Music Server
 	EN	Lyrion Music Server
-	ES	Lyrion Music Server
-	FI	Lyrion Music Server
-	FR	Lyrion Music Server
-	HE	Lyrion Music Server
-	HU	Lyrion Music Server
-	IT	Lyrion Music Server
-	NL	Lyrion Music Server
-	NO	Lyrion Music Server
-	PL	Lyrion Music Server
-	PT	Lyrion Music Server
-	RU	Lyrion Music Server
-	SV	Lyrion Music Server
-	ZH_CN	Lyrion Music Server
 
 ABOUT
 	CS	Lyrion Music Server V.%s, autor:
@@ -2622,94 +2576,19 @@ ALARM_SHORT_DAY_6
 	ZH_CN	星期六
 
 SLIMP3
-	CS	SLIMP3
-	DA	SLIMP3
-	DE	SLIMP3
 	EN	SLIMP3
-	ES	SLIMP3
-	FI	SLIMP3
-	FR	SLIMP3
-	HE	SLIMP3
-	HU	SLIMP3
-	IT	SLIMP3
-	NL	SLIMP3
-	NO	SLIMP3
-	PL	SLIMP3
-	PT	SLIMP3
-	RU	SLIMP3
-	SV	SLIMP3
 
 SQUEEZEBOX
-	CS	Squeezebox
-	DA	Squeezebox
-	DE	Squeezebox
 	EN	Squeezebox
-	ES	Squeezebox
-	FI	Squeezebox
-	FR	Squeezebox
-	HE	Squeezebox
-	HU	Squeezebox
-	IT	Squeezebox
-	NL	Squeezebox
-	NO	Squeezebox
-	PL	Squeezebox
-	PT	Squeezebox
-	RU	Squeezebox
-	SV	Squeezebox
 
 SQUEEZEBOX2
-	CS	Squeezebox2/v3
-	DA	Squeezebox2/v3
-	DE	Squeezebox2/v3
 	EN	Squeezebox2/v3
-	ES	Squeezebox2/v3
-	FI	Squeezebox2/v3
-	FR	Squeezebox2/v3
-	HE	Squeezebox2/v3
-	HU	Squeezebox2/v3
-	IT	Squeezebox2/v3
-	NL	Squeezebox2/v3
-	NO	Squeezebox2/v3
-	PL	Squeezebox2/v3
-	PT	Squeezebox2/v3
-	RU	Squeezebox2/v3
-	SV	Squeezebox 2/v3
 
 TRANSPORTER
-	CS	Transporter
-	DA	Transporter
-	DE	Transporter
 	EN	Transporter
-	ES	Transporter
-	FI	Transporter
-	FR	Transporter
-	HE	Transporter
-	HU	Transporter
-	IT	Transporter
-	NL	Transporter
-	NO	Transporter
-	PL	Transporter
-	PT	Transporter
-	RU	Transporter
-	SV	Transporter
 
 SOFTSQUEEZE
-	CS	SoftSqueeze
-	DA	SoftSqueeze
-	DE	SoftSqueeze
 	EN	SoftSqueeze
-	ES	SoftSqueeze
-	FI	SoftSqueeze
-	FR	SoftSqueeze
-	HE	SoftSqueeze
-	HU	SoftSqueeze
-	IT	SoftSqueeze
-	NL	SoftSqueeze
-	NO	SoftSqueeze
-	PL	SoftSqueeze
-	PT	SoftSqueeze
-	RU	SoftSqueeze
-	SV	SoftSqueeze
 
 WELCOME_TO_SLIMP3
 	CS	Vítejte v SLIMP3
@@ -3487,8 +3366,6 @@ HOME
 
 STATUS
 	CS	Stav
-	DA	Status
-	DE	Status
 	EN	Status
 	ES	Estado
 	FI	Tila
@@ -3497,12 +3374,9 @@ STATUS
 	HU	Státusz
 	IT	Stato
 	JA	ステータス
-	NL	Status
-	NO	Status
 	PL	Stan
 	PT	Estado
 	RU	Статус
-	SV	Status
 	ZH_CN	状态
 
 SERVER
@@ -3623,8 +3497,6 @@ XML_LOADING
 
 XML_LINK
 	CS	Odkaz
-	DA	Link
-	DE	Link
 	EN	Link
 	ES	Vínculo
 	FI	Linkki
@@ -3632,10 +3504,8 @@ XML_LINK
 	HE	קישור
 	HU	Hivatkozás
 	IT	Collegamento
-	NL	Link
 	NO	Kopling
 	PL	Łącze
-	PT	Link
 	RU	Ссылка
 	SV	Länk
 	ZH_CN	链路
@@ -11473,18 +11343,14 @@ ADD_THIS_SONG_TO_PLAYLIST
 
 PAUSE
 	CS	Pozastavit
-	DA	Pause
-	DE	Pause
 	EN	Pause
 	ES	Pausa
 	FI	Tauko
-	FR	Pause
 	HE	השהייה
 	HU	Szünet
 	IT	Pausa
 	JA	一時停止
 	NL	Pauzeren
-	NO	Pause
 	PL	Wstrzymaj
 	PT	Pausar
 	RU	Пауза
@@ -12061,15 +11927,11 @@ VOLUME
 	EN	Volume
 	ES	Volumen
 	FI	Äänenvoimakkuus
-	FR	Volume
 	HE	עוצמת קול
 	HU	Hangerő
-	IT	Volume
 	JA	ボリューム
-	NL	Volume
 	NO	Volum
 	PL	Głośność
-	PT	Volume
 	RU	Громкость
 	SV	Volym
 	ZH_CN	音量
@@ -12189,21 +12051,7 @@ FIXED_VOLUME_100
 	ZH_CN	固定音量 100%
 
 STEREOXL
-	CS	StereoXL
-	DA	StereoXL
-	DE	StereoXL
 	EN	StereoXL
-	ES	StereoXL
-	FI	StereoXL
-	FR	StereoXL
-	HU	StereoXL
-	IT	StereoXL
-	NL	StereoXL
-	NO	StereoXL
-	PL	StereoXL
-	RU	Режим StereoXL
-	SV	StereoXL
-	ZH_CN	StereoXL
 
 BALANCE
 	CS	Vyvážení
@@ -12477,20 +12325,13 @@ THREELINE
 
 STANDARD
 	CS	Standardní
-	DA	Standard
-	DE	Standard
 	EN	Standard
 	ES	Estándar
 	FI	Standardi
-	FR	Standard
 	HE	רגיל
-	HU	Standard
-	IT	Standard
 	NL	Standaard
-	NO	Standard
 	PL	Domyślny
 	RU	Стандартный
-	SV	Standard
 	ZH_CN	标准
 
 TITLEFORMAT
@@ -13065,23 +12906,13 @@ BAND
 	ZH_CN	乐队
 
 ALBUM
-	CS	Album
-	DA	Album
-	DE	Album
 	EN	Album
 	ES	Álbum
 	FI	Levy
-	FR	Album
 	HE	אלבום
-	HU	Album
-	IT	Album
 	JA	アルバム
-	NL	Album
-	NO	Album
-	PL	Album
 	PT	Álbum
 	RU	Альбом
-	SV	Album
 	ZH_CN	专辑
 
 RELEASE_TYPE
@@ -13245,74 +13076,16 @@ DIR
 	ZH_CN	目录
 
 APE
-	CS	Monkey's Audio
-	DA	Monkey's Audio
-	DE	Monkey's Audio
 	EN	Monkey's Audio
-	ES	Monkey's Audio
-	FI	Monkey's Audio
-	FR	Monkey's Audio
-	HE	Monkey's Audio
-	HU	Monkey's Audio
-	IT	Monkey's Audio
-	NL	Monkey's Audio
-	NO	Monkey's Audio
-	PL	Monkey's Audio
-	RU	Monkey's Audio
-	SV	Monkey's Audio
-	ZH_CN	Monkey's Audio
 
 MP3
-	CS	MP3
-	DA	MP3
-	DE	MP3
 	EN	MP3
-	ES	MP3
-	FI	MP3
-	FR	MP3
-	HE	MP3
-	HU	MP3
-	IT	MP3
-	NL	MP3
-	NO	Mp3
-	PL	MP3
-	RU	MP3
-	SV	mp3
 
 MP2
-	CS	MP2
-	DA	MP2
-	DE	MP2
 	EN	MP2
-	ES	MP2
-	FI	MP2
-	FR	MP2
-	HE	MP2
-	HU	MP2
-	IT	MP2
-	NL	MP2
-	NO	MP2
-	PL	MP2
-	RU	MP2
-	SV	Mp2
 
 ALC
-	CS	Apple Lossless
-	DA	Apple Lossless
-	DE	Apple Lossless
 	EN	Apple Lossless
-	ES	Sin pérdidas de Apple
-	FI	Apple Lossless
-	FR	Apple Lossless
-	HE	Apple Lossless
-	HU	Apple Lossless
-	IT	Apple Lossless
-	NL	Apple Lossless
-	NO	Apple Lossless
-	PL	Bezstratne Apple
-	RU	Apple Lossless
-	SV	Apple förlustfri
-	ZH_CN	Apple Lossless
 
 ALCX
 	EN	Apple Lossless leading audio
@@ -13336,58 +13109,17 @@ MOV
 	ZH_CN	QuickTime 影片
 
 AAC
-	CS	AAC
-	DA	AAC
-	DE	AAC
 	EN	AAC
-	ES	AAC
-	FI	AAC
-	FR	AAC
-	HU	AAC
-	IT	AAC
-	NL	AAC
-	NO	AAC
-	PL	AAC
-	RU	AAC
-	SV	AAC
 
 MP4
-	CS	MPEG-4
-	DA	MPEG-4
-	DE	MPEG-4
 	EN	MPEG-4
-	ES	MPEG-4
-	FI	MPEG-4
-	FR	MPEG-4
-	HU	MPEG-4
-	IT	MPEG-4
-	NL	MPEG-4
-	NO	MPEG-4
-	PL	MP4
-	RU	MPEG-4
-	SV	MPEG-4
-	ZH_CN	MPEG-4
 
 MP4X
 	EN	MPEG-4 leading audio
 	ZH_CN	MPEG-4 预先音频
 
 SLS
-	CS	MPEG-4 SLS / HD-AAC
-	DA	MPEG-4 SLS / HD-AAC
-	DE	MPEG-4 SLS / HD-AAC
 	EN	MPEG-4 SLS / HD-AAC
-	ES	MPEG-4 SLS / HD-AAC
-	FI	MPEG-4 SLS / HD-AAC
-	FR	MPEG-4 SLS / HD-AAC
-	HU	MPEG-4 SLS / HD-AAC
-	IT	MPEG-4 SLS / HD-AAC
-	NL	MPEG-4 SLS / HD-AAC
-	NO	MPEG-4 SLS / HD-AAC
-	PL	MPEG-4 SLS / HD-AAC
-	RU	MPEG-4 SLS/HD-AAC
-	SV	MPEG-4 SLS / HD-AAC
-	ZH_CN	MPEG-4 SLS / HD-AAC
 
 M3U
 	CS	Seznam skladeb M3U
@@ -13428,131 +13160,36 @@ PLS
 	ZH_CN	PLS播放表
 
 MPC
-	CS	Musepack
-	DA	Musepack
-	DE	Musepack
 	EN	Musepack
-	ES	Musepack
-	FI	Musepack
-	FR	Musepack
-	HE	Musepack
-	HU	Musepack
-	IT	Musepack
-	NL	Musepack
-	NO	Musepack
-	PL	Musepack
-	RU	Musepack
-	SV	Musepack
-	ZH_CN	Musepack
 
 WVP
-	CS	WavPack
-	DA	WavPack
-	DE	WavPack
 	EN	WavPack
-	ES	WavPack
-	FI	WavPack
-	FR	WavPack
-	HU	WavPack
-	IT	WavPack
-	NL	WavPack
-	NO	WavPack
-	PL	WavPack
-	RU	WavPack
-	SV	WavPack
-	ZH_CN	WavPack
 
 WVPX
-	CS	WavPack DSD
-	DA	WavPack DSD
-	DE	WavPack DSD
 	EN	WavPack DSD
-	ES	WavPack DSD
-	FI	WavPack DSD
-	FR	WavPack DSD
-	HU	WavPack DSD
-	IT	WavPack DSD
-	NL	WavPack DSD
-	NO	WavPack DSD
-	PL	WavPack DSD
-	RU	WavPack DSD
-	SV	WavPack DSD
-	ZH_CN	WavPack DSD
 
 SHN
 # SLT: Please note that "Shorten" is a file format name, thus doesn't need to be translated
 	EN	Shorten
-	ZH_CN	Shorten
 
 WMA
-	CS	Windows Media
-	DA	Windows Media
-	DE	Windows Media
 	EN	Windows Media
-	ES	Windows Media
-	FI	Windows-media
-	FR	Windows Media
-	HE	Windows Media
-	HU	Windows Media
-	IT	Windows Media
-	NL	Windows Media
-	NO	Windows Media
-	PL	Windows Media
-	RU	Windows Media
-	SV	Windows Media
-	ZH_CN	Windows Media
 
 WMAL
-	CS	WMA Lossless
-	DA	WMA Lossless
-	DE	WMA Lossless
 	EN	WMA Lossless
-	ES	WMA Lossless
 	FI	WMA (häviötön)
-	FR	WMA Lossless
-	HU	WMA Lossless
-	IT	WMA Lossless
-	NL	WMA Lossless
-	NO	WMA Lossless
 	PL	Bezstratny WMA
-	RU	WMA Lossless
 	SV	WMA (utan dataförluster)
 	ZH_CN	WMA 无损
 
 WMAP
-	CS	WMA Pro
-	DA	WMA Pro
-	DE	WMA Pro
 	EN	WMA Pro
-	ES	WMA Pro
-	FI	WMA Pro
-	FR	WMA Pro
-	HU	WMA Pro
-	IT	WMA Pro
-	NL	WMA Pro
 	NO	WMAPro
 	PL	WMAPro
-	RU	WMA Pro
-	SV	WMA Pro
-	ZH_CN	WMA Pro
 
 MMS
-	CS	Microsoft Media Server
-	DA	Microsoft Media Server
-	DE	Microsoft Media Server
 	EN	Microsoft Media Server
 	ES	Servidor de medios de Microsoft
-	FI	Microsoft Media Server
-	FR	Microsoft Media Server
-	HE	Microsoft Media Server
-	HU	Microsoft Media Server
-	IT	Microsoft Media Server
-	NL	Microsoft Media Server
-	NO	Microsoft Media Server
-	PL	Microsoft Media Server
-	RU	Microsoft Media Server
-	SV	Microsoft Media Server
-	ZH_CN	Microsoft Media Server
 
 ASX
 	CS	Seznam skladeb ASX
@@ -13592,22 +13229,7 @@ M4P
 	ZH_CN	受保护AAC
 
 AIF
-	CS	AIFF
-	DA	AIFF
-	DE	AIFF
 	EN	AIFF
-	ES	AIFF
-	FI	AIFF
-	FR	AIFF
-	HE	AIFF
-	HU	AIFF
-	IT	AIFF
-	NL	AIFF
-	NO	AIFF
-	PL	AIFF
-	RU	AIFF
-	SV	AIFF
-	ZH_CN	AIFF
 
 UNK
 	CS	Neznámý
@@ -13630,58 +13252,13 @@ UNK
 	ZH_CN	不详
 
 WAV
-	CS	WAV
-	DA	WAV
-	DE	WAV
 	EN	WAV
-	ES	WAV
-	FI	WAV
-	FR	WAV
-	HE	WAV
-	HU	WAV
-	IT	WAV
-	NL	WAV
-	NO	WAV
-	PL	WAV
-	RU	WAV
-	SV	WAV
-	ZH_CN	WAV
 
 FLC
-	CS	FLAC
-	DA	FLAC
-	DE	FLAC
 	EN	FLAC
-	ES	FLAC
-	FI	FLAC
-	FR	FLAC
-	HE	FLAC
-	HU	FLAC
-	IT	FLAC
-	NL	FLAC
-	NO	FLAC
-	PL	FLAC
-	RU	FLAC
-	SV	FLAC
-	ZH_CN	FLAC
 
 PCM
-	CS	PCM
-	DA	PCM
-	DE	PCM
 	EN	PCM
-	ES	PCM
-	FI	PCM
-	FR	PCM
-	HE	PCM
-	HU	PCM
-	IT	PCM
-	NL	PCM
-	NO	PCM
-	PL	PCM
-	RU	PCM
-	SV	PCM
-	ZH_CN	PCM
 
 FEC
 	CS	FLAC s vloženým seznamem CUE
@@ -13702,63 +13279,19 @@ FEC
 	ZH_CN	FLAC内置CUEsheet
 
 OGG
-	CS	Ogg Vorbis
-	DA	Ogg Vorbis
-	DE	Ogg Vorbis
 	EN	Ogg Vorbis
-	ES	Ogg Vorbis
-	FI	Ogg Vorbis
-	FR	Ogg Vorbis
-	HE	Ogg Vorbis
-	HU	Ogg Vorbis
-	IT	Ogg Vorbis
-	NL	Ogg Vorbis
-	NO	Ogg Vorbis
-	PL	Ogg Vorbis
-	RU	Ogg Vorbis
-	SV	Ogg Vorbis
-	ZH_CN	Ogg Vorbis
 
 OGF
-	CS	Ogg FLAC
-	DA	Ogg FLAC
-	DE	Ogg FLAC
 	EN	Ogg FLAC
-	ES	Ogg FLAC
-	FI	Ogg FLAC
-	FR	Ogg FLAC
-	HE	Ogg FLAC
-	HU	Ogg FLAC
-	IT	Ogg FLAC
-	NL	Ogg FLAC
-	NO	Ogg FLAC
-	PL	Ogg FLAC
-	RU	Ogg FLAC
-	SV	Ogg FLAC
-	ZH_CN	Ogg FLAC
 
 DFF
-	CS	DFF
-	DA	DFF
 	EN	DFF
-	NO	DFF
-	SV	DFF
-	ZH_CN	DFF
 
 DSF
-	CS	DSF
-	DA	DSF
 	EN	DSF
-	NO	DSF
-	SV	DSF
-	ZH_CN	DSF
 
 OPS
-	CS	Opus
-	DA	Opus
 	EN	Opus
-	SV	Opus
-	ZH_CN	Opus
 
 MODIFIED
 	CS	Upraveno
@@ -13969,19 +13502,15 @@ THOUSANDS_SEP
 BYTES
 	CS	Bytů
 	DA	Byte
-	DE	Byte
 	EN	Bytes
-	ES	Bytes
 	FI	Tavut
 	FR	octets
 	HE	בתים
 	HU	Byte
 	IT	Byte
 	JA	バイト
-	NL	Bytes
 	NO	Byte
 	PL	Bajty
-	PT	Bytes
 	RU	Байты
 	SV	Byte
 	ZH_CN	字节
@@ -14272,20 +13801,11 @@ KBPS
 	DA	kb/s
 	DE	kb/s
 	EN	kbps
-	ES	kbps
-	FI	kbps
 	FR	Kbps
-	HE	kbps
-	HU	kbps
-	IT	kbps
-	JA	kbps
 	NL	kb/s
-	NO	kbps
 	PL	kb/s
-	PT	kbps
 	RU	кбит/с
 	SV	kbit/s
-	ZH_CN	kbps
 
 NO_LIMIT
 	CS	Bez omezení
@@ -14313,12 +13833,10 @@ GENRES
 	EN	Genres
 	ES	Géneros
 	FI	Genret
-	FR	Genres
 	HE	סגנונות
 	HU	Műfajok
 	IT	Generi musicali
 	JA	ジャンル
-	NL	Genres
 	NO	Sjangere
 	PL	Gatunki
 	PT	Géneros
@@ -14441,15 +13959,12 @@ ALBUMS
 	EN	Albums
 	ES	Álbumes
 	FI	Levyt
-	FR	Albums
 	HE	אלבומים
 	HU	Album
 	IT	Album
 	JA	アルバム
-	NL	Albums
 	NO	Album
 	PL	Albumy
-	PT	Albums
 	RU	Альбомы
 	SV	Album
 	ZH_CN	专辑
@@ -14857,12 +14372,10 @@ BROWSE_BY_GENRE
 	EN	Genres
 	ES	Géneros
 	FI	Genret
-	FR	Genres
 	HE	סגנונות
 	HU	Műfajok
 	IT	Generi musicali
 	JA	ジャンルをブラウズする
-	NL	Genres
 	NO	Sjangere
 	PL	Gatunki
 	PT	Escolher por Género
@@ -14872,10 +14385,8 @@ BROWSE_BY_GENRE
 
 BROWSE_BY_GENRE_DBL
 	DA	Genre
-	FR	Genres
 	PL	Gatunki
 	NO	Sjangrer
-	NL	Genres
 	ZH_CN	曲风
 
 BROWSE_BY_ARTIST
@@ -15087,12 +14598,10 @@ BROWSE_BY_ALBUM
 	EN	Albums
 	ES	Álbumes
 	FI	Levyt
-	FR	Albums
 	HE	אלבומים
 	HU	Albumok
 	IT	Album
 	JA	アルバムをブラウズする
-	NL	Albums
 	NO	Album
 	PL	Albumy
 	PT	Escolher por Álbum
@@ -15103,7 +14612,6 @@ BROWSE_BY_ALBUM
 BROWSE_BY_ALBUM_DBL
 	DA	Gennemse albums
 	ES	Examinar por Álbum
-	FR	Albums
 	PL	Albumy
 	ZH_CN	浏览专辑
 
@@ -15332,11 +14840,8 @@ SYNCHRONIZED_WITH
 PLAYER_PLUGINS
 	CS	Doplňky
 	DA	Ekstra
-	DE	Extras
 	EN	Extras
-	ES	Extras
 	FI	Muut
-	FR	Extras
 	HU	Extra
 	IT	Extra
 	NL	Extra's
@@ -15349,11 +14854,8 @@ PLAYER_PLUGINS
 PLUGINS
 	CS	Doplňky
 	DA	Ekstra
-	DE	Extras
 	EN	Extras
-	ES	Extras
 	FI	Muut
-	FR	Extras
 	HU	Extrák
 	IT	Extra
 	NL	Extra's
@@ -16306,20 +15808,14 @@ DEBUG_TRANSCODING
 	ZH_CN	转码器
 
 DEBUG_SERVER_CHOOSE
-	CS	Server
-	DA	Server
-	DE	Server
 	EN	Server
 	ES	Servidor
 	FI	Palvelin
 	FR	Serveur
 	HU	Szerver
-	IT	Server
-	NL	Server
 	NO	Tjener
 	PL	Serwer
 	RU	Сервер
-	SV	Server
 	ZH_CN	服务器
 
 DEBUG_SCANNER_CHOOSE
@@ -18375,217 +17871,10 @@ RADIO_TUNEIN
 	SV	Ange webbadress
 	ZH_CN	收音机网址
 
-SHOUTCAST
-	CS	SHOUTcast
-	DA	SHOUTcast
-	DE	SHOUTcast
-	EN	SHOUTcast
-	ES	SHOUTcast
-	FI	SHOUTcast
-	FR	SHOUTcast
-	HU	SHOUTcast
-	IT	SHOUTcast
-	NL	SHOUTcast
-	NO	SHOUTcast
-	PL	SHOUTcast
-	RU	SHOUTcast
-	SV	SHOUTcast
-	ZH_CN	SHOUTcast
-
-RADIO_PROVIDERS_ABSOLUTE
-	CS	Absolute Radio UK
-	DA	Absolute Radio UK
-	DE	Absolute Radio UK
-	EN	Absolute Radio UK
-	ES	Absolute Radio UK
-	FI	Absolute Radio UK
-	FR	Absolute Radio UK
-	HU	Absolute Radio UK
-	IT	Absolute Radio UK
-	NL	Absolute Radio UK
-	NO	Absolute Radio UK
-	PL	Absolute Radio UK
-	RU	Absolute Radio UK
-	SV	Absolute Radio UK
-	ZH_CN	Absolute Radio UK
-
-RADIO_PROVIDERS_ACCURADIO
-	CS	AccuRadio
-	DA	AccuRadio
-	DE	AccuRadio
-	EN	AccuRadio
-	ES	AccuRadio
-	FI	AccuRadio
-	FR	AccuRadio
-	HU	AccuRadio
-	IT	AccuRadio
-	NL	AccuRadio
-	NO	AccuRadio
-	PL	AccuRadio
-	RU	AccuRadio
-	SV	AccuRadio
-	ZH_CN	AccuRadio
-
-RADIO_PROVIDERS_BBC
-	CS	BBC
-	DA	BBC
-	DE	BBC
-	EN	BBC
-	ES	BBC
-	FI	BBC
-	FR	BBC
-	HU	BBC
-	IT	BBC
-	NL	BBC
-	NO	BBC
-	PL	BBC
-	RU	BBC
-	SV	BBC
-	ZH_CN	BBC
-
-RADIO_PROVIDERS_CBC
-	CS	CBC
-	DA	CBC
-	DE	CBC
-	EN	CBC
-	ES	CBC
-	FI	CBC
-	FR	CBC
-	HU	CBC
-	IT	CBC
-	NL	CBC
-	NO	CBC
-	PL	CBC
-	RU	CBC
-	SV	CBC
-	ZH_CN	CBC
-
-RADIO_PROVIDERS_DIFM
-# SLT: "Digitally Imported" is a product name, not to be translated (https://www.di.fm/)
-	CS	Digitally Imported
-	DA	Digitally Imported
-	DE	Digitally Imported
-	EN	Digitally Imported
-	ES	Digitally Imported
-	FI	Digitally Imported
-	FR	Digitally Imported
-	HU	Digitally Imported
-	IT	Digitally Imported
-	NL	Digitally Imported
-	NO	Digitally Imported
-	PL	Digitally Imported
-	RU	Digitally Imported
-	SV	Digitally Imported
-	ZH_CN	Digitally Imported
-
-RADIO_PROVIDERS_SOMAFM
-	CS	SomaFM
-	DA	SomaFM
-	DE	SomaFM
-	EN	SomaFM
-	ES	SomaFM
-	FI	SomaFM
-	FR	SomaFM
-	HU	SomaFM
-	IT	SomaFM
-	NL	SomaFM
-	NO	SomaFM
-	PL	SomaFM
-	RU	SomaFM
-	SV	SomaFM
-	ZH_CN	SomaFM
-
-RADIO_PROVIDERS_SKYFM
-	EN	RadioTunes
-	NL	RadioTunes
-	NO	RadioTunes
-	SV	RadioTunes
-	ZH_CN	RadioTunes
-
-RADIO_PROVIDERS_RADIODE
-	CS	radio.de
-	DA	radio.de
-	DE	radio.de
-	EN	radio.de
-	ES	radio.de
-	FI	radio.de
-	FR	radio.de
-	HU	radio.de
-	IT	radio.de
-	NL	radio.de
-	NO	radio.de
-	PL	radio.de
-	RU	radio.de
-	SV	radio.de
-	ZH_CN	radio.de
-
-RADIO_PROVIDERS_RADIOFR
-	CS	radio.fr
-	DA	radio.fr
-	DE	radio.fr
-	EN	radio.fr
-	ES	radio.fr
-	FI	radio.fr
-	FR	radio.fr
-	HU	radio.fr
-	IT	radio.fr
-	NL	radio.fr
-	NO	radio.fr
-	PL	radio.fr
-	RU	radio.fr
-	SV	radio.fr
-	ZH_CN	radio.fr
-
-RADIO_PROVIDERS_RADIOFEEDS
-	CS	RadioFeeds UK a Irsko
-	DA	RadioFeeds UK og Irland
-	DE	RadioFeeds UK & Ireland
-	EN	RadioFeeds UK & Ireland
-	ES	RadioFeeds UK & Ireland
-	FI	RadioFeeds (Iso-Britannia ja Irlanti)
-	FR	RadioFeeds RU et Irlande
-	HU	RadioFeeds RU et Irlande
-	IT	RadioFeeds UK & Ireland
-	NL	RadioFeeds UK & Ireland
-	NO	RadioFeeds UK & Ireland
-	PL	RadioFeeds Wielka Brytania i Irlandia
-	RU	Радиоканалы: Великобритания и Ирландия
-	SV	RadioFeeds UK & Ireland
-	ZH_CN	RadioFeeds UK & Ireland
-
-RADIO_PROVIDERS_RADIONOMY
-	CS	Radionomy
-	DA	Radionomy
-	DE	Radionomy
-	EN	Radionomy
-	ES	Radionomy
-	FI	Radionomy
-	FR	Radionomy
-	HU	Radionomy
-	IT	Radionomy
-	NL	Radionomy
-	NO	Radionomy
-	PL	Radionomy
-	RU	Radionomy
-	SV	Radionomy
-	ZH_CN	Radionomy
-
 URL
 	CS	Adresa URL
-	DA	URL
-	DE	URL
 	EN	URL
-	ES	URL
-	FI	URL
-	FR	URL
 	HE	כתובת URL
-	HU	URL
-	IT	URL
-	NL	URL
-	NO	URL
-	PL	URL
-	RU	URL
-	SV	URL
 	ZH_CN	网址
 
 PATH
@@ -19016,7 +18305,6 @@ INFORMATION
 	NO	Informasjon
 	PL	Informacje
 	RU	Информация
-	SV	Information
 	ZH_CN	信息
 
 JIVE_SQUEEZEBOX_INFORMATION
@@ -19075,17 +18363,10 @@ INFORMATION_SPECIFIC_PLAYER
 
 INFORMATION_MENU_SERVER
 	CS	Informace serveru
-	DA	Lyrion Music Server
-	DE	Lyrion Music Server
 	EN	Lyrion Music Server
-	ES	Lyrion Music Server
 	FI	Palvelimen tiedot
-	FR	Lyrion Music Server
 	HE	מידע אודות השרת
-	HU	Lyrion Music Server
-	IT	Lyrion Music Server
 	JA	サーバー情報
-	NL	Lyrion Music Server
 	NO	Server informasjon
 	SV	Server-information
 	ZH_CN	伺服器信息
@@ -19209,8 +18490,6 @@ INFORMATION_PLAYER_MODEL
 	ZH_CN	播放器型号
 
 INFORMATION_PLAYER_MODEL_ABBR
-	CS	Model
-	DA	Model
 	DE	Modell
 	EN	Model
 	ES	Modelo
@@ -19218,9 +18497,7 @@ INFORMATION_PLAYER_MODEL_ABBR
 	FR	Modèle
 	HU	Típus
 	IT	Modello
-	NL	Model
 	NO	Modell
-	PL	Model
 	RU	Модель
 	SV	Modell
 	ZH_CN	模型
@@ -19245,16 +18522,9 @@ INFORMATION_FIRMWARE
 	ZH_CN	播放器固件版本
 
 INFORMATION_FIRMWARE_ABBR
-	CS	Firmware
-	DA	Firmware
-	DE	Firmware
 	EN	Firmware
-	ES	Firmware
 	FI	Laitteisto-ohjelmisto
 	FR	Micrologiciel
-	HU	Firmware
-	IT	Firmware
-	NL	Firmware
 	NO	Fastvare
 	PL	Oprogramowanie układowe
 	RU	Микропрограмма
@@ -19283,20 +18553,9 @@ INFORMATION_PLAYER_IP
 
 INFORMATION_PLAYER_IP_ABBR
 	CS	IP adresa
-	DA	IP
-	DE	IP
 	EN	IP
-	ES	IP
-	FI	IP
-	FR	IP
-	HU	IP
-	IT	IP
-	NL	IP
-	NO	IP
 	PL	Adres IP
 	RU	IP-адрес
-	SV	IP
-	ZH_CN	IP
 
 INFORMATION_PLAYER_PORT
 	CS	Číslo portu přehrávače
@@ -19317,20 +18576,12 @@ INFORMATION_PLAYER_PORT
 	ZH_CN	播放器端口号
 
 INFORMATION_PLAYER_PORT_ABBR
-	CS	Port
-	DA	Port
-	DE	Anschluss
 	EN	Port
 	ES	Puerto
 	FI	Portti
-	FR	Port
-	HU	Port
 	IT	Porta
 	NL	Poort
-	NO	Port
-	PL	Port
 	RU	Порт
-	SV	Port
 	ZH_CN	端口
 
 INFORMATION_PLAYER_MAC
@@ -19354,21 +18605,7 @@ INFORMATION_PLAYER_MAC
 	ZH_CN	播放器MAC地址
 
 INFORMATION_PLAYER_MAC_ABBR
-	CS	MAC
-	DA	MAC
-	DE	MAC
 	EN	MAC
-	ES	MAC
-	FI	MAC
-	FR	MAC
-	HU	MAC
-	IT	MAC
-	NL	MAC
-	NO	MAC
-	PL	MAC
-	RU	MAC
-	SV	MAC
-	ZH_CN	MAC
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	CS	Síla bezdrátového signálu
@@ -19554,21 +18791,9 @@ INFORMATION_SERVER_IP
 
 INFORMATION_SERVER_IP_ABBR
 	CS	IP adresa
-	DA	IP
-	DE	IP
 	EN	IP
-	ES	IP
-	FI	IP
-	FR	IP
-	HU	IP
-	IT	IP
-	NL	IP
-	NO	IP
 	PL	Adres IP
-	PT	IP
 	RU	IP-адрес
-	SV	IP
-	ZH_CN	IP
 
 INFORMATION_SERVER_PORT
 	CS	Číslo portu serveru
@@ -19759,12 +18984,9 @@ INFORMATION_TIME
 
 INFORMATION_VERSION
 	CS	Verze
-	DA	Version
-	DE	Version
 	EN	Version
 	ES	Versión
 	FI	Versio
-	FR	Version
 	HE	גרסה
 	HU	Verzió
 	IT	Versione
@@ -19774,7 +18996,6 @@ INFORMATION_VERSION
 	PL	Wersja
 	PT	Versão
 	RU	Версия
-	SV	Version
 	ZH_CN	版本
 
 INFORMATION_DIAGSTRING
@@ -20121,24 +19342,8 @@ NOT_IN_RANGE
 # The space before the French : is there on purpose.
 
 COLON
-	CS	:
-	DA	:
-	DE	:
 	EN	:
-	ES	:
-	FI	:
 	FR	 :
-	HE	:
-	HU	:
-	IT	:
-	JA	:
-	NL	:
-	NO	:
-	PL	:
-	PT	:
-	RU	:
-	SV	:
-	ZH_CN	：
 
 SETUP_SCROLLPIXELS
 	CS	Pixely rolování
@@ -20422,10 +19627,8 @@ COMPILATION
 	EN	Compilation
 	ES	Compilación
 	FI	Kokoelma
-	FR	Compilation
 	HE	אוסף
 	HU	Válogatás
-	IT	Compilation
 	NL	Compilatie
 	NO	Samling
 	PL	Kompilacja
@@ -20985,19 +20188,15 @@ SETUP_LARGETEXTFONT_0
 SETUP_LARGETEXTFONT_1
 	CS	Moderní
 	DA	Moderne
-	DE	Modern
 	EN	Modern
 	ES	Moderno
 	FI	Moderni
 	FR	Moderne
 	HE	מודרני
-	HU	Modern
 	IT	Moderno
-	NL	Modern
 	NO	Moderne
 	PL	Nowoczesna
 	RU	Современный
-	SV	Modern
 	ZH_CN	现代
 
 SORT_BY
@@ -21726,20 +20925,14 @@ SETUP_PRIORITY_ABOVE_NORMAL
 
 SETUP_PRIORITY_NORMAL
 	CS	Normální
-	DA	Normal
-	DE	Normal
 	EN	Normal
-	ES	Normal
 	FI	Normaali
-	FR	Normal
 	HE	רגילה
 	HU	Nomrál
 	IT	Normale
 	NL	Normaal
-	NO	Normal
 	PL	Normalny
 	RU	Обычный
-	SV	Normal
 	ZH_CN	中
 
 SETUP_PRIORITY_BELOW_NORMAL
@@ -21816,40 +21009,10 @@ SETUP_DIGITALOUTPUTENCODING_DESC
 	ZH_CN	您可以选择使用S/PDIF或AES/EBU编码作为数码输出。
 
 DIGITALOUTPUTENCODING_SPDIF
-	CS	S/PDIF
-	DA	S/PDIF
-	DE	S/PDIF
 	EN	S/PDIF
-	ES	S/PDIF
-	FI	S/PDIF
-	FR	S/PDIF
-	HE	S/PDIF
-	HU	S/PDIF
-	IT	S/PDIF
-	NL	S/PDIF
-	NO	S/PDIF
-	PL	S/PDIF
-	RU	S/PDIF
-	SV	S/PDIF
-	ZH_CN	S/PDIF
 
 DIGITALOUTPUTENCODING_AESEBU
-	CS	AES/EBU
-	DA	AES/EBU
-	DE	AES/EBU
 	EN	AES/EBU
-	ES	AES/EBU
-	FI	AES/EBU
-	FR	AES/EBU
-	HE	AES/EBU
-	HU	AES/EBU
-	IT	AES/EBU
-	NL	AES/EBU
-	NO	AES/EBU
-	PL	AES/EBU
-	RU	AES/EBU
-	SV	AES/EBU
-	ZH_CN	AES/EBU
 
 AUDIO_SOURCE_BALANCED_AES
 	CS	Vyvážený AES/EBU
@@ -22239,18 +21402,9 @@ SETUP_ANALOGOUTMODE_DESC
 	ZH_CN	选择Boom耳机/子输出端口的功能。耳机选项将关闭内部扬声器。"始终开启"将在插入耳机时保持内部扬声器开启。
 
 ANALOGOUTMODE_SUBOUT
-	CS	Subwoofer
-	DA	Subwoofer
-	DE	Subwoofer
 	EN	Subwoofer
-	ES	Subwoofer
-	FI	Subwoofer
-	FR	Subwoofer
 	HU	Mélynyomó
-	IT	Subwoofer
-	NL	Subwoofer
 	NO	Basshøyttaler
-	PL	Subwoofer
 	RU	Сабвуфер
 	SV	Baselement
 	ZH_CN	低音扬声器
@@ -23588,7 +22742,6 @@ SETUP_DEBUG_LEVEL_INFO
 	NO	Info
 	PL	Informacje
 	RU	Информация
-	SV	Information
 	ZH_CN	信息
 
 SETUP_DEBUG_LEVEL_DEBUG
@@ -24813,38 +23966,10 @@ JIVE_SAVEPLAYLIST_HELP
 	ZH_CN	使用滚轮更改字母，然后按中心按钮选择该字母。再次按中心按钮以保存播放列表。
 
 JIVE_ALLOWEDCHARS_WITHCAPS
-	CS	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	DA	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	DE	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	EN	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	ES	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FI	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FR	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	HU	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	IT	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NL	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NO	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	PL	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	RU	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	SV	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	ZH_CN	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 
 JIVE_ALLOWEDCHARS_NOCAPS
-	CS	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	DA	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	DE	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	EN	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	ES	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FI	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FR	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	HU	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	IT	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NL	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NO	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	PL	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	RU	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	SV	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	ZH_CN	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 
 JIVE_ALARMSET_HELP
 	CS	Číslice hodin změňte pomocí otočného ovladače, výběr potvrďte stisknutím středového tlačítka. Po zadání času nastavte čas budíku stisknutím středového tlačítka.
@@ -25069,8 +24194,6 @@ PLAYER_NAME
 	ZH_CN	名称
 
 JIVE_PLAYER_MODEL
-	CS	Model
-	DA	Model
 	DE	Modell
 	EN	Model
 	ES	Modelo
@@ -25078,9 +24201,7 @@ JIVE_PLAYER_MODEL
 	FR	Modèle
 	HU	Modell
 	IT	Modello
-	NL	Model
 	NO	Modell
-	PL	Model
 	RU	Модель
 	SV	Modell
 	ZH_CN	型号
@@ -25626,21 +24747,7 @@ SQUEEZEBOX_SERVER_CONNECT
 	ZH_CN	连接到 Lyrion Music Server
 
 SQUEEZEBOX_SERVER_CONNECT_ABBR
-	CS	Lyrion Music Server
-	DA	Lyrion Music Server
-	DE	Lyrion Music Server
 	EN	Lyrion Music Server
-	ES	Lyrion Music Server
-	FI	Lyrion Music Server
-	FR	Lyrion Music Server
-	HU	Lyrion Music Server
-	IT	Lyrion Music Server
-	NL	Lyrion Music Server
-	NO	Lyrion Music Server
-	PL	Lyrion Music Server
-	RU	Lyrion Music Server
-	SV	Lyrion Music Server
-	ZH_CN	Lyrion Music Server
 
 CLOCK
 	CS	Hodiny
@@ -26290,20 +25397,9 @@ HOWTO_STAFF_PICKS_CONTROLLER
 
 INTERNET_RADIO
 	CS	Rádio
-	DA	Radio
-	DE	Radio
 	EN	Radio
-	ES	Radio
-	FI	Radio
-	FR	Radio
 	HU	Radió
-	IT	Radio
-	NL	Radio
-	NO	Radio
-	PL	Radio
-	PT	Radio
 	RU	Радиостанция
-	SV	Radio
 	ZH_CN	电台
 
 HOWTO_INTERNET_RADIO
@@ -26729,21 +25825,8 @@ PRESET
 
 USB
 	CS	Rozhraní USB
-	DA	USB
-	DE	USB
 	EN	USB
-	ES	USB
-	FI	USB
-	FR	USB
-	HU	USB
-	IT	USB
-	NL	USB
 	NO	Usb-port
-	PL	USB
-	PT	USB
-	RU	USB
-	SV	USB-port
-	ZH_CN	USB
 
 SD
 	CS	SD karta
