@@ -99,6 +99,60 @@ sub clientEvent {
 		return;
 	}
 
+	# Player jumped to new song, check if NextURI needs to be moved to CurrentURI
+	# for gapless playback support.
+	if ( $cmd eq 'newsong' ) {
+		my $pd = $client->pluginData();
+		my $currentURI = $pd->{AVT}->{CurrentTrackURI};
+
+		# only run if a controller has sent a track ie) currentURI is set.
+		if ( $currentURI ne '' ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("playlist $cmd event, currentURI: $currentURI");
+
+			my $playlist = Slim::Player::Playlist::playList($client);
+			if ( scalar @{$playlist} > 1 ) {
+				if ( my $song = ($client->playingSong() || $client->streamingSong()) ) {
+
+					my $nextURI = $pd->{AVT}->{NextAVTransportURI};
+					my $currentURIMetadata = $pd->{AVT}->{CurrentTrackMetaData};
+					my $track = $song->currentTrack;
+
+					# Convert URI to protocol handler
+					$currentURI =~ s/^http/upnp/;
+					$nextURI =~ s/^http/upnp/;
+
+					# Only continue if the track has transitioned to nextURI
+					# this also provides a check if the track not a upnp track
+					if ( $track->url eq $nextURI ) {
+						main::DEBUGLOG && $log->is_debug && $log->debug("playlist $cmd event, queueing next track");
+
+						# player has moved on to next track, copy NextURI to CurrentURI
+						$pd->{avt_AVTransportURIMetaData_hash} = $pd->{avt_NextAVTransportURIMetaData_hash};
+						$currentURI = $pd->{AVT}->{NextAVTransportURI};
+						$currentURIMetadata = $pd->{AVT}->{NextAVTransportURIMetaData};
+
+						# Remove track that just finished playing. The plugin protocol
+						# handler can only return metadata for currentURI and NextURI
+						$client->execute(["playlist", "delete", 0]);
+						# change state variables
+						$class->changeState( $client, {
+							CurrentTrackURI				=> $currentURI,
+							CurrentTrackMetaData		=> $currentURIMetadata,
+							AVTransportURI				=> $currentURI,
+							AVTransportURIMetaData		=> $currentURIMetadata,
+						} );
+					}
+					elsif (main::DEBUGLOG && $log->is_debug) {
+						$log->debug("playlist $cmd event, not upnp track");
+					}
+				}
+			}
+		}
+		elsif ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug("playlist $cmd event, currentURI is empty, not upnp track");
+		}
+	}
+
 	# Use playmode to handle TransportState changes on any kind of event
 	my $mode = Slim::Player::Source::playmode($client);
 
@@ -330,7 +384,26 @@ sub SetNextAVTransportURI {
 		return [ 718 => 'Invalid InstanceID' ];
 	}
 
- 		my $meta = $class->_DIDLLiteToHash( $args->{NextURIMetaData} );
+	my $playlist = Slim::Player::Playlist::playList($client);
+	my $pd = $client->pluginData();
+
+	if ( scalar @{$playlist} > 1 ){
+
+		# Next track queued on the control point has changed while
+		# currentURI is still playing. Remove it from the playlist
+		# ready for the updated NextURI.
+		$client->execute(["playlist", "delete", 1]);
+	}
+
+	if ( exists $args->{NextURI} && $args->{NextURI} eq '' ) {
+
+		# NextURI is blank, clear NextURI track from playlist
+		$pd->{avt_NextAVTransportURIMetaData_hash} = '';
+		main::DEBUGLOG && $log->is_debug && $log->debug("NextURI cleared");
+
+	} else {
+
+		my $meta = $class->_DIDLLiteToHash( $args->{NextURIMetaData} );
 
 		# XXX parse playlist?
 
@@ -338,8 +411,24 @@ sub SetNextAVTransportURI {
 			return [ 714 => 'Illegal MIME-type' ];
 		}
 
-			# Save hash version of metadata
-	$client->pluginData( avt_NextAVTransportURIMetaData_hash => $meta );
+		my $upnp_uri = $meta->{res}->{uri};
+		my $upnp_uricached = $pd->{avt_NextAVTransportURIMetaData_hash}->{res}->{uri};
+
+		# only update if NextURI has changed or it's not queued yet
+		if ( $upnp_uri ne $upnp_uricached || scalar @{$playlist} < 2 ){
+
+			# Convert URI to protocol handler
+			$upnp_uri =~ s/^http/upnp/;
+			Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
+			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );
+
+			$pd->{avt_NextAVTransportURIMetaData_hash} = $meta;
+
+			# use insert to make sure it is queued next.
+			$client->execute( [ 'playlist', 'insert', $upnp_uri, $meta->{title} ] );
+			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $upnp_uri . ":" . $meta->{title});
+		}
+	}
 
 	# Change state variables
 	$class->changeState( $client, {

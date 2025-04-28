@@ -74,10 +74,34 @@ sub isRepeatingStream {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
+	# This returns metadata for any tracks added to the playlist via the plugin.
+
+	# convert protocal handler
+	$url =~ s/^upnp/http/;
+
 	my $pd = $client->pluginData();
 	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
 	my $res = $meta->{res};
+	my $currentUri = $res->{uri};
 
+	# if $url doesn't match CurrentURI check against NextUri
+	if ( $url && $currentUri && $url ne $currentUri ) {
+		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
+
+		# check for cleared NextUri
+		if ( ref($nextMeta) eq 'HASH' ) {
+
+			my $nextRes = $nextMeta->{res};
+			$currentUri = $nextRes->{uri};
+
+			if ( $currentUri && $url eq $currentUri ) {
+				$meta = $nextMeta;
+				$res = $nextRes;
+			}
+		}
+	}
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
 	return {
 		artist   => $meta->{artist},
 		album    => $meta->{album},
