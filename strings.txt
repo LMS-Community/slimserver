@@ -9349,7 +9349,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	PL	Jedna, konfigurowalna lista wykonawców
 	PT	Use um unica lista de artistas configuravel
 	SV	Använd en enda konfigurerbar artistlista
-	zh_CN	使用一个可配置的艺术家列表
+	ZH_CN	使用一个可配置的艺术家列表
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
 	CS	Použít dva samostatné seznamy pro Interpreta alba a Všechny interprety
