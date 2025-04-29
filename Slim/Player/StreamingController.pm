@@ -1301,8 +1301,6 @@ sub _Stream {				# play -> Buffering, Streaming
 		if ($song->currentTrackHandler()->can('onStream')) {
 			$song->currentTrackHandler()->onStream($player, $song);
 		}
-		
-		$player->replayGain($replayGain);  # store this for status queries
 
 		my %params = (
 			'paused'      => $paused,
@@ -1317,6 +1315,8 @@ sub _Stream {				# play -> Buffering, Streaming
 		);
 
 		$startedPlayers += $player->play( \%params );
+
+		$player->replayGain($replayGain);  # store this for status queries
 
 		$reportsTrackStart ||= $player->reportsTrackStart();
 	}
