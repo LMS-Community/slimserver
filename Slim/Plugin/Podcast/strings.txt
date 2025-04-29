@@ -17,22 +17,6 @@ PLUGIN_PODCAST
 	RU	Подкасты
 	SV	Poddsändningar
 
-PODCAST_PLAYER
-	CS	Přehrávač podcastů
-	DA	Podcastafspiller
-	DE	Podcast Player
-	EN	Podcast Player
-	ES	Reproductor de podcasts
-	FI	Podcast-soitin
-	FR	Lecteur de podcast
-	HU	Podcast lejátszó
-	IT	Lettore podcast
-	NL	Podcast Speler
-	NO	Podkast-spiller
-	PL	Odtwarzacz podcastów
-	RU	Плеер подкастов
-	SV	Poddsändningsspelare
-
 PLUGIN_PODCAST_DESC
 	CS	Přístup k podcastům
 	DA	Adgang til podcasts
@@ -48,23 +32,6 @@ PLUGIN_PODCAST_DESC
 	PL	Dostęp do podcastów
 	RU	Доступ к подкастам
 	SV	Tillgång till poddsändningar
-
-PODCAST_NOTHING_TO_PLAY
-	CS	Nic k přehrání
-	DA	Der er ikke noget at afspille
-	DE	Kein Material vorhanden
-	EN	Nothing to play
-	ES	Nada para reproducir
-	FI	Ei soitettavaa
-	FR	Aucun podcast à lire
-	HE	אין פריטים להפעלה
-	HU	Nincs mit lejátszani
-	IT	Niente da riprodurre
-	NL	Niets om af te spelen
-	NO	Ingenting å spille av
-	PL	Brak elementów do odtworzenia
-	RU	Нет песен для воспроизведения
-	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
 	CS	Zásuvný modul prohlížeč podcastů vám umožňuje prohlížet a poslouchat podcasty.
@@ -82,74 +49,6 @@ PODCAST_GROUP_DESC
 	PL	Dodatek Przeglądarka podcastów umożliwia wyświetlanie i słuchanie podcastów.
 	RU	Подключаемый модуль "Браузер подкастов" позволяет просматривать и прослушивать подкасты.
 	SV	Med plugin-programmet för poddsändningsläsaren kan du visa och lyssna på poddsändningar.
-
-PODCAST_RESET_BUTTON
-	CS	Resetovat
-	DA	Nulstil
-	DE	Zurücksetzen
-	EN	Reset
-	ES	Restablecer
-	FI	Palauta
-	FR	Réinitialiser
-	HE	איפוס
-	HU	Visszaállítás
-	IT	Reimposta
-	NL	Opnieuw instellen
-	NO	Tilbakestill
-	PL	Resetuj
-	RU	Сброс
-	SV	Återställ
-
-PODCAST_RESETTING
-	CS	Obnovuji výchozí podcasty
-	DA	Nulstilling til standardpodcasts
-	DE	Standard-Podcasts werden wiederhergestellt
-	EN	Resetting to default podcasts
-	ES	Restableciendo podcasts predeterminados
-	FI	Palautetaan oletus-podcasteihin
-	FR	Réinitialisation des podcasts par défaut
-	HE	איפוס לפריטי ה-Podcast המוגדרים כברירת מחדל
-	HU	Az alapértelmezett podcastok visszaállítása
-	IT	Reimpostazione dei podcast predefiniti
-	NL	Standaard podcasts worden opnieuw ingesteld
-	NO	Tilbakestiller til standardpodkaster
-	PL	Przywracanie podcastów domyślnych
-	RU	Восстановление подкастов по умолчанию
-	SV	Återställer till standardpoddsändningarna
-
-PODCAST_FEEDS_CHANGE
-	CS	Seznam podcastů změněn.
-	DA	Podcastlisten er ændret.
-	DE	Die Podcast-Liste wurde geändert.
-	EN	Podcast list changed.
-	ES	La lista de podcasts ha cambiado.
-	FI	Podcast-luetteloa muutettiin.
-	FR	Liste des podcasts modifiée.
-	HE	רשימת פריטי ה-Podcast השתנתה.
-	HU	A podcastok listája megváltozott.
-	IT	Elenco Podcast modificato.
-	NL	Podcast lijst gewijzigd.
-	NO	Podkast-liste endret.
-	PL	Lista podcastów została zmieniona.
-	RU	Список подкастов изменен.
-	SV	Poddsändningslistan har ändrats.
-
-SETUP_PLUGIN_PODCAST_RESET
-	CS	Obnovit výchozí podcasty
-	DA	Nulstil standardpodcasts
-	DE	Standard-Podcasts zurücksetzen
-	EN	Reset default Podcasts
-	ES	Restablecer podcasts predeterminados
-	FI	Palauta oletus-podcastit
-	FR	Rétablir la liste des podcasts par défaut
-	HE	איפוס פריטי Podcast המוגדרים כברירת מחדל
-	HU	Alapértelmezett podcastok visszaállítása
-	IT	Reimposta podcast predefiniti
-	NL	Standaard podcasts opnieuw instellen
-	NO	Tilbakestill standardpodkaster
-	PL	Przywróć podcasty domyślne
-	RU	Восстановить подкасты по умолчанию
-	SV	Återställ till standardpoddsändningarna
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
 	CS	Přidat nový kanál:

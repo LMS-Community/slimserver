@@ -33,22 +33,6 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	RU	TuneIn Radio
 	SV	TuneIn Radio
 
-PLUGIN_RADIOTIME_MODULE_NAME_DESC
-	CS	TuneIn Radio – Místní internetové rádio
-	DA	TuneIn Radio - lokal internetradio
-	DE	TuneIn Radio - Lokale Internetradiosender
-	EN	TuneIn Radio - Local Internet Radio
-	ES	TuneIn Radio - Radio por Internet local
-	FI	TuneIn Radio - paikallinen internetradio
-	FR	TuneIn Radio - Radios Internet
-	HU	TuneIn Radio - Radios Internet
-	IT	TuneIn Radio - Radio Internet locale
-	NL	TuneIn Radio - lokale internetradio
-	NO	TuneIn Radio: Lokal Internett-radio
-	PL	TuneIn Radio - lokalne radio internetowe
-	RU	TuneIn Radio — местная интернет-радиостанция
-	SV	TuneIn Radio – Lokal webbradio
-
 PLUGIN_RADIOTIME_MODULE_TITLE
 	CS	TuneIn Radio
 	DA	TuneIn Radio

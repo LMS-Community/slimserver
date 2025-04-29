@@ -124,26 +124,6 @@ VERSION
 	RU	Версия 9.1.0 / r%s
 	ZH_CN	版本 9.1.0 / r%s
 
-CHOOSE_A_LANGUAGE
-	CS	Zvolte prosím jazyk
-	DA	Vælg sprog
-	DE	Wählen Sie eine Sprache
-	EN	Please choose a language
-	ES	Elija un idioma
-	FI	Valitse kieli
-	FR	Sélectionnez une langue
-	HE	בחר שפה
-	HU	Válassz nyelvet
-	IT	Selezionare una lingua
-	JA	言語を選んでください
-	NL	Selecteer een taal
-	NO	Velg språk
-	PL	Wybierz język
-	PT	Escolha um idioma
-	RU	Выберите язык
-	SV	Välj ett språk
-	ZH_CN	请选择语言
-
 LOADING_SQUEEZEBOX_SERVER
 	CS	Načítání Lyrion Music Serveru...
 	DA	Indlæser Lyrion Music Server...
@@ -221,23 +201,6 @@ DEFAULT_MAP
 	RU	Стандартный
 	ZH_CN	标准
 
-SERVER_VERSION
-	CS	Verze Lyrion Music Serveru
-	DA	Lyrion Music Server version
-	DE	Lyrion Music Server-Version
-	EN	Lyrion Music Serverersion
-	ES	Versión de Lyrion Music Server
-	FR	Version du Lyrion Music Server
-	HE	גרסת Lyrion Music Server‏
-	HU	Lyrion Music Server verzió
-	IT	Versione Lyrion Music Server
-	NL	Lyrion Music Server-versie
-	NO	Lyrion Music Server-versjon
-	PL	Wersja Lyrion Music Server
-	PT	Versão do Lyrion Music Server
-	SV	Lyrion Music Server-version
-	ZH_CN	Lyrion Music Server版本
-
 PERL_VERSION
 	CS	Verze Perlu
 	DA	Perl-version
@@ -274,26 +237,6 @@ DATABASE_VERSION
 	RU	Версия базы данных
 	SV	Databasversion
 	ZH_CN	数据库版本
-
-PLAYER_VERSION
-	CS	Verze firmwaru přehrávače
-	DA	Afspillerens firmwareversion
-	DE	Version der Player-Firmware
-	EN	Player Firmware Version
-	ES	Versión de firmware de reproductor
-	FI	Soittimen laitteisto-ohjelmiston versio
-	FR	Version du micrologiciel de la platine
-	HE	גרסת הקושחה של הנגן
-	HU	Lejátszó Firmware verzió
-	IT	Versione firmware del lettore
-	JA	ファームウェア・バージョン
-	NL	Firmwareversie van muziekspeler
-	NO	Spillerens fastvareversjon
-	PL	Wersja oprogramowania układowego odtwarzacza
-	PT	Versão do firmware do reprodutor
-	RU	Версия микропрограммы плеера
-	SV	Spelarens inbyggda programvaruversion
-	ZH_CN	播放器固件版本
 
 #
 # Player user interface, sent by the server
@@ -458,24 +401,6 @@ MUSIC
 	SV	Musik
 	ZH_CN	音乐
 
-PICTURES
-	CS	Obrázky
-	DA	Billeder
-	DE	Bilder
-	EN	Pictures
-	ES	Imágenes
-	FI	Kuvat
-	HU	Képek
-	FR	Images
-	IT	Immagini
-	NL	Foto's
-	NO	Bilder
-	PL	Obrazy
-	PT	Imagens
-	RU	Изображения
-	SV	Bilder
-	ZH_CN	图片
-
 PICTURE
 	CS	Obrázek
 	DA	Billede
@@ -553,26 +478,6 @@ NOTHING
 	RU	Ничего
 	SV	Ingenting
 	ZH_CN	无
-
-ONLY_ONE
-	CS	Zde je pouze jedna položka!
-	DA	Der er kun et element her!
-	DE	Hier gibt es nur eine Auswahl
-	EN	There is only one item here!
-	ES	Aquí solo hay un elemento.
-	FI	Täällä on vain yksi kohde
-	FR	Il n'y a qu'un élément ici.
-	HE	נמצא רק פריט אחד!
-	HU	Itt csak egy elem van!
-	IT	Un solo elemento trovato.
-	JA	ここには１つのアイテムしかありません！
-	NL	Slechts één item beschikbaar!
-	NO	Det er bare ett element her!
-	PL	Tutaj znajduje się tylko jeden element!
-	PT	Só existe apenas um item!
-	RU	Доступен только один элемент!
-	SV	Det finns bara ett objekt!
-	ZH_CN	此处只有一个项目！
 
 SCREENSAVERS
 	CS	Spořiče obrazovky
@@ -807,46 +712,6 @@ NOW_PLAYING
 	RU	Воспроизводится
 	SV	Nu spelas
 	ZH_CN	播放中
-
-NOW_SCANNING
-	CS	Prohledávání
-	DA	Gennemsøger
-	DE	Suche läuft ...
-	EN	Now Scanning
-	ES	Examinando...
-	FI	Tarkistetaan
-	FR	Recherche en cours
-	HE	סורק
-	HU	Beolvasás alatt...
-	IT	Analisi in corso
-	JA	スキャンしています
-	NL	Bezig met scannen
-	NO	Søker
-	PL	Teraz przeszukiwane
-	PT	A Procurar
-	RU	Сканируется
-	SV	Söker nu igenom
-	ZH_CN	扫描中
-
-NOW_REWINDING
-	CS	Převíjení zpět
-	DA	Spoler tilbage
-	DE	Zurückspulen läuft ...
-	EN	Now Rewinding
-	ES	Rebobinando
-	FI	Kelataan alkuun
-	FR	Retour rapide en cours
-	HE	מחזיר לאחור
-	HU	Visszatekerés alatt...
-	IT	Riavvolgimento in corso
-	JA	巻き戻しています
-	NL	Bezig met terugspoelen
-	NO	Spoler tilbake
-	PL	Trwa przewijanie do tyłu
-	PT	A Rebobinar
-	RU	Перематывается
-	SV	Spolar tillbaka
-	ZH_CN	回转中
 
 EVERYTHING
 	CS	Vše
@@ -1184,26 +1049,6 @@ CLEARING_PLAYLIST
 	RU	Очистка плей-листа...
 	SV	Rensar spellistan...
 	ZH_CN	正在清除播放表...
-
-VIEWING_PLAYLIST
-	CS	Právě hraje...
-	DA	Nu spiller...
-	DE	Aktuelle Wiedergabe ...
-	EN	Now Playing...
-	ES	Reproduciendo...
-	FI	Nyt soi...
-	FR	En cours de lecture...
-	HE	מושמע כעת...
-	HU	éppen jástzott...
-	IT	Riproduzione in corso...
-	JA	現在再生中...
-	NL	Speelt nu...
-	NO	Spiller av nå...
-	PL	Teraz odtwarzane...
-	PT	Reproduzindo...
-	RU	Воспроизводится...
-	SV	Nu spelas...
-	ZH_CN	播放中...
 
 PLAYLIST_EMPTY
 	CS	Seznam skladeb je prázdný
@@ -1562,26 +1407,6 @@ SLEEPING_AT
 	RU	Спящий режим в
 	SV	Viloläge vid
 	ZH_CN	进入睡眠状态
-
-POWERING_OFF
-	CS	Přechod do pohotovosti...
-	DA	Går på standby...
-	DE	Standbymodus wird aktiviert ...
-	EN	Going to standby...
-	ES	Pasando a modo de espera...
-	FI	Siirtyy valmiustilaan...
-	FR	Mise hors tension...
-	HE	עובר למצב המתנה...
-	HU	Készenléti állapotba kerül...
-	IT	Attivazione modalità standby...
-	JA	パワー オフ
-	NL	Stand-by wordt ingeschakeld...
-	NO	Hvilemodus...
-	PL	Przechodzenie w tryb gotowości...
-	PT	A entrar em stanby...
-	RU	В режим ожидания...
-	SV	Går till viloläge...
-	ZH_CN	进入备用状态中...
 
 POWER
 #SLT: This is "power" as in the "Power on/off" button
@@ -2972,25 +2797,6 @@ FIRMWARE_MISSING_DESC
 	SV	Servern kan inte ansluta till Internet och hämta spelarens inbyggda programvara.
 	ZH_CN	服务器无法连接互联网并取得固件更新。
 
-CHECKING_STREAM
-	CS	Kontrola datového proudu...
-	DA	Kontrollerer stream...
-	DE	Datenstrom wird geprüft ...
-	EN	Checking stream...
-	ES	Comprobando secuencia...
-	FI	Tarkistetaan virtaa...
-	FR	Vérification du flux...
-	HE	בודק את מצב הזרימה...
-	HU	Adatfolyam ellenőrzése...
-	IT	Controllo stream...
-	NL	Stream controleren...
-	NO	Kontrollerer datastrøm...
-	PL	Sprawdzanie strumienia...
-	PT	Verificando o stream ...
-	RU	Проверка потока...
-	SV	Kontrollerar ström...
-	ZH_CN	检查频流
-
 GETTING_STREAM_INFO
 	CS	Získávání informací o datovém proudu...
 	DA	Henter oplysninger om stream...
@@ -3309,22 +3115,6 @@ PLAYLIST_NO_ITEMS_FOUND
 	SV	Fel: Spellistan är tom.
 	ZH_CN	错误：播放列表中没有找到任何项目
 
-PLAYLIST_PROBLEM_CONNECTING
-	DA	Fejl: Kan ikke tilslutte for at hente spillelisten
-	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
-	EN	Error: Can't connect to retrieve playlist
-	ES	Error: No se puede conectar para obtener lista de reproducción
-	FR	Erreur : connexion impossible pour récupérer la liste de lecture
-	HE	שגיאה: אין אפשרות להתחבר ולאחזר רשימת השמעה
-	HU	Hiba: Nem lehet csatlakozni a lejátszási lista lekéréséhez
-	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
-	NL	Fout: Kan geen verbinding maken om afspeellijst op te halen
-	NO	Feil: Kan ikke koble til for å hente spilleliste
-	PL	Błąd: nie można połączyć się, aby odzyskać listę odtwarzania
-	PT	Erro: Não se consegue conectar para obter a playlist
-	SV	Fel: Kan inte ansluta för att hämta spellista
-	ZH_CN	失误：无法取得播放表
-
 ASF_UNABLE_TO_PARSE
 	CS	Chyba: Nelze parsovat zvukový proud ASF
 	DA	Fejl: Kan ikke fortolke ASF-lydstream
@@ -3399,26 +3189,6 @@ SERVER
 	SV	Server
 	ZH_CN	服务器
 
-ABOUT_SHORT
-	CS	O aplikaci
-	DA	Om
-	DE	Info...
-	EN	About
-	ES	Acerca de
-	FI	Tietoja
-	FR	A propos de
-	HE	אודות
-	HU	Névjegy
-	IT	Informazioni su
-	JA	...について
-	NL	Info
-	NO	Om
-	PL	Informacje
-	PT	Sobre ...
-	RU	О программе
-	SV	Om
-	ZH_CN	关于
-
 WEB_XML_ERROR
 	CS	Nastala chyba při zavádění vzdáleného kanálu pro %s: (%s)
 	DA	Der opstod en fejl under indlæsningen af feed for %s: (%s)
@@ -3475,25 +3245,6 @@ XML_GET_FAILED
 	RU	Сбой анализа
 	SV	Det gick inte att tolka
 	ZH_CN	解析失误
-
-XML_LOADING
-	CS	Načítání...
-	DA	Henter...
-	DE	Daten werden geladen ...
-	EN	Fetching...
-	ES	Obteniendo...
-	FI	Noudetaan...
-	FR	Chargement...
-	HE	מבצע איסוף...
-	HU	Adatlekérés...
-	IT	Recupero in corso...
-	NL	Bezig met ophalen...
-	NO	Henter...
-	PL	Pobieranie...
-	PT	Carregando...
-	RU	Получение...
-	SV	Hämtar...
-	ZH_CN	读取中
 
 XML_LINK
 	CS	Odkaz
@@ -4132,7 +3883,7 @@ SETUP_SCROLLRATE_DESC
 	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放器，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放器这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
-DOUBLE-LINE
+DOUBLE_LINE
 	CS	Velký text
 	DA	Stor skrift
 	DE	Großer Text
@@ -4403,24 +4154,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	SV	Avaktiverade filtillägg för ljudfiler
 	ZH_CN	撤销音频文件扩展名
 
-SETUP_DISABLEDEXTENSIONSIMAGES
-	CS	Zakázané přípony souborů obrázku
-	DA	Fravalgte filtypenavne for billedfiler
-	DE	Deaktivierte Dateierweiterungen für Bilder
-	EN	Disabled Picture File Extensions
-	ES	Extensiones de archivo de imagen desactivadas
-	FI	Kuvatiedostojen tunnisteet poistettu käytöstä
-	FR	Extensions de fichiers image ignorées
-	HU	Letiltott képfájl-kiterjesztések
-	IT	Estensioni file delle immagini disattivate
-	NL	Uitgeschakelde extensies voor fotobestanden
-	NO	Deaktiverte bildefilendelser
-	PL	Wyłączone rozszerzenia plików obrazów
-	PT	Desactivar as extensões dos ficheiros de imagem
-	RU	Отключенные расширения файлов изображений
-	SV	Avaktiverade filtillägg för bildfiler
-	ZH_CN	撤销图片文件扩展名
-
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	CS	Lyrion Music Server vyhledá ve složkách s médii všechny podporované typy souborů (zvukové soubory a seznamy cue). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: cue, mp4, aac
 	DA	Lyrion Music Server søger efter understøttede filtyper (lydfiler og cue-ark) i mapperne med mediefiler. Hvis du vil forhindre at der søges efter bestemte filtyper når mappen bliver gennemsøgt, skal du angive filtypenavnene i en kommaadskilt liste nedenfor. For eksempel: cue, mp4, aac
@@ -4438,24 +4171,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	PT	O Lyrion Music Server procurará na Pasta de Musica por todo o tipo de ficheiros suportados (ficheiros audio ou cue). Para desactivar o processamento de ficheiros de audio específicos durante o scanning da Pasta de Musica introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : cue, mp4, aac.
 	RU	Lyrion Music Server выполняет в папках мультимедиа поиск файлов всех поддерживаемых типов (аудиофайлов и плей-листов). Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: cue, mp4, aac.
 	SV	Lyrion Music Server söker igenom mediemapparna efter alla filtyper som stöds (ljudfiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av musikmappen kan du ange filtilläggen för de filer som ska undantas nedan i en kommaavgränsad lista. Exempel: cue, mp4, aac
-	ZH_CN	Lyrion Music Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
-
-SETUP_DISABLEDEXTENSIONSIMAGES_DESC
-	CS	Server vyhledá ve složkách s médii všechny podporované typy souborů obrázku. Chcete-li zakázat zpracování některých typů souborů při prohledávání složky s médii, zadejte níže seznam přípon souborů oddělený čárkami. Například: bmp, gif.
-	DA	Serveren søger efter alle understøttede billedfiltyper i mapperne med mediefiler. Du kan fravælge specifikke filtyper når mappen med musikfiler gennemsøges, ved at angive en kommasepareret liste over filtypenavne nedenfor. For eksempel: bmp og gif
-	DE	Der Server sucht in den Medienordnern nach allen unterstützten Bilddateitypen. Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: bmp, gif
-	EN	The server will look in the Media Folders for all supported picture file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: bmp, gif
-	ES	El servidor buscará en las carpetas de material multimedia todos los tipos de archivo de imagen compatibles. Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: bmp, gif.
-	FI	Lyrion Music Server etsii mediakansioista kaikkia tuettuja kuvatiedostotyyppejä. Jos haluat poistaa tiettyjen tiedostotyyppien käsittelyn käytöstä kansiohaun aikana, kirjoita tiedostotyypit alle pilkuin erotettuina, esimerkiksi: bmp, gif.
-	FR	Le serveur recherche tous les types de fichiers image pris en charge dans les dossiers multimédias. Pour exclure un type de fichier image de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple : bmp, gif
-	HU	A szerver a médiamappákban keresi az összes támogatott képfájltípust. Ha le szeretné tiltani bizonyos fájltípusok feldolgozását a Zene mappa vizsgálatakor, írja be alább a fájlkiterjesztések vesszővel elválasztott listáját. Pl.: bmp, gif
-	IT	Il server effettua una ricerca nelle cartelle dei file multimediali per tutti i tipi di file di immagini. Per ignorare tipi di file specifici durante l'analisi della cartella della musica, inserire l'elenco delle estensioni corrispondenti, separate da una virgola. Ad esempio: bmp, gif e così via.
-	NL	Lyrion Music Server zoekt in de mediamappen naar alle ondersteunde fotobestandstypen. Als je wilt voorkomen dat bepaalde bestandstypen worden verwerkt tijdens het scannen van de muziekmap, voer je een kommagescheiden lijst met bestandsextensies in. Bijv: bmp, gif
-	NO	Serveren ser etter alle støttede bildefilformater i mediemappene. Du kan utelate bestemte filformater fra søk i musikkmappen ved å lage en kommadelt liste med filendelser nedenfor. Den kan f.eks. se slik ut: bmp, gif
-	PL	Serwer wyszuka w folderach multimediów wszystkie obsługiwane typy plików obrazów. Aby wyłączyć przetwarzanie określonych typów plików podczas przeszukiwania folderu muzyki, wprowadź listę rozszerzeń plików rozdzieloną przecinkami poniżej, np.: bmp, gif
-	PT	O Lyrion Music Server procurará na Pasta de Musica por todo o tipo de ficheiros suportados. Para desactivar o processamento de tipos de ficheiros específicos durante o scanning da Pasta de Musica introduza  uma lista dos tipos de ficheiros a não serem processados, separados por uma vírgula. Exemplo : bmp, gif.
-	RU	Сервер выполнит в папках мультимедиа поиск файлов изображений всех поддерживаемых типов. Чтобы отключить обработку определенных типов файлов при сканировании папки с музыкальными файлами, введите список файловых расширений через запятую. Например: bmp, gif.
-	SV	Servern letar i mediemapparna efter alla bildfiler i format som stöds. Om du vill förhindra att vissa filtyper behandlas när musikmappen genomsöks kan du ange en kommaavgränsad lista med filnamnstillägg nedan. T.ex. bmp, gif
 	ZH_CN	Lyrion Music Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
@@ -4515,26 +4230,6 @@ PLAYER_TYPE
 	RU	Тип плеера
 	SV	Spelartyp
 	ZH_CN	播放器类别
-
-PLAYER_ID
-	CS	ID přehrávače
-	DA	Afspiller-id
-	DE	Player-ID
-	EN	Player ID
-	ES	ID de reproductor
-	FI	Soittimen tunnus
-	FR	ID platine
-	HE	מזהה נגן
-	HU	Lejátszó ID
-	IT	Identificativo lettore
-	JA	プレーヤーID
-	NL	Muziekspeler-ID
-	NO	Spiller-ID
-	PL	Identyfikator odtwarzacza
-	PT	ID do reprodutor
-	RU	ID плеера
-	SV	Spelar-ID
-	ZH_CN	播放器身份证明
 
 COMMAND
 	CS	Příkaz
@@ -6892,25 +6587,6 @@ SETUP_AUDIODIR
 	SV	Musikmapp
 	ZH_CN	音乐文件夹
 
-SETUP_AUDIODIR_DESC
-	CS	Můžete zadat složku obsahující hudební soubory, kterou bude Lyrion Music Server prohledávat, a přidat do své hudební knihovny. Níže zadejte cestu ke složce. Můžete toto pole ponechat prázdné, pokud importujete informace o své hudební knihovně z iTunes nebo MusicIP.
-	DA	Du kan angive en mappe med musikfiler som Lyrion Music Server vil gennemsøge og føje til musikbiblioteket. Angiv stien til mappen nedenfor. Feltet kan være tomt hvis du importerer oplysninger om musikbiblioteket fra iTunes eller MusicIP.
-	DE	Geben Sie den Ordner ein, der die Musikdateien enthält, die von Lyrion Music Server durchsucht und der Musiksammlung hinzugefügt werden sollen. Sie können dieses Feld leer lassen, wenn Sie die Musiksammlung über iTunes oder MusicIP importieren.
-	EN	You can specify a folder containing music files that Lyrion Music Server will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MusicIP.
-	ES	Se puede especificar una carpeta que contenga archivos de música para que Lyrion Music Server la examine y agregue a la biblioteca de música. Introduzca la ruta a ala carpeta a continuación. Se puede dejar este campo en blanco si va a importar la información de la biblioteca de música desde iTunes o MusicIP.
-	FI	Voit määrittää kansion, jonka Lyrion Music Server tarkistaa ja josta se etsii musiikkitiedostoja musiikkikirjastoon lisättäväksi.  Kirjoita kansion polku alle.  Voit jättää kentän tyhjäksi, jos tuot musiikkikirjastotietoja iTunes- tai MusicIP-sovelluksista.
-	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le Lyrion Music Server l'analyse et ajoute son contenu à votre bibliothèque musicale. Spécifiez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous importez les informations de votre bibliothèque musicale à partir d'iTunes ou de MusicIP.
-	HE	באפשרותך לציין תיקייה שמכילה קובצי מוסיקה שעל Lyrion Music Server לסרוק ולהוסיף לספריית המוסיקה שלך. הזן את הנתיב לתיקייה בשדה שלהלן. באפשרותך להשאיר שדה זה ריק אם אתה מייבא את מידע ספריית המוסיקה מ-iTunes או מ-MusicIP.
-	HU	Megadhat egy zenei fájlokat tartalmazó mappát, amelyet a Lyrion Music Server átvizsgál, és hozzáad a zenei könyvtárához.  Adja meg az alábbi mappa elérési útját.  Ezt a mezőt üresen hagyhatja, ha a zenekönyvtár adatait az iTunes vagy a MusicIP szolgáltatásból importálja.
-	IT	È possibile indicare una cartella contenente file musicali che Lyrion Music Server analizzerà e aggiungerà alla libreria musicale. Inserire di seguito il percorso della cartella. Si può lasciare il campo vuoto se si importa la libreria musicale da iTunes o MusicIP.
-	JA	Lyrion Music Serverが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
-	NL	Je kunt een map met audio bestanden opgeven zodat Lyrion Music Server de map scant en aan jouw muziekbibliotheek toevoegt. Voer hieronder het pad naar de map in. Je kunt dit veld leeg laten als je jouw muziekbibliotheek importeert uit iTunes of MusicIP.
-	NO	Du kan angi en mappe med musikkfiler som Lyrion Music Server skal søke gjennom og legge til i musikkbiblioteket. Angi banen til mappen nedenfor. Du kan la dette feltet stå tomt hvis du importerer informasjon om musikkbibliotek fra iTunes eller MusicIP.
-	PL	Możliwe jest określenie folderu zawierającego pliki muzyczne, który program Lyrion Music Server przeszuka w celu dodania ich do biblioteki muzyki. Wprowadź ścieżkę do folderu poniżej. To pole można pozostawić puste w przypadku importowania informacji o bibliotece muzyki z programu iTunes lub MusicIP.
-	RU	Можно задать папку, содержащую музыкальные файлы, которые Lyrion Music Server будет сканировать и добавлять в медиатеку. Введите путь к папке ниже. Это поле можно не заполнять, если информация медиатеки импортируется из iTunes или MusicIP.
-	SV	Du kan ange en mapp med de musikfiler som ska sökas igenom och läggas till i ditt musikbibliotek. Ange sökvägen till mappen nedan: Om du importerar musikbibliotek från iTunes eller MusicIP kan du lämna fältet tomt.
-	ZH_CN	您可以指定Lyrion Music Server所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MusicIP导入您音乐库信息，您可以让此资料栏空白。
-
 SETUP_MEDIADIRS
 	CS	Složky s médii
 	DA	Mediemapper
@@ -7317,26 +6993,6 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
 	ZH_CN	为了检测远程网络共享或没有本地更改检测支持的某些操作系统上的更改，必须定期轮询文件是否有更改。选择用于此检查的间隔，以分钟为单位。默认值为10分钟。
 
 RESCANNING
-	CS	Lyrion Music Server znovu prohledává vaši knihovnu médií.
-	DA	Lyrion Music Server gennemsøger nu dit mediebibliotek igen.
-	DE	Lyrion Music Server durchsucht Ihre Medienbibliothek erneut.
-	EN	Lyrion Music Server is now rescanning your Media Library.
-	ES	Lyrion Music Server está volviendo a examinar la biblioteca multimedia.
-	FI	Lyrion Music Server tarkistaa mediakirjastoasi uudelleen.
-	FR	Le Lyrion Music Server analyse maintenant la bibliothèque multimédia.
-	HE	השרת מבצע סריקה חוזרת של ספריית המוסיקה שלך.
-	HU	A Lyrion Music Server most újraellenőrzi a médiakönyvtárat.
-	IT	Lyrion Music Server sta analizzando nuovamente la libreria multimediale.
-	JA	サーバーは音楽ライブラリーを再スキャンしています。
-	NL	Lyrion Music Server is nu jouw mediabibliotheek opnieuw aan het scannen.
-	NO	Lyrion Music Server søker gjennom mediebiblioteket.
-	PL	Program Lyrion Music Server ponownie przeszukuje bibliotekę multimedialną.
-	PT	Lyrion Music Server está a analisar o arquivo de músicas.
-	RU	Lyrion Music Server выполняет повторное сканирование библиотеки мультимедиа.
-	SV	Lyrion Music Server söker nu igenom ditt mediebibliotek igen.
-	ZH_CN	服务器正在重新扫描您的音乐库。
-
-RESCANNING_SHORT
 	CS	Nové prohledávání knihovny médií...
 	DA	Gennemsøger mediebibliotek igen...
 	DE	Medienbibliothek wird durchsucht...
@@ -10245,46 +9901,6 @@ SETUP_FILTERRULE_DESC
 
 #miscellaneous setup strings
 
-SETUP_NEW_VALUE
-	CS	Nová hodnota pro
-	DA	Ny værdi for
-	DE	Neuer Wert für
-	EN	New value for
-	ES	Nuevo valor para
-	FI	Uusi arvo kohteelle
-	FR	Nouvelle valeur pour
-	HE	ערך חדש עבור
-	HU	Új érték:
-	IT	Nuovo valore per
-	JA	新しい数値:
-	NL	Nieuwe waarde voor
-	NO	Ny verdi for
-	PL	Nowa wartość dla
-	PT	Novo valor para
-	RU	Новое значение для
-	SV	Nytt värde för
-	ZH_CN	新的值为：
-
-SETUP_BAD_VALUE
-	CS	Zadána neplatná hodnota: %s
-	DA	Ugyldig værdig angivet: %s
-	DE	Ungültiger Wert angegeben: %s
-	EN	Invalid value specified: %s
-	ES	Valor especificado no válido: %s
-	FI	Virheellinen arvo: %s
-	FR	Valeur non valide : %s
-	HE	צוין ערך לא חוקי: %s
-	HU	Érvénytelen megadott érték: %s
-	IT	Valore specificato non valido: %s
-	JA	無効な数値が指定されました: %s
-	NL	Ongeldige waarde opgegeven: %s
-	NO	Ugyldig verdi oppgitt: %s
-	PL	Określono nieprawidłową wartość: %s
-	PT	Valor especificado inválido
-	RU	Задано недопустимое значение: %s
-	SV	Ogiltigt värde har angetts: %s
-	ZH_CN	指定价值无效: %s
-
 SETTINGS_INVALIDVALUE
 	CS	Neplatná hodnota "%s" pro %s
 	DA	Værdien "%s" for %s er ugyldig
@@ -11181,26 +10797,6 @@ CHOOSE_PLAYER
 	SV	Välj spelare
 	ZH_CN	选择播放器
 
-NOW_PLAYING_ON
-	CS	Právě hraje na přehrávači v
-	DA	Nu spilles på afspilleren
-	DE	Aktueller Titel auf dem Player bei
-	EN	Now playing on the player at
-	ES	Reproduciendo en el reproductor en
-	FI	Soitetaan soittimella kohteessa
-	FR	Lecture sur la platine à
-	HE	מושמע כעת בנגן
-	HU	Jelenleg játszott
-	IT	In riproduzione sul lettore a
-	JA	プレーヤーで現在再生中
-	NL	Speelt nu op de muziekspeler van
-	NO	Spilles nå på
-	PL	Teraz odtwarzane na odtwarzaczu w
-	PT	A tocar no reprodutor Slim Player em
-	RU	Воспроизводится на плеере по адресу
-	SV	Nu spelas på spelaren
-	ZH_CN	播放器播放中：
-
 SKIP
 	CS	Přeskočit
 	DA	Spring over
@@ -11437,26 +11033,6 @@ ONE
 	SV	ett
 	ZH_CN	一曲
 
-MCONE
-	CS	Jeden
-	DA	En
-	DE	Eins
-	EN	One
-	ES	Uno
-	FI	Yksi
-	FR	Un
-	HE	אחד
-	HU	Egy
-	IT	Uno
-	JA	1曲
-	NL	Eén
-	NO	Én
-	PL	Jeden
-	PT	Uma
-	RU	Один
-	SV	Ett
-	ZH_CN	一曲
-
 ALL
 	CS	vše
 	DA	alle
@@ -11474,26 +11050,6 @@ ALL
 	PL	wszystko
 	PT	todas
 	RU	все
-	SV	Alla
-	ZH_CN	全部
-
-MCALL
-	CS	Vše
-	DA	Alle
-	DE	Alle
-	EN	All
-	ES	Todo
-	FI	Kaikki
-	FR	Tous
-	HE	הכל
-	HU	Mind
-	IT	Tutti
-	JA	全て
-	NL	Alle
-	NO	Alle
-	PL	Wszystko
-	PT	Todas
-	RU	Все
 	SV	Alla
 	ZH_CN	全部
 
@@ -11536,46 +11092,6 @@ ON
 	RU	Вкл.
 	SV	på
 	ZH_CN	开机
-
-MCON
-	CS	Zapnout
-	DA	Til
-	DE	Ein
-	EN	On
-	ES	Encendido
-	FI	Päällä
-	FR	Activé
-	HE	מופעל
-	HU	Bekapcs
-	IT	Attivato
-	JA	オン
-	NL	Aan
-	NO	På
-	PL	Wł.
-	PT	Sim
-	RU	Вкл
-	SV	På
-	ZH_CN	开
-
-MCOFF
-	CS	Vypnuto
-	DA	Fra
-	DE	Aus
-	EN	Off
-	ES	Apagado
-	FI	Ei käytössä
-	FR	Désactivé
-	HE	כבוי
-	HU	Kikapcs
-	IT	Disattivato
-	JA	オフ
-	NL	Uit
-	NO	Av
-	PL	Wył.
-	PT	Não
-	RU	Выкл
-	SV	Av
-	ZH_CN	关
 
 MOVEUP
 	CS	Nahoru
@@ -11653,23 +11169,6 @@ PLAY_NEXT
 	RU	След. дорожка
 	SV	Spela härnäst
 	ZH_CN	播放下一曲
-
-PLAY_NOW
-	CS	Přehrát nyní
-	DA	Afspil nu
-	DE	Jetzt abspielen
-	EN	Play Now
-	ES	Reproducir ahora
-	FI	Toista nyt
-	FR	Lire maintenant
-	HU	Lejátszás most
-	IT	Riproduci ora
-	NL	Nu afspelen
-	NO	Spill av nå
-	PL	Odtwórz teraz
-	RU	Воспроизвести
-	SV	Spela upp nu
-	ZH_CN	立即播放
 
 SHUFFLE
 	CS	Náhodně
@@ -12233,23 +11732,6 @@ LOW
 	SV	Dålig
 	ZH_CN	低
 
-OUTDOOR
-	CS	Venkovní
-	DA	Udendørs
-	DE	Tageslicht
-	EN	Outdoor
-	ES	Exterior
-	FI	Ulkoilma
-	FR	Extérieur
-	HU	Szabadtéri
-	IT	Esterna
-	NL	Buiten
-	NO	Utendørs
-	PL	Na zewnątrz
-	RU	На улице
-	SV	Utomhus
-	ZH_CN	户外
-
 HIGH
 	CS	Vysoká
 	DA	Høj
@@ -12518,66 +12000,6 @@ SAVED_PLAYLISTS_DBL
 	ZH_CN	保存播放表
 	NL	Afspeellijst
 
-PLAYLISTDIR
-	CS	Složka uložených seznamů skladeb
-	DA	Mappe til gemte afspilningslister
-	DE	Ordner für Wiedergabelisten
-	EN	Saved Playlists Folder
-	ES	Carpeta de listas de reproducción guardadas
-	FI	Tallennettujen soittoluetteloiden kansio
-	FR	Dossier des listes de lecture
-	HE	תיקיית רשימות השמעה שמורות
-	HU	Mentve a lejátszási lista mappába
-	IT	Cartella playlist salvate
-	JA	プレイリスト保存フォルダー
-	NL	Map met opgeslagen afspeellijsten
-	NO	Mappe med lagrede spillelister
-	PL	Folder zapisanych list odtwarzania
-	PT	Escolher Pasta para Playlists
-	RU	Папка "Сохраненные плей-листы"
-	SV	Mapp för spellistor
-	ZH_CN	播放表保存文件夹
-
-PLAYLISTDIR_IS_NOW
-	CS	Můžete zadat cestu k adresáři, kde jsou vaše soubory seznamů skladeb uloženy na pevném disku. (Pokud nechcete ukládat seznamy skladeb, ponechte toto pole prázdné.)
-	DA	Du kan angive stien til den mappe på harddisken hvor afspilningslisterne skal gemmes. Hvis du ikke ønsker at gemme dine afspilningslister, skal du lade feltet være tomt.
-	DE	Geben Sie hier den Ordner ein, in dem Wiedergabelistendateien gespeichert werden. Wenn Sie Wiedergabelisten nicht speichern möchten, können Sie dieses Feld leer lassen.
-	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
-	ES	Se puede introducir la ruta a un directorio en el que se guardan los archivos de listas de reproducción en el disco duro. Se puede dejar en blanco si no desea guardar listas de reproducción.
-	FI	Voit kirjoittaa polun hakemistoon, jonne soittoluettelotiedostot on tallennettu kiintolevyllä. (Voit jättää kohdan tyhjäksi, jos et halua tallentaa soittoluetteloita.)
-	FR	Vous pouvez spécifier le chemin d'accès au dossier où seront stockées les listes de lectures enregistrées. Ne spécifiez rien si vous ne souhaitez pas enregistrer de listes de lecture.
-	HE	באפשרותך להזין את הנתיב לספרייה שבה מאוחסנים הקבצים של רשימות ההשמעה השמורות בדיסק הקשיח. (אם אינך מעוניין לשמור רשימות השמעה, באפשרותך להשאיר שדה זה ריק.)
-	HU	Megadhatja annak a könyvtárnak az elérési útját, ahol a mentett lejátszási lista fájljai a merevlemezen vannak tárolva. (Ha nem akar lejátszási listákat menteni, ezt üresen hagyhatja.)
-	IT	È possibile specificare il percorso sul disco rigido in cui salvare i file delle playlist. Se non si desidera salvare le playlist, lasciare vuoto questo campo.
-	JA	プレイリストが保存してあるフォルダーへのパスを指定してください。（プレイリストを保存しないのであればブランクで結構です）
-	NL	Je kunt het pad invoeren naar een map waarin jouw afspeellijsten moeten worden opgeslagen. Je kunt dit leeg laten als je geen afspeellijsten wilt opslaan.
-	NO	Her kan du angi banen til katalogen der du har lagret spillelistefilene dine på harddisken. (Du kan la dette feltet stå tomt hvis du ikke vil lagre spillelister.)
-	PL	Możliwe jest wprowadzenie ścieżki do katalogu przechowywania zapisanych list odtwarzania na dysku twardym. (Pole można zostawić puste, jeżeli listy odtwarzania nie mają być zapisywane.)
-	PT	Escolha a directoria onde as playlist serão gravadas no disco. (Deixe vazio para desactivar esta opção)
-	RU	Можно ввести путь к каталогу жесткого диска, где находятся файлы сохраненных плей-листов. (Если сохранять плей-листы не требуется, это поле можно не заполнять.)
-	SV	Ange sökvägen till den mapp på hårddisken där dina spellistor finns. Lämna fältet tomt om du inte spara spellistor.
-	ZH_CN	您可以输入播放表保存文件夹的路径。（如果您不打算保存播放表请留空。）
-
-THIS_PLAYLIST_AS
-	CS	tento seznam skladeb jako:
-	DA	denne afspilningsliste som:
-	DE	diese Wiedergabeliste als:
-	EN	this playlist as:
-	ES	Esta lista de reproducción como:
-	FI	tämä soittoluettelo nimellä:
-	FR	cette liste de lecture sous :
-	HE	רשימת ההשמעה בתור:
-	HU	ezt a lejátszási listát így:
-	IT	questa playlist con nome:
-	JA	このプレイリスト:
-	NL	deze afspeellijst als:
-	NO	denne spillelisten som:
-	PL	tę listę odtwarzania jako:
-	PT	esta playlist como
-	RU	этот плей-лист как:
-	SV	den här spellistan som:
-	ZH_CN	此播放表为：
-
 SAVED_THIS_PLAYLIST_AS
 	CS	Tento seznam skladeb uložen jako:\n\n%s
 	DA	Gemte afspilningslisten som:\n\n%s
@@ -12634,26 +12056,6 @@ UNTITLED
 	RU	Без названия
 	SV	Namnlös
 	ZH_CN	尚未标题
-
-THIS_ENTIRE_PLAYLIST
-	CS	Tento celý seznam skladeb
-	DA	Hele denne afspilningsliste
-	DE	Die vollständige Wiedergabeliste
-	EN	This entire playlist
-	ES	Esta lista de reproducción completa
-	FI	Koko soittoluettelo
-	FR	Liste de lecture en entier
-	HE	כל רשימת ההשמעה
-	HU	Ez az egész lejátszási lista
-	IT	Tutta la playlist
-	JA	このプレイリスト全体
-	NL	Deze volledige afspeellijst
-	NO	Hele spillelisten
-	PL	Cała lista odtwarzania
-	PT	Esta lista inteira
-	RU	Весь плей-лист
-	SV	Hela spellistan
-	ZH_CN	此完整的播放表
 
 REMOVE_FROM_PLAYLIST
 	CS	Odstranit ze seznamu skladeb
@@ -13864,74 +13266,6 @@ ARTISTS
 	SV	Artister
 	ZH_CN	艺人名
 
-ARTIST_SEARCH
-	CS	Hledání interpreta
-	DA	Søg efter kunstnere
-	DE	Interpretensuche
-	EN	Artist Search
-	ES	Búsqueda de artista
-	FI	Artistihaku
-	FR	Recherche d'artiste
-	HU	Előadó keresés
-	IT	Ricerca artista
-	NL	Artiesten zoeken
-	NO	Søk etter artist
-	PL	Wyszukiwanie wykonawców
-	RU	Поиск исполнителя
-	SV	Artistsökning
-	ZH_CN	艺人搜索
-
-ALBUM_SEARCH
-	CS	Hledání alba
-	DA	Søg efter album
-	DE	Album suchen
-	EN	Album Search
-	ES	Búsqueda de álbumes
-	FI	Levyn haku
-	FR	Recherche d'album
-	HU	Album keresés
-	IT	Ricerca album
-	NL	Albums zoeken
-	NO	Albumsøk
-	PL	Wyszukiwanie albumów
-	RU	Поиск альбома
-	SV	Albumsökning
-	ZH_CN	专辑搜索
-
-TRACK_SEARCH
-	CS	Hledání skladby
-	DA	Søg efter nummer
-	DE	Titelsuche
-	EN	Track Search
-	ES	Búsqueda de pistas
-	FI	Kappalehaku
-	FR	Recherche de piste
-	HU	Zeneszám keresés
-	IT	Ricerca brano
-	NL	Nummers zoeken
-	NO	Spor søk
-	PL	Wyszukiwanie utworu
-	RU	Поиск дорожек
-	SV	Spårsökning
-	ZH_CN	曲目搜索
-
-PLAYLIST_SEARCH
-	CS	Hledání seznamu skladeb
-	DA	Søg efter afspilningslister
-	DE	Wiedergabeliste suchen
-	EN	Playlist Search
-	ES	Búsqueda de listas de reproducción
-	FI	Soittoluettelohaku
-	FR	Recherche de la liste de lecture
-	HU	Lejátszási lista keresés
-	IT	Ricerca playlist
-	NL	Afspeellijsten zoeken
-	NO	Søk etter spilleliste
-	PL	Wyszukiwanie listy odtwarzania
-	RU	Поиск плей-листов
-	SV	Spellistesökning
-	ZH_CN	播放列表搜索
-
 LCARTISTS
 	CS	interpretů
 	DA	kunstnere
@@ -14146,23 +13480,6 @@ PAGES
 	RU	Страницы
 	SV	Sidor
 	ZH_CN	页
-
-PAGEINDEX
-	CS	Index stránky
-	DA	Sideindeks
-	DE	Seitenindex
-	EN	Page index
-	ES	Índice de páginas
-	FI	Sivuhakemisto
-	FR	Index de page
-	HU	Oldalszám
-	IT	Indice pagine
-	NL	Pagina-index
-	NO	Innholdsfortegnelse
-	PL	Indeks stron
-	RU	Индекс страницы
-	SV	Sidindex
-	ZH_CN	页索引
 
 ITEMS
 	CS	Položky
@@ -14732,40 +14049,6 @@ BROWSE_MUSIC_FOLDER
 	SV	Musikmapp
 	ZH_CN	浏览音乐文件夹
 
-BROWSE_ALL_PICTURES
-	CS	Všechny obrázky
-	DA	Alle billeder
-	DE	Alle Bilder
-	EN	All Pictures
-	ES	Todas las imágenes
-	FI	Kaikki kuvat
-	FR	Toutes les images
-	HU	Minden kép
-	IT	Tutte le immagini
-	NL	Alle foto's
-	NO	Alle bilder
-	PL	Wszystkie obrazy
-	RU	Все изображения
-	SV	Alla bilder
-	ZH_CN	所有图片
-
-BROWSE_MUSIC_FOLDER_WHILE_SCANNING
-	CS	Složka hudby není v průběhu prohledávání k dispozici.
-	DA	Musikmappe kan ikke vælges, mens der scannes.
-	DE	Musikordner ist während des Scanvorgangs nicht verfügbar.
-	EN	Music Folder is not available while scanning.
-	ES	La carpeta Música no está disponible al examinar.
-	FI	Musiikkikansio ei ole käytettävissä tarkistuksen aikana.
-	FR	Les dossiers de musique ne sont pas disponibles pendant l'analyse.
-	HU	A Zene mappa nem érhető el beolvasás közben.
-	IT	La cartella Musica non è disponibile durante l’analisi.
-	NL	Muziekmap is niet beschikbaar tijdens het scannen.
-	NO	Musikkmappen er ikke tilgjengelig når søk pågår.
-	PL	Folder muzyczny nie jest dostępny, gdy trwa przeszukiwanie.
-	RU	Во время сканирования папка "Музыка" недоступна.
-	SV	Musikmappen är inte tillgänglig under sökning.
-	ZH_CN	扫描时音乐文件夹不可用。
-
 BROWSE_ON_SERVICE
 	CS	Procházet %s
 	DA	Gennemse på %s
@@ -14798,25 +14081,6 @@ SYNCHRONIZE
 	SV	Synkronisera
 	ZH_CN	同步
 
-NOT_SYNCHRONIZED
-	CS	Není synchronizováno
-	DA	Ikke synkroniseret
-	DE	Nicht synchronisiert
-	EN	Not Synchronized
-	EN_GB	Not Synchronised
-	ES	Sin sincronizar
-	FI	Ei synkronoitu
-	FR	Non synchronisé
-	HE	לא מסונכרן
-	HU	Nincs szinkronizálva
-	IT	Non sincronizzato
-	NL	Niet gesynchroniseerd
-	NO	Ikke synkronisert
-	PL	Nie zsynchronizowano
-	RU	Без синхронизации
-	SV	Inte synkroniserad
-	ZH_CN	不同步
-
 SYNCHRONIZED_WITH
 	CS	Synchronizováno s
 	DA	Synkroniseret med
@@ -14836,20 +14100,6 @@ SYNCHRONIZED_WITH
 	RU	Синхронизован с
 	SV	Synkroniserad med
 	ZH_CN	同步与
-
-PLAYER_PLUGINS
-	CS	Doplňky
-	DA	Ekstra
-	EN	Extras
-	FI	Muut
-	HU	Extra
-	IT	Extra
-	NL	Extra's
-	NO	Tillegg
-	PL	Dodatki
-	RU	Дополнения
-	SV	Extrafunktioner
-	ZH_CN	插件
 
 PLUGINS
 	CS	Doplňky
@@ -15436,26 +14686,6 @@ REMOTE_SETTINGS
 	SV	Fjärr
 	ZH_CN	遥控
 
-PLAYERIR_SETTINGS
-	CS	Nastavení IR
-	DA	IR-indstillinger
-	DE	IR-Einstellungen
-	EN	IR Settings
-	ES	Configuración IR
-	FI	Infrapuna-asetukset
-	FR	Réglages infrarouge
-	HE	הגדרות IR
-	HU	IR beállítások
-	IT	Impostazioni IR
-	JA	IR（リモコン）セッティング
-	NL	IR-instellingen
-	NO	IR-innstillinger
-	PL	Ustawienia podczerwieni
-	PT	Configurações de Infravermelhos
-	RU	ИК-настройки
-	SV	IR-inställningar
-	ZH_CN	红外线设置
-
 SERVER_STATUS
 	CS	Stav Lyrion Music Serveru
 	DA	Status for Lyrion Music Server
@@ -15941,64 +15171,6 @@ CHANGE
 	SV	Ändra
 	ZH_CN	更动
 
-SERVER_IP_ADDRESS
-	CS	IP adresa serveru
-	DA	Serverens IP-adresse
-	DE	IP-Adresse des Servers
-	EN	Server IP address
-	ES	Dirección IP del servidor
-	FI	Palvelimen IP-osoite
-	FR	Adresse IP du serveur
-	HE	כתובת ה-IP של השרת
-	HU	Szerver IP címe
-	IT	Indirizzo IP del server
-	NL	IP-adres van server
-	NO	Serverens IP-adresse
-	PL	Adres IP serwera
-	RU	IP-адрес сервера
-	SV	Serverns IP-adress
-	ZH_CN	服务器IP地址
-
-PLAYER_IP_ADDRESS
-	CS	IP adresa tohoto přehrávače je
-	DA	IP-adressen for denne afspiller er
-	DE	Die IP-Adresse für diesen Player ist
-	EN	The IP address for this player is
-	ES	La dirección IP para este reproductor es
-	FI	Tämän soittimen IP-osoite on
-	FR	L'adresse IP de cette platine est
-	HE	כתובת ה-IP של הנגן היא
-	HU	Ennek a lejátszónak az IP-címe
-	IT	L'indirizzo IP del lettore è
-	JA	このプレーヤーのIPアドレスは
-	NL	Het IP-adres van deze muziekspeler is
-	NO	Spillerens IP-adresse er
-	PL	Adres IP tego odtwarzacza to
-	PT	O endereço IP deste reprodutor é
-	RU	IP-адрес данного плеера —
-	SV	Spelarens IP-adress är
-	ZH_CN	此播放器的IP地址是
-
-PLAYER_MAC_ADDRESS
-	CS	MAC adresa sítě Ethernet pro tento přehrávač je
-	DA	MAC-adressen for denne afspiller er
-	DE	Die MAC-Adresse für diesen Player ist
-	EN	The Ethernet MAC address for this player is
-	ES	La dirección Ethernet MAC para este reproductor es
-	FI	Tämän soittimen ethernet MAC -osoite on
-	FR	L'adresse MAC de cette platine est
-	HE	כתובת ה-MAC של האתרנט של הנגן היא
-	HU	Ennek a lejátszónak az Ethernet MAC-címe
-	IT	L'indirizzo MAC Ethernet di questo lettore è
-	JA	このプレーヤーのMACアドレスは
-	NL	Het MAC-adres van deze muziekspeler is
-	NO	Spillerens MAC-adresse er
-	PL	Adres MAC w sieci Ethernet tego odtwarzacza to
-	PT	O endereço MAC deste reprodutor é
-	RU	MAC-адрес Ethernet данного плеера следующий
-	SV	Spelarens Ethernet-MAC-adress är
-	ZH_CN	此播放器的以太网MAC地址是
-
 BRIGHTNESS_DIMMEST
 	CS	Nejvíce ztlumený
 	DA	Mørkest
@@ -16124,26 +15296,6 @@ BRIGHTNESS_BRIGHTEST
 	RU	Самый яркий
 	SV	Starkast
 	ZH_CN	最亮
-
-CHOOSE_PLAYING_DISPLAY_MODE
-	CS	Přehrávač může zobrazit informaci o průběhu přehrávání skladby. Zvolte si, jaké informace chcete zobrazovat.
-	DA	På displayet kan du se hvor meget af et nummer der er spillet. Du kan vælge hvilke oplysninger der skal vises.
-	DE	Der Player kann den Zeitverlauf des aktuellen Titels anzeigen. Wählen Sie das Anzeigeformat.
-	EN	The player can display information on the progress of a song as it's playing. Choose the information you wish to be displayed.
-	ES	El reproductor puede mostrar información sobre el progreso de una canción mientras reproduce. Elija la información que desea que se muestre.
-	FI	Soitin voi näyttää soiton aikana tietoja siitä, kuinka pitkälle kappaletta on soitettu. Valitse tiedot, jotka haluat soittimen näyttävän.
-	FR	La platine peut afficher des informations sur la progression de la lecture d'un morceau au cours de la lecture. Sélectionnez les informations à afficher.
-	HE	הנגן יכול להציג מידע אודות התקדמות השיר במהלך ההשמעה. בחר את המידע שברצונך להציג.
-	HU	A lejátszó információkat jeleníthet meg egy dal lejátszása közben. Válassza ki a megjeleníteni kívánt információkat.
-	IT	Nel lettore è possibile visualizzare informazioni relative all'avanzamento del brano in corso. Scegliere le informazioni da visualizzare.
-	JA	プレーヤーは、曲の進み具合を表示することができます。表示したい情報を選んでください。
-	NL	De muziekspeler kan informatie over de voortgang van het huidige nummer tonen. Kies de informatie die getoond moet worden.
-	NO	Spilleren kan vise hvor mye av sangen som er spilt av under avspillingen. Velg hvilken informasjon du vil se.
-	PL	Odtwarzacz może wyświetlić informacje o postępie odtwarzania utworu. Wybierz informacje, które chcesz wyświetlić.
-	PT	O reprodutor pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
-	RU	В плеере может выводиться ход воспроизведения песни. Выберите необходимую информацию для отображения.
-	SV	Uppspelningsinformation om den aktuella låten kan visas på spelarens skärm. Välj den information du vill ska visas.
-	ZH_CN	播放器可以在播放音乐的同时显示有关歌曲信息。请选择您所要希望看到的信息。
 
 VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	CS	Malé spektrum
@@ -16399,26 +15551,6 @@ MINUTES
 	SV	minuter
 	ZH_CN	分
 
-CURRENT_WEB_SKIN
-	CS	Aktuální vzhled webu:
-	DA	Nuværende web-layout:
-	DE	Aktuelle Web-Skin:
-	EN	Current web skin:
-	ES	Máscara Web actual:
-	FI	Nykyinen WWW-olemus:
-	FR	Interface web en cours :
-	HE	מעטפת אינטרנט נוכחית:
-	HU	Jelenlegi web felület:
-	IT	Skin web in uso:
-	JA	現在のウェブ外観
-	NL	Huidige webskin:
-	NO	Aktivt grensesnittskall:
-	PL	Aktualna karnacja internetowa:
-	PT	Tema Web actual
-	RU	Текущая веб-обложка:
-	SV	Aktuellt webbskal:
-	ZH_CN	当前的WEB界面皮肤：
-
 WEB_NO_COOKIES_WARNING
 	CS	Váš prohlížeč nepřijímá soubory cookie. Může to mít za následek neočekávané chování při ovládání Lyrion Music Serveru. Než budete pokračovat, povolte příjem souborů cookie ve vašem prohlížeči.
 	DA	Din browser accepterer ikke cookies. Det kan føre til uventede handlinger i brugen af din Lyrion Music Server. Aktivér cookies i browseren inden du fortsætter.
@@ -16436,60 +15568,6 @@ WEB_NO_COOKIES_WARNING
 	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Lyrion Music Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
 	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Lyrion Music Server. Aktivera cookies i din webbläsare innan du fortsätter.
 	ZH_CN	您的浏览器不接受cookie。这可能导致您控制Lyrion Music Server时出现意外行为。在继续之前，请在您的浏览器中启用cookie。
-
-DISPLAY_PLUGINS
-	CS	Zobrazit nabídku Doplňky na přehrávači Slim:
-	DA	Vis menuen Ekstra på Slim-afspilleren:
-	DE	Extras-Menü auf dem Slim-Player anzeigen:
-	EN	Display the Extras menu on the Slim player:
-	ES	Mostrar el menú Extras en el reproductor Slim:
-	FI	Näytä Muut-valikko Slim-soittimessa:
-	FR	Afficher le menu Extras sur la platine :
-	HU	Jelenítse meg az Extrák menüt a Slim lejátszón:
-	IT	Visualizza il menu Extra nel lettore Slim:
-	NL	Het menu Extra's op de Slim-muziekspeler tonen:
-	NO	Vis menyen Tillegg på Slim-spilleren:
-	PL	Wyświetl menu Dodatki w odtwarzaczu Slim:
-	PT	Mostrar menu de Extras no reprodutor Slim
-	RU	Отображать в плеере Slim меню "Дополнения":
-	SV	Visa menyn Extrafunktioner på Slim-spelaren:
-	ZH_CN	在Slim播放器上显示“额外”菜单：
-
-SHOW_PLUGINS
-	CS	Zobrazit zásuvné moduly
-	DA	Vis udvidelsesmoduler
-	DE	Plugins anzeigen
-	EN	Show Plugins
-	ES	Mostrar complementos
-	FI	Näytä laajennukset
-	FR	Afficher les plugins
-	HU	Beépülő modulok megjelenítése
-	IT	Mostra plugin
-	NL	Plug-ins tonen
-	NO	Vis plugin-moduler
-	PL	Pokaż dodatki
-	PT	Mostrar Plugins
-	RU	Показать подключаемые модули
-	SV	Visa plugin-program
-	ZH_CN	显示插件
-
-NO_PLUGINS
-	CS	Nejsou k dispozici žádné zásuvné moduly.
-	DA	Der er ingen udvidelsesmoduler tilgængelige.
-	DE	Keine Plugins verfügbar.
-	EN	No Plugins available.
-	ES	No hay complementos disponibles.
-	FI	Ei käytettävissä olevia laajennuksia.
-	FR	Aucun plugin disponible.
-	HU	Nincs elérhető bővítmény.
-	IT	Nessun plugin disponibile
-	NL	Geen plug-ins beschikbaar.
-	NO	Ingen plugin-moduler er tilgjengelige.
-	PL	Brak dostępnych dodatków.
-	PT	Sem Plugins
-	RU	Нет доступных подключаемых модулей.
-	SV	Inga plugin-program tillgängliga.
-	ZH_CN	没有可用的插件。
 
 MUSIC_PLAYER
 	CS	Přehrávač hudby
@@ -16882,46 +15960,6 @@ CHECKVERSION_ERROR
 	SV	Det uppstod ett fel vid sökningen efter uppdateringar för Lyrion Music Server:
 	ZH_CN	与Lyrion Music Server查证更新时出现错误：
 
-NEED_PATH
-	CS	Musíte zadat cestu k adresáři obsahujícímu vaše mediální soubory.
-	DA	Du skal angive stien til mappen med dine mediefiler.
-	DE	Sie müssen einen Pfad zum Verzeichnis mit den Mediendateien angeben.
-	EN	You need to specify a path to your directory containing your media files.
-	ES	Debe especificar una ruta al directorio que contiene los archivos multimedia.
-	FI	Sinun on määritettävä polku hakemistoon, jossa mediatiedostot ovat.
-	FR	Vous devez spécifier le chemin d'accès au dossier qui contient vos fichiers multimédias.
-	HE	עליך לציין נתיב אל הספרייה שמכילה את קובצי המוסיקה שלך.
-	HU	Adja meg a médiafájlokat tartalmazó könyvtár elérési útját.
-	IT	Specificare il percorso della directory in cui sono memorizzati i file multimediali.
-	JA	音楽ファイルが保存されているフォルダーへのパスを指定しなければいけません。
-	NL	Geef het pad op naar de map waarin jouw mediabestanden staan.
-	NO	Du må angi en søkebane til mappen med mediefiler.
-	PL	Należy określić ścieżkę do katalogu zawierającego pliki multimedialne.
-	PT	Deve especificar a directoria que contêm os ficheiros MP3.
-	RU	Задайте путь к каталогу с файлами мультимедиа.
-	SV	Du måste ange sökvägen till den mapp som innehåller mediefilerna.
-	ZH_CN	您必须指定存有音乐文件目录的路径。
-
-NEED_PLAYLIST_PATH
-	CS	Je nutno zadat cestu k adresáři souborů vašich uložených seznamů skladeb.
-	DA	Du skal angive stien til mappen som indeholder dine gemte afspilningslister.
-	DE	Sie müssen den Ordner mit den gespeicherten Wiedergabelisten angeben.
-	EN	You need to specify a path to a directory for your saved playlist files.
-	ES	Debe especificar una ruta a un directorio para los archivos de listas de reproducción guardados.
-	FI	Sinun on määritettävä polku hakemistoon, jossa tallennetut soittoluettelot ovat.
-	FR	Vous devez spécifier le chemin d'accès du dossier qui contient vos listes de lecture enregistrées.
-	HE	עליך לציין נתיב אל ספרייה שבה יישמרו קובצי רשימות ההשמעה.
-	HU	Adja meg a mentett lejátszási listaák mappájának elérési útját.
-	IT	Specificare un percorso per il salvataggio dei file delle playlist.
-	JA	プレイリストが保存されているフォルダーへのパスを指定しなければいけません。
-	NL	Geef het pad op naar de map waarin jouw opgeslagen afspeellijsten staan.
-	NO	Du må angi en bane til en katalog for lagrede spillelister.
-	PL	Należy podać ścieżkę do katalogu zapisanych plików listy odtwarzania.
-	PT	Deve especificar a directoria que contêm os ficheiros de playlist.
-	RU	Задайте путь к каталогу сохраненных файлов плей-листа.
-	SV	Ange sökvägen till mappen där du sparar spellistor.
-	ZH_CN	您必须指定存有播放表目录的路径。
-
 CSRF_ERROR_INFO
 	CS	Chcete-li si tuto adresu URL vyžádat ze záložky/oblíbené stránky nebo jiným způsobem než pomocí odkazu z webového rozhraní serveru Lyrion Music Server, musíte použít adresu URL s bezpečnostním parametrem \"cauth\". Pokud jste tuto chybu obdrželi při následování odkazu z webového rozhraní serveru Lyrion Music Server, měli byste se ujistit, že software vašeho webového prohlížeče (včetně proxy serverů a softwaru pro ochranu soukromí a spywaru) umožňuje odesílání hlaviček \"Referer\". Níže je uvedena příslušná adresa URL pro adresu URL, na které jste se pokusili přejít.
 	DA	Hvis du vil åbne siden som denne adresse henviser til, fra et bogmærke/en favorit, eller på andre måder end ved at klikke på et link fra Lyrion Music Servers webbaserede brugerflade, skal adressen rumme sikkerhedsparameteren "cauth".  Hvis denne fejl opstod da du klikkede på et link i Lyrion Music Servers webbaserede brugerflade, skal du sikre dig at din browser (herunder indstillinger for proxyservere og antispywareprogrammer m.v.) tillader headere med henvisninger (Referer). Nedenfor er den rigtigt konfigurerede adresse som du forsøgte at få adgang til.
@@ -17058,24 +16096,6 @@ ADVANCEDSEARCH
 	SV	Avancerad sökning
 	ZH_CN	高等搜索
 
-EXAMPLE_SHORT
-	CS	ex:
-	DA	eksempel:
-	DE	z.B.
-	EN	ex:
-	ES	ej.:
-	FI	esim.
-	FR	ex :
-	HE	דוגמא:
-	HU	pl.
-	IT	es:
-	NL	bijv.
-	NO	eksempel:
-	PL	np.
-	RU	пр:
-	SV	ex:
-	ZH_CN	例如:
-
 SEARCH
 	CS	Vyhledat
 	DA	Søg
@@ -17153,22 +16173,6 @@ SEARCHMUSIC
 	RU	Поиск музыки
 	SV	Sök musik
 	ZH_CN	搜索音乐
-
-SEARCHRESULTS
-	CS	Výsledky hledání
-	DA	Søgeresultater
-	DE	Suchergebnisse
-	EN	Search Results
-	ES	Resultados de búsqueda
-	FI	Etsinnän tulokset
-	FR	Résultats de la recherche
-	HU	Keresési eredmények
-	IT	Risultati ricerca
-	NL	Zoekresultaten
-	NO	Søkeresultater
-	PL	Wyniki wyszukiwania
-	RU	Результаты поиска
-	SV	Sökresultat
 
 SEARCHFOR
 	CS	Vyhledat
@@ -17256,13 +16260,6 @@ SEARCHFOR_ARTISTS
 	SV	Sök efter artister
 	ZH_CN	搜索艺人
 
-SEARCHFOR_ARTISTS_DBL
-	ES	Buscar artistas
-	FR	Cherche artistes
-	NL	Artiesten zoeken
-	PL	Wyszukaj wykonawców
-	ZH_CN	搜索艺人
-
 SEARCHFOR_ALBUM
 	CS	Hledat album
 	DA	Søg efter album
@@ -17303,13 +16300,6 @@ SEARCHFOR_ALBUMS
 	SV	Sök efter album
 	ZH_CN	搜索专辑
 
-SEARCHFOR_ALBUMS_DBL
-	ES	Buscar álbumes
-	FR	Cherche albums
-	NL	Albums zoeken
-	PL	Wyszukaj albumy
-	ZH_CN	搜索专辑
-
 SEARCHFOR_SONGS
 	CS	Hledat skladby
 	DA	Søg efter numre
@@ -17328,13 +16318,6 @@ SEARCHFOR_SONGS
 	PT	Procurar por Músicas
 	RU	Поиск песен
 	SV	Sök efter låtar
-	ZH_CN	搜索歌曲
-
-SEARCHFOR_SONGS_DBL
-	ES	Buscar Canciones
-	FR	Cherche morceaux
-	NL	Nummers zoeken
-	PL	Wyszukaj utwory
 	ZH_CN	搜索歌曲
 
 SEARCHFOR_SONGTITLE
@@ -17356,66 +16339,6 @@ SEARCHFOR_SONGTITLE
 	RU	Поиск названия песни
 	SV	Sök efter låttitel
 	ZH_CN	搜索歌曲标题
-
-SEARCH_FOR_ARTISTS
-	CS	Hledat interprety
-	DA	Søg efter kunstnere
-	DE	Nach Interpreten suchen
-	EN	Search For Artists
-	ES	Buscar artistas
-	FI	Hae artisteja
-	FR	Rechercher des artistes
-	HE	איתור מבצעים
-	HU	Előadók keresse
-	IT	Cerca artisti
-	JA	アーチストを検索する
-	NL	Artiesten zoeken
-	NO	Søk etter artister
-	PL	Wyszukaj wykonawców
-	PT	Procurar por Artistas
-	RU	Поиск исполнителей
-	SV	Sök efter artister
-	ZH_CN	搜索艺人
-
-SEARCH_FOR_ALBUMS
-	CS	Hledat album
-	DA	Søg efter album
-	DE	Nach Alben suchen
-	EN	Search For Albums
-	ES	Buscar álbumes
-	FI	Etsi levyjä
-	FR	Rechercher des albums
-	HE	איתור אלבומים
-	HU	Albumok keresése
-	IT	Cerca album
-	JA	アルバムを検索する
-	NL	Albums zoeken
-	NO	Søk etter album
-	PL	Wyszukaj albumy
-	PT	Procurar por Álbum
-	RU	Поиск альбомов
-	SV	Sök efter album
-	ZH_CN	搜索专辑
-
-SEARCH_FOR_SONGS
-	CS	Hledat skladby
-	DA	Søg efter numre
-	DE	Nach Titel suchen
-	EN	Search For Songs
-	ES	Buscar canciones
-	FI	Hae kappaleita
-	FR	Rechercher des morceaux
-	HE	איתור שירים
-	HU	Dalok keresése
-	IT	Cerca brani
-	JA	曲を検索する
-	NL	Nummers zoeken
-	NO	Søk etter sanger
-	PL	Wyszukaj utwory
-	PT	Procurar por Música
-	RU	Поиск песен
-	SV	Sök efter låtar
-	ZH_CN	搜索歌曲
 
 SEARCH_STREAMS
 	CS	Vyhledat
@@ -17537,160 +16460,6 @@ NO_SEARCH_RESULTS
 	SV	Inga sökresultat
 	ZH_CN	无搜索成果
 
-CONTRIBUTORMATCHING
-	CS	Shoda interpretu
-	DA	Kunstnere der matcher
-	DE	Passender Interpret
-	EN	Artist matching
-	ES	Artista coincidente con
-	FI	Artistin vastaavuus
-	FR	Artiste trouvé
-	HE	התאמת מבצע
-	HU	Egyező előadó
-	IT	Artista corrispondente
-	JA	アーチスト照合
-	NL	Gevonden artiest
-	NO	Treff på artist
-	PL	Dopasowywanie wykonawców
-	PT	Artistas encontrados
-	RU	Найденный исполнитель
-	SV	Artister som matchar
-	ZH_CN	艺人匹配
-
-CONTRIBUTORSMATCHING
-	CS	Shoda interpretů
-	DA	Kunstnere der matcher
-	DE	Passende Interpreten
-	EN	Artists matching
-	ES	Artistas coincidentes con
-	FI	Artistien vastaavuus
-	FR	Artistes trouvés
-	HE	התאמת מבצעים
-	HU	Egyező előadók
-	IT	Artisti corrispondenti
-	JA	アーチスト照合
-	NL	Gevonden artiesten
-	NO	Treff på artister
-	PL	Dopasowywanie wykonawców
-	PT	Artistas encontrados
-	RU	Найденные исполнители
-	SV	Artister som matchar
-	ZH_CN	艺人匹配
-
-ALBUMMATCHING
-	CS	Shoda alba
-	DA	Album der matcher
-	DE	Passendes Album
-	EN	Album matching
-	ES	Álbum coincidente con
-	FI	Levyjen vastaavuus
-	FR	Album trouvé
-	HE	התאמת אלבום
-	HU	Egyező album
-	IT	Album corrispondente
-	JA	アルバム照合
-	NL	Gevonden album
-	NO	Treff på album
-	PL	Dopasowywanie albumów
-	PT	Albums encontrados
-	RU	Найденный альбом
-	SV	Album som matchar
-	ZH_CN	专辑匹配
-
-ALBUMSMATCHING
-	CS	Shoda alb
-	DA	Album der matcher
-	DE	Passende Alben
-	EN	Albums matching
-	ES	Álbumes coincidentes con
-	FI	Vastaavat levyt
-	FR	Albums trouvés
-	HE	התאמת אלבומים
-	HU	Egyező albumok
-	IT	Album corrispondenti
-	JA	アルバム照合
-	NL	Gevonden albums
-	NO	Treff på album
-	PL	Dopasowywanie albumów
-	PT	Albums encontrados
-	RU	Найденные альбомы
-	SV	Album som matchar
-	ZH_CN	专辑匹配
-
-TRACKMATCHING
-	CS	Shoda názvu skladby
-	DA	Titel der matcher
-	DE	Passender Titel
-	EN	Song title matching
-	ES	Título de canción coincidente con
-	FI	Kappaleiden nimien vastaavuus
-	FR	Morceau trouvé
-	HE	התאמת שם שיר
-	HU	Dalcím egyezés
-	IT	Titolo corrispondente a
-	JA	曲タイトル照合
-	NL	Gevonden titel
-	NO	Treff på sangtittel
-	PL	Dopasowywanie tytułów utworów
-	PT	Músicas encontradas
-	RU	Найденное название песни
-	SV	Låttitel som matchar
-	ZH_CN	歌曲标题匹配
-
-TRACKSMATCHING
-	CS	Shoda názvů skladeb
-	DA	Numre der matcher
-	DE	Passende Titel
-	EN	Songs matching
-	ES	Canciones coincidentes con
-	FI	Vastaavat kappaleet
-	FR	Morceaux trouvés
-	HE	התאמת שמות שירים
-	HU	Dalcím egyezés
-	IT	Brani corrispondenti
-	JA	曲タイトル照合
-	NL	Gevonden titels
-	NO	Treff på sanger
-	PL	Dopasowywanie utworów
-	PT	Músicas encontradas
-	RU	Найденные песни
-	SV	Låtar som matchar
-	ZH_CN	歌曲标题匹配
-
-GENREMATCHING
-	CS	Shoda žánru
-	DA	Genre der matcher
-	DE	Passende Stilrichtung
-	EN	Genre matching
-	ES	Género coincidente
-	FI	Genrejen vastaavuus
-	FR	Correspondance de genres
-	HU	Műfaji egyeztetés
-	IT	Genere corrispondente a
-	NL	Gevonden genre
-	NO	Treff på sjanger
-	PL	Dopasowywanie gatunków
-	RU	Найденный жанр
-	SV	Genre som matchar
-	ZH_CN	流派匹配
-
-GENRESMATCHING
-	CS	Shoda žánrů
-	DA	Genrer der matcher
-	DE	Passende Stilrichtungen
-	EN	Genres matching
-	ES	Géneros coincidentes
-	FI	Vastaavat genret
-	FR	Correspondance de genres
-	HU	Egyező műfajok
-	IT	Generi corrispondenti a
-	NL	Gevonden genres
-	NO	Treff på sjanger
-	PL	Dopasowywanie gatunków
-	RU	Найденные жанры
-	SV	Genrer som matchar
-	ZH_CN	流派匹配
-
 MORE
 	CS	Další
 	DA	Mere...
@@ -17708,24 +16477,6 @@ MORE
 	RU	Дополнительно
 	SV	Mer
 	ZH_CN	更多
-
-MORE_MATCHES
-	CS	Další shody...
-	DA	Flere resultater...
-	DE	Mehr Treffer ...
-	EN	More matches...
-	ES	Más coincidencias...
-	FI	Lisää vastaavuuksia...
-	FR	Plus de résultats...
-	HE	התאמות נוספות...
-	HU	További egyezések...
-	IT	Altri risultati...
-	NL	Meer resultaten...
-	NO	Flere treff...
-	PL	Więcej pasujących elementów...
-	RU	Другие совпадения...
-	SV	Fler träffar...
-	ZH_CN	更多匹配
 
 SYNC_WITH
 	CS	Synchronizovat s:
@@ -17835,24 +16586,6 @@ UNSYNCING_FROM
 	SV	Synkronisering från %s avbryts
 	ZH_CN	不同步: %s
 
-CREATE_MIX
-	CS	Vytvořit mix
-	DA	Opret miks
-	DE	Mix erstellen
-	EN	Create Mix
-	ES	Crear mezcla
-	FI	Luo sekoitus
-	FR	Créer un mix
-	HE	יצירת מיקס
-	HU	Keverés létrehozása
-	IT	Crea raccolta
-	NL	Mix maken
-	NO	Lag en miks
-	PL	Utwórz składankę
-	RU	Плей-лист под настроение
-	SV	Skapa mix
-	ZH_CN	产生混音
-
 RADIO_TUNEIN
 	CS	Naladit adresu URL
 	DA	Stil ind på adressen
@@ -17886,24 +16619,6 @@ PATH
 	HU	Útvonal
 	NL	Pad
 	SV	Sökväg
-
-RADIO_TUNEIN_NOW
-	CS	Naladit nyní
-	DA	Stil ind nu
-	DE	Sender jetzt wählen
-	EN	Tune In Now
-	ES	Sintonizar ahora
-	FI	Virittäydy kanavalle
-	FR	Se connecter
-	HE	התכוונן עכשיו
-	HU	Ráhangolódás
-	IT	Sintonizzati adesso
-	NL	Nu instellen
-	NO	Hent stasjon nå
-	PL	Dostrój teraz
-	RU	Настроить сейчас
-	SV	Välj radiostation nu
-	ZH_CN	现在调谐
 
 RADIO_TUNEIN_DESC
 	CS	Pokud již znáte adresu URL stanice, kterou chcete poslouchat, zadejte ji zde a klikněte na tlačítko "Naladit". Můžete zadat adresu URL buď samotného radiového proudu (např. http://62.49.59.50:8000) nebo souboru seznamu skladeb, který k proudu odkazuje (např. http://www.hitzradio.com/hitzradio.pls).
@@ -18037,26 +16752,6 @@ TECHNICAL_INFORMATION
 	SV	Teknisk information
 	ZH_CN	技术信息
 
-GETTING_STARTED
-	CS	Začínáme
-	DA	Kom i gang
-	DE	Erste Schritte
-	EN	Getting Started
-	ES	Introducción
-	FI	Aloittaminen
-	FR	Guide de démarrage
-	HE	תחילת השימוש
-	HU	Kezdő lépések
-	IT	Guida introduttiva
-	JA	最初に
-	NL	Introductie
-	NO	Komme i gang
-	PL	Wprowadzenie
-	PT	Ajuda Inicial
-	RU	Приступая к работе
-	SV	Komma igång
-	ZH_CN	开始
-
 COMMUNITY_FORUM
 	CS	Fórum komunity
 	DA	Brugergruppeforum
@@ -18094,26 +16789,6 @@ FAQ
 	SV	Vanliga frågor och svar
 	ZH_CN	常问问题
 
-HELP_RADIO
-	CS	Internetové rádio
-	DA	Internetradio
-	DE	Internetradio
-	EN	Internet Radio
-	ES	Radio por Internet
-	FI	Nettiradio
-	FR	Radio Internet
-	HE	רדיו באינטרנט
-	HU	Internetes rádió
-	IT	Radio Internet
-	JA	インターネットラジオとプレイリストファイル
-	NL	Internetradio
-	NO	Internett-radio
-	PL	Radio internetowe
-	PT	Rádio via Internet
-	RU	Радиостанции Интернета
-	SV	Webbradio
-	ZH_CN	互联网电台
-
 REMOTE_STREAMING
 	CS	Přehrávání vzdálených datových proudů
 	DA	Ekstern streaming
@@ -18133,46 +16808,6 @@ REMOTE_STREAMING
 	RU	Удаленная потоковая передача
 	SV	Fjärrströmning
 	ZH_CN	远程流
-
-PLAYER_SETUP
-	CS	Nastavení přehrávače
-	DA	Konfiguration af afspiller
-	DE	Player einrichten
-	EN	Player Setup
-	ES	Configuración de reproductor
-	FI	Soittimen käyttöönotto
-	FR	Réglage de la platine
-	HE	הגדרת הנגן
-	HU	Lejátszó beállítása
-	IT	Installazione lettore
-	JA	プレーヤーセットアップ
-	NL	Setup van muziekspeler
-	NO	Spillerinnstillinger
-	PL	Konfiguracja odtwarzacza
-	PT	Configurações dos reprodutores
-	RU	Настройка плеера
-	SV	Installation av spelare
-	ZH_CN	播放器设置
-
-USING_REMOTE
-	CS	Použití dálkového ovladače
-	DA	Brug af fjernbetjeningen
-	DE	Slim Devices-Fernbedienung
-	EN	Using the Remote
-	ES	Uso del mando a distancia
-	FI	Kaukosäätimen käyttö
-	FR	Utilisation de la télécommande
-	HE	שימוש בשלט-רחוק
-	HU	A távirányító használata
-	IT	Utilizzo del telecomando
-	JA	リモートを使う
-	NL	Afstandsbediening gebruiken
-	NO	Bruke fjernkontrollen
-	PL	Używanie pilota
-	PT	Como usar o Controlo Remoto
-	RU	Работа с пультом
-	SV	Använda fjärrkontrollen
-	ZH_CN	使用遥控器
 
 STATISTICS
 	CS	Statistika
@@ -18212,25 +16847,6 @@ EDIT_PLAYLIST
 	RU	Изменить плей-лист
 	SV	Redigera spellista
 	ZH_CN	编辑播放表
-
-DONE_EDITING
-	CS	Úpravy provedeny
-	DA	Redigering udført
-	DE	Bearbeitung abgeschlossen
-	EN	Done Editing
-	ES	Edición finalizada
-	FI	Muokkaus on suoritettu
-	FR	Modification effectuée
-	HE	העריכה הסתיימה
-	HU	Szerkesztés kész
-	IT	Modifica completata
-	JA	編集完了
-	NL	Aanpassen klaar
-	NO	Endring utført
-	PL	Edycja zakończona
-	RU	Изменения внесены
-	SV	Redigering klar
-	ZH_CN	编辑完成
 
 UP
 	CS	Nahoru
@@ -18379,24 +16995,6 @@ INFORMATION_MENU_PERL
 	FR	Versions de Perl et des modules
 	PT	Versões de Perl e Módulos
 	ZH_CN	Perl和模块版本
-
-INFORMATION_MENU_SCAN
-	CS	Detaily prohledávání médií
-	DA	Detaljer om mediesøgning
-	DE	Details zum Medien-Scan
-	EN	Media Scan Details
-	ES	Detalles de examen multimedia
-	FI	Mediahaun tiedot
-	FR	Détails de l'analyse du contenu multimédia
-	HU	Média szkennelés részletei
-	IT	Dettagli analisi file multimediali
-	NL	Details van mediascan
-	NO	Detaljer om søk etter mediefiler
-	PL	Szczegóły przeszukiwania multimediów
-	PT	Detalhes do scan de ficheiro multimédia
-	RU	Сведения о сканировании мультимедиа
-	SV	Information om mediesökning
-	ZH_CN	媒体扫描详情
 
 INFORMATION_MENU_LIBRARY
 	CS	Statistika knihovny
@@ -18944,24 +17542,6 @@ INFORMATION_PLAYLISTS
 	PT	Total de playlists
 	ZH_CN	播放列表总数
 
-INFORMATION_IMAGES
-	CS	Celkem obrázků
-	DA	Billeder i alt
-	DE	Anzahl Bilder
-	EN	Total Images
-	ES	Total de imágenes
-	FI	Kuvia yhteensä
-	FR	Images
-	HU	Összes kép
-	IT	Immagini totali
-	NL	Totaal aantal afbeeldingen
-	NO	Totalt antall bilder
-	PL	Łącznie obrazów
-	PT	Total de imagens
-	RU	Кол-во изображений
-	SV	Antal bilder
-	ZH_CN	图片总数
-
 INFORMATION_TIME
 	CS	Celková doba přehrávání
 	DA	Samlet spilletid
@@ -19072,25 +17652,6 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	SV	Operativsystem
 	ZH_CN	OS
 
-INFORMATION_HOSTIP
-	CS	IP adresa hostitele
-	DA	Værtens IP-adresse
-	DE	IP-Adresse des Host
-	EN	Host IP Address
-	ES	Dirección IP de host
-	FI	Isännän IP-osoite
-	FR	Adresse IP hôte
-	HE	כתובת ה-IP של המארח
-	HU	Gazda IP-címe
-	IT	Indirizzo IP host
-	NL	IP-adres van host
-	NO	Verts-IP
-	PL	Adres IP hosta
-	PT	Endereºo IP do host
-	RU	IP-адрес узла
-	SV	Värdens IP-adress
-	ZH_CN	主机IP地址
-
 INFORMATION_INSTALLED
 	CS	Instalováno
 	DA	Installeret
@@ -19130,46 +17691,6 @@ INFORMATION_DISABLED
 	RU	Отключено
 	SV	Avaktiverat
 	ZH_CN	已撤销
-
-INFORMATION_NO_VERSION
-	CS	Bez čísla verze
-	DA	Intet versionsnummer
-	DE	Keine Versionsnummer
-	EN	No version number
-	ES	Sin número de versión
-	FI	Ei version numeroa
-	FR	Pas de numéro de version
-	HE	אין מספר גרסה
-	HU	Nincs verziószám
-	IT	Nessun numero di versione
-	JA	バージョン番号なし
-	NL	Geen versienummer
-	NO	Ingen versjonsnummer
-	PL	Brak numeru wersji
-	PT	Sem versão numero
-	RU	Нет номера версии
-	SV	Inget versionsnummer
-	ZH_CN	无版本号
-
-INFORMATION_DATE_FORMAT
-	CS	${shortdateFormat} v ${timeFormat}
-	DA	${shortdateFormat} kl. ${timeFormat}
-	DE	${shortdateFormat} um ${timeFormat}
-	EN	${shortdateFormat} at ${timeFormat}
-	ES	${shortdateFormat} a ${timeFormat}
-	FI	${shortdateFormat} / ${timeFormat}
-	FR	${shortdateFormat} à ${timeFormat}
-	HE	${shortdateFormat} ב-${timeFormat}
-	HU	${shortdateFormat}, ${timeFormat}
-	IT	${shortdateFormat} alle ${timeFormat}
-	JA	${shortdateFormat}  ${timeFormat}
-	NL	${shortdateFormat} op ${timeFormat}
-	NO	${shortdateFormat} kl ${timeFormat}
-	PL	${shortdateFormat} o ${timeFormat}
-	PT	${shortdateFormat} às ${timeFormat}
-	RU	${shortdateFormat} в ${timeFormat}
-	SV	${shortdateFormat} klockan ${timeFormat}
-	ZH_CN	${shortdateFormat}  ${timeFormat}
 
 BEFORE
 	CS	před
@@ -19460,23 +17981,6 @@ MUSICSOURCE
 	RU	Источник музыки
 	SV	Musikkälla
 	ZH_CN	音乐源
-
-MEDIASOURCE
-	CS	Zdroj média
-	DA	Mediekilde
-	DE	Medienquelle
-	EN	Media Source
-	ES	Origen de material multimedia
-	FI	Medialähde
-	FR	Source du média
-	HU	Médiaforrás
-	IT	Sorgente multimediale
-	NL	Mediabron
-	NO	Mediekilde
-	PL	Źródło multimediów
-	RU	Источник мультимедиа
-	SV	Mediekälla
-	ZH_CN	媒体源
 
 MUSICSOURCE_SWITCH
 	CS	Zvolte prosím zdroj hudby, ke kterému chcete připojit svůj přehrávač.
@@ -19844,24 +18348,6 @@ UNSYNC
 	SV	Avsluta synkronisering
 	ZH_CN	非同步
 
-SETUP_USEBANDASALBUMARTIST_DESC
-	CS	Alba obsahující skladby, které jsou označené štítkem skupiny, mohou být u tohoto alba uvedena buď pod jménem skupiny nebo s ostatními interprety. Tag skupiny se nazývá také TPE2 a v některých programech se může zobrazovat jako "Interpret alba".
-	DA	Album der indeholder numre som er mærket med navnet på et band, kan vises under dette bands navn eller sammen med de andre kunstnere som optræder på albummet. Bandmærket kaldes også TPE2 og vises som "album artist" i nogle programmer.
-	DE	Alben, die Lieder enthalten, die mit einem Band-Tag versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Der Band-Tag (auch TPE2 genannt) wird in bestimmten Anwendungen auch als 'Album Artist' (Albuminterpret) bezeichnet.
-	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
-	ES	Los álbumes que contienen canciones con etiquetas de una banda pueden aparecer en listas por esa banda o con los otros artistas de ese álbum. La etiqueta "band" se conoce también como TPE2 y puede aparecer en algún software como "album artist".
-	FI	Jos levyllä on lauluja, jotka on merkitty jollekin tietylle yhtyeelle, levy voidaan sijoittaa yhtyeen nimen alle tai muiden samalla levyllä esiintyvien artistien alle.  Yhtyetunnus tunnetaan myös nimellä TPE2. Joissakin ohjelmistoissa se saattaa näkyä "levyartistina".
-	FR	Les albums ayant des morceaux dont un tag contient un nom de groupe/orchestre peuvent être listés sous ce nom ou sous le nom des autres artistes de l'album. Le tag groupe/orchestre est appelé TPE2 ou "Artiste de l'album" dans certains logiciels.
-	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
-	HU	Azok az albumok, amelyek egy zenekarral megcímkézett dalokat tartalmaznak, az adott zenekar neve alatt vagy az album többi előadójával együtt szerepelhetnek.  A zenekar címke TPE2 néven is ismert, és bizonyos szoftverekben "album előadóként" jelenhet meg.
-	IT	Gli album con brani che contengono il tag Gruppo possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
-	NL	Albums met nummers die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
-	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
-	PL	Albumy zawierające utwory z nazwą zespołu mogą być wymienione pod nazwą tego zespołu lub innych wykonawców tego albumu. Etykieta zespołu nosi także nazwę TPE2 i w niektórych programach może być widoczna jako „wykonawca albumu”.
-	RU	Альбомы песен с тегами группы могут быть перечислены в списке с названием этой группы или другими исполнителями данного альбома. Тег группы также называется TPE2 и в некоторых программах может отображаться как "Исполнитель альбома".
-	SV	Album som innehåller låtar som taggats med ett bandnamn kan listas under bandnamnet eller tillsammans med de andra artisterna på albumet. Bandtaggen kallas också TPE2, och visas i vissa program som Albumartist.
-	ZH_CN	包含带有乐队标签的歌曲的专辑可以列出该乐队名称或与该专辑的其他艺术家一起列出。乐队标签也称为 TPE2，在某些软件中可能显示为“专辑艺术家”。
-
 SETUP_USETPE2ASALBUMARTIST_DESC
 	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam "Skupina/orchestr". Zvolte význam, který má Lyrion Music Server používat. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Lyrion Music Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
@@ -20094,42 +18580,6 @@ ARTWORK
 	RU	Обложка
 	SV	Albumomslag
 	ZH_CN	封面图
-
-ONE_BY_ONE_ARTWORK
-	CS	Obaly alb "jeden po druhém"
-	DA	Albumcover 1-til-1
-	DE	Plattenhüllen einzeln
-	EN	1-by-1 Artwork
-	ES	Carátula 1 a 1
-	FI	1 x 1 -kansitaide
-	FR	Pochette 1x1
-	HE	עטיפות נפרדות
-	HU	1 x 1 borító
-	IT	Copertine una alla volta
-	NL	Albumhoezen 1-voor-1
-	NO	Bla i albumomslag
-	PL	Okładka 1 na 1
-	RU	Показ обложек по одной
-	SV	Albumomslag, 1-och-1
-	ZH_CN	1-by-1 封面图
-
-OBJECT_RETRIEVAL_FAILURE
-	CS	Lyrion Music Serveru se nepodařilo najít hledaný zdroj.
-	DA	Lyrion Music Server kunne ikke hente kilden du søgte efter.
-	DE	Lyrion Music Server konnte die gesuchte Ressource nicht finden.
-	EN	Lyrion Music Server failed retrieve the resource you were looking for.
-	ES	Lyrion Music Server no pudo obtener el recurso que estaba buscando.
-	FI	Lyrion Music Server epäonnistui etsimäsi resurssin hakemisessa.
-	FR	Le Lyrion Music Server n'a pas pu récupérer la source recherchée.
-	HE	Lyrion Music Server לא הצליח לאחזר את המשאב המבוקש.
-	HU	A Lyrion Music Server nem tudta lekérni a keresett erőforrást.
-	IT	Recupero risorsa richiesta non riuscito.
-	NL	Lyrion Music Server kan de gewenste hulpbron niet ophalen.
-	NO	Lyrion Music Server kunne ikke hente inn ressursen du så etter.
-	PL	Pobranie wyszukiwanego zasobu przez program Lyrion Music Server nie powiodło się.
-	RU	Lyrion Music Server не удалось получить искомый ресурс.
-	SV	Det gick inte att ladda ner den önskade resursen.
-	ZH_CN	Lyrion Music Server无法检索您正在寻找的资源。
 
 SETUP_LARGETEXTFONT
 	CS	Písmo velkého textu
@@ -21568,24 +20018,6 @@ INFORMATION_PLAYER_VOLTAGE_ABBR
 	SV	Spänning
 	ZH_CN	伏特
 
-LOADING_BROWSE_MUSIC_FOLDER
-	CS	Zavádění složky hudby...
-	DA	Indlæser musikmappe...
-	DE	Musikordner wird geladen ...
-	EN	Loading Music Folder...
-	ES	Cargando carpeta de música...
-	FI	Ladataan musiikkikansiota...
-	FR	Chargement des dossiers de musique...
-	HE	טוען את תיקיית המוסיקה...
-	HU	Zene mappa betöltése...
-	IT	Caricamento cartella Musica...
-	NL	Muziekmap wordt geladen...
-	NO	Laster musikkmappe...
-	PL	Ładowanie folderu muzyki...
-	RU	Загрузка папки "Музыка"...
-	SV	Läser in musikmapp...
-	ZH_CN	音乐文件夹装载中
-
 LOADING
 	CS	Načítání...
 	DA	Indlæser...
@@ -22796,41 +21228,6 @@ APPLY
 	SV	Verkställ
 	ZH_CN	应用
 
-SHRINK
-	CS	Zmenšit
-	DA	Formindsk
-	DE	Kleiner
-	EN	Shrink
-	ES	Comprimir
-	FI	Kutista
-	FR	Réduire
-	HU	Tömörítés
-	IT	Comprimi
-	NL	Verkleinen
-	NO	Reduser
-	PL	Zmniejsz
-	PT	Comprimir
-	RU	Сжатие
-	SV	Krymp
-	ZH_CN	缩小
-
-ENLARGE
-	CS	Zvětšit
-	DA	Forstør
-	DE	Größer
-	EN	Enlarge
-	ES	Ampliar
-	FI	Suurenna
-	FR	Agrandir
-	HU	Nagyít
-	IT	Ingrandisci
-	NL	Vergroten
-	NO	Forstørr
-	PL	Powiększ
-	RU	Увеличить
-	SV	Förstora
-	ZH_CN	放大
-
 SCANNER_PROGRESS
 	CS	Detaily prohledávání médií
 	DA	Detaljer om mediesøgning
@@ -23652,74 +22049,6 @@ JIVE_PLAY_ALL_SONGS
 	SV	Spela upp alla låtar
 	ZH_CN	播放所有歌曲
 
-JIVE_PLAY_ALL
-	CS	Přehrát vše
-	DA	Afspil alle
-	DE	Alle wiedergeben
-	EN	Play all
-	ES	Reproducir todo
-	FI	Toista kaikki
-	FR	Tout lire
-	HU	Az összes lejátszása
-	IT	Riproduci tutto
-	NL	Alles afspelen
-	NO	Spill av alle
-	PL	Odtwórz wszystko
-	RU	Воспроизвести все
-	SV	Spela upp alla
-	ZH_CN	播放所有
-
-JIVE_ALL_SONGS
-	CS	Všechny skladby
-	DA	Alle numre
-	DE	Alle Titel
-	EN	All songs
-	ES	Todas las canciones
-	FI	Kaikki kappaleet
-	FR	Tous les morceaux
-	HU	Minden zeneszám
-	IT	Tutti i brani
-	NL	Alle nummers
-	NO	Alle sanger
-	PL	Wszystkie utwory
-	RU	Все песни
-	SV	Alla låtar
-	ZH_CN	所有歌曲
-
-JIVE_ADD_ALL_SONGS
-	CS	Přidat všechny skladby
-	DA	Tilføj alle numre
-	DE	Alle Lieder hinzufügen
-	EN	Add all songs
-	ES	Agregar todas las canciones
-	FI	Lisää kaikki kappaleet
-	FR	Ajouter tous les morceaux
-	HU	Az összes zeneszám hozzáadása
-	IT	Aggiungi tutti i brani
-	NL	Alle nummers toevoegen
-	NO	Legg til alle sanger
-	PL	Dodaj wszystkie utwory
-	RU	Добавить все песни
-	SV	Lägg till alla låtar
-	ZH_CN	添加所有歌曲
-
-JIVE_ADD_ALL
-	CS	Přidat vše
-	DA	Tilføj alle
-	DE	Alle hinzufügen
-	EN	Add all
-	ES	Agregar todo
-	FI	Lisää kaikki
-	FR	Tout ajouter
-	HU	Összes hozzáadása
-	IT	Aggiungi tutto
-	NL	Alles toevoegen
-	NO	Legg til alle
-	PL	Dodaj wszystkie
-	RU	Добавить все
-	SV	Lägg till alla
-	ZH_CN	添加所有
-
 JIVE_DELETE_PLAYLIST
 	CS	Odstranit seznam skladeb\n%s
 	DA	Slet afspilningsliste\n%s
@@ -23790,23 +22119,6 @@ JIVE_SET_PRESET_X
 	SV	Ange förinställning %s
 	ZH_CN	设置预设 %s
 
-JIVE_SET_AS_PRESET
-	CS	Nastavit jako předvolbu
-	DA	Indstil som fast indstilling
-	DE	Als Voreinstellung festgelegt
-	EN	Set as Preset
-	ES	Establecer como memoria
-	FI	Määritä esiasetukseksi
-	FR	Définir comme présélection
-	HU	Beállítás előre beállítottként
-	IT	Imposta come predefinito
-	NL	Als voorinstelling instellen
-	NO	Gjør til forhåndsinnstilling
-	PL	Ustaw jako ustawienie zaprogramowane
-	RU	Задать в качестве предустановки
-	SV	Ange som förinställd
-	ZH_CN	设置为预设
-
 JIVE_SAVE_TO_FAVORITES
 	CS	Uložit do oblíbených položek
 	DA	Føj til favoritter
@@ -23824,40 +22136,6 @@ JIVE_SAVE_TO_FAVORITES
 	RU	Сохранить в избранном
 	SV	Spara i Favoriter
 	ZH_CN	保存到收藏夹
-
-JIVE_ADD_THIS_SONG
-	CS	Přidat do aktuálního seznamu skladeb
-	DA	Føj til afspilningslisten
-	DE	Der aktuellen Wiedergabeliste hinzufügen
-	EN	Add to Current Playlist
-	ES	Agregar a la lista de reproducción actual
-	FI	Lisää nykyiseen soittoluetteloon
-	FR	Ajouter à la liste de lecture en cours
-	HU	Hozzáadás az aktuális lejátszási listához
-	IT	Aggiungi alla playlist corrente
-	NL	Aan huidige afspeellijst toevoegen
-	NO	Legg til i gjeldende spilleliste
-	PL	Dodaj do aktualnej listy odtwarzania
-	RU	Добавить в текущий плей-лист
-	SV	Lägg till i aktuell spellista
-	ZH_CN	添加到当前播放列表
-
-JIVE_PLAY_THIS_SONG
-	CS	Přehrát tuto skladbu
-	DA	Afspil dette nummer
-	DE	Diesen Titel wiedergeben
-	EN	Play this Song
-	ES	Reproducir esta canción
-	FI	Soita tämä kappale
-	FR	Lire ce morceau
-	HU	Játzsa le ezt a zeneszámot
-	IT	Riproduci questo brano
-	NL	Dit nummer afspelen
-	NO	Spill denne sangen
-	PL	Odtwórz ten utwór
-	RU	Воспроизвести эту песню
-	SV	Spela upp den här låten
-	ZH_CN	播放这首歌
 
 ADD_TO_END
 	CS	Přidat na konec
@@ -24040,40 +22318,6 @@ JIVE_POPUP_ADDING
 	SV	Lägger till
 	ZH_CN	添加
 
-JIVE_POPUP_REMOVING
-	CS	Odstraňování
-	DA	Fjerner
-	DE	Entfernen von
-	EN	Removing
-	ES	Quitando
-	FI	Poistetaan
-	FR	Suppression
-	HU	Removing
-	IT	Rimozione
-	NL	Verwijderen
-	NO	Fjerner
-	PL	Usuwanie
-	RU	Удаление
-	SV	Tar bort
-	ZH_CN	移除
-
-JIVE_POPUP_REMOVING_FROM_PLAYLIST
-	CS	Odstraňování\n%s\nze seznamu skladeb...
-	DA	Fjerner\n%s\nfra afspilningsliste...
-	DE	\n%s\nwird aus Wiedergabeliste entfernt...
-	EN	Removing\n%s\nfrom Playlist...
-	ES	Quitando\n%s\nde la lista de reproducción...
-	FI	Poistetaan\n%s\nsoittoluettelosta...
-	FR	Suppression de\n%s\nde la liste de lecture...
-	HU	\n%s\neltávolítása a lejátszási listáról...
-	IT	Eliminazione di\n%s\ndalla playlist in corso...
-	NL	Bezig met verwijderen van\n%s\nuit afspeellijst...
-	NO	Fjerner\n%s\nfra spillelisten ...
-	PL	Usuwanie\n%s\nz listy odtwarzania...
-	RU	Удаление\n%s\nиз плей-листа...
-	SV	Tar bort\n%s\nfrån spellistan...
-	ZH_CN	移除\n%s\n从播放列表...
-
 JIVE_POPUP_TO_PLAY_NEXT
 	CS	přehrát další...
 	DA	bliver spillet næste gang...
@@ -24090,40 +22334,6 @@ JIVE_POPUP_TO_PLAY_NEXT
 	RU	воспроизвести след...
 	SV	spelar härnäst...
 	ZH_CN	作为下一首播放...
-
-JIVE_POPUP_TO_PLAYLIST
-	CS	do seznamu skladeb...
-	DA	til afspilningsliste...
-	DE	in Wiedergabeliste...
-	EN	to Playlist...
-	ES	a lista de reproducción...
-	FI	soittoluetteloon...
-	FR	vers la liste de lecture...
-	HU	lejátszási listára...
-	IT	alla playlist in corso...
-	NL	aan afspeellijst...
-	NO	i spilleliste...
-	PL	do listy odtwarzania...
-	RU	в плей-лист...
-	SV	till spellista...
-	ZH_CN	到播放列表...
-
-JIVE_POPUP_FROM_PLAYLIST
-	CS	ze seznamu skladeb...
-	DA	fra afspilningsliste...
-	DE	aus Wiedergabeliste...
-	EN	from Playlist...
-	ES	de lista de reproducción...
-	FI	soittoluettelosta...
-	FR	à partir de la liste de lecture...
-	HU	a lejátszási listáról...
-	IT	dalla playlist in corso...
-	NL	uit afspeellijst...
-	NO	fra spilleliste...
-	PL	z listy odtwarzania...
-	RU	из плей-листа...
-	SV	från spellista...
-	ZH_CN	从播放列表...
 
 JIVE_POPUP_NOW_PLAYING
 	CS	Právě hraje\n%s
@@ -24175,53 +22385,6 @@ JIVE_TURN_PLAYER_OFF
 	RU	Отключить %s
 	SV	Stäng av %s
 	ZH_CN	关闭 %s
-
-PLAYER_NAME
-	CS	Název
-	DA	Navn
-	DE	Name
-	EN	Name
-	ES	Nombre
-	FI	Nimi
-	FR	Nom
-	HU	Név
-	IT	Nome
-	NL	Naam
-	NO	Navn
-	PL	Nazwa
-	RU	Имя
-	SV	Namn
-	ZH_CN	名称
-
-JIVE_PLAYER_MODEL
-	DE	Modell
-	EN	Model
-	ES	Modelo
-	FI	Malli
-	FR	Modèle
-	HU	Modell
-	IT	Modello
-	NO	Modell
-	RU	Модель
-	SV	Modell
-	ZH_CN	型号
-
-JIVE_PLAYER_FIRMWARE_VERSION
-	CS	Verze firmwaru
-	DA	Firmwareversion
-	DE	Firmware-Version
-	EN	FW Version
-	ES	Versión de FW
-	FI	FW-versio
-	FR	Version FW
-	HU	FW verzió
-	IT	Versione FW
-	NL	Firmware-versie
-	NO	Fastvareversjon
-	PL	Wersja oprogramowania układowego
-	RU	Версия микропрограммы
-	SV	Version av inbyggd programvara
-	ZH_CN	固件版本
 
 CANCEL
 	CS	Storno
@@ -24541,23 +22704,6 @@ UNMIXABLE
 	SV	%s är inte tillgängligt för det här objektet
 	ZH_CN	%s 不可用于此项目
 
-NO_MIXERS_AVAILABLE
-	CS	Nejsou k dispozici žádné směšovače
-	DA	Der er ingen miksere
-	DE	Keine Mixer verfügbar
-	EN	No mixers available
-	ES	No hay mezcladores disponibles
-	FI	Miksereitä ei ole käytettävissä
-	FR	Aucun mixeur disponible
-	HU	Nem állnak rendelkezésre keverők
-	IT	Nessuna raccolta disponibile
-	NL	Geen mixers beschikbaar
-	NO	Ingen miksere tilgjengelig
-	PL	Brak dostępnych mikserów
-	RU	Нет доступных микшеров
-	SV	Inga mixrar tillgängliga
-	ZH_CN	没有可用的混音器
-
 PLAYER_BRIGHTNESS
 	CS	Jas přehrávače
 	DA	Afspillerens lysstyrke
@@ -24728,27 +22874,6 @@ ERROR_PLAYLIST_ALMOST_FULL
 	SV	Spellistan är full: %s av %s spår lades till
 	ZH_CN	播放列表已满：已添加 %s/%s 轨道
 
-SQUEEZEBOX_SERVER_CONNECT
-	CS	Připojit se k Lyrion Music Serveru
-	DA	Etabler forbindelse til Lyrion Music Server
-	DE	Mit Lyrion Music Server verbinden
-	EN	Connect to Lyrion Music Server
-	ES	Conectar a Lyrion Music Server
-	FI	Muodosta yhteys Lyrion Music Serveriin
-	FR	Se connecter au Lyrion Music Server
-	HE	התחבר ל-Lyrion Music Server
-	HU	Csatlakozás a Lyrion Music Serverhez
-	IT	Connetti a Lyrion Music Server
-	NL	Verbinding maken met Lyrion Music Server
-	NO	Kople til Lyrion Music Server
-	PL	Połącz z programem Lyrion Music Server
-	RU	Подключиться к Lyrion Music Server
-	SV	Anslut till Lyrion Music Server
-	ZH_CN	连接到 Lyrion Music Server
-
-SQUEEZEBOX_SERVER_CONNECT_ABBR
-	EN	Lyrion Music Server
-
 CLOCK
 	CS	Hodiny
 	DA	Ur
@@ -24799,23 +22924,6 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	RU	Доступна и готова к установке обновленная версия Lyrion Music Server.
 	SV	En uppdaterad version av Lyrion Music Server finns tillgänglig och klar att installeras.
 	ZH_CN	Lyrion Music Server 的更新版本已准备好安装。
-
-PREFPANE_UPDATE_AVAILABLE
-	CS	Pro instalaci je k dispozici aktualizovaná verze Lyrion Music Serveru. Přejděte na Lyrion Music Server v systémových vlastnostech pro spuštění aktualizace.
-	DA	En opdateret version af Lyrion Music Server er klar til at blive installeret. Du kan starte opgraderingen under Systemindstillinger på Lyrion Music Server.
-	DE	Eine aktualisierte Version von Lyrion Music Server ist verfügbar und kann installiert werden. Wählen Sie unter 'Systemeinstellungen' die Option 'Lyrion Music Server', um das Update zu starten.
-	EN	An updated version of Lyrion Music Server is available and ready to install. Visit the Lyrion Music Server in System Preferences to start the upgrade.
-	ES	Hay disponible una versión actualizada de Lyrion Music Server y está lista para instalar. Visite Lyrion Music Server en Preferencias del sistema para iniciar la actualización.
-	FI	Lyrion Music Serverin päivitetty versio on käytettävissä ja valmiina asennusta varten. Käynnistä päivitys Lyrion Music Server -kohdassa järjestelmäasetuksissa.
-	FR	Une version mise à jour du Lyrion Music Server est disponible et peut être installée. Accédez à Lyrion Music Server dans les Préférences système pour démarrer la mise à niveau.
-	HU	Elérhető a Lyrion Music Server frissített verziója, amely készen áll a telepítésre. A frissítés megkezdéséhez keresse fel a Lyrion Music Servert a Rendszerbeállításokban.
-	IT	È disponibile una versione aggiornata di Lyrion Music Server, pronta per essere installata. Per avviare l'aggiornamento, accedere a Lyrion Music Server in Preferenze di Sistema.
-	NL	Nieuwe versie van Lyrion Music Server is beschikbaar voor installatie. Ga naar Lyrion Music Server in Systeemvoorkeuren om de upgrade te starten.
-	NO	En oppdatert versjon av Lyrion Music Server er tilgjengelig og klar til installering. Du kan starte oppgraderingen fra Lyrion Music Server i Systemvalg.
-	PL	Zaktualizowana wersja programu Lyrion Music Server jest gotowa i dostępna do zainstalowania. Aby rozpocząć uaktualnianie, otwórz ekran programu Lyrion Music Server w programie Preferencje systemowe.
-	RU	Доступна и готова к установке обновленная версия сервера Lyrion Music Server. Чтобы начать установку обновления, посетите Lyrion Music Server в приложении System Preferences.
-	SV	En uppdaterad version av Lyrion Music Server finns tillgänglig och redo att installeras. Gå till Lyrion Music Server i Systeminställningar för att starta uppgraderingen.
-	ZH_CN	Lyrion Music Server 的更新版本已准备好安装。请访问系统偏好设置中的 Lyrion Music Server 以启动升级。
 
 CONTROLPANEL_NO_UPDATE_AVAILABLE
 	CS	K dispozici není žádná aktualizovaná verze Lyrion Music Serveru.
@@ -24869,40 +22977,6 @@ CLEANUP
 	SV	Rensning
 	ZH_CN	清理
 
-CLEANUP_DO
-	CS	Spustit čištění
-	DA	Foretag oprydning
-	DE	Bereinigung durchführen
-	EN	Run Cleanup
-	ES	Ejecutar limpieza
-	FI	Suorita puhdistus
-	FR	Lancer le nettoyage
-	HU	Cleanup futtatása
-	IT	Esegui pulizia
-	NL	Opschoning uitvoeren
-	NO	Kjør opprydding
-	PL	Uruchom czyszczenie
-	RU	Запустить очистку
-	SV	Kör rensning
-	ZH_CN	运行清理
-
-CLEANUP_SUCCESS
-	CS	Čištění bylo úspěšně dokončeno
-	DA	Oprydningen er gennemført
-	DE	Bereinigung erfolgreich abgeschlossen
-	EN	Cleanup finished successfully
-	ES	La limpieza finalizó correctamente
-	FI	Puhdistus on suoritettu
-	FR	Le nettoyage a été effectué
-	HU	A tisztítás sikeresen befejeződött
-	IT	Pulizia eseguita correttamente
-	NL	Opschoning voltooid
-	NO	Opprydding fullført
-	PL	Czyszczenie zakończone powodzeniem
-	RU	Очистка выполнена успешно
-	SV	Rensningen slutfördes utan problem
-	ZH_CN	清理完成
-
 CLEANUP_PLEASE_RESTART_SC
 	CS	Restartujte prosím Lyrion Music Server k uskutečnění změn.
 	DA	Du skal genstarte Lyrion Music Server for at ændringerne kan træde i kraft.
@@ -24936,23 +23010,6 @@ CLEANUP_PLEASE_STOP_SC
 	RU	Перед очисткой остановите работу Lyrion Music Server.
 	SV	Stoppa Lyrion Music Server innan du börjar med rensningen.
 	ZH_CN	请在运行清理之前停止 Lyrion Music Server。
-
-CLEANUP_WANT_TO_STOP_SC
-	CS	Před zahájením čištění musí být Lyrion Music Server zastaven. Chcete ho zastavit nyní?
-	DA	Lyrion Music Server skal stoppes før der kan foretages en oprydning. Vil du stoppe den nu?
-	DE	Lyrion Music Server muss vor der Ausführung der Bereinigung angehalten werden. Soll der Server jetzt angehalten werden?
-	EN	Lyrion Music Server has to be stopped before running the cleanup. Do you want to stop it now?
-	ES	Antes de ejecutar la limpieza, se debe detener Lyrion Music Server. ¿Desea detenerlo ahora?
-	FI	Lyrion Music Server täytyy pysäyttää ennen puhdistuksen suorittamista. Haluatko pysäyttää sen nyt?
-	FR	Le Lyrion Music Server doit être arrêté avant le lancement du nettoyage. Souhaitez-vous l'arrêter maintenant ?
-	HU	A Lyrion Music Servert le kell állítani a tisztítás futtatása előtt. Szeretné most abbahagyni?
-	IT	Prima di eseguire la pulizia è necessario arrestare Lyrion Music Server. Arrestarlo adesso?
-	NL	Lyrion Music Server dient te worden stopgezet, voordat de opschoning wordt uitgevoerd. Wil je de server nu stoppen?
-	NO	Lyrion Music Server må stoppes før oppryddingen kan kjøres. Vil du stoppe den nå?
-	PL	Przed uruchomieniem czyszczenia należy zatrzymać program Lyrion Music Server. Czy chcesz go zatrzymać teraz?
-	RU	Перед выполнением очистки Lyrion Music Server нужно остановить. Остановить сейчас?
-	SV	Lyrion Music Server måste stoppas innan du kör rensningen. Vill du stoppa den nu?
-	ZH_CN	在运行清理之前，必须停止 Lyrion Music Server。您现在要停止它吗？
 
 CLEANUP_USAGE
 	CS	Použití
@@ -25124,392 +23181,12 @@ CLEANUP_DELETING
 	SV	Raderar
 	ZH_CN	删除中
 
-RUN_AT_BOOT
-	CS	Spustit automaticky při startu systému
-	DA	Kør automatisk ved systemstart
-	DE	Automatisch bei Systemstart ausführen
-	EN	Automatically run at system start
-	ES	Ejecutar automáticamente al iniciar el sistema
-	FI	Suorita automaattisesti järjestelmän käynnistyessä
-	FR	Démarrer automatiquement au démarrage du système
-	HU	Automatikus futás a rendszer indításakor
-	IT	Esegui automaticamente all'avvio del sistema
-	NL	Automatisch uitvoeren bij systeemstart
-	NO	Kjør automatisk når systemet starter
-	PL	Uruchom automatycznie po uruchomieniu systemu
-	PT	Executar automaticamente ao iniciar o sistema
-	RU	Запускать автоматически при запуске системы
-	SV	Kör automatiskt vid systemstart
-	ZH_CN	自动在系统启动时运行
-
-RUN_AT_LOGIN
-	CS	Spustit automaticky při přihlášení
-	DA	Kør automatisk ved logon
-	DE	Automatisch bei Anmeldung ausführen
-	EN	Automatically run at login
-	ES	Ejecutar automáticamente al iniciar sesión
-	FI	Suorita automaattisesti kirjautuessa
-	FR	Démarrer automatiquement lors de la connexion
-	HU	Automatikus futás bejelentkezéskor
-	IT	Esegui automaticamente all'accesso al sistema
-	NL	Automatisch uitvoeren bij aanmelden
-	NO	Kjør automatisk ved pålogging
-	PL	Uruchom automatycznie po zalogowaniu
-	PT	Executar automaticamente ao login
-	RU	Запускать автоматически при входе в систему
-	SV	Kör automatiskt vid inloggning
-	ZH_CN	自动在登录时运行
-
-RUN_FAILSAFE
-	CS	Spustit bez zásuvných modulů ("Bezpečný režim")
-	DA	Kør uden udvidelsesmoduler (fejlsikret tilstand)
-	DE	Ohne Benutzererweiterungen ausführen ("Abgesicherter Modus")
-	EN	Run with no user extensions ("Safe Mode")
-	ES	Ejecutar sin extensiones de usuario ("Modo seguro")
-	FI	Suorita ilman käyttäjätunnisteita (vikasietotila)
-	FR	Exécuter sans poste utilisateur ("Mode sans échec")
-	HU	Futtatás felhasználói bővítmények nélkül ("Csökkentett mód")
-	IT	Esegui senza estensioni utente (modalità provvisoria)
-	NL	Zonder gebruikersextensies uitvoeren ('Veilige modus')
-	NO	Kjør uten brukerutvidelser ("sikkermodus")
-	PL	Uruchom bez rozszerzeń użytkownika („tryb bezpieczny”)
-	PT	Executar sem carregar as extensões do utilizador ("Safe Mode")
-	RU	Запустить без пользовательских расширений ("Безопасный режим")
-	SV	Kör utan användartillägg (Felsäkert läge)
-	ZH_CN	以无用户扩展模式运行（“安全模式”）
-
-RUN_NEVER
-	CS	Nespouštět automaticky
-	DA	Start ikke automatisk
-	DE	Nicht automatisch starten
-	EN	Don't start automatically
-	ES	No iniciar automáticamente
-	FI	Älä käynnistä automaattisesti
-	FR	Ne pas démarrer automatiquement
-	HU	Ne induljon el automatikusan
-	IT	Non avviare automaticamente
-	NL	Niet automatisch starten
-	NO	Ikke start automatisk
-	PL	Nie uruchamiaj automatycznie
-	PT	Não iniciar automaticamente
-	RU	Не запускать автоматически
-	SV	Starta inte automatiskt
-	ZH_CN	不自动运行
-
-START_SQUEEZEBOX_SERVER
-	CS	Spustit Lyrion Music Server
-	DA	Start Lyrion Music Server
-	DE	Lyrion Music Server starten
-	EN	Start Lyrion Music Server
-	ES	Iniciar Lyrion Music Server
-	FI	Käynnistä Lyrion Music Server
-	FR	Démarrer Lyrion Music Server
-	HU	Lyrion Music Server indítása
-	IT	Avvia Lyrion Music Server
-	NL	Lyrion Music Server starten
-	NO	Start Lyrion Music Server
-	PL	Uruchom program Lyrion Music Server
-	PT	Iniciar Lyrion Music Server
-	RU	Запустить Lyrion Music Server
-	SV	Starta Lyrion Music Server
-	ZH_CN	启动 Lyrion Music Server
-
-STOP_SQUEEZEBOX_SERVER
-	CS	Zastavit Lyrion Music Server
-	DA	Stop Lyrion Music Server
-	DE	Lyrion Music Server anhalten
-	EN	Stop Lyrion Music Server
-	ES	Detener Lyrion Music Server
-	FI	Pysäytä Lyrion Music Server
-	FR	Arrêter le Lyrion Music Server
-	HU	Lyrion Music Server leállítása
-	IT	Arresta Lyrion Music Server
-	NL	Lyrion Music Server stoppen
-	NO	Stopp Lyrion Music Server
-	PL	Zatrzymaj program Lyrion Music Server
-	PT	Parar o Lyrion Music Server
-	RU	Остановить Lyrion Music Server
-	SV	Stoppa Lyrion Music Server
-	ZH_CN	停止 Lyrion Music Server
-
-SIGNUP_LISTEN
-	CS	Poslouchejte hudbu!
-	DA	Lyt til noget musik!
-	DE	Hören Sie Musik!
-	EN	Listen to some music!
-	ES	Escuchar un poco de música.
-	FI	Kuuntele musiikkia!
-	FR	Ecouter de la musique
-	IT	Ascolta un po' di musica!
-	NL	Luister eens naar muziek!
-	NO	Lytt til musikk!
-	PL	Posłuchaj muzyki!
-	PT	Ouvir um pouco de musica!
-	RU	Послушайте музыку!
-	SV	Lyssna på musik!
-	ZH_CN	听点音乐吧！
-
-HOWTO_HOME
-	CS	Namiřte dálkový ovladač na Squeezebox, stiskněte šipku DOLEVA, dokud se nezobrazí volba Právě hraje.
-	DA	Kig på din Squeezebox, og tryk på venstrepilen på fjernbetjeningen indtil du kan se Nu spiller.
-	DE	Zeigen Sie mit der Fernbedienung auf die Squeezebox und drücken Sie LINKS auf der Fernbedienung, bis die Option 'Aktuelle Wiedergabe' zu sehen ist.
-	EN	Facing your Squeezebox, press the LEFT arrow on the remote until you see the Now Playing option.
-	ES	De cara a Squeezebox, pulse la flecha IZQUIERDA del mando a distancia hasta que vea la opción Reproduciendo.
-	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen vasenta nuolta, kunnes Nyt soi -ruutu tulee näyttöön.
-	FR	Appuyez sur la flèche GAUCHE de la télécommande en la pointant vers la Squeezebox, jusqu'à ce que l'option Lecture s'affiche.
-	HU	A Squeezebox felé fordulva nyomja meg a BALRA nyilat a távvezérlőn, amíg meg nem jelenik a Most játszik opció.
-	IT	Puntare il telecomando verso lo Squeezebox e premere freccia SINISTRA fino a quando non viene visualizzata l'opzione Riproduzione in corso.
-	NL	Richt de afstandsbediening naar de Squeezebox, en druk op de pijl naar LINKS tot je de optie Speelt nu ziet.
-	NO	Gå til VENSTRE på fjernkontrollen mens du står vendt mot Squeezebox, og hold knappen nede til du ser alternativet Spiller av nå.
-	PL	Patrząc w kierunku urządzenia Squeezebox, naciśnij strzałkę W LEWO na pilocie aż do wyświetlenia opcji Teraz odtwarzane.
-	RU	Направьте пульт ДУ на Squeezebox и нажимайте кнопку LEFT, пока не появится параметр "Воспроизводится".
-	PT	De frente para o Squeezebox prima a seta para a Esquerda no controle remoto até que lhe apareça a opção NOW PLAYING.
-	SV	Rikta fjärrkontrollen mot Squeezebox och tryck på vänsterpilen på fjärrkontrollen för att visa alternativet Aktuellt spår.
-	ZH_CN	将遥控器对准 Squeezebox，按遥控器上的向左箭头键，直到出现“正在播放”选项。
-
-HOWTO_HOME_BOOM
-	CS	Namiřte dálkový ovladač na Squeezebox a stiskněte tlačítko HOME.
-	DA	Se på din Squeezebox, og tryk på Hovedmenu/Hjem på fjernbetjeningen.
-	DE	Zeigen Sie mit der Fernbedienung auf die Squeezebox und drücken Sie HOME.
-	EN	Facing your Squeezebox, press HOME on the remote.
-	ES	De cara a Squeezebox, pulse HOME en el mando a distancia.
-	FI	Asetu Squeezeboxin eteen ja paina kaukosäätimen kotipainiketta.
-	FR	Appuyez sur HOME sur la télécommande en la pointant vers la Squeezebox.
-	HU	A Squeezebox felé fordulva nyomja meg a HOME gombot a távvezérlőn.
-	IT	Puntare il telecomando verso lo Squeezebox e premere HOME.
-	NL	Richt de afstandsbediening op de Squeezebox en druk op HOME.
-	NO	Trykk på HOME på fjernkontrollen mens du står vendt mot Squeezebox.
-	PL	Stojąc w kierunku urządzenia Squeezebox, naciśnij przycisk HOME na pilocie.
-	PT	De frente para o Squeezebox prima HOME no controle remoto.
-	RU	Направьте пульт ДУ на Squeezebox и нажмите кнопку HOME.
-	SV	Rikta fjärrkontrollen mot Squeezebox och tryck på HOME.
-	ZH_CN	将遥控器对准 Squeezebox，按遥控器上的 HOME 键。
-
-HOWTO_HOME_CONTROLLER
-	CS	Stiskněte tlačítko HOME na dálkovém ovladači.
-	DA	Tryk på Hovedmenu/Hjem på fjernbetjeningen.
-	DE	Drücken Sie HOME auf der Fernbedienung.
-	EN	Press HOME on the remote.
-	ES	Pulse HOME en el mando a distancia.
-	FI	Paina kaukosäätimen kotipainiketta.
-	FR	Appuyez sur HOME sur la télécommande.
-	HU	Nyomja meg a HOME gombot a távvezérlőn.
-	IT	Premere HOME sul telecomando.
-	NL	Druk op HOME op de afstandsbediening.
-	NO	Trykk på HOME på fjernkontrollen.
-	PL	Naciśnij przycisk HOME na pilocie.
-	PT	Prima HOME no controle remoto.
-	RU	Нажмите на пульте кнопку HOME.
-	SV	Tryck på HOME på fjärrkontrollen.
-	ZH_CN	按遥控器上的 HOME 键。
-
-HOWTO_DOWN
-	CS	Stisknutím tlačítka DOLŮ na dálkovém ovladači přejděte na položku Internetové rádio a stisknutím tlačítka VPRAVO vyberte možnost.
-	DA	Tryk på nedpilen på fjernbetjeningen for at finde Internetradio, og tryk så på højrepilen for at vælge.
-	DE	Drücken Sie UNTEN auf der Fernbedienung, um 'Internetradio' aufzurufen. Drücken Sie RECHTS, um die Funktion zu aktivieren.
-	EN	Press DOWN on the remote to scroll to Internet Radio, and press RIGHT to select.
-	ES	Pulse ABAJO en el mando a distancia para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
-	FI	Siirry nettiradioon kaukosäätimen alapainikkeella ja valitse kanava oikealla painikkeella.
-	FR	Appuyez sur BAS pour accéder aux radios Internet puis sur le bouton DROIT pour effectuer la sélection.
-	HU	A távvezérlő LE gombjával görgessen az Internet Rádió lehetőséghez, majd nyomja meg a JOBBRA gombot a kiválasztáshoz.
-	IT	Premere la freccia GIÙ sul telecomando per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
-	NL	Druk OMLAAG op de afstandsbediening om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
-	NO	Gå NED på fjernkontrollen for å gå til Internett-radio, og gå til HØYRE for å velge.
-	PL	Naciśnij przycisk W DÓŁ, aby przejść do opcji Radio internetowe, a następnie naciśnij przycisk W PRAWO, aby wybrać.
-	PT	Prima DOWN no controle remoto até chegar a radio pela Internet, Prima RIGHT para seleccionar.
-	RU	На пульте ДУ нажмите кнопку DOWN, чтобы прокрутить до элемента "Радиостанции Интернета", и нажмите кнопку RIGHT, чтобы выбрать его.
-	SV	Bläddra till webbradio genom att trycka på nerknappen på fjärrkontrollen. Tryck därefter på högerknappen för att välja.
-	ZH_CN	按遥控器上的向下键滚动到Internet Radio，然后按向右键选择。
-
-HOWTO_DOWN_BOOM
-	CS	Stisknutím tlačítka DOLŮ na dálkovém ovladači (nebo otočením knoflíku doprava) přejděte na položku Internetové rádio a stisknutím tlačítka VPRAVO vyberte možnost.
-	DA	Tryk på nedpilen på fjernbetjeningen (eller drej drejeknappen til højre) for at finde Internetradio, og tryk så på højrepilen for at vælge.
-	DE	Drücken Sie UNTEN auf der Fernbedienung (oder drehen Sie den Regler nach rechts), um 'Internetradio' aufzurufen. Drücken Sie zum Aktivieren der Funktion RECHTS.
-	EN	Press DOWN on the remote (or spin the knob to the right) to scroll to Internet Radio, and press RIGHT to select.
-	ES	Pulse ABAJO en el mando a distancia (o gire la rueda central a la derecha) para desplazarse a Radio por Internet y pulse DERECHA para seleccionar.
-	FI	Siirry nettiradioon kaukosäätimen alapainikkeella (tai pyörittämällä kiekkoa oikealle) ja valitse se oikealla painikkeella.
-	FR	Appuyez sur BAS ou tournez la molette vers la droite pour faire défiler vers les radios Internet, puis appuyez sur le bouton DROIT pour effectuer la sélection.
-	HU	Nyomja meg a DOWN gombot a távvezérlőn (vagy forgassa el a gombot jobbra) az Internet Rádió lehetőséghez való görgetéshez, majd nyomja meg a JOBBRA gombot a kiválasztáshoz.
-	IT	Premere la freccia GIÙ sul telecomando (o spingere il pulsante centrale verso destra) per scorrere fino a Radio Internet, quindi premere la freccia DESTRA per eseguire una selezione.
-	NL	Druk OMLAAG op de afstandsbediening (of draai de regelaar naar rechts) om naar 'Internetradio' te scrollen, en druk dan RECHTS om te selecteren.
-	NO	Gå ned på fjernkontrollen (eller rull mot høyre med midtknappen) for å gå til Internett-radio, og gå til høyre  for å velge.
-	PL	Naciśnij przycisk W DÓŁ na pilocie (lub obróć pokrętło w prawo), aby przejść do opcji Radio internetowe i naciśnij przycisk W PRAWO, aby wybrać.
-	RU	Нажмите на пульте ДУ кнопку DOWN (или прокрутите ручку вправо), чтобы перейти к элементу "Радиостанции Интернета", и нажмите для его выбора кнопку RIGHT.
-	PT	Prima DOWN no controle remoto (ou rode o botão para a direita) até chegar a radio pela Internet, Prima RIGHT para seleccionar.
-	SV	Bläddra till webbradion genom att trycka på nerknappen på fjärrkontrollen (eller vrid mittenknappen åt höger). Tryck på högerknappen för att göra ditt val.
-	ZH_CN	按遥控器上的向下箭头键（或向右旋转旋钮），直到出现“互联网电台”选项，然后按向右箭头键选择。
-
-HOWTO_DOWN_CONTROLLER
-	CS	Otočením kolečka doprava přejděte na položku Internetové rádio a stisknutím středového tlačítka vyberte možnost.
-	DA	Drej knappen til højre for at markere Internetradio, og tryk på den for at vælge.
-	DE	Drehen Sie den Regler nach rechts, um Internetradio zu wählen. Drücken Sie die mittlere Taste, um die Funktion zu aktivieren.
-	EN	Spin the wheel to the right to scroll to Internet Radio, and press the center button to select.
-	EN_GB	Spin the wheel to the right to scroll to Internet Radio, and press the centre button to select.
-	ES	Gire la rueda a la derecha para desplazarse a Radio por Internet y pulse el botón central para seleccionar.
-	FI	Pyöritä kiekkoa oikealle, kunnes löydät nettiradion, ja valitse se keskipainikkeella.
-	FR	Tournez la molette vers la droite pour faire défiler vers les radios Internet et appuyez sur le bouton central pour effectuer la sélection.
-	HU	Forgassa jobbra a kereket az Internet Rádió lehetőséghez való görgetéshez, majd nyomja meg a középső gombot a kiválasztáshoz.
-	IT	Spostare la rotellina verso destra per scorrere fino a Radio Internet, quindi premere il pulsante centrale per eseguire una selezione.
-	NL	Draai het wiel naar rechts om naar 'Internetradio' te scrollen, en druk op de middelste knop om te selecteren.
-	NO	Rull hjulet mot høyre for å gå til Internett-radio, og trykk på midtknappen for å velge.
-	PL	Obróć pokrętło w prawo, aby przejść do opcji Radio internetowe i naciśnij środkowy przycisk, aby wybrać.
-	PT	Gire a roda para a direita até chegar a Radio pela Internet.Prima o botão central para seleccionar.
-	RU	Прокрутите колесико вправо до элемента "Радиостанции Интернета" и нажмите центральную кнопку, чтобы выбрать его.
-	SV	Rulla med hjulet för att bläddra till webbradion. Använd mittenknappen för att välja.
-	ZH_CN	向右旋转控制盘可滚动到Internet Radio，然后按中心按钮进行选择。
-
-HOWTO_STAFF_PICKS
-	CS	Přejděte na položku VÝBĚR NAŠEHO PERSONÁLU a stiskněte tlačítko DOPRAVA.
-	DA	Rul til Vi anbefaler, og tryk på højrepilen.
-	DE	Markieren Sie 'Unsere Empfehlungen' und drücken Sie RECHTS.
-	EN	Scroll to STAFF PICKS and press RIGHT.
-	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse DERECHA.
-	FI	Selaa suosituksiin ja paina oikeaa näppäintä.
-	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton droit.
-	HU	Görgessen a SZOLGÁLTATÁSOK elemhez, és nyomja meg a JOBBRA gombot.
-	IT	Scorrere fino a SCELTI DALLO STAFF e premere DESTRA.
-	NL	Scroll naar AANRADERS en druk RECHTS.
-	NO	Gå til UTVALGTE STASJONER og gå til høyre.
-	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij przycisk w prawo.
-	PT	Faça scroll até Staff Picks e prima o botão RIGHT.
-	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите кнопку RIGHT.
-	SV	Bläddra till VÅRA FAVORITER och tryck på högerknappen.
-	ZH_CN	滚动到员工图片，然后按右键。
-
-HOWTO_STAFF_PICKS_CONTROLLER
-	CS	Přejděte na položku VÝBĚR NAŠEHO PERSONÁLU a stiskněte středové tlačítko.
-	DA	Rul til Vi anbefaler, og tryk på midterknappen.
-	DE	Markieren Sie 'Unsere Empfehlungen' und drücken Sie die mittlere Taste.
-	EN	Scroll to STAFF PICKS and press the center button.
-	EN_GB	Scroll to STAFF PICKS and press the centre button.
-	ES	Desplácese hasta NUESTRAS SELECCIONES y pulse el botón central.
-	FI	Selaa kohtaan SUOSITUKSET ja paina keskipainiketta.
-	FR	Faites défiler vers NOTRE SELECTION et appuyez sur le bouton central.
-	HU	Görgessen a STAFF PICKS elemhez, és nyomja meg a középső gombot.
-	IT	Scorrere fino a SCELTI DALLO STAFF e premere il pulsante centrale.
-	NL	Scroll naar AANRADERS en druk op de middelste knop.
-	NO	Gå til UTVALGTE STASJONER og trykk på midtknappen.
-	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij środkowy przycisk.
-	PT	Faça scroll até Staff Picks e prima o botão central.
-	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите центральную кнопку.
-	SV	Bläddra till Våra favoriter och tryck på mittenknappen.
-	ZH_CN	滚动到员工图片，然后按中央按钮。
-
 INTERNET_RADIO
 	CS	Rádio
 	EN	Radio
 	HU	Radió
 	RU	Радиостанция
 	ZH_CN	电台
-
-HOWTO_INTERNET_RADIO
-	CS	Přejděte na položku "Nejoblíbenější internetová rádia" a stiskněte tlačítko DOPRAVA.
-	DA	Find Det bedste fra internetradio, og tryk på højrepilen.
-	DE	Markieren Sie die Option 'Die besten Internetradiosender' und drücken Sie RECHTS.
-	EN	Scroll to "Best of Internet Radio" and press RIGHT.
-	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse DERECHA.
-	FI	Siirry kohtaan "internet-radion parhaat" ja paina oikeaa painiketta.
-	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton droit.
-	HU	Görgessen a „Best of Internet Radio” elemhez, és nyomja meg a JOBBRA gombot.
-	IT	Scorrere fino a "Il meglio della radio su Internet" e premere DESTRA.
-	NL	Scroll naar 'De beste internetradio' en druk RECHTS.
-	NO	Gå til "Beste stasjoner" og gå til høyre.
-	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij przycisk W PRAWO.
-	PT	Faça scroll até "Best of Internet Radio" e prima o botão RIGHT.
-	RU	Прокрутите до элемента "Лучшие из радиостанций Интернета" и нажмите кнопку RIGHT.
-	SV	Bläddra till Webbradiofavoriter och tryck på högerknappen.
-	ZH_CN	滚动至“最佳网络广播”，然后按向右键。
-
-HOWTO_INTERNET_RADIO_CONTROLLER
-	CS	Přejděte na položku "Nejoblíbenější internetová rádia" a stiskněte středové tlačítko.
-	DA	Find Det bedste fra internetradio, og tryk på midterknappen.
-	DE	Markieren Sie 'Die besten Internetradiosender' und drücken Sie die mittlere Taste.
-	EN	Scroll to "Best of Internet Radio" and press the center button.
-	EN_GB	Scroll to "Best of Internet Radio" and press the centre button.
-	ES	Desplácese hasta "Lo mejor en radio por Internet" y pulse el botón central.
-	FI	Siirry internet-radion parhaisiin ja paina keskipainiketta.
-	FR	Faites défiler vers "Le meilleur des radios Internet" et appuyez sur le bouton central.
-	HU	Görgessen a „Best of Internet Radio” elemhez, és nyomja meg a középső gombot.
-	IT	Scorrere fino a "Il meglio della radio su Internet" e premere il pulsante centrale.
-	NL	Scroll naar 'De beste internetradio' en druk op de middelste knop.
-	NO	Gå til "Beste stasjoner" og trykk på midtknappen.
-	PL	Przewiń do opcji „Najlepsze internetowe stacje radiowe" i naciśnij środkowy przycisk.
-	PT	Faça scroll até "Best of Internet Radio" e prima o botão central.
-	RU	Прокрутите до "Лучшие радиостанции Интернета" и нажмите центральную кнопку.
-	SV	Bläddra till Webbradiofavoriter och tryck på mittenknappen.
-	ZH_CN	滚动到“最佳网络广播”，然后按中心按钮。
-
-HOWTO_SHOWCASE
-	CS	Přejděte na položku Slim Showcase: Miles Davis a stiskněte tlačítko PLAY.
-	DA	Find Demonstration af Slim: Miles Davis, og tryk på Afspil.
-	DE	Markieren Sie den Eintrag 'Slim Showcase: Miles Davis' und drücken Sie PLAY.
-	EN	Scroll to Slim Showcase: Miles Davis and press PLAY.
-	ES	Desplácese hasta Slim Showcase: Miles Davis y pulse el botón de reproducción.
-	FI	Siirry kohtaan Esittely: Miles Davis ja paina toistopainiketta.
-	FR	Faites défiler vers Slim Showcase: Miles Davis et appuyez sur Lecture.
-	HU	Görgessen a Slim Showcase: Miles Davis elemhez, és nyomja meg a PLAY gombot.
-	IT	Scorrere fino a Slim Showcase: Miles Davis e premere PLAY.
-	NL	Scroll naar 'Slim Showcase: Miles Davis' en druk op PLAY.
-	NO	Gå til Slim-scenen: Miles Davis og trykk på PLAY.
-	PL	Przewiń do opcji Prezentacja Slim: Miles Davis i naciśnij przycisk PLAY.
-	PT	Faça scroll até Slim Showcase: Miles Davis e prima PLAY.
-	RU	Прокрутите до элемента Slim Showcase: Miles Davis и нажмите кнопку PLAY.
-	SV	Bläddra till Demonstration: Miles Davis och tryck på PLAY.
-	ZH_CN	滚动到Slim展示：Miles Davis，然后按播放。
-
-HOWTO_VOLUME
-	CS	Upravte hlasitost.
-	DA	Juster lydstyrken.
-	DE	Regeln Sie die Lautstärke.
-	EN	Adjust the volume.
-	ES	Ajuste el volumen.
-	FI	Säädä äänenvoimakkuus.
-	FR	Ajustement du volume.
-	HU	Hangerő beállítása
-	IT	Regolare il volume.
-	NL	Pas het volume aan.
-	NO	Juster volumet.
-	PL	Ustaw głośność.
-	PT	Ajuste do volume
-	RU	Выровнять звук.
-	SV	Justera volymen.
-	ZH_CN	调整音量。
-
-HOWTO_PAUSE
-	CS	Přehrávání skladby pozastavíte klepnutím na tlačítko PAUSE. Stisknutím a podržením tlačítka PAUSE přehrávání skladby zastavíte.
-	DA	Du kan afbryde afspilningen af nummeret midlertidigt ved at trykke på Pause. Hvis du vil stoppe afspilningen helt, skal du holde pauseknappen nede.
-	DE	Drücken Sie PAUSE, um den Titel anzuhalten. Halten Sie PAUSE gedrückt, um die Wiedergabe des Titels zu beenden.
-	EN	To pause the track, tap PAUSE. To stop the track, press and hold the PAUSE button.
-	ES	Para poner la pista en pausa, toque PAUSE. Para detener la pista, mantenga pulsado el botón PAUSE.
-	FI	Voit keskeyttää raidan toiston napauttamalla taukopainiketta. Voit lopettaa raidan toiston kokonaan pitämällä taukopainikkeen pohjassa.
-	FR	Appuyez sur PAUSE pour mettre la lecture en pause. Pour arrêter la lecture, maintenez le bouton PAUSE enfoncé.
-	HU	A szám szüneteltetéséhez érintse meg a SZÜNET lehetőséget. A szám leállításához nyomja meg és tartsa lenyomva a PAUSE gombot.
-	IT	Per sospendere la riproduzione del brano, premere leggermente il pulsante di PAUSA. Per interrompere il brano, tenere premuto tale pulsante.
-	NL	Druk op PAUSE om het nummer te pauzeren. Houd de knop PAUSE ingedrukt om het nummer te stoppen.
-	NO	Hvis du vil sette sporet på pause, trykker du lett på PAUSE. Hvis du vil stoppe sporet, holder du nede PAUSE-knappen.
-	PL	Aby wstrzymać odtwarzanie, wybierz przycisk PAUSE. Aby zatrzymać odtwarzanie, naciśnij i przytrzymaj przycisk PAUSE.
-	PT	Para pausar a reprodução da pista prima em PAUSE. Para a parar, mantenha pressionado o botão PAUSE.
-	RU	Чтобы приостановить дорожку, коснитесь кнопки PAUSE. Чтобы остановить дорожку, нажмите и удерживайте кнопку PAUSE.
-	SV	Tryck på paus om du vill pausa spåret. Håll ner paus för att stoppa spåret.
-	ZH_CN	要暂停曲目，请点击“暂停”。要停止曲目，请按住“暂停”按钮。
-
-WHATS_NEXT
-	CS	Jsem zcela připraven – co dále?
-	DA	Jeg er klar, hvad nu?
-	DE	Alles eingerichtet - wie geht's weiter?
-	EN	I'm all set up - what's next?
-	ES	Todo listo. ¿Qué más?
-	FI	Kaikki on valmista - mitä seuraavaksi?
-	FR	Passer à la suite.
-	HU	Kész vagyok – mi a következő lépés?
-	IT	La configurazione è completa. Quali sono i passaggi successivi?
-	NL	Ik heb alles ingesteld - wat nu?
-	NO	Jeg er klar ‒ hva skjer nå?
-	PL	Konfiguracja ukończona - co dalej?
-	PT	Configuração completa - e a seguir?
-	RU	Все настроено — что дальше?
-	SV	Jag är klar. Vad gör jag nu?
-	ZH_CN	我已经准备好了，接下来呢？
 
 CONTINUE_TO_SQUEEZEBOX_SERVER
 	CS	Pokračujte na Lyrion Music Server a spravujte nastavení pro přístup k osobní knihovně médií.
@@ -26075,18 +23752,6 @@ UPDATES_LATEST_CHANGES
 	PT	Ultimas modificações (<a href="%s" target="_blank">todas as modificações</a>)
 	SV	Senaste ändringar (<a href="%s" target="_blank">alla ändringar</a>)
 	ZH_CN	最新更改 (<a href="%s" target="_blank">所有更改</a>)
-
-SERVICE_REQUIRES_HTTPS
-	CS	Tato služba vyžaduje modul Perlu IO::Socket::SSL. Bez tohoto modulu nelze tuto službu používat. K jeho instalaci použijte správce balíčků vašeho operačního systému.
-	DA	Denne tjeneste kræver Perl modul IO::Socket::SSL. Uden dette modul er tjenesten ikke tilgængelig. Venligst brug pakkehåndtering for dit operativsystem for installation af modulet.
-	DE	Dieser Dienst benötigt das Perl Modul IO::Socket::SSL! Ohne dieses Modul ist die Nutzung diese Dienstes nicht möglich. Bitte benutzen Sie den Paket-Manager ihres Betriebssystems um es zu installieren.
-	EN	This service requires the Perl module IO::Socket::SSL. You can not use this service without that module. Please use your operating system's package manager to install it.
-	FR	Ce service nécessite le module Perl IO::Socket::SSL. Vous ne pouvez pas utiliser ce service sans ce module. Veuillez utiliser le gestionnaire de paquets de votre système d'exploitation pour l'installer.
-	HU	Ehhez a szolgáltatáshoz az IO::Socket::SSL Perl modulra van szükség. A szolgáltatást a modul nélkül nem használhatja. Kérjük, használja az operációs rendszer csomagkezelőjét a telepítéshez.
-	NL	Deze dienst vereist Perl module IO::Socket::SSL. Je kunt de dienst zonder deze module niet gebruiken. Gebruik de pakketmanager van je besturingssysteem om het te instaleren.
-	PT	Este serviço requere o módulo Perl UO::Socket::SSL! Não poderá usar o serviço sem este módulo. Use o gestor de aplicativos do seu sistema operativo para o instalar.
-	SV	Den här tjänsten behöver PERL-modulen IO::Socket::SSL! utan den kan denna modul inte användas. Använd operativsystemets pakethanterare för att installera den.
-	ZH_CN	此服务需要 Perl 模块 IO::Socket::SSL。没有该模块，您将无法使用此服务。请使用您的操作系统的包管理器来安装它。
 
 UPDATE
 	CS	Aktualizace
