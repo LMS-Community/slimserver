@@ -229,6 +229,9 @@ sub _updateInfoCB {
 
 		if ($params->{'newVersion'}) {
 			$json->{server} = $params->{'newVersion'};
+			if ($json->{server} =~ /"(updateinfo\.html[^"]+)"/) {
+				$json->{infoUrl} = $1;
+			}
 		}
 		if ($params->{'newPlugins'} && scalar @{$params->{'newPlugins'}}) {
 			$json->{plugins} = $params->{'newPlugins'};
