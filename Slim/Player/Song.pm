@@ -72,7 +72,7 @@ my @_playlistCloneAttributes = qw(
 
 			samplerate samplesize channels totalbytes offset blockalign isLive
 
-			retryData
+			retryData replayGain
 		),
 	);
 }
@@ -127,6 +127,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
+		replayGain      => undef,
 	);
 
 	$self->seekdata($seekdata) if $seekdata;
