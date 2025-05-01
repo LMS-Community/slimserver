@@ -132,7 +132,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								modeStack modeParameterStack playlist chunks
 								shufflelist shuffleInhibit syncSelections searchTerm
 								updatePending httpState
-								disconnected replayGain
+								disconnected
 							));
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
@@ -305,8 +305,6 @@ sub new {
 		_pluginData             => {},
 		updatePending           => 0,
 		disconnected            => 0,
-		replayGain              => undef,
-
 	);
 
 	$clientHash{$id} = $client;
