@@ -119,8 +119,29 @@ runs:
           exit 1;
         fi
 
+    - name: Cache s5cmd
+      uses: actions/cache@v4
+      with:
+        key: s5cmd-${{ runner.os }}
+        path: ${{ runner.temp }}/s5cmd-bin
+
+    - name: Check if s5cmd is installed
+      id: check-s5cmd
+      continue-on-error: true
+      shell: bash
+      run: |
+        PATH="${{ runner.temp }}/s5cmd-bin:$PATH"
+        if command -v s5cmd &> /dev/null; then
+          echo "s5cmd is already installed"
+          echo "installed=true" >> $GITHUB_OUTPUT
+          echo "${{ runner.temp }}/s5cmd-bin" >> $GITHUB_PATH
+        else
+          echo "s5cmd is not installed"
+          echo "installed=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Set-up s5cmd
-      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      if: ${{ !startsWith(inputs.build-params, 'docker') && steps.check-s5cmd.outputs.installed != 'true' }}
       # don't fail, as we can fall back to aws-cli
       continue-on-error: true
       uses: ./server/.github/actions/setup-s5cmd
