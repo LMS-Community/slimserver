@@ -51,12 +51,10 @@
 			<input type="text" class="stdedit" name="pref_corsAllowedHosts" id="corsAllowedHosts" value="[% prefs.pref_corsAllowedHosts | html %]" size="40">
 		[% END %]
 
-		[% IF enforceInsecureHTTPS %]
-			<input type="hidden" name="pref_insecureHTTPS" value="[% prefs.pref_insecureHTTPS | html %]" />
-		[% ELSE; WRAPPER settingGroup title="SETUP_INSECURE_HTTPS" desc="SETUP_INSECURE_HTTPS_DESC" %]
+		[% WRAPPER settingGroup title="SETUP_INSECURE_HTTPS" desc="SETUP_INSECURE_HTTPS_DESC" %]
 			<input type="checkbox" name="pref_insecureHTTPS" id="insecureHTTPS" [% IF prefs.pref_insecureHTTPS %] checked="checked" [% END %] />
 			<label for="insecureHTTPS">[% "SETUP_INSECURE_HTTPS2" | string %]</label>
-		[% END; END %]
+		[% END %]
 	[% END %]
 [% PROCESS settings/footer.html %]
 
