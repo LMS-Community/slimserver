@@ -1316,7 +1316,7 @@ sub _Stream {				# play -> Buffering, Streaming
 
 		$startedPlayers += $player->play( \%params );
 
-		$player->replayGain($replayGain);  # store this for status queries
+		$song->replayGain($replayGain);  # store this for status queries
 
 		$reportsTrackStart ||= $player->reportsTrackStart();
 	}
