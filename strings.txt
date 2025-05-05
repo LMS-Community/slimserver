@@ -23717,18 +23717,18 @@ SERVER_UPDATE_AVAILABLE_SHORT
 	ZH_CN	Lyrion Music Server 有新版本可用。
 
 SERVER_LINUX_UPDATE_AVAILABLE
-	CS	Je k dispozici nová verze Lyrion Music Serveru (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikněte zde pro další informace</a>.
-	DA	Der findes en ny version af Lyrion Music Server (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik her for mere information</a>.
-	DE	Eine neue Version von Lyrion Music Server ist verfügbar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
-	EN	A new version of Lyrion Music Server is available (%s). <a href="updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
-	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
-	HU	Elérhető a Lyrion Music Server új verziója (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kattintson ide további információkért</a>.
-	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
-	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
-	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
-	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
-	SV	En ny version av Lyrion Music Server är tillgänglig (%s). <a href="updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
-	ZH_CN	Lyrion Music Server 有新版本可用 (%s)。 <a href="updateinfo.html?installerFile=%s" target="update">点击这里获取更多信息</a>。
+	CS	Je k dispozici nová verze Lyrion Music Serveru (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klikněte zde pro další informace</a>.
+	DA	Der findes en ny version af Lyrion Music Server (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klik her for mere information</a>.
+	DE	Eine neue Version von Lyrion Music Server ist verfügbar (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klicken Sie hier für weitere Instruktionen</a>.
+	EN	A new version of Lyrion Music Server is available (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
+	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
+	HU	Elérhető a Lyrion Music Server új verziója (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Kattintson ide további információkért</a>.
+	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
+	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
+	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
+	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="/updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
+	SV	En ny version av Lyrion Music Server är tillgänglig (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klicka här för mer information</a>.
+	ZH_CN	Lyrion Music Server 有新版本可用 (%s)。 <a href="/updateinfo.html?installerFile=%s" target="update">点击这里获取更多信息</a>。
 
 SERVER_WINDOWS_UPDATE_AVAILABLE
 	CS	<ul><li>Verze %s – %s je k dispozici pro instalaci.</li><li>Přihlaste se do počítače se spuštěným Lyrion Music Serverem (%s).</li><li>Spusťe <code>%s</code> a postupujte podle pokynů.</li></ul>
