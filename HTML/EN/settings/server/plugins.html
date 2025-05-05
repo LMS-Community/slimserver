@@ -43,9 +43,9 @@
 		var view = viewToggle.src.match(/grid|list/)[0];
 		var newView = view === 'grid' ? 'list' : 'grid';
 		viewToggle.src = viewToggle.src.replace(view+'.svg', newView+'.svg');
-		setCookie('Squeezebox-viewMode', newView);
+		setCookie('Squeezebox-viewMode', view);
 
-		if (newView === 'list') {
+		if (newView === 'grid') {
 			$('pluginListPanel').addClassName('pluginListList');
 		}
 		else {

@@ -137,10 +137,10 @@
 			viewToggle.on('click', function() {
 				var view = viewToggle.dom.src.match(/grid|list/)[0];
 				var newView = view === 'grid' ? 'list' : 'grid';
-				viewToggle.dom.src = '[% webroot %]html/images/' + newView + '.svg';
-				SqueezeJS.setCookie('Squeezebox-viewMode', newView);
+				viewToggle.dom.src = viewToggle.dom.src.replace(view + '.svg', newView + '.svg');
+				SqueezeJS.setCookie('Squeezebox-viewMode', view);
 
-				if (view === 'list') {
+				if (view === 'grid') {
 					Ext.get('pluginListPanel').removeClass('pluginListList');
 				}
 				else {

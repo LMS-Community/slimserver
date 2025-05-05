@@ -46,7 +46,7 @@
 [%- END -%]
 [%- customButtonBar = BLOCK -%]
 	<div id="pluginButtonBar">
-		<img src="[% webroot %]html/images/[% cookies.${"Squeezebox-viewMode"}.value == "list" ? "list" : "grid" %].svg" title="[% "SETUP_EXTENSIONS_TOGGLE_VIEW" | string %]" id="viewToggle" />
+		<img src="[% webroot %]html/images/[% cookies.${"Squeezebox-viewMode"}.value == "list" ? "grid" : "list" %].svg" title="[% "SETUP_EXTENSIONS_TOGGLE_VIEW" | string %]" id="viewToggle" />
 		<span id="filterChooser">
 			<select>
 				[% FOREACH category = categories %]
