@@ -1197,15 +1197,17 @@ Utility functions for strings we send out to the world.
 =cut
 
 sub userAgentString {
+	my ($legacy) = @_;
 
-	if (defined $userAgentString) {
+	# allow callers to force the legacy user agent string
+	if (defined $userAgentString && !$legacy) {
 		return $userAgentString;
 	}
 
 	my $osDetails = Slim::Utils::OSDetect::details();
 
-	# We masquerade as iTunes for radio stations that really want it.
-	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
+	$userAgentString = sprintf("%s (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
+		$legacy ? 'iTunes/4.7.1' : 'Mozilla/5.0',
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),
