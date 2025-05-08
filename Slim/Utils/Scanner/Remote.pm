@@ -210,6 +210,9 @@ sub scanURL {
 	if ( $url =~ /(?:^mms|\.asf|\.asx|\.wma)/i ) {
 		addWMAHeaders( $request );
 	}
+	else {
+		$request->header( 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
+	}
 
 	my $timeout = preferences('server')->get('remotestreamtimeout');
 
@@ -285,6 +288,9 @@ sub handleRedirect {
 		}
 
 		addWMAHeaders( $request );
+	}
+	elsif ( !$request->header('User-Agent') || $request->header('User-Agent') =~ /^Mozilla/i ) {
+		$request->header( 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
 	}
 
 	# Keep track of artwork or station icon across redirects
