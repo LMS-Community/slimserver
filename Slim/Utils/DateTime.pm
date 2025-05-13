@@ -20,7 +20,7 @@ use Slim::Networking::SimpleAsyncHTTP;
 
 # The server/url that provides us with date/time data, including an Olson
 # formatted TimeZone. The response is JSON formatted.
-use constant TIME_INFO_URL => 'https://stats.lms-community.org/api/time';
+use constant TIME_INFO_URL => 'https://api.lms-community.org/time';
 
 my $log = logger('server');
 my $prefs = preferences('server');
