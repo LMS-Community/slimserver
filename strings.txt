@@ -1929,7 +1929,7 @@ ALARM_SET_DAYS
 	EN	Choose Days
 	ES	Elegir días
 	FI	Valitse päivät
-	FR	Choisissez les jours
+	FR	Choisir les jours
 	HU	Válassz napot
 	IT	Scegli giorni
 	NL	Dagen kiezen
@@ -7570,7 +7570,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 SETUP_EXTENSIONS_TOGGLE_VIEW
 	DE	Zwischen Listen- und Gitteransicht umschalten
 	EN	Toggle between grid and list view
-	FR	Basculer entre la grille et la liste
+	FR	Basculer entre les vues grille et liste
 	NL	Schakelen tussen raster- en lijstweergave
 	ZH_CN	切换网格和列表视图
 
@@ -15072,7 +15072,7 @@ DEBUG_SELECT_SET
 	EN	Please select log set...
 	ES	Seleccione un conjunto de registros...
 	FI	Valitse lokijoukko...
-	FR	Sélectionnez l'ensemble de journaux...
+	FR	Sélectionner l'ensemble de journaux...
 	HU	Kérjük, válassza ki a naplókzást...
 	IT	Selezionare un gruppo di registri...
 	NL	Selecteer een logboekset...
@@ -23912,7 +23912,7 @@ SETUP_WORKSSCAN_1
 	DE	Die gesamte Bibliothek nach Werken durchsuchen
 	EN	Scan whole library for works
 	ES	Escanea toda la biblioteca en busca de obras
-	FR	Parcourez toute la bibliothèque à la recherche d'œuvres
+	FR	Parcourir toute la bibliothèque à la recherche d'œuvres
 	HU	Szkennelje be a teljes könyvtárat művekért
 	NL	Scan de hele bibliotheek op werken
 	ZH_CN	扫描整个库以查找作品
