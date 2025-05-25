@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Report a bug report to improve the quality of LMS.
+about: Create a bug report to improve the quality of LMS.
 title: ''
-labels: bug
+labels: ''
 assignees: ''
 
 ---

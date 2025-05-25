@@ -17,7 +17,7 @@ package Slim::Web::Time;
 # The SqueezeOS callback will not see an empty body even if it is a '200'
 # response. So we don't do that.
 
-# LMS obtains the TimeZone by an API call to 'https://stats.lms-community.org'
+# LMS obtains the TimeZone by an API call to 'https://api.lms-community.org'
 
 use strict;
 

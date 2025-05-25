@@ -89,7 +89,15 @@ sub getFlavor {
 
 		return 'Netgear RAIDiator';
 
-	} elsif ($osName =~ /debian|devuan|ubuntu|raspbian/ || -f '/etc/debian_version' || -f '/etc/devuan_version') {
+	} elsif ($osName =~ /raspbian/) {
+
+		return 'Raspberry Pi OS';
+
+	} elsif ($osName =~ /ubuntu/) {
+
+		return 'Ubuntu';
+
+	} elsif ($osName =~ /debian|devuan|raspbian/ || -f '/etc/debian_version' || -f '/etc/devuan_version') {
 
 		return 'Debian';
 

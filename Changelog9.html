@@ -23,7 +23,6 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1363">#1363</a> - Allow item removal even if playlist has only 1 item (@mw9)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1364">#1364</a> - store/return playqueue entry context flag ("addedFromWork")</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1377">#1377</a> - Provide new /time/tz endpoint for Squeezeplay to fetch the local timezone (@mw9)</li>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1383">#1383</a> - Store the calculated replay gain in the player object when beginning playback (@SamInPgh)</li>
 	</ul>
 	<br />
 
@@ -33,8 +32,9 @@
 		<li>Make Docker a first class citizan: add Slim::Utils::OS::Docker instead of a Custom.pm</li>
 		<li>Remove Win32 legacy support files, code, control panels, build pipeline, etc.</li>
 		<li>Remove legacy Mac installer from build pipeline.</li>
+		<li>Add support for Perl 5.40 on aarch64 Linux.</li>
 		<li>Remove code dealing with Perl &lt; 5.10.</li>
-		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
+		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.40 (Linux x86_64, aarch64), 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/73">#73</a> - Add a note about setting the hostname in a Docker container (thanks @hartzell!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/86">#86</a> - Add more tags to Docker images to better support automated updates (thanks @stavros-k!)</li>
 	</ul>
@@ -70,6 +70,7 @@
 
 	<li>Server Changes:</li>
 	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1386">#1386</a> - Store the calculated replay gain in the song object when beginning playback (@SamInPgh)</li>
 		<li></li>
 	</ul>
 	<br />

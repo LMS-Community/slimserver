@@ -81,7 +81,7 @@ elsif ($^O =~/darwin/i) {
 }
 
 # Cache our user agent string.
-my $userAgentString;
+my ($userAgentString, $legacyUserAgentString);
 my $tempdir;
 
 my %pathToFileCache = ();
@@ -1203,10 +1203,13 @@ sub userAgentString {
 	if (defined $userAgentString && !$legacy) {
 		return $userAgentString;
 	}
+	elsif (defined $legacyUserAgentString && $legacy) {
+		return $legacyUserAgentString;
+	}
 
 	my $osDetails = Slim::Utils::OSDetect::details();
 
-	$userAgentString = sprintf("%s (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
+	my $ua = sprintf("%s (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
 		$legacy ? 'iTunes/4.7.1' : 'Mozilla/5.0',
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
@@ -1216,7 +1219,14 @@ sub userAgentString {
 		'SqueezeCenter, Squeezebox Server, Lyrion Music Server',
 	);
 
-	return $userAgentString;
+	if ($legacy) {
+		$legacyUserAgentString = $ua;
+	}
+	else {
+		$userAgentString = $ua;
+	}
+
+	return $ua;
 }
 
 =head2 assert ( $exp, $msg )
