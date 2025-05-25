@@ -1534,8 +1534,9 @@ sub _albums {
 					$_->{'name'} .= "$_->{'performance'} " if $_->{'performance'};
 					$_->{'name'} .= cstring($client,'FROM') . ' ';
 				}
-				$_->{'name'}          .= $_->{'album'};
-				$_->{'name'}          .= ')' if $_->{'work_id'};
+				$_->{'name'}         .= $_->{'album'};
+				$_->{'name'}         .= ' [' . $_->{'version'} . ']' if $_->{'version'};
+				$_->{'name'}         .= ')' if $_->{'work_id'};
 				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'image'}       ||= $_->{'artwork_url'} if $_->{'artwork_url'};
 				$_->{'type'}          = 'playlist';

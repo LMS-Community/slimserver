@@ -868,6 +868,7 @@ sub _objForDbUrl {
 			if ($term =~ /(.*)=(.*)/) {
 				my $key = $1;
 				my $value = Slim::Utils::Misc::unescape($2);
+				$key = 'me.version' if $key eq 'album.version';
 
 				if (utf8::is_utf8($value)) {
 					utf8::decode($value);
@@ -904,6 +905,7 @@ sub _createOrUpdateAlbum {
 
 	# Now handle Album creation
 	my $title     = $attributes->{ALBUM};
+	my $version   = $attributes->{VERSION};
 	my $disc      = $attributes->{DISC};
 	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
@@ -1046,6 +1048,7 @@ sub _createOrUpdateAlbum {
 			(  $lastAlbum->{_dirname}
 				&& $lastAlbum->{_dirname} eq $basename
 				&& $lastAlbum->{title} eq $title
+				&& $lastAlbum->{version} eq $version
 				&& (!$checkDisc || (($disc || '') eq ($lastAlbum->{disc} || 0)))
 			)
 		) {
@@ -1069,6 +1072,9 @@ sub _createOrUpdateAlbum {
 
 			push @{$search}, 'albums.title = ?';
 			push @{$values}, $title;
+
+			push @{$search}, 'albums.version = ?';
+			push @{$values}, $version;
 
 			if (defined $brainzId) {
 				push @{$search}, 'albums.musicbrainz_id = ?';
@@ -1247,6 +1253,8 @@ sub _createOrUpdateAlbum {
 	my ($releaseType) = grep { lc($_) ne 'compilation' } Slim::Music::Info::splitTag($attributes->{RELEASETYPE});
 	$albumHash->{release_type} = Slim::Utils::Text::ignoreCase( $releaseType || 'album' );
 	Slim::Schema::Album->addReleaseTypeMap($releaseType, $albumHash->{release_type});
+
+	$albumHash->{version} = $attributes->{VERSION};
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
 	$vaObjId ||= $self->variousArtistsObject->id;
@@ -1514,7 +1522,6 @@ sub _createWork {
 
 sub _createTrack {
 	my ($self, $columnValueHash, $persistentColumnValueHash, $source) = @_;
-
 	# Create the track
 	# Using native DBI here to improve performance during scanning
 	my $dbh = $self->dbh;
@@ -2813,6 +2820,8 @@ sub _preCheckAttributes {
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'DISC'} = $attributes->{'DISC'} if $attributes->{'DISC'};
+
+	$deferredAttributes->{'VERSION'} = $attributes->{'VERSION'} || undef;
 
 	# thumb has gone away, since we have GD resizing.
 	delete $attributes->{'THUMB'};

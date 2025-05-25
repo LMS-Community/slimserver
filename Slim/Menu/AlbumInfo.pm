@@ -367,6 +367,7 @@ sub infoAlbum {
 	my $item;
 	my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	my $albumName = $album->title;
+	$albumName .= ' [' . $album->version . ']' if $album->version;
 	my $totalAlbumTracks = $album->tracks->count;
 
 	if ( $albumName && $totalAlbumTracks > $filter->{track_count} ) {

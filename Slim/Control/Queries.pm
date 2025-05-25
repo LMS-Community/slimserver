@@ -581,7 +581,7 @@ sub albumsQuery {
 
 	if ( $tags =~ /l/ ) {
 		# title/disc/discc is needed to construct (N of M) title
-		map { $c->{$_} = 1 } qw(albums.title albums.disc albums.discc);
+		map { $c->{$_} = 1 } qw(albums.title albums.version albums.disc albums.discc);
 	}
 
 	if ( $tags =~ /y/ ) {
@@ -804,6 +804,7 @@ sub albumsQuery {
 		while ( $sth->fetch ) {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+			utf8::decode( $c->{'albums.version'} ) if exists $c->{'albums.version'};
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
@@ -814,23 +815,31 @@ sub albumsQuery {
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'composer', $c->{'composer.name'});
 			$request->addResultLoop($loopname, $chunkCount, 'performance', $c->{'tracks.performance'}||"");
 
-			my $favoritesUrl = $work
-				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
-					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
-					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.performance'}))
-				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
+			my $favoritesUrl = sprintf('db:album.title=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}));
+			if ( $c->{'albums.version'} ) {
+				$favoritesUrl .= sprintf('&album.version=%s', URI::Escape::uri_escape_utf8($c->{'albums.version'}));
+			}
+			$favoritesUrl .= $work
+				? sprintf('&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
+					URI::Escape::uri_escape_utf8($c->{'contributors.name'}), URI::Escape::uri_escape_utf8($c->{'works.title'}),
+					URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.performance'}))
+				: sprintf('&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
 			my $favoritesTitle = $c->{'albums.title'};
+			$favoritesTitle .= ' [' . $c->{'albums.version'} . ']' if $c->{'albums.version'};
 			if ( $work ) {
 				$favoritesTitle = $c->{'composer.name'} ? $c->{'composer.name'} . cstring($client, 'COLON') . ' ' : '';
 				$favoritesTitle .= $c->{'works.title'} . ' (';
 				$favoritesTitle .= "$c->{'tracks.performance'} " if $c->{'tracks.performance'};
-				$favoritesTitle .= cstring($client,'FROM') . ' ' . $c->{'albums.title'} . ')';
+				$favoritesTitle .= cstring($client,'FROM') . ' ' . $c->{'albums.title'};
+				$favoritesTitle .= ' [' . $c->{'albums.version'} . ']' if $c->{'albums.version'};
+				$favoritesTitle .= ')';
 			}
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_title', $favoritesTitle);
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'version', $c->{'albums.version'});
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
 			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
@@ -5660,6 +5669,12 @@ sub _songDataFromHash {
 			}
 		}
 
+		# Special case for l (albums.title), return albums.version as well
+		elsif ( $tag eq 'l' ) {
+				$returnHash{'album'} = $res->{'albums.title'} if $res->{'albums.title'};
+				$returnHash{'version'} = $res->{'albums.version'} if $res->{'albums.version'};
+		}
+
 		# Special case for b (work), return work_id as well
 		elsif ( $tag eq 'b' ) {
 				$returnHash{'work'} = $res->{'works.title'} if $res->{'works.title'};
@@ -6391,6 +6406,7 @@ sub _getTagDataForTracks {
 	$tags =~ /l/ && do {
 		$join_albums->();
 		$c->{'albums.title'} = 1;
+		$c->{'albums.version'} = 1;
 	};
 
 	$tags =~ /q/ && do {
@@ -6517,6 +6533,7 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+			utf8::decode( $c->{'albums.version'} ) if exists $c->{'albums.version'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};

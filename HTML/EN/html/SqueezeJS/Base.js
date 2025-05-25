@@ -726,6 +726,16 @@ SqueezeJS.SonginfoParser = {
 		});
 	},
 
+	version : function(result, noLink){
+		var version;
+
+		if (result.playlist_tracks > 0 && result.playlist_loop[0].version) {
+			version = result.playlist_loop[0].version;
+		}
+
+		return version;
+	},
+
 	bitrate : function(result){
 		var bitrate = '';
 
