@@ -1073,8 +1073,12 @@ sub _createOrUpdateAlbum {
 			push @{$search}, 'albums.title = ?';
 			push @{$values}, $title;
 
-			push @{$search}, 'albums.version = ?';
-			push @{$values}, $version;
+			if ($version) {
+				push @{$search}, 'albums.version = ?';
+				push @{$values}, $version;
+			} else {
+				push @{$search}, 'albums.version IS NULL';
+			}
 
 			if (defined $brainzId) {
 				push @{$search}, 'albums.musicbrainz_id = ?';
