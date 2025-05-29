@@ -22,6 +22,7 @@
 			});
 
 			Ext.each(categories, function(category) {
+				if (category.value && category.value === 'top' ) return;
 				const catId = category.value;
 				const title = category.innerHTML;
 				filterChooser.menu.add(
