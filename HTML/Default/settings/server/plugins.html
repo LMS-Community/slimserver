@@ -21,6 +21,10 @@
 				text: categoriesAllLabel
 			});
 
+			var mostPopular = new Set(Object.keys(searchData).sort(function(a, b) {
+				return (searchData[b].installs || -1) - (searchData[a].installs || -1)
+			}).slice(0, 15));
+
 			Ext.each(categories, function(category) {
 				const catId = category.value;
 				const title = category.innerHTML;
@@ -37,36 +41,18 @@
 
 							category = ev.value;
 							filterChooser.setText(title);
-							togglePluginVisibility(catId, function(s) {
-								return s.category == catId;
-							});
+							togglePluginVisibility(catId, category === 'top'
+								? function(s, id) {
+									return mostPopular.has(id);
+								}
+								: function(s) {
+									return s.category == catId;
+								}
+							);
 						}
 					})
 				);
 			});
-
-			filterChooser.menu.add(
-				new Ext.menu.CheckItem({
-					text: '[% "SETUP_EXTENSIONS_CATEGORY_TOP" | string %]',
-					value: 'top',
-					checked: false,
-					cls: 'settingsList',
-					group: 'settingsList',
-					handler: function(ev) {
-						Ext.get('filterInput').dom.value = '';
-						expandAllSections();
-
-						var mostPopular = new Set(Object.keys(searchData).sort(function(a, b) {
-							return (searchData[b].installs || -1) - (searchData[a].installs || -1)
-						}).slice(0, 15));
-
-						filterChooser.setText(ev.text);
-						togglePluginVisibility(ev.value, function(s, id) {
-							return mostPopular.has(id);
-						});
-					}
-				})
-			);
 
 			Ext.select("#filterChooser select").remove()
 
