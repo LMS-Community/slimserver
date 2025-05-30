@@ -589,7 +589,8 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /j/ ) {
-		$c->{'albums.artwork'} = 1;
+		$c->{'albums.artwork'} = 1 if !$work;
+		$c->{'tracks.coverid'} = 1 if $work;
 	}
 
 	if ( $tags =~ /t/ ) {
@@ -832,7 +833,10 @@ sub albumsQuery {
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
+			if ($tags =~ /j/) {
+				my $albumCover = $c->{'tracks.coverid'} ? $c->{'tracks.coverid'} : $c->{'albums.artwork'};
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $albumCover) if ($albumCover || '') !~ /^https?:/;
+			}
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
@@ -4921,7 +4925,7 @@ sub worksQuery {
 	my $w   = [];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT tracks.coverid), GROUP_CONCAT(DISTINCT albums.id)";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
