@@ -834,8 +834,8 @@ sub albumsQuery {
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
 			if ($tags =~ /j/) {
-				$c->{'albums.artwork'} = $c->{'tracks.coverid'} if $c->{'tracks.coverid'};
-				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;
+				my $albumCover = $c->{'tracks.coverid'} ? $c->{'tracks.coverid'} : $c->{'albums.artwork'};
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $albumCover) if ($albumCover || '') !~ /^https?:/;
 			}
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
