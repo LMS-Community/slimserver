@@ -794,8 +794,6 @@ sub objectForUrl {
 		$playlistId = $args->{'playlistId'};
 	}
 
-	# Confirm that the URL itself isn't an object (see bug 1811)
-	# XXX - exception should go here. Coming soon.
 	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
 		$url = $url->url;
 	}

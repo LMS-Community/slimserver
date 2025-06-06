@@ -1387,6 +1387,15 @@ sub cliQuery {
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
 		if (my $track = Slim::Player::Playlist::track( $client, $playlist_index )) {
+			# If we have a RemoteTrack object, we try to get information from the local database anyway
+			if (ref $track eq 'Slim::Schema::RemoteTrack') {
+				if (my $localTrack = Slim::Schema->objectForUrl({
+					'url'      => $track->url,
+				})) {
+					$track = $localTrack;
+				};
+			}
+
 			$trackId = $track->id;
 			$url     = $track->url;
 			$request->addParam('track_id', $trackId);
