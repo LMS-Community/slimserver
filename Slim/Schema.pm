@@ -796,7 +796,10 @@ sub objectForUrl {
 
 	# Confirm that the URL itself isn't an object (see bug 1811)
 	# XXX - exception should go here. Coming soon.
-	if (blessed($url) || ref($url)) {
+	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
+		$url = $url->url;
+	}
+	elsif (blessed($url) || ref($url)) {
 
 		# returning already blessed url
 		return $url;
@@ -818,12 +821,16 @@ sub objectForUrl {
 	}
 
 	# Pull the track object for the DB
-	my $track = $self->_retrieveTrack($url, $playlist);
-	my $isRemote = Slim::Music::Info::isRemoteURL($url);
+	my $track;
 
 	# Check to see if we have a remote track stored in our database
-	if (!$track && $isRemote && !$create && !$readTag) {
+	my $isRemote = Slim::Music::Info::isRemoteURL($url);
+	if ($isRemote && !$create && !$readTag) {
 		$track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+	}
+
+	if (!$track) {
+		$track = $self->_retrieveTrack($url, $playlist);
 	}
 
 	# Bug 14648: Check to see if we have a playlist with remote tracks
