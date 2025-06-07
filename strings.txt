@@ -12370,6 +12370,20 @@ RELEASE_TYPE_BROADCAST
 	EN	Broadcast
 	ZH_CN	广播
 
+RELEASE_TYPE_DEMO
+	EN	Demo
+
+RELEASE_TYPE_DEMOS
+	EN	Demos
+
+RELEASE_TYPE_LIVE
+	DE	Live Aufnahme
+	EN	Live Recording
+
+RELEASE_TYPE_LIVES
+	DE	Live Aufnahmen
+	EN	Live Recordings
+
 RELEASE_TYPE_OTHER
 	DA	Andre
 	DE	Andere
