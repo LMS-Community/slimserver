@@ -12384,6 +12384,12 @@ RELEASE_TYPE_LIVES
 	DE	Live Aufnahmen
 	EN	Live Recordings
 
+RELEASE_TYPE_MIXTAPE
+	EN	Mixtape
+
+RELEASE_TYPE_MIXTAPES
+	EN	Mixtapes
+
 RELEASE_TYPE_OTHER
 	DA	Andre
 	DE	Andere
