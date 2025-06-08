@@ -38,6 +38,23 @@ use constant CACHE_TIME => 3600; # how long to cache browse sessions
 my $log = logger('formats.xml');
 my $prefs = preferences('server');
 
+# variable of same name in Slim::Control::Queries is source of truth
+# used to return raw metadata for clients who request tags
+my %colMap = (
+	g => 'genres',
+	# "publisher" is used in Podcasts
+	a => ['artist','publisher'],
+	A => 'artists',
+	l => 'album',
+	d => ['secs','duration'],
+	# i => 'tracks.disc',
+	# q => 'albums.discc',
+	t => 'tracknum',
+	# "date" is being used in Podcast episodes
+	y => ['year','date'],
+	k => 'description',
+);
+
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 
@@ -549,7 +566,7 @@ sub _cliQuery_done {
 						($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') ||
 						$subFeed->{'enclosure'} ||
 						# Bug 17385 - rss feeds include description at non leaf levels
-						($subFeed->{'description'} && $subFeed->{'type'} && $subFeed->{'type'} ne 'rss')
+						($subFeed->{'description'} && $subFeed->{'type'} && $subFeed->{'type'} ne 'rss' && ($subFeed->{'hasMetadata'} || '') ne 'podcast')
 					)
 				) {
 
@@ -1372,6 +1389,35 @@ sub _cliQuery_done {
 							delete $hash{'style'} if $hash{'style'} && $hash{'style'} eq 'itemNoAction';
 						}
 
+						if ( $item->{hasMetadata} && (my $tags = $request->getParam('tags')) ) {
+							my $metadata = {
+								type => $item->{hasMetadata},
+							};
+
+							foreach my $tag (split(//, $tags)) {
+								if (my $mapping = $colMap{$tag}) {
+									$mapping = [$mapping] unless ref $mapping;
+									foreach my $map (@$mapping) {
+										if (my $value = $item->{$map}) {
+											$metadata->{$map} = $value;
+										}
+									}
+								}
+							}
+
+							# some itmes (basically line1, line2) we add always, if available
+							$metadata->{'name'} ||= $item->{'name'} if defined $item->{'name'} && !$metadata->{'title'};
+							$metadata->{'description'} ||= $item->{'description'} if defined $item->{'description'};
+
+							# convert unix timestamps to human readable time
+							$metadata->{'date'} = localtime($metadata->{'date'}) if $metadata->{'date'} =~ /\d{10}/;
+
+							# add formatted duration
+							$metadata->{'duration'} ||= Slim::Utils::DateTime::secsToMMSS($metadata->{'secs'}) if $metadata->{'secs'};
+
+							$hash{'metadata'} = $metadata;
+						}
+
 						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
 
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -1410,7 +1456,6 @@ sub _cliQuery_done {
 
 							$hash{hasitems} = $hasItems;
 						}
-
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
 					}
 					$cnt++;

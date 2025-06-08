@@ -137,6 +137,10 @@ sub parse {
 		elsif ($duration) {
 			$item->{line2} = $item->{line2} ? $item->{line2} . ' (' . $duration . ')' : $duration;
 		}
+
+		$item->{hasMetadata} = 'episode';
+		$item->{secs} ||= $item->{duration};
+		$item->{'date'} = $item->{pubdate};
 	}
 
 	$feed->{nocache} = 1;

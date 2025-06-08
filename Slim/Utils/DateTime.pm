@@ -131,6 +131,11 @@ sub timeFormat {
 	);
 }
 
+sub secsToMMSS {
+	my $secs = shift || 0;
+	return sprintf('%d:%02d', int($secs / 60), $secs % 60);
+}
+
 =head2 fracSecToMinSec( $seconds )
 
 Turns seconds into min:sec

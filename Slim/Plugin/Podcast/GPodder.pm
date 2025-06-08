@@ -26,6 +26,9 @@ sub getFeedsIterator {
 			image        => $feed->{$image},
 			description  => $feed->{description},
 			author       => $feed->{author},
+			hasMetadata  => 'podcast',
+			title        => $feed->{title},
+			publisher    => $feed->{author},
 		};
 	};
 }

@@ -610,7 +610,8 @@ sub _parseOPMLOutline {
 
 		my $url = $itemXML->{'url'} || $itemXML->{'URL'} || $itemXML->{'xmlUrl'};
 
-		next if $url && $url =~ IS_TUNEIN_RE && $itemXML && ref $itemXML && $itemXML->{key} && $itemXML->{key} eq 'unavailable';
+		my $isTuneIn = $url && $url =~ IS_TUNEIN_RE;
+		next if $isTuneIn && $itemXML && ref $itemXML && $itemXML->{key} && $itemXML->{key} eq 'unavailable';
 
 		# Some programs, such as OmniOutliner put garbage in the URL.
 		if ($url) {
@@ -620,12 +621,33 @@ sub _parseOPMLOutline {
 		# Pull in all attributes we find
 		my %attrs;
 		for my $attr ( keys %{$itemXML} ) {
-		    next if $attr =~ /^(?:text|type|URL|xmlUrl|outline)$/i;
-		    $attrs{$attr} = $itemXML->{$attr};
-	    }
+			next if $attr =~ /^(?:text|type|URL|xmlUrl|outline)$/i;
+			$attrs{$attr} = $itemXML->{$attr};
+		}
+
+		if ( $isTuneIn && $itemXML->{type} ) {
+			my $type = $itemXML->{type} || '';
+			my $item = $itemXML->{item} || '';
+
+			my $defaults = sub {
+				$attrs{'hasMetadata'} = $_[0];
+				$attrs{'title'}       = unescapeAndTrim($itemXML->{'text'}),
+				$attrs{'description'} = unescapeAndTrim($itemXML->{'subtext'}),
+			};
+
+			if ($type eq 'audio' && $item eq 'topic' && ($itemXML->{'stream_type'} || '') eq 'download') {
+				$defaults->('episode');
+				$attrs{'secs'} = $itemXML->{'topic_duration'} || 0;
+			}
+			elsif ($type eq 'audio') {
+				$defaults->('station');
+			}
+			elsif ($type eq 'link' && $item eq 'show') {
+				$defaults->('podcast');
+			}
+		}
 
 		push @items, {
-
 			# compatable with INPUT.Choice, which expects 'name' and 'value'
 			'name'  => unescapeAndTrim( $itemXML->{'text'} ),
 			'value' => $url || $itemXML->{'text'},
