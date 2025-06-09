@@ -179,7 +179,6 @@ sub init {
 		MetaInformation
 		Playlist
 		PlaylistTrack
-		Rescan
 		Track
 		Year
 		Progress
