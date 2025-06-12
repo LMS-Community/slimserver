@@ -12326,7 +12326,6 @@ RELEASE_TYPE
 	ZH_CN	发行类型
 
 RELEASE_TYPE_SINGLE
-	DA	Single
 	EN	Single
 	ZH_CN	单曲
 
@@ -12336,21 +12335,19 @@ RELEASE_TYPE_SINGLES
 	ZH_CN	单曲
 
 RELEASE_TYPE_EP
-	DA	EP
 	EN	EP
-	ZH_CN	EP
 
 RELEASE_TYPE_EPS
-	DA	EPs
 	EN	EPs
-	ZH_CN	EPs
 
 RELEASE_TYPE_BESTOF
 	EN	Best Of
 	ZH_CN	最佳选择
 
 RELEASE_TYPE_BESTOFS
-	EN	Best Ofs
+	DE	Best of Alben
+	EN	Best Of Albums
+	FR	Albums Best Of
 	ZH_CN	最佳选择
 
 RELEASE_TYPE_BOXSET
@@ -12379,16 +12376,81 @@ RELEASE_TYPE_DEMOS
 RELEASE_TYPE_LIVE
 	DE	Live Aufnahme
 	EN	Live Recording
+	FR	Enregistrement en direct
 
 RELEASE_TYPE_LIVES
 	DE	Live Aufnahmen
 	EN	Live Recordings
+	FR	Enregistrements en direct
 
 RELEASE_TYPE_MIXTAPE
 	EN	Mixtape
 
 RELEASE_TYPE_MIXTAPES
 	EN	Mixtapes
+
+RELEASE_TYPE_BONUS
+	DE	Bonus Alben
+	EN	Bonus Albums
+	FR	Album bonus
+
+RELEASE_TYPE_COLLECTION
+	DE	Sammlung
+	EN	Collection
+
+RELEASE_TYPE_COLLECTIONS
+	DE	Sammlungen
+	EN	Collections
+
+RELEASE_TYPE_REMIX
+	EN	Remix
+
+RELEASE_TYPE_REMIXES
+	DE	Remix Alben
+	EN	Remixes
+
+RELEASE_TYPE_COMPILATION
+	DE	Kompilation
+	EN	Compilation
+
+RELEASE_TYPE_COMPILATIONS
+	DE	Kompilationen
+	EN	Compilations
+
+RELEASE_TYPE_BOOTLEG
+	EN	Bootleg
+
+RELEASE_TYPE_BOOTLEGS
+	EN	Bootlegs
+
+RELEASE_TYPE_SOUNDTRACK
+	EN	Soundtrack
+	FR	Bande sonores
+
+RELEASE_TYPE_SOUNDTRACKS
+	EN	Soundtracks
+	FR	Bandes sonores
+
+# from https://musicbrainz.org/doc/Release_Group/Type
+RELEASE_TYPE_SPOKENWORD
+	DE	Gesprochen
+	EN	Spokenword
+
+RELEASE_TYPE_INTERVIEW
+	EN	Interview
+
+RELEASE_TYPE_INTERVIEWS
+	EN	Interviews
+
+RELEASE_TYPE_AUDIOBOOK
+	DE	Hörbuch
+	EN	Audiobook
+	FR	Livre audio
+
+RELEASE_TYPE_AUDIOBOOKS
+	DE	Hörbücher
+	EN	Audiobooks
+	FR	Livres audio
 
 RELEASE_TYPE_OTHER
 	DA	Andre
