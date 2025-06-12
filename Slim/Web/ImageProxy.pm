@@ -502,8 +502,7 @@ use base 'Slim::Utils::DbArtworkCache';
 
 use strict;
 
-use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
-use constant IDLE_THRESHOLD    => 600;
+use constant PURGE_INTERVAL => 3600 * 8;  # interval between purge cycles
 
 sub new {
 	my $class = shift;
@@ -528,15 +527,11 @@ sub cleanup {
 	# after startup don't purge if a player is on - retry later
 	my $interval;
 
-	unless ($force) {
-		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
-				main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
-				$interval = 300 + 60 * rand(5);
-				last;
-			}
-		}
-	}
+	$cache->checkActivity(sub {
+		my $client = shift;
+		main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
+		$interval = 300 + 60 * rand(5);
+	}) unless $force;
 
 	my $now = Time::HiRes::time();
 

@@ -13,6 +13,7 @@ use File::Spec::Functions qw(catfile);
 use Storable qw(freeze thaw);
 
 use constant DEFAULT_EXPIRES_TIME => 60 * 60;
+use constant IDLE_THRESHOLD       => 600;       # player inactivity before we consider it unused
 
 sub new {
 	my ( $self, $args ) = @_;
@@ -110,13 +111,30 @@ sub remove {
 	$self->{delete_sth}->execute($id);
 }
 
+sub checkActivity {
+	my ( $self, $cb) = @_;
+
+	my $hourOfTheDay = (localtime())[2];
+
+	# don't purge if a player is active - retry later
+	for my $client ( Slim::Player::Client::clients() ) {
+		if ($client->controller->isPlaying()
+			# Purge the cache in the early morning hours, even if some activity is detected
+			|| ($hourOfTheDay < 2 && $hourOfTheDay > 4 && $client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)
+		) {
+			$cb->($client) if $cb;
+			last;
+		}
+	}
+}
+
 sub purge {
 	my ( $self ) = @_;
 
 	my $dbh = $self->_init_db;
 
-	$dbh->sqlite_progress_handler(200, sub {
-		main::idle();
+	$dbh->sqlite_progress_handler(20, sub {
+		main::idleStreams();
 		return;
 	}) if !main::SCANNER;
 
