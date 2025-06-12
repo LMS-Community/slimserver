@@ -189,7 +189,7 @@ sub cleanup {
 		}
 	}
 
-	if ($cache) {
+	if ($cache && $namespace) {
 		my $lastpurge = $cache->get('Slim::Utils::Cache-purgetime');
 
 		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
