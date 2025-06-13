@@ -41,18 +41,20 @@ my $prefs = preferences('server');
 # variable of same name in Slim::Control::Queries is source of truth
 # used to return raw metadata for clients who request tags
 my %colMap = (
-	g => 'genres',
 	# "publisher" is used in Podcasts
 	a => ['artist','publisher'],
 	A => 'artists',
-	l => 'album',
+	b => ['work','composer'],
 	d => ['secs','duration'],
-	# i => 'tracks.disc',
-	# q => 'albums.discc',
+	g => 'genre',
+	G => 'genres',
+	i => 'discnum',
+	k => 'description',
+	l => 'album',
+	q => 'disccount',
 	t => 'tracknum',
 	# "date" is being used in Podcast episodes
 	y => ['year','date'],
-	k => 'description',
 );
 
 sub cliQuery {
