@@ -489,7 +489,7 @@ sub newsongCallback {
 
 	my $title = $track->title;
 
-	if ( $track->remote ) {
+	if ( $track->can('stash') ) {
 		if ( $meta ) {
 			$title = $meta->{title};
 
@@ -686,7 +686,7 @@ sub checkScrobble {
 
 	my $source = 'P';
 
-	if ( $track->remote ) {
+	if ( $track->can('stash') ) {
 		if (!$meta) {
 			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $cururl );
 			return;

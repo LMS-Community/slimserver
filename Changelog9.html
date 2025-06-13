@@ -16,6 +16,7 @@
 		<li>Improve support for 3rd party player icons, add some for piCorePlayer, SqueezeAMP, WiiM players.</li>
 		<li>Update downloader now validates the installers checksum.</li>
 		<li>Updated Chinese translation - thanks @xdsnet!</li>
+		<li>Purge caches in the early morning hours, even if player activity has been seen</li>
 		<li>Update the custom user agent string: pretending to be iTunes probably caused more problems than it solved.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1216">#1216</a> - Reset playing position to first track once a playlist or album has ended (@ml-1)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1245">#1245</a> - Added a Simple WebSocket client capability for 3rd Party Plugins to support this protocol (@expectingtofly)</li>
@@ -43,6 +44,7 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li>The AudioScrobbler failed to report tracks from online music services when they were integrated with the local library.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1287">#1287</a> - fix method name for spdr protocol handler.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1359">#1359</a> - Update UPnP ConnectionManager.pm to add checks for Wav and Opus (@BoringName15).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1362">#1362</a> - Update UPnP AVTransport.pm to move LMS event registration (@BoringName15).</li>
