@@ -129,7 +129,7 @@ sub checkActivity {
 }
 
 sub purge {
-	my ( $self ) = @_;
+	my ( $self, $limit ) = @_;
 
 	my $dbh = $self->_init_db;
 
@@ -138,7 +138,11 @@ sub purge {
 		return;
 	}) if !main::SCANNER;
 
-	my $deleted = $dbh->do('DELETE FROM cache WHERE t >= 0 AND t < ' . time());
+	my $sql = $limit
+		? 'DELETE FROM cache WHERE k IN (SELECT k FROM cache WHERE t >= 0 AND t < ' . time() . " LIMIT $limit)"
+		: 'DELETE FROM cache WHERE t >= 0 AND t < ' . time();
+
+	my $deleted = $dbh->do($sql);
 
 	$dbh->sqlite_progress_handler(0, undef) if !main::SCANNER;
 
