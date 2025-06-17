@@ -505,7 +505,7 @@ use strict;
 use constant PURGE_INTERVAL => 3600 * 8;  # interval between purge cycles
 # image proxy cache is slow to purge due to the large item sizes, so we do it in smaller chunks
 use constant INCREMENTAL_PURGE_CHUNKSIZE => 20;
-use constant INCREMENTAL_PURGE_INTERVAL => 60;
+use constant INCREMENTAL_PURGE_INTERVAL => 10;
 use constant FIRST_PURGE_DELAY => 20;
 
 sub new {

@@ -518,6 +518,7 @@ sub logFile {
 	$params->{logLines} = '';
 
 	my $file = File::ReadBackwards->new($logFile);
+	my $lineNo = 0;
 
 	if ($file){
 
@@ -527,6 +528,7 @@ sub logFile {
 			# Decode line. The log file is encoded in utf-8, and File::ReadBackwards retrieves it raw (binmode).
 			$line = Slim::Utils::Unicode::utf8decode($line);
 
+			main::idleStreams() if $lineNo++ % 10000 == 0;
 			next if $search && $line !~ /\Q$search\E/i;
 
 			$line = "<span style=\"color:green\">$line<\/span>" if $line =~ /main::init.*Starting/;
