@@ -329,6 +329,7 @@ sub _cliQuery_done {
 	my $menu       = $request->getParam('menu');
 	my $url        = $request->getParam('url');
 	my $trackId    = $request->getParam('track_id');
+	my $tags       = $request->getParam('tags');
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -514,6 +515,8 @@ sub _cliQuery_done {
 
 					my $pt = $subFeed->{passthrough} || [];
 					my %args = (params => $feed->{'query'}, isControl => 1);
+
+					$args{'tags'} = $tags if $tags;
 
 					if (defined $search && $subFeed->{type} && ($subFeed->{type} eq 'search' || defined $subFeed->{'searchParam'})) {
 						$args{'search'} = $search;
