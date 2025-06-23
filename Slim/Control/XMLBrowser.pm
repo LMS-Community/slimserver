@@ -813,7 +813,6 @@ sub _cliQuery_done {
 		main::INFOLOG && $log->info("Get items.");
 
 		my $items = $subFeed->{'items'};
-#Slim::Utils::Log::logError("DK \$items=" . Data::Dump::dump($items));
 		my $count = $subFeed->{'total'};;
 		$count ||= defined $items ? scalar @$items : 0;
 
@@ -1469,16 +1468,17 @@ sub _cliQuery_done {
 			}
 
 		}
-#Slim::Utils::Log::logError("DK \$subFeed=" . Data::Dump::dump($subFeed));
 
 		$request->addResult('count', $totalCount);
 
-		if ( $subFeed->{'hasMetadata'} && $subFeed->{'hasMetadata'} eq 'album' ) {
-			$request->addResult('year', $subFeed->{'year'});
-			$request->addResult('album', $subFeed->{'album'});
-			$request->addResult('artist', $subFeed->{'artist'});
-			$request->addResult('genre', $subFeed->{'genre'});
-			$request->addResult('hasMetadata', $subFeed->{'hasMetadata'});
+		if ( my $meta = $subFeed->{'hasMetadata'} ) {
+			$request->addResult('hasMetadata', $meta);
+			if ( $meta eq 'album' ) {
+				$request->addResult('year', $subFeed->{'year'});
+				$request->addResult('album', $subFeed->{'album'});
+				$request->addResult('artist', $subFeed->{'artist'});
+				$request->addResult('genre', $subFeed->{'genre'});
+			}
 		}
 
 		if ($menuMode) {
@@ -1558,7 +1558,6 @@ sub _cliQuery_done {
 	} # ENDIF $isItemQuery
 
 	$request->setStatusDone();
-#Slim::Utils::Log::logError("DK \$request=" . Data::Dump::dump($request));
 }
 
 
