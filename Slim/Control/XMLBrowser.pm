@@ -1471,6 +1471,16 @@ sub _cliQuery_done {
 
 		$request->addResult('count', $totalCount);
 
+		if ( my $meta = $subFeed->{'hasMetadata'} ) {
+			$request->addResult('hasMetadata', $meta);
+			if ( $meta eq 'album' ) {
+				$request->addResult('year', $subFeed->{'year'});
+				$request->addResult('album', $subFeed->{'album'});
+				$request->addResult('artist', $subFeed->{'artist'});
+				$request->addResult('genre', $subFeed->{'genre'});
+			}
+		}
+
 		if ($menuMode) {
 
 			if ($request->getResult('base')) {
