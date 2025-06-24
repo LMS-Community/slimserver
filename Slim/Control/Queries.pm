@@ -4574,7 +4574,7 @@ sub tagsQuery {
 	my $request = shift;
 
 	if ($request->isNotQuery([['tags']])) {
-		$request->setStatusBadConfig();
+		$request->setStatusBadDispatch();
 		return;
 	}
 

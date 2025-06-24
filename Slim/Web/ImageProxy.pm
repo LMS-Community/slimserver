@@ -502,8 +502,11 @@ use base 'Slim::Utils::DbArtworkCache';
 
 use strict;
 
-use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
-use constant IDLE_THRESHOLD    => 600;
+use constant PURGE_INTERVAL => 3600 * 8;  # interval between purge cycles
+# image proxy cache is slow to purge due to the large item sizes, so we do it in smaller chunks
+use constant INCREMENTAL_PURGE_CHUNKSIZE => 20;
+use constant INCREMENTAL_PURGE_INTERVAL => 60;
+use constant FIRST_PURGE_DELAY => 20;
 
 sub new {
 	my $class = shift;
@@ -515,7 +518,7 @@ sub new {
 		if ( !main::SCANNER ) {
 			# start purge routine in a few seconds
 			require Slim::Utils::Timers;
-			Slim::Utils::Timers::setTimer( undef, time() + 60 + rand(30), \&cleanup );
+			Slim::Utils::Timers::setTimer( undef, time() + FIRST_PURGE_DELAY + rand(FIRST_PURGE_DELAY), \&cleanup );
 		}
 	}
 
@@ -528,21 +531,25 @@ sub cleanup {
 	# after startup don't purge if a player is on - retry later
 	my $interval;
 
-	unless ($force) {
-		for my $client ( Slim::Player::Client::clients() ) {
-			if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
-				main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
-				$interval = 300 + 60 * rand(5);
-				last;
-			}
-		}
-	}
+	$cache->checkActivity(sub {
+		my $client = shift;
+		main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
+		$interval = 300 + 60 * rand(5);
+	}) unless $force;
 
 	my $now = Time::HiRes::time();
 
 	if (!$interval) {
-		my $deleted = $cache->purge();
+		my $deleted = $cache->purge(INCREMENTAL_PURGE_CHUNKSIZE);
 		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %i records - %f sec", $deleted, Time::HiRes::time() - $now));
+
+		if ($deleted < INCREMENTAL_PURGE_CHUNKSIZE) {
+			# no more items to purge, so we can wait longer
+			$interval = PURGE_INTERVAL;
+		} else {
+			# still items to purge, so we do it again in a short while
+			$interval = INCREMENTAL_PURGE_INTERVAL + rand(INCREMENTAL_PURGE_INTERVAL);
+		}
 	}
 
 	Slim::Utils::Timers::setTimer( undef, $now + ($interval || PURGE_INTERVAL), \&cleanup );

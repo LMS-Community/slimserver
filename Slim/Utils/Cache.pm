@@ -54,7 +54,6 @@ use Slim::Utils::Prefs;
 use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
 use constant PURGE_RETRY       => 3600;      # retry time if players are on
 use constant PURGE_NEXT        => 30;        # purge next namespace
-use constant IDLE_THRESHOLD    => 600;       # player inactivity before we consider it unused
 use constant FIRST_PURGE_DELAY => 30;
 
 use constant DEFAULT_NAMESPACE => 'cache';
@@ -71,7 +70,7 @@ my $log = logger('server');
 # create proxy methods
 {
 	my @methods = qw(
-		get set
+		get set checkActivity
 		clear purge remove
 	);
 	#	get_object set_object size
@@ -164,16 +163,22 @@ sub cleanup {
 	# take one namespace from list to purge this cycle
 	$namespace = shift @thisCycle;
 
-	# don't purge if a player is active - retry later
-	for my $client ( Slim::Player::Client::clients() ) {
-		if ($client->controller->isPlaying() || ($client->power && (Time::HiRes::time() - $client->lastActivityTime) < IDLE_THRESHOLD)) {
-			main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
-			unshift @thisCycle, $namespace;
-			$namespace = undef;
-			$interval = PURGE_RETRY;
-			last;
-		}
+	my $cache = $caches{$namespace};
+	my $now = Time::HiRes::time();
+
+	if (!$cache) {
+		main::INFOLOG && $log->is_info && $log->info("No cache found for namespace: $namespace - skipping");
+		Slim::Utils::Timers::setTimer( undef, $now + PURGE_NEXT, \&cleanup );
+		return;
 	}
+
+	$cache->checkActivity(sub {
+		my $client = shift;
+		main::INFOLOG && $log->is_info && $log->info(sprintf("%s is still playing or being used. Let's postpone the cleanup some more. (Idle time: %is)", $client->name, Time::HiRes::time() - $client->lastActivityTime));
+		unshift @thisCycle, $namespace;
+		$namespace = undef;
+		$interval = PURGE_RETRY;
+	});
 
 	unless ($interval) {
 		if (@thisCycle) {
@@ -184,11 +189,7 @@ sub cleanup {
 		}
 	}
 
-	my $now = Time::HiRes::time();
-
-	if ($namespace && $caches{$namespace}) {
-
-		my $cache = $caches{$namespace};
+	if ($cache && $namespace) {
 		my $lastpurge = $cache->get('Slim::Utils::Cache-purgetime');
 
 		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
