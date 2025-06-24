@@ -30,7 +30,7 @@ L<Slim::Control::Queries> implements most Lyrion Music Server queries and is des
 
 use strict;
 
-use File::Basename qw(basename);
+use File::Basename qw(basename dirname);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
@@ -2788,6 +2788,8 @@ sub playlistsQuery {
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
 	my $libraryId= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
+	my $folderFilter   = $request->getParam('folder') || '';
+	my $filterOnFolder = $tags =~ /f/;
 
 	# Normalize any search parameters
 	if (defined $search && !Slim::Schema->canFulltextSearch) {
@@ -2797,7 +2799,7 @@ sub playlistsQuery {
 	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search, $libraryId);
 
 	# now build the result
-	my $count = $rs->count;
+	my $count = $filterOnFolder ? 0 : $rs->count;
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
@@ -2806,33 +2808,72 @@ sub playlistsQuery {
 	if (defined $rs) {
 
 		$count += 0;
+		my $playlistDir = Slim::Utils::Misc::getPlaylistDir();
+		my $playlistDirLen = length($playlistDir);
 
 		my ($valid, $start, $end) = $request->normalize(
-			scalar($index), scalar($quantity), $count);
+			scalar($index), scalar($quantity), $rs->count);
 
 		if ($valid) {
 
 			my $loopname = 'playlists_loop';
 			my $chunkCount = 0;
+			my %folders = ();
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
-				my $id = $eachitem->id();
-				$id += 0;
+				my $useThisItem = 1;
 
-				my $textKey = substr($eachitem->namesort, 0, 1);
+				if ($filterOnFolder && !$eachitem->remote && substr($eachitem->url, 0, 5) eq 'file:') {
+					my $itemFolder = substr(dirname(Slim::Utils::Misc::pathFromFileURL($eachitem->url)), $playlistDirLen + 1);
+					if ($itemFolder ne $folderFilter) {
+						# This URL is not within current folder, so filter out.
+						$useThisItem = 0;
+					}
 
-				$request->addResultLoop($loopname, $chunkCount, "id", $id);
-				$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
-				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
-				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "favorites_url", $eachitem->url);
-				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-				$tags =~ /E/ && $request->addResultLoop($loopname, $chunkCount, 'extid', $eachitem->extid);
-				$tags =~ /x/ && $request->addResultLoop($loopname, $chunkCount, 'remote', $eachitem->remote ? 1 : 0);
+					if (substr($itemFolder, 0, length($folderFilter)) eq $folderFilter) {
+						# However, its parent is...
+						my $parent = $itemFolder;
+						while (length($parent)>0 && ($parent ne '.') && ($parent ne $folderFilter)) {
+							my $prev = $parent;
+							$parent = dirname($parent);
+							$itemFolder = $prev;
+						}
+						if (length($itemFolder)>0 && $itemFolder ne '.' && $itemFolder ne $folderFilter) {
+							$folders{$itemFolder}=1;
+						}
+					}
+				}
+
+				if ($useThisItem) {
+					my $id = $eachitem->id();
+					$id += 0;
+
+					my $textKey = substr($eachitem->namesort, 0, 1);
+
+					$request->addResultLoop($loopname, $count, "id", $id);
+					$request->addResultLoop($loopname, $count, "playlist", $eachitem->title);
+					$tags =~ /u/ && $request->addResultLoop($loopname, $count, "url", $eachitem->url);
+					$tags =~ /u/ && $request->addResultLoop($loopname, $count, "favorites_url", $eachitem->url);
+					$tags =~ /s/ && $request->addResultLoop($loopname, $count, 'textkey', $textKey);
+					$tags =~ /E/ && $request->addResultLoop($loopname, $count, 'extid', $eachitem->extid);
+					$tags =~ /x/ && $request->addResultLoop($loopname, $count, 'remote', $eachitem->remote ? 1 : 0);
+					$count++;
+				}
 
 				$chunkCount++;
 
 				main::idleStreams() if !($chunkCount % 5);
+			}
+
+			if ($filterOnFolder) {
+				foreach my $folder (sort(keys %folders)) {
+					my $name = basename($folder);
+					$request->addResultLoop($loopname, $count, "id", $folder);
+					$request->addResultLoop($loopname, $count, "folder", $name);
+					$tags =~ /s/ && $request->addResultLoop($loopname, $count, 'textkey', substr($name, 0, 1));
+					$count++;
+				}
 			}
 		}
 
