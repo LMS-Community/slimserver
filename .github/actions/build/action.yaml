@@ -22,9 +22,9 @@ runs:
       id: getversion
       run: |
         echo "::group::Get LMS version number"
-        MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
-        MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
-        PATCH=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f3)
+        MAJOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f1)
+        MINOR=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f2)
+        PATCH=$(grep "our \$VERSION" -m1 server/slimserver.pl | cut -d"'" -f2 | cut -d. -f3)
 
         echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
         echo "LMS_FULL_VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
@@ -39,6 +39,13 @@ runs:
         path: platforms
         ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
 
+
+    - name: Check out pCP platform code
+      if: ${{ startsWith(inputs.build-params, 'pcp') }}
+      uses: actions/checkout@v4
+      with:
+        repository: picoreplayer/lms-update-script
+        path: platforms/pcp
 
     - name: Set up Docker environment
       if: ${{ startsWith(inputs.build-params, 'docker') }}
@@ -112,8 +119,31 @@ runs:
           exit 1;
         fi
 
+    - name: Cache s5cmd
+      uses: actions/cache@v4
+      with:
+        key: s5cmd-${{ runner.os }}
+        path: ${{ runner.temp }}/s5cmd-bin
+
+    - name: Check if s5cmd is installed
+      id: check-s5cmd
+      continue-on-error: true
+      shell: bash
+      run: |
+        PATH="${{ runner.temp }}/s5cmd-bin:$PATH"
+        if command -v s5cmd &> /dev/null; then
+          echo "s5cmd is already installed"
+          echo "installed=true" >> $GITHUB_OUTPUT
+          echo "${{ runner.temp }}/s5cmd-bin" >> $GITHUB_PATH
+        else
+          echo "s5cmd is not installed"
+          echo "installed=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Set-up s5cmd
-      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      if: ${{ !startsWith(inputs.build-params, 'docker') && steps.check-s5cmd.outputs.installed != 'true' }}
+      # don't fail, as we can fall back to aws-cli
+      continue-on-error: true
       uses: ./server/.github/actions/setup-s5cmd
       # uses: peak/action-setup-s5cmd@main
       with:

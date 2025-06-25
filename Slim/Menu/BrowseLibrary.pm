@@ -1,5 +1,11 @@
 package Slim::Menu::BrowseLibrary;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 =head1 NAME
 
 Slim::Menu::BrowseLibrary
@@ -1119,6 +1125,8 @@ sub _artists {
 		push @searchTags, 'include_online_only_artists:1'
 	}
 
+	$queryTags .= '4' unless $prefs->get('noContributorPictures');
+
 	#For use down the line in _releases
 	push @ptSearchTags, 'menu_mode:' . $mode if $mode;
 	push @ptSearchTags, 'menu_roles:' . $roleIdParam if $roleIdParam;
@@ -1130,18 +1138,32 @@ sub _artists {
 			my $items = $results->{'artists_loop'};
 			$remote_library ||= $args->{'remote_library'};
 
+			my $noContributorPictures = $prefs->get('noContributorPictures');
+
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'artist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
+
+				if ( $noContributorPictures) {
+					# no pictures wanted
+				}
+				elsif ( $_->{'portraitid'} ) {
+					$_->{'image'} = 'contributor/' . $_->{'portraitid'} . '/image';
+				}
+				else {
+					$_->{'icon'} = 'html/images/artists.png';
+				}
 			}
+
 			my $extra;
 			if (scalar grep { $_ !~ /role_id|remote_library/ } @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
 					name        => cstring($client, 'ALL_ALBUMS'),
+					icon        => $noContributorPictures ? undef : 'html/images/albums.png',
 					type        => $remote_library ? 'link' : 'playlist',
 					playlist    => $remote_library ? undef : \&_tracks,
 					url         => \&_albums,

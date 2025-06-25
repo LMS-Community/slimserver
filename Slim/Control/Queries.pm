@@ -1,7 +1,7 @@
 package Slim::Control::Queries;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -589,7 +589,8 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /j/ ) {
-		$c->{'albums.artwork'} = 1;
+		$c->{'albums.artwork'} = 1 if !$work;
+		$c->{'tracks.coverid'} = 1 if $work;
 	}
 
 	if ( $tags =~ /t/ ) {
@@ -642,6 +643,10 @@ sub albumsQuery {
 		$col = "(SELECT GROUP_CONCAT(COALESCE(SUBSTR('00000'||disc,-5),'00001') || SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
 		$c->{$col} = 1;
 		$as->{$col} = 'group_structure';
+	}
+
+	if ( $tags =~ /4/ && !$work ) {
+		$c->{'contributors.portraitid'} = 1;
 	}
 
 	if ( @{$w} ) {
@@ -828,7 +833,10 @@ sub albumsQuery {
 
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
+			if ($tags =~ /j/) {
+				my $albumCover = $c->{'tracks.coverid'} ? $c->{'tracks.coverid'} : $c->{'albums.artwork'};
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $albumCover) if ($albumCover || '') !~ /^https?:/;
+			}
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
@@ -863,9 +871,8 @@ sub albumsQuery {
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
-				if ($tags =~ /a/) {
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
-				}
+				$tags =~ /a/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
+				$tags =~ /4/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'portraitid', $c->{'contributors.portraitid'});
 			}
 
 			if ($tags =~ /s/) {
@@ -1212,8 +1219,10 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort' . ($tags =~ /E/ ? ', contributors.extid' : ''))
-			. 'GROUP BY contributors.id ';
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort'
+		. ($tags =~ /E/ ? ', contributors.extid' : '')
+		. ($tags =~ /4/ ? ', contributors.portraitid' : '')
+		) . 'GROUP BY contributors.id ';
 
 	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
 
@@ -1290,9 +1299,10 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-		my ($id, $name, $namesort, $extid);
+		my ($id, $name, $namesort, $portraitid, $extid);
 		my @bind = (\$id, \$name, \$namesort);
 		push @bind, \$extid if $tags =~ /E/;
+		push @bind, \$portraitid if $tags =~ /4/;
 		$sth->bind_columns(@bind);
 
 		my $process = sub {
@@ -1303,15 +1313,16 @@ sub artistsQuery {
 
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
+
 			if ($tags =~ /s/) {
 				# Bug 11070: Don't display large V at beginning of browse Artists
 				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
-			if ($tags =~ /E/ && $extid) {
-				$request->addResultLoop($loopname, $chunkCount, 'extid', $extid);
-			}
+			$request->addResultLoop($loopname, $chunkCount, 'extid', $extid) if $tags =~ /E/ && $extid;
+			$request->addResultLoop($loopname, $chunkCount, 'portraitid', $portraitid) if $tags =~ /4/ && $portraitid;
+
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', 'db:contributor.name=' . URI::Escape::uri_escape_utf8( $name ) );
 
 			$chunkCount++;
@@ -3955,7 +3966,7 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		my $trackGain = Slim::Player::ReplayGain->fetchGainMode($client, $song);
+		my $trackGain = $song->replayGain();
 		if (defined $trackGain) {
 			$request->addResult('replay_gain', $trackGain);
 		}
@@ -4248,9 +4259,11 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-				my (@tracks, @trackIds);
+				my (@tracks, @trackIds, @addedFromWork);
 				foreach my $track ( Slim::Player::Playlist::songs($client, $start, $end) ) {
 					next unless defined $track;
+
+					push @addedFromWork, $track->added_from_work;
 
 					if ( $track->remote ) {
 						push @tracks, $track;
@@ -4300,7 +4313,7 @@ sub statusQuery {
 					else {
 						_addSong(	$request, $loop, $count,
 									$data, $tags,
-									'playlist index', $idx, $fast
+									'playlist index', $idx, $fast, @addedFromWork[$count]
 								);
 
 						if ( $tags =~ /2/ ) {
@@ -4561,7 +4574,7 @@ sub tagsQuery {
 	my $request = shift;
 
 	if ($request->isNotQuery([['tags']])) {
-		$request->setStatusBadConfig();
+		$request->setStatusBadDispatch();
 		return;
 	}
 
@@ -4912,7 +4925,7 @@ sub worksQuery {
 	my $w   = [];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT tracks.coverid), GROUP_CONCAT(DISTINCT albums.id)";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
@@ -5273,17 +5286,18 @@ sub dynamicAutoQuery {
 ################################################################################
 
 sub _addSong {
-	my $request   = shift; # request
-	my $loop      = shift; # loop
-	my $index     = shift; # loop index
-	my $pathOrObj = shift; # song path or object, or hash from titlesQuery
-	my $tags      = shift; # tags to use
-	my $prefixKey = shift; # prefix key, if any
-	my $prefixVal = shift; # prefix value, if any
-	my $fast      = shift;
+	my $request       = shift; # request
+	my $loop          = shift; # loop
+	my $index         = shift; # loop index
+	my $pathOrObj     = shift; # song path or object, or hash from titlesQuery
+	my $tags          = shift; # tags to use
+	my $prefixKey     = shift; # prefix key, if any
+	my $prefixVal     = shift; # prefix value, if any
+	my $fast          = shift;
+	my $addedFromWork = shift;
 
 	# get the hash with the data
-	my $hashRef = _songData($request, $pathOrObj, $tags, $fast);
+	my $hashRef = _songData($request, $pathOrObj, $tags, $fast, $addedFromWork);
 
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
@@ -5538,6 +5552,7 @@ my %tagMap = (
 	#--------------------------------------------------------------------------------------------------
 	  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
 	  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
+	  '4' => ['portraitid',        '',                'primary_artist','portraitid'],    #->contributors.portraitid
 
 	  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
 	  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
@@ -5549,6 +5564,7 @@ my %tagMap = (
 	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+	  '2' => [1],                                                                       # to trigger addition of the input parameter
 
 	# Tags handled in code only
 	#--------------------------------------------------------------------------------------------------
@@ -5565,6 +5581,7 @@ my %colMap = (
 	P => 'genre_ids',
 	a => 'contributors.name',
 	's' => 'contributors.id',
+	4 => 'contributors.portraitid',
 	l => 'albums.title',
 	e => 'tracks.album',
 	d => 'tracks.secs',
@@ -5607,7 +5624,7 @@ my %colMap = (
 );
 
 sub _songDataFromHash {
-	my ( $request, $res, $tags, $fast ) = @_;
+	my ( $request, $res, $tags, $fast, $addedFromWork ) = @_;
 
 	my %returnHash;
 
@@ -5668,6 +5685,11 @@ sub _songDataFromHash {
 			}
 		}
 
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
+		}
+
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
 		# such as 'B' (custom button handler). They would return empty here - ignore them.
 		elsif ( my $map = $colMap{$tag} ) {
@@ -5683,14 +5705,15 @@ sub _songDataFromHash {
 }
 
 sub _songData {
-	my $request   = shift; # current request object
-	my $pathOrObj = shift; # song path or object
-	my $tags      = shift; # tags to use
-	my $fast      = shift; # don't use Tie::IxHash for performance
+	my $request       = shift; # current request object
+	my $pathOrObj     = shift; # song path or object
+	my $tags          = shift; # tags to use
+	my $fast          = shift; # don't use Tie::IxHash for performance
+	my $addedFromWork = shift;
 
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
-		return _songDataFromHash($request, $pathOrObj, $tags, $fast);
+		return _songDataFromHash($request, $pathOrObj, $tags, $fast, $addedFromWork);
 	}
 
 	# figure out the track object
@@ -5799,6 +5822,17 @@ sub _songData {
 		# only include it if it is true
 		elsif ($tag eq 'x' && $isRemote) {
 			$returnHash{$tagref->[0]} = 1;
+		}
+
+		# special case: return composer and work for tag 'b'
+		elsif ($tag eq 'b') {
+			$returnHash{work} = $remoteMeta->{$tag};
+			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
+		}
+
+		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
+		elsif ( $tag eq '2' ) {
+			$returnHash{added_from_work} = $addedFromWork if $addedFromWork;
 		}
 
 		# special case artists (tag A and S)
@@ -6351,6 +6385,11 @@ sub _getTagDataForTracks {
 	$tags =~ /s/ && do {
 		$join_contributors->();
 		$c->{'contributors.id'} = 1;
+	};
+
+	$tags =~ /4/ && do {
+		$join_contributors->();
+		$c->{'contributors.portraitid'} = 1;
 	};
 
 	$tags =~ /l/ && do {

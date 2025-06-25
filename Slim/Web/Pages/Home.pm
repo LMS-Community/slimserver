@@ -24,9 +24,10 @@ my $cache = Slim::Utils::Cache->new;
 
 # known skins which don't need all the overhead of DB related variables in index.html
 my %lightIndex = (
+	Classic => 1,
 	Default => 1,
 	EN => 1,
-	Classic => 1,
+	Logic => 1,
 );
 
 sub init {
@@ -229,6 +230,9 @@ sub _updateInfoCB {
 
 		if ($params->{'newVersion'}) {
 			$json->{server} = $params->{'newVersion'};
+			if ($json->{server} =~ /"(updateinfo\.html[^"]+)"/) {
+				$json->{infoUrl} = $1;
+			}
 		}
 		if ($params->{'newPlugins'} && scalar @{$params->{'newPlugins'}}) {
 			$json->{plugins} = $params->{'newPlugins'};

@@ -2,7 +2,7 @@ package Slim::Schema;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -179,7 +179,6 @@ sub init {
 		MetaInformation
 		Playlist
 		PlaylistTrack
-		Rescan
 		Track
 		Year
 		Progress
@@ -794,9 +793,10 @@ sub objectForUrl {
 		$playlistId = $args->{'playlistId'};
 	}
 
-	# Confirm that the URL itself isn't an object (see bug 1811)
-	# XXX - exception should go here. Coming soon.
-	if (blessed($url) || ref($url)) {
+	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
+		$url = $url->url;
+	}
+	elsif (blessed($url) || ref($url)) {
 
 		# returning already blessed url
 		return $url;
@@ -818,12 +818,16 @@ sub objectForUrl {
 	}
 
 	# Pull the track object for the DB
-	my $track = $self->_retrieveTrack($url, $playlist);
-	my $isRemote = Slim::Music::Info::isRemoteURL($url);
+	my $track;
 
 	# Check to see if we have a remote track stored in our database
-	if (!$track && $isRemote && !$create && !$readTag) {
+	my $isRemote = Slim::Music::Info::isRemoteURL($url);
+	if ($isRemote && !$create && !$readTag) {
 		$track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+	}
+
+	if (!$track) {
+		$track = $self->_retrieveTrack($url, $playlist);
 	}
 
 	# Bug 14648: Check to see if we have a playlist with remote tracks
@@ -1980,6 +1984,10 @@ sub updateOrCreateBase {
 
 			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
 			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
+
+				# Bug 7731, filter out duplicate keys that end up as array refs
+				# https://github.com/LMS-Community/slimserver/issues/1378
+				$val = $val->[0] if ( ref $val eq 'ARRAY' );
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 

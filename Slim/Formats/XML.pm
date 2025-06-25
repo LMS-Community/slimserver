@@ -136,13 +136,8 @@ sub getFeedAsync {
 
 	main::INFOLOG && $log->is_info && $log->info("Async request: $url");
 
-	# Bug 3165
-	# Override user-agent and Icy-Metadata headers so we appear to be a web browser
-	my $ua = Slim::Utils::Misc::userAgentString();
-	$ua =~ s{iTunes/4.7.1}{Mozilla/5.0};
-
 	my %headers = (
-		'User-Agent'   => $ua,
+		'User-Agent'   => Slim::Utils::Misc::userAgentString(),
 		'Icy-Metadata' => '',
 	);
 

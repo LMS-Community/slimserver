@@ -204,7 +204,7 @@ sub infoLibrary {
 
 	elsif (Slim::Music::Import->stillScanning) {
 		return {
-			name => cstring($client, 'RESCANNING_SHORT'),
+			name => cstring($client, 'RESCANNING'),
 
 			web  => {
 				hide => 1,

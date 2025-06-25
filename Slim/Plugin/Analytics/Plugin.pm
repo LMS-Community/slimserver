@@ -111,6 +111,7 @@ sub _report {
 }
 
 sub _scheduleReport {
+	Slim::Utils::Timers::killTimers($serverId, \&_report);
 	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_INTERVAL, \&_report);
 }
 

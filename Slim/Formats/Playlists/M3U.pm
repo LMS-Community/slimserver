@@ -28,7 +28,7 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
-	my ($secs, $artist, $album, $title, $trackurl);
+	my ($secs, $artist, $album, $title, $trackurl, $addedFromWork);
 	my $checkedBOM = 0;
 	my $fh;
 	my $mediadirs;
@@ -114,6 +114,12 @@ sub read {
 			main::DEBUGLOG && $log->debug("  found trackurl: $trackurl");
 		}
 
+		elsif ( $entry =~ /^#ADDEDFROMWORK:(.*?)$/ ) {
+			$addedFromWork = $1;
+
+			main::DEBUGLOG && $log->debug("  found addedFromWork: $addedFromWork");
+		}
+
 		next if $entry =~ /^#/;
 		next if $entry =~ /#CURTRACK/;
 		next if $entry eq "";
@@ -142,7 +148,7 @@ sub read {
 
 		if ($class->playlistEntryIsValid($trackurl, $url)) {
 
-			push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url);
+			push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url, $addedFromWork);
 
 		}
 		else {
@@ -154,7 +160,7 @@ sub read {
 
 				if ($class->playlistEntryIsValid($trackurl, $url)) {
 
-					push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url);
+					push @items, $class->_item($trackurl, $artist, $album, $title, $secs, $url, $addedFromWork);
 
 					last;
 				}
@@ -162,7 +168,7 @@ sub read {
 		}
 
 		# reset the title
-		($secs, $artist, $album, $title, $trackurl) = ();
+		($secs, $artist, $album, $title, $trackurl, $addedFromWork) = ();
 	}
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -175,7 +181,7 @@ sub read {
 }
 
 sub _item {
-	my ($class, $trackurl, $artist, $album, $title, $secs, $playlistUrl) = @_;
+	my ($class, $trackurl, $artist, $album, $title, $secs, $playlistUrl, $addedFromWork) = @_;
 
 	main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
 
@@ -184,7 +190,9 @@ sub _item {
 		'ALBUM'  => $album,
 		'ARTIST' => $artist,
 		'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
-	}, $playlistUrl );
+	},
+	$playlistUrl,
+	$addedFromWork );
 }
 
 sub readCurTrackForM3U {
@@ -284,6 +292,10 @@ sub write {
 
 			if ($title) {
 				print $output "#EXTINF:$secs,$title\n";
+			}
+
+			if (my $addedFromWork = $track->added_from_work) {
+				print $output "#ADDEDFROMWORK:$addedFromWork\n";
 			}
 		}
 

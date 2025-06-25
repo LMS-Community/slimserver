@@ -62,6 +62,7 @@ my @allAttributes = (qw(
 	subtitle
 	performance
 	discsubtitle
+	added_from_work
 ));
 
 {

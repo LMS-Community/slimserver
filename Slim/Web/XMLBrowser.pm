@@ -2,7 +2,7 @@ package Slim::Web::XMLBrowser;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -43,7 +43,7 @@ if ( !main::SCANNER ) {
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
 		composerInArtists conductorInArtists bandInArtists trackartistInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
 		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore showComposerReleasesbyAlbum myClassicalGenres onlyAlbumYears userDefinedRoles
-		artistAlbumLink albumartistAlbumLink trackartistAlbumLink composerAlbumLink conductorAlbumLink bandAlbumLink) );
+		artistAlbumLink albumartistAlbumLink trackartistAlbumLink composerAlbumLink conductorAlbumLink bandAlbumLink noContributorPictures) );
 }
 
 tie my %cacheables, 'Tie::RegexpHash';

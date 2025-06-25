@@ -305,7 +305,6 @@ sub new {
 		_pluginData             => {},
 		updatePending           => 0,
 		disconnected            => 0,
-
 	);
 
 	$clientHash{$id} = $client;

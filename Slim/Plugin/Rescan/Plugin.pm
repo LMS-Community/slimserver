@@ -335,9 +335,9 @@ sub progressHeader {
 	} else {
 
 		if (Slim::Music::Import->stillScanning) {
-			return $client->string('RESCANNING_SHORT');
+			return $client->string('RESCANNING');
 		} else {
-			return $client->string('RESCANNING_SHORT').$client->string('COMPLETE');
+			return $client->string('RESCANNING').$client->string('COMPLETE');
 		}
 	}
 }

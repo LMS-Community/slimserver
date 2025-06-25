@@ -57,6 +57,7 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
 	'DESCRIPTION'               => 'COMMENT',
 	'ORIGINALYEAR'              => 'YEAR',
+	'ORIGINALDATE'              => 'DATE',
 	'UNSYNCEDLYRICS'            => "LYRICS",
 
 	# J.River once again.. can't these people use existing standards?

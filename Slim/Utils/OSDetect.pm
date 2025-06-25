@@ -85,7 +85,7 @@ sub init {
 			$os = Slim::Utils::OS::Linux->getFlavor();
 
 			# we only differentiate Debian/Suse/Red Hat if they've been installed from a package
-			if ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezeboxserver}) {
+			if ($os =~ /debian|ubuntu|raspb/i && $0 =~ m{^/usr/sbin/squeezeboxserver}) {
 
 				require Slim::Utils::OS::Debian;
 				$os = Slim::Utils::OS::Debian->new();
@@ -104,6 +104,11 @@ sub init {
 
 				require Slim::Utils::OS::Synology;
 				$os = Slim::Utils::OS::Synology->new();
+
+			} elsif ($os =~ /piCorePlayer/i) {
+
+				require Slim::Utils::OS::pCP;
+				$os = Slim::Utils::OS::pCP->new();
 
 			} else {
 

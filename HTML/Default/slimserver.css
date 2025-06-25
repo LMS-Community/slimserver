@@ -1193,6 +1193,25 @@ div.buttonbarSpacer {
 	vertical-align: top;
 }
 
+.settingSection input[type="button"], .settingSection input[type="submit"] {
+	padding: 0px 2px;
+}
+
+.settingSection input[type="checkbox"] {
+	margin-top: 3px;
+}
+
+/* Safari only. This feels wrong... */
+@supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+	.settingSection select {
+		font-size: 1.3em;
+	}
+
+	.settingSection input[type="button"], .settingSection input[type="submit"] {
+		padding: 2px 4px;
+	}
+}
+
 .prefs td {
 	padding-bottom: 2px;
 }

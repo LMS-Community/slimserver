@@ -18,94 +18,6 @@ FAVORITES
 	RU	Выбранное
 	SV	Favoriter
 
-FAVORITES_NONE_DEFINED
-	CS	Neexistují žádné oblíbené položky
-	DA	Der findes ingen favoritter
-	DE	Es sind noch keine Favoriten definiert
-	EN	No Favorites exist
-	EN_GB	No Favourites exist
-	ES	No existen favoritos
-	FI	Suosikkeja ei ole
-	FR	Aucun favori défini
-	HE	לא קיימים פריטים מועדפים
-	HU	Nincsenek kedvencek
-	IT	Nessun preferito
-	NL	Er zijn geen favorieten
-	NO	Finner ingen favoritter
-	PL	Brak ulubionych
-	RU	Выбранное не существует
-	SV	Det finns inga favoriter
-
-FAVORITES_PLAYING
-	CS	Přehrávání oblíbené položky #%s
-	DA	Afspiller favorit nr. %s
-	DE	Favorit Nr. %s läuft ...
-	EN	Playing favorite #%s
-	EN_GB	Playing favourite #%s
-	ES	Reproduciendo favorito nº %s
-	FI	Soitetaan suosikki #%s
-	FR	Lecture du favori n°%s
-	HE	השמעת פריט מועדף ‎#%s
-	HU	Kedvenc #%s lejátszása
-	IT	Riproduzione del brano preferito #%s
-	NL	Favoriet #%s wordt afgespeeld
-	NO	Spiller favoritt nr. %s
-	PL	Odtwarzanie ulubionego nr %s
-	RU	Воспроизводится выбранное #%s
-	SV	Spelar favorit nr %s
-
-FAVORITES_FAVORITE_NUM
-	CS	Oblíbená položka #
-	DA	Favorit nr.
-	DE	Favorit Nr.
-	EN	Favorite #
-	EN_GB	Favourite #
-	ES	Nº de favorito
-	FI	Suosikki #
-	FR	Favori n°
-	HE	פריט מועדף #
-	HU	Kedvenc #
-	IT	Preferito #
-	NL	Favoriet nr.
-	NO	Favoritt nr.
-	PL	Ulubiony nr
-	RU	Выбранное #
-	SV	Favorit nr
-	ZH_CN	最喜爱#
-
-FAVORITES_HOTKEYS
-	CS	Klávesové zkratky
-	DA	Genvejstaster
-	DE	Abkürzungstasten
-	EN	Hotkeys
-	ES	Teclas de acceso rápido
-	FI	Pikanäppäimet
-	FR	Raccourcis
-	HU	Gyorsbillentyűk
-	IT	Tasti di scelta rapida
-	NL	Sneltoetsen
-	NO	Hurtigknapper
-	PL	Klawisze dostępu
-	RU	Сочетания клавиш
-	SV	Snabbtangenter
-
-FAVORITES_FAVORITE
-	CS	Oblíbené položky
-	DA	Favorit
-	DE	Favorit
-	EN	Favorite
-	EN_GB	Favourite
-	ES	Favorito
-	FI	Suosikki
-	FR	Favori
-	HU	Kedvenc
-	IT	Preferito
-	NL	Favoriet
-	NO	Favoritt
-	PL	Ulubiony
-	RU	Выбранное
-	SV	Favorit
-
 FAVORITES_RIGHT_TO_DELETE
 	CS	Odstranit oblíbenou položku
 	DA	Slet favorit
@@ -122,25 +34,6 @@ FAVORITES_RIGHT_TO_DELETE
 	PL	Usuń ulubiony
 	RU	Удалить выбранное
 	SV	Ta bort favorit
-
-FAVORITES_NOT_A_FAVORITE
-	CS	Není oblíbená položka
-	DA	Ikke en favorit
-	DE	Kein Favorit
-	EN	Not a favorite
-	EN_GB	Not a favourite
-	ES	No es un favorito
-	FI	Ei suosikki
-	FR	Pas un favori
-	HE	לא מוגדר כפריט מועדף
-	HU	Nem kedvenc
-	IT	Non è un preferito
-	NL	Geen favoriet
-	NO	Ikke en favoritt
-	PL	Nie ulubiony
-	RU	Не входит в выбранное
-	SV	Ingen favorit
-	ZH_CN	不是最喜爱的
 
 FAVORITES_ADDING
 	CS	Ukládání oblíbených položek...
@@ -490,22 +383,6 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	PL	Nowy ulubiony
 	RU	Новое выбранное
 	SV	Ny favorit
-
-PLUGIN_FAVORITES_NEWURL
-	CS	Nová adresa URL
-	DA	Ny URL adresse
-	DE	Neue URL
-	EN	New URL
-	ES	URL nueva
-	FI	Uusi URL
-	FR	Nouvelle URL
-	HU	Új URL
-	IT	Nuovo URL
-	NL	Nieuwe URL
-	NO	Ny url
-	PL	Nowy adres URL
-	RU	Новый URL
-	SV	Ny webbadress
 
 PLUGIN_FAVORITES_LOADERROR
 	CS	Chyba při načítání souboru
