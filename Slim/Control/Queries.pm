@@ -2803,7 +2803,7 @@ sub playlistsQuery {
 		$search = { titlesearch => $search };
 	}
 	elsif ($folder) {
-		$folder = Slim::Utils::Misc::unescape($folder);
+		$folder = Slim::Utils::Misc::pathFromFileURL($folder) if $folder =~ m{^file:/};
 		$folder = Slim::Utils::Misc::getPlaylistDir() if !$folder || $folder eq '/' || $folder eq 'file:';
 		$folder .= '/' unless $folder =~ m{/$};
 		$folder = Slim::Utils::Misc::fileURLFromPath($folder);
