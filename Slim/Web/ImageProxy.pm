@@ -142,7 +142,8 @@ sub getImage {
 		return;
 	}
 
-	if ($url =~ /\.svg$/ || ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/)) {
+	my $handler = $class->getHandlerFor($url);
+	if (!$handler && ($url =~ /\.svg$/ || ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/))) {
 		main::INFOLOG && $log->is_info && $log->info("No resizing requested - redirect to original URI: $url");
 
 		my $response = $args[1];
@@ -227,7 +228,7 @@ sub getImage {
 	};
 
 	# some plugin might have registered to deal with this image URL
-	if ( my $handler = $class->getHandlerFor($url) ) {
+	if ($handler) {
 		$url = $handler->($url, $spec, $handleProxiedUrl);
 		return unless defined $url;
 	}
