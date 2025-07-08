@@ -4212,7 +4212,7 @@ sub statusQuery {
 		if (!$totalOnly) {
 			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
-			if (ref($track) ne 'Slim::Schema::Track') {
+			if ( ref($track) ne 'Slim::Schema::Track' && $track->remote ) {
 				$tags .= "B" unless $totalOnly; # include button remapping
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);

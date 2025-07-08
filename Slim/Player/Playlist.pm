@@ -88,8 +88,8 @@ sub track {
 
 		$objOrUrl = Slim::Schema->objectForUrl({
 			'url'      => $objOrUrl,
-			'create'   => 0,
-			'readTags' => 0,
+			'create'   => 1,
+			'readTags' => 1,
 		});
 
 		if ($refresh) {
@@ -124,8 +124,8 @@ sub songs {
 
 			my $track = Slim::Schema->objectForUrl({
 					'url'      => $_,
-					'create'   => 0,
-					'readTags' => 0,
+					'create'   => 1,
+					'readTags' => 1,
 				});
 
 			if (defined $track) {
@@ -147,8 +147,8 @@ sub refreshTrack {
 
 	my $track = Slim::Schema->objectForUrl( {
 		url      => $url,
-		create   => 0,
-		readTags => 0,
+		create   => 1,
+		readTags => 1,
 	} );
 
 	my $i = 0;
