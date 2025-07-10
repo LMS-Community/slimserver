@@ -822,7 +822,7 @@ sub objectForUrl {
 
 	# Check to see if we have a remote track stored in our database
 	my $isRemote = Slim::Music::Info::isRemoteURL($url);
-	if ( $isRemote ) {
+	if ($isRemote && !$create && !$readTag) {
 		$track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
 	}
 
