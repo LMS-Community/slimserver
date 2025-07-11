@@ -4504,7 +4504,7 @@ sub songinfoQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $url	     = $request->getParam('url');
+	my $url      = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
 
@@ -4521,12 +4521,9 @@ sub songinfoQuery {
 
 		$track = Slim::Schema->find('Track', $trackID);
 
-	} else {
+	} elsif ( defined $url ){
 
-		if ( defined $url ){
-
-			$track = Slim::Schema->objectForUrl($url);
-		}
+		$track = Slim::Schema->libraryOjectForUrl($url);
 	}
 
 	# now build the result
@@ -5779,7 +5776,7 @@ sub _songData {
 	}
 
 	# figure out the track object
-	my $track = Slim::Schema->objectForUrl($pathOrObj);
+	my $track = Slim::Schema->libraryOjectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
