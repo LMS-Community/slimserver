@@ -87,9 +87,10 @@ sub new {
 	# Bug: 3390 - reload the track if it's changed.
 	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
 
- 	my $track    = Slim::Schema->objectForUrl({
+	my $track    = Slim::Schema->libraryObjectForUrl({
 		'url'      => $url,
-		'readTags' => 1
+		'readTags' => 1,
+		'matchUrl' => 1,
 	});
 
 	if (!blessed($track) || !$track->can('url')) {
