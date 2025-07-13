@@ -184,7 +184,7 @@ sub install {
 
 		$downloading++;
 
-		$http->get($url);
+		$http->get($url, 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy'));
 	}
 }
 
