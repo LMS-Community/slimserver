@@ -864,23 +864,25 @@ remote track imported into the local database.
 
 =cut
 
-sub libraryOjectForUrl {
+sub libraryObjectForUrl {
 	my $self = shift;
 	my $args = shift;
 
 	my $url = $args;
 	my $playlist;
 
+	if (ref($args) eq 'HASH') {
+		$url      = $args->{'url'};
+		$playlist = $args->{'playlist'};
+	}
+
 	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
 		$url = $url->url;
-	}
-	elsif (ref($url) eq 'HASH') {
-		$url = $url->{'url'};
-		$playlist = $url->{'playlist'};
 	}
 
 	if (!ref $url && Slim::Music::Info::isRemoteURL($url)) {
 		my $track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+
 		return $track if $track;
 	}
 
