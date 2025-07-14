@@ -4274,7 +4274,7 @@ sub statusQuery {
 		if (!$totalOnly) {
 			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
-			if ( ref($track) ne 'Slim::Schema::Track' && $track->remote ) {
+			if ( _notLocalTrackAndRemoteUrl($track) ) {
 				$tags .= "B" unless $totalOnly; # include button remapping
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
@@ -4327,7 +4327,7 @@ sub statusQuery {
 
 					push @addedFromWork, $track->added_from_work;
 
-					if ( ref($track) ne 'Slim::Schema::Track' && $track->remote ) {
+					if ( _notLocalTrackAndRemoteUrl($track) ) {
 						push @tracks, $track;
 					}
 					else {
@@ -5796,7 +5796,7 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote && ref($track) ne 'Slim::Schema::Track';
+	my $isRemote = _notLocalTrackAndRemoteUrl($track);
 	my $url = $track->url;
 
 	my $song;
@@ -6768,6 +6768,11 @@ sub _createIndexList {
 	}
 
 	return \@indexList;
+}
+
+sub _notLocalTrackAndRemoteUrl {
+	my $track = shift;
+	return ref($track) && ref($track) ne 'Slim::Schema::Track' && $track->can('remote') && $track->remote;
 }
 
 =head1 SEE ALSO

@@ -872,8 +872,8 @@ sub libraryObjectForUrl {
 	my $playlist;
 
 	if (ref($args) eq 'HASH') {
-		$url        = $args->{'url'};
-		$playlist   = $args->{'playlist'};
+		$url      = $args->{'url'};
+		$playlist = $args->{'playlist'};
 	}
 
 	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {

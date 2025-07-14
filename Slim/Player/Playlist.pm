@@ -84,7 +84,7 @@ sub track {
 		$objOrUrl = ${playList($client)}[$index];
 	}
 
-	if ( $objOrUrl && ($refresh || !blessed($objOrUrl) || ref($objOrUrl) eq 'Slim::Schema::RemoteTrack' && $objOrUrl->url) ) {
+	if ( $objOrUrl && ( $refresh || !blessed($objOrUrl) || _remoteTrackWithUrl($objOrUrl) ) ) {
 
 		$objOrUrl = Slim::Schema->libraryObjectForUrl({
 			'url'      => $objOrUrl,
@@ -93,7 +93,7 @@ sub track {
 		});
 
 		if ($refresh) {
-			$objOrUrl = refreshTrack($client, $objOrUrl->url);
+			$objOrUrl = refreshTrack($client, $objOrUrl->url, $objOrUrl);
 		}
 	}
 
@@ -116,7 +116,7 @@ sub songs {
 	{
 		# Use $_ here to use perl's inline replace semantics
 
-		if ( $_ && (!blessed($_) || ref($_) eq 'Slim::Schema::RemoteTrack' && $_->url) ) {
+		if ( $_ && (!blessed($_) || _remoteTrackWithUrl($_) ) ) {
 
 			# If we instantiate a Track from a URL then
 			# back-patch the playlist item with the Track. This could be common
@@ -143,9 +143,9 @@ sub songs {
 
 # Refresh track(s) in a client playlist from the database
 sub refreshTrack {
-	my ( $client, $url ) = @_;
+	my ( $client, $url, $track ) = @_;
 
-	my $track = Slim::Schema->libraryObjectForUrl( {
+	$track ||= Slim::Schema->objectForUrl( {
 		url      => $url,
 		create   => 1,
 		readTags => 1,
@@ -1228,6 +1228,10 @@ sub _playlistUrlForClient {
 	);
 }
 
+sub _remoteTrackWithUrl {
+	my $track = shift;
+	return ref($track) eq 'Slim::Schema::RemoteTrack' && $track->url;
+}
 
 1;
 
