@@ -4274,7 +4274,7 @@ sub statusQuery {
 		if (!$totalOnly) {
 			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
-			if ($track->remote) {
+			if ( _notLocalTrackAndRemoteUrl($track) ) {
 				$tags .= "B" unless $totalOnly; # include button remapping
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
@@ -4327,7 +4327,7 @@ sub statusQuery {
 
 					push @addedFromWork, $track->added_from_work;
 
-					if ( $track->remote ) {
+					if ( _notLocalTrackAndRemoteUrl($track) ) {
 						push @tracks, $track;
 					}
 					else {
@@ -4504,7 +4504,7 @@ sub songinfoQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $url	     = $request->getParam('url');
+	my $url      = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
 
@@ -4521,12 +4521,9 @@ sub songinfoQuery {
 
 		$track = Slim::Schema->find('Track', $trackID);
 
-	} else {
+	} elsif ( defined $url ){
 
-		if ( defined $url ){
-
-			$track = Slim::Schema->objectForUrl($url);
-		}
+		$track = Slim::Schema->libraryObjectForUrl($url);
 	}
 
 	# now build the result
@@ -5779,7 +5776,7 @@ sub _songData {
 	}
 
 	# figure out the track object
-	my $track = Slim::Schema->objectForUrl($pathOrObj);
+	my $track = Slim::Schema->libraryObjectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -5799,7 +5796,7 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote;
+	my $isRemote = _notLocalTrackAndRemoteUrl($track);
 	my $url = $track->url;
 
 	my $song;
@@ -6771,6 +6768,11 @@ sub _createIndexList {
 	}
 
 	return \@indexList;
+}
+
+sub _notLocalTrackAndRemoteUrl {
+	my $track = shift;
+	return ref($track) && ref($track) ne 'Slim::Schema::Track' && $track->can('remote') && $track->remote;
 }
 
 =head1 SEE ALSO
