@@ -142,7 +142,8 @@ sub getImage {
 		return;
 	}
 
-	if ($url =~ /\.svg$/ || ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/)) {
+	my $handler = $class->getHandlerFor($url);
+	if (!$handler && ($url =~ /\.svg$/ || ($spec =~ /^\.(?:png|jpe?g)/i && $url =~ /^https?/))) {
 		main::INFOLOG && $log->is_info && $log->info("No resizing requested - redirect to original URI: $url");
 
 		my $response = $args[1];
@@ -227,7 +228,7 @@ sub getImage {
 	};
 
 	# some plugin might have registered to deal with this image URL
-	if ( my $handler = $class->getHandlerFor($url) ) {
+	if ($handler) {
 		$url = $handler->($url, $spec, $handleProxiedUrl);
 		return unless defined $url;
 	}
@@ -505,7 +506,7 @@ use strict;
 use constant PURGE_INTERVAL => 3600 * 8;  # interval between purge cycles
 # image proxy cache is slow to purge due to the large item sizes, so we do it in smaller chunks
 use constant INCREMENTAL_PURGE_CHUNKSIZE => 20;
-use constant INCREMENTAL_PURGE_INTERVAL => 60;
+use constant INCREMENTAL_PURGE_INTERVAL => 10;
 use constant FIRST_PURGE_DELAY => 20;
 
 sub new {
