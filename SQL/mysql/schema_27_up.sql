@@ -1,5 +1,4 @@
 ALTER TABLE albums ADD version blob;
-ALTER TABLE tracks ADD lms_persistent_id text;
 DROP INDEX IF EXISTS albumsLabelIndex;
 CREATE INDEX albumsLabelIndex ON albums (label);
 DROP TABLE IF EXISTS labels;
