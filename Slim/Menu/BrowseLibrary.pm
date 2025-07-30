@@ -764,7 +764,7 @@ sub _topLevel {
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
 		$args{'noEdit'}       = $params->{'noEdit'} if $params->{'noEdit'};
-		$args{'work_id'}       = $params->{'work_id'} if $params->{'work_id'};
+		$args{'work_id'}      = $params->{'work_id'} if $params->{'work_id'};
 
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -2166,47 +2166,56 @@ sub _playlists {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
 			$remote_library ||= $args->{'remote_library'};
+
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'playlist'};
-				$_->{'type'}          = 'playlist';
-				$_->{'playlist'}      = \&_playlistTracks;
-				$_->{'url'}           = \&_playlistTracks;
-				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
+				$_->{'name'} = $_->{'playlist'};
+
+				if ($_->{'id'} =~ /^file:/) {
+					$_->{'type'}     = 'link';
+					$_->{'url'}      = \&_playlists;
+					$_->{'textkey'}  = ' ';
+					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ], remote_library => $remote_library } ];
+				}
+				else {
+					$_->{'type'}        = 'playlist';
+					$_->{'playlist'}    = \&_playlistTracks;
+					$_->{'url'}         = $_->{'playlist'};
+					$_->{'itemActions'} = $remote_library ? {
+						commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
+					} : {
+						info => {
+							command     => ['playlistinfo', 'items'],
+							fixedParams => {playlist_id => $_->{'id'}},
+						},
+						items => {
+							command     => [BROWSELIBRARY, 'items'],
+							fixedParams => {
+								mode       => 'playlistTracks',
+								# %{&_tagsToParams(\@searchTags)},
+								playlist_id => $_->{'id'},
+							},
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', playlist_id => $_->{'id'}},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', playlist_id => $_->{'id'}},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', playlist_id => $_->{'id'}},
+						},
+					};
+					$_->{'itemActions'}->{'playall'} = $_->{'itemActions'}->{'play'};
+					$_->{'itemActions'}->{'addall'} = $_->{'itemActions'}->{'add'};
+
+					$_->{'passthrough'} = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
+				}
 			};
 
-			my %actions = $remote_library ? (
-				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
-			) : (
-				allAvailableActionsDefined => 1,
-				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
-				info => {
-					command     => ['playlistinfo', 'items'],
-				},
-				items => {
-					command     => [BROWSELIBRARY, 'items'],
-					fixedParams => {
-						mode       => 'playlistTracks',
-						%{&_tagsToParams(\@searchTags)},
-					},
-				},
-				play => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
-				},
-				add => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
-				},
-				insert => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert'},
-				},
-			);
-			$actions{'playall'} = $actions{'play'};
-			$actions{'addall'} = $actions{'add'};
-
-			return {items => $items, actions => \%actions, sorted => 1}, undef;
-
+			return {items => $items, sorted => 1}, undef;
 		},
 	);
 }

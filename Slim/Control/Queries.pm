@@ -31,10 +31,11 @@ L<Slim::Control::Queries> implements most Lyrion Music Server queries and is des
 use strict;
 
 use File::Basename qw(basename);
+use File::Spec::Functions qw(catdir);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
-use List::Util qw(first);
+use List::Util qw(first max);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
 use URI::Escape ();
@@ -589,7 +590,8 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /j/ ) {
-		$c->{'albums.artwork'} = 1;
+		$c->{'albums.artwork'} = 1 if !$work;
+		$c->{'tracks.coverid'} = 1 if $work;
 	}
 
 	if ( $tags =~ /t/ ) {
@@ -841,7 +843,10 @@ sub albumsQuery {
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'version', $c->{'albums.version'});
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') !~ /^https?:/;;
+			if ($tags =~ /j/) {
+				my $albumCover = $c->{'tracks.coverid'} ? $c->{'tracks.coverid'} : $c->{'albums.artwork'};
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $albumCover) if ($albumCover || '') !~ /^https?:/;
+			}
 			$tags =~ /K/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_url', $c->{'albums.artwork'}) if ($c->{'albums.artwork'} || '') =~ /^https?:/;
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
@@ -2791,35 +2796,99 @@ sub playlistsQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
+	my $folder   = $request->getParam('folder_id') || '';
 	my $tags     = $request->getParam('tags') || '';
 	my $libraryId= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 
+	my @items;
+	my @folders;
+	my $folderCount = 0;
+
 	# Normalize any search parameters
-	if (defined $search && !Slim::Schema->canFulltextSearch) {
-		$search = Slim::Utils::Text::searchStringSplit($search);
+	if ($search && !Slim::Schema->canFulltextSearch) {
+		$search = { titlesearch => Slim::Utils::Text::searchStringSplit($search) };
+	}
+	elsif ($search) {
+		$search = { titlesearch => $search };
+	}
+	elsif ($folder) {
+		$folder = Slim::Utils::Misc::pathFromFileURL($folder) if $folder =~ m{^file:/};
+		$folder = Slim::Utils::Misc::getPlaylistDir() if !$folder || $folder eq '/' || $folder eq 'file:';
+		$folder .= '/' unless $folder =~ m{/$};
+		$folder = Slim::Utils::Misc::fileURLFromPath($folder);
+		$search = {
+			folder => $folder,
+		};
+
+		# the SQL used to filter out items we want
+		my ($inFolderSQL, $sqlParams) = Slim::Schema->rs('Playlist')->getPlaylistIdsSQL('all', { %$search, foldersOnly => 1 }, $libraryId);
+
+		# now we need to figure out folder names only:
+		my $folderSQL = qq(
+			WITH relative_paths AS (
+				SELECT id, replace(url, ?, '') AS relative_path
+				FROM tracks
+				WHERE id IN ($inFolderSQL)
+			)
+			SELECT substr(relative_path, 0, instr(relative_path, '/') ) AS folder_name
+			FROM relative_paths
+			WHERE relative_path != '' AND instr(relative_path, '/') > 0
+			GROUP BY folder_name;
+		);
+
+		my $folders = Slim::Schema->dbh->selectall_arrayref($folderSQL, undef, $folder, @$sqlParams);
+
+		foreach (@$folders) {
+			push @folders, {
+				url => $folder . $_->[0],
+				name => Slim::Utils::Misc::unescape($_->[0]),
+			}
+		}
+
+		$folderCount = scalar @folders;
+		@folders = sort { $a->{name} cmp $b->{name} } @folders;
 	}
 
 	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search, $libraryId);
 
 	# now build the result
-	my $count = $rs->count;
+	my $count = $folderCount + $rs->count;
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	if (defined $rs) {
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-		$count += 0;
+	if ($valid) {
+		my $loopname = 'playlists_loop';
+		my $chunkCount = 0;
 
-		my ($valid, $start, $end) = $request->normalize(
-			scalar($index), scalar($quantity), $count);
+		if ($start < $folderCount) {
+			while ($chunkCount <= $end && $chunkCount < $folderCount) {
+				my $item = $folders[$start + $chunkCount];
 
-		if ($valid) {
+				$request->addResultLoop($loopname, $chunkCount, "id", $item->{url});
+				$request->addResultLoop($loopname, $chunkCount, "playlist", $item->{name});
+				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $item->{url});
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', substr($item->{name}, 0, 1));
 
-			my $loopname = 'playlists_loop';
-			my $chunkCount = 0;
+				$chunkCount++;
+			}
+		}
 
+		if ($end < $folderCount) {
+			@items = splice(@items, $start, $end + 1);
+			$folderCount = scalar @items;
+		}
+
+		if ($end >= $folderCount) {
+			# if we have a folder, we need to start the playlist query at the end of the folder list
+			$start = max(0, $start - $folderCount);
+			$end = $end - $folderCount;
+		}
+
+		if ($end >= 0) {
 			for my $eachitem ($rs->slice($start, $end)) {
 
 				my $id = $eachitem->id();
@@ -2842,10 +2911,8 @@ sub playlistsQuery {
 		}
 
 		$request->addResult("count", $count);
-
-	} else {
-		$request->addResult("count", 0);
 	}
+
 	$request->setStatusDone();
 }
 
@@ -2969,7 +3036,6 @@ sub readDirectoryQuery {
 	my $folder     = $request->getParam('folder');
 	my $filter     = $request->getParam('filter');
 
-	use File::Spec::Functions qw(catdir);
 	my @fsitems;		# raw list of items
 	my %fsitems;		# meta data cache
 
@@ -4217,7 +4283,7 @@ sub statusQuery {
 		if (!$totalOnly) {
 			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
-			if ($track->remote) {
+			if ( _notLocalTrackAndRemoteUrl($track) ) {
 				$tags .= "B" unless $totalOnly; # include button remapping
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
@@ -4270,7 +4336,7 @@ sub statusQuery {
 
 					push @addedFromWork, $track->added_from_work;
 
-					if ( $track->remote ) {
+					if ( _notLocalTrackAndRemoteUrl($track) ) {
 						push @tracks, $track;
 					}
 					else {
@@ -4447,7 +4513,7 @@ sub songinfoQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $url	     = $request->getParam('url');
+	my $url      = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
 
@@ -4464,12 +4530,9 @@ sub songinfoQuery {
 
 		$track = Slim::Schema->find('Track', $trackID);
 
-	} else {
+	} elsif ( defined $url ){
 
-		if ( defined $url ){
-
-			$track = Slim::Schema->objectForUrl($url);
-		}
+		$track = Slim::Schema->libraryObjectForUrl($url);
 	}
 
 	# now build the result
@@ -4579,7 +4642,7 @@ sub tagsQuery {
 	my $request = shift;
 
 	if ($request->isNotQuery([['tags']])) {
-		$request->setStatusBadConfig();
+		$request->setStatusBadDispatch();
 		return;
 	}
 
@@ -4930,7 +4993,7 @@ sub worksQuery {
 	my $w   = [];
 	my $p   = [];
 
-	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT albums.artwork), GROUP_CONCAT(DISTINCT albums.id)";
+	my $columns = "works.title, works.id, composer.name, composer.id, composer.namesort, works.titlesort, GROUP_CONCAT(DISTINCT tracks.coverid), GROUP_CONCAT(DISTINCT albums.id)";
 
 	my $sql = 'SELECT %s FROM tracks
 		JOIN contributor_track composer_track ON composer_track.track = tracks.id AND composer_track.role = 2
@@ -5728,7 +5791,7 @@ sub _songData {
 	}
 
 	# figure out the track object
-	my $track = Slim::Schema->objectForUrl($pathOrObj);
+	my $track = Slim::Schema->libraryObjectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -5748,7 +5811,7 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote;
+	my $isRemote = _notLocalTrackAndRemoteUrl($track);
 	my $url = $track->url;
 
 	my $song;
@@ -6722,6 +6785,11 @@ sub _createIndexList {
 	}
 
 	return \@indexList;
+}
+
+sub _notLocalTrackAndRemoteUrl {
+	my $track = shift;
+	return ref($track) && ref($track) ne 'Slim::Schema::Track' && $track->can('remote') && $track->remote;
 }
 
 =head1 SEE ALSO

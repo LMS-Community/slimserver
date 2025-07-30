@@ -24,9 +24,10 @@ my $cache = Slim::Utils::Cache->new;
 
 # known skins which don't need all the overhead of DB related variables in index.html
 my %lightIndex = (
+	Classic => 1,
 	Default => 1,
 	EN => 1,
-	Classic => 1,
+	Logic => 1,
 );
 
 sub init {
