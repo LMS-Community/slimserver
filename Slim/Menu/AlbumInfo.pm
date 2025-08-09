@@ -239,7 +239,6 @@ sub infoContributors {
 			items => {
 				command     => ['browselibrary', 'items'],
 				# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
-				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, role_id => ((grep /^$role$/, ('ARTIST','ALBUMARTIST','TRACKARTIST')) ? undef : $role) },
 				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, (grep /^\Q$role\E$/, ('ARTIST','ALBUMARTIST','TRACKARTIST') ? '' : role_id => $role) },
 			},
 			play => {
