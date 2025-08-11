@@ -233,13 +233,15 @@ sub infoContributors {
 		my ($items, $contributor, $role) = @_;
 
 		my $id = $contributor->id;
+		my $itemsFixedParams = { mode => 'albums', artist_id => $id, library_id => $library_id };
+		# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
+		$itemsFixedParams->{role_id} = $role if !grep { $_ eq $role } ('ARTIST','ALBUMARTIST','TRACKARTIST');
 
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
 				command     => ['browselibrary', 'items'],
-				# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
-				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, (grep /^\Q$role\E$/, ('ARTIST','ALBUMARTIST','TRACKARTIST') ? '' : role_id => $role) },
+				fixedParams => $itemsFixedParams,
 			},
 			play => {
 				command     => ['playlistcontrol'],
