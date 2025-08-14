@@ -9,13 +9,12 @@
         <script TYPE="text/javascript" src="[% webroot %]html/dragdrop.js?r=[% revision %]"></script>
         <script>
            document.addEventListener("DOMContentLoaded", function() {
-           initPlaylistDragDrop(".browsedbList");
+             initPlaylistDragDrop(".browsedbList");
            });
         </script>
 </head>
 
 <body onload="javascript:to_currentsong()">
-<div id="playerid" style="display:none;" >[% playerURI %]</div>
 <div id="playList">
 	[% IF playercount == '0' %]
 	[% ELSE %]

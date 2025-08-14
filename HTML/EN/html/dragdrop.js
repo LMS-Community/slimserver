@@ -15,7 +15,6 @@ function initPlaylistDragDrop(listSelector) {
 
     let draggedItem = null;
     // Attach drag-and-drop behavior to direct children
-    //list.querySelectorAll(":scope > div").forEach(item => {
     list.querySelectorAll(":scope > div").forEach((item, index) => {
         item.setAttribute("draggable", "true");
         item.setAttribute('data-index', index);
@@ -23,7 +22,7 @@ function initPlaylistDragDrop(listSelector) {
         item.addEventListener("dragstart", function(e) {
             draggedItem = this;
             e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/plain", ""); // required in Firefox
+            e.dataTransfer.setData("text/plain", index); // required in Firefox
             this.classList.add("dragging");
         });
 
@@ -89,17 +88,6 @@ function clearDropStyles(list) {
 }
 
 
-// Get the player ID from the DOM and decode it
-function getPlayerId() {
-    const playerIdElement = document.getElementById('playerid');
-    if (playerIdElement) {
-        // The MAC address is URL encoded in the DOM, so decode it
-        return decodeURIComponent(playerIdElement.textContent || playerIdElement.innerText);
-    }
-    return null;
-}
-
-
 function handlePlaylistDragEnd(event) {
     const draggedElement = event.target;
     const fromIndex = parseInt(draggedElement.getAttribute('data-index'));
@@ -108,22 +96,56 @@ function handlePlaylistDragEnd(event) {
     if (fromIndex === toIndex) {
         return;
     }
-    let player_id = getPlayerId();
-    if (player_id !=null){ 
-      movePlaylistItemXHR(player_id, fromIndex, toIndex) 
-    }
+    //movePlaylistItemXHR(fromIndex, toIndex);
+    movePlaylistItemFetch(fromIndex, toIndex) ;
 }
 
 
-function movePlaylistItemXHR(playerID, fromIndex, toIndex) {
+function movePlaylistItemFetch(fromIndex, toIndex) {
+    const jsonRpcPayload = {
+        id: 1,
+        method: "slim.request",
+        params: [
+            playerid, // The MAC address or ID of the current player
+            [
+                "playlist",
+                "move",
+                fromIndex,
+                toIndex
+            ]
+        ]
+    };
+    
+    fetch('/jsonrpc.js', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jsonRpcPayload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Playlist move successful:', data);
+    })
+    .catch(error => {
+        console.error('Error moving playlist item:', error);
+    });
+}
+
+
+
+function movePlaylistItemXHR(fromIndex, toIndex) {
+    if (playerid==null){return;}
+    if (isNaN(fromIndex)) {return;}
+    if (isNaN(toIndex)) {return;}
     const xhr = new XMLHttpRequest();
-    const url = `/status.html?p0=playlist&p1=move&p2=${fromIndex}&p3=${toIndex}&player=${playerID}&ajax=1`;
+    const url = `/status.html?p0=playlist&p1=move&p2=${fromIndex}&p3=${toIndex}&player=${playerid}&ajax=1`;
     console.log("Calling URL : " + url)
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                console.log('Player ' + playerID + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
+                console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
             } else {
                 console.error('Failed to move playlist item');
             }
