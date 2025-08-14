@@ -244,13 +244,3 @@ td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
 	background-image: url('data:image/gif;base64,R0lGODlhDQAFAJEAAAAAAIuLi+zs7AAAACH5BAkKAAMALAAAAAANAAUAAAIPVI4hw2y5WntKWhOtzLYAADs=');
 }
 
-
-.dragging {
-    opacity: 0.4;
-}
-.drop-target-above {
-    border-top: 2px solid #ccc;
-}
-.drop-target-below {
-    border-bottom: 2px solid #ccc;
-}

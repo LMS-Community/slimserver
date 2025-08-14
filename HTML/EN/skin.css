@@ -1,0 +1,9 @@
+.dragging {
+    opacity: 0.4;
+}
+.drop-target-above {
+    border-top: 2px solid #ccc;
+}
+.drop-target-below {
+    border-bottom: 2px solid #ccc;
+}
