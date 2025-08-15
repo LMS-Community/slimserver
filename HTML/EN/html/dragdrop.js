@@ -13,6 +13,7 @@ function initPlaylistDragDrop(listSelector) {
     }
 
     let draggedItem = null;
+    let bgcolor=null;
     // Attach drag-and-drop behavior to direct children
     list.querySelectorAll(":scope > div").forEach((item, index) => {
         item.setAttribute("draggable", "true");
@@ -20,6 +21,8 @@ function initPlaylistDragDrop(listSelector) {
 
         item.addEventListener("dragstart", function(e) {
             draggedItem = this;
+            bgcolor = this.style.backgroundColor;
+            this.style.backgroundColor = "#c5c5c5";
             e.dataTransfer.effectAllowed = "move";
             e.dataTransfer.setData("text/plain", index); // required in Firefox
             this.classList.add("dragging");
@@ -27,6 +30,7 @@ function initPlaylistDragDrop(listSelector) {
 
         item.addEventListener("dragend", function(e) {
             this.classList.remove("dragging");
+            this.style.backgroundColor = bgcolor;
             handlePlaylistDragEnd(e);
             clearDropStyles(list);
             draggedItem = null;
