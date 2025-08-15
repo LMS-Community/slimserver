@@ -1,5 +1,4 @@
-// dragdrop.js
-
+// dragdrop.js for re-ordering playlists when using the classic skin.
 function initPlaylistDragDrop(listSelector) {
     // Feature detection for HTML5 drag-and-drop
     if (!("draggable" in document.createElement("div"))) {
@@ -69,25 +68,20 @@ function initPlaylistDragDrop(listSelector) {
             }
         });
     });
-
     // Initial odd/even setup
     updateOddEven(list);
 }
-
 function updateOddEven(list) {
     list.querySelectorAll(":scope > div").forEach((el, index) => {
         el.classList.remove("odd", "even");
         el.classList.add(index % 2 === 0 ? "odd" : "even");
     });
 }
-
 function clearDropStyles(list) {
     list.querySelectorAll(".drop-target-above, .drop-target-below").forEach(el => {
         el.classList.remove("drop-target-above", "drop-target-below");
     });
 }
-
-
 function handlePlaylistDragEnd(event) {
     const draggedElement = event.target;
     const fromIndex = parseInt(draggedElement.getAttribute('data-index'));
@@ -99,9 +93,11 @@ function handlePlaylistDragEnd(event) {
     //movePlaylistItemXHR(fromIndex, toIndex);
     movePlaylistItemFetch(fromIndex, toIndex) ;
 }
-
-
 function movePlaylistItemFetch(fromIndex, toIndex) {
+    if (playerid==null){return;}
+    if (isNaN(fromIndex)) {return;}
+    if (isNaN(toIndex)) {return;}
+
     const jsonRpcPayload = {
         id: 1,
         method: "slim.request",
@@ -125,37 +121,12 @@ function movePlaylistItemFetch(fromIndex, toIndex) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Playlist move successful:', data);
+        console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
     })
     .catch(error => {
         console.error('Error moving playlist item:', error);
     });
 }
-
-
-
-function movePlaylistItemXHR(fromIndex, toIndex) {
-    if (playerid==null){return;}
-    if (isNaN(fromIndex)) {return;}
-    if (isNaN(toIndex)) {return;}
-    const xhr = new XMLHttpRequest();
-    const url = `/status.html?p0=playlist&p1=move&p2=${fromIndex}&p3=${toIndex}&player=${playerid}&ajax=1`;
-    console.log("Calling URL : " + url)
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
-            } else {
-                console.error('Failed to move playlist item');
-            }
-        }
-    };
-    xhr.open('GET', url, true);
-    xhr.send();
-}
-
-
 // Helper function to calculate the new index based on drop position
 function calculateNewIndex(draggedElement) {
     const playlistContainer = document.getElementById('playList');
