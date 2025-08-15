@@ -29,8 +29,8 @@ function initPlaylistDragDrop(listSelector) {
         });
 
         item.addEventListener("dragend", function(e) {
-            this.classList.remove("dragging");
             this.style.backgroundColor = bgcolor;
+            this.classList.remove("dragging");
             handlePlaylistDragEnd(e);
             clearDropStyles(list);
             draggedItem = null;
@@ -58,10 +58,11 @@ function initPlaylistDragDrop(listSelector) {
         });
 
         item.addEventListener("drop", function(e) {
+            e.preventDefault();
             e.stopPropagation();
             clearDropStyles(list);
 
-            if (draggedItem !== this) {
+            if (draggedItem && draggedItem !== this && draggedItem.parentNode === list) {
                 const bounding = this.getBoundingClientRect();
                 const offset = e.clientY - bounding.top;
                 if (offset > bounding.height / 2) {
