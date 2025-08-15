@@ -127,6 +127,7 @@ function movePlaylistItemFetch(fromIndex, toIndex) {
     .then(response => response.json())
     .then(data => {
         console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
+        updatePlaylistDisplay();
     })
     .catch(error => {
         console.error('Error moving playlist item:', error);
@@ -138,4 +139,23 @@ function calculateNewIndex(draggedElement) {
     const allItems = Array.from(playlistContainer.querySelectorAll('.odd, .even'));
     var newIndex=allItems.indexOf(draggedElement);
     return newIndex;
+}
+// Function to update the playlist display by reloading the frame
+function updatePlaylistDisplay() {
+    // Method 1: If this code is running inside the frame itself
+    if (window.self !== window.top) {
+        // We're in a frame, reload ourselves
+        window.location.reload();
+    } else {
+        // Or if we need to reload a specific frame from the parent using the playlist frame name
+        const playlistFrame = window.frames['playlist'];
+        if (playlistFrame) {
+            if (playlistFrame.contentWindow) {
+                playlistFrame.contentWindow.location.reload(); 
+            } else {
+                // Fallback: reload by setting src
+                playlistFrame.src = playlistFrame.src;
+            }
+        }
+    }
 }
