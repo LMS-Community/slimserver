@@ -1,7 +1,7 @@
 package Slim::Plugin::AudioScrobbler::Plugin;
 
 
-# This plugin handles submission of tracks to Last.fm (Audioscrobbler v1.2) service.
+# This plugin handles submission of tracks to Last.fm (Audioscrobbler v1.2) and ListenBrainz service.
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
 # Lyrion Music Server Copyright 2025 Lyrion Community.
