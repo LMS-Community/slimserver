@@ -64,20 +64,20 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
 	SV	Om du vill ta bort ett befintligt konto, markerar du motsvarande kryssruta.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
-	CS	Zadejte vaše přihlašovací jméno a heslo k Last.fm či ListenBrainz.
-	DA	Skriv dit brugernavn og adgangskoden til Last.fm eller ListenBrainz.
-	DE	Geben Sie Benutzername und Kennwort für Last.fm oder ListenBrainz ein.
-	EN	Enter your Last.fm username and password or ListenBrainz.
-	ES	Introduzca su nombre de usuario y su contraseña de Last.fm o ListenBrainz.
-	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana tai ListenBrainz.
-	FR	Saisissez votre nom d'utilisateur et votre mot de passe Last.fm ou ListenBrainz.
-	HU	Adja meg Last.fm felhasználónevét és jelszavát vagy ListenBrainz.
-	IT	Immettere nome utente e password di Last.fm o ListenBrainz.
-	NL	Voer jouw gebruikersnaam en wachtwoord voor Last.fm of ListenBrainz in.
-	NO	Oppgi brukernavn og passord for Last.fm eller ListenBrainz.
-	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm lub ListenBrainz.
-	RU	Введите имя пользователя и пароль Last.fm или ListenBrainz.
-	SV	Ange användarnamn och lösenord för Last.fm eller ListenBrainz.
+	CS	Zadejte vaše přihlašovací jméno a heslo k Last.fm či údaje k ListenBrainz.
+	DA	Skriv dit brugernavn og adgangskoden til Last.fm eller legitimationsoplysninger til ListenBrainz.
+	DE	Geben Sie Benutzername und Kennwort für Last.fm oder Anmeldedaten für ListenBrainz ein.
+	EN	Enter your Last.fm username and password or credentials for ListenBrainz.
+	ES	Introduzca su nombre de usuario y su contraseña de Last.fm o credenciales de ListenBrainz.
+	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana tai ListenBrainz-tunnistetiedot.
+	FR	Saisissez votre nom d'utilisateur et votre mot de passe Last.fm ou identifiants ListenBrainz.
+	HU	Adja meg Last.fm felhasználónevét és jelszavát vagy ListenBrainz hitelesítő adatok.
+	IT	Immettere nome utente e password di Last.fm o credenziali di ListenBrainz.
+	NL	Voer jouw gebruikersnaam en wachtwoord voor Last.fm of inloggegevens voor ListenBrainz in.
+	NO	Oppgi brukernavn og passord for Last.fm eller påloggingsopplysninger for ListenBrainz.
+	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm lub dane uwierzytelniające ListenBrainz.
+	RU	Введите имя пользователя и пароль Last.fm или учетные данные ListenBrainz.
+	SV	Ange användarnamn och lösenord för Last.fm eller inloggningsuppgifter för ListenBrainz.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME
 	CS	Uživatelské jméno:
