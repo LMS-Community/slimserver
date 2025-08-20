@@ -139,18 +139,26 @@ sub handler {
 			}
 			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'listenbrainz' ) {
 				# Listenbrainz
-				if ( $params->{pref_password} ) {
-					push @{ $params->{pref_accounts} }, {
-						username    => $params->{pref_username},
-						password    => $params->{pref_password},
-						api_type    => $params->{pref_api_type},
-						api_url     => $params->{pref_api_url},
-					};
-					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug( "Saving Listenbrainz account: " . Data::Dump::dump( $params->{pref_accounts} ) );
-					}
+				Slim::Plugin::AudioScrobbler::Plugin::validateListenBrainz( {
+					api_url => $params->{pref_api_url},
+					api_key => $params->{pref_password},
+					pref_accounts => $params->{pref_accounts},
 
-						my $msg  = 'Listenbrainz API token uložen.';
+					cb       => sub {
+						# Callback for OK validation response
+
+						push @{ $params->{pref_accounts} }, {
+							username    => $params->{pref_username},
+							password    => $params->{pref_password},
+							api_type    => $params->{pref_api_type},
+							api_url     => $params->{pref_api_url},
+						};
+
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Saving ListenBrainz account: " . Data::Dump::dump( $params->{pref_accounts} ) );
+						}
+
+						my $msg  = 'ListenBrainz API token validated and saved.';
 						my $body = $class->SUPER::handler( $client, $params );
 
 						if ( $params->{AJAX} ) {
@@ -162,9 +170,15 @@ sub handler {
 						}
 
 						$callback->( $client, $params, $body, @args );
-						return;
-					} else {
-						my $error = 'Missing Listenbrainz API token.';
+					},
+					ecb      => sub {
+						# Callback for any errors
+						my $error = shift;
+
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Error validating ListenBrainz account: " . Data::Dump::dump( $error ) );
+						}
+
 						if ( $params->{AJAX} ) {
 							$params->{warning} = $error;
 							$params->{validated}->{valid} = 0;
@@ -173,15 +187,17 @@ sub handler {
 							$params->{warning} .= $error . '<br/>';
 						}
 
-					delete $params->{pref_username};
-					delete $params->{pref_password};
-					delete $params->{pref_api_url};
-					delete $params->{pref_api_type};
+						delete $params->{pref_username};
+						delete $params->{pref_password};
+						delete $params->{pref_api_url};
+						delete $params->{pref_api_type};
 
-					my $body = $class->SUPER::handler( $client, $params );
-					$callback->( $client, $params, $body, @args );
-					return;
-				}
+						my $body = $class->SUPER::handler( $client, $params );
+						$callback->( $client, $params, $body, @args );
+					},
+				} );
+
+				return;
 			}
 		}
 	}

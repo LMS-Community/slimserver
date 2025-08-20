@@ -915,6 +915,106 @@ sub _updateNowPlayingListenBrainz {
 	submitNowPlayingListenBrainz( $client, $track );
 }
 
+sub validateListenBrainz {
+	my $params = shift || {};
+
+	my $api_url = $params->{api_url};
+	my $api_key = $params->{api_key};
+
+	# Handle empty/undefined api_url by setting default
+	if (!defined $api_url || $api_url eq '' || $api_url =~ /^\s*$/) {
+		$api_url = 'https://api.listenbrainz.org';
+	}
+	
+	# Normalize ListenBrainz endpoint to always end with /1/validate-token
+	# Remove everything after /1/ and add the correct endpoint
+	$api_url =~ s{/1/.*$}{/1/validate-token};
+	# Or if the URL doesn't end with /1/, add the whole path
+	if ($api_url !~ m{/1/validate-token$}) {
+		$api_url =~ s{/$}{}; # remove trailing slash
+		if ($api_url !~ m{/1$}) {
+			$api_url .= '/1/validate-token';
+		} else {
+			$api_url .= '/validate-token';
+		}
+	}
+
+	if (!$api_key) {
+		if ( $params->{ecb} ) {
+			$params->{ecb}->('Missing ListenBrainz API token');
+		}
+		return;
+	}
+
+	main::DEBUGLOG && $log->debug("Validating ListenBrainz token: $api_url");
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_validateListenBrainzOK,
+		\&_validateListenBrainzError,
+		{
+			params  => $params,
+			timeout => 30,
+		},
+	);
+
+	$http->get(
+		$api_url,
+		'Authorization' => "Token $api_key",
+	);
+}
+
+sub _validateListenBrainzOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+
+	my $content = $http->content;
+	
+	main::DEBUGLOG && $log->debug("ListenBrainz validation response: $content");
+
+	# Parse JSON response
+	my $response;
+	eval {
+		require JSON::XS;
+		$response = JSON::XS->new->utf8->decode($content);
+	};
+	
+	if ($@ || !$response) {
+		$log->error("Failed to parse ListenBrainz validation response: $@");
+		if ( $params->{ecb} ) {
+			$params->{ecb}->('Invalid response from ListenBrainz API');
+		}
+		return;
+	}
+
+	# Check if validation was successful
+	if ($response->{valid} && ($response->{valid} eq 'true' || $response->{valid} == 1)) {
+		main::DEBUGLOG && $log->debug('ListenBrainz token validation successful');
+		
+		if ( $params->{cb} ) {
+			$params->{cb}->();
+		}
+	} else {
+		my $error = $response->{error} || 'Invalid ListenBrainz API token';
+		$log->error("ListenBrainz token validation failed: $error");
+		
+		if ( $params->{ecb} ) {
+			$params->{ecb}->($error);
+		}
+	}
+}
+
+sub _validateListenBrainzError {
+	my $http   = shift;
+	my $error  = $http->error;
+	my $params = $http->params('params');
+
+	$log->error("Error validating ListenBrainz token: $error");
+
+	if ( $params->{ecb} ) {
+		$params->{ecb}->($error);
+	}
+}
+
 sub checkScrobble {
 	my ( $client, $track, $checktime, $rating ) = @_;
 
