@@ -301,8 +301,8 @@ sub handshake {
 			for my $account ( @{$accounts} ) {
 				if ( $account->{username} eq $params->{username} ) {
 					$params->{password} = $account->{password};
-					$params->{api_type}  = $account->{api_type}  || 'lastfm';
-					$params->{api_url}   = $account->{api_url}   || '';
+					$params->{api_type}  = $account->{api_type};
+					$params->{api_url}   = $account->{api_url};
 					last;
 				}
 			}
@@ -311,19 +311,14 @@ sub handshake {
 
 	my $time = time();
 
-	# Get API type and URL with defaulting
-	my $api_type = $params->{api_type};
-	my $api_url  = $params->{api_url};
+	# Get URL with defaulting
+	my $api_url = $params->{api_url};
 
 	my $url;
-	if ($api_type eq 'lastfm') {
-		if ($api_url && $api_url ne '') {
-			$url = $api_url;
-		} else {
-			$url = HANDSHAKE_URL;
-		}
+	if ($api_url && $api_url ne '') {
+		$url = $api_url;
 	} else {
-		$url = $api_url || HANDSHAKE_URL;
+		$url = HANDSHAKE_URL;
 	}
 
 	$url .= '/' unless $url =~ m{/$};
@@ -504,13 +499,14 @@ sub newsongCallback {
 	my $queue = getQueue($client);
 
 	my $accounts = getAccounts($client);
-	my $api_type = 'lastfm';
+	my $api_type;
 	for my $acc (@{$accounts}) {
 		if ($acc->{username} eq $account) {
-			$api_type = $acc->{api_type} || 'lastfm';
+			$api_type = $acc->{api_type};
 			last;
 		}
 	}
+
 	if ( scalar @{$queue} && scalar @{$queue} <= 50 ) {
 		# before we submit now playing, submit all queued tracks, so that
 		# a scrobbled track doesn't clobber the now playing data
@@ -896,13 +892,14 @@ sub _updateNowPlayingListenBrainz {
 
 	# Check if it's still a ListenBrainz account
 	my $accounts = getAccounts($client);
-	my $api_type = 'lastfm';
+	my $api_type;
 	for my $acc (@{$accounts}) {
 		if ($acc->{username} eq $account) {
-			$api_type = $acc->{api_type} || 'lastfm';
+			$api_type = $acc->{api_type};
 			last;
 		}
 	}
+
 	
 	if ($api_type ne 'listenbrainz') {
 		main::DEBUGLOG && $log->debug('ListenBrainz: Account type changed, stopping Now Playing updates');
@@ -1164,9 +1161,9 @@ sub submitScrobble {
 	my ($api_type, $api_url, $api_key);
 	for my $acc (@{$accounts}) {
 		if ($acc->{username} eq $account) {
-			$api_type = $acc->{api_type} || 'lastfm';
-			$api_url  = $acc->{api_url}  || '';
-			$api_key  = $acc->{password} || '';
+			$api_type = $acc->{api_type};
+			$api_url  = $acc->{api_url};
+			$api_key  = $acc->{password};
 			last;
 		}
 	}
