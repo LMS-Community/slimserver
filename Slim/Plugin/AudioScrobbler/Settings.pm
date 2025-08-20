@@ -62,7 +62,7 @@ sub handler {
 		# Save new account
 		if ( $params->{pref_password} ) {
 			# Last.fm Password (MD5)
-			if ( !($params->{pref_api_type} && $params->{pref_api_type} eq 'listenbrainz') ) {
+			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'lastfm' ) {
 				$params->{pref_password} = md5_hex( $params->{pref_password} );
 			}
 			# Listenbrainz API token (Plain)
