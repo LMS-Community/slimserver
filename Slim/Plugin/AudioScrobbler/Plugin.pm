@@ -1038,46 +1038,46 @@ sub submitScrobble {
 
 		return $cb->();
 	}
-       # Find out the API type and call ListenBrainz if necessary
-       my $accounts = getAccounts($client);
-       my ($api_type, $api_url, $api_key);
-       for my $acc (@{$accounts}) {
-	       if ($acc->{username} eq $account) {
-		       $api_type = $acc->{api_type} || 'lastfm';
-		       $api_url  = $acc->{api_url}  || '';
-		       $api_key  = $acc->{password} || '';
-		       last;
-	       }
-       }
-       if ( main::DEBUGLOG && $log->is_debug ) {
-	       $log->debug("Submitting to: account=$account, api_type=$api_type, api_url=$api_url, api_key=" . (length($api_key) ? substr($api_key,0,6).'...' : ''));
-       }
-       if ($api_type && $api_type eq 'listenbrainz') {
-	       if ( main::DEBUGLOG && $log->is_debug ) {
-		       $log->debug("Listenbrainz: Submitting " . scalar(@{$queue}) . " queued item(s)");
-	       }
-	       _submitListenBrainz($client, $queue, $api_url, $api_key, $cb);
-	       setQueue($client, []); # Empty the queue after sending
-	       return; # End for ListenBrainz
-       }
+	# Find out the API type and call ListenBrainz if necessary
+	my $accounts = getAccounts($client);
+	my ($api_type, $api_url, $api_key);
+	for my $acc (@{$accounts}) {
+		if ($acc->{username} eq $account) {
+			$api_type = $acc->{api_type} || 'lastfm';
+			$api_url  = $acc->{api_url}  || '';
+			$api_key  = $acc->{password} || '';
+			last;
+		}
+	}
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug("Submitting to: account=$account, api_type=$api_type, api_url=$api_url, api_key=" . (length($api_key) ? substr($api_key,0,6).'...' : ''));
+	}
+	if ($api_type && $api_type eq 'listenbrainz') {
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug("Listenbrainz: Submitting " . scalar(@{$queue}) . " queued item(s)");
+		}
+		_submitListenBrainz($client, $queue, $api_url, $api_key, $cb);
+		setQueue($client, []); # Empty the queue after sending
+		return; # End for ListenBrainz
+	}
 
-       # Check for submit_url and possible handshake
-       if ( !$client->master->pluginData('submit_url') ) {
-	       # Get a new session
-	       handshake( {
-		       client => $client,
-		       cb     => sub {
-			       submitScrobble( $client, $params );
-		       },
-	       } );
-	       return;
-       }
+	# Check for submit_url and possible handshake
+	if ( !$client->master->pluginData('submit_url') ) {
+		# Get a new session
+		handshake( {
+			client => $client,
+			cb     => sub {
+				submitScrobble( $client, $params );
+			},
+		} );
+		return;
+	}
 
-       # Logging the number of items in the queue
-       if ( main::DEBUGLOG && $log->is_debug ) {
-	       $log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
-	       #$log->debug( Data::Dump::dump($queue) );
-       }
+	# Logging the number of items in the queue
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
+		#$log->debug( Data::Dump::dump($queue) );
+	}
 
 	# Get the currently playing track
 	my $current_track;
