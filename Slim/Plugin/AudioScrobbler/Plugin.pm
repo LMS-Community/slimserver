@@ -48,6 +48,27 @@ use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
 
+# Migration from version 0 to 1: add api_type and api_url to existing accounts
+$prefs->migrate(1, sub {
+	my $accounts = $prefs->get('accounts') || [];
+	
+	for my $account (@{$accounts}) {
+		# Add api_type if missing, defaulting to lastfm
+		if (!exists $account->{api_type}) {
+			$account->{api_type} = 'lastfm';
+		}
+		
+		# Add api_url if missing, defaulting to empty string
+		if (!exists $account->{api_url}) {
+			$account->{api_url} = '';
+		}
+	}
+	
+	# Save the updated accounts
+	$prefs->set('accounts', $accounts);
+	1;
+});
+
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.audioscrobbler',
 	defaultLevel => 'ERROR',
