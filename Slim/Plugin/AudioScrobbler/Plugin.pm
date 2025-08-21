@@ -1,11 +1,10 @@
 package Slim::Plugin::AudioScrobbler::Plugin;
 
 
-# This plugin handles submission of tracks to Last.fm's
-# Audioscrobbler service.
+# This plugin handles submission of tracks to Last.fm (Audioscrobbler v1.2) and ListenBrainz service.
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -48,6 +47,27 @@ use Digest::MD5 qw(md5_hex);
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
+
+# Migration from version 0 to 1: add api_type and api_url to existing accounts
+$prefs->migrate(1, sub {
+	my $accounts = $prefs->get('accounts') || [];
+	
+	for my $account (@{$accounts}) {
+		# Add api_type if missing, defaulting to lastfm
+		if (!exists $account->{api_type}) {
+			$account->{api_type} = 'lastfm';
+		}
+		
+		# Add api_url if missing, defaulting to empty string
+		if (!exists $account->{api_url}) {
+			$account->{api_url} = '';
+		}
+	}
+	
+	# Save the updated accounts
+	$prefs->set('accounts', $accounts);
+	1;
+});
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.audioscrobbler',
@@ -281,6 +301,8 @@ sub handshake {
 			for my $account ( @{$accounts} ) {
 				if ( $account->{username} eq $params->{username} ) {
 					$params->{password} = $account->{password};
+					$params->{api_type}  = $account->{api_type};
+					$params->{api_url}   = $account->{api_url};
 					last;
 				}
 			}
@@ -289,8 +311,18 @@ sub handshake {
 
 	my $time = time();
 
-	my $url = HANDSHAKE_URL
-		. '?hs=true&p=1.2'
+	# Get URL with defaulting
+	my $api_url = $params->{api_url};
+
+	my $url;
+	if ($api_url && $api_url ne '') {
+		$url = $api_url;
+	} else {
+		$url = HANDSHAKE_URL;
+	}
+
+	$url .= '/' unless $url =~ m{/$};
+	$url .= '?hs=true&p=1.2'
 		. '&c=' . CLIENT_ID
 		. '&v=' . CLIENT_VER
 		. '&u=' . $params->{username}
@@ -414,8 +446,12 @@ sub newsongCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
 
+	# Kill any existing ListenBrainz Now Playing update timers when a new song starts
+	Slim::Utils::Timers::killTimers( $client, \&_updateNowPlayingListenBrainz );
+
 	# Check if this player has an account selected
-	if ( ! (my $account = $prefs->client($client)->get('account')) ) {
+	my $account = $prefs->client($client)->get('account');
+	if ( !$account ) {
 		return ;
 	}
 
@@ -450,8 +486,26 @@ sub newsongCallback {
 		return;
 	}
 
-	# report all new songs as now playing
+	# Track must be > 30 seconds - check this early to avoid submitting short tracks for Now Playing
+	if ( $duration && $duration < 30 ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
+		}
+
+		return;
+	}
+
+	# report all new songs as now playing (for Last.fm)
 	my $queue = getQueue($client);
+
+	my $accounts = getAccounts($client);
+	my $api_type;
+	for my $acc (@{$accounts}) {
+		if ($acc->{username} eq $account) {
+			$api_type = $acc->{api_type};
+			last;
+		}
+	}
 
 	if ( scalar @{$queue} && scalar @{$queue} <= 50 ) {
 		# before we submit now playing, submit all queued tracks, so that
@@ -462,30 +516,34 @@ sub newsongCallback {
 			cb => sub {
 				# delay by 1 second so we don't hit the server too fast after
 				# the submit call
-				Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
-				Slim::Utils::Timers::setTimer(
-					$client,
-					time() + 1,
-					\&submitNowPlaying,
-					$track,
-				);
+				if ($api_type eq 'listenbrainz') {
+					Slim::Utils::Timers::killTimers( $client, \&submitNowPlayingListenBrainz );
+					Slim::Utils::Timers::setTimer(
+						$client,
+						time() + 1,
+						\&submitNowPlayingListenBrainz,
+						$track,
+					);
+				} else {
+					Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
+					Slim::Utils::Timers::setTimer(
+						$client,
+						time() + 1,
+						\&submitNowPlaying,
+						$track,
+					);
+				}
 			},
 		} );
-	}
-	else {
-		submitNowPlaying( $client, $track );
-	}
-
-	# Determine when we need to check again
-
-	# Track must be > 30 seconds
-	if ( $duration && $duration < 30 ) {
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
+		} else {
+		if ($api_type eq 'listenbrainz') {
+			submitNowPlayingListenBrainz( $client, $track );
+		} else {
+			submitNowPlaying( $client, $track );
+		}
 		}
 
-		return;
-	}
+	# Determine when we need to check again
 
 	my $title = $track->title;
 
@@ -668,6 +726,292 @@ sub _submitNowPlayingError {
 	);
 }
 
+sub submitNowPlayingListenBrainz {
+	my ( $client, $track, $retry ) = @_;
+
+	# Abort if the user disabled scrobbling for this player
+	return if !$prefs->client($client)->get('account');
+
+	my $meta = _getMetadata($client, $track);
+
+	if (!$meta) {
+		main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
+		return;
+	}
+
+	elsif ( $meta->{msg} ) {
+		main::DEBUGLOG && $log->debug( $meta->{msg} );
+		return;
+	}
+
+	# Get account information for ListenBrainz
+	my $account = $prefs->client($client)->get('account');
+	my $accounts = getAccounts($client);
+	my ($api_url, $api_key);
+	
+	for my $acc (@{$accounts}) {
+		if ($acc->{username} eq $account) {
+			$api_url = $acc->{api_url} || '';
+			$api_key = $acc->{password} || '';
+			last;
+		}
+	}
+
+	# Handle empty/undefined api_url by setting default
+	if (!defined $api_url || $api_url eq '' || $api_url =~ /^\s*$/) {
+		$api_url = 'https://api.listenbrainz.org';
+	}
+	
+	# Normalize ListenBrainz endpoint to always end with /1/submit-listens
+	$api_url =~ s{/$}{}; # remove trailing slash
+	if ($api_url =~ m{/1$}) {
+		$api_url .= '/submit-listens';
+	} elsif ($api_url !~ m{/1/submit-listens$}) {
+		$api_url .= '/1/submit-listens';
+	}
+
+	my %additional_info = (
+		media_player => 'Lyrion Media Server',
+		media_player_version => $::VERSION || '',
+		submission_client => 'Lyrion Media Server',
+		submission_client_version => $::VERSION || '',
+	);
+	$additional_info{duration} = int($meta->{duration}) if $meta->{duration};
+
+	my %track_metadata = (
+		artist_name  => $meta->{artist},
+		track_name   => $meta->{title},
+		release_name => $meta->{album},
+		additional_info => \%additional_info,
+	);
+	$track_metadata{tracknumber} = $meta->{tracknum} if defined $meta->{tracknum} && $meta->{tracknum} ne '';
+	$track_metadata{recording_mbid} = $track->musicbrainz_id if $track->musicbrainz_id;
+
+	my $payload = {
+		listen_type => 'playing_now',
+		payload     => [{
+			track_metadata => \%track_metadata,
+		}],
+	};
+
+	require JSON::XS;
+	my $json = JSON::XS->new->utf8->encode($payload);
+
+	main::DEBUGLOG && $log->debug("Submitting Now Playing track to ListenBrainz: " . $meta->{title});
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_submitNowPlayingListenBrainzOK,
+		\&_submitNowPlayingListenBrainzError,
+		{
+			client  => $client,
+			track   => $track,
+			retry   => $retry,
+			timeout => 30,
+		}
+	);
+
+	$http->post(
+		$api_url,
+		'Content-Type'  => 'application/json',
+		'Authorization' => "Token $api_key",
+		$json,
+	);
+}
+
+sub _submitNowPlayingListenBrainzOK {
+	my $http    = shift;
+	my $content = $http->content;
+	my $client  = $http->params('client');
+	my $track   = $http->params('track');
+	my $retry   = $http->params('retry');
+
+	main::DEBUGLOG && $log->debug('ListenBrainz Now Playing track submitted successfully: ' . $content);
+	
+	# Schedule next Now Playing update in 30 seconds for ListenBrainz
+	my $client = $http->params('client');
+	my $track = $http->params('track');
+	
+	if ($client && $track) {
+		Slim::Utils::Timers::killTimers( $client, \&_updateNowPlayingListenBrainz );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + 30,
+			\&_updateNowPlayingListenBrainz,
+			$track,
+		);
+	}
+}
+
+sub _submitNowPlayingListenBrainzError {
+	my $http   = shift;
+	my $error  = $http->error;
+	my $client = $http->params('client');
+	my $track  = $http->params('track');
+	my $retry  = $http->params('retry');
+
+	if ( $retry ) {
+		main::DEBUGLOG && $log->debug("ListenBrainz Now Playing track failed to submit after retry: $error, giving up");
+		return;
+	}
+
+	main::DEBUGLOG && $log->debug("ListenBrainz Now Playing track failed to submit: $error, retrying in 5 seconds");
+
+	# Retry once after 5 seconds
+	Slim::Utils::Timers::killTimers( $client, \&submitNowPlayingListenBrainz );
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 5,
+		\&submitNowPlayingListenBrainz,
+		$track,
+		'retry',
+	);
+}
+
+sub _updateNowPlayingListenBrainz {
+	my ( $client, $track ) = @_;
+
+	# Check if the same track is still playing
+	my $current_url = Slim::Player::Playlist::url($client);
+	if (!$current_url || $current_url ne $track->url) {
+		main::DEBUGLOG && $log->debug('ListenBrainz: Track changed, stopping Now Playing updates');
+		return;
+	}
+
+	# Check if player is still playing or paused (not stopped)
+	if ($client->isStopped()) {
+		main::DEBUGLOG && $log->debug('ListenBrainz: Player stopped, stopping Now Playing updates');
+		return;
+	}
+
+	# Check if account is still enabled
+	my $account = $prefs->client($client)->get('account');
+	if (!$account) {
+		main::DEBUGLOG && $log->debug('ListenBrainz: Account disabled, stopping Now Playing updates');
+		return;
+	}
+
+	# Check if it's still a ListenBrainz account
+	my $accounts = getAccounts($client);
+	my $api_type;
+	for my $acc (@{$accounts}) {
+		if ($acc->{username} eq $account) {
+			$api_type = $acc->{api_type};
+			last;
+		}
+	}
+
+	
+	if ($api_type ne 'listenbrainz') {
+		main::DEBUGLOG && $log->debug('ListenBrainz: Account type changed, stopping Now Playing updates');
+		return;
+	}
+
+	main::DEBUGLOG && $log->debug('ListenBrainz: Updating Now Playing (periodic update)');
+	
+	# Submit Now Playing again
+	submitNowPlayingListenBrainz( $client, $track );
+}
+
+sub validateListenBrainz {
+	my $params = shift || {};
+
+	my $api_url = $params->{api_url};
+	my $api_key = $params->{api_key};
+
+	# Handle empty/undefined api_url by setting default
+	if (!defined $api_url || $api_url eq '' || $api_url =~ /^\s*$/) {
+		$api_url = 'https://api.listenbrainz.org';
+	}
+	
+	# Normalize ListenBrainz endpoint to always end with /1/validate-token
+	# Remove everything after /1/ and add the correct endpoint
+	$api_url =~ s{/1/.*$}{/1/validate-token};
+	# Or if the URL doesn't end with /1/, add the whole path
+	if ($api_url !~ m{/1/validate-token$}) {
+		$api_url =~ s{/$}{}; # remove trailing slash
+		if ($api_url !~ m{/1$}) {
+			$api_url .= '/1/validate-token';
+		} else {
+			$api_url .= '/validate-token';
+		}
+	}
+
+	if (!$api_key) {
+		if ( $params->{ecb} ) {
+			$params->{ecb}->('Missing ListenBrainz API token');
+		}
+		return;
+	}
+
+	main::DEBUGLOG && $log->debug("Validating ListenBrainz token: $api_url");
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_validateListenBrainzOK,
+		\&_validateListenBrainzError,
+		{
+			params  => $params,
+			timeout => 30,
+		},
+	);
+
+	$http->get(
+		$api_url,
+		'Authorization' => "Token $api_key",
+	);
+}
+
+sub _validateListenBrainzOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+
+	my $content = $http->content;
+	
+	main::DEBUGLOG && $log->debug("ListenBrainz validation response: $content");
+
+	# Parse JSON response
+	my $response;
+	eval {
+		require JSON::XS;
+		$response = JSON::XS->new->utf8->decode($content);
+	};
+	
+	if ($@ || !$response) {
+		$log->error("Failed to parse ListenBrainz validation response: $@");
+		if ( $params->{ecb} ) {
+			$params->{ecb}->('Invalid response from ListenBrainz API');
+		}
+		return;
+	}
+
+	# Check if validation was successful
+	if ($response->{valid} && ($response->{valid} eq 'true' || $response->{valid} == 1)) {
+		main::DEBUGLOG && $log->debug('ListenBrainz token validation successful');
+		
+		if ( $params->{cb} ) {
+			$params->{cb}->();
+		}
+	} else {
+		my $error = $response->{error} || 'Invalid ListenBrainz API token';
+		$log->error("ListenBrainz token validation failed: $error");
+		
+		if ( $params->{ecb} ) {
+			$params->{ecb}->($error);
+		}
+	}
+}
+
+sub _validateListenBrainzError {
+	my $http   = shift;
+	my $error  = $http->error;
+	my $params = $http->params('params');
+
+	$log->error("Error validating ListenBrainz token: $error");
+
+	if ( $params->{ecb} ) {
+		$params->{ecb}->($error);
+	}
+}
+
 sub checkScrobble {
 	my ( $client, $track, $checktime, $rating ) = @_;
 
@@ -812,7 +1156,30 @@ sub submitScrobble {
 
 		return $cb->();
 	}
+	# Find out the API type and call ListenBrainz if necessary
+	my $accounts = getAccounts($client);
+	my ($api_type, $api_url, $api_key);
+	for my $acc (@{$accounts}) {
+		if ($acc->{username} eq $account) {
+			$api_type = $acc->{api_type};
+			$api_url  = $acc->{api_url};
+			$api_key  = $acc->{password};
+			last;
+		}
+	}
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug("Submitting to: account=$account, api_type=$api_type, api_url=$api_url, api_key=" . (length($api_key) ? substr($api_key,0,6).'...' : ''));
+	}
+	if ($api_type && $api_type eq 'listenbrainz') {
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug("Listenbrainz: Submitting " . scalar(@{$queue}) . " queued item(s)");
+		}
+		_submitListenBrainz($client, $queue, $api_url, $api_key, $cb);
+		setQueue($client, []); # Empty the queue after sending
+		return; # End for ListenBrainz
+	}
 
+	# Check for submit_url and possible handshake
 	if ( !$client->master->pluginData('submit_url') ) {
 		# Get a new session
 		handshake( {
@@ -824,6 +1191,7 @@ sub submitScrobble {
 		return;
 	}
 
+	# Logging the number of items in the queue
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
 		#$log->debug( Data::Dump::dump($queue) );
@@ -907,6 +1275,153 @@ sub submitScrobble {
 			$params,
 		);
 	}
+}
+
+# Scrobbling to ListenBrainz API
+sub _submitListenBrainz {
+	my ($client, $queue, $api_url, $api_key, $cb) = @_;
+	
+	# Handle empty/undefined api_url by setting default
+	if (!defined $api_url || $api_url eq '' || $api_url =~ /^\s*$/) {
+		$api_url = 'https://api.listenbrainz.org';
+	}
+	
+	# Normalize ListenBrainz endpoint to always end with /1/submit-listens
+	$api_url =~ s{/$}{}; # remove trailing slash
+	if ($api_url =~ m{/1$}) {
+		$api_url .= '/submit-listens';
+	} elsif ($api_url !~ m{/1/submit-listens$}) {
+		$api_url .= '/1/submit-listens';
+	}
+	my @listens;
+	foreach my $item (@$queue) {
+		my $origin_url = $item->{_url} && $item->{_url} =~ m{^https?://} ? $item->{_url} : undef;
+		my $music_service;
+		if ($origin_url) {
+			# Extract domain for music_service (e.g. youtube.com, spotify.com)
+			if ($origin_url =~ m{^https?://(?:www\.)?([^/]+)}) {
+				$music_service = $1;
+				# Normalize some common services
+				$music_service =~ s/^open\.spotify\.com$/spotify.com/;
+				$music_service =~ s/^www\.//;
+			}
+		}
+		my %additional_info = (
+			media_player => 'Lyrion Media Server',
+			media_player_version => $::VERSION || '',
+			submission_client => 'Lyrion Media Server',
+			submission_client_version => $::VERSION || '',
+			duration     => ($item->{l} ? int($item->{l}) : undef),
+		);
+		$additional_info{origin_url} = $origin_url if $origin_url;
+		$additional_info{music_service} = $music_service if $music_service;
+
+		my %track_metadata = (
+			artist_name  => uri_unescape($item->{a} // ''),
+			track_name   => uri_unescape($item->{t} // ''),
+			release_name => uri_unescape($item->{b} // ''),
+			additional_info => \%additional_info,
+		);
+		$track_metadata{tracknumber} = $item->{n} if defined $item->{n} && $item->{n} ne '';
+		$track_metadata{recording_mbid} = $item->{m} if defined $item->{m} && $item->{m} ne '';
+
+		# listened_at must be an integer (UNIX timestamp)
+		my $listened_at = $item->{i} || $item->{ts} || time();
+		$listened_at = int($listened_at);
+
+		push @listens, {
+			track_metadata => \%track_metadata,
+			listened_at => $listened_at,
+		};
+	}
+	# Submit items one by one to avoid 400 errors with multiple items
+	_submitListenBrainzItems($client, \@listens, $api_url, $api_key, $cb, 0);
+}
+
+# Helper function to submit ListenBrainz items one by one
+sub _submitListenBrainzItems {
+	my ($client, $listens, $api_url, $api_key, $cb, $index) = @_;
+	
+	# If we've processed all items, call the callback
+	if ($index >= scalar @$listens) {
+		$cb->() if $cb;
+		return;
+	}
+	
+	my $listen = $listens->[$index];
+	
+	# Create payload with single listen
+	my $payload = {
+		listen_type => 'single',
+		payload     => [$listen],
+	};
+	
+	require JSON::XS;
+	my $json = JSON::XS->new->utf8->encode($payload);
+	
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug("ListenBrainz: Submitting item " . ($index + 1) . " of " . scalar(@$listens) . ": " . $listen->{track_metadata}->{track_name});
+	}
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_submitListenBrainzOK,
+		\&_submitListenBrainzError,
+		{
+			client  => $client,
+			timeout => 30,
+			cb      => $cb,
+			listens => $listens,
+			api_url => $api_url,
+			api_key => $api_key,
+			index   => $index,
+		},
+	);
+	$http->post(
+		$api_url,
+		'Content-Type'  => 'application/json',
+		'Authorization' => "Token $api_key",
+		$json,
+	);
+}
+
+# Success callback for single ListenBrainz item submission
+sub _submitListenBrainzOK {
+	my $http = shift;
+	my $client = $http->params('client');
+	my $cb = $http->params('cb');
+	my $listens = $http->params('listens');
+	my $api_url = $http->params('api_url');
+	my $api_key = $http->params('api_key');
+	my $index = $http->params('index');
+	
+	main::DEBUGLOG && $log->debug("ListenBrainz: Item " . ($index + 1) . " submitted successfully : " . $http->content);
+	
+	# Submit next item with a small delay to avoid hitting rate limits
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 0.1,  # 100ms delay between submissions
+		sub { _submitListenBrainzItems($client, $listens, $api_url, $api_key, $cb, $index + 1); }
+	);
+}
+
+# Error callback for single ListenBrainz item submission
+sub _submitListenBrainzError {
+	my $http = shift;
+	my $client = $http->params('client');
+	my $cb = $http->params('cb');
+	my $listens = $http->params('listens');
+	my $api_url = $http->params('api_url');
+	my $api_key = $http->params('api_key');
+	my $index = $http->params('index');
+	
+	$log->error("ListenBrainz: Failed to submit item " . ($index + 1) . ": " . $http->error);
+	
+	# Continue with next item even if this one failed
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 0.1,  # 100ms delay between submissions
+		sub { _submitListenBrainzItems($client, $listens, $api_url, $api_key, $cb, $index + 1); }
+	);
 }
 
 # Check if a track is still playing

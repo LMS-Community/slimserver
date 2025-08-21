@@ -61,68 +61,144 @@ sub handler {
 
 		# Save new account
 		if ( $params->{pref_password} ) {
-			$params->{pref_password} = md5_hex( $params->{pref_password} );
+			# Last.fm Password (MD5)
+			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'lastfm' ) {
+				$params->{pref_password} = md5_hex( $params->{pref_password} );
+			}
+			# Listenbrainz API token (Plain)
 		}
 
 		# If the user added a username/password, we need to verify their info
 		if ( $params->{pref_username} && $params->{pref_password} ) {
-			Slim::Plugin::AudioScrobbler::Plugin::handshake( {
-				username => $params->{pref_username},
-				password => $params->{pref_password},
-				pref_accounts => $params->{pref_accounts},
+			# Split by API type
+			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'lastfm' ) {
+				# Last.fm
+				Slim::Plugin::AudioScrobbler::Plugin::handshake( {
+					username => $params->{pref_username},
+					password => $params->{pref_password},
+					api_type => $params->{pref_api_type},
+					api_url  => $params->{pref_api_url},
+					pref_accounts => $params->{pref_accounts},
 
-				cb       => sub {
-					# Callback for OK handshake response
+					cb       => sub {
+						# Callback for OK handshake response
 
-					push @{ $params->{pref_accounts} }, {
-						username => $params->{pref_username},
-						password => $params->{pref_password},
-					};
+						push @{ $params->{pref_accounts} }, {
+							username    => $params->{pref_username},
+							password    => $params->{pref_password},
+							api_type    => $params->{pref_api_type},
+							api_url     => $params->{pref_api_url},
+						};
 
-					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
-					}
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
+						}
 
-					my $msg  = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
-					my $body = $class->SUPER::handler( $client, $params );
+						my $msg  = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
+						my $body = $class->SUPER::handler( $client, $params );
 
-					if ( $params->{AJAX} ) {
-						$params->{warning} = $msg;
-						$params->{validated}->{valid} = 1;
-					}
-					else {
-						$params->{warning} .= $msg . '<br/>';
-					}
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $msg;
+							$params->{validated}->{valid} = 1;
+						}
+						else {
+							$params->{warning} .= $msg . '<br/>';
+						}
 
-					$callback->( $client, $params, $body, @args );
-				},
-				ecb      => sub {
-					# Callback for any errors
-					my $error = shift;
+						$callback->( $client, $params, $body, @args );
+					},
+					ecb      => sub {
+						# Callback for any errors
+						my $error = shift;
 
-					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
-					}
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
+						}
 
-					$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
+						$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
 
-					if ( $params->{AJAX} ) {
-						$params->{warning} = $error;
-						$params->{validated}->{valid} = 0;
-					}
-					else {
-						$params->{warning} .= $error . '<br/>';
-					}
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $error;
+							$params->{validated}->{valid} = 0;
+						}
+						else {
+							$params->{warning} .= $error . '<br/>';
+						}
 
-					delete $params->{pref_username};
-					delete $params->{pref_password};
+						delete $params->{pref_username};
+						delete $params->{pref_password};
+						delete $params->{pref_api_url};
+						delete $params->{pref_api_type};
 
-					my $body = $class->SUPER::handler( $client, $params );
-					$callback->( $client, $params, $body, @args );
-				},
-			} );
+						my $body = $class->SUPER::handler( $client, $params );
+						$callback->( $client, $params, $body, @args );
+					},
+				} );
 
-			return;
+				return;
+			}
+			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'listenbrainz' ) {
+				# Listenbrainz
+				Slim::Plugin::AudioScrobbler::Plugin::validateListenBrainz( {
+					api_url => $params->{pref_api_url},
+					api_key => $params->{pref_password},
+					pref_accounts => $params->{pref_accounts},
+
+					cb       => sub {
+						# Callback for OK validation response
+
+						push @{ $params->{pref_accounts} }, {
+							username    => $params->{pref_username},
+							password    => $params->{pref_password},
+							api_type    => $params->{pref_api_type},
+							api_url     => $params->{pref_api_url},
+						};
+
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Saving ListenBrainz account: " . Data::Dump::dump( $params->{pref_accounts} ) );
+						}
+
+						my $msg  = 'ListenBrainz API token validated and saved.';
+						my $body = $class->SUPER::handler( $client, $params );
+
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $msg;
+							$params->{validated}->{valid} = 1;
+						}
+						else {
+							$params->{warning} .= $msg . '<br/>';
+						}
+
+						$callback->( $client, $params, $body, @args );
+					},
+					ecb      => sub {
+						# Callback for any errors
+						my $error = shift;
+
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Error validating ListenBrainz account: " . Data::Dump::dump( $error ) );
+						}
+
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $error;
+							$params->{validated}->{valid} = 0;
+						}
+						else {
+							$params->{warning} .= $error . '<br/>';
+						}
+
+						delete $params->{pref_username};
+						delete $params->{pref_password};
+						delete $params->{pref_api_url};
+						delete $params->{pref_api_type};
+
+						my $body = $class->SUPER::handler( $client, $params );
+						$callback->( $client, $params, $body, @args );
+					},
+				} );
+
+				return;
+			}
 		}
 	}
 

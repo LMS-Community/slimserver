@@ -8,10 +8,43 @@
 			<input type="checkbox" name="delete" value="[% account.username | html %]" /> [% account.username %]<br /><br />
 		[% END %]
 
+		<style>
+			.prefRow {
+				margin-bottom: 16px;
+			}
+			.prefItem {
+				white-space: nowrap;
+			}
+
+		</style>
+
 		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD" | string %]</div>
-		<input type="text" class="stdedit" name="pref_username" id="username" value="" size="20">
-		&nbsp;&nbsp;
-		<input type="password" class="stdedit" name="pref_password" id="password" value="" size="20">
+		<div class="prefRow">
+			<span class="prefItem">
+				<label for="username" style="margin-right:4px;">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME" | string %]</label>
+				<input type="text" class="stdedit" name="pref_username" id="username" value="" size="20">
+			</span>
+			&nbsp;&nbsp;
+			<span class="prefItem">
+				<label for="password" style="margin-right:4px;">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_PASSWORD" | string %]</label>
+				<input type="password" class="stdedit" name="pref_password" id="password" value="" size="20">
+			</span>
+		</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_API_TYPE" | string %]</div>
+		<div class="prefRow">
+			<span class="prefItem">
+				<label for="api_type" style="margin-right:4px;">API:</label>
+				<select class="stdedit" name="pref_api_type" id="api_type">
+					<option [% IF (prefs.pref_api_type || '') == 'lastfm' %]selected="selected"[% END %] value="lastfm">Last.fm (v1.2)</option>
+					<option [% IF (prefs.pref_api_type || '') == 'listenbrainz' %]selected="selected"[% END %] value="listenbrainz">ListenBrainz API (Experimental)</option>
+				</select>
+			</span>
+			&nbsp;&nbsp;
+			<span class="prefItem">
+				<label for="api_url" style="margin-right:4px;">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_CUSTOM_URL" | string %]</label>
+				<input type="text" class="stdedit" name="pref_api_url" id="api_url" value="[% prefs.pref_api_url || '' | html %]" size="20">
+			</span>
+		</div>
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING" desc="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC" %]
