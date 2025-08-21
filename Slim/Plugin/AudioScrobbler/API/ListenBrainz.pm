@@ -64,7 +64,8 @@ sub getMetadata {
 	$meta->{a} = uri_escape_utf8($meta->{artist} || '');
 	$meta->{t} = uri_escape_utf8($meta->{title} || '');
 	$meta->{b} = uri_escape_utf8($meta->{album} || '');
-	$meta->{i} = $meta->{l} = $meta->{duration};
+	$meta->{i} = time();
+	$meta->{l} = $meta->{duration};
 	$meta->{n} = $meta->{tracknum};
 	$meta->{m} = $track->musicbrainz_id if $track->musicbrainz_id;
 
@@ -160,30 +161,32 @@ sub submitScrobble {
 	my $cb = $params->{cb} || sub {};
 
 	my @listens;
-	foreach my $item (@$queue) {
+	while ( my $item = shift @$queue ) {
 		my $track_metadata = _getTrackMetadata($item);
 
 		push @listens, {
 			track_metadata => $track_metadata,
-			listened_at => int($item->{i} || $item->{ts} || time()),
+			listened_at => int($item->{i} || time()),
 		};
 	}
 
+	Slim::Plugin::AudioScrobbler::Plugin::setQueue( $self->client, $queue );
+
 	# Submit items one by one to avoid 400 errors with multiple items
-	submitScrobbleItems(\@listens, $api_url, $api_key, $cb, 0);
+	submitScrobbleItems(\@listens, $api_url, $api_key, $cb);
 }
 
 # Helper function to submit ListenBrainz items one by one
 sub submitScrobbleItems {
-	my ($listens, $api_url, $api_key, $cb, $index) = @_;
+	my ($listens, $api_url, $api_key, $cb) = @_;
 
 	# If we've processed all items, call the callback
-	if ($index >= scalar @$listens) {
+	if (!scalar @$listens) {
 		$cb->() if $cb;
 		return;
 	}
 
-	my $listen = $listens->[$index];
+	my $listen = $listens->[0];
 
 	# Create payload with single listen
 	my $payload = {
@@ -194,7 +197,7 @@ sub submitScrobbleItems {
 	my $json = to_json($payload);
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug("ListenBrainz: Submitting item " . ($index + 1) . " of " . scalar(@$listens) . ": " . $listen->{track_metadata}->{track_name});
+		$log->debug("ListenBrainz: Submitting item 1 of " . scalar(@$listens) . ": " . $listen->{track_metadata}->{track_name});
 	}
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -206,7 +209,6 @@ sub submitScrobbleItems {
 			listens => $listens,
 			api_url => $api_url,
 			api_key => $api_key,
-			index   => $index,
 		},
 	);
 
@@ -225,15 +227,16 @@ sub _submitScrobbleOK {
 	my $listens = $http->params('listens');
 	my $api_url = $http->params('api_url');
 	my $api_key = $http->params('api_key');
-	my $index = $http->params('index');
 
-	main::DEBUGLOG && $log->debug("ListenBrainz: Item " . ($index + 1) . " submitted successfully : " . $http->content);
+	main::DEBUGLOG && $log->debug("ListenBrainz: Item 1 submitted successfully : " . $http->content);
+
+	shift @$listens;  # Remove the first item from the list
 
 	# Submit next item with a small delay to avoid hitting rate limits
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 0.1,  # 100ms delay between submissions
-		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb, $index + 1); }
+		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb); }
 	);
 }
 
@@ -244,15 +247,14 @@ sub _submitScrobbleError {
 	my $listens = $http->params('listens');
 	my $api_url = $http->params('api_url');
 	my $api_key = $http->params('api_key');
-	my $index = $http->params('index');
 
-	$log->error("ListenBrainz: Failed to submit item " . ($index + 1) . ": " . $http->error);
+	$log->error("ListenBrainz: Failed to submit item 1: " . $http->error);
 
 	# Continue with next item even if this one failed
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 0.1,  # 100ms delay between submissions
-		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb, $index + 1); }
+		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb); }
 	);
 }
 

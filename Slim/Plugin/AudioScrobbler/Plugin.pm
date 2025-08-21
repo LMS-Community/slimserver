@@ -762,6 +762,7 @@ sub getQueue {
 sub setQueue {
 	my ( $client, $queue ) = @_;
 
+	$client = Slim::Player::Client::getClient($client) if !blessed $client;
 	$prefs->client($client)->set( queue => $queue );
 }
 

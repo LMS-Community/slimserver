@@ -95,7 +95,7 @@ sub _handshakeOK {
 			my $queue = Slim::Plugin::AudioScrobbler::Plugin::getQueue($client);
 
 			if ( scalar @{$queue} ) {
-				submitScrobble( $client );
+				Slim::Plugin::AudioScrobbler::Plugin::submitScrobble( $client );
 			}
 		}
 	}
@@ -281,7 +281,7 @@ sub submitScrobble {
 		handshake( {
 			client => $client,
 			cb     => sub {
-				submitScrobble( $client, $params );
+				$self->submitScrobble( $queue, $params );
 			},
 		} );
 		return;
@@ -305,7 +305,7 @@ sub submitScrobble {
 	my $post = 's=' . $client->master->pluginData('session_id');
 
 	my $index = 0;
-	while ( my $item = shift @{$queue} ) {
+	while ( my $item = shift @$queue ) {
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
 		if ( $current_track && Slim::Plugin::AudioScrobbler::Plugin::stillPlaying( $client, $current_track, $item ) ) {
@@ -363,11 +363,11 @@ sub submitScrobble {
 
 	# If there are still items left in the queue, scrobble again in a minute
 	if ( scalar @{$queue} ) {
-		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+		Slim::Utils::Timers::killTimers( $client, \&Slim::Plugin::AudioScrobbler::Plugin::submitScrobble );
 		Slim::Utils::Timers::setTimer(
 			$client,
 			time() + 60,
-			\&submitScrobble,
+			\&Slim::Plugin::AudioScrobbler::Plugin::submitScrobble,
 			$params,
 		);
 	}
@@ -441,11 +441,11 @@ sub _submitScrobbleError {
 
 	# Retry after a short delay
 	$params->{retry}++;
-	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+	Slim::Utils::Timers::killTimers( $client, \&Slim::Plugin::AudioScrobbler::Plugin::submitScrobble );
 	Slim::Utils::Timers::setTimer(
 		$client,
 		Time::HiRes::time() + 5,
-		\&submitScrobble,
+		\&Slim::Plugin::AudioScrobbler::Plugin::submitScrobble,
 		$params,
 	);
 }
