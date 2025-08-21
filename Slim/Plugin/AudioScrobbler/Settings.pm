@@ -14,6 +14,9 @@ use Digest::MD5 qw(md5_hex);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+use Slim::Plugin::AudioScrobbler::API::LastFM;
+use Slim::Plugin::AudioScrobbler::API::ListenBrainz;
+
 my $prefs = preferences('plugin.audioscrobbler');
 my $log   = logger('plugin.audioscrobbler');
 
@@ -59,32 +62,39 @@ sub handler {
 			$params->{pref_accounts} = $newlist;
 		}
 
-		# Save new account
-		if ( $params->{pref_password} ) {
-			# Last.fm Password (MD5)
-			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'lastfm' ) {
-				$params->{pref_password} = md5_hex( $params->{pref_password} );
-			}
-			# Listenbrainz API token (Plain)
+		my $service = $params->{pref_api_type} || 'lastfm';
+		my $serviceHandler;
+
+		# Last.fm Password (MD5)
+		if ( $params->{pref_password} && $service eq 'lastfm' ) {
+			$params->{pref_password} = md5_hex( $params->{pref_password} );
+
+			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::LastFM';
+		}
+		elsif ( $params->{pref_password} && $service eq 'listenbrainz' ) {
+			# ListenBrainz API key
+			$params->{pref_password} = $params->{pref_password};
+
+			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::ListenBrainz';
 		}
 
 		# If the user added a username/password, we need to verify their info
-		if ( $params->{pref_username} && $params->{pref_password} ) {
-			# Split by API type
-			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'lastfm' ) {
-				# Last.fm
-				Slim::Plugin::AudioScrobbler::Plugin::handshake( {
+		if ($serviceHandler) {
+			eval "require $serviceHandler";
+			if ($@) {
+				$log->error("Failed to load service handler $serviceHandler: $@");
+			}
+			else {
+				$serviceHandler->validate( {
 					username => $params->{pref_username},
 					password => $params->{pref_password},
 					api_type => $params->{pref_api_type},
 					api_url  => $params->{pref_api_url},
-					pref_accounts => $params->{pref_accounts},
-
 					cb       => sub {
-						# Callback for OK handshake response
+						my $msg = shift;
 
 						push @{ $params->{pref_accounts} }, {
-							username    => $params->{pref_username},
+							username    => $params->{pref_username} || $params->{pref_api_url},
 							password    => $params->{pref_password},
 							api_type    => $params->{pref_api_type},
 							api_url     => $params->{pref_api_url},
@@ -94,7 +104,6 @@ sub handler {
 							$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
 						}
 
-						my $msg  = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
 						my $body = $class->SUPER::handler( $client, $params );
 
 						if ( $params->{AJAX} ) {
@@ -113,70 +122,6 @@ sub handler {
 
 						if ( main::DEBUGLOG && $log->is_debug ) {
 							$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
-						}
-
-						$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
-
-						if ( $params->{AJAX} ) {
-							$params->{warning} = $error;
-							$params->{validated}->{valid} = 0;
-						}
-						else {
-							$params->{warning} .= $error . '<br/>';
-						}
-
-						delete $params->{pref_username};
-						delete $params->{pref_password};
-						delete $params->{pref_api_url};
-						delete $params->{pref_api_type};
-
-						my $body = $class->SUPER::handler( $client, $params );
-						$callback->( $client, $params, $body, @args );
-					},
-				} );
-
-				return;
-			}
-			if ( $params->{pref_api_type} && $params->{pref_api_type} eq 'listenbrainz' ) {
-				# Listenbrainz
-				Slim::Plugin::AudioScrobbler::Plugin::validateListenBrainz( {
-					api_url => $params->{pref_api_url},
-					api_key => $params->{pref_password},
-					pref_accounts => $params->{pref_accounts},
-
-					cb       => sub {
-						# Callback for OK validation response
-
-						push @{ $params->{pref_accounts} }, {
-							username    => $params->{pref_username},
-							password    => $params->{pref_password},
-							api_type    => $params->{pref_api_type},
-							api_url     => $params->{pref_api_url},
-						};
-
-						if ( main::DEBUGLOG && $log->is_debug ) {
-							$log->debug( "Saving ListenBrainz account: " . Data::Dump::dump( $params->{pref_accounts} ) );
-						}
-
-						my $msg  = 'ListenBrainz API token validated and saved.';
-						my $body = $class->SUPER::handler( $client, $params );
-
-						if ( $params->{AJAX} ) {
-							$params->{warning} = $msg;
-							$params->{validated}->{valid} = 1;
-						}
-						else {
-							$params->{warning} .= $msg . '<br/>';
-						}
-
-						$callback->( $client, $params, $body, @args );
-					},
-					ecb      => sub {
-						# Callback for any errors
-						my $error = shift;
-
-						if ( main::DEBUGLOG && $log->is_debug ) {
-							$log->debug( "Error validating ListenBrainz account: " . Data::Dump::dump( $error ) );
 						}
 
 						if ( $params->{AJAX} ) {

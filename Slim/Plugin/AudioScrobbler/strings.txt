@@ -343,6 +343,12 @@ PLUGIN_AUDIOSCROBBLER_VALID_LOGIN
 	RU	Имя пользователя и пароль Last.fm успешно проверены.
 	SV	Användarnamn och lösenord för Last.fm har verifierats.
 
+SETUP_AUDIOSCROBBLER_VALID_CREDENTIALS
+	DE	Die Anmeldedaten wurden erfolgreich verifiziert.
+	EN	Successfully validated your account information.
+	FR	Vos informations de compte ont été validées avec succès.
+	NL	Uw accountgegevens zijn succesvol gevalideerd.
+
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
 	CS	Nastavení přehrávače Last.fm Audioscrobbler
 	DA	Afspillerindstillinger for Last.fm Audioscrobbler
@@ -438,6 +444,12 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	PL	Podczas weryfikacji konta w usłudze Last.fm wystąpił błąd. Spróbuj ponownie później. (%s)
 	RU	Возникла ошибка при проверке вашей учетной записи на Last.fm. Повторите попытку позже. (%s)
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
+
+SETUP_PLUGIN_AUDIOSCROBBLER_VALIDATION_ERROR
+	DE	Problem beim Prüfen Ihrer Kontoinformationen. Versuchen Sie es später noch einmal. (%s)
+	EN	There was an error validating your account information. Please try again later. (%s)
+	FR	Une erreur est survenue lors de la validation des informations de votre compte. Veuillez réessayer ultérieurement. (%s)
+	NL	Er is een fout opgetreden bij de verificatie van jouw account bij. Probeer het later opnieuw. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí na míru upravené rozhlasové stanice, doporučování hudby a akcí, bezplatné stahování a další. Připojte se zdarma na <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> nebo zjistěte více na <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
