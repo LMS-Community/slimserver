@@ -86,12 +86,18 @@ sub _getTrackMetadata {
 	$additional_info{recording_mbid} = $meta->{m} if $meta->{m};
 	$additional_info{duration} = int($meta->{l}) if $meta->{l};
 
-	return {
+	my $track_metadata = {
 		artist_name  => uri_unescape($meta->{a} // ''),
 		track_name   => uri_unescape($meta->{t} // ''),
 		release_name => uri_unescape($meta->{b} // ''),
 		additional_info => \%additional_info,
 	};
+
+	utf8::decode($track_metadata->{artist_name});
+	utf8::decode($track_metadata->{track_name});
+	utf8::decode($track_metadata->{release_name});
+
+	return $track_metadata;
 }
 
 sub submitNowPlaying {
