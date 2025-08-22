@@ -1,18 +1,18 @@
 PLUGIN_AUDIOSCROBBLER_MODULE_NAME
-	CS	Audioscrobbler
-	DA	Audioscrobbler
-	DE	Audioscrobbler
 	EN	Audioscrobbler
-	ES	Audioscrobbler
-	FI	Audioscrobbler
-	FR	Audioscrobbler
-	HU	Audioscrobbler
-	IT	Audioscrobbler
-	NL	Audioscrobbler
-	NO	Audioscrobbler
-	PL	Audioscrobbler
 	RU	Скробблер
-	SV	Audioscrobbler
+
+PLUGIN_AUDIOSCROBBLER_LASTFM
+	EN	Last.fm
+
+PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ
+	EN	ListenBrainz
+
+PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ_LABEL
+	DE	ListenBrainz API (Experimentell)
+	EN	ListenBrainz API (Experimental)
+	FR	API ListenBrainz (Expérimental)
+	NL	ListenBrainz API (Experimenteel)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	CS	Účet (účty) Last.fm / ListenBrainz

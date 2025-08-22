@@ -50,7 +50,7 @@ sub handler {
 			ACCOUNT:
 			for my $account ( @{ $params->{pref_accounts} } ) {
 				for my $todelete ( @{$delete} ) {
-					if ( $todelete eq $account->{username} ) {
+					if ( $todelete eq $account->{username} || (!$account->{username} && $todelete eq $account->{api_url}) ) {
 						main::DEBUGLOG && $log->debug( "Deleting account $todelete" );
 						next ACCOUNT;
 					}
