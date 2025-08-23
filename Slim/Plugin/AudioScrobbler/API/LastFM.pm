@@ -42,15 +42,19 @@ sub handshake {
 		if ( !$params->{username} && (my $account = Slim::Plugin::AudioScrobbler::Plugin::getAccount($client)) ) {
 			$params->{password} = $account->{password};
 			$params->{username} = $account->{username};
+			$params->{api_url}  = $account->{api_url};
 		}
 	}
 
 	my $time = time();
 
 	# Get URL with defaulting
-	my $api_url = $params->{api_url};
+	my $api_url = $params->{api_url} || HANDSHAKE_URL;
 
-	my $url = HANDSHAKE_URL
+	# Make sure we have a trailing /
+	$api_url =~ s#([^/])$#$1/#;
+
+	my $url = $api_url
 		. '?hs=true&p=1.2'
 		. '&c=' . CLIENT_ID
 		. '&v=' . CLIENT_VER
@@ -456,6 +460,7 @@ sub validate {
 	handshake({
 		username => $params->{username},
 		password => $params->{password},
+		api_url  => $params->{api_url},
 		cb       => sub {
 			$params->{cb}->(string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN'));
 		},
