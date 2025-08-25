@@ -127,7 +127,8 @@ function movePlaylistItemFetch(fromIndex, toIndex) {
     .then(response => response.json())
     .then(data => {
         console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
-        updatePlaylistDisplay();
+        //updatePlaylistDisplay();
+        updatePlaylistControlUrls(fromIndex, toIndex);
     })
     .catch(error => {
         console.error('Error moving playlist item:', error);
@@ -155,6 +156,41 @@ function updatePlaylistDisplay() {
             } else {
                 // Fallback: reload by setting src
                 playlistFrame.src = playlistFrame.src;
+            }
+        }
+    }
+}
+
+
+// Function to update playlist control URLs for items affected by the move
+function updatePlaylistControlUrls(fromIndex, toIndex) {
+    const playlistContainer = document.getElementById('playList');    
+    // Determine the range of items that need URL updates
+    const startIndex = Math.min(fromIndex, toIndex);
+    const endIndex = Math.max(fromIndex, toIndex);
+
+    // Get all playlist items (odd and even divs)
+    const allItems = Array.from(playlistContainer.querySelectorAll('.odd, .even'))
+    // Loop through the affected items (from startIndex to endIndex inclusive)
+    for (let i = startIndex; i <= endIndex; i++) {
+        const playlistItem = allItems[i];
+        if (playlistItem) {
+            // Update the data-index to reflect new position
+            playlistItem.setAttribute('data-index', i);
+            // Find the playlistControls div within this item
+            const controlsDiv = playlistItem.querySelector('.playlistControls');
+            if (controlsDiv) {
+                // Get all anchor tags (hrefs) within the playlistControls div
+                const controlLinks = controlsDiv.querySelectorAll('a[href]');
+                // Update each of the 4 control URLs
+                controlLinks.forEach(link => {
+                    let href = link.getAttribute('href');
+                    // Update the p2 parameter to match the current data-index
+                    // Use regex to find and replace p2=oldvalue with p2=newvalue
+                    href = href.replace(/([&?])p2=\d+/, `$1p2=${i}`);                    
+                    // Set the updated href back to the link
+                    link.setAttribute('href', href);
+                });
             }
         }
     }

@@ -6,12 +6,12 @@
 	[% PROCESS standardheader.html %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
-        <script TYPE="text/javascript" src="[% webroot %]html/dragdrop.js?r=[% revision %]"></script>
-        <script>
-           document.addEventListener("DOMContentLoaded", function() {
-             initPlaylistDragDrop(".browsedbList");
-           });
-        </script>
+	<script TYPE="text/javascript" src="[% webroot %]html/classicdragdrop.js?r=[% revision %]"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+		initPlaylistDragDrop(".browsedbList");
+		});
+	</script>
 </head>
 
 <body onload="javascript:to_currentsong()">
