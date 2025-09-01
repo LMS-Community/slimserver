@@ -3036,6 +3036,9 @@ sub _postCheckAttributes {
 			$track->work(undef);
 		}
 	}
+	else {
+		$track->work(undef);
+	}
 
 	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
