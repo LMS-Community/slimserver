@@ -5,6 +5,8 @@ use File::Spec::Functions qw(catdir);
 
 use base qw(Slim::Utils::OS::Linux);
 
+use constant MAX_LOGSIZE => 1024 * 1024 * 10; # maximum log size: 10 MB
+
 # the following folders are defined in Dockerfile
 use constant MUSIC_DIR => '/music';
 use constant PLAYLIST_DIR => '/playlist';
@@ -56,6 +58,12 @@ sub dirsFor {
 	}
 
 	return wantarray() ? @dirs : $dirs[0];
+}
+
+# configuring rotation on the host might be too difficutl for some users
+# let's make sure we don't use too much space here
+sub logRotate {
+	Slim::Utils::OS->logRotate($_[1], MAX_LOGSIZE);
 }
 
 sub ignoredItems {
