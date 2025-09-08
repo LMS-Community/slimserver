@@ -301,7 +301,7 @@ sub albumsQuery {
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'playcount', 'recentlyplayed', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -401,7 +401,7 @@ sub albumsQuery {
 		}
 
 		if ($tags ne 'CC') {
-			if ( $sort =~ /^(?:new|changed)$/ ) {
+			if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ ) {
 				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 				$limit = $prefs->get('browseagelimit') || 100;
 				$order_by = "MAX(tracks.timestamp) DESC";
@@ -411,9 +411,19 @@ sub albumsQuery {
 					$quantity = $limit;
 				}
 
-				if (main::STATISTICS && $sort eq 'new') {
+				my $useStats = main::STATISTICS && $sort =~ /^(?:new|playcount|recentlyplayed)$/;
+				if (main::STATISTICS && $useStats) {
 					$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-					$order_by = 'MIN(tracks_persistent.added) DESC';
+
+					if ($sort eq 'new') {
+						$order_by = 'MIN(tracks_persistent.added) DESC';
+					}
+					elsif ($sort eq 'playcount') {
+						$order_by = 'albums_playcount DESC';
+					}
+					elsif ($sort eq 'recentlyplayed') {
+						$order_by = 'MAX(tracks_persistent.lastplayed) DESC';
+					}
 				}
 
 				# cache the most recent album IDs - need to query the tracks table, which is expensive
@@ -435,12 +445,14 @@ sub albumsQuery {
 						my $join = '';
 						$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
 
-						if (main::STATISTICS && $sort eq 'new') {
+						my $additionalCols = '';
+						if (main::STATISTICS && $useStats) {
 							$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+							$additionalCols = ', SUM(tracks_persistent.playcount) AS albums_playcount' if $sort eq 'playcount';
 						}
 
 						my $countSQL = qq{
-							SELECT tracks.album
+							SELECT tracks.album $additionalCols
 							FROM tracks
 							$join
 							WHERE tracks.album > 0
@@ -650,6 +662,11 @@ sub albumsQuery {
 		$c->{'contributors.portraitid'} = 1;
 	}
 
+	if ( main::STATISTICS && $sort eq 'playcount' ) {
+		$c->{'SUM(tracks_persistent.playcount)'} = 1;
+		$as->{'SUM(tracks_persistent.playcount)'} = 'albums_playcount';
+	}
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		my $s .= join( ' AND ', @{$w} );
@@ -679,7 +696,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
 
-	if ( $sort =~ /^(?:new|changed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
+	if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
