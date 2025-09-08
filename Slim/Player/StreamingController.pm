@@ -2230,7 +2230,10 @@ sub playerStopped {
 		my $song = playingSong($self);
 		if ($song && $song->status() == Slim::Player::Song::STATUS_PLAYING) {
 			$song->setStatus(Slim::Player::Song::STATUS_FINISHED);
-			$self->resetSongqueue(0);
+
+			my $currsong = Slim::Player::Source::playingSongIndex($client) + 1;
+ 			my $count = Slim::Player::Playlist::count($client);
+			$self->resetSongqueue(0) if ($currsong == $count);
 		}
 	}
 

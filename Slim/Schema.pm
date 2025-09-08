@@ -3064,6 +3064,9 @@ sub _postCheckAttributes {
 			$track->work(undef);
 		}
 	}
+	else {
+		$track->work(undef);
+	}
 
 	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
@@ -3110,6 +3113,7 @@ sub _mergeAndCreateContributors {
 			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
 			# Bug: 6507 - use any ARTISTSORT tag for this contributor
 			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
+			$attributes->{'MUSICBRAINZ_TRACKARTIST_ID'} = delete $attributes->{'MUSICBRAINZ_ARTIST_ID'} if $attributes->{'MUSICBRAINZ_ARTIST_ID'};
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},

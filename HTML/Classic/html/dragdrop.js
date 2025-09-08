@@ -1,0 +1,207 @@
+// dragdrop.js for re-ordering playlists when using the classic skin.
+function initPlaylistDragDrop(listSelector) {
+	// Feature detection for HTML5 drag-and-drop
+	if (!("draggable" in document.createElement("div"))) {
+		console.warn("This browser does not support HTML5 drag-and-drop.");
+		return; // stop script if unsupported
+	}
+
+	const list = document.querySelector(listSelector);
+	if (!list) {
+		console.warn(`No element found for selector: ${listSelector}`);
+		return;
+	}
+
+	let draggedItem = null;
+	let bgcolor = null;
+	// Attach drag-and-drop behavior to direct children
+	list.querySelectorAll(":scope > div").forEach((item, index) => {
+		item.setAttribute("draggable", "true");
+		item.setAttribute('data-index', index);
+
+		item.addEventListener("dragstart", function(e) {
+			draggedItem = this;
+			bgcolor = this.style.backgroundColor;
+			this.style.backgroundColor = "#c5c5c5";
+			e.dataTransfer.effectAllowed = "move";
+			e.dataTransfer.setData("text/plain", index); // required in Firefox
+			this.classList.add("dragging");
+		});
+
+		item.addEventListener("dragend", function(e) {
+			this.style.backgroundColor = bgcolor;
+			this.classList.remove("dragging");
+			handlePlaylistDragEnd(e);
+			clearDropStyles(list);
+			draggedItem = null;
+			updateOddEven(list);
+		});
+
+		item.addEventListener("dragover", function(e) {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = "move";
+
+			const bounding = this.getBoundingClientRect();
+			const offset = e.clientY - bounding.top;
+
+			clearDropStyles(list);
+
+			if (offset > bounding.height / 2) {
+				this.classList.add("drop-target-below");
+			} else {
+				this.classList.add("drop-target-above");
+			}
+		});
+
+		item.addEventListener("dragleave", function() {
+			clearDropStyles(list);
+		});
+
+		item.addEventListener("drop", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			clearDropStyles(list);
+
+			if (draggedItem && draggedItem !== this && draggedItem.parentNode === list) {
+				const bounding = this.getBoundingClientRect();
+				const offset = e.clientY - bounding.top;
+				if (offset > bounding.height / 2) {
+					this.insertAdjacentElement("afterend", draggedItem);
+				} else {
+					this.insertAdjacentElement("beforebegin", draggedItem);
+				}
+			}
+		});
+	});
+	// Initial odd/even setup
+	updateOddEven(list);
+}
+
+function updateOddEven(list) {
+	list.querySelectorAll(":scope > div").forEach((el, index) => {
+		el.classList.remove("odd", "even");
+		el.classList.add(index % 2 === 0 ? "odd" : "even");
+	});
+}
+
+function clearDropStyles(list) {
+	list.querySelectorAll(".drop-target-above, .drop-target-below").forEach(el => {
+		el.classList.remove("drop-target-above", "drop-target-below");
+	});
+}
+
+function handlePlaylistDragEnd(event) {
+	const draggedElement = event.target;
+	const fromIndex = parseInt(draggedElement.getAttribute('data-index'));
+	const toIndex = calculateNewIndex(draggedElement); // Your logic to determine new position
+	// Don't make unnecessary calls if position didn't change
+	if (fromIndex === toIndex) {
+		return;
+	}
+	//movePlaylistItemXHR(fromIndex, toIndex);
+	movePlaylistItemFetch(fromIndex, toIndex);
+}
+
+function movePlaylistItemFetch(fromIndex, toIndex) {
+	if (playerid == null) {
+		return;
+	}
+	if (isNaN(fromIndex)) {
+		return;
+	}
+	if (isNaN(toIndex)) {
+		return;
+	}
+
+	const jsonRpcPayload = {
+		id: 1,
+		method: "slim.request",
+		params: [
+			playerid, // The MAC address or ID of the current player
+			[
+				"playlist",
+				"move",
+				fromIndex,
+				toIndex
+			]
+		]
+	};
+
+	fetch('/jsonrpc.js', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(jsonRpcPayload)
+		})
+		.then(response => response.json())
+		.then(data => {
+			console.log('Player ' + playerid + ' playlist item moved successfully from ' + fromIndex + ' to ' + toIndex);
+			//updatePlaylistDisplay();
+			updatePlaylistControlUrls(fromIndex, toIndex);
+		})
+		.catch(error => {
+			console.error('Error moving playlist item:', error);
+		});
+}
+// Helper function to calculate the new index based on drop position
+function calculateNewIndex(draggedElement) {
+	const playlistContainer = document.getElementById('playList');
+	const allItems = Array.from(playlistContainer.querySelectorAll('.odd, .even'));
+	var newIndex = allItems.indexOf(draggedElement);
+	return newIndex;
+}
+// Function to update the playlist display by reloading the frame
+function updatePlaylistDisplay() {
+	// Method 1: If this code is running inside the frame itself
+	if (window.self !== window.top) {
+		// We're in a frame, reload ourselves
+		window.location.reload();
+	} else {
+		// Or if we need to reload a specific frame from the parent using the playlist frame name
+		const playlistFrame = window.frames['playlist'];
+		if (playlistFrame) {
+			if (playlistFrame.contentWindow) {
+				playlistFrame.contentWindow.location.reload();
+			} else {
+				// Fallback: reload by setting src
+				playlistFrame.src = playlistFrame.src;
+			}
+		}
+	}
+}
+
+
+// Function to update playlist control URLs for items affected by the move
+function updatePlaylistControlUrls(fromIndex, toIndex) {
+	const playlistContainer = document.getElementById('playList');
+	// Determine the range of items that need URL updates
+	const startIndex = Math.min(fromIndex, toIndex);
+	const endIndex = Math.max(fromIndex, toIndex);
+
+	// Get all playlist items (odd and even divs)
+	const allItems = Array.from(playlistContainer.querySelectorAll('.odd, .even'))
+	// Loop through the affected items (from startIndex to endIndex inclusive)
+	for (let i = startIndex; i <= endIndex; i++) {
+		const playlistItem = allItems[i];
+		if (playlistItem) {
+			// Update the data-index to reflect new position
+			playlistItem.setAttribute('data-index', i);
+			// Find the playlistControls div within this item
+			const controlsDiv = playlistItem.querySelector('.playlistControls');
+			if (controlsDiv) {
+				// Get all anchor tags (hrefs) within the playlistControls div
+				const controlLinks = controlsDiv.querySelectorAll('a[href]');
+				// Update each of the 4 control URLs
+				controlLinks.forEach(link => {
+					let href = link.getAttribute('href');
+					// Update the p2 parameter to match the current data-index
+					// Use regex to find and replace p2=oldvalue with p2=newvalue
+					href = href.replace(/([&?])p2=\d+/, `$1p2=${i}`);
+					// Set the updated href back to the link
+					link.setAttribute('href', href);
+				});
+			}
+		}
+	}
+}

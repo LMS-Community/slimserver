@@ -487,7 +487,7 @@ sub getExtensions {
 			\&_parseResponse,
 			\&_noResponse,
 			{ args => $args, cache => 1 }
-		)->get( $args->{'name'} );
+		)->get( $args->{'name'}, 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
 	}
 }
 
