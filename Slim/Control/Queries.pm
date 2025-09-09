@@ -448,7 +448,7 @@ sub albumsQuery {
 						my $additionalCols = '';
 						if (main::STATISTICS && $useStats) {
 							$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-							$additionalCols = ', SUM(tracks_persistent.playcount) AS albums_playcount' if $sort eq 'playcount';
+							$additionalCols = ', AVG(tracks_persistent.playcount) AS albums_playcount' if $sort eq 'playcount';
 						}
 
 						my $countSQL = qq{
@@ -663,8 +663,8 @@ sub albumsQuery {
 	}
 
 	if ( main::STATISTICS && $sort eq 'playcount' ) {
-		$c->{'SUM(tracks_persistent.playcount)'} = 1;
-		$as->{'SUM(tracks_persistent.playcount)'} = 'albums_playcount';
+		$c->{'AVG(tracks_persistent.playcount)'} = 1;
+		$as->{'AVG(tracks_persistent.playcount)'} = 'albums_playcount';
 	}
 
 	if ( @{$w} ) {
