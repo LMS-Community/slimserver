@@ -7903,13 +7903,13 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	DA	Lyrion Music Server kan checke automatisk om der er en ny software version tilgængelig. Hvis det er tilfældet, vil der dukke en besked op i Lyrion Music Sever web interfacet.
-	DE	Lyrion Music Server kann automatisch jeden Tag prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Lyrion Music Server gemeldet.
-	EN	Lyrion Music Server can automatically check to see if an updated version of the software is available.  If it is, then a message will appear in Lyrion Music Server's web interface.
+	DA	Lyrion Music Server kan checke automatisk om der er en ny software version tilgængelig. Hvis det er tilfældet, vil der dukke en besked op i Lyrion Music Sever web interfacet. Vær opmærksom på, at programmet altid vil kontrollere for opdateringer til plug-ins i henhold til de valgte intervaller, selvom softwarekontroller er deaktiveret.
+	DE	Lyrion Music Server kann automatisch prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Lyrion Music Server gemeldet. Beachten Sie bitte, dass Plugins immer gemäss dem gewählten Intervall auf Aktualisierungen überprüft werden.
+	EN	Lyrion Music Server can automatically check to see if an updated version of the software is available.  If it is, then a message will appear in Lyrion Music Server's web interface. Please note that Lyrion Music Server will always check for plugin updates according to the selected intervals, even if software checks are disabled.
 	ES	Lyrion Music Server se puede conectar automáticamente comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Lyrion Music Server.
-	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
+	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible. Veuillez noter que le programme vérifiera toujours les mises à jour des plug-ins selon les intervalles sélectionnés, même si les vérifications logicielles sont désactivées.
 	HU	A Lyrion Music Server automatikusan ellenőrzi, hogy elérhető-e a szoftver frissített verziója.  Ha igen, akkor egy üzenet jelenik meg a Lyrion Music Server webes felületén.
-	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server.
+	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server. Houd er rekening mee dat het programma altijd zal controleren op updates voor plug-ins volgens de geselecteerde intervallen, zelfs als softwarecontroles zijn uitgeschakeld.
 	ZH_CN	Lyrion Music Server 可以自动检查是否有更新的软件版本可用。如果有，则在 Lyrion Music Server 的网页界面中会显示一条消息。
 
 SETUP_CHECKVERSION_1
@@ -7935,16 +7935,16 @@ SETUP_CHECKVERSION_1
 SETUP_CHECKVERSION_0
 	CS	Nehledat aktualizace softwaru
 	DA	Søg ikke automatisk for softwareopdateringer
-	DE	Nicht automatisch nach aktualisierter Software suchen
-	EN	Don't check for software updates
+	DE	Nicht automatisch nach aktualisierter Serversoftware suchen
+	EN	Don't check for server software updates
 	ES	No buscar actualizaciones de software
 	FI	Älä etsi ohjelmistopäivityksiä
-	FR	Ne pas vérifier
+	FR	Ne pas vérifier les mises à jour de logiciel serveur
 	HE	ללא חיפוש עדכוני תוכנה
 	HU	Ne keressen szoftverfrissítéseket
 	IT	Non verificare se sono disponibili aggiornamenti al software
 	JA	ソフトウェアのアップデートを確認しない
-	NL	Niet op software-updates controleren
+	NL	Controleer niet op updates voor serversoftware
 	NO	Ikke se etter programvareoppdateringer
 	PL	Nie sprawdzaj dostępności aktualizacji oprogramowania
 	PT	Não Verificar
