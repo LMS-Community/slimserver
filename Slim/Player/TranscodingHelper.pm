@@ -684,11 +684,22 @@ sub _rateLimit {
 
 	return 0 unless $maxRate;
 
-	# If the input type is mp3 or wma (bug 9641), we determine whether the
-	# input bitrate is under the maximum.
+	my $native = 0;
+	foreach my $format ($client->formats()) {
+		if (defined($type) && $type eq $format) {
+			$native = 1;
+			last;
+		}
+	}
+
+	# If the input type is a lossy format (bug 9641), we determine whether the
+	# input bitrate is within 1% of the maximum, only if the player supports the format natively.
 	# We presume that we won't choose an output format that violates the rate limit.
-	if (defined($type) && ($type eq 'mp3' || $type eq 'wma')) {
-		return 0 if ($maxRate >= ($bitrate || 0)/1000);
+
+	main::INFOLOG && $log->info("Native:$native type:$type maxRate:$maxRate bitrate:$bitrate");
+
+	if (defined($type) && ($type =~ /mp3|wma|aac|ogg|ops/) && $native) {
+		return 0 if ( ($maxRate * 1.01) >= ($bitrate || 0)/1000);
 	}
 
 	return $maxRate;
