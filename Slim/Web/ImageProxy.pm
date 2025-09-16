@@ -168,7 +168,10 @@ sub getImage {
 		main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
 
 		my $pre_shrunk;
-		my %headers;
+		my %headers = (
+			'User-Agent' => Slim::Utils::Misc::userAgentString('legacy')
+		);
+
 		# use external image proxy if one is defined
 		if ( $url =~ /^https?:/ && $spec && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
 			if ( my $external = $externalHandlers{$imageproxy} ) {
