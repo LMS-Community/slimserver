@@ -586,6 +586,7 @@ sub processHTTP {
 					# representation of the unescaped
 					# UTF-8 string into a "real" UTF-8
 					# string with the appropriate magic set.
+					$name = Slim::Utils::Unicode::utf8decode($name);
 					if ($value ne '*') {
 						$value = Slim::Utils::Unicode::utf8decode($value);
 					}
