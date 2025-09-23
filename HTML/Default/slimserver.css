@@ -1203,10 +1203,6 @@ div.buttonbarSpacer {
 
 /* Safari only. This feels wrong... */
 @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
-	.settingSection select {
-		font-size: 1.3em;
-	}
-
 	.settingSection input[type="button"], .settingSection input[type="submit"] {
 		padding: 2px 4px;
 	}
