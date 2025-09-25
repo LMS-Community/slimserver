@@ -116,6 +116,12 @@ sub getImage {
 	# check the cache for this url
 	$cache ||= Slim::Web::ImageProxy::Cache->new();
 
+	# server-side nocache flag (truthy => bypass persistent cache reads/writes)
+	my $no_server_cache = $params && $params->{nocache};
+	if ( $no_server_cache ) {
+		main::DEBUGLOG && $log->debug("nocache=1: bypassing server-side cache for $path");
+	}
+
 	my $path2;
 
 	# some clients require the .png ending, but we don't store it in the cache - try them both
@@ -123,14 +129,18 @@ sub getImage {
 		$path2 = $1;
 	}
 
-	if ( my $cached = $cache->get($path) || ($path2 && $cache->get($path2)) ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug( 'Got cached artwork of type ' . $cached->{content_type} . ' and ' . length(${$cached->{data_ref}}) . ' bytes length' );
+	if ( !$no_server_cache ) {
+		if ( my $cached = $cache->get($path) || ($path2 && $cache->get($path2)) ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug( 'Got cached artwork of type ' . $cached->{content_type} . ' and ' . length(${$cached->{data_ref}}) . ' bytes length' );
 
-		_setHeaders($args[1], $cached->{content_type});
+			_setHeaders($args[1], $cached->{content_type});
 
-		$callback && $callback->( $client, $params, $cached->{data_ref}, @args );
+			$callback && $callback->( $client, $params, $cached->{data_ref}, @args );
 
-		return;
+			return;
+		}
+	} else {
+		main::DEBUGLOG && $log->debug("nocache=1: cache read skipped for $path");
 	}
 
 	my ($url) = $path =~ m|imageproxy/(.*)/[^/]*|;
@@ -207,6 +217,7 @@ sub getImage {
 			spec     => $spec,
 			args     => \@args,
 			pre_shrunk => $pre_shrunk,
+			nocache    => $no_server_cache ? 1 : 0,
 		};
 
 		if ( $url =~ /^file:/ ) {
@@ -310,6 +321,7 @@ sub _resizeFromFile {
 		my $params   = $item->{params};
 		my $callback = $item->{callback};
 		my $cachekey = $item->{cachekey};
+		my $nocache   = $item->{nocache} ? 1 : 0;
 
 		# no need to resize data if we've got it from an external image proxy
 		if ( ($spec =~ /^\.(?:png|jpe?g)/i || $item->{pre_shrunk}) && $http && $http->headers->content_type =~ /image\/(png|jpe?g)/ ) {
@@ -318,18 +330,25 @@ sub _resizeFromFile {
 			my $ct = $1;
 			$ct =~ s/jpeg/jpg/;
 
-			$cache->set( $cachekey, {
-				content_type  => $ct,
-				mtime         => 0,
-				original_path => undef,
-				data_ref      => $fullpath,
-			} );
+			# Only persist for normal requests. With nocache, just pass-through.
+			if ( !$nocache ) {
+				$cache->set( $cachekey, {
+					content_type  => $ct,
+					mtime         => 0,
+					original_path => undef,
+					data_ref      => $fullpath,
+				} );
+			} else {
+				main::DEBUGLOG && $log->debug("nocache=1: skipping cache set for $cachekey (pass-through $ct)");
+			}
 
 			_setHeaders($args->[1], $ct);
 
 			$callback && $callback->( $client, $params, $fullpath, @$args );
 		}
 		else {
+			# Use the real cache as the work area (resizer writes there),
+			# then read it back and delete if nocache=1.
 			Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
 				my ($body, $format) = @_;
 
@@ -356,6 +375,11 @@ sub _resizeFromFile {
 				}
 
 				$callback && $callback->( $client, $params, $body, @$args );
+				# Immediately remove the freshly written entry so nothing persists.
+				if ( $nocache ) {
+					eval { $cache->remove($cachekey) };
+					main::DEBUGLOG && $log->debug("nocache=1: removed transient cache entry for $cachekey");
+				}
 			}, $cache );
 		}
 	}
