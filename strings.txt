@@ -12365,13 +12365,16 @@ RELEASE_TYPE_BOXSETS
 RELEASE_TYPE_BROADCAST
 	DA	Udsendelse
 	EN	Broadcast
+	FR	Radiodiffusion
 	ZH_CN	广播
 
 RELEASE_TYPE_DEMO
 	EN	Demo
+	FR	Démo
 
 RELEASE_TYPE_DEMOS
 	EN	Demos
+	FR	Démos
 
 RELEASE_TYPE_LIVE
 	DE	Live Aufnahme
@@ -12425,7 +12428,7 @@ RELEASE_TYPE_BOOTLEGS
 
 RELEASE_TYPE_SOUNDTRACK
 	EN	Soundtrack
-	FR	Bande sonores
+	FR	Bande sonore
 
 RELEASE_TYPE_SOUNDTRACKS
 	EN	Soundtracks
