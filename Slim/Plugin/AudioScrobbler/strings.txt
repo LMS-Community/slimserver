@@ -37,7 +37,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	EN	Enter your Last.fm username and password or API key/token for ListenBrainz.</br>Multiple accounts may be entered if you wish to submit tracks from different players to different accounts. You can also set a custom API URL for alternative configurations, otherwise leave this setting empty.</br> </br>Examples of custom base URLs:</br> </br>Maloja (with Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (with ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (with ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (with ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	ES	Introduzca su nombre de usuario y contraseña para Last.fm o clave API/token para ListenBrainz.</br>Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas. También puede establecer una URL de API personalizada para configuraciones alternativas, de lo contrario deje esta configuración vacía.</br> </br>Ejemplos de URLs base personalizadas:</br> </br>Maloja (con Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (con ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (con ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (con ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana tai API-avain/token ListenBrainz:lle.</br>Voit antaa useita tilejä, jos haluat lähettää tiedot kuunnelluista kappaleista eri soittimista eri tileihin. Voit myös asettaa mukautetun API-URL:n vaihtoehtoisille konfiguraatioille, muuten jätä tämä asetus tyhjäksi.</br> </br>Esimerkkejä mukautetuista perus-URL:eista:</br> </br>Maloja (Last.fm v1.2 API:lla) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (ListenBrainz API:lla):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (ListenBrainz API:lla):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (ListenBrainz API:lla):</br><i>https://scrobble.yourdomain.com</i>
-	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm ou clé API/token pour ListenBrainz.</br>Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents. Vous pouvez également définir une URL d'API personnalisée pour des configurations alternatives, sinon laissez ce paramètre vide.</br> </br>Exemples d'URLs de base personnalisées:</br> </br>Maloja (avec Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (avec ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (avec ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (avec ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
+	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm ou clé API/token pour ListenBrainz.</br>Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents. Vous pouvez également définir une URL d'API personnalisée pour des configurations alternatives, sinon laissez ce paramètre vide.</br> </br>Exemples d'URLs personnalisées :</br> </br>Maloja (avec Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (avec ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (avec ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (avec ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	HU	Adja meg Last.fm felhasználónevét és jelszavát vagy API kulcs/token-t a ListenBrainz-hez.</br>Több fiók is megadható, ha különböző lejátszók zeneszámait különböző fiókokhoz kívánja elküldeni. Egyéni API URL-t is beállíthat alternatív konfigurációkhoz, egyébként hagyja üresen ezt a beállítást.</br> </br>Példák egyéni alap URL-ekre:</br> </br>Maloja (Last.fm v1.2 API-val) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (ListenBrainz API-val):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (ListenBrainz API-val):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (ListenBrainz API-val):</br><i>https://scrobble.yourdomain.com</i>
 	IT	Inserire il nome utente e la password di Last.fm o chiave API/token per ListenBrainz.</br>Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. È anche possibile impostare un URL API personalizzato per configurazioni alternative, altrimenti lasciare vuota questa impostazione.</br> </br>Esempi di URL di base personalizzati:</br> </br>Maloja (con Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (con ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (con ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (con ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	NL	Voer jouw gebruikersnaam en wachtwoord voor Last.fm in of API-sleutel/token voor ListenBrainz.</br>Je kan meerdere accounts invoeren als je nummers van verschillende muziekspelers naar verschillende accounts wilt versturen. Je kunt ook een aangepaste API-URL instellen voor alternatieve configuraties, anders laat je deze instelling leeg.</br> </br>Voorbeelden van aangepaste basis-URL's:</br> </br>Maloja (met Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (met ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (met ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (met ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
@@ -86,7 +86,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME
 	EN	Username:
 	ES	Nombre de usuario:
 	FI	Käyttäjätunnus:
-	FR	Nom d'utilisateur:
+	FR	Nom d'utilisateur :
 	HU	Felhasználónév:
 	IT	Nome utente:
 	NL	Gebruikersnaam:
@@ -102,7 +102,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_PASSWORD
 	EN	Password / API key:
 	ES	Contraseña / Clave API:
 	FI	Salasana / API-avain:
-	FR	Mot de passe / Clé API:
+	FR	Mot de passe / Clé API :
 	HU	Jelszó / API kulcs:
 	IT	Password / Chiave API:
 	NL	Wachtwoord / API-sleutel:
@@ -118,7 +118,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_API_TYPE
 	EN	Select the API type (and enter the custom API base URL if needed).
 	ES	Seleccione el tipo de API (e introduzca la URL base de API personalizada si es necesario).
 	FI	Valitse API-tyyppi (ja syötä mukautettu API-perus-URL tarvittaessa).
-	FR	Sélectionnez le type d'API (et saisissez l'URL de base API personnalisée si nécessaire).
+	FR	Sélectionnez le type d'API (et saisissez l'URL d'API personnalisée si nécessaire).
 	HU	Válassza ki az API típusát (és adja meg az egyéni API alap URL-t, ha szükséges).
 	IT	Selezionare il tipo di API (e inserire l'URL di base API personalizzato se necessario).
 	NL	Selecteer het API-type (en voer de aangepaste API-basis-URL in indien nodig).
@@ -134,7 +134,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_CUSTOM_URL
 	EN	Custom API base URL:
 	ES	URL base de API personalizada:
 	FI	Mukautettu API-perus-URL:
-	FR	URL de base API personnalisée:
+	FR	URL d'API personnalisée :
 	HU	Egyéni API alap URL:
 	IT	URL di base API personalizzato:
 	NL	Aangepaste API-basis-URL:
@@ -150,7 +150,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	EN	Submit (scrobble) all tracks played.
 	ES	Enviar (hacer "scrobbling") todas las pistas reproducidas.
 	FI	Lähetä tiedot kaikista soitetuista kappaleista.
-	FR	Envoyer tous les morceaux lus.
+	FR	Envoyer tous les morceaux joués.
 	HU	Az összes lejátszott szám elküldése (scrobble).
 	IT	Invia tutti i brani riprodotti.
 	NL	Alle gespeelde nummers versturen (scrobble).
@@ -182,7 +182,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
 	EN	Yes, report tracks played to Last.fm / ListenBrainz.
 	ES	Sí, notificar pistas reproducidas a Last.fm / ListenBrainz.
 	FI	Kyllä, ilmoita soitetut kappaleet Last.fm / ListenBrainz:ään.
-	FR	Indiquer à Last.fm / ListenBrainz les morceaux lus.
+	FR	Indiquer à Last.fm / ListenBrainz les morceaux joués.
 	HU	Igen, küldje a lejátszott számokat a Last.fm / ListenBrainz-re.
 	IT	Sì, segnala i brani riprodotti a Last.fm / ListenBrainz.
 	NL	Ja, gespeelde nummers naar Last.fm / ListenBrainz versturen.
@@ -198,7 +198,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	EN	No, do not report tracks played to Last.fm / ListenBrainz.
 	ES	No notificar pistas reproducidas a Last.fm / ListenBrainz.
 	FI	Ei, älä ilmoita soitettuja kappaleita Last.fm / ListenBrainz:ään.
-	FR	Ne pas indiquer à Last.fm / ListenBrainz les morceaux lus.
+	FR	Ne pas indiquer à Last.fm / ListenBrainz les morceaux joués.
 	HU	Nem, ne küldje el a lejátszott számokat a Last.fm / ListenBrainz-nek.
 	IT	No, non segnalare i brani riprodotti a Last.fm / ListenBrainz.
 	NL	Nee, gespeelde nummers niet naar Last.fm / ListenBrainz versturen.
@@ -388,7 +388,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	EN	Disabled, do not submit tracks played on this player.
 	ES	Desactivado, no enviar pistas reproducidas a Last.fm.
 	FI	Ei käytössä. Älä lähetä tietoja tällä soittimella soitetuista kappaleista.
-	FR	Désactivé, ne pas envoyer les morceaux lus sur cette platine.
+	FR	Désactivé, ne pas envoyer les morceaux joués sur cette platine.
 	HU	Letiltva, ne küldje be az ezen a lejátszón lejátszott számokat.
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
 	NL	Uitgeschakeld; nummers gespeeld op deze muziekspeler niet versturen.
