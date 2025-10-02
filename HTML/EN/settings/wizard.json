@@ -100,13 +100,13 @@
 			"label": {
 				"EN": "Radio Now Playing"
 			},
-			"icon": "http://dabdig.co.uk/slimserver-rep/images/RadioNowPlaying.svg",
+			"icon": "http://radionowplaying.com/RadioNowPlaying.svg",
 			"desc": {
-				"DA": "Titel, album cover art og sommetider med program-information for mere end 4200 radiostationer.",
-				"DE": "Titel, Cover und gelegentlich Programm-Informationen f&uuml;r mehr als 4200 Radiosender.",
-				"EN": "Track, cover art and, occasionally, programme information for more than 4200 radio stations.",
-				"FR": "Titre, pochette et, occasionnellement, informations sur le programme en cours d'&eacute;coute pour plus de 4200 stations de radio.",
-				"NL": "Track-, cover- en af en toe ook programma-informatie voor meer dan 4200 radiostations."
+				"DA": "Titel, album cover art og sommetider med program-information for mere end 7300 radiostationer.",
+				"DE": "Titel, Cover und gelegentlich Programm-Informationen f&uuml;r mehr als 7300 Radiosender.",
+				"EN": "Track, cover art and, occasionally, programme information for more than 7300 radio stations.",
+				"FR": "Titre, pochette et, occasionnellement, informations sur le programme en cours d'&eacute;coute pour plus de 7300 stations de radio.",
+				"NL": "Track-, cover- en af en toe ook programma-informatie voor meer dan 7300 radiostations."
 			}
 		},
 		{
