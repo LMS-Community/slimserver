@@ -341,7 +341,10 @@ sub parseMetadata {
 				}
 
 				main::DEBUGLOG && $directlog->debug("Updating stream artwork to $artworkUrl");
-			};
+			}
+			elsif (my $artHandler = Slim::Formats::RemoteMetadata::getArtworkHandler()) {
+				$artHandler->( $client, $url, $newTitle );
+			}
 		};
 
 		# Delay metadata according to buffer size if we already have metadata

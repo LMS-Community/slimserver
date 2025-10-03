@@ -33,6 +33,8 @@ my $log = logger('formats.metadata');
 tie my %providers, 'Tie::RegexpHash';
 tie my %parsers,   'Tie::RegexpHash';
 
+my $artworkHandler;
+
 # This doesn't do anything any more. But I'll leave it in, just in case something was calling us
 sub init {}
 
@@ -88,6 +90,56 @@ sub getProviderFor {
 
 	return $providers{ $url };
 }
+
+
+=head2 registerArtworkHandler()
+
+Register a new artwork handler:
+
+	Slim::Formats::RemoteMetadata->registerProvider(
+		\&provider,
+	);
+
+	sub provider {
+		my ( $client, $url, $title ) = @_;
+
+		my $artworkUrl = Go::Fetch::Some::Artwork($title);
+
+		if ($artworkUrl) {
+			Slim::Utils::Cache->new()->set( "remote_image_$url", $artworkUrl, 3600 );
+
+			if ( my $song = $client->playingSong() ) {
+				$song->pluginData( httpCover => $artworkUrl );
+			}
+
+			main::DEBUGLOG && $log->debug("Updating stream artwork to $artworkUrl");
+		}
+	}
+
+=cut
+
+sub registerArtworkHandler {
+	my ( $class, $func ) = @_;
+
+	if ( ref $func ne 'CODE' ) {
+		$log->error( 'registerArtworkHandler called without a code reference' );
+		return;
+	}
+
+	main::INFOLOG && $artworkHandler && $log->is_info
+		&& $log->info("Replacing existing artwork handler: " . Slim::Utils::PerlRunTime::realNameForCodeRef($artworkHandler));
+
+	$artworkHandler = $func;
+
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $func );
+		$log->debug( "Registered new artwork handler: $name" );
+	}
+
+	return 1;
+}
+
+sub getArtworkHandler { $artworkHandler }
 
 =head2 registerParser( PARAMS )
 
