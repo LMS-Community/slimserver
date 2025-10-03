@@ -97,38 +97,38 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Lyrion – verze 9.0.3
-	DA	© 2001-2024 Lyrion - version 9.0.3
-	DE	© 2001-2024 Lyrion Version 9.0.3
-	EN	© 2001-2024 Lyrion Version 9.0.3
-	ES	© 2001-2024 Lyrion Versión 9.0.3
-	FI	© 2001-2024 Lyrionin versio 9.0.3
-	FR	© 2001-2024 Lyrion Version 9.0.3
-	HU	© 2001-2024 Lyrion Version 9.0.3
-	IT	© 2001-2024 Lyrion versione 9.0.3
-	NL	© 2001-2024 Lyrion versie 9.0.3
-	NO	© 2001–2024 Lyrion versjon 9.0.3
-	PL	© 2001-2024 Lyrion wersja 9.0.3
-	PT	© 2001-2024 Lyrion wersão 9.0.3
-	RU	© Lyrion, 2001-2024. Версия 9.0.3
-	SV	© 2001–2024 Lyrion Version 9.0.3
+	CS	© 2001-2024 Lyrion – verze 9.0.4
+	DA	© 2001-2024 Lyrion - version 9.0.4
+	DE	© 2001-2024 Lyrion Version 9.0.4
+	EN	© 2001-2024 Lyrion Version 9.0.4
+	ES	© 2001-2024 Lyrion Versión 9.0.4
+	FI	© 2001-2024 Lyrionin versio 9.0.4
+	FR	© 2001-2024 Lyrion Version 9.0.4
+	HU	© 2001-2024 Lyrion Version 9.0.4
+	IT	© 2001-2024 Lyrion versione 9.0.4
+	NL	© 2001-2024 Lyrion versie 9.0.4
+	NO	© 2001–2024 Lyrion versjon 9.0.4
+	PL	© 2001-2024 Lyrion wersja 9.0.4
+	PT	© 2001-2024 Lyrion wersão 9.0.4
+	RU	© Lyrion, 2001-2024. Версия 9.0.4
+	SV	© 2001–2024 Lyrion Version 9.0.4
 
 VERSION
-	CS	Verze 9.0.3 / r%s
-	DA	Version 9.0.3 / r%s
-	DE	Version 9.0.3 / r%s
-	EN	Version 9.0.3 / r%s
-	ES	Versión 9.0.3 / r%s
-	FI	Versio 9.0.3 / r%s
-	HU	Versio 9.0.3 / r%s
-	FR	Version 9.0.3 / r%s
-	IT	Versione 9.0.3/r%s
-	NL	Versie 9.0.3 / r%s
-	NO	Versjon 9.0.3 / r%s
-	PL	Wersja 9.0.3 / r%s
-	PT	Versão 9.0.3 / r%s
-	RU	Версия 9.0.3 / r%s
-	SV	Version 9.0.3 / r%s
+	CS	Verze 9.0.4 / r%s
+	DA	Version 9.0.4 / r%s
+	DE	Version 9.0.4 / r%s
+	EN	Version 9.0.4 / r%s
+	ES	Versión 9.0.4 / r%s
+	FI	Versio 9.0.4 / r%s
+	HU	Versio 9.0.4 / r%s
+	FR	Version 9.0.4 / r%s
+	IT	Versione 9.0.4/r%s
+	NL	Versie 9.0.4 / r%s
+	NO	Versjon 9.0.4 / r%s
+	PL	Wersja 9.0.4 / r%s
+	PT	Versão 9.0.4 / r%s
+	RU	Версия 9.0.4 / r%s
+	SV	Version 9.0.4 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
