@@ -97,18 +97,18 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Lyrion – verze 9.1.0
-	DA	© 2001-2024 Lyrion - version 9.1.0
-	EN	© 2001-2024 Lyrion Version 9.1.0
-	ES	© 2001-2024 Lyrion Versión 9.1.0
-	FI	© 2001-2024 Lyrionin versio 9.1.0
-	IT	© 2001-2024 Lyrion versione 9.1.0
-	NL	© 2001-2024 Lyrion versie 9.1.0
-	NO	© 2001–2024 Lyrion versjon 9.1.0
-	PL	© 2001-2024 Lyrion wersja 9.1.0
-	PT	© 2001-2024 Lyrion wersão 9.1.0
-	RU	© Lyrion, 2001-2024. Версия 9.1.0
-	SV	© 2001–2024 Lyrion Version 9.1.0
+	CS	© 2001-2025 Lyrion – verze 9.1.0
+	DA	© 2001-2025 Lyrion - version 9.1.0
+	EN	© 2001-2025 Lyrion Version 9.1.0
+	ES	© 2001-2025 Lyrion Versión 9.1.0
+	FI	© 2001-2025 Lyrionin versio 9.1.0
+	IT	© 2001-2025 Lyrion versione 9.1.0
+	NL	© 2001-2025 Lyrion versie 9.1.0
+	NO	© 2001–2025 Lyrion versjon 9.1.0
+	PL	© 2001-2025 Lyrion wersja 9.1.0
+	PT	© 2001-2025 Lyrion wersão 9.1.0
+	RU	© Lyrion, 2001-2025. Версия 9.1.0
+	SV	© 2001–2025 Lyrion Version 9.1.0
 
 VERSION
 	CS	Verze 9.1.0 / r%s
