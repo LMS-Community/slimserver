@@ -148,7 +148,6 @@ runs:
       continue-on-error: true
       uses: ./server/.github/actions/setup-s5cmd
       # uses: peak/action-setup-s5cmd@main
-      continue-on-error: true
       with:
         version: v2.3.0
 
