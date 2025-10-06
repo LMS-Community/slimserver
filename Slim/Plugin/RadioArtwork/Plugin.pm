@@ -189,10 +189,20 @@ sub lookupArtwork {
 
 sub getHeaders {
 	my ($class, $args, $client, $url, $titleInfo) = @_;
-	return {
+
+	my $headers =  {
 		'X-LMS-Plugin-ID' => $class,
-		'X-LMS-Radio-URL' => $url,
 	};
+
+	if ($url) {
+		# parse and remove potentially sensitive information
+		my $parsed = URI->new($url);
+		if ($parsed && $parsed->host) {
+			$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
+		}
+	}
+
+	return $headers;
 }
 
 # called when we have artwork to set - will update all clients waiting for the same artwork
