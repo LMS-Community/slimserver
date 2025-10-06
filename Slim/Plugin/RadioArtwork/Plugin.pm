@@ -152,6 +152,8 @@ sub lookupArtwork {
 
 	main::INFOLOG && $log->is_info && $log->info("Getting artwork for $title by $artist");
 
+	my $headers = $class->getHeaders($args, $client, $url, $titleInfo);
+
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $response = shift;
@@ -182,7 +184,15 @@ sub lookupArtwork {
 			$log->error("HTTP error looking up artwork for $artworkLookupUrl");
 			main::INFOLOG && $log->error(Data::Dump::dump(shift));
 		}
-	)->get($artworkLookupUrl);
+	)->get($artworkLookupUrl, %$headers);
+}
+
+sub getHeaders {
+	my ($class, $args, $client, $url, $titleInfo) = @_;
+	return {
+		'X-LMS-Plugin-ID' => $class,
+		'X-LMS-Radio-URL' => $url,
+	};
 }
 
 # called when we have artwork to set - will update all clients waiting for the same artwork
