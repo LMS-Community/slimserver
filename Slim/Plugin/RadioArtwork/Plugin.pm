@@ -26,6 +26,8 @@ package Slim::Plugin::RadioArtwork::Plugin;
 
 use strict;
 use JSON::XS::VersionOneAndTwo;
+use URI;
+use URI::QueryParam;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Formats::RemoteMetadata;
@@ -171,6 +173,9 @@ sub lookupArtwork {
 				return $class->gotArtwork($args, $client, $url, $titleInfo);
 			}
 			elsif ( $json ) {
+				$args->{imageUrl} = $json->{picture};
+				$class->cacheFoundArtwork($args, $client, $url, $titleInfo);
+
 				main::DEBUGLOG && $log->is_debug && $log->debug("Nothing found: " . $response->content);
 			}
 			else {
@@ -194,11 +199,13 @@ sub getHeaders {
 		'X-LMS-Plugin-ID' => $class,
 	};
 
-	if ($url) {
-		# parse and remove potentially sensitive information
-		my $parsed = URI->new($url);
-		if ($parsed && $parsed->host) {
-			$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
+	if ($url && (my $parsed = URI->new($url))) {
+		# only submit host name / path to avoid posting potentially sensitive info like stream keys etc.
+		$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
+
+		if ($parsed->host =~ /\b(?:tunein|radiotime)\.com$/i) {
+			my $queryParams = $parsed->query_form_hash;
+			$headers->{'X-LMS-Radio-URL'} .= '?sid=' . ($queryParams->{id} || 'unknown');
 		}
 	}
 
