@@ -107,8 +107,16 @@ sub _players_done {
 
 	my $res = eval { from_json( $http->content ) };
 
-	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
-		$http->error( $@ || 'Invalid JSON response: ' . $http->content );
+	if ( $@ ) {
+	    $http->error( $@ || 'Invalid JSON response: ' . $http->content );
+		return _players_error( $http );
+	}
+	# Elan controllers can send an empty (but valid) JSON array if their discovery mode is enabled.
+	elsif (ref $res eq 'ARRAY' and ! @$res) {
+	    return;
+	}
+	elsif (ref $res ne 'HASH' || $res->{error} ) {
+	    $http->error( $@ || 'Invalid JSON response: ' . $http->content );
 		return _players_error( $http );
 	}
 
