@@ -101,22 +101,19 @@ sub fetch_players {
 	$http->post( $url . 'jsonrpc.js', $postdata);
 }
 
+my %seen;
 sub _players_done {
 	my $http   = shift;
 	my $server = $http->params('server');
 
 	my $res = eval { from_json( $http->content ) };
 
-	if ( $@ ) {
-	    $http->error( $@ || 'Invalid JSON response: ' . $http->content );
-		return _players_error( $http );
-	}
-	# Elan controllers can send an empty (but valid) JSON array if their discovery mode is enabled.
-	elsif (ref $res eq 'ARRAY' and ! @$res) {
-	    return;
-	}
-	elsif (ref $res ne 'HASH' || $res->{error} ) {
-	    $http->error( $@ || 'Invalid JSON response: ' . $http->content );
+	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
+		# Avoid spamming log
+		# Elan controllers can send an empty (but valid) JSON array if their discovery mode is enabled.
+		return if $seen{$server}++;
+
+		$http->error( $@ || 'Invalid JSON response: ' . $http->content );
 		return _players_error( $http );
 	}
 
@@ -177,3 +174,5 @@ sub _purge_player_list {
 		}
 	}
 }
+
+1;
