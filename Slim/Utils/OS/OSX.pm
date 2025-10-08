@@ -161,6 +161,9 @@ sub dirsFor {
 	# These are all at the top level.
 	if ($dir =~ /^(?:strings|revision|convert|types|repositories)$/) {
 
+		# support LyrPlay's custom-convert.conf
+		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/Squeezebox')	if $dir =~ /^convert$/;
+
 		push @dirs, $Bin;
 
 	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
