@@ -1,11 +1,7 @@
 package Slim::Plugin::AudioScrobbler::Plugin;
 
-
-# This plugin handles submission of tracks to Last.fm's
-# Audioscrobbler service.
-
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -15,6 +11,9 @@ package Slim::Plugin::AudioScrobbler::Plugin;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+# This plugin handles submission of tracks to Last.fm (Audioscrobbler v1.2)
+# and ListenBrainz service.
+
 # The basic algorithm used by this plugin is very simple:
 # On newsong, figure out how long from now until half of song or 240 secs
 # Set a timer for that time, the earliest possible time they could meet the criteria
@@ -23,12 +22,15 @@ package Slim::Plugin::AudioScrobbler::Plugin;
 # If time has passed, great, submit it
 
 # https://www.last.fm/api/submissions
+# https://listenbrainz.readthedocs.io/en/latest/users/api/core.html
 
 # Thanks to the SlimScrobbler plugin for inspiration and feature ideas.
 # http://slimscrobbler.sourceforge.net/
 
 use strict;
 use base qw(Slim::Plugin::Base);
+
+use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Source;
@@ -44,20 +46,36 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Timers;
 
-use Digest::MD5 qw(md5_hex);
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
+
+# Migration from version 0 to 1: add api_type and api_url to existing accounts
+$prefs->migrate(1, sub {
+	my $accounts = $prefs->get('accounts') || [];
+
+	for my $account (@{$accounts}) {
+		# Add api_type if missing, defaulting to lastfm
+		if (!exists $account->{api_type}) {
+			$account->{api_type} = 'lastfm';
+		}
+
+		# Add api_url if missing, defaulting to empty string
+		if (!exists $account->{api_url}) {
+			$account->{api_url} = '';
+		}
+	}
+
+	# Save the updated accounts
+	$prefs->set('accounts', $accounts);
+	1;
+});
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.audioscrobbler',
 	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_AUDIOSCROBBLER_MODULE_NAME',
 } );
-
-use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
-use constant CLIENT_ID     => 'ss7';
-use constant CLIENT_VER    => 'sc' . $::VERSION;
 
 my $loveHandler;
 
@@ -260,154 +278,12 @@ sub changeAccount {
 sub clearSession {
 	my $client = shift;
 
+	$client = Slim::Player::Client::getClient($client) if !blessed $client;
+
 	# Reset our state
 	$client->master->pluginData( session_id      => 0 );
 	$client->master->pluginData( now_playing_url => 0 );
 	$client->master->pluginData( submit_url      => 0 );
-}
-
-sub handshake {
-	my $params = shift || {};
-
-	if ( my $client = $params->{client} ) {
-		clearSession( $client );
-
-		# Get client's account information
-		if ( !$params->{username} ) {
-			$params->{username} = $prefs->client($client)->get('account');
-
-			my $accounts = getAccounts($client);
-
-			for my $account ( @{$accounts} ) {
-				if ( $account->{username} eq $params->{username} ) {
-					$params->{password} = $account->{password};
-					last;
-				}
-			}
-		}
-	}
-
-	my $time = time();
-
-	my $url = HANDSHAKE_URL
-		. '?hs=true&p=1.2'
-		. '&c=' . CLIENT_ID
-		. '&v=' . CLIENT_VER
-		. '&u=' . $params->{username}
-		. '&t=' . $time
-		. '&a=' . md5_hex( $params->{password} . $time );
-
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_handshakeOK,
-		\&_handshakeError,
-		{
-			params  => $params,
-			timeout => 30,
-		},
-	);
-
-	main::DEBUGLOG && $log->debug("Handshaking with Last.fm: $url");
-
-	$http->get( $url );
-}
-
-sub _handshakeOK {
-	my $http   = shift;
-	my $params = $http->params('params');
-	my $client = $params->{client};
-
-	my $content = $http->content;
-	my $error;
-
-	if ( $content =~ /^OK/ ) {
-		my (undef, $session_id, $now_playing_url, $submit_url) = split /\n/, $content, 4;
-
-		main::DEBUGLOG && $log->debug( "Handshake OK, session id: $session_id, np URL: $now_playing_url, submit URL: $submit_url" );
-
-		if ( $client ) {
-			$client->master->pluginData( session_id      => $session_id );
-			$client->master->pluginData( now_playing_url => $now_playing_url );
-			$client->master->pluginData( submit_url      => $submit_url );
-			$client->master->pluginData( handshake_delay => 0 );
-
-			# If there are any tracks pending in the queue, send them now
-			my $queue = getQueue($client);
-
-			if ( scalar @{$queue} ) {
-				submitScrobble( $client );
-			}
-		}
-	}
-	elsif ( $content =~ /^BANNED/ ) {
-		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BANNED');
-	}
-	elsif ( $content =~ /^BADAUTH/ ) {
-		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BADAUTH');
-	}
-	elsif ( $content =~ /^BADTIME/ ) {
-		$error = cstring($client, 'PLUGIN_AUDIOSCROBBLER_BADTIME');
-	}
-	else {
-		# Other error that requires a retry
-		chomp $content;
-		$error = $content;
-		$http->error( $error );
-
-		if ( $client ) {
-			_handshakeError( $http );
-		}
-	}
-
-	if ( $error ) {
-		$log->error($error);
-		if ( $params->{ecb} ) {
-			$params->{ecb}->($error);
-		}
-	}
-	else {
-		# Callback to success function
-		if ( $params->{cb} ) {
-			$params->{cb}->();
-		}
-	}
-}
-
-sub _handshakeError {
-	my $http   = shift;
-	my $error  = $http->error;
-	my $params = $http->params('params');
-	my $client = $params->{client};
-
-	$log->error("Error handshaking with Last.fm: $error");
-
-	if ( $params->{ecb} ) {
-		$params->{ecb}->($error);
-	}
-
-	return unless $client;
-
-	my $delay;
-
-	if ( $delay = $client->master->pluginData('handshake_delay') ) {
-		$delay *= 2;
-		if ( $delay > 120 ) {
-			$delay = 120;
-		}
-	}
-	else {
-		$delay = 1;
-	}
-
-	$client->master->pluginData( handshake_delay => $delay );
-
-	$log->warn("  retrying in $delay minute(s)");
-
-	Slim::Utils::Timers::killTimers( $params, \&handshake );
-	Slim::Utils::Timers::setTimer(
-		$params,
-		time() + ( $delay * 60 ),
-		\&handshake,
-	);
 }
 
 sub newsongCallback {
@@ -415,7 +291,8 @@ sub newsongCallback {
 	my $client  = $request->client() || return;
 
 	# Check if this player has an account selected
-	if ( ! (my $account = $prefs->client($client)->get('account')) ) {
+	my $account = $prefs->client($client)->get('account');
+	if ( !$account ) {
 		return ;
 	}
 
@@ -450,8 +327,19 @@ sub newsongCallback {
 		return;
 	}
 
-	# report all new songs as now playing
+	# Track must be > 30 seconds - check this early to avoid submitting short tracks for Now Playing
+	if ( $duration && $duration < 30 ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
+		}
+
+		return;
+	}
+
+	# report all new songs as now playing (for Last.fm)
 	my $queue = getQueue($client);
+
+	my $api = Slim::Plugin::AudioScrobbler::API->getAPI($client);
 
 	if ( scalar @{$queue} && scalar @{$queue} <= 50 ) {
 		# before we submit now playing, submit all queued tracks, so that
@@ -468,28 +356,20 @@ sub newsongCallback {
 					time() + 1,
 					\&submitNowPlaying,
 					$track,
+					undef,
+					$api,
 				);
 			},
 		} );
-	}
-	else {
-		submitNowPlaying( $client, $track );
+	} else {
+		$api->submitNowPlaying($track);
 	}
 
 	# Determine when we need to check again
 
-	# Track must be > 30 seconds
-	if ( $duration && $duration < 30 ) {
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
-		}
-
-		return;
-	}
-
 	my $title = $track->title;
 
-	if ( $track->remote ) {
+	if ( $track->can('stash') ) {
 		if ( $meta ) {
 			$title = $meta->{title};
 
@@ -552,120 +432,8 @@ sub newsongCallback {
 }
 
 sub submitNowPlaying {
-	my ( $client, $track, $retry ) = @_;
-
-	# Abort if the user disabled scrobbling for this player
-	return if !$prefs->client($client)->get('account');
-
-	if ( !$client->master->pluginData('now_playing_url') ) {
-		# Get a new session
-		handshake( {
-			client => $client,
-			cb     => sub {
-				submitNowPlaying( $client, $track, $retry );
-			},
-		} );
-		return;
-	}
-
-	my $meta = _getMetadata($client, $track);
-
-	if (!$meta) {
-		main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
-		return;
-	}
-
-	elsif ( $meta->{msg} ) {
-		main::DEBUGLOG && $log->debug( $meta->{msg} );
-		return;
-	}
-
-	my $post = 's=' . $client->master->pluginData('session_id')
-		. '&a=' . uri_escape_utf8( $meta->{artist} )
-		. '&t=' . uri_escape_utf8( $meta->{title} )
-		. '&b=' . uri_escape_utf8( $meta->{album} )
-		. '&l=' . ( $meta->{duration} ? int( $meta->{duration} ) : '' )
-		. '&n=' . $meta->{tracknum}
-		. '&m=' . ( $track->musicbrainz_id || '' );
-
-	main::DEBUGLOG && $log->debug("Submitting Now Playing track to Last.fm: $post");
-
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_submitNowPlayingOK,
-		\&_submitNowPlayingError,
-		{
-			client  => $client,
-			track   => $track,
-			retry   => $retry,
-			timeout => 30,
-		}
-	);
-
-	$http->post(
-		$client->master->pluginData('now_playing_url'),
-		'Content-Type' => 'application/x-www-form-urlencoded',
-		$post,
-	);
-}
-
-sub _submitNowPlayingOK {
-	my $http    = shift;
-	my $content = $http->content;
-	my $client  = $http->params('client');
-	my $track   = $http->params('track');
-	my $retry   = $http->params('retry');
-
-	if ( $content =~ /^OK/ ) {
-		main::DEBUGLOG && $log->debug('Now Playing track submitted successfully');
-	}
-	elsif ( $content =~ /^BADSESSION/ ) {
-		main::DEBUGLOG && $log->debug('Now Playing failed to submit: bad session');
-
-		# Re-handshake and retry once
-		handshake( {
-			client => $client,
-			cb     => sub {
-				if ( !$retry ) {
-					main::DEBUGLOG && $log->debug('Retrying failed Now Playing submission');
-					submitNowPlaying( $client, $track, 'retry' );
-				}
-			},
-		} );
-	}
-	else {
-		# Treat it as an error
-		chomp $content;
-		if ( !$content ) {
-			$content = 'Unknown error';
-		}
-		$http->error( $content );
-		_submitNowPlayingError( $http );
-	}
-}
-
-sub _submitNowPlayingError {
-	my $http   = shift;
-	my $error  = $http->error;
-	my $client = $http->params('client');
-	my $track  = $http->params('track');
-	my $retry  = $http->params('retry');
-
-	if ( $retry ) {
-		main::DEBUGLOG && $log->debug("Now Playing track failed to submit after retry: $error, giving up");
-		return;
-	}
-
-	main::DEBUGLOG && $log->debug("Now Playing track failed to submit: $error, retrying in 5 seconds");
-
-	# Retry once after 5 seconds
-	Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
-	Slim::Utils::Timers::setTimer(
-		$client,
-		Time::HiRes::time() + 5,
-		\&submitNowPlaying,
-		$track,
-		'retry',
-	);
+	my ($client, $track, $retry, $api) = @_;
+	$api->submitNowPlaying($track, $retry) if $api;
 }
 
 sub checkScrobble {
@@ -686,7 +454,7 @@ sub checkScrobble {
 
 	my $source = 'P';
 
-	if ( $track->remote ) {
+	if ( $track->can('stash') ) {
 		if (!$meta) {
 			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $cururl );
 			return;
@@ -813,100 +581,11 @@ sub submitScrobble {
 		return $cb->();
 	}
 
-	if ( !$client->master->pluginData('submit_url') ) {
-		# Get a new session
-		handshake( {
-			client => $client,
-			cb     => sub {
-				submitScrobble( $client, $params );
-			},
-		} );
-		return;
-	}
+	my $api = Slim::Plugin::AudioScrobbler::API->getAPI($client);
 
-	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
-		#$log->debug( Data::Dump::dump($queue) );
-	}
+	main::DEBUGLOG && $log->is_debug && $log->debug("Submitting to: account=$account");
 
-	# Get the currently playing track
-	my $current_track;
-	if ( my $url = Slim::Player::Playlist::url($client) ) {
-		$current_track = Slim::Schema->objectForUrl( { url => $url } );
-	}
-
-	my $current_item;
-	my @tmpQueue;
-
-	my $post = 's=' . $client->master->pluginData('session_id');
-
-	my $index = 0;
-	while ( my $item = shift @{$queue} ) {
-		# Don't submit tracks that are still playing, to allow user
-		# to rate the track
-		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
-			main::DEBUGLOG && $log->debug( "Track " . $item->{t} . " is still playing, not submitting" );
-			$current_item = $item;
-			next;
-		}
-
-		push @tmpQueue, $item;
-
-		for my $p ( keys %{$item} ) {
-			# Skip internal items i.e. _url
-			next if $p =~ /^_/;
-
-			# each value is already uri-escaped as needed
-			$post .= '&' . $p . '[' . $index . ']=' . $item->{ $p };
-		}
-
-		$index++;
-
-		# Max size of each scrobble request is 50 items
-		last if $index == 50;
-	}
-
-	# Add the currently playing track back to the queue
-	if ( $current_item ) {
-		unshift @{$queue}, $current_item;
-	}
-
-	if ( @tmpQueue ) {
-		# Only setQueue if tmpQueue is nonempty
-		# otherwise it means we didn't shift anything out of queue into tmpQueue
-		# and $queue is therefore unchanged. prevents disk writes enabling some disks to spindown
-		setQueue( $client, $queue );
-
-		main::DEBUGLOG && $log->debug( "Submitting: $post" );
-
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			\&_submitScrobbleOK,
-			\&_submitScrobbleError,
-			{
-				tmpQueue => \@tmpQueue,
-				params   => $params,
-				client   => $client,
-				timeout  => 30,
-			},
-		);
-
-		$http->post(
-			$client->master->pluginData('submit_url'),
-			'Content-Type' => 'application/x-www-form-urlencoded',
-			$post,
-		);
-	}
-
-	# If there are still items left in the queue, scrobble again in a minute
-	if ( scalar @{$queue} ) {
-		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			time() + 60,
-			\&submitScrobble,
-			$params,
-		);
-	}
+	$api->submitScrobble( $queue, $params );
 }
 
 # Check if a track is still playing
@@ -942,6 +621,8 @@ sub _getMetadata {
 
 	return unless ref $track;
 
+	$client = Slim::Player::Client::getClient($client) if !blessed $client;
+
 	my $meta = {
 		artist   => $track->artistName || '',
 		album    => ($track->album && $track->album->get_column('title')) || '',
@@ -976,82 +657,6 @@ sub _getMetadata {
 	}
 
 	return $meta;
-}
-
-sub _submitScrobbleOK {
-	my $http     = shift;
-	my $content  = $http->content;
-	my $tmpQueue = $http->params('tmpQueue') || [];
-	my $params   = $http->params('params');
-	my $client   = $http->params('client');
-
-	if ( $content =~ /^OK/ ) {
-		main::DEBUGLOG && $log->debug( 'Scrobble submit successful' );
-
-		# If we had a callback on success, call it now
-		if ( $params->{cb} ) {
-			$params->{cb}->();
-		}
-	}
-	elsif ( $content =~ /^BADSESSION/ ) {
-		# put the tmpQueue items back into the main queue
-		my $queue = getQueue($client);
-
-		push @{$queue}, @{$tmpQueue};
-
-		setQueue( $client, $queue );
-
-		main::DEBUGLOG && $log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
-
-		# re-handshake, this will cause a submit to occur after success
-		handshake( { client => $client } );
-	}
-	elsif ( $content =~ /^FAILED (.+)/ ) {
-		# treat as an error
-		$http->error( $1 );
-		_submitScrobbleError( $http );
-	}
-	else {
-		# treat as an error
-		chomp $content;
-		$http->error( $content );
-		_submitScrobbleError( $http );
-	}
-}
-
-sub _submitScrobbleError {
-	my $http     = shift;
-	my $error    = $http->error;
-	my $tmpQueue = $http->params('tmpQueue') || [];
-	my $params   = $http->params('params');
-	my $client   = $http->params('client');
-
-	# put the tmpQueue items back into the main queue
-	my $queue = getQueue($client);
-
-	push @{$queue}, @{$tmpQueue};
-
-	setQueue( $client, $queue );
-
-	if ( $params->{retry} == 3 ) {
-		# after 3 failures, give up and handshake
-		main::DEBUGLOG && $log->debug( "Scrobble submit failed after 3 tries, re-handshaking" );
-		handshake( { client => $client } );
-		return;
-	}
-
-	my $tries = 3 - $params->{retry};
-	main::DEBUGLOG && $log->debug( "Scrobble submit failed: $error, will retry in 5 seconds ($tries tries left)" );
-
-	# Retry after a short delay
-	$params->{retry}++;
-	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
-	Slim::Utils::Timers::setTimer(
-		$client,
-		Time::HiRes::time() + 5,
-		\&submitScrobble,
-		$params,
-	);
 }
 
 sub loveTrack { if ($loveHandler) {
@@ -1131,10 +736,22 @@ sub canScrobble {
 }
 
 sub getAccounts {
-	my $client = shift;
-
 	return $prefs->get('accounts') || [];
 }
+
+sub getAccount {
+	my $client = shift;
+
+	my $username = $prefs->client($client)->get('account');
+
+	return unless $username;
+
+	my $accounts = getAccounts($client) || return;
+
+	my ($account) = grep { $_->{username} eq $username } @{$accounts};
+	return $account;
+}
+
 
 sub getQueue {
 	my $client = shift;
@@ -1145,6 +762,7 @@ sub getQueue {
 sub setQueue {
 	my ( $client, $queue ) = @_;
 
+	$client = Slim::Player::Client::getClient($client) if !blessed $client;
 	$prefs->client($client)->set( queue => $queue );
 }
 

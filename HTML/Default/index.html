@@ -99,10 +99,7 @@
 					}
 				}
 
-				if (frames.browser.location)
-					frames.browser.location.href = navigationUrl;
-				else if (document.browser.location)
-					document.browser.location.href = navigationUrl;
+				SqueezeJS.Utils.setBrowseLocation(navigationUrl);
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';
@@ -170,7 +167,7 @@
 					<span id="scanWarning" style="display:none;">
 						<a href="[% webroot %]progress.html?type=importer" target="browser"><img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/></a>
 						<a href="[% webroot %]progress.html?type=importer" target="browser">
-							[% "RESCANNING_SHORT" | string %]
+							[% "RESCANNING" | string %]
 							<span id="progressInfo" class="link" style="display:none;">
 								<span id="progressName"></span>
 								<span class="progress">&nbsp;(</span><span id="progressDone"></span>

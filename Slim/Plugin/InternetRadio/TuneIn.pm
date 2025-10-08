@@ -277,34 +277,4 @@ sub setUsername {
 	$prefs->set('username', $username);
 }
 
-sub reportError {
-	my ($class, $url, $error) = @_;
-
-	return unless $error && $url =~ m{^https?://[^/](?:radiotime|tunein)\.com};
-
-	my ($id) = $url =~ /\bid\b=([a-z0-9]+)/;
-	if ( $id ) {
-		my $reportUrl = ERROR_URL
-			. '&id=' . uri_escape_utf8($id)
-			. '&message=' . uri_escape_utf8($error);
-
-		main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to TuneIn: $reportUrl");
-
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			sub {
-				main::INFOLOG && $log->is_info && $log->info("TuneIn failure report OK");
-			},
-			sub {
-				my $http = shift;
-				main::INFOLOG && $log->is_info && $log->info( "TuneIn failure report failed: " . $http->error );
-			},
-			{
-				timeout => 30,
-			},
-		);
-
-		$http->get($reportUrl);
-	}
-}
-
 1;

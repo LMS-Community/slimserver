@@ -28,12 +28,6 @@ sub initPlugin {
 			\&_initRadio,
 		);
 
-		# Setup cant_open handler for TuneIn reporting
-		Slim::Control::Request::subscribe(
-			\&cantOpen,
-			[['playlist'],['cant_open']],
-		);
-
 		Slim::Plugin::InternetRadio::TuneIn->init();
 	}
 
@@ -223,20 +217,6 @@ sub _pluginDataFor {
 	return $class->icon if $key eq 'icon';
 
 	return $class->SUPER::_pluginDataFor($key);
-}
-
-sub cantOpen {
-	my $request = shift;
-
-	my $url   = $request->getParam('_url');
-	my $error = $request->getParam('_error');
-
-	# Do not report if the user has turned off stats reporting
-	return if $prefs->get('sn_disable_stats');
-
-	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
-		Slim::Plugin::InternetRadio::TuneIn->reportError($url, $error);
-	}
 }
 
 1;

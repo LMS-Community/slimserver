@@ -367,7 +367,7 @@ sub parse {
 			}
 		} else {
 
-			# handle remaning Commands as a list of keys and values.
+			# handle remaining Commands as a list of keys and values.
 			($cuesheet, $tracks) = _addCommand($cuesheet,
 											 $tracks,
 											 $inAlbum,
@@ -399,6 +399,7 @@ sub parse {
 
 	# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
 	_mergeCommand('DATE', 'YEAR', $cuesheet, $cuesheet);
+	$cuesheet->{YEAR} = Slim::Formats->sanitizeYearTag($cuesheet->{YEAR}) if defined $cuesheet->{YEAR};
 
 	for my $key (sort {$a <=> $b} keys %$tracks) {
 
@@ -425,6 +426,7 @@ sub parse {
 
 		# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
 		_mergeCommand('DATE', 'YEAR', $track, $track);
+		$track->{YEAR} = Slim::Formats->sanitizeYearTag($track->{YEAR}) if defined $track->{YEAR};
 
 		_mergeCommand('DISCNUMBER', 'DISC', $track, $track);
 	}
@@ -564,6 +566,20 @@ sub parse {
 
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
+
+		# external cue sheet hasn't been through tag mapping, so do it now.
+		if ( !$embedded && $track->{'FILENAME'} ) {
+			if ( my $type = Slim::Music::Info::typeFromPath(Slim::Utils::Misc::pathFromFileURL($track->{'FILENAME'})) ) {
+				if ( my $tagReaderClass = Slim::Formats->classForFormat($type) ) {
+					Slim::Formats->loadTagFormatForType($type);
+					if ( $tagReaderClass->can('doTagMapping') ) {
+						$tagReaderClass->doTagMapping($track);
+					}
+				}
+			}
+		}
+
+		Slim::Formats::sanitizeTagValues($track, $filename);
 	}
 
 	# Bug 8443, if no tracks contain a URI element, it's an invalid cue

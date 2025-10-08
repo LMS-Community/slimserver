@@ -255,16 +255,9 @@ sub concatFunction { ' || ' }
 
 =head2 sqlVersion( $dbh )
 
-Returns the version of MySQL that the $dbh is connected to.
-
 =cut
 
-sub sqlVersion {
-	my $class = shift;
-	my $dbh   = shift || return 0;
-
-	return 'SQLite';
-}
+sub sqlVersion { 'SQLite' }
 
 =head2 sqlVersionLong( $dbh )
 

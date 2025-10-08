@@ -720,7 +720,6 @@ sub setLocale {
 	# We leave LC_TYPE unchanged.
 	# This is used in Slim::Music::Info::sortFilename() to modify the
 	# behaviour of uc() when sorting native-encoded filenames.
-	# It is also used, probably incorrectly, in Slim::Schema::Genre::add() for ucfirst()
 
 	# We set LC_COLLATE always to utf8 so that it can be used correctly within
 	# the collate function (perlcollate) for SQLite DB sorting, where the field values

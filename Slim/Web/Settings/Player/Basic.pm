@@ -234,6 +234,16 @@ sub getPlayerIcon {
 
 	my $model = $client->model(1);
 
+	# Squeezelite players can use images based on model name:
+	# remove all but a-z, 0-9, - and _ from the lowercase name to match a PNG image.
+	if ($model eq 'squeezelite') {
+		$model = lc($client->modelName());
+		$model =~ s/[^-_a-z0-1]//g;
+		return $model if Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png");
+
+		$model = $client->model(1);
+	}
+
 	# default icon for software emulators and media players
 	$model = 'squeezebox' if $model eq 'squeezebox2';
 

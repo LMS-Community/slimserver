@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -83,6 +83,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Music::ContributorPictureScan;
 use Slim::Music::ReleaseTypes;
 use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
@@ -264,6 +265,7 @@ sub main {
 		Slim::Music::Import->scanOnlineLibraryOnly($onlineLibrary);
 		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
+		Slim::Music::ContributorPictureScan->init;
 		Slim::Music::ReleaseTypes->init();
 
 	}
@@ -412,7 +414,6 @@ Command line options:
 	--playlists     Only scan files in your playlistdir.
 	--onlinelibrary Only update online library content
 	--progress      Show a progress bar of the scan.
-	--dbtype TYPE   Force database type (valid values are MySQL or SQLite)
 	--prefsdir      Specify alternative preferences directory.
 	--priority      set process priority from -20 (high) to 20 (low)
 	--logfile       Send all debugging messages to the specified logfile.

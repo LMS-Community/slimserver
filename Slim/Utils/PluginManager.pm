@@ -390,12 +390,15 @@ sub load {
 
 			if ($module->can($initFunction)) {
 
+				main::DEBUGLOG && $log->is_debug && $log->debug("Calling $module->$initFunction");
 				eval { $module->$initFunction };
 
 				if ($@) {
 
 					logWarning("Couldn't call $module->$initFunction: $@");
 				}
+
+				main::DEBUGLOG && $log->is_debug && $log->debug("Finished $module->$initFunction");
 			}
 		}
 	}

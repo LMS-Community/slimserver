@@ -22,10 +22,6 @@ DELETE FROM genre_track;
 
 DELETE FROM comments;
 
-DELETE FROM pluginversion;
-
-DELETE FROM unreadable_tracks;
-
 DELETE FROM scanned_files;
 
 DELETE FROM works;

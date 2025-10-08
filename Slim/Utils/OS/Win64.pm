@@ -28,6 +28,10 @@ sub initDetails {
 
 	$class->SUPER::initDetails();
 
+	if ($ENV{PROCESSOR_IDENTIFIER} && $ENV{PROCESSOR_IDENTIFIER} =~ /ARM/i) {
+		$class->{osDetails}->{osArch} = 'ARM64';
+	}
+
 	$class->{osDetails}->{osName} = $class->{osDetails}->{osName} . ' (64-bit)';
 
 	return $class->{osDetails};

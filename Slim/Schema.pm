@@ -2,7 +2,7 @@ package Slim::Schema;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -143,7 +143,6 @@ sub init {
 	}
 
 	# Bug: 4076
-	# If a user was using MySQL with 6.3.x (unsupported), their
 	# metainformation table won't be dropped with the schema_1_up.sql
 	# file, since the metainformation table doesn't get dropped to
 	# maintain state. We need to wipe the DB and start over.
@@ -180,7 +179,6 @@ sub init {
 		MetaInformation
 		Playlist
 		PlaylistTrack
-		Rescan
 		Track
 		Year
 		Progress
@@ -858,6 +856,40 @@ sub objectForUrl {
 	return $track;
 }
 
+=head2 libraryObjectForUrl( $url )
+
+Returns a L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object for the given URL.
+Prefers the Slim::Schema::Track object over Slim::Schema::RemoteTrack if the URL is a
+remote track imported into the local database.
+
+=cut
+
+sub libraryObjectForUrl {
+	my $self = shift;
+	my $args = shift;
+
+	my $url = $args;
+	my $playlist;
+
+	if (ref($args) eq 'HASH') {
+		$url      = $args->{'url'};
+		$playlist = $args->{'playlist'};
+	}
+
+	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
+		$url = $url->url;
+	}
+
+	if (!ref $url && Slim::Music::Info::isRemoteURL($url)) {
+		my $track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+
+		return $track if $track;
+	}
+
+	# Otherwise, fall back to the standard objectForUrl method
+	return $self->objectForUrl($args);
+}
+
 sub _objForDbUrl {
 	my ($url) = @_;
 
@@ -908,7 +940,8 @@ sub _createOrUpdateAlbum {
 	my $disc      = $attributes->{DISC};
 	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
-	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID};
+	# Surely there is only one MB album id!
+	my $brainzId  = ref $attributes->{MUSICBRAINZ_ALBUM_ID} ? $attributes->{MUSICBRAINZ_ALBUM_ID}[0] : $attributes->{MUSICBRAINZ_ALBUM_ID};
 	my $extId     = $attributes->{EXTID} || $attributes->{ALBUM_EXTID};
 
 	# if we have a disc number from an online service, default disc count to 1
@@ -1302,7 +1335,7 @@ sub _createOrUpdateAlbum {
 		}
 	}
 
-	# Check that these are the correct types. Otherwise MySQL will not accept the values.
+	# Check that these are the correct types.
 	if ( defined $disc && $disc =~ /^\d+$/ ) {
 		$albumHash->{disc} = $disc;
 	}
@@ -1981,6 +2014,10 @@ sub updateOrCreateBase {
 			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
 			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
 
+				# Bug 7731, filter out duplicate keys that end up as array refs
+				# https://github.com/LMS-Community/slimserver/issues/1378
+				$val = $val->[0] if ( ref $val eq 'ARRAY' );
+
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
 				$track->set_column($key, $val);
@@ -2639,6 +2676,9 @@ sub _preCheckAttributes {
 
 	# Normalize attribute names
 	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+		if ( $key =~ /^MUSICBRAINZ.*ID$/ && $val && ref $val ne 'ARRAY' ) {
+			logWarning("$key ($val) in " . Slim::Utils::Misc::pathFromFileURL($url) . " has not been validated by Slim::Formats::sanitizeTagValues");
+		}
 		# don't overwrite mapped values
 		next if $mappedValues{$key};
 
@@ -3024,6 +3064,9 @@ sub _postCheckAttributes {
 			$track->work(undef);
 		}
 	}
+	else {
+		$track->work(undef);
+	}
 
 	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
@@ -3070,6 +3113,7 @@ sub _mergeAndCreateContributors {
 			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
 			# Bug: 6507 - use any ARTISTSORT tag for this contributor
 			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
+			$attributes->{'MUSICBRAINZ_TRACKARTIST_ID'} = delete $attributes->{'MUSICBRAINZ_ARTIST_ID'} if $attributes->{'MUSICBRAINZ_ARTIST_ID'};
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},
@@ -3262,7 +3306,7 @@ sub totals {
 	);
 
 	while (my ($key, $query) = each %categories) {
-		if ( !$totalCache->{$key} ) {
+		if ( !defined $totalCache->{$key} ) {
 			push @$query, 'library_id:' . $library_id if $library_id;
 			my $request = Slim::Control::Request::executeRequest($client, $query);
 			$totalCache->{$key} = $request->getResult('count');

@@ -57,6 +57,7 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
 	'DESCRIPTION'               => 'COMMENT',
 	'ORIGINALYEAR'              => 'YEAR',
+	'ORIGINALDATE'              => 'DATE',
 	'UNSYNCEDLYRICS'            => "LYRICS",
 
 	# J.River once again.. can't these people use existing standards?
@@ -132,6 +133,10 @@ sub getTag {
 
 	# suck in metadata for all these tags
 	my $items = $class->_getSubFileTags($s, $tracks);
+
+	foreach (values %$tracks) {
+		Slim::Formats::sanitizeTagValues($_, $file);
+	}
 
 	# fallback if we can't parse metadata
 	if ( $items < 1 ) {
@@ -217,13 +222,13 @@ sub _getStandardTag {
 	my $tags = $s->{tags} || {};
 
 	$class->_addInfoTags($s, $tags);
-	$class->_doTagMapping($tags);
+	$class->doTagMapping($tags);
 	$class->_addArtworkTags($s, $tags);
 
 	return $tags;
 }
 
-sub _doTagMapping {
+sub doTagMapping {
 	my ($class, $tags) = @_;
 
 	# Map ID3 tags first, so FLAC tags win out
@@ -248,7 +253,7 @@ sub _doTagMapping {
 			$tags->{DATE} = $years[0];
 		}
 
-		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
+		$tags->{YEAR} = $class->sanitizeYearTag($tags->{DATE});
 	}
 
 	# Sometimes the BPM is not an integer so we try to convert.
@@ -347,10 +352,6 @@ sub _getSubFileTags {
 
 	# parse cuesheet stuffed into a vorbis comment
 	$items = $class->_getCUEinVCs($s, $tracks);
-	return $items if $items > 0;
-
-	# try parsing stacked vorbis comments
-	$items = $class->_getStackedVCs($s, $tracks);
 	return $items if $items > 0;
 
 	# This won't yield good results - but without it, we regress from 6.0.2
@@ -532,7 +533,7 @@ sub _getXMLTags {
 
 			%{$tracks->{$cuesheetTrack}} = (%{$defaultTags}, %{$tracks->{$cuesheetTrack}});
 
-			$class->_doTagMapping($tracks->{$cuesheetTrack});
+			$class->doTagMapping($tracks->{$cuesheetTrack});
 		}
 	}
 
@@ -627,7 +628,7 @@ sub _getNumberedVCs {
 
 		%{$tracks->{$num}} = (%{$defaultTags}, %{$tracks->{$num}});
 
-		$class->_doTagMapping($tracks->{$num});
+		$class->doTagMapping($tracks->{$num});
 
 		$tracks->{$num}->{TRACKNUM} = $num unless exists $tracks->{$num}->{TRACKNUM};
 	}
@@ -726,7 +727,7 @@ sub _getCDDBTags {
 
 		%{$tracks->{$key}} = (%{$tags}, %{$tracks->{$key}});
 
-		$class->_doTagMapping($tracks->{$key});
+		$class->doTagMapping($tracks->{$key});
 	}
 
 	return $items;
@@ -783,113 +784,12 @@ sub _getCUEinVCs {
 			}
 		}
 
-		$class->_doTagMapping($tracks->{$key});
+		$class->doTagMapping($tracks->{$key});
 
 		$items++;
 	}
 
 	return $items;
-}
-
-sub _getStackedVCs {
-	my ($class, $s, $tracks) = @_;
-
-	my $items  = 0;
-
-	# XXX: can't support this using Audio::Scan, this is a stupid tag scheme anyway!
-	return 0;
-
-=pod
-	# parse "stacked" vorbis comments
-	# this is tricky when it comes to matching which groups belong together
-	# particularly for various artist, or multiple album compilations.
-	# this as also not terribly efficent, so it's not our first choice.
-
-	# here's a simple example of the sort of thing we're trying to work with
-	#
-	# ARTIST=foo
-	# ALBUM=bar
-	# TRACKNUMBER=1
-	# TITLE=baz
-	# TRACKNUMBER=2
-	# TITLE=something
-
-	# grab the raw comments for parsing
-	my $rawTags = $flac->{'rawTags'};
-
-	# grab the cuesheet for reference
-	my $cuesheet = $flac->cuesheet();
-
-	# validate number of TITLE tags against number of
-	# tracks in the cuesheet
-	my $titletags = 0;
-	my $cuetracks = 0;
-
-	for my $tag (@$rawTags) {
-		$titletags++ if $tag =~ /^\s*TITLE=/i;
-	}
-
-	for my $track (@$cuesheet) {
-		$cuetracks++ if $track =~ /^\s*TRACK/i;
-	}
-
-	return 0 unless $titletags == $cuetracks;
-
-
-	# ok, let's see which tags apply to which tracks
-
-	my $tempTags = {};
-	my $defaultTags = {};
-
-	$class->_addInfoTags($flac, $defaultTags);
-
-	for my $tag (@$rawTags) {
-
-		# Match the key and value
-		if ($tag =~ /^(.*?)=(.*?)[\r\n]*$/) {
-
-			# Make the key uppercase
-			my $tkey  = uc($1);
-			my $value = $2;
-
-			# use duplicate detection to find track boundries
-			# retain file wide values as defaults
-			if (defined $tempTags->{$tkey}) {
-				$items++;
-				my %merged = (%{$defaultTags}, %{$tempTags});
-				$defaultTags = \%merged;
-				$tempTags = {};
-
-				# set the tags on the track
-				%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags});
-
-				$class->_doTagMapping($tracks->{$items});
-
-				if (!exists $tracks->{$items}->{'TRACKNUM'}) {
-					$tracks->{$items}->{'TRACKNUM'} = $items;
-				}
-
-			}
-
-			$tempTags->{$tkey} = $value;
-
-			main::DEBUGLOG && logger('formats.playlists')->debug("    $tkey: $value");
-		}
-	}
-
-	# process the final track
-	$items++;
-
-	%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags}, %{$tempTags});
-
-	$class->_doTagMapping($tracks->{$items});
-
-	if (!exists $tracks->{$items}->{'TRACKNUM'}) {
-		$tracks->{$items}->{'TRACKNUM'} = $items;
-	}
-
-	return $items;
-=cut
 }
 
 =head2 findFrameBoundaries( $fh, $offset, $time )

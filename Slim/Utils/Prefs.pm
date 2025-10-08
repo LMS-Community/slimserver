@@ -1,6 +1,7 @@
 package Slim::Utils::Prefs;
 
-
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -261,6 +262,7 @@ sub init {
 		'refreshRate'           => 30,
 		'coverArt'              => '',
 		'artfolder'             => '',
+		'noContributorPictures' => 0,
 		'thumbSize'             => 100,
 		'useLocalImageproxy'    => main::ISWINDOWS ? 1 : 2,
 		# Server Settings - jive UI
@@ -275,7 +277,7 @@ sub init {
 		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
 		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
 		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
-		'worksScan'=> $prefs->get("showComposerReleasesbyAlbum") || 2,
+		'worksScan'             => $prefs->get("showComposerReleasesbyAlbum") || 2,
 	);
 
 	# we can have different defaults depending on the OS
@@ -294,6 +296,9 @@ sub init {
 
 	# initialise any new prefs
 	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
+
+	# remove some SN/MySB legacy
+	$prefs->remove(qw(snInitErrors snLastSyncDown sn_disable_stats sn_disabled_plugins sn_email sn_protocolhandlers sn_session sn_sync));
 
 	# perform OS-specific post-init steps
 	$os->postInitPrefs($prefs);

@@ -61,8 +61,6 @@ sub handler {
 		}
 	}
 
-	$paramRef->{enforceInsecureHTTPS} = main::ISWINDOWS ? 1 : 0;
-
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }
 

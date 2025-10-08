@@ -62,14 +62,12 @@
 	[% END %]
 [% END %]
 
-[% IF progress AND NOT simple %]
+[% IF NOT simple %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]
-		[% IF scanning && !abortScan %]
-			<div id="abortscanlink"><br/>
+			<div id="abortscanlink" style="display: none;"><br/>
 				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a>[%# stringCOLON %] [%# scanning | string %]
 			</div>
-		[% END %]
 	[% END %]
 [% END %]
 

@@ -72,7 +72,7 @@ my @_playlistCloneAttributes = qw(
 
 			samplerate samplesize channels totalbytes offset blockalign isLive
 
-			retryData
+			retryData replayGain
 		),
 	);
 }
@@ -87,7 +87,7 @@ sub new {
 	# Bug: 3390 - reload the track if it's changed.
 	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
 
- 	my $track    = Slim::Schema->objectForUrl({
+	my $track    = Slim::Schema->objectForUrl({
 		'url'      => $url,
 		'readTags' => 1
 	});
@@ -127,6 +127,7 @@ sub new {
 		handler         => $handler,
 		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
+		replayGain      => undef,
 	);
 
 	$self->seekdata($seekdata) if $seekdata;

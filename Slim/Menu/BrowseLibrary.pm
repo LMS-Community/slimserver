@@ -1,5 +1,11 @@
 package Slim::Menu::BrowseLibrary;
 
+# Logitech Media Server Copyright 2001-2024 Logitech.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 =head1 NAME
 
 Slim::Menu::BrowseLibrary
@@ -758,7 +764,7 @@ sub _topLevel {
 		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		$args{'remote_library'} = $params->{'remote_library'} if $params->{'remote_library'};
 		$args{'noEdit'}       = $params->{'noEdit'} if $params->{'noEdit'};
-		$args{'work_id'}       = $params->{'work_id'} if $params->{'work_id'};
+		$args{'work_id'}      = $params->{'work_id'} if $params->{'work_id'};
 
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -1119,6 +1125,8 @@ sub _artists {
 		push @searchTags, 'include_online_only_artists:1'
 	}
 
+	$queryTags .= '4' unless $prefs->get('noContributorPictures');
+
 	#For use down the line in _releases
 	push @ptSearchTags, 'menu_mode:' . $mode if $mode;
 	push @ptSearchTags, 'menu_roles:' . $roleIdParam if $roleIdParam;
@@ -1130,18 +1138,32 @@ sub _artists {
 			my $items = $results->{'artists_loop'};
 			$remote_library ||= $args->{'remote_library'};
 
+			my $noContributorPictures = $prefs->get('noContributorPictures');
+
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'artist'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albumsOrReleases;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}], remote_library => $remote_library } ];
+
+				if ( $noContributorPictures) {
+					# no pictures wanted
+				}
+				elsif ( $_->{'portraitid'} ) {
+					$_->{'image'} = 'contributor/' . $_->{'portraitid'} . '/image';
+				}
+				else {
+					$_->{'icon'} = 'html/images/artists.png';
+				}
 			}
+
 			my $extra;
 			if (scalar grep { $_ !~ /role_id|remote_library/ } @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
 					name        => cstring($client, 'ALL_ALBUMS'),
+					icon        => $noContributorPictures ? undef : 'html/images/albums.png',
 					type        => $remote_library ? 'link' : 'playlist',
 					playlist    => $remote_library ? undef : \&_tracks,
 					url         => \&_albums,
@@ -1455,11 +1477,13 @@ sub _albums {
 	}
 
 	# filter out some release types if wanted, unless we are already filtering for a release type
-	my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
-	if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
-		push @searchTags, 'release_type:' . join(',', grep {
-			!$releaseTypesToIgnore{$_}
-		} @{Slim::Schema::Album->releaseTypes});
+	if ( !$prefs->get('ignoreReleaseTypes') ) {
+		my %releaseTypesToIgnore = map { $_ => 1 } @{ $prefs->get('releaseTypesToIgnore') || [] };
+		if ( keys %releaseTypesToIgnore && !grep /^release_type:/, @searchTags) {
+			push @searchTags, 'release_type:' . join(',', grep {
+				!$releaseTypesToIgnore{$_}
+			} @{Slim::Schema::Album->releaseTypes});
+		}
 	}
 
 	my @artistIds = grep /artist_id:/, @searchTags;
@@ -2141,47 +2165,56 @@ sub _playlists {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
 			$remote_library ||= $args->{'remote_library'};
+
 			foreach (@$items) {
-				$_->{'name'}          = $_->{'playlist'};
-				$_->{'type'}          = 'playlist';
-				$_->{'playlist'}      = \&_playlistTracks;
-				$_->{'url'}           = \&_playlistTracks;
-				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
+				$_->{'name'} = $_->{'playlist'};
+
+				if ($_->{'id'} =~ /^file:/) {
+					$_->{'type'}     = 'link';
+					$_->{'url'}      = \&_playlists;
+					$_->{'textkey'}  = ' ';
+					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ], remote_library => $remote_library } ];
+				}
+				else {
+					$_->{'type'}        = 'playlist';
+					$_->{'playlist'}    = \&_playlistTracks;
+					$_->{'url'}         = $_->{'playlist'};
+					$_->{'itemActions'} = $remote_library ? {
+						commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
+					} : {
+						info => {
+							command     => ['playlistinfo', 'items'],
+							fixedParams => {playlist_id => $_->{'id'}},
+						},
+						items => {
+							command     => [BROWSELIBRARY, 'items'],
+							fixedParams => {
+								mode       => 'playlistTracks',
+								# %{&_tagsToParams(\@searchTags)},
+								playlist_id => $_->{'id'},
+							},
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', playlist_id => $_->{'id'}},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', playlist_id => $_->{'id'}},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', playlist_id => $_->{'id'}},
+						},
+					};
+					$_->{'itemActions'}->{'playall'} = $_->{'itemActions'}->{'play'};
+					$_->{'itemActions'}->{'addall'} = $_->{'itemActions'}->{'add'};
+
+					$_->{'passthrough'} = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], remote_library => $remote_library } ];
+				}
 			};
 
-			my %actions = $remote_library ? (
-				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
-			) : (
-				allAvailableActionsDefined => 1,
-				commonVariables	=> [playlist_id => 'id', noEdit => 'remote'],
-				info => {
-					command     => ['playlistinfo', 'items'],
-				},
-				items => {
-					command     => [BROWSELIBRARY, 'items'],
-					fixedParams => {
-						mode       => 'playlistTracks',
-						%{&_tagsToParams(\@searchTags)},
-					},
-				},
-				play => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
-				},
-				add => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
-				},
-				insert => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert'},
-				},
-			);
-			$actions{'playall'} = $actions{'play'};
-			$actions{'addall'} = $actions{'add'};
-
-			return {items => $items, actions => \%actions, sorted => 1}, undef;
-
+			return {items => $items, sorted => 1}, undef;
 		},
 	);
 }

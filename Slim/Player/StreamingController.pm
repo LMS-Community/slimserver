@@ -277,7 +277,7 @@ sub _eventAction {
 		if ($params) {
 			my $s = "params:";
 			foreach my $p (keys %$params) {
-				$s .= " $p => " . (defined $params->{$p} ? $params->{$p} : 'undef');
+				$s .= " $p => " . (defined $params->{$p} ? dumpFiltered($params->{$p}) : 'undef');
 			}
 			$log->debug($s);
 		}
@@ -1004,7 +1004,6 @@ sub _NextIfMore {			# -> Idle; IF [moreTracks] AND [roomInQueue] THEN getNextTra
 	} else {
 		$log->info("streaming track not started yet, will wait until then to try next track");
 	}
-	_getNextTrack($self, $params, 1);
 }
 
 # This action is only called for StreamingFailed; buffering or wait-to-sync
@@ -1273,6 +1272,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;
 
+	my $replayGain = Slim::Player::ReplayGain->fetchGainMode($self->master(), $song);
+
 	# bug 10438
 	$self->resetFrameData();
 
@@ -1307,13 +1308,15 @@ sub _Stream {				# play -> Buffering, Streaming
 			'controller'  => $songStreamController,
 			'url'         => $songStreamController->streamUrl(),
 			'reconnect'   => $reconnect,
-			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($self->master(), $song),
+			'replay_gain' => $replayGain,
 			'seekdata'    => $seekdata,
 			'fadeIn'      => $myFadeIn,
 			# we never set the 'loop' parameter
 		);
 
 		$startedPlayers += $player->play( \%params );
+
+		$song->replayGain($replayGain);  # store this for status queries
 
 		$reportsTrackStart ||= $player->reportsTrackStart();
 	}
@@ -2227,6 +2230,10 @@ sub playerStopped {
 		my $song = playingSong($self);
 		if ($song && $song->status() == Slim::Player::Song::STATUS_PLAYING) {
 			$song->setStatus(Slim::Player::Song::STATUS_FINISHED);
+
+			my $currsong = Slim::Player::Source::playingSongIndex($client) + 1;
+ 			my $count = Slim::Player::Playlist::count($client);
+			$self->resetSongqueue(0) if ($currsong == $count);
 		}
 	}
 

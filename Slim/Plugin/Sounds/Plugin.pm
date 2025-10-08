@@ -105,8 +105,25 @@ my $menus = {
 		TRAFFIC               => 'effects/traffic.mp3',
 		WIND_CHIME_FLOURISH   => 'effects/wind_chime_flourish.mp3',
 		WIND_CHIME            => 'effects/wind_chime.mp3',
-		ALARM_BUZZER          => 'html/slim-backup-alarm.mp3',
 	},
+	ALARMS => {
+		ALARM_BUZZER          => 'html/slim-backup-alarm.mp3',
+		ALARM_ACCELERATING    => 'alarm/alarm-accelerating.mp3',
+		ALARM_HIGH_BEEP       => 'alarm/alarm-beep-high.mp3',
+		ALARM_SIMPLE_CLOCK    => 'alarm/alarm-clock-simple.mp3',
+		ALARM_BEDSIDE         => 'alarm/bedside-alarm-clock.mp3',
+		ALARM_ELECTRONIC_BEEP => 'alarm/beep-beep-electronical.mp3',
+		ALARM_DIGITAL         => 'alarm/digital-alarm.mp3',
+		ALARM_DISTORTED       => 'alarm/distorted-alarm.mp3',
+		ALARM_DUAL_TONE       => 'alarm/dual-tone-alarm.mp3',
+		ALARM_ELECTRONICAL    => 'alarm/electronic-alarm-clock.mp3',
+		ALARM_FUTURISTIC      => 'alarm/futuristic-alarm.mp3',
+		ALARM_PHONE           => 'alarm/phone-alarm.mp3',
+		ALARM_RINGING         => 'alarm/ringing-alarm.mp3',
+		ALARM_RINGTONE        => 'alarm/ringtone.mp3',
+		ALARM_TIC_TAC         => 'alarm/tic-tac.mp3',
+		ALARM_TICKING         => 'alarm/ticking-clock.mp3',
+	}
 };
 
 my $soundsMenus;

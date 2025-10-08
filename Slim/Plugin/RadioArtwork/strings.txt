@@ -1,0 +1,11 @@
+PLUGIN_RADIO_ARTWORK
+	DE	Bilder für Radiosender finden
+	EN	Find Artwork for Radio Stations
+	FR	Rechercher des pochettes pour les radios internet
+	NL	Artwork zoeken voor radiostations
+
+PLUGIN_RADIO_ARTWORK_DESC
+	DE	Versucht, Bilder für Titel zu finden, die von Radiostationen gespielt werden, welche keine eigenen Bilder bereitstellen. Es basiert auf dem weit verbreiteten Titelformat "Künstler - Titel".
+	EN	Try to find artwork for tracks played from radio stations which don't provide their own artwork. It's based on the widely used title format passed as "artist - title".
+	FR	Essayer de trouver des illustrations pour les pistes jouées depuis des stations de radio qui ne fournissent pas leurs propres illustrations. C'est basé sur le format de titre largement utilisé transmis comme "artiste - titre".
+	NL	Probeer artwork te vinden voor tracks die worden afgespeeld van radiostations die geen eigen artwork leveren. Het is gebaseerd op het veelgebruikte titelformaat dat wordt doorgegeven als "artiest - titel".

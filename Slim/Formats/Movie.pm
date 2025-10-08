@@ -153,7 +153,7 @@ sub _doTagMapping {
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
 	if ( defined $tags->{YEAR} ) {
-		$tags->{YEAR} =~ s/.*(\d\d\d\d).*/$1/;
+		$tags->{YEAR} = $class->sanitizeYearTag($tags->{YEAR});
 	}
 
 	# Unroll the disc info.

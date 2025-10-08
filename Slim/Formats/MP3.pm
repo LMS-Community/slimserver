@@ -409,11 +409,7 @@ sub doTagMapping {
 		# the first.
 		$year = $year->[0] if ref $year eq 'ARRAY';
 
-		if ( $year =~ /(\d\d\d\d)/ ) {
-			$year = $1;
-		}
-
-		$tags->{YEAR} = $year;
+		$tags->{YEAR} = $class->sanitizeYearTag($year);
 	}
 
 	# Sometimes the BPM is not an integer so we try to convert.

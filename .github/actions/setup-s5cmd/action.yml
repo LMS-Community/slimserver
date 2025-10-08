@@ -1,0 +1,134 @@
+name: "setup-s5cmd"
+description: "Setup s5cmd"
+author: peak
+branding:
+  icon: zap
+  color: yellow
+inputs:
+  version:
+    description: s5cmd version to install
+    required: false
+    default: v2.0.0
+runs:
+  using: composite
+  steps:
+    - name: Print version
+      shell: bash
+      run: |
+        echo "${{ inputs.version }}"
+
+    - name: Find release asset
+      id: find_release_asset
+      shell: bash
+      run: |
+        set -e
+
+        echo "::Group::Inputs"
+        echo "${{ toJSON(inputs) }}"
+        echo "::endgroup::"
+
+        echo "::group::Runner Context"
+        echo "${{ toJSON(runner) }}"
+        echo "::endgroup::"
+
+        tag="${{ inputs.version }}"
+        version="${tag#v}"
+        os="${{ runner.os }}"
+        arch="${{ runner.arch || 'X64' }}"
+        extension=".tar.gz"
+
+        case "${os}" in
+        Linux)
+            os="Linux"
+            ;;
+        macOS)
+            os="macOS"
+            ;;
+        Windows)
+            os="Windows"
+            extension=".zip"
+            ;;
+        *)
+            echo "Unknown OS: ${os}"
+            exit 1
+            ;;
+        esac
+
+        case "${arch}" in
+        X32)
+            arch="32bit"
+            ;;
+        X64)
+            arch="64bit"
+            ;;
+        ARM)
+            arch="armv6"
+            ;;
+        ARM64)
+            arch="arm64"
+            ;;
+        *)
+            echo "Unknown architecture: ${arch}"
+            exit 1
+            ;;
+        esac
+
+        asset_name="s5cmd_${version}_${os}-${arch}${extension}"
+        asset_url=$(
+            curl -s https://api.github.com/repos/peak/s5cmd/releases |
+                jq --arg tag "${tag}" --arg asset_name "${asset_name}" '.[]| select(.tag_name==$tag) | .assets[].browser_download_url | select(. | test(".+" + $asset_name + "$"))' | xargs
+        )
+
+        echo "::group::Asset URL"
+        echo "${asset_url}"
+        echo "::endgroup::"
+
+        if [ -z "$asset_url" ]; then
+          echo "Unable to find asset ${asset_name} for version ${tag}"
+          exit 1
+        fi
+
+        echo "url=${asset_url}" >> "$GITHUB_OUTPUT"
+        echo "extension=${extension}" >> "$GITHUB_OUTPUT"
+
+    - name: Download release asset
+      id: download_release
+      if: steps.find_release_asset.outputs.url != ''
+      shell: bash
+      run: |
+        set -e
+
+        asset_url="${{ steps.find_release_asset.outputs.url }}"
+        tmp_dir="${{ runner.temp }}"
+
+        download_dir="$tmp_dir/s5cmd-asset"
+        binary_dir="$tmp_dir/s5cmd-bin"
+
+        mkdir -p "$download_dir"
+        mkdir -p "$binary_dir"
+
+        archive_path="${download_dir}/s5cmd${{ steps.find_release_asset.outputs.extension }}"
+
+        curl -sL -o "${archive_path}" "${asset_url}"
+
+        echo "::group::Download archive"
+        file "${archive_path}"
+        echo "::endgroup::"
+
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          7z x "${archive_path}" -o"${binary_dir}" s5cmd.exe
+        else
+          tar -xf "${archive_path}" -C "${binary_dir}" s5cmd
+        fi
+
+        echo "::group::Binary path"
+        ls -l "${binary_dir}"
+        echo "::endgroup::"
+
+        echo "binary_dir=${binary_dir}" >> "$GITHUB_OUTPUT"
+
+    - name: Add s5cmd to path
+      shell: bash
+      run: |
+        s5cmd_binary_dir="${{ steps.download_release.outputs.binary_dir  }}"
+        echo "${s5cmd_binary_dir}" >> $GITHUB_PATH

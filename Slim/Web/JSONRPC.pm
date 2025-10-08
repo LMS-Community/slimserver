@@ -15,6 +15,8 @@ use strict;
 use HTTP::Status qw(RC_OK RC_FORBIDDEN);
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
+use URI;
+use URI::QueryParam;
 
 use Slim::Web::HTTP;
 use Slim::Utils::Compress;
@@ -127,6 +129,12 @@ sub handleURI {
 
 	# get the request data (POST for JSON 1.0)
 	my $input = $httpResponse->request()->content();
+
+	if (!$input && $httpResponse->request()->method() eq 'GET') {
+		main::INFOLOG && $log->is_info && $log->info("This is GET request - get data from query string");
+		my $uri = new URI($httpResponse->request()->uri());
+		$input = $uri->query_param('request');
+	}
 
 	if (!$input) {
 

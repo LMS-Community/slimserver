@@ -210,6 +210,9 @@ sub scanURL {
 	if ( $url =~ /(?:^mms|\.asf|\.asx|\.wma)/i ) {
 		addWMAHeaders( $request );
 	}
+	else {
+		$request->header( 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
+	}
 
 	my $timeout = preferences('server')->get('remotestreamtimeout');
 
@@ -286,6 +289,9 @@ sub handleRedirect {
 
 		addWMAHeaders( $request );
 	}
+	elsif ( !$request->header('User-Agent') || $request->header('User-Agent') =~ /^Mozilla/i ) {
+		$request->header( 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
+	}
 
 	# Keep track of artwork or station icon across redirects
 	my $cache = Slim::Utils::Cache->new();
@@ -355,7 +361,7 @@ sub readRemoteHeaders {
 		$type = 'm3u';
 	}
 
-	# https://forums.slimdevices.com/forum/user-forums/logitech-media-server/1661990
+	# https://forums.lyrion.org/forum/user-forums/logitech-media-server/1661990
 	elsif ( $type =~ /octet-stream/ ) {
 		my $validTypeExtensions = join('|', Slim::Music::Info::validTypeExtensions());
 		if ($url =~ /\.($validTypeExtensions)\b/) {

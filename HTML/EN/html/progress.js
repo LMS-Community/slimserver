@@ -1,3 +1,5 @@
+const pollingInterval = 2000;
+
 function ajaxProgressCallback(theData) {
 
 	var parsedData = fillDataHash(theData);
@@ -30,15 +32,17 @@ function ajaxProgressCallback(theData) {
 
 	if (parsedData['message']) {
 		if (parsedData['total_time']) {
-			refreshElement('message',parsedData['message']+ timestring + parsedData['total_time']);
+			refreshElement('message',parsedData['message']+ '<br>' + timestring + ' ' + parsedData['total_time']);
 		} else {
 			refreshElement('message',parsedData['message']);
 		}
 
 		hideElements(['abortscanlink']);
+		setTimeout( "ajaxProgressRefresh()", pollingInterval);
 	} else {
+		refreshElement('message','');
 		showElements(['abortscanlink']);
-		setTimeout( "ajaxProgressRefresh()", 5000);
+		setTimeout( "ajaxProgressRefresh()", pollingInterval);
 	}
 }
 

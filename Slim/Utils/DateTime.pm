@@ -1,7 +1,7 @@
 package Slim::Utils::DateTime;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -9,12 +9,22 @@ package Slim::Utils::DateTime;
 use strict;
 
 use Date::Parse;
+use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
+use JSON::XS::VersionOneAndTwo;
 use POSIX qw(strftime);
 
+use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
+use Slim::Networking::SimpleAsyncHTTP;
 
+# The server/url that provides us with date/time data, including an Olson
+# formatted TimeZone. The response is JSON formatted.
+use constant TIME_INFO_URL => 'https://api.lms-community.org/time';
+
+my $log = logger('server');
 my $prefs = preferences('server');
+my $tzInfo;
 
 =head1 NAME
 
@@ -451,6 +461,84 @@ sub setDefaultFormats {
 	$prefs->set('shortdateFormat', Slim::Utils::Strings::string('SETUP_SHORTDATEFORMAT_DEFAULT'));
 	$prefs->set('timeFormat',      Slim::Utils::Strings::string('SETUP_TIMEFORMAT_DEFAULT'));
 }
+
+
+=head2 getTimeZoneInformation()
+
+A bunch of timezone related helper methods. Reaches out to API server to get the local timezone.
+This should keep this platform independent. Server response should look like:
+
+{
+	"datetime": "2025-04-03T11:39:10.351+01:00",
+	"timezone": "Europe/London",
+	"offset": "GMT+1",
+	"offsetHours": 1,
+	"offsetMinutes": 60,
+	"isInDST": true
+}
+
+=cut
+
+sub getTimeZoneInformation {
+	my $cb = shift || sub { $_[0] };
+
+	if ($tzInfo) {
+		# reset cached information if we crossed the DST boundary
+		$tzInfo = undef if ($tzInfo->{isInDST} && !isDST()) || (!$tzInfo->{isInDST} && isDST());
+	}
+
+	return $cb->($tzInfo) if $tzInfo;
+
+	# API call to retrieve date/time data
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $http = shift;
+			my $res  = eval { from_json($http->content) };
+
+			if ($@ || ref $res ne 'HASH') {
+				$log->error($@ || 'Invalid JSON response: ' . $http->content);
+				return $cb->(undef, RC_INTERNAL_SERVER_ERROR);
+			}
+
+			$tzInfo = $res;
+			($tzInfo->{offsetHHMM}) = (delete $tzInfo->{datetime}) =~ /([+-]\d{2}:\d{2})$/;
+
+			return $cb->($tzInfo);
+		},
+		sub {
+			my $http = shift;
+			$log->error("Failed to get TimeZone information from ", join("\n", $http->url, $http->error));
+			return $cb->(undef, RC_INTERNAL_SERVER_ERROR);
+		},
+		{
+			timeout => 5,
+		}
+	)->get(TIME_INFO_URL);
+}
+
+sub getTZName {
+	my $cb = shift || sub { $_[0] };
+
+	return getTimeZoneInformation(sub {
+		my ($tzInfo, $err) = @_;
+		$tzInfo ||= {};
+
+		return $cb->($tzInfo->{timezone}, $err);
+	});
+}
+
+sub getTZOffsetHHMM {
+	my $cb = shift || sub { $_[0] };
+
+	return getTimeZoneInformation(sub {
+		my ($tzInfo, $err) = @_;
+		$tzInfo ||= {};
+
+		return $cb->($tzInfo->{offsetHHMM}, $err);
+	});
+}
+
+sub isDST { (localtime(time()))[8] ? 1 : 0 }
 
 =head1 SEE ALSO
 

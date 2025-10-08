@@ -40,6 +40,12 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
 
+	# tell the server not to trigger a rescan immediately, but let it queue up requests
+	# this is needed to prevent multiple scans to be triggered by change handlers for paths etc.
+	Slim::Music::Import->doQueueScanTasks(1);
+	my $scanOnChange = $serverPrefs->get('dontTriggerScanOnPrefChange');
+	$serverPrefs->set('dontTriggerScanOnPrefChange', 0);
+
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
 	# redirect to the Default skin if another skin is set
@@ -99,17 +105,63 @@ sub handler {
 	# set right-to-left orientation for Hebrew users
 	$paramRef->{rtl} = 1 if ($paramRef->{prefs}->{language} eq 'HE');
 
-	foreach my $pref (@prefs) {
+	# install plugins if needed
+	if ($paramRef->{saveSettings}) {
+		my %installedPlugins = map { $_ => 1 } Slim::Utils::PluginManager->installedPlugins();
 
-		if ($paramRef->{saveSettings}) {
-			@pluginsToInstall = ();
-			for my $param (keys %$paramRef) {
-				if ($paramRef->{$param} && $param =~ /^plugin-(.*)$/) {
-					# my $plugin = $1;
-					push @pluginsToInstall, $1;
-				}
+		@pluginsToInstall = ();
+		for my $param (keys %$paramRef) {
+			if ($paramRef->{$param} && $param =~ /^plugin-(.*)$/) {
+				my $plugin = $1;
+				push @pluginsToInstall, $plugin if !$installedPlugins{$plugin};
 			}
+		}
 
+		Slim::Utils::ExtensionsManager::getAllPluginRepos({
+			type    => 'plugin',
+			cb => sub {
+				my ($pluginData, $error) = @_;
+
+				my (undef, undef, $inactive) = Slim::Utils::ExtensionsManager::getCurrentPlugins();
+
+				my %pluginLookup;
+				foreach (@$pluginData, @$inactive) {
+					$pluginLookup{$_->{name}} = $_;
+				}
+
+				foreach my $plugin (@pluginsToInstall) {
+					Slim::Utils::ExtensionsManager->enablePlugin($plugin);
+					my $pluginDetails = $pluginLookup{$plugin} || {};
+
+					if ($pluginDetails->{url} && $pluginDetails->{sha}) {
+						main::INFOLOG && $log->is_info && $log->info("Downloading plugin: $plugin");
+
+						# 3rd party plugin - needs to be downloaded
+						Slim::Utils::PluginDownloader->install({
+							name => $plugin,
+							url => $pluginDetails->{url},
+							sha => lc($pluginDetails->{sha})
+						});
+
+					}
+					elsif ($pluginDetails->{version}) {
+						# built-in plugin - install
+						main::INFOLOG && $log->is_info && $log->info("Installing plugin: $plugin");
+						Slim::Utils::PluginManager->_needsEnable($plugin);
+						Slim::Utils::PluginManager->load('', $plugin);
+					}
+				}
+
+				if (scalar @pluginsToInstall) {
+					Slim::Utils::Timers::killTimers(undef, \&_checkPluginDownloads);
+					Slim::Utils::Timers::setTimer(undef, time() + 1, \&_checkPluginDownloads);
+				}
+			},
+		}) if (scalar @pluginsToInstall);
+	}
+
+	foreach my $pref (@prefs) {
+		if ($paramRef->{saveSettings}) {
 			# if a scan is running and one of the music sources has changed, abort scan
 			if (
 				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
@@ -120,66 +172,20 @@ sub handler {
 				Slim::Music::Import->abortScan();
 			}
 
-			# revert logic: while the pref is "disable", the UI is opt-in
-			# if this value is set we actually want to not disable it...
-			elsif ($pref eq 'sn_disable_stats') {
-				$paramRef->{$pref} = $paramRef->{$pref} ? 0 : 1;
-			}
-
 			if ($pref eq 'mediadirs') {
 				my $dirs = $serverPrefs->get($pref);
 				unshift @$dirs, $paramRef->{$pref};
+				$dirs = [ Slim::Utils::Misc::uniq(@$dirs) ];
 
-				my $scanOnChange = $serverPrefs->get('dontTriggerScanOnPrefChange');
-				$serverPrefs->set('dontTriggerScanOnPrefChange', 0);
-				$serverPrefs->set($pref, [ Slim::Utils::Misc::uniq(@$dirs) ]);
-				$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
+				main::DEBUGLOG && $log->is_debug() && $log->debug('Setting music folder: ' . Data::Dump::dump($dirs));
+
+				$serverPrefs->set($pref, $dirs);
+				Slim::Control::Request::executeRequest(undef, ['wipecache', 'queue']);
 			}
 			else {
+				main::DEBUGLOG && $log->is_debug() && $log->debug("Setting $pref folder: $paramRef->{$pref}");
 				$serverPrefs->set($pref, $paramRef->{$pref});
 			}
-
-			Slim::Utils::ExtensionsManager::getAllPluginRepos({
-				type    => 'plugin',
-				cb => sub {
-					my ($pluginData, $error) = @_;
-
-					my (undef, undef, $inactive) = Slim::Utils::ExtensionsManager::getCurrentPlugins();
-
-					my %pluginLookup;
-					foreach (@$pluginData, @$inactive) {
-						$pluginLookup{$_->{name}} = $_;
-					}
-
-					foreach my $plugin (@pluginsToInstall) {
-						Slim::Utils::ExtensionsManager->enablePlugin($plugin);
-						my $pluginDetails = $pluginLookup{$plugin} || {};
-
-						if ($pluginDetails->{url} && $pluginDetails->{sha}) {
-							main::INFOLOG && $log->is_info && $log->info("Downloading plugin: $plugin");
-
-							# 3rd party plugin - needs to be downloaded
-							Slim::Utils::PluginDownloader->install({
-								name => $plugin,
-								url => $pluginDetails->{url},
-								sha => lc($pluginDetails->{sha})
-							});
-
-						}
-						elsif ($pluginDetails->{version}) {
-							# built-in plugin - install
-							main::INFOLOG && $log->is_info && $log->info("Installing plugin: $plugin");
-							Slim::Utils::PluginManager->_needsEnable($plugin);
-							Slim::Utils::PluginManager->load('', $plugin);
-						}
-					}
-
-					if (scalar @pluginsToInstall) {
-						Slim::Utils::Timers::killTimers(undef, \&_checkPluginDownloads);
-						Slim::Utils::Timers::setTimer(undef, time() + 1, \&_checkPluginDownloads);
-					}
-				},
-			});
 		}
 
 		if (main::DEBUGLOG && $log->is_debug) {
@@ -209,6 +215,8 @@ sub handler {
 	$paramRef->{plugins} = $wzData->{plugins};
 	$paramRef->{pluginsJSON} = to_json($paramRef->{plugins});
 
+	$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
+
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
 		$response->code(RC_MOVED_TEMPORARILY);
@@ -216,6 +224,8 @@ sub handler {
 
 		if (Slim::Utils::PluginDownloader->downloading) {
 			$finalizeCb = sub {
+				_triggerScan();
+
 				Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 				$pageSetup->( $client, $paramRef, Slim::Web::HTTP::filltemplatefile($class->page, $paramRef), $httpClient, $response );
 			};
@@ -224,12 +234,20 @@ sub handler {
 		}
 	}
 
+	_triggerScan();
+
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
 		$paramRef->{playertype} = $client->model();
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+}
+
+sub _triggerScan {
+	main::DEBUGLOG && $log->is_debug && $log->debug('Now finally run a full wipe & resacan.');
+	Slim::Music::Import->doQueueScanTasks(0);
+	Slim::Music::Import->nextScanTask();
 }
 
 sub _checkPluginDownloads {

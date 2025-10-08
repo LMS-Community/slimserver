@@ -19,13 +19,13 @@ use constant REPORT_PLAYER_UNSEEN_DAYS => 7;
 my $serverPrefs = preferences('server');
 
 my $log;
-my $id;
+my $serverId;
 
 # delay init, as we want to be sure we're enabled before trying to read the display name
 sub postinitPlugin {
-	$id ||= sha1_base64(preferences('server')->get('server_uuid'));
+	$serverId ||= sha1_base64(preferences('server')->get('server_uuid'));
 	# replace / with +, as / would be interpreted as a path part
-	$id =~ s/\//+/g;
+	$serverId =~ s/\//+/g;
 
 	$log = Slim::Utils::Log->addLogCategory({
 		'category'     => 'plugin.analytics',
@@ -33,11 +33,11 @@ sub postinitPlugin {
 		'description'  => __PACKAGE__->getDisplayName(),
 	});
 
-	Slim::Utils::Timers::setTimer($id, time() + REPORT_DELAY, \&_report);
+	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_DELAY, \&_report);
 }
 
 sub _report {
-	Slim::Utils::Timers::killTimers($id, \&_report);
+	Slim::Utils::Timers::killTimers($serverId, \&_report);
 
 	my $osDetails = Slim::Utils::OSDetect::details();
 	my $plugins = [ sort map {
@@ -87,7 +87,7 @@ sub _report {
 
 	main::INFOLOG && $log->is_info && $log->info("Reporting system analytics");
 	# we MUST clone the data, as Data::Dump::dump would convert numbers to strings...
-	main::DEBUGLOG && $log->is_debug && $log->debug("$id: ", Data::Dump::dump(Storable::dclone($data)));
+	main::DEBUGLOG && $log->is_debug && $log->debug("$serverId: ", Data::Dump::dump(Storable::dclone($data)));
 
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
@@ -103,44 +103,42 @@ sub _report {
 			timeout  => 5,
 		},
 	)->post(
-		sprintf(REPORT_URL, $id),
-		'x-lms-id' => $id,
+		sprintf(REPORT_URL, $serverId),
+		'x-lms-id' => $serverId,
 		'Content-Type' => 'application/json',
 		to_json($data),
 	);
 }
 
 sub _scheduleReport {
-	Slim::Utils::Timers::setTimer($id, time() + REPORT_INTERVAL, \&_report);
+	Slim::Utils::Timers::killTimers($serverId, \&_report);
+	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_INTERVAL, \&_report);
 }
 
 sub _getClients {
 	my ($seen) = @_;
 	my @clients;
 
-	foreach my $key (keys %{$serverPrefs->{prefs}}) {
-		if ($key =~ /^$Slim::Utils::Prefs::Client::clientPreferenceTag:(.*)/) {
-			my $id = $1;
+	foreach my $clientPrefs ($serverPrefs->allClients) {
+		my $name = $clientPrefs->get('playername');
 
-			my $clientPrefs = Slim::Utils::Prefs::Client->new($serverPrefs, $id, 'nomigrate');
-			my $name = $clientPrefs->get('playername');
-
-			my $ts = 0;
-			foreach (keys %{ $clientPrefs->{prefs} }) {
-				next unless /^_ts_(?:currentSong|power|playingAtPowerOff|mute|volume|repeat|shuffle|positionAtDisconnect|maxBitrate)/;
-				$ts = max($ts, $clientPrefs->{prefs}->{$_});
-			}
-
-			my $clientData = {
-				mac   => $id,
-				model => $clientPrefs->get('model') || _guessPlayerTypeFromMac($id, $name),
-				lastSeen => $ts,
-			};
-
-			$clientData->{modelName} = $clientPrefs->get('modelName') || ucfirst($clientData->{model});
-
-			push @clients, $clientData;
+		my $ts = 0;
+		# can't use $clientPrefs->all(), as we want to have the timestamps
+		foreach (keys %{ $clientPrefs->{prefs} }) {
+			next unless /^_ts_(?:currentSong|power|playingAtPowerOff|mute|volume|repeat|shuffle|positionAtDisconnect|maxBitrate)/;
+			$ts = max($ts, $clientPrefs->{prefs}->{$_});
 		}
+
+		my $mac = $clientPrefs->{clientid} || next;
+		my $clientData = {
+			mac   => $mac,
+			model => $clientPrefs->get('model') || _guessPlayerType($mac, $name),
+			lastSeen => $ts,
+		};
+
+		$clientData->{modelName} = $clientPrefs->get('modelName') || ucfirst($clientData->{model});
+
+		push @clients, $clientData;
 	}
 
 	return @clients;
@@ -193,7 +191,7 @@ my %playerTypes = (
 	'35' => 'baby',
 );
 
-sub _guessPlayerTypeFromMac {
+sub _guessPlayerType {
 	my ($mac, $name) = @_;
 
 	# most likely...

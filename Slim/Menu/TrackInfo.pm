@@ -356,13 +356,15 @@ sub infoContributors {
 		my ($items, $contributor, $role) = @_;
 
 		my $id = $contributor->id;
+		my $itemsFixedParams = { mode => 'albums', artist_id => $id, library_id => $library_id };
+		# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
+		$itemsFixedParams->{role_id} = $role if !grep { $_ eq $role } ('ARTIST','ALBUMARTIST','TRACKARTIST');
 
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
 				command     => ['browselibrary', 'items'],
-				# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
-				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, role_id => ((grep /^$role$/, ('ARTIST','ALBUMARTIST','TRACKARTIST')) ? undef : $role) },
+				fixedParams => $itemsFixedParams,
 			},
 			play => {
 				command     => ['playlistcontrol'],
@@ -547,7 +549,9 @@ sub addTrack {
 	if ( $cmd eq 'delete' ) {
 
 		# Do not add this item if only one item in playlist
-		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
+		# BUG: 17980 (2012-06-14) - Allow item removal even if playlist has only 1 item
+		# Just comment out for now in case impact on UI should turn out to be sub-optimal
+		#return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
 		$actions = {
 			go => {
@@ -1385,6 +1389,15 @@ sub cliQuery {
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
 		if (my $track = Slim::Player::Playlist::track( $client, $playlist_index )) {
+			# If we have a RemoteTrack object, we try to get information from the local database anyway
+			if (ref $track eq 'Slim::Schema::RemoteTrack') {
+				if (my $localTrack = Slim::Schema->objectForUrl({
+					'url'      => $track->url,
+				})) {
+					$track = $localTrack;
+				};
+			}
+
 			$trackId = $track->id;
 			$url     = $track->url;
 			$request->addParam('track_id', $trackId);

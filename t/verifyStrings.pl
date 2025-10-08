@@ -26,7 +26,7 @@ while (my $file = $files->()) {
 		} elsif (/^[-A-Z0-9_]+$/) {
 			$slug = $_;
 		} elsif ($_) {
-			push @invalid, "Invalid line ($slug): $_";
+			push @invalid, "Invalid line ($file: $slug): $_";
 		}
 
 		if ($lang && !exists $translations{$lang}) {

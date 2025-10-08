@@ -305,7 +305,6 @@ sub new {
 		_pluginData             => {},
 		updatePending           => 0,
 		disconnected            => 0,
-
 	);
 
 	$clientHash{$id} = $client;
@@ -562,7 +561,9 @@ sub forgetClient {
 		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
 
 		# Bug 15860: Force the connection shut if it is not already
-		Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
+		if (defined $client->tcpsock && ref $client->tcpsock eq "IO::Socket::INET") {
+			Slim::Networking::Slimproto::slimproto_close($client->tcpsock);
+		}
 	}
 }
 
