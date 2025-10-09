@@ -111,9 +111,10 @@ sub _players_done {
 	my $res = eval { from_json( $http->content ) };
 
 	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
-		if (!$discoveryFailuresLogged{$server . ($@ || $http->content || '')}++) {
-			$http->error( $@ || "Invalid JSON response from $server" . $http->content );
-		}
+		# don't log the same error more than once a day
+		return if $discoveryFailuresLogged{$server . ($@ || $http->content || '')}++;
+
+		$http->error( $@ || "Invalid JSON response from $server" . $http->content );
 		return _players_error( $http );
 	}
 
