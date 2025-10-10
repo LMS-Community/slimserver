@@ -132,6 +132,7 @@ sub dirsFor {
 	if ($dir =~ /^(?:strings|revision|convert|types|repositories)$/) {
 
 		push @dirs, $Bin;
+		push @dirs, $class->dirsFor('prefs');
 
 	} elsif ($dir eq 'log') {
 

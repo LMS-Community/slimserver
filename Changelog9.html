@@ -7,10 +7,13 @@
 	<ul>
 		<li>Optionally navigate playlists by folders, allowing you to organise your playlists hierarchically.</li>
 		<li>Implement an artist portrait picture handler. This will read images from folders where you've stored them under the artist's name, or from the artist folder in a typical artist/album/track hierarchy.</li>
+		<li>Add a plugin to try to fetch artwork for radio stations which don't provide track artwork.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1425">#1425</a> - Add playlist drag and drop support to the Classic skin (thanks @oreillymj)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1426">#1426</a> - add support for ListenBrainz to AudioScrobbler plugin (thanks @vysmaty & AI)</li>
 		<li>Allow GETting the JSONRPC.js handler with a "request" parameter to simplify access by limited clients.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1294">#1294</a> - Bring back list view in the Manage Plugins section. The view can be toggled between grid an list view.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1422">#1422</a> - Add new sort orders "playcount" and "recentlyplayed" to "albums" query.</li>
+		<li>Provide a hook which would allow a plugin or other to register a method to display track artwork for radio stations which don't provide their own.</li>
 	</ul>
 	<br />
 
@@ -22,6 +25,8 @@
 		<li>Improve cache purging reliability to avoid unnecessary growth.</li>
 		<li>Update the custom user agent string: pretending to be iTunes probably caused more problems than it solved.</li>
 		<li>Enable log rotation on Docker based systeme.</li>
+		<li>Don't re-encode lossy streams when bitrate limiting if original stream is of lower or equal bitrate already (thanks @ralphy!)</li>
+		<li>Add prefs folder to search list for custom types/convert/strings files (macOS/Windows).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1216">#1216</a> - Reset playing position to first track once a playlist or album has ended (@ml-1)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1245">#1245</a> - Added a Simple WebSocket client capability for 3rd Party Plugins to support this protocol (@expectingtofly)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1356">#1356</a> - Use ORIGINALDATE tag with Flac (@jbylsma)</li>
@@ -38,8 +43,8 @@
 		<li>Make Docker a first class citizan: add Slim::Utils::OS::Docker instead of a Custom.pm</li>
 		<li>Remove Win32 legacy support files, code, control panels, build pipeline, etc.</li>
 		<li>Remove legacy Mac installer from build pipeline.</li>
-		<li>Add support for Perl 5.40 on aarch64 Linux.</li>
 		<li>Remove code dealing with Perl &lt; 5.10.</li>
+		<li>Updated Audio::Scan to v1.11 on Linux Perl 5.36/5.40, and Windows - thanks @ralphy!</li>
 		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.40 (Linux x86_64, aarch64), 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/73">#73</a> - Add a note about setting the hostname in a Docker container (thanks @hartzell!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/86">#86</a> - Add more tags to Docker images to better support automated updates (thanks @stavros-k!)</li>
@@ -54,6 +59,7 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1362">#1362</a> - Update UPnP AVTransport.pm to move LMS event registration (@BoringName15).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1367">#1367</a> - Update UPnP support to fix gapless playback (setNextAVTransport) (@BoringName15).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1414">#1414</a> - Make sure custom image proxy handlers are always called (fixes incompatibility with Radio Now Playing's SVG handler).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1442">#1442</a> - Avoid log flood when player discovery JSON is empty (@mikecappella).</li>
 		<li></li>
 	</ul>
 	<br />
@@ -68,7 +74,7 @@
 </ul>
 
 
-<h2><a name="v9.0.3" id="v9.0.3"></a>Version 9.0.3</h2>
+<h2><a name="v9.0.4" id="v9.0.4"></a>Version 9.0.4</h2>
 <ul>
 	<li>New Features:</li>
 	<ul>
@@ -78,13 +84,41 @@
 
 	<li>Server Changes:</li>
 	<ul>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1386">#1386</a> - Store the calculated replay gain in the song object when beginning playback (@SamInPgh)</li>
 		<li></li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1441">#1441</a> - Install procps package Docker image in support of plugins which need the tools to manage their helper processes.</li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Other:</li>
+	<ul>
+		<li></li>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v9.0.3" id="v9.0.3"></a>Version 9.0.3 - 2025-10-03 (9977737c1)</h2>
+<ul>
+	<li>Server Changes:</li>
+	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1386">#1386</a> - Store the calculated replay gain in the song object when beginning playback (@SamInPgh)</li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li>Add support for Perl 5.40 on aarch64/armv7 Linux.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1339">#1339</a> - Add ghcr.io as an alternative container registry in addition to Docker Hub.</li>
 		<li>Download Strawberry Perl for Windows from our own download site. strawberryperl.com has been unstable recently.</li>
 	</ul>
@@ -98,13 +132,6 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1429">#1429</a> - Make sure work is removed from track if removed in tags (thanks @darrell-k).</li>
 		<li></li>
 	</ul>
-	<br />
-
-	<li>Other:</li>
-	<ul>
-		<li></li>
-	</ul>
-	<br />
 </ul>
 
 
