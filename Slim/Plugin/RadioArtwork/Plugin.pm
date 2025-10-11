@@ -109,7 +109,7 @@ sub requestIsQueued {
 	my $artworkLookupUrl = $args->{artworkLookupUrl};
 	if (scalar @{$queue{$artworkLookupUrl} || []}) {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Already looking up artwork for $artworkLookupUrl");
-		push @{$queue{$artworkLookupUrl}}, $client;
+		push @{$queue{$artworkLookupUrl}}, $client if !grep { $_ == $client } @{$queue{$artworkLookupUrl} || []};
 		return 1;
 	}
 
@@ -216,11 +216,17 @@ sub getHeaders {
 sub gotArtwork {
 	my ($class, $args, $client, $url, $titleInfo) = @_;
 
-	my $imageUrl = $args->{imageUrl} || return;
+	my $imageUrl = $args->{imageUrl};
 	my $artworkLookupUrl = $args->{artworkLookupUrl};
 
+	if (!$imageUrl) {
+		main::INFOLOG && $log->is_info && $log->info("No artwork found for $titleInfo");
+		delete $queue{$artworkLookupUrl};
+		return;
+	}
+
 	while ( my $c = shift @{$queue{$artworkLookupUrl} || []} ) {
-		my $song = $c->playingSong() || next();
+		my $song = $c->playingSong() || next;
 
 		$song->pluginData( httpCover => $imageUrl );
 		$c->playingSong->pluginData( wmaMeta => {
