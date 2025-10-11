@@ -13,6 +13,7 @@ package Slim::Plugin::RadioArtwork::Plugin;
 
 	The plugin is structured in to logical methods which you should be able to selectively override if wanted:
 
+	* registerTrackInfoMenu: register a handler for the stream's track info menu
 	* handleTrackCover: the entry point which will be called by LMS with client, stream URL and parsed title info
 	* validateRequest: run some checks, whether we have an artist and track title etc. Returns falsy if we should
 	  ignore the request (eg. only station name provided).
@@ -31,8 +32,10 @@ use URI::QueryParam;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Formats::RemoteMetadata;
+use Slim::Menu::TrackInfo;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 my $cache = Slim::Utils::Cache->new();
 my $log = Slim::Utils::Log->addLogCategory({
@@ -40,6 +43,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_RADIO_ARTWORK',
 });
+my $prefs = preferences('plugin.radioartwork');
 
 use constant COVER_SEARCH_URL => 'https://api.lms-community.org/music/track/%s/%s/cover';
 use constant FALLBACK_ARTWORK => 'https://i1.sndcdn.com/artworks-x8zI2HVC2pnkK7F5-4xKLyA-t1080x1080.jpg';
@@ -48,7 +52,18 @@ my %queue;
 
 sub initPlugin {
 	my ($class) = @_;
-	Slim::Formats::RemoteMetadata->registerArtworkHandler(sub { $class->handleTrackCover(@_) });
+
+	Slim::Formats::RemoteMetadata->registerArtworkHandler( sub {
+		$class->handleTrackCover(@_);
+	} );
+
+	$class->registerTrackInfoMenu();
+
+	$class->registerSettingsHandler();
+
+	$prefs->init({
+		ignoreStations => [],
+	});
 }
 
 sub handleTrackCover {
@@ -67,11 +82,33 @@ sub handleTrackCover {
 	$class->lookupArtwork($args, @_);
 }
 
+sub registerTrackInfoMenu {
+	my $class = shift;
+	require Slim::Plugin::RadioArtwork::TrackInfo;
+
+	Slim::Menu::TrackInfo->registerInfoProvider( blockStream => (
+		before => 'top',
+		func   => \&Slim::Plugin::RadioArtwork::TrackInfo::trackInfoMenu,
+	) );
+}
+
+sub registerSettingsHandler {
+	if (main::WEBUI) {
+		require Slim::Plugin::RadioArtwork::Settings;
+		Slim::Plugin::RadioArtwork::Settings->new();
+	}
+}
+
 sub validateRequest {
 	my ($class, $client, $url, $titleInfo) = @_;
 
 	if (!($titleInfo && $url && $client)) {
 		main::INFOLOG && $log->is_info && $log->info("Missing titleInfo, url or client");
+		return;
+	}
+
+	if ($class->ignoreStation($url)) {
+		main::INFOLOG && $log->is_info && $log->info("Station is in ignore list, not looking up artwork for $url");
 		return;
 	}
 
@@ -238,6 +275,20 @@ sub gotArtwork {
 
 		Slim::Control::Request::notifyFromArray( $c, [ 'newmetadata' ] );
 	}
+}
+
+sub ignoreStation {
+	my ($class, $url) = @_;
+	return grep { lc($_) eq lc($url) } @{$prefs->get('ignoreStations') || []};
+}
+
+sub updateIgnoreStationList {
+	my ($class, $ignoreList) = @_;
+	$prefs->set('ignoreStations', [
+		Slim::Utils::Misc::uniq( grep /^https?:/, sort {
+			lc($a) cmp lc($b)
+		} @$ignoreList)
+	]);
 }
 
 # keep these two apart, so we could have optimized versions for each, if we wanted
