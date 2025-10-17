@@ -4740,6 +4740,8 @@ sub titlesQuery {
 	my $ignoreWorkTracks = $request->getParam('ignore_work_tracks');
 	my $performance      = $request->getParam('performance');
 	my $onlyAlbumYears = $request->getParam('only_album_years');
+	my $remoteAlbumId = $request->getParam('remote_album_id');
+	my $onlineService = $request->getParam('service');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to
@@ -4795,6 +4797,8 @@ sub titlesQuery {
 		workId	      => $workID,
 		libraryId     => $libraryID,
 		onlyAlbumYears=> $onlyAlbumYears,
+		remoteAlbumId => $remoteAlbumId,
+		onlineService => $onlineService,
 		limit         => sub {
 			$count = shift;
 
@@ -4813,26 +4817,62 @@ sub titlesQuery {
 
 	$count += 0;
 
-	my $loopname = 'titles_loop';
-	# this is the count of items in this part of the request (e.g., menu 100 200)
-	# not to be confused with $count, which is the count of the entire list
-	my $chunkCount = 0;
+	# is it a remote album that's not in the database?
+	my $handler;
+	if ( !scalar @{$itemOrder} && $remoteAlbumId && $onlineService ) {
+		my $url = $onlineService . ':album:' . $remoteAlbumId;
+		$handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	}
+	if ( $handler && $handler->can('getAlbumTracks') ) {
 
-	if ( scalar @{$itemOrder} ) {
+		$request->setStatusProcessing();
+		$handler->getAlbumTracks(sub{
+			($items, $itemOrder, $totalCount) = @_;
 
-		for my $trackId ( @{$itemOrder} ) {
-			my $item = $items->{$trackId};
+			my $loopname = 'titles_loop';
+			my $chunkCount = 0;
 
-			_addSong($request, $loopname, $chunkCount, $item, $tags);
+			if ( scalar @{$itemOrder} ) {
 
-			$chunkCount++;
-		}
+				for my $trackId ( @{$itemOrder} ) {
+					my $item = $items->{$trackId};
+
+					_addSong($request, $loopname, $chunkCount, $item, $tags);
+
+					$chunkCount++;
+				}
+
+			}
+
+			$request->addResult('count', $totalCount);
+
+			$request->setStatusDone();
+		}, $request->client, $remoteAlbumId);
 
 	}
+	else {
 
-	$request->addResult('count', $totalCount);
+		my $loopname = 'titles_loop';
+		# this is the count of items in this part of the request (e.g., menu 100 200)
+		# not to be confused with $count, which is the count of the entire list
+		my $chunkCount = 0;
 
-	$request->setStatusDone();
+		if ( scalar @{$itemOrder} ) {
+
+			for my $trackId ( @{$itemOrder} ) {
+				my $item = $items->{$trackId};
+
+				_addSong($request, $loopname, $chunkCount, $item, $tags);
+
+				$chunkCount++;
+			}
+
+		}
+
+		$request->addResult('count', $totalCount);
+
+		$request->setStatusDone();
+	}
 }
 
 
@@ -5823,17 +5863,28 @@ sub _songData {
 		$song = $client->currentSongForUrl($url);
 	}
 
+	my $service;
 	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
 		if ( $handler && $handler->can('getMetadataFor') ) {
+			$service = (split(/:/, $url))[0];
 			# Don't modify source data
 			$remoteMeta = Storable::dclone(
 				$handler->getMetadataFor( $request->client, $url )
 			);
 
+			my @extArtistIds = split /,/, $remoteMeta->{artistId};
+			my @artistIds;
+			foreach (@extArtistIds) {
+				my $artistObj = Slim::Schema->rs("Contributor")->search( extid => "$service:artist:$_" )->single;
+				push @artistIds, $artistObj ? $artistObj->id : $_ * -1;
+			}
+			$remoteMeta->{artistId} = join ',', @artistIds;
+
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
+			$remoteMeta->{e} = $remoteMeta->{albumId};
 			$remoteMeta->{E} = $remoteMeta->{extid};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{i} = $remoteMeta->{disc};
@@ -5877,6 +5928,7 @@ sub _songData {
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
+	$returnHash{'service_id'} = $service if $service;
 	my %seen;
 
 	# loop so that stuff is returned in the order given...
@@ -5906,6 +5958,10 @@ sub _songData {
 		elsif ($tag eq 'b') {
 			$returnHash{work} = $remoteMeta->{$tag};
 			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
+			if ( $remoteMeta->{composerId} ) {
+				my $composerObj = Slim::Schema->rs("Contributor")->search( extid => "$service:artist:" . $remoteMeta->{composerId} )->single;
+				$returnHash{composer_ids} = $composerObj ? $composerObj->id . "" : $remoteMeta->{composerId} * -1 . "";
+			}
 		}
 
 		# Special case for 2: at track level, triggers addition of the play queue context $addedFromWork
@@ -5917,6 +5973,7 @@ sub _songData {
 		elsif ($tag eq 'A' || $tag eq 'S') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
 				$returnHash{artist} = $meta;
+				$returnHash{artist_ids} = $remoteMeta->{artistId} if $remoteMeta->{artistId};
 				next;
 			}
 			elsif ( $track->isa('Slim::Schema::RemoteTrack')) {
@@ -6005,6 +6062,7 @@ sub _songData {
 			}
 			# we might need to proxy the image request to resize it
 			elsif ($tag eq 'K' && $value) {
+				$returnHash{baseImage} = URI::Escape::uri_escape_utf8($value);
 				$value = proxiedImage($value);
 			}
 
@@ -6289,12 +6347,6 @@ sub _getTagDataForTracks {
 		}
 	}
 
-	if ( my $libraryId = Slim::Music::VirtualLibraries->getRealId($args->{libraryId}) ) {
-		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-		push @{$w}, 'library_track.library = ?';
-		push @{$p}, $libraryId;
-	}
-
 	# Some helper functions to setup joins with less code
 	my $join_genre_track = sub {
 		if ( $sql !~ /JOIN genre_track/ ) {
@@ -6335,6 +6387,18 @@ sub _getTagDataForTracks {
 			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
 		}
 	};
+
+	if ( $args->{remoteAlbumId} && $args->{onlineService} ) {
+		my $remoteAlbumId = $args->{remoteAlbumId};
+		my $onlineService = $args->{onlineService};
+		$join_albums->();
+		push @{$w}, 'albums.extid = ?';
+		push @{$p}, $onlineService . ':album:' . $remoteAlbumId;
+	} elsif ( my $libraryId = Slim::Music::VirtualLibraries->getRealId($args->{libraryId}) ) {
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryId;
+	}
 
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';

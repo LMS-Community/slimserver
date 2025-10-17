@@ -13,6 +13,7 @@ use strict;
 use base qw(Slim::Utils::Accessor);
 
 use Scalar::Util qw(blessed);
+use Digest::MD5 qw(md5_hex);
 use Tie::Cache::LRU;
 
 use Slim::Utils::Cache;
@@ -63,6 +64,7 @@ my @allAttributes = (qw(
 	performance
 	discsubtitle
 	added_from_work
+	artistid
 ));
 
 {
@@ -110,7 +112,7 @@ sub init {
 
 # Emulate absent methods - hopefully these can be retired at some time
 sub artists {return ();}
-sub artistid {}
+#sub artistid {}
 sub genres {return ();}
 sub genrename {}
 sub genreid {}
@@ -348,6 +350,15 @@ my $separator;
 
 sub setAttributes {
 	my ($self, $attributes) = @_;
+	my $url = $self->_url;
+	if ( $url !~ "^http" && Slim::Music::Info::isRemoteURL($url) ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			if ( my $meta = $handler->getMetadataFor( undef, $url ) ) {;
+				$attributes = $meta;
+			}
+		}
+	}
 
 	%availableTags = map { $_ => 1 } @allAttributes unless keys %availableTags;
 
@@ -375,7 +386,7 @@ sub setAttributes {
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
 			$log->debug("$key: ", $self->$key(), "=>$value");
 
-		$self->$key($value);
+		$self->$key($value) if !$self->$key || $value;
 	}
 }
 

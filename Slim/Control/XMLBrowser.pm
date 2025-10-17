@@ -50,11 +50,11 @@ my %colMap = (
 	G => 'genres',
 	i => 'discnum',
 	k => 'description',
-	l => ['album','version'],
+	l => ['album','version','remoteAlbumId'],
 	q => 'disccount',
 	t => ['tracknum','title','titleFlags'],
 	# "date" is being used in Podcast episodes
-	y => ['year','date'],
+	'y' => ['year','date'],
 );
 
 sub cliQuery {
@@ -695,7 +695,7 @@ sub _cliQuery_done {
 				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})
 				&& ($method !~ /all/)) {
 
-				my $title = $subFeed->{'name'} || $subFeed->{'title'};
+				my $title = $subFeed->{'album'} && $subFeed->{'artist'} ? $subFeed->{'title'} : $subFeed->{'name'};
 				my $url   = $subFeed->{'url'};
 
 				# Podcast enclosures
@@ -721,6 +721,8 @@ sub _cliQuery_done {
 						bitrate => $subFeed->{'bitrate'},
 						cover   => $subFeed->{'cover'} || $subFeed->{'image'} || $subFeed->{'icon'} || $request->getParam('icon'),
 						year	=> $subFeed->{'year'},
+						album   => $subFeed->{'album'},
+						artist  => $subFeed->{'artist'},
 					} );
 
 					$client->execute([ 'playlist', $method, $url ]);
