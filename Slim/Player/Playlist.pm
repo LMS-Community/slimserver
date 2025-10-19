@@ -365,7 +365,7 @@ sub removeTrack {
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
 
-	# Stop playing track, if necessary, before cuting old track(s) out of playlist
+	# Stop playing track, if necessary, before cutting old track(s) out of playlist
 	# in case Playlist::track() is called while stopping
 	my $playingSongIndex = Slim::Player::Source::playingSongIndex($client);
 	if ($playingSongIndex >= $tracknum  && $playingSongIndex < $tracknum + $nTracks) {
@@ -1133,8 +1133,7 @@ sub modifyPlaylistCallback {
 	# Did the playlist or the current song change?
 	my $saveCurrentSong =
 		$savePlaylist ||
-		$request->isCommand([['playlist'], ['open']]) ||
-		($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
+		$request->isCommand([['playlist'], ['open', 'newsong', 'jump', 'index', 'shuffle']]);
 
 	if (!$saveCurrentSong) {
 		main::INFOLOG && $log->info("saveCurrentSong not set. Returning.");
