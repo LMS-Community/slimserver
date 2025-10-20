@@ -694,7 +694,7 @@ sub albumsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (_searchPhrase($search) || ''));
+	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
 	if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
@@ -1247,7 +1247,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	$cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (_searchPhrase($search) || ''));
+	$cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 
@@ -1852,7 +1852,7 @@ sub genresQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (_searchPhrase($search) || ''));
+	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -5110,7 +5110,7 @@ sub worksQuery {
 
 	# Get count of unique composers, the count is cached until the next rescan done event
 	my $ccSql = sprintf($sql . " GROUP BY composer.id", "'c'");
-	my $cacheKey = md5_hex($ccSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (_searchPhrase($search) || ''));
+	my $cacheKey = _buildCacheKey($ccSql, $p, $search, $client);
 
 	my $composerCount = $cache->{$cacheKey};
 	if ( !$composerCount ) {
@@ -5136,7 +5136,7 @@ sub worksQuery {
 
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cSql = sprintf($sql, "'c'");
-	$cacheKey = md5_hex($cSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (_searchPhrase($search) || ''));
+	$cacheKey = _buildCacheKey($cSql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -6535,7 +6535,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . Slim::Utils::Unicode::utf8on(join( ':', @$p, @$w )) . (_searchPhrase($search) || ''));
+		my $cacheKey = _buildCacheKey($sql, $p, $search, undef);
 
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {
@@ -6794,10 +6794,14 @@ sub _notLocalTrackAndRemoteUrl {
 	return ref($track) && ref($track) ne 'Slim::Schema::Track' && $track->can('remote') && $track->remote;
 }
 
-sub _searchPhrase {
+sub _buildCacheKey {
+	my ($sql, $p, $search, $client) = @_;
+
 	# Slim::Utils::Text::ignoreCase (amongst other useful things) will remove the leading quote from a search phrase, so put it back.
-	my $search = shift;
-	return ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1);
+	return $sql
+		. Slim::Utils::Unicode::utf8on(join( ':', @$p ))
+		. Slim::Music::VirtualLibraries->getLibraryIdForClient($client)
+		. ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1);
 }
 
 =head1 SEE ALSO
