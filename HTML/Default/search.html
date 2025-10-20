@@ -57,7 +57,7 @@
 											m = '[%- "NONE" | string %]';
 										} else if (l && c && c > 1 && l < c) {
 											m += l + ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
-												+ options.params.index + '&q=' + options.params.q + '">[%- "MORE" | string %]</a>...';
+												+ options.params.index + '&q=' + encodeURIComponent(options.params.q) + '">[%- "MORE" | string %]</a>...';
 										}
 										Ext.get(options.thisSearch.hd).update(m);
 
