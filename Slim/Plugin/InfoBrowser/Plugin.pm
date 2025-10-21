@@ -36,7 +36,7 @@ package Slim::Plugin::InfoBrowser::Plugin;
 # default and Addon opml files.
 #
 # Authors are encouraged to publish their addons on the following wiki page:
-#   http://wiki.slimdevices.com/index.php/InformationBrowser
+#   https://wiki.lyrion.org/index.php/Information_Browser
 #
 
 use strict;
