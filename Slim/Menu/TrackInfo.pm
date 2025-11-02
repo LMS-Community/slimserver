@@ -388,6 +388,7 @@ sub infoContributors {
 
 		my $item = {
 			type    => 'playlist',
+			url	  => 'not a valid URL, but needed to make the ip3k UI work...',
 			name    => $contributor->name,
 			itemActions => \%actions,
 			label   => uc($role),
