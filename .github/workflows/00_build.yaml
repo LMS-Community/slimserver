@@ -78,7 +78,6 @@ jobs:
         flavour:
           - [debian, "--x86_64"]
           - [debian, "--arm"]
-          - [debian, "--i386"]
           - [debian, ""]
           - [rpm, ""]
           - [tarball, "--arm"]
