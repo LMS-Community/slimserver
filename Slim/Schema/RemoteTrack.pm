@@ -350,15 +350,21 @@ my $separator;
 
 sub setAttributes {
 	my ($self, $attributes) = @_;
-	my $url = $self->_url;
-	if ( $url !~ "^http" && Slim::Music::Info::isRemoteURL($url) ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			if ( my $meta = $handler->getMetadataFor( undef, $url ) ) {;
-				$attributes = $meta;
-			}
-		}
-	}
+
+#--------------
+# leaving this here as a reminder, commented out for now, because something like this is required to make sure that the play queue
+# is formatted correctly after a restart in default/classic skins. But it needs amendment because it causes problems
+# for plugins (eg BBC Sounds) where getMetadataFor fails without a client.
+#--------------
+#	my $url = $self->_url;
+#	if ( $url !~ "^http" && Slim::Music::Info::isRemoteURL($url) ) {
+#		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+#		if ( $handler && $handler->can('getMetadataFor') ) {
+#			if ( my $meta = $handler->getMetadataFor( undef, $url ) ) {;
+#				$attributes = $meta;
+#			}
+#		}
+#	}
 
 	%availableTags = map { $_ => 1 } @allAttributes unless keys %availableTags;
 

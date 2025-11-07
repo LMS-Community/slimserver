@@ -4823,7 +4823,11 @@ sub titlesQuery {
 		my $url = $onlineService . ':album:' . $remoteAlbumId;
 		$handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	}
+	#---
+	# this change gets rendered by git diff in a very confusing way. All we're doing is adding this "if" and indenting
+	# the existing code in an "else".
 	if ( $handler && $handler->can('getAlbumTracks') ) {
+		# we have an online service handler that can return album tracks in the expected format
 
 		$request->setStatusProcessing();
 		$handler->getAlbumTracks(sub{
@@ -4850,6 +4854,7 @@ sub titlesQuery {
 		}, $request->client, $remoteAlbumId);
 
 	}
+	#---
 	else {
 
 		my $loopname = 'titles_loop';
@@ -5874,6 +5879,11 @@ sub _songData {
 				$handler->getMetadataFor( $request->client, $url )
 			);
 
+			# if the artist is in the database, use their local id. If not, use the remote service id multiplied by -1
+			# so clients can distinguish between the two possibilities.
+			#-------------------------------------------------------------------------------------
+			### !!! Needs extra thought here: what if the remote service artist id is not numeric?
+			#-------------------------------------------------------------------------------------
 			my @extArtistIds = split /,/, $remoteMeta->{artistId};
 			my @artistIds;
 			foreach (@extArtistIds) {
@@ -5958,6 +5968,11 @@ sub _songData {
 		elsif ($tag eq 'b') {
 			$returnHash{work} = $remoteMeta->{$tag};
 			$returnHash{composer} = $remoteMeta->{composer} if $remoteMeta->{composer};
+			# if the composer is in the database, use their local id. If not, use the remote service id multiplied by -1
+			# so clients can distinguish between the two possibilities.
+			#-------------------------------------------------------------------------------------
+			### !!! Needs extra thought here: what if the remote service composer id is not numeric?
+			#-------------------------------------------------------------------------------------
 			if ( $remoteMeta->{composerId} ) {
 				my $composerObj = Slim::Schema->rs("Contributor")->search( extid => "$service:artist:" . $remoteMeta->{composerId} )->single;
 				$returnHash{composer_ids} = $composerObj ? $composerObj->id . "" : $remoteMeta->{composerId} * -1 . "";
@@ -6389,6 +6404,7 @@ sub _getTagDataForTracks {
 	};
 
 	if ( $args->{remoteAlbumId} && $args->{onlineService} ) {
+		# allow retrieval of track by remote album id.
 		my $remoteAlbumId = $args->{remoteAlbumId};
 		my $onlineService = $args->{onlineService};
 		$join_albums->();
