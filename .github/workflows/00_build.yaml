@@ -96,9 +96,10 @@ jobs:
 
       - name: Prepare build environment
         if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
-        run: |
-          sudo apt update
-          sudo apt install -y apt-transport-https debhelper devscripts
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: apt-transport-https debhelper devscripts
+          version: 1
 
       - name: Launch build process
         uses: ./server/.github/actions/build
