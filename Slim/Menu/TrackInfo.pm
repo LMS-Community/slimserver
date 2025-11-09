@@ -57,7 +57,7 @@ my $emptyItemList = [{ignore => 1}];
 
 ##
 # Register all the information providers that we provide.
-# This order is defined at http://wiki.slimdevices.com/index.php/UserInterfaceHierarchy
+# This order is defined at https://wiki.lyrion.org/index.php/UserInterfaceHierarchy
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
@@ -388,6 +388,7 @@ sub infoContributors {
 
 		my $item = {
 			type    => 'playlist',
+			url	  => 'not a valid URL, but needed to make the ip3k UI work...',
 			name    => $contributor->name,
 			itemActions => \%actions,
 			label   => uc($role),

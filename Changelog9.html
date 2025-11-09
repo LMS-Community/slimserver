@@ -21,6 +21,7 @@
 	<ul>
 		<li>Improve support for 3rd party player icons, add some for piCorePlayer, SqueezeAMP, WiiM players.</li>
 		<li>Update downloader now validates the installers checksum.</li>
+		<li>Updated French translation - thanks @Franck-Berry!</li>
 		<li>Updated Chinese translation - thanks @xdsnet!</li>
 		<li>Improve cache purging reliability to avoid unnecessary growth.</li>
 		<li>Update the custom user agent string: pretending to be iTunes probably caused more problems than it solved.</li>
@@ -44,6 +45,8 @@
 		<li>Remove Win32 legacy support files, code, control panels, build pipeline, etc.</li>
 		<li>Remove legacy Mac installer from build pipeline.</li>
 		<li>Remove code dealing with Perl &lt; 5.10.</li>
+		<li>Remove support for older Perl versions from the RPM (thanks @mavit!) and DEB packages.</li>
+		<li>Stop building i386 DEB package.</li>
 		<li>Updated Audio::Scan to v1.11 on Linux Perl 5.36/5.40, and Windows - thanks @ralphy!</li>
 		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.40 (Linux x86_64, aarch64), 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/73">#73</a> - Add a note about setting the hostname in a Docker container (thanks @hartzell!)</li>
@@ -60,6 +63,8 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1367">#1367</a> - Update UPnP support to fix gapless playback (setNextAVTransport) (@BoringName15).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1414">#1414</a> - Make sure custom image proxy handlers are always called (fixes incompatibility with Radio Now Playing's SVG handler).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1442">#1442</a> - Avoid log flood when player discovery JSON is empty (@mikecappella).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1444">#1444</a> - Fix search using terms with quotes in the Default skin (@darrell-k).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1445">#1445</a> - Fix search result count (@darrell-k).</li>
 		<li></li>
 	</ul>
 	<br />
@@ -96,6 +101,8 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li>Classic/Transporter/Boom <a href="https://forums.lyrion.org/forum/user-forums/logitech-media-server/1794277">would not navigate down the artist</a> of the currently playing track.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1280">#1280</a> - persists current song on last track (thanks @MrC!).</li>
 		<li></li>
 	</ul>
 	<br />

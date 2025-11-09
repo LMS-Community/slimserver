@@ -9,3 +9,33 @@ PLUGIN_RADIO_ARTWORK_DESC
 	EN	Try to find artwork for tracks played from radio stations which don't provide their own artwork. It's based on the widely used title format passed as "artist - title".
 	FR	Essayer de trouver des illustrations pour les pistes jouées depuis des stations de radio qui ne fournissent pas leurs propres illustrations. C'est basé sur le format de titre largement utilisé transmis comme "artiste - titre".
 	NL	Probeer artwork te vinden voor tracks die worden afgespeeld van radiostations die geen eigen artwork leveren. Het is gebaseerd op het veelgebruikte titelformaat dat wordt doorgegeven als "artiest - titel".
+
+PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
+	DE	Für diesen Sender nicht nach Titelbildern suchen
+	EN	Don't search for title artwork on this station
+	FR	Ne pas rechercher de pochettes de titres sur cette station
+	NL	Zoek niet naar titelafbeeldingen op dit station
+
+PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
+	DE	Suche nach Titelbildern, wenn möglich
+	EN	Search for title artwork if possible
+	FR	Rechercher des pochettes de titres si possible
+	NL	Zoek indien mogelijk naar titelafbeeldingen
+
+PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
+	DE	Suche nicht mehr nach Titelbildern
+	EN	Will no longer search for artwork
+	FR	La recherche de pochettes est désactivée
+	NL	Zal niet langer zoeken naar artwork
+
+PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
+	DE	Es wird wieder nach Titelbildern gesucht
+	EN	Will search for track artwork
+	FR	La recherche de pochettes est réactivée
+	NL	Zal weer zoeken naar track artwork
+
+PLUGIN_ARTWORK_SETTINGS_IGNORELIST
+	DE	Für die folgenden Radiosender keine Titelbilder suchen (eine URL pro Zeile):
+	EN	Don't look up artwork for the following radio stations (one URL per line):
+	FR	Ne recherchez pas de pochettes pour les stations de radio suivantes (une URL par ligne) :
+	NL	Zoek geen artwork voor de volgende radiostations (één URL per regel):
