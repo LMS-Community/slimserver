@@ -97,7 +97,7 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2024 Lyrion – verze 9.0.4
+	CS	© 2001-2024 Lyrion verze 9.0.4
 	DA	© 2001-2024 Lyrion - version 9.0.4
 	DE	© 2001-2024 Lyrion Version 9.0.4
 	EN	© 2001-2024 Lyrion Version 9.0.4
@@ -169,7 +169,7 @@ LOADING_SQUEEZEBOX_SERVER
 
 EN_SKIN
 # SLT: please use "Light" as in "light weight", not "illumination"
-	CS	Tenký
+	CS	Lehký
 	DA	Let
 	DE	Light
 	EN	Light
@@ -209,6 +209,7 @@ DEFAULT_SKIN
 	ZH_CN	缺省
 
 LOGIC_SKIN
+	CS	Logic tyrkysová
 	DA	Logic blågrøn
 	EN	Logic Teal
 
@@ -1875,7 +1876,7 @@ ALARM_ADD
 	SV	Lägg till alarm
 
 ALARM_ADD_DESC
-	CS	Můžete přidat tolik budíků, kolik chcete. Každý budík může být nastaven na každý den, pouze na určité dny nebo jen jednou. Nový budík přidáte volbou "Přidat budík".
+	CS	Můžete přidat tolik budíků, kolik chcete. Každý budík může být nastaven na každý den, pouze na určité dny nebo jen jednou. Nový budík přidáte volbou „Přidat budík".
 	DA	Du kan tilføje lige så mange vækkeure som du vil. Hvert vækkeur kan indstilles til at ringe hver dag, på bestemte dage eller kun en enkelt gang. Vælg Tilføj vækkeur for at indstille et nyt.
 	DE	Sie können beliebig viele Wecker einrichten. Ein Wecker kann jeden Tag, nur an bestimmten Tagen oder nur einmal gelten. Wählen Sie "Wecker hinzufügen", um einen neuen Wecker hinzuzufügen.
 	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
@@ -2149,7 +2150,7 @@ ALARM_DELETING
 	SV	Tar bort alarm...
 
 ALARM_NOW_PLAYING
-	CS	Budík "Právě hraje"
+	CS	Budík „Právě hraje"
 	DA	Vækkeuret spiller nu
 	DE	Aktuelle Wecker-Wiedergabe
 	EN	Alarm Clock Now Playing
@@ -3349,6 +3350,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	SV	Fel: Spellistan är tom.
 
 PLAYLIST_PROBLEM_CONNECTING
+	CS	Chyba: Nelze se připojit k získání seznamu skladeb
 	DA	Fejl: Kan ikke tilslutte for at hente spillelisten
 	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
 	EN	Error: Can't connect to retrieve playlist
@@ -3767,6 +3769,7 @@ SOURCE
 	ZH_CN	源头
 
 EXTERNAL_ID
+	CS	Externí ID
 	DA	Ekstern ID
 	DE	Externe ID
 	EN	External ID
@@ -3920,7 +3923,7 @@ SETUP_GROUP_MENUITEMS
 	ZH_CN	主页菜单
 
 SETUP_GROUP_MENUITEMS_DESC
-	CS	Můžete si upravit volby, které se objeví ve vaší Domovské nabídce na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na "Přidat" přidáte odstraněnou položku zpět do nabídky.
+	CS	Můžete si upravit volby, které se objeví ve vaší Domovské nabídce na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na „Přidat" přidáte odstraněnou položku zpět do nabídky.
 	DA	Du kan selv vælge hvilke menupunkter der skal vises på øverste niveau i hovedmenuen på afspillerens display. Du kan flytte menupunkter op og ned eller fjerne dem ved at klikke på knapperne ud for dem. Klik på Tilføj hvis du vil tilføje et punkt som er fjernet fra menuen.
 	DE	Sie können die im Hauptmenü des Players verfügbaren Einträge bestimmen. Klicken Sie auf die entsprechenden Schaltflächen, um Einträge nach oben bzw. unten zu verschieben oder sie zu entfernen. Klicken Sie auf 'Hinzufügen', um einen entfernten Eintrag wieder aufzunehmen.
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
@@ -4922,7 +4925,7 @@ SETUP_SENSAUTOBRIGHTNESS_DESC
 	SV	Ändra känsligheten för automatisk ljusstyrka.
 
 SETUP_PLAYINGDISPLAYMODE
-	CS	Informace o "Právě hraje"
+	CS	Informace o „Právě hraje"
 	DA	Oplysninger under afspilning
 	DE	Informationen zur aktuellen Wiedergabe
 	EN	Now Playing Information
@@ -4942,7 +4945,7 @@ SETUP_PLAYINGDISPLAYMODE
 	ZH_CN	播放中信息
 
 SETUP_PLAYINGDISPLAYMODE_ABBR
-	CS	Inf. o "Právě hraje"
+	CS	Inf. o „Právě hraje"
 	DA	Oplysninger om nummer der spiller
 	DE	Aktueller Titel - Info
 	EN	Now Playing Info
@@ -5437,7 +5440,7 @@ SETUP_STARTDELAY
 	SV	Fördröjning för spelarstart (ms)
 
 SETUP_STARTDELAY_DESC
-	CS	Přehrávači může trvat nezanedbatelnou dobu, než spustí přehrávání (než začnete poslouchat hudbu) po zpracování příkazu ke startu od Lyrion Music Serveru. To může nastat v případě, když se používají digitální výstupy (v závislosti na připojením zařízení) nebo u softwarových přehrávačů na určitých platformách. V těchto případech lze nastavit zde toto zpoždění tak, aby Lyrion Music Server věděl, o kolik dříve musí spustit tento přehrávač, aby hudba ze všech synchronizovaných přehrávačů začala ve stejnou dobu. Poznámka: toto se přičítá k případnému "Zpoždění zvuku přehrávače" (níže).
+	CS	Přehrávači může trvat nezanedbatelnou dobu, než spustí přehrávání (než začnete poslouchat hudbu) po zpracování příkazu ke startu od Lyrion Music Serveru. To může nastat v případě, když se používají digitální výstupy (v závislosti na připojením zařízení) nebo u softwarových přehrávačů na určitých platformách. V těchto případech lze nastavit zde toto zpoždění tak, aby Lyrion Music Server věděl, o kolik dříve musí spustit tento přehrávač, aby hudba ze všech synchronizovaných přehrávačů začala ve stejnou dobu. Poznámka: toto se přičítá k případnému „Zpoždění zvuku přehrávače" (níže).
 	DA	Det kan vare lidt fra du klikker på startknappen i Lyrion Music Server til afspilningen begynder (før du kan høre noget). Det kan forekomme når de digitale udgange bruges (afhængigt af hvad der er tilsluttet) eller i forbindelse med softwareafspillere på nogle platforme. I så fald kan du indstille en forsinkelse her sådan at Lyrion Music Server ved hvor meget tidligere afspilleren skal startes sådan at lyden på alle de synkroniserede afspillere startes på samme tid. Bemærk: Denne indstilling er i tillæg til en permanent indstilling af Lydforsinkelse for afspiller (nedenfor).
 	DE	Es kann eine gewisse Zeit dauern, bis ein Player die Wiedergabe beginnt (bis Sie die Musik hören), nachdem der von Lyrion Music Server empfangene Startbefehl verarbeitet wurde. Dies kann bei der Nutzung digitaler Ausgänge (abhängig vom angeschlossenen Gerät) oder bei bestimmten Software-Playern unter bestimmten Plattformen vorkommen. Sie können dann diese Verzögerung hier festlegen, damit Lyrion Music Server weiß, wie bald dieser Player gestartet werden soll, damit die Wiedergabe aus allen synchronisierten Playern gleichzeitig gestartet wird. Hinweis: Diese Verzögerung gilt zusätzlich zu 'Audioverzögerung des Players' (siehe unten).
 	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from Lyrion Music Server. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that Lyrion Music Server knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
@@ -5874,7 +5877,7 @@ SETUP_REPLAYGAINMODE
 	ZH_CN	音量调整/重播增益
 
 SETUP_REPLAYGAINMODE_DESC
-	CS	Některé zvukové skladby obsahují informace o nastavení hlasitosti neboli "Replay Gain", které lze použít při přehrávání, aby skladby a alba zněly stejně hlasitě. Pokud je tato informace přítomna, přehrávač ji může použít. "Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. "Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale aby byly zachovány rozdíly v hlasitosti mezi skladbami v rámci alba. Volba "Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro smíšený seznam skladeb.
+	CS	Některé zvukové skladby obsahují informace o nastavení hlasitosti neboli „Replay Gain", které lze použít při přehrávání, aby skladby a alba zněly stejně hlasitě. Pokud je tato informace přítomna, přehrávač ji může použít. „Zesílení skladby" lze použít pro to, aby všechny skladby zněly stejně hlasitě. „Zesílení alba" lze použít pro to, aby všechna alba zněla stejně hlasitě, ale aby byly zachovány rozdíly v hlasitosti mezi skladbami v rámci alba. Volba „Inteligentní zesílení" používá zesílení alba, pokud jsou po sobě jdoucí skladby ze stejného alba nebo zesílení skladby pro smíšený seznam skladeb.
 	DA	Nogle lydfiler indeholder oplysninger om lydstyrkejustering, også kaldet Replay Gain. Oplysningerne kan anvendes ved afspilningen for at sikre at forskellige nummer og album har den samme lydstyrke. Afspilleren kan anvende denne information hvis den findes. Forstærkning af nummer kan bruges til at sikre at alle numre har samme lydstyrke. Forstærkning af album kan bruges til at sikre at alle album har samme lydstyrke, men forskellen i lydstyrke mellem de enkelte numre på et album bevares. Dynamisk forstærkning anvender forstærkning af album hvis flere på hinanden følgende numre er fra samme album, og forstærkning af numre hvis afspilningslisten består af numre fra forskellige album.
 	DE	Titel können Informationen zur Normalisierung der Lautstärke enthalten ('Replay Gain'), damit alle Titel und Alben mit derselben Lautstärke wiedergegeben werden können. Der Player kann diese Information nutzen. 'Titel-Normalisierung' stellt sicher, dass alle Titel gleich laut wiedergegeben werden. 'Album-Normalisierung' stellt sicher, dass alle Alben gleich laut wiedergegeben werden, wobei Unterschiede in der Lautstärke in den Titeln eines Albums erhalten bleiben. 'Intelligente' Normalisierung nutzt die Album-Normalisierung, wenn aufeinanderfolgende Titel vom selben Album stammen bzw. die Titel-Normalisierung für gemischte Wiedergabelisten.
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. The player can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
@@ -6055,7 +6058,7 @@ SETUP_MP3STREAMINGMETHOD
 	SV	Strömningsmetod
 
 SETUP_MP3STREAMINGMETHOD_DESC
-	CS	Při přehrávání datového proudu z internetu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. Při volbě "Přímé přehrávání datového proudu" přehrávač provede přímé spojení se serverem přehrávání zvukových proudů a tím mírně sníží zatížení Lyrion Music Serveru a umožní přehrávání proudu i po ztrátě spojení s Lyrion Music Serverem. Volba "Přehrávání datového proudu přes proxy" způsobí, že Lyrion Music Server zajistí spojení a přehraje zvuk prostřednictvím přehrávače. "Přímé přehrávání datového proudu" je výchozí nastavení, ale jestliže budete mít potíže s proudy, zkuste změnit nastavení na "Přehrávání datového proudu přes proxy". Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy "Přehrávání datového proudu přes proxy", aby se snížilo využití šířky pásma.
+	CS	Při přehrávání datového proudu z internetu, může být přehrávání datových proudů provedeno jedním ze dvou způsobů. Při volbě „Přímé přehrávání datového proudu" přehrávač provede přímé spojení se serverem přehrávání zvukových proudů a tím mírně sníží zatížení Lyrion Music Serveru a umožní přehrávání proudu i po ztrátě spojení s Lyrion Music Serverem. Volba „Přehrávání datového proudu přes proxy" způsobí, že Lyrion Music Server zajistí spojení a přehraje zvuk prostřednictvím přehrávače. „Přímé přehrávání datového proudu" je výchozí nastavení, ale jestliže budete mít potíže s proudy, zkuste změnit nastavení na „Přehrávání datového proudu přes proxy". Pamatujte na to, že pokud jsou s proudem synchronizovány dva a více přehrávačů, použije se vždy „Přehrávání datového proudu přes proxy", aby se snížilo využití šířky pásma.
 	DA	Når der afspilles en stream fra internettet, kan det gøres på to måder. Ved direkte streaming etableres der en direkte forbindelse mellem afspilleren og serveren der streames fra. Det reducerer belastningen af Lyrion Music Server en smule og afspilningen fortsætter selvom forbindelsen til Lyrion Music Server bliver afbrudt. Ved streaming via en proxy vil Lyrion Music Server håndtere forbindelsen og sende lyden videre til afspilleren. Direkte streaming er standardmetoden, men hvis du har problemer med streams, kan du ændre indstillingen til Streaming via proxy. Bemærk at hvis to eller flere afspillere er synkroniseret til en stream, bliver proxymetoden altid anvendt for at begrænse brugen af båndbredde.
 	DE	Zur Wiedergabe eines Internet-Streams kann das Streaming auf zwei verschiedene Arten durchgeführt werden. Beim direkten Streaming erstellt der Player eine direkte Verbindung mit dem Audio-Streaming-Server, wodurch die Belastung von Lyrion Music Server verringert wird und der Stream auch fortgesetzt werden kann, wenn die Verbindung zu Lyrion Music Server unterbrochen wird. Beim Streaming über einen Proxy-Server verwaltet Lyrion Music Server die Verbindung und leitet die Musik an den Player weiter. Standardmäßig wird das direkte Streaming verwendet, aber wenn Probleme mit Streams auftreten, können Sie die andere Methode versuchen. Hinweis: Wenn zwei oder mehre Player synchron auf einem Stream zugreifen, wird immer das Streaming über einen Proxy-Server verwendet, um die Bandbreitennutzung zu reduzieren.
 	EN	When playing an Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on Lyrion Music Server slightly and allowing the stream to continue playing if the Lyrion Music Server connection is lost.  Proxied Streaming causes Lyrion Music Server to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an stream, proxied streaming is always used to reduce bandwidth usage.
@@ -6666,7 +6669,7 @@ SETUP_SHOWARTIST_DESC
 	ZH_CN	您可以选择通过浏览专辑时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在专辑标题旁边。
 
 SETUP_GUESSFILEFORMATS
-	CS	Odhadnutí formátů štítků (tagů)
+	CS	Odhadnutí formátů tagů
 	DA	Gæt format for mærker
 	DE	Tag-Format erraten
 	EN	Guess Tags Formats
@@ -6725,7 +6728,7 @@ SETUP_IRMAP
 	ZH_CN	遥控键功能
 
 SETUP_IRMAP_DESC
-	CS	Můžete si zvolit mezi seznamy funkcí tlačítek. Tyto seznamy přiřazují konkrétní tlačítka na infračerveném dálkovém ovladači ke konkrétním funkcím. "Standardní" seznam je popsán v dokumentaci.
+	CS	Můžete si zvolit mezi seznamy funkcí tlačítek. Tyto seznamy přiřazují konkrétní tlačítka na infračerveném dálkovém ovladači ke konkrétním funkcím. „Standardní" seznam je popsán v dokumentaci.
 	DA	Du kan vælge mellem forskellige funktionssæt til knapperne. Disse funktionssæt bestemmer hvilken funktion de forskellige knapper på fjernbetjeningen skal have.  Standardsættet er det som er beskrevet i dokumentationen.
 	DE	Sie können zwischen Tastenfunktionsgruppen wählen, die Tasten der Fernbedienung mit bestimmten Funktionen belegen. Die Gruppe 'Standard' wird in der Dokumentation beschrieben.
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Standard" set is the one that is described in the documentation.
@@ -6833,7 +6836,7 @@ SETUP_LIBRARY_NAME
 	SV	Mediebiblioteksnamn
 
 SETUP_LIBRARY_NAME_DESC
-	CS	Tak se bude jmenovat vaše knihovna médií v nabídce "Moje média" vašeho Squeezeboxu.
+	CS	Tak se bude jmenovat vaše knihovna médií v nabídce „Moje média" vašeho Squeezeboxu.
 	DA	Dit mediebibliotek får dette navn i Squeezebox-menuen Mine multimedier.
 	DE	Das ist der Name der Medienbibliothek im Squeezebox-Menü 'Eigene Medien'.
 	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
@@ -6998,7 +7001,7 @@ SETUP_ARTFOLDER_DESC
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
 
 SETUP_BAD_FILE
-	CS	Ouha – "%s" asi nebude platný soubor. Zkuste to znovu.
+	CS	Ouha – „%s" asi nebude platný soubor. Zkuste to znovu.
 	DA	%s er ikke en gyldig fil. Prøv igen.
 	DE	Fehler: '%s' ist keine gültige Datei. Versuchen Sie es noch einmal.
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
@@ -7017,7 +7020,7 @@ SETUP_BAD_FILE
 	ZH_CN	"%s"似乎不是一个合法文件。请再次尝试。
 
 SETUP_BAD_DIRECTORY
-	CS	Ouha – "%s" asi nebude platný adresář. Zkuste to znovu.
+	CS	Ouha – „%s" asi nebude platný adresář. Zkuste to znovu.
 	DA	%s er ikke en gyldig mappe. Prøv igen.
 	DE	Fehler: '%s' ist kein gültiges Verzeichnis. Versuchen Sie es noch einmal.
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
@@ -7356,7 +7359,7 @@ SETUP_SKIN
 	ZH_CN	网界面
 
 SETUP_SKIN_DESC
-	CS	Ze seznamu níže si můžete vybrat vzhled čili "skin" pro webové rozhraní.
+	CS	Ze seznamu níže si můžete vybrat vzhled čili „skin" pro webové rozhraní.
 	DA	Du kan vælge et layout ("skin") til den webbaserede brugerflade på listen nedenfor.
 	DE	Sie können das Aussehen (eine 'Skin') für die Web-Benutzeroberfläche aus der folgenden Liste auswählen.
 	EN	You can choose a look or "skin" for the web interface from the list below.
@@ -7429,6 +7432,7 @@ SETUP_EXTENSIONS_CATEGORY_ALL
 	ZH_CN	全部
 
 SETUP_EXTENSIONS_CATEGORY_TOP
+	CS	Nejoblíbenější (není nainstalováno)
 	DA	Mest populære (ikke installeret)
 	DE	Populärste (nicht installierte)
 	EN	Most Popular (not installed)
@@ -7444,6 +7448,7 @@ SETUP_EXTENSIONS_CATEGORY_DATABASE
 	HU	Zenei könyvtár
 
 SETUP_EXTENSIONS_CATEGORY_HARDWARE
+	CS	Hardware
 	DA	Hardware
 	EN	Hardware
 	FR	Matériel
@@ -7499,7 +7504,7 @@ SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
 	NL	Afspeellijst
 
 SETUP_EXTENSIONS_CATEGORY_RADIO
-	CS	Internetové rádio
+	CS	Internetové rádia
 	DA	Internetradio
 	DE	Internetradio
 	EN	Internet Radio
@@ -7887,7 +7892,7 @@ SETUP_COVERART
 	ZH_CN	图象
 
 SETUP_COVERART_DESC
-	CS	Obrázky obalů alb, pokud jsou k dispozici, se zobrazují při prohlížení informací o albu nebo skladbě. Obrázky obalů alb se nacházejí v tagech ID3 u jednotlivých skladeb nebo mohou být uloženy ve stejné složce jako soubory skladeb. Standardně se používají názvy obrázků "cover.jpg", "folder.jpg", "album.jpg" nebo "thumb.jpg". Můžete zadat další názvy souborů pro obrázky obalů alb. Můžete zadat jiné názvy pro náhledy nebo pro obrázky plné velikosti. Přidejte před tuto volbu znak % a můžete za něj napsat libovolný řetězec vytvořený ze stejných prvků, které jsou pro Formáty názvů (např. %ARTIST - ALBUM bude hledat Artist - Album.jpg odpovídající nalezenému interpretovi a albu).
+	CS	Obrázky obalů alb, pokud jsou k dispozici, se zobrazují při prohlížení informací o albu nebo skladbě. Obrázky obalů alb se nacházejí v tagech ID3 u jednotlivých skladeb nebo mohou být uloženy ve stejné složce jako soubory skladeb. Standardně se používají názvy obrázků „cover.jpg", „folder.jpg", „album.jpg" nebo „thumb.jpg". Můžete zadat další názvy souborů pro obrázky obalů alb. Můžete zadat jiné názvy pro náhledy nebo pro obrázky plné velikosti. Přidejte před tuto volbu znak % a můžete za něj napsat libovolný řetězec vytvořený ze stejných prvků, které jsou pro Formáty názvů (např. %ARTIST - ALBUM bude hledat Artist - Album.jpg odpovídající nalezenému interpretovi a albu).
 	DA	Der vises billeder af albumcovere når du vælger at se oplysninger om et album eller nummer. Coverbillederne hentes fra ID3-koderne i de enkelte numre eller fra mappen hvor filerne er placeret. Som standard indlæses følgende grafikfiler hvis der ikke er et billede i ID3-koden: "cover.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive flere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
 	DE	Plattenhüllen werden (falls verfügbar) beim Anzeigen eines Albums oder Titelinformationen angezeigt. Diese Bilder sind in den ID3-Tags der Titel bzw. demselben Ordner wie die Musikdateien enthalten. Standardmäßig werden Dateinamen wie "cover.jpg", "album.jpg" oder "thumb.jpg" verwendet. Sie können einen weiteren Dateinamen für Plattenhüllen angeben. Sie können unterschiedliche Dateinamen für Miniaturen und Vollbilder angeben. Stellen Sie ein % voran. Der Name kann aus denselben Elementen bestehen, die für Titelformate zulässig sind (z.B. %ARTIST - ALBUM sucht nach 'Interpret - Album.jpg', um die passende Datei zu finden.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eg %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found).
@@ -8153,9 +8158,10 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
+	CS	Lyrion Music Server může automaticky zkontrolovat, zda je k dispozici aktualizovaná verze softwaru. Pokud ano, zobrazí se ve webovém rozhraní Lyrion Music Serveru zpráva.
 	DA	Lyrion Music Server kan checke automatisk om der er en ny software version tilgængelig. Hvis det er tilfældet, vil der dukke en besked op i Lyrion Music Sever web interfacet.
 	DE	Lyrion Music Server kann automatisch jeden Tag prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Lyrion Music Server gemeldet.
-	EN	Lyrion Music Server can automatically check to see if an updated version of the software is available.  If it is, then a message will appear in Lyrion Music Server's web interface.
+	EN	Lyrion Music Server can automatically check to see if an updated version of the software is available. If it is, then a message will appear in Lyrion Music Server's web interface.
 	ES	Lyrion Music Server se puede conectar automáticamente comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Lyrion Music Server.
 	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
 	HU	A Lyrion Music Server automatikusan ellenőrzi, hogy elérhető-e a szoftver frissített verziója.  Ha igen, akkor egy üzenet jelenik meg a Lyrion Music Server webes felületén.
@@ -8455,7 +8461,7 @@ SETUP_ALARMSAVER_ABBR
 	SV	Vid alarm
 
 SETUP_SCREENSAVER_DESC
-	CS	Po období nečinnosti dálkového ovladače může přehrávač zobrazovat různé informace jako "spořiče obrazovky". Můžete zvolit odlišné spořiče k zobrazení v závislosti na tom, jestli přehrávač hraje nebo ne nebo je vypnut. Můžete také zvolit dobu čekání před povolením těchto spořičů obrazovky.
+	CS	Po období nečinnosti dálkového ovladače může přehrávač zobrazovat různé informace jako „spořiče obrazovky". Můžete zvolit odlišné spořiče k zobrazení v závislosti na tom, jestli přehrávač hraje nebo ne nebo je vypnut. Můžete také zvolit dobu čekání před povolením těchto spořičů obrazovky.
 	DA	Hvis du ikke har brugt fjernbetjeningen i et stykke tid, kan der vises forskellige oplysninger på displayet som en form for pauseskærm. Du kan vælge at bruge forskellige pauseskærme når afspilleren er hhv. tændt og slukket, når der spilles et nummer og når der ikke gør. Du kan også angive hvor lang tid der skal gå før pauseskærmene aktiveres.
 	DE	Sie können einen Bildschirmschoner wählen, der nach einer gewissen Inaktivität der Fernbedienung aktiviert wird. Außerdem können Sie die Zeit wählen, nach der der Bildschirmschoner aktiviert wird. Je nachdem, ob der Player Audio wiedergibt, angehalten oder ausgeschaltet wurde, können Sie verschiedene Bildschirmschoner wählen.
 	EN	After a period of inactivity from the remote control, the player can display various information as "screensavers". You can choose different screensavers to show, depending on whether the player is playing or not, or if it is powered off. You can also choose the amount of time to wait before enabling these screensavers.
@@ -8473,6 +8479,7 @@ SETUP_SCREENSAVER_DESC
 	ZH_CN	您可以通过遥控器选择在播放机非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放机在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
 SETUP_NO_SCREENSAVERS
+	CS	Zdá se, že nejsou nainstalovány žádné spořiče obrazovky. Chcete nainstalovat spořič obrazovky Datum a čas?
 	DA	Der ser ikke ud til at være installeret nogen pauseskærme. Vil du installere pauseskærmen Dato og tid?
 	DE	Es scheinen keine Bildschirmschoner installiert zu sein. Möchten Sie den Bildschirmschoner "Datum und Uhrzeit" installieren?
 	EN	There seem to be no screensavers installed. Do you want to install the Date and Time screensaver?
@@ -8532,7 +8539,7 @@ SCREENSAVER_JUMP_BACK_NAME
 	ZH_CN	播放中
 
 SCREENSAVER_JUMP_TO_NOW_PLAYING
-	CS	Přejít na "Právě hraje"
+	CS	Přejít na „Právě hraje"
 	DA	Gå til Nu spiller
 	DE	In 'Aktuelle Wiedergabe' wechseln
 	EN	Jump To Now Playing
@@ -8623,7 +8630,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	SV	Ytterligare spellisteknappar
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
-	CS	Některé vzhledy mohou volitelně zobrazovat další tlačítka pro přehratelné položky, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
+	CS	Některé vzhledy mohou volitelně zobrazovat další tlačítka pro přehratelné položky, například „Přehrát další" nebo „Odstranit ze seznamu skladeb".
 	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.
 	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.
 	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".
@@ -8694,7 +8701,7 @@ SETUP_SEARCHSUBSTRING_1
 	ZH_CN	在词内搜寻
 
 SETUP_SEARCHSUBSTRING_DESC
-	CS	Pokud hledáte mediální soubory, můžete pomocí serveru hledat odpovídající položky obsahující slova, která začínají stejnými písmeny jako hledaný řetězec, nebo obsahující slova, která mají hledaný řetězec kdekoliv ve slově. Například hledání začátku slov "RAIN" najde položky se slovem "RAINBOW". Hledání uvnitř slov vrátí také položku obsahující slovo "TRAIN".
+	CS	Pokud hledáte mediální soubory, můžete pomocí serveru hledat odpovídající položky obsahující slova, která začínají stejnými písmeny jako hledaný řetězec, nebo obsahující slova, která mají hledaný řetězec kdekoliv ve slově. Například hledání začátku slov „RAIN" najde položky se slovem „RAINBOW". Hledání uvnitř slov vrátí také položku obsahující slovo „TRAIN".
 	DA	Når du søger efter mediefiler, kan serveren enten finde elementer med ord som begynder med de samme bogstaver som din søgestreng, eller ord som indeholder søgestrengen et vilkårligt sted i ordet. For eksempel vil søgestrengen ved søgning efter "RAIN" i begyndelsen finde elementer med ordet "RAINBOW". Søgning efter vilkårlige steder i ord vil også returnere elementer som indeholder ordet "TRAIN".
 	DE	Beim Suchen nach Mediendateien können Sie den Server anweisen, nur am Wortanfang nach Zeichenfolgen zu suchen oder an einer beliebigen Stelle im Wort. Beispiel: Wenn Sie den Wortanfang nach 'RAIN' durchsuchen, werden auch Einträge mit dem Wort 'RAINBOW' gefunden. Wird innerhalb des Wortes gesucht, werden auch Wörter wie 'TRAIN' gefunden. Bitte beachten Sie, dass die Einstellung ignoriert wird, wenn die Volltextsuche aktiviert ist.
 	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN". PLEASE NOTE: if you're using the Fulltext Search plugin, this flag does not apply.
@@ -9135,7 +9142,7 @@ SETUP_IGNOREDARTICLES
 	ZH_CN	进行排序时应忽略的词汇
 
 SETUP_IGNOREDARTICLES_DESC
-	CS	Seznam členů ("the", "les", "los" atd.) na začátku jména interpreta, skladby nebo alba, které se budou při řazení ignorovat. Více členů oddělte mezerami nebo nechte tento seznam prázdný, čímž se tato funkce vypne. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
+	CS	Seznam členů („the", „les", „los" atd.) na začátku jména interpreta, skladby nebo alba, které se budou při řazení ignorovat. Více členů oddělte mezerami nebo nechte tento seznam prázdný, čímž se tato funkce vypne. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	En liste med artikler ("the", "les", "los" (og evt. andre ord)) der skal ignoreres ved sortering af kunstnere, numre og albumnavne. De enkelte ord skal adskilles af mellemrum, og hvis du ikke vil benytte funktionen, skal listen være tom. Hvis du ændrer denne indstilling, bliver dit musikbibliotek gennemsøgt igen.
 	DE	Eine Liste von Artikeln ("die", "the", "los", "la" usw..), die bei Sortieren am Anfang des Namens von Interpreten, Titeln oder Alben ignoriert werden sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.  Changing this setting will start a rescan of your music library.
@@ -9152,7 +9159,7 @@ SETUP_IGNOREDARTICLES_DESC
 	SV	En lista med artiklar (the, les, los, o.s.v.) som ska ignoreras när de kommer först i namn på artister, låtar och album. Avgränsa artiklarna med mellanslag eller lämna fältet tomt om du vill avaktivera funktionen. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
 SETUP_SPLITLIST
-	CS	Oddělovač více položek ve štítcích
+	CS	Oddělovač více položek v tazích
 	DA	Skilletegn når der er flere elementer i mærker
 	DE	Trennzeichen für mehrere Einträge in Tags
 	EN	Separator for Multiple Items in Tags
@@ -9169,7 +9176,7 @@ SETUP_SPLITLIST
 	SV	Avgränsare för flera objekt i taggar
 
 SETUP_SPLITLIST_DESC
-	CS	Lyrion Music Server může z tagů ve vašich hudebních souborech získat více interpretů, názvů alb a žánrů. Pokud ve vašich tagech najde některé ze slov nebo znaků uvedených níže, vytvoří pro každou položku jednotlivé výpisy. Pokud například do seznamu níže vložíte středník, skladba s tagem interpreta "J. S. Bach;Michael Tilson Thomas" se objeví v oblasti interpretů pro "J. S. Bach" i "Michael Tilson Thomas". Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
+	CS	Lyrion Music Server může z tagů ve vašich hudebních souborech získat více interpretů, názvů alb a žánrů. Pokud ve vašich tagech najde některé ze slov nebo znaků uvedených níže, vytvoří pro každou položku jednotlivé výpisy. Pokud například do seznamu níže vložíte středník, skladba s tagem interpreta „J. S. Bach;Michael Tilson Thomas" se objeví v oblasti interpretů pro „J. S. Bach" i „Michael Tilson Thomas". Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	Lyrion Music Server kan udtrække flere kunstnere, albumtitler og genre fra mærkerne i dine musikfiler. Hvis Lyrion Music Server finder nogle af de ord eller symboler nedenunder, vil der blive oprettet individuelle oversiger for hvert element. Hvis du for eksempel har indtastet et semikolon i listen nedenunder, vil numre med kunstnermærke "J. S. Bach;Michael Tilson Thomas" medføre at der oprettes to kunstnere, "J. S. Bach" og "Michael Tilson Thomas". Ændring af denne indstilling medfører at dit musikbibliotek bliver genindlæst.
 	DE	Lyrion Music Server kann mehrere Interpreten, Albumtitel und Stilrichtungen in den Tags von Musikdateien erkennen. Findet Lyrion Music Server folgende Wörter oder Zeichen in den Tags, wird für jeden Eintrag eine andere Liste erstellt. Beispiel: Wenn Sie einen Strichpunkt als Trennzeichen definieren, wird ein Titel mit dem Interpreten-Tag 'J. S. Bach;Michael Tilson Thomas' sowohl unter 'J. S. Bach' als auch 'Michael Tilson Thomas' aufgelistet. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	Lyrion Music Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
@@ -9203,7 +9210,7 @@ SETUP_ARTISTS_BROWSE_MODES
 	SV	Bläddra efter artister
 
 SETUP_ARTISTS_BROWSE_MODES_DESC
-	CS	Zvolte, zda chcete použít jeden konfigurovatelný seznam interpretů, nebo dva seznamy pro Interprety alba a Všechny interpreti. Interpreti alba je seznam, ve kterém je Interpret alba jediným interpretem na albu nebo interpretem uvedeným v tagu ALBUMARTIST. Všichni interpreti je seznam všech interpretů, kteří jsou uvedeni v tagu role přispěvatele (ARTIST, COMPOSER atd.). Jednotný konfigurovatelný seznam interpretů naproti tomu umožňuje určit, které role přispěvatelů mají být součástí nabídky Interpret.
+	CS	Zvolte, zda chcete použít jeden konfigurovatelný seznam interpretů, nebo dva seznamy „Interpreti alba" a „Všichni interpreti". „Interpreti alba" je seznam, ve kterém je Interpret alba jediným interpretem na albu nebo interpretem uvedeným v tagu ALBUMARTIST. „Všichni interpreti" je seznam všech interpretů, kteří jsou uvedeni v tagu role přispěvatele (ARTIST, COMPOSER atd.). Jednotný konfigurovatelný seznam interpretů naproti tomu umožňuje určit, které role přispěvatelů mají být součástí nabídky Interpret.
 	DA	Vælg om du vil bruge en samlet konfigurerbar kunstnerliste, eller to separate lister for Album kunstner og Alle kunstnere. Album kunstner er en liste hvor kunstneren er den eneste på albumet eller hvor kunstneren er specificeret i ALBUMARTIST mærket. Alle kunstnere er en liste hvor samtlige kunstnere som er i en bidragsrolle (ARTIST, COMPOSER etc.) er inkluderet. Hvis du vælger en samlet liste, definerer du selv hvilke roller der skal inkluderes i listen.
 	DE	Wählen Sie, ob Sie eine einzelne, konfigurierbare Liste von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
 	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand lets you define which contributor roles should be part of the Artists menu.
@@ -9228,7 +9235,7 @@ SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	SV	Använd en enda konfigurerbar artistlista
 
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
-	CS	Použít dva samostatné seznamy pro Interpreta alba a Všechny interprety
+	CS	Použít dva samostatné seznamy pro Interpreti alba a Všichni interpreti
 	DA	Brug to separate lister for Album kunstner og Alle kunstnere
 	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
 	EN	Use two separate lists for Album Artists and All Artists
@@ -9491,7 +9498,7 @@ SETUP_ENHANCEDHTTP
 	NL	Streammethode voor HTTP(S)
 
 SETUP_ENHANCEDHTTP_DESC
-	CS	Pokud dojde k selhání připojení HTTP(S) k serveru, Lyrion Music Server ukončí přehrávání. Může se také pokusit o jeho opětovné otevření (Trvalý režim) nebo může ukládat datové proudy (Režim mezipaměti) definované délky (podcasty, jednotlivé skladby) do vyrovnávací paměti v souborech na disku. Ty budou po přehrání datového proudu odstraněny. To může zlepšit spolehlivost u některých serverů, které očekávají stahování skladeb, nikoliv přehrávání datového proudu, a proto uzavírají dlouhá spojení. Zároveň to ale způsobuje větší množství zápisu do souborového systému, což může potenciálně opotřebovat např. karty SD. Pokud máte dostatek místa pro ukládání souborů do vyrovnávací paměti, pak je režim "Mezipaměti" správnou cestou
+	CS	Pokud dojde k selhání připojení HTTP(S) k serveru, Lyrion Music Server ukončí přehrávání. Může se také pokusit o jeho opětovné otevření (Trvalý režim) nebo může ukládat datové proudy (Režim mezipaměti) definované délky (podcasty, jednotlivé skladby) do vyrovnávací paměti v souborech na disku. Ty budou po přehrání datového proudu odstraněny. To může zlepšit spolehlivost u některých serverů, které očekávají stahování skladeb, nikoliv přehrávání datového proudu, a proto uzavírají dlouhá spojení. Zároveň to ale způsobuje větší množství zápisu do souborového systému, což může potenciálně opotřebovat např. karty SD. Pokud máte dostatek místa pro ukládání souborů do vyrovnávací paměti, pak je režim „Mezipaměti" správnou cestou
 	DA	Når en HTTP(S) forbindelse til en server fejler, vil Lyrion Music Server afslutte afspilningen. LMS kan forsøge at genåbne (Persistent mode) eller buffere (Cache mode) streams af forudefineret længde (podcasts, enkelte numre) til en disk fil. Disse bliver fjernet når afspilningen er afsluttet. Dette kan forbedre pålideligheden med nogle servere som forventer numrene downloades i stedet for at blive streamet og som derfor lukker langvarige forbindelser. Det kan medføre mere skrivning til filsystemet, hvilket potentielt kan forårsage slidtage på f.eks. SD kort. Hvis du har plads nok til at cache filerne, er det den bedste løsning
 	DE	Wenn eine HTTP(S)-Verbindung zu einem Server fehlschlägt, beendet Lyrion Music Server die Wiedergabe (Normaler Modus). Er kann auch versuchen, die Verbindung wieder zu öffnen (Persistenter Modus), oder er kann Streams von bestimmter Länge (Podcasts, einzelne Tracks) auf der Festplatte zwischenspeichern (Cache Modus). Diese Dateien werden entfernt, sobald der Stream abgespielt wurde. Dies erhöht die Zuverlässigkeit mit einigen Anbietern, kann aber das Dateisystem zusätzlich belasten (z.B. wenn eine SD Karte verwendet wird).
 	EN	When a HTTP(S) connection to a server fails, Lyrion Music Server terminates playback. It can also try to re-open it (Persistent mode) or it can buffer streams (Cache mode) of defined length (podcasts, single tracks) on disk files. These will be removed once the stream has been played. This can improve the reliability with some servers that expect tracks to be downloaded, not streamed and thus close long connections. But it also does cause more writing to the file system, which could potentially wear out e.g. SD cards. If you have enough space for buffering files, then "Cache" mode is the way to go.
@@ -9815,6 +9822,7 @@ SETUP_UDPCHUNKSIZE
 	ZH_CN	最大UDP数据大小
 
 SETUP_MAX_REDIRECTS
+	CS	Maximální počet přesměrování
 	DE	Maximale Anzahl Weiterleitungen
 	DA	Maksimalt antal omdirigeringer
 	EN	Maximum number of redirects
@@ -9822,6 +9830,7 @@ SETUP_MAX_REDIRECTS
 	NL	Maximum aantal omleidingen
 
 SETUP_MAX_REDIRECTS_DESC
+	CS	Maximální počet přesměrování HTTP, která budou následována. Pokud je vyžadováno více přesměrování, je požadavek považován za neúspěšný.
 	DE	Die maximale Anzahl von HTTP Weiterleitungen, die gefolgt werden soll. Werden weitere Weiterleitungen angefordert, so gilt die Anfrage als fehlgeschlagen.
 	DA	Det maksimale antal HTTP-omdirigeringer, der skal følges. Hvis der kræves flere omdirigeringer, betragtes anmodningen som mislykket.
 	EN	The maximum number of HTTP redirects to follow. Should more redirects be required, then the request is considered failure.
@@ -9896,7 +9905,7 @@ SETUP_CORS_ALLOWED_HOSTS
 	SV	Tillåtna CORS servrar
 
 SETUP_CORS_ALLOWED_HOSTS_DESC
-	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Lyrion Music Serveru. Položky musí obsahovat protokol (např. "http"), plný název hostitele ("www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako "https://www.example.com".
+	CS	Cross-Origin Resource Sharing (CORS) je mechanismus, který používá dodatečné hlavičky HTTP k tomu, aby prohlížeči sdělil, že webová aplikace spuštěná v jednom původu (doméně) má povolení k přístupu k vybraným prostředkům ze serveru v jiném původu.<br><br>Zadejte čárkou oddělený seznam názvů hostitelů, kterým chcete poskytnout přístup k Lyrion Music Serveru. Položky musí obsahovat protokol (např. „http"), plný název hostitele („www.example.com") a číslo portu, pokud je toto číslo nestandardní. Ve většině případů by mělo stačit něco jako „https://www.example.com".
 	DA	Cross-Origin Resource Sharing (CORS) er en mekaniske som gør det muligt for en web-browser at tillade en web-server i et domæne at anvende web-ressourcer fra en server i et andet domæne.<br><br>Definér en komma-separeret liste med web-servere som tillades at få adgang til din Lyrion Music Server. Hver server skal have en protokol (f.eks. "http") angivet, samt hele servernavnet ("www.example.com") og et port nummer, hvis det er non-standard. Normalt vil noget i retning af "https://www.example.com" være tilstrækkeligt.
 	DE	Cross-Origin Resource Sharing (CORS) ist ein Mechanismus, der Webbrowsern oder auch anderen Webclients Cross-Origin-Requests ermöglicht.<br><br>Definieren Sie eine Komma separierte Liste von Hostnamen, die auf ihren Lyrion Music Server zugreifen dürfen. Es müssen Protokoll (z.B. "http"), voller Hostname ("www.example.com"), und allenfalls Port angegeben werden, wenn letzterer nicht dem Standard entspricht. In den meisten Fällen reicht ein Eintrag wie "https://www.example.com".
 	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Lyrion Music Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "https://www.example.com" should be good enough.
@@ -9962,7 +9971,7 @@ SETUP_INSECURE_HTTPS2
 	NL	Uitschakelen van certificaatverificatie bij HTTPS verbindingen
 
 SETUP_INSECURE_HTTPS_DESC
-	CS	Povolením možnosti "Nezabezpečené HTTPS" se vypne ověřování certifikátů, pokud Lyrion Music Server funguje jako klient HTTPS. <b>Povolení této možnosti se nedoporučuje!</b> Vypnutí ověřování certifikátů je špatnou praxí, ale za určitých okolností může být nezbytné, např. když nelze aktualizovat knihovny.
+	CS	Povolením možnosti „Nezabezpečené HTTPS" se vypne ověřování certifikátů, pokud Lyrion Music Server funguje jako klient HTTPS. <b>Povolení této možnosti se nedoporučuje!</b> Vypnutí ověřování certifikátů je špatnou praxí, ale za určitých okolností může být nezbytné, např. když nelze aktualizovat knihovny.
 	DA	Aktivering af "Usikker HTTPS"  betyder, at certifikat verifikation deaktiveres når Lyrion Music Server er en HTTPS klient. <b>Aktivering af denne option anbefales ikke!</b> Grundlæggende bør certifikater altid verificeres, men det kan være nødvendigt under visse omstændigheder, f.eks. hvis et onlinebibliotek ikke kan opdateres.
 	DE	"Unsicheres HTTPS" bedeutet, dass Lyrion Music Server Zertifikate von entfernten Servern nicht mehr auf ihre Gültigkeit überprüft. <b>Es wird nicht empfohlen, diese Option zu aktivieren!</b>. Grundsätzlich sollten Zertifikate immer überprüft werden. Allerdings kann dies unter Umständen fehlschlagen, wenn etwa eine Bibliothek nicht aktualisiert werden kann.
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Lyrion Music Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
@@ -10134,7 +10143,7 @@ SETUP_BAD_VALUE
 	ZH_CN	指定价值无效: %s
 
 SETTINGS_INVALIDVALUE
-	CS	Neplatná hodnota "%s" pro %s
+	CS	Neplatná hodnota „%s" pro %s
 	DA	Værdien "%s" for %s er ugyldig
 	DE	"%s" ist kein gültiger Wert für %s
 	EN	Invalid value "%s" for %s
@@ -10206,7 +10215,7 @@ SETUP_AUTHORIZE
 	ZH_CN	密码保护
 
 SETUP_AUTHORIZE_DESC
-	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Lyrion Music Serveru. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Lyrion Music Serveru zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
+	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Lyrion Music Serveru. Zvolte „Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Lyrion Music Serveru zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
 	DA	Du kan vælge at beskytte adgangen til Lyrion Music Servers fjernbetjening med en adgangskode. Vælg Beskyt med adgangskode, angiv et brugernavn og en adgangskode, og klik på Skift. Når du herefter ønsker at bruge Lyrion Music Servers fjernbetjening, skal du angive brugernavnet og adgangskoden i browseren.
 	DE	Sie können Lyrion Music Server Remote Control mit einem Kennwort schützen. Klicken Sie unten auf 'Kennwortschutz', geben Sie einen Benutzernamen und ein Kennwort ein, und klicken Sie auf 'Ändern'. Wenn Sie dann Lyrion Music Server Remote Control aufrufen, müssen Sie diesen Benutzernamen und das Kennwort eingeben.
 	EN	You can choose to password protect Lyrion Music Server Remote Control. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use Lyrion Music Server Remote Control, you'll need to enter this username and password in your web browser.
@@ -10371,7 +10380,7 @@ LANGUAGE
 	ZH_CN	语言
 
 SETUP_RELEASE_TYPES
-	CS	Typy vydání pro Alba
+	CS	Typy vydání pro alba
 	DA	Udgivelsestyper for albums
 	DE	Album Veröffentlichungstypen
 	EN	Release types for Albums
@@ -10381,7 +10390,7 @@ SETUP_RELEASE_TYPES
 	PT	Tipo de lançamento para os albuns
 
 SETUP_RELEASE_TYPES_INCLUDE
-	CS	Typy vydání zahrnuté do seznamu Alb
+	CS	Typy vydání zahrnuté do seznamu alb
 	DA	Udgivelsestyper for filtrering og inkludering i Album liste
 	DE	Album Veröffentlichungstypen filtern
 	EN	Release types to include in Albums list
@@ -10391,7 +10400,7 @@ SETUP_RELEASE_TYPES_INCLUDE
 	PT	Tipos de lançamentos para serem incluídos na Lista de albuns
 
 SETUP_RELEASE_TYPES_DESC
-	CS	Můžete určit, jaké typy vydání chcete zahrnout do seznamu alb (viz <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Pokud vydání nemá definovaný typ, předpokládá se "Album". Alba nelze z tohoto seznamu vyloučit.
+	CS	Můžete určit, jaké typy vydání chcete zahrnout do seznamu alb (viz <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Pokud vydání nemá definovaný typ, předpokládá se „Album". Alba nelze z tohoto seznamu vyloučit.
 	DA	Du kan specificere hvilke udgivelsestypper som ønskes inkluderet i Album listen (se <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Hvis en udgivelse ikke har en typespecifikation, bliver "Album" antaget og de kan ikke bortfiltreres fra listen.
 	DE	Sie können angeben, welche Veröffentlichungstypen (siehe <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) in der Albenliste mit aufgeführt werden sollen. Falls für eine Veröffentlichung kein Typ definiert wurde, so wird "Album" angenommen. Diese können nicht ausgeschlossen werden.
 	EN	You can specify what release types you want to include in the albums list (see <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). If a release doesn't have a type defined, "Album" is assumed. Albums can't be excluded from that list.
@@ -10411,7 +10420,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	PT	Opções para Compositor do album
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
-	CS	Vytvořit skupinu Alba skladatele – vždy, nikdy nebo pro určité žánry. Pokud kvůli tomuto nastavení nejsou některé skladatelské role zahrnuty do skupiny Alba skladatele, zobrazí se místo toho v samostatné skupině "Kompozice", která bude obsahovat seznam jednotlivých skladeb, nikoli alb. Seznam žánrů by měl být oddělen čárkou.
+	CS	Vytvořit skupinu Alba skladatele – vždy, nikdy nebo pro určité žánry. Pokud kvůli tomuto nastavení nejsou některé skladatelské role zahrnuty do skupiny Alba skladatele, zobrazí se místo toho v samostatné skupině „Kompozice", která bude obsahovat seznam jednotlivých skladeb, nikoli alb. Seznam žánrů by měl být oddělen čárkou.
 	DA	Opret en Komponistalbum gruppe - altid, aldrig, eller for bestemte genrer. Når visse komponist roller ikke inkluderes i Composer Albums pga. denne indstilling, vil de i stedet dukke op i en separat "Compositions" gruppe, som lister individuelle numre, ikke albums. Listen over genrer skal være komma-separeret.
 	EN	Create a Composer Albums group - always, never, or for certain genres. If due to this setting, certain composer roles are not included in the Composer Albums group, they will appear in a separate "Compositions" group instead, which will list individual tracks, not albums. The genre list should be comma separated.
 	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
@@ -10441,7 +10450,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
-	CS	Vytvoření skupiny Skladatelské album pro "Moje žánry pro díla a skladatelská alba" (výše)
+	CS	Vytvoření skupiny Skladatelské album pro „Moje žánry pro díla a skladatelská alba" (výše)
 	DA	Opret en komponistalbumgruppe for "Mine genrer til værker og komponistalbums" (ovenfor)
 	DE	Erstellen einer Komponistenalbengruppe für "Genres für Werke und Komponistenalben" (oben)
 	EN	Create a Composer Album group for "My work and composer album genres" (above)
@@ -10451,7 +10460,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	NL	Maak een componistenalbumgroep voor 'Mijn genres voor werken en albums van componisten' (hierboven)
 
 SETUP_IGNORE_RELEASE_TYPES_0
-	CS	Povolit podporu typu vydání pro alba
+	CS	Povolit podporu typů vydání pro alba
 	DA	Aktivér understøttelse af udgivelsestyper for albums
 	DE	Unterstützung für Veröffentlichungstypen von Alben aktivieren
 	EN	Enable release type support for albums
@@ -10471,7 +10480,7 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	PT	Ignore o tipo de lançamento dos albuns
 
 SETUP_CLEANUP_RELEASE_TYPES
-	CS	Zkusit automaticky rozpoznat EP a singly, pokud je informace o typu vydání "album" nebo chybí.
+	CS	Zkusit automaticky rozpoznat EP a singly, pokud je informace o typu vydání „album" nebo chybí.
 	DA	Forsøg at genkende EPs og singler automatisk, når udgivelsestype informationen er "Album" eller mangler.
 	DE	Versuchen, EPs und Singles ohne definierten Veröffentlichungstypen, oder die als Album deklariert sind, selber zu erkennen.
 	EN	Try to recognize EPs and singles automatically when release type information is "album" or is missing.
@@ -10531,7 +10540,7 @@ SETUP_GROUPDISCS
 	ZH_CN	组合光碟
 
 SETUP_GROUPDISCS_DESC
-	CS	Můžete zadat, aby vícediskové sady byly považovány za jedno album (s jedním názvem) nebo za více alb, každé se svým názvem pro disk, například "Název alba (disk 2 ze 3)". Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
+	CS	Můžete zadat, aby vícediskové sady byly považovány za jedno album (s jedním názvem) nebo za více alb, každé se svým názvem pro disk, například „Název alba (disk 2 ze 3)". Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	Du kan angive om album med flere cd'er skal opfattes som et enkelt album (med et enkelt navn), eller som flere album med et unikt navn for hver cd, fx Albumtitel (cd 1 af 3). Hvis du ændrer denne indstilling, bliver dit musikbibliotek gennemsøgt igen.
 	DE	Sie können angeben, ob mehrere CDs eines Albums als ein Album (unter dem gleichen Namen) oder als getrennte Alben (z.B. 'Albumtitel (CD 1 von 2)' angezeigt werden sollen. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
@@ -10615,6 +10624,7 @@ SETUP_NO_JAVASCRIPT
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 10, Opera 25 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Lyrion Music Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a>.
 
 SETUP_WIZARD_WELCOME
+	CS	Vítejte v úvodním nastavení Lyrion Music Serveru
 	DA	Velkommen til den indledende opsætning af Lyrion Music Server
 	DE	Willkommen beim Einrichtungsassistenten für ihr neues Lyrion Music Server Setup
 	EN	Welcome to the initial Lyrion Music Server setup
@@ -10623,6 +10633,7 @@ SETUP_WIZARD_WELCOME
 	HU	Üdvözöljük a Lyrion Music Server kezdő beállításokban
 
 SETUP_WIZARD_WELCOME_INTRO
+	CS	Tento průvodce vás provede úvodním nastavením vašeho Lyrion Music Serveru.
 	DA	Denne assistent vil hjælpe dig igennem den indledende opsætning af din Lyrion Music Server.
 	DE	Dieser Assistent führt dich durch den initalen Setup deines Lyrion Music Servers.
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
@@ -10631,6 +10642,7 @@ SETUP_WIZARD_WELCOME_INTRO
 	HU	Ez az asszisztens végigvezeti Önt a Lyrion Music Server kezdeti beállításán.
 
 SETUP_WIZARD_PLUGINS_INTRO
+	CS	Doporučujeme instalaci následujících zásuvných modulů (pluginů) třetích stran. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Mnoho dalších zásuvných modulů</a> lze kdykoli nainstalovat v Nastavení/Správa zásuvných modulů po dokončení instalace.
 	DA	Vi anbefaler installation af følgende tredjeparts plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Mange andre plugins</a> kan installeres i Settings/Manage Plugins efter at installationen er afsluttet.
 	DE	Wir empfehlen die Installations folgender Drittanbietererweiterungen. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Zahlreiche weitere Plugins</a> können später zu jeder Zeit hinzugefügt werden. Wählen Sie herfür später Einstellungen/Plugins verwalten.
 	EN	We recommend the installation of the following 3rd party plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Many other plugins</a> can be installed any time in Settings/Manage Plugins after the installation has completed.
@@ -12741,6 +12753,7 @@ ALBUM
 	ZH_CN	专辑
 
 RELEASE_TYPE
+	CS	Typ vydání
 	DA	Udgivelsestype
 	DE	Veröffentlichungstyp
 	EN	Release type
@@ -12748,42 +12761,52 @@ RELEASE_TYPE
 	NL	Releasetype
 
 RELEASE_TYPE_SINGLE
+	CS	Singl
 	DA	Single
 	EN	Single
 
 RELEASE_TYPE_SINGLES
+	CS	Singly
 	DA	Singler
 	EN	Singles
 
 RELEASE_TYPE_EP
+	CS	EP
 	DA	EP
 	EN	EP
 
 RELEASE_TYPE_EPS
+	CS	EP
 	DA	EPs
 	EN	EPs
 
 RELEASE_TYPE_BESTOF
+	CS	Výběr
 	EN	Best Of
 
 RELEASE_TYPE_BESTOFS
+	CS	Výběry
 	EN	Best Ofs
 
 RELEASE_TYPE_BOXSET
+	CS	Box set
 	DA	Samling
 	EN	Box Set
 	FR	Coffret
 
 RELEASE_TYPE_BOXSETS
+	CS	Box sety
 	DA	Samlinger
 	EN	Box Sets
 	FR	Coffrets
 
 RELEASE_TYPE_BROADCAST
+	CS	Vysílání
 	DA	Udsendelse
 	EN	Broadcast
 
 RELEASE_TYPE_OTHER
+	CS	Jiné
 	DA	Andre
 	DE	Andere
 	EN	Other
@@ -13420,6 +13443,7 @@ MODTIME
 	ZH_CN	日期已更改
 
 ADDEDTIME
+	CS	Datum přidání
 	DA	Tilføjet den
 	DE	Hinzugefügt am
 	EN	Date Added
@@ -14769,6 +14793,7 @@ BROWSE_BY_SONG_DBL
 	PL	Utwory
 
 BROWSE_BY_WORK
+	CS	Díla
 	DA	Værker
 	DE	Werke
 	EN	Works
@@ -15243,7 +15268,7 @@ FILENAME_WARNING
 	SV	Namnet innehåller otillåtna tecknet. Ändra namnet.
 
 RENAME_WARNING
-	CS	Název, který jste zvolili, byl již vybrán. Zvolte prosím pro svůj seznam skladeb jiný název nebo zaškrtnutím "Potvrdit přepsání" přepište stávající seznam skladeb.
+	CS	Název, který jste zvolili, byl již vybrán. Zvolte prosím pro svůj seznam skladeb jiný název nebo zaškrtnutím „Potvrdit přepsání" přepište stávající seznam skladeb.
 	DA	Navnet du angav, er allerede i brug. Giv afspilningslisten et andet navn, eller vælg at overskrive den eksisterende.
 	DE	Dieser Name ist bereits vorhanden. Wählen Sie einen anderen für die Wiedergabeliste oder aktivieren Sie 'Überschreiben bestätigen'.
 	EN	The name you chose is already taken. Please choose another name for your playlist, or check 'confirm overwrite' to replace your existing playlist.
@@ -15263,7 +15288,7 @@ RENAME_WARNING
 	ZH_CN	您选择的名字已被使用。请选择其它的播放表名字，或选择《确定重写》替换您现有的播放表。
 
 DELETE_WARNING
-	CS	Jste si jisti, že je chcete odstranit? Zaškrtněte políčko "Potvrdit odstranění", chcete-li odstranit svůj seznam skladeb.
+	CS	Jste si jisti, že je chcete odstranit? Zaškrtněte políčko „Potvrdit odstranění", chcete-li odstranit svůj seznam skladeb.
 	DA	Vil du slette? Du skal markere "bekræft sletning" for at slette afspilningslisten.
 	DE	Wirklich löschen? Aktivieren Sie 'Löschen bestätigen', um die Wiedergabeliste zu löschen.
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
@@ -15936,7 +15961,7 @@ DEBUG_DEFAULT
 	SV	Återställ loggningsinställningar
 
 SETUP_GROUP_DEBUG_DESC
-	CS	Lyrion Music Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o provozu serveru a prohledávání. Každá kategorie protokolů má určitou závažnost pro protokolování. Volba "Ladění" je nejvíce informativní, volba "Vypnuto" nejméně.
+	CS	Lyrion Music Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o provozu serveru a prohledávání. Každá kategorie protokolů má určitou závažnost pro protokolování. Volba „Ladění" je nejvíce informativní, volba „Vypnuto" nejméně.
 	DA	Lyrion Music Server har en række indstillinger til logføring som kan bruges til at registrere detaljerede oplysninger om serveren og søgninger. Hver logføringskategori kan indstilles til at registrere flere eller færre oplysninger. Fejlsøgning giver flest detaljer og Fra ingen.
 	DE	Lyrion Music Server enthält eine Reihe von Protokolleinstellungen, mit denen Sie umfangreiche Angaben über Lyrion Music Server- und Scanner-Vorgänge aufzeichnen können. Jede Protokollkategorie unterliegt einer Begrenzung in der Protokollierung ("Debug" mit der höchsten Wortanzahl, "Off" mit der niedrigsten).
 	EN	Lyrion Music Server has a number of logging settings that can be used to record detailed information about server and scanner operation. Each logging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
@@ -16995,7 +17020,7 @@ CSRF_ERROR_INFO
 	ZH_CN	如果要从Bookmark/Favorite或其他方法请求这URL（从Lyrion Music Server网界面跟随链接除外），您将需要使用以\"cauth \"为安全参数的URL。如果您从Lyrion Music Server网界面跟随链接而出现错误，您需要确定您的浏览器软件（包括网代理伺服器和spyware/privacy软件）允许发送\"Referer\"倒坠。下面是您试图访问的URL的正确的URL。
 
 CSRF_ERROR_MEDIUM
-	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na "STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL.</p>
+	CS	<p>Jelikož je vaše úroveň ochrany CSRF nastavena na „STŘEDNÍ", můžete použít stejnou hodnotu &quot;;cauth=&quot; pro libovolnou adresu URL; to znamená, že byste měli být opatrnější, s kým sdílíte své adresy URL.</p>
 	DA	<p>Da CSRF-beskyttelsesnivauet er sat til Mellem, kan du anvende den samme værdi for cauth= i alle internetadresser. Det betyder at du skal være forsigtig med hvem du deler dine adresser med.</p>
 	DE	<p>Da Ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
@@ -18021,6 +18046,7 @@ RADIO_PROVIDERS_SOMAFM
 	SV	SomaFM
 
 RADIO_PROVIDERS_SKYFM
+	CS	RadioTunes
 	EN	RadioTunes
 	NL	RadioTunes
 	NO	RadioTunes
@@ -18137,7 +18163,7 @@ RADIO_TUNEIN_NOW
 	ZH_CN	现在调谐
 
 RADIO_TUNEIN_DESC
-	CS	Pokud již znáte adresu URL stanice, kterou chcete poslouchat, zadejte ji zde a klikněte na tlačítko "Naladit". Můžete zadat adresu URL buď samotného radiového proudu (např. http://62.49.59.50:8000) nebo souboru seznamu skladeb, který k proudu odkazuje (např. http://www.hitzradio.com/hitzradio.pls).
+	CS	Pokud již znáte adresu URL stanice, kterou chcete poslouchat, zadejte ji zde a klikněte na tlačítko „Naladit". Můžete zadat adresu URL buď samotného radiového proudu (např. http://62.49.59.50:8000) nebo souboru seznamu skladeb, který k proudu odkazuje (např. http://www.hitzradio.com/hitzradio.pls).
 	DA	Hvis du allerede kender stationens internetadresse, kan du angive den her og klikke på Stil ind. Du kan angive adressen til selve radiostreamen (fx http://62.49.59.50:8000) eller til en afspilningsliste der henviser til den (fx http://www.hitzradio.com/hitzradio.pls).
 	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
@@ -19722,6 +19748,7 @@ ANY_TYPE
 	ZH_CN	任何文件格式
 
 MIDWORDS_UPPER
+	CS	0
 	DA	0
 	DE	1
 	EN	0
@@ -19977,7 +20004,7 @@ SETUP_VARIOUSARTISTS
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	CS	Můžete si zvolit, aby se sbírky alb zobrazily společně pod "Různí interpreti" nebo aby se zobrazily pod každým interpretem ve sbírce.
+	CS	Můžete si zvolit, aby se sbírky alb zobrazily společně pod „Různí interpreti" nebo aby se zobrazily pod každým interpretem ve sbírce.
 	DA	Du kan vælge at vise kompilationsalbum samlet under Diverse kunstnere, eller under hver kunstner på kompilationen.
 	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter 'Diverse Interpreten' aufführen oder die einzelnen Lieder unter den einzelnen Interpreten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation.
@@ -20031,7 +20058,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	ZH_CN	把合辑发表在个别艺人中
 
 SETUP_VARIOUSARTISTSSTRING_DESC
-	CS	Pokud jsou sbírky seskupeny dohromady, zobrazí se standardně pod názvem "Různí interpreti". Tento název můžete změnit níže.
+	CS	Pokud jsou sbírky seskupeny dohromady, zobrazí se standardně pod názvem „Různí interpreti". Tento název můžete změnit níže.
 	DA	Når numrene på kompilationsalbum grupperes, vises de som standard under Diverse. Du kan ændre navnet nedenfor.
 	DE	Gruppierte Kompilationen werden standardmäßig unter 'Diverse Interpreten' angezeigt. Sie können diesen Namen unten ändern.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below.
@@ -20126,7 +20153,7 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
-	CS	Alba obsahující skladby, které jsou označené štítkem skupiny, mohou být u tohoto alba uvedena buď pod jménem skupiny nebo s ostatními interprety. Tag skupiny se nazývá také TPE2 a v některých programech se může zobrazovat jako "Interpret alba".
+	CS	Alba obsahující skladby, které jsou označené tagem skupiny, mohou být u tohoto alba uvedena buď pod jménem skupiny nebo s ostatními interprety. Tag skupiny se nazývá také TPE2 a v některých programech se může zobrazovat jako „Interpret alba".
 	DA	Album der indeholder numre som er mærket med navnet på et band, kan vises under dette bands navn eller sammen med de andre kunstnere som optræder på albummet. Bandmærket kaldes også TPE2 og vises som "album artist" i nogle programmer.
 	DE	Alben, die Lieder enthalten, die mit einem Band-Tag versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Der Band-Tag (auch TPE2 genannt) wird in bestimmten Anwendungen auch als 'Album Artist' (Albuminterpret) bezeichnet.
 	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
@@ -20143,7 +20170,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	SV	Album som innehåller låtar som taggats med ett bandnamn kan listas under bandnamnet eller tillsammans med de andra artisterna på albumet. Bandtaggen kallas också TPE2, och visas i vissa program som Albumartist.
 
 SETUP_USETPE2ASALBUMARTIST_DESC
-	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam "Skupina/orchestr". Zvolte význam, který má Lyrion Music Server používat. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
+	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam „Skupina/orchestr". Zvolte význam, který má Lyrion Music Server používat. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Lyrion Music Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
 	DE	Das MP3-Tag-Format bietet keine Standardmöglichkeit zum Definieren des Interpreten des Albums. Manche MP3-Anwendungen (iTunes, Winamp, Windows Media Player) nutzen das Feld TPE2 für den Interpreten des Albums, andere nutzen es für den eigentlichen Zweck (Band/Orchester). Wählen Sie die gewünschte Bedeutung. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like Lyrion Music Server to use.  Changing this setting will start a rescan of your music library.
@@ -20372,7 +20399,7 @@ ARTWORK
 	ZH_CN	封面图
 
 ONE_BY_ONE_ARTWORK
-	CS	Obaly alb "jeden po druhém"
+	CS	Obaly alb „jeden po druhém"
 	DA	Albumcover 1-til-1
 	DE	Plattenhüllen einzeln
 	EN	1-by-1 Artwork
@@ -21399,7 +21426,7 @@ SETUP_WORDCLOCKOUTPUT
 	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
-	CS	Při použití digitálních vstupů může Transporter být nadřízeným generátorem taktu ("clock master") a vysílat taktovací signál (word clock) do svých výstupů S/PDIF. Tuto funkci je nutno povolit pouze tehdy, když zdrojové zařízení zajišťuje vstup taktovacího signálu (word clock) a kabel je připojen.
+	CS	Při použití digitálních vstupů může Transporter být nadřízeným generátorem taktu („clock master") a vysílat taktovací signál (word clock) do svých výstupů S/PDIF. Tuto funkci je nutno povolit pouze tehdy, když zdrojové zařízení zajišťuje vstup taktovacího signálu (word clock) a kabel je připojen.
 	DA	Ved brug af de digitale indgange, kan Transporter virke som clock-master og sende et såkaldt Wordclock-signal via S/PDIF-udgangene. Denne funktion må kun aktiveres hvis kilde-enheden sender et Wordclock-signal, og kablet er forbundet.
 	DE	Wenn die digitalen Eingänge verwendet werden, kann Transporter das Signal direkt durchschleifen oder an den S/PDIF-Ausgängen ein Word Clock-Signal erzeugen.
 	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provides a word clock input and the cable is connected.
@@ -21671,7 +21698,7 @@ SETUP_ANALOGOUTMODE
 	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
-	CS	Zvolte funkci portu sluchátka/sub out Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba "Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
+	CS	Zvolte funkci portu sluchátka/sub out Boomu. Volba Sluchátka vypne vnitřní reproduktory. Volba „Vždy zapnuto" ponechá vnitřní reproduktory zapnuté i při připojených sluchátkách.
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra. Hvis du vælger Altid slået til, forbliver de indbyggede højtalere slået til, også selvom der tilsluttes hovedtelefoner.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher. Mit 'Immer Aktiv' bleiben die internen Lautsprecher aktiv, auch wenn Kopfhörer angeschlossen sind.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in.
@@ -25452,7 +25479,7 @@ CONTROLPANEL_PORTBLOCKED_APPS
 	SV	Följande program kan blockera anslutningen:
 
 CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
-	CS	Pokud se vyskytnou problémy s připojením k Lyrion Music Serveru, ujistěte se, že je vypnuta funkce "Stateful Firewall (Always On)"
+	CS	Pokud se vyskytnou problémy s připojením k Lyrion Music Serveru, ujistěte se, že je vypnuta funkce „Stateful Firewall (Always On)"
 	DA	Hvis der er problemer med forbindelsen til og fra Lyrion Music Server, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra
 	DE	Wenn es Verbindungsprobleme mit Lyrion Music Server gibt, vergewissern Sie sich, dass die Option "Statusbehaftete Firewall (immer aktiv)" deaktiviert ist.
 	EN	If you encounter connectivity issues with Lyrion Music Server, please make sure "Stateful Firewall (Always On)" is turned off
@@ -25805,7 +25832,7 @@ CONTROLPANEL_NO_STATUS
 	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Lyrion Music Server inte körs.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Lyrion Music Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klikněte na možnost "Spustit jako správce".
+	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Lyrion Music Serveru na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klikněte na možnost „Spustit jako správce".
 	DA	Du har ikke rettigheder til at installere eller starte/stoppe baggrundstjenesten Lyrion Music Server. Start kontrolpanelet fra Startmenuen i Windows – via højrekliksmenuen klikker du på "Kør som administrator".
 	DE	Sie sind nicht dazu berechtigt, den Lyrion Music Server-Hintergrunddienst zu installieren oder zu starten bzw. anzuhalten. Öffnen Sie die Systemsteuerung im Windows-Startmenü über das Kontextmenü und wählen Sie 'Als Administrator ausführen'.
 	EN	You don't have privileges to install or start/stop the Lyrion Music Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
@@ -25855,7 +25882,7 @@ RUN_AT_LOGIN
 	SV	Kör automatiskt vid inloggning
 
 RUN_FAILSAFE
-	CS	Spustit bez zásuvných modulů ("Bezpečný režim")
+	CS	Spustit bez zásuvných modulů („Bezpečný režim")
 	DA	Kør uden udvidelsesmoduler (fejlsikret tilstand)
 	DE	Ohne Benutzererweiterungen ausführen ("Abgesicherter Modus")
 	EN	Run with no user extensions ("Safe Mode")
@@ -26094,7 +26121,7 @@ INTERNET_RADIO
 	SV	Radio
 
 HOWTO_INTERNET_RADIO
-	CS	Přejděte na položku "Nejoblíbenější internetová rádia" a stiskněte tlačítko DOPRAVA.
+	CS	Přejděte na položku „Nejoblíbenější internetová rádia" a stiskněte tlačítko DOPRAVA.
 	DA	Find Det bedste fra internetradio, og tryk på højrepilen.
 	DE	Markieren Sie die Option 'Die besten Internetradiosender' und drücken Sie RECHTS.
 	EN	Scroll to "Best of Internet Radio" and press RIGHT.
@@ -26111,7 +26138,7 @@ HOWTO_INTERNET_RADIO
 	SV	Bläddra till Webbradiofavoriter och tryck på högerknappen.
 
 HOWTO_INTERNET_RADIO_CONTROLLER
-	CS	Přejděte na položku "Nejoblíbenější internetová rádia" a stiskněte středové tlačítko.
+	CS	Přejděte na položku „Nejoblíbenější internetová rádia" a stiskněte středové tlačítko.
 	DA	Find Det bedste fra internetradio, og tryk på midterknappen.
 	DE	Markieren Sie 'Die besten Internetradiosender' und drücken Sie die mittlere Taste.
 	EN	Scroll to "Best of Internet Radio" and press the center button.
@@ -26769,6 +26796,7 @@ UPDATE
 	SV	Uppdatera
 
 TRACKS_FROM_OTHER_ALBUMS
+	CS	Skladby z jiných alb
 	DE	Titel von anderen Alben
 	DA	Numre fra andre albums
 	EN	Tracks from other albums
@@ -26779,6 +26807,7 @@ TRACKS_FROM_OTHER_ALBUMS
 	PT	Pistas de outros albuns
 
 SETUP_YEARMENU
+	CS	Nabídka Roky
 	DE	Jahre Menü
 	DA	Årsmenu
 	EN	Year Menu
@@ -26788,6 +26817,7 @@ SETUP_YEARMENU
 	PT	Menu Ano
 
 SETUP_YEARMENU_DESC
+	CS	Má nabídka Roky zobrazovat pouze roky alb, nebo roky alb i skladeb?
 	DA	Skal årsmenuen kun vise album året, eller album- og nummeråret?
 	DE	Soll das Jahresmenü nur Albumjahre oder Album- und Trackjahre anzeigen?
 	EN	Should the Year menu show album years only, or album and track years?
@@ -26797,6 +26827,7 @@ SETUP_YEARMENU_DESC
 	PT	O menu Ano deverá mostar só o ano do album ou de ambos, do album e da pista?
 
 SETUP_YEARMENU_0
+	CS	Zobrazit pouze roky alb
 	DA	Vis kun album året
 	DE	Zeige nur Albumjahre
 	EN	Show album years only
@@ -26806,6 +26837,7 @@ SETUP_YEARMENU_0
 	PT	Mostrar sómente o ano do album
 
 SETUP_YEARMENU_1
+	CS	Zobrazit roky alb i skladeb
 	DA	Vis album- og nummeråret
 	DE	Zeige Album- und Titeljahre
 	EN	Show album and track years
@@ -26815,6 +26847,7 @@ SETUP_YEARMENU_1
 	PT	Mostrar o ano do album e de cada pista
 
 SETUP_ALBUMLINKROLES
+	CS	Odkazy interpretů v seznamech alb
 	DA	Kunstnerlinks i albumlisten
 	DE	Künstlerlinks in Albumlisten
 	EN	Artist links in album lists
@@ -26825,6 +26858,7 @@ SETUP_ALBUMLINKROLES
 	PT	Links de artistas nas listas de álbuns
 
 SETUP_ALBUMLINKROLES_DESC
+	CS	Můžete si vybrat, které role se mají zobrazit jako odkazy v seznamech alb. Hlavní přispěvatel alba identifikovaný hudebním skenerem bude vždy zobrazen. Také při procházení alb/vydání podle role budou zobrazeni přispěvatelé pro prohlíženou roli.
 	DA	Du kan vælge hvilke roller der skal vises som links i album listen. Albumets hovedkunstner vil altid blive vist. Når du gennemser album/udgivelser efter rolle, vises bidragyderne til den rolle, der gennemses.
 	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptkünstler des Albums wird immer angezeigt. Wenn Sie Alben/Veröffentlichungen nach Rolle durchsuchen, werden auch die Mitwirkenden für die Rolle angezeigt, die gerade durchsucht wird.
 	EN	You can choose which roles to show as links in album listings. The main album contributor as identified by the music scanner will always be shown. Also, when browsing albums/releases by role, the Contributors for the role being browsed will be shown.
@@ -26835,6 +26869,7 @@ SETUP_ALBUMLINKROLES_DESC
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado. Além disso, ao navegar por álbuns/lançamentos por função, os Colaboradores para a função que está sendo navegada serão mostrados.
 
 SETUP_USERDEFINEDROLES
+	CS	Uživatelsky definované role
 	DA	Brugerdefinerede roller
 	EN	User Defined Roles
 	DE	Benutzerdefinierte Rollen
@@ -26844,6 +26879,7 @@ SETUP_USERDEFINEDROLES
 	NL	Door de gebruiker gedefinieerde rollen
 
 SETUP_USERDEFINEDROLES_DESC
+	CS	Sdělte LMS jakékoli vlastní tagy rolí přispěvatelů používané v hudební knihovně. Například SOLOIST, DRUMMER, PRODUCER atd. Změny tagů rolí spustí opětovné prohledání vaší hudební knihovny.
 	DA	Oplys om de brugerdefinerede rolle-mærker, som bruges i musikbiblioteket. For eksempel SOLOIST, DRUMMER, PRODUCER, etc. Ændringer i rolle-mærker vil udløse en ny scanning af musikbiblioteket.
 	EN	Tell LMS about any custom contributor role tags used in the music library. For example, SOLOIST, DRUMMER, PRODUCER, etc. Role tag changes will trigger a rescan of your music library.
 	DE	Definiere benutzerdefinierte Rollen-Tags, die in der Musikbibliothek verwendet werden. Zum Beispiel SOLOIST, DRUMMER, PRODUCER, usw. Änderungen am Rollentag lösen einen erneuten Scan Ihrer Musikbibliothek aus.
@@ -26853,6 +26889,7 @@ SETUP_USERDEFINEDROLES_DESC
 	NL	Vertel LMS over alle uitvoerende rollen die je hebt getagged in jouw muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Wijzigingen in de roltag zorgen ervoor dat uw muziekbibliotheek opnieuw wordt gescand.
 
 SETUP_USERDEFINEDROLES_TAG
+	CS	Tag role
 	DA	Rolle-mærke
 	EN	Role tag
 	DE	Rollen-Tag
@@ -26862,6 +26899,7 @@ SETUP_USERDEFINEDROLES_TAG
 	NL	Rol tag
 
 SETUP_USERDEFINEDROLES_TEXT
+	CS	Zobrazený text
 	DA	Benævnelse
 	EN	Display text
 	DE	Bezeichnung
@@ -26871,6 +26909,7 @@ SETUP_USERDEFINEDROLES_TEXT
 	NL	Tekst weergeven
 
 SETUP_USERDEFINEDROLES_TEXT_PLURAL
+	CS	Zobrazené texty
 	DA	Benævnelser
 	EN	Display text (plural)
 	DE	Bezeichnung (Plural)
@@ -26880,6 +26919,7 @@ SETUP_USERDEFINEDROLES_TEXT_PLURAL
 	NL	Tekst weergeven (meervoud)
 
 SETUP_WORKSSCAN
+	CS	Prohledávání děl
 	DE	Werke suchen
 	EN	Works scanning
 	ES	Escaneo de obras
@@ -26888,6 +26928,7 @@ SETUP_WORKSSCAN
 	NL	Scannen van werken
 
 SETUP_WORKSSCAN_1
+	CS	Prohledat celou knihovnu pro díla
 	DE	Die gesamte Bibliothek nach Werken durchsuchen
 	EN	Scan whole library for works
 	ES	Escanea toda la biblioteca en busca de obras
@@ -26896,6 +26937,7 @@ SETUP_WORKSSCAN_1
 	NL	Scan de hele bibliotheek op werken
 
 SETUP_WORKSSCAN_2
+	CS	Omezit prohledávání děl na „Moje žánry pro díla a skladatelská alba" (výše)
 	DE	Werke auf "Genres für Werke und Komponistenalben" beschränken (oben)
 	EN	Limit works scan to "My work and composer album genres" (above)
 	ES	Limitar el escaneo de obras a "Mis géneros para las obras y álbumes de compositores" (arriba)
@@ -26904,6 +26946,7 @@ SETUP_WORKSSCAN_2
 	NL	Beperk de werkscan tot "Mijn genres voor werken en albums van componisten" (hierboven)
 
 SETUP_WORKSSCAN_0
+	CS	Neskenovat díla
 	DE	Nicht nach Werken suchen
 	EN	Do not scan for Works
 	ES	No buscar obras
@@ -26922,6 +26965,7 @@ SETUP_MYCLASSICALGENRES
 	NL	Mijn genres voor werken en albums van componisten
 
 SETUP_MYCLASSICALGENRES_DESC
+	CS	Použít tyto žánry pro díla a alba skladatelů. Oddělte čárkami.
 	DE	Diese Genres für Werke und Komponistenalben verwenden (Komma getrennte Liste).
 	EN	Use these genres for works and composer albums. Separate with commas.
 	ES	Utiliza estos géneros para obras y álbumes de compositores. Separe con comas.
@@ -26930,6 +26974,7 @@ SETUP_MYCLASSICALGENRES_DESC
 	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
 
 FIRST_N_ALBUMS
+	CS	(prvních %s alb)
 	DE	(erste %s Alben)
 	EN	(first %s albums)
 	ES	(primeros %s álbumes)
