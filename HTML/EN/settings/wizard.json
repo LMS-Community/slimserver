@@ -6,6 +6,7 @@
 				"EN": "Material Skin"
 			},
 			"desc": {
+				"CS": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> poskytuje moderní, bohaté a responzivní uživatelské rozhraní pro vaši hudební sbírku.",
 				"DA": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> er en moderne, omfangsrig og responsive brugergrænseflade til din musiksamling.",
 				"DE": "Der <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> bietet eine moderne, reichhaltige und f&uuml;r Desktop wie Mobilbrowser anpassungsf&auml;hige Benutzeroberfl&auml;che f&uuml;r Ihre Musiksammlung.",
 				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection.",
@@ -18,12 +19,14 @@
 		{
 			"id": "MusicArtistInfo",
 			"label": {
+				"CS": "Informace o hudbě a interpretovi",
 				"DA": "Musik- og kunstnerinformation",
 				"DE": "Musik- und Interpreteninformation",
 				"EN": "Music and Artist Information",
 				"FR": "Informations sur la Musique et les Artistes"
 			},
 			"desc": {
+				"CS": "Zásuvný modul Informace o hudbě a interpretovi poskytuje další informace o vaší hudbě: biografie, recenze alb, texty písní a další. Je to perfektní doplněk k Material Skin.",
 				"DA": "Musik- og kunsterinformation udvidelsesmodul (plugin) tilbyder mere information om din musik: biografier, anmeldelser, sangtekster og mere. Det er en perfekt tilføjelse til Material Skin.",
 				"DE": "Das Musik- und Interpreteninformationen-Plugin bietet zus&auml;tzliche Informationen zu Ihrer Musik: Biografien, Albumkritiken, Songtexte und mehr. Es ist eine perfekte Erg&auml;nzung zum Material Skin.",
 				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin.",
@@ -36,12 +39,14 @@
 		{
 			"id": "Spotty",
 			"label": {
+				"CS": "Spotty - integrace Spotify pro LMS",
 				"DA": "Spotty - Spotify integration for LMS",
 				"DE": "Spotty Spotify Integration f&uuml;r LMS",
 				"EN": "Spotty Spotify implementation for LMS",
 				"FR": "Int&eacute;gration Spotty Spotify pour LMS"
 			},
 			"desc": {
+				"CS": "Spotty je implementace Spotify pro LMS, která se integruje se všemi uživatelskými rozhraními LMS pro ovládání přehrávání Spotify na účtu Spotify Premium.",
 				"DA": "Spotty er en Spotify implementation for LMS, som fungerer med alle LMS brugergrænseflader til at kontrollere afspilning fra en Spotify Premium konto.",
 				"DE": "Spotty ist eine Spotify Anwendung f&uuml;r LMS. Sie Zugriff auf ihr Spotify Premium Konto &uuml;ber die Squeezebox und all kompatiblen Ger&auml;te.",
 				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account.",
@@ -57,6 +62,7 @@
 				"EN": "TIDAL"
 			},
 			"desc": {
+				"CS": "TIDAL je globální platforma pro streamování hudby, která přibližuje fanoušky interpretům prostřednictvím jedinečných zážitků a nejvyšší kvality zvuku.",
 				"DA": "TIDAL er en verdensomspændende musik streaming platform, som bringer brugerne tættere på kunstnere gennem unikke oplevelser og den højest opnåelige lydkvalitet.",
 				"DE": "TIDAL ist eine globale Musik-Streaming-Plattform, die K&uuml;nstler und Fans durch einzigartige Erlebnisse und die h&ouml;chste Soundqualit&auml;t n&auml;her zusammenbringt.",
 				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality.",
@@ -72,6 +78,7 @@
 				"EN": "Qobuz"
 			},
 			"desc": {
+				"CS": "Qobuz je platforma pro streamování hudby s přístupem k více než 100 milionům skladeb, které jsou všechny dostupné ve formátu hi-res FLAC (Free Lossless Audio Codec).",
 				"DA": "Qobuz er en musik streaming platform med adgang til over 100 millioner sange, alle er tilgængelige i high-res FLAC (Free Lossless Audio Codec) formatet.",
 				"DE": "Qobuz ist eine Musik-Streaming-Plattform mit Zugriff auf &uuml;ber 100 Millionen Songs, die alle im Hi-Res FLAC (Free Lossless Audio Codec) Format verf&uuml;gbar sind.",
 				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format.",
@@ -88,6 +95,7 @@
 			},
 			"icon": "https://raw.githubusercontent.com/philippe44/lms-deezer/197b69be9e8054f6cb2653502c3aa180d7ca49bd/HTML/EN/plugins/Deezer/html/deezer.png",
 			"desc": {
+				"CS": "Deezer je služba pro streamování hudby, která vám poskytuje přístup k více než 120 milionům skladeb a také k dalšímu audio obsahu, jako jsou podcasty nebo audioknihy z celého světa.",
 				"DA": "Deezer er en musik streaming tjeneste, som giver adgang til over 120 millioner sange, samt andet audio indhold så som podcasts eller audiobøger fra hele verden.",
 				"DE": "Deezer ist ein Musikstreamingdienst, mit der du Zugang zu &uuml;ber 120 Millionen Songs, sowie anderen Audioinhalten wie Podcasts oder H&ouml;rb&uuml;chern aus aller Welt erh&auml;ltst.",
 				"EN": "Deezer is a music streaming service that gives you access to over 120 million songs, as well as other audio content such as podcasts or audiobooks from all over the world.",
@@ -102,6 +110,7 @@
 			},
 			"icon": "http://dabdig.co.uk/slimserver-rep/images/RadioNowPlaying.svg",
 			"desc": {
+				"CS": "Informace o skladbě, obalu alba a občas také o programu pro více než 4200 rozhlasových stanic.",
 				"DA": "Titel, album cover art og sommetider med program-information for mere end 4200 radiostationer.",
 				"DE": "Titel, Cover und gelegentlich Programm-Informationen f&uuml;r mehr als 4200 Radiosender.",
 				"EN": "Track, cover art and, occasionally, programme information for more than 4200 radio stations.",
@@ -130,6 +139,7 @@
 		{
 			"id": "Analytics",
 			"label": {
+				"CS": "Reportování analytických údajů",
 				"DA": "Rapport&eacute;er analysedata",
 				"DE": "Analytikdaten teilen",
 				"EN": "Report Analytics Data",
@@ -137,6 +147,7 @@
 				"NL": "Rapport Analytics-gegevens"
 			},
 			"desc": {
+				"CS": "Poskytnutím <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">některých anonymních analytických dat</a> nám <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">pomůžete s dalším vývojem</a> Lyrion Music Serveru.",
 				"DA": "Ved at bidrage med <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">nogle anonyme analytiske data</a> hjælper du os med <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">videre udvikling af</a> Lyrion Music Server.",
 				"DE": "Durch die Bereitstellung <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">anonymer analytischer Daten</a> helfen Sie uns, den <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">Lyrion Music Server weiterzuentwickeln</a>.",
 				"EN": "By providing <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">some anonymous analytical data</a> you <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">help us further develop</a> Lyrion Music Server.",
