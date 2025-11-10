@@ -89,7 +89,7 @@ PLUGIN_VIEW_TAGS_CUSTOM_TAGS
 	NL	Toon additionele tags
 
 PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC
-	CS	"Název tagu" se vztahuje na skutečný tag, jak je uložen v souboru, např. "WEBSITE". Zobrazí se v nabídce "Zobrazit tagy". "Zobrazovaný název" je uživatelsky přívětivější název, který se použije v uživatelském rozhraní. "Adresa URL" určuje, zda pole obsahuje adresu URL. V tomto případě mohou uživatelská rozhraní, která jsou schopná odkazovat na adresy URL, zobrazit obsah s odkazem.
+	CS	„Název tagu" se vztahuje na skutečný tag, jak je uložen v souboru, např. „WEBSITE". Zobrazí se v nabídce „Zobrazit tagy". „Zobrazovaný název" je uživatelsky přívětivější název, který se použije v uživatelském rozhraní. „Adresa URL" určuje, zda pole obsahuje adresu URL. V tomto případě mohou uživatelská rozhraní, která jsou schopná odkazovat na adresy URL, zobrazit obsah s odkazem.
 	DA	"Mærkenavn" er det faktiske navn som er gemt i filen, f.eks. "WEBSITE". Dette vises også i "Vis mærker" menuen. "Mærkenavn at vise" er et mere brugervenligt navn, der vil blive vist i brugergrænsefladen. "URL" definerer, om den viste værdi skal vises som et link (hvis muligt).
 	DE	"Tag Name" ist der eigentliche Name, wie er in der Datei gespeichert ist, z.B. "WEBSITE". Dieser Name wird auch in "Tags anzeigen" eines Titels angezeigt. "Anzuzeigender Name" ist ein benutzerfreundlicherer Name, der in der Benutzeroberfläche angezeigt wird. "URL" definiert, ob der angezeigte Wert als Link dargestellt werden soll (wenn möglich).
 	EN	"Tag name" refers to the actual tag, as stored in the file, eg. "WEBSITE". The "View Tags" menu shows these. The "Name to be displayed" is a more user friendly name to be used in the UI. "URL" defines whether the field contains a URL. In this case UIs able to link to URLs can render the content with a link.
@@ -134,7 +134,7 @@ PLUGIN_VIEW_TAGS_TOPLEVEL
 	NL	Toon tags op het hoogste niveau
 
 PLUGIN_VIEW_TAGS_MOREINFO
-	CS	Zobrazit tagy v "Další informace"
+	CS	Zobrazit tagy v „Další informace"
 	DA	Vis mærker i "Mere info"
 	DE	Tags in "Weitere Infos" anzeigen
 	EN	Show tags in "More Info"
