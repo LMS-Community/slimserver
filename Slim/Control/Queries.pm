@@ -419,9 +419,11 @@ sub albumsQuery {
 						$order_by = 'MIN(tracks_persistent.added) DESC';
 					}
 					elsif ($sort eq 'playcount') {
+						$ignoreNewAlbumsCache = 1;
 						$order_by = 'albums_playcount DESC';
 					}
 					elsif ($sort eq 'recentlyplayed') {
+						$ignoreNewAlbumsCache = 1;
 						$order_by = 'MAX(tracks_persistent.lastplayed) DESC';
 					}
 				}
@@ -696,7 +698,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
-	if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
+	if ( !$ignoreNewAlbumsCache && $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
