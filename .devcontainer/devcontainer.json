@@ -1,0 +1,36 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+	"name": "Lyrion Debian devcontainer",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	//"image": "mcr.microsoft.com/devcontainers/base:bookworm",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "lyrion-devcontainer",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		9000,
+		3483,
+		9090
+	],
+	"portsAttributes": {
+		"9000": {
+			"label": "web interface",
+			"protocol": "http"
+		},
+		"3483": {
+			"label": "SlimProto"
+		},
+		"9090": {
+			"label": "CLI"
+		}
+	},
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "wget -O /workspaces/slimserver/Slim/Utils/OS/Custom.pm https://raw.githubusercontent.com/LMS-Community/slimserver-platforms/public/9.1/Docker/Slim-Utils-OS-Custom.pm"
+	// Configure tool-specific properties.
+	// "customizations": {},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
