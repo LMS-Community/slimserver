@@ -276,7 +276,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
-	CS	Použít „%s"
+	CS	Použít „%s“
 	DA	Benyt '%s'
 	DE	'%s' verwenden
 	EN	Use '%s'
@@ -288,7 +288,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
-	CS	Nyní používáte „%s"
+	CS	Nyní používáte „%s“
 	DA	Bruger nu '%s'
 	DE	Verwende nun '%s'
 	EN	Now using '%s'

@@ -460,7 +460,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS
 	SV	Ignorererade spellistor
 
 SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
-	CS	Definujte čárkou oddělené seznamy skladeb iTunes, které nechcete importovat (např. „Videa, Zakoupeno").
+	CS	Definujte čárkou oddělené seznamy skladeb iTunes, které nechcete importovat (např. „Videa, Zakoupeno“).
 	DA	Opret en kommaadskilt liste med de afspilningslister fra iTunes som ikke skal importeres (fx Videoklip, Købt).
 	DE	Definiert eine durch Komma getrennte Liste von iTunes-Wiedergabelisten, die nicht importiert werden sollen (z.B. "Videos, gekauft").
 	EN	Define a comma separated list of iTunes playlists you don't want to be imported (eg. "Videos, Purchased").

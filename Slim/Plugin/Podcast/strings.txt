@@ -261,7 +261,7 @@ PLUGIN_PODCAST_COUNTRY
 	NL	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
-	CS	Přihlásit se k odběru „%s"
+	CS	Přihlásit se k odběru „%s“
 	DA	Abonnér på '%s'
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
@@ -270,7 +270,7 @@ PLUGIN_PODCAST_SUBSCRIBE
 	NL	Abonneren op '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
-	CS	Odhlásit se z odběru „%s"
+	CS	Odhlásit se z odběru „%s“
 	DA	Afmeld '%s'
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
