@@ -1007,6 +1007,52 @@ sub crc8 {
 	return $val;
 }
 
+=head2 getInitialAudioBlock( $class, $fh, $track, $time )
+
+Returns the FLAC header (fLaC marker + all metadata blocks) for prepending
+when seeking. This allows decoders that create new streams on seek to properly
+initialize, similar to how AIFF and WAV formats handle seeking.
+
+Only works for local files - remote streams return undef.
+
+=cut
+
+sub getInitialAudioBlock {
+	my ($class, $fh, $track, $time) = @_;
+
+	# Only works for local files - remote streams (Qobuz, Tidal, etc.)
+	# are not seekable and will throw an error on seek
+	my $canSeek = eval { seek($fh, 0, 0) };
+	return undef unless $canSeek;
+
+	# Get the audio_offset which tells us where audio frames start
+	# Everything before that is the header (fLaC marker + metadata blocks)
+	my $s = Audio::Scan->scan_fh(flac => $fh);
+	my $length = $s->{info}->{audio_offset} || return undef;
+
+	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug("FLAC getInitialAudioBlock: header length = $length bytes");
+
+	# Read the complete header (fLaC + all metadata blocks)
+	seek($fh, 0, 0);
+	read($fh, my $buffer, $length);
+	seek($fh, 0, 0);
+
+	if (length($buffer) != $length) {
+		$sourcelog->warn("FLAC getInitialAudioBlock: could not read full header");
+		return undef;
+	}
+
+	# Verify we got a valid FLAC header
+	if (substr($buffer, 0, 4) ne 'fLaC') {
+		$sourcelog->warn("FLAC getInitialAudioBlock: invalid FLAC header");
+		return undef;
+	}
+
+	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug("FLAC getInitialAudioBlock: returning $length byte header for seek");
+
+	return $buffer;
+}
+
 sub canSeek { 1 }
 
 =head1 SEE ALSO
