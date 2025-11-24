@@ -5,3 +5,4 @@ Slim/Utils/OS/Custom.pm
 Cache/*
 Logs/*
 prefs/*
+Plugins/*
