@@ -5823,42 +5823,42 @@ sub _songData {
 	my $song;
 	if ( my $client = $request->client ) {
 		$song = $client->currentSongForUrl($url);
+	}
 
-		if ( $isRemote ) {
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	if ( $isRemote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-			if ( $handler && $handler->can('getMetadataFor') ) {
-				# Don't modify source data
-				$remoteMeta = Storable::dclone(
-					$handler->getMetadataFor( $client, $url )
-				);
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			# Don't modify source data
+			$remoteMeta = Storable::dclone(
+				$handler->getMetadataFor( $request->client, $url )
+			);
 
-				$remoteMeta->{a} = $remoteMeta->{artist};
-				$remoteMeta->{A} = $remoteMeta->{artist};
-				$remoteMeta->{E} = $remoteMeta->{extid};
-				$remoteMeta->{l} = $remoteMeta->{album};
-				$remoteMeta->{i} = $remoteMeta->{disc};
-				$remoteMeta->{K} = $remoteMeta->{cover};
-				$remoteMeta->{d} = ( $remoteMeta->{duration} || $remoteMeta->{secs} || 0 ) + 0;
-				$remoteMeta->{Y} = $remoteMeta->{replay_gain};
-				$remoteMeta->{o} = $remoteMeta->{type};
-				$remoteMeta->{r} = $remoteMeta->{bitrate};
-				$remoteMeta->{B} = $remoteMeta->{buttons};
-				$remoteMeta->{L} = $remoteMeta->{info_link};
-				$remoteMeta->{t} = $remoteMeta->{tracknum};
-				$remoteMeta->{y} = $remoteMeta->{year};
-				$remoteMeta->{T} = $remoteMeta->{samplerate};
-				$remoteMeta->{I} = $remoteMeta->{samplesize};
-				$remoteMeta->{W} = $remoteMeta->{releasetype};
-				$remoteMeta->{b} = $remoteMeta->{work};
-				$remoteMeta->{h} = $remoteMeta->{grouping};
-				$remoteMeta->{'1'} = $remoteMeta->{performance};
-				$remoteMeta->{z} = $remoteMeta->{subtitle};
+			$remoteMeta->{a} = $remoteMeta->{artist};
+			$remoteMeta->{A} = $remoteMeta->{artist};
+			$remoteMeta->{E} = $remoteMeta->{extid};
+			$remoteMeta->{l} = $remoteMeta->{album};
+			$remoteMeta->{i} = $remoteMeta->{disc};
+			$remoteMeta->{K} = $remoteMeta->{cover};
+			$remoteMeta->{d} = ( $remoteMeta->{duration} || $remoteMeta->{secs} || 0 ) + 0;
+			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
+			$remoteMeta->{o} = $remoteMeta->{type};
+			$remoteMeta->{r} = $remoteMeta->{bitrate};
+			$remoteMeta->{B} = $remoteMeta->{buttons};
+			$remoteMeta->{L} = $remoteMeta->{info_link};
+			$remoteMeta->{t} = $remoteMeta->{tracknum};
+			$remoteMeta->{y} = $remoteMeta->{year};
+			$remoteMeta->{T} = $remoteMeta->{samplerate};
+			$remoteMeta->{I} = $remoteMeta->{samplesize};
+			$remoteMeta->{W} = $remoteMeta->{releasetype};
+			$remoteMeta->{b} = $remoteMeta->{work};
+			$remoteMeta->{h} = $remoteMeta->{grouping};
+			$remoteMeta->{'1'} = $remoteMeta->{performance};
+			$remoteMeta->{z} = $remoteMeta->{subtitle};
 
-				# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
-				# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
-				$remoteMeta->{V} = $remoteMeta->{live_edge} // ($song && $song->isLive() ? 0 : -1);
-			}
+			# Distance from the live edge of live remote stream. -1 is not live, 0 is live at the edge, >0 is distance in seconds from the live edge.
+			# $remoteMeta->{live_edge} contains distance from live edge. Will only be populated by 3rd party handlers that support dynamic adaptive live streams.
+			$remoteMeta->{V} = $remoteMeta->{live_edge} // ($song && $song->isLive() ? 0 : -1);
 		}
 	}
 

@@ -1046,7 +1046,7 @@ sub getMetadataFor {
 
 	# Check for parsed WMA metadata, this is here because WMA may
 	# use HTTP protocol handler. Check for container and track
-	my $song = $client->playingSong();
+	my $song = $client->playingSong() if $client;
 	my $current = ($song->track->url eq $url || $song->currentTrack->url eq $url) if $song;
 
 	if ( $current ) {
