@@ -6800,11 +6800,12 @@ sub _buildCacheKey {
 	my ($sql, $p, $search, $client) = @_;
 
 	# Slim::Utils::Text::ignoreCase (amongst other useful things) will remove the leading quote from a search phrase, so put it back.
-	return md5_hex($sql
+	return md5_hex(Encode::encode("UTF-8",
+		$sql
 		. Slim::Utils::Unicode::utf8on(join( ':', @$p ))
 		. Slim::Music::VirtualLibraries->getLibraryIdForClient($client)
 		. ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1)
-	);
+	));
 }
 
 =head1 SEE ALSO
