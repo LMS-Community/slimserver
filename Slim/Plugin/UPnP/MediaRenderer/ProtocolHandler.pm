@@ -79,7 +79,7 @@ sub getMetadataFor {
 	# convert protocal handler
 	$url =~ s/^upnp/http/;
 
-	my $pd = $client->pluginData();
+	my $pd = ($client && $client->pluginData()) || {};
 	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
 	my $res = $meta->{res};
 	my $currentUri = $res->{uri};
