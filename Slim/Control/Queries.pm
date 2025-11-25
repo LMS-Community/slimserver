@@ -5820,10 +5820,8 @@ sub _songData {
 	my $isRemote = _notLocalTrackAndRemoteUrl($track);
 	my $url = $track->url;
 
-	my $song;
-	if ( my $client = $request->client ) {
-		$song = $client->currentSongForUrl($url);
-	}
+	my $client = $request->client;
+	my $song = $client->currentSongForUrl($url) if $client;
 
 	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
@@ -5831,7 +5829,7 @@ sub _songData {
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			# Don't modify source data
 			$remoteMeta = Storable::dclone(
-				$handler->getMetadataFor( $request->client, $url )
+				$handler->getMetadataFor( $client, $url )
 			);
 
 			$remoteMeta->{a} = $remoteMeta->{artist};
