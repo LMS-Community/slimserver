@@ -92,6 +92,7 @@ tie my %handlers, 'Tie::RegexpHash';
 my %externalHandlers;
 
 use constant ONE_YEAR => 86400 * 365;
+use constant ACCEPT_IMAGE_FORMATS => 'image/jpeg,image/png;q=0.9' . (Image::Scale->gif_version() ? ',image/gif;q=0.1' : '');
 
 my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
@@ -169,6 +170,7 @@ sub getImage {
 
 		my $pre_shrunk;
 		my %headers = (
+			'Accept'     => ACCEPT_IMAGE_FORMATS,
 			'User-Agent' => Slim::Utils::Misc::userAgentString('legacy')
 		);
 
