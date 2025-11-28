@@ -93,7 +93,7 @@ my %externalHandlers;
 
 use constant ONE_YEAR => 86400 * 365;
 use constant ACCEPT_IMAGE_FORMATS => 'image/jpeg,image/png;q=0.9' . (Image::Scale->gif_version() ? ',image/gif;q=0.1' : '');
-use constant REDIRECT_IMAGE_TO_JPEG => 'https://api.lms-community.org/img2jpg/';
+use constant REDIRECT_IMAGE_TO_JPEG => 'https://api.lms-community.org/img2compatible/';
 
 my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
