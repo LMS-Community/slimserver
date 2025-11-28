@@ -75,6 +75,7 @@ use strict;
 use HTTP::Status qw(
 	RC_MOVED_PERMANENTLY
 );
+use Image::Scale;
 use Tie::RegexpHash;
 use URI::Escape qw(uri_escape_utf8);
 
