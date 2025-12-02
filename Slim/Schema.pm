@@ -793,10 +793,9 @@ sub objectForUrl {
 		$playlistId = $args->{'playlistId'};
 	}
 
-	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
-		$url = $url->url;
-	}
-	elsif (blessed($url) || ref($url)) {
+	# Confirm that the URL itself isn't an object (see bug 1811)
+	# XXX - exception should go here. Coming soon.
+	if (blessed($url) || ref($url)) {
 
 		# returning already blessed url
 		return $url;
@@ -818,16 +817,12 @@ sub objectForUrl {
 	}
 
 	# Pull the track object for the DB
-	my $track;
+	my $track = $self->_retrieveTrack($url, $playlist);
+	my $isRemote = Slim::Music::Info::isRemoteURL($url);
 
 	# Check to see if we have a remote track stored in our database
-	my $isRemote = Slim::Music::Info::isRemoteURL($url);
-	if ($isRemote && !$create && !$readTag) {
+	if (!$track && $isRemote && !$create && !$readTag) {
 		$track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
-	}
-
-	if (!$track) {
-		$track = $self->_retrieveTrack($url, $playlist);
 	}
 
 	# Bug 14648: Check to see if we have a playlist with remote tracks
@@ -859,6 +854,40 @@ sub objectForUrl {
 	}
 
 	return $track;
+}
+
+=head2 libraryObjectForUrl( $url )
+
+Returns a L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object for the given URL.
+Prefers the Slim::Schema::Track object over Slim::Schema::RemoteTrack if the URL is a
+remote track imported into the local database.
+
+=cut
+
+sub libraryObjectForUrl {
+	my $self = shift;
+	my $args = shift;
+
+	my $url = $args;
+	my $playlist;
+
+	if (ref($args) eq 'HASH') {
+		$url      = $args->{'url'};
+		$playlist = $args->{'playlist'};
+	}
+
+	if (ref($url) eq 'Slim::Schema::RemoteTrack' && $url->url) {
+		$url = $url->url;
+	}
+
+	if (!ref $url && Slim::Music::Info::isRemoteURL($url)) {
+		my $track = $self->_retrieveTrack($url, $playlist, 'integrateRemote');
+
+		return $track if $track;
+	}
+
+	# Otherwise, fall back to the standard objectForUrl method
+	return $self->objectForUrl($args);
 }
 
 sub _objForDbUrl {
@@ -3035,6 +3064,9 @@ sub _postCheckAttributes {
 			$track->work(undef);
 		}
 	}
+	else {
+		$track->work(undef);
+	}
 
 	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
@@ -3081,6 +3113,7 @@ sub _mergeAndCreateContributors {
 			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
 			# Bug: 6507 - use any ARTISTSORT tag for this contributor
 			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
+			$attributes->{'MUSICBRAINZ_TRACKARTIST_ID'} = delete $attributes->{'MUSICBRAINZ_ARTIST_ID'} if $attributes->{'MUSICBRAINZ_ARTIST_ID'};
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},

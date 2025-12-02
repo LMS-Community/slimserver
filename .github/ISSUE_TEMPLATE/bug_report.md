@@ -25,10 +25,12 @@ If applicable, add screenshots to help explain your problem.
 
 **System Information (please complete the following information):**
  - OS on which you're running LMS: [e.g. pCP 10]
+ - Hardware on which you're running LMS (x86_64, aarch64, ARM, ...)
  - Web skin used: [e.g. Material, Default]
- - Browser [e.g. chrome, safari]
- - LMS Version [e.g. 22]
+ - Browser [e.g. Chrome, Safari]
+ - LMS Version
  - Player(s) involved
+ - Addition information from the Settings/Information header section
 
 **Additional context**
 Add any other context about the problem here. E.g. a `server.log` or `scanner.log` snippet (see Settings/Information in your LMS)

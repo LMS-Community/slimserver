@@ -1,0 +1,11 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_RADIO_ARTWORK" desc="" %]
+		<div>[% "PLUGIN_ARTWORK_SETTINGS_IGNORELIST" | string %]</div>
+		<div>
+			<br/>
+			<textarea class="stdedit" name="pref_ignoreList" id="ignoreList" cols="80" rows="20">[% ignoreList %]</textarea>
+		</div>
+	[% END %]
+
+[% PROCESS settings/footer.html %]

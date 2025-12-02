@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<extension>
+	<id>1b266b19-cfe9-43a9-abf5-0fa9f682d701</id>
+	<name>PLUGIN_RADIO_ARTWORK</name>
+	<module>Slim::Plugin::RadioArtwork::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_RADIO_ARTWORK_DESC</description>
+	<creator>Michael Herger</creator>
+	<category>information</category>
+	<targetApplication>
+		<id>Lyrion Music Server</id>
+		<minVersion>9.1</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

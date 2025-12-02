@@ -239,6 +239,23 @@ sub initMenus {
 		static       => 1,
 		nocache      => 1,
 	},{
+		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER',
+		params       => {
+			mode => 'playlistFolder',
+			folder_id => URI::Escape::uri_escape_utf8('/'),
+		},
+		feed         => \&Slim::Menu::BrowseLibrary::_playlists,
+		icon         => 'html/images/playlists.png',
+		condition    => sub {
+			return unless Slim::Menu::BrowseLibrary::isEnabledNode(@_);
+			return 1 if Slim::Utils::Misc::getPlaylistDir();
+
+			my $totals = Slim::Schema->totals($_[0]);
+			return $totals->{playlist} if $totals;
+		},
+		id           => 'myMusicPlaylistFolder',
+		weight       => 80,
+	},{
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS',
 		params       => {
 			mode => 'randomalbums',

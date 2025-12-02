@@ -53,6 +53,26 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	PL	Kompozytorzy
 	SV	Kompositörer
 
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER
+	CS	Složka seznamu skladeb
+	DA	Mappe med afspilningslister
+	DE	Wiedergabelisten-Ordner
+	EN	Playlists Folder
+	ES	Carpeta de listas de reproducción
+	FI	Soittoluettelokansio
+	FR	Dossier des listes de lecture
+	HE	תיקיית רשימות השמעה
+	HU	Műsorlista mappa
+	IT	Cartella delle playlist
+	JA	現在のプレイリストフォルダー
+	NL	Afspeellijstmap
+	NO	Mappe for spillelister
+	PL	Folder list odtwarzania
+	PT	Directoria com Playlists
+	RU	Папка "Плей-листы"
+	SV	Mapp för spellistor
+	ZH_CN	播放表文件夹
+
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	CS	Klasická hudba podle dirigenta
 	DA	Klassisk musik sorteret efter dirigent
@@ -219,6 +239,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	SV	Slumpmässigt valda album
 
 PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
+	CS	Nedávno aktualizovaná alba
 	DA	Nyligt opdaterede albums
 	DE	Zuletzt aktualisierte Alben
 	EN	Recently Updated Albums
@@ -255,7 +276,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
-	CS	Použít "%s"
+	CS	Použít „%s“
 	DA	Benyt '%s'
 	DE	'%s' verwenden
 	EN	Use '%s'
@@ -267,7 +288,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
-	CS	Nyní používáte "%s"
+	CS	Nyní používáte „%s“
 	DA	Bruger nu '%s'
 	DE	Verwende nun '%s'
 	EN	Now using '%s'

@@ -57,7 +57,7 @@ my $emptyItemList = [{ignore => 1}];
 
 ##
 # Register all the information providers that we provide.
-# This order is defined at http://wiki.slimdevices.com/index.php/UserInterfaceHierarchy
+# This order is defined at https://wiki.lyrion.org/index.php/UserInterfaceHierarchy
 #
 sub registerDefaultInfoProviders {
 	my $class = shift;
@@ -356,13 +356,15 @@ sub infoContributors {
 		my ($items, $contributor, $role) = @_;
 
 		my $id = $contributor->id;
+		my $itemsFixedParams = { mode => 'albums', artist_id => $id, library_id => $library_id };
+		# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
+		$itemsFixedParams->{role_id} = $role if !grep { $_ eq $role } ('ARTIST','ALBUMARTIST','TRACKARTIST');
 
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
 				command     => ['browselibrary', 'items'],
-				# If the role is ARTIST/ALBUMARTIST/TRACKARTIST, albumsQuery will sort it out, otherwise pass the role.
-				fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id, role_id => ((grep /^$role$/, ('ARTIST','ALBUMARTIST','TRACKARTIST')) ? undef : $role) },
+				fixedParams => $itemsFixedParams,
 			},
 			play => {
 				command     => ['playlistcontrol'],
@@ -386,6 +388,7 @@ sub infoContributors {
 
 		my $item = {
 			type    => 'playlist',
+			url	  => 'not a valid URL, but needed to make the ip3k UI work...',
 			name    => $contributor->name,
 			itemActions => \%actions,
 			label   => uc($role),

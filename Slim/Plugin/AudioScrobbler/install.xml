@@ -3,7 +3,7 @@
 	<id>A6AE68BF-2C7F-437A-801B-90298DC62E73</id>
 	<name>PLUGIN_AUDIOSCROBBLER_MODULE_NAME</name>
 	<module>Slim::Plugin::AudioScrobbler::Plugin</module>
-	<version>1.0</version>
+	<version>2.0</version>
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
 	<creator>Lyrion Community</creator>
 	<category>tools</category>

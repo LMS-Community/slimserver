@@ -1,5 +1,5 @@
 PLUGIN_ANALYTICS_MODULE_NAME
-	CS	Poskytování analytických údajů
+	CS	Reportování analytických údajů
 	DA	Afrapportér analysedata
 	DE	Analytikdaten teilen
 	EN	Report Analytics Data

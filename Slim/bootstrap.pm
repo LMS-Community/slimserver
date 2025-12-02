@@ -75,18 +75,6 @@ sub loadModules {
 		$libPath = $Bin;
 	}
 
-	# NB: Fedora Core 5 (and other SELinux work-arounds)
-	# Change the security context of the .so files we distribute.
-	# Apparently this is doable by a non-root user. So much for secure.
-	if (-d '/etc/selinux' && -x '/usr/bin/chcon') {
-
-		my $archDir = catdir($libPath, 'CPAN', 'arch');
-
-		$d_startup && printf("Found SELinux - setting security context to: texrel_shlib_t for *.so files.\n");
-
-		#system("/usr/bin/chcon -R -t texrel_shlib_t $archDir");
-	}
-
 	my @SlimINC = ();
 
 	Slim::Utils::OSDetect::init();
@@ -285,12 +273,11 @@ sub tryModuleLoad {
 				print STDERR "Module [$module] failed to load:\n$@\n";
 			}
 
-			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
 			if ($@ =~ /cannot restore segment prot after reloc/) {
 
 				print STDERR "** Lyrion Music Server Error:\n";
 				print STDERR "** SELinux settings prevented Lyrion Music Server from starting.\n";
-				print STDERR "** See https://wiki.slimdevices.com/index.php/Logitech_Media_Server_RPM.html for more information.\n\n";
+				print STDERR "** See https://wiki.lyrion.org/index.php/RPM.html#SELinux for more information.\n\n";
 				exit;
 			}
 

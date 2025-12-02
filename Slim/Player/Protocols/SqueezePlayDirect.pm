@@ -120,7 +120,7 @@ sub getSeekData {
 sub getMetadataFor {
 	my ($class, $client, $url) = @_;
 
-	if (my $song = $client->currentSongForUrl($url)) {
+	if ($client && (my $song = $client->currentSongForUrl($url))) {
 
 		my $ret = {
 			artist => $song->pluginData('artist'),
@@ -143,7 +143,7 @@ sub getMetadataFor {
 		my ($key, $val) = $param =~ /(.*?)=(.*)/;
 		$params{$key} = decode_base64($val) || $val;
 	}
-	
+
 	return {
 		# omit title here as it prevents connecting status being displayed
 		artist => $params{artist},
@@ -152,6 +152,6 @@ sub getMetadataFor {
 		icon   => $params{icon},
 		type   => $params{type},
 	};
-}	
+}
 
 1;

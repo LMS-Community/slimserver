@@ -1,7 +1,7 @@
 package Slim::Networking::Discovery::Players;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2025 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -23,6 +23,9 @@ my $log = logger('network.protocol');
 
 # List of players we see
 my $players = {};
+
+tie my %discoveryFailuresLogged, 'Tie::Cache::LRU::Expires', EXPIRES => 86400, ENTRIES => 32;
+
 
 =head1 NAME
 
@@ -108,7 +111,10 @@ sub _players_done {
 	my $res = eval { from_json( $http->content ) };
 
 	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
-		$http->error( $@ || 'Invalid JSON response: ' . $http->content );
+		# don't log the same error more than once a day
+		return if $discoveryFailuresLogged{$server . ($@ || $http->content || '')}++;
+
+		$http->error( $@ || "Invalid JSON response from $server" . $http->content );
 		return _players_error( $http );
 	}
 
@@ -169,3 +175,5 @@ sub _purge_player_list {
 		}
 	}
 }
+
+1;

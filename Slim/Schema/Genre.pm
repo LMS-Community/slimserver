@@ -103,11 +103,8 @@ sub add {
 		my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
 		my $namesearch = Slim::Utils::Text::ignoreCase($genreSub, 1);
 
-		# So that ucfirst() works properly.
-		use locale;
-
-		my $sth = $dbh->prepare_cached( 'SELECT id FROM genres WHERE name = ?' );
-		$sth->execute( ucfirst($genreSub) );
+		my $sth = $dbh->prepare_cached( 'SELECT id FROM genres WHERE namesearch = ?' );
+		$sth->execute( $namesearch );
 		my ($id) = $sth->fetchrow_array;
 		$sth->finish;
 
@@ -118,7 +115,7 @@ sub add {
 				VALUES
 				(?, ?, ?)
 			} );
-			$sth->execute( $namesort, ucfirst($genreSub), $namesearch );
+			$sth->execute( $namesort, $genreSub, $namesearch );
 			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
 

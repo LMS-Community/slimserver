@@ -14,6 +14,9 @@ use Digest::MD5 qw(md5_hex);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+use Slim::Plugin::AudioScrobbler::API::LastFM;
+use Slim::Plugin::AudioScrobbler::API::ListenBrainz;
+
 my $prefs = preferences('plugin.audioscrobbler');
 my $log   = logger('plugin.audioscrobbler');
 
@@ -47,7 +50,7 @@ sub handler {
 			ACCOUNT:
 			for my $account ( @{ $params->{pref_accounts} } ) {
 				for my $todelete ( @{$delete} ) {
-					if ( $todelete eq $account->{username} ) {
+					if ( $todelete eq $account->{username} || (!$account->{username} && $todelete eq $account->{api_url}) ) {
 						main::DEBUGLOG && $log->debug( "Deleting account $todelete" );
 						next ACCOUNT;
 					}
@@ -59,70 +62,88 @@ sub handler {
 			$params->{pref_accounts} = $newlist;
 		}
 
-		# Save new account
-		if ( $params->{pref_password} ) {
+		my $service = $params->{pref_api_type} || 'lastfm';
+		my $serviceHandler;
+
+		# Last.fm Password (MD5)
+		if ( $params->{pref_password} && $service eq 'lastfm' ) {
 			$params->{pref_password} = md5_hex( $params->{pref_password} );
+
+			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::LastFM';
+		}
+		elsif ( $params->{pref_password} && $service eq 'listenbrainz' ) {
+			# ListenBrainz API key
+			$params->{pref_password} = $params->{pref_password};
+
+			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::ListenBrainz';
 		}
 
 		# If the user added a username/password, we need to verify their info
-		if ( $params->{pref_username} && $params->{pref_password} ) {
-			Slim::Plugin::AudioScrobbler::Plugin::handshake( {
-				username => $params->{pref_username},
-				password => $params->{pref_password},
-				pref_accounts => $params->{pref_accounts},
+		if ($serviceHandler) {
+			eval "require $serviceHandler";
+			if ($@) {
+				$log->error("Failed to load service handler $serviceHandler: $@");
+			}
+			else {
+				$serviceHandler->validate( {
+					username => $params->{pref_username},
+					password => $params->{pref_password},
+					api_type => $params->{pref_api_type},
+					api_url  => $params->{pref_api_url},
+					cb       => sub {
+						my $msg = shift;
 
-				cb       => sub {
-					# Callback for OK handshake response
+						push @{ $params->{pref_accounts} }, {
+							username    => $params->{pref_username} || $params->{pref_api_url},
+							password    => $params->{pref_password},
+							api_type    => $params->{pref_api_type},
+							api_url     => $params->{pref_api_url},
+						};
 
-					push @{ $params->{pref_accounts} }, {
-						username => $params->{pref_username},
-						password => $params->{pref_password},
-					};
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
+						}
 
-					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
-					}
+						my $body = $class->SUPER::handler( $client, $params );
 
-					my $msg  = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
-					my $body = $class->SUPER::handler( $client, $params );
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $msg;
+							$params->{validated}->{valid} = 1;
+						}
+						else {
+							$params->{warning} .= $msg . '<br/>';
+						}
 
-					if ( $params->{AJAX} ) {
-						$params->{warning} = $msg;
-						$params->{validated}->{valid} = 1;
-					}
-					else {
-						$params->{warning} .= $msg . '<br/>';
-					}
+						$callback->( $client, $params, $body, @args );
+					},
+					ecb      => sub {
+						# Callback for any errors
+						my $error = shift;
 
-					$callback->( $client, $params, $body, @args );
-				},
-				ecb      => sub {
-					# Callback for any errors
-					my $error = shift;
+						if ( main::DEBUGLOG && $log->is_debug ) {
+							$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
+						}
 
-					if ( main::DEBUGLOG && $log->is_debug ) {
-						$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
-					}
+						if ( $params->{AJAX} ) {
+							$params->{warning} = $error;
+							$params->{validated}->{valid} = 0;
+						}
+						else {
+							$params->{warning} .= $error . '<br/>';
+						}
 
-					$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
+						delete $params->{pref_username};
+						delete $params->{pref_password};
+						delete $params->{pref_api_url};
+						delete $params->{pref_api_type};
 
-					if ( $params->{AJAX} ) {
-						$params->{warning} = $error;
-						$params->{validated}->{valid} = 0;
-					}
-					else {
-						$params->{warning} .= $error . '<br/>';
-					}
+						my $body = $class->SUPER::handler( $client, $params );
+						$callback->( $client, $params, $body, @args );
+					},
+				} );
 
-					delete $params->{pref_username};
-					delete $params->{pref_password};
-
-					my $body = $class->SUPER::handler( $client, $params );
-					$callback->( $client, $params, $body, @args );
-				},
-			} );
-
-			return;
+				return;
+			}
 		}
 	}
 

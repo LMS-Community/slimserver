@@ -1,23 +1,19 @@
-# Proc::Background: Generic interface to background process management.
-#
-# Copyright (C) 1998-2002 Blair Zajac.  All rights reserved.
-
 package Proc::Background;
 
+# ABSTRACT: Generic interface to Unix and Win32 background process management
 require 5.004_04;
 
 use strict;
 use Exporter;
 use Carp;
 use Cwd;
-
-use vars qw(@ISA $VERSION @EXPORT_OK);
-@ISA       = qw(Exporter);
-@EXPORT_OK = qw(timeout_system);
-$VERSION   = sprintf '%d.%02d', '$Revision: 1.08 $' =~ /(\d+)\.(\d+)/;
+use Scalar::Util;
+@Proc::Background::ISA       = qw(Exporter);
+@Proc::Background::EXPORT_OK = qw(timeout_system);
 
 # Determine if the operating system is Windows.
 my $is_windows = $^O eq 'MSWin32';
+my $weaken_subref = Scalar::Util->can('weaken');
 
 # Set up a regular expression that tests if the path is absolute and
 # if it has a directory separator in it.  Also create a list of file
@@ -25,24 +21,27 @@ my $is_windows = $^O eq 'MSWin32';
 # executable.
 my $is_absolute_re;
 my $has_dir_element_re;
+my $path_sep;
 my @extensions = ('');
 if ($is_windows) {
   $is_absolute_re     = '^(?:(?:[a-zA-Z]:[\\\\/])|(?:[\\\\/]{2}\w+[\\\\/]))';
   $has_dir_element_re = "[\\\\/]";
+  $path_sep           = "\\";
   push(@extensions, '.exe');
 } else {
   $is_absolute_re     = "^/";
   $has_dir_element_re = "/";
+  $path_sep           = "/";
 }
 
 # Make this class a subclass of Proc::Win32 or Proc::Unix.  Any
 # unresolved method calls will go to either of these classes.
 if ($is_windows) {
   require Proc::Background::Win32;
-  unshift(@ISA, 'Proc::Background::Win32');
+  unshift(@Proc::Background::ISA, 'Proc::Background::Win32');
 } else {
   require Proc::Background::Unix;
-  unshift(@ISA, 'Proc::Background::Unix');
+  unshift(@Proc::Background::ISA, 'Proc::Background::Unix');
 }
 
 # Take either a relative or absolute path to a command and make it an
@@ -50,7 +49,7 @@ if ($is_windows) {
 sub _resolve_path {
   my $command = shift;
 
-  return unless length $command;
+  return ( undef, 'empty command string' ) unless length $command;
 
   # Make the path to the progam absolute if it isn't already.  If the
   # path is not absolute and if the path contains a directory element
@@ -67,13 +66,11 @@ sub _resolve_path {
         last;
       }
     }
-    unless (defined $path) {
-      warn "$0: no executable program located at $command\n";
-    }
+    return defined $path? ( $path, undef ) : ( undef, "no executable program located at $command" );
   } else {
     my $cwd = cwd;
     if ($command =~ /$has_dir_element_re/o) {
-      my $p1 = "$cwd/$command";
+      my $p1 = "$cwd$path_sep$command";
       foreach my $ext (@extensions) {
         my $p2 = "$p1$ext";
         if (-f $p2 and -x _) {
@@ -84,8 +81,8 @@ sub _resolve_path {
     } else {
       foreach my $dir (split($is_windows ? ';' : ':', $ENV{PATH})) {
         next unless length $dir;
-        $dir = "$cwd/$dir" unless $dir =~ /$is_absolute_re/o;
-        my $p1 = "$dir/$command";
+        $dir = "$cwd$path_sep$dir" unless $dir =~ /$is_absolute_re/o;
+        my $p1 = "$dir$path_sep$command";
         foreach my $ext (@extensions) {
           my $p2 = "$p1$ext";
           if (-f $p2 and -x _) {
@@ -96,12 +93,20 @@ sub _resolve_path {
         last if defined $path;
       }
     }
-    unless (defined $path) {
-      warn "$0: cannot find absolute location of $command\n";
-    }
+    return defined $path? ( $path, undef ) : ( undef, "cannot find absolute location of $command" );
   }
+}
 
-  $path;
+# Define the set of allowed options, to warn about unknown ones.
+# Make it a method so subclasses can override it.
+%Proc::Background::_available_options= (
+  autodie => 1, command => 1, exe => 1,
+  cwd => 1, stdin => 1, stdout => 1, stderr => 1,
+  autoterminate => 1, die_upon_destroy => 1,
+);
+
+sub _available_options {
+  return \%Proc::Background::_available_options;
 }
 
 # We want the created object to live in Proc::Background instead of
@@ -109,46 +114,123 @@ sub _resolve_path {
 sub new {
   my $class = shift;
 
+  # The parameters are an optional %options hashref followed by any number
+  # of arguments to become the @argv for exec().  If options are given, check
+  # the keys for typos.
   my $options;
-  if (@_ and defined $_[0] and UNIVERSAL::isa($_[0], 'HASH')) {
-    $options = shift;
+  if (@_ and ref $_[0] eq 'HASH') {
+    $options= shift;
+    my $known= $class->_available_options;
+    my @unknown= grep !$known->{$_}, keys %$options;
+    carp "Unknown options: ".join(', ', @unknown)
+      if @unknown;
+  }
+  else {
+    $options= {};
   }
 
-  unless (@_ > 0) {
-    confess "Proc::Background::new called with insufficient number of arguments";
+  my $self= bless {}, $class;
+  $self->{_autodie}= 1 if $options->{autodie};
+
+  # Resolve any confusion between the 'command' option and positional @argv params.
+  # Store the command in $self->{_command} so that the ::Unix and ::Win32 don't have
+  # to deal with it redundantly.
+  my $cmd= $options->{command};
+  if (defined $cmd) {
+    croak "Can't use both 'command' option and command argument list"
+      if @_;
+    # Can be an arrayref or a single string
+    croak "command must be a non-empty string or an arrayref of strings"
+      unless (ref $cmd eq 'ARRAY' && defined $cmd->[0] && length $cmd->[0])
+        or (!ref $cmd && defined $cmd && length $cmd);
+  }
+  else {
+    # Back-compat: maintain original API quirks
+    confess "Proc::Background::new called with insufficient number of arguments"
+      unless @_;
+    return $self->_fatal('command is undefined') unless defined $_[0];
+
+    # Interpret the parameters as an @argv if there is more than one,
+    # or if the 'exe' option was given.
+    $cmd= (@_ > 1 || defined $options->{exe})? [ @_ ] : $_[0];
   }
 
-  return unless defined $_[0];
+  $self->{_command}= $cmd;
+  $self->{_exe}= $options->{exe} if defined $options->{exe};
 
-  my $self = $class->SUPER::_new(@_) or return;
+  # Also back-compat: failing to fork or CreateProcess returns undef
+  return unless $self->_start($options);
 
-  # Save the start time of the class.
+  # Save the start time
   $self->{_start_time} = time;
 
-  # Handle the specific options.
-  if ($options) {
-    $self->{_die_upon_destroy} = $options->{die_upon_destroy};
+  if ($options->{autoterminate} || $options->{die_upon_destroy}) {
+    $self->autoterminate(1);
   }
 
-  bless $self, $class;
+  return $self;
+}
+
+# The original API returns undef from the constructor in case of various errors.
+# The autodie option converts these undefs into exceptions.
+sub _fatal {
+  my ($self, $message)= @_;
+  croak $message if $self->{_autodie};
+  warn "$0: $message";
+  return undef;
+}
+
+sub autoterminate {
+  my ($self, $newval)= @_;
+  if (@_ > 1 and ($newval xor $self->{_die_upon_destroy})) {
+    if ($newval) {
+      # Global destruction can break this feature, because there are no guarantees
+      # on which order object destructors are called.  In order to avoid that, need
+      # to run all the ->die methods during END{}, and that requires weak
+      # references which weren't available until 5.8
+      $weaken_subref->( $Proc::Background::_die_upon_destroy{$self+0}= $self )
+        if $weaken_subref;
+      # could warn about it for earlier perl... but has been broken for 15 years and
+      # who is still using < 5.8 anyway?
+    }
+    else {
+      delete $Proc::Background::_die_upon_destroy{$self+0};
+    }
+    $self->{_die_upon_destroy}= $newval? 1 : 0;
+  }
+  $self->{_die_upon_destroy} || 0
 }
 
 sub DESTROY {
   my $self = shift;
   if ($self->{_die_upon_destroy}) {
-    $self->die;
+    # During a mainline exit() $? is the prospective exit code from the
+    # parent program. Preserve it across any waitpid() in die()
+    local $?;
+    $self->terminate;
+    delete $Proc::Background::_die_upon_destroy{$self+0};
   }
 }
 
-# Reap the child.  If the first argument is 0 the wait should return
-# immediately, 1 if it should wait forever.  If this number is
-# non-zero, then wait.  If the wait was sucessful, then delete
+END {
+  # Child processes need killed before global destruction, else the
+  # Win32::Process objects might get destroyed first.
+  for (grep defined, values %Proc::Background::_die_upon_destroy) {
+    $_->terminate;
+    delete $_->{_die_upon_destroy}
+  }
+  %Proc::Background::_die_upon_destroy= ();
+}
+
+# Reap the child.  If the first argument is false, then return immediately.
+# Else, block waiting for the process to exit.  If no second argument is
+# given, wait forever, else wait for that number of seconds.
+# If the wait was sucessful, then delete
 # $self->{_os_obj} and set $self->{_exit_value} to the OS specific
 # class return of _reap.  Return 1 if we sucessfully waited, 0
 # otherwise.
 sub _reap {
-  my $self    = shift;
-  my $timeout = shift || 0;
+  my ($self, $blocking, $wait_seconds) = @_;
 
   return 0 unless exists($self->{_os_obj});
 
@@ -156,9 +238,9 @@ sub _reap {
   # the Proc::Background::*::waitpid call, which returns one of three
   # values.
   #   (0, exit_value)	: sucessfully waited on.
-  #   (1, undef)	: process already reaped and exist value lost.
+  #   (1, undef)	: process already reaped and exit value lost.
   #   (2, undef)	: process still running.
-  my ($result, $exit_value) = $self->_waitpid($timeout);
+  my ($result, $exit_value) = $self->_waitpid($blocking, $wait_seconds);
   if ($result == 0 or $result == 1) {
     $self->{_exit_value} = defined($exit_value) ? $exit_value : 0;
     delete $self->{_os_obj};
@@ -183,37 +265,77 @@ sub alive {
   !$self->_reap(0);
 }
 
-sub wait {
-  my $self = shift;
+sub suspended {
+  $_[0]->{_suspended}? 1 : 0
+}
 
-  # If neither _os_obj or _exit_value are set, then something is wrong.
-  if (!exists($self->{_exit_value}) and !exists($self->{_os_obj})) {
-    return;
-  }
+sub suspend {
+  my $self= shift;
+  return $self->_fatal("can't suspend, process has exited")
+    if !$self->{_os_obj};
+  $self->{_suspended} = 1 if $self->_suspend;
+  return $self->{_suspended};
+}
+
+sub resume {
+  my $self= shift;
+  return $self->_fatal("can't resume, process has exited")
+    if !$self->{_os_obj};
+  $self->{_suspended} = 0 if $self->_resume;
+  return !$self->{_suspended};
+}
+
+sub wait {
+  my ($self, $timeout_seconds) = @_;
 
   # If $self->{_exit_value} exists, then we already waited.
   return $self->{_exit_value} if exists($self->{_exit_value});
 
-  # Otherwise, wait forever for the process to finish.
-  $self->_reap(1);
-  return $self->{_exit_value};
+  carp "calling ->wait on a suspended process" if $self->{_suspended};
+
+  # If neither _os_obj or _exit_value are set, then something is wrong.
+  return undef if !exists($self->{_os_obj});
+
+  # Otherwise, wait for the process to finish.
+  return $self->_reap(1, $timeout_seconds)? $self->{_exit_value} : undef;
 }
 
+sub terminate { shift->die(@_) }
 sub die {
   my $self = shift;
+
+  croak "process is already terminated" if $self->{_autodie} && !$self->{_os_obj};
 
   # See if the process has already died.
   return 1 unless $self->alive;
 
   # Kill the process using the OS specific method.
-  $self->_die;
+  $self->_terminate(@_? ([ @_ ]) : ());
 
   # See if the process is still alive.
   !$self->alive;
 }
 
+sub command {
+  $_[0]->{_command};
+}
+
+sub exe {
+  $_[0]->{_exe}
+}
+
 sub start_time {
   $_[0]->{_start_time};
+}
+
+sub exit_code {
+  return undef unless exists $_[0]->{_exit_value};
+  return $_[0]->{_exit_value} >> 8;
+}
+
+sub exit_signal {
+  return undef unless exists $_[0]->{_exit_value};
+  return $_[0]->{_exit_value} & 127;
 }
 
 sub end_time {
@@ -236,14 +358,22 @@ sub timeout_system {
 
   my $proc = Proc::Background->new(@_) or return;
   my $end_time = $proc->start_time + $timeout;
-  while ($proc->alive and time < $end_time) {
-    sleep(1);
+  my $delay= $timeout;
+  while ($delay > 0 && defined $proc->{_os_obj}) {
+    last if defined $proc->wait($delay);
+    # If it times out, it's likely that wait() already waited the entire duration.
+    # But, if it got interrupted, there might be time remaining.
+    # But, if the system clock changes, this could break horribly.  Constrain it to a sane value.
+    my $t= time;
+    if ($t < $end_time - $delay) { # time moved backward!
+      $end_time= $t + $delay;
+    } else {
+      $delay= $end_time - $t;
+    }
   }
 
   my $alive = $proc->alive;
-  if ($alive) {
-    $proc->die;
-  }
+  $proc->terminate if $alive;
 
   if (wantarray) {
     return ($proc->wait, $alive);
@@ -258,29 +388,38 @@ __END__
 
 =pod
 
-=head1 NAME
-
-Proc::Background - Generic interface to Unix and Win32 background process management
-
 =head1 SYNOPSIS
 
-    use Proc::Background;
-    timeout_system($seconds, $command, $arg1);
-    timeout_system($seconds, "$command $arg1");
-
-    my $proc1 = Proc::Background->new($command, $arg1, $arg2);
-    my $proc2 = Proc::Background->new("$command $arg1 1>&2");
-    $proc1->alive;
-    $proc1->die;
+  use Proc::Background 'timeout_system';
+  timeout_system($seconds, $command, $arg1, $arg2);
+  timeout_system($seconds, "$command $arg1 $arg2");
+  
+  my $proc1 = Proc::Background->new($command, $arg1, $arg2) || die "failed";
+  my $proc2 = Proc::Background->new("$command $arg1 1>&2") || die "failed";
+  if ($proc1->alive) {
+    $proc1->terminate;
     $proc1->wait;
-    my $time1 = $proc1->start_time;
-    my $time2 = $proc1->end_time;
-
-    # Add an option to kill the process with die when the variable is
-    # DETROYed.
-    my $opts  = {'die_upon_destroy' => 1};
-    my $proc3 = Proc::Background->new($opts, $command, $arg1, $arg2);
-    $proc3    = undef;
+  }
+  say 'Ran for ' . ($proc1->end_time - $proc1->start_time) . ' seconds';
+  
+  Proc::Background->new({
+    autodie => 1,           # Throw exceptions instead of returning undef
+    cwd => 'some/path/',    # Set working directory for the new process
+    exe => 'busybox',       # Specify executable different from argv[0]
+    command => [ $command ] # resolve ambiguity of command line vs. argv[0]
+  });
+  
+  # Set initial file handles
+  Proc::Background->new({
+    stdin => undef,                # /dev/null or NUL
+    stdout => '/append/to/fname',  # will try to open()
+    stderr => $log_fh,             # use existing handle
+    command => \@command,
+  });
+  
+  # Automatically kill the process if the object gets destroyed
+  my $proc4 = Proc::Background->new({ autoterminate => 1 }, $command);
+  $proc4    = undef;  # calls ->terminate
 
 =head1 DESCRIPTION
 
@@ -288,7 +427,7 @@ This is a generic interface for placing processes in the background on
 both Unix and Win32 platforms.  This module lets you start, kill, wait
 on, retrieve exit values, and see if background processes still exist.
 
-=head1 METHODS
+=head1 CONSTRUCTOR
 
 =over 4
 
@@ -296,67 +435,114 @@ on, retrieve exit values, and see if background processes still exist.
 
 =item B<new> [options] 'I<command> [I<arg> [I<arg> ...]]'
 
-This creates a new background process.  As exec() or system() may be
-passed an array with a single single string element containing a
-command to be passed to the shell or an array with more than one
-element to be run without calling the shell, B<new> has the same
-behavior.
+This creates a new background process.  Just like C<system()>, you can
+supply a single string of the entire command line, or individual
+arguments.  The first argument may be a hashref of named options.
+To resolve the ambiguity between a command line vs. a single-element
+argument list, see the C<command> option below.
 
-In certain cases B<new> will attempt to find I<command> on the system
-and fail if it cannot be found.
+By default, the constructor returns an empty list on failure,
+except for a few cases of invalid arguments which call C<croak>.
 
-For Win32 operating systems:
+For platform-specific details, see L<Proc::Background::Unix/IMPLEMENTATION>
+or L<Proc::Background::Win32/IMPLEMENTATION>, but in short:
 
-    The Win32::Process module is always used to spawn background
-    processes on the Win32 platform.  This module always takes a
-    single string argument containing the executable's name and
-    any option arguments.  In addition, it requires that the
-    absolute path to the executable is also passed to it.  If
-    only a single argument is passed to new, then it is split on
-    whitespace into an array and the first element of the split
-    array is used at the executable's name.  If multiple
-    arguments are passed to new, then the first element is used
-    as the executable's name.
+=over 7
 
-    If the executable's name is an absolute path, then new
-    checks to see if the executable exists in the given location
-    or fails otherwise.  If the executable's name is not
-    absolute, then the executable is searched for using the PATH
-    environmental variable.  The input executable name is always
-    replaced with the absolute path determined by this process.
+=item Unix
 
-    In addition, when searching for the executable, the
-    executable is searched for using the unchanged executable
-    name and if that is not found, then it is checked by
-    appending `.exe' to the name in case the name was passed
-    without the `.exe' suffix.
+This implementation uses C<fork>/C<exec>.  If you supply a single-string
+command line, it is passed to the shell.  If you supply multiple arguments,
+they are passed to C<exec>.  In the multi-argument case, it will also check
+that the executable exists before calling C<fork>.
 
-    Finally, the argument array is placed back into a single
-    string and passed to Win32::Process::Create.
+=item Win32
 
-For non-Win32 operating systems, such as Unix:
+This implementation uses the L<Windows CreateProcess API|Win32::Process/METHODS>.
+If you supply a single-string command line, it derives the executable by
+parsing the command line and looking for the first element in the C<PATH>,
+appending C<".exe"> if needed.  If you supply multiple arguments, the
+first is used as the C<exe> and the command line is built using
+L<Win32::ShellQuote>.  To let Windows search for the executable, pass option
+C<< { exe => undef } >>.
 
-    If more than one argument is passed to new, then new
-    assumes that the command will not be passed through the
-    shell and the first argument is the executable's relative
-    or absolute path.  If the first argument is an absolute
-    path, then it is checked to see if it exists and can be
-    run, otherwise new fails.  If the path is not absolute,
-    then the PATH environmental variable is checked to see if
-    the executable can be found.  If the executable cannot be
-    found, then new fails.  These steps are taking to prevent
-    exec() from failing after an fork() without the caller of
-    new knowing that something failed.
+=back
 
-The first argument to B<new> I<options> may be a reference to a hash
-which contains key/value pairs to modify Proc::Background's behavior.
-Currently the only key understood by B<new> is I<die_upon_destroy>.
-When this value is set to true, then when the Proc::Background object
-is being DESTROY'ed for any reason (i.e. the variable goes out of
-scope) the process is killed via the die() method.
+B<Options:>
 
-If anything fails, then new returns an empty list in a list context,
-an undefined value in a scalar context, or nothing in a void context.
+=over
+
+=item C<autodie>
+
+This module traditionally has returned C<undef> if the child could not
+be started.  Modern Perl recommends the use of exceptions for things
+like this.  This option, like Perl's L<autodie> pragma, causes all
+fatal errors in starting the process to die with exceptions instead of
+returning undef.  (module-usage errors or other problems prior to
+launching the process may still 'croak' regardless of this setting)
+
+=item C<command>
+
+You may specify the command as an option instead of passing the command
+as a list.  A string value is considered a command line, and an arrayref
+value is considered an argument list.  Using this option resolves the
+ambiguity in the plain-list constructor between a command line vs.
+a single-element argument list.
+
+=item C<exe>
+
+Specify the executable.  This can serve two purposes:
+on Win32 it avoids the need to parse the commandline, and on Unix it can be
+used to run an executable while passing a different value for C<$ARGV[0]>.
+
+=item C<stdin>, C<stdout>, C<stderr>
+
+Specify one or more overrides for the standard handles of the child.
+The value should be a Perl filehandle with an underlying system C<fileno>
+value.  As a convenience, you can pass C<undef> to open the C<NUL> device
+on Win32 or C</dev/null> on Unix.  You may also pass a plain-scalar file
+name which this module will attmept to open for reading or appending.
+
+(for anything more elaborate, see L<IPC::Run> instead)
+
+Note that on Win32, none of the parent's handles are inherited by default,
+which is the opposite on Unix.  When you specify any of these handles on
+Win32 the default will change to inherit the rest from the parent.
+
+=item C<cwd>
+
+Specify a path which should become the child process's current working
+directory.  The path must already exist.
+
+=item C<autoterminate>
+
+If you pass a true value for this option, then destruction of the
+Proc::Background object (going out of scope, or script-end) will kill the
+process via C<< ->terminate >>.  Without this option, the child process
+continues running.  C<die_upon_destroy> is an alias for this option, used
+by previous versions of this module.
+
+=back
+
+=back
+
+=head1 ATTRIBUTES
+
+=over
+
+=item B<command>
+
+The command (string or arrayref) that was passed to the constructor.
+
+=item B<exe>
+
+The path to the executable that was passed as an option to the constructor,
+or derived from the C<command>.
+
+=item B<start_time>
+
+Return the value that the Perl function time() returned when the
+process was started.
 
 =item B<pid>
 
@@ -365,36 +551,103 @@ even if the process has already finished.
 
 =item B<alive>
 
-Return 1 if the process is still active, 0 otherwise.
+Return 1 if the process is still active, 0 otherwise.  This makes a
+non-blocking call to C<wait> to check the real status of the process if it
+has not been reaped yet.
 
-=item B<die>
+=item B<suspended>
 
-Reliably try to kill the process.  Returns 1 if the process no longer
-exists once B<die> has completed, 0 otherwise.  This will also return
-1 if the process has already died.  On Unix, the following signals are
-sent to the process in one second intervals until the process dies:
-HUP, QUIT, INT, KILL.
+Boolean whether the process is thought to be stopped.  This does not actually
+consult the operating system, and just returns the last known status from a
+call to C<suspend> or C<resume>.  It is always false if C<alive> is false.
 
-=item B<wait>
+=item B<exit_code>
 
-Wait for the process to exit.  Return the exit status of the command
-as returned by wait() on the system.  To get the actual exit value,
-divide by 256 or right bit shift by 8, regardless of the operating
-system being used.  If the process never existed, then return an empty
-list in a list context, an undefined value in a scalar context, or
-nothing in a void context.  This function may be called multiple times
-even after the process has exited and it will return the same exit
-status.
+Returns the exit code of the process, assuming it exited cleanly.
+Returns C<undef> if the process has not exited yet, and 0 if the
+process exited with a signal (or TerminateProcess).  Since 0 is
+ambiguous, check for C<exit_signal> first.
 
-=item B<start_time>
+=item B<exit_signal>
 
-Return the value that the Perl function time() returned when the
-process was started.
+Returns the value of the signal the process exited with, assuming it
+died on a signal.  Returns C<undef> if it has not exited yet, and 0
+if it did not die to a signal.
 
 =item B<end_time>
 
 Return the value that the Perl function time() returned when the exit
 status was obtained from the process.
+
+=item B<autoterminate>
+
+This writeable attribute lets you enable or disable the autoterminate
+option, which could also be passed to the constructor.
+
+=back
+
+=head1 METHODS
+
+=over
+
+=item B<wait>
+
+  $exit= $proc->wait; # blocks forever
+  $exit= $proc->wait($timeout_seconds); # since version 1.20
+
+Wait for the process to exit.  Return the exit status of the command
+as returned by wait() on the system.  To get the actual exit value,
+divide by 256 or right bit shift by 8, regardless of the operating
+system being used.  If the process never existed, this returns undef.
+This function may be called multiple times even after the process has
+exited and it will return the same exit status.
+
+Since version 1.20, you may pass an optional argument of the number of
+seconds to wait for the process to exit.  This may be fractional, and
+if it is zero then the wait will be non-blocking.  Note that on Unix
+this is implemented with L<Time::HiRes/alarm> before a call to wait(),
+so it may not be compatible with scripts that use alarm() for other
+purposes, or systems/perls that resume system calls after a signal.
+In the event of a timeout, the return will be undef.
+
+=item B<suspend>
+
+Pause the process.  This returns true if the process is stopped afterward.
+This throws an excetion if the process is not C<alive> and C<autodie> is
+enabled.
+
+=item B<resume>
+
+Resume a paused process.  This returns true if the process is not stopped
+afterward.  This throws an exception if the process is not C<alive> and
+C<autodie> is enabled.
+
+=item B<terminate>, B<terminate(@kill_sequence)>
+
+Reliably try to kill the process.  Returns 1 if the process no longer
+exists once B<terminate> has completed, 0 otherwise.  This will also return
+1 if the process has already exited.
+
+C<@kill_sequence> is a list of actions and seconds-to-wait for that
+action to end the process.  The default is C< TERM 2 TERM 8 KILL 3 KILL 7 >.
+On Unix this sends SIGTERM and SIGKILL; on Windows it just calls
+TerminateProcess (graceful termination is still a TODO).
+
+Note that C<terminate()> (formerly named C<die()>) on Proc::Background 1.10
+and earlier on Unix called a sequence of:
+
+  ->die( ( HUP => 1 )x5, ( QUIT => 1 )x5, ( INT => 1 )x5, ( KILL => 1 )x5 );
+
+which wasn't what most people need, since SIGHUP is open to interpretation,
+and QUIT is almost always immediately fatal and generates a coredump.
+The new default should accomodate programs that acknowledge a second
+SIGTERM, and give enough time for it to exit on a laggy system while still
+not holding up the main script too much.
+
+C<die> is preserved as an alias for C<terminate>.
+
+This throws an exception if the process has been reaped and C<autodie> is
+enabled.
 
 =back
 
@@ -407,12 +660,7 @@ status was obtained from the process.
 =item B<timeout_system> 'I<timeout> I<command> [I<arg> [I<arg>...]]'
 
 Run a command for I<timeout> seconds and if the process did not exit,
-then kill it.  While the timeout is implemented using sleep(), this
-function makes sure that the full I<timeout> is reached before killing
-the process.  B<timeout_system> does not wait for the complete
-I<timeout> number of seconds before checking if the process has
-exited.  Rather, it sleeps repeatidly for 1 second and checks to see
-if the process still exists.
+then kill it.
 
 In a scalar context, B<timeout_system> returns the exit status from
 the process.  In an array context, B<timeout_system> returns a two
@@ -430,48 +678,63 @@ scalar context, or nothing in a void context.
 
 =back
 
-=head1 IMPLEMENTATION
+=head1 BUGS
 
-I<Proc::Background> comes with two modules, I<Proc::Background::Unix>
-and I<Proc::Background::Win32>.  Currently, on Unix platforms
-I<Proc::Background> uses the I<Proc::Background::Unix> class and on
-Win32 platforms it uses I<Proc::Background::Win32>, which makes use of
-I<Win32::Process>.
+The following behaviors aren't ideal, but are preserved for backward-compatibility.
 
-The I<Proc::Background> assigns to @ISA either
-I<Proc::Background::Unix> or I<Proc::Background::Win32>, which does
-the OS dependent work.  The OS independent work is done in
-I<Proc::Background>.
+=over
 
-Proc::Background uses two variables to keep track of the process.
-$self->{_os_obj} contains the operating system object to reference the
-process.  On a Unix systems this is the process id (pid).  On Win32,
-it is an object returned from the I<Win32::Process> class.  When
-$self->{_os_obj} exists, then the process is running.  When the
-process dies, this is recorded by deleting $self->{_os_obj} and saving
-the exit value $self->{_exit_value}.
+=item Commandline vs. Single Argv[]
 
-Anytime I<alive> is called, a waitpid() is called on the process and
-the return status, if any, is gathered and saved for a call to
-I<wait>.  This module does not install a signal handler for SIGCHLD.
-If for some reason, the user has installed a signal handler for
-SIGCHLD, then, then when this module calls waitpid(), the failure will
-be noticed and taken as the exited child, but it won't be able to
-gather the exit status.  In this case, the exit status will be set to
-0.
+C<< ->new($x) >> is treated as a command line.  In C<< ->new({ exe => $y }, $x) >>,
+$x is treated as C<$ARGV[0]>.  Use C<< ->new({ command => ... }) >>
+(scalar vs. arrayref) to dis-ambiguate.
+
+=item Win32 Argv Quoting
+
+This is a bug in Windows, not this module.  It is not possible to universally
+convert an @ARGV into a commandline, because each Win32 program performs its
+own command line parsing, and cmd.exe and find.exe deviate from the majority
+of other executables.  Those things could be improved with hieuristics, which
+this module doesn't have.
+
+=item Win32 exe determination
+
+If you don't specify an absolute path for option C<exe>, this module manually
+searches the %PATH% looking for the executable, and is less thorough than the
+native Windows shell behavior.  Use C<< { exe => undef } >> to get the naive
+Windows exe search.  (but you need Win32::Process version 0.17 or newer)
+
+=item Win32 SIGTERM
+
+This module only supports TerminateProcess, which is equivalent to SIGKILL, not
+SIGTERM.  SIGTERM could be emulated by calling taskkill.exe, or using windows
+messages.  Patches welcome.
+
+=back
 
 =head1 SEE ALSO
 
-See also L<Proc::Background::Unix> and L<Proc::Background::Win32>.
+=over
 
-=head1 AUTHOR
+=item L<IPC::Run>
 
-Blair Zajac <blair@orcaware.com>
+IPC::Run is a much more complete solution for running child processes.
+It handles dozens of forms of redirection and pipe pumping, and should
+probably be your first stop for any complex needs.
 
-=head1 COPYRIGHT
+However, also note the very large and slightly alarming list of
+limitations it lists for Win32.  Proc::Background is a much simpler design
+and should be more reliable for simple needs.
 
-Copyright (C) 1998-2002 Blair Zajac.  All rights reserved.  This
-package is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+=item L<Win32::ShellQuote>
 
-=cut
+If you are running on Win32, this article by Daniel Colascione helps
+describe the problem you are up against for passing argument lists:
+L<Everyone quotes command line arguments the wrong way|https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/>
+
+This module gives you parsing / quoting per the standard
+CommandLineToArgvW behavior.  But, if you need to pass arguments to be
+processed by C<cmd.exe> then you need to do additional work.
+
+=back

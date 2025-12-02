@@ -312,6 +312,9 @@ sub parseSearchTerm {
 
 	$search = lc($search || '');
 
+	# replace iOS' smart quotes with regular quotes
+	$search =~ s/[“”„\x{201c}\x{201d}\x{201e}]/"/g;
+
 	# Check if we have an open double quote and close it if needed
 	my $c = () = $search =~ /"/g;
 	if ( $c % 2 == 1 ) {

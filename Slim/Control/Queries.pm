@@ -31,10 +31,11 @@ L<Slim::Control::Queries> implements most Lyrion Music Server queries and is des
 use strict;
 
 use File::Basename qw(basename);
+use File::Spec::Functions qw(catdir);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
-use List::Util qw(first);
+use List::Util qw(first max);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
 use URI::Escape ();
@@ -300,7 +301,7 @@ sub albumsQuery {
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'playcount', 'recentlyplayed', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -400,7 +401,7 @@ sub albumsQuery {
 		}
 
 		if ($tags ne 'CC') {
-			if ( $sort =~ /^(?:new|changed)$/ ) {
+			if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ ) {
 				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 				$limit = $prefs->get('browseagelimit') || 100;
 				$order_by = "MAX(tracks.timestamp) DESC";
@@ -410,9 +411,21 @@ sub albumsQuery {
 					$quantity = $limit;
 				}
 
-				if (main::STATISTICS && $sort eq 'new') {
+				my $useStats = main::STATISTICS && $sort =~ /^(?:new|playcount|recentlyplayed)$/;
+				if (main::STATISTICS && $useStats) {
 					$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-					$order_by = 'MIN(tracks_persistent.added) DESC';
+
+					if ($sort eq 'new') {
+						$order_by = 'MIN(tracks_persistent.added) DESC';
+					}
+					elsif ($sort eq 'playcount') {
+						$ignoreNewAlbumsCache = 1;
+						$order_by = 'albums_playcount DESC';
+					}
+					elsif ($sort eq 'recentlyplayed') {
+						$ignoreNewAlbumsCache = 1;
+						$order_by = 'MAX(tracks_persistent.lastplayed) DESC';
+					}
 				}
 
 				# cache the most recent album IDs - need to query the tracks table, which is expensive
@@ -434,12 +447,14 @@ sub albumsQuery {
 						my $join = '';
 						$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
 
-						if (main::STATISTICS && $sort eq 'new') {
+						my $additionalCols = '';
+						if (main::STATISTICS && $useStats) {
 							$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+							$additionalCols = ', AVG(tracks_persistent.playcount) AS albums_playcount' if $sort eq 'playcount';
 						}
 
 						my $countSQL = qq{
-							SELECT tracks.album
+							SELECT tracks.album $additionalCols
 							FROM tracks
 							$join
 							WHERE tracks.album > 0
@@ -649,6 +664,11 @@ sub albumsQuery {
 		$c->{'contributors.portraitid'} = 1;
 	}
 
+	if ( main::STATISTICS && $sort eq 'playcount' ) {
+		$c->{'AVG(tracks_persistent.playcount)'} = 1;
+		$as->{'AVG(tracks_persistent.playcount)'} = 'albums_playcount';
+	}
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		my $s .= join( ' AND ', @{$w} );
@@ -676,9 +696,9 @@ sub albumsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
-	if ( $sort =~ /^(?:new|changed)$/ && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
+	if ( !$ignoreNewAlbumsCache && $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
@@ -1229,7 +1249,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	$cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+	$cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 
@@ -1834,7 +1854,7 @@ sub genresQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -2786,35 +2806,101 @@ sub playlistsQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
+	my $folder   = $request->getParam('folder_id') || '';
 	my $tags     = $request->getParam('tags') || '';
 	my $libraryId= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 
+	my @items;
+	my @folders;
+	my $folderCount = 0;
+
 	# Normalize any search parameters
-	if (defined $search && !Slim::Schema->canFulltextSearch) {
-		$search = Slim::Utils::Text::searchStringSplit($search);
+	if ($search && !Slim::Schema->canFulltextSearch) {
+		$search = { titlesearch => Slim::Utils::Text::searchStringSplit($search) };
+	}
+	elsif ($search) {
+		$search = { titlesearch => $search };
+	}
+	elsif ($folder) {
+		$folder = Slim::Utils::Misc::unescape($folder) if $folder !~ m{^file:/} && $folder =~ /%[0-9A-Fa-f]{2}/;
+		$folder = Slim::Utils::Misc::pathFromFileURL($folder) if $folder =~ m{^file:/};
+		$folder = Slim::Utils::Misc::getPlaylistDir() if !$folder || $folder eq '/' || $folder eq 'file:';
+		$folder .= '/' unless $folder =~ m{/$};
+		$folder = Slim::Utils::Misc::fileURLFromPath($folder);
+
+		$search = {
+			folder => $folder,
+		};
+
+		# the SQL used to filter out items we want
+		my ($inFolderSQL, $sqlParams) = Slim::Schema->rs('Playlist')->getPlaylistIdsSQL('all', { %$search, foldersOnly => 1 }, $libraryId);
+
+		# now we need to figure out folder names only:
+		my $folderSQL = qq(
+			WITH relative_paths AS (
+				SELECT id, replace(url, ?, '') AS relative_path
+				FROM tracks
+				WHERE id IN ($inFolderSQL)
+			)
+			SELECT substr(relative_path, 0, instr(relative_path, '/') ) AS folder_name
+			FROM relative_paths
+			WHERE relative_path != '' AND instr(relative_path, '/') > 0
+			GROUP BY folder_name;
+		);
+
+		my $folders = Slim::Schema->dbh->selectall_arrayref($folderSQL, undef, $folder, @$sqlParams);
+
+		foreach (@$folders) {
+			push @folders, {
+				url => $folder . $_->[0],
+				name => Slim::Utils::Misc::unescape($_->[0]),
+			}
+		}
+
+		$folderCount = scalar @folders;
+		@folders = sort { $a->{name} cmp $b->{name} } @folders;
 	}
 
 	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search, $libraryId);
 
 	# now build the result
-	my $count = $rs->count;
+	my $count = $folderCount + $rs->count;
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	if (defined $rs) {
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-		$count += 0;
+	if ($valid) {
+		my $loopname = 'playlists_loop';
+		my $chunkCount = 0;
 
-		my ($valid, $start, $end) = $request->normalize(
-			scalar($index), scalar($quantity), $count);
+		if ($start < $folderCount) {
+			while ($chunkCount <= $end && $chunkCount < $folderCount) {
+				my $item = $folders[$start + $chunkCount];
 
-		if ($valid) {
+				$request->addResultLoop($loopname, $chunkCount, "id", $item->{url});
+				$request->addResultLoop($loopname, $chunkCount, "playlist", $item->{name});
+				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $item->{url});
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', substr($item->{name}, 0, 1));
 
-			my $loopname = 'playlists_loop';
-			my $chunkCount = 0;
+				$chunkCount++;
+			}
+		}
 
+		if ($end < $folderCount) {
+			@items = splice(@items, $start, $end + 1);
+			$folderCount = scalar @items;
+		}
+
+		if ($end >= $folderCount) {
+			# if we have a folder, we need to start the playlist query at the end of the folder list
+			$start = max(0, $start - $folderCount);
+			$end = $end - $folderCount;
+		}
+
+		if ($end >= 0) {
 			for my $eachitem ($rs->slice($start, $end)) {
 
 				my $id = $eachitem->id();
@@ -2837,10 +2923,8 @@ sub playlistsQuery {
 		}
 
 		$request->addResult("count", $count);
-
-	} else {
-		$request->addResult("count", 0);
 	}
+
 	$request->setStatusDone();
 }
 
@@ -2964,7 +3048,6 @@ sub readDirectoryQuery {
 	my $folder     = $request->getParam('folder');
 	my $filter     = $request->getParam('filter');
 
-	use File::Spec::Functions qw(catdir);
 	my @fsitems;		# raw list of items
 	my %fsitems;		# meta data cache
 
@@ -4212,7 +4295,7 @@ sub statusQuery {
 		if (!$totalOnly) {
 			$track = Slim::Player::Playlist::track($client, $playlist_cur_index, $refreshTrack);
 
-			if ($track->remote) {
+			if ( _notLocalTrackAndRemoteUrl($track) ) {
 				$tags .= "B" unless $totalOnly; # include button remapping
 				my $metadata = _songData($request, $track, $tags);
 				$request->addResult('remoteMeta', $metadata);
@@ -4265,7 +4348,7 @@ sub statusQuery {
 
 					push @addedFromWork, $track->added_from_work;
 
-					if ( $track->remote ) {
+					if ( _notLocalTrackAndRemoteUrl($track) ) {
 						push @tracks, $track;
 					}
 					else {
@@ -4442,7 +4525,7 @@ sub songinfoQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $url	     = $request->getParam('url');
+	my $url      = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
 
@@ -4459,12 +4542,9 @@ sub songinfoQuery {
 
 		$track = Slim::Schema->find('Track', $trackID);
 
-	} else {
+	} elsif ( defined $url ){
 
-		if ( defined $url ){
-
-			$track = Slim::Schema->objectForUrl($url);
-		}
+		$track = Slim::Schema->libraryObjectForUrl($url);
 	}
 
 	# now build the result
@@ -5032,7 +5112,7 @@ sub worksQuery {
 
 	# Get count of unique composers, the count is cached until the next rescan done event
 	my $ccSql = sprintf($sql . " GROUP BY composer.id", "'c'");
-	my $cacheKey = md5_hex($ccSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = _buildCacheKey($ccSql, $p, $search, $client);
 
 	my $composerCount = $cache->{$cacheKey};
 	if ( !$composerCount ) {
@@ -5058,7 +5138,7 @@ sub worksQuery {
 
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cSql = sprintf($sql, "'c'");
-	$cacheKey = md5_hex($cSql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	$cacheKey = _buildCacheKey($cSql, $p, $search, $client);
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -5717,7 +5797,7 @@ sub _songData {
 	}
 
 	# figure out the track object
-	my $track = Slim::Schema->objectForUrl($pathOrObj);
+	my $track = Slim::Schema->libraryObjectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -5737,13 +5817,11 @@ sub _songData {
 
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	my $isRemote = $track->remote;
+	my $isRemote = _notLocalTrackAndRemoteUrl($track);
 	my $url = $track->url;
 
-	my $song;
-	if ( my $client = $request->client ) {
-		$song = $client->currentSongForUrl($url);
-	}
+	my $client = $request->client;
+	my $song = $client->currentSongForUrl($url) if $client;
 
 	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
@@ -5751,7 +5829,7 @@ sub _songData {
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			# Don't modify source data
 			$remoteMeta = Storable::dclone(
-				$handler->getMetadataFor( $request->client, $url )
+				$handler->getMetadataFor( $client, $url )
 			);
 
 			$remoteMeta->{a} = $remoteMeta->{artist};
@@ -6457,7 +6535,7 @@ sub _getTagDataForTracks {
 	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 
-		my $cacheKey = md5_hex($sql . Slim::Utils::Unicode::utf8on(join( ':', @$p, @$w )) . (Slim::Utils::Text::ignoreCase($search, 1) || ''));
+		my $cacheKey = _buildCacheKey($sql, $p, $search, undef);
 
 		# use short lived cache, as we might be dealing with changing data (eg. playcount)
 		if ( my $cached = $bmfCache{$cacheKey} ) {
@@ -6709,6 +6787,23 @@ sub _createIndexList {
 	}
 
 	return \@indexList;
+}
+
+sub _notLocalTrackAndRemoteUrl {
+	my $track = shift;
+	return ref($track) && ref($track) ne 'Slim::Schema::Track' && $track->can('remote') && $track->remote;
+}
+
+sub _buildCacheKey {
+	my ($sql, $p, $search, $client) = @_;
+
+	# Slim::Utils::Text::ignoreCase (amongst other useful things) will remove the leading quote from a search phrase, so put it back.
+	return md5_hex(Encode::encode("UTF-8",
+		$sql
+		. Slim::Utils::Unicode::utf8on(join( ':', @$p ))
+		. Slim::Music::VirtualLibraries->getLibraryIdForClient($client)
+		. ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1)
+	));
 }
 
 =head1 SEE ALSO
