@@ -453,7 +453,7 @@ sub artworkRequest {
 			my $formatClass = Slim::Formats->classForFormat($ct);
 			my $body;
 
-			if (Slim::Formats->loadTagFormatForType($ct) && $formatClass->can('getCoverArt')) {
+			if ($formatClass && $formatClass->can('getCoverArt') && Slim::Formats->loadTagFormatForType($ct)) {
 				$body = $formatClass->getCoverArt($fullpath);
 			}
 
