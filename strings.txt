@@ -12388,6 +12388,12 @@ RELEASE_TYPE_BROADCAST
 	FR	Radiodiffusion
 	ZH_CN	广播
 
+RELEASE_TYPE_BROADCASTS
+	CS	Vysílání
+	DA	Udsendelser
+	EN	Broadcasts
+	FR	Radiodiffusions
+
 RELEASE_TYPE_DEMO
 	EN	Demo
 	FR	Démo
