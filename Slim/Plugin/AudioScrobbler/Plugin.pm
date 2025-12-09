@@ -409,12 +409,10 @@ sub newsongCallback {
 			push @trackGenres, $meta->{genre};
 		}
 
-		if (scalar @trackGenres) {
-			foreach my $trackGenre (@trackGenres) {
-				if (grep { $trackGenre =~ /\Q$_\E/i } @ignoreGenres) {
-					main::DEBUGLOG && $log->debug( sprintf("Ignoring %s due to genre match: %s", $title, join(', ', @trackGenres)) );
-					return;
-				}
+		foreach my $trackGenre (@trackGenres) {
+			if (grep { $trackGenre =~ /\Q$_\E/i } @ignoreGenres) {
+				main::DEBUGLOG && $log->debug( sprintf("Ignoring %s due to genre match: %s", $title, join(', ', @trackGenres)) );
+				return;
 			}
 		}
 	}
