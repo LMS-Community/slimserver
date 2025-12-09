@@ -395,29 +395,28 @@ sub newsongCallback {
 	my @ignoreArtists = split(/\s*,\s*/, $prefs->get('ignoreArtists'));
 	my @ignoreGenres  = split(/\s*,\s*/, $prefs->get('ignoreGenres'));
 
-
-	my @trackGenres = map { $_->name } $track->genres;
-	if (!@trackGenres && $meta->{genre}) {
-		push @trackGenres, $meta->{genre};
-	}
-
-	my $genreIgnored = 0;
-	if (scalar @ignoreGenres && scalar @trackGenres) {
-		foreach my $trackGenre (@trackGenres) {
-			if (grep { $trackGenre =~ /\Q$_\E/i } @ignoreGenres) {
-				$genreIgnored = 1;
-				last;
-			}
-		}
-	}
-
-	if ( $genreIgnored
-		|| (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
+	if ( (scalar @ignoreTitles && grep { $title =~ /\Q$_\E/i } @ignoreTitles)
 		|| (scalar @ignoreArtists && grep { ($track->artistName || $meta->{artist} || '') =~ /\Q$_\E/i } @ignoreArtists)
 		|| (scalar @ignoreAlbums && grep { ($track->albumname || $meta->{album} || '') =~ /\Q$_\E/i } @ignoreAlbums)
 	) {
-		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s; %s; %s", $title, $track->artistName || $meta->{artist}, $track->albumname || $meta->{album}, (@trackGenres ? join(', ', @trackGenres) : '')) );
+		main::DEBUGLOG && $log->debug( sprintf("Ignoring %s, it's failing one of the ignored items tests: %s, %s", $title, $track->artistName || $meta->{artist}, $track->albumname || $meta->{album}) );
 		return;
+	}
+
+	if (scalar @ignoreGenres) {
+		my @trackGenres = map { $_->name } $track->genres;
+		if (!@trackGenres && $meta->{genre}) {
+			push @trackGenres, $meta->{genre};
+		}
+
+		if (scalar @trackGenres) {
+			foreach my $trackGenre (@trackGenres) {
+				if (grep { $trackGenre =~ /\Q$_\E/i } @ignoreGenres) {
+					main::DEBUGLOG && $log->debug( sprintf("Ignoring %s due to genre match: %s", $title, join(', ', @trackGenres)) );
+					return;
+				}
+			}
+		}
 	}
 
 	# We check again at half the song's length or 240 seconds, whichever comes first
