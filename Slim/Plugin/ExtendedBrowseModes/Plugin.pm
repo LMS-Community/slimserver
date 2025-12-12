@@ -356,7 +356,7 @@ sub initMenus {
 			},
 			feed         => 'albums',
 			id           => 'myMusicPopularAlbums',
-			icon         => 'plugins/ExtendedBrowseModes/html/popularalbus_MTL_svg_popularalbum.png',
+			icon         => 'plugins/ExtendedBrowseModes/html/popularalbums_MTL_svg_popularalbum.png',
 			weight       => 52,
 			static       => 1,
 		};
