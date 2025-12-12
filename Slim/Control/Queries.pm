@@ -1263,7 +1263,7 @@ sub artistsQuery {
 	# searching, or if we have a track
 	my $count_va = 0;
 
-	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID && !$roleID ) {
+	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID && !$roleID && !$useStats ) {
 		# Only show VA item if there are any
 		if ( @{$w_va} ) {
 			$sql_va .= 'WHERE ';
