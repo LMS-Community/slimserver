@@ -11,7 +11,6 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use POSIX qw(strftime);
-use List::Util qw(min);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;

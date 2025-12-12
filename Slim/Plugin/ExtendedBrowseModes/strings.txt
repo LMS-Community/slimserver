@@ -247,6 +247,30 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	HU	Nemrég frissített albumok
 	NL	Recent Gewijzigde Albums
 
+PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
+	DE	Zuletzt häufig gespielte Alben
+	EN	Recently Most-Played Albums
+	FR	Albums les plus écoutés récemment
+	NL	Recent meest afgespeelde albums
+
+PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
+	DE	Beliebteste Interpreten
+	EN	Top Artists
+	FR	Artistes les plus populaires
+	NL	Populairste artiesten
+
+PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
+	DE	Neue Interpreten
+	EN	New Artists
+	FR	Nouveaux artistes
+	NL	Nieuwe artiesten
+
+PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
+	DE	Kürzlich gespielte Interpreten
+	EN	Recently Played Artists
+	FR	Artistes récemment écoutés
+	NL	Onlangs afgespeelde artiesten
+
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	CS	Nejlepší skladby
 	DA	Mest populære numre

@@ -35,7 +35,7 @@ use File::Spec::Functions qw(catdir);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
-use List::Util qw(first max);
+use List::Util qw(first max min);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
 use URI::Escape ();
@@ -58,6 +58,7 @@ use Slim::Web::ImageProxy qw(proxiedImage);
 }
 
 my $log = logger('control.queries');
+my $sqllog = logger('database.sql');
 
 my $prefs = preferences('server');
 
@@ -275,8 +276,6 @@ sub albumsQuery {
 		return;
 	}
 
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
 	# get our parameters
 	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
@@ -300,8 +299,7 @@ sub albumsQuery {
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 
-	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'playcount', 'recentlyplayed', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random'])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'playcount', 'popular', 'recentlyplayed', 'changed', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -401,7 +399,7 @@ sub albumsQuery {
 		}
 
 		if ($tags ne 'CC') {
-			if ( $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ ) {
+			if ( $sort =~ /^(?:new|changed|playcount|popular|recentlyplayed)$/ ) {
 				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 				$limit = $prefs->get('browseagelimit') || 100;
 				$order_by = "MAX(tracks.timestamp) DESC";
@@ -411,14 +409,14 @@ sub albumsQuery {
 					$quantity = $limit;
 				}
 
-				my $useStats = main::STATISTICS && $sort =~ /^(?:new|playcount|recentlyplayed)$/;
+				my $useStats = main::STATISTICS && $sort =~ /^(?:new|playcount|popular|recentlyplayed)$/;
 				if (main::STATISTICS && $useStats) {
 					$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
 
 					if ($sort eq 'new') {
 						$order_by = 'MIN(tracks_persistent.added) DESC';
 					}
-					elsif ($sort eq 'playcount') {
+					elsif ($sort =~ /playcount|popular/) {
 						$ignoreNewAlbumsCache = 1;
 						$order_by = 'albums_playcount DESC';
 					}
@@ -664,9 +662,15 @@ sub albumsQuery {
 		$c->{'contributors.portraitid'} = 1;
 	}
 
-	if ( main::STATISTICS && $sort eq 'playcount' ) {
+	if ( main::STATISTICS && $sort =~ /playcount|popular/ ) {
 		$c->{'AVG(tracks_persistent.playcount)'} = 1;
 		$as->{'AVG(tracks_persistent.playcount)'} = 'albums_playcount';
+
+		# only look back browsePopularityMaxDays days
+		if ($sort eq 'popular') {
+			push @{$w}, 'tracks_persistent.lastplayed > ?';
+			push @{$p}, time() - $prefs->get('browsePopularityMaxDays') * 86400;
+		}
 	}
 
 	if ( @{$w} ) {
@@ -698,7 +702,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = _buildCacheKey($sql, $p, $search, $client);
 
-	if ( !$ignoreNewAlbumsCache && $sort =~ /^(?:new|changed|playcount|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} ) {
+	if ( !$ignoreNewAlbumsCache && $sort =~ /^(?:new|changed|playcount|popular|recentlyplayed)$/ && $cache->{$newAlbumsCacheKey} ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
@@ -1005,6 +1009,7 @@ sub artistsQuery {
 	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
+	my $sort     = $request->getParam('sort') || 'artist';
 	my $search   = $request->getParam('search');
 	my $year     = $request->getParam('year');
 	my $genreID  = $request->getParam('genre_id');
@@ -1017,6 +1022,12 @@ sub artistsQuery {
 	my $includeOnlineOnlyArtists = $request->getParam('include_online_only_artists');
 	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags     = $request->getParam('tags') || '';
+
+	# "popular" is similar to "playcount", but only looks back browsePopularityMaxDays days
+	if ($request->paramNotOneOfIfDefined($sort, ['artist', 'new', 'playcount', 'popular', 'recentlyplayed'])) {
+		$request->setStatusBadParams();
+		return;
+	}
 
 	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
 	my $aa_merge = $roleID && $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
@@ -1042,7 +1053,30 @@ sub artistsQuery {
 	my $cacheKey;
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $sort    = "contributors.namesort $collate, contributors.musicbrainz_id";
+	my $order_by = "contributors.namesort $collate, contributors.musicbrainz_id";
+
+	my $useStats = $sort =~ /^(?:new|playcount|popular|recentlyplayed)$/;
+	if (main::STATISTICS && $useStats) {
+		if ($sort eq 'new') {
+			$order_by = "MIN(tracks_persistent.added) DESC, $order_by";
+		}
+		elsif ($sort =~ /playcount|popular/) {
+			$order_by = "SUM(tracks_persistent.playcount) DESC, MIN(tracks.timestamp), $order_by";
+		}
+		elsif ($sort eq 'recentlyplayed') {
+			$order_by = "MAX(tracks_persistent.lastplayed) DESC, $order_by";
+		}
+
+		my $limit = $prefs->get('browseagelimit') || 100;
+		$quantity = min($quantity || $limit, $limit);
+
+		$wantExternal = 0; # stats are not available for online-only artists
+	}
+	# stats are disabled
+	elsif ( $useStats ) {
+		$useStats = undef;
+		$sort = 'artist';
+	}
 
 	# Manage joins
 	if (defined $trackID) {
@@ -1066,7 +1100,7 @@ sub artistsQuery {
 			unshift @{$w}, "contributors.id = artistsSearch.id";
 
 			if ($tags ne 'CC') {
-				$sort = "artistsSearch.fulltextweight DESC, LENGTH(contributors.name), $sort";
+				$order_by = "artistsSearch.fulltextweight DESC, LENGTH(contributors.name), $order_by";
 			}
 		}
 
@@ -1088,11 +1122,23 @@ sub artistsQuery {
 			} Slim::Schema::Contributor->defaultContributorRoles(), Slim::Schema::Contributor->userDefinedRoles(1) ];
 		}
 
+		my $join_contributor_tracks = sub {
+			if ( $sql !~ /JOIN contributor_track/ ) {
+				$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
+			}
+		};
+
+		my $join_tracks = sub {
+			$join_contributor_tracks->();
+			if ( $sql !~ /JOIN tracks / ) {
+				$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
+			}
+		};
+
 		if ( defined $genreID ) {
 			my @genreIDs = split(/,/, $genreID);
 
-			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
-			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
+			$join_tracks->();
 			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
 			push @{$p}, @genreIDs;
@@ -1105,13 +1151,23 @@ sub artistsQuery {
 		}
 
 		if (defined $workID) {
-			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ' if $sql !~ /JOIN contributor_track/;
-			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ' if $sql !~ /JOIN tracks /;
+			$join_tracks->();
 			if ( $workID eq "-1" ) {
 				push @{$w}, 'tracks.work IS NOT NULL';
 			} else {
 				push @{$w}, 'tracks.work = ?';
 				push @{$p}, $workID;
+			}
+		}
+
+		if ( $useStats ) {
+			$join_tracks->();
+			$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+
+			# only look back browsePopularityMaxDays days
+			if ($sort eq 'popular') {
+				push @{$w}, 'tracks_persistent.lastplayed > ?';
+				push @{$p}, time() - $prefs->get('browsePopularityMaxDays') * 86400;
 			}
 		}
 
@@ -1227,7 +1283,7 @@ sub artistsQuery {
 	}
 
 	my $indexList;
-	if ($tags =~ /Z/) {
+	if ($tags =~ /Z/ && $useStats) {
 		$indexList = _createIndexList(sprintf($sql, "SUBSTR(contributors.namesort,1,1)") . " GROUP BY contributors.id ORDER BY contributors.namesort $collate", $p);
 
 		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
@@ -1244,7 +1300,7 @@ sub artistsQuery {
 		. ($tags =~ /4/ ? ', contributors.portraitid' : '')
 		) . 'GROUP BY contributors.id ';
 
-	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
+	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
@@ -1334,7 +1390,7 @@ sub artistsQuery {
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
 
-			if ($tags =~ /s/) {
+			if (!$useStats && $tags =~ /s/) {
 				# Bug 11070: Don't display large V at beginning of browse Artists
 				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
 				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
@@ -1730,8 +1786,6 @@ sub genresQuery {
 		$request->setStatusNotDispatchable();
 		return;
 	}
-
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
 
 	# get our parameters
 	my $client        = $request->client();
@@ -3253,8 +3307,6 @@ sub rolesQuery {
 		$request->setStatusNotDispatchable();
 		return;
 	}
-
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
 
 	# get our parameters
 	my $client        = $request->client();
@@ -4869,8 +4921,6 @@ sub yearsQuery {
 		return;
 	}
 
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
 	# get our parameters
 	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
@@ -4983,8 +5033,6 @@ sub worksQuery {
 		$request->setStatusNotDispatchable();
 		return;
 	}
-
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
 
 	# get our parameters
 	my $client        = $request->client();
@@ -6189,8 +6237,6 @@ Returns arrayref of hashes.
 sub _getTagDataForTracks {
 	my ( $tags, $args ) = @_;
 
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	my $sql      = 'SELECT %s FROM tracks ';
@@ -6749,8 +6795,7 @@ sub _getTagDataForTracks {
 sub _createIndexList {
 	my ($pageSql, $p) = @_;
 
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-	if ( $sqllog && $sqllog->is_debug ) {
+	if ( main::DEBUGLOG && $sqllog->is_debug ) {
 		$sqllog->debug( "indexList query: $pageSql / " . Data::Dump::dump($p) );
 	}
 

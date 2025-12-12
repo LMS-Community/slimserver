@@ -177,6 +177,7 @@ sub init {
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => ';',
 		'browseagelimit'        => 100,
+		'browsePopularityMaxDays' => 180,
 		'groupdiscs'            => 1,
 		'persistPlaylists'      => 1,
 		'playtrackalbum'        => 1,

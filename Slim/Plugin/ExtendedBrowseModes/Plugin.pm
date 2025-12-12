@@ -271,6 +271,45 @@ sub initMenus {
 
 	if (main::STATISTICS) {
 		push @additionalStaticMenuItems, {
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS',
+			params       => {
+				mode   => 'myMusicArtistsPopular',
+				sort   => 'popular',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicTopArtists',
+			icon         => 'plugins/ExtendedBrowseModes/html/topartists_MTL_icon_diversity_1.png',
+			weight       => 55,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS',
+			params       => {
+				mode   => 'myMusicArtistsNew',
+				sort   => 'new',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicNewArtists',
+			icon         => 'html/images/artists.png',
+			weight       => 56,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED',
+			params       => {
+				mode   => 'myMusicArtistsRecentlyPlayed',
+				sort   => 'recentlyplayed',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicRecentlyPlayedArtists',
+			icon         => 'html/images/artists.png',
+			weight       => 57,
+			static       => 1,
+			nocache      => 1,
+		},{
 			name         => 'PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS',
 			params       => {
 				mode   => 'toptracks',
@@ -307,6 +346,18 @@ sub initMenus {
 			id           => 'myMusicRecentlyChangeAlbums',
 			icon         => 'html/images/newmusic.png',
 			weight       => 51,
+			static       => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS',
+			params       => {
+				mode => 'albumsmyMusicAlbumsPopular',
+				sort => 'popular',
+				wantMetadata => 1,
+			},
+			feed         => 'albums',
+			id           => 'myMusicPopularAlbums',
+			icon         => 'html/images/newmusic.png',
+			weight       => 52,
 			static       => 1,
 		};
 	}
