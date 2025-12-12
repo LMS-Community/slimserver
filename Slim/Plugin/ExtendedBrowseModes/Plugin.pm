@@ -53,6 +53,7 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
+$serverPrefs->setChange( \&initMenus, 'useUnifiedArtistsList' );
 # subs to subscribe must be unique - wrap the actual sub
 Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['client'], ['new', 'reconnect']] );
 Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['library'], ['changed']] );
@@ -288,6 +289,7 @@ sub initMenus {
 			params       => {
 				mode   => 'myMusicArtistsNew',
 				sort   => 'new',
+				role_id => $serverPrefs->get('useUnifiedArtistsList') ? undef : 'ALBUMARTIST',
 				wantMetadata => 1,
 			},
 			feed         => 'artists',
@@ -301,6 +303,7 @@ sub initMenus {
 			params       => {
 				mode   => 'myMusicArtistsRecentlyPlayed',
 				sort   => 'recentlyplayed',
+				role_id => $serverPrefs->get('useUnifiedArtistsList') ? undef : 'ALBUMARTIST',
 				wantMetadata => 1,
 			},
 			feed         => 'artists',
@@ -412,6 +415,8 @@ sub registerBrowseMode {
 
 	my %params = map {
 		my $v = Slim::Plugin::ExtendedBrowseModes::Libraries->valueToId($item->{params}->{$_}, $_);
+		# artists query is expecting the "ALBUMARTIST" as a literal, or some role filtering will fail
+		$v = $item->{params}->{$_} if $_ eq 'role_id' && $v == 5;
 		{ $_ => $v };
 	} keys %{ $item->{params} || {} };
 

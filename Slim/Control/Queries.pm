@@ -1283,7 +1283,7 @@ sub artistsQuery {
 	}
 
 	my $indexList;
-	if ($tags =~ /Z/ && $useStats) {
+	if ($tags =~ /Z/ && !$useStats) {
 		$indexList = _createIndexList(sprintf($sql, "SUBSTR(contributors.namesort,1,1)") . " GROUP BY contributors.id ORDER BY contributors.namesort $collate", $p);
 
 		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
