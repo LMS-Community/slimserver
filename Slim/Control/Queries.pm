@@ -424,6 +424,10 @@ sub albumsQuery {
 						$ignoreNewAlbumsCache = 1;
 						$order_by = 'MAX(tracks_persistent.lastplayed) DESC';
 					}
+
+					if ($sort ne 'new') {
+						push @{$w}, 'tracks_persistent.lastplayed > 0';
+					}
 				}
 
 				# cache the most recent album IDs - need to query the tracks table, which is expensive
@@ -1168,6 +1172,9 @@ sub artistsQuery {
 			if ($sort eq 'popular') {
 				push @{$w}, 'tracks_persistent.lastplayed > ?';
 				push @{$p}, time() - $prefs->get('browsePopularityMaxDays') * 86400;
+			}
+			elsif ($sort ne 'new') {
+				push @{$w}, 'tracks_persistent.lastplayed > 0';
 			}
 		}
 
