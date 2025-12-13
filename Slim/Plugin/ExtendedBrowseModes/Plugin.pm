@@ -280,7 +280,7 @@ sub initMenus {
 			},
 			feed         => 'artists',
 			id           => 'myMusicTopArtists',
-			icon         => 'plugins/ExtendedBrowseModes/html/topartists_MTL_icon_diversity_1.png',
+			icon         => 'plugins/ExtendedBrowseModes/html/topartists_MTL_svg_artistpopular.png',
 			weight       => 55,
 			static       => 1,
 			nocache      => 1,
