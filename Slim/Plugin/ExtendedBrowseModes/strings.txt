@@ -248,14 +248,14 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	NL	Recent Gewijzigde Albums
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
-	DE	Zuletzt häufig gespielte Alben
-	EN	Recently Most-Played Albums
+	DE	Populäre Alben
+	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
 	NL	Recent meest afgespeelde albums
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
-	DE	Beliebteste Interpreten
-	EN	Top Artists
+	DE	Populäre Interpreten
+	EN	Popular Artists
 	FR	Artistes les plus populaires
 	NL	Populairste artiesten
 
