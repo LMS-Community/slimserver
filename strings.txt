@@ -13960,6 +13960,25 @@ BROWSE_WORKS
 	PT	Examinar obras
 	ZH_CN	浏览作品
 
+SUBTITLE
+	CS	Podtitulek
+	DA	Undertitel
+	DE	Untertitel
+	EN	Subtitle
+	ES	Subtítulo
+	FI	Tekstitys
+	FR	Titre secondaire
+	HE	כתובית
+	HU	Felirat
+	IT	Sottotitolo
+	NL	Ondertitel
+	NO	Tekst
+	PL	Podtytuł
+	PT	Subtítulo
+	RU	Субтитры
+	SV	Undertitel
+	ZH_CN	字幕
+
 WORK
 	CS	Díla
 	DA	Værk

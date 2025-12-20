@@ -173,7 +173,7 @@ sub advancedSearch {
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
-			$newKey =~ s/_(rating|playcount|value|titlesearch|namesearch|release_type|)\b/\.$1/;
+			$newKey =~ s/_(rating|playcount|value|subtitle|titlesearch|namesearch|release_type|)\b/\.$1/;
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
@@ -252,7 +252,7 @@ sub advancedSearch {
 		#
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/(.+)_(titlesearch|namesearch|value|release_type|)$/$1\.$2/) {
+		if ($newKey =~ s/(.+)_(titlesearch|namesearch|subtitle|value|release_type|)$/$1\.$2/) {
 			$joins{$1}++ if $1 ne 'me';
 
 			$params->{$key} = Slim::Utils::Text::searchStringSplit($params->{$key});
