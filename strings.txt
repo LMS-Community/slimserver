@@ -13979,6 +13979,12 @@ SUBTITLE
 	SV	Undertitel
 	ZH_CN	字幕
 
+DISCSUBTITLE
+	DE	Satz/Album Untertitel
+	EN	Set/Album Subtitle
+	FR	Ensemble/Album Sous-titres
+	NL	Set/Album Ondertiteling
+
 WORK
 	CS	Díla
 	DA	Værk
