@@ -1417,6 +1417,20 @@ sub playlistXitemCommand {
 				$path = $easypath;
 			}
 		}
+
+		# we must not try to play a playlist by path while the scanner is running - it could lock the database
+		if ($easypath && Slim::Music::Import->stillScanning()) {
+			my @tracks = _playlistXtracksCommand_parseDbItem($client, 'db:playlist.title=' . URI::Escape::uri_escape_utf8($item));
+			if (@tracks) {
+				$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
+			}
+			else {
+				main::INFOLOG && $log->info("Cannot play playlist $easypath while scan is in progress");
+			}
+
+			$request->setStatusDone();
+			return;
+		}
 	}
 
 	# Un-escape URI that have been escaped again.
