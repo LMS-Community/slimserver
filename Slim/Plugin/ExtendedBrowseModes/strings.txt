@@ -11,7 +11,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	SV	Ytterligare blädder-menyer
 
 PLUGIN_EXTENDED_BROWSEMODES_DESC
-	CS	Vytvořte si další režimy procházení a procházejte hudební knihovnu podle interpretů alba, skladatelů, vybraných žánrů a dalších.
+	CS	Vytvořte další režimy procházení a procházejte svou hudební knihovnu podle interpretů alba, skladatelů, vybraných žánrů a dalších.
 	DA	Opret flere menuer for at gennemse dit musikbibliotek efter albumkunstnere, komponister, udvalgte genrer, osv.
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
@@ -54,7 +54,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	SV	Kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER
-	CS	Složka seznamu skladeb
+	CS	Složka seznamů skladeb
 	DA	Mappe med afspilningslister
 	DE	Wiedergabelisten-Ordner
 	EN	Playlists Folder
@@ -198,7 +198,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	SV	Hela musiksamlingen (standard)
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
-	CS	Skrýt ztrátové duplikáty, pokud je k dispozici bezeztrátová skladba
+	CS	Skrýt ztrátové duplikáty, pokud je k dispozici bezeztrátová verze skladby
 	DA	Skjul duplikater af numre komprimeret med tab af opløsning, hvis tabsfrie numre er til rådighed
 	DE	Keine verlustbehafteten Duplikate anzeigen
 	EN	Hide lossy duplicates if lossless track is available
@@ -210,7 +210,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
-	CS	Vytvoření zobrazení knihovny, které se snaží potlačit duplicitní skladby skrytím ztrátových verzí, pokud je k dispozici bezztrátová verze stejné nahrávky. To je obzvláště užitečné, pokud uchováváte sbírku skladeb pro použití doma (bezeztrátová) a na cestách (ztrátová).
+	CS	Vytvořte zobrazení knihovny, které se snaží potlačit duplicitní skladby skrytím ztrátových verzí, pokud je k dispozici bezeztrátová verze stejné nahrávky. To je užitečné zejména pokud uchováváte sbírku skladeb pro použití doma (bezeztrátová) a na cestách (ztrátová).
 	DA	Opret en biblioteksvisning som skjuler duplikater af numre komprimeret med tab af opløsning, hvis en tabsfri version af samme optagelse er til rådighed. Dette er nyttigt hvis du har et bibliotek af numre til brug i hjemmet (tabsfri) og en for brug på farten (komprimeret med tab).
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
@@ -248,24 +248,28 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	NL	Recent Gewijzigde Albums
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
+	CS	Oblíbená alba
 	DE	Populäre Alben
 	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
 	NL	Recent meest afgespeelde albums
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
+	CS	Oblíbení interpreti
 	DE	Populäre Interpreten
 	EN	Popular Artists
 	FR	Artistes les plus populaires
 	NL	Populairste artiesten
 
 PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
+	CS	Noví interpreti
 	DE	Neue Interpreten
 	EN	New Artists
 	FR	Nouveaux artistes
 	NL	Nieuwe artiesten
 
 PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
+	CS	Nedávno přehrávaní interpreti
 	DE	Kürzlich gespielte Interpreten
 	EN	Recently Played Artists
 	FR	Artistes récemment écoutés

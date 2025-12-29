@@ -508,7 +508,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	SV	Aktivera det här alternativet om du vill packa om bilder (exempelvis skivomslag) som är lagrade i iTunes. Tänk på att detta kan ta tid eftersom överföringen från iTunes går långsamt.
 
 SETUP_ITUNES_EXTRACT_ARTWORK
-	CS	Extrahovat obaly alb iTunes (zkušebně)
+	CS	Extrahovat obaly alb iTunes (experimentální)
 	DA	Hent iTunes-albumcovere (på prøvestadiet)
 	DE	iTunes-Cover verwenden (experimentell)
 	EN	Extract iTunes Artwork (experimental)

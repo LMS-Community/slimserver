@@ -9,6 +9,7 @@ PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ
 	EN	ListenBrainz
 
 PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ_LABEL
+	CS	ListenBrainz API (experimentální)
 	DE	ListenBrainz API (Experimentell)
 	EN	ListenBrainz API (Experimental)
 	FR	API ListenBrainz (Expérimental)
@@ -31,7 +32,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	SV	Last.fm / ListenBrainz-konto(n)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
-	CS	Zadejte své přihlašovací jméno a heslo k Last.fm či API key/token pro ListenBrainz.</br>Pokud chcete odesílat skladby z různých přehrávačů na různé účty, můžete zadat více účtů. Je možné též nastavit vlastní API url pro alternativní konfigurace, jinak toto nastavení ponechte prázdné.</br> </br>Příklady vlastních base URL:</br> </br>Maloja (with Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (with ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (with ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (with ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
+	CS	Zadejte své uživatelské jméno a heslo k Last.fm či API klíč/token pro ListenBrainz.</br>Pokud chcete odesílat skladby z různých přehrávačů na různé účty, můžete zadat více účtů. Je možné též nastavit vlastní adresu URL API pro alternativní konfigurace, jinak toto nastavení ponechte prázdné.</br> </br>Příklady vlastních základních adres URL:</br> </br>Maloja (s Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (s ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (s ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (s ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	DA	Indtast dit brugernavn og adgangskode til Last.fm eller API-nøgle/token til ListenBrainz.</br>Du kan angive flere konti, hvis du vil indsende oplysninger fra forskellige afspillere til forskellige konti. Du kan også indstille en brugerdefineret API-URL til alternative konfigurationer, ellers skal du lade denne indstilling være tom.</br> </br>Eksempler på brugerdefinerede base-URL'er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	DE	Geben Sie Ihren Benutzernamen und Ihr Passwort für Last.fm oder API-Schlüssel/Token für ListenBrainz ein.</br>Sie können mehrere Konten eingeben, um Titel von verschiedenen Playern an verschiedene Konten zu senden. Sie können auch eine benutzerdefinierte API-URL für alternative Konfigurationen festlegen, andernfalls lassen Sie diese Einstellung leer.</br> </br>Beispiele für benutzerdefinierte Basis-URLs:</br> </br>Maloja (mit Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (mit ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (mit ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (mit ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	EN	Enter your Last.fm username and password or API key/token for ListenBrainz.</br>Multiple accounts may be entered if you wish to submit tracks from different players to different accounts. You can also set a custom API URL for alternative configurations, otherwise leave this setting empty.</br> </br>Examples of custom base URLs:</br> </br>Maloja (with Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (with ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (with ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (with ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
@@ -64,7 +65,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
 	SV	Om du vill ta bort ett befintligt konto, markerar du motsvarande kryssruta.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
-	CS	Zadejte vaše přihlašovací jméno a heslo k Last.fm či údaje k ListenBrainz.
+	CS	Zadejte své uživatelské jméno a heslo k Last.fm či údaje k ListenBrainz.
 	DA	Skriv dit brugernavn og adgangskoden til Last.fm eller legitimationsoplysninger til ListenBrainz.
 	DE	Geben Sie Benutzername und Kennwort für Last.fm oder Anmeldedaten für ListenBrainz ein.
 	EN	Enter your Last.fm username and password or credentials for ListenBrainz.
@@ -96,7 +97,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME
 	SV	Användarnamn:
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_PASSWORD
-	CS	Heslo / API key:
+	CS	Heslo / API klíč:
 	DA	Adgangskode / API-nøgle:
 	DE	Passwort / API-Schlüssel:
 	EN	Password / API key:
@@ -112,7 +113,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_PASSWORD
 	SV	Lösenord / API-nyckel:
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_API_TYPE
-	CS	Vyberte typ API (a v případě potřeby zadejte vlastní základní URL API).
+	CS	Vyberte typ API (a v případě potřeby zadejte Vlastní základní adresu URL API).
 	DA	Vælg API-typen (og indtast den brugerdefinerede API-base-URL, hvis det er nødvendigt).
 	DE	Wählen Sie den API-Typ aus (und geben Sie die benutzerdefinierte API-Basis-URL ein, falls erforderlich).
 	EN	Select the API type (and enter the custom API base URL if needed).
@@ -128,7 +129,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_API_TYPE
 	SV	Välj API-typ (och ange den anpassade API-bas-URL:en om det behövs).
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_CUSTOM_URL
-	CS	Vlastní základní URL API:
+	CS	Vlastní základní adresa URL API:
 	DA	Brugerdefineret API-base-URL:
 	DE	Benutzerdefinierte API-Basis-URL:
 	EN	Custom API base URL:
@@ -176,7 +177,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
 	SV	Aktivera det här alternativet om du vill uppdatera din musikprofil på Last.fm / ListenBrainz med all musik du lyssnar på.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
-	CS	Ano, nahlásit přehrávané skladby do Last.fm / ListenBrainz
+	CS	Ano, nahlásit přehrávané skladby do Last.fm / ListenBrainz.
 	DA	Ja, indsend alle afspillede numre til Last.fm / ListenBrainz.
 	DE	Ja, wiedergegebene Titel an Last.fm / ListenBrainz melden.
 	EN	Yes, report tracks played to Last.fm / ListenBrainz.
@@ -226,7 +227,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
-	CS	Ignorovat interprety
+	CS	Ignorovaní interpreti
 	DA	Ignorér kunstnere
 	DE	Interpreten ignorieren
 	EN	Ignore Artists
@@ -244,7 +245,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	NL	Definieer een door komma's gescheiden lijst van artiesten. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
-	CS	Ignorovat názvy alb
+	CS	Ignorované názvy alb
 	DA	Ignorér albumtitler
 	DE	Albentitel ignorieren
 	EN	Ignore Album Titles
@@ -262,7 +263,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	NL	Definieer een door komma's gescheiden lijst van albums. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
-	CS	Ignorovat žánry
+	CS	Ignorované žánry
 	DA	Ignorér genrer
 	DE	Stilrichtungen ignorieren
 	EN	Ignore Genres
@@ -344,6 +345,7 @@ PLUGIN_AUDIOSCROBBLER_VALID_LOGIN
 	SV	Användarnamn och lösenord för Last.fm har verifierats.
 
 SETUP_AUDIOSCROBBLER_VALID_CREDENTIALS
+	CS	Informace o účtu byly úspěšně ověřeny.
 	DE	Die Anmeldedaten wurden erfolgreich verifiziert.
 	EN	Successfully validated your account information.
 	FR	Vos informations de compte ont été validées avec succès.
@@ -446,27 +448,28 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_VALIDATION_ERROR
+	CS	Při ověřování informací o účtu došlo k chybě. Zkuste to prosím později. (%s)
 	DE	Problem beim Prüfen Ihrer Kontoinformationen. Versuchen Sie es später noch einmal. (%s)
 	EN	There was an error validating your account information. Please try again later. (%s)
 	FR	Une erreur est survenue lors de la validation des informations de votre compte. Veuillez réessayer ultérieurement. (%s)
 	NL	Er is een fout opgetreden bij de verificatie van jouw account bij. Probeer het later opnieuw. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
-	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí na míru upravené rozhlasové stanice, doporučování hudby a akcí, bezplatné stahování a další. Připojte se zdarma na <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> nebo zjistěte více na <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	DA	Med musiktjenesten Last.fm kan du opbygge en personlig musikprofil ved at registrere hvilke numre du lytter til. Ud fra din musiksmag får du en liste over radiostationer, musiknumre og tip om koncerter, gratis download m.m. Du kan tilmelde dig gratis på <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> eller læse mere på <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören. Last.fm stellt auf Ihren Geschmack zugeschnittene Radiosender, Musik- und Veranstaltungsempfehlungen, kostenlose Downloads usw. zur Verfügung. Melden Sie sich kostenlos an unter <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>. Weitere Informationen finden Sie unter <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen to. Based on your taste, Last.fm provides customized radio stations, music and event recommendations, free downloads and more. Join for free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	EN_GB	Last.fm a music service that builds up your personal music profile by tracking the music you listen to. Based on your taste, Last.fm provides customised radio stations, music and event recommendations, free downloads and more. Join for free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha. Según sus gustos, Last.fm le proporciona recomendaciones personalizadas de emisoras de radio, música y sucesos, descargas gratuitas y mucho más. Inscríbase gratuitamente en <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o acceda a más información en <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	FI	Last.fm on musiikkipalvelu, joka rakentaa sinulle henkilökohtaisen musiikkiprofiilin seuraamalla, mitä musiikkia kuuntelet. Last.fm tarjoaa mukautettuja radioasemia, musiikkia, tapahtumasuosituksia, ilmaisia latauksia ja paljon muuta. Liity ilmaiseksi osoitteessa <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>. Saat lisätietoja osoitteessa <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez. En fonction de vos goûts musicaux, Last.fm fournit des stations de radio, des recommandations musicales et des téléchargements libres personnalisés, et bien plus encore. Rejoignez-nous sur <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> ou découvrez le service sur <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	HU	A Last.fm egy zenei szolgáltatás, amely a hallgatott zene nyomon követésével építi fel személyes zenei profilját. Az Ön ízlésének megfelelően a Last.fm személyre szabott rádióállomásokat, zene- és eseményajánlásokat, ingyenes letöltéseket és még sok mást kínál. Csatlakozzon ingyenesen a <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> oldalon, vagy tudjon meg többet a <a href="http: //www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta. Last.fm si basa sui gusti personali e fornisce suggerimenti personalizzati su stazioni radio, musica ed eventi, download gratuiti e altro ancora. Iscriviti gratuitamente all'indirizzo <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o, per saperne di più, visita il sito Web <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	NL	Last.fm: een muziekservice die een persoonlijk muziekprofiel opbouwt door bij te houden naar welke muziek je luistert. Last.fm biedt gepersonaliseerde radiostations, muziek- en evenemententips, gratis downloads en nog meer op basis van je muzieksmaak. Meld je gratis aan op <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> of kom meer te weten op <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	NO	Last.fm er en musikktjeneste som bygger opp en personlig musikkprofil for deg ved å spore musikken du spiller. Ut fra dine valg lager Last.fm tilpassede radiostasjoner, spiller utvalgt musikk og viser relevante arrangementsanbefalinger. Du kan registrere deg gratis på <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>, eller finne ut mer på <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	PL	Usługa muzyczna Last.fm tworzy osobisty profil muzyczny użytkownika, śledząc informacje o słuchanej muzyce. Opierając się na upodobaniach użytkownika, usługa Last.fm udostępnia dostosowane stacje radiowe, rekomendacje muzyki i imprez, bezpłatne pliki do pobrania i nie tylko. Dołącz bezpłatnie pod adresem <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> lub uzyskaj więcej informacji pod adresem <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	RU	Last.fm — музыкальная служба, отслеживающая музыку, которую вы слушаете, и определяющая ваш личный музыкальный профиль. На основании ваших вкусов Last.fm создает персональные радиостанции, рекомендации по музыке и мероприятиям, бесплатные загрузки и многое другое. Подключитесь к Last.fm бесплатно на сайте <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> или посетите <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>, чтобы получить дополнительную информацию.
-	SV	Last.fm är en musiktjänst som skapar en personlig musikprofil för dig genom att registrera vad du lyssnar på. Du får rekommendationer och kan lyssna på anpassade radiostationer och musik som passar just dig. Det kostar ingenting att registrera sig via <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>. Gå in på <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a> om du vill veta mer om hur det fungerar.
+	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí na míru upravené rozhlasové stanice, doporučování hudby a akcí, bezplatné stahování a další. Připojte se zdarma na <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> nebo zjistěte více na <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	DA	Med musiktjenesten Last.fm kan du opbygge en personlig musikprofil ved at registrere hvilke numre du lytter til. Ud fra din musiksmag får du en liste over radiostationer, musiknumre og tip om koncerter, gratis download m.m. Du kan tilmelde dig gratis på <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> eller læse mere på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören. Last.fm stellt auf Ihren Geschmack zugeschnittene Radiosender, Musik- und Veranstaltungsempfehlungen, kostenlose Downloads usw. zur Verfügung. Melden Sie sich kostenlos an unter <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>. Weitere Informationen finden Sie unter <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen to. Based on your taste, Last.fm provides customized radio stations, music and event recommendations, free downloads and more. Join for free at <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	EN_GB	Last.fm a music service that builds up your personal music profile by tracking the music you listen to. Based on your taste, Last.fm provides customised radio stations, music and event recommendations, free downloads and more. Join for free at <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha. Según sus gustos, Last.fm le proporciona recomendaciones personalizadas de emisoras de radio, música y sucesos, descargas gratuitas y mucho más. Inscríbase gratuitamente en <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> o acceda a más información en <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	FI	Last.fm on musiikkipalvelu, joka rakentaa sinulle henkilökohtaisen musiikkiprofiilin seuraamalla, mitä musiikkia kuuntelet. Last.fm tarjoaa mukautettuja radioasemia, musiikkia, tapahtumasuosituksia, ilmaisia latauksia ja paljon muuta. Liity ilmaiseksi osoitteessa <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>. Saat lisätietoja osoitteessa <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez. En fonction de vos goûts musicaux, Last.fm fournit des stations de radio, des recommandations musicales et des téléchargements libres personnalisés, et bien plus encore. Rejoignez-nous sur <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> ou découvrez le service sur <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	HU	A Last.fm egy zenei szolgáltatás, amely a hallgatott zene nyomon követésével építi fel személyes zenei profilját. Az Ön ízlésének megfelelően a Last.fm személyre szabott rádióállomásokat, zene- és eseményajánlásokat, ingyenes letöltéseket és még sok mást kínál. Csatlakozzon ingyenesen a <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> oldalon, vagy tudjon meg többet a <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta. Last.fm si basa sui gusti personali e fornisce suggerimenti personalizzati su stazioni radio, musica ed eventi, download gratuiti e altro ancora. Iscriviti gratuitamente all'indirizzo <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> o, per saperne di più, visita il sito Web <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	NL	Last.fm: een muziekservice die een persoonlijk muziekprofiel opbouwt door bij te houden naar welke muziek je luistert. Last.fm biedt gepersonaliseerde radiostations, muziek- en evenemententips, gratis downloads en nog meer op basis van je muzieksmaak. Meld je gratis aan op <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> of kom meer te weten op <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	NO	Last.fm er en musikktjeneste som bygger opp en personlig musikkprofil for deg ved å spore musikken du spiller. Ut fra dine valg lager Last.fm tilpassede radiostasjoner, spiller utvalgt musikk og viser relevante arrangementsanbefalinger. Du kan registrere deg gratis på <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>, eller finne ut mer på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	PL	Usługa muzyczna Last.fm tworzy osobisty profil muzyczny użytkownika, śledząc informacje o słuchanej muzyce. Opierając się na upodobaniach użytkownika, usługa Last.fm udostępnia dostosowane stacje radiowe, rekomendacje muzyki i imprez, bezpłatne pliki do pobrania i nie tylko. Dołącz bezpłatnie pod adresem <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> lub uzyskaj więcej informacji pod adresem <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	RU	Last.fm — музыкальная служба, отслеживающая музыку, которую вы слушаете, и определяющая ваш личный музыкальный профиль. На основании ваших вкусов Last.fm создает персональные радиостанции, рекомендации по музыке и мероприятиям, бесплатные загрузки и многое другое. Подключитесь к Last.fm бесплатно на сайте <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> или посетите <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>, чтобы получить дополнительную информацию.
+	SV	Last.fm är en musiktjänst som skapar en personlig musikprofil för dig genom att registrera vad du lyssnar på. Du får rekommendationer och kan lyssna på anpassade radiostationer och musik som passar just dig. Det kostar ingenting att registrera sig via <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>. Gå in på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a> om du vill veta mer om hur det fungerar.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	CS	Poznámka: Ke konfiguraci vašeho účtu u Last.fm klikněte na Pokročilé a poté zvolte položku Last.fm Audioscrobbler.
@@ -517,7 +520,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
 	SV	Om du väljer att skrobbla webbradiospåren kan det hända att oönskade data hamnar i din Last.fm-profil. Avaktivera skrobbling genom att ändra det här alternativet. Radiospår kan fortfarande väljas som favoriter.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
-	CS	Ano, scroblovat skladby z internetových rádií
+	CS	Ano, scroblovat skladby z internetových rádií.
 	DA	Ja, indsend oplysninger om hvilke numre jeg hører på internetradio.
 	DE	Ja, Internetradiotitel scrobbeln.
 	EN	Yes, scrobble Internet Radio tracks.
