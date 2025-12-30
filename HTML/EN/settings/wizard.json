@@ -6,7 +6,7 @@
 				"EN": "Material Skin"
 			},
 			"desc": {
-				"CS": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> poskytuje moderní, bohaté a responzivní uživatelské rozhraní pro vaši hudební sbírku.",
+				"CS": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> poskytuje modern&iacute;, bohat&eacute; a responzivn&iacute; u&zcaron;ivatelsk&eacute; rozhran&iacute; pro va&scaron;i hudebn&iacute; sb&iacute;rku.",
 				"DA": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> er en moderne, omfangsrig og responsive brugergrænseflade til din musiksamling.",
 				"DE": "Der <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> bietet eine moderne, reichhaltige und f&uuml;r Desktop wie Mobilbrowser anpassungsf&auml;hige Benutzeroberfl&auml;che f&uuml;r Ihre Musiksammlung.",
 				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection.",
@@ -26,7 +26,7 @@
 				"FR": "Informations sur la Musique et les Artistes"
 			},
 			"desc": {
-				"CS": "Zásuvný modul Informace o hudbě a interpretovi poskytuje další informace o vaší hudbě: biografie, recenze alb, texty písní a další. Je to perfektní doplněk k Material Skin.",
+				"CS": "Z&aacute;suvn&yacute; modul Informace o hudb&ecaron; a interpretovi poskytuje dal&scaron;&iacute; informace o va&scaron;&iacute; hudb&ecaron;: biografie, recenze alb, texty p&iacute;sn&iacute; a dal&scaron;&iacute;. Je to perfektn&iacute; dopln&ecaron;k k Material Skin.",
 				"DA": "Musik- og kunsterinformation udvidelsesmodul (plugin) tilbyder mere information om din musik: biografier, anmeldelser, sangtekster og mere. Det er en perfekt tilføjelse til Material Skin.",
 				"DE": "Das Musik- und Interpreteninformationen-Plugin bietet zus&auml;tzliche Informationen zu Ihrer Musik: Biografien, Albumkritiken, Songtexte und mehr. Es ist eine perfekte Erg&auml;nzung zum Material Skin.",
 				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin.",
@@ -46,7 +46,7 @@
 				"FR": "Int&eacute;gration Spotty Spotify pour LMS"
 			},
 			"desc": {
-				"CS": "Spotty je implementace Spotify pro LMS, která se integruje se všemi uživatelskými rozhraními LMS pro ovládání přehrávání Spotify na účtu Spotify Premium.",
+				"CS": "Spotty je implementace Spotify pro LMS, kter&aacute; se integruje se v&scaron;emi u&zcaron;ivatelsk&yacute;mi rozhran&iacute;mi LMS pro ovl&aacute;d&aacute;n&iacute; p&rcaron;ehr&aacute;v&aacute;n&iacute; Spotify na &uacute;&ccaron;tu Spotify Premium.",
 				"DA": "Spotty er en Spotify implementation for LMS, som fungerer med alle LMS brugergrænseflader til at kontrollere afspilning fra en Spotify Premium konto.",
 				"DE": "Spotty ist eine Spotify Anwendung f&uuml;r LMS. Sie Zugriff auf ihr Spotify Premium Konto &uuml;ber die Squeezebox und all kompatiblen Ger&auml;te.",
 				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account.",
@@ -62,7 +62,7 @@
 				"EN": "TIDAL"
 			},
 			"desc": {
-				"CS": "TIDAL je globální platforma pro streamování hudby, která přibližuje fanoušky interpretům prostřednictvím jedinečných zážitků a nejvyšší kvality zvuku.",
+				"CS": "TIDAL je glob&aacute;ln&iacute; platforma pro streamov&aacute;n&iacute; hudby, kter&aacute; p&rcaron;ibli&zcaron;uje fanou&scaron;ky interpret&uring;m prost&rcaron;ednictv&iacute;m jedine&#269;n&yacute;ch z&aacute;&#382;itk&#367; a nejvy&scaron;&scaron;&iacute; kvality zvuku.",
 				"DA": "TIDAL er en verdensomspændende musik streaming platform, som bringer brugerne tættere på kunstnere gennem unikke oplevelser og den højest opnåelige lydkvalitet.",
 				"DE": "TIDAL ist eine globale Musik-Streaming-Plattform, die K&uuml;nstler und Fans durch einzigartige Erlebnisse und die h&ouml;chste Soundqualit&auml;t n&auml;her zusammenbringt.",
 				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality.",
@@ -78,7 +78,7 @@
 				"EN": "Qobuz"
 			},
 			"desc": {
-				"CS": "Qobuz je platforma pro streamování hudby s přístupem k více než 100 milionům skladeb, které jsou všechny dostupné ve formátu hi-res FLAC (Free Lossless Audio Codec).",
+				"CS": "Qobuz je platforma pro streamov&aacute;n&iacute; hudby s p&rcaron;&iacute;stupem k v&iacute;ce ne&#382; 100 milion&#367;m skladeb, kter&eacute; jsou v&scaron;echny dostupn&eacute; ve form&aacute;tu hi-res FLAC (Free Lossless Audio Codec).",
 				"DA": "Qobuz er en musik streaming platform med adgang til over 100 millioner sange, alle er tilgængelige i high-res FLAC (Free Lossless Audio Codec) formatet.",
 				"DE": "Qobuz ist eine Musik-Streaming-Plattform mit Zugriff auf &uuml;ber 100 Millionen Songs, die alle im Hi-Res FLAC (Free Lossless Audio Codec) Format verf&uuml;gbar sind.",
 				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format.",
@@ -95,7 +95,7 @@
 			},
 			"icon": "https://raw.githubusercontent.com/philippe44/lms-deezer/197b69be9e8054f6cb2653502c3aa180d7ca49bd/HTML/EN/plugins/Deezer/html/deezer.png",
 			"desc": {
-				"CS": "Deezer je služba pro streamování hudby, která vám poskytuje přístup k více než 120 milionům skladeb a také k dalšímu audio obsahu, jako jsou podcasty nebo audioknihy z celého světa.",
+				"CS": "Deezer je slu&#382;ba pro streamov&aacute;n&iacute; hudby, kter&aacute; v&aacute;m poskytuje p&rcaron;&iacute;stup k v&iacute;ce ne&#382; 120 milion&#367;m skladeb a tak&eacute; k dal&scaron;&iacute;mu audio obsahu, jako jsou podcasty nebo audioknihy z cel&eacute;ho sv&#283;ta.",
 				"DA": "Deezer er en musik streaming tjeneste, som giver adgang til over 120 millioner sange, samt andet audio indhold så som podcasts eller audiobøger fra hele verden.",
 				"DE": "Deezer ist ein Musikstreamingdienst, mit der du Zugang zu &uuml;ber 120 Millionen Songs, sowie anderen Audioinhalten wie Podcasts oder H&ouml;rb&uuml;chern aus aller Welt erh&auml;ltst.",
 				"EN": "Deezer is a music streaming service that gives you access to over 120 million songs, as well as other audio content such as podcasts or audiobooks from all over the world.",
@@ -110,7 +110,7 @@
 			},
 			"icon": "http://radionowplaying.com/RadioNowPlaying.svg",
 			"desc": {
-				"CS": "Informace o skladbě, obalu alba a občas také o programu pro více než 7300 rozhlasových stanic.",
+				"CS": "Informace o skladb&ecaron;, obalu alba a ob&#269;as tak&eacute; o programu pro v&iacute;ce ne&#382; 7300 rozhlasov&yacute;ch stanic.",
 				"DA": "Titel, album cover art og sommetider med program-information for mere end 7300 radiostationer.",
 				"DE": "Titel, Cover und gelegentlich Programm-Informationen f&uuml;r mehr als 7300 Radiosender.",
 				"EN": "Track, cover art and, occasionally, programme information for more than 7300 radio stations.",
@@ -121,6 +121,7 @@
 		{
 			"id": "RadioNet",
 			"label": {
+				"CS": "Adresář Radio.net",
 				"DA": "Radio.net katalog",
 				"DE": "Radio.net Verzeichnis",
 				"EN": "Radio.net Directory",
@@ -129,7 +130,8 @@
 			},
 			"icon": "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI5Ni40NTMzNCIgdmlld0JveD0iMCAwIDI5Ni40NTMzNCAyOTYuNDUzMzQiIHdpZHRoPSIyOTYuNDUzMzQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoLjEzMzMzMzMzIDAgMCAtLjEzMzMzMzMzIDAgMjk2LjQ1MzMzKSI+PHBhdGggZD0ibTIyMjMuMzUgMGgtMjIyMy4zNXYyMjIzLjM1aDIyMjMuMzV6Ii8+PHBhdGggZD0ibTY5OS44NzEgMTM3My40Yy0zNy43OTMtMTcuMTUtNzkuNjkxLTI2Ljc5LTEyMy44Mi0yNi43OS0xNjUuODAxIDAtMzAwLjY5MiAxMzQuODktMzAwLjY5MiAzMDAuNyAwIDE2NS44IDEzNC44OTEgMzAwLjY5IDMwMC42OTIgMzAwLjY5czMwMC42ODctMTM0Ljg5IDMwMC42ODctMzAwLjY5YzAtNDQuMTMtOS42MzMtODYuMDItMjYuNzgxLTEyMy44MWw0Ni45NDEtNDYuOTZjMjcuMTU3IDUwLjkyIDQyLjU5NCAxMDkuMDMgNDIuNTk0IDE3MC43NyAwIDIwMC43My0xNjIuNzE1IDM2My40NS0zNjMuNDQxIDM2My40NS0yMDAuNzIzIDAtMzYzLjQ0Ni0xNjIuNzItMzYzLjQ0Ni0zNjMuNDVzMTYyLjcyMy0zNjMuNDYgMzYzLjQ0Ni0zNjMuNDZjNjEuNzM4IDAgMTE5Ljg1MSAxNS40NSAxNzAuNzY5IDQyLjYxeiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Im0xNTg0LjkzIDEzNTAuNDNoLTQyMC4zN2MtNzIuMTYgMC0xMzcuMjYtMjEuNzgtMTg3Ljc0LTUzLjg5bC0yNzguODUxIDI3OC44OWMxMi40NTMgMjEuMDcgMTkuNTkgNDUuNjQgMTkuNTkgNzEuODcgMCA3OC4xNS02My4zMjkgMTQxLjUtMTQxLjQ3MyAxNDEuNS03OC4xNTIgMC0xNDEuNTEyLTYzLjM1LTE0MS41MTItMTQxLjUgMC03OC4xNCA2My4zNi0xNDEuNDcgMTQxLjUxMi0xNDEuNDcgMjYuMjE5IDAgNTAuODA5IDcuMTQgNzEuODM2IDE5LjU4bDQzMC4zMjgtNDMwLjMyYzE4Ljk5IDI3LjI4IDUwLjYyIDQ1LjE1IDg2LjM4IDQ1LjE1aDQyMC40YzU4LjA4IDAgMTA1LjEtNDcuMDIgMTA1LjEtMTA1LjA5di0xNjguNzA5LTI1MS42OTljMC01OC4wODItNDcuMDYtMTA1LjEzMy0xMDUuMS0xMDUuMTMzaC00MjAuNGMtNTguMDUgMC0xMDUuMTEgNDcuMDcxLTEwNS4xMSAxMDUuMTMzdjM5OS4wMThsLTE4My4wNCAxODMuMDRjLTE4LjIwMy0yOC4yNi00Ny40NzItODQuNzQtNDcuNDcyLTE2MS42NXYtNDIwLjQwOGMwLTE3OS41ODIgMTUwLjI0Ni0zMTUuMzEyIDMzNS41NTItMzE1LjMxMmg0MjAuMzdjMTg1LjMgMCAzMzUuNTMgMTM1LjczIDMzNS41MyAzMTUuMzEydjQyMC40MDhjMCAxNzkuNTUtMTUwLjIzIDMxNS4yOC0zMzUuNTMgMzE1LjI4IiBmaWxsPSIjNjRlNjQ2IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PC9zdmc+",
 			"desc": {
-				"DA": "Dette udvidelsesmodul (plugin) giver adgang til Radio.net internet radio indholdsfortegnelse",
+				"CS": "Tento plugin poskytuje p&rcaron;&iacute;stup do adres&aacute;ře internetov&yacute;ch rozhlasov&yacute;ch stanic Radio.net.",
+				"DA": "Dette udvidelsesmodul (plugin) giver adgang til Radio.net internet radio indholdsfortegnelse.",
 				"DE": "Dieses Plugin bietet Zugriff auf das Radio.net Internetradio-Verzeichnis.",
 				"EN": "This plugin provides access to Radio.net internet radio directory.",
 				"FR": "Ce plugin fournit l'acc&egrave;s &agrave; l'annuaire de radios Internet Radio.net.",
@@ -139,7 +141,7 @@
 		{
 			"id": "Analytics",
 			"label": {
-				"CS": "Reportování analytických údajů",
+				"CS": "Reportov&aacute;n&iacute; analytick&yacute;ch &uacute;daj&#367;",
 				"DA": "Rapport&eacute;er analysedata",
 				"DE": "Analytikdaten teilen",
 				"EN": "Report Analytics Data",
@@ -147,7 +149,7 @@
 				"NL": "Rapport Analytics-gegevens"
 			},
 			"desc": {
-				"CS": "Poskytnutím <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">některých anonymních analytických dat</a> nám <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">pomůžete s dalším vývojem</a> Lyrion Music Serveru.",
+				"CS": "Poskytnut&iacute;m <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">n&#283;kter&yacute;ch anonymn&iacute;ch analytick&yacute;ch dat</a> n&aacute;m <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">pom&#367;&zcaron;ete s dal&scaron;&iacute;m v&yacute;vojem</a> Lyrion Music Serveru.",
 				"DA": "Ved at bidrage med <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">nogle anonyme analytiske data</a> hjælper du os med <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">videre udvikling af</a> Lyrion Music Server.",
 				"DE": "Durch die Bereitstellung <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">anonymer analytischer Daten</a> helfen Sie uns, den <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">Lyrion Music Server weiterzuentwickeln</a>.",
 				"EN": "By providing <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">some anonymous analytical data</a> you <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">help us further develop</a> Lyrion Music Server.",

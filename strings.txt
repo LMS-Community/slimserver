@@ -6646,7 +6646,7 @@ SETUP_SKIPSENTINEL_DESC
 	ZH_CN	包含此名称的媒体（子）文件夹将被跳过。
 
 SETUP_PLAYLISTDIR
-	CS	Složka seznamu skladeb
+	CS	Složka seznamů skladeb
 	DA	Mappe med afspilningslister
 	DE	Wiedergabelisten-Ordner
 	EN	Playlists Folder
@@ -6705,18 +6705,21 @@ SETUP_ARTFOLDER_DESC
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
 
 SETUP_NO_PORTRAITS
+	CS	Portréty umělců
 	DE	Künstlerbilder
 	EN	Artist Portraits
 	FR	Photos d'artistes
 	ZH_CN	艺术家头像
 
 SETUP_NO_PORTRAITS_ON
+	CS	Nezobrazovat obrázky při procházení umělců
 	DE	Beim Blättern durch Künstler keine Bilder zeigen
 	EN	Don't show pictures when browsing artists
 	FR	Ne pas afficher de photos lors du parcours des artistes
 	ZH_CN	浏览艺术家时不显示图片
 
 SETUP_NO_PORTRAITS_OFF
+	CS	Zobrazovat obrázky při procházení umělců
 	DE	Beim Blättern durch Künstler Bilder anzeigen
 	EN	Show pictures when browsing artists
 	FR	Afficher les photos lors du parcours des artistes
@@ -7572,6 +7575,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	ZH_CN	警告 - 这些是第三方插件，不能保证在 Lyrion Music Server 的当前版本中正常工作。它们已经被它们的作者遗弃，并且不再维护。最坏的情况下，它们可能会破坏您的 Lyrion Music Server。使用风险自负。
 
 SETUP_EXTENSIONS_TOGGLE_VIEW
+	CS	Přepnout mezi mřížkou a seznamem
 	DE	Zwischen Listen- und Gitteransicht umschalten
 	EN	Toggle between grid and list view
 	FR	Basculer entre les vues grille et liste
@@ -12319,6 +12323,7 @@ BAND
 	ZH_CN	乐队
 
 ALBUM
+	CS	Album
 	EN	Album
 	ES	Álbum
 	FI	Levy
@@ -12349,6 +12354,7 @@ RELEASE_TYPE_SINGLES
 	ZH_CN	单曲
 
 RELEASE_TYPE_EP
+	CS	EP
 	EN	EP
 
 RELEASE_TYPE_EPS
@@ -12395,88 +12401,110 @@ RELEASE_TYPE_BROADCASTS
 	FR	Radiodiffusions
 
 RELEASE_TYPE_DEMO
+	CS	Demo
 	EN	Demo
 	FR	Démo
 
 RELEASE_TYPE_DEMOS
+	CS	Dema
 	EN	Demos
 	FR	Démos
 
 RELEASE_TYPE_LIVE
+	CS	Živý záznam
 	DE	Live Aufnahme
 	EN	Live Recording
 	FR	Enregistrement en direct
 
 RELEASE_TYPE_LIVES
+	CS	Živé záznamy
 	DE	Live Aufnahmen
 	EN	Live Recordings
 	FR	Enregistrements en direct
 
 RELEASE_TYPE_MIXTAPE
+	CS	Mixtape
 	EN	Mixtape
 
 RELEASE_TYPE_MIXTAPES
+	CS	Mixtapy
 	EN	Mixtapes
 
 RELEASE_TYPE_BONUS
+	CS	Bonusová alba
 	DE	Bonus Alben
 	EN	Bonus Albums
 	FR	Album bonus
 
 RELEASE_TYPE_COLLECTION
+	CS	Kolekce
 	DE	Sammlung
 	EN	Collection
 
 RELEASE_TYPE_COLLECTIONS
+	CS	Kolekce
 	DE	Sammlungen
 	EN	Collections
 
 RELEASE_TYPE_REMIX
+	CS	Remix
 	EN	Remix
 
 RELEASE_TYPE_REMIXES
+	CS	Remixy
 	DE	Remix Alben
 	EN	Remixes
 
 RELEASE_TYPE_COMPILATION
+	CS	Kompilace
 	DE	Kompilation
 	EN	Compilation
 
 RELEASE_TYPE_COMPILATIONS
+	CS	Kompilace
 	DE	Kompilationen
 	EN	Compilations
 
 RELEASE_TYPE_BOOTLEG
+	CS	Bootleg
 	EN	Bootleg
 
 RELEASE_TYPE_BOOTLEGS
+	CS	Bootlegy
 	EN	Bootlegs
 
 RELEASE_TYPE_SOUNDTRACK
+	CS	Soundtrack
 	EN	Soundtrack
 	FR	Bande sonore
 
 RELEASE_TYPE_SOUNDTRACKS
+	CS	Soundtracky
 	EN	Soundtracks
 	FR	Bandes sonores
 
 # from https://musicbrainz.org/doc/Release_Group/Type
 RELEASE_TYPE_SPOKENWORD
+	CS	Mluvené slovo
 	DE	Gesprochen
 	EN	Spokenword
 
 RELEASE_TYPE_INTERVIEW
+	CS	Rozhovor
 	EN	Interview
 
 RELEASE_TYPE_INTERVIEWS
+	CS	Rozhovory
 	EN	Interviews
 
 RELEASE_TYPE_AUDIOBOOK
+	CS	Audiokniha
 	DE	Hörbuch
 	EN	Audiobook
 	FR	Livre audio
 
 RELEASE_TYPE_AUDIOBOOKS
+	CS	Audioknihy
 	DE	Hörbücher
 	EN	Audiobooks
 	FR	Livres audio
@@ -13980,6 +14008,7 @@ SUBTITLE
 	ZH_CN	字幕
 
 DISCSUBTITLE
+	CS	Podtitul sady/alba
 	DE	Satz/Album Untertitel
 	EN	Set/Album Subtitle
 	FR	Ensemble/Album Sous-titres
@@ -15177,6 +15206,7 @@ DEBUG_TRANSCODING
 	ZH_CN	转码器
 
 DEBUG_SERVER_CHOOSE
+	CS	Server
 	EN	Server
 	ES	Servidor
 	FI	Palvelin
@@ -17227,6 +17257,7 @@ INFORMATION_PLAYER_MODEL
 	ZH_CN	播放器型号
 
 INFORMATION_PLAYER_MODEL_ABBR
+	CS	Model
 	DE	Modell
 	EN	Model
 	ES	Modelo
@@ -17259,6 +17290,7 @@ INFORMATION_FIRMWARE
 	ZH_CN	播放器固件版本
 
 INFORMATION_FIRMWARE_ABBR
+	CS	Firmware
 	EN	Firmware
 	FI	Laitteisto-ohjelmisto
 	FR	Micrologiciel
@@ -17313,6 +17345,7 @@ INFORMATION_PLAYER_PORT
 	ZH_CN	播放器端口号
 
 INFORMATION_PLAYER_PORT_ABBR
+	CS	Port
 	EN	Port
 	ES	Puerto
 	FI	Portti
@@ -19234,7 +19267,7 @@ SETUP_VISUALIZERMODE_DESC
 	ZH_CN	播放器可以在右侧屏幕上显示可视化效果或扩展文本信息。选择要显示的内容。播放器上的“可视化”按钮将循环显示以下选项。
 
 SETUP_PRECACHEARTWORK
-	CS	Ukládání obalu alba do mezipaměti
+	CS	Ukládání obalů alb do mezipaměti
 	DA	Gemmer coverbilleder i cachelager
 	DE	Plattenhüllen zwischenspeichern
 	EN	Artwork Pre-caching
@@ -19992,6 +20025,7 @@ SETUP_ANALOGOUTMODE_DESC
 	ZH_CN	选择Boom耳机/子输出端口的功能。耳机选项将关闭内部扬声器。"始终开启"将在插入耳机时保持内部扬声器开启。
 
 ANALOGOUTMODE_SUBOUT
+	CS	Subwoofer
 	EN	Subwoofer
 	HU	Mélynyomó
 	NO	Basshøyttaler
@@ -20195,7 +20229,7 @@ SRC
 	ZH_CN	数码输入源
 
 DEBUG_ARTWORK
-	CS	Zobrazení a přiřazení obalu alba
+	CS	Zobrazení a přiřazení obalů alb
 	DA	Vis og find albumcover
 	DE	Plattenhüllen Anzeige & Suche
 	EN	Artwork Display & Matching
@@ -20212,7 +20246,7 @@ DEBUG_ARTWORK
 	ZH_CN	专辑封面显示和匹配
 
 DEBUG_ARTWORK_IMAGEPROXY
-	CS	Proxy pro změnu velikosti obalu alba
+	CS	Proxy pro změnu velikosti obalů alb
 	DA	Albumcover skaleringsproxy
 	DE	Plattenhüllen Grössenanpassunsproxy
 	EN	Artwork Resizing Proxy
@@ -20430,6 +20464,7 @@ DEBUG_NETWORK_ASYNCHTTP
 	ZH_CN	异步远程HTTP请求信息
 
 DEBUG_NETWORK_WS
+	CS	Informace o klientovi Web Sockets
 	EN	Web Sockets Client Information
 	ZH_CN	Web Sockets客户端信息
 
@@ -21652,6 +21687,7 @@ MERGEVA_PROGRESS
 	ZH_CN	合并不同艺术家
 
 CONTRIBUTOR_PICTURE_PROGRESS
+	CS	Hledání obrázků přispěvatelů
 	DE	Nach Künstlerbildern suchen
 	EN	Looking for contributor pictures
 	FR	Recherche des photos d'artistes/contributeurs
@@ -23894,6 +23930,7 @@ UPDATES_LATEST_CHANGES
 	ZH_CN	最新更改 (<a href="%s" target="_blank">所有更改</a>)
 
 MORE_ON_GITHUB
+	CS	Zobrazit změny na GitHubu...
 	DE	Änderungen auf Github ansehen...
 	EN	Check out changes on Github...
 	FR	Consultez les modifications sur Github...
@@ -24082,7 +24119,7 @@ SETUP_WORKSSCAN_2
 	ZH_CN	将作品扫描限制为“我的作品和作曲家专辑类型”（上面）
 
 SETUP_WORKSSCAN_0
-	CS	Neskenovat díla
+	CS	Neprohledávat pro díla
 	DE	Nicht nach Werken suchen
 	EN	Do not scan for Works
 	ES	No buscar obras

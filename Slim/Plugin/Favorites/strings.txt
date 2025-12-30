@@ -72,7 +72,7 @@ FAVORITES_DELETING
 	SV	Tar bort favorit...
 
 PLUGIN_FAVORITES_DESC
-	CS	Uložit a editovat vaše oblíbené položky
+	CS	Uložení a editace vašich oblíbených položek
 	DA	Gem og rediger dine favoritter
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
