@@ -136,7 +136,7 @@ sub initSearchPath {
 
 	push @paths, dirname($^X);
 	push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
-	push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/local/bin));
+	push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/local/bin /opt/homebrew/bin));
 
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 }
