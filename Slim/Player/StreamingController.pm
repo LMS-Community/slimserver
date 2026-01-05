@@ -708,8 +708,9 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 sub _showTrackwaitStatus {
 	my ($self, $song) = @_;
 
-	# Show getting-track-info message if still in TRACKWAIT & STOPPED
-	if ($self->{'playingState'} == STOPPED && $self->{'streamingState'} == TRACKWAIT) {
+	# Show getting-track-info message if still in TRACKWAIT & STOPPED or PLAYING
+	if ( ($self->{'playingState'} == STOPPED || $self->{'playingState'} == PLAYING)
+		&& $self->{'streamingState'} == TRACKWAIT) {
 
 		my $handler = $song->currentTrackHandler();
 		my $remoteMeta = $handler->can('getMetadataFor')
