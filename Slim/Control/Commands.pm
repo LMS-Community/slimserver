@@ -2758,11 +2758,11 @@ sub rescanCommand {
 		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
 		my @paths = Slim::Utils::Misc::uniq(
 			map {
-				# reset time timestamp so changes are certainly picked up
+				# reset the track's timestamp so changes are certainly picked up
 				$_->timestamp(0);
 				$_->update;
 
-				# delete entry in scanned_files - rescan doesn't handle deletions for non-recursive scans
+				# delete entry in scanned_files - otherwise rescan doesn't handle deletions for non-recursive scans
 				$sth->execute($_->url);
 
 				dirname(Slim::Utils::Misc::pathFromFileURL($_->url));

@@ -6896,7 +6896,7 @@ SETUP_PLAYLISTRESCAN
 	ZH_CN	重新扫描播放表而已。
 
 RESCAN_ALBUM
-	CZ	Znovu naskenovat album
+	CS	Znovu naskenovat album
 	DE	Album neu einlesen
 	EN	Rescan Album
 	FR	Réanalyser l'album
