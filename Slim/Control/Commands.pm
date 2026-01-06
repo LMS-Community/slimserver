@@ -28,7 +28,7 @@ use strict;
 
 use Scalar::Util qw(blessed looks_like_number);
 use File::Spec::Functions qw(catfile);
-use File::Basename qw(basename);
+use File::Basename qw(basename dirname);
 use Digest::MD5 qw(md5_hex);
 use JSON::XS::VersionOneAndTwo;
 
@@ -2684,10 +2684,18 @@ sub rescanCommand {
 	# get our parameters
 	my $originalMode;
 	my $mode = $originalMode = $request->getParam('_mode') || 'full';
-	my $singledir = $request->getParam('_singledir');
+	my $target = $request->getParam('_target');
+	my $singledir;
 
-	if ($singledir) {
-		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
+	if ($mode =~ /album|track/) {
+		if (!$target) {
+			$log->error("Album or Tracks scan modes need an album or track ID.");
+			$request->setStatusBadDispatch();
+			return;
+		}
+	}
+	elsif ($target) {
+		$singledir = Slim::Utils::Misc::pathFromFileURL($target);
 
 		# don't run scan if newly added entry is disabled for all media types
 		if ( grep { /\Q$singledir\E/ } @{ Slim::Utils::Misc::getInactiveAudioDirs() }) {
@@ -2709,12 +2717,13 @@ sub rescanCommand {
 	}
 
 	# Bug 17358, if any plugin importers are enabled such as iTunes/MusicIP, run an old-style external rescan
-	# XXX Rewrite iTunes and MusicIP to support async rescan
-	my $importers = Slim::Music::Import->importers();
-	while ( my ($class, $config) = each %{$importers} ) {
-		if ( $class =~ /(?:Plugin|Slim::Music::VirtualLibraries)/ && $config->{use} ) {
-			$mode = 'external';
-			last;
+	if ($mode !~ /album|track/) {
+		my $importers = Slim::Music::Import->importers();
+		while ( my ($class, $config) = each %{$importers} ) {
+			if ( $class =~ /(?:Plugin|Slim::Music::VirtualLibraries)/ && $config->{use} ) {
+				$mode = 'external';
+				last;
+			}
 		}
 	}
 
@@ -2732,6 +2741,44 @@ sub rescanCommand {
 		$args{singledir} = $singledir if $singledir;
 
 		Slim::Music::Import->launchScan(\%args);
+	}
+	elsif ($mode =~ /album|track/) {
+		# quick in-process scan of an individual object's (album or track) folder
+		my @tracks;
+		if ($mode eq 'track') {
+			my $track = Slim::Schema->rs('Track')->single( { id => $target } );
+			push @tracks, $track if $track;
+		}
+		elsif ($mode eq 'album') {
+			my $album = Slim::Schema->rs('Album')->single( { id => $target } );
+			push @tracks, $album->tracks if $album;
+		}
+
+		my $dbh = Slim::Schema->dbh;
+		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
+		my @paths = Slim::Utils::Misc::uniq(
+			map {
+				# reset time timestamp so changes are certainly picked up
+				$_->timestamp(0);
+				$_->update;
+
+				# delete entry in scanned_files - rescan doesn't handle deletions for non-recursive scans
+				$sth->execute($_->url);
+
+				dirname(Slim::Utils::Misc::pathFromFileURL($_->url));
+			} @tracks
+		);
+
+		# need to delete the entry for the folder, too
+		foreach (@paths) {
+			$sth->execute(Slim::Utils::Misc::fileURLFromPath($_));
+		}
+
+		Slim::Utils::Scanner::Local->rescan(\@paths, {
+			no_async  => 1,
+			types     => 'audio',
+			recursive => 0,
+		} ) if scalar @paths;
 	}
 	else {
 		# In-process scan
