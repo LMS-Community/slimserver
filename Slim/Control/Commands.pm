@@ -2673,6 +2673,89 @@ sub prefCommand {
 	$request->setStatusDone();
 }
 
+sub rescanAlbumCommand {
+	my $request = shift;
+
+	if ($request->isNotCommand([['rescan'], ['album']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $albumId = $request->getParam('album_id');
+	if (!$albumId) {
+		$log->warn("rescan album called without album_id");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $album = Slim::Schema->find('Album', $albumId);
+	if (!$album) {
+		$log->warn("Album not found: $albumId");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# Find the directory containing this album's tracks
+	require File::Basename;
+	my %dirs;
+	for my $track ( $album->tracks ) {
+		my $url = $track->url;
+		next unless $url =~ m{^file://};
+		my $path = Slim::Utils::Misc::pathFromFileURL($url);
+		$dirs{ File::Basename::dirname($path) } = 1;
+	}
+
+	my @albumDirs = keys %dirs;
+	if (!@albumDirs) {
+		$log->warn("No local file tracks found for album $albumId");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $singledir = shift @albumDirs;
+	main::INFOLOG && $log->info("Starting album rescan for album_id: $albumId, directory: $singledir");
+
+	# Force re-read of tags by resetting timestamps
+	my $basedir = Slim::Utils::Misc::fileURLFromPath($singledir);
+	my $dbh = Slim::Schema->dbh;
+	my $like = $basedir . '%';
+	my $rows = eval { $dbh->do('UPDATE tracks SET timestamp = 0 WHERE url LIKE ?', undef, $like) };
+	if ($@) {
+		$log->warn("Failed to prepare force-rescan for $singledir: $@");
+	} else {
+		main::INFOLOG && $log->info("Force-rescan prepared for $singledir (tracks updated: " . ($rows || 0) . ")");
+	}
+
+	# Queue additional directories if album spans multiple folders
+	for my $extraDir (@albumDirs) {
+		my $extraBase = Slim::Utils::Misc::fileURLFromPath($extraDir);
+		my $extraLike = $extraBase . '%';
+		eval { $dbh->do('UPDATE tracks SET timestamp = 0 WHERE url LIKE ?', undef, $extraLike) };
+	}
+
+	Slim::Schema->forceCommit;
+
+	# Run in-process scan
+	my @dirs = @{ Slim::Utils::Misc::getMediaDirs() };
+	if (scalar @dirs) {
+		if ( Slim::Utils::OSDetect::getOS->canAutoRescan && preferences('server')->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
+			Slim::Utils::AutoRescan->shutdown;
+		}
+
+		Slim::Utils::Progress->clear();
+
+		my $audiodirs = Slim::Utils::Misc::getAudioDirs($singledir);
+		Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+			types    => 'list|audio',
+			scanName => 'directory',
+			progress => 1,
+		} ) if scalar @$audiodirs;
+	}
+
+	$request->setStatusDone();
+}
+
 sub rescanCommand {
 	my $request = shift;
 
@@ -2687,7 +2770,15 @@ sub rescanCommand {
 	my $singledir = $request->getParam('_singledir');
 
 	if ($singledir) {
-		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
+		# If singledir is passed as a parameter (e.g. from CLI), it might be a file URL or a path.
+		if ( $singledir =~ m{^file://} ) {
+			$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
+		}
+		if ( $singledir =~ /^menu:\d+$/ ) {
+			main::INFOLOG && $log->info("Ignoring invalid singledir parameter: $singledir");
+			$request->setStatusDone();
+			return;
+		}
 
 		# don't run scan if newly added entry is disabled for all media types
 		if ( grep { /\Q$singledir\E/ } @{ Slim::Utils::Misc::getInactiveAudioDirs() }) {

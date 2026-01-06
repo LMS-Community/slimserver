@@ -57,6 +57,8 @@ sub name {
 sub registerDefaultInfoProviders {
 	my $class = shift;
 
+	main::INFOLOG && $log->info("Registering AlbumInfo providers");
+
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addalbum => (
@@ -72,6 +74,11 @@ sub registerDefaultInfoProviders {
 	$class->registerInfoProvider( playitem => (
 		after    => 'addalbumnext',
 		func      => \&playAlbum,
+	) );
+
+	$class->registerInfoProvider( rescan => (
+		after    => 'top',
+		func      => \&rescanAlbum,
 	) );
 
 #	$class->registerInfoProvider( artwork => (
@@ -565,6 +572,27 @@ sub addAlbum {
 		type        => $tags->{menuMode} ? 'text' : 'link',
 		playcontrol => $cmd,
 		name        => cstring($client, $add_string),
+	};
+}
+
+sub rescanAlbum {
+	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
+
+	return unless $album;
+
+	my $actions = {
+		items => {
+			command     => [ 'rescan', 'album' ],
+			fixedParams => { album_id => $album->id },
+		},
+	};
+	$actions->{'do'} = $actions->{'items'};
+
+	return {
+		itemActions => $actions,
+		nextWindow  => 'parent',
+		type        => 'link',
+		name        => cstring($client, 'RESCAN_ALBUM'),
 	};
 }
 

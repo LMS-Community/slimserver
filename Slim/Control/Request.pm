@@ -604,6 +604,7 @@ sub init {
 	addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['remote',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
+	addDispatch(['rescan',         'album'],                                                           [0, 0, 1, \&Slim::Control::Commands::rescanAlbumCommand]);
 	addDispatch(['rescan',         '_mode',          '_singledir'],                                    [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
 	addDispatch(['rescanprogress'],                                                                    [0, 1, 1, \&Slim::Control::Queries::rescanprogressQuery]);
 	addDispatch(['restartserver'],                                                                     [0, 0, 0, \&Slim::Control::Commands::stopServer]);

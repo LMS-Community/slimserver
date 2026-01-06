@@ -6800,6 +6800,9 @@ SETUP_RESCAN
 	SV	Sök igenom mediebiblioteket igen
 	ZH_CN	重新扫描音乐库
 
+RESCAN_ALBUM
+	EN	Rescan Album
+
 SETUP_RESCAN_BUTTON
 	CS	Nové prohledání
 	DA	Gennemsøg igen
