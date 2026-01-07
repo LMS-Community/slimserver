@@ -70,6 +70,143 @@ our $lastAlbum = {};
 # Optimization to cache content type for track entries rather than look them up everytime.
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
 
+# Scanner optimization (scan-local): during scanning we repeatedly resolve the same
+# contributor strings to contributor IDs. Slim::Schema::Contributor->add() does
+# multiple DB round-trips per contributor (SELECT + optional UPDATE/INSERT).
+#
+# To reduce redundant churn during large/metadata-rich scans, retain the resolved
+# contributor ID list for *identical* inputs. This is deliberately scanner-only
+# to avoid any behavioural changes during normal server operation.
+#
+# Safety/behaviour assumptions:
+# - We only short-circuit when the inputs that influence add() are identical.
+#   The cache key includes contributor string + MBID + sort + extid.
+# - Role/tag is NOT part of the key because add()'s behaviour depends only on the
+#   contributor data, not the role in which it was referenced.
+# - Cache is cleared at scan end (rescan done).
+my %_scanContributorAddCache;
+my $_scanContributorAddCacheTied = 0;
+my $_scanContributorAddCacheMaxEntries;
+my $_scanContributorCacheEndHooked = 0;
+my $_scanContributorCacheApproxSize = 0;
+
+sub _scanContributorCacheMaxEntries {
+	# Use the existing cross-platform `dbhighmem` preference as a proxy
+	# Keep this deliberately bounded: on low-RAM systems, very large hash-based
+	# caches can become noticeable during big scans.
+	return $prefs->get('dbhighmem') ? 50000 : 15000;
+}
+
+sub _initScanContributorCache {
+	my $class = shift;
+	return unless main::SCANNER;
+	return if $_scanContributorAddCacheTied;
+
+	my $entries = $class->_scanContributorCacheMaxEntries;
+	$_scanContributorAddCacheMaxEntries = $entries;
+	$_scanContributorCacheApproxSize = 0;
+	tie %_scanContributorAddCache, 'Tie::Cache::LRU::Expires', EXPIRES => 3600, ENTRIES => $entries;
+	$_scanContributorAddCacheTied = 1;
+}
+
+sub _registerScanContributorCacheEndHook {
+	my $class = shift;
+	return unless main::SCANNER;
+	return unless main::DEBUGLOG;
+	return if $_scanContributorCacheEndHooked;
+
+	# Some scanner runs do not have a functional request/subscribe lifecycle.
+	# Register an END hook as a fallback so benchmarking runs always print a
+	# single final stats line.
+	eval 'END { Slim::Schema->_logScanContributorCacheStats(); }';
+	$_scanContributorCacheEndHooked = 1;
+}
+
+# Optional instrumentation (scanner + DEBUGLOG only)
+# These counters are used to quantify effectiveness and provide a conservative
+# estimate of avoided DB statements.
+my (
+	$_scanContributorCacheHitKeys,
+	$_scanContributorCacheMissKeys,
+	$_scanContributorCacheHitIds,
+	$_scanContributorCacheMissIds,
+	$_scanContributorCacheHitIdsWithMbid,
+	$_scanContributorCacheStoreKeys,
+	$_scanContributorCacheStoreIds,
+) = (0, 0, 0, 0, 0, 0, 0);
+
+sub _logScanContributorCacheStats {
+	return unless main::SCANNER;
+	return unless main::DEBUGLOG;
+
+	my $scanlog = logger('scan.import');
+	return unless (($scanlog && $scanlog->is_info) || $log->is_debug);
+
+	my $lookups = $_scanContributorCacheHitKeys + $_scanContributorCacheMissKeys;
+	# Avoid duplicate log lines if multiple end-of-scan hooks fire in one process.
+	# The first emission resets all counters, so subsequent calls will see 0.
+	return unless $lookups;
+	my $hitRate = $lookups ? ($_scanContributorCacheHitKeys / $lookups) : 0;
+	my $cacheApproxSize = $_scanContributorCacheApproxSize;
+	my $cacheMaxEntries = $_scanContributorAddCacheMaxEntries || 0;
+
+	my $statsLine = sprintf(
+		"Scan contributor cache: lookups=%d hits=%d misses=%d hitRate=%.1f%% avoidedContributorAdds=%d newContributorAdds=%d uniqueCachedKeys=%d cachedIds=%d cacheKeysNow~%d (approx) cap=%d",
+		$lookups,
+		$_scanContributorCacheHitKeys,
+		$_scanContributorCacheMissKeys,
+		$hitRate * 100,
+		$_scanContributorCacheHitIds,
+		$_scanContributorCacheMissIds,
+		$_scanContributorCacheStoreKeys,
+		$_scanContributorCacheStoreIds,
+		$cacheApproxSize,
+		$cacheMaxEntries,
+	);
+	$scanlog && $scanlog->is_info ? $scanlog->info($statsLine) : $log->debug($statsLine);
+
+	# Estimate avoided DB statements on cache hits.
+	# This is intentionally a heuristic range (MIN..MAX), because add() may
+	# execute different SQL depending on whether the row exists, and whether
+	# namesort/MBID/extid updates are needed.
+	#
+	# For each contributor entry inside Contributor->add():
+	#  - minimum: 1 SELECT
+	#  - maximum (no MBID): 1 SELECT + up to 3 UPDATE = 4 statements
+	#  - maximum (with MBID): up to 2 SELECT + up to 3 UPDATE = 5 statements
+	my $hitIdsWithMbid = $_scanContributorCacheHitIdsWithMbid;
+	my $hitIdsNoMbid   = $_scanContributorCacheHitIds - $hitIdsWithMbid;
+	$hitIdsNoMbid = 0 if $hitIdsNoMbid < 0;
+
+	my $minSelectsAvoided = $_scanContributorCacheHitIds;
+	my $maxSelectsAvoided = $hitIdsNoMbid + (2 * $hitIdsWithMbid);
+
+	my $minStatementsAvoided = $_scanContributorCacheHitIds;
+	my $maxStatementsAvoided = (4 * $hitIdsNoMbid) + (5 * $hitIdsWithMbid);
+
+	my $estimateLine = sprintf(
+		"Scan contributor cache estimate: avoidedStatements~%d..%d avoidedSELECTs~%d..%d (heuristic)",
+		$minStatementsAvoided,
+		$maxStatementsAvoided,
+		$minSelectsAvoided,
+		$maxSelectsAvoided,
+	);
+	$scanlog && $scanlog->is_info ? $scanlog->info($estimateLine) : $log->debug($estimateLine);
+
+	# Reset so multiple queued scans in the same process don't accumulate.
+	(
+		$_scanContributorCacheHitKeys,
+		$_scanContributorCacheMissKeys,
+		$_scanContributorCacheHitIds,
+		$_scanContributorCacheMissIds,
+		$_scanContributorCacheHitIdsWithMbid,
+		$_scanContributorCacheStoreKeys,
+		$_scanContributorCacheStoreIds,
+		$_scanContributorCacheApproxSize,
+	) = (0, 0, 0, 0, 0, 0, 0, 0);
+	%_scanContributorAddCache = ();
+}
+
 # For the VA album merging & scheduler globals.
 my ($variousAlbumIds, $vaObj, $vaObjId);
 
@@ -241,11 +378,28 @@ sub init {
 	}
 
 	if ( !main::SCANNER ) {
+		require Slim::Control::Request;
 		# Wipe cached data after rescan
 		Slim::Control::Request::subscribe( sub {
 			$class->wipeCaches;
 			Slim::Schema::Album->addReleaseTypeStrings;
 		}, [['rescan'], ['done']] );
+	}
+	elsif ( main::DEBUGLOG ) {
+		require Slim::Control::Request;
+		# Initialize scan-local caches.
+		$class->_initScanContributorCache;
+		$class->_registerScanContributorCacheEndHook;
+
+		# Scanner-only stats, emitted once per scan if DEBUGLOG is enabled.
+		Slim::Control::Request::subscribe( sub {
+			$class->_logScanContributorCacheStats;
+		}, [['rescan'], ['done']] );
+	}
+	elsif ( main::SCANNER ) {
+		require Slim::Control::Request;
+		# Initialize scan-local caches even if DEBUGLOG is off.
+		$class->_initScanContributorCache;
 	}
 
 	$initialized = 1;
@@ -3134,13 +3288,69 @@ sub _mergeAndCreateContributors {
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
 		# "BANDSORT" or similar at any rate.
-		push @{ $contributors{$tag} }, Slim::Schema::Contributor->add({
-			'artist'   => $contributor,
-			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
-			'sortBy'   => $attributes->{$tag.'SORT'},
-			# only store EXTID for track artist, as we don't have it for other roles
-			'extid'    => $tag eq 'ARTIST' && $attributes->{'ARTIST_EXTID'},
-		});
+		my $brainzID = $attributes->{"MUSICBRAINZ_${tag}_ID"};
+		my $sortBy   = $attributes->{$tag.'SORT'};
+		# only store EXTID for track artist, as we don't have it for other roles
+		my $extid    = ($tag eq 'ARTIST' && $attributes->{'ARTIST_EXTID'}) ? $attributes->{'ARTIST_EXTID'} : undef;
+
+		# When scanning, short-circuit repeated contributor resolution for identical inputs.
+		if (main::SCANNER) {
+			# Defensive: ensure the scan-local cache is initialized.
+			# init() should have done this, but this keeps the optimization safe
+			# if call order ever changes.
+			Slim::Schema->_initScanContributorCache unless $_scanContributorAddCacheTied;
+
+			my $brainzKey = ref($brainzID) eq 'ARRAY' ? join("\x1e", @{$brainzID}) : ($brainzID // '');
+			my $sortKey   = ref($sortBy)   eq 'ARRAY' ? join("\x1e", @{$sortBy})   : ($sortBy   // '');
+			my $extKey    = ref($extid)    eq 'ARRAY' ? join("\x1e", @{$extid})    : ($extid    // '');
+
+			my $cacheKey = join("\x1f",
+				$contributor,
+				$brainzKey,
+				$sortKey,
+				$extKey,
+			);
+
+			my $cachedIds = $_scanContributorAddCache{$cacheKey};
+			if ($cachedIds) {
+				if (main::DEBUGLOG) {
+					$_scanContributorCacheHitKeys++;
+					$_scanContributorCacheHitIds += scalar @{$cachedIds};
+					$_scanContributorCacheHitIdsWithMbid += scalar @{$cachedIds} if ($brainzKey ne '');
+				}
+				push @{ $contributors{$tag} }, @{$cachedIds};
+			}
+			else {
+				if (main::DEBUGLOG) {
+					$_scanContributorCacheMissKeys++;
+				}
+				my @ids = Slim::Schema::Contributor->add({
+					'artist'   => $contributor,
+					'brainzID' => $brainzID,
+					'sortBy'   => $sortBy,
+					'extid'    => $extid,
+				});
+				if (main::DEBUGLOG) {
+					$_scanContributorCacheMissIds += scalar @ids;
+					$_scanContributorCacheStoreKeys++;
+					$_scanContributorCacheStoreIds += scalar @ids;
+					if (defined $_scanContributorAddCacheMaxEntries && $_scanContributorCacheApproxSize < $_scanContributorAddCacheMaxEntries) {
+						$_scanContributorCacheApproxSize++;
+					}
+				}
+
+				$_scanContributorAddCache{$cacheKey} = [ @ids ];
+				push @{ $contributors{$tag} }, @ids;
+			}
+		}
+		else {
+			push @{ $contributors{$tag} }, Slim::Schema::Contributor->add({
+				'artist'   => $contributor,
+				'brainzID' => $brainzID,
+				'sortBy'   => $sortBy,
+				'extid'    => $extid,
+			});
+		}
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
 	}
