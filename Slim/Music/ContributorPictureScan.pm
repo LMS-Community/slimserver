@@ -1,7 +1,7 @@
 package Slim::Music::ContributorPictureScan;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -24,13 +24,14 @@ use Path::Class;
 
 use Slim::Music::Import;
 use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner::Local;
 
 my $log = logger('scan.import');
 my $prefs = preferences('server');
 
-my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, @artworkFolders, $specs, $i);
+my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, @artworkFolders, $specs, @userDefinedRolesToInclude, $i);
 
 # when walking up the folder hierarchy, don't go above these folders
 my $audioDirs = { map { $_ => 1 } @{Slim::Utils::Misc::getAudioDirs()} };
@@ -83,7 +84,12 @@ sub startArtworkScan {
 		WHERE id = ?
 	});
 
-	my $roles = join( ',', map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->activeContributorRoles() );
+	my $roles = join( ',', map {
+		Slim::Schema::Contributor->typeToRole($_)
+	} Slim::Utils::Misc::uniq(
+		Slim::Schema::Contributor->activeContributorRoles(),
+		@userDefinedRolesToInclude
+	) );
 
 	my $sql = qq{
 		SELECT id, name, portrait, portraitid
@@ -275,6 +281,10 @@ sub imageInFolder {
 	return $file;
 }
 
+# Allow plugins etc. to register roles for which they want pictures to be read during the scan
+sub registerRolesToInclude {
+	@userDefinedRolesToInclude = Slim::Utils::Misc::uniq(@userDefinedRolesToInclude, @_);
+}
 
 
 =head1 SEE ALSO
