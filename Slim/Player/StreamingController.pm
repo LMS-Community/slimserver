@@ -1274,6 +1274,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $reportsTrackStart = 0;
 
 	my $replayGain = Slim::Player::ReplayGain->fetchGainMode($self->master(), $song);
+	
+	$song->replayGain($replayGain);  # store this for status queries
 
 	# bug 10438
 	$self->resetFrameData();
@@ -1316,8 +1318,6 @@ sub _Stream {				# play -> Buffering, Streaming
 		);
 
 		$startedPlayers += $player->play( \%params );
-
-		$song->replayGain($replayGain);  # store this for status queries
 
 		$reportsTrackStart ||= $player->reportsTrackStart();
 	}
