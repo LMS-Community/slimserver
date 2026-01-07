@@ -6895,6 +6895,13 @@ SETUP_PLAYLISTRESCAN
 	SV	Sök bara igenom spellistorna på nytt
 	ZH_CN	重新扫描播放表而已。
 
+RESCAN_ALBUM
+	CS	Znovu naskenovat album
+	DE	Album neu einlesen
+	EN	Rescan Album
+	FR	Réanalyser l'album
+	NL	Album opnieuw scannen
+
 SETUP_AUTO_RESCAN
 	CS	Automaticky detekovat změny
 	DA	Registrer automatisk ændringer
