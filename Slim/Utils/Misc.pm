@@ -2,7 +2,7 @@ package Slim::Utils::Misc;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -1367,10 +1367,11 @@ sub dumpFiltered {
 			return { object => _dumpClient($obj) } if $ctx->object_isa('Slim::Player::Client');
 			return { object => _dumpTrack($obj) } if $ctx->object_isa('Slim::Schema::Track') || $ctx->object_isa('Slim::Schema::RemoteTrack');
 
-			return { object => [
-				[ $obj->handler, _dumpTrack($obj->track) ],
-				$ctx->class,
-			] } if $ctx->object_isa('Slim::Player::Song');
+			return { object => {
+				handler => $obj->handler,
+				track => _dumpTrack($obj->track),
+				class => $ctx->class,
+			 } } if $ctx->object_isa('Slim::Player::Song');
 
 			# warn 'class: ' . $ctx->class;
 			# warn 'reftype: ' . $ctx->reftype;
@@ -1387,8 +1388,8 @@ sub dumpFiltered {
 	return $object;
 }
 
-sub _dumpClient { $_[0] && [ $_[0]->name, $_[0]->id, ref $_[0] ] }
-sub _dumpTrack { $_[0] && [ $_[0]->title, $_[0]->url, ref $_[0] ] }
+sub _dumpClient { $_[0] && { name => $_[0]->name,  id => $_[0]->id, class => ref $_[0] } }
+sub _dumpTrack { $_[0] && { tile => $_[0]->title, url => $_[0]->url, class => ref $_[0] } }
 
 
 =head2 delimitThousands( $len)
