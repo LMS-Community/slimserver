@@ -21,6 +21,7 @@ use strict;
 use File::Basename qw(dirname basename);
 use File::Spec::Functions qw(catdir catfile);
 use Path::Class;
+use Scalar::Util qw(looks_like_number);
 
 use Slim::Music::Import;
 use Slim::Utils::Log;
@@ -84,11 +85,17 @@ sub startArtworkScan {
 		WHERE id = ?
 	});
 
-	my $roles = join( ',', map {
-		Slim::Schema::Contributor->typeToRole($_)
-	} Slim::Utils::Misc::uniq(
-		Slim::Schema::Contributor->activeContributorRoles(),
-		@userDefinedRolesToInclude
+	my $roles = join( ',', Slim::Utils::Misc::uniq(
+		grep {
+			my $isNum = looks_like_number($_);
+			$isNum || $log->warn("Non-numeric role ID '$_' found when scanning for contributor pictures. Ignoring role.");
+			$isNum;
+		} map {
+			Slim::Schema::Contributor->typeToRole($_)
+		# split items, just in case - we've seen them concatenated with a ',' separator for whatever reason
+		} map {
+			(split ',')
+		} Slim::Schema::Contributor->activeContributorRoles(), @userDefinedRolesToInclude
 	) );
 
 	my $sql = qq{
