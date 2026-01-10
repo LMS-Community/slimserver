@@ -97,18 +97,18 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2025 Lyrion verze 9.1.0
-	DA	© 2001-2025 Lyrion - version 9.1.0
-	EN	© 2001-2025 Lyrion Version 9.1.0
-	ES	© 2001-2025 Lyrion Versión 9.1.0
-	FI	© 2001-2025 Lyrionin versio 9.1.0
-	IT	© 2001-2025 Lyrion versione 9.1.0
-	NL	© 2001-2025 Lyrion versie 9.1.0
-	NO	© 2001–2025 Lyrion versjon 9.1.0
-	PL	© 2001-2025 Lyrion wersja 9.1.0
-	PT	© 2001-2025 Lyrion wersão 9.1.0
-	RU	© Lyrion, 2001-2025. Версия 9.1.0
-	SV	© 2001–2025 Lyrion Version 9.1.0
+	CS	© 2001-2026 Lyrion verze 9.1.0
+	DA	© 2001-2026 Lyrion - version 9.1.0
+	EN	© 2001-2026 Lyrion Version 9.1.0
+	ES	© 2001-2026 Lyrion Versión 9.1.0
+	FI	© 2001-2026 Lyrionin versio 9.1.0
+	IT	© 2001-2026 Lyrion versione 9.1.0
+	NL	© 2001-2026 Lyrion versie 9.1.0
+	NO	© 2001–2026 Lyrion versjon 9.1.0
+	PL	© 2001-2026 Lyrion wersja 9.1.0
+	PT	© 2001-2026 Lyrion wersão 9.1.0
+	RU	© Lyrion, 2001-2026. Версия 9.1.0
+	SV	© 2001–2026 Lyrion Version 9.1.0
 
 VERSION
 	CS	Verze 9.1.0 / r%s
@@ -187,6 +187,7 @@ LOGIC_SKIN
 	CS	Logic tyrkysová
 	DA	Logic blågrøn
 	EN	Logic Teal
+	NL	Logic Turquoise
 	ZH_CN	逻辑蓝绿
 
 DEFAULT_MAP
@@ -2285,7 +2286,7 @@ ALARM_SHORT_DAY_0
 	FR	Di
 	HU	V
 	IT	Do
-	NL	zo
+	NL	Zo
 	NO	søn
 	PL	Ni
 	PT	Dom
@@ -2303,7 +2304,7 @@ ALARM_SHORT_DAY_1
 	FR	Lu
 	HU	H
 	IT	Lu
-	NL	ma
+	NL	Ma
 	NO	man
 	PL	Po
 	PT	2ªF
@@ -2321,7 +2322,7 @@ ALARM_SHORT_DAY_2
 	FR	Ma
 	HU	K
 	IT	Ma
-	NL	di
+	NL	Di
 	NO	tirs
 	PL	Wt
 	PT	3ªF
@@ -2339,7 +2340,7 @@ ALARM_SHORT_DAY_3
 	FR	Me
 	HU	Sze
 	IT	Me
-	NL	wo
+	NL	Wo
 	NO	ons
 	PL	Śr
 	PT	4ªF
@@ -2357,7 +2358,7 @@ ALARM_SHORT_DAY_4
 	FR	Je
 	HU	Cs
 	IT	Gi
-	NL	do
+	NL	Do
 	NO	tors
 	PL	Czw
 	PT	5ªF
@@ -2375,7 +2376,7 @@ ALARM_SHORT_DAY_5
 	FR	Ve
 	HU	P
 	IT	Ve
-	NL	vr
+	NL	Vr
 	NO	fre
 	PL	Pi
 	PT	6ªF
@@ -2393,7 +2394,7 @@ ALARM_SHORT_DAY_6
 	FR	Sa
 	HU	Szo
 	IT	Sa
-	NL	za
+	NL	Za
 	NO	lør
 	PL	So
 	PT	Sab
@@ -5468,7 +5469,7 @@ LAME9
 	HE	איכות ירודה, מהירות נוחה
 	HU	Gyenge minőség, de gyors
 	IT	Bassa qualità, veloce
-	NL	Slechte kwaliteit, maar snel
+	NL	Slechte kwaliteit, snel
 	NO	Laveste kvalitet, men raskt
 	PL	Niska jakość, większa szybkość
 	RU	Низкое качество, но быстро
@@ -8259,7 +8260,7 @@ SETUP_NO_SCREENSAVERS
 	DE	Es scheinen keine Bildschirmschoner installiert zu sein. Möchten Sie den Bildschirmschoner "Datum und Uhrzeit" installieren?
 	EN	There seem to be no screensavers installed. Do you want to install the Date and Time screensaver?
 	FR	Aucun écran de veille ne semble avoir été installé. Voulez-vous installer l'économiseur d'écran "Date et Heure" ?
-	NL	Er lijken geen screensavers geïnstalleerd te zijn. Wil je de schermbeveiliging Datum en tijd installeren?
+	NL	Er lijken geen screensavers geïnstalleerd te zijn. Wil je de screensaver 'Datum en Tijd' installeren?
 	ZH_CN	似乎没有安装屏幕保护程序。您想安装日期和时间屏幕保护程序吗？
 
 SETUP_INSTALL
@@ -8637,7 +8638,7 @@ SETUP_ROLESINARTISTS
 	HU	Zeneszám előadója, Zeneszerző, együttes és zenekar a előadóknál
 	IT	Artista brano, Compositore, gruppo e orchestra in Artisti
 	JA	「アーチスト」に、作曲家、バンド、オーケストラ
-	NL	Artiest van nummer, Componist, dirigent en band in lijst met artiesten
+	NL	Selecteer rollen om op te nemen in lijst met artiesten
 	NO	Sporartist, Komponist, band og orkester i Artister
 	PL	Wykonawca utworu, Kompozytor, zespół i orkiestra jako wykonawcy
 	PT	Artista da pista, Compositor, Banda e Orquestra em Artistas
@@ -8657,7 +8658,7 @@ SETUP_ROLESINARTISTS_DESC
 	HU	A zeneszerzőkről, együttesekről és zenekarokról szóló dalinformációk böngészéshez és kereséshez felvehetők az előadók listájába.
 	IT	Per ogni brano, nell'elenco degli artisti è possibile includere informazioni su compositore, gruppo e orchestra a fini di consultazione e ricerca.
 	JA	作曲家、バンド、オーケストラの情報は、ブラウズ・検索の時にアーチスト情報として認識させることができます。
-	NL	Je kunt informatie over artiest van nummer, componisten, dirigenten en bands, enz, in de lijst van artiesten opnemen, zodat je erin kunt bladeren en zoeken.
+	NL	Je kunt meerdere rollen, zoals componisten, dirigenten en bands, in de lijst van artiesten opnemen, zodat je erin kunt bladeren en zoeken.
 	NO	Sanginformasjon om komponist, gruppe og orkester kan inkluderes i artistlisten når du blar og søker.
 	PL	Wyświetlaj kompozytorów oraz nazwy zespołów i orkiestr na liście wykonawców.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
@@ -10201,7 +10202,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	FR	Regroupement des albums d'un compositeur
 	DE	Optionen für Komponistenalben
 	HU	A zeneszerzői album beállításai
-	NL	Opties voor componistenalbums
+	NL	Opties voor componistalbums
 	ES	Opciones de álbum compositor
 	PT	Opções para Compositor do album
 	ZH_CN	作曲家专辑选项
@@ -10213,7 +10214,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	FR	Créer un groupe "Albums du compositeur" : toujours, jamais ou pour des genres spécifiques. Si, en raison de ce paramètre, certaines œuvres du compositeur ne sont pas incluses dans le groupe "Albums du compositeur", elles apparaîtront à la place dans un groupe "Compositions" distinct, qui répertoriera les morceaux individuels, pas les albums. (Par exemple, un morceau avec un tag "ARTIST" différent du tag "COMPOSER" se retrouvera dans le groupe "Compositions".) Les genres de la liste doivent être séparés par des virgules.
 	DE	Erstellen Sie eine Gruppe "Komponistenalben" – immer, nie oder für bestimmte Genres. Wenn aufgrund dieser Einstellung bestimmte Komponistenrollen nicht in der Gruppe "Komponistenalben" enthalten sind, werden sie stattdessen in einer separaten Gruppe "Kompositionen" angezeigt, in der einzelne Titel und keine Alben aufgeführt werden. Die Liste der Stilrichtungen sollte durch Kommas getrennt sein.
 	HU	Hozzon létre egy zeneszerzői album csoportot – mindig, soha vagy bizonyos műfajokhoz. Ha e beállítás miatt bizonyos zeneszerzői szerepkörök nem szerepelnek a Zeneszerzői albumok csoportban, akkor azok egy külön „Kompozíciók” csoportban jelennek meg, amely az egyes számokat, nem pedig az albumokat listázza. A műfaji listát vesszővel kell elválasztani.
-	NL	Maak een groep voor componistenalbum - altijd, nooit of voor bepaalde genres. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistenalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
+	NL	Maak altijd, nooit of voor bepaalde genres een groep voor componistalbums. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
 	ZH_CN	创建作曲家专辑组 - 总是、从不或针对特定流派。如果由于此设置，某些作曲家角色未包含在作曲家专辑组中，则它们将出现在一个单独的“Composition”组中，该组将列出单个曲目，而不是专辑。流派列表应以逗号分隔。
 
@@ -10224,7 +10225,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	FR	Ne pas créer de groupe "Albums du compositeur"
 	DE	Keine Komponistenalbengruppe erstellen
 	HU	Ne hozzon létre zeneszerzői albumcsoportot
-	NL	Maak geen groep van componistenalbums
+	NL	Maak geen groep van componistalbums
 	ES	No crear un grupo de Álbum de Composer
 	ZH_CN	不创建作曲家专辑组
 
@@ -10235,7 +10236,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	FR	Créer toujours un groupe "Albums du compositeur"
 	DE	Immer eine Komponistenalbengruppe erstellen
 	HU	Mindig hozzon létre egy zeneszerzői albumcsoportot
-	NL	Maak altijd een groep van componistenalbums
+	NL	Maak altijd een groep van componistalbums
 	ES	Crear siempre un grupo de Álbum de compositor
 	ZH_CN	始终创建作曲家专辑组
 
@@ -10247,7 +10248,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	ES	Crear un grupo de álbumes de compositor para "Mis géneros para las obras y álbumes de compositores" (arriba)
 	FR	Créer un groupe "Albums du compositeur" pour les "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	HU	Zeneszerzői albumcsoport létrehozása a "Műfajaim művekhez és zeneszerzői albumokhoz" számára (fent)
-	NL	Maak een componistenalbumgroep voor 'Mijn genres voor werken en albums van componisten' (hierboven)
+	NL	Maak een groep van componistalbums voor 'Mijn genres voor composities en albums van componisten' (hierboven)
 	ZH_CN	为“我的作品和作曲家专辑流派”创建作曲家专辑组（上面）
 
 SETUP_IGNORE_RELEASE_TYPES_0
@@ -10428,7 +10429,7 @@ SETUP_WIZARD_WELCOME
 	DE	Willkommen beim Einrichtungsassistenten für ihr neues Lyrion Music Server Setup
 	EN	Welcome to the initial Lyrion Music Server setup
 	FR	Bienvenue dans l'assistant de configuration initiale du Lyrion Music Server
-	NL	Welkom bij de eerste installatie van de Lyrion Music Server
+	NL	Welkom bij de eerste installatie van Lyrion Music Server
 	HU	Üdvözöljük a Lyrion Music Server kezdő beállításokban
 	ZH_CN	欢迎来到Lyrion音乐服务器的初始设置
 
@@ -10438,7 +10439,7 @@ SETUP_WIZARD_WELCOME_INTRO
 	DE	Dieser Assistent führt dich durch den initalen Setup deines Lyrion Music Servers.
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
 	FR	Cet assistant vous guidera dans la configuration initiale de votre Lyrion Music Server.
-	NL	Deze assistent begeleidt je bij de eerste installatie van je Lyrion Music Server.
+	NL	Deze assistent begeleidt je bij de eerste installatie van jouw Lyrion Music Server.
 	HU	Ez az asszisztens végigvezeti Önt a Lyrion Music Server kezdeti beállításán.
 	ZH_CN	本助手将引导您完成Lyrion音乐服务器的初始设置
 
@@ -12282,7 +12283,7 @@ COMPOSERALBUMS
 	HU	Zeneszerzői albumok
 	IT	Compositore Album
 	JA	作曲家 アルバム
-	NL	Componistenalbums
+	NL	Componistalbums
 	NO	Komponist Album
 	PL	Kompozytor Albumy
 	PT	Compositor Albums
@@ -12399,6 +12400,7 @@ RELEASE_TYPE_BROADCAST
 	DA	Udsendelse
 	EN	Broadcast
 	FR	Radiodiffusion
+	NL	Radiouitzending
 	ZH_CN	广播
 
 RELEASE_TYPE_BROADCASTS
@@ -12406,6 +12408,7 @@ RELEASE_TYPE_BROADCASTS
 	DA	Udsendelser
 	EN	Broadcasts
 	FR	Radiodiffusions
+	NL	Radiouitzendingen
 
 RELEASE_TYPE_DEMO
 	CS	Demo
@@ -12422,12 +12425,14 @@ RELEASE_TYPE_LIVE
 	DE	Live Aufnahme
 	EN	Live Recording
 	FR	Enregistrement en direct
+	NL	Live Opname
 
 RELEASE_TYPE_LIVES
 	CS	Živé záznamy
 	DE	Live Aufnahmen
 	EN	Live Recordings
 	FR	Enregistrements en direct
+	NL	Live Opnamen
 
 RELEASE_TYPE_MIXTAPE
 	CS	Mixtape
@@ -12447,11 +12452,13 @@ RELEASE_TYPE_COLLECTION
 	CS	Kolekce
 	DE	Sammlung
 	EN	Collection
+	NL	Collectie
 
 RELEASE_TYPE_COLLECTIONS
 	CS	Kolekce
 	DE	Sammlungen
 	EN	Collections
+	NL	Collecties
 
 RELEASE_TYPE_REMIX
 	CS	Remix
@@ -12466,11 +12473,13 @@ RELEASE_TYPE_COMPILATION
 	CS	Kompilace
 	DE	Kompilation
 	EN	Compilation
+	NL	Compilatie
 
 RELEASE_TYPE_COMPILATIONS
 	CS	Kompilace
 	DE	Kompilationen
 	EN	Compilations
+	NL	Compilaties
 
 RELEASE_TYPE_BOOTLEG
 	CS	Bootleg
@@ -12495,6 +12504,7 @@ RELEASE_TYPE_SPOKENWORD
 	CS	Mluvené slovo
 	DE	Gesprochen
 	EN	Spokenword
+	NL	Gesproken Woord
 
 RELEASE_TYPE_INTERVIEW
 	CS	Rozhovor
@@ -12509,12 +12519,14 @@ RELEASE_TYPE_AUDIOBOOK
 	DE	Hörbuch
 	EN	Audiobook
 	FR	Livre audio
+	NL	Luisterboek
 
 RELEASE_TYPE_AUDIOBOOKS
 	CS	Audioknihy
 	DE	Hörbücher
 	EN	Audiobooks
 	FR	Livres audio
+	NL	Luisterboeken
 
 RELEASE_TYPE_OTHER
 	CS	Jiné
@@ -14019,7 +14031,7 @@ DISCSUBTITLE
 	DE	Satz/Album Untertitel
 	EN	Set/Album Subtitle
 	FR	Ensemble/Album Sous-titres
-	NL	Set/Album Ondertiteling
+	NL	Set/Album Ondertitel
 
 WORK
 	CS	Díla
@@ -15735,7 +15747,7 @@ WEB_NO_COOKIES_WARNING
 	FR	Votre navigateur n'accepte pas les cookies. Ceci peut affecter le fonctionnement de votre Lyrion Music Server. Veuillez activer les cookies dans votre navigateur avant de continuer.
 	HU	Az Ön böngészője nem fogadja a cookie-kat. Ez váratlan viselkedéshez vezethet a Lyrion Music Server vezérlésekor. Mielőtt folytatná, engedélyezze a cookie-kat a böngészőjében.
 	IT	Il browser in uso non accetta i cookie. Ciò può provocare un comportamento imprevisto di Lyrion Music Server. Prima di continuare, abilitare i cookie nel browser.
-	NL	Je browser accepteert geen cookies. Dit kan leiden tot onverwacht gedrag bij het bedienen van Lyrion Music Server. Schakel cookies in de browser in voordat je verder gaat.
+	NL	Jouw browser accepteert geen cookies. Dit kan leiden tot onverwacht gedrag bij het bedienen van Lyrion Music Server. Schakel cookies in de browser in voordat je verder gaat.
 	NO	Nettleseren din godtar ikke informasjonskapsler. Dette kan føre til uønsket oppførsel ved bruk av Lyrion Music Server. Aktiver informasjonskapsler i nettleseren før du fortsetter.
 	PL	Twoja przeglądarka nie akceptuje plików cookie. Może to wywołać nieoczekiwane skutki podczas sterowania programem Lyrion Music Server. Włącz najpierw obsługę plików cookie w przeglądarce.
 	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Lyrion Music Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
@@ -17166,6 +17178,7 @@ INFORMATION_MENU_PERL
 	DE	Perl- und Modulversionen
 	EN	Perl and Module Versions
 	FR	Versions de Perl et des modules
+	NL	Perl en Module versies
 	PT	Versões de Perl e Módulos
 	ZH_CN	Perl和模块版本
 
@@ -18872,7 +18885,7 @@ SORT_ARTISTALBUM
 	HE	מבצע, אלבום
 	HU	Előadó, Album
 	IT	Artista, album
-	NL	Artiest, album
+	NL	Artiest, Album
 	NO	Artist, album
 	PL	Wykonawca, album
 	RU	Исполнитель, альбом
@@ -18890,7 +18903,7 @@ SORT_ARTISTYEARALBUM
 	HE	מבצע, שנה, אלבום
 	HU	Előadó, év, album
 	IT	Artista, anno, album
-	NL	Artiest, jaar, album
+	NL	Artiest, Jaar, Album
 	NO	Artist, år, album
 	PL	Wykonawca, rok, album
 	RU	Исполнитель, год, альбом
@@ -18908,7 +18921,7 @@ SORT_YEARALBUM
 	HE	שנה, אלבום
 	HU	Év, album
 	IT	Anno, album
-	NL	Jaar, album
+	NL	Jaar, Album
 	NO	År, album
 	PL	Rok, album
 	RU	Год, альбом
@@ -18926,7 +18939,7 @@ SORT_YEARARTISTALBUM
 	HE	שנה, מבצע, אלבום
 	HU	Év, előadó, album
 	IT	Anno, artista, album
-	NL	Jaar, artiest, album
+	NL	Jaar, Artiest, Album
 	NO	År, artist, album
 	PL	Rok, wykonawca, album
 	RU	Год, исполнитель, альбом
@@ -18944,7 +18957,7 @@ SORT_GENREALBUM
 	HE	סגנון, אלבום
 	HU	Műfaj, album
 	IT	Genere, album
-	NL	Genre, album
+	NL	Genre, Album
 	NO	Sjanger, album
 	PL	Gatunek, album
 	RU	Жанр, альбом
@@ -18962,7 +18975,7 @@ SORT_GENREARTISTALBUM
 	HE	סגנון, מבצע, אלבום
 	HU	Műfaj, előadó, album
 	IT	Genere, artista, album
-	NL	Genre, artiest, album
+	NL	Genre, Artiest, Album
 	NO	Sjanger, artist, album
 	PL	Gatunek, wykonawca, album
 	RU	Жанр, исполнитель, альбом
@@ -19370,6 +19383,7 @@ SETUP_IMAGEPROXY_DESC
 	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by Lyrion Music Server itself. The helper can offload some of the heavy lifting to a separate process managed by the server application.
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par Lyrion Music Server. La tâche peut également être confiée à un processus dédié pour décharger le serveur.
 	HU	Annak érdekében, hogy a legjobb minőségű borítókat és teljesítményt érje el az eszközökön, a grafikai fájlokat átméretezi, mielőtt elküldi őket az ügyfélnek. Alapértelmezés szerint ezt maga a Lyrion Music Server kezeli. A segítő a nehézemelés egy részét a szerveralkalmazás által kezelt külön folyamatra terhelheti.
+	NL	Om de beste kwaliteit en prestaties te krijgen, worden de albumhoezen geschaald naar het juiste formaat voordat ze naar de client worden verstuurd. Standaard wordt dit door Lyrion Music Server zelf gedaan. Een hulpapplicatie kan een deel van het werk uitbesteden aan een apart proces dat door de serverapplicatie wordt beheerd.
 	ZH_CN	为了在设备上获得最佳质量的艺术品和性能，在发送给客户端之前，会调整艺术品文件的大小。默认情况下，这是由Lyrion Music Server本身处理的。助手可以将一些繁重的工作卸载到由服务器应用程序管理的单独过程中。
 
 SETUP_IMAGEPROXY_LOCAL
@@ -19843,7 +19857,7 @@ ROLLOFFSLOW_ENABLED
 	FR	Filtre d'affaiblissement amorti
 	HU	Lassú Roll-off szűrő
 	IT	Filtro slow roll-off
-	NL	Slow roll-off filter
+	NL	Flauw roll-off filter
 	NO	Sakte dempingsfilter
 	PL	Filtr łagodnego tłumienia
 	RU	Слабо сглаживающий фильтр
@@ -20470,6 +20484,7 @@ DEBUG_NETWORK_ASYNCHTTP
 DEBUG_NETWORK_WS
 	CS	Informace o klientovi Web Sockets
 	EN	Web Sockets Client Information
+	NL	Web Sockets Client Informatie
 	ZH_CN	Web Sockets客户端信息
 
 DEBUG_NETWORK_ASYNCDNS
@@ -21695,6 +21710,7 @@ CONTRIBUTOR_PICTURE_PROGRESS
 	DE	Nach Künstlerbildern suchen
 	EN	Looking for contributor pictures
 	FR	Recherche des photos d'artistes/contributeurs
+	NL	Naar afbeeldingen van uitvoerenden zoeken
 	ZH_CN	查找贡献者图片
 
 UPDATESTANDALONEARTWORK_PROGRESS
@@ -22780,7 +22796,7 @@ SCANNER_REMOTE_NESTED_TOO_DEEP
 	FR	Impossible d'analyser : la liste de lecture est emboîtée trop profondément
 	HU	Nem lehet beolvasni: A lejátszási lista túl mélyen van beágyazva
 	IT	Impossibile eseguire l'analisi: la playlist contiene troppe nidificazioni
-	NL	Kan niet scannen: afspeellijst te diep genest
+	NL	Kan niet scannen: afspeellijst bevindt zich te diep in de map
 	NO	Kan ikke søke: Spillelisten ligger for langt nede
 	PL	Nie można przeszukiwać: zbyt wiele poziomów listy odtwarzania
 	RU	Сбой сканирования: плей-лист вложен слишком глубоко
@@ -23903,7 +23919,7 @@ SERVER_LINUX_UPDATE_AVAILABLE
 	EN	A new version of Lyrion Music Server is available (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Click here for further information</a>.
 	FR	Une nouvelle version de Lyrion Music Server est disponible (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Cliquez ici pour plus d'info</a>.
 	HU	Elérhető a Lyrion Music Server új verziója (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Kattintson ide további információkért</a>.
-	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klik op hier</a>.
+	NL	Een nieuwe versie van Lyrion Music Server is beschikbaar (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klik hier</a>.
 	NO	En ny versjon av Lyrion Music Server er tilgjengelig (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Klikk her for å få mer informasjon</a>.
 	PL	Nowa wersja Lyrion Music Server jest dostępna (%s). <a href="/updateinfo.html?installerFile=%s" target="update">Kliknij tutaj w celu uzyskania dodatkowej wiadomości</a>.
 	PT	Está disponível uma nova versão do Lyrion Music Server. <a href="/updateinfo.html?installerFile=%s" target="update">Clique aqui para mais infromações</a>.
@@ -23917,6 +23933,7 @@ SERVER_WINDOWS_UPDATE_AVAILABLE
 	EN	<ul><li>Version %s - %s is available for installation.</li><li>Log in to your computer running Lyrion Music Server (%s).</li><li>Execute <code>%s</code> and follow the instructions.</li></ul>
 	FR	<ul><li>La version %s - %s est prête à être installée.</li><li>Connectez-vous à l'ordinateur qui héberge le Lyrion Music Server (%s).</li><li>Exécutez <code>%s</code> et suivez les instructions.</li></ul>
 	HU	<ul><li>A %s verzió – %s elérhető a telepítéshez.</li><li>Jelentkezzen be Lyrion Music Servert (%s) futtató számítógépére.</li><li>Végezze el a <code>% parancsot. s</code>, és kövesse az utasításokat.</li></ul>
+	NL	<ul><li>Versie %s - %s is beschikbaar voor installatie.</li><li>Log in op jouw computer met Lyrion Music Server (%s).</li><li>Voer <code>%s</code> uit en volg de instructies.</li></ul>
 	PT	ul><li>A versão %s - %s está disponível para ser instalada.</li><li>Faça login no computador onde tem instalado o Lyrion Music Server (%s).</li><li>Execute <code>%s</code> e siga as instruções.</li></ul>
 	ZH_CN	<ul><li>版本 %s - %s 可供安装。</li><li>登录运行 Lyrion Music Server 的计算机 (%s)。</li><li>执行 <code>%s</code> 并按照说明操作。</li></ul>
 
@@ -23927,7 +23944,7 @@ UPDATES_LATEST_CHANGES
 	EN	Latest Changes (<a href="%s" target="_blank">all changes</a>)
 	FR	Dernières modifications (<a href="%s" target="_blank">toutes les modifications</a>)
 	HU	Legújabb módosítások (<a href="%s" target="_blank">minden módosítás</a>)
-	NL	Laatste wijzigingen (<a href="%s" target="_blank">all changes</a>)
+	NL	Laatste wijzigingen (<a href="%s" target="_blank">alle wijzigingen</a>)
 	NO	Seneste endringer (<a href="%s" target="_blank">all changes</a>)
 	PT	Ultimas modificações (<a href="%s" target="_blank">todas as modificações</a>)
 	SV	Senaste ändringar (<a href="%s" target="_blank">alla ändringar</a>)
@@ -24033,7 +24050,7 @@ SETUP_ALBUMLINKROLES_DESC
 	ES	Puedes elegir qué roles quieres que aparezcan como enlaces en las listas de álbumes. Siempre se mostrará el colaborador principal del álbum identificado por el escáner de música. Además, al buscar álbumes/lanzamientos por rol, se mostrarán los colaboradores del rol que se está explorando.
 	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album identifié par l'analyseur de musique sera toujours affiché. De plus, lorsque vous parcourez des albums par rôle, les contributeurs du rôle parcouru seront affichés.
 	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik. Az albumok/kiadások szerepkör szerinti böngészése során a böngészett szerepkörhöz tartozó közreműködők is megjelennek.
-	NL	U kunt kiezen welke rollen u als links in albumlijsten wilt weergeven. De belangrijkste albumbijdrager zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven. Bij het doorbladeren van albums/releases op rol worden ook de bijdragers voor de rol die wordt doorzocht weergegeven.
+	NL	Je kan kiezen welke rollen je als links in albumlijsten wilt weergeven. De belangrijkste uitvoerende zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven. Bij het bladeren van albums/releases op rol worden ook de uitvoerenden voor de rol die wordt doorzocht weergegeven.
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado. Além disso, ao navegar por álbuns/lançamentos por função, os Colaboradores para a função que está sendo navegada serão mostrados.
 	ZH_CN	您可以选择在专辑列表中显示哪些角色作为链接。由音乐扫描器识别的主要专辑贡献者将始终显示。另外，当按角色浏览专辑/发行版时，将显示正在浏览的角色贡献者。
 
@@ -24099,7 +24116,7 @@ SETUP_WORKSSCAN
 	ES	Escaneo de obras
 	FR	Recherche d'œuvres
 	HU	Művek beolvasása
-	NL	Scannen van werken
+	NL	Scannen van composities
 	ZH_CN	作品扫描
 
 SETUP_WORKSSCAN_1
@@ -24109,7 +24126,7 @@ SETUP_WORKSSCAN_1
 	ES	Escanea toda la biblioteca en busca de obras
 	FR	Parcourir toute la bibliothèque à la recherche d'œuvres
 	HU	Szkennelje be a teljes könyvtárat művekért
-	NL	Scan de hele bibliotheek op werken
+	NL	Scan de hele bibliotheek op composities
 	ZH_CN	扫描整个库以查找作品
 
 SETUP_WORKSSCAN_2
@@ -24119,7 +24136,7 @@ SETUP_WORKSSCAN_2
 	ES	Limitar el escaneo de obras a "Mis géneros para las obras y álbumes de compositores" (arriba)
 	FR	Limiter la recherche des œuvres aux "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	HU	A művek beolvasásának korlátozása a „Saját műveim és zeneszerzői albumaim műfajaira” (fent)
-	NL	Beperk de werkscan tot "Mijn genres voor werken en albums van componisten" (hierboven)
+	NL	Beperk de compositiescan tot "Mijn genres voor composities en albums van componisten" (hierboven)
 	ZH_CN	将作品扫描限制为“我的作品和作曲家专辑类型”（上面）
 
 SETUP_WORKSSCAN_0
@@ -24129,7 +24146,7 @@ SETUP_WORKSSCAN_0
 	ES	No buscar obras
 	FR	Ne pas rechercher d'œuvres
 	HU	Ne keressen műveket
-	NL	Niet scannen op werken
+	NL	Niet scannen op composities
 	ZH_CN	不扫描作品
 
 SETUP_MYCLASSICALGENRES
@@ -24140,7 +24157,7 @@ SETUP_MYCLASSICALGENRES
 	ES	Mis géneros para las obras y álbumes de compositores
 	FR	Genres en lien avec des œuvres et des compositeurs
 	HU	Műfajaim művekhez és zeneszerzői albumokhoz
-	NL	Mijn genres voor werken en albums van componisten
+	NL	Mijn genres voor composities en albums van componisten
 	ZH_CN	我的作品和作曲家专辑类型
 
 SETUP_MYCLASSICALGENRES_DESC
@@ -24150,7 +24167,7 @@ SETUP_MYCLASSICALGENRES_DESC
 	ES	Utiliza estos géneros para obras y álbumes de compositores. Separe con comas.
 	FR	Précisez les genres concernés par les œuvres et les compositeurs. Séparez-les par des virgules.
 	HU	Használja ezeket a műfajokat a művekhez és zeneszerzői albumokhoz. Vesszővel válassza el.
-	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
+	NL	Gebruik deze genres voor composities en albums van componisten. Scheid met komma's.
 	ZH_CN	使用这些作品和作曲家专辑类型。用逗号分隔。
 
 FIRST_N_ALBUMS
