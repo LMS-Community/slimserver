@@ -226,7 +226,7 @@ sub handler {
 			'SETUP_PLUGINS',
 			'PLUGIN_PODCAST',
 			'ADVANCED_SETTINGS',
-			'SERVER_STATUS'
+			'INFORMATION'
 		);
 	}
 

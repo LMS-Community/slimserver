@@ -14994,25 +14994,22 @@ INTERFACE_SETTINGS
 	ZH_CN	界面
 
 BEHAVIOR_SETTINGS
-	CS	Chování
-	DA	Funktion
-	DE	Verhalten
-	EN	Behavior
-	EN_GB	Behaviour
-	ES	Comportamiento
-	FI	Toiminta
-	FR	Comportement
-	HE	התנהגות השרת
-	HU	Viselkedés
-	IT	Comportamento
-	JA	機能
-	NL	Gedrag
-	NO	Virkemåte
-	PL	Działanie
-	PT	Comportamento
-	RU	Функция
-	SV	Funktion
-	ZH_CN	行为
+	CS	Moje hudba
+	DA	Musik
+	DE	Eigene Musik
+	EN	My Music
+	ES	Mi música
+	FI	Omat musiikkitiedostot
+	HU	Saját zenék
+	FR	Ma musique
+	IT	Musica
+	NL	Mijn muziek
+	NO	Min musikk
+	PL	Moja muzyka
+	PT	Minha musica
+	RU	Моя музыка
+	SV	Min musik
+	ZH_CN	我的音乐
 
 FORMATS_SETTINGS
 	CS	Typy souborů

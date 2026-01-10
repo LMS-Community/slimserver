@@ -1,14 +1,16 @@
 package Slim::Plugin::ExtendedBrowseModes::Libraries;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
 
+use Slim::Music::ContributorPictureScan;
 use Slim::Music::VirtualLibraries;
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
@@ -22,6 +24,12 @@ sub initPlugin {
 		use    => 1,
 		weight => 90,		# must be smaller than VirtualLibrary!
 	} );
+
+	my @additionalRoles = Slim::Utils::Misc::uniq(grep { $_ } map {
+		$_->{params}->{role_id} if $_->{params} && $_->{params}->{role_id};
+	} @{$prefs->get('additionalMenuItems') || []});
+
+	Slim::Music::ContributorPictureScan::registerRolesToInclude(@additionalRoles);
 }
 
 sub startScan {
