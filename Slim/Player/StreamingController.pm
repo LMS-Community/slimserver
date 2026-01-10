@@ -2,7 +2,7 @@ package Slim::Player::StreamingController;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -692,6 +692,13 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		pop @$queue;
 	}
 
+	# ensure that metadata is cached and available (specifically replay gain)
+	my $handler = $song->currentTrackHandler();
+	if ($handler->can('getMetadataFor')) {
+		main::INFOLOG && $log->info("Loading metadata for " . $song->currentTrack()->url );
+		$handler->getMetadataFor($self->master(), $song->currentTrack()->url);
+	}
+
 	_showTrackwaitStatus($self, $song);
 
 	$song->getNextSong (
@@ -708,9 +715,8 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 sub _showTrackwaitStatus {
 	my ($self, $song) = @_;
 
-	# Show getting-track-info message if still in TRACKWAIT & STOPPED or PLAYING
-	if ( ($self->{'playingState'} == STOPPED || $self->{'playingState'} == PLAYING)
-		&& $self->{'streamingState'} == TRACKWAIT) {
+	# Show getting-track-info message if still in TRACKWAIT & STOPPED
+	if ($self->{'playingState'} == STOPPED && $self->{'streamingState'} == TRACKWAIT) {
 
 		my $handler = $song->currentTrackHandler();
 		my $remoteMeta = $handler->can('getMetadataFor')
