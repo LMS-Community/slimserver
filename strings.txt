@@ -188,6 +188,7 @@ LOGIC_SKIN
 	DA	Logic blågrøn
 	EN	Logic Teal
 	NL	Logic Turquoise
+    SV	Logic blågrön
 	ZH_CN	逻辑蓝绿
 
 DEFAULT_MAP
@@ -262,7 +263,7 @@ SLIMP3_HOME
 	PL	SLIMP3 - strona główna
 	PT	Início SLIMP3
 	RU	Главное меню SLIMP3
-	SV	SLIMP3 Hem
+	SV	SLIMP3 Huvudmeny
 	ZH_CN	SLIMP3主页
 
 SQUEEZEBOX_HOME
@@ -282,7 +283,7 @@ SQUEEZEBOX_HOME
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
 	RU	Главное меню Squeezebox
-	SV	Squeezebox Hem
+	SV	Squeezebox Huvudmeny
 	ZH_CN	Squeezebox主页
 
 SQUEEZEBOX2_HOME
@@ -302,7 +303,7 @@ SQUEEZEBOX2_HOME
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
 	RU	Главное меню Squeezebox
-	SV	Squeezebox Hem
+	SV	Squeezebox Huvudmeny
 	ZH_CN	Squeezebox主页
 
 TRANSPORTER_HOME
@@ -322,7 +323,7 @@ TRANSPORTER_HOME
 	PL	Transporter - strona główna
 	PT	Início Transporter
 	RU	Главное меню Transporter
-	SV	Transporter Hem
+	SV	Transporter Huvudmeny
 	ZH_CN	Transporter主页
 
 SOFTSQUEEZE_HOME
@@ -362,7 +363,7 @@ HOMEMENU
 	PL	Strona główna
 	PT	Início
 	RU	Главное меню
-	SV	Hem
+	SV	Huvudmeny
 	ZH_CN	主页
 
 LIBRARY_CONTAINS
@@ -382,7 +383,7 @@ LIBRARY_CONTAINS
 	PL	Twoja biblioteka multimedialna zawiera
 	PT	O arquivo de música contêm
 	RU	Ваша библиотека мультимедиа содержит
-	SV	Mediebiblioteket innehåller
+	SV	Ditt mediebiblioteket innehåller
 	ZH_CN	您的音乐库存有
 
 MUSIC
@@ -1464,7 +1465,7 @@ COLLAPSE
 	PL	Zwiń
 	PT	Contrair
 	RU	Свернуть
-	SV	Komprimera
+	SV	Dölj
 	ZH_CN	折叠
 
 UNDOCK_PLAYER_PANEL
@@ -1704,7 +1705,7 @@ ALARM_ADD_DESC
 	PL	Możesz dodać dowolną liczbę alarmów. Każdy alarm może zostać uruchomiony codziennie, w wybranym dniu lub tylko raz. Aby rozpocząć dodawanie nowego alarmu, wybierz opcję „Dodaj alarm”.
 	PT	Pode adicionar tantos alarmes quantos queira. Cada alarme pode ser programado para que dispare diariamente, só em determinados dias ou em uma só vez. Seleccione "Adicione alarme" para criar um novo alarme.
 	RU	Можно добавить любое число будильников. Каждый будильник может звонить ежедневно, только по определенным дням или один раз. Щелкните "Добавить будильник", чтобы добавить новый будильник.
-	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill ställa in ett nytt alarm.
+	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill lägga till ett nytt alarm.
 	ZH_CN	您可以添加任意数量的闹钟。每个闹钟可以设置为每天、特定日期或仅一次响起。选择“添加闹钟”以开始添加新的闹钟。
 
 ALARM_NEW
@@ -2291,7 +2292,7 @@ ALARM_SHORT_DAY_0
 	PL	Ni
 	PT	Dom
 	RU	Вс
-	SV	Sö
+	SV	Sön
 	ZH_CN	星期日
 
 ALARM_SHORT_DAY_1
@@ -2309,7 +2310,7 @@ ALARM_SHORT_DAY_1
 	PL	Po
 	PT	2ªF
 	RU	Пн
-	SV	Må
+	SV	Mån
 	ZH_CN	星期一
 
 ALARM_SHORT_DAY_2
@@ -2327,7 +2328,7 @@ ALARM_SHORT_DAY_2
 	PL	Wt
 	PT	3ªF
 	RU	Вт
-	SV	Ti
+	SV	Tis
 	ZH_CN	星期二
 
 ALARM_SHORT_DAY_3
@@ -2345,7 +2346,7 @@ ALARM_SHORT_DAY_3
 	PL	Śr
 	PT	4ªF
 	RU	Ср
-	SV	On
+	SV	Ons
 	ZH_CN	星期三
 
 ALARM_SHORT_DAY_4
@@ -2363,7 +2364,7 @@ ALARM_SHORT_DAY_4
 	PL	Czw
 	PT	5ªF
 	RU	Чт
-	SV	To
+	SV	Tor
 	ZH_CN	星期四
 
 ALARM_SHORT_DAY_5
@@ -2381,7 +2382,7 @@ ALARM_SHORT_DAY_5
 	PL	Pi
 	PT	6ªF
 	RU	Пт
-	SV	Fr
+	SV	Fre
 	ZH_CN	星期五
 
 ALARM_SHORT_DAY_6
@@ -2399,7 +2400,7 @@ ALARM_SHORT_DAY_6
 	PL	So
 	PT	Sab
 	RU	Сб
-	SV	Lö
+	SV	Lör
 	ZH_CN	星期六
 
 SLIMP3
