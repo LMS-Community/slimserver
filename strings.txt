@@ -2988,7 +2988,7 @@ PROBLEM_OPENING_REMOTE_URL
 	PL	Błąd: nie można otworzyć zdalnego adresu URL
 	PT	Erro: Não foi possível abrir a URL remota
 	RU	Ошибка: сбой открытия удаленного URL
-	SV	Fel: Fel: Det går inte att öppna den externa webbadressen.
+	SV	Fel: Det går inte att öppna den externa webbadressen.
 	ZH_CN	失误：无法连接网址
 
 PROBLEM_CONVERT_FILE
@@ -3060,7 +3060,7 @@ PROBLEM_CONVERTING_STREAM
 	PL	Błąd: mechanizm DRM w pliku:
 	PT	Erro: ficheiro contendo DRM
 	RU	Ошибка: DRM в файле:
-	SV	Fel: DRM i filen:
+	SV	Fel: DRM-skyddad fil:
 	ZH_CN	错误：文件中的DRM
 
 PROBLEM_UNKNOWN_TYPE
@@ -3154,7 +3154,7 @@ HOME
 	PL	Strona główna
 	PT	Início
 	RU	Главное меню
-	SV	Hem
+	SV	Huvudmeny
 	ZH_CN	主页
 
 STATUS
@@ -3299,7 +3299,7 @@ XML_EDITOR
 	PL	Edytor
 	PT	Editor
 	RU	Редактор
-	SV	Redigerare
+	SV	Redigeringsprogram
 	ZH_CN	编辑
 
 XML_ENCLOSURE
@@ -3336,7 +3336,7 @@ XML_AUDIO_ENCLOSURES
 	NO	Lydvedlegg
 	PL	Załączniki audio
 	RU	Аудиовложения
-	SV	Högtalarkabinett
+	SV	Audiokabinett
 	ZH_CN	音频框架
 
 XML_FEED_DESCRIPTION
@@ -3645,7 +3645,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	PL	Dostępne opcje można dostosować na najwyższym poziomie menu Strona główna ekranu odtwarzacza. Kliknij, aby przenieść pozycje w górę lub w dół albo usunąć pozycję menu. Kliknij przycisk „Dodaj”, aby ponownie dodać usunięte pozycje menu.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
 	RU	Можно настроить элементы, доступные для выбора в главном меню верхнего уровня на экране плеера. Щелкайте элементы меню, перемещая их вверх и вниз или удаляя. Нажмите кнопку "Добавить", чтобы вернуть удаленный элемент обратно в меню.
-	SV	Du kan anpassa vilka alternativ som visas på rotmenyn på spelarens skärm. Flytta ett menyalternativ uppåt och nedåt eller ta bort alternativet genom att klicka. Klicka på Lägg till om du vill lägga till ett borttaget alternativ på menyn igen.
+	SV	Du kan anpassa vilka alternativ som visas på huvudmenyn på spelarens skärm. Flytta ett menyalternativ uppåt och nedåt eller ta bort alternativet genom att klicka. Klicka på Lägg till om du vill lägga till ett borttaget alternativ på menyn igen.
 	ZH_CN	您可将播放器最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
 SETUP_GROUP_NONMENUITEMS_INTRO
@@ -3884,7 +3884,7 @@ SETUP_SCROLLRATE_DESC
 	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna.
 	PT	Pode ajustar a velocidade a que o texto se move no ecran. A velocidade de scrolling define o tempo entre actualizações do ecran. Num reprodutor com ecran grafico este parametro pode ser ajustado em conbinação com os Scroll Pixels para ajustar a qualidade e velocidade do scrolling (o texto mover-se-á segundo o valor do Scroll Pixels por cada valor em segundos da Velocidade de scrolling definida). Num reprodutor com ecran de texto define o tempo de duração antes da entrada do caracter seguinte. Introduza um valor em segundos para o tempo de espera entre actualizações. Quanto menor for o numero mais rápido será o scrolling. Por defeito o valor é 0,033 segundos.
 	RU	Можно настроить скорость прокрутки теста на экране. Параметр «Скорость прокрутки» определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром «Число пикселей прокрутки», при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. Значение по умолчанию 0,033 с.
-	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
+	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Rullningshastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放器，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放器这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE_LINE
@@ -3942,7 +3942,7 @@ SETUP_GROUP_IRSETS_DESC
 	PL	Odtwarzacz można ustawić tak, aby reagował na określone sygnały pilota na podczerwień lub je ignorował. Aby włączyć zestaw kodów pilota zdalnego sterowania, zaznacz pole wyboru obok nazwy poniżej. Aby wyłączyć zestaw kodów, usuń zaznaczenie.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu reprodutor. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
 	RU	Можно настроить, на какие инфракрасные сигналы пульта плеер будет реагировать, а какие — игнорировать. Чтобы включить набор кодов пульта ДУ, установите флажок рядом с его именем. Чтобы отключить его, снимите флажок.
-	SV	Du kan välja om denna spelare ska svara till eller ignorera signaler från vissa fjärrkontroller. Om du vill aktivera en fjärrkontrolls koduppsättning, markerar du rutan bredvid namnet nedan och klickar på Ändra. Om du vill avaktivera en koduppsättning avmarkerar du rutan och klickar på Ändra.
+	SV	Du kan välja om denna spelare ska svara på eller ignorera signaler från vissa fjärrkontroller. Om du vill aktivera en fjärrkontrolls koduppsättning, markerar du rutan bredvid namnet nedan och klickar på Ändra. Om du vill avaktivera en koduppsättning avmarkerar du rutan och klickar på Ändra.
 	ZH_CN	您可选择让这个播放器对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
 
 SETUP_GROUP_PLUGINS
@@ -4066,6 +4066,7 @@ SETUP_FORMATS_PREFER_NATIVE
 	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler)
 	HU	Amikor csak lehetséges, részesítse előnyben a natív formátumot (dekódolás a lejátszón).
 	PT	Utilizar de preferência o formato nativo se possível (evitar a conversão no reprodutor).
+	SV	Använd alltid originalformatet på spelaren när det är möjligt (låt spelaren avkoda)
 	ZH_CN	尽可能优先使用原生格式（在播放器上解码），以避免转码
 
 SETUP_FORMATSLIST_MISSING_BINARY
@@ -4118,6 +4119,7 @@ SETUP_INPUTTYPE
 	NL	Van
 	HU	forrás:
 	PT	De
+	SV	Från
 
 STREAM_FORMAT
 	CS	Formát proudu
@@ -4378,7 +4380,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	PL	Czy na pewno chcesz przywrócić domyślne ustawienia fabryczne odtwarzacza?
 	PT	Confirma que quer efectuar o reset do reprodutor para os valores de fabrica?
 	RU	Вернуть заводские настройки плеера по умолчанию?
-	SV	Vill du återställa spelarens fabriksinställningar?
+	SV	Vill du återställa till spelarens fabriksinställningar?
 	ZH_CN	您真的想将播放器重置为出厂默认设置吗？
 
 SETUP_POWERONBRIGHTNESS
@@ -4540,7 +4542,7 @@ SETUP_MINAUTOBRIGHTNESS_DESC
 	PL	Ustaw minimalną wartość automatycznego ustawienia jasności.
 	PT	Ajustar o nível minímo para a configuração de brilho automatico.
 	RU	Задайте минимальный уровень яркости для автоматической настройки яркости.
-	SV	Justera den minsta möjliga ljusnivån för den automatiska inställningen av ljusstyrkan.
+	SV	Justera den minsta möjliga nivån för den automatiska inställningen av ljusstyrkan.
 	ZH_CN	设置最小亮度级别以自动调整亮度。
 
 SETUP_SENSAUTOBRIGHTNESS
@@ -4856,7 +4858,7 @@ SETUP_SYNCPOWER
 	PL	Zasilanie przy synchronizacji
 	PT	Sincronizar Ligar
 	RU	Синхронизовать мощность
-	SV	Synkronisera av/på
+	SV	Synkronisera på/av
 	ZH_CN	电源同步化
 
 SETUP_SYNCPOWER_DESC
@@ -5005,7 +5007,7 @@ SETUP_BUFFERSECS
 	PL	Sekundy buforu stacji radiowej
 	PT	Buffer em segundos das emissoras de radio
 	RU	Секунд буферизации для радиостанции
-	SV	Storlek på buffert för Internetradio i sekunder
+	SV	Storlek på buffert för internetradio i sekunder
 	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
@@ -5024,7 +5026,7 @@ SETUP_BUFFERSECS_DESC
 	PL	Podczas odtwarzania strumienia internetowego odtwarzacz buforuje niewielką ilość danych przed rozpoczęciem odtwarzania. Określ ilość danych audio do buforowania w sekundach od 3 do 30. Wartość domyślna to 3 sekundy. Jeżeli dźwięk będzie odtwarzany z przerwami, zwiększenie tej wartości może rozwiązać problem.
 	PT	Ao reproduzir streams da internet, o reprodutor armazena no buffer uma pequena quantidade de dados antes de iniciar a reprodução. Especifique a o tamanho do buffer pretendido, em segundos, de 3 a 30s. O valor predeterminado é de 3 segundos. Se o é audio intermitente, pode que tentar que melhorar este aspecto aumentando esse valor.
 	RU	Перед воспроизведением интернет-потока плеер буферизует небольшой объем данных. Укажите размер буферизуемых аудиоданных в секундах, от 3 до 30. Значение по умолчанию — 3 с. Увеличив это значение, можно устранить прерывистость воспроизведения аудио.
-	SV	När strömmat innehåll spelas upp från Internet så buffrar spelaren en liten mängd data innan uppspelningen börjar. Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder. Om uppspelningen hackar kan det hjälpa att öka det här värdet.
+	SV	När strömmat innehåll spelas upp från internet så buffrar spelaren en liten mängd data innan uppspelningen börjar. Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder. Om uppspelningen hackar kan det hjälpa att öka det här värdet.
 	ZH_CN	当播放互联网流时，播放器在开始播放之前会缓冲一小部分数据。指定要缓冲的音频数据量（3到30秒），默认值为3秒。如果音频出现卡顿，增加此值可能会有帮助。
 
 SETUP_MAXWMARATE
@@ -5062,7 +5064,7 @@ SETUP_MAXWMARATE_DESC
 	PL	W niektóre strumieniach WMA dostępnych jest kilka szybkości transmisji bitów do przesyłania strumieniowego. Domyślnie program Lyrion Music Server wybierze strumień z najwyższą dostępną szybkością transmisji bitów, ale jeżeli używane jest wolniejsze połączenie internetowe, można w tym miejscu ustawić niższą wartość w celu ograniczenia maksymalnej szybkości, jaką można wybrać w przypadku strumieni o kilku szybkościach.
 	PT	Alguns streams WMA permitem vários bitrates.  Por defeito oLyrion Music Server irá seleccionar o bitrate mais alto disponível. Contudo se tiver uma ligação à internet lenta poderá seleccionar um valor mais baixo para limitar o bitrate máximo que pode ser escolhido quando existirem multiplos disponíveis.
 	RU	В некоторых потоках WMA доступно несколько скоростей передачи для потокового воспроизведения. По умолчанию Lyrion Music Server выбирает поток с самой высокой скоростью передачи. Но при медленном соединении с Интернетом можно ограничить максимально доступное значение скорости передачи, сделав его более низким.
-	SV	Vissa WMA-strömmar har flera olika bithastigheter. Som standard väljer Lyrion Music Server den högsta tillgängliga bithastigheten. Om du har en långsammare Internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
+	SV	Vissa WMA-strömmar har flera olika bithastigheter. Som standard väljer Lyrion Music Server den högsta tillgängliga bithastigheten. Om du har en långsammare internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
 	ZH_CN	一些WMA流可以以多种比特率进行流式传输。默认情况下，Lyrion Music Server会选择可用的最高比特率流，但如果您的互联网连接较慢，您可以在此处设置一个较低的值，以限制可以从这些具有多种比特率的流中选择的最大速度。
 
 SETUP_SYNCSTARTDELAY
@@ -5174,7 +5176,7 @@ SETUP_MAINTAINSYNC_DESC
 	PL	Nawet jeżeli kilka odtwarzaczy rozpocznie odtwarzanie utworu dokładnie w tym samym momencie, po pewnym czasie (zwykle po kilku minutach) nie będą już zsynchronizowane. Różnica większa niż 30 ms (milisekund) będzie zauważana w przypadku słuchania dźwięku z kilku odtwarzaczy jednocześnie. Program Lyrion Music Server rozwiązuje ten problem przez stałe śledzenie, jaka część utworu została odtworzona przez dany odtwarzacz i wprowadzanie niewielkich zmian w razie potrzeby. Funkcję tę można włączyć lub wyłączyć.
 	PT	Mesmo quando vários reprodutores comecem a tocar uma musica em perfeira sincronização poderá acontecer que decorrendo algum tempo comecem a perder essa sincronização (usualmente depois de alguns minutos). Uma diferença de mais de 30 milisegundos será perceptível se ouvir o som de vários reprodutores simultaneamente. O Lyrion Music Server aborda este problema ao continuadamente verificar o que cada reprodutor já tocou e introduzindo pequenos ajustes, qaundp necessários. Pode ligar ou desligar esta capacidade.
 	RU	Даже если несколько плееров начинают воспроизводить дорожку абсолютно синхронно, со временем (обычно через несколько минут) могут появиться расхождения. Расхождения более 30 мс будут заметны, если одновременно слушать музыку из нескольких плееров. Lyrion Music Server решает эту проблему, отслеживая время работы каждого плеера и корректируя ход воспроизведения. Эту функцию можно включать и отключать.
-	SV	Även om när flera spelare är perfekt synkroniserade när en låt börjar spelas upp, kan de komma i otakt senare (vanligtvis efter ett par minuter). Det går att höra tidsskillnader på över 30 millisekunder från flera spelare samtidigt. I Lyrion Music Server hanteras det här problemet med att speltiden för varje spelare spåras, så att justeringar kan göras vid behov. Du kan aktivera eller avaktivera den här funktionen.
+	SV	Även om flera spelare är perfekt synkroniserade när en låt börjar spelas upp, kan de komma i otakt senare (vanligtvis efter ett par minuter). Det går att höra tidsskillnader på över 30 millisekunder från flera spelare samtidigt. I Lyrion Music Server hanteras det här problemet med att speltiden för varje spelare spåras, så att justeringar kan göras vid behov. Du kan aktivera eller avaktivera den här funktionen.
 	ZH_CN	即使多个播放器从开始就完全同步播放，但经过一段时间后，它们可能会变得不同步（通常在几分钟内）。如果同时听多个播放器的声音，超过30毫秒的延迟是可感知的。在Lyrion Music Server中，这个问题通过跟踪每个播放器播放的时间，并在需要时进行小的调整来解决。您可以启用或禁用此功能。
 
 SETUP_MAINTAINSYNC_ON
