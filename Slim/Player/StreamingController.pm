@@ -2,7 +2,7 @@ package Slim::Player::StreamingController;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -692,6 +692,13 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		pop @$queue;
 	}
 
+	# ensure that metadata is cached and available (specifically replay gain)
+	my $handler = $song->currentTrackHandler();
+	if ($handler->can('getMetadataFor')) {
+		main::INFOLOG && $log->info("Loading metadata for " . $song->currentTrack()->url );
+		$handler->getMetadataFor($self->master(), $song->currentTrack()->url);
+	}
+
 	_showTrackwaitStatus($self, $song);
 
 	$song->getNextSong (
@@ -1273,6 +1280,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $reportsTrackStart = 0;
 
 	my $replayGain = Slim::Player::ReplayGain->fetchGainMode($self->master(), $song);
+	
+	$song->replayGain($replayGain);  # store this for status queries
 
 	# bug 10438
 	$self->resetFrameData();
@@ -1315,8 +1324,6 @@ sub _Stream {				# play -> Buffering, Streaming
 		);
 
 		$startedPlayers += $player->play( \%params );
-
-		$song->replayGain($replayGain);  # store this for status queries
 
 		$reportsTrackStart ||= $player->reportsTrackStart();
 	}
