@@ -5586,7 +5586,7 @@ SETUP_REPLAYGAINMODE_DESC
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
-	SV	Vissa ljudspår innehåller volymjusteringar (Replay Gain), information som kan användas för att få alla spår och album att spelas upp med samma volym Om det finns sådan här information kan spelaren använda den. Volymutjämning av spår (Track Gain) kan användas för att se till att alla spår har samma volym. Volymutjämning av album kan användas för att se till att alla album har samma volym utan att volymskillnader mellan olika låtar på ett album ändras. Smart volymutjämning innebär att ser till att volymutjämningen av album används när låtar som spelas upp efter varandra kommer från samma album, medan volymutjämningen av spår används med blandade spellistor.
+	SV	Vissa ljudspår innehåller volymjusteringsinformation (Replay Gain), dessa kan användas för anpassa volymen av de enskilda spåren. Volymutjämning av spår används för att se till att alla spår i en blandad spellista spelas med samma volym. Volymutjämning av album används för anpassa volymen av alla spår på ett album. Smart volymutjämning innebär att volymutjämningen av album används när spår som spelas upp efter varandra kommer från samma album, medan volymutjämningen av spår används med blandade spellistor.
 	ZH_CN	某些音轨包含音量调节或“回放增益”信息，这些信息可在播放过程中使用，以确保曲目和专辑听起来同样响亮。如果存在此信息，玩家可以使用它。“曲目增益”可用于确保所有曲目听起来都同样响亮。“专辑增益”可用于确保所有专辑听起来都同样响亮，但专辑中曲目之间的音量差异得以保留。“智能”增益选择使用专辑增益，如果连续的歌曲来自同一专辑或混合播放列表的曲目增益。
 
 SETUP_REPLAYGAIN_REMOTE
@@ -5902,6 +5902,7 @@ OUTPUT_CHANNELS_COMBINED
 	FR	Deux Canaux (Mono)
 	HU	Mindkét csatorna (monó)
 	NL	Beide kanalen (mono)
+	SV	Bägge kanalerna (mono)
 	ZH_CN	左右声道（单声道）
 
 SETUP_TRANSITIONTYPE
@@ -6173,7 +6174,7 @@ SETUP_TRANSITIONSAMPLERESTRICTION_DESC
 	DE	In manchen Konfigurationen kann es angebracht sein, Überblendung zwischen Titeln mit unterschiedlichen Sampleraten zu deaktivieren. Dies kann etwa notwendig sein, wenn ein Player beim Überblenden nur ein Knacken oder Lärm wieder gibt.
 	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
 	FR	Il peut être approprié de désactiver les transitions entre les pistes ayant des fréquences d'échantillonnage différentes. Cela peut être nécessaire si la platine génère du bruit pendant ces transitions.
-	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som bara genererar oväsen vid sådan korstoning.
+	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som genererar oväsen vid sådan korstoning.
 	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen.
 	HU	Célszerű lehet letiltani az áttűnést a különböző mintavételi gyakoriságú sávok között. Erre akkor lehet szükség, ha a lejátszó az ilyen átmenetek során zajt produkál.
 	ZH_CN	可能需要禁用不同采样率的曲目之间的交叉淡入。如果此播放器在此类过渡期间产生噪音，则可能需要这样做。
@@ -6422,7 +6423,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	NO	Hvis du har filer som ikke har forståelige etiketter, kan Lyrion Music Server gjette på etiketter ved å bruke informasjon om bane og filnavn. Ved å bruke noen av de samme variablene som i Tittelformat, kan du lage et mønster som passer måten du navngir filer på, slik at programmet lettere kan gjette hva etikettene skal være. Programmet prioriterer som oppgitt nedenfor. Det første gyldige treffet på mønster brukes.
 	PL	W przypadku plików, które nie mają odpowiednich znaczników program Lyrion Music Server może odgadnąć tagi na podstawie ścieżki i nazwy pliku. Używając tej samej zmiennej co opcja Format tytułu, można utworzyć wzór odpowiedni do utworzenia konwencji nazywania plików, co ułatwi aplikacji utworzenie właściwego znacznika. Priorytety mają kolejność podaną poniżej. Stosowany jest pierwszy pasujący wzór.
 	RU	Lyrion Music Server может угадывать теги на основе пути и имени файла для тех файлов, у которых нет корректных тегов. С помощью переменных, аналогичных формату названия, можно создать шаблон, отвечающий условиям именования файлов, чтобы приложению было легче угадывать возможные теги. Приоритет присваивается в нижеследующем порядке. Используется первое допустимое совпадение шаблона.
-	SV	För filer som inte har taggats korrekt kan du låta Lyrion Music Server gissa taggarna med hjälp av sökväg och filnamn. Om du använder samma variabler som i titelformatet kan du skapa ett mönster som överensstämmer med hur man brukar namnge filer, så kan programmet gissa vad taggarna borde vara. Prioriteringsordningen är densamma som i listan nedan. Det första giltiga mönstret används.
+	SV	För filer som inte har taggats korrekt kan du låta Lyrion Music Server gissa taggarna med hjälp av sökväg och filnamn. Om du använder samma variabler som i titelformatet kan du skapa ett mönster som överensstämmer med hur man brukar namnge filer, så kan programmet gissa vad taggarna borde vara. Prioriteringsordningen är densamma som i listan är nedan. Det första giltiga mönstret används.
 	ZH_CN	那些没有合理标签的文件,您可以让服务器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便服务器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
 
 SETUP_IRMAP
@@ -6497,7 +6498,7 @@ SETUP_NO_PREFS
 	NO	Det er ingen innstillinger for denne spilleren på denne siden
 	PL	Na tej stronie nie ma ustawień dla tego odtwarzacza
 	RU	На странице нет настроек для этого плеера
-	SV	Det finns inga inställningar den här spelaren på den här sidan
+	SV	Det finns inga inställningar för den här spelaren på den här sidan
 	ZH_CN	此页面上没有此播放器的设置
 
 # Server Settings
@@ -6637,6 +6638,7 @@ SETUP_SKIPSENTINEL
 	NL	Bestandsnaam voor uitsluitingen
 	HU	A megadott fájlnév kihagyása
 	PT	Excluir ficheiro deste tipo
+	SV	Namn på "Hoppa över" flagg-fil
 	ZH_CN	跳过哨兵文件名
 
 SETUP_SKIPSENTINEL_DESC
@@ -6647,6 +6649,7 @@ SETUP_SKIPSENTINEL_DESC
 	FR	Les (sous-)dossiers multimédias contenant un fichier portant ce nom sont ignorés.
 	NL	Media-(sub)mappen waarin een bestand met deze naam voorkomt worden overgeslagen.
 	HU	Az ilyen nevű fájlt tartalmazó média (al)mappák kimaradnak.
+	SV	Mediemappar som innehåller en fil med detta namn skannas inte.
 	ZH_CN	包含此名称的媒体（子）文件夹将被跳过。
 
 SETUP_PLAYLISTDIR
@@ -6713,6 +6716,7 @@ SETUP_NO_PORTRAITS
 	DE	Künstlerbilder
 	EN	Artist Portraits
 	FR	Photos d'artistes
+	SV	Artistfoton
 	ZH_CN	艺术家头像
 
 SETUP_NO_PORTRAITS_ON
@@ -6720,6 +6724,7 @@ SETUP_NO_PORTRAITS_ON
 	DE	Beim Blättern durch Künstler keine Bilder zeigen
 	EN	Don't show pictures when browsing artists
 	FR	Ne pas afficher de photos lors du parcours des artistes
+	SV	Visa inga bilder när man bläddrar igenom artister
 	ZH_CN	浏览艺术家时不显示图片
 
 SETUP_NO_PORTRAITS_OFF
@@ -6727,6 +6732,7 @@ SETUP_NO_PORTRAITS_OFF
 	DE	Beim Blättern durch Künstler Bilder anzeigen
 	EN	Show pictures when browsing artists
 	FR	Afficher les photos lors du parcours des artistes
+	SV	Visa bilder när man bläddrar igenon artister
 	ZH_CN	浏览艺术家时显示图片
 
 SETUP_BAD_FILE
@@ -6905,6 +6911,7 @@ RESCAN_ALBUM
 	EN	Rescan Album
 	FR	Réanalyser l'album
 	NL	Album opnieuw scannen
+	SV	Skanna om album
 
 SETUP_AUTO_RESCAN
 	CS	Automaticky detekovat změny
@@ -6988,7 +6995,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL
 	NO	Intervall for oppdagelse av delte nettverkselementer
 	PL	Interwał wykrywania udziału sieciowego
 	RU	Интервал между попытками найти общий сетевой ресурс
-	SV	Identifieringsintervall för nätverksresurs
+	SV	Identifieringsintervall för nätverksfilsystem
 	ZH_CN	网络共享检测间隔
 
 SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
@@ -7005,7 +7012,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
 	NO	Filene må kontrolleres for å se etter endringer med jevne mellomrom, slik at endringer av delte elementer på eksterne nettverk og på systemer som ikke har støtte for oppdagelse av endringer, kan oppdages. Velg hvor lang tid det skal gå mellom hver kontroll (i minutter). Standardverdien er 10 minutter.
 	PL	Aby możliwe było wykrywanie zmian w zdalnych udziałach sieciowych lub w niektórych systemach operacyjnych bez wbudowanej obsługi wykrywania zmian, konieczne jest odpytywanie o zmiany plików w regularnych przedziałach czasu. Wybierz interwał takiego sprawdzania (w minutach). Wartość domyślna to 10 minut.
 	RU	Если нужно отслеживать изменения на удаленных сетевых ресурсах или в операционных системах, в которых не поддерживается функция  обнаружения изменений, следует регулярно опрашивать файлы на наличие изменений. Выберите интервал между опросами (в минутах). Значение по умолчанию — 10 минут.
-	SV	För att upptäcka ändringar i fjärrnätverksresurser eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
+	SV	För att upptäcka ändringar i fjärrnätverksfilsystem eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
 	ZH_CN	为了检测远程网络共享或没有本地更改检测支持的某些操作系统上的更改，必须定期轮询文件是否有更改。选择用于此检查的间隔，以分钟为单位。默认值为10分钟。
 
 RESCANNING
@@ -7164,6 +7171,7 @@ SETUP_EXTENSIONS_CATEGORY_TOP
 	EN	Most Popular (not installed)
 	FR	Les plus populaires (non installés)
 	HU	Legnépszerűbb (nincs telepítve)
+	SV	Mest populära
 	ZH_CN	最流行的（未安装）
 
 SETUP_EXTENSIONS_CATEGORY_DATABASE
@@ -7173,6 +7181,7 @@ SETUP_EXTENSIONS_CATEGORY_DATABASE
 	EN	Music library
 	FR	Bibliothèque musicale
 	HU	Zenei könyvtár
+	SV	Musikbibliotek
 	ZH_CN	音乐库
 
 SETUP_EXTENSIONS_CATEGORY_HARDWARE
@@ -7181,6 +7190,7 @@ SETUP_EXTENSIONS_CATEGORY_HARDWARE
 	EN	Hardware
 	FR	Matériel
 	HU	Hardver
+	SV	Hårdvara
 	ZH_CN	硬件
 
 SETUP_EXTENSIONS_CATEGORY_INFORMATION
@@ -7208,6 +7218,7 @@ SETUP_EXTENSIONS_CATEGORY_MISC
 	EN	Miscellaneous
 	FR	Divers
 	HU	Merevlemezek
+	SV	Diverse
 	ZH_CN	杂项
 
 SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES
@@ -7217,6 +7228,7 @@ SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES
 	EN	Streaming Services
 	FR	Services de streaming
 	HU	Streamer szolgáltatás
+	SV	Strömmningstjänster
 	ZH_CN	流媒体服务
 
 SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
@@ -7230,7 +7242,7 @@ SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
 	JA	保存されたプレイリスト
 	NO	Spillelister
 	PL	Listy odtwarzania
-	SV	Låtlistor
+	SV	Spellistor
 	ZH_CN	保存播放表
 	NL	Afspeellijst
 
@@ -7274,6 +7286,7 @@ SETUP_EXTENSIONS_CATEGORY_SKIN
 	EN	Skins
 	FR	Thèmes (Skins)
 	HU	Felületek ("bőrök")
+	SV	Utseende (Skins)
 	ZH_CN	外观
 
 SETUP_EXTENSIONS_CATEGORY_TOOLS
@@ -7283,6 +7296,7 @@ SETUP_EXTENSIONS_CATEGORY_TOOLS
 	EN	Tools
 	FR	Outils
 	HU	Eszközök
+	SV	Verktyg
 	ZH_CN	工具
 
 SETUP_EXTENSIONS_REPOS
@@ -7525,6 +7539,7 @@ SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	IT	Per assistenza, rivolgersi all'autore del plugin.
 	NL	Neem contact op met de auteur van de plug-in voor ondersteuning.
 	NO	Du kan kontakte de som laget modulen for støtte.
+	SV	OBS! Användning av dessa plugin-program sker på eget ansvar. Du kan kontakat plugin-programmets upphosman för hjälp.
 	ZH_CN	请注意，使用第三方插件的风险由您自行承担。请联系插件作者以获取支持。
 
 SETUP_EXTENSIONS_RECOMMENDED_REPOSITORIES
@@ -7573,6 +7588,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED
 	NL	Gebruik niet ondersteunde extensies
 	HU	Nem támogatott bővítmények használatámak engedélyezése
 	PT	Usar extensões não suportadas
+	SV	Plugin-program son inte längre har support
 	ZH_CN	使用不受支持的扩展
 
 SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
@@ -7583,6 +7599,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Lyrion Music Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Lyrion Music Server de fonctionner. À utiliser à vos risques et périls.
 	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
+	SV	OBS! Dessa tredjeparts plugin-program fungerar kanske inte med denna version av Lyrion Music Server. De underhålls inte längre aktivt av deras upphovsmän.
 	ZH_CN	警告 - 这些是第三方插件，不能保证在 Lyrion Music Server 的当前版本中正常工作。它们已经被它们的作者遗弃，并且不再维护。最坏的情况下，它们可能会破坏您的 Lyrion Music Server。使用风险自负。
 
 SETUP_EXTENSIONS_TOGGLE_VIEW
@@ -7591,6 +7608,7 @@ SETUP_EXTENSIONS_TOGGLE_VIEW
 	EN	Toggle between grid and list view
 	FR	Basculer entre les vues grille et liste
 	NL	Schakelen tussen raster- en lijstweergave
+	SV	Byt mellan list- eller ikonvy
 	ZH_CN	切换网格和列表视图
 
 SETUP_REFRESHRATE
@@ -7669,7 +7687,7 @@ SETUP_COVERART_DESC
 	PL	Obrazy okładki albumu (jeżeli są dostępne) pojawiają się po wyświetleniu informacji o albumie lub utworze. Obrazy okładek znajdują się w znacznikach ID3 poszczególnych utworów lub w tym samym folderze co pliki utworów. Domyślnie używane są obrazy o nazwie „cover.jpg”, „folder.jpg”, „album.jpg” lub „thumb.jpg”. Możliwe jest określenie dodatkowej nazwy pliku używanej dla okładek albumów. Można także określić inne nazwy plików dla miniatur i obrazów pełnowymiarowych. Poprzedzenie opcji znakiem % umożliwia dodanie dowolnego ciągu złożonego z tych samych elementów, jakie są używane w formatach tytułów (np. wpisanie tekstu %ARTIST - ALBUM spowoduje wyszukiwanie pliku Artist - Album.jpg w celu dopasowania do znalezionych informacji o wykonawcy i albumie.
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	RU	При просмотре информации об альбоме или песне отображаются доступные изображения обложек. Изображения обложек находятся в тегах ID3 отдельных песен или могут располагаться в той же папке, что и файлы песен. По умолчанию используются изображения с именами cover.jpg, folder.jpg, album.jpg или thumb.jpg. Можно указать дополнительное имя файла, используемое для изображений обложек альбома. Можно также задавать различные имена файлов для эскизов и полноразмерных изображений. Введите перед параметром символ "%", а затем укажите любую строку, состоящую из тех же элементов, которые доступны для форматов названия (например, при вводе %ARTIST — ALBUM будет выполнен поиск строки Artist — Album.jpg в соответствии с найденной информацией об исполнителе и альбоме).
-	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i ID3-taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
+	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du kan ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
 SETUP_THUMBSIZE
@@ -7748,7 +7766,7 @@ SETUP_HTTPPORT_DESC
 	PL	Numer portu używany w celu uzyskania dostępu do serwera z przeglądarki internetowej można zmienić (domyślny to 9000).
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
 	RU	Номер порта для доступа к серверу можно изменить в веб-браузере. (Номер по умолчанию — 9000.)
-	SV	Du kan ändra portnumret som används för tillgång till servern från en webbläsare. (Standard är 9 000.)
+	SV	Du kan ändra portnumret som används för tillgång till servern från en webbläsare. (Standard är 9000.)
 	ZH_CN	您可以改变浏览器访问服务器时所使用的端口号。（缺省值为9000）
 
 SETUP_HTTPPORT_OK
@@ -7930,6 +7948,7 @@ SETUP_CHECKVERSION_DESC
 	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible. Veuillez noter que le programme vérifiera toujours les mises à jour des plug-ins selon les intervalles sélectionnés, même si les vérifications logicielles sont désactivées.
 	HU	A Lyrion Music Server automatikusan ellenőrzi, hogy elérhető-e a szoftver frissített verziója.  Ha igen, akkor egy üzenet jelenik meg a Lyrion Music Server webes felületén.
 	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server. Houd er rekening mee dat het programma altijd zal controleren op updates voor plug-ins volgens de geselecteerde intervallen, zelfs als softwarecontroles zijn uitgeschakeld.
+	SV	Lyrion Music Server kan automatiskt kontrollera on det finns en nyare version tillgänglig. Om så är fallet visas ett meddelande in Lyrion Music servers webgränssnitt. Observera att Lyrion Music Server kommer alltid att kontrollera om det finns nya versioner av de installerade plugin-programmen.
 	ZH_CN	Lyrion Music Server 可以自动检查是否有更新的软件版本可用。如果有，则在 Lyrion Music Server 的网页界面中会显示一条消息。
 
 SETUP_CHECKVERSION_1
@@ -21558,7 +21577,7 @@ DIRECTORY_DELETED_PROGRESS
 	NO	Fjerner slettede filer
 	PL	Kasowanie usuniętych plików
 	RU	Убрать удаленные файлы
-	SV	Ta bort borttagna filer
+	SV	Tar bort borttagna filer
 	ZH_CN	移除已删除的文件
 
 DIRECTORY_NEW_PROGRESS
@@ -21575,7 +21594,7 @@ DIRECTORY_NEW_PROGRESS
 	NO	Søker i nye musikkfiler
 	PL	Trwa przeszukiwanie nowych plików muzycznych
 	RU	Сканирование новых музыкальных файлов
-	SV	Söka igenom nya musikfiler
+	SV	Söker igenom nya musikfiler
 	ZH_CN	扫描新音乐文件
 
 DIRECTORY_MEDIA_PROGRESS
