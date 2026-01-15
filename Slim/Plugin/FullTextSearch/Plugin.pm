@@ -327,7 +327,10 @@ sub parseSearchTerm {
 	my @quoted;
 	while ($search =~ s/"(.+?)"//) {
 		my $quoted = $1;
-		$quoted =~ s/[[:punct:]]/ /g;
+		# Remove English punctuation marks from quoted strings
+		# This preserves full-width Chinese punctuation while cleaning English punctuation
+		# Matches: ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+		$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
 		push @quoted, '"' . $quoted . '"';
 	}
 
@@ -340,7 +343,20 @@ sub parseSearchTerm {
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
 		if ($noOfTokens == 1) {
 			if ( length $_ == 1 ) {
-				$token = "w10:$_";
+				# For single character tokens, add wildcard (*) only for CJK (Chinese/Japanese/Korean) characters
+
+				# \p{Han} matches Chinese Han characters
+				# \p{Hiragana} matches Japanese Hiragana
+				# \p{Katakana} matches Japanese Katakana
+				# \p{Hangul} matches Korean Hangul
+				if ($_ =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/) {
+					# CJK character: Add wildcard for partial matching
+					# Example: "中" becomes "w10:中*" to match "中文", "中国", "中心", etc.
+					$token = "w10:$_*";
+				} else {
+					# Non-CJK single character: Use exact match without wildcard
+					$token = "w10:$_";
+				}
 			}
 			elsif ( /\d{4}/ ) {
 				# nothing to do here: years can be popular, but we want to be able to search for them
