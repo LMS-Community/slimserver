@@ -85,6 +85,7 @@ jobs:
           - [tarball, ""]
           - [tarball, "--encore"]
           - [tarball, "--noCPAN"]
+          - [pcp, ""]
 
     steps:
       # we must check out here, as  otherwise the build action is not available
@@ -95,10 +96,10 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
         run: |
           sudo apt update
-          sudo apt install apt-transport-https debhelper devscripts
+          sudo apt install -y apt-transport-https debhelper devscripts
 
       - name: Launch build process
         uses: ./server/.github/actions/build
