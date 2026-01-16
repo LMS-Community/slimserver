@@ -1317,7 +1317,7 @@ sub _Stream {				# play -> Buffering, Streaming
 			'controller'  => $songStreamController,
 			'url'         => $songStreamController->streamUrl(),
 			'reconnect'   => $reconnect,
-			'replay_gain' => $replayGain,
+			'replay_gain' => $song->replayGain(),
 			'seekdata'    => $seekdata,
 			'fadeIn'      => $myFadeIn,
 			# we never set the 'loop' parameter
