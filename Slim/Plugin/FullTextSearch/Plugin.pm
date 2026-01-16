@@ -323,11 +323,29 @@ sub parseSearchTerm {
 
 	$search =~ s/""\s*$//;
 
+	# Check if the search string contains CJK (Chinese/Japanese/Korean) characters
+	# \p{Han} matches Chinese Han characters (covers both simplified and traditional Chinese, and Kanji)
+	# \p{Hiragana} matches Japanese Hiragana syllabary
+	# \p{Katakana} matches Japanese Katakana syllabary  
+	# \p{Hangul} matches Korean Hangul syllables
+	my $isCJK = ( $search =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/ );
+
 	# don't pull quoted strings apart!
 	my @quoted;
 	while ($search =~ s/"(.+?)"//) {
 		my $quoted = $1;
-		$quoted =~ s/[[:punct:]]/ /g;
+		if ( $isCJK ) {
+			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation, 
+			# we replace ASCII punctuation while preserving CJK punctuation.
+			#
+			# Punctuation characters; in the ‘C’ locale and ASCII character encoding, 
+			# this is ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
+			# https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
+			$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
+		} else {
+			$quoted =~ s/[[:punct:]]/ /g;
+		}
+
 		push @quoted, '"' . $quoted . '"';
 	}
 
@@ -340,7 +358,15 @@ sub parseSearchTerm {
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
 		if ($noOfTokens == 1) {
 			if ( length $_ == 1 ) {
-				$token = "w10:$_";
+				# For single character tokens, add wildcard (*) only for CJK (Chinese/Japanese/Korean) characters
+				if ( $isCJK ) {
+					# CJK character: Add wildcard for partial matching
+					# Example: "中" becomes "w10:中*" to match "中文", "中国", "中心", etc.
+					$token = "w10:$_*";
+				} else {
+					# Non-CJK single character: Use exact match without wildcard
+					$token = "w10:$_";
+				}
 			}
 			elsif ( /\d{4}/ ) {
 				# nothing to do here: years can be popular, but we want to be able to search for them
