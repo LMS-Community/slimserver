@@ -323,14 +323,29 @@ sub parseSearchTerm {
 
 	$search =~ s/""\s*$//;
 
+	# Check if the search string contains CJK (Chinese/Japanese/Korean) characters
+	# \p{Han} matches Chinese Han characters (covers both simplified and traditional Chinese, and Kanji)
+	# \p{Hiragana} matches Japanese Hiragana syllabary
+	# \p{Katakana} matches Japanese Katakana syllabary  
+	# \p{Hangul} matches Korean Hangul syllables
+	my $isCJK = ( $search =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/ );
+
 	# don't pull quoted strings apart!
 	my @quoted;
 	while ($search =~ s/"(.+?)"//) {
 		my $quoted = $1;
-		# Remove English punctuation marks from quoted strings
-		# This preserves full-width Chinese punctuation while cleaning English punctuation
-		# Matches: ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
-		$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
+		if ( $isCJK ) {
+			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation, 
+			# we replace ASCII punctuation while preserving CJK punctuation.
+			#
+			# Punctuation characters; in the ‘C’ locale and ASCII character encoding, 
+			# this is ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
+			# https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
+			$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
+		} else {
+			$quoted =~ s/[[:punct:]]/ /g;
+		}
+
 		push @quoted, '"' . $quoted . '"';
 	}
 
@@ -344,12 +359,7 @@ sub parseSearchTerm {
 		if ($noOfTokens == 1) {
 			if ( length $_ == 1 ) {
 				# For single character tokens, add wildcard (*) only for CJK (Chinese/Japanese/Korean) characters
-
-				# \p{Han} matches Chinese Han characters
-				# \p{Hiragana} matches Japanese Hiragana
-				# \p{Katakana} matches Japanese Katakana
-				# \p{Hangul} matches Korean Hangul
-				if ($_ =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/) {
+				if ( $isCJK ) {
 					# CJK character: Add wildcard for partial matching
 					# Example: "中" becomes "w10:中*" to match "中文", "中国", "中心", etc.
 					$token = "w10:$_*";
