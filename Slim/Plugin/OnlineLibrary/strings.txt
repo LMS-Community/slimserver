@@ -105,6 +105,7 @@ PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT
 	EN	Don't import playlists.
 	FR	Ne pas importer les listes de lecture.
 	HU	Ne importáljon lejátszási listákat.
+	SV	Importera inte spellistor
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 	CS	Logo hudební služby
@@ -154,7 +155,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 	FR	Tous les services de streaming ne prenant pas en charge les genres, ce paramètre permet de mapper des morceaux à des genres en fonction de leur titre ou du nom de l'artiste. Évidemment, cela ne fonctionne pas très bien avec les grosses bibliothèques. Mais cette association permet, par exemple, de regrouper certains morceaux dans des bibliothèques thématiques.
 	HU	Sajnos nem minden streaming szolgáltatás támogatja a műfajokat. Ez a beállítás lehetővé teszi a számok műfajokhoz rendelését a címük vagy az előadó neve alapján. Ez nyilvánvalóan nem igaz a valódi gyűjteményekhez. De ez pl. lehetővé teszi bizonyos műsorszámok megcímkézését egy adott műfajjal, amelyet a könyvtárnézetben alkalmazni kíván.
 	NL	Niet alle online muziek streaming diensten ondersteunen genres. Met deze instelling kan je nummers toewijzen aan genres op basis van hun titel of artiesten. Dit werkt uiteraard niet voor erg grote collecties. Maar het stelt je in staat bepaalde nummers te taggen met een specifiek genre om toe te passen in een bibliotheekweergave.
-	SV	Inte alla strömningstjänster använder genrer. Den här inställningen gör det möjligt att sätta en genre på en låt baserat på namnet eller artistens namn. Det kommer givetvis inte att fungera speciellt bra för stora bibliotek men det gör det möjligt att ge vissa markera vissa låtar med en genre som kan användas i biblioteksvyer.
+	SV	Inte alla strömningstjänster använder genrer. Den här inställningen gör det möjligt att sätta en genre på en låt baserat på namnet eller artistens namn. Det kommer givetvis inte att fungera speciellt bra för stora bibliotek men det gör det möjligt att ge vissa låtar en genre som kan användas i biblioteksvyer.
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	CS	Pokročilá náhrada žánru a typu vydání
@@ -164,6 +165,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	FR	Remplacement avancé de genre et de type de sortie
 	HU	Speciális műfaj és kiadás típus csere
 	NL	Geavanceerde instellingen voor genre vervanging
+	SV	Avancerade genre- och utgåvetypersättningar
 
 PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
 	CS	Typ vydání
@@ -171,6 +173,7 @@ PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
 	EN	Release Type
 	FR	Type de sortie
 	HU	Kiadás típusa
+	SV	Utgåvetyp
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	CS	Zpět na základní nastavení
@@ -180,6 +183,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	FR	Retour aux paramètres de base
 	HU	Vissza az alapbeállításokhoz
 	NL	Terug naar standaard instellingen
+	SV	Tillbaka till standardinställningar
 
 PLUGIN_ONLINE_LIBRARY_TAG
 	CS	Tag:
@@ -209,7 +213,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	FR	Remplacement des genres et des types de sorties en ligne
 	HU	Online műfaj és kiadás típusának cseréje
 	NL	Online Genres Vervangen
-	SV	Ersätta Online genre
+	SV	Ersätt online genre och utgåvetyp
 
 PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
 	CS	Celkový počet skladeb v seznamech skladeb
