@@ -97,6 +97,7 @@ PLUGIN_FAVORITES_USE_DSTM
 	HU	Ne hagyd abba a zenét
 	NO	Ikke stopp musikken
 	NL	Don't Stop The Music
+	SV	Stoppa inte musiken
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
 	CS	Zaregistrujte si oblíbené položky jako možnosti pro „Nezastavuj přehrávání hudby“.
@@ -108,6 +109,7 @@ PLUGIN_FAVORITES_USE_DSTM_DESC
 	HU	A kedvencek beállítása a „Ne hagyja abba a zenét” opcióként.
 	NO	Legg inn favoritter som valg for "Ikke stopp musikken".
 	NL	Gebruik favorieten als opties voor Don't Stop The Music.
+	SV	Använd favoriter som en option för Stoppa inte musiken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	CS	Prohlížeč a editor seznamu skladeb OPML
@@ -541,6 +543,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	NL	Gedrag bij lokale muziek
 	NO	Oppførsel med lokal musikksamling
 	PL	Sposób przeglądania ulubionych
+	SV	Funktion med lokal musik
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
@@ -553,6 +556,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	NL	Niet door bladeren op een geselecteerd item, maar speel af (oude gedrag)
 	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
+	SV	Bläddra inte i spåren när de har valts, bara spela dem (gamla funktionen) 
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
@@ -565,3 +569,4 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	NL	Als je een favoriete uitvoerende, genre of album selecteert, blader door tot de inhoud ervan
 	NO	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.
 	PL	Gdy wybierzesz ulubionego wykonawcę, gatunek lub album, wyświetl utwory im odpowiadające
+	SV	När en favorit väljs, så visa detaljerat innehåll (nya funktionen)
