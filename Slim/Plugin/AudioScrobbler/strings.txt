@@ -14,6 +14,7 @@ PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ_LABEL
 	EN	ListenBrainz API (Experimental)
 	FR	API ListenBrainz (Expérimental)
 	NL	ListenBrainz API (Experimenteel)
+	SV	ListenBrainz API (experimentellt)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	CS	Účet (účty) Last.fm / ListenBrainz
@@ -45,7 +46,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	NO	Angi brukernavn og passord for Last.fm eller API-nøkkel/token for ListenBrainz.</br>Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer. Du kan også angi en tilpasset API-URL for alternative konfigurasjoner, ellers la denne innstillingen være tom.</br> </br>Eksempler på tilpassede basis-URL-er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm lub klucz API/token dla ListenBrainz.</br>W celu przesłania informacji o utworach z różnych odtwarzaczy na różne konta można wprowadzić dane z kilku kont. Możesz również ustawić niestandardowy adres URL API dla alternatywnych konfiguracji, w przeciwnym razie pozostaw to ustawienie puste.</br> </br>Przykłady niestandardowych podstawowych adresów URL:</br> </br>Maloja (z Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (z ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (z ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (z ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	RU	Введите имя пользователя и пароль Last.fm или API ключ/токен для ListenBrainz.</br>Можно указать несколько учетных записей, чтобы передавать дорожки с разных плееров в разные учетные записи. Вы также можете установить пользовательский URL API для альтернативных конфигураций, иначе оставьте эту настройку пустой.</br> </br>Примеры пользовательских базовых URL:</br> </br>Maloja (с Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (с ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (с ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (с ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
-	SV	Ange användarnamn och lösenord för Last.fm eller API-nyckel/token för ListenBrainz.</br>Du kan ange flera konton för att skicka spår från olika spelare till olika konton. Du kan också ställa in en anpassad API-URL för alternativa konfigurationer, annars lämna denna inställning tom.</br> </br>Exempel på anpassade bas-URL:er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
+	SV	Ange användarnamn och lösenord för Last.fm eller API-nyckel/token för ListenBrainz.</br>Du kan ange flera konton för att skicka spår från olika spelare till olika konton. Du kan också ställa in en anpassad API-URL för alternativa konfigurationer, lämna annars denna inställning tom.</br> </br>Exempel på anpassade bas-URL:er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
@@ -216,6 +217,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 	FR	Ignorer les titres
 	HU	Címek kizárása
 	NL	Negeer titels
+	SV	Ignorera spår
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	CS	Definujte seznam názvů nebo jmen oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
@@ -225,6 +227,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	FR	Définissez une liste de titres séparés par des virgules. Les morceaux qui correspondent à l'un de ces titres ne seront pas envoyés (scrobblés).
 	HU	Adja meg a címek vagy nevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	SV	Ange en komma-separerad list med låt- eller spårnamn. Spår med namn som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	CS	Ignorovaní interpreti
@@ -234,6 +237,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	FR	Ignorer les artistes
 	HU	Előadók kizárása
 	NL	Negeer artiesten
+	SV	Ignorera artister
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	CS	Definujte seznam jmen interpretů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
@@ -243,6 +247,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	HU	Adja meg az előadónevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van artiesten. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	SV	Ange en komma-separerad list med artistnamn. Spår av artister som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	CS	Ignorované názvy alb
@@ -252,6 +257,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	FR	Ignorer les titres des albums
 	HU	Albumcímek kizárása
 	NL	Negeer albums
+	SV	Ignorera album
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	CS	Definujte seznam názvů alb oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
@@ -261,6 +267,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	FR	Définissez une liste de noms d'albums séparés par des virgules. Les morceaux dont l'album correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	HU	Adja meg az albumnevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van albums. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	SV	Ange en komma-separerad list med albumnamn. Spår från ett album som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	CS	Ignorované žánry
@@ -270,6 +277,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	FR	Ignorer les genres
 	HU	Műfajok kizárása
 	NL	Negeer genres
+	SV	Ignorera genrer
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	CS	Definujte seznam žánrů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
@@ -279,6 +287,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	FR	Définissez une liste de genres séparés par des virgules. Les morceaux dont le genre correspond à l'un de ces genres ne seront pas envoyés (scrobblés).
 	HU	Adja meg a műfajok vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van genres. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	SV	Ange en komma-separerad list med genrer. Spår med en genre som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_BANNED
 	CS	Tato verze Lyrion Music Server byla zakázána prostřednictvím Last.fm, aktualizujte prosím na novější verzi.
@@ -350,6 +359,7 @@ SETUP_AUDIOSCROBBLER_VALID_CREDENTIALS
 	EN	Successfully validated your account information.
 	FR	Vos informations de compte ont été validées avec succès.
 	NL	Uw accountgegevens zijn succesvol gevalideerd.
+	SV	Din kontoinformation har verifierats.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
 	CS	Nastavení přehrávače Last.fm Audioscrobbler
@@ -453,6 +463,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_VALIDATION_ERROR
 	EN	There was an error validating your account information. Please try again later. (%s)
 	FR	Une erreur est survenue lors de la validation des informations de votre compte. Veuillez réessayer ultérieurement. (%s)
 	NL	Er is een fout opgetreden bij de verificatie van jouw account bij. Probeer het later opnieuw. (%s)
+	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí na míru upravené rozhlasové stanice, doporučování hudby a akcí, bezplatné stahování a další. Připojte se zdarma na <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> nebo zjistěte více na <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
