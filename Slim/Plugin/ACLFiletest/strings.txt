@@ -6,6 +6,7 @@ PLUGIN_ACL_FILETEST
 	HU	ACL fájlteszteket engedélyezése
 	NL	Schakel ACL-bestandtest in
 	NO	Aktiver ACL-filtest
+	SV	Aktivera ACL-filtester
 
 PLUGIN_ACL_FILETEST_DESC
 	CS	Tento zásuvný modul umožňuje kontrolovat oprávnění k souborům na základě ACL v některých systémech. Tento doplněk nepovolujte, pokud nevíte, že váš systém podporuje ACL a Perl „use filetest“.
@@ -15,3 +16,4 @@ PLUGIN_ACL_FILETEST_DESC
 	HU	Ez a beépülő modul lehetővé teszi a fájlengedélyek ellenőrzését az ACL-ek alapján egyes rendszereken. Ne engedélyezze ezt a beépülő modult, hacsak nem tudja, hogy a rendszere támogatja az ACL-eket és a Perl fájltesztjét.
 	NL	Deze plug-in maakt het op sommige systemen mogelijk om bestandsrechten op basis van ACL's te controleren. Schakel deze plug-in alleen in als je zeker weet dat je systeem ACL's and Perl's 'use filetest' ondersteunt.
 	NO	Denne plugin-modulen lar deg kontrollere filtilganger basert på ACL'er på noen systemer. Ikke aktiver denne modulen med mindre du vet at systemet ditt støtter ACL'er og Perls 'use filetest'.
+	SV	Detta pluginprogram gör det möjligt att kontrollera filrättigheter baserade på ACL (Access Control List) på system som använder ACLs. Aktivera inte detta pluginprogram såvida du inte vet om ditt system stöder ACL och Perl-modulen 'use filetest"-
