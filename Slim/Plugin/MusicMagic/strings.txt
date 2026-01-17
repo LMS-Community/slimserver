@@ -753,5 +753,5 @@ MUSICIP_DUPLICATES
 	NO	Duplikater (MusicIP)
 	PL	Duplikaty (MusicIP)
 	RU	Дубликаты (MusicIP)
-	SV	Dubbletter (MusicIP)
+	SV	Dubletter (MusicIP)
 
