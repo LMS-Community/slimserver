@@ -80,6 +80,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	EN	Classical Music by Conductor
 	HU	Klasszikus zene adott karmestertől
 	NL	Klassieke muziek van Dirigent
+	SV	Klassisk musik sorterad efter dirigent
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	CS	Jazzoví skladatelé
@@ -88,6 +89,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	EN	Jazz Composers
 	HU	Jazz zeneszerzők
 	NL	Jazz Componisten
+	SV	Jazz kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	CS	Role přispěvatelů:
@@ -109,6 +111,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	FR	Type de sortie :
 	HU	Kiadás típusa:
 	NL	Release type:
+	SV	Utgåvetyp
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	CS	Typy vydání:
@@ -118,6 +121,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	FR	Types de sorties :
 	HU	Kiadás típusai:
 	NL	Release typen:
+	SV	Utgåvetyper
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	CS	Procházet podle:
@@ -207,7 +211,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	NL	Verberg lossy versie als een lossless versie beschikbaar is.
 	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
-	SV	Göm förlustbehäftade dubbletter om det finns förlustfria versioner.
+	SV	Dölj förlustbehäftade dubbletter om det finns förlustfria versioner.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	CS	Vytvořte zobrazení knihovny, které se snaží potlačit duplicitní skladby skrytím ztrátových verzí, pokud je k dispozici bezeztrátová verze stejné nahrávky. To je užitečné zejména pokud uchováváte sbírku skladeb pro použití doma (bezeztrátová) a na cestách (ztrátová).
@@ -246,6 +250,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	FR	Albums modifiés récemment
 	HU	Nemrég frissített albumok
 	NL	Recent Gewijzigde Albums
+	SV	Nyligen ändrade album
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
 	CS	Oblíbená alba
@@ -253,6 +258,7 @@ PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
 	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
 	NL	Recent meest afgespeelde albums
+	SV	Populära album
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
 	CS	Oblíbení interpreti
@@ -260,6 +266,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
 	EN	Popular Artists
 	FR	Artistes les plus populaires
 	NL	Populairste artiesten
+	SV	Populära artister
 
 PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
 	CS	Noví interpreti
@@ -267,6 +274,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
 	EN	New Artists
 	FR	Nouveaux artistes
 	NL	Nieuwe artiesten
+	SV	Nya artister
 
 PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
 	CS	Nedávno přehrávaní interpreti
@@ -274,6 +282,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
 	EN	Recently Played Artists
 	FR	Artistes récemment écoutés
 	NL	Onlangs afgespeelde artiesten
+	SV	Nyligen spelade artister
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	CS	Nejlepší skladby
