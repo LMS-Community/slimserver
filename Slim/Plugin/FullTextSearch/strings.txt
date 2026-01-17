@@ -8,6 +8,7 @@ PLUGIN_FULLTEXT
 	NL	Tekst zoekfunctie
 	NO	Fulltekstsøk
 	PL	Wyszukiwanie pełnotekstowe
+	SV	Fulltextssökning
 
 PLUGIN_FULLTEXT_DESC
 	CS	Tento zásuvný modul nahrazuje poměrně zjednodušené vyhledávání v názvech fulltextovým vyhledáváním. Umožní např. najít seznamy skladeb se skladbou hledaného názvu nebo odfiltrovat ztrátové soubory přidáním slova „flac“ k hledanému výrazu. Vypnutím tohoto zásuvného modulu se obnoví staré, jednoduché vyhledávání názvů. Upozornění pro pokročilé uživatele: fulltextové vyhledávání není k dispozici při použití MySQL.
@@ -19,6 +20,7 @@ PLUGIN_FULLTEXT_DESC
 	NL	Deze plug-in vervangt een vrij basale zoekfunctie door een volledige tekst zoekfunctie. Zo kun je een afspeellijst vinden als je zoekt op titel, of filter je lossy-bestanden uit, door het toevoegen van de zoekterm 'flac'. Uitschakelen van deze plug-in herstelt de oude, bestaande zoekfunctie. Let op: de tekstzoek functie kan niet gebruikt worden met MySQL.
 	NO	Denne utvidelsen erstatter det basale tittelsøket med et fulltekstsøk. Dette vil for eksempel finne spillelister med sportitler som matcher tekstsøket, eller filtrere ut komprimerte filer ved å legge til 'flac' i søkefeltet. Ved å fravelge denne utvidelsen blir den gamle tittelsøket gjenopprettet. Advarsel til avanserte brukere: Fulltekstsøk er ikke tilgjengelig når man bruker MySQL.
 	PL	Ten dodatek zastępuje proste wyszukiwanie tytułów utworów wyszukiwaniem pełnotekstowym. To pozwoli np. na znalezienie list odtwarzania, które zawierają szukaną nazwę utworu lub na filtrowanie stratnych plików przez dodanie "flac" do wyszukiwanej frazy. Wyłączenie dodatku przywraca starą, prostą wyszukiwarkę. Notka dla poweruserów: wyszukiwanie pełnotekstowe nie jest dostępne dla MySQL.
+	SV	Detta pluginprogram ersätter den enkla titelsökningen med en fulltextsökning. Den hittar t.ex. spellistor med ett spår från den sökta titeln, eller filtrera ut förlustbehäftade genom att lägga till strängen "flac" sökkriteriet. Avaktivering av detta pluginprogram återställer gamla enkla sökfunktionen.
 
 PLUGIN_FULLTEXT_PROGRESS
 	CS	Vytváření fulltextového indexu
@@ -30,3 +32,4 @@ PLUGIN_FULLTEXT_PROGRESS
 	NL	Tekstindex opbouwen
 	NO	Lager fulltekstindeks
 	PL	Budowanie indeksu wyszukiwarki pełnotekstowej
+	SV	Skapar fulltextindex
