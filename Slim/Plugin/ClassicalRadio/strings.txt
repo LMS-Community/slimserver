@@ -26,4 +26,4 @@ PLUGIN_CLASSICALRADIO_LINK
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> oldalra.
-	SV	Gå till <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> för att skapa ett eller ändra ditt konto.
+	SV	Gå till <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> för att skapa eller ändra ditt konto.
