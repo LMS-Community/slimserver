@@ -12,7 +12,7 @@
 				"EN": "The <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> provides a modern, rich, and responsive user interface to your music collection.",
 				"FR": "Le plugin <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> fournit une interface utilisateur moderne, riche et r&eacute;active (utilisable ais&eacute;ment quelle que soit la taille de l'&eacute;cran) pour votre collection musicale.",
 				"NL": "De <a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> biedt een moderne, rijke en responsieve gebruikersinterface voor je muziekcollectie.",
-				"SV": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> är ett modernt, fullödigt och performant användargränssnitt till din musiksamling."
+				"SV": "<a href=\"https://github.com/CDrummond/lms-material\" target=\"_blank\">Material Skin</a> &auml;r ett modernt, full&ouml;digt och performant anv&auml;ndargr&auml;nssnitt till din musiksamling."
 			},
 			"checked": true,
 			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-initial.png"
@@ -34,7 +34,7 @@
 				"EN": "The Music and Artist Information plugin provides additional information about your music: biographies, album reviews, lyrics and more. It's a perfect addition to the Material Skin.",
 				"FR": "Le plugin \"Informations sur la Musique et les Artistes\" fournit des informations suppl&eacute;mentaires sur votre musique : biographies des artistes, critiques des albums, paroles des chansons et plus encore. Il compl&egrave;te parfaitement le plugin Material Skin.",
 				"NL": "De Music and Artist Information plugin geeft extra informatie over je muziek: biografieën, albumrecensies, songteksten en meer. Het is een perfecte aanvulling op de Material Skin.",
-				"SV": "Musik- och artistinformations-pluginprogrammet erbjuder mer information om din musik: biografier, recensioner, sångtexter och mer. Det passar perfekt till Material Skin."
+				"SV": "Musik- och artistinformations-pluginprogrammet erbjuder mer information om din musik: biografier, recensioner, s&aring;ngtexter och mer. Det passar perfekt till Material Skin."
 			},
 			"checked": true,
 			"img": "https://raw.githubusercontent.com/CDrummond/lms-material/master/screenshots/desktop-mai.png"
@@ -47,7 +47,7 @@
 				"DE": "Spotty Spotify Integration f&uuml;r LMS",
 				"EN": "Spotty Spotify implementation for LMS",
 				"FR": "Int&eacute;gration Spotty Spotify pour LMS",
-				"SV": "Spotty - Spotify integration för LMS."
+				"SV": "Spotty - Spotify integration f&ouml;r LMS."
 			},
 			"desc": {
 				"CS": "Spotty je implementace Spotify pro LMS, kter&aacute; se integruje se v&scaron;emi u&zcaron;ivatelsk&yacute;mi rozhran&iacute;mi LMS pro ovl&aacute;d&aacute;n&iacute; p&rcaron;ehr&aacute;v&aacute;n&iacute; Spotify na &uacute;&ccaron;tu Spotify Premium.",
@@ -56,7 +56,7 @@
 				"EN": "Spotty is a Spotify implementation for LMS that integrates with all LMS user interfaces to control Spotify playback on a Spotify Premium account.",
 				"FR": "Spotty permet de lier votre compte Spotify Premium &agrave; une Squeezebox, ou tout autre appareil compatible LMS, et d'acc&eacute;der &agrave; votre musique sur Spotify.",
 				"NL": "Spotty is een Spotify-implementatie voor LMS die integreert met alle LMS-gebruikersinterfaces om het afspelen van Spotify op een Spotify Premium account te regelen.",
-				"SV": "Spotty implementerar Spotify p&aring; LMS med alla LMS gr&auml;nssnitt för att kontrollera uppspelning fr&aring;n ett Spotify premiumkonto."
+				"SV": "Spotty implementerar Spotify p&aring; LMS med alla LMS gr&auml;nssnitt f&ouml;r att kontrollera uppspelning fr&aring;n ett Spotify premiumkonto."
 			},
 			"icon": "https://raw.githubusercontent.com/michaelherger/Spotty-Plugin/master/HTML/EN/plugins/Spotty/html/images/93aac68fb06348598c1e67734dfaceee.png",
 			"checked": false
@@ -73,7 +73,7 @@
 				"EN": "TIDAL is a global music streaming platform bringing fans closer to artists through unique experiences and the highest sound quality.",
 				"FR": "TIDAL est une plateforme de streaming internationale qui rapproche les artistes de leurs fans &agrave; travers des contenus originaux dans la meilleure qualit&eacute; audio disponible.",
 				"NL": "TIDAL is een wereldwijd muziekstreamingplatform dat fans dichter bij artiesten brengt door middel van unieke ervaringen en de hoogste geluidskwaliteit.",
-				"SV": "TIDAL är en global str&ouml;mmningstj&auml;nst som för anv&auml;ndarna n&auml;rmare artisterna genom unika upplevelser och inneh&aring;ll med h&ouml;gsta kvalitet."
+				"SV": "TIDAL &auml;r en global str&ouml;mmningstj&auml;nst som f&ouml;r anv&auml;ndarna n&auml;rmare artisterna genom unika upplevelser och inneh&aring;ll med h&ouml;gsta kvalitet."
 			},
 			"icon": "https://raw.githubusercontent.com/michaelherger/lms-plugin-tidal/main/HTML/EN/plugins/TIDAL/html/emblem.png",
 			"checked": false
@@ -90,7 +90,7 @@
 				"EN": "Qobuz is a music-streaming platform with access to over 100 million songs, all of which are available in the hi-res FLAC (Free Lossless Audio Codec) format.",
 				"FR": "Qobuz est une plateforme de streaming musical donnant acc&egrave;s &agrave; plus de 100 millions de morceaux, souvent disponibles au format FLAC Hi-Res (Free Lossless Audio Codec).",
 				"NL": "Qobuz is een muziek-streaming platform met toegang tot meer dan 100 miljoen nummers, die allemaal beschikbaar zijn in het hi-res FLAC (Free Lossless Audio Codec) formaat..",
-				"SV": "Qobuz är en strömmningstjänst med mer än 100 miljoner sånger som alla är tillgängliga i hi-res FLAC (Free Lossless Audio Codec) format."
+				"SV": "Qobuz &auml;r en str&ouml;mmningstj&auml;nst med mer &auml;n 100 miljoner s&aring;nger som alla &auml;r tillg&auml;ngliga i hi-res FLAC (Free Lossless Audio Codec) format."
 			},
 			"icon": "https://raw.githubusercontent.com/LMS-Community/plugin-Qobuz/master/HTML/EN/plugins/Qobuz/html/images/icon.png",
 			"checked": false
@@ -108,7 +108,7 @@
 				"EN": "Deezer is a music streaming service that gives you access to over 120 million songs, as well as other audio content such as podcasts or audiobooks from all over the world.",
 				"FR": "Deezer est un service de streaming musical qui vous donne acc&egrave;s &agrave; plus de 120 millions de chansons, ainsi qu'&agrave; d'autres contenus audio tels que des podcasts ou des livres audio du monde entier.",
 				"NL": "Deezer is een muziekstreamingdienst die je toegang geeft tot meer dan 120 miljoen nummers, maar ook tot andere audio-inhoud zoals podcasts of audioboeken van over de hele wereld.",
-				"SV": "Deezer är en strömmningstjänst med mer än 120 miljoner sånger, samt annat audioinnehåll som podsändningar eller hörböcker från hela världen."
+				"SV": "Deezer &auml;r en str&ouml;mmningstj&auml;nst med mer &auml;n 120 miljoner s&aring;nger, samt annat audioinneh&aring;ll som pods&auml;ndningar eller h%ouml;rb&oumlcker fr&aring;n hela v&auml;rlden."
 			}
 		},
 		{
@@ -124,7 +124,7 @@
 				"EN": "Track, cover art and, occasionally, programme information for more than 7300 radio stations.",
 				"FR": "Titre, pochette et, occasionnellement, informations sur le programme en cours d'&eacute;coute pour plus de 7300 stations de radio.",
 				"NL": "Track-, cover- en af en toe ook programma-informatie voor meer dan 7300 radiostations.",
-				"SV": "Titel, albumomslag och ibland med program-information för mer än 7300 radiostationer."
+				"SV": "Titel, albumomslag och ibland med program-information f&ouml;r mer &auml;n 7300 radiostationer."
 			}
 		},
 		{
@@ -146,7 +146,7 @@
 				"EN": "This plugin provides access to Radio.net internet radio directory.",
 				"FR": "Ce plugin fournit l'acc&egrave;s &agrave; l'annuaire de radios Internet Radio.net.",
 				"NL": "Deze plugin biedt toegang tot Radio.net internetradiogids.",
-				"SV": "Detta pluginprogram ger tillgång till Radio.net webradioinnehållsförteckning.
+				"SV": "Detta pluginprogram ger tillg&aring;ng till Radio.net webradioinneh&aring;llsf&ouml;rteckning.
 			}
 		},
 		{
@@ -167,7 +167,7 @@
 				"EN": "By providing <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">some anonymous analytical data</a> you <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">help us further develop</a> Lyrion Music Server.",
 				"FR": "En fournissant <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">des donn&eacute;es d'analyse anonymes</a>, vous nous aidez &agrave; <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">d&eacute;velopper davantage le Lyrion Music Server</a>.",
 				"NL": "Door het verstrekken van <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">anonieme analytische gegevens</a> helpt u ons bij de <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">verdere ontwikkeling</a> van Lyrion Music Server.",
-				"SV": "Genom att anonymt dela <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">information om ditt system</a> hjälper du oss att <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">vidareutveckla Lyrion Music Server</a>."
+				"SV": "Genom att anonymt dela <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">information om ditt system</a> hj&aumllper du oss att <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">vidareutveckla Lyrion Music Server</a>."
 			},
 			"checked": true,
 			"img": "/html/images/analytics.png"
