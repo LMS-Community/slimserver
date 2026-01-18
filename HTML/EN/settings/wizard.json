@@ -108,7 +108,7 @@
 				"EN": "Deezer is a music streaming service that gives you access to over 120 million songs, as well as other audio content such as podcasts or audiobooks from all over the world.",
 				"FR": "Deezer est un service de streaming musical qui vous donne acc&egrave;s &agrave; plus de 120 millions de chansons, ainsi qu'&agrave; d'autres contenus audio tels que des podcasts ou des livres audio du monde entier.",
 				"NL": "Deezer is een muziekstreamingdienst die je toegang geeft tot meer dan 120 miljoen nummers, maar ook tot andere audio-inhoud zoals podcasts of audioboeken van over de hele wereld.",
-				"SV": "Deezer &auml;r en str&ouml;mmningstj&auml;nst med mer &auml;n 120 miljoner s&aring;nger, samt annat audioinneh&aring;ll som pods&auml;ndningar eller h%ouml;rb&oumlcker fr&aring;n hela v&auml;rlden."
+				"SV": "Deezer &auml;r en str&ouml;mmningstj&auml;nst med mer &auml;n 120 miljoner s&aring;nger, samt annat audioinneh&aring;ll som pods&auml;ndningar eller h&ouml;rb&oumlcker fr&aring;n hela v&auml;rlden."
 			}
 		},
 		{
@@ -158,7 +158,7 @@
 				"EN": "Report Analytics Data",
 				"FR": "Partage de donn&eacute;es d'analyse",
 				"NL": "Rapport Analytics-gegevens",
-				"SV": "Dela information om din Lyrion Music Server",
+				"SV": "Dela information om din Lyrion Music Server"
 			},
 			"desc": {
 				"CS": "Poskytnut&iacute;m <a href=\"https://lyrion.org/analytics/learn-more/\" target=\"lyrion\">n&#283;kter&yacute;ch anonymn&iacute;ch analytick&yacute;ch dat</a> n&aacute;m <a href=\"https://lyrion.org/analytics/\" target=\"lyrion\">pom&#367;&zcaron;ete s dal&scaron;&iacute;m v&yacute;vojem</a> Lyrion Music Serveru.",
