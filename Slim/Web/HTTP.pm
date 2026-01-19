@@ -2323,7 +2323,8 @@ sub sendStreamingResponse {
 
 			unshift @$outbuf, $segment;
 
-			my $url = Slim::Player::Playlist::url($client);
+			my $songIndex = Slim::Player::Source::streamingSongIndex($client);
+			my $url = Slim::Player::Playlist::url($client, $songIndex);
 
 			my $title = $url ? Slim::Music::Info::getCurrentTitle($client, $url) : string('WELCOME_TO_SQUEEZEBOX_SERVER');
 			$title =~ tr/'/ /;
